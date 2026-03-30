@@ -8,6 +8,15 @@ export const Footer = () => {
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 mb-20">
           <div className="lg:col-span-2">
+            <div className="flex items-center gap-4 mb-10 group">
+              <img 
+                src="Kapitech Logo White.png" 
+                alt="KAPITECH" 
+                className="h-12 w-auto object-contain group-hover:rotate-12 transition-transform duration-500"
+                referrerPolicy="no-referrer"
+              />
+              <span className="text-3xl font-display font-bold tracking-tighter">KAPITECH</span>
+            </div>
             <h2 className="text-4xl md:text-6xl font-display font-bold tracking-tighter mb-8">
               Let's build something <br />
               <span className="text-brand-red">extraordinary</span> together.

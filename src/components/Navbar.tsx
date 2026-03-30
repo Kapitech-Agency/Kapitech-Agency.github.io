@@ -36,9 +36,14 @@ export const Navbar = () => {
         )}
       >
         <div className="max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between">
-          <Link to="/" className="text-2xl font-display font-bold tracking-tighter flex items-center gap-2">
-            <span className="w-8 h-8 bg-brand-red rounded-full flex items-center justify-center text-xs">K</span>
-            KAPITECH
+          <Link to="/" className="flex items-center gap-3 group">
+            <img 
+              src="https://ais-dev-l4gphadlzxjwyhm6e7c2hc-185669140339.asia-southeast1.run.app/kapitech-logo.png" 
+              alt="KAPITECH" 
+              className="h-10 w-auto object-contain group-hover:scale-110 transition-transform duration-500"
+              referrerPolicy="no-referrer"
+            />
+            <span className="text-2xl font-display font-bold tracking-tighter">KAPITECH</span>
           </Link>
 
           {/* Desktop Nav */}
@@ -80,7 +85,15 @@ export const Navbar = () => {
             className="fixed inset-0 z-[60] bg-black flex flex-col p-12"
           >
             <div className="flex justify-between items-center mb-20">
-              <span className="text-2xl font-display font-bold tracking-tighter">KAPITECH</span>
+              <div className="flex items-center gap-3">
+                <img 
+                  src="https://ais-dev-l4gphadlzxjwyhm6e7c2hc-185669140339.asia-southeast1.run.app/kapitech-logo.png" 
+                  alt="KAPITECH" 
+                  className="h-10 w-auto object-contain"
+                  referrerPolicy="no-referrer"
+                />
+                <span className="text-2xl font-display font-bold tracking-tighter">KAPITECH</span>
+              </div>
               <button onClick={() => setIsMenuOpen(false)}><X size={32} /></button>
             </div>
             <div className="flex flex-col gap-8">

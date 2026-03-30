@@ -1,0 +1,7 @@
+<svg width="200" height="100" viewBox="0 0 200 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Stylized "K" - Red Part -->
+  <path d="M20 20L50 50L20 80H40L70 50L40 20H20Z" fill="#FF3B3B"/>
+  <path d="M70 20L100 50L70 80H90L120 50L90 20H70Z" fill="#FF3B3B"/>
+  <!-- Stylized "K" - White Part (Subtle) -->
+  <path d="M50 20L80 50L50 80H70L100 50L70 20H50Z" fill="white" fill-opacity="0.1"/>
+</svg>
