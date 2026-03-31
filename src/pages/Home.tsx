@@ -4,6 +4,7 @@ import { motion, AnimatePresence, useScroll, useTransform } from 'motion/react';
 import { ArrowUpRight, CheckCircle2, Zap, Shield, Globe, Cpu, Layout, Code2, Palette, Box, Layers, Activity, X } from 'lucide-react';
 import { MagneticButton } from '../components/ui/MagneticButton';
 import { PerspectiveTilt } from '../components/ui/PerspectiveTilt';
+import { Testimonials } from '../components/Testimonials';
 import { cn } from '../lib/utils';
 
 export const Home = () => {
@@ -65,15 +66,46 @@ export const Home = () => {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
+      className="film-grain"
     >
       {/* Hero */}
-      <section className="relative min-h-screen flex flex-col justify-center px-6 md:px-12 pt-20 overflow-hidden">
-        <div className="absolute top-1/4 -right-20 w-96 h-96 bg-brand-red/10 blur-[120px] rounded-full animate-pulse" />
-        <div className="absolute -bottom-20 -left-20 w-96 h-96 bg-blue-600/10 blur-[120px] rounded-full animate-pulse" />
-        
-        {/* Background Kinetic Text */}
-        <div className="absolute inset-0 flex items-center justify-center opacity-[0.02] select-none pointer-events-none overflow-hidden">
-          <span className="text-[40vw] font-display font-black uppercase tracking-tighter leading-none">KAPITECH</span>
+      <section className="relative min-h-screen flex flex-col justify-center px-6 md:px-12 pt-20 overflow-hidden bg-black">
+        {/* Enhanced Atmospheric Background */}
+        <div className="absolute inset-0 z-0">
+          {/* Technical Dot Matrix */}
+          <div className="absolute inset-0 opacity-[0.15]" 
+               style={{ 
+                 backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.15) 1px, transparent 1px)', 
+                 backgroundSize: '32px 32px' 
+               }} 
+          />
+          
+          {/* Subtle Grid */}
+          <div className="absolute inset-0 grid-bg opacity-10" />
+          
+          {/* Deep Vignette */}
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.8)_100%)]" />
+          
+          {/* Muted Layered Gradients */}
+          <motion.div 
+            animate={{ 
+              scale: [1, 1.1, 1],
+              opacity: [0.1, 0.15, 0.1]
+            }}
+            transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+            className="absolute top-1/4 -right-20 w-[600px] h-[600px] bg-brand-red/10 blur-[180px] rounded-full" 
+          />
+          <motion.div 
+            animate={{ 
+              scale: [1.1, 1, 1.1],
+              opacity: [0.05, 0.1, 0.05]
+            }}
+            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+            className="absolute -bottom-20 -left-20 w-[700px] h-[700px] bg-blue-900/10 blur-[180px] rounded-full" 
+          />
+          
+          {/* Scanline Effect */}
+          <div className="absolute inset-0 pointer-events-none opacity-[0.02] bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%)] bg-[length:100%_4px]" />
         </div>
 
         <div className="max-w-7xl mx-auto w-full relative z-10">
@@ -84,7 +116,7 @@ export const Home = () => {
           >
             <div className="flex items-center gap-4 mb-8">
               <span className="px-4 py-1.5 rounded-full border border-white/10 bg-white/5 text-[10px] font-bold tracking-[0.2em] uppercase text-white/60">
-                Elite Digital Studio
+                Creative Tech Studio
               </span>
               <div className="flex items-center gap-2 text-[10px] font-bold tracking-[0.2em] uppercase text-emerald-400">
                 <span className="relative flex h-2 w-2">
@@ -95,13 +127,13 @@ export const Home = () => {
               </div>
             </div>
             
-            <h1 className="text-7xl md:text-[10vw] font-display font-bold leading-[0.85] tracking-tighter mb-12 text-gradient">
+            <h1 className="text-5xl sm:text-7xl md:text-[8vw] lg:text-[10vw] font-display font-bold leading-[0.85] tracking-tighter mb-12 text-gradient">
               Digital<br />
               Powerhouse.
             </h1>
             
             <p className="text-xl md:text-3xl text-white/40 max-w-3xl font-light leading-tight mb-16 tracking-tight">
-              We engineer extraordinary digital products through <span className="text-white">IT Development</span>, <span className="text-white">UI/UX Design</span>, and <span className="text-white">SOP Consultancy</span>. Tech meets Artistry.
+              We engineer extraordinary digital products through <span className="text-white">IT Development</span>, <span className="text-white">UI/UX Design</span>, and <span className="text-white">Graphic Design</span>. Tech meets Artistry.
             </p>
             
             <div className="flex flex-wrap gap-6 items-center">
@@ -122,21 +154,21 @@ export const Home = () => {
 
         {/* Kinetic Typography */}
         <div className="absolute bottom-10 left-0 w-full kinetic-text opacity-5 select-none pointer-events-none">
-          <div className="kinetic-track text-[15vh] font-display font-black uppercase tracking-tighter">
-            <span>Elite Digital Studio • High Fidelity Design • Robust Engineering • Scalable Infrastructure • </span>
-            <span>Elite Digital Studio • High Fidelity Design • Robust Engineering • Scalable Infrastructure • </span>
+          <div className="kinetic-track text-[8vh] md:text-[15vh] font-display font-black uppercase tracking-tighter">
+            <span>Creative Tech Studio • UI/UX Design • IT Development • Graphic Design • </span>
+            <span>Creative Tech Studio • UI/UX Design • IT Development • Graphic Design • </span>
           </div>
         </div>
       </section>
 
       {/* Success Metrics */}
-      <section className="py-32 px-6 md:px-12 bg-black border-y border-white/5">
-        <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-12">
+      <section className="py-20 md:py-32 px-6 md:px-12 bg-black border-y border-white/5">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-12">
           {[
-            { label: "ROI Increase", value: "240%", desc: "Average client growth" },
-            { label: "Speed Boost", value: "60%", desc: "Faster load times" },
+            { label: "Design Precision", value: "100%", desc: "Pixel-perfect delivery" },
+            { label: "User Engagement", value: "85%", desc: "Average increase" },
             { label: "Projects", value: "150+", desc: "Delivered globally" },
-            { label: "Uptime", value: "99.9%", desc: "Reliability guaranteed" }
+            { label: "Client Satisfaction", value: "98%", desc: "Long-term partnerships" }
           ].map((stat, i) => (
             <motion.div 
               key={i}
@@ -146,7 +178,7 @@ export const Home = () => {
               transition={{ delay: i * 0.1 }}
               className="text-center"
             >
-              <span className="text-5xl md:text-7xl font-display font-bold text-white block mb-2">{stat.value}</span>
+              <span className="text-5xl md:text-6xl lg:text-7xl font-display font-bold text-white block mb-2">{stat.value}</span>
               <span className="text-brand-red font-bold uppercase tracking-widest text-[10px] block mb-2">{stat.label}</span>
               <p className="text-white/40 text-xs">{stat.desc}</p>
             </motion.div>
@@ -171,9 +203,9 @@ export const Home = () => {
       </section>
 
       {/* Anti-Freelance Statement */}
-      <section className="py-40 px-6 md:px-12 bg-zinc-950">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
-          <div className="relative aspect-square rounded-[3rem] overflow-hidden order-2 md:order-1">
+      <section className="py-20 md:py-40 px-6 md:px-12 bg-zinc-950">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-center">
+          <div className="relative aspect-square rounded-[2rem] md:rounded-[3rem] overflow-hidden order-2 md:order-1">
             <img 
               src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=2070" 
               alt="Agency vs Freelance" 
@@ -188,8 +220,8 @@ export const Home = () => {
             className="order-1 md:order-2"
           >
             <span className="text-brand-red font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">The Kapitech Advantage</span>
-            <h2 className="text-5xl md:text-7xl font-display font-bold tracking-tighter mb-8 leading-[0.9]">Beyond the Solo Freelancer.</h2>
-            <p className="text-xl text-white/60 font-light leading-relaxed mb-8">
+            <h2 className="text-4xl md:text-6xl lg:text-7xl font-display font-bold tracking-tighter mb-8 leading-[0.9]">Beyond the Solo Freelancer.</h2>
+            <p className="text-lg md:text-xl text-white/60 font-light leading-relaxed mb-8">
               Freelancers offer tasks. We offer systems. Kapitech provides a full-stack ecosystem of designers, architects, and consultants working in orchestration. 
             </p>
             <div className="space-y-6">
@@ -224,19 +256,24 @@ export const Home = () => {
         </div>
       </section>
 
-      {/* SOP Methodology */}
-      <section className="py-40 px-6 md:px-12 bg-black">
-        <div className="max-w-7xl mx-auto">
-          <div className="mb-24">
-            <span className="text-brand-red font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">The Kapitech SOP</span>
-            <h2 className="text-6xl md:text-8xl font-display font-bold tracking-tighter">Our Methodology.</h2>
+      {/* Methodology */}
+      <section className="py-20 md:py-40 px-6 md:px-12 bg-black relative overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-brand-red/10 blur-[150px] rounded-full animate-pulse" />
+          <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-blue-900/10 blur-[150px] rounded-full animate-pulse" style={{ animationDelay: '2s' }} />
+          <div className="absolute inset-0 grid-bg opacity-5" />
+        </div>
+        <div className="max-w-7xl mx-auto relative z-10">
+          <div className="mb-16 md:mb-24">
+            <span className="text-brand-red font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">The Creative Blueprint</span>
+            <h2 className="text-5xl md:text-7xl lg:text-8xl font-display font-bold tracking-tighter">Our Process.</h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
             {[
-              { step: "01", title: "Discovery", desc: "Deep-dive audit of current infrastructure and business objectives." },
-              { step: "02", title: "Blueprints", desc: "Architecting high-fidelity UI/UX and technical system maps." },
-              { step: "03", title: "Sprint Dev", desc: "Agile engineering with continuous integration and testing." },
-              { step: "04", title: "Deployment", desc: "Global edge delivery with 24/7 performance monitoring." }
+              { step: "01", title: "Ideation", desc: "Conceptualizing unique digital experiences tailored to your brand." },
+              { step: "02", title: "Design", desc: "Crafting high-fidelity UI/UX and stunning graphic identities." },
+              { step: "03", title: "Development", desc: "Building robust, scalable IT solutions with modern tech stacks." },
+              { step: "04", title: "Launch", desc: "Seamless deployment and continuous creative optimization." }
             ].map((item, i) => (
               <motion.div 
                 key={i}
@@ -244,9 +281,10 @@ export const Home = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="p-10 rounded-[2rem] bg-zinc-900 border border-white/5 hover:border-brand-red transition-all group"
+                className="p-10 rounded-[2rem] bg-zinc-900/50 backdrop-blur-sm border border-white/5 hover:border-brand-red/50 transition-all group relative overflow-hidden"
               >
-                <span className="text-4xl font-display font-bold text-brand-red block mb-6">{item.step}</span>
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-brand-red to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <span className="text-4xl font-display font-bold text-brand-red block mb-6 group-hover:scale-110 transition-transform duration-500">{item.step}</span>
                 <h3 className="text-xl font-bold mb-4">{item.title}</h3>
                 <p className="text-white/40 text-sm leading-relaxed">{item.desc}</p>
               </motion.div>
@@ -256,7 +294,19 @@ export const Home = () => {
       </section>
 
       {/* Built to Scale Manifesto */}
-      <section className="py-60 px-6 md:px-12 bg-black text-white overflow-hidden relative border-y border-white/5">
+      <section className="py-32 md:py-60 px-6 md:px-12 bg-black text-white overflow-hidden relative border-y border-white/5">
+        <div className="absolute inset-0 z-0">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,rgba(255,99,33,0.08)_0%,transparent_70%)]" />
+          <motion.div 
+            animate={{ 
+              rotate: [0, 360],
+              scale: [1, 1.2, 1]
+            }}
+            transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+            className="absolute -top-1/2 -right-1/4 w-[1000px] h-[1000px] bg-brand-red/5 blur-[120px] rounded-full" 
+          />
+          <div className="absolute inset-0 grid-bg opacity-5" />
+        </div>
         <div className="max-w-7xl mx-auto relative z-10">
           <motion.h2 
             initial={{ opacity: 0, y: 50 }}
@@ -264,42 +314,41 @@ export const Home = () => {
             viewport={{ once: true }}
             className="text-4xl md:text-6xl lg:text-7xl font-display font-black leading-[0.8] tracking-tighter uppercase text-white"
           >
+            Design First.<br />
             Built to Scale.<br />
-            Engineered to<br />
-            Dominate.
+            Engineered for<br />
+            Excellence.
           </motion.h2>
-          <div className="mt-20 grid grid-cols-1 md:grid-cols-2 gap-20">
-            <p className="text-2xl md:text-4xl font-light leading-tight tracking-tight text-white/60">
-              We don't build for today. We build for the version of your company that exists five years from now. Performance is not a feature; it's our foundation.
+          <div className="mt-12 md:mt-20 grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20">
+            <p className="text-xl md:text-3xl lg:text-4xl font-light leading-tight tracking-tight text-white/60">
+              We don't just build for today. We architect digital legacies that evolve with your vision. Creativity is our engine; technology is our foundation.
             </p>
             <div className="flex flex-col justify-end items-start">
               <Link to="/services" className="group flex items-center gap-4 text-xl font-bold uppercase tracking-widest hover:text-brand-red transition-colors">
-                View Architecture <ArrowUpRight size={32} className="group-hover:translate-x-2 group-hover:-translate-y-2 transition-transform" />
+                Explore Services <ArrowUpRight size={32} className="group-hover:translate-x-2 group-hover:-translate-y-2 transition-transform" />
               </Link>
             </div>
           </div>
         </div>
-        <div className="absolute top-0 right-0 w-1/2 h-full bg-white/[0.02] -skew-x-12 translate-x-1/4" />
       </section>
 
-      {/* Real Estate Digital Solutions */}
-      <section className="py-40 px-6 md:px-12 bg-black">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
+      {/* Core Specialization */}
+      <section className="py-20 md:py-40 px-6 md:px-12 bg-black">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-center">
           <div>
-            <span className="text-brand-red font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Sector Specialization</span>
-            <h2 className="text-5xl md:text-7xl font-display font-bold tracking-tighter mb-8 leading-[0.9]">Real Estate<br />Digital Mastery.</h2>
-            <p className="text-xl text-white/40 font-light leading-relaxed mb-12">
-              We architect high-fidelity property portals, 3D immersive tours, and automated lead-to-close systems for the world's most ambitious developers.
+            <span className="text-brand-red font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Our Core Expertise</span>
+            <h2 className="text-4xl md:text-6xl lg:text-7xl font-display font-bold tracking-tighter mb-8 leading-[0.9]">Digital Craftsmanship.</h2>
+            <p className="text-lg md:text-xl text-white/40 font-light leading-relaxed mb-12">
+              We specialize in the intersection of high-end design and robust development, delivering pixel-perfect products that command attention.
             </p>
-            <div className="grid grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 gap-8">
               {[
-                { label: "3D Tours", desc: "Immersive walkthroughs" },
-                { label: "Lead Gen", desc: "Automated pipelines" },
-                { label: "CRM Sync", desc: "Legacy integration" },
-                { label: "Portals", desc: "High-speed search" }
+                { label: "IT Development", desc: "Scalable web & mobile applications" },
+                { label: "UI/UX Design", desc: "Intuitive & immersive user experiences" },
+                { label: "Graphic Design", desc: "Bold visual identities & branding" }
               ].map((item, i) => (
                 <div key={i} className="border-l border-brand-red pl-6">
-                  <span className="block font-bold mb-1">{item.label}</span>
+                  <span className="block font-bold text-2xl mb-1">{item.label}</span>
                   <span className="text-xs text-white/40 uppercase tracking-widest">{item.desc}</span>
                 </div>
               ))}
@@ -307,8 +356,8 @@ export const Home = () => {
           </div>
           <div className="relative aspect-[4/5] rounded-[3rem] overflow-hidden">
             <img 
-              src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=2070" 
-              alt="Real Estate Solutions" 
+              src="https://images.unsplash.com/photo-1558655146-d09347e92766?auto=format&fit=crop&q=80&w=2070" 
+              alt="Digital Craftsmanship" 
               className="w-full h-full object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
@@ -316,48 +365,28 @@ export const Home = () => {
         </div>
       </section>
 
-      {/* IT Infrastructure Audit */}
-      <section className="py-40 px-6 md:px-12 bg-zinc-950">
+      {/* Free Consultation */}
+      <section className="py-20 md:py-40 px-6 md:px-12 bg-zinc-950">
         <div className="max-w-7xl mx-auto text-center">
-          <span className="text-brand-red font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Corporate Health Check</span>
-          <h2 className="text-5xl md:text-7xl font-display font-bold tracking-tighter mb-8">Free Infrastructure Audit.</h2>
-          <p className="text-xl text-white/40 font-light leading-relaxed max-w-2xl mx-auto mb-12">
-            Is your current tech stack holding you back? We provide a comprehensive 48-hour audit of your digital ecosystem, identifying bottlenecks and security vulnerabilities.
+          <span className="text-brand-red font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Strategic Advisory</span>
+          <h2 className="text-4xl md:text-6xl lg:text-7xl font-display font-bold tracking-tighter mb-8">Free Design & Tech Consultation.</h2>
+          <p className="text-lg md:text-xl text-white/40 font-light leading-relaxed max-w-2xl mx-auto mb-12">
+            Ready to elevate your digital presence? We offer a complimentary 30-minute session to discuss your UI/UX, IT development, or graphic design needs.
           </p>
           <MagneticButton>
-            <button className="px-12 py-5 bg-white text-black rounded-full font-bold hover:bg-brand-red hover:text-white transition-all duration-500 uppercase tracking-widest text-xs">
-              Request Free Audit
-            </button>
+            <Link to="/contact" className="px-12 py-5 bg-white text-black rounded-full font-bold hover:bg-brand-red hover:text-white transition-all duration-500 uppercase tracking-widest text-xs inline-block">
+              Book Free Consultation
+            </Link>
           </MagneticButton>
         </div>
       </section>
 
-      {/* Industry Expertise Badges */}
-      <section className="py-40 px-6 md:px-12 bg-black border-y border-white/5">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
-            {[
-              { sector: "Fintech", desc: "High-frequency trading platforms & secure payment gateways." },
-              { sector: "Real Estate", desc: "PropTech solutions, 3D portals, and CRM automation." },
-              { sector: "E-commerce", desc: "Headless commerce & high-conversion retail architectures." },
-              { sector: "SaaS", desc: "Scalable cloud-native products with robust API ecosystems." }
-            ].map((item, i) => (
-              <div key={i} className="group">
-                <h3 className="text-2xl font-display font-bold mb-4 group-hover:text-brand-red transition-colors">{item.sector}</h3>
-                <p className="text-white/40 text-sm leading-relaxed">{item.desc}</p>
-                <div className="mt-6 h-[1px] w-0 bg-brand-red group-hover:w-full transition-all duration-700" />
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Meeting Scheduler */}
-      <section className="py-40 px-6 md:px-12 bg-[#111111] border-y border-white/5">
+      <section className="py-20 md:py-40 px-6 md:px-12 bg-[#111111] border-y border-white/5">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-12">
-          <div className="text-white">
-            <h2 className="text-5xl md:text-7xl font-display font-bold tracking-tighter mb-4 leading-none">Strategic Partnership.</h2>
-            <p className="text-xl font-light opacity-80">Inquire about long-term IT & Creative collaboration.</p>
+          <div className="text-white text-center md:text-left">
+            <h2 className="text-4xl md:text-6xl lg:text-7xl font-display font-bold tracking-tighter mb-4 leading-none">Strategic Partnership.</h2>
+            <p className="text-lg md:text-xl font-light opacity-80">Inquire about long-term IT & Creative collaboration.</p>
           </div>
           <MagneticButton>
             <Link to="/contact" className="px-12 py-6 bg-white text-black rounded-full font-bold hover:bg-brand-red hover:text-white transition-all duration-500 uppercase tracking-widest text-xs">
@@ -368,8 +397,8 @@ export const Home = () => {
       </section>
 
       {/* Philosophy Section - Reveal on Scroll */}
-      <section className="py-40 px-6 md:px-12 bg-black">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
+      <section className="py-20 md:py-40 px-6 md:px-12 bg-black">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-center">
           <motion.div 
             initial={{ opacity: 0, x: -50 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -377,15 +406,15 @@ export const Home = () => {
             transition={{ duration: 1 }}
           >
             <span className="text-brand-red font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Our Philosophy</span>
-            <h2 className="text-5xl md:text-7xl font-display font-bold tracking-tighter mb-8 leading-[0.9]">We build for the 1%.</h2>
-            <p className="text-xl text-white/60 font-light leading-relaxed mb-12">
-              In a world of digital noise, we create silence. Our work is defined by what we leave out as much as what we put in. We don't just build websites; we architect digital legacies.
+            <h2 className="text-4xl md:text-6xl lg:text-7xl font-display font-bold tracking-tighter mb-8 leading-[0.9]">Artistry in Every Pixel.</h2>
+            <p className="text-lg md:text-xl text-white/60 font-light leading-relaxed mb-12">
+              We believe that technology should be as beautiful as it is functional. Our philosophy is rooted in the pursuit of digital perfection, where every line of code and every design choice serves a purpose.
             </p>
             <div className="flex flex-col gap-6">
               {[
-                { title: "Precision Engineering", desc: "Every pixel is calculated. Every line of code is optimized." },
-                { title: "Strategic Artistry", desc: "Design that doesn't just look good, but drives conversion." },
-                { title: "Future-Proofing", desc: "Built on technologies that will dominate the next decade." }
+                { title: "Creative Logic", desc: "We blend artistic vision with technical precision to solve complex problems." },
+                { title: "Human-Centric Design", desc: "Every product we build is designed with the end-user's journey in mind." },
+                { title: "Technical Excellence", desc: "We leverage the latest technologies to ensure performance and scalability." }
               ].map((item, i) => (
                 <div key={i} className="flex gap-6 items-start">
                   <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center shrink-0">
@@ -425,13 +454,13 @@ export const Home = () => {
         </div>
       </section>
 
-      {/* Featured Work Preview - Horizontal Scroll */}
-      <section className="py-40 bg-black overflow-hidden">
-        <div className="max-w-7xl mx-auto px-6 md:px-12 mb-32">
+      {/* Featured Work Preview - Vertical Grid */}
+      <section className="py-20 md:py-40 bg-black overflow-hidden">
+        <div className="max-w-7xl mx-auto px-6 md:px-12 mb-16 md:mb-32">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8">
             <div>
               <span className="text-brand-red font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Selected Works</span>
-              <h2 className="text-6xl md:text-8xl font-display font-bold tracking-tighter">The Portfolio.</h2>
+              <h2 className="text-5xl md:text-7xl lg:text-8xl font-display font-bold tracking-tighter">The Portfolio.</h2>
             </div>
             <Link to="/work" className="group px-8 py-4 rounded-full border border-white/10 hover:bg-white hover:text-black transition-all duration-500 font-bold tracking-widest uppercase text-xs flex items-center gap-3">
               Explore All <ArrowUpRight size={16} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
@@ -439,93 +468,112 @@ export const Home = () => {
           </div>
         </div>
 
-        <div className="flex gap-8 px-6 md:px-12 overflow-x-auto custom-scrollbar pb-20 snap-x">
+        <div className="max-w-7xl mx-auto px-6 md:px-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-16 lg:gap-24">
             {projects.map((project, i) => (
               <motion.div 
                 key={project.title}
-                initial={{ opacity: 0, x: 100 }}
-                whileInView={{ opacity: 1, x: 0 }}
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: i * 0.1 }}
-                className="min-w-[45vw] md:min-w-[420px] snap-center group cursor-pointer"
+                className="group cursor-pointer"
               >
                 <PerspectiveTilt 
-                  className="overflow-hidden rounded-[2rem] aspect-video mb-8 relative"
+                  className="overflow-hidden rounded-[2rem] aspect-[16/10] mb-8 relative"
                   onClick={() => setSelectedProject(project)}
                 >
                   <img src={project.image} alt={project.title} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 group-hover:scale-105" />
                   <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-700" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 </PerspectiveTilt>
                 <div className="flex justify-between items-start">
-                <div>
-                  <h3 className="text-2xl md:text-3xl font-display font-bold mb-3">{project.title}</h3>
-                  <p className="text-brand-red text-[10px] font-bold uppercase tracking-[0.3em] mb-4">{project.category}</p>
-                  <p className="text-white/40 text-sm font-light leading-relaxed max-w-sm">{project.description}</p>
+                  <div>
+                    <h3 className="text-2xl md:text-3xl font-display font-bold mb-3 group-hover:text-brand-red transition-colors">{project.title}</h3>
+                    <p className="text-brand-red text-[10px] font-bold uppercase tracking-[0.3em] mb-4">{project.category}</p>
+                    <p className="text-white/40 text-sm font-light leading-relaxed max-w-sm">{project.description}</p>
+                  </div>
+                  <div className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center group-hover:bg-white group-hover:text-black transition-all duration-500 shrink-0">
+                    <ArrowUpRight size={24} />
+                  </div>
                 </div>
-                <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center group-hover:bg-white group-hover:text-black transition-all duration-500 shrink-0">
-                  <ArrowUpRight size={20} />
-                </div>
-              </div>
-            </motion.div>
-          ))}
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
 
+      {/* Testimonials Carousel */}
+      <Testimonials />
+
       {/* Technical Authority Widget */}
-      <section className="py-32 px-6 md:px-12 bg-zinc-950 border-y border-white/5">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12">
-          <div className="p-10 rounded-[2rem] bg-white/5 border border-white/5 flex flex-col gap-6">
+      <section className="py-32 px-6 md:px-12 bg-zinc-950 border-y border-white/5 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-5 pointer-events-none">
+          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-brand-red blur-[150px] rounded-full" />
+        </div>
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12 relative z-10">
+          <div className="p-10 rounded-[2rem] bg-white/5 border border-white/5 flex flex-col gap-6 group hover:border-emerald-400/30 transition-all duration-500">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Server Status</span>
+              <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Design Precision</span>
               <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-emerald-400">
                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                99.9% Uptime
+                Pixel Perfect
               </div>
             </div>
             <div className="flex items-end gap-4">
               <div className="flex-grow h-12 flex items-end gap-1">
-                {[40, 60, 45, 70, 55, 80, 65, 90, 75, 85].map((h, i) => (
-                  <div key={i} className="flex-grow bg-emerald-400/20 rounded-t-sm" style={{ height: `${h}%` }}></div>
+                {[80, 90, 85, 95, 100, 90, 95, 100, 95, 100].map((h, i) => (
+                  <motion.div 
+                    key={i} 
+                    initial={{ height: 0 }}
+                    whileInView={{ height: `${h}%` }}
+                    transition={{ delay: i * 0.05, duration: 0.5 }}
+                    className="flex-grow bg-emerald-400/20 rounded-t-sm group-hover:bg-emerald-400/40 transition-colors"
+                  />
                 ))}
               </div>
-              <span className="text-2xl font-display font-bold">24ms</span>
+              <span className="text-2xl font-display font-bold">100%</span>
             </div>
-            <p className="text-xs text-white/40">Global edge network latency optimized for sub-second delivery.</p>
+            <p className="text-xs text-white/40">Meticulous attention to detail in every UI component we craft.</p>
           </div>
 
-          <div className="p-10 rounded-[2rem] bg-white/5 border border-white/5 flex flex-col gap-6">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Security Protocol</span>
+          <div className="p-10 rounded-[2rem] bg-white/5 border border-white/5 flex flex-col gap-6 group hover:border-brand-red/30 transition-all duration-500">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Technical Excellence</span>
             <div className="flex items-center gap-4">
-              <Shield className="text-brand-red" size={40} />
+              <div className="w-12 h-12 rounded-xl bg-brand-red/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
+                <Code2 className="text-brand-red" size={24} />
+              </div>
               <div>
-                <span className="block text-xl font-bold">AES-256</span>
-                <span className="text-xs text-white/40 uppercase tracking-widest">Encryption Standard</span>
+                <span className="block text-xl font-bold">Modern Stack</span>
+                <span className="text-xs text-white/40 uppercase tracking-widest">Performance First</span>
               </div>
             </div>
-            <p className="text-xs text-white/40">Every digital asset is protected by enterprise-grade security hardening.</p>
+            <p className="text-xs text-white/40">Leveraging cutting-edge frameworks for sub-second digital experiences.</p>
           </div>
 
-          <div className="p-10 rounded-[2rem] bg-white/5 border border-white/5 flex flex-col gap-6">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Core Methodology</span>
+          <div className="p-10 rounded-[2rem] bg-white/5 border border-white/5 flex flex-col gap-6 group hover:border-blue-500/30 transition-all duration-500">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Creative Strategy</span>
             <div className="flex items-center gap-4">
-              <Layers className="text-blue-500" size={40} />
+              <div className="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
+                <Palette className="text-blue-500" size={24} />
+              </div>
               <div>
-                <span className="block text-xl font-bold">Atomic</span>
-                <span className="text-xs text-white/40 uppercase tracking-widest">Design System</span>
+                <span className="block text-xl font-bold">Brand Vision</span>
+                <span className="text-xs text-white/40 uppercase tracking-widest">Strategic Design</span>
               </div>
             </div>
-            <p className="text-xs text-white/40">We build scalable components that evolve with your business architecture.</p>
+            <p className="text-xs text-white/40">Aligning visual aesthetics with your core business objectives.</p>
           </div>
         </div>
       </section>
 
       {/* Newsletter Section */}
-      <section className="py-40 px-6 md:px-12 bg-black border-t border-white/5">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
+      <section className="py-20 md:py-40 px-6 md:px-12 bg-black border-t border-white/5">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-center">
           <div>
             <span className="text-brand-red font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">The Kapitech Insight</span>
-            <h2 className="text-5xl md:text-7xl font-display font-bold tracking-tighter mb-8 leading-[0.9]">Stay ahead of the curve.</h2>
-            <p className="text-xl text-white/40 font-light leading-relaxed">
+            <h2 className="text-4xl md:text-6xl lg:text-7xl font-display font-bold tracking-tighter mb-8 leading-[0.9]">Stay ahead of the curve.</h2>
+            <p className="text-lg md:text-xl text-white/40 font-light leading-relaxed">
               Bi-weekly intelligence on digital architecture, UI/UX psychology, and the future of IT infrastructure. No fluff. Just power.
             </p>
           </div>
@@ -589,7 +637,7 @@ export const Home = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.4 }}
-                  className="text-6xl md:text-[10vw] font-display font-bold tracking-tighter leading-none"
+                  className="text-4xl sm:text-6xl md:text-[8vw] lg:text-[10vw] font-display font-bold tracking-tighter leading-none"
                 >
                   {selectedProject.title}
                 </motion.h2>

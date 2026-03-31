@@ -8,20 +8,19 @@ export const Footer = () => {
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 mb-20">
           <div className="lg:col-span-2">
-            <div className="flex items-center gap-4 mb-10 group">
+            <div className="flex items-center mb-10 group">
               <img 
                 src="Kapitech Logo White.png" 
                 alt="KAPITECH" 
-                className="h-12 w-auto object-contain group-hover:rotate-12 transition-transform duration-500"
+                className="h-12 md:h-16 w-auto object-contain group-hover:rotate-12 transition-transform duration-500"
                 referrerPolicy="no-referrer"
               />
-              <span className="text-3xl font-display font-bold tracking-tighter">KAPITECH</span>
             </div>
-            <h2 className="text-4xl md:text-6xl font-display font-bold tracking-tighter mb-8">
+            <h2 className="text-3xl sm:text-5xl md:text-6xl font-display font-bold tracking-tighter mb-8">
               Let's build something <br />
               <span className="text-brand-red">extraordinary</span> together.
             </h2>
-            <button className="text-xl font-display font-bold flex items-center gap-2 hover:text-brand-red transition-colors group">
+            <button className="text-lg md:text-xl font-display font-bold flex items-center gap-2 hover:text-brand-red transition-colors group">
               hello@kapitech.co.id
               <ChevronRight className="group-hover:translate-x-2 transition-transform" />
             </button>
@@ -48,11 +47,11 @@ export const Footer = () => {
           </div>
         </div>
 
-        <div className="pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6 text-white/30 text-xs">
-          <p>© 2026 KAPITECH AGENCY. ALL RIGHTS RESERVED.</p>
+        <div className="pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8 text-white/30 text-[10px] font-bold uppercase tracking-widest">
+          <p>© 2026 PT KAPITECH DIGITAL INDONESIA. ALL RIGHTS RESERVED. HEADQUARTERED IN SOUTH TANGERANG, ID & BEYOND.</p>
           <div className="flex gap-8">
-            <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
+            <Link to="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
+            <Link to="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
           </div>
         </div>
       </div>
