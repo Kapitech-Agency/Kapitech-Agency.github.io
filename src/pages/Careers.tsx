@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ArrowUpRight, CheckCircle2, Zap, Globe, Cpu, Code2, Palette, Users, Rocket, Heart, Coffee, Laptop } from 'lucide-react';
+import { ArrowUpRight, CheckCircle2, Zap, Globe, Cpu, Code2, Palette, Users, Rocket, Heart, Coffee, Laptop, Upload, FileText, Phone, Mail, User, Link as LinkIcon, X, Shield } from 'lucide-react';
 import { MagneticButton } from '../components/ui/MagneticButton';
 import { Link } from 'react-router-dom';
 import { cn } from '../lib/utils';
@@ -85,6 +85,71 @@ const benefits = [
 
 export const Careers = () => {
   const [selectedPosition, setSelectedPosition] = useState<typeof positions[0] | null>(null);
+  const [isApplying, setIsApplying] = useState(false);
+  const [fileError, setFileError] = useState<string | null>(null);
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    portfolio: '',
+    coverLetter: '',
+    resume: null as File | null
+  });
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    setFileError(null);
+
+    if (file) {
+      const allowedTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/msword'];
+      const maxSize = 5 * 1024 * 1024; // 5MB
+
+      if (!allowedTypes.includes(file.type)) {
+        setFileError('Invalid file type. Please upload a PDF or DOCX.');
+        return;
+      }
+
+      if (file.size > maxSize) {
+        setFileError('File size exceeds 5MB. Please upload a smaller file.');
+        return;
+      }
+
+      setFormData(prev => ({ ...prev, resume: file }));
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (fileError) {
+      alert('Please fix the file upload errors before submitting.');
+      return;
+    }
+
+    if (!formData.resume) {
+      alert('Please upload your resume.');
+      return;
+    }
+
+    // Simulate submission
+    console.log('Application submitted:', formData);
+    alert('Application submitted successfully!');
+    setIsApplying(false);
+    setSelectedPosition(null);
+    setFormData({
+      name: '',
+      email: '',
+      phone: '',
+      portfolio: '',
+      coverLetter: '',
+      resume: null as File | null
+    });
+  };
 
   return (
     <motion.div
@@ -93,6 +158,8 @@ export const Careers = () => {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
       className="film-grain"
+      role="main"
+      aria-label="Careers at Kapitech"
     >
       {/* Hero Section */}
       <section className="relative min-h-[80vh] flex flex-col justify-center px-6 md:px-12 pt-32 overflow-hidden bg-black">
@@ -131,6 +198,88 @@ export const Careers = () => {
               We are looking for the <span className="text-white">top 1%</span> of designers, engineers, and strategists to architect the digital legacies of tomorrow.
             </p>
           </motion.div>
+        </div>
+      </section>
+
+      {/* Why Kapitech? Section */}
+      <section className="py-24 md:py-48 px-6 md:px-12 bg-black relative overflow-hidden" id="why-kapitech">
+        <div className="absolute inset-0 z-0 opacity-20">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full grid-bg" />
+        </div>
+        
+        <div className="max-w-7xl mx-auto relative z-10">
+          <div className="text-center mb-20">
+            <motion.span 
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              className="text-brand-red font-bold tracking-[0.4em] uppercase text-[10px] mb-4 block"
+            >
+              The Advantage
+            </motion.span>
+            <motion.h2 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              className="text-5xl md:text-8xl font-display font-bold tracking-tighter"
+            >
+              Why Kapitech?
+            </motion.h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-1">
+            {[
+              { 
+                icon: <Zap size={32} />, 
+                title: "High Velocity", 
+                desc: "We ship at a speed that leaves competitors in the dust. No bureaucracy, just execution.",
+                image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=800"
+              },
+              { 
+                icon: <Shield size={32} />, 
+                title: "Elite Standards", 
+                desc: "We only hire the top 1%. You'll be surrounded by masters of their craft.",
+                image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=800"
+              },
+              { 
+                icon: <Globe size={32} />, 
+                title: "Global Impact", 
+                desc: "Build products used by millions across the globe for world-class enterprise clients.",
+                image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=800"
+              },
+              { 
+                icon: <Cpu size={32} />, 
+                title: "Future Tech", 
+                desc: "Work with the most advanced stacks. We don't just follow trends, we set them.",
+                image: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=800"
+              }
+            ].map((item, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.1 }}
+                className="relative p-10 bg-zinc-900/30 border border-white/5 hover:bg-zinc-900/50 transition-all duration-500 group overflow-hidden"
+              >
+                {/* Background Image with Overlay */}
+                <div className="absolute inset-0 z-0 opacity-0 group-hover:opacity-10 transition-opacity duration-700">
+                  <img 
+                    src={item.image} 
+                    alt={item.title} 
+                    className="w-full h-full object-cover scale-110 group-hover:scale-100 transition-transform duration-1000"
+                    referrerPolicy="no-referrer"
+                  />
+                  <div className="absolute inset-0 bg-black/60" />
+                </div>
+
+                <div className="relative z-10">
+                  <div className="text-brand-red mb-8 group-hover:scale-110 group-hover:-translate-y-2 transition-all duration-500">
+                    {item.icon}
+                  </div>
+                  <h3 className="text-2xl font-display font-bold mb-4 group-hover:text-brand-red transition-colors duration-500">{item.title}</h3>
+                  <p className="text-white/60 font-light leading-relaxed group-hover:text-white/90 transition-colors duration-500">{item.desc}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -212,20 +361,24 @@ export const Careers = () => {
               <span className="text-brand-red font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Current Openings</span>
               <h2 className="text-5xl md:text-7xl font-display font-bold tracking-tighter">Open Roles.</h2>
             </div>
-            <p className="text-white/40 max-w-sm text-sm">
+            <p className="text-white/60 max-w-sm text-sm">
               Don't see a role that fits? We're always looking for exceptional talent. Send us a strategic inquiry.
             </p>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-4" role="list" aria-label="Open job positions">
             {positions.map((job, i) => (
               <motion.div
                 key={job.id}
+                role="listitem"
                 initial={{ opacity: 0, x: -20 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
                 onClick={() => setSelectedPosition(job)}
+                onKeyDown={(e) => e.key === 'Enter' && setSelectedPosition(job)}
+                tabIndex={0}
+                aria-label={`View details for ${job.title}`}
                 className="group p-8 md:p-12 rounded-[2rem] bg-black border border-white/5 hover:border-brand-red/50 transition-all cursor-pointer flex flex-col md:flex-row justify-between items-start md:items-center gap-8"
               >
                 <div>
@@ -387,13 +540,18 @@ export const Careers = () => {
                     <h3 className="text-2xl font-bold mb-8">Ready to architect the future?</h3>
                     <div className="flex flex-wrap gap-6">
                       <MagneticButton>
-                        <Link to="/contact" className="px-12 py-5 bg-white text-black rounded-full font-bold hover:bg-brand-red hover:text-white transition-all duration-500 uppercase tracking-widest text-xs inline-block">
+                        <button 
+                          onClick={() => setIsApplying(true)}
+                          className="px-12 py-5 bg-white text-black rounded-full font-bold hover:bg-brand-red hover:text-white transition-all duration-500 uppercase tracking-widest text-xs inline-block"
+                          aria-label="Apply for this position"
+                        >
                           Apply for this position
-                        </Link>
+                        </button>
                       </MagneticButton>
                       <button 
                         onClick={() => setSelectedPosition(null)}
                         className="px-12 py-5 rounded-full border border-white/10 hover:bg-white/5 transition-all font-bold tracking-widest uppercase text-xs"
+                        aria-label="Back to Openings"
                       >
                         Back to Openings
                       </button>
@@ -401,6 +559,168 @@ export const Careers = () => {
                   </div>
                 </div>
               </motion.div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Application Modal */}
+      <AnimatePresence>
+        {isApplying && selectedPosition && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[200] bg-black flex flex-col overflow-y-auto"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="application-title"
+          >
+            <div className="max-w-3xl mx-auto px-6 md:px-12 py-24 w-full">
+              <div className="flex justify-between items-center mb-12">
+                <div>
+                  <span className="text-brand-red font-bold tracking-[0.3em] uppercase text-[10px] mb-2 block">Application Form</span>
+                  <h2 id="application-title" className="text-4xl md:text-6xl font-display font-bold tracking-tighter">
+                    {selectedPosition.title}
+                  </h2>
+                </div>
+                <button 
+                  onClick={() => setIsApplying(false)}
+                  className="p-4 rounded-full bg-white/5 border border-white/10 text-white hover:bg-brand-red transition-all"
+                  aria-label="Close application form"
+                >
+                  <X size={24} />
+                </button>
+              </div>
+
+              <form onSubmit={handleSubmit} className="space-y-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="space-y-2">
+                    <label htmlFor="name" className="text-[10px] font-bold uppercase tracking-widest text-white/40 block">Full Name</label>
+                    <div className="relative">
+                      <User className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20" size={18} />
+                      <input 
+                        required
+                        type="text" 
+                        id="name"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleInputChange}
+                        className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-6 text-white focus:outline-none focus:border-brand-red transition-all"
+                        placeholder="John Doe"
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <label htmlFor="email" className="text-[10px] font-bold uppercase tracking-widest text-white/40 block">Email Address</label>
+                    <div className="relative">
+                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20" size={18} />
+                      <input 
+                        required
+                        type="email" 
+                        id="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-6 text-white focus:outline-none focus:border-brand-red transition-all"
+                        placeholder="john@example.com"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="space-y-2">
+                    <label htmlFor="phone" className="text-[10px] font-bold uppercase tracking-widest text-white/40 block">Phone Number</label>
+                    <div className="relative">
+                      <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20" size={18} />
+                      <input 
+                        required
+                        type="tel" 
+                        id="phone"
+                        name="phone"
+                        value={formData.phone}
+                        onChange={handleInputChange}
+                        className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-6 text-white focus:outline-none focus:border-brand-red transition-all"
+                        placeholder="+1 (555) 000-0000"
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <label htmlFor="portfolio" className="text-[10px] font-bold uppercase tracking-widest text-white/40 block">Portfolio Link</label>
+                    <div className="relative">
+                      <LinkIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20" size={18} />
+                      <input 
+                        type="url" 
+                        id="portfolio"
+                        name="portfolio"
+                        value={formData.portfolio}
+                        onChange={handleInputChange}
+                        className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-6 text-white focus:outline-none focus:border-brand-red transition-all"
+                        placeholder="https://portfolio.com"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label htmlFor="coverLetter" className="text-[10px] font-bold uppercase tracking-widest text-white/40 block">Cover Letter</label>
+                  <textarea 
+                    id="coverLetter"
+                    name="coverLetter"
+                    value={formData.coverLetter}
+                    onChange={handleInputChange}
+                    rows={6}
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white focus:outline-none focus:border-brand-red transition-all resize-none"
+                    placeholder="Tell us why you're the perfect fit for Kapitech..."
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-white/40 block">Resume / CV</span>
+                  <label 
+                    htmlFor="resume" 
+                    className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-white/10 rounded-3xl cursor-pointer hover:border-brand-red/50 hover:bg-white/5 transition-all group"
+                  >
+                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                      <Upload className="w-10 h-10 text-white/20 group-hover:text-brand-red mb-4 transition-colors" />
+                      <p className="mb-2 text-sm text-white/60">
+                        <span className="font-bold">Click to upload</span> or drag and drop
+                      </p>
+                      <p className="text-xs text-white/40">PDF, DOCX (MAX. 5MB)</p>
+                      {fileError && (
+                        <p className="mt-2 text-xs text-brand-red font-bold uppercase tracking-widest animate-pulse">
+                          {fileError}
+                        </p>
+                      )}
+                      {formData.resume && !fileError && (
+                        <div className="mt-4 flex items-center gap-2 text-brand-red font-bold text-xs uppercase tracking-widest">
+                          <FileText size={14} />
+                          {formData.resume.name}
+                        </div>
+                      )}
+                    </div>
+                    <input 
+                      id="resume" 
+                      type="file" 
+                      className="hidden" 
+                      accept=".pdf,.doc,.docx"
+                      onChange={handleFileChange}
+                    />
+                  </label>
+                </div>
+
+                <div className="pt-8">
+                  <MagneticButton>
+                    <button 
+                      type="submit"
+                      className="w-full py-6 bg-white text-black rounded-full font-bold hover:bg-brand-red hover:text-white transition-all duration-500 uppercase tracking-widest text-sm"
+                    >
+                      Submit Application
+                    </button>
+                  </MagneticButton>
+                </div>
+              </form>
             </div>
           </motion.div>
         )}

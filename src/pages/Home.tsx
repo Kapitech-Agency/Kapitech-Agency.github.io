@@ -79,6 +79,8 @@ export const Home = () => {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
       className="film-grain"
+      role="main"
+      aria-label="Kapitech Home"
     >
       {/* Hero */}
       <section className="relative min-h-screen flex flex-col justify-center px-6 md:px-12 pt-20 overflow-hidden bg-black">
@@ -144,7 +146,7 @@ export const Home = () => {
               Powerhouse.
             </h1>
             
-            <p className="text-xl md:text-3xl text-white/40 max-w-3xl font-light leading-tight mb-16 tracking-tight">
+            <p className="text-xl md:text-3xl text-white/60 max-w-3xl font-light leading-tight mb-16 tracking-tight">
               We engineer extraordinary digital products through <span className="text-white">IT Development</span>, <span className="text-white">UI/UX Design</span>, and <span className="text-white">Graphic Design</span>. Tech meets Artistry.
             </p>
             
@@ -173,28 +175,65 @@ export const Home = () => {
         </div>
       </section>
 
-      {/* Success Metrics */}
-      <section className="py-20 md:py-32 px-6 md:px-12 bg-black border-y border-white/5">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-12">
-          {[
-            { label: "Design Precision", value: "100%", desc: "Pixel-perfect delivery" },
-            { label: "User Engagement", value: "85%", desc: "Average increase" },
-            { label: "Projects", value: "150+", desc: "Delivered globally" },
-            { label: "Client Satisfaction", value: "98%", desc: "Long-term partnerships" }
-          ].map((stat, i) => (
-            <motion.div 
-              key={i}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-              className="text-center"
-            >
-              <span className="text-5xl md:text-6xl lg:text-7xl font-display font-bold text-white block mb-2">{stat.value}</span>
-              <span className="text-brand-red font-bold uppercase tracking-widest text-[10px] block mb-2">{stat.label}</span>
-              <p className="text-white/40 text-xs">{stat.desc}</p>
-            </motion.div>
-          ))}
+      {/* Performance Matrix */}
+      <section className="py-24 md:py-40 px-6 md:px-12 bg-black border-y border-white/5 relative overflow-hidden" aria-label="Performance Statistics">
+        <div className="absolute inset-0 z-0 opacity-20">
+          <div className="absolute top-0 left-1/4 w-px h-full bg-gradient-to-b from-transparent via-brand-red/50 to-transparent" />
+          <div className="absolute top-0 right-1/4 w-px h-full bg-gradient-to-b from-transparent via-blue-500/50 to-transparent" />
+        </div>
+        
+        <div className="max-w-7xl mx-auto relative z-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-12 md:gap-16" role="list">
+            {[
+              { 
+                label: "Sub-second Latency", 
+                value: "0.8s", 
+                desc: "Average global load time for our high-fidelity deployments.",
+                icon: <Cpu size={16} />
+              },
+              { 
+                label: "Conversion Growth", 
+                value: "+45%", 
+                desc: "Average increase in user engagement post-orchestration.",
+                icon: <ArrowUpRight size={16} />
+              },
+              { 
+                label: "Global Scalability", 
+                value: "15+", 
+                desc: "Countries served with enterprise-level cloud infrastructure.",
+                icon: <Globe size={16} />
+              },
+              { 
+                label: "System Reliability", 
+                value: "99.9%", 
+                desc: "Guaranteed uptime for mission-critical digital ecosystems.",
+                icon: <CheckCircle2 size={16} />
+              }
+            ].map((stat, i) => (
+              <motion.div
+                key={stat.label}
+                role="listitem"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className="group"
+              >
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-brand-red group-hover:scale-110 transition-transform duration-500">
+                    {stat.icon}
+                  </div>
+                  <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/60 group-hover:text-brand-red transition-colors">{stat.label}</span>
+                </div>
+                <div className="space-y-4">
+                  <span className="text-5xl md:text-7xl font-display font-bold block text-white tracking-tighter">{stat.value}</span>
+                  <p className="text-sm text-white/60 font-light leading-relaxed max-w-[200px]">
+                    {stat.desc}
+                  </p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -470,7 +509,7 @@ export const Home = () => {
             <span className="text-brand-red font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">The Creative Blueprint</span>
             <h2 className="text-5xl md:text-7xl lg:text-8xl font-display font-bold tracking-tighter">Our Process.</h2>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8" role="list" aria-label="Our methodology">
             {[
               { step: "01", title: "Ideation", desc: "Conceptualizing unique digital experiences tailored to your brand." },
               { step: "02", title: "Design", desc: "Crafting high-fidelity UI/UX and stunning graphic identities." },
@@ -479,6 +518,7 @@ export const Home = () => {
             ].map((item, i) => (
               <motion.div 
                 key={i}
+                role="listitem"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -488,7 +528,7 @@ export const Home = () => {
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-brand-red to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 <span className="text-4xl font-display font-bold text-brand-red block mb-6 group-hover:scale-110 transition-transform duration-500">{item.step}</span>
                 <h3 className="text-xl font-bold mb-4">{item.title}</h3>
-                <p className="text-white/40 text-sm leading-relaxed">{item.desc}</p>
+                <p className="text-white/60 text-sm leading-relaxed">{item.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -687,19 +727,23 @@ export const Home = () => {
         </div>
 
         <div className="max-w-7xl mx-auto px-6 md:px-12">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-16 lg:gap-24">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-16 lg:gap-24" role="list" aria-label="Featured projects">
             {projects.map((project, i) => (
               <motion.div 
                 key={project.title}
+                role="listitem"
                 initial={{ opacity: 0, y: 50 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: i * 0.1 }}
-                className="group cursor-pointer"
+                className="group cursor-pointer focus:outline-none"
+                onClick={() => setSelectedProject(project)}
+                onKeyDown={(e) => e.key === 'Enter' && setSelectedProject(project)}
+                tabIndex={0}
+                aria-label={`View project: ${project.title}`}
               >
                 <PerspectiveTilt 
                   className="overflow-hidden rounded-[2rem] aspect-[16/10] mb-8 relative"
-                  onClick={() => setSelectedProject(project)}
                 >
                   <img 
                     src={project.image} 
@@ -715,7 +759,7 @@ export const Home = () => {
                   <div>
                     <h3 className="text-2xl md:text-3xl font-display font-bold mb-3 group-hover:text-brand-red transition-colors">{project.title}</h3>
                     <p className="text-brand-red text-[10px] font-bold uppercase tracking-[0.3em] mb-4">{project.category}</p>
-                    <p className="text-white/40 text-sm font-light leading-relaxed max-w-sm">{project.description}</p>
+                    <p className="text-white/60 text-sm font-light leading-relaxed max-w-sm">{project.description}</p>
                   </div>
                   <div className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center group-hover:bg-white group-hover:text-black transition-all duration-500 shrink-0">
                     <ArrowUpRight size={24} />
@@ -731,62 +775,150 @@ export const Home = () => {
       <Testimonials />
 
       {/* Technical Authority Widget */}
-      <section className="py-32 px-6 md:px-12 bg-zinc-950 border-y border-white/5 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-5 pointer-events-none">
-          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-brand-red blur-[150px] rounded-full" />
+      {/* Studio Diagnostics */}
+      <section className="py-32 px-6 md:px-12 bg-black border-y border-white/5 relative overflow-hidden">
+        <div className="absolute inset-0 z-0 opacity-10">
+          <div className="absolute inset-0 grid-bg" />
         </div>
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12 relative z-10">
-          <div className="p-10 rounded-[2rem] bg-white/5 border border-white/5 flex flex-col gap-6 group hover:border-emerald-400/30 transition-all duration-500">
-            <div className="flex items-center justify-between">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Design Precision</span>
+        
+        <div className="max-w-7xl mx-auto relative z-10">
+          <div className="flex flex-col md:flex-row justify-between items-end gap-8 mb-20">
+            <div>
+              <span className="text-brand-red font-bold tracking-[0.4em] uppercase text-[10px] mb-4 block">System Monitoring</span>
+              <h2 className="text-4xl md:text-6xl font-display font-bold tracking-tighter">Studio Diagnostics.</h2>
+            </div>
+            <div className="flex items-center gap-4 px-6 py-3 rounded-full bg-white/5 border border-white/10">
               <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-emerald-400">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                Pixel Perfect
+                <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+                All Systems Nominal
               </div>
+              <div className="w-px h-4 bg-white/10" />
+              <span className="text-[10px] font-mono text-white/40">v2.4.0-build.88</span>
             </div>
-            <div className="flex items-end gap-4">
-              <div className="flex-grow h-12 flex items-end gap-1">
-                {[80, 90, 85, 95, 100, 90, 95, 100, 95, 100].map((h, i) => (
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Visual Fidelity Node */}
+            <div className="p-8 rounded-[2rem] bg-zinc-900/40 border border-white/5 flex flex-col gap-8 group hover:border-brand-red/30 transition-all duration-500 relative overflow-hidden">
+              <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
+                <Palette size={80} />
+              </div>
+              <div className="space-y-2">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Node 01 // Visual Fidelity</span>
+                <h3 className="text-2xl font-display font-bold">Design Accuracy</h3>
+              </div>
+              <div className="space-y-6">
+                <div className="flex justify-between items-end">
+                  <span className="text-4xl font-mono font-bold text-white">100%</span>
+                  <span className="text-[10px] font-mono text-emerald-400">PIXEL_PERFECT</span>
+                </div>
+                <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
                   <motion.div 
-                    key={i} 
-                    initial={{ height: 0 }}
-                    whileInView={{ height: `${h}%` }}
-                    transition={{ delay: i * 0.05, duration: 0.5 }}
-                    className="flex-grow bg-emerald-400/20 rounded-t-sm group-hover:bg-emerald-400/40 transition-colors"
+                    initial={{ width: 0 }}
+                    whileInView={{ width: "100%" }}
+                    transition={{ duration: 1.5, ease: "easeOut" }}
+                    className="h-full bg-brand-red"
                   />
-                ))}
+                </div>
+                <div className="grid grid-cols-2 gap-4 pt-4 border-t border-white/5">
+                  <div>
+                    <span className="text-[9px] font-mono text-white/30 block uppercase">Asset Opt.</span>
+                    <span className="text-xs font-mono text-white">98.4%</span>
+                  </div>
+                  <div>
+                    <span className="text-[9px] font-mono text-white/30 block uppercase">Color Depth</span>
+                    <span className="text-xs font-mono text-white">32-BIT</span>
+                  </div>
+                </div>
               </div>
-              <span className="text-2xl font-display font-bold">100%</span>
             </div>
-            <p className="text-xs text-white/40">Meticulous attention to detail in every UI component we craft.</p>
-          </div>
 
-          <div className="p-10 rounded-[2rem] bg-white/5 border border-white/5 flex flex-col gap-6 group hover:border-brand-red/30 transition-all duration-500">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Technical Excellence</span>
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-brand-red/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
-                <Code2 className="text-brand-red" size={24} />
+            {/* Engineering Core */}
+            <div className="p-8 rounded-[2rem] bg-zinc-900/40 border border-white/5 flex flex-col gap-8 group hover:border-blue-500/30 transition-all duration-500 relative overflow-hidden">
+              <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
+                <Code2 size={80} />
               </div>
-              <div>
-                <span className="block text-xl font-bold">Modern Stack</span>
-                <span className="text-xs text-white/40 uppercase tracking-widest">Performance First</span>
+              <div className="space-y-2">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Node 02 // Engineering Core</span>
+                <h3 className="text-2xl font-display font-bold">System Uptime</h3>
+              </div>
+              <div className="space-y-6">
+                <div className="flex justify-between items-end">
+                  <span className="text-4xl font-mono font-bold text-white">99.99%</span>
+                  <span className="text-[10px] font-mono text-blue-400">STABLE_BUILD</span>
+                </div>
+                <div className="flex gap-1 h-8 items-end">
+                  {[...Array(20)].map((_, i) => (
+                    <motion.div
+                      key={i}
+                      initial={{ height: "20%" }}
+                      animate={{ height: ["20%", "100%", "60%", "90%", "20%"] }}
+                      transition={{ 
+                        duration: 2 + Math.random() * 2, 
+                        repeat: Infinity, 
+                        delay: i * 0.1 
+                      }}
+                      className="flex-grow bg-blue-500/20 rounded-sm"
+                    />
+                  ))}
+                </div>
+                <div className="grid grid-cols-2 gap-4 pt-4 border-t border-white/5">
+                  <div>
+                    <span className="text-[9px] font-mono text-white/30 block uppercase">Deploy Speed</span>
+                    <span className="text-xs font-mono text-white">124ms</span>
+                  </div>
+                  <div>
+                    <span className="text-[9px] font-mono text-white/30 block uppercase">Security</span>
+                    <span className="text-xs font-mono text-white">AES-256</span>
+                  </div>
+                </div>
               </div>
             </div>
-            <p className="text-xs text-white/40">Leveraging cutting-edge frameworks for sub-second digital experiences.</p>
-          </div>
 
-          <div className="p-10 rounded-[2rem] bg-white/5 border border-white/5 flex flex-col gap-6 group hover:border-blue-500/30 transition-all duration-500">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Creative Strategy</span>
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
-                <Palette className="text-blue-500" size={24} />
+            {/* Strategic Engine */}
+            <div className="p-8 rounded-[2rem] bg-zinc-900/40 border border-white/5 flex flex-col gap-8 group hover:border-emerald-500/30 transition-all duration-500 relative overflow-hidden">
+              <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
+                <Activity size={80} />
               </div>
-              <div>
-                <span className="block text-xl font-bold">Brand Vision</span>
-                <span className="text-xs text-white/40 uppercase tracking-widest">Strategic Design</span>
+              <div className="space-y-2">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Node 03 // Strategic Engine</span>
+                <h3 className="text-2xl font-display font-bold">Market Impact</h3>
+              </div>
+              <div className="space-y-6">
+                <div className="flex justify-between items-end">
+                  <span className="text-4xl font-mono font-bold text-white">12.5x</span>
+                  <span className="text-[10px] font-mono text-emerald-400">ROI_MULTIPLIER</span>
+                </div>
+                <div className="relative h-12 flex items-center">
+                  <svg className="w-full h-full text-emerald-500/20" viewBox="0 0 100 20" preserveAspectRatio="none">
+                    <motion.path
+                      d="M0 20 L10 15 L20 18 L30 10 L40 12 L50 5 L60 8 L70 2 L80 4 L90 1 L100 3"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1"
+                      initial={{ pathLength: 0 }}
+                      whileInView={{ pathLength: 1 }}
+                      transition={{ duration: 2 }}
+                    />
+                  </svg>
+                  <motion.div 
+                    animate={{ opacity: [0, 1, 0] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                    className="absolute right-0 top-0 w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]" 
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4 pt-4 border-t border-white/5">
+                  <div>
+                    <span className="text-[9px] font-mono text-white/30 block uppercase">Growth Lift</span>
+                    <span className="text-xs font-mono text-white">+85%</span>
+                  </div>
+                  <div>
+                    <span className="text-[9px] font-mono text-white/30 block uppercase">Retention</span>
+                    <span className="text-xs font-mono text-white">94.2%</span>
+                  </div>
+                </div>
               </div>
             </div>
-            <p className="text-xs text-white/40">Aligning visual aesthetics with your core business objectives.</p>
           </div>
         </div>
       </section>
