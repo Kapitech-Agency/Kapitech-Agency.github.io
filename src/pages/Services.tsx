@@ -116,23 +116,45 @@ export const Services = () => {
   const process = [
     {
       step: "01",
-      title: "Ideation",
-      desc: "Conceptualizing unique digital experiences tailored to your brand's core vision."
+      title: "Discovery & Strategy",
+      desc: "Deep dive into brand DNA, market positioning, and technical requirements to build a solid foundation.",
+      icon: <Globe size={24} />,
+      details: ["Market Analysis", "Brand DNA Audit", "Technical Feasibility", "Project Roadmap"]
     },
     {
       step: "02",
-      title: "Design",
-      desc: "Crafting high-fidelity visual narratives and frictionless user journeys."
+      title: "Architecture & UX",
+      desc: "Mapping user journeys, information architecture, and low-fidelity wireframing for intuitive experiences.",
+      icon: <Layout size={24} />,
+      details: ["User Flow Mapping", "Wireframing", "IA Design", "UX Strategy"]
     },
     {
       step: "03",
-      title: "Development",
-      desc: "Engineering robust, scalable codebases using elite tech stacks for peak performance."
+      title: "Visual Narrative",
+      desc: "Crafting high-fidelity UI, bespoke branding, and immersive motion design that commands attention.",
+      icon: <Palette size={24} />,
+      details: ["UI Design", "Design Systems", "Motion Design", "3D Visualization"]
     },
     {
       step: "04",
-      title: "Launch",
-      desc: "Orchestrating a seamless launch followed by continuous creative optimization."
+      title: "Agile Engineering",
+      desc: "Building robust, scalable codebases with sub-second performance and enterprise-grade security.",
+      icon: <Code2 size={24} />,
+      details: ["Full-Stack Dev", "Security Audit", "API Integration", "Cloud Setup"]
+    },
+    {
+      step: "05",
+      title: "Quality Assurance",
+      desc: "Rigorous testing, performance auditing, and cross-platform validation to ensure perfection.",
+      icon: <Shield size={24} />,
+      details: ["Unit Testing", "Performance Audit", "UAT", "Security Hardening"]
+    },
+    {
+      step: "06",
+      title: "Launch & Evolution",
+      desc: "Seamless deployment followed by data-driven optimization and scaling for long-term growth.",
+      icon: <Rocket size={24} />,
+      details: ["Deployment", "Monitoring", "Optimization", "Scaling Strategy"]
     }
   ];
 
@@ -455,8 +477,11 @@ export const Services = () => {
                 <span className="text-brand-red font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">The Creative Blueprint</span>
                 <h2 className="text-5xl md:text-8xl font-display font-bold tracking-tighter">Our Process.</h2>
               </div>
+              <p className="text-white/40 max-w-md text-sm md:text-base font-light leading-relaxed">
+                A systematic orchestration of creativity and engineering, designed to deliver high-impact digital solutions with surgical precision.
+              </p>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {process.map((item, i) => (
                 <motion.div 
                   key={i}
@@ -464,12 +489,32 @@ export const Services = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.1 }}
-                  className="p-10 rounded-[2rem] bg-zinc-900/50 backdrop-blur-sm border border-white/5 hover:border-brand-red/50 transition-all group relative overflow-hidden"
+                  className="p-10 rounded-[3rem] bg-zinc-900/40 backdrop-blur-xl border border-white/5 hover:border-brand-red/30 transition-all duration-500 group relative overflow-hidden"
                 >
                   <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-brand-red to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  <span className="text-4xl font-display font-bold text-brand-red block mb-6 group-hover:scale-110 transition-transform duration-500">{item.step}</span>
-                  <h3 className="text-xl font-bold mb-4">{item.title}</h3>
-                  <p className="text-white/40 text-sm leading-relaxed">{item.desc}</p>
+                  
+                  <div className="flex justify-between items-start mb-10">
+                    <div className="w-14 h-14 rounded-2xl bg-white/5 flex items-center justify-center border border-white/5 group-hover:border-brand-red/20 group-hover:bg-brand-red/5 transition-all duration-500">
+                      <div className="text-white/40 group-hover:text-brand-red transition-colors duration-500">
+                        {item.icon}
+                      </div>
+                    </div>
+                    <span className="text-5xl font-display font-bold text-white/5 group-hover:text-brand-red/10 transition-colors duration-500">{item.step}</span>
+                  </div>
+
+                  <h3 className="text-2xl font-display font-bold mb-4 group-hover:tracking-tight transition-all duration-500">{item.title}</h3>
+                  <p className="text-white/40 text-sm leading-relaxed mb-8 font-light">{item.desc}</p>
+                  
+                  <div className="space-y-3 pt-6 border-t border-white/5">
+                    {item.details.map((detail, idx) => (
+                      <div key={idx} className="flex items-center gap-3">
+                        <div className="w-1 h-1 rounded-full bg-brand-red/40 group-hover:bg-brand-red transition-colors" />
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-white/20 group-hover:text-white/40 transition-colors">
+                          {detail}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
                 </motion.div>
               ))}
             </div>
