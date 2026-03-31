@@ -13,6 +13,7 @@ import { Work } from './pages/Work';
 import { Services } from './pages/Services';
 import { About } from './pages/About';
 import { Contact } from './pages/Contact';
+import { Careers } from './pages/Careers';
 import { PrivacyPolicy } from './pages/PrivacyPolicy';
 import { TermsOfService } from './pages/TermsOfService';
 import NotFound from './pages/NotFound';
@@ -36,6 +37,7 @@ const AnimatedRoutes = () => {
           <Route path="/work" element={<Work />} />
           <Route path="/services" element={<Services />} />
           <Route path="/about" element={<About />} />
+          <Route path="/careers" element={<Careers />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/terms" element={<TermsOfService />} />

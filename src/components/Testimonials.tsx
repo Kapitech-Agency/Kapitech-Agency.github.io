@@ -195,6 +195,8 @@ export const Testimonials = () => {
                       <img 
                         src={item.image} 
                         alt={item.author}
+                        loading="lazy"
+                        referrerPolicy="no-referrer"
                         className="w-full h-full object-cover"
                       />
                     </div>

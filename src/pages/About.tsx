@@ -101,6 +101,8 @@ export const About = () => {
               <img 
                 src="https://picsum.photos/seed/studio/1200/1500" 
                 alt="Creative Tech Studio" 
+                loading="lazy"
+                referrerPolicy="no-referrer"
                 className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-1000"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
@@ -183,6 +185,8 @@ export const About = () => {
                     <img 
                       src={member.image} 
                       alt={member.name} 
+                      loading="lazy"
+                      referrerPolicy="no-referrer"
                       className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 group-hover:scale-105" 
                     />
                     <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-700" />

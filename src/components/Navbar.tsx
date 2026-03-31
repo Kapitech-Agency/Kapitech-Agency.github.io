@@ -7,6 +7,7 @@ import { cn } from '@/src/lib/utils';
 export const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const location = useLocation();
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, {
@@ -18,7 +19,19 @@ export const Navbar = () => {
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    
+    const checkModal = () => {
+      setIsModalOpen(document.body.hasAttribute('data-modal-open'));
+    };
+    
+    checkModal();
+    const observer = new MutationObserver(checkModal);
+    observer.observe(document.body, { attributes: true });
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      observer.disconnect();
+    };
   }, []);
 
   const navLinks = [
@@ -26,6 +39,7 @@ export const Navbar = () => {
     { name: 'Work', href: '/work' },
     { name: 'Services', href: '/services' },
     { name: 'About', href: '/about' },
+    { name: 'Careers', href: '/careers' },
     { name: 'Contact', href: '/contact' },
   ];
 
@@ -33,7 +47,8 @@ export const Navbar = () => {
     <>
       <motion.nav
         initial={{ y: -100 }}
-        animate={{ y: 0 }}
+        animate={{ y: isModalOpen ? -100 : 0 }}
+        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
         className={cn(
           "fixed top-0 left-0 w-full z-50 transition-all duration-500 border-b",
           isScrolled 

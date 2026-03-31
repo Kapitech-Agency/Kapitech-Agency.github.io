@@ -1,17 +1,34 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ArrowUpRight, X, Layout, Code2, Palette, Box } from 'lucide-react';
+import { ArrowUpRight, X, Layout, Code2, Palette, Box, Search, Filter } from 'lucide-react';
 import { PerspectiveTilt } from '../components/ui/PerspectiveTilt';
 import { MagneticButton } from '../components/ui/MagneticButton';
 
 export const Work = () => {
   const [activeFilter, setActiveFilter] = useState('All');
+  const [searchQuery, setSearchQuery] = useState('');
   const [selectedProject, setSelectedProject] = useState<any>(null);
+
+  React.useEffect(() => {
+    if (selectedProject) {
+      document.body.style.overflow = 'hidden';
+      document.body.setAttribute('data-modal-open', 'true');
+    } else {
+      document.body.style.overflow = 'unset';
+      document.body.removeAttribute('data-modal-open');
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+      document.body.removeAttribute('data-modal-open');
+    };
+  }, [selectedProject]);
 
   const projects = [
     {
       title: "Lumina Real Estate",
       category: "IT Development / UI/UX Design",
+      featured: true,
+      recent: true,
       image: "https://picsum.photos/seed/lumina/1200/800",
       desc: "Fragmented property search engineered into a high-fidelity portal, delivering a sub-second search experience for high-ticket listings.",
       challenge: "The existing platform suffered from high bounce rates due to a fragmented search experience and slow loading times for high-resolution property images. Users found it difficult to filter through thousands of listings efficiently.",
@@ -23,6 +40,8 @@ export const Work = () => {
     {
       title: "Aura Creative Studio",
       category: "Graphic Design / UI/UX Design",
+      featured: true,
+      recent: false,
       image: "https://picsum.photos/seed/aura/1200/800",
       desc: "Cluttered visual presence orchestrated into a sharp, charcoal-themed identity system that commands authority in the creative sector.",
       challenge: "Aura had a world-class portfolio but a digital presence that felt dated and cluttered, failing to attract high-ticket enterprise clients. Their brand message was lost in a sea of inconsistent visuals.",
@@ -34,6 +53,8 @@ export const Work = () => {
     {
       title: "Nexus Fintech App",
       category: "IT Development / UI/UX Design",
+      featured: true,
+      recent: true,
       image: "https://picsum.photos/seed/nexus/1200/800",
       desc: "Complex financial data simplified into a frictionless UI/UX strategy, reducing onboarding drop-off by 85% through progressive disclosure.",
       challenge: "Users were overwhelmed by complex financial data, leading to a 60% drop-off rate during the onboarding process. The security protocols were also perceived as cumbersome by the user base.",
@@ -45,6 +66,8 @@ export const Work = () => {
     {
       title: "Vanguard Logistics",
       category: "IT Development / UI/UX Design",
+      featured: false,
+      recent: false,
       image: "https://picsum.photos/seed/vanguard/1200/800",
       desc: "Data latency in supply chain tracking optimized by 40% using cloud-native ERP and edge computing for real-time global synchronization.",
       challenge: "Legacy systems caused significant data latency, making real-time supply chain tracking impossible for global operations. This led to inefficiencies and lost revenue in the millions.",
@@ -56,6 +79,8 @@ export const Work = () => {
     {
       title: "Zenith Marketplace",
       category: "IT Development / Graphic Design",
+      featured: true,
+      recent: true,
       image: "https://picsum.photos/seed/zenith/1200/800",
       desc: "Luxury brand digital prestige engineered with headless CMS, ensuring sub-second load times and complete creative freedom for marketing teams.",
       challenge: "A luxury brand needed a digital storefront that matched their physical prestige while maintaining sub-second load times globally. Their previous platform was slow and difficult to update.",
@@ -67,6 +92,8 @@ export const Work = () => {
     {
       title: "Titan Health",
       category: "IT Development / UI/UX Design",
+      featured: false,
+      recent: false,
       image: "https://picsum.photos/seed/titan/1200/800",
       desc: "Long wait times in healthcare apps solved with a high-performance, HIPAA-compliant interface and an optimized doctor-patient matching algorithm.",
       challenge: "Patients were frustrated by long wait times and a confusing interface that made scheduling urgent consultations difficult. Data privacy was also a major concern for the client.",
@@ -78,6 +105,8 @@ export const Work = () => {
     {
       title: "Nova Gaming",
       category: "Graphic Design / UI/UX Design",
+      featured: false,
+      recent: false,
       image: "https://picsum.photos/seed/nova/1200/800",
       desc: "Low engagement in e-sports landing pages boosted with a dynamic interface featuring Framer Motion animations and real-time tournament integration.",
       challenge: "E-sports landing pages were static and failed to capture the high-energy nature of competitive gaming, resulting in low sign-up rates and poor community retention.",
@@ -89,6 +118,8 @@ export const Work = () => {
     {
       title: "Pulse Analytics",
       category: "IT Development / UI/UX Design",
+      featured: true,
+      recent: false,
       image: "https://picsum.photos/seed/pulse/1200/800",
       desc: "Complex data silos for corporate decision-makers solved with a real-time visualization dashboard and an AI-driven insights engine.",
       challenge: "Corporate decision-makers were struggling with fragmented data silos that delayed critical business responses. The data was often outdated by the time it reached the executive board.",
@@ -96,14 +127,75 @@ export const Work = () => {
       results: "Decision-making speed improved by 60%. The dashboard is now the primary strategic tool for the executive board, leading to a 10% increase in overall operational efficiency.",
       roi: { conversion: "N/A", uptime: "99.99%", engagement: "+60%" },
       technologies: ["D3.js", "Python", "Node.js", "React", "BigQuery"]
+    },
+    {
+      title: "Aether Cloud",
+      category: "IT Development / UI/UX Design",
+      featured: false,
+      recent: false,
+      image: "https://picsum.photos/seed/aether/1200/800",
+      desc: "Distributed cloud infrastructure management simplified with a high-performance dashboard and real-time resource orchestration.",
+      challenge: "Managing distributed cloud resources across multiple regions was complex and prone to human error, leading to inefficient resource allocation and high costs.",
+      solution: "We built a unified cloud management platform with real-time visualization of resource usage and automated scaling policies. The UI was designed for maximum clarity in high-pressure environments.",
+      results: "Cloud infrastructure costs reduced by 25% through optimized allocation. Deployment times for new environments dropped from hours to minutes.",
+      roi: { conversion: "N/A", uptime: "99.999%", engagement: "+55%" },
+      technologies: ["React", "Go", "Terraform", "Prometheus", "Grafana"]
+    },
+    {
+      title: "Solaris Energy",
+      category: "Graphic Design / UI/UX Design",
+      featured: false,
+      recent: false,
+      image: "https://picsum.photos/seed/solaris/1200/800",
+      desc: "Renewable energy monitoring platform designed for clarity and impact, featuring real-time production data and predictive maintenance.",
+      challenge: "Solaris needed a way to present complex energy production data to both technical engineers and non-technical stakeholders in a way that was both informative and visually engaging.",
+      solution: "We designed a multi-layered dashboard that provides high-level summaries for executives and deep-dive analytics for engineers. The visual identity was refreshed to reflect their commitment to clean energy.",
+      results: "User adoption across the organization increased by 70%. Maintenance response times improved by 30% due to the new predictive alerting system.",
+      roi: { conversion: "+15%", uptime: "99.95%", engagement: "+70%" },
+      technologies: ["React", "D3.js", "Figma", "Node.js", "InfluxDB"]
+    },
+    {
+      title: "Quantum AI",
+      category: "IT Development / UI/UX Design",
+      featured: true,
+      recent: true,
+      image: "https://picsum.photos/seed/quantum/1200/800",
+      desc: "Next-gen AI model training platform with a focus on developer experience and high-fidelity data visualization.",
+      challenge: "AI researchers were spending too much time on infrastructure setup and data cleaning, distracting them from core model development and experimentation.",
+      solution: "We engineered a streamlined AI development environment that automates environment provisioning and data preprocessing. We built custom visualization tools for model performance metrics.",
+      results: "Research throughput increased by 40%. The platform is now used by several leading AI labs for large-scale model training.",
+      roi: { conversion: "N/A", uptime: "99.9%", engagement: "+85%" },
+      technologies: ["Python", "React", "PyTorch", "Docker", "Kubernetes"]
+    },
+    {
+      title: "Vivid Fashion",
+      category: "Graphic Design / IT Development",
+      featured: false,
+      recent: true,
+      image: "https://picsum.photos/seed/vivid/1200/800",
+      desc: "E-commerce rebrand and platform migration for a high-end fashion house, prioritizing visual storytelling and mobile performance.",
+      challenge: "Vivid's legacy e-commerce platform was slow on mobile and didn't support the high-resolution video content needed for their seasonal campaigns.",
+      solution: "We rebranded the digital identity and migrated them to a headless commerce stack. We implemented advanced image and video optimization to ensure sub-second load times on all devices.",
+      results: "Mobile conversion rates increased by 35%. Seasonal campaign engagement saw a 50% boost due to the new immersive storytelling features.",
+      roi: { conversion: "+35%", uptime: "99.9%", engagement: "+50%" },
+      technologies: ["Next.js", "Shopify Plus", "Cloudinary", "Figma", "Tailwind CSS"]
     }
   ];
 
-  const categories = ['All', 'IT Development', 'UI/UX Design', 'Graphic Design'];
+  const categories = ['All', 'Featured', 'Recent', 'IT Development', 'UI/UX Design', 'Graphic Design'];
 
-  const filteredProjects = activeFilter === 'All' 
-    ? projects 
-    : projects.filter(p => p.category.includes(activeFilter));
+  const filteredProjects = useMemo(() => {
+    return projects.filter(project => {
+      const matchesFilter = activeFilter === 'All' || 
+                           (activeFilter === 'Featured' ? project.featured : 
+                            activeFilter === 'Recent' ? project.recent :
+                            project.category.includes(activeFilter));
+      const matchesSearch = project.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                           project.desc.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                           project.technologies.some(t => t.toLowerCase().includes(searchQuery.toLowerCase()));
+      return matchesFilter && matchesSearch;
+    });
+  }, [activeFilter, searchQuery]);
 
   return (
     <motion.div
@@ -139,59 +231,91 @@ export const Work = () => {
             </motion.div>
           </header>
 
-          {/* Filters */}
-          <div className="flex flex-wrap gap-3 mb-16 md:mb-24">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setActiveFilter(cat)}
-                className={`px-8 py-3 rounded-full border text-[10px] font-bold uppercase tracking-widest transition-all duration-500 ${
-                  activeFilter === cat
-                    ? 'bg-white border-white text-black'
-                    : 'border-white/10 text-white/40 hover:border-white/30 hover:text-white'
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
+          {/* Filters & Search */}
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mb-16 md:mb-24">
+            <div className="flex flex-wrap gap-3">
+              {categories.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setActiveFilter(cat)}
+                  className={`px-8 py-3 rounded-full border text-[10px] font-bold uppercase tracking-widest transition-all duration-500 ${
+                    activeFilter === cat
+                      ? 'bg-white border-white text-black'
+                      : 'border-white/10 text-white/40 hover:border-white/30 hover:text-white'
+                  }`}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+
+            <div className="relative w-full md:w-80 group">
+              <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-brand-red transition-colors" size={18} />
+              <input 
+                type="text"
+                placeholder="Search projects or tech..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full bg-white/5 border border-white/10 rounded-full py-4 pl-14 pr-6 text-sm text-white focus:outline-none focus:border-brand-red transition-all"
+              />
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-16 lg:gap-24">
             <AnimatePresence mode="popLayout">
-              {filteredProjects.map((project, i) => (
-                <motion.div 
-                  key={project.title}
-                  layout
-                  initial={{ opacity: 0, y: 50 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: i * 0.1 }}
-                  className="group relative cursor-pointer"
-                >
-                  <PerspectiveTilt 
-                    className="overflow-hidden rounded-[2rem] aspect-[16/10] mb-8 relative"
+              {filteredProjects.length > 0 ? (
+                filteredProjects.map((project, i) => (
+                  <motion.div 
+                    key={project.title}
+                    layout
+                    initial={{ opacity: 0, y: 50 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: i * 0.1 }}
+                    className="group relative cursor-pointer"
                     onClick={() => setSelectedProject(project)}
                   >
-                    <img 
-                      src={project.image} 
-                      alt={project.title} 
-                      className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 group-hover:scale-105" 
-                    />
-                    <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-700" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  </PerspectiveTilt>
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <h3 className="text-2xl md:text-3xl font-display font-bold mb-3 group-hover:text-brand-red transition-colors">{project.title}</h3>
-                      <p className="text-brand-red text-[10px] font-bold uppercase tracking-[0.3em] mb-4">{project.category}</p>
-                      <p className="text-white/40 text-sm font-light leading-relaxed max-w-sm">{project.desc}</p>
+                    <PerspectiveTilt 
+                      className="overflow-hidden rounded-[2rem] aspect-[16/10] mb-8 relative"
+                    >
+                      <img 
+                        src={project.image} 
+                        alt={project.title} 
+                        loading="lazy"
+                        referrerPolicy="no-referrer"
+                        className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 group-hover:scale-105" 
+                      />
+                      {project.featured && (
+                        <div className="absolute top-6 left-6 z-20 px-4 py-1.5 bg-brand-red text-white text-[8px] font-bold uppercase tracking-[0.3em] rounded-full">
+                          Featured
+                        </div>
+                      )}
+                      <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-700" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    </PerspectiveTilt>
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h3 className="text-2xl md:text-3xl font-display font-bold mb-3 group-hover:text-brand-red transition-colors">{project.title}</h3>
+                        <p className="text-brand-red text-[10px] font-bold uppercase tracking-[0.3em] mb-4">{project.category}</p>
+                        <p className="text-white/40 text-sm font-light leading-relaxed max-w-sm">{project.desc}</p>
+                      </div>
+                      <div className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center group-hover:bg-white group-hover:text-black transition-all duration-500 shrink-0">
+                        <ArrowUpRight size={24} />
+                      </div>
                     </div>
-                    <div className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center group-hover:bg-white group-hover:text-black transition-all duration-500 shrink-0">
-                      <ArrowUpRight size={24} />
-                    </div>
-                  </div>
+                  </motion.div>
+                ))
+              ) : (
+                <motion.div 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="col-span-full py-20 text-center"
+                >
+                  <Filter className="mx-auto text-white/10 mb-6" size={64} />
+                  <h3 className="text-2xl font-display font-bold mb-2">No projects found</h3>
+                  <p className="text-white/40">Try adjusting your filters or search query</p>
                 </motion.div>
-              ))}
+              )}
             </AnimatePresence>
           </div>
         </div>
@@ -212,13 +336,13 @@ export const Work = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-black flex flex-col overflow-y-auto"
+            className="fixed inset-0 z-[9999] bg-black flex flex-col overflow-y-auto"
           >
             <motion.button 
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               onClick={() => setSelectedProject(null)}
-              className="fixed top-6 right-6 md:top-12 md:right-12 z-[110] p-3 md:p-4 rounded-full bg-white text-black hover:bg-brand-red hover:text-white transition-all"
+              className="fixed top-6 right-6 md:top-12 md:right-12 z-[10000] p-3 md:p-4 rounded-full bg-white text-black hover:bg-brand-red hover:text-white transition-all"
             >
               <X size={24} className="md:w-8 md:h-8" />
             </motion.button>
@@ -228,6 +352,8 @@ export const Work = () => {
                 layoutId={`img-${selectedProject.title}`}
                 src={selectedProject.image} 
                 alt={selectedProject.title} 
+                loading="lazy"
+                referrerPolicy="no-referrer"
                 className="w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent" />

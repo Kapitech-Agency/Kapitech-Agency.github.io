@@ -53,10 +53,22 @@ export const Home = () => {
       description: "Challenge: Complex financial data causing user drop-off. Solution: We designed a frictionless UI/UX strategy for 100k+ active users."
     },
     {
-      title: "Vanguard Logistics",
-      category: "Enterprise System / Dashboard",
-      image: "https://picsum.photos/seed/vanguard/1200/800",
-      description: "Challenge: Data latency in supply chain tracking. Solution: We architected a cloud-native ERP optimizing visibility by 40%."
+      title: "Quantum AI",
+      category: "AI Platform / IT Development",
+      image: "https://picsum.photos/seed/quantum/1200/800",
+      description: "Challenge: Infrastructure complexity for AI researchers. Solution: We engineered a streamlined development environment with high-fidelity visualization."
+    },
+    {
+      title: "Solaris Energy",
+      category: "Clean Tech / Dashboard",
+      image: "https://picsum.photos/seed/solaris/1200/800",
+      description: "Challenge: Complex energy data visualization. Solution: We designed a multi-layered monitoring platform for real-time production analytics."
+    },
+    {
+      title: "Vivid Fashion",
+      category: "E-commerce / Branding",
+      image: "https://picsum.photos/seed/vivid/1200/800",
+      description: "Challenge: Poor mobile performance and storytelling. Solution: We migrated to a headless stack with immersive visual storytelling features."
     }
   ];
 
@@ -209,6 +221,8 @@ export const Home = () => {
             <img 
               src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=2070" 
               alt="Agency vs Freelance" 
+              loading="lazy"
+              referrerPolicy="no-referrer"
               className="w-full h-full object-cover grayscale"
             />
             <div className="absolute inset-0 bg-brand-red/20 mix-blend-multiply" />
@@ -238,6 +252,194 @@ export const Home = () => {
                   </div>
                 </div>
               ))}
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Kapitech Ecosystem Section */}
+      <section className="py-32 md:py-48 px-6 md:px-12 bg-black relative overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-brand-red/5 blur-[150px] rounded-full" />
+          <div className="absolute inset-0 grid-bg opacity-5" />
+        </div>
+
+        <div className="max-w-7xl mx-auto relative z-10">
+          <div className="text-center mb-20 md:mb-32">
+            <motion.span 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-brand-red font-bold tracking-[0.4em] uppercase text-[10px] mb-6 block"
+            >
+              The Orchestration of Excellence
+            </motion.span>
+            <motion.h2 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+              className="text-5xl md:text-8xl font-display font-bold tracking-tighter mb-8"
+            >
+              The Kapitech Ecosystem.
+            </motion.h2>
+            <motion.p 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+              className="text-xl md:text-2xl text-white/40 font-light max-w-3xl mx-auto leading-relaxed"
+            >
+              A unified framework where design intelligence, engineering power, and strategic advisory converge to build digital legacies.
+            </motion.p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-12">
+            {[
+              {
+                title: "Design Intelligence",
+                icon: <Palette size={32} />,
+                color: "from-brand-red/20 to-transparent",
+                borderColor: "border-brand-red/20",
+                desc: "We don't just design; we architect visual languages. From high-fidelity UI/UX to avant-garde branding, our design intelligence ensures your product commands attention and delivers frictionless experiences.",
+                features: ["Immersive UI/UX", "Brand Identity", "3D Visualization", "Motion Design"]
+              },
+              {
+                title: "Engineering Power",
+                icon: <Code2 size={32} />,
+                color: "from-blue-600/20 to-transparent",
+                borderColor: "border-blue-600/20",
+                desc: "Robust, scalable, and sub-second. Our engineering pillar leverages modern tech stacks to build high-performance IT solutions that are engineered for growth and technical excellence.",
+                features: ["Full-Stack Dev", "Cloud Architecture", "Mobile Engineering", "API Integration"]
+              },
+              {
+                title: "Strategic Advisory",
+                icon: <Activity size={32} />,
+                color: "from-emerald-500/20 to-transparent",
+                borderColor: "border-emerald-500/20",
+                desc: "Data-driven insights meet market intuition. We provide strategic advisory to align your digital products with core business objectives, ensuring every pixel serves a purpose in your market dominance.",
+                features: ["Product Strategy", "Market Analysis", "Scaling Roadmap", "Performance Audit"]
+              }
+            ].map((pillar, i) => (
+              <motion.div
+                key={pillar.title}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.2 }}
+                whileHover={{ y: -10 }}
+                className={cn(
+                  "p-10 rounded-[3rem] bg-zinc-900/40 border backdrop-blur-xl transition-all duration-500 group relative overflow-hidden",
+                  pillar.borderColor
+                )}
+              >
+                <div className={cn("absolute inset-0 bg-gradient-to-br opacity-0 group-hover:opacity-100 transition-opacity duration-700", pillar.color)} />
+                
+                <div className="relative z-10">
+                  <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center mb-8 group-hover:scale-110 transition-transform duration-500">
+                    <div className="text-white group-hover:text-brand-red transition-colors">
+                      {pillar.icon}
+                    </div>
+                  </div>
+                  
+                  <h3 className="text-3xl font-display font-bold mb-6 group-hover:tracking-tight transition-all">{pillar.title}</h3>
+                  <p className="text-white/50 font-light leading-relaxed mb-10 text-sm md:text-base">
+                    {pillar.desc}
+                  </p>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    {pillar.features.map((feature) => (
+                      <div key={feature} className="flex items-center gap-2">
+                        <div className="w-1 h-1 rounded-full bg-brand-red" />
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-white/30 group-hover:text-white/60 transition-colors">
+                          {feature}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Interactive Synergy Hub */}
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            className="mt-20 md:mt-32 p-12 md:p-20 rounded-[4rem] bg-zinc-950 border border-white/5 relative overflow-hidden group"
+          >
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,59,59,0.05)_0%,transparent_70%)]" />
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center relative z-10">
+              <div>
+                <h3 className="text-4xl md:text-5xl font-display font-bold tracking-tighter mb-8">The Synergy Hub.</h3>
+                <p className="text-lg text-white/40 font-light leading-relaxed mb-12">
+                  Our ecosystem isn't just a collection of services; it's a living synergy. Each pillar informs the other, creating a feedback loop of innovation that ensures your project is visually stunning, technically robust, and strategically sound.
+                </p>
+                <div className="flex flex-col gap-6">
+                  {[
+                    { label: "Cross-Pillar Collaboration", value: "Real-time sync between design and dev teams." },
+                    { label: "Unified Vision", desc: "One point of contact, one cohesive strategy." },
+                    { label: "Agile Orchestration", desc: "Rapid iterations powered by integrated workflows." }
+                  ].map((item, i) => (
+                    <div key={i} className="flex gap-6 items-start">
+                      <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center shrink-0 border border-white/10 group-hover:border-brand-red/30 transition-colors">
+                        <Zap size={18} className="text-brand-red" />
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-lg mb-1">{item.label}</h4>
+                        <p className="text-sm text-white/30">{item.desc || item.value}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              <div className="relative aspect-square flex items-center justify-center">
+                {/* Visual Representation of the Ecosystem Hub */}
+                <div className="relative w-full h-full flex items-center justify-center">
+                  <motion.div 
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+                    className="absolute inset-0 border border-white/5 rounded-full"
+                  />
+                  <motion.div 
+                    animate={{ rotate: -360 }}
+                    transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
+                    className="absolute inset-12 border border-white/5 rounded-full border-dashed"
+                  />
+                  
+                  {/* Central Node */}
+                  <div className="relative z-20 w-32 h-32 md:w-48 md:h-48 rounded-full bg-black border border-brand-red/30 flex items-center justify-center shadow-[0_0_50px_rgba(255,59,59,0.15)] group-hover:scale-110 transition-transform duration-700">
+                    <div className="text-center">
+                      <span className="block text-brand-red font-bold text-xs tracking-widest uppercase mb-1">Kapitech</span>
+                      <span className="block text-white font-display font-bold text-2xl md:text-3xl">CORE</span>
+                    </div>
+                  </div>
+                  
+                  {/* Orbiting Nodes */}
+                  {[
+                    { label: "Design", icon: <Palette size={16} />, pos: "top-0 left-1/2 -translate-x-1/2 -translate-y-1/2" },
+                    { label: "Tech", icon: <Code2 size={16} />, pos: "bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2" },
+                    { label: "Strategy", icon: <Activity size={16} />, pos: "left-0 top-1/2 -translate-y-1/2 -translate-x-1/2" },
+                    { label: "Growth", icon: <Zap size={16} />, pos: "right-0 top-1/2 -translate-y-1/2 translate-x-1/2" }
+                  ].map((node, i) => (
+                    <motion.div
+                      key={node.label}
+                      animate={{ 
+                        y: [0, -10, 0],
+                        scale: [1, 1.05, 1]
+                      }}
+                      transition={{ duration: 4, delay: i * 1, repeat: Infinity, ease: "easeInOut" }}
+                      className={cn("absolute z-30 p-4 md:p-6 rounded-2xl bg-zinc-900 border border-white/10 flex flex-col items-center gap-2 shadow-2xl", node.pos)}
+                    >
+                      <div className="text-brand-red">{node.icon}</div>
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-white/60">{node.label}</span>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
             </div>
           </motion.div>
         </div>
@@ -343,14 +545,26 @@ export const Home = () => {
             </p>
             <div className="grid grid-cols-1 gap-8">
               {[
-                { label: "IT Development", desc: "Scalable web & mobile applications" },
-                { label: "UI/UX Design", desc: "Intuitive & immersive user experiences" },
-                { label: "Graphic Design", desc: "Bold visual identities & branding" }
+                { label: "IT Development", desc: "Scalable web & mobile applications", icon: <Code2 size={24} /> },
+                { label: "UI/UX Design", desc: "Intuitive & immersive user experiences", icon: <Layout size={24} /> },
+                { label: "Graphic Design", desc: "Bold visual identities & branding", icon: <Palette size={24} /> }
               ].map((item, i) => (
-                <div key={i} className="border-l border-brand-red pl-6">
-                  <span className="block font-bold text-2xl mb-1">{item.label}</span>
-                  <span className="text-xs text-white/40 uppercase tracking-widest">{item.desc}</span>
-                </div>
+                <motion.div 
+                  key={i} 
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1 }}
+                  className="group flex items-center gap-6 p-6 rounded-2xl border border-white/5 hover:border-brand-red/30 hover:bg-white/5 transition-all duration-500 cursor-default"
+                >
+                  <div className="w-12 h-12 rounded-xl bg-brand-red/10 flex items-center justify-center text-brand-red group-hover:bg-brand-red group-hover:text-white transition-all duration-500">
+                    {item.icon}
+                  </div>
+                  <div>
+                    <span className="block font-bold text-2xl mb-1 group-hover:text-brand-red transition-colors">{item.label}</span>
+                    <span className="text-xs text-white/40 uppercase tracking-widest group-hover:text-white/60 transition-colors">{item.desc}</span>
+                  </div>
+                </motion.div>
               ))}
             </div>
           </div>
@@ -358,6 +572,8 @@ export const Home = () => {
             <img 
               src="https://images.unsplash.com/photo-1558655146-d09347e92766?auto=format&fit=crop&q=80&w=2070" 
               alt="Digital Craftsmanship" 
+              loading="lazy"
+              referrerPolicy="no-referrer"
               className="w-full h-full object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
@@ -440,6 +656,8 @@ export const Home = () => {
               <img 
                 src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&q=80&w=2072" 
                 alt="Philosophy" 
+                loading="lazy"
+                referrerPolicy="no-referrer"
                 className="w-full h-full object-cover"
               />
             </motion.div>
@@ -483,7 +701,13 @@ export const Home = () => {
                   className="overflow-hidden rounded-[2rem] aspect-[16/10] mb-8 relative"
                   onClick={() => setSelectedProject(project)}
                 >
-                  <img src={project.image} alt={project.title} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 group-hover:scale-105" />
+                  <img 
+                    src={project.image} 
+                    alt={project.title} 
+                    loading="lazy"
+                    referrerPolicy="no-referrer"
+                    className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 group-hover:scale-105" 
+                  />
                   <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-700" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 </PerspectiveTilt>
@@ -621,6 +845,8 @@ export const Home = () => {
                 layoutId={`img-${selectedProject.title}`}
                 src={selectedProject.image} 
                 alt={selectedProject.title} 
+                loading="lazy"
+                referrerPolicy="no-referrer"
                 className="w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent" />
