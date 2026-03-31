@@ -7,8 +7,8 @@ export default defineConfig(({mode}) => {
   const env = loadEnv(mode, '.', '');
   
   return {
-    // This 'base' line is what fixes the white screen on GitHub Pages
-    base: '/Kapitech-Agency/', 
+    // Base is set to '/' for root-level hosting (Standard)
+    base: '/', 
     plugins: [react(), tailwindcss()],
     define: {
       'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY),
