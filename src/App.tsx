@@ -31,7 +31,13 @@ const AnimatedRoutes = () => {
   
   return (
     <AnimatePresence mode="wait">
-      <div key={location.pathname}>
+      <motion.div 
+        key={location.pathname}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+      >
         <Routes location={location}>
           <Route path="/" element={<Home />} />
           <Route path="/work" element={<Work />} />
@@ -43,7 +49,7 @@ const AnimatedRoutes = () => {
           <Route path="/terms" element={<TermsOfService />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
-      </div>
+      </motion.div>
     </AnimatePresence>
   );
 };

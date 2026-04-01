@@ -139,12 +139,12 @@ export const Testimonials = () => {
   );
 
   return (
-    <section className="py-40 px-6 md:px-12 bg-black overflow-hidden border-y border-white/5">
+    <section className="py-20 md:py-40 px-6 md:px-12 bg-black overflow-hidden border-y border-white/5">
       <div className="max-w-7xl mx-auto">
         <div className="mb-24 flex flex-col md:flex-row justify-between items-end gap-8">
           <div>
-            <span className="text-brand-red font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Client Intelligence</span>
-            <h2 className="text-6xl md:text-8xl font-display font-bold tracking-tighter">The Feedback.</h2>
+            <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Client Intelligence</span>
+            <h2 className="text-[clamp(2.5rem,6vw,5rem)] font-display font-bold tracking-tighter">The Feedback.</h2>
           </div>
           <div className="flex gap-4">
             <button 
@@ -180,18 +180,18 @@ export const Testimonials = () => {
               className="grid grid-cols-1 md:grid-cols-3 gap-6"
             >
               {currentItems.map((item, idx) => (
-                <div key={idx} className="p-6 rounded-[1.5rem] bg-zinc-900/50 border border-white/5 flex flex-col justify-between h-full group hover:border-brand-red/30 transition-colors duration-500">
+                <div key={idx} className="p-8 rounded-[2rem] bg-zinc-900/50 border border-white/5 flex flex-col justify-between h-full group hover:border-brand-red/30 transition-colors duration-500">
                   <div>
-                    <div className="w-8 h-8 bg-brand-red/10 rounded-lg flex items-center justify-center mb-4">
+                    <div className="w-8 h-8 bg-brand-red/10 rounded-lg flex items-center justify-center mb-6">
                       <Quote size={14} className="text-brand-red fill-current" />
                     </div>
-                    <p className="text-sm md:text-base font-light leading-relaxed text-white/80 mb-6 italic">
+                    <p className="text-[clamp(0.875rem,1vw,1.125rem)] font-light leading-relaxed text-white/80 mb-8 italic">
                       "{item.quote}"
                     </p>
                   </div>
                   
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg overflow-hidden grayscale group-hover:grayscale-0 transition-all duration-700">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-xl overflow-hidden grayscale group-hover:grayscale-0 transition-all duration-700 border border-white/10">
                       <img 
                         src={item.image} 
                         alt={item.author}
@@ -201,8 +201,9 @@ export const Testimonials = () => {
                       />
                     </div>
                     <div>
-                      <span className="block text-xs font-bold text-white">{item.author}</span>
-                      <span className="text-brand-red text-[9px] font-bold uppercase tracking-widest">
+                      <span className="block text-sm font-bold text-white">{item.author}</span>
+                      <span className="block text-[10px] font-mono text-white/40 uppercase tracking-widest mb-1">{item.role}</span>
+                      <span className="text-brand-red text-[10px] font-mono font-bold uppercase tracking-[0.2em]">
                         {item.company}
                       </span>
                     </div>

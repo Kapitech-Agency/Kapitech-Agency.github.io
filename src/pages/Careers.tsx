@@ -1,51 +1,51 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ArrowUpRight, CheckCircle2, Zap, Globe, Cpu, Code2, Palette, Users, Rocket, Heart, Coffee, Laptop, Upload, FileText, Phone, Mail, User, Link as LinkIcon, X, Shield } from 'lucide-react';
+import { ArrowUpRight, CheckCircle2, Zap, Globe, Cpu, Code2, Palette, Users, Rocket, Heart, Coffee, Laptop, Upload, FileText, Phone, Mail, User, Link as LinkIcon, X, Shield, MapPin } from 'lucide-react';
 import { MagneticButton } from '../components/ui/MagneticButton';
 import { Link } from 'react-router-dom';
 import { cn } from '../lib/utils';
 
 const positions = [
   {
-    id: 'sr-ux-designer',
-    title: 'Senior UX Designer',
+    id: 'ui-ux-designer',
+    title: 'UI/UX Designer',
     department: 'Design',
-    location: 'Remote / Hybrid',
+    location: 'Tangerang / Remote',
     type: 'Full-time',
-    description: 'We are looking for a visionary designer to lead our high-fidelity product experiences. You will be responsible for architecting complex user journeys and setting the visual standard for our enterprise clients.',
+    description: 'We are looking for a designer to help us create user-friendly interfaces for our clients. You will work closely with our developers to ensure designs are implemented correctly.',
     requirements: [
-      '5+ years of experience in product design',
-      'Expertise in Figma and motion design',
-      'Strong portfolio of shipped digital products',
-      'Ability to translate complex data into intuitive interfaces'
+      '2+ years of experience in UI/UX design',
+      'Proficiency in Figma',
+      'Good understanding of design principles',
+      'Portfolio showing web or mobile projects'
     ]
   },
   {
-    id: 'fullstack-eng',
-    title: 'Full-Stack Engineer',
+    id: 'frontend-dev',
+    title: 'Frontend Developer',
     department: 'Engineering',
     location: 'Remote',
     type: 'Full-time',
-    description: 'Join our engineering elite to build scalable, performance-first applications. You will work with Next.js, TypeScript, and AWS to deliver sub-second digital experiences.',
+    description: 'Join our team to build responsive web applications. You will be working with React and Tailwind CSS to deliver high-quality code.',
     requirements: [
-      'Proficiency in React, Node.js, and TypeScript',
-      'Experience with cloud infrastructure (AWS/GCP)',
-      'Passion for performance optimization and clean code',
-      'Understanding of modern CI/CD pipelines'
+      'Experience with React and TypeScript',
+      'Strong knowledge of CSS and Tailwind',
+      'Attention to detail and performance',
+      'Ability to work in a team environment'
     ]
   },
   {
-    id: 'creative-director',
-    title: 'Creative Director',
+    id: 'graphic-designer',
+    title: 'Graphic Designer',
     department: 'Creative',
-    location: 'Hybrid',
+    location: 'Tangerang',
     type: 'Full-time',
-    description: 'Lead our creative vision and mentor a team of multidisciplinary designers. You will be the bridge between strategic objectives and artistic execution.',
+    description: 'We need a creative designer to help with branding and marketing assets for our clients. You will be responsible for creating visual content for various platforms.',
     requirements: [
-      '8+ years in a creative leadership role',
-      'Strong background in branding and digital storytelling',
-      'Experience managing and scaling creative teams',
-      'Exceptional communication and presentation skills'
+      'Experience in graphic design and branding',
+      'Proficiency in Adobe Creative Suite',
+      'Creative thinking and problem-solving skills',
+      'Good communication skills'
     ]
   }
 ];
@@ -53,33 +53,33 @@ const positions = [
 const benefits = [
   {
     icon: <Globe size={24} />,
-    title: 'Work from Anywhere',
-    desc: 'Our team is distributed globally. We prioritize output over hours spent in an office.'
+    title: 'Flexible Work',
+    desc: 'We offer flexible working hours and the option to work remotely for most roles.'
   },
   {
     icon: <Cpu size={24} />,
-    title: 'Elite Tech Stack',
-    desc: 'Work with the latest tools and technologies. We never settle for legacy systems.'
+    title: 'Modern Tools',
+    desc: 'We use modern tools and technologies to help you do your best work.'
   },
   {
     icon: <Heart size={24} />,
-    title: 'Health & Wellness',
-    desc: 'Comprehensive health insurance and wellness stipends to keep you at your best.'
+    title: 'Health Support',
+    desc: 'We provide health insurance and support for your well-being.'
   },
   {
     icon: <Rocket size={24} />,
-    title: 'Growth Budget',
-    desc: 'Annual budget for courses, conferences, and books to fuel your professional evolution.'
+    title: 'Learning Support',
+    desc: 'We support your professional growth with resources for learning and development.'
   },
   {
     icon: <Coffee size={24} />,
-    title: 'Culture of Autonomy',
-    desc: 'We hire experts and trust them to lead. No micromanagement, just high-performance.'
+    title: 'Collaborative Culture',
+    desc: 'We value teamwork and open communication in everything we do.'
   },
   {
     icon: <Laptop size={24} />,
-    title: 'Home Office Setup',
-    desc: 'We provide a generous stipend to ensure your workspace is as high-fidelity as your work.'
+    title: 'Equipment Provided',
+    desc: 'We provide the necessary equipment to ensure you have a good workspace.'
   }
 ];
 
@@ -152,17 +152,17 @@ export const Careers = () => {
   };
 
   return (
-    <motion.div
+    <motion.div 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
-      className="film-grain"
+      className="film-grain overflow-x-hidden"
       role="main"
       aria-label="Careers at Kapitech"
     >
       {/* Hero Section */}
-      <section className="relative min-h-[80vh] flex flex-col justify-center px-6 md:px-12 pt-32 overflow-hidden bg-black">
+      <section className="relative min-h-[80vh] flex flex-col justify-center px-6 md:px-12 py-20 md:py-40 overflow-hidden bg-black">
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 opacity-[0.15]" 
                style={{ 
@@ -171,6 +171,13 @@ export const Careers = () => {
                }} 
           />
           <div className="absolute inset-0 grid-bg opacity-10" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black" />
+          <img 
+            src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&q=80&w=2070" 
+            className="absolute inset-0 w-full h-full object-cover opacity-[0.05] grayscale"
+            alt="Background Texture"
+            referrerPolicy="no-referrer"
+          />
           <motion.div 
             animate={{ 
               scale: [1, 1.2, 1],
@@ -187,22 +194,22 @@ export const Careers = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
           >
-            <span className="px-4 py-1.5 rounded-full border border-white/10 bg-white/5 text-[10px] font-bold tracking-[0.2em] uppercase text-brand-red mb-8 inline-block">
-              Careers at Kapitech
+            <span className="px-4 py-1.5 rounded-full border border-white/10 bg-white/5 text-[10px] font-mono font-bold tracking-[0.2em] uppercase text-brand-red mb-8 inline-block">
+              Join Our Team
             </span>
-            <h1 className="text-5xl sm:text-7xl md:text-[8vw] lg:text-[10vw] font-display font-bold leading-[0.85] tracking-tighter mb-12 text-gradient">
-              Join the<br />
-              Powerhouse.
+            <h1 className="text-[clamp(2.5rem,8vw,8rem)] font-display font-bold leading-[0.85] tracking-tighter mb-12 text-gradient">
+              Work with<br />
+              Us.
             </h1>
-            <p className="text-xl md:text-3xl text-white/40 max-w-3xl font-light leading-tight mb-16 tracking-tight">
-              We are looking for the <span className="text-white">top 1%</span> of designers, engineers, and strategists to architect the digital legacies of tomorrow.
+            <p className="text-[clamp(1rem,2vw,1.5rem)] text-white/40 max-w-3xl font-light leading-tight mb-16 tracking-tight">
+              We are looking for talented people to join our growing agency. If you are passionate about design and technology, we'd love to hear from you.
             </p>
           </motion.div>
         </div>
       </section>
 
       {/* Why Kapitech? Section */}
-      <section className="py-24 md:py-48 px-6 md:px-12 bg-black relative overflow-hidden" id="why-kapitech">
+      <section className="py-20 md:py-40 px-6 md:px-12 bg-black relative overflow-hidden" id="why-kapitech">
         <div className="absolute inset-0 z-0 opacity-20">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full grid-bg" />
         </div>
@@ -212,16 +219,16 @@ export const Careers = () => {
             <motion.span 
               initial={{ opacity: 0, y: 10 }}
               whileInView={{ opacity: 1, y: 0 }}
-              className="text-brand-red font-bold tracking-[0.4em] uppercase text-[10px] mb-4 block"
+              className="text-brand-red font-mono font-bold tracking-[0.4em] uppercase text-[10px] mb-4 block"
             >
-              The Advantage
+              Working at Kapitech
             </motion.span>
             <motion.h2 
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              className="text-5xl md:text-8xl font-display font-bold tracking-tighter"
+              className="text-[clamp(2.5rem,6vw,6rem)] font-display font-bold tracking-tighter"
             >
-              Why Kapitech?
+              Why <span className="text-brand-red">Kapitech?</span>
             </motion.h2>
           </div>
 
@@ -229,26 +236,26 @@ export const Careers = () => {
             {[
               { 
                 icon: <Zap size={32} />, 
-                title: "High Velocity", 
-                desc: "We ship at a speed that leaves competitors in the dust. No bureaucracy, just execution.",
+                title: "Fast Execution", 
+                desc: "We value efficiency and focus on delivering quality work in a timely manner.",
                 image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=800"
               },
               { 
                 icon: <Shield size={32} />, 
-                title: "Elite Standards", 
-                desc: "We only hire the top 1%. You'll be surrounded by masters of their craft.",
+                title: "Quality First", 
+                desc: "We maintain high standards in everything we build, from design to code.",
                 image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=800"
               },
               { 
                 icon: <Globe size={32} />, 
-                title: "Global Impact", 
-                desc: "Build products used by millions across the globe for world-class enterprise clients.",
+                title: "Real Impact", 
+                desc: "Work on projects that solve real problems for our clients and their users.",
                 image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=800"
               },
               { 
                 icon: <Cpu size={32} />, 
-                title: "Future Tech", 
-                desc: "Work with the most advanced stacks. We don't just follow trends, we set them.",
+                title: "Modern Stack", 
+                desc: "We use the latest technologies to build robust and scalable digital products.",
                 image: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=800"
               }
             ].map((item, i) => (
@@ -271,9 +278,20 @@ export const Careers = () => {
                 </div>
 
                 <div className="relative z-10">
-                  <div className="text-brand-red mb-8 group-hover:scale-110 group-hover:-translate-y-2 transition-all duration-500">
+                  <motion.div 
+                    animate={{ 
+                      y: [0, -8, 0],
+                    }}
+                    transition={{ 
+                      duration: 4, 
+                      repeat: Infinity, 
+                      ease: "easeInOut",
+                      delay: i * 0.5
+                    }}
+                    className="text-brand-red mb-8 group-hover:scale-110 transition-all duration-500"
+                  >
                     {item.icon}
-                  </div>
+                  </motion.div>
                   <h3 className="text-2xl font-display font-bold mb-4 group-hover:text-brand-red transition-colors duration-500">{item.title}</h3>
                   <p className="text-white/60 font-light leading-relaxed group-hover:text-white/90 transition-colors duration-500">{item.desc}</p>
                 </div>
@@ -284,29 +302,29 @@ export const Careers = () => {
       </section>
 
       {/* Culture Section */}
-      <section className="py-20 md:py-40 px-6 md:px-12 bg-zinc-950">
+      <section className="py-20 md:py-40 px-6 md:px-12 bg-zinc-950 relative overflow-hidden">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-center">
           <motion.div 
             initial={{ opacity: 0, x: -50 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
           >
-            <span className="text-brand-red font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Our Culture</span>
-            <h2 className="text-4xl md:text-6xl lg:text-7xl font-display font-bold tracking-tighter mb-8 leading-[0.9]">Built on Excellence.</h2>
-            <p className="text-lg md:text-xl text-white/60 font-light leading-relaxed mb-8">
-              At Kapitech, we don't just "do work." We orchestrate digital symphonies. We value autonomy, technical mastery, and the relentless pursuit of perfection.
+            <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Our Culture</span>
+            <h2 className="text-[clamp(2rem,5vw,4.5rem)] font-display font-bold tracking-tighter mb-8 leading-[0.9]">How We <span className="text-brand-red">Work.</span></h2>
+            <p className="text-lg text-white/60 font-light leading-relaxed mb-8">
+              We believe in a balance between hard work and creativity. Our team values open communication, continuous improvement, and delivering the best results for our clients.
             </p>
             <div className="space-y-6">
               {[
-                { title: "Radical Transparency", desc: "We share everything—from strategy to financials. Everyone is an owner." },
-                { title: "Craft Over Speed", desc: "We move fast, but we never sacrifice the integrity of the craft." },
-                { title: "Continuous Evolution", desc: "If you're not learning, you're standing still. We push each other to grow." }
+                { title: "Open Communication", desc: "We encourage everyone to speak up and share their ideas. Transparency is key to our success." },
+                { title: "Continuous Learning", desc: "We support our team in learning new skills and staying up to date with industry trends." },
+                { title: "Ownership", desc: "We take responsibility for our work and strive for excellence in every project." }
               ].map((item, i) => (
                 <div key={i} className="flex gap-6 items-start">
                   <div className="w-1.5 h-1.5 rounded-full bg-brand-red mt-2 shrink-0" />
                   <div>
                     <h4 className="font-bold mb-1">{item.title}</h4>
-                    <p className="text-sm text-white/40">{item.desc}</p>
+                    <p className="text-sm text-white/40 font-light">{item.desc}</p>
                   </div>
                 </div>
               ))}
@@ -326,11 +344,11 @@ export const Careers = () => {
       </section>
 
       {/* Benefits Grid */}
-      <section className="py-20 md:py-40 px-6 md:px-12 bg-black">
+      <section className="py-20 md:py-40 px-6 md:px-12 bg-black relative overflow-hidden">
         <div className="max-w-7xl mx-auto">
           <div className="mb-16 md:mb-24 text-center">
-            <span className="text-brand-red font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Perks & Benefits</span>
-            <h2 className="text-5xl md:text-7xl font-display font-bold tracking-tighter">The Ecosystem.</h2>
+            <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Benefits</span>
+            <h2 className="text-[clamp(2.5rem,6vw,6rem)] font-display font-bold tracking-tighter">Perks.</h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {benefits.map((benefit, i) => (
@@ -354,15 +372,15 @@ export const Careers = () => {
       </section>
 
       {/* Open Positions */}
-      <section className="py-20 md:py-40 px-6 md:px-12 bg-zinc-950 border-y border-white/5">
+      <section className="py-20 md:py-40 px-6 md:px-12 bg-zinc-950 border-y border-white/5 relative overflow-hidden">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 mb-16 md:mb-24">
             <div>
-              <span className="text-brand-red font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Current Openings</span>
-              <h2 className="text-5xl md:text-7xl font-display font-bold tracking-tighter">Open Roles.</h2>
+              <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Open Positions</span>
+              <h2 className="text-[clamp(2.5rem,6vw,6rem)] font-display font-bold tracking-tighter">Join Us.</h2>
             </div>
-            <p className="text-white/60 max-w-sm text-sm">
-              Don't see a role that fits? We're always looking for exceptional talent. Send us a strategic inquiry.
+            <p className="text-white/60 max-w-sm text-sm font-light">
+              If you don't see a role that fits you, feel free to send us your portfolio for future openings.
             </p>
           </div>
 
@@ -383,10 +401,10 @@ export const Careers = () => {
               >
                 <div>
                   <div className="flex items-center gap-4 mb-4">
-                    <span className="text-brand-red text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full bg-brand-red/10">
+                    <span className="text-brand-red font-mono text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full bg-brand-red/10">
                       {job.department}
                     </span>
-                    <span className="text-white/40 text-[10px] font-bold uppercase tracking-widest">
+                    <span className="text-white/40 font-mono text-[10px] font-bold uppercase tracking-widest">
                       {job.location} • {job.type}
                     </span>
                   </div>
@@ -403,23 +421,23 @@ export const Careers = () => {
         </div>
       </section>
 
-      {/* Technical Authority Widget */}
-      <section className="py-32 px-6 md:px-12 bg-zinc-950 border-y border-white/5 relative overflow-hidden">
+      {/* Agency Stats Widget */}
+      <section className="py-20 md:py-40 px-6 md:px-12 bg-zinc-950 border-y border-white/5 relative overflow-hidden">
         <div className="absolute inset-0 opacity-5 pointer-events-none">
           <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-brand-red blur-[150px] rounded-full" />
         </div>
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12 relative z-10">
           <div className="p-10 rounded-[2rem] bg-white/5 border border-white/5 flex flex-col gap-6 group hover:border-emerald-400/30 transition-all duration-500">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Growth Velocity</span>
-              <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-emerald-400">
+              <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/40">Project Success</span>
+              <div className="flex items-center gap-2 text-[10px] font-mono font-bold uppercase tracking-widest text-emerald-400">
                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                Scaling Fast
+                Growing
               </div>
             </div>
             <div className="flex items-end gap-4">
               <div className="flex-grow h-12 flex items-end gap-1">
-                {[70, 80, 75, 85, 90, 80, 85, 90, 85, 100].map((h, i) => (
+                {[40, 50, 45, 60, 70, 65, 75, 80, 85, 90].map((h, i) => (
                   <motion.div 
                     key={i} 
                     initial={{ height: 0 }}
@@ -429,52 +447,52 @@ export const Careers = () => {
                   />
                 ))}
               </div>
-              <span className="text-2xl font-display font-bold">120%</span>
+              <span className="text-2xl font-display font-bold font-mono">50+</span>
             </div>
-            <p className="text-xs text-white/40">Our team has expanded by 120% in the last 12 months, focusing on elite talent.</p>
+            <p className="text-xs text-white/40 font-light">Successful projects delivered since our founding in 2021.</p>
           </div>
 
           <div className="p-10 rounded-[2rem] bg-white/5 border border-white/5 flex flex-col gap-6 group hover:border-brand-red/30 transition-all duration-500">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Learning Hours</span>
+            <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/40">Team Growth</span>
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl bg-brand-red/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
-                <Cpu className="text-brand-red" size={24} />
+                <Users className="text-brand-red" size={24} />
               </div>
               <div>
-                <span className="block text-xl font-bold">400+ hrs</span>
-                <span className="text-xs text-white/40 uppercase tracking-widest">Monthly R&D</span>
+                <span className="block text-xl font-bold font-mono">15+ People</span>
+                <span className="text-xs text-white/40 uppercase tracking-widest font-mono">Team Members</span>
               </div>
             </div>
-            <p className="text-xs text-white/40">We dedicate over 400 hours monthly to internal R&D and skill evolution.</p>
+            <p className="text-xs text-white/40 font-light">A dedicated team of designers and developers working together.</p>
           </div>
 
           <div className="p-10 rounded-[2rem] bg-white/5 border border-white/5 flex flex-col gap-6 group hover:border-blue-500/30 transition-all duration-500">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Team Diversity</span>
+            <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/40">Local Presence</span>
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
-                <Globe className="text-blue-500" size={24} />
+                <MapPin className="text-blue-500" size={24} />
               </div>
               <div>
-                <span className="block text-xl font-bold">12+ Nations</span>
-                <span className="text-xs text-white/40 uppercase tracking-widest">Global Perspective</span>
+                <span className="block text-xl font-bold font-mono">Tangerang</span>
+                <span className="text-xs text-white/40 uppercase tracking-widest font-mono">Base Office</span>
               </div>
             </div>
-            <p className="text-xs text-white/40">Our powerhouse is built from experts across 12+ different countries.</p>
+            <p className="text-xs text-white/40 font-light">Based in Tangerang, serving clients across Indonesia and beyond.</p>
           </div>
         </div>
       </section>
 
-      {/* Strategic Inquiry */}
-      <section className="py-20 md:py-40 px-6 md:px-12 bg-black">
+      {/* General Inquiry */}
+      <section className="py-20 md:py-40 px-6 md:px-12 bg-black relative overflow-hidden">
         <div className="max-w-7xl mx-auto text-center">
-          <span className="text-brand-red font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Strategic Inquiry</span>
-          <h2 className="text-4xl md:text-6xl lg:text-7xl font-display font-bold tracking-tighter mb-8">Not a standard fit?</h2>
-          <p className="text-lg md:text-xl text-white/40 font-light leading-relaxed max-w-2xl mx-auto mb-12">
-            If you believe you belong in the top 1% but don't see a role that matches your expertise, we want to hear from you.
+          <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">General Inquiry</span>
+          <h2 className="text-[clamp(2rem,5vw,4.5rem)] font-display font-bold tracking-tighter mb-8">Not Seeing a Role?</h2>
+          <p className="text-lg text-white/40 font-light leading-relaxed max-w-2xl mx-auto mb-12">
+            If you're interested in working with us but don't see a matching role, feel free to send us your portfolio. We're always looking for talented people.
           </p>
           <MagneticButton>
-            <Link to="/contact" className="px-12 py-5 bg-white text-black rounded-full font-bold hover:bg-brand-red hover:text-white transition-all duration-500 uppercase tracking-widest text-xs inline-block">
-              Send Strategic Inquiry
+            <Link to="/contact" className="px-12 py-5 bg-white text-black rounded-full font-bold hover:bg-brand-red hover:text-white transition-all duration-500 uppercase tracking-widest text-xs inline-block font-mono">
+              Send Portfolio
             </Link>
           </MagneticButton>
         </div>
@@ -518,7 +536,7 @@ export const Careers = () => {
                 
                 <div className="space-y-16">
                   <div>
-                    <h3 className="text-2xl font-bold mb-6 text-brand-red uppercase tracking-widest text-sm">The Mission</h3>
+                    <h3 className="text-2xl font-bold mb-6 text-brand-red uppercase tracking-widest text-sm">The Role</h3>
                     <p className="text-xl text-white/60 font-light leading-relaxed">
                       {selectedPosition.description}
                     </p>
@@ -537,7 +555,7 @@ export const Careers = () => {
                   </div>
 
                   <div className="pt-12 border-t border-white/10">
-                    <h3 className="text-2xl font-bold mb-8">Ready to architect the future?</h3>
+                    <h3 className="text-2xl font-bold mb-8">Ready to join us?</h3>
                     <div className="flex flex-wrap gap-6">
                       <MagneticButton>
                         <button 
@@ -576,7 +594,14 @@ export const Careers = () => {
             aria-modal="true"
             aria-labelledby="application-title"
           >
-            <div className="max-w-3xl mx-auto px-6 md:px-12 py-24 w-full">
+            {/* Modal Background Effects */}
+            <div className="fixed inset-0 z-0 pointer-events-none">
+              <div className="absolute inset-0 grid-bg opacity-5" />
+              <div className="absolute top-1/4 -right-20 w-[600px] h-[600px] bg-brand-red/5 blur-[180px] rounded-full" />
+              <div className="absolute -bottom-20 -left-20 w-[700px] h-[700px] bg-blue-900/5 blur-[180px] rounded-full" />
+            </div>
+
+            <div className="max-w-3xl mx-auto px-6 md:px-12 py-24 w-full relative z-10">
               <div className="flex justify-between items-center mb-12">
                 <div>
                   <span className="text-brand-red font-bold tracking-[0.3em] uppercase text-[10px] mb-2 block">Application Form</span>
@@ -672,7 +697,7 @@ export const Careers = () => {
                     onChange={handleInputChange}
                     rows={6}
                     className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white focus:outline-none focus:border-brand-red transition-all resize-none"
-                    placeholder="Tell us why you're the perfect fit for Kapitech..."
+                    placeholder="Tell us why you'd like to join Kapitech..."
                   />
                 </div>
 

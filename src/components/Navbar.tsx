@@ -146,9 +146,9 @@ export const Navbar = () => {
                   <Link
                     to={link.href}
                     onClick={() => setIsMenuOpen(false)}
-                    className="flex items-baseline gap-4 text-5xl sm:text-7xl font-display font-bold hover:text-brand-red transition-colors"
+                    className="flex items-baseline gap-4 text-[clamp(2.5rem,10vw,5rem)] font-display font-bold hover:text-brand-red transition-colors"
                   >
-                    <span className="text-xs font-mono opacity-30 group-hover/item:opacity-100 transition-opacity">0{i + 1}</span>
+                    <span className="text-[clamp(0.75rem,1.5vw,1rem)] font-mono opacity-30 group-hover/item:opacity-100 transition-opacity">0{i + 1}</span>
                     {link.name}
                   </Link>
                 </motion.div>

@@ -34,12 +34,12 @@ export const Work = () => {
       featured: true,
       recent: true,
       image: "https://picsum.photos/seed/lumina/1200/800",
-      desc: "Fragmented property search engineered into a high-fidelity portal, delivering a sub-second search experience for high-ticket listings.",
-      challenge: "The existing platform suffered from high bounce rates due to a fragmented search experience and slow loading times for high-resolution property images. Users found it difficult to filter through thousands of listings efficiently.",
-      solution: "We engineered a custom Next.js portal with optimized image delivery and integrated 3D walkthroughs. A real-time lead management system was built into the backend, allowing agents to respond to inquiries in seconds. We implemented a robust search engine with sub-second filtering capabilities.",
-      results: "45% increase in user retention and a 30% boost in lead generation within the first quarter of launch. The platform now handles over 500k monthly visitors with peak performance.",
+      desc: "A property search website built for speed and ease of use, helping users find listings quickly.",
+      challenge: "The old website was slow and difficult to navigate, making it hard for users to find the properties they were looking for.",
+      solution: "We built a new website using Next.js to improve performance and redesigned the search interface to be more intuitive for users.",
+      results: "Users are now spending more time on the site, and the client has seen an increase in property inquiries.",
       roi: { conversion: "+30%", uptime: "99.9%", engagement: "+45%" },
-      technologies: ["Next.js", "TypeScript", "Tailwind CSS", "AWS", "PostgreSQL"]
+      technologies: ["Next.js", "TypeScript", "Tailwind CSS", "PostgreSQL"]
     },
     {
       title: "Aura Creative Studio",
@@ -47,12 +47,12 @@ export const Work = () => {
       featured: true,
       recent: false,
       image: "https://picsum.photos/seed/aura/1200/800",
-      desc: "Cluttered visual presence orchestrated into a sharp, charcoal-themed identity system that commands authority in the creative sector.",
-      challenge: "Aura had a world-class portfolio but a digital presence that felt dated and cluttered, failing to attract high-ticket enterprise clients. Their brand message was lost in a sea of inconsistent visuals.",
-      solution: "We orchestrated a minimalist, charcoal-themed identity system. We utilized Three.js for interactive 3D elements that showcase their avant-garde approach. The new design system was applied across all digital and physical touchpoints, ensuring absolute brand consistency.",
-      results: "Secured 3 major enterprise contracts within months of the rebrand. Brand perception shifted towards 'premium' and 'innovative', leading to a 200% increase in high-ticket inquiries.",
+      desc: "A complete brand refresh and website design for a creative studio, focusing on a clean and professional look.",
+      challenge: "Aura's previous branding was inconsistent and their website didn't accurately reflect the quality of their work.",
+      solution: "We created a new visual identity and a minimalist website that highlights their portfolio and services clearly.",
+      results: "The new branding has helped them attract more professional clients and improved their overall brand recognition.",
       roi: { conversion: "+150%", uptime: "99.9%", engagement: "+80%" },
-      technologies: ["Three.js", "Framer Motion", "Figma", "Adobe Illustrator"]
+      technologies: ["Figma", "Framer Motion", "Adobe Illustrator"]
     },
     {
       title: "Nexus Fintech App",
@@ -60,12 +60,12 @@ export const Work = () => {
       featured: true,
       recent: true,
       image: "https://picsum.photos/seed/nexus/1200/800",
-      desc: "Complex financial data simplified into a frictionless UI/UX strategy, reducing onboarding drop-off by 85% through progressive disclosure.",
-      challenge: "Users were overwhelmed by complex financial data, leading to a 60% drop-off rate during the onboarding process. The security protocols were also perceived as cumbersome by the user base.",
-      solution: "We redesigned the entire user journey, implementing a 'progressive disclosure' strategy that simplifies complex data into digestible insights. We integrated biometric authentication to streamline security without compromising safety.",
-      results: "Onboarding completion rate increased by 85%. The app now successfully manages transactions for over 100k active users with a 4.9-star rating on major app stores.",
-      roi: { conversion: "+85%", uptime: "99.99%", engagement: "+60%" },
-      technologies: ["React Native", "Node.js", "Biometric Auth", "MongoDB"]
+      desc: "A mobile app design and development project that simplifies financial management for everyday users.",
+      challenge: "The original app was complex and confusing, leading to many users dropping off during the signup process.",
+      solution: "We simplified the user flow and redesigned the interface to make it easier for users to understand their financial data.",
+      results: "The signup completion rate has improved significantly, and user feedback on the new design has been very positive.",
+      roi: { conversion: "+85%", uptime: "99.9%", engagement: "+60%" },
+      technologies: ["React Native", "Node.js", "MongoDB"]
     },
     {
       title: "Vanguard Logistics",
@@ -73,12 +73,12 @@ export const Work = () => {
       featured: false,
       recent: false,
       image: "https://picsum.photos/seed/vanguard/1200/800",
-      desc: "Data latency in supply chain tracking optimized by 40% using cloud-native ERP and edge computing for real-time global synchronization.",
-      challenge: "Legacy systems caused significant data latency, making real-time supply chain tracking impossible for global operations. This led to inefficiencies and lost revenue in the millions.",
-      solution: "We architected a cloud-native ERP using edge computing to ensure real-time data synchronization across global nodes. We built a custom dashboard for fleet managers to monitor assets in real-time with predictive maintenance alerts.",
-      results: "Operational visibility improved by 40%, leading to a 15% reduction in logistics overhead costs. The system has successfully scaled to handle 10x the previous data volume.",
-      roi: { conversion: "N/A", uptime: "99.99%", engagement: "+40%" },
-      technologies: ["Go", "Edge Computing", "Docker", "Kubernetes", "React"]
+      desc: "An internal dashboard for a logistics company to track shipments and manage fleet operations in real-time.",
+      challenge: "The company was using outdated systems that made it difficult to track shipments accurately and efficiently.",
+      solution: "We developed a custom dashboard that integrates with their existing data to provide real-time updates on shipment status.",
+      results: "The new system has improved operational efficiency and reduced the time spent on manual tracking tasks.",
+      roi: { conversion: "N/A", uptime: "99.9%", engagement: "+40%" },
+      technologies: ["React", "Node.js", "PostgreSQL"]
     },
     {
       title: "Zenith Marketplace",
@@ -86,12 +86,12 @@ export const Work = () => {
       featured: true,
       recent: true,
       image: "https://picsum.photos/seed/zenith/1200/800",
-      desc: "Luxury brand digital prestige engineered with headless CMS, ensuring sub-second load times and complete creative freedom for marketing teams.",
-      challenge: "A luxury brand needed a digital storefront that matched their physical prestige while maintaining sub-second load times globally. Their previous platform was slow and difficult to update.",
-      solution: "We implemented a headless CMS architecture with a React-based frontend, ensuring complete creative freedom and peak performance. We developed a custom visual editor for their marketing team to launch new collections in minutes.",
-      results: "Page load times dropped to under 0.8s globally. Conversion rates for high-value items increased by 22%, and the brand saw a 50% increase in mobile-driven sales.",
+      desc: "An e-commerce website for a fashion brand, focusing on high-quality visuals and a smooth shopping experience.",
+      challenge: "The brand needed a website that could handle high traffic during sales and provide a consistent experience across devices.",
+      solution: "We built a responsive e-commerce site with a focus on performance and clean visual design to showcase their products.",
+      results: "The site has seen an increase in mobile sales and can now handle peak traffic without any performance issues.",
       roi: { conversion: "+22%", uptime: "99.9%", engagement: "+35%" },
-      technologies: ["Headless CMS", "React", "Shopify API", "Vercel"]
+      technologies: ["React", "Shopify API", "Tailwind CSS"]
     },
     {
       title: "Titan Health",
@@ -99,90 +99,12 @@ export const Work = () => {
       featured: false,
       recent: false,
       image: "https://picsum.photos/seed/titan/1200/800",
-      desc: "Long wait times in healthcare apps solved with a high-performance, HIPAA-compliant interface and an optimized doctor-patient matching algorithm.",
-      challenge: "Patients were frustrated by long wait times and a confusing interface that made scheduling urgent consultations difficult. Data privacy was also a major concern for the client.",
-      solution: "We developed a secure, HIPAA-compliant interface with an optimized matching algorithm to connect users in under 60 seconds. We implemented end-to-end encryption for all patient-doctor communications.",
-      results: "Patient satisfaction scores rose by 50%. The platform now handles 5,000+ consultations daily with zero downtime and zero security breaches.",
+      desc: "A healthcare app that helps patients schedule appointments and communicate with their doctors securely.",
+      challenge: "Patients found it difficult to book appointments online and were concerned about the security of their personal data.",
+      solution: "We designed and developed a secure app with a simple booking system and encrypted messaging features.",
+      results: "Patient satisfaction has improved, and the app has made it easier for the clinic to manage appointments.",
       roi: { conversion: "+50%", uptime: "100%", engagement: "+70%" },
-      technologies: ["HIPAA-compliant API", "React", "Node.js", "AES-256 Encryption"]
-    },
-    {
-      title: "Nova Gaming",
-      category: "Graphic Design / UI/UX Design",
-      featured: false,
-      recent: false,
-      image: "https://picsum.photos/seed/nova/1200/800",
-      desc: "Low engagement in e-sports landing pages boosted with a dynamic interface featuring Framer Motion animations and real-time tournament integration.",
-      challenge: "E-sports landing pages were static and failed to capture the high-energy nature of competitive gaming, resulting in low sign-up rates and poor community retention.",
-      solution: "We developed a dynamic interface with Framer Motion animations and real-time tournament data integration. We built a custom community hub where players can track their stats and compete in mini-leagues.",
-      results: "User engagement time increased by 120%. Tournament registrations saw a 40% year-over-year increase, and the community hub now has over 50k active members.",
-      roi: { conversion: "+40%", uptime: "99.9%", engagement: "+120%" },
-      technologies: ["Framer Motion", "WebSockets", "Figma", "After Effects"]
-    },
-    {
-      title: "Pulse Analytics",
-      category: "IT Development / UI/UX Design",
-      featured: true,
-      recent: false,
-      image: "https://picsum.photos/seed/pulse/1200/800",
-      desc: "Complex data silos for corporate decision-makers solved with a real-time visualization dashboard and an AI-driven insights engine.",
-      challenge: "Corporate decision-makers were struggling with fragmented data silos that delayed critical business responses. The data was often outdated by the time it reached the executive board.",
-      solution: "We engineered a real-time visualization dashboard that aggregates data from 20+ sources into a single, high-fidelity interface. We implemented an AI-driven insights engine that highlights anomalies and trends automatically.",
-      results: "Decision-making speed improved by 60%. The dashboard is now the primary strategic tool for the executive board, leading to a 10% increase in overall operational efficiency.",
-      roi: { conversion: "N/A", uptime: "99.99%", engagement: "+60%" },
-      technologies: ["D3.js", "Python", "Node.js", "React", "BigQuery"]
-    },
-    {
-      title: "Aether Cloud",
-      category: "IT Development / UI/UX Design",
-      featured: false,
-      recent: false,
-      image: "https://picsum.photos/seed/aether/1200/800",
-      desc: "Distributed cloud infrastructure management simplified with a high-performance dashboard and real-time resource orchestration.",
-      challenge: "Managing distributed cloud resources across multiple regions was complex and prone to human error, leading to inefficient resource allocation and high costs.",
-      solution: "We built a unified cloud management platform with real-time visualization of resource usage and automated scaling policies. The UI was designed for maximum clarity in high-pressure environments.",
-      results: "Cloud infrastructure costs reduced by 25% through optimized allocation. Deployment times for new environments dropped from hours to minutes.",
-      roi: { conversion: "N/A", uptime: "99.999%", engagement: "+55%" },
-      technologies: ["React", "Go", "Terraform", "Prometheus", "Grafana"]
-    },
-    {
-      title: "Solaris Energy",
-      category: "Graphic Design / UI/UX Design",
-      featured: false,
-      recent: false,
-      image: "https://picsum.photos/seed/solaris/1200/800",
-      desc: "Renewable energy monitoring platform designed for clarity and impact, featuring real-time production data and predictive maintenance.",
-      challenge: "Solaris needed a way to present complex energy production data to both technical engineers and non-technical stakeholders in a way that was both informative and visually engaging.",
-      solution: "We designed a multi-layered dashboard that provides high-level summaries for executives and deep-dive analytics for engineers. The visual identity was refreshed to reflect their commitment to clean energy.",
-      results: "User adoption across the organization increased by 70%. Maintenance response times improved by 30% due to the new predictive alerting system.",
-      roi: { conversion: "+15%", uptime: "99.95%", engagement: "+70%" },
-      technologies: ["React", "D3.js", "Figma", "Node.js", "InfluxDB"]
-    },
-    {
-      title: "Quantum AI",
-      category: "IT Development / UI/UX Design",
-      featured: true,
-      recent: true,
-      image: "https://picsum.photos/seed/quantum/1200/800",
-      desc: "Next-gen AI model training platform with a focus on developer experience and high-fidelity data visualization.",
-      challenge: "AI researchers were spending too much time on infrastructure setup and data cleaning, distracting them from core model development and experimentation.",
-      solution: "We engineered a streamlined AI development environment that automates environment provisioning and data preprocessing. We built custom visualization tools for model performance metrics.",
-      results: "Research throughput increased by 40%. The platform is now used by several leading AI labs for large-scale model training.",
-      roi: { conversion: "N/A", uptime: "99.9%", engagement: "+85%" },
-      technologies: ["Python", "React", "PyTorch", "Docker", "Kubernetes"]
-    },
-    {
-      title: "Vivid Fashion",
-      category: "Graphic Design / IT Development",
-      featured: false,
-      recent: true,
-      image: "https://picsum.photos/seed/vivid/1200/800",
-      desc: "E-commerce rebrand and platform migration for a high-end fashion house, prioritizing visual storytelling and mobile performance.",
-      challenge: "Vivid's legacy e-commerce platform was slow on mobile and didn't support the high-resolution video content needed for their seasonal campaigns.",
-      solution: "We rebranded the digital identity and migrated them to a headless commerce stack. We implemented advanced image and video optimization to ensure sub-second load times on all devices.",
-      results: "Mobile conversion rates increased by 35%. Seasonal campaign engagement saw a 50% boost due to the new immersive storytelling features.",
-      roi: { conversion: "+35%", uptime: "99.9%", engagement: "+50%" },
-      technologies: ["Next.js", "Shopify Plus", "Cloudinary", "Figma", "Tailwind CSS"]
+      technologies: ["React", "Node.js", "PostgreSQL"]
     }
   ];
 
@@ -252,6 +174,13 @@ export const Work = () => {
         <div className="absolute top-1/4 -right-20 w-[600px] h-[600px] bg-brand-red/10 blur-[180px] rounded-full animate-pulse" />
         <div className="absolute -bottom-20 -left-20 w-[700px] h-[700px] bg-blue-900/10 blur-[180px] rounded-full animate-pulse" style={{ animationDelay: '2s' }} />
         <div className="absolute inset-0 grid-bg opacity-10" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black" />
+        <img 
+          src="https://images.unsplash.com/photo-1522542550221-31fd1971107c?auto=format&fit=crop&q=80&w=2070" 
+          className="absolute inset-0 w-full h-full object-cover opacity-[0.05] grayscale"
+          alt="Background Texture"
+          referrerPolicy="no-referrer"
+        />
       </div>
 
       <div className="relative z-10 pt-24 md:pt-32 pb-20 px-6 md:px-12" role="main" aria-label="Our Portfolio">
@@ -262,12 +191,12 @@ export const Work = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
             >
-              <span className="text-brand-red font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Creative Tech Studio</span>
+              <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Kapitech Agency // Portfolio</span>
               <h1 className="text-5xl sm:text-7xl md:text-[10vw] font-display font-bold leading-[0.85] tracking-tighter mb-12 text-gradient">
                 Our Work.
               </h1>
-              <p className="text-xl md:text-3xl text-white/60 max-w-3xl font-light leading-tight tracking-tight">
-                A collection of high-impact digital solutions engineered for growth and designed to inspire.
+              <p className="text-lg md:text-2xl text-white/60 max-w-3xl font-light leading-tight tracking-tight">
+                A collection of digital solutions built for our clients. We focus on delivering practical results that help businesses grow.
               </p>
             </motion.div>
           </header>
@@ -277,27 +206,27 @@ export const Work = () => {
             <div className="flex items-center justify-between mb-8">
               <div className="flex items-center gap-4">
                 <span className="h-px w-12 bg-brand-red" />
-                <span className="text-brand-red font-bold tracking-[0.3em] uppercase text-[10px]">Featured Intelligence</span>
+                <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px]">Selected Projects</span>
               </div>
               <div className="flex gap-2" role="group" aria-label="Carousel navigation">
                 <button 
                   onClick={prevFeatured}
-                  className="p-3 rounded-full border border-white/10 hover:bg-white hover:text-black transition-all duration-500"
+                  className="p-3 rounded-full border border-white/10 hover:bg-white hover:text-black transition-all duration-500 group/btn"
                   aria-label="Previous featured project"
                 >
-                  <ChevronLeft size={20} />
+                  <ChevronLeft size={18} className="group-hover/btn:scale-110 transition-transform" />
                 </button>
                 <button 
                   onClick={nextFeatured}
-                  className="p-3 rounded-full border border-white/10 hover:bg-white hover:text-black transition-all duration-500"
+                  className="p-3 rounded-full border border-white/10 hover:bg-white hover:text-black transition-all duration-500 group/btn"
                   aria-label="Next featured project"
                 >
-                  <ChevronRight size={20} />
+                  <ChevronRight size={18} className="group-hover/btn:scale-110 transition-transform" />
                 </button>
               </div>
             </div>
 
-            <div className="relative aspect-[21/9] md:aspect-[21/7] rounded-[3rem] overflow-hidden bg-zinc-900 border border-white/5 group">
+            <div className="relative aspect-[16/10] md:aspect-[21/8] rounded-3xl md:rounded-[3rem] overflow-hidden bg-zinc-900 border border-white/5 group">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={currentFeaturedIndex}
@@ -321,30 +250,30 @@ export const Work = () => {
                   />
                   <div className="absolute inset-0 bg-gradient-to-r from-black via-black/40 to-transparent" />
                   
-                  <div className="absolute inset-0 p-8 md:p-16 flex flex-col justify-center max-w-3xl">
+                  <div className="absolute inset-0 p-6 md:p-16 flex flex-col justify-center max-w-3xl">
                     <motion.div
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 0.3 }}
                     >
-                      <span className="text-brand-red font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Featured Case Study</span>
-                      <h2 className="text-4xl md:text-7xl font-display font-bold tracking-tighter mb-6 leading-none">
+                      <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Selected Case Study</span>
+                      <h2 className="text-3xl md:text-6xl lg:text-7xl font-display font-bold tracking-tighter mb-6 leading-none">
                         {featuredProjects[currentFeaturedIndex].title}
                       </h2>
-                      <p className="text-lg md:text-xl text-white/60 font-light leading-relaxed mb-8 line-clamp-2">
+                      <p className="text-base md:text-xl text-white/60 font-light leading-relaxed mb-8 line-clamp-2">
                         {featuredProjects[currentFeaturedIndex].desc}
                       </p>
-                      <div className="flex items-center gap-6">
+                      <div className="flex flex-wrap items-center gap-4 md:gap-6">
                         <div className="flex gap-2">
                           {featuredProjects[currentFeaturedIndex].technologies.slice(0, 3).map((tech: string) => (
-                            <span key={tech} className="px-3 py-1 rounded-full bg-white/10 border border-white/10 text-[8px] font-bold uppercase tracking-widest text-white/40">
+                            <span key={tech} className="px-3 py-1 rounded-full bg-white/10 border border-white/10 text-[8px] font-mono font-bold uppercase tracking-widest text-white/40">
                               {tech}
                             </span>
                           ))}
                         </div>
-                        <div className="flex items-center gap-2 text-white group-hover:text-brand-red transition-colors">
-                          <span className="text-[10px] font-bold uppercase tracking-widest">Explore Intelligence</span>
-                          <ArrowUpRight size={16} />
+                        <div className="flex items-center gap-2 text-white group-hover:text-brand-red transition-colors cursor-pointer">
+                          <span className="text-[10px] font-mono font-bold uppercase tracking-widest">View Project</span>
+                          <ArrowUpRight size={14} />
                         </div>
                       </div>
                     </motion.div>
@@ -379,7 +308,7 @@ export const Work = () => {
                   onClick={() => setActiveFilter(cat)}
                   role="tab"
                   aria-selected={activeFilter === cat}
-                  className={`px-8 py-3 rounded-full border text-[10px] font-bold uppercase tracking-widest transition-all duration-500 ${
+                  className={`px-6 md:px-8 py-2 md:py-3 rounded-full border text-[9px] md:text-[10px] font-mono font-bold uppercase tracking-widest transition-all duration-500 ${
                     activeFilter === cat
                       ? 'bg-white border-white text-black'
                       : 'border-white/10 text-white/60 hover:border-white/30 hover:text-white'
@@ -391,14 +320,14 @@ export const Work = () => {
             </div>
 
             <div className="relative w-full md:w-80 group">
-              <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-brand-red transition-colors" size={18} />
+              <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-brand-red transition-colors" size={16} />
               <input 
                 type="text"
-                placeholder="Search projects or tech..."
+                placeholder="Search projects..."
                 aria-label="Search projects or technologies"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-white/5 border border-white/10 rounded-full py-4 pl-14 pr-6 text-sm text-white focus:outline-none focus:border-brand-red transition-all"
+                className="w-full bg-white/5 border border-white/10 rounded-full py-3 md:py-4 pl-14 pr-6 text-xs md:text-sm text-white font-mono placeholder:text-white/20 focus:outline-none focus:border-brand-red transition-all"
               />
             </div>
           </div>
@@ -441,12 +370,12 @@ export const Work = () => {
                     </PerspectiveTilt>
                     <div className="flex justify-between items-start">
                       <div>
-                        <h3 className="text-2xl md:text-3xl font-display font-bold mb-3 group-hover:text-brand-red transition-colors">{project.title}</h3>
-                        <p className="text-brand-red text-[10px] font-bold uppercase tracking-[0.3em] mb-4">{project.category}</p>
-                        <p className="text-white/60 text-sm font-light leading-relaxed max-w-sm">{project.desc}</p>
+                        <h3 className="text-2xl md:text-3xl lg:text-4xl font-display font-bold mb-3 group-hover:text-brand-red transition-colors">{project.title}</h3>
+                        <p className="text-brand-red font-mono text-[10px] font-bold uppercase tracking-[0.3em] mb-4">{project.category}</p>
+                        <p className="text-white/60 text-sm md:text-base font-light leading-relaxed max-w-sm">{project.desc}</p>
                       </div>
-                      <div className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center group-hover:bg-white group-hover:text-black transition-all duration-500 shrink-0">
-                        <ArrowUpRight size={24} />
+                      <div className="w-10 h-10 md:w-12 md:h-12 rounded-full border border-white/10 flex items-center justify-center group-hover:bg-white group-hover:text-black transition-all duration-500 shrink-0">
+                        <ArrowUpRight size={20} className="md:w-6 md:h-6" />
                       </div>
                     </div>
                   </motion.div>
@@ -495,8 +424,8 @@ export const Work = () => {
       {/* Kinetic Typography */}
       <div className="absolute bottom-10 left-0 w-full kinetic-text opacity-5 select-none pointer-events-none">
         <div className="kinetic-track text-[8vh] md:text-[15vh] font-display font-black uppercase tracking-tighter">
-          <span>Creative Tech Studio • UI/UX Design • IT Development • Graphic Design • </span>
-          <span>Creative Tech Studio • UI/UX Design • IT Development • Graphic Design • </span>
+          <span>Kapitech Agency • UI/UX Design • IT Development • Graphic Design • </span>
+          <span>Kapitech Agency • UI/UX Design • IT Development • Graphic Design • </span>
         </div>
       </div>
 
@@ -537,7 +466,7 @@ export const Work = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 }}
-                  className="text-brand-red font-bold tracking-[0.3em] uppercase text-xs md:text-sm mb-4 block"
+                  className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-xs md:text-sm mb-4 block"
                 >
                   {selectedProject.category}
                 </motion.span>
@@ -546,7 +475,7 @@ export const Work = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.4 }}
-                  className="text-4xl sm:text-6xl md:text-[10vw] font-display font-bold tracking-tighter leading-none"
+                  className="text-4xl sm:text-6xl md:text-[8vw] lg:text-[10vw] font-display font-bold tracking-tighter leading-[0.85]"
                 >
                   {selectedProject.title}
                 </motion.h2>
@@ -570,31 +499,31 @@ export const Work = () => {
               </div>
               <div className="space-y-12">
                 <div>
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-white/40 block mb-4">Technologies</span>
+                  <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/40 block mb-4">Technologies</span>
                   <div className="flex flex-wrap gap-2">
                     {selectedProject.technologies.map((tech: string) => (
-                      <span key={tech} className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] font-bold uppercase tracking-widest text-white/60">
+                      <span key={tech} className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] font-mono font-bold uppercase tracking-widest text-white/60">
                         {tech}
                       </span>
                     ))}
                   </div>
                 </div>
                 <div>
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-white/40 block mb-4">Key Metrics</span>
+                  <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/40 block mb-4">Key Metrics</span>
                   <div className="space-y-6">
                     <div>
                       <span className="text-3xl md:text-4xl font-display font-bold block">{selectedProject.roi.conversion}</span>
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-brand-red">Conversion Rate</span>
+                      <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-brand-red">Conversion Rate</span>
                     </div>
                     <div>
                       <span className="text-3xl md:text-4xl font-display font-bold block">{selectedProject.roi.engagement}</span>
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-brand-red">User Engagement</span>
+                      <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-brand-red">User Engagement</span>
                     </div>
                   </div>
                 </div>
                 <MagneticButton>
-                  <button className="px-10 py-5 bg-white text-black rounded-full font-bold flex items-center gap-3 hover:bg-brand-red hover:text-white transition-all duration-500 uppercase tracking-widest text-xs">
-                    View Project <ArrowUpRight size={20} />
+                  <button className="w-full px-10 py-5 bg-white text-black rounded-full font-bold flex items-center justify-center gap-3 hover:bg-brand-red hover:text-white transition-all duration-500 uppercase tracking-widest text-[10px]">
+                    View Live Project <ArrowUpRight size={18} />
                   </button>
                 </MagneticButton>
               </div>
@@ -605,7 +534,7 @@ export const Work = () => {
               <div className="max-w-7xl mx-auto">
                 <div className="flex flex-col md:flex-row justify-between items-end gap-8 mb-16">
                   <div>
-                    <span className="text-brand-red font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Further Exploration</span>
+                    <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Further Exploration</span>
                     <h3 className="text-4xl md:text-6xl font-display font-bold tracking-tighter">Related Projects.</h3>
                   </div>
                   <p className="text-white/40 max-w-md text-sm md:text-base font-light leading-relaxed">
@@ -653,13 +582,13 @@ export const Work = () => {
                           />
                           <div className="absolute inset-0 bg-black/40 group-hover:bg-transparent transition-colors" />
                           <div className="absolute top-4 right-4 px-3 py-1 bg-white/10 backdrop-blur-md border border-white/10 rounded-full">
-                            <span className="text-[8px] font-bold text-white uppercase tracking-widest">
+                            <span className="text-[8px] font-mono font-bold text-white uppercase tracking-widest">
                               Match: {Math.min(99, 70 + related.score)}%
                             </span>
                           </div>
                         </div>
                         <h4 className="text-xl font-display font-bold mb-2 group-hover:text-brand-red transition-colors">{related.title}</h4>
-                        <p className="text-brand-red text-[8px] font-bold uppercase tracking-[0.3em] mb-3">{related.category}</p>
+                        <p className="text-brand-red font-mono text-[8px] font-bold uppercase tracking-[0.3em] mb-3">{related.category}</p>
                         <p className="text-white/40 text-xs font-light leading-relaxed line-clamp-2">{related.desc}</p>
                       </motion.div>
                     ))}

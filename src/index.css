@@ -11,6 +11,45 @@
   --color-charcoal: #0A0A0A;
 }
 
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scrollbar-gutter: stable;
+  }
+
+  body {
+    @apply bg-black text-white font-sans selection:bg-brand-red selection:text-white;
+    overflow-x: hidden;
+    width: 100%;
+  }
+
+  /* Fluid Typography */
+  h1 {
+    font-size: clamp(2.5rem, 8vw, 8rem);
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+  }
+
+  h2 {
+    font-size: clamp(2rem, 6vw, 5rem);
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+  }
+
+  h3 {
+    font-size: clamp(1.5rem, 4vw, 3rem);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+
+  p {
+    font-size: clamp(0.875rem, 1.5vw, 1.125rem);
+    line-height: 1.6;
+  }
+}
+
 :root {
   background-color: #000000;
   color: #ffffff;

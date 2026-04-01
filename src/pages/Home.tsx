@@ -36,39 +36,57 @@ export const Home = () => {
   const projects = [
     {
       title: "Lumina Real Estate",
-      category: "Web Development / UI Design",
+      category: "IT Development / UI Design",
       image: "https://picsum.photos/seed/lumina/1200/800",
-      description: "Challenge: A fragmented property search experience. Solution: We engineered a high-fidelity portal featuring 3D walkthroughs and real-time lead management."
+      description: "Search experience optimization. 3D walkthrough integration. Real-time lead management system.",
+      stack: ["Next.js", "Three.js", "PostgreSQL"],
+      status: "Operational",
+      region: "North America"
     },
     {
       title: "Aura Creative Studio",
-      category: "Branding / 3D Visuals",
+      category: "Identity / 3D Systems",
       image: "https://picsum.photos/seed/aura/1200/800",
-      description: "Challenge: A cluttered visual presence. Solution: We orchestrated a sharp, charcoal-themed identity system reflecting their avant-garde approach."
+      description: "Visual identity system. Charcoal-themed interface. Technical brand architecture.",
+      stack: ["Figma", "Blender", "React"],
+      status: "Completed",
+      region: "Europe"
     },
     {
       title: "Nexus Fintech App",
-      category: "Mobile App / Product Strategy",
+      category: "Mobile / Product Strategy",
       image: "https://picsum.photos/seed/nexus/1200/800",
-      description: "Challenge: Complex financial data causing user drop-off. Solution: We designed a frictionless UI/UX strategy for 100k+ active users."
+      description: "Financial data visualization. UI/UX strategy. 100k+ active user support.",
+      stack: ["React Native", "Node.js", "Redis"],
+      status: "Scaling",
+      region: "Global"
     },
     {
       title: "Quantum AI",
-      category: "AI Platform / IT Development",
+      category: "AI Platform / Development",
       image: "https://picsum.photos/seed/quantum/1200/800",
-      description: "Challenge: Infrastructure complexity for AI researchers. Solution: We engineered a streamlined development environment with high-fidelity visualization."
+      description: "Infrastructure optimization. AI research environment. High-fidelity data visualization.",
+      stack: ["Python", "TensorFlow", "Next.js"],
+      status: "Operational",
+      region: "North America"
     },
     {
       title: "Solaris Energy",
-      category: "Clean Tech / Dashboard",
+      category: "Clean Tech / Monitoring",
       image: "https://picsum.photos/seed/solaris/1200/800",
-      description: "Challenge: Complex energy data visualization. Solution: We designed a multi-layered monitoring platform for real-time production analytics."
+      description: "Energy data visualization. Multi-layered monitoring. Real-time production analytics.",
+      stack: ["D3.js", "AWS IoT", "Go"],
+      status: "Operational",
+      region: "Australia"
     },
     {
       title: "Vivid Fashion",
-      category: "E-commerce / Branding",
+      category: "E-commerce / Architecture",
       image: "https://picsum.photos/seed/vivid/1200/800",
-      description: "Challenge: Poor mobile performance and storytelling. Solution: We migrated to a headless stack with immersive visual storytelling features."
+      description: "Headless commerce migration. Mobile performance optimization. Visual storytelling systems.",
+      stack: ["Shopify Plus", "Hydrogen", "Sanity"],
+      status: "Completed",
+      region: "Europe"
     }
   ];
 
@@ -78,12 +96,12 @@ export const Home = () => {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
-      className="film-grain"
+      className="film-grain overflow-x-hidden"
       role="main"
       aria-label="Kapitech Home"
     >
       {/* Hero */}
-      <section className="relative min-h-screen flex flex-col justify-center px-6 md:px-12 pt-20 overflow-hidden bg-black">
+      <section className="relative min-h-screen flex flex-col justify-center px-6 md:px-12 py-20 md:py-40 overflow-hidden bg-black">
         {/* Enhanced Atmospheric Background */}
         <div className="absolute inset-0 z-0">
           {/* Technical Dot Matrix */}
@@ -100,6 +118,14 @@ export const Home = () => {
           {/* Deep Vignette */}
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.8)_100%)]" />
           
+          {/* Background Image */}
+          <img 
+            src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=2072" 
+            className="absolute inset-0 w-full h-full object-cover opacity-[0.08] grayscale"
+            alt="Background Texture"
+            referrerPolicy="no-referrer"
+          />
+
           {/* Muted Layered Gradients */}
           <motion.div 
             animate={{ 
@@ -129,37 +155,37 @@ export const Home = () => {
             transition={{ duration: 0.8, ease: "easeOut" }}
           >
             <div className="flex items-center gap-4 mb-8">
-              <span className="px-4 py-1.5 rounded-full border border-white/10 bg-white/5 text-[10px] font-bold tracking-[0.2em] uppercase text-white/60">
-                Creative Tech Studio
+              <span className="px-4 py-1.5 rounded-full border border-white/10 bg-white/5 text-[10px] font-mono tracking-[0.2em] uppercase text-white/60">
+                Digital Studio
               </span>
-              <div className="flex items-center gap-2 text-[10px] font-bold tracking-[0.2em] uppercase text-emerald-400">
+              <div className="flex items-center gap-2 text-[10px] font-mono tracking-[0.2em] uppercase text-emerald-400">
                 <span className="relative flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400"></span>
                 </span>
-                Systems Online
+                System Status: Nominal
               </div>
             </div>
             
-            <h1 className="text-5xl sm:text-7xl md:text-[8vw] lg:text-[10vw] font-display font-bold leading-[0.85] tracking-tighter mb-12 text-gradient">
+            <h1 className="text-[clamp(2.5rem,8vw,5.5rem)] font-display font-bold leading-[0.85] tracking-tighter mb-10">
               Digital<br />
-              Powerhouse.
+              Solutions.
             </h1>
             
-            <p className="text-xl md:text-3xl text-white/60 max-w-3xl font-light leading-tight mb-16 tracking-tight">
-              We engineer extraordinary digital products through <span className="text-white">IT Development</span>, <span className="text-white">UI/UX Design</span>, and <span className="text-white">Graphic Design</span>. Tech meets Artistry.
+            <p className="text-[clamp(1rem,1.5vw,1.25rem)] text-white/60 max-w-3xl font-light leading-relaxed mb-16 tracking-tight">
+              Kapitech helps businesses build reliable <span className="text-white">IT Development</span>, <span className="text-white">UI/UX Design</span>, and <span className="text-white">Graphic Design</span>. We deliver practical digital solutions for your business needs.
             </p>
             
             <div className="flex flex-wrap gap-6 items-center">
               <MagneticButton>
                 <Link to="/contact" className="group px-10 py-5 bg-white text-black rounded-full font-bold flex items-center gap-3 hover:bg-brand-red hover:text-white transition-all duration-500">
-                  Start Your Breakthrough
+                  Technical Inquiry
                   <ArrowUpRight size={20} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                 </Link>
               </MagneticButton>
               <MagneticButton>
                 <Link to="/contact" className="px-10 py-5 rounded-full border border-white/10 hover:bg-white/5 transition-all font-bold tracking-widest uppercase text-xs">
-                  Strategic Inquiry
+                  Operational Audit
                 </Link>
               </MagneticButton>
             </div>
@@ -169,14 +195,14 @@ export const Home = () => {
         {/* Kinetic Typography */}
         <div className="absolute bottom-10 left-0 w-full kinetic-text opacity-5 select-none pointer-events-none">
           <div className="kinetic-track text-[8vh] md:text-[15vh] font-display font-black uppercase tracking-tighter">
-            <span>Creative Tech Studio • UI/UX Design • IT Development • Graphic Design • </span>
-            <span>Creative Tech Studio • UI/UX Design • IT Development • Graphic Design • </span>
+            <span>Kapitech Agency • UI/UX Design • IT Development • Graphic Design • </span>
+            <span>Kapitech Agency • UI/UX Design • IT Development • Graphic Design • </span>
           </div>
         </div>
       </section>
 
       {/* Performance Matrix */}
-      <section className="py-24 md:py-40 px-6 md:px-12 bg-black border-y border-white/5 relative overflow-hidden" aria-label="Performance Statistics">
+      <section className="py-20 md:py-40 px-6 md:px-12 bg-black border-y border-white/5 relative overflow-hidden" aria-label="Performance Statistics">
         <div className="absolute inset-0 z-0 opacity-20">
           <div className="absolute top-0 left-1/4 w-px h-full bg-gradient-to-b from-transparent via-brand-red/50 to-transparent" />
           <div className="absolute top-0 right-1/4 w-px h-full bg-gradient-to-b from-transparent via-blue-500/50 to-transparent" />
@@ -186,27 +212,27 @@ export const Home = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-12 md:gap-16" role="list">
             {[
               { 
-                label: "Sub-second Latency", 
-                value: "0.8s", 
-                desc: "Average global load time for our high-fidelity deployments.",
+                label: "Latency", 
+                value: "< 1.0s", 
+                desc: "Fast load times for better user experience.",
                 icon: <Cpu size={16} />
               },
               { 
-                label: "Conversion Growth", 
+                label: "Conversion", 
                 value: "+45%", 
-                desc: "Average increase in user engagement post-orchestration.",
+                desc: "Average user engagement increase.",
                 icon: <ArrowUpRight size={16} />
               },
               { 
-                label: "Global Scalability", 
-                value: "15+", 
-                desc: "Countries served with enterprise-level cloud infrastructure.",
+                label: "Projects", 
+                value: "50+", 
+                desc: "Successfully delivered digital products.",
                 icon: <Globe size={16} />
               },
               { 
-                label: "System Reliability", 
+                label: "Uptime", 
                 value: "99.9%", 
-                desc: "Guaranteed uptime for mission-critical digital ecosystems.",
+                desc: "Reliable hosting and support.",
                 icon: <CheckCircle2 size={16} />
               }
             ].map((stat, i) => (
@@ -223,11 +249,11 @@ export const Home = () => {
                   <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-brand-red group-hover:scale-110 transition-transform duration-500">
                     {stat.icon}
                   </div>
-                  <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/60 group-hover:text-brand-red transition-colors">{stat.label}</span>
+                  <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-white/60 group-hover:text-brand-red transition-colors">{stat.label}</span>
                 </div>
                 <div className="space-y-4">
-                  <span className="text-5xl md:text-7xl font-display font-bold block text-white tracking-tighter">{stat.value}</span>
-                  <p className="text-sm text-white/60 font-light leading-relaxed max-w-[200px]">
+                  <span className="text-[clamp(2.5rem,5vw,4.5rem)] font-display font-bold block text-white tracking-tighter leading-none">{stat.value}</span>
+                  <p className="text-[clamp(0.875rem,1vw,1rem)] text-white/60 font-light leading-relaxed max-w-[200px]">
                     {stat.desc}
                   </p>
                 </div>
@@ -238,7 +264,7 @@ export const Home = () => {
       </section>
 
       {/* Tech Stack Marquee */}
-      <section className="py-20 bg-black overflow-hidden border-b border-white/5">
+      <section className="py-20 md:py-40 bg-black overflow-hidden border-b border-white/5">
         <div className="kinetic-text opacity-40 hover:opacity-100 transition-opacity duration-700">
           <div className="kinetic-track flex gap-20 items-center">
             {[...techStack, ...techStack, ...techStack].map((tech, i) => (
@@ -254,7 +280,7 @@ export const Home = () => {
       </section>
 
       {/* Anti-Freelance Statement */}
-      <section className="py-20 md:py-40 px-6 md:px-12 bg-zinc-950">
+      <section className="py-20 md:py-40 px-6 md:px-12 bg-zinc-950 relative overflow-hidden">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-center">
           <div className="relative aspect-square rounded-[2rem] md:rounded-[3rem] overflow-hidden order-2 md:order-1">
             <img 
@@ -272,16 +298,16 @@ export const Home = () => {
             viewport={{ once: true }}
             className="order-1 md:order-2"
           >
-            <span className="text-brand-red font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">The Kapitech Advantage</span>
-            <h2 className="text-4xl md:text-6xl lg:text-7xl font-display font-bold tracking-tighter mb-8 leading-[0.9]">Beyond the Solo Freelancer.</h2>
-            <p className="text-lg md:text-xl text-white/60 font-light leading-relaxed mb-8">
-              Freelancers offer tasks. We offer systems. Kapitech provides a full-stack ecosystem of designers, architects, and consultants working in orchestration. 
+            <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Operational Model</span>
+            <h2 className="text-[clamp(2.5rem,6vw,5rem)] font-display font-bold tracking-tighter mb-8 leading-[0.9]">System Integration.</h2>
+            <p className="text-[clamp(1rem,1.5vw,1.25rem)] text-white/60 font-light leading-relaxed mb-8">
+              Agency provides integrated systems. Technical architects. System consultants. Worldwide coordination.
             </p>
             <div className="space-y-6">
               {[
-                { title: "Redundancy & Reliability", desc: "Your project never stops. Our team-based approach ensures zero downtime." },
-                { title: "Enterprise Scalability", desc: "We build for where you're going, not just where you are today." },
-                { title: "SOP-Driven Execution", desc: "Every sprint is documented, audited, and optimized for performance." }
+                { title: "System Redundancy", desc: "Continuous operations. Team-based redundancy. Zero downtime." },
+                { title: "Scalability", desc: "Architecture for growth. Future-proof systems." },
+                { title: "SOP Execution", desc: "Documented sprints. Audited performance. Optimized execution." }
               ].map((item, i) => (
                 <div key={i} className="flex gap-6 items-start">
                   <div className="w-1.5 h-1.5 rounded-full bg-brand-red mt-2 shrink-0" />
@@ -297,7 +323,7 @@ export const Home = () => {
       </section>
 
       {/* Kapitech Ecosystem Section */}
-      <section className="py-32 md:py-48 px-6 md:px-12 bg-black relative overflow-hidden">
+      <section className="py-20 md:py-40 px-6 md:px-12 bg-black relative overflow-hidden">
         <div className="absolute inset-0 z-0">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-brand-red/5 blur-[150px] rounded-full" />
           <div className="absolute inset-0 grid-bg opacity-5" />
@@ -309,54 +335,46 @@ export const Home = () => {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="text-brand-red font-bold tracking-[0.4em] uppercase text-[10px] mb-6 block"
+              className="text-brand-red font-mono font-bold tracking-[0.4em] uppercase text-[10px] mb-6 block"
             >
-              The Orchestration of Excellence
+              System Components
             </motion.span>
-            <motion.h2 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
-              className="text-5xl md:text-8xl font-display font-bold tracking-tighter mb-8"
-            >
-              The Kapitech Ecosystem.
-            </motion.h2>
+            <h2 className="text-[clamp(2.5rem,6vw,5rem)] font-display font-bold tracking-tighter mb-8 leading-[0.85]">System Architecture.</h2>
             <motion.p 
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.2 }}
-              className="text-xl md:text-2xl text-white/40 font-light max-w-3xl mx-auto leading-relaxed"
+              className="text-[clamp(1.125rem,2vw,1.5rem)] text-white/40 font-light max-w-3xl mx-auto leading-relaxed"
             >
-              A unified framework where design intelligence, engineering power, and strategic advisory converge to build digital legacies.
+              Integrated framework. Design intelligence. Engineering power. Strategic advisory.
             </motion.p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-12">
             {[
               {
-                title: "Design Intelligence",
+                title: "Design Systems",
                 icon: <Palette size={32} />,
                 color: "from-brand-red/20 to-transparent",
                 borderColor: "border-brand-red/20",
-                desc: "We don't just design; we architect visual languages. From high-fidelity UI/UX to avant-garde branding, our design intelligence ensures your product commands attention and delivers frictionless experiences.",
-                features: ["Immersive UI/UX", "Brand Identity", "3D Visualization", "Motion Design"]
+                desc: "Technical brand architecture. High-fidelity UI/UX systems. Visual language documentation.",
+                features: ["UI/UX Design", "Graphic Design", "3D Visualization", "Motion Systems"]
               },
               {
-                title: "Engineering Power",
+                title: "Engineering",
                 icon: <Code2 size={32} />,
                 color: "from-blue-600/20 to-transparent",
                 borderColor: "border-blue-600/20",
-                desc: "Robust, scalable, and sub-second. Our engineering pillar leverages modern tech stacks to build high-performance IT solutions that are engineered for growth and technical excellence.",
-                features: ["Full-Stack Dev", "Cloud Architecture", "Mobile Engineering", "API Integration"]
+                desc: "Scalable cloud architecture. High-performance IT solutions. Technical growth engineering.",
+                features: ["Full-Stack", "Cloud Architecture", "Mobile Engineering", "API Systems"]
               },
               {
-                title: "Strategic Advisory",
+                title: "Advisory",
                 icon: <Activity size={32} />,
                 color: "from-emerald-500/20 to-transparent",
                 borderColor: "border-emerald-500/20",
-                desc: "Data-driven insights meet market intuition. We provide strategic advisory to align your digital products with core business objectives, ensuring every pixel serves a purpose in your market dominance.",
+                desc: "Data-driven strategic insights. Business objective alignment. Performance auditing.",
                 features: ["Product Strategy", "Market Analysis", "Scaling Roadmap", "Performance Audit"]
               }
             ].map((pillar, i) => (
@@ -381,8 +399,8 @@ export const Home = () => {
                     </div>
                   </div>
                   
-                  <h3 className="text-3xl font-display font-bold mb-6 group-hover:tracking-tight transition-all">{pillar.title}</h3>
-                  <p className="text-white/50 font-light leading-relaxed mb-10 text-sm md:text-base">
+                  <h3 className="text-[clamp(1.5rem,2.5vw,2.25rem)] font-display font-bold mb-6 group-hover:tracking-tight transition-all">{pillar.title}</h3>
+                  <p className="text-white/50 font-light leading-relaxed mb-10 text-[clamp(0.875rem,1vw,1.125rem)]">
                     {pillar.desc}
                   </p>
                   
@@ -412,15 +430,15 @@ export const Home = () => {
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center relative z-10">
               <div>
-                <h3 className="text-4xl md:text-5xl font-display font-bold tracking-tighter mb-8">The Synergy Hub.</h3>
-                <p className="text-lg text-white/40 font-light leading-relaxed mb-12">
-                  Our ecosystem isn't just a collection of services; it's a living synergy. Each pillar informs the other, creating a feedback loop of innovation that ensures your project is visually stunning, technically robust, and strategically sound.
+                <h3 className="text-[clamp(2rem,4vw,3.5rem)] font-display font-bold tracking-tighter mb-8">System Synergy.</h3>
+                <p className="text-[clamp(1rem,1.5vw,1.25rem)] text-white/40 font-light leading-relaxed mb-12">
+                  Integrated services. Feedback loops. Technical robustness. Strategic alignment.
                 </p>
                 <div className="flex flex-col gap-6">
                   {[
-                    { label: "Cross-Pillar Collaboration", value: "Real-time sync between design and dev teams." },
-                    { label: "Unified Vision", desc: "One point of contact, one cohesive strategy." },
-                    { label: "Agile Orchestration", desc: "Rapid iterations powered by integrated workflows." }
+                    { label: "Cross-Pillar Sync", desc: "Real-time coordination between design and engineering." },
+                    { label: "Unified Strategy", desc: "Single point of contact. Cohesive system strategy." },
+                    { label: "Agile Operations", desc: "Rapid iterations. Integrated technical workflows." }
                   ].map((item, i) => (
                     <div key={i} className="flex gap-6 items-start">
                       <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center shrink-0 border border-white/10 group-hover:border-brand-red/30 transition-colors">
@@ -428,7 +446,7 @@ export const Home = () => {
                       </div>
                       <div>
                         <h4 className="font-bold text-lg mb-1">{item.label}</h4>
-                        <p className="text-sm text-white/30">{item.desc || item.value}</p>
+                        <p className="text-sm text-white/30">{item.desc}</p>
                       </div>
                     </div>
                   ))}
@@ -485,14 +503,14 @@ export const Home = () => {
       </section>
 
       {/* Mission Quote */}
-      <section className="py-32 px-6 md:px-12 bg-charcoal">
+      <section className="py-20 md:py-40 px-6 md:px-12 bg-charcoal relative overflow-hidden">
         <div className="max-w-5xl mx-auto text-center">
           <motion.h2 
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
-            className="text-3xl md:text-5xl font-display font-bold leading-tight"
+            className="text-[clamp(1.5rem,3vw,2.75rem)] font-display font-bold leading-tight"
           >
-            "Kapitech spearheads the intersection of elite design and robust engineering to architect the digital legacies of tomorrow's market leaders."
+            "Kapitech integrates high-fidelity design with enterprise engineering. We architect systems for market-leading performance."
           </motion.h2>
         </div>
       </section>
@@ -506,15 +524,15 @@ export const Home = () => {
         </div>
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="mb-16 md:mb-24">
-            <span className="text-brand-red font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">The Creative Blueprint</span>
-            <h2 className="text-5xl md:text-7xl lg:text-8xl font-display font-bold tracking-tighter">Our Process.</h2>
+            <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Execution Framework</span>
+            <h2 className="text-[clamp(2rem,5vw,4rem)] font-display font-bold tracking-tighter leading-none">Operational Lifecycle.</h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8" role="list" aria-label="Our methodology">
             {[
-              { step: "01", title: "Ideation", desc: "Conceptualizing unique digital experiences tailored to your brand." },
-              { step: "02", title: "Design", desc: "Crafting high-fidelity UI/UX and stunning graphic identities." },
-              { step: "03", title: "Development", desc: "Building robust, scalable IT solutions with modern tech stacks." },
-              { step: "04", title: "Launch", desc: "Seamless deployment and continuous creative optimization." }
+              { step: "01", title: "Technical Audit", desc: "System analysis. Requirement documentation." },
+              { step: "02", title: "Architecture", desc: "UI/UX systems. Technical brand architecture." },
+              { step: "03", title: "Engineering", desc: "Full-stack development. Scalable IT solutions." },
+              { step: "04", title: "Deployment", desc: "System launch. Performance optimization." }
             ].map((item, i) => (
               <motion.div 
                 key={i}
@@ -526,19 +544,18 @@ export const Home = () => {
                 className="p-10 rounded-[2rem] bg-zinc-900/50 backdrop-blur-sm border border-white/5 hover:border-brand-red/50 transition-all group relative overflow-hidden"
               >
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-brand-red to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                <span className="text-4xl font-display font-bold text-brand-red block mb-6 group-hover:scale-110 transition-transform duration-500">{item.step}</span>
-                <h3 className="text-xl font-bold mb-4">{item.title}</h3>
-                <p className="text-white/60 text-sm leading-relaxed">{item.desc}</p>
+                <span className="text-[clamp(2rem,3vw,3rem)] font-display font-bold text-brand-red block mb-6 group-hover:scale-110 transition-transform duration-500">{item.step}</span>
+                <h3 className="text-[clamp(1.125rem,1.5vw,1.25rem)] font-bold mb-4">{item.title}</h3>
+                <p className="text-white/60 text-[clamp(0.875rem,1vw,1rem)] leading-relaxed">{item.desc}</p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
-
-      {/* Built to Scale Manifesto */}
-      <section className="py-32 md:py-60 px-6 md:px-12 bg-black text-white overflow-hidden relative border-y border-white/5">
+        {/* Built to Scale Manifesto */}
+      <section className="py-20 md:py-40 px-6 md:px-12 bg-black text-white overflow-hidden relative border-y border-white/5">
         <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,rgba(255,99,33,0.08)_0%,transparent_70%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,rgba(255,59,59,0.08)_0%,transparent_70%)]" />
           <motion.div 
             animate={{ 
               rotate: [0, 360],
@@ -554,16 +571,16 @@ export const Home = () => {
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-4xl md:text-6xl lg:text-7xl font-display font-black leading-[0.8] tracking-tighter uppercase text-white"
+            className="text-[clamp(2.5rem,8vw,7rem)] font-display font-black leading-[0.8] tracking-tighter uppercase text-white"
           >
-            Design First.<br />
-            Built to Scale.<br />
-            Engineered for<br />
-            Excellence.
+            Digital Solutions.<br />
+            Logical Design.<br />
+            Reliable<br />
+            Engineering.
           </motion.h2>
           <div className="mt-12 md:mt-20 grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20">
-            <p className="text-xl md:text-3xl lg:text-4xl font-light leading-tight tracking-tight text-white/60">
-              We don't just build for today. We architect digital legacies that evolve with your vision. Creativity is our engine; technology is our foundation.
+            <p className="text-[clamp(1.25rem,2.5vw,2.5rem)] font-light leading-tight tracking-tight text-white/60">
+              Architecture for long-term growth. Systems evolve with client vision. Technical foundation.
             </p>
             <div className="flex flex-col justify-end items-start">
               <Link to="/services" className="group flex items-center gap-4 text-xl font-bold uppercase tracking-widest hover:text-brand-red transition-colors">
@@ -575,19 +592,19 @@ export const Home = () => {
       </section>
 
       {/* Core Specialization */}
-      <section className="py-20 md:py-40 px-6 md:px-12 bg-black">
+      <section className="py-20 md:py-40 px-6 md:px-12 bg-black relative overflow-hidden">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-center">
           <div>
-            <span className="text-brand-red font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Our Core Expertise</span>
-            <h2 className="text-4xl md:text-6xl lg:text-7xl font-display font-bold tracking-tighter mb-8 leading-[0.9]">Digital Craftsmanship.</h2>
-            <p className="text-lg md:text-xl text-white/40 font-light leading-relaxed mb-12">
-              We specialize in the intersection of high-end design and robust development, delivering pixel-perfect products that command attention.
+            <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Our Services</span>
+            <h2 className="text-[clamp(2rem,5vw,4.5rem)] font-display font-bold tracking-tighter mb-8 leading-[0.9]">What We Do.</h2>
+            <p className="text-[clamp(1rem,1.5vw,1.25rem)] text-white/40 font-light leading-relaxed mb-12">
+              We provide practical digital services to help your business grow. From building websites to creating professional designs.
             </p>
             <div className="grid grid-cols-1 gap-8">
               {[
-                { label: "IT Development", desc: "Scalable web & mobile applications", icon: <Code2 size={24} /> },
-                { label: "UI/UX Design", desc: "Intuitive & immersive user experiences", icon: <Layout size={24} /> },
-                { label: "Graphic Design", desc: "Bold visual identities & branding", icon: <Palette size={24} /> }
+                { label: "IT Development", desc: "Reliable web & mobile apps", icon: <Code2 size={24} /> },
+                { label: "UI/UX Design", desc: "User-friendly interfaces", icon: <Layout size={24} /> },
+                { label: "Graphic Design", desc: "Professional visual assets", icon: <Palette size={24} /> }
               ].map((item, i) => (
                 <motion.div 
                   key={i} 
@@ -622,38 +639,38 @@ export const Home = () => {
       </section>
 
       {/* Free Consultation */}
-      <section className="py-20 md:py-40 px-6 md:px-12 bg-zinc-950">
+      <section className="py-20 md:py-40 px-6 md:px-12 bg-zinc-950 relative overflow-hidden">
         <div className="max-w-7xl mx-auto text-center">
-          <span className="text-brand-red font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Strategic Advisory</span>
-          <h2 className="text-4xl md:text-6xl lg:text-7xl font-display font-bold tracking-tighter mb-8">Free Design & Tech Consultation.</h2>
-          <p className="text-lg md:text-xl text-white/40 font-light leading-relaxed max-w-2xl mx-auto mb-12">
-            Ready to elevate your digital presence? We offer a complimentary 30-minute session to discuss your UI/UX, IT development, or graphic design needs.
+          <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Work With Us</span>
+          <h2 className="text-[clamp(2rem,5vw,4.5rem)] font-display font-bold tracking-tighter mb-8">Start Your Project.</h2>
+          <p className="text-[clamp(1rem,1.5vw,1.25rem)] text-white/40 font-light leading-relaxed max-w-2xl mx-auto mb-12">
+            Have a project in mind? Let's talk about how we can help you build a reliable digital presence.
           </p>
           <MagneticButton>
             <Link to="/contact" className="px-12 py-5 bg-white text-black rounded-full font-bold hover:bg-brand-red hover:text-white transition-all duration-500 uppercase tracking-widest text-xs inline-block">
-              Book Free Consultation
+              Get in Touch
             </Link>
           </MagneticButton>
         </div>
       </section>
 
       {/* Meeting Scheduler */}
-      <section className="py-20 md:py-40 px-6 md:px-12 bg-[#111111] border-y border-white/5">
+      <section className="py-20 md:py-40 px-6 md:px-12 bg-[#111111] border-y border-white/5 relative overflow-hidden">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-12">
           <div className="text-white text-center md:text-left">
-            <h2 className="text-4xl md:text-6xl lg:text-7xl font-display font-bold tracking-tighter mb-4 leading-none">Strategic Partnership.</h2>
-            <p className="text-lg md:text-xl font-light opacity-80">Inquire about long-term IT & Creative collaboration.</p>
+            <h2 className="text-[clamp(2rem,5vw,4rem)] font-display font-bold tracking-tighter mb-4 leading-none">Strategic Partnership.</h2>
+            <p className="text-[clamp(1rem,1.5vw,1.25rem)] font-light opacity-80">Long-term IT and creative collaboration inquiry.</p>
           </div>
           <MagneticButton>
             <Link to="/contact" className="px-12 py-6 bg-white text-black rounded-full font-bold hover:bg-brand-red hover:text-white transition-all duration-500 uppercase tracking-widest text-xs">
-              Begin Consultation
+              Begin Inquiry
             </Link>
           </MagneticButton>
         </div>
       </section>
 
       {/* Philosophy Section - Reveal on Scroll */}
-      <section className="py-20 md:py-40 px-6 md:px-12 bg-black">
+      <section className="py-20 md:py-40 px-6 md:px-12 bg-black relative overflow-hidden">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-center">
           <motion.div 
             initial={{ opacity: 0, x: -50 }}
@@ -661,16 +678,16 @@ export const Home = () => {
             viewport={{ once: true }}
             transition={{ duration: 1 }}
           >
-            <span className="text-brand-red font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Our Philosophy</span>
-            <h2 className="text-4xl md:text-6xl lg:text-7xl font-display font-bold tracking-tighter mb-8 leading-[0.9]">Artistry in Every Pixel.</h2>
-            <p className="text-lg md:text-xl text-white/60 font-light leading-relaxed mb-12">
-              We believe that technology should be as beautiful as it is functional. Our philosophy is rooted in the pursuit of digital perfection, where every line of code and every design choice serves a purpose.
+            <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Operational Principles</span>
+            <h2 className="text-[clamp(2rem,5vw,4.5rem)] font-display font-bold tracking-tighter mb-8 leading-[0.9]">System Integrity.</h2>
+            <p className="text-[clamp(1rem,1.5vw,1.25rem)] text-white/60 font-light leading-relaxed mb-12">
+              Functional technology. Digital precision. Purpose-driven code. System-oriented design.
             </p>
             <div className="flex flex-col gap-6">
               {[
-                { title: "Creative Logic", desc: "We blend artistic vision with technical precision to solve complex problems." },
-                { title: "Human-Centric Design", desc: "Every product we build is designed with the end-user's journey in mind." },
-                { title: "Technical Excellence", desc: "We leverage the latest technologies to ensure performance and scalability." }
+                { title: "Technical Logic", desc: "Artistic vision integrated with technical precision." },
+                { title: "User-Centric Systems", desc: "Products designed for optimized user journeys." },
+                { title: "Engineering Standards", desc: "Latest technologies for performance and scalability." }
               ].map((item, i) => (
                 <div key={i} className="flex gap-6 items-start">
                   <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center shrink-0">
@@ -717,11 +734,11 @@ export const Home = () => {
         <div className="max-w-7xl mx-auto px-6 md:px-12 mb-16 md:mb-32">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8">
             <div>
-              <span className="text-brand-red font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Selected Works</span>
-              <h2 className="text-5xl md:text-7xl lg:text-8xl font-display font-bold tracking-tighter">The Portfolio.</h2>
+              <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Project Portfolio</span>
+              <h2 className="text-[clamp(2.5rem,6vw,5rem)] font-display font-bold tracking-tighter">Case Studies.</h2>
             </div>
             <Link to="/work" className="group px-8 py-4 rounded-full border border-white/10 hover:bg-white hover:text-black transition-all duration-500 font-bold tracking-widest uppercase text-xs flex items-center gap-3">
-              Explore All <ArrowUpRight size={16} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+              View All <ArrowUpRight size={16} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
             </Link>
           </div>
         </div>
@@ -756,10 +773,25 @@ export const Home = () => {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 </PerspectiveTilt>
                 <div className="flex justify-between items-start">
-                  <div>
-                    <h3 className="text-2xl md:text-3xl font-display font-bold mb-3 group-hover:text-brand-red transition-colors">{project.title}</h3>
-                    <p className="text-brand-red text-[10px] font-bold uppercase tracking-[0.3em] mb-4">{project.category}</p>
-                    <p className="text-white/60 text-sm font-light leading-relaxed max-w-sm">{project.description}</p>
+                  <div className="flex-grow">
+                    <div className="flex items-center gap-3 mb-3">
+                      <h3 className="text-2xl md:text-3xl font-display font-bold group-hover:text-brand-red transition-colors">{project.title}</h3>
+                      <span className="px-2 py-0.5 rounded border border-emerald-500/30 bg-emerald-500/5 text-[8px] font-mono text-emerald-400 uppercase tracking-widest">
+                        {project.status}
+                      </span>
+                    </div>
+                    <div className="flex flex-wrap gap-x-4 gap-y-1 mb-4">
+                      <span className="text-brand-red text-[10px] font-mono font-bold uppercase tracking-[0.2em]">{project.category}</span>
+                      <span className="text-white/30 text-[10px] font-mono uppercase tracking-[0.2em]">{project.region}</span>
+                    </div>
+                    <p className="text-white/60 text-sm font-light leading-relaxed max-w-sm mb-4">{project.description}</p>
+                    <div className="flex flex-wrap gap-2">
+                      {project.stack?.map(tech => (
+                        <span key={tech} className="text-[9px] font-mono text-white/30 uppercase tracking-widest">
+                          {tech}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                   <div className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center group-hover:bg-white group-hover:text-black transition-all duration-500 shrink-0">
                     <ArrowUpRight size={24} />
@@ -784,13 +816,13 @@ export const Home = () => {
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="flex flex-col md:flex-row justify-between items-end gap-8 mb-20">
             <div>
-              <span className="text-brand-red font-bold tracking-[0.4em] uppercase text-[10px] mb-4 block">System Monitoring</span>
-              <h2 className="text-4xl md:text-6xl font-display font-bold tracking-tighter">Studio Diagnostics.</h2>
+              <span className="text-brand-red font-mono font-bold tracking-[0.4em] uppercase text-[10px] mb-4 block">System Diagnostics</span>
+              <h2 className="text-4xl md:text-6xl font-display font-bold tracking-tighter">Operational Status.</h2>
             </div>
             <div className="flex items-center gap-4 px-6 py-3 rounded-full bg-white/5 border border-white/10">
-              <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-emerald-400">
+              <div className="flex items-center gap-2 text-[10px] font-mono font-bold uppercase tracking-widest text-emerald-400">
                 <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-                All Systems Nominal
+                Status: Nominal
               </div>
               <div className="w-px h-4 bg-white/10" />
               <span className="text-[10px] font-mono text-white/40">v2.4.0-build.88</span>
@@ -804,7 +836,7 @@ export const Home = () => {
                 <Palette size={80} />
               </div>
               <div className="space-y-2">
-                <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Node 01 // Visual Fidelity</span>
+                <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/40">Node 01 // UI Systems</span>
                 <h3 className="text-2xl font-display font-bold">Design Accuracy</h3>
               </div>
               <div className="space-y-6">
@@ -839,7 +871,7 @@ export const Home = () => {
                 <Code2 size={80} />
               </div>
               <div className="space-y-2">
-                <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Node 02 // Engineering Core</span>
+                <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/40">Node 02 // Infrastructure</span>
                 <h3 className="text-2xl font-display font-bold">System Uptime</h3>
               </div>
               <div className="space-y-6">
@@ -881,7 +913,7 @@ export const Home = () => {
                 <Activity size={80} />
               </div>
               <div className="space-y-2">
-                <span className="text-[10px] font-bold uppercase tracking-widest text-white/40">Node 03 // Strategic Engine</span>
+                <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/40">Node 03 // Advisory</span>
                 <h3 className="text-2xl font-display font-bold">Market Impact</h3>
               </div>
               <div className="space-y-6">
@@ -927,16 +959,16 @@ export const Home = () => {
       <section className="py-20 md:py-40 px-6 md:px-12 bg-black border-t border-white/5">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-center">
           <div>
-            <span className="text-brand-red font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">The Kapitech Insight</span>
-            <h2 className="text-4xl md:text-6xl lg:text-7xl font-display font-bold tracking-tighter mb-8 leading-[0.9]">Stay ahead of the curve.</h2>
+            <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Technical Brief</span>
+            <h2 className="text-4xl md:text-6xl lg:text-7xl font-display font-bold tracking-tighter mb-8 leading-[0.9]">System Intelligence.</h2>
             <p className="text-lg md:text-xl text-white/40 font-light leading-relaxed">
-              Bi-weekly intelligence on digital architecture, UI/UX psychology, and the future of IT infrastructure. No fluff. Just power.
+              Bi-weekly report. Digital architecture. UI/UX systems. IT infrastructure. Technical data only.
             </p>
           </div>
           <div className="bg-zinc-900 p-12 rounded-[3rem] border border-white/5">
             <form className="flex flex-col gap-6">
               <div className="flex flex-col gap-2">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-white/40 ml-2">Email Address</label>
+                <label className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/40 ml-2">Email Address</label>
                 <input 
                   type="email" 
                   placeholder="name@company.com" 
@@ -945,10 +977,10 @@ export const Home = () => {
               </div>
               <MagneticButton>
                 <button className="w-full py-5 bg-white text-black rounded-full font-bold hover:bg-brand-red hover:text-white transition-all duration-500 uppercase tracking-widest text-xs">
-                  Subscribe to Insight
+                  Subscribe
                 </button>
               </MagneticButton>
-              <p className="text-[10px] text-white/20 text-center uppercase tracking-widest">Join 5,000+ industry leaders.</p>
+              <p className="text-[10px] font-mono text-white/20 text-center uppercase tracking-widest">Join 5,000+ industry leaders.</p>
             </form>
           </div>
         </div>
@@ -1004,34 +1036,34 @@ export const Home = () => {
 
             <div className="max-w-7xl mx-auto px-6 md:px-12 py-32 grid grid-cols-1 md:grid-cols-3 gap-20">
               <div className="md:col-span-2">
-                <h3 className="text-4xl font-display font-bold mb-8 text-brand-red">The Challenge.</h3>
+                <h3 className="text-4xl font-display font-bold mb-8 text-brand-red">Technical Requirement.</h3>
                 <p className="text-2xl text-white/60 font-light leading-relaxed mb-16">
                   {selectedProject.description}
                 </p>
-                <h3 className="text-4xl font-display font-bold mb-8 text-brand-red">The Solution.</h3>
+                <h3 className="text-4xl font-display font-bold mb-8 text-brand-red">System Implementation.</h3>
                 <p className="text-2xl text-white/60 font-light leading-relaxed">
-                  We architected a bespoke digital ecosystem that prioritized high-fidelity visual storytelling and sub-second performance. By integrating custom 3D assets and a headless CMS, we empowered the brand to command authority in their sector.
+                  Architecture of digital ecosystem. High-fidelity visual systems. Sub-second performance. 3D asset integration. Headless CMS implementation.
                 </p>
               </div>
               <div className="space-y-12">
                 <div>
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-white/40 block mb-4">Services Provided</span>
+                  <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/40 block mb-4">Technical Stack</span>
                   <div className="flex flex-wrap gap-2">
-                    {["UI/UX Design", "IT Architecture", "3D Renders", "Performance Optimization"].map(s => (
-                      <span key={s} className="px-4 py-2 rounded-full border border-white/10 text-[10px] font-bold uppercase tracking-widest">{s}</span>
+                    {selectedProject.stack?.map(s => (
+                      <span key={s} className="px-4 py-2 rounded-full border border-white/10 text-[10px] font-mono font-bold uppercase tracking-widest">{s}</span>
                     ))}
                   </div>
                 </div>
                 <div>
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-white/40 block mb-4">Key Metrics</span>
+                  <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/40 block mb-4">Operational Metrics</span>
                   <div className="space-y-6">
                     <div>
                       <span className="text-4xl font-display font-bold block">+120%</span>
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-brand-red">Conversion Rate</span>
+                      <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-brand-red">Conversion Delta</span>
                     </div>
                     <div>
                       <span className="text-4xl font-display font-bold block">-40%</span>
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-brand-red">Load Time</span>
+                      <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-brand-red">Latency Reduction</span>
                     </div>
                   </div>
                 </div>
