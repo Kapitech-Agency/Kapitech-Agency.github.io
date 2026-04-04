@@ -4,6 +4,7 @@ import { ArrowUpRight, CheckCircle2, Zap, Globe, Cpu, Code2, Palette, Users, Roc
 import { MagneticButton } from '../components/ui/MagneticButton';
 import { Link } from 'react-router-dom';
 import { cn } from '../lib/utils';
+import { AtmosphericBackground } from '../components/ui/AtmosphericBackground';
 
 const positions = [
   {
@@ -18,7 +19,9 @@ const positions = [
       'Proficiency in Figma',
       'Good understanding of design principles',
       'Portfolio showing web or mobile projects'
-    ]
+    ],
+    salary: 'Competitive',
+    experience: 'Mid-Level'
   },
   {
     id: 'frontend-dev',
@@ -32,7 +35,9 @@ const positions = [
       'Strong knowledge of CSS and Tailwind',
       'Attention to detail and performance',
       'Ability to work in a team environment'
-    ]
+    ],
+    salary: 'Competitive',
+    experience: 'Junior to Mid'
   },
   {
     id: 'graphic-designer',
@@ -46,7 +51,36 @@ const positions = [
       'Proficiency in Adobe Creative Suite',
       'Creative thinking and problem-solving skills',
       'Good communication skills'
-    ]
+    ],
+    salary: 'Competitive',
+    experience: 'Junior to Mid'
+  }
+];
+
+const hiringProcess = [
+  {
+    step: "01",
+    title: "Application Review",
+    desc: "Our team reviews your portfolio and experience to see if there's a match.",
+    icon: <FileText size={24} />
+  },
+  {
+    step: "02",
+    title: "Technical Interview",
+    desc: "A deep dive into your skills, tools, and how you approach complex problems.",
+    icon: <Cpu size={24} />
+  },
+  {
+    step: "03",
+    title: "Culture Fit",
+    desc: "Meeting the team to ensure our values and working styles align perfectly.",
+    icon: <Users size={24} />
+  },
+  {
+    step: "04",
+    title: "Final Offer",
+    desc: "Onboarding and welcome to the Kapitech collective. Let's build together.",
+    icon: <Rocket size={24} />
   }
 ];
 
@@ -161,33 +195,18 @@ export const Careers = () => {
       role="main"
       aria-label="Careers at Kapitech"
     >
+      {/* Enhanced Atmospheric Background */}
+      <AtmosphericBackground 
+        imageUrl="https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&q=80&w=2070"
+        accentColor="purple"
+        statusText="RECRUITMENT_ACTIVE"
+        scanMode="TALENT_ACQUISITION"
+        sysRef="KPTCH_HR_NODE"
+        opacity={0.05}
+      />
+
       {/* Hero Section */}
       <section className="relative min-h-[80vh] flex flex-col justify-center px-6 md:px-12 py-20 md:py-40 overflow-hidden bg-black">
-        <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 opacity-[0.15]" 
-               style={{ 
-                 backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.15) 1px, transparent 1px)', 
-                 backgroundSize: '32px 32px' 
-               }} 
-          />
-          <div className="absolute inset-0 grid-bg opacity-10" />
-          <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black" />
-          <img 
-            src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&q=80&w=2070" 
-            className="absolute inset-0 w-full h-full object-cover opacity-[0.05] grayscale"
-            alt="Background Texture"
-            referrerPolicy="no-referrer"
-          />
-          <motion.div 
-            animate={{ 
-              scale: [1, 1.2, 1],
-              opacity: [0.1, 0.2, 0.1]
-            }}
-            transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-            className="absolute top-1/4 -right-20 w-[600px] h-[600px] bg-brand-red/10 blur-[180px] rounded-full" 
-          />
-        </div>
-
         <div className="max-w-7xl mx-auto w-full relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -264,7 +283,7 @@ export const Careers = () => {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.1 }}
-                className="relative p-10 bg-zinc-900/30 border border-white/5 hover:bg-zinc-900/50 transition-all duration-500 group overflow-hidden"
+                className="relative p-10 rounded-3xl bg-zinc-900/30 border border-white/5 hover:bg-zinc-900/50 transition-all duration-500 group overflow-hidden"
               >
                 {/* Background Image with Overlay */}
                 <div className="absolute inset-0 z-0 opacity-0 group-hover:opacity-10 transition-opacity duration-700">
@@ -330,7 +349,7 @@ export const Careers = () => {
               ))}
             </div>
           </motion.div>
-          <div className="relative aspect-square rounded-[3rem] overflow-hidden">
+          <div className="relative aspect-square rounded-[4rem] overflow-hidden">
             <img 
               src="https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80&w=2070" 
               alt="Team Culture" 
@@ -358,13 +377,49 @@ export const Careers = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="p-10 rounded-[2rem] bg-zinc-900/50 backdrop-blur-sm border border-white/5 hover:border-brand-red/50 transition-all group"
+                className="p-10 rounded-[3rem] bg-zinc-900/50 backdrop-blur-sm border border-white/5 hover:border-brand-red/50 transition-all group"
               >
                 <div className="w-12 h-12 rounded-xl bg-brand-red/10 flex items-center justify-center text-brand-red mb-6 group-hover:scale-110 transition-transform duration-500">
                   {benefit.icon}
                 </div>
                 <h3 className="text-xl font-bold mb-4">{benefit.title}</h3>
                 <p className="text-white/40 text-sm leading-relaxed">{benefit.desc}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Hiring Process Section */}
+      <section className="py-20 md:py-40 px-6 md:px-12 bg-black relative overflow-hidden">
+        <div className="max-w-7xl mx-auto">
+          <div className="mb-16 md:mb-24">
+            <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Our Process</span>
+            <h2 className="text-[clamp(2.5rem,6vw,6rem)] font-display font-bold tracking-tighter">How We <span className="text-brand-red">Hire.</span></h2>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {hiringProcess.map((item, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className="relative p-10 rounded-[3.5rem] bg-zinc-900/20 border border-white/5 group hover:border-brand-red/30 transition-all duration-500"
+              >
+                <div className="absolute top-8 right-8 text-4xl font-display font-black text-white/5 group-hover:text-brand-red/10 transition-colors duration-500">
+                  {item.step}
+                </div>
+                <div className="w-12 h-12 rounded-xl bg-brand-red/10 flex items-center justify-center text-brand-red mb-8 group-hover:scale-110 transition-transform duration-500">
+                  {item.icon}
+                </div>
+                <h3 className="text-xl font-bold mb-4 group-hover:text-white transition-colors">{item.title}</h3>
+                <p className="text-white/40 text-sm leading-relaxed font-light">{item.desc}</p>
+                
+                {i < hiringProcess.length - 1 && (
+                  <div className="hidden lg:block absolute top-1/2 -right-4 w-8 h-px bg-gradient-to-r from-white/10 to-transparent z-10" />
+                )}
               </motion.div>
             ))}
           </div>
@@ -397,23 +452,35 @@ export const Careers = () => {
                 onKeyDown={(e) => e.key === 'Enter' && setSelectedPosition(job)}
                 tabIndex={0}
                 aria-label={`View details for ${job.title}`}
-                className="group p-8 md:p-12 rounded-[2rem] bg-black border border-white/5 hover:border-brand-red/50 transition-all cursor-pointer flex flex-col md:flex-row justify-between items-start md:items-center gap-8"
+                className="group p-8 md:p-12 rounded-[3rem] bg-black border border-white/5 hover:border-brand-red/50 transition-all cursor-pointer flex flex-col md:flex-row justify-between items-start md:items-center gap-8"
               >
-                <div>
-                  <div className="flex items-center gap-4 mb-4">
-                    <span className="text-brand-red font-mono text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full bg-brand-red/10">
-                      {job.department}
-                    </span>
-                    <span className="text-white/40 font-mono text-[10px] font-bold uppercase tracking-widest">
-                      {job.location} • {job.type}
-                    </span>
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 w-full">
+                  <div className="flex-grow">
+                    <div className="flex items-center gap-4 mb-4">
+                      <span className="text-brand-red font-mono text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full bg-brand-red/10">
+                        {job.department}
+                      </span>
+                      <span className="text-white/40 font-mono text-[10px] font-bold uppercase tracking-widest">
+                        {job.location} • {job.type}
+                      </span>
+                    </div>
+                    <h3 className="text-2xl md:text-4xl font-display font-bold group-hover:text-brand-red transition-colors mb-4">
+                      {job.title}
+                    </h3>
+                    <div className="flex gap-6">
+                      <div className="flex items-center gap-2 text-[10px] font-mono text-white/20 uppercase tracking-widest">
+                        <Zap size={12} className="text-brand-red" />
+                        {job.experience}
+                      </div>
+                      <div className="flex items-center gap-2 text-[10px] font-mono text-white/20 uppercase tracking-widest">
+                        <Heart size={12} className="text-brand-red" />
+                        {job.salary}
+                      </div>
+                    </div>
                   </div>
-                  <h3 className="text-2xl md:text-4xl font-display font-bold group-hover:text-brand-red transition-colors">
-                    {job.title}
-                  </h3>
-                </div>
-                <div className="w-16 h-16 rounded-full border border-white/10 flex items-center justify-center group-hover:bg-white group-hover:text-black transition-all duration-500 shrink-0">
-                  <ArrowUpRight size={32} />
+                  <div className="w-16 h-16 rounded-full border border-white/10 flex items-center justify-center group-hover:bg-white group-hover:text-black transition-all duration-500 shrink-0">
+                    <ArrowUpRight size={32} />
+                  </div>
                 </div>
               </motion.div>
             ))}
@@ -427,7 +494,7 @@ export const Careers = () => {
           <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-brand-red blur-[150px] rounded-full" />
         </div>
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12 relative z-10">
-          <div className="p-10 rounded-[2rem] bg-white/5 border border-white/5 flex flex-col gap-6 group hover:border-emerald-400/30 transition-all duration-500">
+          <div className="p-10 rounded-[3rem] bg-white/5 border border-white/5 flex flex-col gap-6 group hover:border-emerald-400/30 transition-all duration-500">
             <div className="flex items-center justify-between">
               <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/40">Project Success</span>
               <div className="flex items-center gap-2 text-[10px] font-mono font-bold uppercase tracking-widest text-emerald-400">
@@ -452,7 +519,7 @@ export const Careers = () => {
             <p className="text-xs text-white/40 font-light">Successful projects delivered since our founding in 2021.</p>
           </div>
 
-          <div className="p-10 rounded-[2rem] bg-white/5 border border-white/5 flex flex-col gap-6 group hover:border-brand-red/30 transition-all duration-500">
+          <div className="p-10 rounded-[3rem] bg-white/5 border border-white/5 flex flex-col gap-6 group hover:border-brand-red/30 transition-all duration-500">
             <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/40">Team Growth</span>
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl bg-brand-red/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
@@ -466,7 +533,7 @@ export const Careers = () => {
             <p className="text-xs text-white/40 font-light">A dedicated team of designers and developers working together.</p>
           </div>
 
-          <div className="p-10 rounded-[2rem] bg-white/5 border border-white/5 flex flex-col gap-6 group hover:border-blue-500/30 transition-all duration-500">
+          <div className="p-10 rounded-[3rem] bg-white/5 border border-white/5 flex flex-col gap-6 group hover:border-blue-500/30 transition-all duration-500">
             <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/40">Local Presence</span>
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
@@ -631,7 +698,7 @@ export const Careers = () => {
                         name="name"
                         value={formData.name}
                         onChange={handleInputChange}
-                        className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-6 text-white focus:outline-none focus:border-brand-red transition-all"
+                        className="w-full bg-white/5 border border-white/10 rounded-3xl py-4 pl-12 pr-6 text-white focus:outline-none focus:border-brand-red transition-all"
                         placeholder="John Doe"
                       />
                     </div>
@@ -647,7 +714,7 @@ export const Careers = () => {
                         name="email"
                         value={formData.email}
                         onChange={handleInputChange}
-                        className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-6 text-white focus:outline-none focus:border-brand-red transition-all"
+                        className="w-full bg-white/5 border border-white/10 rounded-3xl py-4 pl-12 pr-6 text-white focus:outline-none focus:border-brand-red transition-all"
                         placeholder="john@example.com"
                       />
                     </div>
@@ -666,7 +733,7 @@ export const Careers = () => {
                         name="phone"
                         value={formData.phone}
                         onChange={handleInputChange}
-                        className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-6 text-white focus:outline-none focus:border-brand-red transition-all"
+                        className="w-full bg-white/5 border border-white/10 rounded-3xl py-4 pl-12 pr-6 text-white focus:outline-none focus:border-brand-red transition-all"
                         placeholder="+1 (555) 000-0000"
                       />
                     </div>
@@ -681,7 +748,7 @@ export const Careers = () => {
                         name="portfolio"
                         value={formData.portfolio}
                         onChange={handleInputChange}
-                        className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-6 text-white focus:outline-none focus:border-brand-red transition-all"
+                        className="w-full bg-white/5 border border-white/10 rounded-3xl py-4 pl-12 pr-6 text-white focus:outline-none focus:border-brand-red transition-all"
                         placeholder="https://portfolio.com"
                       />
                     </div>
@@ -696,7 +763,7 @@ export const Careers = () => {
                     value={formData.coverLetter}
                     onChange={handleInputChange}
                     rows={6}
-                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white focus:outline-none focus:border-brand-red transition-all resize-none"
+                    className="w-full bg-white/5 border border-white/10 rounded-3xl py-4 px-6 text-white focus:outline-none focus:border-brand-red transition-all resize-none"
                     placeholder="Tell us why you'd like to join Kapitech..."
                   />
                 </div>
@@ -705,7 +772,7 @@ export const Careers = () => {
                   <span className="text-[10px] font-bold uppercase tracking-widest text-white/40 block">Resume / CV</span>
                   <label 
                     htmlFor="resume" 
-                    className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-white/10 rounded-3xl cursor-pointer hover:border-brand-red/50 hover:bg-white/5 transition-all group"
+                    className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-white/10 rounded-[3rem] cursor-pointer hover:border-brand-red/50 hover:bg-white/5 transition-all group"
                   >
                     <div className="flex flex-col items-center justify-center pt-5 pb-6">
                       <Upload className="w-10 h-10 text-white/20 group-hover:text-brand-red mb-4 transition-colors" />

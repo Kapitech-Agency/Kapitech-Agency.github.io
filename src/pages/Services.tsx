@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Layout, Code2, Palette, Box, CheckCircle2, Cpu, Globe, ArrowUpRight, X, Zap, Shield, Rocket, Activity, FileText, Settings } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { MagneticButton } from '../components/ui/MagneticButton';
 import { PerspectiveTilt } from '../components/ui/PerspectiveTilt';
 import { cn } from '../lib/utils';
+
+import { AtmosphericBackground } from '../components/ui/AtmosphericBackground';
 
 export const Services = () => {
   const navigate = useNavigate();
@@ -171,20 +173,13 @@ export const Services = () => {
       className="relative min-h-screen bg-black"
     >
       {/* Atmospheric Background */}
-      <div className="absolute inset-0 z-0 pointer-events-none">
-        <div className="absolute top-0 left-0 w-full h-full opacity-5" 
-             style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.15) 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
-        <div className="absolute top-1/4 -right-20 w-[600px] h-[600px] bg-brand-red/10 blur-[180px] rounded-full animate-pulse" />
-        <div className="absolute -bottom-20 -left-20 w-[700px] h-[700px] bg-blue-900/10 blur-[180px] rounded-full animate-pulse" style={{ animationDelay: '2s' }} />
-        <div className="absolute inset-0 grid-bg opacity-10" />
-        <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black" />
-        <img 
-          src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&q=80&w=2070" 
-          className="absolute inset-0 w-full h-full object-cover opacity-[0.03] grayscale"
-          alt="Background Texture"
-          referrerPolicy="no-referrer"
-        />
-      </div>
+      <AtmosphericBackground 
+        imageUrl="https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&q=80&w=2070"
+        accentColor="red"
+        statusText="SERVICES_ACTIVE"
+        scanMode="PROTOCOL_SCAN"
+        sysRef="KPTCH_SRV_ARCH"
+      />
 
       <div className="relative z-10">
         <div className="max-w-7xl mx-auto">
@@ -888,9 +883,11 @@ export const Services = () => {
                 </p>
                 <div className="flex flex-col md:flex-row items-center justify-center gap-6">
                   <MagneticButton>
-                    <button className="px-12 py-6 bg-white text-black rounded-full font-bold hover:bg-brand-red hover:text-white transition-all duration-500 uppercase tracking-widest text-xs">
-                      Initialize Project
-                    </button>
+                    <Link to="/contact">
+                      <button className="px-12 py-6 bg-white text-black rounded-full font-bold hover:bg-brand-red hover:text-white transition-all duration-500 uppercase tracking-widest text-xs">
+                        Initialize Project
+                      </button>
+                    </Link>
                   </MagneticButton>
                   <button className="px-12 py-6 rounded-full border border-white/10 text-white font-bold hover:bg-white/5 transition-all uppercase tracking-widest text-xs">
                     View Documentation

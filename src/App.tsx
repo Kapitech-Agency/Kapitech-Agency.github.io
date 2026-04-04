@@ -8,6 +8,7 @@ import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-route
 import { AnimatePresence, motion } from 'motion/react';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
+import { FloatingContact } from './components/FloatingContact';
 import { Home } from './pages/Home';
 import { Work } from './pages/Work';
 import { Services } from './pages/Services';
@@ -64,6 +65,7 @@ export default function App() {
           <AnimatedRoutes />
         </main>
         <Footer />
+        <FloatingContact />
       </div>
     </Router>
   );

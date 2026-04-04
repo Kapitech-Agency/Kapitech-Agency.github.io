@@ -1,9 +1,12 @@
 import React, { useState, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
-import { ArrowUpRight, X, Layout, Code2, Palette, Box, Search, Filter, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
+import { ArrowUpRight, X, Layout, Code2, Palette, Box, Search, Filter, ChevronLeft, ChevronRight, Loader2, Activity, Layers } from 'lucide-react';
 import { PerspectiveTilt } from '../components/ui/PerspectiveTilt';
 import { MagneticButton } from '../components/ui/MagneticButton';
 import Fuse from 'fuse.js';
+
+import { AtmosphericBackground } from '../components/ui/AtmosphericBackground';
 
 export const Work = () => {
   const [activeFilter, setActiveFilter] = useState('All');
@@ -34,12 +37,13 @@ export const Work = () => {
       featured: true,
       recent: true,
       image: "https://picsum.photos/seed/lumina/1200/800",
-      desc: "A property search website built for speed and ease of use, helping users find listings quickly.",
-      challenge: "The old website was slow and difficult to navigate, making it hard for users to find the properties they were looking for.",
-      solution: "We built a new website using Next.js to improve performance and redesigned the search interface to be more intuitive for users.",
-      results: "Users are now spending more time on the site, and the client has seen an increase in property inquiries.",
-      roi: { conversion: "+30%", uptime: "99.9%", engagement: "+45%" },
-      technologies: ["Next.js", "TypeScript", "Tailwind CSS", "PostgreSQL"]
+      desc: "A high-performance property ecosystem architected for sub-second search latency and enterprise scalability.",
+      challenge: "The legacy infrastructure suffered from high latency and poor mobile conversion rates, hindering market growth.",
+      solution: "We implemented a headless architecture using Next.js and a custom-built search engine optimized for real-time listing updates.",
+      results: "Achieved a 30% increase in lead generation and 99.99% system availability during peak traffic cycles.",
+      roi: { conversion: "+30%", uptime: "99.99%", engagement: "+45%" },
+      technologies: ["Next.js", "TypeScript", "Tailwind CSS", "PostgreSQL"],
+      stats: { complexity: "High", performance: 98, security: "Enterprise" }
     },
     {
       title: "Aura Creative Studio",
@@ -47,12 +51,13 @@ export const Work = () => {
       featured: true,
       recent: false,
       image: "https://picsum.photos/seed/aura/1200/800",
-      desc: "A complete brand refresh and website design for a creative studio, focusing on a clean and professional look.",
-      challenge: "Aura's previous branding was inconsistent and their website didn't accurately reflect the quality of their work.",
-      solution: "We created a new visual identity and a minimalist website that highlights their portfolio and services clearly.",
-      results: "The new branding has helped them attract more professional clients and improved their overall brand recognition.",
+      desc: "A comprehensive brand identity and digital presence engineered to reflect high-end creative precision.",
+      challenge: "Inconsistent visual language across platforms was diluting brand equity and client trust.",
+      solution: "Developed a unified design system and a minimalist digital portfolio that prioritizes high-resolution asset delivery.",
+      results: "Brand recognition increased by 150%, leading to a significant shift towards premium-tier client acquisitions.",
       roi: { conversion: "+150%", uptime: "99.9%", engagement: "+80%" },
-      technologies: ["Figma", "Framer Motion", "Adobe Illustrator"]
+      technologies: ["Figma", "Framer Motion", "Adobe Illustrator"],
+      stats: { complexity: "Medium", performance: 99, security: "Standard" }
     },
     {
       title: "Nexus Fintech App",
@@ -60,12 +65,13 @@ export const Work = () => {
       featured: true,
       recent: true,
       image: "https://picsum.photos/seed/nexus/1200/800",
-      desc: "A mobile app design and development project that simplifies financial management for everyday users.",
-      challenge: "The original app was complex and confusing, leading to many users dropping off during the signup process.",
-      solution: "We simplified the user flow and redesigned the interface to make it easier for users to understand their financial data.",
-      results: "The signup completion rate has improved significantly, and user feedback on the new design has been very positive.",
+      desc: "A secure, low-latency financial management platform designed for high-frequency user interactions.",
+      challenge: "Complex user flows and high friction during onboarding were causing significant user drop-off.",
+      solution: "Streamlined the UX architecture and implemented a robust backend with real-time data synchronization.",
+      results: "Onboarding completion rate improved by 85%, with a 60% increase in daily active users.",
       roi: { conversion: "+85%", uptime: "99.9%", engagement: "+60%" },
-      technologies: ["React Native", "Node.js", "MongoDB"]
+      technologies: ["React Native", "Node.js", "MongoDB"],
+      stats: { complexity: "Critical", performance: 96, security: "Military-Grade" }
     },
     {
       title: "Vanguard Logistics",
@@ -73,12 +79,13 @@ export const Work = () => {
       featured: false,
       recent: false,
       image: "https://picsum.photos/seed/vanguard/1200/800",
-      desc: "An internal dashboard for a logistics company to track shipments and manage fleet operations in real-time.",
-      challenge: "The company was using outdated systems that made it difficult to track shipments accurately and efficiently.",
-      solution: "We developed a custom dashboard that integrates with their existing data to provide real-time updates on shipment status.",
-      results: "The new system has improved operational efficiency and reduced the time spent on manual tracking tasks.",
+      desc: "An operational dashboard providing real-time fleet telemetry and automated shipment tracking.",
+      challenge: "Manual tracking processes were causing operational bottlenecks and data inaccuracies.",
+      solution: "Engineered a custom telemetry dashboard that integrates directly with fleet hardware for live data visualization.",
+      results: "Operational efficiency increased by 40%, with a significant reduction in manual reporting errors.",
       roi: { conversion: "N/A", uptime: "99.9%", engagement: "+40%" },
-      technologies: ["React", "Node.js", "PostgreSQL"]
+      technologies: ["React", "Node.js", "PostgreSQL"],
+      stats: { complexity: "High", performance: 94, security: "Enterprise" }
     },
     {
       title: "Zenith Marketplace",
@@ -86,12 +93,13 @@ export const Work = () => {
       featured: true,
       recent: true,
       image: "https://picsum.photos/seed/zenith/1200/800",
-      desc: "An e-commerce website for a fashion brand, focusing on high-quality visuals and a smooth shopping experience.",
-      challenge: "The brand needed a website that could handle high traffic during sales and provide a consistent experience across devices.",
-      solution: "We built a responsive e-commerce site with a focus on performance and clean visual design to showcase their products.",
-      results: "The site has seen an increase in mobile sales and can now handle peak traffic without any performance issues.",
-      roi: { conversion: "+22%", uptime: "99.9%", engagement: "+35%" },
-      technologies: ["React", "Shopify API", "Tailwind CSS"]
+      desc: "A scalable e-commerce engine optimized for high-volume transactions and seamless cross-device experiences.",
+      challenge: "The existing platform was unable to handle traffic spikes during seasonal sales, leading to revenue loss.",
+      solution: "Architected a cloud-native commerce solution with auto-scaling capabilities and a high-fidelity visual interface.",
+      results: "Successfully handled a 400% traffic surge with zero downtime, resulting in a 22% increase in overall sales.",
+      roi: { conversion: "+22%", uptime: "100%", engagement: "+35%" },
+      technologies: ["React", "Shopify API", "Tailwind CSS"],
+      stats: { complexity: "High", performance: 97, security: "PCI-DSS" }
     },
     {
       title: "Titan Health",
@@ -99,12 +107,13 @@ export const Work = () => {
       featured: false,
       recent: false,
       image: "https://picsum.photos/seed/titan/1200/800",
-      desc: "A healthcare app that helps patients schedule appointments and communicate with their doctors securely.",
-      challenge: "Patients found it difficult to book appointments online and were concerned about the security of their personal data.",
-      solution: "We designed and developed a secure app with a simple booking system and encrypted messaging features.",
-      results: "Patient satisfaction has improved, and the app has made it easier for the clinic to manage appointments.",
+      desc: "A HIPAA-compliant patient management system focused on data security and intuitive scheduling.",
+      challenge: "Patients faced significant friction in booking appointments, and data privacy was a primary concern.",
+      solution: "Developed a secure, encrypted patient portal with a simplified scheduling engine and real-time notifications.",
+      results: "Patient satisfaction scores increased by 50%, with a 70% reduction in scheduling-related support calls.",
       roi: { conversion: "+50%", uptime: "100%", engagement: "+70%" },
-      technologies: ["React", "Node.js", "PostgreSQL"]
+      technologies: ["React", "Node.js", "PostgreSQL"],
+      stats: { complexity: "Critical", performance: 95, security: "HIPAA" }
     }
   ];
 
@@ -168,20 +177,13 @@ export const Work = () => {
       className="relative min-h-screen bg-black overflow-hidden"
     >
       {/* Atmospheric Background */}
-      <div className="absolute inset-0 z-0 pointer-events-none">
-        <div className="absolute top-0 left-0 w-full h-full opacity-5" 
-             style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.15) 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
-        <div className="absolute top-1/4 -right-20 w-[600px] h-[600px] bg-brand-red/10 blur-[180px] rounded-full animate-pulse" />
-        <div className="absolute -bottom-20 -left-20 w-[700px] h-[700px] bg-blue-900/10 blur-[180px] rounded-full animate-pulse" style={{ animationDelay: '2s' }} />
-        <div className="absolute inset-0 grid-bg opacity-10" />
-        <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black" />
-        <img 
-          src="https://images.unsplash.com/photo-1522542550221-31fd1971107c?auto=format&fit=crop&q=80&w=2070" 
-          className="absolute inset-0 w-full h-full object-cover opacity-[0.05] grayscale"
-          alt="Background Texture"
-          referrerPolicy="no-referrer"
-        />
-      </div>
+      <AtmosphericBackground 
+        imageUrl="https://images.unsplash.com/photo-1522542550221-31fd1971107c?auto=format&fit=crop&q=80&w=2070"
+        accentColor="red"
+        statusText="OPERATIONAL_SYNC"
+        scanMode="ACTIVE_TELEMETRY"
+        sysRef="KPTCH_WRK_ARCH_00"
+      />
 
       <div className="relative z-10 pt-24 md:pt-32 pb-20 px-6 md:px-12" role="main" aria-label="Our Portfolio">
         <div className="max-w-7xl mx-auto">
@@ -341,7 +343,8 @@ export const Work = () => {
                     layout
                     role="listitem"
                     initial={{ opacity: 0, y: 50 }}
-                    animate={{ opacity: 1, y: 0 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
                     exit={{ opacity: 0, scale: 0.95 }}
                     transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: i * 0.1 }}
                     className="group relative cursor-pointer focus:outline-none"
@@ -351,31 +354,95 @@ export const Work = () => {
                     aria-label={`View project: ${project.title}`}
                   >
                     <PerspectiveTilt 
-                      className="overflow-hidden rounded-[2rem] aspect-[16/10] mb-8 relative"
+                      className="overflow-hidden rounded-[2.5rem] aspect-[16/10] mb-8 relative border border-white/5 group-hover:border-brand-red/30 transition-all duration-700 shadow-2xl"
                     >
                       <img 
                         src={project.image} 
                         alt={project.title} 
                         loading="lazy"
                         referrerPolicy="no-referrer"
-                        className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 group-hover:scale-105" 
+                        className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 group-hover:scale-110" 
                       />
-                      {project.featured && (
-                        <div className="absolute top-6 left-6 z-20 px-4 py-1.5 bg-brand-red text-white text-[8px] font-bold uppercase tracking-[0.3em] rounded-full">
-                          Featured
+                      
+                      {/* Project Metadata Overlay */}
+                      <div className="absolute top-6 left-6 z-20 flex flex-col gap-2">
+                        <AnimatePresence>
+                          {project.featured && (
+                            <motion.div 
+                              initial={{ opacity: 0, x: -10 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              className="px-4 py-1.5 bg-brand-red text-white text-[8px] font-bold uppercase tracking-[0.3em] rounded-full shadow-[0_0_20px_rgba(255,59,59,0.6)] border border-white/10"
+                            >
+                              Featured
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                        <div className="px-4 py-1.5 bg-black/60 backdrop-blur-md border border-white/10 text-white/60 text-[8px] font-mono font-bold uppercase tracking-[0.3em] rounded-full">
+                          Node: {String(i + 1).padStart(2, '0')}
                         </div>
-                      )}
-                      <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-700" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                    </PerspectiveTilt>
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h3 className="text-2xl md:text-3xl lg:text-4xl font-display font-bold mb-3 group-hover:text-brand-red transition-colors">{project.title}</h3>
-                        <p className="text-brand-red font-mono text-[10px] font-bold uppercase tracking-[0.3em] mb-4">{project.category}</p>
-                        <p className="text-white/60 text-sm md:text-base font-light leading-relaxed max-w-sm">{project.desc}</p>
                       </div>
-                      <div className="w-10 h-10 md:w-12 md:h-12 rounded-full border border-white/10 flex items-center justify-center group-hover:bg-white group-hover:text-black transition-all duration-500 shrink-0">
-                        <ArrowUpRight size={20} className="md:w-6 md:h-6" />
+
+                      <div className="absolute bottom-6 right-6 z-20 flex gap-2">
+                        <div className="px-4 py-1.5 bg-black/60 backdrop-blur-md border border-white/10 text-emerald-400 text-[8px] font-mono font-bold uppercase tracking-[0.3em] rounded-full flex items-center gap-2">
+                          <div className="w-1 h-1 bg-emerald-400 rounded-full animate-pulse" />
+                          Perf: {project.stats.performance}%
+                        </div>
+                      </div>
+
+                      {/* Technical Specs Overlay (On Hover) */}
+                      <div className="absolute inset-0 bg-black/80 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-center p-12 z-30">
+                        <div className="space-y-6">
+                          <div className="flex items-center gap-4">
+                            <div className="w-8 h-px bg-brand-red" />
+                            <span className="text-brand-red font-mono text-[10px] font-bold uppercase tracking-[0.4em]">Technical Specs</span>
+                          </div>
+                          
+                          <div className="grid grid-cols-2 gap-8">
+                            <div>
+                              <p className="text-white/20 font-mono text-[8px] uppercase tracking-widest mb-2">Architecture</p>
+                              <p className="text-white/80 font-mono text-[10px] font-bold uppercase">{project.stats.complexity}</p>
+                            </div>
+                            <div>
+                              <p className="text-white/20 font-mono text-[8px] uppercase tracking-widest mb-2">Security Level</p>
+                              <p className="text-white/80 font-mono text-[10px] font-bold uppercase">{project.stats.security}</p>
+                            </div>
+                            <div>
+                              <p className="text-white/20 font-mono text-[8px] uppercase tracking-widest mb-2">Region</p>
+                              <p className="text-white/80 font-mono text-[10px] font-bold uppercase">{project.region}</p>
+                            </div>
+                            <div>
+                              <p className="text-white/20 font-mono text-[8px] uppercase tracking-widest mb-2">Status</p>
+                              <p className="text-emerald-400 font-mono text-[10px] font-bold uppercase">{project.status}</p>
+                            </div>
+                          </div>
+
+                          <div className="pt-6 border-t border-white/10">
+                            <p className="text-white/20 font-mono text-[8px] uppercase tracking-widest mb-3">Core Technologies</p>
+                            <div className="flex flex-wrap gap-2">
+                              {project.technologies.map((tech: string) => (
+                                <span key={tech} className="px-2 py-1 bg-white/5 border border-white/10 rounded text-[8px] font-mono text-white/40 uppercase">
+                                  {tech}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-700" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    </PerspectiveTilt>
+                    <div className="flex justify-between items-start group-hover:translate-x-2 transition-transform duration-500">
+                      <div className="flex-grow">
+                        <div className="flex items-center gap-3 mb-3">
+                          <span className="w-6 h-px bg-brand-red/40 group-hover:w-12 group-hover:bg-brand-red transition-all duration-500" />
+                          <p className="text-brand-red font-mono text-[10px] font-bold uppercase tracking-[0.3em]">{project.category}</p>
+                        </div>
+                        <h3 className="text-2xl md:text-3xl lg:text-4xl font-display font-bold mb-4 group-hover:text-brand-red transition-colors tracking-tighter leading-tight">{project.title}</h3>
+                        <p className="text-white/40 text-sm md:text-base font-light leading-relaxed max-w-md line-clamp-2 group-hover:text-white/80 transition-colors">{project.desc}</p>
+                      </div>
+                      <div className="w-12 h-12 md:w-16 md:h-16 rounded-full border border-white/10 flex items-center justify-center group-hover:bg-brand-red group-hover:border-brand-red group-hover:text-white transition-all duration-500 shrink-0 mt-2 shadow-lg">
+                        <ArrowUpRight size={24} className="md:w-8 md:h-8 group-hover:rotate-45 transition-transform duration-500" />
                       </div>
                     </div>
                   </motion.div>
@@ -484,48 +551,96 @@ export const Work = () => {
 
             <div className="max-w-7xl mx-auto px-6 md:px-12 py-16 md:py-32 grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-20">
               <div className="md:col-span-2">
-                <h3 className="text-3xl md:text-4xl font-display font-bold mb-6 md:mb-8 text-brand-red">The Challenge.</h3>
+                <div className="flex items-center gap-4 mb-12">
+                  <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-brand-red/10 border border-brand-red/20">
+                    <div className="w-2 h-2 rounded-full bg-brand-red animate-pulse" />
+                    <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-brand-red">Operational Audit</span>
+                  </div>
+                  <div className="h-px flex-grow bg-white/5" />
+                </div>
+
+                <h3 className="text-3xl md:text-4xl font-display font-bold mb-6 md:mb-8 text-brand-red tracking-tight">The Challenge.</h3>
                 <p className="text-xl md:text-2xl text-white/60 font-light leading-relaxed mb-12 md:mb-16">
                   {selectedProject.challenge}
                 </p>
-                <h3 className="text-3xl md:text-4xl font-display font-bold mb-6 md:mb-8 text-brand-red">The Solution.</h3>
+                
+                <h3 className="text-3xl md:text-4xl font-display font-bold mb-6 md:mb-8 text-brand-red tracking-tight">The Solution.</h3>
                 <p className="text-xl md:text-2xl text-white/60 font-light leading-relaxed mb-12 md:mb-16">
                   {selectedProject.solution}
                 </p>
-                <h3 className="text-3xl md:text-4xl font-display font-bold mb-6 md:mb-8 text-brand-red">The Results.</h3>
-                <p className="text-xl md:text-2xl text-white/60 font-light leading-relaxed italic border-l-2 border-brand-red pl-6">
-                  {selectedProject.results}
-                </p>
+                
+                <h3 className="text-3xl md:text-4xl font-display font-bold mb-6 md:mb-8 text-brand-red tracking-tight">The Results.</h3>
+                <div className="relative p-8 rounded-3xl bg-white/5 border border-white/10 overflow-hidden group">
+                  <div className="absolute top-0 right-0 p-4 opacity-10">
+                    <Activity size={80} className="text-brand-red" />
+                  </div>
+                  <p className="text-xl md:text-2xl text-white font-light leading-relaxed italic relative z-10">
+                    "{selectedProject.results}"
+                  </p>
+                </div>
               </div>
+              
               <div className="space-y-12">
-                <div>
-                  <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/40 block mb-4">Technologies</span>
-                  <div className="flex flex-wrap gap-2">
-                    {selectedProject.technologies.map((tech: string) => (
-                      <span key={tech} className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] font-mono font-bold uppercase tracking-widest text-white/60">
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-                <div>
-                  <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/40 block mb-4">Key Metrics</span>
-                  <div className="space-y-6">
-                    <div>
-                      <span className="text-3xl md:text-4xl font-display font-bold block">{selectedProject.roi.conversion}</span>
-                      <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-brand-red">Conversion Rate</span>
-                    </div>
-                    <div>
-                      <span className="text-3xl md:text-4xl font-display font-bold block">{selectedProject.roi.engagement}</span>
-                      <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-brand-red">User Engagement</span>
+                <div className="p-8 rounded-3xl bg-zinc-900/50 border border-white/5 space-y-10">
+                  <div>
+                    <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/40 block mb-6">Technical Stack</span>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedProject.technologies.map((tech: string) => (
+                        <span key={tech} className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-[10px] font-mono font-bold uppercase tracking-widest text-white/60 hover:border-brand-red/40 transition-colors">
+                          {tech}
+                        </span>
+                      ))}
                     </div>
                   </div>
+
+                  <div>
+                    <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/40 block mb-6">Performance Metrics</span>
+                    <div className="space-y-8">
+                      <div className="flex justify-between items-end">
+                        <div>
+                          <span className="text-4xl md:text-5xl font-display font-bold block text-white tracking-tighter">{selectedProject.roi.conversion}</span>
+                          <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-brand-red">Conversion Lift</span>
+                        </div>
+                        <ArrowUpRight className="text-emerald-400 mb-2" size={24} />
+                      </div>
+                      <div className="flex justify-between items-end">
+                        <div>
+                          <span className="text-4xl md:text-5xl font-display font-bold block text-white tracking-tighter">{selectedProject.roi.engagement}</span>
+                          <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-brand-red">User Engagement</span>
+                        </div>
+                        <Activity className="text-blue-400 mb-2" size={24} />
+                      </div>
+                      <div className="flex justify-between items-end">
+                        <div>
+                          <span className="text-4xl md:text-5xl font-display font-bold block text-white tracking-tighter">{selectedProject.roi.uptime}</span>
+                          <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-brand-red">System Uptime</span>
+                        </div>
+                        <Code2 className="text-purple-400 mb-2" size={24} />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="pt-8 border-t border-white/5">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <span className="text-[9px] font-mono text-white/20 block uppercase tracking-widest mb-1">Complexity</span>
+                        <span className="text-xs font-mono text-white font-bold">{selectedProject.stats.complexity}</span>
+                      </div>
+                      <div>
+                        <span className="text-[9px] font-mono text-white/20 block uppercase tracking-widest mb-1">Security</span>
+                        <span className="text-xs font-mono text-white font-bold">{selectedProject.stats.security}</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <MagneticButton>
-                  <button className="w-full px-10 py-5 bg-white text-black rounded-full font-bold flex items-center justify-center gap-3 hover:bg-brand-red hover:text-white transition-all duration-500 uppercase tracking-widest text-[10px]">
-                    View Live Project <ArrowUpRight size={18} />
-                  </button>
-                </MagneticButton>
+
+                <Link to="/contact" className="w-full">
+                  <MagneticButton>
+                    <button className="w-full px-10 py-6 bg-white text-black rounded-full font-bold flex items-center justify-center gap-3 hover:bg-brand-red hover:text-white transition-all duration-500 uppercase tracking-widest text-[10px] shadow-xl">
+                      Initialize Live Project <ArrowUpRight size={20} />
+                    </button>
+                  </MagneticButton>
+                </Link>
               </div>
             </div>
 

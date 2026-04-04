@@ -7,6 +7,8 @@ import { PerspectiveTilt } from '../components/ui/PerspectiveTilt';
 import { Testimonials } from '../components/Testimonials';
 import { cn } from '../lib/utils';
 
+import { AtmosphericBackground } from '../components/ui/AtmosphericBackground';
+
 export const Home = () => {
   const [selectedProject, setSelectedProject] = useState<typeof projects[0] | null>(null);
   const [showScrollTop, setShowScrollTop] = useState(false);
@@ -103,50 +105,14 @@ export const Home = () => {
       {/* Hero */}
       <section className="relative min-h-screen flex flex-col justify-center px-6 md:px-12 py-20 md:py-40 overflow-hidden bg-black">
         {/* Enhanced Atmospheric Background */}
-        <div className="absolute inset-0 z-0">
-          {/* Technical Dot Matrix */}
-          <div className="absolute inset-0 opacity-[0.15]" 
-               style={{ 
-                 backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.15) 1px, transparent 1px)', 
-                 backgroundSize: '32px 32px' 
-               }} 
-          />
-          
-          {/* Subtle Grid */}
-          <div className="absolute inset-0 grid-bg opacity-10" />
-          
-          {/* Deep Vignette */}
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.8)_100%)]" />
-          
-          {/* Background Image */}
-          <img 
-            src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=2072" 
-            className="absolute inset-0 w-full h-full object-cover opacity-[0.08] grayscale"
-            alt="Background Texture"
-            referrerPolicy="no-referrer"
-          />
-
-          {/* Muted Layered Gradients */}
-          <motion.div 
-            animate={{ 
-              scale: [1, 1.1, 1],
-              opacity: [0.1, 0.15, 0.1]
-            }}
-            transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-            className="absolute top-1/4 -right-20 w-[600px] h-[600px] bg-brand-red/10 blur-[180px] rounded-full" 
-          />
-          <motion.div 
-            animate={{ 
-              scale: [1.1, 1, 1.1],
-              opacity: [0.05, 0.1, 0.05]
-            }}
-            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-            className="absolute -bottom-20 -left-20 w-[700px] h-[700px] bg-blue-900/10 blur-[180px] rounded-full" 
-          />
-          
-          {/* Scanline Effect */}
-          <div className="absolute inset-0 pointer-events-none opacity-[0.02] bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%)] bg-[length:100%_4px]" />
-        </div>
+        <AtmosphericBackground 
+          imageUrl="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=2072"
+          accentColor="red"
+          statusText="SYSTEM_READY"
+          scanMode="HERO_TELEMETRY"
+          sysRef="KPTCH_HOME_MAIN"
+          opacity={0.08}
+        />
 
         <div className="max-w-7xl mx-auto w-full relative z-10">
           <motion.div
@@ -807,150 +773,267 @@ export const Home = () => {
       <Testimonials />
 
       {/* Technical Authority Widget */}
-      {/* Studio Diagnostics */}
+      {/* Operational Framework */}
       <section className="py-32 px-6 md:px-12 bg-black border-y border-white/5 relative overflow-hidden">
         <div className="absolute inset-0 z-0 opacity-10">
           <div className="absolute inset-0 grid-bg" />
+          <div className="absolute top-0 left-1/4 w-px h-full bg-gradient-to-b from-transparent via-brand-red/20 to-transparent" />
+          <div className="absolute top-0 right-1/4 w-px h-full bg-gradient-to-b from-transparent via-blue-500/20 to-transparent" />
         </div>
         
         <div className="max-w-7xl mx-auto relative z-10">
-          <div className="flex flex-col md:flex-row justify-between items-end gap-8 mb-20">
-            <div>
-              <span className="text-brand-red font-mono font-bold tracking-[0.4em] uppercase text-[10px] mb-4 block">System Diagnostics</span>
-              <h2 className="text-4xl md:text-6xl font-display font-bold tracking-tighter">Operational Status.</h2>
+          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-12 mb-20">
+            <div className="max-w-2xl">
+              <motion.div 
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                className="flex items-center gap-3 mb-6"
+              >
+                <span className="w-8 h-px bg-brand-red" />
+                <span className="text-brand-red font-mono font-bold tracking-[0.4em] uppercase text-[10px]">
+                  Operational Framework
+                </span>
+              </motion.div>
+              <h2 className="text-[clamp(2.5rem,5vw,5rem)] font-display font-bold tracking-tighter leading-[0.9]">
+                Service <span className="text-brand-red">Architecture.</span>
+              </h2>
+              <p className="mt-6 text-white/40 text-lg font-light max-w-xl leading-relaxed">
+                Our methodology integrates design precision with engineering rigor. We don't just build; we architect digital ecosystems for long-term operational excellence.
+              </p>
             </div>
-            <div className="flex items-center gap-4 px-6 py-3 rounded-full bg-white/5 border border-white/10">
-              <div className="flex items-center gap-2 text-[10px] font-mono font-bold uppercase tracking-widest text-emerald-400">
-                <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-                Status: Nominal
+            
+            <div className="flex flex-wrap items-center gap-4 p-2 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md">
+              <div className="flex items-center gap-3 px-4 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
+                <div className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400"></span>
+                </div>
+                <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-emerald-400">Standard: Optimized</span>
               </div>
-              <div className="w-px h-4 bg-white/10" />
-              <span className="text-[10px] font-mono text-white/40">v2.4.0-build.88</span>
+              <div className="hidden sm:block w-px h-6 bg-white/10" />
+              <div className="flex items-center gap-3 px-4 py-2">
+                <Layers size={14} className="text-white/40" />
+                <span className="text-[10px] font-mono text-white/60 uppercase tracking-widest">SOP: v3.1</span>
+              </div>
+              <div className="hidden sm:block w-px h-6 bg-white/10" />
+              <div className="flex items-center gap-3 px-4 py-2">
+                <Box size={14} className="text-white/40" />
+                <span className="text-[10px] font-mono text-white/60 uppercase tracking-widest">ISO: Logic-9001</span>
+              </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Visual Fidelity Node */}
-            <div className="p-8 rounded-[2rem] bg-zinc-900/40 border border-white/5 flex flex-col gap-8 group hover:border-brand-red/30 transition-all duration-500 relative overflow-hidden">
-              <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
-                <Palette size={80} />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {/* Design Intelligence */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="p-8 rounded-[2.5rem] bg-zinc-900/40 border border-white/5 flex flex-col gap-8 group hover:border-brand-red/30 transition-all duration-700 relative overflow-hidden"
+            >
+              <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
+                <Palette size={120} />
               </div>
-              <div className="space-y-2">
-                <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/40">Node 01 // UI Systems</span>
-                <h3 className="text-2xl font-display font-bold">Design Accuracy</h3>
+              <div className="space-y-2 relative z-10">
+                <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/30">Node 01 // Creative Logic</span>
+                <h3 className="text-2xl font-display font-bold">Design Intelligence</h3>
               </div>
-              <div className="space-y-6">
+              <div className="space-y-6 relative z-10">
                 <div className="flex justify-between items-end">
-                  <span className="text-4xl font-mono font-bold text-white">100%</span>
-                  <span className="text-[10px] font-mono text-emerald-400">PIXEL_PERFECT</span>
+                  <span className="text-5xl font-mono font-bold text-white tracking-tighter">98.2%</span>
+                  <div className="flex flex-col items-end">
+                    <span className="text-[10px] font-mono text-emerald-400 font-bold uppercase tracking-widest">VISUAL_ACCURACY</span>
+                    <span className="text-[8px] font-mono text-white/20 uppercase">Brand alignment index</span>
+                  </div>
                 </div>
-                <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
+                <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
                   <motion.div 
                     initial={{ width: 0 }}
-                    whileInView={{ width: "100%" }}
-                    transition={{ duration: 1.5, ease: "easeOut" }}
-                    className="h-full bg-brand-red"
+                    whileInView={{ width: "98.2%" }}
+                    transition={{ duration: 2, ease: "circOut" }}
+                    className="h-full bg-brand-red shadow-[0_0_15px_rgba(255,59,59,0.5)]"
                   />
                 </div>
-                <div className="grid grid-cols-2 gap-4 pt-4 border-t border-white/5">
+                <div className="grid grid-cols-2 gap-4 pt-6 border-t border-white/5">
                   <div>
-                    <span className="text-[9px] font-mono text-white/30 block uppercase">Asset Opt.</span>
-                    <span className="text-xs font-mono text-white">98.4%</span>
+                    <span className="text-[9px] font-mono text-white/20 block uppercase tracking-widest mb-1">UI/UX Sync</span>
+                    <span className="text-xs font-mono text-white font-bold">Optimal</span>
                   </div>
                   <div>
-                    <span className="text-[9px] font-mono text-white/30 block uppercase">Color Depth</span>
-                    <span className="text-xs font-mono text-white">32-BIT</span>
+                    <span className="text-[9px] font-mono text-white/20 block uppercase tracking-widest mb-1">Graphic Fidelity</span>
+                    <span className="text-xs font-mono text-white font-bold">High-Res</span>
                   </div>
                 </div>
               </div>
-            </div>
+            </motion.div>
 
-            {/* Engineering Core */}
-            <div className="p-8 rounded-[2rem] bg-zinc-900/40 border border-white/5 flex flex-col gap-8 group hover:border-blue-500/30 transition-all duration-500 relative overflow-hidden">
-              <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
-                <Code2 size={80} />
+            {/* Engineering Power */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+              className="p-8 rounded-[2.5rem] bg-zinc-900/40 border border-white/5 flex flex-col gap-8 group hover:border-blue-500/30 transition-all duration-700 relative overflow-hidden"
+            >
+              <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
+                <Code2 size={120} />
               </div>
-              <div className="space-y-2">
-                <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/40">Node 02 // Infrastructure</span>
-                <h3 className="text-2xl font-display font-bold">System Uptime</h3>
+              <div className="space-y-2 relative z-10">
+                <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/30">Node 02 // IT Development</span>
+                <h3 className="text-2xl font-display font-bold">Engineering Power</h3>
               </div>
-              <div className="space-y-6">
+              <div className="space-y-6 relative z-10">
                 <div className="flex justify-between items-end">
-                  <span className="text-4xl font-mono font-bold text-white">99.99%</span>
-                  <span className="text-[10px] font-mono text-blue-400">STABLE_BUILD</span>
+                  <span className="text-5xl font-mono font-bold text-white tracking-tighter">99.9%</span>
+                  <div className="flex flex-col items-end">
+                    <span className="text-[10px] font-mono text-blue-400 font-bold uppercase tracking-widest">CODE_STABILITY</span>
+                    <span className="text-[8px] font-mono text-white/20 uppercase">Scalable architecture</span>
+                  </div>
                 </div>
-                <div className="flex gap-1 h-8 items-end">
-                  {[...Array(20)].map((_, i) => (
+                <div className="flex gap-1.5 h-10 items-end">
+                  {[...Array(15)].map((_, i) => (
                     <motion.div
                       key={i}
-                      initial={{ height: "20%" }}
-                      animate={{ height: ["20%", "100%", "60%", "90%", "20%"] }}
+                      initial={{ height: "30%" }}
+                      animate={{ height: ["30%", "100%", "50%", "85%", "30%"] }}
                       transition={{ 
-                        duration: 2 + Math.random() * 2, 
+                        duration: 1.5 + Math.random() * 1.5, 
                         repeat: Infinity, 
-                        delay: i * 0.1 
+                        delay: i * 0.1,
+                        ease: "easeInOut"
                       }}
-                      className="flex-grow bg-blue-500/20 rounded-sm"
+                      className="flex-grow bg-blue-500/20 rounded-sm group-hover:bg-blue-500/40 transition-colors"
                     />
                   ))}
                 </div>
-                <div className="grid grid-cols-2 gap-4 pt-4 border-t border-white/5">
+                <div className="grid grid-cols-2 gap-4 pt-6 border-t border-white/5">
                   <div>
-                    <span className="text-[9px] font-mono text-white/30 block uppercase">Deploy Speed</span>
-                    <span className="text-xs font-mono text-white">124ms</span>
+                    <span className="text-[9px] font-mono text-white/20 block uppercase tracking-widest mb-1">Latency</span>
+                    <span className="text-xs font-mono text-white font-bold">&lt; 1.0s</span>
                   </div>
                   <div>
-                    <span className="text-[9px] font-mono text-white/30 block uppercase">Security</span>
-                    <span className="text-xs font-mono text-white">AES-256</span>
+                    <span className="text-[9px] font-mono text-white/20 block uppercase tracking-widest mb-1">Security</span>
+                    <span className="text-xs font-mono text-white font-bold">Enterprise</span>
                   </div>
                 </div>
               </div>
-            </div>
+            </motion.div>
 
-            {/* Strategic Engine */}
-            <div className="p-8 rounded-[2rem] bg-zinc-900/40 border border-white/5 flex flex-col gap-8 group hover:border-emerald-500/30 transition-all duration-500 relative overflow-hidden">
-              <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
-                <Activity size={80} />
+            {/* Strategic Advisory */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+              className="p-8 rounded-[2.5rem] bg-zinc-900/40 border border-white/5 flex flex-col gap-8 group hover:border-emerald-500/30 transition-all duration-700 relative overflow-hidden"
+            >
+              <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
+                <Activity size={120} />
               </div>
-              <div className="space-y-2">
-                <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/40">Node 03 // Advisory</span>
-                <h3 className="text-2xl font-display font-bold">Market Impact</h3>
+              <div className="space-y-2 relative z-10">
+                <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/30">Node 03 // Advisory</span>
+                <h3 className="text-2xl font-display font-bold">Strategic Advisory</h3>
               </div>
-              <div className="space-y-6">
+              <div className="space-y-6 relative z-10">
                 <div className="flex justify-between items-end">
-                  <span className="text-4xl font-mono font-bold text-white">12.5x</span>
-                  <span className="text-[10px] font-mono text-emerald-400">ROI_MULTIPLIER</span>
+                  <span className="text-5xl font-mono font-bold text-white tracking-tighter">45%</span>
+                  <div className="flex flex-col items-end">
+                    <span className="text-[10px] font-mono text-emerald-400 font-bold uppercase tracking-widest">ROI_LIFT</span>
+                    <span className="text-[8px] font-mono text-white/20 uppercase">Business alignment</span>
+                  </div>
                 </div>
-                <div className="relative h-12 flex items-center">
-                  <svg className="w-full h-full text-emerald-500/20" viewBox="0 0 100 20" preserveAspectRatio="none">
+                <div className="relative h-10 flex items-center">
+                  <svg className="w-full h-full text-emerald-500/30" viewBox="0 0 100 20" preserveAspectRatio="none">
                     <motion.path
                       d="M0 20 L10 15 L20 18 L30 10 L40 12 L50 5 L60 8 L70 2 L80 4 L90 1 L100 3"
                       fill="none"
                       stroke="currentColor"
-                      strokeWidth="1"
+                      strokeWidth="2"
                       initial={{ pathLength: 0 }}
                       whileInView={{ pathLength: 1 }}
-                      transition={{ duration: 2 }}
+                      transition={{ duration: 2.5, ease: "easeInOut" }}
                     />
                   </svg>
                   <motion.div 
-                    animate={{ opacity: [0, 1, 0] }}
+                    animate={{ opacity: [0, 1, 0], scale: [1, 1.5, 1] }}
                     transition={{ duration: 2, repeat: Infinity }}
-                    className="absolute right-0 top-0 w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]" 
+                    className="absolute right-0 top-0 w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.8)]" 
                   />
                 </div>
-                <div className="grid grid-cols-2 gap-4 pt-4 border-t border-white/5">
+                <div className="grid grid-cols-2 gap-4 pt-6 border-t border-white/5">
                   <div>
-                    <span className="text-[9px] font-mono text-white/30 block uppercase">Growth Lift</span>
-                    <span className="text-xs font-mono text-white">+85%</span>
+                    <span className="text-[9px] font-mono text-white/20 block uppercase tracking-widest mb-1">Strategy</span>
+                    <span className="text-xs font-mono text-white font-bold">Data-Driven</span>
                   </div>
                   <div>
-                    <span className="text-[9px] font-mono text-white/30 block uppercase">Retention</span>
-                    <span className="text-xs font-mono text-white">94.2%</span>
+                    <span className="text-[9px] font-mono text-white/20 block uppercase tracking-widest mb-1">Growth</span>
+                    <span className="text-xs font-mono text-white font-bold">Scalable</span>
                   </div>
                 </div>
               </div>
-            </div>
+            </motion.div>
+
+            {/* Operational Flow */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.3 }}
+              className="p-8 rounded-[2.5rem] bg-zinc-950 border border-white/5 flex flex-col gap-6 group hover:border-white/20 transition-all duration-700 relative overflow-hidden"
+            >
+              <div className="flex justify-between items-center relative z-10">
+                <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/30">Node 04 // Project Lifecycle</span>
+                <div className="flex gap-1">
+                  <div className="w-1 h-1 rounded-full bg-brand-red animate-pulse" />
+                  <div className="w-1 h-1 rounded-full bg-brand-red animate-pulse" style={{ animationDelay: '0.2s' }} />
+                  <div className="w-1 h-1 rounded-full bg-brand-red animate-pulse" style={{ animationDelay: '0.4s' }} />
+                </div>
+              </div>
+              
+              <div className="flex-grow font-mono text-[9px] space-y-3 overflow-hidden relative z-10">
+                {[
+                  { time: "Phase 01", msg: "TECHNICAL_AUDIT_INITIALIZED", type: "system" },
+                  { time: "Phase 02", msg: "ARCHITECTURE_BLUEPRINT_SYNC", type: "success" },
+                  { time: "Phase 03", msg: "ENGINEERING_SPRINT_ACTIVE", type: "system" },
+                  { time: "Phase 04", msg: "UI_SYSTEM_INTEGRATION", type: "system" },
+                  { time: "Phase 05", msg: "QUALITY_ASSURANCE_NOMINAL", type: "success" },
+                  { time: "Phase 06", msg: "DEPLOYMENT_READY_STABLE", type: "warning" },
+                  { time: "Phase 07", msg: "OPERATIONAL_EXCELLENCE", type: "success" },
+                ].map((log, i) => (
+                  <motion.div 
+                    key={i}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: i * 0.1 + 0.5 }}
+                    className="flex gap-3"
+                  >
+                    <span className="text-white/20 shrink-0">{log.time}</span>
+                    <span className={cn(
+                      "uppercase tracking-tighter",
+                      log.type === 'success' ? 'text-emerald-400' : 
+                      log.type === 'warning' ? 'text-blue-400' : 'text-white/60'
+                    )}>
+                      {log.msg}
+                    </span>
+                  </motion.div>
+                ))}
+                
+                {/* Scanning Line Effect */}
+                <motion.div 
+                  animate={{ top: ["0%", "100%", "0%"] }}
+                  transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+                  className="absolute left-0 right-0 h-px bg-brand-red/20 z-20 pointer-events-none shadow-[0_0_10px_rgba(255,59,59,0.5)]"
+                />
+              </div>
+
+              <div className="pt-6 border-t border-white/5 relative z-10">
+                <Link to="/contact" className="flex items-center justify-between group/link">
+                  <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/40 group-hover/link:text-brand-red transition-colors">View Methodology</span>
+                  <ArrowUpRight size={14} className="text-white/20 group-hover/link:text-brand-red group-hover/link:translate-x-1 group-hover/link:-translate-y-1 transition-all" />
+                </Link>
+              </div>
+            </motion.div>
           </div>
         </div>
       </section>

@@ -64,10 +64,9 @@ export const Navbar = () => {
         <div className="max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between">
           <Link to="/" className="flex items-center group">
             <img 
-              src="https://ais-dev-l4gphadlzxjwyhm6e7c2hc-185669140339.asia-southeast1.run.app/kapitech-logo.png" 
+              src="/Logo KTA - Blak BG.png" 
               alt="KAPITECH" 
-              className="h-10 md:h-12 w-auto object-contain group-hover:scale-110 transition-transform duration-500"
-              referrerPolicy="no-referrer"
+              className="h-8 md:h-10 w-auto object-contain group-hover:scale-105 transition-transform duration-500"
             />
           </Link>
 
@@ -92,13 +91,17 @@ export const Navbar = () => {
             </div>
             <Link 
               to="/contact" 
-              className="relative overflow-hidden px-8 py-3 bg-white text-black rounded-full text-[10px] font-bold uppercase tracking-[0.2em] group/btn transition-all duration-500 hover:pr-12"
+              className="relative overflow-hidden px-8 py-3 bg-white text-black rounded-full text-[10px] font-bold uppercase tracking-[0.2em] group/btn transition-all duration-500 hover:pr-12 shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:shadow-[0_0_30px_rgba(255,59,59,0.3)]"
             >
               <span className="relative z-10">Start Project</span>
               <div className="absolute inset-0 bg-brand-red translate-y-full group-hover/btn:translate-y-0 transition-transform duration-500" />
               <div className="absolute right-4 top-1/2 -translate-y-1/2 opacity-0 group-hover/btn:opacity-100 transition-all duration-500">
                 <ChevronRight size={14} className="text-white" />
               </div>
+              
+              {/* Enhanced Pulse Effect */}
+              <div className="absolute inset-0 -z-0 bg-brand-red/20 animate-ping opacity-0 group-hover:opacity-100 transition-opacity rounded-full" />
+              <div className="absolute inset-0 -z-0 bg-white/20 animate-pulse opacity-0 group-hover:opacity-100 transition-opacity" />
             </Link>
           </div>
 
@@ -124,10 +127,9 @@ export const Navbar = () => {
             <div className="flex justify-between items-center mb-20">
               <div className="flex items-center">
                 <img 
-                  src="https://ais-dev-l4gphadlzxjwyhm6e7c2hc-185669140339.asia-southeast1.run.app/kapitech-logo.png" 
+                  src="/Logo KTA - Blak BG.png" 
                   alt="KAPITECH" 
-                  className="h-10 w-auto object-contain"
-                  referrerPolicy="no-referrer"
+                  className="h-8 w-auto object-contain"
                 />
               </div>
               <button onClick={() => setIsMenuOpen(false)} className="p-2 hover:text-brand-red transition-colors">

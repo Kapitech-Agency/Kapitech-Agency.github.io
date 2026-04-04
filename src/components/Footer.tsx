@@ -107,13 +107,13 @@ export const Footer = () => {
         {/* Main Footer Content */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-16 mb-20">
           <div className="lg:col-span-4">
-            <Link to="/" className="inline-block mb-10 group">
+            <Link to="/" className="flex items-center gap-4 mb-10 group">
               <img 
-                src="Kapitech Logo White.png" 
+                src="/Logo KTA - Blak BG.png" 
                 alt="KAPITECH" 
-                className="h-10 md:h-12 w-auto object-contain transition-transform duration-700 group-hover:scale-110 group-hover:rotate-3"
-                referrerPolicy="no-referrer"
+                className="h-8 md:h-10 w-auto object-contain transition-transform duration-700 group-hover:scale-110 group-hover:rotate-3"
               />
+              <span className="text-2xl md:text-3xl font-display font-bold tracking-tighter group-hover:text-brand-red transition-colors">KAPITECH</span>
             </Link>
             <p className="text-white/40 text-sm font-light leading-relaxed max-w-sm mb-10">
               A digital agency specializing in high-performance systems and logical design. We bridge the gap between complex technology and human experience.
@@ -176,11 +176,11 @@ export const Footer = () => {
           <div className="lg:col-span-3">
             <h4 className="text-white/20 uppercase tracking-[0.3em] text-[10px] font-mono font-bold mb-8">Contact</h4>
             <div className="space-y-6">
-              <a href="mailto:hello@kapitech.co.id" className="flex items-center gap-4 text-white/40 hover:text-brand-red transition-all group">
+              <a href="mailto:hello@kapitech.id" className="flex items-center gap-4 text-white/40 hover:text-brand-red transition-all group">
                 <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:border-brand-red/30 group-hover:bg-brand-red/5 transition-all">
                   <Mail size={16} />
                 </div>
-                <span className="font-mono text-[10px] uppercase tracking-widest">hello@kapitech.co.id</span>
+                <span className="font-mono text-[10px] uppercase tracking-widest">hello@kapitech.id</span>
               </a>
               <div className="flex items-start gap-4 text-white/40">
                 <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center mt-1">

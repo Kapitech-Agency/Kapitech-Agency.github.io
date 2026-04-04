@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from 'motion/react';
 import { ArrowUpRight, Mail, Phone, MapPin, Globe, Cpu, Layout, Code2, Palette, Box } from 'lucide-react';
 import { MagneticButton } from '../components/ui/MagneticButton';
 
+import { AtmosphericBackground } from '../components/ui/AtmosphericBackground';
+
 export const Contact = () => {
   const offices = [
     {
@@ -73,20 +75,14 @@ export const Contact = () => {
       className="relative min-h-screen bg-black overflow-hidden"
     >
       {/* Atmospheric Background */}
-      <div className="absolute inset-0 z-0 pointer-events-none">
-        <div className="absolute top-0 left-0 w-full h-full opacity-5" 
-             style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.15) 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
-        <div className="absolute top-1/4 -right-20 w-[600px] h-[600px] bg-brand-red/10 blur-[180px] rounded-full animate-pulse" />
-        <div className="absolute -bottom-20 -left-20 w-[700px] h-[700px] bg-blue-900/10 blur-[180px] rounded-full animate-pulse" style={{ animationDelay: '2s' }} />
-        <div className="absolute inset-0 grid-bg opacity-10" />
-        <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black" />
-        <img 
-          src="https://images.unsplash.com/photo-1423666639041-f56000c27a9a?auto=format&fit=crop&q=80&w=2074" 
-          className="absolute inset-0 w-full h-full object-cover opacity-[0.05] grayscale"
-          alt="Background Texture"
-          referrerPolicy="no-referrer"
-        />
-      </div>
+      <AtmosphericBackground 
+        imageUrl="https://images.unsplash.com/photo-1423666639041-f56000c27a9a?auto=format&fit=crop&q=80&w=2074"
+        accentColor="red"
+        statusText="COMM_LINK_ESTABLISHED"
+        scanMode="SIGNAL_RECEPTION"
+        sysRef="KPTCH_CONTACT_NODE"
+        opacity={0.05}
+      />
 
       <div className="relative z-10">
         <div className="max-w-7xl mx-auto">
@@ -109,6 +105,20 @@ export const Contact = () => {
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 md:gap-24 px-6 md:px-12 py-20 md:py-40 overflow-hidden">
             <div className="lg:col-span-7">
+              <div className="mb-12 flex items-center gap-6">
+                <div className="flex -space-x-4">
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="w-12 h-12 rounded-full border-2 border-black overflow-hidden bg-zinc-800">
+                      <img src={`https://i.pravatar.cc/150?u=${i + 10}`} alt="Team Member" className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all" />
+                    </div>
+                  ))}
+                </div>
+                <div>
+                  <p className="text-white font-bold text-sm">Our team is online.</p>
+                  <p className="text-white/40 text-xs font-mono uppercase tracking-widest">Typical response: <span className="text-brand-red">Under 2 hours</span></p>
+                </div>
+              </div>
+
               <AnimatePresence mode="wait">
                 {isSubmitted ? (
                   <motion.div
@@ -198,7 +208,7 @@ export const Contact = () => {
                         <button 
                           disabled={isSubmitting}
                           type="submit"
-                          className="px-12 py-6 bg-white text-black rounded-full font-bold flex items-center gap-3 hover:bg-brand-red hover:text-white transition-all duration-500 uppercase tracking-widest text-xs group font-mono disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="px-12 py-6 bg-white text-black rounded-full font-bold flex items-center gap-3 hover:bg-brand-red hover:text-white transition-all duration-500 uppercase tracking-widest text-xs group font-mono disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_30px_rgba(255,255,255,0.1)] hover:shadow-[0_0_30px_rgba(255,59,59,0.3)]"
                         >
                           {isSubmitting ? 'Sending...' : 'Send Message'} 
                           {!isSubmitting && <ArrowUpRight size={20} className="group-hover:rotate-45 transition-transform" />}
@@ -242,15 +252,34 @@ export const Contact = () => {
                         </div>
                       </div>
                       
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div className="space-y-2">
-                          <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/20 block">Email</span>
-                          <a href={`mailto:${office.email}`} className="text-lg font-display font-bold hover:text-brand-red transition-colors block">{office.email}</a>
-                        </div>
-                        <div className="space-y-2">
-                          <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/20 block">Phone</span>
-                          <a href={`tel:${office.phone}`} className="text-lg font-display font-bold hover:text-brand-red transition-colors block">{office.phone}</a>
-                        </div>
+                      <div className="grid grid-cols-1 gap-6">
+                        <a 
+                          href={`mailto:${office.email}`} 
+                          className="group/link flex items-center gap-4 p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-brand-red/30 transition-all duration-500"
+                        >
+                          <div className="w-12 h-12 rounded-xl bg-brand-red/10 flex items-center justify-center text-brand-red group-hover/link:bg-brand-red group-hover/link:text-white transition-all duration-500">
+                            <Mail size={20} />
+                          </div>
+                          <div>
+                            <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/20 block mb-1">Email Address</span>
+                            <span className="text-lg font-display font-bold group-hover/link:text-brand-red transition-colors block">{office.email}</span>
+                          </div>
+                          <ArrowUpRight size={16} className="ml-auto text-white/20 group-hover/link:text-brand-red group-hover/link:translate-x-1 group-hover/link:-translate-y-1 transition-all" />
+                        </a>
+
+                        <a 
+                          href={`tel:${office.phone.replace(/\s/g, '')}`} 
+                          className="group/link flex items-center gap-4 p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-brand-red/30 transition-all duration-500"
+                        >
+                          <div className="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500 group-hover/link:bg-blue-500 group-hover/link:text-white transition-all duration-500">
+                            <Phone size={20} />
+                          </div>
+                          <div>
+                            <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/20 block mb-1">Phone Number</span>
+                            <span className="text-lg font-display font-bold group-hover/link:text-brand-red transition-colors block">{office.phone}</span>
+                          </div>
+                          <ArrowUpRight size={16} className="ml-auto text-white/20 group-hover/link:text-brand-red group-hover/link:translate-x-1 group-hover/link:-translate-y-1 transition-all" />
+                        </a>
                       </div>
                     </div>
                   </div>

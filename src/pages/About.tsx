@@ -1,9 +1,11 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { ArrowUpRight, CheckCircle2, Globe, Cpu, Layout, Code2, Palette, Box, Shield, Zap, Activity } from 'lucide-react';
+import { ArrowUpRight, CheckCircle2, Globe, Cpu, Layout, Code2, Palette, Box, Shield, Zap, Activity, Rocket } from 'lucide-react';
 import { MagneticButton } from '../components/ui/MagneticButton';
 import { PerspectiveTilt } from '../components/ui/PerspectiveTilt';
 import { cn } from '../lib/utils';
+
+import { AtmosphericBackground } from '../components/ui/AtmosphericBackground';
 
 export const About = () => {
   const values = [
@@ -25,10 +27,17 @@ export const About = () => {
   ];
 
   const journey = [
-    { year: "2021", event: "Kapitech Founded", desc: "Founded by Fikri Nurlete and Reynaldo Anakotta as a small digital studio." },
-    { year: "2022", event: "Service Expansion", desc: "Started offering full-scale IT development and UI/UX design services." },
-    { year: "2023", event: "Growing Portfolio", desc: "Successfully delivered projects for various local and international clients." },
-    { year: "2024", event: "Legalization", desc: "Officially legalized as PT. Kapitech Digital Indonesia to better serve our partners." }
+    { year: "2021", event: "Kapitech Founded", desc: "Founded by Fikri Nurlete and Reynaldo Anakotta as a small digital studio.", icon: <Rocket size={20} /> },
+    { year: "2022", event: "Service Expansion", desc: "Started offering full-scale IT development and UI/UX design services.", icon: <Zap size={20} /> },
+    { year: "2023", event: "Growing Portfolio", desc: "Successfully delivered projects for various local and international clients.", icon: <Globe size={20} /> },
+    { year: "2024", event: "Legalization", desc: "Officially legalized as PT. Kapitech Digital Indonesia to better serve our partners.", icon: <Shield size={20} /> }
+  ];
+
+  const techStack = [
+    { category: "Frontend", tools: ["React", "Next.js", "TypeScript", "Tailwind CSS", "Framer Motion"] },
+    { category: "Backend", tools: ["Node.js", "Express", "PostgreSQL", "Firebase", "Redis"] },
+    { category: "Design", tools: ["Figma", "Adobe Creative Suite", "Blender", "Spline"] },
+    { category: "Infrastructure", tools: ["AWS", "Google Cloud", "Docker", "Vercel"] }
   ];
 
   const team = [
@@ -54,20 +63,14 @@ export const About = () => {
       className="relative min-h-screen bg-black"
     >
       {/* Atmospheric Background */}
-      <div className="absolute inset-0 z-0 pointer-events-none">
-        <div className="absolute top-0 left-0 w-full h-full opacity-5" 
-             style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.15) 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
-        <div className="absolute top-1/4 -right-20 w-[600px] h-[600px] bg-brand-red/10 blur-[180px] rounded-full animate-pulse" />
-        <div className="absolute -bottom-20 -left-20 w-[700px] h-[700px] bg-blue-900/10 blur-[180px] rounded-full animate-pulse" style={{ animationDelay: '2s' }} />
-        <div className="absolute inset-0 grid-bg opacity-10" />
-        <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black" />
-        <img 
-          src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=1200" 
-          className="absolute inset-0 w-full h-full object-cover opacity-[0.05] grayscale"
-          alt="Background Texture"
-          referrerPolicy="no-referrer"
-        />
-      </div>
+      <AtmosphericBackground 
+        imageUrl="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=1200"
+        accentColor="purple"
+        statusText="HISTORY_SYNC_COMPLETE"
+        scanMode="ARCHIVE_RETRIEVAL"
+        sysRef="KPTCH_ABOUT_CORE"
+        opacity={0.05}
+      />
 
       <div className="relative z-10">
         <div className="max-w-7xl mx-auto">
@@ -90,7 +93,7 @@ export const About = () => {
 
           {/* Mission Section */}
           <section className="py-20 md:py-40 px-6 md:px-12 bg-zinc-950/30 relative overflow-hidden grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-24 items-center">
-            <div className="relative aspect-[4/5] rounded-[2rem] md:rounded-[3rem] overflow-hidden group">
+            <div className="relative aspect-[4/5] rounded-[3rem] md:rounded-[4rem] overflow-hidden group">
               <img 
                 src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=1200" 
                 alt="Kapitech Studio" 
@@ -135,7 +138,7 @@ export const About = () => {
               <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Operational Timeline</span>
               <h2 className="text-[clamp(2.5rem,6vw,6rem)] font-display font-bold tracking-tighter">System Evolution.</h2>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
               {journey.map((item, i) => (
                 <motion.div 
                   key={item.year}
@@ -143,12 +146,46 @@ export const About = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.1 }}
-                  className="relative pl-8 border-l border-white/10"
+                  className="relative p-10 rounded-[3.5rem] bg-zinc-900/20 border border-white/5 group hover:border-brand-red/30 transition-all duration-500"
                 >
-                  <div className="absolute top-0 left-0 w-1 h-8 bg-brand-red -translate-x-1/2" />
-                  <span className="text-3xl font-display font-bold text-brand-red mb-2 block font-mono">{item.year}</span>
-                  <h3 className="text-xl font-bold mb-4">{item.event}</h3>
+                  <div className="absolute top-8 right-8 text-4xl font-display font-black text-white/5 group-hover:text-brand-red/10 transition-colors duration-500 font-mono">
+                    {item.year}
+                  </div>
+                  <div className="w-12 h-12 rounded-xl bg-brand-red/10 flex items-center justify-center text-brand-red mb-8 group-hover:scale-110 transition-transform duration-500">
+                    {item.icon}
+                  </div>
+                  <h3 className="text-xl font-bold mb-4 group-hover:text-white transition-colors">{item.event}</h3>
                   <p className="text-white/40 text-sm leading-relaxed font-light">{item.desc}</p>
+                </motion.div>
+              ))}
+            </div>
+          </section>
+
+          {/* Tech Stack Section */}
+          <section className="py-20 md:py-40 px-6 md:px-12 bg-zinc-950/30 relative overflow-hidden">
+            <div className="mb-16 md:mb-24">
+              <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Technical Infrastructure</span>
+              <h2 className="text-[clamp(2.5rem,6vw,6rem)] font-display font-bold tracking-tighter">Our Stack.</h2>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-1">
+              {techStack.map((stack, i) => (
+                <motion.div
+                  key={stack.category}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1 }}
+                  className="p-12 bg-zinc-900/30 border border-white/5 hover:bg-zinc-900/50 transition-all duration-500 group"
+                >
+                  <h3 className="text-brand-red font-mono text-[10px] font-bold uppercase tracking-[0.3em] mb-8">{stack.category}</h3>
+                  <div className="space-y-4">
+                    {stack.tools.map((tool, j) => (
+                      <div key={j} className="flex items-center gap-3">
+                        <div className="w-1 h-1 rounded-full bg-white/20 group-hover:bg-brand-red transition-colors" />
+                        <span className="text-lg font-light text-white/60 group-hover:text-white transition-colors">{tool}</span>
+                      </div>
+                    ))}
+                  </div>
                 </motion.div>
               ))}
             </div>
@@ -169,7 +206,7 @@ export const About = () => {
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true }}
                       transition={{ delay: i * 0.1 }}
-                      className="p-12 h-full rounded-[2.5rem] bg-zinc-900/50 backdrop-blur-sm border border-white/5 hover:border-brand-red/30 transition-all group"
+                      className="p-12 h-full rounded-[3.5rem] bg-zinc-900/50 backdrop-blur-sm border border-white/5 hover:border-brand-red/30 transition-all group"
                     >
                       <div className="text-brand-red mb-8 w-12 h-12 rounded-xl bg-brand-red/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
                         {value.icon}
@@ -188,7 +225,7 @@ export const About = () => {
             <div className="max-w-7xl mx-auto">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
                 <div className="order-2 lg:order-1">
-                  <div className="relative p-8 md:p-12 rounded-[3rem] bg-zinc-900/40 backdrop-blur-2xl border border-white/5 overflow-hidden group">
+                  <div className="relative p-8 md:p-12 rounded-[4rem] bg-zinc-900/40 backdrop-blur-2xl border border-white/5 overflow-hidden group">
                     <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-brand-red to-transparent" />
                     <div className="space-y-8">
                       <div className="flex justify-between items-center">
@@ -256,7 +293,7 @@ export const About = () => {
           </section>
 
           {/* Global Reach Section */}
-          <section className="py-20 md:py-40 px-6 md:px-12 rounded-[3rem] bg-zinc-900/30 border border-white/5 relative overflow-hidden">
+          <section className="py-20 md:py-40 px-6 md:px-12 rounded-[4rem] bg-zinc-900/30 border border-white/5 relative overflow-hidden">
             <div className="absolute inset-0 opacity-10">
               <div className="absolute inset-0 grid-bg" />
             </div>
@@ -282,7 +319,7 @@ export const About = () => {
                   </div>
                 </div>
               </div>
-              <div className="relative aspect-video rounded-2xl overflow-hidden border border-white/10">
+              <div className="relative aspect-video rounded-3xl overflow-hidden border border-white/10">
                 <img 
                   src="https://images.unsplash.com/photo-1526772662000-3f88f10405ff?auto=format&fit=crop&q=80&w=1200" 
                   alt="Global Map" 
@@ -315,7 +352,7 @@ export const About = () => {
                       transition={{ delay: i * 0.1 }}
                       className="group"
                     >
-                      <div className="aspect-[4/5] rounded-[2rem] overflow-hidden mb-8 relative">
+                      <div className="aspect-[4/5] rounded-[3rem] overflow-hidden mb-8 relative">
                         <img 
                           src={member.image} 
                           alt={member.name} 
