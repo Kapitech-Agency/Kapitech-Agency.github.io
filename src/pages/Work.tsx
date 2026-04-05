@@ -7,6 +7,7 @@ import { MagneticButton } from '../components/ui/MagneticButton';
 import Fuse from 'fuse.js';
 
 import { AtmosphericBackground } from '../components/ui/AtmosphericBackground';
+import { TelemetryOverlay } from '../components/ui/TelemetryOverlay';
 
 export const Work = () => {
   const [activeFilter, setActiveFilter] = useState('All');
@@ -33,91 +34,103 @@ export const Work = () => {
   const projects = [
     {
       title: "Lumina Real Estate",
-      category: "IT Development / UI/UX Design",
+      category: "System Engineering / Interface Production",
       featured: true,
       recent: true,
       image: "https://picsum.photos/seed/lumina/1200/800",
-      desc: "A high-performance property ecosystem architected for sub-second search latency and enterprise scalability.",
-      challenge: "The legacy infrastructure suffered from high latency and poor mobile conversion rates, hindering market growth.",
-      solution: "We implemented a headless architecture using Next.js and a custom-built search engine optimized for real-time listing updates.",
-      results: "Achieved a 30% increase in lead generation and 99.99% system availability during peak traffic cycles.",
+      desc: "High-performance property ecosystem architected for sub-second search latency and enterprise scalability.",
+      challenge: "Legacy infrastructure exhibited high latency and low mobile conversion rates, obstructing market expansion.",
+      solution: "Implemented headless architecture using Next.js and a custom search engine optimized for real-time data synchronization.",
+      results: "Lead generation increased by 30%. System availability maintained at 99.99% during peak traffic cycles.",
       roi: { conversion: "+30%", uptime: "99.99%", engagement: "+45%" },
       technologies: ["Next.js", "TypeScript", "Tailwind CSS", "PostgreSQL"],
-      stats: { complexity: "High", performance: 98, security: "Enterprise" }
+      stats: { complexity: "High", performance: 98, security: "Enterprise" },
+      region: "Global",
+      status: "Operational"
     },
     {
       title: "Aura Creative Studio",
-      category: "Graphic Design / UI/UX Design",
+      category: "Visual Architecture / Interface Production",
       featured: true,
       recent: false,
       image: "https://picsum.photos/seed/aura/1200/800",
-      desc: "A comprehensive brand identity and digital presence engineered to reflect high-end creative precision.",
-      challenge: "Inconsistent visual language across platforms was diluting brand equity and client trust.",
-      solution: "Developed a unified design system and a minimalist digital portfolio that prioritizes high-resolution asset delivery.",
-      results: "Brand recognition increased by 150%, leading to a significant shift towards premium-tier client acquisitions.",
+      desc: "Comprehensive brand identity and digital presence engineered for high-precision creative output.",
+      challenge: "Inconsistent visual language across platforms reduced brand equity and client trust.",
+      solution: "Developed unified design system and minimalist digital portfolio prioritizing high-resolution asset delivery.",
+      results: "Brand recognition increased by 150%. Client acquisition shifted toward premium-tier segments.",
       roi: { conversion: "+150%", uptime: "99.9%", engagement: "+80%" },
       technologies: ["Figma", "Framer Motion", "Adobe Illustrator"],
-      stats: { complexity: "Medium", performance: 99, security: "Standard" }
+      stats: { complexity: "Medium", performance: 99, security: "Standard" },
+      region: "EMEA",
+      status: "Operational"
     },
     {
       title: "Nexus Fintech App",
-      category: "IT Development / UI/UX Design",
+      category: "System Engineering / Interface Production",
       featured: true,
       recent: true,
       image: "https://picsum.photos/seed/nexus/1200/800",
-      desc: "A secure, low-latency financial management platform designed for high-frequency user interactions.",
-      challenge: "Complex user flows and high friction during onboarding were causing significant user drop-off.",
-      solution: "Streamlined the UX architecture and implemented a robust backend with real-time data synchronization.",
-      results: "Onboarding completion rate improved by 85%, with a 60% increase in daily active users.",
+      desc: "Secure, low-latency financial management platform designed for high-frequency user interactions.",
+      challenge: "Complex user flows and high friction during onboarding caused significant user drop-off.",
+      solution: "Streamlined UX architecture and implemented robust backend with real-time data synchronization.",
+      results: "Onboarding completion improved by 85%. Daily active users increased by 60%.",
       roi: { conversion: "+85%", uptime: "99.9%", engagement: "+60%" },
       technologies: ["React Native", "Node.js", "MongoDB"],
-      stats: { complexity: "Critical", performance: 96, security: "Military-Grade" }
+      stats: { complexity: "Critical", performance: 96, security: "Military-Grade" },
+      region: "APAC",
+      status: "Operational"
     },
     {
       title: "Vanguard Logistics",
-      category: "IT Development / UI/UX Design",
+      category: "System Engineering / Interface Production",
       featured: false,
       recent: false,
       image: "https://picsum.photos/seed/vanguard/1200/800",
-      desc: "An operational dashboard providing real-time fleet telemetry and automated shipment tracking.",
-      challenge: "Manual tracking processes were causing operational bottlenecks and data inaccuracies.",
-      solution: "Engineered a custom telemetry dashboard that integrates directly with fleet hardware for live data visualization.",
-      results: "Operational efficiency increased by 40%, with a significant reduction in manual reporting errors.",
+      desc: "Operational dashboard providing real-time fleet telemetry and automated shipment tracking.",
+      challenge: "Manual tracking processes caused operational bottlenecks and data inaccuracies.",
+      solution: "Engineered custom telemetry dashboard integrating directly with fleet hardware for live data visualization.",
+      results: "Operational efficiency increased by 40%. Manual reporting errors significantly reduced.",
       roi: { conversion: "N/A", uptime: "99.9%", engagement: "+40%" },
       technologies: ["React", "Node.js", "PostgreSQL"],
-      stats: { complexity: "High", performance: 94, security: "Enterprise" }
+      stats: { complexity: "High", performance: 94, security: "Enterprise" },
+      region: "Global",
+      status: "Operational"
     },
     {
       title: "Zenith Marketplace",
-      category: "IT Development / Graphic Design",
+      category: "System Engineering / Visual Architecture",
       featured: true,
       recent: true,
       image: "https://picsum.photos/seed/zenith/1200/800",
-      desc: "A scalable e-commerce engine optimized for high-volume transactions and seamless cross-device experiences.",
-      challenge: "The existing platform was unable to handle traffic spikes during seasonal sales, leading to revenue loss.",
-      solution: "Architected a cloud-native commerce solution with auto-scaling capabilities and a high-fidelity visual interface.",
-      results: "Successfully handled a 400% traffic surge with zero downtime, resulting in a 22% increase in overall sales.",
+      desc: "Scalable e-commerce engine optimized for high-volume transactions and seamless cross-device experiences.",
+      challenge: "Platform instability during traffic spikes caused revenue loss.",
+      solution: "Architected cloud-native commerce solution with auto-scaling capabilities and high-fidelity visual interface.",
+      results: "Handled 400% traffic surge with zero downtime. Sales increased by 22%.",
       roi: { conversion: "+22%", uptime: "100%", engagement: "+35%" },
       technologies: ["React", "Shopify API", "Tailwind CSS"],
-      stats: { complexity: "High", performance: 97, security: "PCI-DSS" }
+      stats: { complexity: "High", performance: 97, security: "PCI-DSS" },
+      region: "Global",
+      status: "Operational"
     },
     {
       title: "Titan Health",
-      category: "IT Development / UI/UX Design",
+      category: "System Engineering / Interface Production",
       featured: false,
       recent: false,
       image: "https://picsum.photos/seed/titan/1200/800",
-      desc: "A HIPAA-compliant patient management system focused on data security and intuitive scheduling.",
-      challenge: "Patients faced significant friction in booking appointments, and data privacy was a primary concern.",
-      solution: "Developed a secure, encrypted patient portal with a simplified scheduling engine and real-time notifications.",
-      results: "Patient satisfaction scores increased by 50%, with a 70% reduction in scheduling-related support calls.",
+      desc: "HIPAA-compliant patient management system focused on data security and intuitive scheduling.",
+      challenge: "High friction in appointment booking and data privacy concerns.",
+      solution: "Developed secure, encrypted patient portal with simplified scheduling engine and real-time notifications.",
+      results: "Patient satisfaction increased by 50%. Scheduling-related support calls reduced by 70%.",
       roi: { conversion: "+50%", uptime: "100%", engagement: "+70%" },
       technologies: ["React", "Node.js", "PostgreSQL"],
-      stats: { complexity: "Critical", performance: 95, security: "HIPAA" }
+      stats: { complexity: "Critical", performance: 95, security: "HIPAA" },
+      region: "North America",
+      status: "Operational"
     }
   ];
 
-  const categories = ['All', 'Featured', 'Recent', 'IT Development', 'UI/UX Design', 'Graphic Design'];
+  const categories = ['All', 'Featured', 'Recent', 'System Engineering', 'Interface Production', 'Visual Architecture'];
 
   const featuredProjects = useMemo(() => projects.filter(p => p.featured), [projects]);
 
@@ -185,50 +198,87 @@ export const Work = () => {
         sysRef="KPTCH_WRK_ARCH_00"
       />
 
-      <div className="relative z-10 pt-24 md:pt-32 pb-20 px-6 md:px-12" role="main" aria-label="Our Portfolio">
+      {/* Telemetry Overlay */}
+      <TelemetryOverlay label="KPTCH_WORK_TELEMETRY" accentColor="red" />
+
+      <div className="relative z-10 pt-24 md:pt-48 pb-24 md:pb-48 px-6 md:px-12" role="main" aria-label="Our Portfolio">
         <div className="max-w-7xl mx-auto">
-          <header className="mb-16 md:mb-24">
+          <header className="mb-24 md:mb-40 relative">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
+              className="relative z-10"
             >
-              <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Kapitech Agency // Portfolio</span>
-              <h1 className="text-5xl sm:text-7xl md:text-[10vw] font-display font-bold leading-[0.85] tracking-tighter mb-12 text-gradient">
-                Our Work.
+              <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Kapitech Operations // Archive</span>
+              <h1 className="text-[clamp(2rem,6vw,6rem)] font-display font-bold leading-[0.85] tracking-tighter mb-12 uppercase">
+                Operational Index.
               </h1>
-              <p className="text-lg md:text-2xl text-white/60 max-w-3xl font-light leading-tight tracking-tight">
-                A collection of digital solutions built for our clients. We focus on delivering practical results that help businesses grow.
+              <p className="text-sm md:text-base text-white/40 max-w-2xl font-light leading-relaxed tracking-tight">
+                Archive of technical deployments and system architectures. We deliver functional results for client operational requirements.
               </p>
             </motion.div>
+
+            {/* Project Archive Visual */}
+            <div className="absolute top-0 right-0 w-px h-full bg-gradient-to-b from-brand-red/50 via-brand-red/10 to-transparent hidden lg:block">
+              {[...Array(8)].map((_, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, scaleX: 0 }}
+                  whileInView={{ opacity: 1, scaleX: 1 }}
+                  transition={{ delay: i * 0.1 }}
+                  className="absolute left-0 w-12 h-px bg-brand-red/20 origin-left"
+                  style={{ top: `${i * 12.5}%` }}
+                >
+                  <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-1 bg-brand-red rounded-full" />
+                </motion.div>
+              ))}
+            </div>
           </header>
 
-          {/* Featured Carousel */}
-          <section className="mb-32" aria-label="Featured Projects">
-            <div className="flex items-center justify-between mb-8">
-              <div className="flex items-center gap-4">
-                <span className="h-px w-12 bg-brand-red" />
-                <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px]">Selected Projects</span>
+          {/* Featured Projects Section */}
+          <section className="mb-32 md:mb-48 relative" aria-label="Featured Projects">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-12 mb-20 md:mb-32">
+              <div className="max-w-2xl">
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="w-8 h-px bg-brand-red/40" />
+                  <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px]">Selected Deployments</span>
+                </div>
+                <h2 className="text-[clamp(2rem,5vw,4.5rem)] font-display font-bold tracking-tighter leading-none uppercase">
+                  Featured<br />
+                  <span className="text-brand-red">Case Studies.</span>
+                </h2>
               </div>
-              <div className="flex gap-2" role="group" aria-label="Carousel navigation">
-                <button 
-                  onClick={prevFeatured}
-                  className="p-3 rounded-full border border-white/10 hover:bg-white hover:text-black transition-all duration-500 group/btn"
-                  aria-label="Previous featured project"
-                >
-                  <ChevronLeft size={18} className="group-hover/btn:scale-110 transition-transform" />
-                </button>
-                <button 
-                  onClick={nextFeatured}
-                  className="p-3 rounded-full border border-white/10 hover:bg-white hover:text-black transition-all duration-500 group/btn"
-                  aria-label="Next featured project"
-                >
-                  <ChevronRight size={18} className="group-hover/btn:scale-110 transition-transform" />
-                </button>
+              <div className="flex items-center gap-4">
+                <div className="flex flex-col items-end gap-1 mr-4 hidden sm:flex">
+                  <span className="text-[8px] font-mono text-white/20 uppercase tracking-widest">Active_Index</span>
+                  <span className="text-xs font-mono text-white font-bold">0{currentFeaturedIndex + 1} / 0{featuredProjects.length}</span>
+                </div>
+                <div className="flex gap-4" role="group" aria-label="Carousel navigation">
+                  <button 
+                    onClick={prevFeatured}
+                    className="w-14 h-14 rounded-full border border-white/10 flex items-center justify-center hover:bg-brand-red hover:border-brand-red transition-all group/btn backdrop-blur-xl"
+                    aria-label="Previous featured project"
+                  >
+                    <ChevronLeft size={20} className="group-hover/btn:scale-110 transition-transform" />
+                  </button>
+                  <button 
+                    onClick={nextFeatured}
+                    className="w-14 h-14 rounded-full border border-white/10 flex items-center justify-center hover:bg-brand-red hover:border-brand-red transition-all group/btn backdrop-blur-xl"
+                    aria-label="Next featured project"
+                  >
+                    <ChevronRight size={20} className="group-hover/btn:scale-110 transition-transform" />
+                  </button>
+                </div>
               </div>
             </div>
 
-            <div className="relative aspect-[16/10] md:aspect-[21/8] rounded-3xl md:rounded-[3rem] overflow-hidden bg-zinc-900 border border-white/5 group">
+            <div className="relative aspect-[16/10] md:aspect-[21/8] rounded-[2.5rem] overflow-hidden bg-zinc-900 border border-white/5 group shadow-2xl shadow-black/50">
+              {/* Technical Frame */}
+              <div className="absolute top-8 left-8 z-20 flex items-center gap-3 px-3 py-1.5 rounded-full bg-black/40 border border-white/10 backdrop-blur-md">
+                <div className="w-1.5 h-1.5 rounded-full bg-brand-red animate-pulse" />
+                <span className="text-[8px] font-mono font-bold text-white/60 uppercase tracking-widest">Live_Telemetry</span>
+              </div>
               <AnimatePresence mode="wait">
                 <motion.div
                   key={currentFeaturedIndex}
@@ -241,40 +291,40 @@ export const Work = () => {
                   onKeyDown={(e) => e.key === 'Enter' && setSelectedProject(featuredProjects[currentFeaturedIndex])}
                   tabIndex={0}
                   role="button"
-                  aria-label={`View featured project: ${featuredProjects[currentFeaturedIndex].title}`}
+                  aria-label={`View featured deployment: ${featuredProjects[currentFeaturedIndex].title}`}
                   aria-live="polite"
                 >
                   <img 
                     src={featuredProjects[currentFeaturedIndex].image} 
                     alt={featuredProjects[currentFeaturedIndex].title}
-                    className="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-[2s]"
+                    className="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-[2s] grayscale group-hover:grayscale-0"
                     referrerPolicy="no-referrer"
                   />
                   <div className="absolute inset-0 bg-gradient-to-r from-black via-black/40 to-transparent" />
                   
-                  <div className="absolute inset-0 p-6 md:p-16 flex flex-col justify-center max-w-3xl">
+                  <div className="absolute inset-0 p-8 md:p-16 flex flex-col justify-center max-w-3xl">
                     <motion.div
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 0.3 }}
                     >
                       <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Selected Case Study</span>
-                      <h2 className="text-3xl md:text-6xl lg:text-7xl font-display font-bold tracking-tighter mb-6 leading-none">
+                      <h2 className="text-3xl md:text-5xl lg:text-7xl font-display font-bold tracking-tighter mb-6 leading-[0.9] uppercase">
                         {featuredProjects[currentFeaturedIndex].title}
                       </h2>
-                      <p className="text-base md:text-xl text-white/60 font-light leading-relaxed mb-8 line-clamp-2">
+                      <p className="text-sm md:text-lg text-white/60 font-light leading-relaxed mb-10 line-clamp-2 max-w-xl">
                         {featuredProjects[currentFeaturedIndex].desc}
                       </p>
                       <div className="flex flex-wrap items-center gap-4 md:gap-6">
                         <div className="flex gap-2">
                           {featuredProjects[currentFeaturedIndex].technologies.slice(0, 3).map((tech: string) => (
-                            <span key={tech} className="px-3 py-1 rounded-full bg-white/10 border border-white/10 text-[8px] font-mono font-bold uppercase tracking-widest text-white/40">
+                            <span key={tech} className="px-3 py-1 rounded-xl bg-white/10 border border-white/10 text-[8px] font-mono font-bold uppercase tracking-widest text-white/40">
                               {tech}
                             </span>
                           ))}
                         </div>
                         <div className="flex items-center gap-2 text-white group-hover:text-brand-red transition-colors cursor-pointer">
-                          <span className="text-[10px] font-mono font-bold uppercase tracking-widest">View Project</span>
+                          <span className="text-[10px] font-mono font-bold uppercase tracking-widest">View Deployment</span>
                           <ArrowUpRight size={14} />
                         </div>
                       </div>
@@ -298,19 +348,30 @@ export const Work = () => {
                   />
                 ))}
               </div>
+              {/* Progress Bar */}
+              <div className="absolute bottom-0 left-0 w-full h-1 bg-white/5 z-20">
+                <motion.div 
+                  key={currentFeaturedIndex}
+                  initial={{ width: "0%" }}
+                  animate={{ width: "100%" }}
+                  transition={{ duration: 8, ease: "linear" }}
+                  onAnimationComplete={nextFeatured}
+                  className="h-full bg-brand-red"
+                />
+              </div>
             </div>
           </section>
 
           {/* Filters & Search */}
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mb-16 md:mb-24">
-            <div className="flex flex-wrap gap-3" role="tablist" aria-label="Project categories">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-12 mb-24 md:mb-40">
+            <div className="flex flex-wrap gap-3" role="tablist" aria-label="Operational categories">
               {categories.map((cat) => (
                 <button
                   key={cat}
                   onClick={() => setActiveFilter(cat)}
                   role="tab"
                   aria-selected={activeFilter === cat}
-                  className={`px-6 md:px-8 py-2 md:py-3 rounded-full border text-[9px] md:text-[10px] font-mono font-bold uppercase tracking-widest transition-all duration-500 ${
+                  className={`px-6 md:px-8 py-2 md:py-3 rounded-2xl border text-[9px] md:text-[10px] font-mono font-bold uppercase tracking-widest transition-all duration-500 ${
                     activeFilter === cat
                       ? 'bg-white border-white text-black'
                       : 'border-white/10 text-white/60 hover:border-white/30 hover:text-white'
@@ -325,11 +386,11 @@ export const Work = () => {
               <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-brand-red transition-colors" size={16} />
               <input 
                 type="text"
-                placeholder="Search projects..."
-                aria-label="Search projects or technologies"
+                placeholder="SEARCH ARCHIVE..."
+                aria-label="Search deployments or technologies"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-white/5 border border-white/10 rounded-full py-3 md:py-4 pl-14 pr-6 text-xs md:text-sm text-white font-mono placeholder:text-white/20 focus:outline-none focus:border-brand-red transition-all"
+                className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 md:py-4 pl-14 pr-6 text-xs md:text-sm text-white font-mono placeholder:text-white/20 focus:outline-none focus:border-brand-red transition-all"
               />
             </div>
           </div>
@@ -354,7 +415,7 @@ export const Work = () => {
                     aria-label={`View project: ${project.title}`}
                   >
                     <PerspectiveTilt 
-                      className="overflow-hidden rounded-[2.5rem] aspect-[16/10] mb-8 relative border border-white/5 group-hover:border-brand-red/30 transition-all duration-700 shadow-2xl"
+                      className="overflow-hidden rounded-3xl aspect-[16/10] mb-8 relative border border-white/5 group-hover:border-brand-red/30 transition-all duration-700 shadow-2xl"
                     >
                       <img 
                         src={project.image} 
@@ -365,27 +426,27 @@ export const Work = () => {
                       />
                       
                       {/* Project Metadata Overlay */}
-                      <div className="absolute top-6 left-6 z-20 flex flex-col gap-2">
+                      <div className="absolute top-8 left-8 z-20 flex flex-col gap-2">
                         <AnimatePresence>
                           {project.featured && (
                             <motion.div 
                               initial={{ opacity: 0, x: -10 }}
                               animate={{ opacity: 1, x: 0 }}
-                              className="px-4 py-1.5 bg-brand-red text-white text-[8px] font-bold uppercase tracking-[0.3em] rounded-full shadow-[0_0_20px_rgba(255,59,59,0.6)] border border-white/10"
+                              className="px-4 py-1.5 bg-brand-red text-white text-[8px] font-bold uppercase tracking-[0.3em] rounded-xl shadow-[0_0_20px_rgba(255,59,59,0.6)] border border-white/10"
                             >
                               Featured
                             </motion.div>
                           )}
                         </AnimatePresence>
-                        <div className="px-4 py-1.5 bg-black/60 backdrop-blur-md border border-white/10 text-white/60 text-[8px] font-mono font-bold uppercase tracking-[0.3em] rounded-full">
+                        <div className="px-4 py-1.5 bg-black/60 backdrop-blur-md border border-white/10 text-white/60 text-[8px] font-mono font-bold uppercase tracking-[0.3em] rounded-xl">
                           Node: {String(i + 1).padStart(2, '0')}
                         </div>
                       </div>
 
-                      <div className="absolute bottom-6 right-6 z-20 flex gap-2">
-                        <div className="px-4 py-1.5 bg-black/60 backdrop-blur-md border border-white/10 text-emerald-400 text-[8px] font-mono font-bold uppercase tracking-[0.3em] rounded-full flex items-center gap-2">
+                      <div className="absolute bottom-8 right-8 z-20 flex gap-2">
+                        <div className="px-4 py-1.5 bg-black/60 backdrop-blur-md border border-white/10 text-emerald-400 text-[8px] font-mono font-bold uppercase tracking-[0.3em] rounded-xl flex items-center gap-2">
                           <div className="w-1 h-1 bg-emerald-400 rounded-full animate-pulse" />
-                          Perf: {project.stats.performance}%
+                          PERF: {project.stats.performance}%
                         </div>
                       </div>
 
@@ -438,10 +499,10 @@ export const Work = () => {
                           <span className="w-6 h-px bg-brand-red/40 group-hover:w-12 group-hover:bg-brand-red transition-all duration-500" />
                           <p className="text-brand-red font-mono text-[10px] font-bold uppercase tracking-[0.3em]">{project.category}</p>
                         </div>
-                        <h3 className="text-2xl md:text-3xl lg:text-4xl font-display font-bold mb-4 group-hover:text-brand-red transition-colors tracking-tighter leading-tight">{project.title}</h3>
-                        <p className="text-white/40 text-sm md:text-base font-light leading-relaxed max-w-md line-clamp-2 group-hover:text-white/80 transition-colors">{project.desc}</p>
+                        <h3 className="text-xl md:text-2xl lg:text-3xl font-display font-bold mb-4 group-hover:text-brand-red transition-colors tracking-tighter leading-tight uppercase">{project.title}</h3>
+                        <p className="text-sm text-white/40 font-light leading-relaxed max-w-md line-clamp-2 group-hover:text-white/80 transition-colors">{project.desc}</p>
                       </div>
-                      <div className="w-12 h-12 md:w-16 md:h-16 rounded-full border border-white/10 flex items-center justify-center group-hover:bg-brand-red group-hover:border-brand-red group-hover:text-white transition-all duration-500 shrink-0 mt-2 shadow-lg">
+                      <div className="w-12 h-12 md:w-16 md:h-16 rounded-2xl border border-white/10 flex items-center justify-center group-hover:bg-brand-red group-hover:border-brand-red group-hover:text-white transition-all duration-500 shrink-0 mt-2 shadow-lg">
                         <ArrowUpRight size={24} className="md:w-8 md:h-8 group-hover:rotate-45 transition-transform duration-500" />
                       </div>
                     </div>
@@ -468,16 +529,16 @@ export const Work = () => {
                 <button 
                   onClick={handleLoadMore}
                   disabled={isLoadingMore}
-                  className="px-12 py-5 bg-white text-black rounded-full font-bold flex items-center gap-3 hover:bg-brand-red hover:text-white transition-all duration-500 uppercase tracking-widest text-xs disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-12 py-5 bg-white text-black rounded-2xl font-bold flex items-center gap-3 hover:bg-brand-red hover:text-white transition-all duration-500 uppercase tracking-widest text-xs disabled:opacity-50 disabled:cursor-not-allowed font-mono"
                 >
                   {isLoadingMore ? (
                     <>
                       <Loader2 size={18} className="animate-spin" />
-                      Processing...
+                      PROCESSING...
                     </>
                   ) : (
                     <>
-                      Load More Projects
+                      LOAD MORE DEPLOYMENTS
                       <ArrowUpRight size={18} />
                     </>
                   )}
@@ -559,22 +620,22 @@ export const Work = () => {
                   <div className="h-px flex-grow bg-white/5" />
                 </div>
 
-                <h3 className="text-3xl md:text-4xl font-display font-bold mb-6 md:mb-8 text-brand-red tracking-tight">The Challenge.</h3>
-                <p className="text-xl md:text-2xl text-white/60 font-light leading-relaxed mb-12 md:mb-16">
+                <h3 className="text-xl md:text-2xl font-display font-bold mb-6 md:mb-8 text-brand-red tracking-tight uppercase">The Challenge.</h3>
+                <p className="text-sm md:text-base text-white/60 font-light leading-relaxed mb-12 md:mb-16">
                   {selectedProject.challenge}
                 </p>
                 
-                <h3 className="text-3xl md:text-4xl font-display font-bold mb-6 md:mb-8 text-brand-red tracking-tight">The Solution.</h3>
-                <p className="text-xl md:text-2xl text-white/60 font-light leading-relaxed mb-12 md:mb-16">
+                <h3 className="text-xl md:text-2xl font-display font-bold mb-6 md:mb-8 text-brand-red tracking-tight uppercase">The Solution.</h3>
+                <p className="text-sm md:text-base text-white/60 font-light leading-relaxed mb-12 md:mb-16">
                   {selectedProject.solution}
                 </p>
                 
-                <h3 className="text-3xl md:text-4xl font-display font-bold mb-6 md:mb-8 text-brand-red tracking-tight">The Results.</h3>
+                <h3 className="text-xl md:text-2xl font-display font-bold mb-6 md:mb-8 text-brand-red tracking-tight uppercase">The Results.</h3>
                 <div className="relative p-8 rounded-3xl bg-white/5 border border-white/10 overflow-hidden group">
                   <div className="absolute top-0 right-0 p-4 opacity-10">
                     <Activity size={80} className="text-brand-red" />
                   </div>
-                  <p className="text-xl md:text-2xl text-white font-light leading-relaxed italic relative z-10">
+                  <p className="text-sm md:text-base text-white font-light leading-relaxed italic relative z-10">
                     "{selectedProject.results}"
                   </p>
                 </div>
@@ -598,21 +659,21 @@ export const Work = () => {
                     <div className="space-y-8">
                       <div className="flex justify-between items-end">
                         <div>
-                          <span className="text-4xl md:text-5xl font-display font-bold block text-white tracking-tighter">{selectedProject.roi.conversion}</span>
+                          <span className="text-3xl md:text-4xl font-display font-bold block text-white tracking-tighter">{selectedProject.roi.conversion}</span>
                           <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-brand-red">Conversion Lift</span>
                         </div>
                         <ArrowUpRight className="text-emerald-400 mb-2" size={24} />
                       </div>
                       <div className="flex justify-between items-end">
                         <div>
-                          <span className="text-4xl md:text-5xl font-display font-bold block text-white tracking-tighter">{selectedProject.roi.engagement}</span>
+                          <span className="text-3xl md:text-4xl font-display font-bold block text-white tracking-tighter">{selectedProject.roi.engagement}</span>
                           <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-brand-red">User Engagement</span>
                         </div>
                         <Activity className="text-blue-400 mb-2" size={24} />
                       </div>
                       <div className="flex justify-between items-end">
                         <div>
-                          <span className="text-4xl md:text-5xl font-display font-bold block text-white tracking-tighter">{selectedProject.roi.uptime}</span>
+                          <span className="text-3xl md:text-4xl font-display font-bold block text-white tracking-tighter">{selectedProject.roi.uptime}</span>
                           <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-brand-red">System Uptime</span>
                         </div>
                         <Code2 className="text-purple-400 mb-2" size={24} />
@@ -636,7 +697,7 @@ export const Work = () => {
 
                 <Link to="/contact" className="w-full">
                   <MagneticButton>
-                    <button className="w-full px-10 py-6 bg-white text-black rounded-full font-bold flex items-center justify-center gap-3 hover:bg-brand-red hover:text-white transition-all duration-500 uppercase tracking-widest text-[10px] shadow-xl">
+                    <button className="w-full px-10 py-6 bg-white text-black rounded-2xl font-bold flex items-center justify-center gap-3 hover:bg-brand-red hover:text-white transition-all duration-500 uppercase tracking-widest text-[10px] shadow-xl font-mono">
                       Initialize Live Project <ArrowUpRight size={20} />
                     </button>
                   </MagneticButton>
@@ -650,10 +711,10 @@ export const Work = () => {
                 <div className="flex flex-col md:flex-row justify-between items-end gap-8 mb-16">
                   <div>
                     <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Further Exploration</span>
-                    <h3 className="text-4xl md:text-6xl font-display font-bold tracking-tighter">Related Projects.</h3>
+                    <h3 className="text-3xl md:text-5xl font-display font-bold tracking-tighter uppercase">Related Deployments.</h3>
                   </div>
-                  <p className="text-white/40 max-w-md text-sm md:text-base font-light leading-relaxed">
-                    Explore more high-impact solutions engineered with similar technologies and creative strategies.
+                  <p className="text-white/40 max-w-md text-xs md:text-sm font-light leading-relaxed">
+                    Archive of high-impact solutions engineered with similar technologies and creative strategies.
                   </p>
                 </div>
 
@@ -689,22 +750,23 @@ export const Work = () => {
                         }}
                         className="group cursor-pointer"
                       >
-                        <div className="aspect-[16/10] rounded-2xl overflow-hidden mb-6 relative">
+                        <div className="aspect-[16/10] rounded-3xl overflow-hidden mb-6 relative border border-white/5">
                           <img 
                             src={related.image} 
                             alt={related.title} 
                             className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105" 
+                            referrerPolicy="no-referrer"
                           />
                           <div className="absolute inset-0 bg-black/40 group-hover:bg-transparent transition-colors" />
-                          <div className="absolute top-4 right-4 px-3 py-1 bg-white/10 backdrop-blur-md border border-white/10 rounded-full">
+                          <div className="absolute top-4 right-4 px-3 py-1 bg-white/10 backdrop-blur-md border border-white/10 rounded-xl">
                             <span className="text-[8px] font-mono font-bold text-white uppercase tracking-widest">
                               Match: {Math.min(99, 70 + related.score)}%
                             </span>
                           </div>
                         </div>
-                        <h4 className="text-xl font-display font-bold mb-2 group-hover:text-brand-red transition-colors">{related.title}</h4>
+                        <h4 className="text-xl font-display font-bold mb-2 group-hover:text-brand-red transition-colors uppercase tracking-tight">{related.title}</h4>
                         <p className="text-brand-red font-mono text-[8px] font-bold uppercase tracking-[0.3em] mb-3">{related.category}</p>
-                        <p className="text-white/40 text-xs font-light leading-relaxed line-clamp-2">{related.desc}</p>
+                        <p className="text-white/40 text-[10px] font-light leading-relaxed line-clamp-2">{related.desc}</p>
                       </motion.div>
                     ))}
                 </div>

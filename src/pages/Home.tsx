@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence, useScroll, useTransform } from 'motion/react';
-import { ArrowUpRight, CheckCircle2, Zap, Shield, Globe, Cpu, Layout, Code2, Palette, Box, Layers, Activity, X } from 'lucide-react';
+import { ArrowUpRight, CheckCircle2, Zap, Shield, Globe, Cpu, Layout, Code2, Palette, Box, Layers, Activity, X, Rocket } from 'lucide-react';
 import { MagneticButton } from '../components/ui/MagneticButton';
 import { PerspectiveTilt } from '../components/ui/PerspectiveTilt';
 import { Testimonials } from '../components/Testimonials';
 import { cn } from '../lib/utils';
 
 import { AtmosphericBackground } from '../components/ui/AtmosphericBackground';
+import { TelemetryOverlay } from '../components/ui/TelemetryOverlay';
 
 export const Home = () => {
   const [selectedProject, setSelectedProject] = useState<typeof projects[0] | null>(null);
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const [isBooted, setIsBooted] = useState(false);
   const { scrollYProgress } = useScroll();
   const x = useTransform(scrollYProgress, [0, 1], [0, -1000]);
 
@@ -20,7 +22,14 @@ export const Home = () => {
       setShowScrollTop(window.scrollY > window.innerHeight);
     };
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    
+    // System boot simulation
+    const timer = setTimeout(() => setIsBooted(true), 100);
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      clearTimeout(timer);
+    };
   }, []);
 
   const scrollToTop = () => {
@@ -103,7 +112,7 @@ export const Home = () => {
       aria-label="Kapitech Home"
     >
       {/* Hero */}
-      <section className="relative min-h-screen flex flex-col justify-center px-6 md:px-12 py-20 md:py-40 overflow-hidden bg-black">
+      <section className="relative min-h-screen flex flex-col justify-center px-6 md:px-12 py-24 md:py-48 overflow-hidden bg-black">
         {/* Enhanced Atmospheric Background */}
         <AtmosphericBackground 
           imageUrl="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=2072"
@@ -114,91 +123,138 @@ export const Home = () => {
           opacity={0.08}
         />
 
+        {/* Telemetry Overlay */}
+        <TelemetryOverlay label="KPTCH_HOME_TELEMETRY" accentColor="red" />
+
         <div className="max-w-7xl mx-auto w-full relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
+            animate={isBooted ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           >
             <div className="flex items-center gap-4 mb-8">
-              <span className="px-4 py-1.5 rounded-full border border-white/10 bg-white/5 text-[10px] font-mono tracking-[0.2em] uppercase text-white/60">
+              <motion.span 
+                initial={{ opacity: 0, x: -20 }}
+                animate={isBooted ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
+                transition={{ delay: 0.2 }}
+                className="px-4 py-1.5 rounded-full border border-white/10 bg-white/5 text-[10px] font-mono tracking-[0.2em] uppercase text-white/60"
+              >
                 Digital Studio
-              </span>
-              <div className="flex items-center gap-2 text-[10px] font-mono tracking-[0.2em] uppercase text-emerald-400">
+              </motion.span>
+              <motion.div 
+                initial={{ opacity: 0, x: -20 }}
+                animate={isBooted ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
+                transition={{ delay: 0.3 }}
+                className="flex items-center gap-2 text-[10px] font-mono tracking-[0.2em] uppercase text-emerald-400"
+              >
                 <span className="relative flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400"></span>
                 </span>
                 System Status: Nominal
-              </div>
+              </motion.div>
             </div>
             
-            <h1 className="text-[clamp(2.5rem,8vw,5.5rem)] font-display font-bold leading-[0.85] tracking-tighter mb-10">
-              Digital<br />
-              Solutions.
+            <h1 className="text-[clamp(2.25rem,8vw,4.5rem)] font-display font-bold leading-[0.9] tracking-tighter mb-10 uppercase">
+              <motion.span
+                initial={{ opacity: 0, filter: "blur(10px)" }}
+                animate={isBooted ? { opacity: 1, filter: "blur(0px)" } : { opacity: 0, filter: "blur(10px)" }}
+                transition={{ duration: 1, delay: 0.4 }}
+                className="block"
+              >
+                System Integration.
+              </motion.span>
+              <motion.span
+                initial={{ opacity: 0, filter: "blur(10px)" }}
+                animate={isBooted ? { opacity: 1, filter: "blur(0px)" } : { opacity: 0, filter: "blur(10px)" }}
+                transition={{ duration: 1, delay: 0.6 }}
+                className="block text-white/40"
+              >
+                Interface Production.
+              </motion.span>
             </h1>
             
-            <p className="text-[clamp(1rem,1.5vw,1.25rem)] text-white/60 max-w-3xl font-light leading-relaxed mb-16 tracking-tight">
-              Kapitech helps businesses build reliable <span className="text-white">IT Development</span>, <span className="text-white">UI/UX Design</span>, and <span className="text-white">Graphic Design</span>. We deliver practical digital solutions for your business needs.
-            </p>
+            <motion.p 
+              initial={{ opacity: 0 }}
+              animate={isBooted ? { opacity: 1 } : { opacity: 0 }}
+              transition={{ duration: 1, delay: 0.8 }}
+              className="text-sm text-white/60 max-w-3xl font-light leading-relaxed mb-16 tracking-tight"
+            >
+              Kapitech provides infrastructure. Services include audit. Production. Deployment. Operations span jurisdictions.
+            </motion.p>
             
-            <div className="flex flex-wrap gap-6 items-center">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={isBooted ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+              transition={{ duration: 0.8, delay: 1 }}
+              className="flex flex-wrap gap-6 items-center"
+            >
               <MagneticButton>
-                <Link to="/contact" className="group px-10 py-5 bg-white text-black rounded-full font-bold flex items-center gap-3 hover:bg-brand-red hover:text-white transition-all duration-500">
-                  Technical Inquiry
-                  <ArrowUpRight size={20} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                <Link to="/contact" className="group h-11 px-8 bg-white text-black rounded-2xl font-mono text-[10px] font-bold uppercase tracking-widest flex items-center gap-3 hover:bg-brand-red hover:text-white transition-all duration-500">
+                  System Inquiry
+                  <ArrowUpRight size={16} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                 </Link>
               </MagneticButton>
               <MagneticButton>
-                <Link to="/contact" className="px-10 py-5 rounded-full border border-white/10 hover:bg-white/5 transition-all font-bold tracking-widest uppercase text-xs">
+                <Link to="/contact" className="h-11 px-8 rounded-2xl border border-white/10 hover:bg-white/5 transition-all font-mono font-bold tracking-widest uppercase text-[10px] flex items-center">
                   Operational Audit
                 </Link>
               </MagneticButton>
-            </div>
+            </motion.div>
           </motion.div>
+        </div>
+
+        {/* System Load Progress */}
+        <div className="absolute top-0 left-0 w-full h-1 bg-white/5 z-20">
+          <motion.div
+            initial={{ width: "0%" }}
+            animate={isBooted ? { width: "100%" } : { width: "0%" }}
+            transition={{ duration: 1.5, ease: "easeInOut" }}
+            className="h-full bg-brand-red shadow-[0_0_10px_rgba(255,59,59,0.5)]"
+          />
         </div>
 
         {/* Kinetic Typography */}
         <div className="absolute bottom-10 left-0 w-full kinetic-text opacity-5 select-none pointer-events-none">
           <div className="kinetic-track text-[8vh] md:text-[15vh] font-display font-black uppercase tracking-tighter">
-            <span>Kapitech Agency • UI/UX Design • IT Development • Graphic Design • </span>
-            <span>Kapitech Agency • UI/UX Design • IT Development • Graphic Design • </span>
+            <span>Kapitech Operations • System Engineering • Interface Production • Visual Architecture • </span>
+            <span>Kapitech Operations • System Engineering • Interface Production • Visual Architecture • </span>
           </div>
         </div>
       </section>
 
       {/* Performance Matrix */}
-      <section className="py-20 md:py-40 px-6 md:px-12 bg-black border-y border-white/5 relative overflow-hidden" aria-label="Performance Statistics">
+      <section className="py-24 md:py-48 px-6 md:px-12 bg-black border-y border-white/5 relative overflow-hidden" aria-label="Performance Statistics">
         <div className="absolute inset-0 z-0 opacity-20">
           <div className="absolute top-0 left-1/4 w-px h-full bg-gradient-to-b from-transparent via-brand-red/50 to-transparent" />
           <div className="absolute top-0 right-1/4 w-px h-full bg-gradient-to-b from-transparent via-blue-500/50 to-transparent" />
         </div>
         
         <div className="max-w-7xl mx-auto relative z-10">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-12 md:gap-16" role="list">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-20 md:gap-32" role="list">
             {[
               { 
                 label: "Latency", 
                 value: "< 1.0s", 
-                desc: "Fast load times for better user experience.",
+                desc: "Sub-second response times.",
                 icon: <Cpu size={16} />
               },
               { 
                 label: "Conversion", 
-                value: "+45%", 
-                desc: "Average user engagement increase.",
+                value: "OPTIMIZED", 
+                desc: "Engagement delta increase.",
                 icon: <ArrowUpRight size={16} />
               },
               { 
                 label: "Projects", 
                 value: "50+", 
-                desc: "Successfully delivered digital products.",
+                desc: "Technical systems delivered.",
                 icon: <Globe size={16} />
               },
               { 
                 label: "Uptime", 
-                value: "99.9%", 
-                desc: "Reliable hosting and support.",
+                value: "STABLE", 
+                desc: "System reliability standard.",
                 icon: <CheckCircle2 size={16} />
               }
             ].map((stat, i) => (
@@ -218,8 +274,8 @@ export const Home = () => {
                   <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-white/60 group-hover:text-brand-red transition-colors">{stat.label}</span>
                 </div>
                 <div className="space-y-4">
-                  <span className="text-[clamp(2.5rem,5vw,4.5rem)] font-display font-bold block text-white tracking-tighter leading-none">{stat.value}</span>
-                  <p className="text-[clamp(0.875rem,1vw,1rem)] text-white/60 font-light leading-relaxed max-w-[200px]">
+                  <span className="text-[clamp(2rem,4vw,3.5rem)] font-display font-bold block text-white tracking-tighter leading-none">{stat.value}</span>
+                  <p className="text-[clamp(0.875rem,1vw,1rem)] text-white/60 font-light leading-relaxed">
                     {stat.desc}
                   </p>
                 </div>
@@ -230,7 +286,7 @@ export const Home = () => {
       </section>
 
       {/* Tech Stack Marquee */}
-      <section className="py-20 md:py-40 bg-black overflow-hidden border-b border-white/5">
+      <section className="py-16 md:py-32 bg-black overflow-hidden border-b border-white/5">
         <div className="kinetic-text opacity-40 hover:opacity-100 transition-opacity duration-700">
           <div className="kinetic-track flex gap-20 items-center">
             {[...techStack, ...techStack, ...techStack].map((tech, i) => (
@@ -245,58 +301,156 @@ export const Home = () => {
         </div>
       </section>
 
-      {/* Anti-Freelance Statement */}
-      <section className="py-20 md:py-40 px-6 md:px-12 bg-zinc-950 relative overflow-hidden">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-center">
-          <div className="relative aspect-square rounded-[2rem] md:rounded-[3rem] overflow-hidden order-2 md:order-1">
-            <img 
-              src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=2070" 
-              alt="Agency vs Freelance" 
-              loading="lazy"
-              referrerPolicy="no-referrer"
-              className="w-full h-full object-cover grayscale"
-            />
-            <div className="absolute inset-0 bg-brand-red/20 mix-blend-multiply" />
-          </div>
-          <motion.div 
-            initial={{ opacity: 0, x: 50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            className="order-1 md:order-2"
-          >
-            <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Operational Model</span>
-            <h2 className="text-[clamp(2.5rem,6vw,5rem)] font-display font-bold tracking-tighter mb-8 leading-[0.9]">System Integration.</h2>
-            <p className="text-[clamp(1rem,1.5vw,1.25rem)] text-white/60 font-light leading-relaxed mb-8">
-              Agency provides integrated systems. Technical architects. System consultants. Worldwide coordination.
-            </p>
-            <div className="space-y-6">
-              {[
-                { title: "System Redundancy", desc: "Continuous operations. Team-based redundancy. Zero downtime." },
-                { title: "Scalability", desc: "Architecture for growth. Future-proof systems." },
-                { title: "SOP Execution", desc: "Documented sprints. Audited performance. Optimized execution." }
-              ].map((item, i) => (
-                <div key={i} className="flex gap-6 items-start">
-                  <div className="w-1.5 h-1.5 rounded-full bg-brand-red mt-2 shrink-0" />
-                  <div>
-                    <h4 className="font-bold mb-1">{item.title}</h4>
-                    <p className="text-sm text-white/40">{item.desc}</p>
+      {/* Operational Model Section */}
+      <section className="py-24 md:py-48 px-6 md:px-12 bg-zinc-950 relative overflow-hidden border-y border-white/5">
+        {/* Technical Background Elements */}
+        <div className="absolute inset-0 z-0 pointer-events-none">
+          <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-brand-red/20 to-transparent" />
+          <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-brand-red/20 to-transparent" />
+          <div className="absolute inset-0 grid-bg opacity-[0.03]" />
+        </div>
+
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-16 md:gap-24 items-center relative z-10">
+          {/* Visual Side */}
+          <div className="lg:col-span-5 order-2 lg:order-1">
+            <div className="relative group">
+              {/* Technical Frame */}
+              <div className="absolute -inset-4 border border-white/5 rounded-[2.5rem] pointer-events-none transition-colors group-hover:border-brand-red/20" />
+              <div className="absolute -top-4 -left-4 w-8 h-8 border-t-2 border-l-2 border-brand-red/40 rounded-tl-2xl" />
+              <div className="absolute -bottom-4 -right-4 w-8 h-8 border-b-2 border-r-2 border-brand-red/40 rounded-br-2xl" />
+              
+              <div className="relative aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl shadow-black/50">
+                <motion.img 
+                  initial={{ scale: 1.1 }}
+                  whileInView={{ scale: 1 }}
+                  transition={{ duration: 1.5, ease: "easeOut" }}
+                  src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=2070" 
+                  alt="Agency vs Freelance" 
+                  loading="lazy"
+                  referrerPolicy="no-referrer"
+                  className="w-full h-full object-cover grayscale transition-all duration-700 group-hover:grayscale-0 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-brand-red/10 mix-blend-multiply transition-opacity group-hover:opacity-0" />
+                
+                {/* Image Overlay Telemetry */}
+                <div className="absolute bottom-8 left-8 right-8 flex justify-between items-end">
+                  <div className="flex flex-col gap-1">
+                    <span className="text-[8px] font-mono text-white/40 uppercase tracking-widest">Visual_ID</span>
+                    <span className="text-[10px] font-mono text-white font-bold">KPTCH_OPS_01</span>
+                  </div>
+                  <div className="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center backdrop-blur-md">
+                    <div className="w-2 h-2 rounded-full bg-brand-red animate-pulse" />
                   </div>
                 </div>
+              </div>
+
+              {/* Floating Data Tag */}
+              <motion.div 
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.5 }}
+                className="absolute -left-8 top-1/4 p-4 rounded-xl bg-black/80 border border-white/10 backdrop-blur-xl hidden xl:block"
+              >
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-2 h-2 rounded-full bg-emerald-500" />
+                  <span className="text-[10px] font-mono font-bold text-white/60 uppercase tracking-widest">Sync Status</span>
+                </div>
+                <div className="text-xs font-mono text-white">LOCKED_STABLE</div>
+              </motion.div>
+            </div>
+          </div>
+
+          {/* Content Side */}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="lg:col-span-7 order-1 lg:order-2"
+          >
+            <div className="flex items-center gap-4 mb-6">
+              <div className="w-8 h-px bg-brand-red/40" />
+              <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px]">Operational Model</span>
+            </div>
+            
+            <h2 className="text-[clamp(2rem,5vw,3.5rem)] font-display font-bold tracking-tighter mb-8 leading-[0.9] uppercase">
+              Integrated<br />
+              <span className="text-white/20">Systems.</span>
+            </h2>
+            
+            <p className="text-lg md:text-xl text-white/40 font-light leading-relaxed mb-12 max-w-xl">
+              Unlike fragmented freelance models, Kapitech operates as a unified <span className="text-white">technical ecosystem</span>. Our architects coordinate every operational node for maximum reliability.
+            </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 md:gap-12">
+              {[
+                { 
+                  title: "System Redundancy", 
+                  desc: "Continuous operations through team-based redundancy. Zero single-point-of-failure architecture.",
+                  icon: <Shield size={20} className="text-brand-red" />
+                },
+                { 
+                  title: "Scalability", 
+                  desc: "Architecture engineered for growth. Future-proof systems designed for global deployment.",
+                  icon: <Rocket size={20} className="text-brand-red" />
+                },
+                { 
+                  title: "SOP Execution", 
+                  desc: "Documented sprints and audited performance metrics. Optimized execution protocols.",
+                  icon: <Activity size={20} className="text-brand-red" />
+                },
+                { 
+                  title: "Global Sync", 
+                  desc: "Worldwide coordination maintained across all time zones. Real-time project telemetry.",
+                  icon: <Globe size={20} className="text-brand-red" />
+                }
+              ].map((item, i) => (
+                <motion.div 
+                  key={i}
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.1 }}
+                  className="group"
+                >
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="p-2 rounded-lg bg-brand-red/5 border border-brand-red/10 group-hover:bg-brand-red/10 transition-colors">
+                      {item.icon}
+                    </div>
+                    <h4 className="font-display font-bold text-sm uppercase tracking-wider">{item.title}</h4>
+                  </div>
+                  <p className="text-sm text-white/40 font-light leading-relaxed group-hover:text-white/60 transition-colors">{item.desc}</p>
+                </motion.div>
               ))}
+            </div>
+
+            <div className="mt-16 pt-8 border-t border-white/5 flex flex-wrap gap-8 items-center">
+              <div className="flex flex-col">
+                <span className="text-[10px] font-mono text-white/20 uppercase tracking-widest mb-1">Uptime_Metric</span>
+                <span className="text-xl font-display font-bold text-white">99.99%</span>
+              </div>
+              <div className="w-px h-8 bg-white/10" />
+              <div className="flex flex-col">
+                <span className="text-[10px] font-mono text-white/20 uppercase tracking-widest mb-1">SLA_Compliance</span>
+                <span className="text-xl font-display font-bold text-white">100%</span>
+              </div>
+              <div className="w-px h-8 bg-white/10" />
+              <div className="flex flex-col">
+                <span className="text-[10px] font-mono text-white/20 uppercase tracking-widest mb-1">Response_Latency</span>
+                <span className="text-xl font-display font-bold text-white">&lt; 2H</span>
+              </div>
             </div>
           </motion.div>
         </div>
       </section>
 
       {/* Kapitech Ecosystem Section */}
-      <section className="py-20 md:py-40 px-6 md:px-12 bg-black relative overflow-hidden">
+      <section className="py-24 md:py-48 px-6 md:px-12 bg-black relative overflow-hidden">
         <div className="absolute inset-0 z-0">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-brand-red/5 blur-[150px] rounded-full" />
           <div className="absolute inset-0 grid-bg opacity-5" />
         </div>
 
         <div className="max-w-7xl mx-auto relative z-10">
-          <div className="text-center mb-20 md:mb-32">
+          <div className="text-center mb-24 md:mb-40">
             <motion.span 
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -305,19 +459,19 @@ export const Home = () => {
             >
               System Components
             </motion.span>
-            <h2 className="text-[clamp(2.5rem,6vw,5rem)] font-display font-bold tracking-tighter mb-8 leading-[0.85]">System Architecture.</h2>
+            <h2 className="text-3xl md:text-5xl font-display font-bold tracking-tighter mb-10 leading-tight uppercase">System Architecture.</h2>
             <motion.p 
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.2 }}
-              className="text-[clamp(1.125rem,2vw,1.5rem)] text-white/40 font-light max-w-3xl mx-auto leading-relaxed"
+              className="text-base md:text-lg text-white/40 font-light max-w-3xl mx-auto leading-relaxed"
             >
-              Integrated framework. Design intelligence. Engineering power. Strategic advisory.
+              Integrated framework. Interface production. Engineering power. Strategic advisory.
             </motion.p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-12">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 md:gap-16">
             {[
               {
                 title: "Design Systems",
@@ -352,7 +506,7 @@ export const Home = () => {
                 transition={{ delay: i * 0.2 }}
                 whileHover={{ y: -10 }}
                 className={cn(
-                  "p-10 rounded-[3rem] bg-zinc-900/40 border backdrop-blur-xl transition-all duration-500 group relative overflow-hidden",
+                  "p-10 rounded-3xl bg-zinc-900/40 border backdrop-blur-xl transition-all duration-500 group relative overflow-hidden",
                   pillar.borderColor
                 )}
               >
@@ -390,13 +544,13 @@ export const Home = () => {
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            className="mt-20 md:mt-32 p-12 md:p-20 rounded-[4rem] bg-zinc-950 border border-white/5 relative overflow-hidden group"
+            className="mt-20 md:mt-32 p-12 md:p-20 rounded-3xl bg-zinc-950 border border-white/5 relative overflow-hidden group"
           >
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,59,59,0.05)_0%,transparent_70%)]" />
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center relative z-10">
               <div>
-                <h3 className="text-[clamp(2rem,4vw,3.5rem)] font-display font-bold tracking-tighter mb-8">System Synergy.</h3>
+                <h3 className="text-[clamp(2rem,4vw,3.5rem)] font-display font-bold tracking-tighter mb-8 uppercase">System Synergy.</h3>
                 <p className="text-[clamp(1rem,1.5vw,1.25rem)] text-white/40 font-light leading-relaxed mb-12">
                   Integrated services. Feedback loops. Technical robustness. Strategic alignment.
                 </p>
@@ -481,7 +635,7 @@ export const Home = () => {
         </div>
       </section>
 
-      {/* Methodology */}
+      {/* Service Preview */}
       <section className="py-20 md:py-40 px-6 md:px-12 bg-black relative overflow-hidden">
         <div className="absolute inset-0 z-0">
           <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-brand-red/10 blur-[150px] rounded-full animate-pulse" />
@@ -489,30 +643,80 @@ export const Home = () => {
           <div className="absolute inset-0 grid-bg opacity-5" />
         </div>
         <div className="max-w-7xl mx-auto relative z-10">
-          <div className="mb-16 md:mb-24">
-            <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Execution Framework</span>
-            <h2 className="text-[clamp(2rem,5vw,4rem)] font-display font-bold tracking-tighter leading-none">Operational Lifecycle.</h2>
+          <div className="mb-16 md:mb-24 flex flex-col md:flex-row md:items-end justify-between gap-8">
+            <div>
+              <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Service Preview</span>
+              <h2 className="text-2xl md:text-3xl font-display font-bold tracking-tighter leading-tight uppercase">Operational Capabilities.</h2>
+            </div>
+            <Link to="/services" className="group flex items-center gap-3 text-[10px] font-mono font-bold uppercase tracking-widest text-white/40 hover:text-brand-red transition-colors">
+              View All Services <ArrowUpRight size={14} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+            </Link>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8" role="list" aria-label="Our methodology">
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {[
-              { step: "01", title: "Technical Audit", desc: "System analysis. Requirement documentation." },
-              { step: "02", title: "Architecture", desc: "UI/UX systems. Technical brand architecture." },
-              { step: "03", title: "Engineering", desc: "Full-stack development. Scalable IT solutions." },
-              { step: "04", title: "Deployment", desc: "System launch. Performance optimization." }
-            ].map((item, i) => (
+              { 
+                title: "Website Development", 
+                desc: "High-performance web applications engineered for operational stability. Focus on system speed, security, and technical documentation.", 
+                tags: ["React", "Next.js", "Node.js", "TypeScript"],
+                isTop: true,
+                icon: <Code2 size={24} />
+              },
+              { 
+                title: "UI/UX Design", 
+                desc: "Interface production focusing on professional navigation and functional clarity. User-centric design systems for rapid task completion.", 
+                tags: ["Figma", "Prototyping", "Design Systems", "Usability"],
+                isTop: true,
+                icon: <Palette size={24} />
+              },
+              { 
+                title: "Technical Architecture", 
+                desc: "System mapping and technical blueprint production. Designing scalable infrastructure for long-term operational growth.", 
+                tags: ["Cloud", "Database", "API", "Security"],
+                isTop: false,
+                icon: <Cpu size={24} />
+              },
+              { 
+                title: "System Engineering", 
+                desc: "Full-stack engineering solutions for complex business logic. Integration of reliable backend systems and performance optimization.", 
+                tags: ["DevOps", "Backend", "Integration", "Scaling"],
+                isTop: false,
+                icon: <Layers size={24} />
+              }
+            ].map((service, i) => (
               <motion.div 
-                key={i}
-                role="listitem"
+                key={service.title}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="p-10 rounded-[2rem] bg-zinc-900/50 backdrop-blur-sm border border-white/5 hover:border-brand-red/50 transition-all group relative overflow-hidden"
+                className={cn(
+                  "p-10 rounded-3xl bg-zinc-900/50 backdrop-blur-sm border transition-all group relative overflow-hidden h-full flex flex-col",
+                  service.isTop ? "border-brand-red/30 shadow-[0_0_30px_rgba(255,59,59,0.05)]" : "border-white/5"
+                )}
               >
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-brand-red to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                <span className="text-[clamp(2rem,3vw,3rem)] font-display font-bold text-brand-red block mb-6 group-hover:scale-110 transition-transform duration-500">{item.step}</span>
-                <h3 className="text-[clamp(1.125rem,1.5vw,1.25rem)] font-bold mb-4">{item.title}</h3>
-                <p className="text-white/60 text-[clamp(0.875rem,1vw,1rem)] leading-relaxed">{item.desc}</p>
+                {service.isTop && (
+                  <div className="absolute top-0 right-0 px-4 py-2 bg-brand-red text-white text-[8px] font-mono font-bold uppercase tracking-widest rounded-bl-2xl">
+                    Top Service
+                  </div>
+                )}
+                
+                <div className="mb-8 p-4 w-fit rounded-2xl bg-white/5 border border-white/10 text-brand-red group-hover:bg-brand-red group-hover:text-white transition-all duration-500">
+                  {service.icon}
+                </div>
+
+                <div className="flex flex-col flex-grow">
+                  <h3 className="text-xl font-display font-bold mb-4 group-hover:text-brand-red transition-colors uppercase tracking-tighter">{service.title}</h3>
+                  <p className="text-white/40 text-sm leading-relaxed mb-8 font-light">{service.desc}</p>
+                  
+                  <div className="mt-auto pt-8 border-t border-white/5 flex flex-wrap gap-2">
+                    {service.tags.map(tag => (
+                      <span key={tag} className="px-3 py-1 rounded-xl bg-white/5 border border-white/10 text-[8px] font-mono font-bold uppercase tracking-widest text-white/40">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
               </motion.div>
             ))}
           </div>
@@ -562,9 +766,9 @@ export const Home = () => {
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-center">
           <div>
             <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Our Services</span>
-            <h2 className="text-[clamp(2rem,5vw,4.5rem)] font-display font-bold tracking-tighter mb-8 leading-[0.9]">What We Do.</h2>
-            <p className="text-[clamp(1rem,1.5vw,1.25rem)] text-white/40 font-light leading-relaxed mb-12">
-              We provide practical digital services to help your business grow. From building websites to creating professional designs.
+            <h2 className="text-2xl md:text-3xl font-display font-bold tracking-tighter mb-8 leading-tight uppercase">Operational Scope.</h2>
+            <p className="text-sm text-white/40 font-light leading-relaxed mb-12">
+              Agency provides technical services for client growth. Websites and professional interfaces produced.
             </p>
             <div className="grid grid-cols-1 gap-8">
               {[
@@ -591,7 +795,7 @@ export const Home = () => {
               ))}
             </div>
           </div>
-          <div className="relative aspect-[4/5] rounded-[3rem] overflow-hidden">
+          <div className="relative aspect-[4/5] rounded-3xl overflow-hidden">
             <img 
               src="https://images.unsplash.com/photo-1558655146-d09347e92766?auto=format&fit=crop&q=80&w=2070" 
               alt="Digital Craftsmanship" 
@@ -608,12 +812,12 @@ export const Home = () => {
       <section className="py-20 md:py-40 px-6 md:px-12 bg-zinc-950 relative overflow-hidden">
         <div className="max-w-7xl mx-auto text-center">
           <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Work With Us</span>
-          <h2 className="text-[clamp(2rem,5vw,4.5rem)] font-display font-bold tracking-tighter mb-8">Start Your Project.</h2>
-          <p className="text-[clamp(1rem,1.5vw,1.25rem)] text-white/40 font-light leading-relaxed max-w-2xl mx-auto mb-12">
-            Have a project in mind? Let's talk about how we can help you build a reliable digital presence.
+          <h2 className="text-2xl md:text-3xl font-display font-bold tracking-tighter mb-8 uppercase">System Deployment.</h2>
+          <p className="text-sm text-white/40 font-light leading-relaxed max-w-2xl mx-auto mb-12">
+            Client project initiation. Technical infrastructure established.
           </p>
           <MagneticButton>
-            <Link to="/contact" className="px-12 py-5 bg-white text-black rounded-full font-bold hover:bg-brand-red hover:text-white transition-all duration-500 uppercase tracking-widest text-xs inline-block">
+            <Link to="/contact" className="px-8 py-4 bg-white text-black rounded-2xl font-mono font-bold hover:bg-brand-red hover:text-white transition-all duration-500 uppercase tracking-widest text-[10px] inline-block">
               Get in Touch
             </Link>
           </MagneticButton>
@@ -624,11 +828,11 @@ export const Home = () => {
       <section className="py-20 md:py-40 px-6 md:px-12 bg-[#111111] border-y border-white/5 relative overflow-hidden">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-12">
           <div className="text-white text-center md:text-left">
-            <h2 className="text-[clamp(2rem,5vw,4rem)] font-display font-bold tracking-tighter mb-4 leading-none">Strategic Partnership.</h2>
-            <p className="text-[clamp(1rem,1.5vw,1.25rem)] font-light opacity-80">Long-term IT and creative collaboration inquiry.</p>
+            <h2 className="text-2xl md:text-3xl font-display font-bold tracking-tighter mb-4 leading-tight uppercase">Strategic Partnership.</h2>
+            <p className="text-sm font-light opacity-80">Technical and creative collaboration inquiry.</p>
           </div>
           <MagneticButton>
-            <Link to="/contact" className="px-12 py-6 bg-white text-black rounded-full font-bold hover:bg-brand-red hover:text-white transition-all duration-500 uppercase tracking-widest text-xs">
+            <Link to="/contact" className="px-8 py-4 bg-white text-black rounded-2xl font-mono font-bold hover:bg-brand-red hover:text-white transition-all duration-500 uppercase tracking-widest text-[10px]">
               Begin Inquiry
             </Link>
           </MagneticButton>
@@ -645,9 +849,9 @@ export const Home = () => {
             transition={{ duration: 1 }}
           >
             <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Operational Principles</span>
-            <h2 className="text-[clamp(2rem,5vw,4.5rem)] font-display font-bold tracking-tighter mb-8 leading-[0.9]">System Integrity.</h2>
-            <p className="text-[clamp(1rem,1.5vw,1.25rem)] text-white/60 font-light leading-relaxed mb-12">
-              Functional technology. Digital precision. Purpose-driven code. System-oriented design.
+            <h2 className="text-2xl md:text-3xl font-display font-bold tracking-tighter mb-8 leading-tight uppercase">System Integrity.</h2>
+            <p className="text-sm text-white/60 font-light leading-relaxed mb-12">
+              Functional technology. Digital precision. Purpose-driven code. System-oriented interface production.
             </p>
             <div className="flex flex-col gap-6">
               {[
@@ -668,7 +872,7 @@ export const Home = () => {
             </div>
           </motion.div>
           
-          <div className="relative aspect-square rounded-[3rem] overflow-hidden">
+          <div className="relative aspect-square rounded-3xl overflow-hidden">
             <motion.div 
               initial={{ scale: 1.5, opacity: 0 }}
               whileInView={{ scale: 1, opacity: 1 }}
@@ -701,10 +905,10 @@ export const Home = () => {
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8">
             <div>
               <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Project Portfolio</span>
-              <h2 className="text-[clamp(2.5rem,6vw,5rem)] font-display font-bold tracking-tighter">Case Studies.</h2>
+              <h2 className="text-2xl md:text-3xl font-display font-bold tracking-tighter uppercase">Case Studies.</h2>
             </div>
-            <Link to="/work" className="group px-8 py-4 rounded-full border border-white/10 hover:bg-white hover:text-black transition-all duration-500 font-bold tracking-widest uppercase text-xs flex items-center gap-3">
-              View All <ArrowUpRight size={16} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+            <Link to="/work" className="group px-6 py-3 rounded-2xl border border-white/10 hover:bg-white hover:text-black transition-all duration-500 font-mono font-bold tracking-widest uppercase text-[10px] flex items-center gap-3">
+              View All <ArrowUpRight size={14} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
             </Link>
           </div>
         </div>
@@ -726,7 +930,7 @@ export const Home = () => {
                 aria-label={`View project: ${project.title}`}
               >
                 <PerspectiveTilt 
-                  className="overflow-hidden rounded-[2rem] aspect-[16/10] mb-8 relative"
+                  className="overflow-hidden rounded-3xl aspect-[16/10] mb-8 relative"
                 >
                   <img 
                     src={project.image} 
@@ -773,7 +977,7 @@ export const Home = () => {
       <Testimonials />
 
       {/* Technical Authority Widget */}
-      {/* Operational Framework */}
+      {/* Workflow Architecture */}
       <section className="py-32 px-6 md:px-12 bg-black border-y border-white/5 relative overflow-hidden">
         <div className="absolute inset-0 z-0 opacity-10">
           <div className="absolute inset-0 grid-bg" />
@@ -792,14 +996,14 @@ export const Home = () => {
               >
                 <span className="w-8 h-px bg-brand-red" />
                 <span className="text-brand-red font-mono font-bold tracking-[0.4em] uppercase text-[10px]">
-                  Operational Framework
+                  Workflow Architecture
                 </span>
               </motion.div>
-              <h2 className="text-[clamp(2.5rem,5vw,5rem)] font-display font-bold tracking-tighter leading-[0.9]">
-                Service <span className="text-brand-red">Architecture.</span>
+              <h2 className="text-[clamp(2.5rem,5vw,5rem)] font-display font-bold tracking-tighter leading-[0.9] uppercase">
+                Operational <span className="text-brand-red">Lifecycle.</span>
               </h2>
               <p className="mt-6 text-white/40 text-lg font-light max-w-xl leading-relaxed">
-                Our methodology integrates design precision with engineering rigor. We don't just build; we architect digital ecosystems for long-term operational excellence.
+                Detailed technical execution protocol. From initial system audit to enterprise-grade deployment. Each phase is documented and audited for precision.
               </p>
             </div>
             
@@ -809,231 +1013,94 @@ export const Home = () => {
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400"></span>
                 </div>
-                <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-emerald-400">Standard: Optimized</span>
+                <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-emerald-400">Process: Active</span>
               </div>
               <div className="hidden sm:block w-px h-6 bg-white/10" />
               <div className="flex items-center gap-3 px-4 py-2">
                 <Layers size={14} className="text-white/40" />
-                <span className="text-[10px] font-mono text-white/60 uppercase tracking-widest">SOP: v3.1</span>
-              </div>
-              <div className="hidden sm:block w-px h-6 bg-white/10" />
-              <div className="flex items-center gap-3 px-4 py-2">
-                <Box size={14} className="text-white/40" />
-                <span className="text-[10px] font-mono text-white/60 uppercase tracking-widest">ISO: Logic-9001</span>
+                <span className="text-[10px] font-mono text-white/60 uppercase tracking-widest">Protocol: v4.0</span>
               </div>
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {/* Design Intelligence */}
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="p-8 rounded-[2.5rem] bg-zinc-900/40 border border-white/5 flex flex-col gap-8 group hover:border-brand-red/30 transition-all duration-700 relative overflow-hidden"
-            >
-              <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
-                <Palette size={120} />
-              </div>
-              <div className="space-y-2 relative z-10">
-                <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/30">Node 01 // Creative Logic</span>
-                <h3 className="text-2xl font-display font-bold">Design Intelligence</h3>
-              </div>
-              <div className="space-y-6 relative z-10">
-                <div className="flex justify-between items-end">
-                  <span className="text-5xl font-mono font-bold text-white tracking-tighter">98.2%</span>
-                  <div className="flex flex-col items-end">
-                    <span className="text-[10px] font-mono text-emerald-400 font-bold uppercase tracking-widest">VISUAL_ACCURACY</span>
-                    <span className="text-[8px] font-mono text-white/20 uppercase">Brand alignment index</span>
-                  </div>
+            {[
+              {
+                step: "01",
+                title: "Discovery & Audit",
+                desc: "Comprehensive analysis of existing technical infrastructure. Stakeholder interviews to define operational requirements and system constraints.",
+                metrics: { label: "AUDIT_STATUS", value: "VERIFIED" },
+                nodes: ["Requirement Mapping", "Technical Feasibility"],
+                icon: <Activity size={20} />,
+                color: "group-hover:border-brand-red/30"
+              },
+              {
+                step: "02",
+                title: "Architecture & UI",
+                desc: "Production of high-fidelity interface systems and technical blueprints. Designing user flows optimized for rapid information retrieval.",
+                metrics: { label: "SYSTEM_TYPE", value: "MODULAR" },
+                nodes: ["System Mapping", "Interface Systems"],
+                icon: <Palette size={20} />,
+                color: "group-hover:border-blue-500/30"
+              },
+              {
+                step: "03",
+                title: "Engineering",
+                desc: "Full-stack development using enterprise frameworks. Implementation of scalable backend logic and high-performance frontend components.",
+                metrics: { label: "LOGIC_CORE", value: "ROBUST" },
+                nodes: ["API Orchestration", "Security Hardening"],
+                icon: <Code2 size={20} />,
+                color: "group-hover:border-emerald-500/30"
+              },
+              {
+                step: "04",
+                title: "Deployment",
+                desc: "System integration and CI/CD pipeline execution. Performance monitoring and operational scaling for long-term growth.",
+                metrics: { label: "INFRASTRUCTURE", value: "ELASTIC" },
+                nodes: ["Cloud Scaling", "Optimization"],
+                icon: <Rocket size={20} />,
+                color: "group-hover:border-white/30"
+              }
+            ].map((phase, i) => (
+              <motion.div 
+                key={phase.step}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className={cn(
+                  "p-8 rounded-[2.5rem] bg-zinc-900/40 border border-white/5 flex flex-col gap-8 group transition-all duration-700 relative overflow-hidden",
+                  phase.color
+                )}
+              >
+                <div className="space-y-2 relative z-10">
+                  <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/30">Phase {phase.step} // {phase.title.split(' ')[0]}</span>
+                  <h3 className="text-2xl font-display font-bold">{phase.title}</h3>
                 </div>
-                <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
-                  <motion.div 
-                    initial={{ width: 0 }}
-                    whileInView={{ width: "98.2%" }}
-                    transition={{ duration: 2, ease: "circOut" }}
-                    className="h-full bg-brand-red shadow-[0_0_15px_rgba(255,59,59,0.5)]"
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-4 pt-6 border-t border-white/5">
-                  <div>
-                    <span className="text-[9px] font-mono text-white/20 block uppercase tracking-widest mb-1">UI/UX Sync</span>
-                    <span className="text-xs font-mono text-white font-bold">Optimal</span>
-                  </div>
-                  <div>
-                    <span className="text-[9px] font-mono text-white/20 block uppercase tracking-widest mb-1">Graphic Fidelity</span>
-                    <span className="text-xs font-mono text-white font-bold">High-Res</span>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Engineering Power */}
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
-              className="p-8 rounded-[2.5rem] bg-zinc-900/40 border border-white/5 flex flex-col gap-8 group hover:border-blue-500/30 transition-all duration-700 relative overflow-hidden"
-            >
-              <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
-                <Code2 size={120} />
-              </div>
-              <div className="space-y-2 relative z-10">
-                <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/30">Node 02 // IT Development</span>
-                <h3 className="text-2xl font-display font-bold">Engineering Power</h3>
-              </div>
-              <div className="space-y-6 relative z-10">
-                <div className="flex justify-between items-end">
-                  <span className="text-5xl font-mono font-bold text-white tracking-tighter">99.9%</span>
-                  <div className="flex flex-col items-end">
-                    <span className="text-[10px] font-mono text-blue-400 font-bold uppercase tracking-widest">CODE_STABILITY</span>
-                    <span className="text-[8px] font-mono text-white/20 uppercase">Scalable architecture</span>
-                  </div>
-                </div>
-                <div className="flex gap-1.5 h-10 items-end">
-                  {[...Array(15)].map((_, i) => (
-                    <motion.div
-                      key={i}
-                      initial={{ height: "30%" }}
-                      animate={{ height: ["30%", "100%", "50%", "85%", "30%"] }}
-                      transition={{ 
-                        duration: 1.5 + Math.random() * 1.5, 
-                        repeat: Infinity, 
-                        delay: i * 0.1,
-                        ease: "easeInOut"
-                      }}
-                      className="flex-grow bg-blue-500/20 rounded-sm group-hover:bg-blue-500/40 transition-colors"
-                    />
-                  ))}
-                </div>
-                <div className="grid grid-cols-2 gap-4 pt-6 border-t border-white/5">
-                  <div>
-                    <span className="text-[9px] font-mono text-white/20 block uppercase tracking-widest mb-1">Latency</span>
-                    <span className="text-xs font-mono text-white font-bold">&lt; 1.0s</span>
-                  </div>
-                  <div>
-                    <span className="text-[9px] font-mono text-white/20 block uppercase tracking-widest mb-1">Security</span>
-                    <span className="text-xs font-mono text-white font-bold">Enterprise</span>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Strategic Advisory */}
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.2 }}
-              className="p-8 rounded-[2.5rem] bg-zinc-900/40 border border-white/5 flex flex-col gap-8 group hover:border-emerald-500/30 transition-all duration-700 relative overflow-hidden"
-            >
-              <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
-                <Activity size={120} />
-              </div>
-              <div className="space-y-2 relative z-10">
-                <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/30">Node 03 // Advisory</span>
-                <h3 className="text-2xl font-display font-bold">Strategic Advisory</h3>
-              </div>
-              <div className="space-y-6 relative z-10">
-                <div className="flex justify-between items-end">
-                  <span className="text-5xl font-mono font-bold text-white tracking-tighter">45%</span>
-                  <div className="flex flex-col items-end">
-                    <span className="text-[10px] font-mono text-emerald-400 font-bold uppercase tracking-widest">ROI_LIFT</span>
-                    <span className="text-[8px] font-mono text-white/20 uppercase">Business alignment</span>
-                  </div>
-                </div>
-                <div className="relative h-10 flex items-center">
-                  <svg className="w-full h-full text-emerald-500/30" viewBox="0 0 100 20" preserveAspectRatio="none">
-                    <motion.path
-                      d="M0 20 L10 15 L20 18 L30 10 L40 12 L50 5 L60 8 L70 2 L80 4 L90 1 L100 3"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      initial={{ pathLength: 0 }}
-                      whileInView={{ pathLength: 1 }}
-                      transition={{ duration: 2.5, ease: "easeInOut" }}
-                    />
-                  </svg>
-                  <motion.div 
-                    animate={{ opacity: [0, 1, 0], scale: [1, 1.5, 1] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                    className="absolute right-0 top-0 w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.8)]" 
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-4 pt-6 border-t border-white/5">
-                  <div>
-                    <span className="text-[9px] font-mono text-white/20 block uppercase tracking-widest mb-1">Strategy</span>
-                    <span className="text-xs font-mono text-white font-bold">Data-Driven</span>
-                  </div>
-                  <div>
-                    <span className="text-[9px] font-mono text-white/20 block uppercase tracking-widest mb-1">Growth</span>
-                    <span className="text-xs font-mono text-white font-bold">Scalable</span>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Operational Flow */}
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.3 }}
-              className="p-8 rounded-[2.5rem] bg-zinc-950 border border-white/5 flex flex-col gap-6 group hover:border-white/20 transition-all duration-700 relative overflow-hidden"
-            >
-              <div className="flex justify-between items-center relative z-10">
-                <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/30">Node 04 // Project Lifecycle</span>
-                <div className="flex gap-1">
-                  <div className="w-1 h-1 rounded-full bg-brand-red animate-pulse" />
-                  <div className="w-1 h-1 rounded-full bg-brand-red animate-pulse" style={{ animationDelay: '0.2s' }} />
-                  <div className="w-1 h-1 rounded-full bg-brand-red animate-pulse" style={{ animationDelay: '0.4s' }} />
-                </div>
-              </div>
-              
-              <div className="flex-grow font-mono text-[9px] space-y-3 overflow-hidden relative z-10">
-                {[
-                  { time: "Phase 01", msg: "TECHNICAL_AUDIT_INITIALIZED", type: "system" },
-                  { time: "Phase 02", msg: "ARCHITECTURE_BLUEPRINT_SYNC", type: "success" },
-                  { time: "Phase 03", msg: "ENGINEERING_SPRINT_ACTIVE", type: "system" },
-                  { time: "Phase 04", msg: "UI_SYSTEM_INTEGRATION", type: "system" },
-                  { time: "Phase 05", msg: "QUALITY_ASSURANCE_NOMINAL", type: "success" },
-                  { time: "Phase 06", msg: "DEPLOYMENT_READY_STABLE", type: "warning" },
-                  { time: "Phase 07", msg: "OPERATIONAL_EXCELLENCE", type: "success" },
-                ].map((log, i) => (
-                  <motion.div 
-                    key={i}
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.1 + 0.5 }}
-                    className="flex gap-3"
-                  >
-                    <span className="text-white/20 shrink-0">{log.time}</span>
-                    <span className={cn(
-                      "uppercase tracking-tighter",
-                      log.type === 'success' ? 'text-emerald-400' : 
-                      log.type === 'warning' ? 'text-blue-400' : 'text-white/60'
-                    )}>
-                      {log.msg}
-                    </span>
-                  </motion.div>
-                ))}
                 
-                {/* Scanning Line Effect */}
-                <motion.div 
-                  animate={{ top: ["0%", "100%", "0%"] }}
-                  transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-                  className="absolute left-0 right-0 h-px bg-brand-red/20 z-20 pointer-events-none shadow-[0_0_10px_rgba(255,59,59,0.5)]"
-                />
-              </div>
+                <p className="text-white/40 text-xs font-light leading-relaxed relative z-10">
+                  {phase.desc}
+                </p>
 
-              <div className="pt-6 border-t border-white/5 relative z-10">
-                <Link to="/contact" className="flex items-center justify-between group/link">
-                  <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/40 group-hover/link:text-brand-red transition-colors">View Methodology</span>
-                  <ArrowUpRight size={14} className="text-white/20 group-hover/link:text-brand-red group-hover/link:translate-x-1 group-hover/link:-translate-y-1 transition-all" />
-                </Link>
-              </div>
-            </motion.div>
+                <div className="space-y-6 relative z-10 mt-auto">
+                  <div className="flex justify-between items-end">
+                    <span className="text-4xl font-mono font-bold text-white tracking-tighter">{phase.metrics.value}</span>
+                    <div className="flex flex-col items-end">
+                      <span className="text-[10px] font-mono text-white/40 font-bold uppercase tracking-widest">{phase.metrics.label}</span>
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 gap-3 pt-6 border-t border-white/5">
+                    {phase.nodes.map(node => (
+                      <div key={node} className="flex items-center gap-2">
+                        <div className="w-1 h-1 rounded-full bg-brand-red" />
+                        <span className="text-[9px] font-mono text-white/60 uppercase tracking-widest">{node}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
@@ -1043,7 +1110,7 @@ export const Home = () => {
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-center">
           <div>
             <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Technical Brief</span>
-            <h2 className="text-4xl md:text-6xl lg:text-7xl font-display font-bold tracking-tighter mb-8 leading-[0.9]">System Intelligence.</h2>
+            <h2 className="text-4xl md:text-6xl lg:text-7xl font-display font-bold tracking-tighter mb-8 leading-[0.9] uppercase">System Intelligence.</h2>
             <p className="text-lg md:text-xl text-white/40 font-light leading-relaxed">
               Bi-weekly report. Digital architecture. UI/UX systems. IT infrastructure. Technical data only.
             </p>
@@ -1119,11 +1186,11 @@ export const Home = () => {
 
             <div className="max-w-7xl mx-auto px-6 md:px-12 py-32 grid grid-cols-1 md:grid-cols-3 gap-20">
               <div className="md:col-span-2">
-                <h3 className="text-4xl font-display font-bold mb-8 text-brand-red">Technical Requirement.</h3>
+                <h3 className="text-4xl font-display font-bold mb-8 text-brand-red uppercase">Technical Requirement.</h3>
                 <p className="text-2xl text-white/60 font-light leading-relaxed mb-16">
                   {selectedProject.description}
                 </p>
-                <h3 className="text-4xl font-display font-bold mb-8 text-brand-red">System Implementation.</h3>
+                <h3 className="text-4xl font-display font-bold mb-8 text-brand-red uppercase">System Implementation.</h3>
                 <p className="text-2xl text-white/60 font-light leading-relaxed">
                   Architecture of digital ecosystem. High-fidelity visual systems. Sub-second performance. 3D asset integration. Headless CMS implementation.
                 </p>
@@ -1141,11 +1208,11 @@ export const Home = () => {
                   <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/40 block mb-4">Operational Metrics</span>
                   <div className="space-y-6">
                     <div>
-                      <span className="text-4xl font-display font-bold block">+120%</span>
+                      <span className="text-4xl font-display font-bold block">SCALED</span>
                       <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-brand-red">Conversion Delta</span>
                     </div>
                     <div>
-                      <span className="text-4xl font-display font-bold block">-40%</span>
+                      <span className="text-4xl font-display font-bold block">REDUCED</span>
                       <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-brand-red">Latency Reduction</span>
                     </div>
                   </div>

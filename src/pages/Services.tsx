@@ -7,6 +7,7 @@ import { PerspectiveTilt } from '../components/ui/PerspectiveTilt';
 import { cn } from '../lib/utils';
 
 import { AtmosphericBackground } from '../components/ui/AtmosphericBackground';
+import { TelemetryOverlay } from '../components/ui/TelemetryOverlay';
 
 export const Services = () => {
   const navigate = useNavigate();
@@ -31,57 +32,57 @@ export const Services = () => {
     {
       icon: <Code2 size={32} />,
       title: "IT Development",
-      desc: "Building reliable web and mobile applications using modern technologies. We focus on stability, speed, and clean code.",
-      detailedDesc: "We develop custom software solutions tailored to your business needs. Our team uses proven technologies like React, Next.js, and Node.js to ensure your project is built on a solid foundation.",
-      approach: "We follow a straightforward development process: planning, coding, testing, and deployment. We keep you updated at every stage to ensure the final product meets your expectations.",
+      desc: "Production of web and mobile applications. Focus on system stability, execution speed, and technical documentation.",
+      detailedDesc: "Custom software solutions engineered for operational requirements. Implementation of React, Next.js, and Node.js for reliable infrastructure.",
+      approach: "Standard development protocol: Technical Audit, System Architecture, Engineering, and Deployment. Status reports provided per sprint.",
       outcomes: [
-        "Reliable Performance",
-        "Clean Codebase",
-        "Mobile Responsive",
-        "Easy Maintenance"
+        "System Reliability",
+        "Technical Documentation",
+        "Mobile Integration",
+        "Operational Stability"
       ],
       features: [
         "Web Applications",
         "Backend Systems",
-        "Mobile Apps",
-        "Cloud Hosting",
-        "API Integration",
-        "Bug Fixing"
+        "Mobile Engineering",
+        "Cloud Infrastructure",
+        "API Orchestration",
+        "System Maintenance"
       ],
       subServices: [
-        { title: "Web Apps", desc: "Fast and responsive websites.", icon: <Zap size={20} /> },
-        { title: "Mobile", desc: "Apps for iOS and Android.", icon: <Shield size={20} /> },
-        { title: "Backend", desc: "Stable server-side logic.", icon: <Rocket size={20} /> }
+        { title: "Web Apps", desc: "High-performance web interfaces.", icon: <Zap size={20} /> },
+        { title: "Mobile", desc: "iOS and Android engineering.", icon: <Shield size={20} /> },
+        { title: "Backend", desc: "Server-side logic systems.", icon: <Rocket size={20} /> }
       ],
       tech: ["React", "Next.js", "Node.js", "TypeScript", "Tailwind", "PostgreSQL"],
-      industries: ["SME", "Startups", "Local Business", "E-commerce"],
+      industries: ["SME", "Startups", "Enterprise", "E-commerce"],
       accent: "from-blue-500/20 to-brand-red/20",
       image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&q=80&w=2070"
     },
     {
       icon: <Palette size={32} />,
       title: "UI/UX Design",
-      desc: "Creating user-friendly interfaces that look professional and are easy to navigate. We prioritize usability over complex animations.",
-      detailedDesc: "Our design process focuses on the user. We create layouts that are intuitive and help your customers find what they need quickly and easily.",
-      approach: "We start by understanding your users and their goals. Then we create wireframes and high-fidelity designs that are tested for usability and clarity.",
+      desc: "Interface production focusing on professional navigation and usability. Prioritization of functional clarity over aesthetic motion.",
+      detailedDesc: "User-centric design process. Intuitive layouts engineered for rapid information retrieval and task completion.",
+      approach: "User requirement analysis. Wireframe production. High-fidelity interface design. Usability validation.",
       outcomes: [
-        "Better User Flow",
-        "Professional Look",
-        "Clear Navigation",
-        "Consistent Branding"
+        "User Flow Optimization",
+        "Interface Fidelity",
+        "Navigation Clarity",
+        "Brand Consistency"
       ],
       features: [
-        "User Interface Design",
-        "User Experience Research",
-        "Wireframing",
+        "Interface Design",
+        "User Experience Audit",
+        "System Mapping",
         "Prototyping",
         "Design Systems",
-        "Mobile-First Design"
+        "Mobile-First Architecture"
       ],
       subServices: [
-        { title: "UI Design", desc: "Clean and modern interfaces.", icon: <Zap size={20} /> },
-        { title: "UX Research", desc: "Understanding user needs.", icon: <Shield size={20} /> },
-        { title: "Prototyping", desc: "Interactive design previews.", icon: <Rocket size={20} /> }
+        { title: "UI Design", desc: "Professional interface systems.", icon: <Zap size={20} /> },
+        { title: "UX Audit", desc: "User requirement analysis.", icon: <Shield size={20} /> },
+        { title: "Prototyping", desc: "Functional interface previews.", icon: <Rocket size={20} /> }
       ],
       tech: ["Figma", "Adobe XD", "Sketch", "Miro"],
       industries: ["SaaS", "Mobile Apps", "Corporate", "Retail"],
@@ -91,30 +92,30 @@ export const Services = () => {
     {
       icon: <Box size={32} />,
       title: "Graphic Design",
-      desc: "Visual design services including branding, social media assets, and marketing materials. We help your brand stand out.",
-      detailedDesc: "We provide a wide range of graphic design services to support your marketing efforts. From logo design to social media content, we ensure your brand looks consistent everywhere.",
-      approach: "We work closely with you to understand your brand's personality. We then create visual assets that communicate your message effectively to your audience.",
+      desc: "Visual architecture including brand identity and technical assets. Focus on brand authority and visual consistency.",
+      detailedDesc: "Production of visual assets for operational support. Brand identity systems and technical documentation graphics.",
+      approach: "Brand requirement analysis. Visual asset production. Brand identity documentation.",
       outcomes: [
-        "Strong Brand Identity",
-        "Consistent Visuals",
-        "Marketing Ready",
-        "High-Quality Assets"
+        "Brand Authority",
+        "Visual Consistency",
+        "Technical Documentation",
+        "Asset Production"
       ],
       features: [
-        "Logo & Branding",
-        "Social Media Graphics",
-        "Marketing Materials",
-        "Digital Illustrations",
-        "Print Design",
-        "Presentation Design"
+        "Brand Identity",
+        "Technical Graphics",
+        "Operational Assets",
+        "Visual Architecture",
+        "Print Production",
+        "System Documentation"
       ],
       subServices: [
-        { title: "Branding", desc: "Logo and identity systems.", icon: <Zap size={20} /> },
-        { title: "Social Media", desc: "Content for your platforms.", icon: <Shield size={20} /> },
-        { title: "Marketing", desc: "Brochures and flyers.", icon: <Rocket size={20} /> }
+        { title: "Branding", desc: "Identity and logo systems.", icon: <Zap size={20} /> },
+        { title: "Visual Assets", desc: "Operational platform content.", icon: <Shield size={20} /> },
+        { title: "Documentation", desc: "Technical brand manuals.", icon: <Rocket size={20} /> }
       ],
       tech: ["Photoshop", "Illustrator", "InDesign", "Canva"],
-      industries: ["Marketing", "Events", "Food & Beverage", "Education"],
+      industries: ["Marketing", "Events", "Logistics", "Education"],
       accent: "from-purple-500/20 to-brand-red/20",
       image: "https://images.unsplash.com/photo-1626785774573-4b799315345d?auto=format&fit=crop&q=80&w=2071"
     }
@@ -181,26 +182,30 @@ export const Services = () => {
         sysRef="KPTCH_SRV_ARCH"
       />
 
+      {/* Telemetry Overlay */}
+      <TelemetryOverlay label="KPTCH_SERVICES_TELEMETRY" accentColor="emerald" />
+
       <div className="relative z-10">
         <div className="max-w-7xl mx-auto">
           {/* Hero Section */}
-          <section className="px-6 md:px-12 py-20 md:py-40 overflow-hidden">
+          <section className="px-6 md:px-12 py-24 md:py-48 overflow-hidden relative">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
+              className="relative z-10"
             >
               <div className="flex items-center gap-4 mb-6">
                 <div className="w-12 h-px bg-brand-red/30" />
                 <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px]">Kapitech Agency // Services</span>
               </div>
-              <h1 className="text-[clamp(3rem,12vw,10rem)] font-display font-bold leading-[0.8] tracking-tighter mb-12 text-gradient">
+              <h1 className="text-[clamp(2.5rem,10vw,8.5rem)] font-display font-bold leading-[0.85] tracking-tighter mb-12 uppercase">
                 Our<br />Services.
               </h1>
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-end">
                 <div className="lg:col-span-7">
                   <p className="text-xl md:text-3xl text-white/40 font-light leading-tight tracking-tight max-w-2xl">
-                    Kapitech provides reliable <span className="text-white">IT Development</span>, <span className="text-white">UI/UX Design</span>, and <span className="text-white">Graphic Design</span>. We help businesses grow with practical digital solutions.
+                    Kapitech provides technical <span className="text-white">IT Development</span>, <span className="text-white">UI/UX Design</span>, and <span className="text-white">Graphic Design</span>. We architect digital systems for client operational requirements.
                   </p>
                 </div>
                 <div className="lg:col-span-5 flex flex-col gap-6">
@@ -210,82 +215,132 @@ export const Services = () => {
                       <div className="w-2 h-2 rounded-full bg-brand-red animate-pulse" />
                       <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/40">Agency Status</span>
                     </div>
-                    <div className="text-2xl font-display font-bold text-white">Ready for New Projects</div>
+                    <div className="text-2xl font-display font-bold text-white uppercase">Ready for Project Initiation</div>
                   </div>
                 </div>
               </div>
             </motion.div>
+
+            {/* Service Matrix Visual */}
+            <div className="absolute top-0 right-0 w-64 h-64 opacity-10 hidden lg:block pointer-events-none">
+              <div className="grid grid-cols-4 grid-rows-4 gap-2 w-full h-full">
+                {[...Array(16)].map((_, i) => (
+                  <motion.div
+                    key={i}
+                    animate={{ opacity: [0.1, 0.5, 0.1] }}
+                    transition={{ duration: 3, delay: i * 0.1, repeat: Infinity }}
+                    className="border border-white/20 rounded-sm"
+                  />
+                ))}
+              </div>
+            </div>
           </section>
 
-          <section className="py-20 md:py-40 px-6 md:px-12 bg-zinc-950/30 relative overflow-hidden">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {services.map((service, i) => (
-                <div key={service.title} className="h-full">
-                  <PerspectiveTilt 
-                    className="h-full"
-                    onClick={() => setSelectedService(service)}
-                  >
-                    <motion.div 
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: i * 0.1 }}
-                      onMouseEnter={() => setHoveredService(service.title)}
-                      onMouseLeave={() => setHoveredService(null)}
-                      className="group relative h-full cursor-pointer"
-                    >
-                    <div className="absolute inset-0 bg-gradient-to-br opacity-0 group-hover:opacity-100 transition-opacity duration-700 rounded-[2.5rem] blur-2xl -z-10" style={{ backgroundImage: `linear-gradient(to bottom right, var(--tw-gradient-stops))` }} />
-                    <div className={cn(
-                      "p-8 md:p-10 rounded-[2rem] md:rounded-[2.5rem] bg-zinc-900/50 backdrop-blur-sm border border-white/5 transition-all duration-500 flex flex-col h-full overflow-hidden relative",
-                      hoveredService === service.title ? "border-brand-red/30" : ""
-                    )}>
-                      <div className={cn(
-                        "absolute top-0 right-0 w-32 h-32 bg-gradient-to-br blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700",
-                        service.accent
-                      )} />
-                      
-                      <motion.div 
-                        layoutId={`icon-${service.title}`}
-                        className="text-brand-red mb-8 w-14 h-14 rounded-2xl bg-brand-red/10 flex items-center justify-center group-hover:scale-110 group-hover:bg-brand-red group-hover:text-white transition-all duration-500"
-                      >
-                        {service.icon}
-                      </motion.div>
-                      
-                      <motion.h3 
-                        layoutId={`title-${service.title}`}
-                        className="text-xl md:text-2xl font-display font-bold mb-4 group-hover:text-brand-red transition-colors"
-                      >
-                        {service.title}
-                      </motion.h3>
-                      <p className="text-white/40 text-sm md:text-base leading-relaxed mb-8 flex-grow group-hover:text-white/60 transition-colors">{service.desc}</p>
-                      
-                      <div className="space-y-3 mb-8">
-                        {service.features.slice(0, 3).map((feature: string) => (
-                          <div key={feature} className="flex items-center gap-3 text-[12px] text-white/50">
-                            <CheckCircle2 size={12} className="text-brand-red shrink-0" />
-                            <span className="group-hover:text-white/80 transition-colors">{feature}</span>
-                          </div>
-                        ))}
-                      </div>
-  
-                      <div className="pt-6 border-t border-white/5">
-                        <div className="flex flex-wrap gap-2">
-                          {service.tech.slice(0, 3).map((t: string) => (
-                            <span key={t} className="px-2 py-1 rounded-md bg-white/5 text-[8px] font-mono font-bold uppercase tracking-widest text-white/30 group-hover:text-white/60 group-hover:bg-white/10 transition-all">
-                              {t}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-  
-                      <div className="mt-6 flex items-center gap-2 text-brand-red font-mono font-bold text-[9px] uppercase tracking-widest opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-500">
-                        View Specs <ArrowUpRight size={12} />
-                      </div>
-                    </div>
-                  </motion.div>
-                </PerspectiveTilt>
+          {/* Service Grid Section */}
+          <section className="py-24 md:py-48 px-6 md:px-12 bg-zinc-950/30 relative overflow-hidden border-y border-white/5">
+            {/* Technical Background Elements */}
+            <div className="absolute inset-0 z-0 pointer-events-none">
+              <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-brand-red/20 to-transparent" />
+              <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-brand-red/20 to-transparent" />
+              <div className="absolute inset-0 grid-bg opacity-[0.03]" />
+            </div>
+
+            <div className="max-w-7xl mx-auto relative z-10">
+              <div className="flex flex-col md:flex-row md:items-end justify-between gap-12 mb-20 md:mb-32">
+                <div className="max-w-2xl">
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="w-8 h-px bg-brand-red/40" />
+                    <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px]">Capabilities Matrix</span>
+                  </div>
+                  <h2 className="text-[clamp(2rem,5vw,4.5rem)] font-display font-bold tracking-tighter leading-none uppercase">
+                    Technical<br />
+                    <span className="text-brand-red">Specializations.</span>
+                  </h2>
                 </div>
-              ))}
+                <div className="flex flex-col items-start md:items-end gap-2">
+                  <span className="text-[10px] font-mono text-white/20 uppercase tracking-widest">Protocol_Status</span>
+                  <div className="flex items-center gap-3 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-xl">
+                    <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                    <span className="text-[10px] font-mono font-bold text-white/60 uppercase tracking-widest">Systems_Online</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 md:gap-16">
+                {services.map((service, i) => (
+                  <div key={service.title} className="h-full">
+                    <PerspectiveTilt 
+                      className="h-full"
+                      onClick={() => setSelectedService(service)}
+                    >
+                      <motion.div 
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: i * 0.1 }}
+                        onMouseEnter={() => setHoveredService(service.title)}
+                        onMouseLeave={() => setHoveredService(null)}
+                        className="group relative h-full cursor-pointer"
+                      >
+                        {/* Technical Border Glow */}
+                        <div className="absolute inset-0 bg-gradient-to-br opacity-0 group-hover:opacity-100 transition-opacity duration-700 rounded-[2.5rem] blur-2xl -z-10" style={{ backgroundImage: `linear-gradient(to bottom right, var(--tw-gradient-stops))` }} />
+                        
+                        <div className={cn(
+                          "p-8 md:p-10 rounded-[2rem] md:rounded-[2.5rem] bg-zinc-900/50 backdrop-blur-sm border border-white/5 transition-all duration-500 flex flex-col h-full overflow-hidden relative",
+                          hoveredService === service.title ? "border-brand-red/30" : ""
+                        )}>
+                          {/* Corner Accents */}
+                          <div className="absolute top-0 left-0 w-8 h-8 border-t border-l border-white/10 rounded-tl-[2rem] group-hover:border-brand-red/40 transition-colors" />
+                          <div className="absolute bottom-0 right-0 w-8 h-8 border-b border-r border-white/10 rounded-br-[2rem] group-hover:border-brand-red/40 transition-colors" />
+
+                          <div className={cn(
+                            "absolute top-0 right-0 w-32 h-32 bg-gradient-to-br blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700",
+                            service.accent
+                          )} />
+                          
+                          <motion.div 
+                            layoutId={`icon-${service.title}`}
+                            className="text-brand-red mb-8 w-14 h-14 rounded-2xl bg-brand-red/10 flex items-center justify-center group-hover:scale-110 group-hover:bg-brand-red group-hover:text-white transition-all duration-500"
+                          >
+                            {service.icon}
+                          </motion.div>
+                          
+                          <motion.h3 
+                            layoutId={`title-${service.title}`}
+                            className="text-xl md:text-2xl font-display font-bold mb-4 group-hover:text-brand-red transition-colors uppercase tracking-tight"
+                          >
+                            {service.title}
+                          </motion.h3>
+                          <p className="text-white/40 text-sm md:text-base leading-relaxed mb-8 flex-grow group-hover:text-white/60 transition-colors font-light">{service.desc}</p>
+                          
+                          <div className="space-y-3 mb-8">
+                            {service.features.slice(0, 3).map((feature: string) => (
+                              <div key={feature} className="flex items-center gap-3 text-[12px] text-white/50">
+                                <CheckCircle2 size={12} className="text-brand-red shrink-0" />
+                                <span className="group-hover:text-white/80 transition-colors font-light">{feature}</span>
+                              </div>
+                            ))}
+                          </div>
+      
+                          <div className="pt-6 border-t border-white/5">
+                            <div className="flex flex-wrap gap-2">
+                              {service.tech.slice(0, 3).map((t: string) => (
+                                <span key={t} className="px-2 py-1 rounded-md bg-white/5 text-[8px] font-mono font-bold uppercase tracking-widest text-white/30 group-hover:text-white/60 group-hover:bg-white/10 transition-all">
+                                  {t}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+      
+                          <div className="mt-6 flex items-center gap-2 text-brand-red font-mono font-bold text-[9px] uppercase tracking-widest opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-500">
+                            View Specs <ArrowUpRight size={12} />
+                          </div>
+                        </div>
+                      </motion.div>
+                    </PerspectiveTilt>
+                  </div>
+                ))}
+              </div>
             </div>
           </section>
 
@@ -347,7 +402,7 @@ export const Services = () => {
 
                       <motion.h2 
                         layoutId={`title-${selectedService.title}`}
-                        className="text-5xl sm:text-7xl md:text-[12vw] lg:text-[14vw] font-display font-bold tracking-tighter leading-[0.75] text-white relative"
+                        className="text-5xl sm:text-7xl md:text-[12vw] lg:text-[14vw] font-display font-bold tracking-tighter leading-[0.75] text-white relative uppercase"
                       >
                         <span className="absolute -top-1/2 -left-12 text-[15vw] md:text-[20vw] opacity-5 select-none pointer-events-none font-black text-brand-red">
                           {selectedService.title.split(' ')[0]}
@@ -400,7 +455,7 @@ export const Services = () => {
                           >
                             <div className="absolute -left-12 top-0 w-px h-full bg-brand-red/20 hidden xl:block" />
                             <span className="text-brand-red font-mono font-bold tracking-[0.5em] uppercase text-[10px] mb-8 block">System Overview</span>
-                            <p className="text-3xl md:text-5xl lg:text-6xl font-display font-bold text-white leading-[0.95] tracking-tighter max-w-4xl">
+                            <p className="text-3xl md:text-5xl lg:text-6xl font-display font-bold text-white leading-[0.95] tracking-tighter max-w-4xl uppercase">
                               {selectedService.detailedDesc}
                             </p>
                           </motion.section>
@@ -413,7 +468,7 @@ export const Services = () => {
                               className="space-y-6"
                             >
                               <span className="text-brand-red font-mono font-bold tracking-[0.5em] uppercase text-[10px] block">Implementation Strategy</span>
-                              <h3 className="text-2xl md:text-3xl font-display font-bold tracking-tight">System orchestration.</h3>
+                              <h3 className="text-2xl md:text-3xl font-display font-bold tracking-tight uppercase">System orchestration.</h3>
                               <p className="text-base md:text-lg text-white/50 font-light leading-relaxed">
                                 {selectedService.approach}
                               </p>
@@ -447,7 +502,7 @@ export const Services = () => {
                           <div className="flex flex-col md:flex-row justify-between items-end gap-6">
                             <div>
                               <span className="text-brand-red font-mono font-bold tracking-[0.5em] uppercase text-[10px] mb-4 block">Core Modules</span>
-                              <h3 className="text-4xl font-display font-bold tracking-tight">System Modules.</h3>
+                              <h3 className="text-4xl font-display font-bold tracking-tight uppercase">System Modules.</h3>
                             </div>
                             <p className="text-white/40 max-w-xs text-sm font-light leading-relaxed">
                               Bespoke solutions engineered for demanding digital environments.
@@ -471,7 +526,7 @@ export const Services = () => {
                                   <div className="text-brand-red mb-8 w-14 h-14 rounded-2xl bg-brand-red/5 flex items-center justify-center border border-brand-red/10 group-hover:bg-brand-red group-hover:text-white transition-all duration-500">
                                     {sub.icon}
                                   </div>
-                                  <h4 className="text-xl font-display font-bold mb-4 group-hover:text-brand-red transition-colors">{sub.title}</h4>
+                                  <h4 className="text-xl font-display font-bold mb-4 group-hover:text-brand-red transition-colors uppercase">{sub.title}</h4>
                                   <p className="text-sm text-white/40 leading-relaxed font-light group-hover:text-white/60 transition-colors">{sub.desc}</p>
                                 </div>
 
@@ -529,7 +584,7 @@ export const Services = () => {
                             <span className="text-brand-red font-mono font-bold tracking-[0.5em] uppercase text-[10px] block mb-12">Technical Specifications</span>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
                               <div className="space-y-8">
-                                <h4 className="text-2xl font-display font-bold">System Architecture</h4>
+                                <h3 className="text-2xl font-display font-bold uppercase">System Architecture</h3>
                                 <div className="space-y-4">
                                   {[
                                     { label: "Deployment Protocol", value: "CI/CD Automated" },
@@ -545,7 +600,7 @@ export const Services = () => {
                                 </div>
                               </div>
                               <div className="space-y-8">
-                                <h4 className="text-2xl font-display font-bold">Operational Standards</h4>
+                                <h4 className="text-2xl font-display font-bold uppercase">Operational Standards</h4>
                                 <div className="space-y-4">
                                   {[
                                     { label: "Uptime Guarantee", value: "99.99% SLA" },
@@ -636,9 +691,9 @@ export const Services = () => {
                           >
                             <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 blur-[80px] -mr-32 -mt-32 group-hover:scale-150 transition-transform duration-1000" />
                             <div className="relative z-10 space-y-6">
-                              <h4 className="text-3xl font-display font-bold text-white leading-tight tracking-tighter">Start Your Project.</h4>
+                              <h4 className="text-3xl font-display font-bold text-white leading-tight tracking-tighter uppercase">Start Project Initiation.</h4>
                               <p className="text-white/80 text-sm font-light leading-relaxed">
-                                Ready to bring your ideas to life? Contact us today to discuss your project requirements and get a quote.
+                                Ready for system deployment? Contact us to discuss project requirements and technical specifications.
                               </p>
                               <div className="pt-4">
                                 <div className="inline-flex items-center gap-3 px-8 py-4 bg-white text-black rounded-full font-bold uppercase tracking-widest text-[10px] group-hover:bg-black group-hover:text-white transition-all duration-500">
@@ -669,11 +724,11 @@ export const Services = () => {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
                 <div>
                   <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-6 block">Our Standards</span>
-                  <h2 className="text-4xl md:text-6xl font-display font-bold tracking-tighter mb-8 leading-tight">
+                  <h2 className="text-4xl md:text-6xl font-display font-bold tracking-tighter mb-8 leading-tight uppercase">
                     Built for<br />Reliability.
                   </h2>
                   <p className="text-lg text-white/40 font-light leading-relaxed mb-12 max-w-xl">
-                    We focus on delivering digital products that are stable and easy to use. Our team combines professional design with reliable engineering to help your business succeed online.
+                    We focus on delivering digital products with operational stability. Our team integrates technical design with reliable engineering for client success.
                   </p>
                   
                   <div className="grid grid-cols-2 gap-8">
@@ -743,7 +798,7 @@ export const Services = () => {
             <div className="max-w-7xl mx-auto">
               <div className="text-center mb-20">
                 <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Market Comparison</span>
-                <h2 className="text-4xl md:text-7xl font-display font-bold tracking-tighter">Competitive Analysis.</h2>
+                <h2 className="text-4xl md:text-7xl font-display font-bold tracking-tighter uppercase">Competitive Analysis.</h2>
               </div>
               
               <div className="overflow-x-auto pb-8">
@@ -785,17 +840,17 @@ export const Services = () => {
           </section>
 
           {/* Process Section */}
-          <section className="py-20 md:py-40 px-6 md:px-12 relative overflow-hidden">
-            <div className="flex flex-col md:flex-row justify-between items-end gap-8 mb-16 md:mb-24">
+          <section className="py-24 md:py-48 px-6 md:px-12 relative overflow-hidden">
+            <div className="flex flex-col md:flex-row justify-between items-end gap-12 mb-20 md:mb-32">
               <div>
                 <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Architectural Methodology</span>
-                <h2 className="text-4xl md:text-7xl lg:text-8xl font-display font-bold tracking-tighter">Operational Workflow.</h2>
+                <h2 className="text-[clamp(2.5rem,6vw,5.5rem)] font-display font-bold tracking-tighter uppercase leading-none">Operational<br />Workflow.</h2>
               </div>
-              <p className="text-white/40 max-w-md text-sm md:text-base font-light leading-relaxed">
+              <p className="text-white/40 max-w-md text-sm md:text-lg font-light leading-relaxed">
                 Systematic orchestration of creativity and engineering. High-impact digital solutions. Surgical precision.
               </p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 relative">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 md:gap-16 relative">
               {/* Connecting Lines (Desktop) */}
               <div className="absolute top-1/2 left-0 w-full h-px bg-white/5 hidden lg:block -translate-y-1/2 pointer-events-none" />
               
@@ -870,8 +925,8 @@ export const Services = () => {
           </section>
 
           {/* CTA Section */}
-          <section className="py-20 md:py-40 px-6 md:px-12 relative overflow-hidden">
-            <div className="max-w-5xl mx-auto p-12 md:p-24 rounded-[3rem] md:rounded-[4rem] bg-zinc-950 border border-white/5 text-center relative overflow-hidden group">
+          <section className="py-24 md:py-48 px-6 md:px-12 relative overflow-hidden">
+            <div className="max-w-5xl mx-auto p-16 md:p-32 rounded-[3rem] md:rounded-[4rem] bg-zinc-950 border border-white/5 text-center relative overflow-hidden group">
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,99,33,0.1)_0%,transparent_70%)] opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-brand-red to-transparent" />
               

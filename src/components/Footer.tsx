@@ -116,7 +116,7 @@ export const Footer = () => {
               <span className="text-2xl md:text-3xl font-display font-bold tracking-tighter group-hover:text-brand-red transition-colors">KAPITECH</span>
             </Link>
             <p className="text-white/40 text-sm font-light leading-relaxed max-w-sm mb-10">
-              A digital agency specializing in high-performance systems and logical design. We bridge the gap between complex technology and human experience.
+              Agency specializes in systems. Design. Bridge technology and experience.
             </p>
             
             <form onSubmit={handleSubscribe} className="relative max-w-sm group">
