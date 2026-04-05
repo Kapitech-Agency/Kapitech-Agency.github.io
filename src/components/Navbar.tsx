@@ -64,7 +64,7 @@ export const Navbar = () => {
         <div className="max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between">
           <Link to="/" className="flex items-center group">
             <img 
-              src="/Logo KTA - Blak BG.png" 
+              src="/Kapitech Logo White.png" 
               alt="KAPITECH" 
               className="h-8 md:h-10 w-auto object-contain group-hover:scale-105 transition-transform duration-500"
             />
