@@ -109,7 +109,7 @@ export const Footer = () => {
           <div className="lg:col-span-4">
             <Link to="/" className="flex items-center gap-4 mb-10 group">
               <img 
-                src="/Logo KTA - Blak BG.png" 
+                src="/kapitech-logo-white.png" 
                 alt="KAPITECH" 
                 className="h-8 md:h-10 w-auto object-contain transition-transform duration-700 group-hover:scale-110 group-hover:rotate-3"
               />
