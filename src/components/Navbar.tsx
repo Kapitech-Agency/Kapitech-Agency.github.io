@@ -35,12 +35,12 @@ export const Navbar = () => {
   }, []);
 
   const navLinks = [
-    { name: 'System', href: '/' },
-    { name: 'Projects', href: '/work' },
+    { name: 'Home', href: '/' },
+    { name: 'Work', href: '/work' },
     { name: 'Services', href: '/services' },
-    { name: 'Infrastructure', href: '/about' },
-    { name: 'Personnel', href: '/careers' },
-    { name: 'Inquiry', href: '/contact' },
+    { name: 'About', href: '/about' },
+    { name: 'Careers', href: '/careers' },
+    { name: 'Contact', href: '/contact' },
   ];
 
   return (
@@ -93,7 +93,7 @@ export const Navbar = () => {
               to="/contact" 
               className="relative overflow-hidden h-11 px-8 bg-white text-black rounded-full text-[10px] font-bold uppercase tracking-[0.2em] group/btn transition-all duration-500 hover:pr-12 shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:shadow-[0_0_30px_rgba(255,59,59,0.3)] flex items-center"
             >
-              <span className="relative z-10">Initiate Project</span>
+              <span className="relative z-10">Start Project</span>
               <div className="absolute inset-0 bg-brand-red translate-y-full group-hover/btn:translate-y-0 transition-transform duration-500" />
               <div className="absolute right-4 top-1/2 -translate-y-1/2 opacity-0 group-hover/btn:opacity-100 transition-all duration-500">
                 <ChevronRight size={14} className="text-white" />
