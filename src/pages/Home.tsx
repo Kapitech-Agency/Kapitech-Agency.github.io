@@ -139,7 +139,7 @@ export const Home = () => {
                 transition={{ delay: 0.2 }}
                 className="px-4 py-1.5 rounded-full border border-white/10 bg-white/5 text-[10px] font-mono tracking-[0.2em] uppercase text-white/60"
               >
-                Digital Studio
+                Creative Tech Studio
               </motion.span>
               <motion.div 
                 initial={{ opacity: 0, x: -20 }}
@@ -180,7 +180,7 @@ export const Home = () => {
               transition={{ duration: 1, delay: 0.8 }}
               className="text-sm text-white/60 max-w-3xl font-light leading-relaxed mb-16 tracking-tight"
             >
-              Kapitech provides infrastructure. Services include audit. Production. Deployment. Operations span jurisdictions.
+              Kapitech provides Website & App Development. Creative & Video Production. System & Deployment.
             </motion.p>
             
             <motion.div 
@@ -191,13 +191,13 @@ export const Home = () => {
             >
               <MagneticButton>
                 <Link to="/contact" className="group h-11 px-8 bg-white text-black rounded-2xl font-mono text-[10px] font-bold uppercase tracking-widest flex items-center gap-3 hover:bg-brand-red hover:text-white transition-all duration-500">
-                  System Inquiry
+                  New Project?
                   <ArrowUpRight size={16} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                 </Link>
               </MagneticButton>
               <MagneticButton>
                 <Link to="/contact" className="h-11 px-8 rounded-2xl border border-white/10 hover:bg-white/5 transition-all font-mono font-bold tracking-widest uppercase text-[10px] flex items-center">
-                  Operational Audit
+                  Apply Careers
                 </Link>
               </MagneticButton>
             </motion.div>
@@ -217,7 +217,7 @@ export const Home = () => {
         {/* Kinetic Typography */}
         <div className="absolute bottom-10 left-0 w-full kinetic-text opacity-5 select-none pointer-events-none">
           <div className="kinetic-track text-[8vh] md:text-[15vh] font-display font-black uppercase tracking-tighter">
-            <span>Kapitech Operations • System Engineering • Interface Production • Visual Architecture • </span>
+            <span>Kapitech Operations • System Engineering • Video Production • Visual Architecture • </span>
             <span>Kapitech Operations • System Engineering • Interface Production • Visual Architecture • </span>
           </div>
         </div>
@@ -336,7 +336,7 @@ export const Home = () => {
                 <div className="absolute bottom-8 left-8 right-8 flex justify-between items-end">
                   <div className="flex flex-col gap-1">
                     <span className="text-[8px] font-mono text-white/40 uppercase tracking-widest">Visual_ID</span>
-                    <span className="text-[10px] font-mono text-white font-bold">KPTCH_OPS_01</span>
+                    <span className="text-[10px] font-mono text-white font-bold">KPTCH_DPS_01</span>
                   </div>
                   <div className="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center backdrop-blur-md">
                     <div className="w-2 h-2 rounded-full bg-brand-red animate-pulse" />
