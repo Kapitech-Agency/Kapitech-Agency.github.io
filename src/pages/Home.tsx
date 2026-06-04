@@ -8,7 +8,6 @@ import { Testimonials } from '../components/Testimonials';
 import { cn } from '../lib/utils';
 
 import { AtmosphericBackground } from '../components/ui/AtmosphericBackground';
-import { TelemetryOverlay } from '../components/ui/TelemetryOverlay';
 
 export const Home = () => {
   const [selectedProject, setSelectedProject] = useState<typeof projects[0] | null>(null);
@@ -116,15 +115,8 @@ export const Home = () => {
         {/* Enhanced Atmospheric Background */}
         <AtmosphericBackground 
           imageUrl="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=2072"
-          accentColor="red"
-          statusText="SYSTEM_READY"
-          scanMode="HERO_TELEMETRY"
-          sysRef="KPTCH_HOME_MAIN"
           opacity={0.08}
         />
-
-        {/* Telemetry Overlay */}
-        <TelemetryOverlay label="KPTCH_HOME_TELEMETRY" accentColor="red" />
 
         <div className="max-w-7xl mx-auto w-full relative z-10">
           <motion.div
@@ -139,7 +131,7 @@ export const Home = () => {
                 transition={{ delay: 0.2 }}
                 className="px-4 py-1.5 rounded-full border border-white/10 bg-white/5 text-[10px] font-mono tracking-[0.2em] uppercase text-white/60"
               >
-                Creative Tech Studio
+                Digital Studio
               </motion.span>
               <motion.div 
                 initial={{ opacity: 0, x: -20 }}
@@ -151,7 +143,7 @@ export const Home = () => {
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400"></span>
                 </span>
-                System Status: Nominal
+                Available for new projects
               </motion.div>
             </div>
             
@@ -162,7 +154,7 @@ export const Home = () => {
                 transition={{ duration: 1, delay: 0.4 }}
                 className="block"
               >
-                System Integration.
+                Digital Product Agency.
               </motion.span>
               <motion.span
                 initial={{ opacity: 0, filter: "blur(10px)" }}
@@ -170,7 +162,7 @@ export const Home = () => {
                 transition={{ duration: 1, delay: 0.6 }}
                 className="block text-white/40"
               >
-                Interface Production.
+                We help companies to build and scale.
               </motion.span>
             </h1>
             
@@ -180,7 +172,7 @@ export const Home = () => {
               transition={{ duration: 1, delay: 0.8 }}
               className="text-sm text-white/60 max-w-3xl font-light leading-relaxed mb-16 tracking-tight"
             >
-              Kapitech provides Website & App Development. Creative & Video Production. System & Deployment.
+              We bridge the gap between complex technology and human experience. Our team architects digital success for enterprise, SMEs, and startups.
             </motion.p>
             
             <motion.div 
@@ -191,13 +183,13 @@ export const Home = () => {
             >
               <MagneticButton>
                 <Link to="/contact" className="group h-11 px-8 bg-white text-black rounded-2xl font-mono text-[10px] font-bold uppercase tracking-widest flex items-center gap-3 hover:bg-brand-red hover:text-white transition-all duration-500">
-                  New Project?
+                  Start a Project
                   <ArrowUpRight size={16} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                 </Link>
               </MagneticButton>
               <MagneticButton>
-                <Link to="/contact" className="h-11 px-8 rounded-2xl border border-white/10 hover:bg-white/5 transition-all font-mono font-bold tracking-widest uppercase text-[10px] flex items-center">
-                  Apply Careers
+                <Link to="/work" className="h-11 px-8 rounded-2xl border border-white/10 hover:bg-white/5 transition-all font-mono font-bold tracking-widest uppercase text-[10px] flex items-center">
+                  View Projects
                 </Link>
               </MagneticButton>
             </motion.div>
@@ -217,8 +209,8 @@ export const Home = () => {
         {/* Kinetic Typography */}
         <div className="absolute bottom-10 left-0 w-full kinetic-text opacity-5 select-none pointer-events-none">
           <div className="kinetic-track text-[8vh] md:text-[15vh] font-display font-black uppercase tracking-tighter">
-            <span>Kapitech Operations • System Engineering • Video Production • Visual Architecture • </span>
-            <span>Kapitech Operations • System Engineering • Interface Production • Visual Architecture • </span>
+            <span>Product Strategy • UI/UX Design • Web Development • Branding • </span>
+            <span>Product Strategy • UI/UX Design • Web Development • Branding • </span>
           </div>
         </div>
       </section>
@@ -234,27 +226,27 @@ export const Home = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-20 md:gap-32" role="list">
             {[
               { 
-                label: "Latency", 
-                value: "< 1.0s", 
-                desc: "Sub-second response times.",
+                label: "Experience", 
+                value: "3+ YRS", 
+                desc: "Established studio.",
                 icon: <Cpu size={16} />
-              },
-              { 
-                label: "Conversion", 
-                value: "OPTIMIZED", 
-                desc: "Engagement delta increase.",
-                icon: <ArrowUpRight size={16} />
               },
               { 
                 label: "Projects", 
                 value: "50+", 
-                desc: "Technical systems delivered.",
+                desc: "Successful deliveries.",
+                icon: <ArrowUpRight size={16} />
+              },
+              { 
+                label: "Clients", 
+                value: "Global", 
+                desc: "Worldwide partnerships.",
                 icon: <Globe size={16} />
               },
               { 
-                label: "Uptime", 
-                value: "STABLE", 
-                desc: "System reliability standard.",
+                label: "Quality", 
+                value: "100%", 
+                desc: "Client satisfaction.",
                 icon: <CheckCircle2 size={16} />
               }
             ].map((stat, i) => (
@@ -301,6 +293,73 @@ export const Home = () => {
         </div>
       </section>
 
+      {/* Expertise & Markets Section */}
+      <section className="py-24 md:py-48 px-6 md:px-12 bg-black relative overflow-hidden border-b border-white/5">
+        <div className="max-w-7xl mx-auto relative z-10">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-12 mb-20 md:mb-32">
+            <div className="max-w-2xl">
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-8 h-px bg-brand-red/40" />
+                <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px]">Market Focus</span>
+              </div>
+              <h2 className="text-[clamp(2rem,5vw,4.5rem)] font-display font-bold tracking-tighter leading-[0.9] uppercase">
+                Expertise tailored<br />
+                <span className="text-white/20">to your industry.</span>
+              </h2>
+            </div>
+            <p className="text-lg text-white/40 font-light max-w-sm leading-relaxed">
+              We build scalable digital products for high-growth startups and visionary enterprises. Our teams are optimized to deliver reliable results.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {[
+              { 
+                title: "Web3 & Blockchain", 
+                desc: "Smart contract audits. Decentralized infrastructure. Tokenized systems.",
+                icon: <Globe size={24} />,
+                accent: "group-hover:text-blue-500"
+              },
+              { 
+                title: "AI & Machine Learning", 
+                desc: "Neural network deployment. Data pipeline optimization. AI research environments.",
+                icon: <Cpu size={24} />,
+                accent: "group-hover:text-emerald-500"
+              },
+              { 
+                title: "Fintech & Banking", 
+                desc: "Secure payment gateways. Real-time transaction systems. Compliance architecture.",
+                icon: <Shield size={24} />,
+                accent: "group-hover:text-brand-red"
+              },
+              { 
+                title: "SaaS & Enterprise", 
+                desc: "Scalable cloud platforms. Multi-tenant architecture. Operational dashboards.",
+                icon: <Layers size={24} />,
+                accent: "group-hover:text-purple-500"
+              }
+            ].map((market, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className="group p-8 rounded-3xl bg-white/5 border border-white/10 hover:bg-white/[0.08] transition-all duration-500 cursor-default"
+              >
+                <div className={cn("mb-6 transition-colors duration-500", market.accent)}>
+                  {market.icon}
+                </div>
+                <h3 className="text-xl font-display font-bold mb-4 uppercase tracking-tight">{market.title}</h3>
+                <p className="text-sm text-white/40 font-light leading-relaxed group-hover:text-white/60 transition-colors">
+                  {market.desc}
+                </p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Operational Model Section */}
       <section className="py-24 md:py-48 px-6 md:px-12 bg-zinc-950 relative overflow-hidden border-y border-white/5">
         {/* Technical Background Elements */}
@@ -332,19 +391,15 @@ export const Home = () => {
                 />
                 <div className="absolute inset-0 bg-brand-red/10 mix-blend-multiply transition-opacity group-hover:opacity-0" />
                 
-                {/* Image Overlay Telemetry */}
+                {/* Image Overlay */}
                 <div className="absolute bottom-8 left-8 right-8 flex justify-between items-end">
                   <div className="flex flex-col gap-1">
-                    <span className="text-[8px] font-mono text-white/40 uppercase tracking-widest">Visual_ID</span>
-                    <span className="text-[10px] font-mono text-white font-bold">KPTCH_DPS_01</span>
-                  </div>
-                  <div className="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center backdrop-blur-md">
-                    <div className="w-2 h-2 rounded-full bg-brand-red animate-pulse" />
+                    <span className="text-[10px] font-mono text-white font-bold tracking-widest break-words">TEAM_OPERATIONS</span>
                   </div>
                 </div>
               </div>
 
-              {/* Floating Data Tag */}
+              {/* Floating Tag */}
               <motion.div 
                 initial={{ opacity: 0, x: -20 }}
                 whileInView={{ opacity: 1, x: 0 }}
@@ -353,9 +408,8 @@ export const Home = () => {
               >
                 <div className="flex items-center gap-3 mb-2">
                   <div className="w-2 h-2 rounded-full bg-emerald-500" />
-                  <span className="text-[10px] font-mono font-bold text-white/60 uppercase tracking-widest">Sync Status</span>
+                  <span className="text-[10px] font-mono font-bold text-white/60 uppercase tracking-widest">Global Operations</span>
                 </div>
-                <div className="text-xs font-mono text-white">LOCKED_STABLE</div>
               </motion.div>
             </div>
           </div>
@@ -369,16 +423,16 @@ export const Home = () => {
           >
             <div className="flex items-center gap-4 mb-6">
               <div className="w-8 h-px bg-brand-red/40" />
-              <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px]">Operational Model</span>
+              <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px]">Our Expertise</span>
             </div>
             
             <h2 className="text-[clamp(2rem,5vw,3.5rem)] font-display font-bold tracking-tighter mb-8 leading-[0.9] uppercase">
-              Integrated<br />
-              <span className="text-white/20">Systems.</span>
+              Fueling<br />
+              <span className="text-white/20">Growth.</span>
             </h2>
             
             <p className="text-lg md:text-xl text-white/40 font-light leading-relaxed mb-12 max-w-xl">
-              Unlike fragmented freelance models, Kapitech operates as a unified <span className="text-white">technical ecosystem</span>. Our architects coordinate every operational node for maximum reliability.
+              We help companies to build and scale digital products. Our team of experts provides strategic design and development services to drive business results.
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 md:gap-12">
@@ -424,18 +478,18 @@ export const Home = () => {
 
             <div className="mt-16 pt-8 border-t border-white/5 flex flex-wrap gap-8 items-center">
               <div className="flex flex-col">
-                <span className="text-[10px] font-mono text-white/20 uppercase tracking-widest mb-1">Uptime_Metric</span>
-                <span className="text-xl font-display font-bold text-white">99.99%</span>
-              </div>
-              <div className="w-px h-8 bg-white/10" />
-              <div className="flex flex-col">
-                <span className="text-[10px] font-mono text-white/20 uppercase tracking-widest mb-1">SLA_Compliance</span>
+                <span className="text-[10px] font-mono text-white/40 uppercase tracking-widest mb-1">Project Success</span>
                 <span className="text-xl font-display font-bold text-white">100%</span>
               </div>
               <div className="w-px h-8 bg-white/10" />
               <div className="flex flex-col">
-                <span className="text-[10px] font-mono text-white/20 uppercase tracking-widest mb-1">Response_Latency</span>
-                <span className="text-xl font-display font-bold text-white">&lt; 2H</span>
+                <span className="text-[10px] font-mono text-white/40 uppercase tracking-widest mb-1">Uptime</span>
+                <span className="text-xl font-display font-bold text-white">99.99%</span>
+              </div>
+              <div className="w-px h-8 bg-white/10" />
+              <div className="flex flex-col">
+                <span className="text-[10px] font-mono text-white/40 uppercase tracking-widest mb-1">Response Time</span>
+                <span className="text-xl font-display font-bold text-white">&lt; 24H</span>
               </div>
             </div>
           </motion.div>
@@ -457,9 +511,9 @@ export const Home = () => {
               viewport={{ once: true }}
               className="text-brand-red font-mono font-bold tracking-[0.4em] uppercase text-[10px] mb-6 block"
             >
-              System Components
+              Core Services
             </motion.span>
-            <h2 className="text-3xl md:text-5xl font-display font-bold tracking-tighter mb-10 leading-tight uppercase">System Architecture.</h2>
+            <h2 className="text-3xl md:text-5xl font-display font-bold tracking-tighter mb-10 leading-tight uppercase">What we do.</h2>
             <motion.p 
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -467,35 +521,35 @@ export const Home = () => {
               transition={{ delay: 0.2 }}
               className="text-base md:text-lg text-white/40 font-light max-w-3xl mx-auto leading-relaxed"
             >
-              Integrated framework. Interface production. Engineering power. Strategic advisory.
+              End-to-end digital product creation. From brand identity to scalable tech infrastructure.
             </motion.p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 md:gap-16">
             {[
               {
-                title: "Design Systems",
+                title: "Branding",
                 icon: <Palette size={32} />,
                 color: "from-brand-red/20 to-transparent",
                 borderColor: "border-brand-red/20",
-                desc: "Technical brand architecture. High-fidelity UI/UX systems. Visual language documentation.",
-                features: ["UI/UX Design", "Graphic Design", "3D Visualization", "Motion Systems"]
+                desc: "We build brands that define markets. Visual identity systems, strategic positioning, and immersive storytelling.",
+                features: ["Visual Identity", "Brand Strategy", "Logo Design", "Brand Guidelines"]
               },
               {
-                title: "Engineering",
-                icon: <Code2 size={32} />,
+                title: "Design",
+                icon: <Layout size={32} />,
                 color: "from-blue-600/20 to-transparent",
                 borderColor: "border-blue-600/20",
-                desc: "Scalable cloud architecture. High-performance IT solutions. Technical growth engineering.",
-                features: ["Full-Stack", "Cloud Architecture", "Mobile Engineering", "API Systems"]
+                desc: "High-fidelity digital products. UI/UX design, mobile experiences, and complex interface systems.",
+                features: ["Product Design", "UI/UX Design", "Mobile Apps", "Web Design"]
               },
               {
-                title: "Advisory",
-                icon: <Activity size={32} />,
+                title: "Development",
+                icon: <Code2 size={32} />,
                 color: "from-emerald-500/20 to-transparent",
                 borderColor: "border-emerald-500/20",
-                desc: "Data-driven strategic insights. Business objective alignment. Performance auditing.",
-                features: ["Product Strategy", "Market Analysis", "Scaling Roadmap", "Performance Audit"]
+                desc: "Scalable technical infrastructure. Full-stack engineering, cloud architecture, and performance-first codebases.",
+                features: ["Web Development", "Mobile Dev", "Cloud Solutions", "API Integration"]
               }
             ].map((pillar, i) => (
               <motion.div
@@ -550,14 +604,14 @@ export const Home = () => {
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center relative z-10">
               <div>
-                <h3 className="text-[clamp(2rem,4vw,3.5rem)] font-display font-bold tracking-tighter mb-8 uppercase">System Synergy.</h3>
+                <h3 className="text-[clamp(2rem,4vw,3.5rem)] font-display font-bold tracking-tighter mb-8 uppercase">Seamless Integration.</h3>
                 <p className="text-[clamp(1rem,1.5vw,1.25rem)] text-white/40 font-light leading-relaxed mb-12">
-                  Integrated services. Feedback loops. Technical robustness. Strategic alignment.
+                  Unified services. Agile processes. Technical robustness. Strategic alignment.
                 </p>
                 <div className="flex flex-col gap-6">
                   {[
-                    { label: "Cross-Pillar Sync", desc: "Real-time coordination between design and engineering." },
-                    { label: "Unified Strategy", desc: "Single point of contact. Cohesive system strategy." },
+                    { label: "Cross-Functional Teams", desc: "Real-time coordination between design and engineering." },
+                    { label: "Unified Strategy", desc: "Single point of contact. Cohesive project strategy." },
                     { label: "Agile Operations", desc: "Rapid iterations. Integrated technical workflows." }
                   ].map((item, i) => (
                     <div key={i} className="flex gap-6 items-start">
@@ -630,7 +684,7 @@ export const Home = () => {
             whileInView={{ opacity: 1, scale: 1 }}
             className="text-[clamp(1.5rem,3vw,2.75rem)] font-display font-bold leading-tight"
           >
-            "Kapitech integrates high-fidelity design with enterprise engineering. We architect systems for market-leading performance."
+            "Kapitech integrates high-fidelity design with reliable engineering. We build products for market-leading performance."
           </motion.h2>
         </div>
       </section>
@@ -646,7 +700,7 @@ export const Home = () => {
           <div className="mb-16 md:mb-24 flex flex-col md:flex-row md:items-end justify-between gap-8">
             <div>
               <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Service Preview</span>
-              <h2 className="text-2xl md:text-3xl font-display font-bold tracking-tighter leading-tight uppercase">Operational Capabilities.</h2>
+              <h2 className="text-2xl md:text-3xl font-display font-bold tracking-tighter leading-tight uppercase">Core Capabilities.</h2>
             </div>
             <Link to="/services" className="group flex items-center gap-3 text-[10px] font-mono font-bold uppercase tracking-widest text-white/40 hover:text-brand-red transition-colors">
               View All Services <ArrowUpRight size={14} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
@@ -657,28 +711,28 @@ export const Home = () => {
             {[
               { 
                 title: "Website Development", 
-                desc: "High-performance web applications engineered for operational stability. Focus on system speed, security, and technical documentation.", 
+                desc: "High-performance websites and web applications built for speed and security. Focus on user experience and clean code.", 
                 tags: ["React", "Next.js", "Node.js", "TypeScript"],
                 isTop: true,
                 icon: <Code2 size={24} />
               },
               { 
                 title: "UI/UX Design", 
-                desc: "Interface production focusing on professional navigation and functional clarity. User-centric design systems for rapid task completion.", 
+                desc: "Beautiful and functional interfaces. User-centric design for better engagement and experience.", 
                 tags: ["Figma", "Prototyping", "Design Systems", "Usability"],
                 isTop: true,
                 icon: <Palette size={24} />
               },
               { 
                 title: "Technical Architecture", 
-                desc: "System mapping and technical blueprint production. Designing scalable infrastructure for long-term operational growth.", 
+                desc: "Planning and structuring your digital presence for long-term growth.", 
                 tags: ["Cloud", "Database", "API", "Security"],
                 isTop: false,
                 icon: <Cpu size={24} />
               },
               { 
                 title: "System Engineering", 
-                desc: "Full-stack engineering solutions for complex business logic. Integration of reliable backend systems and performance optimization.", 
+                desc: "Expert development solutions for complex business needs. Integration of reliable tools to help your business run smoothly.", 
                 tags: ["DevOps", "Backend", "Integration", "Scaling"],
                 isTop: false,
                 icon: <Layers size={24} />
@@ -766,9 +820,9 @@ export const Home = () => {
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-center">
           <div>
             <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Our Services</span>
-            <h2 className="text-2xl md:text-3xl font-display font-bold tracking-tighter mb-8 leading-tight uppercase">Operational Scope.</h2>
+            <h2 className="text-2xl md:text-3xl font-display font-bold tracking-tighter mb-8 leading-tight uppercase">Specialized Expertise.</h2>
             <p className="text-sm text-white/40 font-light leading-relaxed mb-12">
-              Agency provides technical services for client growth. Websites and professional interfaces produced.
+              We provide holistic digital services to accelerate your business. From robust engineering to intuitive visual design.
             </p>
             <div className="grid grid-cols-1 gap-8">
               {[
@@ -812,9 +866,9 @@ export const Home = () => {
       <section className="py-20 md:py-40 px-6 md:px-12 bg-zinc-950 relative overflow-hidden">
         <div className="max-w-7xl mx-auto text-center">
           <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Work With Us</span>
-          <h2 className="text-2xl md:text-3xl font-display font-bold tracking-tighter mb-8 uppercase">System Deployment.</h2>
+          <h2 className="text-2xl md:text-3xl font-display font-bold tracking-tighter mb-8 uppercase">Start Your Project.</h2>
           <p className="text-sm text-white/40 font-light leading-relaxed max-w-2xl mx-auto mb-12">
-            Client project initiation. Technical infrastructure established.
+            Ready to take the next step? Let's discuss how we can transform your vision into reality.
           </p>
           <MagneticButton>
             <Link to="/contact" className="px-8 py-4 bg-white text-black rounded-2xl font-mono font-bold hover:bg-brand-red hover:text-white transition-all duration-500 uppercase tracking-widest text-[10px] inline-block">
@@ -828,12 +882,12 @@ export const Home = () => {
       <section className="py-20 md:py-40 px-6 md:px-12 bg-[#111111] border-y border-white/5 relative overflow-hidden">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-12">
           <div className="text-white text-center md:text-left">
-            <h2 className="text-2xl md:text-3xl font-display font-bold tracking-tighter mb-4 leading-tight uppercase">Strategic Partnership.</h2>
-            <p className="text-sm font-light opacity-80">Technical and creative collaboration inquiry.</p>
+            <h2 className="text-2xl md:text-3xl font-display font-bold tracking-tighter mb-4 leading-tight uppercase">Let's Collaborate.</h2>
+            <p className="text-sm font-light opacity-80">Book a discovery call to explore technical and creative synergies.</p>
           </div>
           <MagneticButton>
             <Link to="/contact" className="px-8 py-4 bg-white text-black rounded-2xl font-mono font-bold hover:bg-brand-red hover:text-white transition-all duration-500 uppercase tracking-widest text-[10px]">
-              Begin Inquiry
+              Book a Call
             </Link>
           </MagneticButton>
         </div>
@@ -851,13 +905,13 @@ export const Home = () => {
             <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Operational Principles</span>
             <h2 className="text-2xl md:text-3xl font-display font-bold tracking-tighter mb-8 leading-tight uppercase">System Integrity.</h2>
             <p className="text-sm text-white/60 font-light leading-relaxed mb-12">
-              Functional technology. Digital precision. Purpose-driven code. System-oriented interface production.
+              Creativity meets execution. Clear design. Smart development. Outstanding digital products.
             </p>
             <div className="flex flex-col gap-6">
               {[
-                { title: "Technical Logic", desc: "Artistic vision integrated with technical precision." },
-                { title: "User-Centric Systems", desc: "Products designed for optimized user journeys." },
-                { title: "Engineering Standards", desc: "Latest technologies for performance and scalability." }
+                { title: "Smart Design", desc: "Artistic vision integrated with clean design principles." },
+                { title: "User-Focused", desc: "Products designed for intuitive user journeys." },
+                { title: "Modern Stacks", desc: "Latest technologies for performance and scale." }
               ].map((item, i) => (
                 <div key={i} className="flex gap-6 items-start">
                   <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center shrink-0">
@@ -1003,7 +1057,7 @@ export const Home = () => {
                 Operational <span className="text-brand-red">Lifecycle.</span>
               </h2>
               <p className="mt-6 text-white/40 text-lg font-light max-w-xl leading-relaxed">
-                Detailed technical execution protocol. From initial system audit to enterprise-grade deployment. Each phase is documented and audited for precision.
+                Clear and proven process. From initial idea to final launch. We make sure every step is done right.
               </p>
             </div>
             
@@ -1028,7 +1082,7 @@ export const Home = () => {
               {
                 step: "01",
                 title: "Discovery & Audit",
-                desc: "Comprehensive analysis of existing technical infrastructure. Stakeholder interviews to define operational requirements and system constraints.",
+                desc: "Understanding your current needs and challenges. We collaborate closely to define project goals and requirements.",
                 metrics: { label: "AUDIT_STATUS", value: "VERIFIED" },
                 nodes: ["Requirement Mapping", "Technical Feasibility"],
                 icon: <Activity size={20} />,
@@ -1037,7 +1091,7 @@ export const Home = () => {
               {
                 step: "02",
                 title: "Architecture & UI",
-                desc: "Production of high-fidelity interface systems and technical blueprints. Designing user flows optimized for rapid information retrieval.",
+                desc: "Creating wireframes and high-fidelity designs. Building user flows that make sense for your audience.",
                 metrics: { label: "SYSTEM_TYPE", value: "MODULAR" },
                 nodes: ["System Mapping", "Interface Systems"],
                 icon: <Palette size={20} />,
@@ -1105,34 +1159,86 @@ export const Home = () => {
         </div>
       </section>
 
-      {/* Newsletter Section */}
-      <section className="py-20 md:py-40 px-6 md:px-12 bg-black border-t border-white/5">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-center">
-          <div>
-            <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Technical Brief</span>
-            <h2 className="text-4xl md:text-6xl lg:text-7xl font-display font-bold tracking-tighter mb-8 leading-[0.9] uppercase">System Intelligence.</h2>
-            <p className="text-lg md:text-xl text-white/40 font-light leading-relaxed">
-              Bi-weekly report. Digital architecture. UI/UX systems. IT infrastructure. Technical data only.
+      {/* Awards & Achievements Section */}
+      <section className="py-24 md:py-48 px-6 md:px-12 bg-black relative overflow-hidden border-t border-white/5">
+        <div className="max-w-7xl mx-auto relative z-10">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-12 mb-20 md:mb-32">
+            <div className="max-w-2xl">
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-8 h-px bg-brand-red/40" />
+                <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px]">Recognition</span>
+              </div>
+              <h2 className="text-[clamp(2rem,6vw,4.5rem)] font-display font-bold tracking-tighter leading-none uppercase">
+                Awards &<br />
+                <span className="text-white/20">Achievements.</span>
+              </h2>
+            </div>
+            <p className="text-lg text-white/40 font-light max-w-sm leading-relaxed">
+              While client growth is our primary metric, technical recognition validates our operational standards.
             </p>
           </div>
-          <div className="bg-zinc-900 p-12 rounded-[3rem] border border-white/5">
-            <form className="flex flex-col gap-6">
-              <div className="flex flex-col gap-2">
-                <label className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/40 ml-2">Email Address</label>
-                <input 
-                  type="email" 
-                  placeholder="name@company.com" 
-                  className="bg-black border border-white/10 rounded-full px-8 py-5 text-white focus:outline-none focus:border-brand-red transition-all"
-                />
-              </div>
-              <MagneticButton>
-                <button className="w-full py-5 bg-white text-black rounded-full font-bold hover:bg-brand-red hover:text-white transition-all duration-500 uppercase tracking-widest text-xs">
-                  Subscribe
-                </button>
-              </MagneticButton>
-              <p className="text-[10px] font-mono text-white/20 text-center uppercase tracking-widest">Join 5,000+ industry leaders.</p>
-            </form>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
+            {[
+              { year: "2023", award: "Awwwards", category: "Site of the Day", icon: <Globe size={24} /> },
+              { year: "2023", award: "CSS Design", category: "Special Kudos", icon: <Layout size={24} /> },
+              { year: "2022", award: "FWA", category: "Mobile Excellence", icon: <Zap size={24} /> },
+              { year: "2022", award: "Behance", category: "Interaction Design", icon: <Palette size={24} /> }
+            ].map((item, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className="p-8 rounded-3xl bg-zinc-900/30 border border-white/5 hover:border-brand-red/30 transition-all duration-500 group"
+              >
+                <div className="text-brand-red/40 group-hover:text-brand-red transition-colors mb-6">
+                  {item.icon}
+                </div>
+                <span className="text-[10px] font-mono text-white/20 uppercase tracking-widest block mb-2">{item.year}</span>
+                <h3 className="text-xl font-display font-bold mb-1 uppercase tracking-tight">{item.award}</h3>
+                <p className="text-xs text-white/40 font-light uppercase tracking-widest">{item.category}</p>
+              </motion.div>
+            ))}
           </div>
+        </div>
+      </section>
+
+      {/* CTA Section (Replaces Newsletter) */}
+      <section className="py-24 md:py-48 px-6 md:px-12 bg-zinc-950 relative overflow-hidden border-t border-white/5">
+        <div className="absolute inset-0 z-0 opacity-10">
+          <div className="absolute inset-0 grid-bg" />
+        </div>
+        <div className="max-w-7xl mx-auto relative z-10 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="max-w-4xl mx-auto"
+          >
+            <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-8 block">Project Initiation</span>
+            <h2 className="text-[clamp(2.5rem,8vw,6.5rem)] font-display font-bold tracking-tighter leading-[0.85] mb-12 uppercase">
+              Ready to scale<br />
+              <span className="text-white/20">your business?</span>
+            </h2>
+            <p className="text-xl md:text-2xl text-white/40 font-light leading-relaxed mb-16 max-w-2xl mx-auto">
+              Join 250+ companies who have built and scaled with our Kapitech team. We architect digital success.
+            </p>
+            <div className="flex flex-wrap justify-center gap-8">
+              <MagneticButton>
+                <Link to="/contact" className="group h-14 px-12 bg-white text-black rounded-2xl font-mono text-xs font-bold uppercase tracking-widest flex items-center gap-3 hover:bg-brand-red hover:text-white transition-all duration-500">
+                  Start a Project
+                  <ArrowUpRight size={20} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                </Link>
+              </MagneticButton>
+              <MagneticButton>
+                <Link to="/work" className="h-14 px-12 rounded-2xl border border-white/10 hover:bg-white/5 transition-all font-mono font-bold tracking-widest uppercase text-xs flex items-center">
+                  View Projects
+                </Link>
+              </MagneticButton>
+            </div>
+          </motion.div>
         </div>
       </section>
 

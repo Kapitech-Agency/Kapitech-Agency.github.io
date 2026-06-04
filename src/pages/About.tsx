@@ -6,32 +6,31 @@ import { PerspectiveTilt } from '../components/ui/PerspectiveTilt';
 import { cn } from '../lib/utils';
 
 import { AtmosphericBackground } from '../components/ui/AtmosphericBackground';
-import { TelemetryOverlay } from '../components/ui/TelemetryOverlay';
 
 export const About = () => {
   const values = [
     {
-      title: "Functional Architecture",
+      title: "Functional Design",
       icon: <Palette size={24} />,
-      desc: "Interface production prioritized for operational utility. Systematic removal of non-functional decorative elements to ensure interface clarity."
+      desc: "We prioritize usability and clarity. Every design element serves a distinct purpose, eliminating unnecessary decoration to focus on the core user experience."
     },
     {
-      title: "Technical Reliability",
+      title: "Technical Excellence",
       icon: <Code2 size={24} />,
-      desc: "Utilization of React and Next.js frameworks for high-performance execution. System stability prioritized over experimental methodologies."
+      desc: "Built on modern frameworks like React and Next.js, our technical solutions emphasize performance, security, and long-term reliability over fleeting trends."
     },
     {
-      title: "Direct Protocol",
+      title: "Direct Collaboration",
       icon: <Box size={24} />,
-      desc: "Direct communication channels between clients and technical architects. Elimination of intermediary management layers for project transparency."
+      desc: "We maintain clear, direct communication channels between our team and yours. Our transparent process ensures everyone is aligned at every stage of the project."
     }
   ];
 
   const journey = [
-    { year: "2021", event: "Studio Initiation", desc: "Operational start by Fikri Nurlete and Reynaldo Anakotta as a digital production unit.", icon: <Rocket size={20} /> },
-    { year: "2022", event: "Capability Expansion", desc: "Integration of full-scale IT engineering and interface production services.", icon: <Zap size={20} /> },
-    { year: "2023", event: "Global Operations", desc: "Execution of technical deployments for regional and international client networks.", icon: <Globe size={20} /> },
-    { year: "2024", event: "Corporate Integration", desc: "Official registration as PT. Kapitech Digital Indonesia for standardized service delivery.", icon: <Shield size={20} /> }
+    { year: "2021", event: "Inception", desc: "Started as a digital production unit by Fikri Nurlete and Reynaldo Anakotta.", icon: <Rocket size={20} /> },
+    { year: "2022", event: "Expansion", desc: "Integrated full-scale IT engineering Services and focused on specialized product development.", icon: <Zap size={20} /> },
+    { year: "2023", event: "Global Reach", desc: "Delivered digital solutions for a diverse range of international clients.", icon: <Globe size={20} /> },
+    { year: "2024", event: "Establishment", desc: "Officially registered as PT. Kapitech Digital Indonesia to standardize enterprise delivery.", icon: <Shield size={20} /> }
   ];
 
   const techStack = [
@@ -44,15 +43,27 @@ export const About = () => {
   const team = [
     {
       name: "Fikri Nurlete",
-      role: "Founder & Technical Lead",
-      image: "https://picsum.photos/seed/fikri/400/500",
-      bio: "Fikri manages technical architecture at Kapitech. Specialized in software engineering and systematic digital solution deployment."
+      role: "Founder/CEO",
+      image: "/1.png",
+      bio: "Fikri leads Kapitech's overall vision and technical architecture, driving strategic business growth and delivering impactful solutions."
     },
     {
-      name: "Reynaldo Anakotta",
-      role: "Co-Founder & Interface Lead",
-      image: "https://picsum.photos/seed/reynaldo/400/500",
-      bio: "Reynaldo directs interface production and creative logic. Ensures all deliverables meet functional and visual operational standards."
+      name: "Reynaldo Frasiskus Anakotta",
+      role: "Co-Founder/PM",
+      image: "/3.png",
+      bio: "Reynaldo oversees project management, ensuring smooth operations, agile workflows, and timely delivery of scalable technical products."
+    },
+    {
+      name: "Hendri Hassan",
+      role: "ECD",
+      image: "/2.png",
+      bio: "Hendri is the Executive Creative Director, shaping the visual identity and leading the design team to create beautiful, functional experiences."
+    },
+    {
+      name: "Akell Ahmed",
+      role: "Associate Project",
+      image: "/4.png",
+      bio: "Akell coordinates project details and client communication, making sure every phase runs efficiently and expectations are exceeded."
     }
   ];
 
@@ -66,15 +77,8 @@ export const About = () => {
       {/* Atmospheric Background */}
       <AtmosphericBackground 
         imageUrl="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=1200"
-        accentColor="purple"
-        statusText="HISTORY_SYNC_COMPLETE"
-        scanMode="ARCHIVE_RETRIEVAL"
-        sysRef="KPTCH_ABOUT_CORE"
         opacity={0.05}
       />
-
-      {/* Telemetry Overlay */}
-      <TelemetryOverlay label="KPTCH_ABOUT_TELEMETRY" accentColor="purple" />
 
       <div className="relative z-10">
         <div className="max-w-7xl mx-auto">
@@ -86,12 +90,12 @@ export const About = () => {
               transition={{ duration: 0.8 }}
               className="relative z-10"
             >
-              <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Operational Overview</span>
+              <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">About Us</span>
               <h1 className="text-[clamp(2.25rem,8vw,5.5rem)] font-display font-bold leading-[0.85] tracking-tighter mb-12 uppercase">
-                Technical Solutions.<br />Systematic Design.
+                Digital design experts<br />who fuel growth.
               </h1>
               <p className="text-sm md:text-base text-white/40 max-w-3xl font-light leading-relaxed tracking-tight">
-                Kapitech is a digital production unit based in Indonesia. We architect reliable technical infrastructure and professional interfaces for global client operations.
+                For over 3 years, we have delivered 50+ platform initiatives for enterprise, SMEs, and startups. We bridge the gap between complex technology and human experience.
               </p>
             </motion.div>
 
@@ -106,9 +110,6 @@ export const About = () => {
                   className="absolute left-0 w-8 h-px bg-brand-red/30"
                   style={{ top: `${20 + i * 15}%` }}
                 >
-                  <span className="absolute left-10 top-1/2 -translate-y-1/2 text-[6px] font-mono text-brand-red/40 whitespace-nowrap">
-                    DNA_SEQ_{i}: {Math.random().toString(16).substring(2, 8).toUpperCase()}
-                  </span>
                 </motion.div>
               ))}
             </div>
@@ -147,11 +148,11 @@ export const About = () => {
                   {/* Image Overlay Telemetry */}
                   <div className="absolute bottom-8 left-8 md:bottom-12 md:left-12">
                     <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Core Objective</span>
-                    <h3 className="text-2xl md:text-4xl font-display font-bold tracking-tighter uppercase">Reliable System Deployment.</h3>
+                    <h3 className="text-2xl md:text-4xl font-display font-bold tracking-tighter uppercase">Reliable Digital Products.</h3>
                   </div>
                 </div>
 
-                {/* Floating Data Tag */}
+                {/* Floating Tag */}
                 <motion.div 
                   initial={{ opacity: 0, x: 20 }}
                   whileInView={{ opacity: 1, x: 0 }}
@@ -160,9 +161,8 @@ export const About = () => {
                 >
                   <div className="flex items-center gap-3 mb-2">
                     <div className="w-2 h-2 rounded-full bg-brand-red animate-pulse" />
-                    <span className="text-[10px] font-mono font-bold text-white/60 uppercase tracking-widest">Operational Status</span>
+                    <span className="text-[10px] font-mono font-bold text-white/60 uppercase tracking-widest">Global Reach</span>
                   </div>
-                  <div className="text-xs font-mono text-white">ACTIVE_DEPLOYMENT</div>
                 </motion.div>
               </div>
 
@@ -170,19 +170,19 @@ export const About = () => {
               <div className="lg:col-span-7 space-y-8 md:space-y-12">
                 <div className="flex items-center gap-4">
                   <div className="w-8 h-px bg-brand-red/40" />
-                  <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px]">Agency DNA</span>
+                  <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px]">Our Mission</span>
                 </div>
                 
                 <h2 className="text-[clamp(1.75rem,5vw,3.5rem)] font-display font-bold tracking-tighter leading-[0.9] uppercase">
-                  We engineer <span className="text-brand-red">functional systems</span> for operational performance.
+                  We bridge the gap between <span className="text-brand-red">technology</span> and human experience.
                 </h2>
                 
                 <div className="space-y-6">
                   <p className="text-lg md:text-xl text-white/40 font-light leading-relaxed max-w-2xl">
-                    Established in 2021, Kapitech maintains a focus on <span className="text-white">high-fidelity technical engineering</span> and interface production for scaling client networks.
+                    Established in 2021, Kapitech is a digital product agency that helps companies to build and scale. We focus on <span className="text-white">strategic design and development</span> to drive business results.
                   </p>
                   <p className="text-sm md:text-base text-white/40 font-light leading-relaxed max-w-2xl">
-                    In 2024, the unit integrated as PT. Kapitech Digital Indonesia. We operate with technical precision, prioritizing system integrity over marketing narratives.
+                    Our team of experts architects digital success for enterprise, SMEs, and startups. We operate with precision, ensuring every product we build is scalable, secure, and user-centric.
                   </p>
                 </div>
 
@@ -207,8 +207,8 @@ export const About = () => {
           {/* Journey Section */}
           <section className="py-24 md:py-48 px-6 md:px-12 relative overflow-hidden">
             <div className="mb-20 md:mb-32">
-              <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Operational Timeline</span>
-              <h2 className="text-[clamp(2rem,6vw,4.5rem)] font-display font-bold tracking-tighter uppercase leading-none">System Evolution.</h2>
+              <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Timeline</span>
+              <h2 className="text-[clamp(2rem,6vw,4.5rem)] font-display font-bold tracking-tighter uppercase leading-none">Our Journey.</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 md:gap-16">
               {journey.map((item, i) => (
@@ -236,8 +236,8 @@ export const About = () => {
           {/* Tech Stack Section */}
           <section className="py-24 md:py-48 px-6 md:px-12 bg-zinc-950/30 relative overflow-hidden border-y border-white/5">
             <div className="mb-20 md:mb-32">
-              <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Technical Infrastructure</span>
-              <h2 className="text-[clamp(2rem,6vw,4.5rem)] font-display font-bold tracking-tighter uppercase leading-none">System Stack.</h2>
+              <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Technologies</span>
+              <h2 className="text-[clamp(2rem,6vw,4.5rem)] font-display font-bold tracking-tighter uppercase leading-none">Our Stack.</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {techStack.map((stack, i) => (
@@ -267,7 +267,7 @@ export const About = () => {
           <section className="py-24 md:py-48 px-6 md:px-12 relative overflow-hidden">
             <div className="mb-20 md:mb-32">
               <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Core Principles</span>
-              <h2 className="text-[clamp(2rem,6vw,4.5rem)] font-display font-bold tracking-tighter uppercase leading-none">Operational Logic.</h2>
+              <h2 className="text-[clamp(2rem,6vw,4.5rem)] font-display font-bold tracking-tighter uppercase leading-none">How We Work.</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-16">
               {values.map((value, i) => (
@@ -301,7 +301,7 @@ export const About = () => {
                     <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-brand-red to-transparent" />
                     <div className="space-y-8">
                       <div className="flex justify-between items-center">
-                        <span className="text-[10px] font-mono font-bold uppercase tracking-[0.3em] text-white/20">Operational Standards</span>
+                        <span className="text-[10px] font-mono font-bold uppercase tracking-[0.3em] text-white/20">Our Standards</span>
                         <div className="flex items-center gap-2">
                           <div className="w-2 h-2 rounded-full bg-brand-red animate-pulse" />
                           <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-brand-red">Active</span>
@@ -310,10 +310,10 @@ export const About = () => {
                       
                       <div className="space-y-6">
                         {[
-                          { label: "Interface Fidelity", status: "High", progress: 95 },
-                          { label: "System Stability", status: "Stable", progress: 92 },
-                          { label: "Execution Speed", status: "Optimal", progress: 90 },
-                          { label: "Security Protocol", status: "Standard", progress: 85 }
+                          { label: "Design Quality", status: "High", progress: 95 },
+                          { label: "Code Maintainability", status: "Excellent", progress: 92 },
+                          { label: "Performance", status: "Optimal", progress: 90 },
+                          { label: "User Experience", status: "Focus", progress: 85 }
                         ].map((item) => (
                           <div key={item.label} className="space-y-2">
                             <div className="flex justify-between text-[10px] font-mono font-bold uppercase tracking-widest">
@@ -336,12 +336,12 @@ export const About = () => {
                 </div>
                 
                 <div className="order-1 lg:order-2">
-                  <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-6 block">Operational Protocol</span>
+                  <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-6 block">Our Approach</span>
                   <h2 className="text-3xl md:text-5xl font-display font-bold tracking-tighter mb-8 leading-tight uppercase">
-                    Execution<br />Methodology.
+                    Execution &<br />Delivery.
                   </h2>
                   <p className="text-sm md:text-base text-white/40 font-light leading-relaxed mb-12 max-w-xl">
-                    Operational processes are standardized for efficiency. We analyze client requirements, architect logical solutions, and deploy using verified technical stacks.
+                    We employ proven agile methodologies to ensure efficiency and quality. We take time to understand your needs and deliver solutions that are not only beautiful, but highly effective.
                   </p>
                   <div className="grid grid-cols-2 gap-8">
                     {[
@@ -371,23 +371,23 @@ export const About = () => {
             </div>
             <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div>
-                <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Global Logistics</span>
-                <h2 className="text-3xl md:text-5xl font-display font-bold tracking-tighter mb-8 uppercase">Distributed Technical Network.</h2>
+                <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Global Teams</span>
+                <h2 className="text-3xl md:text-5xl font-display font-bold tracking-tighter mb-8 uppercase">Distributed Expertise.</h2>
                 <p className="text-sm md:text-base text-white/60 font-light leading-relaxed mb-8">
-                  Operational frameworks are distributed globally. We utilize specialized talent across multiple jurisdictions. A follow-the-sun model maintains continuous system development and deployment cycles.
+                  We are a remote-first agency drawing on specialized talent globally. This flexibility enables us to scale teams quickly and respond effectively to varied client needs.
                 </p>
                 <div className="flex flex-wrap gap-8">
                   <div>
                     <span className="text-2xl font-display font-bold block font-mono">15+</span>
-                    <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/40">Jurisdictions</span>
+                    <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/40">Cities</span>
                   </div>
                   <div>
                     <span className="text-2xl font-display font-bold block font-mono">04</span>
-                    <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/40">Active Timezones</span>
+                    <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/40">Timezones</span>
                   </div>
                   <div>
                     <span className="text-2xl font-display font-bold block font-mono">100%</span>
-                    <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/40">Remote Protocol</span>
+                    <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/40">Remote</span>
                   </div>
                 </div>
               </div>
@@ -410,10 +410,10 @@ export const About = () => {
           {/* Team Section */}
           <section className="py-24 md:py-48 px-6 md:px-12 relative overflow-hidden">
             <div className="mb-20 md:mb-32">
-              <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">System Architects</span>
+              <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Our Team</span>
               <h2 className="text-[clamp(2rem,6vw,4.5rem)] font-display font-bold tracking-tighter uppercase leading-none">The Collective.</h2>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-16">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 md:gap-8">
               {team.map((member, i) => (
                 <div key={member.name}>
                   <PerspectiveTilt>
@@ -449,8 +449,8 @@ export const About = () => {
       {/* Kinetic Typography */}
       <div className="absolute bottom-10 left-0 w-full kinetic-text opacity-5 select-none pointer-events-none">
         <div className="kinetic-track text-[8vh] md:text-[15vh] font-display font-black uppercase tracking-tighter">
-          <span>Kapitech Operations • System Engineering • Interface Production • Visual Architecture • </span>
-          <span>Kapitech Operations • System Engineering • Interface Production • Visual Architecture • </span>
+          <span>Product Strategy • UI/UX Design • Web Development • Branding • </span>
+          <span>Product Strategy • UI/UX Design • Web Development • Branding • </span>
         </div>
       </div>
     </motion.div>

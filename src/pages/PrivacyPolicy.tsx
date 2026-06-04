@@ -10,13 +10,7 @@ export const PrivacyPolicy = () => {
       exit={{ opacity: 0 }}
       className="min-h-screen pt-40 pb-20 px-6 md:px-12 bg-black text-white/80 font-light relative"
     >
-      <AtmosphericBackground 
-        accentColor="blue"
-        statusText="PRIVACY_PROTOCOL_ACTIVE"
-        scanMode="DATA_PROTECTION"
-        sysRef="KPTCH_SEC_NODE"
-        opacity={0.02}
-      />
+      <AtmosphericBackground opacity={0.02} />
       <div className="max-w-4xl mx-auto relative z-10">
         <h1 className="text-5xl md:text-7xl font-display font-bold text-white mb-12 tracking-tighter">Privacy Policy.</h1>
         <p className="text-sm uppercase tracking-widest text-brand-red font-bold mb-12">Last Updated: March 31, 2026</p>

@@ -71,9 +71,9 @@ export const Footer = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.1 }}
-                className="text-[clamp(2.5rem,6vw,6rem)] font-display font-bold tracking-tighter leading-[0.9] mb-8"
+                className="text-[clamp(2.5rem,6vw,6rem)] font-display font-bold tracking-tighter leading-[0.9] mb-8 uppercase"
               >
-                Ready to <span className="text-brand-red">Initialize?</span>
+                Ready to <span className="text-brand-red">Scale?</span>
               </motion.h2>
               <p className="text-white/40 text-lg font-light max-w-md leading-relaxed">
                 Let's build something that matters. Our team is ready to transform your vision into a high-performance reality.
@@ -109,11 +109,11 @@ export const Footer = () => {
           <div className="lg:col-span-4">
             <Link to="/" className="flex items-center gap-4 mb-10 group">
               <img 
-                src="/kapitech-logo-white.png" 
+                src="/Kapitech Logo 3D Glass.png" 
                 alt="KAPITECH" 
-                className="h-8 md:h-10 w-auto object-contain transition-transform duration-700 group-hover:scale-110 group-hover:rotate-3"
+                className="h-8 md:h-12 w-auto object-contain transition-transform duration-700 group-hover:scale-110 group-hover:rotate-3"
               />
-              <span className="text-2xl md:text-3xl font-display font-bold tracking-tighter group-hover:text-brand-red transition-colors">KAPITECH</span>
+              <span className="text-2xl md:text-4xl font-display font-bold tracking-tighter group-hover:text-brand-red transition-colors">KAPITECH</span>
             </Link>
             <p className="text-white/40 text-sm font-light leading-relaxed max-w-sm mb-10">
               Agency specializes in systems. Design. Bridge technology and experience.
@@ -231,7 +231,7 @@ export const Footer = () => {
             <p>© {currentYear} PT KAPITECH DIGITAL INDONESIA.</p>
             <div className="flex items-center gap-2">
               <div className="w-1 h-1 rounded-full bg-white/10" />
-              <p>Logical Design // Operational Excellence</p>
+              <p>All Rights Reserved</p>
             </div>
           </div>
           <div className="flex gap-8">

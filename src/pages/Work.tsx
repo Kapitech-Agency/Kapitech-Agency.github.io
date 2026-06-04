@@ -7,7 +7,6 @@ import { MagneticButton } from '../components/ui/MagneticButton';
 import Fuse from 'fuse.js';
 
 import { AtmosphericBackground } from '../components/ui/AtmosphericBackground';
-import { TelemetryOverlay } from '../components/ui/TelemetryOverlay';
 
 export const Work = () => {
   const [activeFilter, setActiveFilter] = useState('All');
@@ -34,7 +33,7 @@ export const Work = () => {
   const projects = [
     {
       title: "Lumina Real Estate",
-      category: "System Engineering / Interface Production",
+      category: "Design / Development",
       featured: true,
       recent: true,
       image: "https://picsum.photos/seed/lumina/1200/800",
@@ -50,7 +49,7 @@ export const Work = () => {
     },
     {
       title: "Aura Creative Studio",
-      category: "Visual Architecture / Interface Production",
+      category: "Branding / Design",
       featured: true,
       recent: false,
       image: "https://picsum.photos/seed/aura/1200/800",
@@ -66,7 +65,7 @@ export const Work = () => {
     },
     {
       title: "Nexus Fintech App",
-      category: "System Engineering / Interface Production",
+      category: "Design / Development",
       featured: true,
       recent: true,
       image: "https://picsum.photos/seed/nexus/1200/800",
@@ -82,7 +81,7 @@ export const Work = () => {
     },
     {
       title: "Vanguard Logistics",
-      category: "System Engineering / Interface Production",
+      category: "Development",
       featured: false,
       recent: false,
       image: "https://picsum.photos/seed/vanguard/1200/800",
@@ -98,7 +97,7 @@ export const Work = () => {
     },
     {
       title: "Zenith Marketplace",
-      category: "System Engineering / Visual Architecture",
+      category: "Branding / Development",
       featured: true,
       recent: true,
       image: "https://picsum.photos/seed/zenith/1200/800",
@@ -114,7 +113,7 @@ export const Work = () => {
     },
     {
       title: "Titan Health",
-      category: "System Engineering / Interface Production",
+      category: "Design / Development",
       featured: false,
       recent: false,
       image: "https://picsum.photos/seed/titan/1200/800",
@@ -130,7 +129,7 @@ export const Work = () => {
     }
   ];
 
-  const categories = ['All', 'Featured', 'Recent', 'System Engineering', 'Interface Production', 'Visual Architecture'];
+  const categories = ['All', 'Featured', 'Branding', 'Design', 'Development', 'Web3 & Blockchain', 'AI & ML', 'SaaS', 'Fintech'];
 
   const featuredProjects = useMemo(() => projects.filter(p => p.featured), [projects]);
 
@@ -192,14 +191,8 @@ export const Work = () => {
       {/* Atmospheric Background */}
       <AtmosphericBackground 
         imageUrl="https://images.unsplash.com/photo-1522542550221-31fd1971107c?auto=format&fit=crop&q=80&w=2070"
-        accentColor="red"
-        statusText="OPERATIONAL_SYNC"
-        scanMode="ACTIVE_TELEMETRY"
-        sysRef="KPTCH_WRK_ARCH_00"
+        opacity={0.05}
       />
-
-      {/* Telemetry Overlay */}
-      <TelemetryOverlay label="KPTCH_WORK_TELEMETRY" accentColor="red" />
 
       <div className="relative z-10 pt-24 md:pt-48 pb-24 md:pb-48 px-6 md:px-12" role="main" aria-label="Our Portfolio">
         <div className="max-w-7xl mx-auto">
@@ -210,12 +203,12 @@ export const Work = () => {
               transition={{ duration: 0.8 }}
               className="relative z-10"
             >
-              <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Kapitech Operations // Archive</span>
+              <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Work</span>
               <h1 className="text-[clamp(2rem,6vw,6rem)] font-display font-bold leading-[0.85] tracking-tighter mb-12 uppercase">
-                Operational Index.
+                Our experience matches<br />your market.
               </h1>
               <p className="text-sm md:text-base text-white/40 max-w-2xl font-light leading-relaxed tracking-tight">
-                Archive of technical deployments and system architectures. We deliver functional results for client operational requirements.
+                We help companies to build and scale digital products. Our team of experts provides strategic design and development services to drive business results.
               </p>
             </motion.div>
 

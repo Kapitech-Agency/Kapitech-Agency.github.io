@@ -5,7 +5,6 @@ import { MagneticButton } from '../components/ui/MagneticButton';
 import { Link } from 'react-router-dom';
 import { cn } from '../lib/utils';
 import { AtmosphericBackground } from '../components/ui/AtmosphericBackground';
-import { TelemetryOverlay } from '../components/ui/TelemetryOverlay';
 
 const positions = [
   {
@@ -88,33 +87,33 @@ const hiringProcess = [
 const benefits = [
   {
     icon: <Globe size={24} />,
-    title: 'Remote Protocol',
-    desc: 'Remote work options. Flexible hours.',
+    title: 'Global Impact',
+    desc: 'Work on platform initiatives for Fortune 500 companies and SMEs.',
   },
   {
     icon: <Cpu size={24} />,
-    title: 'Technical Stack',
-    desc: 'Access infrastructure. Use production tools.',
+    title: 'Expert Collective',
+    desc: 'Collaborate with senior engineers and product designers.',
   },
   {
     icon: <Heart size={24} />,
-    title: 'Health Coverage',
-    desc: 'Standardized health insurance and well-being support protocols.'
+    title: 'Growth Mindset',
+    desc: 'Continuous learning protocols and technical certification support.'
   },
   {
     icon: <Rocket size={24} />,
-    title: 'Skill Development',
-    desc: 'Resources for technical growth and professional certification.'
+    title: 'Rapid Scaling',
+    desc: 'Experience the lifecycle of high-growth digital products.'
   },
   {
     icon: <Coffee size={24} />,
     title: 'Direct Culture',
-    desc: 'Focus on transparent communication and technical collaboration.'
+    desc: 'Transparent communication and technical collaboration protocols.'
   },
   {
     icon: <Laptop size={24} />,
-    title: 'Hardware Provision',
-    desc: 'Provision of necessary technical hardware for operational efficiency.'
+    title: 'Remote Protocol',
+    desc: 'Flexible remote work options across multiple jurisdictions.'
   }
 ];
 
@@ -199,15 +198,8 @@ export const Careers = () => {
       {/* Enhanced Atmospheric Background */}
       <AtmosphericBackground 
         imageUrl="https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&q=80&w=2070"
-        accentColor="purple"
-        statusText="RECRUITMENT_ACTIVE"
-        scanMode="TALENT_ACQUISITION"
-        sysRef="KPTCH_HR_NODE"
         opacity={0.05}
       />
-
-      {/* Telemetry Overlay */}
-      <TelemetryOverlay label="KPTCH_CAREERS_TELEMETRY" accentColor="purple" />
 
       {/* Hero Section */}
       <section className="relative min-h-screen flex flex-col justify-center px-6 md:px-12 py-24 md:py-48 overflow-hidden bg-black">
@@ -218,14 +210,14 @@ export const Careers = () => {
             transition={{ duration: 0.8, ease: "easeOut" }}
           >
             <span className="px-4 py-1.5 rounded-full border border-white/10 bg-white/5 text-[10px] font-mono font-bold tracking-[0.2em] uppercase text-brand-red mb-8 inline-block">
-              Talent Acquisition
+              Careers
             </span>
             <h1 className="text-[clamp(2.25rem,8vw,5.5rem)] font-display font-bold leading-[0.85] tracking-tighter mb-12 text-gradient uppercase">
-              Operational<br />
-              Integration.
+              Join the experts<br />
+              who fuel growth.
             </h1>
             <p className="text-sm md:text-base text-white/40 max-w-3xl font-light leading-relaxed mb-16 tracking-tight">
-              Kapitech is integrating technical talent for agency operations. We require specialists in interface production and system engineering for global deployment cycles.
+              We help companies to build and scale digital products. Our team of experts provides strategic design and development services to drive business results.
             </p>
           </motion.div>
         </div>
@@ -266,18 +258,17 @@ export const Careers = () => {
             <div className="max-w-2xl">
               <div className="flex items-center gap-4 mb-6">
                 <div className="w-8 h-px bg-brand-red/40" />
-                <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px]">Operational Environment</span>
+                <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px]">Why Kapitech</span>
               </div>
               <h2 className="text-[clamp(2rem,5vw,4.5rem)] font-display font-bold tracking-tighter leading-none uppercase">
-                System<br />
+                Our<br />
                 <span className="text-brand-red">Advantages.</span>
               </h2>
             </div>
             <div className="flex flex-col items-start md:items-end gap-2">
-              <span className="text-[10px] font-mono text-white/20 uppercase tracking-widest">Culture_Protocol</span>
               <div className="flex items-center gap-3 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-xl">
                 <div className="w-2 h-2 rounded-full bg-brand-red animate-pulse" />
-                <span className="text-[10px] font-mono font-bold text-white/60 uppercase tracking-widest">Active_Recruitment</span>
+                <span className="text-[10px] font-mono font-bold text-white/60 uppercase tracking-widest">Active Roles</span>
               </div>
             </div>
           </div>
@@ -286,29 +277,29 @@ export const Careers = () => {
             {[
               { 
                 icon: <Zap size={32} />, 
-                title: "Rapid Execution", 
-                desc: "Standardized workflows for high-speed technical deployment and production.",
+                title: "Growth Mindset", 
+                desc: "We foster a culture of continuous learning and professional development.",
                 image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=800",
                 id: "ADV_01"
               },
               { 
                 icon: <Shield size={32} />, 
-                title: "Technical Integrity", 
-                desc: "Strict adherence to engineering standards and interface fidelity protocols.",
+                title: "Expert Collective", 
+                desc: "Work alongside senior engineers and product designers on high-impact projects.",
                 image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=800",
                 id: "ADV_02"
               },
               { 
                 icon: <Globe size={32} />, 
-                title: "Global Reach", 
-                desc: "Operational involvement in technical systems for international client networks.",
+                title: "Global Impact", 
+                desc: "Build products that are used by millions of users across the globe.",
                 image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=800",
                 id: "ADV_03"
               },
               { 
-                icon: <Cpu size={32} />, 
-                title: "Verified Stack", 
-                desc: "Utilization of industry-standard technologies for robust system performance.",
+                icon: <Rocket size={32} />, 
+                title: "Rapid Scaling", 
+                desc: "Experience the lifecycle of high-growth digital products from MVP to scale.",
                 image: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=800",
                 id: "ADV_04"
               }
@@ -370,16 +361,16 @@ export const Careers = () => {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
           >
-            <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Operational Culture</span>
-            <h2 className="text-[clamp(1.5rem,5vw,3.5rem)] font-display font-bold tracking-tighter mb-8 leading-[0.9]">Execution <span className="text-brand-red">Logic.</span></h2>
+            <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Our Culture</span>
+            <h2 className="text-[clamp(1.5rem,5vw,3.5rem)] font-display font-bold tracking-tighter mb-8 leading-[0.9]">How We <span className="text-brand-red">Work.</span></h2>
             <p className="text-sm md:text-base text-white/60 font-light leading-relaxed mb-8">
-              Kapitech maintains a balance between technical execution and creative logic. Our collective values direct communication, continuous system optimization, and high-fidelity results for client networks.
+              Kapitech maintains a balance between creative design and robust engineering. Our team values transparent communication, continuous improvement, and delivering exceptional results for our clients.
             </p>
             <div className="space-y-6">
               {[
-                { title: "Direct Communication", desc: "Standardized protocols for transparent information exchange across all operational levels." },
-                { title: "Continuous Optimization", desc: "Systematic integration of new technical methodologies and production standards." },
-                { title: "Technical Ownership", desc: "Individual responsibility for system integrity and execution excellence in every deployment." }
+                { title: "Direct Communication", desc: "Open and honest dialogue across all levels." },
+                { title: "Continuous Optimization", desc: "Always learning and improving our skills." },
+                { title: "Ownership", desc: "Taking responsibility for our work and delivering excellence." }
               ].map((item, i) => (
                 <div key={i} className="flex gap-6 items-start">
                   <div className="w-1.5 h-1.5 rounded-full bg-brand-red mt-2 shrink-0" />
@@ -408,8 +399,8 @@ export const Careers = () => {
       <section className="py-20 md:py-40 px-6 md:px-12 bg-black relative overflow-hidden">
         <div className="max-w-7xl mx-auto">
           <div className="mb-16 md:mb-24 text-center">
-            <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Operational Benefits</span>
-            <h2 className="text-[clamp(2rem,6vw,4rem)] font-display font-bold tracking-tighter">System Perks.</h2>
+            <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Benefits</span>
+            <h2 className="text-[clamp(2rem,6vw,4rem)] font-display font-bold tracking-tighter">Perks.</h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {benefits.map((benefit, i) => (
@@ -436,8 +427,8 @@ export const Careers = () => {
       <section className="py-20 md:py-40 px-6 md:px-12 bg-black relative overflow-hidden">
         <div className="max-w-7xl mx-auto">
           <div className="mb-16 md:mb-24">
-            <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Operational Process</span>
-            <h2 className="text-[clamp(2rem,6vw,4rem)] font-display font-bold tracking-tighter">Integration <span className="text-brand-red">Protocol.</span></h2>
+            <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Hiring Process</span>
+            <h2 className="text-[clamp(2rem,6vw,4rem)] font-display font-bold tracking-tighter">Our <span className="text-brand-red">Process.</span></h2>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -474,10 +465,10 @@ export const Careers = () => {
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-12 mb-20 md:mb-32">
             <div>
               <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Active Openings</span>
-              <h2 className="text-[clamp(2.5rem,6vw,5.5rem)] font-display font-bold tracking-tighter uppercase leading-none">Join<br />Collective.</h2>
+              <h2 className="text-[clamp(2.5rem,6vw,5.5rem)] font-display font-bold tracking-tighter uppercase leading-none">Join<br />Our Team.</h2>
             </div>
             <p className="text-white/60 max-w-sm text-sm md:text-base font-light leading-relaxed">
-              For unspecified roles, submit technical portfolios for archival review and future operational requirements.
+              Don't see a role that fits? Submit your portfolio for future opportunities.
             </p>
           </div>
 
@@ -595,9 +586,9 @@ export const Careers = () => {
       <section className="py-20 md:py-40 px-6 md:px-12 bg-black relative overflow-hidden">
         <div className="max-w-7xl mx-auto text-center">
           <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">General Inquiry</span>
-          <h2 className="text-[clamp(1.5rem,5vw,3.5rem)] font-display font-bold tracking-tighter mb-8">Unspecified Roles.</h2>
+          <h2 className="text-[clamp(1.5rem,5vw,3.5rem)] font-display font-bold tracking-tighter mb-8">Open Roles.</h2>
           <p className="text-sm md:text-base text-white/40 font-light leading-relaxed max-w-2xl mx-auto mb-12">
-            Submit technical portfolios for archival review if current openings do not align with specialized skill sets. We maintain a database of talent for future operational requirements.
+            Don't see a role that fits? Submit your portfolio, and we'll keep you in mind for future opportunities.
           </p>
           <MagneticButton>
             <Link to="/contact" className="px-12 py-5 bg-white text-black rounded-2xl font-bold hover:bg-brand-red hover:text-white transition-all duration-500 uppercase tracking-widest text-xs inline-block font-mono">
@@ -645,7 +636,7 @@ export const Careers = () => {
                 
                 <div className="space-y-16">
                   <div>
-                    <h3 className="font-mono font-bold mb-6 text-brand-red uppercase tracking-widest text-[10px]">Operational Role</h3>
+                    <h3 className="font-mono font-bold mb-6 text-brand-red uppercase tracking-widest text-[10px]">Your Role</h3>
                     <p className="text-sm md:text-base text-white/60 font-light leading-relaxed">
                       {selectedPosition.description}
                     </p>
@@ -664,7 +655,7 @@ export const Careers = () => {
                   </div>
 
                   <div className="pt-12 border-t border-white/10">
-                    <h3 className="text-xl font-display font-bold mb-8 uppercase tracking-tighter">Initiate Integration.</h3>
+                    <h3 className="text-xl font-display font-bold mb-8 uppercase tracking-tighter">Join the Team.</h3>
                     <div className="flex flex-wrap gap-6">
                       <MagneticButton>
                         <button 
@@ -713,7 +704,7 @@ export const Careers = () => {
             <div className="max-w-3xl mx-auto px-6 md:px-12 py-24 w-full relative z-10">
               <div className="flex justify-between items-center mb-12">
                 <div>
-                  <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-2 block">Application Protocol</span>
+                  <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-2 block">Application</span>
                   <h2 id="application-title" className="text-3xl md:text-5xl font-display font-bold tracking-tighter uppercase">
                     {selectedPosition.title}
                   </h2>
@@ -741,7 +732,7 @@ export const Careers = () => {
                         value={formData.name}
                         onChange={handleInputChange}
                         className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-6 text-white focus:outline-none focus:border-brand-red transition-all font-mono text-sm"
-                        placeholder="IDENTIFIER"
+                        placeholder="Your Full Name"
                       />
                     </div>
                   </div>
@@ -757,7 +748,7 @@ export const Careers = () => {
                         value={formData.email}
                         onChange={handleInputChange}
                         className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-6 text-white focus:outline-none focus:border-brand-red transition-all font-mono text-sm"
-                        placeholder="NETWORK_ADDRESS"
+                        placeholder="Your Email"
                       />
                     </div>
                   </div>
@@ -776,7 +767,7 @@ export const Careers = () => {
                         value={formData.phone}
                         onChange={handleInputChange}
                         className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-6 text-white focus:outline-none focus:border-brand-red transition-all font-mono text-sm"
-                        placeholder="CONTACT_LINE"
+                        placeholder="Your Phone Number"
                       />
                     </div>
                   </div>
@@ -791,7 +782,7 @@ export const Careers = () => {
                         value={formData.portfolio}
                         onChange={handleInputChange}
                         className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-6 text-white focus:outline-none focus:border-brand-red transition-all font-mono text-sm"
-                        placeholder="TECHNICAL_REPOSITORY"
+                        placeholder="Portfolio URL"
                       />
                     </div>
                   </div>
@@ -806,7 +797,7 @@ export const Careers = () => {
                     onChange={handleInputChange}
                     rows={6}
                     className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white focus:outline-none focus:border-brand-red transition-all resize-none font-mono text-sm"
-                    placeholder="Operational intent and technical background..."
+                    placeholder="Tell us about yourself and why you want to join us..."
                   />
                 </div>
 
@@ -819,7 +810,7 @@ export const Careers = () => {
                     <div className="flex flex-col items-center justify-center pt-5 pb-6">
                       <Upload className="w-10 h-10 text-white/20 group-hover:text-brand-red mb-4 transition-colors" />
                       <p className="mb-2 text-sm text-white/60 font-mono">
-                        <span className="font-bold">UPLOAD_FILE</span> or drag and drop
+                        <span className="font-bold">Upload File</span> or drag and drop
                       </p>
                       <p className="text-[10px] text-white/40 font-mono">PDF, DOCX (MAX. 5MB)</p>
                       {fileError && (

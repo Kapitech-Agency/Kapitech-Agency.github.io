@@ -3,7 +3,6 @@ import { motion, AnimatePresence, useScroll, useSpring } from 'motion/react';
 import { Menu, X, Instagram, Linkedin, Twitter, ChevronRight } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/src/lib/utils';
-// Assuming the existing content is included here, but with modifications made accordingly
 
 export const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -16,12 +15,6 @@ export const Navbar = () => {
     damping: 30,
     restDelta: 0.001
   });
-... previous lines ...
-...
-67:     <img src="./kapitech-logo-white.png" alt="Kapitech Logo" />
-...
-130:     <img src="./kapitech-logo-white.png" alt="Kapitech Logo" />
-...
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
@@ -44,7 +37,7 @@ export const Navbar = () => {
   const navLinks = [
     { name: 'Home', href: '/' },
     { name: 'Work', href: '/work' },
-    { name: 'Services', href: '/services' },
+    { name: 'Service', href: '/services' },
     { name: 'About', href: '/about' },
     { name: 'Careers', href: '/careers' },
     { name: 'Contact', href: '/contact' },
@@ -71,9 +64,9 @@ export const Navbar = () => {
         <div className="max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between">
           <Link to="/" className="flex items-center group">
             <img 
-              src="/kapitech-logo-white.png" 
+              src="/Kapitech Logo 3D Glass.png" 
               alt="KAPITECH" 
-              className="h-8 md:h-10 w-auto object-contain group-hover:scale-105 transition-transform duration-500"
+              className="h-8 md:h-12 w-auto object-contain group-hover:scale-105 transition-transform duration-500"
             />
           </Link>
 
@@ -134,9 +127,9 @@ export const Navbar = () => {
             <div className="flex justify-between items-center mb-20">
               <div className="flex items-center">
                 <img 
-                  src="/kapitech-logo-white.png" 
+                  src="/Kapitech Logo 3D Glass.png" 
                   alt="KAPITECH" 
-                  className="h-8 w-auto object-contain"
+                  className="h-8 md:h-12 w-auto object-contain"
                 />
               </div>
               <button onClick={() => setIsMenuOpen(false)} className="p-2 hover:text-brand-red transition-colors">
@@ -174,4 +167,3 @@ export const Navbar = () => {
     </>
   );
 };
-... following lines ...
