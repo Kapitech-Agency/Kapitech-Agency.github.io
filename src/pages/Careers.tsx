@@ -374,27 +374,27 @@ export const Careers = () => {
       {/* POSITION DETAILS & APPLICATION MODAL */}
       <AnimatePresence>
         {selectedPosition && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-8 bg-black/80 backdrop-blur-md">
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4 md:p-8 bg-black/85 backdrop-blur-md overflow-y-auto">
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ duration: 0.3 }}
-              className="relative w-full max-w-3xl max-h-[90vh] bg-zinc-950 border border-white/20 rounded-3xl overflow-hidden flex flex-col shadow-2xl"
+              className="relative w-full max-w-3xl my-auto max-h-[90vh] bg-zinc-950 border border-white/20 rounded-2xl sm:rounded-3xl overflow-hidden flex flex-col shadow-2xl"
             >
               {/* Modal Header */}
-              <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-black/60 sticky top-0 z-20">
-                <div>
-                  <span className="text-xs font-mono text-brand-red uppercase tracking-wider block">
+              <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 sm:py-4 border-b border-white/10 bg-black/80 sticky top-0 z-20">
+                <div className="min-w-0 flex-1 pr-3 sm:pr-4">
+                  <span className="text-[10px] sm:text-xs font-mono text-brand-red uppercase tracking-wider block mb-0.5 font-medium">
                     {selectedPosition.department} • {selectedPosition.type}
                   </span>
-                  <h3 className="text-lg md:text-xl font-display font-bold text-white">
+                  <h3 className="text-base sm:text-lg md:text-xl font-display font-bold text-white leading-snug break-words">
                     {selectedPosition.title}
                   </h3>
                 </div>
                 <button
                   onClick={() => setSelectedPosition(null)}
-                  className="w-8 h-8 rounded-full bg-white/10 hover:bg-white hover:text-black transition-colors flex items-center justify-center"
+                  className="w-8 h-8 sm:w-9 sm:h-9 rounded-full aspect-square shrink-0 bg-white/10 hover:bg-white hover:text-black transition-colors flex items-center justify-center active:scale-95 ml-auto"
                   aria-label="Close modal"
                 >
                   <X size={16} />

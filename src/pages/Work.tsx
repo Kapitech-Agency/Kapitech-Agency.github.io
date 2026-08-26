@@ -635,27 +635,27 @@ export const Work = () => {
       {/* PROJECT DETAILS MODAL */}
       <AnimatePresence>
         {selectedProject && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 md:p-8 bg-black/85 backdrop-blur-md">
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-6 md:p-8 bg-black/85 backdrop-blur-md overflow-y-auto">
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ duration: 0.3 }}
-              className="relative w-full max-w-4xl max-h-[90vh] bg-zinc-950 border border-white/20 rounded-2xl sm:rounded-3xl overflow-hidden flex flex-col shadow-2xl"
+              className="relative w-full max-w-4xl my-auto max-h-[90vh] bg-zinc-950 border border-white/20 rounded-2xl sm:rounded-3xl overflow-hidden flex flex-col shadow-2xl"
             >
               {/* Modal Header Bar */}
               <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 sm:py-4 border-b border-white/10 bg-black/80 sticky top-0 z-20">
-                <div className="flex items-center gap-2 sm:gap-3">
-                  <span className="text-[10px] sm:text-xs font-mono px-2.5 sm:px-3 py-0.5 sm:py-1 rounded bg-brand-red/20 text-brand-red border border-brand-red/30 uppercase tracking-wider font-medium">
+                <div className="flex items-center gap-2 sm:gap-3 min-w-0 pr-3">
+                  <span className="text-[10px] sm:text-xs font-mono px-2.5 sm:px-3 py-0.5 sm:py-1 rounded bg-brand-red/20 text-brand-red border border-brand-red/30 uppercase tracking-wider font-medium shrink-0">
                     {selectedProject.category}
                   </span>
-                  <span className="text-[11px] sm:text-xs text-white/60 font-mono truncate max-w-[150px] sm:max-w-none">
+                  <span className="text-[11px] sm:text-xs text-white/60 font-mono truncate">
                     {language === 'id' ? 'Klien:' : 'Client:'} {selectedProject.client}
                   </span>
                 </div>
                 <button
                   onClick={() => setSelectedProject(null)}
-                  className="w-8 h-8 rounded-full bg-white/10 hover:bg-white hover:text-black transition-colors flex items-center justify-center shrink-0"
+                  className="w-8 h-8 sm:w-9 sm:h-9 rounded-full aspect-square bg-white/10 hover:bg-white hover:text-black transition-colors flex items-center justify-center shrink-0 active:scale-95 ml-auto"
                   aria-label="Close modal"
                 >
                   <X size={16} />

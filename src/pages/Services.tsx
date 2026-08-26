@@ -470,22 +470,22 @@ export const Services = () => {
       {/* SERVICE DETAILS MODAL */}
       <AnimatePresence>
         {selectedService && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 md:p-8 bg-black/80 backdrop-blur-md">
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-6 md:p-8 bg-black/85 backdrop-blur-md overflow-y-auto">
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ duration: 0.3 }}
-              className="relative w-full max-w-3xl max-h-[90vh] bg-zinc-950 border border-white/20 rounded-2xl sm:rounded-3xl overflow-hidden flex flex-col shadow-2xl"
+              className="relative w-full max-w-3xl my-auto max-h-[90vh] bg-zinc-950 border border-white/20 rounded-2xl sm:rounded-3xl overflow-hidden flex flex-col shadow-2xl"
             >
               {/* Modal Header */}
-              <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-white/10 bg-black/80 backdrop-blur-sm sticky top-0 z-20">
-                <div className="flex items-center gap-3">
+              <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 sm:py-4 border-b border-white/10 bg-black/80 backdrop-blur-sm sticky top-0 z-20">
+                <div className="flex items-center gap-3 min-w-0 pr-3">
                   <div className="text-brand-red shrink-0">
                     {selectedService.icon}
                   </div>
                   <div className="min-w-0">
-                    <span className="text-[10px] sm:text-xs font-mono text-brand-red uppercase tracking-wider block truncate">
+                    <span className="text-[10px] sm:text-xs font-mono text-brand-red uppercase tracking-wider block truncate font-medium">
                       {selectedService.category}
                     </span>
                     <h3 className="text-base sm:text-lg font-display font-bold text-white truncate">
@@ -495,7 +495,7 @@ export const Services = () => {
                 </div>
                 <button
                   onClick={() => setSelectedService(null)}
-                  className="w-8 h-8 rounded-full bg-white/10 hover:bg-white hover:text-black transition-colors flex items-center justify-center shrink-0 ml-2"
+                  className="w-8 h-8 sm:w-9 sm:h-9 rounded-full aspect-square bg-white/10 hover:bg-white hover:text-black transition-colors flex items-center justify-center shrink-0 active:scale-95 ml-auto"
                   aria-label="Close modal"
                 >
                   <X size={16} />

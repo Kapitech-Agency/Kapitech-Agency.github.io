@@ -219,31 +219,31 @@ export const About = () => {
       name: "Fikri Nurlete",
       role: "Founder & Chief Executive Officer",
       image: "/1.png",
-      bio: "Fikri leads Kapitech Agency's overall strategic vision, technical architecture, and client partnerships, ensuring every digital product meets high commercial and operational standards."
+      bio: "Leads agency vision, technical architecture, and client partnerships to deliver scalable digital products."
     },
     {
       name: "Reynaldo Frasiskus Anakotta",
       role: "Co-Founder & Project Manager",
       image: "/3.png",
-      bio: "Reynaldo oversees agile project management, sprint delivery, and operational workflows, making sure client projects are delivered accurately and on schedule."
+      bio: "Directs agile project management, sprint delivery, and operational workflows ensuring on-time release."
     },
     {
       name: "Hendri Hassan",
       role: "Executive Creative Director",
       image: "/2.png",
-      bio: "Hendri leads creative direction, visual branding systems, and user experience standards, shaping digital products that are memorable and intuitive."
+      bio: "Directs visual design systems, brand identity, and intuitive user experience standards."
     },
     {
       name: "Ibrahim M.I",
       role: "Chief Marketing Officer",
       image: "/src/assets/images/ibrahim_cmo_1787755628692.jpg",
-      bio: "Ibrahim spearheads marketing strategy, client acquisition, brand storytelling, and strategic partnerships, expanding Kapitech Agency's global presence and industry reach."
+      bio: "Spearheads marketing strategy, client acquisition, brand storytelling, and strategic partnerships."
     },
     {
       name: "Akell Ahmed",
       role: "Associate Project Manager",
       image: "/4.png",
-      bio: "Akell coordinates project communications, milestone checklists, and client syncs, ensuring smooth cross-functional collaboration from discovery to launch."
+      bio: "Coordinates project communications, milestone checklists, and cross-functional team execution."
     }
   ];
 
@@ -252,31 +252,31 @@ export const About = () => {
       name: "Fikri Nurlete",
       role: "Pendiri & Chief Executive Officer",
       image: "/1.png",
-      bio: "Fikri memimpin visi strategis, arsitektur teknis, dan kemitraan klien agensi, memastikan setiap produk digital memenuhi standar komersial dan operasional yang tinggi."
+      bio: "Memimpin visi agensi, arsitektur teknis, dan kemitraan klien untuk produk digital berskala tinggi."
     },
     {
       name: "Reynaldo Frasiskus Anakotta",
       role: "Co-Founder & Project Manager",
       image: "/3.png",
-      bio: "Reynaldo mengawasi manajemen proyek agile, eksekusi sprint, dan alur kerja operasional untuk memastikan deliverable selesai secara presisi dan tepat waktu."
+      bio: "Mengawasi manajemen proyek agile, eksekusi sprint, dan ketepatan jadwal rilis produk."
     },
     {
       name: "Hendri Hassan",
       role: "Executive Creative Director",
       image: "/2.png",
-      bio: "Hendri memimpin arahan kreatif, sistem identitas visual, dan standar pengalaman pengguna, menciptakan produk digital yang berkesan dan mudah digunakan."
+      bio: "Memimpin arahan visual, sistem identitas brand, dan standar pengalaman pengguna modern."
     },
     {
       name: "Ibrahim M.I",
       role: "Chief Marketing Officer",
       image: "/src/assets/images/ibrahim_cmo_1787755628692.jpg",
-      bio: "Ibrahim memimpin strategi pemasaran, akuisisi klien, narasi brand, dan kemitraan strategis dalam memperluas jangkauan global Kapitech Agency."
+      bio: "Memimpin strategi pemasaran, akuisisi klien, narasi brand, dan kemitraan strategis global."
     },
     {
       name: "Akell Ahmed",
       role: "Associate Project Manager",
       image: "/4.png",
-      bio: "Akell mengoordinasikan komunikasi proyek, checklist milestone, dan sinkronisasi berkala dengan klien untuk memastikan kolaborasi tim berjalan lancar dari awal hingga rilis."
+      bio: "Mengoordinasikan komunikasi proyek, checklist milestone, dan kolaborasi eksekusi tim."
     }
   ];
 
@@ -418,7 +418,7 @@ export const About = () => {
                     <p className="text-[10px] sm:text-[11px] font-mono text-brand-red uppercase tracking-wider mb-2.5 sm:mb-3 font-medium">
                       {member.role}
                     </p>
-                    <p className="text-xs text-white/60 font-light leading-relaxed line-clamp-4">
+                    <p className="text-xs text-white/60 font-light leading-relaxed">
                       {member.bio}
                     </p>
                   </div>
