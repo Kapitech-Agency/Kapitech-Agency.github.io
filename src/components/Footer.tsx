@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronRight, Instagram, Linkedin, Twitter, Github, Mail, MapPin, ArrowUpRight, ArrowUp, Send } from 'lucide-react';
+import { Mail, MapPin, Phone, ArrowUpRight, ArrowUp, Send, CheckCircle2, Clock, Globe, Briefcase } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { motion, AnimatePresence } from 'motion/react';
-import { MagneticButton } from './ui/MagneticButton';
+import { useLanguage } from '@/src/lib/LanguageContext';
 
 export const Footer = () => {
   const currentYear = new Date().getFullYear();
   const [localTime, setLocalTime] = useState('');
   const [email, setEmail] = useState('');
   const [isSubscribed, setIsSubscribed] = useState(false);
+  const { t, language } = useLanguage();
 
   useEffect(() => {
     const updateTime = () => {
@@ -32,7 +32,7 @@ export const Footer = () => {
     e.preventDefault();
     if (email) {
       setIsSubscribed(true);
-      setTimeout(() => setIsSubscribed(false), 3000);
+      setTimeout(() => setIsSubscribed(false), 4000);
       setEmail('');
     }
   };
@@ -41,202 +41,226 @@ export const Footer = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  return (
-    <footer className="relative bg-black pt-20 pb-10 px-6 md:px-12 overflow-hidden border-t border-white/5">
-      {/* Decorative Background Elements */}
-      <div className="absolute inset-0 z-0 pointer-events-none opacity-20">
-        <div className="absolute bottom-0 left-0 w-full h-full grid-bg" />
-        <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-brand-red/10 blur-[120px] rounded-full" />
-        <div className="absolute top-0 left-1/4 w-px h-full bg-gradient-to-b from-transparent via-white/5 to-transparent" />
-      </div>
+  const servicesListEn = [
+    { name: 'Web & Software Development', desc: 'Custom web apps, platforms & landing sites', href: '/services' },
+    { name: 'UI/UX & Product Design', desc: 'Figma design systems, wireframing & prototypes', href: '/services' },
+    { name: 'Mobile App Engineering', desc: 'Cross-platform iOS & Android mobile solutions', href: '/services' },
+    { name: 'Branding & Visual Identity', desc: 'Brandbook, typography & digital design guidelines', href: '/services' },
+    { name: 'API & Cloud Architecture', desc: 'REST/GraphQL, database modeling & cloud scaling', href: '/services' },
+    { name: 'Technical Support & SLA', desc: 'Code audits, security patches & 24/7 maintenance', href: '/services' },
+  ];
 
+  const servicesListId = [
+    { name: 'Pengembangan Web & Software', desc: 'Aplikasi web kustom, platform SaaS & landing page', href: '/services' },
+    { name: 'Desain UI/UX & Produk', desc: 'Sistem desain Figma, wireframing & prototipe interaktif', href: '/services' },
+    { name: 'Rekayasa Aplikasi Mobile', desc: 'Solusi mobile lintas platform iOS & Android', href: '/services' },
+    { name: 'Identitas Brand & Visual', desc: 'Brandbook, tipografi & pedoman desain digital', href: '/services' },
+    { name: 'Arsitektur Cloud & API', desc: 'REST/GraphQL, pemodelan database & skalabilitas cloud', href: '/services' },
+    { name: 'Dukungan Teknis & SLA', desc: 'Audit kode, patch keamanan & pemeliharaan 24/7', href: '/services' },
+  ];
+
+  const servicesList = language === 'id' ? servicesListId : servicesListEn;
+
+  return (
+    <footer className="relative bg-black pt-20 pb-12 px-4 sm:px-6 md:px-12 overflow-hidden border-t border-white/10" id="main-footer">
       <div className="max-w-7xl mx-auto relative z-10">
-        {/* Top Section: Big CTA */}
-        <div className="pb-20 mb-20 border-b border-white/5">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <motion.div 
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                className="flex items-center gap-3 mb-6"
-              >
-                <span className="w-8 h-px bg-brand-red" />
-                <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px]">
-                  Project Inquiry
-                </span>
-              </motion.div>
-              <motion.h2 
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.1 }}
-                className="text-[clamp(2.5rem,6vw,6rem)] font-display font-bold tracking-tighter leading-[0.9] mb-8 uppercase"
-              >
-                Ready to <span className="text-brand-red">Scale?</span>
-              </motion.h2>
-              <p className="text-white/40 text-lg font-light max-w-md leading-relaxed">
-                Let's build something that matters. Our team is ready to transform your vision into a high-performance reality.
+        {/* Top CTA Banner */}
+        <div className="pb-16 mb-16 border-b border-white/10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+            <div className="lg:col-span-8">
+              <span className="text-brand-red font-mono font-semibold tracking-widest uppercase text-xs mb-3 block">
+                {t('footer.cta.tag')}
+              </span>
+              <h2 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-display font-bold tracking-tight mb-4 text-white">
+                {t('footer.cta.title')}
+              </h2>
+              <p className="text-sm md:text-base text-white/70 font-light max-w-2xl leading-relaxed">
+                {t('footer.cta.desc')}
               </p>
             </div>
-            <div className="flex flex-col items-start lg:items-end gap-8">
-              <MagneticButton>
-                <Link 
-                  to="/contact" 
-                  className="group relative inline-flex items-center gap-6 bg-brand-red text-white px-10 py-5 rounded-full font-display font-bold text-xl overflow-hidden transition-all hover:pr-14 active:scale-95"
-                >
-                  <span className="relative z-10">Let's Talk</span>
-                  <ArrowUpRight className="relative z-10 group-hover:rotate-45 transition-transform duration-500" size={24} />
-                  <div className="absolute inset-0 bg-white translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
-                  <span className="absolute inset-0 z-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity" />
-                </Link>
-              </MagneticButton>
-              
-              <div className="flex items-center gap-6 text-[10px] font-mono font-bold uppercase tracking-widest text-white/30">
-                <div className="flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-                  <span>Systems: Online</span>
-                </div>
-                <div className="w-px h-3 bg-white/10" />
-                <span>TGR: {localTime}</span>
+
+            <div className="lg:col-span-4 flex flex-col items-start lg:items-end gap-4">
+              <Link 
+                to="/contact" 
+                id="footer-cta-button"
+                className="h-12 sm:h-14 px-7 sm:px-8 bg-brand-red hover:bg-white text-white hover:text-black rounded-full font-semibold text-xs uppercase tracking-wider transition-all duration-300 flex items-center gap-3 shadow-lg shadow-brand-red/20 hover:scale-[1.02]"
+              >
+                <span>{t('footer.cta.button')}</span>
+                <ArrowUpRight size={18} />
+              </Link>
+              <div className="text-xs font-mono text-white/50 flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span>{language === 'id' ? 'Tangerang Selatan, ID' : 'South Tangerang, ID'} • {localTime || '12:00:00'} WIB</span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Main Footer Content */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-16 mb-20">
-          <div className="lg:col-span-4">
-            <Link to="/" className="flex items-center gap-4 mb-10 group">
+        {/* Main Footer Links */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8 mb-16">
+          {/* Col 1: Brand & Newsletter */}
+          <div className="lg:col-span-4 space-y-6">
+            <Link to="/" className="flex items-center gap-3" aria-label="Kapitech Agency Home">
               <img 
                 src="/Kapitech Logo 3D Glass.png" 
-                alt="KAPITECH" 
-                className="h-8 md:h-12 w-auto object-contain transition-transform duration-700 group-hover:scale-110 group-hover:rotate-3"
+                alt="Kapitech Agency" 
+                className="h-9 w-auto object-contain"
               />
-              <span className="text-2xl md:text-4xl font-display font-bold tracking-tighter group-hover:text-brand-red transition-colors">KAPITECH</span>
+              <span className="font-display font-bold text-lg text-white">Kapitech Agency</span>
             </Link>
-            <p className="text-white/40 text-sm font-light leading-relaxed max-w-sm mb-10">
-              Agency specializes in systems. Design. Bridge technology and experience.
+            <p className="text-xs text-white/70 font-light leading-relaxed max-w-sm">
+              {t('footer.about')}
             </p>
             
-            <form onSubmit={handleSubscribe} className="relative max-w-sm group">
-              <input 
-                type="email" 
-                placeholder="JOIN OUR NEWSLETTER" 
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-6 py-4 text-[10px] font-mono font-bold tracking-widest text-white placeholder:text-white/20 focus:outline-none focus:border-brand-red/50 transition-all"
-              />
-              <button 
-                type="submit"
-                className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-lg bg-brand-red/10 border border-brand-red/20 flex items-center justify-center text-brand-red hover:bg-brand-red hover:text-white transition-all"
-              >
-                <AnimatePresence mode="wait">
-                  {isSubscribed ? (
-                    <motion.div
-                      key="check"
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      exit={{ scale: 0 }}
-                    >
-                      <ChevronRight size={16} className="rotate-90" />
-                    </motion.div>
-                  ) : (
-                    <motion.div
-                      key="send"
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      exit={{ scale: 0 }}
-                    >
-                      <Send size={14} />
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </button>
-            </form>
+            {/* Newsletter Subscription */}
+            <div className="pt-2">
+              <span className="text-[11px] font-mono text-white/50 uppercase tracking-wider block mb-2 font-medium">
+                {language === 'id' ? 'Berlangganan Wawasan Proyek' : 'Subscribe for Project Insights'}
+              </span>
+              <form onSubmit={handleSubscribe} className="relative max-w-sm">
+                <input 
+                  type="email" 
+                  placeholder={language === 'id' ? 'Masukkan email bisnis Anda...' : 'Enter your work email...'} 
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  className="w-full bg-zinc-900/90 border border-white/10 rounded-xl px-4 py-3 text-xs text-white placeholder:text-white/40 focus:outline-none focus:border-brand-red transition-colors"
+                />
+                <button 
+                  type="submit"
+                  className="absolute right-1.5 top-1/2 -translate-y-1/2 px-3.5 py-1.5 rounded-lg bg-brand-red text-white text-xs font-semibold hover:bg-white hover:text-black transition-colors"
+                >
+                  {isSubscribed ? (language === 'id' ? 'Terdaftar!' : 'Subscribed!') : (language === 'id' ? 'Langganan' : 'Subscribe')}
+                </button>
+              </form>
+              {isSubscribed && (
+                <p className="text-[11px] text-emerald-400 font-mono mt-2 flex items-center gap-1.5">
+                  <CheckCircle2 size={12} /> {language === 'id' ? 'Terima kasih telah berlangganan info Kapitech Agency.' : 'Thank you for subscribing to Kapitech Agency updates.'}
+                </p>
+              )}
+            </div>
+          </div>
+
+          {/* Col 2: Complete List of Services */}
+          <div className="lg:col-span-3">
+            <h4 className="text-xs font-mono uppercase tracking-wider text-brand-red mb-6 font-semibold">
+              {t('footer.servicesTitle')}
+            </h4>
+            <ul className="space-y-3.5 text-xs">
+              {servicesList.map((srv) => (
+                <li key={srv.name}>
+                  <Link 
+                    to={srv.href} 
+                    className="group block text-white/80 hover:text-white transition-colors"
+                  >
+                    <span className="font-medium group-hover:text-brand-red transition-colors block">{srv.name}</span>
+                    <span className="text-[10px] text-white/40 group-hover:text-white/60 transition-colors block">{srv.desc}</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </div>
           
-          <div className="lg:col-span-2 lg:col-start-6">
-            <h4 className="text-white/20 uppercase tracking-[0.3em] text-[10px] font-mono font-bold mb-8">Navigation</h4>
-            <ul className="space-y-4 font-mono text-[10px] uppercase tracking-[0.2em]">
-              {['Work', 'Services', 'About', 'Careers', 'Contact'].map((item) => (
-                <li key={item}>
+          {/* Col 3: Navigation & Company Links */}
+          <div className="lg:col-span-2">
+            <h4 className="text-xs font-mono uppercase tracking-wider text-brand-red mb-6 font-semibold">
+              {t('footer.navTitle')}
+            </h4>
+            <ul className="space-y-3 text-xs">
+              {[
+                { name: t('nav.work'), href: '/work' },
+                { name: t('nav.services'), href: '/services' },
+                { name: t('nav.about'), href: '/about' },
+                { name: t('nav.careers'), href: '/careers' },
+                { name: t('nav.contact'), href: '/contact' },
+                { name: language === 'id' ? 'Kebijakan Privasi' : 'Privacy Policy', href: '/privacy' },
+                { name: language === 'id' ? 'Syarat & Ketentuan' : 'Terms of Service', href: '/terms' }
+              ].map((item) => (
+                <li key={item.name}>
                   <Link 
-                    to={`/${item.toLowerCase()}`} 
-                    className="text-white/40 hover:text-brand-red transition-all flex items-center gap-2 group"
+                    to={item.href} 
+                    className="text-white/70 hover:text-brand-red transition-colors flex items-center gap-2"
                   >
-                    <span className="w-0 h-px bg-brand-red group-hover:w-4 transition-all duration-300" />
-                    {item}
+                    <span>{item.name}</span>
                   </Link>
                 </li>
               ))}
             </ul>
           </div>
 
+          {/* Col 4: Direct Office & Contacts */}
           <div className="lg:col-span-3">
-            <h4 className="text-white/20 uppercase tracking-[0.3em] text-[10px] font-mono font-bold mb-8">Contact</h4>
-            <div className="space-y-6">
-              <a href="mailto:hello@kapitech.id" className="flex items-center gap-4 text-white/40 hover:text-brand-red transition-all group">
-                <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:border-brand-red/30 group-hover:bg-brand-red/5 transition-all">
-                  <Mail size={16} />
+            <h4 className="text-xs font-mono uppercase tracking-wider text-brand-red mb-6 font-semibold">
+              {t('footer.contactsTitle')}
+            </h4>
+            <div className="space-y-3.5 text-xs text-white/80">
+              <a href="mailto:hello@kapitech.id" className="flex items-center gap-3 hover:text-brand-red transition-colors group">
+                <div className="w-8 h-8 rounded-lg bg-zinc-900 border border-white/10 flex items-center justify-center text-brand-red group-hover:border-brand-red/40 shrink-0">
+                  <Mail size={14} />
                 </div>
-                <span className="font-mono text-[10px] uppercase tracking-widest">hello@kapitech.id</span>
+                <div>
+                  <span className="text-[10px] font-mono text-white/50 block">{t('footer.clientInquiry')}</span>
+                  <span className="font-medium text-white group-hover:text-brand-red">hello@kapitech.id</span>
+                </div>
               </a>
-              <div className="flex items-start gap-4 text-white/40">
-                <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center mt-1">
-                  <MapPin size={16} />
-                </div>
-                <span className="font-mono text-[10px] uppercase tracking-widest leading-loose">
-                  South Tangerang, Banten<br />
-                  Indonesia
-                </span>
-              </div>
-            </div>
-          </div>
 
-          <div className="lg:col-span-2 flex flex-col items-start lg:items-end justify-between">
-            <div className="w-full">
-              <h4 className="text-white/20 uppercase tracking-[0.3em] text-[10px] font-mono font-bold mb-8 lg:text-right">Connect</h4>
-              <div className="flex flex-wrap gap-3 lg:justify-end">
-                {[
-                  { icon: <Instagram size={18} />, label: 'Instagram', href: '#' },
-                  { icon: <Linkedin size={18} />, label: 'LinkedIn', href: '#' },
-                  { icon: <Twitter size={18} />, label: 'Twitter', href: '#' },
-                  { icon: <Github size={18} />, label: 'GitHub', href: '#' }
-                ].map((social) => (
-                  <a 
-                    key={social.label}
-                    href={social.href}
-                    aria-label={social.label}
-                    className="w-11 h-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white/40 hover:text-brand-red hover:border-brand-red/30 hover:bg-brand-red/5 transition-all duration-500 hover:-translate-y-1"
-                  >
-                    {social.icon}
-                  </a>
-                ))}
+              <a href="mailto:recruitment@kapitech.id" className="flex items-center gap-3 hover:text-brand-red transition-colors group">
+                <div className="w-8 h-8 rounded-lg bg-zinc-900 border border-white/10 flex items-center justify-center text-brand-red group-hover:border-brand-red/40 shrink-0">
+                  <Briefcase size={14} />
+                </div>
+                <div>
+                  <span className="text-[10px] font-mono text-white/50 block">{t('footer.recruitment')}</span>
+                  <span className="font-medium text-white group-hover:text-brand-red">recruitment@kapitech.id</span>
+                </div>
+              </a>
+
+              <a href="mailto:business@kapitech.id" className="flex items-center gap-3 hover:text-brand-red transition-colors group">
+                <div className="w-8 h-8 rounded-lg bg-zinc-900 border border-white/10 flex items-center justify-center text-brand-red group-hover:border-brand-red/40 shrink-0">
+                  <Globe size={14} />
+                </div>
+                <div>
+                  <span className="text-[10px] font-mono text-white/50 block">{t('footer.partnerships')}</span>
+                  <span className="font-medium text-white group-hover:text-brand-red">business@kapitech.id</span>
+                </div>
+              </a>
+
+              <a href="tel:+6287769957062" className="flex items-center gap-3 hover:text-brand-red transition-colors group">
+                <div className="w-8 h-8 rounded-lg bg-zinc-900 border border-white/10 flex items-center justify-center text-brand-red group-hover:border-brand-red/40 shrink-0">
+                  <Phone size={14} />
+                </div>
+                <div>
+                  <span className="text-[10px] font-mono text-white/50 block">{t('footer.phone')}</span>
+                  <span className="font-medium text-white group-hover:text-brand-red">+62 877-6995-7062</span>
+                </div>
+              </a>
+
+              <div className="flex items-start gap-3 pt-1">
+                <div className="w-8 h-8 rounded-lg bg-zinc-900 border border-white/10 flex items-center justify-center text-brand-red shrink-0 mt-0.5">
+                  <MapPin size={14} />
+                </div>
+                <div className="space-y-0.5">
+                  <span className="text-[10px] font-mono text-white/50 block">{t('footer.addressTitle')}</span>
+                  <p className="leading-relaxed text-white/80 text-[11px] font-light">
+                    {t('footer.address')}
+                  </p>
+                </div>
               </div>
             </div>
-            
-            <button 
-              onClick={scrollToTop}
-              className="mt-12 lg:mt-0 w-12 h-12 rounded-full border border-white/10 flex items-center justify-center text-white/20 hover:text-brand-red hover:border-brand-red/30 transition-all group"
-            >
-              <ArrowUp size={20} className="group-hover:-translate-y-1 transition-transform" />
-            </button>
           </div>
         </div>
 
-        {/* Bottom Bar */}
-        <div className="pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8 text-white/20 text-[9px] font-mono font-bold uppercase tracking-[0.3em]">
-          <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8">
-            <p>© {currentYear} PT KAPITECH DIGITAL INDONESIA.</p>
-            <div className="flex items-center gap-2">
-              <div className="w-1 h-1 rounded-full bg-white/10" />
-              <p>All Rights Reserved</p>
-            </div>
-          </div>
-          <div className="flex gap-8">
-            <Link to="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
-            <Link to="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
+        {/* Bottom Copyright Bar */}
+        <div className="pt-8 border-t border-white/10 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-white/50">
+          <p>© {currentYear} Kapitech Agency. {language === 'id' ? 'Beroperasi di bawah naungan PT Kapitech Digital Indonesia.' : 'Operating under PT Kapitech Digital Indonesia.'} {t('footer.rights')}</p>
+          <div className="flex items-center gap-6">
+            <button 
+              onClick={scrollToTop} 
+              id="footer-back-to-top"
+              className="flex items-center gap-1.5 hover:text-white transition-colors py-2 px-3 rounded-lg hover:bg-white/5"
+            >
+              <span>{t('footer.backToTop')}</span>
+              <ArrowUp size={14} />
+            </button>
           </div>
         </div>
       </div>

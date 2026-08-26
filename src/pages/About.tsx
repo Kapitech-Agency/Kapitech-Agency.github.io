@@ -1,458 +1,577 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { ArrowUpRight, CheckCircle2, Globe, Cpu, Layout, Code2, Palette, Box, Shield, Zap, Activity, Rocket } from 'lucide-react';
-import { MagneticButton } from '../components/ui/MagneticButton';
-import { PerspectiveTilt } from '../components/ui/PerspectiveTilt';
-import { cn } from '../lib/utils';
-
+import { ArrowUpRight, CheckCircle2, Globe, Cpu, Layout, Code2, Palette, Shield, Zap, Sparkles, Building2, MapPin, Users, Award, Terminal, Cloud, Layers, Check, Database, Server } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { AtmosphericBackground } from '../components/ui/AtmosphericBackground';
+import { useLanguage } from '../lib/LanguageContext';
 
 export const About = () => {
-  const values = [
+  const { t, language } = useLanguage();
+
+  const valuesEn = [
     {
-      title: "Functional Design",
+      title: "Functional & Purposeful Design",
       icon: <Palette size={24} />,
-      desc: "We prioritize usability and clarity. Every design element serves a distinct purpose, eliminating unnecessary decoration to focus on the core user experience."
+      desc: "We prioritize usability, intuitive information hierarchy, and clean aesthetics. Every screen element is designed to serve a concrete user need rather than superficial decoration."
     },
     {
-      title: "Technical Excellence",
+      title: "Modern & Scalable Engineering",
       icon: <Code2 size={24} />,
-      desc: "Built on modern frameworks like React and Next.js, our technical solutions emphasize performance, security, and long-term reliability over fleeting trends."
+      desc: "Built on modern frameworks like React, Next.js, and TypeScript, our web and mobile architectures emphasize high speed, robust security, and maintainability."
     },
     {
-      title: "Direct Collaboration",
-      icon: <Box size={24} />,
-      desc: "We maintain clear, direct communication channels between our team and yours. Our transparent process ensures everyone is aligned at every stage of the project."
+      title: "Direct & Transparent Partnership",
+      icon: <Globe size={24} />,
+      desc: "We work directly with founders and product teams. No bureaucratic layers or hidden overhead—just clear communication and accountable milestones."
     }
   ];
 
-  const journey = [
-    { year: "2021", event: "Inception", desc: "Started as a digital production unit by Fikri Nurlete and Reynaldo Anakotta.", icon: <Rocket size={20} /> },
-    { year: "2022", event: "Expansion", desc: "Integrated full-scale IT engineering Services and focused on specialized product development.", icon: <Zap size={20} /> },
-    { year: "2023", event: "Global Reach", desc: "Delivered digital solutions for a diverse range of international clients.", icon: <Globe size={20} /> },
-    { year: "2024", event: "Establishment", desc: "Officially registered as PT. Kapitech Digital Indonesia to standardize enterprise delivery.", icon: <Shield size={20} /> }
+  const valuesId = [
+    {
+      title: "Desain Fungsional & Bertujuan",
+      icon: <Palette size={24} />,
+      desc: "Kami memprioritaskan kemudahan penggunaan, hierarki informasi yang intuitif, dan estetika bersih. Setiap elemen antarmuka dirancang untuk menjawab kebutuhan nyata pengguna."
+    },
+    {
+      title: "Rekayasa Modern & Skalabel",
+      icon: <Code2 size={24} />,
+      desc: "Dibangun di atas framework terdepan seperti React, Next.js, dan TypeScript, arsitektur web dan mobile kami menekankan kecepatan tinggi, keamanan teruji, dan kemudahan pemeliharaan."
+    },
+    {
+      title: "Kemitraan Langsung & Transparan",
+      icon: <Globe size={24} />,
+      desc: "Kami berkolaborasi langsung dengan founder dan tim produk. Tanpa birokrasi berbelit atau biaya tersembunyi—hanya komunikasi terbuka dan pencapaian milestone yang bertanggung jawab."
+    }
   ];
 
-  const techStack = [
-    { category: "Frontend", tools: ["React", "Next.js", "TypeScript", "Tailwind CSS", "Framer Motion"] },
-    { category: "Backend", tools: ["Node.js", "Express", "PostgreSQL", "Firebase", "Redis"] },
-    { category: "Design", tools: ["Figma", "Adobe Creative Suite", "Blender", "Spline"] },
-    { category: "Infrastructure", tools: ["AWS", "Google Cloud", "Docker", "Vercel"] }
+  const values = language === 'id' ? valuesId : valuesEn;
+
+  const journeyEn = [
+    { 
+      year: "2021", 
+      title: "Agency Inception", 
+      desc: "Founded as a specialized digital studio by Fikri Nurlete and Reynaldo Frasiskus Anakotta, delivering custom web products and brand identities." 
+    },
+    { 
+      year: "2022", 
+      title: "Engineering Expansion", 
+      desc: "Expanded into full-stack web application development, SaaS platform engineering, and custom mobile application interfaces." 
+    },
+    { 
+      year: "2023", 
+      title: "Diverse Client Ecosystem", 
+      desc: "Delivered 40+ digital platforms for growing startups, real estate firms, and e-commerce companies across Southeast Asia and global markets." 
+    },
+    { 
+      year: "2024", 
+      title: "Official Corporate Entity", 
+      desc: "Officially registered as PT Kapitech Digital Indonesia in South Tangerang, standardizing enterprise delivery and continuous client SLA support." 
+    }
   ];
 
-  const team = [
+  const journeyId = [
+    { 
+      year: "2021", 
+      title: "Awal Berdirinya Agensi", 
+      desc: "Didirikan sebagai studio digital khusus oleh Fikri Nurlete dan Reynaldo Frasiskus Anakotta, menghadirkan produk web kustom dan identitas brand modern." 
+    },
+    { 
+      year: "2022", 
+      title: "Ekspansi Rekayasa Software", 
+      desc: "Memperluas kapabilitas ke pengembangan aplikasi web full-stack, rekayasa platform SaaS, dan antarmuka aplikasi mobile kustom." 
+    },
+    { 
+      year: "2023", 
+      title: "Ekosistem Klien Beragam", 
+      desc: "Menyelesaikan 40+ platform digital untuk startup berkembang, perusahaan properti, dan bisnis e-commerce di Asia Tenggara dan pasar global." 
+    },
+    { 
+      year: "2024", 
+      title: "Entitas Badan Hukum Resmi", 
+      desc: "Resmi terdaftar sebagai PT Kapitech Digital Indonesia di Tangerang Selatan, menstandarisasi delivery kelas korporat dan garansi SLA berkesinambungan." 
+    }
+  ];
+
+  const journey = language === 'id' ? journeyId : journeyEn;
+
+  const techStackEn = [
+    { 
+      category: "Frontend Engineering", 
+      subtitle: "Fast, accessible, and reactive interfaces",
+      badge: "Modern Web",
+      icon: <Code2 size={22} className="text-brand-red" />,
+      tools: [
+        { name: "React 18+", level: "Primary UI" },
+        { name: "Next.js (App Router)", level: "SSR / SSG" },
+        { name: "TypeScript", level: "Type-Safety" },
+        { name: "Tailwind CSS", level: "Design Tokens" },
+        { name: "Motion", level: "Micro-Interactions" },
+        { name: "Vite", level: "Build Tooling" }
+      ]
+    },
+    { 
+      category: "Backend & Cloud Services", 
+      subtitle: "Scalable APIs and robust databases",
+      badge: "Full-Stack Core",
+      icon: <Server size={22} className="text-brand-red" />,
+      tools: [
+        { name: "Node.js / Express", level: "API Runtime" },
+        { name: "PostgreSQL", level: "Relational DB" },
+        { name: "Firebase / Firestore", level: "Realtime & Auth" },
+        { name: "RESTful & GraphQL", level: "Contract Design" },
+        { name: "Prisma & Drizzle", level: "Type-Safe ORM" },
+        { name: "Redis", level: "In-Memory Cache" }
+      ]
+    },
+    { 
+      category: "Design & Product Systems", 
+      subtitle: "User-centric research & Figma systems",
+      badge: "Creative Suite",
+      icon: <Palette size={22} className="text-brand-red" />,
+      tools: [
+        { name: "Figma & FigJam", level: "Prototypes & UI" },
+        { name: "Design Tokens", level: "Cross-Platform" },
+        { name: "Adobe Illustrator", level: "Vector Systems" },
+        { name: "Adobe Photoshop", level: "Asset Retouching" },
+        { name: "Spline 3D", level: "3D Interaction" },
+        { name: "Miro", level: "Flow Mapping" }
+      ]
+    },
+    { 
+      category: "DevOps & Infrastructure", 
+      subtitle: "Automated CI/CD and secure deployments",
+      badge: "Cloud Scalability",
+      icon: <Cloud size={22} className="text-brand-red" />,
+      tools: [
+        { name: "Google Cloud Platform", level: "Managed Cloud" },
+        { name: "Amazon Web Services", level: "S3 & Compute" },
+        { name: "Vercel & Netlify", level: "Edge Hosting" },
+        { name: "Docker", level: "Containerization" },
+        { name: "GitHub Actions", level: "CI/CD Pipeline" },
+        { name: "Cloudflare", level: "DNS & Security" }
+      ]
+    }
+  ];
+
+  const techStackId = [
+    { 
+      category: "Rekayasa Frontend", 
+      subtitle: "Antarmuka cepat, aksesibel, dan reaktif",
+      badge: "Web Modern",
+      icon: <Code2 size={22} className="text-brand-red" />,
+      tools: [
+        { name: "React 18+", level: "UI Utama" },
+        { name: "Next.js (App Router)", level: "SSR / SSG" },
+        { name: "TypeScript", level: "Keamanan Tipe" },
+        { name: "Tailwind CSS", level: "Token Desain" },
+        { name: "Motion", level: "Mikro-Interaksi" },
+        { name: "Vite", level: "Build Tool" }
+      ]
+    },
+    { 
+      category: "Backend & Layanan Cloud", 
+      subtitle: "API skalabel dan database tangguh",
+      badge: "Inti Full-Stack",
+      icon: <Server size={22} className="text-brand-red" />,
+      tools: [
+        { name: "Node.js / Express", level: "Runtime API" },
+        { name: "PostgreSQL", level: "Database Relasional" },
+        { name: "Firebase / Firestore", level: "Realtime & Otentikasi" },
+        { name: "RESTful & GraphQL", level: "Desain Kontrak API" },
+        { name: "Prisma & Drizzle", level: "ORM Bertipe Aman" },
+        { name: "Redis", level: "Cache Memori Cepat" }
+      ]
+    },
+    { 
+      category: "Sistem Desain & Produk", 
+      subtitle: "Riset pengguna & sistem desain Figma",
+      badge: "Suite Kreatif",
+      icon: <Palette size={22} className="text-brand-red" />,
+      tools: [
+        { name: "Figma & FigJam", level: "Prototipe & UI" },
+        { name: "Design Tokens", level: "Lintas Platform" },
+        { name: "Adobe Illustrator", level: "Sistem Vektor" },
+        { name: "Adobe Photoshop", level: "Retouching Visual" },
+        { name: "Spline 3D", level: "Interaksi 3D" },
+        { name: "Miro", level: "Pemetaan Alur" }
+      ]
+    },
+    { 
+      category: "DevOps & Infrastruktur Cloud", 
+      subtitle: "CI/CD otomatis dan deployment aman",
+      badge: "Skalabilitas Cloud",
+      icon: <Cloud size={22} className="text-brand-red" />,
+      tools: [
+        { name: "Google Cloud Platform", level: "Cloud Terkelola" },
+        { name: "Amazon Web Services", level: "S3 & Komputasi" },
+        { name: "Vercel & Netlify", level: "Hosting Edge" },
+        { name: "Docker", level: "Kontainerisasi" },
+        { name: "GitHub Actions", level: "Pipeline CI/CD" },
+        { name: "Cloudflare", level: "DNS & Keamanan" }
+      ]
+    }
+  ];
+
+  const techStack = language === 'id' ? techStackId : techStackEn;
+
+  const teamEn = [
     {
       name: "Fikri Nurlete",
-      role: "Founder/CEO",
+      role: "Founder & Chief Executive Officer",
       image: "/1.png",
-      bio: "Fikri leads Kapitech's overall vision and technical architecture, driving strategic business growth and delivering impactful solutions."
+      bio: "Fikri leads Kapitech Agency's overall strategic vision, technical architecture, and client partnerships, ensuring every digital product meets high commercial and operational standards."
     },
     {
       name: "Reynaldo Frasiskus Anakotta",
-      role: "Co-Founder/PM",
+      role: "Co-Founder & Project Manager",
       image: "/3.png",
-      bio: "Reynaldo oversees project management, ensuring smooth operations, agile workflows, and timely delivery of scalable technical products."
+      bio: "Reynaldo oversees agile project management, sprint delivery, and operational workflows, making sure client projects are delivered accurately and on schedule."
     },
     {
       name: "Hendri Hassan",
-      role: "ECD",
+      role: "Executive Creative Director",
       image: "/2.png",
-      bio: "Hendri is the Executive Creative Director, shaping the visual identity and leading the design team to create beautiful, functional experiences."
+      bio: "Hendri leads creative direction, visual branding systems, and user experience standards, shaping digital products that are memorable and intuitive."
+    },
+    {
+      name: "Ibrahim M.I",
+      role: "Chief Marketing Officer",
+      image: "/src/assets/images/ibrahim_cmo_1787755628692.jpg",
+      bio: "Ibrahim spearheads marketing strategy, client acquisition, brand storytelling, and strategic partnerships, expanding Kapitech Agency's global presence and industry reach."
     },
     {
       name: "Akell Ahmed",
-      role: "Associate Project",
+      role: "Associate Project Manager",
       image: "/4.png",
-      bio: "Akell coordinates project details and client communication, making sure every phase runs efficiently and expectations are exceeded."
+      bio: "Akell coordinates project communications, milestone checklists, and client syncs, ensuring smooth cross-functional collaboration from discovery to launch."
     }
   ];
 
+  const teamId = [
+    {
+      name: "Fikri Nurlete",
+      role: "Pendiri & Chief Executive Officer",
+      image: "/1.png",
+      bio: "Fikri memimpin visi strategis, arsitektur teknis, dan kemitraan klien agensi, memastikan setiap produk digital memenuhi standar komersial dan operasional yang tinggi."
+    },
+    {
+      name: "Reynaldo Frasiskus Anakotta",
+      role: "Co-Founder & Project Manager",
+      image: "/3.png",
+      bio: "Reynaldo mengawasi manajemen proyek agile, eksekusi sprint, dan alur kerja operasional untuk memastikan deliverable selesai secara presisi dan tepat waktu."
+    },
+    {
+      name: "Hendri Hassan",
+      role: "Executive Creative Director",
+      image: "/2.png",
+      bio: "Hendri memimpin arahan kreatif, sistem identitas visual, dan standar pengalaman pengguna, menciptakan produk digital yang berkesan dan mudah digunakan."
+    },
+    {
+      name: "Ibrahim M.I",
+      role: "Chief Marketing Officer",
+      image: "/src/assets/images/ibrahim_cmo_1787755628692.jpg",
+      bio: "Ibrahim memimpin strategi pemasaran, akuisisi klien, narasi brand, dan kemitraan strategis dalam memperluas jangkauan global Kapitech Agency."
+    },
+    {
+      name: "Akell Ahmed",
+      role: "Associate Project Manager",
+      image: "/4.png",
+      bio: "Akell mengoordinasikan komunikasi proyek, checklist milestone, dan sinkronisasi berkala dengan klien untuk memastikan kolaborasi tim berjalan lancar dari awal hingga rilis."
+    }
+  ];
+
+  const team = language === 'id' ? teamId : teamEn;
+
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="relative min-h-screen bg-black"
-    >
-      {/* Atmospheric Background */}
-      <AtmosphericBackground 
-        imageUrl="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=1200"
-        opacity={0.05}
-      />
+    <div className="bg-black text-white min-h-screen selection:bg-brand-red selection:text-white relative" role="main">
+      {/* Hero Section */}
+      <section className="relative pt-28 sm:pt-32 md:pt-36 pb-12 sm:pb-16 px-4 sm:px-6 md:px-12 border-b border-white/10 overflow-hidden">
+        <AtmosphericBackground imageUrl="/hero_background_3d.png" opacity={0.12} disableGrayscale={true} />
+        <div className="max-w-7xl mx-auto relative z-10">
+          <div className="max-w-3xl">
+            <span className="text-brand-red font-mono font-semibold tracking-widest uppercase text-xs mb-3 sm:mb-4 block">
+              {t('about.tag')}
+            </span>
+            <h1 className="text-3xl sm:text-4xl md:text-6xl font-display font-bold leading-[1.1] sm:leading-[1.05] tracking-tight mb-4 sm:mb-6 text-white">
+              {language === 'id' ? (
+                <>Agensi digital yang dirancang untuk <span className="text-brand-red">kejelasan dan pertumbuhan</span>.</>
+              ) : (
+                <>A digital agency engineered for <span className="text-brand-red">clarity and growth</span>.</>
+              )}
+            </h1>
+            <p className="text-sm sm:text-base md:text-lg text-white/70 font-light leading-relaxed">
+              {t('about.subtitle')}
+            </p>
+          </div>
+        </div>
+      </section>
 
-      <div className="relative z-10">
-        <div className="max-w-7xl mx-auto">
-          {/* Hero Section */}
-          <section className="px-6 md:px-12 py-24 md:py-48 overflow-hidden relative">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              className="relative z-10"
-            >
-              <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">About Us</span>
-              <h1 className="text-[clamp(2.25rem,8vw,5.5rem)] font-display font-bold leading-[0.85] tracking-tighter mb-12 uppercase">
-                Digital design experts<br />who fuel growth.
-              </h1>
-              <p className="text-sm md:text-base text-white/40 max-w-3xl font-light leading-relaxed tracking-tight">
-                For over 3 years, we have delivered 50+ platform initiatives for enterprise, SMEs, and startups. We bridge the gap between complex technology and human experience.
-              </p>
-            </motion.div>
+      {/* Company Story / Mission */}
+      <section className="py-16 sm:py-24 px-4 sm:px-6 md:px-12 border-b border-white/10 bg-zinc-950 relative z-10">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
+          <div className="lg:col-span-6 space-y-5 sm:space-y-6">
+            <span className="text-xs font-mono uppercase tracking-wider text-brand-red block font-semibold">
+              {language === 'id' ? 'Identitas & Fondasi Kami' : 'Our Identity & Foundations'}
+            </span>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold tracking-tight text-white">
+              {language === 'id'
+                ? 'Menjembatani desain strategis dengan rekayasa software yang andal.'
+                : 'Bridging strategic design with dependable software engineering.'}
+            </h2>
+            <p className="text-xs sm:text-sm md:text-base text-white/70 font-light leading-relaxed">
+              {language === 'id'
+                ? 'Kapitech Agency beroperasi di bawah badan hukum resmi PT Kapitech Digital Indonesia, berkantor pusat di Tangerang Selatan dengan tim kolaboratif yang terdistribusi.'
+                : 'Kapitech Agency operates under the formal legal entity of PT Kapitech Digital Indonesia, headquartered in South Tangerang with a collaborative, remote-friendly team.'}
+            </p>
+            <p className="text-xs sm:text-sm md:text-base text-white/70 font-light leading-relaxed">
+              {language === 'id'
+                ? 'Kami menolak template yang lambat dan jargon berlebihan. Kami berfokus pada hasil nyata: kode yang bersih, kecepatan muat tinggi, alur pengguna intuitif, dan arsitektur kokoh yang mendukung perkembangan bisnis Anda.'
+                : 'We reject bloated, slow templates and overcomplicated jargon. Instead, we focus on what really moves the needle: clean code, fast loading speeds, intuitive user journeys, and robust architectures that support your business as it grows.'}
+            </p>
 
-            {/* Company DNA Visual */}
-            <div className="absolute top-0 right-12 w-px h-full bg-gradient-to-b from-brand-red/50 via-brand-red/10 to-transparent hidden lg:block">
-              {[...Array(5)].map((_, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, x: -10 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.2 }}
-                  className="absolute left-0 w-8 h-px bg-brand-red/30"
-                  style={{ top: `${20 + i * 15}%` }}
-                >
-                </motion.div>
-              ))}
-            </div>
-          </section>
-
-          {/* Mission Section */}
-          <section className="py-24 md:py-48 px-6 md:px-12 bg-zinc-950/30 relative overflow-hidden border-y border-white/5">
-            {/* Technical Background Elements */}
-            <div className="absolute inset-0 z-0 pointer-events-none">
-              <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-brand-red/20 to-transparent" />
-              <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-brand-red/20 to-transparent" />
-              <div className="absolute inset-0 grid-bg opacity-[0.03]" />
-            </div>
-
-            <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-16 md:gap-24 items-center relative z-10">
-              {/* Visual Side */}
-              <div className="lg:col-span-5 relative group">
-                {/* Technical Frame */}
-                <div className="absolute -inset-4 border border-white/5 rounded-[2.5rem] pointer-events-none transition-colors group-hover:border-brand-red/20" />
-                <div className="absolute -top-4 -left-4 w-8 h-8 border-t-2 border-l-2 border-brand-red/40 rounded-tl-2xl" />
-                <div className="absolute -bottom-4 -right-4 w-8 h-8 border-b-2 border-r-2 border-brand-red/40 rounded-br-2xl" />
-                
-                <div className="relative aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl shadow-black/50">
-                  <motion.img 
-                    initial={{ scale: 1.1 }}
-                    whileInView={{ scale: 1 }}
-                    transition={{ duration: 1.5, ease: "easeOut" }}
-                    src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=1200" 
-                    alt="Kapitech Operations" 
-                    loading="lazy"
-                    referrerPolicy="no-referrer"
-                    className="w-full h-full object-cover grayscale transition-all duration-1000 group-hover:grayscale-0 group-hover:scale-105"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-60" />
-                  
-                  {/* Image Overlay Telemetry */}
-                  <div className="absolute bottom-8 left-8 md:bottom-12 md:left-12">
-                    <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Core Objective</span>
-                    <h3 className="text-2xl md:text-4xl font-display font-bold tracking-tighter uppercase">Reliable Digital Products.</h3>
-                  </div>
-                </div>
-
-                {/* Floating Tag */}
-                <motion.div 
-                  initial={{ opacity: 0, x: 20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.5 }}
-                  className="absolute -right-8 top-1/4 p-4 rounded-xl bg-black/80 border border-white/10 backdrop-blur-xl hidden xl:block"
-                >
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className="w-2 h-2 rounded-full bg-brand-red animate-pulse" />
-                    <span className="text-[10px] font-mono font-bold text-white/60 uppercase tracking-widest">Global Reach</span>
-                  </div>
-                </motion.div>
-              </div>
-
-              {/* Content Side */}
-              <div className="lg:col-span-7 space-y-8 md:space-y-12">
-                <div className="flex items-center gap-4">
-                  <div className="w-8 h-px bg-brand-red/40" />
-                  <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px]">Our Mission</span>
-                </div>
-                
-                <h2 className="text-[clamp(1.75rem,5vw,3.5rem)] font-display font-bold tracking-tighter leading-[0.9] uppercase">
-                  We bridge the gap between <span className="text-brand-red">technology</span> and human experience.
-                </h2>
-                
-                <div className="space-y-6">
-                  <p className="text-lg md:text-xl text-white/40 font-light leading-relaxed max-w-2xl">
-                    Established in 2021, Kapitech is a digital product agency that helps companies to build and scale. We focus on <span className="text-white">strategic design and development</span> to drive business results.
-                  </p>
-                  <p className="text-sm md:text-base text-white/40 font-light leading-relaxed max-w-2xl">
-                    Our team of experts architects digital success for enterprise, SMEs, and startups. We operate with precision, ensuring every product we build is scalable, secure, and user-centric.
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-8 md:gap-12 pt-8 border-t border-white/5">
-                  <div>
-                    <span className="text-3xl md:text-5xl font-display font-bold block font-mono mb-2 tracking-tighter">50+</span>
-                    <span className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-brand-red">Deployments</span>
-                  </div>
-                  <div>
-                    <span className="text-3xl md:text-5xl font-display font-bold block font-mono mb-2 tracking-tighter">03+</span>
-                    <span className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-brand-red">Operational Years</span>
-                  </div>
-                  <div className="hidden sm:block">
-                    <span className="text-3xl md:text-5xl font-display font-bold block font-mono mb-2 tracking-tighter">99%</span>
-                    <span className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-brand-red">Stability Rate</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* Journey Section */}
-          <section className="py-24 md:py-48 px-6 md:px-12 relative overflow-hidden">
-            <div className="mb-20 md:mb-32">
-              <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Timeline</span>
-              <h2 className="text-[clamp(2rem,6vw,4.5rem)] font-display font-bold tracking-tighter uppercase leading-none">Our Journey.</h2>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 md:gap-16">
-              {journey.map((item, i) => (
-                <motion.div 
-                  key={item.year}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1 }}
-                  className="relative p-10 rounded-3xl bg-zinc-900/20 border border-white/5 group hover:border-brand-red/30 transition-all duration-500"
-                >
-                  <div className="absolute top-8 right-8 text-4xl font-display font-black text-white/5 group-hover:text-brand-red/10 transition-colors duration-500 font-mono">
-                    {item.year}
-                  </div>
-                  <div className="w-12 h-12 rounded-2xl bg-brand-red/10 flex items-center justify-center text-brand-red mb-8 group-hover:scale-110 transition-transform duration-500">
-                    {item.icon}
-                  </div>
-                  <h3 className="text-xl font-bold mb-4 group-hover:text-white transition-colors font-mono uppercase tracking-tighter">{item.event}</h3>
-                  <p className="text-white/40 text-sm leading-relaxed font-light">{item.desc}</p>
-                </motion.div>
-              ))}
-            </div>
-          </section>
-
-          {/* Tech Stack Section */}
-          <section className="py-24 md:py-48 px-6 md:px-12 bg-zinc-950/30 relative overflow-hidden border-y border-white/5">
-            <div className="mb-20 md:mb-32">
-              <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Technologies</span>
-              <h2 className="text-[clamp(2rem,6vw,4.5rem)] font-display font-bold tracking-tighter uppercase leading-none">Our Stack.</h2>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {techStack.map((stack, i) => (
-                <motion.div
-                  key={stack.category}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1 }}
-                  className="p-12 bg-zinc-900/30 border border-white/5 hover:bg-zinc-900/50 transition-all duration-500 group"
-                >
-                  <h3 className="text-brand-red font-mono text-[10px] font-bold uppercase tracking-[0.3em] mb-8">{stack.category}</h3>
-                  <div className="space-y-4">
-                    {stack.tools.map((tool, j) => (
-                      <div key={j} className="flex items-center gap-3">
-                        <div className="w-1 h-1 rounded-full bg-white/20 group-hover:bg-brand-red transition-colors" />
-                        <span className="text-sm font-mono font-light text-white/60 group-hover:text-white transition-colors">{tool}</span>
-                      </div>
-                    ))}
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </section>
-
-          {/* Values Section */}
-          <section className="py-24 md:py-48 px-6 md:px-12 relative overflow-hidden">
-            <div className="mb-20 md:mb-32">
-              <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Core Principles</span>
-              <h2 className="text-[clamp(2rem,6vw,4.5rem)] font-display font-bold tracking-tighter uppercase leading-none">How We Work.</h2>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-16">
-              {values.map((value, i) => (
-                <div key={value.title} className="h-full">
-                  <PerspectiveTilt className="h-full">
-                    <motion.div 
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: i * 0.1 }}
-                      className="p-12 h-full rounded-3xl bg-zinc-900/50 backdrop-blur-sm border border-white/5 hover:border-brand-red/30 transition-all group"
-                    >
-                      <div className="text-brand-red mb-8 w-12 h-12 rounded-2xl bg-brand-red/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
-                        {value.icon}
-                      </div>
-                      <h3 className="text-xl font-mono font-bold mb-6 uppercase tracking-tighter">{value.title}</h3>
-                      <p className="text-white/40 text-sm leading-relaxed font-light">{value.desc}</p>
-                    </motion.div>
-                  </PerspectiveTilt>
-                </div>
-              ))}
-            </div>
-          </section>
-
-          {/* Technical Authority Section (New) */}
-          <section className="py-24 md:py-48 px-6 md:px-12 relative overflow-hidden border-y border-white/5">
-            <div className="max-w-7xl mx-auto">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 md:gap-24 items-center">
-                <div className="order-2 lg:order-1">
-                  <div className="relative p-8 md:p-12 rounded-3xl bg-zinc-900/40 backdrop-blur-2xl border border-white/5 overflow-hidden group">
-                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-brand-red to-transparent" />
-                    <div className="space-y-8">
-                      <div className="flex justify-between items-center">
-                        <span className="text-[10px] font-mono font-bold uppercase tracking-[0.3em] text-white/20">Our Standards</span>
-                        <div className="flex items-center gap-2">
-                          <div className="w-2 h-2 rounded-full bg-brand-red animate-pulse" />
-                          <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-brand-red">Active</span>
-                        </div>
-                      </div>
-                      
-                      <div className="space-y-6">
-                        {[
-                          { label: "Design Quality", status: "High", progress: 95 },
-                          { label: "Code Maintainability", status: "Excellent", progress: 92 },
-                          { label: "Performance", status: "Optimal", progress: 90 },
-                          { label: "User Experience", status: "Focus", progress: 85 }
-                        ].map((item) => (
-                          <div key={item.label} className="space-y-2">
-                            <div className="flex justify-between text-[10px] font-mono font-bold uppercase tracking-widest">
-                              <span className="text-white/40">{item.label}</span>
-                              <span className="text-brand-red">{item.status}</span>
-                            </div>
-                            <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
-                              <motion.div 
-                                initial={{ width: 0 }}
-                                whileInView={{ width: `${item.progress}%` }}
-                                transition={{ duration: 1.5, ease: "easeOut" }}
-                                className="h-full bg-brand-red"
-                              />
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="order-1 lg:order-2">
-                  <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-6 block">Our Approach</span>
-                  <h2 className="text-3xl md:text-5xl font-display font-bold tracking-tighter mb-8 leading-tight uppercase">
-                    Execution &<br />Delivery.
-                  </h2>
-                  <p className="text-sm md:text-base text-white/40 font-light leading-relaxed mb-12 max-w-xl">
-                    We employ proven agile methodologies to ensure efficiency and quality. We take time to understand your needs and deliver solutions that are not only beautiful, but highly effective.
-                  </p>
-                  <div className="grid grid-cols-2 gap-8">
-                    {[
-                      { label: "Initiation", value: "2021", icon: <Globe size={20} /> },
-                      { label: "Legal Status", value: "PT", icon: <Shield size={20} /> },
-                      { label: "Deployments", value: "50+", icon: <Activity size={20} /> },
-                      { label: "Core Services", value: "03", icon: <Cpu size={20} /> }
-                    ].map((stat) => (
-                      <div key={stat.label} className="space-y-2">
-                        <div className="flex items-center gap-2 text-brand-red">
-                          {stat.icon}
-                          <span className="text-[10px] font-mono font-bold uppercase tracking-widest">{stat.label}</span>
-                        </div>
-                        <div className="text-3xl font-display font-bold text-white font-mono">{stat.value}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* Global Reach Section */}
-          <section className="py-20 md:py-40 px-6 md:px-12 rounded-3xl bg-zinc-900/30 border border-white/5 relative overflow-hidden">
-            <div className="absolute inset-0 opacity-10">
-              <div className="absolute inset-0 grid-bg" />
-            </div>
-            <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-              <div>
-                <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Global Teams</span>
-                <h2 className="text-3xl md:text-5xl font-display font-bold tracking-tighter mb-8 uppercase">Distributed Expertise.</h2>
-                <p className="text-sm md:text-base text-white/60 font-light leading-relaxed mb-8">
-                  We are a remote-first agency drawing on specialized talent globally. This flexibility enables us to scale teams quickly and respond effectively to varied client needs.
+            {/* Address callout in English */}
+            <div className="p-4 sm:p-5 rounded-2xl bg-black border border-white/10 flex items-start gap-3">
+              <MapPin size={18} className="text-brand-red shrink-0 mt-0.5" />
+              <div className="text-xs">
+                <span className="font-mono text-white/50 uppercase block mb-1">
+                  {language === 'id' ? 'Kantor Pusat Perusahaan' : 'Corporate Headquarters'}
+                </span>
+                <p className="text-white/90 leading-relaxed font-light">
+                  Linea Residence, Block G No. 5, Melati Loka Street, Paku Jaya, North Serpong, South Tangerang City, Banten 15220, Indonesia
                 </p>
-                <div className="flex flex-wrap gap-8">
-                  <div>
-                    <span className="text-2xl font-display font-bold block font-mono">15+</span>
-                    <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/40">Cities</span>
-                  </div>
-                  <div>
-                    <span className="text-2xl font-display font-bold block font-mono">04</span>
-                    <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/40">Timezones</span>
-                  </div>
-                  <div>
-                    <span className="text-2xl font-display font-bold block font-mono">100%</span>
-                    <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/40">Remote</span>
-                  </div>
-                </div>
-              </div>
-              <div className="relative aspect-video rounded-3xl overflow-hidden border border-white/10">
-                <img 
-                  src="https://images.unsplash.com/photo-1526772662000-3f88f10405ff?auto=format&fit=crop&q=80&w=1200" 
-                  alt="Global Map" 
-                  className="w-full h-full object-cover opacity-50 grayscale"
-                  referrerPolicy="no-referrer"
-                />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-32 h-32 rounded-full border border-brand-red/20 animate-ping absolute" />
-                  <div className="w-16 h-16 rounded-full border border-brand-red/40 animate-ping absolute" style={{ animationDelay: '1s' }} />
-                  <Globe className="text-brand-red" size={48} />
-                </div>
               </div>
             </div>
-          </section>
 
-          {/* Team Section */}
-          <section className="py-24 md:py-48 px-6 md:px-12 relative overflow-hidden">
-            <div className="mb-20 md:mb-32">
-              <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Our Team</span>
-              <h2 className="text-[clamp(2rem,6vw,4.5rem)] font-display font-bold tracking-tighter uppercase leading-none">The Collective.</h2>
+            {/* Quick Stats Grid */}
+            <div className="grid grid-cols-3 gap-3 sm:gap-6 pt-5 sm:pt-6 border-t border-white/10">
+              <div>
+                <span className="text-2xl sm:text-3xl md:text-4xl font-display font-bold text-white block">50+</span>
+                <span className="text-[10px] sm:text-xs font-mono text-white/50 uppercase">{t('about.stats.projects')}</span>
+              </div>
+              <div>
+                <span className="text-2xl sm:text-3xl md:text-4xl font-display font-bold text-white block">3+</span>
+                <span className="text-[10px] sm:text-xs font-mono text-white/50 uppercase">{t('about.stats.experience')}</span>
+              </div>
+              <div>
+                <span className="text-2xl sm:text-3xl md:text-4xl font-display font-bold text-brand-red block">100%</span>
+                <span className="text-[10px] sm:text-xs font-mono text-white/50 uppercase">{t('about.stats.craft')}</span>
+              </div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 md:gap-8">
-              {team.map((member, i) => (
-                <div key={member.name}>
-                  <PerspectiveTilt>
-                    <motion.div 
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: i * 0.1 }}
-                      className="group"
-                    >
-                      <div className="aspect-[4/5] rounded-3xl overflow-hidden mb-8 relative border border-white/5">
-                        <img 
-                          src={member.image} 
-                          alt={member.name} 
-                          loading="lazy"
-                          referrerPolicy="no-referrer"
-                          className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 group-hover:scale-105" 
-                        />
-                        <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-700" />
+          </div>
+
+          <div className="lg:col-span-6">
+            <div className="rounded-2xl sm:rounded-3xl overflow-hidden border border-white/10 shadow-2xl relative aspect-[4/3] bg-zinc-900">
+              <img
+                src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=1200"
+                alt="Kapitech Agency Team Collaboration"
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex items-end p-5 sm:p-8">
+                <div>
+                  <span className="text-[10px] sm:text-xs font-mono text-brand-red uppercase tracking-wider block mb-1 font-semibold">
+                    {language === 'id' ? 'Komitmen Kami' : 'Our Commitment'}
+                  </span>
+                  <p className="text-sm sm:text-base font-display font-semibold text-white">
+                    {language === 'id' ? 'Kualitas, transparansi, dan eksekusi yang dapat diandalkan.' : 'Quality, transparency, and dependable delivery.'}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Leadership & Core Team */}
+      <section className="py-16 sm:py-24 px-4 sm:px-6 md:px-12 border-b border-white/10 relative z-10" id="team">
+        <div className="max-w-7xl mx-auto">
+          <div className="max-w-2xl mb-10 sm:mb-16">
+            <span className="text-brand-red font-mono font-semibold tracking-widest uppercase text-xs mb-2 sm:mb-3 block">
+              {t('about.leadership.tag')}
+            </span>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold tracking-tight mb-3 text-white">
+              {t('about.leadership.title')}
+            </h2>
+            <p className="text-xs sm:text-sm text-white/60 font-light leading-relaxed">
+              {t('about.leadership.subtitle')}
+            </p>
+          </div>
+
+          {/* Standardized Team Cards Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 sm:gap-6">
+            {team.map((member) => (
+              <div
+                key={member.name}
+                className="rounded-2xl bg-zinc-950 border border-white/10 overflow-hidden flex flex-col justify-between group hover:border-brand-red/40 transition-colors"
+              >
+                <div>
+                  <div className="h-52 sm:h-56 overflow-hidden bg-zinc-900 relative">
+                    <img
+                      src={member.image}
+                      alt={member.name}
+                      className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                    />
+                  </div>
+                  <div className="p-4 sm:p-5">
+                    <h3 className="text-sm sm:text-base font-display font-bold text-white mb-0.5 sm:mb-1">
+                      {member.name}
+                    </h3>
+                    <p className="text-[10px] sm:text-[11px] font-mono text-brand-red uppercase tracking-wider mb-2.5 sm:mb-3 font-medium">
+                      {member.role}
+                    </p>
+                    <p className="text-xs text-white/60 font-light leading-relaxed line-clamp-4">
+                      {member.bio}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Core Principles / Values */}
+      <section className="py-16 sm:py-24 px-4 sm:px-6 md:px-12 border-b border-white/10 bg-zinc-950 relative z-10">
+        <div className="max-w-7xl mx-auto">
+          <div className="max-w-2xl mb-10 sm:mb-16">
+            <span className="text-brand-red font-mono font-semibold tracking-widest uppercase text-xs mb-2 sm:mb-3 block">
+              {language === 'id' ? 'Prinsip Kerja Kami' : 'Our Principles'}
+            </span>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold tracking-tight mb-3 text-white">
+              {language === 'id' ? 'Bagaimana kami menangani setiap proyek.' : 'How we approach every project.'}
+            </h2>
+            <p className="text-xs sm:text-sm text-white/60 font-light leading-relaxed">
+              {language === 'id'
+                ? 'Kami memegang standar ketat untuk kegunaan, kecepatan, dan dampak bisnis nyata.'
+                : 'We hold our work to strict standards of usability, speed, and business impact.'}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
+            {values.map((v, i) => (
+              <div
+                key={i}
+                className="p-6 sm:p-8 rounded-2xl bg-black border border-white/10 flex flex-col justify-between min-h-[200px] sm:min-h-[240px] hover:border-brand-red/40 transition-colors"
+              >
+                <div>
+                  <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-brand-red/10 border border-brand-red/20 flex items-center justify-center text-brand-red mb-5 sm:mb-6">
+                    {v.icon}
+                  </div>
+                  <h3 className="text-lg sm:text-xl font-display font-bold mb-2.5 sm:mb-3 text-white">{v.title}</h3>
+                  <p className="text-xs text-white/60 font-light leading-relaxed">{v.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Timeline Journey */}
+      <section className="py-16 sm:py-24 px-4 sm:px-6 md:px-12 border-b border-white/10 relative z-10">
+        <div className="max-w-7xl mx-auto">
+          <div className="max-w-2xl mb-10 sm:mb-16">
+            <span className="text-brand-red font-mono font-semibold tracking-widest uppercase text-xs mb-2 sm:mb-3 block">
+              {language === 'id' ? 'Sejarah Agensi' : 'Agency History'}
+            </span>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold tracking-tight mb-3 text-white">
+              {language === 'id' ? 'Perjalanan pertumbuhan kami yang berkelanjutan.' : 'Our journey of continuous growth.'}
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+            {journey.map((item) => (
+              <div
+                key={item.year}
+                className="p-6 sm:p-8 rounded-2xl bg-zinc-950 border border-white/10 flex flex-col justify-between min-h-[180px] sm:min-h-[220px] hover:border-brand-red/40 transition-colors"
+              >
+                <div>
+                  <span className="text-xl sm:text-2xl font-display font-bold text-brand-red font-mono block mb-3 sm:mb-4">
+                    {item.year}
+                  </span>
+                  <h3 className="text-base sm:text-lg font-display font-bold mb-2 text-white">{item.title}</h3>
+                  <p className="text-xs text-white/60 font-light leading-relaxed">{item.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Redesigned Technology Stack Grid */}
+      <section className="py-16 sm:py-24 px-4 sm:px-6 md:px-12 bg-zinc-950 border-b border-white/10 relative z-10">
+        <div className="max-w-7xl mx-auto">
+          <div className="max-w-2xl mb-10 sm:mb-16">
+            <span className="text-brand-red font-mono font-semibold tracking-widest uppercase text-xs mb-2 sm:mb-3 block">
+              {t('about.tools.tag')}
+            </span>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold tracking-tight mb-3 text-white">
+              {t('about.tools.title')}
+            </h2>
+            <p className="text-xs sm:text-sm text-white/60 font-light leading-relaxed">
+              {t('about.tools.subtitle')}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+            {techStack.map((stack) => (
+              <div 
+                key={stack.category} 
+                className="p-6 sm:p-7 rounded-2xl sm:rounded-3xl bg-black border border-white/10 hover:border-brand-red/50 hover:bg-zinc-950 transition-all duration-300 flex flex-col justify-between group"
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-5 sm:mb-6">
+                    <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-brand-red/10 border border-brand-red/20 flex items-center justify-center group-hover:scale-105 transition-transform">
+                      {stack.icon}
+                    </div>
+                    <span className="text-[9px] sm:text-[10px] font-mono px-2.5 py-1 rounded-full bg-white/5 text-white/60 border border-white/10">
+                      {stack.badge}
+                    </span>
+                  </div>
+
+                  <h3 className="text-base sm:text-lg font-display font-bold text-white mb-1 group-hover:text-brand-red transition-colors">
+                    {stack.category}
+                  </h3>
+                  <p className="text-xs text-white/50 font-light mb-5 sm:mb-6">
+                    {stack.subtitle}
+                  </p>
+
+                  <div className="space-y-2 sm:space-y-2.5 pt-4 border-t border-white/10">
+                    {stack.tools.map((tool) => (
+                      <div 
+                        key={tool.name} 
+                        className="flex items-center justify-between p-2 rounded-xl bg-zinc-900/60 border border-white/5 hover:border-white/20 transition-colors"
+                      >
+                        <span className="text-xs font-medium text-white/90">{tool.name}</span>
+                        <span className="text-[9px] sm:text-[10px] font-mono text-white/40 uppercase">{tool.level}</span>
                       </div>
-                      <h3 className="text-xl font-mono font-bold mb-2 uppercase tracking-tighter">{member.name}</h3>
-                      <p className="text-brand-red font-mono text-[10px] font-bold uppercase tracking-[0.3em] mb-4">{member.role}</p>
-                      <p className="text-white/40 text-sm font-light leading-relaxed">{member.bio}</p>
-                    </motion.div>
-                  </PerspectiveTilt>
+                    ))}
+                  </div>
                 </div>
-              ))}
-            </div>
-          </section>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
+      </section>
 
-      {/* Kinetic Typography */}
-      <div className="absolute bottom-10 left-0 w-full kinetic-text opacity-5 select-none pointer-events-none">
-        <div className="kinetic-track text-[8vh] md:text-[15vh] font-display font-black uppercase tracking-tighter">
-          <span>Product Strategy • UI/UX Design • Web Development • Branding • </span>
-          <span>Product Strategy • UI/UX Design • Web Development • Branding • </span>
+      {/* Bottom CTA */}
+      <section className="py-16 sm:py-24 px-4 sm:px-6 md:px-12 text-center relative z-10">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="text-2xl sm:text-3xl md:text-5xl font-display font-bold mb-4 sm:mb-6 text-white">
+            {language === 'id' ? 'Siap berkolaborasi membangun produk digital Anda berikutnya?' : 'Ready to collaborate on your next digital product?'}
+          </h2>
+          <p className="text-xs sm:text-sm md:text-base text-white/70 font-light leading-relaxed mb-6 sm:mb-8 max-w-xl mx-auto">
+            {language === 'id'
+              ? 'Hubungi tim Kapitech Agency di Tangerang Selatan untuk mendiskusikan kebutuhan proyek, estimasi waktu, dan rincian biaya.'
+              : 'Get in touch with Kapitech Agency in South Tangerang to discuss your project requirements, timeline, and estimation.'}
+          </p>
+          <Link
+            to="/contact"
+            className="inline-flex items-center justify-center gap-2 px-8 py-3.5 sm:py-4 rounded-full bg-brand-red hover:bg-white text-white hover:text-black font-semibold text-xs uppercase tracking-wider transition-colors shadow-lg shadow-brand-red/20 active:scale-95"
+          >
+            <span>{language === 'id' ? 'Mulai Diskusi' : 'Start a Conversation'}</span>
+            <ArrowUpRight size={16} />
+          </Link>
         </div>
-      </div>
-    </motion.div>
+      </section>
+    </div>
   );
 };

@@ -1,126 +1,24 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ArrowUpRight, CheckCircle2, Zap, Globe, Cpu, Code2, Palette, Users, Rocket, Heart, Coffee, Laptop, Upload, FileText, Phone, Mail, User, Link as LinkIcon, X, Shield, MapPin } from 'lucide-react';
-import { MagneticButton } from '../components/ui/MagneticButton';
-import { Link } from 'react-router-dom';
-import { cn } from '../lib/utils';
+import { ArrowUpRight, CheckCircle2, Globe, Users, Heart, Coffee, Laptop, Upload, FileText, Phone, Mail, User, Link as LinkIcon, X, Briefcase, MapPin, Clock } from 'lucide-react';
 import { AtmosphericBackground } from '../components/ui/AtmosphericBackground';
+import { useLanguage } from '../lib/LanguageContext';
 
-const positions = [
-  {
-    id: 'ui-ux-designer',
-    title: 'Interface Designer',
-    department: 'Design',
-    location: 'Remote',
-    type: 'Full-time',
-    description: 'Produce interfaces for systems. Collaborate with engineering. Implement specifications.',
-    requirements: [
-      '2+ years experience in interface production',
-      'Proficiency in Figma and design logic',
-      'Understanding of technical design principles',
-      'Portfolio of verified digital deployments'
-    ],
-    salary: 'Standardized',
-    experience: 'Mid-Level'
-  },
-  {
-    id: 'frontend-dev',
-    title: 'Frontend Engineer',
-    department: 'Engineering',
-    location: 'Remote',
-    type: 'Full-time',
-    description: 'Engineer interfaces using React. Focus on stability. Optimize performance.',
-    requirements: [
-      'Proficiency in React and TypeScript',
-      'Expertise in CSS and Tailwind architecture',
-      'Focus on technical performance metrics',
-      'Experience in collaborative engineering environments'
-    ],
-    salary: 'Standardized',
-    experience: 'Mid-Level'
-  },
-  {
-    id: 'graphic-designer',
-    title: 'Visual Production',
-    department: 'Creative',
-    location: 'Remote',
-    type: 'Full-time',
-    description: 'Produce visual assets. Execute content for requirements.',
-    requirements: [
-      'Experience in visual system production',
-      'Proficiency in Adobe Creative Suite',
-      'Logical approach to visual problem solving',
-      'Standardized communication protocols'
-    ],
-    salary: 'Standardized',
-    experience: 'Junior to Mid'
-  }
-];
-
-const hiringProcess = [
-  {
-    step: "01",
-    title: "Technical Audit",
-    desc: "Review portfolio. Align technical experience.",
-    icon: <FileText size={24} />
-  },
-  {
-    step: "02",
-    title: "Skill Verification",
-    desc: "Assess tools. Verify methodologies. Test logic.",
-    icon: <Cpu size={24} />
-  },
-  {
-    step: "03",
-    title: "Protocol Alignment",
-    desc: "Verify styles. Integrate operational values.",
-    icon: <Users size={24} />
-  },
-  {
-    step: "04",
-    title: "System Integration",
-    desc: "Onboard personnel. Integrate into collective.",
-    icon: <Rocket size={24} />
-  }
-];
-
-const benefits = [
-  {
-    icon: <Globe size={24} />,
-    title: 'Global Impact',
-    desc: 'Work on platform initiatives for Fortune 500 companies and SMEs.',
-  },
-  {
-    icon: <Cpu size={24} />,
-    title: 'Expert Collective',
-    desc: 'Collaborate with senior engineers and product designers.',
-  },
-  {
-    icon: <Heart size={24} />,
-    title: 'Growth Mindset',
-    desc: 'Continuous learning protocols and technical certification support.'
-  },
-  {
-    icon: <Rocket size={24} />,
-    title: 'Rapid Scaling',
-    desc: 'Experience the lifecycle of high-growth digital products.'
-  },
-  {
-    icon: <Coffee size={24} />,
-    title: 'Direct Culture',
-    desc: 'Transparent communication and technical collaboration protocols.'
-  },
-  {
-    icon: <Laptop size={24} />,
-    title: 'Remote Protocol',
-    desc: 'Flexible remote work options across multiple jurisdictions.'
-  }
-];
+export interface Position {
+  id: string;
+  title: string;
+  department: string;
+  location: string;
+  type: string;
+  summary: string;
+  responsibilities: string[];
+  requirements: string[];
+}
 
 export const Careers = () => {
-  const [selectedPosition, setSelectedPosition] = useState<typeof positions[0] | null>(null);
-  const [isApplying, setIsApplying] = useState(false);
-  const [fileError, setFileError] = useState<string | null>(null);
+  const { language } = useLanguage();
+  const [selectedPosition, setSelectedPosition] = useState<Position | null>(null);
+  const [isSubmitted, setIsSubmitted] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -130,726 +28,550 @@ export const Careers = () => {
     resume: null as File | null
   });
 
+  const positionsEn: Position[] = [
+    {
+      id: 'ui-ux-designer',
+      title: 'UI/UX & Product Designer',
+      department: 'Design',
+      location: 'Remote (Indonesia)',
+      type: 'Full-time / Contract',
+      summary: 'Craft high-fidelity web and mobile interfaces, build structured design systems in Figma, and partner directly with our engineering team and clients.',
+      responsibilities: [
+        'Design responsive web and mobile application interfaces from wireframes to high-fidelity prototypes',
+        'Create and maintain scalable design systems, token sets, and UI components in Figma',
+        'Conduct usability tests, user flow analysis, and design reviews with clients',
+        'Hand off pixel-accurate specs and assets to frontend developers'
+      ],
+      requirements: [
+        '2+ years of experience in UI/UX design for digital products or agency environments',
+        'Strong portfolio demonstrating modern typography, layout, and mobile-responsive UI',
+        'Expert proficiency in Figma, FigJam, and component auto-layout principles',
+        'Clear communication skills and ability to present design decisions objectively'
+      ]
+    },
+    {
+      id: 'frontend-engineer',
+      title: 'Frontend Developer (React / Next.js)',
+      department: 'Engineering',
+      location: 'Remote (Indonesia)',
+      type: 'Full-time',
+      summary: 'Engineer fast, accessible, and responsive user interfaces using React, Next.js, TypeScript, and Tailwind CSS.',
+      responsibilities: [
+        'Translate Figma designs into pixel-perfect, accessible, and responsive web pages',
+        'Build reusable React components and maintain clean code architecture',
+        'Integrate REST APIs, GraphQL, and backend services seamlessly',
+        'Optimize Core Web Vitals, page speed, and browser compatibility'
+      ],
+      requirements: [
+        '2+ years of experience building modern frontend applications with React and Next.js',
+        'Strong proficiency in TypeScript, Tailwind CSS, and HTML5 semantic markup',
+        'Familiarity with animations (Framer Motion / CSS transitions) and state management',
+        'Solid understanding of Git workflows and code reviews'
+      ]
+    },
+    {
+      id: 'fullstack-engineer',
+      title: 'Full-Stack Developer (Node.js & Next.js)',
+      department: 'Engineering',
+      location: 'Remote (Indonesia)',
+      type: 'Full-time',
+      summary: 'Develop end-to-end web applications, design database schemas, and build resilient API backends.',
+      responsibilities: [
+        'Design and deploy backend APIs with Node.js, Express, or Next.js server routes',
+        'Model and optimize database schemas using PostgreSQL, Prisma, or Firestore',
+        'Implement secure authentication (OAuth, JWT) and role-based access control',
+        'Collaborate on cloud deployment setups with Google Cloud, AWS, or Vercel'
+      ],
+      requirements: [
+        '2+ years of full-stack engineering experience with Node.js and TypeScript',
+        'Strong knowledge of relational databases (PostgreSQL/MySQL) or document stores',
+        'Experience with API design, security best practices, and third-party integrations',
+        'Problem-solving mindset and clear documentation habits'
+      ]
+    },
+    {
+      id: 'associate-project-manager',
+      title: 'Associate Project Manager',
+      department: 'Operations',
+      location: 'Remote / Tangerang Hybrid',
+      type: 'Full-time',
+      summary: 'Coordinate agile sprint cycles, manage client communications, and ensure on-time delivery across our design and engineering squads.',
+      responsibilities: [
+        'Facilitate sprint planning, daily standups, and milestone deliverables',
+        'Serve as the key operational bridge between clients and the internal creative/dev teams',
+        'Track project timelines, scope documents, and quality assurance checklists',
+        'Organize project documentation in Notion and task tracking in Linear/Trello'
+      ],
+      requirements: [
+        '1+ years of project management or account coordination experience in digital/tech agencies',
+        'Strong organizational, time management, and multitasking skills',
+        'Excellent written and spoken English and Bahasa Indonesia',
+        'Familiarity with agile product development methodologies'
+      ]
+    }
+  ];
+
+  const positionsId: Position[] = [
+    {
+      id: 'ui-ux-designer',
+      title: 'UI/UX & Desainer Produk',
+      department: 'Desain',
+      location: 'Remote (Indonesia)',
+      type: 'Full-time / Kontrak',
+      summary: 'Merancang antarmuka web dan mobile berpresisi tinggi, membangun sistem desain terstruktur di Figma, dan berkolaborasi langsung dengan tim engineer dan klien.',
+      responsibilities: [
+        'Mendesain antarmuka web responsif dan aplikasi mobile dari wireframe hingga prototipe interaktif',
+        'Membuat serta memelihara sistem desain, token desain, dan pustaka komponen UI di Figma',
+        'Melakukan uji usabilitas, analisis alur pengguna, dan presentasi desain berkala bersama klien',
+        'Menyerahkan spesifikasi desain dan aset visual yang akurat kepada developer frontend'
+      ],
+      requirements: [
+        '2+ tahun pengalaman dalam desain UI/UX untuk produk digital atau agensi',
+        'Portofolio kuat yang menunjukkan penguasaan tipografi, tata letak, dan UI responsif',
+        'Keahlian tingkat lanjut dalam Figma, FigJam, dan prinsip auto-layout komponen',
+        'Kemampuan komunikasi yang jelas dan mampu memaparkan argumen desain secara objektif'
+      ]
+    },
+    {
+      id: 'frontend-engineer',
+      title: 'Frontend Developer (React / Next.js)',
+      department: 'Engineering',
+      location: 'Remote (Indonesia)',
+      type: 'Full-time',
+      summary: 'Membangun antarmuka web yang cepat, aksesibel, dan responsif menggunakan ekosistem React, Next.js, TypeScript, dan Tailwind CSS.',
+      responsibilities: [
+        'Menerjemahkan desain Figma menjadi halaman web responsif yang presisi dan aksesibel',
+        'Membangun komponen React modular yang dapat digunakan kembali dan memelihara arsitektur kode bersih',
+        'Mengintegrasikan REST API, GraphQL, dan layanan backend dengan mulus',
+        'Mengoptimalkan Core Web Vitals, kecepatan akses halaman, dan kompatibilitas peramban'
+      ],
+      requirements: [
+        '2+ tahun pengalaman membangun aplikasi frontend modern dengan React dan Next.js',
+        'Kemampuan mendalam dalam TypeScript, Tailwind CSS, dan markup semantik HTML5',
+        'Terbiasa dengan animasi mikro (Motion / transisi CSS) dan state management',
+        'Pemahaman solid tentang alur kerja Git dan standar review kode'
+      ]
+    },
+    {
+      id: 'fullstack-engineer',
+      title: 'Full-Stack Developer (Node.js & Next.js)',
+      department: 'Engineering',
+      location: 'Remote (Indonesia)',
+      type: 'Full-time',
+      summary: 'Mengembangkan aplikasi web end-to-end, merancang skema database, dan membangun arsitektur API yang tangguh dan aman.',
+      responsibilities: [
+        'Merancang dan mendeploy backend API menggunakan Node.js, Express, atau Next.js server routes',
+        'Membuat dan mengoptimalkan skema database menggunakan PostgreSQL, Prisma, atau Firestore',
+        'Menerapkan sistem otentikasi aman (OAuth, JWT) dan kontrol akses berbasis peran (RBAC)',
+        'Berkolaborasi dalam konfigurasi deployment cloud di Google Cloud, AWS, atau Vercel'
+      ],
+      requirements: [
+        '2+ tahun pengalaman rekayasa full-stack dengan Node.js dan TypeScript',
+        'Pemahaman kuat tentang database relasional (PostgreSQL/MySQL) atau document store',
+        'Pengalaman dalam perancangan API, keamanan sistem, dan integrasi pihak ketiga',
+        'Kemampuan problem-solving yang tajam dan kebiasaan dokumentasi yang rapi'
+      ]
+    },
+    {
+      id: 'associate-project-manager',
+      title: 'Associate Project Manager',
+      department: 'Operasional',
+      location: 'Remote / Tangerang Hybrid',
+      type: 'Full-time',
+      summary: 'Mengoordinasikan siklus sprint agile, mengelola komunikasi klien, dan memastikan deliverable selesai tepat waktu lintas tim desain dan engineer.',
+      responsibilities: [
+        'Memfasilitasi perencanaan sprint, daily standup, dan penyelesaian milestone proyek',
+        'Menjadi jembatan komunikasi utama antara klien dan tim kreatif/teknis internal',
+        'Memantau lini masa proyek, dokumen ruang lingkup, dan daftar uji kualitas (QA)',
+        'Mengorganisir dokumentasi proyek di Notion dan pelacakan tugas di Linear/Trello'
+      ],
+      requirements: [
+        '1+ tahun pengalaman manajemen proyek atau koordinasi akun di agensi digital/teknologi',
+        'Keterampilan organisasi, manajemen waktu, dan multitasking yang sangat baik',
+        'Kemampuan komunikasi tertulis dan lisan yang lancar dalam Bahasa Indonesia dan Bahasa Inggris',
+        'Familiar dengan metodologi pengembangan produk agile (Scrum/Kanban)'
+      ]
+    }
+  ];
+
+  const positions = language === 'id' ? positionsId : positionsEn;
+
+  const benefitsEn = [
+    {
+      icon: <Laptop size={24} />,
+      title: "Remote-Friendly Flexibility",
+      desc: "Work from wherever you are most productive with flexible hours and asynchronous communication."
+    },
+    {
+      icon: <Briefcase size={24} />,
+      title: "Impactful Real Projects",
+      desc: "Collaborate on real-world digital products for innovative startups and established enterprises."
+    },
+    {
+      icon: <Coffee size={24} />,
+      title: "Transparent & Direct Culture",
+      desc: "Zero bureaucracy. Direct access to leadership, open feedback, and room to take ownership."
+    },
+    {
+      icon: <Heart size={24} />,
+      title: "Professional Growth",
+      desc: "Access to learning resources, modern tools (Figma, GitHub, AI tools), and project mentorship."
+    }
+  ];
+
+  const benefitsId = [
+    {
+      icon: <Laptop size={24} />,
+      title: "Fleksibilitas Kerja Remote",
+      desc: "Bekerja dari lokasi mana pun yang membuat Anda paling produktif dengan jam kerja fleksibel dan komunikasi asinkron."
+    },
+    {
+      icon: <Briefcase size={24} />,
+      title: "Proyek Nyata & Berdampak",
+      desc: "Berkontribusi pada produk digital dunia nyata untuk startup inovatif dan perusahaan korporat terkemuka."
+    },
+    {
+      icon: <Coffee size={24} />,
+      title: "Budaya Transparan & Langsung",
+      desc: "Tanpa birokrasi berbelit. Akses komunikasi langsung ke pimpinan, budaya feedback terbuka, dan kebebasan bereksplorasi."
+    },
+    {
+      icon: <Heart size={24} />,
+      title: "Pertumbuhan Profesional",
+      desc: "Akses ke sumber belajar, alat kerja modern (Figma, GitHub, AI tools), dan bimbingan proyek langsung dari praktisi senior."
+    }
+  ];
+
+  const benefits = language === 'id' ? benefitsId : benefitsEn;
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    setFileError(null);
-
-    if (file) {
-      const allowedTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/msword'];
-      const maxSize = 5 * 1024 * 1024; // 5MB
-
-      if (!allowedTypes.includes(file.type)) {
-        setFileError('Invalid file type. Please upload a PDF or DOCX.');
-        return;
-      }
-
-      if (file.size > maxSize) {
-        setFileError('File size exceeds 5MB. Please upload a smaller file.');
-        return;
-      }
-
-      setFormData(prev => ({ ...prev, resume: file }));
-    }
+    const file = e.target.files?.[0] || null;
+    setFormData(prev => ({ ...prev, resume: file }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (fileError) {
-      alert('Please fix the file upload errors before submitting.');
-      return;
-    }
-
-    if (!formData.resume) {
-      alert('Please upload your resume.');
-      return;
-    }
-
-    // Simulate submission
-    console.log('Application submitted:', formData);
-    alert('Application submitted successfully!');
-    setIsApplying(false);
-    setSelectedPosition(null);
-    setFormData({
-      name: '',
-      email: '',
-      phone: '',
-      portfolio: '',
-      coverLetter: '',
-      resume: null as File | null
-    });
+    setIsSubmitted(true);
   };
 
   return (
-    <motion.div 
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.5 }}
-      className="film-grain overflow-x-hidden"
-      role="main"
-      aria-label="Careers at Kapitech"
-    >
-      {/* Enhanced Atmospheric Background */}
-      <AtmosphericBackground 
-        imageUrl="https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&q=80&w=2070"
-        opacity={0.05}
-      />
-
+    <div className="bg-black text-white min-h-screen selection:bg-brand-red selection:text-white relative">
       {/* Hero Section */}
-      <section className="relative min-h-screen flex flex-col justify-center px-6 md:px-12 py-24 md:py-48 overflow-hidden bg-black">
-        <div className="max-w-7xl mx-auto w-full relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-          >
-            <span className="px-4 py-1.5 rounded-full border border-white/10 bg-white/5 text-[10px] font-mono font-bold tracking-[0.2em] uppercase text-brand-red mb-8 inline-block">
-              Careers
+      <section className="relative pt-32 pb-16 px-6 md:px-12 border-b border-white/10 overflow-hidden">
+        <AtmosphericBackground imageUrl="/hero_background_3d.png" opacity={0.12} disableGrayscale={true} />
+        <div className="max-w-7xl mx-auto relative z-10">
+          <div className="max-w-3xl">
+            <span className="text-brand-red font-mono font-semibold tracking-widest uppercase text-xs mb-4 block">
+              {language === 'id' ? 'Bergabung Bersama Tim Kami' : 'Join Our Team'}
             </span>
-            <h1 className="text-[clamp(2.25rem,8vw,5.5rem)] font-display font-bold leading-[0.85] tracking-tighter mb-12 text-gradient uppercase">
-              Join the experts<br />
-              who fuel growth.
+            <h1 className="text-[clamp(2.5rem,6vw,5rem)] font-display font-bold leading-[1.05] tracking-tight mb-6 text-white">
+              {language === 'id' ? (
+                <>Bangun masa depan produk digital bersama <span className="text-brand-red">Kapitech</span>.</>
+              ) : (
+                <>Build the future of digital products with <span className="text-brand-red">Kapitech</span>.</>
+              )}
             </h1>
-            <p className="text-sm md:text-base text-white/40 max-w-3xl font-light leading-relaxed mb-16 tracking-tight">
-              We help companies to build and scale digital products. Our team of experts provides strategic design and development services to drive business results.
+            <p className="text-base md:text-lg text-white/70 font-light leading-relaxed">
+              {language === 'id'
+                ? 'Kami mencari desainer berbakat, engineer kreatif, dan problem solver berdedikasi yang menjunjung tinggi keahlian, kecepatan eksekusi, dan dampak nyata bagi klien.'
+                : 'We are looking for passionate designers, engineers, and problem solvers who value craft, speed, and genuine client impact.'}
             </p>
-          </motion.div>
-        </div>
-
-        {/* Talent Acquisition Visual */}
-        <div className="absolute top-1/2 right-12 -translate-y-1/2 w-80 h-80 hidden lg:block pointer-events-none opacity-20">
-          <div className="relative w-full h-full">
-            {[...Array(3)].map((_, i) => (
-              <motion.div
-                key={i}
-                animate={{ 
-                  rotate: 360,
-                  scale: [1, 1.1, 1]
-                }}
-                transition={{ 
-                  rotate: { duration: 20 + i * 10, repeat: Infinity, ease: "linear" },
-                  scale: { duration: 4, repeat: Infinity, ease: "easeInOut" }
-                }}
-                className="absolute inset-0 border border-brand-red/30 rounded-full"
-                style={{ margin: `${i * 20}px` }}
-              />
-            ))}
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-4 h-4 bg-brand-red rounded-full animate-ping" />
-            </div>
           </div>
         </div>
       </section>
 
-      {/* Why Kapitech? Section */}
-      <section className="py-24 md:py-48 px-6 md:px-12 bg-black relative overflow-hidden border-y border-white/5" id="why-kapitech">
-        <div className="absolute inset-0 z-0 opacity-20">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full grid-bg" />
-        </div>
-        
-        <div className="max-w-7xl mx-auto relative z-10">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-12 mb-20 md:mb-32">
-            <div className="max-w-2xl">
-              <div className="flex items-center gap-4 mb-6">
-                <div className="w-8 h-px bg-brand-red/40" />
-                <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px]">Why Kapitech</span>
+      {/* Culture & Benefits */}
+      <section className="py-20 px-6 md:px-12 bg-black border-b border-white/10 relative z-10">
+        <div className="max-w-7xl mx-auto">
+          <div className="max-w-2xl mb-16">
+            <span className="text-xs font-mono uppercase tracking-wider text-brand-red block mb-2 font-semibold">
+              {language === 'id' ? 'Mengapa Bergabung Bersama Kami' : 'Why Work With Us'}
+            </span>
+            <h2 className="text-3xl md:text-4xl font-display font-bold tracking-tight text-white">
+              {language === 'id' ? 'Lingkungan kerja yang fokus pada kualitas dan hasil.' : 'A workplace focused on craft and results.'}
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {benefits.map((b, idx) => (
+              <div
+                key={idx}
+                className="p-8 rounded-2xl bg-zinc-950 border border-white/10 flex flex-col justify-between hover:border-brand-red/40 transition-colors"
+              >
+                <div>
+                  <div className="w-12 h-12 rounded-xl bg-brand-red/10 border border-brand-red/20 flex items-center justify-center text-brand-red mb-6">
+                    {b.icon}
+                  </div>
+                  <h3 className="text-lg font-display font-bold mb-3 text-white">{b.title}</h3>
+                  <p className="text-xs text-white/60 font-light leading-relaxed">{b.desc}</p>
+                </div>
               </div>
-              <h2 className="text-[clamp(2rem,5vw,4.5rem)] font-display font-bold tracking-tighter leading-none uppercase">
-                Our<br />
-                <span className="text-brand-red">Advantages.</span>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Open Positions List */}
+      <section className="py-24 px-6 md:px-12 bg-zinc-950 border-b border-white/10 relative z-10" id="positions">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
+            <div>
+              <span className="text-xs font-mono uppercase tracking-wider text-brand-red block mb-2 font-semibold">
+                {language === 'id' ? 'Posisi Terbuka' : 'Open Roles'} ({positions.length})
+              </span>
+              <h2 className="text-3xl md:text-4xl font-display font-bold tracking-tight text-white">
+                {language === 'id' ? 'Peluang Karir Saat Ini' : 'Current Opportunities'}
               </h2>
             </div>
-            <div className="flex flex-col items-start md:items-end gap-2">
-              <div className="flex items-center gap-3 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-xl">
-                <div className="w-2 h-2 rounded-full bg-brand-red animate-pulse" />
-                <span className="text-[10px] font-mono font-bold text-white/60 uppercase tracking-widest">Active Roles</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 md:gap-16">
-            {[
-              { 
-                icon: <Zap size={32} />, 
-                title: "Growth Mindset", 
-                desc: "We foster a culture of continuous learning and professional development.",
-                image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=800",
-                id: "ADV_01"
-              },
-              { 
-                icon: <Shield size={32} />, 
-                title: "Expert Collective", 
-                desc: "Work alongside senior engineers and product designers on high-impact projects.",
-                image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=800",
-                id: "ADV_02"
-              },
-              { 
-                icon: <Globe size={32} />, 
-                title: "Global Impact", 
-                desc: "Build products that are used by millions of users across the globe.",
-                image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=800",
-                id: "ADV_03"
-              },
-              { 
-                icon: <Rocket size={32} />, 
-                title: "Rapid Scaling", 
-                desc: "Experience the lifecycle of high-growth digital products from MVP to scale.",
-                image: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=800",
-                id: "ADV_04"
-              }
-            ].map((item, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.1 }}
-                className="relative p-10 rounded-[2.5rem] bg-zinc-900/30 border border-white/5 hover:bg-zinc-900/50 transition-all duration-500 group overflow-hidden"
-              >
-                {/* Corner Accents */}
-                <div className="absolute top-0 left-0 w-8 h-8 border-t border-l border-white/10 rounded-tl-[2.5rem] group-hover:border-brand-red/40 transition-colors" />
-                <div className="absolute bottom-0 right-0 w-8 h-8 border-b border-r border-white/10 rounded-br-[2.5rem] group-hover:border-brand-red/40 transition-colors" />
-
-                {/* Background Image with Overlay */}
-                <div className="absolute inset-0 z-0 opacity-0 group-hover:opacity-10 transition-opacity duration-700">
-                  <img 
-                    src={item.image} 
-                    alt={item.title} 
-                    className="w-full h-full object-cover scale-110 group-hover:scale-100 transition-transform duration-1000 grayscale"
-                    referrerPolicy="no-referrer"
-                  />
-                  <div className="absolute inset-0 bg-black/60" />
-                </div>
-
-                <div className="relative z-10">
-                  <div className="flex justify-between items-start mb-12">
-                    <motion.div 
-                      animate={{ 
-                        y: [0, -8, 0],
-                      }}
-                      transition={{ 
-                        duration: 4, 
-                        repeat: Infinity, 
-                        ease: "easeInOut",
-                        delay: i * 0.5
-                      }}
-                      className="text-brand-red group-hover:scale-110 transition-all duration-500"
-                    >
-                      {item.icon}
-                    </motion.div>
-                    <span className="text-[8px] font-mono text-white/10 uppercase tracking-widest group-hover:text-brand-red/40 transition-colors">{item.id}</span>
-                  </div>
-                  <h3 className="text-xl md:text-2xl font-display font-bold mb-4 group-hover:text-brand-red transition-colors duration-500 uppercase tracking-tight">{item.title}</h3>
-                  <p className="text-white/40 text-sm font-light leading-relaxed group-hover:text-white/70 transition-colors duration-500">{item.desc}</p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Culture Section */}
-      <section className="py-24 md:py-48 px-6 md:px-12 bg-zinc-950 relative overflow-hidden border-b border-white/5">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-32 items-center">
-          <motion.div 
-            initial={{ opacity: 0, x: -50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-          >
-            <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Our Culture</span>
-            <h2 className="text-[clamp(1.5rem,5vw,3.5rem)] font-display font-bold tracking-tighter mb-8 leading-[0.9]">How We <span className="text-brand-red">Work.</span></h2>
-            <p className="text-sm md:text-base text-white/60 font-light leading-relaxed mb-8">
-              Kapitech maintains a balance between creative design and robust engineering. Our team values transparent communication, continuous improvement, and delivering exceptional results for our clients.
-            </p>
-            <div className="space-y-6">
-              {[
-                { title: "Direct Communication", desc: "Open and honest dialogue across all levels." },
-                { title: "Continuous Optimization", desc: "Always learning and improving our skills." },
-                { title: "Ownership", desc: "Taking responsibility for our work and delivering excellence." }
-              ].map((item, i) => (
-                <div key={i} className="flex gap-6 items-start">
-                  <div className="w-1.5 h-1.5 rounded-full bg-brand-red mt-2 shrink-0" />
-                  <div>
-                    <h4 className="font-mono font-bold mb-1 uppercase tracking-tighter text-sm">{item.title}</h4>
-                    <p className="text-xs text-white/40 font-light">{item.desc}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </motion.div>
-          <div className="relative aspect-square rounded-3xl overflow-hidden">
-            <img 
-              src="https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80&w=2070" 
-              alt="Operational Environment" 
-              loading="lazy"
-              referrerPolicy="no-referrer"
-              className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-1000"
-            />
-            <div className="absolute inset-0 bg-brand-red/10 mix-blend-multiply" />
-          </div>
-        </div>
-      </section>
-
-      {/* Benefits Grid */}
-      <section className="py-20 md:py-40 px-6 md:px-12 bg-black relative overflow-hidden">
-        <div className="max-w-7xl mx-auto">
-          <div className="mb-16 md:mb-24 text-center">
-            <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Benefits</span>
-            <h2 className="text-[clamp(2rem,6vw,4rem)] font-display font-bold tracking-tighter">Perks.</h2>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {benefits.map((benefit, i) => (
-              <motion.div 
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="p-10 rounded-3xl bg-zinc-900/50 backdrop-blur-sm border border-white/5 hover:border-brand-red/50 transition-all group"
-              >
-                <div className="w-12 h-12 rounded-xl bg-brand-red/10 flex items-center justify-center text-brand-red mb-6 group-hover:scale-110 transition-transform duration-500">
-                  {benefit.icon}
-                </div>
-                <h3 className="text-lg font-mono font-bold mb-4 uppercase tracking-tighter">{benefit.title}</h3>
-                <p className="text-white/40 text-xs leading-relaxed">{benefit.desc}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Hiring Process Section */}
-      <section className="py-20 md:py-40 px-6 md:px-12 bg-black relative overflow-hidden">
-        <div className="max-w-7xl mx-auto">
-          <div className="mb-16 md:mb-24">
-            <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Hiring Process</span>
-            <h2 className="text-[clamp(2rem,6vw,4rem)] font-display font-bold tracking-tighter">Our <span className="text-brand-red">Process.</span></h2>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {hiringProcess.map((item, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="relative p-10 rounded-3xl bg-zinc-900/20 border border-white/5 group hover:border-brand-red/30 transition-all duration-500"
-              >
-                <div className="absolute top-8 right-8 text-4xl font-display font-black text-white/5 group-hover:text-brand-red/10 transition-colors duration-500 font-mono">
-                  {item.step}
-                </div>
-                <div className="w-12 h-12 rounded-xl bg-brand-red/10 flex items-center justify-center text-brand-red mb-8 group-hover:scale-110 transition-transform duration-500">
-                  {item.icon}
-                </div>
-                <h3 className="text-lg font-mono font-bold mb-4 group-hover:text-white transition-colors uppercase tracking-tighter">{item.title}</h3>
-                <p className="text-white/40 text-xs leading-relaxed font-light">{item.desc}</p>
-                
-                {i < hiringProcess.length - 1 && (
-                  <div className="hidden lg:block absolute top-1/2 -right-4 w-8 h-px bg-gradient-to-r from-white/10 to-transparent z-10" />
-                )}
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Open Positions */}
-      <section className="py-24 md:py-48 px-6 md:px-12 bg-zinc-950 border-y border-white/5 relative overflow-hidden">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-12 mb-20 md:mb-32">
-            <div>
-              <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Active Openings</span>
-              <h2 className="text-[clamp(2.5rem,6vw,5.5rem)] font-display font-bold tracking-tighter uppercase leading-none">Join<br />Our Team.</h2>
-            </div>
-            <p className="text-white/60 max-w-sm text-sm md:text-base font-light leading-relaxed">
-              Don't see a role that fits? Submit your portfolio for future opportunities.
+            <p className="text-xs text-white/60 font-mono">
+              {language === 'id' ? 'Kontak rekrutmen langsung:' : 'Direct recruitment inquiries:'}{' '}
+              <a href="mailto:recruitment@kapitech.id" className="text-brand-red hover:underline font-medium">recruitment@kapitech.id</a>
             </p>
           </div>
 
-          <div className="space-y-6" role="list" aria-label="Open job positions">
-            {positions.map((job, i) => (
-              <motion.div
-                key={job.id}
-                role="listitem"
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                onClick={() => setSelectedPosition(job)}
-                onKeyDown={(e) => e.key === 'Enter' && setSelectedPosition(job)}
-                tabIndex={0}
-                aria-label={`View details for ${job.title}`}
-                className="group p-8 md:p-12 rounded-3xl bg-black border border-white/5 hover:border-brand-red/50 transition-all cursor-pointer flex flex-col md:flex-row justify-between items-start md:items-center gap-8"
+          <div className="space-y-4">
+            {positions.map((pos) => (
+              <div
+                key={pos.id}
+                onClick={() => { setSelectedPosition(pos); setIsSubmitted(false); }}
+                className="p-6 md:p-8 rounded-2xl bg-zinc-950 border border-white/10 hover:border-brand-red/50 transition-all duration-300 flex flex-col md:flex-row md:items-center justify-between gap-6 cursor-pointer group"
               >
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 w-full">
-                  <div className="flex-grow">
-                    <div className="flex items-center gap-4 mb-4">
-                      <span className="text-brand-red font-mono text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-xl bg-brand-red/10">
-                        {job.department}
-                      </span>
-                      <span className="text-white/40 font-mono text-[10px] font-bold uppercase tracking-widest">
-                        {job.location} • {job.type}
-                      </span>
-                    </div>
-                    <h3 className="text-xl md:text-3xl font-mono font-bold group-hover:text-brand-red transition-colors mb-4 uppercase tracking-tighter">
-                      {job.title}
-                    </h3>
-                    <div className="flex gap-6">
-                      <div className="flex items-center gap-2 text-[10px] font-mono text-white/20 uppercase tracking-widest">
-                        <Zap size={12} className="text-brand-red" />
-                        {job.experience}
-                      </div>
-                      <div className="flex items-center gap-2 text-[10px] font-mono text-white/20 uppercase tracking-widest">
-                        <Heart size={12} className="text-brand-red" />
-                        {job.salary}
-                      </div>
-                    </div>
+                <div className="space-y-2">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <span className="text-[10px] font-mono px-2.5 py-0.5 rounded bg-brand-red/20 text-brand-red border border-brand-red/30 uppercase tracking-wider">
+                      {pos.department}
+                    </span>
+                    <span className="text-xs text-white/50 flex items-center gap-1">
+                      <MapPin size={12} /> {pos.location}
+                    </span>
+                    <span className="text-xs text-white/50 flex items-center gap-1">
+                      <Clock size={12} /> {pos.type}
+                    </span>
                   </div>
-                  <div className="w-16 h-16 rounded-full border border-white/10 flex items-center justify-center group-hover:bg-white group-hover:text-black transition-all duration-500 shrink-0">
-                    <ArrowUpRight size={32} />
-                  </div>
+                  <h3 className="text-xl md:text-2xl font-display font-bold text-white group-hover:text-brand-red transition-colors">
+                    {pos.title}
+                  </h3>
+                  <p className="text-xs md:text-sm text-white/60 font-light max-w-2xl">
+                    {pos.summary}
+                  </p>
                 </div>
-              </motion.div>
+
+                <div className="flex items-center gap-2 text-xs font-semibold text-white/70 group-hover:text-white uppercase tracking-wider shrink-0">
+                  <span>{language === 'id' ? 'Lihat Detail & Lamar' : 'View Details & Apply'}</span>
+                  <ArrowUpRight size={16} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                </div>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Agency Stats Widget */}
-      <section className="py-20 md:py-40 px-6 md:px-12 bg-zinc-950 border-y border-white/5 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-5 pointer-events-none">
-          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-brand-red blur-[150px] rounded-full" />
-        </div>
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12 relative z-10">
-          <div className="p-10 rounded-3xl bg-white/5 border border-white/5 flex flex-col gap-6 group hover:border-emerald-400/30 transition-all duration-500">
-            <div className="flex items-center justify-between">
-              <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/40">Deployment Success</span>
-              <div className="flex items-center gap-2 text-[10px] font-mono font-bold uppercase tracking-widest text-emerald-400">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                Active
-              </div>
-            </div>
-            <div className="flex items-end gap-4">
-              <div className="flex-grow h-12 flex items-end gap-1">
-                {[40, 50, 45, 60, 70, 65, 75, 80, 85, 90].map((h, i) => (
-                  <motion.div 
-                    key={i} 
-                    initial={{ height: 0 }}
-                    whileInView={{ height: `${h}%` }}
-                    transition={{ delay: i * 0.05, duration: 0.5 }}
-                    className="flex-grow bg-emerald-400/20 rounded-t-sm group-hover:bg-emerald-400/40 transition-colors"
-                  />
-                ))}
-              </div>
-              <span className="text-2xl font-display font-bold font-mono">50+</span>
-            </div>
-            <p className="text-[10px] text-white/40 font-light font-mono uppercase tracking-widest">Verified technical deployments since 2021 initiation.</p>
-          </div>
-
-          <div className="p-10 rounded-3xl bg-white/5 border border-white/5 flex flex-col gap-6 group hover:border-brand-red/30 transition-all duration-500">
-            <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/40">Collective Growth</span>
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-brand-red/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
-                <Users className="text-brand-red" size={24} />
-              </div>
-              <div>
-                <span className="block text-xl font-bold font-mono">15+ Units</span>
-                <span className="text-[10px] text-white/40 uppercase tracking-widest font-mono">Specialized Personnel</span>
-              </div>
-            </div>
-            <p className="text-[10px] text-white/40 font-light font-mono uppercase tracking-widest">Technical architects and interface production specialists.</p>
-          </div>
-
-          <div className="p-10 rounded-3xl bg-white/5 border border-white/5 flex flex-col gap-6 group hover:border-blue-500/30 transition-all duration-500">
-            <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/40">Operational Base</span>
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
-                <MapPin className="text-blue-500" size={24} />
-              </div>
-              <div>
-                <span className="block text-xl font-bold font-mono">Tangerang</span>
-                <span className="text-[10px] text-white/40 uppercase tracking-widest font-mono">Central Node</span>
-              </div>
-            </div>
-            <p className="text-[10px] text-white/40 font-light font-mono uppercase tracking-widest">Regional headquarters for global system management.</p>
-          </div>
-        </div>
-      </section>
-
-      {/* General Inquiry */}
-      <section className="py-20 md:py-40 px-6 md:px-12 bg-black relative overflow-hidden">
-        <div className="max-w-7xl mx-auto text-center">
-          <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">General Inquiry</span>
-          <h2 className="text-[clamp(1.5rem,5vw,3.5rem)] font-display font-bold tracking-tighter mb-8">Open Roles.</h2>
-          <p className="text-sm md:text-base text-white/40 font-light leading-relaxed max-w-2xl mx-auto mb-12">
-            Don't see a role that fits? Submit your portfolio, and we'll keep you in mind for future opportunities.
-          </p>
-          <MagneticButton>
-            <Link to="/contact" className="px-12 py-5 bg-white text-black rounded-2xl font-bold hover:bg-brand-red hover:text-white transition-all duration-500 uppercase tracking-widest text-xs inline-block font-mono">
-              Submit Portfolio
-            </Link>
-          </MagneticButton>
-        </div>
-      </section>
-
-      {/* Job Detail Modal */}
+      {/* POSITION DETAILS & APPLICATION MODAL */}
       <AnimatePresence>
         {selectedPosition && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-black flex flex-col overflow-y-auto"
-          >
-            <motion.button 
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              onClick={() => setSelectedPosition(null)}
-              className="fixed top-12 right-12 z-[110] p-4 rounded-2xl bg-white text-black hover:bg-brand-red hover:text-white transition-all"
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-8 bg-black/80 backdrop-blur-md">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              transition={{ duration: 0.3 }}
+              className="relative w-full max-w-3xl max-h-[90vh] bg-zinc-950 border border-white/20 rounded-3xl overflow-hidden flex flex-col shadow-2xl"
             >
-              <ArrowUpRight size={32} className="rotate-180" />
-            </motion.button>
-
-            <div className="max-w-4xl mx-auto px-6 md:px-12 py-32">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-              >
-                <div className="flex items-center gap-4 mb-8">
-                  <span className="text-brand-red text-[10px] font-mono font-bold uppercase tracking-widest px-4 py-2 rounded-xl bg-brand-red/10">
-                    {selectedPosition.department}
-                  </span>
-                  <span className="text-white/40 text-[10px] font-mono font-bold uppercase tracking-widest">
-                    {selectedPosition.location} • {selectedPosition.type}
-                  </span>
-                </div>
-                <h2 className="text-4xl md:text-6xl font-display font-bold tracking-tighter mb-12 uppercase">
-                  {selectedPosition.title}
-                </h2>
-                
-                <div className="space-y-16">
-                  <div>
-                    <h3 className="font-mono font-bold mb-6 text-brand-red uppercase tracking-widest text-[10px]">Your Role</h3>
-                    <p className="text-sm md:text-base text-white/60 font-light leading-relaxed">
-                      {selectedPosition.description}
-                    </p>
-                  </div>
-
-                  <div>
-                    <h3 className="font-mono font-bold mb-6 text-brand-red uppercase tracking-widest text-[10px]">Technical Requirements</h3>
-                    <ul className="space-y-4">
-                      {selectedPosition.requirements.map((req, i) => (
-                        <li key={i} className="flex gap-4 items-start text-sm text-white/60 font-light">
-                          <CheckCircle2 className="text-brand-red shrink-0 mt-1" size={16} />
-                          {req}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  <div className="pt-12 border-t border-white/10">
-                    <h3 className="text-xl font-display font-bold mb-8 uppercase tracking-tighter">Join the Team.</h3>
-                    <div className="flex flex-wrap gap-6">
-                      <MagneticButton>
-                        <button 
-                          onClick={() => setIsApplying(true)}
-                          className="px-12 py-5 bg-white text-black rounded-2xl font-bold hover:bg-brand-red hover:text-white transition-all duration-500 uppercase tracking-widest text-xs inline-block font-mono"
-                          aria-label="Apply for this position"
-                        >
-                          Submit Application
-                        </button>
-                      </MagneticButton>
-                      <button 
-                        onClick={() => setSelectedPosition(null)}
-                        className="px-12 py-5 rounded-2xl border border-white/10 hover:bg-white/5 transition-all font-bold tracking-widest uppercase text-xs font-mono"
-                        aria-label="Back to Openings"
-                      >
-                        Return to Index
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Application Modal */}
-      <AnimatePresence>
-        {isApplying && selectedPosition && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[200] bg-black flex flex-col overflow-y-auto"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="application-title"
-          >
-            {/* Modal Background Effects */}
-            <div className="fixed inset-0 z-0 pointer-events-none">
-              <div className="absolute inset-0 grid-bg opacity-5" />
-              <div className="absolute top-1/4 -right-20 w-[600px] h-[600px] bg-brand-red/5 blur-[180px] rounded-full" />
-              <div className="absolute -bottom-20 -left-20 w-[700px] h-[700px] bg-blue-900/5 blur-[180px] rounded-full" />
-            </div>
-
-            <div className="max-w-3xl mx-auto px-6 md:px-12 py-24 w-full relative z-10">
-              <div className="flex justify-between items-center mb-12">
+              {/* Modal Header */}
+              <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-black/60 sticky top-0 z-20">
                 <div>
-                  <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-2 block">Application</span>
-                  <h2 id="application-title" className="text-3xl md:text-5xl font-display font-bold tracking-tighter uppercase">
+                  <span className="text-xs font-mono text-brand-red uppercase tracking-wider block">
+                    {selectedPosition.department} • {selectedPosition.type}
+                  </span>
+                  <h3 className="text-lg md:text-xl font-display font-bold text-white">
                     {selectedPosition.title}
-                  </h2>
+                  </h3>
                 </div>
-                <button 
-                  onClick={() => setIsApplying(false)}
-                  className="p-4 rounded-2xl bg-white/5 border border-white/10 text-white hover:bg-brand-red transition-all"
-                  aria-label="Close application form"
+                <button
+                  onClick={() => setSelectedPosition(null)}
+                  className="w-8 h-8 rounded-full bg-white/10 hover:bg-white hover:text-black transition-colors flex items-center justify-center"
+                  aria-label="Close modal"
                 >
-                  <X size={24} />
+                  <X size={16} />
                 </button>
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-8">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <div className="space-y-2">
-                    <label htmlFor="name" className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/40 block">Full Name</label>
-                    <div className="relative">
-                      <User className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20" size={18} />
-                      <input 
-                        required
-                        type="text" 
-                        id="name"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleInputChange}
-                        className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-6 text-white focus:outline-none focus:border-brand-red transition-all font-mono text-sm"
-                        placeholder="Your Full Name"
-                      />
+              {/* Modal Scroll Content */}
+              <div className="overflow-y-auto p-6 md:p-10 space-y-8">
+                {isSubmitted ? (
+                  <div className="text-center py-12 space-y-4">
+                    <div className="w-16 h-16 rounded-full bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 mx-auto">
+                      <CheckCircle2 size={32} />
                     </div>
-                  </div>
-                  <div className="space-y-2">
-                    <label htmlFor="email" className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/40 block">Email Address</label>
-                    <div className="relative">
-                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20" size={18} />
-                      <input 
-                        required
-                        type="email" 
-                        id="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleInputChange}
-                        className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-6 text-white focus:outline-none focus:border-brand-red transition-all font-mono text-sm"
-                        placeholder="Your Email"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <div className="space-y-2">
-                    <label htmlFor="phone" className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/40 block">Phone Number</label>
-                    <div className="relative">
-                      <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20" size={18} />
-                      <input 
-                        required
-                        type="tel" 
-                        id="phone"
-                        name="phone"
-                        value={formData.phone}
-                        onChange={handleInputChange}
-                        className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-6 text-white focus:outline-none focus:border-brand-red transition-all font-mono text-sm"
-                        placeholder="Your Phone Number"
-                      />
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <label htmlFor="portfolio" className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/40 block">Portfolio Link</label>
-                    <div className="relative">
-                      <LinkIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20" size={18} />
-                      <input 
-                        type="url" 
-                        id="portfolio"
-                        name="portfolio"
-                        value={formData.portfolio}
-                        onChange={handleInputChange}
-                        className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-6 text-white focus:outline-none focus:border-brand-red transition-all font-mono text-sm"
-                        placeholder="Portfolio URL"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <label htmlFor="coverLetter" className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/40 block">Cover Letter</label>
-                  <textarea 
-                    id="coverLetter"
-                    name="coverLetter"
-                    value={formData.coverLetter}
-                    onChange={handleInputChange}
-                    rows={6}
-                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white focus:outline-none focus:border-brand-red transition-all resize-none font-mono text-sm"
-                    placeholder="Tell us about yourself and why you want to join us..."
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/40 block">Resume / CV</span>
-                  <label 
-                    htmlFor="resume" 
-                    className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-white/10 rounded-2xl cursor-pointer hover:border-brand-red/50 hover:bg-white/5 transition-all group"
-                  >
-                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                      <Upload className="w-10 h-10 text-white/20 group-hover:text-brand-red mb-4 transition-colors" />
-                      <p className="mb-2 text-sm text-white/60 font-mono">
-                        <span className="font-bold">Upload File</span> or drag and drop
-                      </p>
-                      <p className="text-[10px] text-white/40 font-mono">PDF, DOCX (MAX. 5MB)</p>
-                      {fileError && (
-                        <p className="mt-2 text-[10px] text-brand-red font-bold uppercase tracking-widest animate-pulse font-mono">
-                          {fileError}
-                        </p>
+                    <h3 className="text-2xl font-display font-bold">
+                      {language === 'id' ? 'Lamaran Anda Berhasil Terkirim!' : 'Application Received!'}
+                    </h3>
+                    <p className="text-sm text-white/70 max-w-md mx-auto font-light">
+                      {language === 'id' ? (
+                        <>Terima kasih telah melamar untuk posisi <span className="text-white font-medium">{selectedPosition.title}</span>. Tim rekrutmen kami akan meninjau kualifikasi Anda dan menghubungi via email.</>
+                      ) : (
+                        <>Thank you for applying for the <span className="text-white font-medium">{selectedPosition.title}</span> role. Our hiring team will review your application and get in touch via email.</>
                       )}
-                      {formData.resume && !fileError && (
-                        <div className="mt-4 flex items-center gap-2 text-brand-red font-bold text-[10px] uppercase tracking-widest font-mono">
-                          <FileText size={14} />
-                          {formData.resume.name}
-                        </div>
-                      )}
-                    </div>
-                    <input 
-                      id="resume" 
-                      type="file" 
-                      className="hidden" 
-                      accept=".pdf,.doc,.docx"
-                      onChange={handleFileChange}
-                    />
-                  </label>
-                </div>
-
-                <div className="pt-8">
-                  <MagneticButton>
-                    <button 
-                      type="submit"
-                      className="w-full py-6 bg-white text-black rounded-full font-bold hover:bg-brand-red hover:text-white transition-all duration-500 uppercase tracking-widest text-sm"
+                    </p>
+                    <button
+                      onClick={() => setSelectedPosition(null)}
+                      className="px-6 py-3 rounded-xl bg-white text-black text-xs font-semibold uppercase tracking-wider hover:bg-brand-red hover:text-white transition-colors"
                     >
-                      Submit Application
+                      {language === 'id' ? 'Tutup Jendela' : 'Close Window'}
                     </button>
-                  </MagneticButton>
-                </div>
-              </form>
-            </div>
-          </motion.div>
+                  </div>
+                ) : (
+                  <>
+                    <div>
+                      <h4 className="text-xs font-mono uppercase tracking-wider text-white/50 mb-2">
+                        {language === 'id' ? 'Deskripsi Peran' : 'Role Overview'}
+                      </h4>
+                      <p className="text-sm text-white/80 font-light leading-relaxed">
+                        {selectedPosition.summary}
+                      </p>
+                    </div>
+
+                    <div>
+                      <h4 className="text-xs font-mono uppercase tracking-wider text-white/50 mb-3">
+                        {language === 'id' ? 'Tanggung Jawab Utama' : 'Key Responsibilities'}
+                      </h4>
+                      <div className="space-y-2">
+                        {selectedPosition.responsibilities.map((resp, i) => (
+                          <div key={i} className="flex items-start gap-2.5 text-xs text-white/80">
+                            <CheckCircle2 size={14} className="text-brand-red shrink-0 mt-0.5" />
+                            <span className="font-light leading-relaxed">{resp}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div>
+                      <h4 className="text-xs font-mono uppercase tracking-wider text-white/50 mb-3">
+                        {language === 'id' ? 'Kualifikasi & Persyaratan' : 'Qualifications & Requirements'}
+                      </h4>
+                      <div className="space-y-2">
+                        {selectedPosition.requirements.map((req, i) => (
+                          <div key={i} className="flex items-start gap-2.5 text-xs text-white/80">
+                            <CheckCircle2 size={14} className="text-brand-red shrink-0 mt-0.5" />
+                            <span className="font-light leading-relaxed">{req}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Quick Application Form */}
+                    <div className="pt-6 border-t border-white/10">
+                      <h4 className="text-base font-display font-bold mb-4">
+                        {language === 'id' ? 'Kirimkan Lamaran Anda' : 'Submit Your Application'}
+                      </h4>
+                      <form onSubmit={handleSubmit} className="space-y-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div>
+                            <label className="block text-[11px] font-mono text-white/50 uppercase mb-1">
+                              {language === 'id' ? 'Nama Lengkap *' : 'Full Name *'}
+                            </label>
+                            <input
+                              type="text"
+                              name="name"
+                              required
+                              value={formData.name}
+                              onChange={handleInputChange}
+                              placeholder="e.g. Alex Pratama"
+                              className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-[11px] font-mono text-white/50 uppercase mb-1">
+                              {language === 'id' ? 'Alamat Email *' : 'Email Address *'}
+                            </label>
+                            <input
+                              type="email"
+                              name="email"
+                              required
+                              value={formData.email}
+                              onChange={handleInputChange}
+                              placeholder="alex@example.com"
+                              className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div>
+                            <label className="block text-[11px] font-mono text-white/50 uppercase mb-1">
+                              {language === 'id' ? 'Nomor WhatsApp / Telepon' : 'Phone / WhatsApp'}
+                            </label>
+                            <input
+                              type="tel"
+                              name="phone"
+                              value={formData.phone}
+                              onChange={handleInputChange}
+                              placeholder="+62 812-xxxx-xxxx"
+                              className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-[11px] font-mono text-white/50 uppercase mb-1">
+                              {language === 'id' ? 'Tautan Portofolio / GitHub *' : 'Portfolio / GitHub Link *'}
+                            </label>
+                            <input
+                              type="url"
+                              name="portfolio"
+                              required
+                              value={formData.portfolio}
+                              onChange={handleInputChange}
+                              placeholder="https://behance.net/alex or https://github.com/alex"
+                              className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red"
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="block text-[11px] font-mono text-white/50 uppercase mb-1">
+                            {language === 'id' ? 'Catatan Singkat / Mengapa Tertarik di Kapitech?' : 'Cover Note / Why Kapitech?'}
+                          </label>
+                          <textarea
+                            name="coverLetter"
+                            rows={3}
+                            value={formData.coverLetter}
+                            onChange={handleInputChange}
+                            placeholder={language === 'id' ? 'Ceritakan secara singkat pengalaman dan kontribusi yang ingin Anda berikan...' : 'Tell us briefly about your experience and what you hope to achieve at Kapitech...'}
+                            className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red resize-none"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-[11px] font-mono text-white/50 uppercase mb-1">
+                            {language === 'id' ? 'Resume / CV (Format PDF atau DOC)' : 'Resume / CV (PDF or DOC)'}
+                          </label>
+                          <input
+                            type="file"
+                            accept=".pdf,.doc,.docx"
+                            onChange={handleFileChange}
+                            className="w-full text-xs text-white/60 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-white/10 file:text-white hover:file:bg-brand-red file:cursor-pointer"
+                          />
+                        </div>
+
+                        <button
+                          type="submit"
+                          className="w-full py-3.5 rounded-xl bg-brand-red hover:bg-white text-white hover:text-black font-semibold text-xs uppercase tracking-wider transition-colors"
+                        >
+                          {language === 'id' ? 'Kirimkan Lamaran' : 'Submit Application'}
+                        </button>
+                      </form>
+                    </div>
+                  </>
+                )}
+              </div>
+            </motion.div>
+          </div>
         )}
       </AnimatePresence>
-    </motion.div>
+    </div>
   );
 };

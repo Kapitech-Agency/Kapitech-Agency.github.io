@@ -6,6 +6,7 @@
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'motion/react';
+import { LanguageProvider } from './lib/LanguageContext';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 import { FloatingContact } from './components/FloatingContact';
@@ -57,16 +58,18 @@ const AnimatedRoutes = () => {
 
 export default function App() {
   return (
-    <Router>
-      <ScrollToTop />
-      <div className="bg-black text-white selection:bg-brand-red selection:text-white min-h-screen flex flex-col film-grain">
-        <Navbar />
-        <main className="flex-grow">
-          <AnimatedRoutes />
-        </main>
-        <Footer />
-        <FloatingContact />
-      </div>
-    </Router>
+    <LanguageProvider>
+      <Router>
+        <ScrollToTop />
+        <div className="bg-black text-white selection:bg-brand-red selection:text-white min-h-screen flex flex-col film-grain">
+          <Navbar />
+          <main className="flex-grow">
+            <AnimatedRoutes />
+          </main>
+          <Footer />
+          <FloatingContact />
+        </div>
+      </Router>
+    </LanguageProvider>
   );
 }

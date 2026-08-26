@@ -1,137 +1,141 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ChevronLeft, ChevronRight, Quote } from 'lucide-react';
-
-const testimonials = [
-  {
-    quote: "Kapitech transformed our fragmented real estate portal into a high-conversion engine. Their SOP-driven approach is a game-changer.",
-    author: "Marcus Thorne",
-    role: "CEO",
-    company: "Lumina Real Estate",
-    image: "https://i.pravatar.cc/150?u=marcus"
-  },
-  {
-    quote: "The level of technical authority Kapitech brings is unmatched. They architect digital legacies that command market authority.",
-    author: "Sarah Chen",
-    role: "Creative Director",
-    company: "Aura Creative Studio",
-    image: "https://i.pravatar.cc/150?u=sarah"
-  },
-  {
-    quote: "Frictionless UI and a robust backend. Our active user base grew by 40% within three months. Their engineering is truly elite.",
-    author: "David Miller",
-    role: "Product Lead",
-    company: "Nexus Fintech",
-    image: "https://i.pravatar.cc/150?u=david"
-  },
-  {
-    quote: "Their strategic consultancy optimized our internal workflows by 60%. Kapitech is more than a dev shop; they are architects of efficiency.",
-    author: "Elena Rodriguez",
-    role: "COO",
-    company: "Vanguard Logistics",
-    image: "https://i.pravatar.cc/150?u=elena"
-  },
-  {
-    quote: "The 3D immersive tours they built for our luxury listings have redefined how we sell properties globally. Absolute mastery.",
-    author: "Julian Vane",
-    role: "Founder",
-    company: "Vane Estates",
-    image: "https://i.pravatar.cc/150?u=julian"
-  },
-  {
-    quote: "Security and speed were our top priorities. Kapitech delivered a cloud-native architecture that handles our scale effortlessly.",
-    author: "Michael Kross",
-    role: "CTO",
-    company: "Kross Security",
-    image: "https://i.pravatar.cc/150?u=michael"
-  },
-  {
-    quote: "A masterclass in UI/UX psychology. Every interaction feels intentional and high-fidelity. They truly understand the 1%.",
-    author: "Sophia Laurent",
-    role: "Brand Manager",
-    company: "Laurent Luxury",
-    image: "https://i.pravatar.cc/150?u=sophia"
-  },
-  {
-    quote: "We needed a partner who could handle complex API integrations with zero downtime. Kapitech exceeded every expectation.",
-    author: "Robert Chen",
-    role: "Head of Engineering",
-    company: "Sync Systems",
-    image: "https://i.pravatar.cc/150?u=robert"
-  },
-  {
-    quote: "The ROI we've seen since the redesign is staggering. Kapitech doesn't just build; they engineer growth.",
-    author: "Amanda Grey",
-    role: "Marketing VP",
-    company: "Growth Labs",
-    image: "https://i.pravatar.cc/150?u=amanda"
-  },
-  {
-    quote: "Kapitech's ability to translate complex business requirements into elegant digital solutions is unparalleled. They are true partners.",
-    author: "Thomas Wright",
-    role: "Director of Innovation",
-    company: "Wright Tech",
-    image: "https://i.pravatar.cc/150?u=thomas"
-  },
-  {
-    quote: "The speed and efficiency of their deployment pipeline saved us months of development time. Elite engineering at its finest.",
-    author: "Lisa Song",
-    role: "Lead Developer",
-    company: "CloudScale",
-    image: "https://i.pravatar.cc/150?u=lisa"
-  },
-  {
-    quote: "Their design system approach allowed us to scale our product across multiple platforms with perfect consistency. Highly recommended.",
-    author: "Kevin Park",
-    role: "Head of Product",
-    company: "OmniChannel",
-    image: "https://i.pravatar.cc/150?u=kevin"
-  }
-];
+import { ChevronLeft, ChevronRight, Quote, Star } from 'lucide-react';
+import { useLanguage } from '../lib/LanguageContext';
 
 export const Testimonials = () => {
+  const { language } = useLanguage();
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [direction, setDirection] = useState(0);
-  const itemsPerSlide = 3;
+  const [itemsPerSlide, setItemsPerSlide] = useState(3);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 768) {
+        setItemsPerSlide(1);
+      } else if (window.innerWidth < 1024) {
+        setItemsPerSlide(2);
+      } else {
+        setItemsPerSlide(3);
+      }
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const testimonialsEn = [
+    {
+      quote: "Kapitech built our real estate portal from scratch using Next.js. The page load speed is blazing fast and our inbound lead conversions increased by 45% within the first month.",
+      author: "Marcus Thorne",
+      role: "Managing Director",
+      company: "Lumina Real Estate",
+      location: "Jakarta, Indonesia"
+    },
+    {
+      quote: "Their design team has an exceptional eye for modern typography and layout. They delivered a cohesive brand identity and a stunning web experience that elevated our firm completely.",
+      author: "Sarah Chen",
+      role: "Creative Director",
+      company: "Aura Creative Studio",
+      location: "Singapore"
+    },
+    {
+      quote: "Working with Kapitech on our mobile banking interface was seamless. They simplified complex account journeys and delivered pixel-perfect Figma specs ready for our dev squad.",
+      author: "David Miller",
+      role: "Head of Product",
+      company: "Nexus Fintech",
+      location: "Hong Kong"
+    },
+    {
+      quote: "The solar energy monitoring dashboard Kapitech engineered gave our operations team instant visibility across 40+ solar farms with zero lag. Highly dependable engineering.",
+      author: "Elena Rodriguez",
+      role: "Operations VP",
+      company: "Solaris CleanTech",
+      location: "Melbourne, Australia"
+    },
+    {
+      quote: "Our headless Shopify migration handled our flash sale traffic peaks without a hitch. Checkout conversion increased by 38%. Kapitech delivers genuine business results.",
+      author: "Julian Vane",
+      role: "Founder & CEO",
+      company: "Vivid Commerce",
+      location: "Jakarta, Indonesia"
+    },
+    {
+      quote: "Clear milestones, proactive communication, and zero technical fluff. Kapitech is our go-to partner whenever we need to launch a new digital product on a tight timeline.",
+      author: "Michael Kross",
+      role: "Chief Technology Officer",
+      company: "Kross Cloud Systems",
+      location: "Kuala Lumpur, Malaysia"
+    }
+  ];
+
+  const testimonialsId = [
+    {
+      quote: "Kapitech membangun portal real estate kami dari nol menggunakan Next.js. Kecepatan loading halamannya luar biasa cepat dan konversi prospek kami meningkat 45% dalam bulan pertama.",
+      author: "Marcus Thorne",
+      role: "Managing Director",
+      company: "Lumina Real Estate",
+      location: "Jakarta, Indonesia"
+    },
+    {
+      quote: "Tim desain mereka memiliki keahlian luar biasa dalam tipografi dan tata letak modern. Mereka menghadirkan identitas brand yang sangat kohesif dan pengalaman web yang memukau.",
+      author: "Sarah Chen",
+      role: "Creative Director",
+      company: "Aura Creative Studio",
+      location: "Singapura"
+    },
+    {
+      quote: "Bekerja dengan Kapitech untuk antarmuka mobile banking sangat lancar. Mereka menyederhanakan alur pengguna yang kompleks dan menyerahkan spesifikasi Figma yang presisi untuk tim developer kami.",
+      author: "David Miller",
+      role: "Head of Product",
+      company: "Nexus Fintech",
+      location: "Hong Kong"
+    },
+    {
+      quote: "Dashboard monitoring energi surya yang dikembangkan Kapitech memberi tim operasi kami visibilitas langsung di lebih dari 40 ladang surya tanpa lag. Rekayasa yang sangat andal.",
+      author: "Elena Rodriguez",
+      role: "Operations VP",
+      company: "Solaris CleanTech",
+      location: "Melbourne, Australia"
+    },
+    {
+      quote: "Migrasi headless Shopify kami mampu menangani lonjakan traffic flash sale tanpa hambatan sama sekali. Konversi checkout meningkat 38%. Kapitech memberikan hasil nyata untuk bisnis.",
+      author: "Julian Vane",
+      role: "Founder & CEO",
+      company: "Vivid Commerce",
+      location: "Jakarta, Indonesia"
+    },
+    {
+      quote: "Milestone yang jelas, komunikasi proaktif, dan tanpa basa-basi teknis. Kapitech adalah mitra andalan kami setiap kali butuh meluncurkan produk digital dengan tenggat waktu ketat.",
+      author: "Michael Kross",
+      role: "Chief Technology Officer",
+      company: "Kross Cloud Systems",
+      location: "Kuala Lumpur, Malaysia"
+    }
+  ];
+
+  const testimonials = language === 'id' ? testimonialsId : testimonialsEn;
   const totalSlides = Math.ceil(testimonials.length / itemsPerSlide);
 
   const next = () => {
-    setDirection(1);
     setCurrentIndex((prev) => (prev + 1) % totalSlides);
   };
 
   const prev = () => {
-    setDirection(-1);
     setCurrentIndex((prev) => (prev - 1 + totalSlides) % totalSlides);
   };
 
+  // Reset index if out of bounds on resize
   useEffect(() => {
-    const timer = setInterval(next, 10000);
-    return () => clearInterval(timer);
-  }, []);
+    if (currentIndex >= totalSlides) {
+      setCurrentIndex(0);
+    }
+  }, [itemsPerSlide, totalSlides]);
 
-  const variants = {
-    enter: (direction: number) => ({
-      x: direction > 0 ? 100 : -100,
-      opacity: 0,
-      filter: "blur(10px)",
-      scale: 0.95
-    }),
-    center: {
-      zIndex: 1,
-      x: 0,
-      opacity: 1,
-      filter: "blur(0px)",
-      scale: 1
-    },
-    exit: (direction: number) => ({
-      zIndex: 0,
-      x: direction < 0 ? 100 : -100,
-      opacity: 0,
-      filter: "blur(10px)",
-      scale: 0.95
-    })
-  };
+  useEffect(() => {
+    const timer = setInterval(next, 8000);
+    return () => clearInterval(timer);
+  }, [totalSlides]);
 
   const currentItems = testimonials.slice(
     currentIndex * itemsPerSlide,
@@ -139,93 +143,82 @@ export const Testimonials = () => {
   );
 
   return (
-    <section className="py-20 md:py-40 px-6 md:px-12 bg-black overflow-hidden border-y border-white/5">
+    <section className="py-16 sm:py-24 md:py-32 px-4 sm:px-6 md:px-12 bg-black border-b border-white/10" id="testimonials">
       <div className="max-w-7xl mx-auto">
-        <div className="mb-24 flex flex-col md:flex-row justify-between items-end gap-8">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12 sm:mb-16">
           <div>
-            <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Client Intelligence</span>
-            <h2 className="text-[clamp(2.5rem,6vw,5rem)] font-display font-bold tracking-tighter">The Feedback.</h2>
+            <span className="text-brand-red font-mono font-semibold tracking-widest uppercase text-xs mb-2.5 block">
+              {language === 'id' ? 'Testimoni Klien' : 'Client Testimonials'}
+            </span>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold tracking-tight text-white">
+              {language === 'id' ? 'Dipercaya oleh para pendiri dan pemimpin produk.' : 'Trusted by founders and product leaders.'}
+            </h2>
           </div>
-          <div className="flex gap-4">
+          <div className="flex items-center gap-2.5 self-start sm:self-auto">
             <button 
               onClick={prev}
-              className="w-14 h-14 rounded-full border border-white/10 flex items-center justify-center hover:bg-white hover:text-black transition-all duration-500"
+              className="w-11 h-11 rounded-full border border-white/20 flex items-center justify-center hover:bg-white hover:text-black active:scale-95 transition-all"
+              aria-label="Previous testimonials"
             >
-              <ChevronLeft size={20} />
+              <ChevronLeft size={18} />
             </button>
             <button 
               onClick={next}
-              className="w-14 h-14 rounded-full border border-white/10 flex items-center justify-center hover:bg-white hover:text-black transition-all duration-500"
+              className="w-11 h-11 rounded-full border border-white/20 flex items-center justify-center hover:bg-white hover:text-black active:scale-95 transition-all"
+              aria-label="Next testimonials"
             >
-              <ChevronRight size={20} />
+              <ChevronRight size={18} />
             </button>
           </div>
         </div>
 
-        <div className="relative min-h-[400px]">
-          <AnimatePresence initial={false} custom={direction} mode="wait">
-            <motion.div
-              key={currentIndex}
-              custom={direction}
-              variants={variants}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              transition={{
-                x: { type: "spring", stiffness: 300, damping: 30 },
-                opacity: { duration: 0.5 },
-                scale: { duration: 0.5 },
-                filter: { duration: 0.5 }
-              }}
-              className="grid grid-cols-1 md:grid-cols-3 gap-6"
-            >
-              {currentItems.map((item, idx) => (
-                <div key={idx} className="p-8 rounded-[2rem] bg-zinc-900/50 border border-white/5 flex flex-col justify-between h-full group hover:border-brand-red/30 transition-colors duration-500">
-                  <div>
-                    <div className="w-8 h-8 bg-brand-red/10 rounded-lg flex items-center justify-center mb-6">
-                      <Quote size={14} className="text-brand-red fill-current" />
-                    </div>
-                    <p className="text-[clamp(0.875rem,1vw,1.125rem)] font-light leading-relaxed text-white/80 mb-8 italic">
-                      "{item.quote}"
-                    </p>
-                  </div>
-                  
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-xl overflow-hidden grayscale group-hover:grayscale-0 transition-all duration-700 border border-white/10">
-                      <img 
-                        src={item.image} 
-                        alt={item.author}
-                        loading="lazy"
-                        referrerPolicy="no-referrer"
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <div>
-                      <span className="block text-sm font-bold text-white">{item.author}</span>
-                      <span className="block text-[10px] font-mono text-white/40 uppercase tracking-widest mb-1">{item.role}</span>
-                      <span className="text-brand-red text-[10px] font-mono font-bold uppercase tracking-[0.2em]">
-                        {item.company}
-                      </span>
+        <div className={`grid gap-4 sm:gap-6 md:gap-8 ${
+          itemsPerSlide === 1 ? 'grid-cols-1' : itemsPerSlide === 2 ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
+        }`}>
+          <AnimatePresence mode="wait">
+            {currentItems.map((item, index) => (
+              <motion.div
+                key={item.author + currentIndex + language}
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -15 }}
+                transition={{ duration: 0.3, delay: index * 0.06 }}
+                className="p-6 sm:p-8 rounded-2xl bg-zinc-950 border border-white/10 flex flex-col justify-between min-h-[260px] sm:min-h-[300px] transition-colors hover:border-brand-red/40"
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-4 sm:mb-5">
+                    <Quote size={22} className="text-brand-red opacity-80" />
+                    <div className="flex items-center gap-1">
+                      {[...Array(5)].map((_, i) => (
+                        <Star key={i} size={13} className="fill-amber-400 text-amber-400" />
+                      ))}
                     </div>
                   </div>
+                  <p className="text-xs sm:text-sm text-white/80 font-light leading-relaxed">
+                    "{item.quote}"
+                  </p>
                 </div>
-              ))}
-            </motion.div>
+
+                <div className="pt-4 sm:pt-5 mt-4 border-t border-white/10">
+                  <h4 className="text-sm font-semibold text-white">{item.author}</h4>
+                  <p className="text-xs text-brand-red font-medium mt-0.5">{item.role}, {item.company}</p>
+                  <p className="text-[11px] text-white/40 font-mono mt-0.5">{item.location}</p>
+                </div>
+              </motion.div>
+            ))}
           </AnimatePresence>
         </div>
 
-        {/* Progress Indicators */}
-        <div className="mt-20 flex gap-3">
-          {Array.from({ length: totalSlides }).map((_, i) => (
+        {/* Carousel Dots */}
+        <div className="flex justify-center gap-2 mt-8 sm:mt-10">
+          {[...Array(totalSlides)].map((_, i) => (
             <button
               key={i}
-              onClick={() => {
-                setDirection(i > currentIndex ? 1 : -1);
-                setCurrentIndex(i);
-              }}
-              className={`h-1 transition-all duration-500 rounded-full ${
-                i === currentIndex ? 'w-12 bg-brand-red' : 'w-4 bg-white/10'
+              onClick={() => setCurrentIndex(i)}
+              className={`h-2 rounded-full transition-all duration-300 ${
+                currentIndex === i ? 'w-8 bg-brand-red' : 'w-2 bg-white/20'
               }`}
+              aria-label={`Go to slide ${i + 1}`}
             />
           ))}
         </div>

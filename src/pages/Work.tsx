@@ -1,373 +1,525 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
-import { ArrowUpRight, X, Layout, Code2, Palette, Box, Search, Filter, ChevronLeft, ChevronRight, Loader2, Activity, Layers } from 'lucide-react';
-import { PerspectiveTilt } from '../components/ui/PerspectiveTilt';
-import { MagneticButton } from '../components/ui/MagneticButton';
+import { ArrowUpRight, X, Search, ChevronLeft, ChevronRight, CheckCircle2, Globe, Layers, Cpu, Code2, Palette, Box, Building2, ExternalLink } from 'lucide-react';
 import Fuse from 'fuse.js';
-
 import { AtmosphericBackground } from '../components/ui/AtmosphericBackground';
+import { useLanguage } from '../lib/LanguageContext';
+
+export interface ProjectItem {
+  id: string;
+  title: string;
+  client: string;
+  category: 'Branding' | 'UI/UX Design' | 'Web Development' | 'Mobile App';
+  featured: boolean;
+  image: string;
+  desc: string;
+  challenge: string;
+  solution: string;
+  deliverables: string[];
+  technologies: string[];
+  impact: { label: string; value: string }[];
+  year: string;
+}
 
 export const Work = () => {
-  const [activeFilter, setActiveFilter] = useState('All');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedProject, setSelectedProject] = useState<any>(null);
-  const [visibleCount, setVisibleCount] = useState(6);
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const [currentFeaturedIndex, setCurrentFeaturedIndex] = useState(0);
+  const { t, language } = useLanguage();
+  const [activeCategory, setActiveCategory] = useState<string>('All');
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [selectedProject, setSelectedProject] = useState<ProjectItem | null>(null);
+  const [featuredIndex, setFeaturedIndex] = useState<number>(0);
 
-  React.useEffect(() => {
-    if (selectedProject) {
-      document.body.style.overflow = 'hidden';
-      document.body.setAttribute('data-modal-open', 'true');
-    } else {
-      document.body.style.overflow = 'unset';
-      document.body.removeAttribute('data-modal-open');
-    }
-    return () => {
-      document.body.style.overflow = 'unset';
-      document.body.removeAttribute('data-modal-open');
-    };
-  }, [selectedProject]);
-
-  const projects = [
+  const projectsEn: ProjectItem[] = [
     {
-      title: "Lumina Real Estate",
-      category: "Design / Development",
+      id: 'lumina-real-estate',
+      title: "Lumina Real Estate Portal",
+      client: "Lumina Property Group",
+      category: "Web Development",
       featured: true,
-      recent: true,
-      image: "https://picsum.photos/seed/lumina/1200/800",
-      desc: "High-performance property ecosystem architected for sub-second search latency and enterprise scalability.",
-      challenge: "Legacy infrastructure exhibited high latency and low mobile conversion rates, obstructing market expansion.",
-      solution: "Implemented headless architecture using Next.js and a custom search engine optimized for real-time data synchronization.",
-      results: "Lead generation increased by 30%. System availability maintained at 99.99% during peak traffic cycles.",
-      roi: { conversion: "+30%", uptime: "99.99%", engagement: "+45%" },
+      image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=1400",
+      desc: "A high-performance real estate discovery portal featuring interactive property search, multi-criteria filtering, and optimized agent lead capture pipelines.",
+      challenge: "The client’s previous platform suffered from slow load times and confusing navigation, resulting in low user engagement and lost sales inquiries.",
+      solution: "Engineered a modern web platform with Next.js and Tailwind CSS, featuring instantaneous search, responsive property galleries, and structured contact workflows.",
+      deliverables: ["Custom Web Application", "Responsive Search UI", "Lead Capture Integration", "Property CMS Setup"],
       technologies: ["Next.js", "TypeScript", "Tailwind CSS", "PostgreSQL"],
-      stats: { complexity: "High", performance: 98, security: "Enterprise" },
-      region: "Global",
-      status: "Operational"
+      impact: [
+        { label: "Search Speed", value: "< 0.4s" },
+        { label: "Lead Inquiries", value: "+45%" },
+        { label: "Mobile Engagement", value: "+60%" }
+      ],
+      year: "2024"
     },
     {
-      title: "Aura Creative Studio",
-      category: "Branding / Design",
+      id: 'aura-creative-studio',
+      title: "Aura Creative Brand & Web",
+      client: "Aura Creative Studio",
+      category: "Branding",
       featured: true,
-      recent: false,
-      image: "https://picsum.photos/seed/aura/1200/800",
-      desc: "Comprehensive brand identity and digital presence engineered for high-precision creative output.",
-      challenge: "Inconsistent visual language across platforms reduced brand equity and client trust.",
-      solution: "Developed unified design system and minimalist digital portfolio prioritizing high-resolution asset delivery.",
-      results: "Brand recognition increased by 150%. Client acquisition shifted toward premium-tier segments.",
-      roi: { conversion: "+150%", uptime: "99.9%", engagement: "+80%" },
-      technologies: ["Figma", "Framer Motion", "Adobe Illustrator"],
-      stats: { complexity: "Medium", performance: 99, security: "Standard" },
-      region: "EMEA",
-      status: "Operational"
+      image: "https://images.unsplash.com/photo-1542744094-3a31f272c490?auto=format&fit=crop&q=80&w=1400",
+      desc: "Complete visual identity system, brand guidelines, and a bespoke portfolio web experience for a global design agency.",
+      challenge: "The agency needed to elevate its brand presence to attract premium enterprise clients and stand out in a competitive market.",
+      solution: "Created a modern typographic identity, comprehensive brand book, and an interactive digital portfolio showcasing case studies with fluid animations.",
+      deliverables: ["Visual Identity & Logo", "Brand Guidelines", "Custom React Portfolio", "Content Strategy"],
+      technologies: ["Figma", "React", "Motion", "Tailwind CSS"],
+      impact: [
+        { label: "Client Inquiries", value: "+80%" },
+        { label: "Brand Recall", value: "95%" },
+        { label: "Average Deal Size", value: "+65%" }
+      ],
+      year: "2024"
     },
     {
-      title: "Nexus Fintech App",
-      category: "Design / Development",
+      id: 'nexus-mobile-banking',
+      title: "Nexus Mobile Banking App",
+      client: "Nexus Financial Technologies",
+      category: "Mobile App",
       featured: true,
-      recent: true,
-      image: "https://picsum.photos/seed/nexus/1200/800",
-      desc: "Secure, low-latency financial management platform designed for high-frequency user interactions.",
-      challenge: "Complex user flows and high friction during onboarding caused significant user drop-off.",
-      solution: "Streamlined UX architecture and implemented robust backend with real-time data synchronization.",
-      results: "Onboarding completion improved by 85%. Daily active users increased by 60%.",
-      roi: { conversion: "+85%", uptime: "99.9%", engagement: "+60%" },
-      technologies: ["React Native", "Node.js", "MongoDB"],
-      stats: { complexity: "Critical", performance: 96, security: "Military-Grade" },
-      region: "APAC",
-      status: "Operational"
+      image: "https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&q=80&w=1400",
+      desc: "Intuitive mobile banking application designed for fast peer-to-peer transfers, real-time transaction tracking, and account management.",
+      challenge: "Complex financial actions required too many steps, leading to user friction during onboarding and money transfers.",
+      solution: "Designed a clean, user-centric mobile UI with clear navigation hierarchies, biometric security, and streamlined 2-tap transfer flows.",
+      deliverables: ["Mobile UI/UX Design", "Design System in Figma", "React Native Architecture", "API Integration"],
+      technologies: ["React Native", "TypeScript", "Node.js", "Figma"],
+      impact: [
+        { label: "Onboarding Completion", value: "92%" },
+        { label: "Daily Active Users", value: "100k+" },
+        { label: "App Store Rating", value: "4.8/5" }
+      ],
+      year: "2023"
     },
     {
-      title: "Vanguard Logistics",
-      category: "Development",
+      id: 'solaris-cleantech',
+      title: "Solaris CleanTech Monitoring",
+      client: "Solaris Energy Systems",
+      category: "Web Development",
+      featured: true,
+      image: "https://images.unsplash.com/photo-1497435334941-8c899ee9e8e9?auto=format&fit=crop&q=80&w=1400",
+      desc: "Operational monitoring dashboard for renewable energy plants, visualizing real-time power generation and grid analytics across 40+ facilities.",
+      challenge: "Plant operators lacked a unified interface to track telemetry and generation metrics across multiple distributed solar farms.",
+      solution: "Developed an interactive data visualization platform using Next.js and D3.js, providing automated reporting and instant anomaly alerts.",
+      deliverables: ["Interactive Dashboard", "Data Visualizations", "Role-Based Access Control", "Automated Reports"],
+      technologies: ["Next.js", "D3.js", "Tailwind CSS", "Google Cloud"],
+      impact: [
+        { label: "Response Time", value: "-70%" },
+        { label: "Data Accuracy", value: "99.9%" },
+        { label: "Facilities Covered", value: "40+" }
+      ],
+      year: "2023"
+    },
+    {
+      id: 'vivid-commerce',
+      title: "Vivid Headless E-Commerce",
+      client: "Vivid Retail & Apparel",
+      category: "Web Development",
       featured: false,
-      recent: false,
-      image: "https://picsum.photos/seed/vanguard/1200/800",
-      desc: "Operational dashboard providing real-time fleet telemetry and automated shipment tracking.",
-      challenge: "Manual tracking processes caused operational bottlenecks and data inaccuracies.",
-      solution: "Engineered custom telemetry dashboard integrating directly with fleet hardware for live data visualization.",
-      results: "Operational efficiency increased by 40%. Manual reporting errors significantly reduced.",
-      roi: { conversion: "N/A", uptime: "99.9%", engagement: "+40%" },
-      technologies: ["React", "Node.js", "PostgreSQL"],
-      stats: { complexity: "High", performance: 94, security: "Enterprise" },
-      region: "Global",
-      status: "Operational"
+      image: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&q=80&w=1400",
+      desc: "High-speed headless commerce storefront optimized for international sales, instant variant selection, and rapid checkout.",
+      challenge: "Slow mobile loading on standard templates was dampening ad campaign ROI and cart completion rates.",
+      solution: "Migrated to a modern headless architecture with instant page transitions, optimized assets, and a clean product discovery UI.",
+      deliverables: ["Headless Storefront", "Product Filter Engine", "Checkout Optimization", "Custom CMS"],
+      technologies: ["React", "Shopify Plus API", "Tailwind CSS", "Node.js"],
+      impact: [
+        { label: "Page Load Time", value: "0.8s" },
+        { label: "Mobile Conversion", value: "+38%" },
+        { label: "Cart Abandonment", value: "-24%" }
+      ],
+      year: "2024"
     },
     {
-      title: "Zenith Marketplace",
-      category: "Branding / Development",
-      featured: true,
-      recent: true,
-      image: "https://picsum.photos/seed/zenith/1200/800",
-      desc: "Scalable e-commerce engine optimized for high-volume transactions and seamless cross-device experiences.",
-      challenge: "Platform instability during traffic spikes caused revenue loss.",
-      solution: "Architected cloud-native commerce solution with auto-scaling capabilities and high-fidelity visual interface.",
-      results: "Handled 400% traffic surge with zero downtime. Sales increased by 22%.",
-      roi: { conversion: "+22%", uptime: "100%", engagement: "+35%" },
-      technologies: ["React", "Shopify API", "Tailwind CSS"],
-      stats: { complexity: "High", performance: 97, security: "PCI-DSS" },
-      region: "Global",
-      status: "Operational"
-    },
-    {
-      title: "Titan Health",
-      category: "Design / Development",
+      id: 'kross-cloud-security',
+      title: "Kross Cloud Security Portal",
+      client: "Kross Systems",
+      category: "UI/UX Design",
       featured: false,
-      recent: false,
-      image: "https://picsum.photos/seed/titan/1200/800",
-      desc: "HIPAA-compliant patient management system focused on data security and intuitive scheduling.",
-      challenge: "High friction in appointment booking and data privacy concerns.",
-      solution: "Developed secure, encrypted patient portal with simplified scheduling engine and real-time notifications.",
-      results: "Patient satisfaction increased by 50%. Scheduling-related support calls reduced by 70%.",
-      roi: { conversion: "+50%", uptime: "100%", engagement: "+70%" },
-      technologies: ["React", "Node.js", "PostgreSQL"],
-      stats: { complexity: "Critical", performance: 95, security: "HIPAA" },
-      region: "North America",
-      status: "Operational"
+      image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&q=80&w=1400",
+      desc: "Comprehensive UI/UX design system and management portal for cloud infrastructure security and access management.",
+      challenge: "Security managers needed an easy way to audit complex server permissions and identify misconfigurations quickly.",
+      solution: "Designed a clean, high-density interface with intuitive visual graphs, alert prioritization, and one-click remediation actions.",
+      deliverables: ["Platform UX Architecture", "Figma Design System", "Interactive Prototype", "Accessibility Audit"],
+      technologies: ["Figma", "React", "Tailwind CSS", "TypeScript"],
+      impact: [
+        { label: "Audit Time", value: "-50%" },
+        { label: "User Satisfaction", value: "96%" },
+        { label: "Design Adoption", value: "100%" }
+      ],
+      year: "2023"
+    },
+    {
+      id: 'zenora-health-app',
+      title: "Zenora Telehealth Application",
+      client: "Zenora Healthcare",
+      category: "Mobile App",
+      featured: false,
+      image: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&q=80&w=1400",
+      desc: "Accessible patient mobile application for doctor consultations, digital prescription refills, and medical records.",
+      challenge: "Elderly and non-technical patients found standard healthcare applications overwhelming and difficult to use.",
+      solution: "Crafted an accessible mobile interface with high-contrast typography, large touch targets, and a guided 3-step appointment flow.",
+      deliverables: ["Patient Mobile App", "Doctor Schedule Portal", "Design System", "WCAG 2.1 AA Compliance"],
+      technologies: ["React Native", "Node.js", "PostgreSQL", "Figma"],
+      impact: [
+        { label: "Booking Ease Score", value: "4.9/5" },
+        { label: "Support Tickets", value: "-65%" },
+        { label: "Active Consultations", value: "25k+" }
+      ],
+      year: "2024"
+    },
+    {
+      id: 'orbit-saas-platform',
+      title: "Orbit SaaS Team Workspace",
+      client: "Orbit Dynamics",
+      category: "Web Development",
+      featured: false,
+      image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=1400",
+      desc: "Collaborative cloud resource platform for distributed engineering teams with automated billing and team permissions.",
+      challenge: "Teams struggled with scattered developer credentials and lacked centralized usage transparency.",
+      solution: "Built a centralized web portal with team workspaces, usage dashboards, and automated monthly invoice generation.",
+      deliverables: ["Full-Stack Web App", "Team Permissions UI", "Billing Integration", "RESTful API"],
+      technologies: ["Next.js", "TypeScript", "Tailwind CSS", "PostgreSQL"],
+      impact: [
+        { label: "Team Productivity", value: "+30%" },
+        { label: "Uptime Reliability", value: "99.95%" },
+        { label: "Active Workspaces", value: "1,200+" }
+      ],
+      year: "2023"
     }
   ];
 
-  const categories = ['All', 'Featured', 'Branding', 'Design', 'Development', 'Web3 & Blockchain', 'AI & ML', 'SaaS', 'Fintech'];
+  const projectsId: ProjectItem[] = [
+    {
+      id: 'lumina-real-estate',
+      title: "Portal Real Estate Lumina",
+      client: "Lumina Property Group",
+      category: "Web Development",
+      featured: true,
+      image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=1400",
+      desc: "Portal pencarian properti berkinerja tinggi dengan fitur filter interaktif multi-kriteria dan pipeline penangkapan prospek agen yang optimal.",
+      challenge: "Platform lama milik klien mengalami waktu muat yang lambat dan navigasi membingungkan, mengakibatkan interaksi rendah dan hilangnya calon pembeli.",
+      solution: "Membangun platform web modern menggunakan Next.js dan Tailwind CSS, menghadirkan pencarian instan, galeri foto responsif, dan alur kontak terstruktur.",
+      deliverables: ["Aplikasi Web Kustom", "UI Pencarian Responsif", "Integrasi Penangkapan Prospek", "Konfigurasi CMS Properti"],
+      technologies: ["Next.js", "TypeScript", "Tailwind CSS", "PostgreSQL"],
+      impact: [
+        { label: "Kecepatan Cari", value: "< 0.4s" },
+        { label: "Kenaikan Prospek", value: "+45%" },
+        { label: "Engagement Mobile", value: "+60%" }
+      ],
+      year: "2024"
+    },
+    {
+      id: 'aura-creative-studio',
+      title: "Brand & Web Aura Creative",
+      client: "Aura Creative Studio",
+      category: "Branding",
+      featured: true,
+      image: "https://images.unsplash.com/photo-1542744094-3a31f272c490?auto=format&fit=crop&q=80&w=1400",
+      desc: "Sistem identitas visual lengkap, buku pedoman brand, dan pengalaman portofolio web kustom untuk agensi desain internasional.",
+      challenge: "Agensi ini membutuhkan peningkatan citra brand untuk menarik klien korporat premium dan menonjol di pasar global yang kompetitif.",
+      solution: "Merancang tipografi modern, buku pedoman brand komprehensif, dan portofolio digital interaktif dengan animasi yang mulus.",
+      deliverables: ["Identitas Visual & Logo", "Pedoman Brandbook", "Portofolio React Kustom", "Strategi Konten"],
+      technologies: ["Figma", "React", "Motion", "Tailwind CSS"],
+      impact: [
+        { label: "Inkuiri Klien Baru", value: "+80%" },
+        { label: "Daya Ingat Brand", value: "95%" },
+        { label: "Rata-rata Nilai Kontrak", value: "+65%" }
+      ],
+      year: "2024"
+    },
+    {
+      id: 'nexus-mobile-banking',
+      title: "Aplikasi Mobile Banking Nexus",
+      client: "Nexus Financial Technologies",
+      category: "Mobile App",
+      featured: true,
+      image: "https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&q=80&w=1400",
+      desc: "Aplikasi mobile banking intuitif untuk transfer peer-to-peer instan, pelacakan mutasi rekening real-time, dan manajemen saldo terintegrasi.",
+      challenge: "Aktivitas finansial sebelumnya membutuhkan terlalu banyak langkah verifikasi, menimbulkan friksi saat onboarding nasabah baru.",
+      solution: "Mendesain UI mobile yang berpusat pada pengguna dengan keamanan biometrik, navigasi jelas, dan alur transfer cepat 2-sentuhan.",
+      deliverables: ["Desain UI/UX Mobile", "Sistem Desain di Figma", "Arsitektur React Native", "Integrasi Core Banking API"],
+      technologies: ["React Native", "TypeScript", "Node.js", "Figma"],
+      impact: [
+        { label: "Penyelesaian Onboarding", value: "92%" },
+        { label: "Pengguna Aktif Harian", value: "100rb+" },
+        { label: "Rating App Store", value: "4.8/5" }
+      ],
+      year: "2023"
+    },
+    {
+      id: 'solaris-cleantech',
+      title: "Monitoring CleanTech Solaris",
+      client: "Solaris Energy Systems",
+      category: "Web Development",
+      featured: true,
+      image: "https://images.unsplash.com/photo-1497435334941-8c899ee9e8e9?auto=format&fit=crop&q=80&w=1400",
+      desc: "Dashboard monitoring operasional untuk pembangkit listrik tenaga surya dengan visualisasi analitik daya dan jaringan listrik di 40+ lokasi.",
+      challenge: "Operator lapangan kesulitan memantau metrik telemetri pembangkit yang tersebar tanpa antarmuka data terpadu.",
+      solution: "Mengembangkan platform visualisasi data real-time dengan Next.js dan D3.js, lengkap dengan sistem peringatan anomali otomatis.",
+      deliverables: ["Dashboard Interaktif", "Visualisasi Data Grafis", "Kontrol Akses Berbasis Peran", "Laporan Otomatis Berkala"],
+      technologies: ["Next.js", "D3.js", "Tailwind CSS", "Google Cloud"],
+      impact: [
+        { label: "Waktu Tanggap Masalah", value: "-70%" },
+        { label: "Akurasi Data Metrik", value: "99.9%" },
+        { label: "Jumlah Fasilitas Aktif", value: "40+" }
+      ],
+      year: "2023"
+    },
+    {
+      id: 'vivid-commerce',
+      title: "E-Commerce Headless Vivid",
+      client: "Vivid Retail & Apparel",
+      category: "Web Development",
+      featured: false,
+      image: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&q=80&w=1400",
+      desc: "Etalase digital headless commerce berkecepatan tinggi yang dioptimalkan untuk penjualan global dan proses checkout kilat.",
+      challenge: "Waktu muat lambat pada template e-commerce lama menurunkan rasio konversi iklan dan meningkatkan pengabaian keranjang belanja.",
+      solution: "Migrasi ke arsitektur headless modern dengan transisi halaman seketika, kompresi aset gambar, dan alur belanja yang mulus.",
+      deliverables: ["Etalase Toko Headless", "Mesin Filter Produk Instan", "Optimasi Alur Checkout", "Integrasi CMS Kustom"],
+      technologies: ["React", "Shopify Plus API", "Tailwind CSS", "Node.js"],
+      impact: [
+        { label: "Waktu Muat Halaman", value: "0.8s" },
+        { label: "Konversi Mobile", value: "+38%" },
+        { label: "Pengabaian Keranjang", value: "-24%" }
+      ],
+      year: "2024"
+    },
+    {
+      id: 'kross-cloud-security',
+      title: "Portal Keamanan Cloud Kross",
+      client: "Kross Systems",
+      category: "UI/UX Design",
+      featured: false,
+      image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&q=80&w=1400",
+      desc: "Sistem desain UI/UX dan portal manajemen terpadu untuk monitoring keamanan infrastruktur cloud dan hak akses pengguna.",
+      challenge: "Manajer keamanan membutuhkan cara mudah untuk mengaudit hak akses server yang rumit dan mendeteksi kesalahan konfigurasi dengan cepat.",
+      solution: "Mendesain antarmuka berdensitas informasi tinggi dengan grafik visual intuitif, prioritas alert bahaya, dan remediasi 1-klik.",
+      deliverables: ["Arsitektur UX Platform", "Sistem Desain di Figma", "Prototipe Interaktif", "Audit Aksesibilitas WCAG"],
+      technologies: ["Figma", "React", "Tailwind CSS", "TypeScript"],
+      impact: [
+        { label: "Waktu Audit Server", value: "-50%" },
+        { label: "Kepuasan Pengguna", value: "96%" },
+        { label: "Adopsi Desain Tim", value: "100%" }
+      ],
+      year: "2023"
+    },
+    {
+      id: 'zenora-health-app',
+      title: "Aplikasi Telehealth Zenora",
+      client: "Zenora Healthcare",
+      category: "Mobile App",
+      featured: false,
+      image: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&q=80&w=1400",
+      desc: "Aplikasi mobile pasien yang ramah pengguna untuk konsultasi dokter, tebus resep obat digital, dan rekam medis terpadu.",
+      challenge: "Pasien lanjut usia dan non-teknis merasa aplikasi kesehatan konvensional terlalu rumit dan sulit digunakan.",
+      solution: "Membangun antarmuka mobile yang sangat mudah diakses dengan teks kontras tinggi, tombol besar, dan alur booking janji temu 3-langkah.",
+      deliverables: ["Aplikasi Mobile Pasien", "Portal Jadwal Dokter", "Sistem Desain Inklusif", "Kepatuhan WCAG 2.1 AA"],
+      technologies: ["React Native", "Node.js", "PostgreSQL", "Figma"],
+      impact: [
+        { label: "Skor Kemudahan Pakai", value: "4.9/5" },
+        { label: "Keluhan Layanan Tiket", value: "-65%" },
+        { label: "Konsultasi Berhasil", value: "25rb+" }
+      ],
+      year: "2024"
+    },
+    {
+      id: 'orbit-saas-platform',
+      title: "Workspace Kolaborasi SaaS Orbit",
+      client: "Orbit Dynamics",
+      category: "Web Development",
+      featured: false,
+      image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=1400",
+      desc: "Platform manajemen resource cloud kolaboratif untuk tim engineer jarak jauh dengan sistem penagihan otomatis dan izin bertingkat.",
+      challenge: "Tim pengembang menghadapi kendala pengelolaan kredensial akun yang tersebar dan kurangnya transparansi biaya pemakaian bulanan.",
+      solution: "Membangun portal web terpusat dengan manajemen ruang kerja tim, analitik penggunaan, dan penerbitan faktur otomatis.",
+      deliverables: ["Aplikasi Web Full-Stack", "UI Manajemen Izin Tim", "Integrasi Billing Otomatis", "Arsitektur RESTful API"],
+      technologies: ["Next.js", "TypeScript", "Tailwind CSS", "PostgreSQL"],
+      impact: [
+        { label: "Produktivitas Tim", value: "+30%" },
+        { label: "Keandalan Uptime", value: "99.95%" },
+        { label: "Workspace Aktif", value: "1.200+" }
+      ],
+      year: "2023"
+    }
+  ];
+
+  const projects = language === 'id' ? projectsId : projectsEn;
+
+  const categoriesEn = ['All', 'Web Development', 'UI/UX Design', 'Branding', 'Mobile App'];
+  const categoriesId = ['Semua', 'Web Development', 'UI/UX Design', 'Branding', 'Mobile App'];
+  const categories = language === 'id' ? categoriesId : categoriesEn;
+
+  const categoryMapping: Record<string, string> = {
+    'Semua': 'All',
+    'All': 'All',
+    'Web Development': 'Web Development',
+    'UI/UX Design': 'UI/UX Design',
+    'Branding': 'Branding',
+    'Mobile App': 'Mobile App'
+  };
 
   const featuredProjects = useMemo(() => projects.filter(p => p.featured), [projects]);
 
   const filteredProjects = useMemo(() => {
-    // First, filter by category
-    const categoryFiltered = projects.filter(project => {
-      return activeFilter === 'All' || 
-             (activeFilter === 'Featured' ? project.featured : 
-              activeFilter === 'Recent' ? project.recent :
-              project.category.includes(activeFilter));
-    });
-
-    // Then, apply fuzzy search if there's a query
-    if (!searchQuery) return categoryFiltered;
-
-    const fuse = new Fuse(categoryFiltered, {
-      keys: ['title', 'desc', 'technologies'],
-      threshold: 0.35, 
-      distance: 100,
-      ignoreLocation: true
-    });
-
-    return fuse.search(searchQuery).map(result => result.item);
-  }, [activeFilter, searchQuery]);
-
-  const displayedProjects = useMemo(() => {
-    return filteredProjects.slice(0, visibleCount);
-  }, [filteredProjects, visibleCount]);
-
-  const handleLoadMore = () => {
-    setIsLoadingMore(true);
-    // Simulate network delay for "engineered" feel
-    setTimeout(() => {
-      setVisibleCount(prev => prev + 6);
-      setIsLoadingMore(false);
-    }, 1000);
-  };
+    let result = projects;
+    const normalizedCategory = categoryMapping[activeCategory] || 'All';
+    if (normalizedCategory !== 'All') {
+      result = result.filter(p => p.category === normalizedCategory);
+    }
+    if (searchQuery.trim()) {
+      const fuse = new Fuse(result, {
+        keys: ['title', 'client', 'desc', 'category', 'technologies'],
+        threshold: 0.35,
+      });
+      result = fuse.search(searchQuery.trim()).map(r => r.item);
+    }
+    return result;
+  }, [projects, activeCategory, searchQuery]);
 
   const nextFeatured = () => {
-    setCurrentFeaturedIndex((prev) => (prev + 1) % featuredProjects.length);
+    setFeaturedIndex((prev) => (prev + 1) % featuredProjects.length);
   };
 
   const prevFeatured = () => {
-    setCurrentFeaturedIndex((prev) => (prev - 1 + featuredProjects.length) % featuredProjects.length);
+    setFeaturedIndex((prev) => (prev - 1 + featuredProjects.length) % featuredProjects.length);
   };
 
-  // Reset visible count when filter or search changes
-  React.useEffect(() => {
-    setVisibleCount(6);
-  }, [activeFilter, searchQuery]);
+  useEffect(() => {
+    if (selectedProject) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [selectedProject]);
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="relative min-h-screen bg-black overflow-hidden"
-    >
-      {/* Atmospheric Background */}
-      <AtmosphericBackground 
-        imageUrl="https://images.unsplash.com/photo-1522542550221-31fd1971107c?auto=format&fit=crop&q=80&w=2070"
-        opacity={0.05}
-      />
+    <div className="bg-black text-white min-h-screen selection:bg-brand-red selection:text-white relative" role="main">
+      {/* Page Header */}
+      <section className="relative pt-28 sm:pt-32 md:pt-36 pb-12 sm:pb-16 px-4 sm:px-6 md:px-12 border-b border-white/10 overflow-hidden">
+        <AtmosphericBackground imageUrl="/hero_background_3d.png" opacity={0.12} disableGrayscale={true} />
+        <div className="max-w-7xl mx-auto relative z-10">
+          <div className="max-w-3xl">
+            <span className="text-brand-red font-mono font-semibold tracking-widest uppercase text-xs mb-3 sm:mb-4 block">
+              {language === 'id' ? 'Portofolio & Studi Kasus' : 'Portfolio & Case Studies'}
+            </span>
+            <h1 className="text-3xl sm:text-4xl md:text-6xl font-display font-bold leading-[1.1] sm:leading-[1.05] tracking-tight mb-4 sm:mb-6 text-white">
+              {language === 'id' ? (
+                <>Karya digital teruji yang memberikan <span className="text-brand-red">dampak nyata</span>.</>
+              ) : (
+                <>Proven digital work that delivers <span className="text-brand-red">measurable impact</span>.</>
+              )}
+            </h1>
+            <p className="text-sm sm:text-base md:text-lg text-white/70 font-light leading-relaxed">
+              {language === 'id'
+                ? 'Jelajahi kumpulan aplikasi web, antarmuka mobile, identitas visual, dan solusi software kami yang dirancang untuk startup, bisnis berkembang, dan perusahaan korporat.'
+                : 'Explore our curated selection of web applications, mobile interfaces, visual identities, and software solutions crafted for startups, growing businesses, and enterprises.'}
+            </p>
+          </div>
+        </div>
+      </section>
 
-      <div className="relative z-10 pt-24 md:pt-48 pb-24 md:pb-48 px-6 md:px-12" role="main" aria-label="Our Portfolio">
-        <div className="max-w-7xl mx-auto">
-          <header className="mb-24 md:mb-40 relative">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              className="relative z-10"
-            >
-              <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Work</span>
-              <h1 className="text-[clamp(2rem,6vw,6rem)] font-display font-bold leading-[0.85] tracking-tighter mb-12 uppercase">
-                Our experience matches<br />your market.
-              </h1>
-              <p className="text-sm md:text-base text-white/40 max-w-2xl font-light leading-relaxed tracking-tight">
-                We help companies to build and scale digital products. Our team of experts provides strategic design and development services to drive business results.
-              </p>
-            </motion.div>
-
-            {/* Project Archive Visual */}
-            <div className="absolute top-0 right-0 w-px h-full bg-gradient-to-b from-brand-red/50 via-brand-red/10 to-transparent hidden lg:block">
-              {[...Array(8)].map((_, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, scaleX: 0 }}
-                  whileInView={{ opacity: 1, scaleX: 1 }}
-                  transition={{ delay: i * 0.1 }}
-                  className="absolute left-0 w-12 h-px bg-brand-red/20 origin-left"
-                  style={{ top: `${i * 12.5}%` }}
-                >
-                  <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-1 bg-brand-red rounded-full" />
-                </motion.div>
-              ))}
-            </div>
-          </header>
-
-          {/* Featured Projects Section */}
-          <section className="mb-32 md:mb-48 relative" aria-label="Featured Projects">
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-12 mb-20 md:mb-32">
-              <div className="max-w-2xl">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="w-8 h-px bg-brand-red/40" />
-                  <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px]">Selected Deployments</span>
-                </div>
-                <h2 className="text-[clamp(2rem,5vw,4.5rem)] font-display font-bold tracking-tighter leading-none uppercase">
-                  Featured<br />
-                  <span className="text-brand-red">Case Studies.</span>
+      {/* Featured Project Carousel */}
+      {featuredProjects.length > 0 && (
+        <section className="py-12 sm:py-16 px-4 sm:px-6 md:px-12 border-b border-white/10 bg-zinc-950 relative z-10">
+          <div className="max-w-7xl mx-auto">
+            <div className="flex flex-row items-center justify-between gap-4 mb-6 sm:mb-10">
+              <div>
+                <span className="text-[10px] sm:text-xs font-mono uppercase tracking-wider text-brand-red block mb-1 sm:mb-2 font-semibold">
+                  {language === 'id' ? 'Sorotan Proyek Unggulan' : 'Spotlight Case Study'} ({featuredIndex + 1}/{featuredProjects.length})
+                </span>
+                <h2 className="text-xl sm:text-2xl md:text-3xl font-display font-bold text-white">
+                  {language === 'id' ? 'Proyek Pilihan Kami' : 'Featured Projects'}
                 </h2>
               </div>
-              <div className="flex items-center gap-4">
-                <div className="flex flex-col items-end gap-1 mr-4 hidden sm:flex">
-                  <span className="text-[8px] font-mono text-white/20 uppercase tracking-widest">Active_Index</span>
-                  <span className="text-xs font-mono text-white font-bold">0{currentFeaturedIndex + 1} / 0{featuredProjects.length}</span>
-                </div>
-                <div className="flex gap-4" role="group" aria-label="Carousel navigation">
-                  <button 
-                    onClick={prevFeatured}
-                    className="w-14 h-14 rounded-full border border-white/10 flex items-center justify-center hover:bg-brand-red hover:border-brand-red transition-all group/btn backdrop-blur-xl"
-                    aria-label="Previous featured project"
-                  >
-                    <ChevronLeft size={20} className="group-hover/btn:scale-110 transition-transform" />
-                  </button>
-                  <button 
-                    onClick={nextFeatured}
-                    className="w-14 h-14 rounded-full border border-white/10 flex items-center justify-center hover:bg-brand-red hover:border-brand-red transition-all group/btn backdrop-blur-xl"
-                    aria-label="Next featured project"
-                  >
-                    <ChevronRight size={20} className="group-hover/btn:scale-110 transition-transform" />
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <div className="relative aspect-[16/10] md:aspect-[21/8] rounded-[2.5rem] overflow-hidden bg-zinc-900 border border-white/5 group shadow-2xl shadow-black/50">
-              {/* Technical Frame */}
-              <div className="absolute top-8 left-8 z-20 flex items-center gap-3 px-3 py-1.5 rounded-full bg-black/40 border border-white/10 backdrop-blur-md">
-                <div className="w-1.5 h-1.5 rounded-full bg-brand-red animate-pulse" />
-                <span className="text-[8px] font-mono font-bold text-white/60 uppercase tracking-widest">Live_Telemetry</span>
-              </div>
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={currentFeaturedIndex}
-                  initial={{ opacity: 0, scale: 1.1 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-                  className="absolute inset-0 cursor-pointer focus:outline-none focus:ring-2 focus:ring-brand-red"
-                  onClick={() => setSelectedProject(featuredProjects[currentFeaturedIndex])}
-                  onKeyDown={(e) => e.key === 'Enter' && setSelectedProject(featuredProjects[currentFeaturedIndex])}
-                  tabIndex={0}
-                  role="button"
-                  aria-label={`View featured deployment: ${featuredProjects[currentFeaturedIndex].title}`}
-                  aria-live="polite"
+              <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+                <button
+                  onClick={prevFeatured}
+                  className="w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-white/20 flex items-center justify-center hover:bg-white hover:text-black transition-colors active:scale-95"
+                  aria-label="Previous featured project"
                 >
-                  <img 
-                    src={featuredProjects[currentFeaturedIndex].image} 
-                    alt={featuredProjects[currentFeaturedIndex].title}
-                    className="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-[2s] grayscale group-hover:grayscale-0"
-                    referrerPolicy="no-referrer"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-r from-black via-black/40 to-transparent" />
-                  
-                  <div className="absolute inset-0 p-8 md:p-16 flex flex-col justify-center max-w-3xl">
-                    <motion.div
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.3 }}
-                    >
-                      <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Selected Case Study</span>
-                      <h2 className="text-3xl md:text-5xl lg:text-7xl font-display font-bold tracking-tighter mb-6 leading-[0.9] uppercase">
-                        {featuredProjects[currentFeaturedIndex].title}
-                      </h2>
-                      <p className="text-sm md:text-lg text-white/60 font-light leading-relaxed mb-10 line-clamp-2 max-w-xl">
-                        {featuredProjects[currentFeaturedIndex].desc}
-                      </p>
-                      <div className="flex flex-wrap items-center gap-4 md:gap-6">
-                        <div className="flex gap-2">
-                          {featuredProjects[currentFeaturedIndex].technologies.slice(0, 3).map((tech: string) => (
-                            <span key={tech} className="px-3 py-1 rounded-xl bg-white/10 border border-white/10 text-[8px] font-mono font-bold uppercase tracking-widest text-white/40">
-                              {tech}
-                            </span>
-                          ))}
-                        </div>
-                        <div className="flex items-center gap-2 text-white group-hover:text-brand-red transition-colors cursor-pointer">
-                          <span className="text-[10px] font-mono font-bold uppercase tracking-widest">View Deployment</span>
-                          <ArrowUpRight size={14} />
-                        </div>
-                      </div>
-                    </motion.div>
-                  </div>
-                </motion.div>
-              </AnimatePresence>
-
-              {/* Indicators */}
-              <div className="absolute bottom-8 right-8 flex gap-2 z-20" role="tablist" aria-label="Carousel indicators">
-                {featuredProjects.map((_, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setCurrentFeaturedIndex(i)}
-                    role="tab"
-                    aria-selected={currentFeaturedIndex === i}
-                    aria-label={`Go to featured project ${i + 1}`}
-                    className={`h-1 transition-all duration-500 rounded-full ${
-                      currentFeaturedIndex === i ? 'w-8 bg-brand-red' : 'w-2 bg-white/20'
-                    }`}
-                  />
-                ))}
-              </div>
-              {/* Progress Bar */}
-              <div className="absolute bottom-0 left-0 w-full h-1 bg-white/5 z-20">
-                <motion.div 
-                  key={currentFeaturedIndex}
-                  initial={{ width: "0%" }}
-                  animate={{ width: "100%" }}
-                  transition={{ duration: 8, ease: "linear" }}
-                  onAnimationComplete={nextFeatured}
-                  className="h-full bg-brand-red"
-                />
+                  <ChevronLeft size={18} />
+                </button>
+                <button
+                  onClick={nextFeatured}
+                  className="w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-white/20 flex items-center justify-center hover:bg-white hover:text-black transition-colors active:scale-95"
+                  aria-label="Next featured project"
+                >
+                  <ChevronRight size={18} />
+                </button>
               </div>
             </div>
-          </section>
 
-          {/* Filters & Search */}
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-12 mb-24 md:mb-40">
-            <div className="flex flex-wrap gap-3" role="tablist" aria-label="Operational categories">
+            {/* Featured Item Card */}
+            <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden bg-black border border-white/10 group">
+              <div className="grid grid-cols-1 lg:grid-cols-12 lg:h-[460px]">
+                <div className="lg:col-span-7 relative h-56 sm:h-80 lg:h-full overflow-hidden bg-zinc-900">
+                  <img
+                    src={featuredProjects[featuredIndex].image}
+                    alt={featuredProjects[featuredIndex].title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent lg:hidden" />
+                </div>
+
+                <div className="lg:col-span-5 p-5 sm:p-8 md:p-10 flex flex-col justify-between bg-zinc-950/95 lg:h-full">
+                  <div>
+                    <div className="flex items-center gap-2.5 sm:gap-3 mb-3 sm:mb-4">
+                      <span className="text-[9px] sm:text-[10px] font-mono px-2.5 sm:px-3 py-1 rounded-full bg-brand-red/20 text-brand-red border border-brand-red/30 uppercase tracking-wider font-semibold">
+                        {featuredProjects[featuredIndex].category}
+                      </span>
+                      <span className="text-[11px] sm:text-xs text-white/50 font-mono">
+                        {featuredProjects[featuredIndex].year}
+                      </span>
+                    </div>
+                    <h3 className="text-xl sm:text-2xl md:text-3xl font-display font-bold mb-1.5 sm:mb-2 text-white">
+                      {featuredProjects[featuredIndex].title}
+                    </h3>
+                    <p className="text-xs font-mono text-brand-red mb-2 sm:mb-3 font-medium">
+                      {language === 'id' ? 'Klien:' : 'Client:'} <span className="text-white/90">{featuredProjects[featuredIndex].client}</span>
+                    </p>
+                    <p className="text-xs sm:text-sm text-white/70 font-light leading-relaxed mb-4 sm:mb-6 line-clamp-3">
+                      {featuredProjects[featuredIndex].desc}
+                    </p>
+
+                    {/* Tech Stack Pills */}
+                    <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-4 sm:mb-6">
+                      {featuredProjects[featuredIndex].technologies.map((t) => (
+                        <span key={t} className="text-[10px] sm:text-[11px] px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg bg-white/5 border border-white/10 text-white/80 font-mono">
+                          {t}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => setSelectedProject(featuredProjects[featuredIndex])}
+                    className="w-full py-3 sm:py-3.5 px-6 rounded-xl bg-brand-red hover:bg-white text-white hover:text-black font-semibold text-xs uppercase tracking-wider transition-colors flex items-center justify-center gap-2 shadow-lg shadow-brand-red/20 mt-2 sm:mt-auto active:scale-95"
+                  >
+                    <span>{language === 'id' ? 'Lihat Studi Kasus' : 'View Case Study'}</span>
+                    <ArrowUpRight size={16} />
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Filter and Search Bar */}
+      <section className="py-8 sm:py-10 px-4 sm:px-6 md:px-12 relative z-10">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 sm:gap-6 pb-6 sm:pb-8 border-b border-white/10">
+            {/* Category Tabs */}
+            <div className="flex flex-wrap gap-1.5 sm:gap-2" role="tablist">
               {categories.map((cat) => (
                 <button
                   key={cat}
-                  onClick={() => setActiveFilter(cat)}
+                  onClick={() => setActiveCategory(cat)}
                   role="tab"
-                  aria-selected={activeFilter === cat}
-                  className={`px-6 md:px-8 py-2 md:py-3 rounded-2xl border text-[9px] md:text-[10px] font-mono font-bold uppercase tracking-widest transition-all duration-500 ${
-                    activeFilter === cat
-                      ? 'bg-white border-white text-black'
-                      : 'border-white/10 text-white/60 hover:border-white/30 hover:text-white'
+                  aria-selected={activeCategory === cat}
+                  className={`px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs font-medium uppercase tracking-wider transition-colors active:scale-95 ${
+                    activeCategory === cat
+                      ? 'bg-white text-black font-semibold'
+                      : 'bg-zinc-900/80 text-white/70 hover:text-white border border-white/10 hover:border-white/30'
                   }`}
                 >
                   {cat}
@@ -375,399 +527,250 @@ export const Work = () => {
               ))}
             </div>
 
-            <div className="relative w-full md:w-80 group">
-              <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-brand-red transition-colors" size={16} />
-              <input 
+            {/* Search Input */}
+            <div className="relative w-full md:w-72">
+              <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40" />
+              <input
                 type="text"
-                placeholder="SEARCH ARCHIVE..."
-                aria-label="Search deployments or technologies"
+                placeholder={language === 'id' ? 'Cari proyek atau teknologi...' : 'Search projects or stack...'}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 md:py-4 pl-14 pr-6 text-xs md:text-sm text-white font-mono placeholder:text-white/20 focus:outline-none focus:border-brand-red transition-all"
+                className="w-full bg-zinc-900 border border-white/10 rounded-full pl-10 pr-4 py-2.5 text-xs text-white placeholder:text-white/40 focus:outline-none focus:border-brand-red transition-colors font-sans"
               />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white p-1"
+                >
+                  <X size={14} />
+                </button>
+              )}
             </div>
           </div>
+        </div>
+      </section>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-16 lg:gap-24" role="list" aria-label="Project grid">
-            <AnimatePresence mode="popLayout">
-              {displayedProjects.length > 0 ? (
-                displayedProjects.map((project, i) => (
-                  <motion.div 
-                    key={project.title}
-                    layout
-                    role="listitem"
-                    initial={{ opacity: 0, y: 50 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: i * 0.1 }}
-                    className="group relative cursor-pointer focus:outline-none"
-                    onClick={() => setSelectedProject(project)}
-                    onKeyDown={(e) => e.key === 'Enter' && setSelectedProject(project)}
-                    tabIndex={0}
-                    aria-label={`View project: ${project.title}`}
-                  >
-                    <PerspectiveTilt 
-                      className="overflow-hidden rounded-3xl aspect-[16/10] mb-8 relative border border-white/5 group-hover:border-brand-red/30 transition-all duration-700 shadow-2xl"
-                    >
-                      <img 
-                        src={project.image} 
-                        alt={project.title} 
-                        loading="lazy"
-                        referrerPolicy="no-referrer"
-                        className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 group-hover:scale-110" 
-                      />
-                      
-                      {/* Project Metadata Overlay */}
-                      <div className="absolute top-8 left-8 z-20 flex flex-col gap-2">
-                        <AnimatePresence>
-                          {project.featured && (
-                            <motion.div 
-                              initial={{ opacity: 0, x: -10 }}
-                              animate={{ opacity: 1, x: 0 }}
-                              className="px-4 py-1.5 bg-brand-red text-white text-[8px] font-bold uppercase tracking-[0.3em] rounded-xl shadow-[0_0_20px_rgba(255,59,59,0.6)] border border-white/10"
-                            >
-                              Featured
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
-                        <div className="px-4 py-1.5 bg-black/60 backdrop-blur-md border border-white/10 text-white/60 text-[8px] font-mono font-bold uppercase tracking-[0.3em] rounded-xl">
-                          Node: {String(i + 1).padStart(2, '0')}
-                        </div>
+      {/* Projects Grid */}
+      <section className="pb-20 sm:pb-28 px-4 sm:px-6 md:px-12 relative z-10">
+        <div className="max-w-7xl mx-auto">
+          {filteredProjects.length === 0 ? (
+            <div className="text-center py-16 sm:py-20 bg-zinc-950 rounded-2xl sm:rounded-3xl border border-white/10 px-4">
+              <p className="text-base sm:text-lg text-white/60 mb-3">
+                {language === 'id' ? 'Tidak ada proyek yang sesuai dengan kriteria pencarian.' : 'No projects found matching your search criteria.'}
+              </p>
+              <button
+                onClick={() => { setActiveCategory(language === 'id' ? 'Semua' : 'All'); setSearchQuery(''); }}
+                className="text-xs font-mono uppercase tracking-wider text-brand-red hover:underline"
+              >
+                {language === 'id' ? 'Reset Filter' : 'Reset Filters'}
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
+              {filteredProjects.map((project) => (
+                <div
+                  key={project.id}
+                  onClick={() => setSelectedProject(project)}
+                  className="rounded-2xl bg-zinc-950 border border-white/10 hover:border-brand-red/50 hover:bg-zinc-900/40 transition-all duration-300 overflow-hidden flex flex-col justify-between h-full group cursor-pointer"
+                >
+                  {/* Thumbnail */}
+                  <div className="relative aspect-[16/10] overflow-hidden bg-zinc-900 shrink-0">
+                    <img
+                      src={project.image}
+                      alt={project.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      loading="lazy"
+                    />
+                    <div className="absolute top-3 left-3">
+                      <span className="px-2.5 py-0.5 rounded-md bg-black/80 backdrop-blur-md text-[9px] sm:text-[10px] font-mono text-white border border-white/10 uppercase tracking-wider">
+                        {project.category}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Card Content & Footer */}
+                  <div className="p-5 sm:p-6 flex-1 flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-center justify-between gap-2 mb-2">
+                        <span className="text-xs font-mono text-brand-red font-medium truncate">{project.client}</span>
+                        <span className="text-xs font-mono text-white/40 shrink-0">{project.year}</span>
                       </div>
+                      <h3 className="text-base sm:text-lg font-display font-bold text-white group-hover:text-brand-red transition-colors mb-1.5 sm:mb-2 line-clamp-1">
+                        {project.title}
+                      </h3>
+                      <p className="text-xs text-white/60 font-light line-clamp-2 leading-relaxed mb-4 min-h-[2.5rem]">
+                        {project.desc}
+                      </p>
 
-                      <div className="absolute bottom-8 right-8 z-20 flex gap-2">
-                        <div className="px-4 py-1.5 bg-black/60 backdrop-blur-md border border-white/10 text-emerald-400 text-[8px] font-mono font-bold uppercase tracking-[0.3em] rounded-xl flex items-center gap-2">
-                          <div className="w-1 h-1 bg-emerald-400 rounded-full animate-pulse" />
-                          PERF: {project.stats.performance}%
-                        </div>
-                      </div>
-
-                      {/* Technical Specs Overlay (On Hover) */}
-                      <div className="absolute inset-0 bg-black/80 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-center p-12 z-30">
-                        <div className="space-y-6">
-                          <div className="flex items-center gap-4">
-                            <div className="w-8 h-px bg-brand-red" />
-                            <span className="text-brand-red font-mono text-[10px] font-bold uppercase tracking-[0.4em]">Technical Specs</span>
-                          </div>
-                          
-                          <div className="grid grid-cols-2 gap-8">
-                            <div>
-                              <p className="text-white/20 font-mono text-[8px] uppercase tracking-widest mb-2">Architecture</p>
-                              <p className="text-white/80 font-mono text-[10px] font-bold uppercase">{project.stats.complexity}</p>
-                            </div>
-                            <div>
-                              <p className="text-white/20 font-mono text-[8px] uppercase tracking-widest mb-2">Security Level</p>
-                              <p className="text-white/80 font-mono text-[10px] font-bold uppercase">{project.stats.security}</p>
-                            </div>
-                            <div>
-                              <p className="text-white/20 font-mono text-[8px] uppercase tracking-widest mb-2">Region</p>
-                              <p className="text-white/80 font-mono text-[10px] font-bold uppercase">{project.region}</p>
-                            </div>
-                            <div>
-                              <p className="text-white/20 font-mono text-[8px] uppercase tracking-widest mb-2">Status</p>
-                              <p className="text-emerald-400 font-mono text-[10px] font-bold uppercase">{project.status}</p>
-                            </div>
-                          </div>
-
-                          <div className="pt-6 border-t border-white/10">
-                            <p className="text-white/20 font-mono text-[8px] uppercase tracking-widest mb-3">Core Technologies</p>
-                            <div className="flex flex-wrap gap-2">
-                              {project.technologies.map((tech: string) => (
-                                <span key={tech} className="px-2 py-1 bg-white/5 border border-white/10 rounded text-[8px] font-mono text-white/40 uppercase">
-                                  {tech}
-                                </span>
-                              ))}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-700" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                    </PerspectiveTilt>
-                    <div className="flex justify-between items-start group-hover:translate-x-2 transition-transform duration-500">
-                      <div className="flex-grow">
-                        <div className="flex items-center gap-3 mb-3">
-                          <span className="w-6 h-px bg-brand-red/40 group-hover:w-12 group-hover:bg-brand-red transition-all duration-500" />
-                          <p className="text-brand-red font-mono text-[10px] font-bold uppercase tracking-[0.3em]">{project.category}</p>
-                        </div>
-                        <h3 className="text-xl md:text-2xl lg:text-3xl font-display font-bold mb-4 group-hover:text-brand-red transition-colors tracking-tighter leading-tight uppercase">{project.title}</h3>
-                        <p className="text-sm text-white/40 font-light leading-relaxed max-w-md line-clamp-2 group-hover:text-white/80 transition-colors">{project.desc}</p>
-                      </div>
-                      <div className="w-12 h-12 md:w-16 md:h-16 rounded-2xl border border-white/10 flex items-center justify-center group-hover:bg-brand-red group-hover:border-brand-red group-hover:text-white transition-all duration-500 shrink-0 mt-2 shadow-lg">
-                        <ArrowUpRight size={24} className="md:w-8 md:h-8 group-hover:rotate-45 transition-transform duration-500" />
+                      {/* Tech Pills */}
+                      <div className="flex flex-wrap gap-1.5 mb-4 sm:mb-5 h-7 overflow-hidden items-center">
+                        {project.technologies.slice(0, 3).map((tech) => (
+                          <span key={tech} className="text-[10px] px-2 py-0.5 rounded bg-white/5 text-white/70 border border-white/5 font-mono">
+                            {tech}
+                          </span>
+                        ))}
+                        {project.technologies.length > 3 && (
+                          <span className="text-[10px] px-2 py-0.5 rounded bg-white/5 text-white/40 font-mono">
+                            +{project.technologies.length - 3}
+                          </span>
+                        )}
                       </div>
                     </div>
-                  </motion.div>
-                ))
-              ) : (
-                <motion.div 
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="col-span-full py-20 text-center"
-                >
-                  <Filter className="mx-auto text-white/10 mb-6" size={64} />
-                  <h3 className="text-2xl font-display font-bold mb-2">No projects found</h3>
-                  <p className="text-white/60">Try adjusting your filters or search query</p>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
 
-          {/* Load More Button */}
-          {filteredProjects.length > visibleCount && (
-            <div className="mt-24 flex justify-center">
-              <MagneticButton>
-                <button 
-                  onClick={handleLoadMore}
-                  disabled={isLoadingMore}
-                  className="px-12 py-5 bg-white text-black rounded-2xl font-bold flex items-center gap-3 hover:bg-brand-red hover:text-white transition-all duration-500 uppercase tracking-widest text-xs disabled:opacity-50 disabled:cursor-not-allowed font-mono"
-                >
-                  {isLoadingMore ? (
-                    <>
-                      <Loader2 size={18} className="animate-spin" />
-                      PROCESSING...
-                    </>
-                  ) : (
-                    <>
-                      LOAD MORE DEPLOYMENTS
-                      <ArrowUpRight size={18} />
-                    </>
-                  )}
-                </button>
-              </MagneticButton>
+                    {/* Card Bottom CTA with harmonious spacing */}
+                    <div className="pt-3.5 sm:pt-4 border-t border-white/10 flex items-center justify-between text-xs font-semibold text-white/70 group-hover:text-white transition-colors mt-auto">
+                      <span className="group-hover:text-brand-red transition-colors">
+                        {language === 'id' ? 'Lihat Studi Kasus' : 'View Case Study'}
+                      </span>
+                      <ArrowUpRight size={14} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform text-brand-red" />
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           )}
         </div>
-      </div>
+      </section>
 
-      {/* Kinetic Typography */}
-      <div className="absolute bottom-10 left-0 w-full kinetic-text opacity-5 select-none pointer-events-none">
-        <div className="kinetic-track text-[8vh] md:text-[15vh] font-display font-black uppercase tracking-tighter">
-          <span>Kapitech Agency • UI/UX Design • IT Development • Graphic Design • </span>
-          <span>Kapitech Agency • UI/UX Design • IT Development • Graphic Design • </span>
-        </div>
-      </div>
-
-      {/* Case Study Modal */}
+      {/* PROJECT DETAILS MODAL */}
       <AnimatePresence>
         {selectedProject && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[9999] bg-black flex flex-col overflow-y-auto case-study-modal"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="modal-title"
-          >
-            <motion.button 
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              onClick={() => setSelectedProject(null)}
-              className="fixed top-6 right-6 md:top-12 md:right-12 z-[10000] p-3 md:p-4 rounded-full bg-white text-black hover:bg-brand-red hover:text-white transition-all"
-              aria-label="Close case study"
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 md:p-8 bg-black/85 backdrop-blur-md">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              transition={{ duration: 0.3 }}
+              className="relative w-full max-w-4xl max-h-[90vh] bg-zinc-950 border border-white/20 rounded-2xl sm:rounded-3xl overflow-hidden flex flex-col shadow-2xl"
             >
-              <X size={24} className="md:w-8 md:h-8" />
-            </motion.button>
-
-            <div className="w-full h-[50vh] md:h-[70vh] relative">
-              <motion.img 
-                layoutId={`img-${selectedProject.title}`}
-                src={selectedProject.image} 
-                alt={selectedProject.title} 
-                loading="lazy"
-                referrerPolicy="no-referrer"
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent" />
-              <div className="absolute bottom-12 left-6 md:bottom-20 md:left-12">
-                <motion.span 
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 }}
-                  className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-xs md:text-sm mb-4 block"
+              {/* Modal Header Bar */}
+              <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 sm:py-4 border-b border-white/10 bg-black/80 sticky top-0 z-20">
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <span className="text-[10px] sm:text-xs font-mono px-2.5 sm:px-3 py-0.5 sm:py-1 rounded bg-brand-red/20 text-brand-red border border-brand-red/30 uppercase tracking-wider font-medium">
+                    {selectedProject.category}
+                  </span>
+                  <span className="text-[11px] sm:text-xs text-white/60 font-mono truncate max-w-[150px] sm:max-w-none">
+                    {language === 'id' ? 'Klien:' : 'Client:'} {selectedProject.client}
+                  </span>
+                </div>
+                <button
+                  onClick={() => setSelectedProject(null)}
+                  className="w-8 h-8 rounded-full bg-white/10 hover:bg-white hover:text-black transition-colors flex items-center justify-center shrink-0"
+                  aria-label="Close modal"
                 >
-                  {selectedProject.category}
-                </motion.span>
-                <motion.h2 
-                  id="modal-title"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.4 }}
-                  className="text-4xl sm:text-6xl md:text-[8vw] lg:text-[10vw] font-display font-bold tracking-tighter leading-[0.85]"
-                >
-                  {selectedProject.title}
-                </motion.h2>
+                  <X size={16} />
+                </button>
               </div>
-            </div>
 
-            <div className="max-w-7xl mx-auto px-6 md:px-12 py-16 md:py-32 grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-20">
-              <div className="md:col-span-2">
-                <div className="flex items-center gap-4 mb-12">
-                  <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-brand-red/10 border border-brand-red/20">
-                    <div className="w-2 h-2 rounded-full bg-brand-red animate-pulse" />
-                    <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-brand-red">Operational Audit</span>
-                  </div>
-                  <div className="h-px flex-grow bg-white/5" />
+              {/* Modal Scrollable Content */}
+              <div className="overflow-y-auto p-4 sm:p-6 md:p-10 space-y-6 sm:space-y-8">
+                {/* Hero Preview */}
+                <div className="rounded-xl sm:rounded-2xl overflow-hidden aspect-[16/9] border border-white/10">
+                  <img
+                    src={selectedProject.image}
+                    alt={selectedProject.title}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
 
-                <h3 className="text-xl md:text-2xl font-display font-bold mb-6 md:mb-8 text-brand-red tracking-tight uppercase">The Challenge.</h3>
-                <p className="text-sm md:text-base text-white/60 font-light leading-relaxed mb-12 md:mb-16">
-                  {selectedProject.challenge}
-                </p>
-                
-                <h3 className="text-xl md:text-2xl font-display font-bold mb-6 md:mb-8 text-brand-red tracking-tight uppercase">The Solution.</h3>
-                <p className="text-sm md:text-base text-white/60 font-light leading-relaxed mb-12 md:mb-16">
-                  {selectedProject.solution}
-                </p>
-                
-                <h3 className="text-xl md:text-2xl font-display font-bold mb-6 md:mb-8 text-brand-red tracking-tight uppercase">The Results.</h3>
-                <div className="relative p-8 rounded-3xl bg-white/5 border border-white/10 overflow-hidden group">
-                  <div className="absolute top-0 right-0 p-4 opacity-10">
-                    <Activity size={80} className="text-brand-red" />
-                  </div>
-                  <p className="text-sm md:text-base text-white font-light leading-relaxed italic relative z-10">
-                    "{selectedProject.results}"
+                {/* Title & Overview */}
+                <div>
+                  <h2 className="text-xl sm:text-2xl md:text-4xl font-display font-bold mb-2 sm:mb-4">
+                    {selectedProject.title}
+                  </h2>
+                  <p className="text-xs sm:text-sm md:text-base text-white/70 font-light leading-relaxed">
+                    {selectedProject.desc}
                   </p>
                 </div>
-              </div>
-              
-              <div className="space-y-12">
-                <div className="p-8 rounded-3xl bg-zinc-900/50 border border-white/5 space-y-10">
+
+                {/* Challenge & Solution Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+                  <div className="p-4 sm:p-6 rounded-xl sm:rounded-2xl bg-black border border-white/10">
+                    <h4 className="text-xs font-mono uppercase tracking-wider text-brand-red mb-2 font-medium">
+                      {language === 'id' ? 'Tantangan Bisnis' : 'The Challenge'}
+                    </h4>
+                    <p className="text-xs sm:text-sm text-white/70 font-light leading-relaxed">
+                      {selectedProject.challenge}
+                    </p>
+                  </div>
+                  <div className="p-4 sm:p-6 rounded-xl sm:rounded-2xl bg-black border border-white/10">
+                    <h4 className="text-xs font-mono uppercase tracking-wider text-emerald-400 mb-2 font-medium">
+                      {language === 'id' ? 'Solusi yang Kami Bangun' : 'The Solution'}
+                    </h4>
+                    <p className="text-xs sm:text-sm text-white/70 font-light leading-relaxed">
+                      {selectedProject.solution}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Deliverables & Impact */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                   <div>
-                    <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/40 block mb-6">Technical Stack</span>
-                    <div className="flex flex-wrap gap-2">
-                      {selectedProject.technologies.map((tech: string) => (
-                        <span key={tech} className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-[10px] font-mono font-bold uppercase tracking-widest text-white/60 hover:border-brand-red/40 transition-colors">
-                          {tech}
-                        </span>
+                    <h4 className="text-xs font-mono uppercase tracking-wider text-white/50 mb-3 font-medium">
+                      {language === 'id' ? 'Deliverables Utama' : 'Key Deliverables'}
+                    </h4>
+                    <div className="space-y-2">
+                      {selectedProject.deliverables.map((item, idx) => (
+                        <div key={idx} className="flex items-center gap-2 text-xs text-white/80">
+                          <CheckCircle2 size={14} className="text-brand-red shrink-0" />
+                          <span>{item}</span>
+                        </div>
                       ))}
                     </div>
                   </div>
 
                   <div>
-                    <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/40 block mb-6">Performance Metrics</span>
-                    <div className="space-y-8">
-                      <div className="flex justify-between items-end">
-                        <div>
-                          <span className="text-3xl md:text-4xl font-display font-bold block text-white tracking-tighter">{selectedProject.roi.conversion}</span>
-                          <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-brand-red">Conversion Lift</span>
+                    <h4 className="text-xs font-mono uppercase tracking-wider text-white/50 mb-3 font-medium">
+                      {language === 'id' ? 'Dampak Terukur' : 'Measurable Impact'}
+                    </h4>
+                    <div className="grid grid-cols-3 gap-2 sm:gap-3">
+                      {selectedProject.impact.map((imp, idx) => (
+                        <div key={idx} className="p-2.5 sm:p-3 rounded-xl bg-black border border-white/10 text-center">
+                          <span className="text-sm sm:text-base font-display font-bold text-brand-red block mb-0.5 sm:mb-1">
+                            {imp.value}
+                          </span>
+                          <span className="text-[9px] sm:text-[10px] font-mono text-white/50 uppercase">
+                            {imp.label}
+                          </span>
                         </div>
-                        <ArrowUpRight className="text-emerald-400 mb-2" size={24} />
-                      </div>
-                      <div className="flex justify-between items-end">
-                        <div>
-                          <span className="text-3xl md:text-4xl font-display font-bold block text-white tracking-tighter">{selectedProject.roi.engagement}</span>
-                          <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-brand-red">User Engagement</span>
-                        </div>
-                        <Activity className="text-blue-400 mb-2" size={24} />
-                      </div>
-                      <div className="flex justify-between items-end">
-                        <div>
-                          <span className="text-3xl md:text-4xl font-display font-bold block text-white tracking-tighter">{selectedProject.roi.uptime}</span>
-                          <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-brand-red">System Uptime</span>
-                        </div>
-                        <Code2 className="text-purple-400 mb-2" size={24} />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="pt-8 border-t border-white/5">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <span className="text-[9px] font-mono text-white/20 block uppercase tracking-widest mb-1">Complexity</span>
-                        <span className="text-xs font-mono text-white font-bold">{selectedProject.stats.complexity}</span>
-                      </div>
-                      <div>
-                        <span className="text-[9px] font-mono text-white/20 block uppercase tracking-widest mb-1">Security</span>
-                        <span className="text-xs font-mono text-white font-bold">{selectedProject.stats.security}</span>
-                      </div>
+                      ))}
                     </div>
                   </div>
                 </div>
 
-                <Link to="/contact" className="w-full">
-                  <MagneticButton>
-                    <button className="w-full px-10 py-6 bg-white text-black rounded-2xl font-bold flex items-center justify-center gap-3 hover:bg-brand-red hover:text-white transition-all duration-500 uppercase tracking-widest text-[10px] shadow-xl font-mono">
-                      Initialize Live Project <ArrowUpRight size={20} />
-                    </button>
-                  </MagneticButton>
-                </Link>
-              </div>
-            </div>
-
-            {/* Related Projects Section */}
-            <div className="bg-zinc-950/50 border-t border-white/5 py-24 md:py-32 px-6 md:px-12">
-              <div className="max-w-7xl mx-auto">
-                <div className="flex flex-col md:flex-row justify-between items-end gap-8 mb-16">
-                  <div>
-                    <span className="text-brand-red font-mono font-bold tracking-[0.3em] uppercase text-[10px] mb-4 block">Further Exploration</span>
-                    <h3 className="text-3xl md:text-5xl font-display font-bold tracking-tighter uppercase">Related Deployments.</h3>
-                  </div>
-                  <p className="text-white/40 max-w-md text-xs md:text-sm font-light leading-relaxed">
-                    Archive of high-impact solutions engineered with similar technologies and creative strategies.
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                  {projects
-                    .filter(p => p.title !== selectedProject.title)
-                    .map(p => {
-                      let score = 0;
-                      const pCats = p.category.split(' / ');
-                      const sCats = selectedProject.category.split(' / ');
-                      const sharedCats = pCats.filter(c => sCats.includes(c));
-                      score += sharedCats.length * 10;
-                      const sharedTech = p.technologies.filter(t => selectedProject.technologies.includes(t));
-                      score += sharedTech.length;
-                      return { ...p, score };
-                    })
-                    .filter(p => p.score > 0)
-                    .sort((a, b) => b.score - a.score)
-                    .slice(0, 3)
-                    .map((related, i) => (
-                      <motion.div
-                        key={related.title}
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: i * 0.1 }}
-                        onClick={() => {
-                          setSelectedProject(related);
-                          window.scrollTo({ top: 0, behavior: 'smooth' });
-                          // Also scroll the modal to top if it's the scroll container
-                          const modal = document.querySelector('.case-study-modal');
-                          if (modal) modal.scrollTo({ top: 0, behavior: 'smooth' });
-                        }}
-                        className="group cursor-pointer"
-                      >
-                        <div className="aspect-[16/10] rounded-3xl overflow-hidden mb-6 relative border border-white/5">
-                          <img 
-                            src={related.image} 
-                            alt={related.title} 
-                            className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105" 
-                            referrerPolicy="no-referrer"
-                          />
-                          <div className="absolute inset-0 bg-black/40 group-hover:bg-transparent transition-colors" />
-                          <div className="absolute top-4 right-4 px-3 py-1 bg-white/10 backdrop-blur-md border border-white/10 rounded-xl">
-                            <span className="text-[8px] font-mono font-bold text-white uppercase tracking-widest">
-                              Match: {Math.min(99, 70 + related.score)}%
-                            </span>
-                          </div>
-                        </div>
-                        <h4 className="text-xl font-display font-bold mb-2 group-hover:text-brand-red transition-colors uppercase tracking-tight">{related.title}</h4>
-                        <p className="text-brand-red font-mono text-[8px] font-bold uppercase tracking-[0.3em] mb-3">{related.category}</p>
-                        <p className="text-white/40 text-[10px] font-light leading-relaxed line-clamp-2">{related.desc}</p>
-                      </motion.div>
+                {/* Technologies Used */}
+                <div>
+                  <h4 className="text-xs font-mono uppercase tracking-wider text-white/50 mb-2.5 sm:mb-3 font-medium">
+                    {language === 'id' ? 'Teknologi & Alat' : 'Technologies & Tools'}
+                  </h4>
+                  <div className="flex flex-wrap gap-1.5 sm:gap-2">
+                    {selectedProject.technologies.map((tech) => (
+                      <span key={tech} className="px-2.5 sm:px-3 py-1 rounded-lg bg-zinc-900 border border-white/10 text-[11px] sm:text-xs font-mono text-white/80">
+                        {tech}
+                      </span>
                     ))}
+                  </div>
+                </div>
+
+                {/* Bottom Modal CTA */}
+                <div className="pt-5 sm:pt-6 border-t border-white/10 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4">
+                  <p className="text-xs text-white/60 text-center sm:text-left">
+                    {language === 'id' ? 'Tertarik membangun solusi serupa untuk bisnis Anda?' : 'Interested in building a similar solution for your business?'}
+                  </p>
+                  <Link
+                    to="/contact"
+                    onClick={() => setSelectedProject(null)}
+                    className="h-11 px-6 bg-brand-red hover:bg-white text-white hover:text-black rounded-xl text-xs font-semibold uppercase tracking-wider transition-colors flex items-center justify-center gap-2 active:scale-95"
+                  >
+                    <span>{language === 'id' ? 'Mulai Proyek Serupa' : 'Start Similar Project'}</span>
+                    <ArrowUpRight size={14} />
+                  </Link>
                 </div>
               </div>
-            </div>
-          </motion.div>
+            </motion.div>
+          </div>
         )}
       </AnimatePresence>
-    </motion.div>
+    </div>
   );
 };
