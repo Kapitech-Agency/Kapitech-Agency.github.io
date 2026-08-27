@@ -27,14 +27,15 @@ export const FloatingContact = () => {
   const contactOptions = [
     {
       icon: <Phone size={18} />,
-      label: language === 'id' ? 'Telepon / WhatsApp' : 'Phone / WhatsApp',
-      href: 'tel:+6287769957062',
-      color: 'bg-emerald-600'
+      label: language === 'id' ? 'WhatsApp Langsung' : 'Direct WhatsApp',
+      href: 'https://wa.me/6287769957062?text=Halo%20Kapitech%20Agency,%20saya%20ingin%20konsultasi%20proyek.',
+      color: 'bg-emerald-600',
+      isExternal: true
     },
     {
       icon: <Mail size={18} />,
       label: language === 'id' ? 'Kirim Email' : 'Send Email',
-      href: 'mailto:hello@kapitech.id',
+      href: 'mailto:kapitechagency@gmail.com',
       color: 'bg-blue-600'
     },
     {
@@ -61,14 +62,14 @@ export const FloatingContact = () => {
         )}
       </AnimatePresence>
 
-      <div className="fixed bottom-5 right-5 sm:bottom-8 sm:right-8 z-[95] flex flex-col items-end gap-3">
+      <div className="fixed bottom-4 right-4 sm:bottom-8 sm:right-8 z-[95] flex flex-col items-end gap-3">
         <AnimatePresence>
           {isOpen && (
             <motion.div
               initial={{ opacity: 0, scale: 0.85, y: 15 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.85, y: 15 }}
-              className="flex flex-col gap-2.5 mb-2"
+              className="flex flex-col gap-2.5 mb-2 max-w-[85vw]"
             >
               {contactOptions.map((option, i) => (
                 <motion.div
@@ -83,11 +84,11 @@ export const FloatingContact = () => {
                       onClick={() => setIsOpen(false)}
                       className="flex items-center justify-end gap-2.5 sm:gap-3 group"
                     >
-                      <span className="px-3.5 py-1.5 rounded-xl bg-zinc-900/95 backdrop-blur-md border border-white/15 text-xs font-medium text-white shadow-lg transition-all group-hover:border-brand-red/60 group-hover:text-brand-red">
+                      <span className="px-3.5 py-2 rounded-xl bg-zinc-900/95 backdrop-blur-md border border-white/15 text-xs font-medium text-white shadow-lg transition-all group-hover:border-brand-red/60 group-hover:text-brand-red whitespace-nowrap">
                         {option.label}
                       </span>
                       <div className={cn(
-                        "w-11 h-11 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center text-white shadow-xl transition-transform hover:scale-105 active:scale-95",
+                        "w-11 h-11 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center text-white shadow-xl transition-transform hover:scale-105 active:scale-95 shrink-0",
                         option.color
                       )}>
                         {option.icon}
@@ -96,14 +97,16 @@ export const FloatingContact = () => {
                   ) : (
                     <a
                       href={option.href}
+                      target={option.isExternal ? "_blank" : undefined}
+                      rel={option.isExternal ? "noopener noreferrer" : undefined}
                       onClick={() => setIsOpen(false)}
                       className="flex items-center justify-end gap-2.5 sm:gap-3 group"
                     >
-                      <span className="px-3.5 py-1.5 rounded-xl bg-zinc-900/95 backdrop-blur-md border border-white/15 text-xs font-medium text-white shadow-lg transition-all group-hover:border-brand-red/60 group-hover:text-brand-red">
+                      <span className="px-3.5 py-2 rounded-xl bg-zinc-900/95 backdrop-blur-md border border-white/15 text-xs font-medium text-white shadow-lg transition-all group-hover:border-brand-red/60 group-hover:text-brand-red whitespace-nowrap">
                         {option.label}
                       </span>
                       <div className={cn(
-                        "w-11 h-11 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center text-white shadow-xl transition-transform hover:scale-105 active:scale-95",
+                        "w-11 h-11 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center text-white shadow-xl transition-transform hover:scale-105 active:scale-95 shrink-0",
                         option.color
                       )}>
                         {option.icon}
@@ -130,7 +133,7 @@ export const FloatingContact = () => {
                 whileTap={{ scale: 0.95 }}
                 aria-label={isOpen ? "Tutup Kontak Cepat" : "Buka Kontak Cepat"}
                 className={cn(
-                  "w-13 h-13 sm:w-15 sm:h-15 rounded-2xl sm:rounded-[1.75rem] flex items-center justify-center text-white shadow-xl transition-all duration-300",
+                  "w-12 h-12 sm:w-14 sm:h-14 rounded-2xl sm:rounded-[1.75rem] flex items-center justify-center text-white shadow-xl transition-all duration-300",
                   isOpen 
                     ? "bg-zinc-800 border border-white/20" 
                     : "bg-brand-red shadow-brand-red/30 shadow-lg"

@@ -1,6 +1,28 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ArrowUpRight, CheckCircle2, Globe, Users, Heart, Coffee, Laptop, Upload, FileText, Phone, Mail, User, Link as LinkIcon, X, Briefcase, MapPin, Clock } from 'lucide-react';
+import { 
+  ArrowUpRight, 
+  CheckCircle2, 
+  Globe, 
+  Users, 
+  Heart, 
+  Coffee, 
+  Laptop, 
+  Upload, 
+  FileText, 
+  Phone, 
+  Mail, 
+  User, 
+  Link as LinkIcon, 
+  X, 
+  Briefcase, 
+  MapPin, 
+  Clock,
+  Sparkles,
+  Building2,
+  TrendingUp,
+  Award
+} from 'lucide-react';
 import { AtmosphericBackground } from '../components/ui/AtmosphericBackground';
 import { useLanguage } from '../lib/LanguageContext';
 
@@ -10,9 +32,12 @@ export interface Position {
   department: string;
   location: string;
   type: string;
+  workplace: string;
+  badge: string;
   summary: string;
   responsibilities: string[];
   requirements: string[];
+  compensation?: string;
 }
 
 export const Careers = () => {
@@ -28,169 +53,359 @@ export const Careers = () => {
     resume: null as File | null
   });
 
+  const [selectedTalent, setSelectedTalent] = useState<any | null>(null);
+
+  const twelveTalentsEn = [
+    {
+      id: "aditya-pratama",
+      name: "Aditya Pratama",
+      role: "Lead Frontend Engineer",
+      specialty: "React, Next.js & Web Performance",
+      department: "Innovation Development",
+      experience: "6+ Years Exp",
+      image: "https://images.unsplash.com/photo-1501196354995-cbb51c65aaea?auto=format&fit=crop&q=80&w=600",
+      bio: "Specializes in sub-second DOM hydration, micro-frontend architecture, and fluid motion physics."
+    },
+    {
+      id: "nathania-kusuma",
+      name: "Nathania Kusuma",
+      role: "Senior UI/UX & Design Systems Lead",
+      specialty: "Figma Systems & Design Tokens",
+      department: "Visual Experience",
+      experience: "5+ Years Exp",
+      image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=600",
+      bio: "Crafts mathematically scaled Figma design systems, accessible WCAG color models, and interactive micro-interactions."
+    },
+    {
+      id: "bagas-wicaksono",
+      name: "Bagas Wicaksono",
+      role: "Senior Motion & 2D Animator",
+      specialty: "Kinetic Typography & After Effects",
+      department: "Visual Experience",
+      experience: "4+ Years Exp",
+      image: "https://images.unsplash.com/photo-1507152832244-10d45c7eda57?auto=format&fit=crop&q=80&w=600",
+      bio: "Brings brand stories to life through high-frame-rate kinetic animation, 2D character explainers, and Lottie assets."
+    },
+    {
+      id: "clarissa-angela",
+      name: "Clarissa Angela",
+      role: "Brand Identity & Editorial Designer",
+      specialty: "Brand Guidelines & Visual Story",
+      department: "Visual Experience",
+      experience: "5+ Years Exp",
+      image: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=crop&q=80&w=600",
+      bio: "Authors bespoke typography pairings, multi-brand identity kits, and investor presentation collateral."
+    },
+    {
+      id: "dimas-rizky",
+      name: "Dimas Rizky",
+      role: "3D Visualizer & Spline Technologist",
+      specialty: "Blender 3D & WebGL Environments",
+      department: "Visual Experience",
+      experience: "4+ Years Exp",
+      image: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&q=80&w=600",
+      bio: "Builds photorealistic architectural renders, 3D product prototypes, and real-time Spline WebGL canvases."
+    },
+    {
+      id: "evelyn-santoso",
+      name: "Evelyn Santoso",
+      role: "Senior Product & Mobile UI Designer",
+      specialty: "iOS/Android Ergonomics & Prototypes",
+      department: "Visual Experience",
+      experience: "5+ Years Exp",
+      image: "https://images.unsplash.com/photo-1548142813-c348350df52b?auto=format&fit=crop&q=80&w=600",
+      bio: "Engineers thumb-accessible mobile UX flows, haptic feedback loops, and multi-tenant mobile applications."
+    },
+    {
+      id: "farhan-ramadhan",
+      name: "Farhan Ramadhan",
+      role: "Cloud Infrastructure & DevOps Specialist",
+      specialty: "AWS, GCP & Automated CI/CD",
+      department: "Innovation Development",
+      experience: "6+ Years Exp",
+      image: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?auto=format&fit=crop&q=80&w=600",
+      bio: "Maintains 99.99% cloud uptime, automated blue-green deployment pipelines, and zero-trust security."
+    },
+    {
+      id: "gabriella-tan",
+      name: "Gabriella Tan",
+      role: "2D Character Artist & Illustrator",
+      specialty: "Vector Assets & Explainer Artworks",
+      department: "Visual Experience",
+      experience: "4+ Years Exp",
+      image: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&q=80&w=600",
+      bio: "Draws distinctive editorial vectors, custom icon sets, and charismatic 2D character sets for brand campaigns."
+    },
+    {
+      id: "haikal-firdaus",
+      name: "Haikal Firdaus",
+      role: "Senior Backend & Database Architect",
+      specialty: "Node.js, PostgreSQL & Distributed Cache",
+      department: "Innovation Development",
+      experience: "7+ Years Exp",
+      image: "https://images.unsplash.com/photo-1531891437562-4301cf092a93?auto=format&fit=crop&q=80&w=600",
+      bio: "Architects scalable microservices, low-latency Redis caching layers, and high-volume relational schemas."
+    },
+    {
+      id: "indah-permata",
+      name: "Indah Permata",
+      role: "Video Producer & Commercial Colorist",
+      specialty: "TVC Editing, Cinematic LUTs & DaVinci",
+      department: "Visual Experience",
+      experience: "5+ Years Exp",
+      image: "https://images.unsplash.com/photo-1514315384763-ba401779410f?auto=format&fit=crop&q=80&w=600",
+      bio: "Directs cinematic commercial shoots, color grades in DaVinci Resolve Studio, and produces TVC broadcast masters."
+    },
+    {
+      id: "julian-mahendra",
+      name: "Julian Mahendra",
+      role: "Full-Stack SaaS & Web App Engineer",
+      specialty: "TypeScript, GraphQL & Realtime Sockets",
+      department: "Innovation Development",
+      experience: "5+ Years Exp",
+      image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=600",
+      bio: "Develops real-time collaborative SaaS platforms, custom enterprise CRM tooling, and high-security REST APIs."
+    },
+    {
+      id: "karina-wijaya",
+      name: "Karina Wijaya",
+      role: "Pitch Deck & Publication Strategist",
+      specialty: "Investor Decks & High-Impact Reports",
+      department: "Visual Experience",
+      experience: "4+ Years Exp",
+      image: "https://images.unsplash.com/photo-1527736947477-2790e28f3443?auto=format&fit=crop&q=80&w=600",
+      bio: "Translates complex financial data and corporate roadmaps into crisp, executive-ready presentation decks."
+    }
+  ];
+
+  const twelveTalentsId = [
+    {
+      id: "aditya-pratama",
+      name: "Aditya Pratama",
+      role: "Lead Frontend Engineer",
+      specialty: "React, Next.js & Web Performance",
+      department: "Innovation Development",
+      experience: "Pengalaman 6+ Tahun",
+      image: "https://images.unsplash.com/photo-1501196354995-cbb51c65aaea?auto=format&fit=crop&q=80&w=600",
+      bio: "Spesialis dalam hidrasi DOM sub-detik, arsitektur micro-frontend, dan fisika animasi berbasis kode modern."
+    },
+    {
+      id: "nathania-kusuma",
+      name: "Nathania Kusuma",
+      role: "Senior UI/UX & Design Systems Lead",
+      specialty: "Sistem Desain Figma & Token UI",
+      department: "Visual Experience",
+      experience: "Pengalaman 5+ Tahun",
+      image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=600",
+      bio: "Merancang sistem desain modular Figma, standar aksesibilitas WCAG, dan uji interaksi prototipe pengguna."
+    },
+    {
+      id: "bagas-wicaksono",
+      name: "Bagas Wicaksono",
+      role: "Senior Motion & 2D Animator",
+      specialty: "Tipografi Kinetik & After Effects",
+      department: "Visual Experience",
+      experience: "Pengalaman 4+ Tahun",
+      image: "https://images.unsplash.com/photo-1507152832244-10d45c7eda57?auto=format&fit=crop&q=80&w=600",
+      bio: "Menghidupkan cerita brand lewat animasi frame-rate tinggi, video explainer komersial, dan aset Lottie."
+    },
+    {
+      id: "clarissa-angela",
+      name: "Clarissa Angela",
+      role: "Brand Identity & Editorial Designer",
+      specialty: "Pedoman Brand & Identitas Visual",
+      department: "Visual Experience",
+      experience: "Pengalaman 5+ Tahun",
+      image: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=crop&q=80&w=600",
+      bio: "Merancang identitas korporat, brandbook komprehensif, dan materi publikasi editorial tingkat tinggi."
+    },
+    {
+      id: "dimas-rizky",
+      name: "Dimas Rizky",
+      role: "3D Visualizer & Spline Technologist",
+      specialty: "Blender 3D & Lingkungan WebGL",
+      department: "Visual Experience",
+      experience: "Pengalaman 4+ Tahun",
+      image: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&q=80&w=600",
+      bio: "Membangun render fotorealistis 3D produk, visualisasi arsitektur, dan aset WebGL real-time interaktif."
+    },
+    {
+      id: "evelyn-santoso",
+      name: "Evelyn Santoso",
+      role: "Senior Product & Mobile UI Designer",
+      specialty: "Ergonomi iOS/Android & Prototipe",
+      department: "Visual Experience",
+      experience: "Pengalaman 5+ Tahun",
+      image: "https://images.unsplash.com/photo-1548142813-c348350df52b?auto=format&fit=crop&q=80&w=600",
+      bio: "Merancang pengalaman aplikasi mobile yang ramah ibu jari, alur onboarding mulus, dan responsivitas layar."
+    },
+    {
+      id: "farhan-ramadhan",
+      name: "Farhan Ramadhan",
+      role: "Cloud Infrastructure & DevOps Engineer",
+      specialty: "AWS, Docker & Otomasi Pipeline CI/CD",
+      department: "Innovation Development",
+      experience: "Pengalaman 6+ Tahun",
+      image: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?auto=format&fit=crop&q=80&w=600",
+      bio: "Menjaga uptime server 99.99%, otomatisasi build pipeline multi-region, dan mitigasi keamanan cloud."
+    },
+    {
+      id: "gabriella-tan",
+      name: "Gabriella Tan",
+      role: "2D Character Artist & Illustrator",
+      specialty: "Aset Vektor & Artwork Video Explainer",
+      department: "Visual Experience",
+      experience: "Pengalaman 4+ Tahun",
+      image: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&q=80&w=600",
+      bio: "Menggambar ilustrasi vektor orisinal, paket ikon kustom, dan karakter visual berkarakter kuat untuk kampanye."
+    },
+    {
+      id: "haikal-firdaus",
+      name: "Haikal Firdaus",
+      role: "Senior Backend & Database Architect",
+      specialty: "Node.js, PostgreSQL & Distributed Cache",
+      department: "Innovation Development",
+      experience: "Pengalaman 7+ Tahun",
+      image: "https://images.unsplash.com/photo-1531891437562-4301cf092a93?auto=format&fit=crop&q=80&w=600",
+      bio: "Membangun arsitektur microservices terukur, cache berkinerja tinggi, dan relasi database berkeamanan tinggi."
+    },
+    {
+      id: "indah-permata",
+      name: "Indah Permata",
+      role: "Video Producer & Commercial Colorist",
+      specialty: "Editing TVC, LUT Sinematik & DaVinci",
+      department: "Visual Experience",
+      experience: "Pengalaman 5+ Tahun",
+      image: "https://images.unsplash.com/photo-1514315384763-ba401779410f?auto=format&fit=crop&q=80&w=600",
+      bio: "Memproduksi video komersial brand, grading warna sinematik di DaVinci Studio, dan supervisi audio master."
+    },
+    {
+      id: "julian-mahendra",
+      name: "Julian Mahendra",
+      role: "Full-Stack SaaS & Web App Engineer",
+      specialty: "TypeScript, GraphQL & Realtime Sockets",
+      department: "Innovation Development",
+      experience: "Pengalaman 5+ Tahun",
+      image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=600",
+      bio: "Mengembangkan aplikasi SaaS kolaboratif real-time, integrasi sistem CRM bisnis, dan API terenkripsi."
+    },
+    {
+      id: "karina-wijaya",
+      name: "Karina Wijaya",
+      role: "Pitch Deck & Publication Strategist",
+      specialty: "Investor Pitch Deck & Laporan Finansial",
+      department: "Visual Experience",
+      experience: "Pengalaman 4+ Tahun",
+      image: "https://images.unsplash.com/photo-1527736947477-2790e28f3443?auto=format&fit=crop&q=80&w=600",
+      bio: "Mengubah data bisnis dan proyeksi keuangan yang kompleks menjadi deck presentasi investor yang meyakinkan."
+    }
+  ];
+
+  const twelveTalents = language === 'id' ? twelveTalentsId : twelveTalentsEn;
+
   const positionsEn: Position[] = [
     {
-      id: 'ui-ux-designer',
+      id: 'bdr-partnership',
+      title: 'Business Development Representative (BDR)',
+      department: 'Business & Partnerships',
+      location: 'South Tangerang & Remote',
+      workplace: 'Hybrid',
+      type: 'Commission Based • Contract Freelancer Partnership',
+      badge: 'High Commission + Bonus',
+      summary: 'Drive high-value enterprise and mid-market client partnerships. You will identify business opportunities for our Visual Experience and Innovation Development services, conduct discovery pitches, and earn competitive uncapped commissions.',
+      responsibilities: [
+        'Identify and prospect prospective corporate clients, startups, and brand leaders requiring digital transformation or visual design',
+        'Initiate outbound sales outreach via LinkedIn, email sequences, and high-impact discovery calls',
+        'Present Kapitech Agency capabilities, pitch decks, and tailored solution proposals to key decision-makers (C-Level, VP, Directors)',
+        'Negotiate scope agreements and collaborate closely with our CEO and Project Managers for seamless client onboarding',
+        'Maintain accurate deal telemetry, CRM pipeline tracking, and revenue forecasting'
+      ],
+      requirements: [
+        'Proven track record in B2B sales, agency business development, or software solutions partnership',
+        'Strong network in technology, corporate, creative, or e-commerce sectors',
+        'Outstanding verbal and written communication skills with persuasive pitching ability',
+        'Self-motivated, goal-oriented mindset thriving in a performance-driven commission structure',
+        'Fluency in Bahasa Indonesia and professional English proficiency'
+      ],
+      compensation: 'Uncapped Deal Commissions + Milestone Performance Bonuses'
+    },
+    {
+      id: 'ui-ux-product-designer',
       title: 'UI/UX & Product Designer',
-      department: 'Design',
-      location: 'Remote (Indonesia)',
-      type: 'Full-time / Contract',
-      summary: 'Craft high-fidelity web and mobile interfaces, build structured design systems in Figma, and partner directly with our engineering team and clients.',
+      department: 'Design & Visual Experience',
+      location: 'Kapitech Studio, South Tangerang',
+      workplace: 'WFO (Work From Office)',
+      type: 'Full Time',
+      badge: 'Full Time • On-site Studio',
+      summary: 'Join our in-studio creative squad to author world-class digital interfaces, responsive design systems in Figma, and interactive user experiences for global and domestic client projects.',
       responsibilities: [
-        'Design responsive web and mobile application interfaces from wireframes to high-fidelity prototypes',
-        'Create and maintain scalable design systems, token sets, and UI components in Figma',
-        'Conduct usability tests, user flow analysis, and design reviews with clients',
-        'Hand off pixel-accurate specs and assets to frontend developers'
+        'Design pixel-perfect responsive web, mobile app (iOS/Android), and SaaS software interfaces',
+        'Architect and maintain scalable design systems, design tokens, and comprehensive component libraries in Figma',
+        'Conduct user journey mapping, wireframing, interactive prototyping, and usability validation sprints',
+        'Collaborate side-by-side with our Executive Creative Director and frontend engineers for flawless implementation',
+        'Prepare presentation decks and articulate UX/UI rationale directly during client review sessions'
       ],
       requirements: [
-        '2+ years of experience in UI/UX design for digital products or agency environments',
-        'Strong portfolio demonstrating modern typography, layout, and mobile-responsive UI',
-        'Expert proficiency in Figma, FigJam, and component auto-layout principles',
-        'Clear communication skills and ability to present design decisions objectively'
-      ]
-    },
-    {
-      id: 'frontend-engineer',
-      title: 'Frontend Developer (React / Next.js)',
-      department: 'Engineering',
-      location: 'Remote (Indonesia)',
-      type: 'Full-time',
-      summary: 'Engineer fast, accessible, and responsive user interfaces using React, Next.js, TypeScript, and Tailwind CSS.',
-      responsibilities: [
-        'Translate Figma designs into pixel-perfect, accessible, and responsive web pages',
-        'Build reusable React components and maintain clean code architecture',
-        'Integrate REST APIs, GraphQL, and backend services seamlessly',
-        'Optimize Core Web Vitals, page speed, and browser compatibility'
+        '2+ years of professional experience in UI/UX design for web platforms, mobile apps, or digital agencies',
+        'Stunning design portfolio showcasing modern visual hierarchy, clean typography, and responsive UX systems',
+        'Mastery of Figma, FigJam, auto-layout, component variants, and interactive prototyping',
+        'Ability to work full-time on-site at our South Tangerang studio with strong collaborative energy',
+        'High attention to visual craft, micro-interactions, and design-to-code feasibility'
       ],
-      requirements: [
-        '2+ years of experience building modern frontend applications with React and Next.js',
-        'Strong proficiency in TypeScript, Tailwind CSS, and HTML5 semantic markup',
-        'Familiarity with animations (Framer Motion / CSS transitions) and state management',
-        'Solid understanding of Git workflows and code reviews'
-      ]
-    },
-    {
-      id: 'fullstack-engineer',
-      title: 'Full-Stack Developer (Node.js & Next.js)',
-      department: 'Engineering',
-      location: 'Remote (Indonesia)',
-      type: 'Full-time',
-      summary: 'Develop end-to-end web applications, design database schemas, and build resilient API backends.',
-      responsibilities: [
-        'Design and deploy backend APIs with Node.js, Express, or Next.js server routes',
-        'Model and optimize database schemas using PostgreSQL, Prisma, or Firestore',
-        'Implement secure authentication (OAuth, JWT) and role-based access control',
-        'Collaborate on cloud deployment setups with Google Cloud, AWS, or Vercel'
-      ],
-      requirements: [
-        '2+ years of full-stack engineering experience with Node.js and TypeScript',
-        'Strong knowledge of relational databases (PostgreSQL/MySQL) or document stores',
-        'Experience with API design, security best practices, and third-party integrations',
-        'Problem-solving mindset and clear documentation habits'
-      ]
-    },
-    {
-      id: 'associate-project-manager',
-      title: 'Associate Project Manager',
-      department: 'Operations',
-      location: 'Remote / Tangerang Hybrid',
-      type: 'Full-time',
-      summary: 'Coordinate agile sprint cycles, manage client communications, and ensure on-time delivery across our design and engineering squads.',
-      responsibilities: [
-        'Facilitate sprint planning, daily standups, and milestone deliverables',
-        'Serve as the key operational bridge between clients and the internal creative/dev teams',
-        'Track project timelines, scope documents, and quality assurance checklists',
-        'Organize project documentation in Notion and task tracking in Linear/Trello'
-      ],
-      requirements: [
-        '1+ years of project management or account coordination experience in digital/tech agencies',
-        'Strong organizational, time management, and multitasking skills',
-        'Excellent written and spoken English and Bahasa Indonesia',
-        'Familiarity with agile product development methodologies'
-      ]
+      compensation: 'Competitive Monthly Salary + Health Coverage + Project Performance Bonuses'
     }
   ];
 
   const positionsId: Position[] = [
     {
-      id: 'ui-ux-designer',
-      title: 'UI/UX & Desainer Produk',
-      department: 'Desain',
-      location: 'Remote (Indonesia)',
-      type: 'Full-time / Kontrak',
-      summary: 'Merancang antarmuka web dan mobile berpresisi tinggi, membangun sistem desain terstruktur di Figma, dan berkolaborasi langsung dengan tim engineer dan klien.',
+      id: 'bdr-partnership',
+      title: 'Business Development Representative (BDR)',
+      department: 'Bisnis & Kemitraan',
+      location: 'Tangerang Selatan & Remote',
+      workplace: 'Hybrid',
+      type: 'Commission Based • Contract Freelancer Partnership',
+      badge: 'Komisi Tinggi + Bonus',
+      summary: 'Pimpin ekspansi kemitraan klien korporat dan pasar menengah. Anda akan mengidentifikasi peluang bisnis untuk layanan Visual Experience dan Innovation Development kami, mempresentasikan solusi, dan memperoleh komisi berbasis performa tanpa batas.',
       responsibilities: [
-        'Mendesain antarmuka web responsif dan aplikasi mobile dari wireframe hingga prototipe interaktif',
-        'Membuat serta memelihara sistem desain, token desain, dan pustaka komponen UI di Figma',
-        'Melakukan uji usabilitas, analisis alur pengguna, dan presentasi desain berkala bersama klien',
-        'Menyerahkan spesifikasi desain dan aset visual yang akurat kepada developer frontend'
+        'Mengidentifikasi dan memprospek calon klien perusahaan, startup, dan brand yang membutuhkan transformasi digital atau desain visual',
+        'Melakukan outbound sales outreach melalui LinkedIn, email bisnis, dan discovery call terarah',
+        'Mempresentasikan portofolio Kapitech Agency, proposal kustom, dan lingkup kerja kepada pengambil keputusan utama (C-Level, VP, Direktur)',
+        'Membantu negosiasi kontrak kerja sama dan berkoordinasi langsung dengan CEO serta Project Manager kami',
+        'Memelihara catatan pipeline prospek di CRM dan pelacakan target pendapatan secara terstruktur'
       ],
       requirements: [
-        '2+ tahun pengalaman dalam desain UI/UX untuk produk digital atau agensi',
-        'Portofolio kuat yang menunjukkan penguasaan tipografi, tata letak, dan UI responsif',
-        'Keahlian tingkat lanjut dalam Figma, FigJam, dan prinsip auto-layout komponen',
-        'Kemampuan komunikasi yang jelas dan mampu memaparkan argumen desain secara objektif'
-      ]
+        'Pengalaman terbukti dalam B2B sales, kemitraan agensi digital, atau penjualan solusi perangkat lunak',
+        'Memiliki jaringan luas di sektor teknologi, korporasi, retail kreatif, atau e-commerce',
+        'Kemampuan komunikasi lisan dan tulisan yang persuasif serta percaya diri saat presentasi',
+        'Mandiri, berorientasi pada target, dan termotivasi oleh skema komisi berbasis kinerja',
+        'Fasih berbahasa Indonesia dan memiliki kemampuan bahasa Inggris bisnis yang baik'
+      ],
+      compensation: 'Komisi Proyek Tanpa Batas + Bonus Pencapaian Target Milestone'
     },
     {
-      id: 'frontend-engineer',
-      title: 'Frontend Developer (React / Next.js)',
-      department: 'Engineering',
-      location: 'Remote (Indonesia)',
-      type: 'Full-time',
-      summary: 'Membangun antarmuka web yang cepat, aksesibel, dan responsif menggunakan ekosistem React, Next.js, TypeScript, dan Tailwind CSS.',
+      id: 'ui-ux-product-designer',
+      title: 'UI/UX & Product Designer',
+      department: 'Desain & Visual Experience',
+      location: 'Studio Kapitech, Tangerang Selatan',
+      workplace: 'WFO (Work From Office)',
+      type: 'Full Time',
+      badge: 'Full Time • Studio On-site',
+      summary: 'Bergabunglah bersama tim kreatif di studio kami untuk merancang antarmuka digital kelas dunia, sistem desain responsif di Figma, dan pengalaman pengguna interaktif untuk klien global dan nasional.',
       responsibilities: [
-        'Menerjemahkan desain Figma menjadi halaman web responsif yang presisi dan aksesibel',
-        'Membangun komponen React modular yang dapat digunakan kembali dan memelihara arsitektur kode bersih',
-        'Mengintegrasikan REST API, GraphQL, dan layanan backend dengan mulus',
-        'Mengoptimalkan Core Web Vitals, kecepatan akses halaman, dan kompatibilitas peramban'
+        'Merancang antarmuka web responsif, aplikasi mobile (iOS/Android), dan sistem software SaaS berpresisi tinggi',
+        'Membangun serta memelihara sistem desain modular, token desain, dan pustaka komponen di Figma',
+        'Melakukan pemetaan alur pengguna, wireframing, pembuatan prototipe interaktif, dan uji usabilitas',
+        'Berkolaborasi langsung di studio bersama Executive Creative Director dan frontend engineer untuk memastikan hasil koding sesuai desain',
+        'Mempersiapkan deck presentasi dan menjelaskan pertimbangan desain secara objektif dalam sesi review klien'
       ],
       requirements: [
-        '2+ tahun pengalaman membangun aplikasi frontend modern dengan React dan Next.js',
-        'Kemampuan mendalam dalam TypeScript, Tailwind CSS, dan markup semantik HTML5',
-        'Terbiasa dengan animasi mikro (Motion / transisi CSS) dan state management',
-        'Pemahaman solid tentang alur kerja Git dan standar review kode'
-      ]
-    },
-    {
-      id: 'fullstack-engineer',
-      title: 'Full-Stack Developer (Node.js & Next.js)',
-      department: 'Engineering',
-      location: 'Remote (Indonesia)',
-      type: 'Full-time',
-      summary: 'Mengembangkan aplikasi web end-to-end, merancang skema database, dan membangun arsitektur API yang tangguh dan aman.',
-      responsibilities: [
-        'Merancang dan mendeploy backend API menggunakan Node.js, Express, atau Next.js server routes',
-        'Membuat dan mengoptimalkan skema database menggunakan PostgreSQL, Prisma, atau Firestore',
-        'Menerapkan sistem otentikasi aman (OAuth, JWT) dan kontrol akses berbasis peran (RBAC)',
-        'Berkolaborasi dalam konfigurasi deployment cloud di Google Cloud, AWS, atau Vercel'
+        '2+ tahun pengalaman profesional di bidang desain UI/UX untuk platform web, aplikasi mobile, atau agensi',
+        'Portofolio desain yang kuat menunjukkan penguasaan tipografi, tata letak visual modern, dan sistem UX responsif',
+        'Keahlian mendalam dalam Figma, FigJam, auto-layout, varian komponen, dan prototipe interaktif',
+        'Bersedia bekerja full-time on-site (WFO) di studio Tangerang Selatan dengan semangat kolaborasi tinggi',
+        'Ketelitian tinggi terhadap detail visual mikro, konsistensi brand, dan kelayakan teknis implementasi kode'
       ],
-      requirements: [
-        '2+ tahun pengalaman rekayasa full-stack dengan Node.js dan TypeScript',
-        'Pemahaman kuat tentang database relasional (PostgreSQL/MySQL) atau document store',
-        'Pengalaman dalam perancangan API, keamanan sistem, dan integrasi pihak ketiga',
-        'Kemampuan problem-solving yang tajam dan kebiasaan dokumentasi yang rapi'
-      ]
-    },
-    {
-      id: 'associate-project-manager',
-      title: 'Associate Project Manager',
-      department: 'Operasional',
-      location: 'Remote / Tangerang Hybrid',
-      type: 'Full-time',
-      summary: 'Mengoordinasikan siklus sprint agile, mengelola komunikasi klien, dan memastikan deliverable selesai tepat waktu lintas tim desain dan engineer.',
-      responsibilities: [
-        'Memfasilitasi perencanaan sprint, daily standup, dan penyelesaian milestone proyek',
-        'Menjadi jembatan komunikasi utama antara klien dan tim kreatif/teknis internal',
-        'Memantau lini masa proyek, dokumen ruang lingkup, dan daftar uji kualitas (QA)',
-        'Mengorganisir dokumentasi proyek di Notion dan pelacakan tugas di Linear/Trello'
-      ],
-      requirements: [
-        '1+ tahun pengalaman manajemen proyek atau koordinasi akun di agensi digital/teknologi',
-        'Keterampilan organisasi, manajemen waktu, dan multitasking yang sangat baik',
-        'Kemampuan komunikasi tertulis dan lisan yang lancar dalam Bahasa Indonesia dan Bahasa Inggris',
-        'Familiar dengan metodologi pengembangan produk agile (Scrum/Kanban)'
-      ]
+      compensation: 'Gaji Pokok Kompetitif + Asuransi Kesehatan + Bonus Kinerja Proyek'
     }
   ];
 
@@ -198,47 +413,47 @@ export const Careers = () => {
 
   const benefitsEn = [
     {
-      icon: <Laptop size={24} />,
-      title: "Remote-Friendly Flexibility",
-      desc: "Work from wherever you are most productive with flexible hours and asynchronous communication."
+      icon: <TrendingUp size={24} />,
+      title: "Uncapped Earnings & Growth",
+      desc: "Lucrative performance-driven commissions for BDRs and structured career paths with annual salary reviews."
     },
     {
       icon: <Briefcase size={24} />,
-      title: "Impactful Real Projects",
-      desc: "Collaborate on real-world digital products for innovative startups and established enterprises."
+      title: "Real Enterprise Impact",
+      desc: "Work on genuine client products for high-growth ventures, enterprise leaders, and disruptive global startups."
     },
     {
       icon: <Coffee size={24} />,
-      title: "Transparent & Direct Culture",
-      desc: "Zero bureaucracy. Direct access to leadership, open feedback, and room to take ownership."
+      title: "Inspiring Studio Culture",
+      desc: "Modern collaborative workspace in South Tangerang equipped with cutting-edge hardware, ergonomic setups, and zero bureaucracy."
     },
     {
       icon: <Heart size={24} />,
-      title: "Professional Growth",
-      desc: "Access to learning resources, modern tools (Figma, GitHub, AI tools), and project mentorship."
+      title: "Health & Professional Tools",
+      desc: "Full Figma Organization licenses, AI tool subscriptions, learning stipends, and comprehensive health coverage."
     }
   ];
 
   const benefitsId = [
     {
-      icon: <Laptop size={24} />,
-      title: "Fleksibilitas Kerja Remote",
-      desc: "Bekerja dari lokasi mana pun yang membuat Anda paling produktif dengan jam kerja fleksibel dan komunikasi asinkron."
+      icon: <TrendingUp size={24} />,
+      title: "Pendapatan & Karier Bertumbuh",
+      desc: "Komisi performa tanpa batas untuk BDR dan jenjang karier terstruktur dengan tinjauan berkala."
     },
     {
       icon: <Briefcase size={24} />,
-      title: "Proyek Nyata & Berdampak",
-      desc: "Berkontribusi pada produk digital dunia nyata untuk startup inovatif dan perusahaan korporat terkemuka."
+      title: "Dampak Nyata Bersama Klien",
+      desc: "Berkontribusi pada proyek riil untuk startup berkembang pesat dan perusahaan korporat terkemuka."
     },
     {
       icon: <Coffee size={24} />,
-      title: "Budaya Transparan & Langsung",
-      desc: "Tanpa birokrasi berbelit. Akses komunikasi langsung ke pimpinan, budaya feedback terbuka, dan kebebasan bereksplorasi."
+      title: "Budaya Studio yang Menginspirasi",
+      desc: "Ruang kerja studio kolaboratif di Tangerang Selatan dengan perangkat kerja modern dan komunikasi langsung tanpa birokrasi."
     },
     {
       icon: <Heart size={24} />,
-      title: "Pertumbuhan Profesional",
-      desc: "Akses ke sumber belajar, alat kerja modern (Figma, GitHub, AI tools), dan bimbingan proyek langsung dari praktisi senior."
+      title: "Kesehatan & Fasilitas Alat Kerja",
+      desc: "Lisensi penuh Figma, langganan tool AI, anggaran pengembangan keahlian, dan perlindungan kesehatan komprehensif."
     }
   ];
 
@@ -250,8 +465,9 @@ export const Careers = () => {
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] || null;
-    setFormData(prev => ({ ...prev, resume: file }));
+    if (e.target.files && e.target.files[0]) {
+      setFormData(prev => ({ ...prev, resume: e.target.files![0] }));
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -260,313 +476,532 @@ export const Careers = () => {
   };
 
   return (
-    <div className="bg-black text-white min-h-screen selection:bg-brand-red selection:text-white relative">
+    <div className="bg-black text-white min-h-screen selection:bg-brand-red selection:text-white relative" role="main">
       {/* Hero Section */}
-      <section className="relative pt-32 pb-16 px-6 md:px-12 border-b border-white/10 overflow-hidden">
-        <AtmosphericBackground imageUrl="/hero_background_3d.png" opacity={0.12} disableGrayscale={true} />
+      <section className="relative pt-32 sm:pt-36 md:pt-40 pb-16 sm:pb-20 px-4 sm:px-6 md:px-12 border-b border-white/10 overflow-hidden">
+        <AtmosphericBackground 
+          imageUrl="/hero_background_3d.png"
+          opacity={0.06}
+          disableGrayscale={true}
+        />
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="max-w-3xl">
-            <span className="text-brand-red font-mono font-semibold tracking-widest uppercase text-xs mb-4 block">
-              {language === 'id' ? 'Bergabung Bersama Tim Kami' : 'Join Our Team'}
+            <span className="text-brand-red font-mono font-semibold tracking-widest uppercase text-xs mb-3 block">
+              {language === 'id' ? 'Karier & Peluang Kemitraan' : 'Careers & Opportunities'}
             </span>
-            <h1 className="text-[clamp(2.5rem,6vw,5rem)] font-display font-bold leading-[1.05] tracking-tight mb-6 text-white">
-              {language === 'id' ? (
-                <>Bangun masa depan produk digital bersama <span className="text-brand-red">Kapitech</span>.</>
-              ) : (
-                <>Build the future of digital products with <span className="text-brand-red">Kapitech</span>.</>
-              )}
+            <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-display font-bold tracking-tight text-white mb-6">
+              {language === 'id' ? 'Berkarya Bersama Kapitech.' : 'Build the Future With Us.'}
             </h1>
-            <p className="text-base md:text-lg text-white/70 font-light leading-relaxed">
+            <p className="text-base sm:text-lg text-white/70 font-light leading-relaxed mb-6">
               {language === 'id'
-                ? 'Kami mencari desainer berbakat, engineer kreatif, dan problem solver berdedikasi yang menjunjung tinggi keahlian, kecepatan eksekusi, dan dampak nyata bagi klien.'
-                : 'We are looking for passionate designers, engineers, and problem solvers who value craft, speed, and genuine client impact.'}
+                ? 'Kami membuka kesempatan bagi talenta luar biasa yang berorientasi pada hasil nyata, keunggulan visual, dan kemitraan bisnis strategis untuk tumbuh bersama studio kami.'
+                : 'We are seeking exceptional individuals focused on tangible impact, visual craftsmanship, and strategic client growth to shape the future of digital products.'
+              }
             </p>
+            <div className="flex flex-wrap items-center gap-3 text-xs font-mono text-white/60">
+              <span className="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span>2 {language === 'id' ? 'Posisi Terbuka Saat Ini' : 'Open Positions Now Hiring'}</span>
+              </span>
+              <span className="px-3 py-1.5 rounded-full bg-white/5 border border-white/10">
+                {language === 'id' ? 'Studio di Tangerang Selatan' : 'Studio in South Tangerang'}
+              </span>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Culture & Benefits */}
-      <section className="py-20 px-6 md:px-12 bg-black border-b border-white/10 relative z-10">
-        <div className="max-w-7xl mx-auto">
-          <div className="max-w-2xl mb-16">
-            <span className="text-xs font-mono uppercase tracking-wider text-brand-red block mb-2 font-semibold">
-              {language === 'id' ? 'Mengapa Bergabung Bersama Kami' : 'Why Work With Us'}
+      {/* SECTION: Join With Our 12 Great Talents */}
+      <section className="py-16 sm:py-24 border-b border-white/10 bg-zinc-950/80 relative overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12 mb-10">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-brand-red/30 bg-brand-red/10 text-brand-red text-xs font-mono mb-3">
+                <Users className="w-3.5 h-3.5 text-brand-red" />
+                <span>{language === 'id' ? '12 Talenta Spesialis' : '12 Specialist Talents'}</span>
+              </div>
+              <h2 className="text-2xl sm:text-4xl md:text-5xl font-display font-bold text-white tracking-tight">
+                {language === 'id' ? 'Bergabung Bersama 12 Talenta Terbaik Kami' : 'Join with our 12 great talents'}
+              </h2>
+            </div>
+            <p className="text-xs sm:text-sm text-white/60 font-light max-w-md">
+              {language === 'id'
+                ? 'Bekerja bahu-membahu bersama para insinyur software, desainer visual, animator 3D, dan spesialis kreatif kami.'
+                : 'Collaborate shoulder-to-shoulder with our multidisciplinary squad of software engineers, visual designers, 3D animators, and creative strategists.'
+              }
+            </p>
+          </div>
+        </div>
+
+        {/* Curated Static Photo Wall (12 Specialist Talents) */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4">
+            {twelveTalents.map((talent, idx) => (
+              <button
+                key={`talent-${talent.id}`}
+                onClick={() => setSelectedTalent(talent)}
+                className="group relative flex flex-col justify-between rounded-2xl sm:rounded-3xl overflow-hidden border border-white/10 bg-zinc-950 transition-all duration-300 hover:scale-[1.03] hover:border-brand-red/60 hover:shadow-[0_0_30px_rgba(255,26,26,0.18)] text-left cursor-pointer aspect-[3/4] p-3 sm:p-4"
+                title={`${talent.name} - ${talent.role}`}
+              >
+                {/* Dark Cinematic Talent Portrait */}
+                <img 
+                  src={talent.image} 
+                  alt={talent.name}
+                  className="absolute inset-0 w-full h-full object-cover object-center brightness-75 contrast-110 group-hover:brightness-95 group-hover:scale-105 transition-all duration-500"
+                  loading="lazy"
+                />
+
+                {/* Dark Vignette Gradient */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/35 to-black/40 group-hover:via-black/10 transition-colors duration-500 pointer-events-none" />
+
+                {/* Top Badge (Specialty & Index) */}
+                <div className="relative z-10 flex items-center justify-between w-full">
+                  <span className="text-[9px] sm:text-[10px] font-mono px-2 py-0.5 rounded-full bg-black/70 backdrop-blur-md text-white/90 border border-white/15">
+                    {String(idx + 1).padStart(2, '0')}
+                  </span>
+                  <span className="text-[8px] sm:text-[9px] font-mono uppercase tracking-wider text-white/70 bg-black/60 backdrop-blur-md px-2 py-0.5 rounded-full border border-white/10 font-semibold truncate max-w-[90px] text-right">
+                    {talent.department === 'Visual Experience' ? 'Visual' : 'Code'}
+                  </span>
+                </div>
+
+                {/* Bottom Overlay Info */}
+                <div className="relative z-10 -mx-3 -mb-3 sm:-mx-4 sm:-mb-4 p-3 sm:p-3.5 bg-gradient-to-t from-black via-black/95 to-transparent pt-8 text-white">
+                  <span className="text-[9px] sm:text-[10px] font-mono text-brand-red font-semibold truncate block mb-0.5">
+                    {talent.specialty}
+                  </span>
+                  <h4 className="text-xs sm:text-sm font-display font-bold text-white truncate leading-snug">
+                    {talent.name}
+                  </h4>
+                  <p className="text-[10px] sm:text-[11px] text-white/60 truncate">
+                    {talent.role}
+                  </p>
+                </div>
+              </button>
+            ))}
+          </div>
+
+          <div className="mt-8 text-center">
+            <span className="text-xs font-mono text-white/50">
+              {language === 'id' 
+                ? '💡 Klik kartu profil mana pun untuk melihat spesialisasi dan portofolio teknis talenta.'
+                : '💡 Click any profile card to view detailed technical specialty and background.'
+              }
             </span>
-            <h2 className="text-3xl md:text-4xl font-display font-bold tracking-tight text-white">
-              {language === 'id' ? 'Lingkungan kerja yang fokus pada kualitas dan hasil.' : 'A workplace focused on craft and results.'}
+          </div>
+        </div>
+
+        {/* Interactive Talent Detail Modal */}
+        <AnimatePresence>
+          {selectedTalent && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/85 backdrop-blur-md overflow-y-auto"
+              onClick={() => setSelectedTalent(null)}
+            >
+              <motion.div
+                initial={{ scale: 0.95, opacity: 0, y: 20 }}
+                animate={{ scale: 1, opacity: 1, y: 0 }}
+                exit={{ scale: 0.95, opacity: 0, y: 20 }}
+                onClick={(e) => e.stopPropagation()}
+                className="relative w-full max-w-lg bg-zinc-950 border border-white/15 rounded-3xl p-5 sm:p-8 shadow-2xl overflow-hidden my-6"
+              >
+                <button
+                  onClick={() => setSelectedTalent(null)}
+                  className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/80 hover:text-white transition-colors z-10"
+                  aria-label="Close talent profile"
+                >
+                  <X size={18} />
+                </button>
+
+                <div className="flex items-center gap-3.5 sm:gap-4 mb-5 sm:mb-6 pr-8">
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden border border-white/15 bg-zinc-900 shrink-0 relative">
+                    <img 
+                      src={selectedTalent.image} 
+                      alt={selectedTalent.name}
+                      className="w-full h-full object-cover object-center brightness-85 contrast-105"
+                    />
+                  </div>
+                  <div className="min-w-0">
+                    <span className="text-[11px] sm:text-xs font-mono text-brand-red font-semibold block mb-0.5 truncate">
+                      {selectedTalent.department} • {selectedTalent.experience}
+                    </span>
+                    <h3 className="text-lg sm:text-xl font-display font-bold text-white truncate">
+                      {selectedTalent.name}
+                    </h3>
+                    <p className="text-xs text-white/60 truncate">
+                      {selectedTalent.role}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="space-y-3.5 sm:space-y-4 text-xs font-light text-white/80 border-t border-white/10 pt-4">
+                  <div>
+                    <span className="text-[10px] font-mono uppercase text-white/40 block mb-1">
+                      {language === 'id' ? 'Fokus Keahlian' : 'Core Specialty'}
+                    </span>
+                    <p className="font-mono text-brand-red font-medium text-xs sm:text-sm">
+                      {selectedTalent.specialty}
+                    </p>
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-mono uppercase text-white/40 block mb-1">
+                      {language === 'id' ? 'Tentang Praktik Kerja' : 'About Craft & Practice'}
+                    </span>
+                    <p className="leading-relaxed">
+                      {selectedTalent.bio}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="mt-5 sm:mt-6 pt-4 border-t border-white/10 flex justify-end">
+                  <button
+                    onClick={() => setSelectedTalent(null)}
+                    className="w-full sm:w-auto px-5 py-2.5 bg-brand-red hover:bg-white hover:text-black text-white text-xs font-mono font-medium rounded-full transition-colors"
+                  >
+                    {language === 'id' ? 'Tutup Profil' : 'Close Profile'}
+                  </button>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </section>
+
+      {/* SECTION: Current Opportunities */}
+      <section className="py-16 sm:py-24 px-4 sm:px-6 md:px-12 border-b border-white/10" id="open-positions">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
+            <div>
+              <span className="text-brand-red font-mono font-semibold tracking-widest uppercase text-xs mb-3 block">
+                {language === 'id' ? 'Peluang Terbuka' : 'Current Opportunities'}
+              </span>
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-bold text-white tracking-tight">
+                {language === 'id' ? 'Posisi yang Sedang Dibuka' : 'Available Roles'}
+              </h2>
+            </div>
+            <p className="text-xs sm:text-sm text-white/60 font-light max-w-md">
+              {language === 'id'
+                ? 'Klik salah satu posisi di bawah ini untuk melihat detail kualifikasi, tanggung jawab, dan mengirimkan lamaran langsung.'
+                : 'Click any role below to review full responsibilities, qualification benchmarks, and submit your application.'
+              }
+            </p>
+          </div>
+
+          <div className="space-y-6">
+            {positions.map((pos) => (
+              <motion.div
+                key={pos.id}
+                whileHover={{ y: -2 }}
+                onClick={() => setSelectedPosition(pos)}
+                className="cursor-pointer group p-6 sm:p-8 lg:p-10 rounded-2xl border border-white/10 bg-zinc-900/40 hover:bg-zinc-900/80 hover:border-brand-red/50 transition-all duration-300"
+              >
+                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+                  <div className="space-y-3 max-w-3xl">
+                    <div className="flex flex-wrap items-center gap-2.5">
+                      <span className="px-3 py-1 rounded-full bg-brand-red/10 border border-brand-red/30 text-brand-red text-xs font-mono font-medium">
+                        {pos.workplace}
+                      </span>
+                      <span className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-white/80 text-xs font-mono">
+                        {pos.department}
+                      </span>
+                      <span className="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-mono">
+                        {pos.badge}
+                      </span>
+                    </div>
+
+                    <h3 className="text-xl sm:text-2xl lg:text-3xl font-display font-bold text-white group-hover:text-brand-red transition-colors">
+                      {pos.title}
+                    </h3>
+
+                    <p className="text-sm text-white/70 font-light leading-relaxed">
+                      {pos.summary}
+                    </p>
+
+                    <div className="flex flex-wrap items-center gap-4 text-xs font-mono text-white/50 pt-1">
+                      <div className="flex items-center gap-1.5">
+                        <MapPin size={13} className="text-brand-red" />
+                        <span>{pos.location}</span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <Clock size={13} className="text-brand-red" />
+                        <span>{pos.type}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3 shrink-0 pt-2 lg:pt-0">
+                    <span className="px-5 py-2.5 rounded-full bg-white/5 group-hover:bg-brand-red text-white text-xs font-mono font-semibold uppercase tracking-wider transition-all duration-300 flex items-center gap-2 border border-white/10 group-hover:border-brand-red">
+                      <span>{language === 'id' ? 'Lihat Detail & Lamar' : 'View Role & Apply'}</span>
+                      <ArrowUpRight size={14} />
+                    </span>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION: Benefits & Perks */}
+      <section className="py-16 sm:py-24 px-4 sm:px-6 md:px-12 border-b border-white/10 bg-zinc-950/40">
+        <div className="max-w-7xl mx-auto">
+          <div className="max-w-3xl mb-12">
+            <span className="text-brand-red font-mono font-semibold tracking-widest uppercase text-xs mb-3 block">
+              {language === 'id' ? 'Nilai & Keuntungan' : 'Why Work With Us'}
+            </span>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-bold text-white tracking-tight">
+              {language === 'id' ? 'Lingkungan Kerja Berorientasi Prestasi' : 'Craft, Autonomy, and Real Growth'}
             </h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {benefits.map((b, idx) => (
-              <div
-                key={idx}
-                className="p-8 rounded-2xl bg-zinc-950 border border-white/10 flex flex-col justify-between hover:border-brand-red/40 transition-colors"
+            {benefits.map((benefit, i) => (
+              <div 
+                key={i}
+                className="p-6 sm:p-8 rounded-2xl border border-white/10 bg-zinc-900/40 hover:border-brand-red/30 transition-all duration-300 flex flex-col justify-between"
               >
-                <div>
-                  <div className="w-12 h-12 rounded-xl bg-brand-red/10 border border-brand-red/20 flex items-center justify-center text-brand-red mb-6">
-                    {b.icon}
-                  </div>
-                  <h3 className="text-lg font-display font-bold mb-3 text-white">{b.title}</h3>
-                  <p className="text-xs text-white/60 font-light leading-relaxed">{b.desc}</p>
+                <div className="w-12 h-12 rounded-xl bg-brand-red/10 border border-brand-red/30 flex items-center justify-center text-brand-red mb-6">
+                  {benefit.icon}
                 </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Open Positions List */}
-      <section className="py-24 px-6 md:px-12 bg-zinc-950 border-b border-white/10 relative z-10" id="positions">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
-            <div>
-              <span className="text-xs font-mono uppercase tracking-wider text-brand-red block mb-2 font-semibold">
-                {language === 'id' ? 'Posisi Terbuka' : 'Open Roles'} ({positions.length})
-              </span>
-              <h2 className="text-3xl md:text-4xl font-display font-bold tracking-tight text-white">
-                {language === 'id' ? 'Peluang Karir Saat Ini' : 'Current Opportunities'}
-              </h2>
-            </div>
-            <p className="text-xs text-white/60 font-mono">
-              {language === 'id' ? 'Kontak rekrutmen langsung:' : 'Direct recruitment inquiries:'}{' '}
-              <a href="mailto:recruitment@kapitech.id" className="text-brand-red hover:underline font-medium">recruitment@kapitech.id</a>
-            </p>
-          </div>
-
-          <div className="space-y-4">
-            {positions.map((pos) => (
-              <div
-                key={pos.id}
-                onClick={() => { setSelectedPosition(pos); setIsSubmitted(false); }}
-                className="p-6 md:p-8 rounded-2xl bg-zinc-950 border border-white/10 hover:border-brand-red/50 transition-all duration-300 flex flex-col md:flex-row md:items-center justify-between gap-6 cursor-pointer group"
-              >
-                <div className="space-y-2">
-                  <div className="flex flex-wrap items-center gap-3">
-                    <span className="text-[10px] font-mono px-2.5 py-0.5 rounded bg-brand-red/20 text-brand-red border border-brand-red/30 uppercase tracking-wider">
-                      {pos.department}
-                    </span>
-                    <span className="text-xs text-white/50 flex items-center gap-1">
-                      <MapPin size={12} /> {pos.location}
-                    </span>
-                    <span className="text-xs text-white/50 flex items-center gap-1">
-                      <Clock size={12} /> {pos.type}
-                    </span>
-                  </div>
-                  <h3 className="text-xl md:text-2xl font-display font-bold text-white group-hover:text-brand-red transition-colors">
-                    {pos.title}
+                <div>
+                  <h3 className="text-lg font-display font-bold text-white mb-2">
+                    {benefit.title}
                   </h3>
-                  <p className="text-xs md:text-sm text-white/60 font-light max-w-2xl">
-                    {pos.summary}
+                  <p className="text-xs sm:text-sm text-white/70 font-light leading-relaxed">
+                    {benefit.desc}
                   </p>
                 </div>
-
-                <div className="flex items-center gap-2 text-xs font-semibold text-white/70 group-hover:text-white uppercase tracking-wider shrink-0">
-                  <span>{language === 'id' ? 'Lihat Detail & Lamar' : 'View Details & Apply'}</span>
-                  <ArrowUpRight size={16} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                </div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* POSITION DETAILS & APPLICATION MODAL */}
+      {/* Detail & Application Modal */}
       <AnimatePresence>
         {selectedPosition && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4 md:p-8 bg-black/85 backdrop-blur-md overflow-y-auto">
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 overflow-y-auto bg-black/85 backdrop-blur-md">
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              transition={{ duration: 0.3 }}
-              className="relative w-full max-w-3xl my-auto max-h-[90vh] bg-zinc-950 border border-white/20 rounded-2xl sm:rounded-3xl overflow-hidden flex flex-col shadow-2xl"
+              transition={{ duration: 0.25 }}
+              className="relative w-full max-w-3xl bg-zinc-950 border border-white/15 rounded-2xl overflow-hidden shadow-2xl my-8 max-h-[90vh] flex flex-col"
             >
-              {/* Modal Header */}
-              <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 sm:py-4 border-b border-white/10 bg-black/80 sticky top-0 z-20">
-                <div className="min-w-0 flex-1 pr-3 sm:pr-4">
-                  <span className="text-[10px] sm:text-xs font-mono text-brand-red uppercase tracking-wider block mb-0.5 font-medium">
-                    {selectedPosition.department} • {selectedPosition.type}
-                  </span>
-                  <h3 className="text-base sm:text-lg md:text-xl font-display font-bold text-white leading-snug break-words">
-                    {selectedPosition.title}
-                  </h3>
+              {/* Sticky Modal Header with Role Title */}
+              <div className="sticky top-0 z-20 p-5 sm:p-6 bg-zinc-950/95 backdrop-blur-md border-b border-white/10 space-y-3">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="space-y-1.5 min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="px-2.5 py-0.5 rounded-full bg-brand-red/15 border border-brand-red/40 text-brand-red text-[11px] font-mono font-semibold">
+                        {selectedPosition.workplace}
+                      </span>
+                      <span className="text-[11px] font-mono text-white/60">
+                        {selectedPosition.department}
+                      </span>
+                    </div>
+                    <h2 className="text-xl sm:text-2xl md:text-3xl font-display font-bold text-white tracking-tight leading-tight">
+                      {selectedPosition.title}
+                    </h2>
+                  </div>
+                  
+                  <button
+                    onClick={() => {
+                      setSelectedPosition(null);
+                      setIsSubmitted(false);
+                    }}
+                    className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/5 hover:bg-white/15 border border-white/10 flex items-center justify-center text-white/70 hover:text-white transition-colors shrink-0"
+                    aria-label="Close modal"
+                  >
+                    <X size={18} />
+                  </button>
                 </div>
-                <button
-                  onClick={() => setSelectedPosition(null)}
-                  className="w-8 h-8 sm:w-9 sm:h-9 rounded-full aspect-square shrink-0 bg-white/10 hover:bg-white hover:text-black transition-colors flex items-center justify-center active:scale-95 ml-auto"
-                  aria-label="Close modal"
-                >
-                  <X size={16} />
-                </button>
+
+                <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-xs font-mono text-white/60">
+                  <span className="flex items-center gap-1.5">
+                    <MapPin size={13} className="text-brand-red shrink-0" />
+                    <span>{selectedPosition.location}</span>
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <Clock size={13} className="text-brand-red shrink-0" />
+                    <span>{selectedPosition.type}</span>
+                  </span>
+                  {selectedPosition.compensation && (
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 text-[11px]">
+                      <Award size={13} className="shrink-0" />
+                      <span><strong>{language === 'id' ? 'Kompensasi:' : 'Compensation:'}</strong> {selectedPosition.compensation}</span>
+                    </span>
+                  )}
+                </div>
               </div>
 
-              {/* Modal Scroll Content */}
-              <div className="overflow-y-auto p-6 md:p-10 space-y-8">
-                {isSubmitted ? (
-                  <div className="text-center py-12 space-y-4">
-                    <div className="w-16 h-16 rounded-full bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 mx-auto">
-                      <CheckCircle2 size={32} />
-                    </div>
-                    <h3 className="text-2xl font-display font-bold">
-                      {language === 'id' ? 'Lamaran Anda Berhasil Terkirim!' : 'Application Received!'}
-                    </h3>
-                    <p className="text-sm text-white/70 max-w-md mx-auto font-light">
-                      {language === 'id' ? (
-                        <>Terima kasih telah melamar untuk posisi <span className="text-white font-medium">{selectedPosition.title}</span>. Tim rekrutmen kami akan meninjau kualifikasi Anda dan menghubungi via email.</>
-                      ) : (
-                        <>Thank you for applying for the <span className="text-white font-medium">{selectedPosition.title}</span> role. Our hiring team will review your application and get in touch via email.</>
-                      )}
-                    </p>
-                    <button
-                      onClick={() => setSelectedPosition(null)}
-                      className="px-6 py-3 rounded-xl bg-white text-black text-xs font-semibold uppercase tracking-wider hover:bg-brand-red hover:text-white transition-colors"
-                    >
-                      {language === 'id' ? 'Tutup Jendela' : 'Close Window'}
-                    </button>
-                  </div>
-                ) : (
-                  <>
-                    <div>
-                      <h4 className="text-xs font-mono uppercase tracking-wider text-white/50 mb-2">
-                        {language === 'id' ? 'Deskripsi Peran' : 'Role Overview'}
-                      </h4>
-                      <p className="text-sm text-white/80 font-light leading-relaxed">
-                        {selectedPosition.summary}
+              {/* Modal Body */}
+              <div className="overflow-y-auto p-6 sm:p-8 space-y-8">
+                {/* Responsibilities */}
+                <div>
+                  <h4 className="text-xs font-mono uppercase tracking-wider text-brand-red mb-3 font-semibold">
+                    {language === 'id' ? 'Tanggung Jawab Utama' : 'Key Responsibilities'}
+                  </h4>
+                  <ul className="space-y-2.5">
+                    {selectedPosition.responsibilities.map((resp, i) => (
+                      <li key={i} className="flex items-start gap-2.5 text-xs sm:text-sm text-white/80 font-light">
+                        <CheckCircle2 size={15} className="text-emerald-400 shrink-0 mt-0.5" />
+                        <span>{resp}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Requirements */}
+                <div>
+                  <h4 className="text-xs font-mono uppercase tracking-wider text-brand-red mb-3 font-semibold">
+                    {language === 'id' ? 'Kualifikasi & Persyaratan' : 'Requirements & Skills'}
+                  </h4>
+                  <ul className="space-y-2.5">
+                    {selectedPosition.requirements.map((req, i) => (
+                      <li key={i} className="flex items-start gap-2.5 text-xs sm:text-sm text-white/80 font-light">
+                        <CheckCircle2 size={15} className="text-brand-red shrink-0 mt-0.5" />
+                        <span>{req}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Application Form */}
+                <div className="pt-6 border-t border-white/10">
+                  <h4 className="text-lg font-display font-bold text-white mb-2">
+                    {language === 'id' ? 'Kirimkan Lamaran Anda' : 'Submit Your Application'}
+                  </h4>
+                  <p className="text-xs text-white/60 font-light mb-6">
+                    {language === 'id'
+                      ? 'Lengkapi formulir di bawah ini atau kirimkan CV & portofolio Anda langsung ke recruitment@kapitech.id'
+                      : 'Fill in the form below or send your resume and portfolio directly to recruitment@kapitech.id'
+                    }
+                  </p>
+
+                  {isSubmitted ? (
+                    <div className="p-6 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-center space-y-3">
+                      <CheckCircle2 size={36} className="text-emerald-400 mx-auto" />
+                      <h5 className="text-lg font-display font-bold text-white">
+                        {language === 'id' ? 'Lamaran Berhasil Dikirimkan!' : 'Application Successfully Submitted!'}
+                      </h5>
+                      <p className="text-xs text-white/80 max-w-md mx-auto font-light">
+                        {language === 'id'
+                          ? 'Terima kasih atas minat Anda bergabung di Kapitech Agency. Tim rekrutmen kami akan meninjau profil Anda dan menghubungi Anda dalam 2-3 hari kerja.'
+                          : 'Thank you for your interest in joining Kapitech Agency. Our recruitment squad will review your application and reach out within 2-3 business days.'
+                        }
                       </p>
                     </div>
-
-                    <div>
-                      <h4 className="text-xs font-mono uppercase tracking-wider text-white/50 mb-3">
-                        {language === 'id' ? 'Tanggung Jawab Utama' : 'Key Responsibilities'}
-                      </h4>
-                      <div className="space-y-2">
-                        {selectedPosition.responsibilities.map((resp, i) => (
-                          <div key={i} className="flex items-start gap-2.5 text-xs text-white/80">
-                            <CheckCircle2 size={14} className="text-brand-red shrink-0 mt-0.5" />
-                            <span className="font-light leading-relaxed">{resp}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div>
-                      <h4 className="text-xs font-mono uppercase tracking-wider text-white/50 mb-3">
-                        {language === 'id' ? 'Kualifikasi & Persyaratan' : 'Qualifications & Requirements'}
-                      </h4>
-                      <div className="space-y-2">
-                        {selectedPosition.requirements.map((req, i) => (
-                          <div key={i} className="flex items-start gap-2.5 text-xs text-white/80">
-                            <CheckCircle2 size={14} className="text-brand-red shrink-0 mt-0.5" />
-                            <span className="font-light leading-relaxed">{req}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Quick Application Form */}
-                    <div className="pt-6 border-t border-white/10">
-                      <h4 className="text-base font-display font-bold mb-4">
-                        {language === 'id' ? 'Kirimkan Lamaran Anda' : 'Submit Your Application'}
-                      </h4>
-                      <form onSubmit={handleSubmit} className="space-y-4">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div>
-                            <label className="block text-[11px] font-mono text-white/50 uppercase mb-1">
-                              {language === 'id' ? 'Nama Lengkap *' : 'Full Name *'}
-                            </label>
-                            <input
-                              type="text"
-                              name="name"
-                              required
-                              value={formData.name}
-                              onChange={handleInputChange}
-                              placeholder="e.g. Alex Pratama"
-                              className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red"
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-[11px] font-mono text-white/50 uppercase mb-1">
-                              {language === 'id' ? 'Alamat Email *' : 'Email Address *'}
-                            </label>
-                            <input
-                              type="email"
-                              name="email"
-                              required
-                              value={formData.email}
-                              onChange={handleInputChange}
-                              placeholder="alex@example.com"
-                              className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red"
-                            />
-                          </div>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div>
-                            <label className="block text-[11px] font-mono text-white/50 uppercase mb-1">
-                              {language === 'id' ? 'Nomor WhatsApp / Telepon' : 'Phone / WhatsApp'}
-                            </label>
-                            <input
-                              type="tel"
-                              name="phone"
-                              value={formData.phone}
-                              onChange={handleInputChange}
-                              placeholder="+62 812-xxxx-xxxx"
-                              className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red"
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-[11px] font-mono text-white/50 uppercase mb-1">
-                              {language === 'id' ? 'Tautan Portofolio / GitHub *' : 'Portfolio / GitHub Link *'}
-                            </label>
-                            <input
-                              type="url"
-                              name="portfolio"
-                              required
-                              value={formData.portfolio}
-                              onChange={handleInputChange}
-                              placeholder="https://behance.net/alex or https://github.com/alex"
-                              className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red"
-                            />
-                          </div>
-                        </div>
-
+                  ) : (
+                    <form onSubmit={handleSubmit} className="space-y-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-[11px] font-mono text-white/50 uppercase mb-1">
-                            {language === 'id' ? 'Catatan Singkat / Mengapa Tertarik di Kapitech?' : 'Cover Note / Why Kapitech?'}
+                          <label className="block text-[11px] font-mono text-white/60 mb-1.5 uppercase">
+                            {language === 'id' ? 'Nama Lengkap *' : 'Full Name *'}
                           </label>
-                          <textarea
-                            name="coverLetter"
-                            rows={3}
-                            value={formData.coverLetter}
+                          <input 
+                            type="text"
+                            name="name"
+                            required
+                            value={formData.name}
                             onChange={handleInputChange}
-                            placeholder={language === 'id' ? 'Ceritakan secara singkat pengalaman dan kontribusi yang ingin Anda berikan...' : 'Tell us briefly about your experience and what you hope to achieve at Kapitech...'}
-                            className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red resize-none"
+                            placeholder={language === 'id' ? 'e.g. Alex Pratama' : 'e.g. Alex Morgan'}
+                            className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-mono"
                           />
                         </div>
 
                         <div>
-                          <label className="block text-[11px] font-mono text-white/50 uppercase mb-1">
-                            {language === 'id' ? 'Resume / CV (Format PDF atau DOC)' : 'Resume / CV (PDF or DOC)'}
+                          <label className="block text-[11px] font-mono text-white/60 mb-1.5 uppercase">
+                            {language === 'id' ? 'Alamat Email *' : 'Email Address *'}
                           </label>
-                          <input
+                          <input 
+                            type="email"
+                            name="email"
+                            required
+                            value={formData.email}
+                            onChange={handleInputChange}
+                            placeholder="alex@example.com"
+                            className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-mono"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-[11px] font-mono text-white/60 mb-1.5 uppercase">
+                            {language === 'id' ? 'Nomor WhatsApp / HP *' : 'Phone / WhatsApp *'}
+                          </label>
+                          <input 
+                            type="tel"
+                            name="phone"
+                            required
+                            value={formData.phone}
+                            onChange={handleInputChange}
+                            placeholder="+62 812-3456-7890"
+                            className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-mono"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-[11px] font-mono text-white/60 mb-1.5 uppercase">
+                            {language === 'id' ? 'Tautan Portofolio / LinkedIn *' : 'Portfolio / LinkedIn URL *'}
+                          </label>
+                          <input 
+                            type="url"
+                            name="portfolio"
+                            required
+                            value={formData.portfolio}
+                            onChange={handleInputChange}
+                            placeholder="https://linkedin.com/in/... or https://behance.net/..."
+                            className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-mono"
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-[11px] font-mono text-white/60 mb-1.5 uppercase">
+                          {language === 'id' ? 'Pesan / Pengantar Singkat' : 'Cover Note / Introduction'}
+                        </label>
+                        <textarea 
+                          name="coverLetter"
+                          rows={3}
+                          value={formData.coverLetter}
+                          onChange={handleInputChange}
+                          placeholder={language === 'id' ? 'Ceritakan secara singkat pengalaman dan motivasi Anda...' : 'Briefly describe your relevant background and motivations...'}
+                          className="w-full bg-zinc-900 border border-white/10 rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-mono"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-[11px] font-mono text-white/60 mb-1.5 uppercase">
+                          {language === 'id' ? 'Unggah CV / Resume (PDF maks 5MB)' : 'Upload Resume / CV (PDF max 5MB)'}
+                        </label>
+                        <div className="relative border border-dashed border-white/20 rounded-xl p-4 text-center hover:border-brand-red/50 transition-colors bg-zinc-900/50">
+                          <input 
                             type="file"
                             accept=".pdf,.doc,.docx"
                             onChange={handleFileChange}
-                            className="w-full text-xs text-white/60 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-white/10 file:text-white hover:file:bg-brand-red file:cursor-pointer"
+                            className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
                           />
+                          <Upload className="w-5 h-5 text-white/40 mx-auto mb-1.5" />
+                          <span className="text-xs text-white/70 font-mono block">
+                            {formData.resume ? formData.resume.name : (language === 'id' ? 'Klik atau seret file CV Anda ke sini' : 'Click or drag your CV file here')}
+                          </span>
                         </div>
+                      </div>
 
-                        <button
-                          type="submit"
-                          className="w-full py-3.5 rounded-xl bg-brand-red hover:bg-white text-white hover:text-black font-semibold text-xs uppercase tracking-wider transition-colors"
-                        >
-                          {language === 'id' ? 'Kirimkan Lamaran' : 'Submit Application'}
-                        </button>
-                      </form>
-                    </div>
-                  </>
-                )}
+                      <button
+                        type="submit"
+                        className="w-full py-3 rounded-xl bg-brand-red hover:bg-white text-white hover:text-black font-semibold text-xs font-mono uppercase tracking-wider transition-all duration-300 shadow-lg shadow-brand-red/20 flex items-center justify-center gap-2"
+                      >
+                        <span>{language === 'id' ? 'Kirimkan Lamaran Sekarang' : 'Submit Application Now'}</span>
+                        <ArrowUpRight size={16} />
+                      </button>
+                    </form>
+                  )}
+                </div>
               </div>
             </motion.div>
           </div>

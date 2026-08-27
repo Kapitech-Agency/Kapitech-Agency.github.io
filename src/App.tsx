@@ -18,6 +18,9 @@ import { Contact } from './pages/Contact';
 import { Careers } from './pages/Careers';
 import { PrivacyPolicy } from './pages/PrivacyPolicy';
 import { TermsOfService } from './pages/TermsOfService';
+import { AiInstructions } from './pages/AiInstructions';
+import { EditorialPolicy } from './pages/EditorialPolicy';
+import { CookiePolicy } from './pages/CookiePolicy';
 import NotFound from './pages/NotFound';
 
 const ScrollToTop = () => {
@@ -49,6 +52,9 @@ const AnimatedRoutes = () => {
           <Route path="/contact" element={<Contact />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/terms" element={<TermsOfService />} />
+          <Route path="/ai-instructions" element={<AiInstructions />} />
+          <Route path="/editorial-policy" element={<EditorialPolicy />} />
+          <Route path="/cookie-policy" element={<CookiePolicy />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </motion.div>

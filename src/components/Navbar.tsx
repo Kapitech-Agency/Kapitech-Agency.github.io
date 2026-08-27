@@ -173,35 +173,35 @@ export const Navbar = () => {
 
           {/* Mobile Right Controls: Language Switcher & Hamburger Toggle */}
           <div className="flex items-center gap-2 sm:gap-3 md:hidden">
-            <div className="flex items-center p-0.5 rounded-full bg-zinc-900 border border-white/15 text-[10px] font-mono font-semibold">
+            <div className="flex items-center p-0.5 rounded-full bg-zinc-900 border border-white/15 text-[11px] font-mono font-semibold">
               <button
                 onClick={() => setLanguage('en')}
                 className={cn(
-                  "px-2.5 py-1 rounded-full transition-colors",
+                  "min-w-[34px] py-1 px-2 rounded-full transition-colors flex items-center justify-center",
                   language === 'en' ? "bg-brand-red text-white font-bold" : "text-white/60"
                 )}
-                aria-label="Bahasa Inggris"
+                aria-label="Switch to English"
               >
                 EN
               </button>
               <button
                 onClick={() => setLanguage('id')}
                 className={cn(
-                  "px-2.5 py-1 rounded-full transition-colors",
+                  "min-w-[34px] py-1 px-2 rounded-full transition-colors flex items-center justify-center",
                   language === 'id' ? "bg-brand-red text-white font-bold" : "text-white/60"
                 )}
-                aria-label="Bahasa Indonesia"
+                aria-label="Ganti ke Bahasa Indonesia"
               >
                 ID
               </button>
             </div>
 
             <button 
-              className="w-10 h-10 rounded-xl bg-zinc-900 border border-white/10 flex items-center justify-center text-white active:bg-white/20 transition-colors"
+              className="w-11 h-11 rounded-xl bg-zinc-900 border border-white/15 flex items-center justify-center text-white active:bg-white/20 transition-colors shrink-0"
               onClick={() => setIsMenuOpen(true)}
               aria-label="Open Navigation Menu"
             >
-              <Menu size={20} />
+              <Menu size={22} />
             </button>
           </div>
         </div>
@@ -215,26 +215,30 @@ export const Navbar = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25 }}
-            className="fixed inset-0 z-[100] bg-black flex flex-col p-5 sm:p-8 overflow-y-auto"
+            className="fixed inset-0 z-[100] bg-black/98 flex flex-col p-4 sm:p-6 overflow-y-auto"
           >
             {/* Header in Mobile Menu */}
-            <div className="flex justify-between items-center pb-4 border-b border-white/10">
-              <div className="flex items-center gap-2.5">
+            <div className="flex justify-between items-center pb-4 border-b border-white/10 shrink-0">
+              <Link 
+                to="/" 
+                onClick={() => setIsMenuOpen(false)}
+                className="flex items-center gap-2.5"
+              >
                 <img 
                   src="/Kapitech Logo 3D Glass.png" 
                   alt="Kapitech" 
                   className="h-8 w-auto object-contain"
                 />
                 <span className="font-display font-bold text-base text-white">Kapitech Agency</span>
-              </div>
+              </Link>
               
               <div className="flex items-center gap-2">
                 {/* Language Switcher inside Mobile Menu */}
-                <div className="flex items-center p-0.5 rounded-full bg-zinc-900 border border-white/15 text-[10px] font-mono font-semibold">
+                <div className="flex items-center p-0.5 rounded-full bg-zinc-900 border border-white/15 text-[11px] font-mono font-semibold">
                   <button
                     onClick={() => setLanguage('en')}
                     className={cn(
-                      "px-2.5 py-1 rounded-full transition-colors",
+                      "min-w-[34px] py-1 px-2 rounded-full transition-colors flex items-center justify-center",
                       language === 'en' ? "bg-brand-red text-white font-bold" : "text-white/60"
                     )}
                   >
@@ -243,7 +247,7 @@ export const Navbar = () => {
                   <button
                     onClick={() => setLanguage('id')}
                     className={cn(
-                      "px-2.5 py-1 rounded-full transition-colors",
+                      "min-w-[34px] py-1 px-2 rounded-full transition-colors flex items-center justify-center",
                       language === 'id' ? "bg-brand-red text-white font-bold" : "text-white/60"
                     )}
                   >
@@ -253,16 +257,16 @@ export const Navbar = () => {
 
                 <button 
                   onClick={() => setIsMenuOpen(false)} 
-                  className="w-10 h-10 rounded-xl bg-zinc-900 border border-white/10 hover:bg-brand-red hover:text-white transition-colors text-white flex items-center justify-center"
+                  className="w-11 h-11 rounded-xl bg-zinc-900 border border-white/15 hover:bg-brand-red hover:text-white active:scale-95 transition-all text-white flex items-center justify-center shrink-0"
                   aria-label="Close menu"
                 >
-                  <X size={20} />
+                  <X size={22} />
                 </button>
               </div>
             </div>
 
             {/* Nav Links */}
-            <div className="flex flex-col gap-2 my-auto py-6">
+            <div className="flex flex-col gap-2.5 my-auto py-6">
               {navLinks.map((link, i) => {
                 const isActive = location.pathname === link.href;
                 return (
@@ -276,7 +280,7 @@ export const Navbar = () => {
                       to={link.href}
                       onClick={() => setIsMenuOpen(false)}
                       className={cn(
-                        "flex items-center justify-between py-3.5 px-4 rounded-2xl transition-colors",
+                        "flex items-center justify-between py-4 px-4 rounded-2xl transition-colors",
                         isActive 
                           ? "bg-zinc-900 text-white font-bold border border-brand-red/40" 
                           : "text-white/80 hover:text-white hover:bg-zinc-950 active:bg-zinc-900"
@@ -300,7 +304,7 @@ export const Navbar = () => {
                 <Link
                   to="/contact"
                   onClick={() => setIsMenuOpen(false)}
-                  className="w-full h-12 rounded-xl bg-brand-red text-white flex items-center justify-center text-xs font-semibold uppercase tracking-wider gap-2 shadow-lg shadow-brand-red/20 active:scale-[0.98] transition-transform"
+                  className="w-full h-12 rounded-xl bg-brand-red hover:bg-white text-white hover:text-black flex items-center justify-center text-xs font-semibold uppercase tracking-wider gap-2 shadow-lg shadow-brand-red/20 active:scale-[0.98] transition-all"
                 >
                   <span>{t('nav.startProject')}</span>
                   <ArrowUpRight size={16} />
@@ -309,20 +313,22 @@ export const Navbar = () => {
             </div>
 
             {/* Quick Contact & Footer in Drawer */}
-            <div className="pt-5 border-t border-white/10 space-y-3">
-              <div className="grid grid-cols-2 gap-2 text-xs">
+            <div className="pt-4 border-t border-white/10 space-y-3 shrink-0">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
                 <a
-                  href="tel:+6287769957062"
-                  className="p-2.5 rounded-xl bg-zinc-900 border border-white/10 flex items-center gap-2 text-white/80 active:bg-zinc-800"
+                  href="https://wa.me/6287769957062?text=Halo%20Kapitech%20Agency,%20saya%20ingin%20konsultasi%20proyek."
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-3 rounded-xl bg-zinc-900/90 border border-white/10 flex items-center gap-2.5 text-white/85 active:bg-zinc-800 transition-colors"
                 >
-                  <Phone size={14} className="text-brand-red shrink-0" />
-                  <span className="truncate">+62 877-6995-7062</span>
+                  <Phone size={15} className="text-brand-red shrink-0" />
+                  <span className="truncate">+62 877-6995-7062 (WhatsApp)</span>
                 </a>
                 <a
                   href="mailto:hello@kapitech.id"
-                  className="p-2.5 rounded-xl bg-zinc-900 border border-white/10 flex items-center gap-2 text-white/80 active:bg-zinc-800"
+                  className="p-3 rounded-xl bg-zinc-900/90 border border-white/10 flex items-center gap-2.5 text-white/85 active:bg-zinc-800 transition-colors"
                 >
-                  <Mail size={14} className="text-brand-red shrink-0" />
+                  <Mail size={15} className="text-brand-red shrink-0" />
                   <span className="truncate">hello@kapitech.id</span>
                 </a>
               </div>

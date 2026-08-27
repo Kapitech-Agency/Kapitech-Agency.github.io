@@ -20,17 +20,37 @@ export const Contact = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   const serviceOptionsEn = [
-    'Web & Software Development',
-    'UI/UX & Product Design',
-    'Branding & Visual Identity',
-    'Mobile App Development'
+    // Visual Experience
+    'UI/UX Design',
+    'Video Production (Event, Wedding & Commercials)',
+    '2D Animation',
+    'Branding & Identity',
+    'Motion & Graphic Design',
+    'Creative Design',
+    '3D Visualization',
+    // Innovation Development
+    'Brochure Site / Company Profile Website',
+    'E-Commerce Website',
+    'Web Application',
+    'ERP / CRM System',
+    'IT Support & Infrastructure'
   ];
 
   const serviceOptionsId = [
-    'Pengembangan Web & Software',
-    'Desain UI/UX & Produk',
-    'Branding & Identitas Visual',
-    'Pengembangan Aplikasi Mobile'
+    // Visual Experience
+    'UI/UX Design',
+    'Produksi Video (Event, Pernikahan & Iklan)',
+    'Animasi 2D',
+    'Branding & Identitas',
+    'Motion & Desain Grafis',
+    'Desain Kreatif & Publikasi',
+    'Visualisasi 3D',
+    // Innovation Development
+    'Website Profil Perusahaan / Brochure Site',
+    'Website E-Commerce',
+    'Aplikasi Web / SaaS',
+    'Sistem ERP / CRM',
+    'Dukungan & Infrastruktur IT'
   ];
 
   const serviceOptions = language === 'id' ? serviceOptionsId : serviceOptionsEn;
@@ -377,7 +397,7 @@ export const Contact = () => {
                           value={formState.name}
                           onChange={handleInputChange}
                           placeholder={language === 'id' ? 'cth. Budi Santoso' : 'e.g. John Doe'}
-                          className="w-full bg-black/60 border border-white/10 rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red"
+                          className="w-full bg-black/60 border border-white/10 rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-mono"
                         />
                       </div>
                       <div>
@@ -391,7 +411,7 @@ export const Contact = () => {
                           value={formState.email}
                           onChange={handleInputChange}
                           placeholder="john@company.com"
-                          className="w-full bg-black/60 border border-white/10 rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red"
+                          className="w-full bg-black/60 border border-white/10 rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-mono"
                         />
                       </div>
                     </div>
@@ -407,7 +427,7 @@ export const Contact = () => {
                           value={formState.company}
                           onChange={handleInputChange}
                           placeholder="e.g. Acme Corp"
-                          className="w-full bg-black/60 border border-white/10 rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red"
+                          className="w-full bg-black/60 border border-white/10 rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-mono"
                         />
                       </div>
                       <div>
@@ -420,7 +440,7 @@ export const Contact = () => {
                           value={formState.phone}
                           onChange={handleInputChange}
                           placeholder="+62 812-xxxx-xxxx"
-                          className="w-full bg-black/60 border border-white/10 rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red"
+                          className="w-full bg-black/60 border border-white/10 rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-mono"
                         />
                       </div>
                     </div>
@@ -460,7 +480,7 @@ export const Contact = () => {
                         value={formState.message}
                         onChange={handleInputChange}
                         placeholder={language === 'id' ? 'Ceritakan tentang kebutuhan produk yang ingin dibangun, tantangan saat ini, target rilis, dll...' : 'Tell us about what you want to build, existing challenges, desired launch dates, etc...'}
-                        className="w-full bg-black/60 border border-white/10 rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red resize-none"
+                        className="w-full bg-black/60 border border-white/10 rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red resize-none font-mono"
                       />
                     </div>
 

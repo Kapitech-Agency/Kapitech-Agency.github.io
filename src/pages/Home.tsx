@@ -1,12 +1,38 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
-import { ArrowUpRight, CheckCircle2, Globe, Cpu, Layout, Code2, Palette, Box, Shield, Layers, X, Smartphone, Sparkles, Building2, Briefcase, Users, BarChart3, ChevronRight } from 'lucide-react';
+import { 
+  ArrowUpRight, 
+  CheckCircle2, 
+  Globe, 
+  Cpu, 
+  Layout, 
+  Code2, 
+  Palette, 
+  Box, 
+  Shield, 
+  Layers, 
+  X, 
+  Smartphone, 
+  Sparkles, 
+  Building2, 
+  Briefcase, 
+  Users, 
+  BarChart3, 
+  ChevronRight,
+  Video,
+  Film,
+  ShoppingCart,
+  Server,
+  Wrench,
+  TrendingUp,
+  Target
+} from 'lucide-react';
 import { PerspectiveTilt } from '../components/ui/PerspectiveTilt';
 import { Testimonials } from '../components/Testimonials';
 import { AtmosphericBackground } from '../components/ui/AtmosphericBackground';
 import { useLanguage } from '../lib/LanguageContext';
-import { cn } from '../lib/utils';
+import { allProjects } from '../data/projectsData';
 
 export const Home = () => {
   const { t, language } = useLanguage();
@@ -34,139 +60,33 @@ export const Home = () => {
     { name: "AWS & GCP", category: "Cloud", icon: <Shield size={18} /> },
   ];
 
-  const projectsEn = [
-    {
-      title: "Lumina Real Estate Portal",
-      category: "Web Development & UI/UX",
-      image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=1200",
-      description: "Interactive real estate portal featuring responsive search filters, virtual tour showcases, and an optimized lead capture pipeline.",
-      stack: ["Next.js", "TypeScript", "Tailwind CSS", "PostgreSQL"],
-      status: "Live Project",
-      client: "Lumina Real Estate"
-    },
-    {
-      title: "Aura Studio Brand & Web",
-      category: "Visual Identity & Frontend",
-      image: "https://images.unsplash.com/photo-1542744094-3a31f272c490?auto=format&fit=crop&q=80&w=1200",
-      description: "Comprehensive visual branding, design system guidelines, and custom high-performance web experience for a creative agency.",
-      stack: ["React", "Figma", "Motion", "Tailwind CSS"],
-      status: "Completed",
-      client: "Aura Creative Studio"
-    },
-    {
-      title: "Nexus Mobile Banking UI",
-      category: "Mobile App & Product Design",
-      image: "https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&q=80&w=1200",
-      description: "Intuitive financial dashboard, real-time transaction tracking, and frictionless user flows designed for mobile finance.",
-      stack: ["React Native", "TypeScript", "Node.js", "Figma"],
-      status: "Production",
-      client: "Nexus Fintech"
-    },
-    {
-      title: "Solaris CleanTech Dashboard",
-      category: "SaaS & Data Visualization",
-      image: "https://images.unsplash.com/photo-1497435334941-8c899ee9e8e9?auto=format&fit=crop&q=80&w=1200",
-      description: "Clean operational interface for energy monitoring, production metrics, and automated reporting systems across 40+ solar farms.",
-      stack: ["Next.js", "D3.js", "Tailwind CSS", "GCP"],
-      status: "Live Project",
-      client: "Solaris Energy"
-    }
-  ];
+  const previewProjects = allProjects.slice(0, 4);
 
-  const projectsId = [
-    {
-      title: "Portal Real Estate Lumina",
-      category: "Pengembangan Web & UI/UX",
-      image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=1200",
-      description: "Portal real estate interaktif dengan filter pencarian responsif, pameran tur virtual, dan sistem penangkapan prospek yang teroptimasi.",
-      stack: ["Next.js", "TypeScript", "Tailwind CSS", "PostgreSQL"],
-      status: "Proyek Aktif",
-      client: "Lumina Real Estate"
-    },
-    {
-      title: "Brand & Web Aura Studio",
-      category: "Identitas Visual & Frontend",
-      image: "https://images.unsplash.com/photo-1542744094-3a31f272c490?auto=format&fit=crop&q=80&w=1200",
-      description: "Branding visual komprehensif, pedoman sistem desain, dan pengalaman web kustom berkecepatan tinggi untuk agensi kreatif terkemuka.",
-      stack: ["React", "Figma", "Motion", "Tailwind CSS"],
-      status: "Selesai",
-      client: "Aura Creative Studio"
-    },
-    {
-      title: "UI Mobile Banking Nexus",
-      category: "Aplikasi Mobile & Desain Produk",
-      image: "https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&q=80&w=1200",
-      description: "Dashboard keuangan intuitif, pelacakan transaksi real-time, dan alur pengguna yang mulus untuk kebutuhan mobile fintech.",
-      stack: ["React Native", "TypeScript", "Node.js", "Figma"],
-      status: "Produksi",
-      client: "Nexus Fintech"
-    },
-    {
-      title: "Dashboard CleanTech Solaris",
-      category: "SaaS & Visualisasi Data",
-      image: "https://images.unsplash.com/photo-1497435334941-8c899ee9e8e9?auto=format&fit=crop&q=80&w=1200",
-      description: "Antarmuka operasional bersih untuk pemantauan energi surya, metrik produksi real-time, dan sistem pelaporan otomatis di 40+ lokasi.",
-      stack: ["Next.js", "D3.js", "Tailwind CSS", "GCP"],
-      status: "Proyek Aktif",
-      client: "Solaris Energy"
-    }
-  ];
-
-  const projects = language === 'id' ? projectsId : projectsEn;
-
+  // Redesigned Simple, High-Contrast Stats
   const stats = [
     { 
       label: language === 'id' ? "Pengalaman Industri" : "Years in Industry", 
-      value: language === 'id' ? "3+ Tahun" : "3+ Years", 
-      desc: language === 'id' ? "Berdiri sejak 2021" : "Established since 2021" 
+      value: "3+ Years", 
+      subValue: language === 'id' ? "Sejak 2021" : "Est. 2021",
+      desc: language === 'id' ? "Dedikasi penuh dalam rekayasa produk digital" : "Dedicated digital product engineering" 
     },
     { 
       label: language === 'id' ? "Proyek Terselesaikan" : "Completed Projects", 
-      value: language === 'id' ? "50+ Proyek" : "50+ Projects", 
-      desc: language === 'id' ? "Web, mobile & UI/UX" : "Web, mobile & UI/UX" 
+      value: "50+ Projects", 
+      subValue: "100% On-Time",
+      desc: language === 'id' ? "50 studi kasus terverifikasi di berbagai sektor" : "50 verified case studies across sectors" 
     },
     { 
       label: language === 'id' ? "Fokus Klien" : "Client Focus", 
-      value: language === 'id' ? "UKM & Korporat" : "SME & Enterprise", 
-      desc: language === 'id' ? "Mitra domestik & global" : "Global & domestic partners" 
+      value: "SME & Enterprise", 
+      subValue: language === 'id' ? "Kemitraan Jangka Panjang" : "Long-term Partnerships",
+      desc: language === 'id' ? "Pertumbuhan startup dan korporat skala global" : "High-growth startups and global brands" 
     },
     { 
       label: language === 'id' ? "Pendekatan Layanan" : "Service Approach", 
-      value: language === 'id' ? "End-to-End" : "End-to-End", 
-      desc: language === 'id' ? "Strategi, desain & kode" : "Strategy, design & code" 
-    }
-  ];
-
-  const servicesCards = [
-    {
-      title: language === 'id' ? "Pengembangan Web & Software" : "Web & Software Development",
-      icon: <Code2 size={28} />,
-      desc: language === 'id' 
-        ? "Aplikasi web modern, cepat, dan aman yang dibangun di atas stack berkinerja tinggi seperti React, Next.js, Node.js, dan TypeScript."
-        : "Fast, secure, and modern web applications built on scalable tech stacks like React, Next.js, Node.js, and TypeScript.",
-      items: language === 'id'
-        ? ["Aplikasi Web Kustom", "Website Korporat Responsif", "Solusi E-Commerce Terintegrasi", "Arsitektur Cloud & API"]
-        : ["Custom Web Applications", "Responsive Corporate Websites", "E-Commerce Solutions", "API & Database Architecture"]
-    },
-    {
-      title: language === 'id' ? "Desain UI/UX & Produk Digital" : "UI/UX & Product Design",
-      icon: <Layout size={28} />,
-      desc: language === 'id'
-        ? "Sistem visual berorientasi pengguna dan desain interaksi intuitif. Kami memprioritaskan kemudahan pakai, alur mulus, dan konversi tinggi."
-        : "User-centered visual systems and interaction design. We focus on usability, clean user journeys, and high conversions.",
-      items: language === 'id'
-        ? ["Desain Antarmuka Pengguna (UI)", "Riset Pengalaman Pengguna (UX)", "Sistem Desain & Prototipe Interaktif", "Desain Antarmuka Aplikasi Mobile"]
-        : ["User Interface (UI) Design", "User Experience (UX) Research", "Design Systems & Prototyping", "Mobile App Interface Design"]
-    },
-    {
-      title: language === 'id' ? "Strategi Kreatif & Identitas Brand" : "Creative & Digital Strategy",
-      icon: <Palette size={28} />,
-      desc: language === 'id'
-        ? "Penentuan posisi brand strategis, aset visual digital, dan konsultasi teknologi untuk membangun kredibilitas bisnis yang kuat."
-        : "Strategic brand positioning, graphic assets, and digital consulting to give your business an authoritative presence.",
-      items: language === 'id'
-        ? ["Sistem Identitas Brand & Logo", "Aset Pemasaran Digital", "Konsultasi Teknis & Arsitektur", "Pemeliharaan & Dukungan SLA"]
-        : ["Brand Identity & Logo Systems", "Digital Marketing Assets", "Technical Consulting", "Maintenance & SLA Support"]
+      value: "End-to-End", 
+      subValue: "Strategy • Design • Code",
+      desc: language === 'id' ? "Solusi satu atap dari strategi hingga SLA" : "Full lifecycle from discovery to SLA" 
     }
   ];
 
@@ -234,8 +154,8 @@ export const Home = () => {
             
             <p className="text-sm sm:text-base md:text-xl text-white/70 font-light leading-relaxed max-w-2xl mb-8 sm:mb-12">
               {language === 'id'
-                ? 'Kami merancang dan mengembangkan website berkinerja tinggi, aplikasi web kustom, solusi mobile, dan identitas visual kohesif untuk perusahaan visioner.'
-                : 'We design and develop high-performance websites, custom web apps, mobile solutions, and cohesive visual identities for forward-thinking companies.'}
+                ? 'Kami merancang dan mengembangkan website berkinerja tinggi, aplikasi web kustom, sistem visual, dan infrastruktur cloud terpercaya untuk bisnis visioner.'
+                : 'We design and develop high-performance websites, custom web applications, visual systems, and resilient cloud infrastructures for visionary enterprises.'}
             </p>
             
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-center">
@@ -250,26 +170,41 @@ export const Home = () => {
                 to="/work" 
                 className="h-12 sm:h-13 px-7 sm:px-8 rounded-full border border-white/20 hover:bg-white/10 text-white transition-colors duration-300 text-xs font-semibold uppercase tracking-wider flex items-center justify-center gap-2 active:scale-95"
               >
-                <span>{language === 'id' ? 'Jelajahi Portofolio' : 'Explore Our Work'}</span>
+                <span>{language === 'id' ? 'Jelajahi 50 Portofolio' : 'Explore 50 Case Studies'}</span>
               </Link>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Key Agency Facts & Stats */}
-      <section className="py-12 sm:py-16 px-4 sm:px-6 md:px-12 bg-zinc-950 border-y border-white/10" aria-label="Key Facts">
+      {/* REDESIGNED STATS SECTION - Minimal, Simple, High-Contrast & Sleek */}
+      <section className="py-12 sm:py-16 px-4 sm:px-6 md:px-12 bg-black border-y border-white/10" aria-label="Key Agency Statistics">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6 md:gap-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {stats.map((stat, i) => (
-              <div key={i} className="p-4 sm:p-5 rounded-2xl bg-zinc-900/40 border border-white/10 space-y-1.5">
-                <span className="text-[10px] sm:text-[11px] font-mono uppercase tracking-wider text-brand-red block font-medium">
-                  {stat.label}
-                </span>
-                <span className="text-xl sm:text-2xl md:text-3xl font-display font-bold text-white block">
-                  {stat.value}
-                </span>
-                <p className="text-[11px] sm:text-xs text-white/50 font-light">
+              <div 
+                key={i} 
+                className="relative p-6 rounded-2xl bg-zinc-950 border border-white/10 hover:border-brand-red/40 transition-all duration-300 group flex flex-col justify-between"
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <span className="text-[11px] font-mono uppercase tracking-widest text-brand-red font-semibold">
+                    {stat.label}
+                  </span>
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-white/5 border border-white/10 text-white/50">
+                    0{i + 1}
+                  </span>
+                </div>
+
+                <div className="my-2">
+                  <div className="text-2xl sm:text-3xl lg:text-4xl font-display font-bold text-white tracking-tight group-hover:text-brand-red transition-colors">
+                    {stat.value}
+                  </div>
+                  <div className="text-xs font-mono text-emerald-400 font-medium mt-1">
+                    {stat.subValue}
+                  </div>
+                </div>
+
+                <p className="text-xs text-white/50 font-light leading-relaxed pt-3 border-t border-white/10 mt-2">
                   {stat.desc}
                 </p>
               </div>
@@ -343,81 +278,162 @@ export const Home = () => {
         </div>
       </section>
 
-      {/* Core Services Section */}
+      {/* TWO CORE PILLARS / SERVICES SECTION */}
       <section className="py-16 sm:py-24 md:py-32 px-4 sm:px-6 md:px-12 bg-zinc-950 border-b border-white/10 relative z-10" id="services">
         <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 sm:gap-6 mb-10 sm:mb-16">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 sm:gap-6 mb-12 sm:mb-16">
             <div>
               <span className="text-brand-red font-mono font-semibold tracking-widest uppercase text-xs mb-2 sm:mb-3 block">
-                {t('services.tag')}
+                {language === 'id' ? 'Dua Pilar Solusi' : 'Two Core Service Pillars'}
               </span>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold tracking-tight text-white">
-                {t('services.title')}
+              <h2 className="text-2xl sm:text-3xl md:text-5xl font-display font-bold tracking-tight text-white">
+                {language === 'id' ? 'Layanan Unggulan Kapitech' : 'Full-Spectrum Capabilities'}
               </h2>
             </div>
             <Link 
               to="/services" 
               className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-brand-red hover:text-white transition-colors"
             >
-              <span>{t('services.viewAll')}</span>
+              <span>{language === 'id' ? 'Lihat Semua 12 Layanan' : 'Explore All 12 Services'}</span>
               <ArrowUpRight size={14} />
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
-            {servicesCards.map((service, i) => (
-              <div 
-                key={i}
-                className="p-6 sm:p-8 rounded-2xl bg-black border border-white/10 hover:border-brand-red/50 transition-all duration-300 flex flex-col justify-between"
-              >
-                <div>
-                  <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-brand-red/10 border border-brand-red/20 flex items-center justify-center text-brand-red mb-5 sm:mb-6">
-                    {service.icon}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Pillar 1: Visual Experience */}
+            <div className="p-8 sm:p-10 rounded-2xl bg-zinc-900/50 border border-white/10 hover:border-brand-red/40 transition-all duration-300 flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between mb-6">
+                  <div className="w-12 h-12 rounded-xl bg-brand-red/10 border border-brand-red/30 flex items-center justify-center text-brand-red">
+                    <Palette size={24} />
                   </div>
-                  <h3 className="text-lg sm:text-xl font-display font-bold mb-3 sm:mb-4 text-white">{service.title}</h3>
-                  <p className="text-xs sm:text-sm text-white/60 font-light leading-relaxed mb-6 sm:mb-8">{service.desc}</p>
+                  <span className="px-3 py-1 rounded-full bg-brand-red/10 border border-brand-red/30 text-brand-red text-xs font-mono font-medium">
+                    7 Disciplines
+                  </span>
                 </div>
-                <div className="pt-5 sm:pt-6 border-t border-white/10 space-y-2 sm:space-y-2.5">
-                  {service.items.map((item, idx) => (
-                    <div key={idx} className="flex items-center gap-2 text-xs text-white/70 font-light">
-                      <CheckCircle2 size={13} className="text-brand-red shrink-0" />
-                      <span>{item}</span>
+
+                <h3 className="text-2xl sm:text-3xl font-display font-bold text-white mb-3">
+                  1. Visual Experience
+                </h3>
+                <p className="text-sm text-white/70 font-light leading-relaxed mb-6">
+                  {language === 'id' 
+                    ? 'Menciptakan daya tarik visual, identitas berkarakter kuat, dan interaksi yang memukau audiens dari detik pertama.'
+                    : 'Crafting mesmerizing visual design, iconic branding, and multi-format media that immediately captivates audiences.'
+                  }
+                </p>
+
+                <div className="space-y-3 pt-4 border-t border-white/10">
+                  {[
+                    { name: 'UI/UX Design', desc: language === 'id' ? 'Sistem desain Figma & antarmuka responsif' : 'Figma design systems & responsive interfaces' },
+                    { name: 'Video Production', desc: language === 'id' ? 'Event, pernikahan sinematik & iklan TVC' : 'Events, wedding films & brand commercials' },
+                    { name: '2D Animation', desc: language === 'id' ? 'Video explainer produk & animasi web Lottie' : 'Explainer videos & lightweight Lottie motion' },
+                    { name: 'Branding & Identity', desc: language === 'id' ? 'Arsitektur logo & buku pedoman brandbook' : 'Logo architecture & complete brand manuals' },
+                    { name: 'Motion & Graphic Design', desc: language === 'id' ? 'Tipografi kinetik & iklan digital billboard' : 'Kinetic typography & DOOH motion displays' },
+                    { name: 'Creative Design', desc: language === 'id' ? 'Laporan tahunan & investor pitch decks' : 'Annual corporate reports & pitch decks' },
+                    { name: '3D Visualization', desc: language === 'id' ? 'Render 3D arsitektur & produk fotorealistis' : 'Architectural & photorealistic product renders' }
+                  ].map((item, idx) => (
+                    <div key={idx} className="flex items-start gap-2.5 text-xs text-white/80 font-light">
+                      <CheckCircle2 size={15} className="text-brand-red shrink-0 mt-0.5" />
+                      <div>
+                        <strong className="text-white font-medium">{item.name}</strong> — <span className="text-white/60">{item.desc}</span>
+                      </div>
                     </div>
                   ))}
                 </div>
               </div>
-            ))}
+
+              <div className="pt-8 mt-8 border-t border-white/10">
+                <Link
+                  to="/services"
+                  className="inline-flex items-center gap-2 text-xs font-mono font-semibold uppercase tracking-wider text-brand-red hover:text-white transition-colors"
+                >
+                  <span>{language === 'id' ? 'Jelajahi Visual Experience' : 'Explore Visual Experience'}</span>
+                  <ArrowUpRight size={14} />
+                </Link>
+              </div>
+            </div>
+
+            {/* Pillar 2: Innovation Development */}
+            <div className="p-8 sm:p-10 rounded-2xl bg-zinc-900/50 border border-white/10 hover:border-brand-red/40 transition-all duration-300 flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between mb-6">
+                  <div className="w-12 h-12 rounded-xl bg-brand-red/10 border border-brand-red/30 flex items-center justify-center text-brand-red">
+                    <Code2 size={24} />
+                  </div>
+                  <span className="px-3 py-1 rounded-full bg-brand-red/10 border border-brand-red/30 text-brand-red text-xs font-mono font-medium">
+                    5 Disciplines
+                  </span>
+                </div>
+
+                <h3 className="text-2xl sm:text-3xl font-display font-bold text-white mb-3">
+                  2. Innovation Development
+                </h3>
+                <p className="text-sm text-white/70 font-light leading-relaxed mb-6">
+                  {language === 'id'
+                    ? 'Rekayasa perangkat lunak berskala tinggi, platform e-commerce, arsitektur ERP/CRM, dan infrastruktur cloud stabil 24/7.'
+                    : 'Engineering resilient enterprise software, e-commerce engines, custom ERP/CRM workflows, and high-availability cloud systems.'
+                  }
+                </p>
+
+                <div className="space-y-3 pt-4 border-t border-white/10">
+                  {[
+                    { name: 'Brochure Site / Company Profile Website', desc: language === 'id' ? 'Website korporat sub-1 detik & SEO terstruktur' : 'Sub-1s corporate portals & headless CMS' },
+                    { name: 'E-Commerce Website', desc: language === 'id' ? 'Toko online headless, payment gateway & kurir' : 'Headless commerce, payment gateways & cart sync' },
+                    { name: 'Web Application', desc: language === 'id' ? 'Platform SaaS kustom & kolaborasi real-time' : 'Custom SaaS platforms & WebSockets architecture' },
+                    { name: 'ERP / CRM System', desc: language === 'id' ? 'Manajemen inventaris, sales pipeline & keuangan' : 'Inventory tracking, sales CRM & balance sheets' },
+                    { name: 'IT Support & Infrastructure', desc: language === 'id' ? 'Migrasi cloud AWS/GCP, DevOps & SLA 24/7' : 'Cloud setup, CI/CD pipelines & SLA retainer' }
+                  ].map((item, idx) => (
+                    <div key={idx} className="flex items-start gap-2.5 text-xs text-white/80 font-light">
+                      <CheckCircle2 size={15} className="text-emerald-400 shrink-0 mt-0.5" />
+                      <div>
+                        <strong className="text-white font-medium">{item.name}</strong> — <span className="text-white/60">{item.desc}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="pt-8 mt-8 border-t border-white/10">
+                <Link
+                  to="/services"
+                  className="inline-flex items-center gap-2 text-xs font-mono font-semibold uppercase tracking-wider text-brand-red hover:text-white transition-colors"
+                >
+                  <span>{language === 'id' ? 'Jelajahi Innovation Development' : 'Explore Innovation Development'}</span>
+                  <ArrowUpRight size={14} />
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Featured Projects Preview */}
+      {/* FEATURED PROJECTS PREVIEW (Linked to 50 Case Studies) */}
       <section className="py-16 sm:py-24 md:py-32 px-4 sm:px-6 md:px-12 bg-black border-b border-white/10 relative z-10" id="work">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 sm:gap-6 mb-10 sm:mb-16">
             <div>
               <span className="text-brand-red font-mono font-semibold tracking-widest uppercase text-xs mb-2 sm:mb-3 block">
-                {t('work.tag')}
+                {language === 'id' ? 'Studi Kasus Unggulan' : 'Featured Case Studies'}
               </span>
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold tracking-tight text-white">
-                {t('work.title')}
+                {language === 'id' ? 'Karya Nyata & Berkelanjutan' : 'Real Work for Real Leaders'}
               </h2>
             </div>
             <Link 
               to="/work" 
               className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-white hover:text-brand-red transition-colors"
             >
-              <span>{t('work.viewAll')}</span>
+              <span>{language === 'id' ? 'Buka Semua 50 Portofolio' : 'View All 50 Case Studies'}</span>
               <ArrowUpRight size={14} />
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-12">
-            {projects.map((project, i) => (
-              <div 
-                key={i}
-                className="group cursor-pointer rounded-2xl overflow-hidden bg-zinc-950 border border-white/10 hover:border-brand-red/40 transition-all duration-300 flex flex-col"
-                onClick={() => setSelectedProject(project)}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+            {previewProjects.map((project) => (
+              <Link 
+                key={project.id}
+                to="/work"
+                className="group rounded-2xl overflow-hidden bg-zinc-950 border border-white/10 hover:border-brand-red/40 transition-all duration-300 flex flex-col"
               >
                 <div className="relative aspect-[16/10] overflow-hidden bg-zinc-900">
                   <img 
@@ -426,17 +442,17 @@ export const Home = () => {
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     loading="lazy"
                   />
-                  <div className="absolute top-3 right-3 sm:top-4 sm:right-4 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full bg-black/70 backdrop-blur-md text-[9px] sm:text-[10px] font-mono text-emerald-400 border border-white/10">
-                    {project.status}
+                  <div className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-black/75 backdrop-blur-md text-[10px] font-mono text-emerald-400 border border-white/10">
+                    {project.impact[0] ? `${project.impact[0].value} ${project.impact[0].label}` : project.year}
                   </div>
                 </div>
-                <div className="p-5 sm:p-8 flex flex-col flex-grow justify-between">
+                <div className="p-6 sm:p-8 flex flex-col flex-grow justify-between">
                   <div>
                     <div className="flex items-center justify-between gap-3 mb-2">
-                      <span className="text-[11px] sm:text-xs font-mono font-medium text-brand-red uppercase tracking-wider">
-                        {project.category}
+                      <span className="text-[11px] font-mono font-medium text-brand-red uppercase tracking-wider">
+                        {project.service}
                       </span>
-                      <span className="text-[11px] sm:text-xs font-light text-white/40">
+                      <span className="text-[11px] font-light text-white/50">
                         {project.client}
                       </span>
                     </div>
@@ -444,49 +460,57 @@ export const Home = () => {
                       {project.title}
                     </h3>
                     <p className="text-xs sm:text-sm text-white/60 font-light leading-relaxed mb-5">
-                      {project.description}
+                      {language === 'id' ? project.descId : project.desc}
                     </p>
                   </div>
-                  <div className="flex flex-wrap items-center justify-between gap-3 pt-4 sm:pt-6 border-t border-white/10">
+                  <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-white/10">
                     <div className="flex flex-wrap gap-1.5">
-                      {project.stack.map((item: string) => (
-                        <span key={item} className="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-[9px] sm:text-[10px] font-mono text-white/60">
+                      {project.technologies.slice(0, 3).map((item) => (
+                        <span key={item} className="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-[10px] font-mono text-white/60">
                           {item}
                         </span>
                       ))}
                     </div>
-                    <span className="text-xs font-medium text-white group-hover:text-brand-red inline-flex items-center gap-1">
-                      {language === 'id' ? 'Detail' : 'Details'} <ChevronRight size={14} />
+                    <span className="text-xs font-medium text-brand-red inline-flex items-center gap-1">
+                      {language === 'id' ? 'Buka Kasus' : 'Inspect'} <ChevronRight size={14} />
                     </span>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Clear 4-Step Process Section */}
-      <section className="py-16 sm:py-24 px-4 sm:px-6 md:px-12 bg-zinc-950 border-b border-white/10 relative z-10">
+      {/* WORKING PROCESS STEPPING */}
+      <section className="py-16 sm:py-24 px-4 sm:px-6 md:px-12 bg-zinc-950 border-b border-white/10">
         <div className="max-w-7xl mx-auto">
-          <div className="max-w-2xl mb-10 sm:mb-16">
-            <span className="text-brand-red font-mono font-semibold tracking-widest uppercase text-xs mb-2 sm:mb-3 block">
-              {t('process.tag')}
+          <div className="max-w-2xl mb-12 sm:mb-16">
+            <span className="text-brand-red font-mono font-semibold tracking-widest uppercase text-xs mb-3 block">
+              {language === 'id' ? 'Alur Kerja Studio' : 'Our Working Framework'}
             </span>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold tracking-tight mb-3 text-white">
-              {t('process.title')}
+            <h2 className="text-2xl sm:text-4xl md:text-5xl font-display font-bold tracking-tight text-white">
+              {language === 'id' ? 'Eksekusi Tangkas & Terukur' : 'Disciplined Agile Execution'}
             </h2>
-            <p className="text-xs sm:text-sm text-white/60 font-light leading-relaxed">
-              {t('process.desc')}
-            </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
-            {processSteps.map((phase, i) => (
-              <div key={i} className="p-5 sm:p-6 rounded-2xl bg-black border border-white/10 space-y-3">
-                <span className="text-xl sm:text-2xl font-mono font-bold text-brand-red">{phase.step}</span>
-                <h3 className="text-base sm:text-lg font-display font-bold text-white">{phase.title}</h3>
-                <p className="text-xs text-white/60 font-light leading-relaxed">{phase.desc}</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {processSteps.map((step) => (
+              <div 
+                key={step.step}
+                className="p-6 rounded-2xl bg-zinc-900/40 border border-white/10 hover:border-brand-red/30 transition-colors flex flex-col justify-between"
+              >
+                <div className="text-2xl font-display font-bold text-brand-red font-mono mb-4">
+                  {step.step}
+                </div>
+                <div>
+                  <h3 className="text-lg font-display font-bold text-white mb-2">
+                    {step.title}
+                  </h3>
+                  <p className="text-xs sm:text-sm text-white/60 font-light leading-relaxed">
+                    {step.desc}
+                  </p>
+                </div>
               </div>
             ))}
           </div>
@@ -495,107 +519,6 @@ export const Home = () => {
 
       {/* Testimonials */}
       <Testimonials />
-
-      {/* Final Action CTA */}
-      <section className="py-16 sm:py-24 px-4 sm:px-6 md:px-12 bg-black text-center relative z-10">
-        <div className="max-w-4xl mx-auto space-y-6 sm:space-y-8">
-          <span className="text-brand-red font-mono font-semibold tracking-widest uppercase text-xs block">
-            {t('cta.tag')}
-          </span>
-          <h2 className="text-2xl sm:text-3xl md:text-5xl font-display font-bold tracking-tight leading-tight text-white">
-            {t('cta.title')}
-          </h2>
-          <p className="text-sm sm:text-base text-white/60 font-light max-w-xl mx-auto leading-relaxed">
-            {t('cta.desc')}
-          </p>
-          <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 pt-2 sm:pt-4">
-            <Link 
-              to="/contact" 
-              className="h-12 sm:h-13 px-8 bg-brand-red hover:bg-brand-red/90 text-white rounded-full text-xs font-semibold uppercase tracking-wider transition-colors duration-300 flex items-center justify-center gap-2 shadow-lg shadow-brand-red/20 active:scale-95"
-            >
-              <span>{t('cta.button')}</span>
-              <ArrowUpRight size={16} />
-            </Link>
-            <Link 
-              to="/about" 
-              className="h-12 sm:h-13 px-8 rounded-full border border-white/20 hover:bg-white/10 text-white transition-colors duration-300 text-xs font-semibold uppercase tracking-wider flex items-center justify-center active:scale-95"
-            >
-              <span>{language === 'id' ? 'Tentang Tim Kami' : 'Learn About Our Team'}</span>
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Project Detail Modal */}
-      <AnimatePresence>
-        {selectedProject && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 md:p-12 overflow-y-auto"
-          >
-            <div className="bg-zinc-950 border border-white/10 rounded-2xl sm:rounded-3xl max-w-4xl w-full p-5 sm:p-8 md:p-12 relative my-auto shadow-2xl max-h-[90vh] overflow-y-auto">
-              <button 
-                onClick={() => setSelectedProject(null)}
-                className="absolute top-4 right-4 sm:top-6 sm:right-6 p-2 rounded-full bg-white/10 hover:bg-brand-red text-white transition-colors"
-                aria-label="Close Project Details"
-              >
-                <X size={18} />
-              </button>
-
-              <div className="mb-4 sm:mb-6 pr-8">
-                <span className="text-[11px] sm:text-xs font-mono font-medium text-brand-red uppercase tracking-wider block mb-1 sm:mb-2">
-                  {selectedProject.category} • {selectedProject.client}
-                </span>
-                <h3 className="text-xl sm:text-2xl md:text-4xl font-display font-bold">
-                  {selectedProject.title}
-                </h3>
-              </div>
-
-              <div className="aspect-[16/9] rounded-xl overflow-hidden mb-6 sm:mb-8 bg-zinc-900 border border-white/10">
-                <img 
-                  src={selectedProject.image} 
-                  alt={selectedProject.title} 
-                  className="w-full h-full object-cover"
-                />
-              </div>
-
-              <div className="space-y-4 sm:space-y-6 text-white/80 font-light leading-relaxed">
-                <div>
-                  <h4 className="text-xs font-mono font-semibold text-white uppercase tracking-wider mb-1.5 sm:mb-2">
-                    {language === 'id' ? 'Ikhtisar Proyek' : 'Project Overview'}
-                  </h4>
-                  <p className="text-xs sm:text-sm text-white/70">{selectedProject.description}</p>
-                </div>
-                <div>
-                  <h4 className="text-xs font-mono font-semibold text-white uppercase tracking-wider mb-1.5 sm:mb-2">
-                    {language === 'id' ? 'Teknologi yang Digunakan' : 'Tech Stack'}
-                  </h4>
-                  <div className="flex flex-wrap gap-1.5 sm:gap-2">
-                    {selectedProject.stack.map((s: string) => (
-                      <span key={s} className="px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-[10px] sm:text-xs font-mono text-white/70">
-                        {s}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-6 sm:mt-8 pt-5 sm:pt-6 border-t border-white/10 flex justify-end">
-                <Link 
-                  to="/contact" 
-                  onClick={() => setSelectedProject(null)}
-                  className="w-full sm:w-auto px-6 py-3 bg-brand-red text-white text-xs font-semibold uppercase tracking-wider rounded-xl hover:bg-brand-red/90 transition-colors inline-flex items-center justify-center gap-2"
-                >
-                  <span>{language === 'id' ? 'Konsultasikan Proyek Serupa' : 'Inquire Similar Project'}</span>
-                  <ArrowUpRight size={14} />
-                </Link>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 };
