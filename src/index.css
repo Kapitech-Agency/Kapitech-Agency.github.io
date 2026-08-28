@@ -7,26 +7,27 @@
   --font-heading: "Outfit", sans-serif;
   --font-mono: "JetBrains Mono", monospace;
   
-  /* Primary Accent (Red) */
-  --color-brand-red: #FF1A1A;
-  --color-brand-red-hover: #E01414;
-  --color-brand-red-glow: rgba(255, 26, 26, 0.2);
+  /* Primary Accent: Electric Crimson Red */
+  --color-brand-red: #E60023;
+  --color-brand-red-bright: #FF1F3D;
+  --color-brand-red-hover: #CC001F;
+  --color-brand-red-glow: rgba(230, 0, 35, 0.25);
 
-  /* Neutral Base (Pure Black) */
-  --color-dark-base: #0A0A0A;
+  /* Neutral Base: Obsidian Black */
+  --color-dark-base: #0B0C0E;
   --color-black-pure: #000000;
 
-  /* Structural Neutral (Greys) */
-  --color-dark-card: #161616;
-  --color-dark-card-hover: #1E1E1E;
-  --color-dark-border: #2A2A2A;
-  --color-dark-divider: #333333;
-  --color-charcoal: #161616;
+  /* Card & Surface Neutral: Charcoal Dark */
+  --color-dark-card: #16181D;
+  --color-dark-card-hover: #1E2128;
+  --color-dark-border: #262930;
+  --color-dark-divider: #2D313A;
+  --color-charcoal: #16181D;
 
-  /* High Contrast Neutral (White) & Muted Greys */
+  /* Typography: High Contrast White & Slate Gray */
   --color-text-headline: #FFFFFF;
-  --color-text-body: #8E8E93;
-  --color-text-muted: #A1A1AA;
+  --color-text-body: #8A909D;
+  --color-text-muted: #6B7280;
 }
 
 @layer base {
@@ -38,12 +39,12 @@
   }
 
   body {
-    background-color: #0A0A0A;
-    color: #8E8E93;
+    background-color: #0B0C0E;
+    color: #8A909D;
     font-family: var(--font-sans);
     overflow-x: hidden;
     width: 100%;
-    selection-background-color: #FF1A1A;
+    selection-background-color: #E60023;
     selection-color: #FFFFFF;
   }
 
@@ -53,7 +54,7 @@
   input:focus-visible,
   textarea:focus-visible,
   select:focus-visible {
-    outline: 2px solid #FF1A1A;
+    outline: 2px solid #E60023;
     outline-offset: 2px;
   }
 
@@ -88,8 +89,8 @@
 }
 
 :root {
-  background-color: #0A0A0A;
-  color: #8E8E93;
+  background-color: #0B0C0E;
+  color: #8A909D;
   font-family: var(--font-sans);
 }
 
@@ -98,7 +99,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
-  background-color: #0A0A0A;
+  background-color: #0B0C0E;
 }
 
 /* Film Grain Overlay */

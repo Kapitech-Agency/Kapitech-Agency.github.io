@@ -82,9 +82,9 @@ export const FloatingContact = () => {
                     <Link
                       to={option.href}
                       onClick={() => setIsOpen(false)}
-                      className="flex items-center justify-end gap-2.5 sm:gap-3 group"
+                      className="flex items-center justify-end gap-2.5 sm:gap-3 group min-h-[44px]"
                     >
-                      <span className="px-3.5 py-2 rounded-xl bg-[#161616] border border-[#2A2A2A] text-xs font-medium text-white shadow-lg transition-all group-hover:border-brand-red/60 group-hover:text-brand-red whitespace-nowrap">
+                      <span className="px-3.5 py-2 rounded-xl bg-[#16181D] border border-[#262930] text-xs font-medium text-white shadow-lg transition-all group-hover:border-brand-red/60 group-hover:text-brand-red whitespace-nowrap">
                         {option.label}
                       </span>
                       <div className={cn(
@@ -100,9 +100,9 @@ export const FloatingContact = () => {
                       target={option.isExternal ? "_blank" : undefined}
                       rel={option.isExternal ? "noopener noreferrer" : undefined}
                       onClick={() => setIsOpen(false)}
-                      className="flex items-center justify-end gap-2.5 sm:gap-3 group"
+                      className="flex items-center justify-end gap-2.5 sm:gap-3 group min-h-[44px]"
                     >
-                      <span className="px-3.5 py-2 rounded-xl bg-[#161616] border border-[#2A2A2A] text-xs font-medium text-white shadow-lg transition-all group-hover:border-brand-red/60 group-hover:text-brand-red whitespace-nowrap">
+                      <span className="px-3.5 py-2 rounded-xl bg-[#16181D] border border-[#262930] text-xs font-medium text-white shadow-lg transition-all group-hover:border-brand-red/60 group-hover:text-brand-red whitespace-nowrap">
                         {option.label}
                       </span>
                       <div className={cn(
@@ -133,9 +133,9 @@ export const FloatingContact = () => {
                 whileTap={{ scale: 0.95 }}
                 aria-label={isOpen ? "Tutup Kontak Cepat" : "Buka Kontak Cepat"}
                 className={cn(
-                  "w-12 h-12 sm:w-14 sm:h-14 rounded-2xl sm:rounded-[1.75rem] flex items-center justify-center text-white shadow-xl transition-all duration-300",
+                  "w-12 h-12 sm:w-14 sm:h-14 min-h-[44px] min-w-[44px] rounded-2xl sm:rounded-[1.75rem] flex items-center justify-center text-white shadow-xl transition-all duration-300",
                   isOpen 
-                    ? "bg-[#161616] border border-[#2A2A2A]" 
+                    ? "bg-[#16181D] border border-[#262930]" 
                     : "bg-brand-red shadow-brand-red/30 shadow-lg"
                 )}
               >
@@ -144,7 +144,7 @@ export const FloatingContact = () => {
               
               {!isOpen && (
                 <div className="hidden sm:block absolute right-full mr-4 top-1/2 -translate-y-1/2 pointer-events-none">
-                  <div className="px-3 py-1.5 rounded-xl bg-[#161616] border border-[#2A2A2A] whitespace-nowrap opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 transition-all duration-300">
+                  <div className="px-3 py-1.5 rounded-xl bg-[#16181D] border border-[#262930] whitespace-nowrap opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 transition-all duration-300">
                     <span className="text-[11px] font-mono uppercase tracking-wider text-white">
                       {language === 'id' ? 'Hubungi Kapitech' : 'Contact Kapitech'}
                     </span>

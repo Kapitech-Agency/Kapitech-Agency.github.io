@@ -34,6 +34,7 @@ import {
 } from 'lucide-react';
 import { AtmosphericBackground } from '../components/ui/AtmosphericBackground';
 import { useLanguage } from '../lib/LanguageContext';
+import { sanitizeInput, isValidEmail, isValidPhone, validateResumeFile, clampLength } from '../lib/security';
 
 export interface Position {
   id: string;
@@ -53,6 +54,7 @@ export const Careers = () => {
   const { language } = useLanguage();
   const [selectedPosition, setSelectedPosition] = useState<Position | null>(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [applicantErrors, setApplicantErrors] = useState<{ [key: string]: string }>({});
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -65,6 +67,7 @@ export const Careers = () => {
   // Freelance Vendor Modal & Form State
   const [isFreelanceModalOpen, setIsFreelanceModalOpen] = useState(false);
   const [isVendorSubmitted, setIsVendorSubmitted] = useState(false);
+  const [vendorErrors, setVendorErrors] = useState<{ [key: string]: string }>({});
   const [vendorHoneypot, setVendorHoneypot] = useState('');
   const [vendorFormData, setVendorFormData] = useState({
     name: '',
@@ -492,16 +495,28 @@ export const Careers = () => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+    if (applicantErrors[name]) {
+      setApplicantErrors(prev => {
+        const next = { ...prev };
+        delete next[name];
+        return next;
+      });
+    }
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      // Max 5MB check
-      if (file.size > 5 * 1024 * 1024) {
-        alert(language === 'id' ? 'Ukuran file maksimal adalah 5MB' : 'Maximum file size is 5MB');
+      const validation = validateResumeFile(file);
+      if (!validation.isValid) {
+        setApplicantErrors(prev => ({ ...prev, resume: validation.error || 'Invalid file' }));
         return;
       }
+      setApplicantErrors(prev => {
+        const next = { ...prev };
+        delete next.resume;
+        return next;
+      });
       setFormData(prev => ({ ...prev, resume: file }));
     }
   };
@@ -512,10 +527,22 @@ export const Careers = () => {
       setIsSubmitted(true);
       return;
     }
-    const sanitizedName = formData.name.trim();
-    const sanitizedEmail = formData.email.trim();
-    if (!sanitizedName || !sanitizedEmail) return;
+    const sanitizedName = sanitizeInput(clampLength(formData.name, 100));
+    const sanitizedEmail = sanitizeInput(clampLength(formData.email, 120));
+    const sanitizedPhone = sanitizeInput(clampLength(formData.phone, 30));
 
+    const errors: { [key: string]: string } = {};
+    if (!sanitizedName) errors.name = language === 'id' ? 'Nama wajib diisi' : 'Name is required';
+    if (!sanitizedEmail || !isValidEmail(sanitizedEmail)) errors.email = language === 'id' ? 'Email tidak valid' : 'Valid email is required';
+    if (sanitizedPhone && !isValidPhone(sanitizedPhone)) errors.phone = language === 'id' ? 'Nomor telepon tidak valid' : 'Valid phone number is required';
+    if (!formData.resume) errors.resume = language === 'id' ? 'Dokumen resume / CV wajib diunggah' : 'Resume / CV file is required';
+
+    if (Object.keys(errors).length > 0) {
+      setApplicantErrors(errors);
+      return;
+    }
+
+    setApplicantErrors({});
     setIsSubmitted(true);
   };
 
@@ -527,15 +554,28 @@ export const Careers = () => {
     } else {
       setVendorFormData(prev => ({ ...prev, [name]: value }));
     }
+    if (vendorErrors[name]) {
+      setVendorErrors(prev => {
+        const next = { ...prev };
+        delete next[name];
+        return next;
+      });
+    }
   };
 
   const handleVendorFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      if (file.size > 5 * 1024 * 1024) {
-        alert(language === 'id' ? 'Ukuran file maksimal adalah 5MB' : 'Maximum file size is 5MB');
+      const validation = validateResumeFile(file);
+      if (!validation.isValid) {
+        setVendorErrors(prev => ({ ...prev, resume: validation.error || 'Invalid file' }));
         return;
       }
+      setVendorErrors(prev => {
+        const next = { ...prev };
+        delete next.resume;
+        return next;
+      });
       setVendorFormData(prev => ({ ...prev, resume: file }));
     }
   };
@@ -546,10 +586,21 @@ export const Careers = () => {
       setIsVendorSubmitted(true);
       return;
     }
-    const sanitizedName = vendorFormData.name.trim();
-    const sanitizedEmail = vendorFormData.email.trim();
-    if (!sanitizedName || !sanitizedEmail) return;
+    const sanitizedName = sanitizeInput(clampLength(vendorFormData.name, 100));
+    const sanitizedEmail = sanitizeInput(clampLength(vendorFormData.email, 120));
+    const sanitizedPhone = sanitizeInput(clampLength(vendorFormData.phone, 30));
 
+    const errors: { [key: string]: string } = {};
+    if (!sanitizedName) errors.name = language === 'id' ? 'Nama wajib diisi' : 'Name is required';
+    if (!sanitizedEmail || !isValidEmail(sanitizedEmail)) errors.email = language === 'id' ? 'Email tidak valid' : 'Valid email is required';
+    if (sanitizedPhone && !isValidPhone(sanitizedPhone)) errors.phone = language === 'id' ? 'Nomor telepon tidak valid' : 'Valid phone number is required';
+
+    if (Object.keys(errors).length > 0) {
+      setVendorErrors(errors);
+      return;
+    }
+
+    setVendorErrors({});
     setIsVendorSubmitted(true);
   };
 
@@ -1237,7 +1288,7 @@ export const Careers = () => {
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-[11px] font-mono text-[#8E8E93] mb-1.5 uppercase">
+                          <label className="block text-[11px] font-mono text-[#8A909D] mb-1.5 uppercase">
                             {language === 'id' ? 'Nama Lengkap *' : 'Full Name *'}
                           </label>
                           <input 
@@ -1247,12 +1298,15 @@ export const Careers = () => {
                             value={formData.name}
                             onChange={handleInputChange}
                             placeholder={language === 'id' ? 'e.g. Alex Pratama' : 'e.g. Alex Morgan'}
-                            className="w-full bg-[#0A0A0A] border border-[#2A2A2A] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-mono"
+                            className={`w-full min-h-[44px] bg-[#0B0C0E] border rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-mono ${applicantErrors.name ? 'border-brand-red' : 'border-[#262930]'}`}
                           />
+                          {applicantErrors.name && (
+                            <span className="text-[11px] font-mono text-brand-red mt-1 block">{applicantErrors.name}</span>
+                          )}
                         </div>
 
                         <div>
-                          <label className="block text-[11px] font-mono text-[#8E8E93] mb-1.5 uppercase">
+                          <label className="block text-[11px] font-mono text-[#8A909D] mb-1.5 uppercase">
                             {language === 'id' ? 'Alamat Email *' : 'Email Address *'}
                           </label>
                           <input 
@@ -1262,14 +1316,17 @@ export const Careers = () => {
                             value={formData.email}
                             onChange={handleInputChange}
                             placeholder="alex@example.com"
-                            className="w-full bg-[#0A0A0A] border border-[#2A2A2A] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-mono"
+                            className={`w-full min-h-[44px] bg-[#0B0C0E] border rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-mono ${applicantErrors.email ? 'border-brand-red' : 'border-[#262930]'}`}
                           />
+                          {applicantErrors.email && (
+                            <span className="text-[11px] font-mono text-brand-red mt-1 block">{applicantErrors.email}</span>
+                          )}
                         </div>
                       </div>
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-[11px] font-mono text-[#8E8E93] mb-1.5 uppercase">
+                          <label className="block text-[11px] font-mono text-[#8A909D] mb-1.5 uppercase">
                             {language === 'id' ? 'Nomor WhatsApp / HP *' : 'Phone / WhatsApp *'}
                           </label>
                           <input 
@@ -1279,12 +1336,15 @@ export const Careers = () => {
                             value={formData.phone}
                             onChange={handleInputChange}
                             placeholder="+62 812-3456-7890"
-                            className="w-full bg-[#0A0A0A] border border-[#2A2A2A] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-mono"
+                            className={`w-full min-h-[44px] bg-[#0B0C0E] border rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-mono ${applicantErrors.phone ? 'border-brand-red' : 'border-[#262930]'}`}
                           />
+                          {applicantErrors.phone && (
+                            <span className="text-[11px] font-mono text-brand-red mt-1 block">{applicantErrors.phone}</span>
+                          )}
                         </div>
 
                         <div>
-                          <label className="block text-[11px] font-mono text-[#8E8E93] mb-1.5 uppercase">
+                          <label className="block text-[11px] font-mono text-[#8A909D] mb-1.5 uppercase">
                             {language === 'id' ? 'Tautan Portofolio / LinkedIn *' : 'Portfolio / LinkedIn URL *'}
                           </label>
                           <input 
@@ -1294,13 +1354,13 @@ export const Careers = () => {
                             value={formData.portfolio}
                             onChange={handleInputChange}
                             placeholder="https://linkedin.com/in/... or https://behance.net/..."
-                            className="w-full bg-[#0A0A0A] border border-[#2A2A2A] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-mono"
+                            className="w-full min-h-[44px] bg-[#0B0C0E] border border-[#262930] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-mono"
                           />
                         </div>
                       </div>
 
                       <div>
-                        <label className="block text-[11px] font-mono text-[#8E8E93] mb-1.5 uppercase">
+                        <label className="block text-[11px] font-mono text-[#8A909D] mb-1.5 uppercase">
                           {language === 'id' ? 'Pesan / Pengantar Singkat' : 'Cover Note / Introduction'}
                         </label>
                         <textarea 
@@ -1309,15 +1369,15 @@ export const Careers = () => {
                           value={formData.coverLetter}
                           onChange={handleInputChange}
                           placeholder={language === 'id' ? 'Ceritakan secara singkat pengalaman dan motivasi Anda...' : 'Briefly describe your relevant background and motivations...'}
-                          className="w-full bg-[#0A0A0A] border border-[#2A2A2A] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-mono"
+                          className="w-full bg-[#0B0C0E] border border-[#262930] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-mono"
                         />
                       </div>
 
                       <div>
-                        <label className="block text-[11px] font-mono text-[#8E8E93] mb-1.5 uppercase">
+                        <label className="block text-[11px] font-mono text-[#8A909D] mb-1.5 uppercase">
                           {language === 'id' ? 'Unggah CV / Resume (PDF maks 5MB)' : 'Upload Resume / CV (PDF max 5MB)'}
                         </label>
-                        <div className="relative border border-dashed border-[#2A2A2A] rounded-xl p-4 text-center hover:border-brand-red/50 transition-colors bg-[#0A0A0A]/50">
+                        <div className="relative border border-dashed border-[#262930] rounded-xl p-4 text-center hover:border-brand-red/50 transition-colors bg-[#0B0C0E]/50">
                           <input 
                             type="file"
                             accept=".pdf,.doc,.docx"
@@ -1325,15 +1385,18 @@ export const Careers = () => {
                             className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
                           />
                           <Upload className="w-5 h-5 text-white/40 mx-auto mb-1.5" />
-                          <span className="text-xs text-[#8E8E93] font-mono block">
+                          <span className="text-xs text-[#8A909D] font-mono block">
                             {formData.resume ? formData.resume.name : (language === 'id' ? 'Klik atau seret file CV Anda ke sini' : 'Click or drag your CV file here')}
                           </span>
                         </div>
+                        {applicantErrors.resume && (
+                          <span className="text-[11px] font-mono text-brand-red mt-1 block">{applicantErrors.resume}</span>
+                        )}
                       </div>
 
                       <button
                         type="submit"
-                        className="w-full py-3 rounded-xl bg-brand-red hover:bg-white text-white hover:text-black font-semibold text-xs font-mono uppercase tracking-wider transition-all duration-300 shadow-lg shadow-brand-red/20 flex items-center justify-center gap-2"
+                        className="w-full min-h-[44px] py-3 rounded-xl bg-brand-red hover:bg-white text-white hover:text-black font-semibold text-xs font-mono uppercase tracking-wider transition-all duration-300 shadow-lg shadow-brand-red/20 flex items-center justify-center gap-2"
                       >
                         <span>{language === 'id' ? 'Kirimkan Lamaran Sekarang' : 'Submit Application Now'}</span>
                         <ArrowUpRight size={16} />
@@ -1440,7 +1503,7 @@ export const Careers = () => {
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-[11px] font-mono text-[#8E8E93] mb-1.5 uppercase font-semibold">
+                        <label className="block text-[11px] font-mono text-[#8A909D] mb-1.5 uppercase font-semibold">
                           {language === 'id' ? 'Nama Lengkap / Studio *' : 'Full Name / Studio Name *'}
                         </label>
                         <input 
@@ -1450,12 +1513,15 @@ export const Careers = () => {
                           value={vendorFormData.name}
                           onChange={handleVendorInputChange}
                           placeholder={language === 'id' ? 'e.g. Budi Santoso / Studio Koding' : 'e.g. Alex Morgan / Pixel Studio'}
-                          className="w-full bg-[#0A0A0A] border border-[#2A2A2A] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-mono"
+                          className={`w-full min-h-[44px] bg-[#0B0C0E] border rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-mono ${vendorErrors.name ? 'border-brand-red' : 'border-[#262930]'}`}
                         />
+                        {vendorErrors.name && (
+                          <span className="text-[11px] font-mono text-brand-red mt-1 block">{vendorErrors.name}</span>
+                        )}
                       </div>
 
                       <div>
-                        <label className="block text-[11px] font-mono text-[#8E8E93] mb-1.5 uppercase font-semibold">
+                        <label className="block text-[11px] font-mono text-[#8A909D] mb-1.5 uppercase font-semibold">
                           {language === 'id' ? 'Alamat Email *' : 'Email Address *'}
                         </label>
                         <input 
@@ -1465,14 +1531,17 @@ export const Careers = () => {
                           value={vendorFormData.email}
                           onChange={handleVendorInputChange}
                           placeholder="freelancer@example.com"
-                          className="w-full bg-[#0A0A0A] border border-[#2A2A2A] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-mono"
+                          className={`w-full min-h-[44px] bg-[#0B0C0E] border rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-mono ${vendorErrors.email ? 'border-brand-red' : 'border-[#262930]'}`}
                         />
+                        {vendorErrors.email && (
+                          <span className="text-[11px] font-mono text-brand-red mt-1 block">{vendorErrors.email}</span>
+                        )}
                       </div>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-[11px] font-mono text-[#8E8E93] mb-1.5 uppercase font-semibold">
+                        <label className="block text-[11px] font-mono text-[#8A909D] mb-1.5 uppercase font-semibold">
                           {language === 'id' ? 'Nomor WhatsApp Aktif *' : 'WhatsApp Number (Active) *'}
                         </label>
                         <input 
@@ -1482,12 +1551,15 @@ export const Careers = () => {
                           value={vendorFormData.phone}
                           onChange={handleVendorInputChange}
                           placeholder="+62 812-3456-7890"
-                          className="w-full bg-[#0A0A0A] border border-[#2A2A2A] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-mono"
+                          className={`w-full min-h-[44px] bg-[#0B0C0E] border rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-mono ${vendorErrors.phone ? 'border-brand-red' : 'border-[#262930]'}`}
                         />
+                        {vendorErrors.phone && (
+                          <span className="text-[11px] font-mono text-brand-red mt-1 block">{vendorErrors.phone}</span>
+                        )}
                       </div>
 
                       <div>
-                        <label className="block text-[11px] font-mono text-[#8E8E93] mb-1.5 uppercase font-semibold">
+                        <label className="block text-[11px] font-mono text-[#8A909D] mb-1.5 uppercase font-semibold">
                           {language === 'id' ? 'Spesialisasi Utama *' : 'Primary Specialty *'}
                         </label>
                         <select
@@ -1495,7 +1567,7 @@ export const Careers = () => {
                           required
                           value={vendorFormData.specialty}
                           onChange={handleVendorInputChange}
-                          className="w-full bg-[#0A0A0A] border border-[#2A2A2A] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white focus:outline-none focus:border-brand-red font-mono"
+                          className="w-full min-h-[44px] bg-[#0B0C0E] border border-[#262930] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white focus:outline-none focus:border-brand-red font-mono"
                         >
                           <option value="UI/UX & Product Design">UI/UX & Product Design (Figma, Systems, Prototyping)</option>
                           <option value="Frontend Web Development">Frontend Web Dev (React, Next.js, Tailwind, Motion)</option>
@@ -1510,7 +1582,7 @@ export const Careers = () => {
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-[11px] font-mono text-[#8E8E93] mb-1.5 uppercase font-semibold">
+                        <label className="block text-[11px] font-mono text-[#8A909D] mb-1.5 uppercase font-semibold">
                           {language === 'id' ? 'Tautan Portofolio / GitHub / Dribbble *' : 'Portfolio / GitHub / Dribbble URL *'}
                         </label>
                         <input 
@@ -1520,12 +1592,12 @@ export const Careers = () => {
                           value={vendorFormData.portfolio}
                           onChange={handleVendorInputChange}
                           placeholder="https://behance.net/... or https://github.com/..."
-                          className="w-full bg-[#0A0A0A] border border-[#2A2A2A] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-mono"
+                          className="w-full min-h-[44px] bg-[#0B0C0E] border border-[#262930] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-mono"
                         />
                       </div>
 
                       <div>
-                        <label className="block text-[11px] font-mono text-[#8E8E93] mb-1.5 uppercase font-semibold">
+                        <label className="block text-[11px] font-mono text-[#8A909D] mb-1.5 uppercase font-semibold">
                           {language === 'id' ? 'Ekspektasi Rate Card (per Proyek / Jam)' : 'Rate Card Expectation (per Project / Hourly)'}
                         </label>
                         <input 
@@ -1534,21 +1606,21 @@ export const Careers = () => {
                           value={vendorFormData.rateCard}
                           onChange={handleVendorInputChange}
                           placeholder={language === 'id' ? 'e.g. Rp 5.000.000 - Rp 15.000.000 / project' : 'e.g. $25 - $45 / hour or per project range'}
-                          className="w-full bg-[#0A0A0A] border border-[#2A2A2A] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-mono"
+                          className="w-full min-h-[44px] bg-[#0B0C0E] border border-[#262930] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-mono"
                         />
                       </div>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-[11px] font-mono text-[#8E8E93] mb-1.5 uppercase font-semibold">
+                        <label className="block text-[11px] font-mono text-[#8A909D] mb-1.5 uppercase font-semibold">
                           {language === 'id' ? 'Pengalaman Profesional' : 'Years of Experience'}
                         </label>
                         <select
                           name="experienceYears"
                           value={vendorFormData.experienceYears}
                           onChange={handleVendorInputChange}
-                          className="w-full bg-[#0A0A0A] border border-[#2A2A2A] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white focus:outline-none focus:border-brand-red font-mono"
+                          className="w-full min-h-[44px] bg-[#0B0C0E] border border-[#262930] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white focus:outline-none focus:border-brand-red font-mono"
                         >
                           <option value="1-2 Years">1 - 2 Years</option>
                           <option value="3-5 Years">3 - 5 Years (Mid-Level)</option>
@@ -1558,7 +1630,7 @@ export const Careers = () => {
                       </div>
 
                       <div>
-                        <label className="block text-[11px] font-mono text-[#8E8E93] mb-1.5 uppercase font-semibold">
+                        <label className="block text-[11px] font-mono text-[#8A909D] mb-1.5 uppercase font-semibold">
                           {language === 'id' ? 'Alat Kerja / Stack Utama' : 'Core Tools & Tech Stack'}
                         </label>
                         <input 
@@ -1567,25 +1639,25 @@ export const Careers = () => {
                           value={vendorFormData.tools}
                           onChange={handleVendorInputChange}
                           placeholder="e.g. Figma, React, Next.js, After Effects, Blender"
-                          className="w-full bg-[#0A0A0A] border border-[#2A2A2A] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-mono"
+                          className="w-full min-h-[44px] bg-[#0B0C0E] border border-[#262930] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-mono"
                         />
                       </div>
                     </div>
 
                     {/* MANDATORY CHECKBOXES (Crucial Requirements) */}
-                    <div className="p-4 rounded-xl bg-[#0A0A0A] border border-[#2A2A2A] space-y-3">
+                    <div className="p-4 rounded-xl bg-[#0B0C0E] border border-[#262930] space-y-3">
                       <span className="text-[11px] font-mono uppercase text-brand-red font-bold block mb-1">
                         {language === 'id' ? 'Konfirmasi Aturan & Ketentuan Kerja Sama *' : 'Mandatory Terms & Policy Acknowledgment *'}
                       </span>
 
-                      <label className="flex items-start gap-3 cursor-pointer select-none text-xs text-white/80 font-light">
+                      <label className="flex items-start gap-3 cursor-pointer select-none text-xs text-white/80 font-light min-h-[32px]">
                         <input 
                           type="checkbox"
                           name="agreedWfa"
                           required
                           checked={vendorFormData.agreedWfa}
                           onChange={handleVendorInputChange}
-                          className="mt-0.5 rounded border-[#2A2A2A] text-brand-red focus:ring-brand-red bg-[#161616] w-4 h-4 shrink-0"
+                          className="mt-0.5 rounded border-[#262930] text-brand-red focus:ring-brand-red bg-[#16181D] w-4 h-4 shrink-0"
                         />
                         <span>
                           <strong>100% WFA & Project-Based:</strong> {language === 'id' 
@@ -1594,14 +1666,14 @@ export const Careers = () => {
                         </span>
                       </label>
 
-                      <label className="flex items-start gap-3 cursor-pointer select-none text-xs text-white/80 font-light">
+                      <label className="flex items-start gap-3 cursor-pointer select-none text-xs text-white/80 font-light min-h-[32px]">
                         <input 
                           type="checkbox"
                           name="agreedDevice"
                           required
                           checked={vendorFormData.agreedDevice}
                           onChange={handleVendorInputChange}
-                          className="mt-0.5 rounded border-[#2A2A2A] text-brand-red focus:ring-brand-red bg-[#161616] w-4 h-4 shrink-0"
+                          className="mt-0.5 rounded border-[#262930] text-brand-red focus:ring-brand-red bg-[#16181D] w-4 h-4 shrink-0"
                         />
                         <span>
                           <strong>BYOD (No Device Provided):</strong> {language === 'id'
@@ -1610,14 +1682,14 @@ export const Careers = () => {
                         </span>
                       </label>
 
-                      <label className="flex items-start gap-3 cursor-pointer select-none text-xs text-white/80 font-light">
+                      <label className="flex items-start gap-3 cursor-pointer select-none text-xs text-white/80 font-light min-h-[32px]">
                         <input 
                           type="checkbox"
                           name="agreedNda"
                           required
                           checked={vendorFormData.agreedNda}
                           onChange={handleVendorInputChange}
-                          className="mt-0.5 rounded border-[#2A2A2A] text-brand-red focus:ring-brand-red bg-[#161616] w-4 h-4 shrink-0"
+                          className="mt-0.5 rounded border-[#262930] text-brand-red focus:ring-brand-red bg-[#16181D] w-4 h-4 shrink-0"
                         />
                         <span>
                           <strong>NDA & Deadline Discipline:</strong> {language === 'id'
@@ -1628,7 +1700,7 @@ export const Careers = () => {
                     </div>
 
                     <div>
-                      <label className="block text-[11px] font-mono text-[#8E8E93] mb-1.5 uppercase font-semibold">
+                      <label className="block text-[11px] font-mono text-[#8A909D] mb-1.5 uppercase font-semibold">
                         {language === 'id' ? 'Catatan Tambahan / Deskripsi Keahlian' : 'Additional Notes / Key Highlights'}
                       </label>
                       <textarea 
@@ -1637,15 +1709,15 @@ export const Careers = () => {
                         value={vendorFormData.notes}
                         onChange={handleVendorInputChange}
                         placeholder={language === 'id' ? 'Ceritakan proyek terbaik yang pernah Anda kerjakan atau keahlian spesifik Anda...' : 'Highlight your proudest past projects or unique skill sets...'}
-                        className="w-full bg-[#0A0A0A] border border-[#2A2A2A] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-mono"
+                        className="w-full bg-[#0B0C0E] border border-[#262930] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-mono"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-[11px] font-mono text-[#8E8E93] mb-1.5 uppercase font-semibold">
+                      <label className="block text-[11px] font-mono text-[#8A909D] mb-1.5 uppercase font-semibold">
                         {language === 'id' ? 'Unggah CV / Portofolio PDF (Opsional, maks 5MB)' : 'Upload CV / Portfolio PDF (Optional, max 5MB)'}
                       </label>
-                      <div className="relative border border-dashed border-[#2A2A2A] rounded-xl p-4 text-center hover:border-brand-red/50 transition-colors bg-[#0A0A0A]/50">
+                      <div className="relative border border-dashed border-[#262930] rounded-xl p-4 text-center hover:border-brand-red/50 transition-colors bg-[#0B0C0E]/50">
                         <input 
                           type="file"
                           accept=".pdf,.doc,.docx"
@@ -1653,15 +1725,18 @@ export const Careers = () => {
                           className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
                         />
                         <Upload className="w-5 h-5 text-white/40 mx-auto mb-1.5" />
-                        <span className="text-xs text-[#8E8E93] font-mono block">
+                        <span className="text-xs text-[#8A909D] font-mono block">
                           {vendorFormData.resume ? vendorFormData.resume.name : (language === 'id' ? 'Klik atau seret file dokumen Anda ke sini' : 'Click or drag your document here')}
                         </span>
                       </div>
+                      {vendorErrors.resume && (
+                        <span className="text-[11px] font-mono text-brand-red mt-1 block">{vendorErrors.resume}</span>
+                      )}
                     </div>
 
                     <button
                       type="submit"
-                      className="w-full py-3.5 rounded-xl bg-brand-red hover:bg-white text-white hover:text-black font-semibold text-xs font-mono uppercase tracking-wider transition-all duration-300 shadow-xl shadow-brand-red/20 flex items-center justify-center gap-2"
+                      className="w-full min-h-[44px] py-3.5 rounded-xl bg-brand-red hover:bg-white text-white hover:text-black font-semibold text-xs font-mono uppercase tracking-wider transition-all duration-300 shadow-xl shadow-brand-red/20 flex items-center justify-center gap-2"
                     >
                       <span>{language === 'id' ? 'Kirimkan Pendaftaran Freelance Vendor' : 'Submit Vendor Application'}</span>
                       <ArrowUpRight size={16} />

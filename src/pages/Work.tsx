@@ -288,12 +288,12 @@ export const Work = () => {
       )}
 
       {/* Filter & Search Bar Section */}
-      <section className="py-4 sm:py-6 md:py-8 px-4 sm:px-6 md:px-12 sticky top-16 sm:top-20 z-30 bg-[#0A0A0A]/95 backdrop-blur-xl border-b border-[#2A2A2A] shadow-xl">
+      <section className="py-4 sm:py-6 md:py-8 px-4 sm:px-6 md:px-12 sticky top-16 sm:top-20 z-30 bg-[#0B0C0E]/95 backdrop-blur-xl border-b border-[#262930] shadow-xl">
         <div className="max-w-7xl mx-auto space-y-3 sm:space-y-4">
           {/* Top Controls: Main Pillars + Instant Search */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4">
             {/* Primary Pillar Tabs */}
-            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 bg-[#161616] p-1 sm:p-1.5 rounded-xl border border-[#2A2A2A]">
+            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 bg-[#16181D] p-1 sm:p-1.5 rounded-xl border border-[#262930]">
               {[
                 { key: 'All', labelEn: 'All Disciplines', labelId: 'Semua Bidang' },
                 { key: 'Visual Experience', labelEn: 'Visual Experience', labelId: 'Visual Experience' },
@@ -302,10 +302,10 @@ export const Work = () => {
                 <button
                   key={tab.key}
                   onClick={() => handlePillarChange(tab.key)}
-                  className={`px-3 sm:px-4 py-2 rounded-lg text-xs font-mono font-medium transition-all duration-200 ${
+                  className={`px-3 sm:px-4 py-2.5 sm:py-2 rounded-lg text-xs font-mono font-medium transition-all duration-200 min-h-[44px] flex items-center justify-center ${
                     activePillar === tab.key
                       ? 'bg-brand-red text-white shadow-lg shadow-brand-red/20'
-                      : 'text-[#8E8E93] hover:text-white hover:bg-white/5'
+                      : 'text-[#8A909D] hover:text-white hover:bg-white/5'
                   }`}
                 >
                   {language === 'id' ? tab.labelId : tab.labelEn}
@@ -315,7 +315,7 @@ export const Work = () => {
 
             {/* Search Input Box */}
             <div className="relative w-full md:w-80">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8E8E93]" />
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8A909D]" />
               <input
                 type="text"
                 value={searchQuery}
@@ -324,12 +324,12 @@ export const Work = () => {
                   setVisibleCount(12);
                 }}
                 placeholder={language === 'id' ? 'Cari studi kasus, klien, stack...' : 'Search case study, client, tech...'}
-                className="w-full bg-[#161616] border border-[#2A2A2A] rounded-xl pl-10 pr-9 py-2.5 text-base sm:text-xs text-white placeholder:text-[#8E8E93] focus:outline-none focus:border-brand-red transition-colors font-mono"
+                className="w-full bg-[#16181D] border border-[#262930] rounded-xl pl-10 pr-9 py-2.5 text-base sm:text-xs text-white placeholder:text-[#8A909D] focus:outline-none focus:border-brand-red transition-colors font-mono min-h-[44px]"
               />
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery('')}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8E8E93] hover:text-white"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8A909D] hover:text-white min-w-[32px] min-h-[32px] flex items-center justify-center"
                   aria-label="Clear search"
                 >
                   <X size={14} />
@@ -341,7 +341,7 @@ export const Work = () => {
           {/* Granular Service Pill Filter Scroll with Drag-to-Scroll & Right Black Fade */}
           <div className="relative group/filter">
             {/* Right Fade Black Gradient */}
-            <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-16 sm:w-24 bg-gradient-to-l from-[#0A0A0A] via-[#0A0A0A]/80 to-transparent z-10" />
+            <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-16 sm:w-24 bg-gradient-to-l from-[#0B0C0E] via-[#0B0C0E]/80 to-transparent z-10" />
 
             <div 
               ref={serviceScrollRef}
@@ -350,11 +350,11 @@ export const Work = () => {
               onMouseUp={handleMouseUpOrLeaveService}
               onMouseLeave={handleMouseUpOrLeaveService}
               onWheel={handleWheelService}
-              className={`flex items-center gap-2 overflow-x-auto overflow-y-hidden py-1 pr-16 select-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden ${
+              className={`flex items-center gap-2 overflow-x-auto overflow-y-hidden py-1.5 pr-16 select-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden ${
                 isDraggingService ? 'cursor-grabbing' : 'cursor-grab'
               }`}
             >
-              <SlidersHorizontal className="w-3.5 h-3.5 text-[#8E8E93] shrink-0 ml-1 mr-1" />
+              <SlidersHorizontal className="w-3.5 h-3.5 text-[#8A909D] shrink-0 ml-1 mr-1" />
               {serviceOptions.map((srv) => (
                 <button
                   key={srv}
@@ -362,10 +362,10 @@ export const Work = () => {
                     setActiveService(srv);
                     setVisibleCount(12);
                   }}
-                  className={`px-3.5 py-1.5 rounded-full text-xs font-mono whitespace-nowrap transition-all duration-200 shrink-0 border ${
+                  className={`px-3.5 py-2 rounded-full text-xs font-mono whitespace-nowrap transition-all duration-200 shrink-0 border min-h-[38px] flex items-center ${
                     activeService === srv
                       ? 'bg-brand-red text-white border-brand-red font-semibold shadow-md shadow-brand-red/20'
-                      : 'bg-[#161616] text-[#8E8E93] border-[#2A2A2A] hover:border-brand-red/40 hover:text-white'
+                      : 'bg-[#16181D] text-[#8A909D] border-[#262930] hover:border-brand-red/40 hover:text-white'
                   }`}
                 >
                   {srv === 'All' ? (language === 'id' ? 'Semua Layanan' : 'All Services') : srv}
@@ -375,7 +375,7 @@ export const Work = () => {
           </div>
 
           {/* Results Count Bar */}
-          <div className="flex items-center justify-between text-xs font-mono text-[#8E8E93] pt-1">
+          <div className="flex items-center justify-between text-xs font-mono text-[#8A909D] pt-1">
             <span>
               {language === 'id' 
                 ? `Menampilkan ${Math.min(visibleCount, filteredProjects.length)} dari ${filteredProjects.length} Studi Kasus` 
@@ -390,7 +390,7 @@ export const Work = () => {
                   setSearchQuery('');
                   setVisibleCount(12);
                 }}
-                className="text-brand-red hover:underline flex items-center gap-1"
+                className="text-brand-red hover:underline flex items-center gap-1 min-h-[36px]"
               >
                 <X size={12} />
                 <span>{language === 'id' ? 'Reset Filter' : 'Reset Filters'}</span>
@@ -401,15 +401,15 @@ export const Work = () => {
       </section>
 
       {/* Projects Grid Section */}
-      <section className="py-12 sm:py-16 px-4 sm:px-6 md:px-12">
+      <section className="py-12 sm:py-16 px-4 sm:px-6 md:px-12 bg-[#0B0C0E]">
         <div className="max-w-7xl mx-auto">
           {filteredProjects.length === 0 ? (
-            <div className="text-center py-24 border border-dashed border-[#2A2A2A] rounded-2xl p-8 bg-[#161616]/50">
-              <Search className="w-10 h-10 text-[#8E8E93] mx-auto mb-4" />
+            <div className="text-center py-24 border border-dashed border-[#262930] rounded-2xl p-8 bg-[#16181D]/50">
+              <Search className="w-10 h-10 text-[#8A909D] mx-auto mb-4" />
               <h3 className="text-xl font-display font-bold text-white mb-2">
                 {language === 'id' ? 'Studi Kasus Tidak Ditemukan' : 'No Case Studies Found'}
               </h3>
-              <p className="text-sm text-[#8E8E93] max-w-md mx-auto mb-6 font-light">
+              <p className="text-sm text-[#8A909D] max-w-md mx-auto mb-6 font-light">
                 {language === 'id' 
                   ? 'Coba sesuaikan kata kunci pencarian Anda atau reset filter untuk melihat 50 studi kasus kami.'
                   : 'Try adjusting your search query or reset filters to browse all 50 case studies.'
@@ -421,7 +421,7 @@ export const Work = () => {
                   setActiveService('All');
                   setSearchQuery('');
                 }}
-                className="px-6 py-2.5 rounded-full bg-brand-red text-white text-xs font-mono font-semibold hover:bg-[#E01414] transition-colors"
+                className="px-6 py-3 rounded-full bg-brand-red text-white text-xs font-mono font-semibold hover:bg-[#CC001F] transition-colors min-h-[44px]"
               >
                 {language === 'id' ? 'Lihat Semua 50 Portofolio' : 'View All 50 Projects'}
               </button>
@@ -437,10 +437,10 @@ export const Work = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3 }}
                     onClick={() => setSelectedProject(project)}
-                    className="cursor-pointer group rounded-2xl overflow-hidden border border-[#2A2A2A] bg-[#161616] hover:bg-[#1E1E1E] hover:border-brand-red/40 transition-all duration-300 flex flex-col h-full"
+                    className="cursor-pointer group rounded-2xl overflow-hidden border border-[#262930] bg-[#16181D] hover:bg-[#1E2128] hover:border-brand-red/40 transition-all duration-300 flex flex-col h-full"
                   >
                     {/* Thumbnail Image */}
-                    <div className="relative h-56 sm:h-60 overflow-hidden bg-[#0A0A0A]">
+                    <div className="relative h-56 sm:h-60 overflow-hidden bg-[#0B0C0E]">
                       <img 
                         src={project.image} 
                         alt={project.title}
@@ -448,12 +448,12 @@ export const Work = () => {
                         loading="lazy"
                       />
                       <div className="absolute top-3 left-3 flex flex-wrap gap-1.5">
-                        <span className="px-2 py-0.5 rounded-md bg-[#0A0A0A]/80 backdrop-blur-md border border-[#2A2A2A] text-[10px] font-mono text-white">
+                        <span className="px-2 py-0.5 rounded-md bg-[#0B0C0E]/80 backdrop-blur-md border border-[#262930] text-[10px] font-mono text-white">
                           {project.service}
                         </span>
                       </div>
                       <div className="absolute top-3 right-3">
-                        <span className="px-2 py-0.5 rounded-md bg-[#0A0A0A]/80 backdrop-blur-md border border-[#2A2A2A] text-[10px] font-mono text-[#8E8E93]">
+                        <span className="px-2 py-0.5 rounded-md bg-[#0B0C0E]/80 backdrop-blur-md border border-[#262930] text-[10px] font-mono text-[#8A909D]">
                           {project.year}
                         </span>
                       </div>
@@ -468,20 +468,20 @@ export const Work = () => {
                         <h3 className="text-lg sm:text-xl font-display font-bold text-white group-hover:text-brand-red transition-colors mb-2.5">
                           {project.title}
                         </h3>
-                        <p className="text-xs text-[#8E8E93] font-light leading-relaxed line-clamp-2 mb-4">
+                        <p className="text-xs text-[#8A909D] font-light leading-relaxed line-clamp-2 mb-4">
                           {language === 'id' ? project.descId : project.desc}
                         </p>
                       </div>
 
-                      <div className="pt-4 border-t border-[#2A2A2A] flex items-center justify-between">
+                      <div className="pt-4 border-t border-[#262930] flex items-center justify-between">
                         <div className="flex items-center gap-1.5">
                           {project.impact[0] && (
                             <span className="text-xs font-mono font-bold text-white">
-                              {project.impact[0].value} <span className="text-[10px] text-[#8E8E93] font-normal">{project.impact[0].label}</span>
+                              {project.impact[0].value} <span className="text-[10px] text-[#8A909D] font-normal">{project.impact[0].label}</span>
                             </span>
                           )}
                         </div>
-                        <div className="w-8 h-8 rounded-full border border-[#2A2A2A] bg-[#0A0A0A] flex items-center justify-center text-[#8E8E93] group-hover:text-brand-red group-hover:border-brand-red/40 group-hover:scale-110 transition-all">
+                        <div className="w-8 h-8 rounded-full border border-[#262930] bg-[#0B0C0E] flex items-center justify-center text-[#8A909D] group-hover:text-brand-red group-hover:border-brand-red/40 group-hover:scale-110 transition-all">
                           <ArrowUpRight size={14} />
                         </div>
                       </div>
@@ -495,7 +495,7 @@ export const Work = () => {
                 <div className="text-center pt-12">
                   <button
                     onClick={() => setVisibleCount(prev => prev + 12)}
-                    className="px-8 py-3.5 rounded-full bg-[#161616] hover:bg-brand-red text-white border border-[#2A2A2A] hover:border-brand-red text-xs font-mono font-semibold transition-all duration-300 shadow-lg"
+                    className="px-8 py-3.5 rounded-full bg-[#16181D] hover:bg-brand-red text-white border border-[#262930] hover:border-brand-red text-xs font-mono font-semibold transition-all duration-300 shadow-lg min-h-[44px]"
                   >
                     {language === 'id' ? 'Muat Lebih Banyak Studi Kasus' : 'Load More Case Studies'} ({filteredProjects.length - visibleCount} {language === 'id' ? 'tersisa' : 'remaining'})
                   </button>
@@ -515,26 +515,26 @@ export const Work = () => {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ duration: 0.25 }}
-              className="relative w-full max-w-4xl bg-[#161616] border border-[#2A2A2A] rounded-2xl overflow-hidden shadow-2xl my-8 max-h-[90vh] flex flex-col"
+              className="relative w-full max-w-4xl bg-[#16181D] border border-[#262930] rounded-2xl overflow-hidden shadow-2xl my-8 max-h-[90vh] flex flex-col"
             >
               {/* Modal Header Bar */}
-              <div className="sticky top-0 z-20 flex items-center justify-between p-4 sm:p-5 bg-[#161616]/95 backdrop-blur-md border-b border-[#2A2A2A] gap-3">
+              <div className="sticky top-0 z-20 flex items-center justify-between p-4 sm:p-5 bg-[#16181D]/95 backdrop-blur-md border-b border-[#262930] gap-3">
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2 mb-1">
                     <span className="px-2.5 py-0.5 rounded-full bg-brand-red/10 border border-brand-red/30 text-brand-red text-[11px] font-mono font-medium">
                       {selectedProject.pillar}
                     </span>
-                    <span className="text-[11px] font-mono text-[#8E8E93] truncate">
+                    <span className="text-[11px] font-mono text-[#8A909D] truncate">
                       {selectedProject.service}
                     </span>
                   </div>
                   <h3 className="text-sm sm:text-base font-display font-bold text-white truncate">
-                    {selectedProject.title} <span className="text-[#8E8E93] font-normal">({selectedProject.client})</span>
+                    {selectedProject.title} <span className="text-[#8A909D] font-normal">({selectedProject.client})</span>
                   </h3>
                 </div>
                 <button
                   onClick={() => setSelectedProject(null)}
-                  className="w-9 h-9 rounded-full bg-[#0A0A0A] hover:bg-white/10 border border-[#2A2A2A] flex items-center justify-center text-[#8E8E93] hover:text-white transition-colors shrink-0"
+                  className="w-9 h-9 rounded-full bg-[#0B0C0E] hover:bg-white/10 border border-[#262930] flex items-center justify-center text-[#8A909D] hover:text-white transition-colors shrink-0 min-h-[44px] min-w-[44px]"
                   aria-label="Close case study modal"
                 >
                   <X size={18} />
@@ -544,15 +544,15 @@ export const Work = () => {
               {/* Modal Scrollable Content */}
               <div className="overflow-y-auto p-6 sm:p-8 space-y-8">
                 {/* Hero Banner */}
-                <div className="relative h-64 sm:h-80 md:h-96 rounded-xl overflow-hidden bg-[#0A0A0A] border border-[#2A2A2A]">
+                <div className="relative h-64 sm:h-80 md:h-96 rounded-xl overflow-hidden bg-[#0B0C0E] border border-[#262930]">
                   <img 
                     src={selectedProject.image} 
                     alt={selectedProject.title}
                     className="w-full h-full object-cover"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-[#0A0A0A]/40 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0B0C0E] via-[#0B0C0E]/40 to-transparent" />
                   <div className="absolute bottom-4 left-4 right-4 sm:bottom-6 sm:left-6">
-                    <span className="text-xs font-mono text-[#8E8E93] block mb-1">
+                    <span className="text-xs font-mono text-[#8A909D] block mb-1">
                       {selectedProject.client} • {selectedProject.industry} • {selectedProject.year}
                     </span>
                     <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold text-white">
@@ -568,11 +568,11 @@ export const Work = () => {
                   </h4>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     {selectedProject.impact.map((item, idx) => (
-                      <div key={idx} className="p-4 rounded-xl bg-[#0A0A0A] border border-[#2A2A2A]">
+                      <div key={idx} className="p-4 rounded-xl bg-[#0B0C0E] border border-[#262930]">
                         <span className="text-2xl sm:text-3xl font-display font-bold text-white block mb-1">
                           {item.value}
                         </span>
-                        <span className="text-xs font-mono text-[#8E8E93] block">
+                        <span className="text-xs font-mono text-[#8A909D] block">
                           {item.label}
                         </span>
                       </div>
@@ -582,31 +582,31 @@ export const Work = () => {
 
                 {/* Challenge & Solution */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="p-5 rounded-xl bg-[#0A0A0A] border border-[#2A2A2A]">
+                  <div className="p-5 rounded-xl bg-[#0B0C0E] border border-[#262930]">
                     <h4 className="text-xs font-mono uppercase tracking-wider text-[#FF6B00] mb-2 font-semibold flex items-center gap-2">
                       <span className="w-2 h-2 rounded-full bg-[#FF6B00]" />
                       <span>{language === 'id' ? 'Tantangan Bisnis' : 'The Challenge'}</span>
                     </h4>
-                    <p className="text-sm text-[#8E8E93] leading-relaxed font-light">
+                    <p className="text-sm text-[#8A909D] leading-relaxed font-light">
                       {language === 'id' ? selectedProject.challengeId : selectedProject.challenge}
                     </p>
                   </div>
 
-                  <div className="p-5 rounded-xl bg-[#0A0A0A] border border-[#2A2A2A]">
+                  <div className="p-5 rounded-xl bg-[#0B0C0E] border border-[#262930]">
                     <h4 className="text-xs font-mono uppercase tracking-wider text-brand-red mb-2 font-semibold flex items-center gap-2">
                       <span className="w-2 h-2 rounded-full bg-brand-red" />
                       <span>{language === 'id' ? 'Solusi & Rekayasa Kapitech' : 'Our Solution & Execution'}</span>
                     </h4>
-                    <p className="text-sm text-[#8E8E93] leading-relaxed font-light">
+                    <p className="text-sm text-[#8A909D] leading-relaxed font-light">
                       {language === 'id' ? selectedProject.solutionId : selectedProject.solution}
                     </p>
                   </div>
                 </div>
 
                 {/* Deliverables & Tech Stack */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-[#2A2A2A]">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-[#262930]">
                   <div>
-                    <h4 className="text-xs font-mono uppercase tracking-wider text-[#8E8E93] mb-3 font-semibold">
+                    <h4 className="text-xs font-mono uppercase tracking-wider text-[#8A909D] mb-3 font-semibold">
                       {language === 'id' ? 'Hasil Kerja & Serah Terima' : 'Core Deliverables'}
                     </h4>
                     <ul className="space-y-2">
@@ -620,12 +620,12 @@ export const Work = () => {
                   </div>
 
                   <div>
-                    <h4 className="text-xs font-mono uppercase tracking-wider text-[#8E8E93] mb-3 font-semibold">
+                    <h4 className="text-xs font-mono uppercase tracking-wider text-[#8A909D] mb-3 font-semibold">
                       {language === 'id' ? 'Teknologi & Perangkat' : 'Tech Stack & Tooling'}
                     </h4>
                     <div className="flex flex-wrap gap-2">
                       {selectedProject.technologies.map((tech, idx) => (
-                        <span key={idx} className="px-3 py-1 rounded-lg bg-[#0A0A0A] border border-[#2A2A2A] text-xs font-mono text-[#8E8E93]">
+                        <span key={idx} className="px-3 py-1 rounded-lg bg-[#0B0C0E] border border-[#262930] text-xs font-mono text-[#8A909D]">
                           {tech}
                         </span>
                       ))}
@@ -634,19 +634,19 @@ export const Work = () => {
                 </div>
 
                 {/* Footer CTA inside Modal */}
-                <div className="p-6 rounded-xl bg-gradient-to-r from-brand-red/20 via-[#0A0A0A] to-[#0A0A0A] border border-brand-red/30 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="p-6 rounded-xl bg-gradient-to-r from-brand-red/20 via-[#0B0C0E] to-[#0B0C0E] border border-brand-red/30 flex flex-col sm:flex-row items-center justify-between gap-4">
                   <div>
                     <h4 className="text-base font-display font-bold text-white">
                       {language === 'id' ? 'Tertarik membangun proyek serupa?' : 'Looking to build a similar project?'}
                     </h4>
-                    <p className="text-xs text-[#8E8E93] font-light">
+                    <p className="text-xs text-[#8A909D] font-light">
                       {language === 'id' ? 'Diskusikan kebutuhan produk Anda bersama tim arsitek dan desainer kami.' : 'Schedule a discovery session with our tech leads and creative directors.'}
                     </p>
                   </div>
                   <Link
                     to="/contact"
                     onClick={() => setSelectedProject(null)}
-                    className="px-6 py-2.5 rounded-full bg-brand-red hover:bg-[#E01414] text-white text-xs font-semibold uppercase tracking-wider transition-colors shrink-0 flex items-center gap-2 shadow-lg shadow-brand-red/20"
+                    className="px-6 py-3 rounded-full bg-brand-red hover:bg-[#CC001F] text-white text-xs font-semibold uppercase tracking-wider transition-colors shrink-0 flex items-center gap-2 shadow-lg shadow-brand-red/20 min-h-[44px]"
                   >
                     <span>{language === 'id' ? 'Mulai Konsultasi' : 'Start Project'}</span>
                     <ArrowUpRight size={14} />
