@@ -12,7 +12,7 @@ export const EditorialPolicy = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="min-h-screen pt-28 sm:pt-36 md:pt-40 pb-16 sm:pb-20 px-4 sm:px-6 md:px-12 bg-black text-white/80 font-light relative selection:bg-brand-red selection:text-white"
+      className="min-h-screen pt-28 sm:pt-36 md:pt-40 pb-16 sm:pb-20 px-4 sm:px-6 md:px-12 bg-[#0A0A0A] text-[#8E8E93] font-light relative selection:bg-brand-red selection:text-white"
     >
       <AtmosphericBackground 
         imageUrl="/hero_background_3d.png"
@@ -20,7 +20,7 @@ export const EditorialPolicy = () => {
         disableGrayscale={true}
       />
       <div className="max-w-4xl mx-auto relative z-10">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/20 bg-white/5 text-white text-xs font-mono mb-4">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[#2A2A2A] bg-[#161616] text-white text-xs font-mono mb-4">
           <BookOpen className="w-3 h-3 text-brand-red" />
           <span>{language === 'id' ? 'Standar Konten & Publikasi' : 'Content & Publication Standards'}</span>
         </div>
@@ -32,7 +32,7 @@ export const EditorialPolicy = () => {
         </p>
         
         {language === 'id' ? (
-          <div className="space-y-12 text-base md:text-lg leading-relaxed text-white/80">
+          <div className="space-y-12 text-base md:text-lg leading-relaxed text-[#8E8E93]">
             <section>
               <h2 className="text-2xl font-display font-bold text-white mb-4">1. Komitmen Integritas Konten</h2>
               <p>
@@ -44,9 +44,9 @@ export const EditorialPolicy = () => {
               <h2 className="text-2xl font-display font-bold text-white mb-4">2. Verifikasi Faktual & Ketelitian Teknis</h2>
               <p className="mb-4">Seluruh konten teknis yang kami publikasikan harus memenuhi kriteria berikut:</p>
               <ul className="list-disc pl-6 space-y-2">
-                <li><strong>Diuji di Lingkungan Nyata:</strong> Rekomendasi arsitektur perangkat lunak, benchmark performa, dan studi kasus desain didasarkan pada implementasi nyata dan data teruji di lingkungan produksi.</li>
-                <li><strong>Penelaahan Ahli Internal:</strong> Setiap artikel teknis melewati peer review oleh Senior Engineer atau Design Lead sebelum diterbitkan.</li>
-                <li><strong>Transparansi Sumber:</strong> Kami mencantumkan referensi pustaka resmi, dokumentasi open-source, dan pengakuan karya pihak ketiga dengan tautan langsung.</li>
+                <li><strong className="text-white">Diuji di Lingkungan Nyata:</strong> Rekomendasi arsitektur perangkat lunak, benchmark performa, dan studi kasus desain didasarkan pada implementasi nyata dan data teruji di lingkungan produksi.</li>
+                <li><strong className="text-white">Penelaahan Ahli Internal:</strong> Setiap artikel teknis melewati peer review oleh Senior Engineer atau Design Lead sebelum diterbitkan.</li>
+                <li><strong className="text-white">Transparansi Sumber:</strong> Kami mencantumkan referensi pustaka resmi, dokumentasi open-source, dan pengakuan karya pihak ketiga dengan tautan langsung.</li>
               </ul>
             </section>
 
@@ -72,7 +72,7 @@ export const EditorialPolicy = () => {
             </section>
           </div>
         ) : (
-          <div className="space-y-12 text-base md:text-lg leading-relaxed text-white/80">
+          <div className="space-y-12 text-base md:text-lg leading-relaxed text-[#8E8E93]">
             <section>
               <h2 className="text-2xl font-display font-bold text-white mb-4">1. Content Integrity Commitment</h2>
               <p>
@@ -84,9 +84,9 @@ export const EditorialPolicy = () => {
               <h2 className="text-2xl font-display font-bold text-white mb-4">2. Factual Verification & Technical Rigor</h2>
               <p className="mb-4">All technical materials published by Kapitech must satisfy strict internal benchmarks:</p>
               <ul className="list-disc pl-6 space-y-2">
-                <li><strong>Production-Tested Insights:</strong> Architectural guides, speed benchmarks, and UI/UX design patterns are grounded in real-world production testing and validated datasets.</li>
-                <li><strong>Expert Peer Review:</strong> Every publication undergoes technical review by a Senior Engineer or Creative Director prior to release.</li>
-                <li><strong>Attribution Integrity:</strong> We provide full attribution and direct citations for open-source frameworks, benchmark methodologies, and third-party research papers.</li>
+                <li><strong className="text-white">Production-Tested Insights:</strong> Architectural guides, speed benchmarks, and UI/UX design patterns are grounded in real-world production testing and validated datasets.</li>
+                <li><strong className="text-white">Expert Peer Review:</strong> Every publication undergoes technical review by a Senior Engineer or Creative Director prior to release.</li>
+                <li><strong className="text-white">Attribution Integrity:</strong> We provide full attribution and direct citations for open-source frameworks, benchmark methodologies, and third-party research papers.</li>
               </ul>
             </section>
 

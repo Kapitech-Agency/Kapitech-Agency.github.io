@@ -70,7 +70,7 @@ export default function App() {
     <LanguageProvider>
       <Router>
         <ScrollToTop />
-        <div className="bg-black text-white selection:bg-brand-red selection:text-white min-h-screen flex flex-col film-grain">
+        <div className="bg-[#0A0A0A] text-white selection:bg-brand-red selection:text-white min-h-screen flex flex-col film-grain">
           <Navbar />
           <main className="flex-grow">
             <AnimatedRoutes />

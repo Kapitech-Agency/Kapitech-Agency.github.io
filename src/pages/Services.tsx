@@ -67,7 +67,7 @@ export interface StrategicSolution {
 export const Services = () => {
   const { language } = useLanguage();
   const [selectedService, setSelectedService] = useState<ServiceDetail | StrategicSolution | null>(null);
-  const [activeCategory, setActiveCategory] = useState<'All' | 'Branding' | 'Design' | 'Development' | 'Solutions'>('All');
+  const [activeCategory, setActiveCategory] = useState<'All' | 'Branding' | 'Design' | 'Development'>('All');
 
   const strategicSolutions: StrategicSolution[] = [
     {
@@ -628,14 +628,13 @@ export const Services = () => {
 
   const filteredServices = useMemo(() => {
     if (activeCategory === 'All') return allServices;
-    if (activeCategory === 'Solutions') return [];
     return allServices.filter(s => s.category === activeCategory);
   }, [activeCategory]);
 
   return (
-    <div className="bg-black text-white min-h-screen selection:bg-brand-red selection:text-white relative" role="main">
+    <div className="bg-[#0A0A0A] text-white min-h-screen selection:bg-brand-red selection:text-white relative" role="main">
       {/* Hero Section */}
-      <section className="relative pt-32 sm:pt-36 md:pt-40 pb-16 sm:pb-20 px-4 sm:px-6 md:px-12 border-b border-white/10 overflow-hidden">
+      <section className="relative pt-32 sm:pt-36 md:pt-40 pb-16 sm:pb-20 px-4 sm:px-6 md:px-12 border-b border-[#2A2A2A] overflow-hidden">
         <AtmosphericBackground 
           imageUrl="/hero_background_3d.png"
           opacity={0.06}
@@ -649,21 +648,21 @@ export const Services = () => {
             <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-display font-bold tracking-tight text-white mb-6">
               {language === 'id' ? 'Layanan & Solusi Digital.' : 'Services & Strategic Solutions.'}
             </h1>
-            <p className="text-base sm:text-lg text-white/70 font-light leading-relaxed mb-6">
+            <p className="text-base sm:text-lg text-[#8E8E93] font-light leading-relaxed mb-6">
               {language === 'id'
                 ? 'Pilihan solusi strategis dan keahlian spesialis terlengkap untuk mentransformasi identitas brand, desain produk digital, dan rekayasa web skala modern.'
                 : 'Complete strategic solutions and specialized capabilities to transform brand identity, digital product design, and high-performance web engineering.'
               }
             </p>
-            <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 text-xs font-mono text-white/60">
-              <span className="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                <span>3 {language === 'id' ? 'Solusi Strategis' : 'Strategic Solutions'}</span>
+            <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 text-xs font-mono text-[#8E8E93]">
+              <span className="px-3 py-1.5 rounded-full bg-[#161616] border border-[#2A2A2A] flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-brand-red animate-pulse shadow-[0_0_8px_rgba(255,26,26,0.6)]" />
+                <span className="text-white">3 {language === 'id' ? 'Solusi Strategis' : 'Strategic Solutions'}</span>
               </span>
-              <span className="px-3 py-1.5 rounded-full bg-white/5 border border-white/10">
+              <span className="px-3 py-1.5 rounded-full bg-[#161616] border border-[#2A2A2A] text-white">
                 15 {language === 'id' ? 'Layanan Spesialis' : 'Specialized Services'}
               </span>
-              <span className="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-brand-red font-semibold">
+              <span className="px-3 py-1.5 rounded-full bg-[#161616] border border-[#2A2A2A] text-brand-red font-semibold">
                 Branding • Design • Development
               </span>
             </div>
@@ -671,80 +670,77 @@ export const Services = () => {
         </div>
       </section>
 
-      {/* SECTION 1: STRATEGIC SOLUTIONS (Always visible or filtered) */}
-      {(activeCategory === 'All' || activeCategory === 'Solutions') && (
-        <section className="py-14 sm:py-20 px-4 sm:px-6 md:px-12 border-b border-white/10 bg-zinc-950/70 relative">
-          <div className="max-w-7xl mx-auto">
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
-              <div>
-                <span className="text-xs font-mono uppercase tracking-widest text-brand-red mb-2 block font-semibold">
-                  {language === 'id' ? 'Kategori Solusi' : 'Solutions Overview'}
-                </span>
-                <h2 className="text-2xl sm:text-4xl font-display font-bold text-white tracking-tight">
-                  SOLUTIONS
-                </h2>
-              </div>
-              <p className="text-xs sm:text-sm text-white/60 font-light max-w-md">
-                {language === 'id'
-                  ? 'Format kemitraan strategis yang dirancang fleksibel untuk akselerasi ekosistem enterprise, UKM berkembang, maupun ekspansi tim internal.'
-                  : 'Tailored strategic engagement models engineered for enterprise ecosystems, scaling SMEs, and dedicated team expansion.'
-                }
-              </p>
+      {/* SECTION 1: STRATEGIC SOLUTIONS (Always visible above filter) */}
+      <section className="py-14 sm:py-20 px-4 sm:px-6 md:px-12 border-b border-[#2A2A2A] bg-[#0A0A0A] relative">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
+            <div>
+              <span className="text-xs font-mono uppercase tracking-widest text-brand-red mb-2 block font-semibold">
+                {language === 'id' ? 'Kategori Solusi' : 'Solutions Overview'}
+              </span>
+              <h2 className="text-2xl sm:text-4xl font-display font-bold text-white tracking-tight">
+                STRATEGIC SOLUTIONS
+              </h2>
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {strategicSolutions.map((sol) => (
-                <Link
-                  key={sol.id}
-                  to={`/solutions/${sol.id}`}
-                  className="group relative rounded-2xl p-6 sm:p-8 bg-zinc-900/50 hover:bg-zinc-900/90 border border-white/10 hover:border-brand-red/60 transition-all duration-300 flex flex-col justify-between"
-                >
-                  <div>
-                    <div className="flex items-center justify-between mb-6">
-                      <div className="w-12 h-12 rounded-xl bg-brand-red/10 border border-brand-red/30 flex items-center justify-center text-brand-red group-hover:scale-110 transition-transform">
-                        {sol.icon}
-                      </div>
-                      <span className="px-2.5 py-1 rounded-full bg-brand-red/10 border border-brand-red/30 text-[10px] sm:text-[11px] font-mono text-brand-red font-semibold">
-                        {language === 'id' ? sol.badgeId : sol.badge}
-                      </span>
-                    </div>
-
-                    <h3 className="text-xl sm:text-2xl font-display font-bold text-white group-hover:text-brand-red transition-colors mb-1.5">
-                      {sol.title}
-                    </h3>
-
-                    <span className="text-xs font-mono text-white/50 block mb-4">
-                      {language === 'id' ? sol.audienceId : sol.audience}
-                    </span>
-
-                    <p className="text-xs sm:text-sm text-white/80 font-light leading-relaxed mb-6">
-                      {language === 'id' ? sol.descriptionId : sol.description}
-                    </p>
-                  </div>
-
-                  <div className="pt-4 border-t border-white/10 flex items-center justify-between">
-                    <span className="text-xs font-mono text-white/50">
-                      {language === 'id' ? sol.timelineId : sol.timeline}
-                    </span>
-                    <div className="flex items-center gap-1.5 text-xs font-mono text-brand-red font-semibold group-hover:translate-x-1 transition-transform">
-                      <span>{language === 'id' ? 'Detail Solusi' : 'Explore Solution'}</span>
-                      <ArrowUpRight size={14} />
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
+            <p className="text-xs sm:text-sm text-[#8E8E93] font-light max-w-md">
+              {language === 'id'
+                ? 'Format kemitraan strategis yang dirancang fleksibel untuk akselerasi ekosistem enterprise, UKM berkembang, maupun ekspansi tim internal.'
+                : 'Tailored strategic engagement models engineered for enterprise ecosystems, scaling SMEs, and dedicated team expansion.'
+              }
+            </p>
           </div>
-        </section>
-      )}
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {strategicSolutions.map((sol) => (
+              <Link
+                key={sol.id}
+                to={`/solutions/${sol.id}`}
+                className="group relative rounded-2xl p-6 sm:p-8 bg-[#161616] hover:bg-[#1E1E1E] border border-[#2A2A2A] hover:border-brand-red/60 transition-all duration-300 flex flex-col justify-between"
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-6">
+                    <div className="w-12 h-12 rounded-xl bg-brand-red/10 border border-brand-red/30 flex items-center justify-center text-brand-red group-hover:scale-110 transition-transform">
+                      {sol.icon}
+                    </div>
+                    <span className="px-2.5 py-1 rounded-full bg-[#FF6B00]/10 border border-[#FF6B00]/30 text-[10px] sm:text-[11px] font-mono text-[#FF6B00] font-semibold">
+                      {language === 'id' ? sol.badgeId : sol.badge}
+                    </span>
+                  </div>
+
+                  <h3 className="text-xl sm:text-2xl font-display font-bold text-white group-hover:text-brand-red transition-colors mb-1.5">
+                    {sol.title}
+                  </h3>
+
+                  <span className="text-xs font-mono text-[#8E8E93] block mb-4">
+                    {language === 'id' ? sol.audienceId : sol.audience}
+                  </span>
+
+                  <p className="text-xs sm:text-sm text-[#8E8E93] font-light leading-relaxed mb-6">
+                    {language === 'id' ? sol.descriptionId : sol.description}
+                  </p>
+                </div>
+
+                <div className="pt-4 border-t border-[#2A2A2A] flex items-center justify-between">
+                  <span className="text-xs font-mono text-[#8E8E93]/70">
+                    {language === 'id' ? sol.timelineId : sol.timeline}
+                  </span>
+                  <div className="flex items-center gap-1.5 text-xs font-mono text-brand-red font-semibold group-hover:translate-x-1 transition-transform">
+                    <span>{language === 'id' ? 'Detail Solusi' : 'Explore Solution'}</span>
+                    <ArrowUpRight size={14} />
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* Pillar Filter Tabs */}
-      <section className="py-6 sm:py-8 px-4 sm:px-6 md:px-12 border-b border-white/10 bg-zinc-950/90 sticky top-16 sm:top-20 z-30 backdrop-blur-md">
+      <section className="py-6 sm:py-8 px-4 sm:px-6 md:px-12 border-b border-[#2A2A2A] bg-[#0A0A0A]/95 sticky top-16 sm:top-20 z-30 backdrop-blur-md">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
-          <div className="flex flex-wrap items-center gap-2 bg-zinc-900/90 p-1.5 rounded-xl border border-white/10 w-full sm:w-auto">
+          <div className="flex flex-wrap items-center gap-2 bg-[#161616] p-1.5 rounded-xl border border-[#2A2A2A] w-full sm:w-auto">
             {[
-              { key: 'All', labelEn: 'All Services (18)', labelId: 'Semua (18)' },
-              { key: 'Solutions', labelEn: 'Solutions (3)', labelId: 'Solusi (3)' },
+              { key: 'All', labelEn: 'All Services (15)', labelId: 'Semua Layanan (15)' },
               { key: 'Branding', labelEn: '1. Branding (5)', labelId: '1. Branding (5)' },
               { key: 'Design', labelEn: '2. Design (5)', labelId: '2. Design (5)' },
               { key: 'Development', labelEn: '3. Development (5)', labelId: '3. Development (5)' }
@@ -755,7 +751,7 @@ export const Services = () => {
                 className={`flex-1 sm:flex-none px-3.5 sm:px-4 py-2 rounded-lg text-xs font-mono font-medium transition-all duration-200 text-center ${
                   activeCategory === tab.key
                     ? 'bg-brand-red text-white shadow-lg shadow-brand-red/20 font-bold'
-                    : 'text-white/60 hover:text-white hover:bg-white/5'
+                    : 'text-[#8E8E93] hover:text-white hover:bg-white/5'
                 }`}
               >
                 {language === 'id' ? tab.labelId : tab.labelEn}
@@ -763,99 +759,95 @@ export const Services = () => {
             ))}
           </div>
 
-          <span className="text-xs font-mono text-white/40 hidden sm:block">
-            {activeCategory === 'Solutions'
-              ? (language === 'id' ? 'Menampilkan 3 Solusi Strategis' : 'Showing 3 Strategic Solutions')
-              : (language === 'id' ? `Menampilkan ${filteredServices.length} Layanan Spesialis` : `Showing ${filteredServices.length} Specialized Services`)}
+          <span className="text-xs font-mono text-[#8E8E93] hidden sm:block">
+            {language === 'id' ? `Menampilkan ${filteredServices.length} Layanan Spesialis` : `Showing ${filteredServices.length} Specialized Services`}
           </span>
         </div>
       </section>
 
       {/* SECTION 2: SERVICES GRID (Categorized into Branding, Design, Development) */}
-      {activeCategory !== 'Solutions' && (
-        <section className="py-14 sm:py-20 px-4 sm:px-6 md:px-12">
-          <div className="max-w-7xl mx-auto space-y-16">
-            
-            {/* Show Group Headers when 'All' is selected, or direct grid when filtered */}
-            {['Branding', 'Design', 'Development'].map(cat => {
-              if (activeCategory !== 'All' && activeCategory !== cat) return null;
-              const catServices = allServices.filter(s => s.category === cat);
+      <section className="py-14 sm:py-20 px-4 sm:px-6 md:px-12">
+        <div className="max-w-7xl mx-auto space-y-16">
+          
+          {/* Show Group Headers when 'All' is selected, or direct grid when filtered */}
+          {['Branding', 'Design', 'Development'].map(cat => {
+            if (activeCategory !== 'All' && activeCategory !== cat) return null;
+            const catServices = allServices.filter(s => s.category === cat);
 
-              return (
-                <div key={cat} className="space-y-6">
-                  {/* Category Pillar Header */}
-                  <div className="flex items-center justify-between pb-4 border-b border-white/10">
-                    <div className="flex items-center gap-3">
-                      <span className="text-xs font-mono tracking-widest text-brand-red font-semibold uppercase">
-                        {cat === 'Branding' ? '01. ' : cat === 'Design' ? '02. ' : '03. '}
-                      </span>
-                      <h2 className="text-2xl sm:text-3xl font-display font-bold uppercase tracking-tight text-white">
-                        {cat}
-                      </h2>
-                    </div>
-                    <span className="text-xs font-mono text-white/40">
-                      5 {language === 'id' ? 'Layanan Terintegrasi' : 'Capabilities'}
+            return (
+              <div key={cat} className="space-y-6">
+                {/* Category Pillar Header */}
+                <div className="flex items-center justify-between pb-4 border-b border-[#2A2A2A]">
+                  <div className="flex items-center gap-3">
+                    <span className="text-xs font-mono tracking-widest text-brand-red font-semibold uppercase">
+                      {cat === 'Branding' ? '01. ' : cat === 'Design' ? '02. ' : '03. '}
                     </span>
+                    <h2 className="text-2xl sm:text-3xl font-display font-bold uppercase tracking-tight text-white">
+                      {cat}
+                    </h2>
                   </div>
-
-                  {/* 5-Column / Responsive Grid for This Pillar */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
-                    {catServices.map((srv) => (
-                      <Link
-                        key={srv.id}
-                        to={`/services/${srv.id}`}
-                        className="group rounded-2xl p-6 sm:p-7 bg-zinc-900/40 hover:bg-zinc-900/80 border border-white/10 hover:border-brand-red/50 transition-all duration-300 flex flex-col justify-between"
-                      >
-                        <div>
-                          <div className="flex items-center justify-between mb-5">
-                            <div className="w-11 h-11 rounded-xl bg-brand-red/10 border border-brand-red/30 flex items-center justify-center text-brand-red group-hover:scale-110 transition-transform">
-                              {srv.icon}
-                            </div>
-                            <span className="px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] sm:text-[11px] font-mono text-white/50">
-                              {srv.category}
-                            </span>
-                          </div>
-
-                          <h3 className="text-lg sm:text-xl font-display font-bold text-white group-hover:text-brand-red transition-colors mb-1">
-                            {srv.title}
-                          </h3>
-
-                          <p className="text-xs font-mono text-brand-red/90 mb-3.5">
-                            {language === 'id' ? srv.subtitleId : srv.subtitle}
-                          </p>
-
-                          <p className="text-xs sm:text-sm text-white/70 font-light leading-relaxed mb-5 line-clamp-3">
-                            {language === 'id' ? srv.summaryId : srv.summary}
-                          </p>
-
-                          <div className="pt-3.5 border-t border-white/10 space-y-1.5 mb-5">
-                            {(language === 'id' ? srv.deliverablesId : srv.deliverables).slice(0, 2).map((item, idx) => (
-                              <div key={idx} className="flex items-center gap-2 text-xs text-white/60 font-light truncate">
-                                <CheckCircle2 size={13} className="text-emerald-400 shrink-0" />
-                                <span className="truncate">{item}</span>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-
-                        <div className="pt-3.5 border-t border-white/10 flex items-center justify-between">
-                          <span className="text-xs font-mono text-white/50">
-                            {language === 'id' ? srv.timelineId : srv.timeline}
-                          </span>
-                          <div className="flex items-center gap-1.5 text-xs font-mono text-brand-red font-semibold group-hover:translate-x-1 transition-transform">
-                            <span>{language === 'id' ? 'Detail' : 'Explore'}</span>
-                            <ArrowUpRight size={14} />
-                          </div>
-                        </div>
-                      </Link>
-                    ))}
-                  </div>
+                  <span className="text-xs font-mono text-[#8E8E93]">
+                    5 {language === 'id' ? 'Layanan Terintegrasi' : 'Capabilities'}
+                  </span>
                 </div>
-              );
-            })}
-          </div>
-        </section>
-      )}
+
+                {/* 5-Column / Responsive Grid for This Pillar */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
+                  {catServices.map((srv) => (
+                    <Link
+                      key={srv.id}
+                      to={`/services/${srv.id}`}
+                      className="group rounded-2xl p-6 sm:p-7 bg-[#161616] hover:bg-[#1E1E1E] border border-[#2A2A2A] hover:border-brand-red/50 transition-all duration-300 flex flex-col justify-between"
+                    >
+                      <div>
+                        <div className="flex items-center justify-between mb-5">
+                          <div className="w-11 h-11 rounded-xl bg-brand-red/10 border border-brand-red/30 flex items-center justify-center text-brand-red group-hover:scale-110 transition-transform">
+                            {srv.icon}
+                          </div>
+                          <span className="px-2.5 py-1 rounded-full bg-[#0A0A0A] border border-[#2A2A2A] text-[10px] sm:text-[11px] font-mono text-[#8E8E93]">
+                            {srv.category}
+                          </span>
+                        </div>
+
+                        <h3 className="text-lg sm:text-xl font-display font-bold text-white group-hover:text-brand-red transition-colors mb-1">
+                          {srv.title}
+                        </h3>
+
+                        <p className="text-xs font-mono text-brand-red/90 mb-3.5">
+                          {language === 'id' ? srv.subtitleId : srv.subtitle}
+                        </p>
+
+                        <p className="text-xs sm:text-sm text-[#8E8E93] font-light leading-relaxed mb-5 line-clamp-3">
+                          {language === 'id' ? srv.summaryId : srv.summary}
+                        </p>
+
+                        <div className="pt-3.5 border-t border-[#2A2A2A] space-y-1.5 mb-5">
+                          {(language === 'id' ? srv.deliverablesId : srv.deliverables).slice(0, 2).map((item, idx) => (
+                            <div key={idx} className="flex items-center gap-2 text-xs text-[#8E8E93] font-light truncate">
+                              <CheckCircle2 size={13} className="text-emerald-400 shrink-0" />
+                              <span className="truncate">{item}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="pt-3.5 border-t border-[#2A2A2A] flex items-center justify-between">
+                        <span className="text-xs font-mono text-[#8E8E93]/70">
+                          {language === 'id' ? srv.timelineId : srv.timeline}
+                        </span>
+                        <div className="flex items-center gap-1.5 text-xs font-mono text-brand-red font-semibold group-hover:translate-x-1 transition-transform">
+                          <span>{language === 'id' ? 'Detail' : 'Explore'}</span>
+                          <ArrowUpRight size={14} />
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </section>
 
       {/* Service / Solution Detail Modal */}
       <AnimatePresence>
@@ -866,10 +858,10 @@ export const Services = () => {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ duration: 0.25 }}
-              className="relative w-full max-w-3xl bg-zinc-950 border border-white/15 rounded-2xl overflow-hidden shadow-2xl my-8 max-h-[90vh] flex flex-col"
+              className="relative w-full max-w-3xl bg-[#161616] border border-[#2A2A2A] rounded-2xl overflow-hidden shadow-2xl my-8 max-h-[90vh] flex flex-col"
             >
               {/* Modal Header */}
-              <div className="sticky top-0 z-20 flex items-center justify-between p-4 sm:p-6 bg-zinc-950/95 backdrop-blur border-b border-white/10">
+              <div className="sticky top-0 z-20 flex items-center justify-between p-4 sm:p-6 bg-[#161616]/95 backdrop-blur border-b border-[#2A2A2A]">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-xl bg-brand-red/10 border border-brand-red/30 flex items-center justify-center text-brand-red">
                     {selectedService.icon}
@@ -885,7 +877,7 @@ export const Services = () => {
                 </div>
                 <button
                   onClick={() => setSelectedService(null)}
-                  className="w-9 h-9 rounded-full bg-white/5 hover:bg-white/15 border border-white/10 flex items-center justify-center text-white/70 hover:text-white transition-colors"
+                  className="w-9 h-9 rounded-full bg-[#0A0A0A] hover:bg-white/10 border border-[#2A2A2A] flex items-center justify-center text-[#8E8E93] hover:text-white transition-colors"
                   aria-label="Close modal"
                 >
                   <X size={18} />
@@ -895,10 +887,10 @@ export const Services = () => {
               {/* Modal Scrollable Content */}
               <div className="overflow-y-auto p-6 sm:p-8 space-y-6">
                 <div>
-                  <h4 className="text-xs font-mono uppercase tracking-wider text-white/50 mb-2 font-semibold">
+                  <h4 className="text-xs font-mono uppercase tracking-wider text-[#8E8E93] mb-2 font-semibold">
                     {language === 'id' ? 'Deskripsi & Ruang Lingkup' : 'Overview & Scope'}
                   </h4>
-                  <p className="text-sm text-white/80 leading-relaxed font-light">
+                  <p className="text-sm text-[#8E8E93] leading-relaxed font-light">
                     {'fullDescription' in selectedService 
                       ? (language === 'id' ? selectedService.fullDescriptionId : selectedService.fullDescription)
                       : (language === 'id' ? selectedService.descriptionId : selectedService.description)
@@ -906,9 +898,9 @@ export const Services = () => {
                   </p>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-xl bg-white/[0.03] border border-white/10">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-xl bg-[#0A0A0A] border border-[#2A2A2A]">
                   <div>
-                    <span className="text-[11px] font-mono text-white/50 uppercase block mb-1">
+                    <span className="text-[11px] font-mono text-[#8E8E93] uppercase block mb-1">
                       {language === 'id' ? 'Estimasi Pengerjaan' : 'Estimated Timeline'}
                     </span>
                     <span className="text-sm font-display font-semibold text-white">
@@ -916,10 +908,10 @@ export const Services = () => {
                     </span>
                   </div>
                   <div>
-                    <span className="text-[11px] font-mono text-white/50 uppercase block mb-1">
+                    <span className="text-[11px] font-mono text-[#8E8E93] uppercase block mb-1">
                       {language === 'id' ? 'Target Kebutuhan' : 'Target Audience'}
                     </span>
-                    <span className="text-xs text-white/80 font-light block leading-snug">
+                    <span className="text-xs text-[#8E8E93] font-light block leading-snug">
                       {'idealFor' in selectedService 
                         ? (language === 'id' ? selectedService.idealForId : selectedService.idealFor)
                         : (language === 'id' ? selectedService.audienceId : selectedService.audience)
@@ -934,7 +926,7 @@ export const Services = () => {
                   </h4>
                   <ul className="space-y-2">
                     {(language === 'id' ? selectedService.deliverablesId : selectedService.deliverables).map((item, idx) => (
-                      <li key={idx} className="flex items-start gap-2.5 text-xs sm:text-sm text-white/80 font-light">
+                      <li key={idx} className="flex items-start gap-2.5 text-xs sm:text-sm text-[#8E8E93] font-light">
                         <CheckCircle2 size={15} className="text-emerald-400 shrink-0 mt-0.5" />
                         <span>{item}</span>
                       </li>
@@ -944,12 +936,12 @@ export const Services = () => {
 
                 {'tools' in selectedService && selectedService.tools && (
                   <div>
-                    <h4 className="text-xs font-mono uppercase tracking-wider text-white/50 mb-3 font-semibold">
+                    <h4 className="text-xs font-mono uppercase tracking-wider text-[#8E8E93] mb-3 font-semibold">
                       {language === 'id' ? 'Alat & Standar Teknologi' : 'Tools & Technologies'}
                     </h4>
                     <div className="flex flex-wrap gap-2">
                       {selectedService.tools.map((tool, idx) => (
-                        <span key={idx} className="px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-xs font-mono text-white/80">
+                        <span key={idx} className="px-3 py-1 rounded-lg bg-[#0A0A0A] border border-[#2A2A2A] text-xs font-mono text-[#8E8E93]">
                           {tool}
                         </span>
                       ))}
@@ -958,16 +950,16 @@ export const Services = () => {
                 )}
 
                 {/* Modal Footer CTA */}
-                <div className="pt-4 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="pt-4 border-t border-[#2A2A2A] flex flex-col sm:flex-row items-center justify-between gap-4">
                   <div>
-                    <span className="text-xs text-white/60 font-light block">
+                    <span className="text-xs text-[#8E8E93] font-light block">
                       {language === 'id' ? 'Konsultasikan kebutuhan spesifik Anda dengan tim kami.' : 'Consult your specific requirements with our team.'}
                     </span>
                   </div>
                   <Link
                     to="/contact"
                     onClick={() => setSelectedService(null)}
-                    className="w-full sm:w-auto px-6 py-2.5 rounded-full bg-brand-red hover:bg-white text-white hover:text-black font-semibold text-xs uppercase tracking-wider transition-colors flex items-center justify-center gap-2"
+                    className="w-full sm:w-auto px-6 py-2.5 rounded-full bg-brand-red hover:bg-[#E01414] text-white font-semibold text-xs uppercase tracking-wider transition-colors flex items-center justify-center gap-2"
                   >
                     <span>{language === 'id' ? 'Mulai Proyek Ini' : 'Start This Project'}</span>
                     <ArrowUpRight size={14} />

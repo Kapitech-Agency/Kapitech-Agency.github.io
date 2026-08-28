@@ -36,7 +36,7 @@ export const FloatingContact = () => {
       icon: <Mail size={18} />,
       label: language === 'id' ? 'Email Bisnis' : 'Business Email',
       href: 'mailto:business@kapitech.id',
-      color: 'bg-blue-600'
+      color: 'bg-[#FF6B00]'
     },
     {
       icon: <MessageSquare size={18} />,
@@ -84,7 +84,7 @@ export const FloatingContact = () => {
                       onClick={() => setIsOpen(false)}
                       className="flex items-center justify-end gap-2.5 sm:gap-3 group"
                     >
-                      <span className="px-3.5 py-2 rounded-xl bg-zinc-900/95 backdrop-blur-md border border-white/15 text-xs font-medium text-white shadow-lg transition-all group-hover:border-brand-red/60 group-hover:text-brand-red whitespace-nowrap">
+                      <span className="px-3.5 py-2 rounded-xl bg-[#161616] border border-[#2A2A2A] text-xs font-medium text-white shadow-lg transition-all group-hover:border-brand-red/60 group-hover:text-brand-red whitespace-nowrap">
                         {option.label}
                       </span>
                       <div className={cn(
@@ -102,7 +102,7 @@ export const FloatingContact = () => {
                       onClick={() => setIsOpen(false)}
                       className="flex items-center justify-end gap-2.5 sm:gap-3 group"
                     >
-                      <span className="px-3.5 py-2 rounded-xl bg-zinc-900/95 backdrop-blur-md border border-white/15 text-xs font-medium text-white shadow-lg transition-all group-hover:border-brand-red/60 group-hover:text-brand-red whitespace-nowrap">
+                      <span className="px-3.5 py-2 rounded-xl bg-[#161616] border border-[#2A2A2A] text-xs font-medium text-white shadow-lg transition-all group-hover:border-brand-red/60 group-hover:text-brand-red whitespace-nowrap">
                         {option.label}
                       </span>
                       <div className={cn(
@@ -135,7 +135,7 @@ export const FloatingContact = () => {
                 className={cn(
                   "w-12 h-12 sm:w-14 sm:h-14 rounded-2xl sm:rounded-[1.75rem] flex items-center justify-center text-white shadow-xl transition-all duration-300",
                   isOpen 
-                    ? "bg-zinc-800 border border-white/20" 
+                    ? "bg-[#161616] border border-[#2A2A2A]" 
                     : "bg-brand-red shadow-brand-red/30 shadow-lg"
                 )}
               >
@@ -144,7 +144,7 @@ export const FloatingContact = () => {
               
               {!isOpen && (
                 <div className="hidden sm:block absolute right-full mr-4 top-1/2 -translate-y-1/2 pointer-events-none">
-                  <div className="px-3 py-1.5 rounded-xl bg-black/90 backdrop-blur-md border border-white/10 whitespace-nowrap opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 transition-all duration-300">
+                  <div className="px-3 py-1.5 rounded-xl bg-[#161616] border border-[#2A2A2A] whitespace-nowrap opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 transition-all duration-300">
                     <span className="text-[11px] font-mono uppercase tracking-wider text-white">
                       {language === 'id' ? 'Hubungi Kapitech' : 'Contact Kapitech'}
                     </span>

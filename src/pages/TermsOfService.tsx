@@ -11,7 +11,7 @@ export const TermsOfService = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="min-h-screen pt-28 sm:pt-36 md:pt-40 pb-16 sm:pb-20 px-4 sm:px-6 md:px-12 bg-black text-white/80 font-light relative selection:bg-brand-red selection:text-white"
+      className="min-h-screen pt-28 sm:pt-36 md:pt-40 pb-16 sm:pb-20 px-4 sm:px-6 md:px-12 bg-[#0A0A0A] text-[#8E8E93] font-light relative selection:bg-brand-red selection:text-white"
     >
       <AtmosphericBackground 
         imageUrl="/hero_background_3d.png"
@@ -27,7 +27,7 @@ export const TermsOfService = () => {
         </p>
         
         {language === 'id' ? (
-          <div className="space-y-12 text-base md:text-lg leading-relaxed text-white/80">
+          <div className="space-y-12 text-base md:text-lg leading-relaxed text-[#8E8E93]">
             <section>
               <h2 className="text-2xl font-display font-bold text-white mb-4">1. Penerimaan Ketentuan</h2>
               <p>
@@ -85,13 +85,13 @@ export const TermsOfService = () => {
                 <strong className="text-white">PT Kapitech Digital Indonesia</strong><br />
                 Linea Residence, Blok G No. 5, Jl. Melati Loka, Paku Jaya, Serpong Utara, Kota Tangerang Selatan, Banten 15220, Indonesia<br />
                 Email Bisnis: <a href="mailto:business@kapitech.id" className="text-brand-red hover:underline">business@kapitech.id</a><br />
-                Email Resmi: <a href="mailto:hello@kapitech.id" className="text-white/70 hover:underline">hello@kapitech.id</a><br />
+                Email Resmi: <a href="mailto:hello@kapitech.id" className="text-white/90 hover:underline">hello@kapitech.id</a><br />
                 Telepon: <a href="tel:+6287769957062" className="text-brand-red hover:underline">+62 877-6995-7062</a>
               </p>
             </section>
           </div>
         ) : (
-          <div className="space-y-12 text-base md:text-lg leading-relaxed text-white/80">
+          <div className="space-y-12 text-base md:text-lg leading-relaxed text-[#8E8E93]">
             <section>
               <h2 className="text-2xl font-display font-bold text-white mb-4">1. Acceptance of Terms</h2>
               <p>
@@ -149,7 +149,7 @@ export const TermsOfService = () => {
                 <strong className="text-white">PT Kapitech Digital Indonesia</strong><br />
                 Linea Residence, Block G No. 5, Melati Loka Street, Paku Jaya, North Serpong, South Tangerang City, Banten 15220, Indonesia<br />
                 Business Email: <a href="mailto:business@kapitech.id" className="text-brand-red hover:underline">business@kapitech.id</a><br />
-                Official Email: <a href="mailto:hello@kapitech.id" className="text-white/70 hover:underline">hello@kapitech.id</a><br />
+                Official Email: <a href="mailto:hello@kapitech.id" className="text-white/90 hover:underline">hello@kapitech.id</a><br />
                 Phone: <a href="tel:+6287769957062" className="text-brand-red hover:underline">+62 877-6995-7062</a>
               </p>
             </section>

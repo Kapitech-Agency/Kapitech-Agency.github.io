@@ -122,7 +122,7 @@ export const Home = () => {
   ];
 
   return (
-    <div className="bg-black text-white min-h-screen selection:bg-brand-red selection:text-white" role="main">
+    <div className="bg-[#0A0A0A] text-white min-h-screen selection:bg-brand-red selection:text-white" role="main">
       {/* Hero Section */}
       <section className="relative min-h-[85vh] sm:min-h-[90vh] flex flex-col justify-center px-4 sm:px-6 md:px-12 pt-28 sm:pt-36 md:pt-40 pb-16 sm:pb-20 overflow-hidden">
         <AtmosphericBackground 
@@ -134,12 +134,12 @@ export const Home = () => {
         <div className="max-w-7xl mx-auto w-full relative z-10">
           <div className="max-w-4xl">
             {/* Status Chip */}
-            <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full border border-white/10 bg-white/5 backdrop-blur-md mb-6 sm:mb-8">
+            <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full border border-[#2A2A2A] bg-[#161616]/80 backdrop-blur-md mb-6 sm:mb-8">
               <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400"></span>
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-red opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-red"></span>
               </span>
-              <span className="text-[10px] sm:text-[11px] font-mono tracking-wider uppercase text-white/80">
+              <span className="text-[10px] sm:text-[11px] font-mono tracking-wider uppercase text-[#8E8E93]">
                 Digital Product Design & Development Agency
               </span>
             </div>
@@ -152,7 +152,7 @@ export const Home = () => {
               )}
             </h1>
             
-            <p className="text-sm sm:text-base md:text-xl text-white/70 font-light leading-relaxed max-w-2xl mb-8 sm:mb-12">
+            <p className="text-sm sm:text-base md:text-xl text-[#8E8E93] font-light leading-relaxed max-w-2xl mb-8 sm:mb-12">
               {language === 'id'
                 ? 'Kami merancang dan mengembangkan website berkinerja tinggi, aplikasi web kustom, sistem visual, dan infrastruktur cloud terpercaya untuk bisnis visioner.'
                 : 'We design and develop high-performance websites, custom web applications, visual systems, and resilient cloud infrastructures for visionary enterprises.'}
@@ -161,14 +161,14 @@ export const Home = () => {
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-center">
               <Link 
                 to="/contact" 
-                className="h-12 sm:h-13 px-7 sm:px-8 bg-white hover:bg-brand-red text-black hover:text-white rounded-full text-xs font-semibold uppercase tracking-wider transition-colors duration-300 flex items-center justify-center gap-2 shadow-lg active:scale-95"
+                className="h-12 sm:h-13 px-7 sm:px-8 bg-brand-red hover:bg-[#E01414] text-white rounded-full text-xs font-semibold uppercase tracking-wider transition-colors duration-300 flex items-center justify-center gap-2 shadow-lg shadow-brand-red/20 active:scale-95"
               >
                 <span>{language === 'id' ? 'Mulai Proyek' : 'Start a Project'}</span>
                 <ArrowUpRight size={16} />
               </Link>
               <Link 
                 to="/work" 
-                className="h-12 sm:h-13 px-7 sm:px-8 rounded-full border border-white/20 hover:bg-white/10 text-white transition-colors duration-300 text-xs font-semibold uppercase tracking-wider flex items-center justify-center gap-2 active:scale-95"
+                className="h-12 sm:h-13 px-7 sm:px-8 rounded-full border border-[#2A2A2A] bg-[#161616] hover:bg-[#1E1E1E] text-white transition-colors duration-300 text-xs font-semibold uppercase tracking-wider flex items-center justify-center gap-2 active:scale-95"
               >
                 <span>{language === 'id' ? 'Jelajahi 50 Portofolio' : 'Explore 50 Case Studies'}</span>
               </Link>
@@ -178,19 +178,19 @@ export const Home = () => {
       </section>
 
       {/* REDESIGNED STATS SECTION - Minimal, Simple, High-Contrast & Sleek */}
-      <section className="py-12 sm:py-16 px-4 sm:px-6 md:px-12 bg-black border-y border-white/10" aria-label="Key Agency Statistics">
+      <section className="py-12 sm:py-16 px-4 sm:px-6 md:px-12 bg-[#0A0A0A] border-y border-[#2A2A2A]" aria-label="Key Agency Statistics">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {stats.map((stat, i) => (
               <div 
                 key={i} 
-                className="relative p-6 rounded-2xl bg-zinc-950 border border-white/10 hover:border-brand-red/40 transition-all duration-300 group flex flex-col justify-between"
+                className="relative p-6 rounded-2xl bg-[#161616] border border-[#2A2A2A] hover:border-brand-red/40 transition-all duration-300 group flex flex-col justify-between"
               >
                 <div className="flex items-center justify-between mb-4">
                   <span className="text-[11px] font-mono uppercase tracking-widest text-brand-red font-semibold">
                     {stat.label}
                   </span>
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-white/5 border border-white/10 text-white/50">
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#0A0A0A] border border-[#2A2A2A] text-[#8E8E93]">
                     0{i + 1}
                   </span>
                 </div>
@@ -199,12 +199,12 @@ export const Home = () => {
                   <div className="text-2xl sm:text-3xl lg:text-4xl font-display font-bold text-white tracking-tight group-hover:text-brand-red transition-colors">
                     {stat.value}
                   </div>
-                  <div className="text-xs font-mono text-emerald-400 font-medium mt-1">
+                  <div className="text-xs font-mono text-brand-red font-medium mt-1">
                     {stat.subValue}
                   </div>
                 </div>
 
-                <p className="text-xs text-white/50 font-light leading-relaxed pt-3 border-t border-white/10 mt-2">
+                <p className="text-xs text-[#8E8E93] font-light leading-relaxed pt-3 border-t border-[#2A2A2A] mt-2">
                   {stat.desc}
                 </p>
               </div>
@@ -214,7 +214,7 @@ export const Home = () => {
       </section>
 
       {/* CLIENTS & PARTNERS SECTION - LOOPING CAROUSEL WITH SIDE SHADOWS */}
-      <section className="py-14 sm:py-20 bg-black border-b border-white/10 overflow-hidden relative" id="clients">
+      <section className="py-14 sm:py-20 bg-[#0A0A0A] border-b border-[#2A2A2A] overflow-hidden relative" id="clients">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12 mb-8 sm:mb-10 text-center">
           <span className="text-brand-red font-mono font-semibold tracking-widest uppercase text-xs mb-2 block">
             {language === 'id' ? 'KLIEN & MITRA TERPERCAYA' : 'TRUSTED BY INNOVATION LEADERS'}
@@ -230,10 +230,10 @@ export const Home = () => {
         <div className="relative w-full overflow-hidden py-4">
           
           {/* Left Gradient Shadow */}
-          <div className="absolute left-0 top-0 bottom-0 w-24 sm:w-40 bg-gradient-to-r from-black via-black/90 to-transparent z-20 pointer-events-none" />
+          <div className="absolute left-0 top-0 bottom-0 w-24 sm:w-40 bg-gradient-to-r from-[#0A0A0A] via-[#0A0A0A]/90 to-transparent z-20 pointer-events-none" />
           
           {/* Right Gradient Shadow */}
-          <div className="absolute right-0 top-0 bottom-0 w-24 sm:w-40 bg-gradient-to-l from-black via-black/90 to-transparent z-20 pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-0 w-24 sm:w-40 bg-gradient-to-l from-[#0A0A0A] via-[#0A0A0A]/90 to-transparent z-20 pointer-events-none" />
 
           {/* Marquee Motion Container */}
           <div className="flex w-max">
@@ -281,7 +281,7 @@ export const Home = () => {
                   key={idx}
                   className="flex items-center justify-center shrink-0 opacity-40 hover:opacity-100 transition-opacity duration-300 cursor-default px-4"
                 >
-                  <span className={`${logo.style} text-neutral-300 hover:text-white whitespace-nowrap`}>
+                  <span className={`${logo.style} text-[#8E8E93] hover:text-white whitespace-nowrap`}>
                     {logo.name}
                   </span>
                 </div>
@@ -292,7 +292,7 @@ export const Home = () => {
       </section>
 
       {/* SOLUTIONS & 3 CORE PILLARS SECTION */}
-      <section className="py-16 sm:py-24 md:py-32 px-4 sm:px-6 md:px-12 bg-zinc-950 border-b border-white/10 relative z-10" id="services">
+      <section className="py-16 sm:py-24 md:py-32 px-4 sm:px-6 md:px-12 bg-[#0A0A0A] border-b border-[#2A2A2A] relative z-10" id="services">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 sm:gap-6 mb-12 sm:mb-16">
             <div>
@@ -337,7 +337,7 @@ export const Home = () => {
               <Link 
                 key={idx} 
                 to={`/solutions/${sol.slug}`}
-                className="group p-6 sm:p-7 rounded-2xl bg-zinc-900/40 border border-white/10 hover:border-brand-red/40 hover:bg-zinc-900/80 transition-all flex flex-col justify-between"
+                className="group p-6 sm:p-7 rounded-2xl bg-[#161616] border border-[#2A2A2A] hover:border-brand-red/40 hover:bg-[#1E1E1E] transition-all flex flex-col justify-between"
               >
                 <div>
                   <span className="text-[10px] font-mono uppercase tracking-widest text-brand-red font-semibold block mb-1">
@@ -346,11 +346,11 @@ export const Home = () => {
                   <h3 className="text-xl font-display font-bold text-white group-hover:text-brand-red transition-colors mb-2">
                     {sol.title}
                   </h3>
-                  <p className="text-xs sm:text-sm text-white/70 font-light leading-relaxed">
+                  <p className="text-xs sm:text-sm text-[#8E8E93] font-light leading-relaxed">
                     {sol.desc}
                   </p>
                 </div>
-                <div className="pt-4 mt-4 border-t border-white/10">
+                <div className="pt-4 mt-4 border-t border-[#2A2A2A]">
                   <div className="text-xs font-mono text-brand-red group-hover:text-white flex items-center gap-1.5 transition-colors">
                     <span>{language === 'id' ? 'Lihat Detail Subpage' : 'Explore Subpage'}</span>
                     <ArrowUpRight size={13} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
@@ -360,33 +360,33 @@ export const Home = () => {
             ))}
           </div>
 
-          {/* 3 Pillars Grid (Branding, Design, Development) - NO RED DOTS AS REQUESTED */}
+          {/* 3 Pillars Grid (Branding, Design, Development) */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             
             {/* Pillar 1: Branding */}
-            <div className="p-7 sm:p-8 rounded-2xl bg-zinc-900/60 border border-white/10 hover:border-brand-red/40 transition-all flex flex-col justify-between">
+            <div className="p-7 sm:p-8 rounded-2xl bg-[#161616] border border-[#2A2A2A] hover:border-brand-red/40 transition-all flex flex-col justify-between">
               <div>
                 <div className="flex items-center justify-between mb-5">
                   <span className="text-xs font-mono tracking-widest text-brand-red font-semibold uppercase">01. BRANDING</span>
-                  <span className="px-2.5 py-0.5 rounded-full bg-white/5 border border-white/10 text-[10px] font-mono text-white/50">
+                  <span className="px-2.5 py-0.5 rounded-full bg-[#0A0A0A] border border-[#2A2A2A] text-[10px] font-mono text-[#8E8E93]">
                     5 Services
                   </span>
                 </div>
                 <h3 className="text-xl sm:text-2xl font-display font-bold text-white mb-2">
                   BRAND IDENTITY & SYSTEM
                 </h3>
-                <p className="text-xs text-white/60 font-light mb-5">
+                <p className="text-xs text-[#8E8E93] font-light mb-5">
                   {language === 'id' ? 'Membangun kepercayaan dan citra ikonik.' : 'Build market trust and undeniable distinction.'}
                 </p>
-                <ul className="space-y-2.5 text-xs text-white/80 font-light pt-4 border-t border-white/10">
-                  <li><Link to="/services/pitch-deck" className="hover:text-brand-red transition-colors"><strong className="text-white">Pitch Deck</strong> — <span className="text-white/60">Get visuals that raise capital</span></Link></li>
-                  <li><Link to="/services/brand-identity" className="hover:text-brand-red transition-colors"><strong className="text-white">Brand Identity</strong> — <span className="text-white/60">Build trust with design</span></Link></li>
-                  <li><Link to="/services/logo-design" className="hover:text-brand-red transition-colors"><strong className="text-white">Logo Design</strong> — <span className="text-white/60">Become unforgettable</span></Link></li>
-                  <li><Link to="/services/graphic-design" className="hover:text-brand-red transition-colors"><strong className="text-white">Graphic Design</strong> — <span className="text-white/60">Illustrations, Icons, Social media</span></Link></li>
-                  <li><Link to="/services/rebranding" className="hover:text-brand-red transition-colors"><strong className="text-white">Rebranding</strong> — <span className="text-white/60">Rebrand to grow and convert</span></Link></li>
+                <ul className="space-y-2.5 text-xs text-[#8E8E93] font-light pt-4 border-t border-[#2A2A2A]">
+                  <li><Link to="/services/pitch-deck" className="hover:text-brand-red transition-colors"><strong className="text-white">Pitch Deck</strong> — <span className="text-[#8E8E93]">Get visuals that raise capital</span></Link></li>
+                  <li><Link to="/services/brand-identity" className="hover:text-brand-red transition-colors"><strong className="text-white">Brand Identity</strong> — <span className="text-[#8E8E93]">Build trust with design</span></Link></li>
+                  <li><Link to="/services/logo-design" className="hover:text-brand-red transition-colors"><strong className="text-white">Logo Design</strong> — <span className="text-[#8E8E93]">Become unforgettable</span></Link></li>
+                  <li><Link to="/services/graphic-design" className="hover:text-brand-red transition-colors"><strong className="text-white">Graphic Design</strong> — <span className="text-[#8E8E93]">Illustrations, Icons, Social media</span></Link></li>
+                  <li><Link to="/services/rebranding" className="hover:text-brand-red transition-colors"><strong className="text-white">Rebranding</strong> — <span className="text-[#8E8E93]">Rebrand to grow and convert</span></Link></li>
                 </ul>
               </div>
-              <div className="pt-6 mt-6 border-t border-white/10">
+              <div className="pt-6 mt-6 border-t border-[#2A2A2A]">
                 <Link to="/services" className="text-xs font-mono font-semibold text-brand-red hover:text-white flex items-center gap-1.5">
                   <span>{language === 'id' ? 'Jelajahi Branding' : 'Explore Branding'}</span>
                   <ArrowUpRight size={14} />
@@ -395,29 +395,29 @@ export const Home = () => {
             </div>
 
             {/* Pillar 2: Design */}
-            <div className="p-7 sm:p-8 rounded-2xl bg-zinc-900/60 border border-white/10 hover:border-brand-red/40 transition-all flex flex-col justify-between">
+            <div className="p-7 sm:p-8 rounded-2xl bg-[#161616] border border-[#2A2A2A] hover:border-brand-red/40 transition-all flex flex-col justify-between">
               <div>
                 <div className="flex items-center justify-between mb-5">
                   <span className="text-xs font-mono tracking-widest text-brand-red font-semibold uppercase">02. DESIGN</span>
-                  <span className="px-2.5 py-0.5 rounded-full bg-white/5 border border-white/10 text-[10px] font-mono text-white/50">
+                  <span className="px-2.5 py-0.5 rounded-full bg-[#0A0A0A] border border-[#2A2A2A] text-[10px] font-mono text-[#8E8E93]">
                     5 Services
                   </span>
                 </div>
                 <h3 className="text-xl sm:text-2xl font-display font-bold text-white mb-2">
                   UI/UX & PRODUCT DESIGN
                 </h3>
-                <p className="text-xs text-white/60 font-light mb-5">
+                <p className="text-xs text-[#8E8E93] font-light mb-5">
                   {language === 'id' ? 'Pengalaman antarmuka intuitif & modern.' : 'Frictionless UI/UX for web and mobile.'}
                 </p>
-                <ul className="space-y-2.5 text-xs text-white/80 font-light pt-4 border-t border-white/10">
-                  <li><Link to="/services/ui-ux-design" className="hover:text-brand-red transition-colors"><strong className="text-white">UI/UX Design</strong> — <span className="text-white/60">Web & mobile app design</span></Link></li>
-                  <li><Link to="/services/website-design" className="hover:text-brand-red transition-colors"><strong className="text-white">Website Design</strong> — <span className="text-white/60">Custom websites & landings</span></Link></li>
-                  <li><Link to="/services/mobile-app-design" className="hover:text-brand-red transition-colors"><strong className="text-white">Mobile App Design</strong> — <span className="text-white/60">Apps your users love</span></Link></li>
-                  <li><Link to="/services/website-redesign" className="hover:text-brand-red transition-colors"><strong className="text-white">Website Redesign</strong> — <span className="text-white/60">Modern look, higher impact</span></Link></li>
-                  <li><Link to="/services/product-ux-ui-audit" className="hover:text-brand-red transition-colors"><strong className="text-white">Product UX/UI Audit</strong> — <span className="text-white/60">Insights that drive results</span></Link></li>
+                <ul className="space-y-2.5 text-xs text-[#8E8E93] font-light pt-4 border-t border-[#2A2A2A]">
+                  <li><Link to="/services/ui-ux-design" className="hover:text-brand-red transition-colors"><strong className="text-white">UI/UX Design</strong> — <span className="text-[#8E8E93]">Web & mobile app design</span></Link></li>
+                  <li><Link to="/services/website-design" className="hover:text-brand-red transition-colors"><strong className="text-white">Website Design</strong> — <span className="text-[#8E8E93]">Custom websites & landings</span></Link></li>
+                  <li><Link to="/services/mobile-app-design" className="hover:text-brand-red transition-colors"><strong className="text-white">Mobile App Design</strong> — <span className="text-[#8E8E93]">Apps your users love</span></Link></li>
+                  <li><Link to="/services/website-redesign" className="hover:text-brand-red transition-colors"><strong className="text-white">Website Redesign</strong> — <span className="text-[#8E8E93]">Modern look, higher impact</span></Link></li>
+                  <li><Link to="/services/product-ux-ui-audit" className="hover:text-brand-red transition-colors"><strong className="text-white">Product UX/UI Audit</strong> — <span className="text-[#8E8E93]">Insights that drive results</span></Link></li>
                 </ul>
               </div>
-              <div className="pt-6 mt-6 border-t border-white/10">
+              <div className="pt-6 mt-6 border-t border-[#2A2A2A]">
                 <Link to="/services" className="text-xs font-mono font-semibold text-brand-red hover:text-white flex items-center gap-1.5">
                   <span>{language === 'id' ? 'Jelajahi Design' : 'Explore Design'}</span>
                   <ArrowUpRight size={14} />
@@ -426,29 +426,29 @@ export const Home = () => {
             </div>
 
             {/* Pillar 3: Development */}
-            <div className="p-7 sm:p-8 rounded-2xl bg-zinc-900/60 border border-white/10 hover:border-brand-red/40 transition-all flex flex-col justify-between">
+            <div className="p-7 sm:p-8 rounded-2xl bg-[#161616] border border-[#2A2A2A] hover:border-brand-red/40 transition-all flex flex-col justify-between">
               <div>
                 <div className="flex items-center justify-between mb-5">
                   <span className="text-xs font-mono tracking-widest text-brand-red font-semibold uppercase">03. DEVELOPMENT</span>
-                  <span className="px-2.5 py-0.5 rounded-full bg-white/5 border border-white/10 text-[10px] font-mono text-white/50">
+                  <span className="px-2.5 py-0.5 rounded-full bg-[#0A0A0A] border border-[#2A2A2A] text-[10px] font-mono text-[#8E8E93]">
                     5 Services
                   </span>
                 </div>
                 <h3 className="text-xl sm:text-2xl font-display font-bold text-white mb-2">
                   FULL-STACK ENGINEERING
                 </h3>
-                <p className="text-xs text-white/60 font-light mb-5">
+                <p className="text-xs text-[#8E8E93] font-light mb-5">
                   {language === 'id' ? 'Rekayasa web cepat, aman & terukur.' : 'High-performance engineering built to scale.'}
                 </p>
-                <ul className="space-y-2.5 text-xs text-white/80 font-light pt-4 border-t border-white/10">
-                  <li><Link to="/services/web-development" className="hover:text-brand-red transition-colors"><strong className="text-white">Web Development</strong> — <span className="text-white/60">Front-End & Back-End</span></Link></li>
-                  <li><Link to="/services/mvp-development" className="hover:text-brand-red transition-colors"><strong className="text-white">MVP Development</strong> — <span className="text-white/60">MVPs that attract funding</span></Link></li>
-                  <li><Link to="/services/landing-page" className="hover:text-brand-red transition-colors"><strong className="text-white">Landing page</strong> — <span className="text-white/60">High-converting website</span></Link></li>
-                  <li><Link to="/services/corporate-websites" className="hover:text-brand-red transition-colors"><strong className="text-white">Corporate Websites</strong> — <span className="text-white/60">Built for scale and trust</span></Link></li>
-                  <li><Link to="/services/wow-websites" className="hover:text-brand-red transition-colors"><strong className="text-white">WOW Websites</strong> — <span className="text-white/60">Professional, scalable, fast</span></Link></li>
+                <ul className="space-y-2.5 text-xs text-[#8E8E93] font-light pt-4 border-t border-[#2A2A2A]">
+                  <li><Link to="/services/web-development" className="hover:text-brand-red transition-colors"><strong className="text-white">Web Development</strong> — <span className="text-[#8E8E93]">Front-End & Back-End</span></Link></li>
+                  <li><Link to="/services/mvp-development" className="hover:text-brand-red transition-colors"><strong className="text-white">MVP Development</strong> — <span className="text-[#8E8E93]">MVPs that attract funding</span></Link></li>
+                  <li><Link to="/services/landing-page" className="hover:text-brand-red transition-colors"><strong className="text-white">Landing page</strong> — <span className="text-[#8E8E93]">High-converting website</span></Link></li>
+                  <li><Link to="/services/corporate-websites" className="hover:text-brand-red transition-colors"><strong className="text-white">Corporate Websites</strong> — <span className="text-[#8E8E93]">Built for scale and trust</span></Link></li>
+                  <li><Link to="/services/wow-websites" className="hover:text-brand-red transition-colors"><strong className="text-white">WOW Websites</strong> — <span className="text-[#8E8E93]">Professional, scalable, fast</span></Link></li>
                 </ul>
               </div>
-              <div className="pt-6 mt-6 border-t border-white/10">
+              <div className="pt-6 mt-6 border-t border-[#2A2A2A]">
                 <Link to="/services" className="text-xs font-mono font-semibold text-brand-red hover:text-white flex items-center gap-1.5">
                   <span>{language === 'id' ? 'Jelajahi Development' : 'Explore Development'}</span>
                   <ArrowUpRight size={14} />
@@ -460,7 +460,7 @@ export const Home = () => {
       </section>
 
       {/* FEATURED PROJECTS PREVIEW (Linked to 50 Case Studies) */}
-      <section className="py-16 sm:py-24 md:py-32 px-4 sm:px-6 md:px-12 bg-black border-b border-white/10 relative z-10" id="work">
+      <section className="py-16 sm:py-24 md:py-32 px-4 sm:px-6 md:px-12 bg-[#0A0A0A] border-b border-[#2A2A2A] relative z-10" id="work">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 sm:gap-6 mb-10 sm:mb-16">
             <div>
@@ -485,16 +485,16 @@ export const Home = () => {
               <Link 
                 key={project.id}
                 to="/work"
-                className="group rounded-2xl overflow-hidden bg-zinc-950 border border-white/10 hover:border-brand-red/40 transition-all duration-300 flex flex-col"
+                className="group rounded-2xl overflow-hidden bg-[#161616] border border-[#2A2A2A] hover:border-brand-red/40 transition-all duration-300 flex flex-col"
               >
-                <div className="relative aspect-[16/10] overflow-hidden bg-zinc-900">
+                <div className="relative aspect-[16/10] overflow-hidden bg-[#0A0A0A]">
                   <img 
                     src={project.image} 
                     alt={project.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     loading="lazy"
                   />
-                  <div className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-black/75 backdrop-blur-md text-[10px] font-mono text-emerald-400 border border-white/10">
+                  <div className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-[#0A0A0A]/90 backdrop-blur-md text-[10px] font-mono text-brand-red border border-[#2A2A2A]">
                     {project.impact[0] ? `${project.impact[0].value} ${project.impact[0].label}` : project.year}
                   </div>
                 </div>
@@ -504,21 +504,21 @@ export const Home = () => {
                       <span className="text-[11px] font-mono font-medium text-brand-red uppercase tracking-wider">
                         {project.service}
                       </span>
-                      <span className="text-[11px] font-light text-white/50">
+                      <span className="text-[11px] font-light text-[#8E8E93]">
                         {project.client}
                       </span>
                     </div>
                     <h3 className="text-xl sm:text-2xl font-display font-bold mb-2.5 text-white group-hover:text-brand-red transition-colors">
                       {project.title}
                     </h3>
-                    <p className="text-xs sm:text-sm text-white/60 font-light leading-relaxed mb-5">
+                    <p className="text-xs sm:text-sm text-[#8E8E93] font-light leading-relaxed mb-5">
                       {language === 'id' ? project.descId : project.desc}
                     </p>
                   </div>
-                  <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-white/10">
+                  <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-[#2A2A2A]">
                     <div className="flex flex-wrap gap-1.5">
                       {project.technologies.slice(0, 3).map((item) => (
-                        <span key={item} className="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-[10px] font-mono text-white/60">
+                        <span key={item} className="px-2 py-0.5 rounded bg-[#0A0A0A] border border-[#2A2A2A] text-[10px] font-mono text-[#8E8E93]">
                           {item}
                         </span>
                       ))}
@@ -535,7 +535,7 @@ export const Home = () => {
       </section>
 
       {/* WORKING PROCESS STEPPING */}
-      <section className="py-16 sm:py-24 px-4 sm:px-6 md:px-12 bg-zinc-950 border-b border-white/10">
+      <section className="py-16 sm:py-24 px-4 sm:px-6 md:px-12 bg-[#0A0A0A] border-b border-[#2A2A2A]">
         <div className="max-w-7xl mx-auto">
           <div className="max-w-2xl mb-12 sm:mb-16">
             <span className="text-brand-red font-mono font-semibold tracking-widest uppercase text-xs mb-3 block">
@@ -550,7 +550,7 @@ export const Home = () => {
             {processSteps.map((step) => (
               <div 
                 key={step.step}
-                className="p-6 rounded-2xl bg-zinc-900/40 border border-white/10 hover:border-brand-red/30 transition-colors flex flex-col justify-between"
+                className="p-6 rounded-2xl bg-[#161616] border border-[#2A2A2A] hover:border-brand-red/30 transition-colors flex flex-col justify-between"
               >
                 <div className="text-2xl font-display font-bold text-brand-red font-mono mb-4">
                   {step.step}
@@ -559,7 +559,7 @@ export const Home = () => {
                   <h3 className="text-lg font-display font-bold text-white mb-2">
                     {step.title}
                   </h3>
-                  <p className="text-xs sm:text-sm text-white/60 font-light leading-relaxed">
+                  <p className="text-xs sm:text-sm text-[#8E8E93] font-light leading-relaxed">
                     {step.desc}
                   </p>
                 </div>

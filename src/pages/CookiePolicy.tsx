@@ -12,7 +12,7 @@ export const CookiePolicy = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="min-h-screen pt-28 sm:pt-36 md:pt-40 pb-16 sm:pb-20 px-4 sm:px-6 md:px-12 bg-black text-white/80 font-light relative selection:bg-brand-red selection:text-white"
+      className="min-h-screen pt-28 sm:pt-36 md:pt-40 pb-16 sm:pb-20 px-4 sm:px-6 md:px-12 bg-[#0A0A0A] text-[#8E8E93] font-light relative selection:bg-brand-red selection:text-white"
     >
       <AtmosphericBackground 
         imageUrl="/hero_background_3d.png"
@@ -20,7 +20,7 @@ export const CookiePolicy = () => {
         disableGrayscale={true}
       />
       <div className="max-w-4xl mx-auto relative z-10">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/20 bg-white/5 text-white text-xs font-mono mb-4">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[#2A2A2A] bg-[#161616] text-white text-xs font-mono mb-4">
           <Cookie className="w-3 h-3 text-brand-red" />
           <span>{language === 'id' ? 'Preferensi Cookie & Privasi' : 'Cookie Preferences & Privacy'}</span>
         </div>
@@ -32,7 +32,7 @@ export const CookiePolicy = () => {
         </p>
         
         {language === 'id' ? (
-          <div className="space-y-12 text-base md:text-lg leading-relaxed text-white/80">
+          <div className="space-y-12 text-base md:text-lg leading-relaxed text-[#8E8E93]">
             <section>
               <h2 className="text-2xl font-display font-bold text-white mb-4">1. Apa Itu Cookie?</h2>
               <p>
@@ -44,8 +44,8 @@ export const CookiePolicy = () => {
               <h2 className="text-2xl font-display font-bold text-white mb-4">2. Kategori Cookie yang Kami Gunakan</h2>
               <p className="mb-4">Kami menggunakan jenis cookie berikut:</p>
               <ul className="list-disc pl-6 space-y-3">
-                <li><strong>Cookie Esensial & Fungsional (Wajib):</strong> Cookie ini penting agar situs web berfungsi dengan semestinya, seperti menyimpan preferensi bahasa pilihan Anda dan memastikan keamanan formulir kontak.</li>
-                <li><strong>Cookie Performa & Analitik (Opsional):</strong> Membantu kami mengukur metrik anonim seperti waktu muat halaman, halaman yang paling sering dilihat, dan rasio interaksi guna meningkatkan kinerja teknis website. Kami tidak melacak informasi identitas pribadi (PII) melalui cookie analitik.</li>
+                <li><strong className="text-white">Cookie Esensial & Fungsional (Wajib):</strong> Cookie ini penting agar situs web berfungsi dengan semestinya, seperti menyimpan preferensi bahasa pilihan Anda dan memastikan keamanan formulir kontak.</li>
+                <li><strong className="text-white">Cookie Performa & Analitik (Opsional):</strong> Membantu kami mengukur metrik anonim seperti waktu muat halaman, halaman yang paling sering dilihat, dan rasio interaksi guna meningkatkan kinerja teknis website. Kami tidak melacak informasi identitas pribadi (PII) melalui cookie analitik.</li>
               </ul>
             </section>
 
@@ -64,7 +64,7 @@ export const CookiePolicy = () => {
             </section>
           </div>
         ) : (
-          <div className="space-y-12 text-base md:text-lg leading-relaxed text-white/80">
+          <div className="space-y-12 text-base md:text-lg leading-relaxed text-[#8E8E93]">
             <section>
               <h2 className="text-2xl font-display font-bold text-white mb-4">1. What Are Cookies?</h2>
               <p>
@@ -76,8 +76,8 @@ export const CookiePolicy = () => {
               <h2 className="text-2xl font-display font-bold text-white mb-4">2. Categories of Cookies We Use</h2>
               <p className="mb-4">We classify cookies into the following operational groups:</p>
               <ul className="list-disc pl-6 space-y-3">
-                <li><strong>Essential & Functional Cookies (Required):</strong> Essential for core website operations, such as storing your active language toggle preference and securing contact form submissions against spam.</li>
-                <li><strong>Performance & Telemetry Cookies (Optional):</strong> Allow us to measure aggregate anonymous performance indicators, including page render latency and user navigation flows. We do not store Personally Identifiable Information (PII) in telemetry cookies.</li>
+                <li><strong className="text-white">Essential & Functional Cookies (Required):</strong> Essential for core website operations, such as storing your active language toggle preference and securing contact form submissions against spam.</li>
+                <li><strong className="text-white">Performance & Telemetry Cookies (Optional):</strong> Allow us to measure aggregate anonymous performance indicators, including page render latency and user navigation flows. We do not store Personally Identifiable Information (PII) in telemetry cookies.</li>
               </ul>
             </section>
 

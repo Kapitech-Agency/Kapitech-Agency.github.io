@@ -11,7 +11,7 @@ export const PrivacyPolicy = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="min-h-screen pt-28 sm:pt-36 md:pt-40 pb-16 sm:pb-20 px-4 sm:px-6 md:px-12 bg-black text-white/80 font-light relative selection:bg-brand-red selection:text-white"
+      className="min-h-screen pt-28 sm:pt-36 md:pt-40 pb-16 sm:pb-20 px-4 sm:px-6 md:px-12 bg-[#0A0A0A] text-[#8E8E93] font-light relative selection:bg-brand-red selection:text-white"
     >
       <AtmosphericBackground 
         imageUrl="/hero_background_3d.png"
@@ -27,7 +27,7 @@ export const PrivacyPolicy = () => {
         </p>
         
         {language === 'id' ? (
-          <div className="space-y-12 text-base md:text-lg leading-relaxed text-white/80">
+          <div className="space-y-12 text-base md:text-lg leading-relaxed text-[#8E8E93]">
             <section>
               <h2 className="text-2xl font-display font-bold text-white mb-4">1. Pendahuluan</h2>
               <p>
@@ -39,8 +39,8 @@ export const PrivacyPolicy = () => {
               <h2 className="text-2xl font-display font-bold text-white mb-4">2. Informasi yang Kami Kumpulkan</h2>
               <p className="mb-4">Kami dapat mengumpulkan informasi mengenai Anda melalui berbagai cara sebagai berikut:</p>
               <ul className="list-disc pl-6 space-y-2">
-                <li><strong>Data Pribadi & Kontak:</strong> Informasi yang dapat diidentifikasi secara pribadi seperti nama lengkap, alamat email bisnis, nomor telepon/WhatsApp, nama perusahaan, jabatan, dan detail spesifikasi proyek yang Anda kirimkan secara sukarela melalui formulir konsultasi kami.</li>
-                <li><strong>Data Teknis & Derivatif:</strong> Informasi yang otomatis dikumpulkan server kami saat Anda mengakses situs, seperti alamat IP, tipe peramban (browser), sistem operasi, waktu akses, serta riwayat halaman yang Anda jelajahi untuk tujuan analitik performa.</li>
+                <li><strong className="text-white">Data Pribadi & Kontak:</strong> Informasi yang dapat diidentifikasi secara pribadi seperti nama lengkap, alamat email bisnis, nomor telepon/WhatsApp, nama perusahaan, jabatan, dan detail spesifikasi proyek yang Anda kirimkan secara sukarela melalui formulir konsultasi kami.</li>
+                <li><strong className="text-white">Data Teknis & Derivatif:</strong> Informasi yang otomatis dikumpulkan server kami saat Anda mengakses situs, seperti alamat IP, tipe peramban (browser), sistem operasi, waktu akses, serta riwayat halaman yang Anda jelajahi untuk tujuan analitik performa.</li>
               </ul>
             </section>
 
@@ -78,13 +78,13 @@ export const PrivacyPolicy = () => {
                 <strong className="text-white">PT Kapitech Digital Indonesia</strong><br />
                 Linea Residence, Blok G No. 5, Jl. Melati Loka, Paku Jaya, Serpong Utara, Kota Tangerang Selatan, Banten 15220, Indonesia<br />
                 Email Bisnis: <a href="mailto:business@kapitech.id" className="text-brand-red hover:underline">business@kapitech.id</a><br />
-                Email Resmi: <a href="mailto:hello@kapitech.id" className="text-white/70 hover:underline">hello@kapitech.id</a><br />
+                Email Resmi: <a href="mailto:hello@kapitech.id" className="text-white/90 hover:underline">hello@kapitech.id</a><br />
                 Telepon / WhatsApp: <a href="tel:+6287769957062" className="text-brand-red hover:underline">+62 877-6995-7062</a>
               </p>
             </section>
           </div>
         ) : (
-          <div className="space-y-12 text-base md:text-lg leading-relaxed text-white/80">
+          <div className="space-y-12 text-base md:text-lg leading-relaxed text-[#8E8E93]">
             <section>
               <h2 className="text-2xl font-display font-bold text-white mb-4">1. Introduction</h2>
               <p>
@@ -96,8 +96,8 @@ export const PrivacyPolicy = () => {
               <h2 className="text-2xl font-display font-bold text-white mb-4">2. Information We Collect</h2>
               <p className="mb-4">We may collect information about you in a variety of transparent ways. The information we collect on our Site includes:</p>
               <ul className="list-disc pl-6 space-y-2">
-                <li><strong>Personal & Contact Data:</strong> Personally identifiable information, such as your full name, work email address, phone/WhatsApp number, company name, and project scope details that you voluntarily submit when inquiring about our engineering and design capabilities.</li>
-                <li><strong>Technical & Derivative Data:</strong> Information our servers automatically log when you access the Site, such as your IP address, browser type, operating system, access timestamps, and the pages visited to optimize website performance.</li>
+                <li><strong className="text-white">Personal & Contact Data:</strong> Personally identifiable information, such as your full name, work email address, phone/WhatsApp number, company name, and project scope details that you voluntarily submit when inquiring about our engineering and design capabilities.</li>
+                <li><strong className="text-white">Technical & Derivative Data:</strong> Information our servers automatically log when you access the Site, such as your IP address, browser type, operating system, access timestamps, and the pages visited to optimize website performance.</li>
               </ul>
             </section>
 
@@ -135,7 +135,7 @@ export const PrivacyPolicy = () => {
                 <strong className="text-white">PT Kapitech Digital Indonesia</strong><br />
                 Linea Residence, Block G No. 5, Melati Loka Street, Paku Jaya, North Serpong, South Tangerang City, Banten 15220, Indonesia<br />
                 Business Email: <a href="mailto:business@kapitech.id" className="text-brand-red hover:underline">business@kapitech.id</a><br />
-                Official Email: <a href="mailto:hello@kapitech.id" className="text-white/70 hover:underline">hello@kapitech.id</a><br />
+                Official Email: <a href="mailto:hello@kapitech.id" className="text-white/90 hover:underline">hello@kapitech.id</a><br />
                 Phone / WhatsApp: <a href="tel:+6287769957062" className="text-brand-red hover:underline">+62 877-6995-7062</a>
               </p>
             </section>
