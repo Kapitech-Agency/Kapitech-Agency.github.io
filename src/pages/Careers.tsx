@@ -458,6 +458,7 @@ export const Careers = () => {
   ];
 
   const benefits = language === 'id' ? benefitsId : benefitsEn;
+  const [honeypot, setHoneypot] = useState('');
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -466,12 +467,26 @@ export const Careers = () => {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setFormData(prev => ({ ...prev, resume: e.target.files![0] }));
+      const file = e.target.files[0];
+      // Max 5MB check
+      if (file.size > 5 * 1024 * 1024) {
+        alert(language === 'id' ? 'Ukuran file maksimal adalah 5MB' : 'Maximum file size is 5MB');
+        return;
+      }
+      setFormData(prev => ({ ...prev, resume: file }));
     }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (honeypot.trim().length > 0) {
+      setIsSubmitted(true);
+      return;
+    }
+    const sanitizedName = formData.name.trim();
+    const sanitizedEmail = formData.email.trim();
+    if (!sanitizedName || !sanitizedEmail) return;
+
     setIsSubmitted(true);
   };
 
@@ -533,60 +548,26 @@ export const Careers = () => {
           </div>
         </div>
 
-        {/* Curated Static Photo Wall (12 Specialist Talents) */}
+        {/* Curated Static Photo Wall (Only Photos Displayed) */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12">
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4">
-            {twelveTalents.map((talent, idx) => (
+            {twelveTalents.map((talent) => (
               <button
                 key={`talent-${talent.id}`}
                 onClick={() => setSelectedTalent(talent)}
-                className="group relative flex flex-col justify-between rounded-2xl sm:rounded-3xl overflow-hidden border border-white/10 bg-zinc-950 transition-all duration-300 hover:scale-[1.03] hover:border-brand-red/60 hover:shadow-[0_0_30px_rgba(255,26,26,0.18)] text-left cursor-pointer aspect-[3/4] p-3 sm:p-4"
+                className="group relative rounded-2xl sm:rounded-3xl overflow-hidden border border-white/10 bg-zinc-950 transition-all duration-300 hover:scale-[1.03] hover:border-brand-red/60 hover:shadow-[0_0_30px_rgba(255,26,26,0.18)] cursor-pointer aspect-[3/4] p-0 block w-full"
                 title={`${talent.name} - ${talent.role}`}
+                aria-label={`View photo of ${talent.name}`}
               >
-                {/* Dark Cinematic Talent Portrait */}
+                {/* Clean Photo without overlays */}
                 <img 
                   src={talent.image} 
                   alt={talent.name}
-                  className="absolute inset-0 w-full h-full object-cover object-center brightness-75 contrast-110 group-hover:brightness-95 group-hover:scale-105 transition-all duration-500"
+                  className="w-full h-full object-cover object-center group-hover:scale-105 transition-all duration-500"
                   loading="lazy"
                 />
-
-                {/* Dark Vignette Gradient */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/35 to-black/40 group-hover:via-black/10 transition-colors duration-500 pointer-events-none" />
-
-                {/* Top Badge (Specialty & Index) */}
-                <div className="relative z-10 flex items-center justify-between w-full">
-                  <span className="text-[9px] sm:text-[10px] font-mono px-2 py-0.5 rounded-full bg-black/70 backdrop-blur-md text-white/90 border border-white/15">
-                    {String(idx + 1).padStart(2, '0')}
-                  </span>
-                  <span className="text-[8px] sm:text-[9px] font-mono uppercase tracking-wider text-white/70 bg-black/60 backdrop-blur-md px-2 py-0.5 rounded-full border border-white/10 font-semibold truncate max-w-[90px] text-right">
-                    {talent.department === 'Visual Experience' ? 'Visual' : 'Code'}
-                  </span>
-                </div>
-
-                {/* Bottom Overlay Info */}
-                <div className="relative z-10 -mx-3 -mb-3 sm:-mx-4 sm:-mb-4 p-3 sm:p-3.5 bg-gradient-to-t from-black via-black/95 to-transparent pt-8 text-white">
-                  <span className="text-[9px] sm:text-[10px] font-mono text-brand-red font-semibold truncate block mb-0.5">
-                    {talent.specialty}
-                  </span>
-                  <h4 className="text-xs sm:text-sm font-display font-bold text-white truncate leading-snug">
-                    {talent.name}
-                  </h4>
-                  <p className="text-[10px] sm:text-[11px] text-white/60 truncate">
-                    {talent.role}
-                  </p>
-                </div>
               </button>
             ))}
-          </div>
-
-          <div className="mt-8 text-center">
-            <span className="text-xs font-mono text-white/50">
-              {language === 'id' 
-                ? '💡 Klik kartu profil mana pun untuk melihat spesialisasi dan portofolio teknis talenta.'
-                : '💡 Click any profile card to view detailed technical specialty and background.'
-              }
-            </span>
           </div>
         </div>
 
@@ -896,6 +877,20 @@ export const Careers = () => {
                     </div>
                   ) : (
                     <form onSubmit={handleSubmit} className="space-y-4">
+                      {/* Anti-spam honeypot */}
+                      <div className="hidden" aria-hidden="true">
+                        <label htmlFor="applicant_title_hp">Do not fill</label>
+                        <input 
+                          type="text" 
+                          id="applicant_title_hp" 
+                          name="applicant_title_hp" 
+                          value={honeypot} 
+                          onChange={(e) => setHoneypot(e.target.value)} 
+                          tabIndex={-1} 
+                          autoComplete="off" 
+                        />
+                      </div>
+
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                           <label className="block text-[11px] font-mono text-white/60 mb-1.5 uppercase">

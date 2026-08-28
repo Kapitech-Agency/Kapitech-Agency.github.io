@@ -84,7 +84,8 @@ export const TermsOfService = () => {
                 <br /><br />
                 <strong className="text-white">PT Kapitech Digital Indonesia</strong><br />
                 Linea Residence, Blok G No. 5, Jl. Melati Loka, Paku Jaya, Serpong Utara, Kota Tangerang Selatan, Banten 15220, Indonesia<br />
-                Email: <a href="mailto:hello@kapitech.id" className="text-brand-red hover:underline">hello@kapitech.id</a><br />
+                Email Bisnis: <a href="mailto:business@kapitech.id" className="text-brand-red hover:underline">business@kapitech.id</a><br />
+                Email Resmi: <a href="mailto:hello@kapitech.id" className="text-white/70 hover:underline">hello@kapitech.id</a><br />
                 Telepon: <a href="tel:+6287769957062" className="text-brand-red hover:underline">+62 877-6995-7062</a>
               </p>
             </section>
@@ -147,7 +148,8 @@ export const TermsOfService = () => {
                 <br /><br />
                 <strong className="text-white">PT Kapitech Digital Indonesia</strong><br />
                 Linea Residence, Block G No. 5, Melati Loka Street, Paku Jaya, North Serpong, South Tangerang City, Banten 15220, Indonesia<br />
-                Email: <a href="mailto:hello@kapitech.id" className="text-brand-red hover:underline">hello@kapitech.id</a><br />
+                Business Email: <a href="mailto:business@kapitech.id" className="text-brand-red hover:underline">business@kapitech.id</a><br />
+                Official Email: <a href="mailto:hello@kapitech.id" className="text-white/70 hover:underline">hello@kapitech.id</a><br />
                 Phone: <a href="tel:+6287769957062" className="text-brand-red hover:underline">+62 877-6995-7062</a>
               </p>
             </section>

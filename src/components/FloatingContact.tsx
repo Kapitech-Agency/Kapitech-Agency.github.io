@@ -34,13 +34,13 @@ export const FloatingContact = () => {
     },
     {
       icon: <Mail size={18} />,
-      label: language === 'id' ? 'Kirim Email' : 'Send Email',
-      href: 'mailto:kapitechagency@gmail.com',
+      label: language === 'id' ? 'Email Bisnis' : 'Business Email',
+      href: 'mailto:business@kapitech.id',
       color: 'bg-blue-600'
     },
     {
       icon: <MessageSquare size={18} />,
-      label: language === 'id' ? 'Formulir Proyek' : 'Project Form',
+      label: language === 'id' ? 'Mulai Proyek' : 'Start a Project',
       href: '/contact',
       isLink: true,
       color: 'bg-brand-red'

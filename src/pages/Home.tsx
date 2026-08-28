@@ -140,7 +140,7 @@ export const Home = () => {
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400"></span>
               </span>
               <span className="text-[10px] sm:text-[11px] font-mono tracking-wider uppercase text-white/80">
-                PT Kapitech Digital Indonesia • {language === 'id' ? 'Agensi Produk Digital' : 'Digital Product Agency'}
+                Digital Product Design & Development Agency
               </span>
             </div>
             
@@ -213,192 +213,244 @@ export const Home = () => {
         </div>
       </section>
 
-      {/* CLIENTS & PARTNERS SECTION */}
-      <section className="py-16 sm:py-24 px-4 sm:px-6 md:px-12 bg-black border-b border-white/10" id="clients">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 sm:gap-6 mb-10 sm:mb-16">
-            <div>
-              <span className="text-brand-red font-mono font-semibold tracking-widest uppercase text-xs mb-2 sm:mb-3 block">
-                {t('clients.tag')}
-              </span>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold tracking-tight text-white">
-                {t('clients.title')}
-              </h2>
-            </div>
-            <p className="text-xs sm:text-sm text-white/60 font-light max-w-md">
-              {t('clients.desc')}
-            </p>
-          </div>
+      {/* CLIENTS & PARTNERS SECTION - LOOPING CAROUSEL WITH SIDE SHADOWS */}
+      <section className="py-14 sm:py-20 bg-black border-b border-white/10 overflow-hidden relative" id="clients">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12 mb-8 sm:mb-10 text-center">
+          <span className="text-brand-red font-mono font-semibold tracking-widest uppercase text-xs mb-2 block">
+            {language === 'id' ? 'KLIEN & MITRA TERPERCAYA' : 'TRUSTED BY INNOVATION LEADERS'}
+          </span>
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-display font-bold tracking-tight text-white">
+            {language === 'id' 
+              ? 'Dipercaya oleh 50+ perusahaan global & startup bervaluasi tinggi' 
+              : 'Empowering 50+ global scaleups, enterprise leaders & venture-backed products'}
+          </h2>
+        </div>
 
-          {/* Client Logos Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
-            {clientPartners.map((client, i) => (
-              <div
-                key={i}
-                className="p-5 sm:p-6 md:p-8 rounded-2xl bg-zinc-900/40 border border-white/10 hover:border-brand-red/40 hover:bg-zinc-900/80 transition-all duration-300 group flex flex-col justify-between"
-              >
-                <div className="flex items-center justify-between mb-4 sm:mb-8">
-                  <div className="flex items-center gap-2">
-                    <Building2 size={16} className="text-white/40 group-hover:text-brand-red transition-colors" />
-                    <span className="text-base md:text-lg font-display font-black tracking-wider text-white group-hover:text-brand-red transition-colors">
-                      {client.logoText}
-                    </span>
-                  </div>
-                  <span className="text-[9px] font-mono px-2 py-0.5 rounded bg-white/5 text-white/50 border border-white/10">
-                    {client.industry}
+        {/* Looping Marquee Track with Left & Right Gradient Shadows */}
+        <div className="relative w-full overflow-hidden py-4">
+          
+          {/* Left Gradient Shadow */}
+          <div className="absolute left-0 top-0 bottom-0 w-24 sm:w-40 bg-gradient-to-r from-black via-black/90 to-transparent z-20 pointer-events-none" />
+          
+          {/* Right Gradient Shadow */}
+          <div className="absolute right-0 top-0 bottom-0 w-24 sm:w-40 bg-gradient-to-l from-black via-black/90 to-transparent z-20 pointer-events-none" />
+
+          {/* Marquee Motion Container */}
+          <div className="flex w-max">
+            <motion.div
+              className="flex items-center gap-12 sm:gap-20 shrink-0 pr-12 sm:pr-20"
+              animate={{ x: ['0%', '-50%'] }}
+              transition={{
+                duration: 28,
+                repeat: Infinity,
+                ease: 'linear',
+              }}
+            >
+              {[
+                { name: 'interprefy', style: 'font-sans font-bold tracking-tight text-2xl sm:text-3xl lowercase' },
+                { name: 'PLAYERS HEALTH', style: 'font-serif font-black tracking-widest text-lg sm:text-xl uppercase' },
+                { name: 'AUTOMATTIC', style: 'font-mono font-bold tracking-wider text-xl sm:text-2xl uppercase' },
+                { name: 'WordPress.com', style: 'font-serif font-bold tracking-normal text-2xl sm:text-3xl' },
+                { name: 'CHALHOUB GROUP', style: 'font-sans font-extrabold tracking-widest text-lg sm:text-xl uppercase' },
+                { name: 'GREIF', style: 'font-mono font-black tracking-widest text-2xl sm:text-3xl uppercase' },
+                { name: 'Sinta Health', style: 'font-sans font-bold tracking-tight text-xl sm:text-2xl' },
+                { name: 'BlockDB Networks', style: 'font-mono font-semibold tracking-wider text-lg sm:text-xl uppercase' },
+                { name: 'Orbit Cloud', style: 'font-sans font-black tracking-tighter text-2xl sm:text-3xl uppercase' },
+                { name: 'Zenora Systems', style: 'font-serif font-semibold tracking-wide text-xl sm:text-2xl' },
+                { name: 'Lumina Realty', style: 'font-sans font-extrabold tracking-widest text-lg sm:text-xl uppercase' },
+                { name: 'Solaris CleanTech', style: 'font-mono font-bold tracking-tight text-xl sm:text-2xl' },
+                { name: 'Nexus Fintech', style: 'font-sans font-black tracking-wide text-xl sm:text-2xl uppercase' },
+                { name: 'Kross Security', style: 'font-mono font-extrabold tracking-widest text-lg sm:text-xl uppercase' },
+                // Duplicate set for seamless continuous loop
+                { name: 'interprefy', style: 'font-sans font-bold tracking-tight text-2xl sm:text-3xl lowercase' },
+                { name: 'PLAYERS HEALTH', style: 'font-serif font-black tracking-widest text-lg sm:text-xl uppercase' },
+                { name: 'AUTOMATTIC', style: 'font-mono font-bold tracking-wider text-xl sm:text-2xl uppercase' },
+                { name: 'WordPress.com', style: 'font-serif font-bold tracking-normal text-2xl sm:text-3xl' },
+                { name: 'CHALHOUB GROUP', style: 'font-sans font-extrabold tracking-widest text-lg sm:text-xl uppercase' },
+                { name: 'GREIF', style: 'font-mono font-black tracking-widest text-2xl sm:text-3xl uppercase' },
+                { name: 'Sinta Health', style: 'font-sans font-bold tracking-tight text-xl sm:text-2xl' },
+                { name: 'BlockDB Networks', style: 'font-mono font-semibold tracking-wider text-lg sm:text-xl uppercase' },
+                { name: 'Orbit Cloud', style: 'font-sans font-black tracking-tighter text-2xl sm:text-3xl uppercase' },
+                { name: 'Zenora Systems', style: 'font-serif font-semibold tracking-wide text-xl sm:text-2xl' },
+                { name: 'Lumina Realty', style: 'font-sans font-extrabold tracking-widest text-lg sm:text-xl uppercase' },
+                { name: 'Solaris CleanTech', style: 'font-mono font-bold tracking-tight text-xl sm:text-2xl' },
+                { name: 'Nexus Fintech', style: 'font-sans font-black tracking-wide text-xl sm:text-2xl uppercase' },
+                { name: 'Kross Security', style: 'font-mono font-extrabold tracking-widest text-lg sm:text-xl uppercase' }
+              ].map((logo, idx) => (
+                <div 
+                  key={idx}
+                  className="flex items-center justify-center shrink-0 opacity-40 hover:opacity-100 transition-opacity duration-300 cursor-default px-4"
+                >
+                  <span className={`${logo.style} text-neutral-300 hover:text-white whitespace-nowrap`}>
+                    {logo.name}
                   </span>
                 </div>
-                <div>
-                  <h4 className="text-sm font-semibold text-white/90 mb-1">{client.name}</h4>
-                  <p className="text-xs text-white/50 font-light leading-relaxed">{client.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Tech Ecosystem Strip */}
-          <div className="mt-10 sm:mt-16 pt-8 sm:pt-12 border-t border-white/10">
-            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 sm:gap-8">
-              <span className="text-xs font-mono text-white/50 uppercase tracking-wider shrink-0">
-                {language === 'id' ? 'Teknologi & Alat Utama:' : 'Core Technologies & Tools:'}
-              </span>
-              <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-                {techStack.map((tech) => (
-                  <div
-                    key={tech.name}
-                    className="flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-white/5 border border-white/10 text-xs font-medium text-white/80 hover:border-brand-red/40 transition-colors"
-                  >
-                    <span className="text-brand-red">{tech.icon}</span>
-                    <span>{tech.name}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
+              ))}
+            </motion.div>
           </div>
         </div>
       </section>
 
-      {/* TWO CORE PILLARS / SERVICES SECTION */}
+      {/* SOLUTIONS & 3 CORE PILLARS SECTION */}
       <section className="py-16 sm:py-24 md:py-32 px-4 sm:px-6 md:px-12 bg-zinc-950 border-b border-white/10 relative z-10" id="services">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 sm:gap-6 mb-12 sm:mb-16">
             <div>
               <span className="text-brand-red font-mono font-semibold tracking-widest uppercase text-xs mb-2 sm:mb-3 block">
-                {language === 'id' ? 'Dua Pilar Solusi' : 'Two Core Service Pillars'}
+                {language === 'id' ? 'Layanan & Solusi Lengkap' : 'Solutions & Core Capabilities'}
               </span>
               <h2 className="text-2xl sm:text-3xl md:text-5xl font-display font-bold tracking-tight text-white">
-                {language === 'id' ? 'Layanan Unggulan Kapitech' : 'Full-Spectrum Capabilities'}
+                {language === 'id' ? 'Solusi Strategis & Keahlian Studio' : 'Strategic Solutions & Studio Craft'}
               </h2>
             </div>
             <Link 
               to="/services" 
               className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-brand-red hover:text-white transition-colors"
             >
-              <span>{language === 'id' ? 'Lihat Semua 12 Layanan' : 'Explore All 12 Services'}</span>
+              <span>{language === 'id' ? 'Lihat Semua Layanan & Solusi' : 'Explore All Services & Solutions'}</span>
               <ArrowUpRight size={14} />
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Pillar 1: Visual Experience */}
-            <div className="p-8 sm:p-10 rounded-2xl bg-zinc-900/50 border border-white/10 hover:border-brand-red/40 transition-all duration-300 flex flex-col justify-between">
-              <div>
-                <div className="flex items-center justify-between mb-6">
-                  <div className="w-12 h-12 rounded-xl bg-brand-red/10 border border-brand-red/30 flex items-center justify-center text-brand-red">
-                    <Palette size={24} />
+          {/* Solutions 3 Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            {[
+              {
+                slug: 'mvp-design',
+                title: 'MVP DESIGN',
+                audience: language === 'id' ? 'Untuk ekosistem enterprise & startup' : 'For enterprise ecosystems',
+                desc: language === 'id' ? 'Ciptakan produk digital berdaya saing, pikat investor, dan raih klien baru.' : 'Create a digital product, attract investors and new clients'
+              },
+              {
+                slug: 'product-redesign',
+                title: 'PRODUCT REDESIGN',
+                audience: language === 'id' ? 'Untuk UKM & korporasi berkembang' : 'For SMEs & enterprises',
+                desc: language === 'id' ? 'Dapatkan tampilan modern, tingkatkan UX, dan optimalkan konversi.' : 'Get a fresh look, improved user experience, or enhanced functionality'
+              },
+              {
+                slug: 'team-extension',
+                title: 'TEAM EXTENSION',
+                audience: language === 'id' ? 'Untuk perusahaan dengan tim internal' : 'For existing companies',
+                desc: language === 'id' ? 'Perluas kapasitas tim Anda bersama desainer & engineer berdedikasi kami.' : 'Expand your team with our dedicated and talented design experts'
+              }
+            ].map((sol, idx) => (
+              <Link 
+                key={idx} 
+                to={`/solutions/${sol.slug}`}
+                className="group p-6 sm:p-7 rounded-2xl bg-zinc-900/40 border border-white/10 hover:border-brand-red/40 hover:bg-zinc-900/80 transition-all flex flex-col justify-between"
+              >
+                <div>
+                  <span className="text-[10px] font-mono uppercase tracking-widest text-brand-red font-semibold block mb-1">
+                    {sol.audience}
+                  </span>
+                  <h3 className="text-xl font-display font-bold text-white group-hover:text-brand-red transition-colors mb-2">
+                    {sol.title}
+                  </h3>
+                  <p className="text-xs sm:text-sm text-white/70 font-light leading-relaxed">
+                    {sol.desc}
+                  </p>
+                </div>
+                <div className="pt-4 mt-4 border-t border-white/10">
+                  <div className="text-xs font-mono text-brand-red group-hover:text-white flex items-center gap-1.5 transition-colors">
+                    <span>{language === 'id' ? 'Lihat Detail Subpage' : 'Explore Subpage'}</span>
+                    <ArrowUpRight size={13} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                   </div>
-                  <span className="px-3 py-1 rounded-full bg-brand-red/10 border border-brand-red/30 text-brand-red text-xs font-mono font-medium">
-                    7 Disciplines
+                </div>
+              </Link>
+            ))}
+          </div>
+
+          {/* 3 Pillars Grid (Branding, Design, Development) - NO RED DOTS AS REQUESTED */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            
+            {/* Pillar 1: Branding */}
+            <div className="p-7 sm:p-8 rounded-2xl bg-zinc-900/60 border border-white/10 hover:border-brand-red/40 transition-all flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between mb-5">
+                  <span className="text-xs font-mono tracking-widest text-brand-red font-semibold uppercase">01. BRANDING</span>
+                  <span className="px-2.5 py-0.5 rounded-full bg-white/5 border border-white/10 text-[10px] font-mono text-white/50">
+                    5 Services
                   </span>
                 </div>
-
-                <h3 className="text-2xl sm:text-3xl font-display font-bold text-white mb-3">
-                  1. Visual Experience
+                <h3 className="text-xl sm:text-2xl font-display font-bold text-white mb-2">
+                  BRAND IDENTITY & SYSTEM
                 </h3>
-                <p className="text-sm text-white/70 font-light leading-relaxed mb-6">
-                  {language === 'id' 
-                    ? 'Menciptakan daya tarik visual, identitas berkarakter kuat, dan interaksi yang memukau audiens dari detik pertama.'
-                    : 'Crafting mesmerizing visual design, iconic branding, and multi-format media that immediately captivates audiences.'
-                  }
+                <p className="text-xs text-white/60 font-light mb-5">
+                  {language === 'id' ? 'Membangun kepercayaan dan citra ikonik.' : 'Build market trust and undeniable distinction.'}
                 </p>
-
-                <div className="space-y-3 pt-4 border-t border-white/10">
-                  {[
-                    { name: 'UI/UX Design', desc: language === 'id' ? 'Sistem desain Figma & antarmuka responsif' : 'Figma design systems & responsive interfaces' },
-                    { name: 'Video Production', desc: language === 'id' ? 'Event, pernikahan sinematik & iklan TVC' : 'Events, wedding films & brand commercials' },
-                    { name: '2D Animation', desc: language === 'id' ? 'Video explainer produk & animasi web Lottie' : 'Explainer videos & lightweight Lottie motion' },
-                    { name: 'Branding & Identity', desc: language === 'id' ? 'Arsitektur logo & buku pedoman brandbook' : 'Logo architecture & complete brand manuals' },
-                    { name: 'Motion & Graphic Design', desc: language === 'id' ? 'Tipografi kinetik & iklan digital billboard' : 'Kinetic typography & DOOH motion displays' },
-                    { name: 'Creative Design', desc: language === 'id' ? 'Laporan tahunan & investor pitch decks' : 'Annual corporate reports & pitch decks' },
-                    { name: '3D Visualization', desc: language === 'id' ? 'Render 3D arsitektur & produk fotorealistis' : 'Architectural & photorealistic product renders' }
-                  ].map((item, idx) => (
-                    <div key={idx} className="flex items-start gap-2.5 text-xs text-white/80 font-light">
-                      <CheckCircle2 size={15} className="text-brand-red shrink-0 mt-0.5" />
-                      <div>
-                        <strong className="text-white font-medium">{item.name}</strong> — <span className="text-white/60">{item.desc}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                <ul className="space-y-2.5 text-xs text-white/80 font-light pt-4 border-t border-white/10">
+                  <li><Link to="/services/pitch-deck" className="hover:text-brand-red transition-colors"><strong className="text-white">Pitch Deck</strong> — <span className="text-white/60">Get visuals that raise capital</span></Link></li>
+                  <li><Link to="/services/brand-identity" className="hover:text-brand-red transition-colors"><strong className="text-white">Brand Identity</strong> — <span className="text-white/60">Build trust with design</span></Link></li>
+                  <li><Link to="/services/logo-design" className="hover:text-brand-red transition-colors"><strong className="text-white">Logo Design</strong> — <span className="text-white/60">Become unforgettable</span></Link></li>
+                  <li><Link to="/services/graphic-design" className="hover:text-brand-red transition-colors"><strong className="text-white">Graphic Design</strong> — <span className="text-white/60">Illustrations, Icons, Social media</span></Link></li>
+                  <li><Link to="/services/rebranding" className="hover:text-brand-red transition-colors"><strong className="text-white">Rebranding</strong> — <span className="text-white/60">Rebrand to grow and convert</span></Link></li>
+                </ul>
               </div>
-
-              <div className="pt-8 mt-8 border-t border-white/10">
-                <Link
-                  to="/services"
-                  className="inline-flex items-center gap-2 text-xs font-mono font-semibold uppercase tracking-wider text-brand-red hover:text-white transition-colors"
-                >
-                  <span>{language === 'id' ? 'Jelajahi Visual Experience' : 'Explore Visual Experience'}</span>
+              <div className="pt-6 mt-6 border-t border-white/10">
+                <Link to="/services" className="text-xs font-mono font-semibold text-brand-red hover:text-white flex items-center gap-1.5">
+                  <span>{language === 'id' ? 'Jelajahi Branding' : 'Explore Branding'}</span>
                   <ArrowUpRight size={14} />
                 </Link>
               </div>
             </div>
 
-            {/* Pillar 2: Innovation Development */}
-            <div className="p-8 sm:p-10 rounded-2xl bg-zinc-900/50 border border-white/10 hover:border-brand-red/40 transition-all duration-300 flex flex-col justify-between">
+            {/* Pillar 2: Design */}
+            <div className="p-7 sm:p-8 rounded-2xl bg-zinc-900/60 border border-white/10 hover:border-brand-red/40 transition-all flex flex-col justify-between">
               <div>
-                <div className="flex items-center justify-between mb-6">
-                  <div className="w-12 h-12 rounded-xl bg-brand-red/10 border border-brand-red/30 flex items-center justify-center text-brand-red">
-                    <Code2 size={24} />
-                  </div>
-                  <span className="px-3 py-1 rounded-full bg-brand-red/10 border border-brand-red/30 text-brand-red text-xs font-mono font-medium">
-                    5 Disciplines
+                <div className="flex items-center justify-between mb-5">
+                  <span className="text-xs font-mono tracking-widest text-brand-red font-semibold uppercase">02. DESIGN</span>
+                  <span className="px-2.5 py-0.5 rounded-full bg-white/5 border border-white/10 text-[10px] font-mono text-white/50">
+                    5 Services
                   </span>
                 </div>
-
-                <h3 className="text-2xl sm:text-3xl font-display font-bold text-white mb-3">
-                  2. Innovation Development
+                <h3 className="text-xl sm:text-2xl font-display font-bold text-white mb-2">
+                  UI/UX & PRODUCT DESIGN
                 </h3>
-                <p className="text-sm text-white/70 font-light leading-relaxed mb-6">
-                  {language === 'id'
-                    ? 'Rekayasa perangkat lunak berskala tinggi, platform e-commerce, arsitektur ERP/CRM, dan infrastruktur cloud stabil 24/7.'
-                    : 'Engineering resilient enterprise software, e-commerce engines, custom ERP/CRM workflows, and high-availability cloud systems.'
-                  }
+                <p className="text-xs text-white/60 font-light mb-5">
+                  {language === 'id' ? 'Pengalaman antarmuka intuitif & modern.' : 'Frictionless UI/UX for web and mobile.'}
                 </p>
-
-                <div className="space-y-3 pt-4 border-t border-white/10">
-                  {[
-                    { name: 'Brochure Site / Company Profile Website', desc: language === 'id' ? 'Website korporat sub-1 detik & SEO terstruktur' : 'Sub-1s corporate portals & headless CMS' },
-                    { name: 'E-Commerce Website', desc: language === 'id' ? 'Toko online headless, payment gateway & kurir' : 'Headless commerce, payment gateways & cart sync' },
-                    { name: 'Web Application', desc: language === 'id' ? 'Platform SaaS kustom & kolaborasi real-time' : 'Custom SaaS platforms & WebSockets architecture' },
-                    { name: 'ERP / CRM System', desc: language === 'id' ? 'Manajemen inventaris, sales pipeline & keuangan' : 'Inventory tracking, sales CRM & balance sheets' },
-                    { name: 'IT Support & Infrastructure', desc: language === 'id' ? 'Migrasi cloud AWS/GCP, DevOps & SLA 24/7' : 'Cloud setup, CI/CD pipelines & SLA retainer' }
-                  ].map((item, idx) => (
-                    <div key={idx} className="flex items-start gap-2.5 text-xs text-white/80 font-light">
-                      <CheckCircle2 size={15} className="text-emerald-400 shrink-0 mt-0.5" />
-                      <div>
-                        <strong className="text-white font-medium">{item.name}</strong> — <span className="text-white/60">{item.desc}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                <ul className="space-y-2.5 text-xs text-white/80 font-light pt-4 border-t border-white/10">
+                  <li><Link to="/services/ui-ux-design" className="hover:text-brand-red transition-colors"><strong className="text-white">UI/UX Design</strong> — <span className="text-white/60">Web & mobile app design</span></Link></li>
+                  <li><Link to="/services/website-design" className="hover:text-brand-red transition-colors"><strong className="text-white">Website Design</strong> — <span className="text-white/60">Custom websites & landings</span></Link></li>
+                  <li><Link to="/services/mobile-app-design" className="hover:text-brand-red transition-colors"><strong className="text-white">Mobile App Design</strong> — <span className="text-white/60">Apps your users love</span></Link></li>
+                  <li><Link to="/services/website-redesign" className="hover:text-brand-red transition-colors"><strong className="text-white">Website Redesign</strong> — <span className="text-white/60">Modern look, higher impact</span></Link></li>
+                  <li><Link to="/services/product-ux-ui-audit" className="hover:text-brand-red transition-colors"><strong className="text-white">Product UX/UI Audit</strong> — <span className="text-white/60">Insights that drive results</span></Link></li>
+                </ul>
               </div>
+              <div className="pt-6 mt-6 border-t border-white/10">
+                <Link to="/services" className="text-xs font-mono font-semibold text-brand-red hover:text-white flex items-center gap-1.5">
+                  <span>{language === 'id' ? 'Jelajahi Design' : 'Explore Design'}</span>
+                  <ArrowUpRight size={14} />
+                </Link>
+              </div>
+            </div>
 
-              <div className="pt-8 mt-8 border-t border-white/10">
-                <Link
-                  to="/services"
-                  className="inline-flex items-center gap-2 text-xs font-mono font-semibold uppercase tracking-wider text-brand-red hover:text-white transition-colors"
-                >
-                  <span>{language === 'id' ? 'Jelajahi Innovation Development' : 'Explore Innovation Development'}</span>
+            {/* Pillar 3: Development */}
+            <div className="p-7 sm:p-8 rounded-2xl bg-zinc-900/60 border border-white/10 hover:border-brand-red/40 transition-all flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between mb-5">
+                  <span className="text-xs font-mono tracking-widest text-brand-red font-semibold uppercase">03. DEVELOPMENT</span>
+                  <span className="px-2.5 py-0.5 rounded-full bg-white/5 border border-white/10 text-[10px] font-mono text-white/50">
+                    5 Services
+                  </span>
+                </div>
+                <h3 className="text-xl sm:text-2xl font-display font-bold text-white mb-2">
+                  FULL-STACK ENGINEERING
+                </h3>
+                <p className="text-xs text-white/60 font-light mb-5">
+                  {language === 'id' ? 'Rekayasa web cepat, aman & terukur.' : 'High-performance engineering built to scale.'}
+                </p>
+                <ul className="space-y-2.5 text-xs text-white/80 font-light pt-4 border-t border-white/10">
+                  <li><Link to="/services/web-development" className="hover:text-brand-red transition-colors"><strong className="text-white">Web Development</strong> — <span className="text-white/60">Front-End & Back-End</span></Link></li>
+                  <li><Link to="/services/mvp-development" className="hover:text-brand-red transition-colors"><strong className="text-white">MVP Development</strong> — <span className="text-white/60">MVPs that attract funding</span></Link></li>
+                  <li><Link to="/services/landing-page" className="hover:text-brand-red transition-colors"><strong className="text-white">Landing page</strong> — <span className="text-white/60">High-converting website</span></Link></li>
+                  <li><Link to="/services/corporate-websites" className="hover:text-brand-red transition-colors"><strong className="text-white">Corporate Websites</strong> — <span className="text-white/60">Built for scale and trust</span></Link></li>
+                  <li><Link to="/services/wow-websites" className="hover:text-brand-red transition-colors"><strong className="text-white">WOW Websites</strong> — <span className="text-white/60">Professional, scalable, fast</span></Link></li>
+                </ul>
+              </div>
+              <div className="pt-6 mt-6 border-t border-white/10">
+                <Link to="/services" className="text-xs font-mono font-semibold text-brand-red hover:text-white flex items-center gap-1.5">
+                  <span>{language === 'id' ? 'Jelajahi Development' : 'Explore Development'}</span>
                   <ArrowUpRight size={14} />
                 </Link>
               </div>

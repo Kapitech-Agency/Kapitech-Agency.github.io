@@ -20,37 +20,53 @@ export const Contact = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   const serviceOptionsEn = [
-    // Visual Experience
-    'UI/UX Design',
-    'Video Production (Event, Wedding & Commercials)',
-    '2D Animation',
-    'Branding & Identity',
-    'Motion & Graphic Design',
-    'Creative Design',
-    '3D Visualization',
-    // Innovation Development
-    'Brochure Site / Company Profile Website',
-    'E-Commerce Website',
-    'Web Application',
-    'ERP / CRM System',
-    'IT Support & Infrastructure'
+    // Branding
+    'Pitch Deck (Investor Visuals)',
+    'Brand Identity & Guidelines',
+    'Logo Design',
+    'Graphic Design & Illustrations',
+    'Rebranding',
+    // Design
+    'UI/UX Design (Web & Mobile)',
+    'Website Design & Landings',
+    'Mobile App Design (iOS & Android)',
+    'Website Redesign',
+    'Product UX/UI Audit',
+    // Development
+    'Web Development (Full-Stack)',
+    'MVP Development',
+    'Landing Page Development',
+    'Corporate Websites',
+    'WOW / Interactive Websites',
+    // Strategic Solutions
+    'Strategic Solution: MVP Design',
+    'Strategic Solution: Product Redesign',
+    'Strategic Solution: Team Extension'
   ];
 
   const serviceOptionsId = [
-    // Visual Experience
-    'UI/UX Design',
-    'Produksi Video (Event, Pernikahan & Iklan)',
-    'Animasi 2D',
-    'Branding & Identitas',
-    'Motion & Desain Grafis',
-    'Desain Kreatif & Publikasi',
-    'Visualisasi 3D',
-    // Innovation Development
-    'Website Profil Perusahaan / Brochure Site',
-    'Website E-Commerce',
-    'Aplikasi Web / SaaS',
-    'Sistem ERP / CRM',
-    'Dukungan & Infrastruktur IT'
+    // Branding
+    'Pitch Deck (Visual Presentasi Investor)',
+    'Identitas Brand & Brandbook',
+    'Desain Logo Ikonik',
+    'Desain Grafis & Ilustrasi',
+    'Rebranding & Transformasi Visual',
+    // Design
+    'Desain UI/UX (Web & Mobile)',
+    'Desain Website & Landing Page',
+    'Desain Aplikasi Mobile (iOS/Android)',
+    'Redesain Website & Modernisasi',
+    'Audit UX/UI Produk Digital',
+    // Development
+    'Pengembangan Web (Front-End & Back-End)',
+    'Pengembangan MVP Cepat',
+    'Pembuatan Landing Page Berkonversi Tinggi',
+    'Website Korporat & Skala Enterprise',
+    'Website WOW / Interaktif & Cepat',
+    // Strategic Solutions
+    'Solusi Strategis: Desain MVP',
+    'Solusi Strategis: Redesain Produk',
+    'Solusi Strategis: Team Extension (Talenta Dedikasi)'
   ];
 
   const serviceOptions = language === 'id' ? serviceOptionsId : serviceOptionsEn;
@@ -77,6 +93,8 @@ export const Contact = () => {
     );
   };
 
+  const [honeypot, setHoneypot] = useState('');
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormState(prev => ({ ...prev, [name]: value }));
@@ -84,9 +102,26 @@ export const Contact = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    // Anti-spam honeypot detection
+    if (honeypot.trim().length > 0) {
+      // Silently reject bot submissions
+      setIsSubmitting(false);
+      setIsSubmitted(true);
+      return;
+    }
+    
+    // Basic sanitization
+    const sanitizedName = formState.name.trim();
+    const sanitizedEmail = formState.email.trim();
+    const sanitizedMessage = formState.message.trim();
+
+    if (!sanitizedName || !sanitizedEmail || !sanitizedMessage) {
+      return;
+    }
+
     setIsSubmitting(true);
-    // Simulate brief API submission
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    // Simulate brief secure API submission
+    await new Promise(resolve => setTimeout(resolve, 800));
     setIsSubmitting(false);
     setIsSubmitted(true);
   };
@@ -349,6 +384,20 @@ export const Contact = () => {
                   </div>
                 ) : (
                   <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
+                    {/* Honeypot Anti-Spam Field */}
+                    <div className="hidden" aria-hidden="true">
+                      <label htmlFor="company_website_hp">Do not fill this</label>
+                      <input 
+                        type="text" 
+                        id="company_website_hp" 
+                        name="company_website_hp" 
+                        value={honeypot} 
+                        onChange={(e) => setHoneypot(e.target.value)} 
+                        tabIndex={-1} 
+                        autoComplete="off" 
+                      />
+                    </div>
+
                     <div>
                       <h3 className="text-lg sm:text-xl font-display font-bold mb-1.5 sm:mb-2">
                         {language === 'id' ? 'Formulir Konsultasi Proyek' : 'Project Inquiry Form'}

@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Disallow internal build artifacts
+Disallow: /api/
+
+# Sitemap location
+Sitemap: https://kapitech.id/sitemap.xml

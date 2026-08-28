@@ -41,44 +41,29 @@ export const Footer = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const visualServicesEn = [
-    { name: 'UI/UX Design', desc: 'Figma design systems & mobile apps', href: '/services' },
-    { name: 'Video Production', desc: 'Commercials, events & weddings', href: '/services' },
-    { name: '2D Animation', desc: 'Motion explainer & Lottie assets', href: '/services' },
-    { name: 'Branding & Identity', desc: 'Brandbook & visual guidelines', href: '/services' },
-    { name: 'Motion & Graphic Design', desc: 'Dynamic social & OOH motion', href: '/services' },
-    { name: 'Creative Design', desc: 'Editorial reports & pitch decks', href: '/services' },
-    { name: '3D Visualization', desc: 'Architectural & product renders', href: '/services' },
+  const brandingServices = [
+    { name: 'Pitch Deck', desc: 'Get visuals that raise capital', href: '/services' },
+    { name: 'Brand Identity', desc: 'Build trust with design', href: '/services' },
+    { name: 'Logo Design', desc: 'Become unforgettable', href: '/services' },
+    { name: 'Graphic Design', desc: 'Illustrations, Icons, Social media', href: '/services' },
+    { name: 'Rebranding', desc: 'Rebrand to grow and convert', href: '/services' },
   ];
 
-  const visualServicesId = [
-    { name: 'Desain UI/UX', desc: 'Sistem desain Figma & UI mobile', href: '/services' },
-    { name: 'Produksi Video', desc: 'Komersial, event & film pernikahan', href: '/services' },
-    { name: 'Animasi 2D', desc: 'Video explainer & aset Lottie', href: '/services' },
-    { name: 'Branding & Identitas', desc: 'Brandbook & pedoman visual', href: '/services' },
-    { name: 'Motion & Desain Grafis', desc: 'Motion iklan sosial & billboard', href: '/services' },
-    { name: 'Desain Kreatif', desc: 'Laporan editorial & investor deck', href: '/services' },
-    { name: 'Visualisasi 3D', desc: 'Render arsitektur & produk 3D', href: '/services' },
+  const designServices = [
+    { name: 'UI/UX Design', desc: 'Web & mobile app design', href: '/services' },
+    { name: 'Website Design', desc: 'Custom websites & landings', href: '/services' },
+    { name: 'Mobile App Design', desc: 'Apps your users love', href: '/services' },
+    { name: 'Website Redesign', desc: 'Modern look, higher impact', href: '/services' },
+    { name: 'Product UX/UI Audit', desc: 'Insights that drive results', href: '/services' },
   ];
 
-  const devServicesEn = [
-    { name: 'Company Profile Website', desc: 'Brochure site & corporate portals', href: '/services' },
-    { name: 'E-Commerce Website', desc: 'Headless storefronts & Shopify Plus', href: '/services' },
-    { name: 'Web Application', desc: 'Custom SaaS & real-time platforms', href: '/services' },
-    { name: 'ERP / CRM System', desc: 'Enterprise inventory & sales software', href: '/services' },
-    { name: 'IT Support & Infrastructure', desc: 'Cloud migration, DevOps & SLA', href: '/services' },
+  const devServices = [
+    { name: 'Web Development', desc: 'Front-End & Back-End Development', href: '/services' },
+    { name: 'MVP Development', desc: 'MVPs that attract funding', href: '/services' },
+    { name: 'Landing page', desc: 'High-converting website', href: '/services' },
+    { name: 'Corporate Websites', desc: 'Built for scale and trust', href: '/services' },
+    { name: 'WOW Websites', desc: 'Professional, scalable, fast website', href: '/services' },
   ];
-
-  const devServicesId = [
-    { name: 'Website Profil Perusahaan', desc: 'Website brochure & portal korporat', href: '/services' },
-    { name: 'Website E-Commerce', desc: 'Toko online headless & kustom', href: '/services' },
-    { name: 'Aplikasi Web', desc: 'SaaS kustom & platform real-time', href: '/services' },
-    { name: 'Sistem ERP / CRM', desc: 'Software inventaris & sales pipa B2B', href: '/services' },
-    { name: 'Dukungan IT & Infrastruktur', desc: 'Migrasi cloud, DevOps & SLA 24/7', href: '/services' },
-  ];
-
-  const visualServices = language === 'id' ? visualServicesId : visualServicesEn;
-  const devServices = language === 'id' ? devServicesId : devServicesEn;
 
   const socialLinks = [
     {
@@ -244,13 +229,13 @@ export const Footer = () => {
             </div>
           </div>
 
-          {/* Col 2: Visual Experience (2 cols) */}
+          {/* Col 2: Branding & Design (2 cols) */}
           <div className="lg:col-span-2">
             <h4 className="text-xs font-mono uppercase tracking-wider text-brand-red mb-5 font-semibold">
-              Visual Experience
+              Branding & Design
             </h4>
             <ul className="space-y-2.5 text-xs">
-              {visualServices.map((srv) => (
+              {[...brandingServices.slice(0, 3), ...designServices.slice(0, 3)].map((srv) => (
                 <li key={srv.name}>
                   <Link 
                     to={srv.href} 
@@ -263,10 +248,10 @@ export const Footer = () => {
             </ul>
           </div>
 
-          {/* Col 3: Innovation Development (2 cols) */}
+          {/* Col 3: Development & Solutions (2 cols) */}
           <div className="lg:col-span-2">
             <h4 className="text-xs font-mono uppercase tracking-wider text-brand-red mb-5 font-semibold">
-              Innovation Development
+              Development & Solutions
             </h4>
             <ul className="space-y-2.5 text-xs">
               {devServices.map((srv) => (
@@ -345,6 +330,16 @@ export const Footer = () => {
                 </div>
               </a>
 
+              <a href="mailto:business@kapitech.id" className="flex items-center gap-2.5 hover:text-brand-red transition-colors group">
+                <div className="w-7 h-7 rounded-lg bg-zinc-900 border border-white/10 flex items-center justify-center text-brand-red group-hover:border-brand-red/40 shrink-0">
+                  <Globe size={13} />
+                </div>
+                <div className="min-w-0">
+                  <span className="text-[10px] font-mono text-white/50 block leading-tight">{language === 'id' ? 'Kerja Sama Bisnis' : 'Business Inquiry'}</span>
+                  <span className="font-medium text-white group-hover:text-brand-red text-[11px] truncate block">business@kapitech.id</span>
+                </div>
+              </a>
+
               <a href="mailto:recruitment@kapitech.id" className="flex items-center gap-2.5 hover:text-brand-red transition-colors group">
                 <div className="w-7 h-7 rounded-lg bg-zinc-900 border border-white/10 flex items-center justify-center text-brand-red group-hover:border-brand-red/40 shrink-0">
                   <Briefcase size={13} />
@@ -404,7 +399,7 @@ export const Footer = () => {
 
         {/* Bottom Copyright Bar */}
         <div className="pt-6 border-t border-white/10 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-white/50">
-          <p>© {currentYear} Kapitech Agency. {language === 'id' ? 'Beroperasi di bawah naungan PT Kapitech Digital Indonesia.' : 'Operating under PT Kapitech Digital Indonesia.'} {t('footer.rights')}</p>
+          <p>© 2021-2026 Kapitech. {language === 'id' ? 'Beroperasi di bawah naungan PT Kapitech Digital Indonesia.' : 'Operating under PT Kapitech Digital Indonesia.'} {t('footer.rights')}</p>
           <div className="flex items-center gap-6">
             <button 
               onClick={scrollToTop} 

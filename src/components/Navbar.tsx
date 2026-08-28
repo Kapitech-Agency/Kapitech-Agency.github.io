@@ -1,13 +1,34 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useScroll, useSpring } from 'motion/react';
-import { Menu, X, Instagram, Linkedin, Twitter, ChevronRight, Phone, Mail, ArrowUpRight } from 'lucide-react';
+import { 
+  Menu, 
+  X, 
+  Instagram, 
+  Linkedin, 
+  Twitter, 
+  ChevronRight, 
+  ChevronDown, 
+  Phone, 
+  Mail, 
+  ArrowUpRight,
+  Layers,
+  Sparkles,
+  Palette,
+  Code2,
+  Cpu
+} from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/src/lib/utils';
 import { useLanguage } from '@/src/lib/LanguageContext';
+import { allSolutionsAndServices, ServiceItemData } from '@/src/data/servicesData';
 
 export const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isServicesDropdownOpen, setIsServicesDropdownOpen] = useState(false);
+  const [isMobileServicesOpen, setIsMobileServicesOpen] = useState(false);
+  const dropdownTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
   const location = useLocation();
   const { language, setLanguage, t } = useLanguage();
   const { scrollYProgress } = useScroll();
@@ -20,10 +41,7 @@ export const Navbar = () => {
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   // Lock body scroll when mobile menu is open
@@ -38,18 +56,33 @@ export const Navbar = () => {
     };
   }, [isMenuOpen]);
 
-  // Close menu on route change
+  // Close menu & dropdown on route change
   useEffect(() => {
     setIsMenuOpen(false);
+    setIsServicesDropdownOpen(false);
+    setIsMobileServicesOpen(false);
   }, [location.pathname]);
 
-  const navLinks = [
-    { name: t('nav.work'), href: '/work' },
-    { name: t('nav.services'), href: '/services' },
-    { name: t('nav.about'), href: '/about' },
-    { name: t('nav.careers'), href: '/careers' },
-    { name: t('nav.contact'), href: '/contact' },
-  ];
+  const handleMouseEnterServices = () => {
+    if (dropdownTimeoutRef.current) {
+      clearTimeout(dropdownTimeoutRef.current);
+    }
+    setIsServicesDropdownOpen(true);
+  };
+
+  const handleMouseLeaveServices = () => {
+    dropdownTimeoutRef.current = setTimeout(() => {
+      setIsServicesDropdownOpen(false);
+    }, 150);
+  };
+
+  // Organize services by categories
+  const solutions = allSolutionsAndServices.filter(s => s.category === 'Solutions');
+  const branding = allSolutionsAndServices.filter(s => s.category === 'Branding');
+  const design = allSolutionsAndServices.filter(s => s.category === 'Design');
+  const development = allSolutionsAndServices.filter(s => s.category === 'Development');
+
+  const isServicesActive = location.pathname.startsWith('/services') || location.pathname.startsWith('/solutions');
 
   return (
     <>
@@ -81,27 +114,80 @@ export const Navbar = () => {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-6 lg:gap-8">
             <div className="flex items-center gap-5 lg:gap-6 px-6 py-2 rounded-full bg-white/5 backdrop-blur-md border border-white/10">
-              {navLinks.map((link) => (
-                <Link 
-                  key={link.href} 
-                  to={link.href} 
+              
+              {/* Work Link */}
+              <Link 
+                to="/work" 
+                className={cn(
+                  "relative text-[11px] font-medium uppercase tracking-[0.16em] transition-colors py-1",
+                  location.pathname === '/work' ? "text-brand-red font-semibold" : "text-white/70 hover:text-white"
+                )}
+              >
+                {t('nav.work')}
+                <span className={cn(
+                  "absolute -bottom-0.5 left-0 w-0 h-[1.5px] bg-brand-red transition-all duration-300",
+                  location.pathname === '/work' ? "w-full" : "hover:w-full"
+                )} />
+              </Link>
+
+              {/* SERVICES DROPDOWN TRIGGER (NOT DIRECTLY CLICKABLE LINK AS REQUESTED) */}
+              <div 
+                className="relative py-1"
+                onMouseEnter={handleMouseEnterServices}
+                onMouseLeave={handleMouseLeaveServices}
+              >
+                <button
+                  type="button"
+                  onClick={() => setIsServicesDropdownOpen(prev => !prev)}
                   className={cn(
-                    "relative text-[11px] font-medium uppercase tracking-[0.16em] transition-colors py-1",
-                    location.pathname === link.href ? "text-brand-red font-semibold" : "text-white/70 hover:text-white"
+                    "relative inline-flex items-center gap-1 text-[11px] font-medium uppercase tracking-[0.16em] transition-colors cursor-pointer outline-none",
+                    isServicesActive || isServicesDropdownOpen ? "text-brand-red font-semibold" : "text-white/70 hover:text-white"
                   )}
+                  aria-expanded={isServicesDropdownOpen}
+                  aria-haspopup="true"
                 >
-                  {link.name}
+                  <span>{t('nav.services')}</span>
+                  <ChevronDown className={cn("w-3.5 h-3.5 transition-transform duration-200", isServicesDropdownOpen ? "rotate-180 text-brand-red" : "opacity-70")} />
                   <span className={cn(
                     "absolute -bottom-0.5 left-0 w-0 h-[1.5px] bg-brand-red transition-all duration-300",
-                    location.pathname === link.href ? "w-full" : "hover:w-full"
+                    isServicesActive ? "w-full" : ""
                   )} />
-                </Link>
-              ))}
+                </button>
+              </div>
+
+              {/* About Link */}
+              <Link 
+                to="/about" 
+                className={cn(
+                  "relative text-[11px] font-medium uppercase tracking-[0.16em] transition-colors py-1",
+                  location.pathname === '/about' ? "text-brand-red font-semibold" : "text-white/70 hover:text-white"
+                )}
+              >
+                {t('nav.about')}
+                <span className={cn(
+                  "absolute -bottom-0.5 left-0 w-0 h-[1.5px] bg-brand-red transition-all duration-300",
+                  location.pathname === '/about' ? "w-full" : "hover:w-full"
+                )} />
+              </Link>
+
+              {/* Careers Link */}
+              <Link 
+                to="/careers" 
+                className={cn(
+                  "relative text-[11px] font-medium uppercase tracking-[0.16em] transition-colors py-1",
+                  location.pathname === '/careers' ? "text-brand-red font-semibold" : "text-white/70 hover:text-white"
+                )}
+              >
+                {t('nav.careers')}
+                <span className={cn(
+                  "absolute -bottom-0.5 left-0 w-0 h-[1.5px] bg-brand-red transition-all duration-300",
+                  location.pathname === '/careers' ? "w-full" : "hover:w-full"
+                )} />
+              </Link>
             </div>
 
             {/* Start Project CTA with Rotating Clockwise White Outline Glow */}
             <div className="relative p-[1.5px] rounded-full overflow-hidden group/cta flex items-center justify-center shrink-0">
-              {/* Rotating Conic Gradient Beam (Clockwise) */}
               <motion.div
                 className="absolute -inset-[200%] w-[500%] h-[500%] will-change-transform"
                 style={{
@@ -117,7 +203,6 @@ export const Navbar = () => {
                 }}
               />
 
-              {/* Ambient Soft Blur Glow (Clockwise) */}
               <motion.div 
                 className="absolute -inset-[200%] w-[500%] h-[500%] blur-[8px] opacity-70 group-hover/cta:opacity-100 transition-opacity duration-500 will-change-transform"
                 style={{
@@ -142,7 +227,7 @@ export const Navbar = () => {
               </Link>
             </div>
 
-            {/* Language Switcher EN | ID (Proportionally matched with h-10 height) */}
+            {/* Language Switcher EN | ID */}
             <div className="flex items-center h-10 p-1 rounded-full bg-zinc-950/80 border border-white/10 text-[11px] font-mono font-semibold backdrop-blur-md">
               <button
                 onClick={() => setLanguage('en')}
@@ -205,6 +290,146 @@ export const Navbar = () => {
             </button>
           </div>
         </div>
+
+        {/* ======================================================== */}
+        {/* MEGA DROPDOWN MENU FOR DESKTOP (AROUNDA STYLE: 4 COLUMNS) */}
+        {/* ======================================================== */}
+        <AnimatePresence>
+          {isServicesDropdownOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 8 }}
+              transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+              onMouseEnter={handleMouseEnterServices}
+              onMouseLeave={handleMouseLeaveServices}
+              className="hidden md:block absolute top-full left-0 w-full bg-black/95 backdrop-blur-2xl border-b border-white/10 shadow-[0_25px_60px_rgba(0,0,0,0.9)] py-8 px-6 lg:px-12"
+            >
+              <div className="max-w-7xl mx-auto grid grid-cols-4 gap-8 lg:gap-10">
+                
+                {/* COLUMN 1: SOLUTIONS */}
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2 pb-3 border-b border-white/10 text-xs font-mono tracking-widest text-neutral-400 uppercase font-semibold">
+                    <Sparkles className="w-3.5 h-3.5 text-brand-red" />
+                    <span>SOLUTIONS</span>
+                  </div>
+                  <div className="space-y-3">
+                    {solutions.map((item) => (
+                      <Link
+                        key={item.slug}
+                        to={`/solutions/${item.slug}`}
+                        onClick={() => setIsServicesDropdownOpen(false)}
+                        className="group block p-2.5 rounded-xl hover:bg-white/5 transition-all duration-200"
+                      >
+                        <div className="flex items-center justify-between text-sm font-semibold text-white group-hover:text-brand-red transition-colors">
+                          <span>{item.title}</span>
+                          <ChevronRight className="w-3.5 h-3.5 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-brand-red" />
+                        </div>
+                        <div className="text-xs text-neutral-400 group-hover:text-neutral-300 transition-colors mt-0.5 font-light">
+                          {language === 'id' ? item.navSubtitleId : item.navSubtitle}
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+
+                {/* COLUMN 2: BRANDING */}
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2 pb-3 border-b border-white/10 text-xs font-mono tracking-widest text-neutral-400 uppercase font-semibold">
+                    <Palette className="w-3.5 h-3.5 text-brand-red" />
+                    <span>BRANDING</span>
+                  </div>
+                  <div className="space-y-3">
+                    {branding.map((item) => (
+                      <Link
+                        key={item.slug}
+                        to={`/services/${item.slug}`}
+                        onClick={() => setIsServicesDropdownOpen(false)}
+                        className="group block p-2.5 rounded-xl hover:bg-white/5 transition-all duration-200"
+                      >
+                        <div className="flex items-center justify-between text-sm font-semibold text-white group-hover:text-brand-red transition-colors">
+                          <span>{item.title}</span>
+                          <ChevronRight className="w-3.5 h-3.5 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-brand-red" />
+                        </div>
+                        <div className="text-xs text-neutral-400 group-hover:text-neutral-300 transition-colors mt-0.5 font-light">
+                          {language === 'id' ? item.navSubtitleId : item.navSubtitle}
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+
+                {/* COLUMN 3: DESIGN */}
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2 pb-3 border-b border-white/10 text-xs font-mono tracking-widest text-neutral-400 uppercase font-semibold">
+                    <Layers className="w-3.5 h-3.5 text-brand-red" />
+                    <span>DESIGN</span>
+                  </div>
+                  <div className="space-y-3">
+                    {design.map((item) => (
+                      <Link
+                        key={item.slug}
+                        to={`/services/${item.slug}`}
+                        onClick={() => setIsServicesDropdownOpen(false)}
+                        className="group block p-2.5 rounded-xl hover:bg-white/5 transition-all duration-200"
+                      >
+                        <div className="flex items-center justify-between text-sm font-semibold text-white group-hover:text-brand-red transition-colors">
+                          <span>{item.title}</span>
+                          <ChevronRight className="w-3.5 h-3.5 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-brand-red" />
+                        </div>
+                        <div className="text-xs text-neutral-400 group-hover:text-neutral-300 transition-colors mt-0.5 font-light">
+                          {language === 'id' ? item.navSubtitleId : item.navSubtitle}
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+
+                {/* COLUMN 4: DEVELOPMENT */}
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2 pb-3 border-b border-white/10 text-xs font-mono tracking-widest text-neutral-400 uppercase font-semibold">
+                    <Code2 className="w-3.5 h-3.5 text-brand-red" />
+                    <span>DEVELOPMENT</span>
+                  </div>
+                  <div className="space-y-3">
+                    {development.map((item) => (
+                      <Link
+                        key={item.slug}
+                        to={`/services/${item.slug}`}
+                        onClick={() => setIsServicesDropdownOpen(false)}
+                        className="group block p-2.5 rounded-xl hover:bg-white/5 transition-all duration-200"
+                      >
+                        <div className="flex items-center justify-between text-sm font-semibold text-white group-hover:text-brand-red transition-colors">
+                          <span>{item.title}</span>
+                          <ChevronRight className="w-3.5 h-3.5 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-brand-red" />
+                        </div>
+                        <div className="text-xs text-neutral-400 group-hover:text-neutral-300 transition-colors mt-0.5 font-light">
+                          {language === 'id' ? item.navSubtitleId : item.navSubtitle}
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+
+              </div>
+
+              {/* Bottom Quick Hub Bar */}
+              <div className="max-w-7xl mx-auto mt-6 pt-4 border-t border-white/10 flex items-center justify-between text-xs text-neutral-400">
+                <Link 
+                  to="/services" 
+                  onClick={() => setIsServicesDropdownOpen(false)}
+                  className="hover:text-white inline-flex items-center gap-1.5 transition-colors font-medium"
+                >
+                  <span>{language === 'id' ? 'Lihat Semua Gambaran Layanan' : 'Browse All Services Overview'}</span>
+                  <ArrowUpRight className="w-3.5 h-3.5 text-brand-red" />
+                </Link>
+                <div className="font-mono text-[11px] text-neutral-500">
+                  3 Strategic Solutions &bull; 15 Dedicated Services
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </nav>
 
       {/* Fullscreen Mobile Menu Drawer */}
@@ -233,7 +458,6 @@ export const Navbar = () => {
               </Link>
               
               <div className="flex items-center gap-2">
-                {/* Language Switcher inside Mobile Menu */}
                 <div className="flex items-center p-0.5 rounded-full bg-zinc-900 border border-white/15 text-[11px] font-mono font-semibold">
                   <button
                     onClick={() => setLanguage('en')}
@@ -265,42 +489,178 @@ export const Navbar = () => {
               </div>
             </div>
 
-            {/* Nav Links */}
-            <div className="flex flex-col gap-2.5 my-auto py-6">
-              {navLinks.map((link, i) => {
-                const isActive = location.pathname === link.href;
-                return (
-                  <motion.div
-                    initial={{ opacity: 0, x: -15 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.05 }}
-                    key={link.href}
-                  >
-                    <Link
-                      to={link.href}
-                      onClick={() => setIsMenuOpen(false)}
-                      className={cn(
-                        "flex items-center justify-between py-4 px-4 rounded-2xl transition-colors",
-                        isActive 
-                          ? "bg-zinc-900 text-white font-bold border border-brand-red/40" 
-                          : "text-white/80 hover:text-white hover:bg-zinc-950 active:bg-zinc-900"
-                      )}
-                    >
-                      <div className="flex items-center gap-3">
-                        <span className={cn("text-xs font-mono", isActive ? "text-brand-red font-bold" : "text-white/40")}>
-                          0{i + 1}
-                        </span>
-                        <span className="text-xl sm:text-2xl font-display tracking-tight">
-                          {link.name}
-                        </span>
-                      </div>
-                      <ChevronRight size={18} className={cn("transition-transform", isActive ? "text-brand-red translate-x-0.5" : "text-white/30")} />
-                    </Link>
-                  </motion.div>
-                );
-              })}
+            {/* Nav Links in Mobile */}
+            <div className="flex flex-col gap-2 my-auto py-6">
+              
+              {/* Work */}
+              <Link
+                to="/work"
+                onClick={() => setIsMenuOpen(false)}
+                className={cn(
+                  "flex items-center justify-between py-3.5 px-4 rounded-2xl transition-colors",
+                  location.pathname === '/work' 
+                    ? "bg-zinc-900 text-white font-bold border border-brand-red/40" 
+                    : "text-white/80 hover:text-white hover:bg-zinc-950 active:bg-zinc-900"
+                )}
+              >
+                <div className="flex items-center gap-3">
+                  <span className="text-xs font-mono text-brand-red">01</span>
+                  <span className="text-xl font-display">{t('nav.work')}</span>
+                </div>
+                <ChevronRight size={18} className="text-white/40" />
+              </Link>
 
-              <div className="pt-4 mt-2">
+              {/* Services & Solutions (Accordion in Mobile Menu) */}
+              <div className="rounded-2xl border border-white/10 bg-zinc-950/60 overflow-hidden">
+                <button
+                  type="button"
+                  onClick={() => setIsMobileServicesOpen(prev => !prev)}
+                  className="w-full flex items-center justify-between py-3.5 px-4 text-left text-white font-display text-xl"
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="text-xs font-mono text-brand-red">02</span>
+                    <span>{t('nav.services')}</span>
+                  </div>
+                  <ChevronDown className={cn("w-5 h-5 text-neutral-400 transition-transform duration-200", isMobileServicesOpen ? "rotate-180 text-brand-red" : "")} />
+                </button>
+
+                <AnimatePresence>
+                  {isMobileServicesOpen && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="px-4 pb-4 space-y-4 border-t border-white/10 pt-3"
+                    >
+                      {/* Solutions */}
+                      <div>
+                        <div className="text-[11px] font-mono text-brand-red font-semibold uppercase tracking-wider mb-2">
+                          SOLUTIONS
+                        </div>
+                        <div className="space-y-2 pl-2 border-l border-white/10">
+                          {solutions.map(item => (
+                            <Link
+                              key={item.slug}
+                              to={`/solutions/${item.slug}`}
+                              onClick={() => setIsMenuOpen(false)}
+                              className="block py-1 text-sm text-neutral-300 hover:text-white font-medium"
+                            >
+                              {item.title}
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Branding */}
+                      <div>
+                        <div className="text-[11px] font-mono text-neutral-400 font-semibold uppercase tracking-wider mb-2">
+                          BRANDING
+                        </div>
+                        <div className="space-y-2 pl-2 border-l border-white/10">
+                          {branding.map(item => (
+                            <Link
+                              key={item.slug}
+                              to={`/services/${item.slug}`}
+                              onClick={() => setIsMenuOpen(false)}
+                              className="block py-1 text-sm text-neutral-300 hover:text-white"
+                            >
+                              {item.title}
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Design */}
+                      <div>
+                        <div className="text-[11px] font-mono text-neutral-400 font-semibold uppercase tracking-wider mb-2">
+                          DESIGN
+                        </div>
+                        <div className="space-y-2 pl-2 border-l border-white/10">
+                          {design.map(item => (
+                            <Link
+                              key={item.slug}
+                              to={`/services/${item.slug}`}
+                              onClick={() => setIsMenuOpen(false)}
+                              className="block py-1 text-sm text-neutral-300 hover:text-white"
+                            >
+                              {item.title}
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Development */}
+                      <div>
+                        <div className="text-[11px] font-mono text-neutral-400 font-semibold uppercase tracking-wider mb-2">
+                          DEVELOPMENT
+                        </div>
+                        <div className="space-y-2 pl-2 border-l border-white/10">
+                          {development.map(item => (
+                            <Link
+                              key={item.slug}
+                              to={`/services/${item.slug}`}
+                              onClick={() => setIsMenuOpen(false)}
+                              className="block py-1 text-sm text-neutral-300 hover:text-white"
+                            >
+                              {item.title}
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="pt-2">
+                        <Link
+                          to="/services"
+                          onClick={() => setIsMenuOpen(false)}
+                          className="inline-flex items-center gap-1.5 text-xs text-brand-red font-mono uppercase tracking-wider"
+                        >
+                          <span>{language === 'id' ? 'Lihat Semua Layanan' : 'View All Services'}</span>
+                          <ArrowUpRight className="w-3.5 h-3.5" />
+                        </Link>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              {/* About */}
+              <Link
+                to="/about"
+                onClick={() => setIsMenuOpen(false)}
+                className={cn(
+                  "flex items-center justify-between py-3.5 px-4 rounded-2xl transition-colors",
+                  location.pathname === '/about' 
+                    ? "bg-zinc-900 text-white font-bold border border-brand-red/40" 
+                    : "text-white/80 hover:text-white hover:bg-zinc-950 active:bg-zinc-900"
+                )}
+              >
+                <div className="flex items-center gap-3">
+                  <span className="text-xs font-mono text-brand-red">03</span>
+                  <span className="text-xl font-display">{t('nav.about')}</span>
+                </div>
+                <ChevronRight size={18} className="text-white/40" />
+              </Link>
+
+              {/* Careers */}
+              <Link
+                to="/careers"
+                onClick={() => setIsMenuOpen(false)}
+                className={cn(
+                  "flex items-center justify-between py-3.5 px-4 rounded-2xl transition-colors",
+                  location.pathname === '/careers' 
+                    ? "bg-zinc-900 text-white font-bold border border-brand-red/40" 
+                    : "text-white/80 hover:text-white hover:bg-zinc-950 active:bg-zinc-900"
+                )}
+              >
+                <div className="flex items-center gap-3">
+                  <span className="text-xs font-mono text-brand-red">04</span>
+                  <span className="text-xl font-display">{t('nav.careers')}</span>
+                </div>
+                <ChevronRight size={18} className="text-white/40" />
+              </Link>
+
+              <div className="pt-4 mt-1">
                 <Link
                   to="/contact"
                   onClick={() => setIsMenuOpen(false)}
@@ -314,7 +674,7 @@ export const Navbar = () => {
 
             {/* Quick Contact & Footer in Drawer */}
             <div className="pt-4 border-t border-white/10 space-y-3 shrink-0">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+              <div className="grid grid-cols-1 gap-2 text-xs">
                 <a
                   href="https://wa.me/6287769957062?text=Halo%20Kapitech%20Agency,%20saya%20ingin%20konsultasi%20proyek."
                   target="_blank"
@@ -324,13 +684,22 @@ export const Navbar = () => {
                   <Phone size={15} className="text-brand-red shrink-0" />
                   <span className="truncate">+62 877-6995-7062 (WhatsApp)</span>
                 </a>
-                <a
-                  href="mailto:hello@kapitech.id"
-                  className="p-3 rounded-xl bg-zinc-900/90 border border-white/10 flex items-center gap-2.5 text-white/85 active:bg-zinc-800 transition-colors"
-                >
-                  <Mail size={15} className="text-brand-red shrink-0" />
-                  <span className="truncate">hello@kapitech.id</span>
-                </a>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <a
+                    href="mailto:business@kapitech.id"
+                    className="p-3 rounded-xl bg-zinc-900/90 border border-brand-red/30 flex items-center gap-2.5 text-white/85 active:bg-zinc-800 transition-colors"
+                  >
+                    <Mail size={15} className="text-brand-red shrink-0" />
+                    <span className="truncate">business@kapitech.id</span>
+                  </a>
+                  <a
+                    href="mailto:hello@kapitech.id"
+                    className="p-3 rounded-xl bg-zinc-900/90 border border-white/10 flex items-center gap-2.5 text-white/85 active:bg-zinc-800 transition-colors"
+                  >
+                    <Mail size={15} className="text-white/50 shrink-0" />
+                    <span className="truncate">hello@kapitech.id</span>
+                  </a>
+                </div>
               </div>
 
               <div className="flex items-center justify-between text-xs text-white/50 pt-1">
@@ -348,4 +717,3 @@ export const Navbar = () => {
     </>
   );
 };
-

@@ -8,21 +8,21 @@ import {
   ArrowUpRight, 
   X, 
   Layers, 
-  ShieldCheck, 
   Sparkles, 
   Smartphone, 
-  Terminal, 
-  HelpCircle,
-  Video,
-  Film,
-  Box,
-  Globe,
-  ShoppingCart,
-  Cpu,
-  Server,
-  Wrench,
-  SlidersHorizontal,
-  ChevronRight
+  Globe, 
+  Cpu, 
+  TrendingUp,
+  FileSpreadsheet,
+  FileText,
+  Search,
+  Rocket,
+  RefreshCw,
+  Users,
+  Compass,
+  Monitor,
+  Flame,
+  Briefcase
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { AtmosphericBackground } from '../components/ui/AtmosphericBackground';
@@ -31,7 +31,9 @@ import { useLanguage } from '../lib/LanguageContext';
 export interface ServiceDetail {
   id: string;
   title: string;
-  pillar: 'Visual Experience' | 'Innovation Development';
+  category: 'Branding' | 'Design' | 'Development' | 'Solutions';
+  subtitle: string;
+  subtitleId: string;
   icon: React.ReactNode;
   summary: string;
   summaryId: string;
@@ -46,369 +48,589 @@ export interface ServiceDetail {
   timelineId: string;
 }
 
+export interface StrategicSolution {
+  id: string;
+  title: string;
+  audience: string;
+  audienceId: string;
+  description: string;
+  descriptionId: string;
+  badge: string;
+  badgeId: string;
+  icon: React.ReactNode;
+  deliverables: string[];
+  deliverablesId: string[];
+  timeline: string;
+  timelineId: string;
+}
+
 export const Services = () => {
   const { language } = useLanguage();
-  const [selectedService, setSelectedService] = useState<ServiceDetail | null>(null);
-  const [activePillar, setActivePillar] = useState<'All' | 'Visual Experience' | 'Innovation Development'>('All');
+  const [selectedService, setSelectedService] = useState<ServiceDetail | StrategicSolution | null>(null);
+  const [activeCategory, setActiveCategory] = useState<'All' | 'Branding' | 'Design' | 'Development' | 'Solutions'>('All');
 
-  const allServices: ServiceDetail[] = [
-    // Visual Experience (7 services)
+  const strategicSolutions: StrategicSolution[] = [
     {
-      id: 'ui-ux-design',
-      title: 'UI/UX Design',
-      pillar: 'Visual Experience',
-      icon: <Layout size={26} />,
-      summary: 'Figma design systems, high-fidelity responsive wireframes, interactive prototypes, and usability testing.',
-      summaryId: 'Sistem desain Figma, wireframe responsif berpresisi tinggi, prototipe interaktif, dan uji usabilitas pengguna.',
-      fullDescription: 'We craft user-centric digital experiences balancing aesthetics with friction-free utility. From multi-platform SaaS applications to native mobile interfaces, our design systems ensure visual consistency and developer readiness.',
-      fullDescriptionId: 'Kami merancang pengalaman digital berpusat pada pengguna yang menyeimbangkan estetika visual dengan kemudahan pakai. Mulai dari SaaS lintas platform hingga antarmuka mobile, sistem desain kami menjamin konsistensi visual dan kemudahan implementasi kode.',
+      id: 'mvp-design',
+      title: 'MVP DESIGN',
+      audience: 'For enterprise ecosystems',
+      audienceId: 'Untuk ekosistem enterprise & startup',
+      description: 'Create a digital product, attract investors and new clients.',
+      descriptionId: 'Ciptakan produk digital berdaya saing, pikat investor, dan raih klien baru dengan cepat.',
+      badge: 'High Impact',
+      badgeId: 'Dampak Tinggi',
+      icon: <Rocket size={26} />,
       deliverables: [
-        'Responsive Web & Mobile UI Design',
-        'Comprehensive Figma Design Systems & Tokens',
-        'Interactive Clickable Prototypes',
-        'User Journey Mapping & Information Architecture',
-        'Usability Audits & Conversion Optimization'
+        'Rapid Clickable Interactive Prototype',
+        'Core Feature Definition & User Journeys',
+        'Investor Presentation Deck Integration',
+        'Scalable UI Kit & Tokenized Components',
+        'Developer Hand-off Documentation'
       ],
       deliverablesId: [
-        'Desain UI Web Responsif & Mobile',
-        'Sistem Desain & Token Desain Figma Terpusat',
         'Prototipe Interaktif Siap Uji Pengguna',
-        'Pemetaan Alur Pengguna & Arsitektur Informasi',
-        'Audit Usabilitas & Optimasi Konversi'
+        'Definisi Fitur Utama & Alur Pengguna (User Journey)',
+        'Integrasi Visual Pitch Deck Investor',
+        'UI Kit & Komponen Token Desain Skalabel',
+        'Dokumentasi Serah Terima Developer Siap Koding'
       ],
-      tools: ['Figma', 'FigJam', 'Miro', 'Spline 3D', 'Lottie'],
-      idealFor: 'Product companies launching new features, startups creating MVPs, and enterprises redesigning legacy software.',
-      idealForId: 'Perusahaan produk yang merilis fitur baru, startup yang membangun MVP, dan korporat yang memperbarui software lama.',
-      timeline: '3 - 6 Weeks',
-      timelineId: '3 - 6 Minggu'
-    },
-    {
-      id: 'video-production',
-      title: 'Video Production (Event, Wedding & Commercials)',
-      pillar: 'Visual Experience',
-      icon: <Video size={26} />,
-      summary: 'High-definition commercial films, brand documentaries, high-profile corporate events, and bespoke wedding cinematography.',
-      summaryId: 'Produksi film komersial HD, dokumenter brand, liputan event korporat bergengsi, dan sinematografi pernikahan eksklusif.',
-      fullDescription: 'From pre-production scripting and moodboarding to cinema-grade 4K filming, color grading, and sound mastering. We tell stories that evoke deep emotion and elevate brand perception.',
-      fullDescriptionId: 'Dari naskah pra-produksi, moodboard hingga syuting 4K standar bioskop, color grading profesional, dan mastering audio. Kami merangkai cerita visual yang membangkitkan emosi dan mengangkat reputasi brand.',
-      deliverables: [
-        'Commercial & TVC Brand Videos',
-        'Corporate Event Highlights & Keynote Coverage',
-        'Cinematic Wedding Films & Teasers',
-        'Professional Color Grading (DaVinci Resolve)',
-        'Custom Sound Design & Multi-Format Renders'
-      ],
-      deliverablesId: [
-        'Video Komersial Brand & Iklan TVC',
-        'Liputan Highlight Event Korporat & Seminar',
-        'Film & Teaser Pernikahan Sinematik',
-        'Color Grading Profesional (DaVinci Resolve)',
-        'Desain Tata Suara & Render Berbagai Format'
-      ],
-      tools: ['DaVinci Resolve', 'Adobe Premiere Pro', 'After Effects', 'Sony Cinema Line', 'DJI Ronin'],
-      idealFor: 'Brands launching campaigns, corporate summits, and couples looking for timeless cinematic memories.',
-      idealForId: 'Brand yang merilis kampanye iklan, konferensi bisnis, serta pasangan yang menginginkan dokumentasi sinematik abadi.',
-      timeline: '2 - 5 Weeks',
-      timelineId: '2 - 5 Minggu'
-    },
-    {
-      id: '2d-animation',
-      title: '2D Animation',
-      pillar: 'Visual Experience',
-      icon: <Film size={26} />,
-      summary: 'Dynamic 2D explainer animations, character rigging, marketing motion graphics, and lightweight Lottie web animations.',
-      summaryId: 'Animasi explainer 2D dinamis, rigging karakter, motion grafis promosi, dan aset animasi web Lottie super ringan.',
-      fullDescription: 'Complex ideas become immediately memorable with hand-crafted 2D animation. We turn technical product features into fluid, engaging narratives suitable for web embeddings and viral campaigns.',
-      fullDescriptionId: 'Konsep kompleks menjadi mudah dipahami melalui animasi 2D yang dibuat secara presisi. Kami mengubah fitur produk teknis menjadi cerita visual yang menarik untuk website dan media promosi.',
-      deliverables: [
-        'Product & Feature Explainer Videos',
-        'Character Animation & Rigging',
-        'Web-Ready Lottie JSON Animations',
-        'Social Media Motion Loops',
-        'Custom Voiceover & SFX Synchronization'
-      ],
-      deliverablesId: [
-        'Video Explainer Produk & Fitur',
-        'Rigging & Animasi Karakter 2D',
-        'Animasi Lottie JSON Ringan untuk Website',
-        'Loop Motion Grafis untuk Media Sosial',
-        'Sinkronisasi Voiceover & Efek Suara'
-      ],
-      tools: ['Adobe After Effects', 'Adobe Animate', 'Illustrator', 'LottieFiles', 'Spine 2D'],
-      idealFor: 'Fintech, SaaS, and educational platforms needing to explain complex workflows simply.',
-      idealForId: 'Fintech, platform SaaS, dan edutech yang perlu menjelaskan cara kerja produk secara sederhana.',
       timeline: '2 - 4 Weeks',
       timelineId: '2 - 4 Minggu'
     },
     {
-      id: 'branding-identity',
-      title: 'Branding & Identity',
-      pillar: 'Visual Experience',
-      icon: <Palette size={26} />,
-      summary: 'Complete brand systems, iconic logo marks, typography hierarchies, color theory, and comprehensive brand guideline books.',
-      summaryId: 'Sistem brand menyeluruh, rancangan logo ikonik, hierarki tipografi, psikologi warna, dan buku pedoman identitas (brandbook).',
-      fullDescription: 'A strong visual identity provides a distinct competitive moat. We develop timeless brand identities that articulate your business values across digital, print, and physical environments.',
-      fullDescriptionId: 'Identitas visual yang kuat memberikan keunggulan kompetitif yang nyata. Kami merancang sistem identitas abadi yang mencerminkan visi bisnis Anda di media digital, cetak, dan ruang fisik.',
+      id: 'product-redesign',
+      title: 'PRODUCT REDESIGN',
+      audience: 'For SMEs & enterprises',
+      audienceId: 'Untuk UKM & korporasi berkembang',
+      description: 'Get a fresh look, improved user experience, or enhanced functionality.',
+      descriptionId: 'Dapatkan tampilan baru yang modern, pengalaman pengguna superior, dan fungsi sistem yang ditingkatkan.',
+      badge: 'Conversion Boost',
+      badgeId: 'Optimasi Konversi',
+      icon: <RefreshCw size={26} />,
       deliverables: [
-        'Primary & Secondary Logo Architecture',
-        'Brandbook & Visual Standards Manual',
-        'Curated Typography & Color System',
-        'Stationery, Packaging & Merchandise Design',
-        'Social Media Template Kits & Pitch Decks'
+        'Complete UX Heuristic & Friction Audit',
+        'Modernized Design System & Accessibility (WCAG)',
+        'Streamlined Checkout & User Conversion Funnels',
+        'Component Migration to Modern Figma Standards',
+        'A/B Testing & Usability Validation'
       ],
       deliverablesId: [
-        'Arsitektur Logo Utama & Sekunder',
-        'Buku Pedoman Identitas Brand (Brandbook)',
-        'Sistem Tipografi & Palet Warna Terkurasi',
-        'Desain Kemasan, Perlengkapan Kantor & Merchandise',
-        'Template Media Sosial & Pitch Deck Investor'
+        'Audit Heuristik UX & Analisis Titik Hambatan Pengguna',
+        'Sistem Desain Modern & Standar Aksesibilitas (WCAG)',
+        'Penyederhanaan Alur Konversi & Checkout Klien',
+        'Migrasi Komponen ke Standar Figma Terkini',
+        'Uji Validasi A/B Testing & Kepuasan Pengguna'
       ],
-      tools: ['Adobe Illustrator', 'Photoshop', 'InDesign', 'Figma'],
-      idealFor: 'New ventures establishing market presence or existing companies undergoing strategic rebranding.',
-      idealForId: 'Perusahaan baru yang membangun citra pasar atau korporat yang melakukan repositioning brand.',
       timeline: '3 - 6 Weeks',
       timelineId: '3 - 6 Minggu'
     },
     {
-      id: 'motion-graphic-design',
-      title: 'Motion & Graphic Design',
-      pillar: 'Visual Experience',
-      icon: <Sparkles size={26} />,
-      summary: 'Kinetic typography, high-impact social media creatives, digital billboard animations, and promotional motion banners.',
-      summaryId: 'Tipografi kinetik, materi iklan visual media sosial berdaya tarik tinggi, animasi billboard LED, dan motion banner digital.',
-      fullDescription: 'Catch attention within 2 seconds. We combine bold typography, fluid physics, and high-contrast color palettes to deliver scroll-stopping promotional creatives.',
-      fullDescriptionId: 'Pikat perhatian audiens dalam 2 detik pertama. Kami memadukan tipografi dinamis, efek gerak halus, dan tata visual kontras tinggi untuk menciptakan materi promosi yang memukau.',
+      id: 'team-extension',
+      title: 'TEAM EXTENSION',
+      audience: 'For existing companies',
+      audienceId: 'Untuk perusahaan dengan tim internal',
+      description: 'Expand your team with our dedicated and talented design experts.',
+      descriptionId: 'Perluas kapasitas tim Anda bersama desainer dan engineer berpengalaman kami yang siap berkolaborasi penuh.',
+      badge: 'Dedicated Talent',
+      badgeId: 'Talenta Terdedikasi',
+      icon: <Users size={26} />,
       deliverables: [
-        'Kinetic Typography & Social Ad Campaigns',
-        'Digital Out-Of-Home (DOOH) & LED Displays',
-        'App Feature Highlight Micro-Animations',
-        'Promotional Video Trailers & Teasers',
-        'High-Resolution Vector Design Assets'
+        'Full-Time Dedicated UI/UX & Motion Designers',
+        'Direct Slack / Discord & Agile Daily Sync',
+        'Seamless Integration into Existing Sprint Cycles',
+        'Senior Tech & Creative Lead Supervision',
+        'Transparent Hourly / Monthly Retainer Billing'
       ],
       deliverablesId: [
-        'Tipografi Kinetik & Materi Iklan Media Sosial',
-        'Animasi Layar Digital Out-Of-Home (DOOH) & LED',
-        'Mikro-Animasi Fitur Aplikasi',
-        'Trailer & Teaser Peluncuran Produk',
-        'Aset Grafis Vektor Resolusi Tinggi'
+        'Desainer UI/UX & Motion Penuh Waktu Khusus Proyek Anda',
+        'Komunikasi Langsung via Slack / WhatsApp & Sinkronisasi Harian',
+        'Integrasi Mulus ke Alur Kerja Sprint Tim Internal Anda',
+        'Supervisi dari Senior Tech Lead & Design Director',
+        'Sistem Retainer Fleksibel & Transparan Tiap Bulan'
       ],
-      tools: ['After Effects', 'Premiere Pro', 'Photoshop', 'Illustrator', 'Cinema 4D Lite'],
-      idealFor: 'Marketing teams running paid ad campaigns, brand launches, and product announcements.',
-      idealForId: 'Tim pemasaran yang menjalankan kampanye iklan berbayar, peluncuran produk, dan promo diskon.',
+      timeline: 'Monthly Dedicated Retainer',
+      timelineId: 'Retainer Bulanan Fleksibel'
+    }
+  ];
+
+  const allServices: ServiceDetail[] = [
+    // --- BRANDING ---
+    {
+      id: 'pitch-deck',
+      title: 'Pitch Deck',
+      category: 'Branding',
+      subtitle: 'Get visuals that raise capital',
+      subtitleId: 'Visual presentasi memukau untuk menggalang modal',
+      icon: <FileSpreadsheet size={24} />,
+      summary: 'High-stakes investor pitch decks, shareholder slide decks, and commercial fund-raising decks designed to close multi-million dollar deals.',
+      summaryId: 'Desain pitch deck investor, presentasi RUPS, dan materi penggalangan dana modal ventura yang berwibawa dan meyakinkan.',
+      fullDescription: 'We translate complex financial models, market size data, and vision statements into executive-grade storytelling that captures attention and inspires venture backing.',
+      fullDescriptionId: 'Kami menerjemahkan proyeksi keuangan, data pasar, dan visi bisnis menjadi narasi visual tingkat eksekutif yang memikat dewan direksi dan investor.',
+      deliverables: [
+        'Custom 15-25 Slide Investor Storyboard',
+        'Complex Financial & TAM/SAM Data Visualizations',
+        'Interactive Master Deck in Figma / Keynote / PPT',
+        'Executive One-Pager & PDF Teaser',
+        'Editable Master Vector Assets'
+      ],
+      deliverablesId: [
+        'Storyboard Presentasi 15-25 Slide Kustom',
+        'Visualisasi Data Keuangan & Pasar (TAM/SAM)',
+        'File Master Interaktif di Figma / Keynote / PPT',
+        'Ringkasan Eksekutif 1 Halaman (One-Pager Teaser)',
+        'Aset Vektor Master yang Dapat Diedit Kapan Saja'
+      ],
+      tools: ['Figma', 'Keynote', 'Adobe Illustrator', 'Photoshop'],
+      idealFor: 'Founders raising Seed to Series B funding, corporate executives, and investment bankers.',
+      idealForId: 'Pendiri startup penggalangan modal Seed hingga Series B, direksi korporat, dan konsultan investasi.',
       timeline: '1 - 3 Weeks',
       timelineId: '1 - 3 Minggu'
     },
     {
-      id: 'creative-design',
-      title: 'Creative Design',
-      pillar: 'Visual Experience',
-      icon: <Box size={26} />,
-      summary: 'Editorial publications, corporate annual reports, investor pitch decks, infographics, and premium marketing collateral.',
-      summaryId: 'Publikasi editorial, laporan tahunan korporat, pitch deck investor, infografis data, dan materi pemasaran cetak premium.',
-      fullDescription: 'Translate complex datasets and corporate narratives into pristine, readable, and prestigious publication layouts that command respect in boardrooms and industry summits.',
-      fullDescriptionId: 'Ubah data kompleks dan narasi perusahaan menjadi tata letak publikasi yang rapi, mudah dibaca, dan berwibawa di hadapan dewan direksi dan calon investor.',
+      id: 'brand-identity',
+      title: 'Brand Identity',
+      category: 'Branding',
+      subtitle: 'Build trust with design',
+      subtitleId: 'Bangun kepercayaan pelanggan melalui desain terpadu',
+      icon: <Compass size={24} />,
+      summary: 'Complete brand ecosystems including visual guidelines, color geometry, brand personality, and marketing touchpoints.',
+      summaryId: 'Ekosistem identitas brand lengkap mencakup pedoman visual (brandbook), palet warna, tipografi, dan materi pemasaran.',
+      fullDescription: 'A distinctive brand identity that creates instant market differentiation and commands premium positioning across digital and physical mediums.',
+      fullDescriptionId: 'Identitas merek terintegrasi yang menciptakan diferensiasi kuat di pasar dan memposisikan bisnis Anda sebagai pemimpin industri yang elegan dan tepercaya.',
       deliverables: [
-        'Corporate Annual & Sustainability Reports',
-        'High-Stakes Investor Pitch Decks',
-        'Brochures, Whitepapers & Catalogues',
-        'Complex Data Visualization & Infographics',
-        'Print Production Ready Pre-Press Files'
+        'Comprehensive 50+ Page Digital Brand Guidelines',
+        'Color Harmonization & High-Contrast Typography Hierarchy',
+        'Stationery Kit & Corporate Business Collateral',
+        'Social Media Template System (10+ Formats)',
+        'Packaging & Merchandising Visual Standards'
       ],
       deliverablesId: [
-        'Laporan Tahunan & Laporan Keberlanjutan Korporat',
-        'Pitch Deck Investor Tingkat Tinggi',
-        'Brosur, Whitepaper & Katalog Produk',
-        'Visualisasi Data Kompleks & Infografis',
-        'File Cetak Pre-Press Siap Produksi'
+        'Buku Pedoman Identitas Brand (Brandbook 50+ Halaman)',
+        'Harmonisasi Palet Warna & Hierarki Tipografi Berstandar',
+        'Paket Desain Alat Tulis Kantor & Kartu Nama Resmi',
+        'Sistem Template Media Sosial Kustom (10+ Format)',
+        'Standar Visual Desain Kemasan & Merchandise'
       ],
-      tools: ['Adobe InDesign', 'Illustrator', 'Photoshop', 'Keynote', 'Figma'],
-      idealFor: 'Enterprises preparing shareholder meetings, startups pitching for Series A/B funding, and B2B firms.',
-      idealForId: 'Korporat yang mempersiapkan RUPS, startup penggalangan dana modal ventura, dan perusahaan B2B.',
-      timeline: '2 - 4 Weeks',
-      timelineId: '2 - 4 Minggu'
+      tools: ['Adobe Illustrator', 'Photoshop', 'InDesign', 'Figma'],
+      idealFor: 'Enterprises establishing new subsidiaries, scaling brands, and luxury lifestyle businesses.',
+      idealForId: 'Perusahaan yang membuka lini bisnis baru, merek yang ingin scale-up, dan brand komersial.',
+      timeline: '3 - 5 Weeks',
+      timelineId: '3 - 5 Minggu'
     },
     {
-      id: '3d-visualization',
-      title: '3D Visualization',
-      pillar: 'Visual Experience',
-      icon: <Layers size={26} />,
-      summary: 'Photorealistic architectural 3D rendering, industrial product modeling, interactive web 3D (Spline/Three.js), and packaging simulations.',
-      summaryId: 'Render 3D arsitektur fotorealistis, pemodelan produk industri, aset 3D interaktif website (Spline/Three.js), dan simulasi kemasan.',
-      fullDescription: 'Bring unbuilt properties and physical products to life before manufacturing. We create hyper-realistic lighting, textures, and interactive 3D web canvases.',
-      fullDescriptionId: 'Wujudkan proyek properti dan produk fisik sebelum diproduksi massal. Kami menciptakan pencahayaan ultra-realistis, tekstur material nyata, dan kanvas 3D interaktif untuk web.',
+      id: 'logo-design',
+      title: 'Logo Design',
+      category: 'Branding',
+      subtitle: 'Become unforgettable',
+      subtitleId: 'Tampil ikonik dan mudah diingat oleh audiens Anda',
+      icon: <Palette size={24} />,
+      summary: 'Timeless, memorable logo marks and custom typographic logotypes engineered for infinite scalability across all media.',
+      summaryId: 'Simbol logo dan logotipe tipografi kustom yang tak lekang oleh waktu, mudah diingat, dan berpresisi tinggi untuk semua media.',
+      fullDescription: 'We sculpt symbolic logomarks and bespoke typography that crystallize your company’s core purpose into an unforgettable visual icon.',
+      fullDescriptionId: 'Kami merancang simbol logo orisinal yang merepresentasikan nilai inti bisnis Anda secara tajam, bersih, dan berkarakter kuat.',
       deliverables: [
-        'Architectural Exterior & Interior Renders',
-        'Photorealistic 3D Product Mockups',
-        'Interactive Spline 3D Web Embeds',
-        '3D Exploded View Diagrams',
-        'High-Resolution 4K/8K Still Renders'
+        '3 Distinct Creative Direction Concept Options',
+        'Primary Logomark, Secondary Lockups & Responsive Favicons',
+        'Vector Master Formats (SVG, EPS, AI, PDF)',
+        'Light, Dark & Monochrome Contrast Versions',
+        'Full Copyright Ownership Transfer'
       ],
       deliverablesId: [
-        'Render Eksterior & Interior Arsitektur',
-        'Mockup Produk 3D Fotorealistis',
-        'Embed Kanvas 3D Interaktif (Spline / Three.js)',
-        'Diagram 3D Exploded-View Komponen',
-        'Render Gambar Resolusi Tinggi 4K/8K'
+        '3 Opsi Konsep Arah Kreatif yang Berbeda',
+        'Simbol Logo Utama, Variasi Sekunder & Favicon Web',
+        'Format Vektor Master Resolusi Tak Terbatas (SVG, EPS, AI, PDF)',
+        'Versi Kontras Terang, Gelap, dan Monokrom',
+        'Surat Alih Hak Cipta Kepemilikan Penuh'
       ],
-      tools: ['Blender', 'Cinema 4D', 'Spline 3D', 'Unreal Engine', 'V-Ray'],
-      idealFor: 'Property developers, real estate firms, industrial manufacturers, and tech hardware companies.',
-      idealForId: 'Pengembang properti, agen real estate, produsen manufaktur, dan perusahaan hardware teknologi.',
+      tools: ['Adobe Illustrator', 'Figma', 'Vectorizer'],
+      idealFor: 'New ventures seeking an iconic mark, or businesses needing a cleaner, modern corporate symbol.',
+      idealForId: 'Bisnis baru yang membutuhkan lambang ikonik atau perusahaan yang ingin memodernisasi logonya.',
+      timeline: '1 - 2 Weeks',
+      timelineId: '1 - 2 Minggu'
+    },
+    {
+      id: 'graphic-design',
+      title: 'Graphic Design',
+      category: 'Branding',
+      subtitle: 'Illustrations, Icons, Social media',
+      subtitleId: 'Ilustrasi kustom, ikonografi, dan materi media sosial',
+      icon: <Layers size={24} />,
+      summary: 'Custom vector illustration libraries, branded icon sets, promotional campaign visuals, and high-impact digital social graphics.',
+      summaryId: 'Pustaka ilustrasi vektor kustom, set ikon bermerek, materi kampanye promosi, dan desain grafis media sosial berkonversi tinggi.',
+      fullDescription: 'Elevate your marketing touchpoints with cohesive graphic assets that spark engagement, convey technical workflows simply, and enhance brand prestige.',
+      fullDescriptionId: 'Tingkatkan performa pemasaran digital Anda dengan aset visual yang menarik, mudah dipahami, dan seragam di semua saluran promosi.',
+      deliverables: [
+        'Custom 20+ Vector Illustration Library',
+        'Pixel-Perfect 40+ Branded Icon Set',
+        'High-Converting Social Media Ad Assets',
+        'Banner Ads & Digital Display Campaigns',
+        'Print-Ready Marketing Flyers & Roll-Up Banners'
+      ],
+      deliverablesId: [
+        'Pustaka Ilustrasi Vektor Kustom (20+ Aset)',
+        'Set Ikon Khusus Brand Berpresisi Piksel (40+ Ikon)',
+        'Aset Iklan Media Sosial Berkonversi Tinggi',
+        'Banner Iklan Digital & Display Web',
+        'Desain Brosur Cetak & Standing Banner Acara'
+      ],
+      tools: ['Photoshop', 'Illustrator', 'Figma'],
+      idealFor: 'Marketing directors, social media managers, and digital growth campaigns.',
+      idealForId: 'Manajer pemasaran, tim media sosial, dan kampanye akuisisi pengguna digital.',
+      timeline: '1 - 3 Weeks',
+      timelineId: '1 - 3 Minggu'
+    },
+    {
+      id: 'rebranding',
+      title: 'Rebranding',
+      category: 'Branding',
+      subtitle: 'Rebrand to grow and convert',
+      subtitleId: 'Rebranding untuk memicu pertumbuhan dan konversi baru',
+      icon: <Sparkles size={24} />,
+      summary: 'End-to-end brand revitalization for established businesses shifting target markets, acquiring new verticals, or modernizing outdated visuals.',
+      summaryId: 'Revitalisasi merek menyeluruh bagi perusahaan mapan yang ingin menjangkau segmen pasar baru atau memodernisasi citra usang.',
+      fullDescription: 'Transform how your market perceives your business. We perform brand audits, benchmark competitors, and redesign your complete visual footprint for the next decade of growth.',
+      fullDescriptionId: 'Ubah persepsi pasar terhadap perusahaan Anda. Kami melakukan audit mendalam, analisis kompetitor, dan merombak seluruh identitas visual untuk pertumbuhan 10 tahun ke depan.',
+      deliverables: [
+        'Brand Equity & Market Perception Analysis',
+        'Total Visual Identity Overhaul & Rollout Plan',
+        'Corporate Collateral & Asset Migration Checklist',
+        'Internal Team Brand Launch Playbook',
+        'Public Press Release & Rebrand Assets'
+      ],
+      deliverablesId: [
+        'Analisis Ekuitas Brand & Persepsi Pasar Saat Ini',
+        'Perombakan Total Identitas Visual & Rencana Peluncuran',
+        'Daftar Periksa Migrasi Aset Korporat Lama ke Baru',
+        'Buku Panduan Peluncuran Brand untuk Tim Internal',
+        'Materi Rilis Media & Pengumuman Resmi Rebranding'
+      ],
+      tools: ['Adobe Creative Cloud', 'Figma', 'Miro'],
+      idealFor: 'Growing enterprises outgrowing their initial brand, or companies pivoting to high-ticket enterprise clients.',
+      idealForId: 'Perusahaan berkembang yang ingin naik kelas dan menargetkan klien korporat dengan nilai kontrak tinggi.',
+      timeline: '4 - 8 Weeks',
+      timelineId: '4 - 8 Minggu'
+    },
+
+    // --- DESIGN ---
+    {
+      id: 'ui-ux-design',
+      title: 'UI/UX Design',
+      category: 'Design',
+      subtitle: 'Web & mobile app design',
+      subtitleId: 'Desain antarmuka web dan aplikasi mobile terpadu',
+      icon: <Layout size={24} />,
+      summary: 'Figma design systems, intuitive user experience architectures, and clickable prototypes tested with real users.',
+      summaryId: 'Sistem desain Figma modular, arsitektur informasi intuitif, dan prototipe interaktif siap uji untuk web serta aplikasi mobile.',
+      fullDescription: 'We balance aesthetic precision with frictionless usability. From multi-tiered SaaS platforms to high-frequency mobile apps, we design interfaces people love to use daily.',
+      fullDescriptionId: 'Kami menggabungkan keindahan estetika dengan kemudahan navigasi tanpa hambatan. Mulai dari platform SaaS hingga aplikasi mobile, kami ciptakan UI yang disukai pengguna.',
+      deliverables: [
+        'Complete Responsive Screen UI (Desktop, Tablet, Mobile)',
+        'Centralized Figma Design System & Auto-Layout Tokens',
+        'Interactive High-Fidelity Clickable Prototypes',
+        'User Journey Maps & Information Architecture',
+        'Design-to-Code Developer Specifications'
+      ],
+      deliverablesId: [
+        'Desain UI Layar Responsif Lengkap (Desktop, Tablet, Mobile)',
+        'Sistem Desain Figma Terpusat & Token Auto-Layout',
+        'Prototipe Interaktif Siap Uji Pengguna (High-Fidelity)',
+        'Peta Alur Pengguna (User Journey) & Arsitektur Informasi',
+        'Spesifikasi Hand-off Desain Siap Implementasi Developer'
+      ],
+      tools: ['Figma', 'FigJam', 'Miro', 'Spline 3D', 'Lottie'],
+      idealFor: 'SaaS companies, mobile app startups, and digital transformation initiatives.',
+      idealForId: 'Perusahaan SaaS, startup aplikasi mobile, dan proyek transformasi digital.',
       timeline: '3 - 6 Weeks',
       timelineId: '3 - 6 Minggu'
     },
-
-    // Innovation Development (5 services)
     {
-      id: 'company-profile-website',
-      title: 'Brochure Site / Company Profile Website',
-      pillar: 'Innovation Development',
-      icon: <Globe size={26} />,
-      summary: 'High-speed, SEO-optimized company profile websites built with modern frameworks to establish authoritative corporate credibility.',
-      summaryId: 'Website profil perusahaan berkecepatan tinggi, ramah SEO, dan berkinerja maksimal untuk membangun kredibilitas korporat.',
-      fullDescription: 'A bespoke company profile website engineered for instantaneous load speeds, flawless mobile responsiveness, structured schema SEO, and dynamic content management.',
-      fullDescriptionId: 'Website profil perusahaan kustom yang dirancang untuk kecepatan akses instan, tampilan mobile sempurna, struktur data SEO rapi, dan kemudahan pengelolaan konten dinamis.',
+      id: 'website-design',
+      title: 'Website Design',
+      category: 'Design',
+      subtitle: 'Custom websites & landings',
+      subtitleId: 'Desain website kustom dan landing page berkonversi',
+      icon: <Globe size={24} />,
+      summary: 'Bespoke marketing websites and high-impact landing pages crafted to captivate visitors and drive record business conversions.',
+      summaryId: 'Desain website pemasaran kustom dan landing page berkelas tinggi untuk memikat pengunjung dan memaksimalkan konversi bisnis.',
+      fullDescription: 'Every pixel is designed with purpose: clear typographic hierarchy, subtle atmospheric animations, and focused conversion funnels tailored to your target audience.',
+      fullDescriptionId: 'Setiap elemen dirancang dengan tujuan: hierarki tipografi yang jelas, animasi halus bernuansa modern, dan alur konversi yang terbukti efektif.',
       deliverables: [
-        'Custom Jamstack / Next.js Corporate Portal',
-        'Sub-1s Page Load Speeds & 95+ Core Web Vitals',
-        'Headless CMS for Instant News & Career Posting',
-        'Multilingual Support (ID/EN) with Dynamic Toggles',
-        'Advanced Contact Forms & WhatsApp Direct Routing'
+        'Custom Responsive Page Mockups (Home, About, Services, etc.)',
+        'Hero Section Interactive Motion Concepts',
+        'Conversion-Focused Form & CTA Layouts',
+        'Optimized Web Image Assets & Favicon Package',
+        'Component Layout Guide for Web Developers'
       ],
       deliverablesId: [
-        'Portal Korporat Kustom Jamstack / Next.js',
-        'Waktu Muat Sub-1 Detik & Skor Core Web Vitals 95+',
-        'CMS Headless untuk Update Berita & Lowongan Kerja',
-        'Dukungan Multi-Bahasa (ID/EN) Terintegrasi',
-        'Formulir Kontak Cerdas & Integrasi WhatsApp'
+        'Mockup Halaman Lengkap Responsif (Beranda, Tentang, Layanan, dll)',
+        'Konsep Motion Interaktif Bagian Utama (Hero Section)',
+        'Tata Letak Formulir Kontak & Tombol CTA Berkonversi Tinggi',
+        'Paket Optimasi Aset Gambar Web & Favicon Resolusi Tinggi',
+        'Panduan Tata Letak Komponen untuk Web Developer'
       ],
-      tools: ['Next.js', 'TypeScript', 'Tailwind CSS', 'Sanity / Strapi CMS', 'Vercel / Cloudflare'],
-      idealFor: 'Established businesses, consulting groups, manufacturing companies, and enterprise organizations.',
-      idealForId: 'Perusahaan mapan, firma konsultan, produsen manufaktur, dan korporasi berskala menengah-besar.',
+      tools: ['Figma', 'Photoshop', 'Adobe Illustrator'],
+      idealFor: 'Businesses launching a new online presence, agencies, and professional service firms.',
+      idealForId: 'Bisnis yang meluncurkan website baru, agensi, dan firma profesional.',
       timeline: '2 - 4 Weeks',
       timelineId: '2 - 4 Minggu'
     },
     {
-      id: 'ecommerce-website',
-      title: 'E-Commerce Website',
-      pillar: 'Innovation Development',
-      icon: <ShoppingCart size={26} />,
-      summary: 'High-converting custom e-commerce stores, headless storefronts, payment gateway integrations, and automated inventory sync.',
-      summaryId: 'Toko online e-commerce berkonversi tinggi, toko headless kustom, integrasi gateway pembayaran lokal/global, dan sinkronisasi stok otomatis.',
-      fullDescription: 'We build commerce engines tailored for high-volume transactions, rapid checkout funnels, multi-currency pricing, and real-time integration with shipping and inventory carriers.',
-      fullDescriptionId: 'Kami membangun toko online tangguh untuk volume transaksi tinggi, proses checkout cepat, multi-mata uang, dan integrasi kurir pengiriman serta gateway pembayaran resmi.',
+      id: 'mobile-app-design',
+      title: 'Mobile App Design',
+      category: 'Design',
+      subtitle: 'Apps your users love',
+      subtitleId: 'Aplikasi mobile iOS & Android yang dicintai pengguna',
+      icon: <Smartphone size={24} />,
+      summary: 'iOS Human Interface and Android Material 3 compliant mobile interfaces designed for natural single-handed ergonomics.',
+      summaryId: 'Antarmuka aplikasi iOS & Android berstandar resmi (Apple HIG / Material 3) yang nyaman digunakan satu tangan.',
+      fullDescription: 'We design thumb-friendly navigation, tactile micro-interactions, dark/light mode parity, and intuitive onboarding screens that minimize churn.',
+      fullDescriptionId: 'Kami merancang navigasi ramah ibu jari, mikro-interaksi responsif, dukungan tema gelap/terang, dan alur onboarding yang mudah dipahami pengguna baru.',
       deliverables: [
-        'Custom Headless E-Commerce Storefront',
-        'Payment Gateway Integration (Midtrans, Xendit, Stripe)',
-        'Shipping API Calculation (JNE, SiCepat, DHL)',
-        'Cart Abandonment Recovery & Discount Engine',
-        'Customer Account Portal & Order Tracking'
+        'Complete iOS & Android Flow Wireframes & Hi-Fi UI',
+        'Native Component Library (Apple HIG & Material 3)',
+        'Micro-Interactions & Animated Transition Prototypes',
+        'App Store & Google Play Screenshot Mockup Pack',
+        'Handoff Specs with Exportable 1x, 2x, 3x Assets'
       ],
       deliverablesId: [
-        'Storefront E-Commerce Headless Kustom',
-        'Integrasi Payment Gateway (Midtrans, Xendit, Stripe)',
-        'Kalkulasi Ongkos Kirim Otomatis (JNE, SiCepat, DHL)',
-        'Sistem Pemulihan Keranjang Belanja & Kupon Diskon',
-        'Portal Akun Pelanggan & Pelacakan Pesanan Real-Time'
+        'Wireframe & Desain UI Resolusi Tinggi untuk iOS dan Android',
+        'Pustaka Komponen Asli (Apple HIG & Material 3)',
+        'Prototipe Animasi Transisi & Mikro-Interaksi',
+        'Paket Tangkapan Layar Promosi App Store & Google Play',
+        'Aset Ekspor Siap Pakai (1x, 2x, 3x) untuk Mobile Engineer'
       ],
-      tools: ['Next.js Commerce', 'Shopify Plus API', 'MedusaJS', 'PostgreSQL', 'Tailwind CSS'],
-      idealFor: 'D2C retail brands, fashion labels, electronics distributors, and wholesale merchants.',
-      idealForId: 'Brand ritel D2C, label fashion, distributor elektronik, dan merchant grosir B2B/B2C.',
+      tools: ['Figma', 'Protopie', 'LottieFiles'],
+      idealFor: 'Mobile-first startups, fintech wallets, healthcare apps, and on-demand services.',
+      idealForId: 'Startup mobile-first, aplikasi fintech, dompet digital, dan layanan on-demand.',
+      timeline: '3 - 6 Weeks',
+      timelineId: '3 - 6 Minggu'
+    },
+    {
+      id: 'website-redesign',
+      title: 'Website Redesign',
+      category: 'Design',
+      subtitle: 'Modern look, higher impact',
+      subtitleId: 'Tampilan modern berkelas dengan dampak bisnis lebih besar',
+      icon: <RefreshCw size={24} />,
+      summary: 'Upgrade outdated corporate websites into sleek, modern, high-speed digital flagship experiences that command authority.',
+      summaryId: 'Perbarui website lama yang kaku menjadi representasi digital mutakhir, berkecepatan tinggi, dan berwibawa.',
+      fullDescription: 'We audit what works and eliminate friction points, giving your existing website a modern visual aesthetic, sharper typography, and improved mobile UX.',
+      fullDescriptionId: 'Kami mengevaluasi data analitik Anda, memperbaiki kelemahan struktur lama, dan memberikan tampilan visual modern yang jauh lebih prestisius.',
+      deliverables: [
+        'Comprehensive Existing Site UX & Visual Audit',
+        'Modernized Layout & Visual Hierarchy Refresh',
+        'Enhanced Mobile Touch Ergonomics',
+        'SEO-Preserving URL & Navigation Architecture',
+        'Interactive Figma Prototype for Direct Comparison'
+      ],
+      deliverablesId: [
+        'Audit UX & Estetika Visual Website Lama Anda',
+        'Penyegaran Tata Letak & Hierarki Visual Modern',
+        'Peningkatan Ergonomi Akses Pengguna Mobile',
+        'Arsitektur Navigasi yang Mempertahankan Peringkat SEO',
+        'Prototipe Figma Interaktif untuk Perbandingan Langsung'
+      ],
+      tools: ['Figma', 'Google Lighthouse', 'Hotjar'],
+      idealFor: 'Companies whose websites look dated and are not generating sufficient qualified leads.',
+      idealForId: 'Perusahaan yang websitenya tampak ketinggalan zaman dan kurang optimal menghasilkan leads.',
+      timeline: '2 - 4 Weeks',
+      timelineId: '2 - 4 Minggu'
+    },
+    {
+      id: 'product-ux-ui-audit',
+      title: 'Product UX/UI Audit',
+      category: 'Design',
+      subtitle: 'Insights that drive results',
+      subtitleId: 'Wawasan mendalam berbasis data untuk hasil nyata',
+      icon: <Search size={24} />,
+      summary: 'In-depth heuristic evaluation, accessibility audit, and conversion funnel analysis with actionable prioritization roadmap.',
+      summaryId: 'Evaluasi heuristik mendalam, audit aksesibilitas, dan analisis corong konversi disertai rencana perbaikan bertahap.',
+      fullDescription: 'Discover where users drop off, get confused, or abandon transactions. We deliver a comprehensive diagnostic report with wireframe recommendations to boost ROI.',
+      fullDescriptionId: 'Temukan penyebab pengguna keluar atau membatalkan transaksi. Kami memberikan laporan diagnostik lengkap beserta solusi wireframe konkret untuk meningkatkan konversi.',
+      deliverables: [
+        '40+ Page Detailed UX Diagnostic & Heuristic Report',
+        'Conversion Funnel Drop-off Analysis',
+        'Accessibility (WCAG 2.1 AA) Compliance Audit',
+        'Quick-Win Low-Hanging Fruit Optimization List',
+        'Executive Summary & Video Walkthrough Presentation'
+      ],
+      deliverablesId: [
+        'Laporan Diagnostik & Heuristik UX Detail (40+ Halaman)',
+        'Analisis Titik Penurunan (Drop-off) Corong Konversi',
+        'Audit Kepatuhan Aksesibilitas Web (WCAG 2.1 AA)',
+        'Daftar Rekomendasi Cepat (Quick-Win Optimizations)',
+        'Ringkasan Eksekutif & Video Presentasi Penjelasan Temuan'
+      ],
+      tools: ['Figma', 'Miro', 'Hotjar', 'Google Analytics'],
+      idealFor: 'SaaS platforms with high churn, e-commerce stores with low conversion rates, and product managers.',
+      idealForId: 'Platform SaaS dengan retensi rendah, toko e-commerce yang ingin meningkatkan omzet, dan manajer produk.',
+      timeline: '1 - 2 Weeks',
+      timelineId: '1 - 2 Minggu'
+    },
+
+    // --- DEVELOPMENT ---
+    {
+      id: 'web-development',
+      title: 'Web Development',
+      category: 'Development',
+      subtitle: 'Front-End & Back-End Development',
+      subtitleId: 'Pengembangan Front-End & Back-End berkualitas tinggi',
+      icon: <Code2 size={24} />,
+      summary: 'Full-stack web development using modern TypeScript, React, Next.js, Node.js, and cloud database architectures.',
+      summaryId: 'Pengembangan web full-stack menggunakan TypeScript, React, Next.js, Node.js, dan arsitektur cloud database tangguh.',
+      fullDescription: 'Clean, maintainable, and strictly typed codebases built to scale. We engineer lightning-fast front-ends integrated with secure, resilient back-end APIs.',
+      fullDescriptionId: 'Kode terstruktur rapi, teruji, dan siap diskalakan. Kami membangun antarmuka secepat kilat yang terintegrasi dengan REST/GraphQL API yang aman.',
+      deliverables: [
+        'Production-Grade Next.js / React Front-End',
+        'Secure Node.js / Express Back-End APIs & Database Schemas',
+        'Sub-1s Page Load Speeds & 95+ Core Web Vitals',
+        'Automated CI/CD Deployment Pipeline',
+        'Comprehensive Technical Documentation & Source Code Ownership'
+      ],
+      deliverablesId: [
+        'Front-End Standar Produksi Berbasis Next.js / React',
+        'Back-End API & Skema Database Aman (PostgreSQL / Node.js)',
+        'Kecepatan Muat Sub-1 Detik & Skor Core Web Vitals 95+',
+        'Pipeline Deployment Otomatis (CI/CD GitHub Actions)',
+        'Dokumentasi Teknis Lengkap & Kepemilikan Source Code 100%'
+      ],
+      tools: ['TypeScript', 'React', 'Next.js', 'Node.js', 'PostgreSQL', 'Tailwind CSS'],
+      idealFor: 'Tech-forward companies requiring robust, bespoke web software and scalable digital infrastructure.',
+      idealForId: 'Perusahaan yang membutuhkan software web kustom yang tangguh, aman, dan siap scale-up.',
       timeline: '4 - 8 Weeks',
       timelineId: '4 - 8 Minggu'
     },
     {
-      id: 'web-application',
-      title: 'Web Application',
-      pillar: 'Innovation Development',
-      icon: <Code2 size={26} />,
-      summary: 'Custom SaaS platforms, real-time collaboration tools, client portals, and resilient cloud-backed web applications.',
-      summaryId: 'Platform SaaS kustom, alat kolaborasi real-time, portal klien interaktif, dan aplikasi web tangguh berbasis cloud.',
-      fullDescription: 'From initial data modeling to real-time WebSockets and complex business logic. We develop secure, scalable, and responsive web applications built with TypeScript and modern backend architectures.',
-      fullDescriptionId: 'Dari pemodelan database hingga koneksi real-time WebSockets dan logika bisnis yang rumit. Kami membangun aplikasi web yang aman, terukur, dan responsif dengan TypeScript dan cloud backend modern.',
+      id: 'mvp-development',
+      title: 'MVP Development',
+      category: 'Development',
+      subtitle: 'MVPs that attract funding',
+      subtitleId: 'MVP tangguh siap pakai untuk menarik pendanaan investor',
+      icon: <Rocket size={24} />,
+      summary: 'Rapid prototyping and minimum viable product engineering designed to validate market demand and impress seed investors.',
+      summaryId: 'Pembangunan produk minimum (MVP) yang cepat dan fungsional untuk menguji pasar dan meyakinkan investor modal ventura.',
+      fullDescription: 'Go from concept to live production in weeks, not quarters. We build the essential core features with clean architecture ready for future scaling.',
+      fullDescriptionId: 'Wujudkan ide menjadi produk nyata yang dapat diakses pengguna dalam hitungan minggu. Kami fokus pada fitur inti terpenting dengan pondasi arsitektur siap berkembang.',
       deliverables: [
-        'Full-Stack SaaS Platform Architecture',
-        'Role-Based Access Control (RBAC) & OAuth Authentication',
-        'Real-Time WebSocket Sync & Notifications',
-        'RESTful & GraphQL API Endpoints',
-        'Comprehensive Automated Unit & Integration Tests'
+        'Live Production Web / Mobile MVP with User Authentication',
+        'Core Business Logic & Payment / Database Integration',
+        'Analytics & User Telemetry Tracking Setup',
+        'Zero-Downtime Cloud Deployment (Vercel / AWS / GCP)',
+        'Sprint Roadmap for Post-Funding Feature Scaling'
       ],
       deliverablesId: [
-        'Arsitektur Platform SaaS Full-Stack Lengkap',
-        'Otentikasi Aman (OAuth, JWT) & Akses Berbasis Peran',
-        'Sinkronisasi Data Real-Time & Notifikasi Push',
-        'Pengembangan Endpoint RESTful & GraphQL API',
-        'Pengujian Otomatis (Unit & Integration Testing)'
+        'Aplikasi Web / Mobile MVP Aktif dengan Sistem Login & Otentikasi',
+        'Logika Bisnis Inti & Integrasi Database / Pembayaran',
+        'Setup Pelacakan Analitik Pengguna & Telemetri',
+        'Deployment Cloud Bebas Gangguan (Vercel / AWS / GCP)',
+        'Roadmap Pengembangan Lanjutan Pasca-Pendanaan'
       ],
-      tools: ['React', 'Next.js', 'Node.js', 'Express', 'PostgreSQL', 'Prisma', 'Redis', 'Docker'],
-      idealFor: 'Tech startups launching SaaS products, fintech portals, and internal enterprise automation platforms.',
-      idealForId: 'Startup teknologi yang meluncurkan produk SaaS, portal fintech, dan platform otomatisasi internal.',
-      timeline: '6 - 12 Weeks',
-      timelineId: '6 - 12 Minggu'
+      tools: ['Next.js', 'TypeScript', 'Firebase', 'Supabase', 'Tailwind CSS'],
+      idealFor: 'Startups, corporate innovation labs, and founders preparing for pre-seed/seed rounds.',
+      idealForId: 'Startup baru, inkubator inovasi korporat, dan founder yang sedang menggalang modal awal.',
+      timeline: '3 - 6 Weeks',
+      timelineId: '3 - 6 Minggu'
     },
     {
-      id: 'erp-crm-system',
-      title: 'ERP / CRM System',
-      pillar: 'Innovation Development',
-      icon: <Cpu size={26} />,
-      summary: 'Bespoke enterprise ERP workflows, CRM sales pipelines, supply chain management, and automated accounting integrations.',
-      summaryId: 'Sistem alur kerja ERP kustom, pipeline CRM sales B2B, manajemen rantai pasok inventaris, dan otomatisasi akuntansi keuangan.',
-      fullDescription: 'Eliminate manual spreadsheets and disconnected software. We build tailored enterprise resource systems that unite sales teams, inventory tracking, financial ledgers, and executive analytics into a single dashboard.',
-      fullDescriptionId: 'Hapuskan spreadsheet manual dan software terpisah. Kami membangun sistem ERP terpadu yang menyatukan tim penjualan, pelacakan gudang, buku besar akuntansi, dan analitik eksekutif dalam satu sistem terpusat.',
+      id: 'landing-page',
+      title: 'Landing page',
+      category: 'Development',
+      subtitle: 'High-converting website',
+      subtitleId: 'Landing page berkonversi tinggi dan berkecepatan instan',
+      icon: <Monitor size={24} />,
+      summary: 'Ultra-fast, conversion-optimized landing pages with dynamic animations, CRM integrations, and seamless lead capture.',
+      summaryId: 'Landing page berkecepatan ultra-tinggi yang dioptimalkan untuk konversi, dilengkapi animasi elegan dan integrasi CRM.',
+      fullDescription: 'Engineered for ad campaigns and product launches. We ensure sub-second mobile load times, strict typography, and persuasive layout structure.',
+      fullDescriptionId: 'Dirancang khusus untuk kampanye iklan digital dan peluncuran produk. Kami menjamin waktu muat instan di perangkat mobile serta alur CTA yang persuasif.',
       deliverables: [
-        'B2B Sales Pipeline & Lead CRM Engine',
-        'Multi-Warehouse Inventory & Barcode Tracking',
-        'Automated Invoicing & Financial Balance Sheets',
-        'Employee Attendance & HR Management Modules',
-        'Executive Analytics Dashboard & Exportable PDF Reports'
+        'Single-Page Ultra-Responsive Landing Page',
+        'Direct WhatsApp & Email Lead Capture Routing',
+        'Meta Pixel, Google Analytics 4 & Tag Manager Setup',
+        'Speed Optimization for 98+ Google Lighthouse Score',
+        'Custom Micro-Animations & Scroll Effects'
       ],
       deliverablesId: [
-        'Pipeline Penjualan B2B & Manajemen Prospek CRM',
-        'Manajemen Inventaris Multi-Gudang & Barcode',
-        'Faktur Otomatis & Laporan Neraca Keuangan',
-        'Modul Presensi Karyawan & Manajemen SDM',
-        'Dashboard Analitik Eksekutif & Ekspor Laporan PDF'
+        'Landing Page Responsif Berkecepatan Tinggi',
+        'Routing Otomatis Formulir ke WhatsApp & Email Bisnis',
+        'Integrasi Meta Pixel, Google Analytics 4 & Tag Manager',
+        'Optimasi Kecepatan Maksimal (Skor 98+ Google Lighthouse)',
+        'Animasi Mikro Halus & Efek Scroll Interaktif'
       ],
-      tools: ['Node.js', 'PostgreSQL', 'React', 'Docker', 'Redis', 'Tailwind CSS', 'Metabase'],
-      idealFor: 'Manufacturing plants, distribution companies, logistics providers, and multi-branch retail operations.',
-      idealForId: 'Pabrik manufaktur, perusahaan distributor, penyedia logistik, dan jaringan ritel multi-cabang.',
-      timeline: '8 - 16 Weeks',
-      timelineId: '8 - 16 Minggu'
+      tools: ['Next.js', 'Tailwind CSS', 'Framer Motion', 'Vercel'],
+      idealFor: 'Marketing campaigns, product drops, digital courses, and lead generation funnels.',
+      idealForId: 'Kampanye iklan, peluncuran produk, agensi, dan bisnis yang ingin mengumpulkan prospek pelanggan.',
+      timeline: '1 - 2 Weeks',
+      timelineId: '1 - 2 Minggu'
     },
     {
-      id: 'it-support-infrastructure',
-      title: 'IT Support & Infrastructure',
-      pillar: 'Innovation Development',
-      icon: <Server size={26} />,
-      summary: 'Cloud server management, DevOps CI/CD pipelines, database backups, security auditing, and 24/7 technical SLA maintenance.',
-      summaryId: 'Pengelolaan server cloud, pipeline DevOps CI/CD, backup database berkala, audit keamanan, dan pemeliharaan SLA 24/7.',
-      fullDescription: 'Ensure 99.99% uptime and zero data loss. Our infrastructure engineers configure secure cloud environments (AWS, GCP, DigitalOcean), monitor server telemetry, apply zero-day patches, and optimize network latency.',
-      fullDescriptionId: 'Pastikan uptime 99.99% dan tanpa risiko kehilangan data. Tim infrastruktur kami mengonfigurasi cloud aman (AWS, GCP, DigitalOcean), memantau performa server, menerapkan patch keamanan, dan mengoptimalkan kecepatan jaringan.',
+      id: 'corporate-websites',
+      title: 'Corporate Websites',
+      category: 'Development',
+      subtitle: 'Built for scale and trust',
+      subtitleId: 'Dibangun untuk skala besar dan kredibilitas korporat',
+      icon: <Briefcase size={24} />,
+      summary: 'Secure, multilingual, and SEO-dominant enterprise websites equipped with headless CMS for seamless marketing team updates.',
+      summaryId: 'Website korporat multi-bahasa yang aman, berperingkat SEO tinggi, dan dilengkapi CMS headless untuk kemudahan tim internal.',
+      fullDescription: 'Establish undisputed market authority. We build enterprise websites featuring structured schema markup, carrier-grade uptime, and modular content management.',
+      fullDescriptionId: 'Bangun kredibilitas perusahaan yang tak tertandingi. Kami menciptakan portal korporat dengan arsitektur SEO rapi, keamanan maksimal, dan manajemen konten mandiri.',
       deliverables: [
-        'Cloud Server Setup & Migration (AWS / GCP / VPS)',
-        'Automated CI/CD Deployment Pipelines (GitHub Actions)',
-        'Automated Off-site Database Backups & Disaster Recovery',
-        'OWASP Top 10 Security Audit & Firewall Hardening',
-        '24/7 Emergency Technical Support & SLA Guarantee'
+        'Custom Multi-Page Corporate Portal Architecture',
+        'Headless Content Management System (Sanity / Strapi)',
+        'Multilingual Switcher (ID & EN) with Dynamic Localization',
+        'Advanced Career & Investor Relations Post Modules',
+        'Enterprise Security Hardening & SSL Configuration'
       ],
       deliverablesId: [
-        'Setup & Migrasi Server Cloud (AWS / GCP / VPS)',
-        'Pipeline Deployment CI/CD Otomatis (GitHub Actions)',
-        'Backup Database Terjadwal & Rencana Pemulihan Bencana',
-        'Audit Keamanan OWASP Top 10 & Konfigurasi Firewall',
-        'Dukungan Teknis Darurat 24/7 & Garansi Layanan SLA'
+        'Arsitektur Website Korporat Multi-Halaman Kustom',
+        'Sistem Manajemen Konten (CMS Headless Sanity / Strapi)',
+        'Fitur Ganti Bahasa Dinamis (Indonesia & Inggris)',
+        'Modul Informasi Karir & Hubungan Investor Terintegrasi',
+        'Penguatan Keamanan Korporat & Konfigurasi SSL Resmi'
       ],
-      tools: ['Google Cloud Platform', 'AWS', 'Docker', 'Kubernetes', 'Cloudflare', 'Nginx', 'GitHub Actions', 'Datadog'],
-      idealFor: 'Companies running critical customer-facing applications needing high availability, security, and dedicated maintenance.',
-      idealForId: 'Perusahaan dengan aplikasi krusial yang memerlukan ketersediaan tinggi, kepatuhan keamanan, dan tim pemeliharaan siap siaga.',
-      timeline: 'Ongoing SLA Retainer / 1 - 3 Weeks Setup',
-      timelineId: 'Retainer SLA Berkelanjutan / 1 - 3 Minggu Setup'
+      tools: ['Next.js', 'TypeScript', 'Sanity CMS', 'Tailwind CSS', 'Cloudflare'],
+      idealFor: 'Enterprises, conglomerates, consulting firms, financial institutions, and manufacturers.',
+      idealForId: 'Korporasi, konglomerasi bisnis, firma konsultan, institusi finansial, dan perusahaan manufaktur.',
+      timeline: '3 - 6 Weeks',
+      timelineId: '3 - 6 Minggu'
+    },
+    {
+      id: 'wow-websites',
+      title: 'WOW Websites',
+      category: 'Development',
+      subtitle: 'Professional, scalable, fast website',
+      subtitleId: 'Website profesional, terukur, sangat cepat, dan memukau',
+      icon: <Flame size={24} />,
+      summary: 'Award-winning experiential websites featuring 3D canvases, fluid WebGL physics, and kinetic typography that leave audiences in awe.',
+      summaryId: 'Website interaktif berstandar internasional dengan kanvas 3D, efek fisika WebGL, dan tipografi kinetik yang sangat memukau.',
+      fullDescription: 'When standard templates won’t do. We engineer cutting-edge web experiences that combine Awwwards-caliber art direction with blistering fast performance.',
+      fullDescriptionId: 'Ketika website standar tidak cukup. Kami merancang pengalaman web mutakhir berstandar kelas dunia yang memukau pengunjung tanpa mengorbankan kecepatan.',
+      deliverables: [
+        'Interactive WebGL & Spline 3D Scene Integrations',
+        'Kinetic Scroll-Triggered Physics & Micro-Interactions',
+        'Custom Sound FX & Audio-Visual Synchronization',
+        'Sub-second Global Asset Delivery via Cloudflare CDN',
+        'Mobile-Optimized Touch Gestures & Fallbacks'
+      ],
+      deliverablesId: [
+        'Integrasi Kanvas 3D Interaktif (Spline / WebGL / Three.js)',
+        'Animasi Scroll Kinetik & Mikro-Interaksi Halus',
+        'Sinkronisasi Audio-Visual & Efek Interaksi Modern',
+        'Distribusi Aset Global Super Cepat via CDN Cloudflare',
+        'Optimasi Khusus Perangkat Mobile & Navigasi Sentuh'
+      ],
+      tools: ['Three.js', 'Spline 3D', 'Next.js', 'GSAP', 'Tailwind CSS'],
+      idealFor: 'Luxury brands, creative agencies, game studios, and visionary product showcases.',
+      idealForId: 'Brand mewah, studio kreatif, pengembang teknologi, dan produk yang ingin tampil paling menonjol.',
+      timeline: '4 - 8 Weeks',
+      timelineId: '4 - 8 Minggu'
     }
   ];
 
   const filteredServices = useMemo(() => {
-    if (activePillar === 'All') return allServices;
-    return allServices.filter(s => s.pillar === activePillar);
-  }, [activePillar]);
+    if (activeCategory === 'All') return allServices;
+    if (activeCategory === 'Solutions') return [];
+    return allServices.filter(s => s.category === activeCategory);
+  }, [activeCategory]);
 
   return (
     <div className="bg-black text-white min-h-screen selection:bg-brand-red selection:text-white relative" role="main">
@@ -422,48 +644,117 @@ export const Services = () => {
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="max-w-3xl">
             <span className="text-brand-red font-mono font-semibold tracking-widest uppercase text-xs mb-3 block">
-              {language === 'id' ? 'Layanan & Keahlian Studio' : 'Services & Core Capabilities'}
+              {language === 'id' ? 'Layanan & Solusi Lengkap' : 'Solutions & Specialized Services'}
             </span>
             <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-display font-bold tracking-tight text-white mb-6">
-              {language === 'id' ? 'Dua Pilar Solusi Digital.' : 'Two Pillars of Digital Craft.'}
+              {language === 'id' ? 'Layanan & Solusi Digital.' : 'Services & Strategic Solutions.'}
             </h1>
             <p className="text-base sm:text-lg text-white/70 font-light leading-relaxed mb-6">
               {language === 'id'
-                ? 'Kami menggabungkan keunggulan Visual Experience dengan kedalaman rekayasa Innovation Development untuk mempercepat pertumbuhan bisnis Anda.'
-                : 'We unite high-craft Visual Experience with robust Innovation Development engineering to accelerate your digital growth.'
+                ? 'Pilihan solusi strategis dan keahlian spesialis terlengkap untuk mentransformasi identitas brand, desain produk digital, dan rekayasa web skala modern.'
+                : 'Complete strategic solutions and specialized capabilities to transform brand identity, digital product design, and high-performance web engineering.'
               }
             </p>
-            <div className="flex flex-wrap items-center gap-3 text-xs font-mono text-white/60">
+            <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 text-xs font-mono text-white/60">
               <span className="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                <span>12 {language === 'id' ? 'Layanan Terintegrasi' : 'Specialized Capabilities'}</span>
+                <span>3 {language === 'id' ? 'Solusi Strategis' : 'Strategic Solutions'}</span>
               </span>
               <span className="px-3 py-1.5 rounded-full bg-white/5 border border-white/10">
-                Visual Experience (7)
+                15 {language === 'id' ? 'Layanan Spesialis' : 'Specialized Services'}
               </span>
-              <span className="px-3 py-1.5 rounded-full bg-white/5 border border-white/10">
-                Innovation Development (5)
+              <span className="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-brand-red font-semibold">
+                Branding • Design • Development
               </span>
             </div>
           </div>
         </div>
       </section>
 
+      {/* SECTION 1: STRATEGIC SOLUTIONS (Always visible or filtered) */}
+      {(activeCategory === 'All' || activeCategory === 'Solutions') && (
+        <section className="py-14 sm:py-20 px-4 sm:px-6 md:px-12 border-b border-white/10 bg-zinc-950/70 relative">
+          <div className="max-w-7xl mx-auto">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
+              <div>
+                <span className="text-xs font-mono uppercase tracking-widest text-brand-red mb-2 block font-semibold">
+                  {language === 'id' ? 'Kategori Solusi' : 'Solutions Overview'}
+                </span>
+                <h2 className="text-2xl sm:text-4xl font-display font-bold text-white tracking-tight">
+                  SOLUTIONS
+                </h2>
+              </div>
+              <p className="text-xs sm:text-sm text-white/60 font-light max-w-md">
+                {language === 'id'
+                  ? 'Format kemitraan strategis yang dirancang fleksibel untuk akselerasi ekosistem enterprise, UKM berkembang, maupun ekspansi tim internal.'
+                  : 'Tailored strategic engagement models engineered for enterprise ecosystems, scaling SMEs, and dedicated team expansion.'
+                }
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {strategicSolutions.map((sol) => (
+                <Link
+                  key={sol.id}
+                  to={`/solutions/${sol.id}`}
+                  className="group relative rounded-2xl p-6 sm:p-8 bg-zinc-900/50 hover:bg-zinc-900/90 border border-white/10 hover:border-brand-red/60 transition-all duration-300 flex flex-col justify-between"
+                >
+                  <div>
+                    <div className="flex items-center justify-between mb-6">
+                      <div className="w-12 h-12 rounded-xl bg-brand-red/10 border border-brand-red/30 flex items-center justify-center text-brand-red group-hover:scale-110 transition-transform">
+                        {sol.icon}
+                      </div>
+                      <span className="px-2.5 py-1 rounded-full bg-brand-red/10 border border-brand-red/30 text-[10px] sm:text-[11px] font-mono text-brand-red font-semibold">
+                        {language === 'id' ? sol.badgeId : sol.badge}
+                      </span>
+                    </div>
+
+                    <h3 className="text-xl sm:text-2xl font-display font-bold text-white group-hover:text-brand-red transition-colors mb-1.5">
+                      {sol.title}
+                    </h3>
+
+                    <span className="text-xs font-mono text-white/50 block mb-4">
+                      {language === 'id' ? sol.audienceId : sol.audience}
+                    </span>
+
+                    <p className="text-xs sm:text-sm text-white/80 font-light leading-relaxed mb-6">
+                      {language === 'id' ? sol.descriptionId : sol.description}
+                    </p>
+                  </div>
+
+                  <div className="pt-4 border-t border-white/10 flex items-center justify-between">
+                    <span className="text-xs font-mono text-white/50">
+                      {language === 'id' ? sol.timelineId : sol.timeline}
+                    </span>
+                    <div className="flex items-center gap-1.5 text-xs font-mono text-brand-red font-semibold group-hover:translate-x-1 transition-transform">
+                      <span>{language === 'id' ? 'Detail Solusi' : 'Explore Solution'}</span>
+                      <ArrowUpRight size={14} />
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Pillar Filter Tabs */}
-      <section className="py-8 px-4 sm:px-6 md:px-12 border-b border-white/10 bg-zinc-950/80 sticky top-16 sm:top-20 z-30 backdrop-blur-md">
+      <section className="py-6 sm:py-8 px-4 sm:px-6 md:px-12 border-b border-white/10 bg-zinc-950/90 sticky top-16 sm:top-20 z-30 backdrop-blur-md">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
-          <div className="flex items-center gap-2 bg-zinc-900/90 p-1.5 rounded-xl border border-white/10">
+          <div className="flex flex-wrap items-center gap-2 bg-zinc-900/90 p-1.5 rounded-xl border border-white/10 w-full sm:w-auto">
             {[
-              { key: 'All', labelEn: 'All Services (12)', labelId: 'Semua Layanan (12)' },
-              { key: 'Visual Experience', labelEn: '1. Visual Experience (7)', labelId: '1. Visual Experience (7)' },
-              { key: 'Innovation Development', labelEn: '2. Innovation Development (5)', labelId: '2. Innovation Development (5)' }
+              { key: 'All', labelEn: 'All Services (18)', labelId: 'Semua (18)' },
+              { key: 'Solutions', labelEn: 'Solutions (3)', labelId: 'Solusi (3)' },
+              { key: 'Branding', labelEn: '1. Branding (5)', labelId: '1. Branding (5)' },
+              { key: 'Design', labelEn: '2. Design (5)', labelId: '2. Design (5)' },
+              { key: 'Development', labelEn: '3. Development (5)', labelId: '3. Development (5)' }
             ].map(tab => (
               <button
                 key={tab.key}
-                onClick={() => setActivePillar(tab.key as any)}
-                className={`px-4 py-2 rounded-lg text-xs font-mono font-medium transition-all duration-200 ${
-                  activePillar === tab.key
-                    ? 'bg-brand-red text-white shadow-lg shadow-brand-red/20'
+                onClick={() => setActiveCategory(tab.key as any)}
+                className={`flex-1 sm:flex-none px-3.5 sm:px-4 py-2 rounded-lg text-xs font-mono font-medium transition-all duration-200 text-center ${
+                  activeCategory === tab.key
+                    ? 'bg-brand-red text-white shadow-lg shadow-brand-red/20 font-bold'
                     : 'text-white/60 hover:text-white hover:bg-white/5'
                 }`}
               >
@@ -472,70 +763,101 @@ export const Services = () => {
             ))}
           </div>
 
-          <span className="text-xs font-mono text-white/40">
-            {language === 'id' ? `Menampilkan ${filteredServices.length} Layanan` : `Showing ${filteredServices.length} Services`}
+          <span className="text-xs font-mono text-white/40 hidden sm:block">
+            {activeCategory === 'Solutions'
+              ? (language === 'id' ? 'Menampilkan 3 Solusi Strategis' : 'Showing 3 Strategic Solutions')
+              : (language === 'id' ? `Menampilkan ${filteredServices.length} Layanan Spesialis` : `Showing ${filteredServices.length} Specialized Services`)}
           </span>
         </div>
       </section>
 
-      {/* Services Grid */}
-      <section className="py-16 sm:py-24 px-4 sm:px-6 md:px-12">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-            {filteredServices.map((srv) => (
-              <motion.article
-                key={srv.id}
-                layout
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
-                onClick={() => setSelectedService(srv)}
-                className="cursor-pointer group rounded-2xl p-6 sm:p-8 bg-zinc-900/40 hover:bg-zinc-900/80 border border-white/10 hover:border-brand-red/50 transition-all duration-300 flex flex-col justify-between"
-              >
-                <div>
-                  <div className="flex items-center justify-between mb-6">
-                    <div className="w-12 h-12 rounded-xl bg-brand-red/10 border border-brand-red/30 flex items-center justify-center text-brand-red group-hover:scale-105 transition-transform">
-                      {srv.icon}
+      {/* SECTION 2: SERVICES GRID (Categorized into Branding, Design, Development) */}
+      {activeCategory !== 'Solutions' && (
+        <section className="py-14 sm:py-20 px-4 sm:px-6 md:px-12">
+          <div className="max-w-7xl mx-auto space-y-16">
+            
+            {/* Show Group Headers when 'All' is selected, or direct grid when filtered */}
+            {['Branding', 'Design', 'Development'].map(cat => {
+              if (activeCategory !== 'All' && activeCategory !== cat) return null;
+              const catServices = allServices.filter(s => s.category === cat);
+
+              return (
+                <div key={cat} className="space-y-6">
+                  {/* Category Pillar Header */}
+                  <div className="flex items-center justify-between pb-4 border-b border-white/10">
+                    <div className="flex items-center gap-3">
+                      <span className="text-xs font-mono tracking-widest text-brand-red font-semibold uppercase">
+                        {cat === 'Branding' ? '01. ' : cat === 'Design' ? '02. ' : '03. '}
+                      </span>
+                      <h2 className="text-2xl sm:text-3xl font-display font-bold uppercase tracking-tight text-white">
+                        {cat}
+                      </h2>
                     </div>
-                    <span className="px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-[11px] font-mono text-white/50">
-                      {srv.pillar === 'Visual Experience' ? 'Visual' : 'Innovation'}
+                    <span className="text-xs font-mono text-white/40">
+                      5 {language === 'id' ? 'Layanan Terintegrasi' : 'Capabilities'}
                     </span>
                   </div>
 
-                  <h3 className="text-xl font-display font-bold text-white group-hover:text-brand-red transition-colors mb-3">
-                    {srv.title}
-                  </h3>
+                  {/* 5-Column / Responsive Grid for This Pillar */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
+                    {catServices.map((srv) => (
+                      <Link
+                        key={srv.id}
+                        to={`/services/${srv.id}`}
+                        className="group rounded-2xl p-6 sm:p-7 bg-zinc-900/40 hover:bg-zinc-900/80 border border-white/10 hover:border-brand-red/50 transition-all duration-300 flex flex-col justify-between"
+                      >
+                        <div>
+                          <div className="flex items-center justify-between mb-5">
+                            <div className="w-11 h-11 rounded-xl bg-brand-red/10 border border-brand-red/30 flex items-center justify-center text-brand-red group-hover:scale-110 transition-transform">
+                              {srv.icon}
+                            </div>
+                            <span className="px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] sm:text-[11px] font-mono text-white/50">
+                              {srv.category}
+                            </span>
+                          </div>
 
-                  <p className="text-xs sm:text-sm text-white/70 font-light leading-relaxed mb-6">
-                    {language === 'id' ? srv.summaryId : srv.summary}
-                  </p>
+                          <h3 className="text-lg sm:text-xl font-display font-bold text-white group-hover:text-brand-red transition-colors mb-1">
+                            {srv.title}
+                          </h3>
 
-                  <div className="pt-4 border-t border-white/10 space-y-2 mb-6">
-                    {(language === 'id' ? srv.deliverablesId : srv.deliverables).slice(0, 3).map((item, idx) => (
-                      <div key={idx} className="flex items-center gap-2 text-xs text-white/60 font-light truncate">
-                        <CheckCircle2 size={13} className="text-emerald-400 shrink-0" />
-                        <span className="truncate">{item}</span>
-                      </div>
+                          <p className="text-xs font-mono text-brand-red/90 mb-3.5">
+                            {language === 'id' ? srv.subtitleId : srv.subtitle}
+                          </p>
+
+                          <p className="text-xs sm:text-sm text-white/70 font-light leading-relaxed mb-5 line-clamp-3">
+                            {language === 'id' ? srv.summaryId : srv.summary}
+                          </p>
+
+                          <div className="pt-3.5 border-t border-white/10 space-y-1.5 mb-5">
+                            {(language === 'id' ? srv.deliverablesId : srv.deliverables).slice(0, 2).map((item, idx) => (
+                              <div key={idx} className="flex items-center gap-2 text-xs text-white/60 font-light truncate">
+                                <CheckCircle2 size={13} className="text-emerald-400 shrink-0" />
+                                <span className="truncate">{item}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div className="pt-3.5 border-t border-white/10 flex items-center justify-between">
+                          <span className="text-xs font-mono text-white/50">
+                            {language === 'id' ? srv.timelineId : srv.timeline}
+                          </span>
+                          <div className="flex items-center gap-1.5 text-xs font-mono text-brand-red font-semibold group-hover:translate-x-1 transition-transform">
+                            <span>{language === 'id' ? 'Detail' : 'Explore'}</span>
+                            <ArrowUpRight size={14} />
+                          </div>
+                        </div>
+                      </Link>
                     ))}
                   </div>
                 </div>
-
-                <div className="pt-4 border-t border-white/10 flex items-center justify-between">
-                  <span className="text-xs font-mono text-white/50">
-                    {language === 'id' ? srv.timelineId : srv.timeline}
-                  </span>
-                  <div className="flex items-center gap-1.5 text-xs font-mono text-brand-red font-semibold group-hover:translate-x-1 transition-transform">
-                    <span>{language === 'id' ? 'Detail' : 'Explore'}</span>
-                    <ArrowUpRight size={14} />
-                  </div>
-                </div>
-              </motion.article>
-            ))}
+              );
+            })}
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
-      {/* Service Detail Modal */}
+      {/* Service / Solution Detail Modal */}
       <AnimatePresence>
         {selectedService && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 overflow-y-auto bg-black/85 backdrop-blur-md">
@@ -549,14 +871,14 @@ export const Services = () => {
               {/* Modal Header */}
               <div className="sticky top-0 z-20 flex items-center justify-between p-4 sm:p-6 bg-zinc-950/95 backdrop-blur border-b border-white/10">
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-lg bg-brand-red/10 border border-brand-red/30 flex items-center justify-center text-brand-red">
+                  <div className="w-10 h-10 rounded-xl bg-brand-red/10 border border-brand-red/30 flex items-center justify-center text-brand-red">
                     {selectedService.icon}
                   </div>
                   <div>
                     <span className="text-[11px] font-mono text-brand-red block">
-                      {selectedService.pillar}
+                      {'category' in selectedService ? selectedService.category : 'Strategic Solution'}
                     </span>
-                    <h3 className="text-base sm:text-lg font-display font-bold text-white">
+                    <h3 className="text-base sm:text-xl font-display font-bold text-white">
                       {selectedService.title}
                     </h3>
                   </div>
@@ -574,10 +896,13 @@ export const Services = () => {
               <div className="overflow-y-auto p-6 sm:p-8 space-y-6">
                 <div>
                   <h4 className="text-xs font-mono uppercase tracking-wider text-white/50 mb-2 font-semibold">
-                    {language === 'id' ? 'Deskripsi Layanan' : 'Overview & Scope'}
+                    {language === 'id' ? 'Deskripsi & Ruang Lingkup' : 'Overview & Scope'}
                   </h4>
                   <p className="text-sm text-white/80 leading-relaxed font-light">
-                    {language === 'id' ? selectedService.fullDescriptionId : selectedService.fullDescription}
+                    {'fullDescription' in selectedService 
+                      ? (language === 'id' ? selectedService.fullDescriptionId : selectedService.fullDescription)
+                      : (language === 'id' ? selectedService.descriptionId : selectedService.description)
+                    }
                   </p>
                 </div>
 
@@ -592,10 +917,13 @@ export const Services = () => {
                   </div>
                   <div>
                     <span className="text-[11px] font-mono text-white/50 uppercase block mb-1">
-                      {language === 'id' ? 'Sangat Cocok Untuk' : 'Ideal Client Fit'}
+                      {language === 'id' ? 'Target Kebutuhan' : 'Target Audience'}
                     </span>
                     <span className="text-xs text-white/80 font-light block leading-snug">
-                      {language === 'id' ? selectedService.idealForId : selectedService.idealFor}
+                      {'idealFor' in selectedService 
+                        ? (language === 'id' ? selectedService.idealForId : selectedService.idealFor)
+                        : (language === 'id' ? selectedService.audienceId : selectedService.audience)
+                      }
                     </span>
                   </div>
                 </div>
@@ -614,24 +942,26 @@ export const Services = () => {
                   </ul>
                 </div>
 
-                <div>
-                  <h4 className="text-xs font-mono uppercase tracking-wider text-white/50 mb-3 font-semibold">
-                    {language === 'id' ? 'Alat & Teknologi' : 'Tools & Technologies'}
-                  </h4>
-                  <div className="flex flex-wrap gap-2">
-                    {selectedService.tools.map((tool, idx) => (
-                      <span key={idx} className="px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-xs font-mono text-white/80">
-                        {tool}
-                      </span>
-                    ))}
+                {'tools' in selectedService && selectedService.tools && (
+                  <div>
+                    <h4 className="text-xs font-mono uppercase tracking-wider text-white/50 mb-3 font-semibold">
+                      {language === 'id' ? 'Alat & Standar Teknologi' : 'Tools & Technologies'}
+                    </h4>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedService.tools.map((tool, idx) => (
+                        <span key={idx} className="px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-xs font-mono text-white/80">
+                          {tool}
+                        </span>
+                      ))}
+                    </div>
                   </div>
-                </div>
+                )}
 
                 {/* Modal Footer CTA */}
                 <div className="pt-4 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
                   <div>
                     <span className="text-xs text-white/60 font-light block">
-                      {language === 'id' ? 'Konsultasikan kebutuhan spesifik Anda dengan tim kami.' : 'Consult your specific requirements with our engineers.'}
+                      {language === 'id' ? 'Konsultasikan kebutuhan spesifik Anda dengan tim kami.' : 'Consult your specific requirements with our team.'}
                     </span>
                   </div>
                   <Link
@@ -639,7 +969,7 @@ export const Services = () => {
                     onClick={() => setSelectedService(null)}
                     className="w-full sm:w-auto px-6 py-2.5 rounded-full bg-brand-red hover:bg-white text-white hover:text-black font-semibold text-xs uppercase tracking-wider transition-colors flex items-center justify-center gap-2"
                   >
-                    <span>{language === 'id' ? 'Pesan Layanan Ini' : 'Inquire This Service'}</span>
+                    <span>{language === 'id' ? 'Mulai Proyek Ini' : 'Start This Project'}</span>
                     <ArrowUpRight size={14} />
                   </Link>
                 </div>
