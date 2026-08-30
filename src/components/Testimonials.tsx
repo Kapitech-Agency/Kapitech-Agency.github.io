@@ -2,11 +2,21 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ChevronLeft, ChevronRight, Quote, Star } from 'lucide-react';
 import { useLanguage } from '../lib/LanguageContext';
+import { getCmsTestimonials, TestimonialItem } from '../lib/cmsStore';
 
 export const Testimonials = () => {
   const { language } = useLanguage();
+  const [cmsTestimonials, setCmsTestimonials] = useState<TestimonialItem[]>(() => getCmsTestimonials());
   const [currentIndex, setCurrentIndex] = useState(0);
   const [itemsPerSlide, setItemsPerSlide] = useState(3);
+
+  useEffect(() => {
+    const handleUpdate = () => {
+      setCmsTestimonials(getCmsTestimonials());
+    };
+    window.addEventListener('kapitech_cms_updated', handleUpdate);
+    return () => window.removeEventListener('kapitech_cms_updated', handleUpdate);
+  }, []);
 
   useEffect(() => {
     const handleResize = () => {
@@ -24,97 +34,14 @@ export const Testimonials = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const testimonialsEn = [
-    {
-      quote: "Kapitech built our real estate portal from scratch using Next.js. The page load speed is blazing fast and our inbound lead conversions increased by 45% within the first month.",
-      author: "Marcus Thorne",
-      role: "Managing Director",
-      company: "Lumina Real Estate",
-      location: "Jakarta, Indonesia"
-    },
-    {
-      quote: "Their design team has an exceptional eye for modern typography and layout. They delivered a cohesive brand identity and a stunning web experience that elevated our firm completely.",
-      author: "Sarah Chen",
-      role: "Creative Director",
-      company: "Aura Creative Studio",
-      location: "Singapore"
-    },
-    {
-      quote: "Working with Kapitech on our mobile banking interface was seamless. They simplified complex account journeys and delivered pixel-perfect Figma specs ready for our dev squad.",
-      author: "David Miller",
-      role: "Head of Product",
-      company: "Nexus Fintech",
-      location: "Hong Kong"
-    },
-    {
-      quote: "The solar energy monitoring dashboard Kapitech engineered gave our operations team instant visibility across 40+ solar farms with zero lag. Highly dependable engineering.",
-      author: "Elena Rodriguez",
-      role: "Operations VP",
-      company: "Solaris CleanTech",
-      location: "Melbourne, Australia"
-    },
-    {
-      quote: "Our headless Shopify migration handled our flash sale traffic peaks without a hitch. Checkout conversion increased by 38%. Kapitech delivers genuine business results.",
-      author: "Julian Vane",
-      role: "Founder & CEO",
-      company: "Vivid Commerce",
-      location: "Jakarta, Indonesia"
-    },
-    {
-      quote: "Clear milestones, proactive communication, and zero technical fluff. Kapitech is our go-to partner whenever we need to launch a new digital product on a tight timeline.",
-      author: "Michael Kross",
-      role: "Chief Technology Officer",
-      company: "Kross Cloud Systems",
-      location: "Kuala Lumpur, Malaysia"
-    }
-  ];
-
-  const testimonialsId = [
-    {
-      quote: "Kapitech membangun portal real estate kami dari nol menggunakan Next.js. Kecepatan loading halamannya luar biasa cepat dan konversi prospek kami meningkat 45% dalam bulan pertama.",
-      author: "Marcus Thorne",
-      role: "Managing Director",
-      company: "Lumina Real Estate",
-      location: "Jakarta, Indonesia"
-    },
-    {
-      quote: "Tim desain mereka memiliki keahlian luar biasa dalam tipografi dan tata letak modern. Mereka menghadirkan identitas brand yang sangat kohesif dan pengalaman web yang memukau.",
-      author: "Sarah Chen",
-      role: "Creative Director",
-      company: "Aura Creative Studio",
-      location: "Singapura"
-    },
-    {
-      quote: "Bekerja dengan Kapitech untuk antarmuka mobile banking sangat lancar. Mereka menyederhanakan alur pengguna yang kompleks dan menyerahkan spesifikasi Figma yang presisi untuk tim developer kami.",
-      author: "David Miller",
-      role: "Head of Product",
-      company: "Nexus Fintech",
-      location: "Hong Kong"
-    },
-    {
-      quote: "Dashboard monitoring energi surya yang dikembangkan Kapitech memberi tim operasi kami visibilitas langsung di lebih dari 40 ladang surya tanpa lag. Rekayasa yang sangat andal.",
-      author: "Elena Rodriguez",
-      role: "Operations VP",
-      company: "Solaris CleanTech",
-      location: "Melbourne, Australia"
-    },
-    {
-      quote: "Migrasi headless Shopify kami mampu menangani lonjakan traffic flash sale tanpa hambatan sama sekali. Konversi checkout meningkat 38%. Kapitech memberikan hasil nyata untuk bisnis.",
-      author: "Julian Vane",
-      role: "Founder & CEO",
-      company: "Vivid Commerce",
-      location: "Jakarta, Indonesia"
-    },
-    {
-      quote: "Milestone yang jelas, komunikasi proaktif, dan tanpa basa-basi teknis. Kapitech adalah mitra andalan kami setiap kali butuh meluncurkan produk digital dengan tenggat waktu ketat.",
-      author: "Michael Kross",
-      role: "Chief Technology Officer",
-      company: "Kross Cloud Systems",
-      location: "Kuala Lumpur, Malaysia"
-    }
-  ];
-
-  const testimonials = language === 'id' ? testimonialsId : testimonialsEn;
+  const testimonials = cmsTestimonials.map(t => ({
+    quote: language === 'id' ? (t.quoteId || t.quote) : (t.quote || t.quoteId),
+    author: t.author,
+    role: t.role,
+    company: t.company,
+    location: t.location,
+    rating: t.rating || 5
+  }));
   const totalSlides = Math.ceil(testimonials.length / itemsPerSlide);
 
   const next = () => {

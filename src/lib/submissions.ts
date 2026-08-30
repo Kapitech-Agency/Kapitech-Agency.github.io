@@ -9,7 +9,8 @@ import {
   orderBy, 
   serverTimestamp 
 } from 'firebase/firestore';
-import { db } from './firebase';
+import { db, isFirebaseConfigured } from './firebase';
+import { dispatchAdminNotification } from './emailService';
 
 export interface ContactSubmission {
   id: string;
@@ -44,7 +45,7 @@ export const getLocalSubmissions = (): ContactSubmission[] => {
     const parsed = JSON.parse(raw);
     return Array.isArray(parsed) ? parsed : [];
   } catch (err) {
-    console.warn('Failed to parse local submissions:', err);
+    console.debug('Failed to parse local submissions:', err);
     return [];
   }
 };
@@ -55,7 +56,7 @@ const saveLocalSubmissions = (items: ContactSubmission[]) => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(items.slice(0, 200)));
     window.dispatchEvent(new CustomEvent(SUBMISSION_EVENT, { detail: items }));
   } catch (err) {
-    console.warn('Failed to write to localStorage:', err);
+    console.debug('Failed to write to localStorage:', err);
   }
 };
 
@@ -82,22 +83,25 @@ export const submitToInbox = async (data: Omit<ContactSubmission, 'id' | 'create
   const existing = getLocalSubmissions();
   const updatedList = [newRecord, ...existing.filter(i => i.id !== generatedId)];
   saveLocalSubmissions(updatedList);
+  
+  // 2. Dispatch automated external email & telegram forwarding in background
+  dispatchAdminNotification(data).catch(err => {
+    console.debug('Notification forwarding status:', err);
+  });
 
-  // 2. Also attempt to save to Firestore database if online
-  try {
-    const firestoreData = {
-      ...newRecord,
-      firestoreCreatedAt: serverTimestamp()
-    };
-    // Non-blocking firestore attempt
-    addDoc(collection(db, 'contact_submissions'), firestoreData).then(docRef => {
-      // If Firestore creates a real doc, we can store docRef.id
-      console.log('Successfully saved to Firestore doc:', docRef.id);
-    }).catch(fsErr => {
-      console.warn('Firestore write warning (local fallback used):', fsErr?.message || fsErr);
-    });
-  } catch (err) {
-    console.warn('Firestore connection notice (stored in local database):', err);
+  // 3. Also attempt to save to Firestore database if configured
+  if (db && isFirebaseConfigured) {
+    try {
+      const firestoreData = {
+        ...newRecord,
+        firestoreCreatedAt: serverTimestamp()
+      };
+      addDoc(collection(db, 'contact_submissions'), firestoreData).catch(fsErr => {
+        console.debug('Firestore write notice (local fallback active):', fsErr?.message || fsErr);
+      });
+    } catch (err) {
+      console.debug('Firestore save skipped:', err);
+    }
   }
 
   return { success: true, id: generatedId };
@@ -112,14 +116,15 @@ export const updateSubmissionStatus = async (id: string, newStatus: ContactSubmi
   const updated = current.map(item => item.id === id ? { ...item, status: newStatus } : item);
   saveLocalSubmissions(updated);
 
-  // Try Firestore update
-  try {
-    await updateDoc(doc(db, 'contact_submissions', id), {
-      status: newStatus
-    });
-  } catch (err) {
-    // Firestore doc ID might differ from local generated ID if created offline, safe to ignore
-    console.log('Firestore doc update skipped or offline:', err);
+  // Try Firestore update if active
+  if (db && isFirebaseConfigured) {
+    try {
+      await updateDoc(doc(db, 'contact_submissions', id), {
+        status: newStatus
+      });
+    } catch (err) {
+      console.debug('Firestore doc update skipped:', err);
+    }
   }
 };
 
@@ -132,16 +137,18 @@ export const deleteSubmission = async (id: string): Promise<void> => {
   const filtered = current.filter(item => item.id !== id);
   saveLocalSubmissions(filtered);
 
-  // Try Firestore delete
-  try {
-    await deleteDoc(doc(db, 'contact_submissions', id));
-  } catch (err) {
-    console.log('Firestore doc delete skipped or offline:', err);
+  // Try Firestore delete if active
+  if (db && isFirebaseConfigured) {
+    try {
+      await deleteDoc(doc(db, 'contact_submissions', id));
+    } catch (err) {
+      console.debug('Firestore doc delete skipped:', err);
+    }
   }
 };
 
 /**
- * Real-time combined subscriber (Firestore + LocalStorage + Custom Events)
+ * Real-time combined subscriber (LocalStorage + Custom Events + Firestore if active)
  */
 export const subscribeToInbox = (onUpdate: (submissions: ContactSubmission[]) => void): (() => void) => {
   // Initial local state delivery
@@ -159,7 +166,6 @@ export const subscribeToInbox = (onUpdate: (submissions: ContactSubmission[]) =>
 
     // Override or add from Firestore
     firestoreList.forEach(item => {
-      // Find if matched by ID or identical fields
       mergedMap.set(item.id, item);
     });
 
@@ -192,25 +198,27 @@ export const subscribeToInbox = (onUpdate: (submissions: ContactSubmission[]) =>
   };
   window.addEventListener('storage', handleStorageEvent);
 
-  // 3. Listen to Firestore realtime stream
+  // 3. Listen to Firestore realtime stream if configured
   let unsubscribeFirestore = () => {};
-  try {
-    const q = query(collection(db, 'contact_submissions'), orderBy('createdAt', 'desc'));
-    unsubscribeFirestore = onSnapshot(q, (snapshot) => {
-      const fsItems: ContactSubmission[] = [];
-      snapshot.forEach((docSnap) => {
-        fsItems.push({
-          id: docSnap.id,
-          ...docSnap.data()
-        } as ContactSubmission);
+  if (db && isFirebaseConfigured) {
+    try {
+      const q = query(collection(db, 'contact_submissions'), orderBy('createdAt', 'desc'));
+      unsubscribeFirestore = onSnapshot(q, (snapshot) => {
+        const fsItems: ContactSubmission[] = [];
+        snapshot.forEach((docSnap) => {
+          fsItems.push({
+            id: docSnap.id,
+            ...docSnap.data()
+          } as ContactSubmission);
+        });
+        mergeAndNotify(fsItems);
+      }, (err) => {
+        console.debug('Firestore realtime stream fallback to local mode:', err?.message || err);
+        onUpdate(getLocalSubmissions());
       });
-      mergeAndNotify(fsItems);
-    }, (err) => {
-      console.warn('Firestore realtime stream fallback to local mode:', err?.message || err);
-      onUpdate(getLocalSubmissions());
-    });
-  } catch (err) {
-    console.warn('Firestore onSnapshot init notice:', err);
+    } catch (err) {
+      console.debug('Firestore onSnapshot init skipped:', err);
+    }
   }
 
   return () => {

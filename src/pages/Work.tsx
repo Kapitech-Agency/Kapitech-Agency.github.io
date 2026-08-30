@@ -23,16 +23,27 @@ import {
 import Fuse from 'fuse.js';
 import { AtmosphericBackground } from '../components/ui/AtmosphericBackground';
 import { useLanguage } from '../lib/LanguageContext';
-import { allProjects, ProjectItem } from '../data/projectsData';
+import { ProjectItem } from '../data/projectsData';
+import { getCmsProjects } from '../lib/cmsStore';
 
 export const Work = () => {
   const { t, language } = useLanguage();
+  const [projectsList, setProjectsList] = useState<ProjectItem[]>(() => getCmsProjects());
   const [activePillar, setActivePillar] = useState<string>('All');
   const [activeService, setActiveService] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedProject, setSelectedProject] = useState<ProjectItem | null>(null);
   const [featuredIndex, setFeaturedIndex] = useState<number>(0);
   const [visibleCount, setVisibleCount] = useState<number>(12);
+
+  // Sync with CMS updates
+  useEffect(() => {
+    const handleUpdate = () => {
+      setProjectsList(getCmsProjects());
+    };
+    window.addEventListener('kapitech_cms_updated', handleUpdate);
+    return () => window.removeEventListener('kapitech_cms_updated', handleUpdate);
+  }, []);
 
   // Drag-to-scroll refs & state for horizontal filter bars
   const serviceScrollRef = React.useRef<HTMLDivElement>(null);
@@ -70,8 +81,8 @@ export const Work = () => {
   };
 
   const featuredProjects = useMemo(() => {
-    return allProjects.filter(p => p.featured);
-  }, []);
+    return projectsList.filter(p => p.featured);
+  }, [projectsList]);
 
   useEffect(() => {
     if (featuredProjects.length === 0) return;
@@ -129,7 +140,7 @@ export const Work = () => {
   };
 
   const filteredProjects = useMemo(() => {
-    let list = allProjects;
+    let list = projectsList;
 
     if (activePillar !== 'All') {
       list = list.filter(p => p.pillar === activePillar);
@@ -148,9 +159,9 @@ export const Work = () => {
     }
 
     return list;
-  }, [activePillar, activeService, searchQuery]);
+  }, [projectsList, activePillar, activeService, searchQuery]);
 
-  const currentFeatured = featuredProjects[featuredIndex] || allProjects[0];
+  const currentFeatured = featuredProjects[featuredIndex] || projectsList[0];
 
   return (
     <div className="bg-[#0A0A0A] text-white min-h-screen selection:bg-brand-red selection:text-white relative" role="main">

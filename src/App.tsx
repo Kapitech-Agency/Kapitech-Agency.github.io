@@ -3,13 +3,15 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'motion/react';
 import { LanguageProvider } from './lib/LanguageContext';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 import { FloatingContact } from './components/FloatingContact';
+
+// Public Pages
 import { Home } from './pages/Home';
 import { Work } from './pages/Work';
 import { Services } from './pages/Services';
@@ -22,8 +24,22 @@ import { TermsOfService } from './pages/TermsOfService';
 import { AiInstructions } from './pages/AiInstructions';
 import { EditorialPolicy } from './pages/EditorialPolicy';
 import { CookiePolicy } from './pages/CookiePolicy';
-import { SubmissionsInbox } from './pages/SubmissionsInbox';
 import NotFound from './pages/NotFound';
+
+// Protected Admin Suite
+import { AdminLogin } from './pages/admin/AdminLogin';
+import { AdminLayout } from './pages/admin/AdminLayout';
+import { AdminDashboard } from './pages/admin/AdminDashboard';
+import { AdminInbox } from './pages/admin/AdminInbox';
+import { AdminCrm } from './pages/admin/AdminCrm';
+import { AdminInvoicing } from './pages/admin/AdminInvoicing';
+import { AdminProjects } from './pages/admin/AdminProjects';
+import { AdminClients } from './pages/admin/AdminClients';
+import { AdminCmsProjects } from './pages/admin/AdminCmsProjects';
+import { AdminCmsServices } from './pages/admin/AdminCmsServices';
+import { AdminCmsTestimonials } from './pages/admin/AdminCmsTestimonials';
+import { AdminSettings } from './pages/admin/AdminSettings';
+import { RequireAdminAuth } from './components/admin/RequireAdminAuth';
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -35,17 +51,20 @@ const ScrollToTop = () => {
 
 const AnimatedRoutes = () => {
   const location = useLocation();
+  const isAdminRoute = location.pathname.startsWith('/admin');
   
   return (
     <AnimatePresence mode="wait">
       <motion.div 
-        key={location.pathname}
+        key={isAdminRoute ? 'admin-root' : location.pathname}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+        className="w-full flex-1 flex flex-col"
       >
         <Routes location={location}>
+          {/* Public Agency Routes */}
           <Route path="/" element={<Home />} />
           <Route path="/work" element={<Work />} />
           <Route path="/services" element={<Services />} />
@@ -59,13 +78,58 @@ const AnimatedRoutes = () => {
           <Route path="/ai-instructions" element={<AiInstructions />} />
           <Route path="/editorial-policy" element={<EditorialPolicy />} />
           <Route path="/cookie-policy" element={<CookiePolicy />} />
-          <Route path="/inbox" element={<SubmissionsInbox />} />
+          
+          {/* Public access points relocated: redirect /inbox directly to protected admin inbox */}
+          <Route path="/inbox" element={<Navigate to="/admin/inbox" replace />} />
+
+          {/* Admin Authentication Gateway */}
+          <Route path="/admin/login" element={<AdminLogin />} />
+
+          {/* Protected Admin Subsystem */}
+          <Route
+            path="/admin"
+            element={
+              <RequireAdminAuth>
+                <AdminLayout />
+              </RequireAdminAuth>
+            }
+          >
+            <Route index element={<Navigate to="/admin/dashboard" replace />} />
+            <Route path="dashboard" element={<AdminDashboard />} />
+            <Route path="inbox" element={<AdminInbox />} />
+            <Route path="crm" element={<AdminCrm />} />
+            <Route path="invoicing" element={<AdminInvoicing />} />
+            <Route path="projects" element={<AdminProjects />} />
+            <Route path="clients" element={<AdminClients />} />
+            <Route path="cms/projects" element={<AdminCmsProjects />} />
+            <Route path="cms/services" element={<AdminCmsServices />} />
+            <Route path="cms/testimonials" element={<AdminCmsTestimonials />} />
+            <Route path="settings" element={<AdminSettings />} />
+          </Route>
+
+          {/* 404 Fallback */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </motion.div>
     </AnimatePresence>
   );
 };
+
+function AppShell() {
+  const location = useLocation();
+  const isAdminRoute = location.pathname.startsWith('/admin');
+
+  return (
+    <div className="relative z-10 text-white selection:bg-brand-red selection:text-white min-h-screen flex flex-col">
+      {!isAdminRoute && <Navbar />}
+      <main className="flex-grow flex flex-col">
+        <AnimatedRoutes />
+      </main>
+      {!isAdminRoute && <Footer />}
+      {!isAdminRoute && <FloatingContact />}
+    </div>
+  );
+}
 
 export default function App() {
   // Global handler for interactive .kapi-card dynamic mouse glow
@@ -89,19 +153,11 @@ export default function App() {
     <LanguageProvider>
       <Router>
         <ScrollToTop />
-        {/* 1. Ambient Fluid Mesh Background Layers */}
+        {/* Ambient Fluid Mesh Background Layers */}
         <div className="kapi-fluid-background" aria-hidden="true" />
         <div className="kapi-noise-overlay" aria-hidden="true" />
 
-        {/* 2. Main Page Layout */}
-        <div className="relative z-10 text-white selection:bg-brand-red selection:text-white min-h-screen flex flex-col">
-          <Navbar />
-          <main className="flex-grow">
-            <AnimatedRoutes />
-          </main>
-          <Footer />
-          <FloatingContact />
-        </div>
+        <AppShell />
       </Router>
     </LanguageProvider>
   );

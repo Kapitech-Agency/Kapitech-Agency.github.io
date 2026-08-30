@@ -184,20 +184,6 @@ export const Navbar = () => {
                   location.pathname === '/careers' ? "w-full" : "hover:w-full"
                 )} />
               </Link>
-
-              {/* Inbox Link */}
-              <Link 
-                to="/inbox" 
-                className={cn(
-                  "relative inline-flex items-center gap-1.5 h-7 px-2 py-0.5 rounded-full text-[11px] font-mono font-medium uppercase tracking-wider transition-all",
-                  location.pathname === '/inbox' 
-                    ? "bg-brand-red/15 text-brand-red border border-brand-red/40 font-bold" 
-                    : "text-[#8A909D] hover:text-white hover:bg-white/5 border border-transparent"
-                )}
-              >
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                <span>Inbox</span>
-              </Link>
             </div>
 
             {/* Start Project CTA with Rotating Clockwise Red Glow */}
@@ -672,27 +658,6 @@ export const Navbar = () => {
                   <span className="text-xl font-display">{t('nav.careers')}</span>
                 </div>
                 <ChevronRight size={18} className="text-[#8A909D]/40" />
-              </Link>
-
-              {/* Inbox Database */}
-              <Link
-                to="/inbox"
-                onClick={() => setIsMenuOpen(false)}
-                className={cn(
-                  "flex items-center justify-between py-3.5 px-4 rounded-2xl transition-colors min-h-[48px]",
-                  location.pathname === '/inbox' 
-                    ? "bg-[#16181D] text-white font-bold border border-brand-red/40" 
-                    : "text-[#8A909D] hover:text-white hover:bg-[#16181D] active:bg-[#16181D]"
-                )}
-              >
-                <div className="flex items-center gap-3">
-                  <span className="text-xs font-mono text-emerald-400">05</span>
-                  <span className="text-xl font-display">Database Inbox</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                  <ChevronRight size={18} className="text-[#8A909D]/40" />
-                </div>
               </Link>
 
               <div className="pt-4 mt-1">

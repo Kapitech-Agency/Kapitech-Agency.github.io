@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 
 export type Language = 'en' | 'id';
 
@@ -98,6 +98,113 @@ const translations: Record<Language, Record<string, string>> = {
     'careers.subtitle': 'We are looking for passionate designers, engineers, and problem solvers who value craft, speed, and genuine client impact.',
     'careers.openRoles': 'Open Roles',
     'careers.directEmail': 'Direct recruiting inquiries:',
+
+    // Admin Suite Navigation & Shell
+    'admin.nav.dashboard': 'Dashboard Overview',
+    'admin.nav.inbox': 'Leads & Inbox',
+    'admin.nav.crm': 'CRM & Pipeline',
+    'admin.nav.invoicing': 'Financials & Invoicing',
+    'admin.nav.projects': 'Projects & Tasks',
+    'admin.nav.clients': 'Client Directory',
+    'admin.nav.cmsProjects': 'CMS Case Studies',
+    'admin.nav.cmsServices': 'CMS Services',
+    'admin.nav.cmsTestimonials': 'CMS Testimonials',
+    'admin.nav.settings': 'System Settings',
+    'admin.nav.viewSite': 'View Public Website',
+    'admin.nav.mainMenu': 'Main Management',
+    'admin.nav.operations': 'Operations & Execution',
+    'admin.nav.cms': 'Content Management',
+    'admin.nav.system': 'System & Meta',
+    'admin.nav.logout': 'Logout',
+    'admin.nav.logoutConfirm': 'Log out from current admin session?',
+    'admin.badge.principal': 'Principal Admin',
+
+    // Admin General Actions
+    'admin.action.save': 'Save Changes',
+    'admin.action.cancel': 'Cancel',
+    'admin.action.delete': 'Delete',
+    'admin.action.edit': 'Edit',
+    'admin.action.search': 'Search...',
+    'admin.action.filter': 'Filter',
+    'admin.action.exportCsv': 'Export CSV',
+    'admin.action.add': 'Add',
+    'admin.action.create': 'Create',
+    'admin.action.details': 'Details',
+    'admin.action.view': 'View',
+    'admin.action.close': 'Close',
+
+    // Admin Dashboard
+    'admin.dash.title': 'Executive Agency Dashboard',
+    'admin.dash.subtitle': 'Real-time financial telemetry, pipeline conversion metrics, and client engagement operations.',
+    'admin.dash.pipelineValue': 'Total Active Pipeline',
+    'admin.dash.wonRevenue': 'Closed Won Revenue',
+    'admin.dash.activeInquiries': 'Total Inbound Inquiries',
+    'admin.dash.liveProjects': 'Active Client Projects',
+    'admin.dash.monthlyTarget': 'Annual Growth Target',
+    'admin.dash.quickActions': 'Quick Execution Actions',
+    'admin.dash.dealStream': 'High-Value Deal Pipeline',
+    'admin.dash.auditTrail': 'Security & Action Audit Logs',
+    'admin.dash.simulateLead': 'Simulate Inbound Lead',
+
+    // Admin CRM
+    'admin.crm.title': 'Agency CRM & Sales Pipeline',
+    'admin.crm.subtitle': 'Track enterprise leads, deal valuations in IDR, stage conversions, and client notes.',
+    'admin.crm.addDeal': 'Add New Deal',
+    'admin.crm.kanbanView': 'Kanban Board',
+    'admin.crm.listView': 'List View',
+    'admin.crm.stage.new': 'New Lead',
+    'admin.crm.stage.contacted': 'Discovery & Scoping',
+    'admin.crm.stage.proposal': 'Proposal Sent',
+    'admin.crm.stage.negotiation': 'Negotiation & SOW',
+    'admin.crm.stage.won': 'Closed Won',
+    'admin.crm.stage.lost': 'Closed Lost',
+
+    // Admin Financials
+    'admin.fin.title': 'Financials & Client Invoicing',
+    'admin.fin.subtitle': 'Manage billing milestones, PPN tax calculations, expenses, and cash flow tracking.',
+    'admin.fin.createInvoice': 'Create New Invoice',
+    'admin.fin.recordExpense': 'Record Expense',
+    'admin.fin.revenuePaid': 'Total Collected Revenue',
+    'admin.fin.outstanding': 'Outstanding Invoices',
+    'admin.fin.overdue': 'Overdue Invoices',
+    'admin.fin.expenses': 'Total Studio Expenses',
+    'admin.fin.netProfit': 'Net Operating Profit',
+    'admin.fin.invoicesList': 'Client Invoices',
+    'admin.fin.expensesList': 'Expense Records',
+
+    // Admin Projects
+    'admin.proj.title': 'Project & Task Execution Suite',
+    'admin.proj.subtitle': 'Monitor sprint milestones, technical deliverables, and team task Kanban boards.',
+    'admin.proj.createProject': 'Create Project',
+    'admin.proj.addTask': 'Add Team Task',
+    'admin.proj.allProjects': 'Active Client Projects',
+    'admin.proj.taskBoard': 'Task Kanban Board',
+    'admin.proj.milestones': 'Sprint Milestones',
+
+    // Admin Clients
+    'admin.client.title': 'Agency Client Directory',
+    'admin.client.subtitle': 'Central database of active and past enterprise clients, spend history, and contacts.',
+    'admin.client.addClient': 'Add New Client',
+    'admin.client.totalClients': 'Total Clients',
+    'admin.client.activeAccounts': 'Active Accounts',
+    'admin.client.lifetimeSpend': 'Total Client Spend',
+
+    // Admin Inbox
+    'admin.inbox.title': 'Protected Inbound Inbox',
+    'admin.inbox.subtitle': 'Direct client submissions, inquiries, and job applications received through public forms.',
+    'admin.inbox.convertToLead': 'Convert to CRM Lead',
+    'admin.inbox.allSubmissions': 'All Submissions',
+    'admin.inbox.unreadOnly': 'Unread Only',
+
+    // Admin CMS
+    'admin.cms.projectsTitle': 'CMS: Portfolio & Case Studies',
+    'admin.cms.projectsSubtitle': 'Manage case studies, high-resolution media galleries, and technical highlights.',
+    'admin.cms.servicesTitle': 'CMS: Studio Service Offerings',
+    'admin.cms.servicesSubtitle': 'Configure agency core capabilities and bespoke service landing details.',
+    'admin.cms.testiTitle': 'CMS: Client Testimonials',
+    'admin.cms.testiSubtitle': 'Manage executive quotes, ratings, and client verification badges.',
+    'admin.cms.uploadImage': 'Upload Image (PNG/JPG/WebP)',
+    'admin.cms.dragDropImage': 'Drag and drop image here or click to browse'
   },
   id: {
     // Nav
@@ -188,6 +295,113 @@ const translations: Record<Language, Record<string, string>> = {
     'careers.subtitle': 'Kami mencari desainer, engineer, dan problem solver berdedikasi yang mengutamakan kualitas, kecepatan, dan dampak nyata bagi klien.',
     'careers.openRoles': 'Posisi Tersedia',
     'careers.directEmail': 'Kontak rekrutmen langsung:',
+
+    // Admin Suite Navigation & Shell
+    'admin.nav.dashboard': 'Ringkasan Dashboard',
+    'admin.nav.inbox': 'Leads & Pesan Masuk',
+    'admin.nav.crm': 'CRM & Pipeline',
+    'admin.nav.invoicing': 'Keuangan & Invoice',
+    'admin.nav.projects': 'Proyek & Tugas',
+    'admin.nav.clients': 'Direktori Klien',
+    'admin.nav.cmsProjects': 'CMS Studi Kasus',
+    'admin.nav.cmsServices': 'CMS Layanan',
+    'admin.nav.cmsTestimonials': 'CMS Testimoni',
+    'admin.nav.settings': 'Pengaturan Sistem',
+    'admin.nav.viewSite': 'Lihat Website Publik',
+    'admin.nav.mainMenu': 'Manajemen Utama',
+    'admin.nav.operations': 'Operasional & Eksekusi',
+    'admin.nav.cms': 'Manajemen Konten (CMS)',
+    'admin.nav.system': 'Sistem & Pengaturan',
+    'admin.nav.logout': 'Keluar Sesi',
+    'admin.nav.logoutConfirm': 'Keluar dari sesi Admin Portal?',
+    'admin.badge.principal': 'Admin Utama',
+
+    // Admin General Actions
+    'admin.action.save': 'Simpan Perubahan',
+    'admin.action.cancel': 'Batal',
+    'admin.action.delete': 'Hapus',
+    'admin.action.edit': 'Edit',
+    'admin.action.search': 'Cari...',
+    'admin.action.filter': 'Filter',
+    'admin.action.exportCsv': 'Ekspor CSV',
+    'admin.action.add': 'Tambah',
+    'admin.action.create': 'Buat',
+    'admin.action.details': 'Detail',
+    'admin.action.view': 'Lihat',
+    'admin.action.close': 'Tutup',
+
+    // Admin Dashboard
+    'admin.dash.title': 'Dashboard Eksekutif Agensi',
+    'admin.dash.subtitle': 'Telemetri keuangan realtime, metrik konversi pipeline, dan operasional interaksi klien.',
+    'admin.dash.pipelineValue': 'Total Nilai Pipeline Aktif',
+    'admin.dash.wonRevenue': 'Pendapatan Deal Berhasil (Won)',
+    'admin.dash.activeInquiries': 'Total Pesan & Prospek Masuk',
+    'admin.dash.liveProjects': 'Proyek Klien Aktif',
+    'admin.dash.monthlyTarget': 'Target Pertumbuhan Tahunan',
+    'admin.dash.quickActions': 'Aksi Cepat Eksekutif',
+    'admin.dash.dealStream': 'Pipeline Deal Bernilai Tinggi',
+    'admin.dash.auditTrail': 'Log Aktivitas & Audit Keamanan',
+    'admin.dash.simulateLead': 'Simulasi Lead Masuk',
+
+    // Admin CRM
+    'admin.crm.title': 'CRM Agensi & Pipeline Penjualan',
+    'admin.crm.subtitle': 'Pantau prospek enterprise, valuasi deal dalam IDR, konversi tahap, dan catatan klien.',
+    'admin.crm.addDeal': 'Tambah Deal Baru',
+    'admin.crm.kanbanView': 'Tampilan Kanban',
+    'admin.crm.listView': 'Tampilan Tabel',
+    'admin.crm.stage.new': 'Prospek Baru',
+    'admin.crm.stage.contacted': 'Kontak Awal & Brief',
+    'admin.crm.stage.proposal': 'Proposal Dikirim',
+    'admin.crm.stage.negotiation': 'Negosiasi Kontrak',
+    'admin.crm.stage.won': 'Deal Berhasil (Won)',
+    'admin.crm.stage.lost': 'Tidak Lanjut (Lost)',
+
+    // Admin Financials
+    'admin.fin.title': 'Keuangan & Penagihan Invoice',
+    'admin.fin.subtitle': 'Kelola milestone pembayaran klien, perhitungan PPN 11%, pengeluaran, dan arus kas.',
+    'admin.fin.createInvoice': 'Buat Invoice Baru',
+    'admin.fin.recordExpense': 'Catat Pengeluaran',
+    'admin.fin.revenuePaid': 'Total Pendapatan Diterima',
+    'admin.fin.outstanding': 'Tagihan Belum Dibayar',
+    'admin.fin.overdue': 'Tagihan Jatuh Tempo',
+    'admin.fin.expenses': 'Total Biaya Operasional',
+    'admin.fin.netProfit': 'Laba Operasional Bersih',
+    'admin.fin.invoicesList': 'Daftar Invoice Klien',
+    'admin.fin.expensesList': 'Catatan Biaya & Beban',
+
+    // Admin Projects
+    'admin.proj.title': 'Manajemen Proyek & Eksekusi Tugas',
+    'admin.proj.subtitle': 'Pantau milestone sprint, deliverable teknis, dan papan Kanban tugas tim internal.',
+    'admin.proj.createProject': 'Buat Proyek Baru',
+    'admin.proj.addTask': 'Tambah Tugas Tim',
+    'admin.proj.allProjects': 'Daftar Proyek Klien Aktif',
+    'admin.proj.taskBoard': 'Papan Kanban Tugas',
+    'admin.proj.milestones': 'Milestone Sprint',
+
+    // Admin Clients
+    'admin.client.title': 'Direktori Klien Agensi',
+    'admin.client.subtitle': 'Database terpusat klien aktif & sebelumnya, riwayat pengeluaran, dan kontak PIC.',
+    'admin.client.addClient': 'Tambah Klien Baru',
+    'admin.client.totalClients': 'Total Klien',
+    'admin.client.activeAccounts': 'Akun Aktif',
+    'admin.client.lifetimeSpend': 'Total Pengeluaran Klien',
+
+    // Admin Inbox
+    'admin.inbox.title': 'Pesan Masuk Terproteksi',
+    'admin.inbox.subtitle': 'Formulir kontak klien, pertanyaan proyek, dan lamaran karir dari website publik.',
+    'admin.inbox.convertToLead': 'Konversi ke Lead CRM',
+    'admin.inbox.allSubmissions': 'Semua Pesan Masuk',
+    'admin.inbox.unreadOnly': 'Belum Dibaca Saja',
+
+    // Admin CMS
+    'admin.cms.projectsTitle': 'CMS: Portofolio & Studi Kasus',
+    'admin.cms.projectsSubtitle': 'Kelola studi kasus, galeri media visual beresolusi tinggi, dan sorotan teknis.',
+    'admin.cms.servicesTitle': 'CMS: Layanan Spesialisasi Studio',
+    'admin.cms.servicesSubtitle': 'Konfigurasi penawaran kapabilitas studio dan detail landing page layanan.',
+    'admin.cms.testiTitle': 'CMS: Testimoni & Kutipan Klien',
+    'admin.cms.testiSubtitle': 'Kelola kutipan eksekutif, rating bintang, dan lencana verifikasi klien.',
+    'admin.cms.uploadImage': 'Unggah Gambar (PNG/JPG/WebP)',
+    'admin.cms.dragDropImage': 'Tarik & lepas file gambar ke sini atau klik untuk memilih'
   }
 };
 
@@ -198,6 +412,7 @@ const LanguageContext = createContext<LanguageContextType>({
 });
 
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  // Default to ENGLISH ('en') as the primary system language
   const [language, setLanguageState] = useState<Language>(() => {
     const saved = localStorage.getItem('kapitech_lang') as Language;
     return saved === 'id' || saved === 'en' ? saved : 'en';
