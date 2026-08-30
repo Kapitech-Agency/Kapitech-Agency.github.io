@@ -22,6 +22,7 @@ import { TermsOfService } from './pages/TermsOfService';
 import { AiInstructions } from './pages/AiInstructions';
 import { EditorialPolicy } from './pages/EditorialPolicy';
 import { CookiePolicy } from './pages/CookiePolicy';
+import { SubmissionsInbox } from './pages/SubmissionsInbox';
 import NotFound from './pages/NotFound';
 
 const ScrollToTop = () => {
@@ -58,6 +59,7 @@ const AnimatedRoutes = () => {
           <Route path="/ai-instructions" element={<AiInstructions />} />
           <Route path="/editorial-policy" element={<EditorialPolicy />} />
           <Route path="/cookie-policy" element={<CookiePolicy />} />
+          <Route path="/inbox" element={<SubmissionsInbox />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </motion.div>
@@ -66,11 +68,33 @@ const AnimatedRoutes = () => {
 };
 
 export default function App() {
+  // Global handler for interactive .kapi-card dynamic mouse glow
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      const target = (e.target as HTMLElement)?.closest('.kapi-card') as HTMLElement | null;
+      if (target) {
+        const rect = target.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        target.style.setProperty('--mouse-x', `${x}px`);
+        target.style.setProperty('--mouse-y', `${y}px`);
+      }
+    };
+
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
   return (
     <LanguageProvider>
       <Router>
         <ScrollToTop />
-        <div className="bg-[#0A0A0A] text-white selection:bg-brand-red selection:text-white min-h-screen flex flex-col film-grain">
+        {/* 1. Ambient Fluid Mesh Background Layers */}
+        <div className="kapi-fluid-background" aria-hidden="true" />
+        <div className="kapi-noise-overlay" aria-hidden="true" />
+
+        {/* 2. Main Page Layout */}
+        <div className="relative z-10 text-white selection:bg-brand-red selection:text-white min-h-screen flex flex-col">
           <Navbar />
           <main className="flex-grow">
             <AnimatedRoutes />

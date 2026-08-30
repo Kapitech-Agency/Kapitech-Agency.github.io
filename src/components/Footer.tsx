@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Mail, MapPin, Phone, ArrowUpRight, ArrowUp, CheckCircle2, Globe, Briefcase } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '@/src/lib/LanguageContext';
+import { submitToInbox } from '@/src/lib/submissions';
 
 export const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -28,10 +29,22 @@ export const Footer = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const handleSubscribe = (e: React.FormEvent) => {
+  const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
     if (email) {
+      const emailToSubmit = email.trim();
       setIsSubscribed(true);
+      try {
+        await submitToInbox({
+          fullName: 'Newsletter Subscriber',
+          email: emailToSubmit,
+          message: `User subscribed to newsletter updates: ${emailToSubmit}`,
+          source: 'Footer Newsletter Form',
+          type: 'newsletter'
+        });
+      } catch (err) {
+        console.warn('Newsletter submission error:', err);
+      }
       setTimeout(() => setIsSubscribed(false), 4000);
       setEmail('');
     }
@@ -278,7 +291,8 @@ export const Footer = () => {
                 { name: t('nav.services'), href: '/services' },
                 { name: t('nav.about'), href: '/about' },
                 { name: t('nav.careers'), href: '/careers' },
-                { name: t('nav.contact'), href: '/contact' }
+                { name: t('nav.contact'), href: '/contact' },
+                { name: language === 'id' ? 'Inbox Database' : 'Database Inbox', href: '/inbox' }
               ].map((item) => (
                 <li key={item.name}>
                   <Link 

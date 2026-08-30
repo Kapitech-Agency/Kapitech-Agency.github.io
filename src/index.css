@@ -1,8 +1,45 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+/* ==========================================================================
+   KAPITECH AGENCY - DESIGN TOKENS & CORE VARIABLES
+   ========================================================================== */
+:root {
+  /* Brand Color Palette */
+  --kapi-red-primary: #E60023;
+  --kapi-red-electric: #FF1F3D;
+  --kapi-red-hover: #CC001F;
+  --kapi-red-glow: rgba(230, 0, 35, 0.12);
+  --kapi-red-glow-hover: rgba(230, 0, 35, 0.28);
+  --kapi-red-border-hover: rgba(230, 0, 35, 0.65);
+
+  /* Obsidian & Charcoal Surfaces */
+  --kapi-bg-obsidian: #08090A;
+  --kapi-bg-charcoal-deep: #121418;
+  --kapi-bg-card: rgba(22, 24, 29, 0.75);
+  --kapi-bg-card-hover: rgba(26, 29, 36, 0.90);
+  
+  /* Borders & Dividers */
+  --kapi-border-subtle: #262930;
+  --kapi-border-highlight: rgba(255, 255, 255, 0.08);
+
+  /* Typography Colors */
+  --kapi-text-white: #FFFFFF;
+  --kapi-text-slate: #8A909D;
+  --kapi-text-muted: #5C626E;
+
+  /* Layout & Radii */
+  --kapi-radius-card: 20px;
+  --kapi-radius-pill: 9999px;
+  --kapi-radius-inner: 12px;
+
+  /* Transitions */
+  --kapi-ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+  --kapi-transition-smooth: all 0.4s var(--kapi-ease-spring);
+}
 
 @theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Inter", "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Space Grotesk", sans-serif;
   --font-heading: "Outfit", sans-serif;
   --font-mono: "JetBrains Mono", monospace;
@@ -14,7 +51,7 @@
   --color-brand-red-glow: rgba(230, 0, 35, 0.25);
 
   /* Neutral Base: Obsidian Black */
-  --color-dark-base: #0B0C0E;
+  --color-dark-base: #08090A;
   --color-black-pure: #000000;
 
   /* Card & Surface Neutral: Charcoal Dark */
@@ -39,8 +76,8 @@
   }
 
   body {
-    background-color: #0B0C0E;
-    color: #8A909D;
+    background-color: var(--kapi-bg-obsidian);
+    color: var(--kapi-text-slate);
     font-family: var(--font-sans);
     overflow-x: hidden;
     width: 100%;
@@ -88,33 +125,321 @@
   }
 }
 
-:root {
-  background-color: #0B0C0E;
-  color: #8A909D;
-  font-family: var(--font-sans);
-}
-
-body {
-  margin: 0;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden;
-  background-color: #0B0C0E;
-}
-
-/* Film Grain Overlay */
-.film-grain::after {
-  content: "";
+/* ==========================================================================
+   1. GLOBAL FLUID AMBIENT BACKGROUND
+   ========================================================================== */
+.kapi-fluid-background {
   position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at 50% 0%, 
+    var(--kapi-bg-charcoal-deep) 0%, 
+    var(--kapi-bg-obsidian) 75%
+  );
+  overflow: hidden;
+}
+
+/* Ambient Fluid Orbs Mesh */
+.kapi-fluid-background::before,
+.kapi-fluid-background::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(120px);
+  will-change: transform, opacity;
+}
+
+/* Primary Crimson Ambient Light (Fluid Flow Top-Left to Center) */
+.kapi-fluid-background::before {
+  top: -15%;
+  left: -10%;
+  width: 55vw;
+  height: 55vw;
+  max-width: 800px;
+  max-height: 800px;
+  background: radial-gradient(circle, var(--kapi-red-primary) 0%, rgba(230, 0, 35, 0) 70%);
+  opacity: 0.10;
+  animation: kapiFloatOrbOne 22s ease-in-out infinite alternate;
+}
+
+/* Secondary Charcoal & Deep Red Subtle Counter-Mesh (Bottom-Right) */
+.kapi-fluid-background::after {
+  bottom: -20%;
+  right: -10%;
+  width: 65vw;
+  height: 65vw;
+  max-width: 900px;
+  max-height: 900px;
+  background: radial-gradient(circle, var(--kapi-red-electric) 0%, rgba(18, 20, 24, 0.4) 50%, rgba(8, 9, 10, 0) 75%);
+  opacity: 0.08;
+  animation: kapiFloatOrbTwo 28s ease-in-out infinite alternate;
+}
+
+/* Subtle Film Grain Texture Overlay for Depth */
+.kapi-noise-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+/* Ambient Floating Animation Keyframes */
+@keyframes kapiFloatOrbOne {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.09;
+  }
+  50% {
+    transform: translate(15vw, 12vh) scale(1.15);
+    opacity: 0.13;
+  }
+  100% {
+    transform: translate(5vw, 25vh) scale(0.95);
+    opacity: 0.08;
+  }
+}
+
+@keyframes kapiFloatOrbTwo {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.07;
+  }
+  50% {
+    transform: translate(-12vw, -15vh) scale(1.2);
+    opacity: 0.11;
+  }
+  100% {
+    transform: translate(-20vw, -5vh) scale(0.9);
+    opacity: 0.06;
+  }
+}
+
+/* ==========================================================================
+   2. REUSABLE CARD COMPONENT SYSTEM (.kapi-card)
+   ========================================================================== */
+.kapi-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: var(--kapi-bg-card);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--kapi-border-subtle);
+  border-radius: var(--kapi-radius-card);
+  padding: 1.75rem 1.5rem;
+  text-decoration: none;
+  color: inherit;
+  transition: var(--kapi-transition-smooth);
+  cursor: pointer;
+  overflow: hidden;
+}
+
+@media (min-width: 640px) {
+  .kapi-card {
+    padding: 2.25rem 2rem;
+  }
+}
+
+/* Inner Soft Red Radial Glow (Hidden by default, reveals on Hover) */
+.kapi-card::before {
+  content: '';
+  position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
+  right: 0;
   height: 100%;
+  background: radial-gradient(
+    800px circle at var(--mouse-x, 50%) var(--mouse-y, 0%), 
+    var(--kapi-red-glow-hover), 
+    transparent 60%
+  );
+  opacity: 0;
+  transition: opacity 0.5s ease;
   pointer-events: none;
-  z-index: 9999;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-  opacity: 0.04;
-  mix-blend-mode: overlay;
+  z-index: 0;
+}
+
+/* Top Subtle Shimmer Edge */
+.kapi-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--kapi-border-highlight), transparent);
+  transition: var(--kapi-transition-smooth);
+}
+
+/* Card Hover States */
+.kapi-card:hover {
+  transform: translateY(-6px);
+  border-color: var(--kapi-red-border-hover);
+  background-color: var(--kapi-bg-card-hover);
+  box-shadow: 
+    0 12px 36px -8px rgba(0, 0, 0, 0.7),
+    0 0 24px 0 rgba(230, 0, 35, 0.15);
+}
+
+.kapi-card:hover::before {
+  opacity: 1;
+}
+
+.kapi-card:hover::after {
+  left: 0;
+  right: 0;
+  background: linear-gradient(90deg, transparent, var(--kapi-red-electric), transparent);
+}
+
+/* Internal Elements (Z-Index Protection over glow) */
+.kapi-card-header,
+.kapi-card-body,
+.kapi-card-footer {
+  position: relative;
+  z-index: 1;
+}
+
+/* Card Header & Icon */
+.kapi-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.kapi-card-icon-box {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--kapi-radius-inner);
+  background-color: var(--kapi-bg-obsidian);
+  border: 1px solid var(--kapi-border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--kapi-text-white);
+  transition: var(--kapi-transition-smooth);
+}
+
+.kapi-card-icon-box svg {
+  width: 22px;
+  height: 22px;
+  transition: var(--kapi-transition-smooth);
+}
+
+.kapi-card:hover .kapi-card-icon-box {
+  background-color: rgba(230, 0, 35, 0.12);
+  border-color: var(--kapi-red-border-hover);
+  color: var(--kapi-red-electric);
+  transform: scale(1.05);
+}
+
+.kapi-card-pill {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.35rem 0.85rem;
+  border-radius: var(--kapi-radius-pill);
+  background: rgba(18, 20, 24, 0.8);
+  border: 1px solid var(--kapi-border-subtle);
+  color: var(--kapi-text-slate);
+  transition: var(--kapi-transition-smooth);
+}
+
+.kapi-card:hover .kapi-card-pill {
+  color: var(--kapi-text-white);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Card Body Content */
+.kapi-card-title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.75rem;
+  color: var(--kapi-text-white);
+  transition: color 0.3s ease;
+}
+
+@media (min-width: 640px) {
+  .kapi-card-title {
+    font-size: 1.5rem;
+  }
+}
+
+.kapi-card:hover .kapi-card-title {
+  color: var(--kapi-red-electric);
+}
+
+.kapi-card-desc {
+  font-size: 0.875rem;
+  color: var(--kapi-text-slate);
+  line-height: 1.65;
+  font-weight: 300;
+  margin-bottom: 1.5rem;
+}
+
+/* Card Feature Badges List */
+.kapi-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.75rem;
+}
+
+.kapi-card-tag {
+  font-size: 0.75rem;
+  font-family: var(--font-mono);
+  color: var(--kapi-text-slate);
+  background-color: var(--kapi-bg-obsidian);
+  border: 1px solid var(--kapi-border-subtle);
+  padding: 0.25rem 0.65rem;
+  border-radius: 6px;
+}
+
+/* Card Footer CTA */
+.kapi-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--kapi-border-subtle);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--kapi-text-white);
+  transition: var(--kapi-transition-smooth);
+}
+
+.kapi-card-arrow {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--kapi-bg-obsidian);
+  border: 1px solid var(--kapi-border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--kapi-transition-smooth);
+}
+
+.kapi-card:hover .kapi-card-footer {
+  color: var(--kapi-red-electric);
+  border-color: rgba(230, 0, 35, 0.2);
+}
+
+.kapi-card:hover .kapi-card-arrow {
+  background-color: var(--kapi-red-primary);
+  border-color: var(--kapi-red-primary);
+  color: var(--kapi-text-white);
+  transform: translate(3px, -3px);
 }
 
 /* Custom scrollbar */
@@ -124,27 +449,27 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #0A0A0A;
+  background: var(--kapi-bg-obsidian);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #2A2A2A;
+  background: var(--kapi-border-subtle);
   border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #3A3A3A;
+  background: var(--kapi-red-primary);
 }
 
 .glass {
-  background: rgba(22, 22, 22, 0.8);
+  background: rgba(22, 24, 29, 0.8);
   backdrop-filter: blur(20px);
-  border: 1px solid rgba(42, 42, 42, 0.8);
+  border: 1px solid rgba(38, 41, 48, 0.8);
   border-radius: 20px;
 }
 
 .text-gradient {
-  background: linear-gradient(to bottom right, #ffffff 50%, #8E8E93 100%);
+  background: linear-gradient(to bottom right, #ffffff 50%, #8A909D 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -165,14 +490,10 @@ body {
   100% { transform: translateX(-50%); }
 }
 
-.grain-off::after {
-  display: none;
-}
-
 .grid-bg {
   background-image: 
-    linear-gradient(to right, rgba(33, 38, 45, 0.4) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(33, 38, 45, 0.4) 1px, transparent 1px);
+    linear-gradient(to right, rgba(38, 41, 48, 0.4) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(38, 41, 48, 0.4) 1px, transparent 1px);
   background-size: 40px 40px;
 }
 

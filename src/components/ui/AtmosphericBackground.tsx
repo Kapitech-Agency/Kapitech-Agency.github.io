@@ -34,12 +34,12 @@ export const AtmosphericBackground: React.FC<AtmosphericBackgroundProps> = ({
           referrerPolicy="no-referrer"
         />
         {/* Soft elegant gradient overlays that blend seamlessly into dark theme */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0A0A0A]/80 via-[#0A0A0A]/50 to-[#0A0A0A]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#08090A]/85 via-[#08090A]/50 to-[#08090A]" />
         <div className="absolute inset-0 bg-gradient-to-tr from-brand-red/5 via-transparent to-brand-red/5" />
       </motion.div>
 
       {/* Subtle bottom fade to blend with next section */}
-      <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-[#0A0A0A] to-transparent" />
+      <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-[#08090A] to-transparent" />
     </div>
   );
 };

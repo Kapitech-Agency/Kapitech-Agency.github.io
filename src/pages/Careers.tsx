@@ -35,6 +35,7 @@ import {
 import { AtmosphericBackground } from '../components/ui/AtmosphericBackground';
 import { useLanguage } from '../lib/LanguageContext';
 import { sanitizeInput, isValidEmail, isValidPhone, validateResumeFile, clampLength } from '../lib/security';
+import { submitToInbox } from '../lib/submissions';
 
 export interface Position {
   id: string;
@@ -521,7 +522,7 @@ export const Careers = () => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (honeypot.trim().length > 0) {
       setIsSubmitted(true);
@@ -530,6 +531,8 @@ export const Careers = () => {
     const sanitizedName = sanitizeInput(clampLength(formData.name, 100));
     const sanitizedEmail = sanitizeInput(clampLength(formData.email, 120));
     const sanitizedPhone = sanitizeInput(clampLength(formData.phone, 30));
+    const sanitizedPortfolio = sanitizeInput(clampLength(formData.portfolio, 250));
+    const sanitizedCoverLetter = sanitizeInput(clampLength(formData.coverLetter, 2000));
 
     const errors: { [key: string]: string } = {};
     if (!sanitizedName) errors.name = language === 'id' ? 'Nama wajib diisi' : 'Name is required';
@@ -543,6 +546,20 @@ export const Careers = () => {
     }
 
     setApplicantErrors({});
+    try {
+      await submitToInbox({
+        fullName: sanitizedName,
+        email: sanitizedEmail,
+        phone: sanitizedPhone,
+        positionTitle: selectedPosition ? selectedPosition.title : 'General Studio Application',
+        portfolioUrl: sanitizedPortfolio,
+        message: `[Studio Role Application: ${selectedPosition?.title || 'Open Role'}]\nResume File: ${formData.resume?.name || 'Uploaded'}\nPortfolio: ${sanitizedPortfolio || '-'}\n\nCover Letter:\n${sanitizedCoverLetter || 'No cover letter provided.'}`,
+        source: `Careers: ${selectedPosition?.title || 'Studio Role'}`,
+        type: 'career'
+      });
+    } catch (err) {
+      console.warn('Applicant submission error:', err);
+    }
     setIsSubmitted(true);
   };
 
@@ -580,7 +597,7 @@ export const Careers = () => {
     }
   };
 
-  const handleVendorSubmit = (e: React.FormEvent) => {
+  const handleVendorSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (vendorHoneypot.trim().length > 0) {
       setIsVendorSubmitted(true);
@@ -589,6 +606,10 @@ export const Careers = () => {
     const sanitizedName = sanitizeInput(clampLength(vendorFormData.name, 100));
     const sanitizedEmail = sanitizeInput(clampLength(vendorFormData.email, 120));
     const sanitizedPhone = sanitizeInput(clampLength(vendorFormData.phone, 30));
+    const sanitizedPortfolio = sanitizeInput(clampLength(vendorFormData.portfolio, 250));
+    const sanitizedRateCard = sanitizeInput(clampLength(vendorFormData.rateCard, 100));
+    const sanitizedTools = sanitizeInput(clampLength(vendorFormData.tools, 200));
+    const sanitizedNotes = sanitizeInput(clampLength(vendorFormData.notes, 2000));
 
     const errors: { [key: string]: string } = {};
     if (!sanitizedName) errors.name = language === 'id' ? 'Nama wajib diisi' : 'Name is required';
@@ -601,6 +622,23 @@ export const Careers = () => {
     }
 
     setVendorErrors({});
+    try {
+      await submitToInbox({
+        fullName: sanitizedName,
+        email: sanitizedEmail,
+        phone: sanitizedPhone,
+        specialty: vendorFormData.specialty,
+        rateCard: sanitizedRateCard,
+        experienceYears: vendorFormData.experienceYears,
+        tools: sanitizedTools,
+        portfolioUrl: sanitizedPortfolio,
+        message: `[Freelance Vendor Application]\nSpecialty: ${vendorFormData.specialty}\nExperience: ${vendorFormData.experienceYears}\nRate / Project Cost: ${sanitizedRateCard || 'Standard rate'}\nTools & Stack: ${sanitizedTools || '-'}\nPortfolio / CV Link: ${sanitizedPortfolio || '-'}\nResume File: ${vendorFormData.resume?.name || 'Not attached'}\n\nAdditional Notes:\n${sanitizedNotes || '-'}`,
+        source: 'Careers: Freelance Vendor Network',
+        type: 'vendor'
+      });
+    } catch (err) {
+      console.warn('Vendor submission error:', err);
+    }
     setIsVendorSubmitted(true);
   };
 

@@ -360,98 +360,113 @@ export const Home = () => {
             ))}
           </div>
 
-          {/* 3 Pillars Grid (Branding, Design, Development) */}
+          {/* 3 Pillars Grid (Branding, Design, Development) with kapi-card */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             
             {/* Pillar 1: Branding */}
-            <div className="p-7 sm:p-8 rounded-2xl bg-[#16181D] border border-[#262930] hover:border-brand-red/40 transition-all flex flex-col justify-between">
-              <div>
-                <div className="flex items-center justify-between mb-5">
-                  <span className="text-xs font-mono tracking-widest text-brand-red font-semibold uppercase">01. BRANDING</span>
-                  <span className="px-2.5 py-0.5 rounded-full bg-[#0B0C0E] border border-[#262930] text-[10px] font-mono text-[#8A909D]">
-                    5 Services
-                  </span>
+            <div className="kapi-card" id="card-branding">
+              <div className="kapi-card-header">
+                <div className="kapi-card-icon-box">
+                  <Sparkles className="w-5 h-5 text-current" />
                 </div>
-                <h3 className="text-xl sm:text-2xl font-display font-bold text-white mb-2">
+                <span className="kapi-card-pill">01. IDENTITY</span>
+              </div>
+
+              <div className="kapi-card-body">
+                <h3 className="kapi-card-title">
                   BRAND IDENTITY & SYSTEM
                 </h3>
-                <p className="text-xs text-[#8A909D] font-light mb-5">
-                  {language === 'id' ? 'Membangun kepercayaan dan citra ikonik.' : 'Build market trust and undeniable distinction.'}
+                <p className="kapi-card-desc">
+                  {language === 'id' 
+                    ? 'Merumuskan positioning, panduan gaya visual terstruktur, dan strategi diferensiasi brand yang memperkuat reputasi pasar.' 
+                    : 'Build undeniable market distinction, cohesive visual systems, and high-trust positioning.'}
                 </p>
-                <ul className="space-y-2.5 text-xs text-[#8A909D] font-light pt-4 border-t border-[#262930]">
-                  <li><Link to="/services/pitch-deck" className="hover:text-brand-red transition-colors"><strong className="text-white">Pitch Deck</strong> — <span className="text-[#8A909D]">Get visuals that raise capital</span></Link></li>
-                  <li><Link to="/services/brand-identity" className="hover:text-brand-red transition-colors"><strong className="text-white">Brand Identity</strong> — <span className="text-[#8A909D]">Build trust with design</span></Link></li>
-                  <li><Link to="/services/logo-design" className="hover:text-brand-red transition-colors"><strong className="text-white">Logo Design</strong> — <span className="text-[#8A909D]">Become unforgettable</span></Link></li>
-                  <li><Link to="/services/graphic-design" className="hover:text-brand-red transition-colors"><strong className="text-white">Graphic Design</strong> — <span className="text-[#8A909D]">Illustrations, Icons, Social media</span></Link></li>
-                  <li><Link to="/services/rebranding" className="hover:text-brand-red transition-colors"><strong className="text-white">Rebranding</strong> — <span className="text-[#8A909D]">Rebrand to grow and convert</span></Link></li>
-                </ul>
+                <div className="kapi-card-tags">
+                  <span className="kapi-card-tag">Pitch Deck</span>
+                  <span className="kapi-card-tag">Brand Identity</span>
+                  <span className="kapi-card-tag">Logo Design</span>
+                  <span className="kapi-card-tag">Rebranding</span>
+                </div>
               </div>
-              <div className="pt-6 mt-6 border-t border-[#262930]">
-                <Link to="/services" className="text-xs font-mono font-semibold text-brand-red hover:text-white flex items-center gap-1.5">
-                  <span>{language === 'id' ? 'Jelajahi Branding' : 'Explore Branding'}</span>
-                  <ArrowUpRight size={14} />
+
+              <div className="kapi-card-footer">
+                <Link to="/services" className="flex items-center justify-between w-full">
+                  <span>{language === 'id' ? 'Jelajahi 5 Layanan Branding' : 'Explore 5 Branding Services'}</span>
+                  <div className="kapi-card-arrow">
+                    <ArrowUpRight size={14} />
+                  </div>
                 </Link>
               </div>
             </div>
 
             {/* Pillar 2: Design */}
-            <div className="p-7 sm:p-8 rounded-2xl bg-[#16181D] border border-[#262930] hover:border-brand-red/40 transition-all flex flex-col justify-between">
-              <div>
-                <div className="flex items-center justify-between mb-5">
-                  <span className="text-xs font-mono tracking-widest text-brand-red font-semibold uppercase">02. DESIGN</span>
-                  <span className="px-2.5 py-0.5 rounded-full bg-[#0B0C0E] border border-[#262930] text-[10px] font-mono text-[#8A909D]">
-                    5 Services
-                  </span>
+            <div className="kapi-card" id="card-design">
+              <div className="kapi-card-header">
+                <div className="kapi-card-icon-box">
+                  <Layers className="w-5 h-5 text-current" />
                 </div>
-                <h3 className="text-xl sm:text-2xl font-display font-bold text-white mb-2">
+                <span className="kapi-card-pill">02. EXPERIENCE</span>
+              </div>
+
+              <div className="kapi-card-body">
+                <h3 className="kapi-card-title">
                   UI/UX & PRODUCT DESIGN
                 </h3>
-                <p className="text-xs text-[#8A909D] font-light mb-5">
-                  {language === 'id' ? 'Pengalaman antarmuka intuitif & modern.' : 'Frictionless UI/UX for web and mobile.'}
+                <p className="kapi-card-desc">
+                  {language === 'id' 
+                    ? 'Pengalaman antarmuka intuitif berstandar global, prototipe interaktif, dan Design System multi-platform di Figma.' 
+                    : 'Frictionless UI/UX architectures, interactive prototyping, and cross-platform design systems in Figma.'}
                 </p>
-                <ul className="space-y-2.5 text-xs text-[#8A909D] font-light pt-4 border-t border-[#262930]">
-                  <li><Link to="/services/ui-ux-design" className="hover:text-brand-red transition-colors"><strong className="text-white">UI/UX Design</strong> — <span className="text-[#8A909D]">Web & mobile app design</span></Link></li>
-                  <li><Link to="/services/website-design" className="hover:text-brand-red transition-colors"><strong className="text-white">Website Design</strong> — <span className="text-[#8A909D]">Custom websites & landings</span></Link></li>
-                  <li><Link to="/services/mobile-app-design" className="hover:text-brand-red transition-colors"><strong className="text-white">Mobile App Design</strong> — <span className="text-[#8A909D]">Apps your users love</span></Link></li>
-                  <li><Link to="/services/website-redesign" className="hover:text-brand-red transition-colors"><strong className="text-white">Website Redesign</strong> — <span className="text-[#8A909D]">Modern look, higher impact</span></Link></li>
-                  <li><Link to="/services/product-ux-ui-audit" className="hover:text-brand-red transition-colors"><strong className="text-white">Product UX/UI Audit</strong> — <span className="text-[#8A909D]">Insights that drive results</span></Link></li>
-                </ul>
+                <div className="kapi-card-tags">
+                  <span className="kapi-card-tag">UI/UX Design</span>
+                  <span className="kapi-card-tag">Web & Mobile</span>
+                  <span className="kapi-card-tag">Redesign</span>
+                  <span className="kapi-card-tag">UX Audit</span>
+                </div>
               </div>
-              <div className="pt-6 mt-6 border-t border-[#262930]">
-                <Link to="/services" className="text-xs font-mono font-semibold text-brand-red hover:text-white flex items-center gap-1.5">
-                  <span>{language === 'id' ? 'Jelajahi Design' : 'Explore Design'}</span>
-                  <ArrowUpRight size={14} />
+
+              <div className="kapi-card-footer">
+                <Link to="/services" className="flex items-center justify-between w-full">
+                  <span>{language === 'id' ? 'Jelajahi 5 Layanan Desain' : 'Explore 5 Design Services'}</span>
+                  <div className="kapi-card-arrow">
+                    <ArrowUpRight size={14} />
+                  </div>
                 </Link>
               </div>
             </div>
 
             {/* Pillar 3: Development */}
-            <div className="p-7 sm:p-8 rounded-2xl bg-[#16181D] border border-[#262930] hover:border-brand-red/40 transition-all flex flex-col justify-between">
-              <div>
-                <div className="flex items-center justify-between mb-5">
-                  <span className="text-xs font-mono tracking-widest text-brand-red font-semibold uppercase">03. DEVELOPMENT</span>
-                  <span className="px-2.5 py-0.5 rounded-full bg-[#0B0C0E] border border-[#262930] text-[10px] font-mono text-[#8A909D]">
-                    5 Services
-                  </span>
+            <div className="kapi-card" id="card-development">
+              <div className="kapi-card-header">
+                <div className="kapi-card-icon-box">
+                  <Code2 className="w-5 h-5 text-current" />
                 </div>
-                <h3 className="text-xl sm:text-2xl font-display font-bold text-white mb-2">
+                <span className="kapi-card-pill">03. ENGINEERING</span>
+              </div>
+
+              <div className="kapi-card-body">
+                <h3 className="kapi-card-title">
                   FULL-STACK ENGINEERING
                 </h3>
-                <p className="text-xs text-[#8A909D] font-light mb-5">
-                  {language === 'id' ? 'Rekayasa web cepat, aman & terukur.' : 'High-performance engineering built to scale.'}
+                <p className="kapi-card-desc">
+                  {language === 'id' 
+                    ? 'Rekayasa web modern berperforma tinggi, skalabilitas cloud elastis, integrasi API, dan skor Lighthouse 99+.' 
+                    : 'High-performance web applications, resilient cloud architecture, and ultra-fast Lighthouse 99+ loading speeds.'}
                 </p>
-                <ul className="space-y-2.5 text-xs text-[#8A909D] font-light pt-4 border-t border-[#262930]">
-                  <li><Link to="/services/web-development" className="hover:text-brand-red transition-colors"><strong className="text-white">Web Development</strong> — <span className="text-[#8A909D]">Front-End & Back-End</span></Link></li>
-                  <li><Link to="/services/mvp-development" className="hover:text-brand-red transition-colors"><strong className="text-white">MVP Development</strong> — <span className="text-[#8A909D]">MVPs that attract funding</span></Link></li>
-                  <li><Link to="/services/landing-page" className="hover:text-brand-red transition-colors"><strong className="text-white">Landing page</strong> — <span className="text-[#8A909D]">High-converting website</span></Link></li>
-                  <li><Link to="/services/corporate-websites" className="hover:text-brand-red transition-colors"><strong className="text-white">Corporate Websites</strong> — <span className="text-[#8A909D]">Built for scale and trust</span></Link></li>
-                  <li><Link to="/services/wow-websites" className="hover:text-brand-red transition-colors"><strong className="text-white">WOW Websites</strong> — <span className="text-[#8A909D]">Professional, scalable, fast</span></Link></li>
-                </ul>
+                <div className="kapi-card-tags">
+                  <span className="kapi-card-tag">Web Development</span>
+                  <span className="kapi-card-tag">MVP Build</span>
+                  <span className="kapi-card-tag">Landing Pages</span>
+                  <span className="kapi-card-tag">Enterprise</span>
+                </div>
               </div>
-              <div className="pt-6 mt-6 border-t border-[#262930]">
-                <Link to="/services" className="text-xs font-mono font-semibold text-brand-red hover:text-white flex items-center gap-1.5">
-                  <span>{language === 'id' ? 'Jelajahi Development' : 'Explore Development'}</span>
-                  <ArrowUpRight size={14} />
+
+              <div className="kapi-card-footer">
+                <Link to="/services" className="flex items-center justify-between w-full">
+                  <span>{language === 'id' ? 'Jelajahi 5 Layanan Engineering' : 'Explore 5 Engineering Services'}</span>
+                  <div className="kapi-card-arrow">
+                    <ArrowUpRight size={14} />
+                  </div>
                 </Link>
               </div>
             </div>

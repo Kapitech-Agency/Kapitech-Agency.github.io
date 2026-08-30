@@ -4,6 +4,7 @@ import { Mail, Phone, MapPin, Clock, CheckCircle2, ArrowUpRight, Send, Globe, Me
 import { AtmosphericBackground } from '../components/ui/AtmosphericBackground';
 import { useLanguage } from '../lib/LanguageContext';
 import { sanitizeInput, isValidEmail, isValidPhone, clampLength } from '../lib/security';
+import { submitToInbox } from '../lib/submissions';
 
 export const Contact = () => {
   const { t, language } = useLanguage();
@@ -153,10 +154,25 @@ export const Contact = () => {
 
     setFormErrors({});
     setIsSubmitting(true);
-    // Simulate secure API transmission
-    await new Promise(resolve => setTimeout(resolve, 800));
-    setIsSubmitting(false);
-    setIsSubmitted(true);
+    
+    try {
+      await submitToInbox({
+        fullName: sanitizedName,
+        email: sanitizedEmail,
+        company: sanitizedCompany || undefined,
+        phone: sanitizedPhone || undefined,
+        services: selectedServices.length > 0 ? selectedServices : undefined,
+        budget: budgetRange || undefined,
+        message: sanitizedMessage,
+        source: 'Contact Page Form',
+        type: 'inquiry'
+      });
+    } catch (err) {
+      console.warn('Submission error:', err);
+    } finally {
+      setIsSubmitting(false);
+      setIsSubmitted(true);
+    }
   };
 
   const faqsEn = [
@@ -403,18 +419,28 @@ export const Contact = () => {
                         ? 'Terima kasih telah menghubungi Kapitech Agency. Tim kami akan meninjau detail proyek Anda dan merespons dalam waktu 24 jam kerja.'
                         : 'Thank you for reaching out to Kapitech Agency. Our team will review your project details and get back to you within 24 business hours.'}
                     </p>
-                    <button
-                      onClick={() => {
-                        setIsSubmitted(false);
-                        setFormState({ name: '', email: '', company: '', phone: '', message: '' });
-                        setFormErrors({});
-                        setSelectedServices([]);
-                        setBudgetRange('');
-                      }}
-                      className="px-6 py-3 rounded-full bg-brand-red text-white text-xs font-semibold uppercase tracking-wider hover:bg-[#CC001F] transition-colors active:scale-95 shadow-lg shadow-brand-red/20 min-h-[44px]"
-                    >
-                      {language === 'id' ? 'Kirim Pesan Lainnya' : 'Send Another Message'}
-                    </button>
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+                      <button
+                        onClick={() => {
+                          setIsSubmitted(false);
+                          setFormState({ name: '', email: '', company: '', phone: '', message: '' });
+                          setFormErrors({});
+                          setSelectedServices([]);
+                          setBudgetRange('');
+                        }}
+                        className="w-full sm:w-auto px-6 py-3 rounded-full bg-brand-red text-white text-xs font-semibold uppercase tracking-wider hover:bg-[#CC001F] transition-colors active:scale-95 shadow-lg shadow-brand-red/20 min-h-[44px]"
+                      >
+                        {language === 'id' ? 'Kirim Pesan Lainnya' : 'Send Another Message'}
+                      </button>
+
+                      <a
+                        href="/inbox"
+                        className="w-full sm:w-auto px-6 py-3 rounded-full bg-[#0B0C0E] border border-[#262930] hover:border-brand-red/50 text-white text-xs font-mono font-semibold uppercase tracking-wider transition-colors min-h-[44px] flex items-center justify-center gap-2"
+                      >
+                        <span>{language === 'id' ? 'Lihat di Inbox Database' : 'View in Inbox'}</span>
+                        <ArrowUpRight size={14} />
+                      </a>
+                    </div>
                   </div>
                 ) : (
                   <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
