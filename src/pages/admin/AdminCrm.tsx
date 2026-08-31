@@ -295,6 +295,7 @@ export const AdminCrm: React.FC = () => {
       source: formSource,
       description: formDescription,
       expectedCloseDate: formExpectedClose,
+      assignedTo: editingLead ? editingLead.assignedTo : 'Principal Tech Lead',
       notes: editingLead ? editingLead.notes : [],
       createdAt: editingLead ? editingLead.createdAt : new Date().toISOString(),
       updatedAt: new Date().toISOString()
@@ -320,7 +321,7 @@ export const AdminCrm: React.FC = () => {
     e.preventDefault();
     if (!selectedLead || !newNoteText.trim()) return;
 
-    addLeadNote(selectedLead.id, newNoteText.trim(), 'Account Director');
+    addLeadNote(selectedLead.id, newNoteText.trim(), 'note');
     setNewNoteText('');
     const updated = getCmsLeads().find(l => l.id === selectedLead.id);
     if (updated) setSelectedLead(updated);
@@ -349,11 +350,11 @@ export const AdminCrm: React.FC = () => {
         return 'text-blue-400 bg-blue-500/10 border-blue-500/30';
       case 'UI/UX Design':
         return 'text-purple-400 bg-purple-500/10 border-purple-500/30';
-      case 'Brand Identity':
+      case 'Branding & Identity':
         return 'text-amber-400 bg-amber-500/10 border-amber-500/30';
-      case 'Cloud & DevOps':
+      case 'AI & Cloud Solutions':
         return 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30';
-      case 'AI & Machine Learning':
+      case 'Digital Product MVP':
         return 'text-cyan-400 bg-cyan-500/10 border-cyan-500/30';
       default:
         return 'text-zinc-400 bg-zinc-500/10 border-zinc-500/30';
@@ -530,9 +531,9 @@ export const AdminCrm: React.FC = () => {
               { value: 'Web Development', label: 'Web Development' },
               { value: 'Mobile App', label: 'Mobile App' },
               { value: 'UI/UX Design', label: 'UI/UX Design' },
-              { value: 'Brand Identity', label: 'Brand Identity' },
-              { value: 'Cloud & DevOps', label: 'Cloud & DevOps' },
-              { value: 'AI & Machine Learning', label: 'AI & ML' }
+              { value: 'Branding & Identity', label: 'Branding & Identity' },
+              { value: 'AI & Cloud Solutions', label: 'AI & Cloud Solutions' },
+              { value: 'Digital Product MVP', label: 'Digital Product MVP' }
             ]}
           />
 
@@ -1109,9 +1110,9 @@ export const AdminCrm: React.FC = () => {
                     <option value="Web Development">Web Development</option>
                     <option value="Mobile App">Mobile App</option>
                     <option value="UI/UX Design">UI/UX Design</option>
-                    <option value="Brand Identity">Brand Identity</option>
-                    <option value="Cloud & DevOps">Cloud & DevOps</option>
-                    <option value="AI & Machine Learning">AI & ML</option>
+                    <option value="Branding & Identity">Branding & Identity</option>
+                    <option value="AI & Cloud Solutions">AI & Cloud Solutions</option>
+                    <option value="Digital Product MVP">Digital Product MVP</option>
                   </select>
                 </div>
 

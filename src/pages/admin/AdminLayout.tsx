@@ -21,6 +21,7 @@ import {
 import { getAdminSession, logoutAdmin } from '../../lib/adminAuth';
 import { subscribeToInbox, ContactSubmission } from '../../lib/submissions';
 import { useLanguage } from '../../lib/LanguageContext';
+import { DOMAIN_CONFIG } from '../../lib/domainConfig';
 
 export const AdminLayout: React.FC = () => {
   const { language, setLanguage, t } = useLanguage();
@@ -294,8 +295,8 @@ export const AdminLayout: React.FC = () => {
               );
             })}
 
-            <Link
-              to="/"
+            <a
+              href={DOMAIN_CONFIG.PUBLIC_SITE_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-mono text-[#8A909D] hover:text-white hover:bg-[#16181D] transition-all border border-[#262930] mt-2"
@@ -305,7 +306,7 @@ export const AdminLayout: React.FC = () => {
                 <span>{t('admin.nav.viewSite')}</span>
               </div>
               <ExternalLink size={11} className="text-[#5C626E]" />
-            </Link>
+            </a>
           </div>
 
         </div>
@@ -451,8 +452,8 @@ export const AdminLayout: React.FC = () => {
                 })}
 
                 <div className="pt-3 border-t border-[#262930]">
-                  <Link
-                    to="/"
+                  <a
+                    href={DOMAIN_CONFIG.PUBLIC_SITE_URL}
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={() => setMobileMenuOpen(false)}
@@ -463,7 +464,7 @@ export const AdminLayout: React.FC = () => {
                       <span>{t('admin.nav.viewSite')}</span>
                     </div>
                     <ExternalLink size={11} />
-                  </Link>
+                  </a>
                 </div>
               </div>
             </div>

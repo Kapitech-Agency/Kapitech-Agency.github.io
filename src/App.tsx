@@ -40,6 +40,7 @@ import { AdminCmsServices } from './pages/admin/AdminCmsServices';
 import { AdminCmsTestimonials } from './pages/admin/AdminCmsTestimonials';
 import { AdminSettings } from './pages/admin/AdminSettings';
 import { RequireAdminAuth } from './components/admin/RequireAdminAuth';
+import { isAmsSubdomain, DOMAIN_CONFIG } from './lib/domainConfig';
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -82,7 +83,8 @@ const AnimatedRoutes = () => {
           {/* Public access points relocated: redirect /inbox directly to protected admin inbox */}
           <Route path="/inbox" element={<Navigate to="/admin/inbox" replace />} />
 
-          {/* Admin Authentication Gateway */}
+          {/* Admin Authentication Gateways */}
+          <Route path="/login" element={<Navigate to="/admin/login" replace />} />
           <Route path="/admin/login" element={<AdminLogin />} />
 
           {/* Protected Admin Subsystem */}
