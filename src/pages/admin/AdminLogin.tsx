@@ -16,7 +16,6 @@ import {
 } from 'lucide-react';
 import { authenticateAdmin, isUserAuthenticated, getLockoutState } from '../../lib/adminAuth';
 import { useLanguage } from '../../lib/LanguageContext';
-import { DOMAIN_CONFIG, isAmsSubdomain } from '../../lib/domainConfig';
 
 export const AdminLogin: React.FC = () => {
   const { language } = useLanguage();
@@ -33,23 +32,14 @@ export const AdminLogin: React.FC = () => {
 
   // Check query params for redirect
   const searchParams = new URLSearchParams(location.search);
-  const targetPath = searchParams.get('redirect') || '/admin/dashboard';
-
-  const handleSuccessfulAuth = () => {
-    // If running in production on kapitech.id and AMS is on ams.kapitech.id, support clean subdomain handoff
-    if (typeof window !== 'undefined' && window.location.hostname === 'kapitech.id') {
-      window.location.href = `${DOMAIN_CONFIG.AMS_APP_URL}/admin/dashboard`;
-      return;
-    }
-    navigate(targetPath, { replace: true });
-  };
+  const redirectUrl = searchParams.get('redirect') || '/admin/dashboard';
 
   // Check if already authenticated
   useEffect(() => {
     if (isUserAuthenticated()) {
-      handleSuccessfulAuth();
+      navigate(redirectUrl, { replace: true });
     }
-  }, [navigate]);
+  }, [navigate, redirectUrl]);
 
   // Handle lockout countdown timer
   useEffect(() => {
@@ -95,7 +85,7 @@ export const AdminLogin: React.FC = () => {
     try {
       const result = await authenticateAdmin(identifier, password, rememberMe);
       if (result.success) {
-        handleSuccessfulAuth();
+        navigate(redirectUrl, { replace: true });
       } else {
         setErrorMessage(result.error || 'Autentikasi gagal.');
         const lockState = getLockoutState();

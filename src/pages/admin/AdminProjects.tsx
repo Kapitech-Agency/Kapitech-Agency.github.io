@@ -42,20 +42,21 @@ import {
   updateTaskStatus,
   PROJECT_EVENT_NAME
 } from '../../lib/projectStore';
-import { formatIDR } from '../../lib/crmStore';
+import { formatAmount, getActiveCurrency, CURRENCY_EVENT, CurrencyCode } from '../../lib/currency';
 import { useLanguage } from '../../lib/LanguageContext';
 import { useDragToScroll } from '../../lib/useDragToScroll';
 import { CustomSelect } from '../../components/ui/CustomSelect';
 
 const TASK_COLUMNS: { id: TaskStatus; label: string; dotColor: string; bgAccent: string }[] = [
   { id: 'todo', label: 'To Do', dotColor: 'bg-zinc-400', bgAccent: 'group-hover:border-zinc-500/30' },
-  { id: 'in_progress', label: 'In Progress', dotColor: 'bg-blue-400', bgAccent: 'group-hover:border-blue-500/30' },
+  { id: 'in_progress', label: 'In Progress', dotColor: 'bg-red-400', bgAccent: 'group-hover:border-red-500/30' },
   { id: 'review', label: 'Review & QA', dotColor: 'bg-amber-400', bgAccent: 'group-hover:border-amber-500/30' },
   { id: 'done', label: 'Done', dotColor: 'bg-emerald-400', bgAccent: 'group-hover:border-emerald-500/30' }
 ];
 
 export const AdminProjects: React.FC = () => {
   const { t, language } = useLanguage();
+  const [currency, setCurrency] = useState<CurrencyCode>(getActiveCurrency());
   const [projects, setProjects] = useState<AgencyProject[]>([]);
   const [selectedProjectId, setSelectedProjectId] = useState<string>('');
   const [searchQuery, setSearchQuery] = useState('');
@@ -113,7 +114,16 @@ export const AdminProjects: React.FC = () => {
     loadData();
     const handleUpdate = () => loadData();
     window.addEventListener(PROJECT_EVENT_NAME, handleUpdate);
-    return () => window.removeEventListener(PROJECT_EVENT_NAME, handleUpdate);
+
+    const handleCurrencyChange = (e: any) => {
+      setCurrency(e.detail?.currency || getActiveCurrency());
+    };
+    window.addEventListener(CURRENCY_EVENT, handleCurrencyChange);
+
+    return () => {
+      window.removeEventListener(PROJECT_EVENT_NAME, handleUpdate);
+      window.removeEventListener(CURRENCY_EVENT, handleCurrencyChange);
+    };
   }, []);
 
   const showToast = (msg: string) => {
@@ -400,7 +410,7 @@ export const AdminProjects: React.FC = () => {
         );
       case 'medium':
         return (
-          <span className="px-2 py-0.5 rounded bg-blue-500/20 text-blue-400 border border-blue-500/30 text-[10px] font-mono font-bold uppercase">
+          <span className="px-2 py-0.5 rounded bg-rose-500/20 text-rose-400 border border-rose-500/30 text-[10px] font-mono font-bold uppercase">
             Medium
           </span>
         );
@@ -504,7 +514,7 @@ export const AdminProjects: React.FC = () => {
                 <div className="flex items-center justify-between gap-2 mb-1.5 w-full">
                   <span className={`text-[9px] uppercase px-1.5 py-0.5 rounded font-bold ${
                     proj.status === 'completed' ? 'bg-emerald-500/20 text-emerald-400' :
-                    proj.status === 'in_progress' ? 'bg-blue-500/20 text-blue-400' : 'bg-zinc-500/20 text-zinc-400'
+                    proj.status === 'in_progress' ? 'bg-red-500/20 text-red-400' : 'bg-zinc-500/20 text-zinc-400'
                   }`}>
                     {proj.status}
                   </span>
@@ -615,9 +625,9 @@ export const AdminProjects: React.FC = () => {
             </div>
 
             <div>
-              <div className="text-[#8A909D] mb-1 text-[11px]">Total Contract Budget</div>
+              <div className="text-[#8A909D] mb-1 text-[11px]">{language === 'id' ? 'Total Nilai Kontrak' : 'Total Contract Budget'}</div>
               <div className="font-bold text-emerald-400 text-sm">
-                {formatIDR(selectedProject.budget)}
+                {formatAmount(selectedProject.budget, currency)}
               </div>
             </div>
 

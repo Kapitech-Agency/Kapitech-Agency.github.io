@@ -44,8 +44,6 @@ import {
   deleteCrmLead, 
   updateLeadStage, 
   addLeadNote, 
-  formatIDR, 
-  formatShortIDR, 
   computeCrmMetrics, 
   exportCrmLeadsToCsv,
   CRM_EVENT_NAME 
@@ -54,13 +52,14 @@ import { saveAgencyProject, AgencyProject } from '../../lib/projectStore';
 import { useLanguage } from '../../lib/LanguageContext';
 import { useDragToScroll } from '../../lib/useDragToScroll';
 import { CustomSelect } from '../../components/ui/CustomSelect';
+import { formatAmount, getActiveCurrency, setGlobalCurrency, CurrencyCode, CURRENCY_EVENT } from '../../lib/currency';
 
 export const AdminCrm: React.FC = () => {
   const { language, t } = useLanguage();
   const kanbanScrollRef = useDragToScroll<HTMLDivElement>();
   const [leads, setLeads] = useState<CrmLead[]>([]);
   const [viewMode, setViewMode] = useState<'kanban' | 'list'>('kanban');
-  const [currencyMode, setCurrencyMode] = useState<'IDR' | 'USD'>('IDR');
+  const [currency, setCurrency] = useState<CurrencyCode>(getActiveCurrency());
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedPillar, setSelectedPillar] = useState<string>('All');
   const [selectedPriority, setSelectedPriority] = useState<string>('All');
@@ -99,7 +98,19 @@ export const AdminCrm: React.FC = () => {
     loadLeads();
     const handleUpdate = () => loadLeads();
     window.addEventListener(CRM_EVENT_NAME, handleUpdate);
-    return () => window.removeEventListener(CRM_EVENT_NAME, handleUpdate);
+
+    const handleCurr = (e: Event) => {
+      const custom = e as CustomEvent<{ currency: CurrencyCode }>;
+      if (custom.detail?.currency) {
+        setCurrency(custom.detail.currency);
+      }
+    };
+    window.addEventListener(CURRENCY_EVENT, handleCurr);
+
+    return () => {
+      window.removeEventListener(CRM_EVENT_NAME, handleUpdate);
+      window.removeEventListener(CURRENCY_EVENT, handleCurr);
+    };
   }, []);
 
   const showToast = (msg: string) => {
@@ -107,21 +118,8 @@ export const AdminCrm: React.FC = () => {
     setTimeout(() => setStatusMessage(null), 3500);
   };
 
-  const formatCurrency = (valInIDR: number) => {
-    if (currencyMode === 'USD') {
-      const usdVal = Math.round(valInIDR / 16000);
-      return `$${usdVal.toLocaleString()}`;
-    }
-    return formatIDR(valInIDR);
-  };
-
-  const formatShortCurrency = (valInIDR: number) => {
-    if (currencyMode === 'USD') {
-      const usdVal = Math.round(valInIDR / 16000);
-      if (usdVal >= 1000) return `$${(usdVal / 1000).toFixed(1)}k`;
-      return `$${usdVal}`;
-    }
-    return formatShortIDR(valInIDR);
+  const handleCurrencyToggle = (code: CurrencyCode) => {
+    setGlobalCurrency(code);
   };
 
   const cleanPhone = (phone?: string) => {
@@ -186,7 +184,8 @@ export const AdminCrm: React.FC = () => {
 
   const handleStageChange = (leadId: string, newStage: CrmStage) => {
     updateLeadStage(leadId, newStage);
-    const stageName = CRM_STAGE_DEFINITIONS.find(s => s.key === newStage)?.labelId || newStage;
+    const stageDef = CRM_STAGE_DEFINITIONS.find(s => s.key === newStage);
+    const stageName = language === 'id' ? (stageDef?.labelId || newStage) : (stageDef?.label || newStage);
     showToast(language === 'id' ? `Tahap deal diperbarui ke ${stageName}` : `Lead stage updated to ${stageName}`);
     if (selectedLead && selectedLead.id === leadId) {
       setSelectedLead(prev => prev ? { ...prev, stage: newStage } : null);
@@ -278,7 +277,7 @@ export const AdminCrm: React.FC = () => {
   const handleSaveLead = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formClientName.trim() || !formCompany.trim()) {
-      alert('Nama klien dan perusahaan wajib diisi.');
+      alert(language === 'id' ? 'Nama klien dan perusahaan wajib diisi.' : 'Client name and company are required.');
       return;
     }
 
@@ -303,17 +302,17 @@ export const AdminCrm: React.FC = () => {
 
     saveCrmLead(leadData);
     setIsAddModalOpen(false);
-    showToast(editingLead ? 'Data prospek berhasil diperbarui.' : 'Deal prospek baru berhasil dibuat.');
+    showToast(editingLead ? (language === 'id' ? 'Data prospek berhasil diperbarui.' : 'Deal updated successfully.') : (language === 'id' ? 'Deal prospek baru berhasil dibuat.' : 'New deal created successfully.'));
   };
 
   const handleDeleteLead = (id: string, name: string) => {
-    if (window.confirm(`Hapus prospek ${name}?`)) {
+    if (window.confirm(language === 'id' ? `Hapus prospek ${name}?` : `Delete lead ${name}?`)) {
       deleteCrmLead(id);
       if (selectedLead && selectedLead.id === id) {
         setIsDrawerOpen(false);
         setSelectedLead(null);
       }
-      showToast('Data deal telah dihapus.');
+      showToast(language === 'id' ? 'Data deal telah dihapus.' : 'Deal removed from CRM.');
     }
   };
 
@@ -325,7 +324,7 @@ export const AdminCrm: React.FC = () => {
     setNewNoteText('');
     const updated = getCmsLeads().find(l => l.id === selectedLead.id);
     if (updated) setSelectedLead(updated);
-    showToast('Catatan aktivitas ditambahkan.');
+    showToast(language === 'id' ? 'Catatan aktivitas ditambahkan.' : 'Activity note added.');
   };
 
   const getPriorityBadge = (priority: CrmPriority) => {
@@ -335,7 +334,7 @@ export const AdminCrm: React.FC = () => {
       case 'high':
         return <span className="px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 border border-amber-500/30 text-[9px] font-mono font-bold uppercase">High</span>;
       case 'medium':
-        return <span className="px-2 py-0.5 rounded bg-blue-500/20 text-blue-400 border border-blue-500/30 text-[9px] font-mono font-bold uppercase">Medium</span>;
+        return <span className="px-2 py-0.5 rounded bg-rose-500/20 text-rose-400 border border-rose-500/30 text-[9px] font-mono font-bold uppercase">Medium</span>;
       case 'low':
       default:
         return <span className="px-2 py-0.5 rounded bg-zinc-500/20 text-zinc-400 border border-zinc-500/30 text-[9px] font-mono font-bold uppercase">Low</span>;
@@ -347,7 +346,7 @@ export const AdminCrm: React.FC = () => {
       case 'Web Development':
         return 'text-brand-red bg-brand-red/10 border-brand-red/30';
       case 'Mobile App':
-        return 'text-blue-400 bg-blue-500/10 border-blue-500/30';
+        return 'text-rose-400 bg-rose-500/10 border-rose-500/30';
       case 'UI/UX Design':
         return 'text-purple-400 bg-purple-500/10 border-purple-500/30';
       case 'Branding & Identity':
@@ -365,26 +364,24 @@ export const AdminCrm: React.FC = () => {
     <div className="space-y-6">
       
       {/* 1. Header & Actions */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[#262930]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[#30363D]">
         <div>
           <h1 className="text-2xl font-display font-bold text-white flex items-center gap-3">
             <Briefcase className="text-brand-red" size={24} />
-            <span>{t('admin.nav.crm')}</span>
+            <span>{t('admin.crm.title')}</span>
           </h1>
           <p className="text-xs text-[#8A909D] mt-1 font-mono">
-            {language === 'id'
-              ? 'Pipeline penjualan, estimasi deal revenue, dan lifecycle klien Kapitech.'
-              : 'Sales deal pipeline, revenue forecasting, and client relationship management.'}
+            {t('admin.crm.subtitle')}
           </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
           {/* Currency Switcher */}
-          <div className="flex items-center rounded-xl bg-[#16181D] border border-[#262930] p-1 font-mono text-xs">
+          <div className="flex items-center rounded-xl bg-[#161B22] border border-[#30363D] p-1 font-mono text-xs">
             <button
-              onClick={() => setCurrencyMode('IDR')}
+              onClick={() => handleCurrencyToggle('IDR')}
               className={`px-3 py-1.5 rounded-lg transition-all font-bold ${
-                currencyMode === 'IDR'
+                currency === 'IDR'
                   ? 'bg-brand-red text-white shadow-sm'
                   : 'text-[#8A909D] hover:text-white'
               }`}
@@ -392,9 +389,9 @@ export const AdminCrm: React.FC = () => {
               IDR (Rp)
             </button>
             <button
-              onClick={() => setCurrencyMode('USD')}
+              onClick={() => handleCurrencyToggle('USD')}
               className={`px-3 py-1.5 rounded-lg transition-all font-bold ${
-                currencyMode === 'USD'
+                currency === 'USD'
                   ? 'bg-brand-red text-white shadow-sm'
                   : 'text-[#8A909D] hover:text-white'
               }`}
@@ -405,18 +402,18 @@ export const AdminCrm: React.FC = () => {
 
           <button
             onClick={() => exportCrmLeadsToCsv(filteredLeads)}
-            className="px-3.5 py-2.5 rounded-xl bg-[#16181D] hover:bg-[#222630] text-white border border-[#262930] text-xs font-mono transition-all flex items-center gap-2"
+            className="px-3.5 py-2.5 rounded-xl bg-[#161B22] hover:bg-[#1E242C] text-white border border-[#30363D] text-xs font-mono transition-all flex items-center gap-2 min-h-[44px]"
           >
             <Download size={14} className="text-[#8A909D]" />
-            <span className="hidden sm:inline">Export CSV</span>
+            <span className="hidden sm:inline">{t('admin.action.exportCsv')}</span>
           </button>
 
           <button
             onClick={() => handleOpenAddModal('new')}
-            className="px-4 py-2.5 rounded-xl bg-brand-red hover:bg-brand-red/90 text-white text-xs font-mono font-bold transition-all flex items-center gap-2 shadow-lg shadow-brand-red/20"
+            className="px-4 py-2.5 rounded-xl bg-brand-red hover:bg-brand-red/90 text-white text-xs font-mono font-bold transition-all flex items-center gap-2 shadow-lg shadow-brand-red/20 min-h-[44px]"
           >
             <Plus size={15} />
-            <span>{language === 'id' ? 'Tambah Deal Baru' : 'Add New Deal'}</span>
+            <span>{t('admin.crm.addDeal')}</span>
           </button>
         </div>
       </div>
@@ -432,38 +429,38 @@ export const AdminCrm: React.FC = () => {
       {/* 2. KPI Metrics Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         
-        <div className="bg-[#16181D] border border-[#262930] p-5 sm:p-6 rounded-2xl flex flex-col justify-between group hover:border-[#383C46] transition-all">
+        <div className="bg-[#161B22] border border-[#30363D] p-5 sm:p-6 rounded-2xl flex flex-col justify-between group hover:border-[#4B5563] transition-all">
           <div>
             <div className="flex items-center justify-between text-[#8A909D] mb-3">
-              <span className="text-xs font-mono uppercase tracking-wider font-semibold">Total Pipeline Value</span>
+              <span className="text-xs font-mono uppercase tracking-wider font-semibold">{t('admin.dash.pipelineValue')}</span>
               <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
                 <DollarSign size={16} />
               </div>
             </div>
-            <div className="text-2xl sm:text-3xl font-display font-bold text-white tracking-tight break-words">
-              {formatCurrency(metrics.totalPipelineValue)}
+            <div className="text-2xl sm:text-3xl font-display font-bold text-white tracking-tight break-words font-mono">
+              {formatAmount(metrics.totalPipelineValue, currency)}
             </div>
           </div>
-          <div className="flex items-center justify-between mt-4 pt-3 border-t border-[#262930] text-[11px] font-mono">
-            <span className="text-[#8A909D]">{metrics.activeDealsCount} Active Deals</span>
-            <span className="text-emerald-400 font-semibold">Weighted: {formatShortCurrency(metrics.weightedPipelineValue)}</span>
+          <div className="flex items-center justify-between mt-4 pt-3 border-t border-[#30363D] text-[11px] font-mono">
+            <span className="text-[#8A909D]">{metrics.activeDealsCount} {language === 'id' ? 'Prospek Aktif' : 'Active Deals'}</span>
+            <span className="text-emerald-400 font-semibold">{language === 'id' ? 'Tertimbang:' : 'Weighted:'} {formatAmount(metrics.weightedPipelineValue, currency, true)}</span>
           </div>
         </div>
 
-        <div className="bg-[#16181D] border border-[#262930] p-5 sm:p-6 rounded-2xl flex flex-col justify-between group hover:border-[#383C46] transition-all">
+        <div className="bg-[#161B22] border border-[#30363D] p-5 sm:p-6 rounded-2xl flex flex-col justify-between group hover:border-[#4B5563] transition-all">
           <div>
             <div className="flex items-center justify-between text-[#8A909D] mb-3">
-              <span className="text-xs font-mono uppercase tracking-wider font-semibold">Closed Won Revenue</span>
+              <span className="text-xs font-mono uppercase tracking-wider font-semibold">{t('admin.dash.wonRevenue')}</span>
               <div className="w-8 h-8 rounded-lg bg-brand-red/10 border border-brand-red/30 flex items-center justify-center text-brand-red">
                 <CheckCircle2 size={16} />
               </div>
             </div>
-            <div className="text-2xl sm:text-3xl font-display font-bold text-white tracking-tight break-words">
-              {formatCurrency(metrics.totalWonValue)}
+            <div className="text-2xl sm:text-3xl font-display font-bold text-white tracking-tight break-words font-mono">
+              {formatAmount(metrics.totalWonValue, currency)}
             </div>
           </div>
-          <div className="flex items-center justify-between mt-4 pt-3 border-t border-[#262930] text-[11px] font-mono">
-            <span className="text-[#8A909D]">{metrics.wonDealsCount} Contracts Signed</span>
+          <div className="flex items-center justify-between mt-4 pt-3 border-t border-[#30363D] text-[11px] font-mono">
+            <span className="text-[#8A909D]">{metrics.wonDealsCount} {language === 'id' ? 'Kontrak Ditandatangani' : 'Contracts Signed'}</span>
             <span className="text-emerald-400 flex items-center gap-0.5 font-bold">
               <TrendingUp size={12} />
               <span>Win Rate {metrics.winRate}%</span>
@@ -471,46 +468,46 @@ export const AdminCrm: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-[#16181D] border border-[#262930] p-5 sm:p-6 rounded-2xl flex flex-col justify-between group hover:border-[#383C46] transition-all">
+        <div className="bg-[#161B22] border border-[#30363D] p-5 sm:p-6 rounded-2xl flex flex-col justify-between group hover:border-[#4B5563] transition-all">
           <div>
             <div className="flex items-center justify-between text-[#8A909D] mb-3">
-              <span className="text-xs font-mono uppercase tracking-wider font-semibold">In Proposal & Scoping</span>
-              <div className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-400">
+              <span className="text-xs font-mono uppercase tracking-wider font-semibold">{language === 'id' ? 'Proposal & Negosiasi' : 'In Proposal & Scoping'}</span>
+              <div className="w-8 h-8 rounded-lg bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-400">
                 <Activity size={16} />
               </div>
             </div>
-            <div className="text-2xl sm:text-3xl font-display font-bold text-white tracking-tight break-words">
-              {formatCurrency(metrics.negotiationValue)}
+            <div className="text-2xl sm:text-3xl font-display font-bold text-white tracking-tight break-words font-mono">
+              {formatAmount(metrics.negotiationValue, currency)}
             </div>
           </div>
-          <div className="flex items-center justify-between mt-4 pt-3 border-t border-[#262930] text-[11px] font-mono">
-            <span className="text-[#8A909D]">Proposal / SOW Stage</span>
-            <span className="text-blue-400 font-semibold">High Conversion</span>
+          <div className="flex items-center justify-between mt-4 pt-3 border-t border-[#30363D] text-[11px] font-mono">
+            <span className="text-[#8A909D]">{language === 'id' ? 'Tahap Penawaran' : 'Proposal / SOW Stage'}</span>
+            <span className="text-red-400 font-semibold">{language === 'id' ? 'Potensi Tinggi' : 'High Conversion'}</span>
           </div>
         </div>
 
-        <div className="bg-[#16181D] border border-[#262930] p-5 sm:p-6 rounded-2xl flex flex-col justify-between group hover:border-[#383C46] transition-all">
+        <div className="bg-[#161B22] border border-[#30363D] p-5 sm:p-6 rounded-2xl flex flex-col justify-between group hover:border-[#4B5563] transition-all">
           <div>
             <div className="flex items-center justify-between text-[#8A909D] mb-3">
-              <span className="text-xs font-mono uppercase tracking-wider font-semibold">Avg Deal Size</span>
+              <span className="text-xs font-mono uppercase tracking-wider font-semibold">{language === 'id' ? 'Rata-rata Nilai Deal' : 'Avg Deal Size'}</span>
               <div className="w-8 h-8 rounded-lg bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400">
                 <Sparkles size={16} />
               </div>
             </div>
-            <div className="text-2xl sm:text-3xl font-display font-bold text-white tracking-tight break-words">
-              {formatCurrency(metrics.avgDealSize)}
+            <div className="text-2xl sm:text-3xl font-display font-bold text-white tracking-tight break-words font-mono">
+              {formatAmount(metrics.avgDealSize, currency)}
             </div>
           </div>
-          <div className="flex items-center justify-between mt-4 pt-3 border-t border-[#262930] text-[11px] font-mono">
-            <span className="text-[#8A909D]">Per Client Lead</span>
-            <span className="text-purple-400 font-semibold">Agency Standard</span>
+          <div className="flex items-center justify-between mt-4 pt-3 border-t border-[#30363D] text-[11px] font-mono">
+            <span className="text-[#8A909D]">{language === 'id' ? 'Per Klien Inbound' : 'Per Client Lead'}</span>
+            <span className="text-purple-400 font-semibold">{language === 'id' ? 'Standar Studio' : 'Agency Standard'}</span>
           </div>
         </div>
 
       </div>
 
       {/* 3. Filter Bar & View Mode Switcher */}
-      <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 bg-[#16181D] border border-[#262930] p-4 sm:p-5 rounded-2xl">
+      <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 bg-[#161B22] border border-[#30363D] p-4 sm:p-5 rounded-2xl">
         <div className="flex flex-wrap items-center gap-3 flex-1">
           <div className="relative flex-1 min-w-[200px] max-w-md">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#8A909D]" size={14} />
@@ -518,8 +515,8 @@ export const AdminCrm: React.FC = () => {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search leads, companies, or keywords..."
-              className="w-full pl-9 pr-3.5 py-2.5 bg-[#0B0C0E] border border-[#262930] rounded-xl text-xs text-white placeholder-[#5C626E] focus:outline-none focus:border-brand-red font-mono"
+              placeholder={language === 'id' ? 'Cari prospek, perusahaan, atau kata kunci...' : 'Search leads, companies, or keywords...'}
+              className="w-full pl-9 pr-3.5 py-2.5 bg-[#0D1117] border border-[#30363D] rounded-xl text-xs text-white placeholder-[#5C626E] focus:outline-none focus:border-brand-red font-mono min-h-[44px]"
             />
           </div>
 
@@ -527,7 +524,7 @@ export const AdminCrm: React.FC = () => {
             value={selectedPillar}
             onChange={(val) => setSelectedPillar(val)}
             options={[
-              { value: 'All', label: 'All Pillars' },
+              { value: 'All', label: language === 'id' ? 'Semua Pilar Layanan' : 'All Pillars' },
               { value: 'Web Development', label: 'Web Development' },
               { value: 'Mobile App', label: 'Mobile App' },
               { value: 'UI/UX Design', label: 'UI/UX Design' },
@@ -541,7 +538,7 @@ export const AdminCrm: React.FC = () => {
             value={selectedPriority}
             onChange={(val) => setSelectedPriority(val)}
             options={[
-              { value: 'All', label: 'All Priorities' },
+              { value: 'All', label: language === 'id' ? 'Semua Prioritas' : 'All Priorities' },
               { value: 'urgent', label: 'Urgent' },
               { value: 'high', label: 'High' },
               { value: 'medium', label: 'Medium' },
@@ -550,28 +547,28 @@ export const AdminCrm: React.FC = () => {
           />
         </div>
 
-        <div className="flex items-center gap-1 bg-[#0B0C0E] p-1 rounded-xl border border-[#262930] self-start md:self-auto shrink-0">
+        <div className="flex items-center gap-1 bg-[#0D1117] p-1 rounded-xl border border-[#30363D] self-start md:self-auto shrink-0">
           <button
             onClick={() => setViewMode('kanban')}
-            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-mono font-semibold transition-all ${
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-mono font-semibold transition-all min-h-[38px] ${
               viewMode === 'kanban'
-                ? 'bg-[#1E222A] text-white shadow-sm'
+                ? 'bg-[#161B22] text-white shadow-sm border border-[#30363D]'
                 : 'text-[#8A909D] hover:text-white'
             }`}
           >
             <Kanban size={13} />
-            <span>Kanban</span>
+            <span>{t('admin.crm.kanbanView')}</span>
           </button>
           <button
             onClick={() => setViewMode('list')}
-            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-mono font-semibold transition-all ${
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-mono font-semibold transition-all min-h-[38px] ${
               viewMode === 'list'
-                ? 'bg-[#1E222A] text-white shadow-sm'
+                ? 'bg-[#161B22] text-white shadow-sm border border-[#30363D]'
                 : 'text-[#8A909D] hover:text-white'
             }`}
           >
             <List size={13} />
-            <span>List Table</span>
+            <span>{t('admin.crm.listView')}</span>
           </button>
         </div>
       </div>
@@ -596,36 +593,36 @@ export const AdminCrm: React.FC = () => {
                   onDragLeave={handleDragLeaveColumn}
                   onDrop={(e) => handleDropOnColumn(e, stageDef.key)}
                   className={`bg-[#111317] border rounded-2xl flex flex-col flex-1 min-w-[260px] max-w-[320px] shrink-0 transition-all ${
-                    isOver ? 'border-brand-red ring-2 ring-brand-red/30 bg-brand-red/5' : 'border-[#262930]'
+                    isOver ? 'border-brand-red ring-2 ring-brand-red/30 bg-brand-red/5' : 'border-[#30363D]'
                   }`}
                 >
                   {/* Column Header */}
-                  <div className="p-3.5 border-b border-[#262930] flex items-center justify-between bg-[#16181D] rounded-t-2xl">
+                  <div className="p-3.5 border-b border-[#30363D] flex items-center justify-between bg-[#161B22] rounded-t-2xl">
                     <div className="min-w-0 pr-2">
                       <div className="flex items-center gap-2">
                         <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${
                           stageDef.key === 'won' ? 'bg-emerald-400' :
                           stageDef.key === 'new' ? 'bg-rose-400 animate-pulse' :
                           stageDef.key === 'negotiation' ? 'bg-purple-400' :
-                          stageDef.key === 'proposal' ? 'bg-blue-400' :
+                          stageDef.key === 'proposal' ? 'bg-red-400' :
                           stageDef.key === 'contacted' ? 'bg-amber-400' : 'bg-zinc-500'
                         }`} />
                         <h3 className="text-xs font-bold font-display text-white truncate">
-                          {stageDef.labelId}
+                          {language === 'id' ? stageDef.labelId : stageDef.label}
                         </h3>
-                        <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-[#0B0C0E] text-[#8A909D] border border-[#262930] shrink-0">
+                        <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-[#0D1117] text-[#8A909D] border border-[#30363D] shrink-0">
                           {stageLeads.length}
                         </span>
                       </div>
                       <div className="text-[11px] font-mono text-emerald-400 font-semibold mt-1">
-                        {formatShortCurrency(stageSum)}
+                        {formatAmount(stageSum, currency, true)}
                       </div>
                     </div>
 
                     <button
                       onClick={() => handleOpenAddModal(stageDef.key)}
                       title={`Add deal to ${stageDef.labelId}`}
-                      className="p-1 rounded-lg bg-[#0B0C0E] hover:bg-[#222630] text-[#8A909D] hover:text-white border border-[#262930] transition-colors shrink-0"
+                      className="p-1 rounded-lg bg-[#0D1117] hover:bg-[#1E242C] text-[#8A909D] hover:text-white border border-[#30363D] transition-colors shrink-0"
                     >
                       <Plus size={13} />
                     </button>
@@ -634,8 +631,8 @@ export const AdminCrm: React.FC = () => {
                   {/* Column Cards Stream */}
                   <div className="p-3 space-y-3 overflow-y-auto flex-1 max-h-[calc(100vh-320px)] min-h-[180px] scrollbar-thin">
                     {stageLeads.length === 0 ? (
-                      <div className="py-8 text-center text-[#5C626E] text-[11px] font-mono border border-dashed border-[#262930] rounded-xl">
-                        Drop deals here
+                      <div className="py-8 text-center text-[#5C626E] text-[11px] font-mono border border-dashed border-[#30363D] rounded-xl">
+                        {language === 'id' ? 'Tarik deal ke sini' : 'Drop deals here'}
                       </div>
                     ) : (
                       stageLeads.map((lead) => {
@@ -647,8 +644,8 @@ export const AdminCrm: React.FC = () => {
                             draggable={true}
                             onDragStart={(e) => handleDragStart(e, lead.id)}
                             onClick={() => handleOpenLeadDrawer(lead)}
-                            className={`draggable-card kanban-card bg-[#16181D] hover:bg-[#1A1D23] border hover:border-brand-red/60 rounded-xl p-3.5 cursor-pointer transition-all shadow-md group relative ${
-                              isDragging ? 'opacity-40 scale-95 border-brand-red border-dashed' : 'border-[#262930]'
+                            className={`draggable-card kanban-card bg-[#161B22] hover:bg-[#1E242C] border hover:border-brand-red/60 rounded-xl p-3.5 cursor-pointer transition-all shadow-md group relative ${
+                              isDragging ? 'opacity-40 scale-95 border-brand-red border-dashed' : 'border-[#30363D]'
                             }`}
                           >
                             {/* Top Card Info */}
@@ -673,9 +670,9 @@ export const AdminCrm: React.FC = () => {
                             </p>
 
                             {/* Deal Value */}
-                            <div className="flex items-center justify-between text-xs font-mono pb-2.5 mb-2.5 border-t border-[#262930] pt-2">
+                            <div className="flex items-center justify-between text-xs font-mono pb-2.5 mb-2.5 border-t border-[#30363D] pt-2">
                               <span className="text-emerald-400 font-bold font-display text-sm">
-                                {formatCurrency(lead.dealValue)}
+                                {formatAmount(lead.dealValue, currency)}
                               </span>
                               <span className="text-[10px] text-[#5C626E]">
                                 {lead.source}
@@ -688,14 +685,16 @@ export const AdminCrm: React.FC = () => {
                               <select
                                 value={lead.stage}
                                 onChange={(e) => handleStageChange(lead.id, e.target.value as CrmStage)}
-                                className="bg-[#0B0C0E] border border-[#262930] text-[#D0D4DC] rounded-lg px-2 py-1 text-[10px] focus:outline-none focus:border-brand-red font-mono max-w-[110px]"
+                                className="bg-[#0D1117] border border-[#30363D] text-[#D0D4DC] rounded-lg px-2 py-1 text-[10px] focus:outline-none focus:border-brand-red font-mono max-w-[110px]"
                               >
                                 {CRM_STAGE_DEFINITIONS.map(s => (
-                                  <option key={s.key} value={s.key}>{s.labelId}</option>
+                                  <option key={s.key} value={s.key}>
+                                    {language === 'id' ? s.labelId : s.label}
+                                  </option>
                                 ))}
                               </select>
 
-                              {/* Quick WhatsApp & Detail */}
+                              {/* Quick Actions */}
                               <div className="flex items-center gap-1.5">
                                 {lead.stage === 'won' && (
                                   <button
@@ -712,7 +711,7 @@ export const AdminCrm: React.FC = () => {
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     title="Send WhatsApp message"
-                                    className="p-1.5 rounded-lg bg-[#0B0C0E] hover:bg-emerald-950/60 text-emerald-400 border border-[#262930] transition-colors"
+                                    className="p-1.5 rounded-lg bg-[#0D1117] hover:bg-emerald-950/60 text-emerald-400 border border-[#30363D] transition-colors"
                                   >
                                     <Send size={11} />
                                   </a>
@@ -720,7 +719,7 @@ export const AdminCrm: React.FC = () => {
                                 <button
                                   onClick={() => handleOpenLeadDrawer(lead)}
                                   title="View lead profile"
-                                  className="p-1.5 rounded-lg bg-[#0B0C0E] hover:bg-[#262930] text-[#8A909D] hover:text-white border border-[#262930] transition-colors"
+                                  className="p-1.5 rounded-lg bg-[#0D1117] hover:bg-[#1E242C] text-[#8A909D] hover:text-white border border-[#30363D] transition-colors"
                                 >
                                   <ArrowUpRight size={11} />
                                 </button>
@@ -738,26 +737,26 @@ export const AdminCrm: React.FC = () => {
         </div>
       ) : (
         /* LIST TABLE VIEW */
-        <div className="bg-[#16181D] border border-[#262930] rounded-2xl overflow-hidden shadow-xl">
+        <div className="bg-[#161B22] border border-[#30363D] rounded-2xl overflow-hidden shadow-xl">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs font-mono">
-              <thead className="bg-[#0E1013] text-[#8A909D] border-b border-[#262930] uppercase text-[10px] tracking-wider">
+              <thead className="bg-[#0D1117] text-[#8A909D] border-b border-[#30363D] uppercase text-[10px] tracking-wider">
                 <tr>
-                  <th className="py-3.5 px-4">Client & Company</th>
-                  <th className="py-3.5 px-4">Service Pillar</th>
-                  <th className="py-3.5 px-4 text-right">Deal Value</th>
-                  <th className="py-3.5 px-4">Pipeline Stage</th>
-                  <th className="py-3.5 px-4">Priority</th>
-                  <th className="py-3.5 px-4">Source</th>
-                  <th className="py-3.5 px-4">Target Close</th>
-                  <th className="py-3.5 px-4 text-right">Actions</th>
+                  <th className="py-3.5 px-4">{language === 'id' ? 'Klien & Perusahaan' : 'Client & Company'}</th>
+                  <th className="py-3.5 px-4">{language === 'id' ? 'Pilar Layanan' : 'Service Pillar'}</th>
+                  <th className="py-3.5 px-4 text-right">{language === 'id' ? 'Nilai Deal' : 'Deal Value'}</th>
+                  <th className="py-3.5 px-4">{language === 'id' ? 'Tahap Pipeline' : 'Pipeline Stage'}</th>
+                  <th className="py-3.5 px-4">{language === 'id' ? 'Prioritas' : 'Priority'}</th>
+                  <th className="py-3.5 px-4">{language === 'id' ? 'Sumber' : 'Source'}</th>
+                  <th className="py-3.5 px-4">{language === 'id' ? 'Target Closing' : 'Target Close'}</th>
+                  <th className="py-3.5 px-4 text-right">{language === 'id' ? 'Aksi' : 'Actions'}</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#262930]">
+              <tbody className="divide-y divide-[#30363D]">
                 {filteredLeads.length === 0 ? (
                   <tr>
                     <td colSpan={8} className="py-8 text-center text-[#5C626E] font-mono">
-                      No matching leads found.
+                      {language === 'id' ? 'Tidak ada deal yang cocok.' : 'No matching leads found.'}
                     </td>
                   </tr>
                 ) : (
@@ -765,7 +764,7 @@ export const AdminCrm: React.FC = () => {
                     <tr
                       key={lead.id}
                       onClick={() => handleOpenLeadDrawer(lead)}
-                      className="hover:bg-[#1E222A] transition-colors cursor-pointer"
+                      className="hover:bg-[#1E242C] transition-colors cursor-pointer"
                     >
                       <td className="py-3.5 px-4">
                         <div className="font-bold text-white font-display text-sm">
@@ -782,13 +781,15 @@ export const AdminCrm: React.FC = () => {
                         </span>
                       </td>
 
-                      <td className="py-3.5 px-4 text-right font-bold text-emerald-400 font-display text-sm">
-                        {formatCurrency(lead.dealValue)}
+                      <td className="py-3.5 px-4 text-right font-bold text-emerald-400 font-display text-sm font-mono">
+                        {formatAmount(lead.dealValue, currency)}
                       </td>
 
                       <td className="py-3.5 px-4">
-                        <span className="px-2 py-0.5 rounded bg-[#0B0C0E] border border-[#262930] text-[11px] text-[#D0D4DC]">
-                          {CRM_STAGE_DEFINITIONS.find(s => s.key === lead.stage)?.labelId || lead.stage}
+                        <span className="px-2 py-0.5 rounded bg-[#0D1117] border border-[#30363D] text-[11px] text-[#D0D4DC]">
+                          {language === 'id'
+                            ? (CRM_STAGE_DEFINITIONS.find(s => s.key === lead.stage)?.labelId || lead.stage)
+                            : (CRM_STAGE_DEFINITIONS.find(s => s.key === lead.stage)?.label || lead.stage)}
                         </span>
                       </td>
 
@@ -810,7 +811,7 @@ export const AdminCrm: React.FC = () => {
                             <button
                               onClick={() => handleConvertToProject(lead)}
                               title="Create project"
-                              className="p-1.5 rounded-lg bg-emerald-950/40 text-emerald-400 hover:bg-emerald-950/80 border border-emerald-500/30"
+                              className="p-1.5 rounded-lg bg-emerald-950/40 text-emerald-400 hover:bg-emerald-950/80 border border-emerald-500/30 min-h-[32px] min-w-[32px] flex items-center justify-center"
                             >
                               <Layers size={13} />
                             </button>
@@ -820,7 +821,7 @@ export const AdminCrm: React.FC = () => {
                               href={`https://wa.me/${cleanPhone(lead.phone)}`}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="p-1.5 rounded-lg bg-[#0B0C0E] text-emerald-400 hover:bg-emerald-950/50 border border-[#262930]"
+                              className="p-1.5 rounded-lg bg-[#0D1117] text-emerald-400 hover:bg-emerald-950/50 border border-[#30363D] min-h-[32px] min-w-[32px] flex items-center justify-center"
                               title="WhatsApp client"
                             >
                               <Send size={13} />
@@ -828,14 +829,14 @@ export const AdminCrm: React.FC = () => {
                           )}
                           <button
                             onClick={() => handleOpenEditModal(lead)}
-                            className="p-1.5 rounded-lg bg-[#0B0C0E] text-[#8A909D] hover:text-white border border-[#262930]"
+                            className="p-1.5 rounded-lg bg-[#0D1117] text-[#8A909D] hover:text-white border border-[#30363D] min-h-[32px] min-w-[32px] flex items-center justify-center"
                             title="Edit deal"
                           >
                             <Edit3 size={13} />
                           </button>
                           <button
                             onClick={() => handleDeleteLead(lead.id, lead.clientName)}
-                            className="p-1.5 rounded-lg bg-[#0B0C0E] text-[#8A909D] hover:text-red-400 border border-[#262930] hover:border-red-500/40"
+                            className="p-1.5 rounded-lg bg-[#0D1117] text-[#8A909D] hover:text-red-400 border border-[#30363D] hover:border-red-500/40 min-h-[32px] min-w-[32px] flex items-center justify-center"
                             title="Delete deal"
                           >
                             <Trash2 size={13} />
@@ -854,11 +855,11 @@ export const AdminCrm: React.FC = () => {
       {/* 5. CLIENT & DEAL PROFILE DRAWER */}
       {isDrawerOpen && selectedLead && (
         <div className="fixed inset-0 z-50 flex justify-end bg-black/80 backdrop-blur-sm">
-          <div className="bg-[#111317] border-l border-[#262930] w-full sm:max-w-xl h-full flex flex-col justify-between p-5 sm:p-7 overflow-y-auto shadow-2xl animate-in slide-in-from-right duration-300 font-mono text-xs">
+          <div className="bg-[#111317] border-l border-[#30363D] w-full sm:max-w-xl h-full flex flex-col justify-between p-5 sm:p-7 overflow-y-auto shadow-2xl animate-in slide-in-from-right duration-300 font-mono text-xs">
             
             <div className="space-y-6">
               {/* Drawer Top Header */}
-              <div className="flex items-start justify-between gap-4 pb-5 border-b border-[#262930]">
+              <div className="flex items-start justify-between gap-4 pb-5 border-b border-[#30363D]">
                 <div>
                   <div className="flex items-center gap-2 mb-1.5 flex-wrap">
                     <span className={`px-2.5 py-0.5 rounded text-[10px] border font-semibold ${getPillarColor(selectedLead.servicePillar)}`}>
@@ -879,32 +880,34 @@ export const AdminCrm: React.FC = () => {
 
                 <button
                   onClick={() => setIsDrawerOpen(false)}
-                  className="w-8 h-8 rounded-xl bg-[#0B0C0E] hover:bg-[#20232B] text-[#8A909D] hover:text-white border border-[#262930] flex items-center justify-center transition-colors text-xs font-mono"
+                  className="w-8 h-8 rounded-xl bg-[#0D1117] hover:bg-[#1E242C] text-[#8A909D] hover:text-white border border-[#30363D] flex items-center justify-center transition-colors text-xs font-mono"
                 >
                   <X size={15} />
                 </button>
               </div>
 
               {/* Deal Value & Stage Selector Widget */}
-              <div className="p-4 rounded-xl bg-[#16181D] border border-[#262930] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="p-4 rounded-xl bg-[#161B22] border border-[#30363D] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
-                  <div className="text-[10px] text-[#8A909D] uppercase tracking-wider">
-                    Deal Valuation
+                  <div className="text-[10px] text-[#8A909D] uppercase tracking-wider font-semibold">
+                    {language === 'id' ? 'Valuasi Prospek' : 'Deal Valuation'}
                   </div>
-                  <div className="text-2xl font-bold font-display text-emerald-400">
-                    {formatCurrency(selectedLead.dealValue)}
+                  <div className="text-2xl font-bold font-display text-emerald-400 font-mono">
+                    {formatAmount(selectedLead.dealValue, currency)}
                   </div>
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <span className="text-xs text-[#8A909D]">Stage:</span>
+                  <span className="text-xs text-[#8A909D]">{language === 'id' ? 'Tahap:' : 'Stage:'}</span>
                   <select
                     value={selectedLead.stage}
                     onChange={(e) => handleStageChange(selectedLead.id, e.target.value as CrmStage)}
-                    className="px-3 py-1.5 bg-[#0B0C0E] border border-[#262930] rounded-xl text-xs text-white focus:outline-none focus:border-brand-red font-mono"
+                    className="px-3 py-1.5 bg-[#0D1117] border border-[#30363D] rounded-xl text-xs text-white focus:outline-none focus:border-brand-red font-mono"
                   >
                     {CRM_STAGE_DEFINITIONS.map(s => (
-                      <option key={s.key} value={s.key}>{s.labelId}</option>
+                      <option key={s.key} value={s.key}>
+                        {language === 'id' ? s.labelId : s.label}
+                      </option>
                     ))}
                   </select>
                 </div>
@@ -912,10 +915,10 @@ export const AdminCrm: React.FC = () => {
 
               {/* Client Contact Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div className="p-3.5 rounded-xl bg-[#0B0C0E] border border-[#262930]">
+                <div className="p-3.5 rounded-xl bg-[#0D1117] border border-[#30363D]">
                   <div className="flex items-center gap-1.5 text-[#8A909D] mb-1">
                     <Mail size={13} className="text-brand-red" />
-                    <span>Client Email</span>
+                    <span>{language === 'id' ? 'Email Klien' : 'Client Email'}</span>
                   </div>
                   <a 
                     href={`mailto:${selectedLead.email}`}
@@ -925,7 +928,7 @@ export const AdminCrm: React.FC = () => {
                   </a>
                 </div>
 
-                <div className="p-3.5 rounded-xl bg-[#0B0C0E] border border-[#262930]">
+                <div className="p-3.5 rounded-xl bg-[#0D1117] border border-[#30363D]">
                   <div className="flex items-center justify-between text-[#8A909D] mb-1">
                     <div className="flex items-center gap-1.5">
                       <Phone size={13} className="text-brand-red" />
@@ -952,17 +955,17 @@ export const AdminCrm: React.FC = () => {
               {/* Scope Description */}
               <div>
                 <label className="block text-[#8A909D] uppercase tracking-wider mb-2 font-semibold text-[11px]">
-                  Project Scope & Acceptance Notes
+                  {language === 'id' ? 'Deskripsi Scope & Catatan Klien' : 'Project Scope & Acceptance Notes'}
                 </label>
-                <div className="p-4 rounded-xl bg-[#0B0C0E] border border-[#262930] text-gray-200 leading-relaxed font-sans text-xs">
-                  {selectedLead.description || 'No detailed scope notes provided.'}
+                <div className="p-4 rounded-xl bg-[#0D1117] border border-[#30363D] text-gray-200 leading-relaxed font-sans text-xs">
+                  {selectedLead.description || (language === 'id' ? 'Belum ada catatan scope proyek.' : 'No detailed scope notes provided.')}
                 </div>
               </div>
 
               {/* Activity Log / Notes Stream */}
               <div>
                 <label className="block text-[#8A909D] uppercase tracking-wider mb-2 font-semibold text-[11px]">
-                  Activity Timeline & Meeting Notes
+                  {language === 'id' ? 'Riwayat Aktivitas & Catatan Meeting' : 'Activity Timeline & Meeting Notes'}
                 </label>
 
                 {/* Add Note Form */}
@@ -971,22 +974,22 @@ export const AdminCrm: React.FC = () => {
                     type="text"
                     value={newNoteText}
                     onChange={(e) => setNewNoteText(e.target.value)}
-                    placeholder="Log call, meeting summary, or follow-up note..."
-                    className="flex-1 px-3.5 py-2 bg-[#0B0C0E] border border-[#262930] rounded-xl text-xs text-white placeholder-[#5C626E] focus:outline-none focus:border-brand-red font-mono"
+                    placeholder={language === 'id' ? 'Catat ringkasan meeting atau jadwal follow-up...' : 'Log call, meeting summary, or follow-up note...'}
+                    className="flex-1 px-3.5 py-2 bg-[#0D1117] border border-[#30363D] rounded-xl text-xs text-white placeholder-[#5C626E] focus:outline-none focus:border-brand-red font-mono min-h-[44px]"
                   />
                   <button
                     type="submit"
-                    className="px-3.5 py-2 rounded-xl bg-brand-red hover:bg-brand-red/90 text-white text-xs font-mono font-bold transition-colors flex items-center gap-1 shrink-0"
+                    className="px-3.5 py-2 rounded-xl bg-brand-red hover:bg-brand-red/90 text-white text-xs font-mono font-bold transition-colors flex items-center gap-1 shrink-0 min-h-[44px]"
                   >
                     <Plus size={13} />
-                    <span>Log</span>
+                    <span>{language === 'id' ? 'Catat' : 'Log'}</span>
                   </button>
                 </form>
 
                 <div className="space-y-2 max-h-44 overflow-y-auto pr-1">
                   {selectedLead.notes && selectedLead.notes.length > 0 ? (
                     selectedLead.notes.slice().reverse().map((note) => (
-                      <div key={note.id} className="p-3 rounded-xl bg-[#0B0C0E] border border-[#262930] text-xs">
+                      <div key={note.id} className="p-3 rounded-xl bg-[#0D1117] border border-[#30363D] text-xs">
                         <div className="flex items-center justify-between text-[10px] text-[#5C626E] mb-1">
                           <span className="text-brand-red font-semibold">{note.author}</span>
                           <span>{new Date(note.createdAt).toLocaleString()}</span>
@@ -995,7 +998,9 @@ export const AdminCrm: React.FC = () => {
                       </div>
                     ))
                   ) : (
-                    <div className="text-center py-4 text-xs text-[#5C626E]">No activity notes logged yet.</div>
+                    <div className="text-center py-4 text-xs text-[#5C626E]">
+                      {language === 'id' ? 'Belum ada catatan aktivitas.' : 'No activity notes logged yet.'}
+                    </div>
                   )}
                 </div>
               </div>
@@ -1003,18 +1008,18 @@ export const AdminCrm: React.FC = () => {
             </div>
 
             {/* Drawer Bottom Action Buttons */}
-            <div className="pt-5 border-t border-[#262930] flex items-center justify-between gap-3">
+            <div className="pt-5 border-t border-[#30363D] flex items-center justify-between gap-3">
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => handleOpenEditModal(selectedLead)}
-                  className="px-3.5 py-2 rounded-xl bg-[#16181D] hover:bg-[#222630] text-white border border-[#262930] text-xs transition-colors flex items-center gap-1.5"
+                  className="px-3.5 py-2 rounded-xl bg-[#161B22] hover:bg-[#1E242C] text-white border border-[#30363D] text-xs transition-colors flex items-center gap-1.5 min-h-[40px]"
                 >
                   <Edit3 size={13} />
-                  <span>Edit</span>
+                  <span>{t('admin.action.edit')}</span>
                 </button>
                 <button
                   onClick={() => handleDeleteLead(selectedLead.id, selectedLead.clientName)}
-                  className="p-2 rounded-xl bg-[#16181D] hover:bg-red-950/40 text-[#8A909D] hover:text-red-400 border border-[#262930] hover:border-red-500/30 transition-colors"
+                  className="p-2 rounded-xl bg-[#161B22] hover:bg-red-950/40 text-[#8A909D] hover:text-red-400 border border-[#30363D] hover:border-red-500/30 transition-colors min-h-[40px] min-w-[40px] flex items-center justify-center"
                   title="Delete deal"
                 >
                   <Trash2 size={15} />
@@ -1024,10 +1029,10 @@ export const AdminCrm: React.FC = () => {
               {selectedLead.stage === 'won' && (
                 <button
                   onClick={() => handleConvertToProject(selectedLead)}
-                  className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center gap-1.5 shadow-lg shadow-emerald-600/20"
+                  className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center gap-1.5 shadow-lg shadow-emerald-600/20 min-h-[40px]"
                 >
                   <Layers size={13} />
-                  <span>Create Project</span>
+                  <span>{t('admin.crm.convertToProject')}</span>
                 </button>
               )}
             </div>
@@ -1039,13 +1044,13 @@ export const AdminCrm: React.FC = () => {
       {/* 6. CREATE / EDIT DEAL MODAL */}
       {isAddModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-[#16181D] border border-[#262930] rounded-2xl w-full max-w-xl max-h-[90vh] overflow-y-auto p-6 shadow-2xl">
-            <div className="flex items-center justify-between pb-4 mb-4 border-b border-[#262930]">
+          <div className="bg-[#161B22] border border-[#30363D] rounded-2xl w-full max-w-xl max-h-[90vh] overflow-y-auto p-6 shadow-2xl">
+            <div className="flex items-center justify-between pb-4 mb-4 border-b border-[#30363D]">
               <h3 className="font-display font-bold text-white text-lg flex items-center gap-2">
                 <Briefcase className="text-brand-red" size={20} />
-                <span>{editingLead ? 'Edit CRM Lead' : 'Create New CRM Deal'}</span>
+                <span>{editingLead ? (language === 'id' ? 'Edit Data Prospek' : 'Edit CRM Deal') : t('admin.crm.addDeal')}</span>
               </h3>
-              <button onClick={() => setIsAddModalOpen(false)} className="p-1.5 text-[#8A909D] hover:text-white rounded-lg bg-[#0B0C0E] border border-[#262930]">
+              <button onClick={() => setIsAddModalOpen(false)} className="p-1.5 text-[#8A909D] hover:text-white rounded-lg bg-[#0D1117] border border-[#30363D]">
                 <X size={16} />
               </button>
             </div>
@@ -1053,25 +1058,25 @@ export const AdminCrm: React.FC = () => {
             <form onSubmit={handleSaveLead} className="space-y-4 text-xs font-mono">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[#8A909D] mb-1 font-semibold">Client PIC Name *</label>
+                  <label className="block text-[#8A909D] mb-1 font-semibold">{language === 'id' ? 'Nama PIC Klien *' : 'Client PIC Name *'}</label>
                   <input
                     type="text"
                     required
                     value={formClientName}
                     onChange={(e) => setFormClientName(e.target.value)}
                     placeholder="e.g. Adrian Wicaksono"
-                    className="w-full px-3.5 py-2.5 bg-[#0B0C0E] border border-[#262930] rounded-xl text-white focus:outline-none focus:border-brand-red"
+                    className="w-full px-3.5 py-2.5 bg-[#0D1117] border border-[#30363D] rounded-xl text-white focus:outline-none focus:border-brand-red min-h-[44px]"
                   />
                 </div>
                 <div>
-                  <label className="block text-[#8A909D] mb-1 font-semibold">Company Name *</label>
+                  <label className="block text-[#8A909D] mb-1 font-semibold">{language === 'id' ? 'Nama Perusahaan / Brand *' : 'Company Name *'}</label>
                   <input
                     type="text"
                     required
                     value={formCompany}
                     onChange={(e) => setFormCompany(e.target.value)}
                     placeholder="e.g. Bank Mandiri FinTech Division"
-                    className="w-full px-3.5 py-2.5 bg-[#0B0C0E] border border-[#262930] rounded-xl text-white focus:outline-none focus:border-brand-red"
+                    className="w-full px-3.5 py-2.5 bg-[#0D1117] border border-[#30363D] rounded-xl text-white focus:outline-none focus:border-brand-red min-h-[44px]"
                   />
                 </div>
               </div>
@@ -1084,7 +1089,7 @@ export const AdminCrm: React.FC = () => {
                     value={formEmail}
                     onChange={(e) => setFormEmail(e.target.value)}
                     placeholder="adrian@company.com"
-                    className="w-full px-3.5 py-2.5 bg-[#0B0C0E] border border-[#262930] rounded-xl text-white focus:outline-none focus:border-brand-red"
+                    className="w-full px-3.5 py-2.5 bg-[#0D1117] border border-[#30363D] rounded-xl text-white focus:outline-none focus:border-brand-red min-h-[44px]"
                   />
                 </div>
                 <div>
@@ -1094,18 +1099,18 @@ export const AdminCrm: React.FC = () => {
                     value={formPhone}
                     onChange={(e) => setFormPhone(e.target.value)}
                     placeholder="+62 812-3456-7890"
-                    className="w-full px-3.5 py-2.5 bg-[#0B0C0E] border border-[#262930] rounded-xl text-white focus:outline-none focus:border-brand-red"
+                    className="w-full px-3.5 py-2.5 bg-[#0D1117] border border-[#30363D] rounded-xl text-white focus:outline-none focus:border-brand-red min-h-[44px]"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-[#8A909D] mb-1 font-semibold">Service Pillar</label>
+                  <label className="block text-[#8A909D] mb-1 font-semibold">{language === 'id' ? 'Pilar Layanan' : 'Service Pillar'}</label>
                   <select
                     value={formPillar}
                     onChange={(e) => setFormPillar(e.target.value as CrmServicePillar)}
-                    className="w-full px-3 py-2.5 bg-[#0B0C0E] border border-[#262930] rounded-xl text-white focus:outline-none focus:border-brand-red"
+                    className="w-full px-3 py-2.5 bg-[#0D1117] border border-[#30363D] rounded-xl text-white focus:outline-none focus:border-brand-red min-h-[44px]"
                   >
                     <option value="Web Development">Web Development</option>
                     <option value="Mobile App">Mobile App</option>
@@ -1117,24 +1122,26 @@ export const AdminCrm: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-[#8A909D] mb-1 font-semibold">Deal Value (IDR)</label>
+                  <label className="block text-[#8A909D] mb-1 font-semibold">{language === 'id' ? 'Nilai Deal (IDR)' : 'Deal Value (IDR)'}</label>
                   <input
                     type="number"
                     value={formDealValue}
                     onChange={(e) => setFormDealValue(Number(e.target.value))}
-                    className="w-full px-3.5 py-2.5 bg-[#0B0C0E] border border-[#262930] rounded-xl text-white focus:outline-none focus:border-brand-red"
+                    className="w-full px-3.5 py-2.5 bg-[#0D1117] border border-[#30363D] rounded-xl text-white focus:outline-none focus:border-brand-red min-h-[44px]"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[#8A909D] mb-1 font-semibold">Stage</label>
+                  <label className="block text-[#8A909D] mb-1 font-semibold">{language === 'id' ? 'Tahap' : 'Stage'}</label>
                   <select
                     value={formStage}
                     onChange={(e) => setFormStage(e.target.value as CrmStage)}
-                    className="w-full px-3 py-2.5 bg-[#0B0C0E] border border-[#262930] rounded-xl text-white focus:outline-none focus:border-brand-red"
+                    className="w-full px-3 py-2.5 bg-[#0D1117] border border-[#30363D] rounded-xl text-white focus:outline-none focus:border-brand-red min-h-[44px]"
                   >
                     {CRM_STAGE_DEFINITIONS.map(s => (
-                      <option key={s.key} value={s.key}>{s.labelId}</option>
+                      <option key={s.key} value={s.key}>
+                        {language === 'id' ? s.labelId : s.label}
+                      </option>
                     ))}
                   </select>
                 </div>
@@ -1142,11 +1149,11 @@ export const AdminCrm: React.FC = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[#8A909D] mb-1 font-semibold">Priority</label>
+                  <label className="block text-[#8A909D] mb-1 font-semibold">{language === 'id' ? 'Prioritas' : 'Priority'}</label>
                   <select
                     value={formPriority}
                     onChange={(e) => setFormPriority(e.target.value as CrmPriority)}
-                    className="w-full px-3 py-2.5 bg-[#0B0C0E] border border-[#262930] rounded-xl text-white focus:outline-none focus:border-brand-red"
+                    className="w-full px-3 py-2.5 bg-[#0D1117] border border-[#30363D] rounded-xl text-white focus:outline-none focus:border-brand-red min-h-[44px]"
                   >
                     <option value="low">Low</option>
                     <option value="medium">Medium</option>
@@ -1156,40 +1163,40 @@ export const AdminCrm: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-[#8A909D] mb-1 font-semibold">Target Close Date</label>
+                  <label className="block text-[#8A909D] mb-1 font-semibold">{language === 'id' ? 'Target Tanggal Closing' : 'Target Close Date'}</label>
                   <input
                     type="date"
                     value={formExpectedClose}
                     onChange={(e) => setFormExpectedClose(e.target.value)}
-                    className="w-full px-3.5 py-2.5 bg-[#0B0C0E] border border-[#262930] rounded-xl text-white focus:outline-none focus:border-brand-red"
+                    className="w-full px-3.5 py-2.5 bg-[#0D1117] border border-[#30363D] rounded-xl text-white focus:outline-none focus:border-brand-red min-h-[44px]"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-[#8A909D] mb-1 font-semibold">Brief / Project Scope</label>
+                <label className="block text-[#8A909D] mb-1 font-semibold">{language === 'id' ? 'Ringkasan / Scope Kebutuhan' : 'Brief / Project Scope'}</label>
                 <textarea
                   rows={3}
                   value={formDescription}
                   onChange={(e) => setFormDescription(e.target.value)}
-                  placeholder="Requirements, tech stack expectations, budget notes..."
-                  className="w-full px-3.5 py-2 bg-[#0B0C0E] border border-[#262930] rounded-xl text-white focus:outline-none focus:border-brand-red font-sans text-xs"
+                  placeholder={language === 'id' ? 'Kebutuhan teknis, ekspektasi timeline, catatan budget...' : 'Requirements, tech stack expectations, budget notes...'}
+                  className="w-full px-3.5 py-2 bg-[#0D1117] border border-[#30363D] rounded-xl text-white focus:outline-none focus:border-brand-red font-sans text-xs"
                 />
               </div>
 
-              <div className="pt-4 border-t border-[#262930] flex items-center justify-end gap-3">
+              <div className="pt-4 border-t border-[#30363D] flex items-center justify-end gap-3">
                 <button
                   type="button"
                   onClick={() => setIsAddModalOpen(false)}
-                  className="px-4 py-2.5 rounded-xl bg-[#0B0C0E] text-[#8A909D] hover:text-white border border-[#262930]"
+                  className="px-4 py-2.5 rounded-xl bg-[#0D1117] text-[#8A909D] hover:text-white border border-[#30363D] min-h-[44px]"
                 >
-                  Cancel
+                  {t('admin.action.cancel')}
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-2.5 rounded-xl bg-brand-red text-white font-bold hover:bg-brand-red/90 transition-all shadow-md shadow-brand-red/20"
+                  className="px-6 py-2.5 rounded-xl bg-brand-red text-white font-bold hover:bg-brand-red/90 transition-all shadow-md shadow-brand-red/20 min-h-[44px]"
                 >
-                  Save Deal
+                  {editingLead ? (language === 'id' ? 'Simpan Perubahan' : 'Update Deal') : (language === 'id' ? 'Buat Deal' : 'Save Deal')}
                 </button>
               </div>
             </form>

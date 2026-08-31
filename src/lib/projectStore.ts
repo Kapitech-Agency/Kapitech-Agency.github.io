@@ -212,6 +212,8 @@ export const getAgencyProjects = (): AgencyProject[] => {
   }
 };
 
+export const getActiveProjects = getAgencyProjects;
+
 export const saveAgencyProject = (project: AgencyProject): void => {
   const current = getAgencyProjects();
   const idx = current.findIndex(p => p.id === project.id);

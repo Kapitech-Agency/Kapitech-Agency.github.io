@@ -219,7 +219,7 @@ export const AdminInbox: React.FC = () => {
       case 'in-review':
         return <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-amber-500/10 text-amber-400 border border-amber-500/30">In Review</span>;
       case 'contacted':
-        return <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-blue-500/10 text-blue-400 border border-blue-500/30">Contacted</span>;
+        return <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-rose-500/10 text-rose-400 border border-rose-500/30">Contacted</span>;
       case 'closed':
         return <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">Closed Deal</span>;
       default:

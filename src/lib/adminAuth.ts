@@ -4,9 +4,6 @@
  * session token signing/validation, and activity audit logging.
  */
 
-import { setSecureCookie, getSecureCookie, removeSecureCookie } from './cookieUtils';
-import { DOMAIN_CONFIG } from './domainConfig';
-
 export interface AdminUser {
   id: string;
   username: string;
@@ -182,14 +179,8 @@ export function clearAuditLogs() {
 // Session Validation
 export function getAdminSession(): AdminSession | null {
   try {
-    // Check sessionStorage first, then localStorage, then cookie
-    let raw = sessionStorage.getItem(ADMIN_SESSION_KEY) || localStorage.getItem(ADMIN_SESSION_KEY);
-    if (!raw) {
-      const cookieSession = getSecureCookie(ADMIN_SESSION_KEY);
-      if (cookieSession) {
-        raw = cookieSession;
-      }
-    }
+    // Check sessionStorage first, then localStorage
+    const raw = sessionStorage.getItem(ADMIN_SESSION_KEY) || localStorage.getItem(ADMIN_SESSION_KEY);
     if (!raw) return null;
 
     const session: AdminSession = JSON.parse(raw);
@@ -291,13 +282,6 @@ export async function authenticateAdmin(
     sessionStorage.setItem(ADMIN_SESSION_KEY, JSON.stringify(session));
   }
 
-  // Set Secure Cookie scoped to .kapitech.id / ams.kapitech.id with SameSite=Lax
-  setSecureCookie(ADMIN_SESSION_KEY, JSON.stringify(session), {
-    days: rememberMe ? 30 : 1,
-    sameSite: 'Lax',
-    domain: DOMAIN_CONFIG.COOKIE_DOMAIN
-  });
-
   addAuditLog({
     action: 'LOGIN_SUCCESS',
     actor: creds.username,
@@ -323,7 +307,6 @@ export function logoutAdmin() {
   }
   sessionStorage.removeItem(ADMIN_SESSION_KEY);
   localStorage.removeItem(ADMIN_SESSION_KEY);
-  removeSecureCookie(ADMIN_SESSION_KEY, { domain: DOMAIN_CONFIG.COOKIE_DOMAIN });
   // Also clean old legacy key if exists
   sessionStorage.removeItem('kapitech_admin_authenticated');
 }

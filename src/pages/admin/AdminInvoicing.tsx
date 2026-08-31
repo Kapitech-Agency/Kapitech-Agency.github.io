@@ -41,13 +41,14 @@ import {
   computeFinancialMetrics, 
   FINANCE_EVENT_NAME 
 } from '../../lib/financeStore';
-import { formatIDR, formatShortIDR } from '../../lib/crmStore';
+import { formatAmount, formatIDR, getActiveCurrency, CURRENCY_EVENT, CurrencyCode } from '../../lib/currency';
 import { useLanguage } from '../../lib/LanguageContext';
 import { useDragToScroll } from '../../lib/useDragToScroll';
 import { CustomSelect } from '../../components/ui/CustomSelect';
 
 export const AdminInvoicing: React.FC = () => {
   const { t, language } = useLanguage();
+  const [currency, setCurrency] = useState<CurrencyCode>(getActiveCurrency());
   const [invoices, setInvoices] = useState<AgencyInvoice[]>([]);
   const [expenses, setExpenses] = useState<AgencyExpense[]>([]);
   const [activeTab, setActiveTab] = useState<'invoices' | 'expenses'>('invoices');
@@ -94,7 +95,16 @@ export const AdminInvoicing: React.FC = () => {
     loadData();
     const handleUpdate = () => loadData();
     window.addEventListener(FINANCE_EVENT_NAME, handleUpdate);
-    return () => window.removeEventListener(FINANCE_EVENT_NAME, handleUpdate);
+
+    const handleCurrencyChange = (e: any) => {
+      setCurrency(e.detail?.currency || getActiveCurrency());
+    };
+    window.addEventListener(CURRENCY_EVENT, handleCurrencyChange);
+
+    return () => {
+      window.removeEventListener(FINANCE_EVENT_NAME, handleUpdate);
+      window.removeEventListener(CURRENCY_EVENT, handleCurrencyChange);
+    };
   }, []);
 
   const metrics = useMemo(() => computeFinancialMetrics(invoices, expenses), [invoices, expenses]);
@@ -241,7 +251,7 @@ export const AdminInvoicing: React.FC = () => {
         );
       case 'sent':
         return (
-          <span className="px-2.5 py-1 rounded-lg bg-blue-500/10 text-blue-400 border border-blue-500/30 text-[10px] font-mono font-bold flex items-center gap-1.5">
+          <span className="px-2.5 py-1 rounded-lg bg-rose-500/10 text-rose-400 border border-rose-500/30 text-[10px] font-mono font-bold flex items-center gap-1.5">
             <Send size={12} />
             <span>SENT</span>
           </span>
@@ -309,7 +319,7 @@ export const AdminInvoicing: React.FC = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         
         {/* Metric 1: Collected Revenue */}
-        <div className="bg-[#16181D] border border-[#262930] p-5 rounded-2xl flex flex-col justify-between h-full group hover:border-[#383C46] transition-all">
+        <div className="bg-[#161B22] border border-[#30363D] p-5 rounded-2xl flex flex-col justify-between h-full group hover:border-[#484F58] transition-all">
           <div>
             <div className="flex items-center justify-between text-[#8A909D] mb-2">
               <span className="text-xs font-mono uppercase font-semibold">{t('admin.fin.revenuePaid')}</span>
@@ -318,36 +328,36 @@ export const AdminInvoicing: React.FC = () => {
               </div>
             </div>
             <div className="text-2xl sm:text-3xl font-display font-bold text-white tracking-tight">
-              {formatIDR(metrics.totalPaidRevenue)}
+              {formatAmount(metrics.totalPaidRevenue, currency)}
             </div>
           </div>
-          <div className="flex items-center justify-between mt-4 pt-3 border-t border-[#262930] text-[11px] font-mono">
-            <span className="text-[#8A909D]">{metrics.paidCount} Paid Invoices</span>
-            <span className="text-emerald-400 font-semibold">{metrics.collectionRate}% Collected</span>
+          <div className="flex items-center justify-between mt-4 pt-3 border-t border-[#30363D] text-[11px] font-mono">
+            <span className="text-[#8A909D]">{metrics.paidCount} {language === 'id' ? 'Invoice Lunas' : 'Paid Invoices'}</span>
+            <span className="text-emerald-400 font-semibold">{metrics.collectionRate}% {language === 'id' ? 'Tertagih' : 'Collected'}</span>
           </div>
         </div>
 
         {/* Metric 2: Outstanding */}
-        <div className="bg-[#16181D] border border-[#262930] p-5 rounded-2xl flex flex-col justify-between h-full group hover:border-[#383C46] transition-all">
+        <div className="bg-[#161B22] border border-[#30363D] p-5 rounded-2xl flex flex-col justify-between h-full group hover:border-[#484F58] transition-all">
           <div>
             <div className="flex items-center justify-between text-[#8A909D] mb-2">
               <span className="text-xs font-mono uppercase font-semibold">{t('admin.fin.outstanding')}</span>
-              <div className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-400">
+              <div className="w-8 h-8 rounded-lg bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-400">
                 <Clock size={16} />
               </div>
             </div>
             <div className="text-2xl sm:text-3xl font-display font-bold text-white tracking-tight">
-              {formatIDR(metrics.totalOutstanding)}
+              {formatAmount(metrics.totalOutstanding, currency)}
             </div>
           </div>
-          <div className="flex items-center justify-between mt-4 pt-3 border-t border-[#262930] text-[11px] font-mono">
-            <span className="text-[#8A909D]">{metrics.sentCount} Pending Invoices</span>
-            <span className="text-blue-400 font-semibold">Awaiting Settlement</span>
+          <div className="flex items-center justify-between mt-4 pt-3 border-t border-[#30363D] text-[11px] font-mono">
+            <span className="text-[#8A909D]">{metrics.sentCount} {language === 'id' ? 'Invoice Tertunda' : 'Pending Invoices'}</span>
+            <span className="text-red-400 font-semibold">{language === 'id' ? 'Menunggu Pelunasan' : 'Awaiting Settlement'}</span>
           </div>
         </div>
 
         {/* Metric 3: Total Expenses */}
-        <div className="bg-[#16181D] border border-[#262930] p-5 rounded-2xl flex flex-col justify-between h-full group hover:border-[#383C46] transition-all">
+        <div className="bg-[#161B22] border border-[#30363D] p-5 rounded-2xl flex flex-col justify-between h-full group hover:border-[#484F58] transition-all">
           <div>
             <div className="flex items-center justify-between text-[#8A909D] mb-2">
               <span className="text-xs font-mono uppercase font-semibold">{t('admin.fin.expenses')}</span>
@@ -356,17 +366,17 @@ export const AdminInvoicing: React.FC = () => {
               </div>
             </div>
             <div className="text-2xl sm:text-3xl font-display font-bold text-white tracking-tight">
-              {formatIDR(metrics.totalExpenses)}
+              {formatAmount(metrics.totalExpenses, currency)}
             </div>
           </div>
-          <div className="flex items-center justify-between mt-4 pt-3 border-t border-[#262930] text-[11px] font-mono">
-            <span className="text-[#8A909D]">{expenses.length} Records</span>
+          <div className="flex items-center justify-between mt-4 pt-3 border-t border-[#30363D] text-[11px] font-mono">
+            <span className="text-[#8A909D]">{expenses.length} {language === 'id' ? 'Catatan' : 'Records'}</span>
             <span className="text-rose-400 font-semibold">Infrastructure & Ops</span>
           </div>
         </div>
 
         {/* Metric 4: Net Operating Profit */}
-        <div className="bg-[#16181D] border border-[#262930] p-5 rounded-2xl flex flex-col justify-between h-full group hover:border-[#383C46] transition-all">
+        <div className="bg-[#161B22] border border-[#30363D] p-5 rounded-2xl flex flex-col justify-between h-full group hover:border-[#484F58] transition-all">
           <div>
             <div className="flex items-center justify-between text-[#8A909D] mb-2">
               <span className="text-xs font-mono uppercase font-semibold">{t('admin.fin.netProfit')}</span>
@@ -375,10 +385,10 @@ export const AdminInvoicing: React.FC = () => {
               </div>
             </div>
             <div className="text-2xl sm:text-3xl font-display font-bold text-white tracking-tight">
-              {formatIDR(metrics.netOperatingProfit)}
+              {formatAmount(metrics.netOperatingProfit, currency)}
             </div>
           </div>
-          <div className="flex items-center justify-between mt-4 pt-3 border-t border-[#262930] text-[11px] font-mono">
+          <div className="flex items-center justify-between mt-4 pt-3 border-t border-[#30363D] text-[11px] font-mono">
             <span className="text-[#8A909D]">Margin</span>
             <span className="text-purple-400 font-semibold">
               {metrics.totalPaidRevenue > 0 ? Math.round((metrics.netOperatingProfit / metrics.totalPaidRevenue) * 100) : 0}% Net
@@ -389,10 +399,10 @@ export const AdminInvoicing: React.FC = () => {
       </div>
 
       {/* 3. Tab Bar & Filter Controls */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#16181D] border border-[#262930] p-3 sm:p-4 rounded-2xl">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#161B22] border border-[#30363D] p-3 sm:p-4 rounded-2xl">
         
         {/* Left: Tab Switcher */}
-        <div className="flex items-center gap-1.5 bg-[#0B0C0E] p-1 rounded-xl border border-[#262930] shrink-0">
+        <div className="flex items-center gap-1.5 bg-[#0D1117] p-1 rounded-xl border border-[#30363D] shrink-0">
           <button
             onClick={() => setActiveTab('invoices')}
             className={`px-3.5 py-1.5 rounded-lg text-xs font-mono transition-all flex items-center gap-1.5 ${
@@ -426,8 +436,8 @@ export const AdminInvoicing: React.FC = () => {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search invoice number, client..."
-                className="w-full pl-8 pr-3 py-1.5 bg-[#0B0C0E] border border-[#262930] rounded-xl text-xs text-white placeholder-[#5C626E] focus:outline-none focus:border-brand-red font-mono"
+                placeholder={language === 'id' ? 'Cari no invoice, klien...' : 'Search invoice number, client...'}
+                className="w-full pl-8 pr-3 py-2 bg-[#0D1117] border border-[#30363D] rounded-xl text-xs text-white placeholder-[#5C626E] focus:outline-none focus:border-brand-red font-mono"
               />
             </div>
 
@@ -435,10 +445,10 @@ export const AdminInvoicing: React.FC = () => {
               value={filterStatus}
               onChange={(val) => setFilterStatus(val)}
               options={[
-                { value: 'all', label: 'All Status' },
-                { value: 'paid', label: 'Paid' },
-                { value: 'sent', label: 'Sent' },
-                { value: 'overdue', label: 'Overdue' },
+                { value: 'all', label: language === 'id' ? 'Semua Status' : 'All Status' },
+                { value: 'paid', label: language === 'id' ? 'Lunas' : 'Paid' },
+                { value: 'sent', label: language === 'id' ? 'Terkirim' : 'Sent' },
+                { value: 'overdue', label: language === 'id' ? 'Jatuh Tempo' : 'Overdue' },
                 { value: 'draft', label: 'Draft' }
               ]}
             />
@@ -450,29 +460,29 @@ export const AdminInvoicing: React.FC = () => {
       {activeTab === 'invoices' ? (
         <div 
           ref={tableScrollRef}
-          className="bg-[#16181D] border border-[#262930] rounded-2xl overflow-x-auto shadow-xl select-none"
+          className="bg-[#161B22] border border-[#30363D] rounded-2xl overflow-x-auto shadow-xl select-none"
         >
           <table className="w-full text-left text-xs font-mono min-w-[750px]">
             <thead>
-              <tr className="border-b border-[#262930] bg-[#111317] text-[#8A909D]">
+              <tr className="border-b border-[#30363D] bg-[#0D1117] text-[#8A909D]">
                 <th className="py-3 px-4 font-semibold uppercase text-[10px]">Invoice #</th>
-                <th className="py-3 px-4 font-semibold uppercase text-[10px]">Client & Company</th>
-                <th className="py-3 px-4 font-semibold uppercase text-[10px]">Issue / Due Date</th>
-                <th className="py-3 px-4 font-semibold uppercase text-[10px]">Amount</th>
+                <th className="py-3 px-4 font-semibold uppercase text-[10px]">{language === 'id' ? 'Klien & Perusahaan' : 'Client & Company'}</th>
+                <th className="py-3 px-4 font-semibold uppercase text-[10px]">{language === 'id' ? 'Tanggal / Jatuh Tempo' : 'Issue / Due Date'}</th>
+                <th className="py-3 px-4 font-semibold uppercase text-[10px]">{language === 'id' ? 'Nominal' : 'Amount'}</th>
                 <th className="py-3 px-4 font-semibold uppercase text-[10px]">Status</th>
-                <th className="py-3 px-4 font-semibold uppercase text-[10px] text-right">Actions</th>
+                <th className="py-3 px-4 font-semibold uppercase text-[10px] text-right">{language === 'id' ? 'Aksi' : 'Actions'}</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#262930]">
+            <tbody className="divide-y divide-[#30363D]">
               {filteredInvoices.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="py-12 text-center text-[#8A909D]">
-                    No invoices found matching criteria.
+                    {language === 'id' ? 'Tidak ada invoice yang sesuai kriteria.' : 'No invoices found matching criteria.'}
                   </td>
                 </tr>
               ) : (
                 filteredInvoices.map((inv) => (
-                  <tr key={inv.id} className="hover:bg-[#1C2027] transition-colors group">
+                  <tr key={inv.id} className="hover:bg-[#1C2128] transition-colors group">
                     <td className="py-3.5 px-4 font-bold text-white font-display">
                       <button 
                         onClick={() => setPreviewInvoice(inv)} 
@@ -491,7 +501,7 @@ export const AdminInvoicing: React.FC = () => {
                       <div className="text-[10px] text-[#5C626E]">Due: {inv.dueDate}</div>
                     </td>
                     <td className="py-3.5 px-4 font-bold text-emerald-400 font-display">
-                      {formatIDR(inv.total)}
+                      {formatAmount(inv.total, currency)}
                       <div className="text-[10px] font-mono text-[#5C626E] font-normal">
                         incl. {inv.taxPercent}% PPN
                       </div>
@@ -503,7 +513,7 @@ export const AdminInvoicing: React.FC = () => {
                           updateInvoiceStatus(inv.id, e.target.value as InvoiceStatus);
                           showToast(`Status updated to ${e.target.value.toUpperCase()}`);
                         }}
-                        className="bg-[#0B0C0E] border border-[#262930] text-xs text-white rounded-lg px-2.5 py-1 focus:outline-none focus:border-brand-red font-mono"
+                        className="bg-[#0D1117] border border-[#30363D] text-xs text-white rounded-lg px-2.5 py-1 focus:outline-none focus:border-brand-red font-mono"
                       >
                         <option value="draft">Draft</option>
                         <option value="sent">Sent</option>
@@ -515,21 +525,21 @@ export const AdminInvoicing: React.FC = () => {
                       <div className="flex items-center justify-end gap-1.5">
                         <button
                           onClick={() => setPreviewInvoice(inv)}
-                          className="p-1.5 rounded-lg bg-[#0B0C0E] hover:bg-[#262930] text-[#8A909D] hover:text-white border border-[#262930] transition-colors"
+                          className="p-1.5 rounded-lg bg-[#0D1117] hover:bg-[#21262D] text-[#8A909D] hover:text-white border border-[#30363D] transition-colors"
                           title="Preview & Print Invoice"
                         >
                           <FileText size={13} />
                         </button>
                         <button
                           onClick={() => handleOpenEditInvoice(inv)}
-                          className="p-1.5 rounded-lg bg-[#0B0C0E] hover:bg-[#262930] text-[#8A909D] hover:text-white border border-[#262930] transition-colors"
+                          className="p-1.5 rounded-lg bg-[#0D1117] hover:bg-[#21262D] text-[#8A909D] hover:text-white border border-[#30363D] transition-colors"
                           title="Edit Invoice"
                         >
                           <Edit3 size={13} />
                         </button>
                         <button
                           onClick={() => handleDeleteInvoice(inv.id, inv.invoiceNumber)}
-                          className="p-1.5 rounded-lg bg-[#0B0C0E] hover:bg-red-950/40 text-[#8A909D] hover:text-red-400 border border-[#262930] transition-colors"
+                          className="p-1.5 rounded-lg bg-[#0D1117] hover:bg-red-950/40 text-[#8A909D] hover:text-red-400 border border-[#30363D] transition-colors"
                           title="Delete Invoice"
                         >
                           <Trash2 size={13} />
@@ -546,37 +556,37 @@ export const AdminInvoicing: React.FC = () => {
         /* Expenses List */
         <div 
           ref={tableScrollRef}
-          className="bg-[#16181D] border border-[#262930] rounded-2xl overflow-x-auto shadow-xl select-none"
+          className="bg-[#161B22] border border-[#30363D] rounded-2xl overflow-x-auto shadow-xl select-none"
         >
           <table className="w-full text-left text-xs font-mono min-w-[650px]">
             <thead>
-              <tr className="border-b border-[#262930] bg-[#111317] text-[#8A909D]">
-                <th className="py-3 px-4 font-semibold uppercase text-[10px]">Date</th>
-                <th className="py-3 px-4 font-semibold uppercase text-[10px]">Category</th>
-                <th className="py-3 px-4 font-semibold uppercase text-[10px]">Description</th>
-                <th className="py-3 px-4 font-semibold uppercase text-[10px]">Amount</th>
-                <th className="py-3 px-4 font-semibold uppercase text-[10px]">Recorded By</th>
-                <th className="py-3 px-4 font-semibold uppercase text-[10px] text-right">Action</th>
+              <tr className="border-b border-[#30363D] bg-[#0D1117] text-[#8A909D]">
+                <th className="py-3 px-4 font-semibold uppercase text-[10px]">{language === 'id' ? 'Tanggal' : 'Date'}</th>
+                <th className="py-3 px-4 font-semibold uppercase text-[10px]">{language === 'id' ? 'Kategori' : 'Category'}</th>
+                <th className="py-3 px-4 font-semibold uppercase text-[10px]">{language === 'id' ? 'Deskripsi' : 'Description'}</th>
+                <th className="py-3 px-4 font-semibold uppercase text-[10px]">{language === 'id' ? 'Nominal' : 'Amount'}</th>
+                <th className="py-3 px-4 font-semibold uppercase text-[10px]">{language === 'id' ? 'Dicatat Oleh' : 'Recorded By'}</th>
+                <th className="py-3 px-4 font-semibold uppercase text-[10px] text-right">{language === 'id' ? 'Aksi' : 'Action'}</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#262930]">
+            <tbody className="divide-y divide-[#30363D]">
               {expenses.map((exp) => (
-                <tr key={exp.id} className="hover:bg-[#1C2027] transition-colors">
+                <tr key={exp.id} className="hover:bg-[#1C2128] transition-colors">
                   <td className="py-3.5 px-4 text-[#8A909D]">{exp.date}</td>
                   <td className="py-3.5 px-4">
-                    <span className="px-2 py-0.5 rounded bg-[#0B0C0E] text-amber-400 border border-amber-500/20 text-[10px]">
+                    <span className="px-2 py-0.5 rounded bg-[#0D1117] text-amber-400 border border-amber-500/20 text-[10px]">
                       {exp.category}
                     </span>
                   </td>
                   <td className="py-3.5 px-4 font-medium text-white">{exp.description}</td>
                   <td className="py-3.5 px-4 font-bold text-rose-400 font-display">
-                    {formatIDR(exp.amount)}
+                    {formatAmount(exp.amount, currency)}
                   </td>
                   <td className="py-3.5 px-4 text-[#8A909D]">{exp.recordedBy}</td>
                   <td className="py-3.5 px-4 text-right">
                     <button
                       onClick={() => handleDeleteExpense(exp.id)}
-                      className="p-1.5 rounded-lg bg-[#0B0C0E] hover:bg-red-950/40 text-[#8A909D] hover:text-red-400 border border-[#262930] transition-colors"
+                      className="p-1.5 rounded-lg bg-[#0D1117] hover:bg-red-950/40 text-[#8A909D] hover:text-red-400 border border-[#30363D] transition-colors"
                       title="Delete Record"
                     >
                       <Trash2 size={13} />

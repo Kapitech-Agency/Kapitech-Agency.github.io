@@ -3,19 +3,13 @@ import {
   Users,
   Plus,
   Search,
-  Filter,
   Building2,
   Mail,
   Phone,
-  Globe,
   MapPin,
   DollarSign,
-  Briefcase,
-  CheckCircle2,
-  Clock,
   Trash2,
   Edit3,
-  ExternalLink,
   Check,
   X,
   UserCheck
@@ -27,12 +21,14 @@ import {
   deleteAgencyClient,
   CLIENT_EVENT_NAME
 } from '../../lib/clientStore';
-import { formatIDR } from '../../lib/crmStore';
+import { formatAmount, getActiveCurrency, CURRENCY_EVENT, CurrencyCode } from '../../lib/currency';
 import { useLanguage } from '../../lib/LanguageContext';
 import { useDragToScroll } from '../../lib/useDragToScroll';
+import { CustomSelect } from '../../components/ui/CustomSelect';
 
 export const AdminClients: React.FC = () => {
   const { t, language } = useLanguage();
+  const [currency, setCurrency] = useState<CurrencyCode>(getActiveCurrency());
   const [clients, setClients] = useState<AgencyClient[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
@@ -67,7 +63,16 @@ export const AdminClients: React.FC = () => {
     loadData();
     const handleUpdate = () => loadData();
     window.addEventListener(CLIENT_EVENT_NAME, handleUpdate);
-    return () => window.removeEventListener(CLIENT_EVENT_NAME, handleUpdate);
+
+    const handleCurrencyChange = (e: any) => {
+      setCurrency(e.detail?.currency || getActiveCurrency());
+    };
+    window.addEventListener(CURRENCY_EVENT, handleCurrencyChange);
+
+    return () => {
+      window.removeEventListener(CLIENT_EVENT_NAME, handleUpdate);
+      window.removeEventListener(CURRENCY_EVENT, handleCurrencyChange);
+    };
   }, []);
 
   const showToast = (msg: string) => {
@@ -165,7 +170,7 @@ export const AdminClients: React.FC = () => {
     <div className="space-y-6">
       
       {/* 1. Header & Actions */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[#262930]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[#30363D]">
         <div>
           <h1 className="text-2xl font-display font-bold text-white flex items-center gap-3">
             <Users className="text-brand-red" size={26} />
@@ -194,7 +199,7 @@ export const AdminClients: React.FC = () => {
 
       {/* 2. Key Metrics Summary (3 cols) */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
-        <div className="bg-[#16181D] border border-[#262930] p-5 rounded-2xl flex flex-col justify-between">
+        <div className="bg-[#161B22] border border-[#30363D] p-5 rounded-2xl flex flex-col justify-between">
           <div className="flex items-center justify-between text-[#8A909D] mb-2">
             <span className="text-xs font-mono uppercase font-semibold">{t('admin.client.totalClients')}</span>
             <div className="w-8 h-8 rounded-lg bg-zinc-800 flex items-center justify-center text-white">
@@ -204,12 +209,12 @@ export const AdminClients: React.FC = () => {
           <div className="text-3xl font-display font-bold text-white tracking-tight">
             {clients.length}
           </div>
-          <div className="mt-3 pt-2 border-t border-[#262930] text-[11px] font-mono text-[#8A909D]">
-            Across Enterprise & SME tiers
+          <div className="mt-3 pt-2 border-t border-[#30363D] text-[11px] font-mono text-[#8A909D]">
+            {language === 'id' ? 'Klien Enterprise & SME' : 'Across Enterprise & SME tiers'}
           </div>
         </div>
 
-        <div className="bg-[#16181D] border border-[#262930] p-5 rounded-2xl flex flex-col justify-between">
+        <div className="bg-[#161B22] border border-[#30363D] p-5 rounded-2xl flex flex-col justify-between">
           <div className="flex items-center justify-between text-[#8A909D] mb-2">
             <span className="text-xs font-mono uppercase font-semibold">{t('admin.client.activeAccounts')}</span>
             <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
@@ -219,12 +224,12 @@ export const AdminClients: React.FC = () => {
           <div className="text-3xl font-display font-bold text-emerald-400 tracking-tight">
             {activeAccountsCount}
           </div>
-          <div className="mt-3 pt-2 border-t border-[#262930] text-[11px] font-mono text-emerald-400">
-            Active Retainers & Sprints
+          <div className="mt-3 pt-2 border-t border-[#30363D] text-[11px] font-mono text-emerald-400">
+            {language === 'id' ? 'Retainer & Sprint Aktif' : 'Active Retainers & Sprints'}
           </div>
         </div>
 
-        <div className="bg-[#16181D] border border-[#262930] p-5 rounded-2xl flex flex-col justify-between">
+        <div className="bg-[#161B22] border border-[#30363D] p-5 rounded-2xl flex flex-col justify-between">
           <div className="flex items-center justify-between text-[#8A909D] mb-2">
             <span className="text-xs font-mono uppercase font-semibold">{t('admin.client.lifetimeSpend')}</span>
             <div className="w-8 h-8 rounded-lg bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400">
@@ -232,67 +237,67 @@ export const AdminClients: React.FC = () => {
             </div>
           </div>
           <div className="text-2xl sm:text-3xl font-display font-bold text-white tracking-tight">
-            {formatIDR(totalLifetimeSpend)}
+            {formatAmount(totalLifetimeSpend, currency)}
           </div>
-          <div className="mt-3 pt-2 border-t border-[#262930] text-[11px] font-mono text-purple-400">
-            Cumulative Billed Value
+          <div className="mt-3 pt-2 border-t border-[#30363D] text-[11px] font-mono text-purple-400">
+            {language === 'id' ? 'Total Nilai Kontrak Billed' : 'Cumulative Billed Value'}
           </div>
         </div>
       </div>
 
       {/* 3. Search & Filter Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#16181D] border border-[#262930] p-4 rounded-2xl">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#161B22] border border-[#30363D] p-4 rounded-2xl">
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8A909D]" size={14} />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search client name, company, email..."
-            className="w-full pl-8 pr-3 py-1.5 bg-[#0B0C0E] border border-[#262930] rounded-xl text-xs text-white placeholder-[#5C626E] focus:outline-none focus:border-brand-red font-mono"
+            placeholder={language === 'id' ? 'Cari nama klien, perusahaan, email...' : 'Search client name, company, email...'}
+            className="w-full pl-8 pr-3 py-2 bg-[#0D1117] border border-[#30363D] rounded-xl text-xs text-white placeholder-[#5C626E] focus:outline-none focus:border-brand-red font-mono"
           />
         </div>
 
-        <select
+        <CustomSelect
           value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-          className="px-3 py-1.5 bg-[#0B0C0E] border border-[#262930] rounded-xl text-xs text-white focus:outline-none focus:border-brand-red font-mono self-start sm:self-auto"
-        >
-          <option value="all">All Status</option>
-          <option value="active">Active</option>
-          <option value="completed">Completed</option>
-          <option value="lead">Lead</option>
-          <option value="inactive">Inactive</option>
-        </select>
+          onChange={(val) => setStatusFilter(val)}
+          options={[
+            { value: 'all', label: language === 'id' ? 'Semua Status' : 'All Status' },
+            { value: 'active', label: language === 'id' ? 'Aktif' : 'Active' },
+            { value: 'completed', label: language === 'id' ? 'Selesai' : 'Completed' },
+            { value: 'lead', label: 'Lead' },
+            { value: 'inactive', label: language === 'id' ? 'Nonaktif' : 'Inactive' }
+          ]}
+        />
       </div>
 
       {/* 4. Drag-to-Scroll Clients Table */}
       <div
         ref={tableScrollRef}
-        className="bg-[#16181D] border border-[#262930] rounded-2xl overflow-x-auto shadow-xl select-none"
+        className="bg-[#161B22] border border-[#30363D] rounded-2xl overflow-x-auto shadow-xl select-none"
       >
         <table className="w-full text-left text-xs font-mono min-w-[800px]">
           <thead>
-            <tr className="border-b border-[#262930] bg-[#111317] text-[#8A909D]">
-              <th className="py-3 px-4 font-semibold uppercase text-[10px]">Client / PIC</th>
-              <th className="py-3 px-4 font-semibold uppercase text-[10px]">Company & Industry</th>
-              <th className="py-3 px-4 font-semibold uppercase text-[10px]">Contact Info</th>
-              <th className="py-3 px-4 font-semibold uppercase text-[10px]">Location</th>
-              <th className="py-3 px-4 font-semibold uppercase text-[10px]">Total Billed</th>
+            <tr className="border-b border-[#30363D] bg-[#0D1117] text-[#8A909D]">
+              <th className="py-3 px-4 font-semibold uppercase text-[10px]">{language === 'id' ? 'Klien / PIC' : 'Client / PIC'}</th>
+              <th className="py-3 px-4 font-semibold uppercase text-[10px]">{language === 'id' ? 'Perusahaan & Industri' : 'Company & Industry'}</th>
+              <th className="py-3 px-4 font-semibold uppercase text-[10px]">{language === 'id' ? 'Info Kontak' : 'Contact Info'}</th>
+              <th className="py-3 px-4 font-semibold uppercase text-[10px]">{language === 'id' ? 'Lokasi' : 'Location'}</th>
+              <th className="py-3 px-4 font-semibold uppercase text-[10px]">{language === 'id' ? 'Total Nilai' : 'Total Billed'}</th>
               <th className="py-3 px-4 font-semibold uppercase text-[10px]">Status</th>
-              <th className="py-3 px-4 font-semibold uppercase text-[10px] text-right">Actions</th>
+              <th className="py-3 px-4 font-semibold uppercase text-[10px] text-right">{language === 'id' ? 'Aksi' : 'Actions'}</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-[#262930]">
+          <tbody className="divide-y divide-[#30363D]">
             {filteredClients.length === 0 ? (
               <tr>
                 <td colSpan={7} className="py-12 text-center text-[#8A909D]">
-                  No clients found.
+                  {language === 'id' ? 'Tidak ada data klien yang sesuai.' : 'No clients found.'}
                 </td>
               </tr>
             ) : (
               filteredClients.map((client) => (
-                <tr key={client.id} className="hover:bg-[#1C2027] transition-colors group">
+                <tr key={client.id} className="hover:bg-[#1C2128] transition-colors group">
                   <td className="py-3.5 px-4">
                     <div className="font-bold text-white font-display text-sm">{client.name}</div>
                     <div className="text-[10px] text-brand-red font-semibold">{client.contactPersonRole}</div>
@@ -323,9 +328,9 @@ export const AdminClients: React.FC = () => {
                     </div>
                   </td>
                   <td className="py-3.5 px-4 font-bold text-emerald-400 font-display">
-                    {formatIDR(client.totalSpend)}
+                    {formatAmount(client.totalSpend, currency)}
                     <div className="text-[10px] font-mono text-[#5C626E] font-normal">
-                      {client.projectsCount} Project(s)
+                      {client.projectsCount} {language === 'id' ? 'Proyek' : 'Project(s)'}
                     </div>
                   </td>
                   <td className="py-3.5 px-4">
@@ -333,7 +338,7 @@ export const AdminClients: React.FC = () => {
                       client.status === 'active'
                         ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
                         : client.status === 'completed'
-                        ? 'bg-blue-500/10 text-blue-400 border border-blue-500/30'
+                        ? 'bg-rose-500/10 text-rose-400 border border-rose-500/30'
                         : 'bg-zinc-500/10 text-zinc-400 border border-zinc-500/30'
                     }`}>
                       {client.status}
@@ -343,14 +348,14 @@ export const AdminClients: React.FC = () => {
                     <div className="flex items-center justify-end gap-1.5">
                       <button
                         onClick={() => handleOpenEditClient(client)}
-                        className="p-1.5 rounded-lg bg-[#0B0C0E] hover:bg-[#262930] text-[#8A909D] hover:text-white border border-[#262930] transition-colors"
+                        className="p-1.5 rounded-lg bg-[#0D1117] hover:bg-[#21262D] text-[#8A909D] hover:text-white border border-[#30363D] transition-colors"
                         title="Edit Client"
                       >
                         <Edit3 size={13} />
                       </button>
                       <button
                         onClick={() => handleDeleteClient(client.id, client.name)}
-                        className="p-1.5 rounded-lg bg-[#0B0C0E] hover:bg-red-950/40 text-[#8A909D] hover:text-red-400 border border-[#262930] transition-colors"
+                        className="p-1.5 rounded-lg bg-[#0D1117] hover:bg-red-950/40 text-[#8A909D] hover:text-red-400 border border-[#30363D] transition-colors"
                         title="Delete Client"
                       >
                         <Trash2 size={13} />
@@ -367,13 +372,13 @@ export const AdminClients: React.FC = () => {
       {/* 5. Create / Edit Client Modal */}
       {isClientModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-[#16181D] border border-[#262930] rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 shadow-2xl">
-            <div className="flex items-center justify-between pb-4 mb-4 border-b border-[#262930]">
+          <div className="bg-[#161B22] border border-[#30363D] rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 shadow-2xl">
+            <div className="flex items-center justify-between pb-4 mb-4 border-b border-[#30363D]">
               <h3 className="font-display font-bold text-white text-lg flex items-center gap-2">
                 <Users className="text-brand-red" size={20} />
-                <span>{editingClient ? 'Edit Client Record' : 'Add New Agency Client'}</span>
+                <span>{editingClient ? (language === 'id' ? 'Edit Data Klien' : 'Edit Client Record') : (language === 'id' ? 'Tambah Klien Baru' : 'Add New Agency Client')}</span>
               </h3>
-              <button onClick={() => setIsClientModalOpen(false)} className="p-1.5 text-[#8A909D] hover:text-white rounded-lg bg-[#0B0C0E] border border-[#262930]">
+              <button onClick={() => setIsClientModalOpen(false)} className="p-1.5 text-[#8A909D] hover:text-white rounded-lg bg-[#0D1117] border border-[#30363D]">
                 <X size={16} />
               </button>
             </div>
@@ -381,48 +386,48 @@ export const AdminClients: React.FC = () => {
             <form onSubmit={handleSaveClient} className="space-y-4 text-xs font-mono">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[#8A909D] mb-1 font-semibold">Client / PIC Name *</label>
+                  <label className="block text-[#8A909D] mb-1 font-semibold">{language === 'id' ? 'Nama Klien / PIC *' : 'Client / PIC Name *'}</label>
                   <input
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     required
                     placeholder="e.g. Marcus Thorne"
-                    className="w-full px-3 py-2 bg-[#0B0C0E] border border-[#262930] rounded-xl text-white focus:outline-none focus:border-brand-red"
+                    className="w-full px-3 py-2 bg-[#0D1117] border border-[#30363D] rounded-xl text-white focus:outline-none focus:border-brand-red"
                   />
                 </div>
                 <div>
-                  <label className="block text-[#8A909D] mb-1 font-semibold">Company / Brand *</label>
+                  <label className="block text-[#8A909D] mb-1 font-semibold">{language === 'id' ? 'Perusahaan / Brand *' : 'Company / Brand *'}</label>
                   <input
                     type="text"
                     value={company}
                     onChange={(e) => setCompany(e.target.value)}
                     required
                     placeholder="e.g. Lumina Real Estate Global"
-                    className="w-full px-3 py-2 bg-[#0B0C0E] border border-[#262930] rounded-xl text-white focus:outline-none focus:border-brand-red"
+                    className="w-full px-3 py-2 bg-[#0D1117] border border-[#30363D] rounded-xl text-white focus:outline-none focus:border-brand-red"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[#8A909D] mb-1 font-semibold">Contact Person Role</label>
+                  <label className="block text-[#8A909D] mb-1 font-semibold">{language === 'id' ? 'Jabatan Kontak' : 'Contact Person Role'}</label>
                   <input
                     type="text"
                     value={role}
                     onChange={(e) => setRole(e.target.value)}
                     placeholder="e.g. Managing Director / CTO"
-                    className="w-full px-3 py-2 bg-[#0B0C0E] border border-[#262930] rounded-xl text-white focus:outline-none focus:border-brand-red"
+                    className="w-full px-3 py-2 bg-[#0D1117] border border-[#30363D] rounded-xl text-white focus:outline-none focus:border-brand-red"
                   />
                 </div>
                 <div>
-                  <label className="block text-[#8A909D] mb-1 font-semibold">Industry Sector</label>
+                  <label className="block text-[#8A909D] mb-1 font-semibold">{language === 'id' ? 'Sektor Industri' : 'Industry Sector'}</label>
                   <input
                     type="text"
                     value={industry}
                     onChange={(e) => setIndustry(e.target.value)}
                     placeholder="e.g. Real Estate & PropTech"
-                    className="w-full px-3 py-2 bg-[#0B0C0E] border border-[#262930] rounded-xl text-white focus:outline-none focus:border-brand-red"
+                    className="w-full px-3 py-2 bg-[#0D1117] border border-[#30363D] rounded-xl text-white focus:outline-none focus:border-brand-red"
                   />
                 </div>
               </div>
@@ -435,7 +440,7 @@ export const AdminClients: React.FC = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="contact@company.com"
-                    className="w-full px-3 py-2 bg-[#0B0C0E] border border-[#262930] rounded-xl text-white focus:outline-none focus:border-brand-red"
+                    className="w-full px-3 py-2 bg-[#0D1117] border border-[#30363D] rounded-xl text-white focus:outline-none focus:border-brand-red"
                   />
                 </div>
                 <div>
@@ -445,29 +450,29 @@ export const AdminClients: React.FC = () => {
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     placeholder="+62 811-XXXX-XXXX"
-                    className="w-full px-3 py-2 bg-[#0B0C0E] border border-[#262930] rounded-xl text-white focus:outline-none focus:border-brand-red"
+                    className="w-full px-3 py-2 bg-[#0D1117] border border-[#30363D] rounded-xl text-white focus:outline-none focus:border-brand-red"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
-                  <label className="block text-[#8A909D] mb-1 font-semibold">Location</label>
+                  <label className="block text-[#8A909D] mb-1 font-semibold">{language === 'id' ? 'Lokasi' : 'Location'}</label>
                   <input
                     type="text"
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
                     placeholder="Jakarta, Indonesia"
-                    className="w-full px-3 py-2 bg-[#0B0C0E] border border-[#262930] rounded-xl text-white focus:outline-none focus:border-brand-red"
+                    className="w-full px-3 py-2 bg-[#0D1117] border border-[#30363D] rounded-xl text-white focus:outline-none focus:border-brand-red"
                   />
                 </div>
                 <div>
-                  <label className="block text-[#8A909D] mb-1 font-semibold">Lifetime Spend (IDR)</label>
+                  <label className="block text-[#8A909D] mb-1 font-semibold">{language === 'id' ? 'Nilai Kontrak (IDR)' : 'Lifetime Spend (IDR)'}</label>
                   <input
                     type="number"
                     value={totalSpend}
                     onChange={(e) => setTotalSpend(Number(e.target.value))}
-                    className="w-full px-3 py-2 bg-[#0B0C0E] border border-[#262930] rounded-xl text-white focus:outline-none focus:border-brand-red"
+                    className="w-full px-3 py-2 bg-[#0D1117] border border-[#30363D] rounded-xl text-white focus:outline-none focus:border-brand-red"
                   />
                 </div>
                 <div>
@@ -475,7 +480,7 @@ export const AdminClients: React.FC = () => {
                   <select
                     value={clientStatus}
                     onChange={(e) => setClientStatus(e.target.value as any)}
-                    className="w-full px-3 py-2 bg-[#0B0C0E] border border-[#262930] rounded-xl text-white focus:outline-none focus:border-brand-red"
+                    className="w-full px-3 py-2 bg-[#0D1117] border border-[#30363D] rounded-xl text-white focus:outline-none focus:border-brand-red"
                   >
                     <option value="active">Active</option>
                     <option value="completed">Completed</option>
@@ -486,29 +491,29 @@ export const AdminClients: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-[#8A909D] mb-1 font-semibold">Client Notes & Requirements</label>
+                <label className="block text-[#8A909D] mb-1 font-semibold">{language === 'id' ? 'Catatan & Preferensi Klien' : 'Client Notes & Requirements'}</label>
                 <textarea
                   rows={3}
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   placeholder="Special client preferences, NDA details, billing notes..."
-                  className="w-full px-3 py-2 bg-[#0B0C0E] border border-[#262930] rounded-xl text-white focus:outline-none focus:border-brand-red"
+                  className="w-full px-3 py-2 bg-[#0D1117] border border-[#30363D] rounded-xl text-white focus:outline-none focus:border-brand-red"
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-[#262930]">
+              <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-[#30363D]">
                 <button
                   type="button"
                   onClick={() => setIsClientModalOpen(false)}
-                  className="px-4 py-2 rounded-xl bg-[#0B0C0E] text-[#8A909D] hover:text-white border border-[#262930]"
+                  className="px-4 py-2 rounded-xl bg-[#0D1117] text-[#8A909D] hover:text-white border border-[#30363D]"
                 >
-                  Cancel
+                  {language === 'id' ? 'Batal' : 'Cancel'}
                 </button>
                 <button
                   type="submit"
                   className="px-5 py-2 rounded-xl bg-brand-red hover:bg-brand-red/90 text-white font-bold shadow-lg shadow-brand-red/20"
                 >
-                  Save Client
+                  {language === 'id' ? 'Simpan Klien' : 'Save Client'}
                 </button>
               </div>
             </form>
