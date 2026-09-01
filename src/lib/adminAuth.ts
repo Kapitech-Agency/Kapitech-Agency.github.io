@@ -4,11 +4,15 @@
  * session token signing/validation, and activity audit logging.
  */
 
+export type AdminTier = 'Tier 1: Top Management / Sponsor' | 'Tier 2: Project Manager (PM)' | 'Tier 3: Operational Staff' | 'Tier 4: Internal IT / System Administrator';
+
 export interface AdminUser {
   id: string;
   username: string;
   email: string;
-  role: 'Principal Admin' | 'Lead Architect' | 'Editor';
+  role: AdminTier;
+  mfaEnabled?: boolean;
+  division?: 'Management' | 'Engineering' | 'Design' | 'Finance' | 'Operations';
   lastLogin: string;
   createdAt: string;
 }
@@ -43,7 +47,9 @@ const DEFAULT_ADMIN = {
   // SHA-256 hash representation of 'kapitechadmin'
   passwordHash: '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918',
   salt: 'kapi_salt_99x8',
-  role: 'Principal Admin' as const,
+  role: 'Tier 1: Top Management / Sponsor' as AdminTier,
+  mfaEnabled: true,
+  division: 'Management' as const,
   lastLogin: new Date().toISOString(),
   createdAt: '2025-01-01T00:00:00.00Z'
 };

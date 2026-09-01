@@ -64,9 +64,9 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
   }, [isOpen]);
 
   const sizeClasses = {
-    xs: 'px-2.5 py-1.5 text-[11px] gap-2 rounded-lg',
-    sm: 'px-3 py-2 text-xs gap-2.5 rounded-xl',
-    md: 'px-4 py-2.5 text-xs gap-3 rounded-xl'
+    xs: 'px-2.5 py-1.5 text-[11px] gap-2 rounded-md',
+    sm: 'px-3 py-1.5 text-xs gap-2.5 rounded-lg',
+    md: 'px-3.5 py-2 text-xs gap-3 rounded-lg'
   };
 
   return (
@@ -75,24 +75,24 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
         type="button"
         disabled={disabled}
         onClick={() => setIsOpen(!isOpen)}
-        className={`flex items-center justify-between font-mono transition-all duration-150 border select-none ${
+        className={`flex items-center justify-between font-sans transition-all duration-150 border select-none ${
           sizeClasses[size]
         } ${
           isOpen
-            ? 'bg-[#1E222A] border-brand-red text-white shadow-lg shadow-brand-red/10'
-            : 'bg-[#16181D] hover:bg-[#1C2027] border-white/10 hover:border-white/20 text-[#D0D4DC] hover:text-white'
+            ? 'bg-[#1B1E2B] border-[#E50914] text-white shadow-[0_0_12px_rgba(229,9,20,0.15)]'
+            : 'bg-[#161922] hover:bg-[#1B1E2B] border-[rgba(255,255,255,0.06)] hover:border-[rgba(255,255,255,0.12)] text-[#F8FAFC]'
         } ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} ${triggerClassName}`}
       >
         <div className="flex items-center gap-2 min-w-0 pr-2">
-          {prefixIcon && <span className="text-[#8A909D] shrink-0">{prefixIcon}</span>}
+          {prefixIcon && <span className="text-[#94A3B8] shrink-0">{prefixIcon}</span>}
           {selectedOption?.icon && <span className="shrink-0">{selectedOption.icon}</span>}
-          <span className="truncate font-semibold">
+          <span className="truncate font-medium text-xs">
             {selectedOption ? selectedOption.label : placeholder}
           </span>
           {selectedOption?.badge && (
             <span
               className={`px-1.5 py-0.5 rounded text-[9px] uppercase font-bold shrink-0 ${
-                selectedOption.badgeColor || 'bg-[#262930] text-[#8A909D]'
+                selectedOption.badgeColor || 'bg-[rgba(255,255,255,0.06)] text-[#94A3B8]'
               }`}
             >
               {selectedOption.badge}
@@ -102,8 +102,8 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
 
         <ChevronDown
           size={size === 'xs' ? 12 : 14}
-          className={`text-[#8A909D] transition-transform duration-200 shrink-0 ${
-            isOpen ? 'rotate-180 text-brand-red' : ''
+          className={`text-[#94A3B8] transition-transform duration-200 shrink-0 ${
+            isOpen ? 'rotate-180 text-[#FF1E27]' : ''
           }`}
         />
       </button>
@@ -111,11 +111,11 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: 6, scale: 0.98 }}
+            initial={{ opacity: 0, y: 4, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 4, scale: 0.98 }}
-            transition={{ duration: 0.15, ease: 'easeOut' }}
-            className={`absolute z-50 mt-1.5 min-w-[200px] max-w-[320px] max-h-[300px] overflow-y-auto bg-[#16181D]/95 backdrop-blur-xl border border-white/10 rounded-xl p-1.5 shadow-2xl space-y-1 font-mono text-xs ${
+            exit={{ opacity: 0, y: 2, scale: 0.98 }}
+            transition={{ duration: 0.12, ease: 'easeOut' }}
+            className={`absolute z-50 mt-1.5 min-w-[200px] max-w-[320px] max-h-[300px] overflow-y-auto bg-[#13151C] backdrop-blur-xl border border-[#1F222C] rounded-md p-1 shadow-[0_16px_40px_rgba(0,0,0,0.65)] space-y-0.5 font-sans text-xs custom-scrollbar ${
               align === 'right' ? 'right-0' : 'left-0'
             } ${menuClassName}`}
           >
@@ -129,24 +129,24 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
                     onChange(option.value);
                     setIsOpen(false);
                   }}
-                  className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-left transition-colors group ${
+                  className={`w-full flex items-center justify-between px-3 py-2 rounded-md text-left transition-colors group ${
                     isSelected
-                      ? 'bg-brand-red text-white font-bold shadow-sm shadow-brand-red/20'
-                      : 'text-[#8A909D] hover:text-white hover:bg-[#20242D]'
+                      ? 'bg-white/[0.08] text-[#F8FAFC] font-semibold border border-white/10'
+                      : 'text-[#94A3B8] hover:text-[#F8FAFC] hover:bg-white/[0.08]'
                   }`}
                 >
                   <div className="flex items-center gap-2.5 min-w-0 pr-2">
                     {option.icon && (
-                      <span className={isSelected ? 'text-white' : 'text-[#8A909D] group-hover:text-white'}>
+                      <span className={isSelected ? 'text-[#FF1E27]' : 'text-[#94A3B8] group-hover:text-white'}>
                         {option.icon}
                       </span>
                     )}
                     <div className="truncate">
-                      <div className="truncate">{option.label}</div>
+                      <div className="truncate font-medium">{option.label}</div>
                       {option.description && (
                         <div
                           className={`text-[10px] truncate ${
-                            isSelected ? 'text-white/80' : 'text-[#5C626E]'
+                            isSelected ? 'text-[#94A3B8]' : 'text-[#64748B]'
                           }`}
                         >
                           {option.description}
@@ -161,13 +161,13 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
                         className={`px-1.5 py-0.5 rounded text-[9px] font-bold ${
                           isSelected
                             ? 'bg-white/20 text-white'
-                            : option.badgeColor || 'bg-[#262930] text-[#8A909D]'
+                            : option.badgeColor || 'bg-[rgba(255,255,255,0.06)] text-[#94A3B8]'
                         }`}
                       >
                         {option.badge}
                       </span>
                     )}
-                    {isSelected && <Check size={13} className="text-white shrink-0" />}
+                    {isSelected && <Check size={13} className="text-[#FF1E27] shrink-0" />}
                   </div>
                 </button>
               );

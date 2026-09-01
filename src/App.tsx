@@ -38,6 +38,7 @@ import { AdminClients } from './pages/admin/AdminClients';
 import { AdminCmsProjects } from './pages/admin/AdminCmsProjects';
 import { AdminCmsServices } from './pages/admin/AdminCmsServices';
 import { AdminCmsTestimonials } from './pages/admin/AdminCmsTestimonials';
+import { AdminVendors } from './pages/admin/AdminVendors';
 import { AdminSettings } from './pages/admin/AdminSettings';
 import { RequireAdminAuth } from './components/admin/RequireAdminAuth';
 
@@ -100,6 +101,7 @@ const AnimatedRoutes = () => {
             <Route path="crm" element={<AdminCrm />} />
             <Route path="invoicing" element={<AdminInvoicing />} />
             <Route path="projects" element={<AdminProjects />} />
+            <Route path="vendors" element={<AdminVendors />} />
             <Route path="clients" element={<AdminClients />} />
             <Route path="cms/projects" element={<AdminCmsProjects />} />
             <Route path="cms/services" element={<AdminCmsServices />} />

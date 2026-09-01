@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { 
   Plus, 
   Search, 
@@ -13,13 +13,20 @@ import {
   Users, 
   Check, 
   X, 
-  Sparkles,
-  ShieldCheck,
-  Trash2,
-  SearchCode,
-  PenTool,
-  FileCode2,
-  ArrowRight
+  Sparkles, 
+  ShieldCheck, 
+  Trash2, 
+  SearchCode, 
+  PenTool, 
+  FileCode2, 
+  ArrowRight,
+  Download,
+  Filter,
+  BarChart3,
+  Receipt,
+  Clock,
+  AlertTriangle,
+  FileSpreadsheet
 } from 'lucide-react';
 import { getAdminSession, getAuditLogs, SecurityAuditLog } from '../../lib/adminAuth';
 import { subscribeToInbox, ContactSubmission, submitToInbox } from '../../lib/submissions';
@@ -32,16 +39,19 @@ import {
   ServiceCategory, 
   ServiceStatus, 
   ServicePriority,
-  weeklyVolumeDataset,
   SERVICE_REQUEST_EVENT
 } from '../../lib/serviceRequestStore';
 import { getActiveProjects, AgencyProject, PROJECT_EVENT_NAME } from '../../lib/projectStore';
 import { getCmsLeads, CrmLead, CRM_EVENT_NAME } from '../../lib/crmStore';
 import { useLanguage } from '../../lib/LanguageContext';
-import { getActiveCurrency, CurrencyCode, CURRENCY_EVENT } from '../../lib/currency';
+import { getActiveCurrency, CurrencyCode, CURRENCY_EVENT, formatCurrency } from '../../lib/currency';
+import { DropdownMenu, DropdownMenuItem } from '../../components/ui/DropdownMenu';
+import { CustomSelect, SelectOption } from '../../components/ui/CustomSelect';
+import { DataMigrationModal } from '../../components/admin/DataMigrationModal';
 
 export const AdminDashboard: React.FC = () => {
   const { language, t } = useLanguage();
+  const navigate = useNavigate();
   const session = getAdminSession();
 
   // Core Data States
@@ -52,19 +62,22 @@ export const AdminDashboard: React.FC = () => {
   const [auditLogs, setAuditLogs] = useState<SecurityAuditLog[]>([]);
   const [currency, setCurrency] = useState<CurrencyCode>(getActiveCurrency());
 
-  // Interactive UI Filters & Modals
+  // Interactive UI Filters & Controls
+  const [timeRange, setTimeRange] = useState<'lastWeek' | 'thisMonth' | 'last30Days' | 'thisYear'>('lastWeek');
   const [tableStatusFilter, setTableStatusFilter] = useState<string>('all');
   const [tableSearchQuery, setTableSearchQuery] = useState<string>('');
+  const [slaOnlyFilter, setSlaOnlyFilter] = useState<boolean>(false);
   const [selectedRequestIds, setSelectedRequestIds] = useState<string[]>([]);
-  const [chartHoveredDay, setChartHoveredDay] = useState<string | null>(null);
+  const [chartHoveredPillar, setChartHoveredPillar] = useState<string | null>(null);
 
   // Right Activity Feed Controls
   const [activityTab, setActivityTab] = useState<'today' | 'yesterday' | 'week'>('today');
   const [activitySearch, setActivitySearch] = useState<string>('');
 
-  // Modals
+  // Modals & Notifications
   const [activeModalRequest, setActiveModalRequest] = useState<ServiceRequest | null>(null);
   const [isNewRequestModalOpen, setIsNewRequestModalOpen] = useState(false);
+  const [isMigrationModalOpen, setIsMigrationModalOpen] = useState(false);
   const [testSending, setTestSending] = useState(false);
   const [statusNotification, setStatusNotification] = useState<string | null>(null);
 
@@ -128,10 +141,12 @@ export const AdminDashboard: React.FC = () => {
         req.requestId.toLowerCase().includes(tableSearchQuery.toLowerCase()) ||
         req.title.toLowerCase().includes(tableSearchQuery.toLowerCase()) ||
         req.clientName.toLowerCase().includes(tableSearchQuery.toLowerCase()) ||
+        req.clientCompany.toLowerCase().includes(tableSearchQuery.toLowerCase()) ||
         req.serviceType.toLowerCase().includes(tableSearchQuery.toLowerCase());
-      return matchesStatus && matchesSearch;
+      const matchesSla = !slaOnlyFilter || (req.slaDaysRemaining !== undefined && req.slaDaysRemaining <= 2);
+      return matchesStatus && matchesSearch && matchesSla;
     });
-  }, [serviceRequests, tableStatusFilter, tableSearchQuery]);
+  }, [serviceRequests, tableStatusFilter, tableSearchQuery, slaOnlyFilter]);
 
   // Handle Bulk Selection
   const handleSelectAll = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -151,7 +166,56 @@ export const AdminDashboard: React.FC = () => {
   // Quick Status Update
   const handleStatusChange = (id: string, newStatus: ServiceStatus) => {
     updateServiceRequestStatus(id, newStatus);
-    setStatusNotification(language === 'id' ? `Status diperbarui menjadi ${newStatus}` : `Status updated to ${newStatus}`);
+    const statusLabel = language === 'id' 
+      ? (newStatus === 'completed' ? 'Selesai' : newStatus === 'in_progress' ? 'Sedang Dikerjakan' : newStatus === 'review' ? 'Review' : 'Tertunda')
+      : (newStatus === 'completed' ? 'Completed' : newStatus === 'in_progress' ? 'In Progress' : newStatus === 'review' ? 'Review' : 'Pending');
+    setStatusNotification(language === 'id' ? `Status tiket diperbarui menjadi: ${statusLabel}` : `Ticket status updated to: ${statusLabel}`);
+    setTimeout(() => setStatusNotification(null), 3000);
+  };
+
+  // Bulk Actions
+  const handleBulkStatus = (newStatus: ServiceStatus) => {
+    selectedRequestIds.forEach(id => updateServiceRequestStatus(id, newStatus));
+    setSelectedRequestIds([]);
+    setStatusNotification(language === 'id' ? `${selectedRequestIds.length} tiket berhasil diperbarui.` : `${selectedRequestIds.length} tickets updated successfully.`);
+    setTimeout(() => setStatusNotification(null), 3000);
+  };
+
+  const handleBulkDelete = () => {
+    if (window.confirm(language === 'id' ? `Hapus ${selectedRequestIds.length} tiket terpilih?` : `Delete ${selectedRequestIds.length} selected tickets?`)) {
+      selectedRequestIds.forEach(id => deleteServiceRequest(id));
+      setSelectedRequestIds([]);
+      setStatusNotification(language === 'id' ? 'Tiket terpilih berhasil dihapus.' : 'Selected tickets deleted.');
+      setTimeout(() => setStatusNotification(null), 3000);
+    }
+  };
+
+  // Export Table to CSV
+  const handleExportCSV = () => {
+    const headers = ['Request ID', 'Title', 'Client', 'Company', 'Service Type', 'Priority', 'Status', 'Due Date', 'Est Hours', 'SLA Days'];
+    const rows = filteredRequests.map(r => [
+      r.requestId,
+      `"${r.title.replace(/"/g, '""')}"`,
+      `"${r.clientName.replace(/"/g, '""')}"`,
+      `"${r.clientCompany.replace(/"/g, '""')}"`,
+      r.serviceType,
+      r.priority,
+      r.status,
+      r.dueDate,
+      r.estimatedHours,
+      r.slaDaysRemaining || 0
+    ]);
+
+    const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', `kapitech_service_requests_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    setStatusNotification(language === 'id' ? 'Laporan CSV berhasil diunduh.' : 'CSV Report exported successfully.');
     setTimeout(() => setStatusNotification(null), 3000);
   };
 
@@ -170,13 +234,13 @@ export const AdminDashboard: React.FC = () => {
         name: 'Pratama Wijaya',
         role: 'Senior Tech Lead',
         initials: 'PW',
-        colorBg: 'bg-red-600'
+        colorBg: 'bg-[#E60023]'
       },
       status: 'in_progress',
       dueDate: new Date(Date.now() + 7 * 86400000).toISOString().split('T')[0],
       estimatedHours: parseInt(newHours) || 20,
       completedHours: 0,
-      description: newDesc || 'Standard agency service execution agreement and SLA.',
+      description: newDesc || (language === 'id' ? 'Perjanjian eksekusi layanan agensi dan SLA standar.' : 'Standard agency service execution agreement and SLA.'),
       slaDaysRemaining: 7
     });
 
@@ -185,7 +249,7 @@ export const AdminDashboard: React.FC = () => {
     setNewClient('');
     setNewCompany('');
     setNewDesc('');
-    setStatusNotification(language === 'id' ? 'Service Request baru berhasil dibuat.' : 'New Service Request created successfully.');
+    setStatusNotification(language === 'id' ? 'Permintaan layanan baru berhasil dibuat.' : 'New service request created successfully.');
     setTimeout(() => setStatusNotification(null), 3000);
   };
 
@@ -218,13 +282,13 @@ export const AdminDashboard: React.FC = () => {
     }
   };
 
-  // Activity Feed Events matching Image 2
+  // Activity Feed Events
   const activityEvents = useMemo(() => {
     const events = [
       {
         id: 'act_1',
-        title: 'SEO Report Sent to Client A',
-        desc: 'Ticket #2217 3LA Client A',
+        title: language === 'id' ? 'Laporan SEO Dikirim ke Klien A' : 'SEO Report Sent to Client A',
+        desc: 'Ticket #2217 SLA Client A',
         time: '12:30 AM',
         category: 'seo',
         timeframe: 'today',
@@ -233,9 +297,9 @@ export const AdminDashboard: React.FC = () => {
       },
       {
         id: 'act_2',
-        title: 'New Content Request from Client B',
-        desc: 'New Content Request from Client B',
-        time: '10 AM',
+        title: language === 'id' ? 'Permintaan Konten Baru dari Klien B' : 'New Content Request from Client B',
+        desc: language === 'id' ? 'Strategi artikel & copy landing' : 'Copywriting & landing page brief',
+        time: '10:00 AM',
         category: 'content',
         timeframe: 'today',
         icon: PenTool,
@@ -243,8 +307,8 @@ export const AdminDashboard: React.FC = () => {
       },
       {
         id: 'act_3',
-        title: 'Website Bug Fixed for Client C',
-        desc: 'Ticket #2322 Login Issue',
+        title: language === 'id' ? 'Bug Website Selesai Diperbaiki' : 'Website Bug Fixed for Client C',
+        desc: 'Ticket #2322 Auth Token Fix',
         time: '10:40 AM',
         category: 'dev',
         timeframe: 'today',
@@ -253,8 +317,8 @@ export const AdminDashboard: React.FC = () => {
       },
       {
         id: 'act_4',
-        title: 'Monthly Analytics Review',
-        desc: 'New article reviewed: Troubleshooting',
+        title: language === 'id' ? 'Review Analitik Bulanan' : 'Monthly Analytics Review',
+        desc: language === 'id' ? 'Audit metrik Core Web Vitals' : 'Core Web Vitals & conversion metrics',
         time: '10:30 AM',
         category: 'analytics',
         timeframe: 'today',
@@ -263,8 +327,8 @@ export const AdminDashboard: React.FC = () => {
       },
       {
         id: 'act_5',
-        title: 'Customer feedback',
-        desc: 'Great support supports, Thanks Sarah!',
+        title: language === 'id' ? 'Umpan Balik Klien' : 'Customer feedback',
+        desc: language === 'id' ? 'Dukungan sangat cepat, terima kasih tim!' : 'Great support responsiveness, thanks team!',
         time: '10:30 AM',
         category: 'feedback',
         timeframe: 'today',
@@ -273,19 +337,19 @@ export const AdminDashboard: React.FC = () => {
       },
       {
         id: 'act_6',
-        title: 'Sprint #14 Scope Deployed',
-        desc: 'Updated client directory & audit logger',
-        time: 'Yesterday 17:30',
+        title: language === 'id' ? 'Scope Sprint #14 Diluncurkan' : 'Sprint #14 Scope Deployed',
+        desc: language === 'id' ? 'Update direktori klien & audit logger' : 'Updated client directory & audit logger',
+        time: language === 'id' ? 'Kemarin 17:30' : 'Yesterday 17:30',
         category: 'system',
         timeframe: 'yesterday',
         icon: Layers,
-        badgeBg: 'bg-red-500/15 text-red-400 border border-red-500/30'
+        badgeBg: 'bg-rose-500/15 text-rose-400 border border-rose-500/30'
       },
       {
         id: 'act_7',
-        title: 'Cloud Run Edge Cache Sync Verified',
-        desc: 'Zero latency response verified at 24ms',
-        time: 'Yesterday 14:15',
+        title: language === 'id' ? 'Sinkronisasi Edge Cache Cloud Run' : 'Cloud Run Edge Cache Sync Verified',
+        desc: language === 'id' ? 'Latensi terverifikasi pada 24ms' : 'Zero latency verified at 24ms',
+        time: language === 'id' ? 'Kemarin 14:15' : 'Yesterday 14:15',
         category: 'system',
         timeframe: 'yesterday',
         icon: ShieldCheck,
@@ -293,9 +357,9 @@ export const AdminDashboard: React.FC = () => {
       },
       {
         id: 'act_8',
-        title: 'Service Agreement Renewed',
-        desc: 'Enterprise SLA extended for Q4 2026',
-        time: '3 days ago',
+        title: language === 'id' ? 'Perpanjangan Kontrak Layanan' : 'Service Agreement Renewed',
+        desc: language === 'id' ? 'SLA Enterprise diperpanjang untuk Q4 2026' : 'Enterprise SLA extended for Q4 2026',
+        time: language === 'id' ? '3 hari lalu' : '3 days ago',
         category: 'contract',
         timeframe: 'week',
         icon: CheckCircle2,
@@ -309,61 +373,127 @@ export const AdminDashboard: React.FC = () => {
                           e.desc.toLowerCase().includes(activitySearch.toLowerCase());
       return matchTime && matchSearch;
     });
-  }, [activityTab, activitySearch]);
+  }, [activityTab, activitySearch, language]);
+
+  // Time Range Options for Dropdown
+  const timeRangeOptions: SelectOption[] = [
+    { value: 'lastWeek', label: t('admin.dash.lastWeek') },
+    { value: 'thisMonth', label: t('admin.dash.thisMonth') },
+    { value: 'last30Days', label: t('admin.dash.last30Days') },
+    { value: 'thisYear', label: t('admin.dash.thisYear') }
+  ];
+
+  // Table More Action Dropdown Items
+  const tableActionItems: DropdownMenuItem[] = [
+    {
+      id: 'export',
+      label: t('admin.dash.exportReport'),
+      icon: <Download size={13} />,
+      onClick: handleExportCSV
+    },
+    {
+      id: 'bulk_progress',
+      label: t('admin.dash.markInProgress'),
+      icon: <Activity size={13} />,
+      onClick: () => handleBulkStatus('in_progress')
+    },
+    {
+      id: 'bulk_complete',
+      label: t('admin.dash.markCompleted'),
+      icon: <CheckCircle2 size={13} />,
+      onClick: () => handleBulkStatus('completed')
+    },
+    {
+      id: 'bulk_del',
+      label: t('admin.dash.deleteSelected'),
+      icon: <Trash2 size={13} />,
+      variant: 'danger',
+      divider: true,
+      onClick: handleBulkDelete
+    }
+  ];
 
   return (
     <div className="space-y-6">
       
       {/* ----------------------------------------------------------------- */}
-      {/* 1. TOP HEADER & GREETING (MATCHING IMAGE 2) */}
+      {/* 1. TOP HEADER & QUICK ACTION BAR (KAPITECH DARK AESTHETIC) */}
       {/* ----------------------------------------------------------------- */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-1">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-1">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-sans font-bold text-white tracking-tight flex items-center gap-2">
-            <span>Hello, {session?.user.username ? (session.user.username.charAt(0).toUpperCase() + session.user.username.slice(1)) : 'Alex Chen'}</span>
-            <span className="text-2xl">👋</span>
+          <h1 className="text-2xl sm:text-3xl font-sans font-bold text-[#F8FAFC] tracking-tight flex items-center gap-2">
+            <span>{t('admin.dash.greeting')}, {session?.user.username ? (session.user.username.charAt(0).toUpperCase() + session.user.username.slice(1)) : 'Alex Chen'}</span>
+            <span className="text-xl">👋</span>
           </h1>
           <p className="text-xs sm:text-sm text-[#94A3B8] mt-1">
-            Here are the latest insights from your customer interactions.
+            {t('admin.dash.greetingSub')}
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5">
-          {/* Time Range Selector */}
-          <div className="relative">
-            <button
-              onClick={() => {}}
-              className="px-3.5 py-2 rounded-xl bg-[#111827] hover:bg-[#161F30] border border-[#1E293B] text-xs text-[#94A3B8] hover:text-white flex items-center gap-2 transition-colors shadow-sm"
-            >
-              <Calendar size={13} className="text-red-400" />
-              <span>Last week</span>
-              <ChevronDown size={12} className="text-[#64748B]" />
-            </button>
-          </div>
+        <div className="flex flex-wrap items-center gap-2.5">
+          
+          {/* Sleek Floating Glassmorphic Time Range Dropdown */}
+          <CustomSelect
+            options={timeRangeOptions}
+            value={timeRange}
+            onChange={(val) => setTimeRange(val as any)}
+            size="sm"
+            prefixIcon={<Calendar size={13} className="text-[#FF1E27]" />}
+          />
 
+          {/* Quick CRM Lead button */}
           <button
-            onClick={() => setIsNewRequestModalOpen(true)}
-            className="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-sans font-semibold transition-all flex items-center gap-1.5 shadow-lg shadow-red-600/25 min-h-[38px]"
+            onClick={() => navigate('/admin/crm')}
+            className="px-3.5 py-2 rounded-lg bg-[#161922] hover:bg-[#1B1E2B] border border-[rgba(255,255,255,0.06)] hover:border-[rgba(255,255,255,0.12)] text-xs font-sans font-semibold text-[#F8FAFC] transition-all flex items-center gap-1.5 shadow-sm min-h-[38px]"
           >
-            <Plus size={14} />
-            <span>Add Request</span>
+            <BarChart3 size={13} className="text-emerald-400" />
+            <span>{t('admin.dash.newCrmLead')}</span>
           </button>
 
+          {/* Quick Invoice button */}
+          <button
+            onClick={() => navigate('/admin/invoicing')}
+            className="px-3.5 py-2 rounded-lg bg-[#161922] hover:bg-[#1B1E2B] border border-[rgba(255,255,255,0.06)] hover:border-[rgba(255,255,255,0.12)] text-xs font-sans font-semibold text-[#F8FAFC] transition-all flex items-center gap-1.5 shadow-sm min-h-[38px]"
+          >
+            <Receipt size={13} className="text-purple-400" />
+            <span>{t('admin.dash.newInvoice')}</span>
+          </button>
+
+          {/* Import / Migration Button */}
+          <button
+            onClick={() => setIsMigrationModalOpen(true)}
+            className="px-3.5 py-2 rounded-lg bg-[#161922] hover:bg-[#1B1E2B] border border-[rgba(255,255,255,0.06)] hover:border-[rgba(255,255,255,0.12)] text-xs font-sans font-semibold text-[#F8FAFC] transition-all flex items-center gap-1.5 shadow-sm min-h-[38px]"
+          >
+            <FileSpreadsheet size={13} className="text-cyan-400" />
+            <span>{language === 'id' ? 'Impor CSV' : 'Data Import'}</span>
+          </button>
+
+          {/* Strictly ONE '+' icon on Add Request */}
+          <button
+            onClick={() => setIsNewRequestModalOpen(true)}
+            className="px-4 py-2 rounded-lg bg-[#E50914] hover:bg-[#FF1E27] text-white text-xs font-sans font-semibold transition-all flex items-center gap-1.5 shadow-[0_0_16px_rgba(229,9,20,0.25)] min-h-[38px]"
+          >
+            <Plus size={14} />
+            <span>{t('admin.dash.addRequest')}</span>
+          </button>
+
+          {/* Simulate Inbound Activity */}
           <button
             onClick={handleSimulateLead}
             disabled={testSending}
-            title="Simulate Inbound Activity"
-            className="p-2.5 rounded-xl bg-[#111827] hover:bg-[#161F30] text-[#94A3B8] hover:text-white border border-[#1E293B] text-xs transition-all flex items-center justify-center min-h-[38px]"
+            title={t('admin.dash.simulateLead')}
+            className="p-2.5 rounded-lg bg-[#161922] hover:bg-[#1B1E2B] text-[#94A3B8] hover:text-white border border-[rgba(255,255,255,0.06)] hover:border-[rgba(255,255,255,0.12)] text-xs transition-all flex items-center justify-center min-h-[38px]"
           >
-            <Sparkles size={14} className={testSending ? 'animate-spin text-red-400' : 'text-red-400'} />
+            <Sparkles size={14} className={testSending ? 'animate-spin text-[#FF1E27]' : 'text-[#FF1E27]'} />
           </button>
         </div>
       </div>
 
+      {/* Floating Status Notification Banner */}
       {statusNotification && (
-        <div className="p-3.5 rounded-xl bg-red-950/40 border border-red-500/40 text-red-300 text-xs font-sans flex items-center justify-between animate-in fade-in duration-200">
+        <div className="p-3.5 rounded-lg bg-red-950/40 border border-[rgba(229,9,20,0.3)] text-red-200 text-xs font-sans flex items-center justify-between animate-in fade-in duration-200 shadow-lg">
           <div className="flex items-center gap-2">
-            <CheckCircle2 size={16} className="text-red-400" />
+            <CheckCircle2 size={16} className="text-[#FF1E27]" />
             <span>{statusNotification}</span>
           </div>
           <button onClick={() => setStatusNotification(null)} className="text-[#94A3B8] hover:text-white">
@@ -373,38 +503,48 @@ export const AdminDashboard: React.FC = () => {
       )}
 
       {/* ----------------------------------------------------------------- */}
-      {/* 2. TOP METRIC CARDS (3-GRID SPANNING FULL WIDTH - MATCHING IMAGE 2) */}
+      {/* 2. TOP METRIC CARDS (3-GRID SPANNING FULL WIDTH) */}
       {/* ----------------------------------------------------------------- */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
         
         {/* Card 1: Active Client Projects */}
-        <div className="bg-[#111827] border border-[#1E293B] p-5 rounded-2xl flex flex-col justify-between group hover:border-red-500/40 transition-all shadow-sm">
+        <div className="bg-[#0F1117] border border-[rgba(255,255,255,0.06)] p-5 rounded-[12px] flex flex-col justify-between group hover:border-[rgba(255,255,255,0.12)] hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(0,0,0,0.4)] transition-all duration-200">
           <div className="flex items-center justify-between text-[#94A3B8] mb-2">
-            <span className="text-xs font-sans font-semibold text-[#94A3B8]">Active Client Projects</span>
-            <div className="w-6 h-6 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+            <span className="text-xs font-sans font-semibold text-[#94A3B8]">{t('admin.dash.cardActiveProjects')}</span>
+            <div className="w-6 h-6 rounded-md bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
               <Check size={12} />
             </div>
           </div>
           
-          <div className="flex items-end justify-between mt-1">
+          <div className="flex items-end justify-between mt-2">
             <div>
-              <div className="text-3xl font-sans font-bold text-white tracking-tight">
+              <div className="text-[28px] font-sans font-bold text-[#F8FAFC] tracking-tight leading-none">
                 1,250
               </div>
-              <div className="text-[11px] font-mono text-emerald-400 mt-1 flex items-center gap-1">
-                <span className="font-semibold">+15%</span>
-                <span className="text-[#64748B]">vs last week</span>
+              <div className="text-[11px] font-mono text-emerald-400 mt-2 flex items-center gap-1.5">
+                <span className="px-1.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 font-semibold text-[10px]">+15%</span>
+                <span className="text-[#64748B]">{t('admin.dash.vsLastWeek')}</span>
               </div>
             </div>
 
-            {/* Smooth SVG Sparkline */}
-            <div className="w-28 h-9">
-              <svg viewBox="0 0 100 30" className="w-full h-full overflow-visible">
+            {/* Smooth Curved SVG Sparkline with Gradient Area */}
+            <div className="w-28 h-10">
+              <svg viewBox="0 0 100 36" className="w-full h-full overflow-visible">
+                <defs>
+                  <linearGradient id="gradProjects" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#4ADE80" stopOpacity="0.25" />
+                    <stop offset="100%" stopColor="#4ADE80" stopOpacity="0" />
+                  </linearGradient>
+                </defs>
                 <path
-                  d="M 0,24 Q 25,28 45,18 T 75,12 T 100,5"
+                  d="M 0,28 Q 25,32 45,20 T 75,14 T 100,6 L 100,36 L 0,36 Z"
+                  fill="url(#gradProjects)"
+                />
+                <path
+                  d="M 0,28 Q 25,32 45,20 T 75,14 T 100,6"
                   fill="none"
-                  stroke="#10B981"
-                  strokeWidth="2.5"
+                  stroke="#4ADE80"
+                  strokeWidth="2"
                   strokeLinecap="round"
                 />
               </svg>
@@ -413,33 +553,43 @@ export const AdminDashboard: React.FC = () => {
         </div>
 
         {/* Card 2: Daily Task Resolution */}
-        <div className="bg-[#111827] border border-[#1E293B] p-5 rounded-2xl flex flex-col justify-between group hover:border-red-500/40 transition-all shadow-sm">
+        <div className="bg-[#0F1117] border border-[rgba(255,255,255,0.06)] p-5 rounded-[12px] flex flex-col justify-between group hover:border-[rgba(255,255,255,0.12)] hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(0,0,0,0.4)] transition-all duration-200">
           <div className="flex items-center justify-between text-[#94A3B8] mb-2">
-            <span className="text-xs font-sans font-semibold text-[#94A3B8]">Daily Task Resolution</span>
-            <div className="w-6 h-6 rounded-full bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
+            <span className="text-xs font-sans font-semibold text-[#94A3B8]">{t('admin.dash.cardDailyResolution')}</span>
+            <div className="w-6 h-6 rounded-md bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
               <Activity size={12} />
             </div>
           </div>
           
-          <div className="flex items-end justify-between mt-1">
+          <div className="flex items-end justify-between mt-2">
             <div>
-              <div className="text-3xl font-sans font-bold text-white tracking-tight">
+              <div className="text-[28px] font-sans font-bold text-[#F8FAFC] tracking-tight leading-none">
                 320
               </div>
-              <div className="text-[11px] font-mono text-emerald-400 mt-1 flex items-center gap-1">
-                <span className="font-semibold">+5%</span>
-                <span className="text-[#64748B]">vs last week</span>
+              <div className="text-[11px] font-mono text-emerald-400 mt-2 flex items-center gap-1.5">
+                <span className="px-1.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 font-semibold text-[10px]">+5%</span>
+                <span className="text-[#64748B]">{t('admin.dash.vsLastWeek')}</span>
               </div>
             </div>
 
-            {/* Smooth SVG Sparkline */}
-            <div className="w-28 h-9">
-              <svg viewBox="0 0 100 30" className="w-full h-full overflow-visible">
+            {/* Smooth Curved SVG Sparkline */}
+            <div className="w-28 h-10">
+              <svg viewBox="0 0 100 36" className="w-full h-full overflow-visible">
+                <defs>
+                  <linearGradient id="gradTasks" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#4ADE80" stopOpacity="0.25" />
+                    <stop offset="100%" stopColor="#4ADE80" stopOpacity="0" />
+                  </linearGradient>
+                </defs>
                 <path
-                  d="M 0,22 Q 20,26 40,15 T 70,16 T 100,6"
+                  d="M 0,26 Q 20,30 40,18 T 70,18 T 100,8 L 100,36 L 0,36 Z"
+                  fill="url(#gradTasks)"
+                />
+                <path
+                  d="M 0,26 Q 20,30 40,18 T 70,18 T 100,8"
                   fill="none"
-                  stroke="#10B981"
-                  strokeWidth="2.5"
+                  stroke="#4ADE80"
+                  strokeWidth="2"
                   strokeLinecap="round"
                 />
               </svg>
@@ -448,33 +598,43 @@ export const AdminDashboard: React.FC = () => {
         </div>
 
         {/* Card 3: Client Satisfaction Score */}
-        <div className="bg-[#111827] border border-[#1E293B] p-5 rounded-2xl flex flex-col justify-between group hover:border-red-500/40 transition-all shadow-sm">
+        <div className="bg-[#0F1117] border border-[rgba(255,255,255,0.06)] p-5 rounded-[12px] flex flex-col justify-between group hover:border-[rgba(255,255,255,0.12)] hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(0,0,0,0.4)] transition-all duration-200">
           <div className="flex items-center justify-between text-[#94A3B8] mb-2">
-            <span className="text-xs font-sans font-semibold text-[#94A3B8]">Client Satisfaction Score</span>
-            <div className="w-6 h-6 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+            <span className="text-xs font-sans font-semibold text-[#94A3B8]">{t('admin.dash.cardSatisfaction')}</span>
+            <div className="w-6 h-6 rounded-md bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
               <ShieldCheck size={12} />
             </div>
           </div>
           
-          <div className="flex items-end justify-between mt-1">
+          <div className="flex items-end justify-between mt-2">
             <div>
-              <div className="text-3xl font-sans font-bold text-white tracking-tight">
+              <div className="text-[28px] font-sans font-bold text-[#F8FAFC] tracking-tight leading-none">
                 4.8<span className="text-lg font-normal text-[#64748B]">/5</span>
               </div>
-              <div className="text-[11px] font-mono text-emerald-400 mt-1 flex items-center gap-1">
-                <span className="font-semibold">+2%</span>
-                <span className="text-[#64748B]">vs last week</span>
+              <div className="text-[11px] font-mono text-emerald-400 mt-2 flex items-center gap-1.5">
+                <span className="px-1.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 font-semibold text-[10px]">+2%</span>
+                <span className="text-[#64748B]">{t('admin.dash.vsLastWeek')}</span>
               </div>
             </div>
 
-            {/* Smooth SVG Sparkline */}
-            <div className="w-28 h-9">
-              <svg viewBox="0 0 100 30" className="w-full h-full overflow-visible">
+            {/* Smooth Curved SVG Sparkline */}
+            <div className="w-28 h-10">
+              <svg viewBox="0 0 100 36" className="w-full h-full overflow-visible">
+                <defs>
+                  <linearGradient id="gradSat" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#4ADE80" stopOpacity="0.25" />
+                    <stop offset="100%" stopColor="#4ADE80" stopOpacity="0" />
+                  </linearGradient>
+                </defs>
                 <path
-                  d="M 0,20 Q 30,22 55,14 T 80,10 T 100,5"
+                  d="M 0,24 Q 30,26 55,16 T 80,12 T 100,6 L 100,36 L 0,36 Z"
+                  fill="url(#gradSat)"
+                />
+                <path
+                  d="M 0,24 Q 30,26 55,16 T 80,12 T 100,6"
                   fill="none"
-                  stroke="#10B981"
-                  strokeWidth="2.5"
+                  stroke="#4ADE80"
+                  strokeWidth="2"
                   strokeLinecap="round"
                 />
               </svg>
@@ -490,41 +650,62 @@ export const AdminDashboard: React.FC = () => {
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-5">
         
         {/* Left Column: Weekly Service Request Volume (8 Cols) */}
-        <div className="xl:col-span-8 bg-[#111827] border border-[#1E293B] p-5 sm:p-6 rounded-2xl shadow-sm flex flex-col justify-between">
+        <div className="xl:col-span-8 bg-[#0F1117] border border-[rgba(255,255,255,0.06)] p-5 sm:p-6 rounded-[12px] shadow-sm flex flex-col justify-between">
           
           {/* Header */}
           <div>
-            <div className="flex items-center justify-between pb-4 border-b border-[#1E293B]">
+            <div className="flex items-center justify-between pb-4 border-b border-[rgba(255,255,255,0.06)]">
               <div className="flex items-center gap-2">
-                <Layers size={16} className="text-red-400" />
-                <h2 className="text-sm sm:text-base font-sans font-bold text-white">
-                  Weekly Service Request Volume
+                <Layers size={16} className="text-[#FF1E27]" />
+                <h2 className="text-sm sm:text-base font-sans font-bold text-[#F8FAFC]">
+                  {t('admin.dash.weeklyVolume')}
                 </h2>
               </div>
 
               <div className="flex items-center gap-2">
-                <button className="px-3 py-1.5 rounded-xl bg-[#080C14] border border-[#1E293B] text-xs text-[#94A3B8] hover:text-white flex items-center gap-1.5 transition-colors">
-                  <span>Last week</span>
-                  <ChevronDown size={11} className="text-[#64748B]" />
-                </button>
-                <button className="p-1.5 rounded-lg text-[#64748B] hover:text-white hover:bg-[#080C14] transition-colors">
-                  <MoreVertical size={14} />
-                </button>
+                <CustomSelect
+                  options={timeRangeOptions}
+                  value={timeRange}
+                  onChange={(val) => setTimeRange(val as any)}
+                  size="xs"
+                />
+                
+                <DropdownMenu
+                  trigger={
+                    <button className="p-1.5 rounded-lg text-[#64748B] hover:text-white hover:bg-[#161922] transition-colors border border-transparent hover:border-[rgba(255,255,255,0.06)]">
+                      <MoreVertical size={14} />
+                    </button>
+                  }
+                  items={[
+                    {
+                      id: 'export_chart',
+                      label: t('admin.dash.exportReport'),
+                      icon: <Download size={13} />,
+                      onClick: handleExportCSV
+                    },
+                    {
+                      id: 'open_proj',
+                      label: t('admin.dash.openProjects'),
+                      icon: <ArrowRight size={13} />,
+                      onClick: () => navigate('/admin/projects')
+                    }
+                  ]}
+                />
               </div>
             </div>
 
             {/* Big Stat + Trend Badge */}
             <div className="flex items-center gap-3 mt-4">
-              <span className="text-2xl sm:text-3xl font-sans font-bold text-white tracking-tight">
+              <span className="text-2xl sm:text-3xl font-sans font-bold text-[#F8FAFC] tracking-tight">
                 4,790
               </span>
-              <span className="text-[11px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/20 font-semibold">
-                +8% vs last week
+              <span className="text-[11px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20 font-semibold">
+                +8% {t('admin.dash.vsLastWeek')}
               </span>
             </div>
           </div>
 
-          {/* Grouped Bar Chart Area (Matching Image 2 with 4 pillars: SEO, Content, Development, Design) */}
+          {/* Grouped Bar Chart Area (4 pillars: SEO, Content, Development, Design) */}
           <div className="mt-6 pt-2">
             <div className="relative h-60 w-full flex">
               
@@ -538,19 +719,19 @@ export const AdminDashboard: React.FC = () => {
               </div>
 
               {/* Chart Grid Lines & Bars Container */}
-              <div className="flex-1 relative flex flex-col justify-between h-48 border-b border-[#1E293B]">
+              <div className="flex-1 relative flex flex-col justify-between h-48 border-b border-[rgba(255,255,255,0.06)]">
                 
                 {/* Horizontal Gridlines */}
                 <div className="absolute inset-0 flex flex-col justify-between pointer-events-none">
-                  <div className="border-b border-dashed border-[#1E293B] w-full" />
-                  <div className="border-b border-dashed border-[#1E293B] w-full" />
-                  <div className="border-b border-dashed border-[#1E293B] w-full" />
-                  <div className="border-b border-dashed border-[#1E293B] w-full" />
+                  <div className="border-b border-dashed border-[rgba(255,255,255,0.04)] w-full" />
+                  <div className="border-b border-dashed border-[rgba(255,255,255,0.04)] w-full" />
+                  <div className="border-b border-dashed border-[rgba(255,255,255,0.04)] w-full" />
+                  <div className="border-b border-dashed border-[rgba(255,255,255,0.04)] w-full" />
                   <div className="w-full" />
                 </div>
 
                 {/* Benchmark Target Line at 800 */}
-                <div className="absolute top-0 left-0 right-0 border-b border-dashed border-red-500/30 z-0 pointer-events-none" />
+                <div className="absolute top-0 left-0 right-0 border-b border-dashed border-[rgba(229,9,20,0.3)] z-0 pointer-events-none" />
 
                 {/* 4 Grouped Pillars on X-Axis */}
                 <div className="relative z-10 h-full flex items-end justify-around px-2 sm:px-6">
@@ -558,40 +739,40 @@ export const AdminDashboard: React.FC = () => {
                   {/* Pillar 1: SEO */}
                   <div 
                     className="flex items-end gap-1 sm:gap-1.5 h-full relative group cursor-pointer"
-                    onMouseEnter={() => setChartHoveredDay('SEO')}
-                    onMouseLeave={() => setChartHoveredDay(null)}
+                    onMouseEnter={() => setChartHoveredPillar('SEO')}
+                    onMouseLeave={() => setChartHoveredPillar(null)}
                   >
-                    <div className="w-3.5 sm:w-5 bg-red-600/70 group-hover:bg-red-500 rounded-t-sm transition-all" style={{ height: '48%' }} />
-                    <div className="w-3.5 sm:w-5 bg-red-600 group-hover:bg-red-400 rounded-t-sm transition-all" style={{ height: '62%' }} />
-                    <div className="w-3.5 sm:w-5 bg-red-800/60 group-hover:bg-red-700 rounded-t-sm transition-all" style={{ height: '30%' }} />
-                    <div className="w-3.5 sm:w-5 bg-red-600/80 group-hover:bg-red-500 rounded-t-sm transition-all" style={{ height: '54%' }} />
+                    <div className="w-3.5 sm:w-5 bg-[#E50914]/70 group-hover:bg-[#E50914] rounded-t-[4px] transition-all chart-bar-glow" style={{ height: '48%' }} />
+                    <div className="w-3.5 sm:w-5 bg-[#FF1E27] group-hover:bg-red-400 rounded-t-[4px] transition-all chart-bar-glow" style={{ height: '62%' }} />
+                    <div className="w-3.5 sm:w-5 bg-[#8A0014]/60 group-hover:bg-[#A50019] rounded-t-[4px] transition-all chart-bar-glow" style={{ height: '30%' }} />
+                    <div className="w-3.5 sm:w-5 bg-[#E50914]/80 group-hover:bg-[#FF1E27] rounded-t-[4px] transition-all chart-bar-glow" style={{ height: '54%' }} />
 
-                    {chartHoveredDay === 'SEO' && (
-                      <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-[#080C14] border border-[#1E293B] px-2.5 py-1 rounded-lg text-[10px] font-mono text-white whitespace-nowrap shadow-xl z-30 animate-in fade-in zoom-in-95 duration-150">
-                        <span className="text-red-400 font-bold">SEO Total:</span> 580 reqs
+                    {chartHoveredPillar === 'SEO' && (
+                      <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-[#161922] border border-[rgba(255,255,255,0.12)] px-2.5 py-1 rounded-md text-[11px] font-mono text-white whitespace-nowrap shadow-[0_4px_12px_rgba(0,0,0,0.5)] z-30 animate-in fade-in zoom-in-95 duration-150">
+                        <span className="text-[#FF1E27] font-bold">SEO Total:</span> 580 {language === 'id' ? 'permintaan' : 'reqs'}
                       </div>
                     )}
                   </div>
 
-                  {/* Pillar 2: Content (with highlighted Tue: 450 card) */}
+                  {/* Pillar 2: Content */}
                   <div 
                     className="flex items-end gap-1 sm:gap-1.5 h-full relative group cursor-pointer"
-                    onMouseEnter={() => setChartHoveredDay('Content')}
-                    onMouseLeave={() => setChartHoveredDay(null)}
+                    onMouseEnter={() => setChartHoveredPillar('Content')}
+                    onMouseLeave={() => setChartHoveredPillar(null)}
                   >
-                    {/* Tooltip on active bar matching Image 2 */}
-                    <div className="absolute -top-7 left-1/4 -translate-x-1/2 bg-black border border-white/20 px-2 py-0.5 rounded text-[10px] font-mono text-white whitespace-nowrap shadow-xl z-20">
-                      Tue: 450
+                    {/* Tooltip on active bar */}
+                    <div className="absolute -top-7 left-1/4 -translate-x-1/2 bg-[#161922] border border-[rgba(255,255,255,0.12)] px-2 py-0.5 rounded text-[10px] font-mono text-white whitespace-nowrap shadow-xl z-20">
+                      {language === 'id' ? 'Sel: 450' : 'Tue: 450'}
                     </div>
 
-                    <div className="w-3.5 sm:w-5 bg-red-950 group-hover:bg-red-900 rounded-t-sm transition-all" style={{ height: '88%' }} />
-                    <div className="w-3.5 sm:w-5 bg-red-600/70 group-hover:bg-red-500 rounded-t-sm transition-all" style={{ height: '42%' }} />
-                    <div className="w-3.5 sm:w-5 bg-red-600 group-hover:bg-red-400 rounded-t-sm transition-all" style={{ height: '68%' }} />
-                    <div className="w-3.5 sm:w-5 bg-red-600/60 group-hover:bg-red-500 rounded-t-sm transition-all" style={{ height: '50%' }} />
+                    <div className="w-3.5 sm:w-5 bg-[#380008] group-hover:bg-[#5C000E] rounded-t-[4px] transition-all chart-bar-glow" style={{ height: '88%' }} />
+                    <div className="w-3.5 sm:w-5 bg-[#E50914]/70 group-hover:bg-[#FF1E27] rounded-t-[4px] transition-all chart-bar-glow" style={{ height: '42%' }} />
+                    <div className="w-3.5 sm:w-5 bg-[#E50914] group-hover:bg-red-400 rounded-t-[4px] transition-all chart-bar-glow" style={{ height: '68%' }} />
+                    <div className="w-3.5 sm:w-5 bg-[#E50914]/60 group-hover:bg-[#FF1E27] rounded-t-[4px] transition-all chart-bar-glow" style={{ height: '50%' }} />
 
-                    {chartHoveredDay === 'Content' && (
-                      <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-[#080C14] border border-[#1E293B] px-2.5 py-1 rounded-lg text-[10px] font-mono text-white whitespace-nowrap shadow-xl z-30 animate-in fade-in zoom-in-95 duration-150">
-                        <span className="text-red-400 font-bold">Content:</span> 1,240 reqs
+                    {chartHoveredPillar === 'Content' && (
+                      <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-[#161922] border border-[rgba(255,255,255,0.12)] px-2.5 py-1 rounded-md text-[11px] font-mono text-white whitespace-nowrap shadow-[0_4px_12px_rgba(0,0,0,0.5)] z-30 animate-in fade-in zoom-in-95 duration-150">
+                        <span className="text-[#FF1E27] font-bold">{language === 'id' ? 'Konten:' : 'Content:'}</span> 1,240 {language === 'id' ? 'permintaan' : 'reqs'}
                       </div>
                     )}
                   </div>
@@ -599,17 +780,17 @@ export const AdminDashboard: React.FC = () => {
                   {/* Pillar 3: Development */}
                   <div 
                     className="flex items-end gap-1 sm:gap-1.5 h-full relative group cursor-pointer"
-                    onMouseEnter={() => setChartHoveredDay('Development')}
-                    onMouseLeave={() => setChartHoveredDay(null)}
+                    onMouseEnter={() => setChartHoveredPillar('Development')}
+                    onMouseLeave={() => setChartHoveredPillar(null)}
                   >
-                    <div className="w-3.5 sm:w-5 bg-red-600/80 group-hover:bg-red-500 rounded-t-sm transition-all" style={{ height: '58%' }} />
-                    <div className="w-3.5 sm:w-5 bg-red-600 group-hover:bg-red-400 rounded-t-sm transition-all" style={{ height: '78%' }} />
-                    <div className="w-3.5 sm:w-5 bg-red-600/70 group-hover:bg-red-500 rounded-t-sm transition-all" style={{ height: '56%' }} />
-                    <div className="w-3.5 sm:w-5 bg-red-800/60 group-hover:bg-red-700 rounded-t-sm transition-all" style={{ height: '36%' }} />
+                    <div className="w-3.5 sm:w-5 bg-[#E50914]/80 group-hover:bg-[#FF1E27] rounded-t-[4px] transition-all chart-bar-glow" style={{ height: '58%' }} />
+                    <div className="w-3.5 sm:w-5 bg-[#E50914] group-hover:bg-red-400 rounded-t-[4px] transition-all chart-bar-glow" style={{ height: '78%' }} />
+                    <div className="w-3.5 sm:w-5 bg-[#E50914]/70 group-hover:bg-[#FF1E27] rounded-t-[4px] transition-all chart-bar-glow" style={{ height: '56%' }} />
+                    <div className="w-3.5 sm:w-5 bg-[#8A0014]/60 group-hover:bg-[#A50019] rounded-t-[4px] transition-all chart-bar-glow" style={{ height: '36%' }} />
 
-                    {chartHoveredDay === 'Development' && (
-                      <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-[#080C14] border border-[#1E293B] px-2.5 py-1 rounded-lg text-[10px] font-mono text-white whitespace-nowrap shadow-xl z-30 animate-in fade-in zoom-in-95 duration-150">
-                        <span className="text-red-400 font-bold">Dev Total:</span> 1,890 reqs
+                    {chartHoveredPillar === 'Development' && (
+                      <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-[#161922] border border-[rgba(255,255,255,0.12)] px-2.5 py-1 rounded-md text-[11px] font-mono text-white whitespace-nowrap shadow-[0_4px_12px_rgba(0,0,0,0.5)] z-30 animate-in fade-in zoom-in-95 duration-150">
+                        <span className="text-[#FF1E27] font-bold">Dev Total:</span> 1,890 {language === 'id' ? 'permintaan' : 'reqs'}
                       </div>
                     )}
                   </div>
@@ -617,17 +798,17 @@ export const AdminDashboard: React.FC = () => {
                   {/* Pillar 4: Design */}
                   <div 
                     className="flex items-end gap-1 sm:gap-1.5 h-full relative group cursor-pointer"
-                    onMouseEnter={() => setChartHoveredDay('Design')}
-                    onMouseLeave={() => setChartHoveredDay(null)}
+                    onMouseEnter={() => setChartHoveredPillar('Design')}
+                    onMouseLeave={() => setChartHoveredPillar(null)}
                   >
-                    <div className="w-3.5 sm:w-5 bg-red-600 group-hover:bg-red-400 rounded-t-sm transition-all" style={{ height: '66%' }} />
-                    <div className="w-3.5 sm:w-5 bg-red-600/70 group-hover:bg-red-500 rounded-t-sm transition-all" style={{ height: '44%' }} />
-                    <div className="w-3.5 sm:w-5 bg-red-600/90 group-hover:bg-red-500 rounded-t-sm transition-all" style={{ height: '52%' }} />
-                    <div className="w-3.5 sm:w-5 bg-red-800/50 group-hover:bg-red-700 rounded-t-sm transition-all" style={{ height: '28%' }} />
+                    <div className="w-3.5 sm:w-5 bg-[#E50914] group-hover:bg-red-400 rounded-t-[4px] transition-all chart-bar-glow" style={{ height: '66%' }} />
+                    <div className="w-3.5 sm:w-5 bg-[#E50914]/70 group-hover:bg-[#FF1E27] rounded-t-[4px] transition-all chart-bar-glow" style={{ height: '44%' }} />
+                    <div className="w-3.5 sm:w-5 bg-[#E50914]/90 group-hover:bg-[#FF1E27] rounded-t-[4px] transition-all chart-bar-glow" style={{ height: '52%' }} />
+                    <div className="w-3.5 sm:w-5 bg-[#8A0014]/50 group-hover:bg-[#A50019] rounded-t-[4px] transition-all chart-bar-glow" style={{ height: '28%' }} />
 
-                    {chartHoveredDay === 'Design' && (
-                      <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-[#080C14] border border-[#1E293B] px-2.5 py-1 rounded-lg text-[10px] font-mono text-white whitespace-nowrap shadow-xl z-30 animate-in fade-in zoom-in-95 duration-150">
-                        <span className="text-red-400 font-bold">Design Total:</span> 1,080 reqs
+                    {chartHoveredPillar === 'Design' && (
+                      <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-[#161922] border border-[rgba(255,255,255,0.12)] px-2.5 py-1 rounded-md text-[11px] font-mono text-white whitespace-nowrap shadow-[0_4px_12px_rgba(0,0,0,0.5)] z-30 animate-in fade-in zoom-in-95 duration-150">
+                        <span className="text-[#FF1E27] font-bold">Design Total:</span> 1,080 {language === 'id' ? 'permintaan' : 'reqs'}
                       </div>
                     )}
                   </div>
@@ -636,56 +817,68 @@ export const AdminDashboard: React.FC = () => {
               </div>
             </div>
 
-            {/* X-Axis Labels (SEO, Content, Development, Design) */}
+            {/* X-Axis Labels */}
             <div className="flex justify-around pl-8 pt-3 text-xs font-sans font-medium text-[#94A3B8]">
               <span>SEO</span>
-              <span>Content</span>
+              <span>{language === 'id' ? 'Konten' : 'Content'}</span>
               <span>Development</span>
-              <span>Design</span>
+              <span>{language === 'id' ? 'Desain' : 'Design'}</span>
             </div>
           </div>
 
         </div>
 
-        {/* Right Column: Latest Updates Feed (4 Cols - MATCHING IMAGE 2) */}
-        <div className="xl:col-span-4 bg-[#111827] border border-[#1E293B] rounded-2xl p-5 sm:p-6 shadow-sm flex flex-col justify-between">
+        {/* Right Column: Latest Updates Feed (4 Cols) */}
+        <div className="xl:col-span-4 bg-[#0F1117] border border-[rgba(255,255,255,0.06)] rounded-[12px] p-5 sm:p-6 shadow-sm flex flex-col justify-between">
           <div>
             
             {/* Header */}
-            <div className="flex items-center justify-between pb-3 border-b border-[#1E293B]">
-              <h2 className="text-sm sm:text-base font-sans font-bold text-white">
-                Latest Updates
+            <div className="flex items-center justify-between pb-3 border-b border-[rgba(255,255,255,0.06)]">
+              <h2 className="text-sm sm:text-base font-sans font-bold text-[#F8FAFC]">
+                {t('admin.dash.latestUpdates')}
               </h2>
-              <button className="p-1 text-[#64748B] hover:text-white transition-colors">
-                <MoreVertical size={14} />
-              </button>
+              <DropdownMenu
+                trigger={
+                  <button className="p-1 text-[#64748B] hover:text-white transition-colors">
+                    <MoreVertical size={14} />
+                  </button>
+                }
+                items={[
+                  {
+                    id: 'logs',
+                    label: t('admin.dash.viewAuditLogs'),
+                    icon: <ShieldCheck size={13} />,
+                    onClick: () => navigate('/admin/settings')
+                  }
+                ]}
+              />
             </div>
 
-            {/* Timeframe Tab Buttons (Today, Yesterday, This week) */}
-            <div className="grid grid-cols-3 gap-1 bg-[#080C14] border border-[#1E293B] rounded-xl p-1 mt-3 text-xs font-sans">
+            {/* Timeframe Tab Buttons (Today, Yesterday, This week) - Inset Segmented Control */}
+            <div className="grid grid-cols-3 gap-1 bg-[#0B0C10] border border-[rgba(255,255,255,0.06)] rounded-lg p-1 mt-3 text-xs font-sans">
               <button
                 onClick={() => setActivityTab('today')}
-                className={`py-1 rounded-lg text-center transition-all ${
-                  activityTab === 'today' ? 'bg-red-600 text-white font-semibold shadow-sm' : 'text-[#94A3B8] hover:text-white'
+                className={`py-1 rounded-md text-center transition-all ${
+                  activityTab === 'today' ? 'bg-[#1C1F2B] text-white font-semibold shadow-sm' : 'text-[#94A3B8] hover:text-white'
                 }`}
               >
-                Today
+                {t('admin.dash.today')}
               </button>
               <button
                 onClick={() => setActivityTab('yesterday')}
-                className={`py-1 rounded-lg text-center transition-all ${
-                  activityTab === 'yesterday' ? 'bg-red-600 text-white font-semibold shadow-sm' : 'text-[#94A3B8] hover:text-white'
+                className={`py-1 rounded-md text-center transition-all ${
+                  activityTab === 'yesterday' ? 'bg-[#1C1F2B] text-white font-semibold shadow-sm' : 'text-[#94A3B8] hover:text-white'
                 }`}
               >
-                Yesterday
+                {t('admin.dash.yesterday')}
               </button>
               <button
                 onClick={() => setActivityTab('week')}
-                className={`py-1 rounded-lg text-center transition-all ${
-                  activityTab === 'week' ? 'bg-red-600 text-white font-semibold shadow-sm' : 'text-[#94A3B8] hover:text-white'
+                className={`py-1 rounded-md text-center transition-all ${
+                  activityTab === 'week' ? 'bg-[#1C1F2B] text-white font-semibold shadow-sm' : 'text-[#94A3B8] hover:text-white'
                 }`}
               >
-                This week
+                {t('admin.dash.thisWeek')}
               </button>
             </div>
 
@@ -696,116 +889,51 @@ export const AdminDashboard: React.FC = () => {
                 type="text"
                 value={activitySearch}
                 onChange={(e) => setActivitySearch(e.target.value)}
-                placeholder="Search activities"
-                className="w-full pl-8 pr-3 py-1.5 rounded-xl bg-[#080C14] border border-[#1E293B] text-xs text-white placeholder-[#64748B] focus:outline-none focus:border-red-500 transition-colors"
+                placeholder={t('admin.dash.searchActivities')}
+                className="w-full pl-8 pr-3 py-1.5 rounded-lg bg-[#1B1E2B] border border-[rgba(255,255,255,0.06)] text-xs text-white placeholder-[#64748B] focus:outline-none focus:border-[#E50914] transition-colors"
               />
             </div>
 
             {/* Subheading Activity Count */}
-            <div className="text-xs font-sans font-semibold text-white mt-4 mb-2">
-              8 new activities today
+            <div className="text-xs font-sans font-semibold text-[#F8FAFC] mt-4 mb-2">
+              8 {t('admin.dash.newActivitiesCount')}
             </div>
 
-            {/* Activity List Items (Exact Content from Image 2) */}
+            {/* Activity List Items with 32px icon containers & border-b separators */}
             <div className="space-y-3 max-h-[300px] overflow-y-auto pr-1 custom-scrollbar">
-              
-              {/* Item 1: SEO Report */}
-              <div className="flex items-start justify-between gap-2.5 group">
-                <div className="flex items-start gap-2.5 min-w-0">
-                  <div className="w-7 h-7 rounded-full bg-blue-500/15 text-blue-400 border border-blue-500/30 flex items-center justify-center text-xs shrink-0 mt-0.5">
-                    @
-                  </div>
-                  <div className="min-w-0">
-                    <div className="text-xs font-semibold text-white truncate group-hover:text-red-400 transition-colors">
-                      SEO Report Sent to Client A
+              {activityEvents.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <div key={item.id} className="flex items-start justify-between gap-2.5 pb-3 border-b border-[rgba(255,255,255,0.04)] last:border-0 group">
+                    <div className="flex items-start gap-2.5 min-w-0">
+                      <div className={`w-8 h-8 rounded-lg ${item.badgeBg} flex items-center justify-center text-xs shrink-0 mt-0.5`}>
+                        <Icon size={13} />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="text-xs font-semibold text-[#F8FAFC] truncate group-hover:text-[#FF1E27] transition-colors">
+                          {item.title}
+                        </div>
+                        <div className="text-[10px] text-[#64748B] truncate mt-0.5">
+                          {item.desc}
+                        </div>
+                      </div>
                     </div>
-                    <div className="text-[10px] text-[#64748B] truncate">
-                      Ticket #2217 3LA Client A
-                    </div>
+                    <span className="text-[11px] font-mono text-[#64748B] shrink-0 tabular-nums">{item.time}</span>
                   </div>
-                </div>
-                <span className="text-[10px] font-mono text-[#64748B] shrink-0">12:30 AM</span>
-              </div>
-
-              {/* Item 2: Content Request */}
-              <div className="flex items-start justify-between gap-2.5 group">
-                <div className="flex items-start gap-2.5 min-w-0">
-                  <div className="w-7 h-7 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 flex items-center justify-center text-xs shrink-0 mt-0.5">
-                    <PenTool size={11} />
-                  </div>
-                  <div className="min-w-0">
-                    <div className="text-xs font-semibold text-white truncate group-hover:text-red-400 transition-colors">
-                      New Content Request from Client B
-                    </div>
-                    <div className="text-[10px] text-[#64748B] truncate">
-                      New Content Request from Client B
-                    </div>
-                  </div>
-                </div>
-                <span className="text-[10px] font-mono text-[#64748B] shrink-0">10 AM</span>
-              </div>
-
-              {/* Item 3: Bug Fixed */}
-              <div className="flex items-start justify-between gap-2.5 group">
-                <div className="flex items-start gap-2.5 min-w-0">
-                  <div className="w-7 h-7 rounded-full bg-purple-500/15 text-purple-400 border border-purple-500/30 flex items-center justify-center text-xs shrink-0 mt-0.5">
-                    <FileCode2 size={11} />
-                  </div>
-                  <div className="min-w-0">
-                    <div className="text-xs font-semibold text-white truncate group-hover:text-red-400 transition-colors">
-                      Website Bug Fixed for Client C
-                    </div>
-                    <div className="text-[10px] text-[#64748B] truncate">
-                      Ticket #2322 Login Issue
-                    </div>
-                  </div>
-                </div>
-                <span className="text-[10px] font-mono text-[#64748B] shrink-0">10:40 AM</span>
-              </div>
-
-              {/* Item 4: Monthly Analytics */}
-              <div className="flex items-start justify-between gap-2.5 group">
-                <div className="flex items-start gap-2.5 min-w-0">
-                  <div className="w-7 h-7 rounded-full bg-cyan-500/15 text-cyan-400 border border-cyan-500/30 flex items-center justify-center text-xs shrink-0 mt-0.5">
-                    <Activity size={11} />
-                  </div>
-                  <div className="min-w-0">
-                    <div className="text-xs font-semibold text-white truncate group-hover:text-red-400 transition-colors">
-                      Monthly Analytics Review
-                    </div>
-                    <div className="text-[10px] text-[#64748B] truncate">
-                      New article reviewed: Troubleshooting
-                    </div>
-                  </div>
-                </div>
-                <span className="text-[10px] font-mono text-[#64748B] shrink-0">10:30 AM</span>
-              </div>
-
-              {/* Item 5: Customer Feedback */}
-              <div className="flex items-start justify-between gap-2.5 group">
-                <div className="flex items-start gap-2.5 min-w-0">
-                  <div className="w-7 h-7 rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/30 flex items-center justify-center text-xs shrink-0 mt-0.5">
-                    <Users size={11} />
-                  </div>
-                  <div className="min-w-0">
-                    <div className="text-xs font-semibold text-white truncate group-hover:text-red-400 transition-colors">
-                      Customer feedback
-                    </div>
-                    <div className="text-[10px] text-[#64748B] truncate">
-                      Great support supports, Thanks Sarah!
-                    </div>
-                  </div>
-                </div>
-                <span className="text-[10px] font-mono text-[#64748B] shrink-0">10:30 AM</span>
-              </div>
-
+                );
+              })}
             </div>
 
           </div>
 
-          <div className="pt-3 border-t border-[#1E293B] mt-4 flex items-center justify-between text-[11px] font-mono text-[#64748B]">
-            <span>System SLA: 99.98%</span>
-            <span className="text-red-400 hover:underline cursor-pointer">View audit logs</span>
+          <div className="pt-3 border-t border-[rgba(255,255,255,0.06)] mt-4 flex items-center justify-between text-[11px] font-mono text-[#64748B]">
+            <span>{t('admin.dash.systemSla')}: 99.98%</span>
+            <button 
+              onClick={() => navigate('/admin/settings')} 
+              className="text-[#FF1E27] hover:underline cursor-pointer"
+            >
+              {t('admin.dash.viewAuditLogs')}
+            </button>
           </div>
         </div>
 
@@ -814,101 +942,130 @@ export const AdminDashboard: React.FC = () => {
       {/* ----------------------------------------------------------------- */}
       {/* 4. BOTTOM SECTION: SERVICE REQUEST MONITORING TABLE (FULL WIDTH) */}
       {/* ----------------------------------------------------------------- */}
-      <div className="bg-[#111827] border border-[#1E293B] rounded-2xl overflow-hidden shadow-sm">
+      <div className="bg-[#0F1117] border border-[rgba(255,255,255,0.06)] rounded-[12px] overflow-hidden shadow-sm">
         
         {/* Table Controls Header */}
-        <div className="p-5 border-b border-[#1E293B] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="p-5 border-b border-[rgba(255,255,255,0.06)] flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           
-          <div className="flex items-center gap-2">
-            <Layers size={16} className="text-red-400" />
-            <h2 className="text-base font-sans font-bold text-white">
-              Service Request Monitoring
-            </h2>
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-[#161922] border border-[rgba(255,255,255,0.06)] flex items-center justify-center text-[#FF1E27]">
+              <Layers size={16} />
+            </div>
+            <div>
+              <h2 className="text-base font-sans font-bold text-[#F8FAFC]">
+                {t('admin.dash.serviceReqMonitoring')}
+              </h2>
+              <p className="text-[11px] font-mono text-[#94A3B8]">
+                {filteredRequests.length} {language === 'id' ? 'antrean deliverable aktif' : 'active queue deliverables'}
+              </p>
+            </div>
           </div>
 
-          {/* Search Ticket + Filter Dropdown */}
-          <div className="flex items-center gap-3">
+          {/* Search Ticket + Filter Pills + Dropdown Action */}
+          <div className="flex flex-wrap items-center gap-3">
+            
+            {/* Search Input */}
             <div className="relative">
               <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#64748B]" />
               <input
                 type="text"
                 value={tableSearchQuery}
                 onChange={(e) => setTableSearchQuery(e.target.value)}
-                placeholder="Ticket"
-                className="pl-8 pr-3 py-1.5 rounded-xl bg-[#080C14] border border-[#1E293B] text-xs text-white placeholder-[#64748B] focus:outline-none focus:border-red-500 w-36 sm:w-44 transition-colors"
+                placeholder={t('admin.dash.ticketSearch') + '...'}
+                className="pl-8 pr-3 py-1.5 rounded-lg bg-[#1B1E2B] border border-[rgba(255,255,255,0.06)] text-xs text-white placeholder-[#64748B] focus:outline-none focus:border-[#E50914] w-36 sm:w-44 transition-colors"
               />
             </div>
 
-            {/* Status Filter Dropdown / Pills */}
-            <div className="flex items-center bg-[#080C14] border border-[#1E293B] rounded-xl p-1 text-xs font-sans">
+            {/* Status Filter Pills */}
+            <div className="flex items-center bg-[#0B0C10] border border-[rgba(255,255,255,0.06)] rounded-lg p-1 text-xs font-sans">
               <button
                 onClick={() => setTableStatusFilter('all')}
-                className={`px-2.5 py-1 rounded-lg transition-colors ${
-                  tableStatusFilter === 'all' ? 'bg-red-600 text-white font-semibold shadow-sm' : 'text-[#94A3B8] hover:text-white'
+                className={`px-2.5 py-1 rounded-md transition-colors ${
+                  tableStatusFilter === 'all' ? 'bg-[#1C1F2B] text-white font-semibold shadow-sm' : 'text-[#94A3B8] hover:text-white'
                 }`}
               >
-                All
+                {t('admin.dash.filterAll')}
               </button>
               <button
                 onClick={() => setTableStatusFilter('in_progress')}
-                className={`px-2.5 py-1 rounded-lg transition-colors ${
-                  tableStatusFilter === 'in_progress' ? 'bg-red-600 text-white font-semibold shadow-sm' : 'text-[#94A3B8] hover:text-white'
+                className={`px-2.5 py-1 rounded-md transition-colors ${
+                  tableStatusFilter === 'in_progress' ? 'bg-[#1C1F2B] text-white font-semibold shadow-sm' : 'text-[#94A3B8] hover:text-white'
                 }`}
               >
-                In Progress
+                {t('admin.dash.filterInProgress')}
               </button>
               <button
                 onClick={() => setTableStatusFilter('review')}
-                className={`px-2.5 py-1 rounded-lg transition-colors ${
-                  tableStatusFilter === 'review' ? 'bg-red-600 text-white font-semibold shadow-sm' : 'text-[#94A3B8] hover:text-white'
+                className={`px-2.5 py-1 rounded-md transition-colors ${
+                  tableStatusFilter === 'review' ? 'bg-[#1C1F2B] text-white font-semibold shadow-sm' : 'text-[#94A3B8] hover:text-white'
                 }`}
               >
-                Review
+                {t('admin.dash.filterReview')}
               </button>
               <button
                 onClick={() => setTableStatusFilter('completed')}
-                className={`px-2.5 py-1 rounded-lg transition-colors ${
-                  tableStatusFilter === 'completed' ? 'bg-red-600 text-white font-semibold shadow-sm' : 'text-[#94A3B8] hover:text-white'
+                className={`px-2.5 py-1 rounded-md transition-colors ${
+                  tableStatusFilter === 'completed' ? 'bg-[#1C1F2B] text-white font-semibold shadow-sm' : 'text-[#94A3B8] hover:text-white'
                 }`}
               >
-                Completed
+                {t('admin.dash.filterCompleted')}
               </button>
             </div>
 
-            <button className="p-1.5 rounded-lg text-[#64748B] hover:text-white hover:bg-[#080C14] transition-colors">
-              <MoreVertical size={14} />
+            {/* SLA Alert Filter Pill */}
+            <button
+              onClick={() => setSlaOnlyFilter(!slaOnlyFilter)}
+              className={`px-2.5 py-1.5 rounded-lg text-xs font-mono flex items-center gap-1.5 transition-all border ${
+                slaOnlyFilter 
+                  ? 'bg-amber-500/20 text-amber-300 border-amber-500/50 font-bold shadow-sm' 
+                  : 'bg-[#161922] text-[#94A3B8] border-[rgba(255,255,255,0.06)] hover:text-white'
+              }`}
+            >
+              <AlertTriangle size={12} className={slaOnlyFilter ? 'text-amber-400' : 'text-[#64748B]'} />
+              <span>{t('admin.dash.slaWarning')}</span>
             </button>
+
+            {/* Bulk Action / More Dropdown */}
+            <DropdownMenu
+              trigger={
+                <button className="p-2 rounded-lg bg-[#161922] text-[#94A3B8] hover:text-white border border-[rgba(255,255,255,0.06)] hover:border-[rgba(255,255,255,0.12)] transition-colors">
+                  <MoreVertical size={14} />
+                </button>
+              }
+              items={tableActionItems}
+            />
+
           </div>
         </div>
 
         {/* Data Table */}
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto custom-scrollbar">
           <table className="w-full text-left border-collapse text-xs font-sans">
             <thead>
-              <tr className="border-b border-[#1E293B] bg-[#080C14]/60 text-[#64748B] font-mono text-[11px] uppercase">
+              <tr className="border-b border-[rgba(255,255,255,0.06)] bg-[#0B0C10]/60 text-[#94A3B8] font-mono text-[11px] uppercase">
                 <th className="p-4 w-10">
                   <input
                     type="checkbox"
                     onChange={handleSelectAll}
                     checked={selectedRequestIds.length > 0 && selectedRequestIds.length === filteredRequests.length}
-                    className="rounded bg-[#080C14] border-[#1E293B] text-red-600 focus:ring-0 focus:ring-offset-0"
+                    className="rounded bg-[#1B1E2B] border-[rgba(255,255,255,0.12)] text-[#E50914] focus:ring-0 focus:ring-offset-0"
                   />
                 </th>
-                <th className="p-4">Request ID ⇅</th>
-                <th className="p-4">Service Type ⇅</th>
-                <th className="p-4">Priority ⇅</th>
-                <th className="p-4">Assigned To ⇅</th>
-                <th className="p-4">Status ⇅</th>
-                <th className="p-4">Created Date ⇅</th>
-                <th className="p-4">Due Date ⇅</th>
-                <th className="p-4 text-right">Actions</th>
+                <th className="p-4">{t('admin.dash.thReqId')} ⇅</th>
+                <th className="p-4">{t('admin.dash.thServiceType')} ⇅</th>
+                <th className="p-4">{t('admin.dash.thPriority')} ⇅</th>
+                <th className="p-4">{t('admin.dash.thAssignedTo')} ⇅</th>
+                <th className="p-4">{t('admin.dash.thStatus')} ⇅</th>
+                <th className="p-4">{t('admin.dash.thCreatedDate')} ⇅</th>
+                <th className="p-4">{t('admin.dash.thDueDate')} ⇅</th>
+                <th className="p-4 text-right">{t('admin.dash.thActions')}</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#1E293B]/60">
+            <tbody className="divide-y divide-[rgba(255,255,255,0.04)]">
               {filteredRequests.length === 0 ? (
                 <tr>
                   <td colSpan={9} className="p-8 text-center text-xs font-mono text-[#94A3B8]">
-                    No service requests found matching the active filter.
+                    {language === 'id' ? 'Tidak ada permintaan layanan yang cocok dengan filter.' : 'No service requests found matching the active filter.'}
                   </td>
                 </tr>
               ) : (
@@ -917,8 +1074,8 @@ export const AdminDashboard: React.FC = () => {
                   return (
                     <tr 
                       key={req.id} 
-                      className={`hover:bg-[#161F30] transition-colors group cursor-pointer ${
-                        isSelected ? 'bg-red-950/20' : ''
+                      className={`hover:bg-[#161922] transition-colors group cursor-pointer ${
+                        isSelected ? 'bg-[rgba(229,9,20,0.08)]' : ''
                       }`}
                       onClick={() => setActiveModalRequest(req)}
                     >
@@ -927,14 +1084,14 @@ export const AdminDashboard: React.FC = () => {
                           type="checkbox"
                           checked={isSelected}
                           onChange={() => handleSelectOne(req.id)}
-                          className="rounded bg-[#080C14] border-[#1E293B] text-red-600 focus:ring-0 focus:ring-offset-0"
+                          className="rounded bg-[#1B1E2B] border-[rgba(255,255,255,0.12)] text-[#E50914] focus:ring-0 focus:ring-offset-0"
                         />
                       </td>
-                      <td className="p-4 font-mono font-semibold text-red-400">
+                      <td className="p-4 font-mono font-semibold text-[#FF1E27]">
                         {req.requestId}
                       </td>
                       <td className="p-4 max-w-xs">
-                        <div className="font-semibold text-white truncate group-hover:text-red-400 transition-colors">
+                        <div className="font-semibold text-white truncate group-hover:text-[#FF1E27] transition-colors">
                           {req.title}
                         </div>
                         <div className="text-[11px] text-[#94A3B8] truncate mt-0.5">
@@ -948,12 +1105,15 @@ export const AdminDashboard: React.FC = () => {
                           req.priority === 'medium' ? 'bg-rose-500/15 text-rose-400 border border-rose-500/30' :
                           'bg-slate-500/15 text-slate-400 border border-slate-500/30'
                         }`}>
-                          {req.priority}
+                          {req.priority === 'urgent' ? t('admin.dash.priority.urgent') :
+                           req.priority === 'high' ? t('admin.dash.priority.high') :
+                           req.priority === 'medium' ? t('admin.dash.priority.medium') :
+                           t('admin.dash.priority.low')}
                         </span>
                       </td>
                       <td className="p-4">
                         <div className="flex items-center gap-2">
-                          <div className="w-6 h-6 rounded-full bg-red-600 text-white flex items-center justify-center text-[10px] font-bold shrink-0">
+                          <div className="w-6 h-6 rounded-full bg-[#E50914] text-white flex items-center justify-center text-[10px] font-bold shrink-0">
                             {req.assignedMember.initials || 'A'}
                           </div>
                           <span className="text-[#F8FAFC] font-medium truncate">{req.assignedMember.name}</span>
@@ -963,29 +1123,31 @@ export const AdminDashboard: React.FC = () => {
                         <select
                           value={req.status}
                           onChange={(e) => handleStatusChange(req.id, e.target.value as ServiceStatus)}
-                          className={`px-2.5 py-1 rounded-lg text-[11px] font-mono font-semibold border bg-[#080C14] focus:outline-none transition-colors cursor-pointer ${
+                          className={`px-2.5 py-1 rounded-lg text-[11px] font-mono font-semibold border bg-[#1B1E2B] focus:outline-none transition-colors cursor-pointer ${
                             req.status === 'completed' ? 'text-emerald-400 border-emerald-500/30' :
                             req.status === 'review' ? 'text-purple-400 border-purple-500/30' :
-                            req.status === 'in_progress' ? 'text-red-400 border-red-500/30' :
+                            req.status === 'in_progress' ? 'text-[#FF1E27] border-[rgba(229,9,20,0.4)]' :
                             'text-amber-400 border-amber-500/30'
                           }`}
                         >
-                          <option value="pending">Pending</option>
-                          <option value="in_progress">In Progress</option>
-                          <option value="review">Review</option>
-                          <option value="completed">Completed</option>
+                          <option value="pending">{t('admin.dash.status.pending')}</option>
+                          <option value="in_progress">{t('admin.dash.status.in_progress')}</option>
+                          <option value="review">{t('admin.dash.status.review')}</option>
+                          <option value="completed">{t('admin.dash.status.completed')}</option>
                         </select>
                       </td>
                       <td className="p-4 font-mono text-[11px] text-[#94A3B8]">
                         2025-08-19
                       </td>
                       <td className="p-4 font-mono text-[11px] text-[#94A3B8]">
-                        {req.dueDate}
+                        <span className={req.slaDaysRemaining !== undefined && req.slaDaysRemaining <= 2 ? 'text-amber-400 font-bold' : ''}>
+                          {req.dueDate}
+                        </span>
                       </td>
                       <td className="p-4 text-right" onClick={(e) => e.stopPropagation()}>
                         <button
                           onClick={() => setActiveModalRequest(req)}
-                          className="p-1.5 text-[#64748B] hover:text-white hover:bg-[#1E293B] rounded-lg transition-colors"
+                          className="p-1.5 text-[#64748B] hover:text-white hover:bg-[#1B1E2B] rounded-lg transition-colors"
                         >
                           <MoreVertical size={14} />
                         </button>
@@ -999,13 +1161,13 @@ export const AdminDashboard: React.FC = () => {
         </div>
 
         {/* Table Footer */}
-        <div className="p-4 border-t border-[#1E293B] bg-[#080C14]/40 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs font-mono text-[#64748B]">
+        <div className="p-4 border-t border-[rgba(255,255,255,0.06)] bg-[#0B0C10]/40 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs font-mono text-[#64748B]">
           <div>
-            Showing {filteredRequests.length} of {serviceRequests.length} total entries
+            {t('admin.dash.showingRequests')} {filteredRequests.length} {t('admin.dash.ofTotal')} ({serviceRequests.length})
           </div>
           <div className="flex items-center gap-2">
-            <Link to="/admin/projects" className="text-red-400 hover:underline flex items-center gap-1">
-              <span>Open Project Execution Board</span>
+            <Link to="/admin/projects" className="text-[#FF1E27] hover:underline flex items-center gap-1">
+              <span>{t('admin.dash.openProjects')}</span>
               <ChevronRight size={12} />
             </Link>
           </div>
@@ -1014,19 +1176,19 @@ export const AdminDashboard: React.FC = () => {
       </div>
 
       {/* ----------------------------------------------------------------- */}
-      {/* 5. SERVICE REQUEST DETAIL MODAL */}
+      {/* 5. SERVICE REQUEST DETAIL MODAL (KAPITECH GLASSMORPHIC PANEL) */}
       {/* ----------------------------------------------------------------- */}
       {activeModalRequest && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-[#0B0F17] border border-[#1E293B] rounded-2xl w-full max-w-lg shadow-2xl p-6 relative animate-in zoom-in-95 duration-150">
+          <div className="bg-[#0F1117] border border-[rgba(255,255,255,0.08)] rounded-2xl w-full max-w-lg shadow-[0_20px_60px_rgba(0,0,0,0.7)] p-6 relative animate-in zoom-in-95 duration-150">
             <button
               onClick={() => setActiveModalRequest(null)}
-              className="absolute top-4 right-4 p-1 rounded-lg text-[#94A3B8] hover:text-white hover:bg-[#1E293B]"
+              className="absolute top-4 right-4 p-1 rounded-lg text-[#94A3B8] hover:text-white hover:bg-[#161922]"
             >
               <X size={16} />
             </button>
 
-            <div className="flex items-center gap-2 font-mono text-red-400 text-xs font-semibold mb-2">
+            <div className="flex items-center gap-2 font-mono text-[#FF1E27] text-xs font-semibold mb-2">
               <span>{activeModalRequest.requestId}</span>
               <span>•</span>
               <span className="text-[#94A3B8]">{activeModalRequest.serviceType}</span>
@@ -1036,30 +1198,30 @@ export const AdminDashboard: React.FC = () => {
               {activeModalRequest.title}
             </h3>
             <p className="text-xs text-[#94A3B8] mb-4">
-              Client: {activeModalRequest.clientCompany} ({activeModalRequest.clientName})
+              {language === 'id' ? 'Klien' : 'Client'}: {activeModalRequest.clientCompany} ({activeModalRequest.clientName})
             </p>
 
-            <div className="p-4 rounded-xl bg-[#111827] border border-[#1E293B] space-y-3 mb-5 text-xs">
+            <div className="p-4 rounded-xl bg-[#161922] border border-[rgba(255,255,255,0.06)] space-y-3 mb-5 text-xs">
               <p className="text-[#F8FAFC] leading-relaxed">
                 {activeModalRequest.description}
               </p>
               
-              <div className="grid grid-cols-2 gap-3 pt-3 border-t border-[#1E293B] text-[11px] font-mono">
+              <div className="grid grid-cols-2 gap-3 pt-3 border-t border-[rgba(255,255,255,0.06)] text-[11px] font-mono">
                 <div>
-                  <span className="text-[#64748B] block">Assigned Specialist:</span>
+                  <span className="text-[#64748B] block">{language === 'id' ? 'Spesialis Ditugaskan:' : 'Assigned Specialist:'}</span>
                   <span className="text-white font-semibold">{activeModalRequest.assignedMember.name}</span>
                 </div>
                 <div>
-                  <span className="text-[#64748B] block">Due Date:</span>
+                  <span className="text-[#64748B] block">{language === 'id' ? 'Batas Waktu:' : 'Due Date:'}</span>
                   <span className="text-white font-semibold">{activeModalRequest.dueDate}</span>
                 </div>
                 <div>
-                  <span className="text-[#64748B] block">Estimated Work:</span>
-                  <span className="text-red-400 font-semibold">{activeModalRequest.estimatedHours} Hours</span>
+                  <span className="text-[#64748B] block">{language === 'id' ? 'Estimasi Pengerjaan:' : 'Estimated Work:'}</span>
+                  <span className="text-[#FF1E27] font-semibold">{activeModalRequest.estimatedHours} {language === 'id' ? 'Jam' : 'Hours'}</span>
                 </div>
                 <div>
-                  <span className="text-[#64748B] block">SLA Remaining:</span>
-                  <span className="text-emerald-400 font-semibold">{activeModalRequest.slaDaysRemaining} Days</span>
+                  <span className="text-[#64748B] block">{language === 'id' ? 'Sisa SLA:' : 'SLA Remaining:'}</span>
+                  <span className="text-emerald-400 font-semibold">{activeModalRequest.slaDaysRemaining} {language === 'id' ? 'Hari' : 'Days'}</span>
                 </div>
               </div>
             </div>
@@ -1069,26 +1231,26 @@ export const AdminDashboard: React.FC = () => {
                 onClick={() => {
                   deleteServiceRequest(activeModalRequest.id);
                   setActiveModalRequest(null);
-                  setStatusNotification('Service request deleted.');
+                  setStatusNotification(language === 'id' ? 'Permintaan layanan dihapus.' : 'Service request deleted.');
                 }}
-                className="px-3 py-2 rounded-xl bg-red-950/40 border border-red-500/30 text-red-400 hover:bg-red-900/50 text-xs font-mono flex items-center gap-1.5"
+                className="px-3 py-2 rounded-lg bg-red-950/40 border border-red-500/30 text-red-400 hover:bg-red-900/50 text-xs font-mono flex items-center gap-1.5"
               >
                 <Trash2 size={13} />
-                <span>Delete</span>
+                <span>{t('admin.action.delete')}</span>
               </button>
 
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setActiveModalRequest(null)}
-                  className="px-4 py-2 rounded-xl bg-[#161F30] hover:bg-[#1E293B] text-white text-xs font-sans"
+                  className="px-4 py-2 rounded-lg bg-[#161922] hover:bg-[#1B1E2B] text-white text-xs font-sans border border-[rgba(255,255,255,0.06)]"
                 >
-                  Close
+                  {t('admin.action.close')}
                 </button>
                 <Link
                   to="/admin/projects"
-                  className="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-sans font-semibold flex items-center gap-1 shadow-md shadow-red-600/20"
+                  className="px-4 py-2 rounded-lg bg-[#E50914] hover:bg-[#FF1E27] text-white text-xs font-sans font-semibold flex items-center gap-1 shadow-[0_0_16px_rgba(229,9,20,0.25)]"
                 >
-                  <span>Execute in Projects</span>
+                  <span>{t('admin.dash.executeProjects')}</span>
                   <ArrowRight size={13} />
                 </Link>
               </div>
@@ -1102,65 +1264,65 @@ export const AdminDashboard: React.FC = () => {
       {/* ----------------------------------------------------------------- */}
       {isNewRequestModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-[#0B0F17] border border-[#1E293B] rounded-2xl w-full max-w-lg shadow-2xl p-6 relative animate-in zoom-in-95 duration-150">
+          <div className="bg-[#0F1117] border border-[rgba(255,255,255,0.08)] rounded-2xl w-full max-w-lg shadow-[0_20px_60px_rgba(0,0,0,0.7)] p-6 relative animate-in zoom-in-95 duration-150">
             <button
               onClick={() => setIsNewRequestModalOpen(false)}
-              className="absolute top-4 right-4 p-1 rounded-lg text-[#94A3B8] hover:text-white hover:bg-[#1E293B]"
+              className="absolute top-4 right-4 p-1 rounded-lg text-[#94A3B8] hover:text-white hover:bg-[#161922]"
             >
               <X size={16} />
             </button>
 
             <h3 className="text-lg font-sans font-bold text-white mb-1">
-              Create New Service Request
+              {t('admin.dash.createReqTitle')}
             </h3>
             <p className="text-xs text-[#94A3B8] mb-5">
-              Add a client service delivery request into the agency queue.
+              {t('admin.dash.createReqSub')}
             </p>
 
             <form onSubmit={handleCreateRequest} className="space-y-4 text-xs font-sans">
               <div>
-                <label className="block text-[#94A3B8] mb-1 font-medium">Request Title *</label>
+                <label className="block text-[#94A3B8] mb-1 font-medium">{t('admin.dash.reqTitleLabel')} *</label>
                 <input
                   type="text"
                   required
                   value={newTitle}
                   onChange={(e) => setNewTitle(e.target.value)}
-                  placeholder="e.g. Next.js Headless Web Platform Migration"
-                  className="w-full px-3 py-2 rounded-xl bg-[#111827] border border-[#1E293B] text-white focus:outline-none focus:border-red-500"
+                  placeholder={language === 'id' ? 'contoh: Migrasi Web Platform Headless Next.js' : 'e.g. Next.js Headless Web Platform Migration'}
+                  className="w-full px-3 py-2 rounded-lg bg-[#1B1E2B] border border-[rgba(255,255,255,0.06)] text-white focus:outline-none focus:border-[#E50914]"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[#94A3B8] mb-1 font-medium">Client Contact *</label>
+                  <label className="block text-[#94A3B8] mb-1 font-medium">{t('admin.dash.clientContactLabel')} *</label>
                   <input
                     type="text"
                     required
                     value={newClient}
                     onChange={(e) => setNewClient(e.target.value)}
                     placeholder="e.g. Marcus Thorne"
-                    className="w-full px-3 py-2 rounded-xl bg-[#111827] border border-[#1E293B] text-white focus:outline-none focus:border-red-500"
+                    className="w-full px-3 py-2 rounded-lg bg-[#1B1E2B] border border-[rgba(255,255,255,0.06)] text-white focus:outline-none focus:border-[#E50914]"
                   />
                 </div>
                 <div>
-                  <label className="block text-[#94A3B8] mb-1 font-medium">Company Name</label>
+                  <label className="block text-[#94A3B8] mb-1 font-medium">{t('admin.dash.companyNameLabel')}</label>
                   <input
                     type="text"
                     value={newCompany}
                     onChange={(e) => setNewCompany(e.target.value)}
                     placeholder="e.g. Lumina Real Estate"
-                    className="w-full px-3 py-2 rounded-xl bg-[#111827] border border-[#1E293B] text-white focus:outline-none focus:border-red-500"
+                    className="w-full px-3 py-2 rounded-lg bg-[#1B1E2B] border border-[rgba(255,255,255,0.06)] text-white focus:outline-none focus:border-[#E50914]"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label className="block text-[#94A3B8] mb-1 font-medium">Service Type</label>
+                  <label className="block text-[#94A3B8] mb-1 font-medium">{t('admin.dash.thServiceType')}</label>
                   <select
                     value={newServiceType}
                     onChange={(e) => setNewServiceType(e.target.value as ServiceCategory)}
-                    className="w-full px-3 py-2 rounded-xl bg-[#111827] border border-[#1E293B] text-white focus:outline-none focus:border-red-500"
+                    className="w-full px-3 py-2 rounded-lg bg-[#1B1E2B] border border-[rgba(255,255,255,0.06)] text-white focus:outline-none focus:border-[#E50914]"
                   >
                     <option value="Web Dev">Web Dev</option>
                     <option value="SEO">SEO</option>
@@ -1170,37 +1332,37 @@ export const AdminDashboard: React.FC = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-[#94A3B8] mb-1 font-medium">Priority</label>
+                  <label className="block text-[#94A3B8] mb-1 font-medium">{t('admin.dash.thPriority')}</label>
                   <select
                     value={newPriority}
                     onChange={(e) => setNewPriority(e.target.value as ServicePriority)}
-                    className="w-full px-3 py-2 rounded-xl bg-[#111827] border border-[#1E293B] text-white focus:outline-none focus:border-red-500"
+                    className="w-full px-3 py-2 rounded-lg bg-[#1B1E2B] border border-[rgba(255,255,255,0.06)] text-white focus:outline-none focus:border-[#E50914]"
                   >
-                    <option value="urgent">Urgent</option>
-                    <option value="high">High</option>
-                    <option value="medium">Medium</option>
-                    <option value="low">Low</option>
+                    <option value="urgent">{t('admin.dash.priority.urgent')}</option>
+                    <option value="high">{t('admin.dash.priority.high')}</option>
+                    <option value="medium">{t('admin.dash.priority.medium')}</option>
+                    <option value="low">{t('admin.dash.priority.low')}</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-[#94A3B8] mb-1 font-medium">Est. Hours</label>
+                  <label className="block text-[#94A3B8] mb-1 font-medium">{t('admin.dash.estHoursLabel')}</label>
                   <input
                     type="number"
                     value={newHours}
                     onChange={(e) => setNewHours(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl bg-[#111827] border border-[#1E293B] text-white focus:outline-none focus:border-red-500"
+                    className="w-full px-3 py-2 rounded-lg bg-[#1B1E2B] border border-[rgba(255,255,255,0.06)] text-white focus:outline-none focus:border-[#E50914]"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-[#94A3B8] mb-1 font-medium">Description / SLA Deliverables</label>
+                <label className="block text-[#94A3B8] mb-1 font-medium">{t('admin.dash.descDeliverablesLabel')}</label>
                 <textarea
                   rows={3}
                   value={newDesc}
                   onChange={(e) => setNewDesc(e.target.value)}
-                  placeholder="Provide scope overview, SLA timeline, and key requirements..."
-                  className="w-full px-3 py-2 rounded-xl bg-[#111827] border border-[#1E293B] text-white focus:outline-none focus:border-red-500"
+                  placeholder={language === 'id' ? 'Berikan ikhtisar scope, batas waktu SLA, dan deliverable utama...' : 'Provide scope overview, SLA timeline, and key requirements...'}
+                  className="w-full px-3 py-2 rounded-lg bg-[#1B1E2B] border border-[rgba(255,255,255,0.06)] text-white focus:outline-none focus:border-[#E50914]"
                 />
               </div>
 
@@ -1208,21 +1370,28 @@ export const AdminDashboard: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsNewRequestModalOpen(false)}
-                  className="px-4 py-2 rounded-xl bg-[#161F30] hover:bg-[#1E293B] text-white text-xs"
+                  className="px-4 py-2 rounded-lg bg-[#161922] hover:bg-[#1B1E2B] text-white text-xs border border-[rgba(255,255,255,0.06)]"
                 >
-                  Cancel
+                  {t('admin.action.cancel')}
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-semibold shadow-lg shadow-red-600/25"
+                  className="px-5 py-2 rounded-lg bg-[#E50914] hover:bg-[#FF1E27] text-white text-xs font-semibold shadow-[0_0_16px_rgba(229,9,20,0.25)]"
                 >
-                  Create Request
+                  {t('admin.dash.addRequest')}
                 </button>
               </div>
             </form>
           </div>
         </div>
       )}
+
+      {/* Universal Data Migration / CSV Ingestion Modal */}
+      <DataMigrationModal
+        isOpen={isMigrationModalOpen}
+        onClose={() => setIsMigrationModalOpen(false)}
+        defaultTarget="clients"
+      />
 
     </div>
   );

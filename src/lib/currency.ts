@@ -87,3 +87,5 @@ export function formatIDR(amount: number): string {
   return formatAmount(amount, 'IDR');
 }
 
+export const formatCurrency = formatAmount;
+

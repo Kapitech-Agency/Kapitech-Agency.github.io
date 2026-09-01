@@ -45,9 +45,16 @@ import { formatAmount, formatIDR, getActiveCurrency, CURRENCY_EVENT, CurrencyCod
 import { useLanguage } from '../../lib/LanguageContext';
 import { useDragToScroll } from '../../lib/useDragToScroll';
 import { CustomSelect } from '../../components/ui/CustomSelect';
+import { InvoiceStatusDropdown } from '../../components/ui/InvoiceStatusDropdown';
+import { getAgencyProjects, AgencyProject } from '../../lib/projectStore';
+import { getAdminSession } from '../../lib/adminAuth';
 
 export const AdminInvoicing: React.FC = () => {
   const { t, language } = useLanguage();
+  const session = getAdminSession();
+  const userRole = session?.user?.role || 'Tier 1: Top Management / Sponsor';
+  const canCreateInvoice = userRole.startsWith('Tier 1') || userRole.startsWith('Tier 2') || userRole.includes('Finance');
+  const canDeleteInvoice = userRole.startsWith('Tier 1');
   const [currency, setCurrency] = useState<CurrencyCode>(getActiveCurrency());
   const [invoices, setInvoices] = useState<AgencyInvoice[]>([]);
   const [expenses, setExpenses] = useState<AgencyExpense[]>([]);
@@ -64,6 +71,8 @@ export const AdminInvoicing: React.FC = () => {
   const [editingInvoice, setEditingInvoice] = useState<AgencyInvoice | null>(null);
   
   // Invoice Form Fields
+  const [selectedProjectId, setSelectedProjectId] = useState<string>('');
+  const [availableProjects, setAvailableProjects] = useState<AgencyProject[]>([]);
   const [clientName, setClientName] = useState('');
   const [clientCompany, setClientCompany] = useState('');
   const [clientEmail, setClientEmail] = useState('');
@@ -126,20 +135,48 @@ export const AdminInvoicing: React.FC = () => {
   };
 
   const handleOpenCreateInvoice = () => {
-    const invNum = `KAPI-INV-${new Date().getFullYear()}-${Math.floor(100 + Math.random() * 900)}`;
+    const allProj = getAgencyProjects();
+    setAvailableProjects(allProj);
+    const approvedProj = allProj.filter(p => p.status === 'in_progress' || p.status === 'completed' || p.status === 'review');
+    
+    if (approvedProj.length > 0) {
+      const first = approvedProj[0];
+      setSelectedProjectId(first.id);
+      setClientName(first.clientName);
+      setClientCompany(first.clientCompany);
+      setClientEmail(first.clientEmail);
+      setItemDesc(`${first.name} - Milestone Deliverable`);
+      setItemAmount(Math.round(first.budget * 0.4));
+    } else {
+      setSelectedProjectId('');
+      setClientName('');
+      setClientCompany('');
+      setClientEmail('');
+      setItemDesc('Digital Product & Engineering Phase 1 Deliverables');
+      setItemAmount(45000000);
+    }
+
     setEditingInvoice(null);
-    setClientName('');
-    setClientCompany('');
-    setClientEmail('');
     setClientPhone('');
-    setItemDesc('Digital Product & Engineering Phase 1 Deliverables');
-    setItemAmount(45000000);
     setIssueDate(new Date().toISOString().split('T')[0]);
     setDueDate(new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]);
     setTaxPercent(11);
     setInvoiceStatus('sent');
     setInvoiceNotes('Payment terms: Net 14 days. Bank Account Mandiri 123-00-998877-1 a/n PT Kapitech Digital Indonesia.');
     setIsInvoiceModalOpen(true);
+  };
+
+  const handleSelectProjectChange = (projId: string) => {
+    setSelectedProjectId(projId);
+    if (!projId) return;
+    const found = availableProjects.find(p => p.id === projId);
+    if (found) {
+      setClientName(found.clientName);
+      setClientCompany(found.clientCompany);
+      setClientEmail(found.clientEmail);
+      setItemDesc(`${found.name} - Sprint Deliverables`);
+      setItemAmount(Math.round(found.budget * 0.5));
+    }
   };
 
   const handleOpenEditInvoice = (inv: AgencyInvoice) => {
@@ -298,13 +335,15 @@ export const AdminInvoicing: React.FC = () => {
             <span>{t('admin.fin.recordExpense')}</span>
           </button>
 
-          <button
-            onClick={handleOpenCreateInvoice}
-            className="px-4 py-2 rounded-xl bg-brand-red hover:bg-brand-red/90 text-white text-xs font-mono font-bold transition-all flex items-center gap-1.5 shadow-lg shadow-brand-red/20"
-          >
-            <Plus size={14} />
-            <span>{t('admin.fin.createInvoice')}</span>
-          </button>
+          {canCreateInvoice && (
+            <button
+              onClick={handleOpenCreateInvoice}
+              className="px-4 py-2 rounded-xl bg-brand-red hover:bg-brand-red/90 text-white text-xs font-mono font-bold transition-all flex items-center gap-1.5 shadow-lg shadow-brand-red/20"
+            >
+              <Plus size={14} />
+              <span>{t('admin.fin.createInvoice')}</span>
+            </button>
+          )}
         </div>
       </div>
 
@@ -507,19 +546,13 @@ export const AdminInvoicing: React.FC = () => {
                       </div>
                     </td>
                     <td className="py-3.5 px-4">
-                      <select
-                        value={inv.status}
-                        onChange={(e) => {
-                          updateInvoiceStatus(inv.id, e.target.value as InvoiceStatus);
-                          showToast(`Status updated to ${e.target.value.toUpperCase()}`);
+                      <InvoiceStatusDropdown
+                        status={inv.status}
+                        onChange={(newStatus) => {
+                          updateInvoiceStatus(inv.id, newStatus);
+                          showToast(`Status updated to ${newStatus.toUpperCase()}`);
                         }}
-                        className="bg-[#0D1117] border border-[#30363D] text-xs text-white rounded-lg px-2.5 py-1 focus:outline-none focus:border-brand-red font-mono"
-                      >
-                        <option value="draft">Draft</option>
-                        <option value="sent">Sent</option>
-                        <option value="paid">Paid</option>
-                        <option value="overdue">Overdue</option>
-                      </select>
+                      />
                     </td>
                     <td className="py-3.5 px-4 text-right">
                       <div className="flex items-center justify-end gap-1.5">
@@ -537,13 +570,15 @@ export const AdminInvoicing: React.FC = () => {
                         >
                           <Edit3 size={13} />
                         </button>
-                        <button
-                          onClick={() => handleDeleteInvoice(inv.id, inv.invoiceNumber)}
-                          className="p-1.5 rounded-lg bg-[#0D1117] hover:bg-red-950/40 text-[#8A909D] hover:text-red-400 border border-[#30363D] transition-colors"
-                          title="Delete Invoice"
-                        >
-                          <Trash2 size={13} />
-                        </button>
+                        {canDeleteInvoice && (
+                          <button
+                            onClick={() => handleDeleteInvoice(inv.id, inv.invoiceNumber)}
+                            className="p-1.5 rounded-lg bg-[#0D1117] hover:bg-red-950/40 text-[#8A909D] hover:text-red-400 border border-[#30363D] transition-colors"
+                            title="Delete Invoice"
+                          >
+                            <Trash2 size={13} />
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>
@@ -614,6 +649,28 @@ export const AdminInvoicing: React.FC = () => {
             </div>
 
             <form onSubmit={handleSaveInvoice} className="space-y-4 text-xs font-mono">
+              {!editingInvoice && availableProjects.length > 0 && (
+                <div className="p-3 bg-[#0B0C0E] border border-[#262930] rounded-xl space-y-1.5">
+                  <label className="block text-[#8A909D] font-semibold flex items-center justify-between">
+                    <span>{language === 'id' ? 'Tautkan ke Proyek yang Disetujui (Approved)' : 'Link to Approved Project'}</span>
+                    <span className="text-[10px] text-emerald-400 font-mono">Status: Approved / In Progress</span>
+                  </label>
+                  <CustomSelect
+                    value={selectedProjectId}
+                    onChange={handleSelectProjectChange}
+                    options={[
+                      { value: '', label: language === 'id' ? '-- Buat Invoice Lepas (Ad-Hoc) --' : '-- Standalone Ad-Hoc Invoice --' },
+                      ...availableProjects
+                        .filter(p => p.status === 'in_progress' || p.status === 'completed' || p.status === 'review')
+                        .map(p => ({
+                          value: p.id,
+                          label: `${p.name} (${p.clientCompany}) • Budget: ${formatAmount(p.budget, currency)}`
+                        }))
+                    ]}
+                  />
+                </div>
+              )}
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-[#8A909D] mb-1 font-semibold">Client Name *</label>
@@ -719,16 +776,18 @@ export const AdminInvoicing: React.FC = () => {
                 </div>
                 <div>
                   <label className="block text-[#8A909D] mb-1 font-semibold">Status</label>
-                  <select
+                  <CustomSelect
                     value={invoiceStatus}
-                    onChange={(e) => setInvoiceStatus(e.target.value as InvoiceStatus)}
-                    className="w-full px-3 py-2 bg-[#0B0C0E] border border-[#262930] rounded-xl text-white focus:outline-none focus:border-brand-red"
-                  >
-                    <option value="draft">Draft</option>
-                    <option value="sent">Sent</option>
-                    <option value="paid">Paid</option>
-                    <option value="overdue">Overdue</option>
-                  </select>
+                    onChange={(val) => setInvoiceStatus(val as InvoiceStatus)}
+                    options={[
+                      { value: 'draft', label: 'Draft', badge: 'Draft', badgeColor: 'bg-slate-500/10 text-slate-400 border border-slate-500/20' },
+                      { value: 'sent', label: 'Sent', badge: 'Sent', badgeColor: 'bg-blue-500/10 text-blue-400 border border-blue-500/20' },
+                      { value: 'paid', label: 'Paid', badge: 'Paid', badgeColor: 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' },
+                      { value: 'overdue', label: 'Overdue', badge: 'Overdue', badgeColor: 'bg-red-500/10 text-red-400 border border-red-500/20' }
+                    ]}
+                    className="w-full"
+                    triggerClassName="w-full justify-between"
+                  />
                 </div>
               </div>
 
@@ -779,17 +838,19 @@ export const AdminInvoicing: React.FC = () => {
             <form onSubmit={handleSaveExpense} className="space-y-3.5 text-xs font-mono">
               <div>
                 <label className="block text-[#8A909D] mb-1 font-semibold">Expense Category</label>
-                <select
+                <CustomSelect
                   value={expCategory}
-                  onChange={(e) => setExpCategory(e.target.value as any)}
-                  className="w-full px-3 py-2 bg-[#0B0C0E] border border-[#262930] rounded-xl text-white focus:outline-none focus:border-brand-red"
-                >
-                  <option value="Software & Cloud">Software & Cloud (Vercel, AWS, Figma)</option>
-                  <option value="Salaries & Contractors">Salaries & Contractors</option>
-                  <option value="Office & Hardware">Office & Hardware</option>
-                  <option value="Marketing & Ads">Marketing & Ads</option>
-                  <option value="Legal & Admin">Legal & Admin</option>
-                </select>
+                  onChange={(val) => setExpCategory(val as any)}
+                  options={[
+                    { value: 'Software & Cloud', label: 'Software & Cloud (Vercel, AWS, Figma)' },
+                    { value: 'Salaries & Contractors', label: 'Salaries & Contractors' },
+                    { value: 'Office & Hardware', label: 'Office & Hardware' },
+                    { value: 'Marketing & Ads', label: 'Marketing & Ads' },
+                    { value: 'Legal & Admin', label: 'Legal & Admin' }
+                  ]}
+                  className="w-full"
+                  triggerClassName="w-full justify-between"
+                />
               </div>
 
               <div>

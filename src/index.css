@@ -2,69 +2,91 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
 /* ==========================================================================
-   KAPITECH AGENCY - DESIGN TOKENS & CORE VARIABLES
+   KAPITECH AGENCY AMS & ENTERPRISE ECOSYSTEM - DESIGN TOKENS & COLOR ARCHITECTURE
    ========================================================================== */
 :root {
-  /* Brand Color Palette */
-  --kapi-red-primary: #E60023;
-  --kapi-red-electric: #FF1F3D;
-  --kapi-red-hover: #CC001F;
-  --kapi-red-glow: rgba(230, 0, 35, 0.12);
-  --kapi-red-glow-hover: rgba(230, 0, 35, 0.28);
-  --kapi-red-border-hover: rgba(230, 0, 35, 0.65);
+  /* Surface & Background Elevation Layers (Linear/Vercel Dark System) */
+  --bg-app: #090A0F;
+  --bg-surface-base: #111318;
+  --bg-surface-elevated: #181B22;
+  --bg-surface-subtle: #21252F;
 
-  /* Obsidian & Charcoal Surfaces */
-  --kapi-bg-obsidian: #08090A;
-  --kapi-bg-charcoal-deep: #121418;
-  --kapi-bg-card: rgba(22, 24, 29, 0.75);
-  --kapi-bg-card-hover: rgba(26, 29, 36, 0.90);
+  /* Borders & Glassmorphism */
+  --border-subtle: rgba(255, 255, 255, 0.07);
+  --border-medium: rgba(255, 255, 255, 0.12);
+  --border-active: rgba(229, 9, 20, 0.4);
+
+  /* Red Brand Accent (Refined Strategy) */
+  --primary-red: #E50914;
+  --primary-red-hover: #FF1E27;
+  --primary-red-glow: 0 0 16px rgba(229, 9, 20, 0.25);
+  --primary-red-subtle: rgba(229, 9, 20, 0.08);
+  --primary-red-border: rgba(229, 9, 20, 0.3);
+
+  /* Typography & Foreground Tokens */
+  --text-primary: #F8FAFC;
+  --text-secondary: #8A94A6;
+  --text-muted: #64748B;
+
+  /* Layout & Standard Radii */
+  --radius-modal: 16px;
+  --radius-card: 12px;
+  --radius-control: 8px;
+  --radius-pill: 9999px;
+
+  /* Legacy compatibility aliases */
+  --kapi-red-primary: #E50914;
+  --kapi-red-electric: #FF1E27;
+  --kapi-red-hover: #FF1E27;
+  --kapi-red-glow: rgba(229, 9, 20, 0.12);
+  --kapi-red-glow-hover: rgba(229, 9, 20, 0.25);
+  --kapi-red-border-hover: rgba(229, 9, 20, 0.5);
+
+  --kapi-bg-obsidian: #090A0F;
+  --kapi-bg-charcoal-deep: #111318;
+  --kapi-bg-card: #111318;
+  --kapi-bg-card-hover: #181B22;
   
-  /* Borders & Dividers */
-  --kapi-border-subtle: #262930;
-  --kapi-border-highlight: rgba(255, 255, 255, 0.08);
+  --kapi-border-subtle: rgba(255, 255, 255, 0.07);
+  --kapi-border-highlight: rgba(255, 255, 255, 0.12);
 
-  /* Typography Colors */
-  --kapi-text-white: #FFFFFF;
-  --kapi-text-slate: #8A909D;
-  --kapi-text-muted: #5C626E;
+  --kapi-text-white: #F8FAFC;
+  --kapi-text-slate: #8A94A6;
+  --kapi-text-muted: #64748B;
 
-  /* Layout & Radii */
-  --kapi-radius-card: 20px;
+  --kapi-radius-card: 12px;
   --kapi-radius-pill: 9999px;
-  --kapi-radius-inner: 12px;
+  --kapi-radius-inner: 8px;
 
-  /* Transitions */
   --kapi-ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
-  --kapi-transition-smooth: all 0.4s var(--kapi-ease-spring);
+  --kapi-transition-smooth: all 0.3s var(--kapi-ease-spring);
 }
 
 @theme {
-  --font-sans: "Inter", "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-display: "Space Grotesk", sans-serif;
-  --font-heading: "Outfit", sans-serif;
-  --font-mono: "JetBrains Mono", monospace;
+  --font-heading: "Outfit", "Inter", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
   
-  /* Primary Accent: Electric Crimson Red */
-  --color-brand-red: #E60023;
-  --color-brand-red-bright: #FF1F3D;
-  --color-brand-red-hover: #CC001F;
-  --color-brand-red-glow: rgba(230, 0, 35, 0.25);
+  /* Primary Accent: Refined Brand Red */
+  --color-brand-red: #E50914;
+  --color-brand-red-bright: #FF1E27;
+  --color-brand-red-hover: #FF1E27;
+  --color-brand-red-glow: rgba(229, 9, 20, 0.25);
 
-  /* Neutral Base: Obsidian Black */
-  --color-dark-base: #08090A;
-  --color-black-pure: #000000;
+  /* Surfaces - Strict Solid Dark Palette */
+  --color-dark-base: #090A0F;
+  --color-dark-card: #111318;
+  --color-dark-card-hover: #181B22;
+  --color-dark-subtle: #21252F;
+  --color-dark-border: rgba(255, 255, 255, 0.07);
+  --color-dark-divider: rgba(255, 255, 255, 0.12);
+  --color-charcoal: #111318;
 
-  /* Card & Surface Neutral: Charcoal Dark */
-  --color-dark-card: #16181D;
-  --color-dark-card-hover: #1E2128;
-  --color-dark-border: #262930;
-  --color-dark-divider: #2D313A;
-  --color-charcoal: #16181D;
-
-  /* Typography: High Contrast White & Slate Gray */
-  --color-text-headline: #FFFFFF;
-  --color-text-body: #8A909D;
-  --color-text-muted: #6B7280;
+  /* Typography */
+  --color-text-headline: #F8FAFC;
+  --color-text-body: #8A94A6;
+  --color-text-muted: #64748B;
 }
 
 @layer base {
@@ -529,4 +551,59 @@
 .animate-marquee-rtl:hover {
   animation-play-state: paused;
 }
+
+/* ==========================================================================
+   ENTERPRISE AMS UTILITY & MICRO-DETAIL GLASS CLASSES
+   ========================================================================== */
+.glass-panel {
+  background: #111318;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.glass-topbar {
+  background: #090A0F;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.glass-sidebar {
+  background: #111318;
+  border-right: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.metric-card {
+  background: #111318;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 12px;
+  padding: 20px;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.metric-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.14);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+.chart-bar-glow:hover {
+  filter: drop-shadow(0 0 8px rgba(255, 46, 77, 0.6));
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(229, 9, 20, 0.5);
+}
+
 

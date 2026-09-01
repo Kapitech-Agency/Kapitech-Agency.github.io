@@ -46,6 +46,7 @@ import { formatAmount, getActiveCurrency, CURRENCY_EVENT, CurrencyCode } from '.
 import { useLanguage } from '../../lib/LanguageContext';
 import { useDragToScroll } from '../../lib/useDragToScroll';
 import { CustomSelect } from '../../components/ui/CustomSelect';
+import { getAdminSession } from '../../lib/adminAuth';
 
 const TASK_COLUMNS: { id: TaskStatus; label: string; dotColor: string; bgAccent: string }[] = [
   { id: 'todo', label: 'To Do', dotColor: 'bg-zinc-400', bgAccent: 'group-hover:border-zinc-500/30' },
@@ -56,6 +57,11 @@ const TASK_COLUMNS: { id: TaskStatus; label: string; dotColor: string; bgAccent:
 
 export const AdminProjects: React.FC = () => {
   const { t, language } = useLanguage();
+  const session = getAdminSession();
+  const userRole = session?.user?.role || 'Tier 1: Top Management / Sponsor';
+  const canManageProjects = userRole.startsWith('Tier 1') || userRole.startsWith('Tier 2');
+  const canDeleteProjects = userRole.startsWith('Tier 1');
+
   const [currency, setCurrency] = useState<CurrencyCode>(getActiveCurrency());
   const [projects, setProjects] = useState<AgencyProject[]>([]);
   const [selectedProjectId, setSelectedProjectId] = useState<string>('');
@@ -591,21 +597,25 @@ export const AdminProjects: React.FC = () => {
                 </a>
               )}
 
-              <button
-                onClick={() => handleOpenEditProject(selectedProject)}
-                className="p-2 rounded-xl bg-[#16181D] hover:bg-[#222630] text-[#8A909D] hover:text-white border border-[#262930] transition-colors"
-                title="Edit Project Details"
-              >
-                <Edit3 size={14} />
-              </button>
+              {canManageProjects && (
+                <button
+                  onClick={() => handleOpenEditProject(selectedProject)}
+                  className="p-2 rounded-xl bg-[#16181D] hover:bg-[#222630] text-[#8A909D] hover:text-white border border-[#262930] transition-colors"
+                  title="Edit Project Details"
+                >
+                  <Edit3 size={14} />
+                </button>
+              )}
 
-              <button
-                onClick={() => handleDeleteProject(selectedProject.id, selectedProject.name)}
-                className="p-2 rounded-xl bg-[#16181D] hover:bg-red-950/40 text-[#8A909D] hover:text-red-400 border border-[#262930] hover:border-red-500/30 transition-colors"
-                title="Delete Project"
-              >
-                <Trash2 size={14} />
-              </button>
+              {canDeleteProjects && (
+                <button
+                  onClick={() => handleDeleteProject(selectedProject.id, selectedProject.name)}
+                  className="p-2 rounded-xl bg-[#16181D] hover:bg-red-950/40 text-[#8A909D] hover:text-red-400 border border-[#262930] hover:border-red-500/30 transition-colors"
+                  title="Delete Project"
+                >
+                  <Trash2 size={14} />
+                </button>
+              )}
             </div>
           </div>
 

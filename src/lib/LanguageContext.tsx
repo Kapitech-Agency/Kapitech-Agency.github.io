@@ -105,6 +105,7 @@ const translations: Record<Language, Record<string, string>> = {
     'admin.nav.crm': 'CRM & Pipeline',
     'admin.nav.invoicing': 'Financials & Invoicing',
     'admin.nav.projects': 'Projects & Tasks',
+    'admin.nav.vendors': 'Vendor Directory',
     'admin.nav.clients': 'Client Directory',
     'admin.nav.cmsProjects': 'CMS Case Studies',
     'admin.nav.cmsServices': 'CMS Services',
@@ -188,6 +189,44 @@ const translations: Record<Language, Record<string, string>> = {
     'admin.client.totalClients': 'Total Clients',
     'admin.client.activeAccounts': 'Active Accounts',
     'admin.client.lifetimeSpend': 'Total Client Spend',
+    'admin.client.searchPlaceholder': 'Search clients, company, email, industry...',
+    'admin.client.colName': 'Client Name',
+    'admin.client.colCompany': 'Company',
+    'admin.client.colContact': 'Contact',
+    'admin.client.colLocation': 'Location',
+    'admin.client.colStatus': 'Status',
+    'admin.client.colActions': 'Actions',
+
+    // Admin Vendors
+    'admin.vendor.title': 'Vendor & Talent Directory',
+    'admin.vendor.subtitle': 'Database of vetted agency partners, specialized freelance contractors, hourly rates, and SLA contract ratings.',
+    'admin.vendor.addVendor': 'Add Vendor',
+    'admin.vendor.searchPlaceholder': 'Search vendors, company, skills...',
+    'admin.vendor.colName': 'Vendor Name',
+    'admin.vendor.colCompany': 'Company',
+    'admin.vendor.colCategory': 'Category',
+    'admin.vendor.colSkills': 'Skills',
+    'admin.vendor.colRate': 'Hourly Rate',
+    'admin.vendor.colRating': 'Rating',
+    'admin.vendor.colStatus': 'Status',
+    'admin.vendor.colActions': 'Actions',
+
+    // Admin Invoicing & Fin Columns
+    'admin.fin.colInvoiceNumber': 'Invoice #',
+    'admin.fin.colClient': 'Client & Company',
+    'admin.fin.colDates': 'Issue / Due Date',
+    'admin.fin.colAmount': 'Amount',
+    'admin.fin.colStatus': 'Status',
+    'admin.fin.colActions': 'Actions',
+
+    // Nav Section Headers & Titles
+    'admin.nav.coreOperations': 'CORE OPERATIONS',
+    'admin.nav.financeRevenue': 'FINANCE & REVENUE',
+    'admin.nav.contentPortfolio': 'CONTENT & PORTFOLIO',
+    'admin.nav.administration': 'ADMINISTRATION & SYSTEM',
+    'admin.nav.servicesCatalog': 'Service Catalog & Pricing',
+    'admin.nav.caseStudies': 'Case Studies & Showcase',
+    'admin.nav.auditTrail': 'Audit Trail & Security',
 
     // Admin Inbox
     'admin.inbox.title': 'Protected Inbound Inbox',
@@ -230,6 +269,9 @@ const translations: Record<Language, Record<string, string>> = {
     'admin.dash.greeting': 'Hello',
     'admin.dash.greetingSub': 'Here are the latest insights from your customer interactions.',
     'admin.dash.lastWeek': 'Last week',
+    'admin.dash.thisMonth': 'This month',
+    'admin.dash.last30Days': 'Last 30 days',
+    'admin.dash.thisYear': 'This year',
     'admin.dash.addRequest': 'Add Request',
     'admin.dash.cardActiveProjects': 'Active Client Projects',
     'admin.dash.cardDailyResolution': 'Daily Task Resolution',
@@ -263,7 +305,35 @@ const translations: Record<Language, Record<string, string>> = {
     'admin.dash.clientContactLabel': 'Client Contact',
     'admin.dash.companyNameLabel': 'Company Name',
     'admin.dash.estHoursLabel': 'Est. Hours',
-    'admin.dash.descDeliverablesLabel': 'Description / SLA Deliverables'
+    'admin.dash.descDeliverablesLabel': 'Description / SLA Deliverables',
+    'admin.dash.quickTriage': 'Quick SLA Triage',
+    'admin.dash.exportReport': 'Export Report (CSV)',
+    'admin.dash.newCrmLead': 'New CRM Lead',
+    'admin.dash.newInvoice': 'New Client Invoice',
+    'admin.dash.newSprint': 'New Project Sprint',
+    'admin.dash.status.pending': 'Pending',
+    'admin.dash.status.in_progress': 'In Progress',
+    'admin.dash.status.review': 'Review & QA',
+    'admin.dash.status.completed': 'Completed',
+    'admin.dash.priority.urgent': 'Urgent',
+    'admin.dash.priority.high': 'High',
+    'admin.dash.priority.medium': 'Medium',
+    'admin.dash.priority.low': 'Low',
+    'admin.dash.slaWarning': 'Urgent SLA (<2d)',
+    'admin.dash.systemSla': 'System SLA',
+    'admin.dash.viewAuditLogs': 'View security logs',
+    'admin.dash.executeProjects': 'Execute in Projects',
+    'admin.dash.deleteConfirm': 'Delete service request?',
+    'admin.dash.showingRequests': 'Showing',
+    'admin.dash.ofTotal': 'of total requests',
+    'admin.dash.bulkActions': 'Bulk Actions',
+    'admin.dash.deleteSelected': 'Delete Selected',
+    'admin.dash.markCompleted': 'Mark as Completed',
+    'admin.dash.markInProgress': 'Mark as In Progress',
+    'admin.dash.teamWorkload': 'Agency Team Workload',
+    'admin.dash.highValueDeals': 'High-Value Deal Stream',
+    'admin.dash.dealConversion': 'Deal Conversion Rate',
+    'admin.dash.pipelineGross': 'Gross Pipeline Value'
   },
   id: {
     // Nav
@@ -361,6 +431,7 @@ const translations: Record<Language, Record<string, string>> = {
     'admin.nav.crm': 'CRM & Pipeline',
     'admin.nav.invoicing': 'Keuangan & Invoice',
     'admin.nav.projects': 'Proyek & Tugas',
+    'admin.nav.vendors': 'Direktori Vendor',
     'admin.nav.clients': 'Direktori Klien',
     'admin.nav.cmsProjects': 'CMS Studi Kasus',
     'admin.nav.cmsServices': 'CMS Layanan',
@@ -437,13 +508,51 @@ const translations: Record<Language, Record<string, string>> = {
     'admin.proj.taskBoard': 'Papan Kanban Tugas',
     'admin.proj.milestones': 'Milestone Sprint',
 
-    // Admin Clients
+    // Admin Clients (ID)
     'admin.client.title': 'Direktori Klien Agensi',
     'admin.client.subtitle': 'Database terpusat klien aktif & sebelumnya, riwayat pengeluaran, dan kontak PIC.',
     'admin.client.addClient': 'Tambah Klien Baru',
     'admin.client.totalClients': 'Total Klien',
     'admin.client.activeAccounts': 'Akun Aktif',
     'admin.client.lifetimeSpend': 'Total Pengeluaran Klien',
+    'admin.client.searchPlaceholder': 'Cari nama klien, perusahaan, email, industri...',
+    'admin.client.colName': 'Nama Klien',
+    'admin.client.colCompany': 'Perusahaan',
+    'admin.client.colContact': 'Kontak',
+    'admin.client.colLocation': 'Lokasi',
+    'admin.client.colStatus': 'Status',
+    'admin.client.colActions': 'Aksi',
+
+    // Admin Vendors (ID)
+    'admin.vendor.title': 'Direktori Vendor & Kontraktor',
+    'admin.vendor.subtitle': 'Database mitra agensi, freelance spesialis terverifikasi, tarif per jam, dan evaluasi performa SLA.',
+    'admin.vendor.addVendor': 'Tambah Vendor',
+    'admin.vendor.searchPlaceholder': 'Cari nama vendor, perusahaan, keahlian...',
+    'admin.vendor.colName': 'Nama Vendor',
+    'admin.vendor.colCompany': 'Perusahaan',
+    'admin.vendor.colCategory': 'Kategori',
+    'admin.vendor.colSkills': 'Keahlian',
+    'admin.vendor.colRate': 'Tarif / Jam',
+    'admin.vendor.colRating': 'Rating',
+    'admin.vendor.colStatus': 'Status',
+    'admin.vendor.colActions': 'Aksi',
+
+    // Admin Invoicing & Fin Columns (ID)
+    'admin.fin.colInvoiceNumber': 'No. Invoice',
+    'admin.fin.colClient': 'Klien & Perusahaan',
+    'admin.fin.colDates': 'Tanggal / Jatuh Tempo',
+    'admin.fin.colAmount': 'Nominal',
+    'admin.fin.colStatus': 'Status',
+    'admin.fin.colActions': 'Aksi',
+
+    // Nav Section Headers & Titles (ID)
+    'admin.nav.coreOperations': 'OPERASIONAL UTAMA',
+    'admin.nav.financeRevenue': 'KEUANGAN & PENDAPATAN',
+    'admin.nav.contentPortfolio': 'KONTEN & PORTOFOLIO',
+    'admin.nav.administration': 'ADMINISTRASI & SISTEM',
+    'admin.nav.servicesCatalog': 'Katalog Layanan & Harga',
+    'admin.nav.caseStudies': 'Studi Kasus & Portofolio',
+    'admin.nav.auditTrail': 'Audit Jejak & Keamanan',
 
     // Admin Inbox
     'admin.inbox.title': 'Pesan Masuk Terproteksi',
@@ -486,6 +595,9 @@ const translations: Record<Language, Record<string, string>> = {
     'admin.dash.greeting': 'Halo',
     'admin.dash.greetingSub': 'Berikut wawasan telemetri dan interaksi klien terbaru untuk studio Anda.',
     'admin.dash.lastWeek': 'Minggu lalu',
+    'admin.dash.thisMonth': 'Bulan ini',
+    'admin.dash.last30Days': '30 hari terakhir',
+    'admin.dash.thisYear': 'Tahun ini',
     'admin.dash.addRequest': 'Tambah Request',
     'admin.dash.cardActiveProjects': 'Proyek Klien Aktif',
     'admin.dash.cardDailyResolution': 'Penyelesaian Tugas Harian',
@@ -519,8 +631,61 @@ const translations: Record<Language, Record<string, string>> = {
     'admin.dash.clientContactLabel': 'Kontak Klien',
     'admin.dash.companyNameLabel': 'Nama Perusahaan',
     'admin.dash.estHoursLabel': 'Estimasi Jam',
-    'admin.dash.descDeliverablesLabel': 'Deskripsi & Deliverable SLA'
+    'admin.dash.descDeliverablesLabel': 'Deskripsi & Deliverable SLA',
+    'admin.dash.quickTriage': 'Triase Cepat SLA',
+    'admin.dash.exportReport': 'Ekspor Laporan (CSV)',
+    'admin.dash.newCrmLead': 'Lead CRM Baru',
+    'admin.dash.newInvoice': 'Invoice Klien Baru',
+    'admin.dash.newSprint': 'Sprint Proyek Baru',
+    'admin.dash.status.pending': 'Tertunda',
+    'admin.dash.status.in_progress': 'Sedang Dikerjakan',
+    'admin.dash.status.review': 'Review & QA',
+    'admin.dash.status.completed': 'Selesai',
+    'admin.dash.priority.urgent': 'Mendesak',
+    'admin.dash.priority.high': 'Tinggi',
+    'admin.dash.priority.medium': 'Sedang',
+    'admin.dash.priority.low': 'Rendah',
+    'admin.dash.slaWarning': 'SLA Mendesak (<2h)',
+    'admin.dash.systemSla': 'SLA Sistem',
+    'admin.dash.viewAuditLogs': 'Lihat log keamanan',
+    'admin.dash.executeProjects': 'Eksekusi di Proyek',
+    'admin.dash.deleteConfirm': 'Hapus permintaan layanan?',
+    'admin.dash.showingRequests': 'Menampilkan',
+    'admin.dash.ofTotal': 'dari total permintaan',
+    'admin.dash.bulkActions': 'Aksi Massal',
+    'admin.dash.deleteSelected': 'Hapus yang Dipilih',
+    'admin.dash.markCompleted': 'Tandai Selesai',
+    'admin.dash.markInProgress': 'Tandai Sedang Dikerjakan',
+    'admin.dash.teamWorkload': 'Beban Kerja Tim Agensi',
+    'admin.dash.highValueDeals': 'Arus Deal Bernilai Tinggi',
+    'admin.dash.dealConversion': 'Tingkat Konversi Deal',
+    'admin.dash.pipelineGross': 'Nilai Bruto Pipeline'
   }
+};
+
+const formatKeyFallback = (key: string): string => {
+  if (!key) return '';
+  // If dot notation like 'admin.client.colActions' or 'admin.dash.pipelineValue'
+  const parts = key.split('.');
+  let lastPart = parts[parts.length - 1];
+  
+  // Remove common prefixes like 'col', 'th', 'lbl', 'btn' if attached
+  if (/^col[A-Z]/.test(lastPart)) {
+    lastPart = lastPart.replace(/^col/, '');
+  } else if (/^th[A-Z]/.test(lastPart)) {
+    lastPart = lastPart.replace(/^th/, '');
+  }
+  
+  // Convert camelCase, snake_case, or kebab-case to Title Case words
+  const words = lastPart
+    .replace(/([A-Z])/g, ' $1')
+    .replace(/[_\-]/g, ' ')
+    .trim()
+    .split(/\s+/);
+
+  return words
+    .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+    .join(' ');
 };
 
 const LanguageContext = createContext<LanguageContextType>({
@@ -542,7 +707,10 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   };
 
   const t = (key: string): string => {
-    return translations[language]?.[key] || translations['en']?.[key] || key;
+    if (!key) return '';
+    const match = translations[language]?.[key] || translations['en']?.[key];
+    if (match) return match;
+    return formatKeyFallback(key);
   };
 
   return (

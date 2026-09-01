@@ -12,7 +12,11 @@ import {
   Edit3,
   Check,
   X,
-  UserCheck
+  UserCheck,
+  AlertTriangle,
+  ShieldAlert,
+  Flame,
+  Activity
 } from 'lucide-react';
 import {
   AgencyClient,
@@ -54,6 +58,8 @@ export const AdminClients: React.FC = () => {
   const [projectsCount, setProjectsCount] = useState<number>(1);
   const [role, setRole] = useState('Managing Director');
   const [notes, setNotes] = useState('');
+  const [slaDailyBudget, setSlaDailyBudget] = useState<number>(5000000);
+  const [currentDailySpend, setCurrentDailySpend] = useState<number>(3500000);
 
   const loadData = () => {
     setClients(getAgencyClients());
@@ -94,6 +100,16 @@ export const AdminClients: React.FC = () => {
 
   const activeAccountsCount = useMemo(() => clients.filter(c => c.status === 'active').length, [clients]);
   const totalLifetimeSpend = useMemo(() => clients.reduce((sum, c) => sum + (c.totalSpend || 0), 0), [clients]);
+  
+  // SLA Warnings Check
+  const clientsExceedingSla = useMemo(() => {
+    return clients.filter(c => {
+      if (c.slaDailyAdSpendBudget && c.currentDailyAdSpend) {
+        return c.currentDailyAdSpend > c.slaDailyAdSpendBudget;
+      }
+      return false;
+    });
+  }, [clients]);
 
   const handleOpenCreateClient = () => {
     setEditingClient(null);
@@ -109,6 +125,8 @@ export const AdminClients: React.FC = () => {
     setProjectsCount(1);
     setRole('Head of Product');
     setNotes('');
+    setSlaDailyBudget(5000000);
+    setCurrentDailySpend(3500000);
     setIsClientModalOpen(true);
   };
 
@@ -126,6 +144,8 @@ export const AdminClients: React.FC = () => {
     setProjectsCount(c.projectsCount);
     setRole(c.contactPersonRole);
     setNotes(c.notes || '');
+    setSlaDailyBudget(c.slaDailyAdSpendBudget || 5000000);
+    setCurrentDailySpend(c.currentDailyAdSpend || 0);
     setIsClientModalOpen(true);
   };
 
@@ -150,6 +170,8 @@ export const AdminClients: React.FC = () => {
       projectsCount: Number(projectsCount) || 1,
       contactPersonRole: role,
       notes,
+      slaDailyAdSpendBudget: Number(slaDailyBudget) || 0,
+      currentDailyAdSpend: Number(currentDailySpend) || 0,
       createdAt: editingClient?.createdAt || new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
@@ -189,6 +211,26 @@ export const AdminClients: React.FC = () => {
           <span>{t('admin.client.addClient')}</span>
         </button>
       </div>
+
+      {/* Critical SLA Ad-Spend Alert Banner */}
+      {clientsExceedingSla.length > 0 && (
+        <div className="p-4 rounded-2xl bg-red-950/60 border border-red-500/50 text-white space-y-2 animate-pulse">
+          <div className="flex items-center gap-2.5 text-red-400 font-bold font-mono text-xs uppercase tracking-wider">
+            <ShieldAlert size={16} />
+            <span>CRITICAL SLA VIOLATION WARNING: Daily Ad-Spend Exceeded Cap</span>
+          </div>
+          <div className="text-xs font-mono text-red-200">
+            {clientsExceedingSla.map(c => (
+              <div key={c.id} className="flex items-center justify-between py-1 border-t border-red-500/20 mt-1">
+                <span>{c.company} ({c.name})</span>
+                <span className="font-bold text-red-300">
+                  Actual: {formatAmount(c.currentDailyAdSpend || 0, currency)} / SLA Cap: {formatAmount(c.slaDailyAdSpendBudget || 0, currency)}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {statusMessage && (
         <div className="p-3.5 rounded-xl bg-emerald-950/40 border border-emerald-500/40 text-emerald-300 text-xs font-mono flex items-center gap-2">
@@ -248,44 +290,46 @@ export const AdminClients: React.FC = () => {
       {/* 3. Search & Filter Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#161B22] border border-[#30363D] p-4 rounded-2xl">
         <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8A909D]" size={14} />
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#8A909D]" size={14} />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder={language === 'id' ? 'Cari nama klien, perusahaan, email...' : 'Search client name, company, email...'}
-            className="w-full pl-8 pr-3 py-2 bg-[#0D1117] border border-[#30363D] rounded-xl text-xs text-white placeholder-[#5C626E] focus:outline-none focus:border-brand-red font-mono"
+            placeholder={t('admin.client.searchPlaceholder')}
+            className="w-full pl-9 pr-3 py-2 bg-[#0D1117] border border-[#30363D] rounded-xl text-xs text-white placeholder:text-[#5C626E] focus:outline-none focus:border-brand-red font-mono"
           />
         </div>
 
-        <CustomSelect
-          value={statusFilter}
-          onChange={(val) => setStatusFilter(val)}
-          options={[
-            { value: 'all', label: language === 'id' ? 'Semua Status' : 'All Status' },
-            { value: 'active', label: language === 'id' ? 'Aktif' : 'Active' },
-            { value: 'completed', label: language === 'id' ? 'Selesai' : 'Completed' },
-            { value: 'lead', label: 'Lead' },
-            { value: 'inactive', label: language === 'id' ? 'Nonaktif' : 'Inactive' }
-          ]}
-        />
+        <div className="w-full sm:w-48">
+          <CustomSelect
+            value={statusFilter}
+            onChange={setStatusFilter}
+            options={[
+              { value: 'all', label: language === 'id' ? 'Semua Status' : 'All Statuses' },
+              { value: 'active', label: 'Active' },
+              { value: 'completed', label: 'Completed' },
+              { value: 'lead', label: 'Lead' },
+              { value: 'inactive', label: 'Inactive' }
+            ]}
+          />
+        </div>
       </div>
 
-      {/* 4. Drag-to-Scroll Clients Table */}
+      {/* 4. Clients Data Table */}
       <div
         ref={tableScrollRef}
-        className="bg-[#161B22] border border-[#30363D] rounded-2xl overflow-x-auto shadow-xl select-none"
+        className="bg-[#161B22] border border-[#30363D] rounded-2xl overflow-x-auto select-none cursor-grab active:cursor-grabbing custom-scrollbar"
       >
-        <table className="w-full text-left text-xs font-mono min-w-[800px]">
+        <table className="w-full text-left text-xs font-mono min-w-[760px]">
           <thead>
-            <tr className="border-b border-[#30363D] bg-[#0D1117] text-[#8A909D]">
-              <th className="py-3 px-4 font-semibold uppercase text-[10px]">{language === 'id' ? 'Klien / PIC' : 'Client / PIC'}</th>
-              <th className="py-3 px-4 font-semibold uppercase text-[10px]">{language === 'id' ? 'Perusahaan & Industri' : 'Company & Industry'}</th>
-              <th className="py-3 px-4 font-semibold uppercase text-[10px]">{language === 'id' ? 'Info Kontak' : 'Contact Info'}</th>
-              <th className="py-3 px-4 font-semibold uppercase text-[10px]">{language === 'id' ? 'Lokasi' : 'Location'}</th>
-              <th className="py-3 px-4 font-semibold uppercase text-[10px]">{language === 'id' ? 'Total Nilai' : 'Total Billed'}</th>
-              <th className="py-3 px-4 font-semibold uppercase text-[10px]">Status</th>
-              <th className="py-3 px-4 font-semibold uppercase text-[10px] text-right">{language === 'id' ? 'Aksi' : 'Actions'}</th>
+            <tr className="border-b border-[#30363D] text-[#8A909D] bg-[#0D1117]/50">
+              <th className="py-3 px-4 font-semibold">{t('admin.client.colName')}</th>
+              <th className="py-3 px-4 font-semibold">{t('admin.client.colCompany')}</th>
+              <th className="py-3 px-4 font-semibold">{t('admin.client.colContact')}</th>
+              <th className="py-3 px-4 font-semibold">{t('admin.client.colLocation')}</th>
+              <th className="py-3 px-4 font-semibold">SLA Ad-Spend / Cap</th>
+              <th className="py-3 px-4 font-semibold">{t('admin.client.colStatus')}</th>
+              <th className="py-3 px-4 font-semibold text-right">{t('admin.client.colActions')}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-[#30363D]">
@@ -296,74 +340,86 @@ export const AdminClients: React.FC = () => {
                 </td>
               </tr>
             ) : (
-              filteredClients.map((client) => (
-                <tr key={client.id} className="hover:bg-[#1C2128] transition-colors group">
-                  <td className="py-3.5 px-4">
-                    <div className="font-bold text-white font-display text-sm">{client.name}</div>
-                    <div className="text-[10px] text-brand-red font-semibold">{client.contactPersonRole}</div>
-                  </td>
-                  <td className="py-3.5 px-4">
-                    <div className="font-bold text-white flex items-center gap-1.5">
-                      <Building2 size={12} className="text-[#8A909D]" />
-                      <span>{client.company}</span>
-                    </div>
-                    <div className="text-[10px] text-[#8A909D]">{client.industry}</div>
-                  </td>
-                  <td className="py-3.5 px-4 text-[#8A909D] space-y-0.5 text-[11px]">
-                    <div className="flex items-center gap-1 text-white">
-                      <Mail size={11} className="text-[#8A909D]" />
-                      <span>{client.email}</span>
-                    </div>
-                    {client.phone && (
-                      <div className="flex items-center gap-1">
-                        <Phone size={11} className="text-[#8A909D]" />
-                        <span>{client.phone}</span>
+              filteredClients.map((client) => {
+                const isOverBudget = client.slaDailyAdSpendBudget && client.currentDailyAdSpend && client.currentDailyAdSpend > client.slaDailyAdSpendBudget;
+                return (
+                  <tr key={client.id} className={`hover:bg-[#1C2128] transition-colors group ${isOverBudget ? 'bg-red-950/20' : ''}`}>
+                    <td className="py-3.5 px-4">
+                      <div className="font-bold text-white font-display text-sm">{client.name}</div>
+                      <div className="text-[10px] text-brand-red font-semibold">{client.contactPersonRole}</div>
+                    </td>
+                    <td className="py-3.5 px-4">
+                      <div className="font-bold text-white flex items-center gap-1.5">
+                        <Building2 size={12} className="text-[#8A909D]" />
+                        <span>{client.company}</span>
                       </div>
-                    )}
-                  </td>
-                  <td className="py-3.5 px-4 text-[#8A909D]">
-                    <div className="flex items-center gap-1">
-                      <MapPin size={11} className="text-[#8A909D]" />
-                      <span>{client.location}</span>
-                    </div>
-                  </td>
-                  <td className="py-3.5 px-4 font-bold text-emerald-400 font-display">
-                    {formatAmount(client.totalSpend, currency)}
-                    <div className="text-[10px] font-mono text-[#5C626E] font-normal">
-                      {client.projectsCount} {language === 'id' ? 'Proyek' : 'Project(s)'}
-                    </div>
-                  </td>
-                  <td className="py-3.5 px-4">
-                    <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase ${
-                      client.status === 'active'
-                        ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
-                        : client.status === 'completed'
-                        ? 'bg-rose-500/10 text-rose-400 border border-rose-500/30'
-                        : 'bg-zinc-500/10 text-zinc-400 border border-zinc-500/30'
-                    }`}>
-                      {client.status}
-                    </span>
-                  </td>
-                  <td className="py-3.5 px-4 text-right">
-                    <div className="flex items-center justify-end gap-1.5">
-                      <button
-                        onClick={() => handleOpenEditClient(client)}
-                        className="p-1.5 rounded-lg bg-[#0D1117] hover:bg-[#21262D] text-[#8A909D] hover:text-white border border-[#30363D] transition-colors"
-                        title="Edit Client"
-                      >
-                        <Edit3 size={13} />
-                      </button>
-                      <button
-                        onClick={() => handleDeleteClient(client.id, client.name)}
-                        className="p-1.5 rounded-lg bg-[#0D1117] hover:bg-red-950/40 text-[#8A909D] hover:text-red-400 border border-[#30363D] transition-colors"
-                        title="Delete Client"
-                      >
-                        <Trash2 size={13} />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))
+                      <div className="text-[10px] text-[#8A909D]">{client.industry}</div>
+                    </td>
+                    <td className="py-3.5 px-4 text-[#8A909D] space-y-0.5 text-[11px]">
+                      <div className="flex items-center gap-1 text-white">
+                        <Mail size={11} className="text-[#8A909D]" />
+                        <span>{client.email}</span>
+                      </div>
+                      {client.phone && (
+                        <div className="flex items-center gap-1">
+                          <Phone size={11} className="text-[#8A909D]" />
+                          <span>{client.phone}</span>
+                        </div>
+                      )}
+                    </td>
+                    <td className="py-3.5 px-4 text-[#8A909D]">
+                      <div className="flex items-center gap-1">
+                        <MapPin size={11} className="text-[#8A909D]" />
+                        <span>{client.location}</span>
+                      </div>
+                    </td>
+                    <td className="py-3.5 px-4 font-mono text-xs">
+                      {client.slaDailyAdSpendBudget ? (
+                        <div>
+                          <div className={`font-bold flex items-center gap-1 ${isOverBudget ? 'text-red-400' : 'text-emerald-400'}`}>
+                            {isOverBudget && <AlertTriangle size={12} className="text-red-400 shrink-0" />}
+                            <span>{formatAmount(client.currentDailyAdSpend || 0, currency)}</span>
+                          </div>
+                          <div className="text-[10px] text-[#5C626E]">
+                            Cap: {formatAmount(client.slaDailyAdSpendBudget, currency)}/day
+                          </div>
+                        </div>
+                      ) : (
+                        <span className="text-[#5C626E] text-[11px]">No SLA Cap</span>
+                      )}
+                    </td>
+                    <td className="py-3.5 px-4">
+                      <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase ${
+                        client.status === 'active'
+                          ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
+                          : client.status === 'completed'
+                          ? 'bg-rose-500/10 text-rose-400 border border-rose-500/30'
+                          : 'bg-zinc-500/10 text-zinc-400 border border-zinc-500/30'
+                      }`}>
+                        {client.status}
+                      </span>
+                    </td>
+                    <td className="py-3.5 px-4 text-right">
+                      <div className="flex items-center justify-end gap-1.5">
+                        <button
+                          onClick={() => handleOpenEditClient(client)}
+                          className="p-1.5 rounded-lg bg-[#0D1117] hover:bg-[#21262D] text-[#8A909D] hover:text-white border border-[#30363D] transition-colors"
+                          title="Edit Client"
+                        >
+                          <Edit3 size={13} />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteClient(client.id, client.name)}
+                          className="p-1.5 rounded-lg bg-[#0D1117] hover:bg-red-950/40 text-[#8A909D] hover:text-red-400 border border-[#30363D] transition-colors"
+                          title="Delete Client"
+                        >
+                          <Trash2 size={13} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })
             )}
           </tbody>
         </table>
@@ -372,69 +428,72 @@ export const AdminClients: React.FC = () => {
       {/* 5. Create / Edit Client Modal */}
       {isClientModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-[#161B22] border border-[#30363D] rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 shadow-2xl">
-            <div className="flex items-center justify-between pb-4 mb-4 border-b border-[#30363D]">
-              <h3 className="font-display font-bold text-white text-lg flex items-center gap-2">
-                <Users className="text-brand-red" size={20} />
-                <span>{editingClient ? (language === 'id' ? 'Edit Data Klien' : 'Edit Client Record') : (language === 'id' ? 'Tambah Klien Baru' : 'Add New Agency Client')}</span>
-              </h3>
-              <button onClick={() => setIsClientModalOpen(false)} className="p-1.5 text-[#8A909D] hover:text-white rounded-lg bg-[#0D1117] border border-[#30363D]">
-                <X size={16} />
+          <div className="bg-[#161B22] border border-[#30363D] rounded-2xl w-full max-w-lg p-6 space-y-4 shadow-2xl my-8 font-mono text-xs">
+            <div className="flex items-center justify-between pb-3 border-b border-[#30363D]">
+              <h2 className="text-base font-bold font-display text-white flex items-center gap-2">
+                <Users className="text-brand-red" size={18} />
+                <span>{editingClient ? (language === 'id' ? 'Edit Profil Klien' : 'Edit Client Profile') : (language === 'id' ? 'Tambah Klien Baru' : 'Add New Client')}</span>
+              </h2>
+              <button
+                onClick={() => setIsClientModalOpen(false)}
+                className="p-1.5 rounded-lg text-[#8A909D] hover:text-white bg-[#0D1117] border border-[#30363D]"
+              >
+                <X size={14} />
               </button>
             </div>
 
-            <form onSubmit={handleSaveClient} className="space-y-4 text-xs font-mono">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <form onSubmit={handleSaveClient} className="space-y-3.5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[#8A909D] mb-1 font-semibold">{language === 'id' ? 'Nama Klien / PIC *' : 'Client / PIC Name *'}</label>
+                  <label className="block text-[#8A909D] mb-1 font-semibold">{language === 'id' ? 'Nama Kontak (PIC) *' : 'Contact Person (PIC) *'}</label>
                   <input
                     type="text"
+                    required
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    required
-                    placeholder="e.g. Marcus Thorne"
+                    placeholder="e.g. John Doe"
                     className="w-full px-3 py-2 bg-[#0D1117] border border-[#30363D] rounded-xl text-white focus:outline-none focus:border-brand-red"
                   />
                 </div>
                 <div>
-                  <label className="block text-[#8A909D] mb-1 font-semibold">{language === 'id' ? 'Perusahaan / Brand *' : 'Company / Brand *'}</label>
+                  <label className="block text-[#8A909D] mb-1 font-semibold">{language === 'id' ? 'Perusahaan Klien *' : 'Company Name *'}</label>
                   <input
                     type="text"
+                    required
                     value={company}
                     onChange={(e) => setCompany(e.target.value)}
-                    required
-                    placeholder="e.g. Lumina Real Estate Global"
+                    placeholder="e.g. Acme Global Tech"
                     className="w-full px-3 py-2 bg-[#0D1117] border border-[#30363D] rounded-xl text-white focus:outline-none focus:border-brand-red"
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[#8A909D] mb-1 font-semibold">{language === 'id' ? 'Jabatan Kontak' : 'Contact Person Role'}</label>
+                  <label className="block text-[#8A909D] mb-1 font-semibold">PIC Role / Title</label>
                   <input
                     type="text"
                     value={role}
                     onChange={(e) => setRole(e.target.value)}
-                    placeholder="e.g. Managing Director / CTO"
+                    placeholder="Managing Director, VP Engineering..."
                     className="w-full px-3 py-2 bg-[#0D1117] border border-[#30363D] rounded-xl text-white focus:outline-none focus:border-brand-red"
                   />
                 </div>
                 <div>
-                  <label className="block text-[#8A909D] mb-1 font-semibold">{language === 'id' ? 'Sektor Industri' : 'Industry Sector'}</label>
+                  <label className="block text-[#8A909D] mb-1 font-semibold">Industry</label>
                   <input
                     type="text"
                     value={industry}
                     onChange={(e) => setIndustry(e.target.value)}
-                    placeholder="e.g. Real Estate & PropTech"
+                    placeholder="Fintech, Real Estate, E-Commerce..."
                     className="w-full px-3 py-2 bg-[#0D1117] border border-[#30363D] rounded-xl text-white focus:outline-none focus:border-brand-red"
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[#8A909D] mb-1 font-semibold">Email</label>
+                  <label className="block text-[#8A909D] mb-1 font-semibold">Email Klien</label>
                   <input
                     type="email"
                     value={email}
@@ -455,7 +514,35 @@ export const AdminClients: React.FC = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {/* SLA Ad Spend Cap Section */}
+              <div className="p-3 bg-[#0D1117] border border-[#30363D] rounded-xl space-y-2">
+                <div className="flex items-center gap-1.5 text-amber-400 font-bold">
+                  <Activity size={13} />
+                  <span>SLA Daily Ad-Spend Cap & Tracking (IDR)</span>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[#8A909D] mb-1 font-semibold">SLA Agreed Daily Budget Cap</label>
+                    <input
+                      type="number"
+                      value={slaDailyBudget}
+                      onChange={(e) => setSlaDailyBudget(Number(e.target.value))}
+                      className="w-full px-3 py-2 bg-[#161B22] border border-[#30363D] rounded-xl text-white focus:outline-none focus:border-brand-red"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[#8A909D] mb-1 font-semibold">Current Actual Daily Spend</label>
+                    <input
+                      type="number"
+                      value={currentDailySpend}
+                      onChange={(e) => setCurrentDailySpend(Number(e.target.value))}
+                      className="w-full px-3 py-2 bg-[#161B22] border border-[#30363D] rounded-xl text-white focus:outline-none focus:border-brand-red"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-[#8A909D] mb-1 font-semibold">{language === 'id' ? 'Lokasi' : 'Location'}</label>
                   <input
@@ -467,33 +554,26 @@ export const AdminClients: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-[#8A909D] mb-1 font-semibold">{language === 'id' ? 'Nilai Kontrak (IDR)' : 'Lifetime Spend (IDR)'}</label>
-                  <input
-                    type="number"
-                    value={totalSpend}
-                    onChange={(e) => setTotalSpend(Number(e.target.value))}
-                    className="w-full px-3 py-2 bg-[#0D1117] border border-[#30363D] rounded-xl text-white focus:outline-none focus:border-brand-red"
-                  />
-                </div>
-                <div>
                   <label className="block text-[#8A909D] mb-1 font-semibold">Account Status</label>
-                  <select
+                  <CustomSelect
                     value={clientStatus}
-                    onChange={(e) => setClientStatus(e.target.value as any)}
-                    className="w-full px-3 py-2 bg-[#0D1117] border border-[#30363D] rounded-xl text-white focus:outline-none focus:border-brand-red"
-                  >
-                    <option value="active">Active</option>
-                    <option value="completed">Completed</option>
-                    <option value="lead">Lead</option>
-                    <option value="inactive">Inactive</option>
-                  </select>
+                    onChange={(val) => setClientStatus(val as any)}
+                    options={[
+                      { value: 'active', label: 'Active', badge: 'Active', badgeColor: 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' },
+                      { value: 'completed', label: 'Completed', badge: 'Completed', badgeColor: 'bg-blue-500/10 text-blue-400 border border-blue-500/20' },
+                      { value: 'lead', label: 'Lead', badge: 'Lead', badgeColor: 'bg-amber-500/10 text-amber-400 border border-amber-500/20' },
+                      { value: 'inactive', label: 'Inactive', badge: 'Inactive', badgeColor: 'bg-slate-500/10 text-slate-400 border border-slate-500/20' }
+                    ]}
+                    className="w-full"
+                    triggerClassName="w-full justify-between"
+                  />
                 </div>
               </div>
 
               <div>
                 <label className="block text-[#8A909D] mb-1 font-semibold">{language === 'id' ? 'Catatan & Preferensi Klien' : 'Client Notes & Requirements'}</label>
                 <textarea
-                  rows={3}
+                  rows={2}
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   placeholder="Special client preferences, NDA details, billing notes..."
@@ -524,3 +604,4 @@ export const AdminClients: React.FC = () => {
     </div>
   );
 };
+export default AdminClients;

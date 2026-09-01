@@ -141,32 +141,32 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
   return (
     <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-start justify-center p-4 pt-16 sm:pt-24 animate-in fade-in duration-150">
       <div 
-        className="bg-[#0D1117] border border-[#30363D] rounded-2xl w-full max-w-xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-150 flex flex-col max-h-[80vh]"
+        className="bg-[#0F1117] border border-[rgba(255,255,255,0.08)] rounded-2xl w-full max-w-xl shadow-[0_24px_64px_rgba(0,0,0,0.8)] overflow-hidden animate-in zoom-in-95 duration-150 flex flex-col max-h-[80vh]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Search Bar Header */}
-        <div className="p-4 border-b border-[#30363D] flex items-center gap-3 bg-[#161B22]">
-          <Search size={18} className="text-[#8A909D] shrink-0" />
+        <div className="p-4 border-b border-[rgba(255,255,255,0.06)] flex items-center gap-3 bg-[#161922]">
+          <Search size={18} className="text-[#94A3B8] shrink-0" />
           <input
             ref={inputRef}
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder={language === 'id' ? 'Ketik perintah atau cari modul (tekan ESC untuk keluar)...' : 'Type a command or search modules (press ESC to exit)...'}
-            className="flex-1 bg-transparent text-sm text-white placeholder-[#5C626E] focus:outline-none font-sans"
+            className="flex-1 bg-transparent text-sm text-[#F8FAFC] placeholder-[#64748B] focus:outline-none font-sans"
           />
           <button 
             onClick={onClose}
-            className="p-1 rounded-lg hover:bg-[#30363D] text-[#8A909D] hover:text-white transition-colors"
+            className="p-1 rounded-lg hover:bg-[#1B1E2B] text-[#94A3B8] hover:text-white transition-colors"
           >
             <X size={16} />
           </button>
         </div>
 
         {/* Results List */}
-        <div className="p-2 overflow-y-auto max-h-[400px] space-y-1">
+        <div className="p-2 overflow-y-auto max-h-[400px] space-y-1 custom-scrollbar">
           {filtered.length === 0 ? (
-            <div className="p-8 text-center text-xs font-mono text-[#8A909D]">
+            <div className="p-8 text-center text-xs font-mono text-[#94A3B8]">
               {language === 'id' ? 'Tidak ada hasil untuk pencarian tersebut.' : 'No commands or modules match your search.'}
             </div>
           ) : (
@@ -176,17 +176,17 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
                 <button
                   key={item.id}
                   onClick={item.action}
-                  className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-[#161B22] text-left transition-colors group"
+                  className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-[#1B1E2B] text-left transition-colors group"
                 >
                   <div className="flex items-center gap-3 min-w-0">
-                    <div className="w-8 h-8 rounded-lg bg-[#21262D] border border-[#30363D] flex items-center justify-center text-[#8A909D] group-hover:text-white group-hover:border-red-500/50 transition-colors">
+                    <div className="w-8 h-8 rounded-lg bg-[#161922] border border-[rgba(255,255,255,0.06)] flex items-center justify-center text-[#94A3B8] group-hover:text-white group-hover:border-[#E50914]/50 transition-colors">
                       <Icon size={16} />
                     </div>
                     <div className="min-w-0">
-                      <div className="text-xs font-semibold text-white truncate group-hover:text-red-400 transition-colors">
+                      <div className="text-xs font-semibold text-[#F8FAFC] truncate group-hover:text-[#FF1E27] transition-colors">
                         {item.title}
                       </div>
-                      <div className="text-[10px] font-mono text-[#5C626E]">
+                      <div className="text-[10px] font-mono text-[#64748B]">
                         {item.category}
                       </div>
                     </div>
@@ -194,11 +194,11 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
 
                   <div className="flex items-center gap-2 shrink-0">
                     {item.shortcut && (
-                      <span className="px-2 py-0.5 rounded bg-[#21262D] border border-[#30363D] text-[10px] font-mono text-[#8A909D]">
+                      <span className="px-2 py-0.5 rounded bg-[#161922] border border-[rgba(255,255,255,0.06)] text-[10px] font-mono text-[#94A3B8]">
                         {item.shortcut}
                       </span>
                     )}
-                    <ArrowRight size={12} className="text-[#5C626E] group-hover:text-red-400 group-hover:translate-x-0.5 transition-all" />
+                    <ArrowRight size={12} className="text-[#64748B] group-hover:text-[#FF1E27] group-hover:translate-x-0.5 transition-all" />
                   </div>
                 </button>
               );
@@ -207,13 +207,13 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
         </div>
 
         {/* Footer info */}
-        <div className="p-3 border-t border-[#30363D] bg-[#161B22] flex items-center justify-between text-[11px] font-mono text-[#5C626E]">
+        <div className="p-3 border-t border-[rgba(255,255,255,0.06)] bg-[#161922] flex items-center justify-between text-[11px] font-mono text-[#64748B]">
           <div className="flex items-center gap-3">
             <span>↑↓ Navigate</span>
             <span>↵ Select</span>
             <span>ESC Close</span>
           </div>
-          <div className="flex items-center gap-1 text-red-400 font-semibold">
+          <div className="flex items-center gap-1 text-[#E50914] font-semibold">
             <Command size={11} />
             <span>KAPITECH AMS</span>
           </div>

@@ -19,6 +19,8 @@ export interface AgencyClient {
   contactPersonRole: string;
   notes?: string;
   avatarUrl?: string;
+  slaDailyAdSpendBudget?: number; // agreed daily ad spend SLA cap in IDR
+  currentDailyAdSpend?: number; // current actual daily ad spend in IDR
   createdAt: string;
   updatedAt: string;
 }
