@@ -192,20 +192,20 @@ export const AdminClients: React.FC = () => {
     <div className="space-y-6">
       
       {/* 1. Header & Actions */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[#30363D]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[rgba(255,255,255,0.07)]">
         <div>
-          <h1 className="text-2xl font-display font-bold text-white flex items-center gap-3">
-            <Users className="text-brand-red" size={26} />
+          <h1 className="text-2xl font-sans font-bold text-white flex items-center gap-3 tracking-tight">
+            <Users className="text-[#E50914]" size={26} />
             <span>{t('admin.client.title')}</span>
           </h1>
-          <p className="text-xs text-[#8A909D] mt-1">
+          <p className="text-xs font-sans text-[#8A94A6] mt-1">
             {t('admin.client.subtitle')}
           </p>
         </div>
 
         <button
           onClick={handleOpenCreateClient}
-          className="px-4 py-2 rounded-xl bg-brand-red hover:bg-brand-red/90 text-white text-xs font-mono font-bold transition-all flex items-center gap-1.5 shadow-lg shadow-brand-red/20 self-start sm:self-auto"
+          className="h-10 px-4 rounded-xl bg-[#E50914] hover:bg-[#FF1E27] text-white text-xs font-mono font-bold transition-all flex items-center justify-center gap-1.5 shadow-lg shadow-[#E50914]/25 self-start sm:self-auto min-h-[40px]"
         >
           <Plus size={14} />
           <span>{t('admin.client.addClient')}</span>
@@ -214,7 +214,7 @@ export const AdminClients: React.FC = () => {
 
       {/* Critical SLA Ad-Spend Alert Banner */}
       {clientsExceedingSla.length > 0 && (
-        <div className="p-4 rounded-2xl bg-red-950/60 border border-red-500/50 text-white space-y-2 animate-pulse">
+        <div className="p-4 rounded-xl bg-red-950/40 border border-red-500/40 text-white space-y-2 animate-pulse">
           <div className="flex items-center gap-2.5 text-red-400 font-bold font-mono text-xs uppercase tracking-wider">
             <ShieldAlert size={16} />
             <span>CRITICAL SLA VIOLATION WARNING: Daily Ad-Spend Exceeded Cap</span>
@@ -233,70 +233,70 @@ export const AdminClients: React.FC = () => {
       )}
 
       {statusMessage && (
-        <div className="p-3.5 rounded-xl bg-emerald-950/40 border border-emerald-500/40 text-emerald-300 text-xs font-mono flex items-center gap-2">
+        <div className="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-sans flex items-center gap-2">
           <Check size={14} />
           <span>{statusMessage}</span>
         </div>
       )}
 
       {/* 2. Key Metrics Summary (3 cols) */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
-        <div className="bg-[#161B22] border border-[#30363D] p-5 rounded-2xl flex flex-col justify-between">
-          <div className="flex items-center justify-between text-[#8A909D] mb-2">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 w-full">
+        <div className="w-full h-full bg-[#111318] border border-[rgba(255,255,255,0.07)] p-5 rounded-xl flex flex-col justify-between">
+          <div className="flex items-center justify-between text-[#8A94A6] mb-2">
             <span className="text-xs font-mono uppercase font-semibold">{t('admin.client.totalClients')}</span>
-            <div className="w-8 h-8 rounded-lg bg-zinc-800 flex items-center justify-center text-white">
+            <div className="w-8 h-8 rounded-lg bg-[#181B22] border border-[rgba(255,255,255,0.07)] flex items-center justify-center text-white">
               <Users size={16} />
             </div>
           </div>
-          <div className="text-3xl font-display font-bold text-white tracking-tight">
+          <div className="text-3xl font-sans font-bold text-white tracking-tight">
             {clients.length}
           </div>
-          <div className="mt-3 pt-2 border-t border-[#30363D] text-[11px] font-mono text-[#8A909D]">
+          <div className="mt-3 pt-2 border-t border-[rgba(255,255,255,0.07)] text-[11px] font-mono text-[#8A94A6]">
             {language === 'id' ? 'Klien Enterprise & SME' : 'Across Enterprise & SME tiers'}
           </div>
         </div>
 
-        <div className="bg-[#161B22] border border-[#30363D] p-5 rounded-2xl flex flex-col justify-between">
-          <div className="flex items-center justify-between text-[#8A909D] mb-2">
+        <div className="w-full h-full bg-[#111318] border border-[rgba(255,255,255,0.07)] p-5 rounded-xl flex flex-col justify-between">
+          <div className="flex items-center justify-between text-[#8A94A6] mb-2">
             <span className="text-xs font-mono uppercase font-semibold">{t('admin.client.activeAccounts')}</span>
             <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
               <UserCheck size={16} />
             </div>
           </div>
-          <div className="text-3xl font-display font-bold text-emerald-400 tracking-tight">
+          <div className="text-3xl font-sans font-bold text-emerald-400 tracking-tight">
             {activeAccountsCount}
           </div>
-          <div className="mt-3 pt-2 border-t border-[#30363D] text-[11px] font-mono text-emerald-400">
+          <div className="mt-3 pt-2 border-t border-[rgba(255,255,255,0.07)] text-[11px] font-mono text-emerald-400">
             {language === 'id' ? 'Retainer & Sprint Aktif' : 'Active Retainers & Sprints'}
           </div>
         </div>
 
-        <div className="bg-[#161B22] border border-[#30363D] p-5 rounded-2xl flex flex-col justify-between">
-          <div className="flex items-center justify-between text-[#8A909D] mb-2">
+        <div className="w-full h-full bg-[#111318] border border-[rgba(255,255,255,0.07)] p-5 rounded-xl flex flex-col justify-between">
+          <div className="flex items-center justify-between text-[#8A94A6] mb-2">
             <span className="text-xs font-mono uppercase font-semibold">{t('admin.client.lifetimeSpend')}</span>
             <div className="w-8 h-8 rounded-lg bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400">
               <DollarSign size={16} />
             </div>
           </div>
-          <div className="text-2xl sm:text-3xl font-display font-bold text-white tracking-tight">
+          <div className="text-2xl sm:text-3xl font-sans font-bold text-white tracking-tight">
             {formatAmount(totalLifetimeSpend, currency)}
           </div>
-          <div className="mt-3 pt-2 border-t border-[#30363D] text-[11px] font-mono text-purple-400">
+          <div className="mt-3 pt-2 border-t border-[rgba(255,255,255,0.07)] text-[11px] font-mono text-purple-400">
             {language === 'id' ? 'Total Nilai Kontrak Billed' : 'Cumulative Billed Value'}
           </div>
         </div>
       </div>
 
       {/* 3. Search & Filter Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#161B22] border border-[#30363D] p-4 rounded-2xl">
+      <div className="w-full flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#111318] border border-[rgba(255,255,255,0.07)] p-4 rounded-xl">
         <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#8A909D]" size={14} />
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#5C626E]" size={14} />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={t('admin.client.searchPlaceholder')}
-            className="w-full pl-9 pr-3 py-2 bg-[#0D1117] border border-[#30363D] rounded-xl text-xs text-white placeholder:text-[#5C626E] focus:outline-none focus:border-brand-red font-mono"
+            className="w-full pl-9 pr-3 py-2 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl text-xs text-white placeholder:text-[#5C626E] focus:outline-none focus:border-[#E50914] font-sans"
           />
         </div>
 
@@ -315,14 +315,140 @@ export const AdminClients: React.FC = () => {
         </div>
       </div>
 
-      {/* 4. Clients Data Table */}
+      {/* 4. Clients Data Table & Mobile Card Stream */}
+      {/* Mobile View: Clean Client Cards (Zero Horizontal Scrolling) */}
+      <div className="md:hidden space-y-3">
+        {filteredClients.length === 0 ? (
+          <div className="py-12 text-center text-[#8A94A6] bg-[#111318] border border-[rgba(255,255,255,0.07)] rounded-xl text-xs font-mono">
+            {language === 'id' ? 'Tidak ada data klien yang sesuai.' : 'No clients found.'}
+          </div>
+        ) : (
+          filteredClients.map((client) => {
+            const isOverBudget = client.slaDailyAdSpendBudget && client.currentDailyAdSpend && client.currentDailyAdSpend > client.slaDailyAdSpendBudget;
+            return (
+              <div 
+                key={client.id}
+                className={`bg-[#111318] border rounded-xl p-4 space-y-3 transition-all shadow-lg ${
+                  isOverBudget ? 'border-red-500/50 bg-red-950/10' : 'border-[rgba(255,255,255,0.07)] hover:border-[rgba(255,255,255,0.15)]'
+                }`}
+              >
+                {/* Header: Name, Role & Status */}
+                <div className="flex items-start justify-between gap-2">
+                  <div>
+                    <div className="font-bold text-white text-base">{client.name}</div>
+                    <div className="text-[11px] text-[#FF1E27] font-semibold">{client.contactPersonRole}</div>
+                  </div>
+                  <span className={`px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold uppercase shrink-0 ${
+                    client.status === 'active'
+                      ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
+                      : client.status === 'completed'
+                      ? 'bg-blue-500/10 text-blue-400 border border-blue-500/30'
+                      : 'bg-zinc-500/10 text-zinc-400 border border-zinc-500/30'
+                  }`}>
+                    {client.status}
+                  </span>
+                </div>
+
+                {/* Company & Industry */}
+                <div className="flex items-center gap-2 text-xs font-mono text-[#C5CEE0] bg-[#181B22]/60 p-2.5 rounded-lg border border-[rgba(255,255,255,0.04)]">
+                  <Building2 size={13} className="text-[#8A94A6] shrink-0" />
+                  <span className="font-semibold text-white">{client.company}</span>
+                  <span className="text-[#64748B]">•</span>
+                  <span className="text-[11px] text-[#8A94A6] truncate">{client.industry}</span>
+                </div>
+
+                {/* Contact: Email & Phone */}
+                <div className="grid grid-cols-1 gap-1.5 text-xs font-mono text-[#8A94A6]">
+                  <a 
+                    href={`mailto:${client.email}`}
+                    className="flex items-center gap-1.5 text-[#C5CEE0] hover:text-white transition-colors truncate"
+                  >
+                    <Mail size={12} className="text-[#8A94A6] shrink-0" />
+                    <span className="truncate">{client.email}</span>
+                  </a>
+                  {client.phone && (
+                    <a 
+                      href={`tel:${client.phone}`}
+                      className="flex items-center gap-1.5 text-[#C5CEE0] hover:text-white transition-colors"
+                    >
+                      <Phone size={12} className="text-[#8A94A6] shrink-0" />
+                      <span>{client.phone}</span>
+                    </a>
+                  )}
+                  {client.location && (
+                    <div className="flex items-center gap-1.5 text-[#64748B] text-[11px]">
+                      <MapPin size={12} className="shrink-0" />
+                      <span>{client.location}</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* SLA Ad-Spend Status & Actions */}
+                <div className="pt-2 border-t border-[rgba(255,255,255,0.06)] flex items-center justify-between gap-2">
+                  <div>
+                    {client.slaDailyAdSpendBudget ? (
+                      <div>
+                        <div className="text-[10px] uppercase font-mono text-[#8A94A6]">Daily SLA Ad-Spend</div>
+                        <div className={`font-bold font-mono text-sm flex items-center gap-1 ${isOverBudget ? 'text-red-400' : 'text-emerald-400'}`}>
+                          {isOverBudget && <AlertTriangle size={12} className="text-red-400 shrink-0" />}
+                          <span>{formatAmount(client.currentDailyAdSpend || 0, currency)}</span>
+                        </div>
+                        <div className="text-[10px] font-mono text-[#5C626E]">
+                          Cap: {formatAmount(client.slaDailyAdSpendBudget, currency)}/day
+                        </div>
+                      </div>
+                    ) : (
+                      <div>
+                        <div className="text-[10px] uppercase font-mono text-[#8A94A6]">Lifetime Spend</div>
+                        <div className="font-bold font-mono text-white text-sm">
+                          {formatAmount(client.totalSpend || 0, currency)}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex items-center gap-1.5">
+                    {client.phone && (
+                      <a
+                        href={`https://wa.me/${client.phone.replace(/\D/g, '')}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="w-9 h-9 rounded-xl bg-[#181B22] hover:bg-emerald-950/40 text-emerald-400 border border-[rgba(255,255,255,0.07)] hover:border-emerald-500/30 flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
+                        title="Chat WhatsApp"
+                      >
+                        <Phone size={13} />
+                      </a>
+                    )}
+                    <button
+                      onClick={() => handleOpenEditClient(client)}
+                      className="w-9 h-9 rounded-xl bg-[#181B22] hover:bg-[#21252F] text-[#8A94A6] hover:text-white border border-[rgba(255,255,255,0.07)] flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
+                      title="Edit Client"
+                    >
+                      <Edit3 size={13} />
+                    </button>
+                    <button
+                      onClick={() => handleDeleteClient(client.id, client.name)}
+                      className="w-9 h-9 rounded-xl bg-[#181B22] hover:bg-red-950/40 text-[#8A94A6] hover:text-red-400 border border-[rgba(255,255,255,0.07)] hover:border-red-500/30 flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
+                      title="Delete Client"
+                    >
+                      <Trash2 size={13} />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            );
+          })
+        )}
+      </div>
+
+      {/* Desktop View: Full Data Table */}
       <div
         ref={tableScrollRef}
-        className="bg-[#161B22] border border-[#30363D] rounded-2xl overflow-x-auto select-none cursor-grab active:cursor-grabbing custom-scrollbar"
+        className="hidden md:block w-full bg-[#111318] border border-[rgba(255,255,255,0.07)] rounded-xl overflow-x-auto select-none cursor-grab active:cursor-grabbing custom-scrollbar max-h-[750px] overflow-y-auto"
       >
-        <table className="w-full text-left text-xs font-mono min-w-[760px]">
-          <thead>
-            <tr className="border-b border-[#30363D] text-[#8A909D] bg-[#0D1117]/50">
+        <table className="w-full text-left text-xs font-sans min-w-[760px]">
+          <thead className="sticky top-0 z-10 bg-[#111318]">
+            <tr className="border-b border-[rgba(255,255,255,0.07)] text-[#8A94A6] bg-[#181B22] font-mono text-[11px]">
               <th className="py-3 px-4 font-semibold">{t('admin.client.colName')}</th>
               <th className="py-3 px-4 font-semibold">{t('admin.client.colCompany')}</th>
               <th className="py-3 px-4 font-semibold">{t('admin.client.colContact')}</th>
@@ -332,10 +458,10 @@ export const AdminClients: React.FC = () => {
               <th className="py-3 px-4 font-semibold text-right">{t('admin.client.colActions')}</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-[#30363D]">
+          <tbody className="divide-y divide-[rgba(255,255,255,0.07)]">
             {filteredClients.length === 0 ? (
               <tr>
-                <td colSpan={7} className="py-12 text-center text-[#8A909D]">
+                <td colSpan={7} className="py-12 text-center text-[#8A94A6]">
                   {language === 'id' ? 'Tidak ada data klien yang sesuai.' : 'No clients found.'}
                 </td>
               </tr>
@@ -343,33 +469,33 @@ export const AdminClients: React.FC = () => {
               filteredClients.map((client) => {
                 const isOverBudget = client.slaDailyAdSpendBudget && client.currentDailyAdSpend && client.currentDailyAdSpend > client.slaDailyAdSpendBudget;
                 return (
-                  <tr key={client.id} className={`hover:bg-[#1C2128] transition-colors group ${isOverBudget ? 'bg-red-950/20' : ''}`}>
+                  <tr key={client.id} className={`hover:bg-[#181B22] transition-colors group ${isOverBudget ? 'bg-red-950/20' : ''}`}>
                     <td className="py-3.5 px-4">
-                      <div className="font-bold text-white font-display text-sm">{client.name}</div>
-                      <div className="text-[10px] text-brand-red font-semibold">{client.contactPersonRole}</div>
+                      <div className="font-bold text-white text-sm">{client.name}</div>
+                      <div className="text-[10px] text-[#E50914] font-semibold">{client.contactPersonRole}</div>
                     </td>
                     <td className="py-3.5 px-4">
                       <div className="font-bold text-white flex items-center gap-1.5">
-                        <Building2 size={12} className="text-[#8A909D]" />
+                        <Building2 size={12} className="text-[#8A94A6]" />
                         <span>{client.company}</span>
                       </div>
-                      <div className="text-[10px] text-[#8A909D]">{client.industry}</div>
+                      <div className="text-[10px] text-[#8A94A6]">{client.industry}</div>
                     </td>
-                    <td className="py-3.5 px-4 text-[#8A909D] space-y-0.5 text-[11px]">
+                    <td className="py-3.5 px-4 text-[#8A94A6] space-y-0.5 text-[11px]">
                       <div className="flex items-center gap-1 text-white">
-                        <Mail size={11} className="text-[#8A909D]" />
+                        <Mail size={11} className="text-[#8A94A6]" />
                         <span>{client.email}</span>
                       </div>
                       {client.phone && (
                         <div className="flex items-center gap-1">
-                          <Phone size={11} className="text-[#8A909D]" />
+                          <Phone size={11} className="text-[#8A94A6]" />
                           <span>{client.phone}</span>
                         </div>
                       )}
                     </td>
-                    <td className="py-3.5 px-4 text-[#8A909D]">
+                    <td className="py-3.5 px-4 text-[#8A94A6]">
                       <div className="flex items-center gap-1">
-                        <MapPin size={11} className="text-[#8A909D]" />
+                        <MapPin size={11} className="text-[#8A94A6]" />
                         <span>{client.location}</span>
                       </div>
                     </td>
@@ -393,7 +519,7 @@ export const AdminClients: React.FC = () => {
                         client.status === 'active'
                           ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
                           : client.status === 'completed'
-                          ? 'bg-rose-500/10 text-rose-400 border border-rose-500/30'
+                          ? 'bg-blue-500/10 text-blue-400 border border-blue-500/30'
                           : 'bg-zinc-500/10 text-zinc-400 border border-zinc-500/30'
                       }`}>
                         {client.status}
@@ -403,14 +529,14 @@ export const AdminClients: React.FC = () => {
                       <div className="flex items-center justify-end gap-1.5">
                         <button
                           onClick={() => handleOpenEditClient(client)}
-                          className="p-1.5 rounded-lg bg-[#0D1117] hover:bg-[#21262D] text-[#8A909D] hover:text-white border border-[#30363D] transition-colors"
+                          className="w-9 h-9 rounded-xl bg-[#181B22] hover:bg-[#21252F] text-[#8A94A6] hover:text-white border border-[rgba(255,255,255,0.07)] flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
                           title="Edit Client"
                         >
                           <Edit3 size={13} />
                         </button>
                         <button
                           onClick={() => handleDeleteClient(client.id, client.name)}
-                          className="p-1.5 rounded-lg bg-[#0D1117] hover:bg-red-950/40 text-[#8A909D] hover:text-red-400 border border-[#30363D] transition-colors"
+                          className="w-9 h-9 rounded-xl bg-[#181B22] hover:bg-red-950/40 text-[#8A94A6] hover:text-red-400 border border-[rgba(255,255,255,0.07)] hover:border-red-500/30 flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
                           title="Delete Client"
                         >
                           <Trash2 size={13} />
@@ -428,15 +554,15 @@ export const AdminClients: React.FC = () => {
       {/* 5. Create / Edit Client Modal */}
       {isClientModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-[#161B22] border border-[#30363D] rounded-2xl w-full max-w-lg p-6 space-y-4 shadow-2xl my-8 font-mono text-xs">
-            <div className="flex items-center justify-between pb-3 border-b border-[#30363D]">
-              <h2 className="text-base font-bold font-display text-white flex items-center gap-2">
-                <Users className="text-brand-red" size={18} />
+          <div className="bg-[#111318] border border-[rgba(255,255,255,0.07)] rounded-xl w-full max-w-lg p-6 space-y-4 shadow-2xl my-8 text-xs font-sans">
+            <div className="flex items-center justify-between pb-3 border-b border-[rgba(255,255,255,0.07)]">
+              <h2 className="text-base font-bold font-sans text-white flex items-center gap-2">
+                <Users className="text-[#E50914]" size={18} />
                 <span>{editingClient ? (language === 'id' ? 'Edit Profil Klien' : 'Edit Client Profile') : (language === 'id' ? 'Tambah Klien Baru' : 'Add New Client')}</span>
               </h2>
               <button
                 onClick={() => setIsClientModalOpen(false)}
-                className="p-1.5 rounded-lg text-[#8A909D] hover:text-white bg-[#0D1117] border border-[#30363D]"
+                className="p-1.5 rounded-lg text-[#8A94A6] hover:text-white bg-[#181B22] border border-[rgba(255,255,255,0.07)]"
               >
                 <X size={14} />
               </button>
@@ -445,98 +571,98 @@ export const AdminClients: React.FC = () => {
             <form onSubmit={handleSaveClient} className="space-y-3.5">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[#8A909D] mb-1 font-semibold">{language === 'id' ? 'Nama Kontak (PIC) *' : 'Contact Person (PIC) *'}</label>
+                  <label className="block text-[#8A94A6] mb-1 font-semibold">{language === 'id' ? 'Nama Kontak (PIC) *' : 'Contact Person (PIC) *'}</label>
                   <input
                     type="text"
                     required
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="e.g. John Doe"
-                    className="w-full px-3 py-2 bg-[#0D1117] border border-[#30363D] rounded-xl text-white focus:outline-none focus:border-brand-red"
+                    className="w-full px-3 py-2 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
                   />
                 </div>
                 <div>
-                  <label className="block text-[#8A909D] mb-1 font-semibold">{language === 'id' ? 'Perusahaan Klien *' : 'Company Name *'}</label>
+                  <label className="block text-[#8A94A6] mb-1 font-semibold">{language === 'id' ? 'Perusahaan Klien *' : 'Company Name *'}</label>
                   <input
                     type="text"
                     required
                     value={company}
                     onChange={(e) => setCompany(e.target.value)}
                     placeholder="e.g. Acme Global Tech"
-                    className="w-full px-3 py-2 bg-[#0D1117] border border-[#30363D] rounded-xl text-white focus:outline-none focus:border-brand-red"
+                    className="w-full px-3 py-2 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[#8A909D] mb-1 font-semibold">PIC Role / Title</label>
+                  <label className="block text-[#8A94A6] mb-1 font-semibold">PIC Role / Title</label>
                   <input
                     type="text"
                     value={role}
                     onChange={(e) => setRole(e.target.value)}
                     placeholder="Managing Director, VP Engineering..."
-                    className="w-full px-3 py-2 bg-[#0D1117] border border-[#30363D] rounded-xl text-white focus:outline-none focus:border-brand-red"
+                    className="w-full px-3 py-2 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
                   />
                 </div>
                 <div>
-                  <label className="block text-[#8A909D] mb-1 font-semibold">Industry</label>
+                  <label className="block text-[#8A94A6] mb-1 font-semibold">Industry</label>
                   <input
                     type="text"
                     value={industry}
                     onChange={(e) => setIndustry(e.target.value)}
                     placeholder="Fintech, Real Estate, E-Commerce..."
-                    className="w-full px-3 py-2 bg-[#0D1117] border border-[#30363D] rounded-xl text-white focus:outline-none focus:border-brand-red"
+                    className="w-full px-3 py-2 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[#8A909D] mb-1 font-semibold">Email Klien</label>
+                  <label className="block text-[#8A94A6] mb-1 font-semibold">Email Klien</label>
                   <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="contact@company.com"
-                    className="w-full px-3 py-2 bg-[#0D1117] border border-[#30363D] rounded-xl text-white focus:outline-none focus:border-brand-red"
+                    className="w-full px-3 py-2 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
                   />
                 </div>
                 <div>
-                  <label className="block text-[#8A909D] mb-1 font-semibold">Phone / WhatsApp</label>
+                  <label className="block text-[#8A94A6] mb-1 font-semibold">Phone / WhatsApp</label>
                   <input
                     type="text"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     placeholder="+62 811-XXXX-XXXX"
-                    className="w-full px-3 py-2 bg-[#0D1117] border border-[#30363D] rounded-xl text-white focus:outline-none focus:border-brand-red"
+                    className="w-full px-3 py-2 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
                   />
                 </div>
               </div>
 
               {/* SLA Ad Spend Cap Section */}
-              <div className="p-3 bg-[#0D1117] border border-[#30363D] rounded-xl space-y-2">
+              <div className="p-3 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl space-y-2">
                 <div className="flex items-center gap-1.5 text-amber-400 font-bold">
                   <Activity size={13} />
                   <span>SLA Daily Ad-Spend Cap & Tracking (IDR)</span>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-[#8A909D] mb-1 font-semibold">SLA Agreed Daily Budget Cap</label>
+                    <label className="block text-[#8A94A6] mb-1 font-semibold">SLA Agreed Daily Budget Cap</label>
                     <input
                       type="number"
                       value={slaDailyBudget}
                       onChange={(e) => setSlaDailyBudget(Number(e.target.value))}
-                      className="w-full px-3 py-2 bg-[#161B22] border border-[#30363D] rounded-xl text-white focus:outline-none focus:border-brand-red"
+                      className="w-full px-3 py-2 bg-[#111318] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
                     />
                   </div>
                   <div>
-                    <label className="block text-[#8A909D] mb-1 font-semibold">Current Actual Daily Spend</label>
+                    <label className="block text-[#8A94A6] mb-1 font-semibold">Current Actual Daily Spend</label>
                     <input
                       type="number"
                       value={currentDailySpend}
                       onChange={(e) => setCurrentDailySpend(Number(e.target.value))}
-                      className="w-full px-3 py-2 bg-[#161B22] border border-[#30363D] rounded-xl text-white focus:outline-none focus:border-brand-red"
+                      className="w-full px-3 py-2 bg-[#111318] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
                     />
                   </div>
                 </div>
@@ -544,17 +670,17 @@ export const AdminClients: React.FC = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[#8A909D] mb-1 font-semibold">{language === 'id' ? 'Lokasi' : 'Location'}</label>
+                  <label className="block text-[#8A94A6] mb-1 font-semibold">{language === 'id' ? 'Lokasi' : 'Location'}</label>
                   <input
                     type="text"
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
                     placeholder="Jakarta, Indonesia"
-                    className="w-full px-3 py-2 bg-[#0D1117] border border-[#30363D] rounded-xl text-white focus:outline-none focus:border-brand-red"
+                    className="w-full px-3 py-2 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
                   />
                 </div>
                 <div>
-                  <label className="block text-[#8A909D] mb-1 font-semibold">Account Status</label>
+                  <label className="block text-[#8A94A6] mb-1 font-semibold">Account Status</label>
                   <CustomSelect
                     value={clientStatus}
                     onChange={(val) => setClientStatus(val as any)}
@@ -571,27 +697,27 @@ export const AdminClients: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-[#8A909D] mb-1 font-semibold">{language === 'id' ? 'Catatan & Preferensi Klien' : 'Client Notes & Requirements'}</label>
+                <label className="block text-[#8A94A6] mb-1 font-semibold">{language === 'id' ? 'Catatan & Preferensi Klien' : 'Client Notes & Requirements'}</label>
                 <textarea
                   rows={2}
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   placeholder="Special client preferences, NDA details, billing notes..."
-                  className="w-full px-3 py-2 bg-[#0D1117] border border-[#30363D] rounded-xl text-white focus:outline-none focus:border-brand-red"
+                  className="w-full px-3 py-2 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-[#30363D]">
+              <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-[rgba(255,255,255,0.07)]">
                 <button
                   type="button"
                   onClick={() => setIsClientModalOpen(false)}
-                  className="px-4 py-2 rounded-xl bg-[#0D1117] text-[#8A909D] hover:text-white border border-[#30363D]"
+                  className="h-10 px-4 rounded-xl bg-[#181B22] hover:bg-[#21252F] text-[#8A94A6] hover:text-white border border-[rgba(255,255,255,0.07)] font-mono text-xs transition-colors min-h-[40px]"
                 >
                   {language === 'id' ? 'Batal' : 'Cancel'}
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-xl bg-brand-red hover:bg-brand-red/90 text-white font-bold shadow-lg shadow-brand-red/20"
+                  className="h-10 px-5 rounded-xl bg-[#E50914] hover:bg-[#FF1E27] text-white font-mono font-bold text-xs shadow-lg shadow-[#E50914]/25 transition-all min-h-[40px]"
                 >
                   {language === 'id' ? 'Simpan Klien' : 'Save Client'}
                 </button>

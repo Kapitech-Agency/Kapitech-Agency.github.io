@@ -2,12 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { 
   Settings, 
-  KeyRound, 
   ShieldCheck, 
-  Mail, 
-  Globe, 
-  Volume2, 
-  Activity, 
   Check, 
   AlertCircle, 
   Save, 
@@ -15,12 +10,9 @@ import {
   Download, 
   Lock, 
   RefreshCw,
-  Cpu,
-  Server,
   UserCheck,
   Palette,
   Layers,
-  Key,
   Database,
   Smartphone
 } from 'lucide-react';
@@ -30,14 +22,13 @@ import {
   getAuditLogs, 
   clearAuditLogs, 
   SecurityAuditLog,
-  getStoredAdminCredentials,
-  AdminTier
+  getStoredAdminCredentials
 } from '../../lib/adminAuth';
 import { getCmsSiteMeta, saveCmsSiteMeta, SiteMetaSettings } from '../../lib/cmsStore';
 import { useLanguage } from '../../lib/LanguageContext';
 
 export const AdminSettings: React.FC = () => {
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
   const [searchParams, setSearchParams] = useSearchParams();
   const session = getAdminSession();
   const storedCreds = getStoredAdminCredentials();
@@ -53,6 +44,11 @@ export const AdminSettings: React.FC = () => {
   ) as 'profile' | 'branding' | 'rbac' | 'security' | 'api' | 'audit';
 
   const [activeTab, setActiveTab] = useState<'profile' | 'branding' | 'rbac' | 'security' | 'api' | 'audit'>(initialTab);
+
+  const handleTabChange = (tab: 'profile' | 'branding' | 'rbac' | 'security' | 'api' | 'audit') => {
+    setActiveTab(tab);
+    setSearchParams({ tab });
+  };
 
   useEffect(() => {
     if (paramTab) {
@@ -102,17 +98,32 @@ export const AdminSettings: React.FC = () => {
     setSecurityStatus(null);
 
     if (!currentPassword) {
-      setSecurityStatus({ success: false, message: 'Password saat ini wajib diisi untuk verifikasi keamanan.' });
+      setSecurityStatus({ 
+        success: false, 
+        message: language === 'id' 
+          ? 'Password saat ini wajib diisi untuk verifikasi keamanan.' 
+          : 'Current password is required for security verification.' 
+      });
       return;
     }
 
     if (newPassword && newPassword !== confirmPassword) {
-      setSecurityStatus({ success: false, message: 'Konfirmasi password baru tidak cocok.' });
+      setSecurityStatus({ 
+        success: false, 
+        message: language === 'id' 
+          ? 'Konfirmasi password baru tidak cocok.' 
+          : 'New password confirmation does not match.' 
+      });
       return;
     }
 
     if (newPassword && newPassword.length < 8) {
-      setSecurityStatus({ success: false, message: 'Password baru minimal 8 karakter.' });
+      setSecurityStatus({ 
+        success: false, 
+        message: language === 'id' 
+          ? 'Password baru minimal 8 karakter.' 
+          : 'New password must be at least 8 characters long.' 
+      });
       return;
     }
 
@@ -128,16 +139,24 @@ export const AdminSettings: React.FC = () => {
       if (res.success) {
         setSecurityStatus({ 
           success: true, 
-          message: 'Kredensial dan password admin berhasil diperbarui dengan enkripsi aman!' 
+          message: language === 'id' 
+            ? 'Kredensial dan password admin berhasil diperbarui dengan enkripsi aman!' 
+            : 'Admin credentials and password updated successfully with secure encryption!' 
         });
         setCurrentPassword('');
         setNewPassword('');
         setConfirmPassword('');
       } else {
-        setSecurityStatus({ success: false, message: res.error || 'Gagal memperbarui kredensial.' });
+        setSecurityStatus({ 
+          success: false, 
+          message: res.error || (language === 'id' ? 'Gagal memperbarui kredensial.' : 'Failed to update credentials.') 
+        });
       }
     } catch (err: any) {
-      setSecurityStatus({ success: false, message: err.message || 'Terjadi kesalahan sistem.' });
+      setSecurityStatus({ 
+        success: false, 
+        message: err.message || (language === 'id' ? 'Terjadi kesalahan sistem.' : 'A system error occurred.') 
+      });
     } finally {
       setSecurityLoading(false);
     }
@@ -147,12 +166,19 @@ export const AdminSettings: React.FC = () => {
   const handleSaveMeta = (e: React.FormEvent) => {
     e.preventDefault();
     saveCmsSiteMeta(metaSettings);
-    setMetaStatus('Pengaturan sistem dan metadata website berhasil disimpan!');
+    setMetaStatus(
+      language === 'id' 
+        ? 'Pengaturan sistem dan metadata website berhasil disimpan!' 
+        : 'System settings and site metadata successfully saved!'
+    );
     setTimeout(() => setMetaStatus(null), 3000);
   };
 
   const handleClearLogs = () => {
-    if (window.confirm('Hapus seluruh riwayat audit log keamanan?')) {
+    const confirmMsg = language === 'id' 
+      ? 'Hapus seluruh riwayat audit log keamanan?' 
+      : 'Clear all security audit logs permanently?';
+    if (window.confirm(confirmMsg)) {
       clearAuditLogs();
       setLogs([]);
     }
@@ -174,103 +200,111 @@ export const AdminSettings: React.FC = () => {
     <div className="space-y-6">
       
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[#262930]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[rgba(255,255,255,0.07)]">
         <div>
           <h1 className="text-2xl font-display font-bold text-white flex items-center gap-3">
-            <Settings className="text-brand-red" size={24} />
-            <span>System Settings & Security</span>
+            <Settings className="text-[#E50914]" size={24} />
+            <span>{language === 'id' ? 'Pengaturan Sistem & Keamanan' : 'System Settings & Security'}</span>
           </h1>
-          <p className="text-xs text-[#8A909D] mt-1">
-            Konfigurasi akun master admin, hak akses RBAC, integrasi API, dan log audit keamanan terenkripsi.
+          <p className="text-xs text-[#8A94A6] mt-1 font-mono">
+            {language === 'id'
+              ? 'Konfigurasi akun master admin, hak akses RBAC, integrasi API, dan log audit keamanan terenkripsi.'
+              : 'Configure master admin identity, 4-tier RBAC access matrix, API cloud integrations, and encrypted audit trail.'}
           </p>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="flex items-center gap-2 border-b border-[#262930] pb-2 overflow-x-auto custom-scrollbar">
+      <div className="flex items-center gap-2 border-b border-[rgba(255,255,255,0.07)] pb-2 overflow-x-auto custom-scrollbar">
         <button
-          onClick={() => setActiveTab('profile')}
-          className={`px-3.5 py-2 rounded-xl text-xs font-mono transition-all flex items-center gap-2 shrink-0 ${
+          onClick={() => handleTabChange('profile')}
+          className={`px-4 py-2.5 rounded-xl text-xs font-mono transition-all flex items-center gap-2 shrink-0 min-h-[44px] ${
             activeTab === 'profile'
-              ? 'bg-brand-red text-white font-bold'
-              : 'text-[#8A909D] hover:text-white hover:bg-[#16181D]'
+              ? 'bg-[#E50914] text-white font-bold shadow-[0_0_12px_rgba(229,9,20,0.25)]'
+              : 'text-[#8A94A6] hover:text-white hover:bg-[#181B22]'
           }`}
         >
-          <UserCheck size={14} />
-          <span>Profile & Master</span>
+          <UserCheck size={15} />
+          <span>{language === 'id' ? 'Profil & Akun Master' : 'Profile & Master Account'}</span>
         </button>
 
         <button
-          onClick={() => setActiveTab('branding')}
-          className={`px-3.5 py-2 rounded-xl text-xs font-mono transition-all flex items-center gap-2 shrink-0 ${
+          onClick={() => handleTabChange('branding')}
+          className={`px-4 py-2.5 rounded-xl text-xs font-mono transition-all flex items-center gap-2 shrink-0 min-h-[44px] ${
             activeTab === 'branding'
-              ? 'bg-brand-red text-white font-bold'
-              : 'text-[#8A909D] hover:text-white hover:bg-[#16181D]'
+              ? 'bg-[#E50914] text-white font-bold shadow-[0_0_12px_rgba(229,9,20,0.25)]'
+              : 'text-[#8A94A6] hover:text-white hover:bg-[#181B22]'
           }`}
         >
-          <Palette size={14} />
-          <span>Brand & SEO</span>
+          <Palette size={15} />
+          <span>{language === 'id' ? 'Brand & SEO' : 'Brand & SEO'}</span>
         </button>
 
         <button
-          onClick={() => setActiveTab('rbac')}
-          className={`px-3.5 py-2 rounded-xl text-xs font-mono transition-all flex items-center gap-2 shrink-0 ${
+          onClick={() => handleTabChange('rbac')}
+          className={`px-4 py-2.5 rounded-xl text-xs font-mono transition-all flex items-center gap-2 shrink-0 min-h-[44px] ${
             activeTab === 'rbac'
-              ? 'bg-brand-red text-white font-bold'
-              : 'text-[#8A909D] hover:text-white hover:bg-[#16181D]'
+              ? 'bg-[#E50914] text-white font-bold shadow-[0_0_12px_rgba(229,9,20,0.25)]'
+              : 'text-[#8A94A6] hover:text-white hover:bg-[#181B22]'
           }`}
         >
-          <Layers size={14} />
-          <span>RBAC Matrix</span>
+          <Layers size={15} />
+          <span>{language === 'id' ? 'Matriks Hak Akses (RBAC)' : 'RBAC Matrix'}</span>
         </button>
 
         <button
-          onClick={() => setActiveTab('security')}
-          className={`px-3.5 py-2 rounded-xl text-xs font-mono transition-all flex items-center gap-2 shrink-0 ${
+          onClick={() => handleTabChange('security')}
+          className={`px-4 py-2.5 rounded-xl text-xs font-mono transition-all flex items-center gap-2 shrink-0 min-h-[44px] ${
             activeTab === 'security'
-              ? 'bg-brand-red text-white font-bold'
-              : 'text-[#8A909D] hover:text-white hover:bg-[#16181D]'
+              ? 'bg-[#E50914] text-white font-bold shadow-[0_0_12px_rgba(229,9,20,0.25)]'
+              : 'text-[#8A94A6] hover:text-white hover:bg-[#181B22]'
           }`}
         >
-          <Lock size={14} />
-          <span>Security & MFA</span>
+          <Lock size={15} />
+          <span>{language === 'id' ? 'Keamanan & MFA' : 'Security & MFA'}</span>
         </button>
 
         <button
-          onClick={() => setActiveTab('api')}
-          className={`px-3.5 py-2 rounded-xl text-xs font-mono transition-all flex items-center gap-2 shrink-0 ${
+          onClick={() => handleTabChange('api')}
+          className={`px-4 py-2.5 rounded-xl text-xs font-mono transition-all flex items-center gap-2 shrink-0 min-h-[44px] ${
             activeTab === 'api'
-              ? 'bg-brand-red text-white font-bold'
-              : 'text-[#8A909D] hover:text-white hover:bg-[#16181D]'
+              ? 'bg-[#E50914] text-white font-bold shadow-[0_0_12px_rgba(229,9,20,0.25)]'
+              : 'text-[#8A94A6] hover:text-white hover:bg-[#181B22]'
           }`}
         >
-          <Database size={14} />
-          <span>API & Cloud</span>
+          <Database size={15} />
+          <span>{language === 'id' ? 'API & Cloud' : 'API & Cloud'}</span>
         </button>
 
         <button
-          onClick={() => setActiveTab('audit')}
-          className={`px-3.5 py-2 rounded-xl text-xs font-mono transition-all flex items-center gap-2 shrink-0 ${
+          onClick={() => handleTabChange('audit')}
+          className={`px-4 py-2.5 rounded-xl text-xs font-mono transition-all flex items-center gap-2 shrink-0 min-h-[44px] ${
             activeTab === 'audit'
-              ? 'bg-brand-red text-white font-bold'
-              : 'text-[#8A909D] hover:text-white hover:bg-[#16181D]'
+              ? 'bg-[#E50914] text-white font-bold shadow-[0_0_12px_rgba(229,9,20,0.25)]'
+              : 'text-[#8A94A6] hover:text-white hover:bg-[#181B22]'
           }`}
         >
-          <Activity size={14} />
-          <span>Audit Trail ({logs.length})</span>
+          <ShieldCheck size={15} />
+          <span>{language === 'id' ? `Riwayat Audit (${logs.length})` : `Audit Trail (${logs.length})`}</span>
         </button>
       </div>
 
       {/* TAB 1: PROFILE & MASTER ACCOUNT */}
       {activeTab === 'profile' && (
-        <div className="max-w-2xl bg-[#16181D] border border-[#262930] rounded-2xl p-6 sm:p-8">
-          <div className="flex items-center gap-3 mb-6 pb-4 border-b border-[#262930]">
-            <div className="w-10 h-10 rounded-xl bg-brand-red/10 border border-brand-red/30 flex items-center justify-center text-brand-red">
+        <div className="w-full max-w-4xl bg-[#111318] border border-[rgba(255,255,255,0.07)] rounded-2xl p-5 sm:p-8">
+          <div className="flex items-center gap-3 mb-6 pb-4 border-b border-[rgba(255,255,255,0.07)]">
+            <div className="w-10 h-10 rounded-xl bg-[#E50914]/10 border border-[#E50914]/30 flex items-center justify-center text-[#E50914] shrink-0">
               <UserCheck size={20} />
             </div>
             <div>
-              <h2 className="text-base font-bold font-display text-white">Master Profile & Identity</h2>
-              <p className="text-xs text-[#8A909D]">Konfigurasi identitas login pengelola sistem dan kredensial utama.</p>
+              <h2 className="text-base font-bold font-display text-white">
+                {language === 'id' ? 'Profil & Identitas Master' : 'Master Profile & Identity'}
+              </h2>
+              <p className="text-xs text-[#8A94A6] font-mono">
+                {language === 'id' 
+                  ? 'Konfigurasi identitas login pengelola sistem dan kredensial utama.' 
+                  : 'Configure system administrator login identity and primary credentials.'}
+              </p>
             </div>
           </div>
 
@@ -288,54 +322,58 @@ export const AdminSettings: React.FC = () => {
           <form onSubmit={handleUpdateSecurity} className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-mono text-[#8A909D] mb-1 font-semibold">Username</label>
+                <label className="block text-xs font-mono text-[#8A94A6] mb-1 font-semibold">
+                  {language === 'id' ? 'Nama Pengguna (Username)' : 'Username'}
+                </label>
                 <input
                   type="text"
                   required
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-[#0B0C0E] border border-[#262930] rounded-xl text-xs text-white focus:outline-none focus:border-brand-red font-mono"
+                  className="w-full px-3.5 py-2.5 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl text-xs text-white focus:outline-none focus:border-[#E50914] font-mono min-h-[44px]"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-mono text-[#8A909D] mb-1 font-semibold">Email Notifikasi</label>
+                <label className="block text-xs font-mono text-[#8A94A6] mb-1 font-semibold">
+                  {language === 'id' ? 'Email Notifikasi' : 'Notification Email'}
+                </label>
                 <input
                   type="email"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-[#0B0C0E] border border-[#262930] rounded-xl text-xs text-white focus:outline-none focus:border-brand-red font-mono"
+                  className="w-full px-3.5 py-2.5 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl text-xs text-white focus:outline-none focus:border-[#E50914] font-mono min-h-[44px]"
                 />
               </div>
             </div>
 
-            <div className="p-4 bg-[#0B0C0E] border border-[#262930] rounded-xl space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-[#8A909D] font-mono">Tingkat Akses (Role Tier):</span>
-                <span className="text-xs text-brand-red font-mono font-bold">{session?.user.role || storedCreds.role}</span>
+            <div className="p-4 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl space-y-2">
+              <div className="flex items-center justify-between text-xs font-mono">
+                <span className="text-[#8A94A6]">{language === 'id' ? 'Tingkat Akses (Role Tier):' : 'Role Tier Level:'}</span>
+                <span className="text-[#E50914] font-bold">{session?.user.role || storedCreds.role}</span>
               </div>
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-[#8A909D] font-mono">Divisi Agensi:</span>
-                <span className="text-xs text-white font-mono font-bold">{storedCreds.division || 'Management'}</span>
+              <div className="flex items-center justify-between text-xs font-mono">
+                <span className="text-[#8A94A6]">{language === 'id' ? 'Divisi Agensi:' : 'Agency Division:'}</span>
+                <span className="text-white font-bold">{storedCreds.division || 'Management'}</span>
               </div>
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-[#8A909D] font-mono">Terakhir Login:</span>
-                <span className="text-xs text-[#5C626E] font-mono">{new Date(session?.user.lastLogin || Date.now()).toLocaleString()}</span>
+              <div className="flex items-center justify-between text-xs font-mono">
+                <span className="text-[#8A94A6]">{language === 'id' ? 'Terakhir Login:' : 'Last Login:'}</span>
+                <span className="text-[#64748B]">{new Date(session?.user.lastLogin || Date.now()).toLocaleString()}</span>
               </div>
             </div>
 
-            <div className="pt-2 border-t border-[#262930]">
-              <label className="block text-xs font-mono text-[#8A909D] mb-1 font-semibold">
-                Password Saat Ini (Wajib untuk Verifikasi Perubahan) *
+            <div className="pt-2 border-t border-[rgba(255,255,255,0.07)]">
+              <label className="block text-xs font-mono text-[#8A94A6] mb-1 font-semibold">
+                {language === 'id' ? 'Password Saat Ini (Wajib Konfirmasi Perubahan) *' : 'Current Password (Required for confirmation) *'}
               </label>
               <input
                 type="password"
                 required
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
-                placeholder="Masukkan password admin saat ini..."
-                className="w-full px-3.5 py-2.5 bg-[#0B0C0E] border border-[#262930] rounded-xl text-xs text-white focus:outline-none focus:border-brand-red font-mono"
+                placeholder={language === 'id' ? 'Masukkan password admin saat ini...' : 'Enter your current password...'}
+                className="w-full px-3.5 py-2.5 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl text-xs text-white focus:outline-none focus:border-[#E50914] font-mono min-h-[44px]"
               />
             </div>
 
@@ -343,10 +381,10 @@ export const AdminSettings: React.FC = () => {
               <button
                 type="submit"
                 disabled={securityLoading}
-                className="px-5 py-2.5 rounded-xl bg-brand-red text-white text-xs font-mono font-bold hover:bg-brand-red/90 transition-all shadow-md shadow-brand-red/20 flex items-center gap-2 disabled:opacity-50"
+                className="px-5 py-2.5 rounded-xl bg-[#E50914] text-white text-xs font-mono font-bold hover:bg-[#FF1E27] transition-all shadow-md shadow-[#E50914]/20 flex items-center gap-2 disabled:opacity-50 min-h-[44px]"
               >
                 {securityLoading ? <RefreshCw size={14} className="animate-spin" /> : <Save size={14} />}
-                <span>Perbarui Akun Master</span>
+                <span>{language === 'id' ? 'Perbarui Akun Master' : 'Update Master Account'}</span>
               </button>
             </div>
           </form>
@@ -355,15 +393,19 @@ export const AdminSettings: React.FC = () => {
 
       {/* TAB 2: BRAND IDENTITY & SEO */}
       {activeTab === 'branding' && (
-        <div className="max-w-3xl bg-[#16181D] border border-[#262930] rounded-2xl p-6 sm:p-8">
-          <div className="flex items-center gap-3 mb-6 pb-4 border-b border-[#262930]">
-            <div className="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400">
+        <div className="w-full max-w-4xl bg-[#111318] border border-[rgba(255,255,255,0.07)] rounded-2xl p-5 sm:p-8">
+          <div className="flex items-center gap-3 mb-6 pb-4 border-b border-[rgba(255,255,255,0.07)]">
+            <div className="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 shrink-0">
               <Palette size={20} />
             </div>
             <div>
-              <h2 className="text-base font-bold font-display text-white">Brand Identity, Metadata & Notification Rules</h2>
-              <p className="text-xs text-[#8A909D]">
-                Konfigurasi representasi visual dan aturan SEO global untuk kapitech.id dan ams.kapitech.id.
+              <h2 className="text-base font-bold font-display text-white">
+                {language === 'id' ? 'Identitas Brand, Metadata & Notifikasi' : 'Brand Identity, Metadata & Notification Rules'}
+              </h2>
+              <p className="text-xs text-[#8A94A6] font-mono">
+                {language === 'id'
+                  ? 'Konfigurasi representasi visual dan aturan SEO global untuk kapitech.id dan ams.kapitech.id.'
+                  : 'Configure visual branding, search meta tags, and global agency settings for kapitech.id.'}
               </p>
             </div>
           </div>
@@ -378,68 +420,80 @@ export const AdminSettings: React.FC = () => {
           <form onSubmit={handleSaveMeta} className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-mono text-[#8A909D] mb-1 font-semibold">Nama Agensi Global</label>
+                <label className="block text-xs font-mono text-[#8A94A6] mb-1 font-semibold">
+                  {language === 'id' ? 'Nama Agensi Global' : 'Global Agency Name'}
+                </label>
                 <input
                   type="text"
                   value={metaSettings.agencyName}
                   onChange={(e) => setMetaSettings({ ...metaSettings, agencyName: e.target.value })}
-                  className="w-full px-3.5 py-2.5 bg-[#0B0C0E] border border-[#262930] rounded-xl text-xs text-white focus:outline-none focus:border-brand-red font-mono"
+                  className="w-full px-3.5 py-2.5 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl text-xs text-white focus:outline-none focus:border-[#E50914] font-mono min-h-[44px]"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-mono text-[#8A909D] mb-1 font-semibold">Public Domain</label>
+                <label className="block text-xs font-mono text-[#8A94A6] mb-1 font-semibold">
+                  {language === 'id' ? 'Domain Publik' : 'Public Domain'}
+                </label>
                 <input
                   type="text"
                   value="https://kapitech.id"
                   disabled
-                  className="w-full px-3.5 py-2.5 bg-[#0B0C0E]/50 border border-[#262930] rounded-xl text-xs text-[#8A909D] font-mono cursor-not-allowed"
+                  className="w-full px-3.5 py-2.5 bg-[#181B22]/50 border border-[rgba(255,255,255,0.07)] rounded-xl text-xs text-[#8A94A6] font-mono cursor-not-allowed min-h-[44px]"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-mono text-[#8A909D] mb-1 font-semibold">Hero Tagline / Catchphrase</label>
+              <label className="block text-xs font-mono text-[#8A94A6] mb-1 font-semibold">
+                {language === 'id' ? 'Tagline / Slogan Utama' : 'Hero Tagline / Catchphrase'}
+              </label>
               <input
                 type="text"
                 value={metaSettings.tagline}
                 onChange={(e) => setMetaSettings({ ...metaSettings, tagline: e.target.value })}
-                className="w-full px-3.5 py-2.5 bg-[#0B0C0E] border border-[#262930] rounded-xl text-xs text-white focus:outline-none focus:border-brand-red font-mono"
+                className="w-full px-3.5 py-2.5 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl text-xs text-white focus:outline-none focus:border-[#E50914] font-mono min-h-[44px]"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-mono text-[#8A909D] mb-1 font-semibold">Meta Description (SEO)</label>
+              <label className="block text-xs font-mono text-[#8A94A6] mb-1 font-semibold">
+                {language === 'id' ? 'Deskripsi Meta (SEO Global)' : 'Meta Description (Global SEO)'}
+              </label>
               <textarea
                 rows={3}
                 value={metaSettings.metaDescription}
                 onChange={(e) => setMetaSettings({ ...metaSettings, metaDescription: e.target.value })}
-                className="w-full px-3.5 py-2.5 bg-[#0B0C0E] border border-[#262930] rounded-xl text-xs text-white focus:outline-none focus:border-brand-red font-mono"
+                className="w-full px-3.5 py-2.5 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl text-xs text-white focus:outline-none focus:border-[#E50914] font-mono"
               />
             </div>
 
-            <div className="pt-4 border-t border-[#262930] space-y-3">
-              <label className="flex items-center gap-3 cursor-pointer">
+            <div className="pt-4 border-t border-[rgba(255,255,255,0.07)] space-y-3">
+              <label className="flex items-center gap-3 cursor-pointer select-none">
                 <input
                   type="checkbox"
                   checked={metaSettings.soundEffectsEnabled}
                   onChange={(e) => setMetaSettings({ ...metaSettings, soundEffectsEnabled: e.target.checked })}
-                  className="w-4 h-4 rounded bg-[#0B0C0E] border-[#262930] text-brand-red accent-brand-red"
+                  className="w-4 h-4 rounded bg-[#181B22] border-[rgba(255,255,255,0.07)] text-[#E50914] accent-[#E50914]"
                 />
                 <span className="text-xs text-white font-mono">
-                  Aktifkan Notifikasi Suara (Chime) saat ada lead baru masuk
+                  {language === 'id' 
+                    ? 'Aktifkan Notifikasi Suara (Chime) saat ada lead baru masuk' 
+                    : 'Enable audio chime notification on new incoming lead submission'}
                 </span>
               </label>
 
-              <label className="flex items-center gap-3 cursor-pointer">
+              <label className="flex items-center gap-3 cursor-pointer select-none">
                 <input
                   type="checkbox"
                   checked={metaSettings.enableLiveChat}
                   onChange={(e) => setMetaSettings({ ...metaSettings, enableLiveChat: e.target.checked })}
-                  className="w-4 h-4 rounded bg-[#0B0C0E] border-[#262930] text-brand-red accent-brand-red"
+                  className="w-4 h-4 rounded bg-[#181B22] border-[rgba(255,255,255,0.07)] text-[#E50914] accent-[#E50914]"
                 />
                 <span className="text-xs text-white font-mono">
-                  Tampilkan Floating Contact & WhatsApp Widget di pojok kanan bawah
+                  {language === 'id' 
+                    ? 'Tampilkan Floating Contact & WhatsApp Widget di pojok kanan bawah' 
+                    : 'Display Floating WhatsApp & Contact Widget on bottom-right'}
                 </span>
               </label>
             </div>
@@ -447,10 +501,10 @@ export const AdminSettings: React.FC = () => {
             <div className="pt-4 flex items-center justify-end">
               <button
                 type="submit"
-                className="px-5 py-2.5 rounded-xl bg-brand-red text-white text-xs font-mono font-bold hover:bg-brand-red/90 transition-all shadow-md shadow-brand-red/20 flex items-center gap-2"
+                className="px-5 py-2.5 rounded-xl bg-[#E50914] text-white text-xs font-mono font-bold hover:bg-[#FF1E27] transition-all shadow-md shadow-[#E50914]/20 flex items-center gap-2 min-h-[44px]"
               >
                 <Save size={14} />
-                <span>Simpan Pengaturan Brand</span>
+                <span>{language === 'id' ? 'Simpan Pengaturan Brand' : 'Save Brand Settings'}</span>
               </button>
             </div>
           </form>
@@ -459,70 +513,74 @@ export const AdminSettings: React.FC = () => {
 
       {/* TAB 3: ROLE MATRIX (4-TIER RBAC) */}
       {activeTab === 'rbac' && (
-        <div className="bg-[#16181D] border border-[#262930] rounded-2xl p-6 sm:p-8 space-y-6">
-          <div className="flex items-center gap-3 pb-4 border-b border-[#262930]">
-            <div className="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400">
+        <div className="w-full bg-[#111318] border border-[rgba(255,255,255,0.07)] rounded-2xl p-5 sm:p-8 space-y-6">
+          <div className="flex items-center gap-3 pb-4 border-b border-[rgba(255,255,255,0.07)]">
+            <div className="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 shrink-0">
               <Layers size={20} />
             </div>
             <div>
-              <h2 className="text-base font-bold font-display text-white">4-Tier Role-Based Access Control (RBAC) Matrix</h2>
-              <p className="text-xs text-[#8A909D]">
-                Struktur hirarki hak akses dan izin operasi di seluruh modul AMS Kapitech.
+              <h2 className="text-base font-bold font-display text-white">
+                {language === 'id' ? 'Matriks Hak Akses 4-Tier RBAC' : '4-Tier Role-Based Access Control (RBAC) Matrix'}
+              </h2>
+              <p className="text-xs text-[#8A94A6] font-mono">
+                {language === 'id'
+                  ? 'Struktur hirarki hak akses dan izin operasi di seluruh modul AMS Kapitech.'
+                  : 'Enterprise permission matrix across financial, pipeline, sprint delivery, and system configurations.'}
               </p>
             </div>
           </div>
 
           <div className="overflow-x-auto custom-scrollbar">
-            <table className="w-full text-xs font-mono text-left border-collapse">
+            <table className="w-full text-xs font-mono text-left border-collapse min-w-[650px]">
               <thead>
-                <tr className="border-b border-[#262930] text-[#8A909D]">
-                  <th className="py-3 px-4 font-semibold">Tier Level & Role</th>
-                  <th className="py-3 px-4 font-semibold">Financial & Invoicing</th>
-                  <th className="py-3 px-4 font-semibold">CRM & Client Leads</th>
-                  <th className="py-3 px-4 font-semibold">Sprint & Tasks</th>
-                  <th className="py-3 px-4 font-semibold">System Settings & Audit</th>
+                <tr className="border-b border-[rgba(255,255,255,0.07)] text-[#8A94A6]">
+                  <th className="py-3 px-4 font-semibold">{language === 'id' ? 'Tingkatan & Peran' : 'Tier Level & Role'}</th>
+                  <th className="py-3 px-4 font-semibold">{language === 'id' ? 'Finansial & Invoice' : 'Financial & Invoicing'}</th>
+                  <th className="py-3 px-4 font-semibold">{language === 'id' ? 'CRM & Pipeline Prospek' : 'CRM & Client Leads'}</th>
+                  <th className="py-3 px-4 font-semibold">{language === 'id' ? 'Sprint & Kanban Task' : 'Sprint & Tasks'}</th>
+                  <th className="py-3 px-4 font-semibold">{language === 'id' ? 'Sistem & Audit Trail' : 'System Settings & Audit'}</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#262930]">
-                <tr className="hover:bg-[#121418]/60 transition-colors">
+              <tbody className="divide-y divide-[rgba(255,255,255,0.07)]">
+                <tr className="hover:bg-[#181B22]/60 transition-colors">
                   <td className="py-3.5 px-4 font-bold text-white flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-brand-red"></span>
+                    <span className="w-2 h-2 rounded-full bg-[#E50914] shrink-0"></span>
                     <span>Tier 1: Top Management / Sponsor</span>
                   </td>
-                  <td className="py-3.5 px-4 text-emerald-400 font-semibold">Full Access (Create/Approve/Delete)</td>
-                  <td className="py-3.5 px-4 text-emerald-400 font-semibold">Full Access</td>
-                  <td className="py-3.5 px-4 text-emerald-400 font-semibold">Full Access</td>
-                  <td className="py-3.5 px-4 text-emerald-400 font-semibold">Full Access & Credentials</td>
+                  <td className="py-3.5 px-4 text-emerald-400 font-semibold">{language === 'id' ? 'Akses Penuh (Buat/Setujui/Hapus)' : 'Full Access (Create/Approve/Delete)'}</td>
+                  <td className="py-3.5 px-4 text-emerald-400 font-semibold">{language === 'id' ? 'Akses Penuh' : 'Full Access'}</td>
+                  <td className="py-3.5 px-4 text-emerald-400 font-semibold">{language === 'id' ? 'Akses Penuh' : 'Full Access'}</td>
+                  <td className="py-3.5 px-4 text-emerald-400 font-semibold">{language === 'id' ? 'Akses Penuh & Kredensial' : 'Full Access & Credentials'}</td>
                 </tr>
-                <tr className="hover:bg-[#121418]/60 transition-colors">
+                <tr className="hover:bg-[#181B22]/60 transition-colors">
                   <td className="py-3.5 px-4 font-bold text-white flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-purple-400"></span>
+                    <span className="w-2 h-2 rounded-full bg-purple-400 shrink-0"></span>
                     <span>Tier 2: Project Manager (PM)</span>
                   </td>
-                  <td className="py-3.5 px-4 text-amber-300">View & Draft Invoices</td>
-                  <td className="py-3.5 px-4 text-emerald-400 font-semibold">Manage Pipeline & Assign</td>
-                  <td className="py-3.5 px-4 text-emerald-400 font-semibold">Sprint Planning & Task Mgmt</td>
-                  <td className="py-3.5 px-4 text-[#8A909D]">View Only</td>
+                  <td className="py-3.5 px-4 text-amber-300">{language === 'id' ? 'Lihat & Draf Invoice' : 'View & Draft Invoices'}</td>
+                  <td className="py-3.5 px-4 text-emerald-400 font-semibold">{language === 'id' ? 'Kelola Pipeline & Delegasi' : 'Manage Pipeline & Assign'}</td>
+                  <td className="py-3.5 px-4 text-emerald-400 font-semibold">{language === 'id' ? 'Sprint Planning & Kelola Task' : 'Sprint Planning & Task Mgmt'}</td>
+                  <td className="py-3.5 px-4 text-[#8A94A6]">{language === 'id' ? 'Hanya Lihat' : 'View Only'}</td>
                 </tr>
-                <tr className="hover:bg-[#121418]/60 transition-colors">
+                <tr className="hover:bg-[#181B22]/60 transition-colors">
                   <td className="py-3.5 px-4 font-bold text-white flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-cyan-400"></span>
+                    <span className="w-2 h-2 rounded-full bg-cyan-400 shrink-0"></span>
                     <span>Tier 3: Operational Staff</span>
                   </td>
-                  <td className="py-3.5 px-4 text-[#8A909D]">No Access</td>
-                  <td className="py-3.5 px-4 text-cyan-300">View Assigned Deals</td>
-                  <td className="py-3.5 px-4 text-emerald-400 font-semibold">Update Assigned Tasks</td>
-                  <td className="py-3.5 px-4 text-[#8A909D]">No Access</td>
+                  <td className="py-3.5 px-4 text-[#8A94A6]">{language === 'id' ? 'Tanpa Akses' : 'No Access'}</td>
+                  <td className="py-3.5 px-4 text-cyan-300">{language === 'id' ? 'Lihat Prospek Terkait' : 'View Assigned Deals'}</td>
+                  <td className="py-3.5 px-4 text-emerald-400 font-semibold">{language === 'id' ? 'Update Task Terkait' : 'Update Assigned Tasks'}</td>
+                  <td className="py-3.5 px-4 text-[#8A94A6]">{language === 'id' ? 'Tanpa Akses' : 'No Access'}</td>
                 </tr>
-                <tr className="hover:bg-[#121418]/60 transition-colors">
+                <tr className="hover:bg-[#181B22]/60 transition-colors">
                   <td className="py-3.5 px-4 font-bold text-white flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>
                     <span>Tier 4: Internal IT / System Admin</span>
                   </td>
-                  <td className="py-3.5 px-4 text-[#8A909D]">Audit View</td>
-                  <td className="py-3.5 px-4 text-[#8A909D]">Audit View</td>
-                  <td className="py-3.5 px-4 text-[#8A909D]">Audit View</td>
-                  <td className="py-3.5 px-4 text-emerald-400 font-semibold">Full Infrastructure & Logs</td>
+                  <td className="py-3.5 px-4 text-[#8A94A6]">{language === 'id' ? 'Audit View' : 'Audit View'}</td>
+                  <td className="py-3.5 px-4 text-[#8A94A6]">{language === 'id' ? 'Audit View' : 'Audit View'}</td>
+                  <td className="py-3.5 px-4 text-[#8A94A6]">{language === 'id' ? 'Audit View' : 'Audit View'}</td>
+                  <td className="py-3.5 px-4 text-emerald-400 font-semibold">{language === 'id' ? 'Akses Server & Audit Lengkap' : 'Full Infrastructure & Logs'}</td>
                 </tr>
               </tbody>
             </table>
@@ -532,94 +590,108 @@ export const AdminSettings: React.FC = () => {
 
       {/* TAB 4: SECURITY & MFA POLICY */}
       {activeTab === 'security' && (
-        <div className="max-w-2xl bg-[#16181D] border border-[#262930] rounded-2xl p-6 sm:p-8 space-y-6">
-          <div className="flex items-center gap-3 pb-4 border-b border-[#262930]">
-            <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
+        <div className="w-full max-w-4xl bg-[#111318] border border-[rgba(255,255,255,0.07)] rounded-2xl p-5 sm:p-8 space-y-6">
+          <div className="flex items-center gap-3 pb-4 border-b border-[rgba(255,255,255,0.07)]">
+            <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 shrink-0">
               <Lock size={20} />
             </div>
             <div>
-              <h2 className="text-base font-bold font-display text-white">Security, MFA & Password Policy</h2>
-              <p className="text-xs text-[#8A909D]">
-                Enkripsi SHA-256 tersimulasi, autentikasi multi-faktor, dan proteksi sesi.
+              <h2 className="text-base font-bold font-display text-white">
+                {language === 'id' ? 'Kebijakan Keamanan, MFA & Password' : 'Security, MFA & Password Policy'}
+              </h2>
+              <p className="text-xs text-[#8A94A6] font-mono">
+                {language === 'id'
+                  ? 'Enkripsi SHA-256 tersimulasi, autentikasi multi-faktor, dan proteksi durasi sesi login.'
+                  : 'SHA-256 secure hashing simulation, multi-factor authentication enforcement, and idle session limits.'}
               </p>
             </div>
           </div>
 
           <div className="space-y-4">
-            <div className="p-4 bg-[#0B0C0E] border border-[#262930] rounded-xl flex items-center justify-between">
+            <div className="p-4 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div className="space-y-1">
-                <div className="text-white font-mono font-bold flex items-center gap-2">
-                  <Smartphone size={14} className="text-emerald-400" />
-                  <span>Enforce Multi-Factor Authentication (MFA)</span>
+                <div className="text-white font-mono font-bold flex items-center gap-2 text-xs">
+                  <Smartphone size={15} className="text-emerald-400 shrink-0" />
+                  <span>{language === 'id' ? 'Wajibkan Multi-Factor Authentication (MFA)' : 'Enforce Multi-Factor Authentication (MFA)'}</span>
                 </div>
-                <p className="text-[#8A909D] text-[11px] font-mono">
-                  Wajibkan verifikasi OTP untuk Tier 1 (Top Management) dan Tier 4 (System Admin).
+                <p className="text-[#8A94A6] text-[11px] font-mono">
+                  {language === 'id'
+                    ? 'Wajibkan verifikasi OTP untuk Tier 1 (Top Management) dan Tier 4 (System Admin).'
+                    : 'Mandate time-based OTP verification for Tier 1 Sponsors and Tier 4 IT Administrators.'}
                 </p>
               </div>
               <button
                 type="button"
                 onClick={() => setMfaActive(!mfaActive)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition-all ${
-                  mfaActive ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40' : 'bg-[#1E2128] text-[#8A909D]'
+                className={`px-3.5 py-1.5 rounded-lg text-xs font-mono font-bold transition-all self-start sm:self-auto min-h-[38px] ${
+                  mfaActive ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40' : 'bg-[#21252F] text-[#8A94A6]'
                 }`}
               >
-                {mfaActive ? 'ACTIVE' : 'DISABLED'}
+                {mfaActive ? (language === 'id' ? 'AKTIF' : 'ACTIVE') : (language === 'id' ? 'NONAKTIF' : 'DISABLED')}
               </button>
             </div>
 
-            <div className="p-4 bg-[#0B0C0E] border border-[#262930] rounded-xl space-y-2">
-              <label className="block text-xs font-mono text-[#8A909D] font-semibold">
-                Session Inactivity Timeout (Menit)
+            <div className="p-4 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl space-y-2">
+              <label className="block text-xs font-mono text-[#8A94A6] font-semibold">
+                {language === 'id' ? 'Batas Waktu Ketidakaktifan Sesi (Menit)' : 'Session Inactivity Timeout (Minutes)'}
               </label>
               <input
                 type="number"
                 value={sessionTimeoutMin}
                 onChange={(e) => setSessionTimeoutMin(parseInt(e.target.value) || 60)}
-                className="w-full px-3.5 py-2.5 bg-[#121418] border border-[#262930] rounded-xl text-xs text-white font-mono focus:outline-none focus:border-brand-red"
+                className="w-full px-3.5 py-2.5 bg-[#111318] border border-[rgba(255,255,255,0.07)] rounded-xl text-xs text-white font-mono focus:outline-none focus:border-[#E50914] min-h-[44px]"
               />
-              <p className="text-[10px] text-[#5C626E] font-mono">
-                Sesi login admin akan otomatis keluar jika tidak ada aktivitas dalam rentang waktu di atas.
+              <p className="text-[10px] text-[#64748B] font-mono">
+                {language === 'id'
+                  ? 'Sesi login admin akan otomatis keluar jika tidak ada aktivitas dalam rentang waktu di atas.'
+                  : 'Admin login session automatically terminates if no active interaction occurs within this threshold.'}
               </p>
             </div>
 
-            <form onSubmit={handleUpdateSecurity} className="space-y-3 pt-3 border-t border-[#262930]">
-              <h3 className="text-xs font-bold text-white font-mono">Ganti Password Master</h3>
+            <form onSubmit={handleUpdateSecurity} className="space-y-3 pt-3 border-t border-[rgba(255,255,255,0.07)]">
+              <h3 className="text-xs font-bold text-white font-mono">
+                {language === 'id' ? 'Ganti Password Master' : 'Change Master Password'}
+              </h3>
               
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-mono text-[#8A909D] mb-1 font-semibold">Password Baru (min 8 char)</label>
+                  <label className="block text-xs font-mono text-[#8A94A6] mb-1 font-semibold">
+                    {language === 'id' ? 'Password Baru (min 8 karakter)' : 'New Password (min 8 characters)'}
+                  </label>
                   <input
                     type="password"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="w-full px-3.5 py-2.5 bg-[#0B0C0E] border border-[#262930] rounded-xl text-xs text-white focus:outline-none focus:border-brand-red font-mono"
+                    className="w-full px-3.5 py-2.5 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl text-xs text-white focus:outline-none focus:border-[#E50914] font-mono min-h-[44px]"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-mono text-[#8A909D] mb-1 font-semibold">Konfirmasi Password Baru</label>
+                  <label className="block text-xs font-mono text-[#8A94A6] mb-1 font-semibold">
+                    {language === 'id' ? 'Konfirmasi Password Baru' : 'Confirm New Password'}
+                  </label>
                   <input
                     type="password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="w-full px-3.5 py-2.5 bg-[#0B0C0E] border border-[#262930] rounded-xl text-xs text-white focus:outline-none focus:border-brand-red font-mono"
+                    className="w-full px-3.5 py-2.5 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl text-xs text-white focus:outline-none focus:border-[#E50914] font-mono min-h-[44px]"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-mono text-[#8A909D] mb-1 font-semibold">
-                  Password Saat Ini (Wajib Konfirmasi) *
+                <label className="block text-xs font-mono text-[#8A94A6] mb-1 font-semibold">
+                  {language === 'id' ? 'Password Saat Ini (Wajib Konfirmasi) *' : 'Current Password (Required for verification) *'}
                 </label>
                 <input
                   type="password"
                   required
                   value={currentPassword}
                   onChange={(e) => setCurrentPassword(e.target.value)}
-                  placeholder="Masukkan password admin saat ini..."
-                  className="w-full px-3.5 py-2.5 bg-[#0B0C0E] border border-[#262930] rounded-xl text-xs text-white focus:outline-none focus:border-brand-red font-mono"
+                  placeholder={language === 'id' ? 'Masukkan password admin saat ini...' : 'Enter your current admin password...'}
+                  className="w-full px-3.5 py-2.5 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl text-xs text-white focus:outline-none focus:border-[#E50914] font-mono min-h-[44px]"
                 />
               </div>
 
@@ -627,10 +699,10 @@ export const AdminSettings: React.FC = () => {
                 <button
                   type="submit"
                   disabled={securityLoading}
-                  className="px-5 py-2.5 rounded-xl bg-brand-red text-white text-xs font-mono font-bold hover:bg-brand-red/90 transition-all flex items-center gap-2"
+                  className="px-5 py-2.5 rounded-xl bg-[#E50914] text-white text-xs font-mono font-bold hover:bg-[#FF1E27] transition-all flex items-center gap-2 min-h-[44px]"
                 >
                   <Save size={14} />
-                  <span>Update Password Terenkripsi</span>
+                  <span>{language === 'id' ? 'Update Password Terenkripsi' : 'Update Encrypted Password'}</span>
                 </button>
               </div>
             </form>
@@ -640,15 +712,19 @@ export const AdminSettings: React.FC = () => {
 
       {/* TAB 5: API & CLOUD CONNECTIONS */}
       {activeTab === 'api' && (
-        <div className="max-w-2xl bg-[#16181D] border border-[#262930] rounded-2xl p-6 sm:p-8 space-y-6">
-          <div className="flex items-center gap-3 pb-4 border-b border-[#262930]">
-            <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+        <div className="w-full max-w-4xl bg-[#111318] border border-[rgba(255,255,255,0.07)] rounded-2xl p-5 sm:p-8 space-y-6">
+          <div className="flex items-center gap-3 pb-4 border-b border-[rgba(255,255,255,0.07)]">
+            <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0">
               <Database size={20} />
             </div>
             <div>
-              <h2 className="text-base font-bold font-display text-white">API & Cloud Integrations</h2>
-              <p className="text-xs text-[#8A909D]">
-                Webhook notifikasi masuk, server SMTP, dan konfigurasi Cloud Run container.
+              <h2 className="text-base font-bold font-display text-white">
+                {language === 'id' ? 'Integrasi API & Cloud' : 'API & Cloud Integrations'}
+              </h2>
+              <p className="text-xs text-[#8A94A6] font-mono">
+                {language === 'id'
+                  ? 'Webhook notifikasi masuk, server SMTP, dan konfigurasi region Cloud Run.'
+                  : 'Inbound notification webhooks, transactional SMTP credentials, and Cloud Run container regions.'}
               </p>
             </div>
           </div>
@@ -662,44 +738,52 @@ export const AdminSettings: React.FC = () => {
 
           <div className="space-y-4 text-xs font-mono">
             <div>
-              <label className="block text-[#8A909D] mb-1 font-semibold">Inbound Lead Webhook (Discord / Slack)</label>
+              <label className="block text-[#8A94A6] mb-1 font-semibold">
+                {language === 'id' ? 'Webhook Notifikasi Prospek (Discord / Slack)' : 'Inbound Lead Webhook (Discord / Slack)'}
+              </label>
               <input
                 type="text"
                 value={webhookUrl}
                 onChange={(e) => setWebhookUrl(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-[#0B0C0E] border border-[#262930] rounded-xl text-white focus:outline-none focus:border-brand-red font-mono"
+                className="w-full px-3.5 py-2.5 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914] font-mono min-h-[44px]"
               />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-[#8A909D] mb-1 font-semibold">SMTP Host</label>
+                <label className="block text-[#8A94A6] mb-1 font-semibold">
+                  {language === 'id' ? 'Host Server SMTP' : 'SMTP Server Host'}
+                </label>
                 <input
                   type="text"
                   value={smtpHost}
                   onChange={(e) => setSmtpHost(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-[#0B0C0E] border border-[#262930] rounded-xl text-white focus:outline-none focus:border-brand-red font-mono"
+                  className="w-full px-3.5 py-2.5 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914] font-mono min-h-[44px]"
                 />
               </div>
 
               <div>
-                <label className="block text-[#8A909D] mb-1 font-semibold">SMTP Port</label>
+                <label className="block text-[#8A94A6] mb-1 font-semibold">
+                  {language === 'id' ? 'Port SMTP' : 'SMTP Port'}
+                </label>
                 <input
                   type="text"
                   value={smtpPort}
                   onChange={(e) => setSmtpPort(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-[#0B0C0E] border border-[#262930] rounded-xl text-white focus:outline-none focus:border-brand-red font-mono"
+                  className="w-full px-3.5 py-2.5 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914] font-mono min-h-[44px]"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-[#8A909D] mb-1 font-semibold">Cloud Run Deployment Region</label>
+              <label className="block text-[#8A94A6] mb-1 font-semibold">
+                {language === 'id' ? 'Region Deployment Cloud Run' : 'Cloud Run Deployment Region'}
+              </label>
               <input
                 type="text"
                 value={cloudRunRegion}
                 onChange={(e) => setCloudRunRegion(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-[#0B0C0E] border border-[#262930] rounded-xl text-white focus:outline-none focus:border-brand-red font-mono"
+                className="w-full px-3.5 py-2.5 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914] font-mono min-h-[44px]"
               />
             </div>
 
@@ -707,13 +791,17 @@ export const AdminSettings: React.FC = () => {
               <button
                 type="button"
                 onClick={() => {
-                  setApiSaveStatus('Konfigurasi API & Cloud berhasil disimpan.');
+                  setApiSaveStatus(
+                    language === 'id' 
+                      ? 'Konfigurasi API & Cloud berhasil disimpan.' 
+                      : 'API & Cloud settings successfully saved.'
+                  );
                   setTimeout(() => setApiSaveStatus(null), 3000);
                 }}
-                className="px-5 py-2.5 rounded-xl bg-brand-red text-white text-xs font-mono font-bold hover:bg-brand-red/90 transition-all flex items-center gap-2"
+                className="px-5 py-2.5 rounded-xl bg-[#E50914] text-white text-xs font-mono font-bold hover:bg-[#FF1E27] transition-all flex items-center gap-2 min-h-[44px]"
               >
                 <Save size={14} />
-                <span>Simpan Konfigurasi API</span>
+                <span>{language === 'id' ? 'Simpan Konfigurasi API' : 'Save API Settings'}</span>
               </button>
             </div>
           </div>
@@ -722,16 +810,18 @@ export const AdminSettings: React.FC = () => {
 
       {/* TAB 6: AUDIT TRAIL */}
       {activeTab === 'audit' && (
-        <div className="bg-[#16181D] border border-[#262930] rounded-2xl p-6 sm:p-8">
+        <div className="w-full bg-[#111318] border border-[rgba(255,255,255,0.07)] rounded-2xl p-5 sm:p-8">
           
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-[#262930]">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-[rgba(255,255,255,0.07)]">
             <div>
               <h2 className="text-base font-bold font-display text-white flex items-center gap-2">
-                <ShieldCheck size={18} className="text-brand-red" />
-                <span>Security & Activity Audit Trail</span>
+                <ShieldCheck size={18} className="text-[#E50914]" />
+                <span>{language === 'id' ? 'Riwayat Audit Aktivitas & Keamanan' : 'Security & Activity Audit Trail'}</span>
               </h2>
-              <p className="text-xs text-[#8A909D]">
-                Catatan terenkripsi dari aktivitas autentikasi, percobaan brute force, dan perubahan sistem.
+              <p className="text-xs text-[#8A94A6] font-mono mt-0.5">
+                {language === 'id'
+                  ? 'Catatan terenkripsi dari aktivitas autentikasi, akses RBAC, dan perubahan data sistem.'
+                  : 'Immutable encrypted trail of user authentication, RBAC transitions, and security operations.'}
               </p>
             </div>
 
@@ -739,7 +829,7 @@ export const AdminSettings: React.FC = () => {
               <button
                 onClick={handleExportLogs}
                 disabled={logs.length === 0}
-                className="px-3 py-1.5 rounded-xl bg-[#0B0C0E] hover:bg-[#20232B] text-white border border-[#262930] text-xs font-mono transition-colors flex items-center gap-1.5 disabled:opacity-50"
+                className="px-3.5 py-2 rounded-xl bg-[#181B22] hover:bg-[#21252F] text-white border border-[rgba(255,255,255,0.07)] text-xs font-mono transition-colors flex items-center gap-1.5 disabled:opacity-50 min-h-[40px]"
               >
                 <Download size={13} />
                 <span>Export JSON</span>
@@ -748,28 +838,28 @@ export const AdminSettings: React.FC = () => {
               <button
                 onClick={handleClearLogs}
                 disabled={logs.length === 0}
-                className="px-3 py-1.5 rounded-xl bg-[#0B0C0E] hover:bg-red-950/40 text-[#8A909D] hover:text-red-400 border border-[#262930] hover:border-red-500/40 text-xs font-mono transition-colors flex items-center gap-1.5 disabled:opacity-50"
+                className="px-3.5 py-2 rounded-xl bg-[#181B22] hover:bg-red-950/40 text-[#8A94A6] hover:text-red-400 border border-[rgba(255,255,255,0.07)] hover:border-red-500/40 text-xs font-mono transition-colors flex items-center gap-1.5 disabled:opacity-50 min-h-[40px]"
               >
                 <Trash2 size={13} />
-                <span>Hapus Log</span>
+                <span>{language === 'id' ? 'Hapus Log' : 'Clear Logs'}</span>
               </button>
             </div>
           </div>
 
           {logs.length === 0 ? (
-            <div className="py-12 text-center text-[#8A909D] text-xs font-mono">
-              Belum ada log aktivitas keamanan yang tercatat.
+            <div className="py-12 text-center text-[#8A94A6] text-xs font-mono">
+              {language === 'id' ? 'Belum ada log aktivitas keamanan yang tercatat.' : 'No security audit logs recorded yet.'}
             </div>
           ) : (
-            <div className="space-y-2 max-h-[500px] overflow-y-auto pr-1">
+            <div className="space-y-2 max-h-[500px] overflow-y-auto pr-1 custom-scrollbar">
               {logs.map((log) => (
                 <div
                   key={log.id}
-                  className="p-3.5 rounded-xl bg-[#0B0C0E] border border-[#262930] flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs font-mono"
+                  className="p-3.5 rounded-xl bg-[#181B22] border border-[rgba(255,255,255,0.07)] flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs font-mono"
                 >
                   <div className="min-w-0">
                     <div className="flex items-center gap-2 mb-0.5">
-                      <span className={`px-2 py-0.2 rounded text-[10px] font-bold ${
+                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
                         log.severity === 'critical' 
                           ? 'bg-red-950 text-red-400 border border-red-500/40' 
                           : log.severity === 'warning' 
@@ -778,12 +868,12 @@ export const AdminSettings: React.FC = () => {
                       }`}>
                         {log.action}
                       </span>
-                      <span className="text-[#8A909D] text-[11px] font-semibold">{log.actor}</span>
+                      <span className="text-[#8A94A6] text-[11px] font-semibold">{log.actor}</span>
                     </div>
                     <p className="text-gray-300 text-xs">{log.details}</p>
                   </div>
 
-                  <div className="text-[10px] text-[#5C626E] shrink-0 sm:text-right">
+                  <div className="text-[10px] text-[#64748B] shrink-0 sm:text-right font-mono">
                     <div>{new Date(log.timestamp).toLocaleTimeString()}</div>
                     <div>{new Date(log.timestamp).toLocaleDateString()}</div>
                   </div>
@@ -798,4 +888,5 @@ export const AdminSettings: React.FC = () => {
     </div>
   );
 };
+
 export default AdminSettings;

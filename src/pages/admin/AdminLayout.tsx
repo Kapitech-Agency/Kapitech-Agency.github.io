@@ -111,6 +111,18 @@ export const AdminLayout: React.FC = () => {
     setMobileMenuOpen(false);
   }, [location.pathname]);
 
+  // Lock background scroll when mobile sidebar drawer is open
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [mobileMenuOpen]);
+
   const handleLogout = () => {
     if (window.confirm(t('admin.nav.logoutConfirm'))) {
       logoutAdmin();
@@ -118,7 +130,7 @@ export const AdminLayout: React.FC = () => {
     }
   };
 
-  // 4 Logical Sections
+  // 4 Logical Sections (with Consolidated Single Settings Menu)
   const navSections: NavSection[] = [
     {
       id: 'core',
@@ -206,21 +218,9 @@ export const AdminLayout: React.FC = () => {
       titleKey: 'admin.nav.administration',
       items: [
         {
-          to: '/admin/settings?tab=team',
-          label: language === 'id' ? 'Tim & Hak Akses' : 'Team & Permissions',
-          icon: ShieldCheck,
-          badge: null
-        },
-        {
-          to: '/admin/settings?tab=audit',
-          label: t('admin.nav.auditTrail'),
-          icon: Activity,
-          badge: null
-        },
-        {
-          to: '/admin/settings?tab=system',
-          label: language === 'id' ? 'Preferensi Sistem' : 'System Preferences',
-          icon: Sliders,
+          to: '/admin/settings',
+          label: t('admin.nav.settings'),
+          icon: Settings,
           badge: null
         }
       ]
@@ -229,12 +229,11 @@ export const AdminLayout: React.FC = () => {
 
   // Helper to determine if link is active
   const isItemActive = (itemTo: string) => {
-    const [path, query] = itemTo.split('?');
-    if (query) {
-      return location.pathname === path && location.search.includes(query);
+    if (itemTo === '/admin/settings') {
+      return location.pathname === '/admin/settings';
     }
-    if (location.pathname === path) return true;
-    if (path !== '/admin/dashboard' && path !== '/admin/settings' && location.pathname.startsWith(path)) {
+    if (location.pathname === itemTo) return true;
+    if (itemTo !== '/admin/dashboard' && itemTo !== '/admin/settings' && location.pathname.startsWith(itemTo)) {
       return true;
     }
     return false;
@@ -242,17 +241,21 @@ export const AdminLayout: React.FC = () => {
 
   // Find active item label for breadcrumb
   let activeItemLabel = 'Dashboard';
-  for (const section of navSections) {
-    for (const item of section.items) {
-      if (isItemActive(item.to)) {
-        activeItemLabel = item.label;
-        break;
+  if (location.pathname === '/admin/settings') {
+    activeItemLabel = t('admin.nav.settings');
+  } else {
+    for (const section of navSections) {
+      for (const item of section.items) {
+        if (isItemActive(item.to)) {
+          activeItemLabel = item.label;
+          break;
+        }
       }
     }
   }
 
   return (
-    <div className="h-screen w-full bg-[#08090C] text-[#F8FAFC] flex flex-col md:flex-row selection:bg-[#E50914] selection:text-white font-sans antialiased overflow-hidden">
+    <div className="h-screen w-full bg-[#090A0F] text-[#F8FAFC] flex flex-col md:flex-row selection:bg-[#E50914] selection:text-white font-sans antialiased overflow-hidden">
       
       {/* Universal Command Palette */}
       <CommandPalette 
@@ -398,189 +401,230 @@ export const AdminLayout: React.FC = () => {
       </aside>
 
       {/* ------------------------------------------------------------- */}
-      {/* MOBILE TOPBAR */}
+      {/* MOBILE TOPBAR - Single, sleek, non-cluttered header */}
       {/* ------------------------------------------------------------- */}
-      <div className="md:hidden flex items-center justify-between px-4 py-3 bg-[#0F1117]/95 backdrop-blur-xl border-b border-[#1F222C] sticky top-0 z-40 shrink-0 shadow-[0_4px_20px_rgba(0,0,0,0.5)]">
-        <Link to="/admin/dashboard" className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#E50914] to-[#FF1E27] flex items-center justify-center text-white font-bold text-xs shadow-[0_0_12px_rgba(229,9,20,0.3)]">
-            K
-          </div>
-          <div>
-            <span className="font-sans font-bold text-[#F8FAFC] text-sm tracking-tight block">KAPITECH AMS</span>
-            <span className="text-[9px] font-mono text-emerald-400 flex items-center gap-1 -mt-0.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              <span>Online • {currentTime.split(' ')[0] || ''}</span>
-            </span>
-          </div>
-        </Link>
-
-        <div className="flex items-center gap-2">
+      <div className="md:hidden flex items-center justify-between px-3.5 py-2.5 bg-[#111318] border-b border-[rgba(255,255,255,0.07)] sticky top-0 z-40 shrink-0 shadow-[0_4px_20px_rgba(0,0,0,0.5)] h-14">
+        <div className="flex items-center gap-2.5">
           <button
-            onClick={() => setCommandPaletteOpen(true)}
-            aria-label="Search command palette"
-            className="p-2 rounded-lg bg-[#161922] text-[#94A3B8] border border-[#1F222C]"
+            onClick={() => setMobileMenuOpen(true)}
+            aria-label="Open navigation menu"
+            className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl bg-[#181B22] text-white border border-[rgba(255,255,255,0.08)] hover:bg-[#21252F] active:scale-95 transition-all shadow-sm"
           >
-            <Search size={15} />
+            <Menu size={20} />
           </button>
 
-          {/* Quick Currency Toggle Mobile */}
-          <div className="flex items-center bg-[#08090C] border border-[#1F222C] rounded-lg p-0.5 font-mono text-[10px]">
+          <Link to="/admin/dashboard" className="flex items-center gap-2">
+            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#E50914] to-[#FF1E27] flex items-center justify-center text-white font-bold text-xs shadow-[0_0_12px_rgba(229,9,20,0.35)] shrink-0">
+              K
+            </div>
+            <div className="min-w-0">
+              <span className="font-sans font-bold text-[#F8FAFC] text-xs tracking-tight block truncate">KAPITECH AMS</span>
+              <span className="text-[9px] font-mono text-[#8A94A6] block truncate -mt-0.5">{activeItemLabel}</span>
+            </div>
+          </Link>
+        </div>
+
+        <div className="flex items-center gap-2">
+          {/* Mobile Language Switcher */}
+          <div className="flex items-center bg-[#181B22] border border-[rgba(255,255,255,0.08)] rounded-lg p-0.5 font-mono text-[10px]">
             <button
-              onClick={() => handleSwitchCurrency('IDR')}
-              className={`px-2 py-0.5 rounded-md font-semibold transition-all ${currency === 'IDR' ? 'bg-[#161922] text-emerald-400 font-bold shadow-sm' : 'text-[#94A3B8]'}`}
+              onClick={() => setLanguage('en')}
+              className={`px-2 py-1 rounded-md font-semibold transition-all ${
+                language === 'en'
+                  ? 'bg-[#111318] text-white shadow-sm border border-white/10 font-bold'
+                  : 'text-[#8A94A6]'
+              }`}
             >
-              IDR
+              EN
             </button>
             <button
-              onClick={() => handleSwitchCurrency('USD')}
-              className={`px-2 py-0.5 rounded-md font-semibold transition-all ${currency === 'USD' ? 'bg-[#161922] text-emerald-400 font-bold shadow-sm' : 'text-[#94A3B8]'}`}
+              onClick={() => setLanguage('id')}
+              className={`px-2 py-1 rounded-md font-semibold transition-all ${
+                language === 'id'
+                  ? 'bg-[#111318] text-white shadow-sm border border-white/10 font-bold'
+                  : 'text-[#8A94A6]'
+              }`}
             >
-              USD
+              ID
             </button>
           </div>
 
+          {/* Quick Currency Pill */}
           <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            aria-label="Toggle navigation menu"
-            className="p-2 min-h-[40px] min-w-[40px] flex items-center justify-center rounded-lg bg-[#161922] text-white border border-[#1F222C] hover:bg-[#1B1E2B] transition-colors"
+            onClick={() => handleSwitchCurrency(currency === 'IDR' ? 'USD' : 'IDR')}
+            className="px-2 py-1.5 rounded-lg bg-[#181B22] border border-[rgba(255,255,255,0.08)] text-[10px] font-mono font-bold text-emerald-400 hover:bg-[#21252F] transition-all min-h-[36px]"
+            title="Toggle Currency"
           >
-            {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
+            {currency}
           </button>
         </div>
       </div>
 
-      {/* Mobile Drawer Overlay & Menu */}
+      {/* Mobile Drawer Overlay & Menu (Global standard sliding drawer from left) */}
       {mobileMenuOpen && (
         <div className="md:hidden fixed inset-0 z-50 flex">
           <div 
-            className="fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity" 
+            className="fixed inset-0 bg-black/80 backdrop-blur-md transition-opacity" 
             onClick={() => setMobileMenuOpen(false)}
           />
 
-          <div className="relative ml-auto w-4/5 max-w-xs bg-[#0F1117] border-l border-[#1F222C] h-full flex flex-col justify-between p-4 z-10 shadow-2xl overflow-y-auto animate-in slide-in-from-right duration-200 rounded-l-2xl">
-            <div>
-              <div className="flex items-center justify-between pb-3 mb-3 border-b border-[#1F222C]">
-                <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-[#E50914] to-[#FF1E27] flex items-center justify-center text-white font-bold text-xs">
-                    K
-                  </div>
-                  <span className="text-xs font-mono font-bold text-white uppercase tracking-wider">Kapitech AMS</span>
+          <div className="relative w-[300px] max-w-[85vw] bg-[#111318] border-r border-[rgba(255,255,255,0.08)] h-[100dvh] flex flex-col justify-between z-50 shadow-[4px_0_30px_rgba(0,0,0,0.8)] overflow-hidden animate-in slide-in-from-left duration-200">
+            
+            {/* Drawer Header */}
+            <div className="p-4 border-b border-[rgba(255,255,255,0.07)] flex items-center justify-between bg-[#111318] shrink-0">
+              <Link 
+                to="/admin/dashboard" 
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-2.5"
+              >
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#E50914] to-[#FF1E27] flex items-center justify-center text-white font-bold text-xs shadow-[0_0_12px_rgba(229,9,20,0.35)] shrink-0">
+                  K
                 </div>
-                <button
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="p-2 min-h-[40px] min-w-[40px] flex items-center justify-center rounded-lg bg-[#161922] text-[#94A3B8] hover:text-white border border-[#1F222C]"
-                >
-                  <X size={16} />
-                </button>
-              </div>
+                <div>
+                  <div className="font-sans font-bold text-[#F8FAFC] text-sm tracking-tight flex items-center gap-1.5">
+                    <span>KAPITECH</span>
+                    <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#E50914]/10 text-[#FF1E27] border border-[#E50914]/30 font-semibold">
+                      AMS
+                    </span>
+                  </div>
+                  <p className="text-[10px] font-mono text-[#8A94A6] -mt-0.5">Agency Management System</p>
+                </div>
+              </Link>
 
-              {/* Mobile Drawer Language & Currency Bar */}
-              <div className="flex items-center justify-between gap-2 pb-3 mb-3 border-b border-[#1F222C]">
-                <div className="flex items-center bg-[#08090C] border border-[#1F222C] rounded-lg p-0.5 font-mono text-xs">
+              <button
+                onClick={() => setMobileMenuOpen(false)}
+                aria-label="Close navigation menu"
+                className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl bg-[#181B22] text-[#8A94A6] hover:text-white border border-[rgba(255,255,255,0.08)] active:scale-95 transition-all"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* Quick Preferences Bar inside Drawer */}
+            <div className="px-4 py-2.5 bg-[#14171E] border-b border-[rgba(255,255,255,0.05)] flex items-center justify-between shrink-0">
+              <div className="flex items-center gap-1 text-[11px] font-mono text-[#8A94A6]">
+                <span>{language === 'id' ? 'Bahasa:' : 'Lang:'}</span>
+                <div className="flex items-center bg-[#181B22] border border-[rgba(255,255,255,0.08)] rounded-md p-0.5">
                   <button
                     onClick={() => setLanguage('en')}
-                    className={`px-2.5 py-1 rounded-md font-bold transition-all ${
-                      language === 'en' ? 'bg-[#161922] text-white shadow-sm' : 'text-[#94A3B8]'
+                    className={`px-2 py-0.5 rounded text-[10px] font-bold transition-all ${
+                      language === 'en' ? 'bg-[#111318] text-white shadow-sm' : 'text-[#8A94A6]'
                     }`}
                   >
                     EN
                   </button>
                   <button
                     onClick={() => setLanguage('id')}
-                    className={`px-2.5 py-1 rounded-md font-bold transition-all ${
-                      language === 'id' ? 'bg-[#161922] text-white shadow-sm' : 'text-[#94A3B8]'
+                    className={`px-2 py-0.5 rounded text-[10px] font-bold transition-all ${
+                      language === 'id' ? 'bg-[#111318] text-white shadow-sm' : 'text-[#8A94A6]'
                     }`}
                   >
                     ID
                   </button>
                 </div>
+              </div>
 
-                <div className="flex items-center bg-[#08090C] border border-[#1F222C] rounded-lg p-0.5 font-mono text-xs">
+              <div className="flex items-center gap-1 text-[11px] font-mono text-[#8A94A6]">
+                <span>{language === 'id' ? 'Valuta:' : 'Curr:'}</span>
+                <div className="flex items-center bg-[#181B22] border border-[rgba(255,255,255,0.08)] rounded-md p-0.5">
                   <button
                     onClick={() => handleSwitchCurrency('IDR')}
-                    className={`px-2.5 py-1 rounded-md font-bold transition-all ${
-                      currency === 'IDR' ? 'bg-[#161922] text-emerald-400 shadow-sm' : 'text-[#94A3B8]'
+                    className={`px-2 py-0.5 rounded text-[10px] font-bold transition-all ${
+                      currency === 'IDR' ? 'bg-[#111318] text-emerald-400 shadow-sm' : 'text-[#8A94A6]'
                     }`}
                   >
                     IDR
                   </button>
                   <button
                     onClick={() => handleSwitchCurrency('USD')}
-                    className={`px-2.5 py-1 rounded-md font-bold transition-all ${
-                      currency === 'USD' ? 'bg-[#161922] text-emerald-400 shadow-sm' : 'text-[#94A3B8]'
+                    className={`px-2 py-0.5 rounded text-[10px] font-bold transition-all ${
+                      currency === 'USD' ? 'bg-[#111318] text-emerald-400 shadow-sm' : 'text-[#8A94A6]'
                     }`}
                   >
                     USD
                   </button>
                 </div>
               </div>
+            </div>
 
-              {/* Mobile Navigation List */}
-              <div className="space-y-3">
-                {navSections.map((section) => (
-                  <div key={section.id} className="space-y-1">
-                    <div className="text-[10px] font-mono text-[#64748B] font-bold tracking-wider px-2 uppercase">
-                      {t(section.titleKey)}
-                    </div>
-                    {section.items.map((item) => {
-                      const Icon = item.icon;
-                      const active = isItemActive(item.to);
-
-                      return (
-                        <Link
-                          key={item.to}
-                          to={item.to}
-                          onClick={() => setMobileMenuOpen(false)}
-                          className={`relative flex items-center justify-between px-3 py-2 rounded-lg text-xs font-sans transition-colors min-h-[42px] ${
-                            active 
-                              ? 'bg-[#E50914]/10 text-white font-semibold border-l-2 border-[#E50914]' 
-                              : 'text-[#94A3B8] hover:text-white hover:bg-white/[0.04]'
-                          }`}
-                        >
-                          <div className="flex items-center gap-2.5 min-w-0">
-                            <Icon size={16} className={active ? 'text-[#FF1E27]' : 'text-[#94A3B8]'} />
-                            <span className="truncate">{item.label}</span>
-                          </div>
-                          {item.badge !== null && item.badge !== undefined && (
-                            <span className={`px-2 py-0.5 rounded-full text-[10px] ${item.badgeColor || 'bg-[#161922] text-[#94A3B8]'}`}>
-                              {item.badge}
-                            </span>
-                          )}
-                        </Link>
-                      );
-                    })}
+            {/* Scrollable Navigation List */}
+            <div className="flex-1 overflow-y-auto p-3 space-y-4 custom-scrollbar">
+              {navSections.map((section) => (
+                <div key={section.id} className="space-y-1">
+                  <div className="text-[10px] font-mono text-[#64748B] font-bold tracking-wider px-3 pt-1 uppercase">
+                    {t(section.titleKey)}
                   </div>
-                ))}
+                  {section.items.map((item) => {
+                    const Icon = item.icon;
+                    const active = isItemActive(item.to);
 
-                <div className="pt-3 border-t border-[#1F222C]">
-                  <Link
-                    to="/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center justify-between px-3 py-2 rounded-lg text-xs font-mono text-emerald-400 bg-[#161922] border border-[#1F222C]"
-                  >
-                    <div className="flex items-center gap-2">
-                      <Globe size={14} />
-                      <span>{t('admin.nav.viewSite')}</span>
-                    </div>
-                    <ExternalLink size={11} />
-                  </Link>
+                    return (
+                      <Link
+                        key={item.to}
+                        to={item.to}
+                        onClick={() => setMobileMenuOpen(false)}
+                        className={`relative flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-sans transition-all min-h-[44px] group ${
+                          active 
+                            ? 'bg-[rgba(229,9,20,0.1)] text-white font-semibold' 
+                            : 'text-[#8A94A6] hover:text-white hover:bg-white/[0.04]'
+                        }`}
+                      >
+                        {active && (
+                          <span className="absolute left-0 top-2 bottom-2 w-[3px] bg-[#E50914] rounded-r-full" />
+                        )}
+                        <div className="flex items-center gap-3 min-w-0">
+                          <Icon size={17} className={active ? 'text-[#E50914] shrink-0' : 'text-[#8A94A6] shrink-0'} />
+                          <span className="truncate">{item.label}</span>
+                        </div>
+                        {item.badge !== null && item.badge !== undefined && (
+                          <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold shrink-0 ${item.badgeColor || 'bg-[#181B22] text-[#8A94A6] border border-[rgba(255,255,255,0.07)]'}`}>
+                            {item.badge}
+                          </span>
+                        )}
+                      </Link>
+                    );
+                  })}
                 </div>
+              ))}
+
+              {/* Public Agency Site Link */}
+              <div className="pt-2">
+                <Link
+                  to="/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-mono text-emerald-400 bg-[#181B22] hover:bg-[#21252F] border border-[rgba(255,255,255,0.07)] min-h-[44px] transition-colors"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <Globe size={15} />
+                    <span>{t('admin.nav.viewSite')}</span>
+                  </div>
+                  <ExternalLink size={12} className="text-[#64748B]" />
+                </Link>
               </div>
             </div>
 
             {/* Bottom session details */}
-            <div className="pt-3 border-t border-[#1F222C] flex items-center justify-between">
-              <div className="min-w-0 pr-2">
-                <div className="text-xs font-bold text-[#F8FAFC] truncate">{session?.user.username || 'admin'}</div>
-                <div className="text-[10px] font-mono text-[#94A3B8] truncate">{session?.user.email}</div>
+            <div className="p-3.5 border-t border-[rgba(255,255,255,0.07)] bg-[#14171E] flex items-center justify-between shrink-0">
+              <div className="flex items-center gap-2.5 min-w-0">
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#E50914] to-[#FF1E27] border border-white/10 flex items-center justify-center text-xs font-sans text-white font-bold shrink-0 shadow-sm">
+                  {session?.user.username?.charAt(0).toUpperCase() || 'A'}
+                </div>
+                <div className="min-w-0">
+                  <div className="text-xs font-semibold text-[#F8FAFC] truncate">{session?.user.username || 'admin'}</div>
+                  <div className="text-[10px] font-mono text-emerald-400 truncate flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                    <span>Lead Admin</span>
+                  </div>
+                </div>
               </div>
               <button
                 onClick={handleLogout}
-                className="px-3 py-2 min-h-[40px] rounded-lg bg-red-950/50 border border-[#E50914]/30 text-red-300 text-xs font-mono flex items-center gap-1 shrink-0"
+                aria-label="Logout"
+                className="px-3 py-2 min-h-[44px] rounded-xl bg-[#181B22] hover:bg-red-950/50 border border-[rgba(255,255,255,0.08)] hover:border-[#E50914]/30 text-[#8A94A6] hover:text-[#FF1E27] text-xs font-mono flex items-center gap-1.5 shrink-0 transition-all"
               >
-                <LogOut size={12} />
+                <LogOut size={14} />
                 <span>{t('admin.nav.logout')}</span>
               </button>
             </div>
@@ -589,38 +633,28 @@ export const AdminLayout: React.FC = () => {
       )}
 
       {/* ------------------------------------------------------------- */}
-      {/* MAIN CONTENT AREA & STICKY TOPBAR */}
+      {/* MAIN CONTENT AREA & DESKTOP STICKY TOPBAR */}
       {/* ------------------------------------------------------------- */}
-      <main className="flex-1 flex flex-col min-w-0 h-full overflow-y-auto bg-[#08090C] custom-scrollbar">
+      <main className="flex-1 flex flex-col min-w-0 h-full overflow-y-auto bg-[#090A0F] custom-scrollbar">
         
-        {/* Sticky Topbar Header */}
-        <header className="h-16 px-4 sm:px-6 lg:px-8 border-b border-[#1F222C] bg-[#08090C]/85 backdrop-blur-xl sticky top-0 z-30 flex items-center justify-between shrink-0 shadow-[0_4px_20px_rgba(0,0,0,0.5)]">
-          <div className="flex items-center gap-2.5 text-xs font-sans text-[#94A3B8]">
+        {/* Sticky Desktop Topbar Header (hidden on mobile to prevent double headers) */}
+        <header className="hidden md:flex h-16 px-4 sm:px-6 lg:px-8 border-b border-[rgba(255,255,255,0.07)] bg-[#090A0F]/95 backdrop-blur-md sticky top-0 z-30 items-center justify-between shrink-0 shadow-[0_1px_0_rgba(255,255,255,0.07),0_4px_24px_rgba(0,0,0,0.6)]">
+          <div className="flex items-center gap-2.5 text-xs font-sans text-[#8A94A6]">
             <span className="font-semibold text-white">Kapitech AMS</span>
             <ChevronRight size={13} className="text-[#64748B]" />
             <span className="text-[#F8FAFC] font-medium truncate">{activeItemLabel}</span>
           </div>
 
           {/* Topbar Controls Container */}
-          <div className="flex items-center gap-3 text-xs font-sans text-[#94A3B8]">
-            
-            {/* Quick Command Trigger in Topbar */}
-            <button
-              onClick={() => setCommandPaletteOpen(true)}
-              className="hidden xl:flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-[#161922] border border-[#1F222C] text-[#94A3B8] hover:text-white hover:border-white/10 text-xs transition-colors"
-            >
-              <Search size={13} className="text-[#64748B]" />
-              <span className="text-[11px] font-mono text-[#64748B]">⌘K Search</span>
-            </button>
-
+          <div className="flex items-center gap-3 text-xs font-sans text-[#8A94A6]">
             {/* Currency Switcher (IDR / USD) */}
-            <div className="hidden sm:flex items-center bg-[#0F1117] border border-[#1F222C] rounded-lg p-[3px] font-mono text-xs">
+            <div className="flex items-center bg-[#111318] border border-[rgba(255,255,255,0.07)] rounded-lg p-[3px] font-mono text-xs">
               <button
                 onClick={() => handleSwitchCurrency('IDR')}
                 className={`px-2.5 py-1 rounded-md font-semibold transition-all ${
                   currency === 'IDR'
-                    ? 'bg-[#161922] text-emerald-400 shadow-[0_1px_3px_rgba(0,0,0,0.5)] border border-white/10'
-                    : 'text-[#94A3B8] hover:text-white'
+                    ? 'bg-[#181B22] text-emerald-400 shadow-[0_1px_3px_rgba(0,0,0,0.5)] border border-white/10'
+                    : 'text-[#8A94A6] hover:text-white'
                 }`}
               >
                 IDR
@@ -629,8 +663,8 @@ export const AdminLayout: React.FC = () => {
                 onClick={() => handleSwitchCurrency('USD')}
                 className={`px-2.5 py-1 rounded-md font-semibold transition-all ${
                   currency === 'USD'
-                    ? 'bg-[#161922] text-emerald-400 shadow-[0_1px_3px_rgba(0,0,0,0.5)] border border-white/10'
-                    : 'text-[#94A3B8] hover:text-white'
+                    ? 'bg-[#181B22] text-emerald-400 shadow-[0_1px_3px_rgba(0,0,0,0.5)] border border-white/10'
+                    : 'text-[#8A94A6] hover:text-white'
                 }`}
               >
                 USD
@@ -638,13 +672,13 @@ export const AdminLayout: React.FC = () => {
             </div>
 
             {/* Language Switcher (EN / ID) */}
-            <div className="hidden sm:flex items-center bg-[#0F1117] border border-[#1F222C] rounded-lg p-[3px] font-mono text-xs">
+            <div className="flex items-center bg-[#111318] border border-[rgba(255,255,255,0.07)] rounded-lg p-[3px] font-mono text-xs">
               <button
                 onClick={() => setLanguage('en')}
                 className={`px-2.5 py-1 rounded-md font-semibold transition-all ${
                   language === 'en'
-                    ? 'bg-[#161922] text-white shadow-[0_1px_3px_rgba(0,0,0,0.5)] border border-white/10'
-                    : 'text-[#94A3B8] hover:text-white'
+                    ? 'bg-[#181B22] text-white shadow-[0_1px_3px_rgba(0,0,0,0.5)] border border-white/10'
+                    : 'text-[#8A94A6] hover:text-white'
                 }`}
               >
                 EN
@@ -653,8 +687,8 @@ export const AdminLayout: React.FC = () => {
                 onClick={() => setLanguage('id')}
                 className={`px-2.5 py-1 rounded-md font-semibold transition-all ${
                   language === 'id'
-                    ? 'bg-[#161922] text-white shadow-[0_1px_3px_rgba(0,0,0,0.5)] border border-white/10'
-                    : 'text-[#94A3B8] hover:text-white'
+                    ? 'bg-[#181B22] text-white shadow-[0_1px_3px_rgba(0,0,0,0.5)] border border-white/10'
+                    : 'text-[#8A94A6] hover:text-white'
                 }`}
               >
                 ID
@@ -662,7 +696,7 @@ export const AdminLayout: React.FC = () => {
             </div>
 
             {/* Live Studio Clock */}
-            <div className="flex items-center gap-1.5 bg-[#161922] px-2.5 py-1.5 rounded-lg border border-[#1F222C] text-[11px] font-mono text-[#94A3B8]">
+            <div className="flex items-center gap-1.5 bg-[#181B22] px-2.5 py-1.5 rounded-lg border border-[rgba(255,255,255,0.07)] text-[11px] font-mono text-[#8A94A6]">
               <Clock size={12} className="text-[#FF1E27]" />
               <span>{currentTime || 'Jakarta WIB'}</span>
             </div>
@@ -672,7 +706,7 @@ export const AdminLayout: React.FC = () => {
               to="/"
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden lg:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[#161922] border border-[#1F222C] hover:border-white/10 text-[11px] font-mono text-[#94A3B8] hover:text-white transition-colors"
+              className="hidden lg:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[#181B22] border border-[rgba(255,255,255,0.07)] hover:border-white/10 text-[11px] font-mono text-[#8A94A6] hover:text-white transition-colors"
             >
               <span>kapitech.id</span>
               <ExternalLink size={10} />

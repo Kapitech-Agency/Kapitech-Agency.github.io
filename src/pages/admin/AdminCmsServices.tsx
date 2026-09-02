@@ -180,28 +180,28 @@ export const AdminCmsServices: React.FC = () => {
     <div className="space-y-6">
       
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#1E293B]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[rgba(255,255,255,0.07)]">
         <div>
-          <div className="flex items-center gap-2 text-red-400 font-mono text-xs font-semibold uppercase tracking-wider mb-1">
+          <div className="flex items-center gap-2 text-[#E50914] font-mono text-xs font-semibold uppercase tracking-wider mb-1">
             <Cpu size={14} />
             <span>Service Catalog & Execution Engine</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-sans font-bold text-white tracking-tight flex items-center gap-3">
             <span>Agency Services (SEO & Dev)</span>
           </h1>
-          <p className="text-xs sm:text-sm text-[#94A3B8] mt-1">
-            Manage live service offerings, SLA benchmarks, deliverables, and technical capabilities published on <code className="text-white bg-[#111827] px-1.5 py-0.5 rounded border border-[#1E293B]">/services</code>.
+          <p className="text-xs sm:text-sm text-[#8A94A6] mt-1">
+            Manage live service offerings, SLA benchmarks, deliverables, and technical capabilities published on <code className="text-white bg-[#181B22] px-1.5 py-0.5 rounded border border-[rgba(255,255,255,0.07)]">/services</code>.
           </p>
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="text-xs font-mono text-[#94A3B8] bg-[#111827] px-3.5 py-2 rounded-xl border border-[#1E293B]">
+          <div className="text-xs font-mono text-[#8A94A6] bg-[#111318] px-3.5 py-2 rounded-xl border border-[rgba(255,255,255,0.07)]">
             Active Catalog: <strong className="text-white">{servicesList.length} Offerings</strong>
           </div>
 
           <button
             onClick={() => setIsAddModalOpen(true)}
-            className="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-sans font-semibold transition-all flex items-center gap-1.5 shadow-lg shadow-red-600/25 min-h-[38px]"
+            className="px-4 py-2 rounded-xl bg-[#E50914] hover:bg-[#FF1E27] text-white text-xs font-sans font-semibold transition-all flex items-center gap-1.5 shadow-lg shadow-[#E50914]/25 min-h-[38px]"
           >
             <Plus size={14} />
             <span>Add Service</span>
@@ -210,22 +210,22 @@ export const AdminCmsServices: React.FC = () => {
       </div>
 
       {statusMessage && (
-        <div className="p-3.5 rounded-xl bg-red-950/40 border border-red-500/40 text-red-300 text-xs font-sans flex items-center justify-between animate-in fade-in duration-200">
+        <div className="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-sans flex items-center justify-between animate-in fade-in duration-200">
           <div className="flex items-center gap-2">
-            <CheckCircle2 size={16} className="text-red-400" />
+            <CheckCircle2 size={16} className="text-emerald-400" />
             <span>{statusMessage}</span>
           </div>
-          <button onClick={() => setStatusMessage(null)} className="text-[#94A3B8] hover:text-white">
+          <button onClick={() => setStatusMessage(null)} className="text-[#8A94A6] hover:text-white">
             <X size={14} />
           </button>
         </div>
       )}
 
       {/* Quick Metrics Bar */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-[#111827] border border-[#1E293B] p-4 rounded-xl flex items-center justify-between shadow-sm">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
+        <div className="w-full h-full bg-[#111318] border border-[rgba(255,255,255,0.07)] p-4 rounded-xl flex items-center justify-between shadow-sm">
           <div>
-            <div className="text-xs font-sans text-[#94A3B8]">SEO & Growth Services</div>
+            <div className="text-xs font-sans text-[#8A94A6]">SEO & Growth Services</div>
             <div className="text-xl font-sans font-bold text-white mt-0.5">3 Modules</div>
           </div>
           <div className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-400">
@@ -233,19 +233,19 @@ export const AdminCmsServices: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-[#111827] border border-[#1E293B] p-4 rounded-xl flex items-center justify-between shadow-sm">
+        <div className="w-full h-full bg-[#111318] border border-[rgba(255,255,255,0.07)] p-4 rounded-xl flex items-center justify-between shadow-sm">
           <div>
-            <div className="text-xs font-sans text-[#94A3B8]">Development & Cloud</div>
+            <div className="text-xs font-sans text-[#8A94A6]">Development & Cloud</div>
             <div className="text-xl font-sans font-bold text-white mt-0.5">5 Stacks</div>
           </div>
-          <div className="w-8 h-8 rounded-lg bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-400">
+          <div className="w-8 h-8 rounded-lg bg-[#E50914]/10 border border-[#E50914]/30 flex items-center justify-center text-[#E50914]">
             <FileCode2 size={16} />
           </div>
         </div>
 
-        <div className="bg-[#111827] border border-[#1E293B] p-4 rounded-xl flex items-center justify-between shadow-sm">
+        <div className="w-full h-full bg-[#111318] border border-[rgba(255,255,255,0.07)] p-4 rounded-xl flex items-center justify-between shadow-sm">
           <div>
-            <div className="text-xs font-sans text-[#94A3B8]">UI/UX Design Systems</div>
+            <div className="text-xs font-sans text-[#8A94A6]">UI/UX Design Systems</div>
             <div className="text-xl font-sans font-bold text-white mt-0.5">4 Systems</div>
           </div>
           <div className="w-8 h-8 rounded-lg bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400">
@@ -253,9 +253,9 @@ export const AdminCmsServices: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-[#111827] border border-[#1E293B] p-4 rounded-xl flex items-center justify-between shadow-sm">
+        <div className="w-full h-full bg-[#111318] border border-[rgba(255,255,255,0.07)] p-4 rounded-xl flex items-center justify-between shadow-sm">
           <div>
-            <div className="text-xs font-sans text-[#94A3B8]">Standard Delivery SLA</div>
+            <div className="text-xs font-sans text-[#8A94A6]">Standard Delivery SLA</div>
             <div className="text-xl font-sans font-bold text-emerald-400 mt-0.5">7 - 14 Days</div>
           </div>
           <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
@@ -265,16 +265,16 @@ export const AdminCmsServices: React.FC = () => {
       </div>
 
       {/* Category Pills & Search */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-[#111827] p-3 rounded-2xl border border-[#1E293B]">
+      <div className="w-full flex flex-col sm:flex-row items-center justify-between gap-3 bg-[#111318] p-3 rounded-xl border border-[rgba(255,255,255,0.07)]">
         <div className="flex flex-wrap items-center gap-1.5 w-full sm:w-auto">
           {categories.map((cat) => (
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-sans transition-all ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-sans transition-all ${
                 selectedCategory === cat
-                  ? 'bg-red-600 text-white font-semibold shadow-md shadow-red-600/20'
-                  : 'text-[#94A3B8] hover:text-white hover:bg-[#161F30]'
+                  ? 'bg-[#E50914] text-white font-semibold shadow-md shadow-[#E50914]/20'
+                  : 'text-[#8A94A6] hover:text-white hover:bg-[#181B22]'
               }`}
             >
               {cat}
@@ -283,29 +283,29 @@ export const AdminCmsServices: React.FC = () => {
         </div>
 
         <div className="relative w-full sm:w-72">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#64748B]" size={14} />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5C626E]" size={14} />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search service by name or slug..."
-            className="w-full pl-9 pr-3 py-1.5 bg-[#080C14] border border-[#1E293B] rounded-xl text-xs text-white placeholder-[#64748B] focus:outline-none focus:border-red-500 font-sans transition-colors"
+            placeholder={language === 'id' ? 'Cari layanan berdasarkan nama atau slug...' : 'Search service by name or slug...'}
+            className="w-full pl-9 pr-3 py-2 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl text-xs text-white placeholder:text-[#5C626E] focus:outline-none focus:border-[#E50914] font-sans transition-colors min-h-[40px]"
           />
         </div>
       </div>
 
       {/* Services List Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 w-full">
         {filtered.map((item) => (
           <div
             key={item.slug}
-            className="bg-[#111827] border border-[#1E293B] rounded-2xl p-5 flex flex-col justify-between hover:border-red-500/40 transition-all shadow-sm group"
+            className="w-full h-full bg-[#111318] border border-[rgba(255,255,255,0.07)] rounded-xl p-5 flex flex-col justify-between hover:border-[rgba(255,255,255,0.14)] transition-all shadow-sm group"
           >
             <div>
               <div className="flex items-center justify-between gap-2 mb-3">
                 <div className="flex items-center gap-2">
                   {getCategoryIcon(item.category)}
-                  <span className="text-[10px] font-mono text-[#94A3B8] uppercase tracking-wider font-semibold">
+                  <span className="text-[10px] font-mono text-[#8A94A6] uppercase tracking-wider font-semibold">
                     {item.category}
                   </span>
                 </div>
@@ -314,22 +314,22 @@ export const AdminCmsServices: React.FC = () => {
                 </span>
               </div>
 
-              <h3 className="text-base font-bold font-sans text-white mb-1.5 group-hover:text-red-400 transition-colors">
+              <h3 className="text-base font-bold font-sans text-white mb-1.5 group-hover:text-[#E50914] transition-colors">
                 {item.title}
               </h3>
               
-              <p className="text-xs text-[#94A3B8] leading-relaxed mb-4 line-clamp-2">
+              <p className="text-xs text-[#8A94A6] leading-relaxed mb-4 line-clamp-2">
                 {item.heroSubtitle || item.heroSubtitleId}
               </p>
 
               {/* Core Capabilities Preview */}
               <div className="space-y-1.5 mb-4">
-                <div className="text-[10px] font-mono text-[#64748B] uppercase tracking-wider font-semibold">
+                <div className="text-[10px] font-mono text-[#5C626E] uppercase tracking-wider font-semibold">
                   Core Capabilities:
                 </div>
                 <div className="flex flex-wrap gap-1.5">
                   {item.capabilities.slice(0, 3).map((c, idx) => (
-                    <span key={idx} className="text-[10px] font-mono px-2 py-0.5 rounded-lg bg-[#080C14] text-[#F8FAFC] border border-[#1E293B]">
+                    <span key={idx} className="text-[10px] font-mono px-2 py-0.5 rounded-lg bg-[#181B22] text-[#F8FAFC] border border-[rgba(255,255,255,0.07)]">
                       {c.title || c.titleId}
                     </span>
                   ))}
@@ -338,10 +338,10 @@ export const AdminCmsServices: React.FC = () => {
 
               {/* Tech Stack / Tools */}
               {item.tools && item.tools.length > 0 && (
-                <div className="pt-2 border-t border-[#1E293B]/60 mb-3 flex items-center gap-1.5 overflow-x-auto custom-scrollbar pb-1">
-                  <span className="text-[10px] font-mono text-[#64748B] shrink-0">Tech:</span>
+                <div className="pt-2 border-t border-[rgba(255,255,255,0.07)] mb-3 flex items-center gap-1.5 overflow-x-auto custom-scrollbar pb-1">
+                  <span className="text-[10px] font-mono text-[#5C626E] shrink-0">Tech:</span>
                   {item.tools.slice(0, 4).map((tool, tIdx) => (
-                    <span key={tIdx} className="text-[9px] font-mono text-red-300 bg-red-950/30 px-1.5 py-0.5 rounded border border-red-500/20 shrink-0">
+                    <span key={tIdx} className="text-[9px] font-mono text-[#8A94A6] bg-[#181B22] px-1.5 py-0.5 rounded border border-[rgba(255,255,255,0.07)] shrink-0">
                       {tool}
                     </span>
                   ))}
@@ -349,22 +349,22 @@ export const AdminCmsServices: React.FC = () => {
               )}
             </div>
 
-            <div className="pt-4 border-t border-[#1E293B] flex items-center justify-between text-xs font-mono text-[#94A3B8]">
+            <div className="pt-4 border-t border-[rgba(255,255,255,0.07)] flex items-center justify-between text-xs font-mono text-[#8A94A6]">
               <span className="truncate max-w-[120px]">/{item.slug}</span>
               
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setSelectedServiceForDetail(item)}
-                  className="px-2.5 py-1 rounded-lg bg-[#161F30] hover:bg-[#1E293B] text-white text-[11px] font-sans flex items-center gap-1 transition-colors"
+                  className="px-2.5 py-1 rounded-lg bg-[#181B22] hover:bg-[#21252F] border border-[rgba(255,255,255,0.07)] text-white text-[11px] font-sans flex items-center gap-1 transition-colors"
                 >
-                  <Eye size={12} className="text-[#94A3B8]" />
+                  <Eye size={12} className="text-[#8A94A6]" />
                   <span>Inspect</span>
                 </button>
                 <a
                   href={`/services/${item.slug}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-2.5 py-1 rounded-lg bg-red-600/10 hover:bg-red-600/20 text-red-400 border border-red-500/30 text-[11px] font-sans flex items-center gap-1 transition-colors"
+                  className="px-2.5 py-1 rounded-lg bg-[#E50914]/10 hover:bg-[#E50914]/20 text-[#E50914] border border-[#E50914]/30 text-[11px] font-sans flex items-center gap-1 transition-colors"
                 >
                   <span>Live</span>
                   <ExternalLink size={11} />
@@ -379,50 +379,50 @@ export const AdminCmsServices: React.FC = () => {
       {/* Service Detail / Inspection Modal */}
       {selectedServiceForDetail && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-[#0B0F17] border border-[#1E293B] rounded-2xl w-full max-w-2xl shadow-2xl p-6 relative max-h-[90vh] overflow-y-auto custom-scrollbar animate-in zoom-in-95 duration-150">
+          <div className="bg-[#111318] border border-[rgba(255,255,255,0.07)] rounded-xl w-full max-w-2xl shadow-2xl p-6 relative max-h-[90vh] overflow-y-auto custom-scrollbar animate-in zoom-in-95 duration-150">
             <button
               onClick={() => setSelectedServiceForDetail(null)}
-              className="absolute top-4 right-4 p-1 rounded-lg text-[#94A3B8] hover:text-white hover:bg-[#1E293B]"
+              className="absolute top-4 right-4 p-1.5 rounded-lg text-[#8A94A6] hover:text-white bg-[#181B22] border border-[rgba(255,255,255,0.07)]"
             >
               <X size={16} />
             </button>
 
-            <div className="flex items-center gap-2 font-mono text-xs text-red-400 font-semibold mb-2">
+            <div className="flex items-center gap-2 font-mono text-xs text-[#E50914] font-semibold mb-2">
               <span>{selectedServiceForDetail.category}</span>
               <span>•</span>
-              <span className="text-[#94A3B8]">/{selectedServiceForDetail.slug}</span>
+              <span className="text-[#8A94A6]">/{selectedServiceForDetail.slug}</span>
             </div>
 
             <h2 className="text-xl font-sans font-bold text-white mb-2">
               {selectedServiceForDetail.title}
             </h2>
-            <p className="text-xs text-[#94A3B8] mb-5 leading-relaxed">
+            <p className="text-xs text-[#8A94A6] mb-5 leading-relaxed">
               {selectedServiceForDetail.heroSubtitle || selectedServiceForDetail.heroSubtitleId}
             </p>
 
             {/* Metrics */}
             <div className="grid grid-cols-3 gap-3 mb-5">
               {selectedServiceForDetail.metrics?.map((m, idx) => (
-                <div key={idx} className="bg-[#111827] border border-[#1E293B] p-3 rounded-xl text-center">
-                  <div className="text-lg font-sans font-bold text-red-400">{m.value}</div>
-                  <div className="text-[10px] font-mono text-[#94A3B8] mt-0.5">{m.label}</div>
+                <div key={idx} className="bg-[#181B22] border border-[rgba(255,255,255,0.07)] p-3 rounded-xl text-center">
+                  <div className="text-lg font-sans font-bold text-[#E50914]">{m.value}</div>
+                  <div className="text-[10px] font-mono text-[#8A94A6] mt-0.5">{m.label}</div>
                 </div>
               ))}
             </div>
 
             {/* Capabilities */}
             <div className="mb-5">
-              <h4 className="text-xs font-mono uppercase text-[#64748B] font-semibold tracking-wider mb-2">
+              <h4 className="text-xs font-mono uppercase text-[#5C626E] font-semibold tracking-wider mb-2">
                 Detailed Capabilities & SLA Scope
               </h4>
               <div className="space-y-2">
                 {selectedServiceForDetail.capabilities?.map((cap, cIdx) => (
-                  <div key={cIdx} className="bg-[#111827] border border-[#1E293B] p-3 rounded-xl">
+                  <div key={cIdx} className="bg-[#181B22] border border-[rgba(255,255,255,0.07)] p-3 rounded-xl">
                     <div className="text-xs font-semibold text-white flex items-center gap-2">
                       <CheckCircle2 size={13} className="text-emerald-400" />
                       <span>{cap.title || cap.titleId}</span>
                     </div>
-                    <p className="text-[11px] text-[#94A3B8] mt-1 pl-5">
+                    <p className="text-[11px] text-[#8A94A6] mt-1 pl-5">
                       {cap.desc || cap.descId}
                     </p>
                   </div>
@@ -433,20 +433,20 @@ export const AdminCmsServices: React.FC = () => {
             {/* Process Stages */}
             {selectedServiceForDetail.processStages && selectedServiceForDetail.processStages.length > 0 && (
               <div className="mb-5">
-                <h4 className="text-xs font-mono uppercase text-[#64748B] font-semibold tracking-wider mb-2">
+                <h4 className="text-xs font-mono uppercase text-[#5C626E] font-semibold tracking-wider mb-2">
                   Delivery Process & Milestones
                 </h4>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {selectedServiceForDetail.processStages.map((stage, sIdx) => (
-                    <div key={sIdx} className="bg-[#111827] border border-[#1E293B] p-3 rounded-xl">
-                      <div className="flex items-center gap-2 text-red-400 font-mono text-xs font-bold mb-1">
+                    <div key={sIdx} className="bg-[#181B22] border border-[rgba(255,255,255,0.07)] p-3 rounded-xl">
+                      <div className="flex items-center gap-2 text-[#E50914] font-mono text-xs font-bold mb-1">
                         <span>{stage.stageNumber}</span>
                         <span className="text-white font-sans font-semibold">{stage.stageName}</span>
                       </div>
-                      <p className="text-[11px] text-[#94A3B8] mb-2">{stage.stageDesc}</p>
+                      <p className="text-[11px] text-[#8A94A6] mb-2">{stage.stageDesc}</p>
                       <div className="flex flex-wrap gap-1">
                         {stage.deliverables?.map((d, dIdx) => (
-                          <span key={dIdx} className="text-[9px] font-mono bg-[#080C14] text-emerald-400 px-1.5 py-0.5 rounded border border-[#1E293B]">
+                          <span key={dIdx} className="text-[9px] font-mono bg-[#111318] text-emerald-400 px-1.5 py-0.5 rounded border border-[rgba(255,255,255,0.07)]">
                             ✓ {d}
                           </span>
                         ))}
@@ -457,10 +457,10 @@ export const AdminCmsServices: React.FC = () => {
               </div>
             )}
 
-            <div className="flex items-center justify-between pt-4 border-t border-[#1E293B]">
+            <div className="flex items-center justify-between pt-4 border-t border-[rgba(255,255,255,0.07)]">
               <button
                 onClick={() => handleDeleteService(selectedServiceForDetail.slug)}
-                className="px-3 py-2 rounded-xl bg-red-950/40 border border-red-500/30 text-red-400 hover:bg-red-900/50 text-xs font-mono flex items-center gap-1.5 transition-colors"
+                className="px-3 py-2 rounded-xl bg-red-950/30 border border-red-500/30 text-red-400 hover:bg-red-900/40 text-xs font-mono flex items-center gap-1.5 transition-colors"
               >
                 <Trash2 size={13} />
                 <span>Delete Offering</span>
@@ -469,7 +469,7 @@ export const AdminCmsServices: React.FC = () => {
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setSelectedServiceForDetail(null)}
-                  className="px-4 py-2 rounded-xl bg-[#161F30] hover:bg-[#1E293B] text-white text-xs font-sans"
+                  className="px-4 py-2 rounded-xl bg-[#181B22] hover:bg-[#21252F] border border-[rgba(255,255,255,0.07)] text-white text-xs font-sans transition-colors"
                 >
                   Close
                 </button>
@@ -477,7 +477,7 @@ export const AdminCmsServices: React.FC = () => {
                   href={`/services/${selectedServiceForDetail.slug}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-sans font-semibold flex items-center gap-1 shadow-md shadow-red-600/20"
+                  className="px-4 py-2 rounded-xl bg-[#E50914] hover:bg-[#FF1E27] text-white text-xs font-sans font-semibold flex items-center gap-1 shadow-md shadow-[#E50914]/20 transition-all"
                 >
                   <span>Open Public Page</span>
                   <ExternalLink size={12} />
@@ -492,10 +492,10 @@ export const AdminCmsServices: React.FC = () => {
       {/* Add New Service Modal */}
       {isAddModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-[#0B0F17] border border-[#1E293B] rounded-2xl w-full max-w-lg shadow-2xl p-6 relative max-h-[90vh] overflow-y-auto custom-scrollbar animate-in zoom-in-95 duration-150">
+          <div className="bg-[#111318] border border-[rgba(255,255,255,0.07)] rounded-xl w-full max-w-lg shadow-2xl p-6 relative max-h-[90vh] overflow-y-auto custom-scrollbar animate-in zoom-in-95 duration-150">
             <button
               onClick={() => setIsAddModalOpen(false)}
-              className="absolute top-4 right-4 p-1 rounded-lg text-[#94A3B8] hover:text-white hover:bg-[#1E293B]"
+              className="absolute top-4 right-4 p-1.5 rounded-lg text-[#8A94A6] hover:text-white bg-[#181B22] border border-[rgba(255,255,255,0.07)]"
             >
               <X size={16} />
             </button>
@@ -503,13 +503,13 @@ export const AdminCmsServices: React.FC = () => {
             <h3 className="text-lg font-sans font-bold text-white mb-1">
               Add New Agency Service Offering
             </h3>
-            <p className="text-xs text-[#94A3B8] mb-5">
+            <p className="text-xs text-[#8A94A6] mb-5">
               Publish a new technical capability or SEO service package into the agency catalog.
             </p>
 
             <form onSubmit={handleCreateService} className="space-y-4 text-xs font-sans">
               <div>
-                <label className="block text-[#94A3B8] mb-1 font-medium">Service Title *</label>
+                <label className="block text-[#8A94A6] mb-1 font-medium">Service Title *</label>
                 <input
                   type="text"
                   required
@@ -519,28 +519,28 @@ export const AdminCmsServices: React.FC = () => {
                     setNewSlug(e.target.value.toLowerCase().replace(/[^a-z0-9]/g, '-'));
                   }}
                   placeholder="e.g. Enterprise SEO & Core Web Vitals"
-                  className="w-full px-3 py-2 rounded-xl bg-[#111827] border border-[#1E293B] text-white focus:outline-none focus:border-red-500"
+                  className="w-full px-3 py-2 rounded-xl bg-[#181B22] border border-[rgba(255,255,255,0.07)] text-white focus:outline-none focus:border-[#E50914]"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[#94A3B8] mb-1 font-medium">URL Slug *</label>
+                  <label className="block text-[#8A94A6] mb-1 font-medium">URL Slug *</label>
                   <input
                     type="text"
                     required
                     value={newSlug}
                     onChange={(e) => setNewSlug(e.target.value)}
                     placeholder="e.g. enterprise-seo"
-                    className="w-full px-3 py-2 rounded-xl bg-[#111827] border border-[#1E293B] text-white font-mono text-[11px] focus:outline-none focus:border-red-500"
+                    className="w-full px-3 py-2 rounded-xl bg-[#181B22] border border-[rgba(255,255,255,0.07)] text-white font-mono text-[11px] focus:outline-none focus:border-[#E50914]"
                   />
                 </div>
                 <div>
-                  <label className="block text-[#94A3B8] mb-1 font-medium">Category</label>
+                  <label className="block text-[#8A94A6] mb-1 font-medium">Category</label>
                   <select
                     value={newCategory}
                     onChange={(e) => setNewCategory(e.target.value as any)}
-                    className="w-full px-3 py-2 rounded-xl bg-[#111827] border border-[#1E293B] text-white focus:outline-none focus:border-red-500"
+                    className="w-full px-3 py-2 rounded-xl bg-[#181B22] border border-[rgba(255,255,255,0.07)] text-white focus:outline-none focus:border-[#E50914]"
                   >
                     <option value="Development">Development</option>
                     <option value="Design">Design</option>
@@ -551,49 +551,49 @@ export const AdminCmsServices: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-[#94A3B8] mb-1 font-medium">Hero Headline</label>
+                <label className="block text-[#8A94A6] mb-1 font-medium">Hero Headline</label>
                 <input
                   type="text"
                   value={newHeadline}
                   onChange={(e) => setNewHeadline(e.target.value)}
                   placeholder="e.g. High-Impact Technical SEO for Scaling Ventures"
-                  className="w-full px-3 py-2 rounded-xl bg-[#111827] border border-[#1E293B] text-white focus:outline-none focus:border-red-500"
+                  className="w-full px-3 py-2 rounded-xl bg-[#181B22] border border-[rgba(255,255,255,0.07)] text-white focus:outline-none focus:border-[#E50914]"
                 />
               </div>
 
               <div>
-                <label className="block text-[#94A3B8] mb-1 font-medium">Description & Scope Overview</label>
+                <label className="block text-[#8A94A6] mb-1 font-medium">Description & Scope Overview</label>
                 <textarea
                   rows={2}
                   value={newSubtitle}
                   onChange={(e) => setNewSubtitle(e.target.value)}
                   placeholder="Explain client value proposition, measurable KPI improvements, and SLA guarantee..."
-                  className="w-full px-3 py-2 rounded-xl bg-[#111827] border border-[#1E293B] text-white focus:outline-none focus:border-red-500"
+                  className="w-full px-3 py-2 rounded-xl bg-[#181B22] border border-[rgba(255,255,255,0.07)] text-white focus:outline-none focus:border-[#E50914]"
                 />
               </div>
 
               {/* Capabilities Manager */}
               <div>
-                <label className="block text-[#94A3B8] mb-1 font-medium">Core Deliverables & Capabilities</label>
+                <label className="block text-[#8A94A6] mb-1 font-medium">Core Deliverables & Capabilities</label>
                 <div className="flex gap-2 mb-2">
                   <input
                     type="text"
                     value={newCapability}
                     onChange={(e) => setNewCapability(e.target.value)}
                     placeholder="Add deliverable point..."
-                    className="flex-1 px-3 py-1.5 rounded-xl bg-[#111827] border border-[#1E293B] text-white text-xs focus:outline-none focus:border-red-500"
+                    className="flex-1 px-3 py-1.5 rounded-xl bg-[#181B22] border border-[rgba(255,255,255,0.07)] text-white text-xs focus:outline-none focus:border-[#E50914]"
                   />
                   <button
                     type="button"
                     onClick={handleAddTempCapability}
-                    className="px-3 py-1.5 rounded-xl bg-[#161F30] hover:bg-[#1E293B] text-white text-xs font-semibold"
+                    className="px-3 py-1.5 rounded-xl bg-[#181B22] hover:bg-[#21252F] border border-[rgba(255,255,255,0.07)] text-white text-xs font-semibold transition-colors"
                   >
                     Add
                   </button>
                 </div>
                 <div className="space-y-1.5 max-h-32 overflow-y-auto custom-scrollbar">
                   {tempCapabilities.map((cap, idx) => (
-                    <div key={idx} className="flex items-center justify-between p-2 rounded-lg bg-[#111827] border border-[#1E293B] text-[11px]">
+                    <div key={idx} className="flex items-center justify-between p-2 rounded-lg bg-[#181B22] border border-[rgba(255,255,255,0.07)] text-[11px]">
                       <span className="text-white truncate">{cap}</span>
                       <button
                         type="button"
@@ -611,13 +611,13 @@ export const AdminCmsServices: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsAddModalOpen(false)}
-                  className="px-4 py-2 rounded-xl bg-[#161F30] hover:bg-[#1E293B] text-white text-xs"
+                  className="px-4 py-2 rounded-xl bg-[#181B22] hover:bg-[#21252F] border border-[rgba(255,255,255,0.07)] text-white text-xs transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-semibold shadow-lg shadow-red-600/25"
+                  className="px-5 py-2 rounded-xl bg-[#E50914] hover:bg-[#FF1E27] text-white text-xs font-semibold shadow-lg shadow-[#E50914]/25 transition-all"
                 >
                   Publish Service
                 </button>

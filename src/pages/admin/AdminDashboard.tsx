@@ -444,34 +444,34 @@ export const AdminDashboard: React.FC = () => {
           {/* Quick CRM Lead button */}
           <button
             onClick={() => navigate('/admin/crm')}
-            className="px-3.5 py-2 rounded-lg bg-[#161922] hover:bg-[#1B1E2B] border border-[rgba(255,255,255,0.06)] hover:border-[rgba(255,255,255,0.12)] text-xs font-sans font-semibold text-[#F8FAFC] transition-all flex items-center gap-1.5 shadow-sm min-h-[38px]"
+            className="h-10 px-3.5 py-2 rounded-xl bg-[#161922] hover:bg-[#1B1E2B] border border-[rgba(255,255,255,0.06)] hover:border-[rgba(255,255,255,0.12)] text-xs font-sans font-semibold text-[#F8FAFC] transition-all flex items-center gap-1.5 shadow-sm min-h-[40px]"
           >
-            <BarChart3 size={13} className="text-emerald-400" />
+            <BarChart3 size={14} className="text-emerald-400" />
             <span>{t('admin.dash.newCrmLead')}</span>
           </button>
 
           {/* Quick Invoice button */}
           <button
             onClick={() => navigate('/admin/invoicing')}
-            className="px-3.5 py-2 rounded-lg bg-[#161922] hover:bg-[#1B1E2B] border border-[rgba(255,255,255,0.06)] hover:border-[rgba(255,255,255,0.12)] text-xs font-sans font-semibold text-[#F8FAFC] transition-all flex items-center gap-1.5 shadow-sm min-h-[38px]"
+            className="h-10 px-3.5 py-2 rounded-xl bg-[#161922] hover:bg-[#1B1E2B] border border-[rgba(255,255,255,0.06)] hover:border-[rgba(255,255,255,0.12)] text-xs font-sans font-semibold text-[#F8FAFC] transition-all flex items-center gap-1.5 shadow-sm min-h-[40px]"
           >
-            <Receipt size={13} className="text-purple-400" />
+            <Receipt size={14} className="text-purple-400" />
             <span>{t('admin.dash.newInvoice')}</span>
           </button>
 
           {/* Import / Migration Button */}
           <button
             onClick={() => setIsMigrationModalOpen(true)}
-            className="px-3.5 py-2 rounded-lg bg-[#161922] hover:bg-[#1B1E2B] border border-[rgba(255,255,255,0.06)] hover:border-[rgba(255,255,255,0.12)] text-xs font-sans font-semibold text-[#F8FAFC] transition-all flex items-center gap-1.5 shadow-sm min-h-[38px]"
+            className="h-10 px-3.5 py-2 rounded-xl bg-[#161922] hover:bg-[#1B1E2B] border border-[rgba(255,255,255,0.06)] hover:border-[rgba(255,255,255,0.12)] text-xs font-sans font-semibold text-[#F8FAFC] transition-all flex items-center gap-1.5 shadow-sm min-h-[40px]"
           >
-            <FileSpreadsheet size={13} className="text-cyan-400" />
+            <FileSpreadsheet size={14} className="text-cyan-400" />
             <span>{language === 'id' ? 'Impor CSV' : 'Data Import'}</span>
           </button>
 
           {/* Strictly ONE '+' icon on Add Request */}
           <button
             onClick={() => setIsNewRequestModalOpen(true)}
-            className="px-4 py-2 rounded-lg bg-[#E50914] hover:bg-[#FF1E27] text-white text-xs font-sans font-semibold transition-all flex items-center gap-1.5 shadow-[0_0_16px_rgba(229,9,20,0.25)] min-h-[38px]"
+            className="h-10 px-4 py-2 rounded-xl bg-[#E50914] hover:bg-[#FF1E27] text-white text-xs font-sans font-semibold transition-all flex items-center gap-1.5 shadow-[0_0_16px_rgba(229,9,20,0.25)] min-h-[40px]"
           >
             <Plus size={14} />
             <span>{t('admin.dash.addRequest')}</span>
@@ -482,7 +482,7 @@ export const AdminDashboard: React.FC = () => {
             onClick={handleSimulateLead}
             disabled={testSending}
             title={t('admin.dash.simulateLead')}
-            className="p-2.5 rounded-lg bg-[#161922] hover:bg-[#1B1E2B] text-[#94A3B8] hover:text-white border border-[rgba(255,255,255,0.06)] hover:border-[rgba(255,255,255,0.12)] text-xs transition-all flex items-center justify-center min-h-[38px]"
+            className="h-10 w-10 p-2.5 rounded-xl bg-[#161922] hover:bg-[#1B1E2B] text-[#94A3B8] hover:text-white border border-[rgba(255,255,255,0.06)] hover:border-[rgba(255,255,255,0.12)] text-xs transition-all flex items-center justify-center min-h-[40px] min-w-[40px]"
           >
             <Sparkles size={14} className={testSending ? 'animate-spin text-[#FF1E27]' : 'text-[#FF1E27]'} />
           </button>
@@ -1038,17 +1038,117 @@ export const AdminDashboard: React.FC = () => {
           </div>
         </div>
 
-        {/* Data Table */}
-        <div className="overflow-x-auto custom-scrollbar">
+        {/* Mobile View: Zero Horizontal Scrolling Card Stream */}
+        <div className="md:hidden divide-y divide-[rgba(255,255,255,0.06)]">
+          {filteredRequests.length === 0 ? (
+            <div className="p-8 text-center text-xs font-mono text-[#94A3B8]">
+              {language === 'id' ? 'Tidak ada permintaan layanan yang cocok dengan filter.' : 'No service requests found matching the active filter.'}
+            </div>
+          ) : (
+            filteredRequests.map((req) => {
+              const isSelected = selectedRequestIds.includes(req.id);
+              return (
+                <div
+                  key={req.id}
+                  onClick={() => setActiveModalRequest(req)}
+                  className={`p-4 space-y-3 transition-colors cursor-pointer ${
+                    isSelected ? 'bg-[rgba(229,9,20,0.08)]' : 'hover:bg-[#161922]'
+                  }`}
+                >
+                  {/* Top Bar: Checkbox + ID + Priority + Due Date */}
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                      <input
+                        type="checkbox"
+                        checked={isSelected}
+                        onChange={() => handleSelectOne(req.id)}
+                        className="rounded bg-[#1B1E2B] border-[rgba(255,255,255,0.12)] text-[#E50914] focus:ring-0 focus:ring-offset-0"
+                      />
+                      <span className="font-mono font-semibold text-[#FF1E27] text-xs">
+                        {req.requestId}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold uppercase ${
+                        req.priority === 'urgent' ? 'bg-red-500/15 text-red-400 border border-red-500/30' :
+                        req.priority === 'high' ? 'bg-amber-500/15 text-amber-400 border border-amber-500/30' :
+                        req.priority === 'medium' ? 'bg-rose-500/15 text-rose-400 border border-rose-500/30' :
+                        'bg-slate-500/15 text-slate-400 border border-slate-500/30'
+                      }`}>
+                        {req.priority === 'urgent' ? t('admin.dash.priority.urgent') :
+                         req.priority === 'high' ? t('admin.dash.priority.high') :
+                         req.priority === 'medium' ? t('admin.dash.priority.medium') :
+                         t('admin.dash.priority.low')}
+                      </span>
+                      <span className={`text-[10px] font-mono ${req.slaDaysRemaining !== undefined && req.slaDaysRemaining <= 2 ? 'text-amber-400 font-bold' : 'text-[#94A3B8]'}`}>
+                        {req.dueDate}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Title & Metadata */}
+                  <div>
+                    <div className="font-semibold text-white text-sm">
+                      {req.title}
+                    </div>
+                    <div className="text-xs text-[#94A3B8] mt-0.5 font-mono">
+                      {req.clientCompany} • {req.serviceType}
+                    </div>
+                  </div>
+
+                  {/* Assigned Member & Status Selector Footer */}
+                  <div className="flex items-center justify-between gap-2 pt-2 border-t border-[rgba(255,255,255,0.04)]" onClick={(e) => e.stopPropagation()}>
+                    <div className="flex items-center gap-2 min-w-0">
+                      <div className="w-6 h-6 rounded-full bg-[#E50914] text-white flex items-center justify-center text-[10px] font-bold shrink-0">
+                        {req.assignedMember.initials || 'A'}
+                      </div>
+                      <span className="text-[#F8FAFC] text-xs truncate">{req.assignedMember.name}</span>
+                    </div>
+
+                    <div className="flex items-center gap-2 shrink-0">
+                      <select
+                        value={req.status}
+                        onChange={(e) => handleStatusChange(req.id, e.target.value as ServiceStatus)}
+                        className={`h-9 px-2.5 rounded-lg text-xs font-mono font-semibold border bg-[#1B1E2B] focus:outline-none transition-colors cursor-pointer min-h-[36px] ${
+                          req.status === 'completed' ? 'text-emerald-400 border-emerald-500/30' :
+                          req.status === 'review' ? 'text-purple-400 border-purple-500/30' :
+                          req.status === 'in_progress' ? 'text-[#FF1E27] border-[rgba(229,9,20,0.4)]' :
+                          'text-amber-400 border-amber-500/30'
+                        }`}
+                      >
+                        <option value="pending">{t('admin.dash.status.pending')}</option>
+                        <option value="in_progress">{t('admin.dash.status.in_progress')}</option>
+                        <option value="review">{t('admin.dash.status.review')}</option>
+                        <option value="completed">{t('admin.dash.status.completed')}</option>
+                      </select>
+
+                      <button
+                        onClick={() => setActiveModalRequest(req)}
+                        className="w-9 h-9 flex items-center justify-center rounded-lg bg-[#161922] text-[#94A3B8] hover:text-white border border-[rgba(255,255,255,0.06)] min-h-[36px] min-w-[36px]"
+                        title="View details"
+                      >
+                        <MoreVertical size={14} />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })
+          )}
+        </div>
+
+        {/* Desktop Data Table */}
+        <div className="hidden md:block overflow-x-auto custom-scrollbar max-h-[600px] overflow-y-auto">
           <table className="w-full text-left border-collapse text-xs font-sans">
-            <thead>
-              <tr className="border-b border-[rgba(255,255,255,0.06)] bg-[#0B0C10]/60 text-[#94A3B8] font-mono text-[11px] uppercase">
+            <thead className="sticky top-0 z-10 bg-[#111318]">
+              <tr className="border-b border-[rgba(255,255,255,0.07)] bg-[#181B22] text-[#8A94A6] font-mono text-[11px] uppercase">
                 <th className="p-4 w-10">
                   <input
                     type="checkbox"
                     onChange={handleSelectAll}
                     checked={selectedRequestIds.length > 0 && selectedRequestIds.length === filteredRequests.length}
-                    className="rounded bg-[#1B1E2B] border-[rgba(255,255,255,0.12)] text-[#E50914] focus:ring-0 focus:ring-offset-0"
+                    className="rounded bg-[#111318] border-[rgba(255,255,255,0.12)] text-[#E50914] focus:ring-0 focus:ring-offset-0"
                   />
                 </th>
                 <th className="p-4">{t('admin.dash.thReqId')} ⇅</th>
@@ -1147,7 +1247,7 @@ export const AdminDashboard: React.FC = () => {
                       <td className="p-4 text-right" onClick={(e) => e.stopPropagation()}>
                         <button
                           onClick={() => setActiveModalRequest(req)}
-                          className="p-1.5 text-[#64748B] hover:text-white hover:bg-[#1B1E2B] rounded-lg transition-colors"
+                          className="w-8 h-8 flex items-center justify-center text-[#64748B] hover:text-white hover:bg-[#1B1E2B] rounded-lg transition-colors ml-auto"
                         >
                           <MoreVertical size={14} />
                         </button>
@@ -1366,17 +1466,17 @@ export const AdminDashboard: React.FC = () => {
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-3">
+              <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-[rgba(255,255,255,0.06)]">
                 <button
                   type="button"
                   onClick={() => setIsNewRequestModalOpen(false)}
-                  className="px-4 py-2 rounded-lg bg-[#161922] hover:bg-[#1B1E2B] text-white text-xs border border-[rgba(255,255,255,0.06)]"
+                  className="h-10 px-4 rounded-xl bg-[#161922] hover:bg-[#1B1E2B] text-white text-xs font-mono font-medium border border-[rgba(255,255,255,0.06)] transition-colors min-h-[40px]"
                 >
                   {t('admin.action.cancel')}
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-lg bg-[#E50914] hover:bg-[#FF1E27] text-white text-xs font-semibold shadow-[0_0_16px_rgba(229,9,20,0.25)]"
+                  className="h-10 px-5 rounded-xl bg-[#E50914] hover:bg-[#FF1E27] text-white text-xs font-mono font-bold shadow-[0_0_16px_rgba(229,9,20,0.25)] transition-all min-h-[40px]"
                 >
                   {t('admin.dash.addRequest')}
                 </button>

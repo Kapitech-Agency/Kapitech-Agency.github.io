@@ -102,22 +102,22 @@ export const AdminLogin: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0B0C0E] text-white flex flex-col justify-between pt-20 pb-12 px-4 sm:px-6 relative overflow-hidden selection:bg-brand-red selection:text-white">
+    <div className="min-h-screen bg-[#090A0F] text-white flex flex-col justify-between pt-20 pb-12 px-4 sm:px-6 relative overflow-hidden selection:bg-[#E50914] selection:text-white">
       {/* Subtle Background Glow Elements */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-brand-red/5 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-10 right-10 w-72 h-72 bg-brand-red/[0.03] rounded-full blur-2xl pointer-events-none" />
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-[#E50914]/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-10 right-10 w-72 h-72 bg-[#E50914]/[0.03] rounded-full blur-2xl pointer-events-none" />
 
       {/* Top Header Navigation */}
       <div className="max-w-6xl w-full mx-auto flex items-center justify-between z-10">
         <Link 
           to="/" 
-          className="inline-flex items-center gap-2 text-xs font-mono text-[#8A909D] hover:text-white transition-colors group px-3 py-1.5 rounded-full bg-[#16181D]/60 border border-[#262930]"
+          className="inline-flex items-center gap-2 text-xs font-mono text-[#8A94A6] hover:text-white transition-colors group px-3 py-1.5 rounded-full bg-[#181B22] border border-[rgba(255,255,255,0.07)]"
         >
           <ArrowLeft size={14} className="group-hover:-translate-x-0.5 transition-transform" />
           <span>{language === 'id' ? 'Kembali ke Website Utama' : 'Back to Public Website'}</span>
         </Link>
 
-        <div className="flex items-center gap-2 text-[11px] font-mono text-[#8A909D]">
+        <div className="flex items-center gap-2 text-[11px] font-mono text-[#8A94A6]">
           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
           <span>Security Engine: ACTIVE</span>
         </div>
@@ -125,19 +125,19 @@ export const AdminLogin: React.FC = () => {
 
       {/* Main Login Card */}
       <div className="max-w-md w-full mx-auto my-auto z-10">
-        <div className="bg-[#16181D] border border-[#262930] rounded-2xl p-7 sm:p-9 shadow-2xl relative overflow-hidden backdrop-blur-xl">
+        <div className="bg-[#111318] border border-[rgba(255,255,255,0.07)] rounded-2xl p-7 sm:p-9 shadow-2xl relative overflow-hidden backdrop-blur-xl">
           
           {/* Subtle Top Red Accent Line */}
-          <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-brand-red to-transparent opacity-80" />
+          <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#E50914] to-transparent opacity-80" />
 
           {/* Header */}
           <div className="text-center mb-8">
-            <div className="w-13 h-13 rounded-2xl bg-brand-red/10 border border-brand-red/30 flex items-center justify-center text-brand-red mx-auto mb-4 shadow-lg shadow-brand-red/10">
+            <div className="w-13 h-13 rounded-2xl bg-[#E50914]/10 border border-[#E50914]/30 flex items-center justify-center text-[#FF1E27] mx-auto mb-4 shadow-lg shadow-[#E50914]/10">
               <Lock size={26} />
             </div>
             
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#0B0C0E] border border-[#262930] text-[10px] font-mono text-[#8A909D] uppercase tracking-wider mb-2">
-              <ShieldCheck size={12} className="text-brand-red" />
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#090A0F] border border-[rgba(255,255,255,0.07)] text-[10px] font-mono text-[#8A94A6] uppercase tracking-wider mb-2">
+              <ShieldCheck size={12} className="text-[#FF1E27]" />
               <span>Kapitech Studio Infrastructure</span>
             </div>
 
@@ -145,7 +145,7 @@ export const AdminLogin: React.FC = () => {
               {language === 'id' ? 'Portal Admin Internal' : 'Admin Portal Login'}
             </h1>
             
-            <p className="text-xs text-[#8A909D] mt-1.5 leading-relaxed">
+            <p className="text-xs text-[#8A94A6] mt-1.5 leading-relaxed">
               {language === 'id' 
                 ? 'Autentikasi terenkripsi untuk mengelola leads, pesan formulir, dan konten studio.' 
                 : 'Encrypted management gateway for client leads, CMS content, and agency infrastructure.'}
@@ -175,11 +175,11 @@ export const AdminLogin: React.FC = () => {
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Identifier Field */}
             <div>
-              <label className="block text-xs font-mono text-[#8A909D] uppercase tracking-wider mb-1.5 font-semibold">
+              <label className="block text-xs font-mono text-[#8A94A6] uppercase tracking-wider mb-1.5 font-semibold">
                 Username / Email Admin
               </label>
               <div className="relative">
-                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-brand-red" size={16} />
+                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#FF1E27]" size={16} />
                 <input
                   type="text"
                   required
@@ -188,7 +188,7 @@ export const AdminLogin: React.FC = () => {
                   value={identifier}
                   onChange={(e) => setIdentifier(e.target.value)}
                   placeholder="admin atau email..."
-                  className="w-full pl-10 pr-4 py-2.5 bg-[#0B0C0E] border border-[#262930] rounded-xl text-sm text-white focus:outline-none focus:border-brand-red transition-all font-mono placeholder:text-[#5C626E] disabled:opacity-50"
+                  className="w-full pl-10 pr-4 py-2.5 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl text-sm text-white focus:outline-none focus:border-[#E50914] transition-all font-mono placeholder:text-[#64748B] disabled:opacity-50"
                 />
               </div>
             </div>
@@ -196,13 +196,13 @@ export const AdminLogin: React.FC = () => {
             {/* Password Field */}
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="block text-xs font-mono text-[#8A909D] uppercase tracking-wider font-semibold">
+                <label className="block text-xs font-mono text-[#8A94A6] uppercase tracking-wider font-semibold">
                   Password
                 </label>
-                <span className="text-[10px] font-mono text-[#5C626E]">SHA-256 Protected</span>
+                <span className="text-[10px] font-mono text-[#64748B]">SHA-256 Protected</span>
               </div>
               <div className="relative">
-                <KeyRound className="absolute left-3.5 top-1/2 -translate-y-1/2 text-brand-red" size={16} />
+                <KeyRound className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#FF1E27]" size={16} />
                 <input
                   type={showPassword ? 'text' : 'password'}
                   required
@@ -210,12 +210,12 @@ export const AdminLogin: React.FC = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••••••"
-                  className="w-full pl-10 pr-10 py-2.5 bg-[#0B0C0E] border border-[#262930] rounded-xl text-sm text-white focus:outline-none focus:border-brand-red transition-all font-mono placeholder:text-[#5C626E] disabled:opacity-50"
+                  className="w-full pl-10 pr-10 py-2.5 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl text-sm text-white focus:outline-none focus:border-[#E50914] transition-all font-mono placeholder:text-[#64748B] disabled:opacity-50"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8A909D] hover:text-white transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8A94A6] hover:text-white transition-colors"
                 >
                   {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
@@ -229,21 +229,21 @@ export const AdminLogin: React.FC = () => {
                   type="checkbox"
                   checked={rememberMe}
                   onChange={(e) => setRememberMe(e.target.checked)}
-                  className="w-4 h-4 rounded bg-[#0B0C0E] border-[#262930] text-brand-red focus:ring-0 focus:ring-offset-0 cursor-pointer accent-brand-red"
+                  className="w-4 h-4 rounded bg-[#090A0F] border-[rgba(255,255,255,0.07)] text-[#FF1E27] focus:ring-0 focus:ring-offset-0 cursor-pointer accent-[#E50914]"
                 />
-                <span className="text-xs text-[#8A909D]">
+                <span className="text-xs text-[#8A94A6]">
                   {language === 'id' ? 'Ingat sesi selama 30 hari' : 'Remember session (30 days)'}
                 </span>
               </label>
 
-              <span className="text-[11px] font-mono text-[#5C626E]">v2.4.0</span>
+              <span className="text-[11px] font-mono text-[#64748B]">v2.4.0</span>
             </div>
 
             {/* Submit Button */}
             <button
               type="submit"
               disabled={loading || lockoutTimer > 0}
-              className="w-full mt-2 py-3 rounded-xl bg-brand-red hover:bg-brand-red/90 disabled:bg-[#262930] disabled:text-[#5C626E] text-white text-xs font-bold font-mono uppercase tracking-wider transition-all shadow-lg shadow-brand-red/20 flex items-center justify-center gap-2 group"
+              className="w-full mt-2 py-3 rounded-xl bg-[#E50914] hover:bg-[#FF1E27] disabled:bg-[#262930] disabled:text-[#64748B] text-white text-xs font-bold font-mono uppercase tracking-wider transition-all shadow-lg shadow-[#E50914]/20 flex items-center justify-center gap-2 group"
             >
               {loading ? (
                 <span>Memverifikasi Kredensial...</span>
@@ -257,9 +257,9 @@ export const AdminLogin: React.FC = () => {
           </form>
 
           {/* Quick Demo Credentials Reminder for internal dev */}
-          <div className="mt-6 pt-5 border-t border-[#262930] text-center">
-            <p className="text-[11px] font-mono text-[#5C626E] leading-relaxed">
-              Default Master: <code className="text-gray-300 bg-[#0B0C0E] px-1.5 py-0.5 rounded border border-[#262930]">admin</code> / <code className="text-gray-300 bg-[#0B0C0E] px-1.5 py-0.5 rounded border border-[#262930]">kapitechadmin</code>
+          <div className="mt-6 pt-5 border-t border-[rgba(255,255,255,0.07)] text-center">
+            <p className="text-[11px] font-mono text-[#64748B] leading-relaxed">
+              Default Master: <code className="text-gray-300 bg-[#090A0F] px-1.5 py-0.5 rounded border border-[rgba(255,255,255,0.07)]">admin</code> / <code className="text-gray-300 bg-[#090A0F] px-1.5 py-0.5 rounded border border-[rgba(255,255,255,0.07)]">kapitechadmin</code>
             </p>
           </div>
 
@@ -268,7 +268,7 @@ export const AdminLogin: React.FC = () => {
 
       {/* Footer Branding */}
       <div className="max-w-md w-full mx-auto text-center z-10">
-        <p className="text-[11px] font-mono text-[#5C626E]">
+        <p className="text-[11px] font-mono text-[#64748B]">
           © {new Date().getFullYear()} PT Kapitech Global Digital • Secure Administrative Subsystem
         </p>
       </div>

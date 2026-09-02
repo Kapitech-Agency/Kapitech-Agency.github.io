@@ -69,20 +69,22 @@ export const AdminCmsTestimonials: React.FC = () => {
     <div className="space-y-6">
       
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[#262930]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[rgba(255,255,255,0.07)]">
         <div>
           <h1 className="text-2xl font-display font-bold text-white flex items-center gap-3">
-            <Quote className="text-brand-red" size={24} />
+            <Quote className="text-[#FF1E27]" size={24} />
             <span>CMS: Client Testimonials & Social Proof</span>
           </h1>
-          <p className="text-xs text-[#8A909D] mt-1">
-            Kelola ulasan klien, feedback kepuasan, dan rekomendasi eksekutif yang tampil di homepage.
+          <p className="text-xs text-[#8A94A6] mt-1 font-mono">
+            {language === 'id' 
+              ? 'Kelola ulasan klien, feedback kepuasan, dan rekomendasi eksekutif yang tampil di homepage.'
+              : 'Manage client reviews, enterprise feedback, and executive recommendations on the homepage.'}
           </p>
         </div>
 
         <button
           onClick={handleOpenAdd}
-          className="px-4 py-2.5 rounded-xl bg-brand-red hover:bg-brand-red/90 text-white text-xs font-mono font-bold transition-all flex items-center gap-2 shadow-lg shadow-brand-red/20"
+          className="px-4 py-2.5 rounded-xl bg-[#E50914] hover:bg-[#FF1E27] text-white text-xs font-mono font-bold transition-all flex items-center gap-2 shadow-lg shadow-[#E50914]/20 min-h-[44px]"
         >
           <Plus size={14} />
           <span>{language === 'id' ? 'Tambah Testimoni' : 'Add Testimonial'}</span>
@@ -101,7 +103,7 @@ export const AdminCmsTestimonials: React.FC = () => {
         {testimonials.map((item) => (
           <div
             key={item.id}
-            className="bg-[#16181D] border border-[#262930] rounded-2xl p-6 flex flex-col justify-between hover:border-[#383C46] transition-all"
+            className="bg-[#111318] border border-[rgba(255,255,255,0.07)] rounded-2xl p-6 flex flex-col justify-between hover:border-[rgba(255,255,255,0.15)] transition-all"
           >
             <div>
               {/* Rating stars */}
@@ -117,13 +119,13 @@ export const AdminCmsTestimonials: React.FC = () => {
               </p>
             </div>
 
-            <div className="pt-4 border-t border-[#262930] flex items-center justify-between">
+            <div className="pt-4 border-t border-[rgba(255,255,255,0.07)] flex items-center justify-between">
               <div>
                 <div className="text-xs font-bold text-white">{item.author}</div>
-                <div className="text-[11px] font-mono text-[#8A909D]">
+                <div className="text-[11px] font-mono text-[#8A94A6]">
                   {item.role}, <span className="text-white">{item.company}</span>
                 </div>
-                <div className="text-[10px] font-mono text-[#5C626E] mt-0.5 flex items-center gap-1">
+                <div className="text-[10px] font-mono text-[#64748B] mt-0.5 flex items-center gap-1">
                   <MapPin size={10} />
                   <span>{item.location}</span>
                 </div>
@@ -132,15 +134,15 @@ export const AdminCmsTestimonials: React.FC = () => {
               <div className="flex items-center gap-1.5">
                 <button
                   onClick={() => handleOpenEdit(item)}
-                  className="p-1.5 rounded-lg bg-[#0B0C0E] hover:bg-[#20232B] text-[#8A909D] hover:text-white border border-[#262930] transition-colors"
+                  className="p-2 rounded-lg bg-[#181B22] hover:bg-[#21252F] text-[#8A94A6] hover:text-white border border-[rgba(255,255,255,0.07)] transition-colors min-h-[36px] min-w-[36px] flex items-center justify-center"
                 >
-                  <Edit3 size={13} />
+                  <Edit3 size={14} />
                 </button>
                 <button
                   onClick={() => handleDelete(item.id, item.author)}
-                  className="p-1.5 rounded-lg bg-[#0B0C0E] hover:bg-red-950/40 text-[#8A909D] hover:text-red-400 border border-[#262930] hover:border-red-500/30 transition-colors"
+                  className="p-2 rounded-lg bg-[#181B22] hover:bg-red-950/40 text-[#8A94A6] hover:text-red-400 border border-[rgba(255,255,255,0.07)] hover:border-red-500/30 transition-colors min-h-[36px] min-w-[36px] flex items-center justify-center"
                 >
-                  <Trash2 size={13} />
+                  <Trash2 size={14} />
                 </button>
               </div>
             </div>
@@ -152,73 +154,82 @@ export const AdminCmsTestimonials: React.FC = () => {
       {/* Modal: Add / Edit Testimonial */}
       {isModalOpen && editingItem && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-[#16181D] border border-[#262930] rounded-2xl max-w-lg w-full p-6 sm:p-7 shadow-2xl">
-            <div className="flex items-center justify-between pb-4 border-b border-[#262930] mb-5">
+          <div className="bg-[#111318] border border-[rgba(255,255,255,0.07)] rounded-2xl max-w-lg w-full p-6 sm:p-7 shadow-2xl">
+            <div className="flex items-center justify-between pb-4 border-b border-[rgba(255,255,255,0.07)] mb-5">
               <h2 className="text-base font-bold font-display text-white">
-                {editingItem.author ? `Edit: ${editingItem.author}` : 'Tambah Testimoni Klien'}
+                {editingItem.author ? `Edit: ${editingItem.author}` : (language === 'id' ? 'Tambah Testimoni Klien' : 'Add Client Testimonial')}
               </h2>
-              <button onClick={() => setIsModalOpen(false)} className="text-[#8A909D] hover:text-white text-xs font-mono">
-                ✕ Tutup
+              <button onClick={() => setIsModalOpen(false)} className="text-[#8A94A6] hover:text-white text-xs font-mono">
+                ✕ {language === 'id' ? 'Tutup' : 'Close'}
               </button>
             </div>
 
             <form onSubmit={handleSaveModal} className="space-y-4">
               <div>
-                <label className="block text-xs font-mono text-[#8A909D] mb-1 font-semibold">Nama Klien / Eksekutif *</label>
+                <label className="block text-xs font-mono text-[#8A94A6] mb-1 font-semibold">
+                  {language === 'id' ? 'Nama Klien / Eksekutif *' : 'Client / Executive Name *'}
+                </label>
                 <input
                   type="text"
                   required
                   value={editingItem.author}
                   onChange={(e) => setEditingItem({ ...editingItem, author: e.target.value })}
-                  placeholder="Contoh: Marcus Thorne"
-                  className="w-full px-3 py-2 bg-[#0B0C0E] border border-[#262930] rounded-xl text-xs text-white focus:outline-none focus:border-brand-red font-mono"
+                  placeholder="e.g., Marcus Thorne"
+                  className="w-full px-3 py-2.5 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl text-xs text-white focus:outline-none focus:border-[#E50914] font-mono min-h-[44px]"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-mono text-[#8A909D] mb-1 font-semibold">Jabatan (Role)</label>
+                  <label className="block text-xs font-mono text-[#8A94A6] mb-1 font-semibold">
+                    {language === 'id' ? 'Jabatan' : 'Role / Position'}
+                  </label>
                   <input
                     type="text"
                     value={editingItem.role}
                     onChange={(e) => setEditingItem({ ...editingItem, role: e.target.value })}
-                    placeholder="Managing Director"
-                    className="w-full px-3 py-2 bg-[#0B0C0E] border border-[#262930] rounded-xl text-xs text-white focus:outline-none focus:border-brand-red font-mono"
+                    placeholder="e.g., VP of Product"
+                    className="w-full px-3 py-2 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl text-xs text-white focus:outline-none focus:border-[#E50914] font-mono min-h-[44px]"
                   />
                 </div>
-
                 <div>
-                  <label className="block text-xs font-mono text-[#8A909D] mb-1 font-semibold">Perusahaan (Company)</label>
+                  <label className="block text-xs font-mono text-[#8A94A6] mb-1 font-semibold">
+                    {language === 'id' ? 'Perusahaan' : 'Company'}
+                  </label>
                   <input
                     type="text"
                     value={editingItem.company}
                     onChange={(e) => setEditingItem({ ...editingItem, company: e.target.value })}
-                    placeholder="Lumina Real Estate"
-                    className="w-full px-3 py-2 bg-[#0B0C0E] border border-[#262930] rounded-xl text-xs text-white focus:outline-none focus:border-brand-red font-mono"
+                    placeholder="e.g., Finova Global"
+                    className="w-full px-3 py-2 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl text-xs text-white focus:outline-none focus:border-[#E50914] font-mono min-h-[44px]"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-mono text-[#8A909D] mb-1 font-semibold">Lokasi Klien</label>
+                <label className="block text-xs font-mono text-[#8A94A6] mb-1 font-semibold">
+                  {language === 'id' ? 'Lokasi Klien' : 'Client Location'}
+                </label>
                 <input
                   type="text"
                   value={editingItem.location}
                   onChange={(e) => setEditingItem({ ...editingItem, location: e.target.value })}
-                  placeholder="Jakarta, Indonesia"
-                  className="w-full px-3 py-2 bg-[#0B0C0E] border border-[#262930] rounded-xl text-xs text-white focus:outline-none focus:border-brand-red font-mono"
+                  placeholder="e.g., Jakarta, Indonesia"
+                  className="w-full px-3 py-2 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl text-xs text-white focus:outline-none focus:border-[#E50914] font-mono min-h-[44px]"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-mono text-[#8A909D] mb-1 font-semibold">Isi Kutipan Testimoni (Bahasa Indonesia) *</label>
+                <label className="block text-xs font-mono text-[#8A94A6] mb-1 font-semibold">
+                  {language === 'id' ? 'Isi Kutipan Testimoni *' : 'Testimonial Quote *'}
+                </label>
                 <textarea
                   rows={3}
                   required
-                  value={editingItem.quoteId}
-                  onChange={(e) => setEditingItem({ ...editingItem, quoteId: e.target.value })}
-                  placeholder="Ceritakan dampak positif atau kecepatan kerja sama dengan Kapitech..."
-                  className="w-full px-3 py-2 bg-[#0B0C0E] border border-[#262930] rounded-xl text-xs text-white focus:outline-none focus:border-brand-red font-sans"
+                  value={editingItem.quoteId || editingItem.quote}
+                  onChange={(e) => setEditingItem({ ...editingItem, quoteId: e.target.value, quote: e.target.value })}
+                  placeholder={language === 'id' ? 'Ceritakan dampak positif atau kecepatan kerja sama dengan Kapitech...' : 'Share client feedback, impact, and delivery speed...'}
+                  className="w-full px-3 py-2 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl text-xs text-white focus:outline-none focus:border-[#E50914] font-sans"
                 />
               </div>
 
@@ -226,15 +237,15 @@ export const AdminCmsTestimonials: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 rounded-xl bg-[#0B0C0E] text-[#8A909D] hover:text-white border border-[#262930] text-xs font-mono"
+                  className="px-4 py-2 rounded-xl bg-[#181B22] text-[#8A94A6] hover:text-white border border-[rgba(255,255,255,0.07)] text-xs font-mono min-h-[44px]"
                 >
-                  Batal
+                  {language === 'id' ? 'Batal' : 'Cancel'}
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-xl bg-brand-red text-white text-xs font-mono font-bold hover:bg-brand-red/90 transition-all shadow-md shadow-brand-red/20"
+                  className="px-5 py-2 rounded-xl bg-[#E50914] text-white text-xs font-mono font-bold hover:bg-[#FF1E27] transition-all shadow-md shadow-[#E50914]/20 min-h-[44px]"
                 >
-                  Simpan Testimoni
+                  {language === 'id' ? 'Simpan Testimoni' : 'Save Testimonial'}
                 </button>
               </div>
             </form>
