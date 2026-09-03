@@ -238,18 +238,18 @@ export const DataMigrationModal: React.FC<DataMigrationModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-0 sm:p-4 overflow-y-auto">
       <div className="fixed inset-0 bg-black/80 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative w-full max-w-2xl bg-[#0D0F12] border border-[#262930] rounded-2xl shadow-2xl p-6 z-10 animate-in zoom-in-95 duration-150">
+      <div className="relative w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-2xl bg-[#0D0F12] border-0 sm:border sm:border-[#262930] rounded-none sm:rounded-2xl shadow-2xl z-10 flex flex-col overflow-hidden animate-in zoom-in-95 duration-150">
         
-        {/* Header */}
-        <div className="flex items-center justify-between pb-4 border-b border-[#262930]">
+        {/* Sticky Header */}
+        <div className="sticky top-0 z-20 bg-[#0D0F12]/95 backdrop-blur-md px-5 sm:px-6 py-4 border-b border-[#262930] flex items-center justify-between shrink-0">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-[#E60023]/15 text-[#FF1F3D] border border-[#E60023]/30 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-xl bg-[#E60023]/15 text-[#FF1F3D] border border-[#E60023]/30 flex items-center justify-center shrink-0">
               <FileSpreadsheet size={18} />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-white">
+              <h3 className="text-sm font-bold text-white leading-tight">
                 {language === 'id' ? 'Impor Data & Migrasi Skema' : 'Data Migration & CSV Import'}
               </h3>
               <p className="text-[11px] font-mono text-[#8A909D]">
@@ -257,24 +257,28 @@ export const DataMigrationModal: React.FC<DataMigrationModalProps> = ({
               </p>
             </div>
           </div>
-          <button onClick={onClose} className="p-1.5 rounded-lg bg-[#121418] text-[#8A909D] hover:text-white border border-[#262930]">
+          <button 
+            onClick={onClose} 
+            className="w-8 h-8 rounded-lg bg-[#121418] text-[#8A909D] hover:text-white border border-[#262930] flex items-center justify-center transition-colors shrink-0 ml-3"
+          >
             <X size={15} />
           </button>
         </div>
 
-        {/* Target Module Selector */}
-        <div className="py-4 space-y-4">
+        {/* Scrollable Body */}
+        <div className="p-5 sm:p-6 overflow-y-auto flex-1 space-y-4 custom-scrollbar">
           <div>
             <label className="text-[11px] font-mono text-[#8A909D] uppercase block mb-2">
               {language === 'id' ? 'Pilih Modul Tujuan Migrasi' : 'Select Target Destination Module'}
             </label>
-            <div className="grid grid-cols-3 gap-2.5">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
               <button
+                type="button"
                 onClick={() => {
                   setTargetModule('clients');
                   setPreviewRows([]);
                 }}
-                className={`p-3 rounded-xl border flex flex-col items-center gap-1.5 text-xs font-sans transition-all ${
+                className={`p-3 rounded-xl border flex flex-row sm:flex-col items-center gap-2 sm:gap-1.5 text-xs font-sans transition-all min-h-[44px] sm:min-h-[auto] ${
                   targetModule === 'clients'
                     ? 'bg-[#E60023]/15 border-[#E60023] text-white font-bold shadow-sm'
                     : 'bg-[#121418] border-[#262930] text-[#8A909D] hover:text-white'
@@ -285,11 +289,12 @@ export const DataMigrationModal: React.FC<DataMigrationModalProps> = ({
               </button>
 
               <button
+                type="button"
                 onClick={() => {
                   setTargetModule('projects');
                   setPreviewRows([]);
                 }}
-                className={`p-3 rounded-xl border flex flex-col items-center gap-1.5 text-xs font-sans transition-all ${
+                className={`p-3 rounded-xl border flex flex-row sm:flex-col items-center gap-2 sm:gap-1.5 text-xs font-sans transition-all min-h-[44px] sm:min-h-[auto] ${
                   targetModule === 'projects'
                     ? 'bg-[#E60023]/15 border-[#E60023] text-white font-bold shadow-sm'
                     : 'bg-[#121418] border-[#262930] text-[#8A909D] hover:text-white'
@@ -300,11 +305,12 @@ export const DataMigrationModal: React.FC<DataMigrationModalProps> = ({
               </button>
 
               <button
+                type="button"
                 onClick={() => {
                   setTargetModule('invoices');
                   setPreviewRows([]);
                 }}
-                className={`p-3 rounded-xl border flex flex-col items-center gap-1.5 text-xs font-sans transition-all ${
+                className={`p-3 rounded-xl border flex flex-row sm:flex-col items-center gap-2 sm:gap-1.5 text-xs font-sans transition-all min-h-[44px] sm:min-h-[auto] ${
                   targetModule === 'invoices'
                     ? 'bg-[#E60023]/15 border-[#E60023] text-white font-bold shadow-sm'
                     : 'bg-[#121418] border-[#262930] text-[#8A909D] hover:text-white'
@@ -317,14 +323,15 @@ export const DataMigrationModal: React.FC<DataMigrationModalProps> = ({
           </div>
 
           {/* Template Download Utility */}
-          <div className="flex items-center justify-between p-3 rounded-xl bg-[#121418] border border-[#262930]">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 rounded-xl bg-[#121418] border border-[#262930]">
             <div className="text-xs font-sans text-[#8A909D]">
               <span className="text-white font-semibold block">{language === 'id' ? 'Download Format Template Resmi' : 'Download Predefined Template'}</span>
               <span className="text-[11px] font-mono text-[#5C626E]">CSV format formatted for {targetModule}</span>
             </div>
             <button
+              type="button"
               onClick={handleDownloadTemplate}
-              className="px-3 py-1.5 rounded-lg bg-[#1E2128] hover:bg-[#262930] border border-[#262930] text-xs font-mono text-white flex items-center gap-1.5 transition-colors"
+              className="h-9 px-3 rounded-lg bg-[#1E2128] hover:bg-[#262930] border border-[#262930] text-xs font-mono text-white flex items-center justify-center gap-1.5 transition-colors shrink-0 min-h-[36px]"
             >
               <Download size={13} className="text-emerald-400" />
               <span>Download .CSV</span>
@@ -373,18 +380,20 @@ export const DataMigrationModal: React.FC<DataMigrationModalProps> = ({
           )}
         </div>
 
-        {/* Footer Actions */}
-        <div className="pt-4 border-t border-[#262930] flex items-center justify-end gap-2.5">
+        {/* Sticky Footer */}
+        <div className="sticky bottom-0 z-20 bg-[#0D0F12]/95 backdrop-blur-md px-5 sm:px-6 py-3.5 border-t border-[#262930] flex items-center justify-end gap-2.5 shrink-0">
           <button
+            type="button"
             onClick={onClose}
-            className="px-4 py-2 rounded-xl bg-[#121418] hover:bg-[#1E2128] border border-[#262930] text-xs font-sans text-white"
+            className="h-10 px-4 min-h-[40px] rounded-xl bg-[#121418] hover:bg-[#1E2128] border border-[#262930] text-xs font-mono text-white transition-colors"
           >
             {language === 'id' ? 'Tutup' : 'Close'}
           </button>
           <button
+            type="button"
             onClick={handleExecuteImport}
             disabled={parsing || !file}
-            className="px-5 py-2 rounded-xl bg-[#E60023] hover:bg-[#FF1F3D] disabled:opacity-50 text-white text-xs font-semibold shadow-lg shadow-[#E60023]/25 flex items-center gap-2"
+            className="h-10 px-5 min-h-[40px] rounded-xl bg-[#E60023] hover:bg-[#FF1F3D] disabled:opacity-50 text-white text-xs font-mono font-bold shadow-lg shadow-[#E60023]/25 flex items-center gap-2 transition-all"
           >
             <FileCheck2 size={15} />
             <span>{parsing ? 'Processing...' : language === 'id' ? 'Mulai Impor Data' : 'Execute Import'}</span>

@@ -24,7 +24,8 @@ import {
   Kanban,
   ShieldCheck,
   Activity,
-  Sliders
+  Sliders,
+  Users
 } from 'lucide-react';
 import { getAdminSession, logoutAdmin } from '../../lib/adminAuth';
 import { subscribeToInbox, ContactSubmission } from '../../lib/submissions';
@@ -222,6 +223,13 @@ export const AdminLayout: React.FC = () => {
           label: t('admin.nav.settings'),
           icon: Settings,
           badge: null
+        },
+        {
+          to: '/admin/settings?tab=rbac',
+          label: language === 'id' ? 'Akun & Hak Akses' : 'Accounts & RBAC',
+          icon: Users,
+          badge: 'RBAC',
+          badgeColor: 'bg-[#E50914]/10 text-[#FF1E27] border border-[#E50914]/30 font-mono text-[9px] font-bold'
         }
       ]
     }
@@ -229,8 +237,12 @@ export const AdminLayout: React.FC = () => {
 
   // Helper to determine if link is active
   const isItemActive = (itemTo: string) => {
+    if (itemTo.includes('tab=')) {
+      const [path, query] = itemTo.split('?');
+      return location.pathname === path && location.search.includes(query);
+    }
     if (itemTo === '/admin/settings') {
-      return location.pathname === '/admin/settings';
+      return location.pathname === '/admin/settings' && !location.search.includes('tab=rbac');
     }
     if (location.pathname === itemTo) return true;
     if (itemTo !== '/admin/dashboard' && itemTo !== '/admin/settings' && location.pathname.startsWith(itemTo)) {
@@ -273,30 +285,42 @@ export const AdminLayout: React.FC = () => {
       >
         
         {/* Brand Header */}
-        <div className="h-16 px-4 border-b border-[rgba(255,255,255,0.07)] flex items-center justify-between bg-[#111318]">
-          <Link to="/admin/dashboard" className="flex items-center gap-3 group overflow-hidden">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#E50914] to-[#FF1E27] flex items-center justify-center text-white font-bold font-sans shadow-[0_0_16px_rgba(229,9,20,0.3)] text-sm shrink-0">
-              K
-            </div>
-            {!sidebarCollapsed && (
-              <div className="min-w-0">
-                <div className="font-sans font-bold text-[#F8FAFC] text-sm tracking-tight flex items-center gap-1.5">
-                  <span>KAPITECH</span>
-                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#E50914]/10 text-[#FF1E27] border border-[#E50914]/30 font-semibold">
-                    AMS
-                  </span>
+        <div className={`h-16 border-b border-[rgba(255,255,255,0.07)] flex items-center bg-[#111318] transition-all ${
+          sidebarCollapsed ? 'justify-center px-2' : 'justify-between px-4'
+        }`}>
+          {!sidebarCollapsed ? (
+            <>
+              <Link to="/admin/dashboard" className="flex items-center gap-3 group overflow-hidden">
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#E50914] to-[#FF1E27] flex items-center justify-center text-white font-bold font-sans shadow-[0_0_16px_rgba(229,9,20,0.3)] text-sm shrink-0">
+                  K
                 </div>
-                <p className="text-[10px] font-mono text-[#8A94A6] -mt-0.5 truncate">Agency Management System</p>
-              </div>
-            )}
-          </Link>
-          <button
-            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-            className="p-1.5 rounded-lg bg-[#181B22] hover:bg-[#21252F] text-[#8A94A6] hover:text-[#F8FAFC] border border-[rgba(255,255,255,0.07)] transition-colors shrink-0"
-            title={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-          >
-            {sidebarCollapsed ? <PanelLeftOpen size={15} /> : <PanelLeftClose size={15} />}
-          </button>
+                <div className="min-w-0">
+                  <div className="font-sans font-bold text-[#F8FAFC] text-sm tracking-tight flex items-center gap-1.5">
+                    <span>KAPITECH</span>
+                    <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#E50914]/10 text-[#FF1E27] border border-[#E50914]/30 font-semibold">
+                      AMS
+                    </span>
+                  </div>
+                  <p className="text-[10px] font-mono text-[#8A94A6] -mt-0.5 truncate">Agency Management System</p>
+                </div>
+              </Link>
+              <button
+                onClick={() => setSidebarCollapsed(true)}
+                className="w-8 h-8 rounded-lg bg-[#181B22] hover:bg-[#21252F] text-[#8A94A6] hover:text-[#F8FAFC] border border-[rgba(255,255,255,0.07)] transition-colors flex items-center justify-center shrink-0"
+                title="Collapse sidebar"
+              >
+                <PanelLeftClose size={15} />
+              </button>
+            </>
+          ) : (
+            <Link 
+              to="/admin/dashboard" 
+              className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#E50914] to-[#FF1E27] flex items-center justify-center text-white font-bold font-sans shadow-[0_0_16px_rgba(229,9,20,0.3)] text-sm hover:scale-105 transition-transform shrink-0"
+              title="Kapitech AMS Dashboard"
+            >
+              K
+            </Link>
+          )}
         </div>
 
         {/* Navigation List - 4 Structured Sections */}
@@ -373,16 +397,16 @@ export const AdminLayout: React.FC = () => {
           <div className={`flex items-center justify-between ${sidebarCollapsed ? 'flex-col gap-2' : ''}`}>
             <div className="flex items-center gap-2.5 min-w-0">
               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#E50914] to-[#FF1E27] border border-white/10 flex items-center justify-center text-xs font-sans text-white font-bold shrink-0 shadow-sm">
-                {session?.user.username?.charAt(0).toUpperCase() || 'A'}
+                {(session?.user?.name || session?.user?.username || 'A').charAt(0).toUpperCase()}
               </div>
               {!sidebarCollapsed && (
                 <div className="min-w-0">
                   <div className="text-xs font-semibold text-[#F8FAFC] truncate">
-                    {session?.user.username || 'admin'}
+                    {session?.user?.name || session?.user?.username || 'Admin'}
                   </div>
                   <div className="text-[10px] font-mono text-emerald-400 truncate flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                    <span>Lead Admin</span>
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+                    <span className="truncate">{session?.user?.role || 'Lead Admin'}</span>
                   </div>
                 </div>
               )}
@@ -609,13 +633,13 @@ export const AdminLayout: React.FC = () => {
             <div className="p-3.5 border-t border-[rgba(255,255,255,0.07)] bg-[#14171E] flex items-center justify-between shrink-0">
               <div className="flex items-center gap-2.5 min-w-0">
                 <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#E50914] to-[#FF1E27] border border-white/10 flex items-center justify-center text-xs font-sans text-white font-bold shrink-0 shadow-sm">
-                  {session?.user.username?.charAt(0).toUpperCase() || 'A'}
+                  {(session?.user?.name || session?.user?.username || 'A').charAt(0).toUpperCase()}
                 </div>
                 <div className="min-w-0">
-                  <div className="text-xs font-semibold text-[#F8FAFC] truncate">{session?.user.username || 'admin'}</div>
+                  <div className="text-xs font-semibold text-[#F8FAFC] truncate">{session?.user?.name || session?.user?.username || 'Admin'}</div>
                   <div className="text-[10px] font-mono text-emerald-400 truncate flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                    <span>Lead Admin</span>
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+                    <span className="truncate">{session?.user?.role || 'Lead Admin'}</span>
                   </div>
                 </div>
               </div>
@@ -640,6 +664,15 @@ export const AdminLayout: React.FC = () => {
         {/* Sticky Desktop Topbar Header (hidden on mobile to prevent double headers) */}
         <header className="hidden md:flex h-16 px-4 sm:px-6 lg:px-8 border-b border-[rgba(255,255,255,0.07)] bg-[#090A0F]/95 backdrop-blur-md sticky top-0 z-30 items-center justify-between shrink-0 shadow-[0_1px_0_rgba(255,255,255,0.07),0_4px_24px_rgba(0,0,0,0.6)]">
           <div className="flex items-center gap-2.5 text-xs font-sans text-[#8A94A6]">
+            {sidebarCollapsed && (
+              <button
+                onClick={() => setSidebarCollapsed(false)}
+                className="w-8 h-8 rounded-lg bg-[#111318] hover:bg-[#181B22] text-[#8A94A6] hover:text-[#F8FAFC] border border-[rgba(255,255,255,0.07)] hover:border-[#E50914]/30 transition-all mr-1.5 flex items-center justify-center shrink-0 shadow-sm"
+                title="Expand sidebar"
+              >
+                <PanelLeftOpen size={15} />
+              </button>
+            )}
             <span className="font-semibold text-white">Kapitech AMS</span>
             <ChevronRight size={13} className="text-[#64748B]" />
             <span className="text-[#F8FAFC] font-medium truncate">{activeItemLabel}</span>

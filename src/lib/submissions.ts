@@ -32,6 +32,11 @@ export interface ContactSubmission {
   tools?: string;
   createdAt: string;
   userAgent?: string;
+  priority?: 'urgent' | 'high' | 'normal' | 'low';
+  assignedTo?: string;
+  internalNotes?: string;
+  tags?: string[];
+  starred?: boolean;
 }
 
 const STORAGE_KEY = 'kapitech_contact_submissions';
@@ -108,24 +113,29 @@ export const submitToInbox = async (data: Omit<ContactSubmission, 'id' | 'create
 };
 
 /**
- * Update submission status in both LocalStorage & Firestore
+ * Update any submission fields (status, notes, priority, assignedTo, starred, tags)
  */
-export const updateSubmissionStatus = async (id: string, newStatus: ContactSubmission['status']): Promise<void> => {
+export const updateSubmission = async (id: string, updates: Partial<ContactSubmission>): Promise<void> => {
   // Update local
   const current = getLocalSubmissions();
-  const updated = current.map(item => item.id === id ? { ...item, status: newStatus } : item);
+  const updated = current.map(item => item.id === id ? { ...item, ...updates } : item);
   saveLocalSubmissions(updated);
 
   // Try Firestore update if active
   if (db && isFirebaseConfigured) {
     try {
-      await updateDoc(doc(db, 'contact_submissions', id), {
-        status: newStatus
-      });
+      await updateDoc(doc(db, 'contact_submissions', id), updates);
     } catch (err) {
       console.debug('Firestore doc update skipped:', err);
     }
   }
+};
+
+/**
+ * Update submission status in both LocalStorage & Firestore
+ */
+export const updateSubmissionStatus = async (id: string, newStatus: ContactSubmission['status']): Promise<void> => {
+  return updateSubmission(id, { status: newStatus });
 };
 
 /**

@@ -1,0 +1,2015 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kapitech AMS • Agency Management System (CRM & Projects Prototype)</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            dark: {
+              base: '#0B0C10',
+              surface: '#13151C',
+              surfaceHover: '#1A1D26',
+              border: 'rgba(255, 255, 255, 0.08)',
+              borderSubtle: 'rgba(255, 255, 255, 0.05)',
+            },
+            accent: {
+              red: '#E62E2D',
+              redHover: '#FF3B30',
+              emerald: '#10B981',
+              amber: '#F59E0B',
+              purple: '#8B5CF6',
+              sky: '#0EA5E9',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    /* Custom Scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0B0C10;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1F2430;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #2D3342;
+    }
+
+    .drag-over {
+      background-color: rgba(230, 46, 45, 0.08) !important;
+      border-color: #E62E2D !important;
+    }
+
+    .glass-drawer {
+      background: rgba(19, 21, 28, 0.95);
+      backdrop-filter: blur(16px);
+    }
+  </style>
+</head>
+
+<body class="bg-[#0B0C10] text-[#F3F4F6] font-sans antialiased min-h-screen flex flex-col selection:bg-[#E62E2D] selection:text-white">
+
+  <!-- ============================================================== -->
+  <!-- 1. TOP EXECUTIVE APP BAR                                       -->
+  <!-- ============================================================== -->
+  <header class="sticky top-0 z-40 bg-[#0D0E12]/90 backdrop-blur-md border-b border-white/10 px-4 sm:px-6 py-3 flex items-center justify-between gap-4">
+    
+    <!-- Left: Brand & AMS Scope -->
+    <div class="flex items-center gap-3">
+      <a href="/admin/dashboard" class="flex items-center gap-2.5 group">
+        <div class="w-8 h-8 rounded-lg bg-[#E62E2D] flex items-center justify-center text-white font-mono font-bold text-sm shadow-md shadow-red-900/30">
+          K
+        </div>
+        <div>
+          <div class="flex items-center gap-1.5">
+            <span class="font-bold text-sm tracking-tight text-white font-mono">KAPITECH<span class="text-[#E62E2D]">.AMS</span></span>
+            <span class="text-[10px] font-mono px-1.5 py-0.2 rounded bg-red-950/60 text-red-400 border border-red-800/40">PROTOTYPE</span>
+          </div>
+          <span class="text-[10px] font-mono text-[#9CA3AF] block leading-none">ams.kapitech.id</span>
+        </div>
+      </a>
+
+      <div class="h-5 w-px bg-white/10 mx-1 hidden sm:block"></div>
+
+      <!-- Navigation Module Switcher Tabs -->
+      <nav class="flex items-center gap-1 bg-[#13151C] p-1 rounded-xl border border-white/10">
+        <button id="nav-btn-crm" onclick="switchModule('crm')" class="px-3 py-1.5 rounded-lg text-xs font-mono font-medium transition-all flex items-center gap-1.5 bg-[#E62E2D] text-white shadow-sm">
+          <i data-lucide="git-pull-request" class="w-3.5 h-3.5"></i>
+          <span>CRM & Pipeline</span>
+        </button>
+        <button id="nav-btn-projects" onclick="switchModule('projects')" class="px-3 py-1.5 rounded-lg text-xs font-mono font-medium transition-all flex items-center gap-1.5 text-[#9CA3AF] hover:text-white">
+          <i data-lucide="kanban-square" class="w-3.5 h-3.5"></i>
+          <span>Projects & Tasks</span>
+        </button>
+      </nav>
+    </div>
+
+    <!-- Center: Global Quick Search / Command Palette Trigger -->
+    <button onclick="toggleCommandPalette(true)" class="hidden md:flex items-center gap-3 px-3.5 py-1.5 rounded-xl bg-[#13151C] hover:bg-[#1A1D26] border border-white/10 text-[#9CA3AF] text-xs font-mono transition-all w-72 justify-between group">
+      <div class="flex items-center gap-2">
+        <i data-lucide="search" class="w-3.5 h-3.5 text-gray-500 group-hover:text-white transition-colors"></i>
+        <span>Quick search / jump...</span>
+      </div>
+      <kbd class="px-1.5 py-0.5 rounded bg-[#0B0C10] border border-white/10 text-[10px] text-gray-400 font-mono">⌘K</kbd>
+    </button>
+
+    <!-- Right: Currency, Language, & Profile Controls -->
+    <div class="flex items-center gap-2.5">
+      
+      <!-- Currency Switcher Toggle -->
+      <div class="flex items-center bg-[#13151C] border border-white/10 rounded-lg p-0.5">
+        <button id="curr-idr-btn" onclick="setCurrency('IDR')" class="px-2 py-1 rounded text-[11px] font-mono font-bold bg-[#0B0C10] text-[#10B981] shadow-sm">
+          IDR
+        </button>
+        <button id="curr-usd-btn" onclick="setCurrency('USD')" class="px-2 py-1 rounded text-[11px] font-mono text-[#9CA3AF] hover:text-white">
+          USD
+        </button>
+      </div>
+
+      <!-- Language Toggle -->
+      <div class="flex items-center bg-[#13151C] border border-white/10 rounded-lg p-0.5">
+        <button id="lang-en-btn" onclick="setLanguage('en')" class="px-2 py-1 rounded text-[11px] font-mono font-bold bg-[#0B0C10] text-white">
+          EN
+        </button>
+        <button id="lang-id-btn" onclick="setLanguage('id')" class="px-2 py-1 rounded text-[11px] font-mono text-[#9CA3AF] hover:text-white">
+          ID
+        </button>
+      </div>
+
+      <!-- Back to Full React App Link -->
+      <a href="/admin/crm" class="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#13151C] hover:bg-[#1A1D26] text-xs font-mono text-gray-300 border border-white/10 transition-colors">
+        <i data-lucide="arrow-left" class="w-3.5 h-3.5 text-[#E62E2D]"></i>
+        <span>Exit Prototype</span>
+      </a>
+
+      <!-- User Avatar -->
+      <div class="flex items-center gap-2 pl-1 border-l border-white/10">
+        <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-red-600 to-amber-500 p-0.5">
+          <div class="w-full h-full rounded-full bg-[#13151C] flex items-center justify-center text-xs font-mono font-bold text-white">
+            KP
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ============================================================== -->
+  <!-- 2. MAIN WORKSPACE CONTAINER                                    -->
+  <!-- ============================================================== -->
+  <main class="flex-1 p-4 sm:p-6 max-w-7xl w-full mx-auto space-y-6">
+
+    <!-- ============================================================ -->
+    <!-- MODULE 1: CRM & SALES PIPELINE                               -->
+    <!-- ============================================================ -->
+    <section id="module-crm" class="space-y-6">
+      
+      <!-- Top Action Bar & Filters -->
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 class="text-2xl font-bold font-mono tracking-tight text-white flex items-center gap-2">
+            <span>CRM & Sales Pipeline</span>
+            <span class="text-xs font-mono py-0.5 px-2 rounded-full bg-red-950/60 text-red-400 border border-red-800/40">Enterprise</span>
+          </h1>
+          <p class="text-xs font-mono text-[#9CA3AF]">
+            Track deal stages, qualify inbound scoping, and convert won opportunities directly to active project sprints.
+          </p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2">
+          <!-- View mode toggle: Kanban vs List -->
+          <div class="flex items-center bg-[#13151C] border border-white/10 rounded-xl p-0.5">
+            <button id="crm-view-kanban-btn" onclick="setCrmView('kanban')" class="px-3 py-1.5 rounded-lg text-xs font-mono font-medium transition-all bg-[#0B0C10] text-white border border-white/10">
+              <i data-lucide="layout-grid" class="w-3.5 h-3.5 inline mr-1"></i> Kanban
+            </button>
+            <button id="crm-view-list-btn" onclick="setCrmView('list')" class="px-3 py-1.5 rounded-lg text-xs font-mono font-medium transition-all text-[#9CA3AF] hover:text-white">
+              <i data-lucide="list" class="w-3.5 h-3.5 inline mr-1"></i> List Table
+            </button>
+          </div>
+
+          <!-- Add Deal Button (Strict single + icon) -->
+          <button onclick="openAddDealModal()" class="px-3.5 py-2 rounded-xl bg-[#E62E2D] hover:bg-[#FF3B30] text-white text-xs font-mono font-semibold transition-all flex items-center gap-1.5 shadow-lg shadow-red-950/40">
+            <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+            <span>Add Deal</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 1. Top KPI Bar & Analytics -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        
+        <!-- KPI 1: Total Active Pipeline -->
+        <div class="p-4 rounded-2xl bg-[#13151C] border border-gray-800/60 space-y-1 relative overflow-hidden group">
+          <div class="flex items-center justify-between text-xs font-mono text-[#9CA3AF]">
+            <span>Active Pipeline</span>
+            <i data-lucide="layers" class="w-4 h-4 text-gray-500"></i>
+          </div>
+          <div id="kpi-pipeline-val" class="text-2xl font-bold font-mono text-white tracking-tight">
+            Rp 840.000.000
+          </div>
+          <div class="text-[11px] font-mono text-[#10B981] flex items-center gap-1 pt-1 border-t border-white/5">
+            <i data-lucide="trending-up" class="w-3 h-3"></i>
+            <span id="kpi-weighted-val">Weighted: Rp 369.000.000 (probability-based)</span>
+          </div>
+        </div>
+
+        <!-- KPI 2: Closed Won Revenue & Win Rate -->
+        <div class="p-4 rounded-2xl bg-[#13151C] border border-gray-800/60 space-y-1">
+          <div class="flex items-center justify-between text-xs font-mono text-[#9CA3AF]">
+            <span>Closed Won (Q3)</span>
+            <i data-lucide="award" class="w-4 h-4 text-[#10B981]"></i>
+          </div>
+          <div id="kpi-won-val" class="text-2xl font-bold font-mono text-[#10B981] tracking-tight">
+            Rp 450.000.000
+          </div>
+          <div class="text-[11px] font-mono text-gray-400 flex items-center justify-between pt-1 border-t border-white/5">
+            <span>Win Rate:</span>
+            <span class="text-white font-bold font-mono">68.4% (8 of 12 closed)</span>
+          </div>
+        </div>
+
+        <!-- KPI 3: Pipeline Stage Conversion Indicators -->
+        <div class="p-4 rounded-2xl bg-[#13151C] border border-gray-800/60 space-y-2 sm:col-span-2">
+          <div class="flex items-center justify-between text-xs font-mono text-[#9CA3AF]">
+            <span>Stage Conversion Funnel</span>
+            <span class="text-[10px] text-gray-400">Lead → Won Conversion</span>
+          </div>
+          <div class="grid grid-cols-4 gap-2 pt-1">
+            <div class="p-2 rounded-xl bg-[#0B0C10] border border-white/5 text-center">
+              <span class="text-[10px] font-mono text-gray-400 block">Lead→Scope</span>
+              <span class="text-sm font-bold font-mono text-white">82%</span>
+            </div>
+            <div class="p-2 rounded-xl bg-[#0B0C10] border border-white/5 text-center">
+              <span class="text-[10px] font-mono text-gray-400 block">Scope→Pitch</span>
+              <span class="text-sm font-bold font-mono text-white">71%</span>
+            </div>
+            <div class="p-2 rounded-xl bg-[#0B0C10] border border-white/5 text-center">
+              <span class="text-[10px] font-mono text-gray-400 block">Pitch→SOW</span>
+              <span class="text-sm font-bold font-mono text-white">60%</span>
+            </div>
+            <div class="p-2 rounded-xl bg-[#0B0C10] border border-white/5 text-center">
+              <span class="text-[10px] font-mono text-emerald-400 block">SOW→Won</span>
+              <span class="text-sm font-bold font-mono text-[#10B981]">75%</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 2. Interactive Pipeline Board (Kanban View) -->
+      <div id="crm-kanban-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 items-start overflow-x-auto pb-4">
+        <!-- Injected via JavaScript renderCrmKanban() -->
+      </div>
+
+      <!-- 2. Interactive Pipeline Board (List Table View - Hidden by default) -->
+      <div id="crm-list-container" class="hidden bg-[#13151C] border border-gray-800/60 rounded-2xl overflow-hidden shadow-xl">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs font-mono">
+            <thead class="bg-[#0D0E12] border-b border-white/10 text-[#9CA3AF]">
+              <tr>
+                <th class="p-3.5">Deal & Client</th>
+                <th class="p-3.5">Service Pillar</th>
+                <th class="p-3.5">Stage</th>
+                <th class="p-3.5">Probability</th>
+                <th class="p-3.5">Valuation</th>
+                <th class="p-3.5">Source</th>
+                <th class="p-3.5 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="crm-table-body" class="divide-y divide-white/5">
+              <!-- Injected via JavaScript -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- MODULE 2: PROJECTS & TASKS                                   -->
+    <!-- ============================================================ -->
+    <section id="module-projects" class="hidden space-y-6">
+      
+      <!-- 1. Project Header & Workspace Overview -->
+      <div class="p-5 rounded-2xl bg-[#13151C] border border-gray-800/60 space-y-4 shadow-xl">
+        
+        <!-- Top Row: Project Selector, Margin Health, & Quick Links -->
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          
+          <div class="space-y-1">
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-mono text-[#9CA3AF] uppercase tracking-wider">Active Workspace</span>
+              <span id="proj-health-badge" class="px-2 py-0.5 rounded text-[10px] font-mono bg-emerald-950/80 text-emerald-400 border border-emerald-500/30 font-bold flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span>Margin Health: Healthy (58% Remaining)</span>
+              </span>
+            </div>
+
+            <!-- Project Selector Dropdown -->
+            <div class="flex items-center gap-2">
+              <select id="project-selector" onchange="changeActiveProject(this.value)" class="bg-[#0B0C10] border border-white/10 rounded-xl px-3 py-2 text-base font-bold font-mono text-white focus:outline-none focus:border-[#E62E2D]">
+                <option value="p1">Veritas Omnichannel Retail MVP</option>
+                <option value="p2">PT Fintek Nusantara Core Banking API</option>
+                <option value="p3">AeroCloud Series-A SaaS Analytics Portal</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Tech Stack Pills & Quick Links -->
+          <div class="flex flex-wrap items-center gap-2">
+            <div id="project-tech-stack" class="flex flex-wrap gap-1 mr-2">
+              <span class="px-2 py-1 rounded bg-[#0B0C10] border border-purple-500/30 text-purple-300 text-[10px] font-mono">Next.js 14</span>
+              <span class="px-2 py-1 rounded bg-[#0B0C10] border border-sky-500/30 text-sky-300 text-[10px] font-mono">Tailwind</span>
+              <span class="px-2 py-1 rounded bg-[#0B0C10] border border-blue-500/30 text-blue-300 text-[10px] font-mono">PostgreSQL</span>
+              <span class="px-2 py-1 rounded bg-[#0B0C10] border border-emerald-500/30 text-emerald-300 text-[10px] font-mono">Docker</span>
+            </div>
+
+            <a href="https://github.com/kapitech-agency" target="_blank" class="px-2.5 py-1.5 rounded-lg bg-[#0B0C10] hover:bg-[#1A1D26] border border-white/10 text-xs font-mono text-gray-300 flex items-center gap-1.5 transition-colors">
+              <i data-lucide="github" class="w-3.5 h-3.5"></i>
+              <span>Repo</span>
+            </a>
+            <a href="https://staging.kapitech.id" target="_blank" class="px-2.5 py-1.5 rounded-lg bg-[#0B0C10] hover:bg-[#1A1D26] border border-white/10 text-xs font-mono text-gray-300 flex items-center gap-1.5 transition-colors">
+              <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+              <span>Staging</span>
+            </a>
+            <button onclick="openSowModal()" class="px-2.5 py-1.5 rounded-lg bg-[#0B0C10] hover:bg-[#1A1D26] border border-white/10 text-xs font-mono text-gray-300 flex items-center gap-1.5 transition-colors">
+              <i data-lucide="file-text" class="w-3.5 h-3.5 text-[#E62E2D]"></i>
+              <span>SOW</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Middle Row: Sprint Progress & Budget vs Spent Hours -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t border-white/5">
+          <!-- Sprint Progress -->
+          <div class="space-y-1.5">
+            <div class="flex items-center justify-between text-xs font-mono">
+              <span class="text-[#9CA3AF]">Overall Sprint Velocity</span>
+              <span id="proj-sprint-percent" class="text-white font-bold">68% (Sprint 4 of 6)</span>
+            </div>
+            <div class="h-2 w-full bg-[#0B0C10] rounded-full overflow-hidden border border-white/5">
+              <div id="proj-sprint-bar" class="h-full bg-gradient-to-r from-red-600 to-amber-500 rounded-full transition-all duration-500" style="width: 68%;"></div>
+            </div>
+          </div>
+
+          <!-- Budget vs Spent Hours -->
+          <div class="flex items-center justify-between text-xs font-mono p-2.5 rounded-xl bg-[#0B0C10] border border-white/5">
+            <div>
+              <span class="text-gray-400 block text-[10px]">Total Contract Budget</span>
+              <span id="proj-budget-val" class="text-white font-bold text-sm">Rp 120.000.000</span>
+            </div>
+            <div class="text-right">
+              <span class="text-gray-400 block text-[10px]">Logged Billable Hours</span>
+              <span id="proj-hours-val" class="text-emerald-400 font-bold text-sm">184 hrs / Rp 64.400.000</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom Row: Interactive Milestones & Deliverables Tracker -->
+        <div class="space-y-2 pt-2 border-t border-white/5">
+          <div class="flex items-center justify-between text-xs font-mono text-[#9CA3AF]">
+            <span class="flex items-center gap-1.5">
+              <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400"></i>
+              <span>Milestones & Deliverables (Linked to Invoicing Terms)</span>
+            </span>
+            <span class="text-[10px] text-gray-500">Click milestone to inspect terms</span>
+          </div>
+
+          <div id="project-milestones-row" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
+            <!-- Injected via JS renderMilestones() -->
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 2. Multi-View Workspace Toggle & Controls -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        
+        <!-- Multi-View Tab Switcher -->
+        <div class="flex items-center bg-[#13151C] border border-white/10 rounded-xl p-0.5">
+          <button id="task-view-kanban-btn" onclick="setTaskView('kanban')" class="px-3.5 py-1.5 rounded-lg text-xs font-mono font-medium transition-all bg-[#0B0C10] text-white border border-white/10 shadow-sm flex items-center gap-1.5">
+            <i data-lucide="kanban" class="w-3.5 h-3.5"></i>
+            <span>Kanban Board</span>
+          </button>
+          <button id="task-view-gantt-btn" onclick="setTaskView('gantt')" class="px-3.5 py-1.5 rounded-lg text-xs font-mono font-medium transition-all text-[#9CA3AF] hover:text-white flex items-center gap-1.5">
+            <i data-lucide="gantt-chart" class="w-3.5 h-3.5"></i>
+            <span>Gantt / Timeline</span>
+          </button>
+          <button id="task-view-workload-btn" onclick="setTaskView('workload')" class="px-3.5 py-1.5 rounded-lg text-xs font-mono font-medium transition-all text-[#9CA3AF] hover:text-white flex items-center gap-1.5">
+            <i data-lucide="users" class="w-3.5 h-3.5"></i>
+            <span>Resource Workload</span>
+          </button>
+        </div>
+
+        <!-- Add Task Button (Single + icon) -->
+        <button onclick="openAddTaskModal()" class="px-3.5 py-2 rounded-xl bg-[#E62E2D] hover:bg-[#FF3B30] text-white text-xs font-mono font-semibold transition-all flex items-center gap-1.5 shadow-lg shadow-red-950/40">
+          <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+          <span>Add Task</span>
+        </button>
+      </div>
+
+      <!-- View 1: Task Execution Kanban Board -->
+      <div id="task-view-kanban" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-start pb-4">
+        <!-- Injected via renderTasksKanban() -->
+      </div>
+
+      <!-- View 2: Gantt / Timeline View (Interactive Visual Chart) -->
+      <div id="task-view-gantt" class="hidden p-5 rounded-2xl bg-[#13151C] border border-gray-800/60 space-y-4 shadow-xl">
+        <div class="flex items-center justify-between border-b border-white/10 pb-3">
+          <div>
+            <h3 class="font-bold text-sm font-mono text-white">Interactive Sprint Timeline & Dependencies</h3>
+            <p class="text-xs font-mono text-[#9CA3AF]">Visual duration bars linked with deliverables critical path</p>
+          </div>
+          <span class="text-xs font-mono px-2.5 py-1 rounded bg-emerald-950/60 text-emerald-400 border border-emerald-500/30">
+            Sprint Cycle: Weeks 1 - 8
+          </span>
+        </div>
+
+        <div id="gantt-chart-container" class="space-y-3 font-mono text-xs">
+          <!-- Injected via renderGanttChart() -->
+        </div>
+      </div>
+
+      <!-- View 3: Resource Workload View (Capacity & Billable Hours) -->
+      <div id="task-view-workload" class="hidden p-5 rounded-2xl bg-[#13151C] border border-gray-800/60 space-y-4 shadow-xl">
+        <div class="flex items-center justify-between border-b border-white/10 pb-3">
+          <div>
+            <h3 class="font-bold text-sm font-mono text-white">Team Member Workload & Capacity</h3>
+            <p class="text-xs font-mono text-[#9CA3AF]">Allocated billable hours vs weekly SLA ceiling</p>
+          </div>
+          <span class="text-xs font-mono text-gray-400">Total Squad: 4 Specialists</span>
+        </div>
+
+        <div id="workload-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Injected via renderWorkload() -->
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ============================================================== -->
+  <!-- 3. SLIDE-OVER DRAWER: DEAL DETAIL DEEP-DIVE                    -->
+  <!-- ============================================================== -->
+  <div id="deal-drawer" class="fixed inset-0 z-50 overflow-hidden hidden">
+    <!-- Backdrop -->
+    <div onclick="closeDealDrawer()" class="absolute inset-0 bg-black/75 backdrop-blur-sm transition-opacity"></div>
+
+    <div class="fixed inset-y-0 right-0 max-w-full flex pl-10">
+      <div class="w-screen max-w-xl glass-drawer border-l border-white/10 shadow-2xl flex flex-col">
+        
+        <!-- Drawer Header -->
+        <div class="p-5 border-b border-white/10 flex items-center justify-between bg-[#13151C]">
+          <div class="space-y-0.5">
+            <span id="drawer-deal-pillar" class="text-[10px] font-mono px-2 py-0.5 rounded bg-red-950/60 text-red-400 border border-red-800/40">
+              Web Development
+            </span>
+            <h2 id="drawer-deal-title" class="text-lg font-bold font-mono text-white pt-1">
+              PT Fintek Nusantara Global
+            </h2>
+            <div class="flex items-center gap-2 pt-0.5">
+              <span id="drawer-deal-val" class="text-sm font-bold font-mono text-[#10B981]">
+                Rp 120.000.000
+              </span>
+              <span class="text-xs font-mono text-gray-400">•</span>
+              <span id="drawer-deal-stage" class="text-xs font-mono text-gray-300">
+                Negotiation & SOW
+              </span>
+            </div>
+          </div>
+
+          <button onclick="closeDealDrawer()" class="p-1.5 rounded-lg bg-[#0B0C10] text-gray-400 hover:text-white border border-white/10">
+            <i data-lucide="x" class="w-4 h-4"></i>
+          </button>
+        </div>
+
+        <!-- Drawer Navigation Tabs -->
+        <div class="flex border-b border-white/10 px-5 bg-[#0D0E12]">
+          <button id="deal-tab-btn-activity" onclick="setDealDrawerTab('activity')" class="py-2.5 px-3 text-xs font-mono border-b-2 border-[#E62E2D] text-white font-bold">
+            Activity & Notes
+          </button>
+          <button id="deal-tab-btn-docs" onclick="setDealDrawerTab('docs')" class="py-2.5 px-3 text-xs font-mono border-b-2 border-transparent text-[#9CA3AF] hover:text-white">
+            Document Attachments
+          </button>
+          <button id="deal-tab-btn-email" onclick="setDealDrawerTab('email')" class="py-2.5 px-3 text-xs font-mono border-b-2 border-transparent text-[#9CA3AF] hover:text-white">
+            Direct Email Sender
+          </button>
+        </div>
+
+        <!-- Drawer Tab 1: Activity Timeline & Notes -->
+        <div id="deal-tab-content-activity" class="flex-1 p-5 overflow-y-auto space-y-4">
+          <!-- Add Note Form -->
+          <div class="p-3.5 rounded-xl bg-[#0D0E12] border border-white/10 space-y-2">
+            <div class="flex items-center gap-2">
+              <select id="new-activity-type" class="bg-[#13151C] border border-white/10 rounded-lg px-2 py-1 text-xs font-mono text-white">
+                <option value="call">📞 Log Call</option>
+                <option value="email">✉️ Log Email</option>
+                <option value="note">📝 Internal Note</option>
+              </select>
+              <span class="text-[10px] font-mono text-gray-400">Add entry to deal history</span>
+            </div>
+            <textarea id="new-activity-text" placeholder="Detail notes, discussion points, or feedback from client..." class="w-full bg-[#13151C] border border-white/10 rounded-lg p-2.5 text-xs font-mono text-white focus:outline-none focus:border-[#E62E2D] h-20 placeholder:text-gray-500"></textarea>
+            <div class="flex justify-end">
+              <button onclick="addDealActivity()" class="px-3 py-1.5 rounded-lg bg-[#E62E2D] hover:bg-[#FF3B30] text-white text-xs font-mono font-semibold flex items-center gap-1">
+                <span>Save Entry</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Timeline Entries -->
+          <div class="space-y-3" id="deal-activity-timeline">
+            <!-- Injected via JS -->
+          </div>
+        </div>
+
+        <!-- Drawer Tab 2: Document Attachments -->
+        <div id="deal-tab-content-docs" class="hidden flex-1 p-5 overflow-y-auto space-y-4">
+          <!-- Upload Area -->
+          <div class="p-6 border-2 border-dashed border-white/15 rounded-xl text-center space-y-2 bg-[#0D0E12]">
+            <i data-lucide="upload-cloud" class="w-8 h-8 text-[#E62E2D] mx-auto"></i>
+            <div class="text-xs font-mono text-white font-semibold">Upload SOW Draft, NDA, or Pitch Deck</div>
+            <p class="text-[10px] font-mono text-gray-400">PDF, DOCX, FIG up to 25MB</p>
+            <button onclick="simulateUploadDoc()" class="px-3 py-1.5 rounded-lg bg-[#13151C] hover:bg-[#1A1D26] text-xs font-mono text-gray-200 border border-white/10">
+              Select Files
+            </button>
+          </div>
+
+          <!-- Existing Docs List -->
+          <div id="deal-docs-list" class="space-y-2">
+            <!-- Injected via JS -->
+          </div>
+        </div>
+
+        <!-- Drawer Tab 3: Direct Email Sender -->
+        <div id="deal-tab-content-email" class="hidden flex-1 p-5 overflow-y-auto space-y-3">
+          <div class="space-y-1">
+            <label class="text-xs font-mono text-[#9CA3AF]">Select Email Template</label>
+            <select id="deal-email-template-select" onchange="applyEmailTemplate(this.value)" class="w-full bg-[#0D0E12] border border-white/10 rounded-xl px-3 py-2 text-xs font-mono text-white focus:outline-none focus:border-[#E62E2D]">
+              <option value="proposal">Formal Technical Scope & Fee Proposal</option>
+              <option value="discovery">Discovery Call Invitation & Scheduling</option>
+              <option value="sow">Statement of Work (SOW) & Milestone Sign-off</option>
+            </select>
+          </div>
+
+          <div class="space-y-1">
+            <label class="text-xs font-mono text-[#9CA3AF]">Recipient Email</label>
+            <input id="deal-email-to" type="text" value="client.contact@fintek.id" class="w-full bg-[#0D0E12] border border-white/10 rounded-xl px-3 py-2 text-xs font-mono text-white focus:outline-none focus:border-[#E62E2D]">
+          </div>
+
+          <div class="space-y-1">
+            <label class="text-xs font-mono text-[#9CA3AF]">Subject Line</label>
+            <input id="deal-email-subject" type="text" value="Kapitech Agency • Technical Proposal & Architecture Specs" class="w-full bg-[#0D0E12] border border-white/10 rounded-xl px-3 py-2 text-xs font-mono text-white focus:outline-none focus:border-[#E62E2D]">
+          </div>
+
+          <div class="space-y-1">
+            <label class="text-xs font-mono text-[#9CA3AF]">Message Body</label>
+            <textarea id="deal-email-body" class="w-full bg-[#0D0E12] border border-white/10 rounded-xl p-3 text-xs font-mono text-white focus:outline-none focus:border-[#E62E2D] h-44 leading-relaxed"></textarea>
+          </div>
+
+          <div class="flex items-center justify-between pt-2">
+            <span id="deal-email-status" class="text-[11px] font-mono text-emerald-400 hidden">
+              ✓ Proposal successfully sent to client!
+            </span>
+            <button onclick="sendDealEmail()" class="ml-auto px-4 py-2 rounded-xl bg-[#E62E2D] hover:bg-[#FF3B30] text-white text-xs font-mono font-semibold flex items-center gap-1.5 shadow-lg shadow-red-950/40">
+              <i data-lucide="send" class="w-3.5 h-3.5"></i>
+              <span>Send Proposal to Client</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- 4. SLIDE-OVER DRAWER: TASK EXECUTION DEEP-DIVE                 -->
+  <!-- ============================================================== -->
+  <div id="task-drawer" class="fixed inset-0 z-50 overflow-hidden hidden">
+    <div onclick="closeTaskDrawer()" class="absolute inset-0 bg-black/75 backdrop-blur-sm transition-opacity"></div>
+
+    <div class="fixed inset-y-0 right-0 max-w-full flex pl-10">
+      <div class="w-screen max-w-xl glass-drawer border-l border-white/10 shadow-2xl flex flex-col">
+        
+        <!-- Task Drawer Header -->
+        <div class="p-5 border-b border-white/10 bg-[#13151C] flex items-center justify-between">
+          <div class="space-y-1">
+            <div class="flex items-center gap-2">
+              <span id="drawer-task-priority" class="text-[10px] font-mono px-2 py-0.5 rounded bg-red-950/80 text-red-400 border border-red-800/40 font-bold">
+                URGENT
+              </span>
+              <span id="drawer-task-status-badge" class="text-[10px] font-mono px-2 py-0.5 rounded bg-sky-950/60 text-sky-400 border border-sky-800/40">
+                In Progress
+              </span>
+            </div>
+            <h2 id="drawer-task-title" class="text-base font-bold font-mono text-white">
+              Implement ISO 27001 OAuth 2.0 & Token Revocation
+            </h2>
+          </div>
+
+          <button onclick="closeTaskDrawer()" class="p-1.5 rounded-lg bg-[#0B0C10] text-gray-400 hover:text-white border border-white/10">
+            <i data-lucide="x" class="w-4 h-4"></i>
+          </button>
+        </div>
+
+        <!-- Task Drawer Body -->
+        <div class="flex-1 p-5 overflow-y-auto space-y-5">
+          
+          <!-- 1. Built-in Live Time Tracker -->
+          <div class="p-4 rounded-xl bg-[#0D0E12] border border-white/10 flex items-center justify-between">
+            <div class="space-y-0.5">
+              <span class="text-[10px] font-mono text-gray-400 uppercase tracking-wider block">Billable Time Tracker</span>
+              <div id="timer-display" class="text-2xl font-mono font-bold text-white tracking-widest">
+                01:24:32
+              </div>
+              <span id="timer-state-text" class="text-[10px] font-mono text-gray-500">Timer stopped</span>
+            </div>
+
+            <button id="timer-btn" onclick="toggleTimer()" class="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-mono text-xs font-bold transition-all flex items-center gap-1.5 shadow-lg shadow-emerald-950/40">
+              <i data-lucide="play" class="w-3.5 h-3.5" id="timer-btn-icon"></i>
+              <span id="timer-btn-label">Start Timer</span>
+            </button>
+          </div>
+
+          <!-- 2. Sub-task Checklist with Dynamic % Bar -->
+          <div class="space-y-2 p-4 rounded-xl bg-[#0D0E12] border border-white/10">
+            <div class="flex items-center justify-between text-xs font-mono">
+              <span class="text-white font-semibold">Sub-task Checklist</span>
+              <span id="subtask-progress-label" class="text-[#10B981] font-bold">75% Completed (3/4)</span>
+            </div>
+
+            <div class="h-1.5 w-full bg-[#13151C] rounded-full overflow-hidden">
+              <div id="subtask-progress-bar" class="h-full bg-emerald-500 transition-all duration-300" style="width: 75%;"></div>
+            </div>
+
+            <div id="subtasks-list" class="space-y-1.5 pt-2 font-mono text-xs">
+              <!-- Injected via JS -->
+            </div>
+
+            <!-- Add Subtask Input -->
+            <div class="flex items-center gap-2 pt-2 border-t border-white/5">
+              <input id="new-subtask-input" type="text" placeholder="+ Add a subtask..." class="flex-1 bg-[#13151C] border border-white/10 rounded-lg px-2.5 py-1.5 text-xs font-mono text-white focus:outline-none focus:border-[#E62E2D]">
+              <button onclick="addSubtask()" class="px-3 py-1.5 rounded-lg bg-[#13151C] hover:bg-[#1A1D26] text-xs font-mono text-gray-200 border border-white/10">
+                Add
+              </button>
+            </div>
+          </div>
+
+          <!-- 3. Figma / GitHub / Asset Embed Links -->
+          <div class="space-y-2 p-4 rounded-xl bg-[#0D0E12] border border-white/10 font-mono text-xs">
+            <span class="text-white font-semibold block">Design & Engineering Links</span>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+              <a href="https://figma.com" target="_blank" class="p-2.5 rounded-lg bg-[#13151C] hover:bg-[#1A1D26] border border-white/5 flex items-center justify-between text-gray-300 transition-colors">
+                <span class="flex items-center gap-1.5 truncate">
+                  <i data-lucide="figma" class="w-3.5 h-3.5 text-purple-400"></i>
+                  <span class="truncate">Figma Component Wireframes</span>
+                </span>
+                <i data-lucide="external-link" class="w-3 h-3 text-gray-500"></i>
+              </a>
+
+              <a href="https://github.com" target="_blank" class="p-2.5 rounded-lg bg-[#13151C] hover:bg-[#1A1D26] border border-white/5 flex items-center justify-between text-gray-300 transition-colors">
+                <span class="flex items-center gap-1.5 truncate">
+                  <i data-lucide="git-branch" class="w-3.5 h-3.5 text-sky-400"></i>
+                  <span class="truncate">PR #48: Auth Middleware</span>
+                </span>
+                <i data-lucide="external-link" class="w-3 h-3 text-gray-500"></i>
+              </a>
+            </div>
+          </div>
+
+          <!-- 4. Team Discussion & @Mention Activity Log -->
+          <div class="space-y-3 p-4 rounded-xl bg-[#0D0E12] border border-white/10 font-mono text-xs">
+            <span class="text-white font-semibold block">Discussion & @Mention Activity Log</span>
+            
+            <div id="task-comments-list" class="space-y-2.5 max-h-48 overflow-y-auto">
+              <!-- Injected via JS -->
+            </div>
+
+            <!-- Comment Input Box -->
+            <div class="pt-2 border-t border-white/5 space-y-2">
+              <textarea id="task-comment-input" placeholder="Leave an update or type @member..." class="w-full bg-[#13151C] border border-white/10 rounded-lg p-2 text-xs font-mono text-white focus:outline-none focus:border-[#E62E2D] h-16"></textarea>
+              <div class="flex justify-end">
+                <button onclick="addTaskComment()" class="px-3 py-1.5 rounded-lg bg-[#E62E2D] hover:bg-[#FF3B30] text-white text-xs font-mono font-semibold">
+                  Post Update
+                </button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- 5. CLOSED WON AUTO-TRIGGER MODAL: CONVERT TO ACTIVE PROJECT   -->
+  <!-- ============================================================== -->
+  <div id="closed-won-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden">
+    <div onclick="closeClosedWonModal()" class="fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity"></div>
+    
+    <div class="relative w-full max-w-lg bg-[#13151C] border border-emerald-500/40 rounded-2xl shadow-2xl overflow-hidden p-6 space-y-5 animate-in fade-in zoom-in-95">
+      <div class="flex items-center gap-3 border-b border-white/10 pb-4">
+        <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-[#10B981]">
+          <i data-lucide="sparkles" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <h3 class="text-base font-bold font-mono text-white">Convert to Active Project Workspace</h3>
+          <p class="text-xs font-mono text-[#9CA3AF]">Deal marked as Closed Won! Auto-scaffolding agile sprint board.</p>
+        </div>
+      </div>
+
+      <div class="space-y-3 font-mono text-xs">
+        <div class="space-y-1">
+          <label class="text-gray-400">Project Name</label>
+          <input id="cw-project-name" type="text" value="PT Fintek Nusantara Core Banking API" class="w-full bg-[#0B0C10] border border-white/10 rounded-xl px-3 py-2 text-white font-bold">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div class="space-y-1">
+            <label class="text-gray-400">Total Contract Budget</label>
+            <input id="cw-project-budget" type="text" value="Rp 120.000.000" class="w-full bg-[#0B0C10] border border-white/10 rounded-xl px-3 py-2 text-emerald-400 font-bold">
+          </div>
+          <div class="space-y-1">
+            <label class="text-gray-400">Estimated Timeline</label>
+            <input id="cw-project-timeline" type="text" value="8 Weeks (4 Sprints)" class="w-full bg-[#0B0C10] border border-white/10 rounded-xl px-3 py-2 text-white">
+          </div>
+        </div>
+
+        <div class="space-y-1">
+          <label class="text-gray-400">Initial Service Pillar & Squad</label>
+          <input type="text" readonly value="Web & Cloud API • 4 Specialists Assigned" class="w-full bg-[#0B0C10] border border-white/10 rounded-xl px-3 py-2 text-gray-300">
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end gap-2 pt-2 border-t border-white/10">
+        <button onclick="closeClosedWonModal()" class="px-3 py-2 rounded-xl bg-[#0B0C10] text-gray-400 hover:text-white border border-white/10 text-xs font-mono">
+          Dismiss
+        </button>
+        <button onclick="confirmConvertToProject()" class="px-4 py-2 rounded-xl bg-[#10B981] hover:bg-emerald-400 text-black font-mono font-bold text-xs shadow-lg shadow-emerald-950/30 flex items-center gap-1.5">
+          <i data-lucide="check" class="w-3.5 h-3.5"></i>
+          <span>Initialize Project Workspace</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- 6. GLOBAL COMMAND PALETTE (CMD + K / CTRL + K)                 -->
+  <!-- ============================================================== -->
+  <div id="cmd-palette" class="fixed inset-0 z-50 flex items-start justify-center pt-20 p-4 hidden">
+    <div onclick="toggleCommandPalette(false)" class="fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity"></div>
+    
+    <div class="relative w-full max-w-xl bg-[#13151C] border border-white/15 rounded-2xl shadow-2xl overflow-hidden font-mono">
+      <!-- Search Input -->
+      <div class="flex items-center gap-3 p-4 border-b border-white/10 bg-[#0D0E12]">
+        <i data-lucide="search" class="w-4 h-4 text-gray-400"></i>
+        <input id="cmd-search-input" oninput="filterCommandPalette(this.value)" type="text" placeholder="Type a command, deal name, or task..." class="flex-1 bg-transparent text-sm text-white placeholder:text-gray-500 focus:outline-none">
+        <kbd class="px-1.5 py-0.5 rounded bg-[#13151C] border border-white/10 text-[10px] text-gray-400">ESC</kbd>
+      </div>
+
+      <!-- Command List Items -->
+      <div id="cmd-list" class="max-h-72 overflow-y-auto p-2 space-y-1 text-xs">
+        <!-- Injected via JS -->
+      </div>
+
+      <div class="p-2.5 bg-[#0B0C10] border-t border-white/10 flex items-center justify-between text-[10px] text-gray-400 px-4">
+        <span>Navigation: <kbd class="text-white">↑</kbd> <kbd class="text-white">↓</kbd> to navigate, <kbd class="text-white">ENTER</kbd> to select</span>
+        <span>Kapitech AMS v3.4</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- 7. APPLICATION STATE & VANILLA JAVASCRIPT LOGIC               -->
+  <!-- ============================================================== -->
+  <script>
+    // -------------------------------------------------------------
+    // Core Application State
+    // -------------------------------------------------------------
+    const STATE = {
+      activeModule: 'crm', // 'crm' | 'projects'
+      currency: 'IDR', // 'IDR' | 'USD'
+      exchangeRate: 15750, // 1 USD = 15,750 IDR
+      language: 'en', // 'en' | 'id'
+      crmView: 'kanban', // 'kanban' | 'list'
+      taskView: 'kanban', // 'kanban' | 'gantt' | 'workload'
+      activeProjectId: 'p1',
+      timerRunning: false,
+      timerSeconds: 5072, // 01:24:32
+      timerInterval: null,
+      activeDealId: null,
+      activeTaskId: null,
+
+      // Pipeline Stages Definition
+      pipelineStages: [
+        { id: 'new', label: 'New Inbound Lead', prob: 0.10 },
+        { id: 'scoping', label: 'Initial Contact & Scoping', prob: 0.30 },
+        { id: 'proposal', label: 'Proposal & Pitch Sent', prob: 0.50 },
+        { id: 'negotiation', label: 'Negotiation & SOW', prob: 0.80 },
+        { id: 'won', label: 'Closed Won', prob: 1.00 },
+        { id: 'lost', label: 'Closed Lost', prob: 0.00 }
+      ],
+
+      // Mock CRM Deals
+      deals: [
+        {
+          id: 'd1',
+          title: 'PT Fintek Nusantara Global',
+          clientName: 'Adrian Wibowo',
+          pillar: 'AI & Cloud Solutions',
+          valuationIDR: 120000000,
+          stage: 'negotiation',
+          priority: 'urgent',
+          source: 'Website Form (Production)',
+          docs: [
+            { name: 'Core_Banking_SOW_v2.pdf', size: '2.4 MB', date: 'Yesterday' },
+            { name: 'ISO_Compliance_Checklist.docx', size: '1.1 MB', date: '3 days ago' }
+          ],
+          activities: [
+            { type: 'call', text: 'Discovery call with VP of Engineering. Confirmed ISO 27001 requirements.', author: 'Lead Architect', time: '2 hours ago' },
+            { type: 'note', text: 'Prepared discounted fee structure for upfront 50% milestone advance.', author: 'Business Director', time: 'Yesterday' }
+          ]
+        },
+        {
+          id: 'd2',
+          title: 'AeroCloud Analytics Inc.',
+          clientName: 'Sarah Jenkins',
+          pillar: 'Digital Product MVP',
+          valuationIDR: 75000000,
+          stage: 'proposal',
+          priority: 'high',
+          source: 'Referral Partner',
+          docs: [
+            { name: 'AeroCloud_Deck_2026.pdf', size: '5.6 MB', date: '2 days ago' }
+          ],
+          activities: [
+            { type: 'email', text: 'Dispatched custom proposal deck with interactive D3 charts milestone.', author: 'Lead Full-Stack', time: '1 day ago' }
+          ]
+        },
+        {
+          id: 'd3',
+          title: 'Bank Mandiri Institutional API',
+          clientName: 'Hendra Gunawan',
+          pillar: 'Web Development',
+          valuationIDR: 180000000,
+          stage: 'scoping',
+          priority: 'urgent',
+          source: 'Enterprise RFP',
+          docs: [],
+          activities: [
+            { type: 'note', text: 'Undergoing initial architecture scoping and latency benchmarking.', author: 'Tech Lead', time: '3 days ago' }
+          ]
+        },
+        {
+          id: 'd4',
+          title: 'Veritas Retail Omnichannel',
+          clientName: 'Budi Hartono',
+          pillar: 'Mobile App',
+          valuationIDR: 45000000,
+          stage: 'won',
+          priority: 'medium',
+          source: 'Website Form',
+          docs: [
+            { name: 'Signed_SOW_Veritas_Final.pdf', size: '3.1 MB', date: '1 week ago' }
+          ],
+          activities: [
+            { type: 'note', text: 'DP payment received. Transferred to Active Project Workspace!', author: 'Finance Admin', time: '5 days ago' }
+          ]
+        },
+        {
+          id: 'd5',
+          title: 'Nusantara Logistics Tracker',
+          clientName: 'Denny Pratama',
+          pillar: 'UI/UX Design',
+          valuationIDR: 35000000,
+          stage: 'new',
+          priority: 'medium',
+          source: 'Direct Client Inquiry',
+          docs: [],
+          activities: [
+            { type: 'email', text: 'Auto-responded with discovery call invite.', author: 'System Bot', time: '4 hours ago' }
+          ]
+        },
+        {
+          id: 'd6',
+          title: 'Legacy Travel Agency Booking',
+          clientName: 'Rian Kusuma',
+          pillar: 'Web Development',
+          valuationIDR: 25000000,
+          stage: 'lost',
+          priority: 'low',
+          source: 'Google Organic',
+          docs: [],
+          activities: [
+            { type: 'note', text: 'Client budget constraints below agency SLA threshold.', author: 'Business Director', time: '2 weeks ago' }
+          ]
+        }
+      ],
+
+      // Projects & Milestones Data
+      projects: {
+        p1: {
+          id: 'p1',
+          name: 'Veritas Omnichannel Retail MVP',
+          client: 'Veritas Retail Ecosystem',
+          budgetIDR: 120000000,
+          loggedHours: 184,
+          loggedValuationIDR: 64400000,
+          sprintProgress: 68,
+          health: 'Healthy (58% Remaining)',
+          tech: ['Next.js 14', 'Tailwind', 'Go Engine', 'PostgreSQL', 'Docker'],
+          milestones: [
+            { name: 'M1: Architecture & UX', status: 'done', progress: 100, amount: 'Rp 30.000.000 (Paid)' },
+            { name: 'M2: Core API & DB Engine', status: 'done', progress: 100, amount: 'Rp 40.000.000 (Invoiced)' },
+            { name: 'M3: Omnichannel Stock Sync', status: 'active', progress: 65, amount: 'Rp 30.000.000 (Current)' },
+            { name: 'M4: QA, Load Test & Launch', status: 'pending', progress: 0, amount: 'Rp 20.000.000 (Pending)' }
+          ]
+        },
+        p2: {
+          id: 'p2',
+          name: 'PT Fintek Nusantara Core Banking API',
+          client: 'PT Fintek Nusantara Global',
+          budgetIDR: 160000000,
+          loggedHours: 92,
+          loggedValuationIDR: 32200000,
+          sprintProgress: 35,
+          health: 'Healthy (79% Remaining)',
+          tech: ['Golang', 'gRPC', 'PostgreSQL', 'Kubernetes', 'Redis'],
+          milestones: [
+            { name: 'M1: ISO 27001 Specs', status: 'done', progress: 100, amount: 'Rp 50.000.000 (Paid)' },
+            { name: 'M2: Core Ledger & Auth', status: 'active', progress: 40, amount: 'Rp 60.000.000 (Current)' },
+            { name: 'M3: Gateway & Audit Logs', status: 'pending', progress: 0, amount: 'Rp 50.000.000 (Pending)' }
+          ]
+        },
+        p3: {
+          id: 'p3',
+          name: 'AeroCloud Series-A SaaS Analytics Portal',
+          client: 'AeroCloud Analytics Inc.',
+          budgetIDR: 90000000,
+          loggedHours: 176,
+          loggedValuationIDR: 61600000,
+          sprintProgress: 88,
+          health: 'At Risk (14% Remaining)',
+          tech: ['React 18', 'Tailwind', 'D3.js', 'ClickHouse', 'AWS Lambda'],
+          milestones: [
+            { name: 'M1: Dashboard UI Framework', status: 'done', progress: 100, amount: 'Rp 30.000.000 (Paid)' },
+            { name: 'M2: Real-time D3 Streaming', status: 'done', progress: 100, amount: 'Rp 35.000.000 (Paid)' },
+            { name: 'M3: Multi-tenant SLA Testing', status: 'active', progress: 80, amount: 'Rp 25.000.000 (Current)' }
+          ]
+        }
+      },
+
+      // Tasks Data
+      tasks: [
+        {
+          id: 't1',
+          projectId: 'p1',
+          title: 'Implement OAuth 2.0 & Token Revocation',
+          stage: 'in_progress', // 'todo' | 'in_progress' | 'review' | 'done'
+          priority: 'urgent',
+          assignee: 'Bagas (Tech Lead)',
+          avatar: 'BG',
+          dueDate: 'Tomorrow',
+          isOverdue: false,
+          subtasks: [
+            { title: 'Define JWT Claims & Expire Schema', done: true },
+            { title: 'Setup Redis Token Blacklist Store', done: true },
+            { title: 'Write Automated Integration Tests', done: true },
+            { title: 'Deploy to Staging Sandbox', done: false }
+          ],
+          comments: [
+            { author: 'Bagas', text: '@adrian Redis revocation latency is sub-2ms on staging.', time: '1 hour ago' }
+          ]
+        },
+        {
+          id: 't2',
+          projectId: 'p1',
+          title: 'Checkout Cart Omnichannel Real-time Sync',
+          stage: 'in_progress',
+          priority: 'high',
+          assignee: 'Clara (UI/UX)',
+          avatar: 'CL',
+          dueDate: 'In 2 days',
+          isOverdue: false,
+          subtasks: [
+            { title: 'Wireframe Cart Drawer states', done: true },
+            { title: 'Figma interactive component variants', done: false }
+          ],
+          comments: []
+        },
+        {
+          id: 't3',
+          projectId: 'p1',
+          title: 'PostgreSQL Database Connection Pooling Fix',
+          stage: 'review',
+          priority: 'urgent',
+          assignee: 'Bagas (Tech Lead)',
+          avatar: 'BG',
+          dueDate: 'Yesterday',
+          isOverdue: true,
+          subtasks: [
+            { title: 'Configure PgBouncer 50-conn limit', done: true },
+            { title: 'Stress test 2,000 req/sec load', done: true }
+          ],
+          comments: [
+            { author: 'QA Lead', text: 'Verified no dropped connections under max load.', time: 'Yesterday' }
+          ]
+        },
+        {
+          id: 't4',
+          projectId: 'p1',
+          title: 'Automated Invoice Webhook Listener',
+          stage: 'done',
+          priority: 'medium',
+          assignee: 'Dimas (Backend)',
+          avatar: 'DM',
+          dueDate: '3 days ago',
+          isOverdue: false,
+          subtasks: [
+            { title: 'Stripe/Xendit webhook signature check', done: true },
+            { title: 'Emit internal Slack dispatch alert', done: true }
+          ],
+          comments: []
+        },
+        {
+          id: 't5',
+          projectId: 'p1',
+          title: 'Setup Sentry Error Monitoring & Alerting',
+          stage: 'todo',
+          priority: 'low',
+          assignee: 'Dimas (Backend)',
+          avatar: 'DM',
+          dueDate: 'Next week',
+          isOverdue: false,
+          subtasks: [
+            { title: 'Install @sentry/react SDK', done: false },
+            { title: 'Mask sensitive customer PII fields', done: false }
+          ],
+          comments: []
+        }
+      ],
+
+      // Team Squad Workload Specs
+      workload: [
+        { name: 'Bagas Pratama', role: 'Lead Full-Stack Tech', allocatedHours: 36, maxHours: 40, status: 'Optimal' },
+        { name: 'Clara Wijaya', role: 'Senior UI/UX Designer', allocatedHours: 32, maxHours: 40, status: 'Optimal' },
+        { name: 'Dimas Anggoro', role: 'Backend & Cloud Engineer', allocatedHours: 44, maxHours: 40, status: 'Overloaded' },
+        { name: 'Sarah Jessica', role: 'QA & Technical Delivery', allocatedHours: 24, maxHours: 40, status: 'Available' }
+      ]
+    };
+
+    // -------------------------------------------------------------
+    // Currency & Number Formatting Engine
+    // -------------------------------------------------------------
+    function formatMoney(amountIDR) {
+      if (STATE.currency === 'USD') {
+        const usd = Math.round(amountIDR / STATE.exchangeRate);
+        return `$${usd.toLocaleString('en-US')}`;
+      }
+      return `Rp ${amountIDR.toLocaleString('id-ID')}`;
+    }
+
+    function setCurrency(curr) {
+      STATE.currency = curr;
+      document.getElementById('curr-idr-btn').className = curr === 'IDR'
+        ? 'px-2 py-1 rounded text-[11px] font-mono font-bold bg-[#0B0C10] text-[#10B981] shadow-sm'
+        : 'px-2 py-1 rounded text-[11px] font-mono text-[#9CA3AF] hover:text-white';
+      document.getElementById('curr-usd-btn').className = curr === 'USD'
+        ? 'px-2 py-1 rounded text-[11px] font-mono font-bold bg-[#0B0C10] text-[#10B981] shadow-sm'
+        : 'px-2 py-1 rounded text-[11px] font-mono text-[#9CA3AF] hover:text-white';
+
+      renderAll();
+    }
+
+    function setLanguage(lang) {
+      STATE.language = lang;
+      document.getElementById('lang-en-btn').className = lang === 'en'
+        ? 'px-2 py-1 rounded text-[11px] font-mono font-bold bg-[#0B0C10] text-white'
+        : 'px-2 py-1 rounded text-[11px] font-mono text-[#9CA3AF] hover:text-white';
+      document.getElementById('lang-id-btn').className = lang === 'id'
+        ? 'px-2 py-1 rounded text-[11px] font-mono font-bold bg-[#0B0C10] text-white'
+        : 'px-2 py-1 rounded text-[11px] font-mono text-[#9CA3AF] hover:text-white';
+    }
+
+    // -------------------------------------------------------------
+    // Module Navigation (CRM vs Projects)
+    // -------------------------------------------------------------
+    function switchModule(mod) {
+      STATE.activeModule = mod;
+      
+      const crmSection = document.getElementById('module-crm');
+      const projSection = document.getElementById('module-projects');
+      const crmBtn = document.getElementById('nav-btn-crm');
+      const projBtn = document.getElementById('nav-btn-projects');
+
+      if (mod === 'crm') {
+        crmSection.classList.remove('hidden');
+        projSection.classList.add('hidden');
+        crmBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-mono font-medium transition-all flex items-center gap-1.5 bg-[#E62E2D] text-white shadow-sm';
+        projBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-mono font-medium transition-all flex items-center gap-1.5 text-[#9CA3AF] hover:text-white';
+      } else {
+        crmSection.classList.add('hidden');
+        projSection.classList.remove('hidden');
+        crmBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-mono font-medium transition-all flex items-center gap-1.5 text-[#9CA3AF] hover:text-white';
+        projBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-mono font-medium transition-all flex items-center gap-1.5 bg-[#E62E2D] text-white shadow-sm';
+      }
+
+      renderAll();
+    }
+
+    // -------------------------------------------------------------
+    // CRM Module Logic & Rendering
+    // -------------------------------------------------------------
+    function calculateCrmMetrics() {
+      const activeDeals = STATE.deals.filter(d => d.stage !== 'lost' && d.stage !== 'won');
+      const wonDeals = STATE.deals.filter(d => d.stage === 'won');
+      
+      const totalPipelineVal = activeDeals.reduce((sum, d) => sum + d.valuationIDR, 0);
+      const totalWonVal = wonDeals.reduce((sum, d) => sum + d.valuationIDR, 0);
+
+      // Weighted forecast
+      let weightedVal = 0;
+      activeDeals.forEach(d => {
+        const stageObj = STATE.pipelineStages.find(s => s.id === d.stage);
+        const prob = stageObj ? stageObj.prob : 0.2;
+        weightedVal += d.valuationIDR * prob;
+      });
+
+      document.getElementById('kpi-pipeline-val').innerText = formatMoney(totalPipelineVal);
+      document.getElementById('kpi-weighted-val').innerText = `Weighted: ${formatMoney(Math.round(weightedVal))} (stage probability)`;
+      document.getElementById('kpi-won-val').innerText = formatMoney(totalWonVal);
+    }
+
+    function setCrmView(view) {
+      STATE.crmView = view;
+      const kanbanContainer = document.getElementById('crm-kanban-container');
+      const listContainer = document.getElementById('crm-list-container');
+      const kanbanBtn = document.getElementById('crm-view-kanban-btn');
+      const listBtn = document.getElementById('crm-view-list-btn');
+
+      if (view === 'kanban') {
+        kanbanContainer.classList.remove('hidden');
+        listContainer.classList.add('hidden');
+        kanbanBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-mono font-medium transition-all bg-[#0B0C10] text-white border border-white/10 shadow-sm';
+        listBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-mono font-medium transition-all text-[#9CA3AF] hover:text-white';
+      } else {
+        kanbanContainer.classList.add('hidden');
+        listContainer.classList.remove('hidden');
+        kanbanBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-mono font-medium transition-all text-[#9CA3AF] hover:text-white';
+        listBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-mono font-medium transition-all bg-[#0B0C10] text-white border border-white/10 shadow-sm';
+        renderCrmList();
+      }
+    }
+
+    function renderCrmKanban() {
+      const container = document.getElementById('crm-kanban-container');
+      container.innerHTML = '';
+
+      STATE.pipelineStages.forEach(stage => {
+        const stageDeals = STATE.deals.filter(d => d.stage === stage.id);
+        const stageSum = stageDeals.reduce((acc, cur) => acc + cur.valuationIDR, 0);
+
+        const col = document.createElement('div');
+        col.className = 'flex flex-col min-w-[280px] bg-[#13151C] border border-gray-800/60 rounded-2xl p-3.5 space-y-3';
+        col.setAttribute('data-stage-id', stage.id);
+        col.ondragover = (e) => { e.preventDefault(); col.classList.add('drag-over'); };
+        col.ondragleave = () => { col.classList.remove('drag-over'); };
+        col.ondrop = (e) => handleDealDrop(e, stage.id);
+
+        // Column Header
+        col.innerHTML = `
+          <div class="flex items-center justify-between pb-2 border-b border-white/5">
+            <div class="space-y-0.5">
+              <span class="text-xs font-bold font-mono text-white flex items-center gap-1.5">
+                <span>${stage.label}</span>
+              </span>
+              <span class="text-[10px] font-mono text-[#9CA3AF] block">${formatMoney(stageSum)}</span>
+            </div>
+            <span class="text-[11px] font-mono px-2 py-0.5 rounded-full bg-[#0B0C10] text-gray-400 border border-white/5">
+              ${stageDeals.length}
+            </span>
+          </div>
+          <div class="space-y-2.5 flex-1 min-h-[140px]" id="stage-deals-${stage.id}"></div>
+        `;
+
+        const dealsContainer = col.querySelector(`#stage-deals-${stage.id}`);
+
+        stageDeals.forEach(deal => {
+          const card = document.createElement('div');
+          card.className = `p-3.5 rounded-xl bg-[#0B0C10] border border-white/10 hover:border-white/20 transition-all cursor-pointer space-y-2.5 shadow-md ${
+            deal.priority === 'urgent' ? 'border-l-2 border-l-[#E62E2D]' : ''
+          }`;
+          card.setAttribute('draggable', 'true');
+          card.ondragstart = (e) => e.dataTransfer.setData('text/plain', deal.id);
+          card.onclick = () => openDealDrawer(deal.id);
+
+          const priorityBadge = deal.priority === 'urgent'
+            ? '<span class="text-[9px] font-mono px-1.5 py-0.2 rounded bg-red-950/80 text-red-400 border border-red-800/40 font-bold">URGENT</span>'
+            : deal.priority === 'high'
+            ? '<span class="text-[9px] font-mono px-1.5 py-0.2 rounded bg-amber-950/80 text-amber-300 border border-amber-800/40">HIGH</span>'
+            : '<span class="text-[9px] font-mono px-1.5 py-0.2 rounded bg-zinc-900 text-zinc-400 border border-zinc-700/50">NORMAL</span>';
+
+          card.innerHTML = `
+            <div class="flex items-center justify-between gap-1">
+              <span class="text-[10px] font-mono text-gray-400 truncate max-w-[140px]">${deal.pillar}</span>
+              ${priorityBadge}
+            </div>
+
+            <div class="space-y-0.5">
+              <h4 class="text-xs font-bold font-mono text-white line-clamp-1">${deal.title}</h4>
+              <p class="text-[11px] font-mono text-[#9CA3AF]">${deal.clientName}</p>
+            </div>
+
+            <div class="flex items-baseline justify-between pt-1 border-t border-white/5">
+              <span class="text-xs font-mono font-bold text-[#10B981]">${formatMoney(deal.valuationIDR)}</span>
+              <span class="text-[9px] font-mono text-gray-500 truncate max-w-[90px]">${deal.source}</span>
+            </div>
+
+            <!-- Quick Action Row -->
+            <div class="flex items-center justify-end gap-1.5 pt-1">
+              ${stage.id !== 'won' ? `
+                <button onclick="event.stopPropagation(); triggerClosedWon('${deal.id}')" class="px-2 py-0.5 rounded bg-emerald-950/60 hover:bg-emerald-900 text-[10px] font-mono text-emerald-400 border border-emerald-500/30 flex items-center gap-1" title="Mark Closed Won & Convert">
+                  <span>Won</span>
+                </button>
+              ` : ''}
+              <button onclick="event.stopPropagation(); openDealDrawer('${deal.id}')" class="px-2 py-0.5 rounded bg-[#13151C] hover:bg-white/10 text-[10px] font-mono text-gray-300 border border-white/10">
+                Inspect
+              </button>
+            </div>
+          `;
+
+          dealsContainer.appendChild(card);
+        });
+
+        container.appendChild(col);
+      });
+
+      lucide.createIcons();
+    }
+
+    function renderCrmList() {
+      const tbody = document.getElementById('crm-table-body');
+      tbody.innerHTML = '';
+
+      STATE.deals.forEach(deal => {
+        const stageObj = STATE.pipelineStages.find(s => s.id === deal.stage);
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-[#1A1D26] cursor-pointer transition-colors';
+        tr.onclick = () => openDealDrawer(deal.id);
+
+        tr.innerHTML = `
+          <td class="p-3.5">
+            <div class="font-bold text-white">${deal.title}</div>
+            <div class="text-[11px] text-gray-400">${deal.clientName}</div>
+          </td>
+          <td class="p-3.5 text-gray-300">${deal.pillar}</td>
+          <td class="p-3.5">
+            <span class="px-2 py-0.5 rounded bg-[#0B0C10] border border-white/10 text-[10px] ${
+              deal.stage === 'won' ? 'text-emerald-400 border-emerald-500/30' : 'text-gray-300'
+            }">
+              ${stageObj ? stageObj.label : deal.stage}
+            </span>
+          </td>
+          <td class="p-3.5 font-bold text-gray-300">${Math.round((stageObj ? stageObj.prob : 0.2) * 100)}%</td>
+          <td class="p-3.5 font-bold text-[#10B981]">${formatMoney(deal.valuationIDR)}</td>
+          <td class="p-3.5 text-gray-400">${deal.source}</td>
+          <td class="p-3.5 text-right" onclick="event.stopPropagation()">
+            <button onclick="openDealDrawer('${deal.id}')" class="px-2.5 py-1 rounded bg-[#0B0C10] hover:bg-[#13151C] text-gray-300 border border-white/10 text-[11px]">
+              Inspect
+            </button>
+          </td>
+        `;
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    function handleDealDrop(e, targetStage) {
+      e.preventDefault();
+      document.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
+      const dealId = e.dataTransfer.getData('text/plain');
+      const deal = STATE.deals.find(d => d.id === dealId);
+      if (!deal) return;
+
+      deal.stage = targetStage;
+      if (targetStage === 'won') {
+        triggerClosedWon(deal.id);
+      } else {
+        renderAll();
+      }
+    }
+
+    function triggerClosedWon(dealId) {
+      const deal = STATE.deals.find(d => d.id === dealId);
+      if (!deal) return;
+
+      deal.stage = 'won';
+      document.getElementById('cw-project-name').value = `${deal.title} Workspace`;
+      document.getElementById('cw-project-budget').value = formatMoney(deal.valuationIDR);
+      document.getElementById('closed-won-modal').classList.remove('hidden');
+      renderAll();
+    }
+
+    function closeClosedWonModal() {
+      document.getElementById('closed-won-modal').classList.add('hidden');
+    }
+
+    function confirmConvertToProject() {
+      closeClosedWonModal();
+      switchModule('projects');
+    }
+
+    // -------------------------------------------------------------
+    // Deal Detail Drawer Slide-Over Logic
+    // -------------------------------------------------------------
+    function openDealDrawer(dealId) {
+      STATE.activeDealId = dealId;
+      const deal = STATE.deals.find(d => d.id === dealId);
+      if (!deal) return;
+
+      document.getElementById('drawer-deal-pillar').innerText = deal.pillar;
+      document.getElementById('drawer-deal-title').innerText = deal.title;
+      document.getElementById('drawer-deal-val').innerText = formatMoney(deal.valuationIDR);
+      
+      const stageObj = STATE.pipelineStages.find(s => s.id === deal.stage);
+      document.getElementById('drawer-deal-stage').innerText = stageObj ? stageObj.label : deal.stage;
+
+      // Populate Activities
+      renderDealActivities(deal);
+      renderDealDocs(deal);
+      applyEmailTemplate('proposal');
+
+      setDealDrawerTab('activity');
+      document.getElementById('deal-drawer').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function closeDealDrawer() {
+      document.getElementById('deal-drawer').classList.add('hidden');
+      STATE.activeDealId = null;
+    }
+
+    function setDealDrawerTab(tab) {
+      const actBtn = document.getElementById('deal-tab-btn-activity');
+      const docsBtn = document.getElementById('deal-tab-btn-docs');
+      const emailBtn = document.getElementById('deal-tab-btn-email');
+      
+      const actContent = document.getElementById('deal-tab-content-activity');
+      const docsContent = document.getElementById('deal-tab-content-docs');
+      const emailContent = document.getElementById('deal-tab-content-email');
+
+      [actContent, docsContent, emailContent].forEach(el => el.classList.add('hidden'));
+      [actBtn, docsBtn, emailBtn].forEach(b => {
+        b.className = 'py-2.5 px-3 text-xs font-mono border-b-2 border-transparent text-[#9CA3AF] hover:text-white';
+      });
+
+      if (tab === 'activity') {
+        actContent.classList.remove('hidden');
+        actBtn.className = 'py-2.5 px-3 text-xs font-mono border-b-2 border-[#E62E2D] text-white font-bold';
+      } else if (tab === 'docs') {
+        docsContent.classList.remove('hidden');
+        docsBtn.className = 'py-2.5 px-3 text-xs font-mono border-b-2 border-[#E62E2D] text-white font-bold';
+      } else {
+        emailContent.classList.remove('hidden');
+        emailBtn.className = 'py-2.5 px-3 text-xs font-mono border-b-2 border-[#E62E2D] text-white font-bold';
+      }
+    }
+
+    function renderDealActivities(deal) {
+      const list = document.getElementById('deal-activity-timeline');
+      list.innerHTML = '';
+
+      if (deal.activities.length === 0) {
+        list.innerHTML = `<div class="text-xs font-mono text-gray-500 text-center py-6">No logged activity yet.</div>`;
+        return;
+      }
+
+      deal.activities.forEach(act => {
+        const item = document.createElement('div');
+        item.className = 'p-3 rounded-xl bg-[#0D0E12] border border-white/5 space-y-1 font-mono text-xs';
+        const icon = act.type === 'call' ? '📞' : act.type === 'email' ? '✉️' : '📝';
+        item.innerHTML = `
+          <div class="flex items-center justify-between text-[10px] text-gray-400">
+            <span>${icon} <span class="text-white font-semibold">${act.author}</span></span>
+            <span>${act.time}</span>
+          </div>
+          <p class="text-gray-300 leading-relaxed">${act.text}</p>
+        `;
+        list.appendChild(item);
+      });
+    }
+
+    function addDealActivity() {
+      const deal = STATE.deals.find(d => d.id === STATE.activeDealId);
+      if (!deal) return;
+
+      const type = document.getElementById('new-activity-type').value;
+      const text = document.getElementById('new-activity-text').value.trim();
+      if (!text) return;
+
+      deal.activities.unshift({
+        type: type,
+        text: text,
+        author: 'Lead Producer',
+        time: 'Just now'
+      });
+
+      document.getElementById('new-activity-text').value = '';
+      renderDealActivities(deal);
+    }
+
+    function renderDealDocs(deal) {
+      const list = document.getElementById('deal-docs-list');
+      list.innerHTML = '';
+
+      if (deal.docs.length === 0) {
+        list.innerHTML = `<div class="text-xs font-mono text-gray-500 text-center py-4">No attachments uploaded yet.</div>`;
+        return;
+      }
+
+      deal.docs.forEach(doc => {
+        const row = document.createElement('div');
+        row.className = 'p-3 rounded-xl bg-[#0D0E12] border border-white/5 flex items-center justify-between font-mono text-xs';
+        row.innerHTML = `
+          <div class="flex items-center gap-2 truncate">
+            <i data-lucide="file-text" class="w-4 h-4 text-[#E62E2D] shrink-0"></i>
+            <div class="truncate">
+              <span class="text-white font-semibold truncate block">${doc.name}</span>
+              <span class="text-[10px] text-gray-400">${doc.size} • ${doc.date}</span>
+            </div>
+          </div>
+          <button class="px-2 py-1 rounded bg-[#13151C] hover:bg-[#1A1D26] text-[11px] text-gray-300 border border-white/10 shrink-0">
+            Download
+          </button>
+        `;
+        list.appendChild(row);
+      });
+      lucide.createIcons();
+    }
+
+    function simulateUploadDoc() {
+      const deal = STATE.deals.find(d => d.id === STATE.activeDealId);
+      if (!deal) return;
+
+      deal.docs.unshift({
+        name: `Kapitech_Proposal_v${Math.floor(Math.random()*5)+1}.pdf`,
+        size: '3.2 MB',
+        date: 'Just now'
+      });
+      renderDealDocs(deal);
+    }
+
+    function applyEmailTemplate(tpl) {
+      const deal = STATE.deals.find(d => d.id === STATE.activeDealId);
+      const toField = document.getElementById('deal-email-to');
+      const subField = document.getElementById('deal-email-subject');
+      const bodyField = document.getElementById('deal-email-body');
+
+      if (deal) {
+        toField.value = `${deal.clientName.toLowerCase().replace(/\s+/g, '.')}@client.com`;
+      }
+
+      if (tpl === 'proposal') {
+        subField.value = `Kapitech Agency • Technical Proposal & SOW Architecture - ${deal ? deal.title : ''}`;
+        bodyField.value = `Dear ${deal ? deal.clientName : 'Client'},\n\nFollowing our discovery scoping session, please find attached the formal technical proposal and milestone architecture for ${deal ? deal.title : 'your initiative'}.\n\nKey Highlights:\n- Estimated Valuation: ${deal ? formatMoney(deal.valuationIDR) : ''}\n- Turnkey Delivery Model with 95+ Lighthouse Performance SLA\n- Dedicated Engineering Sprint Squad\n\nPlease let us know when we can walk your team through the milestone timeline.\n\nBest regards,\nSolution Architect | Kapitech Agency\nhttps://kapitech.id`;
+      } else if (tpl === 'discovery') {
+        subField.value = `Kapitech Agency • Discovery Call Invitation - ${deal ? deal.title : ''}`;
+        bodyField.value = `Hi ${deal ? deal.clientName : 'Client'},\n\nThank you for reaching out to Kapitech Agency regarding your project initiative.\n\nWe would love to invite you to a brief 20-minute Discovery Call via Google Meet to align on technical specs and milestones:\n🔗 https://cal.com/kapitech-agency/discovery\n\nLooking forward to speaking with you.\n\nBest regards,\nKapitech Team`;
+      } else {
+        subField.value = `Kapitech Agency • Statement of Work (SOW) & Advance Invoice - ${deal ? deal.title : ''}`;
+        bodyField.value = `Dear ${deal ? deal.clientName : 'Client'},\n\nPlease find attached the final Statement of Work (SOW) document ready for electronic signature, along with Milestone 1 advance term.\n\nWe are ready to spin up the staging workspace immediately upon sign-off.\n\nWarm regards,\nClient Operations | Kapitech Agency`;
+      }
+    }
+
+    function sendDealEmail() {
+      const status = document.getElementById('deal-email-status');
+      status.classList.remove('hidden');
+      setTimeout(() => status.classList.add('hidden'), 3500);
+    }
+
+    function openAddDealModal() {
+      const title = prompt('Enter Deal / Client Title:', 'New Venture Capital MVP');
+      if (!title) return;
+      const valStr = prompt('Enter Valuation in IDR (e.g. 50000000):', '60000000');
+      const val = parseInt(valStr, 10) || 50000000;
+
+      STATE.deals.unshift({
+        id: 'd_' + Date.now(),
+        title: title,
+        clientName: 'Inbound Client',
+        pillar: 'Web Development',
+        valuationIDR: val,
+        stage: 'new',
+        priority: 'high',
+        source: 'Executive Console',
+        docs: [],
+        activities: [{ type: 'note', text: 'Created deal from prototype console.', author: 'Admin', time: 'Just now' }]
+      });
+
+      renderAll();
+    }
+
+    // -------------------------------------------------------------
+    // Projects & Tasks Module Logic
+    // -------------------------------------------------------------
+    function changeActiveProject(projId) {
+      STATE.activeProjectId = projId;
+      renderProjectsModule();
+    }
+
+    function renderProjectsModule() {
+      const proj = STATE.projects[STATE.activeProjectId];
+      if (!proj) return;
+
+      document.getElementById('project-selector').value = proj.id;
+      document.getElementById('proj-health-badge').innerHTML = `
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+        <span>Margin Health: ${proj.health}</span>
+      `;
+      document.getElementById('proj-sprint-percent').innerText = `${proj.sprintProgress}% Velocity`;
+      document.getElementById('proj-sprint-bar').style.width = `${proj.sprintProgress}%`;
+      document.getElementById('proj-budget-val').innerText = formatMoney(proj.budgetIDR);
+      document.getElementById('proj-hours-val').innerText = `${proj.loggedHours} hrs / ${formatMoney(proj.loggedValuationIDR)}`;
+
+      // Render Milestones
+      renderMilestones(proj);
+      renderTasksKanban();
+      renderGanttChart();
+      renderWorkload();
+    }
+
+    function renderMilestones(proj) {
+      const row = document.getElementById('project-milestones-row');
+      row.innerHTML = '';
+
+      proj.milestones.forEach(m => {
+        const item = document.createElement('div');
+        item.className = 'p-2.5 rounded-xl bg-[#0B0C10] border border-white/5 space-y-1 font-mono text-xs cursor-pointer hover:border-white/20 transition-colors';
+        const badge = m.status === 'done'
+          ? '<span class="text-[#10B981] font-bold text-[10px]">✓ COMPLETE</span>'
+          : m.status === 'active'
+          ? '<span class="text-amber-400 font-bold text-[10px]">● IN PROGRESS</span>'
+          : '<span class="text-gray-500 text-[10px]">○ PENDING</span>';
+
+        item.innerHTML = `
+          <div class="flex items-center justify-between">
+            <span class="text-white font-bold truncate">${m.name}</span>
+            ${badge}
+          </div>
+          <div class="h-1 w-full bg-[#13151C] rounded-full overflow-hidden">
+            <div class="h-full bg-emerald-500" style="width: ${m.progress}%"></div>
+          </div>
+          <div class="text-[10px] text-gray-400 truncate">${m.amount}</div>
+        `;
+        row.appendChild(item);
+      });
+    }
+
+    function setTaskView(view) {
+      STATE.taskView = view;
+      const kanbanView = document.getElementById('task-view-kanban');
+      const ganttView = document.getElementById('task-view-gantt');
+      const workloadView = document.getElementById('task-view-workload');
+
+      const kBtn = document.getElementById('task-view-kanban-btn');
+      const gBtn = document.getElementById('task-view-gantt-btn');
+      const wBtn = document.getElementById('task-view-workload-btn');
+
+      [kanbanView, ganttView, workloadView].forEach(el => el.classList.add('hidden'));
+      [kBtn, gBtn, wBtn].forEach(b => {
+        b.className = 'px-3.5 py-1.5 rounded-lg text-xs font-mono font-medium transition-all text-[#9CA3AF] hover:text-white flex items-center gap-1.5';
+      });
+
+      if (view === 'kanban') {
+        kanbanView.classList.remove('hidden');
+        kBtn.className = 'px-3.5 py-1.5 rounded-lg text-xs font-mono font-medium transition-all bg-[#0B0C10] text-white border border-white/10 shadow-sm flex items-center gap-1.5';
+      } else if (view === 'gantt') {
+        ganttView.classList.remove('hidden');
+        gBtn.className = 'px-3.5 py-1.5 rounded-lg text-xs font-mono font-medium transition-all bg-[#0B0C10] text-white border border-white/10 shadow-sm flex items-center gap-1.5';
+      } else {
+        workloadView.classList.remove('hidden');
+        wBtn.className = 'px-3.5 py-1.5 rounded-lg text-xs font-mono font-medium transition-all bg-[#0B0C10] text-white border border-white/10 shadow-sm flex items-center gap-1.5';
+      }
+
+      lucide.createIcons();
+    }
+
+    function renderTasksKanban() {
+      const container = document.getElementById('task-view-kanban');
+      container.innerHTML = '';
+
+      const stages = [
+        { id: 'todo', label: 'To Do' },
+        { id: 'in_progress', label: 'In Progress' },
+        { id: 'review', label: 'Review & QA' },
+        { id: 'done', label: 'Done' }
+      ];
+
+      stages.forEach(stg => {
+        const stageTasks = STATE.tasks.filter(t => t.projectId === STATE.activeProjectId && t.stage === stg.id);
+
+        const col = document.createElement('div');
+        col.className = 'flex flex-col min-w-[260px] bg-[#13151C] border border-gray-800/60 rounded-2xl p-3.5 space-y-3';
+        col.ondragover = (e) => { e.preventDefault(); col.classList.add('drag-over'); };
+        col.ondragleave = () => { col.classList.remove('drag-over'); };
+        col.ondrop = (e) => handleTaskDrop(e, stg.id);
+
+        col.innerHTML = `
+          <div class="flex items-center justify-between pb-2 border-b border-white/5">
+            <span class="text-xs font-bold font-mono text-white">${stg.label}</span>
+            <span class="text-[11px] font-mono px-2 py-0.5 rounded-full bg-[#0B0C10] text-gray-400 border border-white/5">
+              ${stageTasks.length}
+            </span>
+          </div>
+          <div class="space-y-2.5 flex-1 min-h-[140px]" id="task-stage-${stg.id}"></div>
+        `;
+
+        const tasksBox = col.querySelector(`#task-stage-${stg.id}`);
+
+        stageTasks.forEach(task => {
+          const card = document.createElement('div');
+          card.className = 'p-3 rounded-xl bg-[#0B0C10] border border-white/10 hover:border-white/20 transition-all cursor-pointer space-y-2 shadow-md';
+          card.setAttribute('draggable', 'true');
+          card.ondragstart = (e) => e.dataTransfer.setData('text/plain', task.id);
+          card.onclick = () => openTaskDrawer(task.id);
+
+          const dueBadge = task.isOverdue
+            ? '<span class="text-[9px] font-mono px-1.5 py-0.2 rounded bg-red-950/80 text-red-400 border border-red-800/40 font-bold">OVERDUE</span>'
+            : `<span class="text-[9px] font-mono text-gray-400">${task.dueDate}</span>`;
+
+          const doneCount = task.subtasks.filter(s => s.done).length;
+
+          card.innerHTML = `
+            <div class="flex items-center justify-between">
+              <span class="text-[9px] font-mono px-1.5 py-0.2 rounded bg-red-950/60 text-red-300 uppercase">${task.priority}</span>
+              ${dueBadge}
+            </div>
+
+            <h4 class="text-xs font-bold font-mono text-white line-clamp-2">${task.title}</h4>
+
+            <div class="flex items-center justify-between pt-1 border-t border-white/5 text-[10px] font-mono text-gray-400">
+              <div class="flex items-center gap-1.5">
+                <div class="w-5 h-5 rounded-full bg-gradient-to-tr from-purple-600 to-sky-500 flex items-center justify-center text-[9px] font-bold text-white">
+                  ${task.avatar}
+                </div>
+                <span>${task.assignee.split(' ')[0]}</span>
+              </div>
+              <span>${doneCount}/${task.subtasks.length} subtasks</span>
+            </div>
+          `;
+
+          tasksBox.appendChild(card);
+        });
+
+        container.appendChild(col);
+      });
+
+      lucide.createIcons();
+    }
+
+    function handleTaskDrop(e, targetStage) {
+      e.preventDefault();
+      document.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
+      const taskId = e.dataTransfer.getData('text/plain');
+      const task = STATE.tasks.find(t => t.id === taskId);
+      if (!task) return;
+
+      task.stage = targetStage;
+      renderTasksKanban();
+      renderGanttChart();
+    }
+
+    function renderGanttChart() {
+      const container = document.getElementById('gantt-chart-container');
+      container.innerHTML = '';
+
+      const ganttItems = [
+        { name: 'Sprint 1: UX Architecture & Wireframes', start: 1, duration: 2, status: 'complete', color: 'bg-emerald-500' },
+        { name: 'Sprint 2: Core DB Schema & PgBouncer', start: 2, duration: 3, status: 'complete', color: 'bg-emerald-500' },
+        { name: 'Sprint 3: OAuth 2.0 & Token Revocation', start: 3, duration: 2, status: 'in_progress', color: 'bg-[#E62E2D]' },
+        { name: 'Sprint 4: Omnichannel Cart Sync Middleware', start: 4, duration: 3, status: 'in_progress', color: 'bg-amber-500' },
+        { name: 'Sprint 5: Invoicing Webhook Integration', start: 6, duration: 2, status: 'pending', color: 'bg-gray-600' },
+        { name: 'Sprint 6: Load Testing & Enterprise Go-Live', start: 7, duration: 2, status: 'pending', color: 'bg-purple-600' }
+      ];
+
+      ganttItems.forEach(item => {
+        const leftPercent = ((item.start - 1) / 8) * 100;
+        const widthPercent = (item.duration / 8) * 100;
+
+        const row = document.createElement('div');
+        row.className = 'space-y-1';
+        row.innerHTML = `
+          <div class="flex items-center justify-between text-xs text-gray-300">
+            <span>${item.name}</span>
+            <span class="text-[10px] text-gray-500 uppercase">${item.status}</span>
+          </div>
+          <div class="h-6 w-full bg-[#0B0C10] rounded-lg p-1 relative border border-white/5">
+            <div class="h-full rounded ${item.color} flex items-center justify-center text-[10px] font-bold text-white transition-all shadow-sm" style="margin-left: ${leftPercent}%; width: ${widthPercent}%;">
+              Week ${item.start} - ${item.start + item.duration - 1}
+            </div>
+          </div>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    function renderWorkload() {
+      const container = document.getElementById('workload-container');
+      container.innerHTML = '';
+
+      STATE.workload.forEach(member => {
+        const percent = Math.round((member.allocatedHours / member.maxHours) * 100);
+        const card = document.createElement('div');
+        card.className = 'p-3.5 rounded-xl bg-[#0B0C10] border border-white/5 space-y-2 font-mono text-xs';
+        
+        const badgeColor = percent > 100
+          ? 'text-red-400 bg-red-950/80 border-red-800/40'
+          : percent >= 80
+          ? 'text-emerald-400 bg-emerald-950/80 border-emerald-800/40'
+          : 'text-sky-400 bg-sky-950/80 border-sky-800/40';
+
+        card.innerHTML = `
+          <div class="flex items-center justify-between">
+            <div>
+              <h4 class="font-bold text-white">${member.name}</h4>
+              <p class="text-[10px] text-gray-400">${member.role}</p>
+            </div>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded border ${badgeColor}">
+              ${member.status}
+            </span>
+          </div>
+
+          <div class="space-y-1">
+            <div class="flex items-center justify-between text-[11px] text-gray-400">
+              <span>Billable Allocation</span>
+              <span class="text-white font-bold">${member.allocatedHours} hrs / ${member.maxHours} hrs</span>
+            </div>
+            <div class="h-1.5 w-full bg-[#13151C] rounded-full overflow-hidden">
+              <div class="h-full ${percent > 100 ? 'bg-red-500' : 'bg-emerald-500'}" style="width: ${Math.min(percent, 100)}%;"></div>
+            </div>
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+    }
+
+    function openAddTaskModal() {
+      const title = prompt('Enter Task Title:', 'Implement Redis Invalidation Hook');
+      if (!title) return;
+
+      STATE.tasks.unshift({
+        id: 't_' + Date.now(),
+        projectId: STATE.activeProjectId,
+        title: title,
+        stage: 'todo',
+        priority: 'high',
+        assignee: 'Bagas (Tech Lead)',
+        avatar: 'BG',
+        dueDate: 'In 3 days',
+        isOverdue: false,
+        subtasks: [{ title: 'Initial setup & scaffold', done: false }],
+        comments: []
+      });
+
+      renderTasksKanban();
+    }
+
+    // -------------------------------------------------------------
+    // Task Detail Drawer & Time Tracker Logic
+    // -------------------------------------------------------------
+    function openTaskDrawer(taskId) {
+      STATE.activeTaskId = taskId;
+      const task = STATE.tasks.find(t => t.id === taskId);
+      if (!task) return;
+
+      document.getElementById('drawer-task-priority').innerText = task.priority.toUpperCase();
+      document.getElementById('drawer-task-status-badge').innerText = task.stage.replace('_', ' ').toUpperCase();
+      document.getElementById('drawer-task-title').innerText = task.title;
+
+      renderSubtasks(task);
+      renderTaskComments(task);
+
+      document.getElementById('task-drawer').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function closeTaskDrawer() {
+      document.getElementById('task-drawer').classList.add('hidden');
+      STATE.activeTaskId = null;
+    }
+
+    function toggleTimer() {
+      STATE.timerRunning = !STATE.timerRunning;
+      const btn = document.getElementById('timer-btn');
+      const label = document.getElementById('timer-btn-label');
+      const stateText = document.getElementById('timer-state-text');
+
+      if (STATE.timerRunning) {
+        btn.className = 'px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-mono text-xs font-bold transition-all flex items-center gap-1.5 shadow-lg shadow-red-950/40';
+        label.innerText = 'Stop Timer';
+        stateText.innerText = '● Live recording billable hours';
+        stateText.className = 'text-[10px] font-mono text-emerald-400 font-bold';
+
+        STATE.timerInterval = setInterval(() => {
+          STATE.timerSeconds++;
+          const hrs = String(Math.floor(STATE.timerSeconds / 3600)).padStart(2, '0');
+          const mins = String(Math.floor((STATE.timerSeconds % 3600) / 60)).padStart(2, '0');
+          const secs = String(STATE.timerSeconds % 60).padStart(2, '0');
+          document.getElementById('timer-display').innerText = `${hrs}:${mins}:${secs}`;
+        }, 1000);
+      } else {
+        clearInterval(STATE.timerInterval);
+        btn.className = 'px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-mono text-xs font-bold transition-all flex items-center gap-1.5 shadow-lg shadow-emerald-950/40';
+        label.innerText = 'Start Timer';
+        stateText.innerText = 'Timer stopped & logged to task';
+        stateText.className = 'text-[10px] font-mono text-gray-500';
+      }
+    }
+
+    function renderSubtasks(task) {
+      const list = document.getElementById('subtasks-list');
+      list.innerHTML = '';
+
+      const doneCount = task.subtasks.filter(s => s.done).length;
+      const total = task.subtasks.length;
+      const percent = total > 0 ? Math.round((doneCount / total) * 100) : 0;
+
+      document.getElementById('subtask-progress-label').innerText = `${percent}% Completed (${doneCount}/${total})`;
+      document.getElementById('subtask-progress-bar').style.width = `${percent}%`;
+
+      task.subtasks.forEach((sub, idx) => {
+        const row = document.createElement('div');
+        row.className = 'flex items-center gap-2 p-1.5 rounded hover:bg-[#13151C] transition-colors';
+        row.innerHTML = `
+          <input type="checkbox" ${sub.done ? 'checked' : ''} onchange="toggleSubtask(${idx})" class="rounded bg-[#13151C] border-white/10 text-[#E62E2D] focus:ring-0 w-4 h-4 cursor-pointer">
+          <span class="${sub.done ? 'line-through text-gray-500' : 'text-gray-300'}">${sub.title}</span>
+        `;
+        list.appendChild(row);
+      });
+    }
+
+    function toggleSubtask(idx) {
+      const task = STATE.tasks.find(t => t.id === STATE.activeTaskId);
+      if (!task) return;
+      task.subtasks[idx].done = !task.subtasks[idx].done;
+      renderSubtasks(task);
+      renderTasksKanban();
+    }
+
+    function addSubtask() {
+      const input = document.getElementById('new-subtask-input');
+      const text = input.value.trim();
+      if (!text) return;
+
+      const task = STATE.tasks.find(t => t.id === STATE.activeTaskId);
+      if (!task) return;
+
+      task.subtasks.push({ title: text, done: false });
+      input.value = '';
+      renderSubtasks(task);
+      renderTasksKanban();
+    }
+
+    function renderTaskComments(task) {
+      const list = document.getElementById('task-comments-list');
+      list.innerHTML = '';
+
+      if (task.comments.length === 0) {
+        list.innerHTML = `<div class="text-xs text-gray-500 text-center py-2">No team discussion yet.</div>`;
+        return;
+      }
+
+      task.comments.forEach(c => {
+        const item = document.createElement('div');
+        item.className = 'p-2 rounded-lg bg-[#13151C] border border-white/5 space-y-0.5 text-xs';
+        item.innerHTML = `
+          <div class="flex items-center justify-between text-[10px] text-gray-400">
+            <span class="font-bold text-white">${c.author}</span>
+            <span>${c.time}</span>
+          </div>
+          <p class="text-gray-300">${c.text}</p>
+        `;
+        list.appendChild(item);
+      });
+    }
+
+    function addTaskComment() {
+      const input = document.getElementById('task-comment-input');
+      const text = input.value.trim();
+      if (!text) return;
+
+      const task = STATE.tasks.find(t => t.id === STATE.activeTaskId);
+      if (!task) return;
+
+      task.comments.push({
+        author: 'Lead Producer',
+        text: text,
+        time: 'Just now'
+      });
+
+      input.value = '';
+      renderTaskComments(task);
+    }
+
+    function openSowModal() {
+      alert('Opening Statement of Work (SOW) viewer for Veritas Omnichannel MVP. Fixed milestones linked to 50% advance invoice term.');
+    }
+
+    // -------------------------------------------------------------
+    // Global Command Palette (Cmd + K) Logic
+    // -------------------------------------------------------------
+    function toggleCommandPalette(show) {
+      const modal = document.getElementById('cmd-palette');
+      if (show) {
+        modal.classList.remove('hidden');
+        document.getElementById('cmd-search-input').value = '';
+        filterCommandPalette('');
+        setTimeout(() => document.getElementById('cmd-search-input').focus(), 50);
+      } else {
+        modal.classList.add('hidden');
+      }
+    }
+
+    function filterCommandPalette(query) {
+      const list = document.getElementById('cmd-list');
+      list.innerHTML = '';
+
+      const q = query.toLowerCase();
+
+      const commands = [
+        { title: 'Switch to CRM & Sales Pipeline', category: 'Navigation', action: () => { switchModule('crm'); toggleCommandPalette(false); } },
+        { title: 'Switch to Projects & Tasks Workspace', category: 'Navigation', action: () => { switchModule('projects'); toggleCommandPalette(false); } },
+        { title: 'Toggle Currency to USD ($)', category: 'Preferences', action: () => { setCurrency('USD'); toggleCommandPalette(false); } },
+        { title: 'Toggle Currency to IDR (Rp)', category: 'Preferences', action: () => { setCurrency('IDR'); toggleCommandPalette(false); } },
+        ...STATE.deals.map(d => ({
+          title: `Deal: ${d.title} (${formatMoney(d.valuationIDR)})`,
+          category: 'CRM Deals',
+          action: () => { switchModule('crm'); openDealDrawer(d.id); toggleCommandPalette(false); }
+        })),
+        ...STATE.tasks.map(t => ({
+          title: `Task: ${t.title}`,
+          category: 'Project Tasks',
+          action: () => { switchModule('projects'); openTaskDrawer(t.id); toggleCommandPalette(false); }
+        }))
+      ];
+
+      const filtered = commands.filter(c => c.title.toLowerCase().includes(q) || c.category.toLowerCase().includes(q));
+
+      filtered.forEach(cmd => {
+        const item = document.createElement('button');
+        item.className = 'w-full text-left p-2.5 rounded-xl hover:bg-[#1A1D26] flex items-center justify-between transition-colors group';
+        item.onclick = cmd.action;
+        item.innerHTML = `
+          <div class="flex items-center gap-2">
+            <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-gray-500 group-hover:text-white transition-colors"></i>
+            <span class="text-gray-200 group-hover:text-white font-medium">${cmd.title}</span>
+          </div>
+          <span class="text-[10px] text-gray-500 uppercase px-1.5 py-0.5 rounded bg-[#0B0C10] border border-white/5">${cmd.category}</span>
+        `;
+        list.appendChild(item);
+      });
+
+      lucide.createIcons();
+    }
+
+    // Keyboard shortcut listeners (Cmd+K / Ctrl+K / ESC)
+    window.addEventListener('keydown', (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        toggleCommandPalette(true);
+      }
+      if (e.key === 'Escape') {
+        toggleCommandPalette(false);
+        closeDealDrawer();
+        closeTaskDrawer();
+        closeClosedWonModal();
+      }
+    });
+
+    // -------------------------------------------------------------
+    // Initial Boot & Render
+    // -------------------------------------------------------------
+    function renderAll() {
+      calculateCrmMetrics();
+      renderCrmKanban();
+      if (STATE.crmView === 'list') renderCrmList();
+      renderProjectsModule();
+      lucide.createIcons();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderAll();
+    });
+  </script>
+
+</body>
+</html>

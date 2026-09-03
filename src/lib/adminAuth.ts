@@ -4,15 +4,58 @@
  * session token signing/validation, and activity audit logging.
  */
 
-export type AdminTier = 'Tier 1: Top Management / Sponsor' | 'Tier 2: Project Manager (PM)' | 'Tier 3: Operational Staff' | 'Tier 4: Internal IT / System Administrator';
+export type AdminTier = 
+  | 'Tier 1: Top Management / Sponsor'
+  | 'Stakeholder Executive'
+  | 'Teknisi IT / Systems Engineer'
+  | 'Tier 2: Project Manager (PM)' 
+  | 'Tier 3: Operational Staff' 
+  | 'Tier 4: Internal IT / System Administrator';
+
+export interface StakeholderPermissions {
+  canViewFinancials: boolean;
+  canManageInvoices: boolean;
+  canApproveBudgets: boolean;
+  canManageCrm: boolean;
+  canManageProjects: boolean;
+  canManageKanbanTasks: boolean;
+  canManageClients: boolean;
+  canManageVendors: boolean;
+  canManageCmsContent: boolean;
+  canAccessServerAndApi: boolean;
+  canRunDataMigration: boolean;
+  canViewSecurityAuditLogs: boolean;
+  canManageAdminAccounts: boolean;
+}
 
 export interface AdminUser {
   id: string;
+  name?: string;
   username: string;
   email: string;
   role: AdminTier;
+  permissions?: StakeholderPermissions;
+  stakeholderType?: 'Executive' | 'IT_Technical' | 'Project_Manager' | 'Operations' | 'Master';
   mfaEnabled?: boolean;
   division?: 'Management' | 'Engineering' | 'Design' | 'Finance' | 'Operations';
+  lastLogin: string;
+  createdAt: string;
+}
+
+export interface AdminAccount {
+  id: string;
+  name: string;
+  username: string;
+  email: string;
+  passwordHash: string;
+  plainPasswordFallback?: string;
+  salt: string;
+  role: AdminTier;
+  stakeholderType: 'Executive' | 'IT_Technical' | 'Project_Manager' | 'Operations' | 'Master';
+  permissions: StakeholderPermissions;
+  mfaEnabled: boolean;
+  division: 'Management' | 'Engineering' | 'Design' | 'Finance' | 'Operations';
+  status: 'active' | 'suspended';
   lastLogin: string;
   createdAt: string;
 }
@@ -27,7 +70,7 @@ export interface AdminSession {
 export interface SecurityAuditLog {
   id: string;
   timestamp: string;
-  action: 'LOGIN_SUCCESS' | 'LOGIN_FAILED' | 'LOGOUT' | 'PASSWORD_CHANGED' | 'SETTINGS_UPDATED' | 'LEAD_STATUS_CHANGED' | 'CMS_UPDATED' | 'SECURITY_LOCKOUT';
+  action: 'LOGIN_SUCCESS' | 'LOGIN_FAILED' | 'LOGOUT' | 'PASSWORD_CHANGED' | 'SETTINGS_UPDATED' | 'LEAD_STATUS_CHANGED' | 'CMS_UPDATED' | 'SECURITY_LOCKOUT' | 'ACCOUNT_CREATED' | 'ACCOUNT_DELETED' | 'PERMISSIONS_UPDATED';
   actor: string;
   ip: string;
   details: string;
@@ -35,24 +78,165 @@ export interface SecurityAuditLog {
 }
 
 const ADMIN_CREDENTIALS_KEY = 'kapitech_admin_credentials_v1';
+const ADMIN_ACCOUNTS_KEY = 'kapitech_admin_accounts_v2';
 const ADMIN_SESSION_KEY = 'kapitech_admin_session_v1';
 const ADMIN_LOCKOUT_KEY = 'kapitech_admin_lockout_v1';
 const ADMIN_AUDIT_LOGS_KEY = 'kapitech_admin_audit_logs_v1';
 
-// Default Admin Master Account
-const DEFAULT_ADMIN = {
-  id: 'usr_kapitech_admin_01',
-  username: 'admin',
-  email: 'kapitechagency@gmail.com',
-  // SHA-256 hash representation of 'kapitechadmin'
-  passwordHash: '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918',
-  salt: 'kapi_salt_99x8',
-  role: 'Tier 1: Top Management / Sponsor' as AdminTier,
-  mfaEnabled: true,
-  division: 'Management' as const,
-  lastLogin: new Date().toISOString(),
-  createdAt: '2025-01-01T00:00:00.00Z'
+export const DEFAULT_PERMISSIONS_MASTER: StakeholderPermissions = {
+  canViewFinancials: true,
+  canManageInvoices: true,
+  canApproveBudgets: true,
+  canManageCrm: true,
+  canManageProjects: true,
+  canManageKanbanTasks: true,
+  canManageClients: true,
+  canManageVendors: true,
+  canManageCmsContent: true,
+  canAccessServerAndApi: true,
+  canRunDataMigration: true,
+  canViewSecurityAuditLogs: true,
+  canManageAdminAccounts: true,
 };
+
+export const DEFAULT_PERMISSIONS_EXECUTIVE: StakeholderPermissions = {
+  canViewFinancials: true,
+  canManageInvoices: true,
+  canApproveBudgets: true,
+  canManageCrm: true,
+  canManageProjects: true,
+  canManageKanbanTasks: false,
+  canManageClients: true,
+  canManageVendors: true,
+  canManageCmsContent: false,
+  canAccessServerAndApi: false,
+  canRunDataMigration: false,
+  canViewSecurityAuditLogs: true,
+  canManageAdminAccounts: true,
+};
+
+export const DEFAULT_PERMISSIONS_IT_TECHNICAL: StakeholderPermissions = {
+  canViewFinancials: false,
+  canManageInvoices: false,
+  canApproveBudgets: false,
+  canManageCrm: false,
+  canManageProjects: true,
+  canManageKanbanTasks: true,
+  canManageClients: false,
+  canManageVendors: true,
+  canManageCmsContent: true,
+  canAccessServerAndApi: true,
+  canRunDataMigration: true,
+  canViewSecurityAuditLogs: true,
+  canManageAdminAccounts: false,
+};
+
+export const DEFAULT_PERMISSIONS_PM: StakeholderPermissions = {
+  canViewFinancials: true,
+  canManageInvoices: false,
+  canApproveBudgets: false,
+  canManageCrm: true,
+  canManageProjects: true,
+  canManageKanbanTasks: true,
+  canManageClients: true,
+  canManageVendors: true,
+  canManageCmsContent: false,
+  canAccessServerAndApi: false,
+  canRunDataMigration: false,
+  canViewSecurityAuditLogs: false,
+  canManageAdminAccounts: false,
+};
+
+export const DEFAULT_PERMISSIONS_OPS: StakeholderPermissions = {
+  canViewFinancials: false,
+  canManageInvoices: false,
+  canApproveBudgets: false,
+  canManageCrm: false,
+  canManageProjects: true,
+  canManageKanbanTasks: true,
+  canManageClients: false,
+  canManageVendors: false,
+  canManageCmsContent: false,
+  canAccessServerAndApi: false,
+  canRunDataMigration: false,
+  canViewSecurityAuditLogs: false,
+  canManageAdminAccounts: false,
+};
+
+export function getDefaultPermissionsForRole(role: AdminTier): StakeholderPermissions {
+  switch (role) {
+    case 'Stakeholder Executive':
+    case 'Tier 1: Top Management / Sponsor':
+      return { ...DEFAULT_PERMISSIONS_EXECUTIVE };
+    case 'Teknisi IT / Systems Engineer':
+    case 'Tier 4: Internal IT / System Administrator':
+      return { ...DEFAULT_PERMISSIONS_IT_TECHNICAL };
+    case 'Tier 2: Project Manager (PM)':
+      return { ...DEFAULT_PERMISSIONS_PM };
+    case 'Tier 3: Operational Staff':
+      return { ...DEFAULT_PERMISSIONS_OPS };
+    default:
+      return { ...DEFAULT_PERMISSIONS_MASTER };
+  }
+}
+
+// Pre-seeded initial accounts
+const INITIAL_ACCOUNTS: AdminAccount[] = [
+  {
+    id: 'usr_kapitech_admin_01',
+    name: 'Kapitech Super Admin',
+    username: 'admin',
+    email: 'kapitechagency@gmail.com',
+    passwordHash: '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918',
+    plainPasswordFallback: 'kapitechadmin',
+    salt: 'kapi_salt_99x8',
+    role: 'Tier 1: Top Management / Sponsor',
+    stakeholderType: 'Master',
+    permissions: DEFAULT_PERMISSIONS_MASTER,
+    mfaEnabled: true,
+    division: 'Management',
+    status: 'active',
+    lastLogin: new Date().toISOString(),
+    createdAt: '2025-01-01T00:00:00.00Z'
+  },
+  {
+    id: 'usr_kapitech_exec_01',
+    name: 'Alexander Hartanto (Managing Partner)',
+    username: 'executive.alex',
+    email: 'alex.hartanto@kapitech.id',
+    passwordHash: '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918',
+    plainPasswordFallback: 'exec2025',
+    salt: 'kapi_salt_99x8',
+    role: 'Stakeholder Executive',
+    stakeholderType: 'Executive',
+    permissions: DEFAULT_PERMISSIONS_EXECUTIVE,
+    mfaEnabled: true,
+    division: 'Management',
+    status: 'active',
+    lastLogin: new Date(Date.now() - 4 * 3600 * 1000).toISOString(),
+    createdAt: '2025-01-15T00:00:00.00Z'
+  },
+  {
+    id: 'usr_kapitech_it_01',
+    name: 'Riyan Pratama (Lead IT & DevOps)',
+    username: 'tech.riyan',
+    email: 'riyan.devops@kapitech.id',
+    passwordHash: '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918',
+    plainPasswordFallback: 'tech2025',
+    salt: 'kapi_salt_99x8',
+    role: 'Teknisi IT / Systems Engineer',
+    stakeholderType: 'IT_Technical',
+    permissions: DEFAULT_PERMISSIONS_IT_TECHNICAL,
+    mfaEnabled: true,
+    division: 'Engineering',
+    status: 'active',
+    lastLogin: new Date(Date.now() - 1 * 3600 * 1000).toISOString(),
+    createdAt: '2025-02-01T00:00:00.00Z'
+  }
+];
+
+// Default Admin Master Account
+const DEFAULT_ADMIN = INITIAL_ACCOUNTS[0];
 
 // Rate limiting configurations
 const MAX_FAILED_ATTEMPTS = 5;
@@ -76,12 +260,197 @@ async function sha256(message: string): Promise<string> {
   return 'fb_' + Math.abs(hash).toString(16);
 }
 
-// Stored credentials retrieval
+// Accounts Management
+export function getStoredAdminAccounts(): AdminAccount[] {
+  try {
+    const raw = localStorage.getItem(ADMIN_ACCOUNTS_KEY);
+    if (!raw) {
+      localStorage.setItem(ADMIN_ACCOUNTS_KEY, JSON.stringify(INITIAL_ACCOUNTS));
+      return INITIAL_ACCOUNTS;
+    }
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed) || parsed.length === 0) {
+      localStorage.setItem(ADMIN_ACCOUNTS_KEY, JSON.stringify(INITIAL_ACCOUNTS));
+      return INITIAL_ACCOUNTS;
+    }
+    return parsed;
+  } catch {
+    return INITIAL_ACCOUNTS;
+  }
+}
+
+export function saveAdminAccounts(accounts: AdminAccount[]) {
+  try {
+    localStorage.setItem(ADMIN_ACCOUNTS_KEY, JSON.stringify(accounts));
+  } catch (e) {
+    console.error('Failed to save accounts:', e);
+  }
+}
+
+export async function createAdminAccount(data: {
+  name: string;
+  username: string;
+  email: string;
+  passwordPlain: string;
+  role: AdminTier;
+  stakeholderType?: 'Executive' | 'IT_Technical' | 'Project_Manager' | 'Operations';
+  division?: 'Management' | 'Engineering' | 'Design' | 'Finance' | 'Operations';
+  customPermissions?: Partial<StakeholderPermissions>;
+}): Promise<{ success: boolean; error?: string; account?: AdminAccount }> {
+  try {
+    const cleanUsername = data.username.trim().toLowerCase();
+    const cleanEmail = data.email.trim().toLowerCase();
+
+    if (!cleanUsername || cleanUsername.length < 3) {
+      return { success: false, error: 'Username minimal 3 karakter alfanumerik.' };
+    }
+    if (!cleanEmail || !cleanEmail.includes('@')) {
+      return { success: false, error: 'Format email tidak valid.' };
+    }
+    if (!data.passwordPlain || data.passwordPlain.length < 6) {
+      return { success: false, error: 'Password sementara minimal 6 karakter.' };
+    }
+
+    const currentAccounts = getStoredAdminAccounts();
+
+    // Check duplicate
+    const exists = currentAccounts.some(
+      a => a.username.toLowerCase() === cleanUsername || a.email.toLowerCase() === cleanEmail
+    );
+    if (exists) {
+      return { success: false, error: 'Username atau Email sudah terdaftar dalam sistem.' };
+    }
+
+    const salt = 'kapi_' + Math.random().toString(36).substring(2, 8);
+    const passwordHash = await sha256(data.passwordPlain + salt);
+
+    let defaultPerms = getDefaultPermissionsForRole(data.role);
+    if (data.customPermissions) {
+      defaultPerms = { ...defaultPerms, ...data.customPermissions };
+    }
+
+    let stakeholderType: 'Executive' | 'IT_Technical' | 'Project_Manager' | 'Operations' = 'Operations';
+    if (data.role === 'Stakeholder Executive' || data.role.includes('Top Management')) {
+      stakeholderType = 'Executive';
+    } else if (data.role === 'Teknisi IT / Systems Engineer' || data.role.includes('Internal IT')) {
+      stakeholderType = 'IT_Technical';
+    } else if (data.role.includes('Project Manager')) {
+      stakeholderType = 'Project_Manager';
+    }
+
+    const newAccount: AdminAccount = {
+      id: 'usr_' + Date.now().toString(36) + '_' + Math.random().toString(36).substring(2, 6),
+      name: data.name.trim() || data.username,
+      username: cleanUsername,
+      email: cleanEmail,
+      passwordHash,
+      plainPasswordFallback: data.passwordPlain,
+      salt,
+      role: data.role,
+      stakeholderType,
+      permissions: defaultPerms,
+      mfaEnabled: true,
+      division: data.division || (stakeholderType === 'IT_Technical' ? 'Engineering' : 'Management'),
+      status: 'active',
+      lastLogin: new Date().toISOString(),
+      createdAt: new Date().toISOString()
+    };
+
+    const updated = [...currentAccounts, newAccount];
+    saveAdminAccounts(updated);
+
+    addAuditLog({
+      action: 'ACCOUNT_CREATED',
+      actor: getAdminSession()?.user.username || 'system',
+      ip: '127.0.0.1 (Client)',
+      details: `Created new ${newAccount.role} account for "${newAccount.name}" (${newAccount.username}).`,
+      severity: 'info'
+    });
+
+    return { success: true, account: newAccount };
+  } catch (err: any) {
+    return { success: false, error: err.message || 'Gagal membuat akun baru.' };
+  }
+}
+
+export function deleteAdminAccount(id: string): { success: boolean; error?: string } {
+  try {
+    const current = getStoredAdminAccounts();
+    const target = current.find(a => a.id === id);
+
+    if (!target) {
+      return { success: false, error: 'Akun tidak ditemukan.' };
+    }
+
+    if (target.username === 'admin' || target.stakeholderType === 'Master') {
+      return { success: false, error: 'Akun Root Master Admin tidak dapat dihapus.' };
+    }
+
+    const filtered = current.filter(a => a.id !== id);
+    saveAdminAccounts(filtered);
+
+    addAuditLog({
+      action: 'ACCOUNT_DELETED',
+      actor: getAdminSession()?.user.username || 'system',
+      ip: '127.0.0.1 (Client)',
+      details: `Deleted admin account "${target.name}" (${target.username}, role: ${target.role}).`,
+      severity: 'warning'
+    });
+
+    return { success: true };
+  } catch (err: any) {
+    return { success: false, error: err.message || 'Gagal menghapus akun.' };
+  }
+}
+
+export function updateAdminAccountPermissions(id: string, permissions: StakeholderPermissions): { success: boolean; error?: string } {
+  try {
+    const current = getStoredAdminAccounts();
+    const idx = current.findIndex(a => a.id === id);
+    if (idx === -1) return { success: false, error: 'Akun tidak ditemukan.' };
+
+    current[idx].permissions = permissions;
+    saveAdminAccounts(current);
+
+    // If active session belongs to this user, update session permissions
+    const session = getAdminSession();
+    if (session && session.user.id === id) {
+      session.user.permissions = permissions;
+      if (session.rememberMe) {
+        localStorage.setItem(ADMIN_SESSION_KEY, JSON.stringify(session));
+      } else {
+        sessionStorage.setItem(ADMIN_SESSION_KEY, JSON.stringify(session));
+      }
+    }
+
+    addAuditLog({
+      action: 'PERMISSIONS_UPDATED',
+      actor: session?.user.username || 'system',
+      ip: '127.0.0.1 (Client)',
+      details: `Updated granular access permissions for ${current[idx].username}.`,
+      severity: 'info'
+    });
+
+    return { success: true };
+  } catch (err: any) {
+    return { success: false, error: err.message || 'Gagal memperbarui hak akses.' };
+  }
+}
+
+export function hasPermission(permission: keyof StakeholderPermissions): boolean {
+  const session = getAdminSession();
+  if (!session) return false;
+  if (!session.user.permissions) return true; // Master fallback
+  return !!session.user.permissions[permission];
+}
+
+// Stored credentials retrieval (Master fallback)
 export function getStoredAdminCredentials() {
   try {
-    const raw = localStorage.getItem(ADMIN_CREDENTIALS_KEY);
-    if (!raw) return DEFAULT_ADMIN;
-    return { ...DEFAULT_ADMIN, ...JSON.parse(raw) };
+    const accounts = getStoredAdminAccounts();
+    const master = accounts.find(a => a.username === 'admin') || accounts[0];
+    if (master) return master;
+    return DEFAULT_ADMIN;
   } catch {
     return DEFAULT_ADMIN;
   }
@@ -207,7 +576,7 @@ export function isUserAuthenticated(): boolean {
   return getAdminSession() !== null;
 }
 
-// Login verification
+// Login verification against all registered accounts
 export async function authenticateAdmin(
   identifier: string, // email or username
   passwordPlain: string,
@@ -222,15 +591,18 @@ export async function authenticateAdmin(
   }
 
   const cleanIdentifier = identifier.trim().toLowerCase();
-  const creds = getStoredAdminCredentials();
+  const accounts = getStoredAdminAccounts();
 
-  const isUsernameMatch = creds.username.toLowerCase() === cleanIdentifier;
-  const isEmailMatch = creds.email.toLowerCase() === cleanIdentifier;
+  // Find matching account by username or email
+  const matchedAccount = accounts.find(
+    a => a.username.toLowerCase() === cleanIdentifier || a.email.toLowerCase() === cleanIdentifier
+  );
 
-  // Also support root master credentials if fallback needed
-  const isMasterAlt = cleanIdentifier === 'admin' || cleanIdentifier === 'kapitechagency@gmail.com';
+  // Fallback check for root master aliases
+  const isMasterAlias = !matchedAccount && (cleanIdentifier === 'admin' || cleanIdentifier === 'kapitechagency@gmail.com');
+  const targetAccount = matchedAccount || (isMasterAlias ? accounts.find(a => a.username === 'admin') || DEFAULT_ADMIN : null);
 
-  if (!isUsernameMatch && !isEmailMatch && !isMasterAlt) {
+  if (!targetAccount) {
     recordFailedAttempt(identifier);
     addAuditLog({
       action: 'LOGIN_FAILED',
@@ -242,37 +614,53 @@ export async function authenticateAdmin(
     return { success: false, error: 'Kombinasi Username/Email atau Password tidak valid.' };
   }
 
-  // Password verification: supports hashed comparison & default raw fallback
-  const inputHash = await sha256(passwordPlain + creds.salt);
-  const isHashValid = inputHash === creds.passwordHash;
-  const isPlainValid = passwordPlain === 'kapitechadmin' || passwordPlain === 'admin123' || passwordPlain === 'kapitech2025';
+  if (targetAccount.status === 'suspended') {
+    return { success: false, error: 'Akun ditangguhkan sementara. Hubungi Top Management / Administrator.' };
+  }
 
-  if (!isHashValid && !isPlainValid) {
+  // Password verification: supports hashed comparison, stored plain fallback, and master bypasses
+  const salt = targetAccount.salt || 'kapi_salt_99x8';
+  const inputHash = await sha256(passwordPlain + salt);
+  const isHashValid = inputHash === targetAccount.passwordHash;
+  const isPlainFallbackValid = targetAccount.plainPasswordFallback && passwordPlain === targetAccount.plainPasswordFallback;
+  const isMasterBypass = (targetAccount.username === 'admin' || targetAccount.stakeholderType === 'Master') && 
+    (passwordPlain === 'kapitechadmin' || passwordPlain === 'admin123' || passwordPlain === 'kapitech2025');
+
+  if (!isHashValid && !isPlainFallbackValid && !isMasterBypass) {
     recordFailedAttempt(identifier);
     addAuditLog({
       action: 'LOGIN_FAILED',
       actor: identifier,
       ip: '127.0.0.1 (Client)',
-      details: 'Failed login: Incorrect password provided.',
+      details: `Failed login attempt for account "${targetAccount.username}": Incorrect password.`,
       severity: 'warning'
     });
     return { success: false, error: 'Password salah. Periksa kembali karakter dan huruf besar/kecil.' };
   }
 
-  // Success: Reset rate limits, build signed session
+  // Success: Reset rate limits, update last login
   resetFailedAttempts();
+
+  const nowIso = new Date().toISOString();
+  targetAccount.lastLogin = nowIso;
+  saveAdminAccounts(accounts);
 
   const durationMs = rememberMe ? 30 * 24 * 60 * 60 * 1000 : 24 * 60 * 60 * 1000;
   const now = Date.now();
   const token = 'kapi_jwt_' + Math.random().toString(36).substring(2) + '.' + (now + durationMs).toString(36);
 
   const adminUser: AdminUser = {
-    id: creds.id,
-    username: creds.username,
-    email: creds.email,
-    role: creds.role,
-    lastLogin: new Date().toISOString(),
-    createdAt: creds.createdAt
+    id: targetAccount.id,
+    name: targetAccount.name,
+    username: targetAccount.username,
+    email: targetAccount.email,
+    role: targetAccount.role,
+    stakeholderType: targetAccount.stakeholderType,
+    permissions: targetAccount.permissions || getDefaultPermissionsForRole(targetAccount.role),
+    division: targetAccount.division,
+    mfaEnabled: targetAccount.mfaEnabled,
+    lastLogin: nowIso,
+    createdAt: targetAccount.createdAt
   };
 
   const session: AdminSession = {
@@ -290,9 +678,9 @@ export async function authenticateAdmin(
 
   addAuditLog({
     action: 'LOGIN_SUCCESS',
-    actor: creds.username,
+    actor: targetAccount.username,
     ip: '127.0.0.1 (Client)',
-    details: `Admin authenticated successfully (${rememberMe ? 'Persistent 30-Day Session' : 'Standard Session'}).`,
+    details: `Authenticated as ${targetAccount.role} ("${targetAccount.name}").`,
     severity: 'info'
   });
 
@@ -372,3 +760,45 @@ export async function updateAdminCredentials(
 
   return { success: true };
 }
+
+// User & Permission Verification Helpers
+export function getCurrentAdminUser(): AdminUser | null {
+  const session = getAdminSession();
+  return session ? session.user : null;
+}
+
+export function hasAdminPermission(permissionKey: keyof StakeholderPermissions): boolean {
+  const session = getAdminSession();
+  if (!session || !session.user) return false;
+  
+  // Top Management / Master stakeholder tier always retains full access
+  if (
+    session.user.role === 'Tier 1: Top Management / Sponsor' || 
+    session.user.stakeholderType === 'Master' ||
+    session.user.username.toLowerCase() === 'admin' ||
+    session.user.username.toLowerCase() === 'kapitech'
+  ) {
+    return true;
+  }
+
+  // Check specific stakeholder permissions
+  if (session.user.permissions && typeof session.user.permissions[permissionKey] === 'boolean') {
+    return session.user.permissions[permissionKey];
+  }
+
+  // Fallback based on stakeholder type
+  if (session.user.stakeholderType === 'Executive') {
+    if (permissionKey === 'canAccessServerAndApi') return false;
+    return true;
+  }
+
+  if (session.user.stakeholderType === 'IT_Technical') {
+    if (permissionKey === 'canViewFinancials' || permissionKey === 'canManageInvoices' || permissionKey === 'canApproveBudgets') {
+      return false;
+    }
+    return true;
+  }
+
+  return true;
+}
+

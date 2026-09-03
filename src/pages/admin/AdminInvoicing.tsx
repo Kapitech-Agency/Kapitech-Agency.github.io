@@ -44,17 +44,21 @@ import {
 import { formatAmount, formatIDR, getActiveCurrency, CURRENCY_EVENT, CurrencyCode } from '../../lib/currency';
 import { useLanguage } from '../../lib/LanguageContext';
 import { useDragToScroll } from '../../lib/useDragToScroll';
+import { ScrollShadowContainer } from '../../components/ui/ScrollShadowContainer';
 import { CustomSelect } from '../../components/ui/CustomSelect';
 import { InvoiceStatusDropdown } from '../../components/ui/InvoiceStatusDropdown';
 import { getAgencyProjects, AgencyProject } from '../../lib/projectStore';
-import { getAdminSession } from '../../lib/adminAuth';
+import { getAdminSession, hasAdminPermission } from '../../lib/adminAuth';
 
 export const AdminInvoicing: React.FC = () => {
   const { t, language } = useLanguage();
   const session = getAdminSession();
   const userRole = session?.user?.role || 'Tier 1: Top Management / Sponsor';
-  const canCreateInvoice = userRole.startsWith('Tier 1') || userRole.startsWith('Tier 2') || userRole.includes('Finance');
-  const canDeleteInvoice = userRole.startsWith('Tier 1');
+  const canViewFinancials = hasAdminPermission('canViewFinancials');
+  const canManageInvoices = hasAdminPermission('canManageInvoices');
+  const canApproveBudgets = hasAdminPermission('canApproveBudgets');
+  const canCreateInvoice = canManageInvoices || userRole.startsWith('Tier 1') || userRole.startsWith('Tier 2') || userRole.includes('Finance');
+  const canDeleteInvoice = userRole.startsWith('Tier 1') || session?.user?.stakeholderType === 'Master';
   const [currency, setCurrency] = useState<CurrencyCode>(getActiveCurrency());
   const [invoices, setInvoices] = useState<AgencyInvoice[]>([]);
   const [expenses, setExpenses] = useState<AgencyExpense[]>([]);
@@ -310,6 +314,27 @@ export const AdminInvoicing: React.FC = () => {
         );
     }
   };
+
+  if (!canViewFinancials) {
+    return (
+      <div className="min-h-[60vh] flex flex-col items-center justify-center text-center p-8 bg-[#111318] border border-[rgba(255,255,255,0.07)] rounded-2xl max-w-xl mx-auto my-12 animate-in fade-in duration-200">
+        <div className="w-16 h-16 rounded-2xl bg-red-500/10 border border-red-500/20 text-[#FF1E27] flex items-center justify-center mb-4 shadow-lg shadow-red-500/5">
+          <ShieldCheck size={32} />
+        </div>
+        <h2 className="text-xl font-display font-bold text-white mb-2">
+          {language === 'id' ? 'Akses Terbatas: Finansial & Invoicing' : 'Restricted Access: Financials & Invoicing'}
+        </h2>
+        <p className="text-sm text-[#8A94A6] mb-6 leading-relaxed">
+          {language === 'id' 
+            ? `Akun Anda (${session?.user?.name || session?.user?.username}) terdaftar dengan peran "${session?.user?.role}". Akses modul keuangan, pembukuan invoice, dan data billing dibatasi khusus untuk Eksekutif / Manajemen Sponsor Kapitech.`
+            : `Your account (${session?.user?.name || session?.user?.username}) is registered as "${session?.user?.role}". Financial ledger, invoices, and billing metrics are restricted to Executive Stakeholders / Sponsors.`}
+        </p>
+        <div className="px-4 py-2.5 rounded-xl bg-[#181B22] border border-[rgba(255,255,255,0.07)] text-xs font-mono text-[#8A94A6]">
+          {language === 'id' ? 'Hubungi Executive Sponsor untuk peningkatan otorisasi hak akses.' : 'Contact an Executive Sponsor for elevated authorization.'}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -590,10 +615,13 @@ export const AdminInvoicing: React.FC = () => {
             )}
           </div>
 
-          {/* Desktop View: Full Data Table */}
-          <div 
-            ref={tableScrollRef}
-            className="hidden md:block bg-[#111318] border border-[rgba(255,255,255,0.07)] rounded-2xl overflow-x-auto shadow-xl select-none"
+          {/* Desktop View: Full Data Table with Edge Shadows */}
+          <ScrollShadowContainer
+            externalRef={tableScrollRef}
+            shadowBg="surface"
+            shadowSize="md"
+            className="hidden md:block rounded-2xl overflow-hidden"
+            scrollClassName="bg-[#111318] border border-[rgba(255,255,255,0.07)] rounded-2xl overflow-x-auto shadow-xl select-none"
           >
             <table className="w-full text-left text-xs font-mono min-w-[750px]">
               <thead className="sticky top-0 z-10 bg-[#111318]">
@@ -680,7 +708,7 @@ export const AdminInvoicing: React.FC = () => {
                 )}
               </tbody>
             </table>
-          </div>
+          </ScrollShadowContainer>
         </>
       ) : (
         /* Expenses List */
@@ -777,174 +805,183 @@ export const AdminInvoicing: React.FC = () => {
         </>
       )}
 
-      {/* 5. Create / Edit Invoice Modal */}
+      {/* 5. Create / Edit Invoice Modal (Mobile Fullscreen + Sticky Header) */}
       {isInvoiceModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 shadow-2xl">
-            <div className="flex items-center justify-between pb-4 mb-4 border-b border-[rgba(255,255,255,0.07)]">
-              <h3 className="font-display font-bold text-white text-lg flex items-center gap-2">
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-0 sm:p-4 overflow-y-auto">
+          <div className="bg-[#181B22] border-0 sm:border sm:border-[rgba(255,255,255,0.07)] rounded-none sm:rounded-2xl w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-2xl shadow-2xl flex flex-col overflow-hidden">
+            
+            {/* Sticky Header */}
+            <div className="sticky top-0 z-20 bg-[#181B22]/95 backdrop-blur-md px-5 sm:px-6 py-4 border-b border-[rgba(255,255,255,0.07)] flex items-center justify-between shrink-0">
+              <h3 className="font-display font-bold text-white text-base sm:text-lg flex items-center gap-2">
                 <Receipt className="text-[#FF1E27]" size={20} />
                 <span>{editingInvoice ? 'Edit Client Invoice' : 'Create New Invoice'}</span>
               </h3>
-              <button onClick={() => setIsInvoiceModalOpen(false)} className="p-1.5 text-[#8A94A6] hover:text-white rounded-lg bg-[#0B0C0E] border border-[rgba(255,255,255,0.07)]">
+              <button 
+                onClick={() => setIsInvoiceModalOpen(false)} 
+                className="w-8 h-8 rounded-lg text-[#8A94A6] hover:text-white bg-[#0B0C0E] border border-[rgba(255,255,255,0.07)] flex items-center justify-center transition-colors shrink-0 ml-3"
+              >
                 <X size={16} />
               </button>
             </div>
 
-            <form onSubmit={handleSaveInvoice} className="space-y-4 text-xs font-mono">
-              {!editingInvoice && availableProjects.length > 0 && (
-                <div className="p-3 bg-[#0B0C0E] border border-[rgba(255,255,255,0.07)] rounded-xl space-y-1.5">
-                  <label className="block text-[#8A94A6] font-semibold flex items-center justify-between">
-                    <span>{language === 'id' ? 'Tautkan ke Proyek yang Disetujui (Approved)' : 'Link to Approved Project'}</span>
-                    <span className="text-[10px] text-emerald-400 font-mono">Status: Approved / In Progress</span>
-                  </label>
-                  <CustomSelect
-                    value={selectedProjectId}
-                    onChange={handleSelectProjectChange}
-                    options={[
-                      { value: '', label: language === 'id' ? '-- Buat Invoice Lepas (Ad-Hoc) --' : '-- Standalone Ad-Hoc Invoice --' },
-                      ...availableProjects
-                        .filter(p => p.status === 'in_progress' || p.status === 'completed' || p.status === 'review')
-                        .map(p => ({
-                          value: p.id,
-                          label: `${p.name} (${p.clientCompany}) • Budget: ${formatAmount(p.budget, currency)}`
-                        }))
-                    ]}
-                  />
-                </div>
-              )}
+            <form onSubmit={handleSaveInvoice} className="flex-1 flex flex-col overflow-hidden">
+              {/* Scrollable Body */}
+              <div className="p-5 sm:p-6 overflow-y-auto flex-1 space-y-4 text-xs font-mono custom-scrollbar">
+                {!editingInvoice && availableProjects.length > 0 && (
+                  <div className="p-3 bg-[#0B0C0E] border border-[rgba(255,255,255,0.07)] rounded-xl space-y-1.5">
+                    <label className="block text-[#8A94A6] font-semibold flex items-center justify-between">
+                      <span>{language === 'id' ? 'Tautkan ke Proyek yang Disetujui (Approved)' : 'Link to Approved Project'}</span>
+                      <span className="text-[10px] text-emerald-400 font-mono">Status: Approved / In Progress</span>
+                    </label>
+                    <CustomSelect
+                      value={selectedProjectId}
+                      onChange={handleSelectProjectChange}
+                      options={[
+                        { value: '', label: language === 'id' ? '-- Buat Invoice Lepas (Ad-Hoc) --' : '-- Standalone Ad-Hoc Invoice --' },
+                        ...availableProjects
+                          .filter(p => p.status === 'in_progress' || p.status === 'completed' || p.status === 'review')
+                          .map(p => ({
+                            value: p.id,
+                            label: `${p.name} (${p.clientCompany}) • Budget: ${formatAmount(p.budget, currency)}`
+                          }))
+                      ]}
+                    />
+                  </div>
+                )}
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-[#8A94A6] mb-1 font-semibold">Client Name *</label>
-                  <input
-                    type="text"
-                    value={clientName}
-                    onChange={(e) => setClientName(e.target.value)}
-                    required
-                    placeholder="e.g. Marcus Thorne"
-                    className="w-full px-3 py-2 bg-[#0B0C0E] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
-                  />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-[#8A94A6] mb-1 font-semibold">Client Name *</label>
+                    <input
+                      type="text"
+                      value={clientName}
+                      onChange={(e) => setClientName(e.target.value)}
+                      required
+                      placeholder="e.g. Marcus Thorne"
+                      className="w-full px-3 py-2.5 bg-[#0B0C0E] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[#8A94A6] mb-1 font-semibold">Company Name *</label>
+                    <input
+                      type="text"
+                      value={clientCompany}
+                      onChange={(e) => setClientCompany(e.target.value)}
+                      required
+                      placeholder="e.g. Lumina Real Estate"
+                      className="w-full px-3 py-2.5 bg-[#0B0C0E] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
+                    />
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-[#8A94A6] mb-1 font-semibold">Company Name *</label>
-                  <input
-                    type="text"
-                    value={clientCompany}
-                    onChange={(e) => setClientCompany(e.target.value)}
-                    required
-                    placeholder="e.g. Lumina Real Estate"
-                    className="w-full px-3 py-2 bg-[#0B0C0E] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
-                  />
-                </div>
-              </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-[#8A94A6] mb-1 font-semibold">Email Address</label>
-                  <input
-                    type="email"
-                    value={clientEmail}
-                    onChange={(e) => setClientEmail(e.target.value)}
-                    placeholder="client@company.com"
-                    className="w-full px-3 py-2 bg-[#0B0C0E] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
-                  />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-[#8A94A6] mb-1 font-semibold">Email Address</label>
+                    <input
+                      type="email"
+                      value={clientEmail}
+                      onChange={(e) => setClientEmail(e.target.value)}
+                      placeholder="client@company.com"
+                      className="w-full px-3 py-2.5 bg-[#0B0C0E] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[#8A94A6] mb-1 font-semibold">Phone / WhatsApp</label>
+                    <input
+                      type="text"
+                      value={clientPhone}
+                      onChange={(e) => setClientPhone(e.target.value)}
+                      placeholder="+62 811-XXXX-XXXX"
+                      className="w-full px-3 py-2.5 bg-[#0B0C0E] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
+                    />
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-[#8A94A6] mb-1 font-semibold">Phone / WhatsApp</label>
-                  <input
-                    type="text"
-                    value={clientPhone}
-                    onChange={(e) => setClientPhone(e.target.value)}
-                    placeholder="+62 811-XXXX-XXXX"
-                    className="w-full px-3 py-2 bg-[#0B0C0E] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
-                  />
-                </div>
-              </div>
 
-              <div className="p-4 bg-[#0B0C0E] border border-[rgba(255,255,255,0.07)] rounded-xl space-y-3">
-                <label className="block text-white font-bold">Line Item & Milestone Valuation</label>
+                <div className="p-4 bg-[#0B0C0E] border border-[rgba(255,255,255,0.07)] rounded-xl space-y-3">
+                  <label className="block text-white font-bold">Line Item & Milestone Valuation</label>
+                  <div>
+                    <label className="block text-[#8A94A6] mb-1">Deliverable Description</label>
+                    <textarea
+                      rows={2}
+                      value={itemDesc}
+                      onChange={(e) => setItemDesc(e.target.value)}
+                      className="w-full px-3 py-2 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
+                    />
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-[#8A94A6] mb-1">Amount (IDR Rupiah)</label>
+                      <input
+                        type="number"
+                        value={itemAmount}
+                        onChange={(e) => setItemAmount(Number(e.target.value))}
+                        className="w-full px-3 py-2.5 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[#8A94A6] mb-1">PPN / Tax % (e.g. 11%)</label>
+                      <input
+                        type="number"
+                        value={taxPercent}
+                        onChange={(e) => setTaxPercent(Number(e.target.value))}
+                        className="w-full px-3 py-2.5 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
+                      />
+                    </div>
+                  </div>
+                  <div className="pt-2 text-right text-emerald-400 font-bold font-display text-sm">
+                    Total Payable: {formatIDR(itemAmount + Math.round((itemAmount * taxPercent) / 100))}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div>
+                    <label className="block text-[#8A94A6] mb-1 font-semibold">Issue Date</label>
+                    <input
+                      type="date"
+                      value={issueDate}
+                      onChange={(e) => setIssueDate(e.target.value)}
+                      className="w-full px-3 py-2.5 bg-[#0B0C0E] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[#8A94A6] mb-1 font-semibold">Due Date</label>
+                    <input
+                      type="date"
+                      value={dueDate}
+                      onChange={(e) => setDueDate(e.target.value)}
+                      className="w-full px-3 py-2.5 bg-[#0B0C0E] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[#8A94A6] mb-1 font-semibold">Status</label>
+                    <CustomSelect
+                      value={invoiceStatus}
+                      onChange={(val) => setInvoiceStatus(val as InvoiceStatus)}
+                      options={[
+                        { value: 'draft', label: 'Draft', badge: 'Draft', badgeColor: 'bg-slate-500/10 text-slate-400 border border-slate-500/20' },
+                        { value: 'sent', label: 'Sent', badge: 'Sent', badgeColor: 'bg-blue-500/10 text-blue-400 border border-blue-500/20' },
+                        { value: 'paid', label: 'Paid', badge: 'Paid', badgeColor: 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' },
+                        { value: 'overdue', label: 'Overdue', badge: 'Overdue', badgeColor: 'bg-red-500/10 text-red-400 border border-red-500/20' }
+                      ]}
+                      className="w-full"
+                      triggerClassName="w-full justify-between"
+                    />
+                  </div>
+                </div>
+
                 <div>
-                  <label className="block text-[#8A94A6] mb-1">Deliverable Description</label>
+                  <label className="block text-[#8A94A6] mb-1 font-semibold">Bank Wire Instructions / Notes</label>
                   <textarea
                     rows={2}
-                    value={itemDesc}
-                    onChange={(e) => setItemDesc(e.target.value)}
-                    className="w-full px-3 py-2 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
-                  />
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-[#8A94A6] mb-1">Amount (IDR Rupiah)</label>
-                    <input
-                      type="number"
-                      value={itemAmount}
-                      onChange={(e) => setItemAmount(Number(e.target.value))}
-                      className="w-full px-3 py-2 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[#8A94A6] mb-1">PPN / Tax % (e.g. 11%)</label>
-                    <input
-                      type="number"
-                      value={taxPercent}
-                      onChange={(e) => setTaxPercent(Number(e.target.value))}
-                      className="w-full px-3 py-2 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
-                    />
-                  </div>
-                </div>
-                <div className="pt-2 text-right text-emerald-400 font-bold font-display text-sm">
-                  Total Payable: {formatIDR(itemAmount + Math.round((itemAmount * taxPercent) / 100))}
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div>
-                  <label className="block text-[#8A94A6] mb-1 font-semibold">Issue Date</label>
-                  <input
-                    type="date"
-                    value={issueDate}
-                    onChange={(e) => setIssueDate(e.target.value)}
+                    value={invoiceNotes}
+                    onChange={(e) => setInvoiceNotes(e.target.value)}
                     className="w-full px-3 py-2 bg-[#0B0C0E] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
                   />
                 </div>
-                <div>
-                  <label className="block text-[#8A94A6] mb-1 font-semibold">Due Date</label>
-                  <input
-                    type="date"
-                    value={dueDate}
-                    onChange={(e) => setDueDate(e.target.value)}
-                    className="w-full px-3 py-2 bg-[#0B0C0E] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
-                  />
-                </div>
-                <div>
-                  <label className="block text-[#8A94A6] mb-1 font-semibold">Status</label>
-                  <CustomSelect
-                    value={invoiceStatus}
-                    onChange={(val) => setInvoiceStatus(val as InvoiceStatus)}
-                    options={[
-                      { value: 'draft', label: 'Draft', badge: 'Draft', badgeColor: 'bg-slate-500/10 text-slate-400 border border-slate-500/20' },
-                      { value: 'sent', label: 'Sent', badge: 'Sent', badgeColor: 'bg-blue-500/10 text-blue-400 border border-blue-500/20' },
-                      { value: 'paid', label: 'Paid', badge: 'Paid', badgeColor: 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' },
-                      { value: 'overdue', label: 'Overdue', badge: 'Overdue', badgeColor: 'bg-red-500/10 text-red-400 border border-red-500/20' }
-                    ]}
-                    className="w-full"
-                    triggerClassName="w-full justify-between"
-                  />
-                </div>
               </div>
 
-              <div>
-                <label className="block text-[#8A94A6] mb-1 font-semibold">Bank Wire Instructions / Notes</label>
-                <textarea
-                  rows={2}
-                  value={invoiceNotes}
-                  onChange={(e) => setInvoiceNotes(e.target.value)}
-                  className="w-full px-3 py-2 bg-[#0B0C0E] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
-                />
-              </div>
-
-              <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-[rgba(255,255,255,0.07)]">
+              {/* Sticky Footer */}
+              <div className="sticky bottom-0 z-20 bg-[#181B22]/95 backdrop-blur-md px-5 sm:px-6 py-3.5 border-t border-[rgba(255,255,255,0.07)] flex items-center justify-end gap-2.5 shrink-0">
                 <button
                   type="button"
                   onClick={() => setIsInvoiceModalOpen(false)}
@@ -964,73 +1001,82 @@ export const AdminInvoicing: React.FC = () => {
         </div>
       )}
 
-      {/* 6. Record Expense Modal */}
+      {/* 6. Record Expense Modal (Mobile Fullscreen + Sticky Header) */}
       {isExpenseModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-2xl w-full max-w-md p-6 shadow-2xl">
-            <div className="flex items-center justify-between pb-4 mb-4 border-b border-[rgba(255,255,255,0.07)]">
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-0 sm:p-4 overflow-y-auto">
+          <div className="bg-[#181B22] border-0 sm:border sm:border-[rgba(255,255,255,0.07)] rounded-none sm:rounded-2xl w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-md shadow-2xl flex flex-col overflow-hidden">
+            
+            {/* Sticky Header */}
+            <div className="sticky top-0 z-20 bg-[#181B22]/95 backdrop-blur-md px-5 sm:px-6 py-4 border-b border-[rgba(255,255,255,0.07)] flex items-center justify-between shrink-0">
               <h3 className="font-display font-bold text-white text-base flex items-center gap-2">
                 <CreditCard className="text-[#FF1E27]" size={18} />
                 <span>Record Studio Expense</span>
               </h3>
-              <button onClick={() => setIsExpenseModalOpen(false)} className="p-1 text-[#8A94A6] hover:text-white">
+              <button 
+                onClick={() => setIsExpenseModalOpen(false)} 
+                className="w-8 h-8 rounded-lg text-[#8A94A6] hover:text-white bg-[#0B0C0E] border border-[rgba(255,255,255,0.07)] flex items-center justify-center transition-colors shrink-0 ml-3"
+              >
                 <X size={16} />
               </button>
             </div>
 
-            <form onSubmit={handleSaveExpense} className="space-y-3.5 text-xs font-mono">
-              <div>
-                <label className="block text-[#8A94A6] mb-1 font-semibold">Expense Category</label>
-                <CustomSelect
-                  value={expCategory}
-                  onChange={(val) => setExpCategory(val as any)}
-                  options={[
-                    { value: 'Software & Cloud', label: 'Software & Cloud (Vercel, AWS, Figma)' },
-                    { value: 'Salaries & Contractors', label: 'Salaries & Contractors' },
-                    { value: 'Office & Hardware', label: 'Office & Hardware' },
-                    { value: 'Marketing & Ads', label: 'Marketing & Ads' },
-                    { value: 'Legal & Admin', label: 'Legal & Admin' }
-                  ]}
-                  className="w-full"
-                  triggerClassName="w-full justify-between"
-                />
-              </div>
-
-              <div>
-                <label className="block text-[#8A94A6] mb-1 font-semibold">Description *</label>
-                <input
-                  type="text"
-                  value={expDesc}
-                  onChange={(e) => setExpDesc(e.target.value)}
-                  required
-                  placeholder="e.g. Google Cloud Run cluster billing"
-                  className="w-full px-3 py-2 bg-[#0B0C0E] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
+            <form onSubmit={handleSaveExpense} className="flex-1 flex flex-col overflow-hidden">
+              {/* Scrollable Body */}
+              <div className="p-5 sm:p-6 overflow-y-auto flex-1 space-y-3.5 text-xs font-mono custom-scrollbar">
                 <div>
-                  <label className="block text-[#8A94A6] mb-1 font-semibold">Amount (IDR)</label>
+                  <label className="block text-[#8A94A6] mb-1 font-semibold">Expense Category</label>
+                  <CustomSelect
+                    value={expCategory}
+                    onChange={(val) => setExpCategory(val as any)}
+                    options={[
+                      { value: 'Software & Cloud', label: 'Software & Cloud (Vercel, AWS, Figma)' },
+                      { value: 'Salaries & Contractors', label: 'Salaries & Contractors' },
+                      { value: 'Office & Hardware', label: 'Office & Hardware' },
+                      { value: 'Marketing & Ads', label: 'Marketing & Ads' },
+                      { value: 'Legal & Admin', label: 'Legal & Admin' }
+                    ]}
+                    className="w-full"
+                    triggerClassName="w-full justify-between"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[#8A94A6] mb-1 font-semibold">Description *</label>
                   <input
-                    type="number"
-                    value={expAmount}
-                    onChange={(e) => setExpAmount(Number(e.target.value))}
+                    type="text"
+                    value={expDesc}
+                    onChange={(e) => setExpDesc(e.target.value)}
                     required
-                    className="w-full px-3 py-2 bg-[#0B0C0E] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
+                    placeholder="e.g. Google Cloud Run cluster billing"
+                    className="w-full px-3 py-2.5 bg-[#0B0C0E] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
                   />
                 </div>
-                <div>
-                  <label className="block text-[#8A94A6] mb-1 font-semibold">Date</label>
-                  <input
-                    type="date"
-                    value={expDate}
-                    onChange={(e) => setExpDate(e.target.value)}
-                    className="w-full px-3 py-2 bg-[#0B0C0E] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
-                  />
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[#8A94A6] mb-1 font-semibold">Amount (IDR)</label>
+                    <input
+                      type="number"
+                      value={expAmount}
+                      onChange={(e) => setExpAmount(Number(e.target.value))}
+                      required
+                      className="w-full px-3 py-2.5 bg-[#0B0C0E] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[#8A94A6] mb-1 font-semibold">Date</label>
+                    <input
+                      type="date"
+                      value={expDate}
+                      onChange={(e) => setExpDate(e.target.value)}
+                      className="w-full px-3 py-2.5 bg-[#0B0C0E] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
+                    />
+                  </div>
                 </div>
               </div>
 
-              <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-[rgba(255,255,255,0.07)]">
+              {/* Sticky Footer */}
+              <div className="sticky bottom-0 z-20 bg-[#181B22]/95 backdrop-blur-md px-5 sm:px-6 py-3.5 border-t border-[rgba(255,255,255,0.07)] flex items-center justify-end gap-2.5 shrink-0">
                 <button
                   type="button"
                   onClick={() => setIsExpenseModalOpen(false)}
@@ -1050,119 +1096,133 @@ export const AdminInvoicing: React.FC = () => {
         </div>
       )}
 
-      {/* 7. Printable Invoice Preview Slide-Over / Modal */}
+      {/* 7. Printable Invoice Preview Slide-Over / Modal (Mobile Fullscreen + Sticky Header) */}
       {previewInvoice && (
-        <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-white text-zinc-900 rounded-2xl w-full max-w-2xl p-8 shadow-2xl font-sans relative">
-            <button
-              onClick={() => setPreviewInvoice(null)}
-              className="absolute top-4 right-4 p-2 rounded-full bg-zinc-100 hover:bg-zinc-200 text-zinc-600 transition-colors"
-            >
-              <X size={18} />
-            </button>
+        <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-0 sm:p-4 overflow-y-auto">
+          <div className="bg-white text-zinc-900 rounded-none sm:rounded-2xl w-full h-full sm:h-auto sm:max-h-[92vh] sm:max-w-2xl shadow-2xl font-sans relative flex flex-col overflow-hidden">
+            
+            {/* Sticky Header for Preview Modal */}
+            <div className="sticky top-0 z-20 bg-white/95 backdrop-blur-md px-6 py-4 border-b border-zinc-200 flex items-center justify-between shrink-0">
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 rounded-lg bg-red-600 flex items-center justify-center text-white font-bold text-xs">
+                  K
+                </div>
+                <div>
+                  <span className="text-sm font-bold font-display tracking-tight text-zinc-900 block">KAPITECH INVOICE</span>
+                  <span className="text-[11px] font-mono text-zinc-500">{previewInvoice.invoiceNumber}</span>
+                </div>
+              </div>
+              <button
+                onClick={() => setPreviewInvoice(null)}
+                className="p-1.5 rounded-full bg-zinc-100 hover:bg-zinc-200 text-zinc-600 transition-colors"
+              >
+                <X size={18} />
+              </button>
+            </div>
 
-            {/* Invoice Printable Header */}
-            <div className="flex justify-between items-start border-b border-zinc-200 pb-6 mb-6">
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <div className="w-8 h-8 rounded-lg bg-red-600 flex items-center justify-center text-white font-bold text-sm">
-                    K
+            {/* Scrollable Printable Content */}
+            <div className="p-6 sm:p-8 overflow-y-auto flex-1 custom-scrollbar">
+              {/* Invoice Printable Header */}
+              <div className="flex justify-between items-start border-b border-zinc-200 pb-6 mb-6">
+                <div>
+                  <span className="text-lg font-bold font-display tracking-tight text-zinc-900">PT Kapitech Digital Indonesia</span>
+                  <p className="text-xs text-zinc-500 max-w-xs mt-1 leading-relaxed">
+                    Linea Residence Block G No. 5, Paku Jaya, South Tangerang, Banten 15220, Indonesia
+                  </p>
+                </div>
+
+                <div className="text-right">
+                  <span className="text-2xl font-bold font-display text-zinc-900 block">INVOICE</span>
+                  <span className="text-sm font-mono text-zinc-600 font-bold block">{previewInvoice.invoiceNumber}</span>
+                  <span className="text-xs font-mono px-2 py-0.5 rounded uppercase font-bold mt-2 inline-block bg-zinc-100 text-zinc-800">
+                    Status: {previewInvoice.status.toUpperCase()}
+                  </span>
+                </div>
+              </div>
+
+              {/* Billed To */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6 text-xs">
+                <div>
+                  <span className="text-zinc-400 uppercase font-mono font-semibold block mb-1">Billed To:</span>
+                  <strong className="text-sm text-zinc-900 block">{previewInvoice.clientName}</strong>
+                  <span className="text-zinc-700 block">{previewInvoice.clientCompany}</span>
+                  <span className="text-zinc-500 block">{previewInvoice.clientEmail}</span>
+                  {previewInvoice.clientPhone && <span className="text-zinc-500 block">{previewInvoice.clientPhone}</span>}
+                </div>
+                <div className="sm:text-right">
+                  <span className="text-zinc-400 uppercase font-mono font-semibold block mb-1">Invoice Details:</span>
+                  <div><strong>Issue Date:</strong> {previewInvoice.issueDate}</div>
+                  <div><strong>Payment Due:</strong> {previewInvoice.dueDate}</div>
+                  <div><strong>Currency:</strong> IDR (Indonesian Rupiah)</div>
+                </div>
+              </div>
+
+              {/* Items Table */}
+              <div className="overflow-x-auto mb-6">
+                <table className="w-full text-xs text-left border-collapse min-w-[320px]">
+                  <thead>
+                    <tr className="border-b-2 border-zinc-900 text-zinc-900 font-mono uppercase text-[10px]">
+                      <th className="py-2">Description</th>
+                      <th className="py-2 text-right">Qty</th>
+                      <th className="py-2 text-right">Price</th>
+                      <th className="py-2 text-right">Total</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-zinc-200">
+                    {previewInvoice.items.map((item, idx) => (
+                      <tr key={idx}>
+                        <td className="py-3 font-medium text-zinc-800">{item.description}</td>
+                        <td className="py-3 text-right font-mono">{item.quantity}</td>
+                        <td className="py-3 text-right font-mono">{formatIDR(item.unitPrice)}</td>
+                        <td className="py-3 text-right font-mono font-bold">{formatIDR(item.amount)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Totals Calculation */}
+              <div className="flex justify-end mb-6 text-xs font-mono">
+                <div className="w-64 space-y-1.5 text-right">
+                  <div className="flex justify-between text-zinc-600">
+                    <span>Subtotal:</span>
+                    <span>{formatIDR(previewInvoice.subtotal)}</span>
                   </div>
-                  <span className="text-xl font-bold font-display tracking-tight text-zinc-900">KAPITECH AGENCY</span>
+                  <div className="flex justify-between text-zinc-600">
+                    <span>PPN ({previewInvoice.taxPercent}%):</span>
+                    <span>{formatIDR(previewInvoice.taxAmount)}</span>
+                  </div>
+                  <div className="flex justify-between text-sm font-bold text-zinc-900 pt-2 border-t border-zinc-900 font-display">
+                    <span>Total Amount:</span>
+                    <span className="text-red-600">{formatIDR(previewInvoice.total)}</span>
+                  </div>
                 </div>
-                <p className="text-xs text-zinc-500 font-mono">PT Kapitech Digital Indonesia</p>
-                <p className="text-xs text-zinc-500 max-w-xs mt-1">
-                  Linea Residence Block G No. 5, Paku Jaya, South Tangerang, Banten 15220, Indonesia
+              </div>
+
+              {/* Bank details & Signoff */}
+              <div className="bg-zinc-50 p-4 rounded-xl text-xs text-zinc-600 border border-zinc-200">
+                <strong className="text-zinc-900 block mb-1">Bank Payment Wire Instructions:</strong>
+                <p className="font-mono text-[11px] leading-relaxed">
+                  Bank Mandiri Indonesia (Cabang Serpong)<br />
+                  Account Number: <strong className="text-zinc-900">123-00-998877-1</strong><br />
+                  Beneficiary: <strong className="text-zinc-900">PT KAPITECH DIGITAL INDONESIA</strong>
                 </p>
-              </div>
-
-              <div className="text-right">
-                <span className="text-2xl font-bold font-display text-zinc-900 block">INVOICE</span>
-                <span className="text-sm font-mono text-zinc-600 font-bold block">{previewInvoice.invoiceNumber}</span>
-                <span className="text-xs font-mono px-2 py-0.5 rounded uppercase font-bold mt-2 inline-block bg-zinc-100 text-zinc-800">
-                  Status: {previewInvoice.status.toUpperCase()}
-                </span>
+                {previewInvoice.notes && <p className="mt-2 text-zinc-500 italic">{previewInvoice.notes}</p>}
               </div>
             </div>
 
-            {/* Billed To */}
-            <div className="grid grid-cols-2 gap-6 mb-6 text-xs">
-              <div>
-                <span className="text-zinc-400 uppercase font-mono font-semibold block mb-1">Billed To:</span>
-                <strong className="text-sm text-zinc-900 block">{previewInvoice.clientName}</strong>
-                <span className="text-zinc-700 block">{previewInvoice.clientCompany}</span>
-                <span className="text-zinc-500 block">{previewInvoice.clientEmail}</span>
-                {previewInvoice.clientPhone && <span className="text-zinc-500 block">{previewInvoice.clientPhone}</span>}
-              </div>
-              <div className="text-right">
-                <span className="text-zinc-400 uppercase font-mono font-semibold block mb-1">Invoice Details:</span>
-                <div><strong>Issue Date:</strong> {previewInvoice.issueDate}</div>
-                <div><strong>Payment Due:</strong> {previewInvoice.dueDate}</div>
-                <div><strong>Currency:</strong> IDR (Indonesian Rupiah)</div>
-              </div>
-            </div>
-
-            {/* Items Table */}
-            <table className="w-full text-xs text-left mb-6 border-collapse">
-              <thead className="sticky top-0 z-10 bg-[#111318]">
-                <tr className="border-b-2 border-zinc-900 text-zinc-900 font-mono uppercase text-[10px]">
-                  <th className="py-2">Description</th>
-                  <th className="py-2 text-right">Qty</th>
-                  <th className="py-2 text-right">Price</th>
-                  <th className="py-2 text-right">Total</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-zinc-200">
-                {previewInvoice.items.map((item, idx) => (
-                  <tr key={idx}>
-                    <td className="py-3 font-medium text-zinc-800">{item.description}</td>
-                    <td className="py-3 text-right font-mono">{item.quantity}</td>
-                    <td className="py-3 text-right font-mono">{formatIDR(item.unitPrice)}</td>
-                    <td className="py-3 text-right font-mono font-bold">{formatIDR(item.amount)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-
-            {/* Totals Calculation */}
-            <div className="flex justify-end mb-6 text-xs font-mono">
-              <div className="w-64 space-y-1.5 text-right">
-                <div className="flex justify-between text-zinc-600">
-                  <span>Subtotal:</span>
-                  <span>{formatIDR(previewInvoice.subtotal)}</span>
-                </div>
-                <div className="flex justify-between text-zinc-600">
-                  <span>PPN ({previewInvoice.taxPercent}%):</span>
-                  <span>{formatIDR(previewInvoice.taxAmount)}</span>
-                </div>
-                <div className="flex justify-between text-sm font-bold text-zinc-900 pt-2 border-t border-zinc-900 font-display">
-                  <span>Total Amount:</span>
-                  <span className="text-red-600">{formatIDR(previewInvoice.total)}</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Bank details & Signoff */}
-            <div className="bg-zinc-50 p-4 rounded-xl text-xs text-zinc-600 border border-zinc-200 mb-6">
-              <strong className="text-zinc-900 block mb-1">Bank Payment Wire Instructions:</strong>
-              <p className="font-mono text-[11px] leading-relaxed">
-                Bank Mandiri Indonesia (Cabang Serpong)<br />
-                Account Number: <strong className="text-zinc-900">123-00-998877-1</strong><br />
-                Beneficiary: <strong className="text-zinc-900">PT KAPITECH DIGITAL INDONESIA</strong>
-              </p>
-              {previewInvoice.notes && <p className="mt-2 text-zinc-500 italic">{previewInvoice.notes}</p>}
-            </div>
-
-            <div className="flex items-center justify-between pt-4 border-t border-zinc-200 text-xs">
+            {/* Sticky Footer for Preview Modal */}
+            <div className="sticky bottom-0 z-20 bg-white/95 backdrop-blur-md px-6 py-3.5 border-t border-zinc-200 flex items-center justify-between text-xs shrink-0">
               <span className="text-zinc-400 font-mono">kapitech.id • Finance Division</span>
               <button
                 onClick={() => window.print()}
-                className="px-4 py-2 rounded-xl bg-zinc-900 text-white font-mono font-bold text-xs flex items-center gap-1.5 hover:bg-zinc-800 transition-colors"
+                className="h-10 px-4 min-h-[40px] rounded-xl bg-zinc-900 text-white font-mono font-bold text-xs flex items-center gap-1.5 hover:bg-zinc-800 transition-colors"
               >
                 <Download size={14} />
                 <span>Print / Save PDF</span>
               </button>
             </div>
+
           </div>
         </div>
       )}

@@ -1279,61 +1279,71 @@ export const AdminDashboard: React.FC = () => {
       {/* 5. SERVICE REQUEST DETAIL MODAL (KAPITECH GLASSMORPHIC PANEL) */}
       {/* ----------------------------------------------------------------- */}
       {activeModalRequest && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-[#0F1117] border border-[rgba(255,255,255,0.08)] rounded-2xl w-full max-w-lg shadow-[0_20px_60px_rgba(0,0,0,0.7)] p-6 relative animate-in zoom-in-95 duration-150">
-            <button
-              onClick={() => setActiveModalRequest(null)}
-              className="absolute top-4 right-4 p-1 rounded-lg text-[#94A3B8] hover:text-white hover:bg-[#161922]"
-            >
-              <X size={16} />
-            </button>
-
-            <div className="flex items-center gap-2 font-mono text-[#FF1E27] text-xs font-semibold mb-2">
-              <span>{activeModalRequest.requestId}</span>
-              <span>•</span>
-              <span className="text-[#94A3B8]">{activeModalRequest.serviceType}</span>
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-0 sm:p-4 overflow-y-auto">
+          <div className="bg-[#0F1117] border-0 sm:border sm:border-[rgba(255,255,255,0.08)] rounded-none sm:rounded-2xl w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-lg shadow-[0_20px_60px_rgba(0,0,0,0.7)] flex flex-col overflow-hidden">
+            
+            {/* Sticky Header */}
+            <div className="sticky top-0 z-20 bg-[#0F1117]/95 backdrop-blur-md px-5 sm:px-6 py-4 border-b border-[rgba(255,255,255,0.08)] flex items-center justify-between shrink-0">
+              <div>
+                <div className="flex items-center gap-2 font-mono text-[#FF1E27] text-xs font-semibold">
+                  <span>{activeModalRequest.requestId}</span>
+                  <span>•</span>
+                  <span className="text-[#94A3B8]">{activeModalRequest.serviceType}</span>
+                </div>
+                <h3 className="text-base font-sans font-bold text-white leading-tight mt-0.5">
+                  {activeModalRequest.title}
+                </h3>
+              </div>
+              
+              <button
+                onClick={() => setActiveModalRequest(null)}
+                className="w-8 h-8 rounded-lg text-[#94A3B8] hover:text-white hover:bg-[#161922] flex items-center justify-center transition-colors shrink-0 ml-3"
+              >
+                <X size={16} />
+              </button>
             </div>
 
-            <h3 className="text-lg font-sans font-bold text-white mb-1">
-              {activeModalRequest.title}
-            </h3>
-            <p className="text-xs text-[#94A3B8] mb-4">
-              {language === 'id' ? 'Klien' : 'Client'}: {activeModalRequest.clientCompany} ({activeModalRequest.clientName})
-            </p>
-
-            <div className="p-4 rounded-xl bg-[#161922] border border-[rgba(255,255,255,0.06)] space-y-3 mb-5 text-xs">
-              <p className="text-[#F8FAFC] leading-relaxed">
-                {activeModalRequest.description}
+            {/* Scrollable Content */}
+            <div className="p-5 sm:p-6 overflow-y-auto flex-1 space-y-4 custom-scrollbar">
+              <p className="text-xs text-[#94A3B8] font-mono">
+                {language === 'id' ? 'Klien' : 'Client'}: <span className="text-white font-semibold">{activeModalRequest.clientCompany}</span> ({activeModalRequest.clientName})
               </p>
-              
-              <div className="grid grid-cols-2 gap-3 pt-3 border-t border-[rgba(255,255,255,0.06)] text-[11px] font-mono">
-                <div>
-                  <span className="text-[#64748B] block">{language === 'id' ? 'Spesialis Ditugaskan:' : 'Assigned Specialist:'}</span>
-                  <span className="text-white font-semibold">{activeModalRequest.assignedMember.name}</span>
-                </div>
-                <div>
-                  <span className="text-[#64748B] block">{language === 'id' ? 'Batas Waktu:' : 'Due Date:'}</span>
-                  <span className="text-white font-semibold">{activeModalRequest.dueDate}</span>
-                </div>
-                <div>
-                  <span className="text-[#64748B] block">{language === 'id' ? 'Estimasi Pengerjaan:' : 'Estimated Work:'}</span>
-                  <span className="text-[#FF1E27] font-semibold">{activeModalRequest.estimatedHours} {language === 'id' ? 'Jam' : 'Hours'}</span>
-                </div>
-                <div>
-                  <span className="text-[#64748B] block">{language === 'id' ? 'Sisa SLA:' : 'SLA Remaining:'}</span>
-                  <span className="text-emerald-400 font-semibold">{activeModalRequest.slaDaysRemaining} {language === 'id' ? 'Hari' : 'Days'}</span>
+
+              <div className="p-4 rounded-xl bg-[#161922] border border-[rgba(255,255,255,0.06)] space-y-3 text-xs font-mono">
+                <p className="text-[#F8FAFC] leading-relaxed font-sans">
+                  {activeModalRequest.description}
+                </p>
+                
+                <div className="grid grid-cols-2 gap-3 pt-3 border-t border-[rgba(255,255,255,0.06)] text-[11px]">
+                  <div>
+                    <span className="text-[#64748B] block">{language === 'id' ? 'Spesialis Ditugaskan:' : 'Assigned Specialist:'}</span>
+                    <span className="text-white font-semibold">{activeModalRequest.assignedMember.name}</span>
+                  </div>
+                  <div>
+                    <span className="text-[#64748B] block">{language === 'id' ? 'Batas Waktu:' : 'Due Date:'}</span>
+                    <span className="text-white font-semibold">{activeModalRequest.dueDate}</span>
+                  </div>
+                  <div>
+                    <span className="text-[#64748B] block">{language === 'id' ? 'Estimasi Pengerjaan:' : 'Estimated Work:'}</span>
+                    <span className="text-[#FF1E27] font-semibold">{activeModalRequest.estimatedHours} {language === 'id' ? 'Jam' : 'Hours'}</span>
+                  </div>
+                  <div>
+                    <span className="text-[#64748B] block">{language === 'id' ? 'Sisa SLA:' : 'SLA Remaining:'}</span>
+                    <span className="text-emerald-400 font-semibold">{activeModalRequest.slaDaysRemaining} {language === 'id' ? 'Hari' : 'Days'}</span>
+                  </div>
                 </div>
               </div>
             </div>
 
-            <div className="flex items-center justify-between gap-3">
+            {/* Sticky Footer */}
+            <div className="sticky bottom-0 z-20 bg-[#0F1117]/95 backdrop-blur-md px-5 sm:px-6 py-3.5 border-t border-[rgba(255,255,255,0.08)] flex items-center justify-between gap-3 shrink-0">
               <button
                 onClick={() => {
                   deleteServiceRequest(activeModalRequest.id);
                   setActiveModalRequest(null);
                   setStatusNotification(language === 'id' ? 'Permintaan layanan dihapus.' : 'Service request deleted.');
                 }}
-                className="px-3 py-2 rounded-lg bg-red-950/40 border border-red-500/30 text-red-400 hover:bg-red-900/50 text-xs font-mono flex items-center gap-1.5"
+                className="h-10 px-3 min-h-[40px] rounded-xl bg-red-950/40 border border-red-500/30 text-red-400 hover:bg-red-900/50 text-xs font-mono flex items-center gap-1.5 transition-colors"
               >
                 <Trash2 size={13} />
                 <span>{t('admin.action.delete')}</span>
@@ -1342,145 +1352,157 @@ export const AdminDashboard: React.FC = () => {
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setActiveModalRequest(null)}
-                  className="px-4 py-2 rounded-lg bg-[#161922] hover:bg-[#1B1E2B] text-white text-xs font-sans border border-[rgba(255,255,255,0.06)]"
+                  className="h-10 px-4 min-h-[40px] rounded-xl bg-[#161922] hover:bg-[#1B1E2B] text-white text-xs font-mono border border-[rgba(255,255,255,0.06)] transition-colors"
                 >
                   {t('admin.action.close')}
                 </button>
                 <Link
                   to="/admin/projects"
-                  className="px-4 py-2 rounded-lg bg-[#E50914] hover:bg-[#FF1E27] text-white text-xs font-sans font-semibold flex items-center gap-1 shadow-[0_0_16px_rgba(229,9,20,0.25)]"
+                  className="h-10 px-4 min-h-[40px] rounded-xl bg-[#E50914] hover:bg-[#FF1E27] text-white text-xs font-mono font-bold flex items-center gap-1.5 shadow-[0_0_16px_rgba(229,9,20,0.25)] transition-all"
                 >
                   <span>{t('admin.dash.executeProjects')}</span>
                   <ArrowRight size={13} />
                 </Link>
               </div>
             </div>
+
           </div>
         </div>
       )}
 
       {/* ----------------------------------------------------------------- */}
-      {/* 6. + NEW SERVICE REQUEST MODAL */}
+      {/* 6. + NEW SERVICE REQUEST MODAL (MOBILE FULLSCREEN + STICKY HEADER) */}
       {/* ----------------------------------------------------------------- */}
       {isNewRequestModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-[#0F1117] border border-[rgba(255,255,255,0.08)] rounded-2xl w-full max-w-lg shadow-[0_20px_60px_rgba(0,0,0,0.7)] p-6 relative animate-in zoom-in-95 duration-150">
-            <button
-              onClick={() => setIsNewRequestModalOpen(false)}
-              className="absolute top-4 right-4 p-1 rounded-lg text-[#94A3B8] hover:text-white hover:bg-[#161922]"
-            >
-              <X size={16} />
-            </button>
-
-            <h3 className="text-lg font-sans font-bold text-white mb-1">
-              {t('admin.dash.createReqTitle')}
-            </h3>
-            <p className="text-xs text-[#94A3B8] mb-5">
-              {t('admin.dash.createReqSub')}
-            </p>
-
-            <form onSubmit={handleCreateRequest} className="space-y-4 text-xs font-sans">
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-0 sm:p-4 overflow-y-auto">
+          <div className="bg-[#0F1117] border-0 sm:border sm:border-[rgba(255,255,255,0.08)] rounded-none sm:rounded-2xl w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-lg shadow-[0_20px_60px_rgba(0,0,0,0.7)] flex flex-col overflow-hidden">
+            
+            {/* Sticky Header */}
+            <div className="sticky top-0 z-20 bg-[#0F1117]/95 backdrop-blur-md px-5 sm:px-6 py-4 border-b border-[rgba(255,255,255,0.08)] flex items-center justify-between shrink-0">
               <div>
-                <label className="block text-[#94A3B8] mb-1 font-medium">{t('admin.dash.reqTitleLabel')} *</label>
-                <input
-                  type="text"
-                  required
-                  value={newTitle}
-                  onChange={(e) => setNewTitle(e.target.value)}
-                  placeholder={language === 'id' ? 'contoh: Migrasi Web Platform Headless Next.js' : 'e.g. Next.js Headless Web Platform Migration'}
-                  className="w-full px-3 py-2 rounded-lg bg-[#1B1E2B] border border-[rgba(255,255,255,0.06)] text-white focus:outline-none focus:border-[#E50914]"
-                />
+                <h3 className="text-base font-sans font-bold text-white">
+                  {t('admin.dash.createReqTitle')}
+                </h3>
+                <p className="text-[11px] text-[#94A3B8] font-mono">
+                  {t('admin.dash.createReqSub')}
+                </p>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <button
+                onClick={() => setIsNewRequestModalOpen(false)}
+                className="w-8 h-8 rounded-lg text-[#94A3B8] hover:text-white hover:bg-[#161922] flex items-center justify-center transition-colors shrink-0 ml-3"
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateRequest} className="flex-1 flex flex-col overflow-hidden">
+              {/* Scrollable Body */}
+              <div className="p-5 sm:p-6 overflow-y-auto flex-1 space-y-4 text-xs font-sans custom-scrollbar">
                 <div>
-                  <label className="block text-[#94A3B8] mb-1 font-medium">{t('admin.dash.clientContactLabel')} *</label>
+                  <label className="block text-[#94A3B8] mb-1 font-medium font-mono">{t('admin.dash.reqTitleLabel')} *</label>
                   <input
                     type="text"
                     required
-                    value={newClient}
-                    onChange={(e) => setNewClient(e.target.value)}
-                    placeholder="e.g. Marcus Thorne"
-                    className="w-full px-3 py-2 rounded-lg bg-[#1B1E2B] border border-[rgba(255,255,255,0.06)] text-white focus:outline-none focus:border-[#E50914]"
+                    value={newTitle}
+                    onChange={(e) => setNewTitle(e.target.value)}
+                    placeholder={language === 'id' ? 'contoh: Migrasi Web Platform Headless Next.js' : 'e.g. Next.js Headless Web Platform Migration'}
+                    className="w-full px-3 py-2.5 rounded-xl bg-[#1B1E2B] border border-[rgba(255,255,255,0.06)] text-white font-mono focus:outline-none focus:border-[#E50914]"
                   />
                 </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[#94A3B8] mb-1 font-medium font-mono">{t('admin.dash.clientContactLabel')} *</label>
+                    <input
+                      type="text"
+                      required
+                      value={newClient}
+                      onChange={(e) => setNewClient(e.target.value)}
+                      placeholder="e.g. Marcus Thorne"
+                      className="w-full px-3 py-2.5 rounded-xl bg-[#1B1E2B] border border-[rgba(255,255,255,0.06)] text-white font-mono focus:outline-none focus:border-[#E50914]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[#94A3B8] mb-1 font-medium font-mono">{t('admin.dash.companyNameLabel')}</label>
+                    <input
+                      type="text"
+                      value={newCompany}
+                      onChange={(e) => setNewCompany(e.target.value)}
+                      placeholder="e.g. Lumina Real Estate"
+                      className="w-full px-3 py-2.5 rounded-xl bg-[#1B1E2B] border border-[rgba(255,255,255,0.06)] text-white font-mono focus:outline-none focus:border-[#E50914]"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div>
+                    <label className="block text-[#94A3B8] mb-1 font-medium font-mono">{t('admin.dash.thServiceType')}</label>
+                    <select
+                      value={newServiceType}
+                      onChange={(e) => setNewServiceType(e.target.value as ServiceCategory)}
+                      className="w-full px-3 py-2.5 rounded-xl bg-[#1B1E2B] border border-[rgba(255,255,255,0.06)] text-white font-mono focus:outline-none focus:border-[#E50914]"
+                    >
+                      <option value="Web Dev">Web Dev</option>
+                      <option value="SEO">SEO</option>
+                      <option value="Content">Content</option>
+                      <option value="Design">Design</option>
+                      <option value="Cloud">Cloud</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-[#94A3B8] mb-1 font-medium font-mono">{t('admin.dash.thPriority')}</label>
+                    <select
+                      value={newPriority}
+                      onChange={(e) => setNewPriority(e.target.value as ServicePriority)}
+                      className="w-full px-3 py-2.5 rounded-xl bg-[#1B1E2B] border border-[rgba(255,255,255,0.06)] text-white font-mono focus:outline-none focus:border-[#E50914]"
+                    >
+                      <option value="urgent">{t('admin.dash.priority.urgent')}</option>
+                      <option value="high">{t('admin.dash.priority.high')}</option>
+                      <option value="medium">{t('admin.dash.priority.medium')}</option>
+                      <option value="low">{t('admin.dash.priority.low')}</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-[#94A3B8] mb-1 font-medium font-mono">{t('admin.dash.estHoursLabel')}</label>
+                    <input
+                      type="number"
+                      value={newHours}
+                      onChange={(e) => setNewHours(e.target.value)}
+                      className="w-full px-3 py-2.5 rounded-xl bg-[#1B1E2B] border border-[rgba(255,255,255,0.06)] text-white font-mono focus:outline-none focus:border-[#E50914]"
+                    />
+                  </div>
+                </div>
+
                 <div>
-                  <label className="block text-[#94A3B8] mb-1 font-medium">{t('admin.dash.companyNameLabel')}</label>
-                  <input
-                    type="text"
-                    value={newCompany}
-                    onChange={(e) => setNewCompany(e.target.value)}
-                    placeholder="e.g. Lumina Real Estate"
-                    className="w-full px-3 py-2 rounded-lg bg-[#1B1E2B] border border-[rgba(255,255,255,0.06)] text-white focus:outline-none focus:border-[#E50914]"
+                  <label className="block text-[#94A3B8] mb-1 font-medium font-mono">{t('admin.dash.descDeliverablesLabel')}</label>
+                  <textarea
+                    rows={3}
+                    value={newDesc}
+                    onChange={(e) => setNewDesc(e.target.value)}
+                    placeholder={language === 'id' ? 'Berikan ikhtisar scope, batas waktu SLA, dan deliverable utama...' : 'Provide scope overview, SLA timeline, and key requirements...'}
+                    className="w-full px-3 py-2 rounded-xl bg-[#1B1E2B] border border-[rgba(255,255,255,0.06)] text-white font-mono focus:outline-none focus:border-[#E50914]"
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-3 gap-3">
-                <div>
-                  <label className="block text-[#94A3B8] mb-1 font-medium">{t('admin.dash.thServiceType')}</label>
-                  <select
-                    value={newServiceType}
-                    onChange={(e) => setNewServiceType(e.target.value as ServiceCategory)}
-                    className="w-full px-3 py-2 rounded-lg bg-[#1B1E2B] border border-[rgba(255,255,255,0.06)] text-white focus:outline-none focus:border-[#E50914]"
-                  >
-                    <option value="Web Dev">Web Dev</option>
-                    <option value="SEO">SEO</option>
-                    <option value="Content">Content</option>
-                    <option value="Design">Design</option>
-                    <option value="Cloud">Cloud</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-[#94A3B8] mb-1 font-medium">{t('admin.dash.thPriority')}</label>
-                  <select
-                    value={newPriority}
-                    onChange={(e) => setNewPriority(e.target.value as ServicePriority)}
-                    className="w-full px-3 py-2 rounded-lg bg-[#1B1E2B] border border-[rgba(255,255,255,0.06)] text-white focus:outline-none focus:border-[#E50914]"
-                  >
-                    <option value="urgent">{t('admin.dash.priority.urgent')}</option>
-                    <option value="high">{t('admin.dash.priority.high')}</option>
-                    <option value="medium">{t('admin.dash.priority.medium')}</option>
-                    <option value="low">{t('admin.dash.priority.low')}</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-[#94A3B8] mb-1 font-medium">{t('admin.dash.estHoursLabel')}</label>
-                  <input
-                    type="number"
-                    value={newHours}
-                    onChange={(e) => setNewHours(e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg bg-[#1B1E2B] border border-[rgba(255,255,255,0.06)] text-white focus:outline-none focus:border-[#E50914]"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-[#94A3B8] mb-1 font-medium">{t('admin.dash.descDeliverablesLabel')}</label>
-                <textarea
-                  rows={3}
-                  value={newDesc}
-                  onChange={(e) => setNewDesc(e.target.value)}
-                  placeholder={language === 'id' ? 'Berikan ikhtisar scope, batas waktu SLA, dan deliverable utama...' : 'Provide scope overview, SLA timeline, and key requirements...'}
-                  className="w-full px-3 py-2 rounded-lg bg-[#1B1E2B] border border-[rgba(255,255,255,0.06)] text-white focus:outline-none focus:border-[#E50914]"
-                />
-              </div>
-
-              <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-[rgba(255,255,255,0.06)]">
+              {/* Sticky Footer */}
+              <div className="sticky bottom-0 z-20 bg-[#0F1117]/95 backdrop-blur-md px-5 sm:px-6 py-3.5 border-t border-[rgba(255,255,255,0.08)] flex items-center justify-end gap-3 shrink-0">
                 <button
                   type="button"
                   onClick={() => setIsNewRequestModalOpen(false)}
-                  className="h-10 px-4 rounded-xl bg-[#161922] hover:bg-[#1B1E2B] text-white text-xs font-mono font-medium border border-[rgba(255,255,255,0.06)] transition-colors min-h-[40px]"
+                  className="h-10 px-4 min-h-[40px] rounded-xl bg-[#161922] hover:bg-[#1B1E2B] text-white text-xs font-mono font-medium border border-[rgba(255,255,255,0.06)] transition-colors"
                 >
                   {t('admin.action.cancel')}
                 </button>
                 <button
                   type="submit"
-                  className="h-10 px-5 rounded-xl bg-[#E50914] hover:bg-[#FF1E27] text-white text-xs font-mono font-bold shadow-[0_0_16px_rgba(229,9,20,0.25)] transition-all min-h-[40px]"
+                  className="h-10 px-5 min-h-[40px] rounded-xl bg-[#E50914] hover:bg-[#FF1E27] text-white text-xs font-mono font-bold shadow-[0_0_16px_rgba(229,9,20,0.25)] transition-all"
                 >
                   {t('admin.dash.addRequest')}
                 </button>
               </div>
+
             </form>
           </div>
         </div>

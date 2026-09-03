@@ -14,7 +14,16 @@ import {
   Palette,
   Layers,
   Database,
-  Smartphone
+  Smartphone,
+  UserPlus,
+  X,
+  Key,
+  Edit3,
+  Sliders,
+  Shield,
+  Briefcase,
+  Terminal,
+  Users
 } from 'lucide-react';
 import { 
   getAdminSession, 
@@ -22,7 +31,15 @@ import {
   getAuditLogs, 
   clearAuditLogs, 
   SecurityAuditLog,
-  getStoredAdminCredentials
+  getStoredAdminCredentials,
+  AdminAccount,
+  AdminTier,
+  StakeholderPermissions,
+  getStoredAdminAccounts,
+  createAdminAccount,
+  deleteAdminAccount,
+  updateAdminAccountPermissions,
+  getDefaultPermissionsForRole
 } from '../../lib/adminAuth';
 import { getCmsSiteMeta, saveCmsSiteMeta, SiteMetaSettings } from '../../lib/cmsStore';
 import { useLanguage } from '../../lib/LanguageContext';
@@ -88,9 +105,132 @@ export const AdminSettings: React.FC = () => {
   // Audit Logs state
   const [logs, setLogs] = useState<SecurityAuditLog[]>([]);
 
+  // Accounts Management state (Stakeholder Executive & Teknisi IT)
+  const [accounts, setAccounts] = useState<AdminAccount[]>([]);
+  const [isAddAccountModalOpen, setIsAddAccountModalOpen] = useState(false);
+  const [isEditPermsModalOpen, setIsEditPermsModalOpen] = useState(false);
+  const [editingAccount, setEditingAccount] = useState<AdminAccount | null>(null);
+  const [accountActionMessage, setAccountActionMessage] = useState<{ success: boolean; message: string } | null>(null);
+
+  // New Account Form State
+  const [newAccName, setNewAccName] = useState('');
+  const [newAccUsername, setNewAccUsername] = useState('');
+  const [newAccEmail, setNewAccEmail] = useState('');
+  const [newAccPassword, setNewAccPassword] = useState('');
+  const [newAccRole, setNewAccRole] = useState<AdminTier>('Stakeholder Executive');
+  const [newAccDivision, setNewAccDivision] = useState<'Management' | 'Engineering' | 'Design' | 'Finance' | 'Operations'>('Management');
+  const [newAccPermissions, setNewAccPermissions] = useState<StakeholderPermissions>(getDefaultPermissionsForRole('Stakeholder Executive'));
+
+  // Editable permissions state
+  const [tempPermissions, setTempPermissions] = useState<StakeholderPermissions>(getDefaultPermissionsForRole('Stakeholder Executive'));
+
   useEffect(() => {
     setLogs(getAuditLogs());
+    setAccounts(getStoredAdminAccounts());
   }, [activeTab]);
+
+  const refreshAccounts = () => {
+    setAccounts(getStoredAdminAccounts());
+  };
+
+  const handleOpenAddAccount = () => {
+    setNewAccName('');
+    setNewAccUsername('');
+    setNewAccEmail('');
+    setNewAccPassword('kapi_' + Math.random().toString(36).substring(2, 7) + '25');
+    setNewAccRole('Stakeholder Executive');
+    setNewAccDivision('Management');
+    setNewAccPermissions(getDefaultPermissionsForRole('Stakeholder Executive'));
+    setAccountActionMessage(null);
+    setIsAddAccountModalOpen(true);
+  };
+
+  const handleRoleChangeForNewAccount = (role: AdminTier) => {
+    setNewAccRole(role);
+    const perms = getDefaultPermissionsForRole(role);
+    setNewAccPermissions(perms);
+    if (role === 'Teknisi IT / Systems Engineer' || role.includes('Internal IT')) {
+      setNewAccDivision('Engineering');
+    } else if (role === 'Stakeholder Executive' || role.includes('Top Management')) {
+      setNewAccDivision('Management');
+    }
+  };
+
+  const handleCreateAccountSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setAccountActionMessage(null);
+
+    const res = await createAdminAccount({
+      name: newAccName,
+      username: newAccUsername,
+      email: newAccEmail,
+      passwordPlain: newAccPassword,
+      role: newAccRole,
+      division: newAccDivision,
+      customPermissions: newAccPermissions
+    });
+
+    if (res.success) {
+      refreshAccounts();
+      setAccountActionMessage({
+        success: true,
+        message: language === 'id' 
+          ? `Akun baru "${newAccName}" (${newAccRole}) berhasil dibuat & disimpan secara terenkripsi!` 
+          : `New account "${newAccName}" (${newAccRole}) created & securely stored!`
+      });
+      setIsAddAccountModalOpen(false);
+      setTimeout(() => setAccountActionMessage(null), 5000);
+    } else {
+      setAccountActionMessage({
+        success: false,
+        message: res.error || 'Gagal membuat akun.'
+      });
+    }
+  };
+
+  const handleDeleteAccountClick = (id: string, name: string) => {
+    const confirmMsg = language === 'id'
+      ? `Hapus akun stakeholder "${name}" dari sistem Kapitech? Tindakan ini tidak dapat dibatalkan.`
+      : `Delete stakeholder account "${name}" permanently? This action cannot be undone.`;
+    
+    if (window.confirm(confirmMsg)) {
+      const res = deleteAdminAccount(id);
+      if (res.success) {
+        refreshAccounts();
+        setAccountActionMessage({
+          success: true,
+          message: language === 'id' ? `Akun "${name}" berhasil dihapus.` : `Account "${name}" deleted.`
+        });
+        setTimeout(() => setAccountActionMessage(null), 4000);
+      } else {
+        alert(res.error);
+      }
+    }
+  };
+
+  const handleOpenEditPermissions = (acc: AdminAccount) => {
+    setEditingAccount(acc);
+    setTempPermissions({ ...acc.permissions });
+    setIsEditPermsModalOpen(true);
+  };
+
+  const handleSavePermissions = () => {
+    if (!editingAccount) return;
+    const res = updateAdminAccountPermissions(editingAccount.id, tempPermissions);
+    if (res.success) {
+      refreshAccounts();
+      setIsEditPermsModalOpen(false);
+      setAccountActionMessage({
+        success: true,
+        message: language === 'id' 
+          ? `Hak akses untuk "${editingAccount.name}" berhasil diperbarui!` 
+          : `Permissions for "${editingAccount.name}" updated successfully!`
+      });
+      setTimeout(() => setAccountActionMessage(null), 4000);
+    } else {
+      alert(res.error);
+    }
+  };
 
   // Handle credentials update
   const handleUpdateSecurity = async (e: React.FormEvent) => {
@@ -511,79 +651,564 @@ export const AdminSettings: React.FC = () => {
         </div>
       )}
 
-      {/* TAB 3: ROLE MATRIX (4-TIER RBAC) */}
+      {/* TAB 3: ROLE MATRIX & ACCOUNTS MANAGEMENT (STAKEHOLDER EXECUTIVE & TEKNISI IT) */}
       {activeTab === 'rbac' && (
-        <div className="w-full bg-[#111318] border border-[rgba(255,255,255,0.07)] rounded-2xl p-5 sm:p-8 space-y-6">
-          <div className="flex items-center gap-3 pb-4 border-b border-[rgba(255,255,255,0.07)]">
-            <div className="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 shrink-0">
-              <Layers size={20} />
+        <div className="w-full space-y-6">
+          {/* Notification banner */}
+          {accountActionMessage && (
+            <div className={`p-4 rounded-xl border flex items-center gap-3 text-xs font-mono animate-fadeIn ${
+              accountActionMessage.success
+                ? 'bg-emerald-950/40 border-emerald-500/40 text-emerald-300'
+                : 'bg-red-950/40 border-red-500/40 text-red-300'
+            }`}>
+              {accountActionMessage.success ? <Check size={16} className="shrink-0 text-emerald-400" /> : <AlertCircle size={16} className="shrink-0 text-red-400" />}
+              <span>{accountActionMessage.message}</span>
             </div>
-            <div>
-              <h2 className="text-base font-bold font-display text-white">
-                {language === 'id' ? 'Matriks Hak Akses 4-Tier RBAC' : '4-Tier Role-Based Access Control (RBAC) Matrix'}
-              </h2>
-              <p className="text-xs text-[#8A94A6] font-mono">
-                {language === 'id'
-                  ? 'Struktur hirarki hak akses dan izin operasi di seluruh modul AMS Kapitech.'
-                  : 'Enterprise permission matrix across financial, pipeline, sprint delivery, and system configurations.'}
-              </p>
+          )}
+
+          {/* Accounts Management Section */}
+          <div className="bg-[#111318] border border-[rgba(255,255,255,0.07)] rounded-2xl p-5 sm:p-8 space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-[rgba(255,255,255,0.07)]">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-[#E50914]/10 border border-[#E50914]/30 flex items-center justify-center text-[#FF1E27] shrink-0">
+                  <Users size={20} />
+                </div>
+                <div>
+                  <h2 className="text-base font-bold font-display text-white">
+                    {language === 'id' ? 'Manajemen Akun Stakeholder & Teknisi' : 'Stakeholder & Technical Accounts'}
+                  </h2>
+                  <p className="text-xs text-[#8A94A6] font-mono">
+                    {language === 'id'
+                      ? 'Kelola akun khusus Stakeholder Executive, Teknisi IT, dan staf dengan hak akses granular.'
+                      : 'Manage dedicated accounts for Executive Stakeholders, IT Engineers, and operations.'}
+                  </p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={handleOpenAddAccount}
+                className="h-10 px-4 min-h-[40px] rounded-xl bg-[#E50914] text-white text-xs font-mono font-bold hover:bg-[#FF1E27] transition-all shadow-md shadow-[#E50914]/20 flex items-center justify-center gap-2 self-start sm:self-auto shrink-0"
+              >
+                <UserPlus size={15} />
+                <span>{language === 'id' ? 'Tambah Akun Baru' : 'Add New Account'}</span>
+              </button>
+            </div>
+
+            {/* Accounts Grid / List */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {accounts.map((acc) => {
+                const isExecutive = acc.role === 'Stakeholder Executive' || acc.stakeholderType === 'Executive';
+                const isIT = acc.role === 'Teknisi IT / Systems Engineer' || acc.stakeholderType === 'IT_Technical';
+                const isMaster = acc.username === 'admin' || acc.stakeholderType === 'Master';
+
+                return (
+                  <div 
+                    key={acc.id}
+                    className="p-4 rounded-xl bg-[#181B22] border border-[rgba(255,255,255,0.07)] flex flex-col justify-between hover:border-[rgba(255,255,255,0.15)] transition-all space-y-4"
+                  >
+                    <div>
+                      <div className="flex items-start justify-between gap-2 mb-2.5">
+                        <div className="flex items-center gap-2.5">
+                          <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-bold text-xs font-mono ${
+                            isMaster ? 'bg-red-500/20 text-red-400 border border-red-500/30' :
+                            isExecutive ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' :
+                            isIT ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' :
+                            'bg-purple-500/20 text-purple-400 border border-purple-500/30'
+                          }`}>
+                            {acc.name.split(' ').map(n => n[0]).slice(0, 2).join('')}
+                          </div>
+                          <div>
+                            <h3 className="text-sm font-bold text-white leading-snug">{acc.name}</h3>
+                            <p className="text-[11px] font-mono text-[#8A94A6]">@{acc.username}</p>
+                          </div>
+                        </div>
+
+                        <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full border shrink-0 ${
+                          isMaster ? 'bg-red-500/10 text-red-400 border-red-500/30' :
+                          isExecutive ? 'bg-amber-500/10 text-amber-300 border-amber-500/30' :
+                          isIT ? 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30' :
+                          'bg-purple-500/10 text-purple-300 border-purple-500/30'
+                        }`}>
+                          {acc.division || 'Operations'}
+                        </span>
+                      </div>
+
+                      <div className="space-y-1.5 pt-1 text-[11px] font-mono">
+                        <div className="text-[#8A94A6] flex items-center justify-between">
+                          <span>Role:</span>
+                          <span className="font-semibold text-white truncate max-w-[170px]">{acc.role}</span>
+                        </div>
+                        <div className="text-[#8A94A6] flex items-center justify-between">
+                          <span>Email:</span>
+                          <span className="text-gray-300 truncate max-w-[170px]">{acc.email}</span>
+                        </div>
+                        <div className="text-[#8A94A6] flex items-center justify-between">
+                          <span>Status:</span>
+                          <span className="text-emerald-400 flex items-center gap-1">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                            Aktif
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Permissions Summary Badges */}
+                      <div className="mt-3 pt-3 border-t border-[rgba(255,255,255,0.05)] flex flex-wrap gap-1">
+                        {acc.permissions?.canManageInvoicing && (
+                          <span className="text-[9px] font-mono px-1.5 py-0.5 bg-emerald-950/40 text-emerald-300 border border-emerald-800/40 rounded">
+                            Invoice
+                          </span>
+                        )}
+                        {acc.permissions?.canApproveBudgets && (
+                          <span className="text-[9px] font-mono px-1.5 py-0.5 bg-amber-950/40 text-amber-300 border border-amber-800/40 rounded">
+                            Budget Approval
+                          </span>
+                        )}
+                        {acc.permissions?.canManageInfrastructure && (
+                          <span className="text-[9px] font-mono px-1.5 py-0.5 bg-cyan-950/40 text-cyan-300 border border-cyan-800/40 rounded">
+                            DevOps / Cloud
+                          </span>
+                        )}
+                        {acc.permissions?.canViewAuditLogs && (
+                          <span className="text-[9px] font-mono px-1.5 py-0.5 bg-slate-800 text-slate-300 border border-slate-700 rounded">
+                            Audit Logs
+                          </span>
+                        )}
+                        {acc.permissions?.canManageCrm && (
+                          <span className="text-[9px] font-mono px-1.5 py-0.5 bg-blue-950/40 text-blue-300 border border-blue-800/40 rounded">
+                            CRM
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="pt-3 border-t border-[rgba(255,255,255,0.07)] flex items-center justify-between gap-2">
+                      <button
+                        type="button"
+                        onClick={() => handleOpenEditPermissions(acc)}
+                        className="h-8 px-2.5 rounded-lg bg-[#262930] hover:bg-[#323640] text-gray-200 text-[11px] font-mono font-medium flex items-center gap-1.5 transition-colors"
+                      >
+                        <Sliders size={13} className="text-[#FF1E27]" />
+                        <span>{language === 'id' ? 'Atur Izin' : 'Permissions'}</span>
+                      </button>
+
+                      {!isMaster ? (
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteAccountClick(acc.id, acc.name)}
+                          className="h-8 px-2 rounded-lg hover:bg-red-500/10 text-[#8A94A6] hover:text-red-400 text-[11px] font-mono transition-colors flex items-center gap-1"
+                          title="Hapus Akun"
+                        >
+                          <Trash2 size={13} />
+                          <span className="hidden sm:inline">{language === 'id' ? 'Hapus' : 'Delete'}</span>
+                        </button>
+                      ) : (
+                        <span className="text-[10px] font-mono text-[#64748B] italic">Root Master</span>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
 
-          <div className="overflow-x-auto custom-scrollbar">
-            <table className="w-full text-xs font-mono text-left border-collapse min-w-[650px]">
-              <thead>
-                <tr className="border-b border-[rgba(255,255,255,0.07)] text-[#8A94A6]">
-                  <th className="py-3 px-4 font-semibold">{language === 'id' ? 'Tingkatan & Peran' : 'Tier Level & Role'}</th>
-                  <th className="py-3 px-4 font-semibold">{language === 'id' ? 'Finansial & Invoice' : 'Financial & Invoicing'}</th>
-                  <th className="py-3 px-4 font-semibold">{language === 'id' ? 'CRM & Pipeline Prospek' : 'CRM & Client Leads'}</th>
-                  <th className="py-3 px-4 font-semibold">{language === 'id' ? 'Sprint & Kanban Task' : 'Sprint & Tasks'}</th>
-                  <th className="py-3 px-4 font-semibold">{language === 'id' ? 'Sistem & Audit Trail' : 'System Settings & Audit'}</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[rgba(255,255,255,0.07)]">
-                <tr className="hover:bg-[#181B22]/60 transition-colors">
-                  <td className="py-3.5 px-4 font-bold text-white flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-[#E50914] shrink-0"></span>
-                    <span>Tier 1: Top Management / Sponsor</span>
-                  </td>
-                  <td className="py-3.5 px-4 text-emerald-400 font-semibold">{language === 'id' ? 'Akses Penuh (Buat/Setujui/Hapus)' : 'Full Access (Create/Approve/Delete)'}</td>
-                  <td className="py-3.5 px-4 text-emerald-400 font-semibold">{language === 'id' ? 'Akses Penuh' : 'Full Access'}</td>
-                  <td className="py-3.5 px-4 text-emerald-400 font-semibold">{language === 'id' ? 'Akses Penuh' : 'Full Access'}</td>
-                  <td className="py-3.5 px-4 text-emerald-400 font-semibold">{language === 'id' ? 'Akses Penuh & Kredensial' : 'Full Access & Credentials'}</td>
-                </tr>
-                <tr className="hover:bg-[#181B22]/60 transition-colors">
-                  <td className="py-3.5 px-4 font-bold text-white flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-purple-400 shrink-0"></span>
-                    <span>Tier 2: Project Manager (PM)</span>
-                  </td>
-                  <td className="py-3.5 px-4 text-amber-300">{language === 'id' ? 'Lihat & Draf Invoice' : 'View & Draft Invoices'}</td>
-                  <td className="py-3.5 px-4 text-emerald-400 font-semibold">{language === 'id' ? 'Kelola Pipeline & Delegasi' : 'Manage Pipeline & Assign'}</td>
-                  <td className="py-3.5 px-4 text-emerald-400 font-semibold">{language === 'id' ? 'Sprint Planning & Kelola Task' : 'Sprint Planning & Task Mgmt'}</td>
-                  <td className="py-3.5 px-4 text-[#8A94A6]">{language === 'id' ? 'Hanya Lihat' : 'View Only'}</td>
-                </tr>
-                <tr className="hover:bg-[#181B22]/60 transition-colors">
-                  <td className="py-3.5 px-4 font-bold text-white flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-cyan-400 shrink-0"></span>
-                    <span>Tier 3: Operational Staff</span>
-                  </td>
-                  <td className="py-3.5 px-4 text-[#8A94A6]">{language === 'id' ? 'Tanpa Akses' : 'No Access'}</td>
-                  <td className="py-3.5 px-4 text-cyan-300">{language === 'id' ? 'Lihat Prospek Terkait' : 'View Assigned Deals'}</td>
-                  <td className="py-3.5 px-4 text-emerald-400 font-semibold">{language === 'id' ? 'Update Task Terkait' : 'Update Assigned Tasks'}</td>
-                  <td className="py-3.5 px-4 text-[#8A94A6]">{language === 'id' ? 'Tanpa Akses' : 'No Access'}</td>
-                </tr>
-                <tr className="hover:bg-[#181B22]/60 transition-colors">
-                  <td className="py-3.5 px-4 font-bold text-white flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>
-                    <span>Tier 4: Internal IT / System Admin</span>
-                  </td>
-                  <td className="py-3.5 px-4 text-[#8A94A6]">{language === 'id' ? 'Audit View' : 'Audit View'}</td>
-                  <td className="py-3.5 px-4 text-[#8A94A6]">{language === 'id' ? 'Audit View' : 'Audit View'}</td>
-                  <td className="py-3.5 px-4 text-[#8A94A6]">{language === 'id' ? 'Audit View' : 'Audit View'}</td>
-                  <td className="py-3.5 px-4 text-emerald-400 font-semibold">{language === 'id' ? 'Akses Server & Audit Lengkap' : 'Full Infrastructure & Logs'}</td>
-                </tr>
-              </tbody>
-            </table>
+          {/* Reference RBAC Matrix */}
+          <div className="w-full bg-[#111318] border border-[rgba(255,255,255,0.07)] rounded-2xl p-5 sm:p-8 space-y-6">
+            <div className="flex items-center gap-3 pb-4 border-b border-[rgba(255,255,255,0.07)]">
+              <div className="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 shrink-0">
+                <Layers size={20} />
+              </div>
+              <div>
+                <h2 className="text-base font-bold font-display text-white">
+                  {language === 'id' ? 'Standar Hirarki Hak Akses Stakeholder Kapitech' : 'Kapitech Stakeholder Access Standards'}
+                </h2>
+                <p className="text-xs text-[#8A94A6] font-mono">
+                  {language === 'id'
+                    ? 'Struktur hirarki hak akses dan izin operasi di seluruh modul AMS Kapitech.'
+                    : 'Enterprise permission matrix across financial, pipeline, sprint delivery, and system configurations.'}
+                </p>
+              </div>
+            </div>
+
+            <div className="overflow-x-auto custom-scrollbar">
+              <table className="w-full text-xs font-mono text-left border-collapse min-w-[650px]">
+                <thead>
+                  <tr className="border-b border-[rgba(255,255,255,0.07)] text-[#8A94A6]">
+                    <th className="py-3 px-4 font-semibold">{language === 'id' ? 'Tingkatan & Peran' : 'Tier Level & Role'}</th>
+                    <th className="py-3 px-4 font-semibold">{language === 'id' ? 'Finansial & Invoice' : 'Financial & Invoicing'}</th>
+                    <th className="py-3 px-4 font-semibold">{language === 'id' ? 'CRM & Pipeline Prospek' : 'CRM & Client Leads'}</th>
+                    <th className="py-3 px-4 font-semibold">{language === 'id' ? 'Sprint & Kanban Task' : 'Sprint & Tasks'}</th>
+                    <th className="py-3 px-4 font-semibold">{language === 'id' ? 'Sistem & Cloud API' : 'System & Cloud API'}</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[rgba(255,255,255,0.07)]">
+                  <tr className="hover:bg-[#181B22]/60 transition-colors">
+                    <td className="py-3.5 px-4 font-bold text-white flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-amber-400 shrink-0"></span>
+                      <span>Stakeholder Executive (Managing Partner)</span>
+                    </td>
+                    <td className="py-3.5 px-4 text-emerald-400 font-semibold">{language === 'id' ? 'Approval & Audit Finansial Penuh' : 'Financial Approval & Audit'}</td>
+                    <td className="py-3.5 px-4 text-emerald-400 font-semibold">{language === 'id' ? 'Akses Penuh Pipeline' : 'Full Pipeline View'}</td>
+                    <td className="py-3.5 px-4 text-amber-300">{language === 'id' ? 'Review Milestone & Delivery' : 'Milestone & Delivery Review'}</td>
+                    <td className="py-3.5 px-4 text-[#8A94A6]">{language === 'id' ? 'Audit Log & Governance' : 'Audit Logs & Governance'}</td>
+                  </tr>
+                  <tr className="hover:bg-[#181B22]/60 transition-colors">
+                    <td className="py-3.5 px-4 font-bold text-white flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>
+                      <span>Teknisi IT / Systems Engineer</span>
+                    </td>
+                    <td className="py-3.5 px-4 text-[#8A94A6]">{language === 'id' ? 'Tanpa Akses Finansial' : 'No Financial Access'}</td>
+                    <td className="py-3.5 px-4 text-[#8A94A6]">{language === 'id' ? 'Tanpa Akses' : 'No Access'}</td>
+                    <td className="py-3.5 px-4 text-emerald-400 font-semibold">{language === 'id' ? 'Teknis Penuh & Sprint Tasks' : 'Technical & Sprint Tasks'}</td>
+                    <td className="py-3.5 px-4 text-emerald-400 font-semibold">{language === 'id' ? 'Server, Cloud Run, API & Diagnostics' : 'Full Server, Cloud & Diagnostics'}</td>
+                  </tr>
+                  <tr className="hover:bg-[#181B22]/60 transition-colors">
+                    <td className="py-3.5 px-4 font-bold text-white flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-purple-400 shrink-0"></span>
+                      <span>Tier 2: Project Manager (PM)</span>
+                    </td>
+                    <td className="py-3.5 px-4 text-amber-300">{language === 'id' ? 'Lihat & Draf Invoice' : 'View & Draft Invoices'}</td>
+                    <td className="py-3.5 px-4 text-emerald-400 font-semibold">{language === 'id' ? 'Kelola Pipeline & Delegasi' : 'Manage Pipeline & Assign'}</td>
+                    <td className="py-3.5 px-4 text-emerald-400 font-semibold">{language === 'id' ? 'Sprint Planning & Kelola Task' : 'Sprint Planning & Task Mgmt'}</td>
+                    <td className="py-3.5 px-4 text-[#8A94A6]">{language === 'id' ? 'Hanya Lihat' : 'View Only'}</td>
+                  </tr>
+                  <tr className="hover:bg-[#181B22]/60 transition-colors">
+                    <td className="py-3.5 px-4 font-bold text-white flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-cyan-400 shrink-0"></span>
+                      <span>Tier 3: Operational Staff</span>
+                    </td>
+                    <td className="py-3.5 px-4 text-[#8A94A6]">{language === 'id' ? 'Tanpa Akses' : 'No Access'}</td>
+                    <td className="py-3.5 px-4 text-cyan-300">{language === 'id' ? 'Lihat Prospek Terkait' : 'View Assigned Deals'}</td>
+                    <td className="py-3.5 px-4 text-emerald-400 font-semibold">{language === 'id' ? 'Update Task Terkait' : 'Update Assigned Tasks'}</td>
+                    <td className="py-3.5 px-4 text-[#8A94A6]">{language === 'id' ? 'Tanpa Akses' : 'No Access'}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL: TAMBAH AKUN BARU (MOBILE FULLSCREEN + STICKY HEADER & FOOTER) */}
+      {isAddAccountModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm overflow-y-auto">
+          <div className="w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-2xl bg-[#111318] border-0 sm:border sm:border-[rgba(255,255,255,0.07)] rounded-none sm:rounded-2xl shadow-2xl flex flex-col overflow-hidden">
+            
+            {/* Sticky Header */}
+            <div className="sticky top-0 z-20 bg-[#111318]/95 backdrop-blur-md px-5 sm:px-6 py-4 border-b border-[rgba(255,255,255,0.07)] flex items-center justify-between shrink-0">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-[#E50914]/10 border border-[#E50914]/30 flex items-center justify-center text-[#FF1E27] shrink-0">
+                  <UserPlus size={18} />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold font-display text-white">
+                    {language === 'id' ? 'Tambah Akun Stakeholder / Teknisi' : 'Add Stakeholder / Technical Account'}
+                  </h3>
+                  <p className="text-[11px] font-mono text-[#8A94A6]">
+                    {language === 'id' ? 'Pilih peran dan sesuaikan hak akses sistem.' : 'Select role and configure granular permissions.'}
+                  </p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setIsAddAccountModalOpen(false)}
+                className="w-8 h-8 rounded-lg bg-[#181B22] hover:bg-[#262930] text-[#8A94A6] hover:text-white flex items-center justify-center transition-colors shrink-0"
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            {/* Scrollable Form Content */}
+            <form onSubmit={handleCreateAccountSubmit} className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-5 custom-scrollbar">
+              
+              {/* Role Selection Cards */}
+              <div>
+                <label className="block text-xs font-mono text-[#8A94A6] uppercase tracking-wider mb-2 font-semibold">
+                  {language === 'id' ? 'Pilih Tipe Peran Stakeholder' : 'Select Stakeholder Role'}
+                </label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    onClick={() => handleRoleChangeForNewAccount('Stakeholder Executive')}
+                    className={`p-3.5 rounded-xl border text-left transition-all ${
+                      newAccRole === 'Stakeholder Executive'
+                        ? 'bg-amber-500/10 border-amber-500/50 ring-1 ring-amber-500/30'
+                        : 'bg-[#181B22] border-[rgba(255,255,255,0.07)] hover:border-[rgba(255,255,255,0.15)]'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2 mb-1">
+                      <Briefcase size={16} className="text-amber-400" />
+                      <span className="font-bold text-xs text-white">Stakeholder Executive</span>
+                    </div>
+                    <p className="text-[11px] text-[#8A94A6] leading-relaxed font-mono">
+                      C-Level, Managing Partner, Sponsor. Akses approval finansial & review strategis.
+                    </p>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => handleRoleChangeForNewAccount('Teknisi IT / Systems Engineer')}
+                    className={`p-3.5 rounded-xl border text-left transition-all ${
+                      newAccRole === 'Teknisi IT / Systems Engineer'
+                        ? 'bg-emerald-500/10 border-emerald-500/50 ring-1 ring-emerald-500/30'
+                        : 'bg-[#181B22] border-[rgba(255,255,255,0.07)] hover:border-[rgba(255,255,255,0.15)]'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2 mb-1">
+                      <Terminal size={16} className="text-emerald-400" />
+                      <span className="font-bold text-xs text-white">Teknisi IT / Engineer</span>
+                    </div>
+                    <p className="text-[11px] text-[#8A94A6] leading-relaxed font-mono">
+                      Lead DevOps, Infrastructure, Cloud Run & API. Akses teknis penuh tanpa finansial.
+                    </p>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => handleRoleChangeForNewAccount('Tier 2: Project Manager (PM)')}
+                    className={`p-3.5 rounded-xl border text-left transition-all ${
+                      newAccRole === 'Tier 2: Project Manager (PM)'
+                        ? 'bg-purple-500/10 border-purple-500/50 ring-1 ring-purple-500/30'
+                        : 'bg-[#181B22] border-[rgba(255,255,255,0.07)] hover:border-[rgba(255,255,255,0.15)]'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2 mb-1">
+                      <Layers size={16} className="text-purple-400" />
+                      <span className="font-bold text-xs text-white">Project Manager (PM)</span>
+                    </div>
+                    <p className="text-[11px] text-[#8A94A6] leading-relaxed font-mono">
+                      Sprint planning, delivery klien, task delegation & draf faktur invoice.
+                    </p>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => handleRoleChangeForNewAccount('Tier 3: Operational Staff')}
+                    className={`p-3.5 rounded-xl border text-left transition-all ${
+                      newAccRole === 'Tier 3: Operational Staff'
+                        ? 'bg-cyan-500/10 border-cyan-500/50 ring-1 ring-cyan-500/30'
+                        : 'bg-[#181B22] border-[rgba(255,255,255,0.07)] hover:border-[rgba(255,255,255,0.15)]'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2 mb-1">
+                      <UserCheck size={16} className="text-cyan-400" />
+                      <span className="font-bold text-xs text-white">Operational Staff</span>
+                    </div>
+                    <p className="text-[11px] text-[#8A94A6] leading-relaxed font-mono">
+                      Staf teknis / desainer operasional untuk update tugas harian.
+                    </p>
+                  </button>
+                </div>
+              </div>
+
+              {/* Personal Details */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-mono text-[#8A94A6] uppercase tracking-wider mb-1.5 font-semibold">
+                    {language === 'id' ? 'Nama Lengkap' : 'Full Name'} *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={newAccName}
+                    onChange={(e) => setNewAccName(e.target.value)}
+                    placeholder="Contoh: Alexander Hartanto"
+                    className="w-full px-3.5 py-2.5 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl text-sm text-white font-mono focus:outline-none focus:border-[#E50914] transition-all"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-mono text-[#8A94A6] uppercase tracking-wider mb-1.5 font-semibold">
+                    Username *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={newAccUsername}
+                    onChange={(e) => setNewAccUsername(e.target.value)}
+                    placeholder="Contoh: exec.alex"
+                    className="w-full px-3.5 py-2.5 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl text-sm text-white font-mono focus:outline-none focus:border-[#E50914] transition-all"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-mono text-[#8A94A6] uppercase tracking-wider mb-1.5 font-semibold">
+                    Email Resmi *
+                  </label>
+                  <input
+                    type="email"
+                    required
+                    value={newAccEmail}
+                    onChange={(e) => setNewAccEmail(e.target.value)}
+                    placeholder="alex@kapitech.id"
+                    className="w-full px-3.5 py-2.5 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl text-sm text-white font-mono focus:outline-none focus:border-[#E50914] transition-all"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-mono text-[#8A94A6] uppercase tracking-wider mb-1.5 font-semibold">
+                    {language === 'id' ? 'Password Sementara' : 'Temporary Password'} *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={newAccPassword}
+                    onChange={(e) => setNewAccPassword(e.target.value)}
+                    placeholder="Minimal 6 karakter"
+                    className="w-full px-3.5 py-2.5 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl text-sm text-white font-mono focus:outline-none focus:border-[#E50914] transition-all"
+                  />
+                </div>
+              </div>
+
+              {/* Granular Hak Akses Checkboxes */}
+              <div>
+                <label className="block text-xs font-mono text-[#8A94A6] uppercase tracking-wider mb-2 font-semibold flex items-center justify-between">
+                  <span>{language === 'id' ? 'Hak Akses Granular (RBAC Matrix)' : 'Granular Permissions Matrix'}</span>
+                  <span className="text-[10px] text-emerald-400 lowercase">otomatis tersinkron dengan peran</span>
+                </label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 p-3 bg-[#0E1015] border border-[rgba(255,255,255,0.07)] rounded-xl max-h-48 overflow-y-auto custom-scrollbar">
+                  {[
+                    { key: 'canManageInvoicing', label: 'Finansial & Invoice (Buat / Hapus)' },
+                    { key: 'canViewInvoicing', label: 'Lihat Data & Laporan Keuangan' },
+                    { key: 'canApproveBudgets', label: 'Approval Anggaran & Kontrak' },
+                    { key: 'canManageCrm', label: 'CRM & Kelola Pipeline Prospek' },
+                    { key: 'canViewCrm', label: 'Lihat Data Prospek & Klien' },
+                    { key: 'canManageProjects', label: 'Manajemen Proyek & Delivery' },
+                    { key: 'canManageTasks', label: 'Sprint Kanban & Eksekusi Task' },
+                    { key: 'canManageClients', label: 'Kelola Master Data Klien' },
+                    { key: 'canManageVendors', label: 'Kelola Vendor & Mitra Pihak Ke-3' },
+                    { key: 'canAccessSystemSettings', label: 'Akses Konfigurasi Sistem AMS' },
+                    { key: 'canViewAuditLogs', label: 'Audit Trail & Log Keamanan' },
+                    { key: 'canManageInfrastructure', label: 'Server, Cloud Run, API & Diagnostik' },
+                    { key: 'canManageAdminAccounts', label: 'Manajemen Akun Internal AMS' }
+                  ].map((item) => (
+                    <label 
+                      key={item.key}
+                      className="flex items-center gap-2 p-2 rounded-lg bg-[#181B22]/50 hover:bg-[#181B22] cursor-pointer text-xs font-mono transition-colors"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={!!newAccPermissions[item.key as keyof StakeholderPermissions]}
+                        onChange={(e) => setNewAccPermissions({
+                          ...newAccPermissions,
+                          [item.key]: e.target.checked
+                        })}
+                        className="w-4 h-4 rounded bg-[#090A0F] border-[rgba(255,255,255,0.1)] text-[#E50914] accent-[#E50914]"
+                      />
+                      <span className="text-gray-200 text-[11px] truncate">{item.label}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Sticky Footer */}
+              <div className="sticky bottom-0 -mx-5 sm:-mx-6 -mb-5 sm:-mb-6 mt-4 bg-[#111318]/95 backdrop-blur-md px-5 sm:px-6 py-3.5 border-t border-[rgba(255,255,255,0.07)] flex items-center justify-end gap-3 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setIsAddAccountModalOpen(false)}
+                  className="h-10 px-4 min-h-[40px] rounded-xl bg-[#181B22] text-[#8A94A6] hover:text-white text-xs font-mono font-bold transition-colors"
+                >
+                  {language === 'id' ? 'Batal' : 'Cancel'}
+                </button>
+                <button
+                  type="submit"
+                  className="h-10 px-5 min-h-[40px] rounded-xl bg-[#E50914] text-white text-xs font-mono font-bold hover:bg-[#FF1E27] transition-all shadow-md shadow-[#E50914]/20 flex items-center gap-2"
+                >
+                  <Save size={14} />
+                  <span>{language === 'id' ? 'Simpan Akun Baru' : 'Save Account'}</span>
+                </button>
+              </div>
+
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL: EDIT PERMISSIONS (MOBILE FULLSCREEN + STICKY HEADER & FOOTER) */}
+      {isEditPermsModalOpen && editingAccount && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm overflow-y-auto">
+          <div className="w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-xl bg-[#111318] border-0 sm:border sm:border-[rgba(255,255,255,0.07)] rounded-none sm:rounded-2xl shadow-2xl flex flex-col overflow-hidden">
+            
+            {/* Sticky Header */}
+            <div className="sticky top-0 z-20 bg-[#111318]/95 backdrop-blur-md px-5 sm:px-6 py-4 border-b border-[rgba(255,255,255,0.07)] flex items-center justify-between shrink-0">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 shrink-0">
+                  <Sliders size={18} />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold font-display text-white">
+                    {language === 'id' ? 'Atur Hak Akses Granular' : 'Manage Granular Permissions'}
+                  </h3>
+                  <p className="text-[11px] font-mono text-[#8A94A6]">
+                    {editingAccount.name} ({editingAccount.role})
+                  </p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setIsEditPermsModalOpen(false)}
+                className="w-8 h-8 rounded-lg bg-[#181B22] hover:bg-[#262930] text-[#8A94A6] hover:text-white flex items-center justify-center transition-colors shrink-0"
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            {/* Scrollable Checkbox List */}
+            <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-2.5 custom-scrollbar">
+              {[
+                { key: 'canManageInvoicing', label: 'Finansial & Invoicing (Buat & Hapus Invoice)' },
+                { key: 'canViewInvoicing', label: 'Lihat Data & Laporan Keuangan' },
+                { key: 'canApproveBudgets', label: 'Approval Anggaran & Kontrak Eksekutif' },
+                { key: 'canManageCrm', label: 'CRM & Kelola Pipeline Leads' },
+                { key: 'canViewCrm', label: 'Lihat Data Prospek & Klien' },
+                { key: 'canManageProjects', label: 'Manajemen Proyek & Delivery' },
+                { key: 'canManageTasks', label: 'Sprint Planning & Eksekusi Tasks' },
+                { key: 'canManageClients', label: 'Kelola Master Data Klien' },
+                { key: 'canManageVendors', label: 'Kelola Vendor & Mitra Eksternal' },
+                { key: 'canAccessSystemSettings', label: 'Akses Konfigurasi Sistem AMS' },
+                { key: 'canViewAuditLogs', label: 'Audit Trail & Log Keamanan' },
+                { key: 'canManageInfrastructure', label: 'Server, Cloud Run, API & Diagnostik Sistem' },
+                { key: 'canManageAdminAccounts', label: 'Manajemen Akun Internal AMS' }
+              ].map((item) => (
+                <label 
+                  key={item.key}
+                  className="flex items-center justify-between p-3 rounded-xl bg-[#181B22] border border-[rgba(255,255,255,0.07)] hover:border-[rgba(255,255,255,0.15)] cursor-pointer text-xs font-mono transition-colors"
+                >
+                  <span className="text-gray-200 font-medium">{item.label}</span>
+                  <input
+                    type="checkbox"
+                    checked={!!tempPermissions[item.key as keyof StakeholderPermissions]}
+                    onChange={(e) => setTempPermissions({
+                      ...tempPermissions,
+                      [item.key]: e.target.checked
+                    })}
+                    className="w-4 h-4 rounded bg-[#090A0F] border-[rgba(255,255,255,0.1)] text-[#E50914] accent-[#E50914]"
+                  />
+                </label>
+              ))}
+            </div>
+
+            {/* Sticky Footer */}
+            <div className="sticky bottom-0 bg-[#111318]/95 backdrop-blur-md px-5 sm:px-6 py-3.5 border-t border-[rgba(255,255,255,0.07)] flex items-center justify-end gap-3 shrink-0">
+              <button
+                type="button"
+                onClick={() => setIsEditPermsModalOpen(false)}
+                className="h-10 px-4 min-h-[40px] rounded-xl bg-[#181B22] text-[#8A94A6] hover:text-white text-xs font-mono font-bold transition-colors"
+              >
+                {language === 'id' ? 'Batal' : 'Cancel'}
+              </button>
+              <button
+                type="button"
+                onClick={handleSavePermissions}
+                className="h-10 px-5 min-h-[40px] rounded-xl bg-[#E50914] text-white text-xs font-mono font-bold hover:bg-[#FF1E27] transition-all shadow-md shadow-[#E50914]/20 flex items-center gap-2"
+              >
+                <Save size={14} />
+                <span>{language === 'id' ? 'Simpan Perubahan Hak Akses' : 'Save Permissions'}</span>
+              </button>
+            </div>
+
           </div>
         </div>
       )}

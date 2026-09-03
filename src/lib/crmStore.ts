@@ -427,7 +427,12 @@ export const isSubmissionConverted = (inquiryId: string): boolean => {
  */
 export const convertInquiryToCrmLead = (
   submission: ContactSubmission,
-  customValue?: number
+  customValue?: number,
+  options?: {
+    stage?: CrmStage;
+    pillar?: CrmServicePillar;
+    assignedTo?: string;
+  }
 ): { success: boolean; lead: CrmLead } => {
   const existing = getCmsLeads().find(l => l.inquiryId === submission.id);
   if (existing) {
@@ -436,7 +441,7 @@ export const convertInquiryToCrmLead = (
 
   // Parse estimated budget to IDR
   let estimatedValue = customValue || 35000000; // default Rp 35.000.000
-  if (submission.budget) {
+  if (submission.budget && !customValue) {
     const b = submission.budget.toLowerCase();
     if (b.includes('25,000') || b.includes('50,000') || b.includes('100jt') || b.includes('100m')) {
       estimatedValue = 120000000;
@@ -448,18 +453,20 @@ export const convertInquiryToCrmLead = (
   }
 
   // Map service
-  let pillar: CrmServicePillar = 'Web Development';
-  const servicesJoined = (submission.services || []).join(' ').toLowerCase() + ' ' + (submission.specialty || '').toLowerCase();
-  if (servicesJoined.includes('ui/ux') || servicesJoined.includes('design') || servicesJoined.includes('figma')) {
-    pillar = 'UI/UX Design';
-  } else if (servicesJoined.includes('mobile') || servicesJoined.includes('app') || servicesJoined.includes('ios') || servicesJoined.includes('android')) {
-    pillar = 'Mobile App';
-  } else if (servicesJoined.includes('brand') || servicesJoined.includes('logo') || servicesJoined.includes('identity')) {
-    pillar = 'Branding & Identity';
-  } else if (servicesJoined.includes('ai') || servicesJoined.includes('cloud') || servicesJoined.includes('machine learning')) {
-    pillar = 'AI & Cloud Solutions';
-  } else if (servicesJoined.includes('mvp') || servicesJoined.includes('saas') || servicesJoined.includes('prototype')) {
-    pillar = 'Digital Product MVP';
+  let pillar: CrmServicePillar = options?.pillar || 'Web Development';
+  if (!options?.pillar) {
+    const servicesJoined = (submission.services || []).join(' ').toLowerCase() + ' ' + (submission.specialty || '').toLowerCase();
+    if (servicesJoined.includes('ui/ux') || servicesJoined.includes('design') || servicesJoined.includes('figma')) {
+      pillar = 'UI/UX Design';
+    } else if (servicesJoined.includes('mobile') || servicesJoined.includes('app') || servicesJoined.includes('ios') || servicesJoined.includes('android')) {
+      pillar = 'Mobile App';
+    } else if (servicesJoined.includes('brand') || servicesJoined.includes('logo') || servicesJoined.includes('identity')) {
+      pillar = 'Branding & Identity';
+    } else if (servicesJoined.includes('ai') || servicesJoined.includes('cloud') || servicesJoined.includes('machine learning')) {
+      pillar = 'AI & Cloud Solutions';
+    } else if (servicesJoined.includes('mvp') || servicesJoined.includes('saas') || servicesJoined.includes('prototype')) {
+      pillar = 'Digital Product MVP';
+    }
   }
 
   const newLead: CrmLead = {
@@ -470,13 +477,13 @@ export const convertInquiryToCrmLead = (
     phone: submission.phone || '',
     servicePillar: pillar,
     dealValue: estimatedValue,
-    stage: 'new',
+    stage: options?.stage || 'new',
     priority: estimatedValue >= 75000000 ? 'urgent' : estimatedValue >= 45000000 ? 'high' : 'medium',
     source: submission.source === 'Admin Simulated Live Lead' ? 'Referral' : 'Website Form',
     description: submission.message,
     inquiryId: submission.id,
     expectedCloseDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-    assignedTo: 'Lead Full-Stack Tech',
+    assignedTo: options?.assignedTo || 'Lead Full-Stack Tech',
     notes: [
       {
         id: 'n_conv_' + Date.now().toString(36),

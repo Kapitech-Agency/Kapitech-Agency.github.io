@@ -28,6 +28,7 @@ import {
 import { formatAmount, getActiveCurrency, CURRENCY_EVENT, CurrencyCode } from '../../lib/currency';
 import { useLanguage } from '../../lib/LanguageContext';
 import { useDragToScroll } from '../../lib/useDragToScroll';
+import { ScrollShadowContainer } from '../../components/ui/ScrollShadowContainer';
 import { CustomSelect } from '../../components/ui/CustomSelect';
 
 export const AdminClients: React.FC = () => {
@@ -441,10 +442,13 @@ export const AdminClients: React.FC = () => {
         )}
       </div>
 
-      {/* Desktop View: Full Data Table */}
-      <div
-        ref={tableScrollRef}
-        className="hidden md:block w-full bg-[#111318] border border-[rgba(255,255,255,0.07)] rounded-xl overflow-x-auto select-none cursor-grab active:cursor-grabbing custom-scrollbar max-h-[750px] overflow-y-auto"
+      {/* Desktop View: Full Data Table with Edge Shadows */}
+      <ScrollShadowContainer
+        externalRef={tableScrollRef}
+        shadowBg="surface"
+        shadowSize="md"
+        className="hidden md:block w-full rounded-xl overflow-hidden"
+        scrollClassName="w-full bg-[#111318] border border-[rgba(255,255,255,0.07)] rounded-xl overflow-x-auto select-none cursor-grab active:cursor-grabbing custom-scrollbar max-h-[750px] overflow-y-auto"
       >
         <table className="w-full text-left text-xs font-sans min-w-[760px]">
           <thead className="sticky top-0 z-10 bg-[#111318]">
@@ -549,7 +553,7 @@ export const AdminClients: React.FC = () => {
             )}
           </tbody>
         </table>
-      </div>
+      </ScrollShadowContainer>
 
       {/* 5. Create / Edit Client Modal */}
       {isClientModalOpen && (

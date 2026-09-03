@@ -45,8 +45,9 @@ import {
 import { formatAmount, getActiveCurrency, CURRENCY_EVENT, CurrencyCode } from '../../lib/currency';
 import { useLanguage } from '../../lib/LanguageContext';
 import { useDragToScroll } from '../../lib/useDragToScroll';
+import { ScrollShadowContainer } from '../../components/ui/ScrollShadowContainer';
 import { CustomSelect } from '../../components/ui/CustomSelect';
-import { getAdminSession } from '../../lib/adminAuth';
+import { getAdminSession, hasAdminPermission } from '../../lib/adminAuth';
 
 const TASK_COLUMNS: { id: TaskStatus; label: string; dotColor: string; bgAccent: string }[] = [
   { id: 'todo', label: 'To Do', dotColor: 'bg-zinc-400', bgAccent: 'group-hover:border-zinc-500/30' },
@@ -59,8 +60,10 @@ export const AdminProjects: React.FC = () => {
   const { t, language } = useLanguage();
   const session = getAdminSession();
   const userRole = session?.user?.role || 'Tier 1: Top Management / Sponsor';
-  const canManageProjects = userRole.startsWith('Tier 1') || userRole.startsWith('Tier 2');
-  const canDeleteProjects = userRole.startsWith('Tier 1');
+  const canManageProjects = hasAdminPermission('canManageProjects');
+  const canManageKanbanTasks = hasAdminPermission('canManageKanbanTasks');
+  const canDeleteProjects = userRole.startsWith('Tier 1') || session?.user?.stakeholderType === 'Master';
+
 
   const [currency, setCurrency] = useState<CurrencyCode>(getActiveCurrency());
   const [projects, setProjects] = useState<AgencyProject[]>([]);
@@ -482,6 +485,17 @@ export const AdminProjects: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-3">
+          <a
+            href="/prototype.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="h-10 px-3.5 rounded-xl bg-[#111318] hover:bg-[#21252F] text-[#FF1E27] border border-[#FF1E27]/30 text-xs font-mono font-semibold transition-all flex items-center justify-center gap-2 min-h-[40px]"
+            title="Open Interactive CRM & Tasks Prototype"
+          >
+            <ExternalLink size={14} />
+            <span>Prototype</span>
+          </a>
+
           <button
             onClick={handleOpenCreateProject}
             className="h-10 px-4 rounded-xl bg-[#E50914] hover:bg-[#FF1E27] text-white text-xs font-mono font-bold transition-all flex items-center gap-2 shadow-lg shadow-[#E50914]/20 min-h-[40px]"
@@ -724,10 +738,15 @@ export const AdminProjects: React.FC = () => {
             </div>
           </div>
 
-          {/* Kanban Columns Container with Independent Mouse-Drag-Scroll */}
-          <div
-            ref={kanbanScrollRef}
-            className="flex gap-4 overflow-x-auto pb-4 pt-1 cursor-grab active:cursor-grabbing"
+          {/* Kanban Columns Container with Independent Mouse-Drag-Scroll & Dynamic Fade Shadows */}
+          <ScrollShadowContainer
+            externalRef={kanbanScrollRef}
+            shadowBg="app"
+            shadowSize="lg"
+            showNavButtons={true}
+            scrollStep={340}
+            bottomOffset="bottom-4"
+            scrollClassName="flex gap-4 overflow-x-auto pb-4 pt-1 cursor-grab active:cursor-grabbing scrollbar-thin"
           >
             {TASK_COLUMNS.map((col) => {
               const colTasks = selectedProject.tasks
@@ -856,7 +875,7 @@ export const AdminProjects: React.FC = () => {
                 </div>
               );
             })}
-          </div>
+          </ScrollShadowContainer>
         </div>
       )}
 
@@ -870,21 +889,23 @@ export const AdminProjects: React.FC = () => {
             onClick={() => setActiveTaskDrawer(null)}
           />
 
-          <div className="relative ml-auto w-full max-w-lg bg-[#111318] border-l border-[rgba(255,255,255,0.07)] h-full flex flex-col justify-between p-6 z-10 shadow-2xl overflow-y-auto animate-in slide-in-from-right duration-200 font-mono text-xs">
-            <div className="space-y-5">
-              {/* Drawer Header */}
-              <div className="flex items-center justify-between pb-4 border-b border-[rgba(255,255,255,0.07)]">
-                <div className="flex items-center gap-2">
-                  <ListTodo className="text-[#FF1E27]" size={18} />
-                  <span className="font-display font-bold text-white text-base">Task Details</span>
-                </div>
-                <button
-                  onClick={() => setActiveTaskDrawer(null)}
-                  className="p-1.5 rounded-lg bg-[#181B22] text-[#8A94A6] hover:text-white border border-[rgba(255,255,255,0.07)]"
-                >
-                  <X size={16} />
-                </button>
+          <div className="relative ml-auto w-full sm:max-w-lg bg-[#111318] border-l-0 sm:border-l border-[rgba(255,255,255,0.07)] h-full flex flex-col justify-between z-10 shadow-2xl overflow-hidden animate-in slide-in-from-right duration-200 font-mono text-xs">
+            {/* Sticky Drawer Header */}
+            <div className="sticky top-0 z-20 bg-[#111318]/95 backdrop-blur-md px-5 sm:px-6 py-4 border-b border-[rgba(255,255,255,0.07)] flex items-center justify-between shrink-0">
+              <div className="flex items-center gap-2">
+                <ListTodo className="text-[#FF1E27]" size={18} />
+                <span className="font-display font-bold text-white text-base">Task Details</span>
               </div>
+              <button
+                onClick={() => setActiveTaskDrawer(null)}
+                className="w-8 h-8 rounded-lg bg-[#181B22] text-[#8A94A6] hover:text-white border border-[rgba(255,255,255,0.07)] flex items-center justify-center transition-colors shrink-0 ml-3"
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            {/* Scrollable Drawer Body */}
+            <div className="p-5 sm:p-6 overflow-y-auto flex-1 space-y-5 custom-scrollbar">
 
               {/* Title & Priority */}
               <div className="space-y-2">
@@ -1007,11 +1028,11 @@ export const AdminProjects: React.FC = () => {
               </div>
             </div>
 
-            {/* Bottom Actions */}
-            <div className="pt-4 border-t border-[rgba(255,255,255,0.07)] flex items-center justify-between">
+            {/* Sticky Drawer Footer */}
+            <div className="sticky bottom-0 z-20 bg-[#111318]/95 backdrop-blur-md px-5 sm:px-6 py-3.5 border-t border-[rgba(255,255,255,0.07)] flex items-center justify-between shrink-0">
               <button
                 onClick={() => handleDeleteTask(activeTaskDrawer.id)}
-                className="px-3 py-2 rounded-xl bg-red-950/40 text-red-300 border border-red-500/30 hover:bg-red-950/60 transition-colors flex items-center gap-1.5"
+                className="h-10 px-3 min-h-[40px] rounded-xl bg-red-950/40 text-red-300 border border-red-500/30 hover:bg-red-950/60 transition-colors flex items-center gap-1.5"
               >
                 <Trash2 size={13} />
                 <span>Delete Task</span>
@@ -1019,7 +1040,7 @@ export const AdminProjects: React.FC = () => {
 
               <button
                 onClick={() => setActiveTaskDrawer(null)}
-                className="px-4 py-2 rounded-xl bg-[#181B22] text-white border border-[rgba(255,255,255,0.07)] hover:bg-[#20242D] transition-colors"
+                className="h-10 px-4 min-h-[40px] rounded-xl bg-[#181B22] text-white border border-[rgba(255,255,255,0.07)] hover:bg-[#20242D] transition-colors"
               >
                 Close
               </button>
@@ -1032,163 +1053,171 @@ export const AdminProjects: React.FC = () => {
       {/* CREATE / EDIT PROJECT MODAL */}
       {/* ------------------------------------------------------------- */}
       {isProjectModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 shadow-2xl">
-            <div className="flex items-center justify-between pb-4 mb-4 border-b border-[rgba(255,255,255,0.07)]">
-              <h3 className="font-display font-bold text-white text-lg flex items-center gap-2">
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-0 sm:p-4 overflow-y-auto">
+          <div className="bg-[#181B22] border-0 sm:border sm:border-[rgba(255,255,255,0.07)] rounded-none sm:rounded-2xl w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-2xl shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-150">
+            {/* Sticky Header */}
+            <div className="sticky top-0 z-20 bg-[#181B22]/95 backdrop-blur-md px-5 sm:px-6 py-4 border-b border-[rgba(255,255,255,0.07)] flex items-center justify-between shrink-0">
+              <h3 className="font-display font-bold text-white text-base sm:text-lg flex items-center gap-2">
                 <Layers className="text-[#FF1E27]" size={20} />
                 <span>{editingProject ? 'Edit Project' : 'Create New Agency Project'}</span>
               </h3>
-              <button onClick={() => setIsProjectModalOpen(false)} className="p-1.5 text-[#8A94A6] hover:text-white rounded-lg bg-[#090A0F] border border-[rgba(255,255,255,0.07)]">
+              <button 
+                onClick={() => setIsProjectModalOpen(false)} 
+                className="w-8 h-8 rounded-lg bg-[#090A0F] text-[#8A94A6] hover:text-white border border-[rgba(255,255,255,0.07)] flex items-center justify-center transition-colors shrink-0 ml-3"
+              >
                 <X size={16} />
               </button>
             </div>
 
-            <form onSubmit={handleSaveProject} className="space-y-4 text-xs font-mono">
-              <div>
-                <label className="block text-[#8A94A6] mb-1 font-semibold">Project Name *</label>
-                <input
-                  type="text"
-                  value={projName}
-                  onChange={(e) => setProjName(e.target.value)}
-                  required
-                  placeholder="e.g. Lumina Luxury Real Estate Headless Web Platform"
-                  className="w-full px-3.5 py-2.5 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
-                />
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <form onSubmit={handleSaveProject} className="flex-1 flex flex-col overflow-hidden">
+              {/* Scrollable Body */}
+              <div className="p-5 sm:p-6 overflow-y-auto flex-1 space-y-4 text-xs font-mono custom-scrollbar">
                 <div>
-                  <label className="block text-[#8A94A6] mb-1 font-semibold">Client PIC Name</label>
+                  <label className="block text-[#8A94A6] mb-1 font-semibold">Project Name *</label>
                   <input
                     type="text"
-                    value={clientName}
-                    onChange={(e) => setClientName(e.target.value)}
-                    placeholder="e.g. Marcus Thorne"
-                    className="w-full px-3.5 py-2.5 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
-                  />
-                </div>
-                <div>
-                  <label className="block text-[#8A94A6] mb-1 font-semibold">Client Company *</label>
-                  <input
-                    type="text"
-                    value={clientCompany}
-                    onChange={(e) => setClientCompany(e.target.value)}
+                    value={projName}
+                    onChange={(e) => setProjName(e.target.value)}
                     required
-                    placeholder="e.g. Lumina Real Estate Global"
+                    placeholder="e.g. Lumina Luxury Real Estate Headless Web Platform"
                     className="w-full px-3.5 py-2.5 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
                   />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-[#8A94A6] mb-1 font-semibold">Client PIC Name</label>
+                    <input
+                      type="text"
+                      value={clientName}
+                      onChange={(e) => setClientName(e.target.value)}
+                      placeholder="e.g. Marcus Thorne"
+                      className="w-full px-3.5 py-2.5 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[#8A94A6] mb-1 font-semibold">Client Company *</label>
+                    <input
+                      type="text"
+                      value={clientCompany}
+                      onChange={(e) => setClientCompany(e.target.value)}
+                      required
+                      placeholder="e.g. Lumina Real Estate Global"
+                      className="w-full px-3.5 py-2.5 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-[#8A94A6] mb-1 font-semibold">Service Category</label>
+                    <select
+                      value={serviceCategory}
+                      onChange={(e) => setServiceCategory(e.target.value)}
+                      className="w-full px-3.5 py-2.5 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
+                    >
+                      <option value="Web Development">Web Development</option>
+                      <option value="Mobile App">Mobile App</option>
+                      <option value="UI/UX Design System">UI/UX Design System</option>
+                      <option value="Cloud Architecture">Cloud Architecture</option>
+                      <option value="AI / LLM Integration">AI / LLM Integration</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-[#8A94A6] mb-1 font-semibold">Budget (IDR)</label>
+                    <input
+                      type="number"
+                      value={budget}
+                      onChange={(e) => setBudget(Number(e.target.value))}
+                      className="w-full px-3.5 py-2.5 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[#8A94A6] mb-1 font-semibold">Status</label>
+                    <select
+                      value={projStatus}
+                      onChange={(e) => setProjStatus(e.target.value as ProjectStatus)}
+                      className="w-full px-3.5 py-2.5 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
+                    >
+                      <option value="planning">Planning</option>
+                      <option value="in_progress">In Progress</option>
+                      <option value="review">Review & QA</option>
+                      <option value="completed">Completed</option>
+                      <option value="on_hold">On Hold</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-[#8A94A6] mb-1 font-semibold">Start Date</label>
+                    <input
+                      type="date"
+                      value={startDate}
+                      onChange={(e) => setStartDate(e.target.value)}
+                      className="w-full px-3.5 py-2.5 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[#8A94A6] mb-1 font-semibold">Target End Date</label>
+                    <input
+                      type="date"
+                      value={targetEndDate}
+                      onChange={(e) => setTargetEndDate(e.target.value)}
+                      className="w-full px-3.5 py-2.5 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-[#8A94A6] mb-1 font-semibold">Tech Stack (comma separated)</label>
+                  <input
+                    type="text"
+                    value={techStackInput}
+                    onChange={(e) => setTechStackInput(e.target.value)}
+                    placeholder="e.g. Next.js 14, TypeScript, Tailwind CSS, PostgreSQL"
+                    className="w-full px-3.5 py-2.5 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-[#8A94A6] mb-1 font-semibold">Repository URL</label>
+                    <input
+                      type="url"
+                      value={repoUrl}
+                      onChange={(e) => setRepoUrl(e.target.value)}
+                      placeholder="https://github.com/kapitech-agency/..."
+                      className="w-full px-3.5 py-2.5 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[#8A94A6] mb-1 font-semibold">Live Staging URL</label>
+                    <input
+                      type="url"
+                      value={stagingUrl}
+                      onChange={(e) => setStagingUrl(e.target.value)}
+                      placeholder="https://staging.app.kapitech.id"
+                      className="w-full px-3.5 py-2.5 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
+                    />
+                  </div>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div>
-                  <label className="block text-[#8A94A6] mb-1 font-semibold">Service Category</label>
-                  <select
-                    value={serviceCategory}
-                    onChange={(e) => setServiceCategory(e.target.value)}
-                    className="w-full px-3 py-2.5 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
-                  >
-                    <option value="Web Development">Web Development</option>
-                    <option value="Mobile App">Mobile App</option>
-                    <option value="UI/UX Design System">UI/UX Design System</option>
-                    <option value="Cloud Architecture">Cloud Architecture</option>
-                    <option value="AI / LLM Integration">AI / LLM Integration</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-[#8A94A6] mb-1 font-semibold">Budget (IDR)</label>
-                  <input
-                    type="number"
-                    value={budget}
-                    onChange={(e) => setBudget(Number(e.target.value))}
-                    className="w-full px-3.5 py-2.5 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-[#8A94A6] mb-1 font-semibold">Status</label>
-                  <select
-                    value={projStatus}
-                    onChange={(e) => setProjStatus(e.target.value as ProjectStatus)}
-                    className="w-full px-3 py-2.5 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
-                  >
-                    <option value="planning">Planning</option>
-                    <option value="in_progress">In Progress</option>
-                    <option value="review">Review & QA</option>
-                    <option value="completed">Completed</option>
-                    <option value="on_hold">On Hold</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-[#8A94A6] mb-1 font-semibold">Start Date</label>
-                  <input
-                    type="date"
-                    value={startDate}
-                    onChange={(e) => setStartDate(e.target.value)}
-                    className="w-full px-3.5 py-2.5 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
-                  />
-                </div>
-                <div>
-                  <label className="block text-[#8A94A6] mb-1 font-semibold">Target End Date</label>
-                  <input
-                    type="date"
-                    value={targetEndDate}
-                    onChange={(e) => setTargetEndDate(e.target.value)}
-                    className="w-full px-3.5 py-2.5 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-[#8A94A6] mb-1 font-semibold">Tech Stack (comma separated)</label>
-                <input
-                  type="text"
-                  value={techStackInput}
-                  onChange={(e) => setTechStackInput(e.target.value)}
-                  placeholder="e.g. Next.js 14, TypeScript, Tailwind CSS, PostgreSQL"
-                  className="w-full px-3.5 py-2.5 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
-                />
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-[#8A94A6] mb-1 font-semibold">Repository URL</label>
-                  <input
-                    type="url"
-                    value={repoUrl}
-                    onChange={(e) => setRepoUrl(e.target.value)}
-                    placeholder="https://github.com/kapitech-agency/..."
-                    className="w-full px-3.5 py-2.5 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
-                  />
-                </div>
-                <div>
-                  <label className="block text-[#8A94A6] mb-1 font-semibold">Live Staging URL</label>
-                  <input
-                    type="url"
-                    value={stagingUrl}
-                    onChange={(e) => setStagingUrl(e.target.value)}
-                    placeholder="https://staging.app.kapitech.id"
-                    className="w-full px-3.5 py-2.5 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
-                  />
-                </div>
-              </div>
-
-              <div className="pt-4 border-t border-[rgba(255,255,255,0.07)] flex items-center justify-end gap-3">
+              {/* Sticky Footer */}
+              <div className="sticky bottom-0 z-20 bg-[#181B22]/95 backdrop-blur-md px-5 sm:px-6 py-3.5 border-t border-[rgba(255,255,255,0.07)] flex items-center justify-end gap-2.5 shrink-0">
                 <button
                   type="button"
                   onClick={() => setIsProjectModalOpen(false)}
-                  className="px-4 py-2.5 rounded-xl bg-[#090A0F] text-[#8A94A6] hover:text-white border border-[rgba(255,255,255,0.07)]"
+                  className="h-10 px-4 min-h-[40px] rounded-xl bg-[#090A0F] text-[#8A94A6] hover:text-white border border-[rgba(255,255,255,0.07)] text-xs font-mono font-medium transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-2.5 rounded-xl bg-[#E50914] text-white font-bold hover:bg-[#FF1E27] transition-all shadow-md shadow-[#E50914]/20"
+                  className="h-10 px-6 min-h-[40px] rounded-xl bg-[#E50914] text-white font-mono font-bold hover:bg-[#FF1E27] transition-all shadow-md shadow-[#E50914]/20"
                 >
                   Save Project
                 </button>
@@ -1199,124 +1228,132 @@ export const AdminProjects: React.FC = () => {
       )}
 
       {/* ------------------------------------------------------------- */}
-      {/* CREATE NEW TASK MODAL */}
+      {/* CREATE NEW TASK MODAL (Mobile Fullscreen + Sticky) */}
       {/* ------------------------------------------------------------- */}
       {isTaskModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto p-6 shadow-2xl">
-            <div className="flex items-center justify-between pb-4 mb-4 border-b border-[rgba(255,255,255,0.07)]">
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-0 sm:p-4 overflow-y-auto">
+          <div className="bg-[#181B22] border-0 sm:border sm:border-[rgba(255,255,255,0.07)] rounded-none sm:rounded-2xl w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-lg shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-150">
+            {/* Sticky Header */}
+            <div className="sticky top-0 z-20 bg-[#181B22]/95 backdrop-blur-md px-5 sm:px-6 py-4 border-b border-[rgba(255,255,255,0.07)] flex items-center justify-between shrink-0">
               <h3 className="font-display font-bold text-white text-base flex items-center gap-2">
                 <ListTodo className="text-[#FF1E27]" size={18} />
                 <span>Add Task to Sprint</span>
               </h3>
-              <button onClick={() => setIsTaskModalOpen(false)} className="p-1.5 text-[#8A94A6] hover:text-white rounded-lg bg-[#090A0F] border border-[rgba(255,255,255,0.07)]">
+              <button 
+                onClick={() => setIsTaskModalOpen(false)} 
+                className="w-8 h-8 rounded-lg bg-[#090A0F] text-[#8A94A6] hover:text-white border border-[rgba(255,255,255,0.07)] flex items-center justify-center transition-colors shrink-0 ml-3"
+              >
                 <X size={16} />
               </button>
             </div>
 
-            <form onSubmit={handleAddTask} className="space-y-4 text-xs font-mono">
-              <div>
-                <label className="block text-[#8A94A6] mb-1 font-semibold">Task Title *</label>
-                <input
-                  type="text"
-                  required
-                  value={taskTitle}
-                  onChange={(e) => setTaskTitle(e.target.value)}
-                  placeholder="e.g. Implement Mapbox Vector Tile Cluster Loader"
-                  className="w-full px-3.5 py-2.5 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
-                />
-              </div>
-
-              <div>
-                <label className="block text-[#8A94A6] mb-1 font-semibold">Description / Scope</label>
-                <textarea
-                  rows={3}
-                  value={taskDesc}
-                  onChange={(e) => setTaskDesc(e.target.value)}
-                  placeholder="Acceptance criteria and technical notes..."
-                  className="w-full px-3.5 py-2 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914] font-sans"
-                />
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <form onSubmit={handleAddTask} className="flex-1 flex flex-col overflow-hidden">
+              {/* Scrollable Body */}
+              <div className="p-5 sm:p-6 overflow-y-auto flex-1 space-y-4 text-xs font-mono custom-scrollbar">
                 <div>
-                  <label className="block text-[#8A94A6] mb-1 font-semibold">Priority</label>
-                  <select
-                    value={taskPriority}
-                    onChange={(e) => setTaskPriority(e.target.value as TaskPriority)}
-                    className="w-full px-3 py-2.5 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
-                  >
-                    <option value="low">Low</option>
-                    <option value="medium">Medium</option>
-                    <option value="high">High</option>
-                    <option value="urgent">Urgent</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-[#8A94A6] mb-1 font-semibold">Assignee</label>
-                  <select
-                    value={taskAssignee}
-                    onChange={(e) => setTaskAssignee(e.target.value)}
-                    className="w-full px-3 py-2.5 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
-                  >
-                    <option value="Lead Full-Stack Tech">Lead Full-Stack Tech</option>
-                    <option value="Senior Frontend Dev">Senior Frontend Dev</option>
-                    <option value="UI/UX Specialist">UI/UX Specialist</option>
-                    <option value="Cloud & AI Engineer">Cloud & AI Engineer</option>
-                    <option value="QA Specialist">QA Specialist</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-[#8A94A6] mb-1 font-semibold">Initial Stage</label>
-                  <select
-                    value={taskStatus}
-                    onChange={(e) => setTaskStatus(e.target.value as TaskStatus)}
-                    className="w-full px-3 py-2.5 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
-                  >
-                    <option value="todo">To Do</option>
-                    <option value="in_progress">In Progress</option>
-                    <option value="review">Review & QA</option>
-                    <option value="done">Done</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-[#8A94A6] mb-1 font-semibold">Due Date</label>
+                  <label className="block text-[#8A94A6] mb-1 font-semibold">Task Title *</label>
                   <input
-                    type="date"
-                    value={taskDueDate}
-                    onChange={(e) => setTaskDueDate(e.target.value)}
+                    type="text"
+                    required
+                    value={taskTitle}
+                    onChange={(e) => setTaskTitle(e.target.value)}
+                    placeholder="e.g. Implement Mapbox Vector Tile Cluster Loader"
                     className="w-full px-3.5 py-2.5 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[#8A94A6] mb-1 font-semibold">Description / Scope</label>
+                  <textarea
+                    rows={3}
+                    value={taskDesc}
+                    onChange={(e) => setTaskDesc(e.target.value)}
+                    placeholder="Acceptance criteria and technical notes..."
+                    className="w-full px-3.5 py-2 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914] font-sans"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-[#8A94A6] mb-1 font-semibold">Priority</label>
+                    <select
+                      value={taskPriority}
+                      onChange={(e) => setTaskPriority(e.target.value as TaskPriority)}
+                      className="w-full px-3.5 py-2.5 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
+                    >
+                      <option value="low">Low</option>
+                      <option value="medium">Medium</option>
+                      <option value="high">High</option>
+                      <option value="urgent">Urgent</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-[#8A94A6] mb-1 font-semibold">Assignee</label>
+                    <select
+                      value={taskAssignee}
+                      onChange={(e) => setTaskAssignee(e.target.value)}
+                      className="w-full px-3.5 py-2.5 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
+                    >
+                      <option value="Lead Full-Stack Tech">Lead Full-Stack Tech</option>
+                      <option value="Senior Frontend Dev">Senior Frontend Dev</option>
+                      <option value="UI/UX Specialist">UI/UX Specialist</option>
+                      <option value="Cloud & AI Engineer">Cloud & AI Engineer</option>
+                      <option value="QA Specialist">QA Specialist</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-[#8A94A6] mb-1 font-semibold">Initial Stage</label>
+                    <select
+                      value={taskStatus}
+                      onChange={(e) => setTaskStatus(e.target.value as TaskStatus)}
+                      className="w-full px-3.5 py-2.5 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
+                    >
+                      <option value="todo">To Do</option>
+                      <option value="in_progress">In Progress</option>
+                      <option value="review">Review & QA</option>
+                      <option value="done">Done</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-[#8A94A6] mb-1 font-semibold">Due Date</label>
+                    <input
+                      type="date"
+                      value={taskDueDate}
+                      onChange={(e) => setTaskDueDate(e.target.value)}
+                      className="w-full px-3.5 py-2.5 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-[#8A94A6] mb-1 font-semibold">Subtask Checklist (1 item per line)</label>
+                  <textarea
+                    rows={2}
+                    value={initialSubtasksInput}
+                    onChange={(e) => setInitialSubtasksInput(e.target.value)}
+                    placeholder="Setup API endpoints&#10;Add unit tests"
+                    className="w-full px-3.5 py-2 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
                   />
                 </div>
               </div>
 
-              <div>
-                <label className="block text-[#8A94A6] mb-1 font-semibold">Subtask Checklist (1 item per line)</label>
-                <textarea
-                  rows={2}
-                  value={initialSubtasksInput}
-                  onChange={(e) => setInitialSubtasksInput(e.target.value)}
-                  placeholder="Setup API endpoints&#10;Add unit tests"
-                  className="w-full px-3.5 py-2 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
-                />
-              </div>
-
-              <div className="pt-4 border-t border-[rgba(255,255,255,0.07)] flex items-center justify-end gap-3">
+              {/* Sticky Footer */}
+              <div className="sticky bottom-0 z-20 bg-[#181B22]/95 backdrop-blur-md px-5 sm:px-6 py-3.5 border-t border-[rgba(255,255,255,0.07)] flex items-center justify-end gap-2.5 shrink-0">
                 <button
                   type="button"
                   onClick={() => setIsTaskModalOpen(false)}
-                  className="px-4 py-2.5 rounded-xl bg-[#090A0F] text-[#8A94A6] hover:text-white border border-[rgba(255,255,255,0.07)]"
+                  className="h-10 px-4 min-h-[40px] rounded-xl bg-[#090A0F] text-[#8A94A6] hover:text-white border border-[rgba(255,255,255,0.07)] text-xs font-mono font-medium transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-2.5 rounded-xl bg-[#E50914] text-white font-bold hover:bg-[#FF1E27] transition-all shadow-md shadow-[#E50914]/20"
+                  className="h-10 px-6 min-h-[40px] rounded-xl bg-[#E50914] text-white font-mono font-bold hover:bg-[#FF1E27] transition-all shadow-md shadow-[#E50914]/20"
                 >
                   Add Task
                 </button>

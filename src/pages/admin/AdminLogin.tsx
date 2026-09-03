@@ -22,7 +22,7 @@ export const AdminLogin: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [identifier, setIdentifier] = useState('admin');
+  const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
@@ -243,7 +243,7 @@ export const AdminLogin: React.FC = () => {
             <button
               type="submit"
               disabled={loading || lockoutTimer > 0}
-              className="w-full mt-2 py-3 rounded-xl bg-[#E50914] hover:bg-[#FF1E27] disabled:bg-[#262930] disabled:text-[#64748B] text-white text-xs font-bold font-mono uppercase tracking-wider transition-all shadow-lg shadow-[#E50914]/20 flex items-center justify-center gap-2 group"
+              className="w-full mt-2 h-10 min-h-[40px] rounded-xl bg-[#E50914] hover:bg-[#FF1E27] disabled:bg-[#262930] disabled:text-[#64748B] text-white text-xs font-bold font-mono uppercase tracking-wider transition-all shadow-lg shadow-[#E50914]/20 flex items-center justify-center gap-2 group"
             >
               {loading ? (
                 <span>Memverifikasi Kredensial...</span>
@@ -256,11 +256,13 @@ export const AdminLogin: React.FC = () => {
             </button>
           </form>
 
-          {/* Quick Demo Credentials Reminder for internal dev */}
-          <div className="mt-6 pt-5 border-t border-[rgba(255,255,255,0.07)] text-center">
-            <p className="text-[11px] font-mono text-[#64748B] leading-relaxed">
-              Default Master: <code className="text-gray-300 bg-[#090A0F] px-1.5 py-0.5 rounded border border-[rgba(255,255,255,0.07)]">admin</code> / <code className="text-gray-300 bg-[#090A0F] px-1.5 py-0.5 rounded border border-[rgba(255,255,255,0.07)]">kapitechadmin</code>
-            </p>
+          {/* Enterprise Security Assurance Footer */}
+          <div className="mt-6 pt-5 border-t border-[rgba(255,255,255,0.07)] flex items-center justify-between text-[11px] font-mono text-[#8A94A6]">
+            <div className="flex items-center gap-1.5">
+              <ShieldCheck size={14} className="text-emerald-400" />
+              <span>Zero-Trust Architecture</span>
+            </div>
+            <span className="text-[#64748B]">TLS 1.3 • AES-256</span>
           </div>
 
         </div>

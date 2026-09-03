@@ -51,6 +51,7 @@ import {
 import { saveAgencyProject, AgencyProject } from '../../lib/projectStore';
 import { useLanguage } from '../../lib/LanguageContext';
 import { useDragToScroll } from '../../lib/useDragToScroll';
+import { ScrollShadowContainer } from '../../components/ui/ScrollShadowContainer';
 import { CustomSelect } from '../../components/ui/CustomSelect';
 import { formatAmount, getActiveCurrency, setGlobalCurrency, CurrencyCode, CURRENCY_EVENT } from '../../lib/currency';
 
@@ -400,6 +401,17 @@ export const AdminCrm: React.FC = () => {
             </button>
           </div>
 
+          <a
+            href="/prototype.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="h-10 px-3.5 rounded-xl bg-[#111318] hover:bg-[#21252F] text-[#FF1E27] border border-[#FF1E27]/30 text-xs font-mono font-semibold transition-all flex items-center justify-center gap-2 min-h-[40px]"
+            title="Open Interactive CRM & Tasks Prototype"
+          >
+            <ExternalLink size={14} />
+            <span>Prototype</span>
+          </a>
+
           <button
             onClick={() => exportCrmLeadsToCsv(filteredLeads)}
             className="h-10 px-3.5 rounded-xl bg-[#111318] hover:bg-[#21252F] text-white border border-[rgba(255,255,255,0.07)] text-xs font-mono transition-all flex items-center justify-center gap-2 min-h-[40px]"
@@ -575,9 +587,14 @@ export const AdminCrm: React.FC = () => {
 
       {/* 4. MAIN VIEW: KANBAN BOARD OR LIST TABLE */}
       {viewMode === 'kanban' ? (
-        <div 
-          ref={kanbanScrollRef}
-          className="overflow-x-auto pb-4 select-none cursor-grab active:cursor-grabbing"
+        <ScrollShadowContainer
+          externalRef={kanbanScrollRef}
+          shadowBg="app"
+          shadowSize="lg"
+          showNavButtons={true}
+          scrollStep={340}
+          bottomOffset="bottom-4"
+          scrollClassName="overflow-x-auto pb-4 select-none cursor-grab active:cursor-grabbing scrollbar-thin"
         >
           <div className="flex gap-4 min-w-[1400px] xl:min-w-full items-start">
             
@@ -734,7 +751,7 @@ export const AdminCrm: React.FC = () => {
               );
             })}
           </div>
-        </div>
+        </ScrollShadowContainer>
       ) : (
         /* LIST VIEW: Mobile Cards + Desktop Table */
         <div className="space-y-3">

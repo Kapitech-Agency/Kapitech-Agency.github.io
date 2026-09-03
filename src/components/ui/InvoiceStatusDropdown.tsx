@@ -101,7 +101,7 @@ export const InvoiceStatusDropdown: React.FC<InvoiceStatusDropdownProps> = ({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 2, scale: 0.98 }}
             transition={{ duration: 0.1, ease: 'easeOut' }}
-            className="absolute left-0 z-50 mt-1 min-w-[140px] bg-[#13151C] border border-[#1F222C] rounded-md p-1 shadow-[0_12px_32px_rgba(0,0,0,0.65)] space-y-0.5 font-mono text-xs"
+            className="absolute left-0 sm:left-auto right-auto sm:right-0 md:left-0 md:right-auto z-50 mt-1 min-w-[130px] max-w-[calc(100vw-32px)] bg-[#13151C] border border-[#1F222C] rounded-lg p-1 shadow-[0_12px_32px_rgba(0,0,0,0.65)] space-y-0.5 font-mono text-xs"
           >
             {statuses.map((item) => {
               const isSelected = item === status;
