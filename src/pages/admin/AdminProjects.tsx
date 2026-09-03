@@ -485,17 +485,6 @@ export const AdminProjects: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-3">
-          <a
-            href="/prototype.html"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="h-10 px-3.5 rounded-xl bg-[#111318] hover:bg-[#21252F] text-[#FF1E27] border border-[#FF1E27]/30 text-xs font-mono font-semibold transition-all flex items-center justify-center gap-2 min-h-[40px]"
-            title="Open Interactive CRM & Tasks Prototype"
-          >
-            <ExternalLink size={14} />
-            <span>Prototype</span>
-          </a>
-
           <button
             onClick={handleOpenCreateProject}
             className="h-10 px-4 rounded-xl bg-[#E50914] hover:bg-[#FF1E27] text-white text-xs font-mono font-bold transition-all flex items-center gap-2 shadow-lg shadow-[#E50914]/20 min-h-[40px]"

@@ -988,44 +988,89 @@ export const AdminInbox: React.FC = () => {
             </table>
           </div>
         </div>
+      ) : loading ? (
+        /* LOADING STATE */
+        <div className="flex flex-col items-center justify-center py-20 text-[#8A94A6] space-y-3 bg-[#111318] border border-[rgba(255,255,255,0.07)] rounded-2xl">
+          <RefreshCw className="animate-spin text-[#E50914]" size={24} />
+          <p className="text-xs font-mono">{language === 'id' ? 'Memuat pesan masuk...' : 'Syncing inbox records...'}</p>
+        </div>
+      ) : filteredItems.length === 0 ? (
+        /* SINGLE UNIFIED EMPTY STATE - PREVENTS DUPLICATE BOXES */
+        <div className="bg-[#111318] border border-[rgba(255,255,255,0.07)] rounded-2xl p-12 sm:p-16 text-center text-[#8A94A6] space-y-4">
+          <div className="w-16 h-16 rounded-2xl bg-[#181B22] border border-white/5 flex items-center justify-center text-[#383C46] mx-auto">
+            <Inbox size={32} />
+          </div>
+          <div className="space-y-1.5">
+            <h3 className="text-white font-bold font-display text-base sm:text-lg">
+              {submissions.length === 0
+                ? (language === 'id' ? 'Kotak Masuk Masih Kosong' : 'No Inbound Records Found')
+                : (language === 'id' ? 'Tidak Ada Pesan yang Sesuai Kriteria' : 'No Inbound Records Match Your Filters')}
+            </h3>
+            <p className="text-xs sm:text-sm text-[#8A94A6] max-w-md mx-auto font-mono leading-relaxed">
+              {submissions.length === 0
+                ? (language === 'id'
+                    ? 'Belum ada brief proyek klien, lamaran karir, atau pesan masuk dari formulir website.'
+                    : 'All client project briefs, career applications, and inquiries from the public website will appear here in real time.')
+                : (language === 'id'
+                    ? 'Sesuaikan kata kunci pencarian, status filter, atau ganti kategori kanal di atas.'
+                    : 'Try adjusting your search query, status filters, or switching channel tabs.')}
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+            {(searchQuery || filterStatus !== 'all' || filterPriority !== 'all' || filterType !== 'all' || onlyStarred) && (
+              <button
+                onClick={() => {
+                  setSearchQuery('');
+                  setFilterStatus('all');
+                  setFilterPriority('all');
+                  setFilterType('all');
+                  setOnlyStarred(false);
+                }}
+                className="h-9 px-4 rounded-xl bg-[#181B22] hover:bg-[#21252F] text-white border border-[rgba(255,255,255,0.07)] text-xs font-mono font-medium transition-colors"
+              >
+                {language === 'id' ? 'Reset Semua Filter' : 'Reset All Filters'}
+              </button>
+            )}
+
+            {submissions.length === 0 && (
+              <button
+                onClick={handleCreateTestSubmission}
+                disabled={testSending}
+                className="h-9 px-4 rounded-xl bg-[#E50914] hover:bg-[#FF1E27] text-white text-xs font-mono font-bold transition-all flex items-center gap-2 shadow-lg shadow-[#E50914]/20 disabled:opacity-50"
+              >
+                <Plus size={14} />
+                <span>{testSending ? (language === 'id' ? 'Membuat...' : 'Generating...') : (language === 'id' ? 'Buat Contoh Brief Masuk' : 'Generate Sample Brief')}</span>
+              </button>
+            )}
+          </div>
+        </div>
       ) : (
-        /* SPLIT MASTER-DETAIL VIEW */
+        /* SPLIT MASTER-DETAIL VIEW (when items exist) */
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           
           {/* Left: Master Briefs List Pane */}
           <div className={`space-y-3 ${
             selectedSubmission 
               ? 'hidden lg:block lg:col-span-5' 
-              : 'col-span-12'
+              : 'col-span-12 lg:col-span-5'
           }`}>
-            {loading ? (
-              <div className="flex flex-col items-center justify-center py-20 text-[#8A94A6] space-y-3">
-                <RefreshCw className="animate-spin text-[#E50914]" size={24} />
-                <p className="text-xs font-mono">{language === 'id' ? 'Memuat pesan masuk...' : 'Syncing inbox records...'}</p>
-              </div>
-            ) : filteredItems.length === 0 ? (
-              <div className="p-12 text-center bg-[#111318] border border-[rgba(255,255,255,0.07)] rounded-2xl text-[#8A94A6] space-y-3">
-                <Inbox size={36} className="mx-auto text-[#383C46]" />
-                <p className="text-sm font-medium text-white">{language === 'id' ? 'Tidak ada pesan ditemukan' : 'No inbound records found'}</p>
-                <p className="text-xs font-mono">{language === 'id' ? 'Sesuaikan kata kunci pencarian atau filter status Anda.' : 'Try adjusting your search query or status filter.'}</p>
-              </div>
-            ) : (
-              filteredItems.map((item) => {
-                const isSelected = selectedSubmission?.id === item.id;
-                const isConverted = isSubmissionConverted(item.id);
+            {filteredItems.map((item) => {
+              const isSelected = selectedSubmission?.id === item.id;
+              const isConverted = isSubmissionConverted(item.id);
 
-                return (
-                  <div
-                    key={item.id}
-                    onClick={() => handleSelectSubmission(item)}
-                    className={`relative p-4 rounded-2xl border transition-all cursor-pointer font-mono group ${
-                      isSelected
-                        ? 'bg-[#181B22] border-[#E50914] shadow-lg shadow-[#E50914]/10'
-                        : item.status === 'new'
-                        ? 'bg-[#111318] border-rose-500/30 hover:border-rose-500/50'
-                        : 'bg-[#111318] border-[rgba(255,255,255,0.07)] hover:border-[#383C46] hover:bg-[#181B22]'
-                    }`}
-                  >
+              return (
+                <div
+                  key={item.id}
+                  onClick={() => handleSelectSubmission(item)}
+                  className={`relative p-4 rounded-2xl border transition-all cursor-pointer font-mono group ${
+                    isSelected
+                      ? 'bg-[#181B22] border-[#E50914] shadow-lg shadow-[#E50914]/10'
+                      : item.status === 'new'
+                      ? 'bg-[#111318] border-rose-500/30 hover:border-rose-500/50'
+                      : 'bg-[#111318] border-[rgba(255,255,255,0.07)] hover:border-[#383C46] hover:bg-[#181B22]'
+                  }`}
+                >
                     {/* Linear-style Left Accent Strip */}
                     {isSelected && (
                       <span className="absolute left-0 top-3 bottom-3 w-1 bg-[#E50914] rounded-r-full" />
@@ -1101,8 +1146,7 @@ export const AdminInbox: React.FC = () => {
                     )}
                   </div>
                 );
-              })
-            )}
+              })}
           </div>
 
           {/* Right: Message Reader & Command Hub Pane */}
