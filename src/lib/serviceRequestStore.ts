@@ -42,164 +42,35 @@ export interface DailyVolumeData {
   total: number;
 }
 
-const STORAGE_KEY = 'kapitech_ams_service_requests_v1';
+const STORAGE_KEY = 'kapitech_ams_service_requests_v2';
 export const SERVICE_REQUEST_EVENT = 'kapitech_service_requests_updated';
 
-const defaultServiceRequests: ServiceRequest[] = [
-  {
-    id: 'sr_001',
-    requestId: 'SR-8492',
-    title: 'Enterprise Technical SEO & Core Web Vitals Audit',
-    clientName: 'Marcus Thorne',
-    clientCompany: 'Lumina Real Estate Global',
-    serviceType: 'SEO',
-    priority: 'high',
-    assignedMember: {
-      name: 'Pratama Wijaya',
-      role: 'Lead SEO Architect',
-      initials: 'PW',
-      colorBg: 'bg-rose-600'
-    },
-    status: 'in_progress',
-    createdAt: '2026-08-28',
-    dueDate: '2026-09-03',
-    estimatedHours: 24,
-    completedHours: 16,
-    description: 'Full automated crawl inspection, structured schema markup validation, CWV optimization, and canonical mapping.',
-    slaDaysRemaining: 3
-  },
-  {
-    id: 'sr_002',
-    requestId: 'SR-8491',
-    title: 'Interactive 3D Virtual Estate Tour & Mapbox Integration',
-    clientName: 'Aura Luxury Group',
-    clientCompany: 'Aura Luxury Estates',
-    serviceType: 'Web Dev',
-    priority: 'urgent',
-    assignedMember: {
-      name: 'Kevin Salim',
-      role: 'Senior Full-Stack Engineer',
-      initials: 'KS',
-      colorBg: 'bg-indigo-600'
-    },
-    status: 'review',
-    createdAt: '2026-08-27',
-    dueDate: '2026-09-01',
-    estimatedHours: 36,
-    completedHours: 34,
-    description: 'WebGL panoramic viewport rendering with high-resolution texture compression and spatial geo-pins.',
-    slaDaysRemaining: 1
-  },
-  {
-    id: 'sr_003',
-    requestId: 'SR-8490',
-    title: 'Q3 Thought Leadership & Editorial Content Strategy',
-    clientName: 'Nathalie Chen',
-    clientCompany: 'Nexus Logistics AI',
-    serviceType: 'Content',
-    priority: 'medium',
-    assignedMember: {
-      name: 'Sarah Triana',
-      role: 'Editorial Director',
-      initials: 'ST',
-      colorBg: 'bg-purple-600'
-    },
-    status: 'in_progress',
-    createdAt: '2026-08-29',
-    dueDate: '2026-09-08',
-    estimatedHours: 18,
-    completedHours: 8,
-    description: '12 pillar articles focusing on APAC automated logistics optimization, distribution models, and case studies.',
-    slaDaysRemaining: 8
-  },
-  {
-    id: 'sr_004',
-    requestId: 'SR-8489',
-    title: 'Fintech Dashboard Design System & Micro-Interactions',
-    clientName: 'Hendro Kusuma',
-    clientCompany: 'PT Fintek Inovasi Asia',
-    serviceType: 'Design',
-    priority: 'high',
-    assignedMember: {
-      name: 'Dian Nugraha',
-      role: 'Lead Product Designer',
-      initials: 'DN',
-      colorBg: 'bg-emerald-600'
-    },
-    status: 'completed',
-    createdAt: '2026-08-22',
-    dueDate: '2026-08-30',
-    estimatedHours: 40,
-    completedHours: 40,
-    description: 'Figma component tokens, dark-mode atomic primitives, motion guidelines, and interactive micro-animations.',
-    slaDaysRemaining: 0
-  },
-  {
-    id: 'sr_005',
-    requestId: 'SR-8488',
-    title: 'Zero-Downtime Cloud Migration & Redis Caching Layer',
-    clientName: 'Vanguard Studios',
-    clientCompany: 'Vanguard Media Group',
-    serviceType: 'Cloud',
-    priority: 'medium',
-    assignedMember: {
-      name: 'Budi Hartono',
-      role: 'DevOps & SRE Engineer',
-      initials: 'BH',
-      colorBg: 'bg-cyan-600'
-    },
-    status: 'pending',
-    createdAt: '2026-08-30',
-    dueDate: '2026-09-12',
-    estimatedHours: 20,
-    completedHours: 2,
-    description: 'Terraform infrastructure provisioning on Google Cloud Run with Cloud SQL read replicas and CDN caching.',
-    slaDaysRemaining: 12
-  },
-  {
-    id: 'sr_006',
-    requestId: 'SR-8487',
-    title: 'Multilingual Headless CMS Setup & Search Indexing',
-    clientName: 'Siti Rahma',
-    clientCompany: 'Elysian Hospitality Asia',
-    serviceType: 'Web Dev',
-    priority: 'low',
-    assignedMember: {
-      name: 'Kevin Salim',
-      role: 'Senior Full-Stack Engineer',
-      initials: 'KS',
-      colorBg: 'bg-indigo-600'
-    },
-    status: 'in_progress',
-    createdAt: '2026-08-25',
-    dueDate: '2026-09-06',
-    estimatedHours: 28,
-    completedHours: 19,
-    description: 'Sanity.io localized schemas with Algolia instant search indexing and dynamic edge routing.',
-    slaDaysRemaining: 6
-  }
-];
+const defaultServiceRequests: ServiceRequest[] = [];
 
 export const weeklyVolumeDataset: DailyVolumeData[] = [
-  { day: 'Monday', shortDay: 'Mon', seo: 14, content: 18, webDev: 32, design: 20, total: 84 },
-  { day: 'Tuesday', shortDay: 'Tue', seo: 22, content: 15, webDev: 38, design: 24, total: 99 },
-  { day: 'Wednesday', shortDay: 'Wed', seo: 18, content: 24, webDev: 42, design: 28, total: 112 },
-  { day: 'Thursday', shortDay: 'Thu', seo: 28, content: 20, webDev: 48, design: 32, total: 128 },
-  { day: 'Friday', shortDay: 'Fri', seo: 25, content: 22, webDev: 40, design: 26, total: 113 },
-  { day: 'Saturday', shortDay: 'Sat', seo: 10, content: 8, webDev: 18, design: 12, total: 48 },
-  { day: 'Sunday', shortDay: 'Sun', seo: 8, content: 6, webDev: 14, design: 10, total: 38 }
+  { day: 'Monday', shortDay: 'Mon', seo: 0, content: 0, webDev: 0, design: 0, total: 0 },
+  { day: 'Tuesday', shortDay: 'Tue', seo: 0, content: 0, webDev: 0, design: 0, total: 0 },
+  { day: 'Wednesday', shortDay: 'Wed', seo: 0, content: 0, webDev: 0, design: 0, total: 0 },
+  { day: 'Thursday', shortDay: 'Thu', seo: 0, content: 0, webDev: 0, design: 0, total: 0 },
+  { day: 'Friday', shortDay: 'Fri', seo: 0, content: 0, webDev: 0, design: 0, total: 0 },
+  { day: 'Saturday', shortDay: 'Sat', seo: 0, content: 0, webDev: 0, design: 0, total: 0 },
+  { day: 'Sunday', shortDay: 'Sun', seo: 0, content: 0, webDev: 0, design: 0, total: 0 }
 ];
 
 export function getServiceRequests(): ServiceRequest[] {
   try {
+    if (localStorage.getItem('kapitech_ams_service_requests_v1')) {
+      localStorage.removeItem('kapitech_ams_service_requests_v1');
+    }
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultServiceRequests));
-      return defaultServiceRequests;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify([]));
+      return [];
     }
-    return JSON.parse(raw);
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
   } catch {
-    return defaultServiceRequests;
+    return [];
   }
 }
 

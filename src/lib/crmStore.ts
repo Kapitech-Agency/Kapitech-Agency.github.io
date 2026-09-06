@@ -59,7 +59,7 @@ export interface CrmLead {
   updatedAt: string;
 }
 
-const CRM_STORAGE_KEY = 'kapitech_agency_crm_leads';
+const CRM_STORAGE_KEY = 'kapitech_agency_crm_leads_v2';
 export const CRM_EVENT_NAME = 'kapitech_crm_updated';
 
 export const CRM_STAGE_DEFINITIONS: {
@@ -127,208 +127,25 @@ export const CRM_STAGE_DEFINITIONS: {
   }
 ];
 
-// Initial Realistic CRM Deals Seed (in Indonesian Rupiah IDR)
-const defaultCrmLeads: CrmLead[] = [
-  {
-    id: 'crm_deal_01',
-    clientName: 'Marcus Thorne',
-    company: 'Lumina Real Estate Global',
-    email: 'm.thorne@luminarealestate.com',
-    phone: '+62 811-9872-441',
-    servicePillar: 'Web Development',
-    dealValue: 75000000, // Rp 75.000.000
-    stage: 'won',
-    priority: 'high',
-    source: 'Website Form',
-    description: 'Pengembangan portal real estate luxury multi-listing headless Next.js dengan optimasi SEO internasional dan integrasi Virtual Tour 360.',
-    expectedCloseDate: '2026-08-20',
-    assignedTo: 'Lead Full-Stack Tech',
-    notes: [
-      {
-        id: 'n_01',
-        author: 'Principal Admin',
-        text: 'Kontrak Master Service Agreement dan DP 50% telah diterima. Proyek masuk ke tahap sprint perancangan arsitektur.',
-        createdAt: '2026-08-19T10:30:00.000Z',
-        type: 'stage_change'
-      },
-      {
-        id: 'n_02',
-        author: 'Marcus Thorne',
-        text: 'Sangat puas dengan proposal teknis microservices dari tim Kapitech.',
-        createdAt: '2026-08-15T14:20:00.000Z',
-        type: 'meeting'
-      }
-    ],
-    documents: [
-      { id: 'd_01', title: 'Kapitech_Lumina_Signed_SOW.pdf', status: 'signed', updatedAt: '2026-08-19' },
-      { id: 'd_02', title: 'Tech_Architecture_Spec_v2.pdf', status: 'approved', updatedAt: '2026-08-16' }
-    ],
-    createdAt: '2026-08-10T08:00:00.000Z',
-    updatedAt: '2026-08-19T10:30:00.000Z'
-  },
-  {
-    id: 'crm_deal_02',
-    clientName: 'David Miller',
-    company: 'Nexus Fintech Group',
-    email: 'david.miller@nexusfin.io',
-    phone: '+852 9123-4567',
-    servicePillar: 'Mobile App',
-    dealValue: 145000000, // Rp 145.000.000
-    stage: 'negotiation',
-    priority: 'urgent',
-    source: 'Referral',
-    description: 'Perancangan UI/UX Design System dan arsitektur frontend React Native untuk aplikasi mobile wealth management B2C.',
-    expectedCloseDate: '2026-09-10',
-    assignedTo: 'Principal UI/UX Lead',
-    notes: [
-      {
-        id: 'n_03',
-        author: 'David Miller',
-        text: 'Legal team sedang mereview klausul SLA perbankan dan enkripsi AES-256 pada backend.',
-        createdAt: '2026-08-28T09:15:00.000Z',
-        type: 'meeting'
-      },
-      {
-        id: 'n_04',
-        author: 'Principal Admin',
-        text: 'Kirim revisi SOW klausul keamanan & jadwal implementasi 12 minggu.',
-        createdAt: '2026-08-26T16:00:00.000Z',
-        type: 'proposal_sent'
-      }
-    ],
-    documents: [
-      { id: 'd_03', title: 'Nexus_Fintech_Commercial_Proposal.pdf', status: 'sent', updatedAt: '2026-08-26' },
-      { id: 'd_04', title: 'Mutual_NDA_Nexus_Kapitech.pdf', status: 'signed', updatedAt: '2026-08-14' }
-    ],
-    createdAt: '2026-08-12T11:00:00.000Z',
-    updatedAt: '2026-08-28T09:15:00.000Z'
-  },
-  {
-    id: 'crm_deal_03',
-    clientName: 'Elena Rodriguez',
-    company: 'Solaris CleanTech',
-    email: 'e.rodriguez@solarisclean.com.au',
-    phone: '+61 412-345-678',
-    servicePillar: 'AI & Cloud Solutions',
-    dealValue: 120000000, // Rp 120.000.000
-    stage: 'proposal',
-    priority: 'high',
-    source: 'Website Form',
-    description: 'Dashboard telemetri IoT & AI solar farm analytics dengan realtime charting D3/WebGL dan prediksi anomali energi.',
-    expectedCloseDate: '2026-09-15',
-    assignedTo: 'Lead Cloud & AI Engineer',
-    notes: [
-      {
-        id: 'n_05',
-        author: 'Principal Admin',
-        text: 'Proposal teknis dan demo prototype interaktif telah dikirim ke Board of Directors.',
-        createdAt: '2026-08-27T11:30:00.000Z',
-        type: 'proposal_sent'
-      }
-    ],
-    documents: [
-      { id: 'd_05', title: 'Solaris_AI_IoT_Proposal_v1.pdf', status: 'sent', updatedAt: '2026-08-27' }
-    ],
-    createdAt: '2026-08-18T04:00:00.000Z',
-    updatedAt: '2026-08-27T11:30:00.000Z'
-  },
-  {
-    id: 'crm_deal_04',
-    clientName: 'Sarah Chen',
-    company: 'Aura Creative Studio',
-    email: 'sarah.chen@auracreative.sg',
-    phone: '+65 9876-5432',
-    servicePillar: 'Branding & Identity',
-    dealValue: 48000000, // Rp 48.000.000
-    stage: 'contacted',
-    priority: 'medium',
-    source: 'LinkedIn / Outreach',
-    description: 'Rebranding visual identity, luxury 3D guidelines, typography licensing, dan brand book interactive guidelines.',
-    expectedCloseDate: '2026-09-25',
-    assignedTo: 'Creative Brand Director',
-    notes: [
-      {
-        id: 'n_06',
-        author: 'Principal Admin',
-        text: 'Discovery call selesai. Klien meminta estimasi milestone 6 minggu untuk pengerjaan brand book.',
-        createdAt: '2026-08-29T14:00:00.000Z',
-        type: 'call'
-      }
-    ],
-    documents: [],
-    createdAt: '2026-08-22T07:30:00.000Z',
-    updatedAt: '2026-08-29T14:00:00.000Z'
-  },
-  {
-    id: 'crm_deal_05',
-    clientName: 'Julian Vane',
-    company: 'Vivid Commerce Indonesia',
-    email: 'julian@vividcommerce.co.id',
-    phone: '+62 812-8877-6655',
-    servicePillar: 'Web Development',
-    dealValue: 65000000, // Rp 65.000.000
-    stage: 'new',
-    priority: 'high',
-    source: 'Website Form',
-    description: 'Migrasi e-commerce headless Shopify Plus dengan checkout custom Midtrans, optimasi Core Web Vitals, dan mobile-first UI.',
-    expectedCloseDate: '2026-09-30',
-    assignedTo: 'Lead Full-Stack Tech',
-    notes: [
-      {
-        id: 'n_07',
-        author: 'System',
-        text: 'Inbound submission masuk dari formulir website /contact. Perlu penjadwalan Discovery Call.',
-        createdAt: '2026-08-30T03:00:00.000Z',
-        type: 'note'
-      }
-    ],
-    documents: [],
-    createdAt: '2026-08-30T03:00:00.000Z',
-    updatedAt: '2026-08-30T03:00:00.000Z'
-  },
-  {
-    id: 'crm_deal_06',
-    clientName: 'Michael Kross',
-    company: 'Kross Cloud Systems',
-    email: 'm.kross@krosscloud.com',
-    phone: '+60 12-345-6789',
-    servicePillar: 'Digital Product MVP',
-    dealValue: 85000000, // Rp 85.000.000
-    stage: 'won',
-    priority: 'high',
-    source: 'WhatsApp Direct',
-    description: 'Pengembangan MVP SaaS devops dashboard dengan multi-cloud telemetry exporter dan micro-billing integration.',
-    expectedCloseDate: '2026-08-05',
-    assignedTo: 'Lead Full-Stack Tech',
-    notes: [
-      {
-        id: 'n_08',
-        author: 'Principal Admin',
-        text: 'Proyek MVP berhasil di-deliver tepat waktu, klien sedang mempersiapkan fase 2 enterprise scaling.',
-        createdAt: '2026-08-05T12:00:00.000Z',
-        type: 'stage_change'
-      }
-    ],
-    documents: [
-      { id: 'd_06', title: 'Kross_Cloud_Final_Handover_Signoff.pdf', status: 'signed', updatedAt: '2026-08-05' }
-    ],
-    createdAt: '2026-07-20T08:00:00.000Z',
-    updatedAt: '2026-08-05T12:00:00.000Z'
-  }
-];
+// Clean Zero-Data Baseline: No mock or dummy leads seeded
+const defaultCrmLeads: CrmLead[] = [];
 
 export const getCmsLeads = (): CrmLead[] => {
   try {
+    // Purge legacy dummy storage key if present
+    if (localStorage.getItem('kapitech_agency_crm_leads')) {
+      localStorage.removeItem('kapitech_agency_crm_leads');
+    }
     const raw = localStorage.getItem(CRM_STORAGE_KEY);
     if (!raw) {
-      localStorage.setItem(CRM_STORAGE_KEY, JSON.stringify(defaultCrmLeads));
-      return defaultCrmLeads;
+      localStorage.setItem(CRM_STORAGE_KEY, JSON.stringify([]));
+      return [];
     }
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : defaultCrmLeads;
+    return Array.isArray(parsed) ? parsed : [];
   } catch (err) {
     console.debug('Error reading CRM leads:', err);
-    return defaultCrmLeads;
+    return [];
   }
 };
 

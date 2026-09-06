@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useLocation, useNavigate, Outlet } from 'react-router-dom';
 import { 
   LayoutDashboard, 
@@ -32,8 +32,10 @@ import { subscribeToInbox, ContactSubmission } from '../../lib/submissions';
 import { useLanguage } from '../../lib/LanguageContext';
 import { getActiveCurrency, setActiveCurrency, CurrencyCode, CURRENCY_EVENT } from '../../lib/currency';
 import { CommandPalette } from '../../components/admin/CommandPalette';
+import { useRbacRole, StakeholderRole, ROLE_DEFINITIONS } from '../../lib/rbacEngine';
 
 interface NavItem {
+  key: string;
   to: string;
   label: string;
   icon: React.ComponentType<{ size?: number; className?: string }>;
@@ -60,6 +62,9 @@ export const AdminLayout: React.FC = () => {
   const [unreadCount, setUnreadCount] = useState(0);
   const [currentTime, setCurrentTime] = useState<string>('');
   const [currency, setCurrencyState] = useState<CurrencyCode>(getActiveCurrency());
+
+  // Dynamic RBAC Permission Engine
+  const { role: rbacRole, setRole: setRbacRole, roleMeta, isAllowed } = useRbacRole();
 
   useEffect(() => {
     const updateTime = () => {
@@ -138,12 +143,14 @@ export const AdminLayout: React.FC = () => {
       titleKey: 'admin.nav.coreOperations',
       items: [
         {
+          key: 'dashboard',
           to: '/admin/dashboard',
           label: t('admin.nav.dashboard'),
           icon: LayoutDashboard,
           badge: null
         },
         {
+          key: 'inbox',
           to: '/admin/inbox',
           label: t('admin.nav.inbox'),
           icon: Inbox,
@@ -151,6 +158,7 @@ export const AdminLayout: React.FC = () => {
           badgeColor: 'bg-[#E50914] text-white font-bold animate-pulse'
         },
         {
+          key: 'crm',
           to: '/admin/crm',
           label: t('admin.nav.crm'),
           icon: Kanban,
@@ -158,6 +166,7 @@ export const AdminLayout: React.FC = () => {
           badgeColor: 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-bold font-mono'
         },
         {
+          key: 'projects',
           to: '/admin/projects',
           label: t('admin.nav.projects'),
           icon: Layers,
@@ -170,18 +179,21 @@ export const AdminLayout: React.FC = () => {
       titleKey: 'admin.nav.financeRevenue',
       items: [
         {
+          key: 'invoicing',
           to: '/admin/invoicing',
           label: t('admin.nav.invoicing'),
           icon: Receipt,
           badge: null
         },
         {
+          key: 'clients',
           to: '/admin/clients',
           label: t('admin.nav.clients'),
           icon: Building2,
           badge: null
         },
         {
+          key: 'vendors',
           to: '/admin/vendors',
           label: t('admin.nav.vendors'),
           icon: Briefcase,
@@ -195,18 +207,21 @@ export const AdminLayout: React.FC = () => {
       titleKey: 'admin.nav.contentPortfolio',
       items: [
         {
+          key: 'services',
           to: '/admin/cms/services',
           label: t('admin.nav.servicesCatalog'),
           icon: Cpu,
           badge: null
         },
         {
+          key: 'cms_projects',
           to: '/admin/cms/projects',
           label: t('admin.nav.caseStudies'),
           icon: FolderGit2,
           badge: null
         },
         {
+          key: 'testimonials',
           to: '/admin/cms/testimonials',
           label: t('admin.cms.testiTitle'),
           icon: Quote,
@@ -219,12 +234,14 @@ export const AdminLayout: React.FC = () => {
       titleKey: 'admin.nav.administration',
       items: [
         {
+          key: 'settings',
           to: '/admin/settings',
           label: t('admin.nav.settings'),
           icon: Settings,
           badge: null
         },
         {
+          key: 'rbac',
           to: '/admin/settings?tab=rbac',
           label: language === 'id' ? 'Akun & Hak Akses' : 'Accounts & RBAC',
           icon: Users,
@@ -234,6 +251,16 @@ export const AdminLayout: React.FC = () => {
       ]
     }
   ];
+
+  // RBAC Filtered Sections: dynamically show only modules permitted for the current stakeholder role
+  const filteredNavSections = useMemo(() => {
+    return navSections
+      .map(section => ({
+        ...section,
+        items: section.items.filter(item => isAllowed(item.key))
+      }))
+      .filter(section => section.items.length > 0);
+  }, [navSections, isAllowed]);
 
   // Helper to determine if link is active
   const isItemActive = (itemTo: string) => {
@@ -267,7 +294,7 @@ export const AdminLayout: React.FC = () => {
   }
 
   return (
-    <div className="h-screen w-full bg-[#090A0F] text-[#F8FAFC] flex flex-col md:flex-row selection:bg-[#E50914] selection:text-white font-sans antialiased overflow-hidden">
+    <div className="h-screen w-full bg-[#0D0D0F] text-[#F8FAFC] flex flex-col md:flex-row selection:bg-[#E50914] selection:text-white font-sans antialiased overflow-hidden">
       
       {/* Universal Command Palette */}
       <CommandPalette 
@@ -279,13 +306,13 @@ export const AdminLayout: React.FC = () => {
       {/* DESKTOP SIDEBAR */}
       {/* ------------------------------------------------------------- */}
       <aside 
-        className={`hidden md:flex flex-col bg-[#111318] border-r border-[rgba(255,255,255,0.07)] shrink-0 h-full z-30 transition-all duration-300 ${
+        className={`hidden md:flex flex-col bg-[#151518] border-r border-[#242429] shrink-0 h-full z-30 transition-all duration-300 ${
           sidebarCollapsed ? 'w-20' : 'w-64 lg:w-72'
         }`}
       >
         
         {/* Brand Header */}
-        <div className={`h-16 border-b border-[rgba(255,255,255,0.07)] flex items-center bg-[#111318] transition-all ${
+        <div className={`h-16 border-b border-[#242429] flex items-center bg-[#151518] transition-all ${
           sidebarCollapsed ? 'justify-center px-2' : 'justify-between px-4'
         }`}>
           {!sidebarCollapsed ? (
@@ -295,18 +322,18 @@ export const AdminLayout: React.FC = () => {
                   K
                 </div>
                 <div className="min-w-0">
-                  <div className="font-sans font-bold text-[#F8FAFC] text-sm tracking-tight flex items-center gap-1.5">
+                  <div className="font-sans font-bold text-white text-sm tracking-tight flex items-center gap-1.5">
                     <span>KAPITECH</span>
                     <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#E50914]/10 text-[#FF1E27] border border-[#E50914]/30 font-semibold">
                       AMS
                     </span>
                   </div>
-                  <p className="text-[10px] font-mono text-[#8A94A6] -mt-0.5 truncate">Agency Management System</p>
+                  <p className="text-[10px] font-mono text-[#8E8E93] -mt-0.5 truncate">Agency Management System</p>
                 </div>
               </Link>
               <button
                 onClick={() => setSidebarCollapsed(true)}
-                className="w-8 h-8 rounded-lg bg-[#181B22] hover:bg-[#21252F] text-[#8A94A6] hover:text-[#F8FAFC] border border-[rgba(255,255,255,0.07)] transition-colors flex items-center justify-center shrink-0"
+                className="w-8 h-8 rounded-lg bg-[#0D0D0F] hover:bg-[#1A1A1E] text-[#8E8E93] hover:text-white border border-[#242429] transition-colors flex items-center justify-center shrink-0"
                 title="Collapse sidebar"
               >
                 <PanelLeftClose size={15} />
@@ -323,17 +350,17 @@ export const AdminLayout: React.FC = () => {
           )}
         </div>
 
-        {/* Navigation List - 4 Structured Sections */}
+        {/* Navigation List - 4 Structured Sections Filtered by Dynamic RBAC */}
         <div className="flex-1 px-3 py-3 space-y-4 overflow-y-auto custom-scrollbar">
-          {navSections.map((section) => (
+          {filteredNavSections.map((section) => (
             <div key={section.id} className="space-y-1">
               {!sidebarCollapsed && (
-                <div className="text-[11px] font-mono text-[#64748B] font-bold tracking-wider px-3 pt-2 pb-1 uppercase">
+                <div className="text-[11px] font-mono text-[#8E8E93] font-bold tracking-wider px-3 pt-2 pb-1 uppercase">
                   {t(section.titleKey)}
                 </div>
               )}
               {sidebarCollapsed && (
-                <div className="w-6 h-px bg-[rgba(255,255,255,0.07)] mx-auto my-2" />
+                <div className="w-6 h-px bg-[#242429] mx-auto my-2" />
               )}
               {section.items.map((item) => {
                 const Icon = item.icon;
@@ -347,7 +374,7 @@ export const AdminLayout: React.FC = () => {
                     className={`relative flex items-center justify-between px-3 py-2 rounded-lg text-xs font-sans transition-all duration-150 group ${
                       active
                         ? 'bg-[rgba(229,9,20,0.08)] text-white font-medium'
-                        : 'text-[#8A94A6] hover:text-[#F8FAFC] hover:bg-white/[0.04]'
+                        : 'text-[#8E8E93] hover:text-white hover:bg-white/[0.04]'
                     } ${sidebarCollapsed ? 'justify-center px-0' : ''}`}
                   >
                     {/* Linear-style Left Indicator Strip */}
@@ -356,13 +383,13 @@ export const AdminLayout: React.FC = () => {
                     )}
 
                     <div className="flex items-center gap-2.5 min-w-0">
-                      <Icon size={16} className={active ? 'text-[#E50914] shrink-0' : 'text-[#8A94A6] group-hover:text-[#F8FAFC] shrink-0 transition-colors'} />
+                      <Icon size={16} className={active ? 'text-[#E50914] shrink-0' : 'text-[#8E8E93] group-hover:text-white shrink-0 transition-colors'} />
                       {!sidebarCollapsed && <span className="truncate">{item.label}</span>}
                     </div>
 
                     {!sidebarCollapsed && item.badge !== null && item.badge !== undefined && (
                       <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-semibold ml-auto shrink-0 ${
-                        item.badgeColor || 'bg-[#181B22] text-[#8A94A6] border border-[rgba(255,255,255,0.07)]'
+                        item.badgeColor || 'bg-[#0D0D0F] text-[#8E8E93] border border-[#242429]'
                       }`}>
                         {item.badge}
                       </span>
@@ -380,33 +407,33 @@ export const AdminLayout: React.FC = () => {
                 to="/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-between px-3 py-2 rounded-lg text-xs font-mono text-[#8A94A6] hover:text-white hover:bg-white/[0.04] transition-all border border-[rgba(255,255,255,0.07)]"
+                className="flex items-center justify-between px-3 py-2 rounded-lg text-xs font-mono text-[#8E8E93] hover:text-white hover:bg-white/[0.04] transition-all border border-[#242429]"
               >
                 <div className="flex items-center gap-2">
                   <Globe size={14} className="text-emerald-400" />
                   <span>{t('admin.nav.viewSite')}</span>
                 </div>
-                <ExternalLink size={11} className="text-[#64748B]" />
+                <ExternalLink size={11} className="text-[#8E8E93]" />
               </Link>
             </div>
           )}
         </div>
 
-        {/* Footer: Admin Profile Card */}
-        <div className="p-3 border-t border-[rgba(255,255,255,0.07)] bg-[#111318] space-y-2">
+        {/* Footer: Admin Profile & Discrete Role Simulator Dropdown */}
+        <div className="p-3 border-t border-[#242429] bg-[#151518] space-y-2.5">
           <div className={`flex items-center justify-between ${sidebarCollapsed ? 'flex-col gap-2' : ''}`}>
             <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#E50914] to-[#FF1E27] border border-white/10 flex items-center justify-center text-xs font-sans text-white font-bold shrink-0 shadow-sm">
-                {(session?.user?.name || session?.user?.username || 'A').charAt(0).toUpperCase()}
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#E50914] to-[#B80710] border border-white/10 flex items-center justify-center text-xs font-sans text-white font-bold shrink-0 shadow-sm">
+                {roleMeta.accountProfile.avatarLabel}
               </div>
               {!sidebarCollapsed && (
                 <div className="min-w-0">
-                  <div className="text-xs font-semibold text-[#F8FAFC] truncate">
-                    {session?.user?.name || session?.user?.username || 'Admin'}
+                  <div className="text-xs font-semibold text-white truncate">
+                    {roleMeta.accountProfile.displayName}
                   </div>
-                  <div className="text-[10px] font-mono text-emerald-400 truncate flex items-center gap-1">
+                  <div className="text-[10px] font-mono text-[#8E8E93] truncate flex items-center gap-1">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
-                    <span className="truncate">{session?.user?.role || 'Lead Admin'}</span>
+                    <span className="truncate">{roleMeta.accountProfile.accountId}</span>
                   </div>
                 </div>
               )}
@@ -415,11 +442,35 @@ export const AdminLayout: React.FC = () => {
             <button
               onClick={handleLogout}
               title={t('admin.nav.logout')}
-              className="p-2 flex items-center justify-center rounded-lg bg-[#181B22] hover:bg-red-950/40 text-[#8A94A6] hover:text-[#FF1E27] border border-[rgba(255,255,255,0.07)] hover:border-[#E50914]/30 transition-all shrink-0"
+              className="p-2 flex items-center justify-center rounded-lg bg-[#0D0D0F] hover:bg-red-950/40 text-[#8E8E93] hover:text-[#FF1E27] border border-[#242429] hover:border-[#E50914]/30 transition-all shrink-0"
             >
               <LogOut size={14} />
             </button>
           </div>
+
+          {/* Active Stakeholder Role Selector (Dynamic RBAC Engine) */}
+          {!sidebarCollapsed && (
+            <div className="pt-2 border-t border-[#242429]">
+              <div className="flex items-center justify-between text-[10px] font-mono text-[#8E8E93] mb-1 px-0.5">
+                <span className="flex items-center gap-1">
+                  <ShieldCheck size={11} className="text-[#E50914]" />
+                  <span>{language === 'id' ? 'Hak Akses Peran' : 'Active Role'}</span>
+                </span>
+                <span className="text-[8px] px-1 py-0.2 rounded bg-[#0D0D0F] border border-[#242429] text-[#E50914] font-bold">RBAC</span>
+              </div>
+              <select
+                value={rbacRole}
+                onChange={(e) => setRbacRole(e.target.value as StakeholderRole)}
+                className="w-full h-7 px-2 rounded-lg bg-[#0D0D0F] text-white border border-[#242429] hover:border-[#8E8E93]/60 text-[11px] font-mono focus:outline-none focus:border-[#E50914] transition-colors cursor-pointer"
+                title="Select Stakeholder Role to switch RBAC permissions"
+              >
+                <option value="executive">1. Stakeholder Executive (Full Access)</option>
+                <option value="pm">2. Project Manager (PM / Ops Lead)</option>
+                <option value="engineer">3. Teknisi IT / Engineer (DevOps & Infra)</option>
+                <option value="staff">4. Operational Staff (Creative & Dev)</option>
+              </select>
+            </div>
+          )}
         </div>
 
       </aside>
@@ -427,12 +478,12 @@ export const AdminLayout: React.FC = () => {
       {/* ------------------------------------------------------------- */}
       {/* MOBILE TOPBAR - Single, sleek, non-cluttered header */}
       {/* ------------------------------------------------------------- */}
-      <div className="md:hidden flex items-center justify-between px-3.5 py-2.5 bg-[#111318] border-b border-[rgba(255,255,255,0.07)] sticky top-0 z-40 shrink-0 shadow-[0_4px_20px_rgba(0,0,0,0.5)] h-14">
+      <div className="md:hidden flex items-center justify-between px-3.5 py-2.5 bg-[#151518] border-b border-[#242429] sticky top-0 z-40 shrink-0 shadow-[0_4px_20px_rgba(0,0,0,0.5)] h-14">
         <div className="flex items-center gap-2.5">
           <button
             onClick={() => setMobileMenuOpen(true)}
             aria-label="Open navigation menu"
-            className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl bg-[#181B22] text-white border border-[rgba(255,255,255,0.08)] hover:bg-[#21252F] active:scale-95 transition-all shadow-sm"
+            className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl bg-[#0D0D0F] text-white border border-[#242429] hover:bg-[#1A1A1E] active:scale-95 transition-all shadow-sm"
           >
             <Menu size={20} />
           </button>
@@ -443,20 +494,20 @@ export const AdminLayout: React.FC = () => {
             </div>
             <div className="min-w-0">
               <span className="font-sans font-bold text-[#F8FAFC] text-xs tracking-tight block truncate">KAPITECH AMS</span>
-              <span className="text-[9px] font-mono text-[#8A94A6] block truncate -mt-0.5">{activeItemLabel}</span>
+              <span className="text-[9px] font-mono text-[#8E8E93] block truncate -mt-0.5">{activeItemLabel}</span>
             </div>
           </Link>
         </div>
 
         <div className="flex items-center gap-2">
           {/* Mobile Language Switcher */}
-          <div className="flex items-center bg-[#181B22] border border-[rgba(255,255,255,0.08)] rounded-lg p-0.5 font-mono text-[10px]">
+          <div className="flex items-center bg-[#0D0D0F] border border-[#242429] rounded-lg p-0.5 font-mono text-[10px]">
             <button
               onClick={() => setLanguage('en')}
               className={`px-2 py-1 rounded-md font-semibold transition-all ${
                 language === 'en'
-                  ? 'bg-[#111318] text-white shadow-sm border border-white/10 font-bold'
-                  : 'text-[#8A94A6]'
+                  ? 'bg-[#151518] text-white shadow-sm border border-white/10 font-bold'
+                  : 'text-[#8E8E93]'
               }`}
             >
               EN
@@ -465,8 +516,8 @@ export const AdminLayout: React.FC = () => {
               onClick={() => setLanguage('id')}
               className={`px-2 py-1 rounded-md font-semibold transition-all ${
                 language === 'id'
-                  ? 'bg-[#111318] text-white shadow-sm border border-white/10 font-bold'
-                  : 'text-[#8A94A6]'
+                  ? 'bg-[#151518] text-white shadow-sm border border-white/10 font-bold'
+                  : 'text-[#8E8E93]'
               }`}
             >
               ID
@@ -476,7 +527,7 @@ export const AdminLayout: React.FC = () => {
           {/* Quick Currency Pill */}
           <button
             onClick={() => handleSwitchCurrency(currency === 'IDR' ? 'USD' : 'IDR')}
-            className="px-2 py-1.5 rounded-lg bg-[#181B22] border border-[rgba(255,255,255,0.08)] text-[10px] font-mono font-bold text-emerald-400 hover:bg-[#21252F] transition-all min-h-[36px]"
+            className="px-2 py-1.5 rounded-lg bg-[#0D0D0F] border border-[#242429] text-[10px] font-mono font-bold text-emerald-400 hover:bg-[#1A1A1E] transition-all min-h-[36px]"
             title="Toggle Currency"
           >
             {currency}
@@ -492,10 +543,10 @@ export const AdminLayout: React.FC = () => {
             onClick={() => setMobileMenuOpen(false)}
           />
 
-          <div className="relative w-[300px] max-w-[85vw] bg-[#111318] border-r border-[rgba(255,255,255,0.08)] h-[100dvh] flex flex-col justify-between z-50 shadow-[4px_0_30px_rgba(0,0,0,0.8)] overflow-hidden animate-in slide-in-from-left duration-200">
+          <div className="relative w-[300px] max-w-[85vw] bg-[#151518] border-r border-[#242429] h-[100dvh] flex flex-col justify-between z-50 shadow-[4px_0_30px_rgba(0,0,0,0.8)] overflow-hidden animate-in slide-in-from-left duration-200">
             
             {/* Drawer Header */}
-            <div className="p-4 border-b border-[rgba(255,255,255,0.07)] flex items-center justify-between bg-[#111318] shrink-0">
+            <div className="p-4 border-b border-[#242429] flex items-center justify-between bg-[#151518] shrink-0">
               <Link 
                 to="/admin/dashboard" 
                 onClick={() => setMobileMenuOpen(false)}
@@ -511,28 +562,28 @@ export const AdminLayout: React.FC = () => {
                       AMS
                     </span>
                   </div>
-                  <p className="text-[10px] font-mono text-[#8A94A6] -mt-0.5">Agency Management System</p>
+                  <p className="text-[10px] font-mono text-[#8E8E93] -mt-0.5">Agency Management System</p>
                 </div>
               </Link>
 
               <button
                 onClick={() => setMobileMenuOpen(false)}
                 aria-label="Close navigation menu"
-                className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl bg-[#181B22] text-[#8A94A6] hover:text-white border border-[rgba(255,255,255,0.08)] active:scale-95 transition-all"
+                className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl bg-[#0D0D0F] text-[#8E8E93] hover:text-white border border-[#242429] active:scale-95 transition-all"
               >
                 <X size={18} />
               </button>
             </div>
 
             {/* Quick Preferences Bar inside Drawer */}
-            <div className="px-4 py-2.5 bg-[#14171E] border-b border-[rgba(255,255,255,0.05)] flex items-center justify-between shrink-0">
-              <div className="flex items-center gap-1 text-[11px] font-mono text-[#8A94A6]">
+            <div className="px-4 py-2.5 bg-[#1A1A1E] border-b border-[#242429] flex items-center justify-between shrink-0">
+              <div className="flex items-center gap-1 text-[11px] font-mono text-[#8E8E93]">
                 <span>{language === 'id' ? 'Bahasa:' : 'Lang:'}</span>
-                <div className="flex items-center bg-[#181B22] border border-[rgba(255,255,255,0.08)] rounded-md p-0.5">
+                <div className="flex items-center bg-[#0D0D0F] border border-[#242429] rounded-md p-0.5">
                   <button
                     onClick={() => setLanguage('en')}
                     className={`px-2 py-0.5 rounded text-[10px] font-bold transition-all ${
-                      language === 'en' ? 'bg-[#111318] text-white shadow-sm' : 'text-[#8A94A6]'
+                      language === 'en' ? 'bg-[#151518] text-white shadow-sm' : 'text-[#8E8E93]'
                     }`}
                   >
                     EN
@@ -540,7 +591,7 @@ export const AdminLayout: React.FC = () => {
                   <button
                     onClick={() => setLanguage('id')}
                     className={`px-2 py-0.5 rounded text-[10px] font-bold transition-all ${
-                      language === 'id' ? 'bg-[#111318] text-white shadow-sm' : 'text-[#8A94A6]'
+                      language === 'id' ? 'bg-[#151518] text-white shadow-sm' : 'text-[#8E8E93]'
                     }`}
                   >
                     ID
@@ -548,13 +599,13 @@ export const AdminLayout: React.FC = () => {
                 </div>
               </div>
 
-              <div className="flex items-center gap-1 text-[11px] font-mono text-[#8A94A6]">
+              <div className="flex items-center gap-1 text-[11px] font-mono text-[#8E8E93]">
                 <span>{language === 'id' ? 'Valuta:' : 'Curr:'}</span>
-                <div className="flex items-center bg-[#181B22] border border-[rgba(255,255,255,0.08)] rounded-md p-0.5">
+                <div className="flex items-center bg-[#0D0D0F] border border-[#242429] rounded-md p-0.5">
                   <button
                     onClick={() => handleSwitchCurrency('IDR')}
                     className={`px-2 py-0.5 rounded text-[10px] font-bold transition-all ${
-                      currency === 'IDR' ? 'bg-[#111318] text-emerald-400 shadow-sm' : 'text-[#8A94A6]'
+                      currency === 'IDR' ? 'bg-[#151518] text-emerald-400 shadow-sm' : 'text-[#8E8E93]'
                     }`}
                   >
                     IDR
@@ -562,7 +613,7 @@ export const AdminLayout: React.FC = () => {
                   <button
                     onClick={() => handleSwitchCurrency('USD')}
                     className={`px-2 py-0.5 rounded text-[10px] font-bold transition-all ${
-                      currency === 'USD' ? 'bg-[#111318] text-emerald-400 shadow-sm' : 'text-[#8A94A6]'
+                      currency === 'USD' ? 'bg-[#151518] text-emerald-400 shadow-sm' : 'text-[#8E8E93]'
                     }`}
                   >
                     USD
@@ -571,11 +622,11 @@ export const AdminLayout: React.FC = () => {
               </div>
             </div>
 
-            {/* Scrollable Navigation List */}
+            {/* Scrollable Navigation List Filtered by Dynamic RBAC */}
             <div className="flex-1 overflow-y-auto p-3 space-y-4 custom-scrollbar">
-              {navSections.map((section) => (
+              {filteredNavSections.map((section) => (
                 <div key={section.id} className="space-y-1">
-                  <div className="text-[10px] font-mono text-[#64748B] font-bold tracking-wider px-3 pt-1 uppercase">
+                  <div className="text-[10px] font-mono text-[#8E8E93] font-bold tracking-wider px-3 pt-1 uppercase">
                     {t(section.titleKey)}
                   </div>
                   {section.items.map((item) => {
@@ -590,18 +641,18 @@ export const AdminLayout: React.FC = () => {
                         className={`relative flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-sans transition-all min-h-[44px] group ${
                           active 
                             ? 'bg-[rgba(229,9,20,0.1)] text-white font-semibold' 
-                            : 'text-[#8A94A6] hover:text-white hover:bg-white/[0.04]'
+                            : 'text-[#8E8E93] hover:text-white hover:bg-white/[0.04]'
                         }`}
                       >
                         {active && (
                           <span className="absolute left-0 top-2 bottom-2 w-[3px] bg-[#E50914] rounded-r-full" />
                         )}
                         <div className="flex items-center gap-3 min-w-0">
-                          <Icon size={17} className={active ? 'text-[#E50914] shrink-0' : 'text-[#8A94A6] shrink-0'} />
+                          <Icon size={17} className={active ? 'text-[#E50914] shrink-0' : 'text-[#8E8E93] shrink-0'} />
                           <span className="truncate">{item.label}</span>
                         </div>
                         {item.badge !== null && item.badge !== undefined && (
-                          <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold shrink-0 ${item.badgeColor || 'bg-[#181B22] text-[#8A94A6] border border-[rgba(255,255,255,0.07)]'}`}>
+                          <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold shrink-0 ${item.badgeColor || 'bg-[#0D0D0F] text-[#8E8E93] border border-[#242429]'}`}>
                             {item.badge}
                           </span>
                         )}
@@ -618,35 +669,58 @@ export const AdminLayout: React.FC = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-mono text-emerald-400 bg-[#181B22] hover:bg-[#21252F] border border-[rgba(255,255,255,0.07)] min-h-[44px] transition-colors"
+                  className="flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-mono text-emerald-400 bg-[#0D0D0F] hover:bg-[#1A1A1E] border border-[#242429] min-h-[44px] transition-colors"
                 >
                   <div className="flex items-center gap-2.5">
                     <Globe size={15} />
                     <span>{t('admin.nav.viewSite')}</span>
                   </div>
-                  <ExternalLink size={12} className="text-[#64748B]" />
+                  <ExternalLink size={12} className="text-[#8E8E93]" />
                 </Link>
+              </div>
+
+              {/* Mobile Role Selector Dropdown */}
+              <div className="pt-2">
+                <div className="p-3 rounded-xl bg-[#1A1A1E] border border-[#242429] space-y-1.5">
+                  <div className="flex items-center justify-between text-[10px] font-mono text-[#8E8E93]">
+                    <span className="flex items-center gap-1">
+                      <ShieldCheck size={11} className="text-[#E50914]" />
+                      <span>{language === 'id' ? 'Hak Akses Peran' : 'Active Role'}</span>
+                    </span>
+                    <span className="text-[8px] px-1 py-0.2 rounded bg-[#0D0D0F] border border-[#242429] text-[#E50914] font-bold">RBAC</span>
+                  </div>
+                  <select
+                    value={rbacRole}
+                    onChange={(e) => setRbacRole(e.target.value as StakeholderRole)}
+                    className="w-full h-8 px-2 rounded-lg bg-[#0D0D0F] text-white border border-[#242429] text-xs font-mono focus:outline-none focus:border-[#E50914] cursor-pointer"
+                  >
+                    <option value="executive">1. Stakeholder Executive</option>
+                    <option value="pm">2. Project Manager (PM)</option>
+                    <option value="engineer">3. Teknisi IT / Engineer</option>
+                    <option value="staff">4. Operational Staff</option>
+                  </select>
+                </div>
               </div>
             </div>
 
             {/* Bottom session details */}
-            <div className="p-3.5 border-t border-[rgba(255,255,255,0.07)] bg-[#14171E] flex items-center justify-between shrink-0">
+            <div className="p-3.5 border-t border-[#242429] bg-[#1A1A1E] flex items-center justify-between shrink-0">
               <div className="flex items-center gap-2.5 min-w-0">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#E50914] to-[#FF1E27] border border-white/10 flex items-center justify-center text-xs font-sans text-white font-bold shrink-0 shadow-sm">
-                  {(session?.user?.name || session?.user?.username || 'A').charAt(0).toUpperCase()}
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#E50914] to-[#B80710] border border-white/10 flex items-center justify-center text-xs font-sans text-white font-bold shrink-0 shadow-sm">
+                  {roleMeta.accountProfile.avatarLabel}
                 </div>
                 <div className="min-w-0">
-                  <div className="text-xs font-semibold text-[#F8FAFC] truncate">{session?.user?.name || session?.user?.username || 'Admin'}</div>
-                  <div className="text-[10px] font-mono text-emerald-400 truncate flex items-center gap-1">
+                  <div className="text-xs font-semibold text-[#F8FAFC] truncate">{roleMeta.accountProfile.displayName}</div>
+                  <div className="text-[10px] font-mono text-[#8E8E93] truncate flex items-center gap-1">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
-                    <span className="truncate">{session?.user?.role || 'Lead Admin'}</span>
+                    <span className="truncate">{roleMeta.accountProfile.accountId}</span>
                   </div>
                 </div>
               </div>
               <button
                 onClick={handleLogout}
                 aria-label="Logout"
-                className="px-3 py-2 min-h-[44px] rounded-xl bg-[#181B22] hover:bg-red-950/50 border border-[rgba(255,255,255,0.08)] hover:border-[#E50914]/30 text-[#8A94A6] hover:text-[#FF1E27] text-xs font-mono flex items-center gap-1.5 shrink-0 transition-all"
+                className="px-3 py-2 min-h-[44px] rounded-xl bg-[#0D0D0F] hover:bg-red-950/50 border border-[#242429] hover:border-[#E50914]/30 text-[#8E8E93] hover:text-[#FF1E27] text-xs font-mono flex items-center gap-1.5 shrink-0 transition-all"
               >
                 <LogOut size={14} />
                 <span>{t('admin.nav.logout')}</span>
@@ -659,35 +733,51 @@ export const AdminLayout: React.FC = () => {
       {/* ------------------------------------------------------------- */}
       {/* MAIN CONTENT AREA & DESKTOP STICKY TOPBAR */}
       {/* ------------------------------------------------------------- */}
-      <main className="flex-1 flex flex-col min-w-0 h-full overflow-y-auto bg-[#090A0F] custom-scrollbar">
+      <main className="flex-1 flex flex-col min-w-0 h-full overflow-y-auto bg-[#0D0D0F] custom-scrollbar">
         
-        {/* Sticky Desktop Topbar Header (hidden on mobile to prevent double headers) */}
-        <header className="hidden md:flex h-16 px-4 sm:px-6 lg:px-8 border-b border-[rgba(255,255,255,0.07)] bg-[#090A0F]/95 backdrop-blur-md sticky top-0 z-30 items-center justify-between shrink-0 shadow-[0_1px_0_rgba(255,255,255,0.07),0_4px_24px_rgba(0,0,0,0.6)]">
-          <div className="flex items-center gap-2.5 text-xs font-sans text-[#8A94A6]">
+        {/* Sticky Desktop Topbar Header: Clean & Minimal */}
+        <header className="hidden md:flex h-16 px-4 sm:px-6 lg:px-8 border-b border-[#242429] bg-[#0D0D0F]/95 backdrop-blur-md sticky top-0 z-30 items-center justify-between shrink-0 shadow-[0_1px_0_rgba(255,255,255,0.02),0_4px_24px_rgba(0,0,0,0.6)]">
+          {/* Breadcrumb Navigation */}
+          <div className="flex items-center gap-2 text-xs font-sans text-[#8E8E93]">
             {sidebarCollapsed && (
               <button
                 onClick={() => setSidebarCollapsed(false)}
-                className="w-8 h-8 rounded-lg bg-[#111318] hover:bg-[#181B22] text-[#8A94A6] hover:text-[#F8FAFC] border border-[rgba(255,255,255,0.07)] hover:border-[#E50914]/30 transition-all mr-1.5 flex items-center justify-center shrink-0 shadow-sm"
+                className="w-8 h-8 rounded-lg bg-[#151518] hover:bg-[#1A1A1E] text-[#8E8E93] hover:text-white border border-[#242429] hover:border-[#E50914]/30 transition-all mr-1.5 flex items-center justify-center shrink-0 shadow-sm"
                 title="Expand sidebar"
               >
                 <PanelLeftOpen size={15} />
               </button>
             )}
             <span className="font-semibold text-white">Kapitech AMS</span>
-            <ChevronRight size={13} className="text-[#64748B]" />
-            <span className="text-[#F8FAFC] font-medium truncate">{activeItemLabel}</span>
+            <ChevronRight size={13} className="text-[#8E8E93]" />
+            <span className="text-[#A1A1AA] font-medium truncate">{activeItemLabel}</span>
+          </div>
+
+          {/* Minimalist Global Search Bar */}
+          <div className="relative w-64 lg:w-80">
+            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8E8E93]" />
+            <input
+              type="text"
+              onClick={() => setCommandPaletteOpen(true)}
+              readOnly
+              placeholder={t('admin.dash.searchPlaceholder') || "Search projects, clients, tasks (⌘K)..."}
+              className="w-full h-8 pl-8 pr-12 text-xs bg-[#151518] text-white placeholder-[#8E8E93] rounded-lg border border-[#242429] hover:border-[#8E8E93]/50 focus:outline-none focus:border-[#E50914] transition-colors cursor-pointer"
+            />
+            <kbd className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] font-mono text-[#8E8E93] bg-[#0D0D0F] border border-[#242429] px-1.5 py-0.5 rounded pointer-events-none">
+              ⌘K
+            </kbd>
           </div>
 
           {/* Topbar Controls Container */}
-          <div className="flex items-center gap-3 text-xs font-sans text-[#8A94A6]">
+          <div className="flex items-center gap-3 text-xs font-sans text-[#8E8E93]">
             {/* Currency Switcher (IDR / USD) */}
-            <div className="flex items-center bg-[#111318] border border-[rgba(255,255,255,0.07)] rounded-lg p-[3px] font-mono text-xs">
+            <div className="flex items-center bg-[#151518] border border-[#242429] rounded-lg p-[3px] font-mono text-xs">
               <button
                 onClick={() => handleSwitchCurrency('IDR')}
                 className={`px-2.5 py-1 rounded-md font-semibold transition-all ${
                   currency === 'IDR'
-                    ? 'bg-[#181B22] text-emerald-400 shadow-[0_1px_3px_rgba(0,0,0,0.5)] border border-white/10'
-                    : 'text-[#8A94A6] hover:text-white'
+                    ? 'bg-[#0D0D0F] text-emerald-400 shadow-sm border border-[#242429]'
+                    : 'text-[#8E8E93] hover:text-white'
                 }`}
               >
                 IDR
@@ -696,8 +786,8 @@ export const AdminLayout: React.FC = () => {
                 onClick={() => handleSwitchCurrency('USD')}
                 className={`px-2.5 py-1 rounded-md font-semibold transition-all ${
                   currency === 'USD'
-                    ? 'bg-[#181B22] text-emerald-400 shadow-[0_1px_3px_rgba(0,0,0,0.5)] border border-white/10'
-                    : 'text-[#8A94A6] hover:text-white'
+                    ? 'bg-[#0D0D0F] text-emerald-400 shadow-sm border border-[#242429]'
+                    : 'text-[#8E8E93] hover:text-white'
                 }`}
               >
                 USD
@@ -705,13 +795,13 @@ export const AdminLayout: React.FC = () => {
             </div>
 
             {/* Language Switcher (EN / ID) */}
-            <div className="flex items-center bg-[#111318] border border-[rgba(255,255,255,0.07)] rounded-lg p-[3px] font-mono text-xs">
+            <div className="flex items-center bg-[#151518] border border-[#242429] rounded-lg p-[3px] font-mono text-xs">
               <button
                 onClick={() => setLanguage('en')}
                 className={`px-2.5 py-1 rounded-md font-semibold transition-all ${
                   language === 'en'
-                    ? 'bg-[#181B22] text-white shadow-[0_1px_3px_rgba(0,0,0,0.5)] border border-white/10'
-                    : 'text-[#8A94A6] hover:text-white'
+                    ? 'bg-[#0D0D0F] text-white shadow-sm border border-[#242429]'
+                    : 'text-[#8E8E93] hover:text-white'
                 }`}
               >
                 EN
@@ -720,8 +810,8 @@ export const AdminLayout: React.FC = () => {
                 onClick={() => setLanguage('id')}
                 className={`px-2.5 py-1 rounded-md font-semibold transition-all ${
                   language === 'id'
-                    ? 'bg-[#181B22] text-white shadow-[0_1px_3px_rgba(0,0,0,0.5)] border border-white/10'
-                    : 'text-[#8A94A6] hover:text-white'
+                    ? 'bg-[#0D0D0F] text-white shadow-sm border border-[#242429]'
+                    : 'text-[#8E8E93] hover:text-white'
                 }`}
               >
                 ID
@@ -729,9 +819,9 @@ export const AdminLayout: React.FC = () => {
             </div>
 
             {/* Live Studio Clock */}
-            <div className="flex items-center gap-1.5 bg-[#181B22] px-2.5 py-1.5 rounded-lg border border-[rgba(255,255,255,0.07)] text-[11px] font-mono text-[#8A94A6]">
+            <div className="flex items-center gap-1.5 bg-[#151518] px-2.5 py-1.5 rounded-lg border border-[#242429] text-[11px] font-mono text-[#8E8E93]">
               <Clock size={12} className="text-[#FF1E27]" />
-              <span>{currentTime || 'Jakarta WIB'}</span>
+              <span className="text-white font-medium">{currentTime || 'Jakarta WIB'}</span>
             </div>
 
             {/* Public Domain Switcher */}
@@ -739,7 +829,7 @@ export const AdminLayout: React.FC = () => {
               to="/"
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden lg:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[#181B22] border border-[rgba(255,255,255,0.07)] hover:border-white/10 text-[11px] font-mono text-[#8A94A6] hover:text-white transition-colors"
+              className="hidden lg:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[#151518] border border-[#242429] hover:border-[#8E8E93]/40 text-[11px] font-mono text-[#8E8E93] hover:text-white transition-colors"
             >
               <span>kapitech.id</span>
               <ExternalLink size={10} />

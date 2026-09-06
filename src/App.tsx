@@ -41,6 +41,7 @@ import { AdminCmsTestimonials } from './pages/admin/AdminCmsTestimonials';
 import { AdminVendors } from './pages/admin/AdminVendors';
 import { AdminSettings } from './pages/admin/AdminSettings';
 import { RequireAdminAuth } from './components/admin/RequireAdminAuth';
+import { GlobalExecutiveDashboard } from './components/admin/GlobalExecutiveDashboard';
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -83,6 +84,9 @@ const AnimatedRoutes = () => {
           {/* Public access points relocated: redirect /inbox directly to protected admin inbox */}
           <Route path="/inbox" element={<Navigate to="/admin/inbox" replace />} />
 
+          {/* Direct AMS Executive Gateway */}
+          <Route path="/ams" element={<GlobalExecutiveDashboard showSidebar={true} />} />
+
           {/* Admin Authentication Gateway */}
           <Route path="/admin/login" element={<AdminLogin />} />
 
@@ -97,6 +101,7 @@ const AnimatedRoutes = () => {
           >
             <Route index element={<Navigate to="/admin/dashboard" replace />} />
             <Route path="dashboard" element={<AdminDashboard />} />
+            <Route path="executive" element={<GlobalExecutiveDashboard showSidebar={true} />} />
             <Route path="inbox" element={<AdminInbox />} />
             <Route path="crm" element={<AdminCrm />} />
             <Route path="invoicing" element={<AdminInvoicing />} />

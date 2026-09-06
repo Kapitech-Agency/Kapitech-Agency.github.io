@@ -405,32 +405,6 @@ export const AdminCrm: React.FC = () => {
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
-          {/* View Mode Toggle */}
-          <div className="h-10 p-1 flex items-center rounded-xl bg-[#111318] border border-[rgba(255,255,255,0.07)] font-mono text-xs">
-            <button
-              onClick={() => setViewMode('kanban')}
-              className={`h-8 px-3 rounded-lg transition-all font-semibold flex items-center gap-1.5 ${
-                viewMode === 'kanban'
-                  ? 'bg-[#181B22] text-white border border-[rgba(255,255,255,0.07)] shadow-sm'
-                  : 'text-[#8A94A6] hover:text-white'
-              }`}
-            >
-              <Kanban size={13} />
-              <span>{t('admin.crm.kanbanView')}</span>
-            </button>
-            <button
-              onClick={() => setViewMode('list')}
-              className={`h-8 px-3 rounded-lg transition-all font-semibold flex items-center gap-1.5 ${
-                viewMode === 'list'
-                  ? 'bg-[#181B22] text-white border border-[rgba(255,255,255,0.07)] shadow-sm'
-                  : 'text-[#8A94A6] hover:text-white'
-              }`}
-            >
-              <List size={13} />
-              <span>{t('admin.crm.listView')}</span>
-            </button>
-          </div>
-
           {/* Currency Switcher */}
           <div className="h-10 p-1 flex items-center rounded-xl bg-[#111318] border border-[rgba(255,255,255,0.07)] font-mono text-xs">
             <button
@@ -668,7 +642,7 @@ export const AdminCrm: React.FC = () => {
                   onDragOver={(e) => handleDragOverColumn(e, stageDef.key)}
                   onDragLeave={handleDragLeaveColumn}
                   onDrop={(e) => handleDropOnColumn(e, stageDef.key)}
-                  className={`bg-[#111318] border rounded-2xl flex flex-col flex-1 min-w-[260px] max-w-[320px] shrink-0 transition-all ${
+                  className={`bg-[#111318] border rounded-2xl flex flex-col flex-1 min-w-[280px] max-w-[340px] shrink-0 transition-all ${
                     isOver ? 'border-[#E50914] ring-2 ring-[#E50914]/30 bg-[#E50914]/5' : 'border-[rgba(255,255,255,0.07)]'
                   }`}
                 >
@@ -720,7 +694,7 @@ export const AdminCrm: React.FC = () => {
                             draggable={true}
                             onDragStart={(e) => handleDragStart(e, lead.id)}
                             onClick={() => handleOpenLeadDrawer(lead)}
-                            className={`draggable-card kanban-card bg-[#111318] hover:bg-[#21252F] border hover:border-[#E50914]/60 rounded-xl p-3.5 cursor-pointer transition-all shadow-md group relative ${
+                            className={`draggable-card kanban-card bg-[#111318] hover:bg-[#181B22] border hover:border-[#E50914]/60 rounded-xl p-3.5 cursor-pointer transition-all shadow-md group relative ${
                               isDragging ? 'opacity-40 scale-95 border-[#E50914] border-dashed' : 'border-[rgba(255,255,255,0.07)]'
                             }`}
                           >
@@ -741,75 +715,71 @@ export const AdminCrm: React.FC = () => {
                             <h4 className="text-xs font-bold text-white font-display leading-snug group-hover:text-[#FF1E27] transition-colors line-clamp-1">
                               {lead.clientName}
                             </h4>
-                            <p className="text-[11px] text-[#8A94A6] font-mono truncate mb-3">
+                            <p className="text-[11px] text-[#8A94A6] font-mono truncate mb-2.5">
                               {lead.company}
                             </p>
 
-                            {/* Deal Value */}
+                            {/* Deal Value & Source */}
                             <div className="flex items-center justify-between text-xs font-mono pb-2.5 mb-2.5 border-t border-[rgba(255,255,255,0.07)] pt-2">
-                              <span className="text-emerald-400 font-bold font-display text-sm">
+                              <span className="text-emerald-400 font-bold font-display text-sm tracking-tight">
                                 {formatAmount(lead.dealValue, currency)}
                               </span>
-                              <span className="text-[10px] text-[#64748B]">
+                              <span className="text-[10px] text-[#8A94A6] font-mono px-1.5 py-0.5 rounded bg-[#181B22] border border-[rgba(255,255,255,0.07)] shrink-0">
                                 {lead.source}
                               </span>
                             </div>
 
                             {/* Card Bottom: Quick Actions */}
-                            <div className="flex items-center justify-between text-[10px] font-mono text-[#8A94A6] pt-1" onClick={(e) => e.stopPropagation()}>
-                              {/* Quick Move Stage Selector */}
-                              <select
-                                value={lead.stage}
-                                onChange={(e) => handleStageChange(lead.id, e.target.value as CrmStage)}
-                                className="bg-[#181B22] border border-[rgba(255,255,255,0.07)] text-[#D0D4DC] rounded-lg px-2 py-1 text-[10px] focus:outline-none focus:border-[#E50914] font-mono max-w-[105px]"
-                              >
-                                {CRM_STAGE_DEFINITIONS.map(s => (
-                                  <option key={s.key} value={s.key}>
-                                    {language === 'id' ? s.labelId : s.label}
-                                  </option>
-                                ))}
-                              </select>
-
-                              {/* Quick Actions */}
-                              <div className="flex items-center gap-1.5">
+                            <div className="flex items-center justify-between gap-2 pt-0.5" onClick={(e) => e.stopPropagation()}>
+                              {/* Left: Won / Project status action */}
+                              <div className="flex items-center gap-1.5 shrink-0">
                                 {lead.stage !== 'won' && lead.stage !== 'lost' && (
                                   <button
                                     onClick={() => handleStageChange(lead.id, 'won')}
-                                    title="Mark deal as Won"
-                                    className="px-2 py-1 rounded-lg bg-emerald-950/60 hover:bg-emerald-900/80 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold font-mono transition-colors flex items-center gap-1"
+                                    title={language === 'id' ? 'Tandai Deal Dimenangkan (Won)' : 'Mark deal as Won'}
+                                    className="h-7 px-2.5 rounded-lg bg-emerald-950/60 hover:bg-emerald-900/80 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold font-mono transition-all flex items-center gap-1 active:scale-95 whitespace-nowrap"
                                   >
-                                    <Check size={10} />
+                                    <Check size={11} className="text-emerald-400" />
                                     <span>Won</span>
                                   </button>
                                 )}
                                 {lead.stage === 'won' && (
                                   <button
                                     onClick={() => handleConvertToProject(lead)}
-                                    title="Create active Agency Project"
-                                    className="px-2 py-1 rounded-lg bg-[#E50914]/20 hover:bg-[#E50914]/40 text-[#FF1E27] border border-[#E50914]/30 text-[10px] font-bold font-mono transition-colors flex items-center gap-1"
+                                    title={language === 'id' ? 'Konversi ke Proyek Aktif' : 'Convert deal to Agency Project'}
+                                    className="h-7 px-2.5 rounded-lg bg-[#E50914]/20 hover:bg-[#E50914]/40 text-[#FF1E27] border border-[#E50914]/30 text-[10px] font-bold font-mono transition-all flex items-center gap-1 active:scale-95 shadow-sm whitespace-nowrap"
                                   >
-                                    <Layers size={10} />
+                                    <Layers size={11} />
                                     <span>Project</span>
                                   </button>
                                 )}
+                                {lead.stage === 'lost' && (
+                                  <span className="text-[10px] font-mono text-[#64748B] px-2 py-1 rounded bg-[#181B22] border border-[rgba(255,255,255,0.07)] whitespace-nowrap">
+                                    Closed Lost
+                                  </span>
+                                )}
+                              </div>
+
+                              {/* Right: Quick actions (WhatsApp + Inspect) */}
+                              <div className="flex items-center gap-1.5 shrink-0">
                                 {lead.phone && (
                                   <a
                                     href={`https://wa.me/${cleanPhone(lead.phone)}?text=Halo%20${encodeURIComponent(lead.clientName)},%20kami%20dari%20tim%20Kapitech%20Agency...`}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    title="Send WhatsApp message"
-                                    className="p-1.5 rounded-lg bg-[#181B22] hover:bg-emerald-950/60 text-emerald-400 border border-[rgba(255,255,255,0.07)] transition-colors"
+                                    title={language === 'id' ? 'Kirim Pesan WhatsApp' : 'Send WhatsApp message'}
+                                    className="h-7 w-7 rounded-lg bg-[#181B22] hover:bg-emerald-950/60 text-[#8A94A6] hover:text-emerald-400 border border-[rgba(255,255,255,0.07)] hover:border-emerald-500/30 transition-all flex items-center justify-center shrink-0"
                                   >
                                     <Send size={11} />
                                   </a>
                                 )}
                                 <button
                                   onClick={() => handleOpenLeadDrawer(lead)}
-                                  title="Inspect lead profile & notes"
-                                  className="px-2 py-1 rounded-lg bg-[#181B22] hover:bg-[#21252F] text-[#8A94A6] hover:text-white border border-[rgba(255,255,255,0.07)] text-[10px] font-mono transition-colors flex items-center gap-1"
+                                  title={language === 'id' ? 'Lihat profil lead & catatan' : 'Inspect lead profile & notes'}
+                                  className="h-7 px-2.5 rounded-lg bg-[#181B22] hover:bg-[#21252F] text-[#8A94A6] hover:text-white border border-[rgba(255,255,255,0.07)] text-[10px] font-mono transition-all flex items-center gap-1 active:scale-95 whitespace-nowrap"
                                 >
                                   <span>Inspect</span>
-                                  <ArrowUpRight size={10} />
+                                  <ArrowUpRight size={11} />
                                 </button>
                               </div>
                             </div>
