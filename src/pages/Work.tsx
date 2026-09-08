@@ -451,7 +451,7 @@ export const Work = () => {
                     className="cursor-pointer group rounded-2xl overflow-hidden border border-[#262930] bg-[#16181D] hover:bg-[#1E2128] hover:border-brand-red/40 transition-all duration-300 flex flex-col h-full"
                   >
                     {/* Thumbnail Image */}
-                    <div className="relative h-56 sm:h-60 overflow-hidden bg-[#0B0C0E]">
+                    <div className="relative aspect-[16/10] overflow-hidden bg-[#0B0C0E]">
                       <img 
                         src={project.image} 
                         alt={project.title}

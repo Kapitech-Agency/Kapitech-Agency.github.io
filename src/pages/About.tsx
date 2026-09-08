@@ -404,12 +404,12 @@ export const About = () => {
                 className="rounded-2xl bg-[#151518] border border-[#242429] overflow-hidden flex flex-col justify-between group hover:border-brand-red/40 transition-colors"
               >
                 <div>
-                  <div className="h-52 sm:h-56 overflow-hidden bg-[#0D0D0F] relative">
+                  <div className="w-full aspect-[864/810] overflow-hidden bg-[#0D0D0F] relative">
                     <img
                       src={member.image}
                       alt={member.name}
                       referrerPolicy="no-referrer"
-                      className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                      className="w-full h-full object-contain object-center group-hover:scale-105 transition-transform duration-500"
                     />
                   </div>
                   <div className="p-4 sm:p-5">

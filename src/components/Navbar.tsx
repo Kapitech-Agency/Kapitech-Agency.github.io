@@ -104,9 +104,9 @@ export const Navbar = () => {
             <img 
               src="/Logo White.png" 
               alt="Kapitech Agency" 
-              className="h-5 sm:h-[22px] md:h-6 w-auto object-contain transition-opacity duration-300 group-hover:opacity-90 shrink-0"
+              className="h-6 sm:h-[22px] md:h-6 w-auto object-contain transition-opacity duration-300 group-hover:opacity-90 shrink-0"
             />
-            <span className="font-display font-bold text-[15px] sm:text-base md:text-[17px] tracking-[-0.02em] text-white group-hover:text-brand-red transition-colors whitespace-nowrap">
+            <span className="hidden sm:inline font-display font-bold text-[15px] sm:text-base md:text-[17px] tracking-[-0.02em] text-white group-hover:text-brand-red transition-colors whitespace-nowrap">
               Kapitech Agency
             </span>
           </Link>
@@ -452,9 +452,9 @@ export const Navbar = () => {
                 <img 
                   src="/Logo White.png" 
                   alt="Kapitech" 
-                  className="h-5 sm:h-[22px] w-auto object-contain shrink-0 transition-opacity group-hover:opacity-90"
+                  className="h-6 sm:h-[22px] w-auto object-contain shrink-0 transition-opacity group-hover:opacity-90"
                 />
-                <span className="font-display font-bold text-[15px] sm:text-base text-white group-hover:text-brand-red transition-colors">
+                <span className="hidden sm:inline font-display font-bold text-[15px] sm:text-base text-white group-hover:text-brand-red transition-colors">
                   Kapitech Agency
                 </span>
               </Link>
