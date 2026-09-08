@@ -50,7 +50,7 @@ export const About = () => {
     { 
       year: "2021", 
       title: "Agency Inception", 
-      desc: "Founded as a specialized digital studio by Fikri Nurlete and Reynaldo Frasiskus Anakotta, delivering custom web products and brand identities." 
+      desc: "Founded as a specialized digital studio by Fikri Nurlete and Reynaldo Fransiskus Anakotta, delivering custom web products and brand identities." 
     },
     { 
       year: "2022", 
@@ -73,7 +73,7 @@ export const About = () => {
     { 
       year: "2021", 
       title: "Awal Berdirinya Agensi", 
-      desc: "Didirikan sebagai studio digital khusus oleh Fikri Nurlete dan Reynaldo Frasiskus Anakotta, menghadirkan produk web kustom dan identitas brand modern." 
+      desc: "Didirikan sebagai studio digital khusus oleh Fikri Nurlete dan Reynaldo Fransiskus Anakotta, menghadirkan produk web kustom dan identitas brand modern." 
     },
     { 
       year: "2022", 
@@ -222,7 +222,7 @@ export const About = () => {
       bio: "Leads agency vision, technical architecture, and client partnerships to deliver scalable digital products."
     },
     {
-      name: "Reynaldo Frasiskus Anakotta",
+      name: "Reynaldo Fransiskus Anakotta",
       role: "Co-Founder & Project Manager",
       image: "/3.png",
       bio: "Directs agile project management, sprint delivery, and operational workflows ensuring on-time release."
@@ -236,7 +236,7 @@ export const About = () => {
     {
       name: "Ibrahim M.I",
       role: "Chief Marketing Officer",
-      image: "/src/assets/images/ibrahim_cmo_1787755628692.jpg",
+      image: "/5.png",
       bio: "Spearheads marketing strategy, client acquisition, brand storytelling, and strategic partnerships."
     },
     {
@@ -255,7 +255,7 @@ export const About = () => {
       bio: "Memimpin visi agensi, arsitektur teknis, dan kemitraan klien untuk produk digital berskala tinggi."
     },
     {
-      name: "Reynaldo Frasiskus Anakotta",
+      name: "Reynaldo Fransiskus Anakotta",
       role: "Co-Founder & Project Manager",
       image: "/3.png",
       bio: "Mengawasi manajemen proyek agile, eksekusi sprint, dan ketepatan jadwal rilis produk."
@@ -269,7 +269,7 @@ export const About = () => {
     {
       name: "Ibrahim M.I",
       role: "Chief Marketing Officer",
-      image: "/src/assets/images/ibrahim_cmo_1787755628692.jpg",
+      image: "/5.png",
       bio: "Memimpin strategi pemasaran, akuisisi klien, narasi brand, dan kemitraan strategis global."
     },
     {
@@ -401,13 +401,14 @@ export const About = () => {
             {team.map((member) => (
               <div
                 key={member.name}
-                className="rounded-2xl bg-[#161616] border border-[#2A2A2A] overflow-hidden flex flex-col justify-between group hover:border-brand-red/40 transition-colors"
+                className="rounded-2xl bg-[#151518] border border-[#242429] overflow-hidden flex flex-col justify-between group hover:border-brand-red/40 transition-colors"
               >
                 <div>
-                  <div className="h-52 sm:h-56 overflow-hidden bg-[#0A0A0A] relative">
+                  <div className="h-52 sm:h-56 overflow-hidden bg-[#0D0D0F] relative">
                     <img
                       src={member.image}
                       alt={member.name}
+                      referrerPolicy="no-referrer"
                       className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
                     />
                   </div>

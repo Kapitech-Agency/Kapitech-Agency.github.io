@@ -100,13 +100,13 @@ export const Navbar = () => {
           style={{ scaleX }}
         />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2.5 sm:gap-3 group py-1" aria-label="Kapitech Agency Home">
+          <Link to="/" className="flex items-center gap-2.5 sm:gap-3 group py-1 shrink-0" aria-label="Kapitech Agency Home">
             <img 
-              src="/Kapitech Logo 3D Glass.png" 
+              src="/Logo White.png" 
               alt="Kapitech Agency" 
-              className="h-8 sm:h-9 md:h-10 w-auto object-contain transition-opacity duration-300 group-hover:opacity-90"
+              className="h-5 sm:h-[22px] md:h-6 w-auto object-contain transition-opacity duration-300 group-hover:opacity-90 shrink-0"
             />
-            <span className="font-display font-bold text-base sm:text-lg tracking-tight text-white group-hover:text-brand-red transition-colors">
+            <span className="font-display font-bold text-[15px] sm:text-base md:text-[17px] tracking-[-0.02em] text-white group-hover:text-brand-red transition-colors whitespace-nowrap">
               Kapitech Agency
             </span>
           </Link>
@@ -447,14 +447,16 @@ export const Navbar = () => {
               <Link 
                 to="/" 
                 onClick={() => setIsMenuOpen(false)}
-                className="flex items-center gap-2.5"
+                className="flex items-center gap-2.5 group"
               >
                 <img 
-                  src="/Kapitech Logo 3D Glass.png" 
+                  src="/Logo White.png" 
                   alt="Kapitech" 
-                  className="h-8 w-auto object-contain"
+                  className="h-5 sm:h-[22px] w-auto object-contain shrink-0 transition-opacity group-hover:opacity-90"
                 />
-                <span className="font-display font-bold text-base text-white">Kapitech Agency</span>
+                <span className="font-display font-bold text-[15px] sm:text-base text-white group-hover:text-brand-red transition-colors">
+                  Kapitech Agency
+                </span>
               </Link>
               
               <div className="flex items-center gap-2">

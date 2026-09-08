@@ -201,13 +201,15 @@ export const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8 mb-16">
           {/* Col 1: Brand & Newsletter (4 cols) */}
           <div className="lg:col-span-4 space-y-6">
-            <Link to="/" className="flex items-center gap-3" aria-label="Kapitech Agency Home">
+            <Link to="/" className="inline-flex items-center gap-3 group" aria-label="Kapitech Agency Home">
               <img 
-                src="/Kapitech Logo 3D Glass.png" 
+                src="/Logo White.png" 
                 alt="Kapitech Agency" 
-                className="h-9 w-auto object-contain"
+                className="h-6 sm:h-7 w-auto object-contain transition-opacity duration-300 group-hover:opacity-90 shrink-0"
               />
-              <span className="font-display font-bold text-lg text-white">Kapitech Agency</span>
+              <span className="font-display font-bold text-lg tracking-tight text-white group-hover:text-brand-red transition-colors">
+                Kapitech Agency
+              </span>
             </Link>
             <p className="text-xs text-[#8A909D] font-light leading-relaxed max-w-sm">
               {t('footer.about')}

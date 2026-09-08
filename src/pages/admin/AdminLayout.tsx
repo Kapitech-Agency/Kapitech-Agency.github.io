@@ -318,8 +318,8 @@ export const AdminLayout: React.FC = () => {
           {!sidebarCollapsed ? (
             <>
               <Link to="/admin/dashboard" className="flex items-center gap-3 group overflow-hidden">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#E50914] to-[#FF1E27] flex items-center justify-center text-white font-bold font-sans shadow-[0_0_16px_rgba(229,9,20,0.3)] text-sm shrink-0">
-                  K
+                <div className="h-8 px-2.5 rounded-lg bg-[#18191E] border border-[#262830] flex items-center justify-center shrink-0 shadow-sm group-hover:border-[#E50914]/40 transition-colors">
+                  <img src="/Logo White.png" alt="Kapitech" className="h-3.5 w-auto object-contain" />
                 </div>
                 <div className="min-w-0">
                   <div className="font-sans font-bold text-white text-sm tracking-tight flex items-center gap-1.5">
@@ -342,10 +342,10 @@ export const AdminLayout: React.FC = () => {
           ) : (
             <Link 
               to="/admin/dashboard" 
-              className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#E50914] to-[#FF1E27] flex items-center justify-center text-white font-bold font-sans shadow-[0_0_16px_rgba(229,9,20,0.3)] text-sm hover:scale-105 transition-transform shrink-0"
+              className="w-9 h-9 rounded-xl bg-[#18191E] border border-[#262830] flex items-center justify-center shrink-0 shadow-sm hover:border-[#E50914]/40 hover:scale-105 transition-all p-1.5"
               title="Kapitech AMS Dashboard"
             >
-              K
+              <img src="/favicon.png" alt="Kapitech" className="w-full h-full object-contain" />
             </Link>
           )}
         </div>
@@ -552,8 +552,8 @@ export const AdminLayout: React.FC = () => {
                 onClick={() => setMobileMenuOpen(false)}
                 className="flex items-center gap-2.5"
               >
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#E50914] to-[#FF1E27] flex items-center justify-center text-white font-bold text-xs shadow-[0_0_12px_rgba(229,9,20,0.35)] shrink-0">
-                  K
+                <div className="h-8 px-2.5 rounded-lg bg-[#18191E] border border-[#262830] flex items-center justify-center shrink-0 shadow-sm">
+                  <img src="/Logo White.png" alt="Kapitech" className="h-3.5 w-auto object-contain" />
                 </div>
                 <div>
                   <div className="font-sans font-bold text-[#F8FAFC] text-sm tracking-tight flex items-center gap-1.5">

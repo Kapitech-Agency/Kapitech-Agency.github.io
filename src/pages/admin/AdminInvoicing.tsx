@@ -1104,8 +1104,8 @@ export const AdminInvoicing: React.FC = () => {
             {/* Sticky Header for Preview Modal */}
             <div className="sticky top-0 z-20 bg-white/95 backdrop-blur-md px-6 py-4 border-b border-zinc-200 flex items-center justify-between shrink-0">
               <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-lg bg-red-600 flex items-center justify-center text-white font-bold text-xs">
-                  K
+                <div className="w-7 h-7 rounded-lg bg-zinc-900 flex items-center justify-center p-1 shadow-sm">
+                  <img src="/favicon.png" alt="Kapitech" className="w-full h-full object-contain" />
                 </div>
                 <div>
                   <span className="text-sm font-bold font-display tracking-tight text-zinc-900 block">KAPITECH INVOICE</span>
