@@ -49,6 +49,8 @@ import {
   CRM_EVENT_NAME 
 } from '../../lib/crmStore';
 import { saveAgencyProject, AgencyProject } from '../../lib/projectStore';
+import { saveAgencyInvoice } from '../../lib/financeStore';
+import { saveAgencyClient } from '../../lib/clientStore';
 import { useLanguage } from '../../lib/LanguageContext';
 import { useDragToScroll } from '../../lib/useDragToScroll';
 import { ScrollShadowContainer } from '../../components/ui/ScrollShadowContainer';
@@ -253,8 +255,72 @@ export const AdminCrm: React.FC = () => {
       updatedAt: new Date().toISOString()
     };
 
+    // 1. Save Active Agency Project
     saveAgencyProject(newProj);
-    showToast(language === 'id' ? `Proyek aktif dibuat di Task Board!` : `Active project created in Projects workspace!`);
+
+    // 2. Automatically generate 50% Retainer Down Payment Invoice
+    const downPaymentAmount = Math.round(lead.dealValue * 0.5);
+    const taxAmount = Math.round(downPaymentAmount * 0.11);
+    saveAgencyInvoice({
+      id: 'inv_' + Date.now().toString(36),
+      invoiceNumber: `KAPI-INV-${new Date().getFullYear()}-${Math.floor(100 + Math.random() * 900)}`,
+      type: 'invoice',
+      clientName: lead.clientName,
+      clientCompany: lead.company,
+      clientEmail: lead.email || '',
+      clientPhone: lead.phone || '',
+      projectId: newProj.id,
+      leadId: lead.id,
+      items: [
+        {
+          id: 'item_1',
+          description: `${lead.company} — 50% Kickoff Retainer & Sprint Deliverables (${lead.servicePillar})`,
+          quantity: 1,
+          unitPrice: downPaymentAmount,
+          amount: downPaymentAmount
+        }
+      ],
+      subtotal: downPaymentAmount,
+      discountPercent: 0,
+      discountAmount: 0,
+      taxPercent: 11,
+      taxAmount: taxAmount,
+      total: downPaymentAmount + taxAmount,
+      currency: 'IDR',
+      status: 'sent',
+      issueDate: new Date().toISOString().split('T')[0],
+      dueDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      notes: 'Invoice Retainer Down Payment 50% untuk memulai sprint implementasi teknis.',
+      paymentTerms: 'Bank Transfer Net 14. Mandiri: 123-00-998877-1 / BCA: 889-012-3344 a/n PT Kapitech Digital Indonesia',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    });
+
+    // 3. Centralized Client Directory Synchronization
+    saveAgencyClient({
+      id: 'cli_' + Date.now().toString(36),
+      name: lead.clientName,
+      company: lead.company,
+      email: lead.email || '',
+      phone: lead.phone || '',
+      location: 'Indonesia',
+      industry: lead.servicePillar,
+      status: 'active',
+      totalSpend: lead.dealValue,
+      projectsCount: 1,
+      contactPersonRole: 'Primary Stakeholder',
+      notes: `Converted from CRM Closed Won Deal (${lead.servicePillar})`,
+      slaDailyAdSpendBudget: 10000000,
+      currentDailyAdSpend: 5000000,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    });
+
+    showToast(
+      language === 'id' 
+        ? `Deal berhasil dikonversi: Proyek, Invoice DP 50%, & Klien Direktori telah dibuat!` 
+        : `Deal converted: Project, 50% Retainer Invoice, & Client record created!`
+    );
   };
 
   const handleOpenLeadDrawer = (lead: CrmLead) => {

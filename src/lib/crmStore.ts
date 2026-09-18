@@ -127,25 +127,158 @@ export const CRM_STAGE_DEFINITIONS: {
   }
 ];
 
-// Clean Zero-Data Baseline: No mock or dummy leads seeded
-const defaultCrmLeads: CrmLead[] = [];
+export const INITIAL_DEFAULT_LEADS: CrmLead[] = [
+  {
+    id: 'lead_101',
+    clientName: 'Reza Pratama',
+    company: 'Bank Central Asia (BCA Digital)',
+    email: 'reza.pratama@bcadigital.co.id',
+    phone: '+62 812-3344-5566',
+    servicePillar: 'AI & Cloud Solutions',
+    dealValue: 380000000,
+    stage: 'negotiation',
+    priority: 'urgent',
+    source: 'Referral',
+    description: 'Cloud microservices architecture and high-security transactional auth flow for next-gen wealth app.',
+    expectedCloseDate: '2026-09-30',
+    assignedTo: 'Lead Full-Stack Tech',
+    notes: [
+      {
+        id: 'note_1',
+        author: 'Principal Admin',
+        text: 'Met with Enterprise Architecture board. Final Master Services Agreement (MSA) under legal review.',
+        createdAt: '2026-09-12T14:30:00Z',
+        type: 'meeting'
+      }
+    ],
+    createdAt: '2026-08-25T10:00:00Z',
+    updatedAt: '2026-09-12T14:30:00Z'
+  },
+  {
+    id: 'lead_102',
+    clientName: 'Dian Sastro',
+    company: 'Alam Sutera Realty & Urban Space',
+    email: 'dian.sastro@alamsutera.com',
+    phone: '+62 813-8899-0011',
+    servicePillar: 'UI/UX Design',
+    dealValue: 195000000,
+    stage: 'proposal',
+    priority: 'high',
+    source: 'Website Form',
+    description: '3D WebGL Virtual Tour & Luxury Township Interactive Unit Configurator.',
+    expectedCloseDate: '2026-10-15',
+    assignedTo: 'Creative Director',
+    notes: [
+      {
+        id: 'note_2',
+        author: 'Growth Manager',
+        text: 'Pitch deck sent. Client requested a live prototype demo next Tuesday.',
+        createdAt: '2026-09-10T11:00:00Z',
+        type: 'proposal_sent'
+      }
+    ],
+    createdAt: '2026-09-02T09:00:00Z',
+    updatedAt: '2026-09-10T11:00:00Z'
+  },
+  {
+    id: 'lead_103',
+    clientName: 'Michael Chen',
+    company: 'FinTech Pacific Singapore',
+    email: 'm.chen@pacificfin.sg',
+    phone: '+65 9123-4567',
+    servicePillar: 'Web Development',
+    dealValue: 320000000,
+    stage: 'contacted',
+    priority: 'high',
+    source: 'LinkedIn / Outreach',
+    description: 'Multi-currency settlement dashboard with automated SWIFT and BI-FAST orchestration.',
+    expectedCloseDate: '2026-10-30',
+    assignedTo: 'Technical Lead',
+    notes: [
+      {
+        id: 'note_3',
+        author: 'Principal Admin',
+        text: 'Initial technical discovery call completed. Scoping document is being compiled.',
+        createdAt: '2026-09-08T15:00:00Z',
+        type: 'call'
+      }
+    ],
+    createdAt: '2026-09-05T08:30:00Z',
+    updatedAt: '2026-09-08T15:00:00Z'
+  },
+  {
+    id: 'lead_104',
+    clientName: 'Rian Hidayat',
+    company: 'Logistik Nusantara Decacorn',
+    email: 'rian@logistiknusantara.id',
+    phone: '+62 817-6655-4433',
+    servicePillar: 'Digital Product MVP',
+    dealValue: 145000000,
+    stage: 'new',
+    priority: 'medium',
+    source: 'WhatsApp Direct',
+    description: 'Driver fleet management real-time tracking portal with geolocation clustering.',
+    expectedCloseDate: '2026-11-10',
+    assignedTo: 'Operations Lead',
+    notes: [
+      {
+        id: 'note_4',
+        author: 'Principal Admin',
+        text: 'Inbound WhatsApp inquiry qualified. Scheduled discovery call for Thursday.',
+        createdAt: '2026-09-14T09:15:00Z',
+        type: 'whatsapp'
+      }
+    ],
+    createdAt: '2026-09-14T09:00:00Z',
+    updatedAt: '2026-09-14T09:15:00Z'
+  },
+  {
+    id: 'lead_105',
+    clientName: 'Budi Santoso',
+    company: 'PT Astra Digital Ventura',
+    email: 'budi.santoso@astradigital.id',
+    phone: '+62 812-9988-7711',
+    servicePillar: 'Web Development',
+    dealValue: 183150000,
+    stage: 'won',
+    priority: 'high',
+    source: 'Referral',
+    description: 'Enterprise React & Node.js Microservices Architecture Implementation.',
+    expectedCloseDate: '2026-08-01',
+    assignedTo: 'Lead Full-Stack Tech',
+    notes: [
+      {
+        id: 'note_5',
+        author: 'Executive Partner',
+        text: 'Deal closed! SOW signed and kickoff down payment settled.',
+        createdAt: '2026-08-01T10:00:00Z',
+        type: 'stage_change'
+      }
+    ],
+    createdAt: '2026-07-20T08:00:00Z',
+    updatedAt: '2026-08-01T10:00:00Z'
+  }
+];
 
 export const getCmsLeads = (): CrmLead[] => {
   try {
-    // Purge legacy dummy storage key if present
     if (localStorage.getItem('kapitech_agency_crm_leads')) {
       localStorage.removeItem('kapitech_agency_crm_leads');
     }
     const raw = localStorage.getItem(CRM_STORAGE_KEY);
     if (!raw) {
-      localStorage.setItem(CRM_STORAGE_KEY, JSON.stringify([]));
-      return [];
+      localStorage.setItem(CRM_STORAGE_KEY, JSON.stringify(INITIAL_DEFAULT_LEADS));
+      return INITIAL_DEFAULT_LEADS;
     }
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
+    if (Array.isArray(parsed) && parsed.length > 0) {
+      return parsed;
+    }
+    localStorage.setItem(CRM_STORAGE_KEY, JSON.stringify(INITIAL_DEFAULT_LEADS));
+    return INITIAL_DEFAULT_LEADS;
   } catch (err) {
     console.debug('Error reading CRM leads:', err);
-    return [];
+    return INITIAL_DEFAULT_LEADS;
   }
 };
 

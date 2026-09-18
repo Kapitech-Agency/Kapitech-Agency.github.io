@@ -22,6 +22,11 @@ const statusConfigs: Record<InvoiceStatus, StatusConfig> = {
     badgeClass: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
     dotColor: 'bg-emerald-400'
   },
+  approved: {
+    label: 'Approved',
+    badgeClass: 'bg-violet-500/10 text-violet-400 border-violet-500/20',
+    dotColor: 'bg-violet-400'
+  },
   sent: {
     label: 'Sent',
     badgeClass: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
@@ -39,7 +44,7 @@ const statusConfigs: Record<InvoiceStatus, StatusConfig> = {
   }
 };
 
-const statuses: InvoiceStatus[] = ['paid', 'sent', 'overdue', 'draft'];
+const statuses: InvoiceStatus[] = ['paid', 'approved', 'sent', 'overdue', 'draft'];
 
 export const InvoiceStatusDropdown: React.FC<InvoiceStatusDropdownProps> = ({
   status,

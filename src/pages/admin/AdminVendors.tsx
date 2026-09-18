@@ -47,6 +47,7 @@ export const AdminVendors: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [selectedType, setSelectedType] = useState<string>('All');
   const [statusFilter, setStatusFilter] = useState<string>('All');
+  const [vettedFilter, setVettedFilter] = useState<string>('All');
 
   // Modals & Drawers
   const [selectedVendor, setSelectedVendor] = useState<AgencyVendor | null>(null);
@@ -70,6 +71,7 @@ export const AdminVendors: React.FC = () => {
   const [formGithub, setFormGithub] = useState('');
   const [formNotes, setFormNotes] = useState('');
   const [formStatus, setFormStatus] = useState<VendorStatus>('active');
+  const [formIsVetted, setFormIsVetted] = useState<boolean>(true);
 
   const loadVendors = () => {
     setVendors(getAgencyVendors());
@@ -105,10 +107,11 @@ export const AdminVendors: React.FC = () => {
       const matchCat = selectedCategory === 'All' || v.primaryCategory === selectedCategory;
       const matchType = selectedType === 'All' || v.type === selectedType;
       const matchStatus = statusFilter === 'All' || v.status === statusFilter;
+      const matchVetted = vettedFilter === 'All' || (vettedFilter === 'vetted' ? (v.isVetted ?? true) : !(v.isVetted ?? true));
 
-      return matchSearch && matchCat && matchType && matchStatus;
+      return matchSearch && matchCat && matchType && matchStatus && matchVetted;
     });
-  }, [vendors, searchQuery, selectedCategory, selectedType, statusFilter]);
+  }, [vendors, searchQuery, selectedCategory, selectedType, statusFilter, vettedFilter]);
 
   const handleOpenAdd = () => {
     setEditingVendor(null);
@@ -126,6 +129,7 @@ export const AdminVendors: React.FC = () => {
     setFormGithub('');
     setFormNotes('');
     setFormStatus('active');
+    setFormIsVetted(true);
     setIsModalOpen(true);
   };
 
@@ -145,7 +149,27 @@ export const AdminVendors: React.FC = () => {
     setFormGithub(v.githubUrl || '');
     setFormNotes(v.notes || '');
     setFormStatus(v.status);
+    setFormIsVetted(v.isVetted ?? true);
     setIsModalOpen(true);
+  };
+
+  const handleToggleVettedQuick = (v: AgencyVendor, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const updated: AgencyVendor = {
+      ...v,
+      isVetted: !(v.isVetted ?? true),
+      updatedAt: new Date().toISOString()
+    };
+    saveAgencyVendor(updated);
+    if (selectedVendor && selectedVendor.id === v.id) {
+      setSelectedVendor(updated);
+    }
+    setStatusMessage(
+      language === 'id' 
+        ? `Status verifikasi ${v.name} diubah menjadi ${updated.isVetted ? 'Terverifikasi (Vetted)' : 'Standar'}` 
+        : `Verification status for ${v.name} set to ${updated.isVetted ? 'Vetted' : 'Standard'}`
+    );
+    setTimeout(() => setStatusMessage(null), 3000);
   };
 
   const handleSaveVendor = (e: React.FormEvent) => {
@@ -174,6 +198,7 @@ export const AdminVendors: React.FC = () => {
       rating: Number(formRating) || 5.0,
       completedProjectsCount: editingVendor ? editingVendor.completedProjectsCount : 0,
       status: formStatus,
+      isVetted: formIsVetted,
       location: formLocation.trim(),
       portfolioUrl: formPortfolio.trim() || undefined,
       githubUrl: formGithub.trim() || undefined,
@@ -345,6 +370,18 @@ export const AdminVendors: React.FC = () => {
               ]}
             />
           </div>
+
+          <div className="w-36">
+            <CustomSelect
+              value={vettedFilter}
+              onChange={val => setVettedFilter(val)}
+              options={[
+                { value: 'All', label: language === 'id' ? 'Semua Verifikasi' : 'All Verification' },
+                { value: 'vetted', label: language === 'id' ? 'Hanya Vetted' : 'Vetted Only' },
+                { value: 'unvetted', label: language === 'id' ? 'Belum Vetted' : 'Unvetted' }
+              ]}
+            />
+          </div>
         </div>
       </div>
 
@@ -363,9 +400,21 @@ export const AdminVendors: React.FC = () => {
                     {vendor.name.charAt(0).toUpperCase()}
                   </div>
                   <div>
-                    <h3 className="text-sm font-bold text-white group-hover:text-[#E50914] transition-colors">
-                      {vendor.name}
-                    </h3>
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <h3 className="text-sm font-bold text-white group-hover:text-[#E50914] transition-colors">
+                        {vendor.name}
+                      </h3>
+                      {(vendor.isVetted ?? true) && (
+                        <span 
+                          onClick={(e) => handleToggleVettedQuick(vendor, e)}
+                          title={language === 'id' ? 'Mitra Terverifikasi Kapitech (Klik untuk ubah)' : 'Kapitech Vetted Talent (Click to toggle)'}
+                          className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[9px] font-mono font-bold bg-[#E50914]/15 text-[#FF1E27] border border-[#E50914]/30 cursor-pointer hover:bg-[#E50914]/25 transition-colors"
+                        >
+                          <ShieldCheck size={10} />
+                          <span>Vetted</span>
+                        </span>
+                      )}
+                    </div>
                     {vendor.companyName && (
                       <p className="text-[11px] font-mono text-[#8A94A6] flex items-center gap-1">
                         <Building2 size={11} className="text-[#5C626E]" />
@@ -490,7 +539,15 @@ export const AdminVendors: React.FC = () => {
                     {selectedVendor.name.charAt(0).toUpperCase()}
                   </div>
                   <div>
-                    <h3 className="text-sm font-bold text-white">{selectedVendor.name}</h3>
+                    <div className="flex items-center gap-2">
+                      <h3 className="text-sm font-bold text-white">{selectedVendor.name}</h3>
+                      {(selectedVendor.isVetted ?? true) && (
+                        <span className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-[#E50914]/15 text-[#FF1E27] border border-[#E50914]/30">
+                          <ShieldCheck size={11} />
+                          <span>Vetted</span>
+                        </span>
+                      )}
+                    </div>
                     <p className="text-xs font-mono text-[#8A94A6]">{selectedVendor.primaryCategory}</p>
                   </div>
                 </div>
@@ -713,6 +770,27 @@ export const AdminVendors: React.FC = () => {
                     ]}
                   />
                 </div>
+              </div>
+
+              {/* Vetted Status Verification Toggle */}
+              <div className="p-3 rounded-xl bg-[#181B22] border border-[rgba(255,255,255,0.07)] flex items-center justify-between">
+                <div>
+                  <span className="text-xs font-semibold text-white flex items-center gap-1.5">
+                    <ShieldCheck size={14} className="text-[#E50914]" />
+                    <span>{language === 'id' ? 'Mitra Terverifikasi (Vetted)' : 'Kapitech Vetted Talent'}</span>
+                  </span>
+                  <p className="text-[11px] text-[#8A94A6] mt-0.5">
+                    {language === 'id' 
+                      ? 'Tandai bahwa portfolio, NDA, dan review SLA telah divalidasi oleh partner agensi.' 
+                      : 'Flag that NDA, portfolio deliverables, and background check have been passed.'}
+                  </p>
+                </div>
+                <input
+                  type="checkbox"
+                  checked={formIsVetted}
+                  onChange={e => setFormIsVetted(e.target.checked)}
+                  className="w-4 h-4 rounded bg-[#111318] border-white/20 text-[#E50914] focus:ring-0 focus:ring-offset-0 cursor-pointer"
+                />
               </div>
 
               <div>

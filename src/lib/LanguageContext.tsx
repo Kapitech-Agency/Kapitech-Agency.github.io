@@ -102,8 +102,8 @@ const translations: Record<Language, Record<string, string>> = {
     // Admin Suite Navigation & Shell
     'admin.nav.dashboard': 'Dashboard Overview',
     'admin.nav.inbox': 'Leads & Inbox',
-    'admin.nav.crm': 'CRM & Pipeline',
-    'admin.nav.invoicing': 'Financials & Invoicing',
+    'admin.nav.crm': 'Client CRM & Sales Pipeline',
+    'admin.nav.invoicing': 'Financial Management & Invoicing',
     'admin.nav.projects': 'Projects & Tasks',
     'admin.nav.vendors': 'Vendor Directory',
     'admin.nav.clients': 'Client Directory',
@@ -428,8 +428,8 @@ const translations: Record<Language, Record<string, string>> = {
     // Admin Suite Navigation & Shell
     'admin.nav.dashboard': 'Ringkasan Dashboard',
     'admin.nav.inbox': 'Leads & Pesan Masuk',
-    'admin.nav.crm': 'CRM & Pipeline',
-    'admin.nav.invoicing': 'Keuangan & Invoice',
+    'admin.nav.crm': 'CRM Klien & Pipeline Penjualan',
+    'admin.nav.invoicing': 'Manajemen Keuangan & Invoice',
     'admin.nav.projects': 'Proyek & Tugas',
     'admin.nav.vendors': 'Direktori Vendor',
     'admin.nav.clients': 'Direktori Klien',

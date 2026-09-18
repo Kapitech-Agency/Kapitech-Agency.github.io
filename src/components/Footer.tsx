@@ -203,9 +203,9 @@ export const Footer = () => {
           <div className="lg:col-span-4 space-y-6">
             <Link to="/" className="inline-flex items-center gap-3 group" aria-label="Kapitech Agency Home">
               <img 
-                src="/Logo White.png" 
+                src="/white.png" 
                 alt="Kapitech Agency" 
-                className="h-6 sm:h-7 w-auto object-contain transition-opacity duration-300 group-hover:opacity-90 shrink-0"
+                className="h-6 sm:h-7 w-auto max-h-7 object-contain transition-opacity duration-300 group-hover:opacity-90 shrink-0 select-none"
               />
               <span className="font-display font-bold text-lg tracking-tight text-white group-hover:text-brand-red transition-colors">
                 Kapitech Agency

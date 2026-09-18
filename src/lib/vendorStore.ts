@@ -31,6 +31,7 @@ export interface AgencyVendor {
   rating: number; // 1 to 5
   completedProjectsCount: number;
   status: VendorStatus;
+  isVetted?: boolean; // Vetted agency partner indicator
   location: string;
   portfolioUrl?: string;
   githubUrl?: string;
@@ -58,6 +59,7 @@ const defaultVendors: AgencyVendor[] = [
     rating: 4.9,
     completedProjectsCount: 14,
     status: 'active',
+    isVetted: true,
     location: 'Bandung, Indonesia',
     portfolioUrl: 'https://pixelcraft.id',
     contracts: [

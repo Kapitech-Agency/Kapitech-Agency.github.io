@@ -360,11 +360,11 @@ export const About = () => {
           </div>
 
           <div className="lg:col-span-6">
-            <div className="rounded-2xl sm:rounded-3xl overflow-hidden border border-[#2A2A2A] shadow-2xl relative aspect-[4/3] bg-[#161616]">
+            <div className="rounded-2xl sm:rounded-3xl overflow-hidden border border-[#2A2A2A] shadow-2xl relative aspect-[16/10] sm:aspect-[4/3] bg-[#161616]">
               <img
                 src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=1200"
                 alt="Kapitech Agency Team Collaboration"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover object-center"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A]/90 via-[#0A0A0A]/20 to-transparent flex items-end p-5 sm:p-8">
                 <div>
@@ -397,19 +397,19 @@ export const About = () => {
           </div>
 
           {/* Standardized Team Cards Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 sm:gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 sm:gap-6 max-w-md sm:max-w-none mx-auto">
             {team.map((member) => (
               <div
                 key={member.name}
-                className="rounded-2xl bg-[#151518] border border-[#242429] overflow-hidden flex flex-col justify-between group hover:border-brand-red/40 transition-colors"
+                className="rounded-2xl bg-[#111318] border border-white/[0.07] overflow-hidden flex flex-col justify-between group hover:border-brand-red/40 transition-colors"
               >
                 <div>
-                  <div className="w-full aspect-[864/810] overflow-hidden bg-[#0D0D0F] relative">
+                  <div className="w-full aspect-[864/810] overflow-hidden bg-[#181B22] relative flex items-center justify-center">
                     <img
                       src={member.image}
                       alt={member.name}
                       referrerPolicy="no-referrer"
-                      className="w-full h-full object-contain object-center group-hover:scale-105 transition-transform duration-500"
+                      className="w-full h-full object-contain object-top group-hover:scale-105 transition-transform duration-500"
                     />
                   </div>
                   <div className="p-4 sm:p-5">

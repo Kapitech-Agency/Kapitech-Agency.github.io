@@ -4,6 +4,8 @@
  * session token signing/validation, and activity audit logging.
  */
 
+import { getStoredRole } from './rbacEngine';
+
 export type AdminTier = 
   | 'Tier 1: Top Management / Sponsor'
   | 'Stakeholder Executive'
@@ -770,6 +772,45 @@ export function getCurrentAdminUser(): AdminUser | null {
 export function hasAdminPermission(permissionKey: keyof StakeholderPermissions): boolean {
   const session = getAdminSession();
   if (!session || !session.user) return false;
+
+  // Active simulated role override for live multi-role testing in AMS
+  if (typeof window !== 'undefined') {
+    const activeRole = getStoredRole();
+    if (activeRole === 'engineer') {
+      if (
+        permissionKey === 'canViewFinancials' || 
+        permissionKey === 'canManageInvoices' || 
+        permissionKey === 'canApproveBudgets' ||
+        permissionKey === 'canManageCrm' ||
+        permissionKey === 'canManageClients' ||
+        permissionKey === 'canManageAdminAccounts'
+      ) {
+        return false;
+      }
+    } else if (activeRole === 'staff') {
+      if (
+        permissionKey === 'canViewFinancials' || 
+        permissionKey === 'canManageInvoices' || 
+        permissionKey === 'canApproveBudgets' ||
+        permissionKey === 'canManageCrm' ||
+        permissionKey === 'canManageClients' ||
+        permissionKey === 'canManageVendors' ||
+        permissionKey === 'canManageAdminAccounts' ||
+        permissionKey === 'canAccessServerAndApi'
+      ) {
+        return false;
+      }
+    } else if (activeRole === 'pm') {
+      if (
+        permissionKey === 'canApproveBudgets' ||
+        permissionKey === 'canManageAdminAccounts' ||
+        permissionKey === 'canAccessServerAndApi' ||
+        permissionKey === 'canRunDataMigration'
+      ) {
+        return false;
+      }
+    }
+  }
   
   // Top Management / Master stakeholder tier always retains full access
   if (

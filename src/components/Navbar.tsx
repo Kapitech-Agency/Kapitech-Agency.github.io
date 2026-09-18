@@ -102,11 +102,12 @@ export const Navbar = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2.5 sm:gap-3 group py-1 shrink-0" aria-label="Kapitech Agency Home">
             <img 
-              src="/Logo White.png" 
+              src="/white.png" 
               alt="Kapitech Agency" 
-              className="h-6 sm:h-[22px] md:h-6 w-auto object-contain transition-opacity duration-300 group-hover:opacity-90 shrink-0"
+              className="h-6 sm:h-[22px] md:h-6 w-auto max-h-7 object-contain transition-opacity duration-300 group-hover:opacity-90 shrink-0 select-none"
             />
-            <span className="hidden sm:inline font-display font-bold text-[15px] sm:text-base md:text-[17px] tracking-[-0.02em] text-white group-hover:text-brand-red transition-colors whitespace-nowrap">
+            {/* Hidden strictly on mobile view to maximize space and preserve top-tier minimal aesthetics */}
+            <span className="hidden md:inline font-display font-bold text-[15px] sm:text-base md:text-[17px] tracking-[-0.02em] text-white group-hover:text-brand-red transition-colors whitespace-nowrap">
               Kapitech Agency
             </span>
           </Link>
@@ -450,13 +451,10 @@ export const Navbar = () => {
                 className="flex items-center gap-2.5 group"
               >
                 <img 
-                  src="/Logo White.png" 
+                  src="/white.png" 
                   alt="Kapitech" 
-                  className="h-6 sm:h-[22px] w-auto object-contain shrink-0 transition-opacity group-hover:opacity-90"
+                  className="h-6 sm:h-[22px] w-auto max-h-7 object-contain shrink-0 transition-opacity group-hover:opacity-90 select-none"
                 />
-                <span className="hidden sm:inline font-display font-bold text-[15px] sm:text-base text-white group-hover:text-brand-red transition-colors">
-                  Kapitech Agency
-                </span>
               </Link>
               
               <div className="flex items-center gap-2">

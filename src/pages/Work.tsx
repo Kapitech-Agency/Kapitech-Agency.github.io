@@ -238,11 +238,11 @@ export const Work = () => {
               onClick={() => setSelectedProject(currentFeatured)}
               className="cursor-pointer group relative rounded-2xl overflow-hidden border border-[#2A2A2A] bg-[#161616] hover:border-brand-red/50 transition-all duration-300 grid grid-cols-1 lg:grid-cols-12 gap-0"
             >
-              <div className="lg:col-span-7 relative h-72 sm:h-96 lg:h-[460px] overflow-hidden bg-[#0A0A0A]">
+              <div className="lg:col-span-7 relative aspect-[16/10] sm:aspect-auto sm:h-96 lg:h-[460px] overflow-hidden bg-[#0A0A0A]">
                 <img 
                   src={currentFeatured.image} 
                   alt={currentFeatured.title}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  className="w-full h-full object-cover sm:object-cover transition-transform duration-700 group-hover:scale-105"
                   loading="lazy"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A]/90 via-[#0A0A0A]/30 to-transparent lg:hidden" />
@@ -555,7 +555,7 @@ export const Work = () => {
               {/* Modal Scrollable Content */}
               <div className="overflow-y-auto p-6 sm:p-8 space-y-8">
                 {/* Hero Banner */}
-                <div className="relative h-64 sm:h-80 md:h-96 rounded-xl overflow-hidden bg-[#0B0C0E] border border-[#262930]">
+                <div className="relative aspect-[16/10] sm:aspect-auto sm:h-80 md:h-96 rounded-xl overflow-hidden bg-[#0B0C0E] border border-[#262930]">
                   <img 
                     src={selectedProject.image} 
                     alt={selectedProject.title}
