@@ -1922,5 +1922,19 @@ export const allSolutionsAndServices: ServiceItemData[] = [
 ];
 
 export const getServiceBySlug = (slug: string): ServiceItemData | undefined => {
+  if (typeof window !== 'undefined') {
+    try {
+      const raw = localStorage.getItem('kapitech_cms_services_v1');
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) {
+          const match = parsed.find((s: ServiceItemData) => s.slug === slug);
+          if (match) return match;
+        }
+      }
+    } catch {
+      // ignore
+    }
+  }
   return allSolutionsAndServices.find(s => s.slug === slug);
 };

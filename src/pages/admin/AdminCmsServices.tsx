@@ -26,13 +26,35 @@ import {
 } from 'lucide-react';
 import { allSolutionsAndServices, ServiceItemData } from '../../data/servicesData';
 import { useLanguage } from '../../lib/LanguageContext';
+import { 
+  getCmsServices, 
+  fetchServerCmsServices, 
+  saveCmsService, 
+  deleteCmsService, 
+  CMS_EVENT_KEY 
+} from '../../lib/cmsStore';
 
 export const AdminCmsServices: React.FC = () => {
   const { language } = useLanguage();
-  const [servicesList, setServicesList] = useState<ServiceItemData[]>(allSolutionsAndServices);
+  const [servicesList, setServicesList] = useState<ServiceItemData[]>(getCmsServices);
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
+
+  // Sync with server on mount and listen to updates
+  React.useEffect(() => {
+    fetchServerCmsServices().then(data => {
+      if (Array.isArray(data) && data.length > 0) {
+        setServicesList(data);
+      }
+    });
+
+    const handleUpdate = () => {
+      setServicesList(getCmsServices());
+    };
+    window.addEventListener(CMS_EVENT_KEY, handleUpdate);
+    return () => window.removeEventListener(CMS_EVENT_KEY, handleUpdate);
+  }, []);
   
   // Modals & Editing State
   const [editingService, setEditingService] = useState<ServiceItemData | null>(null);
@@ -157,6 +179,7 @@ export const AdminCmsServices: React.FC = () => {
       faqs: []
     };
 
+    saveCmsService(newService);
     setServicesList([newService, ...servicesList]);
     setIsAddModalOpen(false);
     setNewTitle('');
@@ -169,6 +192,7 @@ export const AdminCmsServices: React.FC = () => {
 
   const handleDeleteService = (slug: string) => {
     if (window.confirm(language === 'id' ? 'Apakah Anda yakin ingin menghapus layanan ini?' : 'Are you sure you want to delete this service?')) {
+      deleteCmsService(slug);
       setServicesList(servicesList.filter(s => s.slug !== slug));
       setSelectedServiceForDetail(null);
       setStatusMessage(language === 'id' ? 'Layanan berhasil dihapus.' : 'Service successfully deleted.');

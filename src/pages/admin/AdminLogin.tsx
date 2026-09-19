@@ -199,7 +199,7 @@ export const AdminLogin: React.FC = () => {
                 <label className="block text-xs font-mono text-[#8A94A6] uppercase tracking-wider font-semibold">
                   Password
                 </label>
-                <span className="text-[10px] font-mono text-[#64748B]">SHA-256 Protected</span>
+                <span className="text-[10px] font-mono text-[#64748B]">PBKDF2 Hashed</span>
               </div>
               <div className="relative">
                 <KeyRound className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#FF1E27]" size={16} />
@@ -256,13 +256,13 @@ export const AdminLogin: React.FC = () => {
             </button>
           </form>
 
-          {/* Enterprise Security Assurance Footer */}
+          {/* Server-Enforced Security Assurance Footer */}
           <div className="mt-6 pt-5 border-t border-[rgba(255,255,255,0.07)] flex items-center justify-between text-[11px] font-mono text-[#8A94A6]">
             <div className="flex items-center gap-1.5">
               <ShieldCheck size={14} className="text-emerald-400" />
-              <span>Zero-Trust Architecture</span>
+              <span>Server Session Verification</span>
             </div>
-            <span className="text-[#64748B]">TLS 1.3 • AES-256</span>
+            <span className="text-[#64748B]">Rate-Limited & Encrypted</span>
           </div>
 
         </div>

@@ -188,13 +188,13 @@ export const AdminSettings: React.FC = () => {
     }
   };
 
-  const handleDeleteAccountClick = (id: string, name: string) => {
+  const handleDeleteAccountClick = async (id: string, name: string) => {
     const confirmMsg = language === 'id'
       ? `Hapus akun stakeholder "${name}" dari sistem Kapitech? Tindakan ini tidak dapat dibatalkan.`
       : `Delete stakeholder account "${name}" permanently? This action cannot be undone.`;
     
     if (window.confirm(confirmMsg)) {
-      const res = deleteAdminAccount(id);
+      const res = await deleteAdminAccount(id);
       if (res.success) {
         refreshAccounts();
         setAccountActionMessage({

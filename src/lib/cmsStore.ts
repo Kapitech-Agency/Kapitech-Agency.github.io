@@ -1,9 +1,12 @@
 /**
  * CMS Data Store & Content Management Engine for Kapitech Agency
- * Manages Portfolio / Case Studies, Services, Client Testimonials, and Site Meta.
+ * Manages Services & Solutions, Portfolio / Case Studies, Client Testimonials, and Site Meta.
+ * Synchronizes with Server API (/api/cms/*) with resilient client cache.
  */
 
 import { allProjects, ProjectItem } from '../data/projectsData';
+import { allSolutionsAndServices, ServiceItemData } from '../data/servicesData';
+import { api } from './apiClient';
 
 export interface TestimonialItem {
   id: string;
@@ -15,6 +18,7 @@ export interface TestimonialItem {
   location: string;
   rating?: number;
   avatar?: string;
+  isPublished?: boolean;
 }
 
 export interface SiteMetaSettings {
@@ -27,10 +31,11 @@ export interface SiteMetaSettings {
   maintenanceMode: boolean;
 }
 
+const CMS_SERVICES_KEY = 'kapitech_cms_services_v1';
 const CMS_PROJECTS_KEY = 'kapitech_cms_projects_v1';
 const CMS_TESTIMONIALS_KEY = 'kapitech_cms_testimonials_v1';
 const CMS_SETTINGS_KEY = 'kapitech_cms_settings_v1';
-const CMS_EVENT_KEY = 'kapitech_cms_updated';
+export const CMS_EVENT_KEY = 'kapitech_cms_updated';
 
 export const defaultTestimonials: TestimonialItem[] = [
   {
@@ -41,7 +46,8 @@ export const defaultTestimonials: TestimonialItem[] = [
     role: "Managing Director",
     company: "Lumina Real Estate",
     location: "Jakarta, Indonesia",
-    rating: 5
+    rating: 5,
+    isPublished: true
   },
   {
     id: 't_02',
@@ -51,7 +57,8 @@ export const defaultTestimonials: TestimonialItem[] = [
     role: "Creative Director",
     company: "Aura Creative Studio",
     location: "Singapore",
-    rating: 5
+    rating: 5,
+    isPublished: true
   },
   {
     id: 't_03',
@@ -61,7 +68,8 @@ export const defaultTestimonials: TestimonialItem[] = [
     role: "Head of Product",
     company: "Nexus Fintech",
     location: "Hong Kong",
-    rating: 5
+    rating: 5,
+    isPublished: true
   },
   {
     id: 't_04',
@@ -71,7 +79,8 @@ export const defaultTestimonials: TestimonialItem[] = [
     role: "Operations VP",
     company: "Solaris CleanTech",
     location: "Melbourne, Australia",
-    rating: 5
+    rating: 5,
+    isPublished: true
   },
   {
     id: 't_05',
@@ -81,7 +90,8 @@ export const defaultTestimonials: TestimonialItem[] = [
     role: "Founder & CEO",
     company: "Vivid Commerce",
     location: "Jakarta, Indonesia",
-    rating: 5
+    rating: 5,
+    isPublished: true
   },
   {
     id: 't_06',
@@ -91,7 +101,8 @@ export const defaultTestimonials: TestimonialItem[] = [
     role: "Chief Technology Officer",
     company: "Kross Cloud Systems",
     location: "Kuala Lumpur, Malaysia",
-    rating: 5
+    rating: 5,
+    isPublished: true
   }
 ];
 
@@ -105,16 +116,80 @@ export const defaultSiteMeta: SiteMetaSettings = {
   maintenanceMode: false
 };
 
-// Dispatch change event
-function notifyCmsUpdate(type: 'projects' | 'testimonials' | 'settings') {
+function notifyCmsUpdate(type: 'services' | 'projects' | 'testimonials' | 'settings') {
   if (typeof window !== 'undefined') {
     window.dispatchEvent(new CustomEvent(CMS_EVENT_KEY, { detail: { type } }));
   }
 }
 
 // -------------------------------------------------------------
-// 1. Projects CMS Manager
+// 1. Services & Solutions CMS Manager
 // -------------------------------------------------------------
+
+export function getCmsServices(): ServiceItemData[] {
+  try {
+    const raw = localStorage.getItem(CMS_SERVICES_KEY);
+    if (!raw) return allSolutionsAndServices;
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) && parsed.length > 0 ? parsed : allSolutionsAndServices;
+  } catch {
+    return allSolutionsAndServices;
+  }
+}
+
+export async function fetchServerCmsServices(): Promise<ServiceItemData[]> {
+  try {
+    const res = await api.cms.getServices();
+    if (res.success && Array.isArray(res.data?.services) && res.data.services.length > 0) {
+      const serverServices = res.data.services;
+      localStorage.setItem(CMS_SERVICES_KEY, JSON.stringify(serverServices));
+      notifyCmsUpdate('services');
+      return serverServices;
+    }
+  } catch (err) {
+    console.debug('Failed to fetch services from server:', err);
+  }
+  return getCmsServices();
+}
+
+export async function saveCmsService(service: ServiceItemData): Promise<{ success: boolean; service: ServiceItemData }> {
+  const current = getCmsServices();
+  const exists = current.some(s => s.slug === service.slug);
+  let updated: ServiceItemData[];
+
+  if (exists) {
+    updated = current.map(s => s.slug === service.slug ? service : s);
+  } else {
+    updated = [service, ...current];
+  }
+
+  localStorage.setItem(CMS_SERVICES_KEY, JSON.stringify(updated));
+  notifyCmsUpdate('services');
+
+  // Persist to server API
+  if (exists) {
+    api.cms.updateService(service.slug, service).catch(() => {});
+  } else {
+    api.cms.createService(service).catch(() => {});
+  }
+
+  return { success: true, service };
+}
+
+export async function deleteCmsService(slug: string): Promise<boolean> {
+  const current = getCmsServices();
+  const updated = current.filter(s => s.slug !== slug);
+  localStorage.setItem(CMS_SERVICES_KEY, JSON.stringify(updated));
+  notifyCmsUpdate('services');
+
+  api.cms.deleteService(slug).catch(() => {});
+  return true;
+}
+
+// -------------------------------------------------------------
+// 2. Projects CMS Manager
+// -------------------------------------------------------------
+
 export function getCmsProjects(): ProjectItem[] {
   try {
     const raw = localStorage.getItem(CMS_PROJECTS_KEY);
@@ -126,7 +201,22 @@ export function getCmsProjects(): ProjectItem[] {
   }
 }
 
-export function saveCmsProject(project: ProjectItem): { success: boolean; project: ProjectItem } {
+export async function fetchServerCmsProjects(): Promise<ProjectItem[]> {
+  try {
+    const res = await api.cms.getProjects();
+    if (res.success && Array.isArray(res.data?.projects) && res.data.projects.length > 0) {
+      const serverProjects = res.data.projects;
+      localStorage.setItem(CMS_PROJECTS_KEY, JSON.stringify(serverProjects));
+      notifyCmsUpdate('projects');
+      return serverProjects;
+    }
+  } catch (err) {
+    console.debug('Failed to fetch projects from server:', err);
+  }
+  return getCmsProjects();
+}
+
+export async function saveCmsProject(project: ProjectItem): Promise<{ success: boolean; project: ProjectItem }> {
   const current = getCmsProjects();
   const exists = current.some(p => p.id === project.id);
   let updated: ProjectItem[];
@@ -139,14 +229,24 @@ export function saveCmsProject(project: ProjectItem): { success: boolean; projec
 
   localStorage.setItem(CMS_PROJECTS_KEY, JSON.stringify(updated));
   notifyCmsUpdate('projects');
+
+  // Persist to server API
+  if (exists) {
+    api.cms.updateProject(project.id, project).catch(() => {});
+  } else {
+    api.cms.createProject(project).catch(() => {});
+  }
+
   return { success: true, project };
 }
 
-export function deleteCmsProject(id: string): boolean {
+export async function deleteCmsProject(id: string): Promise<boolean> {
   const current = getCmsProjects();
   const updated = current.filter(p => p.id !== id);
   localStorage.setItem(CMS_PROJECTS_KEY, JSON.stringify(updated));
   notifyCmsUpdate('projects');
+
+  api.cms.deleteProject(id).catch(() => {});
   return true;
 }
 
@@ -156,8 +256,9 @@ export function resetCmsProjectsToDefault() {
 }
 
 // -------------------------------------------------------------
-// 2. Testimonials CMS Manager
+// 3. Testimonials CMS Manager
 // -------------------------------------------------------------
+
 export function getCmsTestimonials(): TestimonialItem[] {
   try {
     const raw = localStorage.getItem(CMS_TESTIMONIALS_KEY);
@@ -169,7 +270,22 @@ export function getCmsTestimonials(): TestimonialItem[] {
   }
 }
 
-export function saveCmsTestimonial(testimonial: TestimonialItem): { success: boolean; testimonial: TestimonialItem } {
+export async function fetchServerCmsTestimonials(): Promise<TestimonialItem[]> {
+  try {
+    const res = await api.cms.getTestimonials();
+    if (res.success && Array.isArray(res.data?.testimonials) && res.data.testimonials.length > 0) {
+      const serverT = res.data.testimonials;
+      localStorage.setItem(CMS_TESTIMONIALS_KEY, JSON.stringify(serverT));
+      notifyCmsUpdate('testimonials');
+      return serverT;
+    }
+  } catch (err) {
+    console.debug('Failed to fetch testimonials from server:', err);
+  }
+  return getCmsTestimonials();
+}
+
+export async function saveCmsTestimonial(testimonial: TestimonialItem): Promise<{ success: boolean; testimonial: TestimonialItem }> {
   const current = getCmsTestimonials();
   const exists = current.some(t => t.id === testimonial.id);
   let updated: TestimonialItem[];
@@ -182,20 +298,30 @@ export function saveCmsTestimonial(testimonial: TestimonialItem): { success: boo
 
   localStorage.setItem(CMS_TESTIMONIALS_KEY, JSON.stringify(updated));
   notifyCmsUpdate('testimonials');
+
+  if (exists) {
+    api.cms.updateTestimonial(testimonial.id, testimonial).catch(() => {});
+  } else {
+    api.cms.createTestimonial(testimonial).catch(() => {});
+  }
+
   return { success: true, testimonial };
 }
 
-export function deleteCmsTestimonial(id: string): boolean {
+export async function deleteCmsTestimonial(id: string): Promise<boolean> {
   const current = getCmsTestimonials();
   const updated = current.filter(t => t.id !== id);
   localStorage.setItem(CMS_TESTIMONIALS_KEY, JSON.stringify(updated));
   notifyCmsUpdate('testimonials');
+
+  api.cms.deleteTestimonial(id).catch(() => {});
   return true;
 }
 
 // -------------------------------------------------------------
-// 3. Site Meta & Configuration Manager
+// 4. Site Meta & Configuration Manager
 // -------------------------------------------------------------
+
 export function getCmsSiteMeta(): SiteMetaSettings {
   try {
     const raw = localStorage.getItem(CMS_SETTINGS_KEY);
@@ -206,10 +332,27 @@ export function getCmsSiteMeta(): SiteMetaSettings {
   }
 }
 
-export function saveCmsSiteMeta(settings: Partial<SiteMetaSettings>): SiteMetaSettings {
+export async function fetchServerCmsSiteMeta(): Promise<SiteMetaSettings> {
+  try {
+    const res = await api.cms.getSettings();
+    if (res.success && res.data?.settings) {
+      const s = { ...defaultSiteMeta, ...res.data.settings };
+      localStorage.setItem(CMS_SETTINGS_KEY, JSON.stringify(s));
+      notifyCmsUpdate('settings');
+      return s;
+    }
+  } catch (err) {
+    console.debug('Failed to fetch site settings from server:', err);
+  }
+  return getCmsSiteMeta();
+}
+
+export async function saveCmsSiteMeta(settings: Partial<SiteMetaSettings>): Promise<SiteMetaSettings> {
   const current = getCmsSiteMeta();
   const updated = { ...current, ...settings };
   localStorage.setItem(CMS_SETTINGS_KEY, JSON.stringify(updated));
   notifyCmsUpdate('settings');
+
+  api.cms.updateSettings(updated).catch(() => {});
   return updated;
 }

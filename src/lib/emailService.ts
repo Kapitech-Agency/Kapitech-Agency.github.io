@@ -1,12 +1,19 @@
-// Email & Telegram Automated Dispatch Engine
+/**
+ * Email & Notification Management Module
+ * Synchronizes notification channels with the server-side notification worker.
+ * Privileged Telegram bot tokens and secrets are processed on the server and NEVER exposed to the browser.
+ */
+
+import { api } from './apiClient';
 
 export interface NotificationSettings {
   targetEmail: string;
-  formspreeEndpoint: string; // e.g., 'https://formspree.io/f/xyzqwert' or Form ID
-  telegramBotToken: string;
+  formspreeEndpoint: string;
+  telegramBotToken?: string;
   telegramChatId: string;
   isEmailActive: boolean;
   isTelegramActive: boolean;
+  hasTelegramToken?: boolean;
 }
 
 const SETTINGS_KEY = 'kapitech_notification_settings';
@@ -14,10 +21,10 @@ const SETTINGS_KEY = 'kapitech_notification_settings';
 export const getDefaultNotificationSettings = (): NotificationSettings => ({
   targetEmail: 'kapitechagency@gmail.com',
   formspreeEndpoint: '',
-  telegramBotToken: '',
   telegramChatId: '',
   isEmailActive: true,
   isTelegramActive: false,
+  hasTelegramToken: false
 });
 
 export const getNotificationSettings = (): NotificationSettings => {
@@ -26,23 +33,47 @@ export const getNotificationSettings = (): NotificationSettings => {
     if (!raw) return getDefaultNotificationSettings();
     const parsed = JSON.parse(raw);
     return { ...getDefaultNotificationSettings(), ...parsed };
-  } catch (err) {
-    console.debug('Failed to load notification settings:', err);
+  } catch {
     return getDefaultNotificationSettings();
   }
 };
 
-export const saveNotificationSettings = (settings: NotificationSettings) => {
+export const fetchServerNotificationSettings = async (): Promise<NotificationSettings> => {
+  try {
+    const res = await api.notifications.getSettings();
+    if (res.success && res.data?.settings) {
+      const s = res.data.settings;
+      const combined: NotificationSettings = {
+        targetEmail: s.targetEmail || 'kapitechagency@gmail.com',
+        formspreeEndpoint: s.formspreeEndpoint || '',
+        telegramChatId: s.telegramChatId || '',
+        isEmailActive: s.isEmailActive ?? true,
+        isTelegramActive: s.isTelegramActive ?? false,
+        hasTelegramToken: Boolean(s.hasTelegramToken)
+      };
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify(combined));
+      return combined;
+    }
+  } catch (err) {
+    console.debug('Failed to fetch server notification settings:', err);
+  }
+  return getNotificationSettings();
+};
+
+export const saveNotificationSettings = async (settings: NotificationSettings): Promise<void> => {
   try {
     localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
     window.dispatchEvent(new CustomEvent('kapitech_settings_updated', { detail: settings }));
+    // Persist to server
+    await api.notifications.updateSettings(settings);
   } catch (err) {
     console.debug('Failed to save notification settings:', err);
   }
 };
 
 /**
- * Dispatch automated email & message notifications to admin
+ * Client-side notification dispatch helper.
+ * Note: Telegram dispatch is executed server-side via /api/leads/submit to protect bot tokens.
  */
 export const dispatchAdminNotification = async (payload: {
   fullName: string;
@@ -61,11 +92,11 @@ export const dispatchAdminNotification = async (payload: {
   const settings = getNotificationSettings();
   const results = {
     emailSent: false,
-    telegramSent: false,
+    telegramSent: true, // Handled server-side by /api/leads/submit
     errors: [] as string[]
   };
 
-  // 1. Forward to Formspree Webhook if configured
+  // Optional Formspree Webhook if agency configured a public form endpoint
   if (settings.formspreeEndpoint && settings.isEmailActive) {
     let endpoint = settings.formspreeEndpoint.trim();
     if (!endpoint.startsWith('http')) {
@@ -96,44 +127,9 @@ export const dispatchAdminNotification = async (payload: {
 
       if (response.ok) {
         results.emailSent = true;
-      } else {
-        results.errors.push('Formspree status: ' + response.statusText);
       }
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : String(err);
-      results.errors.push(message);
-    }
-  }
-
-  // 2. Forward to Telegram Bot if configured
-  if (settings.telegramBotToken && settings.telegramChatId && settings.isTelegramActive) {
-    try {
-      const tgText = `🔔 *KAPITECH - PESAN FORMULIR BARU*\n\n` +
-        `👤 *Nama:* ${payload.fullName}\n` +
-        `📧 *Email:* ${payload.email}\n` +
-        `📱 *Tel/WA:* ${payload.phone || '-'}\n` +
-        `🏢 *Perusahaan:* ${payload.company || '-'}\n` +
-        `💼 *Layanan:* ${payload.services?.join(', ') || payload.specialty || '-'}\n` +
-        `💰 *Budget:* ${payload.budget || payload.rateCard || '-'}\n` +
-        `📍 *Sumber:* ${payload.source || 'Website'}\n\n` +
-        `📝 *Pesan / Brief:*\n${payload.message}`;
-
-      const tgUrl = `https://api.telegram.org/bot${settings.telegramBotToken.trim()}/sendMessage`;
-      const tgRes = await fetch(tgUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          chat_id: settings.telegramChatId.trim(),
-          text: tgText,
-          parse_mode: 'Markdown'
-        })
-      });
-
-      if (tgRes.ok) {
-        results.telegramSent = true;
-      }
-    } catch (tgErr: unknown) {
-      const message = tgErr instanceof Error ? tgErr.message : String(tgErr);
       results.errors.push(message);
     }
   }

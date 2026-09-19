@@ -10,7 +10,7 @@ import {
   serverTimestamp 
 } from 'firebase/firestore';
 import { db, isFirebaseConfigured } from './firebase';
-import { dispatchAdminNotification } from './emailService';
+import { api } from './apiClient';
 
 export interface ContactSubmission {
   id: string;
@@ -67,10 +67,8 @@ const saveLocalSubmissions = (items: ContactSubmission[]) => {
 
 /**
  * Universal submission handler for all website forms:
- * - /contact form
- * - /careers application form
- * - /careers freelance vendor form
- * - footer newsletter
+ * Persists to server API /api/leads/submit, which executes server-side validation
+ * and dispatches notifications without exposing keys to the browser.
  */
 export const submitToInbox = async (data: Omit<ContactSubmission, 'id' | 'createdAt' | 'status'>): Promise<{ success: boolean; id: string }> => {
   const generatedId = 'sub_' + Date.now() + '_' + Math.random().toString(36).substring(2, 8);
@@ -84,17 +82,23 @@ export const submitToInbox = async (data: Omit<ContactSubmission, 'id' | 'create
     ...data
   };
 
-  // 1. Immediately persist to LocalStorage & dispatch instant UI update
+  // 1. Optimistic local cache update
   const existing = getLocalSubmissions();
   const updatedList = [newRecord, ...existing.filter(i => i.id !== generatedId)];
   saveLocalSubmissions(updatedList);
-  
-  // 2. Dispatch automated external email & telegram forwarding in background
-  dispatchAdminNotification(data).catch(err => {
-    console.debug('Notification forwarding status:', err);
+
+  // 2. Persist to server API & trigger server-side notification worker
+  api.leads.submit(data).then(res => {
+    if (res.success && res.data?.id) {
+      newRecord.id = res.data.id;
+      const current = getLocalSubmissions();
+      saveLocalSubmissions(current.map(c => c.id === generatedId ? { ...c, id: res.data!.id } : c));
+    }
+  }).catch(err => {
+    console.debug('Server lead submission sync status:', err);
   });
 
-  // 3. Also attempt to save to Firestore database if configured
+  // 3. Fallback Firestore if configured
   if (db && isFirebaseConfigured) {
     try {
       const firestoreData = {
@@ -113,7 +117,7 @@ export const submitToInbox = async (data: Omit<ContactSubmission, 'id' | 'create
 };
 
 /**
- * Update any submission fields (status, notes, priority, assignedTo, starred, tags)
+ * Update any submission fields
  */
 export const updateSubmission = async (id: string, updates: Partial<ContactSubmission>): Promise<void> => {
   // Update local
@@ -121,7 +125,12 @@ export const updateSubmission = async (id: string, updates: Partial<ContactSubmi
   const updated = current.map(item => item.id === id ? { ...item, ...updates } : item);
   saveLocalSubmissions(updated);
 
-  // Try Firestore update if active
+  // Update server API
+  api.leads.update(id, updates).catch(err => {
+    console.debug('Server lead update status:', err);
+  });
+
+  // Firestore update if active
   if (db && isFirebaseConfigured) {
     try {
       await updateDoc(doc(db, 'contact_submissions', id), updates);
@@ -132,14 +141,14 @@ export const updateSubmission = async (id: string, updates: Partial<ContactSubmi
 };
 
 /**
- * Update submission status in both LocalStorage & Firestore
+ * Update submission status
  */
 export const updateSubmissionStatus = async (id: string, newStatus: ContactSubmission['status']): Promise<void> => {
   return updateSubmission(id, { status: newStatus });
 };
 
 /**
- * Delete submission from both LocalStorage & Firestore
+ * Delete submission
  */
 export const deleteSubmission = async (id: string): Promise<void> => {
   // Delete local
@@ -147,7 +156,12 @@ export const deleteSubmission = async (id: string): Promise<void> => {
   const filtered = current.filter(item => item.id !== id);
   saveLocalSubmissions(filtered);
 
-  // Try Firestore delete if active
+  // Delete from server API
+  api.leads.delete(id).catch(err => {
+    console.debug('Server lead deletion status:', err);
+  });
+
+  // Firestore delete if active
   if (db && isFirebaseConfigured) {
     try {
       await deleteDoc(doc(db, 'contact_submissions', id));
@@ -158,26 +172,36 @@ export const deleteSubmission = async (id: string): Promise<void> => {
 };
 
 /**
- * Real-time combined subscriber (LocalStorage + Custom Events + Firestore if active)
+ * Real-time combined subscriber (Server API + Local Cache + Firestore)
  */
 export const subscribeToInbox = (onUpdate: (submissions: ContactSubmission[]) => void): (() => void) => {
-  // Initial local state delivery
+  // 1. Deliver local cache immediately
   const initialLocal = getLocalSubmissions();
   onUpdate(initialLocal);
+
+  // 2. Fetch authoritative records from Server API
+  api.leads.getAll().then(res => {
+    if (res.success && Array.isArray(res.data?.leads)) {
+      const serverLeads = res.data!.leads;
+      // Merge with local cache
+      const mergedMap = new Map<string, ContactSubmission>();
+      initialLocal.forEach(l => mergedMap.set(l.id, l));
+      serverLeads.forEach(l => mergedMap.set(l.id, l));
+      const combined = Array.from(mergedMap.values()).sort((a, b) => 
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+      saveLocalSubmissions(combined);
+      onUpdate(combined);
+    }
+  }).catch(() => {});
 
   let localCache = [...initialLocal];
 
   // Helper to merge Firestore snapshots with LocalStorage
   const mergeAndNotify = (firestoreList: ContactSubmission[]) => {
     const mergedMap = new Map<string, ContactSubmission>();
-
-    // Put all local cache first
     localCache.forEach(item => mergedMap.set(item.id, item));
-
-    // Override or add from Firestore
-    firestoreList.forEach(item => {
-      mergedMap.set(item.id, item);
-    });
+    firestoreList.forEach(item => mergedMap.set(item.id, item));
 
     const combined = Array.from(mergedMap.values()).sort((a, b) => 
       new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
@@ -186,7 +210,6 @@ export const subscribeToInbox = (onUpdate: (submissions: ContactSubmission[]) =>
     onUpdate(combined);
   };
 
-  // 1. Listen to Local Custom Events (same-tab immediate update)
   const handleLocalCustomEvent = (e: Event) => {
     const customEvent = e as CustomEvent<ContactSubmission[]>;
     if (customEvent.detail && Array.isArray(customEvent.detail)) {
@@ -199,7 +222,6 @@ export const subscribeToInbox = (onUpdate: (submissions: ContactSubmission[]) =>
   };
   window.addEventListener(SUBMISSION_EVENT, handleLocalCustomEvent);
 
-  // 2. Listen to browser Storage event (cross-tab sync)
   const handleStorageEvent = (e: StorageEvent) => {
     if (e.key === STORAGE_KEY) {
       localCache = getLocalSubmissions();
@@ -208,7 +230,6 @@ export const subscribeToInbox = (onUpdate: (submissions: ContactSubmission[]) =>
   };
   window.addEventListener('storage', handleStorageEvent);
 
-  // 3. Listen to Firestore realtime stream if configured
   let unsubscribeFirestore = () => {};
   if (db && isFirebaseConfigured) {
     try {
