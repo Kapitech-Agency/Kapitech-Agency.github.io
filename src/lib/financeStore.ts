@@ -421,6 +421,88 @@ export const updateInvoiceStatus = (id: string, status: InvoiceStatus, actor: st
   }
 };
 
+export const recordInvoicePayment = (
+  invoiceId: string,
+  payment: {
+    amount: number;
+    date?: string;
+    method: 'bank_transfer' | 'credit_card' | 'cash' | 'other';
+    reference?: string;
+    recordedBy?: string;
+    notes?: string;
+  }
+): AgencyInvoice | null => {
+  const current = getAgencyInvoices();
+  const inv = current.find(i => i.id === invoiceId);
+  if (!inv) return null;
+
+  const now = new Date().toISOString();
+  const paymentDate = payment.date || now.split('T')[0];
+  const newPayment: InvoicePaymentRecord = {
+    id: `pay_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+    amount: payment.amount,
+    date: paymentDate,
+    method: payment.method,
+    reference: payment.reference,
+    recordedBy: payment.recordedBy || 'Finance Officer',
+    notes: payment.notes
+  };
+
+  const existingPayments = inv.payments || [];
+  const updatedPayments = [...existingPayments, newPayment];
+  const totalPaid = updatedPayments.reduce((acc, p) => acc + p.amount, 0);
+  const remaining = Math.max(0, inv.total - totalPaid);
+
+  let newStatus: InvoiceStatus = inv.status;
+  if (remaining <= 0) {
+    newStatus = 'paid';
+  } else if (totalPaid > 0) {
+    newStatus = 'partially_paid';
+  }
+
+  const auditTrail = inv.auditTrail || [];
+  auditTrail.push({
+    action: `Payment recorded: ${payment.amount} (${payment.method})`,
+    timestamp: now,
+    user: payment.recordedBy || 'Finance Officer',
+    note: payment.notes || (remaining <= 0 ? 'Full settlement achieved.' : `Balance remaining: ${remaining}`)
+  });
+
+  const updated: AgencyInvoice = {
+    ...inv,
+    amountPaid: totalPaid,
+    balanceDue: remaining,
+    payments: updatedPayments,
+    status: newStatus,
+    paidDate: newStatus === 'paid' ? paymentDate : inv.paidDate,
+    auditTrail,
+    updatedAt: now
+  };
+
+  saveAgencyInvoice(updated);
+
+  if (newStatus === 'paid' && inv.status !== 'paid') {
+    try {
+      const clients = getAgencyClients();
+      const matchedClient = clients.find(c => 
+        (inv.clientEmail && c.email.toLowerCase() === inv.clientEmail.toLowerCase()) ||
+        (inv.clientCompany && c.company.toLowerCase() === inv.clientCompany.toLowerCase())
+      );
+      if (matchedClient) {
+        saveAgencyClient({
+          ...matchedClient,
+          totalSpend: (matchedClient.totalSpend || 0) + payment.amount,
+          updatedAt: now
+        });
+      }
+    } catch (e) {
+      console.debug('Failed to sync client spend:', e);
+    }
+  }
+
+  return updated;
+};
+
 export const approveInvoice = (id: string, approverName: string = 'Executive Sponsor', note?: string): void => {
   const current = getAgencyInvoices();
   const inv = current.find(i => i.id === id);
@@ -582,7 +664,7 @@ export interface ArAgingSummary {
 }
 
 export const getAccountsReceivableAging = (invoices: AgencyInvoice[]): ArAgingSummary => {
-  const pending = invoices.filter(i => i.status === 'sent' || i.status === 'approved' || i.status === 'overdue');
+  const pending = invoices.filter(i => i.status === 'sent' || i.status === 'approved' || i.status === 'overdue' || i.status === 'partially_paid');
   const now = new Date().getTime();
 
   let current = 0;
@@ -591,17 +673,20 @@ export const getAccountsReceivableAging = (invoices: AgencyInvoice[]): ArAgingSu
   let days90Plus = 0;
 
   pending.forEach(inv => {
+    const amountDue = inv.balanceDue !== undefined ? inv.balanceDue : (inv.total - (inv.amountPaid || 0));
+    if (amountDue <= 0) return;
+
     const dueTime = new Date(inv.dueDate).getTime();
     const diffDays = Math.floor((now - dueTime) / (1000 * 60 * 60 * 24));
 
     if (diffDays <= 0) {
-      current += inv.total;
+      current += amountDue;
     } else if (diffDays <= 30) {
-      days30 += inv.total;
+      days30 += amountDue;
     } else if (diffDays <= 60) {
-      days60 += inv.total;
+      days60 += amountDue;
     } else {
-      days90Plus += inv.total;
+      days90Plus += amountDue;
     }
   });
 
@@ -616,14 +701,21 @@ export const getAccountsReceivableAging = (invoices: AgencyInvoice[]): ArAgingSu
 
 export const computeFinancialMetrics = (invoices: AgencyInvoice[], expenses: AgencyExpense[]) => {
   const paidInvoices = invoices.filter(i => i.status === 'paid');
+  const partiallyPaidInvoices = invoices.filter(i => i.status === 'partially_paid');
   const approvedInvoices = invoices.filter(i => i.status === 'approved');
   const sentInvoices = invoices.filter(i => i.status === 'sent');
   const overdueInvoices = invoices.filter(i => i.status === 'overdue');
 
-  const totalPaidRevenue = paidInvoices.reduce((sum, i) => sum + i.total, 0);
-  const totalApproved = approvedInvoices.reduce((sum, i) => sum + i.total, 0);
-  const totalOutstanding = sentInvoices.reduce((sum, i) => sum + i.total, 0) + totalApproved;
-  const totalOverdue = overdueInvoices.reduce((sum, i) => sum + i.total, 0);
+  // Collected revenue includes fully paid invoices plus collected partial payments
+  const totalPaidRevenue = paidInvoices.reduce((sum, i) => sum + i.total, 0) +
+    partiallyPaidInvoices.reduce((sum, i) => sum + (i.amountPaid || 0), 0);
+
+  const totalApproved = approvedInvoices.reduce((sum, i) => sum + (i.balanceDue !== undefined ? i.balanceDue : i.total), 0);
+  const totalSent = sentInvoices.reduce((sum, i) => sum + (i.balanceDue !== undefined ? i.balanceDue : i.total), 0);
+  const partialBalance = partiallyPaidInvoices.reduce((sum, i) => sum + (i.balanceDue !== undefined ? i.balanceDue : (i.total - (i.amountPaid || 0))), 0);
+  
+  const totalOutstanding = totalSent + totalApproved + partialBalance;
+  const totalOverdue = overdueInvoices.reduce((sum, i) => sum + (i.balanceDue !== undefined ? i.balanceDue : i.total), 0);
 
   // Split expenses by type
   const opExExpenses = expenses.filter(e => e.type !== 'CapEx').reduce((sum, e) => sum + e.amount, 0);
@@ -641,6 +733,7 @@ export const computeFinancialMetrics = (invoices: AgencyInvoice[], expenses: Age
   return {
     totalInvoicesCount: invoices.length,
     paidCount: paidInvoices.length,
+    partiallyPaidCount: partiallyPaidInvoices.length,
     approvedCount: approvedInvoices.length,
     sentCount: sentInvoices.length,
     overdueCount: overdueInvoices.length,

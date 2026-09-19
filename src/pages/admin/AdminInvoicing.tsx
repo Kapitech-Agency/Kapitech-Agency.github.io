@@ -35,6 +35,7 @@ import {
   saveAgencyInvoice, 
   deleteAgencyInvoice, 
   updateInvoiceStatus, 
+  recordInvoicePayment,
   getAgencyExpenses, 
   saveAgencyExpense, 
   deleteAgencyExpense, 
@@ -98,6 +99,14 @@ export const AdminInvoicing: React.FC = () => {
 
   // Invoice Detail / Printable Preview Modal
   const [previewInvoice, setPreviewInvoice] = useState<AgencyInvoice | null>(null);
+
+  // Modal State for Recording Partial / Full Payment
+  const [paymentModalInvoice, setPaymentModalInvoice] = useState<AgencyInvoice | null>(null);
+  const [paymentAmount, setPaymentAmount] = useState<number>(0);
+  const [paymentMethod, setPaymentMethod] = useState<'bank_transfer' | 'credit_card' | 'cash' | 'other'>('bank_transfer');
+  const [paymentRef, setPaymentRef] = useState<string>('');
+  const [paymentDate, setPaymentDate] = useState<string>(new Date().toISOString().split('T')[0]);
+  const [paymentNotes, setPaymentNotes] = useState<string>('');
 
   const loadData = () => {
     setInvoices(getAgencyInvoices());
@@ -249,6 +258,37 @@ export const AdminInvoicing: React.FC = () => {
     if (window.confirm(`Hapus invoice ${invNum}?`)) {
       deleteAgencyInvoice(id);
       showToast(language === 'id' ? 'Invoice dihapus.' : 'Invoice deleted.');
+    }
+  };
+
+  const handleOpenPaymentModal = (inv: AgencyInvoice) => {
+    setPaymentModalInvoice(inv);
+    const remaining = inv.balanceDue !== undefined ? inv.balanceDue : (inv.total - (inv.amountPaid || 0));
+    setPaymentAmount(remaining > 0 ? remaining : inv.total);
+    setPaymentMethod('bank_transfer');
+    setPaymentRef(`TRX-${Math.floor(100000 + Math.random() * 900000)}`);
+    setPaymentDate(new Date().toISOString().split('T')[0]);
+    setPaymentNotes('');
+  };
+
+  const handleRecordPaymentSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!paymentModalInvoice) return;
+    if (paymentAmount <= 0) {
+      showToast(language === 'id' ? 'Nominal pembayaran harus lebih besar dari 0' : 'Payment amount must be greater than 0');
+      return;
+    }
+    const updated = recordInvoicePayment(paymentModalInvoice.id, {
+      amount: paymentAmount,
+      date: paymentDate,
+      method: paymentMethod,
+      reference: paymentRef,
+      recordedBy: session?.user?.name || session?.user?.username || 'Finance Officer',
+      notes: paymentNotes
+    });
+    if (updated) {
+      showToast(language === 'id' ? `Pembayaran dicatat untuk ${updated.invoiceNumber}` : `Payment recorded for ${updated.invoiceNumber}`);
+      setPaymentModalInvoice(null);
     }
   };
 
@@ -511,6 +551,8 @@ export const AdminInvoicing: React.FC = () => {
               options={[
                 { value: 'all', label: language === 'id' ? 'Semua Status' : 'All Status' },
                 { value: 'paid', label: language === 'id' ? 'Lunas' : 'Paid' },
+                { value: 'partially_paid', label: language === 'id' ? 'Sebagian (Partial)' : 'Partially Paid' },
+                { value: 'approved', label: language === 'id' ? 'Disetujui' : 'Approved' },
                 { value: 'sent', label: language === 'id' ? 'Terkirim' : 'Sent' },
                 { value: 'overdue', label: language === 'id' ? 'Jatuh Tempo' : 'Overdue' },
                 { value: 'draft', label: 'Draft' }
@@ -581,9 +623,33 @@ export const AdminInvoicing: React.FC = () => {
                       <div className="text-[10px] font-mono text-[#64748B]">
                         incl. {inv.taxPercent}% PPN
                       </div>
+                      {((inv.amountPaid && inv.amountPaid > 0) || inv.status === 'partially_paid') && (
+                        <div className="mt-1.5 space-y-1">
+                          <div className="flex items-center gap-2 text-[10px] font-mono">
+                            <span className="text-emerald-400">Paid: {formatAmount(inv.amountPaid || 0, currency)}</span>
+                            <span className="text-amber-400 font-semibold">Due: {formatAmount(inv.balanceDue ?? (inv.total - (inv.amountPaid || 0)), currency)}</span>
+                          </div>
+                          <div className="w-28 bg-[#1F242D] h-1.5 rounded-full overflow-hidden">
+                            <div 
+                              className="bg-emerald-500 h-full rounded-full transition-all" 
+                              style={{ width: `${Math.min(100, Math.round(((inv.amountPaid || 0) / inv.total) * 100))}%` }}
+                            />
+                          </div>
+                        </div>
+                      )}
                     </div>
 
                     <div className="flex items-center gap-1.5">
+                      {inv.status !== 'paid' && (
+                        <button
+                          onClick={() => handleOpenPaymentModal(inv)}
+                          className="h-9 px-2.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-mono flex items-center justify-center gap-1 transition-colors min-h-[36px]"
+                          title="Record Payment"
+                        >
+                          <CreditCard size={13} />
+                          <span className="text-[11px] font-semibold">Pay</span>
+                        </button>
+                      )}
                       <button
                         onClick={() => setPreviewInvoice(inv)}
                         className="h-9 px-3 rounded-xl bg-[#181B22] hover:bg-[#21252F] text-[#8A94A6] hover:text-white border border-[rgba(255,255,255,0.07)] text-xs font-mono flex items-center justify-center gap-1 transition-colors min-h-[36px]"
@@ -666,6 +732,20 @@ export const AdminInvoicing: React.FC = () => {
                         <div className="text-[10px] font-mono text-[#64748B] font-normal">
                           incl. {inv.taxPercent}% PPN
                         </div>
+                        {((inv.amountPaid && inv.amountPaid > 0) || inv.status === 'partially_paid') && (
+                          <div className="mt-1 space-y-1">
+                            <div className="flex items-center gap-2 text-[10px] font-mono font-normal">
+                              <span className="text-emerald-400">Paid: {formatAmount(inv.amountPaid || 0, currency)}</span>
+                              <span className="text-amber-400 font-semibold">Bal: {formatAmount(inv.balanceDue ?? (inv.total - (inv.amountPaid || 0)), currency)}</span>
+                            </div>
+                            <div className="w-24 bg-[#1F242D] h-1.5 rounded-full overflow-hidden">
+                              <div 
+                                className="bg-emerald-500 h-full rounded-full transition-all" 
+                                style={{ width: `${Math.min(100, Math.round(((inv.amountPaid || 0) / inv.total) * 100))}%` }}
+                              />
+                            </div>
+                          </div>
+                        )}
                       </td>
                       <td className="py-3.5 px-4">
                         <InvoiceStatusDropdown
@@ -678,6 +758,16 @@ export const AdminInvoicing: React.FC = () => {
                       </td>
                       <td className="py-3.5 px-4 text-right">
                         <div className="flex items-center justify-end gap-1.5">
+                          {inv.status !== 'paid' && (
+                            <button
+                              onClick={() => handleOpenPaymentModal(inv)}
+                              className="h-9 px-2.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-mono flex items-center justify-center gap-1 transition-colors min-h-[36px]"
+                              title="Record Payment"
+                            >
+                              <CreditCard size={13} />
+                              <span className="text-[11px] font-semibold">Pay</span>
+                            </button>
+                          )}
                           <button
                             onClick={() => setPreviewInvoice(inv)}
                             className="w-9 h-9 rounded-xl bg-[#181B22] hover:bg-[#21252F] text-[#8A94A6] hover:text-white border border-[rgba(255,255,255,0.07)] flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
@@ -1096,6 +1186,176 @@ export const AdminInvoicing: React.FC = () => {
         </div>
       )}
 
+      {/* 6b. Record Payment Modal */}
+      {paymentModalInvoice && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+          <div className="bg-[#111318] border border-[rgba(255,255,255,0.1)] rounded-2xl w-full max-w-lg shadow-2xl relative overflow-hidden flex flex-col max-h-[92vh]">
+            {/* Modal Header */}
+            <div className="sticky top-0 z-20 bg-[#181B22]/95 backdrop-blur-md px-5 sm:px-6 py-4 border-b border-[rgba(255,255,255,0.07)] flex items-center justify-between shrink-0">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+                  <CreditCard size={16} />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-white font-display">
+                    {language === 'id' ? 'Catat Pembayaran Klien' : 'Record Client Payment'}
+                  </h3>
+                  <p className="text-[11px] font-mono text-[#8A94A6]">
+                    {paymentModalInvoice.invoiceNumber} • {paymentModalInvoice.clientName}
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setPaymentModalInvoice(null)}
+                className="w-8 h-8 rounded-xl bg-[#111318] hover:bg-[#21252F] text-[#8A94A6] hover:text-white flex items-center justify-center transition-colors border border-[rgba(255,255,255,0.07)]"
+              >
+                <X size={15} />
+              </button>
+            </div>
+
+            {/* Modal Form */}
+            <form onSubmit={handleRecordPaymentSubmit} className="flex flex-col flex-1 overflow-y-auto">
+              <div className="p-5 sm:p-6 space-y-4 text-xs font-mono">
+                {/* Summary Box */}
+                <div className="bg-[#181B22] p-4 rounded-xl border border-[rgba(255,255,255,0.06)] space-y-2">
+                  <div className="flex items-center justify-between text-[#8A94A6]">
+                    <span>{language === 'id' ? 'Total Invoice:' : 'Total Invoice:'}</span>
+                    <span className="text-white font-bold">{formatAmount(paymentModalInvoice.total, currency)}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-[#8A94A6]">
+                    <span>{language === 'id' ? 'Sudah Dibayar:' : 'Already Paid:'}</span>
+                    <span className="text-emerald-400 font-bold">{formatAmount(paymentModalInvoice.amountPaid || 0, currency)}</span>
+                  </div>
+                  <div className="flex items-center justify-between pt-2 border-t border-[rgba(255,255,255,0.06)]">
+                    <span className="text-white font-semibold">{language === 'id' ? 'Sisa Tagihan (Balance Due):' : 'Remaining Balance Due:'}</span>
+                    <span className="text-amber-400 font-bold text-sm font-display">
+                      {formatAmount(paymentModalInvoice.balanceDue ?? (paymentModalInvoice.total - (paymentModalInvoice.amountPaid || 0)), currency)}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Amount to Record */}
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="text-white font-semibold">
+                      {language === 'id' ? 'Nominal Pembayaran Diterima (IDR)' : 'Payment Amount Received (IDR)'}
+                    </label>
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const rem = paymentModalInvoice.balanceDue ?? (paymentModalInvoice.total - (paymentModalInvoice.amountPaid || 0));
+                          setPaymentAmount(rem > 0 ? rem : paymentModalInvoice.total);
+                        }}
+                        className="px-2 py-0.5 rounded bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px]"
+                      >
+                        100% Full
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const rem = paymentModalInvoice.balanceDue ?? (paymentModalInvoice.total - (paymentModalInvoice.amountPaid || 0));
+                          setPaymentAmount(Math.round(rem / 2));
+                        }}
+                        className="px-2 py-0.5 rounded bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/30 text-[10px]"
+                      >
+                        50% DP
+                      </button>
+                    </div>
+                  </div>
+                  <input
+                    type="number"
+                    value={paymentAmount}
+                    onChange={(e) => setPaymentAmount(Number(e.target.value))}
+                    required
+                    min={1}
+                    max={paymentModalInvoice.total}
+                    className="w-full px-3.5 py-2.5 bg-[#181B22] border border-[rgba(255,255,255,0.08)] rounded-xl text-white text-sm focus:outline-none focus:border-emerald-500 font-bold font-mono"
+                  />
+                </div>
+
+                {/* Method & Date */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[#8A94A6] mb-1 font-semibold">
+                      {language === 'id' ? 'Metode Transfer' : 'Payment Method'}
+                    </label>
+                    <CustomSelect
+                      value={paymentMethod}
+                      onChange={(val) => setPaymentMethod(val as any)}
+                      options={[
+                        { value: 'bank_transfer', label: 'Bank Wire / Transfer (BCA/Mandiri)' },
+                        { value: 'credit_card', label: 'Corporate Card' },
+                        { value: 'cash', label: 'Cash Settlement' },
+                        { value: 'other', label: 'Other / Escrow' }
+                      ]}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[#8A94A6] mb-1 font-semibold">
+                      {language === 'id' ? 'Tanggal Pembayaran' : 'Payment Date'}
+                    </label>
+                    <input
+                      type="date"
+                      value={paymentDate}
+                      onChange={(e) => setPaymentDate(e.target.value)}
+                      required
+                      className="w-full px-3 py-2.5 bg-[#181B22] border border-[rgba(255,255,255,0.08)] rounded-xl text-white focus:outline-none focus:border-emerald-500 font-mono"
+                    />
+                  </div>
+                </div>
+
+                {/* Reference ID */}
+                <div>
+                  <label className="block text-[#8A94A6] mb-1 font-semibold">
+                    {language === 'id' ? 'Nomor Referensi Transaksi / Bukti Transfer' : 'Transaction Reference / Wire Ref'}
+                  </label>
+                  <input
+                    type="text"
+                    value={paymentRef}
+                    onChange={(e) => setPaymentRef(e.target.value)}
+                    placeholder="e.g. BCA-WS-99882312 or MANDIRI-TRX-102"
+                    className="w-full px-3 py-2.5 bg-[#181B22] border border-[rgba(255,255,255,0.08)] rounded-xl text-white focus:outline-none focus:border-emerald-500 font-mono"
+                  />
+                </div>
+
+                {/* Notes */}
+                <div>
+                  <label className="block text-[#8A94A6] mb-1 font-semibold">
+                    {language === 'id' ? 'Catatan Tambahan (Opsional)' : 'Internal Notes (Optional)'}
+                  </label>
+                  <input
+                    type="text"
+                    value={paymentNotes}
+                    onChange={(e) => setPaymentNotes(e.target.value)}
+                    placeholder="e.g. Received via Bank Mandiri 123-00-998877-1"
+                    className="w-full px-3 py-2.5 bg-[#181B22] border border-[rgba(255,255,255,0.08)] rounded-xl text-white focus:outline-none focus:border-emerald-500 font-mono"
+                  />
+                </div>
+              </div>
+
+              {/* Modal Footer */}
+              <div className="sticky bottom-0 z-20 bg-[#181B22]/95 backdrop-blur-md px-5 sm:px-6 py-3.5 border-t border-[rgba(255,255,255,0.07)] flex items-center justify-end gap-2.5 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setPaymentModalInvoice(null)}
+                  className="h-10 px-4 rounded-xl bg-[#111318] hover:bg-[#181B22] text-[#8A94A6] hover:text-white border border-[rgba(255,255,255,0.07)] text-xs font-mono font-medium transition-colors min-h-[40px]"
+                >
+                  {language === 'id' ? 'Batal' : 'Cancel'}
+                </button>
+                <button
+                  type="submit"
+                  className="h-10 px-5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-mono font-bold transition-all shadow-lg shadow-emerald-600/20 min-h-[40px] flex items-center gap-1.5"
+                >
+                  <Check size={14} />
+                  <span>{language === 'id' ? 'Simpan Pembayaran' : 'Confirm Payment'}</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
       {/* 7. Printable Invoice Preview Slide-Over / Modal (Mobile Fullscreen + Sticky Header) */}
       {previewInvoice && (
         <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-0 sm:p-4 overflow-y-auto">
@@ -1181,8 +1441,24 @@ export const AdminInvoicing: React.FC = () => {
                 </table>
               </div>
 
-              {/* Totals Calculation */}
-              <div className="flex justify-end mb-6 text-xs font-mono">
+              {/* Totals Calculation & Payments Ledger */}
+              <div className="flex flex-col sm:flex-row sm:justify-between gap-4 mb-6 text-xs font-mono">
+                {previewInvoice.payments && previewInvoice.payments.length > 0 ? (
+                  <div className="flex-1 bg-zinc-50 border border-zinc-200 rounded-xl p-3">
+                    <span className="text-[10px] font-bold text-zinc-900 uppercase block mb-2">Recorded Payment Ledger:</span>
+                    <div className="space-y-1.5">
+                      {previewInvoice.payments.map((p, idx) => (
+                        <div key={idx} className="flex justify-between items-center text-[11px] text-zinc-700">
+                          <span>{p.date} • {p.method.replace('_', ' ')} {p.reference ? `(${p.reference})` : ''}</span>
+                          <span className="font-bold text-emerald-600">{formatIDR(p.amount)}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex-1" />
+                )}
+
                 <div className="w-64 space-y-1.5 text-right">
                   <div className="flex justify-between text-zinc-600">
                     <span>Subtotal:</span>
@@ -1194,8 +1470,20 @@ export const AdminInvoicing: React.FC = () => {
                   </div>
                   <div className="flex justify-between text-sm font-bold text-zinc-900 pt-2 border-t border-zinc-900 font-display">
                     <span>Total Amount:</span>
-                    <span className="text-red-600">{formatIDR(previewInvoice.total)}</span>
+                    <span className="text-zinc-900">{formatIDR(previewInvoice.total)}</span>
                   </div>
+                  {previewInvoice.amountPaid && previewInvoice.amountPaid > 0 ? (
+                    <>
+                      <div className="flex justify-between text-emerald-600 font-semibold pt-1">
+                        <span>Total Paid:</span>
+                        <span>- {formatIDR(previewInvoice.amountPaid)}</span>
+                      </div>
+                      <div className="flex justify-between text-sm font-bold text-red-600 pt-1 border-t border-dashed border-zinc-300">
+                        <span>Balance Due:</span>
+                        <span>{formatIDR(previewInvoice.balanceDue ?? (previewInvoice.total - previewInvoice.amountPaid))}</span>
+                      </div>
+                    </>
+                  ) : null}
                 </div>
               </div>
 

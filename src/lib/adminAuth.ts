@@ -776,18 +776,7 @@ export function hasAdminPermission(permissionKey: keyof StakeholderPermissions):
   // Active simulated role override for live multi-role testing in AMS
   if (typeof window !== 'undefined') {
     const activeRole = getStoredRole();
-    if (activeRole === 'engineer') {
-      if (
-        permissionKey === 'canViewFinancials' || 
-        permissionKey === 'canManageInvoices' || 
-        permissionKey === 'canApproveBudgets' ||
-        permissionKey === 'canManageCrm' ||
-        permissionKey === 'canManageClients' ||
-        permissionKey === 'canManageAdminAccounts'
-      ) {
-        return false;
-      }
-    } else if (activeRole === 'staff') {
+    if (activeRole === 'client_viewer') {
       if (
         permissionKey === 'canViewFinancials' || 
         permissionKey === 'canManageInvoices' || 
@@ -796,7 +785,26 @@ export function hasAdminPermission(permissionKey: keyof StakeholderPermissions):
         permissionKey === 'canManageClients' ||
         permissionKey === 'canManageVendors' ||
         permissionKey === 'canManageAdminAccounts' ||
-        permissionKey === 'canAccessServerAndApi'
+        permissionKey === 'canAccessServerAndApi' ||
+        permissionKey === 'canRunDataMigration'
+      ) {
+        return false;
+      }
+    } else if (activeRole === 'account_manager') {
+      if (
+        permissionKey === 'canApproveBudgets' ||
+        permissionKey === 'canManageAdminAccounts' ||
+        permissionKey === 'canAccessServerAndApi' ||
+        permissionKey === 'canRunDataMigration'
+      ) {
+        return false;
+      }
+    } else if (activeRole === 'finance') {
+      if (
+        permissionKey === 'canManageKanbanTasks' ||
+        permissionKey === 'canManageAdminAccounts' ||
+        permissionKey === 'canAccessServerAndApi' ||
+        permissionKey === 'canRunDataMigration'
       ) {
         return false;
       }
