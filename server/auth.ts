@@ -150,7 +150,9 @@ export function createSession(user: StoredUser, ip: string, userAgent: string, r
   }
   db.sessions.push(session);
   saveDatabase(db);
-  return session;
+
+  // Return the one-time raw token to the caller without persisting it in the database.
+  return { ...session, token };
 }
 
 export function revokeSession(token: string): boolean {
