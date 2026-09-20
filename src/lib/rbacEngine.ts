@@ -22,9 +22,9 @@ export interface RoleMetadata {
 export const ROLE_DEFINITIONS: Record<StakeholderRole, RoleMetadata> = {
   executive: {
     id: 'executive',
-    title: 'Stakeholder Executive (Full Access)',
+    title: 'Stakeholder Executive',
     badge: 'C-Level / Partner',
-    scopeDescription: 'Full 100% Access (Strategic, Financial, P&L, Operations & Admin)',
+    scopeDescription: 'Strategic oversight across commercial, financial, and delivery operations.',
     accountProfile: {
       displayName: 'Executive Partner',
       accountId: 'kapitech-exec-01',
@@ -171,10 +171,45 @@ export function isModuleAllowed(role: StakeholderRole, moduleKey: string): boole
   return meta.allowedModuleKeys.includes(moduleKey);
 }
 
+export interface ServerPermissions {
+  canViewFinancials?: boolean;
+  canManageInvoices?: boolean;
+  canApproveBudgets?: boolean;
+  canManageCrm?: boolean;
+  canManageProjects?: boolean;
+  canManageKanbanTasks?: boolean;
+  canManageClients?: boolean;
+  canManageVendors?: boolean;
+  canManageCmsContent?: boolean;
+  canAccessServerAndApi?: boolean;
+  canRunDataMigration?: boolean;
+  canViewSecurityAuditLogs?: boolean;
+  canManageAdminAccounts?: boolean;
+}
+
+const MODULE_PERMISSION_MAP: Record<string, keyof ServerPermissions | 'authenticated'> = {
+  dashboard: 'authenticated',
+  inbox: 'canManageCrm',
+  crm: 'canManageCrm',
+  proposals: 'canManageCrm',
+  projects: 'canManageProjects',
+  approvals: 'canApproveBudgets',
+  invoicing: 'canManageInvoices',
+  clients: 'canManageClients',
+  vendors: 'canManageVendors',
+  documents: 'authenticated',
+  services: 'canManageCmsContent',
+  cms_projects: 'canManageCmsContent',
+  testimonials: 'canManageCmsContent',
+  settings: 'authenticated',
+  rbac: 'canManageAdminAccounts'
+};
+
 export function useRbacRole(
   actualStakeholderType?: StakeholderType | string,
   division?: string,
-  userRole?: string
+  userRole?: string,
+  serverPermissions?: ServerPermissions
 ) {
   const actualRole = actualStakeholderType
     ? roleFromStakeholderType(actualStakeholderType, division, userRole)
@@ -204,6 +239,12 @@ export function useRbacRole(
     role: currentRole,
     setRole: switchRole,
     roleMeta: meta,
-    isAllowed: (key: string) => isModuleAllowed(currentRole, key)
+    isAllowed: (key: string) => {
+      if (serverPermissions) {
+        const permission = MODULE_PERMISSION_MAP[key];
+        return permission === 'authenticated' ? true : Boolean(serverPermissions[permission]);
+      }
+      return isModuleAllowed(currentRole, key);
+    }
   };
 }
