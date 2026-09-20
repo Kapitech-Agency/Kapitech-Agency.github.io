@@ -7,6 +7,7 @@ import {
   saveDatabase,
   createDatabaseBackup,
   listDatabaseBackups,
+  verifyDatabaseBackupIntegrity,
   recordAuditLog,
   hashSessionToken,
   StoredUser,
@@ -3374,6 +3375,19 @@ apiRouter.get('/system/backups/download', requireAuth, backupAccessMiddleware, (
   } catch (error) {
     console.error('[Backup] Encrypted backup download failed:', error);
     res.status(500).json({ success: false, error: 'Database backup download failed.' });
+  }
+});
+
+apiRouter.get('/system/backups/integrity', requireAuth, backupAccessMiddleware, (req: AuthenticatedRequest, res: Response): void => {
+  try {
+    const integrity = verifyDatabaseBackupIntegrity();
+    res.status(integrity.valid ? 200 : 409).json({
+      success: integrity.valid,
+      integrity
+    });
+  } catch (error) {
+    console.error('[Backup] Backup integrity check failed:', error);
+    res.status(500).json({ success: false, error: 'Database backup integrity status is unavailable.' });
   }
 });
 
