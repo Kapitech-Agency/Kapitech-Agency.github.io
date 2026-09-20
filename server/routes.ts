@@ -906,50 +906,114 @@ apiRouter.get('/finance/invoices', requireAuth, requirePermission('canViewFinanc
   res.json({ success: true, invoices: db.invoices });
 });
 
-apiRouter.post('/finance/invoices', requireAuth, requirePermission('canManageInvoices'), (req: AuthenticatedRequest, res: Response): void => {
-  const inv = req.body;
+function normalizeInvoiceItems(value: unknown): Array<{ id: string; description: string; quantity: number; unitPrice: number; amount: number }> {
+  if (!Array.isArray(value)) return [];
+  return value.slice(0, 100).map((item: any) => {
+    const quantity = Number(item?.quantity);
+    const unitPrice = Number(item?.unitPrice);
+    return {
+      id: String(item?.id || `line_${crypto.randomBytes(4).toString('hex')}`).slice(0, 80),
+      description: String(item?.description || '').trim().slice(0, 500),
+      quantity: Number.isFinite(quantity) ? Math.min(100000, Math.max(0, quantity)) : 0,
+      unitPrice: Number.isFinite(unitPrice) ? Math.min(10_000_000_000, Math.max(0, unitPrice)) : 0,
+      amount: 0
+    };
+  }).filter(item => item.description && item.quantity > 0 && item.unitPrice >= 0).map(item => ({
+    ...item,
+    amount: Math.round(item.quantity * item.unitPrice)
+  }));
+}
+
+function normalizeDate(value: unknown, fallback: string): string {
+  const candidate = String(value || '').trim();
+  if (/^\d{4}-\d{2}-\d{2}$/.test(candidate)) {
+    const parsed = new Date(`${candidate}T00:00:00Z`);
+    if (!Number.isNaN(parsed.getTime()) && parsed.toISOString().slice(0, 10) === candidate) return candidate;
+  }
+  return fallback;
+}
+
+const INVOICE_STATUSES = new Set(['draft', 'sent', 'approved', 'overdue', 'cancelled']);
+const PAYMENT_METHODS = new Set(['bank_transfer', 'credit_card', 'cash', 'other']);
+
+function buildInvoiceFinancials(items: ReturnType<typeof normalizeInvoiceItems>, taxPercent: number, discountPercent: number) {
+  const subtotal = items.reduce((sum, item) => sum + item.amount, 0);
+  const discountAmount = Math.round(subtotal * (discountPercent / 100));
+  const taxableSubtotal = Math.max(0, subtotal - discountAmount);
+  const taxAmount = Math.round(taxableSubtotal * (taxPercent / 100));
+  const total = taxableSubtotal + taxAmount;
+  return { subtotal, discountAmount, taxableSubtotal, taxAmount, total };
+}
+
+
+apiRouter.get('/finance/invoices', requireAuth, requirePermission('canViewFinancials'), (req: AuthenticatedRequest, res: Response): void => {
   const db = getDatabase();
+  res.json({ success: true, invoices: db.invoices });
+});
 
-  // Authoritative server-side calculations
-  const items = Array.isArray(inv.items) ? inv.items : [];
-  const computedSubtotal = items.reduce((acc: number, it: any) => acc + (Number(it.quantity || 1) * Number(it.unitPrice || 0)), 0);
-  const taxPercent = Number(inv.taxPercent) || 11;
-  const taxAmount = Math.round(computedSubtotal * (taxPercent / 100));
-  const total = computedSubtotal + taxAmount;
-  const payments = Array.isArray(inv.payments) ? inv.payments : [];
-  const amountPaid = payments.reduce((sum: number, p: any) => sum + Number(p.amount || 0), 0);
-  const balanceDue = Math.max(0, total - amountPaid);
-
-  let status = inv.status || 'draft';
-  if (amountPaid >= total && total > 0) {
-    status = 'paid';
-  } else if (amountPaid > 0) {
-    status = 'partially_paid';
+apiRouter.post('/finance/invoices', requireAuth, requirePermission('canManageInvoices'), (req: AuthenticatedRequest, res: Response): void => {
+  const input = req.body || {};
+  const items = normalizeInvoiceItems(input.items);
+  if (items.length === 0) {
+    res.status(400).json({ success: false, error: 'At least one valid invoice line item is required.' });
+    return;
   }
 
-  const newInvoice = {
-    id: inv.id || `inv_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
-    invoiceNumber: inv.invoiceNumber || `INV-KAPI-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`,
-    clientName: inv.clientName || 'Client',
-    clientCompany: inv.clientCompany || '',
-    clientEmail: inv.clientEmail || '',
-    issueDate: inv.issueDate || new Date().toISOString().split('T')[0],
-    dueDate: inv.dueDate || new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-    status,
+  const taxPercent = Number.isFinite(Number(input.taxPercent)) ? Math.min(100, Math.max(0, Number(input.taxPercent))) : 11;
+  const discountPercent = Number.isFinite(Number(input.discountPercent)) ? Math.min(100, Math.max(0, Number(input.discountPercent))) : 0;
+  const { subtotal, discountAmount, taxableSubtotal, taxAmount, total } = buildInvoiceFinancials(items, taxPercent, discountPercent);
+
+  const db = getDatabase();
+  const requestedNumber = String(input.invoiceNumber || '').trim();
+  const invoiceNumber = requestedNumber && /^[A-Za-z0-9._/-]{1,80}$/.test(requestedNumber)
+    ? requestedNumber
+    : `INV-KAPI-${new Date().getFullYear()}-${crypto.randomInt(1000, 10000)}`;
+
+  if (db.invoices.some((invoice: any) => invoice.invoiceNumber === invoiceNumber)) {
+    res.status(409).json({ success: false, error: 'Invoice number already exists.' });
+    return;
+  }
+
+  const issueDate = normalizeDate(input.issueDate, new Date().toISOString().slice(0, 10));
+  const dueDate = normalizeDate(input.dueDate, new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10));
+  const requestedStatus = String(input.status || 'draft');
+  const status = INVOICE_STATUSES.has(requestedStatus) ? requestedStatus : 'draft';
+  const invoice = {
+    id: `inv_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
+    invoiceNumber,
+    type: input.type === 'quotation' ? 'quotation' : 'invoice',
+    clientName: String(input.clientName || 'Client').trim().slice(0, 160),
+    clientCompany: String(input.clientCompany || '').trim().slice(0, 200),
+    clientEmail: String(input.clientEmail || '').trim().toLowerCase().slice(0, 254),
+    clientPhone: String(input.clientPhone || '').trim().slice(0, 40),
+    projectId: String(input.projectId || '').slice(0, 100),
+    leadId: String(input.leadId || '').slice(0, 100),
     items,
-    subtotal: computedSubtotal,
+    subtotal,
+    discountPercent,
+    discountAmount,
     taxPercent,
     taxAmount,
     total,
-    amountPaid,
-    balanceDue,
-    payments,
-    notes: inv.notes || '',
+    amountPaid: 0,
+    balanceDue: total,
+    payments: [],
+    currency: input.currency === 'USD' ? 'USD' : 'IDR',
+    status,
+    issueDate,
+    dueDate,
+    notes: String(input.notes || '').trim().slice(0, 5000),
+    paymentTerms: String(input.paymentTerms || '').trim().slice(0, 500),
+    auditTrail: [{
+      action: 'created',
+      timestamp: new Date().toISOString(),
+      user: req.user!.username
+    }],
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   };
 
-  db.invoices.unshift(newInvoice);
+  db.invoices.unshift(invoice);
   saveDatabase(db);
 
   recordAuditLog({
@@ -958,18 +1022,18 @@ apiRouter.post('/finance/invoices', requireAuth, requirePermission('canManageInv
     actorRole: req.user!.role,
     ip: req.ip,
     userAgent: req.headers['user-agent'] as string,
-    details: `Created invoice ${newInvoice.invoiceNumber} for ${newInvoice.clientName} (Total: ${newInvoice.total}).`,
+    details: `Created invoice ${invoice.invoiceNumber} for ${invoice.clientName} (Total: ${invoice.total}).`,
     severity: 'info'
   });
 
-  res.json({ success: true, invoice: newInvoice });
+  res.json({ success: true, invoice });
 });
 
 apiRouter.put('/finance/invoices/:id', requireAuth, requirePermission('canManageInvoices'), (req: AuthenticatedRequest, res: Response): void => {
   const { id } = req.params;
-  const inv = req.body;
+  const input = req.body || {};
   const db = getDatabase();
-  const idx = db.invoices.findIndex(i => i.id === id);
+  const idx = db.invoices.findIndex((invoice: any) => invoice.id === id);
 
   if (idx === -1) {
     res.status(404).json({ success: false, error: 'Invoice not found.' });
@@ -977,34 +1041,63 @@ apiRouter.put('/finance/invoices/:id', requireAuth, requirePermission('canManage
   }
 
   const existing = db.invoices[idx];
-  const items = Array.isArray(inv.items) ? inv.items : existing.items;
-  const computedSubtotal = items.reduce((acc: number, it: any) => acc + (Number(it.quantity || 1) * Number(it.unitPrice || 0)), 0);
-  const taxPercent = inv.taxPercent !== undefined ? Number(inv.taxPercent) : existing.taxPercent;
-  const taxAmount = Math.round(computedSubtotal * (taxPercent / 100));
-  const total = computedSubtotal + taxAmount;
-  const payments = Array.isArray(inv.payments) ? inv.payments : existing.payments || [];
-  const amountPaid = payments.reduce((sum: number, p: any) => sum + Number(p.amount || 0), 0);
-  const balanceDue = Math.max(0, total - amountPaid);
-
-  let status = inv.status || existing.status;
-  if (amountPaid >= total && total > 0) {
-    status = 'paid';
-  } else if (amountPaid > 0 && status !== 'cancelled') {
-    status = 'partially_paid';
+  if (existing.status === 'cancelled' && input.status !== 'cancelled') {
+    res.status(409).json({ success: false, error: 'Cancelled invoices cannot be reopened.' });
+    return;
   }
+
+  const items = input.items !== undefined ? normalizeInvoiceItems(input.items) : normalizeInvoiceItems(existing.items);
+  if (items.length === 0) {
+    res.status(400).json({ success: false, error: 'At least one valid invoice line item is required.' });
+    return;
+  }
+
+  const taxPercent = input.taxPercent !== undefined ? Math.min(100, Math.max(0, Number(input.taxPercent) || 0)) : Number(existing.taxPercent) || 0;
+  const discountPercent = input.discountPercent !== undefined ? Math.min(100, Math.max(0, Number(input.discountPercent) || 0)) : Number(existing.discountPercent) || 0;
+  const { subtotal, discountAmount, taxableSubtotal, taxAmount, total } = buildInvoiceFinancials(items, taxPercent, discountPercent);
+
+  const existingPayments = Array.isArray(existing.payments) ? existing.payments : [];
+  const amountPaid = existingPayments.reduce((sum: number, payment: any) => sum + (Number(payment.amount) || 0), 0);
+  if (total < amountPaid) {
+    res.status(409).json({ success: false, error: 'Invoice total cannot be lower than payments already recorded.' });
+    return;
+  }
+
+  const requestedStatus = String(input.status || existing.status);
+  let status = INVOICE_STATUSES.has(requestedStatus) ? requestedStatus : existing.status;
+  if (amountPaid >= total && total > 0) status = 'paid';
+  else if (amountPaid > 0) status = 'partially_paid';
+  else if (status === 'paid' || status === 'partially_paid') status = 'draft';
 
   db.invoices[idx] = {
     ...existing,
-    ...inv,
+    invoiceNumber: existing.invoiceNumber,
+    clientName: input.clientName !== undefined ? String(input.clientName).trim().slice(0, 160) : existing.clientName,
+    clientCompany: input.clientCompany !== undefined ? String(input.clientCompany).trim().slice(0, 200) : existing.clientCompany,
+    clientEmail: input.clientEmail !== undefined ? String(input.clientEmail).trim().toLowerCase().slice(0, 254) : existing.clientEmail,
+    clientPhone: input.clientPhone !== undefined ? String(input.clientPhone).trim().slice(0, 40) : existing.clientPhone,
+    projectId: input.projectId !== undefined ? String(input.projectId).slice(0, 100) : existing.projectId,
+    leadId: input.leadId !== undefined ? String(input.leadId).slice(0, 100) : existing.leadId,
     items,
-    subtotal: computedSubtotal,
+    subtotal,
+    discountPercent,
+    discountAmount,
     taxPercent,
     taxAmount,
     total,
     amountPaid,
-    balanceDue,
-    payments,
+    balanceDue: Math.max(0, total - amountPaid),
+    payments: existingPayments,
+    currency: input.currency === 'USD' || input.currency === 'IDR' ? input.currency : existing.currency || 'IDR',
     status,
+    issueDate: input.issueDate !== undefined ? normalizeDate(input.issueDate, existing.issueDate) : existing.issueDate,
+    dueDate: input.dueDate !== undefined ? normalizeDate(input.dueDate, existing.dueDate) : existing.dueDate,
+    notes: input.notes !== undefined ? String(input.notes).trim().slice(0, 5000) : existing.notes,
+    paymentTerms: input.paymentTerms !== undefined ? String(input.paymentTerms).trim().slice(0, 500) : existing.paymentTerms,
+    auditTrail: [
+      ...(Array.isArray(existing.auditTrail) ? existing.auditTrail : []),
+      { action: 'updated', timestamp: new Date().toISOString(), user: req.user!.username }
+    ],
     updatedAt: new Date().toISOString()
   };
 
@@ -1023,49 +1116,66 @@ apiRouter.put('/finance/invoices/:id', requireAuth, requirePermission('canManage
   res.json({ success: true, invoice: db.invoices[idx] });
 });
 
-// Record Invoice Payment (Partial or Full)
 apiRouter.post('/finance/invoices/:id/pay', requireAuth, requirePermission('canManageInvoices'), (req: AuthenticatedRequest, res: Response): void => {
   const { id } = req.params;
-  const { amount, date, method, reference, notes } = req.body;
-  const payAmount = Number(amount);
+  const input = req.body || {};
+  const payAmount = Number(input.amount);
 
-  if (!payAmount || payAmount <= 0) {
+  if (!Number.isFinite(payAmount) || payAmount <= 0) {
     res.status(400).json({ success: false, error: 'Valid payment amount is required.' });
     return;
   }
 
   const db = getDatabase();
-  const invoice = db.invoices.find(i => i.id === id);
+  const invoice = db.invoices.find((item: any) => item.id === id);
   if (!invoice) {
     res.status(404).json({ success: false, error: 'Invoice not found.' });
     return;
   }
 
+  if (invoice.status === 'cancelled') {
+    res.status(409).json({ success: false, error: 'Cancelled invoices cannot receive payments.' });
+    return;
+  }
+
+  const currentBalance = Math.max(0, Number(invoice.balanceDue ?? (invoice.total - (invoice.amountPaid || 0))));
+  if (currentBalance <= 0) {
+    res.status(409).json({ success: false, error: 'Invoice has no remaining balance.' });
+    return;
+  }
+
+  if (payAmount > currentBalance) {
+    res.status(400).json({ success: false, error: 'Payment exceeds the current invoice balance.' });
+    return;
+  }
+
+  const method = PAYMENT_METHODS.has(String(input.method)) ? String(input.method) : 'bank_transfer';
+  const date = normalizeDate(input.date, new Date().toISOString().slice(0, 10));
+  const reference = String(input.reference || '').trim().slice(0, 160);
+  const notes = String(input.notes || '').trim().slice(0, 1000);
+
   const paymentRecord = {
     id: `pay_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
-    amount: payAmount,
-    date: date || new Date().toISOString().split('T')[0],
-    method: method || 'bank_transfer',
-    reference: reference || '',
+    amount: Math.round(payAmount * 100) / 100,
+    date,
+    method,
+    reference,
     recordedBy: req.user!.name || req.user!.username,
-    notes: notes || ''
+    notes
   };
 
-  if (!Array.isArray(invoice.payments)) {
-    invoice.payments = [];
-  }
+  if (!Array.isArray(invoice.payments)) invoice.payments = [];
   invoice.payments.push(paymentRecord);
 
-  const totalPaid = invoice.payments.reduce((sum: number, p: any) => sum + Number(p.amount || 0), 0);
+  const totalPaid = invoice.payments.reduce((sum: number, payment: any) => sum + (Number(payment.amount) || 0), 0);
   invoice.amountPaid = totalPaid;
-  invoice.balanceDue = Math.max(0, invoice.total - totalPaid);
-
-  if (invoice.balanceDue <= 0) {
-    invoice.status = 'paid';
-  } else {
-    invoice.status = 'partially_paid';
-  }
+  invoice.balanceDue = Math.max(0, Number(invoice.total || 0) - totalPaid);
+  invoice.status = invoice.balanceDue <= 0 ? 'paid' : 'partially_paid';
   invoice.updatedAt = new Date().toISOString();
+  invoice.auditTrail = [
+    ...(Array.isArray(invoice.auditTrail) ? invoice.auditTrail : []),
+    { action: 'payment_recorded', timestamp: new Date().toISOString(), user: req.user!.username, note: reference || notes }
+  ];
 
   saveDatabase(db);
 
@@ -1085,26 +1195,31 @@ apiRouter.post('/finance/invoices/:id/pay', requireAuth, requirePermission('canM
 apiRouter.delete('/finance/invoices/:id', requireAuth, requirePermission('canManageInvoices'), (req: AuthenticatedRequest, res: Response): void => {
   const { id } = req.params;
   const db = getDatabase();
-  const inv = db.invoices.find(i => i.id === id);
-  if (!inv) {
+  const invoice = db.invoices.find((item: any) => item.id === id);
+  if (!invoice) {
     res.status(404).json({ success: false, error: 'Invoice not found.' });
     return;
   }
 
-  db.invoices = db.invoices.filter(i => i.id !== id);
+  invoice.status = 'cancelled';
+  invoice.updatedAt = new Date().toISOString();
+  invoice.auditTrail = [
+    ...(Array.isArray(invoice.auditTrail) ? invoice.auditTrail : []),
+    { action: 'cancelled', timestamp: new Date().toISOString(), user: req.user!.username }
+  ];
   saveDatabase(db);
 
   recordAuditLog({
-    action: 'INVOICE_DELETED',
+    action: 'INVOICE_CANCELLED',
     actor: req.user!.username,
     actorRole: req.user!.role,
     ip: req.ip,
     userAgent: req.headers['user-agent'] as string,
-    details: `Deleted invoice ${inv.invoiceNumber}.`,
+    details: `Cancelled invoice ${invoice.invoiceNumber}.`,
     severity: 'warning'
   });
 
-  res.json({ success: true, message: 'Invoice deleted.' });
+  res.json({ success: true, message: 'Invoice cancelled.', invoice });
 });
 
 // Expenses
