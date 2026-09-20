@@ -407,8 +407,8 @@ apiRouter.post('/auth/mfa/verify', rateLimitPublic(10, 5 * 60 * 1000), (req: Req
   const db = getDatabase();
   const user = db.users.find(item => item.id === challenge.userId);
   const code = String(req.body?.code || '').trim();
-  const validTotp = Boolean(user?.mfaSecret && verifyTotpCode(user.mfaSecret, code));
-  const validRecovery = Boolean(user && verifyMfaRecoveryCode(user, code));
+  const validTotp = Boolean(user?.mfaEnabled && user?.mfaSecret && verifyTotpCode(user.mfaSecret, code));
+  const validRecovery = Boolean(user?.mfaEnabled && user && verifyMfaRecoveryCode(user, code));
   if (!user || user.status === 'suspended' || !user.mfaEnabled || (!validTotp && !validRecovery)) {
     const challengeState = getMfaChallenge(decodeURIComponent(challengeToken));
     if (challengeState) {
@@ -525,7 +525,7 @@ apiRouter.post('/auth/mfa/setup/verify', requireAuth, rateLimitAuthenticated(10,
     severity: 'info'
   });
 
-  res.json({ success: true, mfaEnabled: true });
+  res.json({ success: true, mfaEnabled: true, mfaRecoveryCodes: recoveryCodes, message: 'MFA enabled successfully. Store the recovery codes securely; each code can be used once.' });
 });
 
 apiRouter.post('/auth/mfa/disable', requireAuth, rateLimitAuthenticated(5, 15 * 60 * 1000), (req: AuthenticatedRequest, res: Response): void => {
@@ -537,14 +537,16 @@ apiRouter.post('/auth/mfa/disable', requireAuth, rateLimitAuthenticated(5, 15 * 
     res.status(409).json({ success: false, error: 'MFA is not enabled.' });
     return;
   }
-  if (!verifyPasswordForUser(currentPassword, user) || !verifyTotpCode(user.mfaSecret, code)) {
-    res.status(401).json({ success: false, error: 'Current password and MFA code are required.' });
+  const validSecondFactor = verifyTotpCode(user.mfaSecret, code) || verifyMfaRecoveryCode(user, code);
+  if (!verifyPasswordForUser(currentPassword, user) || !validSecondFactor) {
+    res.status(401).json({ success: false, error: 'Current password and a valid TOTP or recovery code are required.' });
     return;
   }
 
   user.mfaEnabled = false;
   user.mfaSecret = undefined;
   user.mfaPendingSecret = undefined;
+  user.mfaRecoveryCodeHashes = [];
   saveDatabase(db);
   revokeAllUserSessions(user.id);
 
