@@ -1370,6 +1370,7 @@ export const AdminSettings: React.FC = () => {
             </form>
           </div>
         </div>
+        </div>
       )}
 
       {/* TAB 5: API & CLOUD CONNECTIONS */}
