@@ -370,7 +370,7 @@ export const getAgencyInvoices = (): AgencyInvoice[] => {
     if (Array.isArray(parsed)) return parsed;
     return import.meta.env.PROD ? [] : INITIAL_DEFAULT_INVOICES;
   } catch {
-    return INITIAL_DEFAULT_INVOICES;
+    return import.meta.env.PROD ? [] : INITIAL_DEFAULT_INVOICES;
   }
 };
 
@@ -573,7 +573,7 @@ export const getAgencyExpenses = (): AgencyExpense[] => {
     if (Array.isArray(parsed)) return parsed;
     return import.meta.env.PROD ? [] : INITIAL_DEFAULT_EXPENSES;
   } catch {
-    return INITIAL_DEFAULT_EXPENSES;
+    return import.meta.env.PROD ? [] : INITIAL_DEFAULT_EXPENSES;
   }
 };
 
