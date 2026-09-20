@@ -87,7 +87,7 @@ const AnimatedRoutes = () => {
           <Route path="/inbox" element={<Navigate to="/admin/inbox" replace />} />
 
           {/* Direct AMS Executive Gateway -> Cleanly protected under AdminLayout */}
-          <Route path="/ams" element={<Navigate to="/admin/executive" replace />} />
+          <Route path="/ams" element={<Navigate to="/admin/dashboard" replace />} />
 
           {/* Admin Authentication Gateway */}
           <Route path="/admin/login" element={<AdminLogin />} />
