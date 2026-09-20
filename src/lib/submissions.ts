@@ -1,15 +1,3 @@
-import { 
-  collection, 
-  addDoc, 
-  onSnapshot, 
-  doc, 
-  updateDoc, 
-  deleteDoc, 
-  query, 
-  orderBy, 
-  serverTimestamp 
-} from 'firebase/firestore';
-import { db, isFirebaseConfigured } from './firebase';
 import { api } from './apiClient';
 
 export interface ContactSubmission {
@@ -145,17 +133,6 @@ export const submitToInbox = async (data: Omit<ContactSubmission, 'id' | 'create
   const existing = getLocalSubmissions();
   saveLocalSubmissions([record, ...existing.filter((item) => item.id !== record.id)].slice(0, 200));
 
-  if (db && isFirebaseConfigured) {
-    try {
-      await addDoc(collection(db, 'contact_submissions'), {
-        ...record,
-        firestoreCreatedAt: serverTimestamp()
-      });
-    } catch (err) {
-      console.debug('Firestore secondary write skipped:', err);
-    }
-  }
-
   return { success: true, id: record.id };
 }
 
@@ -194,22 +171,21 @@ export const deleteSubmission = async (id: string): Promise<void> => {
 }
 
 /**
- * Real-time combined subscriber (Server API + Local Cache + Firestore)
+ * Server-backed subscriber with a small browser cache
  */
 export const subscribeToInbox = (onUpdate: (submissions: ContactSubmission[]) => void): (() => void) => {
   // 1. Deliver local cache immediately
   const initialLocal = getLocalSubmissions();
   onUpdate(initialLocal);
 
-  // 2. Fetch authoritative records from Server API
+  // Fetch authoritative records from Server API.
   api.leads.getAll().then(res => {
     if (res.success && Array.isArray(res.data?.leads)) {
       const serverLeads = res.data!.leads;
-      // Merge with local cache
       const mergedMap = new Map<string, ContactSubmission>();
-      initialLocal.forEach(l => mergedMap.set(l.id, l));
-      serverLeads.forEach(l => mergedMap.set(l.id, l));
-      const combined = Array.from(mergedMap.values()).sort((a, b) => 
+      initialLocal.forEach((l) => mergedMap.set(l.id, l));
+      serverLeads.forEach((l) => mergedMap.set(l.id, l));
+      const combined = Array.from(mergedMap.values()).sort((a, b) =>
         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
       );
       saveLocalSubmissions(combined);
@@ -218,19 +194,6 @@ export const subscribeToInbox = (onUpdate: (submissions: ContactSubmission[]) =>
   }).catch(() => {});
 
   let localCache = [...initialLocal];
-
-  // Helper to merge Firestore snapshots with LocalStorage
-  const mergeAndNotify = (firestoreList: ContactSubmission[]) => {
-    const mergedMap = new Map<string, ContactSubmission>();
-    localCache.forEach(item => mergedMap.set(item.id, item));
-    firestoreList.forEach(item => mergedMap.set(item.id, item));
-
-    const combined = Array.from(mergedMap.values()).sort((a, b) => 
-      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    );
-
-    onUpdate(combined);
-  };
 
   const handleLocalCustomEvent = (e: Event) => {
     const customEvent = e as CustomEvent<ContactSubmission[]>;
@@ -252,31 +215,8 @@ export const subscribeToInbox = (onUpdate: (submissions: ContactSubmission[]) =>
   };
   window.addEventListener('storage', handleStorageEvent);
 
-  let unsubscribeFirestore = () => {};
-  if (db && isFirebaseConfigured) {
-    try {
-      const q = query(collection(db, 'contact_submissions'), orderBy('createdAt', 'desc'));
-      unsubscribeFirestore = onSnapshot(q, (snapshot) => {
-        const fsItems: ContactSubmission[] = [];
-        snapshot.forEach((docSnap) => {
-          fsItems.push({
-            id: docSnap.id,
-            ...docSnap.data()
-          } as ContactSubmission);
-        });
-        mergeAndNotify(fsItems);
-      }, (err) => {
-        console.debug('Firestore realtime stream fallback to local mode:', err?.message || err);
-        onUpdate(getLocalSubmissions());
-      });
-    } catch (err) {
-      console.debug('Firestore onSnapshot init skipped:', err);
-    }
-  }
-
   return () => {
     window.removeEventListener(SUBMISSION_EVENT, handleLocalCustomEvent);
     window.removeEventListener('storage', handleStorageEvent);
-    unsubscribeFirestore();
   };
 };
