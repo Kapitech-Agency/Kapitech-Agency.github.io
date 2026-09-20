@@ -87,7 +87,7 @@ export const api = {
   // Auth
   auth: {
     login: (body: { identifier: string; password: string; rememberMe?: boolean }) =>
-      apiRequest<{ success: boolean; user: any }>('/api/auth/login', {
+      apiRequest<{ success: boolean; requiresMfa?: boolean; user: any }>('/api/auth/login', {
         method: 'POST',
         body: JSON.stringify(body)
       }),
