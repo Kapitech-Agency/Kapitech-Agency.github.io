@@ -321,7 +321,7 @@ apiRouter.post('/auth/login', rateLimitPublic(10, 15 * 60 * 1000), (req: Request
         actorRole: user.role,
         ip,
         userAgent,
-        details: 'Password accepted; phishing-resistant-capable second factor is configured as TOTP and is required to complete sign-in.',
+        details: 'Password accepted; TOTP second factor is configured and required to complete sign-in.',
         severity: 'info'
       });
 
@@ -405,6 +405,14 @@ apiRouter.post('/auth/mfa/verify', rateLimitPublic(10, 5 * 60 * 1000), (req: Req
   const user = db.users.find(item => item.id === challenge.userId);
   const code = String(req.body?.code || '').trim();
   if (!user || user.status === 'suspended' || !user.mfaEnabled || !user.mfaSecret || !verifyTotpCode(user.mfaSecret, code)) {
+    const challengeState = getMfaChallenge(decodeURIComponent(challengeToken));
+    if (challengeState) {
+      challengeState.failedAttempts += 1;
+      if (challengeState.failedAttempts >= 5) {
+        consumeMfaChallenge(decodeURIComponent(challengeToken));
+        clearMfaChallengeCookie(res);
+      }
+    }
     recordAuditLog({
       action: 'MFA_VERIFY_FAILED',
       actor: user?.username || 'unknown',
