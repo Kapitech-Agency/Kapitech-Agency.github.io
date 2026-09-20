@@ -19,7 +19,6 @@ import {
   X,
   Key,
   Edit3,
-  Sliders,
   Shield,
   Briefcase,
   Terminal,
@@ -117,9 +116,7 @@ export const AdminSettings: React.FC = () => {
   const [newAccPassword, setNewAccPassword] = useState('');
   const [newAccRole, setNewAccRole] = useState<AdminTier>('Stakeholder Executive');
   const [newAccDivision, setNewAccDivision] = useState<'Management' | 'Engineering' | 'Design' | 'Finance' | 'Operations'>('Management');
-  const [newAccPermissions, setNewAccPermissions] = useState<StakeholderPermissions>(getDefaultPermissionsForRole('Stakeholder Executive'));
-
-  useEffect(() => {
+   useEffect(() => {
     let mounted = true;
     if (activeTab === 'audit') {
       fetchServerAuditLogs().then((nextLogs) => {
@@ -146,15 +143,13 @@ export const AdminSettings: React.FC = () => {
     setNewAccPassword('');
     setNewAccRole('Stakeholder Executive');
     setNewAccDivision('Management');
-    setNewAccPermissions(getDefaultPermissionsForRole('Stakeholder Executive'));
-    setAccountActionMessage(null);
+     setAccountActionMessage(null);
     setIsAddAccountModalOpen(true);
   };
 
   const handleRoleChangeForNewAccount = (role: AdminTier) => {
     setNewAccRole(role);
     const perms = getDefaultPermissionsForRole(role);
-    setNewAccPermissions(perms);
     if (role === 'Teknisi IT / Systems Engineer' || role.includes('Internal IT')) {
       setNewAccDivision('Engineering');
     } else if (role === 'Stakeholder Executive' || role.includes('Top Management')) {
@@ -172,8 +167,7 @@ export const AdminSettings: React.FC = () => {
       email: newAccEmail,
       passwordPlain: newAccPassword,
       role: newAccRole,
-      division: newAccDivision,
-      customPermissions: newAccPermissions
+      division: newAccDivision
     });
 
     if (res.success) {
@@ -1050,47 +1044,6 @@ export const AdminSettings: React.FC = () => {
                     placeholder="Minimal 6 karakter"
                     className="w-full px-3.5 py-2.5 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl text-sm text-white font-mono focus:outline-none focus:border-[#E50914] transition-all"
                   />
-                </div>
-              </div>
-
-              {/* Granular Hak Akses Checkboxes */}
-              <div>
-                <label className="block text-xs font-mono text-[#8A94A6] uppercase tracking-wider mb-2 font-semibold flex items-center justify-between">
-                  <span>{language === 'id' ? 'Hak Akses Granular (RBAC Matrix)' : 'Granular Permissions Matrix'}</span>
-                  <span className="text-[10px] text-emerald-400 lowercase">otomatis tersinkron dengan peran</span>
-                </label>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 p-3 bg-[#0E1015] border border-[rgba(255,255,255,0.07)] rounded-xl max-h-48 overflow-y-auto custom-scrollbar">
-                  {[
-                    { key: 'canManageInvoicing', label: 'Finansial & Invoice (Buat / Hapus)' },
-                    { key: 'canViewInvoicing', label: 'Lihat Data & Laporan Keuangan' },
-                    { key: 'canApproveBudgets', label: 'Approval Anggaran & Kontrak' },
-                    { key: 'canManageCrm', label: 'CRM & Kelola Pipeline Prospek' },
-                    { key: 'canViewCrm', label: 'Lihat Data Prospek & Klien' },
-                    { key: 'canManageProjects', label: 'Manajemen Proyek & Delivery' },
-                    { key: 'canManageTasks', label: 'Sprint Kanban & Eksekusi Task' },
-                    { key: 'canManageClients', label: 'Kelola Master Data Klien' },
-                    { key: 'canManageVendors', label: 'Kelola Vendor & Mitra Pihak Ke-3' },
-                    { key: 'canAccessSystemSettings', label: 'Akses Konfigurasi Sistem AMS' },
-                    { key: 'canViewAuditLogs', label: 'Audit Trail & Log Keamanan' },
-                    { key: 'canManageInfrastructure', label: 'Server, Cloud Run, API & Diagnostik' },
-                    { key: 'canManageAdminAccounts', label: 'Manajemen Akun Internal AMS' }
-                  ].map((item) => (
-                    <label 
-                      key={item.key}
-                      className="flex items-center gap-2 p-2 rounded-lg bg-[#181B22]/50 hover:bg-[#181B22] cursor-pointer text-xs font-mono transition-colors"
-                    >
-                      <input
-                        type="checkbox"
-                        checked={!!newAccPermissions[item.key as keyof StakeholderPermissions]}
-                        onChange={(e) => setNewAccPermissions({
-                          ...newAccPermissions,
-                          [item.key]: e.target.checked
-                        })}
-                        className="w-4 h-4 rounded bg-[#090A0F] border-[rgba(255,255,255,0.1)] text-[#E50914] accent-[#E50914]"
-                      />
-                      <span className="text-gray-200 text-[11px] truncate">{item.label}</span>
-                    </label>
-                  ))}
                 </div>
               </div>
 
