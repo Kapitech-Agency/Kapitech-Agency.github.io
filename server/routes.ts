@@ -11,7 +11,8 @@ import {
   recordAuditLog,
   hashSessionToken,
   StoredUser,
-  verifyAuditLogChain
+  verifyAuditLogChain,
+  isDataEncryptionEnabled
 } from './db';
 import { 
   authenticate,
@@ -3023,11 +3024,49 @@ function humanFileSize(bytes: number): string {
 }
 
 function publicDocument(document: any): any {
-  const { storageKey, ...safeDocument } = document || {};
+  const { storageKey, ownerUserId, accessUserIds, ...safeDocument } = document || {};
   if (safeDocument.sourceType === 'private_file' && safeDocument.status === 'ready') {
     safeDocument.downloadUrl = `/api/documents/${encodeURIComponent(String(safeDocument.id))}/content`;
   }
   return safeDocument;
+}
+
+function canAccessDocument(req: AuthenticatedRequest, document: any): boolean {
+  if (!req.user || req.user.stakeholderType === 'Master') return true;
+
+  const ownerUserId = String(document?.ownerUserId || '');
+  const accessUserIds = Array.isArray(document?.accessUserIds)
+    ? document.accessUserIds.map((id: unknown) => String(id))
+    : [];
+
+  // Legacy records without an explicit access list keep module-permission access.
+  if (!ownerUserId && accessUserIds.length === 0) return true;
+
+  return ownerUserId === req.user.id || accessUserIds.includes(req.user.id);
+}
+
+function requireDocumentObjectAccess(req: AuthenticatedRequest, res: Response): boolean {
+  const id = req.params.id;
+  if (!id) return true;
+
+  const document = (getDatabase().documents || []).find((item: any) => item.id === id);
+  if (!document) return true;
+
+  if (!canAccessDocument(req, document)) {
+    recordAuditLog({
+      action: 'DOCUMENT_ACCESS_DENIED',
+      actor: req.user?.username || 'anonymous',
+      actorRole: req.user?.role || 'visitor',
+      ip: req.ip,
+      userAgent: req.headers['user-agent'] as string,
+      details: `Object-level document access denied for "${document.name || id}".`,
+      severity: 'warning'
+    });
+    res.status(403).json({ success: false, error: 'Document access denied.' });
+    return false;
+  }
+
+  return true;
 }
 
 function privateDocumentPath(document: any): string {
@@ -3096,7 +3135,12 @@ const documentAccessMiddleware = requireAnyPermission(
 
 apiRouter.get('/documents', requireAuth, documentAccessMiddleware, (req: AuthenticatedRequest, res: Response): void => {
   const db = getDatabase();
-  res.json({ success: true, documents: (db.documents || []).map(publicDocument) });
+  res.json({
+    success: true,
+    documents: (db.documents || [])
+      .filter((document: any) => canAccessDocument(req, document))
+      .map(publicDocument)
+  });
 });
 
 apiRouter.post('/documents', requireAuth, documentAccessMiddleware, (req: AuthenticatedRequest, res: Response): void => {
@@ -3129,6 +3173,8 @@ apiRouter.post('/documents', requireAuth, documentAccessMiddleware, (req: Authen
     relatedEntity: cleanText(data.relatedEntity || 'General', 200),
     relatedId: cleanText(data.relatedId || '', 120),
     owner: req.user!.name || req.user!.username,
+    ownerUserId: req.user!.id,
+    accessUserIds: [req.user!.id],
     sourceType,
     status: sourceType === 'private_file' ? 'pending_upload' : 'external_link',
     uploadedDate: new Date().toISOString().split('T')[0],
@@ -3168,6 +3214,8 @@ apiRouter.put('/documents/:id/content', requireAuth, documentAccessMiddleware, (
     res.status(404).json({ success: false, error: 'Document not found.' });
     return;
   }
+  if (!requireDocumentObjectAccess(req, res)) return;
+
   if (document.sourceType !== 'private_file' || !document.storageKey) {
     res.status(409).json({ success: false, error: 'This document is an external link and has no private file content.' });
     return;
@@ -3239,6 +3287,8 @@ apiRouter.get('/documents/:id/content', requireAuth, documentAccessMiddleware, (
     res.status(404).json({ success: false, error: 'Document not found.' });
     return;
   }
+  if (!requireDocumentObjectAccess(req, res)) return;
+
   if (document.sourceType !== 'private_file' || document.status !== 'ready') {
     res.status(409).json({ success: false, error: 'Private document content is not available.' });
     return;
@@ -3285,6 +3335,8 @@ apiRouter.delete('/documents/:id', requireAuth, documentAccessMiddleware, (req: 
   }
 
   const filePath = privateDocumentPath(document);
+  if (!requireDocumentObjectAccess(req, res)) return;
+
   if (filePath && fs.existsSync(filePath)) {
     try { fs.unlinkSync(filePath); } catch (error) {
       console.error('[Documents] Failed to remove private content:', error);
@@ -3411,7 +3463,13 @@ apiRouter.get('/system/backups', requireAuth, backupAccessMiddleware, (req: Auth
       createdAt: backup.createdAt,
       sizeBytes: backup.sizeBytes
     }));
-    res.json({ success: true, backups, retention: Math.min(30, Math.max(3, Math.floor(Number(process.env.KAPITECH_DB_BACKUP_RETENTION || 14) || 14))) });
+    res.json({
+      success: true,
+      backups,
+      retention: Math.min(30, Math.max(3, Math.floor(Number(process.env.KAPITECH_DB_BACKUP_RETENTION || 14) || 14))),
+      encryptedAtRest: isDataEncryptionEnabled(),
+      privateDocumentEncryption: isDataEncryptionEnabled()
+    });
   } catch (error) {
     console.error('[Backup] Backup listing failed:', error);
     res.status(500).json({ success: false, error: 'Database backup status is unavailable.' });
