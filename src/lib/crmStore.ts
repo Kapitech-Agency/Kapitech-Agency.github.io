@@ -60,7 +60,7 @@ export interface CrmLead {
   updatedAt: string;
 }
 
-const CRM_STORAGE_KEY = 'kapitech_agency_crm_leads_v2';
+let crmCache: CrmLead[] | null = null;
 export const CRM_EVENT_NAME = 'kapitech_crm_updated';
 
 let crmServerHydrationStarted = false;
@@ -98,7 +98,7 @@ function hydrateCrmFromServer(): void {
   api.crm.getDeals().then((res) => {
     if (!res.success || !Array.isArray(res.data?.deals)) return;
     const serverLeads = res.data.deals.map(normalizeServerDeal);
-    localStorage.setItem(CRM_STORAGE_KEY, JSON.stringify(serverLeads));
+    crmCache = serverLeads;
     if (typeof window !== 'undefined') {
       window.dispatchEvent(new CustomEvent(CRM_EVENT_NAME, { detail: serverLeads }));
     }
@@ -306,23 +306,13 @@ export const INITIAL_DEFAULT_LEADS: CrmLead[] = [
 
 export const getCmsLeads = (): CrmLead[] => {
   hydrateCrmFromServer();
-  try {
-    if (localStorage.getItem('kapitech_agency_crm_leads')) {
-      localStorage.removeItem('kapitech_agency_crm_leads');
-    }
-    const raw = localStorage.getItem(CRM_STORAGE_KEY);
-    if (!raw) {
-      if (import.meta.env.PROD) return [];
-      localStorage.setItem(CRM_STORAGE_KEY, JSON.stringify(INITIAL_DEFAULT_LEADS));
-      return INITIAL_DEFAULT_LEADS;
-    }
-    const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed)) return parsed;
-    return import.meta.env.PROD ? [] : INITIAL_DEFAULT_LEADS;
-  } catch (err) {
-    console.debug('Error reading CRM leads:', err);
-    return import.meta.env.PROD ? [] : INITIAL_DEFAULT_LEADS;
+  if (crmCache) return crmCache;
+  if (import.meta.env.PROD) {
+    crmCache = [];
+  } else {
+    crmCache = INITIAL_DEFAULT_LEADS;
   }
+  return crmCache;
 };
 
 export const saveCrmLead = (lead: CrmLead): void => {
@@ -348,7 +338,7 @@ export const saveCrmLead = (lead: CrmLead): void => {
     ];
   }
 
-  localStorage.setItem(CRM_STORAGE_KEY, JSON.stringify(updated));
+  crmCache = updated;
   window.dispatchEvent(new CustomEvent(CRM_EVENT_NAME, { detail: updated }));
 
   const payload = {
@@ -365,7 +355,7 @@ export const saveCrmLead = (lead: CrmLead): void => {
 export const deleteCrmLead = (id: string): void => {
   const current = getCmsLeads();
   const filtered = current.filter(l => l.id !== id);
-  localStorage.setItem(CRM_STORAGE_KEY, JSON.stringify(filtered));
+  crmCache = filtered;
   window.dispatchEvent(new CustomEvent(CRM_EVENT_NAME, { detail: filtered }));
   api.crm.deleteDeal(id).catch(() => {});
 };
