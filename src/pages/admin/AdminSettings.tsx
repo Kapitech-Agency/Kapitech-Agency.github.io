@@ -48,10 +48,6 @@ export const AdminSettings: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const session = getAdminSession();
   const storedCreds = getStoredAdminCredentials();
-  const canManageAccounts = session?.user?.stakeholderType === 'Master' || Boolean(session?.user?.permissions?.canManageAdminAccounts);
-  const canManageCms = session?.user?.stakeholderType === 'Master' || Boolean(session?.user?.permissions?.canManageCmsContent);
-  const canAccessServer = session?.user?.stakeholderType === 'Master' || Boolean(session?.user?.permissions?.canAccessServerAndApi);
-  const canViewAudit = session?.user?.stakeholderType === 'Master' || Boolean(session?.user?.permissions?.canViewSecurityAuditLogs);
 
   // Tab: profile, branding, rbac, security, api, audit
   const paramTab = searchParams.get('tab');
@@ -77,15 +73,15 @@ export const AdminSettings: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paramTab) {
-      if (paramTab === 'team' || paramTab === 'rbac') setActiveTab('rbac');
-      else if (paramTab === 'audit') setActiveTab('audit');
-      else if (paramTab === 'system' || paramTab === 'branding') setActiveTab('branding');
-      else if (paramTab === 'security') setActiveTab('security');
-      else if (paramTab === 'api') setActiveTab('api');
-      else if (paramTab === 'profile') setActiveTab('profile');
-    }
-  }, [paramTab]);
+    if (!paramTab) return;
+    if ((paramTab === 'team' || paramTab === 'rbac') && canManageAccounts) setActiveTab('rbac');
+    else if (paramTab === 'audit' && canViewAudit) setActiveTab('audit');
+    else if ((paramTab === 'system' || paramTab === 'branding') && canManageCms) setActiveTab('branding');
+    else if (paramTab === 'security') setActiveTab('security');
+    else if (paramTab === 'api' && canAccessServer) setActiveTab('api');
+    else if (paramTab === 'profile') setActiveTab('profile');
+    else setActiveTab('profile');
+  }, [paramTab, canManageAccounts, canManageCms, canAccessServer, canViewAudit]);
 
   // Security Credentials state
   const [username, setUsername] = useState(storedCreds.username);
