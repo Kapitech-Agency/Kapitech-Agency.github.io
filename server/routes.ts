@@ -31,6 +31,9 @@ import {
   generateMfaSecret,
   buildMfaOtpUri,
   verifyTotpCode,
+  generateMfaRecoveryCodes,
+  hashMfaRecoveryCode,
+  verifyMfaRecoveryCode,
   issueMfaChallenge,
   getMfaChallenge,
   consumeMfaChallenge,
@@ -404,7 +407,9 @@ apiRouter.post('/auth/mfa/verify', rateLimitPublic(10, 5 * 60 * 1000), (req: Req
   const db = getDatabase();
   const user = db.users.find(item => item.id === challenge.userId);
   const code = String(req.body?.code || '').trim();
-  if (!user || user.status === 'suspended' || !user.mfaEnabled || !user.mfaSecret || !verifyTotpCode(user.mfaSecret, code)) {
+  const validTotp = Boolean(user?.mfaSecret && verifyTotpCode(user.mfaSecret, code));
+  const validRecovery = Boolean(user && verifyMfaRecoveryCode(user, code));
+  if (!user || user.status === 'suspended' || !user.mfaEnabled || (!validTotp && !validRecovery)) {
     const challengeState = getMfaChallenge(decodeURIComponent(challengeToken));
     if (challengeState) {
       challengeState.failedAttempts += 1;
@@ -505,6 +510,8 @@ apiRouter.post('/auth/mfa/setup/verify', requireAuth, rateLimitAuthenticated(10,
   user.mfaSecret = user.mfaPendingSecret;
   user.mfaPendingSecret = undefined;
   user.mfaEnabled = true;
+  const recoveryCodes = generateMfaRecoveryCodes(8);
+  user.mfaRecoveryCodeHashes = recoveryCodes.map(hashMfaRecoveryCode);
   saveDatabase(db);
   revokeAllUserSessions(user.id, req.sessionToken ? hashSessionToken(req.sessionToken) : undefined);
 
