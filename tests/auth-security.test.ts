@@ -119,3 +119,127 @@ test('password hashing verifies correctly and session tokens are never stored in
   assert.notEqual(tokenHash, rawToken);
   assert.match(tokenHash, /^[0-9a-f]{64}$/);
 });
+
+
+test('CSRF middleware blocks authenticated state changes without a matching token or origin', async () => {
+  const { validateCsrf } = await import('../server/auth.ts');
+  const makeResponse = () => {
+    const response: any = {
+      statusCode: 200,
+      body: undefined,
+      status(code: number) { this.statusCode = code; return this; },
+      json(value: unknown) { this.body = value; return this; }
+    };
+    return response;
+  };
+
+  const baseRequest: any = {
+    method: 'POST',
+    path: '/clients',
+    originalUrl: '/api/clients',
+    user: { username: 'test', role: 'Test' },
+    ip: '127.0.0.1',
+    headers: { 'user-agent': 'security-test' },
+    get(name: string) {
+      const values: Record<string, string> = {
+        origin: 'https://ams.example.test',
+        'x-csrf-token': 'token-a'
+      };
+      return values[name.toLowerCase()];
+    }
+  };
+
+  const blockedResponse = makeResponse();
+  validateCsrf(
+    { ...baseRequest, cookies: { kapi_csrf: 'token-b' } },
+    blockedResponse,
+    () => assert.fail('CSRF middleware unexpectedly called next()')
+  );
+  assert.equal(blockedResponse.statusCode, 403);
+
+  const originResponse = makeResponse();
+  validateCsrf(
+    { ...baseRequest, cookies: { kapi_csrf: 'token-a' } },
+    originResponse,
+    () => assert.fail('Origin validation unexpectedly called next()')
+  );
+  assert.equal(originResponse.statusCode, 403);
+
+  const allowedResponse = makeResponse();
+  validateCsrf(
+    {
+      ...baseRequest,
+      get(name: string) {
+        const values: Record<string, string> = {
+          origin: 'https://ams.example.test',
+          host: 'ams.example.test',
+          'x-csrf-token': 'token-a'
+        };
+        return values[name.toLowerCase()];
+      },
+      protocol: 'https',
+      cookies: { kapi_csrf: 'token-a' }
+    },
+    allowedResponse,
+    () => { allowedResponse.nextCalled = true; }
+  );
+  assert.equal(allowedResponse.statusCode, 200);
+  assert.equal(allowedResponse.nextCalled, true);
+});
+
+test('permission middleware denies non-authorized users and allows authorized users', async () => {
+  const { requirePermission } = await import('../server/auth.ts');
+  const middleware = requirePermission('canManageProjects');
+  const makeResponse = () => {
+    const response: any = {
+      statusCode: 200,
+      body: undefined,
+      status(code: number) { this.statusCode = code; return this; },
+      json(value: unknown) { this.body = value; return this; }
+    };
+    return response;
+  };
+
+  const deniedResponse = makeResponse();
+  middleware(
+    {
+      user: {
+        id: 'user-a',
+        username: 'ops',
+        role: 'Operations',
+        stakeholderType: 'Operations',
+        mfaEnabled: true,
+        permissions: { canManageProjects: false }
+      },
+      path: '/projects',
+      originalUrl: '/api/projects',
+      ip: '127.0.0.1',
+      headers: { 'user-agent': 'security-test' }
+    } as any,
+    deniedResponse,
+    () => assert.fail('Unauthorized user unexpectedly called next()')
+  );
+  assert.equal(deniedResponse.statusCode, 403);
+
+  const allowedResponse = makeResponse();
+  middleware(
+    {
+      user: {
+        id: 'user-b',
+        username: 'pm',
+        role: 'Project Manager',
+        stakeholderType: 'Project_Manager',
+        mfaEnabled: true,
+        permissions: { canManageProjects: true }
+      },
+      path: '/projects',
+      originalUrl: '/api/projects',
+      ip: '127.0.0.1',
+      headers: { 'user-agent': 'security-test' }
+    } as any,
+    allowedResponse,
+    () => { allowedResponse.nextCalled = true; }
+  );
+  assert.equal(allowedResponse.statusCode, 200);
+  assert.equal(allowedResponse.nextCalled, true);
+});
