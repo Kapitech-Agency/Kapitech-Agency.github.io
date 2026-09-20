@@ -2227,7 +2227,28 @@ const handleOverview = (req: AuthenticatedRequest, res: Response): void => {
   const totalBilled = invoices.reduce((sum, i) => sum + (Number(i.total) || 0), 0);
   const revenueCollected = invoices.reduce((sum, i) => sum + (Number(i.amountPaid) || 0), 0);
   const totalExpenses = expenses.reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
-  const netOperatingProfit = revenueCollected - totalExpenses;
+
+  const currentMonthKey = now.toISOString().slice(0, 7);
+  const revenueThisMonth = invoices.reduce((sum, invoice) => {
+    const payments = Array.isArray(invoice.payments) ? invoice.payments : [];
+    if (payments.length > 0) {
+      return sum + payments
+        .filter((payment: any) => String(payment.date || '').startsWith(currentMonthKey))
+        .reduce((paymentSum: number, payment: any) => paymentSum + (Number(payment.amount) || 0), 0);
+    }
+
+    const paidDate = String(invoice.paidDate || '');
+    return sum + (invoice.status === 'paid' && paidDate.startsWith(currentMonthKey) ? (Number(invoice.amountPaid) || Number(invoice.total) || 0) : 0);
+  }, 0);
+
+  const operatingExpensesThisMonth = expenses
+    .filter((expense) => String(expense.date || '').startsWith(currentMonthKey))
+    .reduce((sum, expense) => sum + (Number(expense.amount) || 0), 0);
+
+  const netOperatingProfitThisMonth = revenueThisMonth - operatingExpensesThisMonth;
+  const netMarginThisMonth = revenueThisMonth > 0
+    ? ((netOperatingProfitThisMonth / revenueThisMonth) * 100).toFixed(1)
+    : '0';
   const pendingApprovalsCount = approvals.filter(a => a.status === 'Pending').length;
   const overdueTasksCount = tasks.filter(
     t => t.status !== 'done' && t.dueDate && new Date(t.dueDate) < now
@@ -2333,12 +2354,12 @@ const handleOverview = (req: AuthenticatedRequest, res: Response): void => {
       cashOutstanding: canViewFinancials ? totalOutstanding : null
     },
     financials: canViewFinancials ? {
-      revenueThisMonth: revenueCollected,
-      cashCollected: revenueCollected,
+      revenueThisMonth,
+      cashCollected: revenueThisMonth,
       outstandingReceivables: totalOutstanding,
-      operatingExpenses: totalExpenses,
-      netOperatingProfit,
-      margin: revenueCollected > 0 ? ((netOperatingProfit / revenueCollected) * 100).toFixed(1) : '0'
+      operatingExpenses: operatingExpensesThisMonth,
+      netOperatingProfit: netOperatingProfitThisMonth,
+      margin: netMarginThisMonth
     } : {
       revenueThisMonth: null,
       cashCollected: null,
