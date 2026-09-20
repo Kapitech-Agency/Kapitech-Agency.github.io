@@ -1096,7 +1096,6 @@ function getInitialSeedData(): DatabaseSchema {
 }
 
 let inMemoryDb: DatabaseSchema | null = null;
-let writeQueue: Promise<void> = Promise.resolve();
 
 export function getDatabase(): DatabaseSchema {
   if (inMemoryDb) {
