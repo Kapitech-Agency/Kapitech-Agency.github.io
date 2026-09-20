@@ -21,9 +21,16 @@ interface LockoutEntry {
   lockoutUntil: number;
 }
 
+interface MfaChallenge {
+  userId: string;
+  rememberMe: boolean;
+  expiresAt: number;
+}
+
 const loginLockouts = new Map<string, LockoutEntry>();
 const publicRateLimits = new Map<string, RateLimitEntry>();
 const authenticatedRateLimits = new Map<string, RateLimitEntry>();
+const mfaChallenges = new Map<string, MfaChallenge>();
 
 const MAX_FAILED_ATTEMPTS = 8;
 const LOCKOUT_DURATION_MS = 15 * 60 * 1000;
@@ -48,6 +55,9 @@ function cleanupMaps(): void {
   for (const [key, entry] of authenticatedRateLimits) {
     if (entry.resetAt <= now) authenticatedRateLimits.delete(key);
   }
+  for (const [key, entry] of mfaChallenges) {
+    if (entry.expiresAt <= now) mfaChallenges.delete(key);
+  }
 }
 
 setInterval(cleanupMaps, 5 * 60 * 1000).unref();
@@ -71,6 +81,107 @@ function cookieValue(req: Request, name: string): string {
     }
   }
   return '';
+}
+
+function base32Encode(buffer: Buffer): string {
+  const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+  let bits = 0;
+  let value = 0;
+  let output = '';
+  for (const byte of buffer) {
+    value = (value << 8) | byte;
+    bits += 8;
+    while (bits >= 5) {
+      output += alphabet[(value >>> (bits - 5)) & 31];
+      bits -= 5;
+    }
+  }
+  if (bits > 0) output += alphabet[(value << (5 - bits)) & 31];
+  return output;
+}
+
+function base32Decode(input: string): Buffer {
+  const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+  const normalized = input.toUpperCase().replace(/=+$/g, '').replace(/[^A-Z2-7]/g, '');
+  let bits = 0;
+  let value = 0;
+  const bytes: number[] = [];
+  for (const char of normalized) {
+    const index = alphabet.indexOf(char);
+    if (index < 0) continue;
+    value = (value << 5) | index;
+    bits += 5;
+    if (bits >= 8) {
+      bytes.push((value >>> (bits - 8)) & 255);
+      bits -= 8;
+    }
+  }
+  return Buffer.from(bytes);
+}
+
+export function generateMfaSecret(): string {
+  return base32Encode(crypto.randomBytes(20));
+}
+
+export function buildMfaOtpUri(user: StoredUser, secret: string): string {
+  const label = encodeURIComponent(`Kapitech AMS:${user.email}`);
+  const issuer = encodeURIComponent('Kapitech AMS');
+  return `otpauth://totp/${label}?secret=${secret}&issuer=${issuer}&algorithm=SHA1&digits=6&period=30`;
+}
+
+export function verifyTotpCode(secret: string, code: string, timestamp = Date.now()): boolean {
+  if (!/^\\d{6}$/.test(String(code))) return false;
+  const key = base32Decode(secret);
+  if (key.length < 10) return false;
+  const timeStep = Math.floor(timestamp / 1000 / 30);
+  for (const offset of [-1, 0, 1]) {
+    const counter = timeStep + offset;
+    const buffer = Buffer.alloc(8);
+    buffer.writeBigUInt64BE(BigInt(counter), 0);
+    const digest = crypto.createHmac('sha1', key).update(buffer).digest();
+    const dynamicOffset = digest[digest.length - 1] & 0x0f;
+    const binary = (
+      ((digest[dynamicOffset] & 0x7f) << 24) |
+      ((digest[dynamicOffset + 1] & 0xff) << 16) |
+      ((digest[dynamicOffset + 2] & 0xff) << 8) |
+      (digest[dynamicOffset + 3] & 0xff)
+    ) % 1_000_000;
+    const expected = String(binary).padStart(6, '0');
+    if (safeEqual(expected, String(code))) return true;
+  }
+  return false;
+}
+
+export function issueMfaChallenge(userId: string, rememberMe: boolean): string {
+  const token = `kapi_mfa_${crypto.randomBytes(32).toString('hex')}`;
+  mfaChallenges.set(hashSessionToken(token), {
+    userId,
+    rememberMe,
+    expiresAt: Date.now() + 5 * 60 * 1000
+  });
+  return token;
+}
+
+export function consumeMfaChallenge(token: string): MfaChallenge | null {
+  if (!token) return null;
+  const key = hashSessionToken(token);
+  const challenge = mfaChallenges.get(key);
+  if (!challenge) return null;
+  mfaChallenges.delete(key);
+  return challenge.expiresAt > Date.now() ? challenge : null;
+}
+
+export function setMfaChallengeCookie(res: Response, token: string): void {
+  const secure = process.env.NODE_ENV === 'production' ? ' Secure;' : '';
+  res.append(
+    'Set-Cookie',
+    `kapi_mfa_challenge=${token}; Path=/; HttpOnly; SameSite=Strict; Max-Age=300;${secure}`
+  );
+}
+
+export function clearMfaChallengeCookie(res: Response): void {
+  const secure = process.env.NODE_ENV === 'production' ? ' Secure;' : '';
+  res.append('Set-Cookie', `kapi_mfa_challenge=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0;${secure}`);
 }
 
 export function createCsrfToken(): string {
@@ -135,7 +246,8 @@ export function createSession(user: StoredUser, ip: string, userAgent: string, r
     expiresAt,
     rememberMe,
     ip,
-    userAgent
+    userAgent,
+    kind: 'session'
   };
 
   // Keep a bounded number of sessions and remove stale sessions for the same account.
@@ -181,7 +293,7 @@ export function getSessionUser(token: string): StoredUser | null {
   const db = getDatabase();
   const tokenHash = hashSessionToken(token);
   const session = db.sessions.find(s => s.tokenHash === tokenHash);
-  if (!session) return null;
+  if (!session || session.kind === 'mfa') return null;
 
   const now = Date.now();
   const lastActivityAt = new Date(session.lastActivityAt || session.createdAt).getTime();
