@@ -126,6 +126,8 @@ export const AdminSettings: React.FC = () => {
     mfaCoveragePercent: number;
     backupCount: number;
     latestBackupAt: string | null;
+    latestBackupAgeMinutes: number | null;
+    backupFresh: boolean;
     backupIntegrity: { valid: boolean; checkedAt: string; latestName?: string; reason?: string };
   } | null>(null);
 
@@ -1246,8 +1248,8 @@ export const AdminSettings: React.FC = () => {
                     {language === 'id' ? 'Status kontrol inti AMS pada saat halaman ini dibuka.' : 'Current state of the AMS core security controls.'}
                   </p>
                 </div>
-                <span className={`inline-flex items-center min-h-[28px] px-2.5 rounded-lg border text-[10px] font-mono font-bold ${securityPosture.mfaCoveragePercent === 100 && securityPosture.encryptionAtRest && securityPosture.backupIntegrity.valid ? 'border-emerald-500/25 bg-emerald-500/5 text-emerald-300' : 'border-amber-500/25 bg-amber-500/5 text-amber-300'}`}>
-                  {securityPosture.mfaCoveragePercent === 100 && securityPosture.encryptionAtRest && securityPosture.backupIntegrity.valid
+                <span className={`inline-flex items-center min-h-[28px] px-2.5 rounded-lg border text-[10px] font-mono font-bold ${securityPosture.mfaCoveragePercent === 100 && securityPosture.encryptionAtRest && securityPosture.backupIntegrity.valid && securityPosture.backupFresh ? 'border-emerald-500/25 bg-emerald-500/5 text-emerald-300' : 'border-amber-500/25 bg-amber-500/5 text-amber-300'}`}>
+                  {securityPosture.mfaCoveragePercent === 100 && securityPosture.encryptionAtRest && securityPosture.backupIntegrity.valid && securityPosture.backupFresh
                     ? (language === 'id' ? 'Posture siap' : 'Posture ready')
                     : (language === 'id' ? 'Perlu tindakan' : 'Action required')}
                 </span>
@@ -1267,8 +1269,12 @@ export const AdminSettings: React.FC = () => {
                 <div className="rounded-xl border border-white/[0.07] bg-[#181B22] p-3">
                   <div className="text-[10px] uppercase tracking-wider text-[#8A94A6] font-mono">Backup</div>
                   <div className="mt-1 text-sm font-bold font-mono text-white">{securityPosture.backupCount}</div>
-                  <div className={`mt-0.5 text-[10px] font-mono ${securityPosture.backupIntegrity.valid ? 'text-emerald-300' : 'text-red-300'}`}>
-                    {securityPosture.backupIntegrity.valid ? 'Integrity valid' : 'Integrity check failed'}
+                  <div className={`mt-0.5 text-[10px] font-mono ${securityPosture.backupIntegrity.valid && securityPosture.backupFresh ? 'text-emerald-300' : 'text-amber-300'}`}>
+                    {securityPosture.backupIntegrity.valid
+                      ? securityPosture.backupFresh
+                        ? (language === 'id' ? 'Integrity valid · fresh' : 'Integrity valid · fresh')
+                        : (language === 'id' ? 'Snapshot lebih dari 24 jam' : 'Snapshot older than 24h')
+                      : 'Integrity check failed'}
                   </div>
                 </div>
                 <div className="rounded-xl border border-white/[0.07] bg-[#181B22] p-3">
