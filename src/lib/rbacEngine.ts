@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from 'react';
 
-export type StakeholderRole = 'executive' | 'pm' | 'finance' | 'account_manager' | 'client_viewer';
+export type StakeholderRole = 'executive' | 'pm' | 'finance' | 'account_manager' | 'it_technical' | 'operations' | 'client_viewer';
 
 export interface RoleMetadata {
   id: StakeholderRole;
@@ -113,6 +113,41 @@ export const ROLE_DEFINITIONS: Record<StakeholderRole, RoleMetadata> = {
       'documents'
     ]
   },
+  it_technical: {
+    id: 'it_technical',
+    title: 'IT / Systems Engineer',
+    badge: 'Platform & Security',
+    scopeDescription: 'Infrastructure, integrations, system administration, security review, and technical operations.',
+    accountProfile: {
+      displayName: 'IT / Systems Engineer',
+      accountId: 'kapitech-it-05',
+      avatarLabel: 'IT',
+      department: 'Engineering & Platform'
+    },
+    allowedModuleKeys: [
+      'dashboard',
+      'projects',
+      'documents',
+      'settings'
+    ]
+  },
+  operations: {
+    id: 'operations',
+    title: 'Operations Staff',
+    badge: 'Agency Operations',
+    scopeDescription: 'Day-to-day project execution, task coordination, and operational administration.',
+    accountProfile: {
+      displayName: 'Operations Staff',
+      accountId: 'kapitech-ops-06',
+      avatarLabel: 'OP',
+      department: 'Agency Operations'
+    },
+    allowedModuleKeys: [
+      'dashboard',
+      'projects',
+      'documents'
+    ]
+  },
   client_viewer: {
     id: 'client_viewer',
     title: 'Client / Viewer',
@@ -146,7 +181,8 @@ export function roleFromStakeholderType(
   if (stakeholderType === 'Master' || stakeholderType === 'Executive') return 'executive';
   if (stakeholderType === 'Project_Manager') return 'pm';
   if (stakeholderType === 'Operations' && (division === 'Finance' || userRole?.toLowerCase().includes('financial'))) return 'finance';
-  if (stakeholderType === 'IT_Technical') return 'client_viewer';
+  if (stakeholderType === 'IT_Technical') return 'it_technical';
+  if (stakeholderType === 'Operations' && division === 'Operations' && userRole?.toLowerCase().includes('operational')) return 'operations';
   return 'account_manager';
 }
 
@@ -240,6 +276,7 @@ export function useRbacRole(
     setRole: switchRole,
     roleMeta: meta,
     isAllowed: (key: string) => {
+      if (actualStakeholderType === 'Master') return true;
       if (serverPermissions) {
         const permission = MODULE_PERMISSION_MAP[key];
         return permission === 'authenticated' ? true : Boolean(serverPermissions[permission]);
