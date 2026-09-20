@@ -231,9 +231,7 @@ export async function createAdminAccount(data: {
   email: string;
   passwordPlain: string;
   role: AdminTier;
-  stakeholderType?: 'Executive' | 'IT_Technical' | 'Project_Manager' | 'Operations';
   division?: 'Management' | 'Engineering' | 'Design' | 'Finance' | 'Operations';
-  customPermissions?: Partial<StakeholderPermissions>;
 }): Promise<{ success: boolean; error?: string; account?: AdminAccount }> {
   const res = await api.auth.createUser({
     name: data.name,
@@ -241,9 +239,7 @@ export async function createAdminAccount(data: {
     email: data.email,
     password: data.passwordPlain,
     role: data.role,
-    stakeholderType: data.stakeholderType || 'Operations',
-    division: data.division || 'Operations',
-    permissions
+    division: data.division || 'Operations'
   });
 
   if (res.success && res.data?.success) {
