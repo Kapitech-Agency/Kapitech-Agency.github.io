@@ -97,6 +97,7 @@ export const AdminSettings: React.FC = () => {
   const [logs, setLogs] = useState<SecurityAuditLog[]>([]);
 
   const [mfaSetup, setMfaSetup] = useState<{ secret: string; otpAuthUri: string } | null>(null);
+  const [mfaRecoveryCodes, setMfaRecoveryCodes] = useState<string[]>([]);
   const [mfaCode, setMfaCode] = useState('');
   const [mfaDisableCode, setMfaDisableCode] = useState('');
   const [mfaDisablePassword, setMfaDisablePassword] = useState('');
@@ -163,6 +164,7 @@ export const AdminSettings: React.FC = () => {
         }
         setMfaSetup(null);
         setMfaCode('');
+        setMfaRecoveryCodes(res.data.mfaRecoveryCodes || []);
         setMfaStatus({ success: true, message: language === 'id' ? 'MFA TOTP berhasil diaktifkan untuk akun ini.' : 'TOTP MFA is now enabled for this account.' });
         window.dispatchEvent(new Event('kapitech_auth_state_changed'));
       } else {
@@ -1177,6 +1179,26 @@ export const AdminSettings: React.FC = () => {
                 <button type="button" onClick={handleStartMfaSetup} disabled={mfaLoading} className="min-h-[44px] px-4 rounded-xl bg-[#181B22] border border-white/[0.08] text-white text-xs font-mono font-bold hover:border-[#E50914]/50 disabled:opacity-50">
                   {language === 'id' ? 'Mulai Setup MFA' : 'Start MFA Setup'}
                 </button>
+              )}
+
+              {mfaRecoveryCodes.length > 0 && refreshMfaProfile() && (
+                <div className="rounded-xl bg-amber-500/5 border border-amber-500/25 p-4 space-y-3">
+                  <div>
+                    <h4 className="text-xs font-bold text-amber-200 font-mono">{language === 'id' ? 'Recovery codes' : 'Recovery codes'}</h4>
+                    <p className="mt-1 text-[11px] text-amber-100/70 leading-relaxed">
+                      {language === 'id'
+                        ? 'Simpan sekarang di password manager atau tempat offline yang aman. Setiap kode hanya dapat digunakan sekali. Kode ini tidak akan ditampilkan lagi setelah halaman ini ditutup.'
+                        : 'Store these in a password manager or another secure offline location. Each code works only once and will not be shown again after this page is closed.'}
+                    </p>
+                  </div>
+                  <code className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px] font-mono text-white">
+                    {mfaRecoveryCodes.map(code => <span key={code} className="rounded-lg bg-[#111318] border border-white/[0.07] px-2 py-2 text-center">{code}</span>)}
+                  </code>
+                  <div className="flex flex-wrap gap-2">
+                    <button type="button" onClick={() => navigator.clipboard?.writeText(mfaRecoveryCodes.join('\n'))} className="min-h-[40px] px-3 rounded-lg bg-[#262930] text-xs font-mono text-white">{language === 'id' ? 'Salin semua kode' : 'Copy all codes'}</button>
+                    <button type="button" onClick={() => setMfaRecoveryCodes([])} className="min-h-[40px] px-3 rounded-lg bg-transparent border border-white/[0.08] text-xs font-mono text-[#8A94A6] hover:text-white">{language === 'id' ? 'Sudah saya simpan' : 'I stored them'}</button>
+                  </div>
+                </div>
               )}
 
               {mfaSetup && !refreshMfaProfile() && (
