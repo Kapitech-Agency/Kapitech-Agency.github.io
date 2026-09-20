@@ -81,7 +81,7 @@ export const AdminLogin: React.FC = () => {
         window.dispatchEvent(new Event('kapitech_auth_state_changed'));
         navigate(redirectUrl, { replace: true });
       } else {
-        setErrorMessage(result.error || result.data?.error || (language === 'id' ? 'Kode MFA tidak valid.' : 'Invalid MFA code.'));
+        setErrorMessage(result.error || (language === 'id' ? 'Kode MFA tidak valid.' : 'Invalid MFA code.'));
       }
     } catch (err: unknown) {
       setErrorMessage(err instanceof Error ? err.message : (language === 'id' ? 'Verifikasi MFA gagal.' : 'MFA verification failed.'));
