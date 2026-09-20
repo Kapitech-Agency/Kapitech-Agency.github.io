@@ -9,6 +9,9 @@ async function startServer() {
   const app = express();
   const PORT = Number(process.env.PORT) || 3000;
 
+  // Hostinger/reverse-proxy aware client IP handling for rate limiting and audit logs.
+  app.set('trust proxy', 1);
+
   // Security Headers Middleware
   app.use((req, res, next) => {
     res.setHeader('X-Content-Type-Options', 'nosniff');
