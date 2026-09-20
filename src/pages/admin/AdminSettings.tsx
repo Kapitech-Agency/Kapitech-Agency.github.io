@@ -37,7 +37,6 @@ import {
   fetchAdminAccounts,
   createAdminAccount,
   deleteAdminAccount,
-  updateAdminAccountPermissions,
   getDefaultPermissionsForRole
 } from '../../lib/adminAuth';
 import { getCmsSiteMeta, saveCmsSiteMeta, SiteMetaSettings } from '../../lib/cmsStore';
@@ -109,8 +108,6 @@ export const AdminSettings: React.FC = () => {
   // Accounts Management state (Stakeholder Executive & Teknisi IT)
   const [accounts, setAccounts] = useState<AdminAccount[]>([]);
   const [isAddAccountModalOpen, setIsAddAccountModalOpen] = useState(false);
-  const [isEditPermsModalOpen, setIsEditPermsModalOpen] = useState(false);
-  const [editingAccount, setEditingAccount] = useState<AdminAccount | null>(null);
   const [accountActionMessage, setAccountActionMessage] = useState<{ success: boolean; message: string } | null>(null);
 
   // New Account Form State
@@ -121,9 +118,6 @@ export const AdminSettings: React.FC = () => {
   const [newAccRole, setNewAccRole] = useState<AdminTier>('Stakeholder Executive');
   const [newAccDivision, setNewAccDivision] = useState<'Management' | 'Engineering' | 'Design' | 'Finance' | 'Operations'>('Management');
   const [newAccPermissions, setNewAccPermissions] = useState<StakeholderPermissions>(getDefaultPermissionsForRole('Stakeholder Executive'));
-
-  // Editable permissions state
-  const [tempPermissions, setTempPermissions] = useState<StakeholderPermissions>(getDefaultPermissionsForRole('Stakeholder Executive'));
 
   useEffect(() => {
     let mounted = true;
@@ -187,8 +181,8 @@ export const AdminSettings: React.FC = () => {
       setAccountActionMessage({
         success: true,
         message: language === 'id' 
-          ? `Akun baru "${newAccName}" (${newAccRole}) berhasil dibuat & disimpan secara terenkripsi!` 
-          : `New account "${newAccName}" (${newAccRole}) created & securely stored!`
+          ? `Akun baru "${newAccName}" (${newAccRole}) berhasil dibuat dan disimpan di server.` 
+          : `New account "${newAccName}" (${newAccRole}) created and stored server-side.`
       });
       setIsAddAccountModalOpen(false);
       setTimeout(() => setAccountActionMessage(null), 5000);
@@ -220,28 +214,14 @@ export const AdminSettings: React.FC = () => {
     }
   };
 
-  const handleOpenEditPermissions = (acc: AdminAccount) => {
-    setEditingAccount(acc);
-    setTempPermissions({ ...acc.permissions });
-    setIsEditPermsModalOpen(true);
-  };
-
-  const handleSavePermissions = async () => {
-    if (!editingAccount) return;
-    const res = await updateAdminAccountPermissions(editingAccount.id, tempPermissions);
-    if (res.success) {
-      refreshAccounts();
-      setIsEditPermsModalOpen(false);
-      setAccountActionMessage({
-        success: true,
-        message: language === 'id' 
-          ? `Hak akses untuk "${editingAccount.name}" berhasil diperbarui!` 
-          : `Permissions for "${editingAccount.name}" updated successfully!`
-      });
-      setTimeout(() => setAccountActionMessage(null), 4000);
-    } else {
-      alert(res.error);
-    }
+  const handlePolicyInfo = () => {
+    setAccountActionMessage({
+      success: true,
+      message: language === 'id'
+        ? 'Hak akses diturunkan dari role server-side. Perubahan checkbox individual tidak diizinkan dari browser.'
+        : 'Permissions are derived from the server-side role policy. Individual checkbox overrides are not allowed.'
+    });
+    setTimeout(() => setAccountActionMessage(null), 4500);
   };
 
   // Handle credentials update
@@ -350,8 +330,8 @@ export const AdminSettings: React.FC = () => {
           </h1>
           <p className="text-xs text-[#8A94A6] mt-1 font-mono">
             {language === 'id'
-              ? 'Konfigurasi akun master admin, hak akses RBAC, integrasi API, dan log audit keamanan terenkripsi.'
-              : 'Configure master admin identity, 4-tier RBAC access matrix, API cloud integrations, and encrypted audit trail.'}
+              ? 'Konfigurasi identitas admin, policy RBAC server-side, integrasi API, dan audit trail hash-chained.'
+              : 'Configure administrator identity, server-enforced RBAC policy, API integrations, and a hash-chained audit trail.'}
           </p>
         </div>
       </div>
@@ -797,11 +777,11 @@ export const AdminSettings: React.FC = () => {
                     <div className="pt-3 border-t border-[rgba(255,255,255,0.07)] flex items-center justify-between gap-2">
                       <button
                         type="button"
-                        onClick={() => handleOpenEditPermissions(acc)}
+                        onClick={handlePolicyInfo}
                         className="h-8 px-2.5 rounded-lg bg-[#262930] hover:bg-[#323640] text-gray-200 text-[11px] font-mono font-medium flex items-center gap-1.5 transition-colors"
                       >
-                        <Sliders size={13} className="text-[#FF1E27]" />
-                        <span>{language === 'id' ? 'Atur Izin' : 'Permissions'}</span>
+                        <ShieldCheck size={13} className="text-[#FF1E27]" />
+                        <span>{language === 'id' ? 'Policy Server' : 'Server Policy'}</span>
                       </button>
 
                       {!isMaster ? (
@@ -1137,94 +1117,6 @@ export const AdminSettings: React.FC = () => {
         </div>
       )}
 
-      {/* MODAL: EDIT PERMISSIONS (MOBILE FULLSCREEN + STICKY HEADER & FOOTER) */}
-      {isEditPermsModalOpen && editingAccount && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm overflow-y-auto">
-          <div className="w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-xl bg-[#111318] border-0 sm:border sm:border-[rgba(255,255,255,0.07)] rounded-none sm:rounded-2xl shadow-2xl flex flex-col overflow-hidden">
-            
-            {/* Sticky Header */}
-            <div className="sticky top-0 z-20 bg-[#111318]/95 backdrop-blur-md px-5 sm:px-6 py-4 border-b border-[rgba(255,255,255,0.07)] flex items-center justify-between shrink-0">
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 shrink-0">
-                  <Sliders size={18} />
-                </div>
-                <div>
-                  <h3 className="text-base font-bold font-display text-white">
-                    {language === 'id' ? 'Atur Hak Akses Granular' : 'Manage Granular Permissions'}
-                  </h3>
-                  <p className="text-[11px] font-mono text-[#8A94A6]">
-                    {editingAccount.name} ({editingAccount.role})
-                  </p>
-                </div>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => setIsEditPermsModalOpen(false)}
-                className="w-8 h-8 rounded-lg bg-[#181B22] hover:bg-[#262930] text-[#8A94A6] hover:text-white flex items-center justify-center transition-colors shrink-0"
-              >
-                <X size={16} />
-              </button>
-            </div>
-
-            {/* Scrollable Checkbox List */}
-            <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-2.5 custom-scrollbar">
-              {[
-                { key: 'canManageInvoicing', label: 'Finansial & Invoicing (Buat & Hapus Invoice)' },
-                { key: 'canViewInvoicing', label: 'Lihat Data & Laporan Keuangan' },
-                { key: 'canApproveBudgets', label: 'Approval Anggaran & Kontrak Eksekutif' },
-                { key: 'canManageCrm', label: 'CRM & Kelola Pipeline Leads' },
-                { key: 'canViewCrm', label: 'Lihat Data Prospek & Klien' },
-                { key: 'canManageProjects', label: 'Manajemen Proyek & Delivery' },
-                { key: 'canManageTasks', label: 'Sprint Planning & Eksekusi Tasks' },
-                { key: 'canManageClients', label: 'Kelola Master Data Klien' },
-                { key: 'canManageVendors', label: 'Kelola Vendor & Mitra Eksternal' },
-                { key: 'canAccessSystemSettings', label: 'Akses Konfigurasi Sistem AMS' },
-                { key: 'canViewAuditLogs', label: 'Audit Trail & Log Keamanan' },
-                { key: 'canManageInfrastructure', label: 'Server, Cloud Run, API & Diagnostik Sistem' },
-                { key: 'canManageAdminAccounts', label: 'Manajemen Akun Internal AMS' }
-              ].map((item) => (
-                <label 
-                  key={item.key}
-                  className="flex items-center justify-between p-3 rounded-xl bg-[#181B22] border border-[rgba(255,255,255,0.07)] hover:border-[rgba(255,255,255,0.15)] cursor-pointer text-xs font-mono transition-colors"
-                >
-                  <span className="text-gray-200 font-medium">{item.label}</span>
-                  <input
-                    type="checkbox"
-                    checked={!!tempPermissions[item.key as keyof StakeholderPermissions]}
-                    onChange={(e) => setTempPermissions({
-                      ...tempPermissions,
-                      [item.key]: e.target.checked
-                    })}
-                    className="w-4 h-4 rounded bg-[#090A0F] border-[rgba(255,255,255,0.1)] text-[#E50914] accent-[#E50914]"
-                  />
-                </label>
-              ))}
-            </div>
-
-            {/* Sticky Footer */}
-            <div className="sticky bottom-0 bg-[#111318]/95 backdrop-blur-md px-5 sm:px-6 py-3.5 border-t border-[rgba(255,255,255,0.07)] flex items-center justify-end gap-3 shrink-0">
-              <button
-                type="button"
-                onClick={() => setIsEditPermsModalOpen(false)}
-                className="h-10 px-4 min-h-[40px] rounded-xl bg-[#181B22] text-[#8A94A6] hover:text-white text-xs font-mono font-bold transition-colors"
-              >
-                {language === 'id' ? 'Batal' : 'Cancel'}
-              </button>
-              <button
-                type="button"
-                onClick={handleSavePermissions}
-                className="h-10 px-5 min-h-[40px] rounded-xl bg-[#E50914] text-white text-xs font-mono font-bold hover:bg-[#FF1E27] transition-all shadow-md shadow-[#E50914]/20 flex items-center gap-2"
-              >
-                <Save size={14} />
-                <span>{language === 'id' ? 'Simpan Perubahan Hak Akses' : 'Save Permissions'}</span>
-              </button>
-            </div>
-
-          </div>
-        </div>
-      )}
-
       {/* TAB 4: SECURITY & MFA POLICY */}
       {activeTab === 'security' && (
         <div className="w-full max-w-4xl bg-[#111318] border border-[rgba(255,255,255,0.07)] rounded-2xl p-5 sm:p-8 space-y-6">
@@ -1366,8 +1258,8 @@ export const AdminSettings: React.FC = () => {
               </h2>
               <p className="text-xs text-[#8A94A6] font-mono mt-0.5">
                 {language === 'id'
-                  ? 'Catatan terenkripsi dari aktivitas autentikasi, akses RBAC, dan perubahan data sistem.'
-                  : 'Immutable encrypted trail of user authentication, RBAC transitions, and security operations.'}
+                  ? 'Catatan hash-chained dari autentikasi, akses RBAC, dan perubahan data sistem.'
+                  : 'Tamper-evident hash chain for user authentication, RBAC transitions, and security operations.'}
               </p>
             </div>
 
