@@ -587,66 +587,6 @@ export const AdminLayout: React.FC = () => {
 
       </aside>
 
-      {/* ------------------------------------------------------------- */}
-      {/* MOBILE TOPBAR - Single, sleek, non-cluttered header */}
-      {/* ------------------------------------------------------------- */}
-      <div className="md:hidden flex items-center justify-between px-3.5 py-2.5 bg-[#111318] border-b border-white/[0.07] sticky top-0 z-40 shrink-0 shadow-[0_4px_20px_rgba(0,0,0,0.5)] h-14">
-        <div className="flex items-center gap-2.5">
-          <button
-            onClick={() => setMobileMenuOpen(true)}
-            aria-label="Open navigation menu"
-            className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl bg-[#181B22] text-white border border-white/[0.07] hover:bg-[#21252F] active:scale-95 transition-all shadow-sm"
-          >
-            <Menu size={20} />
-          </button>
-
-          <Link to="/admin/dashboard" className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#E50914] to-[#FF1E27] flex items-center justify-center text-white font-bold text-xs shadow-[0_0_12px_rgba(229,9,20,0.35)] shrink-0">
-              K
-            </div>
-            <div className="min-w-0">
-              <span className="font-sans font-bold text-[#F8FAFC] text-xs tracking-tight block truncate">KAPITECH AMS</span>
-              <span className="text-[9px] font-mono text-[#8A94A6] block truncate -mt-0.5">{activeItemLabel}</span>
-            </div>
-          </Link>
-        </div>
-
-        <div className="flex items-center gap-2">
-          {/* Mobile Language Switcher */}
-          <div className="flex items-center bg-[#181B22] border border-white/[0.07] rounded-lg p-0.5 font-mono text-[10px]">
-            <button
-              onClick={() => setLanguage('en')}
-              className={`px-2 py-1 rounded-md font-semibold transition-all ${
-                language === 'en'
-                  ? 'bg-[#111318] text-white shadow-sm border border-white/10 font-bold'
-                  : 'text-[#8A94A6]'
-              }`}
-            >
-              EN
-            </button>
-            <button
-              onClick={() => setLanguage('id')}
-              className={`px-2 py-1 rounded-md font-semibold transition-all ${
-                language === 'id'
-                  ? 'bg-[#111318] text-white shadow-sm border border-white/10 font-bold'
-                  : 'text-[#8A94A6]'
-              }`}
-            >
-              ID
-            </button>
-          </div>
-
-          {/* Quick Currency Pill */}
-          <button
-            onClick={() => handleSwitchCurrency(currency === 'IDR' ? 'USD' : 'IDR')}
-            className="px-2.5 py-1.5 rounded-lg bg-[#181B22] border border-white/[0.07] text-[10px] font-mono font-bold text-emerald-400 hover:bg-[#21252F] transition-all min-h-[36px]"
-            title="Toggle Currency"
-          >
-            {currency}
-          </button>
-        </div>
-      </div>
-
       {/* Mobile Drawer Overlay & Menu (Global standard sliding drawer from left) */}
       {mobileMenuOpen && (
         <div className="md:hidden fixed inset-0 z-50 flex">
@@ -861,7 +801,7 @@ export const AdminLayout: React.FC = () => {
           <button
             onClick={() => setMobileMenuOpen(true)}
             aria-label="Open navigation"
-            className="w-10 h-10 rounded-xl bg-[#111318] border border-white/[0.07] text-[#8A94A6] flex items-center justify-center active:scale-95"
+            className="min-w-[44px] min-h-[44px] rounded-xl bg-[#111318] border border-white/[0.07] text-[#8A94A6] flex items-center justify-center active:scale-95 transition-transform focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E50914]/70"
           >
             <Menu size={18} />
           </button>
@@ -892,7 +832,7 @@ export const AdminLayout: React.FC = () => {
             <button
               onClick={() => setNotificationsOpen(!notificationsOpen)}
               aria-label="Notifications"
-              className="relative w-10 h-10 rounded-xl bg-[#111318] border border-white/[0.07] text-[#8A94A6] flex items-center justify-center active:scale-95"
+              className="relative min-w-[44px] min-h-[44px] rounded-xl bg-[#111318] border border-white/[0.07] text-[#8A94A6] flex items-center justify-center active:scale-95 transition-transform focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E50914]/70"
             >
               <Bell size={17} />
               {unreadNotificationsCount > 0 && (
@@ -1102,7 +1042,9 @@ export const AdminLayout: React.FC = () => {
                 <Link
                   key={item.key}
                   to={item.to}
-                  className={`relative min-h-12 rounded-xl flex flex-col items-center justify-center gap-1 text-[9px] font-mono ${active ? 'bg-[#E50914]/10 text-white' : 'text-[#8A94A6]'}`}
+                  aria-current={active ? 'page' : undefined}
+                  aria-label={item.badge ? `${item.label}, ${item.badge}` : item.label}
+                  className={`relative min-h-12 min-w-0 rounded-xl flex flex-col items-center justify-center gap-1 text-[9px] font-mono focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E50914]/70 ${active ? 'bg-[#E50914]/10 text-white' : 'text-[#8A94A6]'}`}
                 >
                   <Icon size={17} className={active ? 'text-[#E50914]' : ''} />
                   <span className="truncate max-w-full px-1">{item.label}</span>
