@@ -17,6 +17,7 @@ export const AdminLogin: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [mfaRequired, setMfaRequired] = useState(false);
+  const [mfaRecoveryMode, setMfaRecoveryMode] = useState(false);
   const [mfaCode, setMfaCode] = useState('');
 
   const searchParams = new URLSearchParams(location.search);
@@ -68,14 +69,17 @@ export const AdminLogin: React.FC = () => {
   const handleMfaSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage(null);
-    if (!/^\d{6}$/.test(mfaCode.trim())) {
-      setErrorMessage(language === 'id' ? 'Masukkan kode MFA 6 digit.' : 'Enter the 6-digit MFA code.');
+    const normalizedCode = mfaCode.trim().toUpperCase();
+    if (mfaRecoveryMode ? normalizedCode.length < 12 : !/^\d{6}$/.test(normalizedCode)) {
+      setErrorMessage(mfaRecoveryMode
+        ? (language === 'id' ? 'Masukkan recovery code yang valid.' : 'Enter a valid recovery code.')
+        : (language === 'id' ? 'Masukkan kode MFA 6 digit.' : 'Enter the 6-digit MFA code.'));
       return;
     }
 
     setLoading(true);
     try {
-      const result = await api.auth.mfaVerify(mfaCode.trim());
+      const result = await api.auth.mfaVerify(normalizedCode);
       if (result.success && result.data?.success && result.data.user) {
         cacheAdminSession(result.data.user, rememberMe);
         window.dispatchEvent(new Event('kapitech_auth_state_changed'));
@@ -92,6 +96,7 @@ export const AdminLogin: React.FC = () => {
 
   const handleBackToPassword = () => {
     setMfaRequired(false);
+    setMfaRecoveryMode(false);
     setMfaCode('');
     setErrorMessage(null);
   };
@@ -214,41 +219,54 @@ export const AdminLogin: React.FC = () => {
                 {language === 'id' ? 'Verifikasi MFA diperlukan' : 'MFA verification required'}
               </div>
               <p className="mt-2 text-xs leading-relaxed text-[#8A94A6]">
-                {language === 'id'
-                  ? 'Buka aplikasi authenticator Anda dan masukkan kode TOTP 6 digit untuk menyelesaikan login.'
-                  : 'Open your authenticator app and enter the 6-digit TOTP code to complete sign-in.'}
+                {mfaRecoveryMode
+                  ? (language === 'id' ? 'Masukkan salah satu recovery code yang Anda simpan saat MFA diaktifkan. Kode yang berhasil digunakan akan langsung tidak dapat digunakan lagi.' : 'Enter one of the recovery codes saved when MFA was enabled. A successfully used code is immediately invalidated.')
+                  : (language === 'id' ? 'Buka aplikasi authenticator Anda dan masukkan kode TOTP 6 digit untuk menyelesaikan login.' : 'Open your authenticator app and enter the 6-digit TOTP code to complete sign-in.')}
               </p>
             </div>
 
             <div>
               <label className="block text-xs font-mono text-[#8A94A6] mb-1.5">
-                {language === 'id' ? 'Kode TOTP' : 'TOTP code'}
+                {mfaRecoveryMode ? 'Recovery code' : (language === 'id' ? 'Kode TOTP' : 'TOTP code')}
               </label>
               <input
                 type="text"
-                inputMode="numeric"
-                autoComplete="one-time-code"
-                pattern="\\d{6}"
-                maxLength={6}
+                inputMode={mfaRecoveryMode ? "text" : "numeric"}
+                autoComplete={mfaRecoveryMode ? "off" : "one-time-code"}
+                pattern={mfaRecoveryMode ? undefined : "\\d{6}"}
+                maxLength={mfaRecoveryMode ? 128 : 6}
                 required
                 autoFocus
                 disabled={loading}
                 value={mfaCode}
-                onChange={(e) => setMfaCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                className="w-full px-4 py-3 bg-[#181B22] border border-white/[0.08] rounded-xl text-center text-xl tracking-[0.4em] text-white focus:outline-none focus:border-[#E50914] font-mono"
-                placeholder="000000"
+                onChange={(e) => setMfaCode(mfaRecoveryMode ? e.target.value.toUpperCase().slice(0, 128) : e.target.value.replace(/\D/g, "").slice(0, 6))}
+                className={`w-full px-4 py-3 bg-[#181B22] border border-white/[0.08] rounded-xl text-center text-xl text-white focus:outline-none focus:border-[#E50914] font-mono ${mfaRecoveryMode ? "tracking-[0.12em]" : "tracking-[0.4em]"}`}
+                placeholder={mfaRecoveryMode ? "XXXX-XXXX-XXXX" : "000000"}
               />
             </div>
 
             <button
               type="submit"
-              disabled={loading || mfaCode.length !== 6}
+              disabled={loading || (mfaRecoveryMode ? mfaCode.trim().length < 12 : mfaCode.length !== 6)}
               className="w-full h-11 rounded-xl bg-[#E50914] hover:bg-[#FF1E27] disabled:bg-[#262930] text-white text-xs font-bold font-mono uppercase tracking-wider flex items-center justify-center gap-2 transition-colors"
             >
               {loading
                 ? (language === 'id' ? 'Memverifikasi…' : 'Verifying…')
                 : (language === 'id' ? 'Verifikasi & Masuk' : 'Verify & Sign In')}
               {!loading && <ArrowRight size={14} />}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                setMfaRecoveryMode((current) => !current);
+                setMfaCode('');
+                setErrorMessage(null);
+              }}
+              disabled={loading}
+              className="w-full h-10 rounded-xl bg-transparent border border-white/[0.08] text-[#8A94A6] hover:text-white text-xs font-mono font-bold transition-colors flex items-center justify-center gap-2"
+            >
+              {mfaRecoveryMode ? (language === 'id' ? 'Gunakan kode authenticator' : 'Use authenticator code') : (language === 'id' ? 'Gunakan recovery code' : 'Use recovery code')}
             </button>
 
             <button
