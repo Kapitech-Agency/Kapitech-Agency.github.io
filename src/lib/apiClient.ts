@@ -350,7 +350,21 @@ export const api = {
       privateDocumentEncryption?: boolean;
     }>('/api/system/backups'),
     createBackup: () => apiRequest<{ success: boolean; backup: { createdAt: string; sizeBytes: number } }>('/api/system/backups', { method: 'POST' }),
-    backupIntegrity: () => apiRequest<{ success: boolean; integrity: { valid: boolean; checkedAt: string; latestName?: string; reason?: string } }>('/api/system/backups/integrity')
+    backupIntegrity: () => apiRequest<{ success: boolean; integrity: { valid: boolean; checkedAt: string; latestName?: string; reason?: string } }>('/api/system/backups/integrity'),
+    securityStatus: () => apiRequest<{
+      success: boolean;
+      status: {
+        encryptionAtRest: boolean;
+        privateDocumentEncryption: boolean;
+        mfaRequired: boolean;
+        activeUserCount: number;
+        mfaEnabledCount: number;
+        mfaCoveragePercent: number;
+        backupCount: number;
+        latestBackupAt: string | null;
+        backupIntegrity: { valid: boolean; checkedAt: string; latestName?: string; reason?: string };
+      };
+    }>('/api/system/security/status')
   },
 
   // Notifications
