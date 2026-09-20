@@ -100,9 +100,29 @@ export const AdminLayout: React.FC = () => {
   };
 
   useEffect(() => {
-    loadNotifications();
-    const interval = setInterval(loadNotifications, 20000);
-    return () => clearInterval(interval);
+    let interval: number | undefined;
+
+    const startPolling = () => {
+      if (document.visibilityState !== 'visible') return;
+      void loadNotifications();
+      window.clearInterval(interval);
+      interval = window.setInterval(() => {
+        if (document.visibilityState === 'visible') void loadNotifications();
+      }, 45000);
+    };
+
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') startPolling();
+      else window.clearInterval(interval);
+    };
+
+    startPolling();
+    document.addEventListener('visibilitychange', handleVisibility);
+
+    return () => {
+      window.clearInterval(interval);
+      document.removeEventListener('visibilitychange', handleVisibility);
+    };
   }, []);
 
   const unreadNotificationsCount = useMemo(() => {
@@ -334,6 +354,15 @@ export const AdminLayout: React.FC = () => {
       }))
       .filter(section => section.items.length > 0);
   }, [navSections, isAllowed]);
+
+  const mobileNavItems = useMemo(() => {
+    const preferredKeys = ['dashboard', 'inbox', 'crm', 'projects', 'invoicing'];
+    const flat = filteredNavSections.flatMap(section => section.items);
+    return preferredKeys
+      .map(key => flat.find(item => item.key === key))
+      .filter((item): item is NavItem => Boolean(item))
+      .slice(0, 5);
+  }, [filteredNavSections]);
 
   // Helper to determine if link is active
   const isItemActive = (itemTo: string) => {
@@ -801,10 +830,10 @@ export const AdminLayout: React.FC = () => {
                   {roleMeta.accountProfile.avatarLabel}
                 </div>
                 <div className="min-w-0">
-                  <div className="text-xs font-semibold text-[#F8FAFC] truncate">{roleMeta.accountProfile.displayName}</div>
+                  <div className="text-xs font-semibold text-[#F8FAFC] truncate">{adminDisplayName}</div>
                   <div className="text-[10px] font-mono text-[#8A94A6] truncate flex items-center gap-1">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
-                    <span className="truncate">{roleMeta.accountProfile.accountId}</span>
+                    <span className="truncate">{adminUsername}</span>
                   </div>
                 </div>
               </div>
@@ -822,9 +851,57 @@ export const AdminLayout: React.FC = () => {
       )}
 
       {/* ------------------------------------------------------------- */}
-      {/* MAIN CONTENT AREA & DESKTOP STICKY TOPBAR */}
+      {/* MAIN CONTENT AREA */}
       {/* ------------------------------------------------------------- */}
-      <main className="flex-1 flex flex-col min-w-0 h-full overflow-y-auto bg-[#090A0F] custom-scrollbar">
+      <main className="flex-1 flex flex-col min-w-0 h-full overflow-y-auto bg-[#090A0F] custom-scrollbar pb-[calc(4.75rem+env(safe-area-inset-bottom))] md:pb-0">
+
+        {/* Mobile-first top bar */}
+        <header className="md:hidden sticky top-0 z-40 h-14 px-3 border-b border-white/[0.07] bg-[#090A0F]/95 backdrop-blur-xl flex items-center justify-between shrink-0">
+          <button
+            onClick={() => setMobileMenuOpen(true)}
+            aria-label="Open navigation"
+            className="w-10 h-10 rounded-xl bg-[#111318] border border-white/[0.07] text-[#8A94A6] flex items-center justify-center active:scale-95"
+          >
+            <Menu size={18} />
+          </button>
+
+          <Link to="/admin/dashboard" className="flex items-center gap-2 min-w-0">
+            <div className="h-8 px-2 rounded-lg bg-[#181B22] border border-white/10 flex items-center justify-center">
+              <img src="/white.png" alt="Kapitech" className="h-3.5 w-auto object-contain" />
+            </div>
+            <div className="min-w-0 text-left">
+              <div className="text-[11px] font-bold text-white tracking-tight flex items-center gap-1">
+                <span>KAPITECH</span>
+                <span className="text-[8px] font-mono px-1 py-0.5 rounded bg-[#E50914]/10 text-[#FF1E27] border border-[#E50914]/30">AMS</span>
+              </div>
+              <div className="text-[8px] font-mono text-[#64748B] truncate max-w-[9rem]">
+                {activeItemLabel}
+              </div>
+            </div>
+          </Link>
+
+          <div className="flex items-center gap-1.5">
+            <button
+              onClick={() => setCommandPaletteOpen(true)}
+              aria-label="Search AMS"
+              className="w-10 h-10 rounded-xl bg-[#111318] border border-white/[0.07] text-[#8A94A6] flex items-center justify-center active:scale-95"
+            >
+              <Search size={17} />
+            </button>
+            <button
+              onClick={() => setNotificationsOpen(!notificationsOpen)}
+              aria-label="Notifications"
+              className="relative w-10 h-10 rounded-xl bg-[#111318] border border-white/[0.07] text-[#8A94A6] flex items-center justify-center active:scale-95"
+            >
+              <Bell size={17} />
+              {unreadNotificationsCount > 0 && (
+                <span className="absolute -top-1 -right-1 min-w-4 h-4 px-1 rounded-full bg-[#E50914] text-white font-mono text-[9px] font-bold flex items-center justify-center">
+                  {unreadNotificationsCount}
+                </span>
+              )}
+            </button>
+          </div>
+        </header>
         
         {/* Sticky Desktop Topbar Header: Clean & Minimal */}
         <header className="hidden md:flex h-16 px-4 sm:px-6 lg:px-8 border-b border-white/[0.07] bg-[#090A0F]/95 backdrop-blur-md sticky top-0 z-30 items-center justify-between shrink-0 shadow-[0_1px_0_rgba(255,255,255,0.02),0_4px_24px_rgba(0,0,0,0.6)]">
@@ -1013,6 +1090,31 @@ export const AdminLayout: React.FC = () => {
         <div className="flex-1 p-4 sm:p-6 lg:p-7 w-full max-w-[1700px] mx-auto">
           <Outlet />
         </div>
+
+        {/* Mobile-first bottom navigation */}
+        <nav className="md:hidden fixed left-0 right-0 bottom-0 z-40 border-t border-white/[0.07] bg-[#090A0F]/95 backdrop-blur-xl px-2 pt-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))]">
+          <div className="grid grid-cols-5 gap-1 max-w-xl mx-auto">
+            {mobileNavItems.map((item) => {
+              const Icon = item.icon;
+              const active = isItemActive(item.to);
+              return (
+                <Link
+                  key={item.key}
+                  to={item.to}
+                  className={`relative min-h-12 rounded-xl flex flex-col items-center justify-center gap-1 text-[9px] font-mono ${active ? 'bg-[#E50914]/10 text-white' : 'text-[#8A94A6]'}`}
+                >
+                  <Icon size={17} className={active ? 'text-[#E50914]' : ''} />
+                  <span className="truncate max-w-full px-1">{item.label}</span>
+                  {item.badge !== null && item.badge !== undefined && item.key === 'inbox' && (
+                    <span className="absolute top-1 right-1/4 min-w-3.5 h-3.5 rounded-full bg-[#E50914] text-white text-[8px] font-bold flex items-center justify-center px-1">
+                      {item.badge}
+                    </span>
+                  )}
+                </Link>
+              );
+            })}
+          </div>
+        </nav>
 
       </main>
 
