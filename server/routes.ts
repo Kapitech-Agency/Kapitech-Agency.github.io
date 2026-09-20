@@ -543,7 +543,9 @@ apiRouter.post('/leads/submit', rateLimitPublic(10, 60 * 1000), async (req: Requ
 
   // Server-side automated notification dispatch (Telegram / Formspree) without exposing secrets to client!
   const notif = db.notificationSettings;
-  if (notif.isTelegramActive && notif.telegramBotToken && notif.telegramChatId) {
+  const telegramBotToken = process.env.KAPITECH_TELEGRAM_BOT_TOKEN || notif.telegramBotToken;
+  const telegramChatId = process.env.KAPITECH_TELEGRAM_CHAT_ID || notif.telegramChatId;
+  if (notif.isTelegramActive && telegramBotToken && telegramChatId) {
     try {
       const text = `🔔 *New Kapitech Lead Received*\n\n` +
         `👤 *Name:* ${newLead.fullName}\n` +
@@ -554,7 +556,7 @@ apiRouter.post('/leads/submit', rateLimitPublic(10, 60 * 1000), async (req: Requ
         `💰 *Budget:* ${newLead.budget || '-'}\n\n` +
         `💬 *Message:*\n_${newLead.message.slice(0, 300)}_`;
 
-      fetch(`https://api.telegram.org/bot${notif.telegramBotToken}/sendMessage`, {
+      fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -1359,20 +1361,20 @@ apiRouter.get('/notifications/settings', requireAuth, requirePermission('canAcce
       telegramChatId: s.telegramChatId,
       isEmailActive: s.isEmailActive,
       isTelegramActive: s.isTelegramActive,
-      hasTelegramToken: Boolean(s.telegramBotToken && s.telegramBotToken.length > 5)
+      hasTelegramToken: Boolean((process.env.KAPITECH_TELEGRAM_BOT_TOKEN || s.telegramBotToken) && (process.env.KAPITECH_TELEGRAM_BOT_TOKEN || s.telegramBotToken).length > 5)
     }
   });
 });
 
 apiRouter.put('/notifications/settings', requireAuth, requirePermission('canAccessServerAndApi'), (req: AuthenticatedRequest, res: Response): void => {
-  const { targetEmail, formspreeEndpoint, telegramBotToken, telegramChatId, isEmailActive, isTelegramActive } = req.body;
+  const { targetEmail, formspreeEndpoint, telegramChatId, isEmailActive, isTelegramActive } = req.body;
   const db = getDatabase();
   const current = db.notificationSettings;
 
   db.notificationSettings = {
     targetEmail: targetEmail || current.targetEmail,
     formspreeEndpoint: formspreeEndpoint !== undefined ? formspreeEndpoint : current.formspreeEndpoint,
-    telegramBotToken: telegramBotToken ? String(telegramBotToken).trim() : current.telegramBotToken,
+    telegramBotToken: current.telegramBotToken,
     telegramChatId: telegramChatId !== undefined ? String(telegramChatId).trim() : current.telegramChatId,
     isEmailActive: isEmailActive !== undefined ? Boolean(isEmailActive) : current.isEmailActive,
     isTelegramActive: isTelegramActive !== undefined ? Boolean(isTelegramActive) : current.isTelegramActive,
