@@ -42,6 +42,7 @@ import {
   verifyMfaRecoveryCode,
   issueMfaChallenge,
   getMfaChallenge,
+  incrementMfaChallengeFailures,
   consumeMfaChallenge,
   setMfaChallengeCookie,
   clearMfaChallengeCookie
@@ -429,13 +430,9 @@ apiRouter.post('/auth/mfa/verify', rateLimitPublic(10, 5 * 60 * 1000), (req: Req
   const validTotp = Boolean(user?.mfaEnabled && user?.mfaSecret && verifyTotpCode(user.mfaSecret, code));
   const validRecovery = Boolean(user?.mfaEnabled && user && verifyMfaRecoveryCode(user, code));
   if (!user || user.status === 'suspended' || !user.mfaEnabled || (!validTotp && !validRecovery)) {
-    const challengeState = getMfaChallenge(decodeURIComponent(challengeToken));
-    if (challengeState) {
-      challengeState.failedAttempts += 1;
-      if (challengeState.failedAttempts >= 5) {
-        consumeMfaChallenge(decodeURIComponent(challengeToken));
-        clearMfaChallengeCookie(res);
-      }
+    const failedAttempts = incrementMfaChallengeFailures(decodeURIComponent(challengeToken));
+    if (failedAttempts >= 5) {
+      clearMfaChallengeCookie(res);
     }
     recordAuditLog({
       action: 'MFA_VERIFY_FAILED',
@@ -504,6 +501,7 @@ apiRouter.post('/auth/mfa/setup/start', requireAuth, rateLimitAuthenticated(5, 1
 
   const secret = generateMfaSecret();
   current.mfaPendingSecret = secret;
+  current.mfaPendingSecretCreatedAt = new Date().toISOString();
   saveDatabase(db);
 
   res.json({
@@ -521,6 +519,16 @@ apiRouter.post('/auth/mfa/setup/verify', requireAuth, rateLimitAuthenticated(10,
     res.status(409).json({ success: false, error: 'MFA setup has not been started.' });
     return;
   }
+
+  const pendingCreatedAt = new Date(user.mfaPendingSecretCreatedAt || 0).getTime();
+  if (!Number.isFinite(pendingCreatedAt) || pendingCreatedAt <= 0 || Date.now() - pendingCreatedAt > 10 * 60 * 1000) {
+    user.mfaPendingSecret = undefined;
+    user.mfaPendingSecretCreatedAt = undefined;
+    saveDatabase(db);
+    res.status(410).json({ success: false, error: 'MFA setup expired. Start the setup again.' });
+    return;
+  }
+
   if (!verifyTotpCode(user.mfaPendingSecret, code)) {
     res.status(401).json({ success: false, error: 'Invalid verification code.' });
     return;
@@ -528,6 +536,7 @@ apiRouter.post('/auth/mfa/setup/verify', requireAuth, rateLimitAuthenticated(10,
 
   user.mfaSecret = user.mfaPendingSecret;
   user.mfaPendingSecret = undefined;
+  user.mfaPendingSecretCreatedAt = undefined;
   user.mfaEnabled = true;
   const recoveryCodes = generateMfaRecoveryCodes(8);
   user.mfaRecoveryCodeHashes = recoveryCodes.map(hashMfaRecoveryCode);
