@@ -5,20 +5,14 @@ import {
   Mail, 
   Phone, 
   Filter, 
-  Search, 
-  RefreshCw, 
-  Trash2, 
+  Search, RefreshCw, Trash2, 
   ExternalLink,
   MessageSquare, 
   Briefcase, 
   Globe, 
   Download, 
-  Copy, 
-  Plus, 
-  Sparkles, 
-  Volume2, 
-  VolumeX, 
-  ArrowLeft, 
+  Copy,
+ArrowLeft, 
   Check, 
   Tag, 
   DollarSign,
@@ -39,11 +33,10 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { 
-  ContactSubmission, 
-  subscribeToInbox, 
+  ContactSubmission,
+  subscribeToInbox,
   updateSubmission,
-  deleteSubmission, 
-  submitToInbox 
+  deleteSubmission
 } from '../../lib/submissions';
 import { 
   isSubmissionConverted,
@@ -56,12 +49,10 @@ import {
   CurrencyCode, 
   CURRENCY_EVENT 
 } from '../../lib/currency';
-import { 
-  playNotificationSound, 
-  requestDesktopNotificationPermission, 
-  showDesktopNotification 
+import {
+  requestDesktopNotificationPermission,
+  showDesktopNotification
 } from '../../lib/notifications';
-import { EmailForwardingGuideModal } from '../../components/EmailForwardingGuideModal';
 import { CannedResponsesModal } from '../../components/admin/inbox/CannedResponsesModal';
 import { ConvertToCrmModal } from '../../components/admin/inbox/ConvertToCrmModal';
 import { useLanguage } from '../../lib/LanguageContext';
@@ -93,12 +84,7 @@ export const AdminInbox: React.FC = () => {
   // Modals & Feedback
   const [isCannedModalOpen, setIsCannedModalOpen] = useState(false);
   const [isCrmModalOpen, setIsCrmModalOpen] = useState(false);
-  const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
-  const [testSending, setTestSending] = useState(false);
-  const [soundEnabled, setSoundEnabled] = useState(() => {
-    return localStorage.getItem('kapitech_inbox_sound') !== 'false';
-  });
   const [prevCount, setPrevCount] = useState<number | null>(null);
   const [toastMessage, setToastMessage] = useState<{ text: string; link?: string; linkText?: string } | null>(null);
 
@@ -111,13 +97,6 @@ export const AdminInbox: React.FC = () => {
     return () => window.removeEventListener(CURRENCY_EVENT, handleCurrencyChange);
   }, []);
 
-  // Sync Sound Preference
-  const handleToggleSound = () => {
-    const next = !soundEnabled;
-    setSoundEnabled(next);
-    localStorage.setItem('kapitech_inbox_sound', String(next));
-  };
-
   // Subscribe to real-time incoming briefs
   useEffect(() => {
     requestDesktopNotificationPermission();
@@ -128,9 +107,6 @@ export const AdminInbox: React.FC = () => {
       // Sound and Desktop notification on newly arrived submission
       if (prevCount !== null && items.length > prevCount) {
         const latest = items[0];
-        if (soundEnabled) {
-          playNotificationSound();
-        }
         showDesktopNotification(
           language === 'id' 
             ? `Pesan Baru: ${latest?.fullName || 'Klien Baru'}` 
@@ -144,7 +120,7 @@ export const AdminInbox: React.FC = () => {
     });
 
     return () => unsubscribe();
-  }, [prevCount, soundEnabled, language]);
+  }, [prevCount, language]);
 
   // Keep selected submission in sync with store
   useEffect(() => {
@@ -258,66 +234,6 @@ export const AdminInbox: React.FC = () => {
       text: language === 'id' ? `${unread.length} pesan ditandai telah ditinjau.` : `${unread.length} messages marked as In Review.`
     });
     setTimeout(() => setToastMessage(null), 3000);
-  };
-
-  // Simulate rich enterprise brief
-  const handleCreateTestSubmission = async () => {
-    setTestSending(true);
-    try {
-      const mockClients = [
-        {
-          name: 'Adrian Wibowo',
-          company: 'PT Fintek Nusantara Global',
-          phone: '+62 811-9872-4321',
-          services: ['Web Development', 'AI & Cloud Solutions', 'UI/UX Design'],
-          budget: '$25,000 - $50,000',
-          message: 'Kami memerlukan redesain dan pembangunan full-stack platform core banking API & dashboard investor institusional dengan standar ISO 27001 dan latensi sub-100ms.',
-          source: 'Kapitech Website Form (Production)'
-        },
-        {
-          name: 'Sarah Jenkins',
-          company: 'AeroCloud Analytics Inc.',
-          phone: '+1 (415) 890-3412',
-          services: ['UI/UX Design', 'Digital Product MVP'],
-          budget: '$10,000 - $25,000',
-          message: 'Seeking a top-tier design & engineering studio to architect our Series-A B2B SaaS analytics portal in Next.js/Tailwind with interactive D3 charts.',
-          source: 'Direct Client Inquiry'
-        },
-        {
-          name: 'Budi Hartono',
-          company: 'Veritas Retail Ecosystem',
-          phone: '+62 812-4455-8899',
-          services: ['Mobile App', 'Web Development'],
-          budget: '$5,000 - $15,000',
-          message: 'Halo tim Kapitech, kami ingin berkonsultasi mengenai migrasi e-commerce omnichannel kami ke modern headless architecture dengan sistem manajemen stok real-time.',
-          source: 'Website Brief Dispatcher'
-        }
-      ];
-
-      const sample = mockClients[Math.floor(Math.random() * mockClients.length)];
-
-      await submitToInbox({
-        fullName: sample.name,
-        email: `${sample.name.toLowerCase().replace(/[^a-z]/g, '.')}@example.com`,
-        company: sample.company,
-        phone: sample.phone,
-        services: sample.services,
-        budget: sample.budget,
-        message: sample.message,
-        source: sample.source,
-        type: 'inquiry',
-        priority: 'urgent'
-      });
-
-      setToastMessage({
-        text: language === 'id' ? `Simulasi lead "${sample.name}" berhasil ditambahkan.` : `Simulated inbound lead "${sample.name}" received!`
-      });
-      setTimeout(() => setToastMessage(null), 3000);
-    } catch (e) {
-      console.error('Error creating test submission:', e);
-    } finally {
-      setTestSending(false);
-    }
   };
 
   // Copy helper
@@ -590,29 +506,6 @@ export const AdminInbox: React.FC = () => {
 
         {/* Global Controls */}
         <div className="flex flex-wrap items-center gap-2">
-          {/* Sound alert toggle */}
-          <button
-            onClick={handleToggleSound}
-            className={`h-10 w-10 rounded-xl border text-xs font-mono transition-colors flex items-center justify-center min-h-[40px] min-w-[40px] ${
-              soundEnabled 
-                ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400' 
-                : 'bg-[#111318] border-[rgba(255,255,255,0.07)] text-[#8A94A6]'
-            }`}
-            title={soundEnabled ? (language === 'id' ? 'Suara Notifikasi: Aktif' : 'Sound Alerts: Active') : (language === 'id' ? 'Suara Notifikasi: Nonaktif' : 'Sound Alerts: Off')}
-          >
-            {soundEnabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
-          </button>
-
-          {/* Email alerts guide modal button */}
-          <button
-            onClick={() => setIsEmailModalOpen(true)}
-            className="h-10 px-3.5 rounded-xl bg-[#111318] hover:bg-[#181B22] text-[#8A94A6] hover:text-white border border-[rgba(255,255,255,0.07)] text-xs font-mono transition-colors flex items-center gap-1.5 min-h-[40px]"
-            title="Configure forwarding rules"
-          >
-            <Mail size={14} className="text-[#FF1E27]" />
-            <span>{language === 'id' ? 'Rules Email' : 'Email Alerts'}</span>
-          </button>
-
           {/* Mark all read if new available */}
           {metrics.newCount > 0 && (
             <button
@@ -623,16 +516,6 @@ export const AdminInbox: React.FC = () => {
               <span>{language === 'id' ? 'Tandai Dibaca' : 'Mark Read'}</span>
             </button>
           )}
-
-          {/* Simulate new lead (Strictly single icon rule) */}
-          <button
-            onClick={handleCreateTestSubmission}
-            disabled={testSending}
-            className="h-10 px-4 rounded-xl bg-[#181B22] hover:bg-[#21252F] text-white border border-[rgba(255,255,255,0.08)] text-xs font-mono transition-colors flex items-center gap-1.5 min-h-[40px]"
-          >
-            {testSending ? <RefreshCw className="animate-spin text-[#FF1E27]" size={14} /> : <Plus size={14} className="text-[#FF1E27]" />}
-            <span>{language === 'id' ? 'Simulasi Lead' : 'Simulate Lead'}</span>
-          </button>
 
           {/* Export CSV */}
           {submissions.length > 0 && (
@@ -1033,16 +916,6 @@ export const AdminInbox: React.FC = () => {
               </button>
             )}
 
-            {submissions.length === 0 && (
-              <button
-                onClick={handleCreateTestSubmission}
-                disabled={testSending}
-                className="h-9 px-4 rounded-xl bg-[#E50914] hover:bg-[#FF1E27] text-white text-xs font-mono font-bold transition-all flex items-center gap-2 shadow-lg shadow-[#E50914]/20 disabled:opacity-50"
-              >
-                <Plus size={14} />
-                <span>{testSending ? (language === 'id' ? 'Membuat...' : 'Generating...') : (language === 'id' ? 'Buat Contoh Brief Masuk' : 'Generate Sample Brief')}</span>
-              </button>
-            )}
           </div>
         </div>
       ) : (
