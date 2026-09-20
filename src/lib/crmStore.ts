@@ -74,7 +74,11 @@ function normalizeServerDeal(deal: any): CrmLead {
     phone: String(deal.phone || ''),
     servicePillar: (deal.servicePillar || deal.service || 'Web Development') as CrmServicePillar,
     dealValue: Number(deal.value ?? deal.dealValue) || 0,
-    stage: (deal.stage || 'new') as CrmStage,
+    stage: (
+      deal.stage === 'lead' ? 'new' :
+      deal.stage === 'discovery' ? 'contacted' :
+      (deal.stage || 'new')
+    ) as CrmStage,
     priority: (deal.priority || 'medium') as CrmPriority,
     source: (deal.source || 'Website Form') as CrmSource,
     description: String(deal.description || deal.notes || ''),
