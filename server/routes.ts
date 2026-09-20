@@ -1371,6 +1371,54 @@ apiRouter.put('/projects/:id', requireAuth, requirePermission('canManageProjects
     return;
   }
   const patch = pickFields(updates || {}, ['title', 'name', 'client', 'clientName', 'clientCompany', 'clientEmail', 'serviceCategory', 'status', 'health', 'budget', 'progressPercent', 'startDate', 'targetEndDate', 'teamLead', 'teamMembers', 'techStack', 'repositoryUrl', 'figmaUrl', 'liveStagingUrl', 'notes', 'tasks']);
+  for (const key of ['title','name','client','clientName','clientCompany','serviceCategory','teamLead','notes'] as const) {
+    if (patch[key] !== undefined) patch[key] = cleanText(patch[key], key === 'notes' ? 3000 : 200);
+  }
+  if (patch.clientEmail !== undefined) {
+    patch.clientEmail = cleanText(patch.clientEmail, 254).toLowerCase();
+    if (patch.clientEmail && !isValidEmail(patch.clientEmail)) {
+      res.status(400).json({ success: false, error: 'Invalid project client email address.' });
+      return;
+    }
+  }
+  if (patch.status !== undefined && !['planning','in_progress','review','completed','on_hold'].includes(String(patch.status))) {
+    res.status(400).json({ success: false, error: 'Invalid project status.' });
+    return;
+  }
+  if (patch.health !== undefined && !['Good','At Risk','Delayed','Blocked'].includes(String(patch.health))) {
+    res.status(400).json({ success: false, error: 'Invalid project health state.' });
+    return;
+  }
+  for (const key of ['budget'] as const) {
+    if (patch[key] !== undefined) {
+      const numeric = normalizeNumber(patch[key], 0, MAX_MONEY);
+      if (numeric === null) {
+        res.status(400).json({ success: false, error: 'Invalid project budget.' });
+        return;
+      }
+      patch[key] = numeric;
+    }
+  }
+  if (patch.progressPercent !== undefined) {
+    const progress = normalizeNumber(patch.progressPercent, 0, 100);
+    if (progress === null) {
+      res.status(400).json({ success: false, error: 'Invalid project progress.' });
+      return;
+    }
+    patch.progressPercent = progress;
+  }
+  for (const key of ['startDate','targetEndDate'] as const) {
+    if (patch[key] !== undefined && !isValidDate(patch[key])) {
+      res.status(400).json({ success: false, error: `Invalid project date for ${key}.` });
+      return;
+    }
+  }
+  for (const key of ['repositoryUrl','figmaUrl','liveStagingUrl'] as const) {
+    if (patch[key] !== undefined) patch[key] = cleanOptionalUrl(patch[key]);
+  }
+  if (patch.teamMembers !== undefined) patch.teamMembers = normalizeStringArray(patch.teamMembers, 50, 160);
+  if (patch.techStack !== undefined) patch.techStack = normalizeStringArray(patch.techStack, 50, 120);
+  if (patch.tasks !== undefined) patch.tasks = Array.isArray(patch.tasks) ? patch.tasks.slice(0, 200) : [];
   db.projects[idx] = { ...db.projects[idx], ...patch, updatedAt: new Date().toISOString() };
   saveDatabase(db);
   recordAuditLog({
@@ -1868,6 +1916,32 @@ apiRouter.put('/vendors/:id', requireAuth, requirePermission('canManageVendors')
     return;
   }
   const patch = pickFields(updates || {}, ['name', 'category', 'contactPerson', 'email', 'phone', 'website', 'paymentTerms', 'status', 'monthlySpend', 'notes', 'portfolioUrl', 'githubUrl', 'contracts']);
+  if (patch.email !== undefined) {
+    patch.email = cleanText(patch.email, 254).toLowerCase();
+    if (patch.email && !isValidEmail(patch.email)) {
+      res.status(400).json({ success: false, error: 'Invalid vendor email address.' });
+      return;
+    }
+  }
+  for (const key of ['website','portfolioUrl','githubUrl'] as const) {
+    if (patch[key] !== undefined) patch[key] = cleanOptionalUrl(patch[key]);
+  }
+  if (patch.status !== undefined && !['active','under_review','inactive','blacklisted'].includes(String(patch.status))) {
+    res.status(400).json({ success: false, error: 'Invalid vendor status.' });
+    return;
+  }
+  if (patch.monthlySpend !== undefined) {
+    const numeric = normalizeNumber(patch.monthlySpend, 0, MAX_MONEY);
+    if (numeric === null) {
+      res.status(400).json({ success: false, error: 'Invalid vendor monthly spend.' });
+      return;
+    }
+    patch.monthlySpend = numeric;
+  }
+  for (const key of ['name','category','contactPerson','phone','paymentTerms','notes'] as const) {
+    if (patch[key] !== undefined) patch[key] = cleanText(patch[key], key === 'notes' ? 3000 : 200);
+  }
+  if (patch.contracts !== undefined) patch.contracts = Array.isArray(patch.contracts) ? patch.contracts.slice(0, 50) : [];
   db.vendors[idx] = { ...db.vendors[idx], ...patch, updatedAt: new Date().toISOString() };
   saveDatabase(db);
   recordAuditLog({
