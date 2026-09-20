@@ -1197,14 +1197,42 @@ apiRouter.get('/clients', requireAuth, requireAnyPermission('canManageClients', 
 apiRouter.post('/clients', requireAuth, requirePermission('canManageClients'), (req: AuthenticatedRequest, res: Response): void => {
   const clientData = req.body || {};
   const db = getDatabase();
+  const email = cleanText(clientData.email, 254).toLowerCase();
+  const website = cleanOptionalUrl(clientData.website);
+  const avatarUrl = cleanOptionalUrl(clientData.avatarUrl);
+  const totalSpend = normalizeNumber(clientData.totalSpend ?? 0, 0, MAX_MONEY, 0);
+  const projectsCount = normalizeNumber(clientData.projectsCount ?? 0, 0, 100000, 0);
+  const slaBudget = normalizeNumber(clientData.slaDailyAdSpendBudget ?? 0, 0, MAX_MONEY, 0);
+  const currentSpend = normalizeNumber(clientData.currentDailyAdSpend ?? 0, 0, MAX_MONEY, 0);
+
+  if (email && !isValidEmail(email)) {
+    res.status(400).json({ success: false, error: 'Invalid client email address.' });
+    return;
+  }
+  if (clientData.status !== undefined && !['active','inactive','prospect','on_hold'].includes(String(clientData.status))) {
+    res.status(400).json({ success: false, error: 'Invalid client status.' });
+    return;
+  }
+
   const newClient = {
     id: `cli_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
-    ...pickFields(clientData, ['name','company','companyName','clientName','email','phone','website','location','industry','status','totalSpend','projectsCount','contactPersonRole','notes','avatarUrl','slaDailyAdSpendBudget','currentDailyAdSpend']),
+    ...pickFields(clientData, ['name','company','companyName','clientName','email','phone','website','location','industry','status','contactPersonRole','notes']),
     name: cleanText(clientData.name || clientData.clientName, 160),
     company: cleanText(clientData.company || clientData.companyName, 200),
     clientName: cleanText(clientData.clientName || clientData.name, 160),
-    email: cleanText(clientData.email, 254).toLowerCase(),
+    email,
     phone: cleanText(clientData.phone, 40),
+    website,
+    location: cleanText(clientData.location, 160),
+    industry: cleanText(clientData.industry, 160),
+    status: clientData.status ? String(clientData.status) : 'prospect',
+    totalSpend: totalSpend ?? 0,
+    projectsCount: projectsCount ?? 0,
+    contactPersonRole: cleanText(clientData.contactPersonRole, 160),
+    notes: cleanText(clientData.notes, 3000),
+    avatarUrl,
+    slaDailyAdSpendBudget: slaBudget ?? 0,
+    currentDailyAdSpend: currentSpend ?? 0,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   };
@@ -1234,6 +1262,32 @@ apiRouter.put('/clients/:id', requireAuth, requirePermission('canManageClients')
     return;
   }
   const patch = pickFields(updates || {}, ['name', 'companyName', 'clientName', 'email', 'phone', 'address', 'website', 'location', 'industry', 'status', 'tier', 'totalProjects', 'totalInvoiced', 'activeRetainer', 'notes', 'slaDailyAdSpendBudget', 'currentDailyAdSpend']);
+  if (patch.email !== undefined) {
+    patch.email = cleanText(patch.email, 254).toLowerCase();
+    if (patch.email && !isValidEmail(patch.email)) {
+      res.status(400).json({ success: false, error: 'Invalid client email address.' });
+      return;
+    }
+  }
+  if (patch.website !== undefined) patch.website = cleanOptionalUrl(patch.website);
+  if (patch.status !== undefined && !['active','inactive','prospect','on_hold'].includes(String(patch.status))) {
+    res.status(400).json({ success: false, error: 'Invalid client status.' });
+    return;
+  }
+  for (const key of ['name','companyName','clientName','phone','address','location','industry','tier','notes'] as const) {
+    if (patch[key] !== undefined) patch[key] = cleanText(patch[key], key === 'notes' ? 3000 : 200);
+  }
+  for (const key of ['totalProjects','totalInvoiced','slaDailyAdSpendBudget','currentDailyAdSpend'] as const) {
+    if (patch[key] !== undefined) {
+      const numeric = normalizeNumber(patch[key], 0, key === 'totalProjects' ? 100000 : MAX_MONEY);
+      if (numeric === null) {
+        res.status(400).json({ success: false, error: `Invalid numeric value for ${key}.` });
+        return;
+      }
+      patch[key] = numeric;
+    }
+  }
+  if (patch.activeRetainer !== undefined) patch.activeRetainer = Boolean(patch.activeRetainer);
   db.clients[idx] = { ...db.clients[idx], ...patch, updatedAt: new Date().toISOString() };
   saveDatabase(db);
   recordAuditLog({
