@@ -147,9 +147,9 @@ function getInitialSeedData(): DatabaseSchema {
           canAccessServerAndApi: true,
           canRunDataMigration: true,
           canViewSecurityAuditLogs: true,
-          canManageAdminAccounts: true
+          canManageAdminAccounts: false
         },
-        mfaEnabled: true,
+        mfaEnabled: false,
         division: 'Management',
         status: 'active',
         lastLogin: new Date().toISOString(),
