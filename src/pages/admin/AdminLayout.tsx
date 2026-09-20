@@ -254,8 +254,8 @@ export const AdminLayout: React.FC = () => {
           to: '/admin/vendors',
           label: t('admin.nav.vendors'),
           icon: Briefcase,
-          badge: 'Vetted',
-          badgeColor: 'bg-zinc-800 text-zinc-300 font-mono text-[9px]'
+          badge: null,
+          badgeColor: undefined
         },
         {
           key: 'documents',
