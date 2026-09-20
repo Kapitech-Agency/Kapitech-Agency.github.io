@@ -2036,28 +2036,29 @@ apiRouter.get('/search', requireAuth, (req: AuthenticatedRequest, res: Response)
   // Proposals
   const canSearchProposals = req.user!.stakeholderType === 'Master' ||
     Boolean(req.user!.permissions.canManageCrm || req.user!.permissions.canManageInvoices || req.user!.permissions.canApproveBudgets);
+
   if (canSearchProposals) {
     for (const prop of db.proposals || []) {
-    if (
-      (prop.proposalNumber && prop.proposalNumber.toLowerCase().includes(q)) ||
-      (prop.clientName && prop.clientName.toLowerCase().includes(q)) ||
-      (prop.title && prop.title.toLowerCase().includes(q))
-    ) {
-      results.push({
-        type: 'Proposal',
-        id: prop.id,
-        name: `${prop.proposalNumber} - ${prop.title}`,
-        status: prop.status,
-        owner: prop.owner,
-        lastUpdated: prop.updatedAt || prop.createdAt,
-        url: '/admin/proposals'
-      });
+      if (
+        (prop.proposalNumber && prop.proposalNumber.toLowerCase().includes(q)) ||
+        (prop.clientName && prop.clientName.toLowerCase().includes(q)) ||
+        (prop.title && prop.title.toLowerCase().includes(q))
+      ) {
+        results.push({
+          type: 'Proposal',
+          id: prop.id,
+          name: `${prop.proposalNumber} - `${prop.title}`,
+          status: prop.status,
+          owner: prop.owner,
+          lastUpdated: prop.updatedAt || prop.createdAt,
+          url: '/admin/proposals'
+        });
+      }
     }
   }
 
   res.json({ success: true, results: results.slice(0, 20) });
 });
-
 // ----------------------------------------------------
 // 19. EXECUTIVE DASHBOARD & TODAY AT KAPITECH ENGINE (PARTS 7, 30, 68)
 // ----------------------------------------------------
