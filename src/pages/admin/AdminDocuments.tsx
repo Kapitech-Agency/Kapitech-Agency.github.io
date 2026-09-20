@@ -277,13 +277,21 @@ export const AdminDocuments: React.FC = () => {
                       </td>
                       <td className="py-3.5 px-4 text-right">
                         <div className="flex items-center justify-end gap-1.5">
-                          <button
-                            onClick={() => showToast(`Downloading ${docTitle}...`)}
-                            title="Download"
-                            className="p-1.5 rounded hover:bg-white/[0.06] text-[#8A94A6] hover:text-white transition-colors"
-                          >
-                            <Download size={14} />
-                          </button>
+                          {doc.url ? (
+                            <a
+                              href={doc.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              title={language === 'id' ? 'Buka dokumen' : 'Open document'}
+                              className="p-1.5 rounded hover:bg-white/[0.06] text-[#8A94A6] hover:text-white transition-colors"
+                            >
+                              <Download size={14} />
+                            </a>
+                          ) : (
+                            <span title={language === 'id' ? 'Tidak ada URL dokumen' : 'No document URL'} className="p-1.5 text-[#475569]">
+                              <Download size={14} />
+                            </span>
+                          )}
                           <button
                             onClick={() => handleDelete(doc.id)}
                             title="Delete"
