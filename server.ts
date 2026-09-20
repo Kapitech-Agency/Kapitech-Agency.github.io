@@ -1,7 +1,6 @@
 import express from 'express';
 import path from 'path';
 import dotenv from 'dotenv';
-import { createServer as createViteServer } from 'vite';
 import { apiRouter } from './server/routes';
 
 dotenv.config();
@@ -26,12 +25,15 @@ async function startServer() {
   // API Routes
   app.use('/api', apiRouter);
 
-  // Health check (PART 75/76)
-  app.get('/api/health', (req, res) => {
+  // Health check
+  app.get('/api/health', async (req, res) => {
     try {
+      const { getDatabase } = await import('./server/db');
+      getDatabase();
+
       res.json({
         status: 'ok',
-        version: '2.6.0-enterprise',
+        version: process.env.APP_VERSION || '2.6.0-enterprise',
         services: {
           application: 'healthy',
           database: 'connected',
@@ -39,13 +41,23 @@ async function startServer() {
         },
         time: new Date().toISOString()
       });
-    } catch {
-      res.status(500).json({ status: 'error', message: 'Health check failed' });
+    } catch (error) {
+      console.error('Health check failed:', error);
+      res.status(500).json({
+        status: 'error',
+        services: {
+          application: 'degraded',
+          database: 'unavailable',
+          auth: 'unknown'
+        },
+        message: 'Health check failed'
+      });
     }
   });
 
   // Vite middleware in dev, static files in prod
   if (process.env.NODE_ENV !== 'production') {
+    const { createServer: createViteServer } = await import('vite');
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: 'spa',
