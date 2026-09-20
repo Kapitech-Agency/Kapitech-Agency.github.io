@@ -1221,6 +1221,16 @@ function getInitialSeedData(): DatabaseSchema {
 }
 
 let inMemoryDb: DatabaseSchema | null = null;
+let lastPersistedFileFingerprint: string | null = null;
+
+function fingerprintDatabaseFile(raw: string): string {
+  return crypto.createHash('sha256').update(raw, 'utf8').digest('hex');
+}
+
+function readDatabaseFileFingerprint(): string | null {
+  if (!fs.existsSync(DB_FILE)) return null;
+  return fingerprintDatabaseFile(fs.readFileSync(DB_FILE, 'utf8'));
+}
 
 export function getDatabase(): DatabaseSchema {
   if (inMemoryDb) {
@@ -1236,6 +1246,7 @@ export function getDatabase(): DatabaseSchema {
   if (fs.existsSync(DB_FILE)) {
     try {
       const rawFile = fs.readFileSync(DB_FILE, 'utf-8');
+      lastPersistedFileFingerprint = fingerprintDatabaseFile(rawFile);
       const raw = decryptDatabase(rawFile);
       inMemoryDb = JSON.parse(raw);
 
@@ -1339,7 +1350,14 @@ export function getDatabase(): DatabaseSchema {
 }
 
 export function saveDatabaseSync(db: DatabaseSchema): void {
-  inMemoryDb = db;
+  if (fs.existsSync(DB_FILE) && lastPersistedFileFingerprint) {
+    const currentFingerprint = readDatabaseFileFingerprint();
+    if (currentFingerprint && currentFingerprint !== lastPersistedFileFingerprint) {
+      throw new Error(
+        'Persistent database changed in another application process. Write rejected to prevent a stale in-memory snapshot from overwriting newer data.'
+      );
+    }
+  }
 
   // Keep a rolling encrypted snapshot before replacing the live database.
   // Backup failures never block the primary write, but are surfaced in runtime logs.
@@ -1357,6 +1375,8 @@ export function saveDatabaseSync(db: DatabaseSchema): void {
   try { fs.chmodSync(tempPath, 0o600); } catch {}
   fs.renameSync(tempPath, DB_FILE);
   try { fs.chmodSync(DB_FILE, 0o600); } catch {}
+  lastPersistedFileFingerprint = fingerprintDatabaseFile(payload);
+  inMemoryDb = db;
 }
 
 export function saveDatabase(db: DatabaseSchema): Promise<void> {
