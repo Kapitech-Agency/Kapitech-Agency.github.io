@@ -16,8 +16,7 @@ export const RequireAdminAuth: React.FC<RequireAdminAuthProps> = ({ children }) 
     let rememberMe = false;
 
     try {
-      const raw = sessionStorage.getItem('kapitech_admin_profile_v2') ||
-        localStorage.getItem('kapitech_admin_profile_v2');
+      const raw = sessionStorage.getItem('kapitech_admin_profile_v2');
       if (raw) rememberMe = Boolean(JSON.parse(raw)?.rememberMe);
     } catch {
       rememberMe = false;
