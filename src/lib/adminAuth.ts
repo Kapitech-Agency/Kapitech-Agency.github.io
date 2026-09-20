@@ -235,11 +235,6 @@ export async function createAdminAccount(data: {
   division?: 'Management' | 'Engineering' | 'Design' | 'Finance' | 'Operations';
   customPermissions?: Partial<StakeholderPermissions>;
 }): Promise<{ success: boolean; error?: string; account?: AdminAccount }> {
-  let permissions = getDefaultPermissionsForRole(data.role);
-  if (data.customPermissions) {
-    permissions = { ...permissions, ...data.customPermissions };
-  }
-
   const res = await api.auth.createUser({
     name: data.name,
     username: data.username,
@@ -265,13 +260,6 @@ export async function deleteAdminAccount(id: string): Promise<{ success: boolean
   return { success: false, error: res.error || res.data?.error || 'Gagal menghapus akun.' };
 }
 
-export async function updateAdminAccountPermissions(id: string, permissions: Partial<StakeholderPermissions>): Promise<{ success: boolean; error?: string }> {
-  const res = await api.auth.updateUser(id, { permissions });
-  if (res.success && res.data?.success) return { success: true };
-  return { success: false, error: res.error || (res.data as any)?.error || 'Gagal memperbarui hak akses.' };
-}
-
-// Stored accounts helper (with server-backed sync)
 export function getStoredAdminAccounts(): AdminAccount[] {
   const session = getAdminSession();
   if (session) {
