@@ -3217,7 +3217,7 @@ const handleOverview = (req: AuthenticatedRequest, res: Response): void => {
   const proposalsAwaitingCount = proposals.filter(
     p => p.status === 'Draft' || p.status === 'Internal Review' || p.status === 'Sent'
   ).length;
-  const activeProjectsList = projects.filter(p => p.status !== 'Completed' && p.status !== 'Archived');
+  const activeProjectsList = projects.filter(p => !['completed','Completed','archived','Archived'].includes(String(p.status)));
   const activeProjectsCount = activeProjectsList.length;
   const projectsAtRiskCount = projects.filter(
     p => p.health === 'At Risk' || p.health === 'Delayed' || p.health === 'Blocked'
@@ -3251,7 +3251,10 @@ const handleOverview = (req: AuthenticatedRequest, res: Response): void => {
     );
 
   const totalBilled = invoices.reduce((sum, i) => sum + (Number(i.total) || 0), 0);
-  const revenueCollected = invoices.reduce((sum, i) => sum + (Number(i.amountPaid) || 0), 0);
+  const revenueCollected = invoices.reduce((sum, invoice) => {
+    const payments = Array.isArray(invoice.payments) ? invoice.payments : [];
+    return sum + payments.reduce((paymentSum: number, payment: any) => paymentSum + (Number(payment.amount) || 0), 0);
+  }, 0);
   const totalExpenses = expenses.reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
 
   const currentMonthKey = now.toISOString().slice(0, 7);
