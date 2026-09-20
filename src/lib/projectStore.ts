@@ -275,7 +275,7 @@ export const getAgencyProjects = (): AgencyProject[] => {
     if (Array.isArray(parsed)) return parsed;
     return import.meta.env.PROD ? [] : INITIAL_DEFAULT_PROJECTS;
   } catch {
-    return INITIAL_DEFAULT_PROJECTS;
+    return import.meta.env.PROD ? [] : INITIAL_DEFAULT_PROJECTS;
   }
 };
 
