@@ -142,7 +142,7 @@ export const AdminSettings: React.FC = () => {
         setMfaSetup({ secret: res.data.secret, otpAuthUri: res.data.otpAuthUri });
         setMfaCode('');
       } else {
-        setMfaStatus({ success: false, message: res.error || res.data?.error || 'Gagal memulai setup MFA.' });
+        setMfaStatus({ success: false, message: res.error || 'Gagal memulai setup MFA.' });
       }
     } finally {
       setMfaLoading(false);
@@ -168,7 +168,7 @@ export const AdminSettings: React.FC = () => {
         setMfaStatus({ success: true, message: language === 'id' ? 'MFA TOTP berhasil diaktifkan untuk akun ini.' : 'TOTP MFA is now enabled for this account.' });
         window.dispatchEvent(new Event('kapitech_auth_state_changed'));
       } else {
-        setMfaStatus({ success: false, message: res.error || res.data?.error || 'Kode MFA tidak valid.' });
+        setMfaStatus({ success: false, message: res.error || 'Kode MFA tidak valid.' });
       }
     } finally {
       setMfaLoading(false);
@@ -189,7 +189,7 @@ export const AdminSettings: React.FC = () => {
         await api.auth.me();
         window.dispatchEvent(new Event('kapitech_auth_state_changed'));
       } else {
-        setMfaStatus({ success: false, message: res.error || res.data?.error || 'Gagal menonaktifkan MFA.' });
+        setMfaStatus({ success: false, message: res.error || 'Gagal menonaktifkan MFA.' });
       }
     } finally {
       setMfaLoading(false);
