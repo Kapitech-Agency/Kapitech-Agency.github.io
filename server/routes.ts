@@ -1870,8 +1870,22 @@ apiRouter.post('/finance/expenses', requireAuth, requirePermission('canManageInv
 apiRouter.delete('/finance/expenses/:id', requireAuth, requirePermission('canManageInvoices'), (req: AuthenticatedRequest, res: Response): void => {
   const { id } = req.params;
   const db = getDatabase();
+  const expense = db.expenses.find((item: any) => item.id === id);
+  if (!expense) {
+    res.status(404).json({ success: false, error: 'Expense not found.' });
+    return;
+  }
   db.expenses = db.expenses.filter(e => e.id !== id);
   saveDatabase(db);
+  recordAuditLog({
+    action: 'EXPENSE_DELETED',
+    actor: req.user!.username,
+    actorRole: req.user!.role,
+    ip: req.ip,
+    userAgent: req.headers['user-agent'] as string,
+    details: `Deleted expense "${expense.description || id}" (${expense.amount || 0}).`,
+    severity: 'warning'
+  });
   res.json({ success: true, message: 'Expense deleted.' });
 });
 
@@ -2025,8 +2039,22 @@ apiRouter.put('/vendors/:id', requireAuth, requirePermission('canManageVendors')
 apiRouter.delete('/vendors/:id', requireAuth, requirePermission('canManageVendors'), (req: AuthenticatedRequest, res: Response): void => {
   const { id } = req.params;
   const db = getDatabase();
+  const vendor = db.vendors.find((item: any) => item.id === id);
+  if (!vendor) {
+    res.status(404).json({ success: false, error: 'Vendor not found.' });
+    return;
+  }
   db.vendors = db.vendors.filter(v => v.id !== id);
   saveDatabase(db);
+  recordAuditLog({
+    action: 'VENDOR_DELETED',
+    actor: req.user!.username,
+    actorRole: req.user!.role,
+    ip: req.ip,
+    userAgent: req.headers['user-agent'] as string,
+    details: `Deleted vendor "${vendor.name || id}".`,
+    severity: 'warning'
+  });
   res.json({ success: true, message: 'Vendor deleted.' });
 });
 
@@ -2082,8 +2110,22 @@ apiRouter.put('/cms/services/:id', requireAuth, requirePermission('canManageCmsC
 apiRouter.delete('/cms/services/:id', requireAuth, requirePermission('canManageCmsContent'), (req: AuthenticatedRequest, res: Response): void => {
   const { id } = req.params;
   const db = getDatabase();
+  const service = db.cmsServices.find((item: any) => item.id === id);
+  if (!service) {
+    res.status(404).json({ success: false, error: 'Service not found.' });
+    return;
+  }
   db.cmsServices = db.cmsServices.filter(s => s.id !== id);
   saveDatabase(db);
+  recordAuditLog({
+    action: 'CMS_SERVICE_DELETED',
+    actor: req.user!.username,
+    actorRole: req.user!.role,
+    ip: req.ip,
+    userAgent: req.headers['user-agent'] as string,
+    details: `Deleted CMS service "${service.title || id}".`,
+    severity: 'warning'
+  });
   res.json({ success: true, message: 'Service deleted.' });
 });
 
@@ -2134,8 +2176,22 @@ apiRouter.put('/cms/projects/:id', requireAuth, requirePermission('canManageCmsC
 apiRouter.delete('/cms/projects/:id', requireAuth, requirePermission('canManageCmsContent'), (req: AuthenticatedRequest, res: Response): void => {
   const { id } = req.params;
   const db = getDatabase();
+  const project = db.cmsProjects.find((item: any) => item.id === id);
+  if (!project) {
+    res.status(404).json({ success: false, error: 'Project not found.' });
+    return;
+  }
   db.cmsProjects = db.cmsProjects.filter(p => p.id !== id);
   saveDatabase(db);
+  recordAuditLog({
+    action: 'CMS_PROJECT_DELETED',
+    actor: req.user!.username,
+    actorRole: req.user!.role,
+    ip: req.ip,
+    userAgent: req.headers['user-agent'] as string,
+    details: `Deleted CMS project "${project.title || id}".`,
+    severity: 'warning'
+  });
   res.json({ success: true, message: 'Project deleted.' });
 });
 
@@ -2189,8 +2245,22 @@ apiRouter.put('/cms/testimonials/:id', requireAuth, requirePermission('canManage
 apiRouter.delete('/cms/testimonials/:id', requireAuth, requirePermission('canManageCmsContent'), (req: AuthenticatedRequest, res: Response): void => {
   const { id } = req.params;
   const db = getDatabase();
+  const testimonial = db.cmsTestimonials.find((item: any) => item.id === id);
+  if (!testimonial) {
+    res.status(404).json({ success: false, error: 'Testimonial not found.' });
+    return;
+  }
   db.cmsTestimonials = db.cmsTestimonials.filter(t => t.id !== id);
   saveDatabase(db);
+  recordAuditLog({
+    action: 'CMS_TESTIMONIAL_DELETED',
+    actor: req.user!.username,
+    actorRole: req.user!.role,
+    ip: req.ip,
+    userAgent: req.headers['user-agent'] as string,
+    details: `Deleted CMS testimonial "${testimonial.author || id}".`,
+    severity: 'warning'
+  });
   res.json({ success: true, message: 'Testimonial deleted.' });
 });
 
