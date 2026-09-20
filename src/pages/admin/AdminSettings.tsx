@@ -39,6 +39,7 @@ import {
 import { getCmsSiteMeta, saveCmsSiteMeta, SiteMetaSettings } from '../../lib/cmsStore';
 import { useLanguage } from '../../lib/LanguageContext';
 import { api } from '../../lib/apiClient';
+import { triggerFeedback } from '../../lib/uiFeedback';
 
 export const AdminSettings: React.FC = () => {
   const { language, t } = useLanguage();
@@ -201,6 +202,7 @@ export const AdminSettings: React.FC = () => {
     try {
       const res = await api.system.createBackup();
       if (res.success && res.data?.success) {
+        triggerFeedback('success');
         setBackupStatus({
           success: true,
           message: language === 'id' ? 'Snapshot database terenkripsi berhasil dibuat.' : 'Encrypted database snapshot created successfully.'
@@ -246,6 +248,7 @@ export const AdminSettings: React.FC = () => {
         setMfaSetup(null);
         setMfaCode('');
         setMfaRecoveryCodes(res.data.mfaRecoveryCodes || []);
+        triggerFeedback('success');
         setMfaStatus({ success: true, message: language === 'id' ? 'MFA TOTP berhasil diaktifkan untuk akun ini.' : 'TOTP MFA is now enabled for this account.' });
         window.dispatchEvent(new Event('kapitech_auth_state_changed'));
       } else {
