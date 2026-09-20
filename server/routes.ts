@@ -3506,6 +3506,36 @@ apiRouter.get('/system/backups', requireAuth, backupAccessMiddleware, (req: Auth
   }
 });
 
+apiRouter.get('/system/security/status', requireAuth, requireAnyPermission('canViewSecurityAuditLogs', 'canAccessServerAndApi'), (req: AuthenticatedRequest, res: Response): void => {
+  try {
+    const db = getDatabase();
+    const users = Array.isArray(db.users) ? db.users : [];
+    const activeUserCount = users.filter(user => user.status === 'active').length;
+    const mfaEnabledCount = users.filter(user => user.status === 'active' && user.mfaEnabled).length;
+    const backups = listDatabaseBackups();
+    const latestBackup = backups[0];
+    const backupIntegrity = verifyDatabaseBackupIntegrity();
+
+    res.json({
+      success: true,
+      status: {
+        encryptionAtRest: isDataEncryptionEnabled(),
+        privateDocumentEncryption: isDataEncryptionEnabled(),
+        mfaRequired: true,
+        activeUserCount,
+        mfaEnabledCount,
+        mfaCoveragePercent: activeUserCount > 0 ? Math.round((mfaEnabledCount / activeUserCount) * 100) : 100,
+        backupCount: backups.length,
+        latestBackupAt: latestBackup?.createdAt || null,
+        backupIntegrity
+      }
+    });
+  } catch (error) {
+    console.error('[Security] Security posture check failed:', error);
+    res.status(500).json({ success: false, error: 'Security posture status is unavailable.' });
+  }
+});
+
 // ----------------------------------------------------
 // 17. UNIFIED NOTIFICATIONS CENTER
 // ----------------------------------------------------
