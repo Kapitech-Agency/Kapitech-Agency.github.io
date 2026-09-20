@@ -34,8 +34,7 @@ import {
   AdminTier,
   fetchAdminAccounts,
   createAdminAccount,
-  deleteAdminAccount,
-  getDefaultPermissionsForRole
+  deleteAdminAccount
 } from '../../lib/adminAuth';
 import { getCmsSiteMeta, saveCmsSiteMeta, SiteMetaSettings } from '../../lib/cmsStore';
 import { useLanguage } from '../../lib/LanguageContext';
@@ -93,13 +92,6 @@ export const AdminSettings: React.FC = () => {
   const [metaSettings, setMetaSettings] = useState<SiteMetaSettings>(getCmsSiteMeta());
   const [metaStatus, setMetaStatus] = useState<string | null>(null);
 
-  // API Connections state
-  const [smtpHost, setSmtpHost] = useState('smtp.gmail.com');
-  const [smtpPort, setSmtpPort] = useState('587');
-  const [webhookUrl, setWebhookUrl] = useState('https://discord.com/api/webhooks/kapitech-agency-leads');
-  const [cloudRunRegion, setCloudRunRegion] = useState('asia-southeast2 (Jakarta)');
-  const [apiSaveStatus, setApiSaveStatus] = useState<string | null>(null);
-
   // Audit Logs state
   const [logs, setLogs] = useState<SecurityAuditLog[]>([]);
 
@@ -148,7 +140,6 @@ export const AdminSettings: React.FC = () => {
 
   const handleRoleChangeForNewAccount = (role: AdminTier) => {
     setNewAccRole(role);
-    getDefaultPermissionsForRole(role);
     if (role === 'Teknisi IT / Systems Engineer' || role.includes('Internal IT')) {
       setNewAccDivision('Engineering');
     } else if (role === 'Stakeholder Executive' || role.includes('Top Management')) {
@@ -265,8 +256,8 @@ export const AdminSettings: React.FC = () => {
         setSecurityStatus({ 
           success: true, 
           message: language === 'id' 
-            ? 'Kredensial dan password admin berhasil diperbarui dengan enkripsi aman!' 
-            : 'Admin credentials and password updated successfully with secure encryption!' 
+            ? 'Kredensial admin berhasil diperbarui di server.'
+            : 'Admin credentials updated successfully on the server.' 
         });
         setCurrentPassword('');
         setNewPassword('');
@@ -1040,7 +1031,7 @@ export const AdminSettings: React.FC = () => {
                     required
                     value={newAccPassword}
                     onChange={(e) => setNewAccPassword(e.target.value)}
-                    placeholder="Minimal 6 karakter"
+                    placeholder="12–128 karakter"
                     className="w-full px-3.5 py-2.5 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl text-sm text-white font-mono focus:outline-none focus:border-[#E50914] transition-all"
                   />
                 </div>
