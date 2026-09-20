@@ -90,8 +90,8 @@ export interface AgencyExpense {
   createdAt?: string;
 }
 
-const INVOICE_STORAGE_KEY = 'kapitech_agency_invoices_v2';
-const EXPENSE_STORAGE_KEY = 'kapitech_agency_expenses_v2';
+let invoiceCache: AgencyInvoice[] | null = null;
+let expenseCache: AgencyExpense[] | null = null;
 export const FINANCE_EVENT_NAME = 'kapitech_finance_updated';
 
 let financeServerHydrationStarted = false;
@@ -108,8 +108,8 @@ function hydrateFinanceFromServer(): void {
       ? expenseRes.data.expenses
       : [];
 
-    if (invoiceRes.success) localStorage.setItem(INVOICE_STORAGE_KEY, JSON.stringify(invoices));
-    if (expenseRes.success) localStorage.setItem(EXPENSE_STORAGE_KEY, JSON.stringify(expenses));
+    if (invoiceRes.success) invoiceCache = invoices;
+    if (expenseRes.success) expenseCache = expenses;
     if (typeof window !== 'undefined' && (invoiceRes.success || expenseRes.success)) {
       window.dispatchEvent(new CustomEvent(FINANCE_EVENT_NAME));
     }
@@ -356,22 +356,9 @@ export const INITIAL_DEFAULT_EXPENSES: AgencyExpense[] = [
 
 export const getAgencyInvoices = (): AgencyInvoice[] => {
   hydrateFinanceFromServer();
-  try {
-    if (localStorage.getItem('kapitech_agency_invoices_v1')) {
-      localStorage.removeItem('kapitech_agency_invoices_v1');
-    }
-    const raw = localStorage.getItem(INVOICE_STORAGE_KEY);
-    if (!raw) {
-      if (import.meta.env.PROD) return [];
-      localStorage.setItem(INVOICE_STORAGE_KEY, JSON.stringify(INITIAL_DEFAULT_INVOICES));
-      return INITIAL_DEFAULT_INVOICES;
-    }
-    const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed)) return parsed;
-    return import.meta.env.PROD ? [] : INITIAL_DEFAULT_INVOICES;
-  } catch {
-    return import.meta.env.PROD ? [] : INITIAL_DEFAULT_INVOICES;
-  }
+  if (invoiceCache) return invoiceCache;
+  invoiceCache = import.meta.env.PROD ? [] : INITIAL_DEFAULT_INVOICES;
+  return invoiceCache;
 };
 
 export const saveAgencyInvoice = (invoice: AgencyInvoice): void => {
@@ -387,7 +374,7 @@ export const saveAgencyInvoice = (invoice: AgencyInvoice): void => {
     updated = [{ ...invoice, createdAt: invoice.createdAt || now, updatedAt: now }, ...current];
   }
 
-  localStorage.setItem(INVOICE_STORAGE_KEY, JSON.stringify(updated));
+  invoiceCache = updated;
   window.dispatchEvent(new CustomEvent(FINANCE_EVENT_NAME, { detail: updated }));
 
   const request = idx >= 0
@@ -399,7 +386,7 @@ export const saveAgencyInvoice = (invoice: AgencyInvoice): void => {
 export const deleteAgencyInvoice = (id: string): void => {
   const current = getAgencyInvoices();
   const updated = current.filter(i => i.id !== id);
-  localStorage.setItem(INVOICE_STORAGE_KEY, JSON.stringify(updated));
+  invoiceCache = updated;
   window.dispatchEvent(new CustomEvent(FINANCE_EVENT_NAME, { detail: updated }));
   api.finance.deleteInvoice(id).catch(() => {});
 
@@ -559,22 +546,9 @@ export const approveInvoice = (id: string, approverName: string = 'Executive Spo
 
 export const getAgencyExpenses = (): AgencyExpense[] => {
   hydrateFinanceFromServer();
-  try {
-    if (localStorage.getItem('kapitech_agency_expenses_v1')) {
-      localStorage.removeItem('kapitech_agency_expenses_v1');
-    }
-    const raw = localStorage.getItem(EXPENSE_STORAGE_KEY);
-    if (!raw) {
-      if (import.meta.env.PROD) return [];
-      localStorage.setItem(EXPENSE_STORAGE_KEY, JSON.stringify(INITIAL_DEFAULT_EXPENSES));
-      return INITIAL_DEFAULT_EXPENSES;
-    }
-    const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed)) return parsed;
-    return import.meta.env.PROD ? [] : INITIAL_DEFAULT_EXPENSES;
-  } catch {
-    return import.meta.env.PROD ? [] : INITIAL_DEFAULT_EXPENSES;
-  }
+  if (expenseCache) return expenseCache;
+  expenseCache = import.meta.env.PROD ? [] : INITIAL_DEFAULT_EXPENSES;
+  return expenseCache;
 };
 
 export const saveAgencyExpense = (expense: AgencyExpense): void => {
@@ -589,7 +563,7 @@ export const saveAgencyExpense = (expense: AgencyExpense): void => {
     updated = [expense, ...current];
   }
 
-  localStorage.setItem(EXPENSE_STORAGE_KEY, JSON.stringify(updated));
+  expenseCache = updated;
   window.dispatchEvent(new CustomEvent(FINANCE_EVENT_NAME, { detail: updated }));
   api.finance.createExpense(expense).catch(() => {});
 };
@@ -597,7 +571,7 @@ export const saveAgencyExpense = (expense: AgencyExpense): void => {
 export const deleteAgencyExpense = (id: string): void => {
   const current = getAgencyExpenses();
   const updated = current.filter(e => e.id !== id);
-  localStorage.setItem(EXPENSE_STORAGE_KEY, JSON.stringify(updated));
+  expenseCache = updated;
   window.dispatchEvent(new CustomEvent(FINANCE_EVENT_NAME, { detail: updated }));
   api.finance.deleteExpense(id).catch(() => {});
 
