@@ -31,7 +31,6 @@ interface MfaChallenge {
 const loginLockouts = new Map<string, LockoutEntry>();
 const publicRateLimits = new Map<string, RateLimitEntry>();
 const authenticatedRateLimits = new Map<string, RateLimitEntry>();
-const mfaChallenges = new Map<string, MfaChallenge>();
 
 const MAX_FAILED_ATTEMPTS = 8;
 const LOCKOUT_DURATION_MS = 15 * 60 * 1000;
@@ -55,9 +54,6 @@ function cleanupMaps(): void {
   }
   for (const [key, entry] of authenticatedRateLimits) {
     if (entry.resetAt <= now) authenticatedRateLimits.delete(key);
-  }
-  for (const [key, entry] of mfaChallenges) {
-    if (entry.expiresAt <= now) mfaChallenges.delete(key);
   }
 }
 
@@ -173,30 +169,74 @@ export function verifyTotpCode(secret: string, code: string, timestamp = Date.no
 
 export function issueMfaChallenge(userId: string, rememberMe: boolean): string {
   const token = `kapi_mfa_${crypto.randomBytes(32).toString('hex')}`;
-  mfaChallenges.set(hashSessionToken(token), {
+  const db = getDatabase();
+  const now = Date.now();
+
+  db.sessions = db.sessions.filter(session => session.kind !== 'mfa' || session.expiresAt > now);
+  db.sessions.push({
+    tokenHash: hashSessionToken(token),
     userId,
+    createdAt: new Date(now).toISOString(),
+    lastActivityAt: new Date(now).toISOString(),
+    expiresAt: now + 5 * 60 * 1000,
     rememberMe,
-    expiresAt: Date.now() + 5 * 60 * 1000,
-    failedAttempts: 0
+    ip: '',
+    userAgent: '',
+    kind: 'mfa',
+    mfaFailedAttempts: 0
   });
+  saveDatabase(db);
+
   return token;
 }
 
 export function getMfaChallenge(token: string): MfaChallenge | null {
   if (!token) return null;
-  const challenge = mfaChallenges.get(hashSessionToken(token));
-  if (!challenge) return null;
-  if (challenge.expiresAt <= Date.now()) {
-    mfaChallenges.delete(hashSessionToken(token));
+
+  const db = getDatabase();
+  const tokenHash = hashSessionToken(token);
+  const session = db.sessions.find(item => item.tokenHash === tokenHash && item.kind === 'mfa');
+  if (!session) return null;
+
+  if (session.expiresAt <= Date.now()) {
+    db.sessions = db.sessions.filter(item => item.tokenHash !== tokenHash);
+    saveDatabase(db);
     return null;
   }
-  return challenge;
+
+  return {
+    userId: session.userId,
+    rememberMe: Boolean(session.rememberMe),
+    expiresAt: session.expiresAt,
+    failedAttempts: session.mfaFailedAttempts || 0
+  };
+}
+
+export function incrementMfaChallengeFailures(token: string): number {
+  if (!token) return 0;
+
+  const db = getDatabase();
+  const tokenHash = hashSessionToken(token);
+  const session = db.sessions.find(item => item.tokenHash === tokenHash && item.kind === 'mfa');
+  if (!session || session.expiresAt <= Date.now()) return 0;
+
+  session.mfaFailedAttempts = (session.mfaFailedAttempts || 0) + 1;
+  const failedAttempts = session.mfaFailedAttempts;
+  if (failedAttempts >= 5) {
+    db.sessions = db.sessions.filter(item => item.tokenHash !== tokenHash);
+  }
+  saveDatabase(db);
+  return failedAttempts;
 }
 
 export function consumeMfaChallenge(token: string): MfaChallenge | null {
   const challenge = getMfaChallenge(token);
   if (!challenge) return null;
-  mfaChallenges.delete(hashSessionToken(token));
+
+  const db = getDatabase();
+  const tokenHash = hashSessionToken(token);
+  db.sessions = db.sessions.filter(item => item.tokenHash !== tokenHash);
+  saveDatabase(db);
   return challenge;
 }
 
