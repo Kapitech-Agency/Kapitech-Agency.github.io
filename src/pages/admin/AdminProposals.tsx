@@ -103,7 +103,27 @@ export const AdminProposals: React.FC = () => {
     try {
       const res = await api.proposals.getAll();
       if (res.success && res.data?.proposals) {
-        setProposals(res.data.proposals);
+        const normalized = res.data.proposals.map((raw: any) => ({
+          id: raw.id,
+          proposalNumber: raw.proposalNumber,
+          title: raw.title,
+          clientName: raw.clientName,
+          clientEmail: raw.clientEmail || raw.email || '',
+          clientCompany: raw.clientCompany || raw.company || '',
+          status: (raw.status ? raw.status.toLowerCase() : 'draft') as Proposal['status'],
+          lineItems: raw.lineItems || raw.items || [],
+          subtotal: Number(raw.subtotal) || 0,
+          discount: Number(raw.discount) || 0,
+          tax: Number(raw.tax) || 0,
+          total: Number(raw.total) || 0,
+          paymentTerms: raw.paymentTerms,
+          validUntil: raw.validUntil || raw.validityPeriod || '30 Days',
+          createdAt: raw.createdAt || raw.createdDate || new Date().toISOString(),
+          approvedBy: raw.approvedBy,
+          approvedAt: raw.approvedAt,
+          invoiceId: raw.invoiceId
+        }));
+        setProposals(normalized);
       }
     } catch {
       showToast('Failed to load proposals.');

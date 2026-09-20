@@ -42,16 +42,74 @@ export interface ContactSubmission {
 const STORAGE_KEY = 'kapitech_contact_submissions';
 const SUBMISSION_EVENT = 'kapitech_submission_updated';
 
+export const DEFAULT_INBOX_SUBMISSIONS: ContactSubmission[] = [
+  {
+    id: 'lead_inb_001',
+    fullName: 'Bambang Soediro',
+    email: 'bambang.soediro@pertamina-digital.id',
+    phone: '+62 811-9876-5432',
+    company: 'PT Pertamina Digital Hub',
+    services: ['Cloud & AI Architecture', 'Enterprise Next.js Platform'],
+    budget: 'Rp 250M - Rp 500M',
+    message: 'Seeking end-to-end cloud migration and real-time monitoring microservices for our downstream logistics division.',
+    status: 'new',
+    priority: 'urgent',
+    source: 'Website Contact Form',
+    type: 'inquiry',
+    starred: true,
+    createdAt: '2026-09-18T08:30:00.000Z'
+  },
+  {
+    id: 'lead_inb_002',
+    fullName: 'Clarissa Wijaya',
+    email: 'clarissa@fintech-asia.sg',
+    phone: '+65 9123 4567',
+    company: 'Fintech Asia Ventures Singapore',
+    services: ['Fintech Core Modernization', 'Security & Pentest'],
+    budget: 'Rp 150M - Rp 250M',
+    message: 'We require a SOC2/ISO compliant payment gateway integration with interactive merchant onboarding portal.',
+    status: 'in-review',
+    priority: 'high',
+    source: 'Executive Referral',
+    type: 'inquiry',
+    starred: false,
+    createdAt: '2026-09-17T11:15:00.000Z'
+  },
+  {
+    id: 'lead_inb_003',
+    fullName: 'Rian Hidayat',
+    email: 'rian@nusantara-retail.co.id',
+    phone: '+62 813-8877-6655',
+    company: 'Nusantara Retail Group',
+    services: ['Mobile App & PWA', 'Omnichannel POS Integration'],
+    budget: 'Rp 75M - Rp 150M',
+    message: 'Requesting consultation on modernizing our inventory sync across 45 stores nationwide with offline-first PWA.',
+    status: 'new',
+    priority: 'normal',
+    source: 'Inbound Organic',
+    type: 'inquiry',
+    starred: false,
+    createdAt: '2026-09-16T14:45:00.000Z'
+  }
+];
+
 // Helper to get local stored submissions
 export const getLocalSubmissions = (): ContactSubmission[] => {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return [];
+    if (!raw) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_INBOX_SUBMISSIONS));
+      return DEFAULT_INBOX_SUBMISSIONS;
+    }
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
+    if (Array.isArray(parsed) && parsed.length > 0) {
+      return parsed;
+    }
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_INBOX_SUBMISSIONS));
+    return DEFAULT_INBOX_SUBMISSIONS;
   } catch (err) {
     console.debug('Failed to parse local submissions:', err);
-    return [];
+    return DEFAULT_INBOX_SUBMISSIONS;
   }
 };
 

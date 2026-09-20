@@ -27,7 +27,7 @@
       "mfaEnabled": true,
       "division": "Management",
       "status": "active",
-      "lastLogin": "2026-09-20T07:45:14.678Z",
+      "lastLogin": "2026-09-20T07:57:04.931Z",
       "createdAt": "2025-01-01T00:00:00.000Z"
     },
     {
@@ -123,14 +123,14 @@
   ],
   "sessions": [
     {
-      "token": "kapi_sec_a3a3cff1a42848299e5a3d9eb7a046b690b08848be30b3a7d40f160fea979152",
+      "token": "kapi_sec_61d9d3b58894f997e119d96bc95294152f5e05cc53b57e82bda2eb862fa8d96e",
       "userId": "usr_root_admin",
       "username": "admin",
       "role": "Tier 1: Top Management / Sponsor",
       "ip": "127.0.0.1",
       "userAgent": "curl/7.88.1",
-      "expiresAt": 1789976714679,
-      "createdAt": "2026-09-20T07:45:14.679Z"
+      "expiresAt": 1789977424931,
+      "createdAt": "2026-09-20T07:57:04.931Z"
     }
   ],
   "leads": [],
@@ -159,6 +159,28 @@
     "maintenanceMode": false
   },
   "auditLogs": [
+    {
+      "id": "log_1789891024931_15783549",
+      "timestamp": "2026-09-20T07:57:04.931Z",
+      "action": "LOGIN_SUCCESS",
+      "actor": "admin",
+      "actorRole": "Tier 1: Top Management / Sponsor",
+      "ip": "127.0.0.1",
+      "userAgent": "curl/7.88.1",
+      "details": "User admin authenticated successfully.",
+      "severity": "info"
+    },
+    {
+      "id": "log_1789890386168_1345197e",
+      "timestamp": "2026-09-20T07:46:26.168Z",
+      "action": "LOGIN_SUCCESS",
+      "actor": "admin",
+      "actorRole": "Tier 1: Top Management / Sponsor",
+      "ip": "127.0.0.1",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "details": "User admin authenticated successfully.",
+      "severity": "info"
+    },
     {
       "id": "log_1789890314679_e84c6e46",
       "timestamp": "2026-09-20T07:45:14.679Z",

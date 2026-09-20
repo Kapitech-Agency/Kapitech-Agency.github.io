@@ -94,7 +94,8 @@ export const GlobalExecutiveDashboard: React.FC = () => {
     try {
       const res = await api.executive.getOverview();
       if (res.success) {
-        setData(res as unknown as ExecutiveOverviewData);
+        const payload = (res.data || res) as ExecutiveOverviewData;
+        setData(payload);
         setLastRefreshed(new Date());
       } else {
         setError(res.error || 'Failed to load executive metrics.');
