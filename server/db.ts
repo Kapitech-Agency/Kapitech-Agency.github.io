@@ -1317,6 +1317,15 @@ export function saveDatabase(db: DatabaseSchema): Promise<void> {
   return Promise.resolve();
 }
 
+const PERIODIC_BACKUP_INTERVAL_MS = 6 * 60 * 60 * 1000;
+setInterval(() => {
+  try {
+    if (fs.existsSync(DB_FILE)) createDatabaseBackup(false);
+  } catch (error) {
+    console.error('[Database] Periodic backup failed:', error);
+  }
+}, PERIODIC_BACKUP_INTERVAL_MS).unref();
+
 // Append-only tamper resistant audit log
 export function recordAuditLog(entry: {
   action: string;
