@@ -7,6 +7,67 @@ const DATA_DIR = process.env.KAPITECH_DATA_DIR
   ? path.resolve(process.env.KAPITECH_DATA_DIR)
   : path.join(process.env.HOME || process.cwd(), '.kapitech-ams-data');
 const DB_FILE = path.join(DATA_DIR, 'kapitech_db.json');
+const DB_ENCRYPTION_PREFIX = 'KAPI-ENC-V1:';
+
+function getDataEncryptionKey(): Buffer | null {
+  const raw = process.env.KAPITECH_DATA_ENCRYPTION_KEY?.trim();
+  if (!raw) return null;
+
+  const key = /^[0-9a-f]{64}$/i.test(raw)
+    ? Buffer.from(raw, 'hex')
+    : Buffer.from(raw, 'base64');
+
+  if (key.length !== 32) {
+    throw new Error('KAPITECH_DATA_ENCRYPTION_KEY must be exactly 32 bytes as 64 hex characters or base64.');
+  }
+
+  return key;
+}
+
+export function isDataEncryptionEnabled(): boolean {
+  return Boolean(getDataEncryptionKey());
+}
+
+function encryptDatabase(db: DatabaseSchema): string {
+  const key = getDataEncryptionKey();
+  if (!key) return JSON.stringify(db, null, 2);
+
+  const iv = crypto.randomBytes(12);
+  const cipher = crypto.createCipheriv('aes-256-gcm', key, iv);
+  const encrypted = Buffer.concat([
+    cipher.update(JSON.stringify(db), 'utf8'),
+    cipher.final()
+  ]);
+  const authTag = cipher.getAuthTag();
+
+  return DB_ENCRYPTION_PREFIX + JSON.stringify({
+    iv: iv.toString('base64'),
+    authTag: authTag.toString('base64'),
+    data: encrypted.toString('base64')
+  });
+}
+
+function decryptDatabase(raw: string): string {
+  if (!raw.startsWith(DB_ENCRYPTION_PREFIX)) return raw;
+
+  const key = getDataEncryptionKey();
+  if (!key) {
+    throw new Error('Database encryption is enabled but KAPITECH_DATA_ENCRYPTION_KEY is not configured.');
+  }
+
+  const payload = JSON.parse(raw.slice(DB_ENCRYPTION_PREFIX.length));
+  const iv = Buffer.from(payload.iv, 'base64');
+  const authTag = Buffer.from(payload.authTag, 'base64');
+  const encrypted = Buffer.from(payload.data, 'base64');
+
+  const decipher = crypto.createDecipheriv('aes-256-gcm', key, iv);
+  decipher.setAuthTag(authTag);
+
+  return Buffer.concat([
+    decipher.update(encrypted),
+    decipher.final()
+  ]).toString('utf8');
+}
 
 // Ensure data directory exists
 if (!fs.existsSync(DATA_DIR)) {
@@ -967,7 +1028,8 @@ export function getDatabase(): DatabaseSchema {
 
   if (fs.existsSync(DB_FILE)) {
     try {
-      const raw = fs.readFileSync(DB_FILE, 'utf-8');
+      const rawFile = fs.readFileSync(DB_FILE, 'utf-8');
+      const raw = decryptDatabase(rawFile);
       inMemoryDb = JSON.parse(raw);
 
       // Migrate legacy password/session records in-memory before the database is returned.
@@ -1018,6 +1080,9 @@ export function getDatabase(): DatabaseSchema {
       }
       if (hasChanges) {
         saveDatabaseSync(inMemoryDb!);
+      } else if (!rawFile.startsWith(DB_ENCRYPTION_PREFIX) && isDataEncryptionEnabled()) {
+        // Upgrade an existing plaintext database to encrypted-at-rest storage.
+        saveDatabaseSync(inMemoryDb!);
       }
       return inMemoryDb!;
     } catch (err) {
@@ -1033,7 +1098,7 @@ export function getDatabase(): DatabaseSchema {
 export function saveDatabaseSync(db: DatabaseSchema): void {
   inMemoryDb = db;
   const tempPath = `${DB_FILE}.${Date.now()}.tmp`;
-  fs.writeFileSync(tempPath, JSON.stringify(db, null, 2), 'utf-8');
+  fs.writeFileSync(tempPath, encryptDatabase(db), 'utf-8');
   fs.renameSync(tempPath, DB_FILE);
 }
 
@@ -1042,7 +1107,7 @@ export function saveDatabase(db: DatabaseSchema): Promise<void> {
   writeQueue = writeQueue.then(async () => {
     try {
       const tempPath = `${DB_FILE}.${Date.now()}.tmp`;
-      await fs.promises.writeFile(tempPath, JSON.stringify(db, null, 2), 'utf-8');
+      await fs.promises.writeFile(tempPath, encryptDatabase(db), 'utf-8');
       await fs.promises.rename(tempPath, DB_FILE);
     } catch (err) {
       console.error('Database write error:', err);
