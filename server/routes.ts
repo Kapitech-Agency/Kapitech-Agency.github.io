@@ -1502,8 +1502,26 @@ apiRouter.put('/projects/:id', requireAuth, requirePermission('canManageProjects
 apiRouter.delete('/projects/:id', requireAuth, requirePermission('canManageProjects'), (req: AuthenticatedRequest, res: Response): void => {
   const { id } = req.params;
   const db = getDatabase();
+  const project = db.projects.find((item: any) => item.id === id);
+
+  if (!project) {
+    res.status(404).json({ success: false, error: 'Project not found.' });
+    return;
+  }
+
   db.projects = db.projects.filter(p => p.id !== id);
   saveDatabase(db);
+
+  recordAuditLog({
+    action: 'PROJECT_DELETED',
+    actor: req.user!.username,
+    actorRole: req.user!.role,
+    ip: req.ip,
+    userAgent: req.headers['user-agent'] as string,
+    details: `Deleted project "${project.name || project.title || id}".`,
+    severity: 'warning'
+  });
+
   res.json({ success: true, message: 'Project removed.' });
 });
 
