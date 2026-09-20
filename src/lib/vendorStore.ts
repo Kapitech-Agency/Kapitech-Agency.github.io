@@ -1,3 +1,5 @@
+import { api } from './apiClient';
+
 /**
  * Kapitech Agency Vendor & Contractor Directory Store
  * Database of vetted freelancers, agency partners, hourly rates, skills, and contract statuses.
@@ -43,6 +45,18 @@ export interface AgencyVendor {
 
 const VENDOR_STORAGE_KEY = 'kapitech_agency_vendors_v1';
 export const VENDOR_EVENT_NAME = 'kapitech_vendors_updated';
+
+let vendorServerHydrationStarted = false;
+
+function hydrateVendorsFromServer(): void {
+  if (!import.meta.env.PROD || vendorServerHydrationStarted) return;
+  vendorServerHydrationStarted = true;
+  api.vendors.getAll().then((res) => {
+    if (!res.success || !Array.isArray(res.data?.vendors)) return;
+    localStorage.setItem(VENDOR_STORAGE_KEY, JSON.stringify(res.data.vendors));
+    if (typeof window !== 'undefined') window.dispatchEvent(new Event(VENDOR_EVENT_NAME));
+  }).catch(() => {});
+}
 
 const defaultVendors: AgencyVendor[] = [
   {
@@ -166,6 +180,7 @@ const defaultVendors: AgencyVendor[] = [
 ];
 
 export function getAgencyVendors(): AgencyVendor[] {
+  hydrateVendorsFromServer();
   try {
     const raw = localStorage.getItem(VENDOR_STORAGE_KEY);
     if (!raw) {
@@ -195,6 +210,9 @@ export function saveAgencyVendor(vendor: AgencyVendor) {
     }
     localStorage.setItem(VENDOR_STORAGE_KEY, JSON.stringify(updated));
     window.dispatchEvent(new Event(VENDOR_EVENT_NAME));
+
+    const request = idx >= 0 ? api.vendors.update(vendor.id, vendor) : api.vendors.create(vendor);
+    request.catch(() => {});
   } catch (err) {
     console.error('Failed to save vendor:', err);
   }
@@ -206,6 +224,7 @@ export function deleteAgencyVendor(id: string) {
     const updated = current.filter(v => v.id !== id);
     localStorage.setItem(VENDOR_STORAGE_KEY, JSON.stringify(updated));
     window.dispatchEvent(new Event(VENDOR_EVENT_NAME));
+    api.vendors.delete(id).catch(() => {});
   } catch (err) {
     console.error('Failed to delete vendor:', err);
   }
