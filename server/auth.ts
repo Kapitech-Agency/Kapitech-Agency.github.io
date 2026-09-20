@@ -402,6 +402,27 @@ export function authenticate(req: AuthenticatedRequest, res: Response, next: Nex
   next();
 }
 
+function requireMfaForProtectedAccess(req: AuthenticatedRequest, res: Response): boolean {
+  if (!req.user) return true;
+  if (req.user.mfaEnabled) return true;
+
+  recordAuditLog({
+    action: 'MFA_REQUIRED',
+    actor: req.user.username,
+    actorRole: req.user.role,
+    ip: req.ip || '',
+    userAgent: req.headers['user-agent'] || '',
+    details: `Protected endpoint blocked until TOTP MFA is enabled at ${req.originalUrl}.`,
+    severity: 'warning'
+  });
+  res.status(403).json({
+    success: false,
+    error: 'MFA is required before accessing protected AMS functions.',
+    code: 'MFA_REQUIRED'
+  });
+  return false;
+}
+
 export function requireAuth(req: AuthenticatedRequest, res: Response, next: NextFunction): void {
   if (!req.user) {
     res.status(401).json({ success: false, error: 'Unauthenticated: Valid session required.' });
@@ -416,6 +437,7 @@ export function requirePermission(permissionKey: keyof StoredUser['permissions']
       res.status(401).json({ success: false, error: 'Unauthenticated' });
       return;
     }
+    if (!requireMfaForProtectedAccess(req, res)) return;
     if (req.user.stakeholderType === 'Master') {
       next();
       return;
@@ -442,6 +464,7 @@ export function requireMaster(req: AuthenticatedRequest, res: Response, next: Ne
     res.status(401).json({ success: false, error: 'Unauthenticated' });
     return;
   }
+  if (!requireMfaForProtectedAccess(req, res)) return;
   if (req.user.stakeholderType !== 'Master') {
     recordAuditLog({
       action: 'ACCESS_DENIED',
@@ -464,6 +487,7 @@ export function requireAnyPermission(...permissionKeys: Array<keyof StoredUser['
       res.status(401).json({ success: false, error: 'Unauthenticated' });
       return;
     }
+    if (!requireMfaForProtectedAccess(req, res)) return;
     if (req.user.stakeholderType === 'Master') {
       next();
       return;
