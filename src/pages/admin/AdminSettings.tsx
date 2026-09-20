@@ -38,6 +38,7 @@ import {
 } from '../../lib/adminAuth';
 import { getCmsSiteMeta, saveCmsSiteMeta, SiteMetaSettings } from '../../lib/cmsStore';
 import { useLanguage } from '../../lib/LanguageContext';
+import { api } from '../../lib/apiClient';
 
 export const AdminSettings: React.FC = () => {
   const { language, t } = useLanguage();
@@ -135,7 +136,7 @@ export const AdminSettings: React.FC = () => {
     setMfaStatus(null);
     setMfaLoading(true);
     try {
-      const res = await (await import('../../lib/apiClient')).api.auth.mfaSetupStart();
+      const res = await api.auth.mfaSetupStart();
       if (res.success && res.data?.success) {
         setMfaSetup({ secret: res.data.secret, otpAuthUri: res.data.otpAuthUri });
         setMfaCode('');
@@ -153,7 +154,7 @@ export const AdminSettings: React.FC = () => {
     setMfaStatus(null);
     setMfaLoading(true);
     try {
-      const res = await (await import('../../lib/apiClient')).api.auth.mfaSetupVerify(mfaCode);
+      const res = await api.auth.mfaSetupVerify(mfaCode);
       if (res.success && res.data?.success) {
         const current = getAdminSession();
         if (current) {
@@ -177,7 +178,7 @@ export const AdminSettings: React.FC = () => {
     setMfaStatus(null);
     setMfaLoading(true);
     try {
-      const res = await (await import('../../lib/apiClient')).api.auth.mfaDisable(mfaDisablePassword, mfaDisableCode);
+      const res = await api.auth.mfaDisable(mfaDisablePassword, mfaDisableCode);
       if (res.success && res.data?.success) {
         sessionStorage.removeItem('kapitech_admin_profile_v2');
         setMfaDisableCode('');
