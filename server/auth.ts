@@ -119,7 +119,11 @@ function parseCookies(cookieHeader?: string): Record<string, string> {
     const trimmedName = name?.trim();
     if (!trimmedName) return;
     const value = rest.join('=').trim();
-    list[trimmedName] = decodeURIComponent(value);
+    try {
+      list[trimmedName] = decodeURIComponent(value);
+    } catch {
+      list[trimmedName] = value;
+    }
   });
   return list;
 }
