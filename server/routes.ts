@@ -27,7 +27,15 @@ import {
   rateLimitPublic,
   rateLimitAuthenticated,
   requireAnyPermission,
-  requireMaster
+  requireMaster,
+  generateMfaSecret,
+  buildMfaOtpUri,
+  verifyTotpCode,
+  issueMfaChallenge,
+  getMfaChallenge,
+  consumeMfaChallenge,
+  setMfaChallengeCookie,
+  clearMfaChallengeCookie
 } from './auth';
 
 
@@ -256,50 +264,86 @@ apiRouter.post('/auth/login', rateLimitPublic(10, 15 * 60 * 1000), (req: Request
     return;
   }
 
-  // Success
+  // Password verified. Complete legacy hash migration before deciding whether a second factor is required.
   try {
     clearLockout(cleanIdentifier, ip);
-    const nowIso = new Date().toISOString();
-    user.lastLogin = nowIso;
 
-    // Upgrade legacy password hashes after a successful login.
     if ((user.passwordAlgorithm || 'pbkdf2-sha512') !== 'scrypt-v1') {
       const prepared = preparePassword(password);
       user.salt = prepared.salt;
       user.passwordHash = prepared.passwordHash;
       user.passwordAlgorithm = prepared.passwordAlgorithm;
+      saveDatabase(db);
     }
 
+    if (user.mfaEnabled) {
+      if (!user.mfaSecret) {
+        res.status(503).json({
+          success: false,
+          error: 'MFA is enabled but not configured correctly. Contact a Master administrator.'
+        });
+        return;
+      }
+
+      const challenge = issueMfaChallenge(user.id, Boolean(rememberMe));
+      setMfaChallengeCookie(res, challenge);
+      setCsrfCookie(res);
+
+      recordAuditLog({
+        action: 'LOGIN_MFA_CHALLENGE',
+        actor: user.username,
+        actorRole: user.role,
+        ip,
+        userAgent,
+        details: 'Password accepted; phishing-resistant-capable second factor is configured as TOTP and is required to complete sign-in.',
+        severity: 'info'
+      });
+
+      res.json({
+        success: true,
+        requiresMfa: true,
+        user: {
+          id: user.id,
+          username: user.username,
+          email: user.email,
+          mfaEnabled: true
+        }
+      });
+      return;
+    }
+
+    const nowIso = new Date().toISOString();
+    user.lastLogin = nowIso;
+    saveDatabase(db);
     const session = createSession(user, ip, userAgent, Boolean(rememberMe));
 
     recordAuditLog({
-    action: 'LOGIN_SUCCESS',
-    actor: user.username,
-    actorRole: user.role,
-    ip,
-    userAgent,
-    details: `User ${user.username} authenticated successfully.`,
-    severity: 'info'
-  });
+      action: 'LOGIN_SUCCESS',
+      actor: user.username,
+      actorRole: user.role,
+      ip,
+      userAgent,
+      details: `User ${user.username} authenticated successfully.`,
+      severity: 'info'
+    });
 
-  // Set secure HttpOnly session cookie and a separate CSRF token cookie.
-  const cookieMaxAge = rememberMe ? 24 * 3600 : 12 * 3600;
-  const secureCookie = process.env.NODE_ENV === 'production' ? ' Secure;' : '';
-  res.append('Set-Cookie', `kapi_session=${session.token}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${cookieMaxAge};${secureCookie}`);
-  setCsrfCookie(res);
+    const cookieMaxAge = rememberMe ? 24 * 3600 : 12 * 3600;
+    const secureCookie = process.env.NODE_ENV === 'production' ? ' Secure;' : '';
+    res.append('Set-Cookie', `kapi_session=${session.token}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${cookieMaxAge};${secureCookie}`);
+    setCsrfCookie(res);
 
     res.json({
       success: true,
       user: {
-      id: user.id,
-      name: user.name,
-      username: user.username,
-      email: user.email,
-      role: user.role,
-      stakeholderType: user.stakeholderType,
-      permissions: user.permissions,
-      division: user.division,
-      mfaEnabled: user.mfaEnabled,
+        id: user.id,
+        name: user.name,
+        username: user.username,
+        email: user.email,
+        role: user.role,
+        stakeholderType: user.stakeholderType,
+        permissions: user.permissions,
+        division: user.division,
+        mfaEnabled: user.mfaEnabled,
         lastLogin: user.lastLogin
       }
     });
@@ -310,6 +354,173 @@ apiRouter.post('/auth/login', rateLimitPublic(10, 15 * 60 * 1000), (req: Request
       error: 'Login could not be completed because the server session store is unavailable. Check the server runtime logs.'
     });
   }
+});
+
+apiRouter.post('/auth/mfa/verify', rateLimitPublic(10, 5 * 60 * 1000), (req: Request, res: Response): void => {
+  const origin = req.get('origin');
+  if (origin && origin !== `${req.protocol}://${req.get('host')}`) {
+    res.status(403).json({ success: false, error: 'Security validation failed.' });
+    return;
+  }
+
+  const challengeToken = req.headers.cookie
+    ?.split(';')
+    .map(part => part.trim())
+    .find(part => part.startsWith('kapi_mfa_challenge='))
+    ?.slice('kapi_mfa_challenge='.length) || '';
+  const challenge = getMfaChallenge(decodeURIComponent(challengeToken));
+  if (!challenge) {
+    clearMfaChallengeCookie(res);
+    res.status(401).json({ success: false, error: 'MFA challenge expired. Please sign in again.' });
+    return;
+  }
+
+  const db = getDatabase();
+  const user = db.users.find(item => item.id === challenge.userId);
+  const code = String(req.body?.code || '').trim();
+  if (!user || user.status === 'suspended' || !user.mfaEnabled || !user.mfaSecret || !verifyTotpCode(user.mfaSecret, code)) {
+    recordAuditLog({
+      action: 'MFA_VERIFY_FAILED',
+      actor: user?.username || 'unknown',
+      actorRole: user?.role || 'anonymous',
+      ip: req.ip,
+      userAgent: req.headers['user-agent'] as string,
+      details: 'Invalid or unavailable MFA verification code during sign-in.',
+      severity: 'warning'
+    });
+    res.status(401).json({ success: false, error: 'Invalid verification code.' });
+    return;
+  }
+
+  consumeMfaChallenge(decodeURIComponent(challengeToken));
+  user.lastLogin = new Date().toISOString();
+  saveDatabase(db);
+
+  const session = createSession(user, req.ip || 'unknown', req.headers['user-agent'] || 'unknown', challenge.rememberMe);
+  const cookieMaxAge = challenge.rememberMe ? 24 * 3600 : 12 * 3600;
+  const secureCookie = process.env.NODE_ENV === 'production' ? ' Secure;' : '';
+  res.append('Set-Cookie', `kapi_session=${session.token}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${cookieMaxAge};${secureCookie}`);
+  clearMfaChallengeCookie(res);
+  setCsrfCookie(res);
+
+  recordAuditLog({
+    action: 'LOGIN_SUCCESS',
+    actor: user.username,
+    actorRole: user.role,
+    ip: req.ip,
+    userAgent: req.headers['user-agent'] as string,
+    details: `User ${user.username} authenticated successfully with MFA.`,
+    severity: 'info'
+  });
+
+  res.json({
+    success: true,
+    user: {
+      id: user.id,
+      name: user.name,
+      username: user.username,
+      email: user.email,
+      role: user.role,
+      stakeholderType: user.stakeholderType,
+      permissions: user.permissions,
+      division: user.division,
+      mfaEnabled: user.mfaEnabled,
+      lastLogin: user.lastLogin
+    }
+  });
+});
+
+apiRouter.post('/auth/mfa/setup/start', requireAuth, rateLimitAuthenticated(5, 15 * 60 * 1000), (req: AuthenticatedRequest, res: Response): void => {
+  const user = req.user!;
+  if (user.mfaEnabled) {
+    res.status(409).json({ success: false, error: 'MFA is already enabled.' });
+    return;
+  }
+
+  const db = getDatabase();
+  const current = db.users.find(item => item.id === user.id);
+  if (!current) {
+    res.status(404).json({ success: false, error: 'Account not found.' });
+    return;
+  }
+
+  const secret = generateMfaSecret();
+  current.mfaPendingSecret = secret;
+  saveDatabase(db);
+
+  res.json({
+    success: true,
+    secret,
+    otpAuthUri: buildMfaOtpUri(current, secret)
+  });
+});
+
+apiRouter.post('/auth/mfa/setup/verify', requireAuth, rateLimitAuthenticated(10, 15 * 60 * 1000), (req: AuthenticatedRequest, res: Response): void => {
+  const code = String(req.body?.code || '').trim();
+  const db = getDatabase();
+  const user = db.users.find(item => item.id === req.user!.id);
+  if (!user?.mfaPendingSecret) {
+    res.status(409).json({ success: false, error: 'MFA setup has not been started.' });
+    return;
+  }
+  if (!verifyTotpCode(user.mfaPendingSecret, code)) {
+    res.status(401).json({ success: false, error: 'Invalid verification code.' });
+    return;
+  }
+
+  user.mfaSecret = user.mfaPendingSecret;
+  user.mfaPendingSecret = undefined;
+  user.mfaEnabled = true;
+  saveDatabase(db);
+  revokeAllUserSessions(user.id, req.sessionToken ? hashSessionToken(req.sessionToken) : undefined);
+
+  recordAuditLog({
+    action: 'MFA_ENABLED',
+    actor: user.username,
+    actorRole: user.role,
+    ip: req.ip,
+    userAgent: req.headers['user-agent'] as string,
+    details: 'TOTP multi-factor authentication enabled for the account.',
+    severity: 'info'
+  });
+
+  res.json({ success: true, mfaEnabled: true });
+});
+
+apiRouter.post('/auth/mfa/disable', requireAuth, rateLimitAuthenticated(5, 15 * 60 * 1000), (req: AuthenticatedRequest, res: Response): void => {
+  const currentPassword = String(req.body?.currentPassword || '');
+  const code = String(req.body?.code || '').trim();
+  const db = getDatabase();
+  const user = db.users.find(item => item.id === req.user!.id);
+  if (!user?.mfaEnabled || !user.mfaSecret) {
+    res.status(409).json({ success: false, error: 'MFA is not enabled.' });
+    return;
+  }
+  if (!verifyPasswordForUser(currentPassword, user) || !verifyTotpCode(user.mfaSecret, code)) {
+    res.status(401).json({ success: false, error: 'Current password and MFA code are required.' });
+    return;
+  }
+
+  user.mfaEnabled = false;
+  user.mfaSecret = undefined;
+  user.mfaPendingSecret = undefined;
+  saveDatabase(db);
+  revokeAllUserSessions(user.id);
+
+  recordAuditLog({
+    action: 'MFA_DISABLED',
+    actor: user.username,
+    actorRole: user.role,
+    ip: req.ip,
+    userAgent: req.headers['user-agent'] as string,
+    details: 'TOTP multi-factor authentication disabled for the account.',
+    severity: 'warning'
+  });
+
+  const secureCookie = process.env.NODE_ENV === 'production' ? ' Secure;' : '';
+  res.append('Set-Cookie', `kapi_session=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0;${secureCookie}`);
+  clearCsrfCookie(res);
+  res.json({ success: true, mfaEnabled: false });
 });
 
 apiRouter.post('/auth/logout', requireAuth, (req: AuthenticatedRequest, res: Response): void => {
