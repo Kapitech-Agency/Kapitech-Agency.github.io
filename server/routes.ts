@@ -2047,7 +2047,7 @@ apiRouter.get('/search', requireAuth, (req: AuthenticatedRequest, res: Response)
         results.push({
           type: 'Proposal',
           id: prop.id,
-          name: `${prop.proposalNumber} - `${prop.title}`,
+          name: `${prop.proposalNumber} - ${prop.title}`,
           status: prop.status,
           owner: prop.owner,
           lastUpdated: prop.updatedAt || prop.createdAt,
