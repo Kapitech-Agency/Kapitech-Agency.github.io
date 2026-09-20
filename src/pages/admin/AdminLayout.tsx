@@ -13,6 +13,7 @@ import {
   LogOut, 
   ExternalLink, 
   Menu, 
+  MoreHorizontal,
   X, 
   Clock, 
   ChevronRight,
@@ -187,15 +188,20 @@ export const AdminLayout: React.FC = () => {
     setMobileMenuOpen(false);
   }, [location.pathname]);
 
-  // Lock background scroll when mobile sidebar drawer is open
+  // Mobile "More" sheet follows a modal interaction pattern without replacing the primary bottom tab bar.
   useEffect(() => {
-    if (mobileMenuOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-    }
+    if (!mobileMenuOpen) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setMobileMenuOpen(false);
+    };
+
+    document.body.style.overflow = 'hidden';
+    document.addEventListener('keydown', handleKeyDown);
+
     return () => {
       document.body.style.overflow = 'unset';
+      document.removeEventListener('keydown', handleKeyDown);
     };
   }, [mobileMenuOpen]);
 
@@ -595,7 +601,13 @@ export const AdminLayout: React.FC = () => {
             onClick={() => setMobileMenuOpen(false)}
           />
 
-          <div className="relative w-[300px] max-w-[85vw] bg-[#111318] border-r border-white/[0.07] h-[100dvh] flex flex-col justify-between z-50 shadow-[4px_0_30px_rgba(0,0,0,0.8)] overflow-hidden animate-in slide-in-from-left duration-200">
+          <div
+            id="ams-mobile-more-sheet"
+            role="dialog"
+            aria-modal="true"
+            aria-label={language === 'id' ? 'Navigasi tambahan AMS' : 'AMS additional navigation'}
+            className="relative w-[300px] max-w-[85vw] bg-[#111318] border-r border-white/[0.07] h-[100dvh] flex flex-col justify-between z-50 shadow-[4px_0_30px_rgba(0,0,0,0.8)] overflow-hidden animate-in slide-in-from-left duration-200"
+          >
             
             {/* Drawer Header */}
             <div className="p-4 border-b border-white/[0.07] flex items-center justify-between bg-[#111318] shrink-0">
@@ -800,10 +812,12 @@ export const AdminLayout: React.FC = () => {
         <header className="md:hidden sticky top-0 z-40 h-14 px-3 border-b border-white/[0.07] bg-[#090A0F]/95 backdrop-blur-xl flex items-center justify-between shrink-0">
           <button
             onClick={() => setMobileMenuOpen(true)}
-            aria-label="Open navigation"
+            aria-label={language === 'id' ? 'Buka menu lainnya' : 'Open more navigation'}
+            aria-expanded={mobileMenuOpen}
+            aria-controls="ams-mobile-more-sheet"
             className="min-w-[44px] min-h-[44px] rounded-xl bg-[#111318] border border-white/[0.07] text-[#8A94A6] flex items-center justify-center active:scale-95 transition-transform focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E50914]/70"
           >
-            <Menu size={18} />
+            <MoreHorizontal size={19} />
           </button>
 
           <Link to="/admin/dashboard" className="flex items-center gap-2 min-w-0">
