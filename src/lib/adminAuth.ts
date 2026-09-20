@@ -5,8 +5,8 @@
  * brute-force lockout, and tamper-resistant audit logging.
  */
 
-import { api, getSessionToken, setSessionToken, clearSessionToken } from './apiClient';
-import { getStoredRole, setStoredRole, StakeholderRole } from './rbacEngine';
+import { api } from './apiClient';
+import { StakeholderRole } from './rbacEngine';
 
 export type AdminTier = 
   | 'Tier 1: Top Management / Sponsor'
@@ -62,7 +62,6 @@ export interface AdminAccount {
 }
 
 export interface AdminSession {
-  token: string;
   user: AdminUser;
   expiresAt: number;
   rememberMe: boolean;
@@ -139,53 +138,24 @@ export function getDefaultPermissionsForRole(role: string): StakeholderPermissio
   };
 }
 
-// Client-side lockout helper for fast UI response
+// Security decisions are enforced by the server. These helpers remain as no-op compatibility shims.
 export function getLockoutState(): { isLocked: boolean; remainingSeconds: number } {
-  try {
-    const raw = localStorage.getItem(ADMIN_LOCKOUT_KEY);
-    if (!raw) return { isLocked: false, remainingSeconds: 0 };
-    const state = JSON.parse(raw);
-    const now = Date.now();
-    if (state.lockedUntil && state.lockedUntil > now) {
-      return {
-        isLocked: true,
-        remainingSeconds: Math.ceil((state.lockedUntil - now) / 1000)
-      };
-    }
-    localStorage.removeItem(ADMIN_LOCKOUT_KEY);
-    return { isLocked: false, remainingSeconds: 0 };
-  } catch {
-    return { isLocked: false, remainingSeconds: 0 };
-  }
+  return { isLocked: false, remainingSeconds: 0 };
 }
+export function recordClientFailedAttempt(): void {}
+export function clearClientLockout(): void {}
 
-export function recordClientFailedAttempt(): void {
-  try {
-    const raw = localStorage.getItem(ADMIN_LOCKOUT_KEY);
-    const current = raw ? JSON.parse(raw) : { attempts: 0, lockedUntil: 0 };
-    const attempts = (current.attempts || 0) + 1;
-    let lockedUntil = 0;
-    if (attempts >= 5) {
-      lockedUntil = Date.now() + 5 * 60 * 1000;
-    }
-    localStorage.setItem(ADMIN_LOCKOUT_KEY, JSON.stringify({ attempts, lockedUntil }));
-  } catch {
-    // ignore
-  }
-}
+const ADMIN_PROFILE_KEY = 'kapitech_admin_profile_v2';
 
-export function clearClientLockout(): void {
-  localStorage.removeItem(ADMIN_LOCKOUT_KEY);
-}
-
-// Session Validation
 export function getAdminSession(): AdminSession | null {
+  if (typeof window === 'undefined') return null;
   try {
-    const raw = sessionStorage.getItem(ADMIN_SESSION_KEY) || localStorage.getItem(ADMIN_SESSION_KEY);
+    const raw = sessionStorage.getItem(ADMIN_PROFILE_KEY) || localStorage.getItem(ADMIN_PROFILE_KEY);
     if (!raw) return null;
-    const session: AdminSession = JSON.parse(raw);
-    if (session.expiresAt && session.expiresAt < Date.now()) {
-      logoutAdmin();
+    const session = JSON.parse(raw) as AdminSession;
+    if (!session?.user || (session.expiresAt && session.expiresAt <= Date.now())) {
+      sessionStorage.removeItem(ADMIN_PROFILE_KEY);
+      localStorage.removeItem(ADMIN_PROFILE_KEY);
       return null;
     }
     return session;
@@ -194,86 +164,63 @@ export function getAdminSession(): AdminSession | null {
   }
 }
 
-export function isUserAuthenticated(): boolean {
-  return getAdminSession() !== null && Boolean(getSessionToken());
+export function cacheAdminSession(user: AdminUser, rememberMe: boolean): AdminSession {
+  const durationMs = rememberMe ? 30 * 24 * 60 * 60 * 1000 : 24 * 60 * 60 * 1000;
+  const session: AdminSession = { user, expiresAt: Date.now() + durationMs, rememberMe };
+  const serialized = JSON.stringify(session);
+  if (rememberMe) {
+    localStorage.setItem(ADMIN_PROFILE_KEY, serialized);
+    sessionStorage.removeItem(ADMIN_PROFILE_KEY);
+  } else {
+    sessionStorage.setItem(ADMIN_PROFILE_KEY, serialized);
+    localStorage.removeItem(ADMIN_PROFILE_KEY);
+  }
+  return session;
 }
 
-// Authenticate Admin against server API
+export function isUserAuthenticated(): boolean {
+  return getAdminSession() !== null;
+}
+
 export async function authenticateAdmin(
   identifier: string,
   passwordPlain: string,
   rememberMe: boolean = false
 ): Promise<{ success: boolean; error?: string; session?: AdminSession }> {
-  const lockout = getLockoutState();
-  if (lockout.isLocked) {
-    return {
-      success: false,
-      error: `Security Lockout: Too many failed attempts. Try again in ${lockout.remainingSeconds}s.`
-    };
-  }
-
-  const res = await api.auth.login({
-    identifier,
-    password: passwordPlain,
-    rememberMe
-  });
-
+  const res = await api.auth.login({ identifier, password: passwordPlain, rememberMe });
   if (!res.success || !res.data?.success) {
-    recordClientFailedAttempt();
     return {
       success: false,
       error: res.error || (res.data as any)?.error || 'Kombinasi Username/Email atau Password tidak valid.'
     };
   }
 
-  clearClientLockout();
-  const data = res.data;
-  const token = data.token;
-  setSessionToken(token, rememberMe);
-
-  const durationMs = rememberMe ? 30 * 24 * 60 * 60 * 1000 : 24 * 60 * 60 * 1000;
-  const session: AdminSession = {
-    token,
-    user: data.user,
-    expiresAt: Date.now() + durationMs,
-    rememberMe
-  };
-
-  const serialized = JSON.stringify(session);
-  if (rememberMe) {
-    localStorage.setItem(ADMIN_SESSION_KEY, serialized);
-  } else {
-    sessionStorage.setItem(ADMIN_SESSION_KEY, serialized);
+  const session = cacheAdminSession(res.data.user, rememberMe);
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new Event('kapitech_auth_state_changed'));
   }
-
-  // Update rbacEngine stored role to match logged in user
-  let mappedRole: StakeholderRole = 'executive';
-  if (data.user.stakeholderType === 'Master' || data.user.stakeholderType === 'Executive') mappedRole = 'executive';
-  else if (data.user.stakeholderType === 'Project_Manager') mappedRole = 'pm';
-  else if (data.user.stakeholderType === 'Operations') mappedRole = 'finance';
-  setStoredRole(mappedRole);
-
   return { success: true, session };
 }
 
-// Log out
 export function logoutAdmin(): void {
-  api.auth.logout().catch(() => {});
-  clearSessionToken();
-  localStorage.removeItem(ADMIN_SESSION_KEY);
-  sessionStorage.removeItem(ADMIN_SESSION_KEY);
+  void api.auth.logout().catch(() => {});
   if (typeof window !== 'undefined') {
+    sessionStorage.removeItem(ADMIN_PROFILE_KEY);
+    localStorage.removeItem(ADMIN_PROFILE_KEY);
+    localStorage.removeItem('kapitech_session_token');
+    sessionStorage.removeItem('kapitech_session_token');
+    localStorage.removeItem('kapitech_admin_session_v1');
+    sessionStorage.removeItem('kapitech_admin_session_v1');
+    localStorage.removeItem('kapitech_simulated_role');
     window.dispatchEvent(new Event('kapitech_auth_state_changed'));
   }
 }
 
-// Has Permission Check
 export function hasPermission(permission: keyof StakeholderPermissions): boolean {
   const session = getAdminSession();
   if (!session) return false;
   if (session.user.stakeholderType === 'Master') return true;
-  if (!session.user.permissions) return true;
-  return Boolean(session.user.permissions[permission]);
+  return Boolean(session.user.permissions?.[permission]);
 }
 
 export const hasAdminPermission = hasPermission;
@@ -327,9 +274,10 @@ export async function deleteAdminAccount(id: string): Promise<{ success: boolean
   return { success: false, error: res.error || res.data?.error || 'Gagal menghapus akun.' };
 }
 
-export function updateAdminAccountPermissions(id: string, permissions: Partial<StakeholderPermissions>): { success: boolean; error?: string } {
-  api.auth.updateUser(id, { permissions }).catch(() => {});
-  return { success: true };
+export async function updateAdminAccountPermissions(id: string, permissions: Partial<StakeholderPermissions>): Promise<{ success: boolean; error?: string }> {
+  const res = await api.auth.updateUser(id, { permissions });
+  if (res.success && res.data?.success) return { success: true };
+  return { success: false, error: res.error || (res.data as any)?.error || 'Gagal memperbarui hak akses.' };
 }
 
 // Stored accounts helper (with server-backed sync)
@@ -401,8 +349,8 @@ export function getStoredAdminCredentials() {
 }
 
 export async function verifyCurrentPassword(passwordPlain: string): Promise<boolean> {
-  // Validates via change-password test or server session
-  return passwordPlain.length >= 6;
+  const res = await api.auth.verifyPassword(passwordPlain);
+  return Boolean(res.success && res.data?.success);
 }
 
 export async function updateAdminCredentials(
