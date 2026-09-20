@@ -27,7 +27,7 @@ export interface ContactSubmission {
   starred?: boolean;
 }
 
-const STORAGE_KEY = 'kapitech_contact_submissions';
+let submissionsCache: ContactSubmission[] | null = null;
 const SUBMISSION_EVENT = 'kapitech_submission_updated';
 
 export const DEFAULT_INBOX_SUBMISSIONS: ContactSubmission[] = [
@@ -83,31 +83,16 @@ export const DEFAULT_INBOX_SUBMISSIONS: ContactSubmission[] = [
 
 // Helper to get local stored submissions
 export const getLocalSubmissions = (): ContactSubmission[] => {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) {
-      if (import.meta.env.PROD) return [];
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_INBOX_SUBMISSIONS));
-      return DEFAULT_INBOX_SUBMISSIONS;
-    }
-    const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed)) return parsed;
-    if (import.meta.env.PROD) return [];
-  } catch (err) {
-    console.debug('Failed to parse local submissions:', err);
-    return import.meta.env.PROD ? [] : DEFAULT_INBOX_SUBMISSIONS;
+  return submissionsCache || (submissionsCache = (import.meta.env.PROD ? [] : DEFAULT_INBOX_SUBMISSIONS));
+};
+
+const saveLocalSubmissions = (items: ContactSubmission[]) => {
+  submissionsCache = items.slice(0, 200);
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent(SUBMISSION_EVENT, { detail: submissionsCache }));
   }
 };
 
-// Helper to save local stored submissions
-const saveLocalSubmissions = (items: ContactSubmission[]) => {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(items.slice(0, 200)));
-    window.dispatchEvent(new CustomEvent(SUBMISSION_EVENT, { detail: items }));
-  } catch (err) {
-    console.debug('Failed to write to localStorage:', err);
-  }
-};
 
 /**
  * Universal submission handler for all website forms:
@@ -207,16 +192,9 @@ export const subscribeToInbox = (onUpdate: (submissions: ContactSubmission[]) =>
   };
   window.addEventListener(SUBMISSION_EVENT, handleLocalCustomEvent);
 
-  const handleStorageEvent = (e: StorageEvent) => {
-    if (e.key === STORAGE_KEY) {
-      localCache = getLocalSubmissions();
-      onUpdate(localCache);
-    }
-  };
-  window.addEventListener('storage', handleStorageEvent);
+
 
   return () => {
     window.removeEventListener(SUBMISSION_EVENT, handleLocalCustomEvent);
-    window.removeEventListener('storage', handleStorageEvent);
   };
 };
