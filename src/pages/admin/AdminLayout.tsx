@@ -192,14 +192,6 @@ export const AdminLayout: React.FC = () => {
           badge: null
         },
         {
-          key: 'executive',
-          to: '/admin/executive',
-          label: language === 'id' ? 'Executive Briefing' : 'Executive Briefing',
-          icon: Sparkles,
-          badge: 'Live',
-          badgeColor: 'bg-[#E50914]/10 text-[#FF1E27] border border-[#E50914]/30 font-mono text-[9px] font-bold'
-        },
-        {
           key: 'inbox',
           to: '/admin/inbox',
           label: t('admin.nav.inbox'),
