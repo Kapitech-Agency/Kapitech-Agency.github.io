@@ -9,3 +9,5 @@ coverage/
 data/
 *.tmp
 kapitech_db.json
+
+.kapitech-ams-data/
