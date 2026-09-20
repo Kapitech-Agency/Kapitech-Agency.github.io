@@ -25,6 +25,7 @@ interface MfaChallenge {
   userId: string;
   rememberMe: boolean;
   expiresAt: number;
+  failedAttempts: number;
 }
 
 const loginLockouts = new Map<string, LockoutEntry>();
@@ -157,7 +158,8 @@ export function issueMfaChallenge(userId: string, rememberMe: boolean): string {
   mfaChallenges.set(hashSessionToken(token), {
     userId,
     rememberMe,
-    expiresAt: Date.now() + 5 * 60 * 1000
+    expiresAt: Date.now() + 5 * 60 * 1000,
+    failedAttempts: 0
   });
   return token;
 }
