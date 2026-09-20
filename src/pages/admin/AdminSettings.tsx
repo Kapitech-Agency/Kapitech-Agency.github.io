@@ -95,6 +95,13 @@ export const AdminSettings: React.FC = () => {
   // Audit Logs state
   const [logs, setLogs] = useState<SecurityAuditLog[]>([]);
 
+  const [mfaSetup, setMfaSetup] = useState<{ secret: string; otpAuthUri: string } | null>(null);
+  const [mfaCode, setMfaCode] = useState('');
+  const [mfaDisableCode, setMfaDisableCode] = useState('');
+  const [mfaDisablePassword, setMfaDisablePassword] = useState('');
+  const [mfaStatus, setMfaStatus] = useState<{ success: boolean; message: string } | null>(null);
+  const [mfaLoading, setMfaLoading] = useState(false);
+
   // Accounts Management state (Stakeholder Executive & Teknisi IT)
   const [accounts, setAccounts] = useState<AdminAccount[]>([]);
   const [isAddAccountModalOpen, setIsAddAccountModalOpen] = useState(false);
@@ -121,6 +128,70 @@ export const AdminSettings: React.FC = () => {
     }
     return () => { mounted = false; };
   }, [activeTab]);
+
+  const refreshMfaProfile = () => getAdminSession()?.user?.mfaEnabled === true;
+
+  const handleStartMfaSetup = async () => {
+    setMfaStatus(null);
+    setMfaLoading(true);
+    try {
+      const res = await (await import('../../lib/apiClient')).api.auth.mfaSetupStart();
+      if (res.success && res.data?.success) {
+        setMfaSetup({ secret: res.data.secret, otpAuthUri: res.data.otpAuthUri });
+        setMfaCode('');
+      } else {
+        setMfaStatus({ success: false, message: res.error || res.data?.error || 'Gagal memulai setup MFA.' });
+      }
+    } finally {
+      setMfaLoading(false);
+    }
+  };
+
+  const handleVerifyMfaSetup = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!/^\\d{6}$/.test(mfaCode)) return;
+    setMfaStatus(null);
+    setMfaLoading(true);
+    try {
+      const res = await (await import('../../lib/apiClient')).api.auth.mfaSetupVerify(mfaCode);
+      if (res.success && res.data?.success) {
+        const current = getAdminSession();
+        if (current) {
+          current.user.mfaEnabled = true;
+          sessionStorage.setItem('kapitech_admin_profile_v2', JSON.stringify(current));
+        }
+        setMfaSetup(null);
+        setMfaCode('');
+        setMfaStatus({ success: true, message: language === 'id' ? 'MFA TOTP berhasil diaktifkan untuk akun ini.' : 'TOTP MFA is now enabled for this account.' });
+        window.dispatchEvent(new Event('kapitech_auth_state_changed'));
+      } else {
+        setMfaStatus({ success: false, message: res.error || res.data?.error || 'Kode MFA tidak valid.' });
+      }
+    } finally {
+      setMfaLoading(false);
+    }
+  };
+
+  const handleDisableMfa = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setMfaStatus(null);
+    setMfaLoading(true);
+    try {
+      const res = await (await import('../../lib/apiClient')).api.auth.mfaDisable(mfaDisablePassword, mfaDisableCode);
+      if (res.success && res.data?.success) {
+        sessionStorage.removeItem('kapitech_admin_profile_v2');
+        setMfaDisableCode('');
+        setMfaDisablePassword('');
+        setMfaStatus({ success: true, message: language === 'id' ? 'MFA dinonaktifkan. Login berikutnya hanya memerlukan password.' : 'MFA disabled. Future sign-ins will require password only.' });
+        await api.auth.me();
+        window.dispatchEvent(new Event('kapitech_auth_state_changed'));
+      } else {
+        setMfaStatus({ success: false, message: res.error || res.data?.error || 'Gagal menonaktifkan MFA.' });
+      }
+    } finally {
+      setMfaLoading(false);
+    }
+  };
 
   const refreshAccounts = async () => {
     const nextAccounts = await fetchAdminAccounts();
@@ -1027,7 +1098,7 @@ export const AdminSettings: React.FC = () => {
                     {language === 'id' ? 'Password Sementara' : 'Temporary Password'} *
                   </label>
                   <input
-                    type="text"
+                    type="password"
                     required
                     value={newAccPassword}
                     onChange={(e) => setNewAccPassword(e.target.value)}
@@ -1082,8 +1153,56 @@ export const AdminSettings: React.FC = () => {
           <div className="space-y-4">
             <div className="p-4 rounded-xl bg-[#181B22] border border-amber-500/20 text-amber-200 text-xs font-mono leading-relaxed">
               {language === 'id'
-                ? 'Keamanan sesi aktif: idle timeout 60 menit, batas sesi 12 jam (24 jam untuk Remember Me), cookie HttpOnly + SameSite=Strict, CSRF protection, dan rate limiting. MFA phishing-resistant belum tersedia.'
-                : 'Active session controls: 60-minute idle timeout, 12-hour absolute lifetime (24 hours with Remember Me), HttpOnly + SameSite=Strict cookies, CSRF protection, and rate limiting. Phishing-resistant MFA is not available yet.'}
+                ? 'Keamanan sesi aktif: idle timeout 60 menit, batas sesi 12 jam (24 jam untuk Remember Me), cookie HttpOnly + SameSite=Strict, CSRF protection, rate limiting, dan MFA TOTP opsional. WebAuthn/passkeys belum tersedia.'
+                : 'Active session controls: 60-minute idle timeout, 12-hour absolute lifetime (24 hours with Remember Me), HttpOnly + SameSite=Strict cookies, CSRF protection, rate limiting, and optional TOTP MFA. WebAuthn/passkeys are not available yet.'}
+            </div>
+
+            <div className="pt-4 border-t border-[rgba(255,255,255,0.07)] space-y-4">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <h3 className="text-xs font-bold text-white font-mono">{language === 'id' ? 'Multi-Factor Authentication (TOTP)' : 'Multi-Factor Authentication (TOTP)'}</h3>
+                  <p className="mt-1 text-[11px] text-[#8A94A6] leading-relaxed">
+                    {refreshMfaProfile()
+                      ? (language === 'id' ? 'Aktif. Kode dari aplikasi authenticator diperlukan setelah password.' : 'Enabled. An authenticator code is required after the password.')
+                      : (language === 'id' ? 'Belum aktif. Hubungkan aplikasi authenticator lalu verifikasi kode 6 digit.' : 'Not enabled. Connect an authenticator app and verify a 6-digit code.')}
+                  </p>
+                </div>
+                <ShieldCheck size={18} className={refreshMfaProfile() ? 'text-emerald-400 shrink-0' : 'text-[#64748B] shrink-0'} />
+              </div>
+
+              {mfaStatus && <div className={`p-3 rounded-xl text-xs font-mono ${mfaStatus.success ? 'bg-emerald-950/40 border border-emerald-500/30 text-emerald-300' : 'bg-red-950/40 border border-red-500/30 text-red-300'}`}>{mfaStatus.message}</div>}
+
+              {!refreshMfaProfile() && !mfaSetup && (
+                <button type="button" onClick={handleStartMfaSetup} disabled={mfaLoading} className="min-h-[44px] px-4 rounded-xl bg-[#181B22] border border-white/[0.08] text-white text-xs font-mono font-bold hover:border-[#E50914]/50 disabled:opacity-50">
+                  {language === 'id' ? 'Mulai Setup MFA' : 'Start MFA Setup'}
+                </button>
+              )}
+
+              {mfaSetup && !refreshMfaProfile() && (
+                <div className="space-y-3 rounded-xl bg-[#181B22] border border-white/[0.07] p-4">
+                  <div className="text-[11px] text-[#8A94A6] font-mono">{language === 'id' ? 'Tambahkan entry ini ke authenticator Anda. QR code bisa dibuat dari URI otpauth di bawah.' : 'Add this entry to your authenticator. A QR code can be generated from the otpauth URI below.'}</div>
+                  <code className="block break-all text-[10px] text-white/80 font-mono">{mfaSetup.otpAuthUri}</code>
+                  <div className="flex flex-wrap gap-2">
+                    <button type="button" onClick={() => navigator.clipboard?.writeText(mfaSetup.otpAuthUri)} className="min-h-[40px] px-3 rounded-lg bg-[#262930] text-xs font-mono text-white">Copy setup URI</button>
+                    <button type="button" onClick={() => navigator.clipboard?.writeText(mfaSetup.secret)} className="min-h-[40px] px-3 rounded-lg bg-[#262930] text-xs font-mono text-white">Copy secret</button>
+                  </div>
+                  <form onSubmit={handleVerifyMfaSetup} className="flex flex-col sm:flex-row gap-2">
+                    <input value={mfaCode} onChange={e => setMfaCode(e.target.value.replace(/\\D/g,'').slice(0,6))} inputMode="numeric" autoComplete="one-time-code" maxLength={6} placeholder="000000" className="min-h-[44px] flex-1 px-3 rounded-xl bg-[#111318] border border-white/[0.08] text-white font-mono text-sm tracking-[0.3em]" />
+                    <button type="submit" disabled={mfaLoading || mfaCode.length !== 6} className="min-h-[44px] px-4 rounded-xl bg-[#E50914] text-white text-xs font-mono font-bold disabled:opacity-50">{language === 'id' ? 'Aktifkan MFA' : 'Enable MFA'}</button>
+                  </form>
+                </div>
+              )}
+
+              {refreshMfaProfile() && (
+                <form onSubmit={handleDisableMfa} className="space-y-3 rounded-xl bg-[#181B22] border border-amber-500/20 p-4">
+                  <div className="text-[11px] text-amber-200 font-mono">{language === 'id' ? 'Menonaktifkan MFA memutus semua sesi akun. Konfirmasi dengan password saat ini dan kode TOTP.' : 'Disabling MFA revokes all sessions. Confirm with the current password and TOTP code.'}</div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <input type="password" value={mfaDisablePassword} onChange={e => setMfaDisablePassword(e.target.value)} required placeholder={language === 'id' ? 'Password saat ini' : 'Current password'} className="min-h-[44px] px-3 rounded-xl bg-[#111318] border border-white/[0.08] text-white font-mono text-xs" />
+                    <input value={mfaDisableCode} onChange={e => setMfaDisableCode(e.target.value.replace(/\\D/g,'').slice(0,6))} inputMode="numeric" autoComplete="one-time-code" maxLength={6} required placeholder="MFA 000000" className="min-h-[44px] px-3 rounded-xl bg-[#111318] border border-white/[0.08] text-white font-mono text-xs tracking-[0.2em]" />
+                  </div>
+                  <button type="submit" disabled={mfaLoading} className="min-h-[44px] px-4 rounded-xl bg-[#262930] border border-amber-500/30 text-amber-200 text-xs font-mono font-bold disabled:opacity-50">{language === 'id' ? 'Nonaktifkan MFA' : 'Disable MFA'}</button>
+                </form>
+              )}
             </div>
 
             <form onSubmit={handleUpdateSecurity} className="space-y-3 pt-3 border-t border-[rgba(255,255,255,0.07)]">
