@@ -3,6 +3,9 @@ Allow: /
 
 # Disallow internal build artifacts
 Disallow: /api/
+Disallow: /admin/
+Disallow: /ams
+Disallow: /inbox
 
 # Sitemap location
 Sitemap: https://kapitech.id/sitemap.xml
