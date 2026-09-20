@@ -136,8 +136,22 @@ export const ROLE_DEFINITIONS: Record<StakeholderRole, RoleMetadata> = {
 const STORAGE_KEY = 'kapitech_simulated_role';
 const ROLE_EVENT_NAME = 'kapitech_rbac_role_change';
 
+export type StakeholderType = 'Executive' | 'IT_Technical' | 'Project_Manager' | 'Operations' | 'Master';
+
+export function roleFromStakeholderType(
+  stakeholderType?: StakeholderType | string,
+  division?: string,
+  userRole?: string
+): StakeholderRole {
+  if (stakeholderType === 'Master' || stakeholderType === 'Executive') return 'executive';
+  if (stakeholderType === 'Project_Manager') return 'pm';
+  if (stakeholderType === 'Operations' && (division === 'Finance' || userRole?.toLowerCase().includes('financial'))) return 'finance';
+  if (stakeholderType === 'IT_Technical') return 'client_viewer';
+  return 'account_manager';
+}
+
 export function getStoredRole(): StakeholderRole {
-  if (typeof window === 'undefined') return 'executive';
+  if (typeof window === 'undefined' || !import.meta.env.DEV) return 'executive';
   const saved = localStorage.getItem(STORAGE_KEY) as StakeholderRole;
   if (saved && ROLE_DEFINITIONS[saved]) {
     return saved;
@@ -146,7 +160,7 @@ export function getStoredRole(): StakeholderRole {
 }
 
 export function setStoredRole(role: StakeholderRole): void {
-  if (typeof window === 'undefined') return;
+  if (typeof window === 'undefined' || !import.meta.env.DEV) return;
   localStorage.setItem(STORAGE_KEY, role);
   window.dispatchEvent(new CustomEvent(ROLE_EVENT_NAME, { detail: { role } }));
 }
@@ -157,14 +171,21 @@ export function isModuleAllowed(role: StakeholderRole, moduleKey: string): boole
   return meta.allowedModuleKeys.includes(moduleKey);
 }
 
-export function useRbacRole() {
-  const [currentRole, setCurrentRoleState] = useState<StakeholderRole>(getStoredRole);
+export function useRbacRole(
+  actualStakeholderType?: StakeholderType | string,
+  division?: string,
+  userRole?: string
+) {
+  const actualRole = actualStakeholderType
+    ? roleFromStakeholderType(actualStakeholderType, division, userRole)
+    : null;
+  const [currentRole, setCurrentRoleState] = useState<StakeholderRole>(actualRole || getStoredRole);
 
   useEffect(() => {
     const handler = (e: Event) => {
       const custom = e as CustomEvent<{ role: StakeholderRole }>;
       if (custom.detail?.role && ROLE_DEFINITIONS[custom.detail.role]) {
-        setCurrentRoleState(custom.detail.role);
+        if (!actualRole) setCurrentRoleState(custom.detail.role);
       }
     };
     window.addEventListener(ROLE_EVENT_NAME, handler);
@@ -172,6 +193,7 @@ export function useRbacRole() {
   }, []);
 
   const switchRole = (newRole: StakeholderRole) => {
+    if (actualRole || !import.meta.env.DEV) return;
     setStoredRole(newRole);
     setCurrentRoleState(newRole);
   };
