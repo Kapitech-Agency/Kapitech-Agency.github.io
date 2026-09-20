@@ -189,6 +189,7 @@ export function getAgencyVendors(): AgencyVendor[] {
 export function saveAgencyVendor(vendor: AgencyVendor) {
   try {
     const current = getAgencyVendors();
+    const previous = [...current];
     const idx = current.findIndex(v => v.id === vendor.id);
     let updated: AgencyVendor[];
     if (idx >= 0) {
@@ -201,7 +202,14 @@ export function saveAgencyVendor(vendor: AgencyVendor) {
     window.dispatchEvent(new Event(VENDOR_EVENT_NAME));
 
     const request = idx >= 0 ? api.vendors.update(vendor.id, vendor) : api.vendors.create(vendor);
-    request.catch(() => {});
+    request.then((res) => {
+      if (res.success && res.data?.success !== false) return;
+      vendorsCache = previous;
+      window.dispatchEvent(new Event(VENDOR_EVENT_NAME));
+    }).catch(() => {
+      vendorsCache = previous;
+      window.dispatchEvent(new Event(VENDOR_EVENT_NAME));
+    });
   } catch (err) {
     console.error('Failed to save vendor:', err);
   }
@@ -210,10 +218,18 @@ export function saveAgencyVendor(vendor: AgencyVendor) {
 export function deleteAgencyVendor(id: string) {
   try {
     const current = getAgencyVendors();
+    const previous = [...current];
     const updated = current.filter(v => v.id !== id);
     vendorsCache = updated;
     window.dispatchEvent(new Event(VENDOR_EVENT_NAME));
-    api.vendors.delete(id).catch(() => {});
+    api.vendors.delete(id).then((res) => {
+      if (res.success && res.data?.success !== false) return;
+      vendorsCache = previous;
+      window.dispatchEvent(new Event(VENDOR_EVENT_NAME));
+    }).catch(() => {
+      vendorsCache = previous;
+      window.dispatchEvent(new Event(VENDOR_EVENT_NAME));
+    });
   } catch (err) {
     console.error('Failed to delete vendor:', err);
   }
