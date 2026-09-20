@@ -3,26 +3,20 @@
  * Seamlessly interfaces with the Express backend on /api
  */
 
-const TOKEN_STORAGE_KEY = 'kapitech_session_token';
+const LEGACY_TOKEN_STORAGE_KEY = 'kapitech_session_token';
 
-export function getSessionToken(): string | null {
-  if (typeof window === 'undefined') return null;
-  return localStorage.getItem(TOKEN_STORAGE_KEY) || sessionStorage.getItem(TOKEN_STORAGE_KEY);
+export function getSessionToken(): null {
+  return null;
 }
 
-export function setSessionToken(token: string, remember: boolean = true): void {
-  if (typeof window === 'undefined') return;
-  if (remember) {
-    localStorage.setItem(TOKEN_STORAGE_KEY, token);
-  } else {
-    sessionStorage.setItem(TOKEN_STORAGE_KEY, token);
-  }
+export function setSessionToken(_token: string, _remember: boolean = true): void {
+  // Server sessions are kept in an HttpOnly cookie and are not exposed to JavaScript.
 }
 
 export function clearSessionToken(): void {
   if (typeof window === 'undefined') return;
-  localStorage.removeItem(TOKEN_STORAGE_KEY);
-  sessionStorage.removeItem(TOKEN_STORAGE_KEY);
+  localStorage.removeItem(LEGACY_TOKEN_STORAGE_KEY);
+  sessionStorage.removeItem(LEGACY_TOKEN_STORAGE_KEY);
 }
 
 export async function apiRequest<T = any>(
@@ -30,21 +24,16 @@ export async function apiRequest<T = any>(
   options: RequestInit = {}
 ): Promise<{ success: boolean; data?: T; error?: string }> {
   try {
-    const token = getSessionToken();
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
       ...(options.headers as Record<string, string> || {})
     };
 
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-      headers['x-session-token'] = token;
-    }
-
     const url = endpoint.startsWith('/') ? endpoint : `/api/${endpoint}`;
     const res = await fetch(url, {
       ...options,
-      headers
+      headers,
+      credentials: 'same-origin'
     });
 
     const json = await res.json().catch(() => ({}));
@@ -76,7 +65,7 @@ export const api = {
   // Auth
   auth: {
     login: (body: { identifier: string; password: string; rememberMe?: boolean }) =>
-      apiRequest<{ success: boolean; token: string; user: any }>('/api/auth/login', {
+      apiRequest<{ success: boolean; user: any }>('/api/auth/login', {
         method: 'POST',
         body: JSON.stringify(body)
       }),
@@ -86,6 +75,11 @@ export const api = {
       apiRequest('/api/auth/change-password', {
         method: 'POST',
         body: JSON.stringify(body)
+      }),
+    verifyPassword: (password: string) =>
+      apiRequest<{ success: boolean }>('/api/auth/verify-password', {
+        method: 'POST',
+        body: JSON.stringify({ password })
       }),
     getUsers: () => apiRequest<{ success: boolean; users: any[] }>('/api/auth/users'),
     createUser: (userData: any) =>
