@@ -339,6 +339,12 @@ export const api = {
     getAll: () => apiRequest<{ success: boolean; logs: any[] }>('/api/audit-logs')
   },
 
+  // System / Backup
+  system: {
+    getBackups: () => apiRequest<{ success: boolean; backups: Array<{ createdAt: string; sizeBytes: number }>; retention: number }>('/api/system/backups'),
+    createBackup: () => apiRequest<{ success: boolean; backup: { createdAt: string; sizeBytes: number } }>('/api/system/backups', { method: 'POST' }),
+  },
+
   // Notifications
   notifications: {
     getSettings: () => apiRequest<{ success: boolean; settings: any }>('/api/notifications/settings'),
