@@ -648,6 +648,11 @@ apiRouter.post('/auth/change-password', requireAuth, rateLimitAuthenticated(10, 
     return;
   }
 
+  if (newPassword === currentPassword) {
+    res.status(400).json({ success: false, error: 'New password must be different from the current password.' });
+    return;
+  }
+
   if (!verifyPasswordForUser(currentPassword, user)) {
     res.status(400).json({ success: false, error: 'Current password is incorrect.' });
     return;
