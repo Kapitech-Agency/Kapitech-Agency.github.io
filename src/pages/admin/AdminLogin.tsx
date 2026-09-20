@@ -96,8 +96,10 @@ export const AdminLogin: React.FC = () => {
     setErrorMessage(null);
   };
 
+  const mfaEnabledNotice = searchParams.get('mfaEnabled') === '1';
+
   return (
-    <div className="min-h-screen bg-[#090A0F] text-white flex items-center justify-center px-4 py-10">
+    <div data-kapi-admin="true" className="min-h-screen bg-[#090A0F] text-white flex items-center justify-center px-4 py-10">
       <div className="w-full max-w-md">
         <Link
           to="/"
@@ -121,6 +123,13 @@ export const AdminLogin: React.FC = () => {
                 : 'Sign in to manage Kapitech operations, CRM, projects, finance, and content.'}
             </p>
           </div>
+
+          {mfaEnabledNotice && (
+            <div className="mb-5 p-3.5 rounded-xl bg-emerald-950/30 border border-emerald-500/30 text-emerald-300 text-xs flex items-start gap-2">
+              <ShieldCheck size={16} className="shrink-0 mt-0.5" />
+              <span>{language === 'id' ? 'MFA berhasil diaktifkan. Silakan login ulang untuk melanjutkan.' : 'MFA is enabled. Sign in again to continue.'}</span>
+            </div>
+          )}
 
           {errorMessage && (
             <div className="mb-5 p-3.5 rounded-xl bg-red-950/30 border border-red-500/30 text-red-300 text-xs flex items-start gap-2">
