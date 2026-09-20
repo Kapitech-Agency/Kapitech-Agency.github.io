@@ -342,7 +342,13 @@ export const api = {
 
   // System / Backup
   system: {
-    getBackups: () => apiRequest<{ success: boolean; backups: Array<{ createdAt: string; sizeBytes: number }>; retention: number }>('/api/system/backups'),
+    getBackups: () => apiRequest<{
+      success: boolean;
+      backups: Array<{ createdAt: string; sizeBytes: number }>;
+      retention: number;
+      encryptedAtRest?: boolean;
+      privateDocumentEncryption?: boolean;
+    }>('/api/system/backups'),
     createBackup: () => apiRequest<{ success: boolean; backup: { createdAt: string; sizeBytes: number } }>('/api/system/backups', { method: 'POST' }),
     backupIntegrity: () => apiRequest<{ success: boolean; integrity: { valid: boolean; checkedAt: string; latestName?: string; reason?: string } }>('/api/system/backups/integrity')
   },
