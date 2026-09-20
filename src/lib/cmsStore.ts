@@ -174,7 +174,7 @@ export async function saveCmsService(service: ServiceItemData): Promise<{ succes
 export async function deleteCmsService(slug: string): Promise<boolean> {
   const current = getCmsServices();
   const updated = current.filter(s => s.slug !== slug);
-  localStorage.setItem(CMS_SERVICES_KEY, JSON.stringify(updated));
+  cmsServicesCache = updated;
   notifyCmsUpdate('services');
 
   api.cms.deleteService(slug).catch(() => {});
