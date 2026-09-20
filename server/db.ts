@@ -240,6 +240,7 @@ export interface StoredSession {
   ip: string;
   userAgent: string;
   kind?: 'session' | 'mfa';
+  mfaFailedAttempts?: number;
   // Legacy field retained only for one-time migration from older deployments.
   token?: string;
 }
