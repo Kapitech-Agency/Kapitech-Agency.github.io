@@ -117,6 +117,17 @@ export const AdminSettings: React.FC = () => {
     privateDocumentEncryption: boolean;
   } | null>(null);
   const [backupIntegrity, setBackupIntegrity] = useState<{ valid: boolean; checkedAt: string; reason?: string } | null>(null);
+  const [securityPosture, setSecurityPosture] = useState<{
+    encryptionAtRest: boolean;
+    privateDocumentEncryption: boolean;
+    mfaRequired: boolean;
+    activeUserCount: number;
+    mfaEnabledCount: number;
+    mfaCoveragePercent: number;
+    backupCount: number;
+    latestBackupAt: string | null;
+    backupIntegrity: { valid: boolean; checkedAt: string; latestName?: string; reason?: string };
+  } | null>(null);
 
   // Accounts Management state (Stakeholder Executive & Teknisi IT)
   const [accounts, setAccounts] = useState<AdminAccount[]>([]);
@@ -148,6 +159,12 @@ export const AdminSettings: React.FC = () => {
     }
     if (activeTab === 'api' && canAccessServer) {
       refreshBackups();
+    }
+    if (activeTab === 'security') {
+      api.system.securityStatus().then((res) => {
+        if (!mounted) return;
+        if (res.success && res.data?.status) setSecurityPosture(res.data.status);
+      });
     }
     return () => { mounted = false; };
   }, [activeTab, canAccessServer]);
@@ -1215,6 +1232,51 @@ export const AdminSettings: React.FC = () => {
                       ? 'Akun ini belum memiliki MFA TOTP. Sistem mengarahkan Anda ke halaman ini dan menahan akses ke fungsi AMS terlindungi sampai MFA selesai diaktifkan.'
                       : 'This account does not have TOTP MFA enabled. The system has routed you here and will keep protected AMS functions unavailable until MFA is enabled.'}
                   </p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {securityPosture && (
+            <div className="rounded-2xl border border-white/[0.07] bg-[#111318] p-4 sm:p-5">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+                <div>
+                  <h2 className="text-sm font-semibold text-white">{language === 'id' ? 'Security Posture' : 'Security Posture'}</h2>
+                  <p className="mt-1 text-[11px] text-[#8A94A6] font-mono">
+                    {language === 'id' ? 'Status kontrol inti AMS pada saat halaman ini dibuka.' : 'Current state of the AMS core security controls.'}
+                  </p>
+                </div>
+                <span className={`inline-flex items-center min-h-[28px] px-2.5 rounded-lg border text-[10px] font-mono font-bold ${securityPosture.mfaCoveragePercent === 100 && securityPosture.encryptionAtRest && securityPosture.backupIntegrity.valid ? 'border-emerald-500/25 bg-emerald-500/5 text-emerald-300' : 'border-amber-500/25 bg-amber-500/5 text-amber-300'}`}>
+                  {securityPosture.mfaCoveragePercent === 100 && securityPosture.encryptionAtRest && securityPosture.backupIntegrity.valid
+                    ? (language === 'id' ? 'Posture siap' : 'Posture ready')
+                    : (language === 'id' ? 'Perlu tindakan' : 'Action required')}
+                </span>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div className="rounded-xl border border-white/[0.07] bg-[#181B22] p-3">
+                  <div className="text-[10px] uppercase tracking-wider text-[#8A94A6] font-mono">MFA</div>
+                  <div className="mt-1 text-sm font-bold text-white font-mono">{securityPosture.mfaEnabledCount}/{securityPosture.activeUserCount}</div>
+                  <div className="mt-0.5 text-[10px] text-[#8A94A6] font-mono">{securityPosture.mfaCoveragePercent}% {language === 'id' ? 'cakupan' : 'coverage'}</div>
+                </div>
+                <div className="rounded-xl border border-white/[0.07] bg-[#181B22] p-3">
+                  <div className="text-[10px] uppercase tracking-wider text-[#8A94A6] font-mono">{language === 'id' ? 'Enkripsi Data' : 'Data Encryption'}</div>
+                  <div className={`mt-1 text-sm font-bold font-mono ${securityPosture.encryptionAtRest ? 'text-emerald-300' : 'text-amber-300'}`}>
+                    {securityPosture.encryptionAtRest ? (language === 'id' ? 'Aktif' : 'Enabled') : (language === 'id' ? 'Belum aktif' : 'Not configured')}
+                  </div>
+                </div>
+                <div className="rounded-xl border border-white/[0.07] bg-[#181B22] p-3">
+                  <div className="text-[10px] uppercase tracking-wider text-[#8A94A6] font-mono">Backup</div>
+                  <div className="mt-1 text-sm font-bold font-mono text-white">{securityPosture.backupCount}</div>
+                  <div className={`mt-0.5 text-[10px] font-mono ${securityPosture.backupIntegrity.valid ? 'text-emerald-300' : 'text-red-300'}`}>
+                    {securityPosture.backupIntegrity.valid ? 'Integrity valid' : 'Integrity check failed'}
+                  </div>
+                </div>
+                <div className="rounded-xl border border-white/[0.07] bg-[#181B22] p-3">
+                  <div className="text-[10px] uppercase tracking-wider text-[#8A94A6] font-mono">{language === 'id' ? 'MFA Policy' : 'MFA Policy'}</div>
+                  <div className="mt-1 text-sm font-bold font-mono text-emerald-300">{securityPosture.mfaRequired ? (language === 'id' ? 'Wajib' : 'Required') : '—'}</div>
+                  <div className="mt-0.5 text-[10px] text-[#8A94A6] font-mono">
+                    {securityPosture.latestBackupAt ? new Date(securityPosture.latestBackupAt).toLocaleString() : (language === 'id' ? 'Belum ada snapshot' : 'No snapshot yet')}
+                  </div>
                 </div>
               </div>
             </div>
