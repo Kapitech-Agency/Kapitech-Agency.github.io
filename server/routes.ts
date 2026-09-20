@@ -2065,27 +2065,38 @@ apiRouter.get('/search', requireAuth, (req: AuthenticatedRequest, res: Response)
 
 const handleOverview = (req: AuthenticatedRequest, res: Response): void => {
   const db = getDatabase();
-  const canViewFinancials = req.user?.stakeholderType === 'Master' || Boolean(req.user?.permissions?.canViewFinancials);
 
-  const leads = db.leads || [];
-  const deals = db.crmDeals || [];
-  const proposals = db.proposals || [];
-  const projects = db.projects || [];
-  const invoices = db.invoices || [];
-  const expenses = db.expenses || [];
-  const tasks = db.tasks || [];
-  const approvals = db.approvals || [];
+  const isMaster = req.user!.stakeholderType === 'Master';
+  const canViewFinancials = isMaster || Boolean(req.user!.permissions?.canViewFinancials);
+  const canViewCrm = isMaster || Boolean(req.user!.permissions?.canManageCrm);
+  const canViewProjects = isMaster || Boolean(req.user!.permissions?.canManageProjects || req.user!.permissions?.canManageKanbanTasks);
+  const canViewApprovals = isMaster || Boolean(req.user!.permissions?.canApproveBudgets || req.user!.permissions?.canManageProjects);
+  const canViewAudit = isMaster || Boolean(req.user!.permissions?.canViewSecurityAuditLogs);
 
-  // 1. Authoritative Core Metrics
-  const openLeadsCount = leads.filter(l => l.status === 'new' || l.status === 'in_review').length;
-  const activeDeals = deals.filter(d => d.stage !== 'won' && d.stage !== 'lost');
+  const leads = canViewCrm ? (db.leads || []) : [];
+  const deals = canViewCrm ? (db.crmDeals || []) : [];
+  const proposals = (canViewCrm || canViewFinancials || canViewApprovals) ? (db.proposals || []) : [];
+  const projects = canViewProjects ? (db.projects || []) : [];
+  const invoices = canViewFinancials ? (db.invoices || []) : [];
+  const expenses = canViewFinancials ? (db.expenses || []) : [];
+  const approvals = canViewApprovals ? (db.approvals || []) : [];
+  const tasks = canViewProjects ? (db.tasks || []) : [];
+
+  const openLeadsCount = canViewCrm
+    ? leads.filter(l => l.status === 'new' || l.status === 'in_review').length
+    : 0;
+  const activeDeals = canViewCrm ? deals.filter(d => d.stage !== 'won' && d.stage !== 'lost') : [];
   const dealsInPipelineCount = activeDeals.length;
   const activePipelineValue = activeDeals.reduce((sum, d) => sum + (Number(d.value) || 0), 0);
 
-  const proposalsAwaitingCount = proposals.filter(p => p.status === 'Draft' || p.status === 'Internal Review' || p.status === 'Sent').length;
+  const proposalsAwaitingCount = proposals.filter(
+    p => p.status === 'Draft' || p.status === 'Internal Review' || p.status === 'Sent'
+  ).length;
   const activeProjectsList = projects.filter(p => p.status !== 'Completed' && p.status !== 'Archived');
   const activeProjectsCount = activeProjectsList.length;
-  const projectsAtRiskCount = projects.filter(p => p.health === 'At Risk' || p.health === 'Delayed' || p.health === 'Blocked').length;
+  const projectsAtRiskCount = projects.filter(
+    p => p.health === 'At Risk' || p.health === 'Delayed' || p.health === 'Blocked'
+  ).length;
 
   const now = new Date();
   const overdueInvoices = invoices.filter(inv => {
@@ -2095,33 +2106,46 @@ const handleOverview = (req: AuthenticatedRequest, res: Response): void => {
   });
   const overdueInvoicesCount = overdueInvoices.length;
   const overdueReceivables = overdueInvoices.reduce(
-    (sum, i) => sum + (i.balanceDue !== undefined ? i.balanceDue : Math.max(0, (i.total || 0) - (i.amountPaid || 0))),
+    (sum, i) => sum + (
+      i.balanceDue !== undefined
+        ? i.balanceDue
+        : Math.max(0, (i.total || 0) - (i.amountPaid || 0))
+    ),
     0
   );
 
   const totalOutstanding = invoices
     .filter(i => i.status !== 'paid' && i.status !== 'cancelled')
-    .reduce((sum, i) => sum + (i.balanceDue !== undefined ? i.balanceDue : Math.max(0, (i.total || 0) - (i.amountPaid || 0))), 0);
+    .reduce(
+      (sum, i) => sum + (
+        i.balanceDue !== undefined
+          ? i.balanceDue
+          : Math.max(0, (i.total || 0) - (i.amountPaid || 0))
+      ),
+      0
+    );
 
   const totalBilled = invoices.reduce((sum, i) => sum + (Number(i.total) || 0), 0);
   const revenueCollected = invoices.reduce((sum, i) => sum + (Number(i.amountPaid) || 0), 0);
   const totalExpenses = expenses.reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
   const netOperatingProfit = revenueCollected - totalExpenses;
   const pendingApprovalsCount = approvals.filter(a => a.status === 'Pending').length;
-  const overdueTasksCount = tasks.filter(t => t.status !== 'done' && t.dueDate && new Date(t.dueDate) < now).length;
+  const overdueTasksCount = tasks.filter(
+    t => t.status !== 'done' && t.dueDate && new Date(t.dueDate) < now
+  ).length;
 
-  // Pipeline by Stage
   const stages = ['lead', 'contacted', 'discovery', 'proposal', 'negotiation', 'won', 'lost'];
-  const pipelineByStage = stages.map(st => {
-    const stageDeals = deals.filter(d => d.stage === st);
-    return {
-      stage: st,
-      count: stageDeals.length,
-      value: stageDeals.reduce((sum, d) => sum + (Number(d.value) || 0), 0)
-    };
-  });
+  const pipelineByStage = canViewCrm
+    ? stages.map(st => {
+        const stageDeals = deals.filter(d => d.stage === st);
+        return {
+          stage: st,
+          count: stageDeals.length,
+          value: stageDeals.reduce((sum, d) => sum + (Number(d.value) || 0), 0)
+        };
+      })
+    : [];
 
-  // Needs Attention Engine
   const attentionItems: Array<{
     id: string;
     title: string;
@@ -2131,55 +2155,55 @@ const handleOverview = (req: AuthenticatedRequest, res: Response): void => {
     linkUrl: string;
   }> = [];
 
-  if (overdueInvoicesCount > 0) {
+  if (canViewFinancials && overdueInvoicesCount > 0) {
     attentionItems.push({
       id: 'att_invoices_overdue',
       title: `${overdueInvoicesCount} Invoices Overdue`,
-      description: `Immediate follow-up required on unpaid accounts totaling IDR ${overdueReceivables.toLocaleString()}.`,
+      description: `Follow-up required on unpaid accounts totaling IDR ${overdueReceivables.toLocaleString()}.`,
       severity: 'danger',
       category: 'Finance',
       linkUrl: '/admin/invoicing'
     });
   }
 
-  if (pendingApprovalsCount > 0) {
+  if (canViewApprovals && pendingApprovalsCount > 0) {
     attentionItems.push({
       id: 'att_pending_approvals',
       title: `${pendingApprovalsCount} Executive Approvals Awaiting Review`,
-      description: `Includes budget and financial approvals submitted by team leads.`,
+      description: 'Budget and operational approvals are waiting for review.',
       severity: 'warning',
       category: 'Operations',
       linkUrl: '/admin/approvals'
     });
   }
 
-  if (projectsAtRiskCount > 0) {
+  if (canViewProjects && projectsAtRiskCount > 0) {
     attentionItems.push({
       id: 'att_projects_risk',
       title: `${projectsAtRiskCount} Projects Flagged At Risk`,
-      description: `Delivery timeline or resource constraints require PM intervention.`,
+      description: 'Delivery timeline or resource constraints require attention.',
       severity: 'danger',
       category: 'Delivery',
       linkUrl: '/admin/projects'
     });
   }
 
-  if (overdueTasksCount > 0) {
+  if (canViewProjects && overdueTasksCount > 0) {
     attentionItems.push({
       id: 'att_tasks_overdue',
       title: `${overdueTasksCount} Tasks Overdue in Active Sprints`,
-      description: `Tasks passed deadline requiring rescheduling or re-assignment.`,
+      description: 'Tasks passed their due dates and may require rescheduling.',
       severity: 'warning',
       category: 'Delivery',
       linkUrl: '/admin/projects'
     });
   }
 
-  if (openLeadsCount > 3) {
+  if (canViewCrm && openLeadsCount > 3) {
     attentionItems.push({
       id: 'att_leads_new',
       title: `${openLeadsCount} Inbound Inquiries Unassigned`,
-      description: `New potential leads received through website forms waiting qualification.`,
+      description: 'Website inquiries are waiting for qualification.',
       severity: 'info',
       category: 'Sales',
       linkUrl: '/admin/inbox'
@@ -2193,20 +2217,20 @@ const handleOverview = (req: AuthenticatedRequest, res: Response): void => {
       totalBilled: canViewFinancials ? totalBilled : null,
       outstandingReceivables: canViewFinancials ? totalOutstanding : null,
       overdueReceivables: canViewFinancials ? overdueReceivables : null,
-      activePipeline: canViewFinancials ? activePipelineValue : null,
-      activeProjects: activeProjectsCount,
-      projectsAtRisk: projectsAtRiskCount,
-      pendingApprovals: pendingApprovalsCount,
-      overdueTasks: overdueTasksCount,
-      openLeads: openLeadsCount
+      activePipeline: canViewCrm ? activePipelineValue : null,
+      activeProjects: canViewProjects ? activeProjectsCount : 0,
+      projectsAtRisk: canViewProjects ? projectsAtRiskCount : 0,
+      pendingApprovals: canViewApprovals ? pendingApprovalsCount : 0,
+      overdueTasks: canViewProjects ? overdueTasksCount : 0,
+      openLeads: canViewCrm ? openLeadsCount : 0
     },
     todayAtKapitech: {
-      openLeadsCount,
-      dealsInPipelineCount,
+      openLeadsCount: canViewCrm ? openLeadsCount : 0,
+      dealsInPipelineCount: canViewCrm ? dealsInPipelineCount : 0,
       pipelineValue: canViewFinancials ? activePipelineValue : null,
-      proposalsAwaitingCount,
-      projectsAtRiskCount,
-      overdueInvoicesCount,
+      proposalsAwaitingCount: (canViewCrm || canViewFinancials || canViewApprovals) ? proposalsAwaitingCount : 0,
+      projectsAtRiskCount: canViewProjects ? projectsAtRiskCount : 0,
+      overdueInvoicesCount: canViewFinancials ? overdueInvoicesCount : 0,
       cashOutstanding: canViewFinancials ? totalOutstanding : null
     },
     financials: canViewFinancials ? {
@@ -2224,13 +2248,12 @@ const handleOverview = (req: AuthenticatedRequest, res: Response): void => {
       netOperatingProfit: null,
       margin: null
     },
-    pipelineByStage: canViewFinancials ? pipelineByStage : pipelineByStage.map((stage) => ({ ...stage, value: null })),
-    attentionItems: canViewFinancials ? attentionItems : attentionItems.filter((item) => item.category !== 'Finance'),
-    projects: activeProjectsList.slice(0, 10),
-    recentActivity: (db.auditLogs || []).slice(0, 10)
+    pipelineByStage,
+    attentionItems,
+    projects: canViewProjects ? activeProjectsList.slice(0, 10) : [],
+    recentActivity: canViewAudit ? (db.auditLogs || []).slice(0, 10) : []
   });
 };
-
 apiRouter.get('/dashboard/overview', requireAuth, handleOverview);
 apiRouter.get('/executive/overview', requireAuth, handleOverview);
 
