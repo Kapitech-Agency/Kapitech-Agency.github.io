@@ -19,28 +19,48 @@ export function clearSessionToken(): void {
   sessionStorage.removeItem(LEGACY_TOKEN_STORAGE_KEY);
 }
 
+function readCookie(name: string): string {
+  if (typeof document === 'undefined') return '';
+  const prefix = `${name}=`;
+  const part = document.cookie.split('; ').find((item) => item.startsWith(prefix));
+  return part ? decodeURIComponent(part.slice(prefix.length)) : '';
+}
+
+const MUTATING_METHODS = new Set(['POST', 'PUT', 'PATCH', 'DELETE']);
+
 export async function apiRequest<T = any>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<{ success: boolean; data?: T; error?: string }> {
+  const controller = new AbortController();
+  const timeout = window.setTimeout(() => controller.abort(), 15000);
   try {
+    const method = String(options.method || 'GET').toUpperCase();
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
       ...(options.headers as Record<string, string> || {})
     };
 
+    if (MUTATING_METHODS.has(method)) {
+      const csrfToken = readCookie('kapi_csrf');
+      if (csrfToken) {
+        headers['X-CSRF-Token'] = csrfToken;
+      }
+    }
+
     const url = endpoint.startsWith('/') ? endpoint : `/api/${endpoint}`;
     const res = await fetch(url, {
       ...options,
+      method,
       headers,
-      credentials: 'same-origin'
+      credentials: 'same-origin',
+      signal: options.signal || controller.signal
     });
 
     const json = await res.json().catch(() => ({}));
 
     if (!res.ok) {
       if (res.status === 401 && typeof window !== 'undefined') {
-        // Expired or invalid session
         clearSessionToken();
       }
       return {
@@ -56,8 +76,10 @@ export async function apiRequest<T = any>(
   } catch (err: any) {
     return {
       success: false,
-      error: err.message || 'Network request failed'
+      error: err?.name === 'AbortError' ? 'Request timed out. Please try again.' : (err?.message || 'Network request failed')
     };
+  } finally {
+    window.clearTimeout(timeout);
   }
 }
 
