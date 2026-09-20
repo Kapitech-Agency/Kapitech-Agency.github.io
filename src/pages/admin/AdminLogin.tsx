@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { Lock, KeyRound, Mail, Eye, EyeOff, AlertCircle, ArrowRight, ArrowLeft, ShieldCheck } from 'lucide-react';
 import { api } from '../../lib/apiClient';
-import { authenticateAdmin } from '../../lib/adminAuth';
+import { authenticateAdmin, cacheAdminSession } from '../../lib/adminAuth';
 import { useLanguage } from '../../lib/LanguageContext';
 
 export const AdminLogin: React.FC = () => {
@@ -77,7 +77,6 @@ export const AdminLogin: React.FC = () => {
     try {
       const result = await api.auth.mfaVerify(mfaCode.trim());
       if (result.success && result.data?.success && result.data.user) {
-        const { cacheAdminSession } = await import('../../lib/adminAuth');
         cacheAdminSession(result.data.user, rememberMe);
         window.dispatchEvent(new Event('kapitech_auth_state_changed'));
         navigate(redirectUrl, { replace: true });
