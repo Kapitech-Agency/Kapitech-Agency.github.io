@@ -43,7 +43,7 @@ export interface AgencyVendor {
   updatedAt: string;
 }
 
-const VENDOR_STORAGE_KEY = 'kapitech_agency_vendors_v1';
+let vendorsCache: AgencyVendor[] | null = null;
 export const VENDOR_EVENT_NAME = 'kapitech_vendors_updated';
 
 let vendorServerHydrationStarted = false;
@@ -53,7 +53,7 @@ function hydrateVendorsFromServer(): void {
   vendorServerHydrationStarted = true;
   api.vendors.getAll().then((res) => {
     if (!res.success || !Array.isArray(res.data?.vendors)) return;
-    localStorage.setItem(VENDOR_STORAGE_KEY, JSON.stringify(res.data.vendors));
+    vendorsCache = res.data.vendors;
     if (typeof window !== 'undefined') window.dispatchEvent(new Event(VENDOR_EVENT_NAME));
   }).catch(() => {});
 }
@@ -181,20 +181,9 @@ const defaultVendors: AgencyVendor[] = [
 
 export function getAgencyVendors(): AgencyVendor[] {
   hydrateVendorsFromServer();
-  try {
-    const raw = localStorage.getItem(VENDOR_STORAGE_KEY);
-    if (!raw) {
-      return import.meta.env.PROD ? [] : (() => {
-        localStorage.setItem(VENDOR_STORAGE_KEY, JSON.stringify(defaultVendors));
-        return defaultVendors;
-      })();
-    }
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : (import.meta.env.PROD ? [] : defaultVendors);
-  } catch (err) {
-    console.error('Failed to load vendors:', err);
-    return import.meta.env.PROD ? [] : defaultVendors;
-  }
+  if (vendorsCache) return vendorsCache;
+  vendorsCache = import.meta.env.PROD ? [] : defaultVendors;
+  return vendorsCache;
 }
 
 export function saveAgencyVendor(vendor: AgencyVendor) {
@@ -208,7 +197,7 @@ export function saveAgencyVendor(vendor: AgencyVendor) {
     } else {
       updated = [{ ...vendor, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() }, ...current];
     }
-    localStorage.setItem(VENDOR_STORAGE_KEY, JSON.stringify(updated));
+    vendorsCache = updated;
     window.dispatchEvent(new Event(VENDOR_EVENT_NAME));
 
     const request = idx >= 0 ? api.vendors.update(vendor.id, vendor) : api.vendors.create(vendor);
@@ -222,7 +211,7 @@ export function deleteAgencyVendor(id: string) {
   try {
     const current = getAgencyVendors();
     const updated = current.filter(v => v.id !== id);
-    localStorage.setItem(VENDOR_STORAGE_KEY, JSON.stringify(updated));
+    vendorsCache = updated;
     window.dispatchEvent(new Event(VENDOR_EVENT_NAME));
     api.vendors.delete(id).catch(() => {});
   } catch (err) {
