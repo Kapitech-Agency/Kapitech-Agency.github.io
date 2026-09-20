@@ -102,6 +102,8 @@ export interface StoredUser {
     canManageAdminAccounts: boolean;
   };
   mfaEnabled: boolean;
+  mfaSecret?: string;
+  mfaPendingSecret?: string;
   division: 'Management' | 'Engineering' | 'Design' | 'Finance' | 'Operations';
   status: 'active' | 'suspended';
   lastLogin: string;
@@ -117,6 +119,7 @@ export interface StoredSession {
   rememberMe: boolean;
   ip: string;
   userAgent: string;
+  kind?: 'session' | 'mfa';
   // Legacy field retained only for one-time migration from older deployments.
   token?: string;
 }
