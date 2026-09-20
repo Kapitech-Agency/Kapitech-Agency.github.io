@@ -1233,44 +1233,10 @@ export const AdminSettings: React.FC = () => {
           </div>
 
           <div className="space-y-4">
-            <div className="p-4 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div className="space-y-1">
-                <div className="text-white font-mono font-bold flex items-center gap-2 text-xs">
-                  <Smartphone size={15} className="text-emerald-400 shrink-0" />
-                  <span>{language === 'id' ? 'Wajibkan Multi-Factor Authentication (MFA)' : 'Enforce Multi-Factor Authentication (MFA)'}</span>
-                </div>
-                <p className="text-[#8A94A6] text-[11px] font-mono">
-                  {language === 'id'
-                    ? 'Wajibkan verifikasi OTP untuk Tier 1 (Top Management) dan Tier 4 (System Admin).'
-                    : 'Mandate time-based OTP verification for Tier 1 Sponsors and Tier 4 IT Administrators.'}
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setMfaActive(!mfaActive)}
-                className={`px-3.5 py-1.5 rounded-lg text-xs font-mono font-bold transition-all self-start sm:self-auto min-h-[38px] ${
-                  mfaActive ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40' : 'bg-[#21252F] text-[#8A94A6]'
-                }`}
-              >
-                {mfaActive ? (language === 'id' ? 'AKTIF' : 'ACTIVE') : (language === 'id' ? 'NONAKTIF' : 'DISABLED')}
-              </button>
-            </div>
-
-            <div className="p-4 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl space-y-2">
-              <label className="block text-xs font-mono text-[#8A94A6] font-semibold">
-                {language === 'id' ? 'Batas Waktu Ketidakaktifan Sesi (Menit)' : 'Session Inactivity Timeout (Minutes)'}
-              </label>
-              <input
-                type="number"
-                value={sessionTimeoutMin}
-                onChange={(e) => setSessionTimeoutMin(parseInt(e.target.value) || 60)}
-                className="w-full px-3.5 py-2.5 bg-[#111318] border border-[rgba(255,255,255,0.07)] rounded-xl text-xs text-white font-mono focus:outline-none focus:border-[#E50914] min-h-[44px]"
-              />
-              <p className="text-[10px] text-[#64748B] font-mono">
-                {language === 'id'
-                  ? 'Sesi login admin akan otomatis keluar jika tidak ada aktivitas dalam rentang waktu di atas.'
-                  : 'Admin login session automatically terminates if no active interaction occurs within this threshold.'}
-              </p>
+            <div className="p-4 rounded-xl bg-[#181B22] border border-amber-500/20 text-amber-200 text-xs font-mono leading-relaxed">
+              {language === 'id'
+                ? 'MFA/OTP dan idle-session enforcement belum diaktifkan oleh backend saat ini. Jangan gunakan indikator UI sebagai bukti MFA sudah berlaku.'
+                : 'MFA/OTP and idle-session enforcement are not enabled by the backend yet. Do not treat UI indicators as proof that MFA is enforced.'}
             </div>
 
             <form onSubmit={handleUpdateSecurity} className="space-y-3 pt-3 border-t border-[rgba(255,255,255,0.07)]">
