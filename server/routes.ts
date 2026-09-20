@@ -1,8 +1,12 @@
 import { Router, Request, Response } from 'express';
 import crypto from 'crypto';
+import fs from 'fs';
+import path from 'path';
 import { 
   getDatabase,
   saveDatabase,
+  createDatabaseBackup,
+  listDatabaseBackups,
   recordAuditLog,
   hashSessionToken,
   StoredUser,
@@ -2973,44 +2977,319 @@ apiRouter.post('/approvals/:id/action', requireAuth, requirePermission('canAppro
 });
 
 // ----------------------------------------------------
-// 16. DOCUMENTS & ASSET VAULT (PART 26)
+// 16. DOCUMENTS & ASSET VAULT
 // ----------------------------------------------------
 
-apiRouter.get('/documents', requireAuth, requireAnyPermission('canManageProjects', 'canManageCrm', 'canViewFinancials', 'canViewSecurityAuditLogs'), (req: AuthenticatedRequest, res: Response): void => {
+const PRIVATE_DOCUMENT_DIR = process.env.KAPITECH_DATA_DIR
+  ? path.join(path.resolve(process.env.KAPITECH_DATA_DIR), 'private-documents')
+  : path.join(process.env.HOME || process.cwd(), '.kapitech-ams-data', 'private-documents');
+
+const DOCUMENT_MIME_TYPES = new Set([
+  'application/pdf',
+  'image/png',
+  'image/jpeg',
+  'image/webp',
+  'text/plain',
+  'text/csv',
+  'application/zip',
+  'application/msword',
+  'application/vnd.ms-excel',
+  'application/vnd.ms-powerpoint',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+]);
+
+function humanFileSize(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  return `${(bytes / (1024 * 1024 * 1024)).toFixed(1)} GB`;
+}
+
+function publicDocument(document: any): any {
+  const { storageKey, ...safeDocument } = document || {};
+  if (safeDocument.sourceType === 'private_file' && safeDocument.status === 'ready') {
+    safeDocument.downloadUrl = `/api/documents/${encodeURIComponent(String(safeDocument.id))}/content`;
+  }
+  return safeDocument;
+}
+
+function privateDocumentPath(document: any): string {
+  if (!document?.storageKey || !/^[a-f0-9]{64}$/.test(String(document.storageKey))) return '';
+  return path.join(PRIVATE_DOCUMENT_DIR, `${document.storageKey}.bin`);
+}
+
+function ensurePrivateDocumentDirectory(): void {
+  if (!fs.existsSync(PRIVATE_DOCUMENT_DIR)) {
+    fs.mkdirSync(PRIVATE_DOCUMENT_DIR, { recursive: true, mode: 0o700 });
+  } else {
+    try { fs.chmodSync(PRIVATE_DOCUMENT_DIR, 0o700); } catch {}
+  }
+}
+
+const documentAccessMiddleware = requireAnyPermission(
+  'canManageProjects',
+  'canManageCrm',
+  'canViewFinancials',
+  'canViewSecurityAuditLogs'
+);
+
+apiRouter.get('/documents', requireAuth, documentAccessMiddleware, (req: AuthenticatedRequest, res: Response): void => {
   const db = getDatabase();
-  res.json({ success: true, documents: db.documents || [] });
+  res.json({ success: true, documents: (db.documents || []).map(publicDocument) });
 });
 
-apiRouter.post('/documents', requireAuth, requireAnyPermission('canManageProjects', 'canManageCrm', 'canViewFinancials', 'canViewSecurityAuditLogs'), (req: AuthenticatedRequest, res: Response): void => {
-  const data = req.body;
+apiRouter.post('/documents', requireAuth, documentAccessMiddleware, (req: AuthenticatedRequest, res: Response): void => {
+  const data = req.body || {};
+  const sourceType = data.url ? 'external_link' : 'private_file';
+  const name = cleanText(data.name || 'Document', 240);
+  const mimeType = cleanText(data.mimeType || '', 160).toLowerCase();
+
+  if (sourceType === 'external_link') {
+    const externalUrl = cleanOptionalUrl(data.url);
+    if (!externalUrl) {
+      res.status(400).json({ success: false, error: 'Only valid HTTPS document links are allowed.' });
+      return;
+    }
+  } else if (mimeType && !DOCUMENT_MIME_TYPES.has(mimeType)) {
+    res.status(400).json({ success: false, error: 'Unsupported document file type.' });
+    return;
+  }
+
   const db = getDatabase();
-  const newDoc = {
-    id: `doc_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
-    name: cleanText(data.name || 'Document', 240),
-    type: cleanText(data.type || 'PDF', 40),
+  const newDoc: any = {
+    id: `doc_${Date.now()}_${crypto.randomBytes(8).toString('hex')}`,
+    name,
+    title: name,
+    type: cleanText(data.type || 'Document', 40),
+    mimeType,
     size: cleanText(data.size || '0 B', 40),
+    sizeBytes: Math.max(0, Math.floor(Number(data.sizeBytes) || 0)),
     category: cleanText(data.category || 'General', 100),
     relatedEntity: cleanText(data.relatedEntity || 'General', 200),
     relatedId: cleanText(data.relatedId || '', 120),
     owner: req.user!.name || req.user!.username,
-    url: cleanOptionalUrl(data.url),
+    sourceType,
+    status: sourceType === 'private_file' ? 'pending_upload' : 'external_link',
     uploadedDate: new Date().toISOString().split('T')[0],
-    createdAt: new Date().toISOString()
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
   };
+
+  if (sourceType === 'private_file') {
+    newDoc.storageKey = crypto.randomBytes(32).toString('hex');
+  } else {
+    newDoc.url = cleanOptionalUrl(data.url);
+  }
 
   if (!db.documents) db.documents = [];
   db.documents.unshift(newDoc);
   saveDatabase(db);
-  res.json({ success: true, document: newDoc });
+
+  recordAuditLog({
+    action: 'DOCUMENT_CREATED',
+    actor: req.user!.username,
+    actorRole: req.user!.role,
+    ip: req.ip,
+    userAgent: req.headers['user-agent'] as string,
+    details: `Created document record "${name}" (${sourceType}).`,
+    severity: 'info'
+  });
+
+  res.status(201).json({ success: true, document: publicDocument(newDoc) });
 });
 
-apiRouter.delete('/documents/:id', requireAuth, requireAnyPermission('canManageProjects', 'canManageCrm', 'canViewFinancials', 'canViewSecurityAuditLogs'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.put('/documents/:id/content', requireAuth, documentAccessMiddleware, (req: AuthenticatedRequest, res: Response): void => {
   const { id } = req.params;
   const db = getDatabase();
+  const document = (db.documents || []).find((item: any) => item.id === id);
+
+  if (!document) {
+    res.status(404).json({ success: false, error: 'Document not found.' });
+    return;
+  }
+  if (document.sourceType !== 'private_file' || !document.storageKey) {
+    res.status(409).json({ success: false, error: 'This document is an external link and has no private file content.' });
+    return;
+  }
+
+  const body = req.body;
+  if (!Buffer.isBuffer(body) || body.length === 0) {
+    res.status(400).json({ success: false, error: 'A non-empty document file is required.' });
+    return;
+  }
+  if (body.length > 25 * 1024 * 1024) {
+    res.status(413).json({ success: false, error: 'Document exceeds the 25 MB vault limit.' });
+    return;
+  }
+
+  const mimeType = String(req.get('content-type') || '').split(';')[0].trim().toLowerCase();
+  if (!DOCUMENT_MIME_TYPES.has(mimeType)) {
+    res.status(415).json({ success: false, error: 'Unsupported document MIME type.' });
+    return;
+  }
+
+  ensurePrivateDocumentDirectory();
+  const targetPath = privateDocumentPath(document);
+  if (!targetPath) {
+    res.status(400).json({ success: false, error: 'Invalid private document storage reference.' });
+    return;
+  }
+
+  const tempPath = `${targetPath}.${process.pid}.${Date.now()}.tmp`;
+  try {
+    fs.writeFileSync(tempPath, body, { flag: 'wx', mode: 0o600 });
+    try { fs.chmodSync(tempPath, 0o600); } catch {}
+    if (fs.existsSync(targetPath)) fs.unlinkSync(targetPath);
+    fs.renameSync(tempPath, targetPath);
+
+    document.mimeType = mimeType;
+    document.type = mimeType.split('/').pop()?.toUpperCase() || document.type || 'FILE';
+    document.sizeBytes = body.length;
+    document.size = humanFileSize(body.length);
+    document.status = 'ready';
+    document.updatedAt = new Date().toISOString();
+    document.uploadedAt = document.updatedAt;
+    saveDatabase(db);
+
+    recordAuditLog({
+      action: 'DOCUMENT_UPLOADED',
+      actor: req.user!.username,
+      actorRole: req.user!.role,
+      ip: req.ip,
+      userAgent: req.headers['user-agent'] as string,
+      details: `Uploaded private document "${document.name}" (${body.length} bytes).`,
+      severity: 'info'
+    });
+
+    res.json({ success: true, document: publicDocument(document) });
+  } catch (error) {
+    try { if (fs.existsSync(tempPath)) fs.unlinkSync(tempPath); } catch {}
+    console.error('[Documents] Private upload failed:', error);
+    res.status(500).json({ success: false, error: 'Private document storage failed.' });
+  }
+});
+
+apiRouter.get('/documents/:id/content', requireAuth, documentAccessMiddleware, (req: AuthenticatedRequest, res: Response): void => {
+  const { id } = req.params;
+  const db = getDatabase();
+  const document = (db.documents || []).find((item: any) => item.id === id);
+
+  if (!document) {
+    res.status(404).json({ success: false, error: 'Document not found.' });
+    return;
+  }
+  if (document.sourceType !== 'private_file' || document.status !== 'ready') {
+    res.status(409).json({ success: false, error: 'Private document content is not available.' });
+    return;
+  }
+
+  const filePath = privateDocumentPath(document);
+  if (!filePath || !fs.existsSync(filePath)) {
+    res.status(404).json({ success: false, error: 'Private document content is missing.' });
+    return;
+  }
+
+  res.setHeader('Cache-Control', 'private, no-store');
+  res.setHeader('Content-Type', document.mimeType || 'application/octet-stream');
+  res.setHeader('Content-Disposition', `attachment; filename*=UTF-8''${encodeURIComponent(String(document.name || 'document'))}`);
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.sendFile(filePath, (error) => {
+    if (error && !res.headersSent) {
+      res.status(500).json({ success: false, error: 'Document delivery failed.' });
+    }
+  });
+});
+
+apiRouter.delete('/documents/:id', requireAuth, documentAccessMiddleware, (req: AuthenticatedRequest, res: Response): void => {
+  const { id } = req.params;
+  const db = getDatabase();
+  const document = (db.documents || []).find((item: any) => item.id === id);
+
+  if (!document) {
+    res.status(404).json({ success: false, error: 'Document not found.' });
+    return;
+  }
+
+  const filePath = privateDocumentPath(document);
+  if (filePath && fs.existsSync(filePath)) {
+    try { fs.unlinkSync(filePath); } catch (error) {
+      console.error('[Documents] Failed to remove private content:', error);
+      res.status(500).json({ success: false, error: 'Private document content could not be removed safely.' });
+      return;
+    }
+  }
+
   db.documents = (db.documents || []).filter(d => d.id !== id);
   saveDatabase(db);
+
+  recordAuditLog({
+    action: 'DOCUMENT_DELETED',
+    actor: req.user!.username,
+    actorRole: req.user!.role,
+    ip: req.ip,
+    userAgent: req.headers['user-agent'] as string,
+    details: `Deleted document "${document.name}".`,
+    severity: 'warning'
+  });
+
   res.json({ success: true, message: 'Document removed.' });
 });
+
+// ----------------------------------------------------
+// 17. SYSTEM BACKUP CONTROLS
+// ----------------------------------------------------
+
+const backupAccessMiddleware = requireAnyPermission('canRunDataMigration', 'canAccessServerAndApi');
+
+apiRouter.post('/system/backups', requireAuth, backupAccessMiddleware, (req: AuthenticatedRequest, res: Response): void => {
+  try {
+    const backup = createDatabaseBackup(true);
+    if (!backup) {
+      res.status(404).json({ success: false, error: 'No persistent database file exists yet.' });
+      return;
+    }
+
+    recordAuditLog({
+      action: 'DATABASE_BACKUP_CREATED',
+      actor: req.user!.username,
+      actorRole: req.user!.role,
+      ip: req.ip,
+      userAgent: req.headers['user-agent'] as string,
+      details: `Created a manual encrypted database backup (${backup.sizeBytes} bytes).`,
+      severity: 'info'
+    });
+
+    res.json({
+      success: true,
+      backup: {
+        createdAt: backup.createdAt,
+        sizeBytes: backup.sizeBytes
+      }
+    });
+  } catch (error) {
+    console.error('[Backup] Manual backup failed:', error);
+    res.status(500).json({ success: false, error: 'Database backup could not be created.' });
+  }
+});
+
+apiRouter.get('/system/backups', requireAuth, backupAccessMiddleware, (req: AuthenticatedRequest, res: Response): void => {
+  try {
+    const backups = listDatabaseBackups().map(backup => ({
+      createdAt: backup.createdAt,
+      sizeBytes: backup.sizeBytes
+    }));
+    res.json({ success: true, backups, retention: Math.min(30, Math.max(3, Math.floor(Number(process.env.KAPITECH_DB_BACKUP_RETENTION || 14) || 14))) });
+  } catch (error) {
+    console.error('[Backup] Backup listing failed:', error);
+    res.status(500).json({ success: false, error: 'Database backup status is unavailable.' });
+  }
+});
+
+// ----------------------------------------------------
+// 17. UNIFIED NOTIFICATIONS CENTER
+// ----------------------------------------------------
 
 // ----------------------------------------------------
 // 17. UNIFIED NOTIFICATIONS CENTER (PART 28)
