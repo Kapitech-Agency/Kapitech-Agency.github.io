@@ -153,6 +153,41 @@ function AppShell() {
 }
 
 export default function App() {
+  // Remove legacy browser-persisted AMS data from older builds.
+  // Sensitive CRM, finance, project, vendor, client and inbox data is now server-authoritative.
+  useEffect(() => {
+    if (!import.meta.env.PROD) return;
+    const legacyKeys = [
+      'kapitech_agency_crm_leads',
+      'kapitech_agency_crm_leads_v2',
+      'kapitech_agency_invoices_v1',
+      'kapitech_agency_invoices_v2',
+      'kapitech_agency_expenses_v1',
+      'kapitech_agency_expenses_v2',
+      'kapitech_agency_active_projects_v1',
+      'kapitech_agency_active_projects_v2',
+      'kapitech_agency_clients_v1',
+      'kapitech_agency_clients_v2',
+      'kapitech_agency_vendors_v1',
+      'kapitech_contact_submissions',
+      'kapitech_cms_services_v1',
+      'kapitech_cms_projects_v1',
+      'kapitech_cms_testimonials_v1',
+      'kapitech_cms_settings_v1',
+      'kapitech_session_token',
+      'kapitech_admin_session_v1'
+    ];
+
+    for (const key of legacyKeys) {
+      try {
+        localStorage.removeItem(key);
+        sessionStorage.removeItem(key);
+      } catch {
+        // Storage may be disabled by privacy settings.
+      }
+    }
+  }, []);
+
   // Global handler for interactive .kapi-card dynamic mouse glow
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
