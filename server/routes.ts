@@ -887,7 +887,7 @@ apiRouter.post('/leads/submit', rateLimitPublic(10, 60 * 1000), async (req: Requ
   }
 
   const origin = req.get('origin');
-  if (origin && !/^https:\\/\\/(?:www\\.)?kapitech\\.id$/i.test(origin) && !/^https:\\/\\/ams\\.kapitech\\.id$/i.test(origin)) {
+  if (origin && !/^https:\/\/(?:www\.)?kapitech\.id$/i.test(origin) && !/^https:\/\/ams\.kapitech\.id$/i.test(origin)) {
     res.status(403).json({ success: false, error: 'Submission origin is not allowed.' });
     return;
   }
