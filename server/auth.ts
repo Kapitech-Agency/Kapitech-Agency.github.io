@@ -110,6 +110,19 @@ export function getSessionUser(token: string): StoredUser | null {
   return user;
 }
 
+function parseCookies(cookieHeader?: string): Record<string, string> {
+  const list: Record<string, string> = {};
+  if (!cookieHeader) return list;
+  cookieHeader.split(';').forEach(cookie => {
+    const [name, ...rest] = cookie.split('=');
+    const trimmedName = name?.trim();
+    if (!trimmedName) return;
+    const value = rest.join('=').trim();
+    list[trimmedName] = decodeURIComponent(value);
+  });
+  return list;
+}
+
 // Authentication middleware
 export function authenticate(req: AuthenticatedRequest, res: Response, next: NextFunction): void {
   const authHeader = req.headers.authorization;
@@ -119,6 +132,11 @@ export function authenticate(req: AuthenticatedRequest, res: Response, next: Nex
     token = authHeader.slice(7).trim();
   } else if (req.headers['x-session-token']) {
     token = String(req.headers['x-session-token']).trim();
+  } else if (req.headers.cookie) {
+    const cookies = parseCookies(req.headers.cookie);
+    if (cookies.kapi_session) {
+      token = cookies.kapi_session.trim();
+    }
   }
 
   if (token) {

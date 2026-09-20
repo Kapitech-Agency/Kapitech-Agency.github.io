@@ -35,6 +35,9 @@ import { AdminCrm } from './pages/admin/AdminCrm';
 import { AdminInvoicing } from './pages/admin/AdminInvoicing';
 import { AdminProjects } from './pages/admin/AdminProjects';
 import { AdminClients } from './pages/admin/AdminClients';
+import { AdminProposals } from './pages/admin/AdminProposals';
+import { AdminApprovals } from './pages/admin/AdminApprovals';
+import { AdminDocuments } from './pages/admin/AdminDocuments';
 import { AdminCmsProjects } from './pages/admin/AdminCmsProjects';
 import { AdminCmsServices } from './pages/admin/AdminCmsServices';
 import { AdminCmsTestimonials } from './pages/admin/AdminCmsTestimonials';
@@ -84,8 +87,8 @@ const AnimatedRoutes = () => {
           {/* Public access points relocated: redirect /inbox directly to protected admin inbox */}
           <Route path="/inbox" element={<Navigate to="/admin/inbox" replace />} />
 
-          {/* Direct AMS Executive Gateway */}
-          <Route path="/ams" element={<GlobalExecutiveDashboard showSidebar={true} />} />
+          {/* Direct AMS Executive Gateway -> Cleanly protected under AdminLayout */}
+          <Route path="/ams" element={<Navigate to="/admin/executive" replace />} />
 
           {/* Admin Authentication Gateway */}
           <Route path="/admin/login" element={<AdminLogin />} />
@@ -101,11 +104,14 @@ const AnimatedRoutes = () => {
           >
             <Route index element={<Navigate to="/admin/dashboard" replace />} />
             <Route path="dashboard" element={<AdminDashboard />} />
-            <Route path="executive" element={<GlobalExecutiveDashboard showSidebar={true} />} />
+            <Route path="executive" element={<GlobalExecutiveDashboard />} />
             <Route path="inbox" element={<AdminInbox />} />
             <Route path="crm" element={<AdminCrm />} />
+            <Route path="proposals" element={<AdminProposals />} />
             <Route path="invoicing" element={<AdminInvoicing />} />
             <Route path="projects" element={<AdminProjects />} />
+            <Route path="approvals" element={<AdminApprovals />} />
+            <Route path="documents" element={<AdminDocuments />} />
             <Route path="vendors" element={<AdminVendors />} />
             <Route path="clients" element={<AdminClients />} />
             <Route path="cms/projects" element={<AdminCmsProjects />} />
@@ -124,7 +130,7 @@ const AnimatedRoutes = () => {
 
 function AppShell() {
   const location = useLocation();
-  const isAdminRoute = location.pathname.startsWith('/admin');
+  const isAdminRoute = location.pathname.startsWith('/admin') || location.pathname.startsWith('/ams');
 
   return (
     <div className="relative z-10 text-white selection:bg-brand-red selection:text-white min-h-screen flex flex-col">

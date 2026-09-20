@@ -25,9 +25,15 @@ import {
   ShieldCheck,
   Activity,
   Sliders,
-  Users
+  Users,
+  FileText,
+  FolderOpen,
+  Bell,
+  Sparkles,
+  CheckCheck
 } from 'lucide-react';
 import { getAdminSession, logoutAdmin } from '../../lib/adminAuth';
+import { api } from '../../lib/apiClient';
 import { subscribeToInbox, ContactSubmission } from '../../lib/submissions';
 import { useLanguage } from '../../lib/LanguageContext';
 import { getActiveCurrency, setActiveCurrency, CurrencyCode, CURRENCY_EVENT } from '../../lib/currency';
@@ -60,11 +66,43 @@ export const AdminLayout: React.FC = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [notifications, setNotifications] = useState<any[]>([]);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [currentTime, setCurrentTime] = useState<string>('');
   const [currency, setCurrencyState] = useState<CurrencyCode>(getActiveCurrency());
 
   // Dynamic RBAC Permission Engine
   const { role: rbacRole, setRole: setRbacRole, roleMeta, isAllowed } = useRbacRole();
+
+  const loadNotifications = async () => {
+    try {
+      const res = await api.notifications.getAll();
+      if (res.success && res.data?.notifications) {
+        setNotifications(res.data.notifications);
+      }
+    } catch {
+      // benign
+    }
+  };
+
+  useEffect(() => {
+    loadNotifications();
+    const interval = setInterval(loadNotifications, 20000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const unreadNotificationsCount = useMemo(() => {
+    return notifications.filter(n => !n.read).length;
+  }, [notifications]);
+
+  const handleMarkAllRead = async () => {
+    try {
+      await api.notifications.markAllRead();
+      setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+    } catch {
+      // benign
+    }
+  };
 
   useEffect(() => {
     const updateTime = () => {
@@ -136,7 +174,7 @@ export const AdminLayout: React.FC = () => {
     }
   };
 
-  // 4 Logical Sections (with Consolidated Single Settings Menu)
+  // Logical Sections matching Kapitech AMS Architecture
   const navSections: NavSection[] = [
     {
       id: 'core',
@@ -148,6 +186,14 @@ export const AdminLayout: React.FC = () => {
           label: t('admin.nav.dashboard'),
           icon: LayoutDashboard,
           badge: null
+        },
+        {
+          key: 'executive',
+          to: '/admin/executive',
+          label: language === 'id' ? 'Executive Briefing' : 'Executive Briefing',
+          icon: Sparkles,
+          badge: 'Live',
+          badgeColor: 'bg-[#E50914]/10 text-[#FF1E27] border border-[#E50914]/30 font-mono text-[9px] font-bold'
         },
         {
           key: 'inbox',
@@ -166,10 +212,24 @@ export const AdminLayout: React.FC = () => {
           badgeColor: 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-bold font-mono'
         },
         {
+          key: 'proposals',
+          to: '/admin/proposals',
+          label: language === 'id' ? 'Proposals & Quotations' : 'Proposals & Quotes',
+          icon: FileText,
+          badge: null
+        },
+        {
           key: 'projects',
           to: '/admin/projects',
           label: t('admin.nav.projects'),
           icon: Layers,
+          badge: null
+        },
+        {
+          key: 'approvals',
+          to: '/admin/approvals',
+          label: language === 'id' ? 'Pusat Otorisasi' : 'Approvals Center',
+          icon: ShieldCheck,
           badge: null
         }
       ]
@@ -199,6 +259,13 @@ export const AdminLayout: React.FC = () => {
           icon: Briefcase,
           badge: 'Vetted',
           badgeColor: 'bg-zinc-800 text-zinc-300 font-mono text-[9px]'
+        },
+        {
+          key: 'documents',
+          to: '/admin/documents',
+          label: language === 'id' ? 'Brankas Dokumen' : 'Documents Vault',
+          icon: FolderOpen,
+          badge: null
         }
       ]
     },
@@ -448,7 +515,7 @@ export const AdminLayout: React.FC = () => {
             </button>
           </div>
 
-          {/* Active Stakeholder Role Selector (Dynamic RBAC Engine) */}
+          {/* Active Stakeholder Role (Production Readonly / Dev Simulator) */}
           {!sidebarCollapsed && (
             <div className="pt-2 border-t border-white/[0.07]">
               <div className="flex items-center justify-between text-[10px] font-mono text-[#8A94A6] mb-1 px-0.5">
@@ -456,20 +523,28 @@ export const AdminLayout: React.FC = () => {
                   <ShieldCheck size={11} className="text-[#E50914]" />
                   <span>{language === 'id' ? 'Hak Akses Peran' : 'Active Role'}</span>
                 </span>
-                <span className="text-[8px] px-1 py-0.2 rounded bg-[#181B22] border border-white/[0.07] text-[#E50914] font-bold">RBAC</span>
+                <span className="text-[8px] px-1 py-0.2 rounded bg-[#181B22] border border-white/[0.07] text-[#E50914] font-bold">
+                  {import.meta.env.DEV ? 'DEV SIM' : 'AUTH'}
+                </span>
               </div>
-              <select
-                value={rbacRole}
-                onChange={(e) => setRbacRole(e.target.value as StakeholderRole)}
-                className="w-full h-7 px-2 rounded-lg bg-[#181B22] text-white border border-white/[0.07] hover:border-[#8A94A6]/60 text-[11px] font-mono focus:outline-none focus:border-[#E50914] transition-colors cursor-pointer"
-                title="Select Stakeholder Role to switch RBAC permissions"
-              >
-                <option value="executive">1. Stakeholder Executive (Full Access)</option>
-                <option value="pm">2. Project Manager</option>
-                <option value="finance">3. Financial Officer</option>
-                <option value="account_manager">4. Account Manager</option>
-                <option value="client_viewer">5. Client / Viewer</option>
-              </select>
+              {import.meta.env.DEV ? (
+                <select
+                  value={rbacRole}
+                  onChange={(e) => setRbacRole(e.target.value as StakeholderRole)}
+                  className="w-full h-7 px-2 rounded-lg bg-[#181B22] text-white border border-white/[0.07] hover:border-[#8A94A6]/60 text-[11px] font-mono focus:outline-none focus:border-[#E50914] transition-colors cursor-pointer"
+                  title="Select Stakeholder Role to switch RBAC permissions (DEV only)"
+                >
+                  <option value="executive">1. Stakeholder Executive (Full Access)</option>
+                  <option value="pm">2. Project Manager</option>
+                  <option value="finance">3. Financial Officer</option>
+                  <option value="account_manager">4. Account Manager</option>
+                  <option value="client_viewer">5. Client / Viewer</option>
+                </select>
+              ) : (
+                <div className="w-full px-2 py-1 rounded-lg bg-[#181B22] text-zinc-200 border border-white/[0.07] text-[11px] font-mono truncate">
+                  {roleMeta.title}
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -680,7 +755,7 @@ export const AdminLayout: React.FC = () => {
                 </Link>
               </div>
 
-              {/* Mobile Role Selector Dropdown */}
+              {/* Mobile Role Selector (Production Readonly / Dev Simulator) */}
               <div className="pt-2">
                 <div className="p-3 rounded-xl bg-[#181B22] border border-white/[0.07] space-y-1.5">
                   <div className="flex items-center justify-between text-[10px] font-mono text-[#8A94A6]">
@@ -688,19 +763,27 @@ export const AdminLayout: React.FC = () => {
                       <ShieldCheck size={11} className="text-[#E50914]" />
                       <span>{language === 'id' ? 'Hak Akses Peran' : 'Active Role'}</span>
                     </span>
-                    <span className="text-[8px] px-1 py-0.2 rounded bg-[#111318] border border-white/[0.07] text-[#E50914] font-bold">RBAC</span>
+                    <span className="text-[8px] px-1 py-0.2 rounded bg-[#111318] border border-white/[0.07] text-[#E50914] font-bold">
+                      {import.meta.env.DEV ? 'DEV SIM' : 'AUTH'}
+                    </span>
                   </div>
-                  <select
-                    value={rbacRole}
-                    onChange={(e) => setRbacRole(e.target.value as StakeholderRole)}
-                    className="w-full h-8 px-2 rounded-lg bg-[#111318] text-white border border-white/[0.07] text-xs font-mono focus:outline-none focus:border-[#E50914] cursor-pointer"
-                  >
-                    <option value="executive">1. Stakeholder Executive (Full Access)</option>
-                    <option value="pm">2. Project Manager</option>
-                    <option value="finance">3. Financial Officer</option>
-                    <option value="account_manager">4. Account Manager</option>
-                    <option value="client_viewer">5. Client / Viewer</option>
-                  </select>
+                  {import.meta.env.DEV ? (
+                    <select
+                      value={rbacRole}
+                      onChange={(e) => setRbacRole(e.target.value as StakeholderRole)}
+                      className="w-full h-8 px-2 rounded-lg bg-[#111318] text-white border border-white/[0.07] text-xs font-mono focus:outline-none focus:border-[#E50914] cursor-pointer"
+                    >
+                      <option value="executive">1. Stakeholder Executive (Full Access)</option>
+                      <option value="pm">2. Project Manager</option>
+                      <option value="finance">3. Financial Officer</option>
+                      <option value="account_manager">4. Account Manager</option>
+                      <option value="client_viewer">5. Client / Viewer</option>
+                    </select>
+                  ) : (
+                    <div className="w-full px-2.5 py-1.5 rounded-lg bg-[#111318] text-white border border-white/[0.07] text-xs font-mono truncate">
+                      {roleMeta.title}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -824,6 +907,87 @@ export const AdminLayout: React.FC = () => {
             <div className="flex items-center gap-1.5 bg-[#111318] px-2.5 py-1.5 rounded-lg border border-white/[0.07] text-[11px] font-mono text-[#8A94A6]">
               <Clock size={12} className="text-[#FF1E27]" />
               <span className="text-white font-medium">{currentTime || 'Jakarta WIB'}</span>
+            </div>
+
+            {/* Live Notification Center */}
+            <div className="relative">
+              <button
+                onClick={() => setNotificationsOpen(!notificationsOpen)}
+                className={`relative p-2 rounded-lg bg-[#111318] border border-white/[0.07] hover:border-white/20 transition-colors ${
+                  unreadNotificationsCount > 0 ? 'text-white' : 'text-[#8A94A6]'
+                }`}
+                title="Notifications"
+              >
+                <Bell size={14} />
+                {unreadNotificationsCount > 0 && (
+                  <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#E50914] text-white font-mono text-[9px] font-bold flex items-center justify-center animate-pulse">
+                    {unreadNotificationsCount}
+                  </span>
+                )}
+              </button>
+
+              {/* Notification Popover Dropdown */}
+              {notificationsOpen && (
+                <div 
+                  className="absolute right-0 mt-2 w-80 sm:w-96 rounded-2xl bg-[#111318]/95 backdrop-blur-xl border border-white/[0.1] shadow-[0_20px_50px_rgba(0,0,0,0.8)] z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-150"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <div className="p-3.5 border-b border-white/[0.07] flex items-center justify-between bg-[#181B22]/60">
+                    <div className="flex items-center gap-2">
+                      <Bell size={14} className="text-[#FF1E27]" />
+                      <span className="text-xs font-bold text-white">Notifications</span>
+                      {unreadNotificationsCount > 0 && (
+                        <span className="px-1.5 py-0.2 rounded text-[9px] font-mono bg-[#E50914]/20 text-[#FF1E27] font-bold">
+                          {unreadNotificationsCount} unread
+                        </span>
+                      )}
+                    </div>
+                    {unreadNotificationsCount > 0 && (
+                      <button
+                        onClick={handleMarkAllRead}
+                        className="text-[10px] font-mono text-[#8A94A6] hover:text-white flex items-center gap-1 transition-colors"
+                      >
+                        <CheckCheck size={12} />
+                        <span>Mark all read</span>
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="max-h-80 overflow-y-auto divide-y divide-white/[0.04]">
+                    {notifications.length === 0 ? (
+                      <div className="p-6 text-center text-xs font-mono text-[#8A94A6]">
+                        No notifications.
+                      </div>
+                    ) : (
+                      notifications.slice(0, 10).map((n) => (
+                        <div
+                          key={n.id}
+                          className={`p-3 text-xs transition-colors hover:bg-white/[0.02] ${
+                            !n.read ? 'bg-[#181B22]/40' : ''
+                          }`}
+                        >
+                          <div className="flex items-start justify-between gap-2">
+                            <span className="font-semibold text-white">{n.title}</span>
+                            <span className="text-[9px] font-mono text-[#8A94A6] shrink-0">
+                              {new Date(n.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            </span>
+                          </div>
+                          <p className="text-[#8A94A6] text-[11px] mt-0.5 leading-relaxed">{n.message}</p>
+                          {n.link && (
+                            <Link
+                              to={n.link}
+                              onClick={() => setNotificationsOpen(false)}
+                              className="text-[10px] font-mono text-[#FF1E27] hover:underline mt-1.5 inline-block"
+                            >
+                              View details →
+                            </Link>
+                          )}
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Public Domain Switcher */}

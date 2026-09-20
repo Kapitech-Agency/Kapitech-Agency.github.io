@@ -58,6 +58,7 @@ apiRouter.post('/auth/login', (req: Request, res: Response): void => {
 
   if (!user || user.status === 'suspended') {
     recordFailedLogin(cleanIdentifier);
+    const lockoutState = checkLockout(cleanIdentifier);
     recordAuditLog({
       action: 'LOGIN_FAILED',
       actor: cleanIdentifier,
@@ -67,6 +68,14 @@ apiRouter.post('/auth/login', (req: Request, res: Response): void => {
       details: 'Failed login attempt: Account not found or suspended.',
       severity: 'warning'
     });
+    if (lockoutState.isLocked) {
+      res.status(429).json({
+        success: false,
+        error: `Security Lockout: Too many failed login attempts. Please try again in ${lockoutState.remainingSeconds}s.`,
+        remainingSeconds: lockoutState.remainingSeconds
+      });
+      return;
+    }
     res.status(401).json({ success: false, error: 'Invalid username/email or password.' });
     return;
   }
@@ -75,6 +84,7 @@ apiRouter.post('/auth/login', (req: Request, res: Response): void => {
   const computedHash = hashPassword(password, user.salt);
   if (computedHash !== user.passwordHash) {
     recordFailedLogin(cleanIdentifier);
+    const lockoutState = checkLockout(cleanIdentifier);
     recordAuditLog({
       action: 'LOGIN_FAILED',
       actor: user.username,
@@ -84,6 +94,14 @@ apiRouter.post('/auth/login', (req: Request, res: Response): void => {
       details: 'Failed login attempt: Incorrect password.',
       severity: 'warning'
     });
+    if (lockoutState.isLocked) {
+      res.status(429).json({
+        success: false,
+        error: `Security Lockout: Too many failed login attempts. Please try again in ${lockoutState.remainingSeconds}s.`,
+        remainingSeconds: lockoutState.remainingSeconds
+      });
+      return;
+    }
     res.status(401).json({ success: false, error: 'Invalid username/email or password.' });
     return;
   }
@@ -103,6 +121,13 @@ apiRouter.post('/auth/login', (req: Request, res: Response): void => {
     details: `User ${user.username} authenticated successfully.`,
     severity: 'info'
   });
+
+  // Set secure HttpOnly session cookie
+  const cookieMaxAge = rememberMe ? 30 * 24 * 3600 : 24 * 3600;
+  res.setHeader(
+    'Set-Cookie',
+    `kapi_session=${session.token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${cookieMaxAge}; ${process.env.NODE_ENV === 'production' ? 'Secure;' : ''}`
+  );
 
   res.json({
     success: true,
@@ -137,6 +162,7 @@ apiRouter.post('/auth/logout', requireAuth, (req: AuthenticatedRequest, res: Res
       severity: 'info'
     });
   }
+  res.setHeader('Set-Cookie', 'kapi_session=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0;');
   res.json({ success: true, message: 'Logged out successfully.' });
 });
 
@@ -1047,13 +1073,12 @@ apiRouter.delete('/vendors/:id', requireAuth, requirePermission('canManageVendor
 // 8. CMS (Services, Projects, Testimonials, Settings)
 // ----------------------------------------------------
 
-// CMS Services (Public GET for published services, protected mutations)
+// CMS Services (Public GET for published services, protected for drafts)
 apiRouter.get('/cms/services', (req: Request, res: Response): void => {
   const db = getDatabase();
-  // If user is authenticated admin, return all; otherwise return only published
-  const authHeader = req.headers.authorization;
-  const isAdmin = authHeader && authHeader.startsWith('Bearer ');
-  const services = isAdmin ? db.cmsServices : db.cmsServices.filter(s => s.isPublished !== false);
+  const user = (req as AuthenticatedRequest).user;
+  const canManage = Boolean(user && (user.stakeholderType === 'Master' || user.permissions?.canManageCmsContent));
+  const services = canManage ? db.cmsServices : db.cmsServices.filter(s => s.isPublished !== false);
   res.json({ success: true, services });
 });
 
@@ -1097,9 +1122,9 @@ apiRouter.delete('/cms/services/:id', requireAuth, requirePermission('canManageC
 // CMS Projects
 apiRouter.get('/cms/projects', (req: Request, res: Response): void => {
   const db = getDatabase();
-  const authHeader = req.headers.authorization;
-  const isAdmin = authHeader && authHeader.startsWith('Bearer ');
-  const projects = isAdmin ? db.cmsProjects : db.cmsProjects.filter(p => p.isPublished !== false);
+  const user = (req as AuthenticatedRequest).user;
+  const canManage = Boolean(user && (user.stakeholderType === 'Master' || user.permissions?.canManageCmsContent));
+  const projects = canManage ? db.cmsProjects : db.cmsProjects.filter(p => p.isPublished !== false);
   res.json({ success: true, projects });
 });
 
@@ -1143,9 +1168,9 @@ apiRouter.delete('/cms/projects/:id', requireAuth, requirePermission('canManageC
 // CMS Testimonials
 apiRouter.get('/cms/testimonials', (req: Request, res: Response): void => {
   const db = getDatabase();
-  const authHeader = req.headers.authorization;
-  const isAdmin = authHeader && authHeader.startsWith('Bearer ');
-  const testimonials = isAdmin ? db.cmsTestimonials : db.cmsTestimonials.filter(t => t.isPublished !== false);
+  const user = (req as AuthenticatedRequest).user;
+  const canManage = Boolean(user && (user.stakeholderType === 'Master' || user.permissions?.canManageCmsContent));
+  const testimonials = canManage ? db.cmsTestimonials : db.cmsTestimonials.filter(t => t.isPublished !== false);
   res.json({ success: true, testimonials });
 });
 
@@ -1410,3 +1435,727 @@ apiRouter.post('/migration/import-local', requireAuth, requirePermission('canRun
     message: `Successfully migrated ${importedCount} records into the server database.`
   });
 });
+
+// ----------------------------------------------------
+// 13. PROPOSALS & QUOTATIONS (PART 12)
+// ----------------------------------------------------
+
+apiRouter.get('/crm/proposals', requireAuth, requirePermission('canManageCrm'), (req: AuthenticatedRequest, res: Response): void => {
+  const db = getDatabase();
+  res.json({ success: true, proposals: db.proposals || [] });
+});
+
+apiRouter.post('/crm/proposals', requireAuth, requirePermission('canManageCrm'), (req: AuthenticatedRequest, res: Response): void => {
+  const data = req.body;
+  const db = getDatabase();
+
+  const items = Array.isArray(data.items) ? data.items : [];
+  const subtotal = items.reduce((sum: number, it: any) => sum + (Number(it.quantity || 1) * Number(it.unitPrice || 0)), 0);
+  const discount = Number(data.discount) || 0;
+  const taxPercent = data.taxPercent !== undefined ? Number(data.taxPercent) : 11;
+  const taxableAmount = Math.max(0, subtotal - discount);
+  const tax = Math.round(taxableAmount * (taxPercent / 100));
+  const total = taxableAmount + tax;
+
+  const newProposal = {
+    id: `prop_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
+    proposalNumber: data.proposalNumber || `PROP-KAPI-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`,
+    title: data.title || 'Digital Engineering Proposal',
+    clientName: data.clientName || 'Prospective Client',
+    company: data.company || '',
+    dealId: data.dealId || '',
+    projectId: data.projectId || '',
+    items,
+    subtotal,
+    discount,
+    taxPercent,
+    tax,
+    total,
+    currency: data.currency || 'IDR',
+    validityPeriod: data.validityPeriod || '30 Days',
+    paymentTerms: data.paymentTerms || '50% Upfront, 50% on Delivery',
+    owner: req.user!.name || req.user!.username,
+    status: data.status || 'Draft',
+    notes: data.notes || '',
+    createdDate: new Date().toISOString().split('T')[0],
+    sentDate: data.sentDate || null,
+    approvedDate: null,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  };
+
+  if (!db.proposals) db.proposals = [];
+  db.proposals.unshift(newProposal);
+  saveDatabase(db);
+
+  recordAuditLog({
+    action: 'PROPOSAL_CREATED',
+    actor: req.user!.username,
+    actorRole: req.user!.role,
+    ip: req.ip,
+    userAgent: req.headers['user-agent'] as string,
+    details: `Created proposal ${newProposal.proposalNumber} for ${newProposal.clientName} (Total: ${newProposal.total}).`,
+    severity: 'info'
+  });
+
+  res.json({ success: true, proposal: newProposal });
+});
+
+apiRouter.put('/crm/proposals/:id', requireAuth, requirePermission('canManageCrm'), (req: AuthenticatedRequest, res: Response): void => {
+  const { id } = req.params;
+  const updates = req.body;
+  const db = getDatabase();
+  const idx = (db.proposals || []).findIndex(p => p.id === id);
+
+  if (idx === -1) {
+    res.status(404).json({ success: false, error: 'Proposal not found.' });
+    return;
+  }
+
+  const existing = db.proposals[idx];
+  const items = Array.isArray(updates.items) ? updates.items : existing.items;
+  const subtotal = items.reduce((sum: number, it: any) => sum + (Number(it.quantity || 1) * Number(it.unitPrice || 0)), 0);
+  const discount = updates.discount !== undefined ? Number(updates.discount) : (existing.discount || 0);
+  const taxPercent = updates.taxPercent !== undefined ? Number(updates.taxPercent) : (existing.taxPercent || 11);
+  const taxableAmount = Math.max(0, subtotal - discount);
+  const tax = Math.round(taxableAmount * (taxPercent / 100));
+  const total = taxableAmount + tax;
+
+  db.proposals[idx] = {
+    ...existing,
+    ...updates,
+    items,
+    subtotal,
+    discount,
+    taxPercent,
+    tax,
+    total,
+    updatedAt: new Date().toISOString()
+  };
+
+  saveDatabase(db);
+  res.json({ success: true, proposal: db.proposals[idx] });
+});
+
+apiRouter.post('/crm/proposals/:id/approve', requireAuth, requirePermission('canApproveBudgets'), (req: AuthenticatedRequest, res: Response): void => {
+  const { id } = req.params;
+  const db = getDatabase();
+  const prop = (db.proposals || []).find(p => p.id === id);
+
+  if (!prop) {
+    res.status(404).json({ success: false, error: 'Proposal not found.' });
+    return;
+  }
+
+  prop.status = 'Approved';
+  prop.approvedDate = new Date().toISOString().split('T')[0];
+  prop.updatedAt = new Date().toISOString();
+  saveDatabase(db);
+
+  recordAuditLog({
+    action: 'PROPOSAL_APPROVED',
+    actor: req.user!.username,
+    actorRole: req.user!.role,
+    ip: req.ip,
+    userAgent: req.headers['user-agent'] as string,
+    details: `Approved proposal ${prop.proposalNumber}.`,
+    severity: 'info'
+  });
+
+  res.json({ success: true, proposal: prop });
+});
+
+apiRouter.post('/crm/proposals/:id/convert-to-invoice', requireAuth, requirePermission('canManageInvoices'), (req: AuthenticatedRequest, res: Response): void => {
+  const { id } = req.params;
+  const db = getDatabase();
+  const prop = (db.proposals || []).find(p => p.id === id);
+
+  if (!prop) {
+    res.status(404).json({ success: false, error: 'Proposal not found.' });
+    return;
+  }
+
+  const invoiceNumber = `INV-KAPI-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
+  const newInvoice = {
+    id: `inv_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
+    invoiceNumber,
+    clientName: prop.clientName,
+    clientCompany: prop.company || prop.clientName,
+    clientEmail: '',
+    issueDate: new Date().toISOString().split('T')[0],
+    dueDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+    status: 'draft',
+    items: prop.items,
+    subtotal: prop.subtotal,
+    taxPercent: prop.taxPercent,
+    taxAmount: prop.tax,
+    total: prop.total,
+    amountPaid: 0,
+    balanceDue: prop.total,
+    payments: [],
+    notes: `Generated from Proposal ${prop.proposalNumber}. Terms: ${prop.paymentTerms}`,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  };
+
+  db.invoices.unshift(newInvoice);
+  prop.status = 'Accepted';
+  prop.updatedAt = new Date().toISOString();
+  saveDatabase(db);
+
+  recordAuditLog({
+    action: 'PROPOSAL_CONVERTED_TO_INVOICE',
+    actor: req.user!.username,
+    actorRole: req.user!.role,
+    ip: req.ip,
+    userAgent: req.headers['user-agent'] as string,
+    details: `Converted proposal ${prop.proposalNumber} to invoice ${newInvoice.invoiceNumber}.`,
+    severity: 'info'
+  });
+
+  res.json({ success: true, invoice: newInvoice, proposal: prop });
+});
+
+apiRouter.delete('/crm/proposals/:id', requireAuth, requirePermission('canManageCrm'), (req: AuthenticatedRequest, res: Response): void => {
+  const { id } = req.params;
+  const db = getDatabase();
+  db.proposals = (db.proposals || []).filter(p => p.id !== id);
+  saveDatabase(db);
+  res.json({ success: true, message: 'Proposal deleted.' });
+});
+
+// ----------------------------------------------------
+// 14. PROJECT TASKS & TIME TRACKING (PARTS 16, 17, 18)
+// ----------------------------------------------------
+
+apiRouter.get('/projects/tasks', requireAuth, (req: AuthenticatedRequest, res: Response): void => {
+  const db = getDatabase();
+  res.json({ success: true, tasks: db.tasks || [] });
+});
+
+apiRouter.post('/projects/tasks', requireAuth, requirePermission('canManageKanbanTasks'), (req: AuthenticatedRequest, res: Response): void => {
+  const taskData = req.body;
+  const db = getDatabase();
+  const newTask = {
+    id: `task_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
+    title: taskData.title || 'Untitled Task',
+    projectId: taskData.projectId || '',
+    projectName: taskData.projectName || 'General Delivery',
+    assignee: taskData.assignee || req.user!.name || req.user!.username,
+    reporter: req.user!.name || req.user!.username,
+    priority: taskData.priority || 'medium',
+    status: taskData.status || 'todo',
+    dueDate: taskData.dueDate || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+    estimatedHours: Number(taskData.estimatedHours) || 8,
+    actualHours: Number(taskData.actualHours) || 0,
+    tags: Array.isArray(taskData.tags) ? taskData.tags : ['Sprint'],
+    subtasks: Array.isArray(taskData.subtasks) ? taskData.subtasks : [],
+    description: taskData.description || '',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  };
+
+  if (!db.tasks) db.tasks = [];
+  db.tasks.unshift(newTask);
+  saveDatabase(db);
+  res.json({ success: true, task: newTask });
+});
+
+apiRouter.put('/projects/tasks/:id', requireAuth, requirePermission('canManageKanbanTasks'), (req: AuthenticatedRequest, res: Response): void => {
+  const { id } = req.params;
+  const updates = req.body;
+  const db = getDatabase();
+  const idx = (db.tasks || []).findIndex(t => t.id === id);
+
+  if (idx === -1) {
+    res.status(404).json({ success: false, error: 'Task not found.' });
+    return;
+  }
+
+  db.tasks[idx] = { ...db.tasks[idx], ...updates, updatedAt: new Date().toISOString() };
+  saveDatabase(db);
+  res.json({ success: true, task: db.tasks[idx] });
+});
+
+apiRouter.delete('/projects/tasks/:id', requireAuth, requirePermission('canManageKanbanTasks'), (req: AuthenticatedRequest, res: Response): void => {
+  const { id } = req.params;
+  const db = getDatabase();
+  db.tasks = (db.tasks || []).filter(t => t.id !== id);
+  saveDatabase(db);
+  res.json({ success: true, message: 'Task deleted.' });
+});
+
+// Time Tracking
+apiRouter.get('/projects/timelogs', requireAuth, (req: AuthenticatedRequest, res: Response): void => {
+  const db = getDatabase();
+  res.json({ success: true, timeLogs: db.timeLogs || [] });
+});
+
+apiRouter.post('/projects/timelogs', requireAuth, (req: AuthenticatedRequest, res: Response): void => {
+  const logData = req.body;
+  const db = getDatabase();
+  const newLog = {
+    id: `tim_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
+    projectId: logData.projectId || '',
+    projectName: logData.projectName || 'General',
+    taskId: logData.taskId || '',
+    taskTitle: logData.taskTitle || '',
+    user: req.user!.name || req.user!.username,
+    durationMinutes: Number(logData.durationMinutes) || 60,
+    billable: logData.billable !== undefined ? Boolean(logData.billable) : true,
+    date: logData.date || new Date().toISOString().split('T')[0],
+    notes: logData.notes || '',
+    createdAt: new Date().toISOString()
+  };
+
+  if (!db.timeLogs) db.timeLogs = [];
+  db.timeLogs.unshift(newLog);
+  saveDatabase(db);
+  res.json({ success: true, timeLog: newLog });
+});
+
+apiRouter.delete('/projects/timelogs/:id', requireAuth, (req: AuthenticatedRequest, res: Response): void => {
+  const { id } = req.params;
+  const db = getDatabase();
+  db.timeLogs = (db.timeLogs || []).filter(t => t.id !== id);
+  saveDatabase(db);
+  res.json({ success: true, message: 'Time entry deleted.' });
+});
+
+// ----------------------------------------------------
+// 15. APPROVALS CENTER (PART 24)
+// ----------------------------------------------------
+
+apiRouter.get('/approvals', requireAuth, (req: AuthenticatedRequest, res: Response): void => {
+  const db = getDatabase();
+  res.json({ success: true, approvals: db.approvals || [] });
+});
+
+apiRouter.post('/approvals', requireAuth, (req: AuthenticatedRequest, res: Response): void => {
+  const data = req.body;
+  const db = getDatabase();
+  const newApproval = {
+    id: `appr_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
+    type: data.type || 'Invoice',
+    referenceId: data.referenceId || '',
+    title: data.title || 'Approval Request',
+    requester: req.user!.name || req.user!.username,
+    requesterRole: req.user!.role,
+    value: data.value || 0,
+    date: new Date().toISOString().split('T')[0],
+    reason: data.reason || 'Standard operational review',
+    riskLevel: data.riskLevel || 'Low',
+    status: 'Pending',
+    createdAt: new Date().toISOString()
+  };
+
+  if (!db.approvals) db.approvals = [];
+  db.approvals.unshift(newApproval);
+  saveDatabase(db);
+  res.json({ success: true, approval: newApproval });
+});
+
+apiRouter.post('/approvals/:id/action', requireAuth, requirePermission('canApproveBudgets'), (req: AuthenticatedRequest, res: Response): void => {
+  const { id } = req.params;
+  const { action, notes } = req.body; // 'Approve' | 'Reject' | 'Request Changes'
+  const db = getDatabase();
+  const item = (db.approvals || []).find(a => a.id === id);
+
+  if (!item) {
+    res.status(404).json({ success: false, error: 'Approval item not found.' });
+    return;
+  }
+
+  item.status = action === 'Approve' ? 'Approved' : action === 'Reject' ? 'Rejected' : 'Changes Requested';
+  item.reviewedBy = req.user!.name || req.user!.username;
+  item.reviewedAt = new Date().toISOString();
+  item.reviewNotes = notes || '';
+  saveDatabase(db);
+
+  recordAuditLog({
+    action: `APPROVAL_${action.toUpperCase()}`,
+    actor: req.user!.username,
+    actorRole: req.user!.role,
+    ip: req.ip,
+    userAgent: req.headers['user-agent'] as string,
+    details: `${action} decision executed for approval item "${item.title}".`,
+    severity: 'info'
+  });
+
+  res.json({ success: true, approval: item });
+});
+
+// ----------------------------------------------------
+// 16. DOCUMENTS & ASSET VAULT (PART 26)
+// ----------------------------------------------------
+
+apiRouter.get('/documents', requireAuth, (req: AuthenticatedRequest, res: Response): void => {
+  const db = getDatabase();
+  res.json({ success: true, documents: db.documents || [] });
+});
+
+apiRouter.post('/documents', requireAuth, (req: AuthenticatedRequest, res: Response): void => {
+  const data = req.body;
+  const db = getDatabase();
+  const newDoc = {
+    id: `doc_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
+    name: data.name || 'Document',
+    type: data.type || 'PDF',
+    size: data.size || '1.2 MB',
+    category: data.category || 'Contract',
+    relatedEntity: data.relatedEntity || 'General',
+    relatedId: data.relatedId || '',
+    owner: req.user!.name || req.user!.username,
+    url: data.url || '#',
+    uploadedDate: new Date().toISOString().split('T')[0],
+    createdAt: new Date().toISOString()
+  };
+
+  if (!db.documents) db.documents = [];
+  db.documents.unshift(newDoc);
+  saveDatabase(db);
+  res.json({ success: true, document: newDoc });
+});
+
+apiRouter.delete('/documents/:id', requireAuth, (req: AuthenticatedRequest, res: Response): void => {
+  const { id } = req.params;
+  const db = getDatabase();
+  db.documents = (db.documents || []).filter(d => d.id !== id);
+  saveDatabase(db);
+  res.json({ success: true, message: 'Document removed.' });
+});
+
+// ----------------------------------------------------
+// 17. UNIFIED NOTIFICATIONS CENTER (PART 28)
+// ----------------------------------------------------
+
+apiRouter.get('/notifications', requireAuth, (req: AuthenticatedRequest, res: Response): void => {
+  const db = getDatabase();
+  res.json({ success: true, notifications: db.notifications || [] });
+});
+
+apiRouter.post('/notifications/:id/read', requireAuth, (req: AuthenticatedRequest, res: Response): void => {
+  const { id } = req.params;
+  const db = getDatabase();
+  const notif = (db.notifications || []).find(n => n.id === id);
+  if (notif) {
+    notif.read = true;
+    saveDatabase(db);
+  }
+  res.json({ success: true });
+});
+
+apiRouter.post('/notifications/mark-all-read', requireAuth, (req: AuthenticatedRequest, res: Response): void => {
+  const db = getDatabase();
+  (db.notifications || []).forEach(n => { n.read = true; });
+  saveDatabase(db);
+  res.json({ success: true });
+});
+
+// ----------------------------------------------------
+// 18. UNIFIED GLOBAL SEARCH (PART 6)
+// ----------------------------------------------------
+
+apiRouter.get('/search', requireAuth, (req: AuthenticatedRequest, res: Response): void => {
+  const q = String(req.query.q || '').trim().toLowerCase();
+  if (!q) {
+    res.json({ success: true, results: [] });
+    return;
+  }
+
+  const db = getDatabase();
+  const results: any[] = [];
+
+  // Leads
+  if (req.user!.permissions.canManageCrm || req.user!.stakeholderType === 'Master') {
+    for (const lead of db.leads || []) {
+      if (
+        (lead.fullName && lead.fullName.toLowerCase().includes(q)) ||
+        (lead.company && lead.company.toLowerCase().includes(q)) ||
+        (lead.email && lead.email.toLowerCase().includes(q))
+      ) {
+        results.push({
+          type: 'Lead',
+          id: lead.id,
+          name: `${lead.fullName} (${lead.company || 'Inquiry'})`,
+          status: lead.status,
+          owner: lead.email,
+          lastUpdated: lead.updatedAt || lead.createdAt,
+          url: '/admin/inbox'
+        });
+      }
+    }
+  }
+
+  // Deals
+  if (req.user!.permissions.canManageCrm || req.user!.stakeholderType === 'Master') {
+    for (const deal of db.crmDeals || []) {
+      if (
+        (deal.title && deal.title.toLowerCase().includes(q)) ||
+        (deal.company && deal.company.toLowerCase().includes(q)) ||
+        (deal.clientName && deal.clientName.toLowerCase().includes(q))
+      ) {
+        results.push({
+          type: 'Deal',
+          id: deal.id,
+          name: deal.title || deal.company,
+          status: deal.stage,
+          owner: deal.owner || 'Unassigned',
+          lastUpdated: deal.updatedAt || deal.createdAt,
+          url: '/admin/crm'
+        });
+      }
+    }
+  }
+
+  // Clients
+  if (req.user!.permissions.canManageClients || req.user!.stakeholderType === 'Master') {
+    for (const cli of db.clients || []) {
+      if (
+        (cli.companyName && cli.companyName.toLowerCase().includes(q)) ||
+        (cli.clientName && cli.clientName.toLowerCase().includes(q)) ||
+        (cli.email && cli.email.toLowerCase().includes(q))
+      ) {
+        results.push({
+          type: 'Client',
+          id: cli.id,
+          name: cli.companyName || cli.clientName,
+          status: cli.status,
+          owner: cli.email,
+          lastUpdated: cli.updatedAt || cli.createdAt,
+          url: '/admin/clients'
+        });
+      }
+    }
+  }
+
+  // Projects
+  if (req.user!.permissions.canManageProjects || req.user!.stakeholderType === 'Master') {
+    for (const proj of db.projects || []) {
+      if (
+        (proj.title && proj.title.toLowerCase().includes(q)) ||
+        (proj.client && proj.client.toLowerCase().includes(q))
+      ) {
+        results.push({
+          type: 'Project',
+          id: proj.id,
+          name: proj.title,
+          status: proj.status || proj.health || 'Active',
+          owner: proj.client,
+          lastUpdated: proj.updatedAt || proj.createdAt,
+          url: '/admin/projects'
+        });
+      }
+    }
+  }
+
+  // Invoices
+  if (req.user!.permissions.canViewFinancials || req.user!.stakeholderType === 'Master') {
+    for (const inv of db.invoices || []) {
+      if (
+        (inv.invoiceNumber && inv.invoiceNumber.toLowerCase().includes(q)) ||
+        (inv.clientName && inv.clientName.toLowerCase().includes(q)) ||
+        (inv.clientCompany && inv.clientCompany.toLowerCase().includes(q))
+      ) {
+        results.push({
+          type: 'Invoice',
+          id: inv.id,
+          name: `${inv.invoiceNumber} - ${inv.clientCompany || inv.clientName}`,
+          status: inv.status,
+          owner: `IDR ${(inv.total || 0).toLocaleString()}`,
+          lastUpdated: inv.updatedAt || inv.createdAt,
+          url: '/admin/invoicing'
+        });
+      }
+    }
+  }
+
+  // Proposals
+  for (const prop of db.proposals || []) {
+    if (
+      (prop.proposalNumber && prop.proposalNumber.toLowerCase().includes(q)) ||
+      (prop.clientName && prop.clientName.toLowerCase().includes(q)) ||
+      (prop.title && prop.title.toLowerCase().includes(q))
+    ) {
+      results.push({
+        type: 'Proposal',
+        id: prop.id,
+        name: `${prop.proposalNumber} - ${prop.title}`,
+        status: prop.status,
+        owner: prop.owner,
+        lastUpdated: prop.updatedAt || prop.createdAt,
+        url: '/admin/proposals'
+      });
+    }
+  }
+
+  res.json({ success: true, results: results.slice(0, 20) });
+});
+
+// ----------------------------------------------------
+// 19. EXECUTIVE DASHBOARD & TODAY AT KAPITECH ENGINE (PARTS 7, 30, 68)
+// ----------------------------------------------------
+
+const handleOverview = (req: AuthenticatedRequest, res: Response): void => {
+  const db = getDatabase();
+
+  const leads = db.leads || [];
+  const deals = db.crmDeals || [];
+  const proposals = db.proposals || [];
+  const projects = db.projects || [];
+  const invoices = db.invoices || [];
+  const expenses = db.expenses || [];
+  const tasks = db.tasks || [];
+  const approvals = db.approvals || [];
+
+  // 1. Authoritative Core Metrics
+  const openLeadsCount = leads.filter(l => l.status === 'new' || l.status === 'in_review').length;
+  const activeDeals = deals.filter(d => d.stage !== 'won' && d.stage !== 'lost');
+  const dealsInPipelineCount = activeDeals.length;
+  const activePipelineValue = activeDeals.reduce((sum, d) => sum + (Number(d.value) || 0), 0);
+
+  const proposalsAwaitingCount = proposals.filter(p => p.status === 'Draft' || p.status === 'Internal Review' || p.status === 'Sent').length;
+  const activeProjectsList = projects.filter(p => p.status !== 'Completed' && p.status !== 'Archived');
+  const activeProjectsCount = activeProjectsList.length;
+  const projectsAtRiskCount = projects.filter(p => p.health === 'At Risk' || p.health === 'Delayed' || p.health === 'Blocked').length;
+
+  const now = new Date();
+  const overdueInvoices = invoices.filter(inv => {
+    if (inv.status === 'paid' || inv.status === 'cancelled') return false;
+    if (!inv.dueDate) return false;
+    return new Date(inv.dueDate) < now;
+  });
+  const overdueInvoicesCount = overdueInvoices.length;
+  const overdueReceivables = overdueInvoices.reduce(
+    (sum, i) => sum + (i.balanceDue !== undefined ? i.balanceDue : Math.max(0, (i.total || 0) - (i.amountPaid || 0))),
+    0
+  );
+
+  const totalOutstanding = invoices
+    .filter(i => i.status !== 'paid' && i.status !== 'cancelled')
+    .reduce((sum, i) => sum + (i.balanceDue !== undefined ? i.balanceDue : Math.max(0, (i.total || 0) - (i.amountPaid || 0))), 0);
+
+  const totalBilled = invoices.reduce((sum, i) => sum + (Number(i.total) || 0), 0);
+  const revenueCollected = invoices.reduce((sum, i) => sum + (Number(i.amountPaid) || 0), 0);
+  const totalExpenses = expenses.reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
+  const netOperatingProfit = revenueCollected - totalExpenses;
+  const pendingApprovalsCount = approvals.filter(a => a.status === 'Pending').length;
+  const overdueTasksCount = tasks.filter(t => t.status !== 'done' && t.dueDate && new Date(t.dueDate) < now).length;
+
+  // Pipeline by Stage
+  const stages = ['lead', 'contacted', 'discovery', 'proposal', 'negotiation', 'won', 'lost'];
+  const pipelineByStage = stages.map(st => {
+    const stageDeals = deals.filter(d => d.stage === st);
+    return {
+      stage: st,
+      count: stageDeals.length,
+      value: stageDeals.reduce((sum, d) => sum + (Number(d.value) || 0), 0)
+    };
+  });
+
+  // Needs Attention Engine
+  const attentionItems: Array<{
+    id: string;
+    title: string;
+    description: string;
+    severity: 'danger' | 'warning' | 'info';
+    category: string;
+    linkUrl: string;
+  }> = [];
+
+  if (overdueInvoicesCount > 0) {
+    attentionItems.push({
+      id: 'att_invoices_overdue',
+      title: `${overdueInvoicesCount} Invoices Overdue`,
+      description: `Immediate follow-up required on unpaid accounts totaling IDR ${overdueReceivables.toLocaleString()}.`,
+      severity: 'danger',
+      category: 'Finance',
+      linkUrl: '/admin/invoicing'
+    });
+  }
+
+  if (pendingApprovalsCount > 0) {
+    attentionItems.push({
+      id: 'att_pending_approvals',
+      title: `${pendingApprovalsCount} Executive Approvals Awaiting Review`,
+      description: `Includes budget and financial approvals submitted by team leads.`,
+      severity: 'warning',
+      category: 'Operations',
+      linkUrl: '/admin/approvals'
+    });
+  }
+
+  if (projectsAtRiskCount > 0) {
+    attentionItems.push({
+      id: 'att_projects_risk',
+      title: `${projectsAtRiskCount} Projects Flagged At Risk`,
+      description: `Delivery timeline or resource constraints require PM intervention.`,
+      severity: 'danger',
+      category: 'Delivery',
+      linkUrl: '/admin/projects'
+    });
+  }
+
+  if (overdueTasksCount > 0) {
+    attentionItems.push({
+      id: 'att_tasks_overdue',
+      title: `${overdueTasksCount} Tasks Overdue in Active Sprints`,
+      description: `Tasks passed deadline requiring rescheduling or re-assignment.`,
+      severity: 'warning',
+      category: 'Delivery',
+      linkUrl: '/admin/projects'
+    });
+  }
+
+  if (openLeadsCount > 3) {
+    attentionItems.push({
+      id: 'att_leads_new',
+      title: `${openLeadsCount} Inbound Inquiries Unassigned`,
+      description: `New potential leads received through website forms waiting qualification.`,
+      severity: 'info',
+      category: 'Sales',
+      linkUrl: '/admin/inbox'
+    });
+  }
+
+  res.json({
+    success: true,
+    metrics: {
+      revenueCollected,
+      totalBilled,
+      outstandingReceivables: totalOutstanding,
+      overdueReceivables,
+      activePipeline: activePipelineValue,
+      activeProjects: activeProjectsCount,
+      projectsAtRisk: projectsAtRiskCount,
+      pendingApprovals: pendingApprovalsCount,
+      overdueTasks: overdueTasksCount,
+      openLeads: openLeadsCount
+    },
+    todayAtKapitech: {
+      openLeadsCount,
+      dealsInPipelineCount,
+      pipelineValue: activePipelineValue,
+      proposalsAwaitingCount,
+      projectsAtRiskCount,
+      overdueInvoicesCount,
+      cashOutstanding: totalOutstanding
+    },
+    financials: {
+      revenueThisMonth: revenueCollected,
+      cashCollected: revenueCollected,
+      outstandingReceivables: totalOutstanding,
+      operatingExpenses: totalExpenses,
+      netOperatingProfit,
+      margin: revenueCollected > 0 ? ((netOperatingProfit / revenueCollected) * 100).toFixed(1) : '0'
+    },
+    pipelineByStage,
+    attentionItems,
+    projects: activeProjectsList.slice(0, 10),
+    recentActivity: (db.auditLogs || []).slice(0, 10)
+  });
+};
+
+apiRouter.get('/dashboard/overview', requireAuth, handleOverview);
+apiRouter.get('/executive/overview', requireAuth, handleOverview);
+

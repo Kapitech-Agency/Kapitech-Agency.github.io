@@ -70,11 +70,17 @@ export interface DatabaseSchema {
   sessions: StoredSession[];
   leads: any[];
   crmDeals: any[];
+  proposals: any[];
   clients: any[];
   projects: any[];
+  tasks: any[];
+  timeLogs: any[];
   invoices: any[];
   expenses: any[];
+  approvals: any[];
   vendors: any[];
+  documents: any[];
+  notifications: any[];
   cmsServices: any[];
   cmsProjects: any[];
   cmsTestimonials: any[];
@@ -106,14 +112,18 @@ function getInitialSeedData(): DatabaseSchema {
   const pmSalt = generateSalt();
   const finSalt = generateSalt();
 
+  const initialAdminUsername = process.env.ADMIN_INITIAL_USERNAME || 'admin';
+  const initialAdminPassword = process.env.ADMIN_INITIAL_PASSWORD || 'Kapitech#Admin2026!';
+  const initialAdminEmail = process.env.ADMIN_INITIAL_EMAIL || 'admin@ams.kapitech.id';
+
   return {
     users: [
       {
         id: 'usr_root_admin',
         name: 'Executive Master Admin',
-        username: 'admin',
-        email: 'admin@ams.kapitech.id',
-        passwordHash: hashPassword('Kapitech#Admin2026!', adminSalt),
+        username: initialAdminUsername,
+        email: initialAdminEmail,
+        passwordHash: hashPassword(initialAdminPassword, adminSalt),
         salt: adminSalt,
         role: 'Tier 1: Top Management / Sponsor',
         stakeholderType: 'Master',
@@ -232,11 +242,17 @@ function getInitialSeedData(): DatabaseSchema {
     sessions: [],
     leads: [],
     crmDeals: [],
+    proposals: [],
     clients: [],
     projects: [],
+    tasks: [],
+    timeLogs: [],
     invoices: [],
     expenses: [],
+    approvals: [],
     vendors: [],
+    documents: [],
+    notifications: [],
     cmsServices: [],
     cmsProjects: [],
     cmsTestimonials: [],

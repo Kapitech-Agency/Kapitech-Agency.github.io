@@ -1,0 +1,857 @@
+import React, { useState, useEffect, useMemo } from 'react';
+import { 
+  FileText, 
+  Plus, 
+  Search, 
+  Filter, 
+  TrendingUp, 
+  CheckCircle2, 
+  Clock, 
+  AlertCircle, 
+  ArrowUpRight, 
+  Receipt, 
+  Building2, 
+  Calendar, 
+  Trash2, 
+  X, 
+  Send, 
+  ShieldCheck, 
+  Eye, 
+  Download,
+  Loader2
+} from 'lucide-react';
+import { api } from '../../lib/apiClient';
+import { useLanguage } from '../../lib/LanguageContext';
+import { getActiveCurrency, formatAmount, CurrencyCode, CURRENCY_EVENT } from '../../lib/currency';
+import { getAdminSession } from '../../lib/adminAuth';
+
+interface ProposalLineItem {
+  id: string;
+  description: string;
+  quantity: number;
+  unitPrice: number;
+  total: number;
+}
+
+interface Proposal {
+  id: string;
+  proposalNumber: string;
+  title: string;
+  clientName: string;
+  clientEmail?: string;
+  clientCompany?: string;
+  status: 'draft' | 'review' | 'approved' | 'sent' | 'accepted' | 'rejected';
+  lineItems: ProposalLineItem[];
+  subtotal: number;
+  discount: number;
+  tax: number;
+  total: number;
+  paymentTerms?: string;
+  validUntil: string;
+  createdAt: string;
+  approvedBy?: string;
+  approvedAt?: string;
+  invoiceId?: string;
+}
+
+export const AdminProposals: React.FC = () => {
+  const { language, t } = useLanguage();
+  const session = getAdminSession();
+  const [currency, setCurrency] = useState<CurrencyCode>(getActiveCurrency());
+  const [proposals, setProposals] = useState<Proposal[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [notification, setNotification] = useState<string | null>(null);
+
+  // Modal states
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [previewProposal, setPreviewProposal] = useState<Proposal | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Form state for new proposal
+  const [formTitle, setFormTitle] = useState('');
+  const [formClientName, setFormClientName] = useState('');
+  const [formClientCompany, setFormClientCompany] = useState('');
+  const [formClientEmail, setFormClientEmail] = useState('');
+  const [formPaymentTerms, setFormPaymentTerms] = useState('50% Upfront, 50% on Delivery');
+  const [formValidDays, setFormValidDays] = useState(30);
+  const [formDiscount, setFormDiscount] = useState(0);
+  const [formTaxRate, setFormTaxRate] = useState(11); // 11% PPN in Indonesia
+  const [formItems, setFormItems] = useState<Array<{ id: string; description: string; quantity: number; unitPrice: number }>>([
+    { id: '1', description: 'Enterprise Full-Stack Architecture & Design', quantity: 1, unitPrice: 75000000 }
+  ]);
+
+  const showToast = (msg: string) => {
+    setNotification(msg);
+    setTimeout(() => setNotification(null), 3500);
+  };
+
+  useEffect(() => {
+    const handleCurrency = (e: Event) => {
+      const custom = e as CustomEvent<{ currency: CurrencyCode }>;
+      if (custom.detail?.currency) {
+        setCurrency(custom.detail.currency);
+      }
+    };
+    window.addEventListener(CURRENCY_EVENT, handleCurrency);
+    return () => window.removeEventListener(CURRENCY_EVENT, handleCurrency);
+  }, []);
+
+  const loadProposals = async () => {
+    setIsLoading(true);
+    try {
+      const res = await api.proposals.getAll();
+      if (res.success && res.data?.proposals) {
+        setProposals(res.data.proposals);
+      }
+    } catch {
+      showToast('Failed to load proposals.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadProposals();
+  }, []);
+
+  // Calculated form subtotal
+  const formSubtotal = useMemo(() => {
+    return formItems.reduce((acc, item) => acc + (item.quantity * item.unitPrice), 0);
+  }, [formItems]);
+
+  const formTax = useMemo(() => {
+    const afterDiscount = Math.max(0, formSubtotal - formDiscount);
+    return (afterDiscount * formTaxRate) / 100;
+  }, [formSubtotal, formDiscount, formTaxRate]);
+
+  const formTotal = useMemo(() => {
+    return Math.max(0, formSubtotal - formDiscount) + formTax;
+  }, [formSubtotal, formDiscount, formTax]);
+
+  const handleAddItem = () => {
+    setFormItems(prev => [
+      ...prev,
+      { id: Date.now().toString(), description: '', quantity: 1, unitPrice: 0 }
+    ]);
+  };
+
+  const handleRemoveItem = (id: string) => {
+    if (formItems.length === 1) return;
+    setFormItems(prev => prev.filter(item => item.id !== id));
+  };
+
+  const handleItemChange = (id: string, field: 'description' | 'quantity' | 'unitPrice', val: any) => {
+    setFormItems(prev => prev.map(item => {
+      if (item.id === id) {
+        return { ...item, [field]: val };
+      }
+      return item;
+    }));
+  };
+
+  const handleCreateProposal = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formTitle.trim() || !formClientName.trim()) {
+      showToast('Please fill in title and client name.');
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const validUntilDate = new Date();
+      validUntilDate.setDate(validUntilDate.getDate() + Number(formValidDays));
+
+      const payload = {
+        title: formTitle,
+        clientName: formClientName,
+        clientCompany: formClientCompany,
+        clientEmail: formClientEmail,
+        paymentTerms: formPaymentTerms,
+        validUntil: validUntilDate.toISOString().split('T')[0],
+        discount: Number(formDiscount),
+        tax: Number(formTax),
+        lineItems: formItems.map(item => ({
+          id: item.id,
+          description: item.description,
+          quantity: Number(item.quantity),
+          unitPrice: Number(item.unitPrice),
+          total: Number(item.quantity) * Number(item.unitPrice)
+        }))
+      };
+
+      const res = await api.proposals.create(payload);
+      if (res.success && res.data?.proposal) {
+        setProposals(prev => [res.data.proposal, ...prev]);
+        setIsCreateModalOpen(false);
+        showToast(language === 'id' ? 'Proposal berhasil diterbitkan!' : 'Proposal created successfully!');
+        // Reset form
+        setFormTitle('');
+        setFormClientName('');
+        setFormClientCompany('');
+        setFormClientEmail('');
+      } else {
+        showToast(res.error || 'Failed to create proposal.');
+      }
+    } catch {
+      showToast('Error creating proposal.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleApproveProposal = async (id: string) => {
+    try {
+      const res = await api.proposals.approve(id);
+      if (res.success && res.data?.proposal) {
+        setProposals(prev => prev.map(p => p.id === id ? res.data.proposal : p));
+        showToast(language === 'id' ? 'Proposal disetujui secara internal.' : 'Proposal approved internally.');
+      } else {
+        showToast(res.error || 'Approval failed.');
+      }
+    } catch {
+      showToast('Approval action failed.');
+    }
+  };
+
+  const handleStatusChange = async (id: string, newStatus: Proposal['status']) => {
+    try {
+      const res = await api.proposals.update(id, { status: newStatus });
+      if (res.success && res.data?.proposal) {
+        setProposals(prev => prev.map(p => p.id === id ? res.data.proposal : p));
+        showToast(`${language === 'id' ? 'Status diubah ke' : 'Status changed to'} ${newStatus}`);
+      }
+    } catch {
+      showToast('Failed to update status.');
+    }
+  };
+
+  const handleConvertToInvoice = async (id: string) => {
+    if (!window.confirm(language === 'id' ? 'Konversi proposal ini menjadi invoice resmi?' : 'Convert this approved proposal to an official invoice?')) {
+      return;
+    }
+
+    try {
+      const res = await api.proposals.convertToInvoice(id);
+      if (res.success && res.data?.invoice) {
+        showToast(language === 'id' ? `Invoice diterbitkan: ${res.data.invoice.invoiceNumber}` : `Invoice issued: ${res.data.invoice.invoiceNumber}`);
+        loadProposals();
+      } else {
+        showToast(res.error || 'Failed to convert proposal to invoice.');
+      }
+    } catch {
+      showToast('Error converting to invoice.');
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!window.confirm('Delete proposal?')) return;
+    try {
+      const res = await api.proposals.delete(id);
+      if (res.success) {
+        setProposals(prev => prev.filter(p => p.id !== id));
+        showToast('Proposal deleted.');
+      }
+    } catch {
+      showToast('Failed to delete proposal.');
+    }
+  };
+
+  // Metrics
+  const metrics = useMemo(() => {
+    const totalCount = proposals.length;
+    const totalValue = proposals.reduce((sum, p) => sum + (p.total || 0), 0);
+    const accepted = proposals.filter(p => p.status === 'accepted');
+    const acceptedValue = accepted.reduce((sum, p) => sum + (p.total || 0), 0);
+    const winRate = totalCount > 0 ? Math.round((accepted.length / totalCount) * 100) : 0;
+    const activeProposals = proposals.filter(p => ['draft', 'review', 'approved', 'sent'].includes(p.status)).length;
+
+    return { totalCount, totalValue, acceptedValue, winRate, activeProposals };
+  }, [proposals]);
+
+  // Filtered List
+  const filteredProposals = useMemo(() => {
+    return proposals.filter(p => {
+      const matchesSearch = 
+        p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        p.clientName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        p.proposalNumber.toLowerCase().includes(searchQuery.toLowerCase());
+      
+      const matchesStatus = statusFilter === 'all' || p.status === statusFilter;
+      return matchesSearch && matchesStatus;
+    });
+  }, [proposals, searchQuery, statusFilter]);
+
+  const getStatusBadge = (status: Proposal['status']) => {
+    switch (status) {
+      case 'draft':
+        return <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-zinc-800 text-zinc-300 border border-white/10">Draft</span>;
+      case 'review':
+        return <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-amber-500/10 text-amber-400 border border-amber-500/30">In Review</span>;
+      case 'approved':
+        return <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-blue-500/10 text-blue-400 border border-blue-500/30">Approved</span>;
+      case 'sent':
+        return <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-purple-500/10 text-purple-400 border border-purple-500/30">Sent</span>;
+      case 'accepted':
+        return <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">Accepted</span>;
+      case 'rejected':
+        return <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-red-500/10 text-red-400 border border-red-500/30">Rejected</span>;
+    }
+  };
+
+  return (
+    <div className="space-y-6 animate-in fade-in duration-200">
+      {/* Toast Notification */}
+      {notification && (
+        <div className="fixed top-20 right-6 z-50 px-4 py-2.5 rounded-xl bg-[#181B22] border border-[#E50914]/40 text-white text-xs font-mono shadow-[0_8px_30px_rgba(0,0,0,0.8)] flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-[#E50914] animate-ping" />
+          <span>{notification}</span>
+        </div>
+      )}
+
+      {/* Header & Main Actions */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-xl sm:text-2xl font-bold font-sans tracking-tight text-white flex items-center gap-2.5">
+            <FileText className="text-[#FF1E27]" size={24} />
+            <span>{language === 'id' ? 'Proposal & Estimasi Anggaran' : 'Proposals & Quotations'}</span>
+          </h1>
+          <p className="text-xs font-mono text-[#8A94A6] mt-1">
+            {language === 'id' 
+              ? 'Penerbitan proposal komersial, persetujuan bertingkat, dan konversi instan ke invoice klien.' 
+              : 'Commercial proposals, multi-tier executive approvals, and 1-click invoice conversion.'}
+          </p>
+        </div>
+
+        <button
+          onClick={() => setIsCreateModalOpen(true)}
+          className="px-4 py-2.5 rounded-xl bg-[#E50914] hover:bg-[#B80710] text-white text-xs font-sans font-semibold flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(229,9,20,0.3)] transition-all shrink-0"
+        >
+          <Plus size={15} />
+          <span>{language === 'id' ? 'Buat Proposal Baru' : 'New Proposal'}</span>
+        </button>
+      </div>
+
+      {/* Metrics Row */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <div className="p-4 rounded-xl bg-[#111318] border border-white/[0.07] space-y-1">
+          <div className="text-[11px] font-mono text-[#8A94A6] flex items-center justify-between">
+            <span>{language === 'id' ? 'Total Nilai Ditawarkan' : 'Total Proposed'}</span>
+            <TrendingUp size={13} className="text-[#FF1E27]" />
+          </div>
+          <div className="text-lg sm:text-xl font-bold font-mono text-white">
+            {formatAmount(metrics.totalValue, currency)}
+          </div>
+          <div className="text-[10px] font-mono text-[#8A94A6]">
+            {metrics.totalCount} {language === 'id' ? 'dokumen diterbitkan' : 'proposals generated'}
+          </div>
+        </div>
+
+        <div className="p-4 rounded-xl bg-[#111318] border border-white/[0.07] space-y-1">
+          <div className="text-[11px] font-mono text-[#8A94A6] flex items-center justify-between">
+            <span>{language === 'id' ? 'Proposal Aktif' : 'Active Pipeline'}</span>
+            <Clock size={13} className="text-amber-400" />
+          </div>
+          <div className="text-lg sm:text-xl font-bold font-mono text-amber-400">
+            {metrics.activeProposals}
+          </div>
+          <div className="text-[10px] font-mono text-[#8A94A6]">
+            {language === 'id' ? 'Menunggu keputusan klien' : 'Pending client decision'}
+          </div>
+        </div>
+
+        <div className="p-4 rounded-xl bg-[#111318] border border-white/[0.07] space-y-1">
+          <div className="text-[11px] font-mono text-[#8A94A6] flex items-center justify-between">
+            <span>{language === 'id' ? 'Nilai Dimenangkan' : 'Won Revenue'}</span>
+            <CheckCircle2 size={13} className="text-emerald-400" />
+          </div>
+          <div className="text-lg sm:text-xl font-bold font-mono text-emerald-400">
+            {formatAmount(metrics.acceptedValue, currency)}
+          </div>
+          <div className="text-[10px] font-mono text-emerald-400/80">
+            {language === 'id' ? 'Siap diterbitkan invoice' : 'Accepted deals'}
+          </div>
+        </div>
+
+        <div className="p-4 rounded-xl bg-[#111318] border border-white/[0.07] space-y-1">
+          <div className="text-[11px] font-mono text-[#8A94A6] flex items-center justify-between">
+            <span>{language === 'id' ? 'Tingkat Kemenangan' : 'Win Rate'}</span>
+            <ShieldCheck size={13} className="text-purple-400" />
+          </div>
+          <div className="text-lg sm:text-xl font-bold font-mono text-purple-400">
+            {metrics.winRate}%
+          </div>
+          <div className="text-[10px] font-mono text-[#8A94A6]">
+            {language === 'id' ? 'Berdasarkan konversi klien' : 'Proposal conversion'}
+          </div>
+        </div>
+      </div>
+
+      {/* Filter and Search Bar */}
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-3 rounded-xl bg-[#111318] border border-white/[0.07]">
+        <div className="relative flex-1">
+          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8A94A6]" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder={language === 'id' ? 'Cari nomor proposal, judul proyek, atau nama klien...' : 'Search proposal #, project title, or client...'}
+            className="w-full h-8 pl-8 pr-3 text-xs bg-[#181B22] text-white placeholder-[#8A94A6] rounded-lg border border-white/[0.07] focus:outline-none focus:border-[#E50914] font-sans"
+          />
+        </div>
+
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
+          {(['all', 'draft', 'review', 'approved', 'sent', 'accepted', 'rejected'] as const).map((st) => (
+            <button
+              key={st}
+              onClick={() => setStatusFilter(st)}
+              className={`px-2.5 py-1 rounded-lg text-xs font-mono capitalize whitespace-nowrap transition-colors ${
+                statusFilter === st
+                  ? 'bg-[#E50914]/15 text-[#FF1E27] border border-[#E50914]/30 font-semibold'
+                  : 'text-[#8A94A6] hover:text-white hover:bg-white/[0.04]'
+              }`}
+            >
+              {st}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Proposals Table */}
+      <div className="rounded-xl bg-[#111318] border border-white/[0.07] overflow-hidden">
+        {isLoading ? (
+          <div className="p-12 text-center text-xs font-mono text-[#8A94A6] flex flex-col items-center justify-center gap-2">
+            <Loader2 className="animate-spin text-[#FF1E27]" size={20} />
+            <span>Loading proposals...</span>
+          </div>
+        ) : filteredProposals.length === 0 ? (
+          <div className="p-12 text-center text-xs font-mono text-[#8A94A6]">
+            {language === 'id' ? 'Tidak ada proposal yang sesuai.' : 'No proposals found.'}
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse min-w-[750px]">
+              <thead>
+                <tr className="border-b border-white/[0.07] bg-[#181B22]/50 text-[10px] font-mono text-[#8A94A6] uppercase">
+                  <th className="py-3 px-4">Ref / Title</th>
+                  <th className="py-3 px-4">Client</th>
+                  <th className="py-3 px-4">Value</th>
+                  <th className="py-3 px-4">Status</th>
+                  <th className="py-3 px-4">Valid Until</th>
+                  <th className="py-3 px-4 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/[0.04] text-xs font-sans text-[#F8FAFC]">
+                {filteredProposals.map((p) => (
+                  <tr key={p.id} className="hover:bg-white/[0.02] transition-colors">
+                    <td className="py-3.5 px-4">
+                      <div className="font-semibold text-white">{p.title}</div>
+                      <div className="text-[10px] font-mono text-[#8A94A6] flex items-center gap-2 mt-0.5">
+                        <span className="text-[#FF1E27] font-semibold">{p.proposalNumber}</span>
+                        <span>•</span>
+                        <span>{p.lineItems?.length || 0} line items</span>
+                      </div>
+                    </td>
+                    <td className="py-3.5 px-4">
+                      <div className="font-medium text-white">{p.clientName}</div>
+                      {p.clientCompany && (
+                        <div className="text-[10px] font-mono text-[#8A94A6]">{p.clientCompany}</div>
+                      )}
+                    </td>
+                    <td className="py-3.5 px-4">
+                      <div className="font-bold font-mono text-emerald-400">
+                        {formatAmount(p.total, currency)}
+                      </div>
+                      {p.discount > 0 && (
+                        <div className="text-[9px] font-mono text-[#8A94A6]">
+                          Disc: {formatAmount(p.discount, currency)}
+                        </div>
+                      )}
+                    </td>
+                    <td className="py-3.5 px-4">
+                      {getStatusBadge(p.status)}
+                    </td>
+                    <td className="py-3.5 px-4 font-mono text-[11px] text-[#8A94A6]">
+                      {p.validUntil}
+                    </td>
+                    <td className="py-3.5 px-4 text-right">
+                      <div className="flex items-center justify-end gap-1.5">
+                        {/* Status update quick dropdown */}
+                        <select
+                          value={p.status}
+                          onChange={(e) => handleStatusChange(p.id, e.target.value as Proposal['status'])}
+                          className="h-7 px-2 rounded bg-[#181B22] text-[#8A94A6] hover:text-white border border-white/[0.07] text-[10px] font-mono focus:outline-none"
+                        >
+                          <option value="draft">Draft</option>
+                          <option value="review">Review</option>
+                          <option value="approved">Approved</option>
+                          <option value="sent">Sent</option>
+                          <option value="accepted">Accepted</option>
+                          <option value="rejected">Rejected</option>
+                        </select>
+
+                        {/* Convert to invoice button if accepted or approved */}
+                        {(p.status === 'accepted' || p.status === 'approved') && !p.invoiceId && (
+                          <button
+                            onClick={() => handleConvertToInvoice(p.id)}
+                            title="Convert to Invoice"
+                            className="px-2 py-1 rounded bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-400 border border-emerald-500/30 text-[10px] font-mono font-semibold flex items-center gap-1 transition-colors"
+                          >
+                            <Receipt size={11} />
+                            <span>Invoice</span>
+                          </button>
+                        )}
+
+                        {/* Preview */}
+                        <button
+                          onClick={() => setPreviewProposal(p)}
+                          title="View Details"
+                          className="p-1.5 rounded hover:bg-white/[0.06] text-[#8A94A6] hover:text-white transition-colors"
+                        >
+                          <Eye size={14} />
+                        </button>
+
+                        {/* Delete */}
+                        <button
+                          onClick={() => handleDelete(p.id)}
+                          title="Delete"
+                          className="p-1.5 rounded hover:bg-red-500/10 text-[#8A94A6] hover:text-red-400 transition-colors"
+                        >
+                          <Trash2 size={13} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
+      {/* CREATE PROPOSAL MODAL */}
+      {isCreateModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-[#111318] border border-white/[0.07] rounded-2xl w-full max-w-2xl max-h-[90vh] flex flex-col shadow-[0_24px_64px_rgba(0,0,0,0.8)] overflow-hidden">
+            <div className="p-4 border-b border-white/[0.07] flex items-center justify-between bg-[#181B22]">
+              <div className="flex items-center gap-2">
+                <FileText className="text-[#FF1E27]" size={18} />
+                <h3 className="text-sm font-bold font-sans text-white">
+                  {language === 'id' ? 'Buat Proposal & Estimasi Baru' : 'New Commercial Proposal'}
+                </h3>
+              </div>
+              <button
+                onClick={() => setIsCreateModalOpen(false)}
+                className="p-1 text-[#8A94A6] hover:text-white rounded-lg hover:bg-white/[0.06]"
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateProposal} className="p-5 overflow-y-auto space-y-4 flex-1 custom-scrollbar text-xs font-sans">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <label className="text-[11px] font-mono text-[#8A94A6]">Proposal Title *</label>
+                  <input
+                    type="text"
+                    required
+                    value={formTitle}
+                    onChange={(e) => setFormTitle(e.target.value)}
+                    placeholder="e.g. Kapitech AI Automation Platform"
+                    className="w-full h-8 px-3 rounded-lg bg-[#181B22] text-white border border-white/[0.07] focus:outline-none focus:border-[#E50914]"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-[11px] font-mono text-[#8A94A6]">Client Contact Name *</label>
+                  <input
+                    type="text"
+                    required
+                    value={formClientName}
+                    onChange={(e) => setFormClientName(e.target.value)}
+                    placeholder="e.g. Raditya Pratama"
+                    className="w-full h-8 px-3 rounded-lg bg-[#181B22] text-white border border-white/[0.07] focus:outline-none focus:border-[#E50914]"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <label className="text-[11px] font-mono text-[#8A94A6]">Company Name</label>
+                  <input
+                    type="text"
+                    value={formClientCompany}
+                    onChange={(e) => setFormClientCompany(e.target.value)}
+                    placeholder="e.g. PT Nusantara Digital"
+                    className="w-full h-8 px-3 rounded-lg bg-[#181B22] text-white border border-white/[0.07] focus:outline-none focus:border-[#E50914]"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-[11px] font-mono text-[#8A94A6]">Client Email</label>
+                  <input
+                    type="email"
+                    value={formClientEmail}
+                    onChange={(e) => setFormClientEmail(e.target.value)}
+                    placeholder="e.g. client@company.id"
+                    className="w-full h-8 px-3 rounded-lg bg-[#181B22] text-white border border-white/[0.07] focus:outline-none focus:border-[#E50914]"
+                  />
+                </div>
+              </div>
+
+              {/* Line Items Builder */}
+              <div className="space-y-2 pt-2 border-t border-white/[0.07]">
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-mono text-[#8A94A6] uppercase tracking-wider">Line Items</span>
+                  <button
+                    type="button"
+                    onClick={handleAddItem}
+                    className="px-2 py-0.5 rounded bg-[#181B22] hover:bg-[#21252F] text-xs font-mono text-[#FF1E27] border border-[#E50914]/30 flex items-center gap-1"
+                  >
+                    <Plus size={12} />
+                    <span>Add Item</span>
+                  </button>
+                </div>
+
+                <div className="space-y-2">
+                  {formItems.map((item, idx) => (
+                    <div key={item.id} className="p-3 rounded-xl bg-[#181B22] border border-white/[0.07] grid grid-cols-1 sm:grid-cols-12 gap-2 items-center">
+                      <div className="sm:col-span-6">
+                        <input
+                          type="text"
+                          required
+                          value={item.description}
+                          onChange={(e) => handleItemChange(item.id, 'description', e.target.value)}
+                          placeholder="Scope description / Deliverable..."
+                          className="w-full h-7 px-2.5 rounded bg-[#111318] text-white border border-white/[0.07] text-xs"
+                        />
+                      </div>
+                      <div className="sm:col-span-2">
+                        <input
+                          type="number"
+                          min="1"
+                          required
+                          value={item.quantity}
+                          onChange={(e) => handleItemChange(item.id, 'quantity', Math.max(1, Number(e.target.value)))}
+                          placeholder="Qty"
+                          className="w-full h-7 px-2 rounded bg-[#111318] text-white border border-white/[0.07] text-xs font-mono"
+                        />
+                      </div>
+                      <div className="sm:col-span-3">
+                        <input
+                          type="number"
+                          min="0"
+                          step="10000"
+                          required
+                          value={item.unitPrice}
+                          onChange={(e) => handleItemChange(item.id, 'unitPrice', Number(e.target.value))}
+                          placeholder="Unit Price (IDR)"
+                          className="w-full h-7 px-2 rounded bg-[#111318] text-white border border-white/[0.07] text-xs font-mono"
+                        />
+                      </div>
+                      <div className="sm:col-span-1 flex justify-end">
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveItem(item.id)}
+                          disabled={formItems.length === 1}
+                          className="p-1 text-[#8A94A6] hover:text-red-400 disabled:opacity-30"
+                        >
+                          <Trash2 size={13} />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Totals and Terms */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-3 border-t border-white/[0.07]">
+                <div className="space-y-2">
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-mono text-[#8A94A6]">Payment Terms</label>
+                    <input
+                      type="text"
+                      value={formPaymentTerms}
+                      onChange={(e) => setFormPaymentTerms(e.target.value)}
+                      className="w-full h-8 px-3 rounded-lg bg-[#181B22] text-white border border-white/[0.07] text-xs"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-mono text-[#8A94A6]">Validity Period (Days)</label>
+                    <input
+                      type="number"
+                      value={formValidDays}
+                      onChange={(e) => setFormValidDays(Number(e.target.value))}
+                      className="w-full h-8 px-3 rounded-lg bg-[#181B22] text-white border border-white/[0.07] text-xs font-mono"
+                    />
+                  </div>
+                </div>
+
+                <div className="p-3 rounded-xl bg-[#181B22] border border-white/[0.07] space-y-1.5 font-mono text-xs">
+                  <div className="flex justify-between text-[#8A94A6]">
+                    <span>Subtotal</span>
+                    <span>{formatAmount(formSubtotal, currency)}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-[#8A94A6]">
+                    <span>Discount (IDR)</span>
+                    <input
+                      type="number"
+                      value={formDiscount}
+                      onChange={(e) => setFormDiscount(Number(e.target.value))}
+                      className="w-24 h-6 px-1.5 rounded bg-[#111318] text-right text-white border border-white/[0.07]"
+                    />
+                  </div>
+                  <div className="flex justify-between text-[#8A94A6]">
+                    <span>PPN (11%)</span>
+                    <span>{formatAmount(formTax, currency)}</span>
+                  </div>
+                  <div className="pt-2 border-t border-white/[0.07] flex justify-between text-sm font-bold text-white">
+                    <span>Total Proposal</span>
+                    <span className="text-emerald-400">{formatAmount(formTotal, currency)}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="pt-3 border-t border-white/[0.07] flex items-center justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setIsCreateModalOpen(false)}
+                  className="px-4 py-2 rounded-xl bg-[#181B22] hover:bg-[#21252F] text-[#8A94A6] hover:text-white text-xs font-mono transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="px-5 py-2 rounded-xl bg-[#E50914] hover:bg-[#B80710] text-white text-xs font-sans font-semibold flex items-center gap-2 shadow-[0_0_15px_rgba(229,9,20,0.3)] disabled:opacity-50"
+                >
+                  {isSubmitting ? <Loader2 size={13} className="animate-spin" /> : <Plus size={14} />}
+                  <span>Generate Proposal</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* PREVIEW PROPOSAL MODAL */}
+      {previewProposal && (
+        <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-[#111318] border border-white/[0.07] rounded-2xl w-full max-w-xl shadow-[0_24px_64px_rgba(0,0,0,0.8)] overflow-hidden">
+            <div className="p-4 border-b border-white/[0.07] flex items-center justify-between bg-[#181B22]">
+              <div className="flex items-center gap-2">
+                <span className="text-[#FF1E27] font-mono font-bold text-xs">{previewProposal.proposalNumber}</span>
+                <span className="text-white font-semibold text-xs truncate max-w-[280px]">{previewProposal.title}</span>
+              </div>
+              <button
+                onClick={() => setPreviewProposal(null)}
+                className="p-1 text-[#8A94A6] hover:text-white rounded-lg hover:bg-white/[0.06]"
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            <div className="p-5 space-y-4 text-xs font-sans">
+              <div className="flex justify-between items-start border-b border-white/[0.07] pb-3">
+                <div>
+                  <div className="font-bold text-sm text-white">{previewProposal.clientName}</div>
+                  <div className="text-[11px] font-mono text-[#8A94A6]">{previewProposal.clientCompany}</div>
+                  {previewProposal.clientEmail && (
+                    <div className="text-[11px] font-mono text-[#8A94A6]">{previewProposal.clientEmail}</div>
+                  )}
+                </div>
+                <div className="text-right">
+                  <div className="text-[10px] font-mono text-[#8A94A6]">Valid Until</div>
+                  <div className="font-mono text-white font-semibold">{previewProposal.validUntil}</div>
+                  <div className="mt-1">{getStatusBadge(previewProposal.status)}</div>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <div className="text-[10px] font-mono text-[#8A94A6] uppercase tracking-wider">Scope Deliverables</div>
+                <div className="divide-y divide-white/[0.04] bg-[#181B22] rounded-xl border border-white/[0.07] p-3">
+                  {previewProposal.lineItems?.map((item) => (
+                    <div key={item.id} className="py-2 flex justify-between items-center text-xs">
+                      <div>
+                        <div className="text-white font-medium">{item.description}</div>
+                        <div className="text-[10px] font-mono text-[#8A94A6]">{item.quantity} × {formatAmount(item.unitPrice, currency)}</div>
+                      </div>
+                      <div className="font-mono font-bold text-emerald-400">
+                        {formatAmount(item.total, currency)}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="p-3 rounded-xl bg-[#181B22] border border-white/[0.07] space-y-1 text-xs font-mono">
+                <div className="flex justify-between text-[#8A94A6]">
+                  <span>Subtotal</span>
+                  <span>{formatAmount(previewProposal.subtotal, currency)}</span>
+                </div>
+                {previewProposal.discount > 0 && (
+                  <div className="flex justify-between text-[#8A94A6]">
+                    <span>Discount</span>
+                    <span>-{formatAmount(previewProposal.discount, currency)}</span>
+                  </div>
+                )}
+                <div className="flex justify-between text-[#8A94A6]">
+                  <span>Tax</span>
+                  <span>+{formatAmount(previewProposal.tax, currency)}</span>
+                </div>
+                <div className="pt-2 border-t border-white/[0.07] flex justify-between text-sm font-bold text-white">
+                  <span>Grand Total</span>
+                  <span className="text-emerald-400">{formatAmount(previewProposal.total, currency)}</span>
+                </div>
+              </div>
+
+              {previewProposal.paymentTerms && (
+                <div className="text-[11px] font-mono text-[#8A94A6] bg-[#181B22]/50 p-2.5 rounded-lg border border-white/[0.04]">
+                  Terms: {previewProposal.paymentTerms}
+                </div>
+              )}
+
+              <div className="pt-3 border-t border-white/[0.07] flex items-center justify-between">
+                <button
+                  onClick={() => {
+                    window.print();
+                  }}
+                  className="px-3 py-1.5 rounded-lg bg-[#181B22] hover:bg-[#21252F] text-xs font-mono text-[#8A94A6] hover:text-white flex items-center gap-1.5 border border-white/[0.07]"
+                >
+                  <Download size={13} />
+                  <span>Export / Print</span>
+                </button>
+
+                <div className="flex items-center gap-2">
+                  {previewProposal.status === 'review' && (
+                    <button
+                      onClick={() => {
+                        handleApproveProposal(previewProposal.id);
+                        setPreviewProposal(null);
+                      }}
+                      className="px-3 py-1.5 rounded-lg bg-blue-500/20 text-blue-400 border border-blue-500/30 text-xs font-mono font-semibold"
+                    >
+                      Approve Proposal
+                    </button>
+                  )}
+                  {previewProposal.status === 'accepted' && !previewProposal.invoiceId && (
+                    <button
+                      onClick={() => {
+                        handleConvertToInvoice(previewProposal.id);
+                        setPreviewProposal(null);
+                      }}
+                      className="px-3 py-1.5 rounded-lg bg-emerald-500 text-black font-semibold text-xs font-mono"
+                    >
+                      Convert to Invoice
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};

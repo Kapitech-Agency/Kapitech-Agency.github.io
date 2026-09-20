@@ -272,7 +272,112 @@ export const api = {
       apiRequest('/api/notifications/settings', {
         method: 'PUT',
         body: JSON.stringify(settings)
+      }),
+    getAll: () => apiRequest<{ success: boolean; notifications: any[] }>('/api/notifications'),
+    markRead: (id: string) => apiRequest(`/api/notifications/${id}/read`, { method: 'POST' }),
+    markAllRead: () => apiRequest('/api/notifications/mark-all-read', { method: 'POST' })
+  },
+
+  // Proposals & Quotations
+  proposals: {
+    getAll: () => apiRequest<{ success: boolean; proposals: any[] }>('/api/crm/proposals'),
+    create: (proposal: any) =>
+      apiRequest('/api/crm/proposals', {
+        method: 'POST',
+        body: JSON.stringify(proposal)
+      }),
+    update: (id: string, updates: any) =>
+      apiRequest(`/api/crm/proposals/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(updates)
+      }),
+    approve: (id: string) => apiRequest(`/api/crm/proposals/${id}/approve`, { method: 'POST' }),
+    convertToInvoice: (id: string) => apiRequest(`/api/crm/proposals/${id}/convert-to-invoice`, { method: 'POST' }),
+    delete: (id: string) => apiRequest(`/api/crm/proposals/${id}`, { method: 'DELETE' })
+  },
+
+  // Tasks & Execution
+  tasks: {
+    getAll: () => apiRequest<{ success: boolean; tasks: any[] }>('/api/projects/tasks'),
+    create: (task: any) =>
+      apiRequest('/api/projects/tasks', {
+        method: 'POST',
+        body: JSON.stringify(task)
+      }),
+    update: (id: string, updates: any) =>
+      apiRequest(`/api/projects/tasks/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(updates)
+      }),
+    delete: (id: string) => apiRequest(`/api/projects/tasks/${id}`, { method: 'DELETE' })
+  },
+
+  // Time Tracking
+  timeLogs: {
+    getAll: () => apiRequest<{ success: boolean; timeLogs: any[] }>('/api/projects/timelogs'),
+    create: (log: any) =>
+      apiRequest('/api/projects/timelogs', {
+        method: 'POST',
+        body: JSON.stringify(log)
+      }),
+    delete: (id: string) => apiRequest(`/api/projects/timelogs/${id}`, { method: 'DELETE' })
+  },
+
+  // Approvals
+  approvals: {
+    getAll: () => apiRequest<{ success: boolean; approvals: any[] }>('/api/approvals'),
+    create: (appr: any) =>
+      apiRequest('/api/approvals', {
+        method: 'POST',
+        body: JSON.stringify(appr)
+      }),
+    action: (id: string, action: 'Approve' | 'Reject' | 'Request Changes', notes?: string) =>
+      apiRequest(`/api/approvals/${id}/action`, {
+        method: 'POST',
+        body: JSON.stringify({ action, notes })
       })
+  },
+
+  // Documents
+  documents: {
+    getAll: () => apiRequest<{ success: boolean; documents: any[] }>('/api/documents'),
+    create: (doc: any) =>
+      apiRequest('/api/documents', {
+        method: 'POST',
+        body: JSON.stringify(doc)
+      }),
+    delete: (id: string) => apiRequest(`/api/documents/${id}`, { method: 'DELETE' })
+  },
+
+  // Global Search
+  search: {
+    query: (q: string) => apiRequest<{ success: boolean; results: any[] }>(`/api/search?q=${encodeURIComponent(q)}`)
+  },
+
+  // Executive Dashboard & Today at Kapitech
+  dashboard: {
+    getOverview: () => apiRequest<{
+      success: boolean;
+      todayAtKapitech: any;
+      financials: any;
+      attentionItems: any[];
+      recentActivity: any[];
+      metrics?: any;
+      pipelineByStage?: any[];
+      projects?: any[];
+    }>('/api/dashboard/overview')
+  },
+  executive: {
+    getOverview: () => apiRequest<{
+      success: boolean;
+      todayAtKapitech: any;
+      financials: any;
+      attentionItems: any[];
+      recentActivity: any[];
+      metrics?: any;
+      pipelineByStage?: any[];
+      projects?: any[];
+    }>('/api/executive/overview')
   },
 
   // AI Assist
