@@ -26,6 +26,18 @@ export const RequireAdminAuth: React.FC<RequireAdminAuthProps> = ({ children }) 
       if (!mounted) return;
       if (res.success && res.data?.success && res.data.user) {
         cacheAdminSession(res.data.user, rememberMe);
+
+        const needsMfa = res.data.user.mfaEnabled !== true;
+        const isMfaSetupRoute =
+          location.pathname === '/admin/settings' &&
+          new URLSearchParams(location.search).get('tab') === 'security';
+
+        if (needsMfa && !isMfaSetupRoute) {
+          setStatus('authenticated');
+          window.location.replace('/admin/settings?tab=security&mfaRequired=1');
+          return;
+        }
+
         setStatus('authenticated');
       } else {
         setStatus('unauthenticated');
