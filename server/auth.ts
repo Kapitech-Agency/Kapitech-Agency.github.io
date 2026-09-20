@@ -130,7 +130,7 @@ export function buildMfaOtpUri(user: StoredUser, secret: string): string {
 }
 
 export function verifyTotpCode(secret: string, code: string, timestamp = Date.now()): boolean {
-  if (!/^\\d{6}$/.test(String(code))) return false;
+  if (!/^\d{6}$/.test(String(code))) return false;
   const key = base32Decode(secret);
   if (key.length < 10) return false;
   const timeStep = Math.floor(timestamp / 1000 / 30);
