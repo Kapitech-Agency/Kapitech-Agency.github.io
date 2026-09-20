@@ -83,6 +83,45 @@ export async function apiRequest<T = any>(
   }
 }
 
+async function apiBinaryRequest<T = any>(
+  endpoint: string,
+  body: Blob,
+  contentType: string = 'application/octet-stream'
+): Promise<{ success: boolean; data?: T; error?: string }> {
+  const controller = new AbortController();
+  const timeout = window.setTimeout(() => controller.abort(), 60000);
+  try {
+    const headers: Record<string, string> = {
+      'Content-Type': contentType || 'application/octet-stream'
+    };
+    const csrfToken = readCookie('kapi_csrf');
+    if (csrfToken) headers['X-CSRF-Token'] = csrfToken;
+
+    const url = endpoint.startsWith('/') ? endpoint : `/api/${endpoint}`;
+    const res = await fetch(url, {
+      method: 'PUT',
+      headers,
+      body,
+      credentials: 'same-origin',
+      signal: controller.signal
+    });
+
+    const json = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      if (res.status === 401 && typeof window !== 'undefined') clearSessionToken();
+      return { success: false, error: json.error || `HTTP ${res.status}: ${res.statusText}` };
+    }
+    return { success: true, data: json };
+  } catch (err: any) {
+    return {
+      success: false,
+      error: err?.name === 'AbortError' ? 'Upload timed out. Please try again.' : (err?.message || 'Network request failed')
+    };
+  } finally {
+    window.clearTimeout(timeout);
+  }
+}
+
 export const api = {
   // Auth
   auth: {
@@ -381,6 +420,12 @@ export const api = {
         method: 'POST',
         body: JSON.stringify(doc)
       }),
+    uploadContent: (id: string, file: Blob) =>
+      apiBinaryRequest<{ success: boolean; document: any }>(
+        `/api/documents/${encodeURIComponent(id)}/content`,
+        file,
+        file.type || 'application/octet-stream'
+      ),
     delete: (id: string) => apiRequest(`/api/documents/${id}`, { method: 'DELETE' })
   },
 
