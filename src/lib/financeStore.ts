@@ -616,43 +616,54 @@ export const getMonthlyCashFlowSeries = (
   invoices: AgencyInvoice[],
   expenses: AgencyExpense[]
 ): CashFlowMonthPoint[] => {
-  const months = ['Apr 26', 'May 26', 'Jun 26', 'Jul 26', 'Aug 26', 'Sep 26'];
-  
-  // Base distribution baseline + actual recorded data
-  const baseData: Record<string, { inflow: number; outflow: number }> = {
-    'Apr 26': { inflow: 95000000, outflow: 38000000 },
-    'May 26': { inflow: 140000000, outflow: 45000000 },
-    'Jun 26': { inflow: 190000000, outflow: 62000000 },
-    'Jul 26': { inflow: 220000000, outflow: 58000000 },
-    'Aug 26': { inflow: 309690000, outflow: 84500000 },
-    'Sep 26': { inflow: 245000000, outflow: 74500000 }
-  };
-
-  // Fold in actual paid invoices for August/September
-  const augPaid = invoices.filter(i => i.status === 'paid' && (i.paidDate || i.issueDate).includes('-08-'));
-  const sepPaid = invoices.filter(i => (i.status === 'paid' || i.status === 'approved') && (i.paidDate || i.issueDate).includes('-09-'));
-  
-  if (augPaid.length > 0) {
-    baseData['Aug 26'].inflow = augPaid.reduce((sum, i) => sum + i.total, 0);
-  }
-  if (sepPaid.length > 0) {
-    baseData['Sep 26'].inflow = sepPaid.reduce((sum, i) => sum + i.total, 0);
+  const now = new Date();
+  const months: Date[] = [];
+  for (let offset = 5; offset >= 0; offset -= 1) {
+    months.push(new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - offset, 1)));
   }
 
-  // Fold in expenses
-  const sepExpenses = expenses.filter(e => e.date.includes('-09-'));
-  if (sepExpenses.length > 0) {
-    baseData['Sep 26'].outflow = sepExpenses.reduce((sum, e) => sum + e.amount, 0);
+  const monthKey = (date: Date) =>
+    `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, '0')}`;
+
+  const inflowByMonth = new Map<string, number>();
+  const outflowByMonth = new Map<string, number>();
+
+  for (const invoice of invoices) {
+    const payments = Array.isArray(invoice.payments) ? invoice.payments : [];
+    if (payments.length > 0) {
+      for (const payment of payments) {
+        const parsed = new Date(`${String(payment.date || '')}T00:00:00Z`);
+        if (!Number.isNaN(parsed.getTime())) {
+          const key = monthKey(parsed);
+          inflowByMonth.set(key, (inflowByMonth.get(key) || 0) + (Number(payment.amount) || 0));
+        }
+      }
+    } else if (invoice.status === 'paid' && invoice.paidDate) {
+      const parsed = new Date(`${invoice.paidDate}T00:00:00Z`);
+      if (!Number.isNaN(parsed.getTime())) {
+        const key = monthKey(parsed);
+        inflowByMonth.set(key, (inflowByMonth.get(key) || 0) + (Number(invoice.amountPaid || invoice.total) || 0));
+      }
+    }
   }
 
-  return months.map(m => {
-    const inf = baseData[m]?.inflow || 0;
-    const out = baseData[m]?.outflow || 0;
+  for (const expense of expenses) {
+    const parsed = new Date(`${String(expense.date || '')}T00:00:00Z`);
+    if (!Number.isNaN(parsed.getTime())) {
+      const key = monthKey(parsed);
+      outflowByMonth.set(key, (outflowByMonth.get(key) || 0) + (Number(expense.amount) || 0));
+    }
+  }
+
+  return months.map((month) => {
+    const key = monthKey(month);
+    const inflow = Math.round(inflowByMonth.get(key) || 0);
+    const outflow = Math.round(outflowByMonth.get(key) || 0);
     return {
-      month: m,
-      inflow: inf,
-      outflow: out,
-      net: inf - out
+      month: month.toLocaleDateString('en-US', { month: 'short', year: '2-digit', timeZone: 'UTC' }),
+      inflow,
+      outflow,
+      net: inflow - outflow
     };
   });
 };
@@ -711,29 +722,34 @@ export const computeFinancialMetrics = (invoices: AgencyInvoice[], expenses: Age
   const sentInvoices = invoices.filter(i => i.status === 'sent');
   const overdueInvoices = invoices.filter(i => i.status === 'overdue');
 
-  // Collected revenue includes fully paid invoices plus collected partial payments
-  const totalPaidRevenue = paidInvoices.reduce((sum, i) => sum + i.total, 0) +
-    partiallyPaidInvoices.reduce((sum, i) => sum + (i.amountPaid || 0), 0);
+  const totalPaidRevenue = invoices.reduce((sum, invoice) =>
+    sum + (Array.isArray(invoice.payments)
+      ? invoice.payments.reduce((paymentSum, payment) => paymentSum + (Number(payment.amount) || 0), 0)
+      : (Number(invoice.amountPaid) || 0)), 0
+  );
 
   const totalApproved = approvedInvoices.reduce((sum, i) => sum + (i.balanceDue !== undefined ? i.balanceDue : i.total), 0);
   const totalSent = sentInvoices.reduce((sum, i) => sum + (i.balanceDue !== undefined ? i.balanceDue : i.total), 0);
   const partialBalance = partiallyPaidInvoices.reduce((sum, i) => sum + (i.balanceDue !== undefined ? i.balanceDue : (i.total - (i.amountPaid || 0))), 0);
-  
+
   const totalOutstanding = totalSent + totalApproved + partialBalance;
   const totalOverdue = overdueInvoices.reduce((sum, i) => sum + (i.balanceDue !== undefined ? i.balanceDue : i.total), 0);
 
-  // Split expenses by type
-  const opExExpenses = expenses.filter(e => e.type !== 'CapEx').reduce((sum, e) => sum + e.amount, 0);
-  const capExExpenses = expenses.filter(e => e.type === 'CapEx').reduce((sum, e) => sum + e.amount, 0);
+  const opExExpenses = expenses.filter(e => e.type !== 'CapEx').reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
+  const capExExpenses = expenses.filter(e => e.type === 'CapEx').reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
   const totalExpenses = opExExpenses + capExExpenses;
 
   const netOperatingProfit = totalPaidRevenue - totalExpenses;
   const grossRevenue = totalPaidRevenue + totalOutstanding;
-  const netMarginPercent = grossRevenue > 0 ? Math.round((netOperatingProfit / grossRevenue) * 100) : 48;
+  const netMarginPercent = grossRevenue > 0
+    ? Math.round((netOperatingProfit / grossRevenue) * 100)
+    : 0;
 
-  // Monthly burn rate calculation
-  const monthlyBurnRate = opExExpenses > 0 ? opExExpenses : 83000000;
-  const cashRunwayMonths = monthlyBurnRate > 0 ? Math.max(1, Math.round((Math.max(100000000, totalPaidRevenue) / monthlyBurnRate) * 10) / 10) : 18.4;
+  const months = getMonthlyCashFlowSeries(invoices, expenses);
+  const recentMonths = months.slice(-3);
+  const monthlyBurnRate = recentMonths.length > 0
+    ? Math.round(recentMonths.reduce((sum, point) => sum + point.outflow, 0) / recentMonths.length)
+    : 0;
 
   return {
     totalInvoicesCount: invoices.length,
@@ -752,7 +768,7 @@ export const computeFinancialMetrics = (invoices: AgencyInvoice[], expenses: Age
     netOperatingProfit,
     netMarginPercent,
     monthlyBurnRate,
-    cashRunwayMonths,
+    cashRunwayMonths: null,
     collectionRate: invoices.length > 0 ? Math.round((paidInvoices.length / invoices.length) * 100) : 0
-  };
-};
+  }
+
