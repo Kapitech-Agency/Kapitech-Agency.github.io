@@ -54,7 +54,26 @@ apiRouter.post('/auth/login', rateLimitPublic(10, 15 * 60 * 1000), (req: Request
     return;
   }
 
-  const db = getDatabase();
+  let db;
+  try {
+    db = getDatabase();
+  } catch (error) {
+    console.error('[Auth] Failed to initialize authentication database:', error);
+    const message = error instanceof Error ? error.message : String(error);
+    if (message.includes('ADMIN_INITIAL_PASSWORD')) {
+      res.status(503).json({
+        success: false,
+        error: 'Authentication is not initialized. Configure ADMIN_INITIAL_PASSWORD in the hosting environment, then restart the application.'
+      });
+      return;
+    }
+    res.status(503).json({
+      success: false,
+      error: 'Authentication service is temporarily unavailable. Check the server runtime logs.'
+    });
+    return;
+  }
+
   const user = db.users.find(
     u => u.username.toLowerCase() === cleanIdentifier || u.email.toLowerCase() === cleanIdentifier
   );
@@ -110,12 +129,13 @@ apiRouter.post('/auth/login', rateLimitPublic(10, 15 * 60 * 1000), (req: Request
   }
 
   // Success
-  clearLockout(cleanIdentifier);
-  const nowIso = new Date().toISOString();
-  user.lastLogin = nowIso;
-  const session = createSession(user, ip, userAgent, Boolean(rememberMe));
+  try {
+    clearLockout(cleanIdentifier);
+    const nowIso = new Date().toISOString();
+    user.lastLogin = nowIso;
+    const session = createSession(user, ip, userAgent, Boolean(rememberMe));
 
-  recordAuditLog({
+    recordAuditLog({
     action: 'LOGIN_SUCCESS',
     actor: user.username,
     actorRole: user.role,
@@ -127,14 +147,14 @@ apiRouter.post('/auth/login', rateLimitPublic(10, 15 * 60 * 1000), (req: Request
 
   // Set secure HttpOnly session cookie
   const cookieMaxAge = rememberMe ? 30 * 24 * 3600 : 24 * 3600;
-  res.setHeader(
-    'Set-Cookie',
-    `kapi_session=${session.token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${cookieMaxAge}; ${process.env.NODE_ENV === 'production' ? 'Secure;' : ''}`
-  );
+    res.setHeader(
+      'Set-Cookie',
+      `kapi_session=${session.token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${cookieMaxAge}; ${process.env.NODE_ENV === 'production' ? 'Secure;' : ''}`
+    );
 
-  res.json({
-    success: true,
-    user: {
+    res.json({
+      success: true,
+      user: {
       id: user.id,
       name: user.name,
       username: user.username,
@@ -144,9 +164,16 @@ apiRouter.post('/auth/login', rateLimitPublic(10, 15 * 60 * 1000), (req: Request
       permissions: user.permissions,
       division: user.division,
       mfaEnabled: user.mfaEnabled,
-      lastLogin: user.lastLogin
-    }
-  });
+        lastLogin: user.lastLogin
+      }
+    });
+  } catch (error) {
+    console.error('[Auth] Failed to create authenticated session:', error);
+    res.status(503).json({
+      success: false,
+      error: 'Login could not be completed because the server session store is unavailable. Check the server runtime logs.'
+    });
+  }
 });
 
 apiRouter.post('/auth/logout', requireAuth, (req: AuthenticatedRequest, res: Response): void => {
