@@ -5,7 +5,8 @@ import {
   saveDatabase,
   recordAuditLog,
   hashSessionToken,
-  StoredUser
+  StoredUser,
+  verifyAuditLogChain
 } from './db';
 import { 
   authenticate,
@@ -1509,6 +1510,15 @@ apiRouter.put('/cms/settings', requireAuth, requirePermission('canManageCmsConte
 apiRouter.get('/audit-logs', requireAuth, requirePermission('canViewSecurityAuditLogs'), (req: AuthenticatedRequest, res: Response): void => {
   const db = getDatabase();
   res.json({ success: true, logs: db.auditLogs });
+});
+
+apiRouter.get('/audit-logs/integrity', requireAuth, requirePermission('canViewSecurityAuditLogs'), (req: AuthenticatedRequest, res: Response): void => {
+  const db = getDatabase();
+  const integrity = verifyAuditLogChain(db);
+  res.status(integrity.valid ? 200 : 409).json({
+    success: integrity.valid,
+    integrity
+  });
 });
 
 // ----------------------------------------------------
