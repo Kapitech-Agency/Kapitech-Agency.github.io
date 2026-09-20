@@ -187,7 +187,7 @@ apiRouter.get('/auth/me', requireAuth, (req: AuthenticatedRequest, res: Response
   });
 });
 
-apiRouter.post('/auth/change-password', requireAuth, (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.post('/auth/change-password', requireAuth, rateLimitAuthenticated(10, 15 * 60 * 1000), (req: AuthenticatedRequest, res: Response): void => {
   const { currentPassword, newPassword } = req.body;
   const user = req.user!;
 
@@ -230,7 +230,7 @@ apiRouter.post('/auth/change-password', requireAuth, (req: AuthenticatedRequest,
 });
 
 // Admin Account Management (Requires Master or canManageAdminAccounts permission)
-apiRouter.post('/auth/verify-password', requireAuth, (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.post('/auth/verify-password', requireAuth, rateLimitAuthenticated(10, 15 * 60 * 1000), (req: AuthenticatedRequest, res: Response): void => {
   const { password } = req.body;
   const user = req.user!;
   if (!password || typeof password !== 'string') {
@@ -327,6 +327,11 @@ apiRouter.post('/auth/users', requireAuth, requireMaster, (req: AuthenticatedReq
     division === 'Design' ? 'Design' : 'Operations';
   if (!name || !username || !email || !password) {
     res.status(400).json({ success: false, error: 'Name, username, email, and password are required.' });
+    return;
+  }
+
+  if (String(password).length < 12) {
+    res.status(400).json({ success: false, error: 'Account password must be at least 12 characters.' });
     return;
   }
 
