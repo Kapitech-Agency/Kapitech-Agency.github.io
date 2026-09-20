@@ -149,7 +149,7 @@ export const AdminSettings: React.FC = () => {
 
   const handleVerifyMfaSetup = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!/^\\d{6}$/.test(mfaCode)) return;
+    if (!/^\d{6}$/.test(mfaCode)) return;
     setMfaStatus(null);
     setMfaLoading(true);
     try {
@@ -1187,7 +1187,7 @@ export const AdminSettings: React.FC = () => {
                     <button type="button" onClick={() => navigator.clipboard?.writeText(mfaSetup.secret)} className="min-h-[40px] px-3 rounded-lg bg-[#262930] text-xs font-mono text-white">Copy secret</button>
                   </div>
                   <form onSubmit={handleVerifyMfaSetup} className="flex flex-col sm:flex-row gap-2">
-                    <input value={mfaCode} onChange={e => setMfaCode(e.target.value.replace(/\\D/g,'').slice(0,6))} inputMode="numeric" autoComplete="one-time-code" maxLength={6} placeholder="000000" className="min-h-[44px] flex-1 px-3 rounded-xl bg-[#111318] border border-white/[0.08] text-white font-mono text-sm tracking-[0.3em]" />
+                    <input value={mfaCode} onChange={e => setMfaCode(e.target.value.replace(/\D/g,'').slice(0,6))} inputMode="numeric" autoComplete="one-time-code" maxLength={6} placeholder="000000" className="min-h-[44px] flex-1 px-3 rounded-xl bg-[#111318] border border-white/[0.08] text-white font-mono text-sm tracking-[0.3em]" />
                     <button type="submit" disabled={mfaLoading || mfaCode.length !== 6} className="min-h-[44px] px-4 rounded-xl bg-[#E50914] text-white text-xs font-mono font-bold disabled:opacity-50">{language === 'id' ? 'Aktifkan MFA' : 'Enable MFA'}</button>
                   </form>
                 </div>
@@ -1198,7 +1198,7 @@ export const AdminSettings: React.FC = () => {
                   <div className="text-[11px] text-amber-200 font-mono">{language === 'id' ? 'Menonaktifkan MFA memutus semua sesi akun. Konfirmasi dengan password saat ini dan kode TOTP.' : 'Disabling MFA revokes all sessions. Confirm with the current password and TOTP code.'}</div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     <input type="password" value={mfaDisablePassword} onChange={e => setMfaDisablePassword(e.target.value)} required placeholder={language === 'id' ? 'Password saat ini' : 'Current password'} className="min-h-[44px] px-3 rounded-xl bg-[#111318] border border-white/[0.08] text-white font-mono text-xs" />
-                    <input value={mfaDisableCode} onChange={e => setMfaDisableCode(e.target.value.replace(/\\D/g,'').slice(0,6))} inputMode="numeric" autoComplete="one-time-code" maxLength={6} required placeholder="MFA 000000" className="min-h-[44px] px-3 rounded-xl bg-[#111318] border border-white/[0.08] text-white font-mono text-xs tracking-[0.2em]" />
+                    <input value={mfaDisableCode} onChange={e => setMfaDisableCode(e.target.value.replace(/\D/g,'').slice(0,6))} inputMode="numeric" autoComplete="one-time-code" maxLength={6} required placeholder="MFA 000000" className="min-h-[44px] px-3 rounded-xl bg-[#111318] border border-white/[0.08] text-white font-mono text-xs tracking-[0.2em]" />
                   </div>
                   <button type="submit" disabled={mfaLoading} className="min-h-[44px] px-4 rounded-xl bg-[#262930] border border-amber-500/30 text-amber-200 text-xs font-mono font-bold disabled:opacity-50">{language === 'id' ? 'Nonaktifkan MFA' : 'Disable MFA'}</button>
                 </form>
