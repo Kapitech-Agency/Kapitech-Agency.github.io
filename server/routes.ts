@@ -88,11 +88,77 @@ const ROLE_POLICIES: Record<string, {
   }
 };
 
+const MAX_PUBLIC_TEXT = 4000;
+const MAX_INTERNAL_TEXT = 5000;
+const CRM_STAGES = ['new', 'contacted', 'proposal', 'negotiation', 'won', 'lost'] as const;
+const DEAL_PRIORITIES = ['low', 'medium', 'high', 'urgent'] as const;
+
+function cleanText(value: unknown, max = MAX_INTERNAL_TEXT): string {
+  return String(value ?? '').trim().slice(0, max);
+}
+
+function cleanOptionalUrl(value: unknown): string {
+  const candidate = cleanText(value, 2000);
+  if (!candidate) return '';
+  try {
+    const parsed = new URL(candidate);
+    if (!['http:', 'https:'].includes(parsed.protocol)) return '';
+    return parsed.toString();
+  } catch {
+    return '';
+  }
+}
+
+function pickFields<T extends Record<string, unknown>>(source: Record<string, unknown>, fields: readonly string[]): Partial<T> {
+  const result: Record<string, unknown> = {};
+  for (const field of fields) {
+    if (Object.prototype.hasOwnProperty.call(source, field)) result[field] = source[field];
+  }
+  return result as Partial<T>;
+}
+
+function normalizeProbability(value: unknown): number {
+  const numeric = Number(value);
+  if (!Number.isFinite(numeric)) return 0;
+  return Math.min(1, Math.max(0, numeric > 1 ? numeric / 100 : numeric));
+}
+
+function pushNotification(
+  db: ReturnType<typeof getDatabase>,
+  input: {
+    title: string;
+    message: string;
+    type: 'lead' | 'finance' | 'approval' | 'project' | 'system';
+    severity?: 'info' | 'warning' | 'danger' | 'critical';
+    linkUrl?: string;
+    recipientUserId?: string;
+  }
+): void {
+  if (!Array.isArray(db.notifications)) db.notifications = [];
+  db.notifications.unshift({
+    id: `notif_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
+    title: cleanText(input.title, 180),
+    message: cleanText(input.message, 1000),
+    type: input.type,
+    severity: input.severity || 'info',
+    read: false,
+    readBy: [],
+    recipientUserId: input.recipientUserId || undefined,
+    linkUrl: input.linkUrl || '/admin/dashboard',
+    timestamp: new Date().toISOString()
+  });
+  db.notifications = db.notifications.slice(0, 500);
+}
+
 export const apiRouter = Router();
 
 // Apply auth header checking on all API requests
 apiRouter.use(authenticate);
 apiRouter.use(validateCsrf);
+apiRouter.use((req: AuthenticatedRequest, res: Response, next) => {
+  if (!req.user) return next();
+  return rateLimitAuthenticated(300, 60 * 1000)(req, res, next);
+});
 
 // ----------------------------------------------------
 // 1. AUTHENTICATION & SESSION MANAGEMENT
@@ -551,6 +617,10 @@ apiRouter.post('/leads/submit', rateLimitPublic(10, 60 * 1000), async (req: Requ
     res.status(400).json({ success: false, error: 'Name, email, and message are required fields.' });
     return;
   }
+  if (String(fullName).length > 160 || String(message).length > MAX_PUBLIC_TEXT || String(company || '').length > 200) {
+    res.status(400).json({ success: false, error: 'Submission contains fields that exceed the allowed length.' });
+    return;
+  }
 
   const cleanEmail = String(email).trim().toLowerCase();
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -580,6 +650,13 @@ apiRouter.post('/leads/submit', rateLimitPublic(10, 60 * 1000), async (req: Requ
   };
 
   db.leads.unshift(newLead);
+  pushNotification(db, {
+    title: 'New inbound lead',
+    message: `${newLead.fullName}${newLead.company ? ` from ${newLead.company}` : ''} submitted a new inquiry.`,
+    type: 'lead',
+    severity: 'info',
+    linkUrl: '/admin/inbox'
+  });
   saveDatabase(db);
 
   recordAuditLog({
@@ -631,7 +708,7 @@ apiRouter.get('/leads', requireAuth, requirePermission('canManageCrm'), (req: Au
 
 apiRouter.put('/leads/:id', requireAuth, requirePermission('canManageCrm'), (req: AuthenticatedRequest, res: Response): void => {
   const { id } = req.params;
-  const updates = req.body;
+  const updates = req.body || {};
   const db = getDatabase();
   const idx = db.leads.findIndex(l => l.id === id);
 
@@ -640,7 +717,17 @@ apiRouter.put('/leads/:id', requireAuth, requirePermission('canManageCrm'), (req
     return;
   }
 
-  db.leads[idx] = { ...db.leads[idx], ...updates, updatedAt: new Date().toISOString() };
+  const patch = pickFields(updates, [
+    'fullName', 'email', 'company', 'phone', 'services', 'budget', 'message',
+    'status', 'source', 'type', 'portfolioUrl', 'rateCard', 'specialty'
+  ]);
+  if (patch.email !== undefined) patch.email = cleanText(patch.email, 254).toLowerCase();
+  if (patch.fullName !== undefined) patch.fullName = cleanText(patch.fullName, 160);
+  if (patch.company !== undefined) patch.company = cleanText(patch.company, 200);
+  if (patch.message !== undefined) patch.message = cleanText(patch.message, MAX_PUBLIC_TEXT);
+  if (patch.services !== undefined) patch.services = Array.isArray(patch.services) ? patch.services.slice(0, 20).map((v) => cleanText(v, 120)) : [];
+  if (patch.portfolioUrl !== undefined) patch.portfolioUrl = cleanOptionalUrl(patch.portfolioUrl);
+  db.leads[idx] = { ...db.leads[idx], ...patch, updatedAt: new Date().toISOString() };
   saveDatabase(db);
 
   recordAuditLog({
@@ -714,18 +801,23 @@ apiRouter.post('/leads/:id/convert', requireAuth, requirePermission('canManageCr
   }
 
   // Create CRM Deal
+  const leadValue = Number(lead.dealValue ?? lead.value ?? 0);
+  const dealProbability = normalizeProbability(lead.probability);
+  const requestedCloseDate = /^\d{4}-\d{2}-\d{2}$/.test(String(lead.expectedCloseDate || ''))
+    ? String(lead.expectedCloseDate)
+    : '';
   const deal = {
     id: `deal_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
     title: `${lead.company || lead.fullName} - ${lead.services?.join(', ') || 'Digital Project'}`,
     clientName: lead.fullName,
     company: lead.company || lead.fullName,
-    value: 50000000,
-    stage: 'qualified',
-    probability: 60,
+    value: Number.isFinite(leadValue) && leadValue >= 0 ? leadValue : 0,
+    stage: 'new',
+    probability: dealProbability,
     owner: req.user!.name || req.user!.username,
-    expectedCloseDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+    expectedCloseDate: requestedCloseDate,
     notes: lead.message,
-    priority: 'high',
+    priority: DEAL_PRIORITIES.includes(String(lead.priority) as any) ? String(lead.priority) : 'medium',
     source: lead.source || 'Website',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
@@ -759,13 +851,35 @@ apiRouter.get('/crm/deals', requireAuth, requirePermission('canManageCrm'), (req
 });
 
 apiRouter.post('/crm/deals', requireAuth, requirePermission('canManageCrm'), (req: AuthenticatedRequest, res: Response): void => {
-  const dealData = req.body;
+  const dealData = req.body || {};
   const db = getDatabase();
+  const requestedStage = String(dealData.stage || 'new');
+  const requestedPriority = String(dealData.priority || 'medium');
+  if (!CRM_STAGES.includes(requestedStage as any) || !DEAL_PRIORITIES.includes(requestedPriority as any)) {
+    res.status(400).json({ success: false, error: 'Invalid CRM stage or priority.' });
+    return;
+  }
+  const value = Number(dealData.value);
+  if (!Number.isFinite(value) || value < 0 || value > 100_000_000_000) {
+    res.status(400).json({ success: false, error: 'Deal value must be a valid non-negative amount.' });
+    return;
+  }
   const newDeal = {
     id: `deal_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
-    ...dealData,
-    value: Number(dealData.value) || 0,
-    probability: Number(dealData.probability) || 50,
+    title: cleanText(dealData.title, 200),
+    clientName: cleanText(dealData.clientName, 160),
+    company: cleanText(dealData.company, 200),
+    email: cleanText(dealData.email, 254).toLowerCase(),
+    phone: cleanText(dealData.phone, 40),
+    servicePillar: cleanText(dealData.servicePillar, 120),
+    value,
+    stage: requestedStage,
+    probability: normalizeProbability(dealData.probability),
+    owner: cleanText(dealData.owner || req.user!.name || req.user!.username, 160),
+    expectedCloseDate: /^\d{4}-\d{2}-\d{2}$/.test(String(dealData.expectedCloseDate || '')) ? String(dealData.expectedCloseDate) : '',
+    notes: cleanText(dealData.notes, 3000),
+    priority: requestedPriority,
+    source: cleanText(dealData.source || 'Internal', 120),
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   };
@@ -777,14 +891,40 @@ apiRouter.post('/crm/deals', requireAuth, requirePermission('canManageCrm'), (re
 
 apiRouter.put('/crm/deals/:id', requireAuth, requirePermission('canManageCrm'), (req: AuthenticatedRequest, res: Response): void => {
   const { id } = req.params;
-  const updates = req.body;
+  const updates = req.body || {};
   const db = getDatabase();
   const idx = db.crmDeals.findIndex(d => d.id === id);
   if (idx === -1) {
     res.status(404).json({ success: false, error: 'Deal not found.' });
     return;
   }
-  db.crmDeals[idx] = { ...db.crmDeals[idx], ...updates, updatedAt: new Date().toISOString() };
+  const patch = pickFields(updates, [
+    'title', 'clientName', 'company', 'email', 'phone', 'servicePillar',
+    'value', 'stage', 'probability', 'owner', 'expectedCloseDate', 'notes',
+    'priority', 'source'
+  ]);
+  if (patch.value !== undefined) {
+    const value = Number(patch.value);
+    if (!Number.isFinite(value) || value < 0 || value > 100_000_000_000) {
+      res.status(400).json({ success: false, error: 'Deal value must be a valid non-negative amount.' });
+      return;
+    }
+    patch.value = value;
+  }
+  if (patch.probability !== undefined) patch.probability = normalizeProbability(patch.probability);
+  if (patch.stage !== undefined && !CRM_STAGES.includes(String(patch.stage) as any)) {
+    res.status(400).json({ success: false, error: 'Invalid CRM stage.' });
+    return;
+  }
+  if (patch.priority !== undefined && !DEAL_PRIORITIES.includes(String(patch.priority) as any)) {
+    res.status(400).json({ success: false, error: 'Invalid CRM priority.' });
+    return;
+  }
+  if (patch.email !== undefined) patch.email = cleanText(patch.email, 254).toLowerCase();
+  for (const key of ['title','clientName','company','phone','servicePillar','owner','notes','source'] as const) {
+    if (patch[key] !== undefined) patch[key] = cleanText(patch[key], key === 'notes' ? 3000 : 200);
+  }
+  db.crmDeals[idx] = { ...db.crmDeals[idx], ...patch, updatedAt: new Date().toISOString() };
   saveDatabase(db);
   res.json({ success: true, deal: db.crmDeals[idx] });
 });
@@ -833,15 +973,25 @@ apiRouter.post('/clients', requireAuth, requirePermission('canManageClients'), (
 
 apiRouter.put('/clients/:id', requireAuth, requirePermission('canManageClients'), (req: AuthenticatedRequest, res: Response): void => {
   const { id } = req.params;
-  const updates = req.body;
+  const updates = req.body || {};
   const db = getDatabase();
   const idx = db.clients.findIndex(c => c.id === id);
   if (idx === -1) {
     res.status(404).json({ success: false, error: 'Client not found.' });
     return;
   }
-  db.clients[idx] = { ...db.clients[idx], ...updates, updatedAt: new Date().toISOString() };
+  const patch = pickFields(updates || {}, ['name', 'companyName', 'clientName', 'email', 'phone', 'address', 'website', 'location', 'industry', 'status', 'tier', 'totalProjects', 'totalInvoiced', 'activeRetainer', 'notes', 'slaDailyAdSpendBudget', 'currentDailyAdSpend']);
+  db.clients[idx] = { ...db.clients[idx], ...patch, updatedAt: new Date().toISOString() };
   saveDatabase(db);
+  recordAuditLog({
+    action: 'CLIENT_UPDATED',
+    actor: req.user!.username,
+    actorRole: req.user!.role,
+    ip: req.ip,
+    userAgent: req.headers['user-agent'] as string,
+    details: `Updated client ${id}.`,
+    severity: 'info'
+  });
   res.json({ success: true, client: db.clients[idx] });
 });
 
@@ -878,15 +1028,25 @@ apiRouter.post('/projects', requireAuth, requirePermission('canManageProjects'),
 
 apiRouter.put('/projects/:id', requireAuth, requirePermission('canManageProjects'), (req: AuthenticatedRequest, res: Response): void => {
   const { id } = req.params;
-  const updates = req.body;
+  const updates = req.body || {};
   const db = getDatabase();
   const idx = db.projects.findIndex(p => p.id === id);
   if (idx === -1) {
     res.status(404).json({ success: false, error: 'Project not found.' });
     return;
   }
-  db.projects[idx] = { ...db.projects[idx], ...updates, updatedAt: new Date().toISOString() };
+  const patch = pickFields(updates || {}, ['title', 'name', 'client', 'clientName', 'clientCompany', 'clientEmail', 'serviceCategory', 'status', 'health', 'budget', 'progressPercent', 'startDate', 'targetEndDate', 'teamLead', 'teamMembers', 'techStack', 'repositoryUrl', 'figmaUrl', 'liveStagingUrl', 'notes', 'tasks']);
+  db.projects[idx] = { ...db.projects[idx], ...patch, updatedAt: new Date().toISOString() };
   saveDatabase(db);
+  recordAuditLog({
+    action: 'PROJECT_UPDATED',
+    actor: req.user!.username,
+    actorRole: req.user!.role,
+    ip: req.ip,
+    userAgent: req.headers['user-agent'] as string,
+    details: `Updated project ${id}.`,
+    severity: 'info'
+  });
   res.json({ success: true, project: db.projects[idx] });
 });
 
@@ -1230,17 +1390,36 @@ apiRouter.get('/finance/expenses', requireAuth, requirePermission('canViewFinanc
 });
 
 apiRouter.post('/finance/expenses', requireAuth, requirePermission('canManageInvoices'), (req: AuthenticatedRequest, res: Response): void => {
-  const exp = req.body;
+  const exp = req.body || {};
+  const amount = Number(exp.amount);
+  if (!Number.isFinite(amount) || amount <= 0 || amount > 100_000_000_000) {
+    res.status(400).json({ success: false, error: 'Expense amount must be a valid positive amount.' });
+    return;
+  }
+  const date = normalizeDate(exp.date, new Date().toISOString().slice(0, 10));
   const db = getDatabase();
   const newExpense = {
     id: `exp_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
-    ...exp,
-    amount: Number(exp.amount) || 0,
+    type: ['OpEx','CapEx'].includes(String(exp.type)) ? String(exp.type) : 'OpEx',
+    category: cleanText(exp.category || 'General', 120),
+    description: cleanText(exp.description, 500),
+    amount: Math.round(amount * 100) / 100,
+    date,
+    recurringInterval: cleanText(exp.recurringInterval || 'none', 40),
     recordedBy: req.user!.name || req.user!.username,
     createdAt: new Date().toISOString()
   };
   db.expenses.unshift(newExpense);
   saveDatabase(db);
+  recordAuditLog({
+    action: 'EXPENSE_CREATED',
+    actor: req.user!.username,
+    actorRole: req.user!.role,
+    ip: req.ip,
+    userAgent: req.headers['user-agent'] as string,
+    details: `Created expense of ${newExpense.amount}.`,
+    severity: 'info'
+  });
   res.json({ success: true, expense: newExpense });
 });
 
@@ -1328,15 +1507,25 @@ apiRouter.post('/vendors', requireAuth, requirePermission('canManageVendors'), (
 
 apiRouter.put('/vendors/:id', requireAuth, requirePermission('canManageVendors'), (req: AuthenticatedRequest, res: Response): void => {
   const { id } = req.params;
-  const updates = req.body;
+  const updates = req.body || {};
   const db = getDatabase();
   const idx = db.vendors.findIndex(v => v.id === id);
   if (idx === -1) {
     res.status(404).json({ success: false, error: 'Vendor not found.' });
     return;
   }
-  db.vendors[idx] = { ...db.vendors[idx], ...updates, updatedAt: new Date().toISOString() };
+  const patch = pickFields(updates || {}, ['name', 'category', 'contactPerson', 'email', 'phone', 'website', 'paymentTerms', 'status', 'monthlySpend', 'notes', 'portfolioUrl', 'githubUrl', 'contracts']);
+  db.vendors[idx] = { ...db.vendors[idx], ...patch, updatedAt: new Date().toISOString() };
   saveDatabase(db);
+  recordAuditLog({
+    action: 'VENDOR_UPDATED',
+    actor: req.user!.username,
+    actorRole: req.user!.role,
+    ip: req.ip,
+    userAgent: req.headers['user-agent'] as string,
+    details: `Updated vendor ${id}.`,
+    severity: 'info'
+  });
   res.json({ success: true, vendor: db.vendors[idx] });
 });
 
@@ -1896,7 +2085,11 @@ apiRouter.post('/crm/proposals/:id/convert-to-invoice', requireAuth, requirePerm
     return;
   }
 
-  const invoiceNumber = `INV-KAPI-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
+  const year = new Date().getFullYear();
+  let invoiceNumber = `INV-KAPI-${year}-${crypto.randomInt(1000, 1000000)}`;
+  while (db.invoices.some((invoice: any) => invoice.invoiceNumber === invoiceNumber)) {
+    invoiceNumber = `INV-KAPI-${year}-${crypto.randomInt(1000, 1000000)}`;
+  }
   const newInvoice = {
     id: `inv_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
     invoiceNumber,
@@ -2213,17 +2406,19 @@ apiRouter.get('/notifications', requireAuth, (req: AuthenticatedRequest, res: Re
   const canViewApprovals = isMaster || Boolean(req.user!.permissions?.canApproveBudgets || req.user!.permissions?.canManageProjects);
 
   const notifications = (db.notifications || []).filter((notification) => {
-    switch (notification.type) {
-      case 'finance':
-        return canViewFinance;
-      case 'lead':
-        return canViewCrm;
-      case 'approval':
-        return canViewApprovals;
-      default:
-        return true;
-    }
-  });
+    const typeAllowed =
+      notification.type === 'finance' ? canViewFinance :
+      notification.type === 'lead' ? canViewCrm :
+      notification.type === 'approval' ? canViewApprovals :
+      true;
+    const recipientAllowed = !notification.recipientUserId || notification.recipientUserId === req.user!.id;
+    return typeAllowed && recipientAllowed;
+  }).map((notification) => ({
+    ...notification,
+    read: Array.isArray(notification.readBy)
+      ? notification.readBy.includes(req.user!.id)
+      : Boolean(notification.read)
+  }));
 
   res.json({ success: true, notifications });
 });
@@ -2232,16 +2427,27 @@ apiRouter.post('/notifications/:id/read', requireAuth, (req: AuthenticatedReques
   const { id } = req.params;
   const db = getDatabase();
   const notif = (db.notifications || []).find(n => n.id === id);
-  if (notif) {
-    notif.read = true;
-    saveDatabase(db);
+  if (!notif) {
+    res.status(404).json({ success: false, error: 'Notification not found.' });
+    return;
   }
+  if (notif.recipientUserId && notif.recipientUserId !== req.user!.id) {
+    res.status(403).json({ success: false, error: 'Notification access denied.' });
+    return;
+  }
+  if (!Array.isArray(notif.readBy)) notif.readBy = [];
+  if (!notif.readBy.includes(req.user!.id)) notif.readBy.push(req.user!.id);
+  saveDatabase(db);
   res.json({ success: true });
 });
 
 apiRouter.post('/notifications/mark-all-read', requireAuth, (req: AuthenticatedRequest, res: Response): void => {
   const db = getDatabase();
-  (db.notifications || []).forEach(n => { n.read = true; });
+  for (const notification of (db.notifications || [])) {
+    if (notification.recipientUserId && notification.recipientUserId !== req.user!.id) continue;
+    if (!Array.isArray(notification.readBy)) notification.readBy = [];
+    if (!notification.readBy.includes(req.user!.id)) notification.readBy.push(req.user!.id);
+  }
   saveDatabase(db);
   res.json({ success: true });
 });
@@ -2486,7 +2692,7 @@ const handleOverview = (req: AuthenticatedRequest, res: Response): void => {
     t => t.status !== 'done' && t.dueDate && new Date(t.dueDate) < now
   ).length;
 
-  const stages = ['lead', 'contacted', 'discovery', 'proposal', 'negotiation', 'won', 'lost'];
+  const stages = CRM_STAGES;
   const pipelineByStage = canViewCrm
     ? stages.map(st => {
         const stageDeals = deals.filter(d => d.stage === st);
