@@ -21,9 +21,11 @@ The upload limit is 25 MB per document. Executable MIME types are intentionally 
 1. Stop application writes through the deployment/maintenance workflow.
 2. Copy the current database file as a safety backup.
 3. Select a `kapitech_db_*.bak` snapshot from the backup directory.
-4. Run:
+4. Verify the snapshot without changing production:
+   `node scripts/restore-ams-db.mjs /absolute/path/to/backup.bak --verify-only`
+5. If verification passes and the maintenance window is active, restore:
    `node scripts/restore-ams-db.mjs /absolute/path/to/backup.bak --force`
-5. Ensure the same `KAPITECH_DATA_ENCRYPTION_KEY` is present.
+6. Ensure the same `KAPITECH_DATA_ENCRYPTION_KEY` is present.
 6. Start/redeploy AMS and run the smoke test.
 7. Verify login, dashboard, finance, CRM, documents, and audit integrity.
 
