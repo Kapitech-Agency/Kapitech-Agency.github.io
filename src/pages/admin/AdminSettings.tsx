@@ -104,6 +104,10 @@ export const AdminSettings: React.FC = () => {
   const [mfaStatus, setMfaStatus] = useState<{ success: boolean; message: string } | null>(null);
   const [mfaLoading, setMfaLoading] = useState(false);
 
+  const [backupStatus, setBackupStatus] = useState<{ success: boolean; message: string } | null>(null);
+  const [backupLoading, setBackupLoading] = useState(false);
+  const [backupSummary, setBackupSummary] = useState<{ count: number; latestAt?: string; latestSizeBytes?: number; retention: number } | null>(null);
+
   // Accounts Management state (Stakeholder Executive & Teknisi IT)
   const [accounts, setAccounts] = useState<AdminAccount[]>([]);
   const [isAddAccountModalOpen, setIsAddAccountModalOpen] = useState(false);
@@ -128,10 +132,50 @@ export const AdminSettings: React.FC = () => {
         if (mounted) setAccounts(nextAccounts);
       });
     }
+    if (activeTab === 'api' && canAccessServer) {
+      refreshBackups();
+    }
     return () => { mounted = false; };
-  }, [activeTab]);
+  }, [activeTab, canAccessServer]);
 
   const refreshMfaProfile = () => getAdminSession()?.user?.mfaEnabled === true;
+
+  const refreshBackups = async () => {
+    try {
+      const res = await api.system.getBackups();
+      if (res.success && res.data?.success) {
+        const list = res.data.backups || [];
+        const latest = list[0];
+        setBackupSummary({
+          count: list.length,
+          latestAt: latest?.createdAt,
+          latestSizeBytes: latest?.sizeBytes,
+          retention: res.data.retention
+        });
+      }
+    } catch {
+      setBackupSummary(null);
+    }
+  };
+
+  const handleCreateBackup = async () => {
+    setBackupStatus(null);
+    setBackupLoading(true);
+    try {
+      const res = await api.system.createBackup();
+      if (res.success && res.data?.success) {
+        setBackupStatus({
+          success: true,
+          message: language === 'id' ? 'Snapshot database terenkripsi berhasil dibuat.' : 'Encrypted database snapshot created successfully.'
+        });
+        await refreshBackups();
+      } else {
+        setBackupStatus({ success: false, message: res.error || (language === 'id' ? 'Gagal membuat backup.' : 'Failed to create backup.') });
+      }
+    } finally {
+      setBackupLoading(false);
+    }
+  };
 
   const handleStartMfaSetup = async () => {
     setMfaStatus(null);
@@ -1322,6 +1366,75 @@ export const AdminSettings: React.FC = () => {
               </div>
             ))}
           </div>
+
+          {canAccessServer && (
+            <div className="p-5 rounded-2xl bg-[#181B22] border border-cyan-500/20 space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                    <Database size={15} className="text-cyan-400" />
+                    <span>{language === 'id' ? 'Backup & Disaster Recovery' : 'Backup & Disaster Recovery'}</span>
+                  </h3>
+                  <p className="text-[11px] text-[#8A94A6] font-mono mt-1">
+                    {language === 'id'
+                      ? 'Snapshot terenkripsi otomatis, retention terbatas, dan manual snapshot untuk off-site backup.'
+                      : 'Encrypted rolling snapshots with bounded retention and manual snapshots for off-site backup.'}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleCreateBackup}
+                  disabled={backupLoading}
+                  className="min-h-[40px] px-3.5 rounded-xl bg-[#262930] hover:bg-[#323640] border border-cyan-500/20 text-cyan-200 text-xs font-mono font-bold disabled:opacity-50 flex items-center gap-2"
+                >
+                  <RefreshCw size={13} className={backupLoading ? 'animate-spin' : ''} />
+                  <span>{language === 'id' ? 'Buat Snapshot Sekarang' : 'Create Snapshot Now'}</span>
+                </button>
+              </div>
+
+              {backupStatus && (
+                <div className={'p-3 rounded-xl border text-xs font-mono ' + (
+                  backupStatus.success
+                    ? 'bg-emerald-950/30 border-emerald-500/20 text-emerald-300'
+                    : 'bg-red-950/30 border-red-500/20 text-red-300'
+                )}>
+                  {backupStatus.message}
+                </div>
+              )}
+
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                <div className="p-3 rounded-xl bg-[#111318] border border-white/[0.07]">
+                  <div className="text-[10px] uppercase tracking-wider text-[#8A94A6] font-mono">Snapshots</div>
+                  <div className="text-lg font-bold text-white font-mono mt-1">{backupSummary?.count ?? '—'}</div>
+                </div>
+                <div className="p-3 rounded-xl bg-[#111318] border border-white/[0.07]">
+                  <div className="text-[10px] uppercase tracking-wider text-[#8A94A6] font-mono">Retention</div>
+                  <div className="text-lg font-bold text-white font-mono mt-1">{backupSummary?.retention ?? 14}d</div>
+                </div>
+                <div className="p-3 rounded-xl bg-[#111318] border border-white/[0.07]">
+                  <div className="text-[10px] uppercase tracking-wider text-[#8A94A6] font-mono">Latest</div>
+                  <div className="text-xs font-semibold text-white font-mono mt-1">
+                    {backupSummary?.latestAt ? new Date(backupSummary.latestAt).toLocaleString() : '—'}
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 border-t border-white/[0.07]">
+                <div className="text-[10px] text-[#64748B] font-mono">
+                  {language === 'id'
+                    ? 'Untuk DR penuh, download encrypted backup lalu simpan di lokasi off-site yang terpisah dari Hostinger.'
+                    : 'For full DR, download an encrypted backup and retain it off-site separately from Hostinger.'}
+                </div>
+                <a
+                  href="/api/system/backups/download"
+                  className="min-h-[40px] px-3.5 rounded-xl bg-[#E50914] hover:bg-[#FF1E27] text-white text-xs font-mono font-bold flex items-center justify-center gap-2"
+                >
+                  <Download size={13} />
+                  <span>{language === 'id' ? 'Download Encrypted Backup' : 'Download Encrypted Backup'}</span>
+                </a>
+              </div>
+            </div>
+          )}
 
           <div className="p-4 rounded-xl bg-[#181B22] border border-amber-500/20 text-amber-200 text-xs font-mono leading-relaxed">
             {language === 'id'
