@@ -2409,34 +2409,46 @@ apiRouter.post('/crm/proposals', requireAuth, requirePermission('canManageCrm'),
   const data = req.body;
   const db = getDatabase();
 
-  const items = Array.isArray(data.items) ? data.items : [];
-  const subtotal = items.reduce((sum: number, it: any) => sum + (Number(it.quantity || 1) * Number(it.unitPrice || 0)), 0);
-  const discount = Number(data.discount) || 0;
-  const taxPercent = data.taxPercent !== undefined ? Number(data.taxPercent) : 11;
+  const rawItems = Array.isArray(data.items) ? data.items : [];
+  const items = rawItems.slice(0, 100).map((item: any) => ({
+    id: cleanText(item?.id || crypto.randomBytes(4).toString('hex'), 80),
+    description: cleanText(item?.description, 500),
+    quantity: normalizeNumber(item?.quantity ?? 1, 0.01, 100000, 1) || 1,
+    unitPrice: normalizeNumber(item?.unitPrice ?? 0, 0, MAX_MONEY, 0) || 0
+  })).filter((item: any) => item.description && item.quantity > 0);
+  if (!items.length) {
+    res.status(400).json({ success: false, error: 'Proposal requires at least one valid line item.' });
+    return;
+  }
+  const subtotal = items.reduce((sum: number, it: any) => sum + (it.quantity * it.unitPrice), 0);
+  const discount = Math.min(subtotal, Math.max(0, Number(data.discount) || 0));
+  const taxPercent = Math.min(100, Math.max(0, Number(data.taxPercent ?? 11) || 0));
   const taxableAmount = Math.max(0, subtotal - discount);
   const tax = Math.round(taxableAmount * (taxPercent / 100));
   const total = taxableAmount + tax;
-
+  const statusValues = new Set(['Draft','Internal Review','Sent','Approved','Rejected','Accepted']);
+  const status = statusValues.has(String(data.status)) ? String(data.status) : 'Draft';
+  const currency = data.currency === 'USD' ? 'USD' : 'IDR';
   const newProposal = {
     id: `prop_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
     proposalNumber: cleanText(data.proposalNumber || `PROP-KAPI-${new Date().getFullYear()}-${crypto.randomInt(1000, 1000000)}`, 80),
-    title: data.title || 'Digital Engineering Proposal',
-    clientName: data.clientName || 'Prospective Client',
-    company: data.company || '',
-    dealId: data.dealId || '',
-    projectId: data.projectId || '',
+    title: cleanText(data.title || 'Digital Engineering Proposal', 240),
+    clientName: cleanText(data.clientName || 'Prospective Client', 160),
+    company: cleanText(data.company, 200),
+    dealId: cleanText(data.dealId, 120),
+    projectId: cleanText(data.projectId, 120),
     items,
     subtotal,
     discount,
     taxPercent,
     tax,
     total,
-    currency: data.currency || 'IDR',
-    validityPeriod: data.validityPeriod || '30 Days',
-    paymentTerms: data.paymentTerms || '50% Upfront, 50% on Delivery',
+    currency,
+    validityPeriod: cleanText(data.validityPeriod || '30 Days', 80),
+    paymentTerms: cleanText(data.paymentTerms || '50% Upfront, 50% on Delivery', 300),
     owner: req.user!.name || req.user!.username,
-    status: data.status || 'Draft',
-    notes: data.notes || '',
+    status,
+    notes: cleanText(data.notes, 3000),
     createdDate: new Date().toISOString().split('T')[0],
     sentDate: data.sentDate || null,
     approvedDate: null,
@@ -2490,6 +2502,25 @@ apiRouter.put('/crm/proposals/:id', requireAuth, requirePermission('canManageCrm
   const tax = Math.round(taxableAmount * (taxPercent / 100));
   const total = taxableAmount + tax;
   const patch = pickFields(updates, ['proposalNumber','title','clientName','company','dealId','projectId','currency','validityPeriod','paymentTerms','status','notes','sentDate']);
+  if (patch.proposalNumber !== undefined && !/^[A-Za-z0-9._/-]{1,80}$/.test(String(patch.proposalNumber))) {
+    res.status(400).json({ success: false, error: 'Invalid proposal number.' });
+    return;
+  }
+  for (const key of ['title','clientName','company','dealId','projectId','validityPeriod','paymentTerms','notes'] as const) {
+    if (patch[key] !== undefined) patch[key] = cleanText(patch[key], key === 'notes' ? 3000 : 300);
+  }
+  if (patch.currency !== undefined && !['IDR','USD'].includes(String(patch.currency))) {
+    res.status(400).json({ success: false, error: 'Invalid proposal currency.' });
+    return;
+  }
+  if (patch.status !== undefined && !['Draft','Internal Review','Sent','Approved','Rejected','Accepted'].includes(String(patch.status))) {
+    res.status(400).json({ success: false, error: 'Invalid proposal status.' });
+    return;
+  }
+  if (patch.sentDate !== undefined && patch.sentDate !== null && !isValidDate(patch.sentDate)) {
+    res.status(400).json({ success: false, error: 'Invalid proposal sent date.' });
+    return;
+  }
   db.proposals[idx] = {
     ...existing,
     ...patch,
@@ -2503,6 +2534,15 @@ apiRouter.put('/crm/proposals/:id', requireAuth, requirePermission('canManageCrm
   };
 
   saveDatabase(db);
+  recordAuditLog({
+    action: 'PROPOSAL_UPDATED',
+    actor: req.user!.username,
+    actorRole: req.user!.role,
+    ip: req.ip,
+    userAgent: req.headers['user-agent'] as string,
+    details: `Updated proposal ${db.proposals[idx].proposalNumber}.`,
+    severity: 'info'
+  });
   res.json({ success: true, proposal: db.proposals[idx] });
 });
 
@@ -2516,6 +2556,10 @@ apiRouter.post('/crm/proposals/:id/approve', requireAuth, requirePermission('can
     return;
   }
 
+  if (!['Draft','Internal Review','Sent'].includes(String(prop.status))) {
+    res.status(409).json({ success: false, error: 'Only draft, internal review, or sent proposals can be approved.' });
+    return;
+  }
   prop.status = 'Approved';
   prop.approvedDate = new Date().toISOString().split('T')[0];
   prop.updatedAt = new Date().toISOString();
