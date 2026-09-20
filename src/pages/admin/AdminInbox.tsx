@@ -1453,13 +1453,6 @@ export const AdminInbox: React.FC = () => {
         />
       )}
 
-      {/* Email Forwarding Guide Modal */}
-      <EmailForwardingGuideModal
-        isOpen={isEmailModalOpen}
-        onClose={() => setIsEmailModalOpen(false)}
-        adminEmail="kapitechagency@gmail.com"
-      />
-
     </div>
   );
 };
