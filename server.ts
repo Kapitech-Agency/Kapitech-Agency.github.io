@@ -62,6 +62,14 @@ async function startServer() {
     next();
   });
 
+  // Keep the private AMS surface out of search indexes and intermediary caches.
+  app.use((req, res, next) => {
+    if (req.path === '/admin' || req.path.startsWith('/admin/') || req.path === '/api' || req.path.startsWith('/api/')) {
+      res.setHeader('X-Robots-Tag', 'noindex, nofollow, noarchive');
+    }
+    next();
+  });
+
   // API Routes
   app.use('/api', apiRouter);
 
