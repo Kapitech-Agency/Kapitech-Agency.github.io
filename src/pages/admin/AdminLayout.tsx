@@ -61,6 +61,15 @@ export const AdminLayout: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const session = getAdminSession();
+  const adminDisplayName = session?.user?.name || session?.user?.username || 'Admin';
+  const adminUsername = session?.user?.username || '';
+  const adminInitials = adminDisplayName
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0])
+    .join('')
+    .toUpperCase() || 'AD';
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -488,16 +497,16 @@ export const AdminLayout: React.FC = () => {
           <div className={`flex items-center justify-between ${sidebarCollapsed ? 'flex-col gap-2' : ''}`}>
             <div className="flex items-center gap-2.5 min-w-0">
               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#E50914] to-[#B80710] border border-white/10 flex items-center justify-center text-xs font-sans text-white font-bold shrink-0 shadow-sm">
-                {roleMeta.accountProfile.avatarLabel}
+                {adminInitials}
               </div>
               {!sidebarCollapsed && (
                 <div className="min-w-0">
                   <div className="text-xs font-semibold text-white truncate">
-                    {roleMeta.accountProfile.displayName}
+                    {adminDisplayName}
                   </div>
                   <div className="text-[10px] font-mono text-[#8A94A6] truncate flex items-center gap-1">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
-                    <span className="truncate">{roleMeta.accountProfile.accountId}</span>
+                    <span className="truncate">{adminUsername}</span>
                   </div>
                 </div>
               )}
