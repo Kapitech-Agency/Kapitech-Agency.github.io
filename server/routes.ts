@@ -3249,6 +3249,11 @@ const documentAccessMiddleware = requireAnyPermission(
   'canViewFinancials',
   'canViewSecurityAuditLogs'
 );
+const documentMutationMiddleware = requireAnyPermission(
+  'canManageProjects',
+  'canManageCrm',
+  'canAccessServerAndApi'
+);
 
 apiRouter.get('/documents', requireAuth, documentAccessMiddleware, (req: AuthenticatedRequest, res: Response): void => {
   const db = getDatabase();
@@ -3260,7 +3265,7 @@ apiRouter.get('/documents', requireAuth, documentAccessMiddleware, (req: Authent
   });
 });
 
-apiRouter.post('/documents', requireAuth, documentAccessMiddleware, (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.post('/documents', requireAuth, documentMutationMiddleware, (req: AuthenticatedRequest, res: Response): void => {
   const data = req.body || {};
   const sourceType = data.url ? 'external_link' : 'private_file';
   const name = cleanText(data.name || 'Document', 240);
@@ -3268,7 +3273,9 @@ apiRouter.post('/documents', requireAuth, documentAccessMiddleware, (req: Authen
 
   if (sourceType === 'external_link') {
     const externalUrl = cleanOptionalUrl(data.url);
-    if (!externalUrl) {
+    let externalProtocol = '';
+    try { externalProtocol = new URL(externalUrl).protocol; } catch {}
+    if (!externalUrl || externalProtocol !== 'https:') {
       res.status(400).json({ success: false, error: 'Only valid HTTPS document links are allowed.' });
       return;
     }
@@ -3322,7 +3329,7 @@ apiRouter.post('/documents', requireAuth, documentAccessMiddleware, (req: Authen
   res.status(201).json({ success: true, document: publicDocument(newDoc) });
 });
 
-apiRouter.put('/documents/:id/content', requireAuth, documentAccessMiddleware, (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.put('/documents/:id/content', requireAuth, documentMutationMiddleware, (req: AuthenticatedRequest, res: Response): void => {
   const { id } = req.params;
   const db = getDatabase();
   const document = (db.documents || []).find((item: any) => item.id === id);
@@ -3442,7 +3449,7 @@ apiRouter.get('/documents/:id/content', requireAuth, documentAccessMiddleware, (
   }
 });
 
-apiRouter.delete('/documents/:id', requireAuth, documentAccessMiddleware, (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.delete('/documents/:id', requireAuth, documentMutationMiddleware, (req: AuthenticatedRequest, res: Response): void => {
   const { id } = req.params;
   const db = getDatabase();
   const document = (db.documents || []).find((item: any) => item.id === id);
