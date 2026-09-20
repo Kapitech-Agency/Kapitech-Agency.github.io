@@ -64,6 +64,22 @@ export interface AgencyProject {
 const PROJECTS_STORAGE_KEY = 'kapitech_agency_active_projects_v2';
 export const PROJECT_EVENT_NAME = 'kapitech_projects_updated';
 
+import { api } from './apiClient';
+
+let projectServerHydrationStarted = false;
+
+function hydrateProjectsFromServer(): void {
+  if (!import.meta.env.PROD || projectServerHydrationStarted) return;
+  projectServerHydrationStarted = true;
+  api.projects.getAll().then((res) => {
+    if (!res.success || !Array.isArray(res.data?.projects)) return;
+    localStorage.setItem(PROJECTS_STORAGE_KEY, JSON.stringify(res.data.projects));
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent(PROJECT_EVENT_NAME, { detail: res.data.projects }));
+    }
+  }).catch(() => {});
+}
+
 export const INITIAL_DEFAULT_PROJECTS: AgencyProject[] = [
   {
     id: 'proj_101',
@@ -244,6 +260,7 @@ export const INITIAL_DEFAULT_PROJECTS: AgencyProject[] = [
 ];
 
 export const getAgencyProjects = (): AgencyProject[] => {
+  hydrateProjectsFromServer();
   try {
     if (localStorage.getItem('kapitech_agency_active_projects_v1')) {
       localStorage.removeItem('kapitech_agency_active_projects_v1');
@@ -279,6 +296,9 @@ export const saveAgencyProject = (project: AgencyProject): void => {
 
   localStorage.setItem(PROJECTS_STORAGE_KEY, JSON.stringify(updated));
   window.dispatchEvent(new CustomEvent(PROJECT_EVENT_NAME, { detail: updated }));
+
+  const request = idx >= 0 ? api.projects.update(project.id, project) : api.projects.create(project);
+  request.catch(() => {});
 };
 
 export const deleteAgencyProject = (id: string): void => {
@@ -286,6 +306,7 @@ export const deleteAgencyProject = (id: string): void => {
   const updated = current.filter(p => p.id !== id);
   localStorage.setItem(PROJECTS_STORAGE_KEY, JSON.stringify(updated));
   window.dispatchEvent(new CustomEvent(PROJECT_EVENT_NAME, { detail: updated }));
+  api.projects.delete(id).catch(() => {});
 };
 
 export const updateTaskStatus = (projectId: string, taskId: string, newStatus: TaskStatus): void => {
