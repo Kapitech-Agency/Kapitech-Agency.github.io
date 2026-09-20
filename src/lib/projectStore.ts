@@ -270,6 +270,7 @@ export const getActiveProjects = getAgencyProjects;
 
 export const saveAgencyProject = (project: AgencyProject): void => {
   const current = getAgencyProjects();
+  const previous = [...current];
   const idx = current.findIndex(p => p.id === project.id);
   const now = new Date().toISOString();
 
@@ -285,15 +286,30 @@ export const saveAgencyProject = (project: AgencyProject): void => {
   window.dispatchEvent(new CustomEvent(PROJECT_EVENT_NAME, { detail: updated }));
 
   const request = idx >= 0 ? api.projects.update(project.id, project) : api.projects.create(project);
-  request.catch(() => {});
+  request.then((res) => {
+    if (res.success && res.data?.success !== false) return;
+    projectsCache = previous;
+    window.dispatchEvent(new CustomEvent(PROJECT_EVENT_NAME, { detail: previous }));
+  }).catch(() => {
+    projectsCache = previous;
+    window.dispatchEvent(new CustomEvent(PROJECT_EVENT_NAME, { detail: previous }));
+  });
 };
 
 export const deleteAgencyProject = (id: string): void => {
   const current = getAgencyProjects();
+  const previous = [...current];
   const updated = current.filter(p => p.id !== id);
   projectsCache = updated;
   window.dispatchEvent(new CustomEvent(PROJECT_EVENT_NAME, { detail: updated }));
-  api.projects.delete(id).catch(() => {});
+  api.projects.delete(id).then((res) => {
+    if (res.success && res.data?.success !== false) return;
+    projectsCache = previous;
+    window.dispatchEvent(new CustomEvent(PROJECT_EVENT_NAME, { detail: previous }));
+  }).catch(() => {
+    projectsCache = previous;
+    window.dispatchEvent(new CustomEvent(PROJECT_EVENT_NAME, { detail: previous }));
+  });
 };
 
 export const updateTaskStatus = (projectId: string, taskId: string, newStatus: TaskStatus): void => {
