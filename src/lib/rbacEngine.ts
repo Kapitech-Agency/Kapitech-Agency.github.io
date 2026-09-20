@@ -233,12 +233,17 @@ const MODULE_PERMISSION_MAP: Record<string, keyof ServerPermissions | 'authentic
   invoicing: 'canManageInvoices',
   clients: 'canManageClients',
   vendors: 'canManageVendors',
-  documents: 'authenticated',
   services: 'canManageCmsContent',
   cms_projects: 'canManageCmsContent',
   testimonials: 'canManageCmsContent',
   settings: 'authenticated',
   rbac: 'canManageAdminAccounts'
+};
+
+const MODULE_ANY_PERMISSION_MAP: Record<string, Array<keyof ServerPermissions>> = {
+  clients: ['canManageClients', 'canManageCrm'],
+  documents: ['canManageProjects', 'canManageCrm', 'canViewFinancials', 'canViewSecurityAuditLogs'],
+  settings: ['canManageAdminAccounts', 'canAccessServerAndApi', 'canViewSecurityAuditLogs', 'canManageCrm', 'canManageProjects', 'canViewFinancials']
 };
 
 export function useRbacRole(
@@ -278,8 +283,10 @@ export function useRbacRole(
     isAllowed: (key: string) => {
       if (actualStakeholderType === 'Master') return true;
       if (serverPermissions) {
+        const anyPermissions = MODULE_ANY_PERMISSION_MAP[key];
+        if (anyPermissions) return anyPermissions.some(permission => Boolean(serverPermissions[permission]));
         const permission = MODULE_PERMISSION_MAP[key];
-        return permission === 'authenticated' ? true : Boolean(serverPermissions[permission]);
+        return permission === 'authenticated' ? true : Boolean(permission && serverPermissions[permission]);
       }
       return isModuleAllowed(currentRole, key);
     }
