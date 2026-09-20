@@ -3017,7 +3017,51 @@ function publicDocument(document: any): any {
 
 function privateDocumentPath(document: any): string {
   if (!document?.storageKey || !/^[a-f0-9]{64}$/.test(String(document.storageKey))) return '';
-  return path.join(PRIVATE_DOCUMENT_DIR, `${document.storageKey}.bin`);
+  return path.join(PRIVATE_DOCUMENT_DIR, `${document.storageKey}.enc`);
+}
+
+function getDocumentEncryptionKey(): Buffer {
+  const raw = process.env.KAPITECH_DATA_ENCRYPTION_KEY?.trim() || '';
+  const key = /^[0-9a-f]{64}$/i.test(raw)
+    ? Buffer.from(raw, 'hex')
+    : Buffer.from(raw, 'base64');
+  if (key.length !== 32) {
+    throw new Error('Document encryption key is not configured correctly.');
+  }
+  return key;
+}
+
+function encryptPrivateDocument(buffer: Buffer): Buffer {
+  const iv = crypto.randomBytes(12);
+  const cipher = crypto.createCipheriv('aes-256-gcm', getDocumentEncryptionKey(), iv);
+  const encrypted = Buffer.concat([cipher.update(buffer), cipher.final()]);
+  const authTag = cipher.getAuthTag();
+  return Buffer.from(
+    'KAPI-FILE-V1:' + JSON.stringify({
+      iv: iv.toString('base64'),
+      authTag: authTag.toString('base64'),
+      data: encrypted.toString('base64')
+    }),
+    'utf8'
+  );
+}
+
+function decryptPrivateDocument(payload: Buffer): Buffer {
+  const raw = payload.toString('utf8');
+  if (!raw.startsWith('KAPI-FILE-V1:')) {
+    throw new Error('Private document encryption header is invalid.');
+  }
+  const envelope = JSON.parse(raw.slice('KAPI-FILE-V1:'.length));
+  const decipher = crypto.createDecipheriv(
+    'aes-256-gcm',
+    getDocumentEncryptionKey(),
+    Buffer.from(envelope.iv, 'base64')
+  );
+  decipher.setAuthTag(Buffer.from(envelope.authTag, 'base64'));
+  return Buffer.concat([
+    decipher.update(Buffer.from(envelope.data, 'base64')),
+    decipher.final()
+  ]);
 }
 
 function ensurePrivateDocumentDirectory(): void {
@@ -3139,7 +3183,7 @@ apiRouter.put('/documents/:id/content', requireAuth, documentAccessMiddleware, (
 
   const tempPath = `${targetPath}.${process.pid}.${Date.now()}.tmp`;
   try {
-    fs.writeFileSync(tempPath, body, { flag: 'wx', mode: 0o600 });
+    fs.writeFileSync(tempPath, encryptPrivateDocument(body), { flag: 'wx', mode: 0o600 });
     try { fs.chmodSync(tempPath, 0o600); } catch {}
     if (fs.existsSync(targetPath)) fs.unlinkSync(targetPath);
     fs.renameSync(tempPath, targetPath);
@@ -3195,11 +3239,24 @@ apiRouter.get('/documents/:id/content', requireAuth, documentAccessMiddleware, (
   res.setHeader('Content-Type', document.mimeType || 'application/octet-stream');
   res.setHeader('Content-Disposition', `attachment; filename*=UTF-8''${encodeURIComponent(String(document.name || 'document'))}`);
   res.setHeader('X-Content-Type-Options', 'nosniff');
-  res.sendFile(filePath, (error) => {
-    if (error && !res.headersSent) {
-      res.status(500).json({ success: false, error: 'Document delivery failed.' });
-    }
-  });
+  try {
+    const encryptedPayload = fs.readFileSync(filePath);
+    const content = decryptPrivateDocument(encryptedPayload);
+    res.setHeader('Content-Length', content.length);
+    res.end(content);
+    recordAuditLog({
+      action: 'DOCUMENT_DOWNLOADED',
+      actor: req.user!.username,
+      actorRole: req.user!.role,
+      ip: req.ip,
+      userAgent: req.headers['user-agent'] as string,
+      details: `Downloaded private document "${document.name}".`,
+      severity: 'info'
+    });
+  } catch (error) {
+    console.error('[Documents] Private download failed:', error);
+    res.status(500).json({ success: false, error: 'Document delivery failed.' });
+  }
 });
 
 apiRouter.delete('/documents/:id', requireAuth, documentAccessMiddleware, (req: AuthenticatedRequest, res: Response): void => {
@@ -3271,6 +3328,52 @@ apiRouter.post('/system/backups', requireAuth, backupAccessMiddleware, (req: Aut
   } catch (error) {
     console.error('[Backup] Manual backup failed:', error);
     res.status(500).json({ success: false, error: 'Database backup could not be created.' });
+  }
+});
+
+apiRouter.get('/system/backups/download', requireAuth, backupAccessMiddleware, (req: AuthenticatedRequest, res: Response): void => {
+  try {
+    const backup = createDatabaseBackup(true);
+    if (!backup) {
+      res.status(404).json({ success: false, error: 'No persistent database file exists yet.' });
+      return;
+    }
+
+    const dataDir = process.env.KAPITECH_DATA_DIR
+      ? path.resolve(process.env.KAPITECH_DATA_DIR)
+      : path.join(process.env.HOME || process.cwd(), '.kapitech-ams-data');
+    const backupDir = process.env.KAPITECH_DB_BACKUP_DIR
+      ? path.resolve(process.env.KAPITECH_DB_BACKUP_DIR)
+      : path.join(dataDir, 'backups');
+    const candidates = listDatabaseBackups();
+    const latest = candidates[0];
+    if (!latest) {
+      res.status(404).json({ success: false, error: 'Backup file is not available.' });
+      return;
+    }
+
+    const backupPath = path.join(backupDir, latest.name);
+    if (!fs.existsSync(backupPath)) {
+      res.status(404).json({ success: false, error: 'Backup file is not available.' });
+      return;
+    }
+
+    res.setHeader('Cache-Control', 'private, no-store');
+    res.setHeader('Content-Type', 'application/octet-stream');
+    res.setHeader('Content-Disposition', `attachment; filename*=UTF-8''${encodeURIComponent(latest.name)}`);
+    res.sendFile(backupPath);
+    recordAuditLog({
+      action: 'DATABASE_BACKUP_DOWNLOADED',
+      actor: req.user!.username,
+      actorRole: req.user!.role,
+      ip: req.ip,
+      userAgent: req.headers['user-agent'] as string,
+      details: `Downloaded encrypted database backup "${latest.name}".`,
+      severity: 'warning'
+    });
+  } catch (error) {
+    console.error('[Backup] Encrypted backup download failed:', error);
+    res.status(500).json({ success: false, error: 'Database backup download failed.' });
   }
 });
 
