@@ -160,6 +160,19 @@ function normalizeStringArray(value: unknown, maxItems = 50, maxLength = 160): s
   return value.slice(0, maxItems).map(item => cleanText(item, maxLength)).filter(Boolean);
 }
 
+function getInvoicePaidAmount(invoice: any): number {
+  const payments = Array.isArray(invoice?.payments) ? invoice.payments : [];
+  if (payments.length > 0) {
+    return payments.reduce((sum: number, payment: any) => sum + (Number(payment?.amount) || 0), 0);
+  }
+  return Math.max(0, Number(invoice?.amountPaid) || 0);
+}
+
+function getInvoiceBalanceDue(invoice: any): number {
+  const total = Math.max(0, Number(invoice?.total) || 0);
+  return Math.max(0, total - getInvoicePaidAmount(invoice));
+}
+
 function pushNotification(
   db: ReturnType<typeof getDatabase>,
   input: {
@@ -1842,9 +1855,9 @@ apiRouter.get('/finance/metrics', requireAuth, requirePermission('canViewFinanci
 
   for (const inv of invoices) {
     totalBilled += inv.total || 0;
-    const paid = inv.amountPaid || 0;
+    const paid = getInvoicePaidAmount(inv);
     totalRevenueCollected += paid;
-    const due = inv.balanceDue !== undefined ? inv.balanceDue : Math.max(0, (inv.total || 0) - paid);
+    const due = getInvoiceBalanceDue(inv);
     if (inv.status !== 'paid' && inv.status !== 'cancelled') {
       totalOutstanding += due;
     }
@@ -3249,9 +3262,7 @@ const handleOverview = (req: AuthenticatedRequest, res: Response): void => {
   const overdueInvoicesCount = overdueInvoices.length;
   const overdueReceivables = overdueInvoices.reduce(
     (sum, i) => sum + (
-      i.balanceDue !== undefined
-        ? i.balanceDue
-        : Math.max(0, (i.total || 0) - (i.amountPaid || 0))
+      getInvoiceBalanceDue(i)
     ),
     0
   );
@@ -3260,18 +3271,13 @@ const handleOverview = (req: AuthenticatedRequest, res: Response): void => {
     .filter(i => i.status !== 'paid' && i.status !== 'cancelled')
     .reduce(
       (sum, i) => sum + (
-        i.balanceDue !== undefined
-          ? i.balanceDue
-          : Math.max(0, (i.total || 0) - (i.amountPaid || 0))
+        getInvoiceBalanceDue(i)
       ),
       0
     );
 
   const totalBilled = invoices.reduce((sum, i) => sum + (Number(i.total) || 0), 0);
-  const revenueCollected = invoices.reduce((sum, invoice) => {
-    const payments = Array.isArray(invoice.payments) ? invoice.payments : [];
-    return sum + payments.reduce((paymentSum: number, payment: any) => paymentSum + (Number(payment.amount) || 0), 0);
-  }, 0);
+  const revenueCollected = invoices.reduce((sum, invoice) => sum + getInvoicePaidAmount(invoice), 0);
   const totalExpenses = expenses.reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
 
   const currentMonthKey = now.toISOString().slice(0, 7);
