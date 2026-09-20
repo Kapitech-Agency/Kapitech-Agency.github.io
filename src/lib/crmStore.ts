@@ -317,6 +317,7 @@ export const getCmsLeads = (): CrmLead[] => {
 
 export const saveCrmLead = (lead: CrmLead): void => {
   const current = getCmsLeads();
+  const previous = [...current];
   const existingIdx = current.findIndex(l => l.id === lead.id);
   const now = new Date().toISOString();
   
@@ -349,15 +350,30 @@ export const saveCrmLead = (lead: CrmLead): void => {
   const request = existingIdx >= 0
     ? api.crm.updateDeal(lead.id, payload)
     : api.crm.createDeal(payload);
-  request.catch(() => {});
+  request.then((res) => {
+    if (res.success && res.data?.success !== false) return;
+    crmCache = previous;
+    window.dispatchEvent(new CustomEvent(CRM_EVENT_NAME, { detail: previous }));
+  }).catch(() => {
+    crmCache = previous;
+    window.dispatchEvent(new CustomEvent(CRM_EVENT_NAME, { detail: previous }));
+  });
 };
 
 export const deleteCrmLead = (id: string): void => {
   const current = getCmsLeads();
+  const previous = [...current];
   const filtered = current.filter(l => l.id !== id);
   crmCache = filtered;
   window.dispatchEvent(new CustomEvent(CRM_EVENT_NAME, { detail: filtered }));
-  api.crm.deleteDeal(id).catch(() => {});
+  api.crm.deleteDeal(id).then((res) => {
+    if (res.success && res.data?.success !== false) return;
+    crmCache = previous;
+    window.dispatchEvent(new CustomEvent(CRM_EVENT_NAME, { detail: previous }));
+  }).catch(() => {
+    crmCache = previous;
+    window.dispatchEvent(new CustomEvent(CRM_EVENT_NAME, { detail: previous }));
+  });
 };
 
 export const updateLeadStage = (id: string, newStage: CrmStage): void => {
