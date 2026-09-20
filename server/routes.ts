@@ -1894,7 +1894,25 @@ apiRouter.delete('/documents/:id', requireAuth, requireAnyPermission('canManageP
 
 apiRouter.get('/notifications', requireAuth, (req: AuthenticatedRequest, res: Response): void => {
   const db = getDatabase();
-  res.json({ success: true, notifications: db.notifications || [] });
+  const isMaster = req.user!.stakeholderType === 'Master';
+  const canViewFinance = isMaster || Boolean(req.user!.permissions?.canViewFinancials || req.user!.permissions?.canManageInvoices);
+  const canViewCrm = isMaster || Boolean(req.user!.permissions?.canManageCrm);
+  const canViewApprovals = isMaster || Boolean(req.user!.permissions?.canApproveBudgets || req.user!.permissions?.canManageProjects);
+
+  const notifications = (db.notifications || []).filter((notification) => {
+    switch (notification.type) {
+      case 'finance':
+        return canViewFinance;
+      case 'lead':
+        return canViewCrm;
+      case 'approval':
+        return canViewApprovals;
+      default:
+        return true;
+    }
+  });
+
+  res.json({ success: true, notifications });
 });
 
 apiRouter.post('/notifications/:id/read', requireAuth, (req: AuthenticatedRequest, res: Response): void => {
