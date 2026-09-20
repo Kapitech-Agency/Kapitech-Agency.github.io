@@ -10,6 +10,7 @@ interface LockoutEntry {
 
 const loginLockouts = new Map<string, LockoutEntry>();
 const publicRateLimits = new Map<string, { count: number; resetAt: number }>();
+const authenticatedRateLimits = new Map<string, { count: number; resetAt: number }>();
 
 const MAX_FAILED_ATTEMPTS = 5;
 const LOCKOUT_DURATION_MS = 5 * 60 * 1000; // 5 minutes
@@ -125,14 +126,8 @@ function parseCookies(cookieHeader?: string): Record<string, string> {
 
 // Authentication middleware
 export function authenticate(req: AuthenticatedRequest, res: Response, next: NextFunction): void {
-  const authHeader = req.headers.authorization;
   let token = '';
-
-  if (authHeader && authHeader.startsWith('Bearer ')) {
-    token = authHeader.slice(7).trim();
-  } else if (req.headers['x-session-token']) {
-    token = String(req.headers['x-session-token']).trim();
-  } else if (req.headers.cookie) {
+  if (req.headers.cookie) {
     const cookies = parseCookies(req.headers.cookie);
     if (cookies.kapi_session) {
       token = cookies.kapi_session.trim();
@@ -192,6 +187,81 @@ export function requirePermission(permissionKey: keyof StoredUser['permissions']
       return;
     }
 
+    next();
+  };
+}
+
+export function requireMaster(req: AuthenticatedRequest, res: Response, next: NextFunction): void {
+  if (!req.user) {
+    res.status(401).json({ success: false, error: 'Unauthenticated' });
+    return;
+  }
+
+  if (req.user.stakeholderType !== 'Master') {
+    recordAuditLog({
+      action: 'ACCESS_DENIED',
+      actor: req.user.username,
+      actorRole: req.user.role,
+      ip: req.ip || '',
+      userAgent: req.headers['user-agent'] || '',
+      details: 'Master-only endpoint denied: ' + req.originalUrl,
+      severity: 'warning'
+    });
+    res.status(403).json({ success: false, error: 'Master administrator access required.' });
+    return;
+  }
+
+  next();
+}
+
+export function requireAnyPermission(...permissionKeys: Array<keyof StoredUser['permissions']>) {
+  return (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
+    if (!req.user) {
+      res.status(401).json({ success: false, error: 'Unauthenticated' });
+      return;
+    }
+
+    if (req.user.stakeholderType === 'Master') {
+      next();
+      return;
+    }
+
+    if (!req.user.permissions || !permissionKeys.some((key) => Boolean(req.user!.permissions[key]))) {
+      recordAuditLog({
+        action: 'ACCESS_DENIED',
+        actor: req.user.username,
+        actorRole: req.user.role,
+        ip: req.ip || '',
+        userAgent: req.headers['user-agent'] || '',
+        details: 'Access denied: missing any required permission [' + permissionKeys.join(', ') + '] on endpoint ' + req.originalUrl,
+        severity: 'warning'
+      });
+      res.status(403).json({ success: false, error: 'Unauthorized: insufficient permissions.' });
+      return;
+    }
+
+    next();
+  };
+}
+
+export function rateLimitAuthenticated(maxRequests: number = 30, windowMs: number = 60 * 1000) {
+  return (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
+    const key = req.user?.id || req.ip || 'unknown';
+    const now = Date.now();
+    const record = authenticatedRateLimits.get(key);
+
+    if (!record || record.resetAt <= now) {
+      authenticatedRateLimits.set(key, { count: 1, resetAt: now + windowMs });
+      next();
+      return;
+    }
+
+    if (record.count >= maxRequests) {
+      res.status(429).json({ success: false, error: 'Too many requests. Please try again shortly.' });
+      return;
+    }
+
+    record.count += 1;
     next();
   };
 }
