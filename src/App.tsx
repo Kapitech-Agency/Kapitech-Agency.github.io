@@ -28,6 +28,7 @@ const CookiePolicy = lazy(() => import('./pages/CookiePolicy').then((m) => ({ de
 const NotFound = lazy(() => import('./pages/NotFound'));
 
 const AdminLogin = lazy(() => import('./pages/admin/AdminLogin').then((m) => ({ default: m.AdminLogin })));
+const AdminLayout = lazy(() => import('./pages/admin/AdminLayout').then((m) => ({ default: m.AdminLayout })));
 const AdminInbox = lazy(() => import('./pages/admin/AdminInbox').then((m) => ({ default: m.AdminInbox })));
 const AdminCrm = lazy(() => import('./pages/admin/AdminCrm').then((m) => ({ default: m.AdminCrm })));
 const AdminInvoicing = lazy(() => import('./pages/admin/AdminInvoicing').then((m) => ({ default: m.AdminInvoicing })));
