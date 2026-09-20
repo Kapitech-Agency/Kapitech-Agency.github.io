@@ -17,6 +17,8 @@ CREATE TABLE users (
   status VARCHAR(16) NOT NULL,
   mfa_enabled BOOLEAN NOT NULL DEFAULT FALSE,
   mfa_secret_encrypted TEXT NULL,
+  mfa_pending_secret_encrypted TEXT NULL,
+  mfa_pending_secret_created_at TIMESTAMP NULL,
   created_at TIMESTAMP NOT NULL,
   last_login_at TIMESTAMP NULL
 );
@@ -30,6 +32,8 @@ CREATE TABLE sessions (
   remember_me BOOLEAN NOT NULL DEFAULT FALSE,
   ip VARCHAR(128) NULL,
   user_agent VARCHAR(500) NULL,
+  kind VARCHAR(16) NOT NULL DEFAULT 'session',
+  mfa_failed_attempts INTEGER NOT NULL DEFAULT 0,
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
@@ -241,6 +245,17 @@ CREATE TABLE documents (
 CREATE INDEX idx_documents_client ON documents(client_id);
 CREATE INDEX idx_documents_project ON documents(project_id);
 CREATE INDEX idx_documents_status ON documents(status);
+
+CREATE TABLE document_access (
+  document_id VARCHAR(64) NOT NULL,
+  user_id VARCHAR(64) NOT NULL,
+  granted_at TIMESTAMP NOT NULL,
+  PRIMARY KEY (document_id, user_id),
+  FOREIGN KEY (document_id) REFERENCES documents(id) ON DELETE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE INDEX idx_document_access_user ON document_access(user_id);
 
 CREATE TABLE vendors (
   id VARCHAR(64) PRIMARY KEY,
