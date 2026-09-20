@@ -1,7 +1,7 @@
 /**
  * Admin Authentication, Session & Security Module for Kapitech Agency
  * Interfaces directly with the server-side API (/api/auth) for authentic
- * PBKDF2 credential verification, cryptographically secure sessions,
+ * server-side password verification, cryptographically secure sessions,
  * brute-force lockout, and tamper-resistant audit logging.
  */
 
@@ -77,9 +77,6 @@ export interface SecurityAuditLog {
   severity: 'info' | 'warning' | 'critical';
 }
 
-const ADMIN_SESSION_KEY = 'kapitech_admin_session_v1';
-const ADMIN_LOCKOUT_KEY = 'kapitech_admin_lockout_v1';
-
 export const DEFAULT_PERMISSIONS_MASTER: StakeholderPermissions = {
   canViewFinancials: true,
   canManageInvoices: true,
@@ -150,7 +147,7 @@ const ADMIN_PROFILE_KEY = 'kapitech_admin_profile_v2';
 export function getAdminSession(): AdminSession | null {
   if (typeof window === 'undefined') return null;
   try {
-    const raw = sessionStorage.getItem(ADMIN_PROFILE_KEY) || localStorage.getItem(ADMIN_PROFILE_KEY);
+    const raw = sessionStorage.getItem(ADMIN_PROFILE_KEY);
     if (!raw) return null;
     const session = JSON.parse(raw) as AdminSession;
     if (!session?.user || (session.expiresAt && session.expiresAt <= Date.now())) {
@@ -165,16 +162,11 @@ export function getAdminSession(): AdminSession | null {
 }
 
 export function cacheAdminSession(user: AdminUser, rememberMe: boolean): AdminSession {
-  const durationMs = rememberMe ? 30 * 24 * 60 * 60 * 1000 : 24 * 60 * 60 * 1000;
+  // Only cache the non-secret user profile for the current browser session.
+  // The actual authentication state remains in the HttpOnly server cookie.
+  const durationMs = rememberMe ? 24 * 60 * 60 * 1000 : 12 * 60 * 60 * 1000;
   const session: AdminSession = { user, expiresAt: Date.now() + durationMs, rememberMe };
-  const serialized = JSON.stringify(session);
-  if (rememberMe) {
-    localStorage.setItem(ADMIN_PROFILE_KEY, serialized);
-    sessionStorage.removeItem(ADMIN_PROFILE_KEY);
-  } else {
-    sessionStorage.setItem(ADMIN_PROFILE_KEY, serialized);
-    localStorage.removeItem(ADMIN_PROFILE_KEY);
-  }
+  sessionStorage.setItem(ADMIN_PROFILE_KEY, JSON.stringify(session));
   return session;
 }
 
@@ -206,7 +198,6 @@ export function logoutAdmin(): void {
   void api.auth.logout().catch(() => {});
   if (typeof window !== 'undefined') {
     sessionStorage.removeItem(ADMIN_PROFILE_KEY);
-    localStorage.removeItem(ADMIN_PROFILE_KEY);
     localStorage.removeItem('kapitech_session_token');
     sessionStorage.removeItem('kapitech_session_token');
     localStorage.removeItem('kapitech_admin_session_v1');
