@@ -1,22 +1,27 @@
 import { Router, Request, Response } from 'express';
 import crypto from 'crypto';
 import { 
-  getDatabase, 
-  saveDatabase, 
-  recordAuditLog, 
-  hashPassword, 
-  generateSalt, 
-  StoredUser 
+  getDatabase,
+  saveDatabase,
+  recordAuditLog,
+  hashSessionToken,
+  StoredUser
 } from './db';
 import { 
-  authenticate, 
-  requireAuth, 
-  requirePermission, 
-  createSession, 
-  revokeSession, 
-  checkLockout, 
-  recordFailedLogin, 
-  clearLockout, 
+  authenticate,
+  validateCsrf,
+  setCsrfCookie,
+  clearCsrfCookie,
+  requireAuth,
+  requirePermission,
+  createSession,
+  revokeSession,
+  revokeAllUserSessions,
+  verifyPasswordForUser,
+  preparePassword,
+  checkLockout,
+  recordFailedLogin,
+  clearLockout,
   AuthenticatedRequest,
   rateLimitPublic,
   rateLimitAuthenticated,
@@ -28,6 +33,7 @@ export const apiRouter = Router();
 
 // Apply auth header checking on all API requests
 apiRouter.use(authenticate);
+apiRouter.use(validateCsrf);
 
 // ----------------------------------------------------
 // 1. AUTHENTICATION & SESSION MANAGEMENT
@@ -44,7 +50,7 @@ apiRouter.post('/auth/login', rateLimitPublic(10, 15 * 60 * 1000), (req: Request
   }
 
   const cleanIdentifier = String(identifier).trim().toLowerCase();
-  const lockout = checkLockout(cleanIdentifier);
+  const lockout = checkLockout(cleanIdentifier, ip);
   if (lockout.isLocked) {
     res.status(429).json({
       success: false,
@@ -78,8 +84,8 @@ apiRouter.post('/auth/login', rateLimitPublic(10, 15 * 60 * 1000), (req: Request
   );
 
   if (!user || user.status === 'suspended') {
-    recordFailedLogin(cleanIdentifier);
-    const lockoutState = checkLockout(cleanIdentifier);
+    recordFailedLogin(cleanIdentifier, ip);
+    const lockoutState = checkLockout(cleanIdentifier, ip);
     recordAuditLog({
       action: 'LOGIN_FAILED',
       actor: cleanIdentifier,
@@ -101,11 +107,9 @@ apiRouter.post('/auth/login', rateLimitPublic(10, 15 * 60 * 1000), (req: Request
     return;
   }
 
-  // Password verification: PBKDF2 with user's unique salt
-  const computedHash = hashPassword(password, user.salt);
-  if (computedHash !== user.passwordHash) {
-    recordFailedLogin(cleanIdentifier);
-    const lockoutState = checkLockout(cleanIdentifier);
+  if (!verifyPasswordForUser(password, user)) {
+    recordFailedLogin(cleanIdentifier, ip);
+    const lockoutState = checkLockout(cleanIdentifier, ip);
     recordAuditLog({
       action: 'LOGIN_FAILED',
       actor: user.username,
@@ -129,7 +133,7 @@ apiRouter.post('/auth/login', rateLimitPublic(10, 15 * 60 * 1000), (req: Request
 
   // Success
   try {
-    clearLockout(cleanIdentifier);
+    clearLockout(cleanIdentifier, ip);
     const nowIso = new Date().toISOString();
     user.lastLogin = nowIso;
     const session = createSession(user, ip, userAgent, Boolean(rememberMe));
@@ -144,12 +148,11 @@ apiRouter.post('/auth/login', rateLimitPublic(10, 15 * 60 * 1000), (req: Request
     severity: 'info'
   });
 
-  // Set secure HttpOnly session cookie
-  const cookieMaxAge = rememberMe ? 30 * 24 * 3600 : 24 * 3600;
-    res.setHeader(
-      'Set-Cookie',
-      `kapi_session=${session.token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${cookieMaxAge}; ${process.env.NODE_ENV === 'production' ? 'Secure;' : ''}`
-    );
+  // Set secure HttpOnly session cookie and a separate CSRF token cookie.
+  const cookieMaxAge = rememberMe ? 24 * 3600 : 12 * 3600;
+  const secureCookie = process.env.NODE_ENV === 'production' ? ' Secure;' : '';
+  res.append('Set-Cookie', `kapi_session=${session.token}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${cookieMaxAge};${secureCookie}`);
+  setCsrfCookie(res);
 
     res.json({
       success: true,
@@ -190,7 +193,9 @@ apiRouter.post('/auth/logout', requireAuth, (req: AuthenticatedRequest, res: Res
       severity: 'info'
     });
   }
-  res.setHeader('Set-Cookie', 'kapi_session=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0;');
+  const secureCookie = process.env.NODE_ENV === 'production' ? ' Secure;' : '';
+  res.append('Set-Cookie', `kapi_session=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0;${secureCookie}`);
+  clearCsrfCookie(res);
   res.json({ success: true, message: 'Logged out successfully.' });
 });
 
@@ -222,13 +227,12 @@ apiRouter.post('/auth/change-password', requireAuth, rateLimitAuthenticated(10, 
     return;
   }
 
-  if (typeof newPassword !== 'string' || newPassword.length < 12) {
-    res.status(400).json({ success: false, error: 'New password must be at least 12 characters.' });
+  if (typeof newPassword !== 'string' || newPassword.length < 12 || newPassword.length > 128) {
+    res.status(400).json({ success: false, error: 'New password must be 12 to 128 characters.' });
     return;
   }
 
-  const currentHash = hashPassword(currentPassword, user.salt);
-  if (currentHash !== user.passwordHash) {
+  if (!verifyPasswordForUser(currentPassword, user)) {
     res.status(400).json({ success: false, error: 'Current password is incorrect.' });
     return;
   }
@@ -236,10 +240,14 @@ apiRouter.post('/auth/change-password', requireAuth, rateLimitAuthenticated(10, 
   const db = getDatabase();
   const dbUser = db.users.find(u => u.id === user.id);
   if (dbUser) {
-    const newSalt = generateSalt();
-    dbUser.salt = newSalt;
-    dbUser.passwordHash = hashPassword(newPassword, newSalt);
+    const prepared = preparePassword(newPassword);
+    dbUser.salt = prepared.salt;
+    dbUser.passwordHash = prepared.passwordHash;
+    dbUser.passwordAlgorithm = prepared.passwordAlgorithm;
     saveDatabase(db);
+    if (req.sessionToken) {
+      revokeAllUserSessions(user.id, hashSessionToken(req.sessionToken));
+    }
 
     recordAuditLog({
       action: 'PASSWORD_CHANGED',
@@ -264,8 +272,7 @@ apiRouter.post('/auth/verify-password', requireAuth, rateLimitAuthenticated(10, 
     return;
   }
 
-  const computedHash = hashPassword(password, user.salt);
-  if (computedHash !== user.passwordHash) {
+  if (!verifyPasswordForUser(password, user)) {
     res.status(401).json({ success: false, error: 'Current password is incorrect.' });
     return;
   }
@@ -370,14 +377,15 @@ apiRouter.post('/auth/users', requireAuth, requireMaster, (req: AuthenticatedReq
     return;
   }
 
-  const salt = generateSalt();
+  const prepared = preparePassword(password);
   const newUser: StoredUser = {
     id: `usr_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
-    name,
+    name: String(name).trim(),
     username: cleanUsername,
     email: cleanEmail,
-    passwordHash: hashPassword(password, salt),
-    salt,
+    passwordHash: prepared.passwordHash,
+    salt: prepared.salt,
+    passwordAlgorithm: prepared.passwordAlgorithm,
     role: requestedRole,
     stakeholderType: resolvedStakeholderType,
     permissions: rolePermissions[requestedRole],
@@ -385,7 +393,7 @@ apiRouter.post('/auth/users', requireAuth, requireMaster, (req: AuthenticatedReq
     mfaEnabled: false,
     division: resolvedDivision,
     status: 'active',
-    lastLogin: new Date().toISOString(),
+    lastLogin: '',
     createdAt: new Date().toISOString()
   };
 
