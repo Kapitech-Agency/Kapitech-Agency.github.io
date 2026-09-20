@@ -947,11 +947,16 @@ apiRouter.get('/clients', requireAuth, requireAnyPermission('canManageClients', 
 });
 
 apiRouter.post('/clients', requireAuth, requirePermission('canManageClients'), (req: AuthenticatedRequest, res: Response): void => {
-  const clientData = req.body;
+  const clientData = req.body || {};
   const db = getDatabase();
   const newClient = {
     id: `cli_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
-    ...clientData,
+    ...pickFields(clientData, ['name','company','companyName','clientName','email','phone','website','location','industry','status','totalSpend','projectsCount','contactPersonRole','notes','avatarUrl','slaDailyAdSpendBudget','currentDailyAdSpend']),
+    name: cleanText(clientData.name || clientData.clientName, 160),
+    company: cleanText(clientData.company || clientData.companyName, 200),
+    clientName: cleanText(clientData.clientName || clientData.name, 160),
+    email: cleanText(clientData.email, 254).toLowerCase(),
+    phone: cleanText(clientData.phone, 40),
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   };
@@ -1013,11 +1018,39 @@ apiRouter.get('/projects', requireAuth, requireAnyPermission('canManageProjects'
 });
 
 apiRouter.post('/projects', requireAuth, requirePermission('canManageProjects'), (req: AuthenticatedRequest, res: Response): void => {
-  const projectData = req.body;
+  const projectData = req.body || {};
   const db = getDatabase();
+  const progressPercent = Math.min(100, Math.max(0, Number(projectData.progressPercent) || 0));
+  const budget = Number(projectData.budget);
+  if (!Number.isFinite(budget) || budget < 0 || budget > 100_000_000_000) {
+    res.status(400).json({ success: false, error: 'Project budget must be a valid non-negative amount.' });
+    return;
+  }
   const newProject = {
     id: `proj_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
-    ...projectData,
+    name: cleanText(projectData.name || projectData.title, 200),
+    title: cleanText(projectData.title || projectData.name, 200),
+    client: cleanText(projectData.client || projectData.clientCompany, 200),
+    clientName: cleanText(projectData.clientName, 160),
+    clientCompany: cleanText(projectData.clientCompany || projectData.client, 200),
+    clientEmail: cleanText(projectData.clientEmail, 254).toLowerCase(),
+    crmLeadId: cleanText(projectData.crmLeadId, 100),
+    serviceCategory: cleanText(projectData.serviceCategory, 120),
+    status: ['planning','in_progress','review','completed','on_hold'].includes(String(projectData.status)) ? String(projectData.status) : 'planning',
+    health: ['Good','At Risk','Delayed','Blocked'].includes(String(projectData.health)) ? String(projectData.health) : 'Good',
+    budget,
+    progressPercent,
+    startDate: normalizeDate(projectData.startDate, new Date().toISOString().slice(0,10)),
+    targetEndDate: normalizeDate(projectData.targetEndDate, new Date(Date.now() + 30*24*60*60*1000).toISOString().slice(0,10)),
+    teamLead: cleanText(projectData.teamLead, 160),
+    teamMembers: Array.isArray(projectData.teamMembers) ? projectData.teamMembers.slice(0,50).map((v) => cleanText(v,160)) : [],
+    techStack: Array.isArray(projectData.techStack) ? projectData.techStack.slice(0,50).map((v) => cleanText(v,120)) : [],
+    milestones: Array.isArray(projectData.milestones) ? projectData.milestones.slice(0,50) : [],
+    tasks: Array.isArray(projectData.tasks) ? projectData.tasks.slice(0,200) : [],
+    repositoryUrl: cleanOptionalUrl(projectData.repositoryUrl),
+    figmaUrl: cleanOptionalUrl(projectData.figmaUrl),
+    liveStagingUrl: cleanOptionalUrl(projectData.liveStagingUrl),
+    notes: cleanText(projectData.notes, 3000),
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   };
@@ -1492,11 +1525,34 @@ apiRouter.get('/vendors', requireAuth, requireAnyPermission('canManageVendors', 
 });
 
 apiRouter.post('/vendors', requireAuth, requirePermission('canManageVendors'), (req: AuthenticatedRequest, res: Response): void => {
-  const vendorData = req.body;
+  const vendorData = req.body || {};
   const db = getDatabase();
+  const hourlyRate = Number(vendorData.hourlyRate);
+  if (!Number.isFinite(hourlyRate) || hourlyRate < 0 || hourlyRate > 10_000_000_000) {
+    res.status(400).json({ success: false, error: 'Vendor hourly rate must be a valid non-negative amount.' });
+    return;
+  }
+  const rating = Number(vendorData.rating);
   const newVendor = {
     id: `ven_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
-    ...vendorData,
+    name: cleanText(vendorData.name, 160),
+    companyName: cleanText(vendorData.companyName, 200),
+    email: cleanText(vendorData.email, 254).toLowerCase(),
+    phone: cleanText(vendorData.phone, 40),
+    type: ['freelancer','agency_partner','contractor','saas_vendor'].includes(String(vendorData.type)) ? String(vendorData.type) : 'contractor',
+    primaryCategory: cleanText(vendorData.primaryCategory, 120),
+    skills: Array.isArray(vendorData.skills) ? vendorData.skills.slice(0,100).map((v) => cleanText(v,120)) : [],
+    hourlyRate,
+    currency: vendorData.currency === 'USD' ? 'USD' : 'IDR',
+    rating: Number.isFinite(rating) ? Math.min(5, Math.max(0, rating)) : 0,
+    completedProjectsCount: Math.max(0, Math.floor(Number(vendorData.completedProjectsCount) || 0)),
+    status: ['active','under_review','inactive','blacklisted'].includes(String(vendorData.status)) ? String(vendorData.status) : 'under_review',
+    isVetted: Boolean(vendorData.isVetted),
+    location: cleanText(vendorData.location, 160),
+    portfolioUrl: cleanOptionalUrl(vendorData.portfolioUrl),
+    githubUrl: cleanOptionalUrl(vendorData.githubUrl),
+    contracts: Array.isArray(vendorData.contracts) ? vendorData.contracts.slice(0,50) : [],
+    notes: cleanText(vendorData.notes, 3000),
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   };
@@ -1551,12 +1607,18 @@ apiRouter.get('/cms/services', (req: Request, res: Response): void => {
 });
 
 apiRouter.post('/cms/services', requireAuth, requirePermission('canManageCmsContent'), (req: AuthenticatedRequest, res: Response): void => {
-  const item = req.body;
+  const item = req.body || {};
   const db = getDatabase();
   const newService = {
-    id: item.id || `srv_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
-    ...item,
-    isPublished: item.isPublished !== undefined ? item.isPublished : true,
+    id: `srv_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
+    ...pickFields(item, [
+      'slug','type','category','title','navSubtitle','navSubtitleId','heroHeadline','heroHeadlineId',
+      'heroSubtitle','heroSubtitleId','badge','badgeId','metrics','capabilities','technologies',
+      'deliverables','testimonial','featured','isPublished'
+    ]),
+    slug: cleanText(item.slug, 160).toLowerCase().replace(/[^a-z0-9-]/g, '-'),
+    title: cleanText(item.title, 200),
+    isPublished: item.isPublished !== undefined ? Boolean(item.isPublished) : true,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   };
@@ -1567,14 +1629,15 @@ apiRouter.post('/cms/services', requireAuth, requirePermission('canManageCmsCont
 
 apiRouter.put('/cms/services/:id', requireAuth, requirePermission('canManageCmsContent'), (req: AuthenticatedRequest, res: Response): void => {
   const { id } = req.params;
-  const updates = req.body;
+  const updates = req.body || {};
   const db = getDatabase();
   const idx = db.cmsServices.findIndex(s => s.id === id);
   if (idx === -1) {
     res.status(404).json({ success: false, error: 'Service not found.' });
     return;
   }
-  db.cmsServices[idx] = { ...db.cmsServices[idx], ...updates, updatedAt: new Date().toISOString() };
+  const patch = pickFields(updates, ['slug','type','category','title','navSubtitle','navSubtitleId','heroHeadline','heroHeadlineId','heroSubtitle','heroSubtitleId','badge','badgeId','metrics','capabilities','technologies','deliverables','testimonial','featured','isPublished']);
+  db.cmsServices[idx] = { ...db.cmsServices[idx], ...patch, updatedAt: new Date().toISOString() };
   saveDatabase(db);
   res.json({ success: true, service: db.cmsServices[idx] });
 });
@@ -1597,12 +1660,17 @@ apiRouter.get('/cms/projects', (req: Request, res: Response): void => {
 });
 
 apiRouter.post('/cms/projects', requireAuth, requirePermission('canManageCmsContent'), (req: AuthenticatedRequest, res: Response): void => {
-  const item = req.body;
+  const item = req.body || {};
   const db = getDatabase();
   const newProj = {
-    id: item.id || `proj_cms_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
-    ...item,
-    isPublished: item.isPublished !== undefined ? item.isPublished : true,
+    id: `proj_cms_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
+    ...pickFields(item, [
+      'slug','title','client','industry','pillar','service','featured','image','desc','descId',
+      'challenge','challengeId','solution','solutionId','deliverables','technologies','impact','year','isPublished'
+    ]),
+    slug: cleanText(item.slug, 160).toLowerCase().replace(/[^a-z0-9-]/g, '-'),
+    title: cleanText(item.title, 240),
+    isPublished: item.isPublished !== undefined ? Boolean(item.isPublished) : true,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   };
@@ -1613,14 +1681,15 @@ apiRouter.post('/cms/projects', requireAuth, requirePermission('canManageCmsCont
 
 apiRouter.put('/cms/projects/:id', requireAuth, requirePermission('canManageCmsContent'), (req: AuthenticatedRequest, res: Response): void => {
   const { id } = req.params;
-  const updates = req.body;
+  const updates = req.body || {};
   const db = getDatabase();
   const idx = db.cmsProjects.findIndex(p => p.id === id);
   if (idx === -1) {
     res.status(404).json({ success: false, error: 'Project not found.' });
     return;
   }
-  db.cmsProjects[idx] = { ...db.cmsProjects[idx], ...updates, updatedAt: new Date().toISOString() };
+  const patch = pickFields(updates, ['slug','title','client','industry','pillar','service','featured','image','desc','descId','challenge','challengeId','solution','solutionId','deliverables','technologies','impact','year','isPublished']);
+  db.cmsProjects[idx] = { ...db.cmsProjects[idx], ...patch, updatedAt: new Date().toISOString() };
   saveDatabase(db);
   res.json({ success: true, project: db.cmsProjects[idx] });
 });
@@ -1643,12 +1712,20 @@ apiRouter.get('/cms/testimonials', (req: Request, res: Response): void => {
 });
 
 apiRouter.post('/cms/testimonials', requireAuth, requirePermission('canManageCmsContent'), (req: AuthenticatedRequest, res: Response): void => {
-  const item = req.body;
+  const item = req.body || {};
   const db = getDatabase();
+  const rating = Number(item.rating);
   const newTestimonial = {
-    id: item.id || `test_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
-    ...item,
-    isPublished: item.isPublished !== undefined ? item.isPublished : true,
+    id: `test_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
+    quote: cleanText(item.quote, 2000),
+    quoteId: cleanText(item.quoteId, 2000),
+    author: cleanText(item.author, 160),
+    role: cleanText(item.role, 160),
+    company: cleanText(item.company, 200),
+    location: cleanText(item.location, 160),
+    rating: Number.isFinite(rating) ? Math.min(5, Math.max(0, rating)) : 5,
+    avatar: cleanOptionalUrl(item.avatar),
+    isPublished: item.isPublished !== undefined ? Boolean(item.isPublished) : true,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   };
@@ -1659,14 +1736,15 @@ apiRouter.post('/cms/testimonials', requireAuth, requirePermission('canManageCms
 
 apiRouter.put('/cms/testimonials/:id', requireAuth, requirePermission('canManageCmsContent'), (req: AuthenticatedRequest, res: Response): void => {
   const { id } = req.params;
-  const updates = req.body;
+  const updates = req.body || {};
   const db = getDatabase();
   const idx = db.cmsTestimonials.findIndex(t => t.id === id);
   if (idx === -1) {
     res.status(404).json({ success: false, error: 'Testimonial not found.' });
     return;
   }
-  db.cmsTestimonials[idx] = { ...db.cmsTestimonials[idx], ...updates, updatedAt: new Date().toISOString() };
+  const patch = pickFields(updates, ['quote','quoteId','author','role','company','location','rating','avatar','isPublished']);
+  db.cmsTestimonials[idx] = { ...db.cmsTestimonials[idx], ...patch, updatedAt: new Date().toISOString() };
   saveDatabase(db);
   res.json({ success: true, testimonial: db.cmsTestimonials[idx] });
 });
@@ -1687,7 +1765,8 @@ apiRouter.get('/cms/settings', requireAuth, requirePermission('canManageCmsConte
 
 apiRouter.put('/cms/settings', requireAuth, requirePermission('canManageCmsContent'), (req: AuthenticatedRequest, res: Response): void => {
   const db = getDatabase();
-  db.cmsSettings = { ...db.cmsSettings, ...req.body, updatedAt: new Date().toISOString() };
+  const patch = pickFields(req.body || {}, ['siteTitle','siteDescription','contactReceiverEmail','defaultLanguage','enableLiveChat','enableSoundAlerts','maintenanceMode']);
+  db.cmsSettings = { ...db.cmsSettings, ...patch, updatedAt: new Date().toISOString() };
   saveDatabase(db);
   res.json({ success: true, settings: db.cmsSettings });
 });
