@@ -28,6 +28,22 @@ export interface AgencyClient {
 const CLIENTS_STORAGE_KEY = 'kapitech_agency_clients_v2';
 export const CLIENT_EVENT_NAME = 'kapitech_clients_updated';
 
+import { api } from './apiClient';
+
+let clientServerHydrationStarted = false;
+
+function hydrateClientsFromServer(): void {
+  if (!import.meta.env.PROD || clientServerHydrationStarted) return;
+  clientServerHydrationStarted = true;
+  api.clients.getAll().then((res) => {
+    if (!res.success || !Array.isArray(res.data?.clients)) return;
+    localStorage.setItem(CLIENTS_STORAGE_KEY, JSON.stringify(res.data.clients));
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent(CLIENT_EVENT_NAME, { detail: res.data.clients }));
+    }
+  }).catch(() => {});
+}
+
 export const INITIAL_DEFAULT_CLIENTS: AgencyClient[] = [
   {
     id: 'cli_101',
@@ -127,6 +143,7 @@ export const INITIAL_DEFAULT_CLIENTS: AgencyClient[] = [
 ];
 
 export const getAgencyClients = (): AgencyClient[] => {
+  hydrateClientsFromServer();
   try {
     if (localStorage.getItem('kapitech_agency_clients_v1')) {
       localStorage.removeItem('kapitech_agency_clients_v1');
@@ -160,6 +177,9 @@ export const saveAgencyClient = (client: AgencyClient): void => {
 
   localStorage.setItem(CLIENTS_STORAGE_KEY, JSON.stringify(updated));
   window.dispatchEvent(new CustomEvent(CLIENT_EVENT_NAME, { detail: updated }));
+
+  const request = idx >= 0 ? api.clients.update(client.id, client) : api.clients.create(client);
+  request.catch(() => {});
 };
 
 export const deleteAgencyClient = (id: string): void => {
@@ -167,4 +187,5 @@ export const deleteAgencyClient = (id: string): void => {
   const updated = current.filter(c => c.id !== id);
   localStorage.setItem(CLIENTS_STORAGE_KEY, JSON.stringify(updated));
   window.dispatchEvent(new CustomEvent(CLIENT_EVENT_NAME, { detail: updated }));
+  api.clients.delete(id).catch(() => {});
 };
