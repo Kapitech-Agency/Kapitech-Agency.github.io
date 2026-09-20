@@ -770,5 +770,5 @@ export const computeFinancialMetrics = (invoices: AgencyInvoice[], expenses: Age
     monthlyBurnRate,
     cashRunwayMonths: null,
     collectionRate: invoices.length > 0 ? Math.round((paidInvoices.length / invoices.length) * 100) : 0
-  }
-
+  };
+};
