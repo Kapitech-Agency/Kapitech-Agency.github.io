@@ -45,6 +45,7 @@ export const AdminDocuments: React.FC = () => {
   const [uploadTitle, setUploadTitle] = useState('');
   const [uploadCategory, setUploadCategory] = useState('Contract');
   const [uploadFileType, setUploadFileType] = useState('PDF');
+  const [uploadUrl, setUploadUrl] = useState('');
   const [uploadRelatedType, setUploadRelatedType] = useState('General');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -77,6 +78,10 @@ export const AdminDocuments: React.FC = () => {
       showToast('Please specify a title.');
       return;
     }
+    if (!/^https:\/\//i.test(uploadUrl.trim())) {
+      showToast(language === 'id' ? 'Masukkan URL HTTPS dokumen yang valid.' : 'Enter a valid HTTPS document URL.');
+      return;
+    }
 
     setIsSubmitting(true);
     try {
@@ -85,9 +90,9 @@ export const AdminDocuments: React.FC = () => {
         title: uploadTitle,
         category: uploadCategory,
         type: uploadFileType,
-        size: '1.8 MB',
+        size: '',
         relatedEntity: uploadRelatedType,
-        url: '#'
+        url: uploadUrl.trim()
       };
 
       const res = await api.documents.create(payload);
@@ -95,7 +100,8 @@ export const AdminDocuments: React.FC = () => {
         setDocuments(prev => [res.data.document, ...prev]);
         setIsUploadModalOpen(false);
         setUploadTitle('');
-        showToast(language === 'id' ? 'Dokumen berhasil diunggah ke brankas.' : 'Document added to secure vault.');
+        setUploadUrl('');
+        showToast(language === 'id' ? 'Dokumen berhasil diunggah ke brankas.' : 'Document added to the registry.');
       } else {
         showToast(res.error || 'Upload failed.');
       }
@@ -218,7 +224,7 @@ export const AdminDocuments: React.FC = () => {
           </div>
         ) : filteredDocs.length === 0 ? (
           <div className="p-12 text-center text-xs font-mono text-[#8A94A6]">
-            {language === 'id' ? 'Tidak ada dokumen di brankas.' : 'No documents found in vault.'}
+            {language === 'id' ? 'Belum ada dokumen di registri.' : 'No documents found in the registry.'}
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -303,7 +309,7 @@ export const AdminDocuments: React.FC = () => {
             <div className="p-4 border-b border-white/[0.07] flex items-center justify-between bg-[#181B22]">
               <h3 className="text-sm font-bold font-sans text-white flex items-center gap-2">
                 <UploadCloud size={16} className="text-[#FF1E27]" />
-                <span>Upload Document to Vault</span>
+                <span>Add Document to Registry</span>
               </h3>
               <button
                 onClick={() => setIsUploadModalOpen(false)}
@@ -357,11 +363,19 @@ export const AdminDocuments: React.FC = () => {
                 </div>
               </div>
 
-              {/* Drag & drop box simulation */}
-              <div className="p-4 rounded-xl border border-dashed border-white/20 bg-[#181B22]/50 text-center space-y-1">
-                <UploadCloud size={24} className="mx-auto text-[#FF1E27]" />
-                <div className="text-white font-medium text-xs">Drag & drop files here, or click to browse</div>
-                <div className="text-[10px] font-mono text-[#8A94A6]">PDF, DOCX, XLSX, PNG up to 25MB</div>
+              <div className="space-y-1">
+                <label className="text-[11px] font-mono text-[#8A94A6]">{language === 'id' ? 'URL Dokumen (HTTPS) *' : 'Document URL (HTTPS) *'}</label>
+                <input
+                  type="url"
+                  required
+                  value={uploadUrl}
+                  onChange={(e) => setUploadUrl(e.target.value)}
+                  placeholder="https://..."
+                  className="w-full h-9 px-3 rounded-lg bg-[#181B22] text-white border border-white/[0.07] focus:outline-none focus:border-[#E50914]"
+                />
+                <p className="text-[10px] text-[#64748B] font-mono">
+                  {language === 'id' ? 'AMS saat ini menyimpan metadata dan tautan HTTPS terkontrol. File privat belum diunggah ke object storage internal.' : 'AMS currently stores metadata and controlled HTTPS links. Private files are not uploaded to internal object storage yet.'}
+                </p>
               </div>
 
               <div className="pt-3 border-t border-white/[0.07] flex items-center justify-end gap-2">
@@ -378,7 +392,7 @@ export const AdminDocuments: React.FC = () => {
                   className="px-5 py-2 rounded-xl bg-[#E50914] hover:bg-[#B80710] text-white text-xs font-sans font-semibold disabled:opacity-50 flex items-center gap-1.5"
                 >
                   {isSubmitting ? <Loader2 size={13} className="animate-spin" /> : <Plus size={14} />}
-                  <span>Save to Vault</span>
+                  <span>{language === 'id' ? 'Simpan ke Registri' : 'Save to Registry'}</span>
                 </button>
               </div>
             </form>
