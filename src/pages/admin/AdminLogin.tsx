@@ -68,7 +68,7 @@ export const AdminLogin: React.FC = () => {
   const handleMfaSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage(null);
-    if (!/^\\d{6}$/.test(mfaCode.trim())) {
+    if (!/^\d{6}$/.test(mfaCode.trim())) {
       setErrorMessage(language === 'id' ? 'Masukkan kode MFA 6 digit.' : 'Enter the 6-digit MFA code.');
       return;
     }
@@ -225,7 +225,7 @@ export const AdminLogin: React.FC = () => {
                 autoFocus
                 disabled={loading}
                 value={mfaCode}
-                onChange={(e) => setMfaCode(e.target.value.replace(/\\D/g, '').slice(0, 6))}
+                onChange={(e) => setMfaCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
                 className="w-full px-4 py-3 bg-[#181B22] border border-white/[0.08] rounded-xl text-center text-xl tracking-[0.4em] text-white focus:outline-none focus:border-[#E50914] font-mono"
                 placeholder="000000"
               />
