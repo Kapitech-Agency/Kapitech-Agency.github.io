@@ -607,3 +607,77 @@
 }
 
 
+
+
+/* ==========================================================================
+   AMS RESPONSIVE SYSTEM
+   Keep the existing obsidian / charcoal / red language, but make the shell
+   mobile-first, touch-friendly, and less expensive to render on small screens.
+   ========================================================================== */
+
+[data-kapi-admin="true"] {
+  --ams-content-max: 1700px;
+  --ams-touch: 44px;
+  color-scheme: dark;
+}
+
+[data-kapi-admin="true"] button,
+[data-kapi-admin="true"] a,
+[data-kapi-admin="true"] input,
+[data-kapi-admin="true"] select,
+[data-kapi-admin="true"] textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+
+[data-kapi-admin="true"] input,
+[data-kapi-admin="true"] select,
+[data-kapi-admin="true"] textarea {
+  font-size: 16px;
+}
+
+[data-kapi-admin="true"] button,
+[data-kapi-admin="true"] a {
+  touch-action: manipulation;
+}
+
+[data-kapi-admin="true"] ::selection {
+  background: rgba(229, 9, 20, 0.85);
+  color: #fff;
+}
+
+@media (max-width: 767px) {
+  [data-kapi-admin="true"] main {
+    overscroll-behavior-y: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  [data-kapi-admin="true"] .backdrop-blur-md,
+  [data-kapi-admin="true"] .backdrop-blur-xl {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  [data-kapi-admin="true"] .shadow-2xl,
+  [data-kapi-admin="true"] .shadow-xl {
+    box-shadow: 0 14px 32px rgba(0, 0, 0, 0.48);
+  }
+
+  [data-kapi-admin="true"] .overflow-x-auto {
+    scrollbar-width: none;
+  }
+
+  [data-kapi-admin="true"] .overflow-x-auto::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-kapi-admin="true"] *,
+  [data-kapi-admin="true"] *::before,
+  [data-kapi-admin="true"] *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
+}
