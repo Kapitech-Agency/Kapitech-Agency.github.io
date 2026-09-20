@@ -108,7 +108,14 @@ export const AdminSettings: React.FC = () => {
 
   const [backupStatus, setBackupStatus] = useState<{ success: boolean; message: string } | null>(null);
   const [backupLoading, setBackupLoading] = useState(false);
-  const [backupSummary, setBackupSummary] = useState<{ count: number; latestAt?: string; latestSizeBytes?: number; retention: number } | null>(null);
+  const [backupSummary, setBackupSummary] = useState<{
+    count: number;
+    latestAt?: string;
+    latestSizeBytes?: number;
+    retention: number;
+    encryptedAtRest: boolean;
+    privateDocumentEncryption: boolean;
+  } | null>(null);
   const [backupIntegrity, setBackupIntegrity] = useState<{ valid: boolean; checkedAt: string; reason?: string } | null>(null);
 
   // Accounts Management state (Stakeholder Executive & Teknisi IT)
@@ -157,7 +164,9 @@ export const AdminSettings: React.FC = () => {
           count: list.length,
           latestAt: latest?.createdAt,
           latestSizeBytes: latest?.sizeBytes,
-          retention: res.data.retention
+          retention: res.data.retention,
+          encryptedAtRest: Boolean(res.data.encryptedAtRest),
+          privateDocumentEncryption: Boolean(res.data.privateDocumentEncryption)
         });
         const integrityRes = await api.system.backupIntegrity();
         if (integrityRes.data?.integrity) setBackupIntegrity(integrityRes.data.integrity);
@@ -1441,7 +1450,7 @@ export const AdminSettings: React.FC = () => {
                 </div>
               )}
 
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
                 <div className="p-3 rounded-xl bg-[#111318] border border-white/[0.07]">
                   <div className="text-[10px] uppercase tracking-wider text-[#8A94A6] font-mono">Snapshots</div>
                   <div className="text-lg font-bold text-white font-mono mt-1">{backupSummary?.count ?? '—'}</div>
@@ -1456,8 +1465,14 @@ export const AdminSettings: React.FC = () => {
                     {backupSummary?.latestAt ? new Date(backupSummary.latestAt).toLocaleString() : '—'}
                   </div>
                 </div>
+                <div className={`p-3 rounded-xl bg-[#111318] border ${backupSummary?.encryptedAtRest ? 'border-emerald-500/20' : 'border-amber-500/25'}`}>
+                  <div className="text-[10px] uppercase tracking-wider text-[#8A94A6] font-mono">{language === 'id' ? 'Enkripsi' : 'Encryption'}</div>
+                  <div className={`text-xs font-semibold font-mono mt-1 ${backupSummary?.encryptedAtRest ? 'text-emerald-300' : 'text-amber-300'}`}>
+                    {backupSummary?.encryptedAtRest ? (language === 'id' ? 'Aktif' : 'Enabled') : (language === 'id' ? 'Belum aktif' : 'Not configured')}
+                  </div>
+                </div>
                 <div className={`p-3 rounded-xl bg-[#111318] border ${backupIntegrity?.valid === false ? 'border-red-500/25' : 'border-white/[0.07]'}`}>
-                  <div className="text-[10px] uppercase tracking-wider text-[#8A94A6] font-mono">{language === 'id' ? 'Integrity' : 'Integrity'}</div>
+                  <div className="text-[10px] uppercase tracking-wider text-[#8A94A6] font-mono">Integrity</div>
                   <div className={`text-xs font-semibold font-mono mt-1 ${backupIntegrity?.valid ? 'text-emerald-300' : backupIntegrity?.valid === false ? 'text-red-300' : 'text-[#8A94A6]'}`}>
                     {backupIntegrity?.valid ? (language === 'id' ? 'Valid' : 'Valid') : backupIntegrity?.valid === false ? (language === 'id' ? 'Perlu perhatian' : 'Needs attention') : '—'}
                   </div>
