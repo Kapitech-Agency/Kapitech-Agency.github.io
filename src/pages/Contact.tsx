@@ -167,11 +167,16 @@ export const Contact = () => {
         source: 'Contact Page Form',
         type: 'inquiry'
       });
+      setIsSubmitted(true);
     } catch (err) {
       console.warn('Submission error:', err);
+      setFormErrors({
+        submit: language === 'id'
+          ? 'Pesan belum terkirim. Silakan coba lagi.'
+          : 'Your message could not be submitted. Please try again.'
+      });
     } finally {
       setIsSubmitting(false);
-      setIsSubmitted(true);
     }
   };
 
