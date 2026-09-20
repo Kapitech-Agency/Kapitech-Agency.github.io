@@ -103,6 +103,25 @@ export const api = {
         method: 'POST',
         body: JSON.stringify({ password })
       }),
+    mfaVerify: (code: string) =>
+      apiRequest<{ success: boolean; user: any }>('/api/auth/mfa/verify', {
+        method: 'POST',
+        body: JSON.stringify({ code })
+      }),
+    mfaSetupStart: () =>
+      apiRequest<{ success: boolean; secret: string; otpAuthUri: string }>('/api/auth/mfa/setup/start', {
+        method: 'POST'
+      }),
+    mfaSetupVerify: (code: string) =>
+      apiRequest<{ success: boolean; mfaEnabled: boolean }>('/api/auth/mfa/setup/verify', {
+        method: 'POST',
+        body: JSON.stringify({ code })
+      }),
+    mfaDisable: (currentPassword: string, code: string) =>
+      apiRequest<{ success: boolean; mfaEnabled: boolean }>('/api/auth/mfa/disable', {
+        method: 'POST',
+        body: JSON.stringify({ currentPassword, code })
+      }),
     getUsers: () => apiRequest<{ success: boolean; users: any[] }>('/api/auth/users'),
     createUser: (userData: any) =>
       apiRequest('/api/auth/users', {
