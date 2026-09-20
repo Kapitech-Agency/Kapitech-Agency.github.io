@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
-import { isUserAuthenticated } from '../../lib/adminAuth';
+import { api } from '../../lib/apiClient';
+import { cacheAdminSession } from '../../lib/adminAuth';
 
 interface RequireAdminAuthProps {
   children: React.ReactNode;
@@ -8,12 +9,51 @@ interface RequireAdminAuthProps {
 
 export const RequireAdminAuth: React.FC<RequireAdminAuthProps> = ({ children }) => {
   const location = useLocation();
-  const authenticated = isUserAuthenticated();
+  const [status, setStatus] = useState<'checking' | 'authenticated' | 'unauthenticated'>('checking');
 
-  if (!authenticated) {
-    // Redirect to /admin/login preserving destination url
+  useEffect(() => {
+    let mounted = true;
+    let rememberMe = false;
+
+    try {
+      const raw = sessionStorage.getItem('kapitech_admin_profile_v2') ||
+        localStorage.getItem('kapitech_admin_profile_v2');
+      if (raw) rememberMe = Boolean(JSON.parse(raw)?.rememberMe);
+    } catch {
+      rememberMe = false;
+    }
+
+    api.auth.me().then((res) => {
+      if (!mounted) return;
+      if (res.success && res.data?.success && res.data.user) {
+        cacheAdminSession(res.data.user, rememberMe);
+        setStatus('authenticated');
+      } else {
+        setStatus('unauthenticated');
+      }
+    }).catch(() => {
+      if (mounted) setStatus('unauthenticated');
+    });
+
+    return () => { mounted = false; };
+  }, []);
+
+  if (status === 'checking') {
+    return (
+      <div className="min-h-screen bg-[#090A0F] text-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-8 h-8 border-2 border-white/10 border-t-[#E50914] rounded-full animate-spin mx-auto mb-3" />
+          <p className="text-xs font-mono text-[#8A94A6]">Verifying server session…</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (status === 'unauthenticated') {
     return <Navigate to={`/admin/login?redirect=${encodeURIComponent(location.pathname + location.search)}`} replace />;
   }
 
   return <>{children}</>;
 };
+
+export default RequireAdminAuth;
