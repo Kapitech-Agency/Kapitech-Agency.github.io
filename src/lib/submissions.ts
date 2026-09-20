@@ -98,18 +98,16 @@ export const getLocalSubmissions = (): ContactSubmission[] => {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) {
+      if (import.meta.env.PROD) return [];
       localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_INBOX_SUBMISSIONS));
       return DEFAULT_INBOX_SUBMISSIONS;
     }
     const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed) && parsed.length > 0) {
-      return parsed;
-    }
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_INBOX_SUBMISSIONS));
-    return DEFAULT_INBOX_SUBMISSIONS;
+    if (Array.isArray(parsed)) return parsed;
+    if (import.meta.env.PROD) return [];
   } catch (err) {
     console.debug('Failed to parse local submissions:', err);
-    return DEFAULT_INBOX_SUBMISSIONS;
+    return import.meta.env.PROD ? [] : DEFAULT_INBOX_SUBMISSIONS;
   }
 };
 
@@ -129,74 +127,51 @@ const saveLocalSubmissions = (items: ContactSubmission[]) => {
  * and dispatches notifications without exposing keys to the browser.
  */
 export const submitToInbox = async (data: Omit<ContactSubmission, 'id' | 'createdAt' | 'status'>): Promise<{ success: boolean; id: string }> => {
-  const generatedId = 'sub_' + Date.now() + '_' + Math.random().toString(36).substring(2, 8);
   const nowIso = new Date().toISOString();
+  const result = await api.leads.submit(data);
 
-  const newRecord: ContactSubmission = {
-    id: generatedId,
+  if (!result.success || !result.data?.id) {
+    throw new Error(result.error || 'Lead submission failed.');
+  }
+
+  const record: ContactSubmission = {
+    id: result.data.id,
     status: 'new',
     createdAt: nowIso,
     userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : '',
     ...data
   };
 
-  // 1. Optimistic local cache update
   const existing = getLocalSubmissions();
-  const updatedList = [newRecord, ...existing.filter(i => i.id !== generatedId)];
-  saveLocalSubmissions(updatedList);
+  saveLocalSubmissions([record, ...existing.filter((item) => item.id !== record.id)].slice(0, 200));
 
-  // 2. Persist to server API & trigger server-side notification worker
-  api.leads.submit(data).then(res => {
-    if (res.success && res.data?.id) {
-      newRecord.id = res.data.id;
-      const current = getLocalSubmissions();
-      saveLocalSubmissions(current.map(c => c.id === generatedId ? { ...c, id: res.data!.id } : c));
-    }
-  }).catch(err => {
-    console.debug('Server lead submission sync status:', err);
-  });
-
-  // 3. Fallback Firestore if configured
   if (db && isFirebaseConfigured) {
     try {
-      const firestoreData = {
-        ...newRecord,
+      await addDoc(collection(db, 'contact_submissions'), {
+        ...record,
         firestoreCreatedAt: serverTimestamp()
-      };
-      addDoc(collection(db, 'contact_submissions'), firestoreData).catch(fsErr => {
-        console.debug('Firestore write notice (local fallback active):', fsErr?.message || fsErr);
       });
     } catch (err) {
-      console.debug('Firestore save skipped:', err);
+      console.debug('Firestore secondary write skipped:', err);
     }
   }
 
-  return { success: true, id: generatedId };
-};
+  return { success: true, id: record.id };
+}
 
 /**
  * Update any submission fields
  */
 export const updateSubmission = async (id: string, updates: Partial<ContactSubmission>): Promise<void> => {
-  // Update local
+  const result = await api.leads.update(id, updates);
+  if (!result.success) {
+    throw new Error(result.error || 'Lead update failed.');
+  }
+
   const current = getLocalSubmissions();
   const updated = current.map(item => item.id === id ? { ...item, ...updates } : item);
   saveLocalSubmissions(updated);
-
-  // Update server API
-  api.leads.update(id, updates).catch(err => {
-    console.debug('Server lead update status:', err);
-  });
-
-  // Firestore update if active
-  if (db && isFirebaseConfigured) {
-    try {
-      await updateDoc(doc(db, 'contact_submissions', id), updates);
-    } catch (err) {
-      console.debug('Firestore doc update skipped:', err);
-    }
-  }
-};
+}
 
 /**
  * Update submission status
@@ -209,25 +184,14 @@ export const updateSubmissionStatus = async (id: string, newStatus: ContactSubmi
  * Delete submission
  */
 export const deleteSubmission = async (id: string): Promise<void> => {
-  // Delete local
-  const current = getLocalSubmissions();
-  const filtered = current.filter(item => item.id !== id);
-  saveLocalSubmissions(filtered);
-
-  // Delete from server API
-  api.leads.delete(id).catch(err => {
-    console.debug('Server lead deletion status:', err);
-  });
-
-  // Firestore delete if active
-  if (db && isFirebaseConfigured) {
-    try {
-      await deleteDoc(doc(db, 'contact_submissions', id));
-    } catch (err) {
-      console.debug('Firestore doc delete skipped:', err);
-    }
+  const result = await api.leads.delete(id);
+  if (!result.success) {
+    throw new Error(result.error || 'Lead deletion failed.');
   }
-};
+
+  const filtered = getLocalSubmissions().filter(item => item.id !== id);
+  saveLocalSubmissions(filtered);
+}
 
 /**
  * Real-time combined subscriber (Server API + Local Cache + Firestore)
