@@ -87,11 +87,13 @@ export function setCsrfCookie(res: Response, token: string = createCsrfToken()):
 }
 
 export function clearCsrfCookie(res: Response): void {
-  res.append('Set-Cookie', 'kapi_csrf=; Path=/; SameSite=Strict; Max-Age=0;');
+  const secure = process.env.NODE_ENV === 'production' ? ' Secure;' : '';
+  res.append('Set-Cookie', `kapi_csrf=; Path=/; SameSite=Strict; Max-Age=0;${secure}`);
 }
 
-export function checkLockout(identifier: string): { isLocked: boolean; remainingSeconds: number } {
-  const entry = loginLockouts.get(identifier.toLowerCase());
+export function checkLockout(identifier: string, ip = 'unknown'): { isLocked: boolean; remainingSeconds: number } {
+  const key = `${identifier.toLowerCase()}|${ip}`;
+  const entry = loginLockouts.get(key);
   if (!entry) return { isLocked: false, remainingSeconds: 0 };
   const now = Date.now();
   if (entry.lockoutUntil > now) {
@@ -100,7 +102,7 @@ export function checkLockout(identifier: string): { isLocked: boolean; remaining
       remainingSeconds: Math.ceil((entry.lockoutUntil - now) / 1000)
     };
   }
-  loginLockouts.delete(identifier.toLowerCase());
+  loginLockouts.delete(key);
   return { isLocked: false, remainingSeconds: 0 };
 }
 
