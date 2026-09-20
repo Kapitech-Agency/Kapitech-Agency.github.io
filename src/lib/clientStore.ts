@@ -151,6 +151,7 @@ export const getAgencyClients = (): AgencyClient[] => {
 
 export const saveAgencyClient = (client: AgencyClient): void => {
   const current = getAgencyClients();
+  const previous = [...current];
   const idx = current.findIndex(c => c.id === client.id);
   const now = new Date().toISOString();
 
@@ -166,13 +167,28 @@ export const saveAgencyClient = (client: AgencyClient): void => {
   window.dispatchEvent(new CustomEvent(CLIENT_EVENT_NAME, { detail: updated }));
 
   const request = idx >= 0 ? api.clients.update(client.id, client) : api.clients.create(client);
-  request.catch(() => {});
+  request.then((res) => {
+    if (res.success && res.data?.success !== false) return;
+    clientsCache = previous;
+    window.dispatchEvent(new CustomEvent(CLIENT_EVENT_NAME, { detail: previous }));
+  }).catch(() => {
+    clientsCache = previous;
+    window.dispatchEvent(new CustomEvent(CLIENT_EVENT_NAME, { detail: previous }));
+  });
 };
 
 export const deleteAgencyClient = (id: string): void => {
   const current = getAgencyClients();
+  const previous = [...current];
   const updated = current.filter(c => c.id !== id);
   clientsCache = updated;
   window.dispatchEvent(new CustomEvent(CLIENT_EVENT_NAME, { detail: updated }));
-  api.clients.delete(id).catch(() => {});
+  api.clients.delete(id).then((res) => {
+    if (res.success && res.data?.success !== false) return;
+    clientsCache = previous;
+    window.dispatchEvent(new CustomEvent(CLIENT_EVENT_NAME, { detail: previous }));
+  }).catch(() => {
+    clientsCache = previous;
+    window.dispatchEvent(new CustomEvent(CLIENT_EVENT_NAME, { detail: previous }));
+  });
 };
