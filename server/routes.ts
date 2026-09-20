@@ -142,8 +142,8 @@ function normalizeProbability(value: unknown): number {
 }
 
 const MAX_MONEY = 100_000_000_000;
-const EMAIL_PATTERN = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;
-const ISO_DATE_PATTERN = /^\\d{4}-\\d{2}-\\d{2}$/;
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 
 function isValidEmail(value: unknown): boolean {
   const email = String(value ?? '').trim().toLowerCase();
