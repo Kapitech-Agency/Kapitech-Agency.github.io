@@ -136,6 +136,15 @@ apiRouter.post('/auth/login', rateLimitPublic(10, 15 * 60 * 1000), (req: Request
     clearLockout(cleanIdentifier, ip);
     const nowIso = new Date().toISOString();
     user.lastLogin = nowIso;
+
+    // Upgrade legacy password hashes after a successful login.
+    if ((user.passwordAlgorithm || 'pbkdf2-sha512') !== 'scrypt-v1') {
+      const prepared = preparePassword(password);
+      user.salt = prepared.salt;
+      user.passwordHash = prepared.passwordHash;
+      user.passwordAlgorithm = prepared.passwordAlgorithm;
+    }
+
     const session = createSession(user, ip, userAgent, Boolean(rememberMe));
 
     recordAuditLog({
