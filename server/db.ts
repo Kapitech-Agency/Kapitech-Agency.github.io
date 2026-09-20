@@ -69,9 +69,11 @@ function decryptDatabase(raw: string): string {
   ]).toString('utf8');
 }
 
-// Ensure data directory exists
+// Ensure the persistence directory exists with owner-only permissions where supported.
 if (!fs.existsSync(DATA_DIR)) {
-  fs.mkdirSync(DATA_DIR, { recursive: true });
+  fs.mkdirSync(DATA_DIR, { recursive: true, mode: 0o700 });
+} else {
+  try { fs.chmodSync(DATA_DIR, 0o700); } catch {}
 }
 
 export interface StoredUser {
@@ -1165,8 +1167,17 @@ export function getDatabase(): DatabaseSchema {
       }
       return inMemoryDb!;
     } catch (err) {
-      console.error('Failed reading database file, initializing fresh database:', err);
+      console.error('[Database] Failed to load the existing persistent database:', err);
+      throw new Error(
+        'Persistent database could not be loaded. The application will not replace the existing data automatically.'
+      );
     }
+  }
+
+  if (process.env.NODE_ENV === 'production' && !isDataEncryptionEnabled()) {
+    throw new Error(
+      'Production persistent storage requires KAPITECH_DATA_ENCRYPTION_KEY. Configure a 32-byte key before starting AMS.'
+    );
   }
 
   inMemoryDb = getInitialSeedData();
@@ -1176,21 +1187,19 @@ export function getDatabase(): DatabaseSchema {
 
 export function saveDatabaseSync(db: DatabaseSchema): void {
   inMemoryDb = db;
-  const tempPath = `${DB_FILE}.${Date.now()}.tmp`;
-  fs.writeFileSync(tempPath, encryptDatabase(db), 'utf-8');
+  const tempPath = `${DB_FILE}.${process.pid}.${Date.now()}.tmp`;
+  const payload = encryptDatabase(db);
+  fs.writeFileSync(tempPath, payload, { encoding: 'utf8', mode: 0o600 });
+  try { fs.chmodSync(tempPath, 0o600); } catch {}
   fs.renameSync(tempPath, DB_FILE);
+  try { fs.chmodSync(DB_FILE, 0o600); } catch {}
 }
 
 export function saveDatabase(db: DatabaseSchema): Promise<void> {
-  inMemoryDb = db;
-  writeQueue = writeQueue.then(async () => {
-    try {
-      const tempPath = `${DB_FILE}.${Date.now()}.tmp`;
-      await fs.promises.writeFile(tempPath, encryptDatabase(db), 'utf-8');
-      await fs.promises.rename(tempPath, DB_FILE);
-    } catch (err) {
-      console.error('Database write error:', err);
-    }
+  // JSON storage is intentionally serialized through one process-local queue.
+  // Each request must observe a successful durable write before it is considered complete.
+  writeQueue = writeQueue.then(() => {
+    saveDatabaseSync(db);
   });
   return writeQueue;
 }
