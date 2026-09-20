@@ -162,13 +162,22 @@ export function issueMfaChallenge(userId: string, rememberMe: boolean): string {
   return token;
 }
 
-export function consumeMfaChallenge(token: string): MfaChallenge | null {
+export function getMfaChallenge(token: string): MfaChallenge | null {
   if (!token) return null;
-  const key = hashSessionToken(token);
-  const challenge = mfaChallenges.get(key);
+  const challenge = mfaChallenges.get(hashSessionToken(token));
   if (!challenge) return null;
-  mfaChallenges.delete(key);
-  return challenge.expiresAt > Date.now() ? challenge : null;
+  if (challenge.expiresAt <= Date.now()) {
+    mfaChallenges.delete(hashSessionToken(token));
+    return null;
+  }
+  return challenge;
+}
+
+export function consumeMfaChallenge(token: string): MfaChallenge | null {
+  const challenge = getMfaChallenge(token);
+  if (!challenge) return null;
+  mfaChallenges.delete(hashSessionToken(token));
+  return challenge;
 }
 
 export function setMfaChallengeCookie(res: Response, token: string): void {
