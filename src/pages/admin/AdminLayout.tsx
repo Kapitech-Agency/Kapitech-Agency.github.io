@@ -396,7 +396,10 @@ export const AdminLayout: React.FC = () => {
   }
 
   return (
-    <div className="h-screen w-full bg-[#090A0F] text-[#F8FAFC] flex flex-col md:flex-row selection:bg-[#E50914] selection:text-white font-sans antialiased overflow-hidden">
+    <div
+      data-kapi-admin="true"
+      className="h-screen w-full bg-[#090A0F] text-[#F8FAFC] flex flex-col md:flex-row selection:bg-[#E50914] selection:text-white font-sans antialiased overflow-hidden"
+    >
       
       {/* Universal Command Palette */}
       <CommandPalette 
