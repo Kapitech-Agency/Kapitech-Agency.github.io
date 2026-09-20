@@ -29,6 +29,64 @@ import {
   requireMaster
 } from './auth';
 
+
+const ROLE_POLICIES: Record<string, {
+  stakeholderType: StoredUser['stakeholderType'];
+  division: StoredUser['division'];
+  permissions: StoredUser['permissions'];
+}> = {
+  'Stakeholder Executive': {
+    stakeholderType: 'Executive',
+    division: 'Management',
+    permissions: {
+      canViewFinancials: true, canManageInvoices: true, canApproveBudgets: true, canManageCrm: true,
+      canManageProjects: true, canManageKanbanTasks: false, canManageClients: true, canManageVendors: true,
+      canManageCmsContent: false, canAccessServerAndApi: false, canRunDataMigration: false,
+      canViewSecurityAuditLogs: true, canManageAdminAccounts: false
+    }
+  },
+  'Financial Officer': {
+    stakeholderType: 'Operations',
+    division: 'Finance',
+    permissions: {
+      canViewFinancials: true, canManageInvoices: true, canApproveBudgets: true, canManageCrm: false,
+      canManageProjects: false, canManageKanbanTasks: false, canManageClients: true, canManageVendors: true,
+      canManageCmsContent: false, canAccessServerAndApi: false, canRunDataMigration: false,
+      canViewSecurityAuditLogs: false, canManageAdminAccounts: false
+    }
+  },
+  'Tier 2: Project Manager (PM)': {
+    stakeholderType: 'Project_Manager',
+    division: 'Operations',
+    permissions: {
+      canViewFinancials: false, canManageInvoices: false, canApproveBudgets: false, canManageCrm: true,
+      canManageProjects: true, canManageKanbanTasks: true, canManageClients: true, canManageVendors: true,
+      canManageCmsContent: false, canAccessServerAndApi: false, canRunDataMigration: false,
+      canViewSecurityAuditLogs: false, canManageAdminAccounts: false
+    }
+  },
+  'Tier 3: Operational Staff': {
+    stakeholderType: 'Operations',
+    division: 'Operations',
+    permissions: {
+      canViewFinancials: false, canManageInvoices: false, canApproveBudgets: false, canManageCrm: false,
+      canManageProjects: true, canManageKanbanTasks: true, canManageClients: false, canManageVendors: false,
+      canManageCmsContent: false, canAccessServerAndApi: false, canRunDataMigration: false,
+      canViewSecurityAuditLogs: false, canManageAdminAccounts: false
+    }
+  },
+  'Teknisi IT / Systems Engineer': {
+    stakeholderType: 'IT_Technical',
+    division: 'Engineering',
+    permissions: {
+      canViewFinancials: false, canManageInvoices: false, canApproveBudgets: false, canManageCrm: false,
+      canManageProjects: false, canManageKanbanTasks: false, canManageClients: false, canManageVendors: false,
+      canManageCmsContent: false, canAccessServerAndApi: true, canRunDataMigration: true,
+      canViewSecurityAuditLogs: true, canManageAdminAccounts: false
+    }
+  }
+};
+
 export const apiRouter = Router();
 
 // Apply auth header checking on all API requests
@@ -310,70 +368,20 @@ apiRouter.get('/auth/users', requireAuth, requireMaster, (req: AuthenticatedRequ
 
 apiRouter.post('/auth/users', requireAuth, requireMaster, (req: AuthenticatedRequest, res: Response): void => {
   const { name, username, email, password, role, division } = req.body;
-  const allowedRoles = new Set([
-    'Stakeholder Executive',
-    'Teknisi IT / Systems Engineer',
-    'Tier 2: Project Manager (PM)',
-    'Tier 3: Operational Staff',
-    'Financial Officer'
-  ]);
   const requestedRole = String(role || 'Tier 3: Operational Staff').trim();
-  if (!allowedRoles.has(requestedRole)) {
+  const policy = ROLE_POLICIES[requestedRole];
+
+  if (!policy) {
     res.status(400).json({ success: false, error: 'Unsupported account role.' });
     return;
   }
-
-  const rolePermissions: Record<string, StoredUser['permissions']> = {
-    'Stakeholder Executive': {
-      canViewFinancials: true, canManageInvoices: true, canApproveBudgets: true, canManageCrm: true,
-      canManageProjects: true, canManageKanbanTasks: false, canManageClients: true, canManageVendors: true,
-      canManageCmsContent: false, canAccessServerAndApi: false, canRunDataMigration: false,
-      canViewSecurityAuditLogs: true, canManageAdminAccounts: false
-    },
-    'Financial Officer': {
-      canViewFinancials: true, canManageInvoices: true, canApproveBudgets: true, canManageCrm: false,
-      canManageProjects: false, canManageKanbanTasks: false, canManageClients: true, canManageVendors: true,
-      canManageCmsContent: false, canAccessServerAndApi: false, canRunDataMigration: false,
-      canViewSecurityAuditLogs: false, canManageAdminAccounts: false
-    },
-    'Tier 2: Project Manager (PM)': {
-      canViewFinancials: false, canManageInvoices: false, canApproveBudgets: false, canManageCrm: true,
-      canManageProjects: true, canManageKanbanTasks: true, canManageClients: true, canManageVendors: true,
-      canManageCmsContent: false, canAccessServerAndApi: false, canRunDataMigration: false,
-      canViewSecurityAuditLogs: false, canManageAdminAccounts: false
-    },
-    'Tier 3: Operational Staff': {
-      canViewFinancials: false, canManageInvoices: false, canApproveBudgets: false, canManageCrm: false,
-      canManageProjects: true, canManageKanbanTasks: true, canManageClients: false, canManageVendors: false,
-      canManageCmsContent: false, canAccessServerAndApi: false, canRunDataMigration: false,
-      canViewSecurityAuditLogs: false, canManageAdminAccounts: false
-    },
-    'Teknisi IT / Systems Engineer': {
-      canViewFinancials: false, canManageInvoices: false, canApproveBudgets: false, canManageCrm: false,
-      canManageProjects: false, canManageKanbanTasks: false, canManageClients: false, canManageVendors: false,
-      canManageCmsContent: false, canAccessServerAndApi: true, canRunDataMigration: true,
-      canViewSecurityAuditLogs: true, canManageAdminAccounts: false
-    }
-  };
-
-  const resolvedStakeholderType =
-    requestedRole === 'Stakeholder Executive' ? 'Executive' :
-    requestedRole === 'Financial Officer' ? 'Operations' :
-    requestedRole === 'Tier 2: Project Manager (PM)' ? 'Project_Manager' :
-    requestedRole === 'Teknisi IT / Systems Engineer' ? 'IT_Technical' : 'Operations';
-
-  const resolvedDivision =
-    requestedRole === 'Financial Officer' ? 'Finance' :
-    requestedRole === 'Teknisi IT / Systems Engineer' ? 'Engineering' :
-    requestedRole === 'Stakeholder Executive' ? 'Management' :
-    division === 'Design' ? 'Design' : 'Operations';
   if (!name || !username || !email || !password) {
     res.status(400).json({ success: false, error: 'Name, username, email, and password are required.' });
     return;
   }
 
-  if (String(password).length < 12) {
-    res.status(400).json({ success: false, error: 'Account password must be at least 12 characters.' });
+  if (typeof password !== 'string' || password.length < 12 || password.length > 128) {
+    res.status(400).json({ success: false, error: 'Account password must be 12 to 128 characters.' });
     return;
   }
 
@@ -396,11 +404,10 @@ apiRouter.post('/auth/users', requireAuth, requireMaster, (req: AuthenticatedReq
     salt: prepared.salt,
     passwordAlgorithm: prepared.passwordAlgorithm,
     role: requestedRole,
-    stakeholderType: resolvedStakeholderType,
-    permissions: rolePermissions[requestedRole],
-
+    stakeholderType: policy.stakeholderType,
+    permissions: policy.permissions,
     mfaEnabled: false,
-    division: resolvedDivision,
+    division: policy.division,
     status: 'active',
     lastLogin: '',
     createdAt: new Date().toISOString()
@@ -456,7 +463,6 @@ apiRouter.delete('/auth/users/:id', requireAuth, requireMaster, (req: Authentica
 
 apiRouter.put('/auth/users/:id', requireAuth, requireMaster, (req: AuthenticatedRequest, res: Response): void => {
   const { id } = req.params;
-  const updates = req.body;
   const db = getDatabase();
   const target = db.users.find(u => u.id === id);
 
@@ -465,13 +471,46 @@ apiRouter.put('/auth/users/:id', requireAuth, requireMaster, (req: Authenticated
     return;
   }
 
-  if (updates.permissions) {
-    target.permissions = { ...target.permissions, ...updates.permissions };
+  if (target.stakeholderType === 'Master' || target.username === 'admin') {
+    res.status(403).json({ success: false, error: 'The Root Master Admin account cannot be modified here.' });
+    return;
   }
-  if (updates.role) target.role = updates.role;
-  if (updates.division) target.division = updates.division;
-  if (updates.status) target.status = updates.status;
-  if (updates.name) target.name = updates.name;
+
+  const body = req.body || {};
+  const nextRole = body.role !== undefined ? String(body.role).trim() : target.role;
+  const policy = ROLE_POLICIES[nextRole];
+  if (!policy) {
+    res.status(400).json({ success: false, error: 'Unsupported account role.' });
+    return;
+  }
+
+  const nextName = body.name !== undefined ? String(body.name).trim() : target.name;
+  if (!nextName || nextName.length > 160) {
+    res.status(400).json({ success: false, error: 'Name is required and must be at most 160 characters.' });
+    return;
+  }
+
+  if (body.division !== undefined && String(body.division) !== policy.division) {
+    res.status(400).json({ success: false, error: 'Division is derived from the selected role and cannot be overridden.' });
+    return;
+  }
+
+  const nextStatus = body.status !== undefined ? String(body.status) : target.status;
+  if (!['active', 'suspended'].includes(nextStatus)) {
+    res.status(400).json({ success: false, error: 'Invalid account status.' });
+    return;
+  }
+
+  target.name = nextName;
+  target.role = nextRole;
+  target.stakeholderType = policy.stakeholderType;
+  target.division = policy.division;
+  target.permissions = policy.permissions;
+  target.status = nextStatus as StoredUser['status'];
+
+  if (target.status === 'suspended') {
+    db.sessions = db.sessions.filter(session => session.userId !== target.id);
+  }
 
   saveDatabase(db);
 
@@ -481,11 +520,22 @@ apiRouter.put('/auth/users/:id', requireAuth, requireMaster, (req: Authenticated
     actorRole: req.user!.role,
     ip: req.ip,
     userAgent: req.headers['user-agent'] as string,
-    details: `Updated attributes/permissions for user "${target.username}".`,
-    severity: 'info'
+    details: `Updated account policy/status for user "${target.username}".`,
+    severity: 'warning'
   });
 
-  res.json({ success: true, user: { id: target.id, username: target.username } });
+  res.json({
+    success: true,
+    user: {
+      id: target.id,
+      username: target.username,
+      role: target.role,
+      stakeholderType: target.stakeholderType,
+      division: target.division,
+      status: target.status,
+      permissions: target.permissions
+    }
+  });
 });
 
 // ----------------------------------------------------
