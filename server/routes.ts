@@ -1,6 +1,5 @@
 import { Router, Request, Response } from 'express';
 import crypto from 'crypto';
-import { GoogleGenAI } from '@google/genai';
 import { 
   getDatabase, 
   saveDatabase, 
@@ -1399,23 +1398,56 @@ apiRouter.post('/ai/generate', requireAuth, requirePermission('canAccessServerAn
   }
 
   try {
-    const ai = new GoogleGenAI({ apiKey });
-    const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
-      contents: [
-        {
-          role: 'user',
-          parts: [
-            {
-              text: `You are the executive AI copilot for Kapitech Agency Management System. Context: ${typeof context === 'string' ? context.slice(0, 4000) : 'General Agency Operations'}. Request: ${prompt}`
-            }
-          ]
-        }
-      ]
-    });
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 30_000);
 
-    const outputText = response.text || '';
-    res.json({ success: true, result: outputText });
+    try {
+      const response = await fetch(
+        'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-goog-api-key': apiKey
+          },
+          body: JSON.stringify({
+            contents: [
+              {
+                role: 'user',
+                parts: [
+                  {
+                    text: `You are the executive AI copilot for Kapitech Agency Management System. Context: ${typeof context === 'string' ? context.slice(0, 4000) : 'General Agency Operations'}. Request: ${prompt}`
+                  }
+                ]
+              }
+            ]
+          }),
+          signal: controller.signal
+        }
+      );
+
+      const payload = await response.json().catch(() => null);
+      if (!response.ok) {
+        console.error('[AI] Gemini API returned HTTP', response.status);
+        res.status(502).json({ success: false, error: 'AI service request failed. Please try again later.' });
+        return;
+      }
+
+      const outputText = Array.isArray(payload?.candidates?.[0]?.content?.parts)
+        ? payload.candidates[0].content.parts
+            .map((part: { text?: string }) => typeof part.text === 'string' ? part.text : '')
+            .join('')
+        : '';
+
+      if (!outputText) {
+        res.status(502).json({ success: false, error: 'AI service returned an empty response. Please try again later.' });
+        return;
+      }
+
+      res.json({ success: true, result: outputText });
+    } finally {
+      clearTimeout(timeout);
+    }
   } catch (err: any) {
     console.error('Server Gemini API call failed:', err);
     res.status(502).json({ success: false, error: 'AI service request failed. Please try again later.' });
