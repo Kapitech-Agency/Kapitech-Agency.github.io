@@ -32,7 +32,6 @@ import {
   getStoredAdminCredentials,
   AdminAccount,
   AdminTier,
-  StakeholderPermissions,
   fetchAdminAccounts,
   createAdminAccount,
   deleteAdminAccount,
@@ -149,7 +148,7 @@ export const AdminSettings: React.FC = () => {
 
   const handleRoleChangeForNewAccount = (role: AdminTier) => {
     setNewAccRole(role);
-    const perms = getDefaultPermissionsForRole(role);
+    getDefaultPermissionsForRole(role);
     if (role === 'Teknisi IT / Systems Engineer' || role.includes('Internal IT')) {
       setNewAccDivision('Engineering');
     } else if (role === 'Stakeholder Executive' || role.includes('Top Management')) {
