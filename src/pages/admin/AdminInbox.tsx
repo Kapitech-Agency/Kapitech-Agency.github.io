@@ -30,7 +30,8 @@ ArrowLeft,
   Table as TableIcon,
   ChevronRight,
   ShieldCheck,
-  AlertCircle
+  AlertCircle,
+  Sparkles
 } from 'lucide-react';
 import { 
   ContactSubmission,
