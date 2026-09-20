@@ -238,7 +238,7 @@ export const AdminSettings: React.FC = () => {
         sessionStorage.removeItem('kapitech_admin_profile_v2');
         setMfaDisableCode('');
         setMfaDisablePassword('');
-        setMfaStatus({ success: true, message: language === 'id' ? 'MFA dinonaktifkan. Login berikutnya hanya memerlukan password.' : 'MFA disabled. Future sign-ins will require password only.' });
+        setMfaStatus({ success: true, message: language === 'id' ? 'MFA dinonaktifkan. Login berikutnya akan mengarahkan Anda kembali ke penyiapan MFA sebelum fungsi AMS terlindungi dapat digunakan.' : 'MFA disabled. The next sign-in will route you back to MFA setup before protected AMS functions can be used.' });
         await api.auth.me();
         window.dispatchEvent(new Event('kapitech_auth_state_changed'));
       } else {
