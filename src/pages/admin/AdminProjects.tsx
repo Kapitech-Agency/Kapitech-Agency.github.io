@@ -100,6 +100,7 @@ export const AdminProjects: React.FC = () => {
   const [repoUrl, setRepoUrl] = useState('');
   const [stagingUrl, setStagingUrl] = useState('');
   const [projStatus, setProjStatus] = useState<ProjectStatus>('in_progress');
+  const [driName, setDriName] = useState('Principal Tech Lead');
 
   // Task Creation Modal State
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
@@ -169,6 +170,7 @@ export const AdminProjects: React.FC = () => {
     setRepoUrl('');
     setStagingUrl('https://staging.app.kapitech.id');
     setProjStatus('in_progress');
+    setDriName('Principal Tech Lead');
     setIsProjectModalOpen(true);
   };
 
@@ -187,13 +189,14 @@ export const AdminProjects: React.FC = () => {
     setRepoUrl(proj.repositoryUrl || '');
     setStagingUrl(proj.liveStagingUrl || '');
     setProjStatus(proj.status);
+    setDriName(proj.teamLead || 'Principal Tech Lead');
     setIsProjectModalOpen(true);
   };
 
   const handleSaveProject = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!projName.trim() || !clientCompany.trim()) {
-      alert('Project Title and Client Company are required.');
+    if (!projName.trim() || !clientCompany.trim() || !driName.trim()) {
+      alert(language === 'id' ? 'Nama proyek, perusahaan klien, dan DRI wajib diisi.' : 'Project name, client company, and DRI are required.');
       return;
     }
 
@@ -211,7 +214,7 @@ export const AdminProjects: React.FC = () => {
       progressPercent: Number(progressPercent) || 0,
       startDate,
       targetEndDate,
-      teamLead: editingProject?.teamLead || 'Principal Tech Lead',
+      teamLead: driName.trim(),
       teamMembers: editingProject?.teamMembers || ['Lead Frontend', 'UI Designer', 'QA Specialist'],
       techStack: techArr,
       repositoryUrl: repoUrl,
@@ -552,6 +555,10 @@ export const AdminProjects: React.FC = () => {
                 </span>
                 <span className="text-xs font-mono text-[#8A94A6]">
                   PIC: <strong className="text-white">{selectedProject.clientName}</strong> ({selectedProject.clientCompany})
+                </span>
+                <span className="text-xs font-mono text-[#8A94A6] flex items-center gap-1.5">
+                  <span>DRI:</span>
+                  <strong className="text-white">{selectedProject.teamLead}</strong>
                 </span>
               </div>
               <h2 className="text-xl font-display font-bold text-white tracking-tight">
@@ -1094,6 +1101,27 @@ export const AdminProjects: React.FC = () => {
                       placeholder="e.g. Lumina Real Estate Global"
                       className="w-full px-3.5 py-2.5 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
                     />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-[#8A94A6] mb-1 font-semibold">{language === 'id' ? 'DRI / Penanggung Jawab Utama *' : 'DRI / Directly Responsible Individual *'}</label>
+                    <input
+                      type="text"
+                      value={driName}
+                      onChange={(e) => setDriName(e.target.value)}
+                      required
+                      placeholder={language === 'id' ? 'Contoh: Principal Tech Lead' : 'e.g. Principal Tech Lead'}
+                      className="w-full px-3.5 py-2.5 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
+                    />
+                    <p className="mt-1 text-[10px] text-[#64748B]">{language === 'id' ? 'Satu orang memegang akuntabilitas delivery proyek.' : 'One person owns delivery accountability for the project.'}</p>
+                  </div>
+                  <div className="flex items-end">
+                    <div className="w-full p-3 rounded-xl bg-[#090A0F] border border-[rgba(255,255,255,0.07)] text-[#8A94A6]">
+                      <div className="text-[10px] uppercase tracking-wider font-bold">{language === 'id' ? 'Prinsip DRI' : 'DRI Principle'}</div>
+                      <div className="mt-1 text-[11px] leading-relaxed">{language === 'id' ? 'Keputusan dan follow-up memiliki satu owner yang jelas.' : 'Decisions and follow-up have one clearly accountable owner.'}</div>
+                    </div>
                   </div>
                 </div>
 
