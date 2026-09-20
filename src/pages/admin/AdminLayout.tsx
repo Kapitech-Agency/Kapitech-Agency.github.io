@@ -232,8 +232,7 @@ export const AdminLayout: React.FC = () => {
           to: '/admin/crm',
           label: t('admin.nav.crm'),
           icon: Kanban,
-          badge: currency,
-          badgeColor: 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-bold font-mono'
+          badge: null
         },
         {
           key: 'proposals',
@@ -472,6 +471,7 @@ export const AdminLayout: React.FC = () => {
                 return (
                   <Link
                     key={item.to}
+                    aria-current={active ? 'page' : undefined}
                     to={item.to}
                     title={sidebarCollapsed ? item.label : undefined}
                     className={`relative flex items-center justify-between px-3 py-2 rounded-lg text-xs font-sans transition-all duration-150 group ${
