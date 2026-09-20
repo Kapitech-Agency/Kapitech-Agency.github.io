@@ -3,7 +3,9 @@ import path from 'path';
 import crypto from 'crypto';
 
 // Path to persistent JSON database file
-const DATA_DIR = path.join(process.cwd(), 'data');
+const DATA_DIR = process.env.KAPITECH_DATA_DIR
+  ? path.resolve(process.env.KAPITECH_DATA_DIR)
+  : path.join(process.cwd(), 'data');
 const DB_FILE = path.join(DATA_DIR, 'kapitech_db.json');
 
 // Ensure data directory exists
@@ -107,16 +109,21 @@ export function generateSalt(): string {
 
 // Initial seed accounts
 function getInitialSeedData(): DatabaseSchema {
+  const isProduction = process.env.NODE_ENV === 'production';
   const adminSalt = generateSalt();
   const execSalt = generateSalt();
   const pmSalt = generateSalt();
   const finSalt = generateSalt();
 
-  const initialAdminUsername = process.env.ADMIN_INITIAL_USERNAME || 'admin';
-  const initialAdminPassword = process.env.ADMIN_INITIAL_PASSWORD || 'Kapitech#Admin2026!';
-  const initialAdminEmail = process.env.ADMIN_INITIAL_EMAIL || 'admin@ams.kapitech.id';
+  const initialAdminUsername = process.env.ADMIN_INITIAL_USERNAME || (isProduction ? '' : 'admin');
+  const initialAdminPassword = process.env.ADMIN_INITIAL_PASSWORD || (isProduction ? '' : 'dev-only-change-me');
+  const initialAdminEmail = process.env.ADMIN_INITIAL_EMAIL || (isProduction ? '' : 'admin@localhost');
 
-  return {
+  if (isProduction && !initialAdminPassword) {
+    throw new Error('ADMIN_INITIAL_PASSWORD must be configured in production before the database is initialized.');
+  }
+
+  const seed: DatabaseSchema = {
     users: [
       {
         id: 'usr_root_admin',
@@ -976,6 +983,36 @@ function getInitialSeedData(): DatabaseSchema {
       updatedAt: new Date().toISOString()
     }
   };
+
+  if (isProduction) {
+    seed.users = seed.users
+      .filter((user) => user.id === 'usr_root_admin')
+      .map((user) => ({ ...user, lastLogin: '', mfaEnabled: false }));
+
+    for (const key of [
+      'leads',
+      'crmDeals',
+      'proposals',
+      'clients',
+      'projects',
+      'tasks',
+      'timeLogs',
+      'invoices',
+      'expenses',
+      'approvals',
+      'vendors',
+      'documents',
+      'notifications',
+      'cmsServices',
+      'cmsProjects',
+      'cmsTestimonials',
+      'auditLogs'
+    ] as Array<keyof DatabaseSchema>) {
+      (seed as any)[key] = [];
+    }
+  }
+
+  return seed;
 }
 
 let inMemoryDb: DatabaseSchema | null = null;
