@@ -33,10 +33,6 @@ export default defineConfig(() => {
               return 'router-vendor';
             }
 
-            if (id.includes('/motion/')) {
-              return 'motion-vendor';
-            }
-
             return 'vendor';
           },
         },
