@@ -142,19 +142,17 @@ export const AdminLayout: React.FC = () => {
     const updateTime = () => {
       const now = new Date();
       setCurrentTime(
-        now.toLocaleTimeString(language === 'id' ? 'id-ID' : 'en-US', { 
-          hour: '2-digit', 
-          minute: '2-digit', 
-          second: '2-digit',
-          timeZone: 'Asia/Jakarta' 
+        now.toLocaleTimeString(language === 'id' ? 'id-ID' : 'en-US', {
+          hour: '2-digit',
+          minute: '2-digit',
+          timeZone: 'Asia/Jakarta'
         }) + ' WIB'
       );
     };
     updateTime();
-    const interval = setInterval(updateTime, 1000);
-    return () => clearInterval(interval);
+    const interval = window.setInterval(updateTime, 60000);
+    return () => window.clearInterval(interval);
   }, [language]);
-
   useEffect(() => {
     const handleCurrencyChange = (e: Event) => {
       const custom = e as CustomEvent<{ currency: CurrencyCode }>;
