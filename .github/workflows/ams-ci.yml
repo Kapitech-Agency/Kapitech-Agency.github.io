@@ -25,6 +25,8 @@ jobs:
 
       - name: Type check
         run: npm run lint
+      - name: Security regression tests
+        run: npm test
 
       - name: Dependency audit
         run: npm audit --audit-level=high
