@@ -38,7 +38,7 @@ function pruneDatabaseBackups(): void {
   ensureBackupDirectory();
   const retention = getBackupRetention();
   const backups = fs.readdirSync(BACKUP_DIR)
-    .filter(name => /^kapitech_db_.*\\.bak$/.test(name))
+    .filter(name => /^kapitech_db_.*\.bak$/.test(name))
     .map(name => {
       const fullPath = path.join(BACKUP_DIR, name);
       let mtimeMs = 0;
