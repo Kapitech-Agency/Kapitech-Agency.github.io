@@ -423,11 +423,23 @@ function requireMfaForProtectedAccess(req: AuthenticatedRequest, res: Response):
   return false;
 }
 
+const MFA_BOOTSTRAP_EXEMPT_PATHS = new Set([
+  '/auth/me',
+  '/auth/logout',
+  '/auth/mfa/setup/start',
+  '/auth/mfa/setup/verify'
+]);
+
 export function requireAuth(req: AuthenticatedRequest, res: Response, next: NextFunction): void {
   if (!req.user) {
     res.status(401).json({ success: false, error: 'Unauthenticated: Valid session required.' });
     return;
   }
+
+  if (!MFA_BOOTSTRAP_EXEMPT_PATHS.has(req.path) && !requireMfaForProtectedAccess(req, res)) {
+    return;
+  }
+
   next();
 }
 
