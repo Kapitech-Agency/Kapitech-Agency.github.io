@@ -72,7 +72,11 @@ export const AdminLayout: React.FC = () => {
   const [currency, setCurrencyState] = useState<CurrencyCode>(getActiveCurrency());
 
   // Dynamic RBAC Permission Engine
-  const { role: rbacRole, setRole: setRbacRole, roleMeta, isAllowed } = useRbacRole();
+  const { role: rbacRole, setRole: setRbacRole, roleMeta, isAllowed } = useRbacRole(
+    session?.user?.stakeholderType,
+    session?.user?.division,
+    session?.user?.role
+  );
 
   const loadNotifications = async () => {
     try {
