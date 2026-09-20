@@ -103,6 +103,7 @@ export const AdminSettings: React.FC = () => {
   const [mfaDisablePassword, setMfaDisablePassword] = useState('');
   const [mfaStatus, setMfaStatus] = useState<{ success: boolean; message: string } | null>(null);
   const [mfaLoading, setMfaLoading] = useState(false);
+  const mfaRequired = searchParams.get('mfaRequired') === '1' || !Boolean(session?.user?.mfaEnabled);
 
   const [backupStatus, setBackupStatus] = useState<{ success: boolean; message: string } | null>(null);
   const [backupLoading, setBackupLoading] = useState(false);
@@ -1180,7 +1181,29 @@ export const AdminSettings: React.FC = () => {
 
       {/* TAB 4: SECURITY & MFA POLICY */}
       {activeTab === 'security' && (
-        <div className="w-full max-w-4xl bg-[#111318] border border-[rgba(255,255,255,0.07)] rounded-2xl p-5 sm:p-8 space-y-6">
+        <div className="w-full max-w-4xl space-y-4">
+          {mfaRequired && !refreshMfaProfile() && (
+            <div
+              role="alert"
+              className="rounded-2xl border border-amber-500/30 bg-amber-500/[0.06] p-4 sm:p-5"
+            >
+              <div className="flex items-start gap-3">
+                <ShieldCheck size={20} className="mt-0.5 shrink-0 text-amber-300" />
+                <div className="min-w-0">
+                  <h2 className="text-sm font-semibold text-white">
+                    {language === 'id' ? 'Penyiapan keamanan diperlukan' : 'Security setup required'}
+                  </h2>
+                  <p className="mt-1 text-xs leading-relaxed text-[#A7B0BF]">
+                    {language === 'id'
+                      ? 'Akun ini belum memiliki MFA TOTP. Sistem mengarahkan Anda ke halaman ini dan menahan akses ke fungsi AMS terlindungi sampai MFA selesai diaktifkan.'
+                      : 'This account does not have TOTP MFA enabled. The system has routed you here and will keep protected AMS functions unavailable until MFA is enabled.'}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div className="w-full max-w-4xl bg-[#111318] border border-[rgba(255,255,255,0.07)] rounded-2xl p-5 sm:p-8 space-y-6">
           <div className="flex items-center gap-3 pb-4 border-b border-[rgba(255,255,255,0.07)]">
             <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 shrink-0">
               <Lock size={20} />
@@ -1200,8 +1223,8 @@ export const AdminSettings: React.FC = () => {
           <div className="space-y-4">
             <div className="p-4 rounded-xl bg-[#181B22] border border-amber-500/20 text-amber-200 text-xs font-mono leading-relaxed">
               {language === 'id'
-                ? 'Keamanan sesi aktif: idle timeout 60 menit, batas sesi 12 jam (24 jam untuk Remember Me), cookie HttpOnly + SameSite=Strict, CSRF protection, rate limiting, dan MFA TOTP opsional. WebAuthn/passkeys belum tersedia.'
-                : 'Active session controls: 60-minute idle timeout, 12-hour absolute lifetime (24 hours with Remember Me), HttpOnly + SameSite=Strict cookies, CSRF protection, rate limiting, and optional TOTP MFA. WebAuthn/passkeys are not available yet.'}
+                ? 'Keamanan sesi aktif: idle timeout 60 menit, batas sesi 12 jam (24 jam untuk Remember Me), cookie HttpOnly + SameSite=Strict, CSRF protection, rate limiting, dan MFA TOTP wajib sebelum fungsi AMS terlindungi dapat digunakan.'
+                : 'Active session controls: 60-minute idle timeout, 12-hour absolute lifetime (24 hours with Remember Me), HttpOnly + SameSite=Strict cookies, CSRF protection, rate limiting, and mandatory TOTP MFA before protected AMS functions can be used.'}
             </div>
 
             <div className="pt-4 border-t border-[rgba(255,255,255,0.07)] space-y-4">
@@ -1241,6 +1264,13 @@ export const AdminSettings: React.FC = () => {
                   <div className="flex flex-wrap gap-2">
                     <button type="button" onClick={() => navigator.clipboard?.writeText(mfaRecoveryCodes.join('\n'))} className="min-h-[40px] px-3 rounded-lg bg-[#262930] text-xs font-mono text-white">{language === 'id' ? 'Salin semua kode' : 'Copy all codes'}</button>
                     <button type="button" onClick={() => setMfaRecoveryCodes([])} className="min-h-[40px] px-3 rounded-lg bg-transparent border border-white/[0.08] text-xs font-mono text-[#8A94A6] hover:text-white">{language === 'id' ? 'Sudah saya simpan' : 'I stored them'}</button>
+                    <button
+                      type="button"
+                      onClick={() => window.location.replace('/admin/login?mfaEnabled=1')}
+                      className="min-h-[40px] px-3 rounded-lg bg-[#E50914] text-white text-xs font-mono font-bold hover:bg-[#FF1E27]"
+                    >
+                      {language === 'id' ? 'Login ulang' : 'Sign in again'}
+                    </button>
                   </div>
                 </div>
               )}
