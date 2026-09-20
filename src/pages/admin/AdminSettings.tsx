@@ -92,10 +92,6 @@ export const AdminSettings: React.FC = () => {
   const [securityStatus, setSecurityStatus] = useState<{ success: boolean; message: string } | null>(null);
   const [securityLoading, setSecurityLoading] = useState(false);
 
-  // Security / MFA state
-  const [mfaActive, setMfaActive] = useState(storedCreds.mfaEnabled ?? true);
-  const [sessionTimeoutMin, setSessionTimeoutMin] = useState(120);
-
   // Meta & Branding Settings state
   const [metaSettings, setMetaSettings] = useState<SiteMetaSettings>(getCmsSiteMeta());
   const [metaStatus, setMetaStatus] = useState<string | null>(null);
@@ -1242,8 +1238,8 @@ export const AdminSettings: React.FC = () => {
               </h2>
               <p className="text-xs text-[#8A94A6] font-mono">
                 {language === 'id'
-                  ? 'Password diproses PBKDF2 di server. Sesi diverifikasi server melalui cookie HttpOnly.'
-                  : 'Passwords use server-side PBKDF2 hashing. Sessions are verified by the server through an HttpOnly cookie.'}
+                  ? 'Password diverifikasi di server dengan scrypt. Sesi menggunakan cookie HttpOnly + CSRF protection.'
+                  : 'Passwords are verified server-side with scrypt. Sessions use an HttpOnly cookie plus CSRF protection.'}
               </p>
             </div>
           </div>
@@ -1251,8 +1247,8 @@ export const AdminSettings: React.FC = () => {
           <div className="space-y-4">
             <div className="p-4 rounded-xl bg-[#181B22] border border-amber-500/20 text-amber-200 text-xs font-mono leading-relaxed">
               {language === 'id'
-                ? 'MFA/OTP dan idle-session enforcement belum diaktifkan oleh backend saat ini. Jangan gunakan indikator UI sebagai bukti MFA sudah berlaku.'
-                : 'MFA/OTP and idle-session enforcement are not enabled by the backend yet. Do not treat UI indicators as proof that MFA is enforced.'}
+                ? 'Keamanan sesi aktif: idle timeout 60 menit, batas sesi 12 jam (24 jam untuk Remember Me), cookie HttpOnly + SameSite=Strict, CSRF protection, dan rate limiting. MFA phishing-resistant belum tersedia.'
+                : 'Active session controls: 60-minute idle timeout, 12-hour absolute lifetime (24 hours with Remember Me), HttpOnly + SameSite=Strict cookies, CSRF protection, and rate limiting. Phishing-resistant MFA is not available yet.'}
             </div>
 
             <form onSubmit={handleUpdateSecurity} className="space-y-3 pt-3 border-t border-[rgba(255,255,255,0.07)]">
@@ -1263,7 +1259,7 @@ export const AdminSettings: React.FC = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-mono text-[#8A94A6] mb-1 font-semibold">
-                    {language === 'id' ? 'Password Baru (min 8 karakter)' : 'New Password (min 8 characters)'}
+                    {language === 'id' ? 'Password Baru (12–128 karakter)' : 'New Password (12–128 characters)'}
                   </label>
                   <input
                     type="password"
