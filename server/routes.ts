@@ -2092,7 +2092,7 @@ apiRouter.post('/crm/proposals', requireAuth, requirePermission('canManageCrm'),
 
 apiRouter.put('/crm/proposals/:id', requireAuth, requirePermission('canManageCrm'), (req: AuthenticatedRequest, res: Response): void => {
   const { id } = req.params;
-  const updates = req.body;
+  const updates = req.body || {};
   const db = getDatabase();
   const idx = (db.proposals || []).findIndex(p => p.id === id);
 
@@ -2102,17 +2102,26 @@ apiRouter.put('/crm/proposals/:id', requireAuth, requirePermission('canManageCrm
   }
 
   const existing = db.proposals[idx];
-  const items = Array.isArray(updates.items) ? updates.items : existing.items;
-  const subtotal = items.reduce((sum: number, it: any) => sum + (Number(it.quantity || 1) * Number(it.unitPrice || 0)), 0);
-  const discount = updates.discount !== undefined ? Number(updates.discount) : (existing.discount || 0);
-  const taxPercent = updates.taxPercent !== undefined ? Number(updates.taxPercent) : (existing.taxPercent || 11);
+  const items = Array.isArray(updates.items) ? updates.items.slice(0, 100).map((item: any) => ({
+    id: cleanText(item?.id || crypto.randomBytes(4).toString('hex'), 80),
+    description: cleanText(item?.description, 500),
+    quantity: Math.min(100000, Math.max(0, Number(item?.quantity) || 0)),
+    unitPrice: Math.min(10_000_000_000, Math.max(0, Number(item?.unitPrice) || 0))
+  })).filter((item: any) => item.description && item.quantity > 0) : existing.items;
+  if (!Array.isArray(items) || items.length === 0) {
+    res.status(400).json({ success: false, error: 'Proposal requires at least one valid line item.' });
+    return;
+  }
+  const subtotal = items.reduce((sum: number, it: any) => sum + (Number(it.quantity) * Number(it.unitPrice)), 0);
+  const discount = updates.discount !== undefined ? Math.min(subtotal, Math.max(0, Number(updates.discount) || 0)) : (existing.discount || 0);
+  const taxPercent = updates.taxPercent !== undefined ? Math.min(100, Math.max(0, Number(updates.taxPercent) || 0)) : (existing.taxPercent || 11);
   const taxableAmount = Math.max(0, subtotal - discount);
   const tax = Math.round(taxableAmount * (taxPercent / 100));
   const total = taxableAmount + tax;
-
+  const patch = pickFields(updates, ['proposalNumber','title','clientName','company','dealId','projectId','currency','validityPeriod','paymentTerms','status','notes','sentDate']);
   db.proposals[idx] = {
     ...existing,
-    ...updates,
+    ...patch,
     items,
     subtotal,
     discount,
@@ -2256,7 +2265,7 @@ apiRouter.post('/projects/tasks', requireAuth, requirePermission('canManageKanba
 
 apiRouter.put('/projects/tasks/:id', requireAuth, requirePermission('canManageKanbanTasks'), (req: AuthenticatedRequest, res: Response): void => {
   const { id } = req.params;
-  const updates = req.body;
+  const updates = req.body || {};
   const db = getDatabase();
   const idx = (db.tasks || []).findIndex(t => t.id === id);
 
@@ -2265,8 +2274,26 @@ apiRouter.put('/projects/tasks/:id', requireAuth, requirePermission('canManageKa
     return;
   }
 
-  db.tasks[idx] = { ...db.tasks[idx], ...updates, updatedAt: new Date().toISOString() };
+  const patch = pickFields(updates, ['title','description','projectId','projectName','assignee','priority','status','dueDate','estimatedHours','actualHours','tags','subtasks']);
+  if (patch.status !== undefined && !['todo','in_progress','review','done'].includes(String(patch.status))) {
+    res.status(400).json({ success: false, error: 'Invalid task status.' });
+    return;
+  }
+  if (patch.priority !== undefined && !DEAL_PRIORITIES.includes(String(patch.priority) as any)) {
+    res.status(400).json({ success: false, error: 'Invalid task priority.' });
+    return;
+  }
+  db.tasks[idx] = { ...db.tasks[idx], ...patch, updatedAt: new Date().toISOString() };
   saveDatabase(db);
+  recordAuditLog({
+    action: 'TASK_UPDATED',
+    actor: req.user!.username,
+    actorRole: req.user!.role,
+    ip: req.ip,
+    userAgent: req.headers['user-agent'] as string,
+    details: `Updated task ${id}.`,
+    severity: 'info'
+  });
   res.json({ success: true, task: db.tasks[idx] });
 });
 
@@ -2359,6 +2386,13 @@ apiRouter.post('/approvals', requireAuth, requireAnyPermission('canManageProject
 
   if (!db.approvals) db.approvals = [];
   db.approvals.unshift(newApproval);
+  pushNotification(db, {
+    title: 'Approval request pending',
+    message: `${newApproval.title} requires an independent review.`,
+    type: 'approval',
+    severity: riskLevel === 'Critical' ? 'critical' : riskLevel === 'High' ? 'warning' : 'info',
+    linkUrl: '/admin/approvals'
+  });
   saveDatabase(db);
 
   recordAuditLog({
@@ -2412,6 +2446,10 @@ apiRouter.post('/approvals/:id/action', requireAuth, requirePermission('canAppro
     return;
   }
 
+  if (!item.requesterId && item.requester) {
+    const legacyRequester = db.users.find(u => u.name === item.requester || u.username === item.requester);
+    if (legacyRequester) item.requesterId = legacyRequester.id;
+  }
   item.status = action === 'Approve' ? 'Approved' : action === 'Reject' ? 'Rejected' : 'Changes Requested';
   item.reviewedById = req.user!.id;
   item.reviewedBy = req.user!.name || req.user!.username;
@@ -2447,14 +2485,14 @@ apiRouter.post('/documents', requireAuth, requireAnyPermission('canManageProject
   const db = getDatabase();
   const newDoc = {
     id: `doc_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
-    name: data.name || 'Document',
-    type: data.type || 'PDF',
-    size: data.size || '1.2 MB',
-    category: data.category || 'Contract',
-    relatedEntity: data.relatedEntity || 'General',
-    relatedId: data.relatedId || '',
+    name: cleanText(data.name || 'Document', 240),
+    type: cleanText(data.type || 'PDF', 40),
+    size: cleanText(data.size || '0 B', 40),
+    category: cleanText(data.category || 'General', 100),
+    relatedEntity: cleanText(data.relatedEntity || 'General', 200),
+    relatedId: cleanText(data.relatedId || '', 120),
     owner: req.user!.name || req.user!.username,
-    url: data.url || '#',
+    url: cleanOptionalUrl(data.url),
     uploadedDate: new Date().toISOString().split('T')[0],
     createdAt: new Date().toISOString()
   };
