@@ -1279,7 +1279,7 @@ apiRouter.post('/clients', requireAuth, requirePermission('canManageClients'), (
     actorRole: req.user!.role,
     ip: req.ip,
     userAgent: req.headers['user-agent'] as string,
-    details: `Created client "${newClient.companyName || newClient.clientName}".`,
+    details: `Created client "${newClient.company || newClient.clientName}".`,
     severity: 'info'
   });
 
