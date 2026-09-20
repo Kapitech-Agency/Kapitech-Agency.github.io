@@ -31,7 +31,7 @@ apiRouter.use(authenticate);
 // 1. AUTHENTICATION & SESSION MANAGEMENT
 // ----------------------------------------------------
 
-apiRouter.post('/auth/login', (req: Request, res: Response): void => {
+apiRouter.post('/auth/login', rateLimitPublic(10, 15 * 60 * 1000), (req: Request, res: Response): void => {
   const { identifier, password, rememberMe } = req.body;
   const ip = req.ip || req.socket.remoteAddress || '127.0.0.1';
   const userAgent = req.headers['user-agent'] || 'unknown';
@@ -131,7 +131,6 @@ apiRouter.post('/auth/login', (req: Request, res: Response): void => {
 
   res.json({
     success: true,
-    token: session.token,
     user: {
       id: user.id,
       name: user.name,
@@ -228,7 +227,24 @@ apiRouter.post('/auth/change-password', requireAuth, (req: AuthenticatedRequest,
 });
 
 // Admin Account Management (Requires Master or canManageAdminAccounts permission)
-apiRouter.get('/auth/users', requireAuth, requirePermission('canManageAdminAccounts'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.post('/auth/verify-password', requireAuth, (req: AuthenticatedRequest, res: Response): void => {
+  const { password } = req.body;
+  const user = req.user!;
+  if (!password || typeof password !== 'string') {
+    res.status(400).json({ success: false, error: 'Password is required.' });
+    return;
+  }
+
+  const computedHash = hashPassword(password, user.salt);
+  if (computedHash !== user.passwordHash) {
+    res.status(401).json({ success: false, error: 'Current password is incorrect.' });
+    return;
+  }
+
+  res.json({ success: true });
+});
+
+apiRouter.get('/auth/users', requireAuth, requireMaster, (req: AuthenticatedRequest, res: Response): void => {
   const db = getDatabase();
   const sanitizedUsers = db.users.map(u => ({
     id: u.id,
@@ -247,8 +263,65 @@ apiRouter.get('/auth/users', requireAuth, requirePermission('canManageAdminAccou
   res.json({ success: true, users: sanitizedUsers });
 });
 
-apiRouter.post('/auth/users', requireAuth, requirePermission('canManageAdminAccounts'), (req: AuthenticatedRequest, res: Response): void => {
-  const { name, username, email, password, role, stakeholderType, division, permissions } = req.body;
+apiRouter.post('/auth/users', requireAuth, requireMaster, (req: AuthenticatedRequest, res: Response): void => {
+  const { name, username, email, password, role, division } = req.body;
+  const allowedRoles = new Set([
+    'Stakeholder Executive',
+    'Teknisi IT / Systems Engineer',
+    'Tier 2: Project Manager (PM)',
+    'Tier 3: Operational Staff',
+    'Financial Officer'
+  ]);
+  const requestedRole = String(role || 'Tier 3: Operational Staff').trim();
+  if (!allowedRoles.has(requestedRole)) {
+    res.status(400).json({ success: false, error: 'Unsupported account role.' });
+    return;
+  }
+
+  const rolePermissions: Record<string, StoredUser['permissions']> = {
+    'Stakeholder Executive': {
+      canViewFinancials: true, canManageInvoices: true, canApproveBudgets: true, canManageCrm: true,
+      canManageProjects: true, canManageKanbanTasks: false, canManageClients: true, canManageVendors: true,
+      canManageCmsContent: false, canAccessServerAndApi: false, canRunDataMigration: false,
+      canViewSecurityAuditLogs: true, canManageAdminAccounts: false
+    },
+    'Financial Officer': {
+      canViewFinancials: true, canManageInvoices: true, canApproveBudgets: true, canManageCrm: false,
+      canManageProjects: false, canManageKanbanTasks: false, canManageClients: true, canManageVendors: true,
+      canManageCmsContent: false, canAccessServerAndApi: false, canRunDataMigration: false,
+      canViewSecurityAuditLogs: false, canManageAdminAccounts: false
+    },
+    'Tier 2: Project Manager (PM)': {
+      canViewFinancials: false, canManageInvoices: false, canApproveBudgets: false, canManageCrm: true,
+      canManageProjects: true, canManageKanbanTasks: true, canManageClients: true, canManageVendors: true,
+      canManageCmsContent: false, canAccessServerAndApi: false, canRunDataMigration: false,
+      canViewSecurityAuditLogs: false, canManageAdminAccounts: false
+    },
+    'Tier 3: Operational Staff': {
+      canViewFinancials: false, canManageInvoices: false, canApproveBudgets: false, canManageCrm: false,
+      canManageProjects: true, canManageKanbanTasks: true, canManageClients: false, canManageVendors: false,
+      canManageCmsContent: false, canAccessServerAndApi: false, canRunDataMigration: false,
+      canViewSecurityAuditLogs: false, canManageAdminAccounts: false
+    },
+    'Teknisi IT / Systems Engineer': {
+      canViewFinancials: false, canManageInvoices: false, canApproveBudgets: false, canManageCrm: false,
+      canManageProjects: false, canManageKanbanTasks: false, canManageClients: false, canManageVendors: false,
+      canManageCmsContent: false, canAccessServerAndApi: true, canRunDataMigration: true,
+      canViewSecurityAuditLogs: true, canManageAdminAccounts: false
+    }
+  };
+
+  const resolvedStakeholderType =
+    requestedRole === 'Stakeholder Executive' ? 'Executive' :
+    requestedRole === 'Financial Officer' ? 'Operations' :
+    requestedRole === 'Tier 2: Project Manager (PM)' ? 'Project_Manager' :
+    requestedRole === 'Teknisi IT / Systems Engineer' ? 'IT_Technical' : 'Operations';
+
+  const resolvedDivision =
+    requestedRole === 'Financial Officer' ? 'Finance' :
+    requestedRole === 'Teknisi IT / Systems Engineer' ? 'Engineering' :
+    requestedRole === 'Stakeholder Executive' ? 'Management' :
+    division === 'Design' ? 'Design' : 'Operations';
   if (!name || !username || !email || !password) {
     res.status(400).json({ success: false, error: 'Name, username, email, and password are required.' });
     return;
@@ -271,9 +344,9 @@ apiRouter.post('/auth/users', requireAuth, requirePermission('canManageAdminAcco
     email: cleanEmail,
     passwordHash: hashPassword(password, salt),
     salt,
-    role: role || 'Tier 3: Operational Staff',
-    stakeholderType: stakeholderType || 'Operations',
-    permissions: permissions || {
+    role: requestedRole,
+    stakeholderType: resolvedStakeholderType,
+    permissions: rolePermissions[requestedRole],
       canViewFinancials: false,
       canManageInvoices: false,
       canApproveBudgets: false,
@@ -289,7 +362,7 @@ apiRouter.post('/auth/users', requireAuth, requirePermission('canManageAdminAcco
       canManageAdminAccounts: false
     },
     mfaEnabled: false,
-    division: division || 'Operations',
+    division: resolvedDivision,
     status: 'active',
     lastLogin: new Date().toISOString(),
     createdAt: new Date().toISOString()
@@ -311,7 +384,7 @@ apiRouter.post('/auth/users', requireAuth, requirePermission('canManageAdminAcco
   res.json({ success: true, user: { id: newUser.id, username: newUser.username } });
 });
 
-apiRouter.delete('/auth/users/:id', requireAuth, requirePermission('canManageAdminAccounts'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.delete('/auth/users/:id', requireAuth, requireMaster, (req: AuthenticatedRequest, res: Response): void => {
   const { id } = req.params;
   const db = getDatabase();
   const target = db.users.find(u => u.id === id);
@@ -343,7 +416,7 @@ apiRouter.delete('/auth/users/:id', requireAuth, requirePermission('canManageAdm
   res.json({ success: true, message: 'User deleted.' });
 });
 
-apiRouter.put('/auth/users/:id', requireAuth, requirePermission('canManageAdminAccounts'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.put('/auth/users/:id', requireAuth, requireMaster, (req: AuthenticatedRequest, res: Response): void => {
   const { id } = req.params;
   const updates = req.body;
   const db = getDatabase();
@@ -637,7 +710,7 @@ apiRouter.delete('/crm/deals/:id', requireAuth, requirePermission('canManageCrm'
 // 4. CLIENTS MANAGEMENT
 // ----------------------------------------------------
 
-apiRouter.get('/clients', requireAuth, (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.get('/clients', requireAuth, requireAnyPermission('canManageClients', 'canManageCrm'), (req: AuthenticatedRequest, res: Response): void => {
   const db = getDatabase();
   res.json({ success: true, clients: db.clients });
 });
@@ -693,7 +766,7 @@ apiRouter.delete('/clients/:id', requireAuth, requirePermission('canManageClient
 // 5. PROJECTS MANAGEMENT
 // ----------------------------------------------------
 
-apiRouter.get('/projects', requireAuth, (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.get('/projects', requireAuth, requireAnyPermission('canManageProjects', 'canManageKanbanTasks'), (req: AuthenticatedRequest, res: Response): void => {
   const db = getDatabase();
   res.json({ success: true, projects: db.projects });
 });
@@ -1028,7 +1101,7 @@ apiRouter.get('/finance/metrics', requireAuth, requirePermission('canViewFinanci
 // 7. VENDORS MANAGEMENT
 // ----------------------------------------------------
 
-apiRouter.get('/vendors', requireAuth, (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.get('/vendors', requireAuth, requireAnyPermission('canManageVendors', 'canViewFinancials'), (req: AuthenticatedRequest, res: Response): void => {
   const db = getDatabase();
   res.json({ success: true, vendors: db.vendors });
 });
@@ -1212,7 +1285,7 @@ apiRouter.delete('/cms/testimonials/:id', requireAuth, requirePermission('canMan
 });
 
 // CMS Settings
-apiRouter.get('/cms/settings', (req: Request, res: Response): void => {
+apiRouter.get('/cms/settings', requireAuth, requirePermission('canManageCmsContent'), (req: AuthenticatedRequest, res: Response): void => {
   const db = getDatabase();
   res.json({ success: true, settings: db.cmsSettings });
 });
@@ -1237,7 +1310,7 @@ apiRouter.get('/audit-logs', requireAuth, requirePermission('canViewSecurityAudi
 // 10. NOTIFICATION SETTINGS (Secrets kept strictly on server)
 // ----------------------------------------------------
 
-apiRouter.get('/notifications/settings', requireAuth, (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.get('/notifications/settings', requireAuth, requirePermission('canAccessServerAndApi'), (req: AuthenticatedRequest, res: Response): void => {
   const db = getDatabase();
   const s = db.notificationSettings;
   res.json({
@@ -1253,7 +1326,7 @@ apiRouter.get('/notifications/settings', requireAuth, (req: AuthenticatedRequest
   });
 });
 
-apiRouter.put('/notifications/settings', requireAuth, (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.put('/notifications/settings', requireAuth, requirePermission('canAccessServerAndApi'), (req: AuthenticatedRequest, res: Response): void => {
   const { targetEmail, formspreeEndpoint, telegramBotToken, telegramChatId, isEmailActive, isTelegramActive } = req.body;
   const db = getDatabase();
   const current = db.notificationSettings;
@@ -1287,9 +1360,12 @@ apiRouter.put('/notifications/settings', requireAuth, (req: AuthenticatedRequest
 // 11. SERVER-SIDE GEMINI INTEGRATION (Key never exposed to browser)
 // ----------------------------------------------------
 
-apiRouter.post('/ai/generate', requireAuth, async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+apiRouter.post('/ai/generate', requireAuth, requirePermission('canAccessServerAndApi'), rateLimitAuthenticated(10, 60 * 1000), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { prompt, context } = req.body;
-  if (!prompt) {
+  if (!prompt || typeof prompt !== 'string' || prompt.length > 4000) {
+    res.status(400).json({ success: false, error: 'Prompt is required and must be 4000 characters or fewer.' });
+    return;
+  }
     res.status(400).json({ success: false, error: 'Prompt is required.' });
     return;
   }
@@ -1312,7 +1388,7 @@ apiRouter.post('/ai/generate', requireAuth, async (req: AuthenticatedRequest, re
           role: 'user',
           parts: [
             {
-              text: `You are the executive AI copilot for Kapitech Agency Management System. Context: ${context || 'General Agency Operations'}. Request: ${prompt}`
+              text: `You are the executive AI copilot for Kapitech Agency Management System. Context: ${typeof context === 'string' ? context.slice(0, 4000) : 'General Agency Operations'}. Request: ${prompt}`
             }
           ]
         }
@@ -1323,7 +1399,7 @@ apiRouter.post('/ai/generate', requireAuth, async (req: AuthenticatedRequest, re
     res.json({ success: true, result: outputText });
   } catch (err: any) {
     console.error('Server Gemini API call failed:', err);
-    res.status(500).json({ success: false, error: err.message || 'Gemini AI execution failed.' });
+    res.status(502).json({ success: false, error: 'AI service request failed. Please try again later.' });
   }
 });
 
@@ -1628,7 +1704,7 @@ apiRouter.delete('/crm/proposals/:id', requireAuth, requirePermission('canManage
 // 14. PROJECT TASKS & TIME TRACKING (PARTS 16, 17, 18)
 // ----------------------------------------------------
 
-apiRouter.get('/projects/tasks', requireAuth, (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.get('/projects/tasks', requireAuth, requireAnyPermission('canManageKanbanTasks', 'canManageProjects'), (req: AuthenticatedRequest, res: Response): void => {
   const db = getDatabase();
   res.json({ success: true, tasks: db.tasks || [] });
 });
@@ -1686,7 +1762,7 @@ apiRouter.delete('/projects/tasks/:id', requireAuth, requirePermission('canManag
 });
 
 // Time Tracking
-apiRouter.get('/projects/timelogs', requireAuth, (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.get('/projects/timelogs', requireAuth, requireAnyPermission('canManageKanbanTasks', 'canManageProjects'), (req: AuthenticatedRequest, res: Response): void => {
   const db = getDatabase();
   res.json({ success: true, timeLogs: db.timeLogs || [] });
 });
@@ -1726,7 +1802,7 @@ apiRouter.delete('/projects/timelogs/:id', requireAuth, (req: AuthenticatedReque
 // 15. APPROVALS CENTER (PART 24)
 // ----------------------------------------------------
 
-apiRouter.get('/approvals', requireAuth, (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.get('/approvals', requireAuth, requireAnyPermission('canApproveBudgets', 'canManageProjects', 'canViewFinancials'), (req: AuthenticatedRequest, res: Response): void => {
   const db = getDatabase();
   res.json({ success: true, approvals: db.approvals || [] });
 });
@@ -1789,7 +1865,7 @@ apiRouter.post('/approvals/:id/action', requireAuth, requirePermission('canAppro
 // 16. DOCUMENTS & ASSET VAULT (PART 26)
 // ----------------------------------------------------
 
-apiRouter.get('/documents', requireAuth, (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.get('/documents', requireAuth, requireAnyPermission('canManageProjects', 'canManageCrm', 'canViewFinancials', 'canViewSecurityAuditLogs'), (req: AuthenticatedRequest, res: Response): void => {
   const db = getDatabase();
   res.json({ success: true, documents: db.documents || [] });
 });
@@ -1971,7 +2047,10 @@ apiRouter.get('/search', requireAuth, (req: AuthenticatedRequest, res: Response)
   }
 
   // Proposals
-  for (const prop of db.proposals || []) {
+  const canSearchProposals = req.user!.stakeholderType === 'Master' ||
+    Boolean(req.user!.permissions.canManageCrm || req.user!.permissions.canManageInvoices || req.user!.permissions.canApproveBudgets);
+  if (canSearchProposals) {
+    for (const prop of db.proposals || []) {
     if (
       (prop.proposalNumber && prop.proposalNumber.toLowerCase().includes(q)) ||
       (prop.clientName && prop.clientName.toLowerCase().includes(q)) ||
@@ -1998,6 +2077,7 @@ apiRouter.get('/search', requireAuth, (req: AuthenticatedRequest, res: Response)
 
 const handleOverview = (req: AuthenticatedRequest, res: Response): void => {
   const db = getDatabase();
+  const canViewFinancials = req.user?.stakeholderType === 'Master' || Boolean(req.user?.permissions?.canViewFinancials);
 
   const leads = db.leads || [];
   const deals = db.crmDeals || [];
@@ -2121,11 +2201,11 @@ const handleOverview = (req: AuthenticatedRequest, res: Response): void => {
   res.json({
     success: true,
     metrics: {
-      revenueCollected,
-      totalBilled,
-      outstandingReceivables: totalOutstanding,
-      overdueReceivables,
-      activePipeline: activePipelineValue,
+      revenueCollected: canViewFinancials ? revenueCollected : null,
+      totalBilled: canViewFinancials ? totalBilled : null,
+      outstandingReceivables: canViewFinancials ? totalOutstanding : null,
+      overdueReceivables: canViewFinancials ? overdueReceivables : null,
+      activePipeline: canViewFinancials ? activePipelineValue : null,
       activeProjects: activeProjectsCount,
       projectsAtRisk: projectsAtRiskCount,
       pendingApprovals: pendingApprovalsCount,
@@ -2135,22 +2215,29 @@ const handleOverview = (req: AuthenticatedRequest, res: Response): void => {
     todayAtKapitech: {
       openLeadsCount,
       dealsInPipelineCount,
-      pipelineValue: activePipelineValue,
+      pipelineValue: canViewFinancials ? activePipelineValue : null,
       proposalsAwaitingCount,
       projectsAtRiskCount,
       overdueInvoicesCount,
-      cashOutstanding: totalOutstanding
+      cashOutstanding: canViewFinancials ? totalOutstanding : null
     },
-    financials: {
+    financials: canViewFinancials ? {
       revenueThisMonth: revenueCollected,
       cashCollected: revenueCollected,
       outstandingReceivables: totalOutstanding,
       operatingExpenses: totalExpenses,
       netOperatingProfit,
       margin: revenueCollected > 0 ? ((netOperatingProfit / revenueCollected) * 100).toFixed(1) : '0'
+    } : {
+      revenueThisMonth: null,
+      cashCollected: null,
+      outstandingReceivables: null,
+      operatingExpenses: null,
+      netOperatingProfit: null,
+      margin: null
     },
-    pipelineByStage,
-    attentionItems,
+    pipelineByStage: canViewFinancials ? pipelineByStage : pipelineByStage.map((stage) => ({ ...stage, value: null })),
+    attentionItems: canViewFinancials ? attentionItems : attentionItems.filter((item) => item.category !== 'Finance'),
     projects: activeProjectsList.slice(0, 10),
     recentActivity: (db.auditLogs || []).slice(0, 10)
   });
