@@ -141,7 +141,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
   return (
     <div className="space-y-6 animate-in fade-in duration-200">
       {/* ------------------------------------------------------------- */}
-      {/* 1. HEADER WITH AUTHORITATIVE STATUS & REFRESH */}
+      {/* 1. HEADER WITH SERVER STATUS & REFRESH */}
       {/* ------------------------------------------------------------- */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-white/[0.07]">
         <div>
@@ -153,8 +153,8 @@ export const GlobalExecutiveDashboard: React.FC = () => {
           </div>
           <p className="text-xs font-mono text-[#8A94A6] mt-1">
             {language === 'id'
-              ? 'Laporan agregasi real-time status pipeline, piutang tertagih, risiko proyek, dan prioritas tindakan.'
-              : 'Real-time authoritative telemetry across sales pipeline, receivables, project delivery, and action priorities.'}
+              ? 'Snapshot server saat ini untuk pipeline, piutang, risiko proyek, dan prioritas tindakan.'
+              : 'Current server snapshot for sales pipeline, receivables, project delivery, and action priorities.'}
           </p>
         </div>
 
@@ -182,7 +182,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
       )}
 
       {/* ------------------------------------------------------------- */}
-      {/* 2. CORE KPI ROW (AUTHORITATIVE BUSINESS METRICS) */}
+      {/* 2. CORE KPI ROW */}
       {/* ------------------------------------------------------------- */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Revenue Collected */}
@@ -536,7 +536,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
               <Activity size={15} className="text-[#FF1E27]" />
               <span>{language === 'id' ? 'Log Aktivitas Sistem & Audit Trail' : 'System Audit Trail & Operations Feed'}</span>
             </h3>
-            <p className="text-[10px] font-mono text-[#8A94A6] mt-0.5">Authoritative events recorded by server audit engine</p>
+            <p className="text-[10px] font-mono text-[#8A94A6] mt-0.5">Events recorded by the server audit log</p>
           </div>
           <Link
             to="/admin/settings"
