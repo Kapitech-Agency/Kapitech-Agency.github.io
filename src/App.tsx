@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useEffect } from 'react';
+import React, { lazy, Suspense, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'motion/react';
 import { LanguageProvider } from './lib/LanguageContext';
@@ -11,37 +11,38 @@ import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 import { FloatingContact } from './components/FloatingContact';
 
-// Public Pages
-import { Home } from './pages/Home';
-import { Work } from './pages/Work';
-import { Services } from './pages/Services';
-import { About } from './pages/About';
-import { Contact } from './pages/Contact';
-import { Careers } from './pages/Careers';
-import { ServiceDetail } from './pages/ServiceDetail';
-import { PrivacyPolicy } from './pages/PrivacyPolicy';
-import { TermsOfService } from './pages/TermsOfService';
-import { AiInstructions } from './pages/AiInstructions';
-import { EditorialPolicy } from './pages/EditorialPolicy';
-import { CookiePolicy } from './pages/CookiePolicy';
-import NotFound from './pages/NotFound';
+// Route-level code splitting keeps rarely visited pages out of the initial JavaScript bundle.
+// Named exports are adapted to React.lazy's default-export contract.
+const Home = lazy(() => import('./pages/Home').then((m) => ({ default: m.Home })));
+const Work = lazy(() => import('./pages/Work').then((m) => ({ default: m.Work })));
+const Services = lazy(() => import('./pages/Services').then((m) => ({ default: m.Services })));
+const About = lazy(() => import('./pages/About').then((m) => ({ default: m.About })));
+const Contact = lazy(() => import('./pages/Contact').then((m) => ({ default: m.Contact })));
+const Careers = lazy(() => import('./pages/Careers').then((m) => ({ default: m.Careers })));
+const ServiceDetail = lazy(() => import('./pages/ServiceDetail').then((m) => ({ default: m.ServiceDetail })));
+const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy').then((m) => ({ default: m.PrivacyPolicy })));
+const TermsOfService = lazy(() => import('./pages/TermsOfService').then((m) => ({ default: m.TermsOfService })));
+const AiInstructions = lazy(() => import('./pages/AiInstructions').then((m) => ({ default: m.AiInstructions })));
+const EditorialPolicy = lazy(() => import('./pages/EditorialPolicy').then((m) => ({ default: m.EditorialPolicy })));
+const CookiePolicy = lazy(() => import('./pages/CookiePolicy').then((m) => ({ default: m.CookiePolicy })));
+const NotFound = lazy(() => import('./pages/NotFound'));
 
-// Protected Admin Suite
-import { AdminLogin } from './pages/admin/AdminLogin';
-import { AdminLayout } from './pages/admin/AdminLayout';
-import { AdminInbox } from './pages/admin/AdminInbox';
-import { AdminCrm } from './pages/admin/AdminCrm';
-import { AdminInvoicing } from './pages/admin/AdminInvoicing';
-import { AdminProjects } from './pages/admin/AdminProjects';
-import { AdminClients } from './pages/admin/AdminClients';
-import { AdminProposals } from './pages/admin/AdminProposals';
-import { AdminApprovals } from './pages/admin/AdminApprovals';
-import { AdminDocuments } from './pages/admin/AdminDocuments';
-import { AdminCmsProjects } from './pages/admin/AdminCmsProjects';
-import { AdminCmsServices } from './pages/admin/AdminCmsServices';
-import { AdminCmsTestimonials } from './pages/admin/AdminCmsTestimonials';
-import { AdminVendors } from './pages/admin/AdminVendors';
-import { AdminSettings } from './pages/admin/AdminSettings';
+const AdminLogin = lazy(() => import('./pages/admin/AdminLogin').then((m) => ({ default: m.AdminLogin })));
+const AdminInbox = lazy(() => import('./pages/admin/AdminInbox').then((m) => ({ default: m.AdminInbox })));
+const AdminCrm = lazy(() => import('./pages/admin/AdminCrm').then((m) => ({ default: m.AdminCrm })));
+const AdminInvoicing = lazy(() => import('./pages/admin/AdminInvoicing').then((m) => ({ default: m.AdminInvoicing })));
+const AdminProjects = lazy(() => import('./pages/admin/AdminProjects').then((m) => ({ default: m.AdminProjects })));
+const AdminClients = lazy(() => import('./pages/admin/AdminClients').then((m) => ({ default: m.AdminClients })));
+const AdminProposals = lazy(() => import('./pages/admin/AdminProposals').then((m) => ({ default: m.AdminProposals })));
+const AdminApprovals = lazy(() => import('./pages/admin/AdminApprovals').then((m) => ({ default: m.AdminApprovals })));
+const AdminDocuments = lazy(() => import('./pages/admin/AdminDocuments').then((m) => ({ default: m.AdminDocuments })));
+const AdminCmsProjects = lazy(() => import('./pages/admin/AdminCmsProjects').then((m) => ({ default: m.AdminCmsProjects })));
+const AdminCmsServices = lazy(() => import('./pages/admin/AdminCmsServices').then((m) => ({ default: m.AdminCmsServices })));
+const AdminCmsTestimonials = lazy(() => import('./pages/admin/AdminCmsTestimonials').then((m) => ({ default: m.AdminCmsTestimonials })));
+const AdminVendors = lazy(() => import('./pages/admin/AdminVendors').then((m) => ({ default: m.AdminVendors })));
+const AdminSettings = lazy(() => import('./pages/admin/AdminSettings').then((m) => ({ default: m.AdminSettings })));
+const GlobalExecutiveDashboard = lazy(() => import('./components/admin/GlobalExecutiveDashboard').then((m) => ({ default: m.GlobalExecutiveDashboard })));
+
 import { RequireAdminAuth } from './components/admin/RequireAdminAuth';
 import { GlobalExecutiveDashboard } from './components/admin/GlobalExecutiveDashboard';
 
@@ -67,8 +68,15 @@ const AnimatedRoutes = () => {
         transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
         className="w-full flex-1 flex flex-col"
       >
-        <Routes location={location}>
-          {/* Public Agency Routes */}
+        <Suspense
+          fallback={
+            <div className="flex min-h-[40vh] items-center justify-center px-6 text-sm text-white/60" role="status">
+              Loading…
+            </div>
+          }
+        >
+          <Routes location={location}>
+            {/* Public Agency Routes */}
           <Route path="/" element={<Home />} />
           <Route path="/work" element={<Work />} />
           <Route path="/services" element={<Services />} />
@@ -119,9 +127,10 @@ const AnimatedRoutes = () => {
             <Route path="settings" element={<AdminSettings />} />
           </Route>
 
-          {/* 404 Fallback */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+            {/* 404 Fallback */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Suspense>
       </motion.div>
     </AnimatePresence>
   );
