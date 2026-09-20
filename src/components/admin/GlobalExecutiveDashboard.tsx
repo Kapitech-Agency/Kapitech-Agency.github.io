@@ -23,11 +23,11 @@ import { getActiveCurrency, CURRENCY_EVENT, CurrencyCode } from '../../lib/curre
 
 interface ExecutiveOverviewData {
   metrics: {
-    revenueCollected: number;
-    totalBilled: number;
-    outstandingReceivables: number;
-    overdueReceivables: number;
-    activePipeline: number;
+    revenueCollected: number | null;
+    totalBilled: number | null;
+    outstandingReceivables: number | null;
+    overdueReceivables: number | null;
+    activePipeline: number | null;
     activeProjects: number;
     projectsAtRisk: number;
     pendingApprovals: number;
@@ -37,18 +37,18 @@ interface ExecutiveOverviewData {
   todayAtKapitech: {
     openLeadsCount: number;
     dealsInPipelineCount: number;
-    pipelineValue: number;
+    pipelineValue: number | null;
     proposalsAwaitingCount: number;
     projectsAtRiskCount: number;
     overdueInvoicesCount: number;
   };
   financials: {
-    revenueThisMonth: number;
-    cashCollected: number;
-    outstandingReceivables: number;
-    operatingExpenses: number;
-    netOperatingProfit: number;
-    margin: string;
+    revenueThisMonth: number | null;
+    cashCollected: number | null;
+    outstandingReceivables: number | null;
+    operatingExpenses: number | null;
+    netOperatingProfit: number | null;
+    margin: string | null;
   };
   pipelineByStage: Array<{
     stage: string;
@@ -111,7 +111,8 @@ export const GlobalExecutiveDashboard: React.FC = () => {
     fetchOverview();
   }, []);
 
-  const formatCurrency = (val: number = 0) => {
+  const formatCurrency = (val: number | null | undefined) => {
+    if (val === null || val === undefined) return language === 'id' ? 'Terbatas' : 'Restricted';
     if (currency === 'USD') {
       const usdVal = Math.round(val / 16000);
       return `$${usdVal.toLocaleString()}`;
@@ -271,7 +272,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
               ) : (
                 <span className="text-emerald-400 font-semibold flex items-center gap-1">
                   <CheckCircle2 size={11} />
-                  100% On Schedule
+                  No risk flags
                 </span>
               )}
             </div>
@@ -358,7 +359,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
                 <Kanban size={15} className="text-[#FF1E27]" />
                 <span>{language === 'id' ? 'Sebaran Tahapan Pipeline CRM' : 'Sales Pipeline by Stage'}</span>
               </h3>
-              <p className="text-[10px] font-mono text-[#8A94A6] mt-0.5">Authoritative deal distribution</p>
+              <p className="text-[10px] font-mono text-[#8A94A6] mt-0.5">Current deal distribution</p>
             </div>
             <Link
               to="/admin/crm"
@@ -397,7 +398,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
                 <DollarSign size={15} className="text-emerald-400" />
                 <span>{language === 'id' ? 'Ringkasan Keuangan Operasional' : 'Financial Operating Summary'}</span>
               </h3>
-              <p className="text-[10px] font-mono text-[#8A94A6] mt-0.5">Authoritative cash flow breakdown</p>
+              <p className="text-[10px] font-mono text-[#8A94A6] mt-0.5">Current financial snapshot</p>
             </div>
             <Link
               to="/admin/invoicing"
@@ -450,7 +451,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
               <Layers size={15} className="text-[#FF1E27]" />
               <span>{language === 'id' ? 'Status Eksekusi Proyek Klien' : 'Client Project Delivery Status'}</span>
             </h3>
-            <p className="text-[10px] font-mono text-[#8A94A6] mt-0.5">Authoritative active engagements from project registry</p>
+            <p className="text-[10px] font-mono text-[#8A94A6] mt-0.5">Current active engagements from project registry</p>
           </div>
           <Link
             to="/admin/projects"
