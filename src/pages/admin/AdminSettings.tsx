@@ -48,15 +48,25 @@ export const AdminSettings: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const session = getAdminSession();
   const storedCreds = getStoredAdminCredentials();
+  const canManageAccounts = session?.user?.stakeholderType === 'Master' || Boolean(session?.user?.permissions?.canManageAdminAccounts);
+  const canManageCms = session?.user?.stakeholderType === 'Master' || Boolean(session?.user?.permissions?.canManageCmsContent);
+  const canAccessServer = session?.user?.stakeholderType === 'Master' || Boolean(session?.user?.permissions?.canAccessServerAndApi);
+  const canViewAudit = session?.user?.stakeholderType === 'Master' || Boolean(session?.user?.permissions?.canViewSecurityAuditLogs);
 
   // Tab: profile, branding, rbac, security, api, audit
   const paramTab = searchParams.get('tab');
+
+  const canManageAccounts = session?.user?.stakeholderType === 'Master' || Boolean(session?.user?.permissions?.canManageAdminAccounts);
+  const canManageCms = session?.user?.stakeholderType === 'Master' || Boolean(session?.user?.permissions?.canManageCmsContent);
+  const canAccessServer = session?.user?.stakeholderType === 'Master' || Boolean(session?.user?.permissions?.canAccessServerAndApi);
+  const canViewAudit = session?.user?.stakeholderType === 'Master' || Boolean(session?.user?.permissions?.canViewSecurityAuditLogs);
+
   const initialTab = (
-    paramTab === 'team' || paramTab === 'rbac' ? 'rbac' :
-    paramTab === 'audit' ? 'audit' :
-    paramTab === 'system' || paramTab === 'branding' ? 'branding' :
+    (paramTab === 'team' || paramTab === 'rbac') && canManageAccounts ? 'rbac' :
+    paramTab === 'audit' && canViewAudit ? 'audit' :
+    (paramTab === 'system' || paramTab === 'branding') && canManageCms ? 'branding' :
     paramTab === 'security' ? 'security' :
-    paramTab === 'api' ? 'api' : 'profile'
+    paramTab === 'api' && canAccessServer ? 'api' : 'profile'
   ) as 'profile' | 'branding' | 'rbac' | 'security' | 'api' | 'audit';
 
   const [activeTab, setActiveTab] = useState<'profile' | 'branding' | 'rbac' | 'security' | 'api' | 'audit'>(initialTab);
@@ -368,6 +378,7 @@ export const AdminSettings: React.FC = () => {
           <span>{language === 'id' ? 'Profil & Akun Master' : 'Profile & Master Account'}</span>
         </button>
 
+        {canManageCms && (
         <button
           onClick={() => handleTabChange('branding')}
           className={`px-4 py-2.5 rounded-xl text-xs font-mono transition-all flex items-center gap-2 shrink-0 min-h-[44px] ${
@@ -379,7 +390,9 @@ export const AdminSettings: React.FC = () => {
           <Palette size={15} />
           <span>{language === 'id' ? 'Brand & SEO' : 'Brand & SEO'}</span>
         </button>
+        )}
 
+        {canManageAccounts && (
         <button
           onClick={() => handleTabChange('rbac')}
           className={`px-4 py-2.5 rounded-xl text-xs font-mono transition-all flex items-center gap-2 shrink-0 min-h-[44px] ${
@@ -391,6 +404,7 @@ export const AdminSettings: React.FC = () => {
           <Layers size={15} />
           <span>{language === 'id' ? 'Matriks Hak Akses (RBAC)' : 'RBAC Matrix'}</span>
         </button>
+        )}
 
         <button
           onClick={() => handleTabChange('security')}
@@ -404,6 +418,7 @@ export const AdminSettings: React.FC = () => {
           <span>{language === 'id' ? 'Keamanan & MFA' : 'Security & MFA'}</span>
         </button>
 
+        {canAccessServer && (
         <button
           onClick={() => handleTabChange('api')}
           className={`px-4 py-2.5 rounded-xl text-xs font-mono transition-all flex items-center gap-2 shrink-0 min-h-[44px] ${
@@ -415,7 +430,9 @@ export const AdminSettings: React.FC = () => {
           <Database size={15} />
           <span>{language === 'id' ? 'API & Cloud' : 'API & Cloud'}</span>
         </button>
+        )}
 
+        {canViewAudit && (
         <button
           onClick={() => handleTabChange('audit')}
           className={`px-4 py-2.5 rounded-xl text-xs font-mono transition-all flex items-center gap-2 shrink-0 min-h-[44px] ${
@@ -427,6 +444,7 @@ export const AdminSettings: React.FC = () => {
           <ShieldCheck size={15} />
           <span>{language === 'id' ? `Riwayat Audit (${logs.length})` : `Audit Trail (${logs.length})`}</span>
         </button>
+        )}
       </div>
 
       {/* TAB 1: PROFILE & MASTER ACCOUNT */}
