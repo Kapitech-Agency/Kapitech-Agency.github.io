@@ -44,7 +44,6 @@ const AdminSettings = lazy(() => import('./pages/admin/AdminSettings').then((m) 
 const GlobalExecutiveDashboard = lazy(() => import('./components/admin/GlobalExecutiveDashboard').then((m) => ({ default: m.GlobalExecutiveDashboard })));
 
 import { RequireAdminAuth } from './components/admin/RequireAdminAuth';
-import { GlobalExecutiveDashboard } from './components/admin/GlobalExecutiveDashboard';
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
