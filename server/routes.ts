@@ -2043,19 +2043,34 @@ apiRouter.get('/approvals', requireAuth, requireAnyPermission('canApproveBudgets
 });
 
 apiRouter.post('/approvals', requireAuth, requireAnyPermission('canManageProjects', 'canApproveBudgets'), (req: AuthenticatedRequest, res: Response): void => {
-  const data = req.body;
+  const data = req.body || {};
+  const type = String(data.type || 'Invoice').trim().slice(0, 80);
+  const referenceId = String(data.referenceId || '').trim().slice(0, 120);
+  const title = String(data.title || 'Approval Request').trim().slice(0, 200);
+  const reason = String(data.reason || 'Standard operational review').trim().slice(0, 2000);
+  const riskLevel = ['Low', 'Medium', 'High', 'Critical'].includes(String(data.riskLevel))
+    ? String(data.riskLevel)
+    : 'Low';
+  const value = Number(data.value);
+
+  if (!title || !reason || !Number.isFinite(value) || value < 0) {
+    res.status(400).json({ success: false, error: 'Approval title, reason, and a valid non-negative value are required.' });
+    return;
+  }
+
   const db = getDatabase();
   const newApproval = {
     id: `appr_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
-    type: data.type || 'Invoice',
-    referenceId: data.referenceId || '',
-    title: data.title || 'Approval Request',
+    type,
+    referenceId,
+    title,
+    requesterId: req.user!.id,
     requester: req.user!.name || req.user!.username,
     requesterRole: req.user!.role,
-    value: data.value || 0,
+    value,
     date: new Date().toISOString().split('T')[0],
-    reason: data.reason || 'Standard operational review',
-    riskLevel: data.riskLevel || 'Low',
+    reason,
+    riskLevel,
     status: 'Pending',
     createdAt: new Date().toISOString()
   };
@@ -2063,12 +2078,31 @@ apiRouter.post('/approvals', requireAuth, requireAnyPermission('canManageProject
   if (!db.approvals) db.approvals = [];
   db.approvals.unshift(newApproval);
   saveDatabase(db);
+
+  recordAuditLog({
+    action: 'APPROVAL_CREATED',
+    actor: req.user!.username,
+    actorRole: req.user!.role,
+    ip: req.ip,
+    userAgent: req.headers['user-agent'] as string,
+    details: `Created approval request "${title}" for ${value}.`,
+    severity: riskLevel === 'Critical' ? 'critical' : riskLevel === 'High' ? 'warning' : 'info'
+  });
+
   res.json({ success: true, approval: newApproval });
 });
 
 apiRouter.post('/approvals/:id/action', requireAuth, requirePermission('canApproveBudgets'), (req: AuthenticatedRequest, res: Response): void => {
   const { id } = req.params;
-  const { action, notes } = req.body; // 'Approve' | 'Reject' | 'Request Changes'
+  const action = String(req.body?.action || '');
+  const notes = String(req.body?.notes || '').trim().slice(0, 2000);
+  const allowedActions = new Set(['Approve', 'Reject', 'Request Changes']);
+
+  if (!allowedActions.has(action)) {
+    res.status(400).json({ success: false, error: 'Invalid approval action.' });
+    return;
+  }
+
   const db = getDatabase();
   const item = (db.approvals || []).find(a => a.id === id);
 
@@ -2077,20 +2111,41 @@ apiRouter.post('/approvals/:id/action', requireAuth, requirePermission('canAppro
     return;
   }
 
+  if (item.status !== 'Pending') {
+    res.status(409).json({ success: false, error: 'This approval request has already been resolved.' });
+    return;
+  }
+
+  if (item.requesterId && item.requesterId === req.user!.id) {
+    recordAuditLog({
+      action: 'APPROVAL_SELF_ACTION_BLOCKED',
+      actor: req.user!.username,
+      actorRole: req.user!.role,
+      ip: req.ip,
+      userAgent: req.headers['user-agent'] as string,
+      details: `Blocked self-approval action "${action}" on approval item "${item.title}".`,
+      severity: 'warning'
+    });
+    res.status(403).json({ success: false, error: 'Maker-checker control: the requester cannot approve or reject their own request.' });
+    return;
+  }
+
   item.status = action === 'Approve' ? 'Approved' : action === 'Reject' ? 'Rejected' : 'Changes Requested';
+  item.reviewedById = req.user!.id;
   item.reviewedBy = req.user!.name || req.user!.username;
   item.reviewedAt = new Date().toISOString();
-  item.reviewNotes = notes || '';
+  item.reviewNotes = notes;
+
   saveDatabase(db);
 
   recordAuditLog({
-    action: `APPROVAL_${action.toUpperCase()}`,
+    action: `APPROVAL_${action.toUpperCase().replace(/ /g, '_')}`,
     actor: req.user!.username,
     actorRole: req.user!.role,
     ip: req.ip,
     userAgent: req.headers['user-agent'] as string,
     details: `${action} decision executed for approval item "${item.title}".`,
-    severity: 'info'
+    severity: action === 'Reject' ? 'warning' : 'info'
   });
 
   res.json({ success: true, approval: item });
