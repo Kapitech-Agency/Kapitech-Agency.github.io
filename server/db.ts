@@ -119,7 +119,7 @@ export function verifyDatabaseBackupIntegrity(): { valid: boolean; checkedAt: st
 export function listDatabaseBackups(): Array<{ name: string; createdAt: string; sizeBytes: number }> {
   ensureBackupDirectory();
   return fs.readdirSync(BACKUP_DIR)
-    .filter(name => /^kapitech_db_.*\\.bak$/.test(name))
+    .filter(name => /^kapitech_db_.*\.bak$/.test(name))
     .map(name => {
       const fullPath = path.join(BACKUP_DIR, name);
       const stat = fs.statSync(fullPath);
