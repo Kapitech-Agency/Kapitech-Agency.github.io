@@ -1122,9 +1122,32 @@ export function getDatabase(): DatabaseSchema {
       if (inMemoryDb) {
         let migrationChanged = false;
 
+        // Bootstrap recovery: the original production seed used ADMIN_INITIAL_PASSWORD.
+        // Legacy root accounts still using PBKDF2 can be synchronized from that
+        // configured secret, then immediately upgraded to the current scrypt format.
+        // Accounts already migrated to scrypt are never overwritten by this path.
+        const bootstrapPassword = process.env.ADMIN_INITIAL_PASSWORD?.trim();
+        const bootstrapUsername = process.env.ADMIN_INITIAL_USERNAME?.trim().toLowerCase();
+        const bootstrapEmail = process.env.ADMIN_INITIAL_EMAIL?.trim().toLowerCase();
+
         for (const user of inMemoryDb.users || []) {
           if (!user.passwordAlgorithm) {
             user.passwordAlgorithm = 'pbkdf2-sha512';
+            migrationChanged = true;
+          }
+
+          const isLegacyRoot =
+            user.id === 'usr_root_admin' &&
+            user.passwordAlgorithm === 'pbkdf2-sha512' &&
+            Boolean(bootstrapPassword) &&
+            (!bootstrapUsername || user.username.toLowerCase() === bootstrapUsername) &&
+            (!bootstrapEmail || user.email.toLowerCase() === bootstrapEmail);
+
+          if (isLegacyRoot) {
+            const salt = generateSalt();
+            user.salt = salt;
+            user.passwordHash = hashPassword(bootstrapPassword!, salt, 'scrypt-v1');
+            user.passwordAlgorithm = 'scrypt-v1';
             migrationChanged = true;
           }
         }
