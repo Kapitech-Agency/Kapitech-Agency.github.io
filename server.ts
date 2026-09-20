@@ -15,15 +15,41 @@ async function startServer() {
   // Security Headers Middleware
   app.use((req, res, next) => {
     res.setHeader('X-Content-Type-Options', 'nosniff');
-    res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+    res.setHeader('X-Frame-Options', 'DENY');
     res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
-    res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+    res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), usb=()');
+    res.setHeader('X-DNS-Prefetch-Control', 'off');
+    res.setHeader('X-Permitted-Cross-Domain-Policies', 'none');
+    res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
+    res.setHeader('Cross-Origin-Resource-Policy', 'same-origin');
+
+    if (process.env.NODE_ENV === 'production') {
+      res.setHeader(
+        'Content-Security-Policy',
+        [
+          "default-src 'self'",
+          "script-src 'self'",
+          "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+          "font-src 'self' https://fonts.gstatic.com data:",
+          "img-src 'self' data: blob: https:",
+          "connect-src 'self'",
+          "object-src 'none'",
+          "base-uri 'self'",
+          "form-action 'self'",
+          "frame-ancestors 'none'",
+          "upgrade-insecure-requests"
+        ].join('; ')
+      );
+      if (req.secure) {
+        res.setHeader('Strict-Transport-Security', 'max-age=63072000; includeSubDomains');
+      }
+    }
     next();
   });
 
   // Body parsers
-  app.use(express.json({ limit: '10mb' }));
-  app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+  app.use(express.json({ limit: '1mb' }));
+  app.use(express.urlencoded({ extended: true, limit: '1mb' }));
 
   // Prevent browsers and intermediary caches from storing authenticated API responses.
   app.use('/api', (_req, res, next) => {
@@ -74,6 +100,16 @@ async function startServer() {
     app.use(vite.middlewares);
   } else {
     const distPath = path.join(process.cwd(), 'dist');
+
+    // Never expose backend bundles or source maps as public static assets.
+    app.use((req, res, next) => {
+      if (req.path === '/server.cjs' || req.path.endsWith('.map')) {
+        res.status(404).end();
+        return;
+      }
+      next();
+    });
+
     app.use(express.static(distPath));
     app.get('*', (req, res) => {
       res.sendFile(path.join(distPath, 'index.html'));
