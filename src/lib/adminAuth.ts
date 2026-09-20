@@ -178,12 +178,20 @@ export async function authenticateAdmin(
   identifier: string,
   passwordPlain: string,
   rememberMe: boolean = false
-): Promise<{ success: boolean; error?: string; session?: AdminSession }> {
+): Promise<{ success: boolean; error?: string; session?: AdminSession; requiresMfa?: boolean; mfaUser?: { id: string; username: string; email: string } }> {
   const res = await api.auth.login({ identifier, password: passwordPlain, rememberMe });
   if (!res.success || !res.data?.success) {
     return {
       success: false,
       error: res.error || (res.data as any)?.error || 'Kombinasi Username/Email atau Password tidak valid.'
+    };
+  }
+
+  if ((res.data as any)?.requiresMfa) {
+    return {
+      success: true,
+      requiresMfa: true,
+      mfaUser: (res.data as any).user
     };
   }
 
