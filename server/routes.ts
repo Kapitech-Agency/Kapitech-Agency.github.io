@@ -1140,11 +1140,6 @@ function buildInvoiceFinancials(items: ReturnType<typeof normalizeInvoiceItems>,
 }
 
 
-apiRouter.get('/finance/invoices', requireAuth, requirePermission('canViewFinancials'), (req: AuthenticatedRequest, res: Response): void => {
-  const db = getDatabase();
-  res.json({ success: true, invoices: db.invoices });
-});
-
 apiRouter.post('/finance/invoices', requireAuth, requirePermission('canManageInvoices'), (req: AuthenticatedRequest, res: Response): void => {
   const input = req.body || {};
   const items = normalizeInvoiceItems(input.items);
@@ -2048,7 +2043,7 @@ apiRouter.post('/crm/proposals', requireAuth, requirePermission('canManageCrm'),
 
   const newProposal = {
     id: `prop_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
-    proposalNumber: data.proposalNumber || `PROP-KAPI-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`,
+    proposalNumber: cleanText(data.proposalNumber || `PROP-KAPI-${new Date().getFullYear()}-${crypto.randomInt(1000, 1000000)}`, 80),
     title: data.title || 'Digital Engineering Proposal',
     clientName: data.clientName || 'Prospective Client',
     company: data.company || '',
