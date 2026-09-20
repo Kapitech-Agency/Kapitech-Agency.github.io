@@ -25,6 +25,12 @@ async function startServer() {
   app.use(express.json({ limit: '10mb' }));
   app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
+  // Prevent browsers and intermediary caches from storing authenticated API responses.
+  app.use('/api', (_req, res, next) => {
+    res.setHeader('Cache-Control', 'no-store');
+    next();
+  });
+
   // API Routes
   app.use('/api', apiRouter);
 
