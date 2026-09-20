@@ -231,7 +231,7 @@ export async function saveCmsProject(project: ProjectItem): Promise<{ success: b
 export async function deleteCmsProject(id: string): Promise<boolean> {
   const current = getCmsProjects();
   const updated = current.filter(p => p.id !== id);
-  localStorage.setItem(CMS_PROJECTS_KEY, JSON.stringify(updated));
+  cmsProjectsCache = updated;
   notifyCmsUpdate('projects');
 
   api.cms.deleteProject(id).catch(() => {});
@@ -292,7 +292,7 @@ export async function saveCmsTestimonial(testimonial: TestimonialItem): Promise<
 export async function deleteCmsTestimonial(id: string): Promise<boolean> {
   const current = getCmsTestimonials();
   const updated = current.filter(t => t.id !== id);
-  localStorage.setItem(CMS_TESTIMONIALS_KEY, JSON.stringify(updated));
+  cmsTestimonialsCache = updated;
   notifyCmsUpdate('testimonials');
 
   api.cms.deleteTestimonial(id).catch(() => {});
