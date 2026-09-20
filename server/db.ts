@@ -1196,12 +1196,9 @@ export function saveDatabaseSync(db: DatabaseSchema): void {
 }
 
 export function saveDatabase(db: DatabaseSchema): Promise<void> {
-  // JSON storage is intentionally serialized through one process-local queue.
-  // Each request must observe a successful durable write before it is considered complete.
-  writeQueue = writeQueue.then(() => {
-    saveDatabaseSync(db);
-  });
-  return writeQueue;
+  // Keep the API async-compatible, but perform the atomic write before returning.
+  saveDatabaseSync(db);
+  return Promise.resolve();
 }
 
 // Append-only tamper resistant audit log
