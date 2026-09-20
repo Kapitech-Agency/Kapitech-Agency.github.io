@@ -362,6 +362,8 @@ export const api = {
         mfaCoveragePercent: number;
         backupCount: number;
         latestBackupAt: string | null;
+        latestBackupAgeMinutes: number | null;
+        backupFresh: boolean;
         backupIntegrity: { valid: boolean; checkedAt: string; latestName?: string; reason?: string };
       };
     }>('/api/system/security/status')
