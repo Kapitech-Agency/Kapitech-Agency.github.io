@@ -23,6 +23,10 @@ interface DocumentItem {
   size?: string | number;
   fileSize?: number;
   url?: string;
+  downloadUrl?: string;
+  mimeType?: string;
+  status?: 'pending_upload' | 'ready' | 'external_link';
+  sourceType?: 'private_file' | 'external_link';
   owner?: string;
   uploadedBy?: string;
   uploadedDate?: string;
@@ -45,7 +49,7 @@ export const AdminDocuments: React.FC = () => {
   const [uploadTitle, setUploadTitle] = useState('');
   const [uploadCategory, setUploadCategory] = useState('Contract');
   const [uploadFileType, setUploadFileType] = useState('PDF');
-  const [uploadUrl, setUploadUrl] = useState('');
+  const [uploadFile, setUploadFile] = useState<File | null>(null);
   const [uploadRelatedType, setUploadRelatedType] = useState('General');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -72,41 +76,59 @@ export const AdminDocuments: React.FC = () => {
     loadDocuments();
   }, []);
 
+  const allowedDocumentTypes = '.pdf,.png,.jpg,.jpeg,.webp,.txt,.csv,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.zip';
+
   const handleUploadSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!uploadTitle.trim()) {
       showToast('Please specify a title.');
       return;
     }
-    if (!/^https:\/\//i.test(uploadUrl.trim())) {
-      showToast(language === 'id' ? 'Masukkan URL HTTPS dokumen yang valid.' : 'Enter a valid HTTPS document URL.');
+    if (!uploadFile) {
+      showToast(language === 'id' ? 'Pilih file dokumen terlebih dahulu.' : 'Select a document file first.');
+      return;
+    }
+    if (uploadFile.size <= 0 || uploadFile.size > 25 * 1024 * 1024) {
+      showToast(language === 'id' ? 'Ukuran file harus antara 1 byte dan 25 MB.' : 'File size must be between 1 byte and 25 MB.');
       return;
     }
 
     setIsSubmitting(true);
+    let documentId = '';
     try {
       const payload = {
         name: uploadTitle,
         title: uploadTitle,
         category: uploadCategory,
-        type: uploadFileType,
-        size: '',
-        relatedEntity: uploadRelatedType,
-        url: uploadUrl.trim()
+        type: (uploadFile.name.split('.').pop() || uploadFileType).toUpperCase().slice(0, 40),
+        mimeType: uploadFile.type || 'application/octet-stream',
+        size: (uploadFile.size / (1024 * 1024)).toFixed(1) + ' MB',
+        sizeBytes: uploadFile.size,
+        relatedEntity: uploadRelatedType
       };
 
-      const res = await api.documents.create(payload);
-      if (res.success && res.data?.document) {
-        setDocuments(prev => [res.data.document, ...prev]);
-        setIsUploadModalOpen(false);
-        setUploadTitle('');
-        setUploadUrl('');
-        showToast(language === 'id' ? 'Dokumen berhasil diunggah ke brankas.' : 'Document added to the registry.');
-      } else {
-        showToast(res.error || 'Upload failed.');
+      const created = await api.documents.create(payload);
+      if (!created.success || !created.data?.document) {
+        showToast(created.error || 'Upload failed.');
+        return;
       }
+
+      documentId = created.data.document.id;
+      const uploaded = await api.documents.uploadContent(documentId, uploadFile);
+      if (!uploaded.success || !uploaded.data?.document) {
+        await api.documents.delete(documentId);
+        showToast(uploaded.error || (language === 'id' ? 'File gagal disimpan ke vault.' : 'File could not be stored in the vault.'));
+        return;
+      }
+
+      setDocuments(prev => [uploaded.data.document, ...prev]);
+      setIsUploadModalOpen(false);
+      setUploadTitle('');
+      setUploadFile(null);
+      showToast(language === 'id' ? 'Dokumen tersimpan di private vault.' : 'Document securely stored in the private vault.');
     } catch {
-      showToast('Error uploading document.');
+      if (documentId) await api.documents.delete(documentId).catch(() => {});
+      showToast(language === 'id' ? 'Terjadi kesalahan saat mengunggah dokumen.' : 'Error uploading document.');
     } finally {
       setIsSubmitting(false);
     }
@@ -271,15 +293,24 @@ export const AdminDocuments: React.FC = () => {
                       <td className="py-3.5 px-4 font-mono text-[11px] text-zinc-300">
                         {doc.relatedEntity || 'General'}
                       </td>
+                      <td className="py-3.5 px-4">
+                        <span className={'px-2 py-0.5 rounded text-[10px] font-mono uppercase border ' + (
+                          doc.status === 'ready' || doc.sourceType === 'external_link'
+                            ? 'bg-emerald-500/10 text-emerald-300 border-emerald-500/20'
+                            : 'bg-amber-500/10 text-amber-300 border-amber-500/20'
+                        )}>
+                          {doc.status === 'ready' || doc.sourceType === 'external_link' ? 'ready' : 'pending'}
+                        </span>
+                      </td>
                       <td className="py-3.5 px-4 font-mono text-[11px] text-[#8A94A6]">
                         <div>{docDate}</div>
                         <div className="text-[9px] text-[#8A94A6]/70">by {docOwner}</div>
                       </td>
                       <td className="py-3.5 px-4 text-right">
                         <div className="flex items-center justify-end gap-1.5">
-                          {doc.url ? (
+                          {(doc.downloadUrl || doc.url) ? (
                             <a
-                              href={doc.url}
+                              href={doc.downloadUrl || doc.url}
                               target="_blank"
                               rel="noopener noreferrer"
                               title={language === 'id' ? 'Buka dokumen' : 'Open document'}
@@ -372,17 +403,18 @@ export const AdminDocuments: React.FC = () => {
               </div>
 
               <div className="space-y-1">
-                <label className="text-[11px] font-mono text-[#8A94A6]">{language === 'id' ? 'URL Dokumen (HTTPS) *' : 'Document URL (HTTPS) *'}</label>
+                <label className="text-[11px] font-mono text-[#8A94A6]">{language === 'id' ? 'File Dokumen *' : 'Document File *'}</label>
                 <input
-                  type="url"
+                  type="file"
                   required
-                  value={uploadUrl}
-                  onChange={(e) => setUploadUrl(e.target.value)}
-                  placeholder="https://..."
-                  className="w-full h-9 px-3 rounded-lg bg-[#181B22] text-white border border-white/[0.07] focus:outline-none focus:border-[#E50914]"
+                  accept={allowedDocumentTypes}
+                  onChange={(e) => setUploadFile(e.target.files?.[0] || null)}
+                  className="w-full h-10 px-2 py-2 rounded-lg bg-[#181B22] text-white border border-white/[0.07] focus:outline-none focus:border-[#E50914] text-[11px]"
                 />
                 <p className="text-[10px] text-[#64748B] font-mono">
-                  {language === 'id' ? 'AMS saat ini menyimpan metadata dan tautan HTTPS terkontrol. File privat belum diunggah ke object storage internal.' : 'AMS currently stores metadata and controlled HTTPS links. Private files are not uploaded to internal object storage yet.'}
+                  {language === 'id'
+                    ? 'File disimpan di server-side private vault, di luar static web root. Maksimal 25 MB. Akses selalu melalui session + RBAC.'
+                    : 'Files are stored in a server-side private vault outside the static web root. Max 25 MB. Access requires session + RBAC.'}
                 </p>
               </div>
 
@@ -400,7 +432,7 @@ export const AdminDocuments: React.FC = () => {
                   className="px-5 py-2 rounded-xl bg-[#E50914] hover:bg-[#B80710] text-white text-xs font-sans font-semibold disabled:opacity-50 flex items-center gap-1.5"
                 >
                   {isSubmitting ? <Loader2 size={13} className="animate-spin" /> : <Plus size={14} />}
-                  <span>{language === 'id' ? 'Simpan ke Registri' : 'Save to Registry'}</span>
+                  <span>{language === 'id' ? 'Simpan ke Private Vault' : 'Store in Private Vault'}</span>
                 </button>
               </div>
             </form>
