@@ -95,6 +95,7 @@ export const AdminSettings: React.FC = () => {
 
   // Audit Logs state
   const [logs, setLogs] = useState<SecurityAuditLog[]>([]);
+  const [auditIntegrity, setAuditIntegrity] = useState<{ valid: boolean; checked: number; brokenAt?: string } | null>(null);
 
   const [mfaSetup, setMfaSetup] = useState<{ secret: string; otpAuthUri: string } | null>(null);
   const [mfaRecoveryCodes, setMfaRecoveryCodes] = useState<string[]>([]);
@@ -126,6 +127,10 @@ export const AdminSettings: React.FC = () => {
     if (activeTab === 'audit') {
       fetchServerAuditLogs().then((nextLogs) => {
         if (mounted) setLogs(nextLogs);
+      });
+      api.auditLogs.integrity().then((res) => {
+        if (!mounted) return;
+        setAuditIntegrity(res.success && res.data?.integrity ? res.data.integrity : null);
       });
     }
     if (activeTab === 'rbac') {
@@ -1492,6 +1497,21 @@ export const AdminSettings: React.FC = () => {
             </div>
 
             <div className="flex items-center gap-2">
+              <div
+                className={`min-h-[40px] px-3.5 rounded-xl border text-xs font-mono flex items-center gap-2 ${auditIntegrity?.valid === false
+                  ? 'bg-red-950/30 border-red-500/30 text-red-300'
+                  : auditIntegrity?.valid
+                    ? 'bg-emerald-950/30 border-emerald-500/30 text-emerald-300'
+                    : 'bg-[#181B22] border-white/[0.07] text-[#8A94A6]'}`}
+                title={auditIntegrity ? `Checked ${auditIntegrity.checked} audit entries` : 'Audit integrity status'}
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-current" />
+                {auditIntegrity?.valid === false
+                  ? (language === 'id' ? 'Chain rusak' : 'Chain broken')
+                  : auditIntegrity?.valid
+                    ? (language === 'id' ? `Chain valid · ${auditIntegrity.checked}` : `Chain valid · ${auditIntegrity.checked}`)
+                    : (language === 'id' ? 'Memeriksa chain…' : 'Checking chain…')}
+              </div>
               <button
                 onClick={handleExportLogs}
                 disabled={logs.length === 0}
