@@ -130,6 +130,24 @@ export function buildMfaOtpUri(user: StoredUser, secret: string): string {
   return `otpauth://totp/${label}?secret=${secret}&issuer=${issuer}&algorithm=SHA1&digits=6&period=30`;
 }
 
+export function hashMfaRecoveryCode(code: string): string {
+  return crypto.createHash('sha256').update(String(code).trim().toUpperCase()).digest('hex');
+}
+
+export function generateMfaRecoveryCodes(count = 8): string[] {
+  return Array.from({ length: count }, () => crypto.randomBytes(8).toString('hex').toUpperCase());
+}
+
+export function verifyMfaRecoveryCode(user: StoredUser, code: string): boolean {
+  const normalized = String(code || '').trim().toUpperCase();
+  if (!normalized || normalized.length < 12 || !Array.isArray(user.mfaRecoveryCodeHashes)) return false;
+  const candidateHash = hashMfaRecoveryCode(normalized);
+  const index = user.mfaRecoveryCodeHashes.findIndex(hash => safeEqual(hash, candidateHash));
+  if (index < 0) return false;
+  user.mfaRecoveryCodeHashes.splice(index, 1);
+  return true;
+}
+
 export function verifyTotpCode(secret: string, code: string, timestamp = Date.now()): boolean {
   if (!/^\d{6}$/.test(String(code))) return false;
   const key = base32Decode(secret);
