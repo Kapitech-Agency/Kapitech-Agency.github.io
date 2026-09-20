@@ -250,15 +250,13 @@ export const getAgencyProjects = (): AgencyProject[] => {
     }
     const raw = localStorage.getItem(PROJECTS_STORAGE_KEY);
     if (!raw) {
+      if (import.meta.env.PROD) return [];
       localStorage.setItem(PROJECTS_STORAGE_KEY, JSON.stringify(INITIAL_DEFAULT_PROJECTS));
       return INITIAL_DEFAULT_PROJECTS;
     }
     const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed) && parsed.length > 0) {
-      return parsed;
-    }
-    localStorage.setItem(PROJECTS_STORAGE_KEY, JSON.stringify(INITIAL_DEFAULT_PROJECTS));
-    return INITIAL_DEFAULT_PROJECTS;
+    if (Array.isArray(parsed)) return parsed;
+    return import.meta.env.PROD ? [] : INITIAL_DEFAULT_PROJECTS;
   } catch {
     return INITIAL_DEFAULT_PROJECTS;
   }
