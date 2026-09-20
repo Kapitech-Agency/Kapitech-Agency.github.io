@@ -133,17 +133,15 @@ export const getAgencyClients = (): AgencyClient[] => {
     }
     const raw = localStorage.getItem(CLIENTS_STORAGE_KEY);
     if (!raw) {
+      if (import.meta.env.PROD) return [];
       localStorage.setItem(CLIENTS_STORAGE_KEY, JSON.stringify(INITIAL_DEFAULT_CLIENTS));
       return INITIAL_DEFAULT_CLIENTS;
     }
     const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed) && parsed.length > 0) {
-      return parsed;
-    }
-    localStorage.setItem(CLIENTS_STORAGE_KEY, JSON.stringify(INITIAL_DEFAULT_CLIENTS));
-    return INITIAL_DEFAULT_CLIENTS;
+    if (Array.isArray(parsed)) return parsed;
+    return import.meta.env.PROD ? [] : INITIAL_DEFAULT_CLIENTS;
   } catch {
-    return INITIAL_DEFAULT_CLIENTS;
+    return import.meta.env.PROD ? [] : INITIAL_DEFAULT_CLIENTS;
   }
 };
 
