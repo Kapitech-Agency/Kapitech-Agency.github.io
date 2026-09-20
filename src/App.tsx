@@ -29,7 +29,6 @@ import NotFound from './pages/NotFound';
 // Protected Admin Suite
 import { AdminLogin } from './pages/admin/AdminLogin';
 import { AdminLayout } from './pages/admin/AdminLayout';
-import { AdminDashboard } from './pages/admin/AdminDashboard';
 import { AdminInbox } from './pages/admin/AdminInbox';
 import { AdminCrm } from './pages/admin/AdminCrm';
 import { AdminInvoicing } from './pages/admin/AdminInvoicing';
@@ -103,8 +102,8 @@ const AnimatedRoutes = () => {
             }
           >
             <Route index element={<Navigate to="/admin/dashboard" replace />} />
-            <Route path="dashboard" element={<AdminDashboard />} />
-            <Route path="executive" element={<GlobalExecutiveDashboard />} />
+            <Route path="dashboard" element={<GlobalExecutiveDashboard />} />
+            <Route path="executive" element={<Navigate to="/admin/dashboard" replace />} />
             <Route path="inbox" element={<AdminInbox />} />
             <Route path="crm" element={<AdminCrm />} />
             <Route path="proposals" element={<AdminProposals />} />
