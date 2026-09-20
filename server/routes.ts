@@ -131,6 +131,32 @@ function normalizeProbability(value: unknown): number {
   return Math.min(1, Math.max(0, numeric > 1 ? numeric / 100 : numeric));
 }
 
+const MAX_MONEY = 100_000_000_000;
+const EMAIL_PATTERN = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;
+const ISO_DATE_PATTERN = /^\\d{4}-\\d{2}-\\d{2}$/;
+
+function isValidEmail(value: unknown): boolean {
+  const email = String(value ?? '').trim().toLowerCase();
+  return email.length <= 254 && EMAIL_PATTERN.test(email);
+}
+
+function isValidDate(value: unknown): boolean {
+  if (!ISO_DATE_PATTERN.test(String(value ?? ''))) return false;
+  const parsed = new Date(String(value) + 'T00:00:00Z');
+  return !Number.isNaN(parsed.getTime()) && parsed.toISOString().slice(0, 10) === String(value);
+}
+
+function normalizeNumber(value: unknown, min: number, max: number, fallback?: number): number | null {
+  const numeric = Number(value);
+  if (!Number.isFinite(numeric) || numeric < min || numeric > max) return fallback ?? null;
+  return Math.round(numeric * 100) / 100;
+}
+
+function normalizeStringArray(value: unknown, maxItems = 50, maxLength = 160): string[] {
+  if (!Array.isArray(value)) return [];
+  return value.slice(0, maxItems).map(item => cleanText(item, maxLength)).filter(Boolean);
+}
+
 function pushNotification(
   db: ReturnType<typeof getDatabase>,
   input: {
