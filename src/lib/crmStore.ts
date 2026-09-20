@@ -267,18 +267,16 @@ export const getCmsLeads = (): CrmLead[] => {
     }
     const raw = localStorage.getItem(CRM_STORAGE_KEY);
     if (!raw) {
+      if (import.meta.env.PROD) return [];
       localStorage.setItem(CRM_STORAGE_KEY, JSON.stringify(INITIAL_DEFAULT_LEADS));
       return INITIAL_DEFAULT_LEADS;
     }
     const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed) && parsed.length > 0) {
-      return parsed;
-    }
-    localStorage.setItem(CRM_STORAGE_KEY, JSON.stringify(INITIAL_DEFAULT_LEADS));
-    return INITIAL_DEFAULT_LEADS;
+    if (Array.isArray(parsed)) return parsed;
+    return import.meta.env.PROD ? [] : INITIAL_DEFAULT_LEADS;
   } catch (err) {
     console.debug('Error reading CRM leads:', err);
-    return INITIAL_DEFAULT_LEADS;
+    return import.meta.env.PROD ? [] : INITIAL_DEFAULT_LEADS;
   }
 };
 
