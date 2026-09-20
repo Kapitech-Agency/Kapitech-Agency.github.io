@@ -104,6 +104,7 @@ export interface StoredUser {
   mfaEnabled: boolean;
   mfaSecret?: string;
   mfaPendingSecret?: string;
+  mfaRecoveryCodeHashes?: string[];
   division: 'Management' | 'Engineering' | 'Design' | 'Finance' | 'Operations';
   status: 'active' | 'suspended';
   lastLogin: string;
