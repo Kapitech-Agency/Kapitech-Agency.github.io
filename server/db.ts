@@ -1103,6 +1103,12 @@ export function getDatabase(): DatabaseSchema {
     return inMemoryDb;
   }
 
+  if (process.env.NODE_ENV === 'production' && !isDataEncryptionEnabled()) {
+    throw new Error(
+      'Production persistent storage requires KAPITECH_DATA_ENCRYPTION_KEY. Configure a 32-byte key before starting AMS.'
+    );
+  }
+
   if (fs.existsSync(DB_FILE)) {
     try {
       const rawFile = fs.readFileSync(DB_FILE, 'utf-8');
