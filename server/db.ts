@@ -223,6 +223,7 @@ export interface StoredUser {
   mfaEnabled: boolean;
   mfaSecret?: string;
   mfaPendingSecret?: string;
+  mfaPendingSecretCreatedAt?: string;
   mfaRecoveryCodeHashes?: string[];
   division: 'Management' | 'Engineering' | 'Design' | 'Finance' | 'Operations';
   status: 'active' | 'suspended';
