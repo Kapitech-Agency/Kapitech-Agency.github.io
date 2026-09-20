@@ -12,7 +12,7 @@ The application creates encrypted rolling snapshots before live database replace
 
 ## Private document vault
 
-Uploaded files are stored under the server data directory in `private-documents`, outside the public static web root. Metadata is stored in the AMS database. Downloads require a valid session and the existing RBAC checks.
+Uploaded files are stored under the server data directory in `private-documents`, outside the public static web root. Metadata is stored in the AMS database. Downloads require a valid session, module permission, and object-level document access. Private files are encrypted at rest when `KAPITECH_DATA_ENCRYPTION_KEY` is configured.
 
 The upload limit is 25 MB per document. Executable MIME types are intentionally not accepted.
 
@@ -31,7 +31,7 @@ The upload limit is 25 MB per document. Executable MIME types are intentionally 
 
 ## Relational migration target
 
-The repository includes `docs/relational-schema.sql` as the normalized target schema. The current route layer is intentionally kept deployable on Hostinger while this database service is provisioned. The migration target covers identity, sessions, CRM, projects, proposals, invoices/payments, expenses, approvals, documents, notifications, and audit logs.
+The repository includes `docs/relational-schema.sql` as the normalized target schema. The current route layer remains deployable on Hostinger while the relational database service is provisioned. JSON remains the live compatibility store until cutover reconciliation is completed. The migration target covers identity, sessions, CRM, projects, proposals, invoices/payments, expenses, approvals, documents, notifications, and audit logs.
 
 A future cutover should be performed as a controlled migration with:
 - schema creation,
