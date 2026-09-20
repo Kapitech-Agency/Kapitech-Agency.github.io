@@ -336,7 +336,8 @@ export const api = {
 
   // Audit Logs
   auditLogs: {
-    getAll: () => apiRequest<{ success: boolean; logs: any[] }>('/api/audit-logs')
+    getAll: () => apiRequest<{ success: boolean; logs: any[] }>('/api/audit-logs'),
+    integrity: () => apiRequest<{ success: boolean; integrity: { valid: boolean; checked: number; brokenAt?: string } }>('/api/audit-logs/integrity')
   },
 
   // System / Backup
