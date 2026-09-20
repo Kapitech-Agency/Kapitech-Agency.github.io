@@ -363,6 +363,7 @@ export const getAgencyInvoices = (): AgencyInvoice[] => {
 
 export const saveAgencyInvoice = (invoice: AgencyInvoice): void => {
   const current = getAgencyInvoices();
+  const previousInvoices = [...current];
   const idx = current.findIndex(i => i.id === invoice.id);
   const now = new Date().toISOString();
 
@@ -380,15 +381,30 @@ export const saveAgencyInvoice = (invoice: AgencyInvoice): void => {
   const request = idx >= 0
     ? api.finance.updateInvoice(invoice.id, invoice)
     : api.finance.createInvoice(invoice);
-  request.catch(() => {});
+  request.then((res) => {
+    if (res.success && res.data?.success !== false) return;
+    invoiceCache = previousInvoices;
+    window.dispatchEvent(new CustomEvent(FINANCE_EVENT_NAME, { detail: previousInvoices }));
+  }).catch(() => {
+    invoiceCache = previousInvoices;
+    window.dispatchEvent(new CustomEvent(FINANCE_EVENT_NAME, { detail: previousInvoices }));
+  });
 };
 
 export const deleteAgencyInvoice = (id: string): void => {
   const current = getAgencyInvoices();
+  const previousInvoices = [...current];
   const updated = current.filter(i => i.id !== id);
   invoiceCache = updated;
   window.dispatchEvent(new CustomEvent(FINANCE_EVENT_NAME, { detail: updated }));
-  api.finance.deleteInvoice(id).catch(() => {});
+  api.finance.deleteInvoice(id).then((res) => {
+    if (res.success && res.data?.success !== false) return;
+    invoiceCache = previousInvoices;
+    window.dispatchEvent(new CustomEvent(FINANCE_EVENT_NAME, { detail: previousInvoices }));
+  }).catch(() => {
+    invoiceCache = previousInvoices;
+    window.dispatchEvent(new CustomEvent(FINANCE_EVENT_NAME, { detail: previousInvoices }));
+  });
 
 };
 
@@ -553,6 +569,7 @@ export const getAgencyExpenses = (): AgencyExpense[] => {
 
 export const saveAgencyExpense = (expense: AgencyExpense): void => {
   const current = getAgencyExpenses();
+  const previousExpenses = [...current];
   const idx = current.findIndex(e => e.id === expense.id);
 
   let updated: AgencyExpense[];
@@ -565,15 +582,30 @@ export const saveAgencyExpense = (expense: AgencyExpense): void => {
 
   expenseCache = updated;
   window.dispatchEvent(new CustomEvent(FINANCE_EVENT_NAME, { detail: updated }));
-  api.finance.createExpense(expense).catch(() => {});
+  api.finance.createExpense(expense).then((res) => {
+    if (res.success && res.data?.success !== false) return;
+    expenseCache = previousExpenses;
+    window.dispatchEvent(new CustomEvent(FINANCE_EVENT_NAME, { detail: previousExpenses }));
+  }).catch(() => {
+    expenseCache = previousExpenses;
+    window.dispatchEvent(new CustomEvent(FINANCE_EVENT_NAME, { detail: previousExpenses }));
+  });
 };
 
 export const deleteAgencyExpense = (id: string): void => {
   const current = getAgencyExpenses();
+  const previousExpenses = [...current];
   const updated = current.filter(e => e.id !== id);
   expenseCache = updated;
   window.dispatchEvent(new CustomEvent(FINANCE_EVENT_NAME, { detail: updated }));
-  api.finance.deleteExpense(id).catch(() => {});
+  api.finance.deleteExpense(id).then((res) => {
+    if (res.success && res.data?.success !== false) return;
+    expenseCache = previousExpenses;
+    window.dispatchEvent(new CustomEvent(FINANCE_EVENT_NAME, { detail: previousExpenses }));
+  }).catch(() => {
+    expenseCache = previousExpenses;
+    window.dispatchEvent(new CustomEvent(FINANCE_EVENT_NAME, { detail: previousExpenses }));
+  });
 
 };
 
