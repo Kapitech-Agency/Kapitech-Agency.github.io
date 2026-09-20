@@ -2651,23 +2651,34 @@ apiRouter.get('/projects/tasks', requireAuth, requireAnyPermission('canManageKan
 });
 
 apiRouter.post('/projects/tasks', requireAuth, requirePermission('canManageKanbanTasks'), (req: AuthenticatedRequest, res: Response): void => {
-  const taskData = req.body;
+  const taskData = req.body || {};
+  const dueDate = String(taskData.dueDate || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10));
+  const estimatedHours = normalizeNumber(taskData.estimatedHours ?? 8, 0, 10000, 8);
+  const actualHours = normalizeNumber(taskData.actualHours ?? 0, 0, 10000, 0);
+  const priority = ['low','medium','high','urgent'].includes(String(taskData.priority)) ? String(taskData.priority) : 'medium';
+  const status = ['todo','in_progress','review','done'].includes(String(taskData.status)) ? String(taskData.status) : 'todo';
+
+  if (!taskData.title || !isValidDate(dueDate) || estimatedHours === null || actualHours === null) {
+    res.status(400).json({ success: false, error: 'Task title, due date, and valid hour values are required.' });
+    return;
+  }
+
   const db = getDatabase();
   const newTask = {
     id: `task_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
-    title: taskData.title || 'Untitled Task',
-    projectId: taskData.projectId || '',
-    projectName: taskData.projectName || 'General Delivery',
-    assignee: taskData.assignee || req.user!.name || req.user!.username,
+    title: cleanText(taskData.title, 240),
+    projectId: cleanText(taskData.projectId, 120),
+    projectName: cleanText(taskData.projectName || 'General Delivery', 200),
+    assignee: cleanText(taskData.assignee || req.user!.name || req.user!.username, 160),
     reporter: req.user!.name || req.user!.username,
-    priority: taskData.priority || 'medium',
-    status: taskData.status || 'todo',
-    dueDate: taskData.dueDate || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-    estimatedHours: Number(taskData.estimatedHours) || 8,
-    actualHours: Number(taskData.actualHours) || 0,
-    tags: Array.isArray(taskData.tags) ? taskData.tags : ['Sprint'],
-    subtasks: Array.isArray(taskData.subtasks) ? taskData.subtasks : [],
-    description: taskData.description || '',
+    priority,
+    status,
+    dueDate,
+    estimatedHours,
+    actualHours,
+    tags: normalizeStringArray(Array.isArray(taskData.tags) && taskData.tags.length ? taskData.tags : ['Sprint'], 30, 80),
+    subtasks: Array.isArray(taskData.subtasks) ? taskData.subtasks.slice(0, 50) : [],
+    description: cleanText(taskData.description, 3000),
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   };
@@ -2675,6 +2686,15 @@ apiRouter.post('/projects/tasks', requireAuth, requirePermission('canManageKanba
   if (!db.tasks) db.tasks = [];
   db.tasks.unshift(newTask);
   saveDatabase(db);
+  recordAuditLog({
+    action: 'TASK_CREATED',
+    actor: req.user!.username,
+    actorRole: req.user!.role,
+    ip: req.ip,
+    userAgent: req.headers['user-agent'] as string,
+    details: `Created task "${newTask.title}".`,
+    severity: 'info'
+  });
   res.json({ success: true, task: newTask });
 });
 
@@ -2690,6 +2710,9 @@ apiRouter.put('/projects/tasks/:id', requireAuth, requirePermission('canManageKa
   }
 
   const patch = pickFields(updates, ['title','description','projectId','projectName','assignee','priority','status','dueDate','estimatedHours','actualHours','tags','subtasks']);
+  for (const key of ['title','description','projectId','projectName','assignee'] as const) {
+    if (patch[key] !== undefined) patch[key] = cleanText(patch[key], key === 'description' ? 3000 : 240);
+  }
   if (patch.status !== undefined && !['todo','in_progress','review','done'].includes(String(patch.status))) {
     res.status(400).json({ success: false, error: 'Invalid task status.' });
     return;
@@ -2698,6 +2721,22 @@ apiRouter.put('/projects/tasks/:id', requireAuth, requirePermission('canManageKa
     res.status(400).json({ success: false, error: 'Invalid task priority.' });
     return;
   }
+  if (patch.dueDate !== undefined && !isValidDate(patch.dueDate)) {
+    res.status(400).json({ success: false, error: 'Invalid task due date.' });
+    return;
+  }
+  for (const key of ['estimatedHours','actualHours'] as const) {
+    if (patch[key] !== undefined) {
+      const numeric = normalizeNumber(patch[key], 0, 10000);
+      if (numeric === null) {
+        res.status(400).json({ success: false, error: `Invalid task hours for ${key}.` });
+        return;
+      }
+      patch[key] = numeric;
+    }
+  }
+  if (patch.tags !== undefined) patch.tags = normalizeStringArray(patch.tags, 30, 80);
+  if (patch.subtasks !== undefined) patch.subtasks = Array.isArray(patch.subtasks) ? patch.subtasks.slice(0, 50) : [];
   db.tasks[idx] = { ...db.tasks[idx], ...patch, updatedAt: new Date().toISOString() };
   saveDatabase(db);
   recordAuditLog({
@@ -2727,25 +2766,42 @@ apiRouter.get('/projects/timelogs', requireAuth, requireAnyPermission('canManage
 });
 
 apiRouter.post('/projects/timelogs', requireAuth, requireAnyPermission('canManageKanbanTasks', 'canManageProjects'), (req: AuthenticatedRequest, res: Response): void => {
-  const logData = req.body;
+  const logData = req.body || {};
+  const durationMinutes = normalizeNumber(logData.durationMinutes ?? 60, 1, 1440, 60);
+  const date = String(logData.date || new Date().toISOString().slice(0, 10));
+
+  if (durationMinutes === null || !isValidDate(date)) {
+    res.status(400).json({ success: false, error: 'Valid duration and date are required for a time entry.' });
+    return;
+  }
+
   const db = getDatabase();
   const newLog = {
     id: `tim_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
-    projectId: logData.projectId || '',
-    projectName: logData.projectName || 'General',
-    taskId: logData.taskId || '',
-    taskTitle: logData.taskTitle || '',
+    projectId: cleanText(logData.projectId, 120),
+    projectName: cleanText(logData.projectName || 'General', 200),
+    taskId: cleanText(logData.taskId, 120),
+    taskTitle: cleanText(logData.taskTitle, 240),
     user: req.user!.name || req.user!.username,
-    durationMinutes: Number(logData.durationMinutes) || 60,
+    durationMinutes,
     billable: logData.billable !== undefined ? Boolean(logData.billable) : true,
-    date: logData.date || new Date().toISOString().split('T')[0],
-    notes: logData.notes || '',
+    date,
+    notes: cleanText(logData.notes, 2000),
     createdAt: new Date().toISOString()
   };
 
   if (!db.timeLogs) db.timeLogs = [];
   db.timeLogs.unshift(newLog);
   saveDatabase(db);
+  recordAuditLog({
+    action: 'TIMELOG_CREATED',
+    actor: req.user!.username,
+    actorRole: req.user!.role,
+    ip: req.ip,
+    userAgent: req.headers['user-agent'] as string,
+    details: `Created ${durationMinutes} minute time entry for ${newLog.projectName}.`,
+    severity: 'info'
+  });
   res.json({ success: true, timeLog: newLog });
 });
 
