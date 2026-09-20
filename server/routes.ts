@@ -196,8 +196,8 @@ apiRouter.post('/auth/change-password', requireAuth, (req: AuthenticatedRequest,
     return;
   }
 
-  if (newPassword.length < 8) {
-    res.status(400).json({ success: false, error: 'New password must be at least 8 characters.' });
+  if (typeof newPassword !== 'string' || newPassword.length < 12) {
+    res.status(400).json({ success: false, error: 'New password must be at least 12 characters.' });
     return;
   }
 
