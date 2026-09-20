@@ -169,13 +169,16 @@ export function getAgencyVendors(): AgencyVendor[] {
   try {
     const raw = localStorage.getItem(VENDOR_STORAGE_KEY);
     if (!raw) {
-      localStorage.setItem(VENDOR_STORAGE_KEY, JSON.stringify(defaultVendors));
-      return defaultVendors;
+      return import.meta.env.PROD ? [] : (() => {
+        localStorage.setItem(VENDOR_STORAGE_KEY, JSON.stringify(defaultVendors));
+        return defaultVendors;
+      })();
     }
-    return JSON.parse(raw);
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : (import.meta.env.PROD ? [] : defaultVendors);
   } catch (err) {
     console.error('Failed to load vendors:', err);
-    return defaultVendors;
+    return import.meta.env.PROD ? [] : defaultVendors;
   }
 }
 
