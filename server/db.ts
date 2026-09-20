@@ -5,7 +5,7 @@ import crypto from 'crypto';
 // Path to persistent JSON database file
 const DATA_DIR = process.env.KAPITECH_DATA_DIR
   ? path.resolve(process.env.KAPITECH_DATA_DIR)
-  : path.join(process.cwd(), 'data');
+  : path.join(process.env.HOME || process.cwd(), '.kapitech-ams-data');
 const DB_FILE = path.join(DATA_DIR, 'kapitech_db.json');
 
 // Ensure data directory exists
