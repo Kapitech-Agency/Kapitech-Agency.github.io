@@ -31,10 +31,10 @@ export interface SiteMetaSettings {
   maintenanceMode: boolean;
 }
 
-const CMS_SERVICES_KEY = 'kapitech_cms_services_v1';
-const CMS_PROJECTS_KEY = 'kapitech_cms_projects_v1';
-const CMS_TESTIMONIALS_KEY = 'kapitech_cms_testimonials_v1';
-const CMS_SETTINGS_KEY = 'kapitech_cms_settings_v1';
+let cmsServicesCache: ServiceItemData[] | null = null;
+let cmsProjectsCache: ProjectItem[] | null = null;
+let cmsTestimonialsCache: TestimonialItem[] | null = null;
+let cmsSettingsCache: SiteMetaSettings | null = null;
 export const CMS_EVENT_KEY = 'kapitech_cms_updated';
 
 export const defaultTestimonials: TestimonialItem[] = [
@@ -127,14 +127,9 @@ function notifyCmsUpdate(type: 'services' | 'projects' | 'testimonials' | 'setti
 // -------------------------------------------------------------
 
 export function getCmsServices(): ServiceItemData[] {
-  try {
-    const raw = localStorage.getItem(CMS_SERVICES_KEY);
-    if (!raw) return allSolutionsAndServices;
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) && parsed.length > 0 ? parsed : allSolutionsAndServices;
-  } catch {
-    return allSolutionsAndServices;
-  }
+  if (cmsServicesCache) return cmsServicesCache;
+  cmsServicesCache = allSolutionsAndServices;
+  return cmsServicesCache;
 }
 
 export async function fetchServerCmsServices(): Promise<ServiceItemData[]> {
@@ -142,7 +137,7 @@ export async function fetchServerCmsServices(): Promise<ServiceItemData[]> {
     const res = await api.cms.getServices();
     if (res.success && Array.isArray(res.data?.services) && res.data.services.length > 0) {
       const serverServices = res.data.services;
-      localStorage.setItem(CMS_SERVICES_KEY, JSON.stringify(serverServices));
+      cmsServicesCache = serverServices;
       notifyCmsUpdate('services');
       return serverServices;
     }
@@ -163,7 +158,7 @@ export async function saveCmsService(service: ServiceItemData): Promise<{ succes
     updated = [service, ...current];
   }
 
-  localStorage.setItem(CMS_SERVICES_KEY, JSON.stringify(updated));
+  cmsServicesCache = updated;
   notifyCmsUpdate('services');
 
   // Persist to server API
@@ -191,14 +186,7 @@ export async function deleteCmsService(slug: string): Promise<boolean> {
 // -------------------------------------------------------------
 
 export function getCmsProjects(): ProjectItem[] {
-  try {
-    const raw = localStorage.getItem(CMS_PROJECTS_KEY);
-    if (!raw) return allProjects;
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) && parsed.length > 0 ? parsed : allProjects;
-  } catch {
-    return allProjects;
-  }
+  return cmsProjectsCache || (cmsProjectsCache = allProjects);
 }
 
 export async function fetchServerCmsProjects(): Promise<ProjectItem[]> {
@@ -206,7 +194,7 @@ export async function fetchServerCmsProjects(): Promise<ProjectItem[]> {
     const res = await api.cms.getProjects();
     if (res.success && Array.isArray(res.data?.projects) && res.data.projects.length > 0) {
       const serverProjects = res.data.projects;
-      localStorage.setItem(CMS_PROJECTS_KEY, JSON.stringify(serverProjects));
+      cmsProjectsCache = serverProjects;
       notifyCmsUpdate('projects');
       return serverProjects;
     }
@@ -227,7 +215,7 @@ export async function saveCmsProject(project: ProjectItem): Promise<{ success: b
     updated = [project, ...current];
   }
 
-  localStorage.setItem(CMS_PROJECTS_KEY, JSON.stringify(updated));
+  cmsProjectsCache = updated;
   notifyCmsUpdate('projects');
 
   // Persist to server API
@@ -251,7 +239,7 @@ export async function deleteCmsProject(id: string): Promise<boolean> {
 }
 
 export function resetCmsProjectsToDefault() {
-  localStorage.removeItem(CMS_PROJECTS_KEY);
+  cmsProjectsCache = allProjects;
   notifyCmsUpdate('projects');
 }
 
@@ -260,14 +248,7 @@ export function resetCmsProjectsToDefault() {
 // -------------------------------------------------------------
 
 export function getCmsTestimonials(): TestimonialItem[] {
-  try {
-    const raw = localStorage.getItem(CMS_TESTIMONIALS_KEY);
-    if (!raw) return defaultTestimonials;
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) && parsed.length > 0 ? parsed : defaultTestimonials;
-  } catch {
-    return defaultTestimonials;
-  }
+  return cmsTestimonialsCache || (cmsTestimonialsCache = defaultTestimonials);
 }
 
 export async function fetchServerCmsTestimonials(): Promise<TestimonialItem[]> {
@@ -275,7 +256,7 @@ export async function fetchServerCmsTestimonials(): Promise<TestimonialItem[]> {
     const res = await api.cms.getTestimonials();
     if (res.success && Array.isArray(res.data?.testimonials) && res.data.testimonials.length > 0) {
       const serverT = res.data.testimonials;
-      localStorage.setItem(CMS_TESTIMONIALS_KEY, JSON.stringify(serverT));
+      cmsTestimonialsCache = serverT;
       notifyCmsUpdate('testimonials');
       return serverT;
     }
@@ -296,7 +277,7 @@ export async function saveCmsTestimonial(testimonial: TestimonialItem): Promise<
     updated = [testimonial, ...current];
   }
 
-  localStorage.setItem(CMS_TESTIMONIALS_KEY, JSON.stringify(updated));
+  cmsTestimonialsCache = updated;
   notifyCmsUpdate('testimonials');
 
   if (exists) {
@@ -323,13 +304,7 @@ export async function deleteCmsTestimonial(id: string): Promise<boolean> {
 // -------------------------------------------------------------
 
 export function getCmsSiteMeta(): SiteMetaSettings {
-  try {
-    const raw = localStorage.getItem(CMS_SETTINGS_KEY);
-    if (!raw) return defaultSiteMeta;
-    return { ...defaultSiteMeta, ...JSON.parse(raw) };
-  } catch {
-    return defaultSiteMeta;
-  }
+  return cmsSettingsCache || (cmsSettingsCache = { ...defaultSiteMeta });
 }
 
 export async function fetchServerCmsSiteMeta(): Promise<SiteMetaSettings> {
@@ -337,7 +312,7 @@ export async function fetchServerCmsSiteMeta(): Promise<SiteMetaSettings> {
     const res = await api.cms.getSettings();
     if (res.success && res.data?.settings) {
       const s = { ...defaultSiteMeta, ...res.data.settings };
-      localStorage.setItem(CMS_SETTINGS_KEY, JSON.stringify(s));
+      cmsSettingsCache = s;
       notifyCmsUpdate('settings');
       return s;
     }
@@ -350,7 +325,7 @@ export async function fetchServerCmsSiteMeta(): Promise<SiteMetaSettings> {
 export async function saveCmsSiteMeta(settings: Partial<SiteMetaSettings>): Promise<SiteMetaSettings> {
   const current = getCmsSiteMeta();
   const updated = { ...current, ...settings };
-  localStorage.setItem(CMS_SETTINGS_KEY, JSON.stringify(updated));
+  cmsSettingsCache = updated;
   notifyCmsUpdate('settings');
 
   api.cms.updateSettings(updated).catch(() => {});
