@@ -9,7 +9,8 @@ const DATA_DIR = process.env.KAPITECH_DATA_DIR
   : path.join(process.env.HOME || process.cwd(), '.kapitech-ams-data');
 const DB_FILE = path.join(DATA_DIR, 'kapitech_db.json');
 
-const backupFile = process.argv.find((arg) => !arg.startsWith('--') && process.argv.indexOf(arg) > 0);
+const positionalArgs = process.argv.slice(2).filter((arg) => !arg.startsWith('--'));
+const backupFile = positionalArgs[0];
 const force = process.argv.includes('--force');
 const verifyOnly = process.argv.includes('--verify-only');
 
