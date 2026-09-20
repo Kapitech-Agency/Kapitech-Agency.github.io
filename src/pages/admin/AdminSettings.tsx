@@ -109,6 +109,7 @@ export const AdminSettings: React.FC = () => {
   const [backupStatus, setBackupStatus] = useState<{ success: boolean; message: string } | null>(null);
   const [backupLoading, setBackupLoading] = useState(false);
   const [backupSummary, setBackupSummary] = useState<{ count: number; latestAt?: string; latestSizeBytes?: number; retention: number } | null>(null);
+  const [backupIntegrity, setBackupIntegrity] = useState<{ valid: boolean; checkedAt: string; reason?: string } | null>(null);
 
   // Accounts Management state (Stakeholder Executive & Teknisi IT)
   const [accounts, setAccounts] = useState<AdminAccount[]>([]);
@@ -158,6 +159,8 @@ export const AdminSettings: React.FC = () => {
           latestSizeBytes: latest?.sizeBytes,
           retention: res.data.retention
         });
+        const integrityRes = await api.system.backupIntegrity();
+        if (integrityRes.data?.integrity) setBackupIntegrity(integrityRes.data.integrity);
       }
     } catch {
       setBackupSummary(null);
@@ -1437,7 +1440,7 @@ export const AdminSettings: React.FC = () => {
                 </div>
               )}
 
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <div className="p-3 rounded-xl bg-[#111318] border border-white/[0.07]">
                   <div className="text-[10px] uppercase tracking-wider text-[#8A94A6] font-mono">Snapshots</div>
                   <div className="text-lg font-bold text-white font-mono mt-1">{backupSummary?.count ?? '—'}</div>
@@ -1452,13 +1455,19 @@ export const AdminSettings: React.FC = () => {
                     {backupSummary?.latestAt ? new Date(backupSummary.latestAt).toLocaleString() : '—'}
                   </div>
                 </div>
+                <div className={`p-3 rounded-xl bg-[#111318] border ${backupIntegrity?.valid === false ? 'border-red-500/25' : 'border-white/[0.07]'}`}>
+                  <div className="text-[10px] uppercase tracking-wider text-[#8A94A6] font-mono">{language === 'id' ? 'Integrity' : 'Integrity'}</div>
+                  <div className={`text-xs font-semibold font-mono mt-1 ${backupIntegrity?.valid ? 'text-emerald-300' : backupIntegrity?.valid === false ? 'text-red-300' : 'text-[#8A94A6]'}`}>
+                    {backupIntegrity?.valid ? (language === 'id' ? 'Valid' : 'Valid') : backupIntegrity?.valid === false ? (language === 'id' ? 'Perlu perhatian' : 'Needs attention') : '—'}
+                  </div>
+                </div>
               </div>
 
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 border-t border-white/[0.07]">
                 <div className="text-[10px] text-[#64748B] font-mono">
                   {language === 'id'
-                    ? 'Untuk DR penuh, download encrypted backup lalu simpan di lokasi off-site yang terpisah dari Hostinger.'
-                    : 'For full DR, download an encrypted backup and retain it off-site separately from Hostinger.'}
+                    ? `Untuk DR penuh, download encrypted backup lalu simpan di lokasi off-site yang terpisah dari Hostinger.${backupIntegrity?.valid === false && backupIntegrity.reason ? ' Integrity: ' + backupIntegrity.reason : ''}`
+                    : `For full DR, download an encrypted backup and retain it off-site separately from Hostinger.${backupIntegrity?.valid === false && backupIntegrity.reason ? ' Integrity: ' + backupIntegrity.reason : ''}`}
                 </div>
                 <a
                   href="/api/system/backups/download"
