@@ -3514,6 +3514,7 @@ apiRouter.get('/system/security/status', requireAuth, requireAnyPermission('canV
     const mfaEnabledCount = users.filter(user => user.status === 'active' && user.mfaEnabled).length;
     const backups = listDatabaseBackups();
     const latestBackup = backups[0];
+    const latestBackupAgeMs = latestBackup ? Math.max(0, Date.now() - new Date(latestBackup.createdAt).getTime()) : null;
     const backupIntegrity = verifyDatabaseBackupIntegrity();
 
     res.json({
@@ -3527,6 +3528,8 @@ apiRouter.get('/system/security/status', requireAuth, requireAnyPermission('canV
         mfaCoveragePercent: activeUserCount > 0 ? Math.round((mfaEnabledCount / activeUserCount) * 100) : 100,
         backupCount: backups.length,
         latestBackupAt: latestBackup?.createdAt || null,
+        latestBackupAgeMinutes: latestBackupAgeMs === null ? null : Math.round(latestBackupAgeMs / 60000),
+        backupFresh: latestBackupAgeMs !== null && latestBackupAgeMs <= 24 * 60 * 60 * 1000,
         backupIntegrity
       }
     });
