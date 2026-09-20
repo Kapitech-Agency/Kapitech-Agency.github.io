@@ -7,6 +7,7 @@ dotenv.config();
 
 async function startServer() {
   const app = express();
+  app.disable('x-powered-by');
   const PORT = Number(process.env.PORT) || 3000;
 
   // Hostinger/reverse-proxy aware client IP handling for rate limiting and audit logs.
@@ -47,8 +48,12 @@ async function startServer() {
     next();
   });
 
+  // Binary private-document uploads are parsed before the JSON body parser.
+  // The vault route is authenticated again inside apiRouter, and files are stored outside public static assets.
+  app.put('/api/documents/:id/content', express.raw({ type: () => true, limit: '25mb' }));
+
   // Body parsers
-  app.use(express.json({ limit: '1mb' }));
+  app.use(express.json({ limit: '512kb' }));
   app.use(express.urlencoded({ extended: true, limit: '1mb' }));
 
   // Prevent browsers and intermediary caches from storing authenticated API responses.
