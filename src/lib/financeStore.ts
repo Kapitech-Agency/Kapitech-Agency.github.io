@@ -5,6 +5,7 @@
  */
 
 import { getAgencyClients, saveAgencyClient } from './clientStore';
+import { api } from './apiClient';
 
 export type InvoiceStatus = 'draft' | 'sent' | 'approved' | 'partially_paid' | 'paid' | 'overdue';
 
@@ -92,6 +93,29 @@ export interface AgencyExpense {
 const INVOICE_STORAGE_KEY = 'kapitech_agency_invoices_v2';
 const EXPENSE_STORAGE_KEY = 'kapitech_agency_expenses_v2';
 export const FINANCE_EVENT_NAME = 'kapitech_finance_updated';
+
+let financeServerHydrationStarted = false;
+
+function hydrateFinanceFromServer(): void {
+  if (!import.meta.env.PROD || financeServerHydrationStarted) return;
+  financeServerHydrationStarted = true;
+
+  Promise.all([api.finance.getInvoices(), api.finance.getExpenses()]).then(([invoiceRes, expenseRes]) => {
+    const invoices = invoiceRes.success && Array.isArray(invoiceRes.data?.invoices)
+      ? invoiceRes.data.invoices.map((inv: any) => ({ ...inv, currency: inv.currency || 'IDR', items: Array.isArray(inv.items) ? inv.items : [] }))
+      : [];
+    const expenses = expenseRes.success && Array.isArray(expenseRes.data?.expenses)
+      ? expenseRes.data.expenses
+      : [];
+
+    if (invoiceRes.success) localStorage.setItem(INVOICE_STORAGE_KEY, JSON.stringify(invoices));
+    if (expenseRes.success) localStorage.setItem(EXPENSE_STORAGE_KEY, JSON.stringify(expenses));
+    if (typeof window !== 'undefined' && (invoiceRes.success || expenseRes.success)) {
+      window.dispatchEvent(new CustomEvent(FINANCE_EVENT_NAME));
+    }
+  }).catch(() => {});
+}
+
 
 export const INITIAL_DEFAULT_INVOICES: AgencyInvoice[] = [
   {
@@ -331,6 +355,7 @@ export const INITIAL_DEFAULT_EXPENSES: AgencyExpense[] = [
 ];
 
 export const getAgencyInvoices = (): AgencyInvoice[] => {
+  hydrateFinanceFromServer();
   try {
     if (localStorage.getItem('kapitech_agency_invoices_v1')) {
       localStorage.removeItem('kapitech_agency_invoices_v1');
@@ -364,6 +389,11 @@ export const saveAgencyInvoice = (invoice: AgencyInvoice): void => {
 
   localStorage.setItem(INVOICE_STORAGE_KEY, JSON.stringify(updated));
   window.dispatchEvent(new CustomEvent(FINANCE_EVENT_NAME, { detail: updated }));
+
+  const request = idx >= 0
+    ? api.finance.updateInvoice(invoice.id, invoice)
+    : api.finance.createInvoice(invoice);
+  request.catch(() => {});
 };
 
 export const deleteAgencyInvoice = (id: string): void => {
@@ -371,6 +401,8 @@ export const deleteAgencyInvoice = (id: string): void => {
   const updated = current.filter(i => i.id !== id);
   localStorage.setItem(INVOICE_STORAGE_KEY, JSON.stringify(updated));
   window.dispatchEvent(new CustomEvent(FINANCE_EVENT_NAME, { detail: updated }));
+  api.finance.deleteInvoice(id).catch(() => {});
+
 };
 
 export const updateInvoiceStatus = (id: string, status: InvoiceStatus, actor: string = 'Authorized Lead'): void => {
@@ -526,6 +558,7 @@ export const approveInvoice = (id: string, approverName: string = 'Executive Spo
 };
 
 export const getAgencyExpenses = (): AgencyExpense[] => {
+  hydrateFinanceFromServer();
   try {
     if (localStorage.getItem('kapitech_agency_expenses_v1')) {
       localStorage.removeItem('kapitech_agency_expenses_v1');
@@ -558,6 +591,7 @@ export const saveAgencyExpense = (expense: AgencyExpense): void => {
 
   localStorage.setItem(EXPENSE_STORAGE_KEY, JSON.stringify(updated));
   window.dispatchEvent(new CustomEvent(FINANCE_EVENT_NAME, { detail: updated }));
+  api.finance.createExpense(expense).catch(() => {});
 };
 
 export const deleteAgencyExpense = (id: string): void => {
@@ -565,6 +599,8 @@ export const deleteAgencyExpense = (id: string): void => {
   const updated = current.filter(e => e.id !== id);
   localStorage.setItem(EXPENSE_STORAGE_KEY, JSON.stringify(updated));
   window.dispatchEvent(new CustomEvent(FINANCE_EVENT_NAME, { detail: updated }));
+  api.finance.deleteExpense(id).catch(() => {});
+
 };
 
 /**
