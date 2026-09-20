@@ -734,8 +734,23 @@ apiRouter.post('/auth/users', requireAuth, requireMaster, (req: AuthenticatedReq
     return;
   }
 
+  const cleanName = cleanText(name, 160);
   const cleanUsername = String(username).trim().toLowerCase();
   const cleanEmail = String(email).trim().toLowerCase();
+  const reservedUsernames = new Set(['admin', 'root', 'administrator', 'superuser', 'system']);
+
+  if (!cleanName) {
+    res.status(400).json({ success: false, error: 'Name is required.' });
+    return;
+  }
+  if (!/^[a-z0-9][a-z0-9._-]{2,63}$/.test(cleanUsername) || reservedUsernames.has(cleanUsername)) {
+    res.status(400).json({ success: false, error: 'Username must be 3 to 64 characters and use only lowercase letters, numbers, dots, underscores, or hyphens.' });
+    return;
+  }
+  if (!isValidEmail(cleanEmail)) {
+    res.status(400).json({ success: false, error: 'Invalid account email address.' });
+    return;
+  }
 
   const db = getDatabase();
   if (db.users.some(u => u.username.toLowerCase() === cleanUsername || u.email.toLowerCase() === cleanEmail)) {
@@ -746,7 +761,7 @@ apiRouter.post('/auth/users', requireAuth, requireMaster, (req: AuthenticatedReq
   const prepared = preparePassword(password);
   const newUser: StoredUser = {
     id: `usr_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
-    name: String(name).trim(),
+    name: cleanName,
     username: cleanUsername,
     email: cleanEmail,
     passwordHash: prepared.passwordHash,
@@ -3313,6 +3328,7 @@ apiRouter.get('/documents/:id/content', requireAuth, documentAccessMiddleware, (
   res.setHeader('Content-Type', document.mimeType || 'application/octet-stream');
   res.setHeader('Content-Disposition', `attachment; filename*=UTF-8''${encodeURIComponent(String(document.name || 'document'))}`);
   res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Download-Options', 'noopen');
   try {
     const encryptedPayload = fs.readFileSync(filePath);
     const content = decryptPrivateDocument(encryptedPayload);
