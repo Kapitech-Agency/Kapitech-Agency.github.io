@@ -730,7 +730,7 @@ export const AdminSettings: React.FC = () => {
 
                       {/* Permissions Summary Badges */}
                       <div className="mt-3 pt-3 border-t border-[rgba(255,255,255,0.05)] flex flex-wrap gap-1">
-                        {acc.permissions?.canManageInvoicing && (
+                        {acc.permissions?.canManageInvoices && (
                           <span className="text-[9px] font-mono px-1.5 py-0.5 bg-emerald-950/40 text-emerald-300 border border-emerald-800/40 rounded">
                             Invoice
                           </span>
@@ -740,12 +740,12 @@ export const AdminSettings: React.FC = () => {
                             Budget Approval
                           </span>
                         )}
-                        {acc.permissions?.canManageInfrastructure && (
+                        {acc.permissions?.canAccessServerAndApi && (
                           <span className="text-[9px] font-mono px-1.5 py-0.5 bg-cyan-950/40 text-cyan-300 border border-cyan-800/40 rounded">
                             DevOps / Cloud
                           </span>
                         )}
-                        {acc.permissions?.canViewAuditLogs && (
+                        {acc.permissions?.canViewSecurityAuditLogs && (
                           <span className="text-[9px] font-mono px-1.5 py-0.5 bg-slate-800 text-slate-300 border border-slate-700 rounded">
                             Audit Logs
                           </span>
@@ -881,7 +881,7 @@ export const AdminSettings: React.FC = () => {
                     {language === 'id' ? 'Tambah Akun Stakeholder / Teknisi' : 'Add Stakeholder / Technical Account'}
                   </h3>
                   <p className="text-[11px] font-mono text-[#8A94A6]">
-                    {language === 'id' ? 'Pilih peran dan sesuaikan hak akses sistem.' : 'Select role and configure granular permissions.'}
+                    {language === 'id' ? 'Pilih peran; hak akses ditetapkan oleh policy server.' : 'Select a role; permissions are enforced by the server policy.'}
                   </p>
                 </div>
               </div>
