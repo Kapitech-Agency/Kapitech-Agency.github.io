@@ -5,6 +5,7 @@
  */
 
 import { ContactSubmission, getLocalSubmissions } from './submissions';
+import { api } from './apiClient';
 
 export type CrmStage = 'new' | 'contacted' | 'proposal' | 'negotiation' | 'won' | 'lost';
 export type CrmPriority = 'low' | 'medium' | 'high' | 'urgent';
@@ -61,6 +62,45 @@ export interface CrmLead {
 
 const CRM_STORAGE_KEY = 'kapitech_agency_crm_leads_v2';
 export const CRM_EVENT_NAME = 'kapitech_crm_updated';
+
+let crmServerHydrationStarted = false;
+
+function normalizeServerDeal(deal: any): CrmLead {
+  return {
+    id: String(deal.id),
+    clientName: String(deal.clientName || deal.name || 'Prospective Client'),
+    company: String(deal.company || deal.clientCompany || ''),
+    email: String(deal.email || ''),
+    phone: String(deal.phone || ''),
+    servicePillar: (deal.servicePillar || deal.service || 'Web Development') as CrmServicePillar,
+    dealValue: Number(deal.value ?? deal.dealValue) || 0,
+    stage: (deal.stage || 'new') as CrmStage,
+    priority: (deal.priority || 'medium') as CrmPriority,
+    source: (deal.source || 'Website Form') as CrmSource,
+    description: String(deal.description || deal.notes || ''),
+    inquiryId: deal.inquiryId,
+    expectedCloseDate: deal.expectedCloseDate,
+    assignedTo: String(deal.assignedTo || deal.owner || 'Unassigned'),
+    notes: Array.isArray(deal.notes) ? deal.notes : [],
+    documents: Array.isArray(deal.documents) ? deal.documents : [],
+    createdAt: String(deal.createdAt || new Date().toISOString()),
+    updatedAt: String(deal.updatedAt || deal.createdAt || new Date().toISOString())
+  };
+}
+
+function hydrateCrmFromServer(): void {
+  if (!import.meta.env.PROD || crmServerHydrationStarted) return;
+  crmServerHydrationStarted = true;
+  api.crm.getDeals().then((res) => {
+    if (!res.success || !Array.isArray(res.data?.deals)) return;
+    const serverLeads = res.data.deals.map(normalizeServerDeal);
+    localStorage.setItem(CRM_STORAGE_KEY, JSON.stringify(serverLeads));
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent(CRM_EVENT_NAME, { detail: serverLeads }));
+    }
+  }).catch(() => {});
+}
+
 
 export const CRM_STAGE_DEFINITIONS: {
   key: CrmStage;
@@ -261,6 +301,7 @@ export const INITIAL_DEFAULT_LEADS: CrmLead[] = [
 ];
 
 export const getCmsLeads = (): CrmLead[] => {
+  hydrateCrmFromServer();
   try {
     if (localStorage.getItem('kapitech_agency_crm_leads')) {
       localStorage.removeItem('kapitech_agency_crm_leads');
@@ -305,6 +346,16 @@ export const saveCrmLead = (lead: CrmLead): void => {
 
   localStorage.setItem(CRM_STORAGE_KEY, JSON.stringify(updated));
   window.dispatchEvent(new CustomEvent(CRM_EVENT_NAME, { detail: updated }));
+
+  const payload = {
+    ...lead,
+    value: lead.dealValue,
+    probability: lead.stage === 'won' ? 100 : lead.stage === 'lost' ? 0 : (lead.priority === 'urgent' ? 75 : lead.priority === 'high' ? 60 : 40)
+  };
+  const request = existingIdx >= 0
+    ? api.crm.updateDeal(lead.id, payload)
+    : api.crm.createDeal(payload);
+  request.catch(() => {});
 };
 
 export const deleteCrmLead = (id: string): void => {
@@ -312,6 +363,7 @@ export const deleteCrmLead = (id: string): void => {
   const filtered = current.filter(l => l.id !== id);
   localStorage.setItem(CRM_STORAGE_KEY, JSON.stringify(filtered));
   window.dispatchEvent(new CustomEvent(CRM_EVENT_NAME, { detail: filtered }));
+  api.crm.deleteDeal(id).catch(() => {});
 };
 
 export const updateLeadStage = (id: string, newStage: CrmStage): void => {
