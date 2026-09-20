@@ -8,6 +8,79 @@ const DATA_DIR = process.env.KAPITECH_DATA_DIR
   : path.join(process.env.HOME || process.cwd(), '.kapitech-ams-data');
 const DB_FILE = path.join(DATA_DIR, 'kapitech_db.json');
 const DB_ENCRYPTION_PREFIX = 'KAPI-ENC-V1:';
+const BACKUP_DIR = process.env.KAPITECH_DB_BACKUP_DIR
+  ? path.resolve(process.env.KAPITECH_DB_BACKUP_DIR)
+  : path.join(DATA_DIR, 'backups');
+const DEFAULT_BACKUP_RETENTION = 14;
+const BACKUP_MIN_INTERVAL_MS = 15 * 60 * 1000;
+let lastAutomaticBackupAt = 0;
+
+function getBackupRetention(): number {
+  const configured = Number(process.env.KAPITECH_DB_BACKUP_RETENTION || DEFAULT_BACKUP_RETENTION);
+  if (!Number.isFinite(configured)) return DEFAULT_BACKUP_RETENTION;
+  return Math.min(30, Math.max(3, Math.floor(configured)));
+}
+
+function ensureBackupDirectory(): void {
+  if (!fs.existsSync(BACKUP_DIR)) {
+    fs.mkdirSync(BACKUP_DIR, { recursive: true, mode: 0o700 });
+  } else {
+    try { fs.chmodSync(BACKUP_DIR, 0o700); } catch {}
+  }
+}
+
+function backupFilename(timestamp = new Date()): string {
+  const stamp = timestamp.toISOString().replace(/[:.]/g, '-');
+  return `kapitech_db_${stamp}_${crypto.randomBytes(4).toString('hex')}.bak`;
+}
+
+function pruneDatabaseBackups(): void {
+  ensureBackupDirectory();
+  const retention = getBackupRetention();
+  const backups = fs.readdirSync(BACKUP_DIR)
+    .filter(name => /^kapitech_db_.*\\.bak$/.test(name))
+    .map(name => {
+      const fullPath = path.join(BACKUP_DIR, name);
+      let mtimeMs = 0;
+      try { mtimeMs = fs.statSync(fullPath).mtimeMs; } catch {}
+      return { name, fullPath, mtimeMs };
+    })
+    .sort((a, b) => b.mtimeMs - a.mtimeMs);
+
+  for (const backup of backups.slice(retention)) {
+    try { fs.unlinkSync(backup.fullPath); } catch {}
+  }
+}
+
+export function createDatabaseBackup(force = false): { createdAt: string; sizeBytes: number } | null {
+  if (!fs.existsSync(DB_FILE)) return null;
+  const now = Date.now();
+  if (!force && now - lastAutomaticBackupAt < BACKUP_MIN_INTERVAL_MS) return null;
+
+  ensureBackupDirectory();
+  const raw = fs.readFileSync(DB_FILE);
+  const finalPath = path.join(BACKUP_DIR, backupFilename(new Date(now)));
+  const tempPath = `${finalPath}.${process.pid}.tmp`;
+  fs.writeFileSync(tempPath, raw, { mode: 0o600 });
+  try { fs.chmodSync(tempPath, 0o600); } catch {}
+  fs.renameSync(tempPath, finalPath);
+  try { fs.chmodSync(finalPath, 0o600); } catch {}
+  lastAutomaticBackupAt = now;
+  pruneDatabaseBackups();
+  return { createdAt: new Date(now).toISOString(), sizeBytes: raw.length };
+}
+
+export function listDatabaseBackups(): Array<{ name: string; createdAt: string; sizeBytes: number }> {
+  ensureBackupDirectory();
+  return fs.readdirSync(BACKUP_DIR)
+    .filter(name => /^kapitech_db_.*\\.bak$/.test(name))
+    .map(name => {
+      const fullPath = path.join(BACKUP_DIR, name);
+      const stat = fs.statSync(fullPath);
+      return { name, createdAt: stat.mtime.toISOString(), sizeBytes: stat.size };
+    })
+    .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+}
 
 function getDataEncryptionKey(): Buffer | null {
   const raw = process.env.KAPITECH_DATA_ENCRYPTION_KEY?.trim();
@@ -1219,6 +1292,17 @@ export function getDatabase(): DatabaseSchema {
 
 export function saveDatabaseSync(db: DatabaseSchema): void {
   inMemoryDb = db;
+
+  // Keep a rolling encrypted snapshot before replacing the live database.
+  // Backup failures never block the primary write, but are surfaced in runtime logs.
+  if (fs.existsSync(DB_FILE)) {
+    try {
+      createDatabaseBackup(false);
+    } catch (error) {
+      console.error('[Database] Automatic backup failed:', error);
+    }
+  }
+
   const tempPath = `${DB_FILE}.${process.pid}.${Date.now()}.tmp`;
   const payload = encryptDatabase(db);
   fs.writeFileSync(tempPath, payload, { encoding: 'utf8', mode: 0o600 });
