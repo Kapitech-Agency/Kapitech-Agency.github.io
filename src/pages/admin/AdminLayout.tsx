@@ -75,7 +75,8 @@ export const AdminLayout: React.FC = () => {
   const { role: rbacRole, setRole: setRbacRole, roleMeta, isAllowed } = useRbacRole(
     session?.user?.stakeholderType,
     session?.user?.division,
-    session?.user?.role
+    session?.user?.role,
+    session?.user?.permissions
   );
 
   const loadNotifications = async () => {
