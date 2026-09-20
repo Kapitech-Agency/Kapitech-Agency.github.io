@@ -26,6 +26,9 @@ jobs:
       - name: Type check
         run: npm run lint
 
+      - name: Dependency audit
+        run: npm audit --audit-level=high
+
       - name: Production build
         env:
           RAYON_NUM_THREADS: 1
