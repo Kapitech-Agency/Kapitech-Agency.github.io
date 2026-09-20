@@ -1754,7 +1754,7 @@ apiRouter.get('/projects/timelogs', requireAuth, requireAnyPermission('canManage
   res.json({ success: true, timeLogs: db.timeLogs || [] });
 });
 
-apiRouter.post('/projects/timelogs', requireAuth, (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.post('/projects/timelogs', requireAuth, requireAnyPermission('canManageKanbanTasks', 'canManageProjects'), (req: AuthenticatedRequest, res: Response): void => {
   const logData = req.body;
   const db = getDatabase();
   const newLog = {
@@ -1777,7 +1777,7 @@ apiRouter.post('/projects/timelogs', requireAuth, (req: AuthenticatedRequest, re
   res.json({ success: true, timeLog: newLog });
 });
 
-apiRouter.delete('/projects/timelogs/:id', requireAuth, (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.delete('/projects/timelogs/:id', requireAuth, requireAnyPermission('canManageKanbanTasks', 'canManageProjects'), (req: AuthenticatedRequest, res: Response): void => {
   const { id } = req.params;
   const db = getDatabase();
   db.timeLogs = (db.timeLogs || []).filter(t => t.id !== id);
@@ -1794,7 +1794,7 @@ apiRouter.get('/approvals', requireAuth, requireAnyPermission('canApproveBudgets
   res.json({ success: true, approvals: db.approvals || [] });
 });
 
-apiRouter.post('/approvals', requireAuth, (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.post('/approvals', requireAuth, requireAnyPermission('canManageProjects', 'canApproveBudgets'), (req: AuthenticatedRequest, res: Response): void => {
   const data = req.body;
   const db = getDatabase();
   const newApproval = {
@@ -1857,7 +1857,7 @@ apiRouter.get('/documents', requireAuth, requireAnyPermission('canManageProjects
   res.json({ success: true, documents: db.documents || [] });
 });
 
-apiRouter.post('/documents', requireAuth, (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.post('/documents', requireAuth, requireAnyPermission('canManageProjects', 'canManageCrm', 'canViewFinancials', 'canViewSecurityAuditLogs'), (req: AuthenticatedRequest, res: Response): void => {
   const data = req.body;
   const db = getDatabase();
   const newDoc = {
@@ -1880,7 +1880,7 @@ apiRouter.post('/documents', requireAuth, (req: AuthenticatedRequest, res: Respo
   res.json({ success: true, document: newDoc });
 });
 
-apiRouter.delete('/documents/:id', requireAuth, (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.delete('/documents/:id', requireAuth, requireAnyPermission('canManageProjects', 'canManageCrm', 'canViewFinancials', 'canViewSecurityAuditLogs'), (req: AuthenticatedRequest, res: Response): void => {
   const { id } = req.params;
   const db = getDatabase();
   db.documents = (db.documents || []).filter(d => d.id !== id);
