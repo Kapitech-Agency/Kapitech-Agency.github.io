@@ -28,14 +28,13 @@ import {
 import { 
   getAdminSession, 
   updateAdminCredentials, 
-  getAuditLogs, 
-  clearAuditLogs, 
+  fetchServerAuditLogs,
   SecurityAuditLog,
   getStoredAdminCredentials,
   AdminAccount,
   AdminTier,
   StakeholderPermissions,
-  getStoredAdminAccounts,
+  fetchAdminAccounts,
   createAdminAccount,
   deleteAdminAccount,
   updateAdminAccountPermissions,
@@ -125,19 +124,30 @@ export const AdminSettings: React.FC = () => {
   const [tempPermissions, setTempPermissions] = useState<StakeholderPermissions>(getDefaultPermissionsForRole('Stakeholder Executive'));
 
   useEffect(() => {
-    setLogs(getAuditLogs());
-    setAccounts(getStoredAdminAccounts());
+    let mounted = true;
+    if (activeTab === 'audit') {
+      fetchServerAuditLogs().then((nextLogs) => {
+        if (mounted) setLogs(nextLogs);
+      });
+    }
+    if (activeTab === 'rbac') {
+      fetchAdminAccounts().then((nextAccounts) => {
+        if (mounted) setAccounts(nextAccounts);
+      });
+    }
+    return () => { mounted = false; };
   }, [activeTab]);
 
-  const refreshAccounts = () => {
-    setAccounts(getStoredAdminAccounts());
+  const refreshAccounts = async () => {
+    const nextAccounts = await fetchAdminAccounts();
+    setAccounts(nextAccounts);
   };
 
   const handleOpenAddAccount = () => {
     setNewAccName('');
     setNewAccUsername('');
     setNewAccEmail('');
-    setNewAccPassword('kapi_' + Math.random().toString(36).substring(2, 7) + '25');
+    setNewAccPassword('');
     setNewAccRole('Stakeholder Executive');
     setNewAccDivision('Management');
     setNewAccPermissions(getDefaultPermissionsForRole('Stakeholder Executive'));
@@ -214,9 +224,9 @@ export const AdminSettings: React.FC = () => {
     setIsEditPermsModalOpen(true);
   };
 
-  const handleSavePermissions = () => {
+  const handleSavePermissions = async () => {
     if (!editingAccount) return;
-    const res = updateAdminAccountPermissions(editingAccount.id, tempPermissions);
+    const res = await updateAdminAccountPermissions(editingAccount.id, tempPermissions);
     if (res.success) {
       refreshAccounts();
       setIsEditPermsModalOpen(false);
@@ -312,16 +322,6 @@ export const AdminSettings: React.FC = () => {
         : 'System settings and site metadata successfully saved!'
     );
     setTimeout(() => setMetaStatus(null), 3000);
-  };
-
-  const handleClearLogs = () => {
-    const confirmMsg = language === 'id' 
-      ? 'Hapus seluruh riwayat audit log keamanan?' 
-      : 'Clear all security audit logs permanently?';
-    if (window.confirm(confirmMsg)) {
-      clearAuditLogs();
-      setLogs([]);
-    }
   };
 
   const handleExportLogs = () => {
@@ -1226,8 +1226,8 @@ export const AdminSettings: React.FC = () => {
               </h2>
               <p className="text-xs text-[#8A94A6] font-mono">
                 {language === 'id'
-                  ? 'Enkripsi SHA-256 tersimulasi, autentikasi multi-faktor, dan proteksi durasi sesi login.'
-                  : 'SHA-256 secure hashing simulation, multi-factor authentication enforcement, and idle session limits.'}
+                  ? 'Password diproses PBKDF2 di server. Sesi diverifikasi server melalui cookie HttpOnly.'
+                  : 'Passwords use server-side PBKDF2 hashing. Sessions are verified by the server through an HttpOnly cookie.'}
               </p>
             </div>
           </div>
@@ -1344,91 +1344,34 @@ export const AdminSettings: React.FC = () => {
             </div>
             <div>
               <h2 className="text-base font-bold font-display text-white">
-                {language === 'id' ? 'Integrasi API & Cloud' : 'API & Cloud Integrations'}
+                {language === 'id' ? 'Integrasi Server & API' : 'Server & API Integrations'}
               </h2>
-              <p className="text-xs text-[#8A94A6] font-mono">
+              <p className="text-xs text-[#8A94A6] font-mono mt-1">
                 {language === 'id'
-                  ? 'Webhook notifikasi masuk, server SMTP, dan konfigurasi region Cloud Run.'
-                  : 'Inbound notification webhooks, transactional SMTP credentials, and Cloud Run container regions.'}
+                  ? 'Rahasia server tidak disimpan atau diedit dari browser.'
+                  : 'Server secrets are not stored or edited from the browser.'}
               </p>
             </div>
           </div>
 
-          {apiSaveStatus && (
-            <div className="p-4 rounded-xl text-xs font-mono flex items-start gap-2.5 bg-emerald-950/40 border border-emerald-500/40 text-emerald-300">
-              <Check size={16} className="shrink-0 mt-0.5" />
-              <span>{apiSaveStatus}</span>
-            </div>
-          )}
-
-          <div className="space-y-4 text-xs font-mono">
-            <div>
-              <label className="block text-[#8A94A6] mb-1 font-semibold">
-                {language === 'id' ? 'Webhook Notifikasi Prospek (Discord / Slack)' : 'Inbound Lead Webhook (Discord / Slack)'}
-              </label>
-              <input
-                type="text"
-                value={webhookUrl}
-                onChange={(e) => setWebhookUrl(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914] font-mono min-h-[44px]"
-              />
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-[#8A94A6] mb-1 font-semibold">
-                  {language === 'id' ? 'Host Server SMTP' : 'SMTP Server Host'}
-                </label>
-                <input
-                  type="text"
-                  value={smtpHost}
-                  onChange={(e) => setSmtpHost(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914] font-mono min-h-[44px]"
-                />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {[
+              ['Session', language === 'id' ? 'HttpOnly cookie, server-validated' : 'HttpOnly cookie, server-validated'],
+              ['AI API Key', language === 'id' ? 'Hostinger environment variable' : 'Hostinger environment variable'],
+              ['Notification secrets', language === 'id' ? 'Server-side only' : 'Server-side only'],
+              ['Deployment', 'Node.js 22 / Express']
+            ].map(([label, value]) => (
+              <div key={label} className="p-4 rounded-xl bg-[#181B22] border border-[rgba(255,255,255,0.07)]">
+                <div className="text-[10px] uppercase tracking-wider text-[#8A94A6] font-mono mb-1">{label}</div>
+                <div className="text-sm text-white font-mono">{value}</div>
               </div>
+            ))}
+          </div>
 
-              <div>
-                <label className="block text-[#8A94A6] mb-1 font-semibold">
-                  {language === 'id' ? 'Port SMTP' : 'SMTP Port'}
-                </label>
-                <input
-                  type="text"
-                  value={smtpPort}
-                  onChange={(e) => setSmtpPort(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914] font-mono min-h-[44px]"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-[#8A94A6] mb-1 font-semibold">
-                {language === 'id' ? 'Region Deployment Cloud Run' : 'Cloud Run Deployment Region'}
-              </label>
-              <input
-                type="text"
-                value={cloudRunRegion}
-                onChange={(e) => setCloudRunRegion(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914] font-mono min-h-[44px]"
-              />
-            </div>
-
-            <div className="pt-3 flex justify-end">
-              <button
-                type="button"
-                onClick={() => {
-                  setApiSaveStatus(
-                    language === 'id' 
-                      ? 'Konfigurasi API & Cloud berhasil disimpan.' 
-                      : 'API & Cloud settings successfully saved.'
-                  );
-                  setTimeout(() => setApiSaveStatus(null), 3000);
-                }}
-                className="px-5 py-2.5 rounded-xl bg-[#E50914] text-white text-xs font-mono font-bold hover:bg-[#FF1E27] transition-all flex items-center gap-2 min-h-[44px]"
-              >
-                <Save size={14} />
-                <span>{language === 'id' ? 'Simpan Konfigurasi API' : 'Save API Settings'}</span>
-              </button>
-            </div>
+          <div className="p-4 rounded-xl bg-[#181B22] border border-amber-500/20 text-amber-200 text-xs font-mono leading-relaxed">
+            {language === 'id'
+              ? 'Konfigurasi GEMINI_API_KEY, password admin awal, dan secret notifikasi harus dilakukan melalui Environment Variables di Hostinger. Nilai secret tidak ditampilkan kembali di UI.'
+              : 'Configure GEMINI_API_KEY, initial admin password, and notification secrets through Hostinger Environment Variables. Secret values are never shown back in the UI.'}
           </div>
         </div>
       )}
@@ -1458,15 +1401,6 @@ export const AdminSettings: React.FC = () => {
               >
                 <Download size={13} />
                 <span>Export JSON</span>
-              </button>
-
-              <button
-                onClick={handleClearLogs}
-                disabled={logs.length === 0}
-                className="px-3.5 py-2 rounded-xl bg-[#181B22] hover:bg-red-950/40 text-[#8A94A6] hover:text-red-400 border border-[rgba(255,255,255,0.07)] hover:border-red-500/40 text-xs font-mono transition-colors flex items-center gap-1.5 disabled:opacity-50 min-h-[40px]"
-              >
-                <Trash2 size={13} />
-                <span>{language === 'id' ? 'Hapus Log' : 'Clear Logs'}</span>
               </button>
             </div>
           </div>
