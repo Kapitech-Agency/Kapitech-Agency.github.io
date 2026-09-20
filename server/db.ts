@@ -130,6 +130,8 @@ export interface StoredAuditLog {
   userAgent: string;
   details: string;
   severity: 'info' | 'warning' | 'critical';
+  prevHash?: string;
+  hash?: string;
 }
 
 export interface DatabaseSchema {
@@ -162,6 +164,79 @@ export interface DatabaseSchema {
     isTelegramActive: boolean;
     updatedAt: string;
   };
+}
+
+function computeAuditLogHash(log: Omit<StoredAuditLog, 'hash'>): string {
+  return crypto
+    .createHash('sha256')
+    .update(JSON.stringify(log))
+    .digest('hex');
+}
+
+function ensureAuditLogChain(db: DatabaseSchema): boolean {
+  if (!Array.isArray(db.auditLogs) || db.auditLogs.length === 0) return false;
+
+  let changed = false;
+  let previousHash = 'GENESIS';
+
+  for (let index = db.auditLogs.length - 1; index >= 0; index -= 1) {
+    const log = db.auditLogs[index];
+    const normalized = {
+      id: log.id,
+      timestamp: log.timestamp,
+      action: log.action,
+      actor: log.actor,
+      actorRole: log.actorRole,
+      ip: log.ip,
+      userAgent: log.userAgent,
+      details: log.details,
+      severity: log.severity,
+      prevHash: log.prevHash || previousHash
+    };
+
+    const expectedHash = computeAuditLogHash(normalized);
+    if (log.prevHash !== normalized.prevHash || log.hash !== expectedHash) {
+      log.prevHash = normalized.prevHash;
+      log.hash = expectedHash;
+      changed = true;
+    }
+    previousHash = expectedHash;
+  }
+
+  return changed;
+}
+
+export function verifyAuditLogChain(db: DatabaseSchema): { valid: boolean; checked: number; brokenAt?: string } {
+  if (!Array.isArray(db.auditLogs) || db.auditLogs.length === 0) {
+    return { valid: true, checked: 0 };
+  }
+
+  let previousHash = 'GENESIS';
+  let checked = 0;
+
+  for (let index = db.auditLogs.length - 1; index >= 0; index -= 1) {
+    const log = db.auditLogs[index];
+    const normalized = {
+      id: log.id,
+      timestamp: log.timestamp,
+      action: log.action,
+      actor: log.actor,
+      actorRole: log.actorRole,
+      ip: log.ip,
+      userAgent: log.userAgent,
+      details: log.details,
+      severity: log.severity,
+      prevHash: log.prevHash || previousHash
+    };
+    const expectedHash = computeAuditLogHash(normalized);
+    checked += 1;
+    if (log.prevHash !== normalized.prevHash || log.hash !== expectedHash) {
+      return { valid: false, checked, brokenAt: log.id };
+    }
+    previousHash = expectedHash;
+  }
+
+  return { valid: true, checked };
 }
 
 export function hashSessionToken(token: string): string {
@@ -1059,6 +1134,10 @@ export function getDatabase(): DatabaseSchema {
           saveDatabaseSync(inMemoryDb);
         }
       }
+      if (ensureAuditLogChain(inMemoryDb!)) {
+        saveDatabaseSync(inMemoryDb!);
+      }
+
       // Validate schema keys and backfill empty arrays from seed
       const seed = getInitialSeedData();
       let hasChanges = false;
@@ -1127,7 +1206,8 @@ export function recordAuditLog(entry: {
   severity?: 'info' | 'warning' | 'critical';
 }): void {
   const db = getDatabase();
-  const log: StoredAuditLog = {
+  const previousHash = db.auditLogs?.[0]?.hash || 'GENESIS';
+  const logWithoutHash: Omit<StoredAuditLog, 'hash'> = {
     id: `log_${Date.now()}_${crypto.randomBytes(4).toString('hex')}`,
     timestamp: new Date().toISOString(),
     action: entry.action,
@@ -1136,13 +1216,14 @@ export function recordAuditLog(entry: {
     ip: entry.ip || '127.0.0.1',
     userAgent: entry.userAgent || 'unknown',
     details: entry.details,
-    severity: entry.severity || 'info'
+    severity: entry.severity || 'info',
+    prevHash: previousHash
   };
 
-  db.auditLogs.unshift(log);
-  // Cap at 2000 log entries
-  if (db.auditLogs.length > 2000) {
-    db.auditLogs = db.auditLogs.slice(0, 2000);
-  }
-  saveDatabase(db);
+  const log: StoredAuditLog = {
+    ...logWithoutHash,
+    hash: computeAuditLogHash(logWithoutHash)
+  };
+
+  db.auditLogs.unshift(log);  saveDatabase(db);
 }
