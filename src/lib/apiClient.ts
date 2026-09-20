@@ -113,7 +113,7 @@ export const api = {
         method: 'POST'
       }),
     mfaSetupVerify: (code: string) =>
-      apiRequest<{ success: boolean; mfaEnabled: boolean }>('/api/auth/mfa/setup/verify', {
+      apiRequest<{ success: boolean; mfaEnabled: boolean; mfaRecoveryCodes?: string[] }>('/api/auth/mfa/setup/verify', {
         method: 'POST',
         body: JSON.stringify({ code })
       }),
