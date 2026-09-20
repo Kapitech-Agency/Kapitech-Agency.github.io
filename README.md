@@ -1,20 +1,62 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# Kapitech Agency Management System (AMS)
 
-# Run and deploy your AI Studio app
+Production-grade internal Agency Management System for Kapitech Agency.
 
-This contains everything you need to run your app locally.
+## Runtime
 
-View your app in AI Studio: https://ai.studio/apps/7b17c744-1dc8-4a7c-bcbf-dd9c3386a026
+- Node.js 22
+- Express API + React/Vite frontend
+- Hostinger deployment compatible
+- HttpOnly session cookies
+- SameSite=Strict + CSRF protection
+- TOTP MFA with one-time recovery codes
+- AES-256-GCM encrypted persistent data
+- Rolling encrypted database backups
+- Private server-side document vault
 
-## Run Locally
+## Production environment
 
-**Prerequisites:**  Node.js
+Required:
+- `NODE_ENV=production`
+- `ADMIN_INITIAL_USERNAME`
+- `ADMIN_INITIAL_PASSWORD`
+- `ADMIN_INITIAL_EMAIL`
+- `KAPITECH_DATA_ENCRYPTION_KEY`
 
+Optional:
+- `KAPITECH_DATA_DIR`
+- `KAPITECH_DB_BACKUP_RETENTION` (3-30, default 14)
+- `KAPITECH_DB_BACKUP_DIR`
+- `GEMINI_API_KEY`
+- `KAPITECH_TELEGRAM_BOT_TOKEN`
+- `KAPITECH_TELEGRAM_CHAT_ID`
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+Generate a 32-byte encryption key with:
+
+`openssl rand -hex 32`
+
+Do not commit runtime data, credentials, encryption keys, or private document files.
+
+## Verification
+
+CI runs:
+`npm ci`
+`npm run lint`
+`npm run build`
+
+For production smoke testing, use:
+`GET /api/health`
+and
+`GET /api/auth/me`
+
+An unauthenticated `/api/auth/me` response of HTTP 401 is expected.
+
+## Persistence and recovery
+
+Rolling encrypted backups are created before live database replacement. Privileged IT/Master users can request a manual snapshot through the System Backup API.
+
+Restore utility:
+
+`node scripts/restore-ams-db.mjs /absolute/path/to/backup.bak --force`
+
+The relational migration target is documented in `docs/relational-schema.sql`. Keep the current encrypted store until relational migration reconciliation and rollback tests are complete.
