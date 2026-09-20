@@ -18,8 +18,11 @@ import {
   checkLockout, 
   recordFailedLogin, 
   clearLockout, 
-  AuthenticatedRequest, 
-  rateLimitPublic 
+  AuthenticatedRequest,
+  rateLimitPublic,
+  rateLimitAuthenticated,
+  requireAnyPermission,
+  requireMaster
 } from './auth';
 
 export const apiRouter = Router();
@@ -1351,9 +1354,6 @@ apiRouter.post('/ai/generate', requireAuth, requirePermission('canAccessServerAn
   const { prompt, context } = req.body;
   if (!prompt || typeof prompt !== 'string' || prompt.length > 4000) {
     res.status(400).json({ success: false, error: 'Prompt is required and must be 4000 characters or fewer.' });
-    return;
-  }
-    res.status(400).json({ success: false, error: 'Prompt is required.' });
     return;
   }
 
