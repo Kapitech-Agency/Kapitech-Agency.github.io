@@ -20,6 +20,7 @@ export interface StoredUser {
   email: string;
   passwordHash: string;
   salt: string;
+  passwordAlgorithm?: 'scrypt-v1' | 'pbkdf2-sha512';
   role: string;
   stakeholderType: 'Executive' | 'IT_Technical' | 'Project_Manager' | 'Operations' | 'Master';
   permissions: {
@@ -45,15 +46,18 @@ export interface StoredUser {
 }
 
 export interface StoredSession {
-  token: string;
+  tokenHash: string;
   userId: string;
-  username: string;
-  role: string;
+  createdAt: string;
+  lastActivityAt: string;
+  expiresAt: number;
+  rememberMe: boolean;
   ip: string;
   userAgent: string;
-  expiresAt: number;
-  createdAt: string;
+  // Legacy field retained only for one-time migration from older deployments.
+  token?: string;
 }
+
 
 export interface StoredAuditLog {
   id: string;
@@ -99,21 +103,48 @@ export interface DatabaseSchema {
   };
 }
 
-export function hashPassword(password: string, salt: string): string {
-  return crypto.pbkdf2Sync(password, salt, 100000, 64, 'sha512').toString('hex');
+export function hashSessionToken(token: string): string {
+  return crypto.createHash('sha256').update(token).digest('hex');
 }
 
 export function generateSalt(): string {
   return crypto.randomBytes(16).toString('hex');
 }
 
+function timingSafeEqualHex(a: string, b: string): boolean {
+  const left = Buffer.from(a, 'hex');
+  const right = Buffer.from(b, 'hex');
+  return left.length === right.length && crypto.timingSafeEqual(left, right);
+}
+
+export function hashPassword(
+  password: string,
+  salt: string,
+  algorithm: 'scrypt-v1' | 'pbkdf2-sha512' = 'pbkdf2-sha512'
+): string {
+  if (algorithm === 'scrypt-v1') {
+    return crypto.scryptSync(String(password), salt, 64, {
+      N: 32768,
+      r: 8,
+      p: 1,
+      maxmem: 64 * 1024 * 1024
+    }).toString('hex');
+  }
+
+  return crypto.pbkdf2Sync(String(password), salt, 220000, 64, 'sha512').toString('hex');
+}
+
+export function verifyPassword(password: string, user: StoredUser): boolean {
+  const algorithm = user.passwordAlgorithm || 'pbkdf2-sha512';
+  const computed = hashPassword(password, user.salt, algorithm);
+  return timingSafeEqualHex(computed, user.passwordHash);
+}
+
 // Initial seed accounts
 function getInitialSeedData(): DatabaseSchema {
   const isProduction = process.env.NODE_ENV === 'production';
   const adminSalt = generateSalt();
-  const execSalt = generateSalt();
-  const pmSalt = generateSalt();
-  const finSalt = generateSalt();
+  
 
   const initialAdminUsername = process.env.ADMIN_INITIAL_USERNAME || (isProduction ? '' : 'admin');
   const initialAdminPassword = process.env.ADMIN_INITIAL_PASSWORD || (isProduction ? '' : 'dev-only-change-me');
@@ -130,8 +161,9 @@ function getInitialSeedData(): DatabaseSchema {
         name: 'Executive Master Admin',
         username: initialAdminUsername,
         email: initialAdminEmail,
-        passwordHash: hashPassword(initialAdminPassword, adminSalt),
+        passwordHash: hashPassword(initialAdminPassword, adminSalt, 'scrypt-v1'),
         salt: adminSalt,
+        passwordAlgorithm: 'scrypt-v1',
         role: 'Tier 1: Top Management / Sponsor',
         stakeholderType: 'Master',
         permissions: {
@@ -147,103 +179,13 @@ function getInitialSeedData(): DatabaseSchema {
           canAccessServerAndApi: true,
           canRunDataMigration: true,
           canViewSecurityAuditLogs: true,
-          canManageAdminAccounts: false
-        },
-        mfaEnabled: false,
-        division: 'Management',
-        status: 'active',
-        lastLogin: new Date().toISOString(),
-        createdAt: '2025-01-01T00:00:00.000Z'
-      },
-      {
-        id: 'usr_exec_partner',
-        name: 'Executive Partner',
-        username: 'executive',
-        email: 'executive@ams.kapitech.id',
-        passwordHash: hashPassword('Exec#Partner2026!', execSalt),
-        salt: execSalt,
-        role: 'Stakeholder Executive',
-        stakeholderType: 'Executive',
-        permissions: {
-          canViewFinancials: true,
-          canManageInvoices: true,
-          canApproveBudgets: true,
-          canManageCrm: true,
-          canManageProjects: true,
-          canManageKanbanTasks: false,
-          canManageClients: true,
-          canManageVendors: true,
-          canManageCmsContent: false,
-          canAccessServerAndApi: false,
-          canRunDataMigration: false,
-          canViewSecurityAuditLogs: true,
           canManageAdminAccounts: true
         },
-        mfaEnabled: true,
+        mfaEnabled: false,
         division: 'Management',
         status: 'active',
-        lastLogin: new Date().toISOString(),
-        createdAt: '2025-01-15T00:00:00.000Z'
-      },
-      {
-        id: 'usr_pm_lead',
-        name: 'Project Operations Lead',
-        username: 'pm',
-        email: 'pm@ams.kapitech.id',
-        passwordHash: hashPassword('Pm#Sprint2026!', pmSalt),
-        salt: pmSalt,
-        role: 'Tier 2: Project Manager (PM)',
-        stakeholderType: 'Project_Manager',
-        permissions: {
-          canViewFinancials: true,
-          canManageInvoices: false,
-          canApproveBudgets: false,
-          canManageCrm: true,
-          canManageProjects: true,
-          canManageKanbanTasks: true,
-          canManageClients: true,
-          canManageVendors: true,
-          canManageCmsContent: false,
-          canAccessServerAndApi: false,
-          canRunDataMigration: false,
-          canViewSecurityAuditLogs: false,
-          canManageAdminAccounts: false
-        },
-        mfaEnabled: false,
-        division: 'Operations',
-        status: 'active',
-        lastLogin: new Date().toISOString(),
-        createdAt: '2025-02-01T00:00:00.000Z'
-      },
-      {
-        id: 'usr_fin_cfo',
-        name: 'Chief Financial Officer',
-        username: 'finance',
-        email: 'finance@ams.kapitech.id',
-        passwordHash: hashPassword('Fin#Treasury2026!', finSalt),
-        salt: finSalt,
-        role: 'Financial Officer',
-        stakeholderType: 'Operations',
-        permissions: {
-          canViewFinancials: true,
-          canManageInvoices: true,
-          canApproveBudgets: true,
-          canManageCrm: false,
-          canManageProjects: false,
-          canManageKanbanTasks: false,
-          canManageClients: true,
-          canManageVendors: true,
-          canManageCmsContent: false,
-          canAccessServerAndApi: false,
-          canRunDataMigration: false,
-          canViewSecurityAuditLogs: false,
-          canManageAdminAccounts: false
-        },
-        mfaEnabled: false,
-        division: 'Finance',
-        status: 'active',
-        lastLogin: new Date().toISOString(),
-        createdAt: '2025-02-01T00:00:00.000Z'
+        lastLogin: '',
+        createdAt: '2025-01-01T00:00:00.000Z'
       }
     ],
     sessions: [],
@@ -1027,6 +969,34 @@ export function getDatabase(): DatabaseSchema {
     try {
       const raw = fs.readFileSync(DB_FILE, 'utf-8');
       inMemoryDb = JSON.parse(raw);
+
+      // Migrate legacy password/session records in-memory before the database is returned.
+      if (inMemoryDb) {
+        let migrationChanged = false;
+
+        for (const user of inMemoryDb.users || []) {
+          if (!user.passwordAlgorithm) {
+            user.passwordAlgorithm = 'pbkdf2-sha512';
+            migrationChanged = true;
+          }
+        }
+
+        for (const session of inMemoryDb.sessions || []) {
+          if (!session.tokenHash && session.token) {
+            session.tokenHash = hashSessionToken(session.token);
+            session.lastActivityAt = session.lastActivityAt || session.createdAt;
+            session.rememberMe = session.rememberMe ?? (
+              (session.expiresAt - new Date(session.createdAt).getTime()) > 12 * 60 * 60 * 1000
+            );
+            delete session.token;
+            migrationChanged = true;
+          }
+        }
+
+        if (migrationChanged) {
+          saveDatabaseSync(inMemoryDb);
+        }
+      }
       // Validate schema keys and backfill empty arrays from seed
       const seed = getInitialSeedData();
       let hasChanges = false;
