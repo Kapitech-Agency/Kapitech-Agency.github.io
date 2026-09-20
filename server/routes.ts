@@ -913,21 +913,22 @@ apiRouter.post('/leads/submit', rateLimitPublic(10, 60 * 1000), async (req: Requ
   }
 
   const db = getDatabase();
+  const normalizedServices = normalizeStringArray(services, 20, 120);
   const newLead = {
     id: `lead_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
-    fullName: String(fullName).trim(),
+    fullName: cleanText(fullName, 160),
     email: cleanEmail,
-    company: company ? String(company).trim() : '',
-    phone: phone ? String(phone).trim() : '',
-    services: Array.isArray(services) ? services : [],
-    budget: budget || '',
-    message: String(message).trim(),
+    company: cleanText(company, 200),
+    phone: cleanText(phone, 80),
+    services: normalizedServices,
+    budget: cleanText(budget, 160),
+    message: cleanText(message, MAX_PUBLIC_TEXT),
     status: 'new',
-    source: source || 'Website Form',
-    type: type || 'inquiry',
-    portfolioUrl: portfolioUrl || '',
-    rateCard: rateCard || '',
-    specialty: specialty || '',
+    source: cleanText(source || 'Website Form', 120),
+    type: cleanText(type || 'inquiry', 80),
+    portfolioUrl: cleanOptionalUrl(portfolioUrl),
+    rateCard: cleanText(rateCard, 120),
+    specialty: cleanText(specialty, 160),
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   };
@@ -971,7 +972,7 @@ apiRouter.post('/leads/submit', rateLimitPublic(10, 60 * 1000), async (req: Requ
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          chat_id: notif.telegramChatId,
+          chat_id: telegramChatId,
           text,
           parse_mode: 'Markdown'
         })
@@ -2220,11 +2221,24 @@ apiRouter.put('/notifications/settings', requireAuth, requirePermission('canAcce
   const db = getDatabase();
   const current = db.notificationSettings;
 
+  const nextTargetEmail = targetEmail !== undefined ? cleanText(targetEmail, 254).toLowerCase() : current.targetEmail;
+  const nextFormspreeEndpoint = formspreeEndpoint !== undefined ? cleanOptionalUrl(formspreeEndpoint) : current.formspreeEndpoint;
+  const nextTelegramChatId = telegramChatId !== undefined ? cleanText(telegramChatId, 120) : current.telegramChatId;
+
+  if (nextTargetEmail && !isValidEmail(nextTargetEmail)) {
+    res.status(400).json({ success: false, error: 'Invalid notification target email address.' });
+    return;
+  }
+  if (nextFormspreeEndpoint && !/^https:\/\/(?:www\.)?formspree\.io\//i.test(nextFormspreeEndpoint)) {
+    res.status(400).json({ success: false, error: 'Only Formspree HTTPS endpoints are allowed.' });
+    return;
+  }
+
   db.notificationSettings = {
-    targetEmail: targetEmail || current.targetEmail,
-    formspreeEndpoint: formspreeEndpoint !== undefined ? formspreeEndpoint : current.formspreeEndpoint,
+    targetEmail: nextTargetEmail,
+    formspreeEndpoint: nextFormspreeEndpoint,
     telegramBotToken: current.telegramBotToken,
-    telegramChatId: telegramChatId !== undefined ? String(telegramChatId).trim() : current.telegramChatId,
+    telegramChatId: nextTelegramChatId,
     isEmailActive: isEmailActive !== undefined ? Boolean(isEmailActive) : current.isEmailActive,
     isTelegramActive: isTelegramActive !== undefined ? Boolean(isTelegramActive) : current.isTelegramActive,
     updatedAt: new Date().toISOString()
