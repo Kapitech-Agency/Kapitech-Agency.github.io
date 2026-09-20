@@ -273,12 +273,12 @@ export const AdminSettings: React.FC = () => {
       return;
     }
 
-    if (newPassword && newPassword.length < 8) {
+    if (newPassword && newPassword.length < 12) {
       setSecurityStatus({ 
         success: false, 
         message: language === 'id' 
-          ? 'Password baru minimal 8 karakter.' 
-          : 'New password must be at least 8 characters long.' 
+          ? 'Password baru minimal 12 karakter.' 
+          : 'New password must be at least 12 characters long.' 
       });
       return;
     }
@@ -481,9 +481,8 @@ export const AdminSettings: React.FC = () => {
                 </label>
                 <input
                   type="text"
-                  required
                   value={username}
-                  onChange={(e) => setUsername(e.target.value)}
+                  readOnly
                   className="w-full px-3.5 py-2.5 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl text-xs text-white focus:outline-none focus:border-[#E50914] font-mono min-h-[44px]"
                 />
               </div>
@@ -494,9 +493,8 @@ export const AdminSettings: React.FC = () => {
                 </label>
                 <input
                   type="email"
-                  required
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  readOnly
                   className="w-full px-3.5 py-2.5 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl text-xs text-white focus:outline-none focus:border-[#E50914] font-mono min-h-[44px]"
                 />
               </div>
@@ -513,7 +511,11 @@ export const AdminSettings: React.FC = () => {
               </div>
               <div className="flex items-center justify-between text-xs font-mono">
                 <span className="text-[#8A94A6]">{language === 'id' ? 'Terakhir Login:' : 'Last Login:'}</span>
-                <span className="text-[#64748B]">{new Date(session?.user.lastLogin || Date.now()).toLocaleString()}</span>
+                <span className="text-[#64748B]">
+                  {session?.user.lastLogin
+                    ? new Date(session.user.lastLogin).toLocaleString()
+                    : (language === 'id' ? 'Belum tercatat' : 'Not recorded')}
+                </span>
               </div>
             </div>
 
@@ -1236,7 +1238,7 @@ export const AdminSettings: React.FC = () => {
             </div>
             <div>
               <h2 className="text-base font-bold font-display text-white">
-                {language === 'id' ? 'Kebijakan Keamanan, MFA & Password' : 'Security, MFA & Password Policy'}
+                {language === 'id' ? 'Kebijakan Keamanan & Password' : 'Security & Password Policy'}
               </h2>
               <p className="text-xs text-[#8A94A6] font-mono">
                 {language === 'id'
