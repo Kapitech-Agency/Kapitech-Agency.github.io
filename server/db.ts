@@ -70,6 +70,52 @@ export function createDatabaseBackup(force = false): { createdAt: string; sizeBy
   return { createdAt: new Date(now).toISOString(), sizeBytes: raw.length };
 }
 
+export function verifyDatabaseBackupIntegrity(): { valid: boolean; checkedAt: string; latestName?: string; reason?: string } {
+  const backups = listDatabaseBackups();
+  const latest = backups[0];
+  if (!latest) {
+    return { valid: false, checkedAt: new Date().toISOString(), reason: 'No backup snapshot is available.' };
+  }
+
+  const latestPath = path.join(BACKUP_DIR, latest.name);
+  try {
+    const raw = fs.readFileSync(latestPath, 'utf8');
+    const plaintext = raw.startsWith(DB_ENCRYPTION_PREFIX)
+      ? decryptDatabase(raw)
+      : raw;
+    const parsed = JSON.parse(plaintext);
+    const validSchema =
+      parsed &&
+      Array.isArray(parsed.users) &&
+      Array.isArray(parsed.sessions) &&
+      Array.isArray(parsed.projects) &&
+      Array.isArray(parsed.invoices) &&
+      Array.isArray(parsed.auditLogs);
+
+    if (!validSchema) {
+      return {
+        valid: false,
+        checkedAt: new Date().toISOString(),
+        latestName: latest.name,
+        reason: 'Latest backup does not contain the expected AMS database structure.'
+      };
+    }
+
+    return {
+      valid: true,
+      checkedAt: new Date().toISOString(),
+      latestName: latest.name
+    };
+  } catch (error) {
+    return {
+      valid: false,
+      checkedAt: new Date().toISOString(),
+      latestName: latest.name,
+      reason: error instanceof Error ? error.message : 'Backup integrity verification failed.'
+    };
+  }
+}
+
 export function listDatabaseBackups(): Array<{ name: string; createdAt: string; sizeBytes: number }> {
   ensureBackupDirectory();
   return fs.readdirSync(BACKUP_DIR)
