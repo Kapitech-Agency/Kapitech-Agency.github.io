@@ -337,16 +337,13 @@ export const getAgencyInvoices = (): AgencyInvoice[] => {
     }
     const raw = localStorage.getItem(INVOICE_STORAGE_KEY);
     if (!raw) {
+      if (import.meta.env.PROD) return [];
       localStorage.setItem(INVOICE_STORAGE_KEY, JSON.stringify(INITIAL_DEFAULT_INVOICES));
       return INITIAL_DEFAULT_INVOICES;
     }
     const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed) && parsed.length > 0) {
-      return parsed;
-    }
-    // If empty array was previously stored, seed with initial realistic fixtures
-    localStorage.setItem(INVOICE_STORAGE_KEY, JSON.stringify(INITIAL_DEFAULT_INVOICES));
-    return INITIAL_DEFAULT_INVOICES;
+    if (Array.isArray(parsed)) return parsed;
+    return import.meta.env.PROD ? [] : INITIAL_DEFAULT_INVOICES;
   } catch {
     return INITIAL_DEFAULT_INVOICES;
   }
@@ -535,15 +532,13 @@ export const getAgencyExpenses = (): AgencyExpense[] => {
     }
     const raw = localStorage.getItem(EXPENSE_STORAGE_KEY);
     if (!raw) {
+      if (import.meta.env.PROD) return [];
       localStorage.setItem(EXPENSE_STORAGE_KEY, JSON.stringify(INITIAL_DEFAULT_EXPENSES));
       return INITIAL_DEFAULT_EXPENSES;
     }
     const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed) && parsed.length > 0) {
-      return parsed;
-    }
-    localStorage.setItem(EXPENSE_STORAGE_KEY, JSON.stringify(INITIAL_DEFAULT_EXPENSES));
-    return INITIAL_DEFAULT_EXPENSES;
+    if (Array.isArray(parsed)) return parsed;
+    return import.meta.env.PROD ? [] : INITIAL_DEFAULT_EXPENSES;
   } catch {
     return INITIAL_DEFAULT_EXPENSES;
   }
