@@ -848,7 +848,19 @@ apiRouter.put('/auth/users/:id', requireAuth, requireMaster, (req: Authenticated
 
 // Public submission form (Rate-limited, validated, and dispatches notification via server)
 apiRouter.post('/leads/submit', rateLimitPublic(10, 60 * 1000), async (req: Request, res: Response): Promise<void> => {
-  const { fullName, email, company, phone, services, budget, message, source, type, portfolioUrl, rateCard, specialty } = req.body;
+  const { fullName, email, company, phone, services, budget, message, source, type, portfolioUrl, rateCard, specialty, website } = req.body;
+
+  // Honeypot field: normal visitors never populate this. Do not process obvious bot submissions.
+  if (website) {
+    res.status(400).json({ success: false, error: 'Submission rejected.' });
+    return;
+  }
+
+  const origin = req.get('origin');
+  if (origin && !/^https:\\/\\/(?:www\\.)?kapitech\\.id$/i.test(origin) && !/^https:\\/\\/ams\\.kapitech\\.id$/i.test(origin)) {
+    res.status(403).json({ success: false, error: 'Submission origin is not allowed.' });
+    return;
+  }
 
   if (!fullName || !email || !message) {
     res.status(400).json({ success: false, error: 'Name, email, and message are required fields.' });
@@ -860,8 +872,7 @@ apiRouter.post('/leads/submit', rateLimitPublic(10, 60 * 1000), async (req: Requ
   }
 
   const cleanEmail = String(email).trim().toLowerCase();
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(cleanEmail)) {
+  if (!isValidEmail(cleanEmail)) {
     res.status(400).json({ success: false, error: 'Invalid email address.' });
     return;
   }
