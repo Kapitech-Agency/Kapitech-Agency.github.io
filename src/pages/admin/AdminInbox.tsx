@@ -49,10 +49,6 @@ import {
   CurrencyCode, 
   CURRENCY_EVENT 
 } from '../../lib/currency';
-import {
-  requestDesktopNotificationPermission,
-  showDesktopNotification
-} from '../../lib/notifications';
 import { CannedResponsesModal } from '../../components/admin/inbox/CannedResponsesModal';
 import { ConvertToCrmModal } from '../../components/admin/inbox/ConvertToCrmModal';
 import { useLanguage } from '../../lib/LanguageContext';
@@ -99,20 +95,12 @@ export const AdminInbox: React.FC = () => {
 
   // Subscribe to real-time incoming briefs
   useEffect(() => {
-    requestDesktopNotificationPermission();
-
     const unsubscribe = subscribeToInbox((items) => {
       setSubmissions(items);
 
       // Sound and Desktop notification on newly arrived submission
       if (prevCount !== null && items.length > prevCount) {
         const latest = items[0];
-        showDesktopNotification(
-          language === 'id' 
-            ? `Pesan Baru: ${latest?.fullName || 'Klien Baru'}` 
-            : `New Inbound: ${latest?.fullName || 'New Client'}`,
-          `${latest?.company ? latest.company + ' • ' : ''}${latest?.message?.substring(0, 75)}...`
-        );
       }
 
       setPrevCount(items.length);
