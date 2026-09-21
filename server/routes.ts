@@ -2452,7 +2452,7 @@ apiRouter.delete('/vendors/:id', requireAuth, requirePermission('canManageVendor
 // ----------------------------------------------------
 
 // CMS Services (Public GET for published services, protected for drafts)
-apiRouter.get('/cms/services', async (req: Request, res: Response): Promise<void> => {
+apiRouter.get('/cms/services', rateLimitPublic(), async (req: Request, res: Response): Promise<void> => {
   const user = (req as AuthenticatedRequest).user;
   const canManage = Boolean(user && (user.stakeholderType === 'Master' || user.permissions?.canManageCmsContent));
   const source = getDataSourceMode() === 'postgres'
@@ -2526,7 +2526,7 @@ apiRouter.delete('/cms/services/:id', requireAuth, requirePermission('canManageC
 });
 
 // CMS Projects
-apiRouter.get('/cms/projects', async (req: Request, res: Response): Promise<void> => {
+apiRouter.get('/cms/projects', rateLimitPublic(), async (req: Request, res: Response): Promise<void> => {
   const user = (req as AuthenticatedRequest).user;
   const canManage = Boolean(user && (user.stakeholderType === 'Master' || user.permissions?.canManageCmsContent));
   const source = getDataSourceMode() === 'postgres'
@@ -2596,7 +2596,7 @@ apiRouter.delete('/cms/projects/:id', requireAuth, requirePermission('canManageC
 });
 
 // CMS Testimonials
-apiRouter.get('/cms/testimonials', async (req: Request, res: Response): Promise<void> => {
+apiRouter.get('/cms/testimonials', rateLimitPublic(), async (req: Request, res: Response): Promise<void> => {
   const user = (req as AuthenticatedRequest).user;
   const canManage = Boolean(user && (user.stakeholderType === 'Master' || user.permissions?.canManageCmsContent));
   const source = getDataSourceMode() === 'postgres'
