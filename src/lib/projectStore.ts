@@ -307,7 +307,16 @@ export const saveAgencyProject = (project: AgencyProject): void => {
 
   const request = idx >= 0 ? api.projects.update(project.id, project) : api.projects.create(project);
   request.then((res) => {
-    if (res.success && res.data?.success !== false) return;
+    const serverProject = res.success ? res.data?.project : null;
+    if (res.success && serverProject) {
+      projectsCache = (projectsCache || []).map(p =>
+        p.id === project.id
+          ? { ...serverProject, tasks: p.tasks || [] }
+          : p
+      );
+      window.dispatchEvent(new CustomEvent(PROJECT_EVENT_NAME, { detail: projectsCache }));
+      return;
+    }
     projectsCache = previous;
     window.dispatchEvent(new CustomEvent(PROJECT_EVENT_NAME, { detail: previous }));
   }).catch(() => {
