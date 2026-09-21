@@ -2678,9 +2678,14 @@ apiRouter.get('/audit-logs/integrity', requireAuth, requirePermission('canViewSe
 // ----------------------------------------------------
 
 apiRouter.get('/notifications/settings', requireAuth, requirePermission('canAccessServerAndApi'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-  const s = getDataSourceMode() === 'postgres'
+  const postgresMode = getDataSourceMode() === 'postgres';
+  const s = postgresMode
     ? await postgresNotificationSettingsRepository.get()
     : getDatabase().notificationSettings;
+  const hasTelegramToken = postgresMode
+    ? Boolean(process.env.KAPITECH_TELEGRAM_BOT_TOKEN?.trim())
+    : Boolean(s.telegramBotToken?.trim());
+
   res.json({
     success: true,
     settings: {
@@ -2689,7 +2694,7 @@ apiRouter.get('/notifications/settings', requireAuth, requirePermission('canAcce
       telegramChatId: s.telegramChatId,
       isEmailActive: s.isEmailActive,
       isTelegramActive: s.isTelegramActive,
-      hasTelegramToken: Boolean((process.env.KAPITECH_TELEGRAM_BOT_TOKEN || s.telegramBotToken) && (process.env.KAPITECH_TELEGRAM_BOT_TOKEN || s.telegramBotToken).length > 5)
+      hasTelegramToken
     }
   });
 });
