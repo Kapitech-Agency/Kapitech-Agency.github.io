@@ -1783,6 +1783,49 @@ apiRouter.delete('/projects/:id', requireAuth, requirePermission('canManageProje
 // 6. FINANCE, INVOICING & PAYMENTS (Server-Authoritative Calculations)
 // ----------------------------------------------------
 
+function normalizeInvoiceItems(value: unknown): Array<{ id: string; description: string; quantity: number; unitPrice: number; amount: number }> {
+  if (!Array.isArray(value)) return [];
+  return value.slice(0, 100).map((item: any) => {
+    const quantity = Number(item?.quantity);
+    const unitPrice = Number(item?.unitPrice);
+    return {
+      id: String(item?.id || 'line_' + crypto.randomBytes(4).toString('hex')).slice(0, 80),
+      description: String(item?.description || '').trim().slice(0, 500),
+      quantity: Number.isFinite(quantity) ? Math.min(100000, Math.max(0, quantity)) : 0,
+      unitPrice: Number.isFinite(unitPrice) ? Math.min(MAX_MONEY, Math.max(0, unitPrice)) : 0,
+      amount: 0
+    };
+  }).filter(item => item.description && item.quantity > 0 && item.unitPrice >= 0).map(item => ({
+    ...item,
+    amount: Math.round(item.quantity * item.unitPrice * 100) / 100
+  }));
+}
+
+function normalizeDate(value: unknown, fallback: string): string {
+  const candidate = String(value || '').trim();
+  if (/^\d{4}-\d{2}-\d{2}$/.test(candidate)) {
+    const parsed = new Date(candidate + 'T00:00:00Z');
+    if (!Number.isNaN(parsed.getTime()) && parsed.toISOString().slice(0, 10) === candidate) return candidate;
+  }
+  return fallback;
+}
+
+const INVOICE_STATUSES = new Set(['draft','sent','approved','partially_paid','paid','overdue','cancelled']);
+const PAYMENT_METHODS = new Set(['bank_transfer','credit_card','cash','other']);
+
+function buildInvoiceFinancials(
+  items: ReturnType<typeof normalizeInvoiceItems>,
+  taxPercent: number,
+  discountPercent: number
+) {
+  const subtotal = items.reduce((sum, item) => sum + item.amount, 0);
+  const discountAmount = Math.round(subtotal * (discountPercent / 100) * 100) / 100;
+  const taxableSubtotal = Math.max(0, subtotal - discountAmount);
+  const taxAmount = Math.round(taxableSubtotal * (taxPercent / 100) * 100) / 100;
+  const total = Math.round((taxableSubtotal + taxAmount) * 100) / 100;
+  return { subtotal, discountAmount, taxableSubtotal, taxAmount, total };
+}
+
 apiRouter.get('/finance/invoices', requireAuth, requirePermission('canViewFinancials'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   try {
     if (getDataSourceMode() === 'postgres') {
