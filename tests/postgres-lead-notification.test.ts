@@ -1,0 +1,25 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import test from 'node:test';
+import { fileURLToPath } from 'node:url';
+
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+
+test('lead submissions dispatch Telegram notifications in both datasource modes', async () => {
+  const source = await fs.readFile(path.join(root, 'server/routes.ts'), 'utf8');
+
+  assert.match(source, /dispatchLeadTelegramNotification/);
+  assert.match(source, /postgresLeadRepository\.create\(newLead\)/);
+  assert.match(source, /postgresNotificationSettingsRepository\.get\(\)/);
+  assert.match(source, /void dispatchLeadTelegramNotification\(newLead, notificationSettings\)/);
+  assert.match(source, /KAPITECH_TELEGRAM_BOT_TOKEN/);
+  assert.match(source, /KAPITECH_TELEGRAM_CHAT_ID/);
+});
+
+test('PostgreSQL notification settings remain secret-safe during lead dispatch', async () => {
+  const source = await fs.readFile(path.join(root, 'server/postgres-notification-settings-repository.ts'), 'utf8');
+
+  assert.doesNotMatch(source, /telegram_bot_token/);
+  assert.doesNotMatch(source, /telegramBotToken/);
+});

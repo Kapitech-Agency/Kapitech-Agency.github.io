@@ -202,6 +202,48 @@ function getInvoiceBalanceDue(invoice: any): number {
   return Math.max(0, total - getInvoicePaidAmount(invoice));
 }
 
+async function dispatchLeadTelegramNotification(
+  lead: {
+    fullName: string;
+    company: string;
+    email: string;
+    phone: string;
+    services: string[];
+    budget: string;
+    message: string;
+  },
+  settings: {
+    isTelegramActive: boolean;
+    telegramChatId: string;
+    telegramBotToken?: string;
+  }
+): Promise<void> {
+  const botToken = (process.env.KAPITECH_TELEGRAM_BOT_TOKEN || settings.telegramBotToken || '').trim();
+  const chatId = (process.env.KAPITECH_TELEGRAM_CHAT_ID || settings.telegramChatId || '').trim();
+
+  if (!settings.isTelegramActive || !botToken || !chatId) return;
+
+  const telegramText =
+    `🔔 *New Kapitech Lead Received*\\n\\n` +
+    `👤 *Name:* ${lead.fullName}\\n` +
+    `🏢 *Company:* ${lead.company || '-'}\\n` +
+    `✉️ *Email:* ${lead.email}\\n` +
+    `📞 *Phone:* ${lead.phone || '-'}\\n` +
+    `🛠️ *Services:* ${lead.services.join(', ') || '-'}\\n` +
+    `💰 *Budget:* ${lead.budget || '-'}\\n\\n` +
+    `💬 *Message:*\\n_${lead.message.slice(0, 300)}_`;
+
+  try {
+    await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chat_id: chatId, text: telegramText, parse_mode: 'Markdown' })
+    });
+  } catch (error) {
+    console.debug('[Notifications] Telegram lead notification failed:', error);
+  }
+}
+
 function pushNotification(
   db: ReturnType<typeof getDatabase> | undefined,
   input: {
@@ -1045,32 +1087,24 @@ apiRouter.post('/leads/submit', rateLimitPublic(10, 60 * 1000), async (req: Requ
   };
 
   let jsonDb: ReturnType<typeof getDatabase> | undefined;
+  let notificationSettings: {
+    isTelegramActive: boolean;
+    telegramChatId: string;
+    telegramBotToken?: string;
+  };
+
   if (getDataSourceMode() === 'postgres') {
     await postgresLeadRepository.create(newLead);
+    const postgresNotificationSettings = await postgresNotificationSettingsRepository.get();
+    notificationSettings = postgresNotificationSettings;
   } else {
     jsonDb = getDatabase();
     jsonDb.leads.unshift(newLead);
     saveDatabase(jsonDb);
-
-    const notif = jsonDb.notificationSettings;
-    const telegramBotToken = process.env.KAPITECH_TELEGRAM_BOT_TOKEN || notif.telegramBotToken;
-    const telegramChatId = process.env.KAPITECH_TELEGRAM_CHAT_ID || notif.telegramChatId;
-    if (notif.isTelegramActive && telegramBotToken && telegramChatId) {
-      const telegramText = `🔔 *New Kapitech Lead Received*\\n\\n` +
-        `👤 *Name:* ${newLead.fullName}\\n` +
-        `🏢 *Company:* ${newLead.company || '-'}\\n` +
-        `✉️ *Email:* ${newLead.email}\\n` +
-        `📞 *Phone:* ${newLead.phone || '-'}\\n` +
-        `🛠️ *Services:* ${newLead.services.join(', ') || '-'}\\n` +
-        `💰 *Budget:* ${newLead.budget || '-'}\\n\\n` +
-        `💬 *Message:*\\n_${newLead.message.slice(0, 300)}_`;
-      fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ chat_id: telegramChatId, text: telegramText, parse_mode: 'Markdown' })
-      }).catch(err => console.debug('Telegram notification dispatch failed:', err));
-    }
+    notificationSettings = jsonDb.notificationSettings;
   }
+
+  void dispatchLeadTelegramNotification(newLead, notificationSettings);
 
   pushNotification(getDataSourceMode() === 'json' ? jsonDb : undefined, {
     title: 'New inbound lead',
