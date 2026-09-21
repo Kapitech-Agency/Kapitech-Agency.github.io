@@ -11,32 +11,38 @@ import { isDataEncryptionEnabled } from './server/db.ts';
 
 dotenv.config();
 
-function assertProductionDataSource(): void {
-  if (process.env.NODE_ENV !== 'production') return;
+function validateProductionDataSource(): string | null {
+  if (process.env.NODE_ENV !== 'production') return null;
 
   const mode = (process.env.KAPITECH_DATA_SOURCE || '').trim().toLowerCase();
   if (mode !== 'postgres') {
-    throw new Error('Production startup requires KAPITECH_DATA_SOURCE=postgres. Refusing to run the local JSON data source in production.');
+    return 'Production runtime requires KAPITECH_DATA_SOURCE=postgres.';
   }
 
   if (!process.env.KAPITECH_POSTGRES_URL?.trim()) {
-    throw new Error('Production startup requires KAPITECH_POSTGRES_URL.');
+    return 'Production runtime requires KAPITECH_POSTGRES_URL.';
   }
 
   if (!process.env.KAPITECH_DATA_ENCRYPTION_KEY?.trim()) {
-    throw new Error('Production startup requires KAPITECH_DATA_ENCRYPTION_KEY.');
+    return 'Production runtime requires KAPITECH_DATA_ENCRYPTION_KEY.';
   }
 
-  // Validate the encryption key format and 32-byte length before the application opens its port.
-  isDataEncryptionEnabled();
+  try {
+    // Validate the encryption key format without preventing the public web shell from booting.
+    isDataEncryptionEnabled();
+  } catch (error) {
+    return error instanceof Error ? error.message : String(error);
+  }
+
+  return null;
 }
 
 async function startServer() {
-  assertProductionDataSource();
+  const productionConfigError = validateProductionDataSource();
 
   const app = express();
-  let postgresReady = getDataSourceMode() !== 'postgres';
-  let postgresStartupError: string | null = null;
+  let postgresReady = getDataSourceMode() !== 'postgres' && !productionConfigError;
+  let postgresStartupError: string | null = productionConfigError;
 
   const initializePostgres = async (): Promise<void> => {
     try {
@@ -230,7 +236,7 @@ async function startServer() {
   app.listen(PORT, '0.0.0.0', () => {
     console.log(`[Kapitech AMS Server] Running on http://0.0.0.0:${PORT}`);
 
-    if (getDataSourceMode() === 'postgres') {
+    if (getDataSourceMode() === 'postgres' && !productionConfigError) {
       void initializePostgres();
       const retryTimer = setInterval(() => {
         if (postgresReady) {
