@@ -1181,7 +1181,7 @@ apiRouter.delete('/leads/:id', requireAuth, requirePermission('canManageCrm'), a
       res.status(404).json({ success: false, error: 'Lead not found.' });
       return;
     }
-    await postgresLeadRepository.delete(id);
+    try { await postgresLeadRepository.delete(id); } catch(error) { if(error instanceof Error&&error.message==='LEAD_IS_CLOSED'){res.status(409).json({success:false,error:'Closed leads are retained as business history and cannot be deleted.'});return;} throw error; }
     recordAuditLog({ action: 'LEAD_DELETED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Deleted lead ${lead.fullName} (${lead.email}).`, severity: 'warning' });
     res.json({ success: true, message: 'Lead removed.' });
     return;
@@ -1465,7 +1465,7 @@ apiRouter.delete('/crm/deals/:id', requireAuth, requirePermission('canManageCrm'
       res.status(404).json({ success: false, error: 'Deal not found.' });
       return;
     }
-    await postgresCrmDealRepository.delete(id);
+    try { await postgresCrmDealRepository.delete(id); } catch(error) { if(error instanceof Error&&error.message==='DEAL_HAS_PROPOSALS'){res.status(409).json({success:false,error:'Deal is referenced by proposals and cannot be deleted.'});return;} throw error; }
     recordAuditLog({
       action: 'CRM_DEAL_DELETED',
       actor: req.user!.username,
@@ -1656,7 +1656,8 @@ apiRouter.put('/clients/:id', requireAuth, requirePermission('canManageClients')
 apiRouter.delete('/clients/:id', requireAuth, requirePermission('canManageClients'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
   if (getDataSourceMode() === 'postgres') {
-    const deleted = await postgresClientRepository.delete(id);
+    let deleted:boolean;
+    try { deleted=await postgresClientRepository.delete(id); } catch(error) { if(error instanceof Error&&error.message==='CLIENT_HAS_BUSINESS_RECORDS'){res.status(409).json({success:false,error:'Client has business records and cannot be deleted.'});return;} throw error; }
     if (!deleted) { res.status(404).json({ success: false, error: 'Client not found.' }); return; }
     recordAuditLog({
       action: 'CLIENT_DELETED',
@@ -1827,7 +1828,8 @@ apiRouter.delete('/projects/:id', requireAuth, requirePermission('canManageProje
   if (getDataSourceMode() === 'postgres') {
     const project = await postgresProjectRepository.findById(id);
     if (!project) { res.status(404).json({ success: false, error: 'Project not found.' }); return; }
-    const deleted = await postgresProjectRepository.delete(id);
+    let deleted:boolean;
+    try { deleted=await postgresProjectRepository.delete(id); } catch(error) { if(error instanceof Error&&error.message==='PROJECT_HAS_BUSINESS_RECORDS'){res.status(409).json({success:false,error:'Project has business records and cannot be deleted.'});return;} throw error; }
     if (!deleted) { res.status(404).json({ success: false, error: 'Project not found.' }); return; }
     recordAuditLog({ action: 'PROJECT_DELETED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Deleted project "${project.name}".`, severity: 'warning' });
     res.json({ success: true, message: 'Project removed.' });
@@ -2009,7 +2011,7 @@ apiRouter.put('/finance/invoices/:id', requireAuth, requirePermission('canManage
       res.json({ success: true, invoice: saved }); return;
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Invoice could not be updated.';
-      res.status(message.includes('modified') ? 409 : message.includes('Cancelled') ? 409 : 400).json({ success: false, error: message }); return;
+      res.status(message.includes('modified') || message.includes('Cancelled') || message.includes('PAID_INVOICE_LINKAGE_IMMUTABLE') || message.includes('PAID_INVOICE_TOTAL_IMMUTABLE') ? 409 : 400).json({ success: false, error: message }); return;
     }
   }
 
@@ -2160,6 +2162,7 @@ apiRouter.post('/finance/invoices/:id/pay', requireAuth, requirePermission('canM
   const date = normalizeDate(input.date, new Date().toISOString().slice(0, 10));
   const reference = String(input.reference || '').trim().slice(0, 160);
   const notes = String(input.notes || '').trim().slice(0, 1000);
+  const idempotencyKey = String(input.idempotencyKey || req.get('Idempotency-Key') || '').trim().slice(0, 100);
 
   const paymentRecord = {
     id: `pay_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
@@ -2168,7 +2171,8 @@ apiRouter.post('/finance/invoices/:id/pay', requireAuth, requirePermission('canM
     method,
     reference,
     recordedBy: req.user!.name || req.user!.username,
-    notes
+    notes,
+    idempotencyKey
   };
 
   if (!Array.isArray(invoice.payments)) invoice.payments = [];
@@ -3177,7 +3181,14 @@ apiRouter.put('/crm/proposals/:id', requireAuth, requirePermission('canManageCrm
     if (patch.currency !== undefined && !['IDR','USD'].includes(String(patch.currency))) { res.status(400).json({ success: false, error: 'Invalid proposal currency.' }); return; }
     if (patch.status !== undefined && !['Draft','Internal Review','Sent','Approved','Rejected','Accepted'].includes(String(patch.status))) { res.status(400).json({ success: false, error: 'Invalid proposal status.' }); return; }
     if (patch.sentDate !== undefined && patch.sentDate !== null && !isValidDate(patch.sentDate)) { res.status(400).json({ success: false, error: 'Invalid proposal sent date.' }); return; }
-    const proposal = await postgresProposalRepository.update(id, { ...patch, items, subtotal, discount, taxPercent, tax, total });
+    let proposal;
+    try {
+      proposal = await postgresProposalRepository.update(id, { ...patch, items, subtotal, discount, taxPercent, tax, total });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Proposal could not be updated.';
+      if (message === 'ACCEPTED_PROPOSAL_IMMUTABLE') { res.status(409).json({ success: false, error: 'Accepted proposals cannot be reopened or moved to another status.' }); return; }
+      throw error;
+    }
     recordAuditLog({
       action: 'PROPOSAL_UPDATED',
       actor: req.user!.username,
