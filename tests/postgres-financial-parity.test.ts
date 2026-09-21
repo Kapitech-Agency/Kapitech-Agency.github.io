@@ -33,5 +33,5 @@ test('reconciliation compares PostgreSQL financial aggregates, not only row coun
 
 test('financial parity participates in the reconciliation pass/fail gate', async () => {
   const source = await fs.readFile(path.join(root, 'scripts/postgres-reconcile.ts'), 'utf8');
-  assert.match(source, /countParity && financialParity/);
+  assert.match(source, /const reconciliationPass = checks\.countParity && checks\.financialParity/);
 });
