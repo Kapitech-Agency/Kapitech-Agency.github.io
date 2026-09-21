@@ -112,77 +112,107 @@ export const AdminCmsServices: React.FC = () => {
     if (!newTitle.trim() || !newSlug.trim()) return;
 
     const normalizedSlug = newSlug.toLowerCase().replace(/[^a-z0-9-]/g, '-');
-    const newService: ServiceItemData = {
-      ...(editingService || {}),
-      slug: normalizedSlug,
-      type: 'service',
-      category: newCategory,
-      title: newTitle,
-      navSubtitle: newHeadline || 'High-performance digital craft and engineering.',
-      navSubtitleId: newHeadline || 'Layanan rekayasa digital berstandar global.',
-      heroHeadline: newHeadline || `${newTitle} for High-Growth Brands`,
-      heroHeadlineId: newHeadline || `${newTitle} untuk Brand Berskala Global`,
-      heroSubtitle: newSubtitle || 'Accelerate conversion, user engagement, and revenue through our bespoke engineering methodology.',
-      heroSubtitleId: newSubtitle || 'Akselerasikan konversi dan retensi pengguna melalui arsitektur software berstandar industri.',
-      badge: newBadge,
-      badgeId: newBadge,
-      metrics: [
-        { value: '99.9%', label: 'Uptime SLA', labelId: 'Jaminan Uptime' },
-        { value: '3.4x', label: 'Avg ROI', labelId: 'Rata-rata ROI' },
-        { value: '<50ms', label: 'Edge Latency', labelId: 'Latensi Edge' }
-      ],
-      testimonial: {
-        quote: 'Kapitech delivered exceptional results ahead of our quarterly launch schedule.',
-        quoteId: 'Kapitech memberikan hasil luar biasa lebih cepat dari jadwal peluncuran kami.',
-        highlight: 'Top 1% Engineering Execution',
-        highlightId: 'Eksekusi Rekayasa Kelas Dunia',
-        author: 'Arif Hidayat',
-        role: 'VP of Technology',
-        company: 'Nexus Supply Chain',
-        avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80'
-      },
-      caseStudySlugs: ['lumina-staging-cloud', 'aurora-ecommerce'],
-      problemsSolutions: [],
-      capabilities: tempCapabilities.map(cap => ({
-        title: cap,
-        titleId: cap,
-        desc: 'Production-ready delivery adhering to modern web standards and security benchmarks.',
-        descId: 'Eksekusi produksi sesuai standar arsitektur modern dan keamanan data.'
-      })),
-      processStages: [
-        {
-          stageNumber: '01',
-          stageName: 'Discovery & Audit',
-          stageNameId: 'Audit & Analisis Mendalam',
-          stageDesc: 'Deep-dive technical assessment and strategic roadmap mapping.',
-          stageDescId: 'Pemeriksaan sistem menyeluruh dan penyusunan roadmap teknis.',
-          deliverables: ['Audit Report', 'Architecture Blueprint'],
-          deliverablesId: ['Laporan Audit', 'Cetak Biru Arsitektur']
-        },
-        {
-          stageNumber: '02',
-          stageName: 'Agile Implementation',
-          stageNameId: 'Implementasi & Development',
-          stageDesc: 'Rapid deployment with weekly continuous integration and QA.',
-          stageDescId: 'Pengembangan cepat dengan integrasi mingguan dan pengujian ketat.',
-          deliverables: ['Staging Environment', 'API Documentation'],
-          deliverablesId: ['Environment Staging', 'Dokumentasi API']
+    const defaultCapabilities = tempCapabilities.map(cap => ({
+      title: cap,
+      titleId: cap,
+      desc: 'Production-ready delivery adhering to modern web standards and security benchmarks.',
+      descId: 'Eksekusi produksi sesuai standar arsitektur modern dan keamanan data.'
+    }));
+    const newService: ServiceItemData = editingService
+      ? {
+          ...editingService,
+          slug: normalizedSlug,
+          type: 'service',
+          category: newCategory,
+          title: newTitle.trim(),
+          navSubtitle: newHeadline.trim() || editingService.navSubtitle,
+          navSubtitleId: newHeadline.trim() || editingService.navSubtitleId,
+          heroHeadline: newHeadline.trim() || editingService.heroHeadline,
+          heroHeadlineId: newHeadline.trim() || editingService.heroHeadlineId,
+          heroSubtitle: newSubtitle.trim() || editingService.heroSubtitle,
+          heroSubtitleId: newSubtitle.trim() || editingService.heroSubtitleId,
+          badge: newBadge.trim() || editingService.badge,
+          badgeId: newBadge.trim() || editingService.badgeId,
+          capabilities: tempCapabilities.length > 0
+            ? tempCapabilities.map(cap => {
+                const existing = editingService.capabilities?.find(item => item.title === cap || item.titleId === cap);
+                return existing || {
+                  title: cap,
+                  titleId: cap,
+                  desc: 'Production-ready delivery adhering to modern web standards and security benchmarks.',
+                  descId: 'Eksekusi produksi sesuai standar arsitektur modern dan keamanan data.'
+                };
+              })
+            : editingService.capabilities
         }
-      ],
-      businessOutcomes: {
-        heading: 'Measurable Impact for Your Digital Enterprise',
-        headingId: 'Dampak Terukur untuk Ekosistem Digital Anda',
-        benefits: ['Reduced infrastructure overhead', 'Sub-second page load benchmarks', 'Higher organic conversion rate'],
-        benefitsId: ['Efisiensi biaya server', 'Waktu muat di bawah 1 detik', 'Peningkatan konversi organik']
-      },
-      tools: ['Next.js 15', 'TypeScript', 'Tailwind CSS', 'Docker', 'PostgreSQL', 'Redis'],
-      faqs: []
-    };
+      : {
+          slug: normalizedSlug,
+          type: 'service',
+          category: newCategory,
+          title: newTitle.trim(),
+          navSubtitle: newHeadline || 'High-performance digital craft and engineering.',
+          navSubtitleId: newHeadline || 'Layanan rekayasa digital berstandar global.',
+          heroHeadline: newHeadline || `${newTitle} for High-Growth Brands`,
+          heroHeadlineId: newHeadline || `${newTitle} untuk Brand Berskala Global`,
+          heroSubtitle: newSubtitle || 'Accelerate conversion, user engagement, and revenue through our bespoke engineering methodology.',
+          heroSubtitleId: newSubtitle || 'Akselerasikan konversi dan retensi pengguna melalui arsitektur software berstandar industri.',
+          badge: newBadge,
+          badgeId: newBadge,
+          metrics: [
+            { value: '99.9%', label: 'Uptime SLA', labelId: 'Jaminan Uptime' },
+            { value: '3.4x', label: 'Avg ROI', labelId: 'Rata-rata ROI' },
+            { value: '<50ms', label: 'Edge Latency', labelId: 'Latensi Edge' }
+          ],
+          testimonial: {
+            quote: 'Kapitech delivered exceptional results ahead of our quarterly launch schedule.',
+            quoteId: 'Kapitech memberikan hasil luar biasa lebih cepat dari jadwal peluncuran kami.',
+            highlight: 'Top 1% Engineering Execution',
+            highlightId: 'Eksekusi Rekayasa Kelas Dunia',
+            author: 'Arif Hidayat',
+            role: 'VP of Technology',
+            company: 'Nexus Supply Chain',
+            avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80'
+          },
+          caseStudySlugs: ['lumina-staging-cloud', 'aurora-ecommerce'],
+          problemsSolutions: [],
+          capabilities: defaultCapabilities,
+          processStages: [
+            {
+              stageNumber: '01',
+              stageName: 'Discovery & Audit',
+              stageNameId: 'Audit & Analisis Mendalam',
+              stageDesc: 'Deep-dive technical assessment and strategic roadmap mapping.',
+              stageDescId: 'Pemeriksaan sistem menyeluruh dan penyusunan roadmap teknis.',
+              deliverables: ['Audit Report', 'Architecture Blueprint'],
+              deliverablesId: ['Laporan Audit', 'Cetak Biru Arsitektur']
+            },
+            {
+              stageNumber: '02',
+              stageName: 'Agile Implementation',
+              stageNameId: 'Implementasi & Development',
+              stageDesc: 'Rapid deployment with weekly continuous integration and QA.',
+              stageDescId: 'Pengembangan cepat dengan integrasi mingguan dan pengujian ketat.',
+              deliverables: ['Staging Environment', 'API Documentation'],
+              deliverablesId: ['Environment Staging', 'Dokumentasi API']
+            }
+          ],
+          businessOutcomes: {
+            heading: 'Measurable Impact for Your Digital Enterprise',
+            headingId: 'Dampak Terukur untuk Ekosistem Digital Anda',
+            benefits: ['Reduced infrastructure overhead', 'Sub-second page load benchmarks', 'Higher organic conversion rate'],
+            benefitsId: ['Efisiensi biaya server', 'Waktu muat di bawah 1 detik', 'Peningkatan konversi organik']
+          },
+          tools: ['Next.js 15', 'TypeScript', 'Tailwind CSS', 'Docker', 'PostgreSQL', 'Redis'],
+          faqs: []
+        };
 
     try {
       const saved = await saveCmsService(newService);
-      setServicesList([saved.service, ...servicesList]);
+      setServicesList((current) => editingService
+        ? current.map((item) => String((item as any).id || '') === String((editingService as any).id || '') ? saved.service : item)
+        : [saved.service, ...current]);
       setIsAddModalOpen(false);
+      setEditingService(null);
       setNewTitle('');
       setNewSlug('');
       setNewHeadline('');
