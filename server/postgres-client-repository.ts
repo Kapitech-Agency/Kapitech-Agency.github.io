@@ -66,16 +66,31 @@ export class PostgresClientRepository {
   }
 
   async update(id: string, patch: Partial<AgencyClient>): Promise<AgencyClient | null> {
-    const current = await this.findById(id);
-    if (!current) return null;
-    const next = { ...current, ...patch, id, updatedAt: new Date().toISOString() };
-    const result = await getPostgresPool().query<ClientRow>(
-      `UPDATE clients SET name=$2,company=$3,email=$4,phone=$5,industry=$6,status=$7,notes=$8,metadata=$9,updated_at=$10
-       WHERE id=$1 RETURNING *`,
-      [id, next.name, next.company || null, next.email || null, next.phone || null, next.industry || null,
-       next.status, next.notes || null, JSON.stringify(toMetadata(next)), next.updatedAt]
-    );
-    return result.rows[0] ? mapClient(result.rows[0]) : null;
+    const client = await getPostgresPool().connect();
+    try {
+      await client.query('BEGIN');
+      const current = await client.query<ClientRow>('SELECT * FROM clients WHERE id = $1 FOR UPDATE', [id]);
+      if (!current.rows[0]) {
+        await client.query('ROLLBACK');
+        return null;
+      }
+      const row = current.rows[0];
+      const currentClient = mapClient(row);
+      const next = { ...currentClient, ...patch, id, updatedAt: new Date().toISOString() };
+      const result = await client.query<ClientRow>(
+        `UPDATE clients SET name=$2,company=$3,email=$4,phone=$5,industry=$6,status=$7,notes=$8,metadata=$9,updated_at=$10
+         WHERE id=$1 RETURNING *`,
+        [id, next.name, next.company || null, next.email || null, next.phone || null, next.industry || null,
+         next.status, next.notes || null, JSON.stringify(toMetadata(next)), next.updatedAt]
+      );
+      await client.query('COMMIT');
+      return result.rows[0] ? mapClient(result.rows[0]) : null;
+    } catch (error) {
+      await client.query('ROLLBACK');
+      throw error;
+    } finally {
+      client.release();
+    }
   }
 
   async delete(id: string): Promise<boolean> {
