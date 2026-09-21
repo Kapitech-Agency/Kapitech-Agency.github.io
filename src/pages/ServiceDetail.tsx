@@ -47,7 +47,14 @@ export const ServiceDetail = () => {
 
       if (servicesRes.success && Array.isArray(servicesRes.data?.services)) {
         const serverService = servicesRes.data.services.find((item: any) => item.slug === slug && item.type === 'service');
-        setService(serverService ? (serverService as ServiceItemData) : undefined);
+        const fallbackService = getServiceBySlug(slug);
+        if (serverService) {
+          setService(serverService as ServiceItemData);
+        } else if (fallbackService?.type === 'solution') {
+          setService(fallbackService);
+        } else {
+          setService(undefined);
+        }
       }
 
       if (Array.isArray(serverProjects)) setProjects(serverProjects);
