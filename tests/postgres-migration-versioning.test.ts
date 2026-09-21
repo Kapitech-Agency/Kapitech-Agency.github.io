@@ -22,7 +22,7 @@ test('PostgreSQL migration history is versioned without mutating migration 001',
 });
 
 test('Migration runner keeps the historical 001 transaction wrapper out of the stored checksum', async () => {
-  const runner = await fs.readFile(path.join(root, 'scripts/postgres-migrate.ts'), 'utf8');
+  const runner = await fs.readFile(path.join(root, 'server/postgres-migrations.ts'), 'utf8');
 
   assert.match(runner, /normalizeMigrationSql/);
   assert.match(runner, /replace\(\/\^\\s\*BEGIN/);
