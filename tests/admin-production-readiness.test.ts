@@ -16,6 +16,8 @@ test('API client preserves HTTP 409 readiness payloads', async () => {
 test('Admin Settings exposes the production readiness card', async () => {
   const source = await fs.readFile(path.join(root, 'src/pages/admin/AdminSettings.tsx'), 'utf8');
   assert.ok(source.includes('ProductionReadinessCard'));
+  assert.ok(source.includes('Provider-managed backup'));
+  assert.ok(source.includes("res.data.retention ?? res.data.retentionDays ?? 14"));
   const component = await fs.readFile(path.join(root, 'src/components/admin/ProductionReadinessCard.tsx'), 'utf8');
   for (const gate of ['Runtime', 'Encryption', 'PostgreSQL', 'Migrations', 'MFA', 'Backup / DR', 'Documents', 'Notifications']) assert.ok(component.includes(gate));
 });

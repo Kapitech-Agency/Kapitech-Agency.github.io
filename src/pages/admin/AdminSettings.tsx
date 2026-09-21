@@ -117,6 +117,8 @@ export const AdminSettings: React.FC = () => {
     retention: number;
     encryptedAtRest: boolean;
     privateDocumentEncryption: boolean;
+    provider?: string;
+    configured?: boolean;
   } | null>(null);
   const [backupIntegrity, setBackupIntegrity] = useState<{ valid: boolean; checkedAt: string; reason?: string } | null>(null);
   const [securityPosture, setSecurityPosture] = useState<{
@@ -185,9 +187,11 @@ export const AdminSettings: React.FC = () => {
           count: list.length,
           latestAt: latest?.createdAt,
           latestSizeBytes: latest?.sizeBytes,
-          retention: res.data.retention,
+          retention: res.data.retention ?? res.data.retentionDays ?? 14,
           encryptedAtRest: Boolean(res.data.encryptedAtRest),
-          privateDocumentEncryption: Boolean(res.data.privateDocumentEncryption)
+          privateDocumentEncryption: Boolean(res.data.privateDocumentEncryption),
+          provider: res.data.provider,
+          configured: res.data.configured
         });
         const integrityRes = await api.system.backupIntegrity();
         if (integrityRes.data?.integrity) setBackupIntegrity(integrityRes.data.integrity);
@@ -1503,15 +1507,22 @@ export const AdminSettings: React.FC = () => {
                       : 'Encrypted rolling snapshots with bounded retention and manual snapshots for off-site backup.'}
                   </p>
                 </div>
-                <button
-                  type="button"
-                  onClick={handleCreateBackup}
-                  disabled={backupLoading}
-                  className="min-h-[40px] px-3.5 rounded-xl bg-[#262930] hover:bg-[#323640] border border-cyan-500/20 text-cyan-200 text-xs font-mono font-bold disabled:opacity-50 flex items-center gap-2"
-                >
-                  <RefreshCw size={13} className={backupLoading ? 'animate-spin' : ''} />
-                  <span>{language === 'id' ? 'Buat Snapshot Sekarang' : 'Create Snapshot Now'}</span>
-                </button>
+                {backupSummary?.provider && backupSummary.provider !== 'json-local' ? (
+                  <span className="min-h-[40px] px-3.5 rounded-xl bg-[#262930] border border-white/[0.08] text-[#94A3B8] text-xs font-mono font-bold flex items-center gap-2">
+                    <Database size={13} />
+                    <span>{language === 'id' ? 'Backup dikelola provider' : 'Provider-managed backup'}</span>
+                  </span>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={handleCreateBackup}
+                    disabled={backupLoading}
+                    className="min-h-[40px] px-3.5 rounded-xl bg-[#262930] hover:bg-[#323640] border border-cyan-500/20 text-cyan-200 text-xs font-mono font-bold disabled:opacity-50 flex items-center gap-2"
+                  >
+                    <RefreshCw size={13} className={backupLoading ? 'animate-spin' : ''} />
+                    <span>{language === 'id' ? 'Buat Snapshot Sekarang' : 'Create Snapshot Now'}</span>
+                  </button>
+                )}
               </div>
 
               {backupStatus && (

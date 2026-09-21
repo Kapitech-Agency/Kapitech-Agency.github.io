@@ -349,6 +349,13 @@ export const api = {
       retention: number;
       encryptedAtRest?: boolean;
       privateDocumentEncryption?: boolean;
+      provider?: string;
+      configured?: boolean;
+      retentionDays?: number;
+      rpoMinutes?: number;
+      rtoMinutes?: number;
+      restoreVerified?: boolean;
+      restoreVerifiedAt?: string | null;
     }>('/api/system/backups'),
     createBackup: () => apiRequest<{ success: boolean; backup: { createdAt: string; sizeBytes: number } }>('/api/system/backups', { method: 'POST' }),
     backupIntegrity: () => apiRequest<{ success: boolean; integrity: { valid: boolean; checkedAt: string; latestName?: string; reason?: string } }>('/api/system/backups/integrity'),
