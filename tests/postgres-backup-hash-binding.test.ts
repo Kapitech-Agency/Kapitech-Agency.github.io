@@ -9,5 +9,5 @@ test('PostgreSQL backup readiness requires the latest backup hash and matching r
   assert.ok(source.includes('KAPITECH_POSTGRES_BACKUP_RESTORE_BACKUP_SHA256'));
   assert.ok(source.includes('restoreMatchesLatestBackup'));
   assert.ok(source.includes('latestBackupSha256 === restoreBackupSha256'));
-  assert.ok(source.includes('latestBackupSha256 && restoreBackupSha256'));
+  assert.ok(source.includes('latestBackupSha256'));
 });

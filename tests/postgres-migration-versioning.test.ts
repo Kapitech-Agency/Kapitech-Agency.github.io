@@ -18,7 +18,7 @@ test('PostgreSQL migration history is versioned without mutating migration 001',
   assert.match(runner, /runPostgresMigrations/);
   assert.match(shared, /readdir\(migrationsDir\)/);
   assert.match(shared, /sort\(\(a, b\) => a\.localeCompare\(b, 'en', \{ numeric: true \}\)\)/);
-  assert.match(shared, /already recorded with a different checksum/);
+  assert.match(shared, /checksum mismatch\. Refusing to start against a modified migration/);
 });
 
 test('Migration runner keeps the historical 001 transaction wrapper out of the stored checksum', async () => {

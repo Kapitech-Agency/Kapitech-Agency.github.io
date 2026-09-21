@@ -8,5 +8,5 @@ test('Production reconciliation readiness binds report hash to the migration_run
   assert.ok(source.includes("WHERE source_kind = 'encrypted-json'"));
   assert.ok(source.includes('rowSourceSha256'));
   assert.ok(source.includes("latestReconciliation.sourceSha256 === latestReconciliation.rowSourceSha256"));
-  assert.ok(source.includes("latestReconciliation.sourceKind === 'encrypted-json'"));
+  assert.ok(source.includes("latestReconciliation?.sourceKind === 'encrypted-json'"));
 });
