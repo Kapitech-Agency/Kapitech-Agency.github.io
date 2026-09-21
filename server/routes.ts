@@ -3098,6 +3098,15 @@ apiRouter.put('/crm/proposals/:id', requireAuth, requirePermission('canManageCrm
     if (patch.status !== undefined && !['Draft','Internal Review','Sent','Approved','Rejected','Accepted'].includes(String(patch.status))) { res.status(400).json({ success: false, error: 'Invalid proposal status.' }); return; }
     if (patch.sentDate !== undefined && patch.sentDate !== null && !isValidDate(patch.sentDate)) { res.status(400).json({ success: false, error: 'Invalid proposal sent date.' }); return; }
     const proposal = await postgresProposalRepository.update(id, { ...patch, items, subtotal, discount, taxPercent, tax, total });
+    recordAuditLog({
+      action: 'PROPOSAL_UPDATED',
+      actor: req.user!.username,
+      actorRole: req.user!.role,
+      ip: req.ip,
+      userAgent: req.headers['user-agent'] as string,
+      details: `Updated proposal ${proposal?.proposalNumber || id}.`,
+      severity: 'info'
+    });
     res.json({ success: true, proposal }); return;
   }
 
@@ -3174,7 +3183,23 @@ apiRouter.put('/crm/proposals/:id', requireAuth, requirePermission('canManageCrm
 
 apiRouter.post('/crm/proposals/:id/approve', requireAuth, requirePermission('canApproveBudgets'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
-  if (getDataSourceMode() === 'postgres') { const current = await postgresProposalRepository.findById(id); if (!current) { res.status(404).json({ success: false, error: 'Proposal not found.' }); return; } if (!['Draft','Internal Review','Sent'].includes(String(current.status))) { res.status(409).json({ success: false, error: 'Only draft, internal review, or sent proposals can be approved.' }); return; } const approved = await postgresProposalRepository.approve(id); res.json({ success: true, proposal: approved }); return; }
+  if (getDataSourceMode() === 'postgres') {
+    const current = await postgresProposalRepository.findById(id);
+    if (!current) { res.status(404).json({ success: false, error: 'Proposal not found.' }); return; }
+    if (!['Draft','Internal Review','Sent'].includes(String(current.status))) { res.status(409).json({ success: false, error: 'Only draft, internal review, or sent proposals can be approved.' }); return; }
+    const approved = await postgresProposalRepository.approve(id);
+    recordAuditLog({
+      action: 'PROPOSAL_APPROVED',
+      actor: req.user!.username,
+      actorRole: req.user!.role,
+      ip: req.ip,
+      userAgent: req.headers['user-agent'] as string,
+      details: `Approved proposal ${current.proposalNumber}.`,
+      severity: 'info'
+    });
+    res.json({ success: true, proposal: approved });
+    return;
+  }
   const db = getDatabase();
   const prop = (db.proposals || []).find(p => p.id === id);
   if (!prop) { res.status(404).json({ success: false, error: 'Proposal not found.' }); return; }
@@ -3203,7 +3228,26 @@ apiRouter.post('/crm/proposals/:id/approve', requireAuth, requirePermission('can
 
 apiRouter.post('/crm/proposals/:id/convert-to-invoice', requireAuth, requirePermission('canManageInvoices'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
-  if (getDataSourceMode() === 'postgres') { const current = await postgresProposalRepository.findById(id); if (!current) { res.status(404).json({ success: false, error: 'Proposal not found.' }); return; } try { const invoice = await postgresProposalRepository.convertToInvoice(id); res.json({ success: true, invoice, proposal: await postgresProposalRepository.findById(id) }); } catch (error) { res.status(409).json({ success: false, error: error instanceof Error ? error.message : 'Proposal could not be converted to invoice.' }); } return; }
+  if (getDataSourceMode() === 'postgres') {
+    const current = await postgresProposalRepository.findById(id);
+    if (!current) { res.status(404).json({ success: false, error: 'Proposal not found.' }); return; }
+    try {
+      const invoice = await postgresProposalRepository.convertToInvoice(id);
+      recordAuditLog({
+        action: 'PROPOSAL_CONVERTED_TO_INVOICE',
+        actor: req.user!.username,
+        actorRole: req.user!.role,
+        ip: req.ip,
+        userAgent: req.headers['user-agent'] as string,
+        details: `Converted proposal ${current.proposalNumber} to invoice ${invoice?.invoiceNumber || 'unknown'}.`,
+        severity: 'info'
+      });
+      res.json({ success: true, invoice, proposal: await postgresProposalRepository.findById(id) });
+    } catch (error) {
+      res.status(409).json({ success: false, error: error instanceof Error ? error.message : 'Proposal could not be converted to invoice.' });
+    }
+    return;
+  }
   const db = getDatabase();
   const prop = (db.proposals || []).find(p => p.id === id);
   if (!prop) { res.status(404).json({ success: false, error: 'Proposal not found.' }); return; }
@@ -3255,7 +3299,23 @@ apiRouter.post('/crm/proposals/:id/convert-to-invoice', requireAuth, requirePerm
 
 apiRouter.delete('/crm/proposals/:id', requireAuth, requirePermission('canManageCrm'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
-  if (getDataSourceMode() === 'postgres') { const deleted = await postgresProposalRepository.delete(id); if (!deleted) { res.status(404).json({ success: false, error: 'Proposal not found.' }); return; } res.json({ success: true, message: 'Proposal deleted.' }); return; }
+  if (getDataSourceMode() === 'postgres') {
+    const existing = await postgresProposalRepository.findById(id);
+    if (!existing) { res.status(404).json({ success: false, error: 'Proposal not found.' }); return; }
+    const deleted = await postgresProposalRepository.delete(id);
+    if (!deleted) { res.status(404).json({ success: false, error: 'Proposal not found.' }); return; }
+    recordAuditLog({
+      action: 'PROPOSAL_DELETED',
+      actor: req.user!.username,
+      actorRole: req.user!.role,
+      ip: req.ip,
+      userAgent: req.headers['user-agent'] as string,
+      details: `Deleted proposal ${existing.proposalNumber}.`,
+      severity: 'warning'
+    });
+    res.json({ success: true, message: 'Proposal deleted.' });
+    return;
+  }
   const db = getDatabase();
   db.proposals = (db.proposals || []).filter(p => p.id !== id);
   saveDatabase(db);
@@ -3445,6 +3505,15 @@ apiRouter.post('/approvals', requireAuth, requireAnyPermission('canManageProject
   if (getDataSourceMode() === 'postgres') {
     const approval = await postgresApprovalRepository.create(newApproval);
     pushNotification(undefined, { title: 'Approval request pending', message: `${newApproval.title} requires an independent review.`, type: 'approval', severity: riskLevel === 'Critical' ? 'critical' : riskLevel === 'High' ? 'warning' : 'info', linkUrl: '/admin/approvals' });
+    recordAuditLog({
+      action: 'APPROVAL_CREATED',
+      actor: req.user!.username,
+      actorRole: req.user!.role,
+      ip: req.ip,
+      userAgent: req.headers['user-agent'] as string,
+      details: `Created approval request "${title}" for ${value}.`,
+      severity: riskLevel === 'Critical' ? 'critical' : riskLevel === 'High' ? 'warning' : 'info'
+    });
     res.status(201).json({ success: true, approval });
     return;
   }
