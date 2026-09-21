@@ -7,7 +7,6 @@ import { checkPostgresConnection } from './server/postgres.ts';
 import { postgresAuthRepository } from './server/postgres-repository.ts';
 import { ensurePostgresInitialAdmin } from './server/postgres-bootstrap.ts';
 import { runPostgresMigrations } from './server/postgres-migrations.ts';
-import { checkPostgresConnection } from './server/postgres.ts';
 
 dotenv.config();
 
