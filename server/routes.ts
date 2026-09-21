@@ -260,7 +260,14 @@ apiRouter.post('/auth/login', rateLimitPublic(10, 15 * 60 * 1000), async (req: R
   }
 
   const cleanIdentifier = String(identifier).trim().toLowerCase();
-  const lockout = checkLockout(cleanIdentifier, ip);
+  let lockout;
+  try {
+    lockout = await checkLockout(cleanIdentifier, ip);
+  } catch (error) {
+    console.error('[Auth] Login lockout check failed:', error);
+    res.status(503).json({ success: false, error: 'Authentication security controls are temporarily unavailable.' });
+    return;
+  }
   if (lockout.isLocked) {
     res.status(429).json({
       success: false,
@@ -296,8 +303,14 @@ apiRouter.post('/auth/login', rateLimitPublic(10, 15 * 60 * 1000), async (req: R
   }
 
   if (!user || user.status === 'suspended') {
-    recordFailedLogin(cleanIdentifier, ip);
-    const lockoutState = checkLockout(cleanIdentifier, ip);
+    let lockoutState;
+    try {
+      lockoutState = await recordFailedLogin(cleanIdentifier, ip);
+    } catch (error) {
+      console.error('[Auth] Failed-login security control failed:', error);
+      res.status(503).json({ success: false, error: 'Authentication security controls are temporarily unavailable.' });
+      return;
+    }
     recordAuditLog({
       action: 'LOGIN_FAILED',
       actor: cleanIdentifier,
@@ -320,8 +333,14 @@ apiRouter.post('/auth/login', rateLimitPublic(10, 15 * 60 * 1000), async (req: R
   }
 
   if (!verifyPasswordForUser(password, user)) {
-    recordFailedLogin(cleanIdentifier, ip);
-    const lockoutState = checkLockout(cleanIdentifier, ip);
+    let lockoutState;
+    try {
+      lockoutState = await recordFailedLogin(cleanIdentifier, ip);
+    } catch (error) {
+      console.error('[Auth] Failed-login security control failed:', error);
+      res.status(503).json({ success: false, error: 'Authentication security controls are temporarily unavailable.' });
+      return;
+    }
     recordAuditLog({
       action: 'LOGIN_FAILED',
       actor: user.username,
@@ -345,7 +364,7 @@ apiRouter.post('/auth/login', rateLimitPublic(10, 15 * 60 * 1000), async (req: R
 
   // Password verified. Complete legacy hash migration before deciding whether a second factor is required.
   try {
-    clearLockout(cleanIdentifier, ip);
+    await clearLockout(cleanIdentifier, ip);
 
     if ((user.passwordAlgorithm || 'pbkdf2-sha512') !== 'scrypt-v1') {
       const prepared = preparePassword(password);
