@@ -200,7 +200,7 @@ function getInvoiceBalanceDue(invoice: any): number {
 }
 
 function pushNotification(
-  db: ReturnType<typeof getDatabase>,
+  db: ReturnType<typeof getDatabase> | undefined,
   input: {
     title: string;
     message: string;
@@ -1023,21 +1023,15 @@ apiRouter.post('/leads/submit', rateLimitPublic(10, 60 * 1000), async (req: Requ
     updatedAt: now
   };
 
+  let jsonDb: ReturnType<typeof getDatabase> | undefined;
   if (getDataSourceMode() === 'postgres') {
     await postgresLeadRepository.create(newLead);
   } else {
-    const db = getDatabase();
-    db.leads.unshift(newLead);
-    pushNotification(db, {
-      title: 'New inbound lead',
-      message: `${newLead.fullName}${newLead.company ? ` from ${newLead.company}` : ''} submitted a new inquiry.`,
-      type: 'lead',
-      severity: 'info',
-      linkUrl: '/admin/inbox'
-    });
-    saveDatabase(db);
+    jsonDb = getDatabase();
+    jsonDb.leads.unshift(newLead);
+    saveDatabase(jsonDb);
 
-    const notif = db.notificationSettings;
+    const notif = jsonDb.notificationSettings;
     const telegramBotToken = process.env.KAPITECH_TELEGRAM_BOT_TOKEN || notif.telegramBotToken;
     const telegramChatId = process.env.KAPITECH_TELEGRAM_CHAT_ID || notif.telegramChatId;
     if (notif.isTelegramActive && telegramBotToken && telegramChatId) {
@@ -1056,6 +1050,14 @@ apiRouter.post('/leads/submit', rateLimitPublic(10, 60 * 1000), async (req: Requ
       }).catch(err => console.debug('Telegram notification dispatch failed:', err));
     }
   }
+
+  pushNotification(getDataSourceMode() === 'json' ? jsonDb : undefined, {
+    title: 'New inbound lead',
+    message: `${newLead.fullName}${newLead.company ? ` from ${newLead.company}` : ''} submitted a new inquiry.`,
+    type: 'lead',
+    severity: 'info',
+    linkUrl: '/admin/inbox'
+  });
 
   recordAuditLog({
     action: 'LEAD_SUBMISSION',
@@ -3347,6 +3349,7 @@ apiRouter.post('/approvals', requireAuth, requireAnyPermission('canManageProject
   };
   if (getDataSourceMode() === 'postgres') {
     const approval = await postgresApprovalRepository.create(newApproval);
+    pushNotification(undefined, { title: 'Approval request pending', message: `${newApproval.title} requires an independent review.`, type: 'approval', severity: riskLevel === 'Critical' ? 'critical' : riskLevel === 'High' ? 'warning' : 'info', linkUrl: '/admin/approvals' });
     res.status(201).json({ success: true, approval });
     return;
   }
