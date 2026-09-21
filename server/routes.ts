@@ -4356,10 +4356,25 @@ apiRouter.get('/system/production-readiness', requireAuth, requireAnyPermission(
       migrationCheckError = error instanceof Error ? error.message : 'Migration status unavailable.';
     }
 
-    const requiredMigrationNumbers = Array.from({ length: 14 }, (_, index) => String(index + 1).padStart(3, '0'));
-    const appliedMigrationNumbers = new Set(appliedMigrations.map(version => version.slice(0, 3)));
+    let requiredMigrationVersions: string[] = [];
+    let migrationDefinitionCheckError: string | undefined;
+    try {
+      const migrationsDir = path.resolve(process.cwd(), 'db/postgres');
+      requiredMigrationVersions = fs.readdirSync(migrationsDir)
+        .filter(file => /^\d+_.+\.sql$/.test(file))
+        .sort((a, b) => a.localeCompare(b, 'en', { numeric: true }))
+        .map(file => file.replace(/\.sql$/, ''));
+      if (requiredMigrationVersions.length === 0) {
+        migrationDefinitionCheckError = 'No PostgreSQL migration files were found.';
+      }
+    } catch (error) {
+      migrationDefinitionCheckError = error instanceof Error ? error.message : 'Migration definitions unavailable.';
+    }
+
+    const appliedMigrationSet = new Set(appliedMigrations);
     const migrationComplete = !migrationCheckError
-      && requiredMigrationNumbers.every(version => appliedMigrationNumbers.has(version));
+      && !migrationDefinitionCheckError
+      && requiredMigrationVersions.every(version => appliedMigrationSet.has(version));
 
     const activeUsers = users.filter(user => user.status === 'active');
     const mfaEnabledCount = activeUsers.filter(user => user.mfaEnabled).length;
@@ -4470,10 +4485,11 @@ apiRouter.get('/system/production-readiness', requireAuth, requireAnyPermission(
         },
         postgres: connection,
         migrations: {
-          requiredPrefixCount: requiredMigrationNumbers.length,
+          requiredMigrationCount: requiredMigrationVersions.length,
+          required: requiredMigrationVersions,
           applied: appliedMigrations,
           complete: migrationComplete,
-          error: migrationCheckError || null
+          error: migrationCheckError || migrationDefinitionCheckError || null
         },
         mfa: {
           activeUserCount: activeUsers.length,
