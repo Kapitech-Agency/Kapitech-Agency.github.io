@@ -54,6 +54,7 @@ import { postgresClientRepository, ClientHasDependenciesError } from './postgres
 import { postgresProjectRepository, postgresTaskRepository, ProjectVersionConflictError, TaskVersionConflictError, ProjectArchiveMutationError, ProjectClientRequiredError, ProjectNotFoundError } from './postgres-project-repository.ts';
 import { postgresBillingRateRepository, BillingRateOverlapError } from './postgres-billing-rate-repository.ts';
 import { postgresTimeLogRepository, BillingRateNotConfiguredError, TimeLogImmutableError, TimeLogVersionConflictError, TimeLogNotFoundError, TimeLogProjectMismatchError } from './postgres-time-log-repository.ts';
+import { postgresExpenseRepository, ExpenseNotFoundError, ExpenseImmutableError, ExpenseVersionConflictError, ExpenseProjectNotFoundError } from './postgres-expense-repository.ts';
 
 
 const ROLE_POLICIES: Record<string, {
@@ -2096,65 +2097,158 @@ apiRouter.delete('/finance/invoices/:id', requireAuth, requirePermission('canMan
 });
 
 // Expenses
-apiRouter.get('/finance/expenses', requireAuth, requirePermission('canViewFinancials'), (req: AuthenticatedRequest, res: Response): void => {
-  const db = getDatabase();
-  res.json({ success: true, expenses: db.expenses });
+apiRouter.get('/finance/expenses', requireAuth, requirePermission('canViewFinancials'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  try {
+    if (getDataSourceMode() === 'postgres') {
+      res.json({ success: true, expenses: await postgresExpenseRepository.list() });
+      return;
+    }
+    const db = getDatabase();
+    res.json({ success: true, expenses: db.expenses });
+  } catch (error) {
+    console.error('[Expenses] Failed to load expenses:', error);
+    res.status(503).json({ success: false, error: 'Expense data is temporarily unavailable.' });
+  }
 });
 
-apiRouter.post('/finance/expenses', requireAuth, requirePermission('canManageInvoices'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.post('/finance/expenses', requireAuth, requirePermission('canManageInvoices'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const exp = req.body || {};
   const amount = Number(exp.amount);
-  if (!Number.isFinite(amount) || amount <= 0 || amount > 100_000_000_000) {
-    res.status(400).json({ success: false, error: 'Expense amount must be a valid positive amount.' });
+  const date = String(exp.date || new Date().toISOString().slice(0, 10));
+  const currency = cleanText(exp.currency || 'IDR', 3).toUpperCase();
+
+  if (!Number.isFinite(amount) || amount <= 0 || amount > MAX_MONEY || !isValidDate(date) || !/^[A-Z]{3}$/.test(currency)) {
+    res.status(400).json({ success: false, error: 'Expense amount, date, and currency must be valid.' });
     return;
   }
-  const date = normalizeDate(exp.date, new Date().toISOString().slice(0, 10));
-  const db = getDatabase();
-  const newExpense = {
-    id: `exp_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
-    type: ['OpEx','CapEx'].includes(String(exp.type)) ? String(exp.type) : 'OpEx',
-    category: cleanText(exp.category || 'General', 120),
-    description: cleanText(exp.description, 500),
-    amount: Math.round(amount * 100) / 100,
-    date,
-    recurringInterval: cleanText(exp.recurringInterval || 'none', 40),
-    recordedBy: req.user!.name || req.user!.username,
-    createdAt: new Date().toISOString()
-  };
-  db.expenses.unshift(newExpense);
-  saveDatabase(db);
-  recordAuditLog({
-    action: 'EXPENSE_CREATED',
-    actor: req.user!.username,
-    actorRole: req.user!.role,
-    ip: req.ip,
-    userAgent: req.headers['user-agent'] as string,
-    details: `Created expense of ${newExpense.amount}.`,
-    severity: 'info'
-  });
-  res.json({ success: true, expense: newExpense });
+
+  try {
+    if (getDataSourceMode() === 'postgres') {
+      const idempotencyKey = cleanText(
+        String(req.headers['idempotency-key'] || exp.idempotencyKey || ''),
+        100
+      );
+
+      const expense = await postgresExpenseRepository.create({
+        id: 'exp_' + Date.now() + '_' + crypto.randomBytes(3).toString('hex'),
+        type: ['OpEx','CapEx'].includes(String(exp.type)) ? String(exp.type) : 'OpEx',
+        category: cleanText(exp.category || 'General', 120),
+        description: cleanText(exp.description, 500),
+        amount,
+        currency,
+        date,
+        projectId: cleanText(exp.projectId, 120),
+        recurringInterval: cleanText(exp.recurringInterval || 'none', 40),
+        recordedByUserId: req.user!.id,
+        recordedBy: req.user!.name || req.user!.username,
+        idempotencyKey: idempotencyKey || undefined
+      });
+
+      recordAuditLog({
+        action: 'EXPENSE_CREATED',
+        actor: req.user!.username,
+        actorRole: req.user!.role,
+        ip: req.ip,
+        userAgent: req.headers['user-agent'] as string,
+        details: 'Created expense ' + expense.id + ' for ' + expense.amount + ' ' + expense.currency + '.',
+        severity: 'info'
+      });
+      res.json({ success: true, expense });
+      return;
+    }
+
+    const db = getDatabase();
+    const newExpense = {
+      id: 'exp_' + Date.now() + '_' + crypto.randomBytes(3).toString('hex'),
+      type: ['OpEx','CapEx'].includes(String(exp.type)) ? String(exp.type) : 'OpEx',
+      category: cleanText(exp.category || 'General', 120),
+      description: cleanText(exp.description, 500),
+      amount: Math.round(amount * 100) / 100,
+      date,
+      recurringInterval: cleanText(exp.recurringInterval || 'none', 40),
+      recordedBy: req.user!.name || req.user!.username,
+      createdAt: new Date().toISOString()
+    };
+    db.expenses.unshift(newExpense);
+    saveDatabase(db);
+    recordAuditLog({
+      action: 'EXPENSE_CREATED',
+      actor: req.user!.username,
+      actorRole: req.user!.role,
+      ip: req.ip,
+      userAgent: req.headers['user-agent'] as string,
+      details: 'Created expense of ' + newExpense.amount + '.',
+      severity: 'info'
+    });
+    res.json({ success: true, expense: newExpense });
+  } catch (error) {
+    if (error instanceof ExpenseProjectNotFoundError) {
+      res.status(409).json({ success: false, error: error.message, code: error.code });
+      return;
+    }
+    if ((error as any)?.code === '23505') {
+      res.status(409).json({ success: false, error: 'An expense with this idempotency key already exists.', code: 'EXPENSE_DUPLICATE_REQUEST' });
+      return;
+    }
+    if ((error as any)?.code === '23503') {
+      res.status(400).json({ success: false, error: 'Referenced project or user does not exist.' });
+      return;
+    }
+    console.error('[Expenses] Create failed:', error);
+    res.status(500).json({ success: false, error: 'Expense could not be created.' });
+  }
 });
 
-apiRouter.delete('/finance/expenses/:id', requireAuth, requirePermission('canManageInvoices'), (req: AuthenticatedRequest, res: Response): void => {
-  const { id } = req.params;
-  const db = getDatabase();
-  const expense = db.expenses.find((item: any) => item.id === id);
-  if (!expense) {
-    res.status(404).json({ success: false, error: 'Expense not found.' });
-    return;
+apiRouter.delete('/finance/expenses/:id', requireAuth, requirePermission('canManageInvoices'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  try {
+    if (getDataSourceMode() === 'postgres') {
+      const expense = await postgresExpenseRepository.void(
+        req.params.id,
+        req.body?.version == null ? undefined : Number(req.body.version)
+      );
+      recordAuditLog({
+        action: 'EXPENSE_VOIDED',
+        actor: req.user!.username,
+        actorRole: req.user!.role,
+        ip: req.ip,
+        userAgent: req.headers['user-agent'] as string,
+        details: 'Voided expense ' + req.params.id + '.',
+        severity: 'warning'
+      });
+      res.json({ success: true, message: 'Expense voided.', expense });
+      return;
+    }
+
+    const db = getDatabase();
+    const expense = db.expenses.find((item: any) => item.id === req.params.id);
+    if (!expense) {
+      res.status(404).json({ success: false, error: 'Expense not found.' });
+      return;
+    }
+    db.expenses = db.expenses.filter(e => e.id !== req.params.id);
+    saveDatabase(db);
+    recordAuditLog({
+      action: 'EXPENSE_DELETED',
+      actor: req.user!.username,
+      actorRole: req.user!.role,
+      ip: req.ip,
+      userAgent: req.headers['user-agent'] as string,
+      details: 'Deleted expense "' + (expense.description || req.params.id) + '".',
+      severity: 'warning'
+    });
+    res.json({ success: true, message: 'Expense deleted.' });
+  } catch (error) {
+    if (error instanceof ExpenseNotFoundError) {
+      res.status(404).json({ success: false, error: error.message, code: error.code });
+      return;
+    }
+    if (error instanceof ExpenseImmutableError || error instanceof ExpenseVersionConflictError) {
+      res.status(409).json({ success: false, error: error.message, code: error.code });
+      return;
+    }
+    console.error('[Expenses] Delete/void failed:', error);
+    res.status(500).json({ success: false, error: 'Expense could not be voided.' });
   }
-  db.expenses = db.expenses.filter(e => e.id !== id);
-  saveDatabase(db);
-  recordAuditLog({
-    action: 'EXPENSE_DELETED',
-    actor: req.user!.username,
-    actorRole: req.user!.role,
-    ip: req.ip,
-    userAgent: req.headers['user-agent'] as string,
-    details: `Deleted expense "${expense.description || id}" (${expense.amount || 0}).`,
-    severity: 'warning'
-  });
-  res.json({ success: true, message: 'Expense deleted.' });
 });
 
 // Financial Metrics (Authoritative server-calculated metrics)
