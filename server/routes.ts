@@ -66,6 +66,7 @@ import { postgresDocumentRepository } from './postgres-document-repository.ts';
 import { postgresAuditLogRepository } from './postgres-audit-log-repository.ts';
 import { postgresCmsRepository } from './postgres-cms-repository.ts';
 import { postgresNotificationSettingsRepository } from './postgres-notification-settings-repository.ts';
+import { getPostgresBackupHealth } from './postgres-backup-health.ts';
 
 
 const ROLE_POLICIES: Record<string, {
@@ -3826,30 +3827,34 @@ apiRouter.delete('/documents/:id', requireAuth, documentMutationMiddleware, asyn
 const backupAccessMiddleware = requireAnyPermission('canRunDataMigration', 'canAccessServerAndApi');
 
 apiRouter.post('/system/backups', requireAuth, backupAccessMiddleware, (req: AuthenticatedRequest, res: Response): void => {
+  if (getDataSourceMode() === 'postgres') {
+    const health = getPostgresBackupHealth();
+    res.status(health.configured ? 409 : 503).json({
+      success: false,
+      error: health.configured
+        ? 'PostgreSQL backups are managed by the configured backup provider; trigger them through the provider or operations scheduler.'
+        : 'PostgreSQL backup provider is not configured. Configure the managed backup/DR service before production cutover.',
+      backup: health
+    });
+    return;
+  }
+
   try {
     const backup = createDatabaseBackup(true);
     if (!backup) {
       res.status(404).json({ success: false, error: 'No persistent database file exists yet.' });
       return;
     }
-
     recordAuditLog({
       action: 'DATABASE_BACKUP_CREATED',
       actor: req.user!.username,
       actorRole: req.user!.role,
       ip: req.ip,
       userAgent: req.headers['user-agent'] as string,
-      details: `Created a manual encrypted database backup (${backup.sizeBytes} bytes).`,
+      details: `Created a manual encrypted JSON database backup (${backup.sizeBytes} bytes).`,
       severity: 'info'
     });
-
-    res.json({
-      success: true,
-      backup: {
-        createdAt: backup.createdAt,
-        sizeBytes: backup.sizeBytes
-      }
-    });
+    res.json({ success: true, backup: { createdAt: backup.createdAt, sizeBytes: backup.sizeBytes } });
   } catch (error) {
     console.error('[Backup] Manual backup failed:', error);
     res.status(500).json({ success: false, error: 'Database backup could not be created.' });
@@ -3857,13 +3862,20 @@ apiRouter.post('/system/backups', requireAuth, backupAccessMiddleware, (req: Aut
 });
 
 apiRouter.get('/system/backups/download', requireAuth, backupAccessMiddleware, (req: AuthenticatedRequest, res: Response): void => {
+  if (getDataSourceMode() === 'postgres') {
+    res.status(409).json({
+      success: false,
+      error: 'JSON backup download is disabled in PostgreSQL mode. Use the configured PostgreSQL backup provider or operations export process.'
+    });
+    return;
+  }
+
   try {
     const backup = createDatabaseBackup(true);
     if (!backup) {
       res.status(404).json({ success: false, error: 'No persistent database file exists yet.' });
       return;
     }
-
     const dataDir = process.env.KAPITECH_DATA_DIR
       ? path.resolve(process.env.KAPITECH_DATA_DIR)
       : path.join(process.env.HOME || process.cwd(), '.kapitech-ams-data');
@@ -3876,13 +3888,11 @@ apiRouter.get('/system/backups/download', requireAuth, backupAccessMiddleware, (
       res.status(404).json({ success: false, error: 'Backup file is not available.' });
       return;
     }
-
     const backupPath = path.join(backupDir, latest.name);
     if (!fs.existsSync(backupPath)) {
       res.status(404).json({ success: false, error: 'Backup file is not available.' });
       return;
     }
-
     res.setHeader('Cache-Control', 'private, no-store');
     res.setHeader('Content-Type', 'application/octet-stream');
     res.setHeader('Content-Disposition', `attachment; filename*=UTF-8''${encodeURIComponent(latest.name)}`);
@@ -3893,7 +3903,7 @@ apiRouter.get('/system/backups/download', requireAuth, backupAccessMiddleware, (
       actorRole: req.user!.role,
       ip: req.ip,
       userAgent: req.headers['user-agent'] as string,
-      details: `Downloaded encrypted database backup "${latest.name}".`,
+      details: `Downloaded encrypted JSON database backup "${latest.name}".`,
       severity: 'warning'
     });
   } catch (error) {
@@ -3903,12 +3913,15 @@ apiRouter.get('/system/backups/download', requireAuth, backupAccessMiddleware, (
 });
 
 apiRouter.get('/system/backups/integrity', requireAuth, backupAccessMiddleware, (req: AuthenticatedRequest, res: Response): void => {
+  if (getDataSourceMode() === 'postgres') {
+    const health = getPostgresBackupHealth();
+    res.status(health.integrity.valid ? 200 : 409).json({ success: health.integrity.valid, integrity: health.integrity, backup: health });
+    return;
+  }
+
   try {
     const integrity = verifyDatabaseBackupIntegrity();
-    res.status(integrity.valid ? 200 : 409).json({
-      success: integrity.valid,
-      integrity
-    });
+    res.status(integrity.valid ? 200 : 409).json({ success: integrity.valid, integrity });
   } catch (error) {
     console.error('[Backup] Backup integrity check failed:', error);
     res.status(500).json({ success: false, error: 'Database backup integrity status is unavailable.' });
@@ -3916,6 +3929,24 @@ apiRouter.get('/system/backups/integrity', requireAuth, backupAccessMiddleware, 
 });
 
 apiRouter.get('/system/backups', requireAuth, backupAccessMiddleware, (req: AuthenticatedRequest, res: Response): void => {
+  if (getDataSourceMode() === 'postgres') {
+    const health = getPostgresBackupHealth();
+    res.json({
+      success: true,
+      backups: health.latestBackupAt ? [{ createdAt: health.latestBackupAt, sizeBytes: null }] : [],
+      provider: health.provider,
+      configured: health.configured,
+      retentionDays: health.retentionDays,
+      rpoMinutes: health.rpoMinutes,
+      rtoMinutes: health.rtoMinutes,
+      encryptedAtRest: true,
+      privateDocumentEncryption: true,
+      restoreVerified: health.integrity.restoreVerified,
+      restoreVerifiedAt: health.integrity.restoreVerifiedAt
+    });
+    return;
+  }
+
   try {
     const backups = listDatabaseBackups().map(backup => ({
       createdAt: backup.createdAt,
@@ -3941,25 +3972,37 @@ apiRouter.get('/system/security/status', requireAuth, requireAnyPermission('canV
       : (Array.isArray(getDatabase().users) ? getDatabase().users : []);
     const activeUserCount = users.filter(user => user.status === 'active').length;
     const mfaEnabledCount = users.filter(user => user.status === 'active' && user.mfaEnabled).length;
-    const backups = listDatabaseBackups();
+
+    const postgresMode = getDataSourceMode() === 'postgres';
+    const backupHealth = postgresMode ? getPostgresBackupHealth() : null;
+    const backups = postgresMode ? [] : listDatabaseBackups();
     const latestBackup = backups[0];
     const latestBackupAgeMs = latestBackup ? Math.max(0, Date.now() - new Date(latestBackup.createdAt).getTime()) : null;
-    const backupIntegrity = verifyDatabaseBackupIntegrity();
+    const backupIntegrity = postgresMode
+      ? backupHealth!.integrity
+      : verifyDatabaseBackupIntegrity();
 
     res.json({
       success: true,
       status: {
-        encryptionAtRest: isDataEncryptionEnabled(),
-        privateDocumentEncryption: isDataEncryptionEnabled(),
+        encryptionAtRest: postgresMode ? true : isDataEncryptionEnabled(),
+        privateDocumentEncryption: postgresMode ? true : isDataEncryptionEnabled(),
         mfaRequired: true,
         activeUserCount,
         mfaEnabledCount,
         mfaCoveragePercent: activeUserCount > 0 ? Math.round((mfaEnabledCount / activeUserCount) * 100) : 100,
-        backupCount: backups.length,
-        latestBackupAt: latestBackup?.createdAt || null,
-        latestBackupAgeMinutes: latestBackupAgeMs === null ? null : Math.round(latestBackupAgeMs / 60000),
-        backupFresh: latestBackupAgeMs !== null && latestBackupAgeMs <= 24 * 60 * 60 * 1000,
-        backupIntegrity
+        backupProvider: postgresMode ? backupHealth!.provider : 'json-local',
+        backupConfigured: postgresMode ? backupHealth!.configured : backups.length > 0,
+        backupCount: postgresMode ? (backupHealth!.latestBackupAt ? 1 : 0) : backups.length,
+        latestBackupAt: postgresMode ? backupHealth!.latestBackupAt : (latestBackup?.createdAt || null),
+        latestBackupAgeMinutes: postgresMode ? backupHealth!.latestBackupAgeMinutes : (latestBackupAgeMs === null ? null : Math.round(latestBackupAgeMs / 60000)),
+        backupFresh: postgresMode ? backupHealth!.backupFresh : (latestBackupAgeMs !== null && latestBackupAgeMs <= 24 * 60 * 60 * 1000),
+        backupIntegrity,
+        restoreVerified: postgresMode ? backupHealth!.integrity.restoreVerified : null,
+        restoreVerifiedAt: postgresMode ? backupHealth!.integrity.restoreVerifiedAt : null,
+        rpoMinutes: postgresMode ? backupHealth!.rpoMinutes : null,
+        rtoMinutes: postgresMode ? backupHealth!.rtoMinutes : null,
+        retentionDays: postgresMode ? backupHealth!.retentionDays : null
       }
     });
   } catch (error) {
