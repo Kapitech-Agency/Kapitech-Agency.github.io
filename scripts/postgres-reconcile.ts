@@ -25,8 +25,8 @@ function decrypt(raw: string): string {
   return Buffer.concat([decipher.update(Buffer.from(payload.data, 'base64')), decipher.final()]).toString('utf8');
 }
 
-function sha256(raw: string): string {
-  return crypto.createHash('sha256').update(raw, 'utf8').digest('hex');
+function sha256(raw: string | Buffer): string {
+  return crypto.createHash('sha256').update(raw).digest('hex');
 }
 
 function arr(db: any, key: string): any[] {
@@ -116,7 +116,7 @@ function verifyPrivateDocuments(db: any): { valid: boolean; checked: number; mis
       }
       if (document.storageSha256) {
         const encryptedPayload = fs.readFileSync(encryptedPath);
-        const actualSha256 = sha256(encryptedPayload.toString('binary'));
+        const actualSha256 = sha256(encryptedPayload);
         if (actualSha256 !== String(document.storageSha256)) malformed.push(String(document.id || document.storageKey));
       }
     } catch {
