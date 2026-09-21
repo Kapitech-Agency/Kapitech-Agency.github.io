@@ -3676,7 +3676,10 @@ apiRouter.put('/documents/:id/content', requireAuth, documentMutationMiddleware,
 
   const tempPath = `${targetPath}.${process.pid}.${Date.now()}.tmp`;
   try {
-    fs.writeFileSync(tempPath, encryptPrivateDocument(body), { flag: 'wx', mode: 0o600 });
+    const encryptedPayload = encryptPrivateDocument(body);
+    const contentSha256 = crypto.createHash('sha256').update(body).digest('hex');
+    const storageSha256 = crypto.createHash('sha256').update(encryptedPayload).digest('hex');
+    fs.writeFileSync(tempPath, encryptedPayload, { flag: 'wx', mode: 0o600 });
     try { fs.chmodSync(tempPath, 0o600); } catch {}
     if (fs.existsSync(targetPath)) fs.unlinkSync(targetPath);
     fs.renameSync(tempPath, targetPath);
@@ -3687,6 +3690,11 @@ apiRouter.put('/documents/:id/content', requireAuth, documentMutationMiddleware,
       sizeBytes: body.length,
       size: humanFileSize(body.length),
       status: 'ready',
+      contentSha256,
+      storageSha256,
+      storageVersion: 1,
+      storageProvider: 'local-encrypted-filesystem',
+      integrityCheckedAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       uploadedAt: new Date().toISOString()
     };
@@ -3755,7 +3763,19 @@ apiRouter.get('/documents/:id/content', requireAuth, documentAccessMiddleware, a
   res.setHeader('X-Download-Options', 'noopen');
   try {
     const encryptedPayload = fs.readFileSync(filePath);
+    const actualStorageSha256 = crypto.createHash('sha256').update(encryptedPayload).digest('hex');
+    if (document.storageSha256 && actualStorageSha256 !== String(document.storageSha256)) {
+      recordAuditLog({ action: 'DOCUMENT_INTEGRITY_FAILURE', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Storage checksum mismatch for private document "${document.name}".`, severity: 'critical' });
+      res.status(409).json({ success: false, error: 'Private document integrity verification failed.' });
+      return;
+    }
     const content = decryptPrivateDocument(encryptedPayload);
+    const actualContentSha256 = crypto.createHash('sha256').update(content).digest('hex');
+    if (document.contentSha256 && actualContentSha256 !== String(document.contentSha256)) {
+      recordAuditLog({ action: 'DOCUMENT_INTEGRITY_FAILURE', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Content checksum mismatch for private document "${document.name}".`, severity: 'critical' });
+      res.status(409).json({ success: false, error: 'Private document content integrity verification failed.' });
+      return;
+    }
     res.setHeader('Content-Length', content.length);
     res.end(content);
     recordAuditLog({
@@ -3819,6 +3839,25 @@ apiRouter.delete('/documents/:id', requireAuth, documentMutationMiddleware, asyn
 
   res.json({ success: true, message: 'Document removed.' });
 });
+apiRouter.get('/system/document-vault/status', requireAuth, requireAnyPermission('canViewSecurityAuditLogs', 'canAccessServerAndApi'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  if (getDataSourceMode() !== 'postgres') {
+    res.json({ success: true, status: { datasource: 'json', objectStorageConfigured: false, integrityMetadata: false, productionReady: false } });
+    return;
+  }
+  try {
+    const documents = await postgresDocumentRepository.list();
+    const privateFiles = documents.filter(document => document.sourceType === 'private_file');
+    const checksummed = privateFiles.filter(document => document.storageSha256 && document.contentSha256);
+    const provider = process.env.KAPITECH_DOCUMENT_STORAGE_PROVIDER?.trim() || 'local-encrypted-filesystem';
+    const objectStorageConfigured = Boolean(process.env.KAPITECH_DOCUMENT_STORAGE_PROVIDER && process.env.KAPITECH_DOCUMENT_STORAGE_BUCKET);
+    const productionReady = objectStorageConfigured && privateFiles.every(document => document.storageProvider === provider && document.storageSha256 && document.contentSha256);
+    res.json({ success: true, status: { datasource: 'postgres', storageProvider: provider, objectStorageConfigured, privateDocumentCount: privateFiles.length, integrityMetadataCoveragePercent: privateFiles.length ? Math.round(checksummed.length / privateFiles.length * 100) : 100, productionReady } });
+  } catch (error) {
+    console.error('[Documents] Vault status failed:', error);
+    res.status(500).json({ success: false, error: 'Document vault status is unavailable.' });
+  }
+});
+
 // ----------------------------------------------------
 // 17. SYSTEM BACKUP CONTROLS
 // ----------------------------------------------------
