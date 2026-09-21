@@ -395,12 +395,26 @@ async function importCore(client: any, db: AnyRecord): Promise<Record<string, nu
   counts.approvals = arr(db,'approvals').length;
 
   for (const row of arr(db, 'vendors')) {
+    const vendorMetadata = {
+      ...jsonObject(row, ['id','name','category','contactPerson','email','phone','paymentTerms','status','monthlySpend','notes','createdAt','updatedAt']),
+      companyName: row.companyName,
+      website: row.website,
+      hourlyRate: row.hourlyRate,
+      rating: row.rating,
+      skills: row.skills,
+      primaryCategory: row.primaryCategory,
+      completedProjectsCount: row.completedProjectsCount,
+      isVetted: row.isVetted,
+      location: row.location,
+      portfolioUrl: row.portfolioUrl,
+      githubUrl: row.githubUrl,
+      contracts: row.contracts
+    };
     await upsert(client, 'vendors',
-      ['id','name','category','contact_person','email','phone','payment_terms','status','monthly_spend','notes','metadata','created_at'],
-      [textValue(row.id),textValue(row.name),nullableText(row.category),nullableText(row.contactPerson),nullableText(row.email),nullableText(row.phone),
-       nullableText(row.paymentTerms),textValue(row.status,'active'),numberValue(row.monthlySpend),nullableText(row.notes),
-       metadata(row,['id','name','category','contactPerson','email','phone','paymentTerms','status','monthlySpend','notes','createdAt']),
-       timestampValue(row.createdAt)]);
+      ['id','name','category','contact_person','email','phone','payment_terms','status','monthly_spend','currency','notes','metadata','version','archived_at','created_at'],
+      [textValue(row.id),textValue(row.name),nullableText(row.category || row.primaryCategory),nullableText(row.contactPerson),nullableText(row.email),nullableText(row.phone),
+       nullableText(row.paymentTerms),textValue(row.status,'active'),numberValue(row.monthlySpend),textValue(row.currency,'IDR').toUpperCase().slice(0,3),
+       nullableText(row.notes),jsonValue(vendorMetadata),numberValue(row.version,1),nullableTimestampValue(row.archivedAt),timestampValue(row.createdAt)]);
   }
   counts.vendors = arr(db,'vendors').length;
 
