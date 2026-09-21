@@ -196,6 +196,186 @@ async function pgCountsAndFinancials(): Promise<{ counts: Record<string, number>
   };
 }
 
+type ParityMapper = (row: any) => { id: string; value: any };
+
+function normalizeParityValue(value: any): any {
+  if (value instanceof Date) return value.toISOString();
+  if (Array.isArray(value)) return value.map(normalizeParityValue);
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(
+      Object.keys(value)
+        .sort()
+        .map(key => [key, normalizeParityValue(value[key])])
+    );
+  }
+  if (typeof value === 'number' && Number.isFinite(value)) {
+    return Number(value.toFixed(6));
+  }
+  return value;
+}
+
+function parityFingerprint(value: any): string {
+  return sha256(JSON.stringify(normalizeParityValue(value)));
+}
+
+function buildParityIndex(rows: any[], mapper: ParityMapper): Map<string, string> {
+  const index = new Map<string, string>();
+  for (const row of rows) {
+    const mapped = mapper(row);
+    if (!mapped.id) continue;
+    index.set(mapped.id, parityFingerprint(mapped.value));
+  }
+  return index;
+}
+
+function compareParity(name: string, sourceRows: any[], targetRows: any[], sourceMapper: ParityMapper, targetMapper: ParityMapper) {
+  const sourceIndex = buildParityIndex(sourceRows, sourceMapper);
+  const targetIndex = buildParityIndex(targetRows, targetMapper);
+  const missingIds = [...sourceIndex.keys()].filter(id => !targetIndex.has(id)).slice(0, 50);
+  const unexpectedIds = [...targetIndex.keys()].filter(id => !sourceIndex.has(id)).slice(0, 50);
+  const mismatchedIds = [...sourceIndex.keys()]
+    .filter(id => targetIndex.has(id) && sourceIndex.get(id) !== targetIndex.get(id))
+    .slice(0, 50);
+
+  const sourceCanonical = [...sourceIndex.entries()].sort(([a], [b]) => a.localeCompare(b));
+  const targetCanonical = [...targetIndex.entries()].sort(([a], [b]) => a.localeCompare(b));
+
+  return {
+    valid: sourceIndex.size === targetIndex.size && missingIds.length === 0 && unexpectedIds.length === 0 && mismatchedIds.length === 0,
+    sourceCount: sourceIndex.size,
+    targetCount: targetIndex.size,
+    sourceHash: sha256(JSON.stringify(sourceCanonical)),
+    targetHash: sha256(JSON.stringify(targetCanonical)),
+    missingIds,
+    unexpectedIds,
+    mismatchedIds
+  };
+}
+
+async function pgRecordSets(): Promise<Record<string, any[]>> {
+  const pool = getPostgresPool();
+  const result = await Promise.all([
+    pool.query('SELECT id,name,username,email,role,stakeholder_type,division,status,mfa_enabled,permissions FROM users'),
+    pool.query('SELECT id,full_name,email,phone,company,service_category,budget_range,project_timeline,message,source,status,honeypot_triggered FROM leads'),
+    pool.query('SELECT id,title,client_id,client_name,company,email,phone,service_pillar,value,stage,priority,probability,owner,expected_close_date FROM crm_deals'),
+    pool.query('SELECT id,name,description,client_id,status,owner,budget,start_date,end_date FROM projects'),
+    pool.query('SELECT id,proposal_number,title,client_id,deal_id,project_id,subtotal,discount,tax_percent,tax,total,currency,validity_period,payment_terms,owner,status,notes,created_date,sent_date,approved_date FROM proposals'),
+    pool.query('SELECT id,proposal_id,description,quantity,unit_price FROM proposal_items'),
+    pool.query('SELECT id,project_id,title,description,status,priority,assignee_user_id,due_date FROM tasks'),
+    pool.query('SELECT id,project_id,task_id,user_id,hours,description,logged_at FROM time_logs'),
+    pool.query('SELECT id,invoice_number,client_id,project_id,type,subtotal,discount_percent,discount_amount,tax_percent,tax_amount,total,amount_paid,balance_due,currency,status,issue_date,due_date,paid_date,notes,payment_terms FROM invoices'),
+    pool.query('SELECT id,invoice_id,description,quantity,unit_price,amount FROM invoice_items'),
+    pool.query('SELECT id,invoice_id,amount,paid_at,method,reference,metadata FROM invoice_payments'),
+    pool.query('SELECT id,type,category,description,amount,expense_date,recurring_interval,recorded_by_user_id,recorded_by FROM expenses'),
+    pool.query('SELECT id,type,reference_id,title,requester_user_id,requester,requester_role,value,approval_date,reason,risk_level,status FROM approvals'),
+    pool.query('SELECT id,name,category,contact_person,email,phone,payment_terms,status,monthly_spend,notes FROM vendors'),
+    pool.query('SELECT id,name,type,mime_type,size_bytes,category,related_entity,related_id,source_type,storage_key,owner_user_id,external_url,status,uploaded_date,uploaded_at,content_sha256,storage_sha256,storage_version,storage_provider,integrity_checked_at FROM documents'),
+    pool.query('SELECT document_id,user_id FROM document_access'),
+    pool.query('SELECT id,title,message,type,severity,read,read_by,recipient_user_id,link_url,created_at FROM notifications'),
+    pool.query('SELECT id,timestamp,action,actor,actor_role,actor_user_id,ip,user_agent,details,severity,prev_hash,hash FROM audit_logs'),
+    pool.query('SELECT id,name,slug,description,data,created_at,updated_at FROM cms_services'),
+    pool.query('SELECT id,name,slug,description,data,created_at,updated_at FROM cms_projects'),
+    pool.query('SELECT id,name,company,quote,data,created_at,updated_at FROM cms_testimonials')
+  ]);
+
+  const keys = [
+    'users','leads','crmDeals','projects','proposals','proposalItems','tasks','timeLogs','invoices',
+    'invoiceItems','invoicePayments','expenses','approvals','vendors','documents','documentAccess',
+    'notifications','auditLogs','cmsServices','cmsProjects','cmsTestimonials'
+  ];
+
+  return Object.fromEntries(keys.map((key, index) => [key, result[index].rows]));
+}
+
+function buildRecordParity(db: any, pg: Record<string, any[]>) {
+  return {
+    users: compareParity('users', arr(db,'users'), pg.users,
+      row => ({ id: String(row.id), value: { username: row.username, email: row.email, role: row.role, stakeholderType: row.stakeholderType, division: row.division, status: row.status, mfaEnabled: Boolean(row.mfaEnabled), permissions: row.permissions } }),
+      row => ({ id: String(row.id), value: { username: row.username, email: row.email, role: row.role, stakeholderType: row.stakeholder_type, division: row.division, status: row.status, mfaEnabled: Boolean(row.mfa_enabled), permissions: row.permissions } })
+    ),
+    leads: compareParity('leads', arr(db,'leads'), pg.leads,
+      row => ({ id: String(row.id), value: { fullName: row.fullName, email: row.email, phone: row.phone ?? null, company: row.company ?? null, serviceCategory: row.serviceCategory ?? null, budgetRange: row.budgetRange ?? null, projectTimeline: row.projectTimeline ?? null, message: row.message, source: row.source ?? null, status: row.status, honeypotTriggered: Boolean(row.honeypotTriggered) } }),
+      row => ({ id: String(row.id), value: { fullName: row.full_name, email: row.email, phone: row.phone ?? null, company: row.company ?? null, serviceCategory: row.service_category ?? null, budgetRange: row.budget_range ?? null, projectTimeline: row.project_timeline ?? null, message: row.message, source: row.source ?? null, status: row.status, honeypotTriggered: Boolean(row.honeypot_triggered) } })
+    ),
+    crmDeals: compareParity('crmDeals', arr(db,'crmDeals'), pg.crmDeals,
+      row => ({ id: String(row.id), value: { title: row.title, clientId: row.clientId ?? null, clientName: row.clientName ?? null, company: row.company ?? null, email: row.email ?? null, phone: row.phone ?? null, servicePillar: row.servicePillar ?? null, value: money(row.value), stage: row.stage, priority: row.priority ?? null, probability: row.probability ?? null, owner: row.owner ?? null, expectedCloseDate: row.expectedCloseDate ?? null } }),
+      row => ({ id: String(row.id), value: { title: row.title, clientId: row.client_id ?? null, clientName: row.client_name ?? null, company: row.company ?? null, email: row.email ?? null, phone: row.phone ?? null, servicePillar: row.service_pillar ?? null, value: money(row.value), stage: row.stage, priority: row.priority ?? null, probability: row.probability ?? null, owner: row.owner ?? null, expectedCloseDate: row.expected_close_date ?? null } })
+    ),
+    projects: compareParity('projects', arr(db,'projects'), pg.projects,
+      row => ({ id: String(row.id), value: { clientId: row.clientId ?? null, name: row.name ?? row.title, description: row.description ?? null, status: row.status, owner: row.owner ?? null, budget: money(row.budget), startDate: row.startDate ?? null, endDate: row.endDate ?? null } }),
+      row => ({ id: String(row.id), value: { clientId: row.client_id ?? null, name: row.name, description: row.description ?? null, status: row.status, owner: row.owner ?? null, budget: money(row.budget), startDate: row.start_date ?? null, endDate: row.end_date ?? null } })
+    ),
+    proposals: compareParity('proposals', arr(db,'proposals'), pg.proposals,
+      row => ({ id: String(row.id), value: { proposalNumber: row.proposalNumber ?? null, title: row.title, clientId: row.clientId ?? null, dealId: row.dealId ?? null, projectId: row.projectId ?? null, subtotal: money(row.subtotal), discount: money(row.discount), taxPercent: money(row.taxPercent), tax: money(row.tax), total: money(row.total), currency: row.currency, validityPeriod: row.validityPeriod ?? null, paymentTerms: row.paymentTerms ?? null, owner: row.owner ?? null, status: row.status, notes: row.notes ?? null, createdDate: row.createdDate ?? null, sentDate: row.sentDate ?? null, approvedDate: row.approvedDate ?? null } }),
+      row => ({ id: String(row.id), value: { proposalNumber: row.proposal_number ?? null, title: row.title, clientId: row.client_id ?? null, dealId: row.deal_id ?? null, projectId: row.project_id ?? null, subtotal: money(row.subtotal), discount: money(row.discount), taxPercent: money(row.tax_percent), tax: money(row.tax), total: money(row.total), currency: row.currency, validityPeriod: row.validity_period ?? null, paymentTerms: row.payment_terms ?? null, owner: row.owner ?? null, status: row.status, notes: row.notes ?? null, createdDate: row.created_date ?? null, sentDate: row.sent_date ?? null, approvedDate: row.approved_date ?? null } })
+    ),
+    proposalItems: compareParity('proposalItems', arr(db,'proposals').flatMap(p => (Array.isArray(p.items) ? p.items : []).map(item => ({ ...item, proposalId: p.id }))), pg.proposalItems,
+      row => ({ id: String(row.id), value: { proposalId: row.proposalId, description: row.description, quantity: money(row.quantity), unitPrice: money(row.unitPrice) } }),
+      row => ({ id: String(row.id), value: { proposalId: row.proposal_id, description: row.description, quantity: money(row.quantity), unitPrice: money(row.unit_price) } })
+    ),
+    tasks: compareParity('tasks', arr(db,'tasks'), pg.tasks,
+      row => ({ id: String(row.id), value: { projectId: row.projectId ?? null, title: row.title, description: row.description ?? null, status: row.status, priority: row.priority ?? null, assigneeUserId: row.assigneeUserId ?? row.assigneeId ?? null, dueDate: row.dueDate ?? null } }),
+      row => ({ id: String(row.id), value: { projectId: row.project_id ?? null, title: row.title, description: row.description ?? null, status: row.status, priority: row.priority ?? null, assigneeUserId: row.assignee_user_id ?? null, dueDate: row.due_date ?? null } })
+    ),
+    timeLogs: compareParity('timeLogs', arr(db,'timeLogs'), pg.timeLogs,
+      row => ({ id: String(row.id), value: { projectId: row.projectId ?? null, taskId: row.taskId ?? null, userId: row.userId ?? null, hours: money(row.hours), description: row.description ?? null, loggedAt: row.loggedAt ?? row.date ?? null } }),
+      row => ({ id: String(row.id), value: { projectId: row.project_id ?? null, taskId: row.task_id ?? null, userId: row.user_id ?? null, hours: money(row.hours), description: row.description ?? null, loggedAt: row.logged_at ?? null } })
+    ),
+    invoices: compareParity('invoices', arr(db,'invoices'), pg.invoices,
+      row => ({ id: String(row.id), value: { invoiceNumber: row.invoiceNumber ?? null, clientId: row.clientId ?? null, projectId: row.projectId ?? null, type: row.type ?? 'invoice', subtotal: money(row.subtotal), discountPercent: money(row.discountPercent), discountAmount: money(row.discountAmount), taxPercent: money(row.taxPercent), taxAmount: money(row.taxAmount), total: money(row.total), amountPaid: money(row.amountPaid), balanceDue: money(row.balanceDue), currency: row.currency, status: row.status, issueDate: row.issueDate ?? null, dueDate: row.dueDate ?? null, paidDate: row.paidDate ?? null, notes: row.notes ?? null, paymentTerms: row.paymentTerms ?? null } }),
+      row => ({ id: String(row.id), value: { invoiceNumber: row.invoice_number ?? null, clientId: row.client_id ?? null, projectId: row.project_id ?? null, type: row.type ?? 'invoice', subtotal: money(row.subtotal), discountPercent: money(row.discount_percent), discountAmount: money(row.discount_amount), taxPercent: money(row.tax_percent), taxAmount: money(row.tax_amount), total: money(row.total), amountPaid: money(row.amount_paid), balanceDue: money(row.balance_due), currency: row.currency, status: row.status, issueDate: row.issue_date ?? null, dueDate: row.due_date ?? null, paidDate: row.paid_date ?? null, notes: row.notes ?? null, paymentTerms: row.payment_terms ?? null } })
+    ),
+    invoiceItems: compareParity('invoiceItems', arr(db,'invoices').flatMap(inv => (Array.isArray(inv.items) ? inv.items : []).map(item => ({ ...item, invoiceId: inv.id }))), pg.invoiceItems,
+      row => ({ id: String(row.id), value: { invoiceId: row.invoiceId, description: row.description, quantity: money(row.quantity), unitPrice: money(row.unitPrice), amount: money(row.amount ?? money(row.quantity) * money(row.unitPrice)) } }),
+      row => ({ id: String(row.id), value: { invoiceId: row.invoice_id, description: row.description, quantity: money(row.quantity), unitPrice: money(row.unit_price), amount: money(row.amount) } })
+    ),
+    invoicePayments: compareParity('invoicePayments', arr(db,'invoices').flatMap(inv => (Array.isArray(inv.payments) ? inv.payments : []).map(payment => ({ ...payment, invoiceId: inv.id }))), pg.invoicePayments,
+      row => ({ id: String(row.id), value: { invoiceId: row.invoiceId, amount: money(row.amount), paidAt: row.paidAt ?? row.date ?? null, method: row.method ?? null, reference: row.reference ?? null } }),
+      row => ({ id: String(row.id), value: { invoiceId: row.invoice_id, amount: money(row.amount), paidAt: row.paid_at ?? null, method: row.method ?? null, reference: row.reference ?? null } })
+    ),
+    expenses: compareParity('expenses', arr(db,'expenses'), pg.expenses,
+      row => ({ id: String(row.id), value: { type: row.type, category: row.category, description: row.description, amount: money(row.amount), date: row.date ?? row.expenseDate ?? null, recurringInterval: row.recurringInterval ?? null, recordedByUserId: row.recordedByUserId ?? null, recordedBy: row.recordedBy ?? null } }),
+      row => ({ id: String(row.id), value: { type: row.type, category: row.category, description: row.description, amount: money(row.amount), date: row.expense_date ?? null, recurringInterval: row.recurring_interval ?? null, recordedByUserId: row.recorded_by_user_id ?? null, recordedBy: row.recorded_by ?? null } })
+    ),
+    approvals: compareParity('approvals', arr(db,'approvals'), pg.approvals,
+      row => ({ id: String(row.id), value: { type: row.type, referenceId: row.referenceId ?? null, title: row.title, requesterUserId: row.requesterUserId ?? null, requester: row.requester ?? null, requesterRole: row.requesterRole ?? null, value: money(row.value), approvalDate: row.date ?? row.approvalDate ?? null, reason: row.reason ?? null, riskLevel: row.riskLevel ?? null, status: row.status } }),
+      row => ({ id: String(row.id), value: { type: row.type, referenceId: row.reference_id ?? null, title: row.title, requesterUserId: row.requester_user_id ?? null, requester: row.requester ?? null, requesterRole: row.requester_role ?? null, value: money(row.value), approvalDate: row.approval_date ?? null, reason: row.reason ?? null, riskLevel: row.risk_level ?? null, status: row.status } })
+    ),
+    vendors: compareParity('vendors', arr(db,'vendors'), pg.vendors,
+      row => ({ id: String(row.id), value: { name: row.name, category: row.category ?? null, contactPerson: row.contactPerson ?? null, email: row.email ?? null, phone: row.phone ?? null, paymentTerms: row.paymentTerms ?? null, status: row.status, monthlySpend: money(row.monthlySpend), notes: row.notes ?? null } }),
+      row => ({ id: String(row.id), value: { name: row.name, category: row.category ?? null, contactPerson: row.contact_person ?? null, email: row.email ?? null, phone: row.phone ?? null, paymentTerms: row.payment_terms ?? null, status: row.status, monthlySpend: money(row.monthly_spend), notes: row.notes ?? null } })
+    ),
+    documents: compareParity('documents', arr(db,'documents'), pg.documents,
+      row => ({ id: String(row.id), value: { name: row.name, type: row.type, mimeType: row.mimeType ?? null, sizeBytes: row.sizeBytes ?? null, category: row.category ?? null, relatedEntity: row.relatedEntity ?? null, relatedId: row.relatedId ?? null, sourceType: row.sourceType ?? (row.storageKey ? 'private_file' : 'external_link'), storageKey: row.storageKey ?? null, ownerUserId: row.ownerUserId ?? null, externalUrl: row.externalUrl ?? row.url ?? null, status: row.status, uploadedDate: row.uploadedDate ?? null, uploadedAt: row.uploadedAt ?? null, contentSha256: row.contentSha256 ?? null, storageSha256: row.storageSha256 ?? null, storageVersion: row.storageVersion ?? 1, storageProvider: row.storageProvider ?? null, integrityCheckedAt: row.integrityCheckedAt ?? null } }),
+      row => ({ id: String(row.id), value: { name: row.name, type: row.type, mimeType: row.mime_type ?? null, sizeBytes: row.size_bytes == null ? null : Number(row.size_bytes), category: row.category ?? null, relatedEntity: row.related_entity ?? null, relatedId: row.related_id ?? null, sourceType: row.source_type, storageKey: row.storage_key ?? null, ownerUserId: row.owner_user_id ?? null, externalUrl: row.external_url ?? null, status: row.status, uploadedDate: row.uploaded_date ?? null, uploadedAt: row.uploaded_at ?? null, contentSha256: row.content_sha256 ?? null, storageSha256: row.storage_sha256 ?? null, storageVersion: row.storage_version ?? 1, storageProvider: row.storage_provider ?? null, integrityCheckedAt: row.integrity_checked_at ?? null } })
+    ),
+    documentAccess: compareParity('documentAccess', arr(db,'documents').flatMap(doc => (Array.isArray(doc.accessUserIds) ? doc.accessUserIds : []).map(userId => ({ id: String(doc.id) + ':' + String(userId), documentId: doc.id, userId }))), pg.documentAccess,
+      row => ({ id: String(row.id), value: { documentId: row.documentId, userId: row.userId } }),
+      row => ({ id: String(row.document_id) + ':' + String(row.user_id), value: { documentId: row.document_id, userId: row.user_id } })
+    ),
+    notifications: compareParity('notifications', arr(db,'notifications'), pg.notifications,
+      row => ({ id: String(row.id), value: { title: row.title, message: row.message, type: row.type, severity: row.severity, read: Boolean(row.read), readBy: Array.isArray(row.readBy) ? row.readBy.map(String).sort() : [], recipientUserId: row.recipientUserId ?? null, linkUrl: row.linkUrl ?? null } }),
+      row => ({ id: String(row.id), value: { title: row.title, message: row.message, type: row.type, severity: row.severity, read: Boolean(row.read), readBy: Array.isArray(row.read_by) ? row.read_by.map(String).sort() : [], recipientUserId: row.recipient_user_id ?? null, linkUrl: row.link_url ?? null } })
+    ),
+    auditLogs: compareParity('auditLogs', arr(db,'auditLogs'), pg.auditLogs,
+      row => ({ id: String(row.id), value: { timestamp: row.timestamp, action: row.action, actor: row.actor, actorRole: row.actorRole, ip: row.ip ?? null, userAgent: row.userAgent ?? null, details: row.details, severity: row.severity, prevHash: row.prevHash ?? null, hash: row.hash ?? null } }),
+      row => ({ id: String(row.id), value: { timestamp: row.timestamp, action: row.action, actor: row.actor, actorRole: row.actor_role, ip: row.ip ?? null, userAgent: row.user_agent ?? null, details: row.details, severity: row.severity, prevHash: row.prev_hash ?? null, hash: row.hash ?? null } })
+    ),
+    cmsServices: compareParity('cmsServices', arr(db,'cmsServices'), pg.cmsServices,
+      row => { const data = { ...row }; delete data.id; delete data.createdAt; delete data.updatedAt; return { id: String(row.id), value: { name: row.title || row.name, slug: row.slug ?? null, description: row.description || row.heroSubtitle || null, data } }; },
+      row => ({ id: String(row.id), value: { name: row.name, slug: row.slug ?? null, description: row.description ?? null, data: row.data && typeof row.data === 'object' ? row.data : {} } })
+    ),
+    cmsProjects: compareParity('cmsProjects', arr(db,'cmsProjects'), pg.cmsProjects,
+      row => { const data = { ...row }; delete data.id; delete data.createdAt; delete data.updatedAt; return { id: String(row.id), value: { name: row.title || row.name, slug: row.slug ?? null, description: row.description || row.desc || null, data } }; },
+      row => ({ id: String(row.id), value: { name: row.name, slug: row.slug ?? null, description: row.description ?? null, data: row.data && typeof row.data === 'object' ? row.data : {} } })
+    ),
+    cmsTestimonials: compareParity('cmsTestimonials', arr(db,'cmsTestimonials'), pg.cmsTestimonials,
+      row => { const data = { ...row }; delete data.id; delete data.createdAt; delete data.updatedAt; return { id: String(row.id), value: { name: row.author || row.name, company: row.company ?? null, quote: row.quote ?? null, data } }; },
+      row => ({ id: String(row.id), value: { name: row.name, company: row.company ?? null, quote: row.quote ?? null, data: row.data && typeof row.data === 'object' ? row.data : {} } })
+    )
+  };
+}
+
 async function main(): Promise<void> {
   if (!fs.existsSync(DB_FILE)) throw new Error('JSON database file not found: ' + DB_FILE);
 
@@ -266,6 +446,9 @@ async function main(): Promise<void> {
   try {
     const postgresResult = await pgCountsAndFinancials();
     const postgresCounts = postgresResult.counts;
+    const postgresRecords = await pgRecordSets();
+    const recordParity = buildRecordParity(db, postgresRecords);
+    const recordParityComplete = Object.values(recordParity).every(result => result.valid);
     const financialMismatches = Object.fromEntries(
       Object.keys(financials)
         .filter(key => Math.abs(financials[key as keyof typeof financials] - postgresResult.financials[key]) > 0.005)
@@ -294,10 +477,11 @@ async function main(): Promise<void> {
       cmsSettingsParity: cmsSettingsMismatches.length === 0,
       notificationSettingsParity: notificationMismatches.length === 0,
       auditChainIntegrity: auditChain.valid,
-      privateDocumentIntegrity: privateDocuments.valid
+      privateDocumentIntegrity: privateDocuments.valid,
+      recordFieldParity: recordParityComplete
     };
 
-    const reconciliationPass = checks.countParity && checks.financialParity;
+    const reconciliationPass = checks.countParity && checks.financialParity && checks.recordFieldParity;
     const status = reconciliationPass && Object.values(checks).every(Boolean) ? 'succeeded' : 'failed';
     const report = {
       runId,
@@ -309,6 +493,7 @@ async function main(): Promise<void> {
       financialMismatches,
       cmsSettingsMismatches,
       notificationMismatches,
+      recordParity,
       auditChain,
       privateDocuments,
       financials,
