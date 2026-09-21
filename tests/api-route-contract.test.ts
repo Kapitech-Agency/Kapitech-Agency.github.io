@@ -35,3 +35,25 @@ test('Dashboard API endpoints match the frontend API client contract', async () 
   assert.ok(server.includes("apiRouter.get('/executive/overview', requireAuth, handleOverview);"));
   assert.ok(client.includes("'/api/dashboard/overview'")); assert.ok(client.includes("'/api/executive/overview'"));
 });
+
+test('Frontend API client literal endpoints exist on the server route surface', async () => {
+  const server = await fs.readFile(path.join(root, 'server/routes.ts'), 'utf8');
+  const client = await fs.readFile(path.join(root, 'src/lib/apiClient.ts'), 'utf8');
+
+  const routePattern = /apiRouter\\.(?:get|post|put|patch|delete)\\(\\s*(['`])([^'`]+)\\1/g;
+  const serverPaths = new Set<string>();
+  let routeMatch: RegExpExecArray | null;
+  while ((routeMatch = routePattern.exec(server))) serverPaths.add(routeMatch[2].replace(/\\/+$/, ''));
+
+  const endpointPattern = /apiRequest(?:<[^>]*>)?\\(\\s*(['`])(\\/api\\/[^'`?]+)(?:\\?[^'`]*)?\\1/g;
+  const clientPaths = new Set<string>();
+  let endpointMatch: RegExpExecArray | null;
+  while ((endpointMatch = endpointPattern.exec(client))) clientPaths.add(endpointMatch[2].replace(/^\\/api/, '').replace(/\\/+$/, ''));
+
+  assert.ok(clientPaths.size >= 20, 'Expected a broad frontend API contract surface.');
+  for (const clientPath of clientPaths) {
+    const normalized = clientPath.replace(/:\\w+/g, ':id');
+    const exists = [...serverPaths].some(serverPath => serverPath.replace(/:\\w+/g, ':id') === normalized);
+    assert.ok(exists, 'Frontend API endpoint is not implemented by server routes: ' + clientPath);
+  }
+});
