@@ -10,7 +10,26 @@ import { runPostgresMigrations } from './server/postgres-migrations.ts';
 
 dotenv.config();
 
+function assertProductionDataSource(): void {
+  if (process.env.NODE_ENV !== 'production') return;
+
+  const mode = (process.env.KAPITECH_DATA_SOURCE || '').trim().toLowerCase();
+  if (mode !== 'postgres') {
+    throw new Error('Production startup requires KAPITECH_DATA_SOURCE=postgres. Refusing to run the local JSON data source in production.');
+  }
+
+  if (!process.env.KAPITECH_POSTGRES_URL?.trim()) {
+    throw new Error('Production startup requires KAPITECH_POSTGRES_URL.');
+  }
+
+  if (!process.env.KAPITECH_DATA_ENCRYPTION_KEY?.trim()) {
+    throw new Error('Production startup requires KAPITECH_DATA_ENCRYPTION_KEY.');
+  }
+}
+
 async function startServer() {
+  assertProductionDataSource();
+
   if (getDataSourceMode() === 'postgres') {
     await runPostgresMigrations();
     await ensurePostgresInitialAdmin();
