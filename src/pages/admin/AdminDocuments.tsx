@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { api } from '../../lib/apiClient';
 import { useLanguage } from '../../lib/LanguageContext';
+import { hasAdminPermission } from '../../lib/adminAuth';
 
 interface DocumentItem {
   id: string;
@@ -38,6 +39,10 @@ interface DocumentItem {
 
 export const AdminDocuments: React.FC = () => {
   const { language } = useLanguage();
+  const canManageDocuments =
+    hasAdminPermission('canManageProjects') ||
+    hasAdminPermission('canManageCrm') ||
+    hasAdminPermission('canAccessServerAndApi');
   const [documents, setDocuments] = useState<DocumentItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
@@ -80,6 +85,7 @@ export const AdminDocuments: React.FC = () => {
 
   const handleUploadSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!canManageDocuments) return;
     if (!uploadTitle.trim()) {
       showToast('Please specify a title.');
       return;
@@ -135,6 +141,7 @@ export const AdminDocuments: React.FC = () => {
   };
 
   const handleDelete = async (id: string) => {
+    if (!canManageDocuments) return;
     if (!window.confirm('Delete document from vault?')) return;
     try {
       const res = await api.documents.delete(id);
