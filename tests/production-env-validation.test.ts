@@ -1,0 +1,67 @@
+import assert from 'node:assert/strict';
+import test from 'node:test';
+import { validateProductionEnvironment } from '../scripts/validate-production-env.ts';
+
+function validEnv(): Record<string, string> {
+  const sha = 'a'.repeat(64);
+  return {
+    NODE_ENV: 'production',
+    KAPITECH_DATA_SOURCE: 'postgres',
+    KAPITECH_POSTGRES_URL: 'postgresql://user:pass@example.com:5432/kapitech',
+    KAPITECH_POSTGRES_SSL: 'require',
+    KAPITECH_DATA_ENCRYPTION_KEY: '1'.repeat(64),
+    APP_URL: 'https://kapitech.id',
+    KAPITECH_DOCUMENT_STORAGE_PROVIDER: 's3-compatible',
+    KAPITECH_DOCUMENT_STORAGE_BUCKET: 'kapitech-private',
+    KAPITECH_DOCUMENT_STORAGE_ENDPOINT: 'https://s3.example.com',
+    KAPITECH_DOCUMENT_STORAGE_ACCESS_KEY_ID: 'access',
+    KAPITECH_DOCUMENT_STORAGE_SECRET_ACCESS_KEY: 'secret',
+    KAPITECH_POSTGRES_BACKUP_PROVIDER: 'provider',
+    KAPITECH_POSTGRES_BACKUP_LATEST_AT: '2026-09-21T10:00:00.000Z',
+    KAPITECH_POSTGRES_BACKUP_LATEST_SHA256: sha,
+    KAPITECH_POSTGRES_BACKUP_RESTORE_VERIFIED_AT: '2026-09-21T10:30:00.000Z',
+    KAPITECH_POSTGRES_BACKUP_RESTORE_BACKUP_SHA256: sha,
+    KAPITECH_RELATIONAL_RECONCILIATION_VERIFIED_AT: '2026-09-21T11:00:00.000Z',
+    KAPITECH_RELATIONAL_RECONCILIATION_SOURCE_SHA256: sha,
+    ADMIN_INITIAL_PASSWORD: 'temporary-but-strong'
+  };
+}
+
+test('accepts a structurally valid production environment', () => {
+  const result = validateProductionEnvironment(validEnv());
+  assert.equal(result.valid, true);
+  assert.deepEqual(result.errors, []);
+});
+
+test('accepts the runtime-supported base64 encryption key format', () => {
+  const env = validEnv();
+  env.KAPITECH_DATA_ENCRYPTION_KEY = Buffer.from('a'.repeat(32), 'utf8').toString('base64');
+  const result = validateProductionEnvironment(env);
+  assert.equal(result.valid, true);
+});
+
+test('rejects non-PostgreSQL, insecure URL, invalid encryption key, and invalid storage endpoint', () => {
+  const env = validEnv();
+  env.KAPITECH_DATA_SOURCE = 'json';
+  env.KAPITECH_POSTGRES_SSL = 'disable';
+  env.KAPITECH_DATA_ENCRYPTION_KEY = 'short';
+  env.APP_URL = 'http://kapitech.id';
+  env.KAPITECH_DOCUMENT_STORAGE_ENDPOINT = 'http://s3.example.com';
+  const result = validateProductionEnvironment(env);
+  assert.equal(result.valid, false);
+  assert.ok(result.errors.some(error => error.includes('KAPITECH_DATA_SOURCE')));
+  assert.ok(result.errors.some(error => error.includes('KAPITECH_POSTGRES_SSL')));
+  assert.ok(result.errors.some(error => error.includes('KAPITECH_DATA_ENCRYPTION_KEY')));
+  assert.ok(result.errors.some(error => error.includes('APP_URL')));
+  assert.ok(result.errors.some(error => error.includes('KAPITECH_DOCUMENT_STORAGE_ENDPOINT')));
+});
+
+test('rejects backup hash mismatch and future evidence timestamps', () => {
+  const env = validEnv();
+  env.KAPITECH_POSTGRES_BACKUP_RESTORE_BACKUP_SHA256 = 'b'.repeat(64);
+  env.KAPITECH_RELATIONAL_RECONCILIATION_VERIFIED_AT = '2999-01-01T00:00:00.000Z';
+  const result = validateProductionEnvironment(env);
+  assert.equal(result.valid, false);
+  assert.ok(result.errors.some(error => error.includes('must match')));
+  assert.ok(result.errors.some(error => error.includes('must not be in the future')));
+});
