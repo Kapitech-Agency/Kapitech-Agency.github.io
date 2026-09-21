@@ -150,7 +150,7 @@ export const AdminClients: React.FC = () => {
     setIsClientModalOpen(true);
   };
 
-  const handleSaveClient = (e: React.FormEvent) => {
+  const handleSaveClient = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim() || !company.trim()) {
       alert('Client Name and Company are required.');
@@ -177,15 +177,23 @@ export const AdminClients: React.FC = () => {
       updatedAt: new Date().toISOString()
     };
 
-    saveAgencyClient(clientData);
-    setIsClientModalOpen(false);
-    showToast(language === 'id' ? 'Klien berhasil disimpan.' : 'Client record saved.');
+    try {
+      await saveAgencyClient(clientData);
+      setIsClientModalOpen(false);
+      showToast(language === 'id' ? 'Klien berhasil disimpan ke server.' : 'Client record saved to server.');
+    } catch (error: any) {
+      showToast(error?.message || (language === 'id' ? 'Gagal menyimpan klien.' : 'Failed to save client.'));
+    }
   };
 
-  const handleDeleteClient = (id: string, clientName: string) => {
+  const handleDeleteClient = async (id: string, clientName: string) => {
     if (window.confirm(`Hapus catatan klien "${clientName}"?`)) {
-      deleteAgencyClient(id);
-      showToast(language === 'id' ? 'Klien dihapus.' : 'Client deleted.');
+      try {
+        await deleteAgencyClient(id);
+        showToast(language === 'id' ? 'Klien dihapus dari server.' : 'Client deleted from server.');
+      } catch (error: any) {
+        showToast(error?.message || (language === 'id' ? 'Gagal menghapus klien.' : 'Failed to delete client.'));
+      }
     }
   };
 
