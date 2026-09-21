@@ -1700,7 +1700,7 @@ function buildInvoiceFinancials(items: ReturnType<typeof normalizeInvoiceItems>,
 }
 
 
-apiRouter.post('/finance/invoices', requireAuth, requirePermission('canManageInvoices'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.post('/finance/invoices', requireAuth, requirePermission('canManageInvoices'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const input = req.body || {};
   const items = normalizeInvoiceItems(input.items);
   if (items.length === 0) {
