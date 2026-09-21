@@ -17,7 +17,13 @@ function normalizeMigrationSql(sql: string): string {
   return sql.replace(/^\s*BEGIN;\s*/i, '').replace(/\s*COMMIT;\s*$/i, '');
 }
 
-export async function loadPostgresMigrations(migrationsDir = path.resolve(process.cwd(), 'db/postgres')): Promise<Array<{ version: string; sql: string; checksum: string }>> {
+function defaultMigrationsDir(): string {
+  const entrypoint = process.argv[1];
+  if (entrypoint) return path.resolve(path.dirname(entrypoint), '../db/postgres');
+  return path.resolve(process.cwd(), 'db/postgres');
+}
+
+export async function loadPostgresMigrations(migrationsDir = defaultMigrationsDir()): Promise<Array<{ version: string; sql: string; checksum: string }>> {
   const files = (await fs.readdir(migrationsDir))
     .filter(file => /^\d+_.+\.sql$/.test(file))
     .sort((a, b) => a.localeCompare(b, 'en', { numeric: true }));
