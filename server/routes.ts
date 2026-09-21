@@ -4158,7 +4158,7 @@ apiRouter.get('/system/production-readiness', requireAuth, requireAnyPermission(
 
     const runtimeReady =
       process.env.NODE_ENV === 'production' &&
-      /^https:///i.test(String(process.env.APP_URL || '').trim()) &&
+      /^https:\/\//i.test(String(process.env.APP_URL || '').trim()) &&
       Boolean(process.env.KAPITECH_DATA_SOURCE === 'postgres');
 
     const encryptionReady = isDataEncryptionEnabled();
@@ -4192,7 +4192,7 @@ apiRouter.get('/system/production-readiness', requireAuth, requireAnyPermission(
         datasource: 'postgres',
         runtime: {
           nodeEnvProduction: process.env.NODE_ENV === 'production',
-          appUrlHttps: /^https:///i.test(String(process.env.APP_URL || '').trim()),
+          appUrlHttps: /^https:\/\//i.test(String(process.env.APP_URL || '').trim()),
           dataSourcePostgres: true
         },
         encryption: {
