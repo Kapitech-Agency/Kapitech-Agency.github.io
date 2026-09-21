@@ -421,7 +421,7 @@ export const isSubmissionConverted = (inquiryId: string): boolean => {
 /**
  * Convert any ContactSubmission directly into a high-value CRM Lead
  */
-export const convertInquiryToCrmLead = (
+export const convertInquiryToCrmLead = async (
   submission: ContactSubmission,
   customValue?: number,
   options?: {
