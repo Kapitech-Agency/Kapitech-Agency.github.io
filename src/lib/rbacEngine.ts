@@ -121,6 +121,7 @@ export const ROLE_DEFINITIONS: Record<StakeholderRole, RoleMetadata> = {
     },
     allowedModuleKeys: [
       'dashboard',
+      'documents',
       'settings'
     ]
   },
