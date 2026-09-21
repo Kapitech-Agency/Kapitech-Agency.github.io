@@ -58,7 +58,7 @@ export const AdminInvoicing: React.FC = () => {
   const canViewFinancials = hasAdminPermission('canViewFinancials');
   const canManageInvoices = hasAdminPermission('canManageInvoices');
   const canApproveBudgets = hasAdminPermission('canApproveBudgets');
-  const canCreateInvoice = canManageInvoices || userRole.startsWith('Tier 1') || userRole.startsWith('Tier 2') || userRole.includes('Finance');
+  const canCreateInvoice = canManageInvoices;
   const canDeleteInvoice = userRole.startsWith('Tier 1') || session?.user?.stakeholderType === 'Master';
   const [currency, setCurrency] = useState<CurrencyCode>(getActiveCurrency());
   const [invoices, setInvoices] = useState<AgencyInvoice[]>([]);
@@ -412,13 +412,15 @@ export const AdminInvoicing: React.FC = () => {
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5">
-          <button
-            onClick={() => setIsExpenseModalOpen(true)}
-            className="h-10 px-4 rounded-xl bg-[#181B22] hover:bg-[#21252F] text-white text-xs font-mono font-bold border border-[rgba(255,255,255,0.07)] transition-all flex items-center justify-center gap-1.5 min-h-[40px]"
+          {canManageInvoices && (
+            <button
+              onClick={() => setIsExpenseModalOpen(true)}
+              className="h-10 px-4 rounded-xl bg-[#181B22] hover:bg-[#21252F] text-white text-xs font-mono font-bold border border-[rgba(255,255,255,0.07)] transition-all flex items-center justify-center gap-1.5 min-h-[40px]"
           >
             <Plus size={14} />
-            <span>{t('admin.fin.recordExpense')}</span>
-          </button>
+              <span>{t('admin.fin.recordExpense')}</span>
+            </button>
+          )}
 
           {canCreateInvoice && (
             <button
@@ -609,6 +611,7 @@ export const AdminInvoicing: React.FC = () => {
                     <div className="shrink-0">
                       <InvoiceStatusDropdown
                         status={inv.status}
+                        disabled={!canManageInvoices}
                         onChange={async (newStatus) => {
                           try {
                             await updateInvoiceStatus(inv.id, newStatus, session?.user?.name || session?.user?.username || 'Authorized Lead');
@@ -667,6 +670,7 @@ export const AdminInvoicing: React.FC = () => {
                       {inv.status !== 'paid' && (
                         <button
                           onClick={() => handleOpenPaymentModal(inv)}
+                          disabled={!canManageInvoices}
                           className="h-9 px-2.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-mono flex items-center justify-center gap-1 transition-colors min-h-[36px]"
                           title="Record Payment"
                         >
@@ -684,6 +688,7 @@ export const AdminInvoicing: React.FC = () => {
                       </button>
                       <button
                         onClick={() => handleOpenEditInvoice(inv)}
+                        disabled={!canManageInvoices}
                         className="w-9 h-9 rounded-xl bg-[#181B22] hover:bg-[#21252F] text-[#8A94A6] hover:text-white border border-[rgba(255,255,255,0.07)] flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
                         title="Edit Invoice"
                       >
@@ -774,6 +779,7 @@ export const AdminInvoicing: React.FC = () => {
                       <td className="py-3.5 px-4">
                         <InvoiceStatusDropdown
                           status={inv.status}
+                          disabled={!canManageInvoices}
                           onChange={(newStatus) => {
                             updateInvoiceStatus(inv.id, newStatus);
                             showToast(`Status updated to ${newStatus.toUpperCase()}`);
@@ -799,13 +805,15 @@ export const AdminInvoicing: React.FC = () => {
                           >
                             <FileText size={14} />
                           </button>
-                          <button
-                            onClick={() => handleOpenEditInvoice(inv)}
-                            className="w-9 h-9 rounded-xl bg-[#181B22] hover:bg-[#21252F] text-[#8A94A6] hover:text-white border border-[rgba(255,255,255,0.07)] flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
+                          {canManageInvoices && (
+                            <button
+                              onClick={() => handleOpenEditInvoice(inv)}
+                              className="w-9 h-9 rounded-xl bg-[#181B22] hover:bg-[#21252F] text-[#8A94A6] hover:text-white border border-[rgba(255,255,255,0.07)] flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
                             title="Edit Invoice"
                           >
-                            <Edit3 size={14} />
-                          </button>
+                              <Edit3 size={14} />
+                            </button>
+                          )}
                           {canDeleteInvoice && (
                             <button
                               onClick={() => handleDeleteInvoice(inv.id, inv.invoiceNumber)}
@@ -864,8 +872,10 @@ export const AdminInvoicing: React.FC = () => {
                       className="w-9 h-9 rounded-xl bg-[#181B22] hover:bg-red-950/40 text-[#8A94A6] hover:text-red-400 border border-[rgba(255,255,255,0.07)] hover:border-red-500/30 flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
                       title="Delete Record"
                     >
-                      <Trash2 size={14} />
-                    </button>
+                          <Trash2 size={14} />
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
               ))
@@ -903,13 +913,15 @@ export const AdminInvoicing: React.FC = () => {
                     </td>
                     <td className="py-3.5 px-4 text-[#8A94A6]">{exp.recordedBy}</td>
                     <td className="py-3.5 px-4 text-right">
-                      <button
-                        onClick={() => handleDeleteExpense(exp.id)}
-                        className="w-9 h-9 rounded-xl bg-[#181B22] hover:bg-red-950/40 text-[#8A94A6] hover:text-red-400 border border-[rgba(255,255,255,0.07)] hover:border-red-500/30 inline-flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
+                      {canManageInvoices && (
+                        <button
+                          onClick={() => handleDeleteExpense(exp.id)}
+                          className="w-9 h-9 rounded-xl bg-[#181B22] hover:bg-red-950/40 text-[#8A94A6] hover:text-red-400 border border-[rgba(255,255,255,0.07)] hover:border-red-500/30 inline-flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
                         title="Delete Record"
                       >
-                        <Trash2 size={14} />
-                      </button>
+                          <Trash2 size={14} />
+                        </button>
+                      )}
                     </td>
                   </tr>
                 ))}
