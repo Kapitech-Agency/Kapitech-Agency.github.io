@@ -57,10 +57,12 @@ import { ScrollShadowContainer } from '../../components/ui/ScrollShadowContainer
 import { CustomSelect } from '../../components/ui/CustomSelect';
 import { formatAmount, getActiveCurrency, setGlobalCurrency, CurrencyCode, CURRENCY_EVENT } from '../../lib/currency';
 import { api } from '../../lib/apiClient';
+import { hasAdminPermission } from '../../lib/adminAuth';
 
 export const AdminCrm: React.FC = () => {
   const { language, t } = useLanguage();
   const kanbanScrollRef = useDragToScroll<HTMLDivElement>();
+  const canConvertWonDeal = hasAdminPermission('canManageCrm') && hasAdminPermission('canManageProjects') && hasAdminPermission('canManageInvoices') && hasAdminPermission('canManageClients');
   const [leads, setLeads] = useState<CrmLead[]>([]);
   const [viewMode, setViewMode] = useState<'kanban' | 'list'>('kanban');
   const [currency, setCurrency] = useState<CurrencyCode>(getActiveCurrency());
@@ -222,8 +224,24 @@ export const AdminCrm: React.FC = () => {
   };
 
   const handleConvertToProject = async (lead: CrmLead) => {
-    if (convertingLeadId) return;
+    if (convertingLeadId || !canConvertWonDeal) return;
     setConvertingLeadId(lead.id);
+
+    try {
+      const [projectsRes, invoicesRes] = await Promise.all([api.projects.getAll(), api.finance.getInvoices()]);
+      const alreadyConverted = Boolean(
+        (projectsRes.success && projectsRes.data?.projects?.some((project: any) => project.crmLeadId === lead.id)) ||
+        (invoicesRes.success && invoicesRes.data?.invoices?.some((invoice: any) => invoice.leadId === lead.id))
+      );
+      if (alreadyConverted) {
+        showToast(language === 'id' ? 'Deal ini sudah pernah dikonversi ke operasional.' : 'This deal has already been converted into an operational record.');
+        return;
+      }
+    } catch (error) {
+      showToast(error instanceof Error ? error.message : (language === 'id' ? 'Gagal memeriksa status conversion deal.' : 'Failed to verify deal conversion state.'));
+      setConvertingLeadId(null);
+      return;
+    }
 
     const projectId = 'proj_' + Date.now().toString(36);
     const invoiceId = 'inv_' + Date.now().toString(36);
@@ -1309,7 +1327,7 @@ export const AdminCrm: React.FC = () => {
                 </button>
               </div>
 
-              {selectedLead.stage === 'won' && (
+              {selectedLead.stage === 'won' && canConvertWonDeal && (
                 <button
                   onClick={() => handleConvertToProject(selectedLead)}
                   disabled={convertingLeadId === selectedLead.id}
