@@ -4151,7 +4151,8 @@ apiRouter.get('/system/production-readiness', requireAuth, requireAnyPermission(
         migrations: false,
         mfa: false,
         backupDr: false,
-        documentStorage: false
+        documentStorage: false,
+        notifications: false
       },
       status: {
         datasource: 'json',

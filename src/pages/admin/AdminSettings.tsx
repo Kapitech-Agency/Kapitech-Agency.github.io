@@ -40,6 +40,7 @@ import { getCmsSiteMeta, saveCmsSiteMeta, SiteMetaSettings } from '../../lib/cms
 import { useLanguage } from '../../lib/LanguageContext';
 import { api } from '../../lib/apiClient';
 import { triggerFeedback } from '../../lib/uiFeedback';
+import { ProductionReadinessCard } from '../../components/admin/ProductionReadinessCard';
 
 export const AdminSettings: React.FC = () => {
   const { language, t } = useLanguage();
@@ -1485,6 +1486,8 @@ export const AdminSettings: React.FC = () => {
               </div>
             ))}
           </div>
+
+          {canAccessServer && <ProductionReadinessCard language={language} />}
 
           {canAccessServer && (
             <div className="p-5 rounded-2xl bg-[#181B22] border border-cyan-500/20 space-y-4">

@@ -65,6 +65,7 @@ export async function apiRequest<T = any>(
       }
       return {
         success: false,
+        data: json as T,
         error: json.error || `HTTP ${res.status}: ${res.statusText}`
       };
     }
@@ -366,7 +367,8 @@ export const api = {
         backupFresh: boolean;
         backupIntegrity: { valid: boolean; checkedAt: string; latestName?: string; reason?: string };
       };
-    }>('/api/system/security/status')
+    }>('/api/system/security/status'),
+    productionReadiness: () => apiRequest<{ success: boolean; productionReady: boolean; gates: Record<string, boolean>; status: any }>('/api/system/production-readiness')
   },
 
   // Notifications
