@@ -186,51 +186,50 @@ export function getAgencyVendors(): AgencyVendor[] {
   return vendorsCache;
 }
 
-export function saveAgencyVendor(vendor: AgencyVendor) {
-  try {
-    const current = getAgencyVendors();
-    const previous = [...current];
-    const idx = current.findIndex(v => v.id === vendor.id);
-    let updated: AgencyVendor[];
-    if (idx >= 0) {
-      updated = [...current];
-      updated[idx] = { ...vendor, updatedAt: new Date().toISOString() };
-    } else {
-      updated = [{ ...vendor, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() }, ...current];
-    }
-    vendorsCache = updated;
-    window.dispatchEvent(new Event(VENDOR_EVENT_NAME));
+export async function saveAgencyVendor(vendor: AgencyVendor): Promise<void> {
+  const current = getAgencyVendors();
+  const previous = [...current];
+  const idx = current.findIndex(v => v.id === vendor.id);
+  let updated: AgencyVendor[];
 
-    const request = idx >= 0 ? api.vendors.update(vendor.id, vendor) : api.vendors.create(vendor);
-    request.then((res) => {
-      if (res.success && res.data?.success !== false) return;
-      vendorsCache = previous;
-      window.dispatchEvent(new Event(VENDOR_EVENT_NAME));
-    }).catch(() => {
-      vendorsCache = previous;
-      window.dispatchEvent(new Event(VENDOR_EVENT_NAME));
-    });
-  } catch (err) {
-    console.error('Failed to save vendor:', err);
+  if (idx >= 0) {
+    updated = [...current];
+    updated[idx] = { ...vendor, updatedAt: new Date().toISOString() };
+  } else {
+    updated = [{
+      ...vendor,
+      createdAt: vendor.createdAt || new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    }, ...current];
   }
+
+  vendorsCache = updated;
+  window.dispatchEvent(new Event(VENDOR_EVENT_NAME));
+
+  const request = idx >= 0
+    ? api.vendors.update(vendor.id, vendor)
+    : api.vendors.create(vendor);
+  const res = await request;
+
+  if (res.success && res.data?.success !== false) return;
+
+  vendorsCache = previous;
+  window.dispatchEvent(new Event(VENDOR_EVENT_NAME));
+  throw new Error(res.error || 'Vendor could not be saved on the server.');
 }
 
-export function deleteAgencyVendor(id: string) {
-  try {
-    const current = getAgencyVendors();
-    const previous = [...current];
-    const updated = current.filter(v => v.id !== id);
-    vendorsCache = updated;
-    window.dispatchEvent(new Event(VENDOR_EVENT_NAME));
-    api.vendors.delete(id).then((res) => {
-      if (res.success && res.data?.success !== false) return;
-      vendorsCache = previous;
-      window.dispatchEvent(new Event(VENDOR_EVENT_NAME));
-    }).catch(() => {
-      vendorsCache = previous;
-      window.dispatchEvent(new Event(VENDOR_EVENT_NAME));
-    });
-  } catch (err) {
-    console.error('Failed to delete vendor:', err);
-  }
+export async function deleteAgencyVendor(id: string): Promise<void> {
+  const current = getAgencyVendors();
+  const previous = [...current];
+  const updated = current.filter(v => v.id !== id);
+
+  vendorsCache = updated;
+  window.dispatchEvent(new Event(VENDOR_EVENT_NAME));
+
+  const res = await api.vendors.delete(id);
+  if (res.success && res.data?.success !== false) return;
+
+  vendorsCache = previous;
+  window.dispatchEvent(new Event(VENDOR_EVENT_NAME));
+  throw new Error(res.error || 'Vendor could not be deleted on the server.');
 }

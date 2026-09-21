@@ -453,7 +453,7 @@ export const updateInvoiceStatus = (id: string, status: InvoiceStatus, actor: st
   }
 };
 
-export const recordInvoicePayment = (
+export const recordInvoicePayment = async (
   invoiceId: string,
   payment: {
     amount: number;
@@ -463,68 +463,39 @@ export const recordInvoicePayment = (
     recordedBy?: string;
     notes?: string;
   }
-): AgencyInvoice | null => {
+): Promise<AgencyInvoice | null> => {
   const current = getAgencyInvoices();
   const inv = current.find(i => i.id === invoiceId);
   if (!inv) return null;
 
-  const now = new Date().toISOString();
-  const paymentDate = payment.date || now.split('T')[0];
-  const newPayment: InvoicePaymentRecord = {
-    id: `pay_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+  const result = await api.finance.payInvoice(invoiceId, {
     amount: payment.amount,
-    date: paymentDate,
+    date: payment.date,
     method: payment.method,
     reference: payment.reference,
-    recordedBy: payment.recordedBy || 'Finance Officer',
     notes: payment.notes
-  };
-
-  const existingPayments = inv.payments || [];
-  const updatedPayments = [...existingPayments, newPayment];
-  const totalPaid = updatedPayments.reduce((acc, p) => acc + p.amount, 0);
-  const remaining = Math.max(0, inv.total - totalPaid);
-
-  let newStatus: InvoiceStatus = inv.status;
-  if (remaining <= 0) {
-    newStatus = 'paid';
-  } else if (totalPaid > 0) {
-    newStatus = 'partially_paid';
-  }
-
-  const auditTrail = inv.auditTrail || [];
-  auditTrail.push({
-    action: `Payment recorded: ${payment.amount} (${payment.method})`,
-    timestamp: now,
-    user: payment.recordedBy || 'Finance Officer',
-    note: payment.notes || (remaining <= 0 ? 'Full settlement achieved.' : `Balance remaining: ${remaining}`)
   });
 
-  const updated: AgencyInvoice = {
-    ...inv,
-    amountPaid: totalPaid,
-    balanceDue: remaining,
-    payments: updatedPayments,
-    status: newStatus,
-    paidDate: newStatus === 'paid' ? paymentDate : inv.paidDate,
-    auditTrail,
-    updatedAt: now
-  };
+  if (!result.success || !result.data?.invoice) {
+    throw new Error(result.error || 'Payment could not be recorded on the server.');
+  }
 
-  saveAgencyInvoice(updated);
+  const serverInvoice = result.data.invoice as AgencyInvoice;
+  invoiceCache = current.map((item) => item.id === serverInvoice.id ? serverInvoice : item);
+  window.dispatchEvent(new CustomEvent(FINANCE_EVENT_NAME, { detail: invoiceCache }));
 
-  if (newStatus === 'paid' && inv.status !== 'paid') {
+  if (serverInvoice.status === 'paid' && inv.status !== 'paid') {
     try {
       const clients = getAgencyClients();
-      const matchedClient = clients.find(c => 
+      const matchedClient = clients.find(c =>
         (inv.clientEmail && c.email.toLowerCase() === inv.clientEmail.toLowerCase()) ||
         (inv.clientCompany && c.company.toLowerCase() === inv.clientCompany.toLowerCase())
       );
       if (matchedClient) {
-        saveAgencyClient({
+        await saveAgencyClient({
           ...matchedClient,
           totalSpend: (matchedClient.totalSpend || 0) + payment.amount,
-          updatedAt: now
+          updatedAt: new Date().toISOString()
         });
       }
     } catch (e) {
@@ -532,7 +503,7 @@ export const recordInvoicePayment = (
     }
   }
 
-  return updated;
+  return serverInvoice;
 };
 
 export const approveInvoice = (id: string, approverName: string = 'Executive Sponsor', note?: string): void => {

@@ -193,7 +193,7 @@ export const AdminProjects: React.FC = () => {
     setIsProjectModalOpen(true);
   };
 
-  const handleSaveProject = (e: React.FormEvent) => {
+  const handleSaveProject = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!projName.trim() || !clientCompany.trim() || !driName.trim()) {
       alert(language === 'id' ? 'Nama proyek, perusahaan klien, dan DRI wajib diisi.' : 'Project name, client company, and DRI are required.');
@@ -228,16 +228,24 @@ export const AdminProjects: React.FC = () => {
       updatedAt: new Date().toISOString()
     };
 
-    saveAgencyProject(projectData);
-    setSelectedProjectId(projectData.id);
-    setIsProjectModalOpen(false);
-    showToast(language === 'id' ? 'Proyek berhasil disimpan.' : 'Project successfully saved.');
+    try {
+      await saveAgencyProject(projectData);
+      setSelectedProjectId(projectData.id);
+      setIsProjectModalOpen(false);
+      showToast(language === 'id' ? 'Proyek berhasil disimpan ke server.' : 'Project successfully saved to server.');
+    } catch (error: any) {
+      showToast(error?.message || (language === 'id' ? 'Gagal menyimpan proyek. Refresh data lalu coba lagi.' : 'Project save failed. Refresh the data and try again.'));
+    }
   };
 
-  const handleDeleteProject = (id: string, name: string) => {
+  const handleDeleteProject = async (id: string, name: string) => {
     if (window.confirm(`Hapus proyek "${name}" beserta seluruh task board?`)) {
-      deleteAgencyProject(id);
-      showToast(language === 'id' ? 'Proyek dihapus.' : 'Project deleted.');
+      try {
+        await deleteAgencyProject(id);
+        showToast(language === 'id' ? 'Proyek dihapus dari server.' : 'Project deleted from server.');
+      } catch (error: any) {
+        showToast(error?.message || (language === 'id' ? 'Gagal menghapus proyek.' : 'Failed to delete project.'));
+      }
     }
   };
 

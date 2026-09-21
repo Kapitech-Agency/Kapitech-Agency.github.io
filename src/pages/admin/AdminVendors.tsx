@@ -153,14 +153,20 @@ export const AdminVendors: React.FC = () => {
     setIsModalOpen(true);
   };
 
-  const handleToggleVettedQuick = (v: AgencyVendor, e: React.MouseEvent) => {
+  const handleToggleVettedQuick = async (v: AgencyVendor, e: React.MouseEvent) => {
     e.stopPropagation();
     const updated: AgencyVendor = {
       ...v,
       isVetted: !(v.isVetted ?? true),
       updatedAt: new Date().toISOString()
     };
-    saveAgencyVendor(updated);
+    try {
+      await saveAgencyVendor(updated);
+    } catch (error: any) {
+      setStatusMessage(error?.message || (language === 'id' ? 'Gagal memperbarui status vendor.' : 'Failed to update vendor status.'));
+      setTimeout(() => setStatusMessage(null), 3000);
+      return;
+    }
     if (selectedVendor && selectedVendor.id === v.id) {
       setSelectedVendor(updated);
     }
@@ -172,7 +178,7 @@ export const AdminVendors: React.FC = () => {
     setTimeout(() => setStatusMessage(null), 3000);
   };
 
-  const handleSaveVendor = (e: React.FormEvent) => {
+  const handleSaveVendor = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formName.trim() || !formEmail.trim()) {
       alert('Nama vendor dan email wajib diisi.');
@@ -208,9 +214,14 @@ export const AdminVendors: React.FC = () => {
       updatedAt: new Date().toISOString()
     };
 
-    saveAgencyVendor(vendorToSave);
-    setIsModalOpen(false);
-    setStatusMessage(language === 'id' ? 'Data vendor berhasil disimpan!' : 'Vendor profile saved successfully!');
+    try {
+      await saveAgencyVendor(vendorToSave);
+      setIsModalOpen(false);
+      setStatusMessage(language === 'id' ? 'Data vendor berhasil disimpan ke server!' : 'Vendor profile saved to server.');
+    } catch (error: any) {
+      setStatusMessage(error?.message || (language === 'id' ? 'Gagal menyimpan vendor.' : 'Failed to save vendor.'));
+      return;
+    }
     setTimeout(() => setStatusMessage(null), 3500);
 
     if (selectedVendor && selectedVendor.id === vendorToSave.id) {
@@ -218,9 +229,14 @@ export const AdminVendors: React.FC = () => {
     }
   };
 
-  const handleDeleteVendor = (id: string, name: string) => {
+  const handleDeleteVendor = async (id: string, name: string) => {
     if (window.confirm(language === 'id' ? `Hapus vendor ${name}?` : `Delete vendor ${name}?`)) {
-      deleteAgencyVendor(id);
+      try {
+        await deleteAgencyVendor(id);
+      } catch (error: any) {
+        setStatusMessage(error?.message || (language === 'id' ? 'Gagal menghapus vendor.' : 'Failed to delete vendor.'));
+        return;
+      }
       if (selectedVendor?.id === id) {
         setIsDrawerOpen(false);
         setSelectedVendor(null);
