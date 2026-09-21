@@ -1,6 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
+import { getDataSourceMode } from './data-source.ts';
+import { postgresAuditLogRepository } from './postgres-audit-log-repository.ts';
 
 // Path to persistent JSON database file
 const DATA_DIR = process.env.KAPITECH_DATA_DIR
@@ -1394,7 +1396,9 @@ setInterval(() => {
   }
 }, PERIODIC_BACKUP_INTERVAL_MS).unref();
 
-// Append-only tamper resistant audit log
+// Append-only tamper resistant audit log.
+let postgresAuditWriteChain: Promise<void> = Promise.resolve();
+
 export function recordAuditLog(entry: {
   action: string;
   actor: string;
@@ -1404,6 +1408,18 @@ export function recordAuditLog(entry: {
   details: string;
   severity?: 'info' | 'warning' | 'critical';
 }): void {
+  if (getDataSourceMode() === 'postgres') {
+    // Serialize appends so the hash chain remains deterministic even when several
+    // security events are emitted during the same request burst.
+    postgresAuditWriteChain = postgresAuditWriteChain
+      .then(() => postgresAuditLogRepository.append(entry))
+      .then(() => undefined)
+      .catch(error => {
+        console.error('[AuditLog] PostgreSQL append failed:', error);
+      });
+    return;
+  }
+
   const db = getDatabase();
   const previousHash = db.auditLogs?.[0]?.hash || 'GENESIS';
   const logWithoutHash: Omit<StoredAuditLog, 'hash'> = {
@@ -1424,5 +1440,5 @@ export function recordAuditLog(entry: {
     hash: computeAuditLogHash(logWithoutHash)
   };
 
-  db.auditLogs.unshift(log);  saveDatabase(db);
+  db.auditLogs.unshift(log); saveDatabase(db);
 }

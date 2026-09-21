@@ -60,6 +60,12 @@ import { postgresTaskRepository } from './postgres-task-repository.ts';
 import { postgresTimeLogRepository } from './postgres-time-log-repository.ts';
 import { postgresInvoiceRepository } from './postgres-invoice-repository.ts';
 import { postgresExpenseRepository, ExpenseImmutableError, ExpenseNotFoundError, ExpenseVersionConflictError, ExpenseProjectNotFoundError } from './postgres-expense-repository.ts';
+import { postgresApprovalRepository } from './postgres-approval-repository.ts';
+import { postgresNotificationRepository } from './postgres-notification-repository.ts';
+import { postgresDocumentRepository } from './postgres-document-repository.ts';
+import { postgresAuditLogRepository } from './postgres-audit-log-repository.ts';
+import { postgresCmsRepository } from './postgres-cms-repository.ts';
+import { postgresNotificationSettingsRepository } from './postgres-notification-settings-repository.ts';
 
 
 const ROLE_POLICIES: Record<string, {
@@ -194,7 +200,7 @@ function getInvoiceBalanceDue(invoice: any): number {
 }
 
 function pushNotification(
-  db: ReturnType<typeof getDatabase>,
+  db: ReturnType<typeof getDatabase> | undefined,
   input: {
     title: string;
     message: string;
@@ -204,8 +210,7 @@ function pushNotification(
     recipientUserId?: string;
   }
 ): void {
-  if (!Array.isArray(db.notifications)) db.notifications = [];
-  db.notifications.unshift({
+  const notification = {
     id: `notif_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
     title: cleanText(input.title, 180),
     message: cleanText(input.message, 1000),
@@ -216,7 +221,17 @@ function pushNotification(
     recipientUserId: input.recipientUserId || undefined,
     linkUrl: input.linkUrl || '/admin/dashboard',
     timestamp: new Date().toISOString()
-  });
+  };
+
+  if (getDataSourceMode() === 'postgres') {
+    void postgresNotificationRepository.create(notification).catch(error => {
+      console.error('[Notifications] Failed to persist PostgreSQL notification:', error);
+    });
+    return;
+  }
+
+  if (!Array.isArray(db.notifications)) db.notifications = [];
+  db.notifications.unshift(notification);
   db.notifications = db.notifications.slice(0, 500);
 }
 
@@ -1008,21 +1023,15 @@ apiRouter.post('/leads/submit', rateLimitPublic(10, 60 * 1000), async (req: Requ
     updatedAt: now
   };
 
+  let jsonDb: ReturnType<typeof getDatabase> | undefined;
   if (getDataSourceMode() === 'postgres') {
     await postgresLeadRepository.create(newLead);
   } else {
-    const db = getDatabase();
-    db.leads.unshift(newLead);
-    pushNotification(db, {
-      title: 'New inbound lead',
-      message: `${newLead.fullName}${newLead.company ? ` from ${newLead.company}` : ''} submitted a new inquiry.`,
-      type: 'lead',
-      severity: 'info',
-      linkUrl: '/admin/inbox'
-    });
-    saveDatabase(db);
+    jsonDb = getDatabase();
+    jsonDb.leads.unshift(newLead);
+    saveDatabase(jsonDb);
 
-    const notif = db.notificationSettings;
+    const notif = jsonDb.notificationSettings;
     const telegramBotToken = process.env.KAPITECH_TELEGRAM_BOT_TOKEN || notif.telegramBotToken;
     const telegramChatId = process.env.KAPITECH_TELEGRAM_CHAT_ID || notif.telegramChatId;
     if (notif.isTelegramActive && telegramBotToken && telegramChatId) {
@@ -1041,6 +1050,16 @@ apiRouter.post('/leads/submit', rateLimitPublic(10, 60 * 1000), async (req: Requ
       }).catch(err => console.debug('Telegram notification dispatch failed:', err));
     }
   }
+
+  pushNotification(getDataSourceMode() === 'json' ? jsonDb : undefined, {
+    title: 'New inbound lead',
+    message: `${newLead.fullName}${newLead.company ? ` from ${newLead.company}` : ''} submitted a new inquiry.`,
+    type: 'lead',
+    severity: 'info',
+    linkUrl: '/admin/inbox'
+  });
+
+  if (jsonDb) saveDatabase(jsonDb);
 
   recordAuditLog({
     action: 'LEAD_SUBMISSION',
@@ -1781,13 +1800,13 @@ apiRouter.post('/finance/invoices', requireAuth, requirePermission('canManageInv
   const discountPercent = Number.isFinite(Number(input.discountPercent)) ? Math.min(100, Math.max(0, Number(input.discountPercent))) : 0;
   const { subtotal, discountAmount, taxableSubtotal, taxAmount, total } = buildInvoiceFinancials(items, taxPercent, discountPercent);
 
-  const db = getDatabase();
+  const db = getDataSourceMode() === 'json' ? getDatabase() : undefined;
   const requestedNumber = String(input.invoiceNumber || '').trim();
   const invoiceNumber = requestedNumber && /^[A-Za-z0-9._/-]{1,80}$/.test(requestedNumber)
     ? requestedNumber
     : `INV-KAPI-${new Date().getFullYear()}-${crypto.randomInt(1000, 10000)}`;
 
-  if (db.invoices.some((invoice: any) => invoice.invoiceNumber === invoiceNumber)) {
+  if (db?.invoices?.some((invoice: any) => invoice.invoiceNumber === invoiceNumber)) {
     res.status(409).json({ success: false, error: 'Invoice number already exists.' });
     return;
   }
@@ -1842,8 +1861,8 @@ apiRouter.post('/finance/invoices', requireAuth, requirePermission('canManageInv
     }
   }
 
-  db.invoices.unshift(invoice);
-  saveDatabase(db);
+  db!.invoices.unshift(invoice);
+  saveDatabase(db!);
 
   recordAuditLog({
     action: 'INVOICE_CREATED',
@@ -2371,17 +2390,19 @@ apiRouter.delete('/vendors/:id', requireAuth, requirePermission('canManageVendor
 // ----------------------------------------------------
 
 // CMS Services (Public GET for published services, protected for drafts)
-apiRouter.get('/cms/services', (req: Request, res: Response): void => {
-  const db = getDatabase();
+apiRouter.get('/cms/services', async (req: Request, res: Response): Promise<void> => {
   const user = (req as AuthenticatedRequest).user;
   const canManage = Boolean(user && (user.stakeholderType === 'Master' || user.permissions?.canManageCmsContent));
-  const services = canManage ? db.cmsServices : db.cmsServices.filter(s => s.isPublished !== false);
+  const source = getDataSourceMode() === 'postgres'
+    ? await postgresCmsRepository.list('service')
+    : getDatabase().cmsServices;
+  const services = canManage ? source : source.filter((item: any) => item.isPublished !== false);
   res.json({ success: true, services });
 });
 
-apiRouter.post('/cms/services', requireAuth, requirePermission('canManageCmsContent'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.post('/cms/services', requireAuth, requirePermission('canManageCmsContent'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const item = req.body || {};
-  const db = getDatabase();
+  const now = new Date().toISOString();
   const newService = {
     id: `srv_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
     ...pickFields(item, [
@@ -2392,212 +2413,239 @@ apiRouter.post('/cms/services', requireAuth, requirePermission('canManageCmsCont
     slug: cleanText(item.slug, 160).toLowerCase().replace(/[^a-z0-9-]/g, '-'),
     title: cleanText(item.title, 200),
     isPublished: item.isPublished !== undefined ? Boolean(item.isPublished) : true,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
+    createdAt: now,
+    updatedAt: now
   };
+  if (getDataSourceMode() === 'postgres') {
+    const service = await postgresCmsRepository.create('service', newService);
+    res.json({ success: true, service });
+    return;
+  }
+  const db = getDatabase();
   db.cmsServices.unshift(newService);
   saveDatabase(db);
   res.json({ success: true, service: newService });
 });
 
-apiRouter.put('/cms/services/:id', requireAuth, requirePermission('canManageCmsContent'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.put('/cms/services/:id', requireAuth, requirePermission('canManageCmsContent'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
-  const updates = req.body || {};
-  const db = getDatabase();
-  const idx = db.cmsServices.findIndex(s => s.id === id);
-  if (idx === -1) {
-    res.status(404).json({ success: false, error: 'Service not found.' });
+  const patch = pickFields(req.body || {}, ['slug','type','category','title','navSubtitle','navSubtitleId','heroHeadline','heroHeadlineId','heroSubtitle','heroSubtitleId','badge','badgeId','metrics','capabilities','technologies','deliverables','testimonial','featured','isPublished']);
+  if (getDataSourceMode() === 'postgres') {
+    const service = await postgresCmsRepository.update('service', id, patch);
+    if (!service) { res.status(404).json({ success: false, error: 'Service not found.' }); return; }
+    res.json({ success: true, service });
     return;
   }
-  const patch = pickFields(updates, ['slug','type','category','title','navSubtitle','navSubtitleId','heroHeadline','heroHeadlineId','heroSubtitle','heroSubtitleId','badge','badgeId','metrics','capabilities','technologies','deliverables','testimonial','featured','isPublished']);
+  const db = getDatabase();
+  const idx = db.cmsServices.findIndex(s => s.id === id);
+  if (idx === -1) { res.status(404).json({ success: false, error: 'Service not found.' }); return; }
   db.cmsServices[idx] = { ...db.cmsServices[idx], ...patch, updatedAt: new Date().toISOString() };
   saveDatabase(db);
   res.json({ success: true, service: db.cmsServices[idx] });
 });
 
-apiRouter.delete('/cms/services/:id', requireAuth, requirePermission('canManageCmsContent'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.delete('/cms/services/:id', requireAuth, requirePermission('canManageCmsContent'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
-  const db = getDatabase();
-  const service = db.cmsServices.find((item: any) => item.id === id);
-  if (!service) {
-    res.status(404).json({ success: false, error: 'Service not found.' });
+  if (getDataSourceMode() === 'postgres') {
+    const service = await postgresCmsRepository.findById('service', req.params.id);
+    if (!service) { res.status(404).json({ success: false, error: 'Service not found.' }); return; }
+    await postgresCmsRepository.delete('service', req.params.id);
+    recordAuditLog({ action: 'CMS_SERVICE_DELETED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Deleted CMS service "${service.title || service.name || id}".`, severity: 'warning' });
+    res.json({ success: true, message: 'Service deleted.' });
     return;
   }
+  const db = getDatabase();
+  const service = db.cmsServices.find((item: any) => item.id === id);
+  if (!service) { res.status(404).json({ success: false, error: 'Service not found.' }); return; }
   db.cmsServices = db.cmsServices.filter(s => s.id !== id);
   saveDatabase(db);
-  recordAuditLog({
-    action: 'CMS_SERVICE_DELETED',
-    actor: req.user!.username,
-    actorRole: req.user!.role,
-    ip: req.ip,
-    userAgent: req.headers['user-agent'] as string,
-    details: `Deleted CMS service "${service.title || id}".`,
-    severity: 'warning'
-  });
+  recordAuditLog({ action: 'CMS_SERVICE_DELETED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Deleted CMS service "${service.title || id}".`, severity: 'warning' });
   res.json({ success: true, message: 'Service deleted.' });
 });
 
 // CMS Projects
-apiRouter.get('/cms/projects', (req: Request, res: Response): void => {
-  const db = getDatabase();
+apiRouter.get('/cms/projects', async (req: Request, res: Response): Promise<void> => {
   const user = (req as AuthenticatedRequest).user;
   const canManage = Boolean(user && (user.stakeholderType === 'Master' || user.permissions?.canManageCmsContent));
-  const projects = canManage ? db.cmsProjects : db.cmsProjects.filter(p => p.isPublished !== false);
+  const source = getDataSourceMode() === 'postgres'
+    ? await postgresCmsRepository.list('project')
+    : getDatabase().cmsProjects;
+  const projects = canManage ? source : source.filter((item: any) => item.isPublished !== false);
   res.json({ success: true, projects });
 });
 
-apiRouter.post('/cms/projects', requireAuth, requirePermission('canManageCmsContent'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.post('/cms/projects', requireAuth, requirePermission('canManageCmsContent'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const item = req.body || {};
-  const db = getDatabase();
+  const now = new Date().toISOString();
   const newProj = {
     id: `proj_cms_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
-    ...pickFields(item, [
-      'slug','title','client','industry','pillar','service','featured','image','desc','descId',
-      'challenge','challengeId','solution','solutionId','deliverables','technologies','impact','year','isPublished'
-    ]),
+    ...pickFields(item, ['slug','title','client','industry','pillar','service','featured','image','desc','descId','challenge','challengeId','solution','solutionId','deliverables','technologies','impact','year','isPublished']),
     slug: cleanText(item.slug, 160).toLowerCase().replace(/[^a-z0-9-]/g, '-'),
     title: cleanText(item.title, 240),
     isPublished: item.isPublished !== undefined ? Boolean(item.isPublished) : true,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
+    createdAt: now,
+    updatedAt: now
   };
+  if (getDataSourceMode() === 'postgres') {
+    const project = await postgresCmsRepository.create('project', newProj);
+    res.json({ success: true, project });
+    return;
+  }
+  const db = getDatabase();
   db.cmsProjects.unshift(newProj);
   saveDatabase(db);
   res.json({ success: true, project: newProj });
 });
 
-apiRouter.put('/cms/projects/:id', requireAuth, requirePermission('canManageCmsContent'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.put('/cms/projects/:id', requireAuth, requirePermission('canManageCmsContent'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
-  const updates = req.body || {};
-  const db = getDatabase();
-  const idx = db.cmsProjects.findIndex(p => p.id === id);
-  if (idx === -1) {
-    res.status(404).json({ success: false, error: 'Project not found.' });
+  const patch = pickFields(req.body || {}, ['slug','title','client','industry','pillar','service','featured','image','desc','descId','challenge','challengeId','solution','solutionId','deliverables','technologies','impact','year','isPublished']);
+  if (getDataSourceMode() === 'postgres') {
+    const project = await postgresCmsRepository.update('project', id, patch);
+    if (!project) { res.status(404).json({ success: false, error: 'Project not found.' }); return; }
+    res.json({ success: true, project });
     return;
   }
-  const patch = pickFields(updates, ['slug','title','client','industry','pillar','service','featured','image','desc','descId','challenge','challengeId','solution','solutionId','deliverables','technologies','impact','year','isPublished']);
+  const db = getDatabase();
+  const idx = db.cmsProjects.findIndex(p => p.id === id);
+  if (idx === -1) { res.status(404).json({ success: false, error: 'Project not found.' }); return; }
   db.cmsProjects[idx] = { ...db.cmsProjects[idx], ...patch, updatedAt: new Date().toISOString() };
   saveDatabase(db);
   res.json({ success: true, project: db.cmsProjects[idx] });
 });
 
-apiRouter.delete('/cms/projects/:id', requireAuth, requirePermission('canManageCmsContent'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.delete('/cms/projects/:id', requireAuth, requirePermission('canManageCmsContent'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
-  const db = getDatabase();
-  const project = db.cmsProjects.find((item: any) => item.id === id);
-  if (!project) {
-    res.status(404).json({ success: false, error: 'Project not found.' });
+  if (getDataSourceMode() === 'postgres') {
+    const project = await postgresCmsRepository.findById('project', req.params.id);
+    if (!project) { res.status(404).json({ success: false, error: 'Project not found.' }); return; }
+    await postgresCmsRepository.delete('project', req.params.id);
+    recordAuditLog({ action: 'CMS_PROJECT_DELETED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Deleted CMS project "${project.title || project.name || id}".`, severity: 'warning' });
+    res.json({ success: true, message: 'Project deleted.' });
     return;
   }
+  const db = getDatabase();
+  const project = db.cmsProjects.find((item: any) => item.id === id);
+  if (!project) { res.status(404).json({ success: false, error: 'Project not found.' }); return; }
   db.cmsProjects = db.cmsProjects.filter(p => p.id !== id);
   saveDatabase(db);
-  recordAuditLog({
-    action: 'CMS_PROJECT_DELETED',
-    actor: req.user!.username,
-    actorRole: req.user!.role,
-    ip: req.ip,
-    userAgent: req.headers['user-agent'] as string,
-    details: `Deleted CMS project "${project.title || id}".`,
-    severity: 'warning'
-  });
+  recordAuditLog({ action: 'CMS_PROJECT_DELETED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Deleted CMS project "${project.title || id}".`, severity: 'warning' });
   res.json({ success: true, message: 'Project deleted.' });
 });
 
 // CMS Testimonials
-apiRouter.get('/cms/testimonials', (req: Request, res: Response): void => {
-  const db = getDatabase();
+apiRouter.get('/cms/testimonials', async (req: Request, res: Response): Promise<void> => {
   const user = (req as AuthenticatedRequest).user;
   const canManage = Boolean(user && (user.stakeholderType === 'Master' || user.permissions?.canManageCmsContent));
-  const testimonials = canManage ? db.cmsTestimonials : db.cmsTestimonials.filter(t => t.isPublished !== false);
+  const source = getDataSourceMode() === 'postgres'
+    ? await postgresCmsRepository.list('testimonial')
+    : getDatabase().cmsTestimonials;
+  const testimonials = canManage ? source : source.filter((item: any) => item.isPublished !== false);
   res.json({ success: true, testimonials });
 });
 
-apiRouter.post('/cms/testimonials', requireAuth, requirePermission('canManageCmsContent'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.post('/cms/testimonials', requireAuth, requirePermission('canManageCmsContent'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const item = req.body || {};
-  const db = getDatabase();
   const rating = Number(item.rating);
+  const now = new Date().toISOString();
   const newTestimonial = {
     id: `test_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
     quote: cleanText(item.quote, 2000),
     quoteId: cleanText(item.quoteId, 2000),
     author: cleanText(item.author, 160),
+    name: cleanText(item.author, 160),
     role: cleanText(item.role, 160),
     company: cleanText(item.company, 200),
     location: cleanText(item.location, 160),
     rating: Number.isFinite(rating) ? Math.min(5, Math.max(0, rating)) : 5,
     avatar: cleanOptionalUrl(item.avatar),
     isPublished: item.isPublished !== undefined ? Boolean(item.isPublished) : true,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
+    createdAt: now,
+    updatedAt: now
   };
+  if (getDataSourceMode() === 'postgres') {
+    const testimonial = await postgresCmsRepository.create('testimonial', newTestimonial);
+    res.json({ success: true, testimonial });
+    return;
+  }
+  const db = getDatabase();
   db.cmsTestimonials.unshift(newTestimonial);
   saveDatabase(db);
   res.json({ success: true, testimonial: newTestimonial });
 });
 
-apiRouter.put('/cms/testimonials/:id', requireAuth, requirePermission('canManageCmsContent'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.put('/cms/testimonials/:id', requireAuth, requirePermission('canManageCmsContent'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
-  const updates = req.body || {};
-  const db = getDatabase();
-  const idx = db.cmsTestimonials.findIndex(t => t.id === id);
-  if (idx === -1) {
-    res.status(404).json({ success: false, error: 'Testimonial not found.' });
+  const patch = pickFields(req.body || {}, ['quote','quoteId','author','role','company','location','rating','avatar','isPublished']);
+  if (getDataSourceMode() === 'postgres') {
+    const testimonial = await postgresCmsRepository.update('testimonial', id, patch);
+    if (!testimonial) { res.status(404).json({ success: false, error: 'Testimonial not found.' }); return; }
+    res.json({ success: true, testimonial });
     return;
   }
-  const patch = pickFields(updates, ['quote','quoteId','author','role','company','location','rating','avatar','isPublished']);
+  const db = getDatabase();
+  const idx = db.cmsTestimonials.findIndex(t => t.id === id);
+  if (idx === -1) { res.status(404).json({ success: false, error: 'Testimonial not found.' }); return; }
   db.cmsTestimonials[idx] = { ...db.cmsTestimonials[idx], ...patch, updatedAt: new Date().toISOString() };
   saveDatabase(db);
   res.json({ success: true, testimonial: db.cmsTestimonials[idx] });
 });
 
-apiRouter.delete('/cms/testimonials/:id', requireAuth, requirePermission('canManageCmsContent'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.delete('/cms/testimonials/:id', requireAuth, requirePermission('canManageCmsContent'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
-  const db = getDatabase();
-  const testimonial = db.cmsTestimonials.find((item: any) => item.id === id);
-  if (!testimonial) {
-    res.status(404).json({ success: false, error: 'Testimonial not found.' });
+  if (getDataSourceMode() === 'postgres') {
+    const testimonial = await postgresCmsRepository.findById('testimonial', req.params.id);
+    if (!testimonial) { res.status(404).json({ success: false, error: 'Testimonial not found.' }); return; }
+    await postgresCmsRepository.delete('testimonial', req.params.id);
+    recordAuditLog({ action: 'CMS_TESTIMONIAL_DELETED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Deleted CMS testimonial "${testimonial.author || testimonial.name || id}".`, severity: 'warning' });
+    res.json({ success: true, message: 'Testimonial deleted.' });
     return;
   }
+  const db = getDatabase();
+  const testimonial = db.cmsTestimonials.find((item: any) => item.id === id);
+  if (!testimonial) { res.status(404).json({ success: false, error: 'Testimonial not found.' }); return; }
   db.cmsTestimonials = db.cmsTestimonials.filter(t => t.id !== id);
   saveDatabase(db);
-  recordAuditLog({
-    action: 'CMS_TESTIMONIAL_DELETED',
-    actor: req.user!.username,
-    actorRole: req.user!.role,
-    ip: req.ip,
-    userAgent: req.headers['user-agent'] as string,
-    details: `Deleted CMS testimonial "${testimonial.author || id}".`,
-    severity: 'warning'
-  });
+  recordAuditLog({ action: 'CMS_TESTIMONIAL_DELETED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Deleted CMS testimonial "${testimonial.author || id}".`, severity: 'warning' });
   res.json({ success: true, message: 'Testimonial deleted.' });
 });
 
 // CMS Settings
-apiRouter.get('/cms/settings', requireAuth, requirePermission('canManageCmsContent'), (req: AuthenticatedRequest, res: Response): void => {
-  const db = getDatabase();
-  res.json({ success: true, settings: db.cmsSettings });
+apiRouter.get('/cms/settings', requireAuth, requirePermission('canManageCmsContent'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  const settings = getDataSourceMode() === 'postgres'
+    ? await postgresCmsRepository.getSettings()
+    : getDatabase().cmsSettings;
+  res.json({ success: true, settings });
 });
 
-apiRouter.put('/cms/settings', requireAuth, requirePermission('canManageCmsContent'), (req: AuthenticatedRequest, res: Response): void => {
-  const db = getDatabase();
+apiRouter.put('/cms/settings', requireAuth, requirePermission('canManageCmsContent'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const patch = pickFields(req.body || {}, ['siteTitle','siteDescription','contactReceiverEmail','defaultLanguage','enableLiveChat','enableSoundAlerts','maintenanceMode']);
+  if (getDataSourceMode() === 'postgres') {
+    const settings = await postgresCmsRepository.updateSettings(patch);
+    recordAuditLog({ action: 'CMS_SETTINGS_UPDATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: 'Updated CMS settings.', severity: 'info' });
+    res.json({ success: true, settings });
+    return;
+  }
+  const db = getDatabase();
   db.cmsSettings = { ...db.cmsSettings, ...patch, updatedAt: new Date().toISOString() };
   saveDatabase(db);
   res.json({ success: true, settings: db.cmsSettings });
 });
-
 // ----------------------------------------------------
 // 9. AUDIT LOGS (Server-Side, Tamper-Resistant)
 // ----------------------------------------------------
 
-apiRouter.get('/audit-logs', requireAuth, requirePermission('canViewSecurityAuditLogs'), (req: AuthenticatedRequest, res: Response): void => {
-  const db = getDatabase();
-  res.json({ success: true, logs: db.auditLogs });
+apiRouter.get('/audit-logs', requireAuth, requirePermission('canViewSecurityAuditLogs'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  const logs = getDataSourceMode() === 'postgres'
+    ? await postgresAuditLogRepository.list()
+    : getDatabase().auditLogs;
+  res.json({ success: true, logs });
 });
 
-apiRouter.get('/audit-logs/integrity', requireAuth, requirePermission('canViewSecurityAuditLogs'), (req: AuthenticatedRequest, res: Response): void => {
-  const db = getDatabase();
-  const integrity = verifyAuditLogChain(db);
+apiRouter.get('/audit-logs/integrity', requireAuth, requirePermission('canViewSecurityAuditLogs'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  const integrity = getDataSourceMode() === 'postgres'
+    ? await postgresAuditLogRepository.verifyChain()
+    : verifyAuditLogChain(getDatabase());
   res.status(integrity.valid ? 200 : 409).json({
     success: integrity.valid,
     integrity
@@ -2608,9 +2656,10 @@ apiRouter.get('/audit-logs/integrity', requireAuth, requirePermission('canViewSe
 // 10. NOTIFICATION SETTINGS (Secrets kept strictly on server)
 // ----------------------------------------------------
 
-apiRouter.get('/notifications/settings', requireAuth, requirePermission('canAccessServerAndApi'), (req: AuthenticatedRequest, res: Response): void => {
-  const db = getDatabase();
-  const s = db.notificationSettings;
+apiRouter.get('/notifications/settings', requireAuth, requirePermission('canAccessServerAndApi'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  const s = getDataSourceMode() === 'postgres'
+    ? await postgresNotificationSettingsRepository.get()
+    : getDatabase().notificationSettings;
   res.json({
     success: true,
     settings: {
@@ -2624,24 +2673,34 @@ apiRouter.get('/notifications/settings', requireAuth, requirePermission('canAcce
   });
 });
 
-apiRouter.put('/notifications/settings', requireAuth, requirePermission('canAccessServerAndApi'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.put('/notifications/settings', requireAuth, requirePermission('canAccessServerAndApi'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { targetEmail, formspreeEndpoint, telegramChatId, isEmailActive, isTelegramActive } = req.body;
+  if (getDataSourceMode() === 'postgres') {
+    const current = await postgresNotificationSettingsRepository.get();
+    const nextTargetEmail = targetEmail !== undefined ? cleanText(targetEmail, 254).toLowerCase() : current.targetEmail;
+    const nextFormspreeEndpoint = formspreeEndpoint !== undefined ? cleanOptionalUrl(formspreeEndpoint) : current.formspreeEndpoint;
+    const nextTelegramChatId = telegramChatId !== undefined ? cleanText(telegramChatId, 120) : current.telegramChatId;
+    if (nextTargetEmail && !isValidEmail(nextTargetEmail)) { res.status(400).json({ success: false, error: 'Invalid notification target email address.' }); return; }
+    if (nextFormspreeEndpoint && !/^https:\/\/(?:www\.)?formspree\.io\//i.test(nextFormspreeEndpoint)) { res.status(400).json({ success: false, error: 'Only Formspree HTTPS endpoints are allowed.' }); return; }
+    const settings = await postgresNotificationSettingsRepository.update({
+      targetEmail: nextTargetEmail,
+      formspreeEndpoint: nextFormspreeEndpoint,
+      telegramChatId: nextTelegramChatId,
+      isEmailActive: isEmailActive !== undefined ? Boolean(isEmailActive) : current.isEmailActive,
+      isTelegramActive: isTelegramActive !== undefined ? Boolean(isTelegramActive) : current.isTelegramActive
+    });
+    recordAuditLog({ action: 'SETTINGS_UPDATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: 'Updated notification and dispatch channel settings.', severity: 'info' });
+    res.json({ success: true, message: 'Notification settings saved.' });
+    return;
+  }
+
   const db = getDatabase();
   const current = db.notificationSettings;
-
   const nextTargetEmail = targetEmail !== undefined ? cleanText(targetEmail, 254).toLowerCase() : current.targetEmail;
   const nextFormspreeEndpoint = formspreeEndpoint !== undefined ? cleanOptionalUrl(formspreeEndpoint) : current.formspreeEndpoint;
   const nextTelegramChatId = telegramChatId !== undefined ? cleanText(telegramChatId, 120) : current.telegramChatId;
-
-  if (nextTargetEmail && !isValidEmail(nextTargetEmail)) {
-    res.status(400).json({ success: false, error: 'Invalid notification target email address.' });
-    return;
-  }
-  if (nextFormspreeEndpoint && !/^https:\/\/(?:www\.)?formspree\.io\//i.test(nextFormspreeEndpoint)) {
-    res.status(400).json({ success: false, error: 'Only Formspree HTTPS endpoints are allowed.' });
-    return;
-  }
-
+  if (nextTargetEmail && !isValidEmail(nextTargetEmail)) { res.status(400).json({ success: false, error: 'Invalid notification target email address.' }); return; }
+  if (nextFormspreeEndpoint && !/^https:\/\/(?:www\.)?formspree\.io\//i.test(nextFormspreeEndpoint)) { res.status(400).json({ success: false, error: 'Only Formspree HTTPS endpoints are allowed.' }); return; }
   db.notificationSettings = {
     targetEmail: nextTargetEmail,
     formspreeEndpoint: nextFormspreeEndpoint,
@@ -2651,22 +2710,10 @@ apiRouter.put('/notifications/settings', requireAuth, requirePermission('canAcce
     isTelegramActive: isTelegramActive !== undefined ? Boolean(isTelegramActive) : current.isTelegramActive,
     updatedAt: new Date().toISOString()
   };
-
   saveDatabase(db);
-
-  recordAuditLog({
-    action: 'SETTINGS_UPDATED',
-    actor: req.user!.username,
-    actorRole: req.user!.role,
-    ip: req.ip,
-    userAgent: req.headers['user-agent'] as string,
-    details: 'Updated notification and dispatch channel settings.',
-    severity: 'info'
-  });
-
+  recordAuditLog({ action: 'SETTINGS_UPDATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: 'Updated notification and dispatch channel settings.', severity: 'info' });
   res.json({ success: true, message: 'Notification settings saved.' });
 });
-
 // ----------------------------------------------------
 // 11. SERVER-SIDE GEMINI INTEGRATION (Key never exposed to browser)
 // ----------------------------------------------------
@@ -2749,6 +2796,10 @@ apiRouter.post('/ai/generate', requireAuth, requirePermission('canAccessServerAn
 // ----------------------------------------------------
 
 apiRouter.post('/migration/import-local', requireAuth, requirePermission('canRunDataMigration'), (req: AuthenticatedRequest, res: Response): void => {
+  if (getDataSourceMode() === 'postgres') {
+    res.status(409).json({ success: false, error: 'Legacy JSON import is disabled while PostgreSQL is the active datasource. Use the relational migration pipeline.' });
+    return;
+  }
   const { leads, clients, projects, invoices, expenses, vendors, cmsServices, cmsProjects, cmsTestimonials } = req.body;
   const db = getDatabase();
   let importedCount = 0;
@@ -2865,7 +2916,7 @@ apiRouter.get('/crm/proposals', requireAuth, requirePermission('canManageCrm'), 
 
 apiRouter.post('/crm/proposals', requireAuth, requirePermission('canManageCrm'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const data = req.body;
-  const db = getDatabase();
+  const db = getDataSourceMode() === 'json' ? getDatabase() : undefined;
 
   const rawItems = Array.isArray(data.items) ? data.items : [];
   const items = rawItems.slice(0, 100).map((item: any) => ({
@@ -2916,9 +2967,9 @@ apiRouter.post('/crm/proposals', requireAuth, requirePermission('canManageCrm'),
 
   if (getDataSourceMode() === 'postgres') { const proposal = await postgresProposalRepository.create(newProposal); recordAuditLog({ action: 'PROPOSAL_CREATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Created proposal ${proposal.proposalNumber} for ${proposal.clientName || proposal.company} (Total: ${proposal.total}).`, severity: 'info' }); res.json({ success: true, proposal }); return; }
 
-  if (!db.proposals) db.proposals = [];
-  db.proposals.unshift(newProposal);
-  saveDatabase(db);
+  if (!db?.proposals) db!.proposals = [];
+  db!.proposals.unshift(newProposal);
+  saveDatabase(db!);
 
   recordAuditLog({
     action: 'PROPOSAL_CREATED',
@@ -2936,8 +2987,8 @@ apiRouter.post('/crm/proposals', requireAuth, requirePermission('canManageCrm'),
 apiRouter.put('/crm/proposals/:id', requireAuth, requirePermission('canManageCrm'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
   const updates = req.body || {};
-  const db = getDatabase();
-  const idx = (db.proposals || []).findIndex(p => p.id === id);
+  const db = getDataSourceMode() === 'json' ? getDatabase() : undefined;
+  const idx = db?.proposals?.findIndex(p => p.id === id) ?? -1;
 
   if (getDataSourceMode() === 'postgres') {
     const existing = await postgresProposalRepository.findById(id);
@@ -2970,7 +3021,7 @@ apiRouter.put('/crm/proposals/:id', requireAuth, requirePermission('canManageCrm
     return;
   }
 
-  const existing = db.proposals[idx];
+  const existing = db!.proposals[idx];
   const items = Array.isArray(updates.items) ? updates.items.slice(0, 100).map((item: any) => ({
     id: cleanText(item?.id || crypto.randomBytes(4).toString('hex'), 80),
     description: cleanText(item?.description, 500),
@@ -3007,7 +3058,7 @@ apiRouter.put('/crm/proposals/:id', requireAuth, requirePermission('canManageCrm
     res.status(400).json({ success: false, error: 'Invalid proposal sent date.' });
     return;
   }
-  db.proposals[idx] = {
+  db!.proposals[idx] = {
     ...existing,
     ...patch,
     items,
@@ -3019,17 +3070,17 @@ apiRouter.put('/crm/proposals/:id', requireAuth, requirePermission('canManageCrm
     updatedAt: new Date().toISOString()
   };
 
-  saveDatabase(db);
+  saveDatabase(db!);
   recordAuditLog({
     action: 'PROPOSAL_UPDATED',
     actor: req.user!.username,
     actorRole: req.user!.role,
     ip: req.ip,
     userAgent: req.headers['user-agent'] as string,
-    details: `Updated proposal ${db.proposals[idx].proposalNumber}.`,
+    details: `Updated proposal ${db!.proposals[idx].proposalNumber}.`,
     severity: 'info'
   });
-  res.json({ success: true, proposal: db.proposals[idx] });
+  res.json({ success: true, proposal: db!.proposals[idx] });
 });
 
 apiRouter.post('/crm/proposals/:id/approve', requireAuth, requirePermission('canApproveBudgets'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
@@ -3271,128 +3322,93 @@ apiRouter.delete('/projects/timelogs/:id', requireAuth, requireAnyPermission('ca
 // 15. APPROVALS CENTER (PART 24)
 // ----------------------------------------------------
 
-apiRouter.get('/approvals', requireAuth, requireAnyPermission('canApproveBudgets', 'canManageProjects', 'canViewFinancials'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.get('/approvals', requireAuth, requireAnyPermission('canApproveBudgets', 'canManageProjects', 'canViewFinancials'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  if (getDataSourceMode() === 'postgres') {
+    const approvals = await postgresApprovalRepository.list();
+    res.json({ success: true, approvals });
+    return;
+  }
   const db = getDatabase();
   res.json({ success: true, approvals: db.approvals || [] });
 });
 
-apiRouter.post('/approvals', requireAuth, requireAnyPermission('canManageProjects', 'canApproveBudgets'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.post('/approvals', requireAuth, requireAnyPermission('canManageProjects', 'canApproveBudgets'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const data = req.body || {};
   const type = String(data.type || 'Invoice').trim().slice(0, 80);
   const referenceId = String(data.referenceId || '').trim().slice(0, 120);
   const title = String(data.title || 'Approval Request').trim().slice(0, 200);
   const reason = String(data.reason || 'Standard operational review').trim().slice(0, 2000);
-  const riskLevel = ['Low', 'Medium', 'High', 'Critical'].includes(String(data.riskLevel))
-    ? String(data.riskLevel)
-    : 'Low';
+  const riskLevel = ['Low', 'Medium', 'High', 'Critical'].includes(String(data.riskLevel)) ? String(data.riskLevel) : 'Low';
   const value = Number(data.value);
-
   if (!title || !reason || !Number.isFinite(value) || value < 0) {
     res.status(400).json({ success: false, error: 'Approval title, reason, and a valid non-negative value are required.' });
     return;
   }
-
-  const db = getDatabase();
   const newApproval = {
     id: `appr_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
-    type,
-    referenceId,
-    title,
+    type, referenceId, title,
     requesterId: req.user!.id,
     requester: req.user!.name || req.user!.username,
     requesterRole: req.user!.role,
-    value,
-    date: new Date().toISOString().split('T')[0],
-    reason,
-    riskLevel,
-    status: 'Pending',
-    createdAt: new Date().toISOString()
+    value, date: new Date().toISOString().split('T')[0],
+    reason, riskLevel, status: 'Pending', createdAt: new Date().toISOString()
   };
-
+  if (getDataSourceMode() === 'postgres') {
+    const approval = await postgresApprovalRepository.create(newApproval);
+    pushNotification(undefined, { title: 'Approval request pending', message: `${newApproval.title} requires an independent review.`, type: 'approval', severity: riskLevel === 'Critical' ? 'critical' : riskLevel === 'High' ? 'warning' : 'info', linkUrl: '/admin/approvals' });
+    res.status(201).json({ success: true, approval });
+    return;
+  }
+  const db = getDatabase();
   if (!db.approvals) db.approvals = [];
   db.approvals.unshift(newApproval);
-  pushNotification(db, {
-    title: 'Approval request pending',
-    message: `${newApproval.title} requires an independent review.`,
-    type: 'approval',
-    severity: riskLevel === 'Critical' ? 'critical' : riskLevel === 'High' ? 'warning' : 'info',
-    linkUrl: '/admin/approvals'
-  });
+  pushNotification(db, { title: 'Approval request pending', message: `${newApproval.title} requires an independent review.`, type: 'approval', severity: riskLevel === 'Critical' ? 'critical' : riskLevel === 'High' ? 'warning' : 'info', linkUrl: '/admin/approvals' });
   saveDatabase(db);
-
-  recordAuditLog({
-    action: 'APPROVAL_CREATED',
-    actor: req.user!.username,
-    actorRole: req.user!.role,
-    ip: req.ip,
-    userAgent: req.headers['user-agent'] as string,
-    details: `Created approval request "${title}" for ${value}.`,
-    severity: riskLevel === 'Critical' ? 'critical' : riskLevel === 'High' ? 'warning' : 'info'
-  });
-
-  res.json({ success: true, approval: newApproval });
+  recordAuditLog({ action: 'APPROVAL_CREATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Created approval request "${title}" for ${value}.`, severity: riskLevel === 'Critical' ? 'critical' : riskLevel === 'High' ? 'warning' : 'info' });
+  res.status(201).json({ success: true, approval: newApproval });
 });
 
-apiRouter.post('/approvals/:id/action', requireAuth, requirePermission('canApproveBudgets'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.post('/approvals/:id/action', requireAuth, requirePermission('canApproveBudgets'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
   const action = String(req.body?.action || '');
   const notes = String(req.body?.notes || '').trim().slice(0, 2000);
   const allowedActions = new Set(['Approve', 'Reject', 'Request Changes']);
-
   if (!allowedActions.has(action)) {
     res.status(400).json({ success: false, error: 'Invalid approval action.' });
     return;
   }
-
+  if (getDataSourceMode() === 'postgres') {
+    const item = await postgresApprovalRepository.findById(id);
+    if (!item) { res.status(404).json({ success: false, error: 'Approval item not found.' }); return; }
+    if (item.status !== 'Pending') { res.status(409).json({ success: false, error: 'This approval request has already been resolved.' }); return; }
+    if (item.requesterId === req.user!.id) {
+      recordAuditLog({ action: 'APPROVAL_SELF_ACTION_BLOCKED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Blocked self-approval action "${action}" on approval item "${item.title}".`, severity: 'warning' });
+      res.status(403).json({ success: false, error: 'Maker-checker control: the requester cannot approve or reject their own request.' });
+      return;
+    }
+    const status = action === 'Approve' ? 'Approved' : action === 'Reject' ? 'Rejected' : 'Changes Requested';
+    const updated = await postgresApprovalRepository.action(id, status, req.user!, notes);
+    recordAuditLog({ action: `APPROVAL_${action.toUpperCase().replace(/ /g, '_')}`, actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `${action} decision executed for approval item "${item.title}".`, severity: action === 'Reject' ? 'warning' : 'info' });
+    res.json({ success: true, approval: updated });
+    return;
+  }
   const db = getDatabase();
   const item = (db.approvals || []).find(a => a.id === id);
-
-  if (!item) {
-    res.status(404).json({ success: false, error: 'Approval item not found.' });
-    return;
-  }
-
-  if (item.status !== 'Pending') {
-    res.status(409).json({ success: false, error: 'This approval request has already been resolved.' });
-    return;
-  }
-
+  if (!item) { res.status(404).json({ success: false, error: 'Approval item not found.' }); return; }
+  if (item.status !== 'Pending') { res.status(409).json({ success: false, error: 'This approval request has already been resolved.' }); return; }
   if (item.requesterId && item.requesterId === req.user!.id) {
-    recordAuditLog({
-      action: 'APPROVAL_SELF_ACTION_BLOCKED',
-      actor: req.user!.username,
-      actorRole: req.user!.role,
-      ip: req.ip,
-      userAgent: req.headers['user-agent'] as string,
-      details: `Blocked self-approval action "${action}" on approval item "${item.title}".`,
-      severity: 'warning'
-    });
+    recordAuditLog({ action: 'APPROVAL_SELF_ACTION_BLOCKED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Blocked self-approval action "${action}" on approval item "${item.title}".`, severity: 'warning' });
     res.status(403).json({ success: false, error: 'Maker-checker control: the requester cannot approve or reject their own request.' });
     return;
   }
-
   if (!item.requesterId && item.requester) {
     const legacyRequester = db.users.find(u => u.name === item.requester || u.username === item.requester);
     if (legacyRequester) item.requesterId = legacyRequester.id;
   }
   item.status = action === 'Approve' ? 'Approved' : action === 'Reject' ? 'Rejected' : 'Changes Requested';
-  item.reviewedById = req.user!.id;
-  item.reviewedBy = req.user!.name || req.user!.username;
-  item.reviewedAt = new Date().toISOString();
-  item.reviewNotes = notes;
-
+  item.reviewedById = req.user!.id; item.reviewedBy = req.user!.name || req.user!.username; item.reviewedAt = new Date().toISOString(); item.reviewNotes = notes;
   saveDatabase(db);
-
-  recordAuditLog({
-    action: `APPROVAL_${action.toUpperCase().replace(/ /g, '_')}`,
-    actor: req.user!.username,
-    actorRole: req.user!.role,
-    ip: req.ip,
-    userAgent: req.headers['user-agent'] as string,
-    details: `${action} decision executed for approval item "${item.title}".`,
-    severity: action === 'Reject' ? 'warning' : 'info'
-  });
-
+  recordAuditLog({ action: `APPROVAL_${action.toUpperCase().replace(/ /g, '_')}`, actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `${action} decision executed for approval item "${item.title}".`, severity: action === 'Reject' ? 'warning' : 'info' });
   res.json({ success: true, approval: item });
 });
 
@@ -3449,11 +3465,7 @@ function canAccessDocument(req: AuthenticatedRequest, document: any): boolean {
   return ownerUserId === req.user.id || accessUserIds.includes(req.user.id);
 }
 
-function requireDocumentObjectAccess(req: AuthenticatedRequest, res: Response): boolean {
-  const id = req.params.id;
-  if (!id) return true;
-
-  const document = (getDatabase().documents || []).find((item: any) => item.id === id);
+function requireDocumentObjectAccess(req: AuthenticatedRequest, res: Response, document?: any): boolean {
   if (!document) return true;
 
   if (!canAccessDocument(req, document)) {
@@ -3463,7 +3475,7 @@ function requireDocumentObjectAccess(req: AuthenticatedRequest, res: Response): 
       actorRole: req.user?.role || 'visitor',
       ip: req.ip,
       userAgent: req.headers['user-agent'] as string,
-      details: `Object-level document access denied for "${document.name || id}".`,
+      details: `Object-level document access denied for "${document.name || req.params.id}".`,
       severity: 'warning'
     });
     res.status(403).json({ success: false, error: 'Document access denied.' });
@@ -3542,17 +3554,19 @@ const documentMutationMiddleware = requireAnyPermission(
   'canAccessServerAndApi'
 );
 
-apiRouter.get('/documents', requireAuth, documentAccessMiddleware, (req: AuthenticatedRequest, res: Response): void => {
-  const db = getDatabase();
+apiRouter.get('/documents', requireAuth, documentAccessMiddleware, async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  const documents = getDataSourceMode() === 'postgres'
+    ? await postgresDocumentRepository.list()
+    : getDatabase().documents || [];
   res.json({
     success: true,
-    documents: (db.documents || [])
+    documents: documents
       .filter((document: any) => canAccessDocument(req, document))
       .map(publicDocument)
   });
 });
 
-apiRouter.post('/documents', requireAuth, documentMutationMiddleware, (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.post('/documents', requireAuth, documentMutationMiddleware, async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const data = req.body || {};
   const sourceType = data.url ? 'external_link' : 'private_file';
   const name = cleanText(data.name || 'Document', 240);
@@ -3571,7 +3585,7 @@ apiRouter.post('/documents', requireAuth, documentMutationMiddleware, (req: Auth
     return;
   }
 
-  const db = getDatabase();
+  const now = new Date().toISOString();
   const newDoc: any = {
     id: `doc_${Date.now()}_${crypto.randomBytes(8).toString('hex')}`,
     name,
@@ -3588,20 +3602,24 @@ apiRouter.post('/documents', requireAuth, documentMutationMiddleware, (req: Auth
     accessUserIds: [req.user!.id],
     sourceType,
     status: sourceType === 'private_file' ? 'pending_upload' : 'external_link',
-    uploadedDate: new Date().toISOString().split('T')[0],
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
+    uploadedDate: now.split('T')[0],
+    createdAt: now,
+    updatedAt: now
   };
 
-  if (sourceType === 'private_file') {
-    newDoc.storageKey = crypto.randomBytes(32).toString('hex');
-  } else {
-    newDoc.url = cleanOptionalUrl(data.url);
-  }
+  if (sourceType === 'private_file') newDoc.storageKey = crypto.randomBytes(32).toString('hex');
+  else newDoc.url = cleanOptionalUrl(data.url);
 
-  if (!db.documents) db.documents = [];
-  db.documents.unshift(newDoc);
-  saveDatabase(db);
+  let created = newDoc;
+  if (getDataSourceMode() === 'postgres') {
+    created = await postgresDocumentRepository.create(newDoc);
+  } else {
+    const db = getDatabase();
+    if (!db.documents) db.documents = [];
+    db.documents.unshift(newDoc);
+    db.documents = db.documents.slice(0, 500);
+    saveDatabase(db);
+  }
 
   recordAuditLog({
     action: 'DOCUMENT_CREATED',
@@ -3613,19 +3631,20 @@ apiRouter.post('/documents', requireAuth, documentMutationMiddleware, (req: Auth
     severity: 'info'
   });
 
-  res.status(201).json({ success: true, document: publicDocument(newDoc) });
+  res.status(201).json({ success: true, document: publicDocument(created) });
 });
 
-apiRouter.put('/documents/:id/content', requireAuth, documentMutationMiddleware, (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.put('/documents/:id/content', requireAuth, documentMutationMiddleware, async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
-  const db = getDatabase();
-  const document = (db.documents || []).find((item: any) => item.id === id);
+  const document = getDataSourceMode() === 'postgres'
+    ? await postgresDocumentRepository.findById(id)
+    : (getDatabase().documents || []).find((item: any) => item.id === id);
 
   if (!document) {
     res.status(404).json({ success: false, error: 'Document not found.' });
     return;
   }
-  if (!requireDocumentObjectAccess(req, res)) return;
+  if (!requireDocumentObjectAccess(req, res, document)) return;
 
   if (document.sourceType !== 'private_file' || !document.storageKey) {
     res.status(409).json({ success: false, error: 'This document is an external link and has no private file content.' });
@@ -3662,14 +3681,31 @@ apiRouter.put('/documents/:id/content', requireAuth, documentMutationMiddleware,
     if (fs.existsSync(targetPath)) fs.unlinkSync(targetPath);
     fs.renameSync(tempPath, targetPath);
 
-    document.mimeType = mimeType;
-    document.type = mimeType.split('/').pop()?.toUpperCase() || document.type || 'FILE';
-    document.sizeBytes = body.length;
-    document.size = humanFileSize(body.length);
-    document.status = 'ready';
-    document.updatedAt = new Date().toISOString();
-    document.uploadedAt = document.updatedAt;
-    saveDatabase(db);
+    const patch = {
+      mimeType,
+      type: mimeType.split('/').pop()?.toUpperCase() || document.type || 'FILE',
+      sizeBytes: body.length,
+      size: humanFileSize(body.length),
+      status: 'ready',
+      updatedAt: new Date().toISOString(),
+      uploadedAt: new Date().toISOString()
+    };
+    const updated = getDataSourceMode() === 'postgres'
+      ? await postgresDocumentRepository.update(id, patch)
+      : (() => {
+          const db = getDatabase();
+          const index = (db.documents || []).findIndex((item: any) => item.id === id);
+          if (index < 0) return null;
+          db.documents[index] = { ...db.documents[index], ...patch };
+          saveDatabase(db);
+          return db.documents[index];
+        })();
+
+    if (!updated) {
+      try { if (fs.existsSync(targetPath)) fs.unlinkSync(targetPath); } catch {}
+      res.status(404).json({ success: false, error: 'Document not found.' });
+      return;
+    }
 
     recordAuditLog({
       action: 'DOCUMENT_UPLOADED',
@@ -3681,7 +3717,7 @@ apiRouter.put('/documents/:id/content', requireAuth, documentMutationMiddleware,
       severity: 'info'
     });
 
-    res.json({ success: true, document: publicDocument(document) });
+    res.json({ success: true, document: publicDocument(updated) });
   } catch (error) {
     try { if (fs.existsSync(tempPath)) fs.unlinkSync(tempPath); } catch {}
     console.error('[Documents] Private upload failed:', error);
@@ -3689,16 +3725,17 @@ apiRouter.put('/documents/:id/content', requireAuth, documentMutationMiddleware,
   }
 });
 
-apiRouter.get('/documents/:id/content', requireAuth, documentAccessMiddleware, (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.get('/documents/:id/content', requireAuth, documentAccessMiddleware, async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
-  const db = getDatabase();
-  const document = (db.documents || []).find((item: any) => item.id === id);
+  const document = getDataSourceMode() === 'postgres'
+    ? await postgresDocumentRepository.findById(id)
+    : (getDatabase().documents || []).find((item: any) => item.id === id);
 
   if (!document) {
     res.status(404).json({ success: false, error: 'Document not found.' });
     return;
   }
-  if (!requireDocumentObjectAccess(req, res)) return;
+  if (!requireDocumentObjectAccess(req, res, document)) return;
 
   if (document.sourceType !== 'private_file' || document.status !== 'ready') {
     res.status(409).json({ success: false, error: 'Private document content is not available.' });
@@ -3736,10 +3773,11 @@ apiRouter.get('/documents/:id/content', requireAuth, documentAccessMiddleware, (
   }
 });
 
-apiRouter.delete('/documents/:id', requireAuth, documentMutationMiddleware, (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.delete('/documents/:id', requireAuth, documentMutationMiddleware, async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
-  const db = getDatabase();
-  const document = (db.documents || []).find((item: any) => item.id === id);
+  const document = getDataSourceMode() === 'postgres'
+    ? await postgresDocumentRepository.findById(id)
+    : (getDatabase().documents || []).find((item: any) => item.id === id);
 
   if (!document) {
     res.status(404).json({ success: false, error: 'Document not found.' });
@@ -3747,7 +3785,7 @@ apiRouter.delete('/documents/:id', requireAuth, documentMutationMiddleware, (req
   }
 
   const filePath = privateDocumentPath(document);
-  if (!requireDocumentObjectAccess(req, res)) return;
+  if (!requireDocumentObjectAccess(req, res, document)) return;
 
   if (filePath && fs.existsSync(filePath)) {
     try { fs.unlinkSync(filePath); } catch (error) {
@@ -3757,8 +3795,17 @@ apiRouter.delete('/documents/:id', requireAuth, documentMutationMiddleware, (req
     }
   }
 
-  db.documents = (db.documents || []).filter(d => d.id !== id);
-  saveDatabase(db);
+  if (getDataSourceMode() === 'postgres') {
+    const deleted = await postgresDocumentRepository.delete(id);
+    if (!deleted) {
+      res.status(404).json({ success: false, error: 'Document not found.' });
+      return;
+    }
+  } else {
+    const db = getDatabase();
+    db.documents = (db.documents || []).filter(d => d.id !== id);
+    saveDatabase(db);
+  }
 
   recordAuditLog({
     action: 'DOCUMENT_DELETED',
@@ -3772,7 +3819,6 @@ apiRouter.delete('/documents/:id', requireAuth, documentMutationMiddleware, (req
 
   res.json({ success: true, message: 'Document removed.' });
 });
-
 // ----------------------------------------------------
 // 17. SYSTEM BACKUP CONTROLS
 // ----------------------------------------------------
@@ -3930,14 +3976,16 @@ apiRouter.get('/system/security/status', requireAuth, requireAnyPermission('canV
 // 17. UNIFIED NOTIFICATIONS CENTER (PART 28)
 // ----------------------------------------------------
 
-apiRouter.get('/notifications', requireAuth, (req: AuthenticatedRequest, res: Response): void => {
-  const db = getDatabase();
+apiRouter.get('/notifications', requireAuth, async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const isMaster = req.user!.stakeholderType === 'Master';
   const canViewFinance = isMaster || Boolean(req.user!.permissions?.canViewFinancials || req.user!.permissions?.canManageInvoices);
   const canViewCrm = isMaster || Boolean(req.user!.permissions?.canManageCrm);
   const canViewApprovals = isMaster || Boolean(req.user!.permissions?.canApproveBudgets || req.user!.permissions?.canManageProjects);
+  const source = getDataSourceMode() === 'postgres'
+    ? await postgresNotificationRepository.list()
+    : getDatabase().notifications || [];
 
-  const notifications = (db.notifications || []).filter((notification) => {
+  const notifications = source.filter((notification) => {
     const typeAllowed =
       notification.type === 'finance' ? canViewFinance :
       notification.type === 'lead' ? canViewCrm :
@@ -3955,8 +4003,27 @@ apiRouter.get('/notifications', requireAuth, (req: AuthenticatedRequest, res: Re
   res.json({ success: true, notifications });
 });
 
-apiRouter.post('/notifications/:id/read', requireAuth, (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.post('/notifications/:id/read', requireAuth, async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
+  if (getDataSourceMode() === 'postgres') {
+    const notification = await postgresNotificationRepository.findById(id);
+    if (!notification) {
+      res.status(404).json({ success: false, error: 'Notification not found.' });
+      return;
+    }
+    if (notification.recipientUserId && notification.recipientUserId !== req.user!.id) {
+      res.status(403).json({ success: false, error: 'Notification access denied.' });
+      return;
+    }
+    const updated = await postgresNotificationRepository.markRead(id, req.user!.id);
+    if (!updated) {
+      res.status(403).json({ success: false, error: 'Notification access denied.' });
+      return;
+    }
+    res.json({ success: true });
+    return;
+  }
+
   const db = getDatabase();
   const notif = (db.notifications || []).find(n => n.id === id);
   if (!notif) {
@@ -3973,7 +4040,13 @@ apiRouter.post('/notifications/:id/read', requireAuth, (req: AuthenticatedReques
   res.json({ success: true });
 });
 
-apiRouter.post('/notifications/mark-all-read', requireAuth, (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.post('/notifications/mark-all-read', requireAuth, async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  if (getDataSourceMode() === 'postgres') {
+    await postgresNotificationRepository.markAllRead(req.user!.id);
+    res.json({ success: true });
+    return;
+  }
+
   const db = getDatabase();
   for (const notification of (db.notifications || [])) {
     if (notification.recipientUserId && notification.recipientUserId !== req.user!.id) continue;
@@ -4149,15 +4222,15 @@ apiRouter.get('/search', requireAuth, async (req: AuthenticatedRequest, res: Res
 const handleOverview = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   try {
     const usePostgres=getDataSourceMode()==='postgres';
-    const db=getDatabase();
+    const db=usePostgres?undefined:getDatabase();
     const isMaster=req.user!.stakeholderType==='Master';
     const canViewFinancials=isMaster||Boolean(req.user!.permissions?.canViewFinancials);
     const canViewCrm=isMaster||Boolean(req.user!.permissions?.canManageCrm);
     const canViewProjects=isMaster||Boolean(req.user!.permissions?.canManageProjects||req.user!.permissions?.canManageKanbanTasks);
     const canViewApprovals=isMaster||Boolean(req.user!.permissions?.canApproveBudgets||req.user!.permissions?.canManageProjects);
     const canViewAudit=isMaster||Boolean(req.user!.permissions?.canViewSecurityAuditLogs);
-    const leads=canViewCrm?(db.leads||[]):[],deals=canViewCrm?(db.crmDeals||[]):[],proposals=(canViewCrm||canViewFinancials||canViewApprovals)?(db.proposals||[]):[],approvals=canViewApprovals?(db.approvals||[]):[];
-    const projects=canViewProjects?(usePostgres?await postgresProjectRepository.list():(db.projects||[])):[],tasks=canViewProjects?(usePostgres?await postgresTaskRepository.list():(db.tasks||[])):[];
+    const leads=canViewCrm?(usePostgres?await postgresLeadRepository.list():(db!.leads||[])):[],deals=canViewCrm?(usePostgres?await postgresCrmDealRepository.list():(db!.crmDeals||[])):[],proposals=(canViewCrm||canViewFinancials||canViewApprovals)?(usePostgres?await postgresProposalRepository.list():(db!.proposals||[])):[],approvals=canViewApprovals?(usePostgres?await postgresApprovalRepository.list():(db!.approvals||[])):[];
+    const projects=canViewProjects?(usePostgres?await postgresProjectRepository.list():(db!.projects||[])):[],tasks=canViewProjects?(usePostgres?await postgresTaskRepository.list():(db!.tasks||[])):[];
     const invoices=canViewFinancials?(usePostgres?await postgresInvoiceRepository.list():(db.invoices||=[])):[];
     const expenses=canViewFinancials?(usePostgres?await postgresExpenseRepository.list():(db.expenses||[]).filter((e:any)=>e.status!=='voided')):[];
     const now=new Date(),monthKey=now.toISOString().slice(0,7);
@@ -4172,6 +4245,6 @@ const handleOverview = async (req: AuthenticatedRequest, res: Response): Promise
     const pendingApprovalsCount=approvals.filter(a=>a.status==='Pending').length,overdueTasksCount=tasks.filter(t=>t.status!=='done'&&t.dueDate&&new Date(t.dueDate)<now).length;
     const pipelineByStage=canViewCrm?CRM_STAGES.map(stage=>{const ds=deals.filter(d=>d.stage===stage);return{stage,count:ds.length,value:ds.reduce((s,d)=>s+(Number(d.value)||0),0)}}):[];
     const attentionItems:any[]=[];if(canViewFinancials&&primary.overdueInvoicesCount>0)attentionItems.push({id:'att_invoices_overdue',title:primary.overdueInvoicesCount+' Invoices Overdue',description:'Follow-up required on unpaid accounts totaling '+primary.currency+' '+primary.overdueReceivables.toLocaleString(),severity:'danger',category:'Finance',linkUrl:'/admin/invoicing'});if(canViewApprovals&&pendingApprovalsCount>0)attentionItems.push({id:'att_pending_approvals',title:pendingApprovalsCount+' Executive Approvals Awaiting Review',description:'Budget and operational approvals are waiting for review.',severity:'warning',category:'Operations',linkUrl:'/admin/approvals'});if(canViewProjects&&projectsAtRiskCount>0)attentionItems.push({id:'att_projects_risk',title:projectsAtRiskCount+' Projects Flagged At Risk',description:'Delivery timeline or resource constraints require attention.',severity:'danger',category:'Delivery',linkUrl:'/admin/projects'});if(canViewProjects&&overdueTasksCount>0)attentionItems.push({id:'att_tasks_overdue',title:overdueTasksCount+' Tasks Overdue in Active Sprints',description:'Tasks passed their due dates and may require rescheduling.',severity:'warning',category:'Delivery',linkUrl:'/admin/projects'});if(canViewCrm&&openLeadsCount>3)attentionItems.push({id:'att_leads_new',title:openLeadsCount+' Inbound Inquiries Unassigned',description:'Website inquiries are waiting for qualification.',severity:'info',category:'Sales',linkUrl:'/admin/inbox'});
-    res.json({success:true,metrics:{currency,revenueCollected:canViewFinancials?primary.revenueCollected:null,totalBilled:canViewFinancials?primary.totalBilled:null,outstandingReceivables:canViewFinancials?primary.outstandingReceivables:null,overdueReceivables:canViewFinancials?primary.overdueReceivables:null,activePipeline:canViewCrm?activePipelineValue:null,activeProjects:canViewProjects?activeProjectsCount:0,projectsAtRisk:canViewProjects?projectsAtRiskCount:0,pendingApprovals:canViewApprovals?pendingApprovalsCount:0,overdueTasks:canViewProjects?overdueTasksCount:0,openLeads:canViewCrm?openLeadsCount:0,byCurrency:Array.from(financeByCurrency.values())},todayAtKapitech:{openLeadsCount:canViewCrm?openLeadsCount:0,dealsInPipelineCount:canViewCrm?dealsInPipelineCount:0,pipelineValue:canViewFinancials?activePipelineValue:null,proposalsAwaitingCount:(canViewCrm||canViewFinancials||canViewApprovals)?proposalsAwaitingCount:0,projectsAtRiskCount:canViewProjects?projectsAtRiskCount:0,overdueInvoicesCount:canViewFinancials?primary.overdueInvoicesCount:0,cashOutstanding:canViewFinancials?primary.outstandingReceivables:null,currency},financials:canViewFinancials?{currency,revenueThisMonth:primary.revenueThisMonth,cashCollected:primary.revenueThisMonth,outstandingReceivables:primary.outstandingReceivables,operatingExpenses:primary.monthlyOperatingExpenses,netOperatingProfit:netOperatingProfitThisMonth,margin:netMarginThisMonth}:{currency,revenueThisMonth:null,cashCollected:null,outstandingReceivables:null,operatingExpenses:null,netOperatingProfit:null,margin:null},pipelineByStage,attentionItems,projects:canViewProjects?activeProjectsList.slice(0,10):[],recentActivity:canViewAudit?(db.auditLogs||[]).slice(0,10):[]});
+    res.json({success:true,metrics:{currency,revenueCollected:canViewFinancials?primary.revenueCollected:null,totalBilled:canViewFinancials?primary.totalBilled:null,outstandingReceivables:canViewFinancials?primary.outstandingReceivables:null,overdueReceivables:canViewFinancials?primary.overdueReceivables:null,activePipeline:canViewCrm?activePipelineValue:null,activeProjects:canViewProjects?activeProjectsCount:0,projectsAtRisk:canViewProjects?projectsAtRiskCount:0,pendingApprovals:canViewApprovals?pendingApprovalsCount:0,overdueTasks:canViewProjects?overdueTasksCount:0,openLeads:canViewCrm?openLeadsCount:0,byCurrency:Array.from(financeByCurrency.values())},todayAtKapitech:{openLeadsCount:canViewCrm?openLeadsCount:0,dealsInPipelineCount:canViewCrm?dealsInPipelineCount:0,pipelineValue:canViewFinancials?activePipelineValue:null,proposalsAwaitingCount:(canViewCrm||canViewFinancials||canViewApprovals)?proposalsAwaitingCount:0,projectsAtRiskCount:canViewProjects?projectsAtRiskCount:0,overdueInvoicesCount:canViewFinancials?primary.overdueInvoicesCount:0,cashOutstanding:canViewFinancials?primary.outstandingReceivables:null,currency},financials:canViewFinancials?{currency,revenueThisMonth:primary.revenueThisMonth,cashCollected:primary.revenueThisMonth,outstandingReceivables:primary.outstandingReceivables,operatingExpenses:primary.monthlyOperatingExpenses,netOperatingProfit:netOperatingProfitThisMonth,margin:netMarginThisMonth}:{currency,revenueThisMonth:null,cashCollected:null,outstandingReceivables:null,operatingExpenses:null,netOperatingProfit:null,margin:null},pipelineByStage,attentionItems,projects:canViewProjects?activeProjectsList.slice(0,10):[],recentActivity:canViewAudit?(usePostgres?await postgresAuditLogRepository.list(10):(db!.auditLogs||[]).slice(0,10)):[]});
   }catch(error){console.error('[Dashboard Overview] Failed:',error);res.status(503).json({success:false,error:'Dashboard data is temporarily unavailable.'});}
 };
