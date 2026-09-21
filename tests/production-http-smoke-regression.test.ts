@@ -17,4 +17,7 @@ test('CI boots the production bundle and checks protected API boundaries', () =>
   assert.ok(workflow.includes('node dist/server.cjs'));
   assert.ok(workflow.includes('http://127.0.0.1:4173/api/health'));
   assert.ok(workflow.includes('"401"'));
+  assert.ok(workflow.includes('readiness_status=$(curl'));
+  assert.ok(workflow.includes('test "$readiness_status" = "403"'));
+  assert.ok(workflow.includes("x.code!=='MFA_REQUIRED'"));
 });
