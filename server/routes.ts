@@ -2777,6 +2777,32 @@ apiRouter.put('/crm/proposals/:id', requireAuth, requirePermission('canManageCrm
   const db = getDatabase();
   const idx = (db.proposals || []).findIndex(p => p.id === id);
 
+  if (getDataSourceMode() === 'postgres') {
+    const existing = await postgresProposalRepository.findById(id);
+    if (!existing) { res.status(404).json({ success: false, error: 'Proposal not found.' }); return; }
+    const items = Array.isArray(updates.items) ? updates.items.slice(0, 100).map((item: any) => ({
+      id: cleanText(item?.id || crypto.randomBytes(4).toString('hex'), 80),
+      description: cleanText(item?.description, 500),
+      quantity: Math.min(100000, Math.max(0, Number(item?.quantity) || 0)),
+      unitPrice: Math.min(10_000_000_000, Math.max(0, Number(item?.unitPrice) || 0))
+    })).filter((item: any) => item.description && item.quantity > 0) : existing.items;
+    if (!items.length) { res.status(400).json({ success: false, error: 'Proposal requires at least one valid line item.' }); return; }
+    const subtotal = items.reduce((sum: number, it: any) => sum + Number(it.quantity) * Number(it.unitPrice), 0);
+    const discount = updates.discount !== undefined ? Math.min(subtotal, Math.max(0, Number(updates.discount) || 0)) : existing.discount;
+    const taxPercent = updates.taxPercent !== undefined ? Math.min(100, Math.max(0, Number(updates.taxPercent) || 0)) : existing.taxPercent;
+    const taxableAmount = Math.max(0, subtotal - discount);
+    const tax = Math.round(taxableAmount * (taxPercent / 100));
+    const total = taxableAmount + tax;
+    const patch = pickFields(updates, ['proposalNumber','title','clientName','company','dealId','projectId','currency','validityPeriod','paymentTerms','status','notes','sentDate']);
+    if (patch.proposalNumber !== undefined && !/^[A-Za-z0-9._/-]{1,80}$/.test(String(patch.proposalNumber))) { res.status(400).json({ success: false, error: 'Invalid proposal number.' }); return; }
+    for (const key of ['title','clientName','company','dealId','projectId','validityPeriod','paymentTerms','notes'] as const) if (patch[key] !== undefined) patch[key] = cleanText(patch[key], key === 'notes' ? 3000 : 300);
+    if (patch.currency !== undefined && !['IDR','USD'].includes(String(patch.currency))) { res.status(400).json({ success: false, error: 'Invalid proposal currency.' }); return; }
+    if (patch.status !== undefined && !['Draft','Internal Review','Sent','Approved','Rejected','Accepted'].includes(String(patch.status))) { res.status(400).json({ success: false, error: 'Invalid proposal status.' }); return; }
+    if (patch.sentDate !== undefined && patch.sentDate !== null && !isValidDate(patch.sentDate)) { res.status(400).json({ success: false, error: 'Invalid proposal sent date.' }); return; }
+    const proposal = await postgresProposalRepository.update(id, { ...patch, items, subtotal, discount, taxPercent, tax, total });
+    res.json({ success: true, proposal }); return;
+  }
+
   if (idx === -1) {
     res.status(404).json({ success: false, error: 'Proposal not found.' });
     return;
@@ -2819,8 +2845,6 @@ apiRouter.put('/crm/proposals/:id', requireAuth, requirePermission('canManageCrm
     res.status(400).json({ success: false, error: 'Invalid proposal sent date.' });
     return;
   }
-  if (getDataSourceMode() === 'postgres') { const proposal = await postgresProposalRepository.update(id, { ...patch, items, subtotal, discount, taxPercent, tax, total }); if (!proposal) { res.status(404).json({ success: false, error: 'Proposal not found.' }); return; } recordAuditLog({ action: 'PROPOSAL_UPDATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Updated proposal ${proposal.proposalNumber}.`, severity: 'info' }); res.json({ success: true, proposal }); return; }
-
   db.proposals[idx] = {
     ...existing,
     ...patch,
