@@ -89,6 +89,14 @@ export class ProjectArchiveMutationError extends Error {
   readonly code = 'PROJECT_ARCHIVED';
 }
 
+export class ProjectClientRequiredError extends Error {
+  readonly code = 'PROJECT_CLIENT_REQUIRED';
+}
+
+export class ProjectNotFoundError extends Error {
+  readonly code = 'PROJECT_NOT_FOUND';
+}
+
 export class PostgresProjectRepository {
   async list(): Promise<Record<string, any>[]> {
     const result = await getPostgresPool().query<Row>(
@@ -114,6 +122,26 @@ export class PostgresProjectRepository {
   }
 
   async create(input: Record<string, any>): Promise<Record<string, any>> {
+    const clientHints = [
+      input.clientId,
+      input.clientCompany,
+      input.client,
+      input.clientName
+    ].filter(Boolean).map(value => String(value).trim().toLowerCase());
+
+    let clientId = input.clientId ? String(input.clientId) : '';
+    if (!clientId && clientHints.length > 0) {
+      const clientResult = await getPostgresPool().query<Row>(
+        'SELECT id FROM clients WHERE lower(company) = ANY($1) OR lower(name) = ANY($1) ORDER BY created_at ASC',
+        [clientHints]
+      );
+      const ids = Array.from(new Set(clientResult.rows.map(row => String(row.id))));
+      if (ids.length === 1) clientId = ids[0];
+    }
+    if (!clientId) {
+      throw new ProjectClientRequiredError('A valid client is required to create a project.');
+    }
+
     const known = [
       'id','clientId','name','title','description','status','owner','budget','currency',
       'startDate','targetEndDate','createdAt','updatedAt','version'
@@ -126,7 +154,7 @@ export class PostgresProjectRepository {
       'VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,1,$11,$12,$13) RETURNING *',
       [
         String(input.id),
-        input.clientId ? String(input.clientId) : null,
+        clientId,
         String(input.name || input.title || ''),
         input.description ? String(input.description) : null,
         String(input.status || 'planning'),
@@ -142,7 +170,6 @@ export class PostgresProjectRepository {
     );
     return mapProject(result.rows[0]);
   }
-
   async update(id: string, patch: Record<string, any>): Promise<Record<string, any> | null> {
     const existing = await this.findById(id);
     if (!existing) return null;
@@ -202,7 +229,14 @@ export class PostgresProjectRepository {
         'WHERE id=$1 AND archived_at IS NULL',
         [id, 'archived']
       );
-      return result.rowCount === 1;
+      if (result.rowCount !== 1) return false;
+
+      await client.query(
+        'UPDATE tasks SET archived_at=NOW(), version=version+1, updated_at=NOW() ' +
+        'WHERE project_id=$1 AND archived_at IS NULL',
+        [id]
+      );
+      return true;
     });
   }
 }
@@ -232,37 +266,46 @@ export class PostgresTaskRepository {
   }
 
   async create(input: Record<string, any>): Promise<Record<string, any>> {
-    if (!input.projectId) throw new Error('Task projectId is required.');
+    if (!input.projectId) throw new ProjectNotFoundError('Task projectId is required.');
 
-    const known = [
-      'id','projectId','title','description','status','priority','assigneeUserId',
-      'dueDate','estimatedHours','actualHours','createdAt','updatedAt','version'
-    ];
-    const metadata = metadataFrom(input, known);
-    const now = new Date().toISOString();
-    const estimatedMinutes = Math.round(Math.max(0, Number(input.estimatedHours || 0)) * 60);
-    const result = await getPostgresPool().query<Row>(
-      'INSERT INTO tasks ' +
-      '(id,project_id,title,description,status,priority,assignee_user_id,due_date,estimated_minutes,version,metadata,created_at,updated_at) ' +
-      'VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,1,$10,$11,$12) RETURNING *',
-      [
-        String(input.id),
-        String(input.projectId),
-        String(input.title || ''),
-        input.description ? String(input.description) : null,
-        String(input.status || 'todo'),
-        input.priority ? String(input.priority) : 'medium',
-        input.assigneeUserId ? String(input.assigneeUserId) : null,
-        input.dueDate || null,
-        estimatedMinutes,
-        JSON.stringify(metadata),
-        input.createdAt || now,
-        input.updatedAt || now
-      ]
-    );
-    return mapTask(result.rows[0]);
+    return withPostgresTransaction(async client => {
+      const project = await client.query<Row>(
+        'SELECT id FROM projects WHERE id=$1 AND archived_at IS NULL FOR SHARE',
+        [String(input.projectId)]
+      );
+      if (!project.rows[0]) {
+        throw new ProjectNotFoundError('Project not found or archived.');
+      }
+
+      const known = [
+        'id','projectId','title','description','status','priority','assigneeUserId',
+        'dueDate','estimatedHours','createdAt','updatedAt','version'
+      ];
+      const metadata = metadataFrom(input, known);
+      const now = new Date().toISOString();
+      const estimatedMinutes = Math.round(Math.max(0, Number(input.estimatedHours || 0)) * 60);
+      const result = await client.query<Row>(
+        'INSERT INTO tasks ' +
+        '(id,project_id,title,description,status,priority,assignee_user_id,due_date,estimated_minutes,version,metadata,created_at,updated_at) ' +
+        'VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,1,$10,$11,$12) RETURNING *',
+        [
+          String(input.id),
+          String(input.projectId),
+          String(input.title || ''),
+          input.description ? String(input.description) : null,
+          String(input.status || 'todo'),
+          input.priority ? String(input.priority) : 'medium',
+          input.assigneeUserId ? String(input.assigneeUserId) : null,
+          input.dueDate || null,
+          estimatedMinutes,
+          JSON.stringify(metadata),
+          input.createdAt || now,
+          input.updatedAt || now
+        ]
+      );
+      return mapTask(result.rows[0]);
+    });
   }
-
   async update(id: string, patch: Record<string, any>): Promise<Record<string, any> | null> {
     const existing = await this.findById(id);
     if (!existing) return null;
