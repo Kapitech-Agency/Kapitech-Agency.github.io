@@ -6,7 +6,7 @@
 import React, { lazy, Suspense, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'motion/react';
-import { LanguageProvider } from './lib/LanguageContext';
+import { LanguageProvider, useLanguage } from './lib/LanguageContext';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 import { FloatingContact } from './components/FloatingContact';
