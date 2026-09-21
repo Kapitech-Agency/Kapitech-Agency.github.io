@@ -4425,6 +4425,13 @@ apiRouter.get('/system/production-readiness', requireAuth, requireAnyPermission(
     );
     const reconciliationReady = reconciliationSignoffReady && reconciliationRunReady;
 
+    const backupDrReady = Boolean(
+      backup.configured &&
+      backup.backupFresh &&
+      backup.integrity.valid &&
+      backup.integrity.restoreVerified
+    );
+
     const gates = {
       runtime: runtimeReady,
       encryption: encryptionReady,
@@ -4432,7 +4439,7 @@ apiRouter.get('/system/production-readiness', requireAuth, requireAnyPermission(
       postgres: connection.ok,
       migrations: migrationComplete,
       mfa: mfaComplete,
-      backupDr: backup.configured,
+      backupDr: backupDrReady,
       documentStorage: documentStorageReady,
       notifications: notificationsReady
     };
