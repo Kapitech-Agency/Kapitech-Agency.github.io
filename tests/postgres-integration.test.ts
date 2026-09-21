@@ -8,7 +8,7 @@ const configured = Boolean(process.env.KAPITECH_POSTGRES_URL);
 test('PostgreSQL integration harness is fail-closed when not configured', async t => {
   if (configured) return;
   assert.throws(() => getPostgresPool(), /KAPITECH_POSTGRES_URL/);
-  assert.equal(await checkPostgresConnection(), false);
+  await assert.rejects(() => checkPostgresConnection(), /KAPITECH_POSTGRES_URL/);
   await closePostgresPool();
   t.diagnostic('Set KAPITECH_POSTGRES_URL to execute live schema integration checks.');
 });
