@@ -1998,9 +1998,16 @@ apiRouter.put('/finance/invoices/:id', requireAuth, requirePermission('canManage
 
   const requestedStatus = String(input.status || existing.status);
   let status = INVOICE_STATUSES.has(requestedStatus) ? requestedStatus : existing.status;
+  if (requestedStatus === 'paid' && !(amountPaid >= total && total > 0)) {
+    res.status(409).json({ success: false, error: 'Invoice can only be marked paid after the remaining balance is fully settled.' });
+    return;
+  }
+  if (requestedStatus === 'partially_paid' && !(amountPaid > 0 && amountPaid < total)) {
+    res.status(409).json({ success: false, error: 'Invoice can only be partially paid when a payment has been recorded and a balance remains.' });
+    return;
+  }
   if (amountPaid >= total && total > 0) status = 'paid';
   else if (amountPaid > 0) status = 'partially_paid';
-  else if (status === 'paid' || status === 'partially_paid') status = 'draft';
 
   db.invoices[idx] = {
     ...existing,

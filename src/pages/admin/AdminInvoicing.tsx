@@ -208,7 +208,7 @@ export const AdminInvoicing: React.FC = () => {
     setIsInvoiceModalOpen(true);
   };
 
-  const handleSaveInvoice = (e: React.FormEvent) => {
+  const handleSaveInvoice = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!clientName.trim() || !clientCompany.trim()) {
       alert('Client Name and Company are required.');
@@ -249,15 +249,23 @@ export const AdminInvoicing: React.FC = () => {
       updatedAt: new Date().toISOString()
     };
 
-    saveAgencyInvoice(invData);
-    setIsInvoiceModalOpen(false);
-    showToast(language === 'id' ? 'Invoice berhasil disimpan.' : 'Invoice successfully saved.');
+    try {
+      await saveAgencyInvoice(invData);
+      setIsInvoiceModalOpen(false);
+      showToast(language === 'id' ? 'Invoice berhasil disimpan ke server.' : 'Invoice successfully saved to server.');
+    } catch (error: any) {
+      showToast(error?.message || (language === 'id' ? 'Gagal menyimpan invoice.' : 'Failed to save invoice.'));
+    }
   };
 
-  const handleDeleteInvoice = (id: string, invNum: string) => {
+  const handleDeleteInvoice = async (id: string, invNum: string) => {
     if (window.confirm(`Hapus invoice ${invNum}?`)) {
-      deleteAgencyInvoice(id);
-      showToast(language === 'id' ? 'Invoice dihapus.' : 'Invoice deleted.');
+      try {
+        await deleteAgencyInvoice(id);
+        showToast(language === 'id' ? 'Invoice dibatalkan di server.' : 'Invoice cancelled on server.');
+      } catch (error: any) {
+        showToast(error?.message || (language === 'id' ? 'Gagal membatalkan invoice.' : 'Failed to cancel invoice.'));
+      }
     }
   };
 
@@ -296,7 +304,7 @@ export const AdminInvoicing: React.FC = () => {
     }
   };
 
-  const handleSaveExpense = (e: React.FormEvent) => {
+  const handleSaveExpense = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!expDesc.trim() || !expAmount) {
       alert('Description and amount are required.');
@@ -312,16 +320,24 @@ export const AdminInvoicing: React.FC = () => {
       recordedBy: 'Principal Admin'
     };
 
-    saveAgencyExpense(newExpense);
-    setIsExpenseModalOpen(false);
-    setExpDesc('');
-    showToast(language === 'id' ? 'Pengeluaran berhasil dicatat.' : 'Expense successfully recorded.');
+    try {
+      await saveAgencyExpense(newExpense);
+      setIsExpenseModalOpen(false);
+      setExpDesc('');
+      showToast(language === 'id' ? 'Pengeluaran berhasil dicatat ke server.' : 'Expense successfully recorded to server.');
+    } catch (error: any) {
+      showToast(error?.message || (language === 'id' ? 'Gagal mencatat pengeluaran.' : 'Failed to record expense.'));
+    }
   };
 
-  const handleDeleteExpense = (id: string) => {
+  const handleDeleteExpense = async (id: string) => {
     if (window.confirm('Hapus catatan pengeluaran ini?')) {
-      deleteAgencyExpense(id);
-      showToast(language === 'id' ? 'Pengeluaran dihapus.' : 'Expense deleted.');
+      try {
+        await deleteAgencyExpense(id);
+        showToast(language === 'id' ? 'Pengeluaran dihapus dari server.' : 'Expense deleted from server.');
+      } catch (error: any) {
+        showToast(error?.message || (language === 'id' ? 'Gagal menghapus pengeluaran.' : 'Failed to delete expense.'));
+      }
     }
   };
 
@@ -593,9 +609,13 @@ export const AdminInvoicing: React.FC = () => {
                     <div className="shrink-0">
                       <InvoiceStatusDropdown
                         status={inv.status}
-                        onChange={(newStatus) => {
-                          updateInvoiceStatus(inv.id, newStatus);
-                          showToast(`Status updated to ${newStatus.toUpperCase()}`);
+                        onChange={async (newStatus) => {
+                          try {
+                            await updateInvoiceStatus(inv.id, newStatus, session?.user?.name || session?.user?.username || 'Authorized Lead');
+                            showToast(`Status updated to ${newStatus.toUpperCase()}`);
+                          } catch (error: any) {
+                            showToast(error?.message || 'Invoice status update failed.');
+                          }
                         }}
                       />
                     </div>
