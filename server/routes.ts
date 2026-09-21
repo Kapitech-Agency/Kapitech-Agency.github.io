@@ -2049,7 +2049,8 @@ apiRouter.get('/finance/metrics', requireAuth, requirePermission('canViewFinanci
 });
 
 // ----------------------------------------------------
-// 7. apiRouter.get('/vendors', requireAuth, requireAnyPermission('canManageVendors', 'canViewFinancials'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+// 7. Vendors
+apiRouter.get('/vendors', requireAuth, requireAnyPermission('canManageVendors', 'canViewFinancials'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const vendors = getDataSourceMode() === 'postgres' ? await postgresVendorRepository.list() : getDatabase().vendors;
   res.json({ success: true, vendors });
 });
@@ -2168,11 +2169,6 @@ apiRouter.delete('/vendors/:id', requireAuth, requirePermission('canManageVendor
   db.vendors = db.vendors.filter(v => v.id !== id);
   saveDatabase(db);
   recordAuditLog({ action: 'VENDOR_DELETED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Deleted vendor "${vendor.name || id}".`, severity: 'warning' });
-  res.json({ success: true, message: 'Vendor deleted.' });
-});
-
-ning'
-  });
   res.json({ success: true, message: 'Vendor deleted.' });
 });
 
