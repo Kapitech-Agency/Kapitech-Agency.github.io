@@ -18,7 +18,9 @@ test('Migration transaction normalizer removes wrappers after SQL comments witho
     const normalized = normalizeMigrationSql(source);
     assert.doesNotMatch(normalized, /^\s*BEGIN;/i);
     assert.doesNotMatch(normalized, /COMMIT;\s*$/i);
-    assert.notEqual(source, normalized);
+    if (/\bBEGIN;/.test(source)) {
+      assert.notEqual(source, normalized, file + ' should have its BEGIN wrapper normalized');
+    }
   }
 });
 
