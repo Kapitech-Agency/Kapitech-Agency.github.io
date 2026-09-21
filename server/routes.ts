@@ -2009,7 +2009,7 @@ apiRouter.put('/finance/invoices/:id', requireAuth, requirePermission('canManage
       res.json({ success: true, invoice: saved }); return;
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Invoice could not be updated.';
-      res.status(message.includes('modified') ? 409 : message.includes('Cancelled') ? 409 : 400).json({ success: false, error: message }); return;
+      res.status(message.includes('modified') || message.includes('Cancelled') || message.includes('PAID_INVOICE_LINKAGE_IMMUTABLE') || message.includes('PAID_INVOICE_TOTAL_IMMUTABLE') ? 409 : 400).json({ success: false, error: message }); return;
     }
   }
 
@@ -3177,7 +3177,16 @@ apiRouter.put('/crm/proposals/:id', requireAuth, requirePermission('canManageCrm
     if (patch.currency !== undefined && !['IDR','USD'].includes(String(patch.currency))) { res.status(400).json({ success: false, error: 'Invalid proposal currency.' }); return; }
     if (patch.status !== undefined && !['Draft','Internal Review','Sent','Approved','Rejected','Accepted'].includes(String(patch.status))) { res.status(400).json({ success: false, error: 'Invalid proposal status.' }); return; }
     if (patch.sentDate !== undefined && patch.sentDate !== null && !isValidDate(patch.sentDate)) { res.status(400).json({ success: false, error: 'Invalid proposal sent date.' }); return; }
-    const proposal = await postgresProposalRepository.update(id, { ...patch, items, subtotal, discount, taxPercent, tax, total });
+    let proposal;
+    try {
+      proposal = await postgresProposalRepository.update(id, { ...patch, items, subtotal, discount, taxPercent, tax, total });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Proposal could not be updated.';
+      if (message === 'ACCEPTED_PROPOSAL_IMMUTABLE') {
+        res.status(409).json({ success: false, error: 'Accepted proposals cannot be reopened or moved to another status.' }); return;
+      }
+      throw error;
+    }
     recordAuditLog({
       action: 'PROPOSAL_UPDATED',
       actor: req.user!.username,
