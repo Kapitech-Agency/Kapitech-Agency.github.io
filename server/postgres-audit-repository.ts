@@ -80,8 +80,9 @@ export class PostgresAuditRepository {
 
   async verifyChain(): Promise<{ valid: boolean; checked: number; brokenAt?: string }> {
     const result = await getPostgresPool().query<Row>(
-      'SELECT id,timestamp,action,actor,actor_role,actor_user_id,ip,user_agent,details,severity,prev_hash,hash ' +
-      'FROM audit_logs ORDER BY timestamp ASC,id ASC'
+      "SELECT id,to_char(timestamp AT TIME ZONE 'UTC','YYYY-MM-DD\"T\"HH24:MI:SS.MS\"Z\"') AS timestamp," +
+      "action,actor,actor_role,actor_user_id,ip::text AS ip,user_agent,details,severity,prev_hash,hash " +
+      "FROM audit_logs ORDER BY timestamp ASC,id ASC"
     );
 
     let previousHash = 'GENESIS';
