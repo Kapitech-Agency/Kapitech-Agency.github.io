@@ -1,5 +1,6 @@
 -- AMS PostgreSQL migration 006
 -- Proposal and invoice lifecycle hardening.
+-- Verification marker: proposal-to-invoice writes are transaction-bound.
 
 BEGIN;
 
