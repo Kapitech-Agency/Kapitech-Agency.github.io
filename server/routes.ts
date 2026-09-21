@@ -58,6 +58,8 @@ import { postgresExpenseRepository, ExpenseNotFoundError, ExpenseImmutableError,
 import { postgresProposalRepository, ProposalNotFoundError, ProposalImmutableError, ProposalVersionConflictError, ProposalStatusError } from './postgres-proposal-repository.ts';
 import { postgresInvoiceRepository, InvoiceNotFoundError, InvoiceImmutableError, InvoiceVersionConflictError, InvoicePaymentError, InvoiceProposalConflictError } from './postgres-invoice-repository.ts';
 import { getPostgresPool } from './postgres.ts';
+import { postgresDocumentRepository, DocumentNotFoundError, DocumentAccessDeniedError, DocumentVersionConflictError } from './postgres-document-repository.ts';
+import { postgresVendorRepository, VendorNotFoundError, VendorVersionConflictError, VendorImmutableError } from './postgres-vendor-repository.ts';
 
 
 const ROLE_POLICIES: Record<string, {
