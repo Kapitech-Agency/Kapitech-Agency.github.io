@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import test from 'node:test';
 
-test('Production startup fails closed unless PostgreSQL is explicitly selected', () => {
+test('Production startup requires PostgreSQL and encryption configuration', () => {
   const source = fs.readFileSync(path.resolve(process.cwd(), 'server.ts'), 'utf8');
   assert.ok(source.includes('Production startup requires KAPITECH_DATA_SOURCE=postgres'));
   assert.ok(source.includes('Production startup requires KAPITECH_POSTGRES_URL.'));

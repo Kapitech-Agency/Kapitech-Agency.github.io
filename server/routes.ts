@@ -62,6 +62,7 @@ import { postgresInvoiceRepository } from './postgres-invoice-repository.ts';
 import { postgresExpenseRepository, ExpenseImmutableError, ExpenseNotFoundError, ExpenseVersionConflictError, ExpenseProjectNotFoundError } from './postgres-expense-repository.ts';
 import { postgresApprovalRepository } from './postgres-approval-repository.ts';
 import { postgresNotificationRepository } from './postgres-notification-repository.ts';
+import { canViewNotification, getHiddenNotificationTypes } from './notification-access.ts';
 import { postgresDocumentRepository } from './postgres-document-repository.ts';
 import { postgresAuditLogRepository } from './postgres-audit-log-repository.ts';
 import { postgresCmsRepository } from './postgres-cms-repository.ts';
@@ -4604,15 +4605,7 @@ apiRouter.get('/notifications', requireAuth, async (req: AuthenticatedRequest, r
     ? await postgresNotificationRepository.list()
     : getDatabase().notifications || [];
 
-  const notifications = source.filter((notification) => {
-    const typeAllowed =
-      notification.type === 'finance' ? canViewFinance :
-      notification.type === 'lead' ? canViewCrm :
-      notification.type === 'approval' ? canViewApprovals :
-      true;
-    const recipientAllowed = !notification.recipientUserId || notification.recipientUserId === req.user!.id;
-    return typeAllowed && recipientAllowed;
-  }).map((notification) => ({
+  const notifications = source.filter((notification) => canViewNotification(req.user!, notification)).map((notification) => ({
     ...notification,
     read: Array.isArray(notification.readBy)
       ? notification.readBy.includes(req.user!.id)
@@ -4630,7 +4623,16 @@ apiRouter.post('/notifications/:id/read', requireAuth, async (req: Authenticated
       res.status(404).json({ success: false, error: 'Notification not found.' });
       return;
     }
-    if (notification.recipientUserId && notification.recipientUserId !== req.user!.id) {
+    if (!canViewNotification(req.user!, notification)) {
+      recordAuditLog({
+        action: 'ACCESS_DENIED',
+        actor: req.user!.username,
+        actorRole: req.user!.role,
+        ip: req.ip,
+        userAgent: req.headers['user-agent'] as string,
+        details: `Notification access denied for "${id}".`,
+        severity: 'warning'
+      });
       res.status(403).json({ success: false, error: 'Notification access denied.' });
       return;
     }
@@ -4658,7 +4660,16 @@ apiRouter.post('/notifications/:id/read', requireAuth, async (req: Authenticated
     res.status(404).json({ success: false, error: 'Notification not found.' });
     return;
   }
-  if (notif.recipientUserId && notif.recipientUserId !== req.user!.id) {
+  if (!canViewNotification(req.user!, notif)) {
+    recordAuditLog({
+      action: 'ACCESS_DENIED',
+      actor: req.user!.username,
+      actorRole: req.user!.role,
+      ip: req.ip,
+      userAgent: req.headers['user-agent'] as string,
+      details: `Notification access denied for "${id}".`,
+      severity: 'warning'
+    });
     res.status(403).json({ success: false, error: 'Notification access denied.' });
     return;
   }
@@ -4679,7 +4690,7 @@ apiRouter.post('/notifications/:id/read', requireAuth, async (req: Authenticated
 
 apiRouter.post('/notifications/mark-all-read', requireAuth, async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   if (getDataSourceMode() === 'postgres') {
-    await postgresNotificationRepository.markAllRead(req.user!.id);
+    await postgresNotificationRepository.markAllRead(req.user!.id, getHiddenNotificationTypes(req.user!));
     recordAuditLog({
       action: 'NOTIFICATIONS_MARKED_ALL_READ',
       actor: req.user!.username,
@@ -4695,7 +4706,7 @@ apiRouter.post('/notifications/mark-all-read', requireAuth, async (req: Authenti
 
   const db = getDatabase();
   for (const notification of (db.notifications || [])) {
-    if (notification.recipientUserId && notification.recipientUserId !== req.user!.id) continue;
+    if (!canViewNotification(req.user!, notification)) continue;
     if (!Array.isArray(notification.readBy)) notification.readBy = [];
     if (!notification.readBy.includes(req.user!.id)) notification.readBy.push(req.user!.id);
   }
@@ -4903,3 +4914,6 @@ const handleOverview = async (req: AuthenticatedRequest, res: Response): Promise
     res.json({success:true,metrics:{currency,revenueCollected:canViewFinancials?primary.revenueCollected:null,totalBilled:canViewFinancials?primary.totalBilled:null,outstandingReceivables:canViewFinancials?primary.outstandingReceivables:null,overdueReceivables:canViewFinancials?primary.overdueReceivables:null,activePipeline:canViewCrm?activePipelineValue:null,activeProjects:canViewProjects?activeProjectsCount:0,projectsAtRisk:canViewProjects?projectsAtRiskCount:0,pendingApprovals:canViewApprovals?pendingApprovalsCount:0,overdueTasks:canViewProjects?overdueTasksCount:0,openLeads:canViewCrm?openLeadsCount:0,byCurrency:Array.from(financeByCurrency.values())},todayAtKapitech:{openLeadsCount:canViewCrm?openLeadsCount:0,dealsInPipelineCount:canViewCrm?dealsInPipelineCount:0,pipelineValue:canViewFinancials?activePipelineValue:null,proposalsAwaitingCount:(canViewCrm||canViewFinancials||canViewApprovals)?proposalsAwaitingCount:0,projectsAtRiskCount:canViewProjects?projectsAtRiskCount:0,overdueInvoicesCount:canViewFinancials?primary.overdueInvoicesCount:0,cashOutstanding:canViewFinancials?primary.outstandingReceivables:null,currency},financials:canViewFinancials?{currency,revenueThisMonth:primary.revenueThisMonth,cashCollected:primary.revenueThisMonth,outstandingReceivables:primary.outstandingReceivables,operatingExpenses:primary.monthlyOperatingExpenses,netOperatingProfit:netOperatingProfitThisMonth,margin:netMarginThisMonth}:{currency,revenueThisMonth:null,cashCollected:null,outstandingReceivables:null,operatingExpenses:null,netOperatingProfit:null,margin:null},pipelineByStage,attentionItems,projects:canViewProjects?activeProjectsList.slice(0,10):[],recentActivity:canViewAudit?(usePostgres?await postgresAuditLogRepository.list(10):(db!.auditLogs||[]).slice(0,10)):[]});
   }catch(error){console.error('[Dashboard Overview] Failed:',error);res.status(503).json({success:false,error:'Dashboard data is temporarily unavailable.'});}
 };
+
+apiRouter.get('/dashboard/overview', requireAuth, handleOverview);
+apiRouter.get('/executive/overview', requireAuth, handleOverview);
