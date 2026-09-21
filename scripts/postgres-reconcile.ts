@@ -159,7 +159,13 @@ async function main(): Promise<void> {
   );
 
   try {
-    const postgresCounts = await pgCounts();
+    const postgresResult = await pgCountsAndFinancials();
+    const postgresCounts = postgresResult.counts;
+    const financialMismatches = Object.fromEntries(
+      Object.keys(financials)
+        .filter(key => Math.abs(financials[key as keyof typeof financials] - postgresResult.financials[key]) > 0.005)
+        .map(key => [key, { json: financials[key as keyof typeof financials], postgres: postgresResult.financials[key] }])
+    );
     const countMismatches = Object.fromEntries(
       keys
         .filter(key => localCounts[key] !== postgresCounts[key])
@@ -171,7 +177,8 @@ async function main(): Promise<void> {
       duplicateIds: Object.keys(duplicates).length === 0,
       brokenReferences: Object.values(brokenReferences).every(value => value === 0),
       postgresReachable: true,
-      countParity: Object.keys(countMismatches).length === 0
+      countParity: Object.keys(countMismatches).length === 0,
+      financialParity: Object.keys(financialMismatches).length === 0
     };
 
     const status = Object.values(checks).every(Boolean) ? 'succeeded' : 'failed';
@@ -182,7 +189,7 @@ async function main(): Promise<void> {
       localCounts,
       postgresCounts,
       countMismatches,
-    financialMismatches,
+      financialMismatches,
       financials,
       duplicates,
       brokenReferences,
