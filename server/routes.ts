@@ -717,26 +717,17 @@ apiRouter.post('/auth/verify-password', requireAuth, rateLimitAuthenticated(10, 
   res.json({ success: true });
 });
 
-apiRouter.get('/auth/users', requireAuth, requireMaster, (req: AuthenticatedRequest, res: Response): void => {
-  const db = getDatabase();
-  const sanitizedUsers = db.users.map(u => ({
-    id: u.id,
-    name: u.name,
-    username: u.username,
-    email: u.email,
-    role: u.role,
-    stakeholderType: u.stakeholderType,
-    permissions: u.permissions,
-    division: u.division,
-    mfaEnabled: u.mfaEnabled,
-    status: u.status,
-    lastLogin: u.lastLogin,
-    createdAt: u.createdAt
+apiRouter.get('/auth/users', requireAuth, requireMaster, async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  const users = getDataSourceMode() === 'postgres' ? await postgresAuthRepository.listUsers() : getDatabase().users;
+  const sanitizedUsers = users.map(u => ({
+    id: u.id, name: u.name, username: u.username, email: u.email, role: u.role,
+    stakeholderType: u.stakeholderType, permissions: u.permissions, division: u.division,
+    mfaEnabled: u.mfaEnabled, status: u.status, lastLogin: u.lastLogin, createdAt: u.createdAt
   }));
   res.json({ success: true, users: sanitizedUsers });
 });
 
-apiRouter.post('/auth/users', requireAuth, requireMaster, (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.post('/auth/users', requireAuth, requireMaster, async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { name, username, email, password, role, division } = req.body;
   const requestedRole = String(role || 'Tier 3: Operational Staff').trim();
   const policy = ROLE_POLICIES[requestedRole];
@@ -773,8 +764,11 @@ apiRouter.post('/auth/users', requireAuth, requireMaster, (req: AuthenticatedReq
     return;
   }
 
-  const db = getDatabase();
-  if (db.users.some(u => u.username.toLowerCase() === cleanUsername || u.email.toLowerCase() === cleanEmail)) {
+  const db = getDataSourceMode() === 'json' ? getDatabase() : undefined;
+  const existing = getDataSourceMode() === 'postgres'
+    ? await postgresAuthRepository.findUserByIdentifier(cleanUsername)
+    : db!.users.find(u => u.username.toLowerCase() === cleanUsername || u.email.toLowerCase() === cleanEmail) || null;
+  if (existing || (getDataSourceMode() === 'postgres' && await postgresAuthRepository.findUserByIdentifier(cleanEmail))) {
     res.status(400).json({ success: false, error: 'Username or email already exists.' });
     return;
   }
@@ -798,8 +792,8 @@ apiRouter.post('/auth/users', requireAuth, requireMaster, (req: AuthenticatedReq
     createdAt: new Date().toISOString()
   };
 
-  db.users.push(newUser);
-  saveDatabase(db);
+  if (getDataSourceMode() === 'postgres') await postgresAuthRepository.createUser(newUser);
+  else { db!.users.push(newUser); saveDatabase(db!); }
 
   recordAuditLog({
     action: 'ACCOUNT_CREATED',
@@ -814,7 +808,7 @@ apiRouter.post('/auth/users', requireAuth, requireMaster, (req: AuthenticatedReq
   res.json({ success: true, user: { id: newUser.id, username: newUser.username } });
 });
 
-apiRouter.delete('/auth/users/:id', requireAuth, requireMaster, (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.delete('/auth/users/:id', requireAuth, requireMaster, async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
   const db = getDatabase();
   const target = db.users.find(u => u.id === id);
@@ -846,7 +840,7 @@ apiRouter.delete('/auth/users/:id', requireAuth, requireMaster, (req: Authentica
   res.json({ success: true, message: 'User deleted.' });
 });
 
-apiRouter.put('/auth/users/:id', requireAuth, requireMaster, (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.put('/auth/users/:id', requireAuth, requireMaster, async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
   const db = getDatabase();
   const target = db.users.find(u => u.id === id);
