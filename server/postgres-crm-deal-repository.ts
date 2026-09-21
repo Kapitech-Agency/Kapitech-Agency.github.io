@@ -98,12 +98,22 @@ export class PostgresCrmDealRepository {
   }
 
   async delete(id: string): Promise<boolean> {
-    const result = await getPostgresPool().query('DELETE FROM crm_deals WHERE id = $1', [id]);
-    return result.rowCount === 1;
+    return withPostgresTransaction(async client=>{
+      const current=await client.query('SELECT id FROM crm_deals WHERE id=$1 FOR UPDATE',[id]);
+      if(!current.rows[0])return false;
+      const references=await client.query('SELECT COUNT(*)::int AS count FROM proposals WHERE deal_id=$1',[id]);
+      if(Number(references.rows[0]?.count||0)>0)throw new Error('DEAL_HAS_PROPOSALS');
+      const result=await client.query('DELETE FROM crm_deals WHERE id=$1',[id]);
+      return result.rowCount===1;
+    });
   }
 
   async convertLead(lead: any, client: any, deal: any, clientAlreadyExists = false): Promise<{ client: any; deal: any }> {
     return withPostgresTransaction(async db => {
+      const leadRow=await db.query('SELECT id,status FROM leads WHERE id=$1 FOR UPDATE',[lead.id]);
+      if(!leadRow.rows[0])throw new Error('Lead not found during conversion.');
+      if(String(leadRow.rows[0].status).toLowerCase()==='closed')throw new Error('Lead has already been converted.');
+      if(clientAlreadyExists){const existing=await db.query('SELECT id FROM clients WHERE id=$1 LIMIT 1',[client.id]);if(!existing.rows[0])throw new Error('Existing client not found during conversion.');}
       const clientResult = clientAlreadyExists ? null : await db.query(
         `INSERT INTO clients
          (id,name,company,email,phone,industry,status,notes,metadata,created_at,updated_at)
@@ -141,7 +151,7 @@ export class PostgresCrmDealRepository {
           deal.updatedAt
         ]
       );
-      const leadResult = await db.query('UPDATE leads SET status=$2,updated_at=$3 WHERE id=$1 RETURNING *', [lead.id, 'closed', deal.createdAt]);
+      const leadResult = await db.query('UPDATE leads SET status=$2,updated_at=$3 WHERE id=$1 AND status <> $4 RETURNING *', [lead.id, 'closed', deal.createdAt]);
       if (!leadResult.rows[0]) throw new Error('Lead not found during conversion.');
       return {
         client: { ...client, id: clientResult?.rows[0]?.id || client.id },
