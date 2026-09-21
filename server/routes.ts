@@ -2161,6 +2161,7 @@ apiRouter.post('/finance/invoices/:id/pay', requireAuth, requirePermission('canM
   const reference = String(input.reference || '').trim().slice(0, 160);
   const notes = String(input.notes || '').trim().slice(0, 1000);
 
+  const idempotencyKey = String(input.idempotencyKey || req.get('Idempotency-Key') || '').trim().slice(0, 100);
   const paymentRecord = {
     id: `pay_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
     amount: Math.round(payAmount * 100) / 100,
@@ -2168,7 +2169,8 @@ apiRouter.post('/finance/invoices/:id/pay', requireAuth, requirePermission('canM
     method,
     reference,
     recordedBy: req.user!.name || req.user!.username,
-    notes
+    notes,
+    idempotencyKey
   };
 
   if (!Array.isArray(invoice.payments)) invoice.payments = [];
