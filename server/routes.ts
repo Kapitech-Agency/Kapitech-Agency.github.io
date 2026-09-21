@@ -4098,12 +4098,25 @@ apiRouter.get('/system/security/status', requireAuth, requireAnyPermission('canV
 // ----------------------------------------------------
 
 apiRouter.get('/system/production-readiness', requireAuth, requireAnyPermission('canViewSecurityAuditLogs', 'canAccessServerAndApi'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-  if (getDataSourceMode() !== 'postgres') {
+  const postgresMode = getDataSourceMode() === 'postgres';
+  if (!postgresMode) {
     res.status(409).json({
       success: false,
       productionReady: false,
-      gates: { postgres: false, migrations: false, mfa: false, backupDr: false, documentStorage: false },
-      status: { datasource: 'json', reason: 'Production cutover requires KAPITECH_DATA_SOURCE=postgres.' }
+      gates: {
+        runtime: false,
+        encryption: false,
+        relationalReconciliation: false,
+        postgres: false,
+        migrations: false,
+        mfa: false,
+        backupDr: false,
+        documentStorage: false
+      },
+      status: {
+        datasource: 'json',
+        reason: 'Production cutover requires KAPITECH_DATA_SOURCE=postgres.'
+      }
     });
     return;
   }
@@ -4127,11 +4140,15 @@ apiRouter.get('/system/production-readiness', requireAuth, requireAnyPermission(
       migrationCheckError = error instanceof Error ? error.message : 'Migration status unavailable.';
     }
 
-    const requiredMigrations = ['012_document_vault_integrity', '013_security_controls'];
-    const migrationComplete = !migrationCheckError && requiredMigrations.every(version => appliedMigrations.includes(version));
+    const requiredMigrationNumbers = Array.from({ length: 13 }, (_, index) => String(index + 1).padStart(3, '0'));
+    const appliedMigrationNumbers = new Set(appliedMigrations.map(version => version.slice(0, 3)));
+    const migrationComplete = !migrationCheckError
+      && requiredMigrationNumbers.every(version => appliedMigrationNumbers.has(version));
+
     const activeUsers = users.filter(user => user.status === 'active');
     const mfaEnabledCount = activeUsers.filter(user => user.mfaEnabled).length;
     const mfaComplete = activeUsers.length > 0 && mfaEnabledCount === activeUsers.length;
+
     const backup = getPostgresBackupHealth();
 
     const privateFiles = documents.filter(document => document.sourceType === 'private_file');
@@ -4139,7 +4156,25 @@ apiRouter.get('/system/production-readiness', requireAuth, requireAnyPermission(
     const documentIntegrityComplete = privateFiles.length === checksummed.length;
     const documentStorageReady = storageHealth.configured && storageHealth.ok && documentIntegrityComplete;
 
+    const runtimeReady =
+      process.env.NODE_ENV === 'production' &&
+      /^https:\/\//i.test(String(process.env.APP_URL || '').trim()) &&
+      Boolean(process.env.KAPITECH_DATA_SOURCE === 'postgres');
+
+    const encryptionReady = isDataEncryptionEnabled();
+
+    const reconciliationVerifiedAt = process.env.KAPITECH_RELATIONAL_RECONCILIATION_VERIFIED_AT?.trim() || '';
+    const reconciliationDate = reconciliationVerifiedAt ? new Date(reconciliationVerifiedAt) : null;
+    const reconciliationReady = Boolean(
+      reconciliationDate &&
+      !Number.isNaN(reconciliationDate.getTime()) &&
+      reconciliationDate.getTime() <= Date.now()
+    );
+
     const gates = {
+      runtime: runtimeReady,
+      encryption: encryptionReady,
+      relationalReconciliation: reconciliationReady,
       postgres: connection.ok,
       migrations: migrationComplete,
       mfa: mfaComplete,
@@ -4148,15 +4183,29 @@ apiRouter.get('/system/production-readiness', requireAuth, requireAnyPermission(
     };
 
     const productionReady = Object.values(gates).every(Boolean);
+
     res.status(productionReady ? 200 : 409).json({
       success: productionReady,
       productionReady,
       gates,
       status: {
         datasource: 'postgres',
+        runtime: {
+          nodeEnvProduction: process.env.NODE_ENV === 'production',
+          appUrlHttps: /^https:\/\//i.test(String(process.env.APP_URL || '').trim()),
+          dataSourcePostgres: true
+        },
+        encryption: {
+          configured: encryptionReady,
+          algorithm: 'AES-256-GCM'
+        },
+        relationalReconciliation: {
+          verifiedAt: reconciliationVerifiedAt || null,
+          complete: reconciliationReady
+        },
         postgres: connection,
         migrations: {
-          required: requiredMigrations,
+          requiredPrefixCount: requiredMigrationNumbers.length,
           applied: appliedMigrations,
           complete: migrationComplete,
           error: migrationCheckError || null
@@ -4172,7 +4221,9 @@ apiRouter.get('/system/production-readiness', requireAuth, requireAnyPermission(
           provider: storageHealth.provider,
           health: storageHealth,
           privateDocumentCount: privateFiles.length,
-          integrityMetadataCoveragePercent: privateFiles.length ? Math.round((checksummed.length / privateFiles.length) * 100) : 100,
+          integrityMetadataCoveragePercent: privateFiles.length
+            ? Math.round((checksummed.length / privateFiles.length) * 100)
+            : 100,
           ready: documentStorageReady
         }
       }

@@ -62,13 +62,19 @@ export function getPostgresBackupHealth(): PostgresBackupHealth {
   const rtoMinutes = readPositiveInt('KAPITECH_POSTGRES_BACKUP_RTO_MINUTES', 60);
   const retentionDays = readPositiveInt('KAPITECH_POSTGRES_BACKUP_RETENTION_DAYS', 35);
   const backupFresh = ageMs !== null && ageMs <= rpoMinutes * 60 * 1000;
-  const restoreVerified = restoreVerifiedAt !== null;
+  const restoreVerifiedAtMs = restoreVerifiedAt ? new Date(restoreVerifiedAt).getTime() : null;
+  const restoreMaxAgeMs = retentionDays * 24 * 60 * 60 * 1000;
+  const restoreVerificationFresh = restoreVerifiedAtMs !== null
+    && Number.isFinite(restoreVerifiedAtMs)
+    && Math.max(0, now - restoreVerifiedAtMs) <= restoreMaxAgeMs;
+  const restoreVerified = restoreVerificationFresh;
 
   let reason: string | undefined;
   if (!provider) reason = 'No PostgreSQL backup provider is configured.';
   else if (!latestBackupAt) reason = 'Backup provider is configured but no successful backup timestamp is published.';
   else if (!backupFresh) reason = 'The latest reported PostgreSQL backup is outside the configured RPO.';
-  else if (!restoreVerified) reason = 'A successful restore rehearsal has not been reported.';
+  else if (!restoreVerifiedAt) reason = 'A successful restore rehearsal has not been reported.';
+  else if (!restoreVerificationFresh) reason = 'The latest restore rehearsal is older than the configured retention window.';
 
   return {
     configured: Boolean(provider && latestBackupAt && backupFresh && restoreVerified),
@@ -77,7 +83,7 @@ export function getPostgresBackupHealth(): PostgresBackupHealth {
     latestBackupAgeMinutes: ageMs === null ? null : Math.round(ageMs / 60000),
     backupFresh,
     integrity: {
-      valid: Boolean(provider && latestBackupAt && backupFresh),
+      valid: Boolean(provider && latestBackupAt && backupFresh && restoreVerificationFresh),
       checkedAt: new Date().toISOString(),
       latestBackupAt,
       restoreVerifiedAt,
