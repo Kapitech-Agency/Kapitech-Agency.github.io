@@ -78,11 +78,17 @@ export class InvoicePaymentError extends Error { readonly code = 'INVOICE_PAYMEN
 export class InvoiceProposalConflictError extends Error { readonly code = 'INVOICE_PROPOSAL_CONFLICT'; }
 
 async function loadInvoiceById(clientOrPool: any, id: string): Promise<{ row: Row; items: Row[]; payments: Row[] } | null> {
-  const invoice = await clientOrPool.query<Row>('SELECT * FROM invoices WHERE id=$1 LIMIT 1', [id]);
-  if (!invoice.rows[0]) return null;
-  const items = await clientOrPool.query<Row>('SELECT * FROM invoice_items WHERE invoice_id=$1 ORDER BY id', [id]);
-  const payments = await clientOrPool.query<Row>('SELECT * FROM invoice_payments WHERE invoice_id=$1 ORDER BY paid_at, id', [id]);
-  return { row: invoice.rows[0], items: items.rows, payments: payments.rows };
+  const invoice = await clientOrPool.query('SELECT * FROM invoices WHERE id=$1 LIMIT 1', [id]);
+  const invoiceRows = invoice.rows as Row[];
+  if (!invoiceRows[0]) return null;
+
+  const items = await clientOrPool.query('SELECT * FROM invoice_items WHERE invoice_id=$1 ORDER BY id', [id]);
+  const itemRows = items.rows as Row[];
+
+  const payments = await clientOrPool.query('SELECT * FROM invoice_payments WHERE invoice_id=$1 ORDER BY paid_at, id', [id]);
+  const paymentRows = payments.rows as Row[];
+
+  return { row: invoiceRows[0], items: itemRows, payments: paymentRows };
 }
 
 export class PostgresInvoiceRepository {
