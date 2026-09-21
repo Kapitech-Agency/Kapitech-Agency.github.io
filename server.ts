@@ -7,6 +7,7 @@ import { checkPostgresConnection } from './server/postgres.ts';
 import { postgresAuthRepository } from './server/postgres-repository.ts';
 import { ensurePostgresInitialAdmin } from './server/postgres-bootstrap.ts';
 import { runPostgresMigrations } from './server/postgres-migrations.ts';
+import { isDataEncryptionEnabled } from './server/db.ts';
 
 dotenv.config();
 
@@ -25,6 +26,9 @@ function assertProductionDataSource(): void {
   if (!process.env.KAPITECH_DATA_ENCRYPTION_KEY?.trim()) {
     throw new Error('Production startup requires KAPITECH_DATA_ENCRYPTION_KEY.');
   }
+
+  // Validate the encryption key format and 32-byte length before the application opens its port.
+  isDataEncryptionEnabled();
 }
 
 async function startServer() {
