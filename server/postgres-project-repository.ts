@@ -176,7 +176,7 @@ export class PostgresProjectRepository {
     if (existing.archivedAt) throw new ProjectArchiveMutationError('Archived project cannot be updated.');
 
     const expectedVersion = patch.version == null ? undefined : Number(patch.version);
-    const merged = { ...existing, ...patch, id };
+    const merged: Record<string, any> = { ...(existing as Record<string, any>), ...(patch as Record<string, any>), id };
     const known = [
       'id','clientId','name','title','description','status','owner','budget','currency',
       'startDate','targetEndDate','createdAt','updatedAt','version','archivedAt'
@@ -336,7 +336,7 @@ export class PostgresTaskRepository {
 
       const currentMapped = mapTask(locked.rows[0]);
       const expectedVersion = patch.version == null ? undefined : Number(patch.version);
-      const merged = { ...currentMapped, ...patch, id };
+      const merged: Record<string, any> = { ...(currentMapped as Record<string, any>), ...(patch as Record<string, any>), id };
       const known = [
         'id','projectId','title','description','status','priority','assigneeUserId',
         'dueDate','estimatedHours','version','archivedAt','completedAt','createdAt','updatedAt'
