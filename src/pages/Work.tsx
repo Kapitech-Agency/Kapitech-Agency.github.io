@@ -24,7 +24,7 @@ import Fuse from 'fuse.js';
 import { AtmosphericBackground } from '../components/ui/AtmosphericBackground';
 import { useLanguage } from '../lib/LanguageContext';
 import { ProjectItem } from '../data/projectsData';
-import { getCmsProjects } from '../lib/cmsStore';
+import { getCmsProjects, fetchServerCmsProjects } from '../lib/cmsStore';
 
 export const Work = () => {
   const { t, language } = useLanguage();
@@ -38,6 +38,7 @@ export const Work = () => {
 
   // Sync with CMS updates
   useEffect(() => {
+    void fetchServerCmsProjects();
     const handleUpdate = () => {
       setProjectsList(getCmsProjects());
     };
