@@ -63,6 +63,13 @@ export class PostgresAuthRepository {
     return result.rows[0] ? mapUser(result.rows[0]) : null;
   }
 
+  async findUserByIdentifier(identifier: string): Promise<StoredUser | null> {
+    const result = await getPostgresPool().query<UserRow>(
+      'SELECT * FROM users WHERE lower(username) = lower($1) OR lower(email) = lower($1) LIMIT 1', [identifier]
+    );
+    return result.rows[0] ? mapUser(result.rows[0]) : null;
+  }
+
   async findUserByUsername(username: string): Promise<StoredUser | null> {
     const result = await getPostgresPool().query<UserRow>(
       'SELECT * FROM users WHERE username = $1 LIMIT 1', [username]
@@ -108,6 +115,20 @@ export class PostgresAuthRepository {
     return result.rowCount === 1;
   }
 
+  async pruneUserSessions(userId: string, maxSessions = 5): Promise<void> {
+    await getPostgresPool().query(
+      `DELETE FROM sessions
+       WHERE user_id = $1
+         AND token_hash NOT IN (
+           SELECT token_hash FROM sessions
+           WHERE user_id = $1
+           ORDER BY created_at DESC
+           LIMIT $2
+         )`,
+      [userId, maxSessions]
+    );
+  }
+
   async deleteSession(tokenHash: string): Promise<boolean> {
     const result = await getPostgresPool().query(
       'DELETE FROM sessions WHERE token_hash = $1', [tokenHash]
@@ -123,6 +144,14 @@ export class PostgresAuthRepository {
       exceptTokenHash ? [userId, exceptTokenHash] : [userId]
     );
     return result.rowCount ?? 0;
+  }
+
+  async updateUserPassword(userId: string, passwordHash: string, salt: string, passwordAlgorithm: string): Promise<boolean> {
+    const result = await getPostgresPool().query(
+      'UPDATE users SET password_hash = $2, salt = $3, password_algorithm = $4 WHERE id = $1',
+      [userId, passwordHash, salt, passwordAlgorithm]
+    );
+    return result.rowCount === 1;
   }
 
   async touchUserLastLogin(userId: string, lastLogin: string): Promise<boolean> {

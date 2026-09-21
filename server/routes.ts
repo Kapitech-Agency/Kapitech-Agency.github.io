@@ -47,6 +47,8 @@ import {
   setMfaChallengeCookie,
   clearMfaChallengeCookie
 } from './auth';
+import { getDataSourceMode } from './data-source.ts';
+import { postgresAuthRepository } from './postgres-repository.ts';
 
 
 const ROLE_POLICIES: Record<string, {
@@ -221,7 +223,7 @@ apiRouter.use((req: AuthenticatedRequest, res: Response, next) => {
 // 1. AUTHENTICATION & SESSION MANAGEMENT
 // ----------------------------------------------------
 
-apiRouter.post('/auth/login', rateLimitPublic(10, 15 * 60 * 1000), (req: Request, res: Response): void => {
+apiRouter.post('/auth/login', rateLimitPublic(10, 15 * 60 * 1000), async (req: Request, res: Response): Promise<void> => {
   const { identifier, password, rememberMe } = req.body;
   const ip = req.ip || req.socket.remoteAddress || '127.0.0.1';
   const userAgent = req.headers['user-agent'] || 'unknown';
@@ -242,8 +244,14 @@ apiRouter.post('/auth/login', rateLimitPublic(10, 15 * 60 * 1000), (req: Request
   }
 
   let db;
+  let user: StoredUser | null;
   try {
-    db = getDatabase();
+    if (getDataSourceMode() === 'postgres') {
+      user = await postgresAuthRepository.findUserByIdentifier(cleanIdentifier);
+    } else {
+      db = getDatabase();
+      user = db.users.find(u => u.username.toLowerCase() === cleanIdentifier || u.email.toLowerCase() === cleanIdentifier) || null;
+    }
   } catch (error) {
     console.error('[Auth] Failed to initialize authentication database:', error);
     const message = error instanceof Error ? error.message : String(error);
@@ -260,10 +268,6 @@ apiRouter.post('/auth/login', rateLimitPublic(10, 15 * 60 * 1000), (req: Request
     });
     return;
   }
-
-  const user = db.users.find(
-    u => u.username.toLowerCase() === cleanIdentifier || u.email.toLowerCase() === cleanIdentifier
-  );
 
   if (!user || user.status === 'suspended') {
     recordFailedLogin(cleanIdentifier, ip);
@@ -322,7 +326,8 @@ apiRouter.post('/auth/login', rateLimitPublic(10, 15 * 60 * 1000), (req: Request
       user.salt = prepared.salt;
       user.passwordHash = prepared.passwordHash;
       user.passwordAlgorithm = prepared.passwordAlgorithm;
-      saveDatabase(db);
+      if (getDataSourceMode() === 'postgres') await postgresAuthRepository.updateUserPassword(user.id, prepared.passwordHash, prepared.salt, prepared.passwordAlgorithm);
+      else saveDatabase(db);
     }
 
     if (user.mfaEnabled) {
@@ -334,7 +339,7 @@ apiRouter.post('/auth/login', rateLimitPublic(10, 15 * 60 * 1000), (req: Request
         return;
       }
 
-      const challenge = issueMfaChallenge(user.id, Boolean(rememberMe));
+      const challenge = await issueMfaChallenge(user.id, Boolean(rememberMe));
       setMfaChallengeCookie(res, challenge);
       setCsrfCookie(res);
 
@@ -363,8 +368,9 @@ apiRouter.post('/auth/login', rateLimitPublic(10, 15 * 60 * 1000), (req: Request
 
     const nowIso = new Date().toISOString();
     user.lastLogin = nowIso;
-    saveDatabase(db);
-    const session = createSession(user, ip, userAgent, Boolean(rememberMe));
+    if (getDataSourceMode() === 'postgres') await postgresAuthRepository.touchUserLastLogin(user.id, nowIso);
+    else saveDatabase(db);
+    const session = await createSession(user, ip, userAgent, Boolean(rememberMe));
 
     recordAuditLog({
       action: 'LOGIN_SUCCESS',
@@ -405,7 +411,7 @@ apiRouter.post('/auth/login', rateLimitPublic(10, 15 * 60 * 1000), (req: Request
   }
 });
 
-apiRouter.post('/auth/mfa/verify', rateLimitPublic(10, 5 * 60 * 1000), (req: Request, res: Response): void => {
+apiRouter.post('/auth/mfa/verify', rateLimitPublic(10, 5 * 60 * 1000), async (req: Request, res: Response): Promise<void> => {
   const origin = req.get('origin');
   if (origin && origin !== `${req.protocol}://${req.get('host')}`) {
     res.status(403).json({ success: false, error: 'Security validation failed.' });
@@ -417,20 +423,23 @@ apiRouter.post('/auth/mfa/verify', rateLimitPublic(10, 5 * 60 * 1000), (req: Req
     .map(part => part.trim())
     .find(part => part.startsWith('kapi_mfa_challenge='))
     ?.slice('kapi_mfa_challenge='.length) || '';
-  const challenge = getMfaChallenge(decodeURIComponent(challengeToken));
+  const challenge = await getMfaChallenge(decodeURIComponent(challengeToken));
   if (!challenge) {
     clearMfaChallengeCookie(res);
     res.status(401).json({ success: false, error: 'MFA challenge expired. Please sign in again.' });
     return;
   }
 
-  const db = getDatabase();
-  const user = db.users.find(item => item.id === challenge.userId);
+  const db = getDataSourceMode() === 'json' ? getDatabase() : undefined;
+  const user = getDataSourceMode() === 'postgres' ? await postgresAuthRepository.findUserById(challenge.userId) : db!.users.find(item => item.id === challenge.userId) || null;
   const code = String(req.body?.code || '').trim();
   const validTotp = Boolean(user?.mfaEnabled && user?.mfaSecret && verifyTotpCode(user.mfaSecret, code));
   const validRecovery = Boolean(user?.mfaEnabled && user && verifyMfaRecoveryCode(user, code));
+  if (validRecovery && getDataSourceMode() === 'postgres' && user) {
+    await postgresAuthRepository.updateUserMfa(user.id, { mfaEnabled: user.mfaEnabled, mfaSecret: user.mfaSecret || null, mfaPendingSecret: user.mfaPendingSecret || null, mfaPendingSecretCreatedAt: user.mfaPendingSecretCreatedAt || null, mfaRecoveryCodeHashes: user.mfaRecoveryCodeHashes || [] });
+  }
   if (!user || user.status === 'suspended' || !user.mfaEnabled || (!validTotp && !validRecovery)) {
-    const failedAttempts = incrementMfaChallengeFailures(decodeURIComponent(challengeToken));
+    const failedAttempts = await incrementMfaChallengeFailures(decodeURIComponent(challengeToken));
     if (failedAttempts >= 5) {
       clearMfaChallengeCookie(res);
     }
@@ -447,11 +456,12 @@ apiRouter.post('/auth/mfa/verify', rateLimitPublic(10, 5 * 60 * 1000), (req: Req
     return;
   }
 
-  consumeMfaChallenge(decodeURIComponent(challengeToken));
+  await consumeMfaChallenge(decodeURIComponent(challengeToken));
   user.lastLogin = new Date().toISOString();
-  saveDatabase(db);
+  if (getDataSourceMode() === 'postgres') await postgresAuthRepository.touchUserLastLogin(user.id, user.lastLogin);
+  else saveDatabase(db!);
 
-  const session = createSession(user, req.ip || 'unknown', req.headers['user-agent'] || 'unknown', challenge.rememberMe);
+  const session = await createSession(user, req.ip || 'unknown', req.headers['user-agent'] || 'unknown', challenge.rememberMe);
   const cookieMaxAge = challenge.rememberMe ? 24 * 3600 : 12 * 3600;
   const secureCookie = process.env.NODE_ENV === 'production' ? ' Secure;' : '';
   res.append('Set-Cookie', `kapi_session=${session.token}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${cookieMaxAge};${secureCookie}`);
@@ -485,15 +495,15 @@ apiRouter.post('/auth/mfa/verify', rateLimitPublic(10, 5 * 60 * 1000), (req: Req
   });
 });
 
-apiRouter.post('/auth/mfa/setup/start', requireAuth, rateLimitAuthenticated(5, 15 * 60 * 1000), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.post('/auth/mfa/setup/start', requireAuth, rateLimitAuthenticated(5, 15 * 60 * 1000), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const user = req.user!;
   if (user.mfaEnabled) {
     res.status(409).json({ success: false, error: 'MFA is already enabled.' });
     return;
   }
 
-  const db = getDatabase();
-  const current = db.users.find(item => item.id === user.id);
+  const db = getDataSourceMode() === 'json' ? getDatabase() : undefined;
+  const current = getDataSourceMode() === 'postgres' ? await postgresAuthRepository.findUserById(user.id) : db!.users.find(item => item.id === user.id) || null;
   if (!current) {
     res.status(404).json({ success: false, error: 'Account not found.' });
     return;
@@ -502,7 +512,8 @@ apiRouter.post('/auth/mfa/setup/start', requireAuth, rateLimitAuthenticated(5, 1
   const secret = generateMfaSecret();
   current.mfaPendingSecret = secret;
   current.mfaPendingSecretCreatedAt = new Date().toISOString();
-  saveDatabase(db);
+  if (getDataSourceMode() === 'postgres') await postgresAuthRepository.updateUserMfa(current.id, { mfaEnabled: current.mfaEnabled, mfaSecret: current.mfaSecret || null, mfaPendingSecret: secret, mfaPendingSecretCreatedAt: current.mfaPendingSecretCreatedAt, mfaRecoveryCodeHashes: current.mfaRecoveryCodeHashes || [] });
+  else saveDatabase(db!);
 
   res.json({
     success: true,
@@ -511,10 +522,10 @@ apiRouter.post('/auth/mfa/setup/start', requireAuth, rateLimitAuthenticated(5, 1
   });
 });
 
-apiRouter.post('/auth/mfa/setup/verify', requireAuth, rateLimitAuthenticated(10, 15 * 60 * 1000), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.post('/auth/mfa/setup/verify', requireAuth, rateLimitAuthenticated(10, 15 * 60 * 1000), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const code = String(req.body?.code || '').trim();
-  const db = getDatabase();
-  const user = db.users.find(item => item.id === req.user!.id);
+  const db = getDataSourceMode() === 'json' ? getDatabase() : undefined;
+  const user = getDataSourceMode() === 'postgres' ? await postgresAuthRepository.findUserById(req.user!.id) : db!.users.find(item => item.id === req.user!.id) || null;
   if (!user?.mfaPendingSecret) {
     res.status(409).json({ success: false, error: 'MFA setup has not been started.' });
     return;
@@ -524,7 +535,8 @@ apiRouter.post('/auth/mfa/setup/verify', requireAuth, rateLimitAuthenticated(10,
   if (!Number.isFinite(pendingCreatedAt) || pendingCreatedAt <= 0 || Date.now() - pendingCreatedAt > 10 * 60 * 1000) {
     user.mfaPendingSecret = undefined;
     user.mfaPendingSecretCreatedAt = undefined;
-    saveDatabase(db);
+    if (getDataSourceMode() === 'postgres') await postgresAuthRepository.updateUserMfa(user.id, { mfaEnabled: user.mfaEnabled, mfaSecret: user.mfaSecret || null, mfaPendingSecret: null, mfaPendingSecretCreatedAt: null, mfaRecoveryCodeHashes: user.mfaRecoveryCodeHashes || [] });
+    else saveDatabase(db!);
     res.status(410).json({ success: false, error: 'MFA setup expired. Start the setup again.' });
     return;
   }
@@ -540,8 +552,9 @@ apiRouter.post('/auth/mfa/setup/verify', requireAuth, rateLimitAuthenticated(10,
   user.mfaEnabled = true;
   const recoveryCodes = generateMfaRecoveryCodes(8);
   user.mfaRecoveryCodeHashes = recoveryCodes.map(hashMfaRecoveryCode);
-  saveDatabase(db);
-  revokeAllUserSessions(user.id, req.sessionToken ? hashSessionToken(req.sessionToken) : undefined);
+  if (getDataSourceMode() === 'postgres') await postgresAuthRepository.updateUserMfa(user.id, { mfaEnabled: true, mfaSecret: user.mfaSecret || null, mfaPendingSecret: null, mfaPendingSecretCreatedAt: null, mfaRecoveryCodeHashes: user.mfaRecoveryCodeHashes });
+  else saveDatabase(db!);
+  await revokeAllUserSessions(user.id, req.sessionToken ? hashSessionToken(req.sessionToken) : undefined);
 
   recordAuditLog({
     action: 'MFA_ENABLED',
@@ -556,11 +569,11 @@ apiRouter.post('/auth/mfa/setup/verify', requireAuth, rateLimitAuthenticated(10,
   res.json({ success: true, mfaEnabled: true, mfaRecoveryCodes: recoveryCodes, message: 'MFA enabled successfully. Store the recovery codes securely; each code can be used once.' });
 });
 
-apiRouter.post('/auth/mfa/disable', requireAuth, rateLimitAuthenticated(5, 15 * 60 * 1000), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.post('/auth/mfa/disable', requireAuth, rateLimitAuthenticated(5, 15 * 60 * 1000), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const currentPassword = String(req.body?.currentPassword || '');
   const code = String(req.body?.code || '').trim();
-  const db = getDatabase();
-  const user = db.users.find(item => item.id === req.user!.id);
+  const db = getDataSourceMode() === 'json' ? getDatabase() : undefined;
+  const user = getDataSourceMode() === 'postgres' ? await postgresAuthRepository.findUserById(req.user!.id) : db!.users.find(item => item.id === req.user!.id) || null;
   if (!user?.mfaEnabled || !user.mfaSecret) {
     res.status(409).json({ success: false, error: 'MFA is not enabled.' });
     return;
@@ -575,8 +588,9 @@ apiRouter.post('/auth/mfa/disable', requireAuth, rateLimitAuthenticated(5, 15 * 
   user.mfaSecret = undefined;
   user.mfaPendingSecret = undefined;
   user.mfaRecoveryCodeHashes = [];
-  saveDatabase(db);
-  revokeAllUserSessions(user.id);
+  if (getDataSourceMode() === 'postgres') await postgresAuthRepository.updateUserMfa(user.id, { mfaEnabled: false, mfaSecret: null, mfaPendingSecret: null, mfaPendingSecretCreatedAt: null, mfaRecoveryCodeHashes: [] });
+  else saveDatabase(db!);
+  await revokeAllUserSessions(user.id);
 
   recordAuditLog({
     action: 'MFA_DISABLED',
@@ -594,9 +608,9 @@ apiRouter.post('/auth/mfa/disable', requireAuth, rateLimitAuthenticated(5, 15 * 
   res.json({ success: true, mfaEnabled: false });
 });
 
-apiRouter.post('/auth/logout', requireAuth, (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.post('/auth/logout', requireAuth, async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   if (req.sessionToken) {
-    revokeSession(req.sessionToken);
+    await revokeSession(req.sessionToken);
   }
   if (req.user) {
     recordAuditLog({
@@ -634,7 +648,7 @@ apiRouter.get('/auth/me', requireAuth, (req: AuthenticatedRequest, res: Response
   });
 });
 
-apiRouter.post('/auth/change-password', requireAuth, rateLimitAuthenticated(10, 15 * 60 * 1000), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.post('/auth/change-password', requireAuth, rateLimitAuthenticated(10, 15 * 60 * 1000), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { currentPassword, newPassword } = req.body;
   const user = req.user!;
 
@@ -658,16 +672,17 @@ apiRouter.post('/auth/change-password', requireAuth, rateLimitAuthenticated(10, 
     return;
   }
 
-  const db = getDatabase();
-  const dbUser = db.users.find(u => u.id === user.id);
+  const db = getDataSourceMode() === 'json' ? getDatabase() : undefined;
+  const dbUser = getDataSourceMode() === 'postgres' ? await postgresAuthRepository.findUserById(user.id) : db!.users.find(u => u.id === user.id) || null;
   if (dbUser) {
     const prepared = preparePassword(newPassword);
     dbUser.salt = prepared.salt;
     dbUser.passwordHash = prepared.passwordHash;
     dbUser.passwordAlgorithm = prepared.passwordAlgorithm;
-    saveDatabase(db);
+    if (getDataSourceMode() === 'postgres') await postgresAuthRepository.updateUserPassword(user.id, prepared.passwordHash, prepared.salt, prepared.passwordAlgorithm);
+    else saveDatabase(db!);
     if (req.sessionToken) {
-      revokeAllUserSessions(user.id, hashSessionToken(req.sessionToken));
+      await revokeAllUserSessions(user.id, hashSessionToken(req.sessionToken));
     }
 
     recordAuditLog({
