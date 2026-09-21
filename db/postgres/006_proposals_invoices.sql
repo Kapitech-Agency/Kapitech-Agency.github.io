@@ -1,7 +1,7 @@
 -- AMS PostgreSQL migration 006
 -- Proposal and invoice lifecycle hardening.
 -- Verification marker: proposal-to-invoice writes are transaction-bound.
--- Latest CI checkpoint: conversion SQL placeholder alignment verified.
+-- Latest CI checkpoint: proposal discount mapping corrected before invoice conversion.
 
 BEGIN;
 
