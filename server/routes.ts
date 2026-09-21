@@ -69,6 +69,7 @@ import { postgresNotificationSettingsRepository } from './postgres-notification-
 import { getDocumentStorage } from './document-storage.ts';
 import { getPostgresBackupHealth } from './postgres-backup-health.ts';
 import { checkPostgresConnection, getPostgresPool } from './postgres.ts';
+import { loadPostgresMigrations } from './postgres-migrations.ts';
 
 
 const ROLE_POLICIES: Record<string, {
@@ -4364,21 +4365,11 @@ apiRouter.get('/system/production-readiness', requireAuth, requireAnyPermission(
     let requiredMigrationChecksums: Record<string, string> = {};
     let migrationDefinitionCheckError: string | undefined;
     try {
-      const migrationsDir = path.resolve(process.cwd(), 'db/postgres');
-      const migrationFiles = fs.readdirSync(migrationsDir)
-        .filter(file => /^\d+_.+\.sql$/.test(file))
-        .sort((a, b) => a.localeCompare(b, 'en', { numeric: true }));
-
-      requiredMigrationVersions = migrationFiles.map(file => file.replace(/\.sql$/, ''));
-      if (requiredMigrationVersions.length === 0) {
-        migrationDefinitionCheckError = 'No PostgreSQL migration files were found.';
-      } else {
-        for (const file of migrationFiles) {
-          const version = file.replace(/\.sql$/, '');
-          const sql = fs.readFileSync(path.join(migrationsDir, file), 'utf8');
-          requiredMigrationChecksums[version] = crypto.createHash('sha256').update(sql, 'utf8').digest('hex');
-        }
-      }
+      const migrations = await loadPostgresMigrations();
+      requiredMigrationVersions = migrations.map(migration => migration.version);
+      requiredMigrationChecksums = Object.fromEntries(
+        migrations.map(migration => [migration.version, migration.checksum])
+      );
     } catch (error) {
       migrationDefinitionCheckError = error instanceof Error ? error.message : 'Migration definitions unavailable.';
     }
