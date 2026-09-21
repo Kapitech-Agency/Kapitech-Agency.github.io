@@ -149,7 +149,10 @@ export async function fetchServerCmsServices(): Promise<ServiceItemData[]> {
 
 export async function saveCmsService(service: ServiceItemData): Promise<{ success: boolean; service: ServiceItemData }> {
   const current = getCmsServices();
-  const existing = current.find((s) => s.slug === service.slug || (s as any).id === (service as any).id);
+  const existing = current.find((s) => (
+    ((service as any).id && String((s as any).id || '') === String((service as any).id)) ||
+    s.slug === service.slug
+  ));
   const exists = Boolean(existing);
   const targetId = String((existing as any)?.id || (service as any).id || '');
   const res = exists && targetId
@@ -162,7 +165,7 @@ export async function saveCmsService(service: ServiceItemData): Promise<{ succes
 
   const serverService = res.data.service as ServiceItemData;
   const updated = exists
-    ? current.map(s => s.slug === service.slug ? serverService : s)
+    ? current.map((s) => String((s as any).id || '') === String((existing as any)?.id || targetId) ? serverService : s)
     : [serverService, ...current];
 
   cmsServicesCache = updated;
