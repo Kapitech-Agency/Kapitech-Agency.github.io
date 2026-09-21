@@ -234,7 +234,8 @@ async function main(): Promise<void> {
       privateDocumentIntegrity: privateDocuments.valid
     };
 
-    const status = Object.values(checks).every(Boolean) ? 'succeeded' : 'failed';
+    const reconciliationPass = checks.countParity && checks.financialParity;
+    const status = reconciliationPass && Object.values(checks).every(Boolean) ? 'succeeded' : 'failed';
     const report = {
       runId,
       sourceSha256,
