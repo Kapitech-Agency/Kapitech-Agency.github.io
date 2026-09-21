@@ -3888,7 +3888,7 @@ apiRouter.get('/system/backups', requireAuth, backupAccessMiddleware, (req: Auth
   }
 });
 
-apiRouter.get('/system/security/status', requireAuth, requireAnyPermission('canViewSecurityAuditLogs', 'canAccessServerAndApi'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.get('/system/security/status', requireAuth, requireAnyPermission('canViewSecurityAuditLogs', 'canAccessServerAndApi'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   try {
     const users = getDataSourceMode() === 'postgres'
       ? await postgresAuthRepository.listUsers()
@@ -3988,7 +3988,7 @@ apiRouter.post('/notifications/mark-all-read', requireAuth, (req: AuthenticatedR
 // 18. UNIFIED GLOBAL SEARCH (PART 6)
 // ----------------------------------------------------
 
-apiRouter.get('/search', requireAuth, async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+apiRouter.get('/search', requireAuth, (req: AuthenticatedRequest, res: Response): void => {
   const q = String(req.query.q || '').trim().toLowerCase();
   if (!q) {
     res.json({ success: true, results: [] });
