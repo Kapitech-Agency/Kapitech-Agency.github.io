@@ -1,3 +1,16 @@
+-- ============================================================
+-- IMPORTANT: NON-AUTHORITATIVE SCHEMA REFERENCE
+-- ============================================================
+-- Do NOT execute this file to provision production AMS PostgreSQL.
+-- The production schema is defined by the versioned migrations in
+-- db/postgres/*.sql and must be applied with:
+--   npm run db:migrate
+--
+-- This file is retained only as an older Phase 1 relational design
+-- reference. It may intentionally differ from the current runtime
+-- schema and must not be used for production cutover/reconciliation.
+-- ============================================================
+
 -- Kapitech AMS relational target schema
 -- Phase 1: normalized operational core.
 -- Use this schema when the production relational backend is provisioned.
