@@ -38,9 +38,11 @@ import {
 import { formatAmount, getActiveCurrency, CurrencyCode, CURRENCY_EVENT } from '../../lib/currency';
 import { useLanguage } from '../../lib/LanguageContext';
 import { CustomSelect } from '../../components/ui/CustomSelect';
+import { hasAdminPermission } from '../../lib/adminAuth';
 
 export const AdminVendors: React.FC = () => {
   const { t, language } = useLanguage();
+  const canManageVendors = hasAdminPermission('canManageVendors');
   const [vendors, setVendors] = useState<AgencyVendor[]>([]);
   const [currency, setCurrency] = useState<CurrencyCode>(getActiveCurrency());
   const [searchQuery, setSearchQuery] = useState('');
