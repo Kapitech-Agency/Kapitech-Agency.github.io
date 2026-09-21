@@ -535,7 +535,7 @@ export const getAgencyExpenses = (): AgencyExpense[] => {
   return expenseCache;
 };
 
-export const saveAgencyExpense = (expense: AgencyExpense): void => {
+export const saveAgencyExpense = async (expense: AgencyExpense): Promise<void> => {
   const current = getAgencyExpenses();
   const previousExpenses = [...current];
   const idx = current.findIndex(e => e.id === expense.id);
@@ -550,30 +550,26 @@ export const saveAgencyExpense = (expense: AgencyExpense): void => {
 
   expenseCache = updated;
   window.dispatchEvent(new CustomEvent(FINANCE_EVENT_NAME, { detail: updated }));
-  api.finance.createExpense(expense).then((res) => {
-    if (res.success && res.data?.success !== false) return;
-    expenseCache = previousExpenses;
-    window.dispatchEvent(new CustomEvent(FINANCE_EVENT_NAME, { detail: previousExpenses }));
-  }).catch(() => {
-    expenseCache = previousExpenses;
-    window.dispatchEvent(new CustomEvent(FINANCE_EVENT_NAME, { detail: previousExpenses }));
-  });
+  const res = await api.finance.createExpense(expense);
+  if (res.success && res.data?.success !== false) return;
+
+  expenseCache = previousExpenses;
+  window.dispatchEvent(new CustomEvent(FINANCE_EVENT_NAME, { detail: previousExpenses }));
+  throw new Error(res.error || 'Expense could not be saved on the server.');
 };
 
-export const deleteAgencyExpense = (id: string): void => {
+export const deleteAgencyExpense = async (id: string): Promise<void> => {
   const current = getAgencyExpenses();
   const previousExpenses = [...current];
   const updated = current.filter(e => e.id !== id);
   expenseCache = updated;
   window.dispatchEvent(new CustomEvent(FINANCE_EVENT_NAME, { detail: updated }));
-  api.finance.deleteExpense(id).then((res) => {
-    if (res.success && res.data?.success !== false) return;
-    expenseCache = previousExpenses;
-    window.dispatchEvent(new CustomEvent(FINANCE_EVENT_NAME, { detail: previousExpenses }));
-  }).catch(() => {
-    expenseCache = previousExpenses;
-    window.dispatchEvent(new CustomEvent(FINANCE_EVENT_NAME, { detail: previousExpenses }));
-  });
+  const res = await api.finance.deleteExpense(id);
+  if (res.success && res.data?.success !== false) return;
+
+  expenseCache = previousExpenses;
+  window.dispatchEvent(new CustomEvent(FINANCE_EVENT_NAME, { detail: previousExpenses }));
+  throw new Error(res.error || 'Expense could not be deleted on the server.');
 
 };
 
