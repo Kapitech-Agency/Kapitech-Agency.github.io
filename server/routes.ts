@@ -1236,13 +1236,14 @@ apiRouter.post('/leads/:id/convert', requireAuth, requirePermission('canManageCr
 // ----------------------------------------------------
 
 apiRouter.get('/crm/deals', requireAuth, requirePermission('canManageCrm'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-  const db = await loadApplicationDatabase();
-  res.json({ success: true, deals: db.crmDeals });
+  const deals = getDataSourceMode() === 'postgres'
+    ? await postgresCrmDealRepository.list()
+    : (await loadApplicationDatabase()).crmDeals;
+  res.json({ success: true, deals });
 });
 
-apiRouter.post('/crm/deals', requireAuth, requirePermission('canManageCrm'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.post('/crm/deals', requireAuth, requirePermission('canManageCrm'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const dealData = req.body || {};
-  const db = getDatabase();
   const requestedStage = String(dealData.stage || 'new');
   const requestedPriority = String(dealData.priority || 'medium');
   if (!CRM_STAGES.includes(requestedStage as any) || !DEAL_PRIORITIES.includes(requestedPriority as any)) {
@@ -1273,21 +1274,35 @@ apiRouter.post('/crm/deals', requireAuth, requirePermission('canManageCrm'), (re
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   };
+
+  if (getDataSourceMode() === 'postgres') {
+    try {
+      const deal = await postgresCrmDealRepository.create(newDeal);
+      recordAuditLog({
+        action: 'CRM_DEAL_CREATED',
+        actor: req.user!.username,
+        actorRole: req.user!.role,
+        ip: req.ip,
+        userAgent: req.headers['user-agent'] as string,
+        details: `Created CRM deal "${deal.title || deal.id}".`,
+        severity: 'info'
+      });
+      res.json({ success: true, deal });
+    } catch (error) {
+      res.status(400).json({ success: false, error: error instanceof Error ? error.message : 'Deal could not be created.' });
+    }
+    return;
+  }
+
+  const db = getDatabase();
   db.crmDeals.unshift(newDeal);
   saveDatabase(db);
-
   res.json({ success: true, deal: newDeal });
 });
 
-apiRouter.put('/crm/deals/:id', requireAuth, requirePermission('canManageCrm'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.put('/crm/deals/:id', requireAuth, requirePermission('canManageCrm'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
   const updates = req.body || {};
-  const db = getDatabase();
-  const idx = db.crmDeals.findIndex(d => d.id === id);
-  if (idx === -1) {
-    res.status(404).json({ success: false, error: 'Deal not found.' });
-    return;
-  }
   const patch = pickFields(updates, [
     'title', 'clientName', 'company', 'email', 'phone', 'servicePillar',
     'value', 'stage', 'probability', 'owner', 'expectedCloseDate', 'notes',
@@ -1314,14 +1329,68 @@ apiRouter.put('/crm/deals/:id', requireAuth, requirePermission('canManageCrm'), 
   for (const key of ['title','clientName','company','phone','servicePillar','owner','notes','source'] as const) {
     if (patch[key] !== undefined) patch[key] = cleanText(patch[key], key === 'notes' ? 3000 : 200);
   }
+  if (patch.expectedCloseDate !== undefined) {
+    patch.expectedCloseDate = /^\d{4}-\d{2}-\d{2}$/.test(String(patch.expectedCloseDate)) ? String(patch.expectedCloseDate) : '';
+  }
+
+  if (getDataSourceMode() === 'postgres') {
+    const deal = await postgresCrmDealRepository.update(id, patch);
+    if (!deal) {
+      res.status(404).json({ success: false, error: 'Deal not found.' });
+      return;
+    }
+    recordAuditLog({
+      action: 'CRM_DEAL_UPDATED',
+      actor: req.user!.username,
+      actorRole: req.user!.role,
+      ip: req.ip,
+      userAgent: req.headers['user-agent'] as string,
+      details: `Updated CRM deal "${deal.title || id}".`,
+      severity: 'info'
+    });
+    res.json({ success: true, deal });
+    return;
+  }
+
+  const db = getDatabase();
+  const idx = db.crmDeals.findIndex(d => d.id === id);
+  if (idx === -1) {
+    res.status(404).json({ success: false, error: 'Deal not found.' });
+    return;
+  }
   db.crmDeals[idx] = { ...db.crmDeals[idx], ...patch, updatedAt: new Date().toISOString() };
   saveDatabase(db);
   res.json({ success: true, deal: db.crmDeals[idx] });
 });
 
-apiRouter.delete('/crm/deals/:id', requireAuth, requirePermission('canManageCrm'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.delete('/crm/deals/:id', requireAuth, requirePermission('canManageCrm'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
+  if (getDataSourceMode() === 'postgres') {
+    const deal = await postgresCrmDealRepository.findById(id);
+    if (!deal) {
+      res.status(404).json({ success: false, error: 'Deal not found.' });
+      return;
+    }
+    await postgresCrmDealRepository.delete(id);
+    recordAuditLog({
+      action: 'CRM_DEAL_DELETED',
+      actor: req.user!.username,
+      actorRole: req.user!.role,
+      ip: req.ip,
+      userAgent: req.headers['user-agent'] as string,
+      details: `Deleted CRM deal "${deal.title || id}".`,
+      severity: 'warning'
+    });
+    res.json({ success: true, message: 'Deal deleted.' });
+    return;
+  }
+
   const db = getDatabase();
+  const deal = db.crmDeals.find(d => d.id === id);
+  if (!deal) {
+    res.status(404).json({ success: false, error: 'Deal not found.' });
+    return;
+  }
   db.crmDeals = db.crmDeals.filter(d => d.id !== id);
   saveDatabase(db);
   res.json({ success: true, message: 'Deal deleted.' });
