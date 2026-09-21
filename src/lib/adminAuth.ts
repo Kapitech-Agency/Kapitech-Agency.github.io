@@ -170,6 +170,20 @@ export function cacheAdminSession(user: AdminUser, rememberMe: boolean): AdminSe
   return session;
 }
 
+export function updateCachedAdminSessionUser(user: AdminUser): void {
+  if (typeof window === 'undefined') return;
+  try {
+    const current = getAdminSession();
+    if (!current) return;
+    sessionStorage.setItem(ADMIN_PROFILE_KEY, JSON.stringify({
+      ...current,
+      user
+    }));
+  } catch {
+    // Session cache is non-authoritative and can be safely ignored on storage failure.
+  }
+}
+
 export function isUserAuthenticated(): boolean {
   return getAdminSession() !== null;
 }
