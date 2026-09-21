@@ -1,6 +1,7 @@
 import type { PoolClient } from 'pg';
 import type { StoredSession, StoredUser } from './db.ts';
 import { getPostgresPool } from './postgres.ts';
+import { decryptSecret, encryptOptionalSecret, isEncryptedSecret } from './secret-crypto.ts';
 
 type UserRow = {
   id: string; name: string; username: string; email: string; password_hash: string; salt: string;
@@ -32,8 +33,8 @@ function mapUser(row: UserRow): StoredUser {
     passwordHash: row.password_hash, salt: row.salt,
     passwordAlgorithm: row.password_algorithm as StoredUser['passwordAlgorithm'],
     role: row.role, stakeholderType: row.stakeholder_type, permissions: row.permissions,
-    mfaEnabled: row.mfa_enabled, mfaSecret: row.mfa_secret ?? undefined,
-    mfaPendingSecret: row.mfa_pending_secret ?? undefined,
+    mfaEnabled: row.mfa_enabled, mfaSecret: decryptSecret(row.mfa_secret),
+    mfaPendingSecret: decryptSecret(row.mfa_pending_secret),
     mfaPendingSecretCreatedAt: nullableIso(row.mfa_pending_secret_created_at),
     mfaRecoveryCodeHashes: Array.isArray(row.mfa_recovery_code_hashes) ? row.mfa_recovery_code_hashes : [],
     division: row.division, status: row.status,
@@ -176,6 +177,35 @@ export class PostgresAuthRepository {
     return result.rowCount === 1;
   }
 
+  async migrateLegacyMfaSecrets(): Promise<number> {
+    const result = await getPostgresPool().query<{
+      id: string;
+      mfa_secret: string | null;
+      mfa_pending_secret: string | null;
+    }>('SELECT id, mfa_secret, mfa_pending_secret FROM users WHERE mfa_secret IS NOT NULL OR mfa_pending_secret IS NOT NULL');
+
+    let migrated = 0;
+    for (const row of result.rows) {
+      const secretNeedsMigration = row.mfa_secret !== null && !isEncryptedSecret(row.mfa_secret);
+      const pendingNeedsMigration = row.mfa_pending_secret !== null && !isEncryptedSecret(row.mfa_pending_secret);
+      if (!secretNeedsMigration && !pendingNeedsMigration) continue;
+
+      await getPostgresPool().query(
+        'UPDATE users SET mfa_secret = CASE WHEN $2 THEN $3 ELSE mfa_secret END, mfa_pending_secret = CASE WHEN $4 THEN $5 ELSE mfa_pending_secret END WHERE id = $1',
+        [
+          row.id,
+          secretNeedsMigration,
+          secretNeedsMigration ? encryptOptionalSecret(row.mfa_secret) : null,
+          pendingNeedsMigration,
+          pendingNeedsMigration ? encryptOptionalSecret(row.mfa_pending_secret) : null
+        ]
+      );
+      migrated += 1;
+    }
+
+    return migrated;
+  }
+
   async listUsers(): Promise<StoredUser[]> {
     const result = await getPostgresPool().query<UserRow>('SELECT * FROM users ORDER BY created_at ASC');
     return result.rows.map(mapUser);
@@ -244,8 +274,8 @@ export class PostgresAuthRepository {
         division,status,last_login,created_at)
        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19)`,
       [user.id,user.name,user.username,user.email,user.passwordHash,user.salt,user.passwordAlgorithm || 'pbkdf2-sha512',
-       user.role,user.stakeholderType,JSON.stringify(user.permissions),user.mfaEnabled,user.mfaSecret || null,
-       user.mfaPendingSecret || null,user.mfaPendingSecretCreatedAt || null,JSON.stringify(user.mfaRecoveryCodeHashes || []),
+       user.role,user.stakeholderType,JSON.stringify(user.permissions),user.mfaEnabled,encryptOptionalSecret(user.mfaSecret),
+       encryptOptionalSecret(user.mfaPendingSecret),user.mfaPendingSecretCreatedAt || null,JSON.stringify(user.mfaRecoveryCodeHashes || []),
        user.division,user.status,user.lastLogin || null,user.createdAt]
     );
   }
