@@ -2872,15 +2872,10 @@ apiRouter.put('/crm/proposals/:id', requireAuth, requirePermission('canManageCrm
 
 apiRouter.post('/crm/proposals/:id/approve', requireAuth, requirePermission('canApproveBudgets'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
+  if (getDataSourceMode() === 'postgres') { const current = await postgresProposalRepository.findById(id); if (!current) { res.status(404).json({ success: false, error: 'Proposal not found.' }); return; } if (!['Draft','Internal Review','Sent'].includes(String(current.status))) { res.status(409).json({ success: false, error: 'Only draft, internal review, or sent proposals can be approved.' }); return; } const approved = await postgresProposalRepository.approve(id); res.json({ success: true, proposal: approved }); return; }
   const db = getDatabase();
   const prop = (db.proposals || []).find(p => p.id === id);
-
-  if (!prop) {
-    res.status(404).json({ success: false, error: 'Proposal not found.' });
-    return;
-  }
-
-  if (getDataSourceMode() === 'postgres') { const current = await postgresProposalRepository.findById(id); if (!current) { res.status(404).json({ success: false, error: 'Proposal not found.' }); return; } if (!['Draft','Internal Review','Sent'].includes(String(current.status))) { res.status(409).json({ success: false, error: 'Only draft, internal review, or sent proposals can be approved.' }); return; } const approved = await postgresProposalRepository.approve(id); res.json({ success: true, proposal: approved }); return; }
+  if (!prop) { res.status(404).json({ success: false, error: 'Proposal not found.' }); return; }
 
   if (!['Draft','Internal Review','Sent'].includes(String(prop.status))) {
     res.status(409).json({ success: false, error: 'Only draft, internal review, or sent proposals can be approved.' });
@@ -2906,15 +2901,10 @@ apiRouter.post('/crm/proposals/:id/approve', requireAuth, requirePermission('can
 
 apiRouter.post('/crm/proposals/:id/convert-to-invoice', requireAuth, requirePermission('canManageInvoices'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
+  if (getDataSourceMode() === 'postgres') { const current = await postgresProposalRepository.findById(id); if (!current) { res.status(404).json({ success: false, error: 'Proposal not found.' }); return; } try { const invoice = await postgresProposalRepository.convertToInvoice(id); res.json({ success: true, invoice, proposal: await postgresProposalRepository.findById(id) }); } catch (error) { res.status(409).json({ success: false, error: error instanceof Error ? error.message : 'Proposal could not be converted to invoice.' }); } return; }
   const db = getDatabase();
   const prop = (db.proposals || []).find(p => p.id === id);
-
-  if (!prop) {
-    res.status(404).json({ success: false, error: 'Proposal not found.' });
-    return;
-  }
-
-  if (getDataSourceMode() === 'postgres') { const current = await postgresProposalRepository.findById(id); if (!current) { res.status(404).json({ success: false, error: 'Proposal not found.' }); return; } try { const invoice = await postgresProposalRepository.convertToInvoice(id); res.json({ success: true, invoice, proposal: await postgresProposalRepository.findById(id) }); } catch (error) { res.status(409).json({ success: false, error: error instanceof Error ? error.message : 'Proposal could not be converted to invoice.' }); } return; }
+  if (!prop) { res.status(404).json({ success: false, error: 'Proposal not found.' }); return; }
 
   const year = new Date().getFullYear();
   let invoiceNumber = `INV-KAPI-${year}-${crypto.randomInt(1000, 1000000)}`;
