@@ -33,6 +33,13 @@ test('accepts a structurally valid production environment', () => {
   assert.deepEqual(result.errors, []);
 });
 
+test('accepts the runtime-supported base64 encryption key format', () => {
+  const env = validEnv();
+  env.KAPITECH_DATA_ENCRYPTION_KEY = Buffer.from('a'.repeat(32), 'utf8').toString('base64');
+  const result = validateProductionEnvironment(env);
+  assert.equal(result.valid, true);
+});
+
 test('rejects non-PostgreSQL, insecure URL, invalid encryption key, and invalid storage endpoint', () => {
   const env = validEnv();
   env.KAPITECH_DATA_SOURCE = 'json';
