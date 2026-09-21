@@ -56,6 +56,7 @@ import { useDragToScroll } from '../../lib/useDragToScroll';
 import { ScrollShadowContainer } from '../../components/ui/ScrollShadowContainer';
 import { CustomSelect } from '../../components/ui/CustomSelect';
 import { formatAmount, getActiveCurrency, setGlobalCurrency, CurrencyCode, CURRENCY_EVENT } from '../../lib/currency';
+import { api } from '../../lib/apiClient';
 
 export const AdminCrm: React.FC = () => {
   const { language, t } = useLanguage();
@@ -214,9 +215,13 @@ export const AdminCrm: React.FC = () => {
     }
   };
 
-  const handleConvertToProject = (lead: CrmLead) => {
+  const handleConvertToProject = async (lead: CrmLead) => {
+    const projectId = 'proj_' + Date.now().toString(36);
+    const invoiceId = 'inv_' + Date.now().toString(36);
+    const clientId = 'cli_' + Date.now().toString(36);
+
     const newProj: AgencyProject = {
-      id: 'proj_' + Date.now().toString(36),
+      id: projectId,
       name: `${lead.company} — ${lead.servicePillar}`,
       clientName: lead.clientName,
       clientCompany: lead.company,
@@ -255,21 +260,17 @@ export const AdminCrm: React.FC = () => {
       updatedAt: new Date().toISOString()
     };
 
-    // 1. Save Active Agency Project
-    saveAgencyProject(newProj);
-
-    // 2. Automatically generate 50% Retainer Down Payment Invoice
     const downPaymentAmount = Math.round(lead.dealValue * 0.5);
     const taxAmount = Math.round(downPaymentAmount * 0.11);
-    saveAgencyInvoice({
-      id: 'inv_' + Date.now().toString(36),
-      invoiceNumber: `KAPI-INV-${new Date().getFullYear()}-${Math.floor(100 + Math.random() * 900)}`,
+    const invoicePayload = {
+      id: invoiceId,
+      invoiceNumber: `KAPI-INV-${new Date().getFullYear()}-${Date.now().toString().slice(-6)}`,
       type: 'invoice',
       clientName: lead.clientName,
       clientCompany: lead.company,
       clientEmail: lead.email || '',
       clientPhone: lead.phone || '',
-      projectId: newProj.id,
+      projectId: projectId,
       leadId: lead.id,
       items: [
         {
@@ -284,7 +285,7 @@ export const AdminCrm: React.FC = () => {
       discountPercent: 0,
       discountAmount: 0,
       taxPercent: 11,
-      taxAmount: taxAmount,
+      taxAmount,
       total: downPaymentAmount + taxAmount,
       currency: 'IDR',
       status: 'sent',
@@ -294,11 +295,10 @@ export const AdminCrm: React.FC = () => {
       paymentTerms: 'Bank Transfer Net 14. Mandiri: 123-00-998877-1 / BCA: 889-012-3344 a/n PT Kapitech Digital Indonesia',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
-    });
+    };
 
-    // 3. Centralized Client Directory Synchronization
-    saveAgencyClient({
-      id: 'cli_' + Date.now().toString(36),
+    const clientPayload = {
+      id: clientId,
       name: lead.clientName,
       company: lead.company,
       email: lead.email || '',
@@ -314,15 +314,51 @@ export const AdminCrm: React.FC = () => {
       currentDailyAdSpend: 5000000,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
-    });
+    };
 
-    showToast(
-      language === 'id' 
-        ? `Deal berhasil dikonversi: Proyek, Invoice DP 50%, & Klien Direktori telah dibuat!` 
-        : `Deal converted: Project, 50% Retainer Invoice, & Client record created!`
-    );
+    let projectCreated = false;
+    let invoiceCreated = false;
+
+    try {
+      await saveAgencyProject(newProj);
+      projectCreated = true;
+
+      const invoiceRes = await api.finance.createInvoice(invoicePayload);
+      if (!invoiceRes.success || !invoiceRes.data?.invoice) {
+        throw new Error(invoiceRes.error || 'Invoice could not be created on the server.');
+      }
+      invoiceCreated = true;
+
+      await saveAgencyClient(clientPayload);
+      showToast(
+        language === 'id'
+          ? 'Deal berhasil dikonversi: Project, Invoice DP 50%, dan Client berhasil dibuat di server.'
+          : 'Deal converted: Project, 50% Retainer Invoice, and Client were created on the server.'
+      );
+    } catch (error: any) {
+      if (invoiceCreated) {
+        try {
+          await api.finance.deleteInvoice(invoiceId);
+        } catch (rollbackError) {
+          console.debug('Invoice rollback failed after CRM conversion error:', rollbackError);
+        }
+      }
+      if (projectCreated) {
+        try {
+          const { deleteAgencyProject } = await import('../../lib/projectStore');
+          await deleteAgencyProject(projectId);
+        } catch (rollbackError) {
+          console.debug('Project rollback failed after CRM conversion error:', rollbackError);
+        }
+      }
+      showToast(
+        error?.message ||
+        (language === 'id'
+          ? 'Konversi deal gagal. Tidak ada status sukses yang ditampilkan.'
+          : 'Deal conversion failed. No success state was recorded.')
+      );
+    }
   };
-
   const handleOpenLeadDrawer = (lead: CrmLead) => {
     setSelectedLead(lead);
     setIsDrawerOpen(true);
