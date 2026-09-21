@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
+import { spawnSync } from 'node:child_process';
 import { validateProductionEnvironment } from '../scripts/validate-production-env.ts';
 
 function validEnv(): Record<string, string> {
@@ -67,7 +68,6 @@ test('rejects backup hash mismatch and future evidence timestamps', () => {
 });
 
 test('production preflight CLI executes successfully with a valid synthetic environment', () => {
-  const { spawnSync } = require('node:child_process') as typeof import('node:child_process');
   const now = new Date().toISOString();
   const env = {
     ...process.env,
