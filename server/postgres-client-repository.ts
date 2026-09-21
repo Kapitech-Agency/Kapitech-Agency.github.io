@@ -19,6 +19,12 @@ function iso(value: Date | string): string {
   return value instanceof Date ? value.toISOString() : new Date(value).toISOString();
 }
 
+function normalizeStatus(status: string): AgencyClient['status'] {
+  if (status === 'completed' || status === 'lead' || status === 'inactive') return status;
+  if (status === 'on_hold') return 'inactive';
+  return status === 'prospect' ? 'lead' : 'active';
+}
+
 function mapClient(row: ClientRow): AgencyClient {
   const metadata = row.metadata && typeof row.metadata === 'object' ? row.metadata : {};
   return {
@@ -29,7 +35,8 @@ function mapClient(row: ClientRow): AgencyClient {
     email: row.email ?? '',
     phone: row.phone ?? '',
     industry: row.industry ?? '',
-    status: (row.status === 'completed' || row.status === 'lead' || row.status === 'inactive' ? row.status : 'active') as AgencyClient['status'],
+    location: typeof metadata.location === 'string' ? metadata.location : '',
+    status: normalizeStatus(row.status),
     notes: row.notes ?? undefined,
     createdAt: iso(row.created_at),
     updatedAt: iso(row.updated_at)
@@ -59,7 +66,7 @@ export class PostgresClientRepository {
        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
        RETURNING *`,
       [client.id, client.name, client.company || null, client.email || null, client.phone || null,
-       client.industry || null, client.status, client.notes || null, JSON.stringify(toMetadata(client)),
+       client.industry || null, normalizeStatus(String(client.status)), client.notes || null, JSON.stringify(toMetadata(client)),
        client.createdAt, client.updatedAt]
     );
     return mapClient(result.rows[0]);
@@ -81,7 +88,7 @@ export class PostgresClientRepository {
         `UPDATE clients SET name=$2,company=$3,email=$4,phone=$5,industry=$6,status=$7,notes=$8,metadata=$9,updated_at=$10
          WHERE id=$1 RETURNING *`,
         [id, next.name, next.company || null, next.email || null, next.phone || null, next.industry || null,
-         next.status, next.notes || null, JSON.stringify(toMetadata(next)), next.updatedAt]
+         normalizeStatus(String(next.status)), next.notes || null, JSON.stringify(toMetadata(next)), next.updatedAt]
       );
       await client.query('COMMIT');
       return result.rows[0] ? mapClient(result.rows[0]) : null;
