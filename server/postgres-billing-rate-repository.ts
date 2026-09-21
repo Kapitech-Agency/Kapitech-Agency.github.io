@@ -2,6 +2,11 @@ import { getPostgresPool, withPostgresTransaction } from './postgres.ts';
 
 type Row = Record<string, any>;
 
+function dateOnly(value: any): string {
+  if (!value) return '';
+  return value instanceof Date ? value.toISOString().slice(0, 10) : String(value).slice(0, 10);
+}
+
 function mapRate(row: Row): Record<string, any> {
   return {
     id: row.id,
@@ -64,7 +69,7 @@ export class PostgresBillingRateRepository {
   async create(input: Record<string, any>): Promise<Record<string, any>> {
     const userId = String(input.userId || '');
     const currency = String(input.currency || 'IDR').toUpperCase();
-    const effectiveFrom = String(input.effectiveFrom || '').slice(0, 10);
+    const effectiveFrom = dateOnly(input.effectiveFrom);
     const hourlyRate = Number(input.hourlyRate);
 
     if (!userId || !effectiveFrom || !/^[A-Z]{3}$/.test(currency) || !Number.isFinite(hourlyRate) || hourlyRate < 0) {
@@ -78,8 +83,8 @@ export class PostgresBillingRateRepository {
       );
 
       for (const row of existing.rows) {
-        const from = String(row.effective_from).slice(0, 10);
-        const to = row.effective_to ? String(row.effective_to).slice(0, 10) : null;
+        const from = dateOnly(row.effective_from);
+        const to = row.effective_to ? dateOnly(row.effective_to) : null;
 
         if (from === effectiveFrom) {
           throw new BillingRateOverlapError('A billing rate already exists for this effective date.');
@@ -95,7 +100,7 @@ export class PostgresBillingRateRepository {
       }
 
       const previous = existing.rows.find(row => {
-        const from = String(row.effective_from).slice(0, 10);
+        const from = dateOnly(row.effective_from);
         return from < effectiveFrom && !row.effective_to;
       });
       if (previous) {
