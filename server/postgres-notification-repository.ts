@@ -76,7 +76,7 @@ export class PostgresNotificationRepository {
     return rows[0] ? mapNotification(rows[0]) : null;
   }
 
-  async markAllRead(userId: string): Promise<number> {
+  async markAllRead(userId: string, hiddenTypes: string[] = []): Promise<number> {
     const { rowCount } = await getPostgresPool().query(
       `UPDATE notifications
        SET read_by = (
@@ -87,8 +87,9 @@ export class PostgresNotificationRepository {
          ) AS value
        ),
        read = TRUE
-       WHERE recipient_user_id IS NULL OR recipient_user_id = $2`,
-      [JSON.stringify([userId]), userId]
+       WHERE (recipient_user_id IS NULL OR recipient_user_id = $2)
+         AND NOT (type = ANY($3::text[]))`,
+      [JSON.stringify([userId]), userId, hiddenTypes]
     );
     return rowCount || 0;
   }
