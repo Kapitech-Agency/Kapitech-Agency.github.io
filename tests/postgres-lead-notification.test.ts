@@ -15,6 +15,8 @@ test('lead submissions dispatch Telegram notifications in both datasource modes'
   assert.match(source, /void dispatchLeadTelegramNotification\(newLead, notificationSettings\)/);
   assert.match(source, /KAPITECH_TELEGRAM_BOT_TOKEN/);
   assert.match(source, /KAPITECH_TELEGRAM_CHAT_ID/);
+  assert.match(source, /jsonNotificationSettings\\?\\.telegramBotToken/);
+  assert.doesNotMatch(source, /const hasTelegramToken = postgresMode[\\s\\S]{0,220}s\\.telegramBotToken/);
 });
 
 test('PostgreSQL notification settings remain secret-safe during lead dispatch', async () => {
