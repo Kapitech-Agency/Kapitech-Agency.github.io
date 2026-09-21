@@ -251,7 +251,7 @@ export const AdminProjects: React.FC = () => {
 
   const handleAddTask = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedProject || !taskTitle.trim()) return;
+    if (!canManageProjects || !selectedProject || !taskTitle.trim()) return;
 
     const subtasksList: TaskSubtask[] = initialSubtasksInput
       .split('\n')
@@ -295,7 +295,7 @@ export const AdminProjects: React.FC = () => {
   };
 
   const handleDeleteTask = async (taskId: string) => {
-    if (!selectedProject) return;
+    if (!canManageProjects || !selectedProject) return;
     const updatedTasks = selectedProject.tasks.filter(t => t.id !== taskId);
     try {
       await saveAgencyProject({
@@ -315,7 +315,7 @@ export const AdminProjects: React.FC = () => {
 
   const handleToggleSubtask = async (taskId: string, subtaskId: string, e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
-    if (!selectedProject) return;
+    if (!canManageProjects || !selectedProject) return;
 
     const updatedTasks = selectedProject.tasks.map(t => {
       if (t.id === taskId && t.subtasks) {
@@ -428,6 +428,7 @@ export const AdminProjects: React.FC = () => {
 
   const handleDropOnColumn = async (e: React.DragEvent, columnId: TaskStatus) => {
     e.preventDefault();
+    if (!canManageProjects) return;
     const taskId = e.dataTransfer.getData('text/plain') || draggedTaskId;
     if (taskId && selectedProject) {
       try {
@@ -525,8 +526,9 @@ export const AdminProjects: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-3">
-          <button
-            onClick={handleOpenCreateProject}
+          {canManageProjects && (
+            <button
+              onClick={handleOpenCreateProject}
             className="h-10 px-4 rounded-xl bg-[#E50914] hover:bg-[#FF1E27] text-white text-xs font-mono font-bold transition-all flex items-center gap-2 shadow-lg shadow-[#E50914]/20 min-h-[40px]"
           >
             <Plus size={15} />
@@ -761,13 +763,15 @@ export const AdminProjects: React.FC = () => {
                 />
               </div>
 
-              <button
-                onClick={() => setIsTaskModalOpen(true)}
+              {canManageProjects && (
+                <button
+                  onClick={() => setIsTaskModalOpen(true)}
                 className="h-10 px-4 rounded-xl bg-[#E50914] hover:bg-[#FF1E27] text-white text-xs font-mono font-bold transition-all flex items-center justify-center gap-2 shadow-md shrink-0 min-h-[40px]"
               >
                 <Plus size={14} />
-                <span>{t('admin.proj.addTask')}</span>
-              </button>
+                  <span>{t('admin.proj.addTask')}</span>
+                </button>
+              )}
             </div>
           </div>
 
@@ -830,8 +834,8 @@ export const AdminProjects: React.FC = () => {
                         return (
                           <div
                             key={task.id}
-                            draggable={true}
-                            onDragStart={(e) => handleDragStart(e, task.id)}
+                            draggable={canManageProjects}
+                            onDragStart={(e) => { if (canManageProjects) handleDragStart(e, task.id); }}
                             onClick={() => setActiveTaskDrawer(task)}
                             className={`draggable-card task-card bg-[#181B22] border hover:border-[#E50914]/60 p-3.5 rounded-xl space-y-2.5 shadow-md transition-all cursor-pointer group relative select-none ${
                               isDragging ? 'opacity-40 scale-95 border-[#E50914] border-dashed' : 'border-[rgba(255,255,255,0.07)]'
@@ -844,16 +848,18 @@ export const AdminProjects: React.FC = () => {
                                 {getPriorityBadge(task.priority)}
                               </div>
 
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleDeleteTask(task.id);
-                                }}
+                              {canManageProjects && (
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleDeleteTask(task.id);
+                                  }}
                                 className="text-[#64748B] hover:text-rose-400 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-rose-950/30"
                                 title="Delete task"
                               >
-                                <Trash2 size={12} />
-                              </button>
+                                  <Trash2 size={12} />
+                                </button>
+                              )}
                             </div>
 
                             {/* Task Title */}
@@ -960,7 +966,9 @@ export const AdminProjects: React.FC = () => {
                   {TASK_COLUMNS.map((col) => (
                     <button
                       key={col.id}
+                      disabled={!canManageProjects}
                       onClick={async () => {
+                        if (!canManageProjects) return;
                         try {
                           await updateTaskStatus(selectedProject.id, activeTaskDrawer.id, col.id);
                           showToast(`Moved to ${col.label}`);
@@ -1023,7 +1031,8 @@ export const AdminProjects: React.FC = () => {
                       className="flex items-center justify-between p-2.5 rounded-xl bg-[#181B22] border border-[rgba(255,255,255,0.07)] hover:border-[#383C46] transition-colors"
                     >
                       <button
-                        onClick={() => handleToggleSubtask(activeTaskDrawer.id, st.id)}
+                        disabled={!canManageProjects}
+                      onClick={() => handleToggleSubtask(activeTaskDrawer.id, st.id)}
                         className="flex items-center gap-2.5 text-left min-w-0 flex-1 cursor-pointer"
                       >
                         {st.completed ? (
