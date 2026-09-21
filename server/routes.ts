@@ -51,7 +51,7 @@ import { getDataSourceMode } from './data-source.ts';
 import { loadApplicationDatabase } from './application-data-repository.ts';
 import { postgresAuthRepository } from './postgres-repository.ts';
 import { postgresClientRepository, ClientHasDependenciesError } from './postgres-client-repository.ts';
-import { postgresProjectRepository, postgresTaskRepository, ProjectVersionConflictError, TaskVersionConflictError, ProjectArchiveMutationError } from './postgres-project-repository.ts';
+import { postgresProjectRepository, postgresTaskRepository, ProjectVersionConflictError, TaskVersionConflictError, ProjectArchiveMutationError, ProjectClientRequiredError, ProjectNotFoundError } from './postgres-project-repository.ts';
 
 
 const ROLE_POLICIES: Record<string, {
@@ -1595,8 +1595,8 @@ apiRouter.post('/projects', requireAuth, requirePermission('canManageProjects'),
     saveDatabase(db);
     res.json({ success: true, project: legacyProject });
   } catch (error: any) {
-    if (error?.code === '23503') {
-      res.status(400).json({ success: false, error: 'Referenced client does not exist.' });
+    if (error instanceof ProjectClientRequiredError || error?.code === '23503') {
+      res.status(400).json({ success: false, error: error.message || 'A valid client is required.' });
       return;
     }
     console.error('[Projects] Create failed:', error);
@@ -1751,6 +1751,7 @@ apiRouter.delete('/projects/:id', requireAuth, requirePermission('canManageProje
       return;
     }
     db.projects = db.projects.filter(p => p.id !== id);
+    db.tasks = (db.tasks || []).filter((task: any) => task.projectId !== id);
     saveDatabase(db);
     recordAuditLog({
       action: 'PROJECT_DELETED',
@@ -3130,6 +3131,11 @@ apiRouter.post('/projects/tasks', requireAuth, requirePermission('canManageKanba
     const db = getDatabase();
     if (!db.tasks) db.tasks = [];
     db.tasks.unshift(newTask);
+    const project = db.projects.find((item: any) => item.id === newTask.projectId);
+    if (project) {
+      if (!Array.isArray(project.tasks)) project.tasks = [];
+      project.tasks = [newTask, ...project.tasks.filter((item: any) => item.id !== newTask.id)];
+    }
     saveDatabase(db);
     recordAuditLog({
       action: 'TASK_CREATED',
@@ -3142,8 +3148,8 @@ apiRouter.post('/projects/tasks', requireAuth, requirePermission('canManageKanba
     });
     res.json({ success: true, task: newTask });
   } catch (error: any) {
-    if (error?.code === '23503') {
-      res.status(400).json({ success: false, error: 'Referenced project or assignee does not exist.' });
+    if (error instanceof ProjectNotFoundError || error?.code === '23503') {
+      res.status(400).json({ success: false, error: error.message || 'Referenced project or assignee does not exist.', code: error.code });
       return;
     }
     console.error('[Tasks] Create failed:', error);
@@ -3216,6 +3222,11 @@ apiRouter.put('/projects/tasks/:id', requireAuth, requirePermission('canManageKa
       return;
     }
     db.tasks[idx] = { ...db.tasks[idx], ...patch, updatedAt: new Date().toISOString() };
+    const updatedTask = db.tasks[idx];
+    const parentProject = db.projects.find((item: any) => item.id === updatedTask.projectId);
+    if (parentProject && Array.isArray(parentProject.tasks)) {
+      parentProject.tasks = parentProject.tasks.map((item: any) => item.id === id ? updatedTask : item);
+    }
     saveDatabase(db);
     recordAuditLog({
       action: 'TASK_UPDATED',
@@ -3232,7 +3243,7 @@ apiRouter.put('/projects/tasks/:id', requireAuth, requirePermission('canManageKa
       res.status(409).json({ success: false, error: error.message, code: error.code });
       return;
     }
-    if (error instanceof ProjectArchiveMutationError || error?.code === '23503') {
+    if (error instanceof ProjectArchiveMutationError || error instanceof ProjectNotFoundError || error?.code === '23503') {
       res.status(409).json({ success: false, error: error.message || 'Task references an invalid or archived project.', code: error.code || 'TASK_DEPENDENCY_ERROR' });
       return;
     }
@@ -3266,7 +3277,14 @@ apiRouter.delete('/projects/tasks/:id', requireAuth, requirePermission('canManag
 
     const db = getDatabase();
     const exists = (db.tasks || []).some(t => t.id === id);
+    const taskToDelete = (db.tasks || []).find((t: any) => t.id === id);
     db.tasks = (db.tasks || []).filter(t => t.id !== id);
+    if (taskToDelete?.projectId) {
+      const parentProject = db.projects.find((item: any) => item.id === taskToDelete.projectId);
+      if (parentProject && Array.isArray(parentProject.tasks)) {
+        parentProject.tasks = parentProject.tasks.filter((item: any) => item.id !== id);
+      }
+    }
     saveDatabase(db);
     res.json({ success: true, message: exists ? 'Task deleted.' : 'Task not found.' });
   } catch (error) {
