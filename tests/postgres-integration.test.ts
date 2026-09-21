@@ -269,3 +269,95 @@ test('PostgreSQL delivery workflow preserves client relation across project, tas
     await closePostgresPool();
   }
 });
+
+
+test('PostgreSQL CRM workflow converts a lead into a linked client and deal', async t => {
+  if (!configured) { t.skip('KAPITECH_POSTGRES_URL is not configured'); return; }
+
+  const { PostgresLeadRepository } = await import('../server/postgres-lead-repository.ts');
+  const { PostgresClientRepository } = await import('../server/postgres-client-repository.ts');
+  const { PostgresCrmDealRepository } = await import('../server/postgres-crm-deal-repository.ts');
+
+  const leadRepository = new PostgresLeadRepository();
+  const clientRepository = new PostgresClientRepository();
+  const dealRepository = new PostgresCrmDealRepository();
+
+  const suffix = Date.now() + '-' + Math.random().toString(16).slice(2);
+  const leadId = 'ci-crm-lead-' + suffix;
+  const clientId = 'ci-crm-client-' + suffix;
+  const dealId = 'ci-crm-deal-' + suffix;
+  const email = 'crm-' + suffix + '@example.test';
+  const now = new Date().toISOString();
+
+  try {
+    const lead = await leadRepository.create({
+      id: leadId,
+      fullName: 'CI CRM Lead',
+      email,
+      company: 'CI CRM Company',
+      phone: '',
+      message: 'CRM conversion integration test',
+      status: 'new',
+      source: 'CI',
+      services: ['Website Development'],
+      budget: 'IDR 20.000.000',
+      createdAt: now,
+      updatedAt: now
+    });
+
+    const conversion = await dealRepository.convertLead(
+      lead,
+      {
+        id: clientId,
+        name: lead.fullName,
+        company: lead.company,
+        email: lead.email,
+        phone: lead.phone,
+        industry: 'Technology',
+        status: 'active',
+        notes: 'Converted from CI lead',
+        createdAt: now,
+        updatedAt: now
+      },
+      {
+        id: dealId,
+        title: 'CI CRM Website Project',
+        clientName: lead.fullName,
+        company: lead.company,
+        clientId,
+        servicePillar: 'Website Development',
+        value: 20_000_000,
+        stage: 'new',
+        probability: 0.25,
+        owner: 'ci',
+        expectedCloseDate: now.slice(0, 10),
+        notes: 'CRM conversion integration test',
+        priority: 'medium',
+        source: 'CI',
+        createdAt: now,
+        updatedAt: now
+      }
+    );
+
+    assert.equal(conversion.client.id, clientId);
+    assert.equal(conversion.deal.id, dealId);
+    assert.equal(conversion.deal.clientId, clientId);
+
+    const persistedLead = await leadRepository.findById(leadId);
+    assert.equal(persistedLead?.status, 'closed');
+
+    const persistedClient = await clientRepository.findById(clientId);
+    assert.equal(persistedClient?.id, clientId);
+    assert.equal(persistedClient?.company, 'CI CRM Company');
+
+    const persistedDeal = await dealRepository.findById(dealId);
+    assert.equal(persistedDeal?.clientId, clientId);
+    assert.equal(persistedDeal?.servicePillar, 'Website Development');
+  } finally {
+    const db = getPostgresPool();
+    await db.query('DELETE FROM crm_deals WHERE id = $1', [dealId]);
+    await db.query('DELETE FROM clients WHERE id = $1', [clientId]);
+    await db.query('DELETE FROM leads WHERE id = $1', [leadId]);
+    await closePostgresPool();
+  }
+});
