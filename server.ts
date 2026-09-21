@@ -116,6 +116,51 @@ async function startServer() {
     }
   });
 
+  app.get('/api/health', async (_req, res) => {
+    try {
+      const dataSource = getDataSourceMode();
+      let databaseStatus: 'connected' | 'unavailable' = 'connected';
+      let databaseLatencyMs: number | undefined;
+
+      if (dataSource === 'postgres') {
+        const postgresHealth = await checkPostgresConnection();
+        databaseLatencyMs = postgresHealth.latencyMs;
+      } else {
+        const { getDatabase } = await import('./server/db');
+        getDatabase();
+      }
+
+      res.json({
+        status: 'ok',
+        version: process.env.APP_VERSION || '2.6.0-enterprise',
+        services: {
+          application: 'healthy',
+          database: databaseStatus,
+          dataSource,
+          databaseLatencyMs,
+          auth: 'operational'
+        },
+        time: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error('Health check failed:', error);
+      res.status(503).json({
+        status: 'error',
+        services: {
+          application: 'degraded',
+          database: 'unavailable',
+          auth: 'unknown'
+        },
+        message: 'Health check failed'
+      });
+    }
+  });
+
+  // Keep unknown API routes as JSON 404s instead of letting SPA fallback return index.html.
+  app.use('/api', (_req, res) => {
+    res.status(404).json({ success: false, error: 'API route not found.' });
+  });
+
   // Vite middleware in dev, static files in prod
   if (process.env.NODE_ENV !== 'production') {
     const { createServer: createViteServer } = await import('vite');
