@@ -94,6 +94,15 @@ jobs:
             fi
             sleep 1
           done
+          if [ "$ready" != "1" ]; then
+            echo "===== AMS smoke socket diagnostic ====="
+            ss -ltnp | grep ':4173' || true
+            echo "===== AMS smoke curl diagnostic ====="
+            curl -sS --max-time 5 -o /tmp/health-debug.json -w 'HTTP %{http_code}\n' http://127.0.0.1:4173/api/health || true
+            cat /tmp/health-debug.json 2>/dev/null || true
+            echo "===== AMS smoke curl stderr ====="
+            cat /tmp/health.err 2>/dev/null || true
+          fi
           test "$ready" = "1"
           test -s /tmp/health.json
           node -e "const fs=require('fs'); const x=JSON.parse(fs.readFileSync('/tmp/health.json','utf8')); if(x.status!=='ok'||x.services?.dataSource!=='postgres') process.exit(1)"
