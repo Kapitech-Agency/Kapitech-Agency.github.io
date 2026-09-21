@@ -4438,13 +4438,22 @@ apiRouter.get('/system/production-readiness', requireAuth, requireAnyPermission(
     let latestReconciliation: {
       id: string;
       status: string;
+      sourceKind: string | null;
       completedAt: string | null;
       sourceSha256: string | null;
+      rowSourceSha256: string | null;
       checks: Record<string, boolean>
     } | null = null;
     try {
-      const { rows } = await getPostgresPool().query<{ id: string; status: string; completed_at: Date | string | null; report: unknown }>(
-        'SELECT id, status, completed_at, report FROM migration_runs ORDER BY COALESCE(completed_at, started_at) DESC LIMIT 1'
+      const { rows } = await getPostgresPool().query<{
+        id: string;
+        source_kind: string;
+        source_sha256: string;
+        status: string;
+        completed_at: Date | string | null;
+        report: unknown;
+      }>(
+        "SELECT id, source_kind, source_sha256, status, completed_at, report FROM migration_runs WHERE source_kind = 'encrypted-json' ORDER BY COALESCE(completed_at, started_at) DESC LIMIT 1"
       );
       const row = rows[0];
       if (row) {
@@ -4455,8 +4464,10 @@ apiRouter.get('/system/production-readiness', requireAuth, requireAnyPermission(
         latestReconciliation = {
           id: String(row.id),
           status: String(row.status),
+          sourceKind: String(row.source_kind || '').trim().toLowerCase() || null,
           completedAt: row.completed_at ? new Date(row.completed_at).toISOString() : null,
           sourceSha256: typeof report?.sourceSha256 === 'string' ? report.sourceSha256.toLowerCase() : null,
+          rowSourceSha256: typeof row.source_sha256 === 'string' ? row.source_sha256.trim().toLowerCase() : null,
           checks: report?.checks && typeof report.checks === 'object' ? report.checks : {}
         };
       }
@@ -4470,7 +4481,10 @@ apiRouter.get('/system/production-readiness', requireAuth, requireAnyPermission(
       Object.values(latestReconciliation.checks).every(value => value === true)
     );
     const reconciliationSourceBound = Boolean(
-      latestReconciliation?.sourceSha256 &&
+      latestReconciliation?.sourceKind === 'encrypted-json' &&
+      latestReconciliation.sourceSha256 &&
+      latestReconciliation.rowSourceSha256 &&
+      latestReconciliation.sourceSha256 === latestReconciliation.rowSourceSha256 &&
       latestReconciliation.sourceSha256 === reconciliationSourceSha256
     );
     const reconciliationCompletedBeforeSignoff = Boolean(
@@ -4525,6 +4539,7 @@ apiRouter.get('/system/production-readiness', requireAuth, requireAnyPermission(
           sourceSha256: reconciliationSourceSha256 || null,
           signoffComplete: reconciliationSignoffReady,
           sourceBound: reconciliationSourceBound,
+          databaseSourceSha256: latestReconciliation?.rowSourceSha256 || null,
           completedBeforeSignoff: reconciliationCompletedBeforeSignoff,
           run: latestReconciliation,
           runComplete: reconciliationRunReady,
