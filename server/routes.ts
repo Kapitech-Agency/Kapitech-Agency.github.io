@@ -2908,7 +2908,7 @@ apiRouter.get('/crm/proposals', requireAuth, requirePermission('canManageCrm'), 
 
 apiRouter.post('/crm/proposals', requireAuth, requirePermission('canManageCrm'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const data = req.body;
-  const db = getDatabase();
+  const db = getDataSourceMode() === 'json' ? getDatabase() : undefined;
 
   const rawItems = Array.isArray(data.items) ? data.items : [];
   const items = rawItems.slice(0, 100).map((item: any) => ({
@@ -2959,9 +2959,9 @@ apiRouter.post('/crm/proposals', requireAuth, requirePermission('canManageCrm'),
 
   if (getDataSourceMode() === 'postgres') { const proposal = await postgresProposalRepository.create(newProposal); recordAuditLog({ action: 'PROPOSAL_CREATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Created proposal ${proposal.proposalNumber} for ${proposal.clientName || proposal.company} (Total: ${proposal.total}).`, severity: 'info' }); res.json({ success: true, proposal }); return; }
 
-  if (!db.proposals) db.proposals = [];
-  db.proposals.unshift(newProposal);
-  saveDatabase(db);
+  if (!db?.proposals) db!.proposals = [];
+  db!.proposals.unshift(newProposal);
+  saveDatabase(db!);
 
   recordAuditLog({
     action: 'PROPOSAL_CREATED',
@@ -2979,8 +2979,8 @@ apiRouter.post('/crm/proposals', requireAuth, requirePermission('canManageCrm'),
 apiRouter.put('/crm/proposals/:id', requireAuth, requirePermission('canManageCrm'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
   const updates = req.body || {};
-  const db = getDatabase();
-  const idx = (db.proposals || []).findIndex(p => p.id === id);
+  const db = getDataSourceMode() === 'json' ? getDatabase() : undefined;
+  const idx = db?.proposals?.findIndex(p => p.id === id) ?? -1;
 
   if (getDataSourceMode() === 'postgres') {
     const existing = await postgresProposalRepository.findById(id);
@@ -3013,7 +3013,7 @@ apiRouter.put('/crm/proposals/:id', requireAuth, requirePermission('canManageCrm
     return;
   }
 
-  const existing = db.proposals[idx];
+  const existing = db!.proposals[idx];
   const items = Array.isArray(updates.items) ? updates.items.slice(0, 100).map((item: any) => ({
     id: cleanText(item?.id || crypto.randomBytes(4).toString('hex'), 80),
     description: cleanText(item?.description, 500),
@@ -3050,7 +3050,7 @@ apiRouter.put('/crm/proposals/:id', requireAuth, requirePermission('canManageCrm
     res.status(400).json({ success: false, error: 'Invalid proposal sent date.' });
     return;
   }
-  db.proposals[idx] = {
+  db!.proposals[idx] = {
     ...existing,
     ...patch,
     items,
@@ -3062,17 +3062,17 @@ apiRouter.put('/crm/proposals/:id', requireAuth, requirePermission('canManageCrm
     updatedAt: new Date().toISOString()
   };
 
-  saveDatabase(db);
+  saveDatabase(db!);
   recordAuditLog({
     action: 'PROPOSAL_UPDATED',
     actor: req.user!.username,
     actorRole: req.user!.role,
     ip: req.ip,
     userAgent: req.headers['user-agent'] as string,
-    details: `Updated proposal ${db.proposals[idx].proposalNumber}.`,
+    details: `Updated proposal ${db!.proposals[idx].proposalNumber}.`,
     severity: 'info'
   });
-  res.json({ success: true, proposal: db.proposals[idx] });
+  res.json({ success: true, proposal: db!.proposals[idx] });
 });
 
 apiRouter.post('/crm/proposals/:id/approve', requireAuth, requirePermission('canApproveBudgets'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
