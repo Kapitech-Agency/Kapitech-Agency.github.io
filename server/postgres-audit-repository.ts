@@ -28,10 +28,13 @@ export class PostgresAuditRepository {
       );
       const previousHash = previous.rows[0]?.hash || 'GENESIS';
       const id = 'log_' + Date.now() + '_' + crypto.randomBytes(4).toString('hex');
-      const clock = await client.query<{ timestamp: string }>(
-        "SELECT to_char(clock_timestamp() AT TIME ZONE 'UTC','YYYY-MM-DD\"T\"HH24:MI:SS.US\"Z\"') AS timestamp"
+      const clock = await client.query<{ timestamp: string; ip: string }>(
+        "SELECT to_char(clock_timestamp() AT TIME ZONE 'UTC','YYYY-MM-DD\"T\"HH24:MI:SS.US\"Z\"') AS timestamp," +
+        "$1::inet::text AS ip",
+        [entry.ip || '127.0.0.1']
       );
       const timestamp = clock.rows[0]?.timestamp || new Date().toISOString();
+      const databaseIp = clock.rows[0]?.ip || entry.ip || '127.0.0.1';
 
       const normalized = {
         id,
@@ -39,7 +42,7 @@ export class PostgresAuditRepository {
         action: entry.action,
         actor: entry.actor || 'anonymous',
         actorRole: entry.actorRole || 'visitor',
-        ip: entry.ip || '127.0.0.1',
+        ip: databaseIp,
         userAgent: entry.userAgent || 'unknown',
         details: entry.details || '',
         severity: entry.severity || 'info',
