@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { getPostgresPool, checkPostgresConnection, closePostgresPool } from '../server/postgres.ts';
 import { PostgresDatabaseRepository } from '../server/postgres-database-repository.ts';
+import { PostgresSecurityControlsRepository } from '../server/postgres-security-controls-repository.ts';
 
 const configured = Boolean(process.env.KAPITECH_POSTGRES_URL);
 
@@ -25,4 +26,31 @@ test('PostgreSQL repository can load the complete schema when configured', async
   assert.equal(typeof db.cmsSettings, 'object');
   assert.equal(typeof db.notificationSettings, 'object');
   await closePostgresPool();
+});
+
+
+test('PostgreSQL security controls can consume a live rate-limit bucket', async t => {
+  if (!configured) { t.skip('KAPITECH_POSTGRES_URL is not configured'); return; }
+
+  const repository = new PostgresSecurityControlsRepository();
+  const bucketKey = 'ci-rate-limit-' + Date.now() + '-' + Math.random().toString(16).slice(2);
+
+  try {
+    const first = await repository.consumeRateLimit(bucketKey, 2, 60_000);
+    const second = await repository.consumeRateLimit(bucketKey, 2, 60_000);
+    const third = await repository.consumeRateLimit(bucketKey, 2, 60_000);
+
+    assert.equal(first.count, 1);
+    assert.equal(first.allowed, true);
+    assert.equal(second.count, 2);
+    assert.equal(second.allowed, true);
+    assert.equal(third.count, 3);
+    assert.equal(third.allowed, false);
+  } finally {
+    await getPostgresPool().query(
+      'DELETE FROM security_rate_limits WHERE bucket_key = $1',
+      [bucketKey]
+    );
+    await closePostgresPool();
+  }
 });
