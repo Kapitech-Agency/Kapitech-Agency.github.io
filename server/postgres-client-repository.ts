@@ -104,7 +104,21 @@ export class PostgresClientRepository {
   }
 
   async delete(id: string): Promise<boolean> {
-    const result = await getPostgresPool().query('DELETE FROM clients WHERE id = $1', [id]);
+    const pool = getPostgresPool();
+    const dependencies = await pool.query(
+      `SELECT
+         (SELECT COUNT(*)::int FROM projects WHERE client_id = $1) AS projects,
+         (SELECT COUNT(*)::int FROM crm_deals WHERE client_id = $1) AS deals,
+         (SELECT COUNT(*)::int FROM proposals WHERE client_id = $1) AS proposals,
+         (SELECT COUNT(*)::int FROM invoices WHERE client_id = $1) AS invoices`,
+      [id]
+    );
+    const row = dependencies.rows[0] || {};
+    const counts = Object.entries(row).filter(([, value]) => Number(value) > 0);
+    if (counts.length) {
+      throw new Error('CLIENT_HAS_BUSINESS_RECORDS');
+    }
+    const result = await pool.query('DELETE FROM clients WHERE id = $1', [id]);
     return result.rowCount === 1;
   }
 }
