@@ -308,7 +308,7 @@ export const deleteAgencyProject = async (id: string): Promise<void> => {
   throw new Error(res.error || 'Project could not be deleted on the server.');
 };
 
-export const updateTaskStatus = (projectId: string, taskId: string, newStatus: TaskStatus): void => {
+export const updateTaskStatus = async (projectId: string, taskId: string, newStatus: TaskStatus): Promise<void> => {
   const current = getAgencyProjects();
   const proj = current.find(p => p.id === projectId);
   if (!proj) return;
@@ -320,5 +320,5 @@ export const updateTaskStatus = (projectId: string, taskId: string, newStatus: T
     updatedAt: new Date().toISOString()
   };
 
-  saveAgencyProject(updated);
+  await saveAgencyProject(updated);
 };

@@ -249,7 +249,7 @@ export const AdminProjects: React.FC = () => {
     }
   };
 
-  const handleAddTask = (e: React.FormEvent) => {
+  const handleAddTask = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedProject || !taskTitle.trim()) return;
 
@@ -276,11 +276,16 @@ export const AdminProjects: React.FC = () => {
     };
 
     const updatedTasks = [...selectedProject.tasks, newTask];
-    saveAgencyProject({
-      ...selectedProject,
-      tasks: updatedTasks,
-      updatedAt: new Date().toISOString()
-    });
+    try {
+      await saveAgencyProject({
+        ...selectedProject,
+        tasks: updatedTasks,
+        updatedAt: new Date().toISOString()
+      });
+    } catch (error: any) {
+      showToast(error?.message || (language === 'id' ? 'Gagal menambahkan task.' : 'Failed to create task.'));
+      return;
+    }
 
     setIsTaskModalOpen(false);
     setTaskTitle('');
@@ -289,21 +294,26 @@ export const AdminProjects: React.FC = () => {
     showToast(language === 'id' ? 'Tugas tim berhasil ditambahkan.' : 'Task successfully created.');
   };
 
-  const handleDeleteTask = (taskId: string) => {
+  const handleDeleteTask = async (taskId: string) => {
     if (!selectedProject) return;
     const updatedTasks = selectedProject.tasks.filter(t => t.id !== taskId);
-    saveAgencyProject({
-      ...selectedProject,
-      tasks: updatedTasks,
-      updatedAt: new Date().toISOString()
-    });
+    try {
+      await saveAgencyProject({
+        ...selectedProject,
+        tasks: updatedTasks,
+        updatedAt: new Date().toISOString()
+      });
+    } catch (error: any) {
+      showToast(error?.message || (language === 'id' ? 'Gagal menghapus task.' : 'Failed to remove task.'));
+      return;
+    }
     if (activeTaskDrawer?.id === taskId) {
       setActiveTaskDrawer(null);
     }
     showToast('Task removed.');
   };
 
-  const handleToggleSubtask = (taskId: string, subtaskId: string, e?: React.MouseEvent) => {
+  const handleToggleSubtask = async (taskId: string, subtaskId: string, e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
     if (!selectedProject) return;
 
@@ -315,14 +325,18 @@ export const AdminProjects: React.FC = () => {
       return t;
     });
 
-    saveAgencyProject({
-      ...selectedProject,
-      tasks: updatedTasks,
-      updatedAt: new Date().toISOString()
-    });
+    try {
+      await saveAgencyProject({
+        ...selectedProject,
+        tasks: updatedTasks,
+        updatedAt: new Date().toISOString()
+      });
+    } catch (error: any) {
+      showToast(error?.message || (language === 'id' ? 'Gagal memperbarui subtask.' : 'Failed to update subtask.'));
+    }
   };
 
-  const handleAddSubtaskInDrawer = (e: React.FormEvent) => {
+  const handleAddSubtaskInDrawer = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedProject || !activeTaskDrawer || !newSubtaskTitle.trim()) return;
 
@@ -340,16 +354,19 @@ export const AdminProjects: React.FC = () => {
       return t;
     });
 
-    saveAgencyProject({
-      ...selectedProject,
-      tasks: updatedTasks,
-      updatedAt: new Date().toISOString()
-    });
-
-    setNewSubtaskTitle('');
+    try {
+      await saveAgencyProject({
+        ...selectedProject,
+        tasks: updatedTasks,
+        updatedAt: new Date().toISOString()
+      });
+      setNewSubtaskTitle('');
+    } catch (error: any) {
+      showToast(error?.message || (language === 'id' ? 'Gagal menambahkan subtask.' : 'Failed to add subtask.'));
+    }
   };
 
-  const handleDeleteSubtaskInDrawer = (subtaskId: string) => {
+  const handleDeleteSubtaskInDrawer = async (subtaskId: string) => {
     if (!selectedProject || !activeTaskDrawer) return;
     const updatedTasks = selectedProject.tasks.map(t => {
       if (t.id === activeTaskDrawer.id && t.subtasks) {
@@ -358,14 +375,18 @@ export const AdminProjects: React.FC = () => {
       return t;
     });
 
-    saveAgencyProject({
-      ...selectedProject,
-      tasks: updatedTasks,
-      updatedAt: new Date().toISOString()
-    });
+    try {
+      await saveAgencyProject({
+        ...selectedProject,
+        tasks: updatedTasks,
+        updatedAt: new Date().toISOString()
+      });
+    } catch (error: any) {
+      showToast(error?.message || (language === 'id' ? 'Gagal menghapus subtask.' : 'Failed to delete subtask.'));
+    }
   };
 
-  const handleToggleMilestone = (milestoneId: string) => {
+  const handleToggleMilestone = async (milestoneId: string) => {
     if (!selectedProject) return;
     const updatedMilestones = selectedProject.milestones.map(m =>
       m.id === milestoneId ? { ...m, completed: !m.completed } : m
@@ -373,13 +394,17 @@ export const AdminProjects: React.FC = () => {
     const completedCount = updatedMilestones.filter(m => m.completed).length;
     const calcProgress = Math.round((completedCount / updatedMilestones.length) * 100);
 
-    saveAgencyProject({
-      ...selectedProject,
-      milestones: updatedMilestones,
-      progressPercent: calcProgress,
-      updatedAt: new Date().toISOString()
-    });
-    showToast('Milestone status updated.');
+    try {
+      await saveAgencyProject({
+        ...selectedProject,
+        milestones: updatedMilestones,
+        progressPercent: calcProgress,
+        updatedAt: new Date().toISOString()
+      });
+      showToast('Milestone status updated.');
+    } catch (error: any) {
+      showToast(error?.message || (language === 'id' ? 'Gagal memperbarui milestone.' : 'Failed to update milestone.'));
+    }
   };
 
   // Drag & Drop Handlers
@@ -401,13 +426,17 @@ export const AdminProjects: React.FC = () => {
     setDragOverColumnId(null);
   };
 
-  const handleDropOnColumn = (e: React.DragEvent, columnId: TaskStatus) => {
+  const handleDropOnColumn = async (e: React.DragEvent, columnId: TaskStatus) => {
     e.preventDefault();
     const taskId = e.dataTransfer.getData('text/plain') || draggedTaskId;
     if (taskId && selectedProject) {
-      updateTaskStatus(selectedProject.id, taskId, columnId);
-      const colLabel = TASK_COLUMNS.find(c => c.id === columnId)?.label || columnId;
-      showToast(`Task moved to ${colLabel}`);
+      try {
+        await updateTaskStatus(selectedProject.id, taskId, columnId);
+        const colLabel = TASK_COLUMNS.find(c => c.id === columnId)?.label || columnId;
+        showToast(`Task moved to ${colLabel}`);
+      } catch (error: any) {
+        showToast(error?.message || (language === 'id' ? 'Gagal memindahkan task.' : 'Failed to move task.'));
+      }
     }
     setDraggedTaskId(null);
     setDragOverColumnId(null);
@@ -931,9 +960,13 @@ export const AdminProjects: React.FC = () => {
                   {TASK_COLUMNS.map((col) => (
                     <button
                       key={col.id}
-                      onClick={() => {
-                        updateTaskStatus(selectedProject.id, activeTaskDrawer.id, col.id);
-                        showToast(`Moved to ${col.label}`);
+                      onClick={async () => {
+                        try {
+                          await updateTaskStatus(selectedProject.id, activeTaskDrawer.id, col.id);
+                          showToast(`Moved to ${col.label}`);
+                        } catch (error: any) {
+                          showToast(error?.message || (language === 'id' ? 'Gagal memindahkan task.' : 'Failed to move task.'));
+                        }
                       }}
                       className={`px-2.5 py-1.5 rounded-xl border text-[11px] transition-all font-bold ${
                         activeTaskDrawer.status === col.id
