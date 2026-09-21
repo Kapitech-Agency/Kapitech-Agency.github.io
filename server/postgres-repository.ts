@@ -176,6 +176,28 @@ export class PostgresAuthRepository {
     return result.rowCount === 1;
   }
 
+  async listUsers(): Promise<StoredUser[]> {
+    const result = await getPostgresPool().query<UserRow>('SELECT * FROM users ORDER BY created_at ASC');
+    return result.rows.map(mapUser);
+  }
+
+  async deleteUser(userId: string): Promise<boolean> {
+    const result = await getPostgresPool().query('DELETE FROM users WHERE id = $1 AND stakeholder_type <> $2 AND username <> $3', [userId, 'Master', 'admin']);
+    return result.rowCount === 1;
+  }
+
+  async updateUserPolicy(userId: string, name: string, role: string, stakeholderType: string, permissions: StoredUser['permissions'], division: string, status: StoredUser['status']): Promise<StoredUser | null> {
+    const result = await getPostgresPool().query<UserRow>(
+      `UPDATE users SET name=$2, role=$3, stakeholder_type=$4, permissions=$5, division=$6, status=$7 WHERE id=$1 RETURNING *`,
+      [userId, name, role, stakeholderType, JSON.stringify(permissions), division, status]
+    );
+    return result.rows[0] ? mapUser(result.rows[0]) : null;
+  }
+
+  async deleteUserSessions(userId: string): Promise<void> {
+    await getPostgresPool().query('DELETE FROM sessions WHERE user_id = $1', [userId]);
+  }
+
   async createUser(user: StoredUser): Promise<void> {
     await getPostgresPool().query(
       `INSERT INTO users
