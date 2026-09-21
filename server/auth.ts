@@ -476,10 +476,11 @@ export async function authenticate(req: AuthenticatedRequest, res: Response, nex
   try {
     if (sessionToken) {
       const user = await getSessionUser(sessionToken);
-    if (user) {
-      req.user = user;
-      req.sessionToken = sessionToken;
-      if (!cookieValue(req, 'kapi_csrf')) setCsrfCookie(res);
+      if (user) {
+        req.user = user;
+        req.sessionToken = sessionToken;
+        if (!cookieValue(req, 'kapi_csrf')) setCsrfCookie(res);
+      }
     }
     next();
   } catch (error) {
@@ -487,7 +488,6 @@ export async function authenticate(req: AuthenticatedRequest, res: Response, nex
     res.status(503).json({ success: false, error: 'Authentication service is temporarily unavailable.' });
   }
 }
-
 function requireMfaForProtectedAccess(req: AuthenticatedRequest, res: Response): boolean {
   if (!req.user) return true;
   if (req.user.mfaEnabled) return true;
