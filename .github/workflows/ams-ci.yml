@@ -81,7 +81,7 @@ jobs:
           KAPITECH_DATA_ENCRYPTION_KEY: 00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff
           ADMIN_INITIAL_USERNAME: admin
           ADMIN_INITIAL_PASSWORD: smoke-test-password-123456
-          ADMIN_INITIAL_EMAIL: admin@localhost
+          ADMIN_INITIAL_EMAIL: admin@smoke.kapitech.test
         run: |
           node dist/server.cjs > /tmp/kapitech-ams-smoke.log 2>&1 &
           PID=$!
