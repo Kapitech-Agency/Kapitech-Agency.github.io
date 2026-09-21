@@ -13,15 +13,15 @@ test('PostgreSQL domain repositories expose stable CRUD contracts', () => {
   const tasks = new PostgresTaskRepository();
 
   for (const method of ['list','findById','create','update','delete']) {
-    assert.equal(typeof clients[method as keyof typeof clients], 'function', \`client.\${method}\`);
+    assert.equal(typeof clients[method as keyof typeof clients], 'function', `client.${method}`);
   }
 
   for (const method of ['list','findById','listByClientId','create','update','archive']) {
-    assert.equal(typeof projects[method as keyof typeof projects], 'function', \`project.\${method}\`);
+    assert.equal(typeof projects[method as keyof typeof projects], 'function', `project.${method}`);
   }
 
   for (const method of ['list','findById','listByProjectId','create','update','archive']) {
-    assert.equal(typeof tasks[method as keyof typeof tasks], 'function', \`task.\${method}\`);
+    assert.equal(typeof tasks[method as keyof typeof tasks], 'function', `task.${method}`);
   }
 });
 
