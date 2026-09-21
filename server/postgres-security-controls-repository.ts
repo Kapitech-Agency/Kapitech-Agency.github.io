@@ -31,7 +31,7 @@ export class PostgresSecurityControlsRepository {
     }>(
       `INSERT INTO security_rate_limits
         (bucket_key, request_count, window_started_at, expires_at, updated_at)
-       VALUES ($1, 1, NOW(), NOW() + ($3::double precision * INTERVAL '1 millisecond'), NOW())
+       VALUES ($1, 1, NOW(), NOW() + ($2::double precision * INTERVAL '1 millisecond'), NOW())
        ON CONFLICT (bucket_key) DO UPDATE SET
          request_count = CASE
            WHEN security_rate_limits.expires_at <= NOW() THEN 1
@@ -43,12 +43,12 @@ export class PostgresSecurityControlsRepository {
          END,
          expires_at = CASE
            WHEN security_rate_limits.expires_at <= NOW()
-             THEN NOW() + ($3::double precision * INTERVAL '1 millisecond')
+             THEN NOW() + ($2::double precision * INTERVAL '1 millisecond')
            ELSE security_rate_limits.expires_at
          END,
          updated_at = NOW()
        RETURNING request_count, expires_at`,
-      [bucketKey, maxRequests, windowMs]
+      [bucketKey, windowMs]
     );
 
     const row = result.rows[0];
