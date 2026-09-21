@@ -52,6 +52,7 @@ import { loadApplicationDatabase } from './application-data-repository.ts';
 import { postgresAuthRepository } from './postgres-repository.ts';
 import { postgresClientRepository } from './postgres-client-repository.ts';
 import { postgresProjectRepository, ProjectConcurrencyError } from './postgres-project-repository.ts';
+import { postgresVendorRepository } from './postgres-vendor-repository.ts';
 
 
 const ROLE_POLICIES: Record<string, {
@@ -2048,23 +2049,21 @@ apiRouter.get('/finance/metrics', requireAuth, requirePermission('canViewFinanci
 });
 
 // ----------------------------------------------------
-// 7. VENDORS MANAGEMENT
-// ----------------------------------------------------
-
-apiRouter.get('/vendors', requireAuth, requireAnyPermission('canManageVendors', 'canViewFinancials'), (req: AuthenticatedRequest, res: Response): void => {
-  const db = getDatabase();
-  res.json({ success: true, vendors: db.vendors });
+// 7. Vendors
+apiRouter.get('/vendors', requireAuth, requireAnyPermission('canManageVendors', 'canViewFinancials'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  const vendors = getDataSourceMode() === 'postgres' ? await postgresVendorRepository.list() : getDatabase().vendors;
+  res.json({ success: true, vendors });
 });
 
-apiRouter.post('/vendors', requireAuth, requirePermission('canManageVendors'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.post('/vendors', requireAuth, requirePermission('canManageVendors'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const vendorData = req.body || {};
-  const db = getDatabase();
   const hourlyRate = Number(vendorData.hourlyRate);
   if (!Number.isFinite(hourlyRate) || hourlyRate < 0 || hourlyRate > 10_000_000_000) {
     res.status(400).json({ success: false, error: 'Vendor hourly rate must be a valid non-negative amount.' });
     return;
   }
   const rating = Number(vendorData.rating);
+  const now = new Date().toISOString();
   const newVendor = {
     id: `ven_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
     name: cleanText(vendorData.name, 160),
@@ -2073,7 +2072,7 @@ apiRouter.post('/vendors', requireAuth, requirePermission('canManageVendors'), (
     phone: cleanText(vendorData.phone, 40),
     type: ['freelancer','agency_partner','contractor','saas_vendor'].includes(String(vendorData.type)) ? String(vendorData.type) : 'contractor',
     primaryCategory: cleanText(vendorData.primaryCategory, 120),
-    skills: Array.isArray(vendorData.skills) ? vendorData.skills.slice(0,100).map((v) => cleanText(v,120)) : [],
+    skills: Array.isArray(vendorData.skills) ? vendorData.skills.slice(0,100).map((v: unknown) => cleanText(v,120)) : [],
     hourlyRate,
     currency: vendorData.currency === 'USD' ? 'USD' : 'IDR',
     rating: Number.isFinite(rating) ? Math.min(5, Math.max(0, rating)) : 0,
@@ -2085,83 +2084,91 @@ apiRouter.post('/vendors', requireAuth, requirePermission('canManageVendors'), (
     githubUrl: cleanOptionalUrl(vendorData.githubUrl),
     contracts: Array.isArray(vendorData.contracts) ? vendorData.contracts.slice(0,50) : [],
     notes: cleanText(vendorData.notes, 3000),
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
+    createdAt: now,
+    updatedAt: now
   };
+  if (getDataSourceMode() === 'postgres') {
+    const vendor = await postgresVendorRepository.create(newVendor as any);
+    recordAuditLog({ action: 'VENDOR_CREATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Created vendor "${newVendor.name}".`, severity: 'info' });
+    res.json({ success: true, vendor });
+    return;
+  }
+  const db = getDatabase();
   db.vendors.unshift(newVendor);
   saveDatabase(db);
   res.json({ success: true, vendor: newVendor });
 });
 
-apiRouter.put('/vendors/:id', requireAuth, requirePermission('canManageVendors'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.put('/vendors/:id', requireAuth, requirePermission('canManageVendors'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
   const updates = req.body || {};
+  if (getDataSourceMode() === 'postgres') {
+    const patch = pickFields(updates, ['name','companyName','email','phone','type','primaryCategory','skills','hourlyRate','currency','rating','completedProjectsCount','status','isVetted','location','portfolioUrl','githubUrl','contracts','notes','updatedAt']);
+    if (patch.email !== undefined) {
+      patch.email = cleanText(patch.email, 254).toLowerCase();
+      if (patch.email && !isValidEmail(patch.email)) { res.status(400).json({ success: false, error: 'Invalid vendor email address.' }); return; }
+    }
+    if (patch.status !== undefined && !['active','under_review','inactive','blacklisted'].includes(String(patch.status))) { res.status(400).json({ success: false, error: 'Invalid vendor status.' }); return; }
+    if (patch.hourlyRate !== undefined) {
+      const numeric = normalizeNumber(patch.hourlyRate, 0, MAX_MONEY);
+      if (numeric === null) { res.status(400).json({ success: false, error: 'Invalid vendor hourly rate.' }); return; }
+      patch.hourlyRate = numeric;
+    }
+    if (patch.rating !== undefined) {
+      const numeric = normalizeNumber(patch.rating, 0, 5);
+      if (numeric === null) { res.status(400).json({ success: false, error: 'Invalid vendor rating.' }); return; }
+      patch.rating = numeric;
+    }
+    if (patch.completedProjectsCount !== undefined) {
+      const numeric = normalizeNumber(patch.completedProjectsCount, 0, 1_000_000);
+      if (numeric === null) { res.status(400).json({ success: false, error: 'Invalid vendor project count.' }); return; }
+      patch.completedProjectsCount = Math.floor(numeric);
+    }
+    for (const key of ['name','companyName','phone','primaryCategory','location','notes'] as const) if (patch[key] !== undefined) patch[key] = cleanText(patch[key], key === 'notes' ? 3000 : 200);
+    for (const key of ['portfolioUrl','githubUrl'] as const) if (patch[key] !== undefined) patch[key] = cleanOptionalUrl(patch[key]);
+    if (patch.skills !== undefined) patch.skills = normalizeStringArray(patch.skills, 100, 120);
+    if (patch.contracts !== undefined) patch.contracts = Array.isArray(patch.contracts) ? patch.contracts.slice(0, 50) : [];
+    try {
+      const vendor = await postgresVendorRepository.update(id, patch as any);
+      if (!vendor) { res.status(404).json({ success: false, error: 'Vendor not found.' }); return; }
+      recordAuditLog({ action: 'VENDOR_UPDATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Updated vendor ${id}.`, severity: 'info' });
+      res.json({ success: true, vendor });
+    } catch (error) { throw error; }
+    return;
+  }
   const db = getDatabase();
   const idx = db.vendors.findIndex(v => v.id === id);
-  if (idx === -1) {
-    res.status(404).json({ success: false, error: 'Vendor not found.' });
-    return;
-  }
+  if (idx === -1) { res.status(404).json({ success: false, error: 'Vendor not found.' }); return; }
   const patch = pickFields(updates || {}, ['name', 'category', 'contactPerson', 'email', 'phone', 'website', 'paymentTerms', 'status', 'monthlySpend', 'notes', 'portfolioUrl', 'githubUrl', 'contracts']);
-  if (patch.email !== undefined) {
-    patch.email = cleanText(patch.email, 254).toLowerCase();
-    if (patch.email && !isValidEmail(patch.email)) {
-      res.status(400).json({ success: false, error: 'Invalid vendor email address.' });
-      return;
-    }
-  }
-  for (const key of ['website','portfolioUrl','githubUrl'] as const) {
-    if (patch[key] !== undefined) patch[key] = cleanOptionalUrl(patch[key]);
-  }
-  if (patch.status !== undefined && !['active','under_review','inactive','blacklisted'].includes(String(patch.status))) {
-    res.status(400).json({ success: false, error: 'Invalid vendor status.' });
-    return;
-  }
-  if (patch.monthlySpend !== undefined) {
-    const numeric = normalizeNumber(patch.monthlySpend, 0, MAX_MONEY);
-    if (numeric === null) {
-      res.status(400).json({ success: false, error: 'Invalid vendor monthly spend.' });
-      return;
-    }
-    patch.monthlySpend = numeric;
-  }
-  for (const key of ['name','category','contactPerson','phone','paymentTerms','notes'] as const) {
-    if (patch[key] !== undefined) patch[key] = cleanText(patch[key], key === 'notes' ? 3000 : 200);
-  }
+  if (patch.email !== undefined) { patch.email = cleanText(patch.email, 254).toLowerCase(); if (patch.email && !isValidEmail(patch.email)) { res.status(400).json({ success: false, error: 'Invalid vendor email address.' }); return; } }
+  for (const key of ['website','portfolioUrl','githubUrl'] as const) if (patch[key] !== undefined) patch[key] = cleanOptionalUrl(patch[key]);
+  if (patch.status !== undefined && !['active','under_review','inactive','blacklisted'].includes(String(patch.status))) { res.status(400).json({ success: false, error: 'Invalid vendor status.' }); return; }
+  if (patch.monthlySpend !== undefined) { const numeric = normalizeNumber(patch.monthlySpend, 0, MAX_MONEY); if (numeric === null) { res.status(400).json({ success: false, error: 'Invalid vendor monthly spend.' }); return; } patch.monthlySpend = numeric; }
+  for (const key of ['name','category','contactPerson','phone','paymentTerms','notes'] as const) if (patch[key] !== undefined) patch[key] = cleanText(patch[key], key === 'notes' ? 3000 : 200);
   if (patch.contracts !== undefined) patch.contracts = Array.isArray(patch.contracts) ? patch.contracts.slice(0, 50) : [];
   db.vendors[idx] = { ...db.vendors[idx], ...patch, updatedAt: new Date().toISOString() };
   saveDatabase(db);
-  recordAuditLog({
-    action: 'VENDOR_UPDATED',
-    actor: req.user!.username,
-    actorRole: req.user!.role,
-    ip: req.ip,
-    userAgent: req.headers['user-agent'] as string,
-    details: `Updated vendor ${id}.`,
-    severity: 'info'
-  });
+  recordAuditLog({ action: 'VENDOR_UPDATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Updated vendor ${id}.`, severity: 'info' });
   res.json({ success: true, vendor: db.vendors[idx] });
 });
 
-apiRouter.delete('/vendors/:id', requireAuth, requirePermission('canManageVendors'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.delete('/vendors/:id', requireAuth, requirePermission('canManageVendors'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
-  const db = getDatabase();
-  const vendor = db.vendors.find((item: any) => item.id === id);
-  if (!vendor) {
-    res.status(404).json({ success: false, error: 'Vendor not found.' });
+  if (getDataSourceMode() === 'postgres') {
+    const vendor = await postgresVendorRepository.findById(id);
+    if (!vendor) { res.status(404).json({ success: false, error: 'Vendor not found.' }); return; }
+    const deleted = await postgresVendorRepository.delete(id);
+    if (!deleted) { res.status(404).json({ success: false, error: 'Vendor not found.' }); return; }
+    recordAuditLog({ action: 'VENDOR_DELETED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Deleted vendor "${vendor.name}".`, severity: 'warning' });
+    res.json({ success: true, message: 'Vendor deleted.' });
     return;
   }
+  const db = getDatabase();
+  const vendor = db.vendors.find((item: any) => item.id === id);
+  if (!vendor) { res.status(404).json({ success: false, error: 'Vendor not found.' }); return; }
   db.vendors = db.vendors.filter(v => v.id !== id);
   saveDatabase(db);
-  recordAuditLog({
-    action: 'VENDOR_DELETED',
-    actor: req.user!.username,
-    actorRole: req.user!.role,
-    ip: req.ip,
-    userAgent: req.headers['user-agent'] as string,
-    details: `Deleted vendor "${vendor.name || id}".`,
-    severity: 'warning'
-  });
+  recordAuditLog({ action: 'VENDOR_DELETED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Deleted vendor "${vendor.name || id}".`, severity: 'warning' });
   res.json({ success: true, message: 'Vendor deleted.' });
 });
 
