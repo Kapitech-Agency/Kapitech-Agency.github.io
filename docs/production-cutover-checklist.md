@@ -9,6 +9,7 @@ Before switching production to PostgreSQL, verify:
 - `KAPITECH_DATA_SOURCE=postgres`
 - `KAPITECH_DATA_ENCRYPTION_KEY` is valid.
 - `KAPITECH_RELATIONAL_RECONCILIATION_VERIFIED_AT` records completed and reviewed data reconciliation.
+- The latest `migration_runs` record has status `succeeded` and all reconciliation checks are true.
 - PostgreSQL migration prefixes 001 through 013 are present in `schema_migrations`.
 - Every active AMS user has TOTP MFA enabled.
 - PostgreSQL backup provider reports a backup inside the configured RPO.
