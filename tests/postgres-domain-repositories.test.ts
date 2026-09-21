@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { PostgresClientRepository } from '../server/postgres-client-repository.ts';
+import { closePostgresPool } from '../server/postgres.ts';
 import {
   PostgresProjectRepository,
   PostgresTaskRepository
@@ -81,6 +82,6 @@ test('Projects enforce optimistic concurrency when PostgreSQL is configured', as
     );
   } finally {
     await projects.archive(project.id);
-    await clients.delete(client.id);
+    await closePostgresPool();
   }
 });
