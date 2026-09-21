@@ -95,14 +95,6 @@ function privateDocumentSourceDir(): string {
     : path.join(DATA_DIR, 'private-documents');
 }
 
-function encryptionKey(): Buffer {
-  const raw = process.env.KAPITECH_DATA_ENCRYPTION_KEY?.trim();
-  if (!raw) throw new Error('KAPITECH_DATA_ENCRYPTION_KEY is required for private document migration.');
-  const key = /^[0-9a-f]{64}$/i.test(raw) ? Buffer.from(raw, 'hex') : Buffer.from(raw, 'base64');
-  if (key.length !== 32) throw new Error('KAPITECH_DATA_ENCRYPTION_KEY must decode to 32 bytes.');
-  return key;
-}
-
 function decryptPrivateDocument(payload: Buffer): Buffer {
   const raw = payload.toString('utf8');
   if (!raw.startsWith('KAPI-FILE-V1:')) throw new Error('Private document encryption header is invalid.');
