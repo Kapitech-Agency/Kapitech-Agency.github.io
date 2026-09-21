@@ -622,14 +622,21 @@ async function main(): Promise<void> {
         await client.query('BEGIN');
         importedCounts = await importCore(client, db, stagedPrivateDocuments.metadata);
         await client.query('COMMIT');
+        stagedPrivateDocuments.createdKeys.length = 0;
       } catch (error) {
         try { await client.query('ROLLBACK'); } catch {}
+        if (stagedPrivateDocuments.createdKeys.length > 0) {
+          const storage = getDocumentStorage();
+          for (const key of stagedPrivateDocuments.createdKeys) {
+            try { await storage.delete(key); } catch (cleanupError) {
+              console.error('[PostgreSQL import] Private object rollback cleanup failed:', cleanupError);
+            }
+          }
+        }
         throw error;
       } finally {
         client.release();
       }
-
-      stagedPrivateDocuments.createdKeys.length = 0;
     }
 
     const report = {
