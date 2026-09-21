@@ -164,24 +164,64 @@ test('PostgreSQL time logs fail closed when a billing rate is missing', async t 
     return;
   }
 
-  // The previous test resets its singleton pool after cleanup. This test uses a
-  // deliberately missing user/project pair and checks the rate error before
-  // any insert can occur.
-  const userId = token('missing_user');
-  const projectId = token('missing_project');
+  const userId = token('missing_rate_user');
+  const clientId = token('missing_rate_client');
+  const projectId = token('missing_rate_project');
+  const clients = new PostgresClientRepository();
+  const projects = new PostgresProjectRepository();
   const timeLogs = new PostgresTimeLogRepository();
+  const pool = getPostgresPool();
 
-  await assert.rejects(
-    () => timeLogs.create({
-      id: token('tim'),
+  await pool.query(
+    'INSERT INTO users (id,name,username,email,password_hash,salt,role,stakeholder_type,permissions,division,status) ' +
+    'VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)',
+    [
       userId,
-      projectId,
-      durationMinutes: 60,
-      workDate: today(),
-      currency: 'IDR'
-    }),
-    error => error instanceof BillingRateNotConfiguredError || error?.code === 'TIMELOG_NOT_FOUND'
+      'No Rate User',
+      userId,
+      userId + '@example.test',
+      'test-password-hash',
+      'test-salt',
+      'Integration',
+      'Operations',
+      '{}',
+      'Operations',
+      'active'
+    ]
   );
 
-  await closePostgresPool();
+  const client = await clients.create({
+    id: clientId,
+    name: 'Missing Rate Client',
+    company: 'Missing Rate Co',
+    status: 'active'
+  });
+
+  await projects.create({
+    id: projectId,
+    clientId: client.id,
+    name: 'Missing Rate Project',
+    status: 'planning',
+    budget: 100000,
+    currency: 'IDR'
+  });
+
+  try {
+    await assert.rejects(
+      () => timeLogs.create({
+        id: token('tim'),
+        userId,
+        projectId,
+        durationMinutes: 60,
+        workDate: today(),
+        currency: 'IDR'
+      }),
+      error => error instanceof BillingRateNotConfiguredError
+    );
+  } finally {
+    await pool.query('DELETE FROM projects WHERE id=$1', [projectId]);
+    await pool.query('DELETE FROM clients WHERE id=$1', [clientId]);
+    await pool.query('DELETE FROM users WHERE id=$1', [userId]);
+    await closePostgresPool();
+  }
 });
