@@ -61,6 +61,13 @@ test('PostgreSQL audit repository preserves a verifiable append-only hash chain'
     }
 
     const verified = await audit.verifyChain();
+    if (!verified.valid) {
+      t.diagnostic('Audit chain verification failed: ' + JSON.stringify(verified));
+      const rows = await pool.query(
+        'SELECT id, timestamp, action, actor, actor_role, ip::text AS ip, user_agent, details, severity, prev_hash, hash FROM audit_logs ORDER BY timestamp ASC, id ASC'
+      );
+      t.diagnostic('Audit rows: ' + JSON.stringify(rows.rows));
+    }
     assert.equal(verified.valid, true);
     assert.ok(verified.checked >= actions.length);
 
