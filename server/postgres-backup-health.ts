@@ -49,6 +49,8 @@ export function getPostgresBackupHealth(): PostgresBackupHealth {
         latestBackupAt: null,
         restoreVerifiedAt: null,
         restoreVerified: false,
+        restoreBackupSha256: null,
+        restoreMatchesLatestBackup: false,
         reason: 'PostgreSQL backup health is only applicable when KAPITECH_DATA_SOURCE=postgres.'
       },
       rpoMinutes: readPositiveInt('KAPITECH_POSTGRES_BACKUP_RPO_MINUTES', 15),
