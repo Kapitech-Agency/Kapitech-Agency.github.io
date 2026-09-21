@@ -108,6 +108,20 @@ export class PostgresAuthRepository {
     return result.rowCount === 1;
   }
 
+  async pruneUserSessions(userId: string, maxSessions = 5): Promise<void> {
+    await getPostgresPool().query(
+      `DELETE FROM sessions
+       WHERE user_id = $1
+         AND token_hash NOT IN (
+           SELECT token_hash FROM sessions
+           WHERE user_id = $1
+           ORDER BY created_at DESC
+           LIMIT $2
+         )`,
+      [userId, maxSessions]
+    );
+  }
+
   async deleteSession(tokenHash: string): Promise<boolean> {
     const result = await getPostgresPool().query(
       'DELETE FROM sessions WHERE token_hash = $1', [tokenHash]
