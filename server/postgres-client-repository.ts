@@ -97,7 +97,7 @@ export class PostgresClientRepository {
     const existing = await this.findById(id);
     if (!existing) return null;
 
-    const merged = { ...existing, ...patch, id };
+    const merged: Record<string, any> = { ...(existing as Record<string, any>), ...(patch as Record<string, any>), id };
     const known = [
       'id','name','company','companyName','clientName','email','phone','industry','status','notes',
       'createdAt','updatedAt'
