@@ -15,6 +15,7 @@ test('Production cutover runbook covers the required operational gates', () => {
     'npm run db:migrate',
     'npm run db:restore-rehearsal',
     'npm run db:reconcile',
+    'npm run validate:production-env',
     'npm run build',
     'npm start'
   ]) {
