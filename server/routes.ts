@@ -2673,7 +2673,7 @@ apiRouter.delete('/cms/testimonials/:id', requireAuth, requirePermission('canMan
 });
 
 // Public CMS metadata. Only non-sensitive presentation fields are exposed.
-apiRouter.get('/cms/public-settings', rateLimitPublic, async (_req: Request, res: Response): Promise<void> => {
+apiRouter.get('/cms/public-settings', rateLimitPublic(), async (_req: Request, res: Response): Promise<void> => {
   const settings = getDataSourceMode() === 'postgres'
     ? await postgresCmsRepository.getSettings()
     : getDatabase().cmsSettings;
