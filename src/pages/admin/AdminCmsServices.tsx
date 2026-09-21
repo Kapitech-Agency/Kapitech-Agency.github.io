@@ -109,10 +109,12 @@ export const AdminCmsServices: React.FC = () => {
 
   const handleCreateService = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newTitle || !newSlug) return;
+    if (!newTitle.trim() || !newSlug.trim()) return;
 
+    const normalizedSlug = newSlug.toLowerCase().replace(/[^a-z0-9-]/g, '-');
     const newService: ServiceItemData = {
-      slug: newSlug.toLowerCase().replace(/[^a-z0-9-]/g, '-'),
+      ...(editingService || {}),
+      slug: normalizedSlug,
       type: 'service',
       category: newCategory,
       title: newTitle,
@@ -181,10 +183,11 @@ export const AdminCmsServices: React.FC = () => {
       const saved = await saveCmsService(newService);
       setServicesList([saved.service, ...servicesList]);
       setIsAddModalOpen(false);
-    setNewTitle('');
-    setNewSlug('');
-    setNewHeadline('');
-    setNewSubtitle('');
+      setNewTitle('');
+      setNewSlug('');
+      setNewHeadline('');
+      setNewSubtitle('');
+      setNewBadge('Enterprise Tier');
       setStatusMessage(language === 'id' ? `Layanan "${newTitle}" berhasil ditambahkan ke CMS!` : `Service "${newTitle}" successfully added to CMS!`);
       setTimeout(() => setStatusMessage(null), 4000);
     } catch (error: any) {
@@ -558,10 +561,12 @@ export const AdminCmsServices: React.FC = () => {
             </button>
 
             <h3 className="text-lg font-sans font-bold text-white mb-1">
-              Add New Agency Service Offering
+              {editingService ? 'Edit Service: ' + editingService.title : 'Add New Agency Service Offering'}
             </h3>
             <p className="text-xs text-[#8A94A6] mb-5">
-              Publish a new technical capability or SEO service package into the agency catalog.
+              {editingService
+                ? 'Update the service and publish the changes to the server-backed CMS.'
+                : 'Publish a new technical capability or SEO service package into the agency catalog.'}
             </p>
 
             <form onSubmit={handleCreateService} className="space-y-4 text-xs font-sans">
@@ -676,7 +681,7 @@ export const AdminCmsServices: React.FC = () => {
                   type="submit"
                   className="px-5 py-2 rounded-xl bg-[#E50914] hover:bg-[#FF1E27] text-white text-xs font-semibold shadow-lg shadow-[#E50914]/25 transition-all"
                 >
-                  Publish Service
+                  {editingService ? 'Save Changes' : 'Publish Service'}
                 </button>
               </div>
             </form>
