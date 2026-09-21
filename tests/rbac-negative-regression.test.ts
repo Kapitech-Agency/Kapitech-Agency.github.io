@@ -28,10 +28,11 @@ function request(overrides: Record<string, unknown> = {}) {
     id: 'rbac-test-user', name: 'RBAC Test User', username: 'rbac', email: 'rbac@example.test',
     role: 'Test Role', stakeholderType: 'Operations', mfaEnabled: true, permissions: permissions()
   };
+  const { user: userOverride, ...requestOverrides } = overrides as any;
   return {
-    user: { ...baseUser, ...((overrides.user || {}) as object) },
+    user: { ...baseUser, ...(userOverride || {}) },
     path: '/test', originalUrl: '/api/test', ip: '127.0.0.1',
-    headers: { 'user-agent': 'rbac-test' }, ...(overrides as object)
+    headers: { 'user-agent': 'rbac-test' }, ...requestOverrides
   } as any;
 }
 
