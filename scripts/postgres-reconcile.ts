@@ -65,9 +65,16 @@ function duplicateIds(db: any, key: string): string[] {
 
 function computeAuditLogHash(log: any): string {
   return crypto.createHash('sha256').update(JSON.stringify({
-    id: log.id, timestamp: log.timestamp, action: log.action, actor: log.actor,
-    actorRole: log.actorRole, ip: log.ip, userAgent: log.userAgent,
-    details: log.details, severity: log.severity, prevHash: log.prevHash
+    id: log.id,
+    timestamp: log.timestamp,
+    action: log.action,
+    actor: log.actor,
+    actorRole: log.actorRole,
+    ip: log.ip,
+    userAgent: log.userAgent,
+    details: log.details,
+    severity: log.severity,
+    prevHash: log.prevHash
   })).digest('hex');
 }
 
