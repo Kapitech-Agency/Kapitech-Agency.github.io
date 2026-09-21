@@ -10,6 +10,7 @@ import { LanguageProvider } from './lib/LanguageContext';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 import { FloatingContact } from './components/FloatingContact';
+import { api } from './lib/apiClient';
 
 // Route-level code splitting keeps rarely visited pages out of the initial JavaScript bundle.
 // Named exports are adapted to React.lazy's default-export contract.
@@ -139,6 +140,34 @@ const AnimatedRoutes = () => {
 function AppShell() {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith('/admin') || location.pathname.startsWith('/ams');
+
+  useEffect(() => {
+    if (isAdminRoute) return;
+
+    let cancelled = false;
+    void api.cms.getPublicSettings().then((res) => {
+      if (cancelled || !res.success || !res.data?.settings) return;
+
+      const { siteTitle, siteDescription } = res.data.settings;
+      if (siteTitle) {
+        document.title = siteTitle;
+      }
+
+      if (siteDescription) {
+        let description = document.querySelector<HTMLMetaElement>('meta[name="description"]');
+        if (!description) {
+          description = document.createElement('meta');
+          description.name = 'description';
+          document.head.appendChild(description);
+        }
+        description.content = siteDescription;
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isAdminRoute]);
 
   return (
     <div className="relative z-10 text-white selection:bg-brand-red selection:text-white min-h-screen flex flex-col">
