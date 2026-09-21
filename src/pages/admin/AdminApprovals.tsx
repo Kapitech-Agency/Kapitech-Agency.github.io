@@ -19,6 +19,7 @@ import {
 import { api } from '../../lib/apiClient';
 import { useLanguage } from '../../lib/LanguageContext';
 import { getActiveCurrency, formatAmount, CurrencyCode, CURRENCY_EVENT } from '../../lib/currency';
+import { hasAdminPermission } from '../../lib/adminAuth';
 
 interface ApprovalItem {
   id: string;
@@ -39,6 +40,7 @@ interface ApprovalItem {
 
 export const AdminApprovals: React.FC = () => {
   const { language } = useLanguage();
+  const canApproveBudgets = hasAdminPermission('canApproveBudgets');
   const [currency, setCurrency] = useState<CurrencyCode>(getActiveCurrency());
   const [approvals, setApprovals] = useState<ApprovalItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -90,6 +92,11 @@ export const AdminApprovals: React.FC = () => {
   const handleDecisionSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!activeItem) return;
+    if (!canApproveBudgets) {
+      setActiveItem(null);
+      showToast(language === 'id' ? 'Anda tidak memiliki hak persetujuan.' : 'You do not have approval permission.');
+      return;
+    }
 
     setIsSubmitting(true);
     try {
@@ -222,7 +229,7 @@ export const AdminApprovals: React.FC = () => {
             {metrics.highRiskPending}
           </div>
           <div className="text-[10px] font-mono text-red-400/80">
-            {language === 'id' ? 'Persetujuan Tier 1' : 'Requires Tier 1 Sponsor'}
+            {language === 'id' ? 'Perlu hak persetujuan' : 'Requires approval permission'}
           </div>
         </div>
 
@@ -347,7 +354,7 @@ export const AdminApprovals: React.FC = () => {
                     </div>
                   )}
 
-                  {item.status.toLowerCase() === 'pending' ? (
+                  {item.status.toLowerCase() === 'pending' && canApproveBudgets ? (
                     <div className="flex items-center gap-1.5 mt-2">
                       <button
                         onClick={() => {
@@ -396,7 +403,7 @@ export const AdminApprovals: React.FC = () => {
       </div>
 
       {/* DECISION MODAL */}
-      {activeItem && (
+      {activeItem && canApproveBudgets && (
         <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
           <div className="bg-[#111318] border border-white/[0.07] rounded-2xl w-full max-w-md shadow-[0_24px_64px_rgba(0,0,0,0.8)] overflow-hidden">
             <div className="p-4 border-b border-white/[0.07] flex items-center justify-between bg-[#181B22]">
