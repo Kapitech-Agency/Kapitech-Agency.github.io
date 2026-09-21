@@ -307,56 +307,80 @@ export class PostgresTaskRepository {
     });
   }
   async update(id: string, patch: Record<string, any>): Promise<Record<string, any> | null> {
-    const existing = await this.findById(id);
-    if (!existing) return null;
-    if (existing.archivedAt) throw new ProjectArchiveMutationError('Archived task cannot be updated.');
+    return withPostgresTransaction(async client => {
+      const current = await client.query<Row>(
+        'SELECT * FROM tasks WHERE id=$1 LIMIT 1',
+        [id]
+      );
+      if (!current.rows[0]) return null;
 
-    const expectedVersion = patch.version == null ? undefined : Number(patch.version);
-    const merged = { ...existing, ...patch, id };
-    const known = [
-      'id','projectId','title','description','status','priority','assigneeUserId',
-      'dueDate','estimatedHours','actualHours','version','archivedAt','completedAt','createdAt','updatedAt'
-    ];
-    const metadata = metadataFrom(merged, known);
-    const estimatedMinutes = Math.round(Math.max(0, Number(merged.estimatedHours || 0)) * 60);
-    const completedAt = String(merged.status || '') === 'done'
-      ? (merged.completedAt || new Date().toISOString())
-      : null;
-
-    const params = [
-      id,
-      String(merged.projectId || ''),
-      String(merged.title || ''),
-      merged.description ? String(merged.description) : null,
-      String(merged.status || 'todo'),
-      merged.priority ? String(merged.priority) : 'medium',
-      merged.assigneeUserId ? String(merged.assigneeUserId) : null,
-      merged.dueDate || null,
-      estimatedMinutes,
-      completedAt,
-      JSON.stringify(metadata)
-    ];
-
-    const sql = expectedVersion === undefined
-      ? 'UPDATE tasks SET project_id=$2, title=$3, description=$4, status=$5, priority=$6, ' +
-        'assignee_user_id=$7, due_date=$8, estimated_minutes=$9, completed_at=$10, metadata=$11, ' +
-        'version=version+1, updated_at=NOW() WHERE id=$1 AND archived_at IS NULL RETURNING *'
-      : 'UPDATE tasks SET project_id=$2, title=$3, description=$4, status=$5, priority=$6, ' +
-        'assignee_user_id=$7, due_date=$8, estimated_minutes=$9, completed_at=$10, metadata=$11, ' +
-        'version=version+1, updated_at=NOW() WHERE id=$1 AND version=$12 AND archived_at IS NULL RETURNING *';
-
-    const values = expectedVersion === undefined ? params : [...params, expectedVersion];
-    const result = await getPostgresPool().query<Row>(sql, values);
-
-    if (!result.rows[0]) {
-      if (expectedVersion !== undefined) {
-        throw new TaskVersionConflictError('Task was modified by another user.');
+      const projectId = current.rows[0].project_id ? String(current.rows[0].project_id) : '';
+      if (projectId) {
+        const project = await client.query<Row>(
+          'SELECT id, archived_at FROM projects WHERE id=$1 FOR UPDATE',
+          [projectId]
+        );
+        if (!project.rows[0] || project.rows[0].archived_at) {
+          throw new ProjectArchiveMutationError('Task belongs to an archived or missing project.');
+        }
       }
-      return null;
-    }
-    return mapTask(result.rows[0]);
-  }
 
+      const locked = await client.query<Row>(
+        'SELECT * FROM tasks WHERE id=$1 FOR UPDATE',
+        [id]
+      );
+      if (!locked.rows[0]) return null;
+      if (locked.rows[0].archived_at) {
+        throw new ProjectArchiveMutationError('Archived task cannot be updated.');
+      }
+
+      const currentMapped = mapTask(locked.rows[0]);
+      const expectedVersion = patch.version == null ? undefined : Number(patch.version);
+      const merged = { ...currentMapped, ...patch, id };
+      const known = [
+        'id','projectId','title','description','status','priority','assigneeUserId',
+        'dueDate','estimatedHours','version','archivedAt','completedAt','createdAt','updatedAt'
+      ];
+      const metadata = metadataFrom(merged, known);
+      const estimatedMinutes = Math.round(Math.max(0, Number(merged.estimatedHours || 0)) * 60);
+      const completedAt = String(merged.status || '') === 'done'
+        ? (merged.completedAt || new Date().toISOString())
+        : null;
+
+      const params = [
+        id,
+        String(current.rows[0].project_id || ''),
+        String(merged.title || ''),
+        merged.description ? String(merged.description) : null,
+        String(merged.status || 'todo'),
+        merged.priority ? String(merged.priority) : 'medium',
+        merged.assigneeUserId ? String(merged.assigneeUserId) : null,
+        merged.dueDate || null,
+        estimatedMinutes,
+        completedAt,
+        JSON.stringify(metadata)
+      ];
+
+      const sql = expectedVersion === undefined
+        ? 'UPDATE tasks SET project_id=$2, title=$3, description=$4, status=$5, priority=$6, ' +
+          'assignee_user_id=$7, due_date=$8, estimated_minutes=$9, completed_at=$10, metadata=$11, ' +
+          'version=version+1, updated_at=NOW() WHERE id=$1 AND archived_at IS NULL RETURNING *'
+        : 'UPDATE tasks SET project_id=$2, title=$3, description=$4, status=$5, priority=$6, ' +
+          'assignee_user_id=$7, due_date=$8, estimated_minutes=$9, completed_at=$10, metadata=$11, ' +
+          'version=version+1, updated_at=NOW() WHERE id=$1 AND version=$12 AND archived_at IS NULL RETURNING *';
+
+      const values = expectedVersion === undefined ? params : [...params, expectedVersion];
+      const result = await client.query<Row>(sql, values);
+
+      if (!result.rows[0]) {
+        if (expectedVersion !== undefined) {
+          throw new TaskVersionConflictError('Task was modified by another user.');
+        }
+        return null;
+      }
+      return mapTask(result.rows[0]);
+    });
+  }
   async archive(id: string): Promise<boolean> {
     const result = await getPostgresPool().query(
       'UPDATE tasks SET archived_at=NOW(), version=version+1, updated_at=NOW() ' +
