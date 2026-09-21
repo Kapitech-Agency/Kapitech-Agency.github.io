@@ -50,7 +50,7 @@ import {
 } from '../../lib/crmStore';
 import { saveAgencyProject, AgencyProject } from '../../lib/projectStore';
 import { saveAgencyInvoice } from '../../lib/financeStore';
-import { saveAgencyClient } from '../../lib/clientStore';
+import { saveAgencyClient, AgencyClient } from '../../lib/clientStore';
 import { useLanguage } from '../../lib/LanguageContext';
 import { useDragToScroll } from '../../lib/useDragToScroll';
 import { ScrollShadowContainer } from '../../components/ui/ScrollShadowContainer';
@@ -301,7 +301,7 @@ export const AdminCrm: React.FC = () => {
       updatedAt: new Date().toISOString()
     };
 
-    const clientPayload = {
+    const clientPayload: AgencyClient = {
       id: clientId,
       name: lead.clientName,
       company: lead.company,
