@@ -28,7 +28,7 @@ test('PostgreSQL expense writes preserve idempotency and void lifecycle', async 
 
   await pool.query(
     'INSERT INTO users (id,name,username,email,password_hash,salt,role,stakeholder_type,permissions,division,status) ' +
-    'VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)',
+    'VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)',
     [
       userId,
       'Expense Integration User',
