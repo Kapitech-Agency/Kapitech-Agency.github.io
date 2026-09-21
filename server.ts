@@ -2,6 +2,8 @@ import express from 'express';
 import path from 'path';
 import dotenv from 'dotenv';
 import { apiRouter } from './server/routes';
+import { getDataSourceMode } from './server/data-source.ts';
+import { checkPostgresConnection } from './server/postgres.ts';
 
 dotenv.config();
 
@@ -74,24 +76,35 @@ async function startServer() {
   app.use('/api', apiRouter);
 
   // Health check
-  app.get('/api/health', async (req, res) => {
+  app.get('/api/health', async (_req, res) => {
     try {
-      const { getDatabase } = await import('./server/db');
-      getDatabase();
+      const dataSource = getDataSourceMode();
+      let databaseStatus: 'connected' | 'unavailable' = 'connected';
+      let databaseLatencyMs: number | undefined;
+
+      if (dataSource === 'postgres') {
+        const postgresHealth = await checkPostgresConnection();
+        databaseLatencyMs = postgresHealth.latencyMs;
+      } else {
+        const { getDatabase } = await import('./server/db');
+        getDatabase();
+      }
 
       res.json({
         status: 'ok',
         version: process.env.APP_VERSION || '2.6.0-enterprise',
         services: {
           application: 'healthy',
-          database: 'connected',
+          database: databaseStatus,
+          dataSource,
+          databaseLatencyMs,
           auth: 'operational'
         },
         time: new Date().toISOString()
       });
     } catch (error) {
       console.error('Health check failed:', error);
-      res.status(500).json({
+      res.status(503).json({
         status: 'error',
         services: {
           application: 'degraded',
