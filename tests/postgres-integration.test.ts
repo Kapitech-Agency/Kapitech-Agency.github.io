@@ -54,3 +54,98 @@ test('PostgreSQL security controls can consume a live rate-limit bucket', async 
     await closePostgresPool();
   }
 });
+
+
+test('PostgreSQL commercial workflow converts proposal to invoice and records a partial payment', async t => {
+  if (!configured) { t.skip('KAPITECH_POSTGRES_URL is not configured'); return; }
+
+  const { PostgresClientRepository } = await import('../server/postgres-client-repository.ts');
+  const { PostgresProposalRepository } = await import('../server/postgres-proposal-repository.ts');
+  const { PostgresInvoiceRepository } = await import('../server/postgres-invoice-repository.ts');
+
+  const clientRepository = new PostgresClientRepository();
+  const proposalRepository = new PostgresProposalRepository();
+  const invoiceRepository = new PostgresInvoiceRepository();
+
+  const suffix = Date.now() + '-' + Math.random().toString(16).slice(2);
+  const clientId = 'ci-client-' + suffix;
+  const proposalId = 'ci-proposal-' + suffix;
+  const itemId = 'ci-proposal-item-' + suffix;
+  const now = new Date().toISOString();
+
+  try {
+    await clientRepository.create({
+      id: clientId,
+      name: 'CI Commercial Client',
+      company: 'CI Commercial Company',
+      email: 'ci-' + suffix + '@example.test',
+      phone: '',
+      industry: 'Technology',
+      status: 'active',
+      notes: 'PostgreSQL workflow integration test',
+      createdAt: now,
+      updatedAt: now
+    });
+
+    await proposalRepository.create({
+      id: proposalId,
+      proposalNumber: 'CI-PROP-' + suffix,
+      title: 'CI Commercial Proposal',
+      clientId,
+      subtotal: 2_000_000,
+      discount: 0,
+      taxPercent: 0,
+      tax: 0,
+      total: 2_000_000,
+      currency: 'IDR',
+      validityPeriod: '14 days',
+      paymentTerms: '50% upfront',
+      owner: 'ci',
+      status: 'Approved',
+      notes: 'Workflow integration test',
+      createdDate: now.slice(0, 10),
+      items: [{
+        id: itemId,
+        description: 'Website implementation',
+        quantity: 1,
+        unitPrice: 2_000_000
+      }],
+      createdAt: now,
+      updatedAt: now
+    });
+
+    const invoice = await proposalRepository.convertToInvoice(proposalId);
+    assert.ok(invoice);
+    assert.equal(invoice.clientId, clientId);
+    assert.equal(invoice.total, 2_000_000);
+    assert.equal(invoice.items.length, 1);
+    assert.equal(invoice.items[0].description, 'Website implementation');
+
+    const proposal = await proposalRepository.findById(proposalId);
+    assert.equal(proposal?.status, 'Accepted');
+
+    const paid = await invoiceRepository.recordPayment(invoice.id, {
+      id: 'ci-payment-' + suffix,
+      amount: 1_000_000,
+      date: now.slice(0, 10),
+      method: 'bank_transfer',
+      reference: 'CI-WORKFLOW-PAYMENT',
+      recordedBy: 'ci',
+      userId: null
+    });
+
+    assert.equal(paid?.amountPaid, 1_000_000);
+    assert.equal(paid?.balanceDue, 1_000_000);
+    assert.equal(paid?.status, 'partially_paid');
+    assert.equal(paid?.payments.length, 1);
+  } finally {
+    const db = getPostgresPool();
+    await db.query('DELETE FROM invoice_payments WHERE invoice_id IN (SELECT id FROM invoices WHERE id LIKE $1)', ['inv_%' + suffix]);
+    await db.query('DELETE FROM invoice_items WHERE invoice_id IN (SELECT id FROM invoices WHERE id LIKE $1)', ['inv_%' + suffix]);
+    await db.query('DELETE FROM invoices WHERE id LIKE $1', ['inv_%' + suffix]);
+    await db.query('DELETE FROM proposal_items WHERE proposal_id = $1', [proposalId]);
+    await db.query('DELETE FROM proposals WHERE id = $1', [proposalId]);
+    await db.query('DELETE FROM clients WHERE id = $1', [clientId]);
+    await closePostgresPool();
+  }
+});
