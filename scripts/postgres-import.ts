@@ -134,6 +134,14 @@ function assertForeignKeys(db: AnyRecord): void {
   check('documents', 'ownerUserId', users);
   check('notifications', 'recipientUserId', users);
 
+  for (const row of arr(db, 'documents')) {
+    for (const userId of Array.isArray(row.accessUserIds) ? row.accessUserIds : []) {
+      if (userId && !users.has(userId)) {
+        errors.push('documents.accessUserIds:' + row.id + ' -> ' + userId);
+      }
+    }
+  }
+
   if (errors.length) {
     throw new Error('Broken source foreign keys detected: ' + errors.slice(0, 50).join(', '));
   }
