@@ -66,6 +66,7 @@ import { postgresDocumentRepository } from './postgres-document-repository.ts';
 import { postgresAuditLogRepository } from './postgres-audit-log-repository.ts';
 import { postgresCmsRepository } from './postgres-cms-repository.ts';
 import { postgresNotificationSettingsRepository } from './postgres-notification-settings-repository.ts';
+import { getDocumentStorage } from './document-storage.ts';
 
 
 const ROLE_POLICIES: Record<string, {
@@ -3503,11 +3504,6 @@ function requireDocumentObjectAccess(req: AuthenticatedRequest, res: Response, d
   return true;
 }
 
-function privateDocumentPath(document: any): string {
-  if (!document?.storageKey || !/^[a-f0-9]{64}$/.test(String(document.storageKey))) return '';
-  return path.join(PRIVATE_DOCUMENT_DIR, `${document.storageKey}.enc`);
-}
-
 function getDocumentEncryptionKey(): Buffer {
   const raw = process.env.KAPITECH_DATA_ENCRYPTION_KEY?.trim() || '';
   const key = /^[0-9a-f]{64}$/i.test(raw)
@@ -3550,14 +3546,6 @@ function decryptPrivateDocument(payload: Buffer): Buffer {
     decipher.update(Buffer.from(envelope.data, 'base64')),
     decipher.final()
   ]);
-}
-
-function ensurePrivateDocumentDirectory(): void {
-  if (!fs.existsSync(PRIVATE_DOCUMENT_DIR)) {
-    fs.mkdirSync(PRIVATE_DOCUMENT_DIR, { recursive: true, mode: 0o700 });
-  } else {
-    try { fs.chmodSync(PRIVATE_DOCUMENT_DIR, 0o700); } catch {}
-  }
 }
 
 const documentAccessMiddleware = requireAnyPermission(
@@ -3685,23 +3673,21 @@ apiRouter.put('/documents/:id/content', requireAuth, documentMutationMiddleware,
     return;
   }
 
-  ensurePrivateDocumentDirectory();
-  const targetPath = privateDocumentPath(document);
-  if (!targetPath) {
-    res.status(400).json({ success: false, error: 'Invalid private document storage reference.' });
+  const storage = getDocumentStorage();
+  let encryptedPayload: Buffer;
+  let storageSha256: string;
+  try {
+    encryptedPayload = encryptPrivateDocument(body);
+    storageSha256 = crypto.createHash('sha256').update(encryptedPayload).digest('hex');
+    await storage.put(document.storageKey, encryptedPayload);
+  } catch (error) {
+    console.error('[Documents] Private object upload failed:', error);
+    res.status(500).json({ success: false, error: 'Private document storage failed.' });
     return;
   }
 
-  const tempPath = `${targetPath}.${process.pid}.${Date.now()}.tmp`;
   try {
-    const encryptedPayload = encryptPrivateDocument(body);
     const contentSha256 = crypto.createHash('sha256').update(body).digest('hex');
-    const storageSha256 = crypto.createHash('sha256').update(encryptedPayload).digest('hex');
-    fs.writeFileSync(tempPath, encryptedPayload, { flag: 'wx', mode: 0o600 });
-    try { fs.chmodSync(tempPath, 0o600); } catch {}
-    if (fs.existsSync(targetPath)) fs.unlinkSync(targetPath);
-    fs.renameSync(tempPath, targetPath);
-
     const patch = {
       mimeType,
       type: mimeType.split('/').pop()?.toUpperCase() || document.type || 'FILE',
@@ -3710,8 +3696,8 @@ apiRouter.put('/documents/:id/content', requireAuth, documentMutationMiddleware,
       status: 'ready',
       contentSha256,
       storageSha256,
-      storageVersion: 1,
-      storageProvider: 'local-encrypted-filesystem',
+      storageVersion: Number(document.storageVersion || 1),
+      storageProvider: storage.provider,
       integrityCheckedAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       uploadedAt: new Date().toISOString()
@@ -3728,7 +3714,9 @@ apiRouter.put('/documents/:id/content', requireAuth, documentMutationMiddleware,
         })();
 
     if (!updated) {
-      try { if (fs.existsSync(targetPath)) fs.unlinkSync(targetPath); } catch {}
+      try { await storage.delete(document.storageKey); } catch (cleanupError) {
+        console.error('[Documents] Uploaded orphan object cleanup failed:', cleanupError);
+      }
       res.status(404).json({ success: false, error: 'Document not found.' });
       return;
     }
@@ -3768,22 +3756,24 @@ apiRouter.get('/documents/:id/content', requireAuth, documentAccessMiddleware, a
     return;
   }
 
-  const filePath = privateDocumentPath(document);
-  if (!filePath || !fs.existsSync(filePath)) {
-    res.status(404).json({ success: false, error: 'Private document content is missing.' });
-    return;
-  }
-
-  res.setHeader('Cache-Control', 'private, no-store');
-  res.setHeader('Content-Type', document.mimeType || 'application/octet-stream');
-  res.setHeader('Content-Disposition', `attachment; filename*=UTF-8''${encodeURIComponent(String(document.name || 'document'))}`);
-  res.setHeader('X-Content-Type-Options', 'nosniff');
-  res.setHeader('X-Download-Options', 'noopen');
+  const storage = getDocumentStorage();
   try {
-    const encryptedPayload = fs.readFileSync(filePath);
-    const actualStorageSha256 = crypto.createHash('sha256').update(encryptedPayload).digest('hex');
-    if (document.storageSha256 && actualStorageSha256 !== String(document.storageSha256)) {
+    const stored = await storage.get(document.storageKey);
+    if (document.storageSha256 && stored.storageSha256 !== String(document.storageSha256)) {
       recordAuditLog({ action: 'DOCUMENT_INTEGRITY_FAILURE', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Storage checksum mismatch for private document "${document.name}".`, severity: 'critical' });
+      res.status(409).json({ success: false, error: 'Private document integrity verification failed.' });
+      return;
+    }
+    const content = decryptPrivateDocument(stored.body);
+    const actualContentSha256 = crypto.createHash('sha256').update(content).digest('hex');
+    if (document.contentSha256 && actualContentSha256 !== String(document.contentSha256)) {
+      recordAuditLog({ action: 'DOCUMENT_INTEGRITY_FAILURE', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Content checksum mismatch for private document "${document.name}".`, severity: 'critical' });
+      res.status(409).json({ success: false, error: 'Private document content integrity verification failed.' });
+      return;
+    }
+    res.setHeader('Content-Length', content.length);
+    res.end(content);
+    recordAuditLog({ action: 'DOCUMENT_INTEGRITY_FAILURE', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Storage checksum mismatch for private document "${document.name}".`, severity: 'critical' });
       res.status(409).json({ success: false, error: 'Private document integrity verification failed.' });
       return;
     }
@@ -3822,15 +3812,13 @@ apiRouter.delete('/documents/:id', requireAuth, documentMutationMiddleware, asyn
     return;
   }
 
-  const filePath = privateDocumentPath(document);
-  if (!requireDocumentObjectAccess(req, res, document)) return;
-
-  if (filePath && fs.existsSync(filePath)) {
-    try { fs.unlinkSync(filePath); } catch (error) {
-      console.error('[Documents] Failed to remove private content:', error);
-      res.status(500).json({ success: false, error: 'Private document content could not be removed safely.' });
-      return;
-    }
+  const storage = getDocumentStorage();
+  try {
+    await storage.delete(document.storageKey);
+  } catch (error) {
+    console.error('[Documents] Failed to remove private content:', error);
+    res.status(500).json({ success: false, error: 'Private document content could not be removed safely.' });
+    return;
   }
 
   if (getDataSourceMode() === 'postgres') {
@@ -3866,10 +3854,11 @@ apiRouter.get('/system/document-vault/status', requireAuth, requireAnyPermission
     const documents = await postgresDocumentRepository.list();
     const privateFiles = documents.filter(document => document.sourceType === 'private_file');
     const checksummed = privateFiles.filter(document => document.storageSha256 && document.contentSha256);
-    const provider = process.env.KAPITECH_DOCUMENT_STORAGE_PROVIDER?.trim() || 'local-encrypted-filesystem';
-    const objectStorageConfigured = Boolean(process.env.KAPITECH_DOCUMENT_STORAGE_PROVIDER && process.env.KAPITECH_DOCUMENT_STORAGE_BUCKET);
-    const productionReady = objectStorageConfigured && privateFiles.every(document => document.storageProvider === provider && document.storageSha256 && document.contentSha256);
-    res.json({ success: true, status: { datasource: 'postgres', storageProvider: provider, objectStorageConfigured, privateDocumentCount: privateFiles.length, integrityMetadataCoveragePercent: privateFiles.length ? Math.round(checksummed.length / privateFiles.length * 100) : 100, productionReady } });
+    const storage = getDocumentStorage();
+    const health = await storage.healthCheck();
+    const objectStorageConfigured = health.configured;
+    const productionReady = health.ok && objectStorageConfigured && privateFiles.every(document => document.storageProvider === storage.provider && document.storageSha256 && document.contentSha256);
+    res.json({ success: true, status: { datasource: 'postgres', storageProvider: storage.provider, objectStorageConfigured, storageHealth: health, privateDocumentCount: privateFiles.length, integrityMetadataCoveragePercent: privateFiles.length ? Math.round(checksummed.length / privateFiles.length * 100) : 100, productionReady } });
   } catch (error) {
     console.error('[Documents] Vault status failed:', error);
     res.status(500).json({ success: false, error: 'Document vault status is unavailable.' });
