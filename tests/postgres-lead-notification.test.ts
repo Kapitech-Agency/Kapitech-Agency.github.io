@@ -9,29 +9,30 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 test('lead submissions dispatch Telegram notifications in both datasource modes', async () => {
   const source = await fs.readFile(path.join(root, 'server/routes.ts'), 'utf8');
 
-  assert.match(source, /dispatchLeadTelegramNotification/);
-  assert.match(source, /postgresLeadRepository\.create\(newLead\)/);
-  assert.match(source, /postgresNotificationSettingsRepository\.get\(\)/);
-  assert.match(source, /void dispatchLeadTelegramNotification\(newLead, notificationSettings\)/);
-  assert.match(source, /KAPITECH_TELEGRAM_BOT_TOKEN/);
-  assert.match(source, /KAPITECH_TELEGRAM_CHAT_ID/);
-  assert.match(source, /jsonNotificationSettings\\?\\.telegramBotToken/);
-  assert.doesNotMatch(source, /const hasTelegramToken = postgresMode[\\s\\S]{0,220}s\\.telegramBotToken/);
+  assert.ok(source.includes('dispatchLeadTelegramNotification'));
+  assert.ok(source.includes('postgresLeadRepository.create(newLead)'));
+  assert.ok(source.includes('postgresNotificationSettingsRepository.get()'));
+  assert.ok(source.includes('void dispatchLeadTelegramNotification(newLead, notificationSettings)'));
+  assert.ok(source.includes('KAPITECH_TELEGRAM_BOT_TOKEN'));
+  assert.ok(source.includes('KAPITECH_TELEGRAM_CHAT_ID'));
+  assert.ok(source.includes('jsonNotificationSettings?.telegramBotToken'));
+  assert.ok(!source.includes('const hasTelegramToken = postgresMode'));
+  assert.ok(!source.includes('s.telegramBotToken'));
 });
 
 test('production readiness checks runtime notification credentials when channels are enabled', async () => {
   const source = await fs.readFile(path.join(root, 'server/routes.ts'), 'utf8');
 
-  assert.match(source, /notificationSettings\\.isTelegramActive/);
-  assert.match(source, /KAPITECH_TELEGRAM_BOT_TOKEN/);
-  assert.match(source, /notificationSettings\\.isEmailActive/);
-  assert.match(source, /const notificationsReady = telegramConfigured && emailNotificationConfigured/);
-  assert.match(source, /notifications: notificationsReady/);
+  assert.ok(source.includes('notificationSettings.isTelegramActive'));
+  assert.ok(source.includes('KAPITECH_TELEGRAM_BOT_TOKEN'));
+  assert.ok(source.includes('notificationSettings.isEmailActive'));
+  assert.ok(source.includes('const notificationsReady = telegramConfigured && emailNotificationConfigured'));
+  assert.ok(source.includes('notifications: notificationsReady'));
 });
 
 test('PostgreSQL notification settings remain secret-safe during lead dispatch', async () => {
   const source = await fs.readFile(path.join(root, 'server/postgres-notification-settings-repository.ts'), 'utf8');
 
-  assert.doesNotMatch(source, /telegram_bot_token/);
-  assert.doesNotMatch(source, /telegramBotToken/);
+  assert.ok(!source.includes('telegram_bot_token'));
+  assert.ok(!source.includes('telegramBotToken'));
 });
