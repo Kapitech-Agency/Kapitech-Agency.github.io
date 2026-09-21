@@ -61,3 +61,29 @@ jobs:
         env:
           RAYON_NUM_THREADS: 1
         run: npm run build
+
+      - name: Production HTTP smoke test
+        env:
+          NODE_ENV: production
+          PORT: 4173
+          APP_URL: https://example.invalid
+          KAPITECH_DATA_SOURCE: postgres
+          KAPITECH_POSTGRES_URL: postgresql://postgres:postgres@localhost:5432/kapitech_ams_test
+          KAPITECH_POSTGRES_SSL: disable
+          KAPITECH_DATA_ENCRYPTION_KEY: 00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff
+          ADMIN_INITIAL_USERNAME: admin
+          ADMIN_INITIAL_PASSWORD: smoke-test-password-123456
+          ADMIN_INITIAL_EMAIL: admin@localhost
+        run: |
+          node dist/server.cjs > /tmp/kapitech-ams-smoke.log 2>&1 &
+          PID=$!
+          trap 'kill $PID >/dev/null 2>&1 || true' EXIT
+          for i in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:4173/api/health >/tmp/health.json; then break; fi
+            sleep 1
+          done
+          test -s /tmp/health.json
+          node -e "const fs=require('fs'); const x=JSON.parse(fs.readFileSync('/tmp/health.json','utf8')); if(x.status!=='ok'||x.services?.dataSource!=='postgres') process.exit(1)"
+          test "$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:4173/api/auth/me)" = "401"
+          test "$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:4173/api/system/production-readiness)" = "401"
+          kill $PID
