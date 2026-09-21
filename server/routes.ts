@@ -4385,7 +4385,21 @@ apiRouter.get('/system/production-readiness', requireAuth, requireAnyPermission(
     const privateFiles = documents.filter(document => document.sourceType === 'private_file');
     const checksummed = privateFiles.filter(document => document.storageSha256 && document.contentSha256);
     const documentIntegrityComplete = privateFiles.length === checksummed.length;
-    const documentStorageReady = storageHealth.configured && storageHealth.ok && documentIntegrityComplete;
+    const storage = getDocumentStorage();
+    const documentObjectIntegrityResults = privateFiles.length === 0
+      ? []
+      : await Promise.all(
+          privateFiles.map(async document => ({
+            id: String(document.id),
+            valid: Boolean(
+              document.storageKey &&
+              document.storageSha256 &&
+              await storage.verify(String(document.storageKey), String(document.storageSha256))
+            )
+          }))
+        );
+    const documentObjectsVerified = documentObjectIntegrityResults.every(result => result.valid);
+    const documentStorageReady = storageHealth.configured && storageHealth.ok && documentIntegrityComplete && documentObjectsVerified;
 
     const runtimeReady =
       process.env.NODE_ENV === 'production' &&
@@ -4512,6 +4526,8 @@ apiRouter.get('/system/production-readiness', requireAuth, requireAnyPermission(
           integrityMetadataCoveragePercent: privateFiles.length
             ? Math.round((checksummed.length / privateFiles.length) * 100)
             : 100,
+          objectIntegrityVerified: documentObjectsVerified,
+          objectIntegrityFailures: documentObjectIntegrityResults.filter(result => !result.valid).map(result => result.id),
           ready: documentStorageReady
         }
       }
