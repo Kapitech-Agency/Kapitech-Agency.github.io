@@ -2,6 +2,8 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import { getPostgresPool, closePostgresPool } from '../server/postgres.ts';
+import { encryptOptionalSecret } from '../server/secret-crypto.ts';
+import { getDocumentStorage } from '../server/document-storage.ts';
 
 type AnyRecord = Record<string, any>;
 
@@ -81,6 +83,106 @@ function jsonValue(value: unknown): string {
 
 function sha256(raw: string): string {
   return crypto.createHash('sha256').update(raw, 'utf8').digest('hex');
+}
+
+function sha256Buffer(raw: Buffer): string {
+  return crypto.createHash('sha256').update(raw).digest('hex');
+}
+
+function privateDocumentSourceDir(): string {
+  return process.env.KAPITECH_PRIVATE_DOCUMENT_DIR
+    ? path.resolve(process.env.KAPITECH_PRIVATE_DOCUMENT_DIR)
+    : path.join(DATA_DIR, 'private-documents');
+}
+
+function encryptionKey(): Buffer {
+  const raw = process.env.KAPITECH_DATA_ENCRYPTION_KEY?.trim();
+  if (!raw) throw new Error('KAPITECH_DATA_ENCRYPTION_KEY is required for private document migration.');
+  const key = /^[0-9a-f]{64}$/i.test(raw) ? Buffer.from(raw, 'hex') : Buffer.from(raw, 'base64');
+  if (key.length !== 32) throw new Error('KAPITECH_DATA_ENCRYPTION_KEY must decode to 32 bytes.');
+  return key;
+}
+
+function decryptPrivateDocument(payload: Buffer): Buffer {
+  const raw = payload.toString('utf8');
+  if (!raw.startsWith('KAPI-FILE-V1:')) throw new Error('Private document encryption header is invalid.');
+  const envelope = JSON.parse(raw.slice('KAPI-FILE-V1:'.length));
+  const decipher = crypto.createDecipheriv('aes-256-gcm', encryptionKey(), Buffer.from(envelope.iv, 'base64'));
+  decipher.setAuthTag(Buffer.from(envelope.authTag, 'base64'));
+  return Buffer.concat([
+    decipher.update(Buffer.from(envelope.data, 'base64')),
+    decipher.final()
+  ]);
+}
+
+function isMissingStorageError(error: unknown): boolean {
+  const message = error instanceof Error ? error.message : String(error);
+  return /missing|not found|404/i.test(message);
+}
+
+async function stagePrivateDocumentObjects(db: AnyRecord): Promise<{ metadata: Map<string, AnyRecord>; createdKeys: string[] }> {
+  const documents = arr(db, 'documents').filter(row => row.storageKey && row.sourceType !== 'external_link');
+  const metadata = new Map<string, AnyRecord>();
+  const createdKeys: string[] = [];
+  if (!documents.length) return { metadata, createdKeys };
+
+  const storage = getDocumentStorage();
+  const sourceDir = privateDocumentSourceDir();
+  try {
+    for (const document of documents) {
+      const storageKey = textValue(document.storageKey).trim();
+      if (!/^[a-f0-9]{64}$/.test(storageKey)) {
+        throw new Error('Invalid private document storage key for ' + textValue(document.id));
+      }
+
+      const sourcePath = path.join(sourceDir, storageKey + '.enc');
+      if (!fs.existsSync(sourcePath)) {
+        throw new Error('Private document source object is missing: ' + textValue(document.id));
+      }
+      const payload = fs.readFileSync(sourcePath);
+      if (payload.length === 0) throw new Error('Private document source object is empty: ' + textValue(document.id));
+
+      const storageSha256 = sha256Buffer(payload);
+      let existing: { storageSha256: string } | null = null;
+      try {
+        existing = await storage.get(storageKey);
+      } catch (error) {
+        if (!isMissingStorageError(error)) throw error;
+      }
+
+      if (existing) {
+        if (existing.storageSha256 !== storageSha256) {
+          throw new Error('Target storage already contains a different object for document ' + textValue(document.id) + '. Refusing to overwrite it during cutover.');
+        }
+      } else {
+        await storage.put(storageKey, payload);
+        createdKeys.push(storageKey);
+      }
+
+      const verified = await storage.get(storageKey);
+      if (verified.storageSha256 !== storageSha256) {
+        throw new Error('Private document object verification failed after migration: ' + textValue(document.id));
+      }
+
+      const contentSha256 = sha256Buffer(decryptPrivateDocument(payload));
+      metadata.set(textValue(document.id), {
+        contentSha256,
+        storageSha256,
+        storageVersion: Number(document.storageVersion || 1),
+        storageProvider: storage.provider,
+        integrityCheckedAt: new Date().toISOString(),
+        uploadedAt: timestampValue(document.uploadedAt || document.uploadedDate, document.createdAt),
+        sizeBytes: Buffer.byteLength(decryptPrivateDocument(payload))
+      });
+    }
+  } catch (error) {
+    for (const key of createdKeys) {
+      try { await storage.delete(key); } catch (cleanupError) { console.error('[PostgreSQL import] Private object cleanup failed:', cleanupError); }
+    }
+    throw error;
+  }
+
+  return { metadata, createdKeys };
 }
 
 function duplicateIds(db: AnyRecord, key: string): string[] {
@@ -195,7 +297,7 @@ async function importUsers(client: any, db: AnyRecord): Promise<number> {
       [textValue(row.id), textValue(row.name), textValue(row.username), textValue(row.email),
        textValue(row.passwordHash), textValue(row.salt), textValue(row.passwordAlgorithm, 'pbkdf2-sha512'),
        textValue(row.role), textValue(row.stakeholderType), jsonValue(row.permissions),
-       Boolean(row.mfaEnabled), nullableText(row.mfaSecret), nullableText(row.mfaPendingSecret),
+       Boolean(row.mfaEnabled), encryptOptionalSecret(row.mfaSecret), encryptOptionalSecret(row.mfaPendingSecret),
        row.mfaPendingSecretCreatedAt ? timestampValue(row.mfaPendingSecretCreatedAt) : null,
        JSON.stringify(Array.isArray(row.mfaRecoveryCodeHashes) ? row.mfaRecoveryCodeHashes : []),
        textValue(row.division), textValue(row.status, 'active'), row.lastLogin ? timestampValue(row.lastLogin) : null,
@@ -221,7 +323,7 @@ async function importSessions(client: any, db: AnyRecord): Promise<number> {
   return arr(db, 'sessions').length;
 }
 
-async function importCore(client: any, db: AnyRecord): Promise<Record<string, number>> {
+async function importCore(client: any, db: AnyRecord, privateDocumentMetadata: Map<string, AnyRecord>): Promise<Record<string, number>> {
   const counts: Record<string, number> = {};
   counts.users = await importUsers(client, db);
   counts.sessions = await importSessions(client, db);
@@ -370,12 +472,19 @@ async function importCore(client: any, db: AnyRecord): Promise<Record<string, nu
   for (const row of arr(db, 'documents')) {
     const externalUrl = isHttps(row.externalUrl || row.url) ? textValue(row.externalUrl || row.url) : null;
     const sourceType = row.storageKey ? 'private_file' : 'external_link';
+    const privateMetadata = privateDocumentMetadata.get(textValue(row.id));
+    const sizeBytes = privateMetadata?.sizeBytes ?? nullableNumber(row.sizeBytes);
+    const status = sourceType === 'private_file' ? 'ready' : textValue(row.status,'ready');
     await upsert(client, 'documents',
-      ['id','name','type','mime_type','size_bytes','category','related_entity','related_id','source_type','storage_key','owner_user_id','external_url','status','uploaded_at','created_at','metadata'],
-      [textValue(row.id),textValue(row.name),textValue(row.type),nullableText(row.mimeType),nullableNumber(row.sizeBytes),
+      ['id','name','type','mime_type','size_bytes','category','related_entity','related_id','source_type','storage_key','owner_user_id','external_url','status','uploaded_at','created_at',
+       'content_sha256','storage_sha256','storage_version','storage_provider','integrity_checked_at','metadata'],
+      [textValue(row.id),textValue(row.name),textValue(row.type),nullableText(row.mimeType),sizeBytes,
        nullableText(row.category),nullableText(row.relatedEntity),nullableText(row.relatedId),sourceType,nullableText(row.storageKey),
-       nullableText(row.ownerUserId),externalUrl,textValue(row.status,'ready'),timestampValue(row.uploadedAt || row.uploadedDate,row.createdAt),
-       timestampValue(row.createdAt),metadata(row,['id','name','type','mimeType','sizeBytes','size','category','relatedEntity','relatedId','sourceType','storageKey','ownerUserId','owner','externalUrl','url','status','uploadedAt','uploadedDate','createdAt'])]);
+       nullableText(row.ownerUserId),externalUrl,status,timestampValue(row.uploadedAt || row.uploadedDate,row.createdAt),
+       timestampValue(row.createdAt),privateMetadata?.contentSha256 ?? nullableText(row.contentSha256),
+       privateMetadata?.storageSha256 ?? nullableText(row.storageSha256),privateMetadata?.storageVersion ?? Number(row.storageVersion || 1),
+       privateMetadata?.storageProvider ?? nullableText(row.storageProvider),privateMetadata?.integrityCheckedAt ?? null,
+       metadata(row,['id','name','type','mimeType','sizeBytes','size','category','relatedEntity','relatedId','sourceType','storageKey','ownerUserId','owner','externalUrl','url','status','uploadedAt','uploadedDate','createdAt','contentSha256','storageSha256','storageVersion','storageProvider','integrityCheckedAt'])]);
     for (const userId of Array.isArray(row.accessUserIds) ? row.accessUserIds : []) {
       await client.query(
         `INSERT INTO document_access (document_id,user_id) VALUES ($1,$2)
@@ -504,12 +613,14 @@ async function main(): Promise<void> {
 
   try {
     let importedCounts: Record<string, number> | null = null;
+    let stagedPrivateDocuments: { metadata: Map<string, AnyRecord>; createdKeys: string[] } = { metadata: new Map(), createdKeys: [] };
 
     if (MODE === 'import') {
+      stagedPrivateDocuments = await stagePrivateDocumentObjects(db);
       const client = await pool.connect();
       try {
         await client.query('BEGIN');
-        importedCounts = await importCore(client, db);
+        importedCounts = await importCore(client, db, stagedPrivateDocuments.metadata);
         await client.query('COMMIT');
       } catch (error) {
         try { await client.query('ROLLBACK'); } catch {}
@@ -517,6 +628,8 @@ async function main(): Promise<void> {
       } finally {
         client.release();
       }
+
+      stagedPrivateDocuments.createdKeys.length = 0;
     }
 
     const report = {
