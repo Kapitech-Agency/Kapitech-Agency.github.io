@@ -6,7 +6,7 @@
 import React, { lazy, Suspense, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'motion/react';
-import { LanguageProvider } from './lib/LanguageContext';
+import { LanguageProvider, useLanguage } from './lib/LanguageContext';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 import { FloatingContact } from './components/FloatingContact';
@@ -139,7 +139,9 @@ const AnimatedRoutes = () => {
 
 function AppShell() {
   const location = useLocation();
+  const { language } = useLanguage();
   const isAdminRoute = location.pathname.startsWith('/admin') || location.pathname.startsWith('/ams');
+  const [maintenanceMode, setMaintenanceMode] = React.useState(false);
 
   useEffect(() => {
     if (isAdminRoute) return;
@@ -148,7 +150,9 @@ function AppShell() {
     void api.cms.getPublicSettings().then((res) => {
       if (cancelled || !res.success || !res.data?.settings) return;
 
-      const { siteTitle, siteDescription } = res.data.settings;
+      const { siteTitle, siteDescription, maintenanceMode: serverMaintenanceMode } = res.data.settings;
+      setMaintenanceMode(Boolean(serverMaintenanceMode));
+
       if (siteTitle) {
         document.title = siteTitle;
       }
@@ -168,6 +172,27 @@ function AppShell() {
       cancelled = true;
     };
   }, [isAdminRoute]);
+
+  if (!isAdminRoute && maintenanceMode) {
+    return (
+      <div className="min-h-screen bg-[#0B0C0E] text-white flex items-center justify-center px-6">
+        <div className="w-full max-w-xl text-center">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-brand-red/30 bg-brand-red/10 text-brand-red text-[11px] font-mono uppercase tracking-[0.16em] mb-6">
+            <span className="w-2 h-2 rounded-full bg-brand-red animate-pulse" />
+            <span>Maintenance</span>
+          </div>
+          <h1 className="text-3xl sm:text-5xl font-display font-bold tracking-tight mb-4">
+            We’re working on the site.
+          </h1>
+          <p className="text-sm sm:text-base text-[#8A909D] leading-relaxed max-w-lg mx-auto">
+            {language === 'id'
+              ? 'Website Kapitech sedang dalam pemeliharaan. Silakan kembali beberapa saat lagi.'
+              : 'Kapitech is currently performing maintenance. Please check back shortly.'}
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="relative z-10 text-white selection:bg-brand-red selection:text-white min-h-screen flex flex-col">
