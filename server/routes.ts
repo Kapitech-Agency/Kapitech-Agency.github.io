@@ -1656,7 +1656,16 @@ apiRouter.put('/clients/:id', requireAuth, requirePermission('canManageClients')
 apiRouter.delete('/clients/:id', requireAuth, requirePermission('canManageClients'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
   if (getDataSourceMode() === 'postgres') {
-    const deleted = await postgresClientRepository.delete(id);
+    let deleted: boolean;
+    try {
+      deleted = await postgresClientRepository.delete(id);
+    } catch (error) {
+      if (error instanceof Error && error.message === 'CLIENT_HAS_BUSINESS_RECORDS') {
+        res.status(409).json({ success: false, error: 'Client has business records and cannot be deleted.' });
+        return;
+      }
+      throw error;
+    }
     if (!deleted) { res.status(404).json({ success: false, error: 'Client not found.' }); return; }
     recordAuditLog({
       action: 'CLIENT_DELETED',
@@ -1827,7 +1836,16 @@ apiRouter.delete('/projects/:id', requireAuth, requirePermission('canManageProje
   if (getDataSourceMode() === 'postgres') {
     const project = await postgresProjectRepository.findById(id);
     if (!project) { res.status(404).json({ success: false, error: 'Project not found.' }); return; }
-    const deleted = await postgresProjectRepository.delete(id);
+    let deleted: boolean;
+    try {
+      deleted = await postgresProjectRepository.delete(id);
+    } catch (error) {
+      if (error instanceof Error && error.message === 'PROJECT_HAS_BUSINESS_RECORDS') {
+        res.status(409).json({ success: false, error: 'Project has business records and cannot be deleted.' });
+        return;
+      }
+      throw error;
+    }
     if (!deleted) { res.status(404).json({ success: false, error: 'Project not found.' }); return; }
     recordAuditLog({ action: 'PROJECT_DELETED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Deleted project "${project.name}".`, severity: 'warning' });
     res.json({ success: true, message: 'Project removed.' });
