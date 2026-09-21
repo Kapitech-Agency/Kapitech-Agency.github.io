@@ -372,10 +372,12 @@ async function importCore(client: any, db: AnyRecord): Promise<Record<string, nu
 
   for (const row of arr(db, 'expenses')) {
     await upsert(client, 'expenses',
-      ['id','type','category','description','amount','expense_date','recurring_interval','recorded_by_user_id','recorded_by','metadata','created_at'],
+      ['id','type','category','description','amount','expense_date','recurring_interval','recorded_by_user_id','recorded_by','project_id','currency','status','version','idempotency_key','archived_at','metadata','created_at'],
       [textValue(row.id),textValue(row.type),textValue(row.category),textValue(row.description),numberValue(row.amount),
        dateValue(row.date || row.expenseDate) || '1970-01-01',nullableText(row.recurringInterval),nullableText(row.recordedByUserId),
-       nullableText(row.recordedBy),metadata(row,['id','type','category','description','amount','date','expenseDate','recurringInterval','recordedByUserId','recordedBy','createdAt']),
+       nullableText(row.recordedBy),nullableText(row.projectId),textValue(row.currency,'IDR').toUpperCase().slice(0,3),textValue(row.status,'posted'),
+       numberValue(row.version,1),nullableText(row.idempotencyKey),nullableTimestampValue(row.archivedAt),
+       metadata(row,['id','type','category','description','amount','date','expenseDate','recurringInterval','recordedByUserId','recordedBy','projectId','currency','status','version','idempotencyKey','archivedAt','createdAt']),
        timestampValue(row.createdAt)]);
   }
   counts.expenses = arr(db,'expenses').length;
