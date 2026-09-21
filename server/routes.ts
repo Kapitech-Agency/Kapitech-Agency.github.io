@@ -57,6 +57,7 @@ import { postgresTimeLogRepository, BillingRateNotConfiguredError, TimeLogImmuta
 import { postgresExpenseRepository, ExpenseNotFoundError, ExpenseImmutableError, ExpenseVersionConflictError, ExpenseProjectNotFoundError } from './postgres-expense-repository.ts';
 import { postgresProposalRepository, ProposalNotFoundError, ProposalImmutableError, ProposalVersionConflictError, ProposalStatusError } from './postgres-proposal-repository.ts';
 import { postgresInvoiceRepository, InvoiceNotFoundError, InvoiceImmutableError, InvoiceVersionConflictError, InvoicePaymentError, InvoiceProposalConflictError } from './postgres-invoice-repository.ts';
+import { getPostgresPool } from './postgres.ts';
 
 
 const ROLE_POLICIES: Record<string, {
@@ -2295,54 +2296,159 @@ apiRouter.delete('/finance/expenses/:id', requireAuth, requirePermission('canMan
 });
 
 // Financial Metrics (Authoritative server-calculated metrics)
-apiRouter.get('/finance/metrics', requireAuth, requirePermission('canViewFinancials'), (req: AuthenticatedRequest, res: Response): void => {
-  const db = getDatabase();
-  const invoices = db.invoices;
-  const expenses = db.expenses;
+apiRouter.get('/finance/metrics', requireAuth, requirePermission('canViewFinancials'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  try {
+    if (getDataSourceMode() === 'postgres') {
+      const result = await getPostgresPool().query<{
+        currency: string;
+        total_revenue_collected: string;
+        total_billed: string;
+        total_outstanding: string;
+        total_expense: string;
+        paid_count: string;
+        partially_paid_count: string;
+        overdue_count: string;
+        draft_count: string;
+        total_invoices_count: string;
+      }>(
+        `WITH currencies AS (
+           SELECT currency FROM invoices WHERE archived_at IS NULL
+           UNION
+           SELECT currency FROM expenses WHERE archived_at IS NULL
+         ),
+         invoice_metrics AS (
+           SELECT
+             currency,
+             SUM(total) FILTER (WHERE status <> 'cancelled') AS total_billed,
+             SUM(amount_paid) FILTER (WHERE status <> 'cancelled') AS total_revenue_collected,
+             SUM(balance_due) FILTER (WHERE status NOT IN ('paid','cancelled')) AS total_outstanding,
+             COUNT(*) FILTER (WHERE status='paid') AS paid_count,
+             COUNT(*) FILTER (WHERE status='partially_paid') AS partially_paid_count,
+             COUNT(*) FILTER (WHERE status='overdue') AS overdue_count,
+             COUNT(*) FILTER (WHERE status='draft') AS draft_count,
+             COUNT(*) AS total_invoices_count
+           FROM invoices
+           WHERE archived_at IS NULL
+           GROUP BY currency
+         ),
+         expense_metrics AS (
+           SELECT currency, SUM(amount) AS total_expense
+           FROM expenses
+           WHERE archived_at IS NULL
+           GROUP BY currency
+         )
+         SELECT
+           c.currency,
+           COALESCE(i.total_revenue_collected,0)::text AS total_revenue_collected,
+           COALESCE(i.total_billed,0)::text AS total_billed,
+           COALESCE(i.total_outstanding,0)::text AS total_outstanding,
+           COALESCE(e.total_expense,0)::text AS total_expense,
+           COALESCE(i.paid_count,0)::text AS paid_count,
+           COALESCE(i.partially_paid_count,0)::text AS partially_paid_count,
+           COALESCE(i.overdue_count,0)::text AS overdue_count,
+           COALESCE(i.draft_count,0)::text AS draft_count,
+           COALESCE(i.total_invoices_count,0)::text AS total_invoices_count
+         FROM currencies c
+         LEFT JOIN invoice_metrics i ON i.currency=c.currency
+         LEFT JOIN expense_metrics e ON e.currency=c.currency
+         ORDER BY c.currency`,
+      );
 
-  let totalRevenueCollected = 0;
-  let totalBilled = 0;
-  let totalOutstanding = 0;
-  let paidCount = 0;
-  let partiallyPaidCount = 0;
-  let overdueCount = 0;
-  let draftCount = 0;
+      const byCurrency = result.rows.map(row => {
+        const totalRevenueCollected = Number(row.total_revenue_collected);
+        const totalBilled = Number(row.total_billed);
+        const totalOutstanding = Number(row.total_outstanding);
+        const totalExpense = Number(row.total_expense);
+        const netProfit = totalRevenueCollected - totalExpense;
+        return {
+          currency: row.currency,
+          totalRevenueCollected,
+          totalBilled,
+          totalOutstanding,
+          totalExpense,
+          netProfit,
+          profitMargin: totalRevenueCollected > 0 ? Number(((netProfit / totalRevenueCollected) * 100).toFixed(1)) : 0,
+          paidCount: Number(row.paid_count),
+          partiallyPaidCount: Number(row.partially_paid_count),
+          overdueCount: Number(row.overdue_count),
+          draftCount: Number(row.draft_count),
+          totalInvoicesCount: Number(row.total_invoices_count)
+        };
+      });
 
-  for (const inv of invoices) {
-    totalBilled += inv.total || 0;
-    const paid = getInvoicePaidAmount(inv);
-    totalRevenueCollected += paid;
-    const due = getInvoiceBalanceDue(inv);
-    if (inv.status !== 'paid' && inv.status !== 'cancelled') {
-      totalOutstanding += due;
+      const primaryCurrency = String(req.query.currency || 'IDR').toUpperCase();
+      const primary = byCurrency.find(item => item.currency === primaryCurrency) || byCurrency[0] || {
+        currency: primaryCurrency,
+        totalRevenueCollected: 0,
+        totalBilled: 0,
+        totalOutstanding: 0,
+        totalExpense: 0,
+        netProfit: 0,
+        profitMargin: 0,
+        paidCount: 0,
+        partiallyPaidCount: 0,
+        overdueCount: 0,
+        draftCount: 0,
+        totalInvoicesCount: 0
+      };
+
+      res.json({
+        success: true,
+        metrics: {
+          ...primary,
+          byCurrency
+        }
+      });
+      return;
     }
 
-    if (inv.status === 'paid') paidCount++;
-    else if (inv.status === 'partially_paid') partiallyPaidCount++;
-    else if (inv.status === 'overdue') overdueCount++;
-    else if (inv.status === 'draft') draftCount++;
+    const db = getDatabase();
+    const invoices = db.invoices;
+    const expenses = db.expenses;
+    let totalRevenueCollected = 0;
+    let totalBilled = 0;
+    let totalOutstanding = 0;
+    let paidCount = 0;
+    let partiallyPaidCount = 0;
+    let overdueCount = 0;
+    let draftCount = 0;
+
+    for (const inv of invoices) {
+      totalBilled += inv.total || 0;
+      const paid = getInvoicePaidAmount(inv);
+      totalRevenueCollected += paid;
+      const due = getInvoiceBalanceDue(inv);
+      if (inv.status !== 'paid' && inv.status !== 'cancelled') totalOutstanding += due;
+      if (inv.status === 'paid') paidCount++;
+      else if (inv.status === 'partially_paid') partiallyPaidCount++;
+      else if (inv.status === 'overdue') overdueCount++;
+      else if (inv.status === 'draft') draftCount++;
+    }
+
+    const totalExpense = expenses.reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
+    const netProfit = totalRevenueCollected - totalExpense;
+    const profitMargin = totalRevenueCollected > 0 ? Number(((netProfit / totalRevenueCollected) * 100).toFixed(1)) : 0;
+
+    res.json({
+      success: true,
+      metrics: {
+        totalRevenueCollected,
+        totalBilled,
+        totalOutstanding,
+        totalExpense,
+        netProfit,
+        profitMargin,
+        totalInvoicesCount: invoices.length,
+        paidCount,
+        partiallyPaidCount,
+        overdueCount,
+        draftCount
+      }
+    });
+  } catch (error) {
+    console.error('[Finance Metrics] Failed:', error);
+    res.status(503).json({ success: false, error: 'Financial metrics are temporarily unavailable.' });
   }
-
-  const totalExpense = expenses.reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
-  const netProfit = totalRevenueCollected - totalExpense;
-  const profitMargin = totalRevenueCollected > 0 ? ((netProfit / totalRevenueCollected) * 100).toFixed(1) : '0';
-
-  res.json({
-    success: true,
-    metrics: {
-      totalRevenueCollected,
-      totalBilled,
-      totalOutstanding,
-      totalExpense,
-      netProfit,
-      profitMargin,
-      totalInvoicesCount: invoices.length,
-      paidCount,
-      partiallyPaidCount,
-      overdueCount,
-      draftCount
-    }
-  });
 });
 
 // ----------------------------------------------------
