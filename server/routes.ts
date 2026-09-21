@@ -4467,7 +4467,7 @@ apiRouter.get('/system/production-readiness', requireAuth, requireAnyPermission(
     const reconciliationRunReady = Boolean(
       latestReconciliation?.status === 'succeeded' &&
       Object.keys(latestReconciliation.checks).length > 0 &&
-      Object.values(latestReconciliation.checks).every(Boolean)
+      Object.values(latestReconciliation.checks).every(value => value === true)
     );
     const reconciliationSourceBound = Boolean(
       latestReconciliation?.sourceSha256 &&
