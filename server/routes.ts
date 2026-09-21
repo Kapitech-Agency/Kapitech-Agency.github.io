@@ -4165,11 +4165,40 @@ apiRouter.get('/system/production-readiness', requireAuth, requireAnyPermission(
 
     const reconciliationVerifiedAt = process.env.KAPITECH_RELATIONAL_RECONCILIATION_VERIFIED_AT?.trim() || '';
     const reconciliationDate = reconciliationVerifiedAt ? new Date(reconciliationVerifiedAt) : null;
-    const reconciliationReady = Boolean(
+    const reconciliationSignoffReady = Boolean(
       reconciliationDate &&
       !Number.isNaN(reconciliationDate.getTime()) &&
       reconciliationDate.getTime() <= Date.now()
     );
+
+    let latestReconciliation: { id: string; status: string; completedAt: string | null; checks: Record<string, boolean> } | null = null;
+    try {
+      const { rows } = await getPostgresPool().query<{ id: string; status: string; completed_at: Date | string | null; report: unknown }>(
+        'SELECT id, status, completed_at, report FROM migration_runs ORDER BY COALESCE(completed_at, started_at) DESC LIMIT 1'
+      );
+      const row = rows[0];
+      if (row) {
+        let report: any = row.report;
+        if (typeof report === 'string') {
+          try { report = JSON.parse(report); } catch {}
+        }
+        latestReconciliation = {
+          id: String(row.id),
+          status: String(row.status),
+          completedAt: row.completed_at ? new Date(row.completed_at).toISOString() : null,
+          checks: report?.checks && typeof report.checks === 'object' ? report.checks : {}
+        };
+      }
+    } catch (error) {
+      console.error('[Readiness] Reconciliation history check failed:', error);
+    }
+
+    const reconciliationRunReady = Boolean(
+      latestReconciliation?.status === 'succeeded' &&
+      Object.keys(latestReconciliation.checks).length > 0 &&
+      Object.values(latestReconciliation.checks).every(Boolean)
+    );
+    const reconciliationReady = reconciliationSignoffReady && reconciliationRunReady;
 
     const gates = {
       runtime: runtimeReady,
@@ -4201,6 +4230,9 @@ apiRouter.get('/system/production-readiness', requireAuth, requireAnyPermission(
         },
         relationalReconciliation: {
           verifiedAt: reconciliationVerifiedAt || null,
+          signoffComplete: reconciliationSignoffReady,
+          run: latestReconciliation,
+          runComplete: reconciliationRunReady,
           complete: reconciliationReady
         },
         postgres: connection,
