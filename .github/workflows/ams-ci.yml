@@ -114,4 +114,7 @@ jobs:
           curl -sS -H "Cookie: kapi_session=$SESSION_COOKIE" http://127.0.0.1:4173/api/auth/me >/tmp/me.json
           node -e "const fs=require('fs'); const x=JSON.parse(fs.readFileSync('/tmp/me.json','utf8')); if(!x.success||x.user?.username!=='admin') process.exit(1)"
           test "$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:4173/api/system/production-readiness)" = "401"
+          readiness_status=$(curl -sS -o /tmp/readiness-auth.json -w '%{http_code}' -H "Cookie: kapi_session=$SESSION_COOKIE" http://127.0.0.1:4173/api/system/production-readiness)
+          test "$readiness_status" = "403"
+          node -e "const fs=require('fs'); const x=JSON.parse(fs.readFileSync('/tmp/readiness-auth.json','utf8')); if(x.code!=='MFA_REQUIRED') process.exit(1)"
           kill $PID
