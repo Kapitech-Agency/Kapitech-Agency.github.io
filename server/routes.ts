@@ -3075,6 +3075,10 @@ apiRouter.put('/crm/proposals/:id', requireAuth, requirePermission('canManageCrm
     const tax = Math.round(taxableAmount * (taxPercent / 100));
     const total = taxableAmount + tax;
     const patch = pickFields(updates, ['proposalNumber','title','clientName','company','dealId','projectId','currency','validityPeriod','paymentTerms','status','notes','sentDate']);
+    if (['Approved', 'Rejected'].includes(String(patch.status || '')) && !req.user?.permissions?.canApproveBudgets) {
+      res.status(403).json({ success: false, error: 'Proposal approval decisions require budget approval permission.' });
+      return;
+    }
     if (patch.proposalNumber !== undefined && !/^[A-Za-z0-9._/-]{1,80}$/.test(String(patch.proposalNumber))) { res.status(400).json({ success: false, error: 'Invalid proposal number.' }); return; }
     for (const key of ['title','clientName','company','dealId','projectId','validityPeriod','paymentTerms','notes'] as const) if (patch[key] !== undefined) patch[key] = cleanText(patch[key], key === 'notes' ? 3000 : 300);
     if (patch.currency !== undefined && !['IDR','USD'].includes(String(patch.currency))) { res.status(400).json({ success: false, error: 'Invalid proposal currency.' }); return; }
@@ -3107,6 +3111,10 @@ apiRouter.put('/crm/proposals/:id', requireAuth, requirePermission('canManageCrm
   const tax = Math.round(taxableAmount * (taxPercent / 100));
   const total = taxableAmount + tax;
   const patch = pickFields(updates, ['proposalNumber','title','clientName','company','dealId','projectId','currency','validityPeriod','paymentTerms','status','notes','sentDate']);
+    if (['Approved', 'Rejected'].includes(String(patch.status || '')) && !req.user?.permissions?.canApproveBudgets) {
+      res.status(403).json({ success: false, error: 'Proposal approval decisions require budget approval permission.' });
+      return;
+    }
   if (patch.proposalNumber !== undefined && !/^[A-Za-z0-9._/-]{1,80}$/.test(String(patch.proposalNumber))) {
     res.status(400).json({ success: false, error: 'Invalid proposal number.' });
     return;
