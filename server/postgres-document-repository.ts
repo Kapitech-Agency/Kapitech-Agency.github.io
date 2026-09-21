@@ -72,7 +72,7 @@ export class PostgresDocumentRepository {
       const { rows } = await client.query(
         `INSERT INTO documents
           (id,name,title,type,mime_type,size,size_bytes,category,related_entity,related_id,owner,owner_user_id,source_type,status,uploaded_date,uploaded_at,external_url,storage_key,content_sha256,storage_sha256,storage_version,storage_provider,integrity_checked_at,created_at,updated_at,metadata)
-         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21::jsonb)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26::jsonb)
          RETURNING *`,
         [
           input.id,input.name,input.title,input.type,input.mimeType,input.size,input.sizeBytes,input.category,
