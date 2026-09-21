@@ -202,6 +202,48 @@ function getInvoiceBalanceDue(invoice: any): number {
   return Math.max(0, total - getInvoicePaidAmount(invoice));
 }
 
+async function dispatchLeadTelegramNotification(
+  lead: {
+    fullName: string;
+    company: string;
+    email: string;
+    phone: string;
+    services: string[];
+    budget: string;
+    message: string;
+  },
+  settings: {
+    isTelegramActive: boolean;
+    telegramChatId: string;
+    telegramBotToken?: string;
+  }
+): Promise<void> {
+  const botToken = (process.env.KAPITECH_TELEGRAM_BOT_TOKEN || settings.telegramBotToken || '').trim();
+  const chatId = (process.env.KAPITECH_TELEGRAM_CHAT_ID || settings.telegramChatId || '').trim();
+
+  if (!settings.isTelegramActive || !botToken || !chatId) return;
+
+  const telegramText =
+    `🔔 *New Kapitech Lead Received*\\n\\n` +
+    `👤 *Name:* ${lead.fullName}\\n` +
+    `🏢 *Company:* ${lead.company || '-'}\\n` +
+    `✉️ *Email:* ${lead.email}\\n` +
+    `📞 *Phone:* ${lead.phone || '-'}\\n` +
+    `🛠️ *Services:* ${lead.services.join(', ') || '-'}\\n` +
+    `💰 *Budget:* ${lead.budget || '-'}\\n\\n` +
+    `💬 *Message:*\\n_${lead.message.slice(0, 300)}_`;
+
+  try {
+    await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chat_id: chatId, text: telegramText, parse_mode: 'Markdown' })
+    });
+  } catch (error) {
+    console.debug('[Notifications] Telegram lead notification failed:', error);
+  }
+}
+
 function pushNotification(
   db: ReturnType<typeof getDatabase> | undefined,
   input: {
@@ -1045,32 +1087,24 @@ apiRouter.post('/leads/submit', rateLimitPublic(10, 60 * 1000), async (req: Requ
   };
 
   let jsonDb: ReturnType<typeof getDatabase> | undefined;
+  let notificationSettings: {
+    isTelegramActive: boolean;
+    telegramChatId: string;
+    telegramBotToken?: string;
+  };
+
   if (getDataSourceMode() === 'postgres') {
     await postgresLeadRepository.create(newLead);
+    const postgresNotificationSettings = await postgresNotificationSettingsRepository.get();
+    notificationSettings = postgresNotificationSettings;
   } else {
     jsonDb = getDatabase();
     jsonDb.leads.unshift(newLead);
     saveDatabase(jsonDb);
-
-    const notif = jsonDb.notificationSettings;
-    const telegramBotToken = process.env.KAPITECH_TELEGRAM_BOT_TOKEN || notif.telegramBotToken;
-    const telegramChatId = process.env.KAPITECH_TELEGRAM_CHAT_ID || notif.telegramChatId;
-    if (notif.isTelegramActive && telegramBotToken && telegramChatId) {
-      const telegramText = `🔔 *New Kapitech Lead Received*\\n\\n` +
-        `👤 *Name:* ${newLead.fullName}\\n` +
-        `🏢 *Company:* ${newLead.company || '-'}\\n` +
-        `✉️ *Email:* ${newLead.email}\\n` +
-        `📞 *Phone:* ${newLead.phone || '-'}\\n` +
-        `🛠️ *Services:* ${newLead.services.join(', ') || '-'}\\n` +
-        `💰 *Budget:* ${newLead.budget || '-'}\\n\\n` +
-        `💬 *Message:*\\n_${newLead.message.slice(0, 300)}_`;
-      fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ chat_id: telegramChatId, text: telegramText, parse_mode: 'Markdown' })
-      }).catch(err => console.debug('Telegram notification dispatch failed:', err));
-    }
+    notificationSettings = jsonDb.notificationSettings;
   }
+
+  void dispatchLeadTelegramNotification(newLead, notificationSettings);
 
   pushNotification(getDataSourceMode() === 'json' ? jsonDb : undefined, {
     title: 'New inbound lead',
@@ -2678,9 +2712,15 @@ apiRouter.get('/audit-logs/integrity', requireAuth, requirePermission('canViewSe
 // ----------------------------------------------------
 
 apiRouter.get('/notifications/settings', requireAuth, requirePermission('canAccessServerAndApi'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-  const s = getDataSourceMode() === 'postgres'
+  const postgresMode = getDataSourceMode() === 'postgres';
+  const jsonNotificationSettings = postgresMode ? undefined : getDatabase().notificationSettings;
+  const s = postgresMode
     ? await postgresNotificationSettingsRepository.get()
-    : getDatabase().notificationSettings;
+    : jsonNotificationSettings!;
+  const hasTelegramToken = postgresMode
+    ? Boolean(process.env.KAPITECH_TELEGRAM_BOT_TOKEN?.trim())
+    : Boolean(jsonNotificationSettings?.telegramBotToken?.trim());
+
   res.json({
     success: true,
     settings: {
@@ -2689,7 +2729,7 @@ apiRouter.get('/notifications/settings', requireAuth, requirePermission('canAcce
       telegramChatId: s.telegramChatId,
       isEmailActive: s.isEmailActive,
       isTelegramActive: s.isTelegramActive,
-      hasTelegramToken: Boolean((process.env.KAPITECH_TELEGRAM_BOT_TOKEN || s.telegramBotToken) && (process.env.KAPITECH_TELEGRAM_BOT_TOKEN || s.telegramBotToken).length > 5)
+      hasTelegramToken
     }
   });
 });
@@ -4122,11 +4162,12 @@ apiRouter.get('/system/production-readiness', requireAuth, requireAnyPermission(
   }
 
   try {
-    const [connection, users, documents, storageHealth] = await Promise.all([
+    const [connection, users, documents, storageHealth, notificationSettings] = await Promise.all([
       checkPostgresConnection(),
       postgresAuthRepository.listUsers(),
       postgresDocumentRepository.list(),
-      getDocumentStorage().healthCheck()
+      getDocumentStorage().healthCheck(),
+      postgresNotificationSettingsRepository.get()
     ]);
 
     let appliedMigrations: string[] = [];
@@ -4140,7 +4181,7 @@ apiRouter.get('/system/production-readiness', requireAuth, requireAnyPermission(
       migrationCheckError = error instanceof Error ? error.message : 'Migration status unavailable.';
     }
 
-    const requiredMigrationNumbers = Array.from({ length: 13 }, (_, index) => String(index + 1).padStart(3, '0'));
+    const requiredMigrationNumbers = Array.from({ length: 14 }, (_, index) => String(index + 1).padStart(3, '0'));
     const appliedMigrationNumbers = new Set(appliedMigrations.map(version => version.slice(0, 3)));
     const migrationComplete = !migrationCheckError
       && requiredMigrationNumbers.every(version => appliedMigrationNumbers.has(version));
@@ -4162,6 +4203,15 @@ apiRouter.get('/system/production-readiness', requireAuth, requireAnyPermission(
       Boolean(process.env.KAPITECH_DATA_SOURCE === 'postgres');
 
     const encryptionReady = isDataEncryptionEnabled();
+
+    const telegramConfigured = !notificationSettings.isTelegramActive
+      || Boolean(
+        process.env.KAPITECH_TELEGRAM_BOT_TOKEN?.trim()
+        && (process.env.KAPITECH_TELEGRAM_CHAT_ID?.trim() || notificationSettings.telegramChatId?.trim())
+      );
+    const emailNotificationConfigured = !notificationSettings.isEmailActive
+      || Boolean(notificationSettings.targetEmail?.trim() && notificationSettings.formspreeEndpoint?.trim());
+    const notificationsReady = telegramConfigured && emailNotificationConfigured;
 
     const reconciliationVerifiedAt = process.env.KAPITECH_RELATIONAL_RECONCILIATION_VERIFIED_AT?.trim() || '';
     const reconciliationDate = reconciliationVerifiedAt ? new Date(reconciliationVerifiedAt) : null;
@@ -4208,7 +4258,8 @@ apiRouter.get('/system/production-readiness', requireAuth, requireAnyPermission(
       migrations: migrationComplete,
       mfa: mfaComplete,
       backupDr: backup.configured,
-      documentStorage: documentStorageReady
+      documentStorage: documentStorageReady,
+      notifications: notificationsReady
     };
 
     const productionReady = Object.values(gates).every(Boolean);
@@ -4249,6 +4300,13 @@ apiRouter.get('/system/production-readiness', requireAuth, requireAnyPermission(
           complete: mfaComplete
         },
         backupDr: backup,
+        notifications: {
+          telegramActive: notificationSettings.isTelegramActive,
+          telegramConfigured,
+          emailActive: notificationSettings.isEmailActive,
+          emailConfigured: emailNotificationConfigured,
+          ready: notificationsReady
+        },
         documentStorage: {
           provider: storageHealth.provider,
           health: storageHealth,

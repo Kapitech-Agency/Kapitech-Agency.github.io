@@ -167,11 +167,9 @@ async function pgCountsAndFinancials(): Promise<{ counts: Record<string, number>
     telegram_chat_id: string | null;
     is_email_active: boolean;
     is_telegram_active: boolean;
-    has_telegram_token: boolean;
   }>(
     `SELECT target_email, formspree_endpoint, telegram_chat_id, is_email_active,
-            is_telegram_active,
-            (telegram_bot_token IS NOT NULL AND LENGTH(telegram_bot_token) > 0) AS has_telegram_token
+            is_telegram_active
        FROM notification_settings WHERE id = 1`
   );
   const notificationRow = notificationResult.rows[0];
