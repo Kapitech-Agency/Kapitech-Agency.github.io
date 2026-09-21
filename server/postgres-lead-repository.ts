@@ -66,8 +66,13 @@ export class PostgresLeadRepository {
   }
 
   async delete(id: string): Promise<boolean> {
-    const result = await getPostgresPool().query('DELETE FROM leads WHERE id = $1', [id]);
-    return result.rowCount === 1;
+    return withPostgresTransaction(async client => {
+      const current=await client.query('SELECT status FROM leads WHERE id = $1 FOR UPDATE',[id]);
+      if(!current.rows[0])return false;
+      if(current.rows[0].status==='closed')throw new Error('LEAD_IS_CLOSED');
+      const result=await client.query('DELETE FROM leads WHERE id = $1',[id]);
+      return result.rowCount===1;
+    });
   }
 }
 
