@@ -2672,6 +2672,23 @@ apiRouter.delete('/cms/testimonials/:id', requireAuth, requirePermission('canMan
   res.json({ success: true, message: 'Testimonial deleted.' });
 });
 
+// Public CMS metadata. Only non-sensitive presentation fields are exposed.
+apiRouter.get('/cms/public-settings', rateLimitPublic(), async (_req: Request, res: Response): Promise<void> => {
+  const settings = getDataSourceMode() === 'postgres'
+    ? await postgresCmsRepository.getSettings()
+    : getDatabase().cmsSettings;
+
+  res.json({
+    success: true,
+    settings: {
+      siteTitle: cleanText(settings?.siteTitle || 'Kapitech Agency', 160),
+      siteDescription: cleanText(settings?.siteDescription || '', 320),
+      defaultLanguage: settings?.defaultLanguage === 'en' ? 'en' : 'id',
+      maintenanceMode: Boolean(settings?.maintenanceMode)
+    }
+  });
+});
+
 // CMS Settings
 apiRouter.get('/cms/settings', requireAuth, requirePermission('canManageCmsContent'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const settings = getDataSourceMode() === 'postgres'
