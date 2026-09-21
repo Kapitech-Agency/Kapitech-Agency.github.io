@@ -26,7 +26,7 @@ export class PostgresNotificationSettingsRepository {
     const { rows } = await getPostgresPool().query(
       `INSERT INTO notification_settings
         (id,target_email,formspree_endpoint,telegram_bot_token,telegram_chat_id,is_email_active,is_telegram_active,updated_at)
-       VALUES ('default',$1,$2,COALESCE(NULLIF(current_setting('app.telegram_bot_token', true), ''), ''),$3,$4,$5,NOW())
+       VALUES ('default',$1,$2,'',$3,$4,$5,NOW())
        ON CONFLICT (id) DO UPDATE SET
          target_email=EXCLUDED.target_email,
          formspree_endpoint=EXCLUDED.formspree_endpoint,
