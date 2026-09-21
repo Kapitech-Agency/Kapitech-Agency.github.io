@@ -2498,119 +2498,274 @@ apiRouter.get('/finance/metrics', requireAuth, requirePermission('canViewFinanci
 // 7. VENDORS MANAGEMENT
 // ----------------------------------------------------
 
-apiRouter.get('/vendors', requireAuth, requireAnyPermission('canManageVendors', 'canViewFinancials'), (req: AuthenticatedRequest, res: Response): void => {
-  const db = getDatabase();
-  res.json({ success: true, vendors: db.vendors });
+apiRouter.get('/vendors', requireAuth, requireAnyPermission('canManageVendors', 'canViewFinancials'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  try {
+    if (getDataSourceMode() === 'postgres') {
+      res.json({ success: true, vendors: await postgresVendorRepository.list() });
+      return;
+    }
+    const db = getDatabase();
+    res.json({ success: true, vendors: db.vendors });
+  } catch (error) {
+    console.error('[Vendors] Failed to load vendors:', error);
+    res.status(503).json({ success: false, error: 'Vendor data is temporarily unavailable.' });
+  }
 });
 
-apiRouter.post('/vendors', requireAuth, requirePermission('canManageVendors'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.post('/vendors', requireAuth, requirePermission('canManageVendors'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const vendorData = req.body || {};
-  const db = getDatabase();
   const hourlyRate = Number(vendorData.hourlyRate);
-  if (!Number.isFinite(hourlyRate) || hourlyRate < 0 || hourlyRate > 10_000_000_000) {
-    res.status(400).json({ success: false, error: 'Vendor hourly rate must be a valid non-negative amount.' });
+  const monthlySpend = Number(vendorData.monthlySpend ?? 0);
+  const rating = Number(vendorData.rating ?? 0);
+
+  if (!Number.isFinite(hourlyRate) || hourlyRate < 0 || hourlyRate > MAX_MONEY || !Number.isFinite(monthlySpend) || monthlySpend < 0 || monthlySpend > MAX_MONEY || !Number.isFinite(rating)) {
+    res.status(400).json({ success: false, error: 'Vendor financial values must be valid non-negative amounts.' });
     return;
   }
-  const rating = Number(vendorData.rating);
+  if (rating < 0 || rating > 5) {
+    res.status(400).json({ success: false, error: 'Vendor rating must be between 0 and 5.' });
+    return;
+  }
+
   const newVendor = {
-    id: `ven_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
+    id: 'ven_' + Date.now() + '_' + crypto.randomBytes(3).toString('hex'),
     name: cleanText(vendorData.name, 160),
     companyName: cleanText(vendorData.companyName, 200),
     email: cleanText(vendorData.email, 254).toLowerCase(),
     phone: cleanText(vendorData.phone, 40),
     type: ['freelancer','agency_partner','contractor','saas_vendor'].includes(String(vendorData.type)) ? String(vendorData.type) : 'contractor',
-    primaryCategory: cleanText(vendorData.primaryCategory, 120),
-    skills: Array.isArray(vendorData.skills) ? vendorData.skills.slice(0,100).map((v) => cleanText(v,120)) : [],
+    category: cleanText(vendorData.category || vendorData.primaryCategory, 120),
+    primaryCategory: cleanText(vendorData.primaryCategory || vendorData.category, 120),
+    contactPerson: cleanText(vendorData.contactPerson, 160),
+    skills: Array.isArray(vendorData.skills) ? vendorData.skills.slice(0,100).map((v: any) => cleanText(v,120)) : [],
     hourlyRate,
-    currency: vendorData.currency === 'USD' ? 'USD' : 'IDR',
-    rating: Number.isFinite(rating) ? Math.min(5, Math.max(0, rating)) : 0,
+    currency: cleanText(vendorData.currency || 'IDR', 3).toUpperCase(),
+    monthlySpend,
+    rating,
     completedProjectsCount: Math.max(0, Math.floor(Number(vendorData.completedProjectsCount) || 0)),
     status: ['active','under_review','inactive','blacklisted'].includes(String(vendorData.status)) ? String(vendorData.status) : 'under_review',
     isVetted: Boolean(vendorData.isVetted),
     location: cleanText(vendorData.location, 160),
+    website: cleanOptionalUrl(vendorData.website),
     portfolioUrl: cleanOptionalUrl(vendorData.portfolioUrl),
     githubUrl: cleanOptionalUrl(vendorData.githubUrl),
+    paymentTerms: cleanText(vendorData.paymentTerms, 300),
     contracts: Array.isArray(vendorData.contracts) ? vendorData.contracts.slice(0,50) : [],
     notes: cleanText(vendorData.notes, 3000),
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   };
-  db.vendors.unshift(newVendor);
-  saveDatabase(db);
-  res.json({ success: true, vendor: newVendor });
+
+  if (!/^[A-Z]{3}$/.test(newVendor.currency)) {
+    res.status(400).json({ success: false, error: 'Vendor currency must be a valid ISO-like 3-letter code.' });
+    return;
+  }
+
+  try {
+    if (getDataSourceMode() === 'postgres') {
+      const vendor = await postgresVendorRepository.create(newVendor);
+      recordAuditLog({
+        action: 'VENDOR_CREATED',
+        actor: req.user!.username,
+        actorRole: req.user!.role,
+        ip: req.ip,
+        userAgent: req.headers['user-agent'] as string,
+        details: 'Created vendor "' + vendor.name + '".',
+        severity: 'info'
+      });
+      res.json({ success: true, vendor });
+      return;
+    }
+
+    const db = getDatabase();
+    db.vendors.unshift(newVendor);
+    saveDatabase(db);
+    recordAuditLog({
+      action: 'VENDOR_CREATED',
+      actor: req.user!.username,
+      actorRole: req.user!.role,
+      ip: req.ip,
+      userAgent: req.headers['user-agent'] as string,
+      details: 'Created vendor "' + newVendor.name + '".',
+      severity: 'info'
+    });
+    res.json({ success: true, vendor: newVendor });
+  } catch (error) {
+    if ((error as any)?.code === '23505') {
+      res.status(409).json({ success: false, error: 'Vendor already exists.' });
+      return;
+    }
+    console.error('[Vendors] Create failed:', error);
+    res.status(500).json({ success: false, error: 'Vendor could not be created.' });
+  }
 });
 
-apiRouter.put('/vendors/:id', requireAuth, requirePermission('canManageVendors'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.put('/vendors/:id', requireAuth, requirePermission('canManageVendors'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
   const updates = req.body || {};
-  const db = getDatabase();
-  const idx = db.vendors.findIndex(v => v.id === id);
-  if (idx === -1) {
-    res.status(404).json({ success: false, error: 'Vendor not found.' });
-    return;
-  }
-  const patch = pickFields(updates || {}, ['name', 'category', 'contactPerson', 'email', 'phone', 'website', 'paymentTerms', 'status', 'monthlySpend', 'notes', 'portfolioUrl', 'githubUrl', 'contracts']);
-  if (patch.email !== undefined) {
-    patch.email = cleanText(patch.email, 254).toLowerCase();
-    if (patch.email && !isValidEmail(patch.email)) {
-      res.status(400).json({ success: false, error: 'Invalid vendor email address.' });
+
+  try {
+    if (getDataSourceMode() === 'postgres') {
+      const patch: Record<string, any> = {
+        ...pickFields(updates, [
+          'name','category','contactPerson','companyName','email','phone','website','paymentTerms',
+          'status','monthlySpend','notes','portfolioUrl','githubUrl','contracts','hourlyRate','currency',
+          'rating','skills','primaryCategory','completedProjectsCount','isVetted','location','version'
+        ]),
+        version: updates.version
+      };
+      if (patch.email !== undefined) {
+        patch.email = cleanText(patch.email, 254).toLowerCase();
+        if (patch.email && !isValidEmail(patch.email)) {
+          res.status(400).json({ success: false, error: 'Invalid vendor email address.' });
+          return;
+        }
+      }
+      if (patch.website !== undefined) patch.website = cleanOptionalUrl(patch.website);
+      if (patch.portfolioUrl !== undefined) patch.portfolioUrl = cleanOptionalUrl(patch.portfolioUrl);
+      if (patch.githubUrl !== undefined) patch.githubUrl = cleanOptionalUrl(patch.githubUrl);
+      if (patch.currency !== undefined) patch.currency = cleanText(patch.currency,3).toUpperCase();
+      if (patch.status !== undefined && !['active','under_review','inactive','blacklisted'].includes(String(patch.status))) {
+        res.status(400).json({ success: false, error: 'Invalid vendor status.' });
+        return;
+      }
+      if (patch.hourlyRate !== undefined || patch.monthlySpend !== undefined) {
+        for (const key of ['hourlyRate','monthlySpend'] as const) {
+          if (patch[key] !== undefined) {
+            const value = Number(patch[key]);
+            if (!Number.isFinite(value) || value < 0 || value > MAX_MONEY) {
+              res.status(400).json({ success: false, error: 'Invalid vendor financial value for ' + key + '.' });
+              return;
+            }
+            patch[key] = value;
+          }
+        }
+      }
+      if (patch.rating !== undefined) {
+        const value = Number(patch.rating);
+        if (!Number.isFinite(value) || value < 0 || value > 5) {
+          res.status(400).json({ success: false, error: 'Invalid vendor rating.' });
+          return;
+        }
+        patch.rating = value;
+      }
+      if (patch.skills !== undefined) patch.skills = Array.isArray(patch.skills) ? patch.skills.slice(0,100).map((v: any) => cleanText(v,120)) : [];
+      if (patch.contracts !== undefined) patch.contracts = Array.isArray(patch.contracts) ? patch.contracts.slice(0,50) : [];
+      for (const key of ['name','category','contactPerson','companyName','phone','paymentTerms','primaryCategory','location','notes'] as const) {
+        if (patch[key] !== undefined) patch[key] = cleanText(patch[key], key === 'notes' ? 3000 : 200);
+      }
+
+      const vendor = await postgresVendorRepository.update(id, patch);
+      recordAuditLog({
+        action: 'VENDOR_UPDATED',
+        actor: req.user!.username,
+        actorRole: req.user!.role,
+        ip: req.ip,
+        userAgent: req.headers['user-agent'] as string,
+        details: 'Updated vendor ' + id + '.',
+        severity: 'info'
+      });
+      res.json({ success: true, vendor });
       return;
     }
-  }
-  for (const key of ['website','portfolioUrl','githubUrl'] as const) {
-    if (patch[key] !== undefined) patch[key] = cleanOptionalUrl(patch[key]);
-  }
-  if (patch.status !== undefined && !['active','under_review','inactive','blacklisted'].includes(String(patch.status))) {
-    res.status(400).json({ success: false, error: 'Invalid vendor status.' });
-    return;
-  }
-  if (patch.monthlySpend !== undefined) {
-    const numeric = normalizeNumber(patch.monthlySpend, 0, MAX_MONEY);
-    if (numeric === null) {
-      res.status(400).json({ success: false, error: 'Invalid vendor monthly spend.' });
+
+    const db = getDatabase();
+    const idx = db.vendors.findIndex(v => v.id === id);
+    if (idx === -1) {
+      res.status(404).json({ success: false, error: 'Vendor not found.' });
       return;
     }
-    patch.monthlySpend = numeric;
+    const patch = pickFields(updates || {}, ['name','category','contactPerson','email','phone','website','paymentTerms','status','monthlySpend','notes','portfolioUrl','githubUrl','contracts']);
+    if (patch.email !== undefined) {
+      patch.email = cleanText(patch.email, 254).toLowerCase();
+      if (patch.email && !isValidEmail(patch.email)) {
+        res.status(400).json({ success: false, error: 'Invalid vendor email address.' });
+        return;
+      }
+    }
+    db.vendors[idx] = { ...db.vendors[idx], ...patch, updatedAt: new Date().toISOString() };
+    saveDatabase(db);
+    recordAuditLog({
+      action: 'VENDOR_UPDATED',
+      actor: req.user!.username,
+      actorRole: req.user!.role,
+      ip: req.ip,
+      userAgent: req.headers['user-agent'] as string,
+      details: 'Updated vendor ' + id + '.',
+      severity: 'info'
+    });
+    res.json({ success: true, vendor: db.vendors[idx] });
+  } catch (error) {
+    if (error instanceof VendorNotFoundError) {
+      res.status(404).json({ success: false, error: error.message, code: error.code });
+      return;
+    }
+    if (error instanceof VendorVersionConflictError || error instanceof VendorImmutableError) {
+      res.status(409).json({ success: false, error: error.message, code: error.code });
+      return;
+    }
+    console.error('[Vendors] Update failed:', error);
+    res.status(500).json({ success: false, error: 'Vendor could not be updated.' });
   }
-  for (const key of ['name','category','contactPerson','phone','paymentTerms','notes'] as const) {
-    if (patch[key] !== undefined) patch[key] = cleanText(patch[key], key === 'notes' ? 3000 : 200);
-  }
-  if (patch.contracts !== undefined) patch.contracts = Array.isArray(patch.contracts) ? patch.contracts.slice(0, 50) : [];
-  db.vendors[idx] = { ...db.vendors[idx], ...patch, updatedAt: new Date().toISOString() };
-  saveDatabase(db);
-  recordAuditLog({
-    action: 'VENDOR_UPDATED',
-    actor: req.user!.username,
-    actorRole: req.user!.role,
-    ip: req.ip,
-    userAgent: req.headers['user-agent'] as string,
-    details: `Updated vendor ${id}.`,
-    severity: 'info'
-  });
-  res.json({ success: true, vendor: db.vendors[idx] });
 });
 
-apiRouter.delete('/vendors/:id', requireAuth, requirePermission('canManageVendors'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.delete('/vendors/:id', requireAuth, requirePermission('canManageVendors'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
-  const db = getDatabase();
-  const vendor = db.vendors.find((item: any) => item.id === id);
-  if (!vendor) {
-    res.status(404).json({ success: false, error: 'Vendor not found.' });
-    return;
+  try {
+    if (getDataSourceMode() === 'postgres') {
+      const archived = await postgresVendorRepository.archive(
+        id,
+        req.body?.version == null ? undefined : Number(req.body.version)
+      );
+      if (!archived) {
+        res.status(404).json({ success: false, error: 'Vendor not found.' });
+        return;
+      }
+      recordAuditLog({
+        action: 'VENDOR_ARCHIVED',
+        actor: req.user!.username,
+        actorRole: req.user!.role,
+        ip: req.ip,
+        userAgent: req.headers['user-agent'] as string,
+        details: 'Archived vendor ' + id + '.',
+        severity: 'warning'
+      });
+      res.json({ success: true, message: 'Vendor archived.' });
+      return;
+    }
+
+    const db = getDatabase();
+    const vendor = db.vendors.find((item: any) => item.id === id);
+    if (!vendor) {
+      res.status(404).json({ success: false, error: 'Vendor not found.' });
+      return;
+    }
+    db.vendors = db.vendors.filter(v => v.id !== id);
+    saveDatabase(db);
+    recordAuditLog({
+      action: 'VENDOR_DELETED',
+      actor: req.user!.username,
+      actorRole: req.user!.role,
+      ip: req.ip,
+      userAgent: req.headers['user-agent'] as string,
+      details: 'Deleted vendor "' + vendor.name + '".',
+      severity: 'warning'
+    });
+    res.json({ success: true, message: 'Vendor deleted.' });
+  } catch (error) {
+    if (error instanceof VendorNotFoundError) {
+      res.status(404).json({ success: false, error: error.message, code: error.code });
+      return;
+    }
+    if (error instanceof VendorVersionConflictError || error instanceof VendorImmutableError) {
+      res.status(409).json({ success: false, error: error.message, code: error.code });
+      return;
+    }
+    console.error('[Vendors] Archive failed:', error);
+    res.status(500).json({ success: false, error: 'Vendor could not be archived.' });
   }
-  db.vendors = db.vendors.filter(v => v.id !== id);
-  saveDatabase(db);
-  recordAuditLog({
-    action: 'VENDOR_DELETED',
-    actor: req.user!.username,
-    actorRole: req.user!.role,
-    ip: req.ip,
-    userAgent: req.headers['user-agent'] as string,
-    details: `Deleted vendor "${vendor.name || id}".`,
-    severity: 'warning'
-  });
-  res.json({ success: true, message: 'Vendor deleted.' });
 });
+
 
 // ----------------------------------------------------
 // 8. CMS (Services, Projects, Testimonials, Settings)
