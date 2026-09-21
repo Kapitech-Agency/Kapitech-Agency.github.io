@@ -4435,14 +4435,22 @@ apiRouter.get('/system/production-readiness', requireAuth, requireAnyPermission(
     const notificationsReady = telegramConfigured && emailNotificationConfigured;
 
     const reconciliationVerifiedAt = process.env.KAPITECH_RELATIONAL_RECONCILIATION_VERIFIED_AT?.trim() || '';
+    const reconciliationSourceSha256 = process.env.KAPITECH_RELATIONAL_RECONCILIATION_SOURCE_SHA256?.trim().toLowerCase() || '';
     const reconciliationDate = reconciliationVerifiedAt ? new Date(reconciliationVerifiedAt) : null;
     const reconciliationSignoffReady = Boolean(
       reconciliationDate &&
       !Number.isNaN(reconciliationDate.getTime()) &&
-      reconciliationDate.getTime() <= Date.now()
+      reconciliationDate.getTime() <= Date.now() &&
+      /^[0-9a-f]{64}$/.test(reconciliationSourceSha256)
     );
 
-    let latestReconciliation: { id: string; status: string; completedAt: string | null; checks: Record<string, boolean> } | null = null;
+    let latestReconciliation: {
+      id: string;
+      status: string;
+      completedAt: string | null;
+      sourceSha256: string | null;
+      checks: Record<string, boolean>
+    } | null = null;
     try {
       const { rows } = await getPostgresPool().query<{ id: string; status: string; completed_at: Date | string | null; report: unknown }>(
         'SELECT id, status, completed_at, report FROM migration_runs ORDER BY COALESCE(completed_at, started_at) DESC LIMIT 1'
@@ -4457,6 +4465,7 @@ apiRouter.get('/system/production-readiness', requireAuth, requireAnyPermission(
           id: String(row.id),
           status: String(row.status),
           completedAt: row.completed_at ? new Date(row.completed_at).toISOString() : null,
+          sourceSha256: typeof report?.sourceSha256 === 'string' ? report.sourceSha256.toLowerCase() : null,
           checks: report?.checks && typeof report.checks === 'object' ? report.checks : {}
         };
       }
@@ -4469,7 +4478,20 @@ apiRouter.get('/system/production-readiness', requireAuth, requireAnyPermission(
       Object.keys(latestReconciliation.checks).length > 0 &&
       Object.values(latestReconciliation.checks).every(Boolean)
     );
-    const reconciliationReady = reconciliationSignoffReady && reconciliationRunReady;
+    const reconciliationSourceBound = Boolean(
+      latestReconciliation?.sourceSha256 &&
+      latestReconciliation.sourceSha256 === reconciliationSourceSha256
+    );
+    const reconciliationCompletedBeforeSignoff = Boolean(
+      latestReconciliation?.completedAt &&
+      reconciliationDate &&
+      new Date(latestReconciliation.completedAt).getTime() <= reconciliationDate.getTime()
+    );
+    const reconciliationReady =
+      reconciliationSignoffReady &&
+      reconciliationRunReady &&
+      reconciliationSourceBound &&
+      reconciliationCompletedBeforeSignoff;
 
     const backupDrReady = Boolean(
       backup.configured &&
@@ -4509,7 +4531,10 @@ apiRouter.get('/system/production-readiness', requireAuth, requireAnyPermission(
         },
         relationalReconciliation: {
           verifiedAt: reconciliationVerifiedAt || null,
+          sourceSha256: reconciliationSourceSha256 || null,
           signoffComplete: reconciliationSignoffReady,
+          sourceBound: reconciliationSourceBound,
+          completedBeforeSignoff: reconciliationCompletedBeforeSignoff,
           run: latestReconciliation,
           runComplete: reconciliationRunReady,
           complete: reconciliationReady
