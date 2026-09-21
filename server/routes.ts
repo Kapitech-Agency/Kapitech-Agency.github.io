@@ -4816,214 +4816,357 @@ apiRouter.get('/search', requireAuth, (req: AuthenticatedRequest, res: Response)
 // 19. EXECUTIVE DASHBOARD & TODAY AT KAPITECH ENGINE (PARTS 7, 30, 68)
 // ----------------------------------------------------
 
-const handleOverview = (req: AuthenticatedRequest, res: Response): void => {
-  const db = getDatabase();
+const handleOverview = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  try {
+    const usePostgres = getDataSourceMode() === 'postgres';
+    const db = getDatabase();
 
-  const isMaster = req.user!.stakeholderType === 'Master';
-  const canViewFinancials = isMaster || Boolean(req.user!.permissions?.canViewFinancials);
-  const canViewCrm = isMaster || Boolean(req.user!.permissions?.canManageCrm);
-  const canViewProjects = isMaster || Boolean(req.user!.permissions?.canManageProjects || req.user!.permissions?.canManageKanbanTasks);
-  const canViewApprovals = isMaster || Boolean(req.user!.permissions?.canApproveBudgets || req.user!.permissions?.canManageProjects);
-  const canViewAudit = isMaster || Boolean(req.user!.permissions?.canViewSecurityAuditLogs);
+    const isMaster = req.user!.stakeholderType === 'Master';
+    const canViewFinancials = isMaster || Boolean(req.user!.permissions?.canViewFinancials);
+    const canViewCrm = isMaster || Boolean(req.user!.permissions?.canManageCrm);
+    const canViewProjects = isMaster || Boolean(req.user!.permissions?.canManageProjects || req.user!.permissions?.canManageKanbanTasks);
+    const canViewApprovals = isMaster || Boolean(req.user!.permissions?.canApproveBudgets || req.user!.permissions?.canManageProjects);
+    const canViewAudit = isMaster || Boolean(req.user!.permissions?.canViewSecurityAuditLogs);
 
-  const leads = canViewCrm ? (db.leads || []) : [];
-  const deals = canViewCrm ? (db.crmDeals || []) : [];
-  const proposals = (canViewCrm || canViewFinancials || canViewApprovals) ? (db.proposals || []) : [];
-  const projects = canViewProjects ? (db.projects || []) : [];
-  const invoices = canViewFinancials ? (db.invoices || []) : [];
-  const expenses = canViewFinancials ? (db.expenses || []) : [];
-  const approvals = canViewApprovals ? (db.approvals || []) : [];
-  const tasks = canViewProjects ? (db.tasks || []) : [];
+    const leads = canViewCrm ? (db.leads || []) : [];
+    const deals = canViewCrm ? (db.crmDeals || []) : [];
+    const proposals = (canViewCrm || canViewFinancials || canViewApprovals) ? (db.proposals || []) : [];
+    const approvals = canViewApprovals ? (db.approvals || []) : [];
+    const now = new Date();
 
-  const openLeadsCount = canViewCrm
-    ? leads.filter(l => l.status === 'new' || l.status === 'in_review').length
-    : 0;
-  const activeDeals = canViewCrm ? deals.filter(d => d.stage !== 'won' && d.stage !== 'lost') : [];
-  const dealsInPipelineCount = activeDeals.length;
-  const activePipelineValue = activeDeals.reduce((sum, d) => sum + (Number(d.value) || 0), 0);
+    let projects = canViewProjects ? (db.projects || []) : [];
+    let tasks = canViewProjects ? (db.tasks || []) : [];
+    let invoices = canViewFinancials ? (db.invoices || []) : [];
+    let expenses = canViewFinancials ? (db.expenses || []) : [];
 
-  const proposalsAwaitingCount = proposals.filter(
-    p => p.status === 'Draft' || p.status === 'Internal Review' || p.status === 'Sent'
-  ).length;
-  const activeProjectsList = projects.filter(p => !['completed','Completed','archived','Archived'].includes(String(p.status)));
-  const activeProjectsCount = activeProjectsList.length;
-  const projectsAtRiskCount = projects.filter(
-    p => p.health === 'At Risk' || p.health === 'Delayed' || p.health === 'Blocked'
-  ).length;
-
-  const now = new Date();
-  const overdueInvoices = invoices.filter(inv => {
-    if (inv.status === 'paid' || inv.status === 'cancelled') return false;
-    if (!inv.dueDate) return false;
-    return new Date(inv.dueDate) < now;
-  });
-  const overdueInvoicesCount = overdueInvoices.length;
-  const overdueReceivables = overdueInvoices.reduce(
-    (sum, i) => sum + (
-      getInvoiceBalanceDue(i)
-    ),
-    0
-  );
-
-  const totalOutstanding = invoices
-    .filter(i => i.status !== 'paid' && i.status !== 'cancelled')
-    .reduce(
-      (sum, i) => sum + (
-        getInvoiceBalanceDue(i)
-      ),
-      0
-    );
-
-  const totalBilled = invoices.reduce((sum, i) => sum + (Number(i.total) || 0), 0);
-  const revenueCollected = invoices.reduce((sum, invoice) => sum + getInvoicePaidAmount(invoice), 0);
-  const totalExpenses = expenses.reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
-
-  const currentMonthKey = now.toISOString().slice(0, 7);
-  const revenueThisMonth = invoices.reduce((sum, invoice) => {
-    const payments = Array.isArray(invoice.payments) ? invoice.payments : [];
-    if (payments.length > 0) {
-      return sum + payments
-        .filter((payment: any) => String(payment.date || '').startsWith(currentMonthKey))
-        .reduce((paymentSum: number, payment: any) => paymentSum + (Number(payment.amount) || 0), 0);
+    if (usePostgres && canViewProjects) {
+      projects = await postgresProjectRepository.list();
+      tasks = await postgresTaskRepository.list();
     }
 
-    const paidDate = String(invoice.paidDate || '');
-    return sum + (invoice.status === 'paid' && paidDate.startsWith(currentMonthKey) ? (Number(invoice.amountPaid) || Number(invoice.total) || 0) : 0);
-  }, 0);
+    type FinanceBucket = {
+      currency: string;
+      revenueCollected: number;
+      totalBilled: number;
+      outstandingReceivables: number;
+      overdueReceivables: number;
+      operatingExpenses: number;
+      revenueThisMonth: number;
+      overdueInvoicesCount: number;
+    };
 
-  const operatingExpensesThisMonth = expenses
-    .filter((expense) => String(expense.date || '').startsWith(currentMonthKey))
-    .reduce((sum, expense) => sum + (Number(expense.amount) || 0), 0);
+    const financeByCurrency = new Map<string, FinanceBucket>();
 
-  const netOperatingProfitThisMonth = revenueThisMonth - operatingExpensesThisMonth;
-  const netMarginThisMonth = revenueThisMonth > 0
-    ? ((netOperatingProfitThisMonth / revenueThisMonth) * 100).toFixed(1)
-    : '0';
-  const pendingApprovalsCount = approvals.filter(a => a.status === 'Pending').length;
-  const overdueTasksCount = tasks.filter(
-    t => t.status !== 'done' && t.dueDate && new Date(t.dueDate) < now
-  ).length;
+    if (usePostgres && canViewFinancials) {
+      const result = await getPostgresPool().query<{
+        currency: string;
+        revenue_collected: string;
+        total_billed: string;
+        outstanding_receivables: string;
+        overdue_receivables: string;
+        operating_expenses: string;
+        revenue_this_month: string;
+        overdue_invoices_count: string;
+      }>(
+        `WITH invoice_base AS (
+           SELECT i.currency,
+                  SUM(CASE WHEN i.status <> 'cancelled' THEN i.amount_paid ELSE 0 END) AS revenue_collected,
+                  SUM(CASE WHEN i.status <> 'cancelled' THEN i.total ELSE 0 END) AS total_billed,
+                  SUM(CASE WHEN i.status NOT IN ('paid','cancelled') THEN i.balance_due ELSE 0 END) AS outstanding_receivables,
+                  SUM(CASE WHEN i.status NOT IN ('paid','cancelled') AND i.due_date < CURRENT_DATE THEN i.balance_due ELSE 0 END) AS overdue_receivables,
+                  COUNT(*) FILTER (WHERE i.status NOT IN ('paid','cancelled') AND i.due_date < CURRENT_DATE) AS overdue_invoices_count
+           FROM invoices i
+           WHERE i.archived_at IS NULL
+           GROUP BY i.currency
+         ),
+         monthly_cash AS (
+           SELECT i.currency,
+                  COALESCE(SUM(p.amount) FILTER (WHERE p.paid_at >= date_trunc('month', CURRENT_DATE)::date),0) AS revenue_this_month
+           FROM invoices i
+           LEFT JOIN invoice_payments p ON p.invoice_id = i.id
+           WHERE i.archived_at IS NULL AND i.status <> 'cancelled'
+           GROUP BY i.currency
+         ),
+         expense_base AS (
+           SELECT currency, COALESCE(SUM(amount),0) AS operating_expenses
+           FROM expenses
+           WHERE archived_at IS NULL
+           GROUP BY currency
+         ),
+         currencies AS (
+           SELECT currency FROM invoice_base
+           UNION
+           SELECT currency FROM expense_base
+         )
+         SELECT c.currency,
+                COALESCE(i.revenue_collected,0)::text AS revenue_collected,
+                COALESCE(i.total_billed,0)::text AS total_billed,
+                COALESCE(i.outstanding_receivables,0)::text AS outstanding_receivables,
+                COALESCE(i.overdue_receivables,0)::text AS overdue_receivables,
+                COALESCE(e.operating_expenses,0)::text AS operating_expenses,
+                COALESCE(m.revenue_this_month,0)::text AS revenue_this_month,
+                COALESCE(i.overdue_invoices_count,0)::text AS overdue_invoices_count
+         FROM currencies c
+         LEFT JOIN invoice_base i ON i.currency = c.currency
+         LEFT JOIN monthly_cash m ON m.currency = c.currency
+         LEFT JOIN expense_base e ON e.currency = c.currency
+         ORDER BY c.currency`
+      );
 
-  const stages = CRM_STAGES;
-  const pipelineByStage = canViewCrm
-    ? stages.map(st => {
-        const stageDeals = deals.filter(d => d.stage === st);
-        return {
-          stage: st,
-          count: stageDeals.length,
-          value: stageDeals.reduce((sum, d) => sum + (Number(d.value) || 0), 0)
+      for (const row of result.rows) {
+        const bucket = {
+          currency: row.currency,
+          revenueCollected: Number(row.revenue_collected),
+          totalBilled: Number(row.total_billed),
+          outstandingReceivables: Number(row.outstanding_receivables),
+          overdueReceivables: Number(row.overdue_receivables),
+          operatingExpenses: Number(row.operating_expenses),
+          revenueThisMonth: Number(row.revenue_this_month),
+          overdueInvoicesCount: Number(row.overdue_invoices_count)
         };
-      })
-    : [];
+        financeByCurrency.set(bucket.currency, bucket);
+      }
+    } else if (canViewFinancials) {
+      for (const invoice of invoices) {
+        const currency = String(invoice.currency || 'IDR').toUpperCase();
+        const bucket = financeByCurrency.get(currency) || {
+          currency,
+          revenueCollected: 0,
+          totalBilled: 0,
+          outstandingReceivables: 0,
+          overdueReceivables: 0,
+          operatingExpenses: 0,
+          revenueThisMonth: 0,
+          overdueInvoicesCount: 0
+        };
+        bucket.totalBilled += Number(invoice.total) || 0;
+        bucket.revenueCollected += getInvoicePaidAmount(invoice);
+        if (invoice.status !== 'paid' && invoice.status !== 'cancelled') {
+          bucket.outstandingReceivables += getInvoiceBalanceDue(invoice);
+          if (invoice.dueDate && new Date(invoice.dueDate) < now) {
+            bucket.overdueReceivables += getInvoiceBalanceDue(invoice);
+            bucket.overdueInvoicesCount += 1;
+          }
+        }
+        const payments = Array.isArray(invoice.payments) ? invoice.payments : [];
+        const monthKey = now.toISOString().slice(0, 7);
+        bucket.revenueThisMonth += payments
+          .filter((payment: any) => String(payment.date || '').startsWith(monthKey))
+          .reduce((sum: number, payment: any) => sum + (Number(payment.amount) || 0), 0);
+        financeByCurrency.set(currency, bucket);
+      }
+      for (const expense of expenses) {
+        const currency = String(expense.currency || 'IDR').toUpperCase();
+        const bucket = financeByCurrency.get(currency) || {
+          currency,
+          revenueCollected: 0,
+          totalBilled: 0,
+          outstandingReceivables: 0,
+          overdueReceivables: 0,
+          operatingExpenses: 0,
+          revenueThisMonth: 0,
+          overdueInvoicesCount: 0
+        };
+        bucket.operatingExpenses += Number(expense.amount) || 0;
+        if (String(expense.date || '').startsWith(now.toISOString().slice(0, 7))) {
+          // Legacy JSON expenses are already represented in the monthly operating expense total.
+        }
+        financeByCurrency.set(currency, bucket);
+      }
+    }
 
-  const attentionItems: Array<{
-    id: string;
-    title: string;
-    description: string;
-    severity: 'danger' | 'warning' | 'info';
-    category: string;
-    linkUrl: string;
-  }> = [];
+    const primaryCurrency = String(req.query.currency || 'IDR').toUpperCase();
+    const primaryFinance = financeByCurrency.get(primaryCurrency) || financeByCurrency.values().next().value || {
+      currency: primaryCurrency,
+      revenueCollected: 0,
+      totalBilled: 0,
+      outstandingReceivables: 0,
+      overdueReceivables: 0,
+      operatingExpenses: 0,
+      revenueThisMonth: 0,
+      overdueInvoicesCount: 0
+    };
 
-  if (canViewFinancials && overdueInvoicesCount > 0) {
-    attentionItems.push({
-      id: 'att_invoices_overdue',
-      title: `${overdueInvoicesCount} Invoices Overdue`,
-      description: `Follow-up required on unpaid accounts totaling IDR ${overdueReceivables.toLocaleString()}.`,
-      severity: 'danger',
-      category: 'Finance',
-      linkUrl: '/admin/invoicing'
+    const netOperatingProfitThisMonth = primaryFinance.revenueThisMonth - (
+      usePostgres && canViewFinancials
+        ? await (async () => {
+            const expenseResult = await getPostgresPool().query<{ total: string }>(
+              'SELECT COALESCE(SUM(amount),0)::text AS total FROM expenses WHERE archived_at IS NULL AND currency=$1 AND expense_date >= date_trunc(\'month\', CURRENT_DATE)::date',
+              [primaryFinance.currency]
+            );
+            return Number(expenseResult.rows[0]?.total || 0);
+          })()
+        : expenses
+            .filter((expense: any) =>
+              String(expense.currency || 'IDR').toUpperCase() === primaryFinance.currency &&
+              String(expense.date || '').startsWith(now.toISOString().slice(0, 7))
+            )
+            .reduce((sum: number, expense: any) => sum + (Number(expense.amount) || 0), 0)
+    );
+    const netMarginThisMonth = primaryFinance.revenueThisMonth > 0
+      ? Number(((netOperatingProfitThisMonth / primaryFinance.revenueThisMonth) * 100).toFixed(1))
+      : 0;
+
+    const openLeadsCount = canViewCrm
+      ? leads.filter(l => l.status === 'new' || l.status === 'in_review').length
+      : 0;
+    const activeDeals = canViewCrm ? deals.filter(d => d.stage !== 'won' && d.stage !== 'lost') : [];
+    const dealsInPipelineCount = activeDeals.length;
+    const activePipelineValue = activeDeals.reduce((sum, d) => sum + (Number(d.value) || 0), 0);
+    const proposalsAwaitingCount = proposals.filter(p => p.status === 'Draft' || p.status === 'Internal Review' || p.status === 'Sent').length;
+    const activeProjectsList = projects.filter(p => !['completed','Completed','archived','Archived'].includes(String(p.status)));
+    const activeProjectsCount = activeProjectsList.length;
+    const projectsAtRiskCount = projects.filter(p => p.health === 'At Risk' || p.health === 'Delayed' || p.health === 'Blocked').length;
+    const overdueInvoicesCount = primaryFinance.overdueInvoicesCount;
+    const overdueReceivables = primaryFinance.overdueReceivables;
+    const totalOutstanding = primaryFinance.outstandingReceivables;
+    const totalBilled = primaryFinance.totalBilled;
+    const revenueCollected = primaryFinance.revenueCollected;
+    const totalExpenses = primaryFinance.operatingExpenses;
+    const pendingApprovalsCount = approvals.filter(a => a.status === 'Pending').length;
+    const overdueTasksCount = tasks.filter(t => t.status !== 'done' && t.dueDate && new Date(t.dueDate) < now).length;
+
+    const pipelineByStage = canViewCrm
+      ? CRM_STAGES.map(st => {
+          const stageDeals = deals.filter(d => d.stage === st);
+          return {
+            stage: st,
+            count: stageDeals.length,
+            value: stageDeals.reduce((sum, d) => sum + (Number(d.value) || 0), 0)
+          };
+        })
+      : [];
+
+    const attentionItems: Array<{
+      id: string;
+      title: string;
+      description: string;
+      severity: 'danger' | 'warning' | 'info';
+      category: string;
+      linkUrl: string;
+    }> = [];
+
+    if (canViewFinancials && overdueInvoicesCount > 0) {
+      attentionItems.push({
+        id: 'att_invoices_overdue',
+        title: overdueInvoicesCount + ' Invoices Overdue',
+        description: 'Follow-up required on unpaid accounts totaling ' + primaryFinance.currency + ' ' + overdueReceivables.toLocaleString(),
+        severity: 'danger',
+        category: 'Finance',
+        linkUrl: '/admin/invoicing'
+      });
+    }
+    if (canViewApprovals && pendingApprovalsCount > 0) {
+      attentionItems.push({
+        id: 'att_pending_approvals',
+        title: pendingApprovalsCount + ' Executive Approvals Awaiting Review',
+        description: 'Budget and operational approvals are waiting for review.',
+        severity: 'warning',
+        category: 'Operations',
+        linkUrl: '/admin/approvals'
+      });
+    }
+    if (canViewProjects && projectsAtRiskCount > 0) {
+      attentionItems.push({
+        id: 'att_projects_risk',
+        title: projectsAtRiskCount + ' Projects Flagged At Risk',
+        description: 'Delivery timeline or resource constraints require attention.',
+        severity: 'danger',
+        category: 'Delivery',
+        linkUrl: '/admin/projects'
+      });
+    }
+    if (canViewProjects && overdueTasksCount > 0) {
+      attentionItems.push({
+        id: 'att_tasks_overdue',
+        title: overdueTasksCount + ' Tasks Overdue in Active Sprints',
+        description: 'Tasks passed their due dates and may require rescheduling.',
+        severity: 'warning',
+        category: 'Delivery',
+        linkUrl: '/admin/projects'
+      });
+    }
+    if (canViewCrm && openLeadsCount > 3) {
+      attentionItems.push({
+        id: 'att_leads_new',
+        title: openLeadsCount + ' Inbound Inquiries Unassigned',
+        description: 'Website inquiries are waiting for qualification.',
+        severity: 'info',
+        category: 'Sales',
+        linkUrl: '/admin/inbox'
+      });
+    }
+
+    const byCurrency = Array.from(financeByCurrency.values()).map(item => ({
+      currency: item.currency,
+      revenueCollected: item.revenueCollected,
+      totalBilled: item.totalBilled,
+      outstandingReceivables: item.outstandingReceivables,
+      overdueReceivables: item.overdueReceivables,
+      operatingExpenses: item.operatingExpenses,
+      revenueThisMonth: item.revenueThisMonth,
+      netOperatingProfitThisMonth: item.revenueThisMonth - item.operatingExpenses,
+      overdueInvoicesCount: item.overdueInvoicesCount
+    }));
+
+    res.json({
+      success: true,
+      metrics: {
+        currency: primaryFinance.currency,
+        revenueCollected: canViewFinancials ? revenueCollected : null,
+        totalBilled: canViewFinancials ? totalBilled : null,
+        outstandingReceivables: canViewFinancials ? totalOutstanding : null,
+        overdueReceivables: canViewFinancials ? overdueReceivables : null,
+        activePipeline: canViewCrm ? activePipelineValue : null,
+        activeProjects: canViewProjects ? activeProjectsCount : 0,
+        projectsAtRisk: canViewProjects ? projectsAtRiskCount : 0,
+        pendingApprovals: canViewApprovals ? pendingApprovalsCount : 0,
+        overdueTasks: canViewProjects ? overdueTasksCount : 0,
+        openLeads: canViewCrm ? openLeadsCount : 0,
+        byCurrency
+      },
+      todayAtKapitech: {
+        openLeadsCount: canViewCrm ? openLeadsCount : 0,
+        dealsInPipelineCount: canViewCrm ? dealsInPipelineCount : 0,
+        pipelineValue: canViewFinancials ? activePipelineValue : null,
+        proposalsAwaitingCount: (canViewCrm || canViewFinancials || canViewApprovals) ? proposalsAwaitingCount : 0,
+        projectsAtRiskCount: canViewProjects ? projectsAtRiskCount : 0,
+        overdueInvoicesCount: canViewFinancials ? overdueInvoicesCount : 0,
+        cashOutstanding: canViewFinancials ? totalOutstanding : null,
+        currency: primaryFinance.currency
+      },
+      financials: canViewFinancials ? {
+        currency: primaryFinance.currency,
+        revenueThisMonth: primaryFinance.revenueThisMonth,
+        cashCollected: primaryFinance.revenueThisMonth,
+        outstandingReceivables: totalOutstanding,
+        operatingExpenses: usePostgres
+          ? primaryFinance.operatingExpenses
+          : expenses
+              .filter((expense: any) => String(expense.currency || 'IDR').toUpperCase() === primaryFinance.currency && String(expense.date || '').startsWith(now.toISOString().slice(0, 7)))
+              .reduce((sum: number, expense: any) => sum + (Number(expense.amount) || 0), 0),
+        netOperatingProfit: netOperatingProfitThisMonth,
+        margin: netMarginThisMonth
+      } : {
+        currency: primaryFinance.currency,
+        revenueThisMonth: null,
+        cashCollected: null,
+        outstandingReceivables: null,
+        operatingExpenses: null,
+        netOperatingProfit: null,
+        margin: null
+      },
+      pipelineByStage,
+      attentionItems,
+      projects: canViewProjects ? activeProjectsList.slice(0, 10) : [],
+      recentActivity: canViewAudit ? (db.auditLogs || []).slice(0, 10) : []
     });
+  } catch (error) {
+    console.error('[Dashboard Overview] Failed:', error);
+    res.status(503).json({ success: false, error: 'Dashboard data is temporarily unavailable.' });
   }
-
-  if (canViewApprovals && pendingApprovalsCount > 0) {
-    attentionItems.push({
-      id: 'att_pending_approvals',
-      title: `${pendingApprovalsCount} Executive Approvals Awaiting Review`,
-      description: 'Budget and operational approvals are waiting for review.',
-      severity: 'warning',
-      category: 'Operations',
-      linkUrl: '/admin/approvals'
-    });
-  }
-
-  if (canViewProjects && projectsAtRiskCount > 0) {
-    attentionItems.push({
-      id: 'att_projects_risk',
-      title: `${projectsAtRiskCount} Projects Flagged At Risk`,
-      description: 'Delivery timeline or resource constraints require attention.',
-      severity: 'danger',
-      category: 'Delivery',
-      linkUrl: '/admin/projects'
-    });
-  }
-
-  if (canViewProjects && overdueTasksCount > 0) {
-    attentionItems.push({
-      id: 'att_tasks_overdue',
-      title: `${overdueTasksCount} Tasks Overdue in Active Sprints`,
-      description: 'Tasks passed their due dates and may require rescheduling.',
-      severity: 'warning',
-      category: 'Delivery',
-      linkUrl: '/admin/projects'
-    });
-  }
-
-  if (canViewCrm && openLeadsCount > 3) {
-    attentionItems.push({
-      id: 'att_leads_new',
-      title: `${openLeadsCount} Inbound Inquiries Unassigned`,
-      description: 'Website inquiries are waiting for qualification.',
-      severity: 'info',
-      category: 'Sales',
-      linkUrl: '/admin/inbox'
-    });
-  }
-
-  res.json({
-    success: true,
-    metrics: {
-      revenueCollected: canViewFinancials ? revenueCollected : null,
-      totalBilled: canViewFinancials ? totalBilled : null,
-      outstandingReceivables: canViewFinancials ? totalOutstanding : null,
-      overdueReceivables: canViewFinancials ? overdueReceivables : null,
-      activePipeline: canViewCrm ? activePipelineValue : null,
-      activeProjects: canViewProjects ? activeProjectsCount : 0,
-      projectsAtRisk: canViewProjects ? projectsAtRiskCount : 0,
-      pendingApprovals: canViewApprovals ? pendingApprovalsCount : 0,
-      overdueTasks: canViewProjects ? overdueTasksCount : 0,
-      openLeads: canViewCrm ? openLeadsCount : 0
-    },
-    todayAtKapitech: {
-      openLeadsCount: canViewCrm ? openLeadsCount : 0,
-      dealsInPipelineCount: canViewCrm ? dealsInPipelineCount : 0,
-      pipelineValue: canViewFinancials ? activePipelineValue : null,
-      proposalsAwaitingCount: (canViewCrm || canViewFinancials || canViewApprovals) ? proposalsAwaitingCount : 0,
-      projectsAtRiskCount: canViewProjects ? projectsAtRiskCount : 0,
-      overdueInvoicesCount: canViewFinancials ? overdueInvoicesCount : 0,
-      cashOutstanding: canViewFinancials ? totalOutstanding : null
-    },
-    financials: canViewFinancials ? {
-      revenueThisMonth,
-      cashCollected: revenueThisMonth,
-      outstandingReceivables: totalOutstanding,
-      operatingExpenses: operatingExpensesThisMonth,
-      netOperatingProfit: netOperatingProfitThisMonth,
-      margin: netMarginThisMonth
-    } : {
-      revenueThisMonth: null,
-      cashCollected: null,
-      outstandingReceivables: null,
-      operatingExpenses: null,
-      netOperatingProfit: null,
-      margin: null
-    },
-    pipelineByStage,
-    attentionItems,
-    projects: canViewProjects ? activeProjectsList.slice(0, 10) : [],
-    recentActivity: canViewAudit ? (db.auditLogs || []).slice(0, 10) : []
-  });
 };
+
 apiRouter.get('/dashboard/overview', requireAuth, handleOverview);
 apiRouter.get('/executive/overview', requireAuth, handleOverview);
 
