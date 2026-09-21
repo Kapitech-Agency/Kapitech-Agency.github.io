@@ -4,10 +4,18 @@ import dotenv from 'dotenv';
 import { apiRouter } from './server/routes';
 import { getDataSourceMode } from './server/data-source.ts';
 import { checkPostgresConnection } from './server/postgres.ts';
+import { postgresAuthRepository } from './server/postgres-repository.ts';
 
 dotenv.config();
 
 async function startServer() {
+  if (getDataSourceMode() === 'postgres') {
+    const migratedMfaSecrets = await postgresAuthRepository.migrateLegacyMfaSecrets();
+    if (migratedMfaSecrets > 0) {
+      console.log(`[Security] Re-encrypted ${migratedMfaSecrets} legacy PostgreSQL MFA secret record(s).`);
+    }
+  }
+
   const app = express();
   app.disable('x-powered-by');
   const PORT = Number(process.env.PORT) || 3000;
