@@ -856,7 +856,6 @@ apiRouter.delete('/auth/users/:id', requireAuth, requireMaster, async (req: Auth
       res.status(409).json({ success: false, error: 'User could not be deleted.' });
       return;
     }
-    await postgresAuthRepository.deleteUserSessions(id);
   } else {
     db!.users = db!.users.filter(u => u.id !== id);
     db!.sessions = db!.sessions.filter(s => s.userId !== id);
@@ -933,7 +932,7 @@ apiRouter.put('/auth/users/:id', requireAuth, requireMaster, async (req: Authent
     target.division = updated.division;
     target.permissions = updated.permissions;
     target.status = updated.status;
-    if (target.status === 'suspended') await postgresAuthRepository.deleteUserSessions(target.id);
+
   } else {
     target.name = nextName;
     target.role = nextRole;
