@@ -25,8 +25,8 @@ function decrypt(raw: string): string {
   return Buffer.concat([decipher.update(Buffer.from(payload.data, 'base64')), decipher.final()]).toString('utf8');
 }
 
-function sha256(raw: string): string {
-  return crypto.createHash('sha256').update(raw, 'utf8').digest('hex');
+function sha256(raw: string | Buffer): string {
+  return crypto.createHash('sha256').update(raw).digest('hex');
 }
 
 function arr(db: any, key: string): any[] {
@@ -108,9 +108,17 @@ function verifyPrivateDocuments(db: any): { valid: boolean; checked: number; mis
       continue;
     }
     try {
-      const stat = fs.statSync(path.join(dir, String(document.storageKey)));
-      if (!stat.isFile()) missing.push(String(document.id || document.storageKey));
-      else if (document.sizeBytes != null && Number(document.sizeBytes) !== stat.size) malformed.push(String(document.id || document.storageKey));
+      const encryptedPath = path.join(dir, String(document.storageKey) + '.enc');
+      const stat = fs.statSync(encryptedPath);
+      if (!stat.isFile() || stat.size <= 0) {
+        missing.push(String(document.id || document.storageKey));
+        continue;
+      }
+      if (document.storageSha256) {
+        const encryptedPayload = fs.readFileSync(encryptedPath);
+        const actualSha256 = sha256(encryptedPayload);
+        if (actualSha256 !== String(document.storageSha256)) malformed.push(String(document.id || document.storageKey));
+      }
     } catch {
       missing.push(String(document.id || document.storageKey));
     }
@@ -185,7 +193,7 @@ async function pgCountsAndFinancials(): Promise<{ counts: Record<string, number>
       telegramChatId: notificationRow.telegram_chat_id,
       isEmailActive: notificationRow.is_email_active,
       isTelegramActive: notificationRow.is_telegram_active,
-      hasTelegramToken: notificationRow.has_telegram_token
+      hasTelegramToken: Boolean(process.env.KAPITECH_TELEGRAM_BOT_TOKEN)
     } : {}
   };
 }
@@ -223,7 +231,7 @@ async function main(): Promise<void> {
     telegramChatId: sourceNotification.telegramChatId || null,
     isEmailActive: Boolean(sourceNotification.isEmailActive),
     isTelegramActive: Boolean(sourceNotification.isTelegramActive),
-    hasTelegramToken: Boolean(sourceNotification.telegramBotToken)
+    hasTelegramToken: Boolean(process.env.KAPITECH_TELEGRAM_BOT_TOKEN)
   };
 
   const financials = {
