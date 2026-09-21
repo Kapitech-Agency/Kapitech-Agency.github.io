@@ -39,6 +39,8 @@ import {
   getAgencyProjects,
   saveAgencyProject,
   deleteAgencyProject,
+  saveAgencyTask,
+  deleteAgencyTask,
   updateTaskStatus,
   PROJECT_EVENT_NAME
 } from '../../lib/projectStore';
@@ -267,13 +269,7 @@ export const AdminProjects: React.FC = () => {
       subtasks: subtasksList.length > 0 ? subtasksList : undefined
     };
 
-    const updatedTasks = [...selectedProject.tasks, newTask];
-    saveAgencyProject({
-      ...selectedProject,
-      tasks: updatedTasks,
-      updatedAt: new Date().toISOString()
-    });
-
+    saveAgencyTask(selectedProject.id, newTask);
     setIsTaskModalOpen(false);
     setTaskTitle('');
     setTaskDesc('');
@@ -283,12 +279,7 @@ export const AdminProjects: React.FC = () => {
 
   const handleDeleteTask = (taskId: string) => {
     if (!selectedProject) return;
-    const updatedTasks = selectedProject.tasks.filter(t => t.id !== taskId);
-    saveAgencyProject({
-      ...selectedProject,
-      tasks: updatedTasks,
-      updatedAt: new Date().toISOString()
-    });
+    deleteAgencyTask(selectedProject.id, taskId);
     if (activeTaskDrawer?.id === taskId) {
       setActiveTaskDrawer(null);
     }
@@ -299,18 +290,13 @@ export const AdminProjects: React.FC = () => {
     if (e) e.stopPropagation();
     if (!selectedProject) return;
 
-    const updatedTasks = selectedProject.tasks.map(t => {
-      if (t.id === taskId && t.subtasks) {
-        const updatedSubs = t.subtasks.map(st => st.id === subtaskId ? { ...st, completed: !st.completed } : st);
-        return { ...t, subtasks: updatedSubs };
-      }
-      return t;
-    });
+    const task = selectedProject.tasks.find(t => t.id === taskId);
+    if (!task || !task.subtasks) return;
+    const updatedSubs = task.subtasks.map(st => st.id === subtaskId ? { ...st, completed: !st.completed } : st);
 
-    saveAgencyProject({
-      ...selectedProject,
-      tasks: updatedTasks,
-      updatedAt: new Date().toISOString()
+    saveAgencyTask(selectedProject.id, {
+      ...task,
+      subtasks: updatedSubs
     });
   };
 
@@ -324,18 +310,9 @@ export const AdminProjects: React.FC = () => {
       completed: false
     };
 
-    const currentSubs = activeTaskDrawer.subtasks || [];
-    const updatedTasks = selectedProject.tasks.map(t => {
-      if (t.id === activeTaskDrawer.id) {
-        return { ...t, subtasks: [...currentSubs, newSub] };
-      }
-      return t;
-    });
-
-    saveAgencyProject({
-      ...selectedProject,
-      tasks: updatedTasks,
-      updatedAt: new Date().toISOString()
+    saveAgencyTask(selectedProject.id, {
+      ...activeTaskDrawer,
+      subtasks: [...(activeTaskDrawer.subtasks || []), newSub]
     });
 
     setNewSubtaskTitle('');
@@ -343,17 +320,9 @@ export const AdminProjects: React.FC = () => {
 
   const handleDeleteSubtaskInDrawer = (subtaskId: string) => {
     if (!selectedProject || !activeTaskDrawer) return;
-    const updatedTasks = selectedProject.tasks.map(t => {
-      if (t.id === activeTaskDrawer.id && t.subtasks) {
-        return { ...t, subtasks: t.subtasks.filter(st => st.id !== subtaskId) };
-      }
-      return t;
-    });
-
-    saveAgencyProject({
-      ...selectedProject,
-      tasks: updatedTasks,
-      updatedAt: new Date().toISOString()
+    saveAgencyTask(selectedProject.id, {
+      ...activeTaskDrawer,
+      subtasks: (activeTaskDrawer.subtasks || []).filter(st => st.id !== subtaskId)
     });
   };
 
