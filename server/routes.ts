@@ -3230,7 +3230,7 @@ apiRouter.put('/crm/proposals/:id', requireAuth, requirePermission('canManageCrm
 
   if (getDataSourceMode() === 'postgres') {
     try {
-      const patch = {
+      const patch: Record<string, any> = {
         ...pickFields(updates, [
           'proposalNumber','title','clientId','clientName','company','dealId','projectId','discount','taxPercent',
           'currency','validityPeriod','paymentTerms','status','notes','sentDate','items','version'
