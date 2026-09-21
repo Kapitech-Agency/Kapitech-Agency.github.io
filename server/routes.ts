@@ -68,6 +68,7 @@ import { postgresCmsRepository } from './postgres-cms-repository.ts';
 import { postgresNotificationSettingsRepository } from './postgres-notification-settings-repository.ts';
 import { getDocumentStorage } from './document-storage.ts';
 import { getPostgresBackupHealth } from './postgres-backup-health.ts';
+import { checkPostgresConnection, getPostgresPool } from './postgres.ts';
 
 
 const ROLE_POLICIES: Record<string, {
@@ -4093,6 +4094,95 @@ apiRouter.get('/system/security/status', requireAuth, requireAnyPermission('canV
 });
 
 // ----------------------------------------------------
+// 17. PRODUCTION READINESS GATE
+// ----------------------------------------------------
+
+apiRouter.get('/system/production-readiness', requireAuth, requireAnyPermission('canViewSecurityAuditLogs', 'canAccessServerAndApi'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  if (getDataSourceMode() !== 'postgres') {
+    res.status(409).json({
+      success: false,
+      productionReady: false,
+      gates: { postgres: false, migrations: false, mfa: false, backupDr: false, documentStorage: false },
+      status: { datasource: 'json', reason: 'Production cutover requires KAPITECH_DATA_SOURCE=postgres.' }
+    });
+    return;
+  }
+
+  try {
+    const [connection, users, documents, storageHealth] = await Promise.all([
+      checkPostgresConnection(),
+      postgresAuthRepository.listUsers(),
+      postgresDocumentRepository.list(),
+      getDocumentStorage().healthCheck()
+    ]);
+
+    let appliedMigrations: string[] = [];
+    let migrationCheckError: string | undefined;
+    try {
+      const { rows } = await getPostgresPool().query<{ version: string }>(
+        'SELECT version FROM schema_migrations ORDER BY version'
+      );
+      appliedMigrations = rows.map(row => String(row.version));
+    } catch (error) {
+      migrationCheckError = error instanceof Error ? error.message : 'Migration status unavailable.';
+    }
+
+    const requiredMigrations = ['012_document_vault_integrity', '013_security_controls'];
+    const migrationComplete = !migrationCheckError && requiredMigrations.every(version => appliedMigrations.includes(version));
+    const activeUsers = users.filter(user => user.status === 'active');
+    const mfaEnabledCount = activeUsers.filter(user => user.mfaEnabled).length;
+    const mfaComplete = activeUsers.length > 0 && mfaEnabledCount === activeUsers.length;
+    const backup = getPostgresBackupHealth();
+
+    const privateFiles = documents.filter(document => document.sourceType === 'private_file');
+    const checksummed = privateFiles.filter(document => document.storageSha256 && document.contentSha256);
+    const documentIntegrityComplete = privateFiles.length === checksummed.length;
+    const documentStorageReady = storageHealth.configured && storageHealth.ok && documentIntegrityComplete;
+
+    const gates = {
+      postgres: connection.ok,
+      migrations: migrationComplete,
+      mfa: mfaComplete,
+      backupDr: backup.configured,
+      documentStorage: documentStorageReady
+    };
+
+    const productionReady = Object.values(gates).every(Boolean);
+    res.status(productionReady ? 200 : 409).json({
+      success: productionReady,
+      productionReady,
+      gates,
+      status: {
+        datasource: 'postgres',
+        postgres: connection,
+        migrations: {
+          required: requiredMigrations,
+          applied: appliedMigrations,
+          complete: migrationComplete,
+          error: migrationCheckError || null
+        },
+        mfa: {
+          activeUserCount: activeUsers.length,
+          enabledCount: mfaEnabledCount,
+          coveragePercent: activeUsers.length ? Math.round((mfaEnabledCount / activeUsers.length) * 100) : 0,
+          complete: mfaComplete
+        },
+        backupDr: backup,
+        documentStorage: {
+          provider: storageHealth.provider,
+          health: storageHealth,
+          privateDocumentCount: privateFiles.length,
+          integrityMetadataCoveragePercent: privateFiles.length ? Math.round((checksummed.length / privateFiles.length) * 100) : 100,
+          ready: documentStorageReady
+        }
+      }
+    });
+  } catch (error) {
+    console.error('[Readiness] Production readiness check failed:', error);
+    res.status(503).json({ success: false, productionReady: false, error: 'Production readiness status is unavailable.' });
+  }
+});
+
 // 17. UNIFIED NOTIFICATIONS CENTER
 // ----------------------------------------------------
 
