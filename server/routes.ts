@@ -1427,11 +1427,10 @@ apiRouter.put('/clients/:id', requireAuth, requirePermission('canManageClients')
   }
   if (patch.activeRetainer !== undefined) patch.activeRetainer = Boolean(patch.activeRetainer);
   const updatedAt = new Date().toISOString();
-  const updatedClient = getDataSourceMode() === 'postgres'
-    ? await postgresDatabaseRepository.updateClient(id, { ...patch, updatedAt })
-    : { ...db!.clients[idx], ...patch, updatedAt };
+  const updatedClient = { ...db!.clients[idx], ...patch, updatedAt };
   if (!updatedClient) { res.status(404).json({ success: false, error: 'Client not found.' }); return; }
-  if (getDataSourceMode() === 'json') { db!.clients[idx] = updatedClient; saveDatabase(db!); }
+  db!.clients[idx] = updatedClient;
+  saveDatabase(db!);
   recordAuditLog({
     action: 'CLIENT_UPDATED',
     actor: req.user!.username,
