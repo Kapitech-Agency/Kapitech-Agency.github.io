@@ -259,10 +259,12 @@ async function importCore(client: any, db: AnyRecord): Promise<Record<string, nu
 
   for (const row of arr(db, 'projects')) {
     await upsert(client, 'projects',
-      ['id','client_id','name','description','status','owner','budget','start_date','end_date','metadata','created_at','updated_at'],
+      ['id','client_id','name','description','status','owner','budget','start_date','end_date','currency','version','archived_at','metadata','created_at','updated_at'],
       [textValue(row.id),nullableText(row.clientId),textValue(row.name || row.title),nullableText(row.description),textValue(row.status),
        nullableText(row.owner),numberValue(row.budget),dateValue(row.startDate),dateValue(row.endDate),
-       metadata(row,['id','clientId','name','title','description','status','owner','budget','startDate','endDate','createdAt','updatedAt']),
+       textValue(row.currency,'IDR').toUpperCase().slice(0,3),numberValue(row.version,1),
+       timestampValue(row.archivedAt),
+       metadata(row,['id','clientId','name','title','description','status','owner','budget','startDate','endDate','currency','version','archivedAt','createdAt','updatedAt']),
        timestampValue(row.createdAt),timestampValue(row.updatedAt,row.createdAt)]);
   }
   counts.projects = arr(db,'projects').length;
@@ -289,11 +291,15 @@ async function importCore(client: any, db: AnyRecord): Promise<Record<string, nu
   counts.proposals = arr(db,'proposals').length;
 
   for (const row of arr(db, 'tasks')) {
+    const estimatedMinutes = row.estimatedMinutes != null
+      ? numberValue(row.estimatedMinutes)
+      : Math.round(Math.max(0, numberValue(row.estimatedHours)) * 60);
     await upsert(client, 'tasks',
-      ['id','project_id','title','description','status','priority','assignee_user_id','due_date','metadata','created_at','updated_at'],
+      ['id','project_id','title','description','status','priority','assignee_user_id','due_date','estimated_minutes','version','completed_at','archived_at','metadata','created_at','updated_at'],
       [textValue(row.id),nullableText(row.projectId),textValue(row.title),nullableText(row.description),textValue(row.status),
-       nullableText(row.priority),nullableText(row.assigneeUserId || row.assigneeId),dateValue(row.dueDate),
-       metadata(row,['id','projectId','title','description','status','priority','assigneeUserId','assigneeId','dueDate','createdAt','updatedAt']),
+       nullableText(row.priority),nullableText(row.assigneeUserId || row.assigneeId),dateValue(row.dueDate),estimatedMinutes,
+       numberValue(row.version,1),timestampValue(row.completedAt),timestampValue(row.archivedAt),
+       metadata(row,['id','projectId','title','description','status','priority','assigneeUserId','assigneeId','dueDate','estimatedHours','estimatedMinutes','version','completedAt','archivedAt','createdAt','updatedAt']),
        timestampValue(row.createdAt),timestampValue(row.updatedAt,row.createdAt)]);
   }
   counts.tasks = arr(db,'tasks').length;
