@@ -316,7 +316,7 @@ export class PostgresInvoiceRepository {
       const balanceDue = Math.max(0, Number(row.total || 0) - amountPaid);
       const status = balanceDue <= 0 ? 'paid' : 'partially_paid';
       const updated = await client.query<Row>(
-        'UPDATE invoices SET amount_paid=$2,balance_due=$3,status=$4,paid_date=CASE WHEN $3=0 THEN CURRENT_DATE ELSE paid_date END,version=version+1,updated_at=NOW() WHERE id=$1 RETURNING *',
+        'UPDATE invoices SET amount_paid=$2,balance_due=$3,status=$4,paid_date=CASE WHEN $3::numeric=0 THEN CURRENT_DATE ELSE paid_date END,version=version+1,updated_at=NOW() WHERE id=$1 RETURNING *',
         [id, amountPaid, balanceDue, status]
       );
 
