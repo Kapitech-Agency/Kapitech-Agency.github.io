@@ -44,6 +44,7 @@ export class PostgresTimeLogRepository {
   async create(log: Record<string, unknown>): Promise<Record<string, unknown>> {
     const durationMinutes = Number(log.durationMinutes ?? Number(log.hours || 0) * 60);
     const hours = Math.round((durationMinutes / 60) * 100) / 100;
+    if (!Number.isFinite(hours) || hours <= 0) throw new Error('Time log duration must be greater than zero.');
     const loggedAt = typeof log.date === 'string' && log.date ? `${log.date}T00:00:00.000Z` : new Date().toISOString();
     const projectId = typeof log.projectId === 'string' && log.projectId ? log.projectId : null;
     const taskId = typeof log.taskId === 'string' && log.taskId ? log.taskId : null;
