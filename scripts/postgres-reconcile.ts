@@ -185,7 +185,7 @@ async function pgCountsAndFinancials(): Promise<{ counts: Record<string, number>
       telegramChatId: notificationRow.telegram_chat_id,
       isEmailActive: notificationRow.is_email_active,
       isTelegramActive: notificationRow.is_telegram_active,
-      hasTelegramToken: notificationRow.has_telegram_token
+      hasTelegramToken: Boolean(process.env.KAPITECH_TELEGRAM_BOT_TOKEN)
     } : {}
   };
 }
@@ -223,7 +223,7 @@ async function main(): Promise<void> {
     telegramChatId: sourceNotification.telegramChatId || null,
     isEmailActive: Boolean(sourceNotification.isEmailActive),
     isTelegramActive: Boolean(sourceNotification.isTelegramActive),
-    hasTelegramToken: Boolean(sourceNotification.telegramBotToken)
+    hasTelegramToken: Boolean(process.env.KAPITECH_TELEGRAM_BOT_TOKEN)
   };
 
   const financials = {
