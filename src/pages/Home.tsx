@@ -40,6 +40,14 @@ export const Home = () => {
   const [previewProjects, setPreviewProjects] = useState(() => getCmsProjects().slice(0, 4));
 
   useEffect(() => {
+    void fetchServerCmsProjects().then((projects) => setPreviewProjects(projects.slice(0, 4)));
+    const handleCmsUpdate = () => setPreviewProjects(getCmsProjects().slice(0, 4));
+    window.addEventListener('kapitech_cms_updated', handleCmsUpdate);
+    return () => window.removeEventListener('kapitech_cms_updated', handleCmsUpdate);
+  }, []);
+  const [previewProjects, setPreviewProjects] = useState(() => getCmsProjects().slice(0, 4));
+
+  useEffect(() => {
     fetchServerCmsProjects().then((projects) => setPreviewProjects(projects.slice(0, 4)));
     const handleCmsUpdate = () => setPreviewProjects(getCmsProjects().slice(0, 4));
     window.addEventListener('kapitech_cms_updated', handleCmsUpdate);
