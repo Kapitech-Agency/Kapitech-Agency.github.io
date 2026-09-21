@@ -3634,14 +3634,16 @@ apiRouter.post('/approvals/:id/action', requireAuth, requirePermission('canAppro
   const item = (db.approvals || []).find(a => a.id === id);
   if (!item) { res.status(404).json({ success: false, error: 'Approval item not found.' }); return; }
   if (item.status !== 'Pending') { res.status(409).json({ success: false, error: 'This approval request has already been resolved.' }); return; }
+  if (!item.requesterId && item.requester) {
+    const legacyRequester = db.users.find(u => u.name === item.requester || u.username === item.requester);
+    if (legacyRequester) item.requesterId = legacyRequester.id;
+  }
+  item.status = action === 'Approve' ? 'Approved' : action === 'Reject' ? 'Rejected' : 'Changes Requested';
+  item.reviewedById = req.user!.id; item.reviewedBy = req.user!.name || req.user!.username; item.reviewedAt = new Date().toISOString(); item.reviewNotes = notes;
   if (item.requesterId && item.requesterId === req.user!.id) {
     recordAuditLog({ action: 'APPROVAL_SELF_ACTION_BLOCKED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Blocked self-approval action "${action}" on approval item "${item.title}".`, severity: 'warning' });
     res.status(403).json({ success: false, error: 'Maker-checker control: the requester cannot approve or reject their own request.' });
     return;
-  }
-  if (!item.requesterId && item.requester) {
-    const legacyRequester = db.users.find(u => u.name === item.requester || u.username === item.requester);
-    if (legacyRequester) item.requesterId = legacyRequester.id;
   }
   item.status = action === 'Approve' ? 'Approved' : action === 'Reject' ? 'Rejected' : 'Changes Requested';
   item.reviewedById = req.user!.id; item.reviewedBy = req.user!.name || req.user!.username; item.reviewedAt = new Date().toISOString(); item.reviewNotes = notes;
@@ -3649,7 +3651,6 @@ apiRouter.post('/approvals/:id/action', requireAuth, requirePermission('canAppro
   recordAuditLog({ action: `APPROVAL_${action.toUpperCase().replace(/ /g, '_')}`, actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `${action} decision executed for approval item "${item.title}".`, severity: action === 'Reject' ? 'warning' : 'info' });
   res.json({ success: true, approval: item });
 });
-
 // ----------------------------------------------------
 // 16. DOCUMENTS & ASSET VAULT
 // ----------------------------------------------------
