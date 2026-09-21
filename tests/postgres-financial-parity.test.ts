@@ -23,15 +23,15 @@ test('reconciliation compares PostgreSQL financial aggregates, not only row coun
 
   assert.match(source, /financialMismatches/);
   assert.match(source, /financialParity/);
-  assert.match(source, /SUM\(subtotal\)/);
-  assert.match(source, /SUM\(total\)/);
-  assert.match(source, /SUM\(amount_paid\)/);
-  assert.match(source, /SUM\(balance_due\)/);
-  assert.match(source, /SUM\(amount\)/);
-  assert.match(source, /SUM\(value\)/);
+  assert.match(source, /SUM\\(subtotal\\)/);
+  assert.match(source, /SUM\\(total\\)/);
+  assert.match(source, /SUM\\(amount_paid\\)/);
+  assert.match(source, /SUM\\(balance_due\\)/);
+  assert.match(source, /SUM\\(amount\\)/);
+  assert.match(source, /SUM\\(value\\)/);
 });
 
 test('financial parity participates in the reconciliation pass/fail gate', async () => {
   const source = await fs.readFile(path.join(root, 'scripts/postgres-reconcile.ts'), 'utf8');
-  assert.match(source, /countParity && financialParity/);
+  assert.match(source, /const reconciliationPass = checks\\.countParity && checks\\.financialParity/);
 });
