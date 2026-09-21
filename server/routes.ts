@@ -51,6 +51,7 @@ import { getDataSourceMode } from './data-source.ts';
 import { loadApplicationDatabase } from './application-data-repository.ts';
 import { postgresAuthRepository } from './postgres-repository.ts';
 import { postgresClientRepository } from './postgres-client-repository.ts';
+import { postgresProjectRepository, ProjectConcurrencyError } from './postgres-project-repository.ts';
 
 
 const ROLE_POLICIES: Record<string, {
@@ -1474,20 +1475,20 @@ apiRouter.delete('/clients/:id', requireAuth, requirePermission('canManageClient
 // 5. PROJECTS MANAGEMENT
 // ----------------------------------------------------
 
-apiRouter.get('/projects', requireAuth, requireAnyPermission('canManageProjects', 'canManageKanbanTasks'), (req: AuthenticatedRequest, res: Response): void => {
-  const db = getDatabase();
-  res.json({ success: true, projects: db.projects });
+apiRouter.get('/projects', requireAuth, requireAnyPermission('canManageProjects', 'canManageKanbanTasks'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  const projects = getDataSourceMode() === 'postgres' ? await postgresProjectRepository.list() : getDatabase().projects;
+  res.json({ success: true, projects });
 });
 
-apiRouter.post('/projects', requireAuth, requirePermission('canManageProjects'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.post('/projects', requireAuth, requirePermission('canManageProjects'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const projectData = req.body || {};
-  const db = getDatabase();
   const progressPercent = Math.min(100, Math.max(0, Number(projectData.progressPercent) || 0));
   const budget = Number(projectData.budget);
   if (!Number.isFinite(budget) || budget < 0 || budget > 100_000_000_000) {
     res.status(400).json({ success: false, error: 'Project budget must be a valid non-negative amount.' });
     return;
   }
+  const now = new Date().toISOString();
   const newProject = {
     id: `proj_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
     name: cleanText(projectData.name || projectData.title, 200),
@@ -1502,120 +1503,114 @@ apiRouter.post('/projects', requireAuth, requirePermission('canManageProjects'),
     health: ['Good','At Risk','Delayed','Blocked'].includes(String(projectData.health)) ? String(projectData.health) : 'Good',
     budget,
     progressPercent,
-    startDate: normalizeDate(projectData.startDate, new Date().toISOString().slice(0,10)),
+    startDate: normalizeDate(projectData.startDate, now.slice(0,10)),
     targetEndDate: normalizeDate(projectData.targetEndDate, new Date(Date.now() + 30*24*60*60*1000).toISOString().slice(0,10)),
     teamLead: cleanText(projectData.teamLead, 160),
-    teamMembers: Array.isArray(projectData.teamMembers) ? projectData.teamMembers.slice(0,50).map((v) => cleanText(v,160)) : [],
-    techStack: Array.isArray(projectData.techStack) ? projectData.techStack.slice(0,50).map((v) => cleanText(v,120)) : [],
+    teamMembers: Array.isArray(projectData.teamMembers) ? projectData.teamMembers.slice(0,50).map((v: unknown) => cleanText(v,160)) : [],
+    techStack: Array.isArray(projectData.techStack) ? projectData.techStack.slice(0,50).map((v: unknown) => cleanText(v,120)) : [],
     milestones: Array.isArray(projectData.milestones) ? projectData.milestones.slice(0,50) : [],
     tasks: Array.isArray(projectData.tasks) ? projectData.tasks.slice(0,200) : [],
     repositoryUrl: cleanOptionalUrl(projectData.repositoryUrl),
     figmaUrl: cleanOptionalUrl(projectData.figmaUrl),
     liveStagingUrl: cleanOptionalUrl(projectData.liveStagingUrl),
     notes: cleanText(projectData.notes, 3000),
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
+    createdAt: now,
+    updatedAt: now
   };
+  if (getDataSourceMode() === 'postgres') {
+    const project = await postgresProjectRepository.create(newProject as any);
+    recordAuditLog({ action: 'PROJECT_CREATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Created project "${newProject.name}".`, severity: 'info' });
+    res.json({ success: true, project });
+    return;
+  }
+  const db = getDatabase();
   db.projects.unshift(newProject);
   saveDatabase(db);
   res.json({ success: true, project: newProject });
 });
 
-apiRouter.put('/projects/:id', requireAuth, requirePermission('canManageProjects'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.put('/projects/:id', requireAuth, requirePermission('canManageProjects'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
   const updates = req.body || {};
-  const db = getDatabase();
-  const idx = db.projects.findIndex(p => p.id === id);
-  if (idx === -1) {
-    res.status(404).json({ success: false, error: 'Project not found.' });
+  if (getDataSourceMode() === 'postgres') {
+    const patch = pickFields(updates, ['title','name','client','clientName','clientCompany','clientEmail','serviceCategory','status','health','budget','progressPercent','startDate','targetEndDate','teamLead','teamMembers','techStack','repositoryUrl','figmaUrl','liveStagingUrl','notes','tasks','milestones','crmLeadId','updatedAt']);
+    if (patch.clientEmail !== undefined) {
+      patch.clientEmail = cleanText(patch.clientEmail, 254).toLowerCase();
+      if (patch.clientEmail && !isValidEmail(patch.clientEmail)) { res.status(400).json({ success: false, error: 'Invalid project client email address.' }); return; }
+    }
+    if (patch.status !== undefined && !['planning','in_progress','review','completed','on_hold'].includes(String(patch.status))) { res.status(400).json({ success: false, error: 'Invalid project status.' }); return; }
+    if (patch.health !== undefined && !['Good','At Risk','Delayed','Blocked'].includes(String(patch.health))) { res.status(400).json({ success: false, error: 'Invalid project health state.' }); return; }
+    if (patch.budget !== undefined) {
+      const numeric = normalizeNumber(patch.budget, 0, MAX_MONEY);
+      if (numeric === null) { res.status(400).json({ success: false, error: 'Invalid project budget.' }); return; }
+      patch.budget = numeric;
+    }
+    if (patch.progressPercent !== undefined) {
+      const progress = normalizeNumber(patch.progressPercent, 0, 100);
+      if (progress === null) { res.status(400).json({ success: false, error: 'Invalid project progress.' }); return; }
+      patch.progressPercent = progress;
+    }
+    for (const key of ['startDate','targetEndDate'] as const) {
+      if (patch[key] !== undefined && !isValidDate(patch[key])) { res.status(400).json({ success: false, error: `Invalid project date for ${key}.` }); return; }
+    }
+    for (const key of ['repositoryUrl','figmaUrl','liveStagingUrl'] as const) {
+      if (patch[key] !== undefined) patch[key] = cleanOptionalUrl(patch[key]);
+    }
+    if (patch.teamMembers !== undefined) patch.teamMembers = normalizeStringArray(patch.teamMembers, 50, 160);
+    if (patch.techStack !== undefined) patch.techStack = normalizeStringArray(patch.techStack, 50, 120);
+    if (patch.tasks !== undefined) patch.tasks = Array.isArray(patch.tasks) ? patch.tasks.slice(0, 200) : [];
+    if (patch.milestones !== undefined) patch.milestones = Array.isArray(patch.milestones) ? patch.milestones.slice(0, 50) : [];
+    try {
+      const project = await postgresProjectRepository.update(id, patch as any);
+      if (!project) { res.status(404).json({ success: false, error: 'Project not found.' }); return; }
+      recordAuditLog({ action: 'PROJECT_UPDATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Updated project ${id}.`, severity: 'info' });
+      res.json({ success: true, project });
+    } catch (error) {
+      if (error instanceof ProjectConcurrencyError) { res.status(409).json({ success: false, error: error.message, code: 'PROJECT_CONFLICT' }); return; }
+      throw error;
+    }
     return;
   }
+  const db = getDatabase();
+  const idx = db.projects.findIndex(p => p.id === id);
+  if (idx === -1) { res.status(404).json({ success: false, error: 'Project not found.' }); return; }
   const patch = pickFields(updates || {}, ['title', 'name', 'client', 'clientName', 'clientCompany', 'clientEmail', 'serviceCategory', 'status', 'health', 'budget', 'progressPercent', 'startDate', 'targetEndDate', 'teamLead', 'teamMembers', 'techStack', 'repositoryUrl', 'figmaUrl', 'liveStagingUrl', 'notes', 'tasks']);
   for (const key of ['title','name','client','clientName','clientCompany','serviceCategory','teamLead','notes'] as const) {
     if (patch[key] !== undefined) patch[key] = cleanText(patch[key], key === 'notes' ? 3000 : 200);
   }
-  if (patch.clientEmail !== undefined) {
-    patch.clientEmail = cleanText(patch.clientEmail, 254).toLowerCase();
-    if (patch.clientEmail && !isValidEmail(patch.clientEmail)) {
-      res.status(400).json({ success: false, error: 'Invalid project client email address.' });
-      return;
-    }
-  }
-  if (patch.status !== undefined && !['planning','in_progress','review','completed','on_hold'].includes(String(patch.status))) {
-    res.status(400).json({ success: false, error: 'Invalid project status.' });
-    return;
-  }
-  if (patch.health !== undefined && !['Good','At Risk','Delayed','Blocked'].includes(String(patch.health))) {
-    res.status(400).json({ success: false, error: 'Invalid project health state.' });
-    return;
-  }
-  for (const key of ['budget'] as const) {
-    if (patch[key] !== undefined) {
-      const numeric = normalizeNumber(patch[key], 0, MAX_MONEY);
-      if (numeric === null) {
-        res.status(400).json({ success: false, error: 'Invalid project budget.' });
-        return;
-      }
-      patch[key] = numeric;
-    }
-  }
-  if (patch.progressPercent !== undefined) {
-    const progress = normalizeNumber(patch.progressPercent, 0, 100);
-    if (progress === null) {
-      res.status(400).json({ success: false, error: 'Invalid project progress.' });
-      return;
-    }
-    patch.progressPercent = progress;
-  }
-  for (const key of ['startDate','targetEndDate'] as const) {
-    if (patch[key] !== undefined && !isValidDate(patch[key])) {
-      res.status(400).json({ success: false, error: `Invalid project date for ${key}.` });
-      return;
-    }
-  }
-  for (const key of ['repositoryUrl','figmaUrl','liveStagingUrl'] as const) {
-    if (patch[key] !== undefined) patch[key] = cleanOptionalUrl(patch[key]);
-  }
+  if (patch.clientEmail !== undefined) { patch.clientEmail = cleanText(patch.clientEmail, 254).toLowerCase(); if (patch.clientEmail && !isValidEmail(patch.clientEmail)) { res.status(400).json({ success: false, error: 'Invalid project client email address.' }); return; } }
+  if (patch.status !== undefined && !['planning','in_progress','review','completed','on_hold'].includes(String(patch.status))) { res.status(400).json({ success: false, error: 'Invalid project status.' }); return; }
+  if (patch.health !== undefined && !['Good','At Risk','Delayed','Blocked'].includes(String(patch.health))) { res.status(400).json({ success: false, error: 'Invalid project health state.' }); return; }
+  if (patch.budget !== undefined) { const numeric = normalizeNumber(patch.budget, 0, MAX_MONEY); if (numeric === null) { res.status(400).json({ success: false, error: 'Invalid project budget.' }); return; } patch.budget = numeric; }
+  if (patch.progressPercent !== undefined) { const progress = normalizeNumber(patch.progressPercent, 0, 100); if (progress === null) { res.status(400).json({ success: false, error: 'Invalid project progress.' }); return; } patch.progressPercent = progress; }
+  for (const key of ['startDate','targetEndDate'] as const) { if (patch[key] !== undefined && !isValidDate(patch[key])) { res.status(400).json({ success: false, error: `Invalid project date for ${key}.` }); return; } }
+  for (const key of ['repositoryUrl','figmaUrl','liveStagingUrl'] as const) if (patch[key] !== undefined) patch[key] = cleanOptionalUrl(patch[key]);
   if (patch.teamMembers !== undefined) patch.teamMembers = normalizeStringArray(patch.teamMembers, 50, 160);
   if (patch.techStack !== undefined) patch.techStack = normalizeStringArray(patch.techStack, 50, 120);
   if (patch.tasks !== undefined) patch.tasks = Array.isArray(patch.tasks) ? patch.tasks.slice(0, 200) : [];
   db.projects[idx] = { ...db.projects[idx], ...patch, updatedAt: new Date().toISOString() };
   saveDatabase(db);
-  recordAuditLog({
-    action: 'PROJECT_UPDATED',
-    actor: req.user!.username,
-    actorRole: req.user!.role,
-    ip: req.ip,
-    userAgent: req.headers['user-agent'] as string,
-    details: `Updated project ${id}.`,
-    severity: 'info'
-  });
+  recordAuditLog({ action: 'PROJECT_UPDATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Updated project ${id}.`, severity: 'info' });
   res.json({ success: true, project: db.projects[idx] });
 });
 
-apiRouter.delete('/projects/:id', requireAuth, requirePermission('canManageProjects'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.delete('/projects/:id', requireAuth, requirePermission('canManageProjects'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
-  const db = getDatabase();
-  const project = db.projects.find((item: any) => item.id === id);
-
-  if (!project) {
-    res.status(404).json({ success: false, error: 'Project not found.' });
+  if (getDataSourceMode() === 'postgres') {
+    const project = await postgresProjectRepository.findById(id);
+    if (!project) { res.status(404).json({ success: false, error: 'Project not found.' }); return; }
+    const deleted = await postgresProjectRepository.delete(id);
+    if (!deleted) { res.status(404).json({ success: false, error: 'Project not found.' }); return; }
+    recordAuditLog({ action: 'PROJECT_DELETED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Deleted project "${project.name}".`, severity: 'warning' });
+    res.json({ success: true, message: 'Project removed.' });
     return;
   }
-
+  const db = getDatabase();
+  const project = db.projects.find((item: any) => item.id === id);
+  if (!project) { res.status(404).json({ success: false, error: 'Project not found.' }); return; }
   db.projects = db.projects.filter(p => p.id !== id);
   saveDatabase(db);
-
-  recordAuditLog({
-    action: 'PROJECT_DELETED',
-    actor: req.user!.username,
-    actorRole: req.user!.role,
-    ip: req.ip,
-    userAgent: req.headers['user-agent'] as string,
-    details: `Deleted project "${project.name || project.title || id}".`,
-    severity: 'warning'
-  });
-
+  recordAuditLog({ action: 'PROJECT_DELETED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Deleted project "${project.name || project.title || id}".`, severity: 'warning' });
   res.json({ success: true, message: 'Project removed.' });
 });
 
