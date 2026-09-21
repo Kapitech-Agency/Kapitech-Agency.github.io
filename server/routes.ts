@@ -62,6 +62,7 @@ import { postgresInvoiceRepository } from './postgres-invoice-repository.ts';
 import { postgresExpenseRepository, ExpenseImmutableError, ExpenseNotFoundError, ExpenseVersionConflictError, ExpenseProjectNotFoundError } from './postgres-expense-repository.ts';
 import { postgresApprovalRepository } from './postgres-approval-repository.ts';
 import { postgresNotificationRepository } from './postgres-notification-repository.ts';
+import { postgresDocumentRepository } from './postgres-document-repository.ts';
 
 
 const ROLE_POLICIES: Record<string, {
@@ -3424,11 +3425,7 @@ function canAccessDocument(req: AuthenticatedRequest, document: any): boolean {
   return ownerUserId === req.user.id || accessUserIds.includes(req.user.id);
 }
 
-function requireDocumentObjectAccess(req: AuthenticatedRequest, res: Response): boolean {
-  const id = req.params.id;
-  if (!id) return true;
-
-  const document = (getDatabase().documents || []).find((item: any) => item.id === id);
+function requireDocumentObjectAccess(req: AuthenticatedRequest, res: Response, document?: any): boolean {
   if (!document) return true;
 
   if (!canAccessDocument(req, document)) {
@@ -3438,7 +3435,7 @@ function requireDocumentObjectAccess(req: AuthenticatedRequest, res: Response): 
       actorRole: req.user?.role || 'visitor',
       ip: req.ip,
       userAgent: req.headers['user-agent'] as string,
-      details: `Object-level document access denied for "${document.name || id}".`,
+      details: `Object-level document access denied for "${document.name || req.params.id}".`,
       severity: 'warning'
     });
     res.status(403).json({ success: false, error: 'Document access denied.' });
@@ -3517,17 +3514,19 @@ const documentMutationMiddleware = requireAnyPermission(
   'canAccessServerAndApi'
 );
 
-apiRouter.get('/documents', requireAuth, documentAccessMiddleware, (req: AuthenticatedRequest, res: Response): void => {
-  const db = getDatabase();
+apiRouter.get('/documents', requireAuth, documentAccessMiddleware, async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  const documents = getDataSourceMode() === 'postgres'
+    ? await postgresDocumentRepository.list()
+    : getDatabase().documents || [];
   res.json({
     success: true,
-    documents: (db.documents || [])
+    documents: documents
       .filter((document: any) => canAccessDocument(req, document))
       .map(publicDocument)
   });
 });
 
-apiRouter.post('/documents', requireAuth, documentMutationMiddleware, (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.post('/documents', requireAuth, documentMutationMiddleware, async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const data = req.body || {};
   const sourceType = data.url ? 'external_link' : 'private_file';
   const name = cleanText(data.name || 'Document', 240);
@@ -3546,7 +3545,7 @@ apiRouter.post('/documents', requireAuth, documentMutationMiddleware, (req: Auth
     return;
   }
 
-  const db = getDatabase();
+  const now = new Date().toISOString();
   const newDoc: any = {
     id: `doc_${Date.now()}_${crypto.randomBytes(8).toString('hex')}`,
     name,
@@ -3563,20 +3562,24 @@ apiRouter.post('/documents', requireAuth, documentMutationMiddleware, (req: Auth
     accessUserIds: [req.user!.id],
     sourceType,
     status: sourceType === 'private_file' ? 'pending_upload' : 'external_link',
-    uploadedDate: new Date().toISOString().split('T')[0],
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
+    uploadedDate: now.split('T')[0],
+    createdAt: now,
+    updatedAt: now
   };
 
-  if (sourceType === 'private_file') {
-    newDoc.storageKey = crypto.randomBytes(32).toString('hex');
-  } else {
-    newDoc.url = cleanOptionalUrl(data.url);
-  }
+  if (sourceType === 'private_file') newDoc.storageKey = crypto.randomBytes(32).toString('hex');
+  else newDoc.url = cleanOptionalUrl(data.url);
 
-  if (!db.documents) db.documents = [];
-  db.documents.unshift(newDoc);
-  saveDatabase(db);
+  let created = newDoc;
+  if (getDataSourceMode() === 'postgres') {
+    created = await postgresDocumentRepository.create(newDoc);
+  } else {
+    const db = getDatabase();
+    if (!db.documents) db.documents = [];
+    db.documents.unshift(newDoc);
+    db.documents = db.documents.slice(0, 500);
+    saveDatabase(db);
+  }
 
   recordAuditLog({
     action: 'DOCUMENT_CREATED',
@@ -3588,19 +3591,20 @@ apiRouter.post('/documents', requireAuth, documentMutationMiddleware, (req: Auth
     severity: 'info'
   });
 
-  res.status(201).json({ success: true, document: publicDocument(newDoc) });
+  res.status(201).json({ success: true, document: publicDocument(created) });
 });
 
-apiRouter.put('/documents/:id/content', requireAuth, documentMutationMiddleware, (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.put('/documents/:id/content', requireAuth, documentMutationMiddleware, async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
-  const db = getDatabase();
-  const document = (db.documents || []).find((item: any) => item.id === id);
+  const document = getDataSourceMode() === 'postgres'
+    ? await postgresDocumentRepository.findById(id)
+    : (getDatabase().documents || []).find((item: any) => item.id === id);
 
   if (!document) {
     res.status(404).json({ success: false, error: 'Document not found.' });
     return;
   }
-  if (!requireDocumentObjectAccess(req, res)) return;
+  if (!requireDocumentObjectAccess(req, res, document)) return;
 
   if (document.sourceType !== 'private_file' || !document.storageKey) {
     res.status(409).json({ success: false, error: 'This document is an external link and has no private file content.' });
@@ -3637,14 +3641,31 @@ apiRouter.put('/documents/:id/content', requireAuth, documentMutationMiddleware,
     if (fs.existsSync(targetPath)) fs.unlinkSync(targetPath);
     fs.renameSync(tempPath, targetPath);
 
-    document.mimeType = mimeType;
-    document.type = mimeType.split('/').pop()?.toUpperCase() || document.type || 'FILE';
-    document.sizeBytes = body.length;
-    document.size = humanFileSize(body.length);
-    document.status = 'ready';
-    document.updatedAt = new Date().toISOString();
-    document.uploadedAt = document.updatedAt;
-    saveDatabase(db);
+    const patch = {
+      mimeType,
+      type: mimeType.split('/').pop()?.toUpperCase() || document.type || 'FILE',
+      sizeBytes: body.length,
+      size: humanFileSize(body.length),
+      status: 'ready',
+      updatedAt: new Date().toISOString(),
+      uploadedAt: new Date().toISOString()
+    };
+    const updated = getDataSourceMode() === 'postgres'
+      ? await postgresDocumentRepository.update(id, patch)
+      : (() => {
+          const db = getDatabase();
+          const index = (db.documents || []).findIndex((item: any) => item.id === id);
+          if (index < 0) return null;
+          db.documents[index] = { ...db.documents[index], ...patch };
+          saveDatabase(db);
+          return db.documents[index];
+        })();
+
+    if (!updated) {
+      try { if (fs.existsSync(targetPath)) fs.unlinkSync(targetPath); } catch {}
+      res.status(404).json({ success: false, error: 'Document not found.' });
+      return;
+    }
 
     recordAuditLog({
       action: 'DOCUMENT_UPLOADED',
@@ -3656,7 +3677,7 @@ apiRouter.put('/documents/:id/content', requireAuth, documentMutationMiddleware,
       severity: 'info'
     });
 
-    res.json({ success: true, document: publicDocument(document) });
+    res.json({ success: true, document: publicDocument(updated) });
   } catch (error) {
     try { if (fs.existsSync(tempPath)) fs.unlinkSync(tempPath); } catch {}
     console.error('[Documents] Private upload failed:', error);
@@ -3664,16 +3685,17 @@ apiRouter.put('/documents/:id/content', requireAuth, documentMutationMiddleware,
   }
 });
 
-apiRouter.get('/documents/:id/content', requireAuth, documentAccessMiddleware, (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.get('/documents/:id/content', requireAuth, documentAccessMiddleware, async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
-  const db = getDatabase();
-  const document = (db.documents || []).find((item: any) => item.id === id);
+  const document = getDataSourceMode() === 'postgres'
+    ? await postgresDocumentRepository.findById(id)
+    : (getDatabase().documents || []).find((item: any) => item.id === id);
 
   if (!document) {
     res.status(404).json({ success: false, error: 'Document not found.' });
     return;
   }
-  if (!requireDocumentObjectAccess(req, res)) return;
+  if (!requireDocumentObjectAccess(req, res, document)) return;
 
   if (document.sourceType !== 'private_file' || document.status !== 'ready') {
     res.status(409).json({ success: false, error: 'Private document content is not available.' });
@@ -3711,10 +3733,11 @@ apiRouter.get('/documents/:id/content', requireAuth, documentAccessMiddleware, (
   }
 });
 
-apiRouter.delete('/documents/:id', requireAuth, documentMutationMiddleware, (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.delete('/documents/:id', requireAuth, documentMutationMiddleware, async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
-  const db = getDatabase();
-  const document = (db.documents || []).find((item: any) => item.id === id);
+  const document = getDataSourceMode() === 'postgres'
+    ? await postgresDocumentRepository.findById(id)
+    : (getDatabase().documents || []).find((item: any) => item.id === id);
 
   if (!document) {
     res.status(404).json({ success: false, error: 'Document not found.' });
@@ -3722,7 +3745,7 @@ apiRouter.delete('/documents/:id', requireAuth, documentMutationMiddleware, (req
   }
 
   const filePath = privateDocumentPath(document);
-  if (!requireDocumentObjectAccess(req, res)) return;
+  if (!requireDocumentObjectAccess(req, res, document)) return;
 
   if (filePath && fs.existsSync(filePath)) {
     try { fs.unlinkSync(filePath); } catch (error) {
@@ -3732,8 +3755,17 @@ apiRouter.delete('/documents/:id', requireAuth, documentMutationMiddleware, (req
     }
   }
 
-  db.documents = (db.documents || []).filter(d => d.id !== id);
-  saveDatabase(db);
+  if (getDataSourceMode() === 'postgres') {
+    const deleted = await postgresDocumentRepository.delete(id);
+    if (!deleted) {
+      res.status(404).json({ success: false, error: 'Document not found.' });
+      return;
+    }
+  } else {
+    const db = getDatabase();
+    db.documents = (db.documents || []).filter(d => d.id !== id);
+    saveDatabase(db);
+  }
 
   recordAuditLog({
     action: 'DOCUMENT_DELETED',
@@ -3747,7 +3779,6 @@ apiRouter.delete('/documents/:id', requireAuth, documentMutationMiddleware, (req
 
   res.json({ success: true, message: 'Document removed.' });
 });
-
 // ----------------------------------------------------
 // 17. SYSTEM BACKUP CONTROLS
 // ----------------------------------------------------
