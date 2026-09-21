@@ -98,8 +98,14 @@ export class PostgresCrmDealRepository {
   }
 
   async delete(id: string): Promise<boolean> {
-    const result = await getPostgresPool().query('DELETE FROM crm_deals WHERE id = $1', [id]);
-    return result.rowCount === 1;
+    return withPostgresTransaction(async client => {
+      const current = await client.query('SELECT id FROM crm_deals WHERE id = $1 FOR UPDATE', [id]);
+      if (!current.rows[0]) return false;
+      const references = await client.query('SELECT COUNT(*)::int AS count FROM proposals WHERE deal_id = $1', [id]);
+      if (Number(references.rows[0]?.count || 0) > 0) throw new Error('DEAL_HAS_PROPOSALS');
+      const result = await client.query('DELETE FROM crm_deals WHERE id = $1', [id]);
+      return result.rowCount === 1;
+    });
   }
 
   async convertLead(lead: any, client: any, deal: any, clientAlreadyExists = false): Promise<{ client: any; deal: any }> {
