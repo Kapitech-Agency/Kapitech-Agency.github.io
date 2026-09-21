@@ -54,3 +54,68 @@ test('PostgreSQL security controls can consume a live rate-limit bucket', async 
     await closePostgresPool();
   }
 });
+
+
+test('PostgreSQL invoice transaction preserves line items and recalculates partial payment state', async t => {
+  if (!configured) { t.skip('KAPITECH_POSTGRES_URL is not configured'); return; }
+
+  const repository = new (await import('../server/postgres-invoice-repository.ts')).PostgresInvoiceRepository();
+  const now = new Date().toISOString();
+  const invoiceId = 'ci-invoice-' + Date.now();
+  const paymentId = 'ci-payment-' + Date.now();
+
+  try {
+    const created = await repository.create({
+      id: invoiceId,
+      invoiceNumber: 'CI-' + Date.now(),
+      subtotal: 1_000_000,
+      discountPercent: 0,
+      discountAmount: 0,
+      taxPercent: 0,
+      taxAmount: 0,
+      total: 1_000_000,
+      currency: 'IDR',
+      status: 'draft',
+      issueDate: now.slice(0, 10),
+      dueDate: now.slice(0, 10),
+      notes: 'CI transaction test',
+      paymentTerms: '30 days',
+      items: [
+        {
+          id: paymentId + '-item',
+          description: 'Integration test item',
+          quantity: 1,
+          unitPrice: 1_000_000,
+          amount: 1_000_000
+        }
+      ],
+      createdAt: now,
+      updatedAt: now
+    });
+
+    assert.equal(created.id, invoiceId);
+    assert.equal(created.items.length, 1);
+    assert.equal(created.items[0].amount, 1_000_000);
+    assert.equal(created.amountPaid, 0);
+    assert.equal(created.balanceDue, 1_000_000);
+
+    const paid = await repository.recordPayment(invoiceId, {
+      id: paymentId,
+      amount: 400_000,
+      date: now.slice(0, 10),
+      method: 'bank_transfer',
+      reference: 'CI-PAYMENT',
+      recordedBy: 'ci',
+      userId: null
+    });
+
+    assert.equal(paid?.amountPaid, 400_000);
+    assert.equal(paid?.balanceDue, 600_000);
+    assert.equal(paid?.status, 'partially_paid');
+    assert.equal(paid?.payments.length, 1);
+    assert.equal(paid?.payments[0].amount, 400_000);
+  } finally {
+    await getPostgresPool().query('DELETE FROM invoices WHERE id = $1', [invoiceId]);
+    await closePostgresPool();
+  }
+});
