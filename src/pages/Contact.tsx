@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Mail, Phone, MapPin, Clock, CheckCircle2, ArrowUpRight, Send, Globe, MessageSquare, ChevronDown, ChevronUp, AlertCircle } from 'lucide-react';
 import { AtmosphericBackground } from '../components/ui/AtmosphericBackground';
 import { useLanguage } from '../lib/LanguageContext';
 import { sanitizeInput, isValidEmail, isValidPhone, clampLength } from '../lib/security';
 import { submitToInbox } from '../lib/submissions';
+import { fetchServerCmsServices } from '../lib/cmsStore';
 
 export const Contact = () => {
   const { t, language } = useLanguage();
@@ -21,6 +22,16 @@ export const Contact = () => {
   const [formErrors, setFormErrors] = useState<{ [key: string]: string }>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [cmsServiceOptions, setCmsServiceOptions] = useState<string[]>([]);
+
+  useEffect(() => {
+    void fetchServerCmsServices().then((services) => {
+      const titles = services
+        .map((service) => service.title?.trim())
+        .filter((title): title is string => Boolean(title));
+      setCmsServiceOptions(Array.from(new Set(titles)));
+    });
+  }, []);
 
   const serviceOptionsEn = [
     // Branding
@@ -72,7 +83,11 @@ export const Contact = () => {
     'Solusi Strategis: Team Extension (Talenta Dedikasi)'
   ];
 
-  const serviceOptions = language === 'id' ? serviceOptionsId : serviceOptionsEn;
+  const staticServiceOptions = language === 'id' ? serviceOptionsId : serviceOptionsEn;
+  const serviceOptions = useMemo(
+    () => Array.from(new Set([...cmsServiceOptions, ...staticServiceOptions])),
+    [cmsServiceOptions, staticServiceOptions]
+  );
 
   const budgetOptionsEn = [
     '< $3,000 (IDR 40M - 50M)',
