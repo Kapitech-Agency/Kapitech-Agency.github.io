@@ -7,6 +7,7 @@ import React, { lazy, Suspense, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'motion/react';
 import { LanguageProvider } from './lib/LanguageContext';
+import { api } from './lib/apiClient';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 import { FloatingContact } from './components/FloatingContact';
@@ -139,6 +140,58 @@ const AnimatedRoutes = () => {
 function AppShell() {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith('/admin') || location.pathname.startsWith('/ams');
+  const [maintenanceMode, setMaintenanceMode] = React.useState(false);
+  const [siteMeta, setSiteMeta] = React.useState<{ siteTitle?: string; siteDescription?: string } | null>(null);
+
+  useEffect(() => {
+    if (isAdminRoute) return;
+    let mounted = true;
+
+    void api.cms.getPublicSettings().then((res) => {
+      if (!mounted || !res.success || !res.data?.settings) return;
+      const settings = res.data.settings;
+      setMaintenanceMode(Boolean(settings.maintenanceMode));
+      setSiteMeta({
+        siteTitle: settings.siteTitle,
+        siteDescription: settings.siteDescription
+      });
+      if (settings.siteTitle) document.title = settings.siteTitle;
+      if (settings.siteDescription) {
+        let meta = document.querySelector('meta[name="description"]') as HTMLMetaElement | null;
+        if (!meta) {
+          meta = document.createElement('meta');
+          meta.name = 'description';
+          document.head.appendChild(meta);
+        }
+        meta.content = settings.siteDescription;
+      }
+    }).catch(() => {});
+
+    return () => { mounted = false; };
+  }, [isAdminRoute]);
+
+  if (!isAdminRoute && maintenanceMode) {
+    return (
+      <div className="min-h-screen bg-[#0A0A0A] text-white flex items-center justify-center px-6">
+        <div className="w-full max-w-xl text-center">
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-brand-red/10 border border-brand-red/30 mb-6">
+            <span className="w-3 h-3 rounded-full bg-brand-red animate-pulse" />
+          </div>
+          <p className="text-[11px] font-mono uppercase tracking-[0.22em] text-brand-red mb-3">
+            Kapitech Agency
+          </p>
+          <h1 className="text-3xl sm:text-5xl font-display font-bold tracking-tight mb-4">
+            Website maintenance
+          </h1>
+          <p className="text-sm sm:text-base text-[#8A909D] leading-relaxed">
+            {siteMeta?.siteTitle
+              ? `${siteMeta.siteTitle} is temporarily unavailable while we perform scheduled maintenance.`
+              : 'The website is temporarily unavailable while we perform scheduled maintenance.'}
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="relative z-10 text-white selection:bg-brand-red selection:text-white min-h-screen flex flex-col">
