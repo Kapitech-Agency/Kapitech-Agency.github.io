@@ -288,6 +288,15 @@ export const api = {
 
   // CMS
   cms: {
+    getPublicSettings: () => apiRequest<{
+      success: boolean;
+      settings: {
+        siteTitle: string;
+        siteDescription: string;
+        defaultLanguage: 'id' | 'en';
+        maintenanceMode: boolean;
+      };
+    }>('/api/cms/public-settings'),
     getServices: () => apiRequest<{ success: boolean; services: any[] }>('/api/cms/services'),
     createService: (srv: any) =>
       apiRequest('/api/cms/services', {
