@@ -108,7 +108,7 @@ function verifyPrivateDocuments(db: any): { valid: boolean; checked: number; mis
       continue;
     }
     try {
-      const stat = fs.statSync(path.join(dir, String(document.storageKey)));
+      const stat = fs.statSync(path.join(dir, String(document.storageKey) + '.enc'));
       if (!stat.isFile()) missing.push(String(document.id || document.storageKey));
       else if (document.sizeBytes != null && Number(document.sizeBytes) !== stat.size) malformed.push(String(document.id || document.storageKey));
     } catch {
