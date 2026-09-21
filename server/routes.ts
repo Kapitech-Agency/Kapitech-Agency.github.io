@@ -3888,10 +3888,11 @@ apiRouter.get('/system/backups', requireAuth, backupAccessMiddleware, (req: Auth
   }
 });
 
-apiRouter.get('/system/security/status', requireAuth, requireAnyPermission('canViewSecurityAuditLogs', 'canAccessServerAndApi'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.get('/system/security/status', requireAuth, requireAnyPermission('canViewSecurityAuditLogs', 'canAccessServerAndApi'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   try {
-    const db = getDatabase();
-    const users = Array.isArray(db.users) ? db.users : [];
+    const users = getDataSourceMode() === 'postgres'
+      ? await postgresAuthRepository.listUsers()
+      : (Array.isArray(getDatabase().users) ? getDatabase().users : []);
     const activeUserCount = users.filter(user => user.status === 'active').length;
     const mfaEnabledCount = users.filter(user => user.status === 'active' && user.mfaEnabled).length;
     const backups = listDatabaseBackups();
@@ -3987,146 +3988,160 @@ apiRouter.post('/notifications/mark-all-read', requireAuth, (req: AuthenticatedR
 // 18. UNIFIED GLOBAL SEARCH (PART 6)
 // ----------------------------------------------------
 
-apiRouter.get('/search', requireAuth, (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.get('/search', requireAuth, async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const q = String(req.query.q || '').trim().toLowerCase();
   if (!q) {
     res.json({ success: true, results: [] });
     return;
   }
 
-  const db = getDatabase();
+  const usePostgres = getDataSourceMode() === 'postgres';
+  const isMaster = req.user!.stakeholderType === 'Master';
+  const canCrm = isMaster || Boolean(req.user!.permissions.canManageCrm);
+  const canClients = isMaster || Boolean(req.user!.permissions.canManageClients);
+  const canProjects = isMaster || Boolean(req.user!.permissions.canManageProjects);
+  const canFinance = isMaster || Boolean(req.user!.permissions.canViewFinancials);
+  const canProposals = isMaster || Boolean(
+    req.user!.permissions.canManageCrm ||
+    req.user!.permissions.canManageInvoices ||
+    req.user!.permissions.canApproveBudgets
+  );
+
+  const db = usePostgres ? undefined : getDatabase();
+  const [leads, deals, clients, projects, invoices, proposals] = usePostgres
+    ? await Promise.all([
+        canCrm ? postgresLeadRepository.list() : Promise.resolve([]),
+        canCrm ? postgresCrmDealRepository.list() : Promise.resolve([]),
+        canClients ? postgresClientRepository.list() : Promise.resolve([]),
+        canProjects ? postgresProjectRepository.list() : Promise.resolve([]),
+        canFinance ? postgresInvoiceRepository.list() : Promise.resolve([]),
+        canProposals ? postgresProposalRepository.list() : Promise.resolve([])
+      ])
+    : [
+        canCrm ? (db!.leads || []) : [],
+        canCrm ? (db!.crmDeals || []) : [],
+        canClients ? (db!.clients || []) : [],
+        canProjects ? (db!.projects || []) : [],
+        canFinance ? (db!.invoices || []) : [],
+        canProposals ? (db!.proposals || []) : []
+      ];
+
   const results: any[] = [];
 
-  // Leads
-  if (req.user!.permissions.canManageCrm || req.user!.stakeholderType === 'Master') {
-    for (const lead of db.leads || []) {
-      if (
-        (lead.fullName && lead.fullName.toLowerCase().includes(q)) ||
-        (lead.company && lead.company.toLowerCase().includes(q)) ||
-        (lead.email && lead.email.toLowerCase().includes(q))
-      ) {
-        results.push({
-          type: 'Lead',
-          id: lead.id,
-          name: `${lead.fullName} (${lead.company || 'Inquiry'})`,
-          status: lead.status,
-          owner: lead.email,
-          lastUpdated: lead.updatedAt || lead.createdAt,
-          url: '/admin/inbox'
-        });
-      }
+  for (const lead of leads as any[]) {
+    if (
+      (lead.fullName && String(lead.fullName).toLowerCase().includes(q)) ||
+      (lead.company && String(lead.company).toLowerCase().includes(q)) ||
+      (lead.email && String(lead.email).toLowerCase().includes(q))
+    ) {
+      results.push({
+        type: 'Lead',
+        id: lead.id,
+        name: `${lead.fullName} (${lead.company || 'Inquiry'})`,
+        status: lead.status,
+        owner: lead.email,
+        lastUpdated: lead.updatedAt || lead.createdAt,
+        url: '/admin/inbox'
+      });
     }
   }
 
-  // Deals
-  if (req.user!.permissions.canManageCrm || req.user!.stakeholderType === 'Master') {
-    for (const deal of db.crmDeals || []) {
-      if (
-        (deal.title && deal.title.toLowerCase().includes(q)) ||
-        (deal.company && deal.company.toLowerCase().includes(q)) ||
-        (deal.clientName && deal.clientName.toLowerCase().includes(q))
-      ) {
-        results.push({
-          type: 'Deal',
-          id: deal.id,
-          name: deal.title || deal.company,
-          status: deal.stage,
-          owner: deal.owner || 'Unassigned',
-          lastUpdated: deal.updatedAt || deal.createdAt,
-          url: '/admin/crm'
-        });
-      }
+  for (const deal of deals as any[]) {
+    if (
+      (deal.title && String(deal.title).toLowerCase().includes(q)) ||
+      (deal.company && String(deal.company).toLowerCase().includes(q)) ||
+      (deal.clientName && String(deal.clientName).toLowerCase().includes(q))
+    ) {
+      results.push({
+        type: 'Deal',
+        id: deal.id,
+        name: deal.title || deal.company,
+        status: deal.stage,
+        owner: deal.owner || 'Unassigned',
+        lastUpdated: deal.updatedAt || deal.createdAt,
+        url: '/admin/crm'
+      });
     }
   }
 
-  // Clients
-  if (req.user!.permissions.canManageClients || req.user!.stakeholderType === 'Master') {
-    for (const cli of db.clients || []) {
-      if (
-        (cli.companyName && cli.companyName.toLowerCase().includes(q)) ||
-        (cli.clientName && cli.clientName.toLowerCase().includes(q)) ||
-        (cli.email && cli.email.toLowerCase().includes(q))
-      ) {
-        results.push({
-          type: 'Client',
-          id: cli.id,
-          name: cli.companyName || cli.clientName,
-          status: cli.status,
-          owner: cli.email,
-          lastUpdated: cli.updatedAt || cli.createdAt,
-          url: '/admin/clients'
-        });
-      }
+  for (const cli of clients as any[]) {
+    if (
+      (cli.companyName && String(cli.companyName).toLowerCase().includes(q)) ||
+      (cli.company && String(cli.company).toLowerCase().includes(q)) ||
+      (cli.clientName && String(cli.clientName).toLowerCase().includes(q)) ||
+      (cli.name && String(cli.name).toLowerCase().includes(q)) ||
+      (cli.email && String(cli.email).toLowerCase().includes(q))
+    ) {
+      results.push({
+        type: 'Client',
+        id: cli.id,
+        name: cli.companyName || cli.company || cli.clientName || cli.name,
+        status: cli.status,
+        owner: cli.email,
+        lastUpdated: cli.updatedAt || cli.createdAt,
+        url: '/admin/clients'
+      });
     }
   }
 
-  // Projects
-  if (req.user!.permissions.canManageProjects || req.user!.stakeholderType === 'Master') {
-    for (const proj of db.projects || []) {
-      if (
-        (proj.title && proj.title.toLowerCase().includes(q)) ||
-        (proj.client && proj.client.toLowerCase().includes(q))
-      ) {
-        results.push({
-          type: 'Project',
-          id: proj.id,
-          name: proj.title,
-          status: proj.status || proj.health || 'Active',
-          owner: proj.client,
-          lastUpdated: proj.updatedAt || proj.createdAt,
-          url: '/admin/projects'
-        });
-      }
+  for (const proj of projects as any[]) {
+    if (
+      (proj.title && String(proj.title).toLowerCase().includes(q)) ||
+      (proj.name && String(proj.name).toLowerCase().includes(q)) ||
+      (proj.client && String(proj.client).toLowerCase().includes(q)) ||
+      (proj.clientCompany && String(proj.clientCompany).toLowerCase().includes(q))
+    ) {
+      results.push({
+        type: 'Project',
+        id: proj.id,
+        name: proj.title || proj.name,
+        status: proj.status || proj.health || 'Active',
+        owner: proj.clientCompany || proj.client || proj.teamLead,
+        lastUpdated: proj.updatedAt || proj.createdAt,
+        url: '/admin/projects'
+      });
     }
   }
 
-  // Invoices
-  if (req.user!.permissions.canViewFinancials || req.user!.stakeholderType === 'Master') {
-    for (const inv of db.invoices || []) {
-      if (
-        (inv.invoiceNumber && inv.invoiceNumber.toLowerCase().includes(q)) ||
-        (inv.clientName && inv.clientName.toLowerCase().includes(q)) ||
-        (inv.clientCompany && inv.clientCompany.toLowerCase().includes(q))
-      ) {
-        results.push({
-          type: 'Invoice',
-          id: inv.id,
-          name: `${inv.invoiceNumber} - ${inv.clientCompany || inv.clientName}`,
-          status: inv.status,
-          owner: `IDR ${(inv.total || 0).toLocaleString()}`,
-          lastUpdated: inv.updatedAt || inv.createdAt,
-          url: '/admin/invoicing'
-        });
-      }
+  for (const inv of invoices as any[]) {
+    if (
+      (inv.invoiceNumber && String(inv.invoiceNumber).toLowerCase().includes(q)) ||
+      (inv.clientName && String(inv.clientName).toLowerCase().includes(q)) ||
+      (inv.clientCompany && String(inv.clientCompany).toLowerCase().includes(q))
+    ) {
+      results.push({
+        type: 'Invoice',
+        id: inv.id,
+        name: `${inv.invoiceNumber} - ${inv.clientCompany || inv.clientName}`,
+        status: inv.status,
+        owner: `${inv.currency || 'IDR'} ${Number(inv.total || 0).toLocaleString()}`,
+        lastUpdated: inv.updatedAt || inv.createdAt,
+        url: '/admin/invoicing'
+      });
     }
   }
 
-  // Proposals
-  const canSearchProposals = req.user!.stakeholderType === 'Master' ||
-    Boolean(req.user!.permissions.canManageCrm || req.user!.permissions.canManageInvoices || req.user!.permissions.canApproveBudgets);
-
-  if (canSearchProposals) {
-    for (const prop of db.proposals || []) {
-      if (
-        (prop.proposalNumber && prop.proposalNumber.toLowerCase().includes(q)) ||
-        (prop.clientName && prop.clientName.toLowerCase().includes(q)) ||
-        (prop.title && prop.title.toLowerCase().includes(q))
-      ) {
-        results.push({
-          type: 'Proposal',
-          id: prop.id,
-          name: `${prop.proposalNumber} - ${prop.title}`,
-          status: prop.status,
-          owner: prop.owner,
-          lastUpdated: prop.updatedAt || prop.createdAt,
-          url: '/admin/proposals'
-        });
-      }
+  for (const prop of proposals as any[]) {
+    if (
+      (prop.proposalNumber && String(prop.proposalNumber).toLowerCase().includes(q)) ||
+      (prop.clientName && String(prop.clientName).toLowerCase().includes(q)) ||
+      (prop.title && String(prop.title).toLowerCase().includes(q))
+    ) {
+      results.push({
+        type: 'Proposal',
+        id: prop.id,
+        name: `${prop.proposalNumber} - ${prop.title}`,
+        status: prop.status,
+        owner: prop.owner,
+        lastUpdated: prop.updatedAt || prop.createdAt,
+        url: '/admin/proposals'
+      });
     }
   }
 
   res.json({ success: true, results: results.slice(0, 20) });
 });
+
 // ----------------------------------------------------
 // 19. EXECUTIVE DASHBOARD & TODAY AT KAPITECH ENGINE (PARTS 7, 30, 68)
 // ----------------------------------------------------
