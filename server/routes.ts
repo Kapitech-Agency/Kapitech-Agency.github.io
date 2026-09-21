@@ -50,6 +50,7 @@ import {
 import { getDataSourceMode } from './data-source.ts';
 import { loadApplicationDatabase } from './application-data-repository.ts';
 import { postgresAuthRepository } from './postgres-repository.ts';
+import { postgresClientRepository } from './postgres-client-repository.ts';
 
 
 const ROLE_POLICIES: Record<string, {
@@ -1292,14 +1293,14 @@ apiRouter.delete('/crm/deals/:id', requireAuth, requirePermission('canManageCrm'
 // 4. CLIENTS MANAGEMENT
 // ----------------------------------------------------
 
-apiRouter.get('/clients', requireAuth, requireAnyPermission('canManageClients', 'canManageCrm'), (req: AuthenticatedRequest, res: Response): void => {
-  const db = getDatabase();
-  res.json({ success: true, clients: db.clients });
+apiRouter.get('/clients', requireAuth, requireAnyPermission('canManageClients', 'canManageCrm'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  const clients = getDataSourceMode() === 'postgres' ? await postgresClientRepository.list() : getDatabase().clients;
+  res.json({ success: true, clients });
 });
 
-apiRouter.post('/clients', requireAuth, requirePermission('canManageClients'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.post('/clients', requireAuth, requirePermission('canManageClients'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const clientData = req.body || {};
-  const db = getDatabase();
+  const db = getDataSourceMode() === 'json' ? getDatabase() : undefined;
   const email = cleanText(clientData.email, 254).toLowerCase();
   const website = cleanOptionalUrl(clientData.website);
   const avatarUrl = cleanOptionalUrl(clientData.avatarUrl);
@@ -1339,8 +1340,13 @@ apiRouter.post('/clients', requireAuth, requirePermission('canManageClients'), (
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   };
-  db.clients.unshift(newClient);
-  saveDatabase(db);
+  if (getDataSourceMode() === 'postgres') {
+    const client = await postgresClientRepository.create(newClient as any);
+    res.json({ success: true, client });
+    return;
+  }
+  db!.clients.unshift(newClient);
+  saveDatabase(db!);
 
   recordAuditLog({
     action: 'CLIENT_CREATED',
@@ -1355,9 +1361,20 @@ apiRouter.post('/clients', requireAuth, requirePermission('canManageClients'), (
   res.json({ success: true, client: newClient });
 });
 
-apiRouter.put('/clients/:id', requireAuth, requirePermission('canManageClients'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.put('/clients/:id', requireAuth, requirePermission('canManageClients'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
   const updates = req.body || {};
+  if (getDataSourceMode() === 'postgres') {
+    const patch = pickFields(updates || {}, ['name','company','companyName','clientName','email','phone','website','location','industry','status','contactPersonRole','notes','avatarUrl','slaDailyAdSpendBudget','currentDailyAdSpend','totalSpend','projectsCount','tier','activeRetainer','totalProjects','totalInvoiced']);
+    if (patch.email !== undefined) patch.email = cleanText(patch.email, 254).toLowerCase();
+    if (patch.email && !isValidEmail(patch.email)) { res.status(400).json({ success: false, error: 'Invalid client email address.' }); return; }
+    if (patch.website !== undefined) patch.website = cleanOptionalUrl(patch.website);
+    if (patch.status !== undefined && !['active','inactive','prospect','on_hold'].includes(String(patch.status))) { res.status(400).json({ success: false, error: 'Invalid client status.' }); return; }
+    const updated = await postgresClientRepository.update(id, patch as any);
+    if (!updated) { res.status(404).json({ success: false, error: 'Client not found.' }); return; }
+    res.json({ success: true, client: updated });
+    return;
+  }
   const db = getDatabase();
   const idx = db.clients.findIndex(c => c.id === id);
   if (idx === -1) {
@@ -1405,8 +1422,14 @@ apiRouter.put('/clients/:id', requireAuth, requirePermission('canManageClients')
   res.json({ success: true, client: db.clients[idx] });
 });
 
-apiRouter.delete('/clients/:id', requireAuth, requirePermission('canManageClients'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.delete('/clients/:id', requireAuth, requirePermission('canManageClients'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
+  if (getDataSourceMode() === 'postgres') {
+    const deleted = await postgresClientRepository.delete(id);
+    if (!deleted) { res.status(404).json({ success: false, error: 'Client not found.' }); return; }
+    res.json({ success: true, message: 'Client deleted.' });
+    return;
+  }
   const db = getDatabase();
   db.clients = db.clients.filter(c => c.id !== id);
   saveDatabase(db);
