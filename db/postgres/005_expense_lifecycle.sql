@@ -1,4 +1,5 @@
 -- AMS PostgreSQL migration 005
+-- Expense history is voided/archived instead of physically deleted.
 -- Expense lifecycle hardening for authoritative finance writes.
 
 BEGIN;
