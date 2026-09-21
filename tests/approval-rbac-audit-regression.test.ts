@@ -58,7 +58,7 @@ test('Read-only admin states keep mutation UI controls behind the same permissio
   assert.ok(invoicing.includes('{canManageInvoices && ('));
 
   const projects = await fs.readFile(path.join(root, 'src/pages/admin/AdminProjects.tsx'), 'utf8');
-  assert.ok(projects.includes('if (!canManageProjects || selectedProject'));
+  assert.ok(projects.includes('if (!canManageProjects) return;'));
   assert.ok(projects.includes('draggable={canManageProjects}'));
   assert.ok(projects.includes('{canManageProjects && ('));
 
