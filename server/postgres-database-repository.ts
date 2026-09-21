@@ -10,7 +10,59 @@ const base=(r:Row,x:Row={})=>({...obj(r.metadata),...x,id:r.id});
 const mapUser=(r:Row):StoredUser=>({id:r.id,name:r.name,username:r.username,email:r.email,passwordHash:r.password_hash,salt:r.salt,passwordAlgorithm:r.password_algorithm,role:r.role,stakeholderType:r.stakeholder_type,permissions:obj(r.permissions),mfaEnabled:r.mfa_enabled,mfaSecret:r.mfa_secret??undefined,mfaPendingSecret:r.mfa_pending_secret??undefined,mfaPendingSecretCreatedAt:r.mfa_pending_secret_created_at?iso(r.mfa_pending_secret_created_at):undefined,mfaRecoveryCodeHashes:Array.isArray(r.mfa_recovery_code_hashes)?r.mfa_recovery_code_hashes:[],division:r.division,status:r.status,lastLogin:r.last_login?iso(r.last_login):'',createdAt:iso(r.created_at)});
 const mapSession=(r:Row):StoredSession=>({tokenHash:r.token_hash,userId:r.user_id,createdAt:iso(r.created_at),lastActivityAt:iso(r.last_activity_at),expiresAt:new Date(r.expires_at).getTime(),rememberMe:r.remember_me,ip:r.ip??'',userAgent:r.user_agent,kind:r.kind,mfaFailedAttempts:r.mfa_failed_attempts});
 
+export type ClientRecord = Record<string, any>;
+
+const CLIENT_CORE_FIELDS = new Set(['id','name','company','email','phone','industry','status','notes','createdAt','updatedAt']);
+function clientMetadata(client: ClientRecord): Record<string, any> {
+  return Object.fromEntries(Object.entries(client).filter(([key]) => !CLIENT_CORE_FIELDS.has(key)));
+}
+function mapClient(r: Row): ClientRecord {
+  return base(r, { createdAt: iso(r.created_at), updatedAt: iso(r.updated_at) });
+}
+
 export class PostgresDatabaseRepository {
+  async createClient(client: ClientRecord): Promise<ClientRecord> {
+    const result = await getPostgresPool().query<Row>(
+      `INSERT INTO clients (id,name,company,email,phone,industry,status,notes,metadata,created_at,updated_at)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING *`,
+      [client.id, client.name || '', client.company || null, client.email || null, client.phone || null,
+       client.industry || null, client.status || 'prospect', client.notes || null,
+       JSON.stringify(clientMetadata(client)), client.createdAt, client.updatedAt]
+    );
+    return mapClient(result.rows[0]);
+  }
+
+  async updateClient(id: string, patch: ClientRecord): Promise<ClientRecord | null> {
+    const client = await getPostgresPool().connect();
+    try {
+      await client.query('BEGIN');
+      const current = await client.query<Row>('SELECT * FROM clients WHERE id = $1 FOR UPDATE', [id]);
+      if (!current.rows[0]) { await client.query('ROLLBACK'); return null; }
+      const row = current.rows[0];
+      const mergedMetadata = { ...obj(row.metadata), ...clientMetadata(patch) };
+      const result = await client.query<Row>(
+        `UPDATE clients SET name=$2, company=$3, email=$4, phone=$5, industry=$6, status=$7, notes=$8, metadata=$9, updated_at=$10
+         WHERE id=$1 RETURNING *`,
+        [id, patch.name ?? row.name, patch.company ?? row.company, patch.email ?? row.email,
+         patch.phone ?? row.phone, patch.industry ?? row.industry, patch.status ?? row.status,
+         patch.notes ?? row.notes, JSON.stringify(mergedMetadata), patch.updatedAt ?? new Date().toISOString()]
+      );
+      await client.query('COMMIT');
+      return mapClient(result.rows[0]);
+    } catch (error) {
+      await client.query('ROLLBACK');
+      throw error;
+    } finally {
+      client.release();
+    }
+  }
+
+  async deleteClient(id: string): Promise<boolean> {
+    const result = await getPostgresPool().query('DELETE FROM clients WHERE id = $1', [id]);
+    return result.rowCount === 1;
+  }
+
+
  readonly auth=new PostgresAuthRepository();
  async loadDatabase():Promise<DatabaseSchema>{
   const p=getPostgresPool();
