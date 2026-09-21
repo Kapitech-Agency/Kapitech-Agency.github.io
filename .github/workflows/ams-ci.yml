@@ -85,7 +85,7 @@ jobs:
         run: |
           node dist/server.cjs > /tmp/kapitech-ams-smoke.log 2>&1 &
           PID=$!
-          trap 'kill $PID >/dev/null 2>&1 || true' EXIT
+          trap 'status=$?; if [ "$status" -ne 0 ]; then echo "===== AMS smoke server log ====="; cat /tmp/kapitech-ams-smoke.log || true; fi; kill $PID >/dev/null 2>&1 || true' EXIT
           for i in $(seq 1 30); do
             if curl -fsS http://127.0.0.1:4173/api/health >/tmp/health.json; then break; fi
             sleep 1
