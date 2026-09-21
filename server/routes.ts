@@ -1371,6 +1371,15 @@ apiRouter.post('/crm/deals', requireAuth, requirePermission('canManageCrm'), asy
   const db = getDatabase();
   db.crmDeals.unshift(newDeal);
   saveDatabase(db);
+  recordAuditLog({
+    action: 'CRM_DEAL_CREATED',
+    actor: req.user!.username,
+    actorRole: req.user!.role,
+    ip: req.ip,
+    userAgent: req.headers['user-agent'] as string,
+    details: `Created CRM deal "${newDeal.title || newDeal.id}".`,
+    severity: 'info'
+  });
   res.json({ success: true, deal: newDeal });
 });
 
@@ -1434,6 +1443,15 @@ apiRouter.put('/crm/deals/:id', requireAuth, requirePermission('canManageCrm'), 
   }
   db.crmDeals[idx] = { ...db.crmDeals[idx], ...patch, updatedAt: new Date().toISOString() };
   saveDatabase(db);
+  recordAuditLog({
+    action: 'CRM_DEAL_UPDATED',
+    actor: req.user!.username,
+    actorRole: req.user!.role,
+    ip: req.ip,
+    userAgent: req.headers['user-agent'] as string,
+    details: `Updated CRM deal "${db.crmDeals[idx].title || id}".`,
+    severity: 'info'
+  });
   res.json({ success: true, deal: db.crmDeals[idx] });
 });
 
@@ -1467,6 +1485,15 @@ apiRouter.delete('/crm/deals/:id', requireAuth, requirePermission('canManageCrm'
   }
   db.crmDeals = db.crmDeals.filter(d => d.id !== id);
   saveDatabase(db);
+  recordAuditLog({
+    action: 'CRM_DEAL_DELETED',
+    actor: req.user!.username,
+    actorRole: req.user!.role,
+    ip: req.ip,
+    userAgent: req.headers['user-agent'] as string,
+    details: `Deleted CRM deal "${deal.title || id}".`,
+    severity: 'warning'
+  });
   res.json({ success: true, message: 'Deal deleted.' });
 });
 
@@ -1643,10 +1670,19 @@ apiRouter.delete('/clients/:id', requireAuth, requirePermission('canManageClient
   }
   {
     const db = getDatabase();
-    const exists = db.clients.some(c => c.id === id);
-    if (!exists) { res.status(404).json({ success: false, error: 'Client not found.' }); return; }
+    const client = db.clients.find(c => c.id === id);
+    if (!client) { res.status(404).json({ success: false, error: 'Client not found.' }); return; }
     db.clients = db.clients.filter(c => c.id !== id);
     saveDatabase(db);
+    recordAuditLog({
+      action: 'CLIENT_DELETED',
+      actor: req.user!.username,
+      actorRole: req.user!.role,
+      ip: req.ip,
+      userAgent: req.headers['user-agent'] as string,
+      details: `Deleted client "${client.company || client.clientName || id}".`,
+      severity: 'warning'
+    });
   }
   res.json({ success: true, message: 'Client deleted.' });
 });
@@ -1706,6 +1742,15 @@ apiRouter.post('/projects', requireAuth, requirePermission('canManageProjects'),
   const db = getDatabase();
   db.projects.unshift(newProject);
   saveDatabase(db);
+  recordAuditLog({
+    action: 'PROJECT_CREATED',
+    actor: req.user!.username,
+    actorRole: req.user!.role,
+    ip: req.ip,
+    userAgent: req.headers['user-agent'] as string,
+    details: `Created project "${newProject.name}".`,
+    severity: 'info'
+  });
   res.json({ success: true, project: newProject });
 });
 
@@ -2371,6 +2416,15 @@ apiRouter.post('/vendors', requireAuth, requirePermission('canManageVendors'), a
   const db = getDatabase();
   db.vendors.unshift(newVendor);
   saveDatabase(db);
+  recordAuditLog({
+    action: 'VENDOR_CREATED',
+    actor: req.user!.username,
+    actorRole: req.user!.role,
+    ip: req.ip,
+    userAgent: req.headers['user-agent'] as string,
+    details: `Created vendor "${newVendor.name}".`,
+    severity: 'info'
+  });
   res.json({ success: true, vendor: newVendor });
 });
 
@@ -2480,12 +2534,14 @@ apiRouter.post('/cms/services', requireAuth, requirePermission('canManageCmsCont
   };
   if (getDataSourceMode() === 'postgres') {
     const service = await postgresCmsRepository.create('service', newService);
+    recordAuditLog({ action: 'CMS_SERVICE_CREATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Created CMS service "${service.title || newService.title}".`, severity: 'info' });
     res.json({ success: true, service });
     return;
   }
   const db = getDatabase();
   db.cmsServices.unshift(newService);
   saveDatabase(db);
+  recordAuditLog({ action: 'CMS_SERVICE_CREATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Created CMS service "${newService.title}".`, severity: 'info' });
   res.json({ success: true, service: newService });
 });
 
@@ -2495,6 +2551,7 @@ apiRouter.put('/cms/services/:id', requireAuth, requirePermission('canManageCmsC
   if (getDataSourceMode() === 'postgres') {
     const service = await postgresCmsRepository.update('service', id, patch);
     if (!service) { res.status(404).json({ success: false, error: 'Service not found.' }); return; }
+    recordAuditLog({ action: 'CMS_SERVICE_UPDATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Updated CMS service "${service.title || id}".`, severity: 'info' });
     res.json({ success: true, service });
     return;
   }
@@ -2503,6 +2560,7 @@ apiRouter.put('/cms/services/:id', requireAuth, requirePermission('canManageCmsC
   if (idx === -1) { res.status(404).json({ success: false, error: 'Service not found.' }); return; }
   db.cmsServices[idx] = { ...db.cmsServices[idx], ...patch, updatedAt: new Date().toISOString() };
   saveDatabase(db);
+  recordAuditLog({ action: 'CMS_SERVICE_UPDATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Updated CMS service "${db.cmsServices[idx].title || id}".`, severity: 'info' });
   res.json({ success: true, service: db.cmsServices[idx] });
 });
 
@@ -2550,12 +2608,14 @@ apiRouter.post('/cms/projects', requireAuth, requirePermission('canManageCmsCont
   };
   if (getDataSourceMode() === 'postgres') {
     const project = await postgresCmsRepository.create('project', newProj);
+    recordAuditLog({ action: 'CMS_PROJECT_CREATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Created CMS project "${project.title || newProj.title}".`, severity: 'info' });
     res.json({ success: true, project });
     return;
   }
   const db = getDatabase();
   db.cmsProjects.unshift(newProj);
   saveDatabase(db);
+  recordAuditLog({ action: 'CMS_PROJECT_CREATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Created CMS project "${newProj.title}".`, severity: 'info' });
   res.json({ success: true, project: newProj });
 });
 
@@ -2565,6 +2625,7 @@ apiRouter.put('/cms/projects/:id', requireAuth, requirePermission('canManageCmsC
   if (getDataSourceMode() === 'postgres') {
     const project = await postgresCmsRepository.update('project', id, patch);
     if (!project) { res.status(404).json({ success: false, error: 'Project not found.' }); return; }
+    recordAuditLog({ action: 'CMS_PROJECT_UPDATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Updated CMS project "${project.title || id}".`, severity: 'info' });
     res.json({ success: true, project });
     return;
   }
@@ -2573,6 +2634,7 @@ apiRouter.put('/cms/projects/:id', requireAuth, requirePermission('canManageCmsC
   if (idx === -1) { res.status(404).json({ success: false, error: 'Project not found.' }); return; }
   db.cmsProjects[idx] = { ...db.cmsProjects[idx], ...patch, updatedAt: new Date().toISOString() };
   saveDatabase(db);
+  recordAuditLog({ action: 'CMS_PROJECT_UPDATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Updated CMS project "${db.cmsProjects[idx].title || id}".`, severity: 'info' });
   res.json({ success: true, project: db.cmsProjects[idx] });
 });
 
@@ -2627,12 +2689,14 @@ apiRouter.post('/cms/testimonials', requireAuth, requirePermission('canManageCms
   };
   if (getDataSourceMode() === 'postgres') {
     const testimonial = await postgresCmsRepository.create('testimonial', newTestimonial);
+    recordAuditLog({ action: 'CMS_TESTIMONIAL_CREATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Created CMS testimonial "${testimonial.author || testimonial.name}".`, severity: 'info' });
     res.json({ success: true, testimonial });
     return;
   }
   const db = getDatabase();
   db.cmsTestimonials.unshift(newTestimonial);
   saveDatabase(db);
+  recordAuditLog({ action: 'CMS_TESTIMONIAL_CREATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Created CMS testimonial "${newTestimonial.author}".`, severity: 'info' });
   res.json({ success: true, testimonial: newTestimonial });
 });
 
@@ -2642,6 +2706,7 @@ apiRouter.put('/cms/testimonials/:id', requireAuth, requirePermission('canManage
   if (getDataSourceMode() === 'postgres') {
     const testimonial = await postgresCmsRepository.update('testimonial', id, patch);
     if (!testimonial) { res.status(404).json({ success: false, error: 'Testimonial not found.' }); return; }
+    recordAuditLog({ action: 'CMS_TESTIMONIAL_UPDATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Updated CMS testimonial "${testimonial.author || id}".`, severity: 'info' });
     res.json({ success: true, testimonial });
     return;
   }
@@ -2650,6 +2715,7 @@ apiRouter.put('/cms/testimonials/:id', requireAuth, requirePermission('canManage
   if (idx === -1) { res.status(404).json({ success: false, error: 'Testimonial not found.' }); return; }
   db.cmsTestimonials[idx] = { ...db.cmsTestimonials[idx], ...patch, updatedAt: new Date().toISOString() };
   saveDatabase(db);
+  recordAuditLog({ action: 'CMS_TESTIMONIAL_UPDATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Updated CMS testimonial "${db.cmsTestimonials[idx].author || id}".`, severity: 'info' });
   res.json({ success: true, testimonial: db.cmsTestimonials[idx] });
 });
 
@@ -2708,6 +2774,7 @@ apiRouter.put('/cms/settings', requireAuth, requirePermission('canManageCmsConte
   const db = getDatabase();
   db.cmsSettings = { ...db.cmsSettings, ...patch, updatedAt: new Date().toISOString() };
   saveDatabase(db);
+  recordAuditLog({ action: 'CMS_SETTINGS_UPDATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: 'Updated CMS settings.', severity: 'info' });
   res.json({ success: true, settings: db.cmsSettings });
 });
 // ----------------------------------------------------
