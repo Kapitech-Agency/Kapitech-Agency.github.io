@@ -395,21 +395,15 @@ async function importCore(client: any, db: AnyRecord): Promise<Record<string, nu
   counts.approvals = arr(db,'approvals').length;
 
   for (const row of arr(db, 'vendors')) {
-    const vendorMetadata = {
-      ...jsonObject(row, ['id','name','category','contactPerson','email','phone','paymentTerms','status','monthlySpend','notes','createdAt','updatedAt']),
-      companyName: row.companyName,
-      website: row.website,
-      hourlyRate: row.hourlyRate,
-      rating: row.rating,
-      skills: row.skills,
-      primaryCategory: row.primaryCategory,
-      completedProjectsCount: row.completedProjectsCount,
-      isVetted: row.isVetted,
-      location: row.location,
-      portfolioUrl: row.portfolioUrl,
-      githubUrl: row.githubUrl,
-      contracts: row.contracts
-    };
+    const vendorMetadata: AnyRecord = {};
+    for (const [key, value] of Object.entries(row)) {
+      if (![
+        'id','name','category','contactPerson','email','phone','paymentTerms','status','monthlySpend',
+        'currency','notes','version','archivedAt','createdAt','updatedAt'
+      ].includes(key) && value !== undefined) {
+        vendorMetadata[key] = value;
+      }
+    }
     await upsert(client, 'vendors',
       ['id','name','category','contact_person','email','phone','payment_terms','status','monthly_spend','currency','notes','metadata','version','archived_at','created_at'],
       [textValue(row.id),textValue(row.name),nullableText(row.category || row.primaryCategory),nullableText(row.contactPerson),nullableText(row.email),nullableText(row.phone),
