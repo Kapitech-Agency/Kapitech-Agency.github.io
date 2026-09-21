@@ -61,7 +61,14 @@ export function validateProductionEnvironment(
 
   const encryptionKey = required(env, 'KAPITECH_DATA_ENCRYPTION_KEY', errors);
   if (encryptionKey && !HEX64.test(encryptionKey)) {
-    errors.push('KAPITECH_DATA_ENCRYPTION_KEY must be exactly 32 bytes represented as 64 hexadecimal characters.');
+    try {
+      const decoded = Buffer.from(encryptionKey, 'base64');
+      if (decoded.length !== 32 || decoded.toString('base64').replace(/=+$/,'') !== encryptionKey.replace(/=+$/,'')) {
+        errors.push('KAPITECH_DATA_ENCRYPTION_KEY must be exactly 32 bytes as 64 hexadecimal characters or valid base64.');
+      }
+    } catch {
+      errors.push('KAPITECH_DATA_ENCRYPTION_KEY must be exactly 32 bytes as 64 hexadecimal characters or valid base64.');
+    }
   }
 
   const appUrl = required(env, 'APP_URL', errors);
