@@ -134,7 +134,8 @@ export class PostgresTimeLogRepository {
 
       const hourlyRate = Number(rate.rows[0].hourly_rate);
       const rateMinor = Math.round(hourlyRate * 100);
-      const amountMinor = Math.round(durationMinutes * rateMinor / 60);
+      const billable = input.billable !== undefined ? Boolean(input.billable) : true;
+      const amountMinor = billable ? Math.round(durationMinutes * rateMinor / 60) : 0;
       const amount = amountMinor / 100;
 
       const metadata = {
@@ -142,7 +143,7 @@ export class PostgresTimeLogRepository {
         projectName: input.projectName,
         taskTitle: input.taskTitle,
         user: input.user,
-        billable: input.billable !== undefined ? Boolean(input.billable) : true,
+        billable,
         notes: input.notes
       };
 
