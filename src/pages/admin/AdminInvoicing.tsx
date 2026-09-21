@@ -148,6 +148,7 @@ export const AdminInvoicing: React.FC = () => {
   };
 
   const handleOpenCreateInvoice = () => {
+    if (!canManageInvoices) return;
     const allProj = getAgencyProjects();
     setAvailableProjects(allProj);
     const approvedProj = allProj.filter(p => p.status === 'in_progress' || p.status === 'completed' || p.status === 'review');
@@ -193,6 +194,7 @@ export const AdminInvoicing: React.FC = () => {
   };
 
   const handleOpenEditInvoice = (inv: AgencyInvoice) => {
+    if (!canManageInvoices) return;
     setEditingInvoice(inv);
     setClientName(inv.clientName);
     setClientCompany(inv.clientCompany);
@@ -260,6 +262,7 @@ export const AdminInvoicing: React.FC = () => {
   };
 
   const handleDeleteInvoice = async (id: string, invNum: string) => {
+    if (!canManageInvoices) return;
     if (window.confirm(`Hapus invoice ${invNum}?`)) {
       try {
         await deleteAgencyInvoice(id);
@@ -793,6 +796,7 @@ export const AdminInvoicing: React.FC = () => {
                           {inv.status !== 'paid' && (
                             <button
                               onClick={() => handleOpenPaymentModal(inv)}
+                              disabled={!canManageInvoices}
                               className="h-9 px-2.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-mono flex items-center justify-center gap-1 transition-colors min-h-[36px]"
                               title="Record Payment"
                             >
