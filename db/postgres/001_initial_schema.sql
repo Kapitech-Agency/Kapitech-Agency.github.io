@@ -422,4 +422,3 @@ CREATE TABLE IF NOT EXISTS notification_settings (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-COMMIT;
