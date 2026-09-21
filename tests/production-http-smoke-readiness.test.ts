@@ -11,6 +11,7 @@ test('Production HTTP smoke readiness tolerates transient connection failures', 
 
   assert.ok(block.includes('ready=0'));
   assert.ok(block.includes('--retry-connrefused'));
+  assert.ok(!block.includes('--retry-delay 0.2'));
   assert.ok(block.includes('ready=1'));
   assert.ok(block.includes('test "$ready" = "1"'));
 });
