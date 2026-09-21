@@ -312,10 +312,30 @@ async function importCore(client: any, db: AnyRecord): Promise<Record<string, nu
   counts.tasks = arr(db,'tasks').length;
 
   for (const row of arr(db, 'timeLogs')) {
+    const hours = row.hours != null
+      ? numberValue(row.hours)
+      : numberValue(row.durationMinutes) / 60;
+    const workDate = dateValue(row.workDate || row.date || row.loggedAt);
+    const metadataValue = metadata(row, [
+      'id','projectId','taskId','userId','hours','durationMinutes','description','loggedAt','workDate','date',
+      'rate','amount','currency','status','version','approvedAt','archivedAt','createdAt','billable','notes',
+      'projectName','taskTitle','user'
+    ]);
     await upsert(client, 'time_logs',
-      ['id','project_id','task_id','user_id','hours','description','logged_at','created_at'],
+      ['id','project_id','task_id','user_id','hours','description','logged_at','work_date','rate','amount','currency','status','version','approved_at','archived_at','metadata','created_at'],
       [textValue(row.id),nullableText(row.projectId),nullableText(row.taskId),nullableText(row.userId),
-       numberValue(row.hours),nullableText(row.description),timestampValue(row.loggedAt || row.date,row.createdAt),timestampValue(row.createdAt,row.loggedAt || row.date)]);
+       hours,nullableText(row.description || row.notes),
+       timestampValue(row.loggedAt || row.date,row.createdAt),
+       workDate,
+       nullableNumber(row.rate),
+       nullableNumber(row.amount),
+       row.currency ? textValue(row.currency).toUpperCase() : null,
+       textValue(row.status,'draft'),
+       numberValue(row.version,1),
+       nullableTimestampValue(row.approvedAt),
+       nullableTimestampValue(row.archivedAt),
+       metadataValue,
+       timestampValue(row.createdAt,row.loggedAt || row.date)]);
   }
   counts.timeLogs = arr(db,'timeLogs').length;
 
