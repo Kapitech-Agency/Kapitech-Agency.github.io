@@ -63,32 +63,47 @@ function duplicateIds(db: any, key: string): string[] {
   return [...duplicates];
 }
 
-async function pgCounts(): Promise<Record<string, number>> {
+async function pgCountsAndFinancials(): Promise<{ counts: Record<string, number>; financials: Record<string, number> }> {
   const pool = getPostgresPool();
   const tables: Record<string, string> = {
-    users: 'users',
-    sessions: 'sessions',
-    leads: 'leads',
-    crmDeals: 'crm_deals',
-    proposals: 'proposals',
-    clients: 'clients',
-    projects: 'projects',
-    tasks: 'tasks',
-    timeLogs: 'time_logs',
-    invoices: 'invoices',
-    expenses: 'expenses',
-    approvals: 'approvals',
-    vendors: 'vendors',
-    documents: 'documents',
-    notifications: 'notifications',
-    auditLogs: 'audit_logs'
+    users: 'users', sessions: 'sessions', leads: 'leads', crmDeals: 'crm_deals',
+    proposals: 'proposals', clients: 'clients', projects: 'projects', tasks: 'tasks',
+    timeLogs: 'time_logs', invoices: 'invoices', expenses: 'expenses', approvals: 'approvals',
+    vendors: 'vendors', documents: 'documents', notifications: 'notifications', auditLogs: 'audit_logs'
   };
-  const output: Record<string, number> = {};
+  const counts: Record<string, number> = {};
   for (const [source, table] of Object.entries(tables)) {
     const result = await pool.query<{ count: string }>('SELECT COUNT(*)::bigint AS count FROM ' + table);
-    output[source] = Number(result.rows[0].count);
+    counts[source] = Number(result.rows[0].count);
   }
-  return output;
+
+  const result = await pool.query<{
+    proposal_subtotal: string; proposal_total: string; invoice_total: string;
+    invoice_amount_paid: string; invoice_balance_due: string; expenses_total: string;
+    pipeline_value: string;
+  }>(`
+    SELECT
+      (SELECT COALESCE(SUM(subtotal),0) FROM proposals) AS proposal_subtotal,
+      (SELECT COALESCE(SUM(total),0) FROM proposals) AS proposal_total,
+      (SELECT COALESCE(SUM(total),0) FROM invoices) AS invoice_total,
+      (SELECT COALESCE(SUM(amount_paid),0) FROM invoices) AS invoice_amount_paid,
+      (SELECT COALESCE(SUM(balance_due),0) FROM invoices) AS invoice_balance_due,
+      (SELECT COALESCE(SUM(amount),0) FROM expenses) AS expenses_total,
+      (SELECT COALESCE(SUM(value),0) FROM crm_deals) AS pipeline_value
+  `);
+  const row = result.rows[0];
+  return {
+    counts,
+    financials: {
+      proposalSubtotal: Number(row.proposal_subtotal),
+      proposalTotal: Number(row.proposal_total),
+      invoiceTotal: Number(row.invoice_total),
+      invoiceAmountPaid: Number(row.invoice_amount_paid),
+      invoiceBalanceDue: Number(row.invoice_balance_due),
+      expensesTotal: Number(row.expenses_total),
+      pipelineValue: Number(row.pipeline_value)
+    }
+  };
 }
 
 async function main(): Promise<void> {
@@ -167,6 +182,7 @@ async function main(): Promise<void> {
       localCounts,
       postgresCounts,
       countMismatches,
+    financialMismatches,
       financials,
       duplicates,
       brokenReferences,
