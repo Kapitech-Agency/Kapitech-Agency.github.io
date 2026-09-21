@@ -361,7 +361,7 @@ export const getAgencyInvoices = (): AgencyInvoice[] => {
   return invoiceCache;
 };
 
-export const saveAgencyInvoice = (invoice: AgencyInvoice): void => {
+export const saveAgencyInvoice = async (invoice: AgencyInvoice): Promise<void> => {
   const current = getAgencyInvoices();
   const previousInvoices = [...current];
   const idx = current.findIndex(i => i.id === invoice.id);
@@ -381,34 +381,31 @@ export const saveAgencyInvoice = (invoice: AgencyInvoice): void => {
   const request = idx >= 0
     ? api.finance.updateInvoice(invoice.id, invoice)
     : api.finance.createInvoice(invoice);
-  request.then((res) => {
-    if (res.success && res.data?.success !== false) return;
-    invoiceCache = previousInvoices;
-    window.dispatchEvent(new CustomEvent(FINANCE_EVENT_NAME, { detail: previousInvoices }));
-  }).catch(() => {
-    invoiceCache = previousInvoices;
-    window.dispatchEvent(new CustomEvent(FINANCE_EVENT_NAME, { detail: previousInvoices }));
-  });
+  const res = await request;
+
+  if (res.success && res.data?.success !== false) return;
+
+  invoiceCache = previousInvoices;
+  window.dispatchEvent(new CustomEvent(FINANCE_EVENT_NAME, { detail: previousInvoices }));
+  throw new Error(res.error || 'Invoice could not be saved on the server.');
 };
 
-export const deleteAgencyInvoice = (id: string): void => {
+export const deleteAgencyInvoice = async (id: string): Promise<void> => {
   const current = getAgencyInvoices();
   const previousInvoices = [...current];
   const updated = current.filter(i => i.id !== id);
   invoiceCache = updated;
   window.dispatchEvent(new CustomEvent(FINANCE_EVENT_NAME, { detail: updated }));
-  api.finance.deleteInvoice(id).then((res) => {
-    if (res.success && res.data?.success !== false) return;
-    invoiceCache = previousInvoices;
-    window.dispatchEvent(new CustomEvent(FINANCE_EVENT_NAME, { detail: previousInvoices }));
-  }).catch(() => {
-    invoiceCache = previousInvoices;
-    window.dispatchEvent(new CustomEvent(FINANCE_EVENT_NAME, { detail: previousInvoices }));
-  });
+  const res = await api.finance.deleteInvoice(id);
+  if (res.success && res.data?.success !== false) return;
+
+  invoiceCache = previousInvoices;
+  window.dispatchEvent(new CustomEvent(FINANCE_EVENT_NAME, { detail: previousInvoices }));
+  throw new Error(res.error || 'Invoice could not be cancelled on the server.');
 
 };
 
-export const updateInvoiceStatus = (id: string, status: InvoiceStatus, actor: string = 'Authorized Lead'): void => {
+export const updateInvoiceStatus = async (id: string, status: InvoiceStatus, actor: string = 'Authorized Lead'): Promise<void> => {
   const current = getAgencyInvoices();
   const inv = current.find(i => i.id === id);
   if (!inv) return;
@@ -430,7 +427,7 @@ export const updateInvoiceStatus = (id: string, status: InvoiceStatus, actor: st
     updatedAt: now
   };
 
-  saveAgencyInvoice(updated);
+  await saveAgencyInvoice(updated);
 
   // Sync client total spend if transition to paid
   if (status === 'paid' && inv.status !== 'paid') {
@@ -506,7 +503,7 @@ export const recordInvoicePayment = async (
   return serverInvoice;
 };
 
-export const approveInvoice = (id: string, approverName: string = 'Executive Sponsor', note?: string): void => {
+export const approveInvoice = async (id: string, approverName: string = 'Executive Sponsor', note?: string): Promise<void> => {
   const current = getAgencyInvoices();
   const inv = current.find(i => i.id === id);
   if (!inv) return;
@@ -528,7 +525,7 @@ export const approveInvoice = (id: string, approverName: string = 'Executive Spo
     updatedAt: now
   };
 
-  saveAgencyInvoice(updated);
+  await saveAgencyInvoice(updated);
 };
 
 export const getAgencyExpenses = (): AgencyExpense[] => {
