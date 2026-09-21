@@ -19,6 +19,16 @@ test('lead submissions dispatch Telegram notifications in both datasource modes'
   assert.doesNotMatch(source, /const hasTelegramToken = postgresMode[\\s\\S]{0,220}s\\.telegramBotToken/);
 });
 
+test('production readiness checks runtime notification credentials when channels are enabled', async () => {
+  const source = await fs.readFile(path.join(root, 'server/routes.ts'), 'utf8');
+
+  assert.match(source, /notificationSettings\\.isTelegramActive/);
+  assert.match(source, /KAPITECH_TELEGRAM_BOT_TOKEN/);
+  assert.match(source, /notificationSettings\\.isEmailActive/);
+  assert.match(source, /const notificationsReady = telegramConfigured && emailNotificationConfigured/);
+  assert.match(source, /notifications: notificationsReady/);
+});
+
 test('PostgreSQL notification settings remain secret-safe during lead dispatch', async () => {
   const source = await fs.readFile(path.join(root, 'server/postgres-notification-settings-repository.ts'), 'utf8');
 

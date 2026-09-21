@@ -4162,11 +4162,12 @@ apiRouter.get('/system/production-readiness', requireAuth, requireAnyPermission(
   }
 
   try {
-    const [connection, users, documents, storageHealth] = await Promise.all([
+    const [connection, users, documents, storageHealth, notificationSettings] = await Promise.all([
       checkPostgresConnection(),
       postgresAuthRepository.listUsers(),
       postgresDocumentRepository.list(),
-      getDocumentStorage().healthCheck()
+      getDocumentStorage().healthCheck(),
+      postgresNotificationSettingsRepository.get()
     ]);
 
     let appliedMigrations: string[] = [];
@@ -4202,6 +4203,15 @@ apiRouter.get('/system/production-readiness', requireAuth, requireAnyPermission(
       Boolean(process.env.KAPITECH_DATA_SOURCE === 'postgres');
 
     const encryptionReady = isDataEncryptionEnabled();
+
+    const telegramConfigured = !notificationSettings.isTelegramActive
+      || Boolean(
+        process.env.KAPITECH_TELEGRAM_BOT_TOKEN?.trim()
+        && (process.env.KAPITECH_TELEGRAM_CHAT_ID?.trim() || notificationSettings.telegramChatId?.trim())
+      );
+    const emailNotificationConfigured = !notificationSettings.isEmailActive
+      || Boolean(notificationSettings.targetEmail?.trim() && notificationSettings.formspreeEndpoint?.trim());
+    const notificationsReady = telegramConfigured && emailNotificationConfigured;
 
     const reconciliationVerifiedAt = process.env.KAPITECH_RELATIONAL_RECONCILIATION_VERIFIED_AT?.trim() || '';
     const reconciliationDate = reconciliationVerifiedAt ? new Date(reconciliationVerifiedAt) : null;
@@ -4248,7 +4258,8 @@ apiRouter.get('/system/production-readiness', requireAuth, requireAnyPermission(
       migrations: migrationComplete,
       mfa: mfaComplete,
       backupDr: backup.configured,
-      documentStorage: documentStorageReady
+      documentStorage: documentStorageReady,
+      notifications: notificationsReady
     };
 
     const productionReady = Object.values(gates).every(Boolean);
@@ -4289,6 +4300,13 @@ apiRouter.get('/system/production-readiness', requireAuth, requireAnyPermission(
           complete: mfaComplete
         },
         backupDr: backup,
+        notifications: {
+          telegramActive: notificationSettings.isTelegramActive,
+          telegramConfigured,
+          emailActive: notificationSettings.isEmailActive,
+          emailConfigured: emailNotificationConfigured,
+          ready: notificationsReady
+        },
         documentStorage: {
           provider: storageHealth.provider,
           health: storageHealth,
