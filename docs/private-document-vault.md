@@ -20,8 +20,15 @@ The current application filesystem remains a local encrypted storage implementat
 
 Before PostgreSQL production cutover, configure a durable object-storage provider and bucket through:
 
-- `KAPITECH_DOCUMENT_STORAGE_PROVIDER`
+- `KAPITECH_DOCUMENT_STORAGE_PROVIDER=s3-compatible`
 - `KAPITECH_DOCUMENT_STORAGE_BUCKET`
+- `KAPITECH_DOCUMENT_STORAGE_ENDPOINT`
+- `KAPITECH_DOCUMENT_STORAGE_REGION`
+- `KAPITECH_DOCUMENT_STORAGE_ACCESS_KEY_ID`
+- `KAPITECH_DOCUMENT_STORAGE_SECRET_ACCESS_KEY`
+- Optional `KAPITECH_DOCUMENT_STORAGE_SESSION_TOKEN`
+
+The adapter uses S3 Signature Version 4 over HTTPS and supports AWS S3, Cloudflare R2, MinIO, and other compatible endpoints. The object payload is already AES-256-GCM encrypted by the AMS before it leaves the application.
 
 The vault status endpoint will only report production-ready when provider configuration exists and all private documents have integrity metadata associated with the configured provider.
 
