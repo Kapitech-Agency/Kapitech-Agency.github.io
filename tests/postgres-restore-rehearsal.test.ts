@@ -23,4 +23,6 @@ test('PostgreSQL restore rehearsal emits verifiable backup evidence', async () =
   assert.match(source, /migrationCount/);
   assert.match(source, /userCount/);
   assert.match(source, /requiredTablesVerified/);
+  assert.match(source, /loadPostgresMigrations/);
+  assert.match(source, /migrationChecksumsVerified/);
 });
