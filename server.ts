@@ -80,9 +80,6 @@ async function startServer() {
     next();
   });
 
-  // API Routes
-  app.use('/api', apiRouter);
-
   // Health check
   app.get('/api/health', async (_req, res) => {
     try {
@@ -123,6 +120,9 @@ async function startServer() {
       });
     }
   });
+
+  // API Routes
+  app.use('/api', apiRouter);
 
   // Keep unknown API routes as JSON 404s instead of letting SPA fallback return index.html.
   app.use('/api', (_req, res) => {
