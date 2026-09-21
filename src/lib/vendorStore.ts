@@ -187,42 +187,49 @@ export function getAgencyVendors(): AgencyVendor[] {
 }
 
 export async function saveAgencyVendor(vendor: AgencyVendor): Promise<void> {
-  try {
-    const current = getAgencyVendors();
-    const previous = [...current];
-    const idx = current.findIndex(v => v.id === vendor.id);
-    let updated: AgencyVendor[];
-    if (idx >= 0) {
-      updated = [...current];
-      updated[idx] = { ...vendor, updatedAt: new Date().toISOString() };
-    } else {
-      updated = [{ ...vendor, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() }, ...current];
-    }
-    vendorsCache = updated;
-    window.dispatchEvent(new Event(VENDOR_EVENT_NAME));
+  const current = getAgencyVendors();
+  const previous = [...current];
+  const idx = current.findIndex(v => v.id === vendor.id);
+  let updated: AgencyVendor[];
 
-    const request = idx >= 0 ? api.vendors.update(vendor.id, vendor) : api.vendors.create(vendor);
-    const res = await request;
-    if (res.success && res.data?.success !== false) return;
+  if (idx >= 0) {
+    updated = [...current];
+    updated[idx] = { ...vendor, updatedAt: new Date().toISOString() };
+  } else {
+    updated = [{
+      ...vendor,
+      createdAt: vendor.createdAt || new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    }, ...current];
+  }
 
-    vendorsCache = previous;
-    window.dispatchEvent(new Event(VENDOR_EVENT_NAME));
-    throw new Error(res.error || 'Vendor could not be saved on the server.');
+  vendorsCache = updated;
+  window.dispatchEvent(new Event(VENDOR_EVENT_NAME));
 
+  const request = idx >= 0
+    ? api.vendors.update(vendor.id, vendor)
+    : api.vendors.create(vendor);
+  const res = await request;
+
+  if (res.success && res.data?.success !== false) return;
+
+  vendorsCache = previous;
+  window.dispatchEvent(new Event(VENDOR_EVENT_NAME));
+  throw new Error(res.error || 'Vendor could not be saved on the server.');
 }
 
 export async function deleteAgencyVendor(id: string): Promise<void> {
-  try {
-    const current = getAgencyVendors();
-    const previous = [...current];
-    const updated = current.filter(v => v.id !== id);
-    vendorsCache = updated;
-    window.dispatchEvent(new Event(VENDOR_EVENT_NAME));
-    const res = await api.vendors.delete(id);
-    if (res.success && res.data?.success !== false) return;
+  const current = getAgencyVendors();
+  const previous = [...current];
+  const updated = current.filter(v => v.id !== id);
 
-    vendorsCache = previous;
-    window.dispatchEvent(new Event(VENDOR_EVENT_NAME));
-    throw new Error(res.error || 'Vendor could not be deleted on the server.');
+  vendorsCache = updated;
+  window.dispatchEvent(new Event(VENDOR_EVENT_NAME));
 
+  const res = await api.vendors.delete(id);
+  if (res.success && res.data?.success !== false) return;
+
+  vendorsCache = previous;
+  window.dispatchEvent(new Event(VENDOR_EVENT_NAME));
+  throw new Error(res.error || 'Vendor could not be deleted on the server.');
 }
