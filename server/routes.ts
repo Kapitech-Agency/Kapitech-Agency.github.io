@@ -58,6 +58,7 @@ import { postgresCrmDealRepository } from './postgres-crm-deal-repository.ts';
 import { postgresProposalRepository } from './postgres-proposal-repository.ts';
 import { postgresTaskRepository } from './postgres-task-repository.ts';
 import { postgresTimeLogRepository } from './postgres-time-log-repository.ts';
+import { postgresInvoiceRepository } from './postgres-invoice-repository.ts';
 
 
 const ROLE_POLICIES: Record<string, {
@@ -1653,9 +1654,9 @@ apiRouter.delete('/projects/:id', requireAuth, requirePermission('canManageProje
 // 6. FINANCE, INVOICING & PAYMENTS (Server-Authoritative Calculations)
 // ----------------------------------------------------
 
-apiRouter.get('/finance/invoices', requireAuth, requirePermission('canViewFinancials'), (req: AuthenticatedRequest, res: Response): void => {
-  const db = getDatabase();
-  res.json({ success: true, invoices: db.invoices });
+apiRouter.get('/finance/invoices', requireAuth, requirePermission('canViewFinancials'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  const invoices = getDataSourceMode() === 'postgres' ? await postgresInvoiceRepository.list() : getDatabase().invoices;
+  res.json({ success: true, invoices });
 });
 
 function normalizeInvoiceItems(value: unknown): Array<{ id: string; description: string; quantity: number; unitPrice: number; amount: number }> {
@@ -1759,6 +1760,17 @@ apiRouter.post('/finance/invoices', requireAuth, requirePermission('canManageInv
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   };
+  (invoice as any).clientId = String(input.clientId || '').slice(0, 100) || undefined;
+  if (getDataSourceMode() === 'postgres') {
+    try {
+      const saved = await postgresInvoiceRepository.create(invoice);
+      recordAuditLog({ action: 'INVOICE_CREATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Created invoice ${invoice.invoiceNumber} for ${invoice.clientName} (Total: ${invoice.total}).`, severity: 'info' });
+      res.json({ success: true, invoice: saved }); return;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Invoice could not be created.';
+      res.status(message.includes('duplicate') ? 409 : 400).json({ success: false, error: message }); return;
+    }
+  }
 
   db.invoices.unshift(invoice);
   saveDatabase(db);
@@ -1776,9 +1788,39 @@ apiRouter.post('/finance/invoices', requireAuth, requirePermission('canManageInv
   res.json({ success: true, invoice });
 });
 
-apiRouter.put('/finance/invoices/:id', requireAuth, requirePermission('canManageInvoices'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.put('/finance/invoices/:id', requireAuth, requirePermission('canManageInvoices'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
   const input = req.body || {};
+  if (getDataSourceMode() === 'postgres') {
+    const existing = await postgresInvoiceRepository.findById(req.params.id);
+    if (!existing) { res.status(404).json({ success: false, error: 'Invoice not found.' }); return; }
+    const items = input.items !== undefined ? normalizeInvoiceItems(input.items) : normalizeInvoiceItems(existing.items);
+    if (items.length === 0) { res.status(400).json({ success: false, error: 'At least one valid invoice line item is required.' }); return; }
+    const taxPercent = input.taxPercent !== undefined ? Math.min(100, Math.max(0, Number(input.taxPercent) || 0)) : Number(existing.taxPercent) || 0;
+    const discountPercent = input.discountPercent !== undefined ? Math.min(100, Math.max(0, Number(input.discountPercent) || 0)) : Number(existing.discountPercent) || 0;
+    const financials = buildInvoiceFinancials(items, taxPercent, discountPercent);
+    const patch = {
+      ...input, items, taxPercent, discountPercent, ...financials,
+      clientId: input.clientId !== undefined ? String(input.clientId).slice(0,100) : existing.clientId,
+      projectId: input.projectId !== undefined ? String(input.projectId).slice(0,100) : existing.projectId,
+      currency: input.currency === 'USD' || input.currency === 'IDR' ? input.currency : existing.currency,
+      issueDate: input.issueDate !== undefined ? normalizeDate(input.issueDate, existing.issueDate) : existing.issueDate,
+      dueDate: input.dueDate !== undefined ? normalizeDate(input.dueDate, existing.dueDate) : existing.dueDate,
+      notes: input.notes !== undefined ? String(input.notes).trim().slice(0,5000) : existing.notes,
+      paymentTerms: input.paymentTerms !== undefined ? String(input.paymentTerms).trim().slice(0,500) : existing.paymentTerms,
+      updatedAt: input.updatedAt
+    };
+    try {
+      const saved = await postgresInvoiceRepository.update(req.params.id, patch);
+      if (!saved) { res.status(404).json({ success: false, error: 'Invoice not found.' }); return; }
+      recordAuditLog({ action: 'INVOICE_UPDATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Updated invoice ${saved.invoiceNumber} (Status: ${saved.status}).`, severity: 'info' });
+      res.json({ success: true, invoice: saved }); return;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Invoice could not be updated.';
+      res.status(message.includes('modified') ? 409 : message.includes('Cancelled') ? 409 : 400).json({ success: false, error: message }); return;
+    }
+  }
+
   const db = getDatabase();
   const idx = db.invoices.findIndex((invoice: any) => invoice.id === id);
 
@@ -1863,7 +1905,7 @@ apiRouter.put('/finance/invoices/:id', requireAuth, requirePermission('canManage
   res.json({ success: true, invoice: db.invoices[idx] });
 });
 
-apiRouter.post('/finance/invoices/:id/pay', requireAuth, requirePermission('canManageInvoices'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.post('/finance/invoices/:id/pay', requireAuth, requirePermission('canManageInvoices'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
   const input = req.body || {};
   const payAmount = Number(input.amount);
@@ -1871,6 +1913,25 @@ apiRouter.post('/finance/invoices/:id/pay', requireAuth, requirePermission('canM
   if (!Number.isFinite(payAmount) || payAmount <= 0) {
     res.status(400).json({ success: false, error: 'Valid payment amount is required.' });
     return;
+  }
+
+  if (getDataSourceMode() === 'postgres') {
+    const invoice = await postgresInvoiceRepository.findById(req.params.id);
+    if (!invoice) { res.status(404).json({ success: false, error: 'Invoice not found.' }); return; }
+    const payAmount = Number(input.amount);
+    if (!Number.isFinite(payAmount) || payAmount <= 0) { res.status(400).json({ success: false, error: 'Valid payment amount is required.' }); return; }
+    const method = PAYMENT_METHODS.has(String(input.method)) ? String(input.method) : 'bank_transfer';
+    const date = normalizeDate(input.date, new Date().toISOString().slice(0,10));
+    const payment = { id: `pay_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`, amount: Math.round(payAmount*100)/100, date, method, reference: String(input.reference||'').trim().slice(0,160), notes: String(input.notes||'').trim().slice(0,1000), recordedBy: req.user!.name || req.user!.username, userId: req.user!.id };
+    try {
+      const saved = await postgresInvoiceRepository.recordPayment(req.params.id, payment);
+      if (!saved) { res.status(404).json({ success:false,error:'Invoice not found.' }); return; }
+      recordAuditLog({ action:'PAYMENT_RECORDED', actor:req.user!.username, actorRole:req.user!.role, ip:req.ip, userAgent:req.headers['user-agent'] as string, details:`Recorded payment of ${payAmount} for invoice ${saved.invoiceNumber}. New status: ${saved.status}.`, severity:'info' });
+      res.json({ success:true, invoice:saved, payment }); return;
+    } catch(error) {
+      const message=error instanceof Error?error.message:'Payment could not be recorded.';
+      res.status(message.includes('exceeds')||message.includes('Cancelled')?409:400).json({success:false,error:message}); return;
+    }
   }
 
   const db = getDatabase();
@@ -1939,8 +2000,20 @@ apiRouter.post('/finance/invoices/:id/pay', requireAuth, requirePermission('canM
   res.json({ success: true, invoice, payment: paymentRecord });
 });
 
-apiRouter.delete('/finance/invoices/:id', requireAuth, requirePermission('canManageInvoices'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.delete('/finance/invoices/:id', requireAuth, requirePermission('canManageInvoices'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
+  if (getDataSourceMode() === 'postgres') {
+    try {
+      const invoice = await postgresInvoiceRepository.cancel(req.params.id, req.user!.username);
+      if (!invoice) { res.status(404).json({ success:false,error:'Invoice not found.' }); return; }
+      recordAuditLog({ action:'INVOICE_CANCELLED', actor:req.user!.username, actorRole:req.user!.role, ip:req.ip, userAgent:req.headers['user-agent'] as string, details:`Cancelled invoice ${invoice.invoiceNumber}.`, severity:'warning' });
+      res.json({success:true,message:'Invoice cancelled.',invoice}); return;
+    } catch(error) {
+      const message=error instanceof Error?error.message:'Invoice could not be cancelled.';
+      res.status(400).json({success:false,error:message}); return;
+    }
+  }
+
   const db = getDatabase();
   const invoice = db.invoices.find((item: any) => item.id === id);
   if (!invoice) {
