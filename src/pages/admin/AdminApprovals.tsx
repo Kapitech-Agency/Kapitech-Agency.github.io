@@ -19,6 +19,7 @@ import {
 import { api } from '../../lib/apiClient';
 import { useLanguage } from '../../lib/LanguageContext';
 import { getActiveCurrency, formatAmount, CurrencyCode, CURRENCY_EVENT } from '../../lib/currency';
+import { hasAdminPermission } from '../../lib/adminAuth';
 
 interface ApprovalItem {
   id: string;
@@ -40,6 +41,7 @@ interface ApprovalItem {
 export const AdminApprovals: React.FC = () => {
   const { language } = useLanguage();
   const [currency, setCurrency] = useState<CurrencyCode>(getActiveCurrency());
+  const canApproveBudgets = hasAdminPermission('canApproveBudgets');
   const [approvals, setApprovals] = useState<ApprovalItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState<string>('Pending');
@@ -347,7 +349,7 @@ export const AdminApprovals: React.FC = () => {
                     </div>
                   )}
 
-                  {item.status.toLowerCase() === 'pending' ? (
+                  {item.status.toLowerCase() === 'pending' && canApproveBudgets ? (
                     <div className="flex items-center gap-1.5 mt-2">
                       <button
                         onClick={() => {
