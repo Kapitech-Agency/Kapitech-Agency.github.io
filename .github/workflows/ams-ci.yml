@@ -10,6 +10,22 @@ jobs:
   verify:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: kapitech_ams_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d kapitech_ams_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      KAPITECH_POSTGRES_URL: postgresql://postgres:postgres@localhost:5432/kapitech_ams_test
+      KAPITECH_POSTGRES_SSL: disable
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -25,6 +41,9 @@ jobs:
 
       - name: Type check
         run: npm run lint
+      - name: Apply PostgreSQL migrations
+        run: npm run db:migrate
+
       - name: Security regression tests
         run: npm test
 
