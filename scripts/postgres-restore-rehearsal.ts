@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import { Client } from 'pg';
+import { loadPostgresMigrations } from '../server/postgres-migrations.ts';
 
 const execFileAsync = promisify(execFile);
 
@@ -96,10 +97,23 @@ if (missingTables.length) {
   throw new Error('Restored PostgreSQL database is missing required tables: ' + missingTables.join(', '));
 }
 
-const [migrationRows, userRows] = await Promise.all([
+const [migrationRows, migrationHistory, userRows] = await Promise.all([
   queryTarget<{ count: string }>('SELECT COUNT(*)::bigint AS count FROM schema_migrations'),
+  queryTarget<{ version: string; checksum: string }>('SELECT version, checksum FROM schema_migrations ORDER BY version'),
   queryTarget<{ count: string }>('SELECT COUNT(*)::bigint AS count FROM users')
 ]);
+
+const expectedMigrations = await loadPostgresMigrations();
+const restoredByVersion = new Map(
+  migrationHistory.map(row => [String(row.version), String(row.checksum || '').toLowerCase()])
+);
+const migrationChecksumsVerified =
+  migrationHistory.length === expectedMigrations.length &&
+  expectedMigrations.every(migration => restoredByVersion.get(migration.version) === migration.checksum);
+
+if (!migrationChecksumsVerified) {
+  throw new Error('Restored PostgreSQL migration history does not match the deployed migration versions/checksums.');
+}
 
 const result = {
   status: 'verified',
@@ -109,6 +123,7 @@ const result = {
   format: isCustomDump ? 'custom' : 'plain',
   target: safeTargetLabel(),
   migrationCount: Number(migrationRows[0]?.count || 0),
+  migrationChecksumsVerified,
   userCount: Number(userRows[0]?.count || 0),
   requiredTablesVerified: requiredTables
 };
