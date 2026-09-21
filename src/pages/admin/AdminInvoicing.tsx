@@ -271,24 +271,28 @@ export const AdminInvoicing: React.FC = () => {
     setPaymentNotes('');
   };
 
-  const handleRecordPaymentSubmit = (e: React.FormEvent) => {
+  const handleRecordPaymentSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!paymentModalInvoice) return;
     if (paymentAmount <= 0) {
       showToast(language === 'id' ? 'Nominal pembayaran harus lebih besar dari 0' : 'Payment amount must be greater than 0');
       return;
     }
-    const updated = recordInvoicePayment(paymentModalInvoice.id, {
-      amount: paymentAmount,
-      date: paymentDate,
-      method: paymentMethod,
-      reference: paymentRef,
-      recordedBy: session?.user?.name || session?.user?.username || 'Finance Officer',
-      notes: paymentNotes
-    });
-    if (updated) {
-      showToast(language === 'id' ? `Pembayaran dicatat untuk ${updated.invoiceNumber}` : `Payment recorded for ${updated.invoiceNumber}`);
-      setPaymentModalInvoice(null);
+    try {
+      const updated = await recordInvoicePayment(paymentModalInvoice.id, {
+        amount: paymentAmount,
+        date: paymentDate,
+        method: paymentMethod,
+        reference: paymentRef,
+        recordedBy: session?.user?.name || session?.user?.username || 'Finance Officer',
+        notes: paymentNotes
+      });
+      if (updated) {
+        showToast(language === 'id' ? `Pembayaran dicatat untuk ${updated.invoiceNumber}` : `Payment recorded for ${updated.invoiceNumber}`);
+        setPaymentModalInvoice(null);
+      }
+    } catch (error: any) {
+      showToast(error?.message || (language === 'id' ? 'Pembayaran gagal disimpan ke server.' : 'Payment could not be saved to the server.'));
     }
   };
 
