@@ -76,7 +76,7 @@ export class PostgresTaskRepository {
       if (patch.updatedAt && iso(currentResult.rows[0].updated_at) !== patch.updatedAt) {
         throw new Error('Task has been modified since it was loaded. Refresh and retry.');
       }
-      const next = { ...current, ...patch, id, updatedAt: new Date().toISOString() };
+      const next: Record<string, unknown> = { ...current, ...patch, id, updatedAt: new Date().toISOString() };
       const projectId = typeof next.projectId === 'string' && next.projectId ? next.projectId : null;
       if (projectId) {
         const project = await client.query('SELECT id FROM projects WHERE id = $1 LIMIT 1', [projectId]);
