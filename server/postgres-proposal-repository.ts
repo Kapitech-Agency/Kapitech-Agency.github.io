@@ -265,7 +265,7 @@ export class PostgresProposalRepository {
         'discount=COALESCE($8,discount), tax_percent=COALESCE($9,tax_percent), tax=COALESCE($10,tax), ' +
         'total=COALESCE($11,total), currency=COALESCE($12,currency), validity_period=COALESCE($13,validity_period), ' +
         'payment_terms=COALESCE($14,payment_terms), notes=COALESCE($15,notes), status=COALESCE($16,status), ' +
-        'sent_date=COALESCE($17,sent_date), version=version+1, updated_at=NOW() ' +
+        'sent_date=COALESCE($17,sent_date), metadata=metadata || $18::jsonb, version=version+1, updated_at=NOW() ' +
         'WHERE id=$1 AND archived_at IS NULL RETURNING *',
         [
           id,
@@ -284,7 +284,8 @@ export class PostgresProposalRepository {
           patch.paymentTerms != null ? String(patch.paymentTerms) : null,
           patch.notes != null ? String(patch.notes) : null,
           patch.status != null ? String(patch.status) : null,
-          patch.sentDate ?? null
+          patch.sentDate ?? null,
+          JSON.stringify(metadataPatch)
         ]
       );
 
