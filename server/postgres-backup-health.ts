@@ -57,16 +57,20 @@ export function getPostgresBackupHealth(): PostgresBackupHealth {
   const latestBackupAt = readIsoEnv('KAPITECH_POSTGRES_BACKUP_LATEST_AT');
   const restoreVerifiedAt = readIsoEnv('KAPITECH_POSTGRES_BACKUP_RESTORE_VERIFIED_AT');
   const now = Date.now();
-  const ageMs = latestBackupAt ? Math.max(0, now - new Date(latestBackupAt).getTime()) : null;
+  const latestBackupAtMs = latestBackupAt ? new Date(latestBackupAt).getTime() : null;
+  const ageMs = latestBackupAtMs !== null && Number.isFinite(latestBackupAtMs)
+    ? now - latestBackupAtMs
+    : null;
   const rpoMinutes = readPositiveInt('KAPITECH_POSTGRES_BACKUP_RPO_MINUTES', 15);
   const rtoMinutes = readPositiveInt('KAPITECH_POSTGRES_BACKUP_RTO_MINUTES', 60);
   const retentionDays = readPositiveInt('KAPITECH_POSTGRES_BACKUP_RETENTION_DAYS', 35);
-  const backupFresh = ageMs !== null && ageMs <= rpoMinutes * 60 * 1000;
+  const backupFresh = ageMs !== null && ageMs >= 0 && ageMs <= rpoMinutes * 60 * 1000;
   const restoreVerifiedAtMs = restoreVerifiedAt ? new Date(restoreVerifiedAt).getTime() : null;
   const restoreMaxAgeMs = retentionDays * 24 * 60 * 60 * 1000;
   const restoreVerificationFresh = restoreVerifiedAtMs !== null
     && Number.isFinite(restoreVerifiedAtMs)
-    && Math.max(0, now - restoreVerifiedAtMs) <= restoreMaxAgeMs;
+    && restoreVerifiedAtMs <= now
+    && now - restoreVerifiedAtMs <= restoreMaxAgeMs;
   const restoreVerified = restoreVerificationFresh;
 
   let reason: string | undefined;
