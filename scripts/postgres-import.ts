@@ -75,6 +75,13 @@ function timestampValue(value: unknown, fallback = '1970-01-01T00:00:00.000Z'): 
   return Number.isNaN(parsed.getTime()) ? fallback : parsed.toISOString();
 }
 
+function nullableTimestampValue(value: unknown): string | null {
+  const text = textValue(value).trim();
+  if (!text) return null;
+  const parsed = new Date(text);
+  return Number.isNaN(parsed.getTime()) ? null : parsed.toISOString();
+}
+
 function jsonValue(value: unknown): string {
   return JSON.stringify(value && typeof value === 'object' ? value : {});
 }
@@ -263,7 +270,7 @@ async function importCore(client: any, db: AnyRecord): Promise<Record<string, nu
       [textValue(row.id),nullableText(row.clientId),textValue(row.name || row.title),nullableText(row.description),textValue(row.status),
        nullableText(row.owner),numberValue(row.budget),dateValue(row.startDate),dateValue(row.endDate),
        textValue(row.currency,'IDR').toUpperCase().slice(0,3),numberValue(row.version,1),
-       timestampValue(row.archivedAt),
+       nullableTimestampValue(row.archivedAt),
        metadata(row,['id','clientId','name','title','description','status','owner','budget','startDate','endDate','currency','version','archivedAt','createdAt','updatedAt']),
        timestampValue(row.createdAt),timestampValue(row.updatedAt,row.createdAt)]);
   }
@@ -298,7 +305,7 @@ async function importCore(client: any, db: AnyRecord): Promise<Record<string, nu
       ['id','project_id','title','description','status','priority','assignee_user_id','due_date','estimated_minutes','version','completed_at','archived_at','metadata','created_at','updated_at'],
       [textValue(row.id),nullableText(row.projectId),textValue(row.title),nullableText(row.description),textValue(row.status),
        nullableText(row.priority),nullableText(row.assigneeUserId || row.assigneeId),dateValue(row.dueDate),estimatedMinutes,
-       numberValue(row.version,1),timestampValue(row.completedAt),timestampValue(row.archivedAt),
+       numberValue(row.version,1),nullableTimestampValue(row.completedAt),nullableTimestampValue(row.archivedAt),
        metadata(row,['id','projectId','title','description','status','priority','assigneeUserId','assigneeId','dueDate','estimatedHours','estimatedMinutes','version','completedAt','archivedAt','createdAt','updatedAt']),
        timestampValue(row.createdAt),timestampValue(row.updatedAt,row.createdAt)]);
   }
