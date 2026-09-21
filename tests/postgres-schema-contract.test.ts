@@ -27,11 +27,14 @@ test('PostgreSQL repository SQL table references exist in the authoritative migr
 
   assert.ok(tables.size > 0, 'No PostgreSQL tables were discovered from db/postgres migrations.');
 
+  const nonTableIdentifiers = new Set(['set', 'proposal', 'jsonb_array_elements']);
   const referencedTables = new Map<string, string[]>();
   for (const file of repositoryFiles(serverDir)) {
     const source = fs.readFileSync(file, 'utf8');
     for (const match of source.matchAll(/\b(?:FROM|JOIN|INTO|UPDATE|DELETE\s+FROM)\s+([a-z_][a-z0-9_]*)/gi)) {
       const table = match[1].toLowerCase();
+      const afterToken = match[0].slice(match[0].lastIndexOf(table) + table.length);
+      if (nonTableIdentifiers.has(table) || /^\s*\(/.test(afterToken)) continue;
       const files = referencedTables.get(table) || [];
       files.push(path.relative(root, file));
       referencedTables.set(table, files);
