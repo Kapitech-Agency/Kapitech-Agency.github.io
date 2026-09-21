@@ -52,7 +52,7 @@ jobs:
         env:
           KAPITECH_POSTGRES_URL: postgresql://postgres:postgres@localhost:5432/kapitech_ams_test
           KAPITECH_POSTGRES_SSL: disable
-        run: node --import tsx --test tests/postgres-integration.test.ts tests/postgres-domain-repositories.test.ts tests/postgres-time-log.test.ts
+        run: node --import tsx --test tests/postgres-integration.test.ts tests/postgres-domain-repositories.test.ts tests/postgres-time-log.test.ts tests/postgres-expense.test.ts
 
       - name: Dependency audit
         run: npm audit --audit-level=high
