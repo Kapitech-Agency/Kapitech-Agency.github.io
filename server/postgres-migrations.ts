@@ -22,13 +22,16 @@ import fsSync from 'node:fs';
 function defaultMigrationsDir(): string {
   const cwdCandidate = path.resolve(process.cwd(), 'db/postgres');
   const entrypoint = process.argv[1];
-  const entrypointCandidate = entrypoint
-    ? path.resolve(path.dirname(entrypoint), '../db/postgres')
-    : null;
+  const entrypointDir = entrypoint ? path.dirname(entrypoint) : null;
+  const candidates = [
+    entrypointDir ? path.resolve(entrypointDir, 'db/postgres') : null,
+    entrypointDir ? path.resolve(entrypointDir, '../db/postgres') : null,
+    cwdCandidate
+  ].filter((candidate): candidate is string => Boolean(candidate));
 
-  if (entrypointCandidate) {
+  for (const candidate of candidates) {
     try {
-      if (fsSync.existsSync(entrypointCandidate)) return entrypointCandidate;
+      if (fsSync.existsSync(candidate)) return candidate;
     } catch {}
   }
 
