@@ -230,7 +230,17 @@ export const AdminCmsServices: React.FC = () => {
           </div>
 
           <button
-            onClick={() => setIsAddModalOpen(true)}
+            onClick={() => {
+              setEditingService(null);
+              setNewTitle('');
+              setNewSlug('');
+              setNewCategory('Development');
+              setNewHeadline('');
+              setNewSubtitle('');
+              setNewBadge('Enterprise Tier');
+              setTempCapabilities(['Technical Audit & Core Web Vitals', 'Modern Jamstack Architecture', 'High-speed Edge Delivery']);
+              setIsAddModalOpen(true);
+            }}
             className="px-4 py-2 rounded-xl bg-[#E50914] hover:bg-[#FF1E27] text-white text-xs font-sans font-semibold transition-all flex items-center gap-1.5 shadow-lg shadow-[#E50914]/25 min-h-[38px]"
           >
             <Plus size={14} />
@@ -383,6 +393,23 @@ export const AdminCmsServices: React.FC = () => {
               <span className="truncate max-w-[120px]">/{item.slug}</span>
               
               <div className="flex items-center gap-2">
+                <button
+                  onClick={() => {
+                    setEditingService(item);
+                    setNewTitle(item.title);
+                    setNewSlug(item.slug);
+                    setNewCategory(item.category);
+                    setNewHeadline(item.heroHeadline || '');
+                    setNewSubtitle(item.heroSubtitle || '');
+                    setNewBadge(item.badge || item.badgeId || 'Active');
+                    setTempCapabilities((item.capabilities || []).map((cap) => cap.title || cap.titleId).filter(Boolean));
+                    setIsAddModalOpen(true);
+                  }}
+                  className="px-2.5 py-1 rounded-lg bg-[#181B22] hover:bg-[#21252F] border border-[rgba(255,255,255,0.07)] text-white text-[11px] font-sans flex items-center gap-1 transition-colors"
+                >
+                  <Edit3 size={12} className="text-[#8A94A6]" />
+                  <span>Edit</span>
+                </button>
                 <button
                   onClick={() => setSelectedServiceForDetail(item)}
                   className="px-2.5 py-1 rounded-lg bg-[#181B22] hover:bg-[#21252F] border border-[rgba(255,255,255,0.07)] text-white text-[11px] font-sans flex items-center gap-1 transition-colors"
