@@ -30,9 +30,11 @@ import { useLanguage } from '../../lib/LanguageContext';
 import { useDragToScroll } from '../../lib/useDragToScroll';
 import { ScrollShadowContainer } from '../../components/ui/ScrollShadowContainer';
 import { CustomSelect } from '../../components/ui/CustomSelect';
+import { hasAdminPermission } from '../../lib/adminAuth';
 
 export const AdminClients: React.FC = () => {
   const { t, language } = useLanguage();
+  const canManageClients = hasAdminPermission('canManageClients');
   const [currency, setCurrency] = useState<CurrencyCode>(getActiveCurrency());
   const [clients, setClients] = useState<AgencyClient[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -431,14 +433,16 @@ export const AdminClients: React.FC = () => {
                     <button
                       onClick={() => handleOpenEditClient(client)}
                       className="w-9 h-9 rounded-xl bg-[#181B22] hover:bg-[#21252F] text-[#8A94A6] hover:text-white border border-[rgba(255,255,255,0.07)] flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
-                      title="Edit Client"
+                      title={canManageClients ? 'Edit Client' : 'No permission to edit clients'}
+                    disabled={!canManageClients}
                     >
                       <Edit3 size={13} />
                     </button>
                     <button
                       onClick={() => handleDeleteClient(client.id, client.name)}
                       className="w-9 h-9 rounded-xl bg-[#181B22] hover:bg-red-950/40 text-[#8A94A6] hover:text-red-400 border border-[rgba(255,255,255,0.07)] hover:border-red-500/30 flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
-                      title="Delete Client"
+                      title={canManageClients ? 'Delete Client' : 'No permission to delete clients'}
+                    disabled={!canManageClients}
                     >
                       <Trash2 size={13} />
                     </button>
@@ -542,14 +546,16 @@ export const AdminClients: React.FC = () => {
                         <button
                           onClick={() => handleOpenEditClient(client)}
                           className="w-9 h-9 rounded-xl bg-[#181B22] hover:bg-[#21252F] text-[#8A94A6] hover:text-white border border-[rgba(255,255,255,0.07)] flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
-                          title="Edit Client"
+                          title={canManageClients ? 'Edit Client' : 'No permission to edit clients'}
+                        disabled={!canManageClients}
                         >
                           <Edit3 size={13} />
                         </button>
                         <button
                           onClick={() => handleDeleteClient(client.id, client.name)}
                           className="w-9 h-9 rounded-xl bg-[#181B22] hover:bg-red-950/40 text-[#8A94A6] hover:text-red-400 border border-[rgba(255,255,255,0.07)] hover:border-red-500/30 flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
-                          title="Delete Client"
+                          title={canManageClients ? 'Delete Client' : 'No permission to delete clients'}
+                        disabled={!canManageClients}
                         >
                           <Trash2 size={13} />
                         </button>
