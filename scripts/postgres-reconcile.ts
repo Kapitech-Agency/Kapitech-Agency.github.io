@@ -137,6 +137,7 @@ async function main(): Promise<void> {
 
   const pool = getPostgresPool();
   const runId = crypto.randomUUID();
+  await pool.query('SELECT 1');
   await pool.query(
     'INSERT INTO migration_runs (id, source_kind, source_sha256, started_at, status, report) VALUES ($1,$2,$3,NOW(),$4,$5)',
     [runId, 'encrypted-json', sourceSha256, 'running', JSON.stringify({ localCounts, financials, duplicates, brokenReferences })]
