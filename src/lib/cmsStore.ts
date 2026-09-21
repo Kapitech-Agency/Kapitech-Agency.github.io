@@ -149,9 +149,11 @@ export async function fetchServerCmsServices(): Promise<ServiceItemData[]> {
 
 export async function saveCmsService(service: ServiceItemData): Promise<{ success: boolean; service: ServiceItemData }> {
   const current = getCmsServices();
-  const exists = current.some(s => s.slug === service.slug);
-  const res = exists
-    ? await api.cms.updateService(service.slug, service)
+  const existing = current.find((s) => s.slug === service.slug || (s as any).id === (service as any).id);
+  const exists = Boolean(existing);
+  const targetId = String((existing as any)?.id || (service as any).id || '');
+  const res = exists && targetId
+    ? await api.cms.updateService(targetId, service)
     : await api.cms.createService(service);
 
   if (!res.success || !res.data?.service) {
@@ -169,15 +171,17 @@ export async function saveCmsService(service: ServiceItemData): Promise<{ succes
 }
 
 export async function deleteCmsService(slug: string): Promise<boolean> {
-  const res = await api.cms.deleteService(slug);
+  const current = getCmsServices();
+  const existing = current.find((s) => s.slug === slug || (s as any).id === slug);
+  const targetId = String((existing as any)?.id || slug);
+  const res = await api.cms.deleteService(targetId);
   if (!res.success) throw new Error(res.error || 'CMS service could not be deleted on the server.');
-  cmsServicesCache = getCmsServices().filter(s => s.slug !== slug);
+  cmsServicesCache = current.filter((s) => s.slug !== slug && String((s as any).id || '') !== targetId);
   notifyCmsUpdate('services');
   return true;
 }
 
 // -------------------------------------------------------------
-// 2. Projects CMS Manager// -------------------------------------------------------------
 // 2. Projects CMS Manager
 // -------------------------------------------------------------
 
@@ -229,7 +233,7 @@ export async function deleteCmsProject(id: string): Promise<boolean> {
   return true;
 }
 
-export function resetCmsProjectsToDefaultexport function resetCmsProjectsToDefault() {
+export function resetCmsProjectsToDefault() {
   cmsProjectsCache = allProjects;
   notifyCmsUpdate('projects');
 }
@@ -287,7 +291,6 @@ export async function deleteCmsTestimonial(id: string): Promise<boolean> {
 }
 
 // -------------------------------------------------------------
-// 4. Site Meta & Configuration Manager// -------------------------------------------------------------
 // 4. Site Meta & Configuration Manager
 // -------------------------------------------------------------
 
