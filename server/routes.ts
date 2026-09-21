@@ -1788,7 +1788,7 @@ apiRouter.post('/finance/invoices', requireAuth, requirePermission('canManageInv
   res.json({ success: true, invoice });
 });
 
-apiRouter.put('/finance/invoices/:id', requireAuth, requirePermission('canManageInvoices'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.put('/finance/invoices/:id', requireAuth, requirePermission('canManageInvoices'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
   const input = req.body || {};
   if (getDataSourceMode() === 'postgres') {
@@ -1905,7 +1905,7 @@ apiRouter.put('/finance/invoices/:id', requireAuth, requirePermission('canManage
   res.json({ success: true, invoice: db.invoices[idx] });
 });
 
-apiRouter.post('/finance/invoices/:id/pay', requireAuth, requirePermission('canManageInvoices'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.post('/finance/invoices/:id/pay', requireAuth, requirePermission('canManageInvoices'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
   const input = req.body || {};
   const payAmount = Number(input.amount);
@@ -2000,7 +2000,7 @@ apiRouter.post('/finance/invoices/:id/pay', requireAuth, requirePermission('canM
   res.json({ success: true, invoice, payment: paymentRecord });
 });
 
-apiRouter.delete('/finance/invoices/:id', requireAuth, requirePermission('canManageInvoices'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.delete('/finance/invoices/:id', requireAuth, requirePermission('canManageInvoices'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
   if (getDataSourceMode() === 'postgres') {
     try {
