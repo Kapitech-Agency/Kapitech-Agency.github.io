@@ -25,6 +25,7 @@ test('Migration runner keeps the historical 001 transaction wrapper out of the s
   const runner = await fs.readFile(path.join(root, 'server/postgres-migrations.ts'), 'utf8');
 
   assert.match(runner, /normalizeMigrationSql/);
-  assert.match(runner, /replace\(\/\^\\s\*BEGIN/);
-  assert.match(runner, /replace\(\/\\s\*COMMIT/);
+  assert.match(runner, /normalizeMigrationSql/);
+  assert.match(runner, /BEGIN;/);
+  assert.match(runner, /COMMIT;/);
 });
