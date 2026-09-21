@@ -1,60 +1,116 @@
 import crypto from 'node:crypto';
 import fs from 'node:fs';
-import path from 'node:path';
+import { execFile } from 'node:child_process';
+import { promisify } from 'node:util';
+import { Client } from 'pg';
 
-const backupPath = process.argv[2];
-const outputDir = process.argv[3] || path.join(process.cwd(), '.restore-rehearsal');
+const execFileAsync = promisify(execFile);
 
-if (!backupPath) {
-  throw new Error('Usage: tsx scripts/postgres-restore-rehearsal.ts <backup-file> [isolated-output-dir]');
+const backupPathArg = process.argv[2];
+if (!backupPathArg) {
+  throw new Error('Usage: tsx scripts/postgres-restore-rehearsal.ts <postgres-backup-file>');
 }
 
-const PREFIX = 'KAPI-ENC-V1:';
-
-function key(): Buffer {
-  const raw = process.env.KAPITECH_DATA_ENCRYPTION_KEY?.trim();
-  if (!raw) throw new Error('KAPITECH_DATA_ENCRYPTION_KEY is required.');
-  const value = /^[0-9a-f]{64}$/i.test(raw) ? Buffer.from(raw, 'hex') : Buffer.from(raw, 'base64');
-  if (value.length !== 32) throw new Error('KAPITECH_DATA_ENCRYPTION_KEY must decode to 32 bytes.');
-  return value;
+const backupPath = fs.realpathSync(backupPathArg);
+const targetUrlRaw = process.env.KAPITECH_POSTGRES_REHEARSAL_URL?.trim();
+if (!targetUrlRaw) {
+  throw new Error('KAPITECH_POSTGRES_REHEARSAL_URL is required.');
 }
 
-function decrypt(raw: string): string {
-  if (!raw.startsWith(PREFIX)) return raw;
-  const payload = JSON.parse(raw.slice(PREFIX.length));
-  const decipher = crypto.createDecipheriv('aes-256-gcm', key(), Buffer.from(payload.iv, 'base64'));
-  decipher.setAuthTag(Buffer.from(payload.authTag, 'base64'));
-  return Buffer.concat([
-    decipher.update(Buffer.from(payload.data, 'base64')),
-    decipher.final()
-  ]).toString('utf8');
+const productionUrlRaw = process.env.KAPITECH_POSTGRES_URL?.trim();
+const targetUrl = new URL(targetUrlRaw);
+if (!targetUrl.hostname) {
+  throw new Error('KAPITECH_POSTGRES_REHEARSAL_URL is invalid.');
+}
+if (productionUrlRaw) {
+  const productionUrl = new URL(productionUrlRaw);
+  if (
+    targetUrl.protocol === productionUrl.protocol &&
+    targetUrl.hostname === productionUrl.hostname &&
+    targetUrl.port === productionUrl.port &&
+    targetUrl.pathname === productionUrl.pathname
+  ) {
+    throw new Error('PostgreSQL restore rehearsal target must not be the production database.');
+  }
 }
 
-const source = fs.readFileSync(path.resolve(backupPath), 'utf8');
-const plaintext = decrypt(source);
-const db = JSON.parse(plaintext);
+const stat = fs.statSync(backupPath);
+if (!stat.isFile()) throw new Error('PostgreSQL backup path must be a file.');
 
-const requiredArrays = [
-  'users','sessions','leads','clients','crmDeals','projects','proposals',
-  'tasks','timeLogs','invoices','expenses','approvals','vendors',
-  'documents','notifications','auditLogs'
-];
+const backup = fs.readFileSync(backupPath);
+const backupSha256 = crypto.createHash('sha256').update(backup).digest('hex');
+const isCustomDump = backup.subarray(0, 5).toString('ascii') === 'PGDMP';
 
-for (const name of requiredArrays) {
-  if (!Array.isArray(db[name])) throw new Error(`Restored database is missing array: ${name}`);
+function postgresCliEnv(): NodeJS.ProcessEnv {
+  const url = new URL(targetUrlRaw);
+  const env: NodeJS.ProcessEnv = {
+    ...process.env,
+    PGHOST: url.hostname,
+    PGPORT: url.port || '5432',
+    PGUSER: decodeURIComponent(url.username),
+    PGPASSWORD: decodeURIComponent(url.password),
+    PGDATABASE: decodeURIComponent(url.pathname.replace(/^\//, '')),
+  };
+  const sslmode = url.searchParams.get('sslmode');
+  if (sslmode) env.PGSSLMODE = sslmode;
+  return env;
 }
 
-fs.mkdirSync(path.resolve(outputDir), { recursive: true, mode: 0o700 });
-const restoredPath = path.join(path.resolve(outputDir), 'kapitech_db.json');
-fs.writeFileSync(restoredPath, source, { mode: 0o600 });
-try { fs.chmodSync(restoredPath, 0o600); } catch {}
+function safeTargetLabel(): string {
+  return targetUrl.hostname + (targetUrl.port ? ':' + targetUrl.port : '') + targetUrl.pathname;
+}
 
-const summary = {
+async function queryTarget<T extends Record<string, unknown>>(sql: string): Promise<T[]> {
+  const client = new Client({ connectionString: targetUrlRaw });
+  await client.connect();
+  try {
+    const result = await client.query<T>(sql);
+    return result.rows;
+  } finally {
+    await client.end();
+  }
+}
+
+const before = await queryTarget<{ count: string }>(
+  "SELECT COUNT(*)::bigint AS count FROM information_schema.tables WHERE table_schema = 'public'"
+);
+if (Number(before[0]?.count || 0) !== 0) {
+  throw new Error('Restore rehearsal target must be an empty PostgreSQL database.');
+}
+
+const env = postgresCliEnv();
+const cliArgs = isCustomDump
+  ? ['--no-owner', '--exit-on-error', '--dbname=' + encodeURIComponent(env.PGDATABASE || ''), backupPath]
+  : ['--set=ON_ERROR_STOP=1', '--dbname=' + encodeURIComponent(env.PGDATABASE || ''), '--file', backupPath];
+
+const command = isCustomDump ? 'pg_restore' : 'psql';
+await execFileAsync(command, cliArgs, { env, maxBuffer: 8 * 1024 * 1024 });
+
+const requiredTables = ['schema_migrations', 'users', 'migration_runs', 'notification_settings', 'documents'];
+const tableRows = await queryTarget<{ table_name: string }>(
+  "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'"
+);
+const tableNames = new Set(tableRows.map(row => String(row.table_name)));
+const missingTables = requiredTables.filter(table => !tableNames.has(table));
+if (missingTables.length) {
+  throw new Error('Restored PostgreSQL database is missing required tables: ' + missingTables.join(', '));
+}
+
+const [migrationRows, userRows] = await Promise.all([
+  queryTarget<{ count: string }>('SELECT COUNT(*)::bigint AS count FROM schema_migrations'),
+  queryTarget<{ count: string }>('SELECT COUNT(*)::bigint AS count FROM users')
+]);
+
+const result = {
+  status: 'verified',
   restoredAt: new Date().toISOString(),
-  sourceBytes: Buffer.byteLength(source),
-  restoredBytes: fs.statSync(restoredPath).size,
-  encrypted: source.startsWith(PREFIX),
-  counts: Object.fromEntries(requiredArrays.map(name => [name, db[name].length]))
+  backupSha256,
+  backupBytes: backup.byteLength,
+  format: isCustomDump ? 'custom' : 'plain',
+  target: safeTargetLabel(),
+  migrationCount: Number(migrationRows[0]?.count || 0),
+  userCount: Number(userRows[0]?.count || 0),
+  requiredTablesVerified: requiredTables
 };
 
-console.log(JSON.stringify(summary, null, 2));
+console.log(JSON.stringify(result, null, 2));

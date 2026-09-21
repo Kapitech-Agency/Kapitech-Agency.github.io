@@ -13,7 +13,8 @@
     "test": "node --import tsx --test tests/**/*.test.ts",
     "db:migrate": "tsx scripts/postgres-migrate.ts",
     "db:reconcile": "tsx scripts/postgres-reconcile.ts",
-    "db:import": "tsx scripts/postgres-import.ts"
+    "db:import": "tsx scripts/postgres-import.ts",
+    "db:restore-rehearsal": "tsx scripts/postgres-restore-rehearsal.ts"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.14",
