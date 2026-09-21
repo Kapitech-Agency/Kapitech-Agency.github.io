@@ -2796,6 +2796,10 @@ apiRouter.post('/ai/generate', requireAuth, requirePermission('canAccessServerAn
 // ----------------------------------------------------
 
 apiRouter.post('/migration/import-local', requireAuth, requirePermission('canRunDataMigration'), (req: AuthenticatedRequest, res: Response): void => {
+  if (getDataSourceMode() === 'postgres') {
+    res.status(409).json({ success: false, error: 'Legacy JSON import is disabled while PostgreSQL is the active datasource. Use the relational migration pipeline.' });
+    return;
+  }
   const { leads, clients, projects, invoices, expenses, vendors, cmsServices, cmsProjects, cmsTestimonials } = req.body;
   const db = getDatabase();
   let importedCount = 0;
