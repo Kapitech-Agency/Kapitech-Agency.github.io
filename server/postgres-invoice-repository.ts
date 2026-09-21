@@ -9,7 +9,7 @@ function mapInvoice(row:Row, items:Row[], payments:Row[]):any {
   const metadata=obj(row.metadata);
   const mappedPayments=payments.map(p=>({
     id:p.id, amount:Number(p.amount), date:date(p.payment_date), method:p.method,
-    reference:p.reference||'', recordedBy:metadata.paymentUsers?.[p.id] || p.recorded_by_user_id || '',
+    reference:p.reference||'', recordedBy:obj(metadata.paymentUsers)[p.id] || p.recorded_by_user_id || '',
     notes:p.notes||''
   }));
   const amountPaid=Number(row.amount_paid||mappedPayments.reduce((s,p)=>s+p.amount,0));
