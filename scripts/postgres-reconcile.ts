@@ -108,9 +108,17 @@ function verifyPrivateDocuments(db: any): { valid: boolean; checked: number; mis
       continue;
     }
     try {
-      const stat = fs.statSync(path.join(dir, String(document.storageKey) + '.enc'));
-      if (!stat.isFile()) missing.push(String(document.id || document.storageKey));
-      else if (document.sizeBytes != null && Number(document.sizeBytes) !== stat.size) malformed.push(String(document.id || document.storageKey));
+      const encryptedPath = path.join(dir, String(document.storageKey) + '.enc');
+      const stat = fs.statSync(encryptedPath);
+      if (!stat.isFile() || stat.size <= 0) {
+        missing.push(String(document.id || document.storageKey));
+        continue;
+      }
+      if (document.storageSha256) {
+        const encryptedPayload = fs.readFileSync(encryptedPath);
+        const actualSha256 = sha256(encryptedPayload.toString('binary'));
+        if (actualSha256 !== String(document.storageSha256)) malformed.push(String(document.id || document.storageKey));
+      }
     } catch {
       missing.push(String(document.id || document.storageKey));
     }
