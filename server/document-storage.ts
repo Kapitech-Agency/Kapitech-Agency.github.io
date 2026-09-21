@@ -14,6 +14,7 @@ export interface DocumentStorage {
   put(storageKey: string, payload: Buffer): Promise<void>;
   get(storageKey: string): Promise<DocumentStorageObject>;
   delete(storageKey: string): Promise<void>;
+  verify(storageKey: string, expectedSha256: string): Promise<boolean>;
   healthCheck(): Promise<{ configured: boolean; ok: boolean; provider: string; reason?: string }>;
 }
 
@@ -69,6 +70,16 @@ class LocalEncryptedFilesystemStorage implements DocumentStorage {
   async delete(storageKey: string): Promise<void> {
     const filePath = this.filePath(storageKey);
     if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+  }
+
+  async verify(storageKey: string, expectedSha256: string): Promise<boolean> {
+    try {
+      const filePath = this.filePath(storageKey);
+      if (!fs.existsSync(filePath)) return false;
+      return sha256(fs.readFileSync(filePath)) === String(expectedSha256 || '').trim();
+    } catch {
+      return false;
+    }
   }
 
   async healthCheck(): Promise<{ configured: boolean; ok: boolean; provider: string; reason?: string }> {
@@ -150,7 +161,10 @@ class S3CompatibleStorage implements DocumentStorage {
       'x-amz-date': amzDate
     };
     if (this.sessionToken) headers['x-amz-security-token'] = this.sessionToken;
-    if (body) headers['content-length'] = String(body.length);
+    if (body) {
+      headers['content-length'] = String(body.length);
+      headers['x-amz-meta-storage-sha256'] = contentHash;
+    }
 
     const signedHeaderNames = Object.keys(headers).sort();
     const canonicalHeaders = signedHeaderNames.map(name => name + ':' + headers[name].trim() + '\n').join('');
@@ -206,6 +220,17 @@ class S3CompatibleStorage implements DocumentStorage {
     const response = await this.request('DELETE', storageKey);
     if (!response.ok && response.status !== 404) {
       throw new Error(`S3-compatible object deletion failed with HTTP ${response.status}.`);
+    }
+  }
+
+  async verify(storageKey: string, expectedSha256: string): Promise<boolean> {
+    try {
+      const response = await this.request('HEAD', storageKey);
+      if (!response.ok) return false;
+      const reported = response.headers.get('x-amz-meta-storage-sha256')?.trim() || '';
+      return reported.length > 0 && reported === String(expectedSha256 || '').trim();
+    } catch {
+      return false;
     }
   }
 
