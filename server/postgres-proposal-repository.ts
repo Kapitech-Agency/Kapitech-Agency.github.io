@@ -1,3 +1,4 @@
+import crypto from 'node:crypto';
 import { getPostgresPool, withPostgresTransaction } from './postgres.ts';
 
 type Row = Record<string, any>;
