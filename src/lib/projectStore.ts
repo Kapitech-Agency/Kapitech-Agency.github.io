@@ -268,7 +268,7 @@ export const getAgencyProjects = (): AgencyProject[] => {
 
 export const getActiveProjects = getAgencyProjects;
 
-export const saveAgencyProject = (project: AgencyProject): void => {
+export const saveAgencyProject = async (project: AgencyProject): Promise<void> => {
   const current = getAgencyProjects();
   const previous = [...current];
   const idx = current.findIndex(p => p.id === project.id);
@@ -286,30 +286,26 @@ export const saveAgencyProject = (project: AgencyProject): void => {
   window.dispatchEvent(new CustomEvent(PROJECT_EVENT_NAME, { detail: updated }));
 
   const request = idx >= 0 ? api.projects.update(project.id, project) : api.projects.create(project);
-  request.then((res) => {
-    if (res.success && res.data?.success !== false) return;
-    projectsCache = previous;
-    window.dispatchEvent(new CustomEvent(PROJECT_EVENT_NAME, { detail: previous }));
-  }).catch(() => {
-    projectsCache = previous;
-    window.dispatchEvent(new CustomEvent(PROJECT_EVENT_NAME, { detail: previous }));
-  });
+  const res = await request;
+  if (res.success && res.data?.success !== false) return;
+
+  projectsCache = previous;
+  window.dispatchEvent(new CustomEvent(PROJECT_EVENT_NAME, { detail: previous }));
+  throw new Error(res.error || 'Project could not be saved on the server.');
 };
 
-export const deleteAgencyProject = (id: string): void => {
+export const deleteAgencyProject = async (id: string): Promise<void> => {
   const current = getAgencyProjects();
   const previous = [...current];
   const updated = current.filter(p => p.id !== id);
   projectsCache = updated;
   window.dispatchEvent(new CustomEvent(PROJECT_EVENT_NAME, { detail: updated }));
-  api.projects.delete(id).then((res) => {
-    if (res.success && res.data?.success !== false) return;
-    projectsCache = previous;
-    window.dispatchEvent(new CustomEvent(PROJECT_EVENT_NAME, { detail: previous }));
-  }).catch(() => {
-    projectsCache = previous;
-    window.dispatchEvent(new CustomEvent(PROJECT_EVENT_NAME, { detail: previous }));
-  });
+  const res = await api.projects.delete(id);
+  if (res.success && res.data?.success !== false) return;
+
+  projectsCache = previous;
+  window.dispatchEvent(new CustomEvent(PROJECT_EVENT_NAME, { detail: previous }));
+  throw new Error(res.error || 'Project could not be deleted on the server.');
 };
 
 export const updateTaskStatus = (projectId: string, taskId: string, newStatus: TaskStatus): void => {
