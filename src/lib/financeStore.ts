@@ -728,7 +728,7 @@ export const computeFinancialMetrics = (invoices: AgencyInvoice[], expenses: Age
   const totalSent = sentInvoices.reduce((sum, i) => sum + (i.balanceDue !== undefined ? i.balanceDue : i.total), 0);
   const partialBalance = partiallyPaidInvoices.reduce((sum, i) => sum + (i.balanceDue !== undefined ? i.balanceDue : (i.total - (i.amountPaid || 0))), 0);
 
-  const totalOutstanding = totalSent + totalApproved + partialBalance;
+  const totalOutstanding = totalSent + totalApproved + totalOverdue + partialBalance;
   const totalOverdue = overdueInvoices.reduce((sum, i) => sum + (i.balanceDue !== undefined ? i.balanceDue : i.total), 0);
 
   const opExExpenses = expenses.filter(e => e.type !== 'CapEx').reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
