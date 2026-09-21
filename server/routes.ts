@@ -1059,6 +1059,8 @@ apiRouter.post('/leads/submit', rateLimitPublic(10, 60 * 1000), async (req: Requ
     linkUrl: '/admin/inbox'
   });
 
+  if (jsonDb) saveDatabase(jsonDb);
+
   recordAuditLog({
     action: 'LEAD_SUBMISSION',
     actor: cleanEmail,
