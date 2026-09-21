@@ -17,7 +17,7 @@ test('lead submissions dispatch Telegram notifications in both datasource modes'
   assert.ok(source.includes('KAPITECH_TELEGRAM_CHAT_ID'));
   assert.ok(source.includes('const hasTelegramToken = postgresMode'));
   assert.ok(source.includes('jsonNotificationSettings?.telegramBotToken'));
-  assert.ok(!source.includes('s.telegramBotToken'));
+  assert.ok(source.includes("process.env.KAPITECH_TELEGRAM_BOT_TOKEN?.trim()"));
 });
 
 test('production readiness checks runtime notification credentials when channels are enabled', async () => {
