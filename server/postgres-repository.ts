@@ -182,16 +182,54 @@ export class PostgresAuthRepository {
   }
 
   async deleteUser(userId: string): Promise<boolean> {
-    const result = await getPostgresPool().query('DELETE FROM users WHERE id = $1 AND stakeholder_type <> $2 AND username <> $3', [userId, 'Master', 'admin']);
-    return result.rowCount === 1;
+    return withClient(async client => {
+      await client.query('BEGIN');
+      try {
+        await client.query('DELETE FROM sessions WHERE user_id = $1', [userId]);
+        const result = await client.query(
+          'DELETE FROM users WHERE id = $1 AND stakeholder_type <> $2 AND username <> $3',
+          [userId, 'Master', 'admin']
+        );
+
+        if (result.rowCount !== 1) {
+          await client.query('ROLLBACK');
+          return false;
+        }
+
+        await client.query('COMMIT');
+        return true;
+      } catch (error) {
+        await client.query('ROLLBACK');
+        throw error;
+      }
+    });
   }
 
   async updateUserPolicy(userId: string, name: string, role: string, stakeholderType: string, permissions: StoredUser['permissions'], division: string, status: StoredUser['status']): Promise<StoredUser | null> {
-    const result = await getPostgresPool().query<UserRow>(
-      `UPDATE users SET name=$2, role=$3, stakeholder_type=$4, permissions=$5, division=$6, status=$7 WHERE id=$1 RETURNING *`,
-      [userId, name, role, stakeholderType, JSON.stringify(permissions), division, status]
-    );
-    return result.rows[0] ? mapUser(result.rows[0]) : null;
+    return withClient(async client => {
+      await client.query('BEGIN');
+      try {
+        const result = await client.query<UserRow>(
+          `UPDATE users SET name=$2, role=$3, stakeholder_type=$4, permissions=$5, division=$6, status=$7 WHERE id=$1 RETURNING *`,
+          [userId, name, role, stakeholderType, JSON.stringify(permissions), division, status]
+        );
+
+        if (!result.rows[0]) {
+          await client.query('ROLLBACK');
+          return null;
+        }
+
+        if (status === 'suspended') {
+          await client.query('DELETE FROM sessions WHERE user_id = $1', [userId]);
+        }
+
+        await client.query('COMMIT');
+        return mapUser(result.rows[0]);
+      } catch (error) {
+        await client.query('ROLLBACK');
+        throw error;
+      }
+    });
   }
 
   async deleteUserSessions(userId: string): Promise<void> {
