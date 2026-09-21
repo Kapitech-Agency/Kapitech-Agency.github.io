@@ -49,6 +49,7 @@ export class PostgresApprovalRepository {
   }
 
   async action(id: string, status: string, reviewer: Approval, notes: string): Promise<Approval | null> {
+    if (!['Approved', 'Rejected', 'Changes Requested'].includes(status)) throw new Error('INVALID_APPROVAL_STATUS');
     const client = await getPostgresPool().connect();
     try {
       await client.query('BEGIN');
@@ -58,6 +59,11 @@ export class PostgresApprovalRepository {
       if (item.status !== 'Pending') {
         await client.query('ROLLBACK');
         throw new Error('This approval request has already been resolved.');
+      }
+      if (item.type && current.rows[0].reference_id) {
+        const referenceId=String(current.rows[0].reference_id);
+        const referenceTable=item.type==='Invoice'?'invoices':item.type==='Proposal'?'proposals':item.type==='Project'?'projects':item.type==='Expense'?'expenses':null;
+        if(referenceTable){const ref=await client.query(`SELECT id FROM ${referenceTable} WHERE id=$1 LIMIT 1`,[referenceId]);if(!ref.rows[0])throw new Error('Approval reference not found.');}
       }
       const metadata = {
         ...(current.rows[0].metadata && typeof current.rows[0].metadata === 'object' ? current.rows[0].metadata : {}),

@@ -138,8 +138,10 @@ export class PostgresProjectRepository {
   }
 
   async delete(id: string): Promise<boolean> {
-    const result = await getPostgresPool().query('DELETE FROM projects WHERE id = $1', [id]);
-    return result.rowCount === 1;
+    const pool=getPostgresPool();
+    const r=await pool.query(`SELECT (SELECT COUNT(*)::int FROM proposals WHERE project_id=$1) AS proposals,(SELECT COUNT(*)::int FROM invoices WHERE project_id=$1) AS invoices,(SELECT COUNT(*)::int FROM tasks WHERE project_id=$1) AS tasks,(SELECT COUNT(*)::int FROM time_logs WHERE project_id=$1) AS time_logs`,[id]);
+    if(Object.values(r.rows[0]||{}).some(v=>Number(v)>0))throw new Error('PROJECT_HAS_BUSINESS_RECORDS');
+    const result=await pool.query('DELETE FROM projects WHERE id=$1',[id]);return result.rowCount===1;
   }
 
   private async insertTask(client: { query: (text: string, values?: unknown[]) => Promise<any> }, projectId: string, task: ProjectTask): Promise<void> {
