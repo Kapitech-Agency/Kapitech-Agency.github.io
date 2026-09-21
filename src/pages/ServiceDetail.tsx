@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, Link, Navigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
@@ -22,22 +22,52 @@ import {
 } from 'lucide-react';
 import { AtmosphericBackground } from '../components/ui/AtmosphericBackground';
 import { useLanguage } from '../lib/LanguageContext';
-import { getServiceBySlug, allSolutionsAndServices } from '../data/servicesData';
-import { allProjects } from '../data/projectsData';
+import { getServiceBySlug, allSolutionsAndServices, ServiceItemData } from '../data/servicesData';
+import { allProjects, ProjectItem } from '../data/projectsData';
+import { fetchServerCmsProjects, fetchServerCmsServices } from '../lib/cmsStore';
 
 export const ServiceDetail = () => {
   const { slug } = useParams<{ slug: string }>();
   const { language } = useLanguage();
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
+  const [service, setService] = useState<ServiceItemData | undefined>(() => slug ? getServiceBySlug(slug) : undefined);
+  const [projects, setProjects] = useState<ProjectItem[]>(allProjects);
+  const [isHydrating, setIsHydrating] = useState(true);
 
-  const service = slug ? getServiceBySlug(slug) : undefined;
+  useEffect(() => {
+    let mounted = true;
+    if (!slug) {
+      setIsHydrating(false);
+      return () => { mounted = false; };
+    }
+
+    Promise.all([fetchServerCmsServices(), fetchServerCmsProjects()]).then(([serverServices, serverProjects]) => {
+      if (!mounted) return;
+      const serverService = serverServices.find((item) => item.slug === slug && item.type === 'service');
+      setService(serverService || undefined);
+      if (Array.isArray(serverProjects)) setProjects(serverProjects);
+      setIsHydrating(false);
+    }).catch(() => {
+      if (mounted) setIsHydrating(false);
+    });
+
+    return () => { mounted = false; };
+  }, [slug]);
+
+  if (isHydrating && !service) {
+    return (
+      <div className="min-h-screen bg-[#0A0A0A] text-white flex items-center justify-center">
+        <div className="w-7 h-7 border-2 border-white/10 border-t-brand-red rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   if (!service) {
     return <Navigate to="/services" replace />;
   }
 
-  // Find related case studies from allProjects
-  const relatedProjects = allProjects.filter(p => 
+  // Find related case studies from the server-hydrated project list
+  const relatedProjects = projects.filter(p => 
     service.caseStudySlugs.includes(p.id) ||
     p.pillar.toLowerCase().includes(service.category.toLowerCase()) ||
     p.service.toLowerCase().includes(service.category.toLowerCase()) ||
