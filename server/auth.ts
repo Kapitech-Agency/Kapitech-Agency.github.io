@@ -10,6 +10,8 @@ import {
   StoredSession,
   recordAuditLog
 } from './db';
+import { getDataSourceMode } from './data-source.ts';
+import { postgresAuthRepository } from './postgres-repository.ts';
 
 interface RateLimitEntry {
   count: number;
@@ -167,11 +169,14 @@ export function verifyTotpCode(secret: string, code: string, timestamp = Date.no
   return false;
 }
 
-export function issueMfaChallenge(userId: string, rememberMe: boolean): string {
+export async function issueMfaChallenge(userId: string, rememberMe: boolean): Promise<string> {
   const token = `kapi_mfa_${crypto.randomBytes(32).toString('hex')}`;
-  const db = getDatabase();
   const now = Date.now();
-
+  if (getDataSourceMode() === 'postgres') {
+    await postgresAuthRepository.createSession({ tokenHash: hashSessionToken(token), userId, createdAt: new Date(now).toISOString(), lastActivityAt: new Date(now).toISOString(), expiresAt: now + 5 * 60 * 1000, rememberMe, ip: '', userAgent: '', kind: 'mfa', mfaFailedAttempts: 0 });
+    return token;
+  }
+  const db = getDatabase();
   db.sessions = db.sessions.filter(session => session.kind !== 'mfa' || session.expiresAt > now);
   db.sessions.push({
     tokenHash: hashSessionToken(token),
@@ -190,11 +195,17 @@ export function issueMfaChallenge(userId: string, rememberMe: boolean): string {
   return token;
 }
 
-export function getMfaChallenge(token: string): MfaChallenge | null {
+export async function getMfaChallenge(token: string): Promise<MfaChallenge | null> {
   if (!token) return null;
 
-  const db = getDatabase();
   const tokenHash = hashSessionToken(token);
+  if (getDataSourceMode() === 'postgres') {
+    const session = await postgresAuthRepository.findSession(tokenHash);
+    if (!session || session.kind !== 'mfa') return null;
+    if (session.expiresAt <= Date.now()) { await postgresAuthRepository.deleteSession(tokenHash); return null; }
+    return { userId: session.userId, rememberMe: Boolean(session.rememberMe), expiresAt: session.expiresAt, failedAttempts: session.mfaFailedAttempts || 0 };
+  }
+  const db = getDatabase();
   const session = db.sessions.find(item => item.tokenHash === tokenHash && item.kind === 'mfa');
   if (!session) return null;
 
@@ -212,11 +223,19 @@ export function getMfaChallenge(token: string): MfaChallenge | null {
   };
 }
 
-export function incrementMfaChallengeFailures(token: string): number {
+export async function incrementMfaChallengeFailures(token: string): Promise<number> {
   if (!token) return 0;
 
-  const db = getDatabase();
   const tokenHash = hashSessionToken(token);
+  if (getDataSourceMode() === 'postgres') {
+    const session = await postgresAuthRepository.findSession(tokenHash);
+    if (!session || session.kind !== 'mfa' || session.expiresAt <= Date.now()) return 0;
+    const failedAttempts = (session.mfaFailedAttempts || 0) + 1;
+    if (failedAttempts >= 5) await postgresAuthRepository.deleteSession(tokenHash);
+    else await postgresAuthRepository.updateMfaFailedAttempts(tokenHash, failedAttempts);
+    return failedAttempts;
+  }
+  const db = getDatabase();
   const session = db.sessions.find(item => item.tokenHash === tokenHash && item.kind === 'mfa');
   if (!session || session.expiresAt <= Date.now()) return 0;
 
@@ -229,12 +248,16 @@ export function incrementMfaChallengeFailures(token: string): number {
   return failedAttempts;
 }
 
-export function consumeMfaChallenge(token: string): MfaChallenge | null {
-  const challenge = getMfaChallenge(token);
+export async function consumeMfaChallenge(token: string): Promise<MfaChallenge | null> {
+  const challenge = await getMfaChallenge(token);
   if (!challenge) return null;
 
-  const db = getDatabase();
   const tokenHash = hashSessionToken(token);
+  if (getDataSourceMode() === 'postgres') {
+    await postgresAuthRepository.deleteSession(tokenHash);
+    return challenge;
+  }
+  const db = getDatabase();
   db.sessions = db.sessions.filter(item => item.tokenHash !== tokenHash);
   saveDatabase(db);
   return challenge;
@@ -300,7 +323,7 @@ export function clearLockout(identifier: string, ip = 'unknown'): void {
   loginLockouts.delete(`${identifier.toLowerCase()}|${ip}`);
 }
 
-export function createSession(user: StoredUser, ip: string, userAgent: string, rememberMe = false): StoredSession {
+export async function createSession(user: StoredUser, ip: string, userAgent: string, rememberMe = false): Promise<StoredSession> {
   const db = getDatabase();
   const now = Date.now();
   const lifetime = rememberMe ? EXTENDED_SESSION_LIFETIME_MS : SESSION_LIFETIME_MS;
@@ -319,6 +342,12 @@ export function createSession(user: StoredUser, ip: string, userAgent: string, r
     kind: 'session'
   };
 
+  if (getDataSourceMode() === 'postgres') {
+    await postgresAuthRepository.createSession(session);
+    await postgresAuthRepository.pruneUserSessions(user.id, 5);
+    return { ...session, token };
+  }
+
   // Keep a bounded number of sessions and remove stale sessions for the same account.
   db.sessions = db.sessions.filter(s => s.expiresAt > now);
   const userSessions = db.sessions.filter(s => s.userId === user.id);
@@ -336,9 +365,10 @@ export function createSession(user: StoredUser, ip: string, userAgent: string, r
   return { ...session, token };
 }
 
-export function revokeSession(token: string): boolean {
-  const db = getDatabase();
+export async function revokeSession(token: string): Promise<boolean> {
   const tokenHash = hashSessionToken(token);
+  if (getDataSourceMode() === 'postgres') return postgresAuthRepository.deleteSession(tokenHash);
+  const db = getDatabase();
   const initialCount = db.sessions.length;
   db.sessions = db.sessions.filter(s => s.tokenHash !== tokenHash);
   if (db.sessions.length !== initialCount) {
@@ -348,7 +378,8 @@ export function revokeSession(token: string): boolean {
   return false;
 }
 
-export function revokeAllUserSessions(userId: string, exceptTokenHash?: string): number {
+export async function revokeAllUserSessions(userId: string, exceptTokenHash?: string): Promise<number> {
+  if (getDataSourceMode() === 'postgres') return postgresAuthRepository.revokeUserSessions(userId, exceptTokenHash);
   const db = getDatabase();
   const before = db.sessions.length;
   db.sessions = db.sessions.filter(s => s.userId !== userId || (exceptTokenHash ? s.tokenHash === exceptTokenHash : false));
@@ -357,10 +388,21 @@ export function revokeAllUserSessions(userId: string, exceptTokenHash?: string):
   return revoked;
 }
 
-export function getSessionUser(token: string): StoredUser | null {
+export async function getSessionUser(token: string): Promise<StoredUser | null> {
   if (!token) return null;
-  const db = getDatabase();
   const tokenHash = hashSessionToken(token);
+  if (getDataSourceMode() === 'postgres') {
+    const session = await postgresAuthRepository.findSession(tokenHash);
+    if (!session || session.kind === 'mfa') return null;
+    const now = Date.now();
+    const lastActivityAt = new Date(session.lastActivityAt || session.createdAt).getTime();
+    if (session.expiresAt <= now || now - lastActivityAt > SESSION_IDLE_TIMEOUT_MS) { await postgresAuthRepository.deleteSession(tokenHash); return null; }
+    const user = await postgresAuthRepository.findUserById(session.userId);
+    if (!user || user.status === 'suspended') { await postgresAuthRepository.deleteSession(tokenHash); return null; }
+    if (now - lastActivityAt > SESSION_TOUCH_INTERVAL_MS) await postgresAuthRepository.updateSessionActivity(tokenHash, new Date(now).toISOString());
+    return user;
+  }
+  const db = getDatabase();
   const session = db.sessions.find(s => s.tokenHash === tokenHash);
   if (!session || session.kind === 'mfa') return null;
 
@@ -429,17 +471,21 @@ export function validateCsrf(req: AuthenticatedRequest, res: Response, next: Nex
   next();
 }
 
-export function authenticate(req: AuthenticatedRequest, res: Response, next: NextFunction): void {
+export async function authenticate(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
   const sessionToken = cookieValue(req, 'kapi_session');
-  if (sessionToken) {
-    const user = getSessionUser(sessionToken);
+  try {
+    if (sessionToken) {
+      const user = await getSessionUser(sessionToken);
     if (user) {
       req.user = user;
       req.sessionToken = sessionToken;
       if (!cookieValue(req, 'kapi_csrf')) setCsrfCookie(res);
     }
+    next();
+  } catch (error) {
+    console.error('[Auth] Session lookup failed:', error);
+    res.status(503).json({ success: false, error: 'Authentication service is temporarily unavailable.' });
   }
-  next();
 }
 
 function requireMfaForProtectedAccess(req: AuthenticatedRequest, res: Response): boolean {
