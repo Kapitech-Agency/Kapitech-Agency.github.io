@@ -15,7 +15,7 @@ function migrationVersion(fileName: string): string {
 
 export function normalizeMigrationSql(sql: string): string {
   const withoutLeadingWrapper = sql.replace(
-    /^\s*(?:(?:--[^\r\n]*(?:\r?\n|$))|(?:\/\*[\s\S]*?\*\/\s*))*BEGIN;\s*/i,
+    /^\s*(?:(?:--[^\r\n]*(?:\r?\n|$)\s*)|(?:\/\*[\s\S]*?\*\/\s*))*BEGIN;\s*/i,
     ''
   );
   return withoutLeadingWrapper.replace(/\s*COMMIT;\s*$/i, '');
