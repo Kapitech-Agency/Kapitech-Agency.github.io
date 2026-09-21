@@ -4346,35 +4346,52 @@ apiRouter.get('/system/production-readiness', requireAuth, requireAnyPermission(
     ]);
 
     let appliedMigrations: string[] = [];
+    let appliedMigrationChecksums: Record<string, string> = {};
     let migrationCheckError: string | undefined;
     try {
-      const { rows } = await getPostgresPool().query<{ version: string }>(
-        'SELECT version FROM schema_migrations ORDER BY version'
+      const { rows } = await getPostgresPool().query<{ version: string; checksum: string }>(
+        'SELECT version, checksum FROM schema_migrations ORDER BY version'
       );
       appliedMigrations = rows.map(row => String(row.version));
+      appliedMigrationChecksums = Object.fromEntries(
+        rows.map(row => [String(row.version), String(row.checksum || '')])
+      );
     } catch (error) {
       migrationCheckError = error instanceof Error ? error.message : 'Migration status unavailable.';
     }
 
     let requiredMigrationVersions: string[] = [];
+    let requiredMigrationChecksums: Record<string, string> = {};
     let migrationDefinitionCheckError: string | undefined;
     try {
       const migrationsDir = path.resolve(process.cwd(), 'db/postgres');
-      requiredMigrationVersions = fs.readdirSync(migrationsDir)
+      const migrationFiles = fs.readdirSync(migrationsDir)
         .filter(file => /^\d+_.+\.sql$/.test(file))
-        .sort((a, b) => a.localeCompare(b, 'en', { numeric: true }))
-        .map(file => file.replace(/\.sql$/, ''));
+        .sort((a, b) => a.localeCompare(b, 'en', { numeric: true }));
+
+      requiredMigrationVersions = migrationFiles.map(file => file.replace(/\.sql$/, ''));
       if (requiredMigrationVersions.length === 0) {
         migrationDefinitionCheckError = 'No PostgreSQL migration files were found.';
+      } else {
+        for (const file of migrationFiles) {
+          const version = file.replace(/\.sql$/, '');
+          const sql = fs.readFileSync(path.join(migrationsDir, file), 'utf8');
+          requiredMigrationChecksums[version] = crypto.createHash('sha256').update(sql, 'utf8').digest('hex');
+        }
       }
     } catch (error) {
       migrationDefinitionCheckError = error instanceof Error ? error.message : 'Migration definitions unavailable.';
     }
 
-    const appliedMigrationSet = new Set(appliedMigrations);
-    const migrationComplete = !migrationCheckError
+    const migrationVersionComplete = !migrationCheckError
       && !migrationDefinitionCheckError
-      && requiredMigrationVersions.every(version => appliedMigrationSet.has(version));
+      && requiredMigrationVersions.length === appliedMigrations.length
+      && requiredMigrationVersions.every(version => Object.prototype.hasOwnProperty.call(appliedMigrationChecksums, version));
+
+    const migrationChecksumComplete = migrationVersionComplete
+      && requiredMigrationVersions.every(version => requiredMigrationChecksums[version] === appliedMigrationChecksums[version]);
+
+    const migrationComplete = migrationChecksumComplete;
 
     const activeUsers = users.filter(user => user.status === 'active');
     const mfaEnabledCount = activeUsers.filter(user => user.mfaEnabled).length;
@@ -4502,6 +4519,7 @@ apiRouter.get('/system/production-readiness', requireAuth, requireAnyPermission(
           requiredMigrationCount: requiredMigrationVersions.length,
           required: requiredMigrationVersions,
           applied: appliedMigrations,
+          checksumComplete: migrationChecksumComplete,
           complete: migrationComplete,
           error: migrationCheckError || migrationDefinitionCheckError || null
         },
