@@ -139,6 +139,7 @@ const AnimatedRoutes = () => {
 
 function AppShell() {
   const location = useLocation();
+  const { language } = useLanguage();
   const isAdminRoute = location.pathname.startsWith('/admin') || location.pathname.startsWith('/ams');
   const [maintenanceMode, setMaintenanceMode] = React.useState(false);
 
@@ -184,7 +185,7 @@ function AppShell() {
             We’re working on the site.
           </h1>
           <p className="text-sm sm:text-base text-[#8A909D] leading-relaxed max-w-lg mx-auto">
-            {document.documentElement.lang === 'id'
+            {language === 'id'
               ? 'Website Kapitech sedang dalam pemeliharaan. Silakan kembali beberapa saat lagi.'
               : 'Kapitech is currently performing maintenance. Please check back shortly.'}
           </p>
