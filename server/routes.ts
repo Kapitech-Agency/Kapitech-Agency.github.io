@@ -3673,6 +3673,12 @@ apiRouter.put('/documents/:id/content', requireAuth, documentMutationMiddleware,
     return;
   }
 
+  const configuredProvider = process.env.KAPITECH_DOCUMENT_STORAGE_PROVIDER?.trim().toLowerCase() || '';
+  if (process.env.NODE_ENV === 'production' && getDataSourceMode() === 'postgres' && configuredProvider !== 's3' && configuredProvider !== 's3-compatible') {
+    res.status(503).json({ success: false, error: 'Durable document storage is required for PostgreSQL production mode.' });
+    return;
+  }
+
   const storage = getDocumentStorage();
   let encryptedPayload: Buffer;
   let storageSha256: string;
