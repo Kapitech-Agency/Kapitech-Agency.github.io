@@ -4022,3 +4022,130 @@ const handleOverview = (req: AuthenticatedRequest, res: Response): void => {
   const netMarginThisMonth = revenueThisMonth > 0
     ? ((netOperatingProfitThisMonth / revenueThisMonth) * 100).toFixed(1)
     : '0';
+  const pendingApprovalsCount = approvals.filter(a => a.status === 'Pending').length;
+  const overdueTasksCount = tasks.filter(
+    t => t.status !== 'done' && t.dueDate && new Date(t.dueDate) < now
+  ).length;
+
+  const stages = CRM_STAGES;
+  const pipelineByStage = canViewCrm
+    ? stages.map(st => {
+        const stageDeals = deals.filter(d => d.stage === st);
+        return {
+          stage: st,
+          count: stageDeals.length,
+          value: stageDeals.reduce((sum, d) => sum + (Number(d.value) || 0), 0)
+        };
+      })
+    : [];
+
+  const attentionItems: Array<{
+    id: string;
+    title: string;
+    description: string;
+    severity: 'danger' | 'warning' | 'info';
+    category: string;
+    linkUrl: string;
+  }> = [];
+
+  if (canViewFinancials && overdueInvoicesCount > 0) {
+    attentionItems.push({
+      id: 'att_invoices_overdue',
+      title: `${overdueInvoicesCount} Invoices Overdue`,
+      description: `Follow-up required on unpaid accounts totaling IDR ${overdueReceivables.toLocaleString()}.`,
+      severity: 'danger',
+      category: 'Finance',
+      linkUrl: '/admin/invoicing'
+    });
+  }
+
+  if (canViewApprovals && pendingApprovalsCount > 0) {
+    attentionItems.push({
+      id: 'att_pending_approvals',
+      title: `${pendingApprovalsCount} Executive Approvals Awaiting Review`,
+      description: 'Budget and operational approvals are waiting for review.',
+      severity: 'warning',
+      category: 'Operations',
+      linkUrl: '/admin/approvals'
+    });
+  }
+
+  if (canViewProjects && projectsAtRiskCount > 0) {
+    attentionItems.push({
+      id: 'att_projects_risk',
+      title: `${projectsAtRiskCount} Projects Flagged At Risk`,
+      description: 'Delivery timeline or resource constraints require attention.',
+      severity: 'danger',
+      category: 'Delivery',
+      linkUrl: '/admin/projects'
+    });
+  }
+
+  if (canViewProjects && overdueTasksCount > 0) {
+    attentionItems.push({
+      id: 'att_tasks_overdue',
+      title: `${overdueTasksCount} Tasks Overdue in Active Sprints`,
+      description: 'Tasks passed their due dates and may require rescheduling.',
+      severity: 'warning',
+      category: 'Delivery',
+      linkUrl: '/admin/projects'
+    });
+  }
+
+  if (canViewCrm && openLeadsCount > 3) {
+    attentionItems.push({
+      id: 'att_leads_new',
+      title: `${openLeadsCount} Inbound Inquiries Unassigned`,
+      description: 'Website inquiries are waiting for qualification.',
+      severity: 'info',
+      category: 'Sales',
+      linkUrl: '/admin/inbox'
+    });
+  }
+
+  res.json({
+    success: true,
+    metrics: {
+      revenueCollected: canViewFinancials ? revenueCollected : null,
+      totalBilled: canViewFinancials ? totalBilled : null,
+      outstandingReceivables: canViewFinancials ? totalOutstanding : null,
+      overdueReceivables: canViewFinancials ? overdueReceivables : null,
+      activePipeline: canViewCrm ? activePipelineValue : null,
+      activeProjects: canViewProjects ? activeProjectsCount : 0,
+      projectsAtRisk: canViewProjects ? projectsAtRiskCount : 0,
+      pendingApprovals: canViewApprovals ? pendingApprovalsCount : 0,
+      overdueTasks: canViewProjects ? overdueTasksCount : 0,
+      openLeads: canViewCrm ? openLeadsCount : 0
+    },
+    todayAtKapitech: {
+      openLeadsCount: canViewCrm ? openLeadsCount : 0,
+      dealsInPipelineCount: canViewCrm ? dealsInPipelineCount : 0,
+      pipelineValue: canViewFinancials ? activePipelineValue : null,
+      proposalsAwaitingCount: (canViewCrm || canViewFinancials || canViewApprovals) ? proposalsAwaitingCount : 0,
+      projectsAtRiskCount: canViewProjects ? projectsAtRiskCount : 0,
+      overdueInvoicesCount: canViewFinancials ? overdueInvoicesCount : 0,
+      cashOutstanding: canViewFinancials ? totalOutstanding : null
+    },
+    financials: canViewFinancials ? {
+      revenueThisMonth,
+      cashCollected: revenueThisMonth,
+      outstandingReceivables: totalOutstanding,
+      operatingExpenses: operatingExpensesThisMonth,
+      netOperatingProfit: netOperatingProfitThisMonth,
+      margin: netMarginThisMonth
+    } : {
+      revenueThisMonth: null,
+      cashCollected: null,
+      outstandingReceivables: null,
+      operatingExpenses: null,
+      netOperatingProfit: null,
+      margin: null
+    },
+    pipelineByStage,
+    attentionItems,
+    projects: canViewProjects ? activeProjectsList.slice(0, 10) : [],
+    recentActivity: canViewAudit ? (db.auditLogs || []).slice(0, 10) : []
+  });
+};
+apiRouter.get('/dashboard/overview', requireAuth, handleOverview);
+apiRouter.get('/executive/overview', requireAuth, handleOverview);
