@@ -635,25 +635,40 @@ export const Services = () => {
         .filter((item: any) => item.type === 'service' && item.category !== 'Solutions')
         .map((item: any) => {
           const fallback = allServices.find((service) => service.id === item.slug);
-          if (!fallback) return null;
+          const category = (['Branding', 'Design', 'Development'].includes(item.category) ? item.category : fallback?.category || 'Development') as ServiceDetail['category'];
+          const icon = fallback?.icon || (
+            category === 'Branding' ? <Palette size={24} /> :
+            category === 'Design' ? <Layers size={24} /> :
+            <Code2 size={24} />
+          );
+
           return {
-            ...fallback,
+            ...(fallback || {}),
             id: item.slug,
-            title: item.title || fallback.title,
-            category: item.category || fallback.category,
-            subtitle: item.navSubtitle || fallback.subtitle,
-            subtitleId: item.navSubtitleId || fallback.subtitleId,
-            summary: item.heroSubtitle || fallback.summary,
-            summaryId: item.heroSubtitleId || fallback.summaryId,
-            fullDescription: item.heroSubtitle || fallback.fullDescription,
-            fullDescriptionId: item.heroSubtitleId || fallback.fullDescriptionId,
+            title: item.title || fallback?.title || item.slug,
+            category,
+            subtitle: item.navSubtitle || fallback?.subtitle || 'Specialized digital service',
+            subtitleId: item.navSubtitleId || fallback?.subtitleId || 'Layanan digital spesialis',
+            icon,
+            summary: item.heroSubtitle || fallback?.summary || 'A specialized Kapitech service delivered through a structured, measurable process.',
+            summaryId: item.heroSubtitleId || fallback?.summaryId || 'Layanan spesialis Kapitech dengan proses terstruktur dan terukur.',
+            fullDescription: item.heroSubtitle || fallback?.fullDescription || 'A focused service offering managed through the Kapitech CMS.',
+            fullDescriptionId: item.heroSubtitleId || fallback?.fullDescriptionId || 'Layanan terfokus yang dikelola melalui CMS Kapitech.',
             deliverables: Array.isArray(item.deliverables) && item.deliverables.length
               ? item.deliverables
-              : fallback.deliverables,
+              : Array.isArray(item.capabilities) && item.capabilities.length
+                ? item.capabilities.map((cap: any) => cap.title || cap.titleId).filter(Boolean)
+                : (fallback?.deliverables || []),
             deliverablesId: Array.isArray(item.deliverables) && item.deliverables.length
               ? item.deliverables
-              : fallback.deliverablesId,
-            tools: Array.isArray(item.tools) && item.tools.length ? item.tools : fallback.tools
+              : Array.isArray(item.capabilities) && item.capabilities.length
+                ? item.capabilities.map((cap: any) => cap.titleId || cap.title).filter(Boolean)
+                : (fallback?.deliverablesId || []),
+            tools: Array.isArray(item.tools) && item.tools.length ? item.tools : (fallback?.tools || []),
+            idealFor: fallback?.idealFor || item.businessOutcomes?.heading || 'Brands, organizations, and teams with measurable digital goals.',
+            idealForId: fallback?.idealForId || item.businessOutcomes?.headingId || 'Brand, organisasi, dan tim dengan target digital yang terukur.',
+            timeline: fallback?.timeline || 'Scope defined during discovery',
+            timelineId: fallback?.timelineId || 'Ruang lingkup ditentukan saat discovery'
           } as ServiceDetail;
         })
         .filter((item): item is ServiceDetail => Boolean(item));
