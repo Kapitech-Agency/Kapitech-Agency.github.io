@@ -4,6 +4,7 @@ export type PostgresBackupHealth = {
   configured: boolean;
   provider: string;
   latestBackupAt: string | null;
+  latestBackupSha256: string | null;
   latestBackupAgeMinutes: number | null;
   backupFresh: boolean;
   integrity: {
@@ -37,6 +38,7 @@ export function getPostgresBackupHealth(): PostgresBackupHealth {
       configured: false,
       provider: 'json-local',
       latestBackupAt: null,
+      latestBackupSha256: null,
       latestBackupAgeMinutes: null,
       backupFresh: false,
       integrity: {
@@ -55,7 +57,11 @@ export function getPostgresBackupHealth(): PostgresBackupHealth {
 
   const provider = process.env.KAPITECH_POSTGRES_BACKUP_PROVIDER?.trim() || '';
   const latestBackupAt = readIsoEnv('KAPITECH_POSTGRES_BACKUP_LATEST_AT');
+  const latestBackupSha256Raw = process.env.KAPITECH_POSTGRES_BACKUP_LATEST_SHA256?.trim().toLowerCase() || '';
+  const latestBackupSha256 = /^[0-9a-f]{64}$/.test(latestBackupSha256Raw) ? latestBackupSha256Raw : null;
   const restoreVerifiedAt = readIsoEnv('KAPITECH_POSTGRES_BACKUP_RESTORE_VERIFIED_AT');
+  const restoreBackupSha256Raw = process.env.KAPITECH_POSTGRES_BACKUP_RESTORE_BACKUP_SHA256?.trim().toLowerCase() || '';
+  const restoreBackupSha256 = /^[0-9a-f]{64}$/.test(restoreBackupSha256Raw) ? restoreBackupSha256Raw : null;
   const now = Date.now();
   const latestBackupAtMs = latestBackupAt ? new Date(latestBackupAt).getTime() : null;
   const ageMs = latestBackupAtMs !== null && Number.isFinite(latestBackupAtMs)
@@ -72,16 +78,24 @@ export function getPostgresBackupHealth(): PostgresBackupHealth {
     && restoreVerifiedAtMs <= now
     && now - restoreVerifiedAtMs <= restoreMaxAgeMs;
   const restoreVerified = restoreVerificationFresh;
+  const restoreMatchesLatestBackup = Boolean(
+    latestBackupSha256 &&
+    restoreBackupSha256 &&
+    latestBackupSha256 === restoreBackupSha256
+  );
 
   let reason: string | undefined;
   if (!provider) reason = 'No PostgreSQL backup provider is configured.';
   else if (!latestBackupAt) reason = 'Backup provider is configured but no successful backup timestamp is published.';
+  else if (!latestBackupSha256) reason = 'The latest backup hash is missing or invalid.';
   else if (!backupFresh) reason = 'The latest reported PostgreSQL backup is outside the configured RPO.';
   else if (!restoreVerifiedAt) reason = 'A successful restore rehearsal has not been reported.';
   else if (!restoreVerificationFresh) reason = 'The latest restore rehearsal is older than the configured retention window.';
+  else if (!restoreBackupSha256) reason = 'The restore rehearsal is not bound to a backup SHA-256.';
+  else if (!restoreMatchesLatestBackup) reason = 'The restore rehearsal was verified against a different backup than the latest reported backup.';
 
   return {
-    configured: Boolean(provider && latestBackupAt && backupFresh && restoreVerified),
+    configured: Boolean(provider && latestBackupAt && latestBackupSha256 && backupFresh && restoreVerified && restoreMatchesLatestBackup),
     provider: provider || 'unconfigured',
     latestBackupAt,
     latestBackupAgeMinutes: ageMs === null ? null : Math.round(ageMs / 60000),
@@ -92,6 +106,8 @@ export function getPostgresBackupHealth(): PostgresBackupHealth {
       latestBackupAt,
       restoreVerifiedAt,
       restoreVerified,
+      restoreBackupSha256,
+      restoreMatchesLatestBackup,
       ...(reason ? { reason } : {})
     },
     rpoMinutes,
