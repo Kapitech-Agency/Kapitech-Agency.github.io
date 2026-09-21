@@ -6,22 +6,21 @@ import { fileURLToPath } from 'node:url';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
-test('restore rehearsal is isolated and never targets the live database path', async () => {
+test('PostgreSQL restore rehearsal restores into an isolated database', async () => {
   const source = await fs.readFile(path.join(root, 'scripts/postgres-restore-rehearsal.ts'), 'utf8');
 
-  assert.match(source, /outputDir/);
-  assert.match(source, /\.restore-rehearsal/);
-  assert.match(source, /fs\.mkdirSync/);
-  assert.match(source, /mode: 0o700/);
-  assert.match(source, /mode: 0o600/);
-  assert.doesNotMatch(source, /KAPITECH_DATA_DIR.*kapitech_db\.json/);
+  assert.match(source, /KAPITECH_POSTGRES_REHEARSAL_URL/);
+  assert.match(source, /const isCustomDump = backup\.subarray\(0, 5\)/);
+  assert.match(source, /const command = isCustomDump \? 'pg_restore' : 'psql'/);
+  assert.match(source, /PostgreSQL restore rehearsal target must not be the production database/);
+  assert.match(source, /Restore rehearsal target must be an empty PostgreSQL database/);
 });
 
-test('restore rehearsal validates the decrypted AMS schema before writing the isolated copy', async () => {
+test('PostgreSQL restore rehearsal emits verifiable backup evidence', async () => {
   const source = await fs.readFile(path.join(root, 'scripts/postgres-restore-rehearsal.ts'), 'utf8');
 
-  assert.match(source, /KAPITECH_DATA_ENCRYPTION_KEY/);
-  assert.match(source, /aes-256-gcm/);
-  assert.match(source, /JSON\.parse/);
-  assert.match(source, /requiredArrays/);
+  assert.match(source, /backupSha256/);
+  assert.match(source, /migrationCount/);
+  assert.match(source, /userCount/);
+  assert.match(source, /requiredTablesVerified/);
 });

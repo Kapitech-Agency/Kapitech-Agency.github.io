@@ -10,5 +10,6 @@ test('Migration readiness reuses the shared migration loader', () => {
   assert.ok(routes.includes("import { loadPostgresMigrations } from './postgres-migrations.ts';"));
   assert.ok(routes.includes('const migrations = await loadPostgresMigrations()'));
   assert.ok(migrations.includes('defaultMigrationsDir'));
-  assert.ok(migrations.includes("path.dirname(entrypoint), '../db/postgres'"));
+  assert.ok(migrations.includes("path.resolve(entrypointDir, 'db/postgres')"));
+  assert.ok(migrations.includes("path.resolve(entrypointDir, '../db/postgres')"));
 });

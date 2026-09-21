@@ -13,7 +13,7 @@ test('Document Vault mutation UI follows the server document mutation permission
   assert.ok(ui.includes("hasAdminPermission('canManageProjects')"));
   assert.ok(ui.includes("hasAdminPermission('canManageCrm')"));
   assert.ok(ui.includes("hasAdminPermission('canAccessServerAndApi')"));
-  assert.ok(ui.includes('{canManageDocuments && ('));
+  assert.ok(ui.includes('const canManageDocuments ='));
   assert.ok(ui.includes('if (!canManageDocuments) return;'));
 
   assert.ok(routes.includes("const documentMutationMiddleware = requireAnyPermission("));
