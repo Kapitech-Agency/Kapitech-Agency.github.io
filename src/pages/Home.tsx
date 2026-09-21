@@ -40,12 +40,11 @@ export const Home = () => {
   const [previewProjects, setPreviewProjects] = useState(() => getCmsProjects().slice(0, 4));
 
   useEffect(() => {
-    fetchServerCmsProjects().then((projects) => setPreviewProjects(projects.slice(0, 4)));
+    void fetchServerCmsProjects().then((projects) => setPreviewProjects(projects.slice(0, 4)));
     const handleCmsUpdate = () => setPreviewProjects(getCmsProjects().slice(0, 4));
     window.addEventListener('kapitech_cms_updated', handleCmsUpdate);
     return () => window.removeEventListener('kapitech_cms_updated', handleCmsUpdate);
   }, []);
-
   const clientPartners = [
     { name: "Lumina Property", industry: language === 'id' ? "Teknologi Properti" : "Real Estate Tech", logoText: "LUMINA", desc: language === 'id' ? "Pencarian Properti & Web Interaktif 3D" : "Property Search & 3D Interactive Web" },
     { name: "Nexus Fintech", industry: language === 'id' ? "Layanan Finansial" : "Financial Services", logoText: "NEXUS", desc: language === 'id' ? "UI Mobile Banking & Dashboard Finansial" : "Mobile Banking & Dashboard UI" },
