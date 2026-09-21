@@ -54,7 +54,7 @@ export class PostgresAuditRepository {
           normalized.action,
           normalized.actor,
           normalized.actorRole,
-          normalized.actorUserId,
+          entry.actorUserId || null,
           normalized.ip,
           normalized.userAgent,
           normalized.details,
