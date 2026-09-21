@@ -1214,6 +1214,7 @@ export const AdminCrm: React.FC = () => {
                   <span className="text-xs text-[#8A94A6]">{language === 'id' ? 'Tahap:' : 'Stage:'}</span>
                   <select
                     value={selectedLead.stage}
+                    disabled={!canManageCrm}
                     onChange={(e) => handleStageChange(selectedLead.id, e.target.value as CrmStage)}
                     className="px-3 py-1.5 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl text-xs text-white focus:outline-none focus:border-[#E50914] font-mono"
                   >
@@ -1287,11 +1288,13 @@ export const AdminCrm: React.FC = () => {
                     type="text"
                     value={newNoteText}
                     onChange={(e) => setNewNoteText(e.target.value)}
+                    disabled={!canManageCrm}
                     placeholder={language === 'id' ? 'Catat ringkasan meeting atau jadwal follow-up...' : 'Log call, meeting summary, or follow-up note...'}
                     className="flex-1 px-3.5 py-2 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl text-xs text-white placeholder-[#64748B] focus:outline-none focus:border-[#E50914] font-mono min-h-[44px]"
                   />
                   <button
                     type="submit"
+                    disabled={!canManageCrm || !newNoteText.trim()}
                     className="px-3.5 py-2 rounded-xl bg-[#E50914] hover:bg-[#FF1E27] text-white text-xs font-mono font-bold transition-colors flex items-center gap-1 shrink-0 min-h-[44px]"
                   >
                     <Plus size={13} />
@@ -1323,20 +1326,24 @@ export const AdminCrm: React.FC = () => {
             {/* Drawer Bottom Action Buttons */}
             <div className="pt-5 border-t border-[rgba(255,255,255,0.07)] flex items-center justify-between gap-3">
               <div className="flex items-center gap-2">
-                <button
-                  onClick={() => handleOpenEditModal(selectedLead)}
-                  className="px-3.5 py-2 rounded-xl bg-[#111318] hover:bg-[#21252F] text-white border border-[rgba(255,255,255,0.07)] text-xs transition-colors flex items-center gap-1.5 min-h-[40px]"
+                {canManageCrm && (
+                  <button
+                    onClick={() => handleOpenEditModal(selectedLead)}
+                    className="px-3.5 py-2 rounded-xl bg-[#111318] hover:bg-[#21252F] text-white border border-[rgba(255,255,255,0.07)] text-xs transition-colors flex items-center gap-1.5 min-h-[40px]"
                 >
                   <Edit3 size={13} />
-                  <span>{t('admin.action.edit')}</span>
-                </button>
-                <button
-                  onClick={() => handleDeleteLead(selectedLead.id, selectedLead.clientName)}
+                    <span>{t('admin.action.edit')}</span>
+                  </button>
+                )}
+                {canManageCrm && (
+                  <button
+                    onClick={() => handleDeleteLead(selectedLead.id, selectedLead.clientName)}
                   className="p-2 rounded-xl bg-[#111318] hover:bg-red-950/40 text-[#8A94A6] hover:text-red-400 border border-[rgba(255,255,255,0.07)] hover:border-red-500/30 transition-colors min-h-[40px] min-w-[40px] flex items-center justify-center"
                   title="Delete deal"
                 >
-                  <Trash2 size={15} />
-                </button>
+                    <Trash2 size={15} />
+                  </button>
+                )}
               </div>
 
               {selectedLead.stage === 'won' && canConvertWonDeal && (
