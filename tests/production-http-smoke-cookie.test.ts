@@ -13,6 +13,7 @@ test('Production HTTP smoke test validates Secure session cookies while replayin
   assert.ok(block.includes('HttpOnly'));
   assert.ok(block.includes('Secure'));
   assert.ok(block.includes('SameSite=Strict'));
+  assert.ok(block.includes('split(/\\r?\\n/).find'));
   assert.ok(block.includes('Cookie: kapi_session=$SESSION_COOKIE'));
   assert.ok(!block.includes('-b /tmp/ams-cookies.txt http://127.0.0.1:4173/api/auth/me'));
 });
