@@ -28,7 +28,6 @@ if (productionUrlRaw) {
     targetUrl.protocol === productionUrl.protocol &&
     targetUrl.hostname === productionUrl.hostname &&
     targetUrl.port === productionUrl.port &&
-    targetUrl.username === productionUrl.username &&
     targetUrl.pathname === productionUrl.pathname
   ) {
     throw new Error('PostgreSQL restore rehearsal target must not be the production database.');
@@ -81,8 +80,8 @@ if (Number(before[0]?.count || 0) !== 0) {
 
 const env = postgresCliEnv();
 const cliArgs = isCustomDump
-  ? ['--no-owner', '--exit-on-error', '--dbname=postgresql://localhost/' + encodeURIComponent(env.PGDATABASE || ''), backupPath]
-  : ['--set=ON_ERROR_STOP=1', '--dbname=postgresql://localhost/' + encodeURIComponent(env.PGDATABASE || ''), '--file', backupPath];
+  ? ['--no-owner', '--exit-on-error', '--dbname=' + encodeURIComponent(env.PGDATABASE || ''), backupPath]
+  : ['--set=ON_ERROR_STOP=1', '--dbname=' + encodeURIComponent(env.PGDATABASE || ''), '--file', backupPath];
 
 const command = isCustomDump ? 'pg_restore' : 'psql';
 await execFileAsync(command, cliArgs, { env, maxBuffer: 8 * 1024 * 1024 });
