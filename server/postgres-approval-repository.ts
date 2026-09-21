@@ -49,6 +49,9 @@ export class PostgresApprovalRepository {
   }
 
   async action(id: string, status: string, reviewer: Approval, notes: string): Promise<Approval | null> {
+    if (!['Approved', 'Rejected', 'Changes Requested'].includes(status)) {
+      throw new Error('INVALID_APPROVAL_STATUS');
+    }
     const client = await getPostgresPool().connect();
     try {
       await client.query('BEGIN');
