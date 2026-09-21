@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Layout, 
@@ -27,6 +27,7 @@ import {
 import { Link } from 'react-router-dom';
 import { AtmosphericBackground } from '../components/ui/AtmosphericBackground';
 import { useLanguage } from '../lib/LanguageContext';
+import { fetchServerCmsServices } from '../lib/cmsStore';
 
 export interface ServiceDetail {
   id: string;
@@ -626,10 +627,46 @@ export const Services = () => {
     }
   ];
 
+  const [cmsServices, setCmsServices] = useState<ServiceDetail[]>([]);
+
+  useEffect(() => {
+    void fetchServerCmsServices().then((serverServices) => {
+      const normalized = serverServices
+        .filter((item: any) => item.type === 'service' && item.category !== 'Solutions')
+        .map((item: any) => {
+          const fallback = allServices.find((service) => service.id === item.slug);
+          if (!fallback) return null;
+          return {
+            ...fallback,
+            id: item.slug,
+            title: item.title || fallback.title,
+            category: item.category || fallback.category,
+            subtitle: item.navSubtitle || fallback.subtitle,
+            subtitleId: item.navSubtitleId || fallback.subtitleId,
+            summary: item.heroSubtitle || fallback.summary,
+            summaryId: item.heroSubtitleId || fallback.summaryId,
+            fullDescription: item.heroSubtitle || fallback.fullDescription,
+            fullDescriptionId: item.heroSubtitleId || fallback.fullDescriptionId,
+            deliverables: Array.isArray(item.deliverables) && item.deliverables.length
+              ? item.deliverables
+              : fallback.deliverables,
+            deliverablesId: Array.isArray(item.deliverables) && item.deliverables.length
+              ? item.deliverables
+              : fallback.deliverablesId,
+            tools: Array.isArray(item.tools) && item.tools.length ? item.tools : fallback.tools
+          } as ServiceDetail;
+        })
+        .filter((item): item is ServiceDetail => Boolean(item));
+
+      if (normalized.length > 0) setCmsServices(normalized);
+    });
+  }, []);
+
   const filteredServices = useMemo(() => {
-    if (activeCategory === 'All') return allServices;
-    return allServices.filter(s => s.category === activeCategory);
-  }, [activeCategory]);
+    const source = cmsServices.length > 0 ? cmsServices : allServices;
+    if (activeCategory === 'All') return source;
+    return source.filter(s => s.category === activeCategory);
+  }, [activeCategory, cmsServices]);
 
   return (
     <div className="bg-[#0B0C0E] text-white min-h-screen selection:bg-brand-red selection:text-white relative" role="main">
