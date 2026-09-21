@@ -251,7 +251,7 @@ export const AdminProjects: React.FC = () => {
 
   const handleAddTask = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedProject || !taskTitle.trim()) return;
+    if (!canManageProjects || !selectedProject || !taskTitle.trim()) return;
 
     const subtasksList: TaskSubtask[] = initialSubtasksInput
       .split('\n')
@@ -295,7 +295,7 @@ export const AdminProjects: React.FC = () => {
   };
 
   const handleDeleteTask = async (taskId: string) => {
-    if (!selectedProject) return;
+    if (!canManageProjects || !selectedProject) return;
     const updatedTasks = selectedProject.tasks.filter(t => t.id !== taskId);
     try {
       await saveAgencyProject({
@@ -315,7 +315,7 @@ export const AdminProjects: React.FC = () => {
 
   const handleToggleSubtask = async (taskId: string, subtaskId: string, e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
-    if (!selectedProject) return;
+    if (!canManageProjects || !selectedProject) return;
 
     const updatedTasks = selectedProject.tasks.map(t => {
       if (t.id === taskId && t.subtasks) {
@@ -338,6 +338,7 @@ export const AdminProjects: React.FC = () => {
 
   const handleAddSubtaskInDrawer = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!canManageProjects) return;
     if (!selectedProject || !activeTaskDrawer || !newSubtaskTitle.trim()) return;
 
     const newSub: TaskSubtask = {
@@ -428,6 +429,7 @@ export const AdminProjects: React.FC = () => {
 
   const handleDropOnColumn = async (e: React.DragEvent, columnId: TaskStatus) => {
     e.preventDefault();
+    if (!canManageProjects) return;
     const taskId = e.dataTransfer.getData('text/plain') || draggedTaskId;
     if (taskId && selectedProject) {
       try {
@@ -525,8 +527,9 @@ export const AdminProjects: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-3">
-          <button
-            onClick={handleOpenCreateProject}
+          {canManageProjects && (
+            <button
+              onClick={handleOpenCreateProject}
             className="h-10 px-4 rounded-xl bg-[#E50914] hover:bg-[#FF1E27] text-white text-xs font-mono font-bold transition-all flex items-center gap-2 shadow-lg shadow-[#E50914]/20 min-h-[40px]"
           >
             <Plus size={15} />
@@ -761,13 +764,15 @@ export const AdminProjects: React.FC = () => {
                 />
               </div>
 
-              <button
-                onClick={() => setIsTaskModalOpen(true)}
+              {canManageProjects && (
+                <button
+                  onClick={() => setIsTaskModalOpen(true)}
                 className="h-10 px-4 rounded-xl bg-[#E50914] hover:bg-[#FF1E27] text-white text-xs font-mono font-bold transition-all flex items-center justify-center gap-2 shadow-md shrink-0 min-h-[40px]"
               >
                 <Plus size={14} />
-                <span>{t('admin.proj.addTask')}</span>
-              </button>
+                  <span>{t('admin.proj.addTask')}</span>
+                </button>
+              )}
             </div>
           </div>
 
@@ -830,8 +835,8 @@ export const AdminProjects: React.FC = () => {
                         return (
                           <div
                             key={task.id}
-                            draggable={true}
-                            onDragStart={(e) => handleDragStart(e, task.id)}
+                            draggable={canManageProjects}
+                            onDragStart={(e) => { if (canManageProjects) handleDragStart(e, task.id); }}
                             onClick={() => setActiveTaskDrawer(task)}
                             className={`draggable-card task-card bg-[#181B22] border hover:border-[#E50914]/60 p-3.5 rounded-xl space-y-2.5 shadow-md transition-all cursor-pointer group relative select-none ${
                               isDragging ? 'opacity-40 scale-95 border-[#E50914] border-dashed' : 'border-[rgba(255,255,255,0.07)]'
@@ -844,16 +849,18 @@ export const AdminProjects: React.FC = () => {
                                 {getPriorityBadge(task.priority)}
                               </div>
 
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleDeleteTask(task.id);
-                                }}
+                              {canManageProjects && (
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleDeleteTask(task.id);
+                                  }}
                                 className="text-[#64748B] hover:text-rose-400 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-rose-950/30"
                                 title="Delete task"
                               >
-                                <Trash2 size={12} />
-                              </button>
+                                  <Trash2 size={12} />
+                                </button>
+                              )}
                             </div>
 
                             {/* Task Title */}
@@ -960,7 +967,9 @@ export const AdminProjects: React.FC = () => {
                   {TASK_COLUMNS.map((col) => (
                     <button
                       key={col.id}
+                      disabled={!canManageProjects}
                       onClick={async () => {
+                        if (!canManageProjects) return;
                         try {
                           await updateTaskStatus(selectedProject.id, activeTaskDrawer.id, col.id);
                           showToast(`Moved to ${col.label}`);
@@ -1023,7 +1032,8 @@ export const AdminProjects: React.FC = () => {
                       className="flex items-center justify-between p-2.5 rounded-xl bg-[#181B22] border border-[rgba(255,255,255,0.07)] hover:border-[#383C46] transition-colors"
                     >
                       <button
-                        onClick={() => handleToggleSubtask(activeTaskDrawer.id, st.id)}
+                        disabled={!canManageProjects}
+                      onClick={() => handleToggleSubtask(activeTaskDrawer.id, st.id)}
                         className="flex items-center gap-2.5 text-left min-w-0 flex-1 cursor-pointer"
                       >
                         {st.completed ? (
@@ -1035,12 +1045,14 @@ export const AdminProjects: React.FC = () => {
                           {st.title}
                         </span>
                       </button>
-                      <button
-                        onClick={() => handleDeleteSubtaskInDrawer(st.id)}
-                        className="text-[#64748B] hover:text-rose-400 p-1"
+                      {canManageProjects && (
+                        <button
+                          onClick={() => handleDeleteSubtaskInDrawer(st.id)}
+                          className="text-[#64748B] hover:text-rose-400 p-1"
                       >
-                        <Trash2 size={12} />
-                      </button>
+                          <Trash2 size={12} />
+                        </button>
+                      )}
                     </div>
                   ))}
 
@@ -1049,13 +1061,14 @@ export const AdminProjects: React.FC = () => {
                     <input
                       type="text"
                       value={newSubtaskTitle}
+                      disabled={!canManageProjects}
                       onChange={(e) => setNewSubtaskTitle(e.target.value)}
                       placeholder="Add subtask item and press enter..."
                       className="flex-1 px-3 py-2 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-xs text-white focus:outline-none focus:border-[#E50914] font-mono"
                     />
                     <button
                       type="submit"
-                      disabled={!newSubtaskTitle.trim()}
+                      disabled={!canManageProjects || !newSubtaskTitle.trim()}
                       className="px-3 py-2 rounded-xl bg-[#E50914] text-white text-xs font-bold disabled:opacity-50"
                     >
                       <Plus size={14} />
@@ -1067,13 +1080,15 @@ export const AdminProjects: React.FC = () => {
 
             {/* Sticky Drawer Footer */}
             <div className="sticky bottom-0 z-20 bg-[#111318]/95 backdrop-blur-md px-5 sm:px-6 py-3.5 border-t border-[rgba(255,255,255,0.07)] flex items-center justify-between shrink-0">
-              <button
-                onClick={() => handleDeleteTask(activeTaskDrawer.id)}
-                className="h-10 px-3 min-h-[40px] rounded-xl bg-red-950/40 text-red-300 border border-red-500/30 hover:bg-red-950/60 transition-colors flex items-center gap-1.5"
+              {canManageProjects && (
+                <button
+                  onClick={() => handleDeleteTask(activeTaskDrawer.id)}
+                  className="h-10 px-3 min-h-[40px] rounded-xl bg-red-950/40 text-red-300 border border-red-500/30 hover:bg-red-950/60 transition-colors flex items-center gap-1.5"
               >
                 <Trash2 size={13} />
-                <span>Delete Task</span>
-              </button>
+                  <span>Delete Task</span>
+                </button>
+              )}
 
               <button
                 onClick={() => setActiveTaskDrawer(null)}

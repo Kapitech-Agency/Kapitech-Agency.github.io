@@ -62,7 +62,8 @@ import { hasAdminPermission } from '../../lib/adminAuth';
 export const AdminCrm: React.FC = () => {
   const { language, t } = useLanguage();
   const kanbanScrollRef = useDragToScroll<HTMLDivElement>();
-  const canConvertWonDeal = hasAdminPermission('canManageCrm') && hasAdminPermission('canManageProjects') && hasAdminPermission('canManageInvoices') && hasAdminPermission('canManageClients');
+  const canManageCrm = hasAdminPermission('canManageCrm');
+  const canConvertWonDeal = canManageCrm && hasAdminPermission('canManageProjects') && hasAdminPermission('canManageInvoices') && hasAdminPermission('canManageClients');
   const [leads, setLeads] = useState<CrmLead[]>([]);
   const [viewMode, setViewMode] = useState<'kanban' | 'list'>('kanban');
   const [currency, setCurrency] = useState<CurrencyCode>(getActiveCurrency());
@@ -200,6 +201,7 @@ export const AdminCrm: React.FC = () => {
 
   const handleDropOnColumn = (e: React.DragEvent, stageKey: CrmStage) => {
     e.preventDefault();
+    if (!canManageCrm) return;
     const leadId = e.dataTransfer.getData('text/plain') || draggedLeadId;
     if (leadId) {
       handleStageChange(leadId, stageKey);
@@ -209,6 +211,7 @@ export const AdminCrm: React.FC = () => {
   };
 
   const handleStageChange = async (leadId: string, newStage: CrmStage) => {
+    if (!canManageCrm) return;
     try {
       await updateLeadStage(leadId, newStage);
     } catch (error: any) {
@@ -427,6 +430,7 @@ export const AdminCrm: React.FC = () => {
 
   const handleSaveLead = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!canManageCrm) return;
     if (!formClientName.trim() || !formCompany.trim()) {
       alert(language === 'id' ? 'Nama klien dan perusahaan wajib diisi.' : 'Client name and company are required.');
       return;
@@ -461,6 +465,7 @@ export const AdminCrm: React.FC = () => {
   };
 
   const handleDeleteLead = async (id: string, name: string) => {
+    if (!canManageCrm) return;
     if (window.confirm(language === 'id' ? `Hapus prospek ${name}?` : `Delete lead ${name}?`)) {
       try {
         await deleteCrmLead(id);
@@ -478,6 +483,7 @@ export const AdminCrm: React.FC = () => {
 
   const handleAddNote = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!canManageCrm) return;
     if (!selectedLead || !newNoteText.trim()) return;
 
     try {
@@ -583,13 +589,15 @@ export const AdminCrm: React.FC = () => {
             <span className="hidden sm:inline">{t('admin.action.exportCsv')}</span>
           </button>
 
-          <button
-            onClick={() => handleOpenAddModal('new')}
+          {canManageCrm && (
+            <button
+              onClick={() => handleOpenAddModal('new')}
             className="h-10 px-4 rounded-xl bg-[#E50914] hover:bg-[#FF1E27] text-white text-xs font-mono font-bold transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#E50914]/20 min-h-[40px]"
           >
             <Plus size={15} />
-            <span>{t('admin.crm.addDeal')}</span>
-          </button>
+              <span>{t('admin.crm.addDeal')}</span>
+            </button>
+          )}
         </div>
       </div>
 
@@ -836,8 +844,8 @@ export const AdminCrm: React.FC = () => {
                         return (
                           <div
                             key={lead.id}
-                            draggable={true}
-                            onDragStart={(e) => handleDragStart(e, lead.id)}
+                            draggable={canManageCrm}
+                            onDragStart={(e) => { if (canManageCrm) handleDragStart(e, lead.id); }}
                             onClick={() => handleOpenLeadDrawer(lead)}
                             className={`draggable-card kanban-card bg-[#111318] hover:bg-[#181B22] border hover:border-[#E50914]/60 rounded-xl p-3.5 cursor-pointer transition-all shadow-md group relative ${
                               isDragging ? 'opacity-40 scale-95 border-[#E50914] border-dashed' : 'border-[rgba(255,255,255,0.07)]'
@@ -878,7 +886,7 @@ export const AdminCrm: React.FC = () => {
                             <div className="flex items-center justify-between gap-2 pt-0.5" onClick={(e) => e.stopPropagation()}>
                               {/* Left: Won / Project status action */}
                               <div className="flex items-center gap-1.5 shrink-0">
-                                {lead.stage !== 'won' && lead.stage !== 'lost' && (
+                                {canManageCrm && lead.stage !== 'won' && lead.stage !== 'lost' && (
                                   <button
                                     onClick={() => handleStageChange(lead.id, 'won')}
                                     title={language === 'id' ? 'Tandai Deal Dimenangkan (Won)' : 'Mark deal as Won'}
@@ -888,7 +896,7 @@ export const AdminCrm: React.FC = () => {
                                     <span>Won</span>
                                   </button>
                                 )}
-                                {lead.stage === 'won' && (
+                                {canConvertWonDeal && lead.stage === 'won' && (
                                   <button
                                     onClick={() => handleConvertToProject(lead)}
                                     title={language === 'id' ? 'Konversi ke Proyek Aktif' : 'Convert deal to Agency Project'}
@@ -995,7 +1003,7 @@ export const AdminCrm: React.FC = () => {
                     </div>
 
                     <div className="flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
-                      {lead.stage === 'won' && (
+                      {canConvertWonDeal && lead.stage === 'won' && (
                         <button
                           onClick={() => handleConvertToProject(lead)}
                           title="Create project"
@@ -1015,8 +1023,9 @@ export const AdminCrm: React.FC = () => {
                           <Send size={13} />
                         </a>
                       )}
-                      <button
-                        onClick={() => handleOpenEditModal(lead)}
+                      {canManageCrm && (
+                        <button
+                          onClick={() => handleOpenEditModal(lead)}
                         className="w-9 h-9 rounded-xl bg-[#181B22] text-[#8A94A6] hover:text-white border border-[rgba(255,255,255,0.07)] flex items-center justify-center min-h-[36px] min-w-[36px]"
                         title="Edit deal"
                       >
@@ -1027,8 +1036,9 @@ export const AdminCrm: React.FC = () => {
                         className="w-9 h-9 rounded-xl bg-[#181B22] text-[#8A94A6] hover:text-red-400 border border-[rgba(255,255,255,0.07)] hover:border-red-500/40 flex items-center justify-center min-h-[36px] min-w-[36px]"
                         title="Delete deal"
                       >
-                        <Trash2 size={13} />
-                      </button>
+                          <Trash2 size={13} />
+                        </button>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -1129,6 +1139,7 @@ export const AdminCrm: React.FC = () => {
                             )}
                             <button
                               onClick={() => handleOpenEditModal(lead)}
+                              disabled={!canManageCrm}
                               className="w-9 h-9 rounded-xl bg-[#181B22] text-[#8A94A6] hover:text-white border border-[rgba(255,255,255,0.07)] flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
                               title="Edit deal"
                             >
@@ -1136,6 +1147,7 @@ export const AdminCrm: React.FC = () => {
                             </button>
                             <button
                               onClick={() => handleDeleteLead(lead.id, lead.clientName)}
+                              disabled={!canManageCrm}
                               className="w-9 h-9 rounded-xl bg-[#181B22] text-[#8A94A6] hover:text-red-400 border border-[rgba(255,255,255,0.07)] hover:border-red-500/40 flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
                               title="Delete deal"
                             >
@@ -1202,6 +1214,7 @@ export const AdminCrm: React.FC = () => {
                   <span className="text-xs text-[#8A94A6]">{language === 'id' ? 'Tahap:' : 'Stage:'}</span>
                   <select
                     value={selectedLead.stage}
+                    disabled={!canManageCrm}
                     onChange={(e) => handleStageChange(selectedLead.id, e.target.value as CrmStage)}
                     className="px-3 py-1.5 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl text-xs text-white focus:outline-none focus:border-[#E50914] font-mono"
                   >
@@ -1275,11 +1288,13 @@ export const AdminCrm: React.FC = () => {
                     type="text"
                     value={newNoteText}
                     onChange={(e) => setNewNoteText(e.target.value)}
+                    disabled={!canManageCrm}
                     placeholder={language === 'id' ? 'Catat ringkasan meeting atau jadwal follow-up...' : 'Log call, meeting summary, or follow-up note...'}
                     className="flex-1 px-3.5 py-2 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl text-xs text-white placeholder-[#64748B] focus:outline-none focus:border-[#E50914] font-mono min-h-[44px]"
                   />
                   <button
                     type="submit"
+                    disabled={!canManageCrm || !newNoteText.trim()}
                     className="px-3.5 py-2 rounded-xl bg-[#E50914] hover:bg-[#FF1E27] text-white text-xs font-mono font-bold transition-colors flex items-center gap-1 shrink-0 min-h-[44px]"
                   >
                     <Plus size={13} />
@@ -1311,20 +1326,24 @@ export const AdminCrm: React.FC = () => {
             {/* Drawer Bottom Action Buttons */}
             <div className="pt-5 border-t border-[rgba(255,255,255,0.07)] flex items-center justify-between gap-3">
               <div className="flex items-center gap-2">
-                <button
-                  onClick={() => handleOpenEditModal(selectedLead)}
-                  className="px-3.5 py-2 rounded-xl bg-[#111318] hover:bg-[#21252F] text-white border border-[rgba(255,255,255,0.07)] text-xs transition-colors flex items-center gap-1.5 min-h-[40px]"
+                {canManageCrm && (
+                  <button
+                    onClick={() => handleOpenEditModal(selectedLead)}
+                    className="px-3.5 py-2 rounded-xl bg-[#111318] hover:bg-[#21252F] text-white border border-[rgba(255,255,255,0.07)] text-xs transition-colors flex items-center gap-1.5 min-h-[40px]"
                 >
                   <Edit3 size={13} />
-                  <span>{t('admin.action.edit')}</span>
-                </button>
-                <button
-                  onClick={() => handleDeleteLead(selectedLead.id, selectedLead.clientName)}
+                    <span>{t('admin.action.edit')}</span>
+                  </button>
+                )}
+                {canManageCrm && (
+                  <button
+                    onClick={() => handleDeleteLead(selectedLead.id, selectedLead.clientName)}
                   className="p-2 rounded-xl bg-[#111318] hover:bg-red-950/40 text-[#8A94A6] hover:text-red-400 border border-[rgba(255,255,255,0.07)] hover:border-red-500/30 transition-colors min-h-[40px] min-w-[40px] flex items-center justify-center"
                   title="Delete deal"
                 >
-                  <Trash2 size={15} />
-                </button>
+                    <Trash2 size={15} />
+                  </button>
+                )}
               </div>
 
               {selectedLead.stage === 'won' && canConvertWonDeal && (
