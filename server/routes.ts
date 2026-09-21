@@ -65,6 +65,7 @@ import { postgresNotificationRepository } from './postgres-notification-reposito
 import { postgresDocumentRepository } from './postgres-document-repository.ts';
 import { postgresAuditLogRepository } from './postgres-audit-log-repository.ts';
 import { postgresCmsRepository } from './postgres-cms-repository.ts';
+import { postgresNotificationSettingsRepository } from './postgres-notification-settings-repository.ts';
 
 
 const ROLE_POLICIES: Record<string, {
@@ -2651,9 +2652,10 @@ apiRouter.get('/audit-logs/integrity', requireAuth, requirePermission('canViewSe
 // 10. NOTIFICATION SETTINGS (Secrets kept strictly on server)
 // ----------------------------------------------------
 
-apiRouter.get('/notifications/settings', requireAuth, requirePermission('canAccessServerAndApi'), (req: AuthenticatedRequest, res: Response): void => {
-  const db = getDatabase();
-  const s = db.notificationSettings;
+apiRouter.get('/notifications/settings', requireAuth, requirePermission('canAccessServerAndApi'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  const s = getDataSourceMode() === 'postgres'
+    ? await postgresNotificationSettingsRepository.get()
+    : getDatabase().notificationSettings;
   res.json({
     success: true,
     settings: {
@@ -2667,24 +2669,34 @@ apiRouter.get('/notifications/settings', requireAuth, requirePermission('canAcce
   });
 });
 
-apiRouter.put('/notifications/settings', requireAuth, requirePermission('canAccessServerAndApi'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.put('/notifications/settings', requireAuth, requirePermission('canAccessServerAndApi'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { targetEmail, formspreeEndpoint, telegramChatId, isEmailActive, isTelegramActive } = req.body;
+  if (getDataSourceMode() === 'postgres') {
+    const current = await postgresNotificationSettingsRepository.get();
+    const nextTargetEmail = targetEmail !== undefined ? cleanText(targetEmail, 254).toLowerCase() : current.targetEmail;
+    const nextFormspreeEndpoint = formspreeEndpoint !== undefined ? cleanOptionalUrl(formspreeEndpoint) : current.formspreeEndpoint;
+    const nextTelegramChatId = telegramChatId !== undefined ? cleanText(telegramChatId, 120) : current.telegramChatId;
+    if (nextTargetEmail && !isValidEmail(nextTargetEmail)) { res.status(400).json({ success: false, error: 'Invalid notification target email address.' }); return; }
+    if (nextFormspreeEndpoint && !/^https:\/\/(?:www\.)?formspree\.io\//i.test(nextFormspreeEndpoint)) { res.status(400).json({ success: false, error: 'Only Formspree HTTPS endpoints are allowed.' }); return; }
+    const settings = await postgresNotificationSettingsRepository.update({
+      targetEmail: nextTargetEmail,
+      formspreeEndpoint: nextFormspreeEndpoint,
+      telegramChatId: nextTelegramChatId,
+      isEmailActive: isEmailActive !== undefined ? Boolean(isEmailActive) : current.isEmailActive,
+      isTelegramActive: isTelegramActive !== undefined ? Boolean(isTelegramActive) : current.isTelegramActive
+    });
+    recordAuditLog({ action: 'SETTINGS_UPDATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: 'Updated notification and dispatch channel settings.', severity: 'info' });
+    res.json({ success: true, message: 'Notification settings saved.' });
+    return;
+  }
+
   const db = getDatabase();
   const current = db.notificationSettings;
-
   const nextTargetEmail = targetEmail !== undefined ? cleanText(targetEmail, 254).toLowerCase() : current.targetEmail;
   const nextFormspreeEndpoint = formspreeEndpoint !== undefined ? cleanOptionalUrl(formspreeEndpoint) : current.formspreeEndpoint;
   const nextTelegramChatId = telegramChatId !== undefined ? cleanText(telegramChatId, 120) : current.telegramChatId;
-
-  if (nextTargetEmail && !isValidEmail(nextTargetEmail)) {
-    res.status(400).json({ success: false, error: 'Invalid notification target email address.' });
-    return;
-  }
-  if (nextFormspreeEndpoint && !/^https:\/\/(?:www\.)?formspree\.io\//i.test(nextFormspreeEndpoint)) {
-    res.status(400).json({ success: false, error: 'Only Formspree HTTPS endpoints are allowed.' });
-    return;
-  }
-
+  if (nextTargetEmail && !isValidEmail(nextTargetEmail)) { res.status(400).json({ success: false, error: 'Invalid notification target email address.' }); return; }
+  if (nextFormspreeEndpoint && !/^https:\/\/(?:www\.)?formspree\.io\//i.test(nextFormspreeEndpoint)) { res.status(400).json({ success: false, error: 'Only Formspree HTTPS endpoints are allowed.' }); return; }
   db.notificationSettings = {
     targetEmail: nextTargetEmail,
     formspreeEndpoint: nextFormspreeEndpoint,
@@ -2694,22 +2706,10 @@ apiRouter.put('/notifications/settings', requireAuth, requirePermission('canAcce
     isTelegramActive: isTelegramActive !== undefined ? Boolean(isTelegramActive) : current.isTelegramActive,
     updatedAt: new Date().toISOString()
   };
-
   saveDatabase(db);
-
-  recordAuditLog({
-    action: 'SETTINGS_UPDATED',
-    actor: req.user!.username,
-    actorRole: req.user!.role,
-    ip: req.ip,
-    userAgent: req.headers['user-agent'] as string,
-    details: 'Updated notification and dispatch channel settings.',
-    severity: 'info'
-  });
-
+  recordAuditLog({ action: 'SETTINGS_UPDATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: 'Updated notification and dispatch channel settings.', severity: 'info' });
   res.json({ success: true, message: 'Notification settings saved.' });
 });
-
 // ----------------------------------------------------
 // 11. SERVER-SIDE GEMINI INTEGRATION (Key never exposed to browser)
 // ----------------------------------------------------
