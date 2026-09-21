@@ -3083,7 +3083,7 @@ apiRouter.put('/crm/proposals/:id', requireAuth, requirePermission('canManageCrm
     try {
       const patch = {
         ...pickFields(updates, [
-          'proposalNumber','title','clientId','dealId','projectId','discount','taxPercent',
+          'proposalNumber','title','clientId','clientName','company','dealId','projectId','discount','taxPercent',
           'currency','validityPeriod','paymentTerms','status','notes','sentDate','items','version'
         ]),
         version: updates.version
