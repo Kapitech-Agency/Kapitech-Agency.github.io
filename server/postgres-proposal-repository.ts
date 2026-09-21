@@ -254,6 +254,10 @@ export class PostgresProposalRepository {
         patch.__total = total;
       }
 
+      const metadataPatch: Record<string, any> = {};
+      if (patch.clientName !== undefined) metadataPatch.clientName = String(patch.clientName);
+      if (patch.company !== undefined) metadataPatch.company = String(patch.company);
+
       const result = await client.query<Row>(
         'UPDATE proposals SET ' +
         'proposal_number=COALESCE($2,proposal_number), title=COALESCE($3,title), client_id=COALESCE($4,client_id), ' +
