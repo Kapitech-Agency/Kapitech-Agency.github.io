@@ -1796,13 +1796,13 @@ apiRouter.post('/finance/invoices', requireAuth, requirePermission('canManageInv
   const discountPercent = Number.isFinite(Number(input.discountPercent)) ? Math.min(100, Math.max(0, Number(input.discountPercent))) : 0;
   const { subtotal, discountAmount, taxableSubtotal, taxAmount, total } = buildInvoiceFinancials(items, taxPercent, discountPercent);
 
-  const db = getDatabase();
+  const db = getDataSourceMode() === 'json' ? getDatabase() : undefined;
   const requestedNumber = String(input.invoiceNumber || '').trim();
   const invoiceNumber = requestedNumber && /^[A-Za-z0-9._/-]{1,80}$/.test(requestedNumber)
     ? requestedNumber
     : `INV-KAPI-${new Date().getFullYear()}-${crypto.randomInt(1000, 10000)}`;
 
-  if (db.invoices.some((invoice: any) => invoice.invoiceNumber === invoiceNumber)) {
+  if (db?.invoices?.some((invoice: any) => invoice.invoiceNumber === invoiceNumber)) {
     res.status(409).json({ success: false, error: 'Invoice number already exists.' });
     return;
   }
@@ -1857,8 +1857,8 @@ apiRouter.post('/finance/invoices', requireAuth, requirePermission('canManageInv
     }
   }
 
-  db.invoices.unshift(invoice);
-  saveDatabase(db);
+  db!.invoices.unshift(invoice);
+  saveDatabase(db!);
 
   recordAuditLog({
     action: 'INVOICE_CREATED',
