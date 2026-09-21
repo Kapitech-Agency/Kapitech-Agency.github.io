@@ -75,6 +75,7 @@ export const AdminCrm: React.FC = () => {
 
   // Modals & Drawer
   const [selectedLead, setSelectedLead] = useState<CrmLead | null>(null);
+  const [convertingLeadId, setConvertingLeadId] = useState<string | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [editingLead, setEditingLead] = useState<CrmLead | null>(null);
@@ -216,6 +217,9 @@ export const AdminCrm: React.FC = () => {
   };
 
   const handleConvertToProject = async (lead: CrmLead) => {
+    if (convertingLeadId) return;
+    setConvertingLeadId(lead.id);
+
     const projectId = 'proj_' + Date.now().toString(36);
     const invoiceId = 'inv_' + Date.now().toString(36);
     const clientId = 'cli_' + Date.now().toString(36);
@@ -306,7 +310,7 @@ export const AdminCrm: React.FC = () => {
       location: 'Indonesia',
       industry: lead.servicePillar,
       status: 'active',
-      totalSpend: lead.dealValue,
+      totalSpend: 0,
       projectsCount: 1,
       contactPersonRole: 'Primary Stakeholder',
       notes: `Converted from CRM Closed Won Deal (${lead.servicePillar})`,
@@ -357,6 +361,8 @@ export const AdminCrm: React.FC = () => {
           ? 'Konversi deal gagal. Tidak ada status sukses yang ditampilkan.'
           : 'Deal conversion failed. No success state was recorded.')
       );
+    } finally {
+      setConvertingLeadId(null);
     }
   };
   const handleOpenLeadDrawer = (lead: CrmLead) => {
@@ -1287,10 +1293,13 @@ export const AdminCrm: React.FC = () => {
               {selectedLead.stage === 'won' && (
                 <button
                   onClick={() => handleConvertToProject(selectedLead)}
-                  className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center gap-1.5 shadow-lg shadow-emerald-600/20 min-h-[40px]"
+                  disabled={convertingLeadId === selectedLead.id}
+                  className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center gap-1.5 shadow-lg shadow-emerald-600/20 min-h-[40px] disabled:opacity-60 disabled:cursor-not-allowed"
                 >
-                  <Layers size={13} />
-                  <span>{t('admin.crm.convertToProject')}</span>
+                  {convertingLeadId === selectedLead.id ? <Clock size={13} className="animate-spin" /> : <Layers size={13} />}
+                  <span>{convertingLeadId === selectedLead.id
+                    ? (language === 'id' ? 'Mengonversi...' : 'Converting...')
+                    : t('admin.crm.convertToProject')}</span>
                 </button>
               )}
             </div>
