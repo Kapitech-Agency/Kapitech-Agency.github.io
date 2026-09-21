@@ -256,6 +256,7 @@ async function pgRecordSets(): Promise<Record<string, any[]>> {
   const pool = getPostgresPool();
   const result = await Promise.all([
     pool.query('SELECT id,name,username,email,role,stakeholder_type,division,status,mfa_enabled,permissions FROM users'),
+    pool.query('SELECT id,name,company,email,phone,industry,status,notes,metadata FROM clients'),
     pool.query('SELECT id,full_name,email,phone,company,service_category,budget_range,project_timeline,message,source,status,honeypot_triggered FROM leads'),
     pool.query('SELECT id,title,client_id,client_name,company,email,phone,service_pillar,value,stage,priority,probability,owner,expected_close_date FROM crm_deals'),
     pool.query('SELECT id,name,description,client_id,status,owner,budget,start_date,end_date FROM projects'),
@@ -279,7 +280,7 @@ async function pgRecordSets(): Promise<Record<string, any[]>> {
   ]);
 
   const keys = [
-    'users','leads','crmDeals','projects','proposals','proposalItems','tasks','timeLogs','invoices',
+    'users','clients','leads','crmDeals','projects','proposals','proposalItems','tasks','timeLogs','invoices',
     'invoiceItems','invoicePayments','expenses','approvals','vendors','documents','documentAccess',
     'notifications','auditLogs','cmsServices','cmsProjects','cmsTestimonials'
   ];
@@ -292,6 +293,10 @@ function buildRecordParity(db: any, pg: Record<string, any[]>) {
     users: compareParity('users', arr(db,'users'), pg.users,
       row => ({ id: String(row.id), value: { username: row.username, email: row.email, role: row.role, stakeholderType: row.stakeholderType, division: row.division, status: row.status, mfaEnabled: Boolean(row.mfaEnabled), permissions: row.permissions } }),
       row => ({ id: String(row.id), value: { username: row.username, email: row.email, role: row.role, stakeholderType: row.stakeholder_type, division: row.division, status: row.status, mfaEnabled: Boolean(row.mfa_enabled), permissions: row.permissions } })
+    ),
+    clients: compareParity('clients', arr(db,'clients'), pg.clients,
+      row => ({ id: String(row.id), value: { name: row.name ?? row.clientName ?? null, company: row.company ?? null, email: row.email ?? null, phone: row.phone ?? null, industry: row.industry ?? null, status: row.status, notes: row.notes ?? null, metadata: row.metadata && typeof row.metadata === 'object' ? row.metadata : {} } }),
+      row => ({ id: String(row.id), value: { name: row.name ?? null, company: row.company ?? null, email: row.email ?? null, phone: row.phone ?? null, industry: row.industry ?? null, status: row.status, notes: row.notes ?? null, metadata: row.metadata && typeof row.metadata === 'object' ? row.metadata : {} } })
     ),
     leads: compareParity('leads', arr(db,'leads'), pg.leads,
       row => ({ id: String(row.id), value: { fullName: row.fullName, email: row.email, phone: row.phone ?? null, company: row.company ?? null, serviceCategory: row.serviceCategory ?? null, budgetRange: row.budgetRange ?? null, projectTimeline: row.projectTimeline ?? null, message: row.message, source: row.source ?? null, status: row.status, honeypotTriggered: Boolean(row.honeypotTriggered) } }),
