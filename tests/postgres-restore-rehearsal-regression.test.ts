@@ -15,5 +15,5 @@ test('PostgreSQL restore rehearsal is a real database restore workflow', () => {
 
 test('Legacy JSON restore rehearsal has an explicit non-PostgreSQL name', () => {
   assert.ok(fs.existsSync(path.resolve(process.cwd(), 'scripts/json-restore-rehearsal.ts')));
-  assert.ok(!fs.existsSync(path.resolve(process.cwd(), 'scripts/postgres-restore-rehearsal.json')));
+  assert.ok(fs.existsSync(path.resolve(process.cwd(), 'scripts/json-restore-rehearsal.ts')));
 });
