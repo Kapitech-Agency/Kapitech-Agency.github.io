@@ -810,8 +810,10 @@ apiRouter.post('/auth/users', requireAuth, requireMaster, async (req: Authentica
 
 apiRouter.delete('/auth/users/:id', requireAuth, requireMaster, async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
-  const db = getDatabase();
-  const target = db.users.find(u => u.id === id);
+  const db = getDataSourceMode() === 'json' ? getDatabase() : undefined;
+  const target = getDataSourceMode() === 'postgres'
+    ? await postgresAuthRepository.findUserById(id)
+    : db!.users.find(u => u.id === id) || null;
 
   if (!target) {
     res.status(404).json({ success: false, error: 'User not found.' });
@@ -823,9 +825,18 @@ apiRouter.delete('/auth/users/:id', requireAuth, requireMaster, async (req: Auth
     return;
   }
 
-  db.users = db.users.filter(u => u.id !== id);
-  db.sessions = db.sessions.filter(s => s.userId !== id);
-  saveDatabase(db);
+  if (getDataSourceMode() === 'postgres') {
+    const deleted = await postgresAuthRepository.deleteUser(id);
+    if (!deleted) {
+      res.status(409).json({ success: false, error: 'User could not be deleted.' });
+      return;
+    }
+    await postgresAuthRepository.deleteUserSessions(id);
+  } else {
+    db!.users = db!.users.filter(u => u.id !== id);
+    db!.sessions = db!.sessions.filter(s => s.userId !== id);
+    saveDatabase(db!);
+  }
 
   recordAuditLog({
     action: 'ACCOUNT_DELETED',
@@ -842,8 +853,10 @@ apiRouter.delete('/auth/users/:id', requireAuth, requireMaster, async (req: Auth
 
 apiRouter.put('/auth/users/:id', requireAuth, requireMaster, async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
-  const db = getDatabase();
-  const target = db.users.find(u => u.id === id);
+  const db = getDataSourceMode() === 'json' ? getDatabase() : undefined;
+  const target = getDataSourceMode() === 'postgres'
+    ? await postgresAuthRepository.findUserById(id)
+    : db!.users.find(u => u.id === id) || null;
 
   if (!target) {
     res.status(404).json({ success: false, error: 'User not found.' });
@@ -880,18 +893,32 @@ apiRouter.put('/auth/users/:id', requireAuth, requireMaster, async (req: Authent
     return;
   }
 
-  target.name = nextName;
-  target.role = nextRole;
-  target.stakeholderType = policy.stakeholderType;
-  target.division = policy.division;
-  target.permissions = policy.permissions;
-  target.status = nextStatus as StoredUser['status'];
-
-  if (target.status === 'suspended') {
-    db.sessions = db.sessions.filter(session => session.userId !== target.id);
+  if (getDataSourceMode() === 'postgres') {
+    const updated = await postgresAuthRepository.updateUserPolicy(
+      target.id, nextName, nextRole, policy.stakeholderType, policy.permissions,
+      policy.division, nextStatus as StoredUser['status']
+    );
+    if (!updated) {
+      res.status(404).json({ success: false, error: 'User not found.' });
+      return;
+    }
+    target.name = updated.name;
+    target.role = updated.role;
+    target.stakeholderType = updated.stakeholderType;
+    target.division = updated.division;
+    target.permissions = updated.permissions;
+    target.status = updated.status;
+    if (target.status === 'suspended') await postgresAuthRepository.deleteUserSessions(target.id);
+  } else {
+    target.name = nextName;
+    target.role = nextRole;
+    target.stakeholderType = policy.stakeholderType;
+    target.division = policy.division;
+    target.permissions = policy.permissions;
+    target.status = nextStatus as StoredUser['status'];
+    if (target.status === 'suspended') db!.sessions = db!.sessions.filter(session => session.userId !== target.id);
+    saveDatabase(db!);
   }
-
-  saveDatabase(db);
 
   recordAuditLog({
     action: 'ACCOUNT_UPDATED',
