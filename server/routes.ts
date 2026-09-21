@@ -1711,6 +1711,7 @@ apiRouter.post('/projects', requireAuth, requirePermission('canManageProjects'),
     name: cleanText(projectData.name || projectData.title, 200),
     title: cleanText(projectData.title || projectData.name, 200),
     client: cleanText(projectData.client || projectData.clientCompany, 200),
+    clientId: cleanText(projectData.clientId, 100) || undefined,
     clientName: cleanText(projectData.clientName, 160),
     clientCompany: cleanText(projectData.clientCompany || projectData.client, 200),
     clientEmail: cleanText(projectData.clientEmail, 254).toLowerCase(),
@@ -1759,7 +1760,7 @@ apiRouter.put('/projects/:id', requireAuth, requirePermission('canManageProjects
   const { id } = req.params;
   const updates = req.body || {};
   if (getDataSourceMode() === 'postgres') {
-    const patch = pickFields(updates, ['title','name','client','clientName','clientCompany','clientEmail','serviceCategory','status','health','budget','progressPercent','startDate','targetEndDate','teamLead','teamMembers','techStack','repositoryUrl','figmaUrl','liveStagingUrl','notes','tasks','milestones','crmLeadId','updatedAt']);
+    const patch = pickFields(updates, ['title','name','client','clientId','clientName','clientCompany','clientEmail','serviceCategory','status','health','budget','progressPercent','startDate','targetEndDate','teamLead','teamMembers','techStack','repositoryUrl','figmaUrl','liveStagingUrl','notes','tasks','milestones','crmLeadId','updatedAt']);
     if (patch.clientEmail !== undefined) {
       patch.clientEmail = cleanText(patch.clientEmail, 254).toLowerCase();
       if (patch.clientEmail && !isValidEmail(patch.clientEmail)) { res.status(400).json({ success: false, error: 'Invalid project client email address.' }); return; }

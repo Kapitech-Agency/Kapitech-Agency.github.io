@@ -31,6 +31,7 @@ function mapProject(row: Row, tasks: ProjectTask[]): AgencyProject {
     ...(metadata as Partial<AgencyProject>),
     id: row.id,
     name: row.name,
+    clientId: row.client_id ?? (metadata.clientId ? String(metadata.clientId) : undefined),
     clientName: String(metadata.clientName ?? ''),
     clientCompany: String(metadata.clientCompany ?? ''),
     clientEmail: String(metadata.clientEmail ?? ''),
@@ -56,8 +57,8 @@ function mapProject(row: Row, tasks: ProjectTask[]): AgencyProject {
 }
 
 function projectMetadata(project: AgencyProject): Record<string, unknown> {
-  const { id, name, clientName, clientCompany, clientEmail, crmLeadId, serviceCategory, status, budget, startDate, targetEndDate, teamLead, teamMembers, techStack, milestones, tasks, repositoryUrl, figmaUrl, liveStagingUrl, notes, createdAt, updatedAt, progressPercent, ...rest } = project;
-  return { ...rest, clientName, clientCompany, clientEmail, crmLeadId, serviceCategory, progressPercent, teamLead, teamMembers, techStack, milestones, repositoryUrl, figmaUrl, liveStagingUrl };
+  const { id, name, clientId, clientName, clientCompany, clientEmail, crmLeadId, serviceCategory, status, budget, startDate, targetEndDate, teamLead, teamMembers, techStack, milestones, tasks, repositoryUrl, figmaUrl, liveStagingUrl, notes, createdAt, updatedAt, progressPercent, ...rest } = project;
+  return { ...rest, clientId, clientName, clientCompany, clientEmail, crmLeadId, serviceCategory, progressPercent, teamLead, teamMembers, techStack, milestones, repositoryUrl, figmaUrl, liveStagingUrl };
 }
 
 function taskMetadata(task: ProjectTask): Record<string, unknown> {
@@ -93,10 +94,14 @@ export class PostgresProjectRepository {
 
   async create(project: AgencyProject): Promise<AgencyProject> {
     return withPostgresTransaction(async client => {
+      if (project.clientId) {
+        const linkedClient = await client.query('SELECT id FROM clients WHERE id = $1 LIMIT 1', [project.clientId]);
+        if (!linkedClient.rows[0]) throw new Error('Client not found.');
+      }
       await client.query(
         `INSERT INTO projects (id,client_id,name,description,status,owner,budget,start_date,end_date,metadata,created_at,updated_at)
-         VALUES ($1,NULL,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)`,
-        [project.id, project.name, project.notes || null, project.status, project.teamLead || null, project.budget,
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)`,
+        [project.id, project.clientId || null, project.name, project.notes || null, project.status, project.teamLead || null, project.budget,
          project.startDate || null, project.targetEndDate || null, JSON.stringify(projectMetadata(project)), project.createdAt, project.updatedAt]
       );
       for (const task of project.tasks || []) await this.insertTask(client, project.id, task);
@@ -113,9 +118,13 @@ export class PostgresProjectRepository {
       const tasksResult = await client.query('SELECT * FROM tasks WHERE project_id = $1 ORDER BY created_at ASC', [id]);
       const currentProject = mapProject(current, (tasksResult.rows as Row[]).map(mapTask));
       const next = { ...currentProject, ...patch, id, updatedAt: new Date().toISOString() };
+      if (next.clientId) {
+        const linkedClient = await client.query('SELECT id FROM clients WHERE id = $1 LIMIT 1', [next.clientId]);
+        if (!linkedClient.rows[0]) throw new Error('Client not found.');
+      }
       await client.query(
-        `UPDATE projects SET name=$2,description=$3,status=$4,owner=$5,budget=$6,start_date=$7,end_date=$8,metadata=$9,updated_at=$10 WHERE id=$1`,
-        [id, next.name, next.notes || null, next.status, next.teamLead || null, next.budget, next.startDate || null,
+        `UPDATE projects SET client_id=$2,name=$3,description=$4,status=$5,owner=$6,budget=$7,start_date=$8,end_date=$9,metadata=$10,updated_at=$11 WHERE id=$1`,
+        [id, next.clientId || null, next.name, next.notes || null, next.status, next.teamLead || null, next.budget, next.startDate || null,
          next.targetEndDate || null, JSON.stringify(projectMetadata(next)), next.updatedAt]
       );
       if (patch.tasks !== undefined) {

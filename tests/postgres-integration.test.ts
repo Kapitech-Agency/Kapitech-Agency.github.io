@@ -163,3 +163,109 @@ test('PostgreSQL commercial workflow converts proposal to invoice and returns th
     await closePostgresPool();
   }
 });
+
+
+test('PostgreSQL delivery workflow preserves client relation across project, task, and time log', async t => {
+  if (!configured) { t.skip('KAPITECH_POSTGRES_URL is not configured'); return; }
+
+  const { PostgresClientRepository } = await import('../server/postgres-client-repository.ts');
+  const { PostgresProjectRepository } = await import('../server/postgres-project-repository.ts');
+  const { PostgresTimeLogRepository } = await import('../server/postgres-time-log-repository.ts');
+
+  const clientRepository = new PostgresClientRepository();
+  const projectRepository = new PostgresProjectRepository();
+  const timeLogRepository = new PostgresTimeLogRepository();
+
+  const suffix = Date.now() + '-' + Math.random().toString(16).slice(2);
+  const clientId = 'ci-delivery-client-' + suffix;
+  const projectId = 'ci-delivery-project-' + suffix;
+  const taskId = 'ci-delivery-task-' + suffix;
+  const timeLogId = 'ci-delivery-log-' + suffix;
+  const now = new Date().toISOString();
+  let created = false;
+
+  try {
+    await clientRepository.create({
+      id: clientId,
+      name: 'CI Delivery Client',
+      company: 'CI Delivery Company',
+      email: 'delivery-' + suffix + '@example.test',
+      phone: '',
+      location: 'Jakarta, Indonesia',
+      industry: 'Technology',
+      status: 'active',
+      totalSpend: 0,
+      projectsCount: 0,
+      contactPersonRole: 'Project Lead',
+      notes: 'Delivery workflow integration test',
+      createdAt: now,
+      updatedAt: now
+    });
+
+    const project = await projectRepository.create({
+      id: projectId,
+      name: 'CI Delivery Project',
+      clientId,
+      clientName: 'CI Delivery Client',
+      clientCompany: 'CI Delivery Company',
+      clientEmail: 'delivery-' + suffix + '@example.test',
+      serviceCategory: 'Website Development',
+      status: 'in_progress',
+      budget: 5_000_000,
+      progressPercent: 20,
+      startDate: now.slice(0, 10),
+      targetEndDate: now.slice(0, 10),
+      teamLead: 'CI',
+      teamMembers: ['CI'],
+      techStack: ['React'],
+      milestones: [],
+      tasks: [{
+        id: taskId,
+        title: 'Build landing page',
+        description: 'Integration test task',
+        status: 'todo',
+        priority: 'high',
+        assignedTo: 'ci',
+        dueDate: now.slice(0, 10),
+        createdAt: now
+      }],
+      notes: 'Delivery workflow integration test',
+      createdAt: now,
+      updatedAt: now
+    });
+
+    created = true;
+    assert.equal(project.clientId, clientId);
+    assert.equal(project.tasks.length, 1);
+    assert.equal(project.tasks[0].id, taskId);
+
+    const foundProject = await projectRepository.findById(projectId);
+    assert.equal(foundProject?.clientId, clientId);
+    assert.equal(foundProject?.tasks[0]?.id, taskId);
+
+    const timeLog = await timeLogRepository.create({
+      id: timeLogId,
+      projectId,
+      taskId,
+      userId: null,
+      user: 'CI',
+      durationMinutes: 150,
+      date: now.slice(0, 10),
+      notes: 'Implementation work',
+      billable: true,
+      createdAt: now
+    });
+
+    assert.equal(timeLog.projectId, projectId);
+    assert.equal(timeLog.taskId, taskId);
+    assert.equal(timeLog.durationMinutes, 150);
+    assert.equal(timeLog.hours, 2.5);
+  } finally {
+    const db = getPostgresPool();
+    await db.query('DELETE FROM time_logs WHERE id = $1', [timeLogId]);
+    if (created) await db.query('DELETE FROM tasks WHERE id = $1', [taskId]);
+    await db.query('DELETE FROM projects WHERE id = $1', [projectId]);
+    await db.query('DELETE FROM clients WHERE id = $1', [clientId]);
+    await closePostgresPool();
+  }
+});

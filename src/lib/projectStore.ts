@@ -41,6 +41,7 @@ export interface AgencyProject {
   clientName: string;
   clientCompany: string;
   clientEmail: string;
+  clientId?: string;
   crmLeadId?: string;
   serviceCategory: string;
   status: ProjectStatus;
