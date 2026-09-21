@@ -80,8 +80,12 @@ test('PostgreSQL commercial workflow converts proposal to invoice and records a 
       company: 'CI Commercial Company',
       email: 'ci-' + suffix + '@example.test',
       phone: '',
+      location: 'Jakarta, Indonesia',
       industry: 'Technology',
       status: 'active',
+      totalSpend: 0,
+      projectsCount: 0,
+      contactPersonRole: 'Project Lead',
       notes: 'PostgreSQL workflow integration test',
       createdAt: now,
       updatedAt: now
