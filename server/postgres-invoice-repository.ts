@@ -389,6 +389,13 @@ export class PostgresInvoiceRepository {
       );
       if (!proposalItems.rows.length) throw new InvoiceProposalConflictError('Proposal has no line items.');
 
+      const proposalSubtotal = Number(proposalRow.subtotal || 0);
+      const proposalDiscount = Number(proposalRow.discount || 0);
+      const proposalDiscountPercent = proposalSubtotal > 0
+        ? Math.min(100, Math.max(0, (proposalDiscount / proposalSubtotal) * 100))
+        : 0;
+      const proposalTaxPercent = Math.min(100, Math.max(0, Number(proposalRow.tax_percent || 0)));
+
       const year = new Date().getFullYear();
       const invoiceNumber = 'INV-KAPI-' + year + '-' + crypto.randomInt(1000, 1000000);
       const metadata = {
@@ -410,10 +417,10 @@ export class PostgresInvoiceRepository {
           proposalRow.client_id ?? null,
           proposalRow.project_id ?? null,
           'invoice',
-          Number(proposalRow.subtotal || 0),
-          Number(proposalRow.discount || 0),
-          Number(proposalRow.discount || 0),
-          Number(proposalRow.tax_percent || 0),
+          proposalSubtotal,
+          proposalDiscountPercent,
+          proposalDiscount,
+          proposalTaxPercent,
           Number(proposalRow.tax || 0),
           Number(proposalRow.total || 0),
           proposalRow.currency || 'IDR',
