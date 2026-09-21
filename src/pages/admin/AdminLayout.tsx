@@ -33,7 +33,7 @@ import {
   Sparkles,
   CheckCheck
 } from 'lucide-react';
-import { getAdminSession, logoutAdmin } from '../../lib/adminAuth';
+import { getAdminSession, logoutAdmin, updateCachedAdminSessionUser } from '../../lib/adminAuth';
 import { api } from '../../lib/apiClient';
 import { subscribeToInbox, ContactSubmission } from '../../lib/submissions';
 import { useLanguage } from '../../lib/LanguageContext';
@@ -80,13 +80,7 @@ export const AdminLayout: React.FC = () => {
         const res = await api.auth.me();
         if (!active) return;
         if (res.success && res.data?.user) {
-          const current = getAdminSession();
-          if (current) {
-            sessionStorage.setItem('kapitech_admin_profile_v2', JSON.stringify({
-              ...current,
-              user: res.data.user
-            }));
-          }
+          updateCachedAdminSessionUser(res.data.user);
           return;
         }
       } catch {
