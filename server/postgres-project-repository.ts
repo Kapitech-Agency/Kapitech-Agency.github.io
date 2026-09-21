@@ -63,7 +63,7 @@ function mapTask(row: Row): Record<string, any> {
     status: row.status,
     priority: row.priority ?? metadata.priority ?? 'medium',
     assigneeUserId: row.assignee_user_id ?? metadata.assigneeUserId ?? undefined,
-    assignee: metadata.assignee ?? metadata.assignedTo ?? '',
+    assignedTo: metadata.assignedTo ?? metadata.assignee ?? '',
     dueDate: date(row.due_date) ?? '',
     estimatedHours: row.estimated_minutes == null
       ? Number(metadata.estimatedHours ?? 0)
