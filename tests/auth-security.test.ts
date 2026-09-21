@@ -180,7 +180,7 @@ test('CSRF middleware blocks authenticated state changes without a matching toke
 
   const blockedResponse = makeResponse();
   validateCsrf(
-    { ...baseRequest, cookies: { kapi_csrf: 'token-b' } },
+    { ...baseRequest, headers: { ...baseRequest.headers, cookie: 'kapi_csrf=token-b' } },
     blockedResponse,
     () => assert.fail('CSRF middleware unexpectedly called next()')
   );
@@ -188,7 +188,7 @@ test('CSRF middleware blocks authenticated state changes without a matching toke
 
   const originResponse = makeResponse();
   validateCsrf(
-    { ...baseRequest, cookies: { kapi_csrf: 'token-a' } },
+    { ...baseRequest, headers: { ...baseRequest.headers, cookie: 'kapi_csrf=token-a' } },
     originResponse,
     () => assert.fail('Origin validation unexpectedly called next()')
   );
@@ -208,7 +208,7 @@ test('CSRF middleware blocks authenticated state changes without a matching toke
       },
       protocol: 'https',
       secure: true,
-      cookies: { kapi_csrf: 'token-a' }
+      headers: { 'user-agent': 'security-test', cookie: 'kapi_csrf=token-a' }
     },
     allowedResponse,
     () => { allowedResponse.nextCalled = true; }
