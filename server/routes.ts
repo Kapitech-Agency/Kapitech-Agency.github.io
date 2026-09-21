@@ -56,6 +56,8 @@ import { postgresVendorRepository } from './postgres-vendor-repository.ts';
 import { postgresLeadRepository } from './postgres-lead-repository.ts';
 import { postgresCrmDealRepository } from './postgres-crm-deal-repository.ts';
 import { postgresProposalRepository } from './postgres-proposal-repository.ts';
+import { postgresTaskRepository } from './postgres-task-repository.ts';
+import { postgresTimeLogRepository } from './postgres-time-log-repository.ts';
 
 
 const ROLE_POLICIES: Record<string, {
@@ -2964,25 +2966,21 @@ apiRouter.delete('/crm/proposals/:id', requireAuth, requirePermission('canManage
 // 14. PROJECT TASKS & TIME TRACKING (PARTS 16, 17, 18)
 // ----------------------------------------------------
 
-apiRouter.get('/projects/tasks', requireAuth, requireAnyPermission('canManageKanbanTasks', 'canManageProjects'), (req: AuthenticatedRequest, res: Response): void => {
-  const db = getDatabase();
-  res.json({ success: true, tasks: db.tasks || [] });
+apiRouter.get('/projects/tasks', requireAuth, requireAnyPermission('canManageKanbanTasks', 'canManageProjects'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  const tasks = getDataSourceMode() === 'postgres' ? await postgresTaskRepository.list() : getDatabase().tasks || [];
+  res.json({ success: true, tasks });
 });
 
-apiRouter.post('/projects/tasks', requireAuth, requirePermission('canManageKanbanTasks'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.post('/projects/tasks', requireAuth, requirePermission('canManageKanbanTasks'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const taskData = req.body || {};
   const dueDate = String(taskData.dueDate || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10));
   const estimatedHours = normalizeNumber(taskData.estimatedHours ?? 8, 0, 10000, 8);
   const actualHours = normalizeNumber(taskData.actualHours ?? 0, 0, 10000, 0);
   const priority = ['low','medium','high','urgent'].includes(String(taskData.priority)) ? String(taskData.priority) : 'medium';
   const status = ['todo','in_progress','review','done'].includes(String(taskData.status)) ? String(taskData.status) : 'todo';
-
   if (!taskData.title || !isValidDate(dueDate) || estimatedHours === null || actualHours === null) {
-    res.status(400).json({ success: false, error: 'Task title, due date, and valid hour values are required.' });
-    return;
+    res.status(400).json({ success: false, error: 'Task title, due date, and valid hour values are required.' }); return;
   }
-
-  const db = getDatabase();
   const newTask = {
     id: `task_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
     title: cleanText(taskData.title, 240),
@@ -2990,145 +2988,122 @@ apiRouter.post('/projects/tasks', requireAuth, requirePermission('canManageKanba
     projectName: cleanText(taskData.projectName || 'General Delivery', 200),
     assignee: cleanText(taskData.assignee || req.user!.name || req.user!.username, 160),
     reporter: req.user!.name || req.user!.username,
-    priority,
-    status,
-    dueDate,
-    estimatedHours,
-    actualHours,
+    priority, status, dueDate, estimatedHours, actualHours,
     tags: normalizeStringArray(Array.isArray(taskData.tags) && taskData.tags.length ? taskData.tags : ['Sprint'], 30, 80),
     subtasks: Array.isArray(taskData.subtasks) ? taskData.subtasks.slice(0, 50) : [],
     description: cleanText(taskData.description, 3000),
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   };
-
-  if (!db.tasks) db.tasks = [];
+  if (getDataSourceMode() === 'postgres') {
+    try {
+      const task = await postgresTaskRepository.create(newTask);
+      recordAuditLog({ action: 'TASK_CREATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Created task "${newTask.title}".`, severity: 'info' });
+      res.json({ success: true, task }); return;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Task could not be created.';
+      res.status(message === 'Project not found.' ? 404 : 409).json({ success: false, error: message }); return;
+    }
+  }
+  const db = getDatabase();
   db.tasks.unshift(newTask);
   saveDatabase(db);
-  recordAuditLog({
-    action: 'TASK_CREATED',
-    actor: req.user!.username,
-    actorRole: req.user!.role,
-    ip: req.ip,
-    userAgent: req.headers['user-agent'] as string,
-    details: `Created task "${newTask.title}".`,
-    severity: 'info'
-  });
+  recordAuditLog({ action: 'TASK_CREATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Created task "${newTask.title}".`, severity: 'info' });
   res.json({ success: true, task: newTask });
 });
 
-apiRouter.put('/projects/tasks/:id', requireAuth, requirePermission('canManageKanbanTasks'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.put('/projects/tasks/:id', requireAuth, requirePermission('canManageKanbanTasks'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
   const updates = req.body || {};
-  const db = getDatabase();
-  const idx = (db.tasks || []).findIndex(t => t.id === id);
-
-  if (idx === -1) {
-    res.status(404).json({ success: false, error: 'Task not found.' });
-    return;
-  }
-
-  const patch = pickFields(updates, ['title','description','projectId','projectName','assignee','priority','status','dueDate','estimatedHours','actualHours','tags','subtasks']);
-  for (const key of ['title','description','projectId','projectName','assignee'] as const) {
-    if (patch[key] !== undefined) patch[key] = cleanText(patch[key], key === 'description' ? 3000 : 240);
-  }
-  if (patch.status !== undefined && !['todo','in_progress','review','done'].includes(String(patch.status))) {
-    res.status(400).json({ success: false, error: 'Invalid task status.' });
-    return;
-  }
-  if (patch.priority !== undefined && !DEAL_PRIORITIES.includes(String(patch.priority) as any)) {
-    res.status(400).json({ success: false, error: 'Invalid task priority.' });
-    return;
-  }
-  if (patch.dueDate !== undefined && !isValidDate(patch.dueDate)) {
-    res.status(400).json({ success: false, error: 'Invalid task due date.' });
-    return;
-  }
+  const patch = pickFields(updates, ['title','description','projectId','projectName','assignee','priority','status','dueDate','estimatedHours','actualHours','tags','subtasks','updatedAt']);
+  for (const key of ['title','description','projectId','projectName','assignee'] as const) if (patch[key] !== undefined) patch[key] = cleanText(patch[key], key === 'description' ? 3000 : 240);
+  if (patch.status !== undefined && !['todo','in_progress','review','done'].includes(String(patch.status))) { res.status(400).json({ success: false, error: 'Invalid task status.' }); return; }
+  if (patch.priority !== undefined && !['low','medium','high','urgent'].includes(String(patch.priority))) { res.status(400).json({ success: false, error: 'Invalid task priority.' }); return; }
+  if (patch.dueDate !== undefined && !isValidDate(patch.dueDate)) { res.status(400).json({ success: false, error: 'Invalid task due date.' }); return; }
   for (const key of ['estimatedHours','actualHours'] as const) {
-    if (patch[key] !== undefined) {
-      const numeric = normalizeNumber(patch[key], 0, 10000);
-      if (numeric === null) {
-        res.status(400).json({ success: false, error: `Invalid task hours for ${key}.` });
-        return;
-      }
-      patch[key] = numeric;
-    }
+    if (patch[key] !== undefined) { const numeric = normalizeNumber(patch[key], 0, 10000); if (numeric === null) { res.status(400).json({ success: false, error: `Invalid task hours for ${key}.` }); return; } patch[key] = numeric; }
   }
   if (patch.tags !== undefined) patch.tags = normalizeStringArray(patch.tags, 30, 80);
   if (patch.subtasks !== undefined) patch.subtasks = Array.isArray(patch.subtasks) ? patch.subtasks.slice(0, 50) : [];
-  db.tasks[idx] = { ...db.tasks[idx], ...patch, updatedAt: new Date().toISOString() };
-  saveDatabase(db);
-  recordAuditLog({
-    action: 'TASK_UPDATED',
-    actor: req.user!.username,
-    actorRole: req.user!.role,
-    ip: req.ip,
-    userAgent: req.headers['user-agent'] as string,
-    details: `Updated task ${id}.`,
-    severity: 'info'
-  });
+  if (getDataSourceMode() === 'postgres') {
+    try {
+      const task = await postgresTaskRepository.update(id, patch);
+      if (!task) { res.status(404).json({ success: false, error: 'Task not found.' }); return; }
+      recordAuditLog({ action: 'TASK_UPDATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Updated task ${id}.`, severity: 'info' });
+      res.json({ success: true, task }); return;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Task could not be updated.';
+      res.status(message.includes('modified since') ? 409 : message.endsWith('not found.') ? 404 : 409).json({ success: false, error: message }); return;
+    }
+  }
+  const db = getDatabase(); const idx = (db.tasks || []).findIndex(t => t.id === id);
+  if (idx === -1) { res.status(404).json({ success: false, error: 'Task not found.' }); return; }
+  db.tasks[idx] = { ...db.tasks[idx], ...patch, updatedAt: new Date().toISOString() }; saveDatabase(db);
+  recordAuditLog({ action: 'TASK_UPDATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Updated task ${id}.`, severity: 'info' });
   res.json({ success: true, task: db.tasks[idx] });
 });
 
-apiRouter.delete('/projects/tasks/:id', requireAuth, requirePermission('canManageKanbanTasks'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.delete('/projects/tasks/:id', requireAuth, requirePermission('canManageKanbanTasks'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
-  const db = getDatabase();
-  db.tasks = (db.tasks || []).filter(t => t.id !== id);
-  saveDatabase(db);
+  if (getDataSourceMode() === 'postgres') {
+    const deleted = await postgresTaskRepository.delete(id);
+    if (!deleted) { res.status(404).json({ success: false, error: 'Task not found.' }); return; }
+    recordAuditLog({ action: 'TASK_DELETED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Deleted task ${id}.`, severity: 'warning' });
+    res.json({ success: true, message: 'Task deleted.' }); return;
+  }
+  const db = getDatabase(); const exists = (db.tasks || []).some(t => t.id === id);
+  if (!exists) { res.status(404).json({ success: false, error: 'Task not found.' }); return; }
+  db.tasks = (db.tasks || []).filter(t => t.id !== id); saveDatabase(db);
+  recordAuditLog({ action: 'TASK_DELETED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Deleted task ${id}.`, severity: 'warning' });
   res.json({ success: true, message: 'Task deleted.' });
 });
 
 // Time Tracking
-apiRouter.get('/projects/timelogs', requireAuth, requireAnyPermission('canManageKanbanTasks', 'canManageProjects'), (req: AuthenticatedRequest, res: Response): void => {
-  const db = getDatabase();
-  res.json({ success: true, timeLogs: db.timeLogs || [] });
+apiRouter.get('/projects/timelogs', requireAuth, requireAnyPermission('canManageKanbanTasks', 'canManageProjects'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  const timeLogs = getDataSourceMode() === 'postgres' ? await postgresTimeLogRepository.list() : getDatabase().timeLogs || [];
+  res.json({ success: true, timeLogs });
 });
 
-apiRouter.post('/projects/timelogs', requireAuth, requireAnyPermission('canManageKanbanTasks', 'canManageProjects'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.post('/projects/timelogs', requireAuth, requireAnyPermission('canManageKanbanTasks', 'canManageProjects'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const logData = req.body || {};
   const durationMinutes = normalizeNumber(logData.durationMinutes ?? 60, 1, 1440, 60);
   const date = String(logData.date || new Date().toISOString().slice(0, 10));
-
-  if (durationMinutes === null || !isValidDate(date)) {
-    res.status(400).json({ success: false, error: 'Valid duration and date are required for a time entry.' });
-    return;
-  }
-
-  const db = getDatabase();
+  if (durationMinutes === null || !isValidDate(date)) { res.status(400).json({ success: false, error: 'Valid duration and date are required for a time entry.' }); return; }
   const newLog = {
     id: `tim_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
-    projectId: cleanText(logData.projectId, 120),
-    projectName: cleanText(logData.projectName || 'General', 200),
-    taskId: cleanText(logData.taskId, 120),
-    taskTitle: cleanText(logData.taskTitle, 240),
-    user: req.user!.name || req.user!.username,
-    durationMinutes,
-    billable: logData.billable !== undefined ? Boolean(logData.billable) : true,
-    date,
-    notes: cleanText(logData.notes, 2000),
-    createdAt: new Date().toISOString()
+    projectId: cleanText(logData.projectId, 120), projectName: cleanText(logData.projectName || 'General', 200),
+    taskId: cleanText(logData.taskId, 120), taskTitle: cleanText(logData.taskTitle, 240),
+    user: req.user!.name || req.user!.username, userId: req.user!.id, durationMinutes,
+    billable: logData.billable !== undefined ? Boolean(logData.billable) : true, date,
+    notes: cleanText(logData.notes, 2000), createdAt: new Date().toISOString()
   };
-
-  if (!db.timeLogs) db.timeLogs = [];
-  db.timeLogs.unshift(newLog);
-  saveDatabase(db);
-  recordAuditLog({
-    action: 'TIMELOG_CREATED',
-    actor: req.user!.username,
-    actorRole: req.user!.role,
-    ip: req.ip,
-    userAgent: req.headers['user-agent'] as string,
-    details: `Created ${durationMinutes} minute time entry for ${newLog.projectName}.`,
-    severity: 'info'
-  });
+  if (getDataSourceMode() === 'postgres') {
+    try {
+      const timeLog = await postgresTimeLogRepository.create(newLog);
+      recordAuditLog({ action: 'TIMELOG_CREATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Created ${durationMinutes} minute time entry for ${newLog.projectName}.`, severity: 'info' });
+      res.json({ success: true, timeLog }); return;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Time entry could not be created.';
+      res.status(message.endsWith('not found.') ? 404 : 409).json({ success: false, error: message }); return;
+    }
+  }
+  const db = getDatabase(); if (!db.timeLogs) db.timeLogs = []; db.timeLogs.unshift(newLog); saveDatabase(db);
+  recordAuditLog({ action: 'TIMELOG_CREATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Created ${durationMinutes} minute time entry for ${newLog.projectName}.`, severity: 'info' });
   res.json({ success: true, timeLog: newLog });
 });
 
-apiRouter.delete('/projects/timelogs/:id', requireAuth, requireAnyPermission('canManageKanbanTasks', 'canManageProjects'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.delete('/projects/timelogs/:id', requireAuth, requireAnyPermission('canManageKanbanTasks', 'canManageProjects'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
-  const db = getDatabase();
-  db.timeLogs = (db.timeLogs || []).filter(t => t.id !== id);
-  saveDatabase(db);
+  if (getDataSourceMode() === 'postgres') {
+    const deleted = await postgresTimeLogRepository.delete(id);
+    if (!deleted) { res.status(404).json({ success: false, error: 'Time entry not found.' }); return; }
+    recordAuditLog({ action: 'TIMELOG_DELETED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Deleted time entry ${id}.`, severity: 'warning' });
+    res.json({ success: true, message: 'Time entry deleted.' }); return;
+  }
+  const db = getDatabase(); const exists = (db.timeLogs || []).some(t => t.id === id);
+  if (!exists) { res.status(404).json({ success: false, error: 'Time entry not found.' }); return; }
+  db.timeLogs = (db.timeLogs || []).filter(t => t.id !== id); saveDatabase(db);
+  recordAuditLog({ action: 'TIMELOG_DELETED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Deleted time entry ${id}.`, severity: 'warning' });
   res.json({ success: true, message: 'Time entry deleted.' });
 });
 
