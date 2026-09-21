@@ -185,7 +185,7 @@ export class PostgresAuthRepository {
     return withClient(async client => {
       await client.query('BEGIN');
       try {
-        const sessionDelete = await client.query('DELETE FROM sessions WHERE user_id = $1', [userId]);
+        await client.query('DELETE FROM sessions WHERE user_id = $1', [userId]);
         const result = await client.query(
           'DELETE FROM users WHERE id = $1 AND stakeholder_type <> $2 AND username <> $3',
           [userId, 'Master', 'admin']
