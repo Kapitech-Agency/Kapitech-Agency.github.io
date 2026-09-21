@@ -118,13 +118,13 @@ function verifyPrivateDocuments(db: any): { valid: boolean; checked: number; mis
   return { valid: missing.length === 0 && malformed.length === 0, checked, missing, malformed };
 }
 
-async function pgCountsAndFinancials(): Promise<{ counts: Record<string, number>; financials: Record<string, number> }> {
+async function pgCountsAndFinancials(): Promise<{ counts: Record<string, number>; financials: Record<string, number>; cmsSettings: Record<string, unknown>; notificationSettings: Record<string, unknown> }> {
   const pool = getPostgresPool();
   const tables: Record<string, string> = {
     users: 'users', sessions: 'sessions', leads: 'leads', crmDeals: 'crm_deals',
     proposals: 'proposals', clients: 'clients', projects: 'projects', tasks: 'tasks',
     timeLogs: 'time_logs', invoices: 'invoices', expenses: 'expenses', approvals: 'approvals',
-    vendors: 'vendors', documents: 'documents', notifications: 'notifications', auditLogs: 'audit_logs'
+    vendors: 'vendors', documents: 'documents', notifications: 'notifications', auditLogs: 'audit_logs', cmsServices: 'cms_services', cmsProjects: 'cms_projects', cmsTestimonials: 'cms_testimonials'
   };
   const counts: Record<string, number> = {};
   for (const [source, table] of Object.entries(tables)) {
@@ -147,6 +147,26 @@ async function pgCountsAndFinancials(): Promise<{ counts: Record<string, number>
       (SELECT COALESCE(SUM(value),0) FROM crm_deals) AS pipeline_value
   `);
   const row = result.rows[0];
+  const cmsResult = await pool.query<{ key: string; value: unknown }>(
+    'SELECT key, value FROM cms_settings ORDER BY key'
+  );
+  const pgCmsSettings: Record<string, unknown> = {};
+  for (const item of cmsResult.rows) pgCmsSettings[item.key] = item.value;
+
+  const notificationResult = await pool.query<{
+    target_email: string | null;
+    formspree_endpoint: string | null;
+    telegram_chat_id: string | null;
+    is_email_active: boolean;
+    is_telegram_active: boolean;
+    has_telegram_token: boolean;
+  }>(
+    `SELECT target_email, formspree_endpoint, telegram_chat_id, is_email_active,
+            is_telegram_active,
+            (telegram_bot_token IS NOT NULL AND LENGTH(telegram_bot_token) > 0) AS has_telegram_token
+       FROM notification_settings WHERE id = 1`
+  );
+  const notificationRow = notificationResult.rows[0];
   return {
     counts,
     financials: {
@@ -157,7 +177,16 @@ async function pgCountsAndFinancials(): Promise<{ counts: Record<string, number>
       invoiceBalanceDue: Number(row.invoice_balance_due),
       expensesTotal: Number(row.expenses_total),
       pipelineValue: Number(row.pipeline_value)
-    }
+    },
+    cmsSettings: pgCmsSettings,
+    notificationSettings: notificationRow ? {
+      targetEmail: notificationRow.target_email,
+      formspreeEndpoint: notificationRow.formspree_endpoint,
+      telegramChatId: notificationRow.telegram_chat_id,
+      isEmailActive: notificationRow.is_email_active,
+      isTelegramActive: notificationRow.is_telegram_active,
+      hasTelegramToken: notificationRow.has_telegram_token
+    } : {}
   };
 }
 
@@ -172,7 +201,7 @@ async function main(): Promise<void> {
   const keys = [
     'users','sessions','leads','crmDeals','proposals','clients','projects',
     'tasks','timeLogs','invoices','expenses','approvals','vendors','documents',
-    'notifications','auditLogs'
+    'notifications','auditLogs','cmsServices','cmsProjects','cmsTestimonials'
   ];
   for (const key of keys) localCounts[key] = count(db, key);
 
@@ -184,6 +213,18 @@ async function main(): Promise<void> {
 
   const auditChain = verifyAuditLogChain(db);
   const privateDocuments = verifyPrivateDocuments(db);
+
+  const sourceCmsSettings = db.cmsSettings && typeof db.cmsSettings === 'object' ? { ...db.cmsSettings } : {};
+  delete sourceCmsSettings.updatedAt;
+  const sourceNotification = db.notificationSettings || {};
+  const notificationSource = {
+    targetEmail: sourceNotification.targetEmail || null,
+    formspreeEndpoint: sourceNotification.formspreeEndpoint || null,
+    telegramChatId: sourceNotification.telegramChatId || null,
+    isEmailActive: Boolean(sourceNotification.isEmailActive),
+    isTelegramActive: Boolean(sourceNotification.isTelegramActive),
+    hasTelegramToken: Boolean(sourceNotification.telegramBotToken)
+  };
 
   const financials = {
     proposalSubtotal: sum(db, 'proposals', 'subtotal'),
@@ -224,6 +265,13 @@ async function main(): Promise<void> {
         .filter(key => Math.abs(financials[key as keyof typeof financials] - postgresResult.financials[key]) > 0.005)
         .map(key => [key, { json: financials[key as keyof typeof financials], postgres: postgresResult.financials[key] }])
     );
+    const cmsSettingsMismatches = Object.keys({ ...sourceCmsSettings, ...postgresResult.cmsSettings })
+      .filter(key => JSON.stringify(sourceCmsSettings[key]) !== JSON.stringify(postgresResult.cmsSettings[key]))
+      .map(key => [key, { json: sourceCmsSettings[key], postgres: postgresResult.cmsSettings[key] }]);
+    const notificationMismatches = Object.keys(notificationSource)
+      .filter(key => notificationSource[key as keyof typeof notificationSource] !== postgresResult.notificationSettings[key])
+      .map(key => key === 'hasTelegramToken' ? key : [key, { json: notificationSource[key as keyof typeof notificationSource], postgres: postgresResult.notificationSettings[key] }]);
+
     const countMismatches = Object.fromEntries(
       keys
         .filter(key => localCounts[key] !== postgresCounts[key])
@@ -237,6 +285,8 @@ async function main(): Promise<void> {
       postgresReachable: true,
       countParity: Object.keys(countMismatches).length === 0,
       financialParity: Object.keys(financialMismatches).length === 0,
+      cmsSettingsParity: cmsSettingsMismatches.length === 0,
+      notificationSettingsParity: notificationMismatches.length === 0,
       auditChainIntegrity: auditChain.valid,
       privateDocumentIntegrity: privateDocuments.valid
     };
@@ -251,6 +301,8 @@ async function main(): Promise<void> {
       postgresCounts,
       countMismatches,
       financialMismatches,
+      cmsSettingsMismatches,
+      notificationMismatches,
       auditChain,
       privateDocuments,
       financials,
