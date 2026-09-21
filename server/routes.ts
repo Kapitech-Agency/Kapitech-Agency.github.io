@@ -3988,7 +3988,7 @@ apiRouter.post('/notifications/mark-all-read', requireAuth, (req: AuthenticatedR
 // 18. UNIFIED GLOBAL SEARCH (PART 6)
 // ----------------------------------------------------
 
-apiRouter.get('/search', requireAuth, (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.get('/search', requireAuth, async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const q = String(req.query.q || '').trim().toLowerCase();
   if (!q) {
     res.json({ success: true, results: [] });
