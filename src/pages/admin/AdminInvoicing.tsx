@@ -210,6 +210,7 @@ export const AdminInvoicing: React.FC = () => {
 
   const handleSaveInvoice = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!canManageInvoices) return;
     if (!clientName.trim() || !clientCompany.trim()) {
       alert('Client Name and Company are required.');
       return;
@@ -281,7 +282,7 @@ export const AdminInvoicing: React.FC = () => {
 
   const handleRecordPaymentSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!paymentModalInvoice) return;
+    if (!canManageInvoices || !paymentModalInvoice) return;
     if (paymentAmount <= 0) {
       showToast(language === 'id' ? 'Nominal pembayaran harus lebih besar dari 0' : 'Payment amount must be greater than 0');
       return;
@@ -306,6 +307,7 @@ export const AdminInvoicing: React.FC = () => {
 
   const handleSaveExpense = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!canManageInvoices) return;
     if (!expDesc.trim() || !expAmount) {
       alert('Description and amount are required.');
       return;
@@ -867,17 +869,18 @@ export const AdminInvoicing: React.FC = () => {
                       </div>
                     </div>
 
-                    <button
-                      onClick={() => handleDeleteExpense(exp.id)}
-                      className="w-9 h-9 rounded-xl bg-[#181B22] hover:bg-red-950/40 text-[#8A94A6] hover:text-red-400 border border-[rgba(255,255,255,0.07)] hover:border-red-500/30 flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
-                      title="Delete Record"
-                    >
-                          <Trash2 size={14} />
-                        </button>
-                      )}
-                    </div>
+                    {canManageInvoices && (
+                      <button
+                        onClick={() => handleDeleteExpense(exp.id)}
+                        className="w-9 h-9 rounded-xl bg-[#181B22] hover:bg-red-950/40 text-[#8A94A6] hover:text-red-400 border border-[rgba(255,255,255,0.07)] hover:border-red-500/30 flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
+                        title="Delete Record"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    )}
                   </div>
                 </div>
+              </div>
               ))
             )}
           </div>
