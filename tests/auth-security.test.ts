@@ -178,6 +178,7 @@ test('CSRF middleware blocks authenticated state changes without a matching toke
         return values[name.toLowerCase()];
       },
       protocol: 'https',
+      secure: true,
       cookies: { kapi_csrf: 'token-a' }
     },
     allowedResponse,
