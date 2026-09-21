@@ -1375,9 +1375,9 @@ apiRouter.put('/clients/:id', requireAuth, requirePermission('canManageClients')
     res.json({ success: true, client: updated });
     return;
   }
-  const db = getDatabase();
-  const idx = db.clients.findIndex(c => c.id === id);
-  if (idx === -1) {
+  const db = getDataSourceMode() === 'json' ? getDatabase() : undefined;
+  const idx = db?.clients.findIndex(c => c.id === id) ?? -1;
+  if (idx === -1 && getDataSourceMode() === 'json') {
     res.status(404).json({ success: false, error: 'Client not found.' });
     return;
   }
@@ -1408,8 +1408,12 @@ apiRouter.put('/clients/:id', requireAuth, requirePermission('canManageClients')
     }
   }
   if (patch.activeRetainer !== undefined) patch.activeRetainer = Boolean(patch.activeRetainer);
-  db.clients[idx] = { ...db.clients[idx], ...patch, updatedAt: new Date().toISOString() };
-  saveDatabase(db);
+  const updatedAt = new Date().toISOString();
+  const updatedClient = getDataSourceMode() === 'postgres'
+    ? await postgresDatabaseRepository.updateClient(id, { ...patch, updatedAt })
+    : { ...db!.clients[idx], ...patch, updatedAt };
+  if (!updatedClient) { res.status(404).json({ success: false, error: 'Client not found.' }); return; }
+  if (getDataSourceMode() === 'json') { db!.clients[idx] = updatedClient; saveDatabase(db!); }
   recordAuditLog({
     action: 'CLIENT_UPDATED',
     actor: req.user!.username,
@@ -1419,7 +1423,7 @@ apiRouter.put('/clients/:id', requireAuth, requirePermission('canManageClients')
     details: `Updated client ${id}.`,
     severity: 'info'
   });
-  res.json({ success: true, client: db.clients[idx] });
+  res.json({ success: true, client: updatedClient });
 });
 
 apiRouter.delete('/clients/:id', requireAuth, requirePermission('canManageClients'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
@@ -1430,9 +1434,16 @@ apiRouter.delete('/clients/:id', requireAuth, requirePermission('canManageClient
     res.json({ success: true, message: 'Client deleted.' });
     return;
   }
-  const db = getDatabase();
-  db.clients = db.clients.filter(c => c.id !== id);
-  saveDatabase(db);
+  if (getDataSourceMode() === 'postgres') {
+    const deleted = await postgresDatabaseRepository.deleteClient(id);
+    if (!deleted) { res.status(404).json({ success: false, error: 'Client not found.' }); return; }
+  } else {
+    const db = getDatabase();
+    const exists = db.clients.some(c => c.id === id);
+    if (!exists) { res.status(404).json({ success: false, error: 'Client not found.' }); return; }
+    db.clients = db.clients.filter(c => c.id !== id);
+    saveDatabase(db);
+  }
   res.json({ success: true, message: 'Client deleted.' });
 });
 
