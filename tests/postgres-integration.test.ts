@@ -15,7 +15,9 @@ test('PostgreSQL integration harness is fail-closed when not configured', async 
 
 test('PostgreSQL repository can load the complete schema when configured', async t => {
   if (!configured) { t.skip('KAPITECH_POSTGRES_URL is not configured'); return; }
-  assert.equal(await checkPostgresConnection(), true);
+  const connection = await checkPostgresConnection();
+  assert.equal(connection.ok, true);
+  assert.ok(connection.latencyMs >= 0);
   const db = await new PostgresDatabaseRepository().loadDatabase();
   for (const key of ['users','sessions','leads','crmDeals','clients','projects','proposals','tasks','timeLogs','invoices','expenses','approvals','vendors','documents','notifications','cmsServices','cmsProjects','cmsTestimonials','auditLogs']) {
     assert.ok(Array.isArray((db as any)[key]), key);
