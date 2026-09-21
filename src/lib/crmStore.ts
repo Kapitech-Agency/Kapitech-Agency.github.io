@@ -429,7 +429,7 @@ export const convertInquiryToCrmLead = (
     pillar?: CrmServicePillar;
     assignedTo?: string;
   }
-): { success: boolean; lead: CrmLead } => {
+): Promise<{ success: boolean; lead: CrmLead }> => {
   const existing = getCmsLeads().find(l => l.inquiryId === submission.id);
   if (existing) {
     return { success: true, lead: existing };
@@ -494,7 +494,7 @@ export const convertInquiryToCrmLead = (
     updatedAt: new Date().toISOString()
   };
 
-  saveCrmLead(newLead);
+  await saveCrmLead(newLead);
   return { success: true, lead: newLead };
 };
 
