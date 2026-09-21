@@ -31,7 +31,11 @@ function mapDeal(row: Row): any {
 }
 
 function toMetadata(deal: any): Record<string, unknown> {
-  const { id, clientId, clientName, servicePillar, expectedCloseDate, createdAt, updatedAt, ...metadata } = deal;
+  const {
+    id, title, clientId, clientName, company, email, phone, servicePillar,
+    value, stage, priority, probability, owner, expectedCloseDate,
+    createdAt, updatedAt, ...metadata
+  } = deal;
   return metadata;
 }
 
