@@ -6,11 +6,13 @@ import { getDataSourceMode } from './server/data-source.ts';
 import { checkPostgresConnection } from './server/postgres.ts';
 import { postgresAuthRepository } from './server/postgres-repository.ts';
 import { ensurePostgresInitialAdmin } from './server/postgres-bootstrap.ts';
+import { runPostgresMigrations } from './server/postgres-migrations.ts';
 
 dotenv.config();
 
 async function startServer() {
   if (getDataSourceMode() === 'postgres') {
+    await runPostgresMigrations();
     await ensurePostgresInitialAdmin();
     const migratedMfaSecrets = await postgresAuthRepository.migrateLegacyMfaSecrets();
     if (migratedMfaSecrets > 0) {
