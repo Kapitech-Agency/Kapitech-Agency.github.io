@@ -68,9 +68,9 @@ export class PostgresCrmDealRepository {
     return result.rowCount === 1;
   }
 
-  async convertLead(lead: any, client: any, deal: any): Promise<{ client: any; deal: any }> {
+  async convertLead(lead: any, client: any, deal: any, clientAlreadyExists = false): Promise<{ client: any; deal: any }> {
     return withPostgresTransaction(async db => {
-      const clientResult = await db.query(
+      const clientResult = clientAlreadyExists ? null : await db.query(
         `INSERT INTO clients
          (id,name,company,email,phone,industry,status,notes,metadata,created_at,updated_at)
          VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
@@ -93,7 +93,7 @@ export class PostgresCrmDealRepository {
       const leadResult = await db.query('UPDATE leads SET status=$2,updated_at=$3 WHERE id=$1 RETURNING *', [lead.id, 'closed', deal.createdAt]);
       if (!leadResult.rows[0]) throw new Error('Lead not found during conversion.');
       return {
-        client: { ...client, id: clientResult.rows[0].id },
+        client: { ...client, id: clientResult?.rows[0]?.id || client.id },
         deal: mapDeal(dealResult.rows[0])
       };
     });
