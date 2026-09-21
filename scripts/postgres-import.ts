@@ -394,6 +394,67 @@ async function importCore(client: any, db: AnyRecord): Promise<Record<string, nu
   }
   counts.notifications = arr(db,'notifications').length;
 
+  // CMS content is stored with a stable core identity plus JSONB for the flexible editorial fields.
+  for (const row of arr(db, 'cmsServices')) {
+    const data = { ...row };
+    delete data.id; delete data.createdAt; delete data.updatedAt;
+    await upsert(client, 'cms_services',
+      ['id','name','slug','description','data','created_at','updated_at'],
+      [textValue(row.id), textValue(row.title || row.name), nullableText(row.slug),
+       nullableText(row.description || row.heroSubtitle), jsonValue(data),
+       timestampValue(row.createdAt), timestampValue(row.updatedAt, row.createdAt)]);
+  }
+  counts.cmsServices = arr(db,'cmsServices').length;
+
+  for (const row of arr(db, 'cmsProjects')) {
+    const data = { ...row };
+    delete data.id; delete data.createdAt; delete data.updatedAt;
+    await upsert(client, 'cms_projects',
+      ['id','name','slug','description','data','created_at','updated_at'],
+      [textValue(row.id), textValue(row.title || row.name), nullableText(row.slug),
+       nullableText(row.description || row.desc), jsonValue(data),
+       timestampValue(row.createdAt), timestampValue(row.updatedAt, row.createdAt)]);
+  }
+  counts.cmsProjects = arr(db,'cmsProjects').length;
+
+  for (const row of arr(db, 'cmsTestimonials')) {
+    const data = { ...row };
+    delete data.id; delete data.createdAt; delete data.updatedAt;
+    await upsert(client, 'cms_testimonials',
+      ['id','name','company','quote','data','created_at','updated_at'],
+      [textValue(row.id), textValue(row.author || row.name), nullableText(row.company),
+       nullableText(row.quote), jsonValue(data),
+       timestampValue(row.createdAt), timestampValue(row.updatedAt, row.createdAt)]);
+  }
+  counts.cmsTestimonials = arr(db,'cmsTestimonials').length;
+
+  const settings = db.cmsSettings && typeof db.cmsSettings === 'object' ? db.cmsSettings : {};
+  for (const [key, value] of Object.entries(settings)) {
+    if (key === 'updatedAt') continue;
+    await client.query(
+      `INSERT INTO cms_settings (key,value,updated_at) VALUES ($1,$2,$3)
+       ON CONFLICT (key) DO UPDATE SET value=EXCLUDED.value, updated_at=EXCLUDED.updated_at`,
+      [String(key), JSON.stringify(value), timestampValue(settings.updatedAt || new Date().toISOString())]
+    );
+  }
+  counts.cmsSettings = Object.keys(settings).filter(key => key !== 'updatedAt').length;
+
+  const notificationSettings = db.notificationSettings || {};
+  await client.query(
+    `INSERT INTO notification_settings
+      (id,target_email,formspree_endpoint,telegram_bot_token,telegram_chat_id,is_email_active,is_telegram_active,updated_at)
+      VALUES (1,$1,$2,$3,$4,$5,$6,$7)
+      ON CONFLICT (id) DO UPDATE SET target_email=EXCLUDED.target_email,
+      formspree_endpoint=EXCLUDED.formspree_endpoint,telegram_bot_token=EXCLUDED.telegram_bot_token,
+      telegram_chat_id=EXCLUDED.telegram_chat_id,is_email_active=EXCLUDED.is_email_active,
+      is_telegram_active=EXCLUDED.is_telegram_active,updated_at=EXCLUDED.updated_at`,
+    [nullableText(notificationSettings.targetEmail), nullableText(notificationSettings.formspreeEndpoint),
+     nullableText(notificationSettings.telegramBotToken), nullableText(notificationSettings.telegramChatId),
+     Boolean(notificationSettings.isEmailActive), Boolean(notificationSettings.isTelegramActive),
+     timestampValue(notificationSettings.updatedAt)]
+  );
+  counts.notificationSettings = 1;
+
   for (const row of arr(db, 'auditLogs')) {
     await upsert(client, 'audit_logs',
       ['id','timestamp','action','actor','actor_role','actor_user_id','ip','user_agent','details','severity','prev_hash','hash'],
