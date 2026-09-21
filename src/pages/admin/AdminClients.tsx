@@ -154,6 +154,7 @@ export const AdminClients: React.FC = () => {
 
   const handleSaveClient = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!canManageClients) return;
     if (!name.trim() || !company.trim()) {
       alert('Client Name and Company are required.');
       return;
@@ -214,13 +215,15 @@ export const AdminClients: React.FC = () => {
           </p>
         </div>
 
-        <button
-          onClick={handleOpenCreateClient}
+        {canManageClients && (
+          <button
+            onClick={handleOpenCreateClient}
           className="h-10 px-4 rounded-xl bg-[#E50914] hover:bg-[#FF1E27] text-white text-xs font-mono font-bold transition-all flex items-center justify-center gap-1.5 shadow-lg shadow-[#E50914]/25 self-start sm:self-auto min-h-[40px]"
         >
           <Plus size={14} />
-          <span>{t('admin.client.addClient')}</span>
-        </button>
+            <span>{t('admin.client.addClient')}</span>
+          </button>
+        )}
       </div>
 
       {/* Critical SLA Ad-Spend Alert Banner */}
