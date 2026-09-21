@@ -61,6 +61,7 @@ import { postgresTimeLogRepository } from './postgres-time-log-repository.ts';
 import { postgresInvoiceRepository } from './postgres-invoice-repository.ts';
 import { postgresExpenseRepository, ExpenseImmutableError, ExpenseNotFoundError, ExpenseVersionConflictError, ExpenseProjectNotFoundError } from './postgres-expense-repository.ts';
 import { postgresApprovalRepository } from './postgres-approval-repository.ts';
+import { postgresNotificationRepository } from './postgres-notification-repository.ts';
 
 
 const ROLE_POLICIES: Record<string, {
@@ -205,8 +206,7 @@ function pushNotification(
     recipientUserId?: string;
   }
 ): void {
-  if (!Array.isArray(db.notifications)) db.notifications = [];
-  db.notifications.unshift({
+  const notification = {
     id: `notif_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
     title: cleanText(input.title, 180),
     message: cleanText(input.message, 1000),
@@ -217,7 +217,17 @@ function pushNotification(
     recipientUserId: input.recipientUserId || undefined,
     linkUrl: input.linkUrl || '/admin/dashboard',
     timestamp: new Date().toISOString()
-  });
+  };
+
+  if (getDataSourceMode() === 'postgres') {
+    void postgresNotificationRepository.create(notification).catch(error => {
+      console.error('[Notifications] Failed to persist PostgreSQL notification:', error);
+    });
+    return;
+  }
+
+  if (!Array.isArray(db.notifications)) db.notifications = [];
+  db.notifications.unshift(notification);
   db.notifications = db.notifications.slice(0, 500);
 }
 
@@ -3895,14 +3905,16 @@ apiRouter.get('/system/security/status', requireAuth, requireAnyPermission('canV
 // 17. UNIFIED NOTIFICATIONS CENTER (PART 28)
 // ----------------------------------------------------
 
-apiRouter.get('/notifications', requireAuth, (req: AuthenticatedRequest, res: Response): void => {
-  const db = getDatabase();
+apiRouter.get('/notifications', requireAuth, async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const isMaster = req.user!.stakeholderType === 'Master';
   const canViewFinance = isMaster || Boolean(req.user!.permissions?.canViewFinancials || req.user!.permissions?.canManageInvoices);
   const canViewCrm = isMaster || Boolean(req.user!.permissions?.canManageCrm);
   const canViewApprovals = isMaster || Boolean(req.user!.permissions?.canApproveBudgets || req.user!.permissions?.canManageProjects);
+  const source = getDataSourceMode() === 'postgres'
+    ? await postgresNotificationRepository.list()
+    : getDatabase().notifications || [];
 
-  const notifications = (db.notifications || []).filter((notification) => {
+  const notifications = source.filter((notification) => {
     const typeAllowed =
       notification.type === 'finance' ? canViewFinance :
       notification.type === 'lead' ? canViewCrm :
@@ -3920,8 +3932,27 @@ apiRouter.get('/notifications', requireAuth, (req: AuthenticatedRequest, res: Re
   res.json({ success: true, notifications });
 });
 
-apiRouter.post('/notifications/:id/read', requireAuth, (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.post('/notifications/:id/read', requireAuth, async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
+  if (getDataSourceMode() === 'postgres') {
+    const notification = await postgresNotificationRepository.findById(id);
+    if (!notification) {
+      res.status(404).json({ success: false, error: 'Notification not found.' });
+      return;
+    }
+    if (notification.recipientUserId && notification.recipientUserId !== req.user!.id) {
+      res.status(403).json({ success: false, error: 'Notification access denied.' });
+      return;
+    }
+    const updated = await postgresNotificationRepository.markRead(id, req.user!.id);
+    if (!updated) {
+      res.status(403).json({ success: false, error: 'Notification access denied.' });
+      return;
+    }
+    res.json({ success: true });
+    return;
+  }
+
   const db = getDatabase();
   const notif = (db.notifications || []).find(n => n.id === id);
   if (!notif) {
@@ -3938,7 +3969,13 @@ apiRouter.post('/notifications/:id/read', requireAuth, (req: AuthenticatedReques
   res.json({ success: true });
 });
 
-apiRouter.post('/notifications/mark-all-read', requireAuth, (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.post('/notifications/mark-all-read', requireAuth, async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  if (getDataSourceMode() === 'postgres') {
+    await postgresNotificationRepository.markAllRead(req.user!.id);
+    res.json({ success: true });
+    return;
+  }
+
   const db = getDatabase();
   for (const notification of (db.notifications || [])) {
     if (notification.recipientUserId && notification.recipientUserId !== req.user!.id) continue;
