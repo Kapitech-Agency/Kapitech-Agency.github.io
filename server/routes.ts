@@ -52,6 +52,8 @@ import { loadApplicationDatabase } from './application-data-repository.ts';
 import { postgresAuthRepository } from './postgres-repository.ts';
 import { postgresClientRepository, ClientHasDependenciesError } from './postgres-client-repository.ts';
 import { postgresProjectRepository, postgresTaskRepository, ProjectVersionConflictError, TaskVersionConflictError, ProjectArchiveMutationError, ProjectClientRequiredError, ProjectNotFoundError } from './postgres-project-repository.ts';
+import { postgresBillingRateRepository, BillingRateOverlapError } from './postgres-billing-rate-repository.ts';
+import { postgresTimeLogRepository, BillingRateNotConfiguredError, TimeLogImmutableError, TimeLogVersionConflictError, TimeLogNotFoundError, TimeLogProjectMismatchError } from './postgres-time-log-repository.ts';
 
 
 const ROLE_POLICIES: Record<string, {
@@ -3293,58 +3295,290 @@ apiRouter.delete('/projects/tasks/:id', requireAuth, requirePermission('canManag
   }
 });
 
-// Time Tracking
-apiRouter.get('/projects/timelogs', requireAuth, requireAnyPermission('canManageKanbanTasks', 'canManageProjects'), (req: AuthenticatedRequest, res: Response): void => {
-  const db = getDatabase();
-  res.json({ success: true, timeLogs: db.timeLogs || [] });
+// Billing Rate Cards
+apiRouter.get('/finance/rates', requireAuth, requirePermission('canViewFinancials'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  try {
+    if (getDataSourceMode() !== 'postgres') {
+      res.json({ success: true, rates: [] });
+      return;
+    }
+
+    const userId = req.query.userId ? cleanText(String(req.query.userId), 120) : undefined;
+    const currency = req.query.currency ? cleanText(String(req.query.currency), 3).toUpperCase() : undefined;
+    res.json({ success: true, rates: await postgresBillingRateRepository.list(userId, currency) });
+  } catch (error) {
+    console.error('[Billing Rates] List failed:', error);
+    res.status(503).json({ success: false, error: 'Billing rates are temporarily unavailable.' });
+  }
 });
 
-apiRouter.post('/projects/timelogs', requireAuth, requireAnyPermission('canManageKanbanTasks', 'canManageProjects'), (req: AuthenticatedRequest, res: Response): void => {
-  const logData = req.body || {};
-  const durationMinutes = normalizeNumber(logData.durationMinutes ?? 60, 1, 1440, 60);
-  const date = String(logData.date || new Date().toISOString().slice(0, 10));
-
-  if (durationMinutes === null || !isValidDate(date)) {
-    res.status(400).json({ success: false, error: 'Valid duration and date are required for a time entry.' });
+apiRouter.post('/finance/rates', requireAuth, requirePermission('canManageInvoices'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  if (getDataSourceMode() !== 'postgres') {
+    res.status(409).json({ success: false, error: 'Billing rates require PostgreSQL mode.' });
     return;
   }
 
-  const db = getDatabase();
-  const newLog = {
-    id: `tim_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
-    projectId: cleanText(logData.projectId, 120),
-    projectName: cleanText(logData.projectName || 'General', 200),
-    taskId: cleanText(logData.taskId, 120),
-    taskTitle: cleanText(logData.taskTitle, 240),
-    user: req.user!.name || req.user!.username,
-    durationMinutes,
-    billable: logData.billable !== undefined ? Boolean(logData.billable) : true,
-    date,
-    notes: cleanText(logData.notes, 2000),
-    createdAt: new Date().toISOString()
-  };
+  const input = req.body || {};
+  const hourlyRate = Number(input.hourlyRate);
+  const effectiveFrom = String(input.effectiveFrom || '').slice(0, 10);
+  const currency = cleanText(input.currency || 'IDR', 3).toUpperCase();
+  const userId = cleanText(input.userId, 120);
 
-  if (!db.timeLogs) db.timeLogs = [];
-  db.timeLogs.unshift(newLog);
-  saveDatabase(db);
-  recordAuditLog({
-    action: 'TIMELOG_CREATED',
-    actor: req.user!.username,
-    actorRole: req.user!.role,
-    ip: req.ip,
-    userAgent: req.headers['user-agent'] as string,
-    details: `Created ${durationMinutes} minute time entry for ${newLog.projectName}.`,
-    severity: 'info'
-  });
-  res.json({ success: true, timeLog: newLog });
+  if (!userId || !/^[A-Z]{3}$/.test(currency) || !isValidDate(effectiveFrom) || !Number.isFinite(hourlyRate) || hourlyRate < 0 || hourlyRate > MAX_MONEY) {
+    res.status(400).json({ success: false, error: 'Valid user, currency, effective date, and non-negative hourly rate are required.' });
+    return;
+  }
+
+  try {
+    const rate = await postgresBillingRateRepository.create({
+      id: 'rate_' + Date.now() + '_' + crypto.randomBytes(3).toString('hex'),
+      userId,
+      hourlyRate,
+      currency,
+      effectiveFrom
+    });
+    recordAuditLog({
+      action: 'BILLING_RATE_CREATED',
+      actor: req.user!.username,
+      actorRole: req.user!.role,
+      ip: req.ip,
+      userAgent: req.headers['user-agent'] as string,
+      details: 'Created billing rate for user ' + userId + '.',
+      severity: 'info'
+    });
+    res.json({ success: true, rate });
+  } catch (error) {
+    if (error instanceof BillingRateOverlapError || (error as any)?.code === '23505') {
+      res.status(409).json({ success: false, error: error instanceof Error ? error.message : 'Billing rate overlaps an existing rate.', code: 'BILLING_RATE_OVERLAP' });
+      return;
+    }
+    if ((error as any)?.code === '23503') {
+      res.status(400).json({ success: false, error: 'Referenced user does not exist.' });
+      return;
+    }
+    console.error('[Billing Rates] Create failed:', error);
+    res.status(500).json({ success: false, error: 'Billing rate could not be created.' });
+  }
 });
 
-apiRouter.delete('/projects/timelogs/:id', requireAuth, requireAnyPermission('canManageKanbanTasks', 'canManageProjects'), (req: AuthenticatedRequest, res: Response): void => {
-  const { id } = req.params;
-  const db = getDatabase();
-  db.timeLogs = (db.timeLogs || []).filter(t => t.id !== id);
-  saveDatabase(db);
-  res.json({ success: true, message: 'Time entry deleted.' });
+// Time Tracking
+apiRouter.get('/projects/timelogs', requireAuth, requireAnyPermission('canManageKanbanTasks', 'canManageProjects'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  try {
+    if (getDataSourceMode() === 'postgres') {
+      res.json({ success: true, timeLogs: await postgresTimeLogRepository.list() });
+      return;
+    }
+    const db = getDatabase();
+    res.json({ success: true, timeLogs: db.timeLogs || [] });
+  } catch (error) {
+    console.error('[TimeLogs] Failed to load time logs:', error);
+    res.status(503).json({ success: false, error: 'Time log data is temporarily unavailable.' });
+  }
+});
+
+apiRouter.post('/projects/timelogs', requireAuth, requireAnyPermission('canManageKanbanTasks', 'canManageProjects'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  const logData = req.body || {};
+  const durationMinutes = normalizeNumber(logData.durationMinutes ?? 60, 1, 1440, 60);
+  const date = String(logData.date || new Date().toISOString().slice(0, 10));
+  const currency = cleanText(logData.currency || 'IDR', 3).toUpperCase();
+
+  if (durationMinutes === null || !isValidDate(date) || !/^[A-Z]{3}$/.test(currency)) {
+    res.status(400).json({ success: false, error: 'Valid duration, date, and currency are required for a time entry.' });
+    return;
+  }
+
+  try {
+    if (getDataSourceMode() === 'postgres') {
+      const idempotencyKey = cleanText(
+        String(req.headers['idempotency-key'] || logData.idempotencyKey || ''),
+        100
+      );
+
+      const timeLog = await postgresTimeLogRepository.create({
+        id: 'tim_' + Date.now() + '_' + crypto.randomBytes(3).toString('hex'),
+        userId: req.user!.id,
+        projectId: cleanText(logData.projectId, 120),
+        taskId: cleanText(logData.taskId, 120),
+        projectName: cleanText(logData.projectName, 200),
+        taskTitle: cleanText(logData.taskTitle, 240),
+        durationMinutes,
+        billable: logData.billable !== undefined ? Boolean(logData.billable) : true,
+        workDate: date,
+        currency,
+        notes: cleanText(logData.notes, 2000),
+        idempotencyKey: idempotencyKey || undefined
+      });
+      recordAuditLog({
+        action: 'TIMELOG_CREATED',
+        actor: req.user!.username,
+        actorRole: req.user!.role,
+        ip: req.ip,
+        userAgent: req.headers['user-agent'] as string,
+        details: 'Created ' + durationMinutes + ' minute time entry for project ' + timeLog.projectId + '.',
+        severity: 'info'
+      });
+      res.json({ success: true, timeLog });
+      return;
+    }
+
+    const db = getDatabase();
+    const newLog = {
+      id: 'tim_' + Date.now() + '_' + crypto.randomBytes(3).toString('hex'),
+      projectId: cleanText(logData.projectId, 120),
+      projectName: cleanText(logData.projectName || 'General', 200),
+      taskId: cleanText(logData.taskId, 120),
+      taskTitle: cleanText(logData.taskTitle, 240),
+      user: req.user!.name || req.user!.username,
+      durationMinutes,
+      billable: logData.billable !== undefined ? Boolean(logData.billable) : true,
+      date,
+      notes: cleanText(logData.notes, 2000),
+      createdAt: new Date().toISOString()
+    };
+
+    if (!db.timeLogs) db.timeLogs = [];
+    db.timeLogs.unshift(newLog);
+    saveDatabase(db);
+    recordAuditLog({
+      action: 'TIMELOG_CREATED',
+      actor: req.user!.username,
+      actorRole: req.user!.role,
+      ip: req.ip,
+      userAgent: req.headers['user-agent'] as string,
+      details: 'Created ' + durationMinutes + ' minute time entry for ' + newLog.projectName + '.',
+      severity: 'info'
+    });
+    res.json({ success: true, timeLog: newLog });
+  } catch (error) {
+    if (error instanceof BillingRateNotConfiguredError) {
+      res.status(409).json({ success: false, error: error.message, code: error.code });
+      return;
+    }
+    if (error instanceof TimeLogProjectMismatchError) {
+      res.status(409).json({ success: false, error: error.message, code: error.code });
+      return;
+    }
+    if (error instanceof TimeLogNotFoundError) {
+      res.status(404).json({ success: false, error: error.message, code: error.code });
+      return;
+    }
+    if ((error as any)?.code === '23505') {
+      res.status(409).json({ success: false, error: 'A time log with this idempotency key already exists.', code: 'TIMELOG_DUPLICATE_REQUEST' });
+      return;
+    }
+    if ((error as any)?.code === '23503') {
+      res.status(400).json({ success: false, error: 'Referenced project, task, or user does not exist.' });
+      return;
+    }
+    console.error('[TimeLogs] Create failed:', error);
+    res.status(500).json({ success: false, error: 'Time log could not be created.' });
+  }
+});
+
+apiRouter.post('/projects/timelogs/:id/submit', requireAuth, requireAnyPermission('canManageKanbanTasks', 'canManageProjects'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  if (getDataSourceMode() !== 'postgres') {
+    res.status(409).json({ success: false, error: 'Time log workflow requires PostgreSQL mode.' });
+    return;
+  }
+  try {
+    const timeLog = await postgresTimeLogRepository.submit(
+      req.params.id,
+      req.body?.version == null ? undefined : Number(req.body.version)
+    );
+    recordAuditLog({
+      action: 'TIMELOG_SUBMITTED',
+      actor: req.user!.username,
+      actorRole: req.user!.role,
+      ip: req.ip,
+      userAgent: req.headers['user-agent'] as string,
+      details: 'Submitted time log ' + req.params.id + '.',
+      severity: 'info'
+    });
+    res.json({ success: true, timeLog });
+  } catch (error) {
+    if (error instanceof TimeLogVersionConflictError || error instanceof TimeLogImmutableError) {
+      res.status(409).json({ success: false, error: error.message, code: error.code });
+      return;
+    }
+    if (error instanceof TimeLogNotFoundError) {
+      res.status(404).json({ success: false, error: error.message, code: error.code });
+      return;
+    }
+    console.error('[TimeLogs] Submit failed:', error);
+    res.status(500).json({ success: false, error: 'Time log could not be submitted.' });
+  }
+});
+
+apiRouter.post('/projects/timelogs/:id/approve', requireAuth, requirePermission('canApproveBudgets'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  if (getDataSourceMode() !== 'postgres') {
+    res.status(409).json({ success: false, error: 'Time log workflow requires PostgreSQL mode.' });
+    return;
+  }
+  try {
+    const timeLog = await postgresTimeLogRepository.approve(
+      req.params.id,
+      req.body?.version == null ? undefined : Number(req.body.version)
+    );
+    recordAuditLog({
+      action: 'TIMELOG_APPROVED',
+      actor: req.user!.username,
+      actorRole: req.user!.role,
+      ip: req.ip,
+      userAgent: req.headers['user-agent'] as string,
+      details: 'Approved time log ' + req.params.id + ' for amount ' + timeLog.amount + '.',
+      severity: 'info'
+    });
+    res.json({ success: true, timeLog });
+  } catch (error) {
+    if (error instanceof TimeLogVersionConflictError || error instanceof TimeLogImmutableError) {
+      res.status(409).json({ success: false, error: error.message, code: error.code });
+      return;
+    }
+    if (error instanceof TimeLogNotFoundError) {
+      res.status(404).json({ success: false, error: error.message, code: error.code });
+      return;
+    }
+    console.error('[TimeLogs] Approve failed:', error);
+    res.status(500).json({ success: false, error: 'Time log could not be approved.' });
+  }
+});
+
+apiRouter.delete('/projects/timelogs/:id', requireAuth, requireAnyPermission('canManageKanbanTasks', 'canManageProjects'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  try {
+    if (getDataSourceMode() === 'postgres') {
+      const timeLog = await postgresTimeLogRepository.void(
+        req.params.id,
+        req.body?.version == null ? undefined : Number(req.body.version)
+      );
+      recordAuditLog({
+        action: 'TIMELOG_VOIDED',
+        actor: req.user!.username,
+        actorRole: req.user!.role,
+        ip: req.ip,
+        userAgent: req.headers['user-agent'] as string,
+        details: 'Voided time log ' + req.params.id + '.',
+        severity: 'warning'
+      });
+      res.json({ success: true, message: 'Time log voided.', timeLog });
+      return;
+    }
+
+    const db = getDatabase();
+    db.timeLogs = (db.timeLogs || []).filter(t => t.id !== req.params.id);
+    saveDatabase(db);
+    res.json({ success: true, message: 'Time entry deleted.' });
+  } catch (error) {
+    if (error instanceof TimeLogImmutableError || error instanceof TimeLogVersionConflictError) {
+      res.status(409).json({ success: false, error: error.message, code: error.code });
+      return;
+    }
+    if (error instanceof TimeLogNotFoundError) {
+      res.status(404).json({ success: false, error: error.message, code: error.code });
+      return;
+    }
+    console.error('[TimeLogs] Delete/void failed:', error);
+    res.status(500).json({ success: false, error: 'Time log could not be voided.' });
+  }
 });
 
 // ----------------------------------------------------
