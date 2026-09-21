@@ -3739,8 +3739,10 @@ apiRouter.put('/documents/:id/content', requireAuth, documentMutationMiddleware,
 
     res.json({ success: true, document: publicDocument(updated) });
   } catch (error) {
-    try { if (fs.existsSync(tempPath)) fs.unlinkSync(tempPath); } catch {}
-    console.error('[Documents] Private upload failed:', error);
+    console.error('[Documents] Private upload metadata update failed:', error);
+    try { await storage.delete(document.storageKey); } catch (cleanupError) {
+      console.error('[Documents] Failed to clean up uploaded object after metadata failure:', cleanupError);
+    }
     res.status(500).json({ success: false, error: 'Private document storage failed.' });
   }
 });
@@ -3765,33 +3767,45 @@ apiRouter.get('/documents/:id/content', requireAuth, documentAccessMiddleware, a
   const storage = getDocumentStorage();
   try {
     const stored = await storage.get(document.storageKey);
+
     if (document.storageSha256 && stored.storageSha256 !== String(document.storageSha256)) {
-      recordAuditLog({ action: 'DOCUMENT_INTEGRITY_FAILURE', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Storage checksum mismatch for private document "${document.name}".`, severity: 'critical' });
+      recordAuditLog({
+        action: 'DOCUMENT_INTEGRITY_FAILURE',
+        actor: req.user!.username,
+        actorRole: req.user!.role,
+        ip: req.ip,
+        userAgent: req.headers['user-agent'] as string,
+        details: `Storage checksum mismatch for private document "${document.name}".`,
+        severity: 'critical'
+      });
       res.status(409).json({ success: false, error: 'Private document integrity verification failed.' });
       return;
     }
+
     const content = decryptPrivateDocument(stored.body);
     const actualContentSha256 = crypto.createHash('sha256').update(content).digest('hex');
     if (document.contentSha256 && actualContentSha256 !== String(document.contentSha256)) {
-      recordAuditLog({ action: 'DOCUMENT_INTEGRITY_FAILURE', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Content checksum mismatch for private document "${document.name}".`, severity: 'critical' });
+      recordAuditLog({
+        action: 'DOCUMENT_INTEGRITY_FAILURE',
+        actor: req.user!.username,
+        actorRole: req.user!.role,
+        ip: req.ip,
+        userAgent: req.headers['user-agent'] as string,
+        details: `Content checksum mismatch for private document "${document.name}".`,
+        severity: 'critical'
+      });
       res.status(409).json({ success: false, error: 'Private document content integrity verification failed.' });
       return;
     }
+
+    res.setHeader('Cache-Control', 'private, no-store');
+    res.setHeader('Content-Type', document.mimeType || 'application/octet-stream');
+    res.setHeader('Content-Disposition', `attachment; filename*=UTF-8''${encodeURIComponent(String(document.name || 'document'))}`);
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('X-Download-Options', 'noopen');
     res.setHeader('Content-Length', content.length);
     res.end(content);
-    recordAuditLog({ action: 'DOCUMENT_INTEGRITY_FAILURE', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Storage checksum mismatch for private document "${document.name}".`, severity: 'critical' });
-      res.status(409).json({ success: false, error: 'Private document integrity verification failed.' });
-      return;
-    }
-    const content = decryptPrivateDocument(encryptedPayload);
-    const actualContentSha256 = crypto.createHash('sha256').update(content).digest('hex');
-    if (document.contentSha256 && actualContentSha256 !== String(document.contentSha256)) {
-      recordAuditLog({ action: 'DOCUMENT_INTEGRITY_FAILURE', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Content checksum mismatch for private document "${document.name}".`, severity: 'critical' });
-      res.status(409).json({ success: false, error: 'Private document content integrity verification failed.' });
-      return;
-    }
-    res.setHeader('Content-Length', content.length);
-    res.end(content);
+
     recordAuditLog({
       action: 'DOCUMENT_DOWNLOADED',
       actor: req.user!.username,
@@ -3803,7 +3817,9 @@ apiRouter.get('/documents/:id/content', requireAuth, documentAccessMiddleware, a
     });
   } catch (error) {
     console.error('[Documents] Private download failed:', error);
-    res.status(500).json({ success: false, error: 'Document delivery failed.' });
+    if (!res.headersSent) {
+      res.status(500).json({ success: false, error: 'Document delivery failed.' });
+    }
   }
 });
 
