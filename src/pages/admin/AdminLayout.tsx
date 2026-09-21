@@ -33,7 +33,7 @@ import {
   Sparkles,
   CheckCheck
 } from 'lucide-react';
-import { getAdminSession, logoutAdmin } from '../../lib/adminAuth';
+import { getAdminSession, logoutAdmin, updateCachedAdminSessionUser } from '../../lib/adminAuth';
 import { api } from '../../lib/apiClient';
 import { subscribeToInbox, ContactSubmission } from '../../lib/submissions';
 import { useLanguage } from '../../lib/LanguageContext';
@@ -71,6 +71,33 @@ export const AdminLayout: React.FC = () => {
     .map((part) => part[0])
     .join('')
     .toUpperCase() || 'AD';
+
+  useEffect(() => {
+    let active = true;
+
+    const validateServerSession = async () => {
+      try {
+        const res = await api.auth.me();
+        if (!active) return;
+        if (res.success && res.data?.user) {
+          updateCachedAdminSessionUser(res.data.user);
+          return;
+        }
+      } catch {
+        // Treat an invalid or revoked server session as unauthenticated.
+      }
+
+      if (active) {
+        logoutAdmin();
+        navigate('/admin/login', { replace: true });
+      }
+    };
+
+    void validateServerSession();
+    return () => {
+      active = false;
+    };
+  }, [navigate]);
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
