@@ -206,8 +206,13 @@ export const AdminCrm: React.FC = () => {
     setDragOverStage(null);
   };
 
-  const handleStageChange = (leadId: string, newStage: CrmStage) => {
-    updateLeadStage(leadId, newStage);
+  const handleStageChange = async (leadId: string, newStage: CrmStage) => {
+    try {
+      await updateLeadStage(leadId, newStage);
+    } catch (error: any) {
+      showToast(error?.message || (language === 'id' ? 'Gagal memperbarui tahap deal.' : 'Failed to update deal stage.'));
+      return;
+    }
     const stageDef = CRM_STAGE_DEFINITIONS.find(s => s.key === newStage);
     const stageName = language === 'id' ? (stageDef?.labelId || newStage) : (stageDef?.label || newStage);
     showToast(language === 'id' ? `Tahap deal diperbarui ke ${stageName}` : `Lead stage updated to ${stageName}`);
@@ -402,7 +407,7 @@ export const AdminCrm: React.FC = () => {
     setIsAddModalOpen(true);
   };
 
-  const handleSaveLead = (e: React.FormEvent) => {
+  const handleSaveLead = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formClientName.trim() || !formCompany.trim()) {
       alert(language === 'id' ? 'Nama klien dan perusahaan wajib diisi.' : 'Client name and company are required.');
@@ -428,14 +433,23 @@ export const AdminCrm: React.FC = () => {
       updatedAt: new Date().toISOString()
     };
 
-    saveCrmLead(leadData);
-    setIsAddModalOpen(false);
-    showToast(editingLead ? (language === 'id' ? 'Data prospek berhasil diperbarui.' : 'Deal updated successfully.') : (language === 'id' ? 'Deal prospek baru berhasil dibuat.' : 'New deal created successfully.'));
+    try {
+      await saveCrmLead(leadData);
+      setIsAddModalOpen(false);
+      showToast(editingLead ? (language === 'id' ? 'Data prospek berhasil diperbarui.' : 'Deal updated successfully.') : (language === 'id' ? 'Deal prospek baru berhasil dibuat.' : 'New deal created successfully.'));
+    } catch (error: any) {
+      showToast(error?.message || (language === 'id' ? 'Gagal menyimpan deal.' : 'Failed to save deal.'));
+    }
   };
 
-  const handleDeleteLead = (id: string, name: string) => {
+  const handleDeleteLead = async (id: string, name: string) => {
     if (window.confirm(language === 'id' ? `Hapus prospek ${name}?` : `Delete lead ${name}?`)) {
-      deleteCrmLead(id);
+      try {
+        await deleteCrmLead(id);
+      } catch (error: any) {
+        showToast(error?.message || (language === 'id' ? 'Gagal menghapus deal.' : 'Failed to delete deal.'));
+        return;
+      }
       if (selectedLead && selectedLead.id === id) {
         setIsDrawerOpen(false);
         setSelectedLead(null);
@@ -444,12 +458,17 @@ export const AdminCrm: React.FC = () => {
     }
   };
 
-  const handleAddNote = (e: React.FormEvent) => {
+  const handleAddNote = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedLead || !newNoteText.trim()) return;
 
-    addLeadNote(selectedLead.id, newNoteText.trim(), 'note');
-    setNewNoteText('');
+    try {
+      await addLeadNote(selectedLead.id, newNoteText.trim(), 'note');
+      setNewNoteText('');
+    } catch (error: any) {
+      showToast(error?.message || (language === 'id' ? 'Gagal menyimpan catatan.' : 'Failed to save note.'));
+      return;
+    }
     const updated = getCmsLeads().find(l => l.id === selectedLead.id);
     if (updated) setSelectedLead(updated);
     showToast(language === 'id' ? 'Catatan aktivitas ditambahkan.' : 'Activity note added.');
