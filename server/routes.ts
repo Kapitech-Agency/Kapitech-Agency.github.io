@@ -55,6 +55,8 @@ import { postgresProjectRepository, postgresTaskRepository, ProjectVersionConfli
 import { postgresBillingRateRepository, BillingRateOverlapError } from './postgres-billing-rate-repository.ts';
 import { postgresTimeLogRepository, BillingRateNotConfiguredError, TimeLogImmutableError, TimeLogVersionConflictError, TimeLogNotFoundError, TimeLogProjectMismatchError } from './postgres-time-log-repository.ts';
 import { postgresExpenseRepository, ExpenseNotFoundError, ExpenseImmutableError, ExpenseVersionConflictError, ExpenseProjectNotFoundError } from './postgres-expense-repository.ts';
+import { postgresProposalRepository, ProposalNotFoundError, ProposalImmutableError, ProposalVersionConflictError, ProposalStatusError } from './postgres-proposal-repository.ts';
+import { postgresInvoiceRepository, InvoiceNotFoundError, InvoiceImmutableError, InvoiceVersionConflictError, InvoicePaymentError, InvoiceProposalConflictError } from './postgres-invoice-repository.ts';
 
 
 const ROLE_POLICIES: Record<string, {
@@ -1780,52 +1782,21 @@ apiRouter.delete('/projects/:id', requireAuth, requirePermission('canManageProje
 // 6. FINANCE, INVOICING & PAYMENTS (Server-Authoritative Calculations)
 // ----------------------------------------------------
 
-apiRouter.get('/finance/invoices', requireAuth, requirePermission('canViewFinancials'), (req: AuthenticatedRequest, res: Response): void => {
-  const db = getDatabase();
-  res.json({ success: true, invoices: db.invoices });
+apiRouter.get('/finance/invoices', requireAuth, requirePermission('canViewFinancials'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  try {
+    if (getDataSourceMode() === 'postgres') {
+      res.json({ success: true, invoices: await postgresInvoiceRepository.list() });
+      return;
+    }
+    const db = getDatabase();
+    res.json({ success: true, invoices: db.invoices });
+  } catch (error) {
+    console.error('[Invoices] Failed to load invoices:', error);
+    res.status(503).json({ success: false, error: 'Invoice data is temporarily unavailable.' });
+  }
 });
 
-function normalizeInvoiceItems(value: unknown): Array<{ id: string; description: string; quantity: number; unitPrice: number; amount: number }> {
-  if (!Array.isArray(value)) return [];
-  return value.slice(0, 100).map((item: any) => {
-    const quantity = Number(item?.quantity);
-    const unitPrice = Number(item?.unitPrice);
-    return {
-      id: String(item?.id || `line_${crypto.randomBytes(4).toString('hex')}`).slice(0, 80),
-      description: String(item?.description || '').trim().slice(0, 500),
-      quantity: Number.isFinite(quantity) ? Math.min(100000, Math.max(0, quantity)) : 0,
-      unitPrice: Number.isFinite(unitPrice) ? Math.min(10_000_000_000, Math.max(0, unitPrice)) : 0,
-      amount: 0
-    };
-  }).filter(item => item.description && item.quantity > 0 && item.unitPrice >= 0).map(item => ({
-    ...item,
-    amount: Math.round(item.quantity * item.unitPrice)
-  }));
-}
-
-function normalizeDate(value: unknown, fallback: string): string {
-  const candidate = String(value || '').trim();
-  if (/^\d{4}-\d{2}-\d{2}$/.test(candidate)) {
-    const parsed = new Date(`${candidate}T00:00:00Z`);
-    if (!Number.isNaN(parsed.getTime()) && parsed.toISOString().slice(0, 10) === candidate) return candidate;
-  }
-  return fallback;
-}
-
-const INVOICE_STATUSES = new Set(['draft', 'sent', 'approved', 'overdue', 'cancelled']);
-const PAYMENT_METHODS = new Set(['bank_transfer', 'credit_card', 'cash', 'other']);
-
-function buildInvoiceFinancials(items: ReturnType<typeof normalizeInvoiceItems>, taxPercent: number, discountPercent: number) {
-  const subtotal = items.reduce((sum, item) => sum + item.amount, 0);
-  const discountAmount = Math.round(subtotal * (discountPercent / 100));
-  const taxableSubtotal = Math.max(0, subtotal - discountAmount);
-  const taxAmount = Math.round(taxableSubtotal * (taxPercent / 100));
-  const total = taxableSubtotal + taxAmount;
-  return { subtotal, discountAmount, taxableSubtotal, taxAmount, total };
-}
-
-
-apiRouter.post('/finance/invoices', requireAuth, requirePermission('canManageInvoices'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.post('/finance/invoices', requireAuth, requirePermission('canManageInvoices'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const input = req.body || {};
   const items = normalizeInvoiceItems(input.items);
   if (items.length === 0) {
@@ -1833,240 +1804,325 @@ apiRouter.post('/finance/invoices', requireAuth, requirePermission('canManageInv
     return;
   }
 
-  const taxPercent = Number.isFinite(Number(input.taxPercent)) ? Math.min(100, Math.max(0, Number(input.taxPercent))) : 11;
-  const discountPercent = Number.isFinite(Number(input.discountPercent)) ? Math.min(100, Math.max(0, Number(input.discountPercent))) : 0;
-  const { subtotal, discountAmount, taxableSubtotal, taxAmount, total } = buildInvoiceFinancials(items, taxPercent, discountPercent);
+  try {
+    if (getDataSourceMode() === 'postgres') {
+      const invoice = await postgresInvoiceRepository.create({
+        id: 'inv_' + Date.now() + '_' + crypto.randomBytes(3).toString('hex'),
+        invoiceNumber: String(input.invoiceNumber || '').trim() || undefined,
+        type: input.type === 'quotation' ? 'quotation' : 'invoice',
+        clientId: cleanText(input.clientId, 120),
+        projectId: cleanText(input.projectId, 120),
+        clientName: cleanText(input.clientName || 'Client', 160),
+        clientCompany: cleanText(input.clientCompany, 200),
+        clientEmail: cleanText(input.clientEmail, 254).toLowerCase(),
+        clientPhone: cleanText(input.clientPhone, 40),
+        leadId: cleanText(input.leadId, 100),
+        items,
+        discountPercent: Number(input.discountPercent || 0),
+        taxPercent: Number.isFinite(Number(input.taxPercent)) ? Number(input.taxPercent) : 11,
+        currency: ['IDR','USD'].includes(String(input.currency)) ? String(input.currency) : 'IDR',
+        status: ['draft','sent','approved'].includes(String(input.status)) ? String(input.status) : 'draft',
+        issueDate: input.issueDate,
+        dueDate: input.dueDate,
+        notes: cleanText(input.notes, 5000),
+        paymentTerms: cleanText(input.paymentTerms, 500)
+      });
+      recordAuditLog({
+        action: 'INVOICE_CREATED',
+        actor: req.user!.username,
+        actorRole: req.user!.role,
+        ip: req.ip,
+        userAgent: req.headers['user-agent'] as string,
+        details: 'Created invoice ' + invoice.invoiceNumber + ' for ' + invoice.total + ' ' + invoice.currency + '.',
+        severity: 'info'
+      });
+      res.json({ success: true, invoice });
+      return;
+    }
 
-  const db = getDatabase();
-  const requestedNumber = String(input.invoiceNumber || '').trim();
-  const invoiceNumber = requestedNumber && /^[A-Za-z0-9._/-]{1,80}$/.test(requestedNumber)
-    ? requestedNumber
-    : `INV-KAPI-${new Date().getFullYear()}-${crypto.randomInt(1000, 10000)}`;
+    const taxPercent = Number.isFinite(Number(input.taxPercent)) ? Math.min(100, Math.max(0, Number(input.taxPercent))) : 11;
+    const discountPercent = Number.isFinite(Number(input.discountPercent)) ? Math.min(100, Math.max(0, Number(input.discountPercent))) : 0;
+    const { subtotal, discountAmount, taxAmount, total } = buildInvoiceFinancials(items, taxPercent, discountPercent);
+    const db = getDatabase();
+    const requestedNumber = String(input.invoiceNumber || '').trim();
+    const invoiceNumber = requestedNumber && /^[A-Za-z0-9._/-]{1,80}$/.test(requestedNumber)
+      ? requestedNumber
+      : 'INV-KAPI-' + new Date().getFullYear() + '-' + crypto.randomInt(1000, 10000);
 
-  if (db.invoices.some((invoice: any) => invoice.invoiceNumber === invoiceNumber)) {
-    res.status(409).json({ success: false, error: 'Invoice number already exists.' });
-    return;
+    if (db.invoices.some((invoice: any) => invoice.invoiceNumber === invoiceNumber)) {
+      res.status(409).json({ success: false, error: 'Invoice number already exists.' });
+      return;
+    }
+
+    const issueDate = normalizeDate(input.issueDate, new Date().toISOString().slice(0, 10));
+    const dueDate = normalizeDate(input.dueDate, new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10));
+    const requestedStatus = String(input.status || 'draft');
+    const status = INVOICE_STATUSES.has(requestedStatus) ? requestedStatus : 'draft';
+    const invoice = {
+      id: 'inv_' + Date.now() + '_' + crypto.randomBytes(3).toString('hex'),
+      invoiceNumber,
+      type: input.type === 'quotation' ? 'quotation' : 'invoice',
+      clientName: String(input.clientName || 'Client').trim().slice(0, 160),
+      clientCompany: String(input.clientCompany || '').trim().slice(0, 200),
+      clientEmail: String(input.clientEmail || '').trim().toLowerCase().slice(0, 254),
+      clientPhone: String(input.clientPhone || '').trim().slice(0, 40),
+      projectId: String(input.projectId || '').slice(0, 100),
+      leadId: String(input.leadId || '').slice(0, 100),
+      items,
+      subtotal,
+      discountPercent,
+      discountAmount,
+      taxPercent,
+      taxAmount,
+      total,
+      amountPaid: 0,
+      balanceDue: total,
+      payments: [],
+      currency: input.currency === 'USD' ? 'USD' : 'IDR',
+      status,
+      issueDate,
+      dueDate,
+      notes: String(input.notes || '').trim().slice(0, 5000),
+      paymentTerms: String(input.paymentTerms || '').trim().slice(0, 500),
+      auditTrail: [{ action: 'created', timestamp: new Date().toISOString(), user: req.user!.username }],
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+    db.invoices.unshift(invoice);
+    saveDatabase(db);
+    recordAuditLog({
+      action: 'INVOICE_CREATED',
+      actor: req.user!.username,
+      actorRole: req.user!.role,
+      ip: req.ip,
+      userAgent: req.headers['user-agent'] as string,
+      details: 'Created invoice ' + invoice.invoiceNumber + ' for ' + invoice.clientName + ' (Total: ' + invoice.total + ').',
+      severity: 'info'
+    });
+    res.json({ success: true, invoice });
+  } catch (error: any) {
+    if (error?.code === '23503') {
+      res.status(400).json({ success: false, error: 'Referenced client or project does not exist.' });
+      return;
+    }
+    if (error?.code === '23505') {
+      res.status(409).json({ success: false, error: 'Invoice number already exists.' });
+      return;
+    }
+    console.error('[Invoices] Create failed:', error);
+    res.status(500).json({ success: false, error: 'Invoice could not be created.' });
   }
-
-  const issueDate = normalizeDate(input.issueDate, new Date().toISOString().slice(0, 10));
-  const dueDate = normalizeDate(input.dueDate, new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10));
-  const requestedStatus = String(input.status || 'draft');
-  const status = INVOICE_STATUSES.has(requestedStatus) ? requestedStatus : 'draft';
-  const invoice = {
-    id: `inv_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
-    invoiceNumber,
-    type: input.type === 'quotation' ? 'quotation' : 'invoice',
-    clientName: String(input.clientName || 'Client').trim().slice(0, 160),
-    clientCompany: String(input.clientCompany || '').trim().slice(0, 200),
-    clientEmail: String(input.clientEmail || '').trim().toLowerCase().slice(0, 254),
-    clientPhone: String(input.clientPhone || '').trim().slice(0, 40),
-    projectId: String(input.projectId || '').slice(0, 100),
-    leadId: String(input.leadId || '').slice(0, 100),
-    items,
-    subtotal,
-    discountPercent,
-    discountAmount,
-    taxPercent,
-    taxAmount,
-    total,
-    amountPaid: 0,
-    balanceDue: total,
-    payments: [],
-    currency: input.currency === 'USD' ? 'USD' : 'IDR',
-    status,
-    issueDate,
-    dueDate,
-    notes: String(input.notes || '').trim().slice(0, 5000),
-    paymentTerms: String(input.paymentTerms || '').trim().slice(0, 500),
-    auditTrail: [{
-      action: 'created',
-      timestamp: new Date().toISOString(),
-      user: req.user!.username
-    }],
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  };
-
-  db.invoices.unshift(invoice);
-  saveDatabase(db);
-
-  recordAuditLog({
-    action: 'INVOICE_CREATED',
-    actor: req.user!.username,
-    actorRole: req.user!.role,
-    ip: req.ip,
-    userAgent: req.headers['user-agent'] as string,
-    details: `Created invoice ${invoice.invoiceNumber} for ${invoice.clientName} (Total: ${invoice.total}).`,
-    severity: 'info'
-  });
-
-  res.json({ success: true, invoice });
 });
 
-apiRouter.put('/finance/invoices/:id', requireAuth, requirePermission('canManageInvoices'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.put('/finance/invoices/:id', requireAuth, requirePermission('canManageInvoices'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  if (getDataSourceMode() === 'postgres') {
+    try {
+      const invoice = await postgresInvoiceRepository.update(req.params.id, req.body || {});
+      recordAuditLog({
+        action: 'INVOICE_UPDATED',
+        actor: req.user!.username,
+        actorRole: req.user!.role,
+        ip: req.ip,
+        userAgent: req.headers['user-agent'] as string,
+        details: 'Updated invoice ' + invoice.invoiceNumber + '.',
+        severity: 'info'
+      });
+      res.json({ success: true, invoice });
+      return;
+    } catch (error) {
+      if (error instanceof InvoiceNotFoundError) {
+        res.status(404).json({ success: false, error: error.message, code: error.code });
+        return;
+      }
+      if (error instanceof InvoiceImmutableError || error instanceof InvoiceVersionConflictError) {
+        res.status(409).json({ success: false, error: error.message, code: error.code });
+        return;
+      }
+      if ((error as any)?.code === '23503') {
+        res.status(400).json({ success: false, error: 'Referenced client or project does not exist.' });
+        return;
+      }
+      console.error('[Invoices] Update failed:', error);
+      res.status(500).json({ success: false, error: 'Invoice could not be updated.' });
+      return;
+    }
+  }
+
   const { id } = req.params;
   const input = req.body || {};
   const db = getDatabase();
   const idx = db.invoices.findIndex((invoice: any) => invoice.id === id);
-
   if (idx === -1) {
     res.status(404).json({ success: false, error: 'Invoice not found.' });
     return;
   }
-
   const existing = db.invoices[idx];
   if (existing.status === 'cancelled' && input.status !== 'cancelled') {
     res.status(409).json({ success: false, error: 'Cancelled invoices cannot be reopened.' });
     return;
   }
-
-  const items = input.items !== undefined ? normalizeInvoiceItems(input.items) : normalizeInvoiceItems(existing.items);
-  if (items.length === 0) {
+  const items2 = input.items !== undefined ? normalizeInvoiceItems(input.items) : normalizeInvoiceItems(existing.items);
+  if (!items2.length) {
     res.status(400).json({ success: false, error: 'At least one valid invoice line item is required.' });
     return;
   }
-
-  const taxPercent = input.taxPercent !== undefined ? Math.min(100, Math.max(0, Number(input.taxPercent) || 0)) : Number(existing.taxPercent) || 0;
-  const discountPercent = input.discountPercent !== undefined ? Math.min(100, Math.max(0, Number(input.discountPercent) || 0)) : Number(existing.discountPercent) || 0;
-  const { subtotal, discountAmount, taxableSubtotal, taxAmount, total } = buildInvoiceFinancials(items, taxPercent, discountPercent);
-
-  const existingPayments = Array.isArray(existing.payments) ? existing.payments : [];
-  const amountPaid = existingPayments.reduce((sum: number, payment: any) => sum + (Number(payment.amount) || 0), 0);
-  if (total < amountPaid) {
+  const taxPercent2 = input.taxPercent !== undefined ? Math.min(100, Math.max(0, Number(input.taxPercent) || 0)) : Number(existing.taxPercent) || 0;
+  const discountPercent2 = input.discountPercent !== undefined ? Math.min(100, Math.max(0, Number(input.discountPercent) || 0)) : Number(existing.discountPercent) || 0;
+  const financials2 = buildInvoiceFinancials(items2, taxPercent2, discountPercent2);
+  const existingPayments2 = Array.isArray(existing.payments) ? existing.payments : [];
+  const amountPaid2 = existingPayments2.reduce((sum: number, payment: any) => sum + (Number(payment.amount) || 0), 0);
+  if (financials2.total < amountPaid2) {
     res.status(409).json({ success: false, error: 'Invoice total cannot be lower than payments already recorded.' });
     return;
   }
-
-  const requestedStatus = String(input.status || existing.status);
-  let status = INVOICE_STATUSES.has(requestedStatus) ? requestedStatus : existing.status;
-  if (amountPaid >= total && total > 0) status = 'paid';
-  else if (amountPaid > 0) status = 'partially_paid';
-  else if (status === 'paid' || status === 'partially_paid') status = 'draft';
-
+  const requestedStatus2 = String(input.status || existing.status);
+  let status2 = INVOICE_STATUSES.has(requestedStatus2) ? requestedStatus2 : existing.status;
+  if (amountPaid2 >= financials2.total && financials2.total > 0) status2 = 'paid';
+  else if (amountPaid2 > 0) status2 = 'partially_paid';
+  else if (status2 === 'paid' || status2 === 'partially_paid') status2 = 'draft';
   db.invoices[idx] = {
-    ...existing,
-    invoiceNumber: existing.invoiceNumber,
-    clientName: input.clientName !== undefined ? String(input.clientName).trim().slice(0, 160) : existing.clientName,
-    clientCompany: input.clientCompany !== undefined ? String(input.clientCompany).trim().slice(0, 200) : existing.clientCompany,
-    clientEmail: input.clientEmail !== undefined ? String(input.clientEmail).trim().toLowerCase().slice(0, 254) : existing.clientEmail,
-    clientPhone: input.clientPhone !== undefined ? String(input.clientPhone).trim().slice(0, 40) : existing.clientPhone,
-    projectId: input.projectId !== undefined ? String(input.projectId).slice(0, 100) : existing.projectId,
-    leadId: input.leadId !== undefined ? String(input.leadId).slice(0, 100) : existing.leadId,
-    items,
-    subtotal,
-    discountPercent,
-    discountAmount,
-    taxPercent,
-    taxAmount,
-    total,
-    amountPaid,
-    balanceDue: Math.max(0, total - amountPaid),
-    payments: existingPayments,
-    currency: input.currency === 'USD' || input.currency === 'IDR' ? input.currency : existing.currency || 'IDR',
-    status,
-    issueDate: input.issueDate !== undefined ? normalizeDate(input.issueDate, existing.issueDate) : existing.issueDate,
-    dueDate: input.dueDate !== undefined ? normalizeDate(input.dueDate, existing.dueDate) : existing.dueDate,
-    notes: input.notes !== undefined ? String(input.notes).trim().slice(0, 5000) : existing.notes,
-    paymentTerms: input.paymentTerms !== undefined ? String(input.paymentTerms).trim().slice(0, 500) : existing.paymentTerms,
-    auditTrail: [
-      ...(Array.isArray(existing.auditTrail) ? existing.auditTrail : []),
-      { action: 'updated', timestamp: new Date().toISOString(), user: req.user!.username }
-    ],
+    ...existing, ...pickFields(input, ['clientName','clientCompany','clientEmail','clientPhone','projectId','leadId','notes','paymentTerms']),
+    items: items2,
+    ...financials2,
+    status: status2,
+    amountPaid: amountPaid2,
+    balanceDue: Math.max(0, financials2.total - amountPaid2),
+    payments: existingPayments2,
     updatedAt: new Date().toISOString()
   };
-
   saveDatabase(db);
-
-  recordAuditLog({
-    action: 'INVOICE_UPDATED',
-    actor: req.user!.username,
-    actorRole: req.user!.role,
-    ip: req.ip,
-    userAgent: req.headers['user-agent'] as string,
-    details: `Updated invoice ${db.invoices[idx].invoiceNumber} (Status: ${status}).`,
-    severity: 'info'
-  });
-
   res.json({ success: true, invoice: db.invoices[idx] });
 });
 
-apiRouter.post('/finance/invoices/:id/pay', requireAuth, requirePermission('canManageInvoices'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.post('/finance/invoices/:id/pay', requireAuth, requirePermission('canManageInvoices'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  if (getDataSourceMode() === 'postgres') {
+    try {
+      const result = await postgresInvoiceRepository.pay(req.params.id, {
+        ...(req.body || {}),
+        idempotencyKey: cleanText(String(req.headers['idempotency-key'] || req.body?.idempotencyKey || ''), 100) || undefined,
+        recordedByUserId: req.user!.id
+      });
+      recordAuditLog({
+        action: 'PAYMENT_RECORDED',
+        actor: req.user!.username,
+        actorRole: req.user!.role,
+        ip: req.ip,
+        userAgent: req.headers['user-agent'] as string,
+        details: 'Recorded payment of ' + result.payment.amount + ' for invoice ' + result.invoice.invoiceNumber + '.',
+        severity: 'info'
+      });
+      res.json({ success: true, invoice: result.invoice, payment: result.payment });
+      return;
+    } catch (error) {
+      if (error instanceof InvoiceNotFoundError) {
+        res.status(404).json({ success: false, error: error.message, code: error.code });
+        return;
+      }
+      if (error instanceof InvoicePaymentError || error instanceof InvoiceVersionConflictError) {
+        res.status(409).json({ success: false, error: error.message, code: error.code });
+        return;
+      }
+      if ((error as any)?.code === '23505') {
+        res.status(409).json({ success: false, error: 'Payment request already exists.', code: 'INVOICE_PAYMENT_DUPLICATE' });
+        return;
+      }
+      console.error('[Invoices] Payment failed:', error);
+      res.status(500).json({ success: false, error: 'Payment could not be recorded.' });
+      return;
+    }
+  }
+
   const { id } = req.params;
   const input = req.body || {};
   const payAmount = Number(input.amount);
-
   if (!Number.isFinite(payAmount) || payAmount <= 0) {
     res.status(400).json({ success: false, error: 'Valid payment amount is required.' });
     return;
   }
-
   const db = getDatabase();
   const invoice = db.invoices.find((item: any) => item.id === id);
   if (!invoice) {
     res.status(404).json({ success: false, error: 'Invoice not found.' });
     return;
   }
-
   if (invoice.status === 'cancelled') {
     res.status(409).json({ success: false, error: 'Cancelled invoices cannot receive payments.' });
     return;
   }
-
   const currentBalance = Math.max(0, Number(invoice.balanceDue ?? (invoice.total - (invoice.amountPaid || 0))));
   if (currentBalance <= 0) {
     res.status(409).json({ success: false, error: 'Invoice has no remaining balance.' });
     return;
   }
-
   if (payAmount > currentBalance) {
     res.status(400).json({ success: false, error: 'Payment exceeds the current invoice balance.' });
     return;
   }
-
   const method = PAYMENT_METHODS.has(String(input.method)) ? String(input.method) : 'bank_transfer';
   const date = normalizeDate(input.date, new Date().toISOString().slice(0, 10));
   const reference = String(input.reference || '').trim().slice(0, 160);
   const notes = String(input.notes || '').trim().slice(0, 1000);
-
   const paymentRecord = {
-    id: `pay_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
+    id: 'pay_' + Date.now() + '_' + crypto.randomBytes(3).toString('hex'),
     amount: Math.round(payAmount * 100) / 100,
-    date,
-    method,
-    reference,
+    date, method, reference,
     recordedBy: req.user!.name || req.user!.username,
     notes
   };
-
   if (!Array.isArray(invoice.payments)) invoice.payments = [];
   invoice.payments.push(paymentRecord);
-
   const totalPaid = invoice.payments.reduce((sum: number, payment: any) => sum + (Number(payment.amount) || 0), 0);
   invoice.amountPaid = totalPaid;
   invoice.balanceDue = Math.max(0, Number(invoice.total || 0) - totalPaid);
   invoice.status = invoice.balanceDue <= 0 ? 'paid' : 'partially_paid';
   invoice.updatedAt = new Date().toISOString();
-  invoice.auditTrail = [
-    ...(Array.isArray(invoice.auditTrail) ? invoice.auditTrail : []),
-    { action: 'payment_recorded', timestamp: new Date().toISOString(), user: req.user!.username, note: reference || notes }
-  ];
-
+  invoice.auditTrail = [...(Array.isArray(invoice.auditTrail) ? invoice.auditTrail : []), { action: 'payment_recorded', timestamp: new Date().toISOString(), user: req.user!.username, note: reference || notes }];
   saveDatabase(db);
-
   recordAuditLog({
     action: 'PAYMENT_RECORDED',
     actor: req.user!.username,
     actorRole: req.user!.role,
     ip: req.ip,
     userAgent: req.headers['user-agent'] as string,
-    details: `Recorded payment of ${payAmount} for invoice ${invoice.invoiceNumber}. New status: ${invoice.status}.`,
+    details: 'Recorded payment of ' + payAmount + ' for invoice ' + invoice.invoiceNumber + '.',
     severity: 'info'
   });
-
   res.json({ success: true, invoice, payment: paymentRecord });
 });
 
-apiRouter.delete('/finance/invoices/:id', requireAuth, requirePermission('canManageInvoices'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.delete('/finance/invoices/:id', requireAuth, requirePermission('canManageInvoices'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  if (getDataSourceMode() === 'postgres') {
+    try {
+      const invoice = await postgresInvoiceRepository.cancel(
+        req.params.id,
+        req.body?.version == null ? undefined : Number(req.body.version)
+      );
+      recordAuditLog({
+        action: 'INVOICE_CANCELLED',
+        actor: req.user!.username,
+        actorRole: req.user!.role,
+        ip: req.ip,
+        userAgent: req.headers['user-agent'] as string,
+        details: 'Cancelled invoice ' + invoice.invoiceNumber + '.',
+        severity: 'warning'
+      });
+      res.json({ success: true, message: 'Invoice cancelled.', invoice });
+      return;
+    } catch (error) {
+      if (error instanceof InvoiceNotFoundError) {
+        res.status(404).json({ success: false, error: error.message, code: error.code });
+        return;
+      }
+      if (error instanceof InvoiceImmutableError || error instanceof InvoiceVersionConflictError) {
+        res.status(409).json({ success: false, error: error.message, code: error.code });
+        return;
+      }
+      console.error('[Invoices] Cancel failed:', error);
+      res.status(500).json({ success: false, error: 'Invoice could not be cancelled.' });
+      return;
+    }
+  }
+
   const { id } = req.params;
   const db = getDatabase();
   const invoice = db.invoices.find((item: any) => item.id === id);
@@ -2074,25 +2130,12 @@ apiRouter.delete('/finance/invoices/:id', requireAuth, requirePermission('canMan
     res.status(404).json({ success: false, error: 'Invoice not found.' });
     return;
   }
-
-  invoice.status = 'cancelled';
-  invoice.updatedAt = new Date().toISOString();
-  invoice.auditTrail = [
-    ...(Array.isArray(invoice.auditTrail) ? invoice.auditTrail : []),
-    { action: 'cancelled', timestamp: new Date().toISOString(), user: req.user!.username }
-  ];
-  saveDatabase(db);
-
-  recordAuditLog({
-    action: 'INVOICE_CANCELLED',
-    actor: req.user!.username,
-    actorRole: req.user!.role,
-    ip: req.ip,
-    userAgent: req.headers['user-agent'] as string,
-    details: `Cancelled invoice ${invoice.invoiceNumber}.`,
-    severity: 'warning'
-  });
-
+  if (invoice.status !== 'cancelled') {
+    invoice.status = 'cancelled';
+    invoice.updatedAt = new Date().toISOString();
+    invoice.auditTrail = [...(Array.isArray(invoice.auditTrail) ? invoice.auditTrail : []), { action: 'cancelled', timestamp: new Date().toISOString(), user: req.user!.username }];
+    saveDatabase(db);
+  }
   res.json({ success: true, message: 'Invoice cancelled.', invoice });
 });
 
@@ -2911,139 +2954,200 @@ apiRouter.post('/migration/import-local', requireAuth, requirePermission('canRun
 // 13. PROPOSALS & QUOTATIONS (PART 12)
 // ----------------------------------------------------
 
-apiRouter.get('/crm/proposals', requireAuth, requirePermission('canManageCrm'), (req: AuthenticatedRequest, res: Response): void => {
-  const db = getDatabase();
-  res.json({ success: true, proposals: db.proposals || [] });
+apiRouter.get('/crm/proposals', requireAuth, requirePermission('canManageCrm'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  try {
+    if (getDataSourceMode() === 'postgres') {
+      res.json({ success: true, proposals: await postgresProposalRepository.list() });
+      return;
+    }
+    const db = getDatabase();
+    res.json({ success: true, proposals: db.proposals || [] });
+  } catch (error) {
+    console.error('[Proposals] Failed to load proposals:', error);
+    res.status(503).json({ success: false, error: 'Proposal data is temporarily unavailable.' });
+  }
 });
 
-apiRouter.post('/crm/proposals', requireAuth, requirePermission('canManageCrm'), (req: AuthenticatedRequest, res: Response): void => {
-  const data = req.body;
-  const db = getDatabase();
-
-  const rawItems = Array.isArray(data.items) ? data.items : [];
-  const items = rawItems.slice(0, 100).map((item: any) => ({
-    id: cleanText(item?.id || crypto.randomBytes(4).toString('hex'), 80),
+apiRouter.post('/crm/proposals', requireAuth, requirePermission('canManageCrm'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  const data = req.body || {};
+  const rawItems = Array.isArray(data.items) ? data.items.slice(0, 100) : [];
+  const items = rawItems.map((item: any) => ({
+    id: cleanText(item?.id || crypto.randomUUID(), 80),
     description: cleanText(item?.description, 500),
-    quantity: normalizeNumber(item?.quantity ?? 1, 0.01, 100000, 1) || 1,
-    unitPrice: normalizeNumber(item?.unitPrice ?? 0, 0, MAX_MONEY, 0) || 0
-  })).filter((item: any) => item.description && item.quantity > 0);
+    quantity: Number(item?.quantity),
+    unitPrice: Number(item?.unitPrice)
+  })).filter((item: any) =>
+    item.description &&
+    Number.isFinite(item.quantity) &&
+    item.quantity > 0 &&
+    item.quantity <= 100000 &&
+    Number.isFinite(item.unitPrice) &&
+    item.unitPrice >= 0 &&
+    item.unitPrice <= MAX_MONEY
+  );
+
   if (!items.length) {
     res.status(400).json({ success: false, error: 'Proposal requires at least one valid line item.' });
     return;
   }
-  const subtotal = items.reduce((sum: number, it: any) => sum + (it.quantity * it.unitPrice), 0);
-  const discount = Math.min(subtotal, Math.max(0, Number(data.discount) || 0));
-  const taxPercent = Math.min(100, Math.max(0, Number(data.taxPercent ?? 11) || 0));
-  const taxableAmount = Math.max(0, subtotal - discount);
-  const tax = Math.round(taxableAmount * (taxPercent / 100));
-  const total = taxableAmount + tax;
-  const statusValues = new Set(['Draft','Internal Review','Sent','Approved','Rejected','Accepted']);
-  const status = statusValues.has(String(data.status)) ? String(data.status) : 'Draft';
-  const currency = data.currency === 'USD' ? 'USD' : 'IDR';
+
   const newProposal = {
-    id: `prop_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
-    proposalNumber: cleanText(data.proposalNumber || `PROP-KAPI-${new Date().getFullYear()}-${crypto.randomInt(1000, 1000000)}`, 80),
+    id: 'prop_' + Date.now() + '_' + crypto.randomBytes(3).toString('hex'),
+    proposalNumber: cleanText(
+      data.proposalNumber || 'PROP-KAPI-' + new Date().getFullYear() + '-' + crypto.randomInt(1000, 1000000),
+      80
+    ),
     title: cleanText(data.title || 'Digital Engineering Proposal', 240),
+    clientId: cleanText(data.clientId, 120),
     clientName: cleanText(data.clientName || 'Prospective Client', 160),
     company: cleanText(data.company, 200),
     dealId: cleanText(data.dealId, 120),
     projectId: cleanText(data.projectId, 120),
     items,
-    subtotal,
-    discount,
-    taxPercent,
-    tax,
-    total,
-    currency,
+    discount: Number.isFinite(Number(data.discount)) ? Math.max(0, Number(data.discount)) : 0,
+    taxPercent: Number.isFinite(Number(data.taxPercent)) ? Math.min(100, Math.max(0, Number(data.taxPercent))) : 11,
+    currency: ['IDR','USD'].includes(String(data.currency)) ? String(data.currency) : 'IDR',
     validityPeriod: cleanText(data.validityPeriod || '30 Days', 80),
     paymentTerms: cleanText(data.paymentTerms || '50% Upfront, 50% on Delivery', 300),
     owner: req.user!.name || req.user!.username,
-    status,
+    status: ['Draft','Internal Review','Sent','Approved','Rejected','Accepted'].includes(String(data.status))
+      ? String(data.status)
+      : 'Draft',
     notes: cleanText(data.notes, 3000),
-    createdDate: new Date().toISOString().split('T')[0],
-    sentDate: data.sentDate || null,
-    approvedDate: null,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
+    createdDate: new Date().toISOString().slice(0, 10),
+    sentDate: data.sentDate && isValidDate(data.sentDate) ? data.sentDate : null,
+    approvedDate: null
   };
 
-  if (!db.proposals) db.proposals = [];
-  db.proposals.unshift(newProposal);
-  saveDatabase(db);
+  try {
+    if (getDataSourceMode() === 'postgres') {
+      const proposal = await postgresProposalRepository.create(newProposal);
+      recordAuditLog({
+        action: 'PROPOSAL_CREATED',
+        actor: req.user!.username,
+        actorRole: req.user!.role,
+        ip: req.ip,
+        userAgent: req.headers['user-agent'] as string,
+        details: 'Created proposal ' + proposal.proposalNumber + '.',
+        severity: 'info'
+      });
+      res.json({ success: true, proposal });
+      return;
+    }
 
-  recordAuditLog({
-    action: 'PROPOSAL_CREATED',
-    actor: req.user!.username,
-    actorRole: req.user!.role,
-    ip: req.ip,
-    userAgent: req.headers['user-agent'] as string,
-    details: `Created proposal ${newProposal.proposalNumber} for ${newProposal.clientName} (Total: ${newProposal.total}).`,
-    severity: 'info'
-  });
-
-  res.json({ success: true, proposal: newProposal });
+    const db = getDatabase();
+    const legacyProposal = {
+      ...newProposal,
+      subtotal: items.reduce((sum: number, item: any) => sum + item.quantity * item.unitPrice, 0),
+      tax: 0,
+      total: 0,
+      approvedDate: null,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+    const taxable = Math.max(0, legacyProposal.subtotal - legacyProposal.discount);
+    legacyProposal.tax = Math.round(taxable * (legacyProposal.taxPercent / 100));
+    legacyProposal.total = legacyProposal.subtotal - legacyProposal.discount + legacyProposal.tax;
+    if (!db.proposals) db.proposals = [];
+    db.proposals.unshift(legacyProposal);
+    saveDatabase(db);
+    recordAuditLog({
+      action: 'PROPOSAL_CREATED',
+      actor: req.user!.username,
+      actorRole: req.user!.role,
+      ip: req.ip,
+      userAgent: req.headers['user-agent'] as string,
+      details: 'Created proposal ' + legacyProposal.proposalNumber + '.',
+      severity: 'info'
+    });
+    res.json({ success: true, proposal: legacyProposal });
+  } catch (error: any) {
+    if (error?.code === '23505') {
+      res.status(409).json({ success: false, error: 'Proposal number already exists.' });
+      return;
+    }
+    if (error?.code === '23503') {
+      res.status(400).json({ success: false, error: 'Referenced client, deal, or project does not exist.' });
+      return;
+    }
+    console.error('[Proposals] Create failed:', error);
+    res.status(500).json({ success: false, error: 'Proposal could not be created.' });
+  }
 });
 
-apiRouter.put('/crm/proposals/:id', requireAuth, requirePermission('canManageCrm'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.put('/crm/proposals/:id', requireAuth, requirePermission('canManageCrm'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
   const updates = req.body || {};
+
+  if (getDataSourceMode() === 'postgres') {
+    try {
+      const patch = {
+        ...pickFields(updates, [
+          'proposalNumber','title','clientId','dealId','projectId','discount','taxPercent',
+          'currency','validityPeriod','paymentTerms','status','notes','sentDate','items','version'
+        ]),
+        version: updates.version
+      };
+      if (patch.proposalNumber !== undefined && !/^[A-Za-z0-9._/-]{1,80}$/.test(String(patch.proposalNumber))) {
+        res.status(400).json({ success: false, error: 'Invalid proposal number.' });
+        return;
+      }
+      const proposal = await postgresProposalRepository.update(id, patch as Record<string, any>);
+      recordAuditLog({
+        action: 'PROPOSAL_UPDATED',
+        actor: req.user!.username,
+        actorRole: req.user!.role,
+        ip: req.ip,
+        userAgent: req.headers['user-agent'] as string,
+        details: 'Updated proposal ' + id + '.',
+        severity: 'info'
+      });
+      res.json({ success: true, proposal });
+      return;
+    } catch (error) {
+      if (error instanceof ProposalNotFoundError) {
+        res.status(404).json({ success: false, error: error.message, code: error.code });
+        return;
+      }
+      if (error instanceof ProposalVersionConflictError || error instanceof ProposalImmutableError || error instanceof ProposalStatusError) {
+        res.status(409).json({ success: false, error: error.message, code: error.code });
+        return;
+      }
+      if ((error as any)?.code === '23503') {
+        res.status(400).json({ success: false, error: 'Referenced client, deal, or project does not exist.' });
+        return;
+      }
+      console.error('[Proposals] Update failed:', error);
+      res.status(500).json({ success: false, error: 'Proposal could not be updated.' });
+      return;
+    }
+  }
+
   const db = getDatabase();
   const idx = (db.proposals || []).findIndex(p => p.id === id);
-
   if (idx === -1) {
     res.status(404).json({ success: false, error: 'Proposal not found.' });
     return;
   }
-
   const existing = db.proposals[idx];
   const items = Array.isArray(updates.items) ? updates.items.slice(0, 100).map((item: any) => ({
     id: cleanText(item?.id || crypto.randomBytes(4).toString('hex'), 80),
     description: cleanText(item?.description, 500),
     quantity: Math.min(100000, Math.max(0, Number(item?.quantity) || 0)),
-    unitPrice: Math.min(10_000_000_000, Math.max(0, Number(item?.unitPrice) || 0))
+    unitPrice: Math.min(MAX_MONEY, Math.max(0, Number(item?.unitPrice) || 0))
   })).filter((item: any) => item.description && item.quantity > 0) : existing.items;
-  if (!Array.isArray(items) || items.length === 0) {
+  if (!items.length) {
     res.status(400).json({ success: false, error: 'Proposal requires at least one valid line item.' });
     return;
   }
-  const subtotal = items.reduce((sum: number, it: any) => sum + (Number(it.quantity) * Number(it.unitPrice)), 0);
-  const discount = updates.discount !== undefined ? Math.min(subtotal, Math.max(0, Number(updates.discount) || 0)) : (existing.discount || 0);
-  const taxPercent = updates.taxPercent !== undefined ? Math.min(100, Math.max(0, Number(updates.taxPercent) || 0)) : (existing.taxPercent || 11);
+  const subtotal = items.reduce((sum: number, it: any) => sum + Number(it.quantity) * Number(it.unitPrice), 0);
+  const discount = updates.discount !== undefined ? Math.min(subtotal, Math.max(0, Number(updates.discount) || 0)) : Number(existing.discount || 0);
+  const taxPercent = updates.taxPercent !== undefined ? Math.min(100, Math.max(0, Number(updates.taxPercent) || 0)) : Number(existing.taxPercent || 0);
   const taxableAmount = Math.max(0, subtotal - discount);
   const tax = Math.round(taxableAmount * (taxPercent / 100));
   const total = taxableAmount + tax;
   const patch = pickFields(updates, ['proposalNumber','title','clientName','company','dealId','projectId','currency','validityPeriod','paymentTerms','status','notes','sentDate']);
-  if (patch.proposalNumber !== undefined && !/^[A-Za-z0-9._/-]{1,80}$/.test(String(patch.proposalNumber))) {
-    res.status(400).json({ success: false, error: 'Invalid proposal number.' });
-    return;
-  }
-  for (const key of ['title','clientName','company','dealId','projectId','validityPeriod','paymentTerms','notes'] as const) {
-    if (patch[key] !== undefined) patch[key] = cleanText(patch[key], key === 'notes' ? 3000 : 300);
-  }
-  if (patch.currency !== undefined && !['IDR','USD'].includes(String(patch.currency))) {
-    res.status(400).json({ success: false, error: 'Invalid proposal currency.' });
-    return;
-  }
-  if (patch.status !== undefined && !['Draft','Internal Review','Sent','Approved','Rejected','Accepted'].includes(String(patch.status))) {
-    res.status(400).json({ success: false, error: 'Invalid proposal status.' });
-    return;
-  }
-  if (patch.sentDate !== undefined && patch.sentDate !== null && !isValidDate(patch.sentDate)) {
-    res.status(400).json({ success: false, error: 'Invalid proposal sent date.' });
-    return;
-  }
-  db.proposals[idx] = {
-    ...existing,
-    ...patch,
-    items,
-    subtotal,
-    discount,
-    taxPercent,
-    tax,
-    total,
-    updatedAt: new Date().toISOString()
-  };
-
+  db.proposals[idx] = { ...existing, ...patch, items, subtotal, discount, taxPercent, tax, total, updatedAt: new Date().toISOString() };
   saveDatabase(db);
   recordAuditLog({
     action: 'PROPOSAL_UPDATED',
@@ -3051,61 +3155,109 @@ apiRouter.put('/crm/proposals/:id', requireAuth, requirePermission('canManageCrm
     actorRole: req.user!.role,
     ip: req.ip,
     userAgent: req.headers['user-agent'] as string,
-    details: `Updated proposal ${db.proposals[idx].proposalNumber}.`,
+    details: 'Updated proposal ' + db.proposals[idx].proposalNumber + '.',
     severity: 'info'
   });
   res.json({ success: true, proposal: db.proposals[idx] });
 });
 
-apiRouter.post('/crm/proposals/:id/approve', requireAuth, requirePermission('canApproveBudgets'), (req: AuthenticatedRequest, res: Response): void => {
-  const { id } = req.params;
-  const db = getDatabase();
-  const prop = (db.proposals || []).find(p => p.id === id);
+apiRouter.post('/crm/proposals/:id/approve', requireAuth, requirePermission('canApproveBudgets'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  try {
+    if (getDataSourceMode() === 'postgres') {
+      const proposal = await postgresProposalRepository.approve(
+        req.params.id,
+        req.body?.version == null ? undefined : Number(req.body.version)
+      );
+      recordAuditLog({
+        action: 'PROPOSAL_APPROVED',
+        actor: req.user!.username,
+        actorRole: req.user!.role,
+        ip: req.ip,
+        userAgent: req.headers['user-agent'] as string,
+        details: 'Approved proposal ' + proposal.proposalNumber + '.',
+        severity: 'info'
+      });
+      res.json({ success: true, proposal });
+      return;
+    }
 
-  if (!prop) {
-    res.status(404).json({ success: false, error: 'Proposal not found.' });
-    return;
+    const db = getDatabase();
+    const prop = (db.proposals || []).find(p => p.id === req.params.id);
+    if (!prop) {
+      res.status(404).json({ success: false, error: 'Proposal not found.' });
+      return;
+    }
+    if (!['Draft','Internal Review','Sent'].includes(String(prop.status))) {
+      res.status(409).json({ success: false, error: 'Only draft, internal review, or sent proposals can be approved.' });
+      return;
+    }
+    prop.status = 'Approved';
+    prop.approvedDate = new Date().toISOString().split('T')[0];
+    prop.updatedAt = new Date().toISOString();
+    saveDatabase(db);
+    recordAuditLog({
+      action: 'PROPOSAL_APPROVED',
+      actor: req.user!.username,
+      actorRole: req.user!.role,
+      ip: req.ip,
+      userAgent: req.headers['user-agent'] as string,
+      details: 'Approved proposal ' + prop.proposalNumber + '.',
+      severity: 'info'
+    });
+    res.json({ success: true, proposal: prop });
+  } catch (error) {
+    if (error instanceof ProposalNotFoundError) {
+      res.status(404).json({ success: false, error: error.message, code: error.code });
+      return;
+    }
+    if (error instanceof ProposalVersionConflictError || error instanceof ProposalImmutableError || error instanceof ProposalStatusError) {
+      res.status(409).json({ success: false, error: error.message, code: error.code });
+      return;
+    }
+    console.error('[Proposals] Approve failed:', error);
+    res.status(500).json({ success: false, error: 'Proposal could not be approved.' });
   }
-
-  if (!['Draft','Internal Review','Sent'].includes(String(prop.status))) {
-    res.status(409).json({ success: false, error: 'Only draft, internal review, or sent proposals can be approved.' });
-    return;
-  }
-  prop.status = 'Approved';
-  prop.approvedDate = new Date().toISOString().split('T')[0];
-  prop.updatedAt = new Date().toISOString();
-  saveDatabase(db);
-
-  recordAuditLog({
-    action: 'PROPOSAL_APPROVED',
-    actor: req.user!.username,
-    actorRole: req.user!.role,
-    ip: req.ip,
-    userAgent: req.headers['user-agent'] as string,
-    details: `Approved proposal ${prop.proposalNumber}.`,
-    severity: 'info'
-  });
-
-  res.json({ success: true, proposal: prop });
 });
 
-apiRouter.post('/crm/proposals/:id/convert-to-invoice', requireAuth, requirePermission('canManageInvoices'), (req: AuthenticatedRequest, res: Response): void => {
-  const { id } = req.params;
-  const db = getDatabase();
-  const prop = (db.proposals || []).find(p => p.id === id);
+apiRouter.post('/crm/proposals/:id/convert-to-invoice', requireAuth, requirePermission('canManageInvoices'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  if (getDataSourceMode() === 'postgres') {
+    try {
+      const result = await postgresInvoiceRepository.convertProposal(req.params.id, req.user!.id);
+      recordAuditLog({
+        action: 'PROPOSAL_CONVERTED_TO_INVOICE',
+        actor: req.user!.username,
+        actorRole: req.user!.role,
+        ip: req.ip,
+        userAgent: req.headers['user-agent'] as string,
+        details: 'Converted proposal ' + req.params.id + ' to invoice ' + result.invoice.invoiceNumber + '.',
+        severity: 'info'
+      });
+      res.json({ success: true, invoice: result.invoice, proposal: result.proposal });
+      return;
+    } catch (error) {
+      if (error instanceof InvoiceProposalConflictError) {
+        res.status(409).json({ success: false, error: error.message, code: error.code });
+        return;
+      }
+      console.error('[Proposals] Conversion failed:', error);
+      res.status(500).json({ success: false, error: 'Proposal could not be converted to invoice.' });
+      return;
+    }
+  }
 
+  const db = getDatabase();
+  const prop = (db.proposals || []).find(p => p.id === req.params.id);
   if (!prop) {
     res.status(404).json({ success: false, error: 'Proposal not found.' });
     return;
   }
-
   const year = new Date().getFullYear();
-  let invoiceNumber = `INV-KAPI-${year}-${crypto.randomInt(1000, 1000000)}`;
+  let invoiceNumber = 'INV-KAPI-' + year + '-' + crypto.randomInt(1000, 1000000);
   while (db.invoices.some((invoice: any) => invoice.invoiceNumber === invoiceNumber)) {
-    invoiceNumber = `INV-KAPI-${year}-${crypto.randomInt(1000, 1000000)}`;
+    invoiceNumber = 'INV-KAPI-' + year + '-' + crypto.randomInt(1000, 1000000);
   }
   const newInvoice = {
-    id: `inv_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
+    id: 'inv_' + Date.now() + '_' + crypto.randomBytes(3).toString('hex'),
     invoiceNumber,
     clientName: prop.clientName,
     clientCompany: prop.company || prop.clientName,
@@ -3121,35 +3273,54 @@ apiRouter.post('/crm/proposals/:id/convert-to-invoice', requireAuth, requirePerm
     amountPaid: 0,
     balanceDue: prop.total,
     payments: [],
-    notes: `Generated from Proposal ${prop.proposalNumber}. Terms: ${prop.paymentTerms}`,
+    notes: 'Generated from Proposal ' + prop.proposalNumber + '. Terms: ' + prop.paymentTerms,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   };
-
   db.invoices.unshift(newInvoice);
   prop.status = 'Accepted';
   prop.updatedAt = new Date().toISOString();
   saveDatabase(db);
-
   recordAuditLog({
     action: 'PROPOSAL_CONVERTED_TO_INVOICE',
     actor: req.user!.username,
     actorRole: req.user!.role,
     ip: req.ip,
     userAgent: req.headers['user-agent'] as string,
-    details: `Converted proposal ${prop.proposalNumber} to invoice ${newInvoice.invoiceNumber}.`,
+    details: 'Converted proposal ' + prop.proposalNumber + ' to invoice ' + newInvoice.invoiceNumber + '.',
     severity: 'info'
   });
-
   res.json({ success: true, invoice: newInvoice, proposal: prop });
 });
 
-apiRouter.delete('/crm/proposals/:id', requireAuth, requirePermission('canManageCrm'), (req: AuthenticatedRequest, res: Response): void => {
-  const { id } = req.params;
-  const db = getDatabase();
-  db.proposals = (db.proposals || []).filter(p => p.id !== id);
-  saveDatabase(db);
-  res.json({ success: true, message: 'Proposal deleted.' });
+apiRouter.delete('/crm/proposals/:id', requireAuth, requirePermission('canManageCrm'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  try {
+    if (getDataSourceMode() === 'postgres') {
+      const archived = await postgresProposalRepository.archive(req.params.id);
+      if (!archived) {
+        res.status(404).json({ success: false, error: 'Proposal not found.' });
+        return;
+      }
+      recordAuditLog({
+        action: 'PROPOSAL_ARCHIVED',
+        actor: req.user!.username,
+        actorRole: req.user!.role,
+        ip: req.ip,
+        userAgent: req.headers['user-agent'] as string,
+        details: 'Archived proposal ' + req.params.id + '.',
+        severity: 'warning'
+      });
+      res.json({ success: true, message: 'Proposal archived.' });
+      return;
+    }
+    const db = getDatabase();
+    db.proposals = (db.proposals || []).filter(p => p.id !== req.params.id);
+    saveDatabase(db);
+    res.json({ success: true, message: 'Proposal deleted.' });
+  } catch (error) {
+    console.error('[Proposals] Delete/archive failed:', error);
+    res.status(500).json({ success: false, error: 'Proposal could not be archived.' });
+  }
 });
 
 // ----------------------------------------------------
