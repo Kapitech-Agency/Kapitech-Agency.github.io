@@ -65,3 +65,37 @@ test('rejects backup hash mismatch and future evidence timestamps', () => {
   assert.ok(result.errors.some(error => error.includes('must match')));
   assert.ok(result.errors.some(error => error.includes('must not be in the future')));
 });
+
+test('production preflight CLI executes successfully with a valid synthetic environment', () => {
+  const { spawnSync } = require('node:child_process') as typeof import('node:child_process');
+  const now = new Date().toISOString();
+  const env = {
+    ...process.env,
+    CI: 'true',
+    NODE_ENV: 'production',
+    KAPITECH_DATA_SOURCE: 'postgres',
+    KAPITECH_POSTGRES_URL: 'postgresql://user:pass@example.com:5432/kapitech',
+    KAPITECH_POSTGRES_SSL: 'require',
+    KAPITECH_DATA_ENCRYPTION_KEY: '1'.repeat(64),
+    APP_URL: 'https://kapitech.id',
+    KAPITECH_DOCUMENT_STORAGE_PROVIDER: 's3-compatible',
+    KAPITECH_DOCUMENT_STORAGE_BUCKET: 'kapitech-smoke',
+    KAPITECH_DOCUMENT_STORAGE_ENDPOINT: 'https://s3.example.com',
+    KAPITECH_DOCUMENT_STORAGE_ACCESS_KEY_ID: 'access',
+    KAPITECH_DOCUMENT_STORAGE_SECRET_ACCESS_KEY: 'secret',
+    KAPITECH_POSTGRES_BACKUP_PROVIDER: 'provider',
+    KAPITECH_POSTGRES_BACKUP_LATEST_AT: now,
+    KAPITECH_POSTGRES_BACKUP_LATEST_SHA256: 'a'.repeat(64),
+    KAPITECH_POSTGRES_BACKUP_RESTORE_VERIFIED_AT: now,
+    KAPITECH_POSTGRES_BACKUP_RESTORE_BACKUP_SHA256: 'a'.repeat(64),
+    KAPITECH_RELATIONAL_RECONCILIATION_VERIFIED_AT: now,
+    KAPITECH_RELATIONAL_RECONCILIATION_SOURCE_SHA256: 'b'.repeat(64),
+  };
+  const result = spawnSync(process.execPath, ['--import', 'tsx', 'scripts/validate-production-env.ts'], {
+    cwd: process.cwd(),
+    env,
+    encoding: 'utf8'
+  });
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+  assert.match(result.stdout, /Contract validation passed/);
+});
