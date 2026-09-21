@@ -103,11 +103,14 @@ npm ci
 npm run db:migrate
 npm run db:restore-rehearsal /path/to/postgres-backup.dump
 npm run db:reconcile
+npm run validate:production-env
 npm run build
 npm start
 ```
 
 The restore rehearsal target must be an isolated, empty PostgreSQL database. Never point it at production.
+
+Run `npm run validate:production-env` after the production environment variables are configured and before the final build/start step. The preflight checks the required configuration shape, HTTPS requirements, encryption-key format, durable storage settings, backup/restore evidence format and hash binding, reconciliation evidence format, and optional notification completeness. It never prints secret values and does not replace the dynamic production-readiness endpoint.
 
 ## 4. Release gate
 
