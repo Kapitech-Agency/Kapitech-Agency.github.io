@@ -50,7 +50,7 @@ ALTER TABLE invoices
 ALTER TABLE invoices DROP CONSTRAINT IF EXISTS invoices_status_v2_check;
 ALTER TABLE invoices
   ADD CONSTRAINT invoices_status_v2_check
-  CHECK (status IN ('draft','sent','partially_paid','paid','overdue','cancelled'))
+  CHECK (status IN ('draft','sent','approved','partially_paid','paid','overdue','cancelled'))
   NOT VALID;
 
 ALTER TABLE invoices DROP CONSTRAINT IF EXISTS invoices_source_proposal_id_fkey;
@@ -94,6 +94,13 @@ ALTER TABLE invoice_payments
   ADD CONSTRAINT invoice_payments_amount_v2_check
   CHECK (amount > 0)
   NOT VALID;
+
+ALTER TABLE invoice_payments
+  ADD COLUMN IF NOT EXISTS idempotency_key TEXT;
+
+CREATE UNIQUE INDEX IF NOT EXISTS invoice_payments_idempotency_unique
+  ON invoice_payments(invoice_id, idempotency_key)
+  WHERE idempotency_key IS NOT NULL;
 
 CREATE INDEX IF NOT EXISTS invoice_payments_paid_at_idx
   ON invoice_payments(paid_at DESC);
