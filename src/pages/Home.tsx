@@ -33,10 +33,12 @@ import { Testimonials } from '../components/Testimonials';
 import { AtmosphericBackground } from '../components/ui/AtmosphericBackground';
 import { useLanguage } from '../lib/LanguageContext';
 import { allProjects } from '../data/projectsData';
+import { getCmsProjects, fetchServerCmsProjects } from '../lib/cmsStore';
 
 export const Home = () => {
   const { t, language } = useLanguage();
   const [selectedProject, setSelectedProject] = useState<any | null>(null);
+  const [cmsProjects, setCmsProjects] = useState(() => getCmsProjects());
 
   const clientPartners = [
     { name: "Lumina Property", industry: language === 'id' ? "Teknologi Properti" : "Real Estate Tech", logoText: "LUMINA", desc: language === 'id' ? "Pencarian Properti & Web Interaktif 3D" : "Property Search & 3D Interactive Web" },
@@ -60,7 +62,14 @@ export const Home = () => {
     { name: "AWS & GCP", category: "Cloud", icon: <Shield size={18} /> },
   ];
 
-  const previewProjects = allProjects.slice(0, 4);
+  const previewProjects = cmsProjects.length > 0 ? cmsProjects.slice(0, 4) : allProjects.slice(0, 4);
+
+  useEffect(() => {
+    void fetchServerCmsProjects();
+    const handleUpdate = () => setCmsProjects(getCmsProjects());
+    window.addEventListener('kapitech_cms_updated', handleUpdate);
+    return () => window.removeEventListener('kapitech_cms_updated', handleUpdate);
+  }, []);
 
   // Redesigned Simple, High-Contrast Stats
   const stats = [
