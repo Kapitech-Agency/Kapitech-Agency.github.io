@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ChevronLeft, ChevronRight, Quote, Star } from 'lucide-react';
 import { useLanguage } from '../lib/LanguageContext';
-import { getCmsTestimonials, TestimonialItem } from '../lib/cmsStore';
+import { getCmsTestimonials, fetchServerCmsTestimonials, TestimonialItem } from '../lib/cmsStore';
 
 export const Testimonials = () => {
   const { language } = useLanguage();
@@ -11,6 +11,7 @@ export const Testimonials = () => {
   const [itemsPerSlide, setItemsPerSlide] = useState(3);
 
   useEffect(() => {
+    void fetchServerCmsTestimonials();
     const handleUpdate = () => {
       setCmsTestimonials(getCmsTestimonials());
     };
