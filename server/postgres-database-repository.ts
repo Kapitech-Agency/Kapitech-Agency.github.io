@@ -11,7 +11,7 @@ const mapUser=(r:Row):StoredUser=>({id:r.id,name:r.name,username:r.username,emai
 const mapSession=(r:Row):StoredSession=>({tokenHash:r.token_hash,userId:r.user_id,createdAt:iso(r.created_at),lastActivityAt:iso(r.last_activity_at),expiresAt:new Date(r.expires_at).getTime(),rememberMe:r.remember_me,ip:r.ip??'',userAgent:r.user_agent,kind:r.kind,mfaFailedAttempts:r.mfa_failed_attempts});
 
 export class PostgresDatabaseRepository {
- readonly auth=new PostgresAuthRepository();
+  readonly auth=new PostgresAuthRepository();
  async loadDatabase():Promise<DatabaseSchema>{
   const p=getPostgresPool();
   const names=['users','sessions','leads','crm_deals','clients','projects','proposals','proposal_items','tasks','time_logs','invoices','invoice_items','invoice_payments','expenses','approvals','vendors','documents','document_access','notifications','cms_services','cms_projects','cms_testimonials','cms_settings','audit_logs','notification_settings'];
