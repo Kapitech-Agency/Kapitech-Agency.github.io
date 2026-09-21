@@ -13,6 +13,8 @@ export type PostgresBackupHealth = {
     latestBackupAt: string | null;
     restoreVerifiedAt: string | null;
     restoreVerified: boolean;
+    restoreBackupSha256: string | null;
+    restoreMatchesLatestBackup: boolean;
     reason?: string;
   };
   rpoMinutes: number;
@@ -98,10 +100,19 @@ export function getPostgresBackupHealth(): PostgresBackupHealth {
     configured: Boolean(provider && latestBackupAt && latestBackupSha256 && backupFresh && restoreVerified && restoreMatchesLatestBackup),
     provider: provider || 'unconfigured',
     latestBackupAt,
+    latestBackupSha256,
     latestBackupAgeMinutes: ageMs === null ? null : Math.round(ageMs / 60000),
     backupFresh,
     integrity: {
-      valid: Boolean(provider && latestBackupAt && backupFresh && restoreVerificationFresh),
+      valid: Boolean(
+        provider &&
+        latestBackupAt &&
+        latestBackupSha256 &&
+        backupFresh &&
+        restoreVerificationFresh &&
+        restoreBackupSha256 &&
+        restoreMatchesLatestBackup
+      ),
       checkedAt: new Date().toISOString(),
       latestBackupAt,
       restoreVerifiedAt,
