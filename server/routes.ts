@@ -50,6 +50,8 @@ import {
 import { getDataSourceMode } from './data-source.ts';
 import { loadApplicationDatabase } from './application-data-repository.ts';
 import { postgresAuthRepository } from './postgres-repository.ts';
+import { postgresClientRepository, ClientHasDependenciesError } from './postgres-client-repository.ts';
+import { postgresProjectRepository, postgresTaskRepository, ProjectVersionConflictError, TaskVersionConflictError, ProjectArchiveMutationError } from './postgres-project-repository.ts';
 
 
 const ROLE_POLICIES: Record<string, {
@@ -1292,14 +1294,22 @@ apiRouter.delete('/crm/deals/:id', requireAuth, requirePermission('canManageCrm'
 // 4. CLIENTS MANAGEMENT
 // ----------------------------------------------------
 
-apiRouter.get('/clients', requireAuth, requireAnyPermission('canManageClients', 'canManageCrm'), (req: AuthenticatedRequest, res: Response): void => {
-  const db = getDatabase();
-  res.json({ success: true, clients: db.clients });
+apiRouter.get('/clients', requireAuth, requireAnyPermission('canManageClients', 'canManageCrm'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  try {
+    if (getDataSourceMode() === 'postgres') {
+      res.json({ success: true, clients: await postgresClientRepository.list() });
+      return;
+    }
+    const db = getDatabase();
+    res.json({ success: true, clients: db.clients });
+  } catch (error) {
+    console.error('[Clients] Failed to load clients:', error);
+    res.status(503).json({ success: false, error: 'Client data is temporarily unavailable.' });
+  }
 });
 
-apiRouter.post('/clients', requireAuth, requirePermission('canManageClients'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.post('/clients', requireAuth, requirePermission('canManageClients'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const clientData = req.body || {};
-  const db = getDatabase();
   const email = cleanText(clientData.email, 254).toLowerCase();
   const website = cleanOptionalUrl(clientData.website);
   const avatarUrl = cleanOptionalUrl(clientData.avatarUrl);
@@ -1312,13 +1322,13 @@ apiRouter.post('/clients', requireAuth, requirePermission('canManageClients'), (
     res.status(400).json({ success: false, error: 'Invalid client email address.' });
     return;
   }
-  if (clientData.status !== undefined && !['active','inactive','prospect','on_hold'].includes(String(clientData.status))) {
+  if (clientData.status !== undefined && !['active','inactive','prospect','on_hold','completed','lead'].includes(String(clientData.status))) {
     res.status(400).json({ success: false, error: 'Invalid client status.' });
     return;
   }
 
   const newClient = {
-    id: `cli_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
+    id: String(clientData.id || ('cli_' + Date.now() + '_' + crypto.randomBytes(3).toString('hex'))),
     ...pickFields(clientData, ['name','company','companyName','clientName','email','phone','website','location','industry','status','contactPersonRole','notes']),
     name: cleanText(clientData.name || clientData.clientName, 160),
     company: cleanText(clientData.company || clientData.companyName, 200),
@@ -1339,31 +1349,64 @@ apiRouter.post('/clients', requireAuth, requirePermission('canManageClients'), (
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   };
-  db.clients.unshift(newClient);
-  saveDatabase(db);
 
-  recordAuditLog({
-    action: 'CLIENT_CREATED',
-    actor: req.user!.username,
-    actorRole: req.user!.role,
-    ip: req.ip,
-    userAgent: req.headers['user-agent'] as string,
-    details: `Created client "${newClient.company || newClient.clientName}".`,
-    severity: 'info'
-  });
+  try {
+    if (getDataSourceMode() === 'postgres') {
+      const created = await postgresClientRepository.create(newClient);
+      recordAuditLog({
+        action: 'CLIENT_CREATED',
+        actor: req.user!.username,
+        actorRole: req.user!.role,
+        ip: req.ip,
+        userAgent: req.headers['user-agent'] as string,
+        details: 'Created client "' + (created.company || created.clientName) + '".',
+        severity: 'info'
+      });
+      res.json({ success: true, client: created });
+      return;
+    }
 
-  res.json({ success: true, client: newClient });
+    const db = getDatabase();
+    db.clients.unshift(newClient);
+    saveDatabase(db);
+    recordAuditLog({
+      action: 'CLIENT_CREATED',
+      actor: req.user!.username,
+      actorRole: req.user!.role,
+      ip: req.ip,
+      userAgent: req.headers['user-agent'] as string,
+      details: 'Created client "' + (newClient.company || newClient.clientName) + '".',
+      severity: 'info'
+    });
+    res.json({ success: true, client: newClient });
+  } catch (error: any) {
+    if (error?.code === '23505') {
+      res.status(409).json({ success: false, error: 'Client already exists.' });
+      return;
+    }
+    console.error('[Clients] Create failed:', error);
+    res.status(500).json({ success: false, error: 'Client could not be created.' });
+  }
 });
 
-apiRouter.put('/clients/:id', requireAuth, requirePermission('canManageClients'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.put('/clients/:id', requireAuth, requirePermission('canManageClients'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
   const updates = req.body || {};
-  const db = getDatabase();
-  const idx = db.clients.findIndex(c => c.id === id);
-  if (idx === -1) {
-    res.status(404).json({ success: false, error: 'Client not found.' });
-    return;
+
+  if (getDataSourceMode() === 'postgres') {
+    const existing = await postgresClientRepository.findById(id);
+    if (!existing) {
+      res.status(404).json({ success: false, error: 'Client not found.' });
+      return;
+    }
+  } else {
+    const db = getDatabase();
+    if (!db.clients.some(c => c.id === id)) {
+      res.status(404).json({ success: false, error: 'Client not found.' });
+      return;
+    }
   }
+
   const patch = pickFields(updates || {}, ['name', 'companyName', 'clientName', 'email', 'phone', 'address', 'website', 'location', 'industry', 'status', 'tier', 'totalProjects', 'totalInvoiced', 'activeRetainer', 'notes', 'slaDailyAdSpendBudget', 'currentDailyAdSpend']);
   if (patch.email !== undefined) {
     patch.email = cleanText(patch.email, 254).toLowerCase();
@@ -1373,7 +1416,7 @@ apiRouter.put('/clients/:id', requireAuth, requirePermission('canManageClients')
     }
   }
   if (patch.website !== undefined) patch.website = cleanOptionalUrl(patch.website);
-  if (patch.status !== undefined && !['active','inactive','prospect','on_hold'].includes(String(patch.status))) {
+  if (patch.status !== undefined && !['active','inactive','prospect','on_hold','completed','lead'].includes(String(patch.status))) {
     res.status(400).json({ success: false, error: 'Invalid client status.' });
     return;
   }
@@ -1384,61 +1427,128 @@ apiRouter.put('/clients/:id', requireAuth, requirePermission('canManageClients')
     if (patch[key] !== undefined) {
       const numeric = normalizeNumber(patch[key], 0, key === 'totalProjects' ? 100000 : MAX_MONEY);
       if (numeric === null) {
-        res.status(400).json({ success: false, error: `Invalid numeric value for ${key}.` });
+        res.status(400).json({ success: false, error: 'Invalid numeric value for ' + key + '.' });
         return;
       }
       patch[key] = numeric;
     }
   }
   if (patch.activeRetainer !== undefined) patch.activeRetainer = Boolean(patch.activeRetainer);
-  db.clients[idx] = { ...db.clients[idx], ...patch, updatedAt: new Date().toISOString() };
-  saveDatabase(db);
-  recordAuditLog({
-    action: 'CLIENT_UPDATED',
-    actor: req.user!.username,
-    actorRole: req.user!.role,
-    ip: req.ip,
-    userAgent: req.headers['user-agent'] as string,
-    details: `Updated client ${id}.`,
-    severity: 'info'
-  });
-  res.json({ success: true, client: db.clients[idx] });
+
+  try {
+    if (getDataSourceMode() === 'postgres') {
+      const updated = await postgresClientRepository.update(id, patch as Record<string, any>);
+      if (!updated) {
+        res.status(404).json({ success: false, error: 'Client not found.' });
+        return;
+      }
+      recordAuditLog({
+        action: 'CLIENT_UPDATED',
+        actor: req.user!.username,
+        actorRole: req.user!.role,
+        ip: req.ip,
+        userAgent: req.headers['user-agent'] as string,
+        details: 'Updated client ' + id + '.',
+        severity: 'info'
+      });
+      res.json({ success: true, client: updated });
+      return;
+    }
+
+    const db = getDatabase();
+    const idx = db.clients.findIndex(c => c.id === id);
+    db.clients[idx] = { ...db.clients[idx], ...patch, updatedAt: new Date().toISOString() };
+    saveDatabase(db);
+    recordAuditLog({
+      action: 'CLIENT_UPDATED',
+      actor: req.user!.username,
+      actorRole: req.user!.role,
+      ip: req.ip,
+      userAgent: req.headers['user-agent'] as string,
+      details: 'Updated client ' + id + '.',
+      severity: 'info'
+    });
+    res.json({ success: true, client: db.clients[idx] });
+  } catch (error) {
+    console.error('[Clients] Update failed:', error);
+    res.status(500).json({ success: false, error: 'Client could not be updated.' });
+  }
 });
 
-apiRouter.delete('/clients/:id', requireAuth, requirePermission('canManageClients'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.delete('/clients/:id', requireAuth, requirePermission('canManageClients'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
-  const db = getDatabase();
-  db.clients = db.clients.filter(c => c.id !== id);
-  saveDatabase(db);
-  res.json({ success: true, message: 'Client deleted.' });
+
+  try {
+    if (getDataSourceMode() === 'postgres') {
+      const deleted = await postgresClientRepository.delete(id);
+      if (!deleted) {
+        res.status(404).json({ success: false, error: 'Client not found.' });
+        return;
+      }
+      recordAuditLog({
+        action: 'CLIENT_DELETED',
+        actor: req.user!.username,
+        actorRole: req.user!.role,
+        ip: req.ip,
+        userAgent: req.headers['user-agent'] as string,
+        details: 'Deleted client ' + id + '.',
+        severity: 'warning'
+      });
+      res.json({ success: true, message: 'Client deleted.' });
+      return;
+    }
+
+    const db = getDatabase();
+    const existing = db.clients.some(c => c.id === id);
+    db.clients = db.clients.filter(c => c.id !== id);
+    saveDatabase(db);
+    res.json({ success: true, message: existing ? 'Client deleted.' : 'Client not found.' });
+  } catch (error) {
+    if (error instanceof ClientHasDependenciesError) {
+      res.status(409).json({ success: false, error: error.message, code: error.code });
+      return;
+    }
+    console.error('[Clients] Delete failed:', error);
+    res.status(500).json({ success: false, error: 'Client could not be deleted.' });
+  }
 });
 
 // ----------------------------------------------------
 // 5. PROJECTS MANAGEMENT
 // ----------------------------------------------------
 
-apiRouter.get('/projects', requireAuth, requireAnyPermission('canManageProjects', 'canManageKanbanTasks'), (req: AuthenticatedRequest, res: Response): void => {
-  const db = getDatabase();
-  res.json({ success: true, projects: db.projects });
+apiRouter.get('/projects', requireAuth, requireAnyPermission('canManageProjects', 'canManageKanbanTasks'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  try {
+    if (getDataSourceMode() === 'postgres') {
+      res.json({ success: true, projects: await postgresProjectRepository.list() });
+      return;
+    }
+    const db = getDatabase();
+    res.json({ success: true, projects: db.projects });
+  } catch (error) {
+    console.error('[Projects] Failed to load projects:', error);
+    res.status(503).json({ success: false, error: 'Project data is temporarily unavailable.' });
+  }
 });
 
-apiRouter.post('/projects', requireAuth, requirePermission('canManageProjects'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.post('/projects', requireAuth, requirePermission('canManageProjects'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const projectData = req.body || {};
-  const db = getDatabase();
   const progressPercent = Math.min(100, Math.max(0, Number(projectData.progressPercent) || 0));
   const budget = Number(projectData.budget);
   if (!Number.isFinite(budget) || budget < 0 || budget > 100_000_000_000) {
     res.status(400).json({ success: false, error: 'Project budget must be a valid non-negative amount.' });
     return;
   }
+
   const newProject = {
-    id: `proj_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
+    id: String(projectData.id || ('proj_' + Date.now() + '_' + crypto.randomBytes(3).toString('hex'))),
     name: cleanText(projectData.name || projectData.title, 200),
     title: cleanText(projectData.title || projectData.name, 200),
     client: cleanText(projectData.client || projectData.clientCompany, 200),
     clientName: cleanText(projectData.clientName, 160),
     clientCompany: cleanText(projectData.clientCompany || projectData.client, 200),
     clientEmail: cleanText(projectData.clientEmail, 254).toLowerCase(),
+    clientId: cleanText(projectData.clientId, 120),
     crmLeadId: cleanText(projectData.crmLeadId, 100),
     serviceCategory: cleanText(projectData.serviceCategory, 120),
     status: ['planning','in_progress','review','completed','on_hold'].includes(String(projectData.status)) ? String(projectData.status) : 'planning',
@@ -1451,7 +1561,6 @@ apiRouter.post('/projects', requireAuth, requirePermission('canManageProjects'),
     teamMembers: Array.isArray(projectData.teamMembers) ? projectData.teamMembers.slice(0,50).map((v) => cleanText(v,160)) : [],
     techStack: Array.isArray(projectData.techStack) ? projectData.techStack.slice(0,50).map((v) => cleanText(v,120)) : [],
     milestones: Array.isArray(projectData.milestones) ? projectData.milestones.slice(0,50) : [],
-    tasks: Array.isArray(projectData.tasks) ? projectData.tasks.slice(0,200) : [],
     repositoryUrl: cleanOptionalUrl(projectData.repositoryUrl),
     figmaUrl: cleanOptionalUrl(projectData.figmaUrl),
     liveStagingUrl: cleanOptionalUrl(projectData.liveStagingUrl),
@@ -1459,21 +1568,61 @@ apiRouter.post('/projects', requireAuth, requirePermission('canManageProjects'),
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   };
-  db.projects.unshift(newProject);
-  saveDatabase(db);
-  res.json({ success: true, project: newProject });
+
+  try {
+    if (getDataSourceMode() === 'postgres') {
+      const created = await postgresProjectRepository.create(newProject);
+      recordAuditLog({
+        action: 'PROJECT_CREATED',
+        actor: req.user!.username,
+        actorRole: req.user!.role,
+        ip: req.ip,
+        userAgent: req.headers['user-agent'] as string,
+        details: 'Created project ' + created.id + '.',
+        severity: 'info'
+      });
+      res.json({ success: true, project: created });
+      return;
+    }
+
+    const db = getDatabase();
+    const legacyProject = {
+      ...newProject,
+      tasks: Array.isArray(projectData.tasks) ? projectData.tasks.slice(0, 200) : [],
+      milestones: Array.isArray(projectData.milestones) ? projectData.milestones.slice(0, 50) : []
+    };
+    db.projects.unshift(legacyProject);
+    saveDatabase(db);
+    res.json({ success: true, project: legacyProject });
+  } catch (error: any) {
+    if (error?.code === '23503') {
+      res.status(400).json({ success: false, error: 'Referenced client does not exist.' });
+      return;
+    }
+    console.error('[Projects] Create failed:', error);
+    res.status(500).json({ success: false, error: 'Project could not be created.' });
+  }
 });
 
-apiRouter.put('/projects/:id', requireAuth, requirePermission('canManageProjects'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.put('/projects/:id', requireAuth, requirePermission('canManageProjects'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
   const updates = req.body || {};
-  const db = getDatabase();
-  const idx = db.projects.findIndex(p => p.id === id);
-  if (idx === -1) {
-    res.status(404).json({ success: false, error: 'Project not found.' });
-    return;
+
+  if (getDataSourceMode() === 'postgres') {
+    const existing = await postgresProjectRepository.findById(id);
+    if (!existing) {
+      res.status(404).json({ success: false, error: 'Project not found.' });
+      return;
+    }
+  } else {
+    const db = getDatabase();
+    if (!db.projects.some(p => p.id === id)) {
+      res.status(404).json({ success: false, error: 'Project not found.' });
+      return;
+    }
   }
-  const patch = pickFields(updates || {}, ['title', 'name', 'client', 'clientName', 'clientCompany', 'clientEmail', 'serviceCategory', 'status', 'health', 'budget', 'progressPercent', 'startDate', 'targetEndDate', 'teamLead', 'teamMembers', 'techStack', 'repositoryUrl', 'figmaUrl', 'liveStagingUrl', 'notes', 'tasks']);
+
+  const patch = pickFields(updates || {}, ['title', 'name', 'client', 'clientName', 'clientCompany', 'clientEmail', 'clientId', 'serviceCategory', 'status', 'health', 'budget', 'progressPercent', 'startDate', 'targetEndDate', 'teamLead', 'teamMembers', 'techStack', 'repositoryUrl', 'figmaUrl', 'liveStagingUrl', 'notes', 'version']);
   for (const key of ['title','name','client','clientName','clientCompany','serviceCategory','teamLead','notes'] as const) {
     if (patch[key] !== undefined) patch[key] = cleanText(patch[key], key === 'notes' ? 3000 : 200);
   }
@@ -1492,15 +1641,13 @@ apiRouter.put('/projects/:id', requireAuth, requirePermission('canManageProjects
     res.status(400).json({ success: false, error: 'Invalid project health state.' });
     return;
   }
-  for (const key of ['budget'] as const) {
-    if (patch[key] !== undefined) {
-      const numeric = normalizeNumber(patch[key], 0, MAX_MONEY);
-      if (numeric === null) {
-        res.status(400).json({ success: false, error: 'Invalid project budget.' });
-        return;
-      }
-      patch[key] = numeric;
+  if (patch.budget !== undefined) {
+    const numeric = normalizeNumber(patch.budget, 0, MAX_MONEY);
+    if (numeric === null) {
+      res.status(400).json({ success: false, error: 'Invalid project budget.' });
+      return;
     }
+    patch.budget = numeric;
   }
   if (patch.progressPercent !== undefined) {
     const progress = normalizeNumber(patch.progressPercent, 0, 100);
@@ -1512,7 +1659,7 @@ apiRouter.put('/projects/:id', requireAuth, requirePermission('canManageProjects
   }
   for (const key of ['startDate','targetEndDate'] as const) {
     if (patch[key] !== undefined && !isValidDate(patch[key])) {
-      res.status(400).json({ success: false, error: `Invalid project date for ${key}.` });
+      res.status(400).json({ success: false, error: 'Invalid project date for ' + key + '.' });
       return;
     }
   }
@@ -1521,45 +1668,108 @@ apiRouter.put('/projects/:id', requireAuth, requirePermission('canManageProjects
   }
   if (patch.teamMembers !== undefined) patch.teamMembers = normalizeStringArray(patch.teamMembers, 50, 160);
   if (patch.techStack !== undefined) patch.techStack = normalizeStringArray(patch.techStack, 50, 120);
-  if (patch.tasks !== undefined) patch.tasks = Array.isArray(patch.tasks) ? patch.tasks.slice(0, 200) : [];
-  db.projects[idx] = { ...db.projects[idx], ...patch, updatedAt: new Date().toISOString() };
-  saveDatabase(db);
-  recordAuditLog({
-    action: 'PROJECT_UPDATED',
-    actor: req.user!.username,
-    actorRole: req.user!.role,
-    ip: req.ip,
-    userAgent: req.headers['user-agent'] as string,
-    details: `Updated project ${id}.`,
-    severity: 'info'
-  });
-  res.json({ success: true, project: db.projects[idx] });
+
+  try {
+    if (getDataSourceMode() === 'postgres') {
+      const updated = await postgresProjectRepository.update(id, patch as Record<string, any>);
+      if (!updated) {
+        res.status(404).json({ success: false, error: 'Project not found.' });
+        return;
+      }
+      recordAuditLog({
+        action: 'PROJECT_UPDATED',
+        actor: req.user!.username,
+        actorRole: req.user!.role,
+        ip: req.ip,
+        userAgent: req.headers['user-agent'] as string,
+        details: 'Updated project ' + id + '.',
+        severity: 'info'
+      });
+      res.json({ success: true, project: updated });
+      return;
+    }
+
+    const db = getDatabase();
+    const idx = db.projects.findIndex(p => p.id === id);
+    db.projects[idx] = { ...db.projects[idx], ...patch, updatedAt: new Date().toISOString() };
+    saveDatabase(db);
+    recordAuditLog({
+      action: 'PROJECT_UPDATED',
+      actor: req.user!.username,
+      actorRole: req.user!.role,
+      ip: req.ip,
+      userAgent: req.headers['user-agent'] as string,
+      details: 'Updated project ' + id + '.',
+      severity: 'info'
+    });
+    res.json({ success: true, project: db.projects[idx] });
+  } catch (error: any) {
+    if (error instanceof ProjectVersionConflictError) {
+      res.status(409).json({ success: false, error: error.message, code: error.code });
+      return;
+    }
+    if (error?.code === '23503') {
+      res.status(400).json({ success: false, error: 'Referenced client does not exist.' });
+      return;
+    }
+    if (error instanceof ProjectArchiveMutationError) {
+      res.status(409).json({ success: false, error: error.message, code: error.code });
+      return;
+    }
+    console.error('[Projects] Update failed:', error);
+    res.status(500).json({ success: false, error: 'Project could not be updated.' });
+  }
 });
 
-apiRouter.delete('/projects/:id', requireAuth, requirePermission('canManageProjects'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.delete('/projects/:id', requireAuth, requirePermission('canManageProjects'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
-  const db = getDatabase();
-  const project = db.projects.find((item: any) => item.id === id);
 
-  if (!project) {
-    res.status(404).json({ success: false, error: 'Project not found.' });
-    return;
+  try {
+    if (getDataSourceMode() === 'postgres') {
+      const archived = await postgresProjectRepository.archive(id);
+      if (!archived) {
+        res.status(404).json({ success: false, error: 'Project not found.' });
+        return;
+      }
+      recordAuditLog({
+        action: 'PROJECT_ARCHIVED',
+        actor: req.user!.username,
+        actorRole: req.user!.role,
+        ip: req.ip,
+        userAgent: req.headers['user-agent'] as string,
+        details: 'Archived project ' + id + '.',
+        severity: 'warning'
+      });
+      res.json({ success: true, message: 'Project archived.' });
+      return;
+    }
+
+    const db = getDatabase();
+    const project = db.projects.find((item: any) => item.id === id);
+    if (!project) {
+      res.status(404).json({ success: false, error: 'Project not found.' });
+      return;
+    }
+    db.projects = db.projects.filter(p => p.id !== id);
+    saveDatabase(db);
+    recordAuditLog({
+      action: 'PROJECT_DELETED',
+      actor: req.user!.username,
+      actorRole: req.user!.role,
+      ip: req.ip,
+      userAgent: req.headers['user-agent'] as string,
+      details: 'Deleted project "' + (project.name || project.title || id) + '".',
+      severity: 'warning'
+    });
+    res.json({ success: true, message: 'Project removed.' });
+  } catch (error) {
+    if (error instanceof ProjectArchiveMutationError) {
+      res.status(409).json({ success: false, error: error.message, code: error.code });
+      return;
+    }
+    console.error('[Projects] Delete/archive failed:', error);
+    res.status(500).json({ success: false, error: 'Project could not be archived.' });
   }
-
-  db.projects = db.projects.filter(p => p.id !== id);
-  saveDatabase(db);
-
-  recordAuditLog({
-    action: 'PROJECT_DELETED',
-    actor: req.user!.username,
-    actorRole: req.user!.role,
-    ip: req.ip,
-    userAgent: req.headers['user-agent'] as string,
-    details: `Deleted project "${project.name || project.title || id}".`,
-    severity: 'warning'
-  });
-
-  res.json({ success: true, message: 'Project removed.' });
 });
 
 // ----------------------------------------------------
@@ -2849,12 +3059,21 @@ apiRouter.delete('/crm/proposals/:id', requireAuth, requirePermission('canManage
 // 14. PROJECT TASKS & TIME TRACKING (PARTS 16, 17, 18)
 // ----------------------------------------------------
 
-apiRouter.get('/projects/tasks', requireAuth, requireAnyPermission('canManageKanbanTasks', 'canManageProjects'), (req: AuthenticatedRequest, res: Response): void => {
-  const db = getDatabase();
-  res.json({ success: true, tasks: db.tasks || [] });
+apiRouter.get('/projects/tasks', requireAuth, requireAnyPermission('canManageKanbanTasks', 'canManageProjects'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  try {
+    if (getDataSourceMode() === 'postgres') {
+      res.json({ success: true, tasks: await postgresTaskRepository.list() });
+      return;
+    }
+    const db = getDatabase();
+    res.json({ success: true, tasks: db.tasks || [] });
+  } catch (error) {
+    console.error('[Tasks] Failed to load tasks:', error);
+    res.status(503).json({ success: false, error: 'Task data is temporarily unavailable.' });
+  }
 });
 
-apiRouter.post('/projects/tasks', requireAuth, requirePermission('canManageKanbanTasks'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.post('/projects/tasks', requireAuth, requirePermission('canManageKanbanTasks'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const taskData = req.body || {};
   const dueDate = String(taskData.dueDate || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10));
   const estimatedHours = normalizeNumber(taskData.estimatedHours ?? 8, 0, 10000, 8);
@@ -2867,13 +3086,14 @@ apiRouter.post('/projects/tasks', requireAuth, requirePermission('canManageKanba
     return;
   }
 
-  const db = getDatabase();
   const newTask = {
-    id: `task_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
+    id: String(taskData.id || ('task_' + Date.now() + '_' + crypto.randomBytes(3).toString('hex'))),
     title: cleanText(taskData.title, 240),
+    description: cleanText(taskData.description, 3000),
     projectId: cleanText(taskData.projectId, 120),
     projectName: cleanText(taskData.projectName || 'General Delivery', 200),
     assignee: cleanText(taskData.assignee || req.user!.name || req.user!.username, 160),
+    assigneeUserId: cleanText(taskData.assigneeUserId, 120),
     reporter: req.user!.name || req.user!.username,
     priority,
     status,
@@ -2882,46 +3102,68 @@ apiRouter.post('/projects/tasks', requireAuth, requirePermission('canManageKanba
     actualHours,
     tags: normalizeStringArray(Array.isArray(taskData.tags) && taskData.tags.length ? taskData.tags : ['Sprint'], 30, 80),
     subtasks: Array.isArray(taskData.subtasks) ? taskData.subtasks.slice(0, 50) : [],
-    description: cleanText(taskData.description, 3000),
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   };
 
-  if (!db.tasks) db.tasks = [];
-  db.tasks.unshift(newTask);
-  saveDatabase(db);
-  recordAuditLog({
-    action: 'TASK_CREATED',
-    actor: req.user!.username,
-    actorRole: req.user!.role,
-    ip: req.ip,
-    userAgent: req.headers['user-agent'] as string,
-    details: `Created task "${newTask.title}".`,
-    severity: 'info'
-  });
-  res.json({ success: true, task: newTask });
-});
-
-apiRouter.put('/projects/tasks/:id', requireAuth, requirePermission('canManageKanbanTasks'), (req: AuthenticatedRequest, res: Response): void => {
-  const { id } = req.params;
-  const updates = req.body || {};
-  const db = getDatabase();
-  const idx = (db.tasks || []).findIndex(t => t.id === id);
-
-  if (idx === -1) {
-    res.status(404).json({ success: false, error: 'Task not found.' });
+  if (!newTask.projectId) {
+    res.status(400).json({ success: false, error: 'Task projectId is required.' });
     return;
   }
 
-  const patch = pickFields(updates, ['title','description','projectId','projectName','assignee','priority','status','dueDate','estimatedHours','actualHours','tags','subtasks']);
-  for (const key of ['title','description','projectId','projectName','assignee'] as const) {
+  try {
+    if (getDataSourceMode() === 'postgres') {
+      const created = await postgresTaskRepository.create(newTask);
+      recordAuditLog({
+        action: 'TASK_CREATED',
+        actor: req.user!.username,
+        actorRole: req.user!.role,
+        ip: req.ip,
+        userAgent: req.headers['user-agent'] as string,
+        details: 'Created task "' + created.title + '".',
+        severity: 'info'
+      });
+      res.json({ success: true, task: created });
+      return;
+    }
+
+    const db = getDatabase();
+    if (!db.tasks) db.tasks = [];
+    db.tasks.unshift(newTask);
+    saveDatabase(db);
+    recordAuditLog({
+      action: 'TASK_CREATED',
+      actor: req.user!.username,
+      actorRole: req.user!.role,
+      ip: req.ip,
+      userAgent: req.headers['user-agent'] as string,
+      details: 'Created task "' + newTask.title + '".',
+      severity: 'info'
+    });
+    res.json({ success: true, task: newTask });
+  } catch (error: any) {
+    if (error?.code === '23503') {
+      res.status(400).json({ success: false, error: 'Referenced project or assignee does not exist.' });
+      return;
+    }
+    console.error('[Tasks] Create failed:', error);
+    res.status(500).json({ success: false, error: 'Task could not be created.' });
+  }
+});
+
+apiRouter.put('/projects/tasks/:id', requireAuth, requirePermission('canManageKanbanTasks'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  const { id } = req.params;
+  const updates = req.body || {};
+  const patch = pickFields(updates, ['title','description','projectId','projectName','assignee','assigneeUserId','priority','status','dueDate','estimatedHours','actualHours','tags','subtasks','version']);
+
+  for (const key of ['title','description','projectId','projectName','assignee','assigneeUserId'] as const) {
     if (patch[key] !== undefined) patch[key] = cleanText(patch[key], key === 'description' ? 3000 : 240);
   }
   if (patch.status !== undefined && !['todo','in_progress','review','done'].includes(String(patch.status))) {
     res.status(400).json({ success: false, error: 'Invalid task status.' });
     return;
   }
-  if (patch.priority !== undefined && !DEAL_PRIORITIES.includes(String(patch.priority) as any)) {
+  if (patch.priority !== undefined && !['low','medium','high','urgent'].includes(String(patch.priority))) {
     res.status(400).json({ success: false, error: 'Invalid task priority.' });
     return;
   }
@@ -2933,7 +3175,7 @@ apiRouter.put('/projects/tasks/:id', requireAuth, requirePermission('canManageKa
     if (patch[key] !== undefined) {
       const numeric = normalizeNumber(patch[key], 0, 10000);
       if (numeric === null) {
-        res.status(400).json({ success: false, error: `Invalid task hours for ${key}.` });
+        res.status(400).json({ success: false, error: 'Invalid task hours for ' + key + '.' });
         return;
       }
       patch[key] = numeric;
@@ -2941,26 +3183,96 @@ apiRouter.put('/projects/tasks/:id', requireAuth, requirePermission('canManageKa
   }
   if (patch.tags !== undefined) patch.tags = normalizeStringArray(patch.tags, 30, 80);
   if (patch.subtasks !== undefined) patch.subtasks = Array.isArray(patch.subtasks) ? patch.subtasks.slice(0, 50) : [];
-  db.tasks[idx] = { ...db.tasks[idx], ...patch, updatedAt: new Date().toISOString() };
-  saveDatabase(db);
-  recordAuditLog({
-    action: 'TASK_UPDATED',
-    actor: req.user!.username,
-    actorRole: req.user!.role,
-    ip: req.ip,
-    userAgent: req.headers['user-agent'] as string,
-    details: `Updated task ${id}.`,
-    severity: 'info'
-  });
-  res.json({ success: true, task: db.tasks[idx] });
+
+  try {
+    if (getDataSourceMode() === 'postgres') {
+      const existing = await postgresTaskRepository.findById(id);
+      if (!existing) {
+        res.status(404).json({ success: false, error: 'Task not found.' });
+        return;
+      }
+      const updated = await postgresTaskRepository.update(id, patch as Record<string, any>);
+      if (!updated) {
+        res.status(404).json({ success: false, error: 'Task not found.' });
+        return;
+      }
+      recordAuditLog({
+        action: 'TASK_UPDATED',
+        actor: req.user!.username,
+        actorRole: req.user!.role,
+        ip: req.ip,
+        userAgent: req.headers['user-agent'] as string,
+        details: 'Updated task ' + id + '.',
+        severity: 'info'
+      });
+      res.json({ success: true, task: updated });
+      return;
+    }
+
+    const db = getDatabase();
+    const idx = (db.tasks || []).findIndex(t => t.id === id);
+    if (idx === -1) {
+      res.status(404).json({ success: false, error: 'Task not found.' });
+      return;
+    }
+    db.tasks[idx] = { ...db.tasks[idx], ...patch, updatedAt: new Date().toISOString() };
+    saveDatabase(db);
+    recordAuditLog({
+      action: 'TASK_UPDATED',
+      actor: req.user!.username,
+      actorRole: req.user!.role,
+      ip: req.ip,
+      userAgent: req.headers['user-agent'] as string,
+      details: 'Updated task ' + id + '.',
+      severity: 'info'
+    });
+    res.json({ success: true, task: db.tasks[idx] });
+  } catch (error: any) {
+    if (error instanceof TaskVersionConflictError) {
+      res.status(409).json({ success: false, error: error.message, code: error.code });
+      return;
+    }
+    if (error instanceof ProjectArchiveMutationError || error?.code === '23503') {
+      res.status(409).json({ success: false, error: error.message || 'Task references an invalid or archived project.', code: error.code || 'TASK_DEPENDENCY_ERROR' });
+      return;
+    }
+    console.error('[Tasks] Update failed:', error);
+    res.status(500).json({ success: false, error: 'Task could not be updated.' });
+  }
 });
 
-apiRouter.delete('/projects/tasks/:id', requireAuth, requirePermission('canManageKanbanTasks'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.delete('/projects/tasks/:id', requireAuth, requirePermission('canManageKanbanTasks'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
-  const db = getDatabase();
-  db.tasks = (db.tasks || []).filter(t => t.id !== id);
-  saveDatabase(db);
-  res.json({ success: true, message: 'Task deleted.' });
+
+  try {
+    if (getDataSourceMode() === 'postgres') {
+      const archived = await postgresTaskRepository.archive(id);
+      if (!archived) {
+        res.status(404).json({ success: false, error: 'Task not found.' });
+        return;
+      }
+      recordAuditLog({
+        action: 'TASK_ARCHIVED',
+        actor: req.user!.username,
+        actorRole: req.user!.role,
+        ip: req.ip,
+        userAgent: req.headers['user-agent'] as string,
+        details: 'Archived task ' + id + '.',
+        severity: 'warning'
+      });
+      res.json({ success: true, message: 'Task archived.' });
+      return;
+    }
+
+    const db = getDatabase();
+    const exists = (db.tasks || []).some(t => t.id === id);
+    db.tasks = (db.tasks || []).filter(t => t.id !== id);
+    saveDatabase(db);
+    res.json({ success: true, message: exists ? 'Task deleted.' : 'Task not found.' });
+  } catch (error) {
+    console.error('[Tasks] Archive failed:', error);
+    res.status(500).json({ success: false, error: 'Task could not be archived.' });
+  }
 });
 
 // Time Tracking
