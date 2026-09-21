@@ -88,7 +88,17 @@ export class PostgresTimeLogRepository {
       throw new Error('Valid user, project, work date, currency, and duration are required.');
     }
 
+    const idempotencyKey = input.idempotencyKey ? String(input.idempotencyKey).slice(0, 100) : null;
+
     return withPostgresTransaction(async client => {
+      if (idempotencyKey) {
+        const existing = await client.query<Row>(
+          'SELECT * FROM time_logs WHERE user_id=$1 AND idempotency_key=$2 LIMIT 1',
+          [userId, idempotencyKey]
+        );
+        if (existing.rows[0]) return mapTimeLog(existing.rows[0]);
+      }
+
       const project = await client.query<Row>(
         'SELECT id, currency, archived_at FROM projects WHERE id=$1 FOR SHARE',
         [projectId]
@@ -135,15 +145,6 @@ export class PostgresTimeLogRepository {
         billable: input.billable !== undefined ? Boolean(input.billable) : true,
         notes: input.notes
       };
-
-      const idempotencyKey = input.idempotencyKey ? String(input.idempotencyKey).slice(0, 100) : null;
-      if (idempotencyKey) {
-        const existing = await client.query<Row>(
-          'SELECT * FROM time_logs WHERE user_id=$1 AND idempotency_key=$2 LIMIT 1',
-          [userId, idempotencyKey]
-        );
-        if (existing.rows[0]) return mapTimeLog(existing.rows[0]);
-      }
 
       const loggedAt = input.loggedAt || (workDate + 'T12:00:00.000Z');
       const result = await client.query<Row>(
