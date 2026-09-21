@@ -63,6 +63,7 @@ import { postgresExpenseRepository, ExpenseImmutableError, ExpenseNotFoundError,
 import { postgresApprovalRepository } from './postgres-approval-repository.ts';
 import { postgresNotificationRepository } from './postgres-notification-repository.ts';
 import { postgresDocumentRepository } from './postgres-document-repository.ts';
+import { postgresAuditLogRepository } from './postgres-audit-log-repository.ts';
 
 
 const ROLE_POLICIES: Record<string, {
@@ -2602,14 +2603,17 @@ apiRouter.put('/cms/settings', requireAuth, requirePermission('canManageCmsConte
 // 9. AUDIT LOGS (Server-Side, Tamper-Resistant)
 // ----------------------------------------------------
 
-apiRouter.get('/audit-logs', requireAuth, requirePermission('canViewSecurityAuditLogs'), (req: AuthenticatedRequest, res: Response): void => {
-  const db = getDatabase();
-  res.json({ success: true, logs: db.auditLogs });
+apiRouter.get('/audit-logs', requireAuth, requirePermission('canViewSecurityAuditLogs'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  const logs = getDataSourceMode() === 'postgres'
+    ? await postgresAuditLogRepository.list()
+    : getDatabase().auditLogs;
+  res.json({ success: true, logs });
 });
 
-apiRouter.get('/audit-logs/integrity', requireAuth, requirePermission('canViewSecurityAuditLogs'), (req: AuthenticatedRequest, res: Response): void => {
-  const db = getDatabase();
-  const integrity = verifyAuditLogChain(db);
+apiRouter.get('/audit-logs/integrity', requireAuth, requirePermission('canViewSecurityAuditLogs'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  const integrity = getDataSourceMode() === 'postgres'
+    ? await postgresAuditLogRepository.verifyChain()
+    : verifyAuditLogChain(getDatabase());
   res.status(integrity.valid ? 200 : 409).json({
     success: integrity.valid,
     integrity
