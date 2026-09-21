@@ -50,12 +50,13 @@ import {
 } from '../../lib/crmStore';
 import { saveAgencyProject, AgencyProject } from '../../lib/projectStore';
 import { saveAgencyInvoice } from '../../lib/financeStore';
-import { saveAgencyClient } from '../../lib/clientStore';
+import { saveAgencyClient, AgencyClient } from '../../lib/clientStore';
 import { useLanguage } from '../../lib/LanguageContext';
 import { useDragToScroll } from '../../lib/useDragToScroll';
 import { ScrollShadowContainer } from '../../components/ui/ScrollShadowContainer';
 import { CustomSelect } from '../../components/ui/CustomSelect';
 import { formatAmount, getActiveCurrency, setGlobalCurrency, CurrencyCode, CURRENCY_EVENT } from '../../lib/currency';
+import { api } from '../../lib/apiClient';
 
 export const AdminCrm: React.FC = () => {
   const { language, t } = useLanguage();
@@ -74,6 +75,7 @@ export const AdminCrm: React.FC = () => {
 
   // Modals & Drawer
   const [selectedLead, setSelectedLead] = useState<CrmLead | null>(null);
+  const [convertingLeadId, setConvertingLeadId] = useState<string | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [editingLead, setEditingLead] = useState<CrmLead | null>(null);
@@ -204,8 +206,13 @@ export const AdminCrm: React.FC = () => {
     setDragOverStage(null);
   };
 
-  const handleStageChange = (leadId: string, newStage: CrmStage) => {
-    updateLeadStage(leadId, newStage);
+  const handleStageChange = async (leadId: string, newStage: CrmStage) => {
+    try {
+      await updateLeadStage(leadId, newStage);
+    } catch (error: any) {
+      showToast(error?.message || (language === 'id' ? 'Gagal memperbarui tahap deal.' : 'Failed to update deal stage.'));
+      return;
+    }
     const stageDef = CRM_STAGE_DEFINITIONS.find(s => s.key === newStage);
     const stageName = language === 'id' ? (stageDef?.labelId || newStage) : (stageDef?.label || newStage);
     showToast(language === 'id' ? `Tahap deal diperbarui ke ${stageName}` : `Lead stage updated to ${stageName}`);
@@ -214,9 +221,16 @@ export const AdminCrm: React.FC = () => {
     }
   };
 
-  const handleConvertToProject = (lead: CrmLead) => {
+  const handleConvertToProject = async (lead: CrmLead) => {
+    if (convertingLeadId) return;
+    setConvertingLeadId(lead.id);
+
+    const projectId = 'proj_' + Date.now().toString(36);
+    const invoiceId = 'inv_' + Date.now().toString(36);
+    const clientId = 'cli_' + Date.now().toString(36);
+
     const newProj: AgencyProject = {
-      id: 'proj_' + Date.now().toString(36),
+      id: projectId,
       name: `${lead.company} — ${lead.servicePillar}`,
       clientName: lead.clientName,
       clientCompany: lead.company,
@@ -255,21 +269,17 @@ export const AdminCrm: React.FC = () => {
       updatedAt: new Date().toISOString()
     };
 
-    // 1. Save Active Agency Project
-    saveAgencyProject(newProj);
-
-    // 2. Automatically generate 50% Retainer Down Payment Invoice
     const downPaymentAmount = Math.round(lead.dealValue * 0.5);
     const taxAmount = Math.round(downPaymentAmount * 0.11);
-    saveAgencyInvoice({
-      id: 'inv_' + Date.now().toString(36),
-      invoiceNumber: `KAPI-INV-${new Date().getFullYear()}-${Math.floor(100 + Math.random() * 900)}`,
+    const invoicePayload = {
+      id: invoiceId,
+      invoiceNumber: `KAPI-INV-${new Date().getFullYear()}-${Date.now().toString().slice(-6)}`,
       type: 'invoice',
       clientName: lead.clientName,
       clientCompany: lead.company,
       clientEmail: lead.email || '',
       clientPhone: lead.phone || '',
-      projectId: newProj.id,
+      projectId: projectId,
       leadId: lead.id,
       items: [
         {
@@ -284,7 +294,7 @@ export const AdminCrm: React.FC = () => {
       discountPercent: 0,
       discountAmount: 0,
       taxPercent: 11,
-      taxAmount: taxAmount,
+      taxAmount,
       total: downPaymentAmount + taxAmount,
       currency: 'IDR',
       status: 'sent',
@@ -294,11 +304,10 @@ export const AdminCrm: React.FC = () => {
       paymentTerms: 'Bank Transfer Net 14. Mandiri: 123-00-998877-1 / BCA: 889-012-3344 a/n PT Kapitech Digital Indonesia',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
-    });
+    };
 
-    // 3. Centralized Client Directory Synchronization
-    saveAgencyClient({
-      id: 'cli_' + Date.now().toString(36),
+    const clientPayload: AgencyClient = {
+      id: clientId,
       name: lead.clientName,
       company: lead.company,
       email: lead.email || '',
@@ -306,7 +315,7 @@ export const AdminCrm: React.FC = () => {
       location: 'Indonesia',
       industry: lead.servicePillar,
       status: 'active',
-      totalSpend: lead.dealValue,
+      totalSpend: 0,
       projectsCount: 1,
       contactPersonRole: 'Primary Stakeholder',
       notes: `Converted from CRM Closed Won Deal (${lead.servicePillar})`,
@@ -314,15 +323,53 @@ export const AdminCrm: React.FC = () => {
       currentDailyAdSpend: 5000000,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
-    });
+    };
 
-    showToast(
-      language === 'id' 
-        ? `Deal berhasil dikonversi: Proyek, Invoice DP 50%, & Klien Direktori telah dibuat!` 
-        : `Deal converted: Project, 50% Retainer Invoice, & Client record created!`
-    );
+    let projectCreated = false;
+    let invoiceCreated = false;
+
+    try {
+      await saveAgencyProject(newProj);
+      projectCreated = true;
+
+      const invoiceRes = await api.finance.createInvoice(invoicePayload);
+      if (!invoiceRes.success || !invoiceRes.data?.invoice) {
+        throw new Error(invoiceRes.error || 'Invoice could not be created on the server.');
+      }
+      invoiceCreated = true;
+
+      await saveAgencyClient(clientPayload);
+      showToast(
+        language === 'id'
+          ? 'Deal berhasil dikonversi: Project, Invoice DP 50%, dan Client berhasil dibuat di server.'
+          : 'Deal converted: Project, 50% Retainer Invoice, and Client were created on the server.'
+      );
+    } catch (error: any) {
+      if (invoiceCreated) {
+        try {
+          await api.finance.deleteInvoice(invoiceId);
+        } catch (rollbackError) {
+          console.debug('Invoice rollback failed after CRM conversion error:', rollbackError);
+        }
+      }
+      if (projectCreated) {
+        try {
+          const { deleteAgencyProject } = await import('../../lib/projectStore');
+          await deleteAgencyProject(projectId);
+        } catch (rollbackError) {
+          console.debug('Project rollback failed after CRM conversion error:', rollbackError);
+        }
+      }
+      showToast(
+        error?.message ||
+        (language === 'id'
+          ? 'Konversi deal gagal. Tidak ada status sukses yang ditampilkan.'
+          : 'Deal conversion failed. No success state was recorded.')
+      );
+    } finally {
+      setConvertingLeadId(null);
+    }
   };
-
   const handleOpenLeadDrawer = (lead: CrmLead) => {
     setSelectedLead(lead);
     setIsDrawerOpen(true);
@@ -360,7 +407,7 @@ export const AdminCrm: React.FC = () => {
     setIsAddModalOpen(true);
   };
 
-  const handleSaveLead = (e: React.FormEvent) => {
+  const handleSaveLead = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formClientName.trim() || !formCompany.trim()) {
       alert(language === 'id' ? 'Nama klien dan perusahaan wajib diisi.' : 'Client name and company are required.');
@@ -386,14 +433,23 @@ export const AdminCrm: React.FC = () => {
       updatedAt: new Date().toISOString()
     };
 
-    saveCrmLead(leadData);
-    setIsAddModalOpen(false);
-    showToast(editingLead ? (language === 'id' ? 'Data prospek berhasil diperbarui.' : 'Deal updated successfully.') : (language === 'id' ? 'Deal prospek baru berhasil dibuat.' : 'New deal created successfully.'));
+    try {
+      await saveCrmLead(leadData);
+      setIsAddModalOpen(false);
+      showToast(editingLead ? (language === 'id' ? 'Data prospek berhasil diperbarui.' : 'Deal updated successfully.') : (language === 'id' ? 'Deal prospek baru berhasil dibuat.' : 'New deal created successfully.'));
+    } catch (error: any) {
+      showToast(error?.message || (language === 'id' ? 'Gagal menyimpan deal.' : 'Failed to save deal.'));
+    }
   };
 
-  const handleDeleteLead = (id: string, name: string) => {
+  const handleDeleteLead = async (id: string, name: string) => {
     if (window.confirm(language === 'id' ? `Hapus prospek ${name}?` : `Delete lead ${name}?`)) {
-      deleteCrmLead(id);
+      try {
+        await deleteCrmLead(id);
+      } catch (error: any) {
+        showToast(error?.message || (language === 'id' ? 'Gagal menghapus deal.' : 'Failed to delete deal.'));
+        return;
+      }
       if (selectedLead && selectedLead.id === id) {
         setIsDrawerOpen(false);
         setSelectedLead(null);
@@ -402,12 +458,17 @@ export const AdminCrm: React.FC = () => {
     }
   };
 
-  const handleAddNote = (e: React.FormEvent) => {
+  const handleAddNote = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedLead || !newNoteText.trim()) return;
 
-    addLeadNote(selectedLead.id, newNoteText.trim(), 'note');
-    setNewNoteText('');
+    try {
+      await addLeadNote(selectedLead.id, newNoteText.trim(), 'note');
+      setNewNoteText('');
+    } catch (error: any) {
+      showToast(error?.message || (language === 'id' ? 'Gagal menyimpan catatan.' : 'Failed to save note.'));
+      return;
+    }
     const updated = getCmsLeads().find(l => l.id === selectedLead.id);
     if (updated) setSelectedLead(updated);
     showToast(language === 'id' ? 'Catatan aktivitas ditambahkan.' : 'Activity note added.');
@@ -1251,10 +1312,13 @@ export const AdminCrm: React.FC = () => {
               {selectedLead.stage === 'won' && (
                 <button
                   onClick={() => handleConvertToProject(selectedLead)}
-                  className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center gap-1.5 shadow-lg shadow-emerald-600/20 min-h-[40px]"
+                  disabled={convertingLeadId === selectedLead.id}
+                  className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center gap-1.5 shadow-lg shadow-emerald-600/20 min-h-[40px] disabled:opacity-60 disabled:cursor-not-allowed"
                 >
-                  <Layers size={13} />
-                  <span>{t('admin.crm.convertToProject')}</span>
+                  {convertingLeadId === selectedLead.id ? <Clock size={13} className="animate-spin" /> : <Layers size={13} />}
+                  <span>{convertingLeadId === selectedLead.id
+                    ? (language === 'id' ? 'Mengonversi...' : 'Converting...')
+                    : t('admin.crm.convertToProject')}</span>
                 </button>
               )}
             </div>
