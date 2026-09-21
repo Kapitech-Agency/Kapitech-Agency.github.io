@@ -10,9 +10,8 @@ const base=(r:Row,x:Row={})=>({...obj(r.metadata),...x,id:r.id});
 const mapUser=(r:Row):StoredUser=>({id:r.id,name:r.name,username:r.username,email:r.email,passwordHash:r.password_hash,salt:r.salt,passwordAlgorithm:r.password_algorithm,role:r.role,stakeholderType:r.stakeholder_type,permissions:obj(r.permissions),mfaEnabled:r.mfa_enabled,mfaSecret:r.mfa_secret??undefined,mfaPendingSecret:r.mfa_pending_secret??undefined,mfaPendingSecretCreatedAt:r.mfa_pending_secret_created_at?iso(r.mfa_pending_secret_created_at):undefined,mfaRecoveryCodeHashes:Array.isArray(r.mfa_recovery_code_hashes)?r.mfa_recovery_code_hashes:[],division:r.division,status:r.status,lastLogin:r.last_login?iso(r.last_login):'',createdAt:iso(r.created_at)});
 const mapSession=(r:Row):StoredSession=>({tokenHash:r.token_hash,userId:r.user_id,createdAt:iso(r.created_at),lastActivityAt:iso(r.last_activity_at),expiresAt:new Date(r.expires_at).getTime(),rememberMe:r.remember_me,ip:r.ip??'',userAgent:r.user_agent,kind:r.kind,mfaFailedAttempts:r.mfa_failed_attempts});
 
-
-
- readonly auth=new PostgresAuthRepository();
+export class PostgresDatabaseRepository {
+  readonly auth=new PostgresAuthRepository();
  async loadDatabase():Promise<DatabaseSchema>{
   const p=getPostgresPool();
   const names=['users','sessions','leads','crm_deals','clients','projects','proposals','proposal_items','tasks','time_logs','invoices','invoice_items','invoice_payments','expenses','approvals','vendors','documents','document_access','notifications','cms_services','cms_projects','cms_testimonials','cms_settings','audit_logs','notification_settings'];
