@@ -25,6 +25,8 @@ export interface ProjectTask {
   createdAt: string;
   subtasks?: TaskSubtask[];
   tags?: string[];
+  version?: number;
+  assigneeUserId?: string;
 }
 
 export interface ProjectMilestone {
@@ -59,6 +61,7 @@ export interface AgencyProject {
   notes?: string;
   createdAt: string;
   updatedAt: string;
+  version?: number;
 }
 
 let projectsCache: AgencyProject[] | null = null;
@@ -71,11 +74,23 @@ let projectServerHydrationStarted = false;
 function hydrateProjectsFromServer(): void {
   if (!import.meta.env.PROD || projectServerHydrationStarted) return;
   projectServerHydrationStarted = true;
-  api.projects.getAll().then((res) => {
-    if (!res.success || !Array.isArray(res.data?.projects)) return;
-    projectsCache = res.data.projects;
+  Promise.all([api.projects.getAll(), api.tasks.getAll()]).then(([projectsRes, tasksRes]) => {
+    if (!projectsRes.success || !Array.isArray(projectsRes.data?.projects)) return;
+    const serverProjects = projectsRes.data.projects;
+    const serverTasks = tasksRes.success && Array.isArray(tasksRes.data?.tasks) ? tasksRes.data.tasks : [];
+    const tasksByProject = new Map<string, ProjectTask[]>();
+    for (const task of serverTasks) {
+      if (!task?.projectId) continue;
+      const list = tasksByProject.get(String(task.projectId)) || [];
+      list.push(task as ProjectTask);
+      tasksByProject.set(String(task.projectId), list);
+    }
+    projectsCache = serverProjects.map(project => ({
+      ...project,
+      tasks: tasksByProject.get(String(project.id)) || []
+    }));
     if (typeof window !== 'undefined') {
-      window.dispatchEvent(new CustomEvent(PROJECT_EVENT_NAME, { detail: res.data.projects }));
+      window.dispatchEvent(new CustomEvent(PROJECT_EVENT_NAME, { detail: projectsCache }));
     }
   }).catch(() => {});
 }
@@ -316,13 +331,27 @@ export const updateTaskStatus = (projectId: string, taskId: string, newStatus: T
   const current = getAgencyProjects();
   const proj = current.find(p => p.id === projectId);
   if (!proj) return;
+  const task = proj.tasks.find(t => t.id === taskId);
+  if (!task) return;
 
+  const previousTasks = [...proj.tasks];
   const updatedTasks = proj.tasks.map(t => t.id === taskId ? { ...t, status: newStatus } : t);
-  const updated: AgencyProject = {
-    ...proj,
-    tasks: updatedTasks,
-    updatedAt: new Date().toISOString()
-  };
+  projectsCache = current.map(p => p.id === projectId ? { ...p, tasks: updatedTasks } : p);
+  window.dispatchEvent(new CustomEvent(PROJECT_EVENT_NAME, { detail: projectsCache }));
 
-  saveAgencyProject(updated);
+  api.tasks.update(taskId, { status: newStatus, version: task.version, projectId }).then((res) => {
+    if (res.success && res.data?.task) {
+      const serverTask = res.data.task as ProjectTask;
+      projectsCache = (projectsCache || []).map(p => p.id === projectId
+        ? { ...p, tasks: p.tasks.map(t => t.id === taskId ? serverTask : t) }
+        : p);
+      window.dispatchEvent(new CustomEvent(PROJECT_EVENT_NAME, { detail: projectsCache }));
+      return;
+    }
+    projectsCache = (projectsCache || []).map(p => p.id === projectId ? { ...p, tasks: previousTasks } : p);
+    window.dispatchEvent(new CustomEvent(PROJECT_EVENT_NAME, { detail: projectsCache }));
+  }).catch(() => {
+    projectsCache = (projectsCache || []).map(p => p.id === projectId ? { ...p, tasks: previousTasks } : p);
+    window.dispatchEvent(new CustomEvent(PROJECT_EVENT_NAME, { detail: projectsCache }));
+  });
 };
