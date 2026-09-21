@@ -324,7 +324,6 @@ export function clearLockout(identifier: string, ip = 'unknown'): void {
 }
 
 export async function createSession(user: StoredUser, ip: string, userAgent: string, rememberMe = false): Promise<StoredSession> {
-  const db = getDatabase();
   const now = Date.now();
   const lifetime = rememberMe ? EXTENDED_SESSION_LIFETIME_MS : SESSION_LIFETIME_MS;
   const expiresAt = now + lifetime;
@@ -347,6 +346,8 @@ export async function createSession(user: StoredUser, ip: string, userAgent: str
     await postgresAuthRepository.pruneUserSessions(user.id, 5);
     return { ...session, token };
   }
+
+  const db = getDatabase();
 
   // Keep a bounded number of sessions and remove stale sessions for the same account.
   db.sessions = db.sessions.filter(s => s.expiresAt > now);
