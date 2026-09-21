@@ -43,11 +43,7 @@ export const ROLE_DEFINITIONS: Record<StakeholderRole, RoleMetadata> = {
       'clients',
       'vendors',
       'documents',
-      'services',
-      'cms_projects',
-      'testimonials',
-      'settings',
-      'rbac'
+      'settings'
     ]
   },
   pm: {
@@ -63,13 +59,13 @@ export const ROLE_DEFINITIONS: Record<StakeholderRole, RoleMetadata> = {
     },
     allowedModuleKeys: [
       'dashboard',
+      'inbox',
+      'crm',
+      'proposals',
       'projects',
-      'approvals',
-      'documents',
       'clients',
       'vendors',
-      'services',
-      'cms_projects'
+      'documents'
     ]
   },
   finance: {
@@ -86,7 +82,6 @@ export const ROLE_DEFINITIONS: Record<StakeholderRole, RoleMetadata> = {
     allowedModuleKeys: [
       'dashboard',
       'invoicing',
-      'proposals',
       'approvals',
       'documents',
       'clients',
@@ -126,7 +121,6 @@ export const ROLE_DEFINITIONS: Record<StakeholderRole, RoleMetadata> = {
     },
     allowedModuleKeys: [
       'dashboard',
-      'projects',
       'documents',
       'settings'
     ]
