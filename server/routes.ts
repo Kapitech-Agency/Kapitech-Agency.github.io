@@ -4270,17 +4270,29 @@ const documentMutationMiddleware = requireAnyPermission(
   'canAccessServerAndApi'
 );
 
-apiRouter.get('/documents', requireAuth, documentAccessMiddleware, (req: AuthenticatedRequest, res: Response): void => {
-  const db = getDatabase();
-  res.json({
-    success: true,
-    documents: (db.documents || [])
-      .filter((document: any) => canAccessDocument(req, document))
-      .map(publicDocument)
-  });
+apiRouter.get('/documents', requireAuth, documentAccessMiddleware, async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  try {
+    const isMaster = req.user!.stakeholderType === 'Master';
+    if (getDataSourceMode() === 'postgres') {
+      const documents = await postgresDocumentRepository.listForUser(req.user!.id, isMaster);
+      res.json({ success: true, documents: documents.map(publicDocument) });
+      return;
+    }
+
+    const db = getDatabase();
+    res.json({
+      success: true,
+      documents: (db.documents || [])
+        .filter((document: any) => canAccessDocument(req, document))
+        .map(publicDocument)
+    });
+  } catch (error) {
+    console.error('[Documents] List failed:', error);
+    res.status(503).json({ success: false, error: 'Document data is temporarily unavailable.' });
+  }
 });
 
-apiRouter.post('/documents', requireAuth, documentMutationMiddleware, (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.post('/documents', requireAuth, documentMutationMiddleware, async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const data = req.body || {};
   const sourceType = data.url ? 'external_link' : 'private_file';
   const name = cleanText(data.name || 'Document', 240);
@@ -4299,163 +4311,345 @@ apiRouter.post('/documents', requireAuth, documentMutationMiddleware, (req: Auth
     return;
   }
 
-  const db = getDatabase();
-  const newDoc: any = {
-    id: `doc_${Date.now()}_${crypto.randomBytes(8).toString('hex')}`,
-    name,
-    title: name,
-    type: cleanText(data.type || 'Document', 40),
-    mimeType,
-    size: cleanText(data.size || '0 B', 40),
-    sizeBytes: Math.max(0, Math.floor(Number(data.sizeBytes) || 0)),
-    category: cleanText(data.category || 'General', 100),
-    relatedEntity: cleanText(data.relatedEntity || 'General', 200),
-    relatedId: cleanText(data.relatedId || '', 120),
-    owner: req.user!.name || req.user!.username,
-    ownerUserId: req.user!.id,
-    accessUserIds: [req.user!.id],
-    sourceType,
-    status: sourceType === 'private_file' ? 'pending_upload' : 'external_link',
-    uploadedDate: new Date().toISOString().split('T')[0],
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  };
-
-  if (sourceType === 'private_file') {
-    newDoc.storageKey = crypto.randomBytes(32).toString('hex');
-  } else {
-    newDoc.url = cleanOptionalUrl(data.url);
-  }
-
-  if (!db.documents) db.documents = [];
-  db.documents.unshift(newDoc);
-  saveDatabase(db);
-
-  recordAuditLog({
-    action: 'DOCUMENT_CREATED',
-    actor: req.user!.username,
-    actorRole: req.user!.role,
-    ip: req.ip,
-    userAgent: req.headers['user-agent'] as string,
-    details: `Created document record "${name}" (${sourceType}).`,
-    severity: 'info'
-  });
-
-  res.status(201).json({ success: true, document: publicDocument(newDoc) });
-});
-
-apiRouter.put('/documents/:id/content', requireAuth, documentMutationMiddleware, (req: AuthenticatedRequest, res: Response): void => {
-  const { id } = req.params;
-  const db = getDatabase();
-  const document = (db.documents || []).find((item: any) => item.id === id);
-
-  if (!document) {
-    res.status(404).json({ success: false, error: 'Document not found.' });
-    return;
-  }
-  if (!requireDocumentObjectAccess(req, res)) return;
-
-  if (document.sourceType !== 'private_file' || !document.storageKey) {
-    res.status(409).json({ success: false, error: 'This document is an external link and has no private file content.' });
-    return;
-  }
-
-  const body = req.body;
-  if (!Buffer.isBuffer(body) || body.length === 0) {
-    res.status(400).json({ success: false, error: 'A non-empty document file is required.' });
-    return;
-  }
-  if (body.length > 25 * 1024 * 1024) {
-    res.status(413).json({ success: false, error: 'Document exceeds the 25 MB vault limit.' });
-    return;
-  }
-
-  const mimeType = String(req.get('content-type') || '').split(';')[0].trim().toLowerCase();
-  if (!DOCUMENT_MIME_TYPES.has(mimeType)) {
-    res.status(415).json({ success: false, error: 'Unsupported document MIME type.' });
-    return;
-  }
-
-  ensurePrivateDocumentDirectory();
-  const targetPath = privateDocumentPath(document);
-  if (!targetPath) {
-    res.status(400).json({ success: false, error: 'Invalid private document storage reference.' });
-    return;
-  }
-
-  const tempPath = `${targetPath}.${process.pid}.${Date.now()}.tmp`;
   try {
-    fs.writeFileSync(tempPath, encryptPrivateDocument(body), { flag: 'wx', mode: 0o600 });
-    try { fs.chmodSync(tempPath, 0o600); } catch {}
-    if (fs.existsSync(targetPath)) fs.unlinkSync(targetPath);
-    fs.renameSync(tempPath, targetPath);
+    if (getDataSourceMode() === 'postgres') {
+      const storageKey = sourceType === 'private_file'
+        ? crypto.randomBytes(32).toString('hex')
+        : undefined;
 
-    document.mimeType = mimeType;
-    document.type = mimeType.split('/').pop()?.toUpperCase() || document.type || 'FILE';
-    document.sizeBytes = body.length;
-    document.size = humanFileSize(body.length);
-    document.status = 'ready';
-    document.updatedAt = new Date().toISOString();
-    document.uploadedAt = document.updatedAt;
+      const document = await postgresDocumentRepository.create({
+        id: 'doc_' + Date.now() + '_' + crypto.randomBytes(8).toString('hex'),
+        name,
+        title: name,
+        type: cleanText(data.type || 'Document', 40),
+        mimeType,
+        sizeBytes: Math.max(0, Math.floor(Number(data.sizeBytes) || 0)),
+        size: cleanText(data.size || '0 B', 40),
+        category: cleanText(data.category || 'General', 100),
+        relatedEntity: cleanText(data.relatedEntity || 'General', 200),
+        relatedId: cleanText(data.relatedId || '', 120),
+        ownerUserId: req.user!.id,
+        owner: req.user!.name || req.user!.username,
+        sourceType,
+        storageKey,
+        externalUrl: sourceType === 'external_link' ? cleanOptionalUrl(data.url) : undefined,
+        status: sourceType === 'private_file' ? 'pending_upload' : 'ready',
+        uploadedAt: new Date().toISOString(),
+        metadata: {
+          title: name,
+          owner: req.user!.name || req.user!.username,
+          size: cleanText(data.size || '0 B', 40)
+        }
+      });
+
+      if (Array.isArray(data.accessUserIds)) {
+        for (const targetUserId of data.accessUserIds.slice(0, 100)) {
+          const target = cleanText(targetUserId, 120);
+          if (target && target !== req.user!.id) {
+            await postgresDocumentRepository.grantAccess(document.id, req.user!.id, target, req.user!.stakeholderType === 'Master');
+          }
+        }
+      }
+
+      recordAuditLog({
+        action: 'DOCUMENT_CREATED',
+        actor: req.user!.username,
+        actorRole: req.user!.role,
+        ip: req.ip,
+        userAgent: req.headers['user-agent'] as string,
+        details: 'Created document record "' + name + '" (' + sourceType + ').',
+        severity: 'info'
+      });
+
+      res.status(201).json({ success: true, document: publicDocument(document) });
+      return;
+    }
+
+    const db = getDatabase();
+    const newDoc: any = {
+      id: 'doc_' + Date.now() + '_' + crypto.randomBytes(8).toString('hex'),
+      name,
+      title: name,
+      type: cleanText(data.type || 'Document', 40),
+      mimeType,
+      size: cleanText(data.size || '0 B', 40),
+      sizeBytes: Math.max(0, Math.floor(Number(data.sizeBytes) || 0)),
+      category: cleanText(data.category || 'General', 100),
+      relatedEntity: cleanText(data.relatedEntity || 'General', 200),
+      relatedId: cleanText(data.relatedId || '', 120),
+      owner: req.user!.name || req.user!.username,
+      ownerUserId: req.user!.id,
+      accessUserIds: [req.user!.id],
+      sourceType,
+      status: sourceType === 'private_file' ? 'pending_upload' : 'external_link',
+      uploadedDate: new Date().toISOString().split('T')[0],
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+
+    if (sourceType === 'private_file') newDoc.storageKey = crypto.randomBytes(32).toString('hex');
+    else newDoc.url = cleanOptionalUrl(data.url);
+
+    if (!db.documents) db.documents = [];
+    db.documents.unshift(newDoc);
     saveDatabase(db);
-
     recordAuditLog({
-      action: 'DOCUMENT_UPLOADED',
+      action: 'DOCUMENT_CREATED',
       actor: req.user!.username,
       actorRole: req.user!.role,
       ip: req.ip,
       userAgent: req.headers['user-agent'] as string,
-      details: `Uploaded private document "${document.name}" (${body.length} bytes).`,
+      details: 'Created document record "' + name + '" (' + sourceType + ').',
       severity: 'info'
     });
-
-    res.json({ success: true, document: publicDocument(document) });
+    res.status(201).json({ success: true, document: publicDocument(newDoc) });
   } catch (error) {
-    try { if (fs.existsSync(tempPath)) fs.unlinkSync(tempPath); } catch {}
+    if ((error as any)?.code === '23503') {
+      res.status(400).json({ success: false, error: 'Referenced document user does not exist.' });
+      return;
+    }
+    console.error('[Documents] Create failed:', error);
+    res.status(500).json({ success: false, error: 'Document could not be created.' });
+  }
+});
+
+apiRouter.put('/documents/:id/content', requireAuth, documentMutationMiddleware, async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  const { id } = req.params;
+  const isMaster = req.user!.stakeholderType === 'Master';
+
+  if (getDataSourceMode() !== 'postgres') {
+    const db = getDatabase();
+    const document = (db.documents || []).find((item: any) => item.id === id);
+    if (!document) {
+      res.status(404).json({ success: false, error: 'Document not found.' });
+      return;
+    }
+    if (!requireDocumentObjectAccess(req, res)) return;
+
+    if (document.sourceType !== 'private_file' || !document.storageKey) {
+      res.status(409).json({ success: false, error: 'This document is an external link and has no private file content.' });
+      return;
+    }
+
+    const body = req.body;
+    if (!Buffer.isBuffer(body) || body.length === 0) {
+      res.status(400).json({ success: false, error: 'A non-empty document file is required.' });
+      return;
+    }
+    if (body.length > 25 * 1024 * 1024) {
+      res.status(413).json({ success: false, error: 'Document exceeds the 25 MB vault limit.' });
+      return;
+    }
+
+    const legacyMimeType = String(req.get('content-type') || '').split(';')[0].trim().toLowerCase();
+    if (!DOCUMENT_MIME_TYPES.has(legacyMimeType)) {
+      res.status(415).json({ success: false, error: 'Unsupported document MIME type.' });
+      return;
+    }
+
+    ensurePrivateDocumentDirectory();
+    const legacyTargetPath = privateDocumentPath(document);
+    if (!legacyTargetPath) {
+      res.status(400).json({ success: false, error: 'Invalid private document storage reference.' });
+      return;
+    }
+
+    const legacyTempPath = legacyTargetPath + '.' + process.pid + '.' + Date.now() + '.tmp';
+    try {
+      fs.writeFileSync(legacyTempPath, encryptPrivateDocument(body), { flag: 'wx', mode: 0o600 });
+      try { fs.chmodSync(legacyTempPath, 0o600); } catch {}
+      if (fs.existsSync(legacyTargetPath)) fs.unlinkSync(legacyTargetPath);
+      fs.renameSync(legacyTempPath, legacyTargetPath);
+
+      document.mimeType = legacyMimeType;
+      document.type = legacyMimeType.split('/').pop()?.toUpperCase() || document.type || 'FILE';
+      document.sizeBytes = body.length;
+      document.size = humanFileSize(body.length);
+      document.status = 'ready';
+      document.updatedAt = new Date().toISOString();
+      document.uploadedAt = document.updatedAt;
+      saveDatabase(db);
+
+      recordAuditLog({
+        action: 'DOCUMENT_UPLOADED',
+        actor: req.user!.username,
+        actorRole: req.user!.role,
+        ip: req.ip,
+        userAgent: req.headers['user-agent'] as string,
+        details: 'Uploaded private document "' + document.name + '" (' + body.length + ' bytes).',
+        severity: 'info'
+      });
+      res.json({ success: true, document: publicDocument(document) });
+    } catch (error) {
+      try { if (fs.existsSync(legacyTempPath)) fs.unlinkSync(legacyTempPath); } catch {}
+      console.error('[Documents] Private upload failed:', error);
+      res.status(500).json({ success: false, error: 'Private document storage failed.' });
+    }
+    return;
+  }
+
+  try {
+    const document = await postgresDocumentRepository.findById(id, req.user!.id, isMaster);
+    if (!document) {
+      res.status(404).json({ success: false, error: 'Document not found.' });
+      return;
+    }
+    if (document.sourceType !== 'private_file' || !document.storageKey) {
+      res.status(409).json({ success: false, error: 'This document is an external link and has no private file content.' });
+      return;
+    }
+
+    const body = req.body;
+    if (!Buffer.isBuffer(body) || body.length === 0) {
+      res.status(400).json({ success: false, error: 'A non-empty document file is required.' });
+      return;
+    }
+    if (body.length > 25 * 1024 * 1024) {
+      res.status(413).json({ success: false, error: 'Document exceeds the 25 MB vault limit.' });
+      return;
+    }
+
+    const uploadMimeType = String(req.get('content-type') || '').split(';')[0].trim().toLowerCase();
+    if (!DOCUMENT_MIME_TYPES.has(uploadMimeType)) {
+      res.status(415).json({ success: false, error: 'Unsupported document MIME type.' });
+      return;
+    }
+
+    ensurePrivateDocumentDirectory();
+    const targetPath = privateDocumentPath(document);
+    if (!targetPath) {
+      res.status(400).json({ success: false, error: 'Invalid private document storage reference.' });
+      return;
+    }
+
+    const tempPath = targetPath + '.' + process.pid + '.' + Date.now() + '.tmp';
+    try {
+      fs.writeFileSync(tempPath, encryptPrivateDocument(body), { flag: 'wx', mode: 0o600 });
+      try { fs.chmodSync(tempPath, 0o600); } catch {}
+      if (fs.existsSync(targetPath)) fs.unlinkSync(targetPath);
+      fs.renameSync(tempPath, targetPath);
+
+      const checksumSha256 = crypto.createHash('sha256').update(body).digest('hex');
+      try {
+        const updated = await postgresDocumentRepository.updateContentMetadata(id, req.user!.id, isMaster, {
+          mimeType: uploadMimeType,
+          type: uploadMimeType.split('/').pop()?.toUpperCase() || document.type || 'FILE',
+          sizeBytes: body.length,
+          size: humanFileSize(body.length),
+          status: 'ready',
+          checksumSha256,
+          uploadedAt: new Date().toISOString()
+        });
+        recordAuditLog({
+          action: 'DOCUMENT_UPLOADED',
+          actor: req.user!.username,
+          actorRole: req.user!.role,
+          ip: req.ip,
+          userAgent: req.headers['user-agent'] as string,
+          details: 'Uploaded private document "' + document.name + '" (' + body.length + ' bytes).',
+          severity: 'info'
+        });
+        res.json({ success: true, document: publicDocument(updated) });
+      } catch (dbError) {
+        try { if (fs.existsSync(targetPath)) fs.unlinkSync(targetPath); } catch {}
+        throw dbError;
+      }
+    } catch (error) {
+      try { if (fs.existsSync(tempPath)) fs.unlinkSync(tempPath); } catch {}
+      if (error instanceof DocumentVersionConflictError) {
+        res.status(409).json({ success: false, error: error.message, code: error.code });
+        return;
+      }
+      console.error('[Documents] Private upload failed:', error);
+      res.status(500).json({ success: false, error: 'Private document storage failed.' });
+    }
+  } catch (error) {
+    if (error instanceof DocumentNotFoundError || error instanceof DocumentAccessDeniedError) {
+      res.status(404).json({ success: false, error: 'Document not found.' });
+      return;
+    }
     console.error('[Documents] Private upload failed:', error);
     res.status(500).json({ success: false, error: 'Private document storage failed.' });
   }
 });
 
-apiRouter.get('/documents/:id/content', requireAuth, documentAccessMiddleware, (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.get('/documents/:id/content', requireAuth, documentAccessMiddleware, async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
-  const db = getDatabase();
-  const document = (db.documents || []).find((item: any) => item.id === id);
+  const isMaster = req.user!.stakeholderType === 'Master';
 
-  if (!document) {
-    res.status(404).json({ success: false, error: 'Document not found.' });
-    return;
-  }
-  if (!requireDocumentObjectAccess(req, res)) return;
-
-  if (document.sourceType !== 'private_file' || document.status !== 'ready') {
-    res.status(409).json({ success: false, error: 'Private document content is not available.' });
-    return;
-  }
-
-  const filePath = privateDocumentPath(document);
-  if (!filePath || !fs.existsSync(filePath)) {
-    res.status(404).json({ success: false, error: 'Private document content is missing.' });
-    return;
-  }
-
-  res.setHeader('Cache-Control', 'private, no-store');
-  res.setHeader('Content-Type', document.mimeType || 'application/octet-stream');
-  res.setHeader('Content-Disposition', `attachment; filename*=UTF-8''${encodeURIComponent(String(document.name || 'document'))}`);
-  res.setHeader('X-Content-Type-Options', 'nosniff');
-  res.setHeader('X-Download-Options', 'noopen');
   try {
+    let document: any;
+    if (getDataSourceMode() === 'postgres') {
+      document = await postgresDocumentRepository.findById(id, req.user!.id, isMaster);
+    } else {
+      const db = getDatabase();
+      document = (db.documents || []).find((item: any) => item.id === id);
+      if (document && !canAccessDocument(req, document)) {
+        recordAuditLog({
+          action: 'DOCUMENT_ACCESS_DENIED',
+          actor: req.user?.username || 'anonymous',
+          actorRole: req.user?.role || 'visitor',
+          ip: req.ip,
+          userAgent: req.headers['user-agent'] as string,
+          details: 'Object-level document access denied for "' + (document.name || id) + '".',
+          severity: 'warning'
+        });
+        res.status(403).json({ success: false, error: 'Document access denied.' });
+        return;
+      }
+    }
+
+    if (!document) {
+      res.status(404).json({ success: false, error: 'Document not found.' });
+      return;
+    }
+    if (document.sourceType !== 'private_file' || document.status !== 'ready') {
+      res.status(409).json({ success: false, error: 'Private document content is not available.' });
+      return;
+    }
+
+    const filePath = privateDocumentPath(document);
+    if (!filePath || !fs.existsSync(filePath)) {
+      res.status(404).json({ success: false, error: 'Private document content is missing.' });
+      return;
+    }
+
+    res.setHeader('Cache-Control', 'private, no-store');
+    res.setHeader('Content-Type', document.mimeType || 'application/octet-stream');
+    res.setHeader('Content-Disposition', `attachment; filename*=UTF-8''${encodeURIComponent(String(document.name || 'document'))}`);
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('X-Download-Options', 'noopen');
+
     const encryptedPayload = fs.readFileSync(filePath);
     const content = decryptPrivateDocument(encryptedPayload);
+
+    if (document.checksumSha256) {
+      const checksum = crypto.createHash('sha256').update(content).digest('hex');
+      if (checksum !== document.checksumSha256) {
+        recordAuditLog({
+          action: 'DOCUMENT_INTEGRITY_FAILURE',
+          actor: req.user!.username,
+          actorRole: req.user!.role,
+          ip: req.ip,
+          userAgent: req.headers['user-agent'] as string,
+          details: 'Document checksum verification failed for "' + document.name + '".',
+          severity: 'critical'
+        });
+        res.status(409).json({ success: false, error: 'Document integrity verification failed.' });
+        return;
+      }
+    }
+
     res.setHeader('Content-Length', content.length);
     res.end(content);
+
     recordAuditLog({
       action: 'DOCUMENT_DOWNLOADED',
       actor: req.user!.username,
       actorRole: req.user!.role,
       ip: req.ip,
       userAgent: req.headers['user-agent'] as string,
-      details: `Downloaded private document "${document.name}".`,
+      details: 'Downloaded private document "' + document.name + '".',
       severity: 'info'
     });
   } catch (error) {
@@ -4464,42 +4658,145 @@ apiRouter.get('/documents/:id/content', requireAuth, documentAccessMiddleware, (
   }
 });
 
-apiRouter.delete('/documents/:id', requireAuth, documentMutationMiddleware, (req: AuthenticatedRequest, res: Response): void => {
-  const { id } = req.params;
-  const db = getDatabase();
-  const document = (db.documents || []).find((item: any) => item.id === id);
+apiRouter.post('/documents/:id/access/:userId', requireAuth, documentMutationMiddleware, async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  try {
+    if (getDataSourceMode() !== 'postgres') {
+      res.status(409).json({ success: false, error: 'Document ACL management requires PostgreSQL mode.' });
+      return;
+    }
+    const targetUserId = cleanText(req.params.userId, 120);
+    const isMaster = req.user!.stakeholderType === 'Master';
+    await postgresDocumentRepository.grantAccess(req.params.id, req.user!.id, targetUserId, isMaster);
+    recordAuditLog({
+      action: 'DOCUMENT_ACCESS_GRANTED',
+      actor: req.user!.username,
+      actorRole: req.user!.role,
+      ip: req.ip,
+      userAgent: req.headers['user-agent'] as string,
+      details: 'Granted document access for user ' + targetUserId + '.',
+      severity: 'info'
+    });
+    res.json({ success: true });
+  } catch (error) {
+    if (error instanceof DocumentAccessDeniedError || error instanceof DocumentNotFoundError) {
+      res.status(403).json({ success: false, error: error.message, code: error.code });
+      return;
+    }
+    console.error('[Documents] Grant access failed:', error);
+    res.status(500).json({ success: false, error: 'Document access could not be updated.' });
+  }
+});
 
-  if (!document) {
-    res.status(404).json({ success: false, error: 'Document not found.' });
+apiRouter.delete('/documents/:id/access/:userId', requireAuth, documentMutationMiddleware, async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  try {
+    if (getDataSourceMode() !== 'postgres') {
+      res.status(409).json({ success: false, error: 'Document ACL management requires PostgreSQL mode.' });
+      return;
+    }
+    const targetUserId = cleanText(req.params.userId, 120);
+    const isMaster = req.user!.stakeholderType === 'Master';
+    await postgresDocumentRepository.revokeAccess(req.params.id, req.user!.id, targetUserId, isMaster);
+    recordAuditLog({
+      action: 'DOCUMENT_ACCESS_REVOKED',
+      actor: req.user!.username,
+      actorRole: req.user!.role,
+      ip: req.ip,
+      userAgent: req.headers['user-agent'] as string,
+      details: 'Revoked document access for user ' + targetUserId + '.',
+      severity: 'warning'
+    });
+    res.json({ success: true });
+  } catch (error) {
+    if (error instanceof DocumentAccessDeniedError || error instanceof DocumentNotFoundError) {
+      res.status(403).json({ success: false, error: error.message, code: error.code });
+      return;
+    }
+    console.error('[Documents] Revoke access failed:', error);
+    res.status(500).json({ success: false, error: 'Document access could not be updated.' });
+  }
+});
+
+apiRouter.delete('/documents/:id', requireAuth, documentMutationMiddleware, async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  const { id } = req.params;
+  const isMaster = req.user!.stakeholderType === 'Master';
+
+  if (getDataSourceMode() !== 'postgres') {
+    const db = getDatabase();
+    const document = (db.documents || []).find((item: any) => item.id === id);
+    if (!document) {
+      res.status(404).json({ success: false, error: 'Document not found.' });
+      return;
+    }
+
+    if (!requireDocumentObjectAccess(req, res)) return;
+    const filePath = privateDocumentPath(document);
+    if (filePath && fs.existsSync(filePath)) {
+      try { fs.unlinkSync(filePath); } catch (error) {
+        console.error('[Documents] Failed to remove private content:', error);
+        res.status(500).json({ success: false, error: 'Private document content could not be removed safely.' });
+        return;
+      }
+    }
+
+    db.documents = (db.documents || []).filter(d => d.id !== id);
+    saveDatabase(db);
+    recordAuditLog({
+      action: 'DOCUMENT_DELETED',
+      actor: req.user!.username,
+      actorRole: req.user!.role,
+      ip: req.ip,
+      userAgent: req.headers['user-agent'] as string,
+      details: 'Deleted document "' + document.name + '".',
+      severity: 'warning'
+    });
+    res.json({ success: true, message: 'Document removed.' });
     return;
   }
 
-  const filePath = privateDocumentPath(document);
-  if (!requireDocumentObjectAccess(req, res)) return;
-
-  if (filePath && fs.existsSync(filePath)) {
-    try { fs.unlinkSync(filePath); } catch (error) {
-      console.error('[Documents] Failed to remove private content:', error);
-      res.status(500).json({ success: false, error: 'Private document content could not be removed safely.' });
+  try {
+    const document = await postgresDocumentRepository.findById(id, req.user!.id, isMaster);
+    if (!document) {
+      res.status(404).json({ success: false, error: 'Document not found.' });
       return;
     }
+    const archived = await postgresDocumentRepository.archive(
+      id,
+      req.user!.id,
+      isMaster,
+      req.body?.version == null ? undefined : Number(req.body.version)
+    );
+    if (!archived) {
+      res.status(404).json({ success: false, error: 'Document not found.' });
+      return;
+    }
+
+    const filePath = privateDocumentPath(document);
+    if (filePath && fs.existsSync(filePath)) {
+      try { fs.unlinkSync(filePath); } catch (error) {
+        console.error('[Documents] Archived document content cleanup failed:', error);
+      }
+    }
+
+    recordAuditLog({
+      action: 'DOCUMENT_ARCHIVED',
+      actor: req.user!.username,
+      actorRole: req.user!.role,
+      ip: req.ip,
+      userAgent: req.headers['user-agent'] as string,
+      details: 'Archived document "' + document.name + '".',
+      severity: 'warning'
+    });
+    res.json({ success: true, message: 'Document archived.' });
+  } catch (error) {
+    if (error instanceof DocumentVersionConflictError) {
+      res.status(409).json({ success: false, error: error.message, code: error.code });
+      return;
+    }
+    console.error('[Documents] Archive failed:', error);
+    res.status(500).json({ success: false, error: 'Document could not be archived.' });
   }
-
-  db.documents = (db.documents || []).filter(d => d.id !== id);
-  saveDatabase(db);
-
-  recordAuditLog({
-    action: 'DOCUMENT_DELETED',
-    actor: req.user!.username,
-    actorRole: req.user!.role,
-    ip: req.ip,
-    userAgent: req.headers['user-agent'] as string,
-    details: `Deleted document "${document.name}".`,
-    severity: 'warning'
-  });
-
-  res.json({ success: true, message: 'Document removed.' });
 });
+
 
 // ----------------------------------------------------
 // 17. SYSTEM BACKUP CONTROLS
