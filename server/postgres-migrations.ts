@@ -13,8 +13,12 @@ function migrationVersion(fileName: string): string {
   return fileName.replace(/\.sql$/, '');
 }
 
-function normalizeMigrationSql(sql: string): string {
-  return sql.replace(/^\s*BEGIN;\s*/i, '').replace(/\s*COMMIT;\s*$/i, '');
+export function normalizeMigrationSql(sql: string): string {
+  const withoutLeadingWrapper = sql.replace(
+    /^\s*(?:(?:--[^\r\n]*(?:\r?\n|$))|(?:\/\*[\s\S]*?\*\/\s*))*BEGIN;\s*/i,
+    ''
+  );
+  return withoutLeadingWrapper.replace(/\s*COMMIT;\s*$/i, '');
 }
 
 import fsSync from 'node:fs';
