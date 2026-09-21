@@ -44,9 +44,7 @@ export const AdminCmsServices: React.FC = () => {
   // Sync with server on mount and listen to updates
   React.useEffect(() => {
     fetchServerCmsServices().then(data => {
-      if (Array.isArray(data) && data.length > 0) {
-        setServicesList(data);
-      }
+      if (Array.isArray(data)) setServicesList(data);
     });
 
     const handleUpdate = () => {
@@ -109,7 +107,7 @@ export const AdminCmsServices: React.FC = () => {
     setTempCapabilities(tempCapabilities.filter((_, i) => i !== index));
   };
 
-  const handleCreateService = (e: React.FormEvent) => {
+  const handleCreateService = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newTitle || !newSlug) return;
 
@@ -179,24 +177,32 @@ export const AdminCmsServices: React.FC = () => {
       faqs: []
     };
 
-    saveCmsService(newService);
-    setServicesList([newService, ...servicesList]);
-    setIsAddModalOpen(false);
+    try {
+      const saved = await saveCmsService(newService);
+      setServicesList([saved.service, ...servicesList]);
+      setIsAddModalOpen(false);
     setNewTitle('');
     setNewSlug('');
     setNewHeadline('');
     setNewSubtitle('');
-    setStatusMessage(language === 'id' ? `Layanan "${newTitle}" berhasil ditambahkan ke CMS!` : `Service "${newTitle}" successfully added to CMS!`);
-    setTimeout(() => setStatusMessage(null), 4000);
+      setStatusMessage(language === 'id' ? `Layanan "${newTitle}" berhasil ditambahkan ke CMS!` : `Service "${newTitle}" successfully added to CMS!`);
+      setTimeout(() => setStatusMessage(null), 4000);
+    } catch (error: any) {
+      setStatusMessage(error?.message || 'Failed to save service.');
+    }
   };
 
-  const handleDeleteService = (slug: string) => {
+  const handleDeleteService = async (slug: string) => {
     if (window.confirm(language === 'id' ? 'Apakah Anda yakin ingin menghapus layanan ini?' : 'Are you sure you want to delete this service?')) {
-      deleteCmsService(slug);
-      setServicesList(servicesList.filter(s => s.slug !== slug));
-      setSelectedServiceForDetail(null);
-      setStatusMessage(language === 'id' ? 'Layanan berhasil dihapus.' : 'Service successfully deleted.');
-      setTimeout(() => setStatusMessage(null), 3000);
+      try {
+        await deleteCmsService(slug);
+        setServicesList(servicesList.filter(s => s.slug !== slug));
+        setSelectedServiceForDetail(null);
+        setStatusMessage(language === 'id' ? 'Layanan berhasil dihapus.' : 'Service successfully deleted.');
+        setTimeout(() => setStatusMessage(null), 3000);
+      } catch (error: any) {
+        setStatusMessage(error?.message || 'Failed to delete service.');
+      }
     }
   };
 
