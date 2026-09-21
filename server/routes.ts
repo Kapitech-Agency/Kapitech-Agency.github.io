@@ -3092,7 +3092,7 @@ apiRouter.post('/projects/tasks', requireAuth, requirePermission('canManageKanba
     description: cleanText(taskData.description, 3000),
     projectId: cleanText(taskData.projectId, 120),
     projectName: cleanText(taskData.projectName || 'General Delivery', 200),
-    assignee: cleanText(taskData.assignee || req.user!.name || req.user!.username, 160),
+    assignedTo: cleanText(taskData.assignedTo || taskData.assignee || req.user!.name || req.user!.username, 160),
     assigneeUserId: cleanText(taskData.assigneeUserId, 120),
     reporter: req.user!.name || req.user!.username,
     priority,
@@ -3156,7 +3156,7 @@ apiRouter.put('/projects/tasks/:id', requireAuth, requirePermission('canManageKa
   const updates = req.body || {};
   const patch = pickFields(updates, ['title','description','projectId','projectName','assignee','assigneeUserId','priority','status','dueDate','estimatedHours','actualHours','tags','subtasks','version']);
 
-  for (const key of ['title','description','projectId','projectName','assignee','assigneeUserId'] as const) {
+  for (const key of ['title','description','projectId','projectName','assignedTo','assignee','assigneeUserId'] as const) {
     if (patch[key] !== undefined) patch[key] = cleanText(patch[key], key === 'description' ? 3000 : 240);
   }
   if (patch.status !== undefined && !['todo','in_progress','review','done'].includes(String(patch.status))) {
