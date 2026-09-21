@@ -64,6 +64,7 @@ import { postgresApprovalRepository } from './postgres-approval-repository.ts';
 import { postgresNotificationRepository } from './postgres-notification-repository.ts';
 import { postgresDocumentRepository } from './postgres-document-repository.ts';
 import { postgresAuditLogRepository } from './postgres-audit-log-repository.ts';
+import { postgresCmsRepository } from './postgres-cms-repository.ts';
 
 
 const ROLE_POLICIES: Record<string, {
@@ -2384,17 +2385,19 @@ apiRouter.delete('/vendors/:id', requireAuth, requirePermission('canManageVendor
 // ----------------------------------------------------
 
 // CMS Services (Public GET for published services, protected for drafts)
-apiRouter.get('/cms/services', (req: Request, res: Response): void => {
-  const db = getDatabase();
+apiRouter.get('/cms/services', async (req: Request, res: Response): Promise<void> => {
   const user = (req as AuthenticatedRequest).user;
   const canManage = Boolean(user && (user.stakeholderType === 'Master' || user.permissions?.canManageCmsContent));
-  const services = canManage ? db.cmsServices : db.cmsServices.filter(s => s.isPublished !== false);
+  const source = getDataSourceMode() === 'postgres'
+    ? await postgresCmsRepository.list('service')
+    : getDatabase().cmsServices;
+  const services = canManage ? source : source.filter((item: any) => item.isPublished !== false);
   res.json({ success: true, services });
 });
 
-apiRouter.post('/cms/services', requireAuth, requirePermission('canManageCmsContent'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.post('/cms/services', requireAuth, requirePermission('canManageCmsContent'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const item = req.body || {};
-  const db = getDatabase();
+  const now = new Date().toISOString();
   const newService = {
     id: `srv_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
     ...pickFields(item, [
@@ -2405,200 +2408,224 @@ apiRouter.post('/cms/services', requireAuth, requirePermission('canManageCmsCont
     slug: cleanText(item.slug, 160).toLowerCase().replace(/[^a-z0-9-]/g, '-'),
     title: cleanText(item.title, 200),
     isPublished: item.isPublished !== undefined ? Boolean(item.isPublished) : true,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
+    createdAt: now,
+    updatedAt: now
   };
+  if (getDataSourceMode() === 'postgres') {
+    const service = await postgresCmsRepository.create('service', newService);
+    res.json({ success: true, service });
+    return;
+  }
+  const db = getDatabase();
   db.cmsServices.unshift(newService);
   saveDatabase(db);
   res.json({ success: true, service: newService });
 });
 
-apiRouter.put('/cms/services/:id', requireAuth, requirePermission('canManageCmsContent'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.put('/cms/services/:id', requireAuth, requirePermission('canManageCmsContent'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
-  const updates = req.body || {};
-  const db = getDatabase();
-  const idx = db.cmsServices.findIndex(s => s.id === id);
-  if (idx === -1) {
-    res.status(404).json({ success: false, error: 'Service not found.' });
+  const patch = pickFields(req.body || {}, ['slug','type','category','title','navSubtitle','navSubtitleId','heroHeadline','heroHeadlineId','heroSubtitle','heroSubtitleId','badge','badgeId','metrics','capabilities','technologies','deliverables','testimonial','featured','isPublished']);
+  if (getDataSourceMode() === 'postgres') {
+    const service = await postgresCmsRepository.update('service', id, patch);
+    if (!service) { res.status(404).json({ success: false, error: 'Service not found.' }); return; }
+    res.json({ success: true, service });
     return;
   }
-  const patch = pickFields(updates, ['slug','type','category','title','navSubtitle','navSubtitleId','heroHeadline','heroHeadlineId','heroSubtitle','heroSubtitleId','badge','badgeId','metrics','capabilities','technologies','deliverables','testimonial','featured','isPublished']);
+  const db = getDatabase();
+  const idx = db.cmsServices.findIndex(s => s.id === id);
+  if (idx === -1) { res.status(404).json({ success: false, error: 'Service not found.' }); return; }
   db.cmsServices[idx] = { ...db.cmsServices[idx], ...patch, updatedAt: new Date().toISOString() };
   saveDatabase(db);
   res.json({ success: true, service: db.cmsServices[idx] });
 });
 
-apiRouter.delete('/cms/services/:id', requireAuth, requirePermission('canManageCmsContent'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.delete('/cms/services/:id', requireAuth, requirePermission('canManageCmsContent'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
-  const db = getDatabase();
-  const service = db.cmsServices.find((item: any) => item.id === id);
-  if (!service) {
-    res.status(404).json({ success: false, error: 'Service not found.' });
+  if (getDataSourceMode() === 'postgres') {
+    const service = await postgresCmsRepository.findById('service', req.params.id);
+    if (!service) { res.status(404).json({ success: false, error: 'Service not found.' }); return; }
+    await postgresCmsRepository.delete('service', req.params.id);
+    recordAuditLog({ action: 'CMS_SERVICE_DELETED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Deleted CMS service "${service.title || service.name || id}".`, severity: 'warning' });
+    res.json({ success: true, message: 'Service deleted.' });
     return;
   }
+  const db = getDatabase();
+  const service = db.cmsServices.find((item: any) => item.id === id);
+  if (!service) { res.status(404).json({ success: false, error: 'Service not found.' }); return; }
   db.cmsServices = db.cmsServices.filter(s => s.id !== id);
   saveDatabase(db);
-  recordAuditLog({
-    action: 'CMS_SERVICE_DELETED',
-    actor: req.user!.username,
-    actorRole: req.user!.role,
-    ip: req.ip,
-    userAgent: req.headers['user-agent'] as string,
-    details: `Deleted CMS service "${service.title || id}".`,
-    severity: 'warning'
-  });
+  recordAuditLog({ action: 'CMS_SERVICE_DELETED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Deleted CMS service "${service.title || id}".`, severity: 'warning' });
   res.json({ success: true, message: 'Service deleted.' });
 });
 
 // CMS Projects
-apiRouter.get('/cms/projects', (req: Request, res: Response): void => {
-  const db = getDatabase();
+apiRouter.get('/cms/projects', async (req: Request, res: Response): Promise<void> => {
   const user = (req as AuthenticatedRequest).user;
   const canManage = Boolean(user && (user.stakeholderType === 'Master' || user.permissions?.canManageCmsContent));
-  const projects = canManage ? db.cmsProjects : db.cmsProjects.filter(p => p.isPublished !== false);
+  const source = getDataSourceMode() === 'postgres'
+    ? await postgresCmsRepository.list('project')
+    : getDatabase().cmsProjects;
+  const projects = canManage ? source : source.filter((item: any) => item.isPublished !== false);
   res.json({ success: true, projects });
 });
 
-apiRouter.post('/cms/projects', requireAuth, requirePermission('canManageCmsContent'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.post('/cms/projects', requireAuth, requirePermission('canManageCmsContent'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const item = req.body || {};
-  const db = getDatabase();
+  const now = new Date().toISOString();
   const newProj = {
     id: `proj_cms_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
-    ...pickFields(item, [
-      'slug','title','client','industry','pillar','service','featured','image','desc','descId',
-      'challenge','challengeId','solution','solutionId','deliverables','technologies','impact','year','isPublished'
-    ]),
+    ...pickFields(item, ['slug','title','client','industry','pillar','service','featured','image','desc','descId','challenge','challengeId','solution','solutionId','deliverables','technologies','impact','year','isPublished']),
     slug: cleanText(item.slug, 160).toLowerCase().replace(/[^a-z0-9-]/g, '-'),
     title: cleanText(item.title, 240),
     isPublished: item.isPublished !== undefined ? Boolean(item.isPublished) : true,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
+    createdAt: now,
+    updatedAt: now
   };
+  if (getDataSourceMode() === 'postgres') {
+    const project = await postgresCmsRepository.create('project', newProj);
+    res.json({ success: true, project });
+    return;
+  }
+  const db = getDatabase();
   db.cmsProjects.unshift(newProj);
   saveDatabase(db);
   res.json({ success: true, project: newProj });
 });
 
-apiRouter.put('/cms/projects/:id', requireAuth, requirePermission('canManageCmsContent'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.put('/cms/projects/:id', requireAuth, requirePermission('canManageCmsContent'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
-  const updates = req.body || {};
-  const db = getDatabase();
-  const idx = db.cmsProjects.findIndex(p => p.id === id);
-  if (idx === -1) {
-    res.status(404).json({ success: false, error: 'Project not found.' });
+  const patch = pickFields(req.body || {}, ['slug','title','client','industry','pillar','service','featured','image','desc','descId','challenge','challengeId','solution','solutionId','deliverables','technologies','impact','year','isPublished']);
+  if (getDataSourceMode() === 'postgres') {
+    const project = await postgresCmsRepository.update('project', id, patch);
+    if (!project) { res.status(404).json({ success: false, error: 'Project not found.' }); return; }
+    res.json({ success: true, project });
     return;
   }
-  const patch = pickFields(updates, ['slug','title','client','industry','pillar','service','featured','image','desc','descId','challenge','challengeId','solution','solutionId','deliverables','technologies','impact','year','isPublished']);
+  const db = getDatabase();
+  const idx = db.cmsProjects.findIndex(p => p.id === id);
+  if (idx === -1) { res.status(404).json({ success: false, error: 'Project not found.' }); return; }
   db.cmsProjects[idx] = { ...db.cmsProjects[idx], ...patch, updatedAt: new Date().toISOString() };
   saveDatabase(db);
   res.json({ success: true, project: db.cmsProjects[idx] });
 });
 
-apiRouter.delete('/cms/projects/:id', requireAuth, requirePermission('canManageCmsContent'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.delete('/cms/projects/:id', requireAuth, requirePermission('canManageCmsContent'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
-  const db = getDatabase();
-  const project = db.cmsProjects.find((item: any) => item.id === id);
-  if (!project) {
-    res.status(404).json({ success: false, error: 'Project not found.' });
+  if (getDataSourceMode() === 'postgres') {
+    const project = await postgresCmsRepository.findById('project', req.params.id);
+    if (!project) { res.status(404).json({ success: false, error: 'Project not found.' }); return; }
+    await postgresCmsRepository.delete('project', req.params.id);
+    recordAuditLog({ action: 'CMS_PROJECT_DELETED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Deleted CMS project "${project.title || project.name || id}".`, severity: 'warning' });
+    res.json({ success: true, message: 'Project deleted.' });
     return;
   }
+  const db = getDatabase();
+  const project = db.cmsProjects.find((item: any) => item.id === id);
+  if (!project) { res.status(404).json({ success: false, error: 'Project not found.' }); return; }
   db.cmsProjects = db.cmsProjects.filter(p => p.id !== id);
   saveDatabase(db);
-  recordAuditLog({
-    action: 'CMS_PROJECT_DELETED',
-    actor: req.user!.username,
-    actorRole: req.user!.role,
-    ip: req.ip,
-    userAgent: req.headers['user-agent'] as string,
-    details: `Deleted CMS project "${project.title || id}".`,
-    severity: 'warning'
-  });
+  recordAuditLog({ action: 'CMS_PROJECT_DELETED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Deleted CMS project "${project.title || id}".`, severity: 'warning' });
   res.json({ success: true, message: 'Project deleted.' });
 });
 
 // CMS Testimonials
-apiRouter.get('/cms/testimonials', (req: Request, res: Response): void => {
-  const db = getDatabase();
+apiRouter.get('/cms/testimonials', async (req: Request, res: Response): Promise<void> => {
   const user = (req as AuthenticatedRequest).user;
   const canManage = Boolean(user && (user.stakeholderType === 'Master' || user.permissions?.canManageCmsContent));
-  const testimonials = canManage ? db.cmsTestimonials : db.cmsTestimonials.filter(t => t.isPublished !== false);
+  const source = getDataSourceMode() === 'postgres'
+    ? await postgresCmsRepository.list('testimonial')
+    : getDatabase().cmsTestimonials;
+  const testimonials = canManage ? source : source.filter((item: any) => item.isPublished !== false);
   res.json({ success: true, testimonials });
 });
 
-apiRouter.post('/cms/testimonials', requireAuth, requirePermission('canManageCmsContent'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.post('/cms/testimonials', requireAuth, requirePermission('canManageCmsContent'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const item = req.body || {};
-  const db = getDatabase();
   const rating = Number(item.rating);
+  const now = new Date().toISOString();
   const newTestimonial = {
     id: `test_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
     quote: cleanText(item.quote, 2000),
     quoteId: cleanText(item.quoteId, 2000),
     author: cleanText(item.author, 160),
+    name: cleanText(item.author, 160),
     role: cleanText(item.role, 160),
     company: cleanText(item.company, 200),
     location: cleanText(item.location, 160),
     rating: Number.isFinite(rating) ? Math.min(5, Math.max(0, rating)) : 5,
     avatar: cleanOptionalUrl(item.avatar),
     isPublished: item.isPublished !== undefined ? Boolean(item.isPublished) : true,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
+    createdAt: now,
+    updatedAt: now
   };
+  if (getDataSourceMode() === 'postgres') {
+    const testimonial = await postgresCmsRepository.create('testimonial', newTestimonial);
+    res.json({ success: true, testimonial });
+    return;
+  }
+  const db = getDatabase();
   db.cmsTestimonials.unshift(newTestimonial);
   saveDatabase(db);
   res.json({ success: true, testimonial: newTestimonial });
 });
 
-apiRouter.put('/cms/testimonials/:id', requireAuth, requirePermission('canManageCmsContent'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.put('/cms/testimonials/:id', requireAuth, requirePermission('canManageCmsContent'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
-  const updates = req.body || {};
-  const db = getDatabase();
-  const idx = db.cmsTestimonials.findIndex(t => t.id === id);
-  if (idx === -1) {
-    res.status(404).json({ success: false, error: 'Testimonial not found.' });
+  const patch = pickFields(req.body || {}, ['quote','quoteId','author','role','company','location','rating','avatar','isPublished']);
+  if (getDataSourceMode() === 'postgres') {
+    const testimonial = await postgresCmsRepository.update('testimonial', id, patch);
+    if (!testimonial) { res.status(404).json({ success: false, error: 'Testimonial not found.' }); return; }
+    res.json({ success: true, testimonial });
     return;
   }
-  const patch = pickFields(updates, ['quote','quoteId','author','role','company','location','rating','avatar','isPublished']);
+  const db = getDatabase();
+  const idx = db.cmsTestimonials.findIndex(t => t.id === id);
+  if (idx === -1) { res.status(404).json({ success: false, error: 'Testimonial not found.' }); return; }
   db.cmsTestimonials[idx] = { ...db.cmsTestimonials[idx], ...patch, updatedAt: new Date().toISOString() };
   saveDatabase(db);
   res.json({ success: true, testimonial: db.cmsTestimonials[idx] });
 });
 
-apiRouter.delete('/cms/testimonials/:id', requireAuth, requirePermission('canManageCmsContent'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.delete('/cms/testimonials/:id', requireAuth, requirePermission('canManageCmsContent'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
-  const db = getDatabase();
-  const testimonial = db.cmsTestimonials.find((item: any) => item.id === id);
-  if (!testimonial) {
-    res.status(404).json({ success: false, error: 'Testimonial not found.' });
+  if (getDataSourceMode() === 'postgres') {
+    const testimonial = await postgresCmsRepository.findById('testimonial', req.params.id);
+    if (!testimonial) { res.status(404).json({ success: false, error: 'Testimonial not found.' }); return; }
+    await postgresCmsRepository.delete('testimonial', req.params.id);
+    recordAuditLog({ action: 'CMS_TESTIMONIAL_DELETED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Deleted CMS testimonial "${testimonial.author || testimonial.name || id}".`, severity: 'warning' });
+    res.json({ success: true, message: 'Testimonial deleted.' });
     return;
   }
+  const db = getDatabase();
+  const testimonial = db.cmsTestimonials.find((item: any) => item.id === id);
+  if (!testimonial) { res.status(404).json({ success: false, error: 'Testimonial not found.' }); return; }
   db.cmsTestimonials = db.cmsTestimonials.filter(t => t.id !== id);
   saveDatabase(db);
-  recordAuditLog({
-    action: 'CMS_TESTIMONIAL_DELETED',
-    actor: req.user!.username,
-    actorRole: req.user!.role,
-    ip: req.ip,
-    userAgent: req.headers['user-agent'] as string,
-    details: `Deleted CMS testimonial "${testimonial.author || id}".`,
-    severity: 'warning'
-  });
+  recordAuditLog({ action: 'CMS_TESTIMONIAL_DELETED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Deleted CMS testimonial "${testimonial.author || id}".`, severity: 'warning' });
   res.json({ success: true, message: 'Testimonial deleted.' });
 });
 
 // CMS Settings
-apiRouter.get('/cms/settings', requireAuth, requirePermission('canManageCmsContent'), (req: AuthenticatedRequest, res: Response): void => {
-  const db = getDatabase();
-  res.json({ success: true, settings: db.cmsSettings });
+apiRouter.get('/cms/settings', requireAuth, requirePermission('canManageCmsContent'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  const settings = getDataSourceMode() === 'postgres'
+    ? await postgresCmsRepository.getSettings()
+    : getDatabase().cmsSettings;
+  res.json({ success: true, settings });
 });
 
-apiRouter.put('/cms/settings', requireAuth, requirePermission('canManageCmsContent'), (req: AuthenticatedRequest, res: Response): void => {
-  const db = getDatabase();
+apiRouter.put('/cms/settings', requireAuth, requirePermission('canManageCmsContent'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const patch = pickFields(req.body || {}, ['siteTitle','siteDescription','contactReceiverEmail','defaultLanguage','enableLiveChat','enableSoundAlerts','maintenanceMode']);
+  if (getDataSourceMode() === 'postgres') {
+    const settings = await postgresCmsRepository.updateSettings(patch);
+    recordAuditLog({ action: 'CMS_SETTINGS_UPDATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: 'Updated CMS settings.', severity: 'info' });
+    res.json({ success: true, settings });
+    return;
+  }
+  const db = getDatabase();
   db.cmsSettings = { ...db.cmsSettings, ...patch, updatedAt: new Date().toISOString() };
   saveDatabase(db);
   res.json({ success: true, settings: db.cmsSettings });
 });
-
 // ----------------------------------------------------
 // 9. AUDIT LOGS (Server-Side, Tamper-Resistant)
 // ----------------------------------------------------
