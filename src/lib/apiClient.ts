@@ -266,6 +266,18 @@ export const api = {
         body: JSON.stringify(exp)
       }),
     deleteExpense: (id: string) => apiRequest(`/api/finance/expenses/${id}`, { method: 'DELETE' }),
+    getRates: (params?: { userId?: string; currency?: string }) => {
+      const query = new URLSearchParams();
+      if (params?.userId) query.set('userId', params.userId);
+      if (params?.currency) query.set('currency', params.currency);
+      const suffix = query.toString() ? '?' + query.toString() : '';
+      return apiRequest<{ success: boolean; rates: any[] }>(`/api/finance/rates${suffix}`);
+    },
+    createRate: (rate: any) =>
+      apiRequest('/api/finance/rates', {
+        method: 'POST',
+        body: JSON.stringify(rate)
+      }),
     getMetrics: () => apiRequest<{ success: boolean; metrics: any }>('/api/finance/metrics')
   },
 
@@ -424,7 +436,21 @@ export const api = {
         method: 'POST',
         body: JSON.stringify(log)
       }),
-    delete: (id: string) => apiRequest(`/api/projects/timelogs/${id}`, { method: 'DELETE' })
+    submit: (id: string, version?: number) =>
+      apiRequest(`/api/projects/timelogs/${id}/submit`, {
+        method: 'POST',
+        body: JSON.stringify({ version })
+      }),
+    approve: (id: string, version?: number) =>
+      apiRequest(`/api/projects/timelogs/${id}/approve`, {
+        method: 'POST',
+        body: JSON.stringify({ version })
+      }),
+    delete: (id: string, version?: number) =>
+      apiRequest(`/api/projects/timelogs/${id}`, {
+        method: 'DELETE',
+        body: JSON.stringify({ version })
+      })
   },
 
   // Approvals
