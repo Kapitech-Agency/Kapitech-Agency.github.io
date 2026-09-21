@@ -4140,7 +4140,7 @@ apiRouter.get('/system/production-readiness', requireAuth, requireAnyPermission(
       migrationCheckError = error instanceof Error ? error.message : 'Migration status unavailable.';
     }
 
-    const requiredMigrationNumbers = Array.from({ length: 13 }, (_, index) => String(index + 1).padStart(3, '0'));
+    const requiredMigrationNumbers = Array.from({ length: 14 }, (_, index) => String(index + 1).padStart(3, '0'));
     const appliedMigrationNumbers = new Set(appliedMigrations.map(version => version.slice(0, 3)));
     const migrationComplete = !migrationCheckError
       && requiredMigrationNumbers.every(version => appliedMigrationNumbers.has(version));

@@ -38,7 +38,7 @@ export class PostgresDatabaseRepository {
   const cmsTestimonials=(m.get('cms_testimonials')??[]).map(r=>({...obj(r.data),id:r.id,name:r.name,company:r.company??undefined,quote:r.quote??undefined,createdAt:iso(r.created_at),updatedAt:iso(r.updated_at)}));
   const sr=m.get('cms_settings')??[],cmsSettings:any=Object.fromEntries(sr.map(r=>[r.key,r.value]));if(sr.length)cmsSettings.updatedAt=iso(sr[0].updated_at);
   const auditLogs=(m.get('audit_logs')??[]).map(r=>base(r,{actorRole:r.actor_role,actorUserId:r.actor_user_id??undefined,userAgent:r.user_agent??'',timestamp:iso(r.timestamp)}));
-  const n=m.get('notification_settings')?.[0];const notificationSettings={targetEmail:n?.target_email??'',formspreeEndpoint:n?.formspree_endpoint??'',telegramBotToken:n?.telegram_bot_token??'',telegramChatId:n?.telegram_chat_id??'',isEmailActive:Boolean(n?.is_email_active),isTelegramActive:Boolean(n?.is_telegram_active),updatedAt:n?.updated_at?iso(n.updated_at):''};
+  const n=m.get('notification_settings')?.[0];const notificationSettings={targetEmail:n?.target_email??'',formspreeEndpoint:n?.formspree_endpoint??'',telegramBotToken:'',telegramChatId:n?.telegram_chat_id??'',isEmailActive:Boolean(n?.is_email_active),isTelegramActive:Boolean(n?.is_telegram_active),updatedAt:n?.updated_at?iso(n.updated_at):''};
   return{users,sessions,leads,crmDeals,clients,projects,proposals,tasks,timeLogs,invoices,expenses,approvals,vendors,documents,notifications,cmsServices,cmsProjects,cmsTestimonials,cmsSettings,auditLogs,notificationSettings};
  }}
 export const postgresDatabaseRepository=new PostgresDatabaseRepository();

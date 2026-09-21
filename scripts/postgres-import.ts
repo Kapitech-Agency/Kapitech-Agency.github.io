@@ -440,16 +440,19 @@ async function importCore(client: any, db: AnyRecord): Promise<Record<string, nu
   counts.cmsSettings = Object.keys(settings).filter(key => key !== 'updatedAt').length;
 
   const notificationSettings = db.notificationSettings || {};
+
   await client.query(
     `INSERT INTO notification_settings
-      (id,target_email,formspree_endpoint,telegram_bot_token,telegram_chat_id,is_email_active,is_telegram_active,updated_at)
-      VALUES (1,$1,$2,$3,$4,$5,$6,$7)
+      (id,target_email,formspree_endpoint,telegram_chat_id,is_email_active,is_telegram_active,updated_at)
+      VALUES (1,$1,$2,$3,$4,$5,$6)
       ON CONFLICT (id) DO UPDATE SET target_email=EXCLUDED.target_email,
-      formspree_endpoint=EXCLUDED.formspree_endpoint,telegram_bot_token=EXCLUDED.telegram_bot_token,
-      telegram_chat_id=EXCLUDED.telegram_chat_id,is_email_active=EXCLUDED.is_email_active,
-      is_telegram_active=EXCLUDED.is_telegram_active,updated_at=EXCLUDED.updated_at`,
+      formspree_endpoint=EXCLUDED.formspree_endpoint,
+      telegram_chat_id=EXCLUDED.telegram_chat_id,
+      is_email_active=EXCLUDED.is_email_active,
+      is_telegram_active=EXCLUDED.is_telegram_active,
+      updated_at=EXCLUDED.updated_at`,
     [nullableText(notificationSettings.targetEmail), nullableText(notificationSettings.formspreeEndpoint),
-     nullableText(notificationSettings.telegramBotToken), nullableText(notificationSettings.telegramChatId),
+     nullableText(notificationSettings.telegramChatId),
      Boolean(notificationSettings.isEmailActive), Boolean(notificationSettings.isTelegramActive),
      timestampValue(notificationSettings.updatedAt)]
   );
