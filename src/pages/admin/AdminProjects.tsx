@@ -530,11 +530,12 @@ export const AdminProjects: React.FC = () => {
           {canManageProjects && (
             <button
               onClick={handleOpenCreateProject}
-            className="h-10 px-4 rounded-xl bg-[#E50914] hover:bg-[#FF1E27] text-white text-xs font-mono font-bold transition-all flex items-center gap-2 shadow-lg shadow-[#E50914]/20 min-h-[40px]"
-          >
-            <Plus size={15} />
-            <span>{language === 'id' ? 'Buat Proyek Baru' : 'New Project'}</span>
-          </button>
+              className="h-10 px-4 rounded-xl bg-[#E50914] hover:bg-[#FF1E27] text-white text-xs font-mono font-bold transition-all flex items-center gap-2 shadow-lg shadow-[#E50914]/20 min-h-[40px]"
+            >
+              <Plus size={15} />
+              <span>{language === 'id' ? 'Buat Proyek Baru' : 'New Project'}</span>
+            </button>
+          )}
         </div>
       </div>
 

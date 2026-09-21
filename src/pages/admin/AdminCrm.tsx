@@ -1024,20 +1024,22 @@ export const AdminCrm: React.FC = () => {
                         </a>
                       )}
                       {canManageCrm && (
-                        <button
-                          onClick={() => handleOpenEditModal(lead)}
-                        className="w-9 h-9 rounded-xl bg-[#181B22] text-[#8A94A6] hover:text-white border border-[rgba(255,255,255,0.07)] flex items-center justify-center min-h-[36px] min-w-[36px]"
-                        title="Edit deal"
-                      >
-                        <Edit3 size={13} />
-                      </button>
-                      <button
-                        onClick={() => handleDeleteLead(lead.id, lead.clientName)}
-                        className="w-9 h-9 rounded-xl bg-[#181B22] text-[#8A94A6] hover:text-red-400 border border-[rgba(255,255,255,0.07)] hover:border-red-500/40 flex items-center justify-center min-h-[36px] min-w-[36px]"
-                        title="Delete deal"
-                      >
-                          <Trash2 size={13} />
-                        </button>
+                        <>
+                          <button
+                            onClick={() => handleOpenEditModal(lead)}
+                            className="w-9 h-9 rounded-xl bg-[#181B22] text-[#8A94A6] hover:text-white border border-[rgba(255,255,255,0.07)] flex items-center justify-center min-h-[36px] min-w-[36px]"
+                            title="Edit deal"
+                          >
+                            <Edit3 size={13} />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteLead(lead.id, lead.clientName)}
+                            className="w-9 h-9 rounded-xl bg-[#181B22] text-[#8A94A6] hover:text-red-400 border border-[rgba(255,255,255,0.07)] hover:border-red-500/40 flex items-center justify-center min-h-[36px] min-w-[36px]"
+                            title="Delete deal"
+                          >
+                            <Trash2 size={13} />
+                          </button>
+                        </>
                       )}
                     </div>
                   </div>
