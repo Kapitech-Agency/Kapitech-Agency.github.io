@@ -116,6 +116,11 @@ async function startServer() {
     }
   });
 
+  // Keep unknown API routes as JSON 404s instead of letting SPA fallback return index.html.
+  app.use('/api', (_req, res) => {
+    res.status(404).json({ success: false, error: 'API route not found.' });
+  });
+
   // Vite middleware in dev, static files in prod
   if (process.env.NODE_ENV !== 'production') {
     const { createServer: createViteServer } = await import('vite');
