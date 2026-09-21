@@ -1,5 +1,6 @@
 -- AMS PostgreSQL migration 007
 -- Private document vault metadata, ACL, integrity, and lifecycle hardening.
+-- Verification checkpoint after invoice repository restoration.
 
 BEGIN;
 
