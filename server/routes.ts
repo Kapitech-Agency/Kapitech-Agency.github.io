@@ -3139,6 +3139,10 @@ apiRouter.put('/crm/proposals/:id', requireAuth, requirePermission('canManageCrm
     res.status(400).json({ success: false, error: 'Invalid proposal status.' });
     return;
   }
+  if (['Approved', 'Rejected'].includes(String(patch.status)) && !Boolean(req.user!.permissions?.canApproveBudgets) && req.user!.stakeholderType !== 'Master') {
+    res.status(403).json({ success: false, error: 'Proposal approval status requires approval permission.' });
+    return;
+  }
   if (patch.sentDate !== undefined && patch.sentDate !== null && !isValidDate(patch.sentDate)) {
     res.status(400).json({ success: false, error: 'Invalid proposal sent date.' });
     return;
