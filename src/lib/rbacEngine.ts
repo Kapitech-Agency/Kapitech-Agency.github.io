@@ -237,6 +237,8 @@ const MODULE_PERMISSION_MAP: Record<string, keyof ServerPermissions | 'authentic
 const MODULE_ANY_PERMISSION_MAP: Record<string, Array<keyof ServerPermissions>> = {
   clients: ['canManageClients', 'canManageCrm'],
   documents: ['canManageProjects', 'canManageCrm', 'canViewFinancials', 'canViewSecurityAuditLogs'],
+  projects: ['canManageProjects', 'canManageKanbanTasks'],
+  approvals: ['canApproveBudgets', 'canManageProjects', 'canViewFinancials'],
   settings: ['canManageAdminAccounts', 'canAccessServerAndApi', 'canViewSecurityAuditLogs', 'canManageCrm', 'canManageProjects', 'canViewFinancials']
 };
 

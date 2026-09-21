@@ -23,7 +23,7 @@ import {
 import { api } from '../../lib/apiClient';
 import { useLanguage } from '../../lib/LanguageContext';
 import { getActiveCurrency, formatAmount, CurrencyCode, CURRENCY_EVENT } from '../../lib/currency';
-import { getAdminSession } from '../../lib/adminAuth';
+import { getAdminSession, hasAdminPermission } from '../../lib/adminAuth';
 
 interface ProposalLineItem {
   id: string;
@@ -57,6 +57,7 @@ interface Proposal {
 export const AdminProposals: React.FC = () => {
   const { language, t } = useLanguage();
   const session = getAdminSession();
+  const canApproveBudgets = hasAdminPermission('canApproveBudgets');
   const [currency, setCurrency] = useState<CurrencyCode>(getActiveCurrency());
   const [proposals, setProposals] = useState<Proposal[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -236,6 +237,12 @@ export const AdminProposals: React.FC = () => {
   };
 
   const handleStatusChange = async (id: string, newStatus: Proposal['status']) => {
+    if (['approved', 'rejected'].includes(newStatus) && !canApproveBudgets) {
+      showToast(language === 'id'
+        ? 'Status Approved/Rejected hanya dapat diubah oleh user dengan hak Approval.'
+        : 'Approved/Rejected status requires approval permission.');
+      return;
+    }
     try {
       const res = await api.proposals.update(id, { status: newStatus });
       if (res.success && res.data?.proposal) {
