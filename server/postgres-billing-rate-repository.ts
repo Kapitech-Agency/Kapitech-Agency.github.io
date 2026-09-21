@@ -80,12 +80,24 @@ export class PostgresBillingRateRepository {
       for (const row of existing.rows) {
         const from = String(row.effective_from).slice(0, 10);
         const to = row.effective_to ? String(row.effective_to).slice(0, 10) : null;
-        if (from === effectiveFrom || (from < effectiveFrom && (!to || to >= effectiveFrom)) || from > effectiveFrom) {
+
+        if (from === effectiveFrom) {
+          throw new BillingRateOverlapError('A billing rate already exists for this effective date.');
+        }
+
+        if (from > effectiveFrom) {
+          throw new BillingRateOverlapError('A future billing rate exists; add new rates chronologically.');
+        }
+
+        if (from < effectiveFrom && to && to >= effectiveFrom) {
           throw new BillingRateOverlapError('A billing rate already covers this effective date.');
         }
       }
 
-      const previous = existing.rows.find(row => String(row.effective_from).slice(0, 10) < effectiveFrom && !row.effective_to);
+      const previous = existing.rows.find(row => {
+        const from = String(row.effective_from).slice(0, 10);
+        return from < effectiveFrom && !row.effective_to;
+      });
       if (previous) {
         const dayBefore = new Date(effectiveFrom + 'T00:00:00Z');
         dayBefore.setUTCDate(dayBefore.getUTCDate() - 1);
