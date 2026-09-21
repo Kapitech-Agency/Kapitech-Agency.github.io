@@ -55,6 +55,7 @@ import { postgresProjectRepository, ProjectConcurrencyError } from './postgres-p
 import { postgresVendorRepository } from './postgres-vendor-repository.ts';
 import { postgresLeadRepository } from './postgres-lead-repository.ts';
 import { postgresCrmDealRepository } from './postgres-crm-deal-repository.ts';
+import { postgresProposalRepository } from './postgres-proposal-repository.ts';
 
 
 const ROLE_POLICIES: Record<string, {
@@ -2694,12 +2695,13 @@ apiRouter.post('/migration/import-local', requireAuth, requirePermission('canRun
 // 13. PROPOSALS & QUOTATIONS (PART 12)
 // ----------------------------------------------------
 
-apiRouter.get('/crm/proposals', requireAuth, requirePermission('canManageCrm'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.get('/crm/proposals', requireAuth, requirePermission('canManageCrm'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  if (getDataSourceMode() === 'postgres') { const proposals = await postgresProposalRepository.list(); res.json({ success: true, proposals }); return; }
   const db = getDatabase();
   res.json({ success: true, proposals: db.proposals || [] });
 });
 
-apiRouter.post('/crm/proposals', requireAuth, requirePermission('canManageCrm'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.post('/crm/proposals', requireAuth, requirePermission('canManageCrm'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const data = req.body;
   const db = getDatabase();
 
@@ -2750,6 +2752,8 @@ apiRouter.post('/crm/proposals', requireAuth, requirePermission('canManageCrm'),
     updatedAt: new Date().toISOString()
   };
 
+  if (getDataSourceMode() === 'postgres') { const proposal = await postgresProposalRepository.create(newProposal); recordAuditLog({ action: 'PROPOSAL_CREATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Created proposal ${proposal.proposalNumber} for ${proposal.clientName || proposal.company} (Total: ${proposal.total}).`, severity: 'info' }); res.json({ success: true, proposal }); return; }
+
   if (!db.proposals) db.proposals = [];
   db.proposals.unshift(newProposal);
   saveDatabase(db);
@@ -2767,11 +2771,37 @@ apiRouter.post('/crm/proposals', requireAuth, requirePermission('canManageCrm'),
   res.json({ success: true, proposal: newProposal });
 });
 
-apiRouter.put('/crm/proposals/:id', requireAuth, requirePermission('canManageCrm'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.put('/crm/proposals/:id', requireAuth, requirePermission('canManageCrm'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
   const updates = req.body || {};
   const db = getDatabase();
   const idx = (db.proposals || []).findIndex(p => p.id === id);
+
+  if (getDataSourceMode() === 'postgres') {
+    const existing = await postgresProposalRepository.findById(id);
+    if (!existing) { res.status(404).json({ success: false, error: 'Proposal not found.' }); return; }
+    const items = Array.isArray(updates.items) ? updates.items.slice(0, 100).map((item: any) => ({
+      id: cleanText(item?.id || crypto.randomBytes(4).toString('hex'), 80),
+      description: cleanText(item?.description, 500),
+      quantity: Math.min(100000, Math.max(0, Number(item?.quantity) || 0)),
+      unitPrice: Math.min(10_000_000_000, Math.max(0, Number(item?.unitPrice) || 0))
+    })).filter((item: any) => item.description && item.quantity > 0) : existing.items;
+    if (!items.length) { res.status(400).json({ success: false, error: 'Proposal requires at least one valid line item.' }); return; }
+    const subtotal = items.reduce((sum: number, it: any) => sum + Number(it.quantity) * Number(it.unitPrice), 0);
+    const discount = updates.discount !== undefined ? Math.min(subtotal, Math.max(0, Number(updates.discount) || 0)) : existing.discount;
+    const taxPercent = updates.taxPercent !== undefined ? Math.min(100, Math.max(0, Number(updates.taxPercent) || 0)) : existing.taxPercent;
+    const taxableAmount = Math.max(0, subtotal - discount);
+    const tax = Math.round(taxableAmount * (taxPercent / 100));
+    const total = taxableAmount + tax;
+    const patch = pickFields(updates, ['proposalNumber','title','clientName','company','dealId','projectId','currency','validityPeriod','paymentTerms','status','notes','sentDate']);
+    if (patch.proposalNumber !== undefined && !/^[A-Za-z0-9._/-]{1,80}$/.test(String(patch.proposalNumber))) { res.status(400).json({ success: false, error: 'Invalid proposal number.' }); return; }
+    for (const key of ['title','clientName','company','dealId','projectId','validityPeriod','paymentTerms','notes'] as const) if (patch[key] !== undefined) patch[key] = cleanText(patch[key], key === 'notes' ? 3000 : 300);
+    if (patch.currency !== undefined && !['IDR','USD'].includes(String(patch.currency))) { res.status(400).json({ success: false, error: 'Invalid proposal currency.' }); return; }
+    if (patch.status !== undefined && !['Draft','Internal Review','Sent','Approved','Rejected','Accepted'].includes(String(patch.status))) { res.status(400).json({ success: false, error: 'Invalid proposal status.' }); return; }
+    if (patch.sentDate !== undefined && patch.sentDate !== null && !isValidDate(patch.sentDate)) { res.status(400).json({ success: false, error: 'Invalid proposal sent date.' }); return; }
+    const proposal = await postgresProposalRepository.update(id, { ...patch, items, subtotal, discount, taxPercent, tax, total });
+    res.json({ success: true, proposal }); return;
+  }
 
   if (idx === -1) {
     res.status(404).json({ success: false, error: 'Proposal not found.' });
@@ -2840,15 +2870,12 @@ apiRouter.put('/crm/proposals/:id', requireAuth, requirePermission('canManageCrm
   res.json({ success: true, proposal: db.proposals[idx] });
 });
 
-apiRouter.post('/crm/proposals/:id/approve', requireAuth, requirePermission('canApproveBudgets'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.post('/crm/proposals/:id/approve', requireAuth, requirePermission('canApproveBudgets'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
+  if (getDataSourceMode() === 'postgres') { const current = await postgresProposalRepository.findById(id); if (!current) { res.status(404).json({ success: false, error: 'Proposal not found.' }); return; } if (!['Draft','Internal Review','Sent'].includes(String(current.status))) { res.status(409).json({ success: false, error: 'Only draft, internal review, or sent proposals can be approved.' }); return; } const approved = await postgresProposalRepository.approve(id); res.json({ success: true, proposal: approved }); return; }
   const db = getDatabase();
   const prop = (db.proposals || []).find(p => p.id === id);
-
-  if (!prop) {
-    res.status(404).json({ success: false, error: 'Proposal not found.' });
-    return;
-  }
+  if (!prop) { res.status(404).json({ success: false, error: 'Proposal not found.' }); return; }
 
   if (!['Draft','Internal Review','Sent'].includes(String(prop.status))) {
     res.status(409).json({ success: false, error: 'Only draft, internal review, or sent proposals can be approved.' });
@@ -2872,15 +2899,12 @@ apiRouter.post('/crm/proposals/:id/approve', requireAuth, requirePermission('can
   res.json({ success: true, proposal: prop });
 });
 
-apiRouter.post('/crm/proposals/:id/convert-to-invoice', requireAuth, requirePermission('canManageInvoices'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.post('/crm/proposals/:id/convert-to-invoice', requireAuth, requirePermission('canManageInvoices'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
+  if (getDataSourceMode() === 'postgres') { const current = await postgresProposalRepository.findById(id); if (!current) { res.status(404).json({ success: false, error: 'Proposal not found.' }); return; } try { const invoice = await postgresProposalRepository.convertToInvoice(id); res.json({ success: true, invoice, proposal: await postgresProposalRepository.findById(id) }); } catch (error) { res.status(409).json({ success: false, error: error instanceof Error ? error.message : 'Proposal could not be converted to invoice.' }); } return; }
   const db = getDatabase();
   const prop = (db.proposals || []).find(p => p.id === id);
-
-  if (!prop) {
-    res.status(404).json({ success: false, error: 'Proposal not found.' });
-    return;
-  }
+  if (!prop) { res.status(404).json({ success: false, error: 'Proposal not found.' }); return; }
 
   const year = new Date().getFullYear();
   let invoiceNumber = `INV-KAPI-${year}-${crypto.randomInt(1000, 1000000)}`;
@@ -2927,8 +2951,9 @@ apiRouter.post('/crm/proposals/:id/convert-to-invoice', requireAuth, requirePerm
   res.json({ success: true, invoice: newInvoice, proposal: prop });
 });
 
-apiRouter.delete('/crm/proposals/:id', requireAuth, requirePermission('canManageCrm'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.delete('/crm/proposals/:id', requireAuth, requirePermission('canManageCrm'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
+  if (getDataSourceMode() === 'postgres') { const deleted = await postgresProposalRepository.delete(id); if (!deleted) { res.status(404).json({ success: false, error: 'Proposal not found.' }); return; } res.json({ success: true, message: 'Proposal deleted.' }); return; }
   const db = getDatabase();
   db.proposals = (db.proposals || []).filter(p => p.id !== id);
   saveDatabase(db);
