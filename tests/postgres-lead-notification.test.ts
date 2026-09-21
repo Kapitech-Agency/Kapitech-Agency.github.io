@@ -15,8 +15,8 @@ test('lead submissions dispatch Telegram notifications in both datasource modes'
   assert.ok(source.includes('void dispatchLeadTelegramNotification(newLead, notificationSettings)'));
   assert.ok(source.includes('KAPITECH_TELEGRAM_BOT_TOKEN'));
   assert.ok(source.includes('KAPITECH_TELEGRAM_CHAT_ID'));
+  assert.ok(source.includes('const hasTelegramToken = postgresMode'));
   assert.ok(source.includes('jsonNotificationSettings?.telegramBotToken'));
-  assert.ok(!source.includes('const hasTelegramToken = postgresMode'));
   assert.ok(!source.includes('s.telegramBotToken'));
 });
 
