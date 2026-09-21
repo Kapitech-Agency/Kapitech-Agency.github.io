@@ -435,6 +435,9 @@ apiRouter.post('/auth/mfa/verify', rateLimitPublic(10, 5 * 60 * 1000), async (re
   const code = String(req.body?.code || '').trim();
   const validTotp = Boolean(user?.mfaEnabled && user?.mfaSecret && verifyTotpCode(user.mfaSecret, code));
   const validRecovery = Boolean(user?.mfaEnabled && user && verifyMfaRecoveryCode(user, code));
+  if (validRecovery && getDataSourceMode() === 'postgres' && user) {
+    await postgresAuthRepository.updateUserMfa(user.id, { mfaEnabled: user.mfaEnabled, mfaSecret: user.mfaSecret || null, mfaPendingSecret: user.mfaPendingSecret || null, mfaPendingSecretCreatedAt: user.mfaPendingSecretCreatedAt || null, mfaRecoveryCodeHashes: user.mfaRecoveryCodeHashes || [] });
+  }
   if (!user || user.status === 'suspended' || !user.mfaEnabled || (!validTotp && !validRecovery)) {
     const failedAttempts = await incrementMfaChallengeFailures(decodeURIComponent(challengeToken));
     if (failedAttempts >= 5) {
@@ -645,7 +648,7 @@ apiRouter.get('/auth/me', requireAuth, (req: AuthenticatedRequest, res: Response
   });
 });
 
-apiRouter.post('/auth/change-password', requireAuth, rateLimitAuthenticated(10, 15 * 60 * 1000), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.post('/auth/change-password', requireAuth, rateLimitAuthenticated(10, 15 * 60 * 1000), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { currentPassword, newPassword } = req.body;
   const user = req.user!;
 
@@ -669,16 +672,17 @@ apiRouter.post('/auth/change-password', requireAuth, rateLimitAuthenticated(10, 
     return;
   }
 
-  const db = getDatabase();
-  const dbUser = db.users.find(u => u.id === user.id);
+  const db = getDataSourceMode() === 'json' ? getDatabase() : undefined;
+  const dbUser = getDataSourceMode() === 'postgres' ? await postgresAuthRepository.findUserById(user.id) : db!.users.find(u => u.id === user.id) || null;
   if (dbUser) {
     const prepared = preparePassword(newPassword);
     dbUser.salt = prepared.salt;
     dbUser.passwordHash = prepared.passwordHash;
     dbUser.passwordAlgorithm = prepared.passwordAlgorithm;
-    saveDatabase(db);
+    if (getDataSourceMode() === 'postgres') await postgresAuthRepository.updateUserPassword(user.id, prepared.passwordHash, prepared.salt, prepared.passwordAlgorithm);
+    else saveDatabase(db!);
     if (req.sessionToken) {
-      revokeAllUserSessions(user.id, hashSessionToken(req.sessionToken));
+      await revokeAllUserSessions(user.id, hashSessionToken(req.sessionToken));
     }
 
     recordAuditLog({
