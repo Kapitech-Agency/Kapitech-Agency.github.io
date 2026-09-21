@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { 
   Inbox, 
@@ -82,7 +82,7 @@ export const AdminInbox: React.FC = () => {
   const [isCannedModalOpen, setIsCannedModalOpen] = useState(false);
   const [isCrmModalOpen, setIsCrmModalOpen] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
-  const [prevCount, setPrevCount] = useState<number | null>(null);
+  const prevCountRef = useRef<number | null>(null);
   const [toastMessage, setToastMessage] = useState<{ text: string; link?: string; linkText?: string } | null>(null);
 
   // Sync Currency
@@ -97,19 +97,20 @@ export const AdminInbox: React.FC = () => {
   // Subscribe to real-time incoming briefs
   useEffect(() => {
     const unsubscribe = subscribeToInbox((items) => {
+      const previousCount = prevCountRef.current;
       setSubmissions(items);
 
-      // Sound and Desktop notification on newly arrived submission
-      if (prevCount !== null && items.length > prevCount) {
-        const latest = items[0];
+      // Keep the notification hook stable; actual notification delivery remains server-controlled.
+      if (previousCount !== null && items.length > previousCount) {
+        // New submissions are reflected immediately in the Inbox UI.
       }
 
-      setPrevCount(items.length);
+      prevCountRef.current = items.length;
       setLoading(false);
     });
 
     return () => unsubscribe();
-  }, [prevCount, language]);
+  }, []);
 
   // Keep selected submission in sync with store
   useEffect(() => {

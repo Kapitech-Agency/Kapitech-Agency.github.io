@@ -159,42 +159,52 @@ export const deleteSubmission = async (id: string): Promise<void> => {
  * Server-backed subscriber with a small browser cache
  */
 export const subscribeToInbox = (onUpdate: (submissions: ContactSubmission[]) => void): (() => void) => {
-  // 1. Deliver local cache immediately
   const initialLocal = getLocalSubmissions();
-  onUpdate(initialLocal);
+  let localCache = [...initialLocal];
 
-  // Fetch authoritative records from Server API.
-  api.leads.getAll().then(res => {
-    if (res.success && Array.isArray(res.data?.leads)) {
-      const serverLeads = res.data!.leads;
+  onUpdate(localCache);
+
+  const syncFromServer = async () => {
+    try {
+      const res = await api.leads.getAll();
+      if (!res.success || !Array.isArray(res.data?.leads)) return;
+
+      const serverLeads = res.data.leads;
       const mergedMap = new Map<string, ContactSubmission>();
-      initialLocal.forEach((l) => mergedMap.set(l.id, l));
-      serverLeads.forEach((l) => mergedMap.set(l.id, l));
+
+      localCache.forEach((lead) => mergedMap.set(lead.id, lead));
+      serverLeads.forEach((lead) => mergedMap.set(lead.id, lead));
+
       const combined = Array.from(mergedMap.values()).sort((a, b) =>
         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
       );
+
+      localCache = combined;
       saveLocalSubmissions(combined);
       onUpdate(combined);
+    } catch {
+      // Keep the last known local/server snapshot when the network is unavailable.
     }
-  }).catch(() => {});
+  };
 
-  let localCache = [...initialLocal];
+  void syncFromServer();
 
   const handleLocalCustomEvent = (e: Event) => {
     const customEvent = e as CustomEvent<ContactSubmission[]>;
-    if (customEvent.detail && Array.isArray(customEvent.detail)) {
-      localCache = customEvent.detail;
-      onUpdate(localCache);
-    } else {
-      localCache = getLocalSubmissions();
-      onUpdate(localCache);
-    }
+    localCache = customEvent.detail && Array.isArray(customEvent.detail)
+      ? customEvent.detail
+      : getLocalSubmissions();
+    onUpdate(localCache);
   };
+
   window.addEventListener(SUBMISSION_EVENT, handleLocalCustomEvent);
 
-
+  const refreshInterval = window.setInterval(() => {
+    void syncFromServer();
+  }, 30000);
 
   return () => {
+    window.clearInterval(refreshInterval);
     window.removeEventListener(SUBMISSION_EVENT, handleLocalCustomEvent);
   };
 };
