@@ -1181,7 +1181,15 @@ apiRouter.delete('/leads/:id', requireAuth, requirePermission('canManageCrm'), a
       res.status(404).json({ success: false, error: 'Lead not found.' });
       return;
     }
-    await postgresLeadRepository.delete(id);
+    try {
+      await postgresLeadRepository.delete(id);
+    } catch (error) {
+      if (error instanceof Error && error.message === 'LEAD_IS_CLOSED') {
+        res.status(409).json({ success: false, error: 'Closed leads are retained as business history and cannot be deleted.' });
+        return;
+      }
+      throw error;
+    }
     recordAuditLog({ action: 'LEAD_DELETED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Deleted lead ${lead.fullName} (${lead.email}).`, severity: 'warning' });
     res.json({ success: true, message: 'Lead removed.' });
     return;
@@ -1465,7 +1473,15 @@ apiRouter.delete('/crm/deals/:id', requireAuth, requirePermission('canManageCrm'
       res.status(404).json({ success: false, error: 'Deal not found.' });
       return;
     }
-    await postgresCrmDealRepository.delete(id);
+    try {
+      await postgresCrmDealRepository.delete(id);
+    } catch (error) {
+      if (error instanceof Error && error.message === 'DEAL_HAS_PROPOSALS') {
+        res.status(409).json({ success: false, error: 'Deal is referenced by proposals and cannot be deleted.' });
+        return;
+      }
+      throw error;
+    }
     recordAuditLog({
       action: 'CRM_DEAL_DELETED',
       actor: req.user!.username,
