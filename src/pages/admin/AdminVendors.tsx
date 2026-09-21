@@ -38,9 +38,11 @@ import {
 import { formatAmount, getActiveCurrency, CurrencyCode, CURRENCY_EVENT } from '../../lib/currency';
 import { useLanguage } from '../../lib/LanguageContext';
 import { CustomSelect } from '../../components/ui/CustomSelect';
+import { hasAdminPermission } from '../../lib/adminAuth';
 
 export const AdminVendors: React.FC = () => {
   const { t, language } = useLanguage();
+  const canManageVendors = hasAdminPermission('canManageVendors');
   const [vendors, setVendors] = useState<AgencyVendor[]>([]);
   const [currency, setCurrency] = useState<CurrencyCode>(getActiveCurrency());
   const [searchQuery, setSearchQuery] = useState('');
@@ -512,14 +514,16 @@ export const AdminVendors: React.FC = () => {
                 <button
                   onClick={() => handleOpenEdit(vendor)}
                   className="p-1.5 rounded-lg bg-[#181B22] hover:bg-[#21252F] border border-[rgba(255,255,255,0.07)] text-[#8A94A6] hover:text-white transition-colors"
-                  title="Edit Vendor"
+                  title={canManageVendors ? 'Edit Vendor' : 'No permission to edit vendors'}
+                disabled={!canManageVendors}
                 >
                   <Edit3 size={13} />
                 </button>
                 <button
                   onClick={() => handleDeleteVendor(vendor.id, vendor.name)}
                   className="p-1.5 rounded-lg bg-[#181B22] hover:bg-red-950/40 border border-[rgba(255,255,255,0.07)] text-[#8A94A6] hover:text-red-400 transition-colors"
-                  title="Delete Vendor"
+                  title={canManageVendors ? 'Delete Vendor' : 'No permission to delete vendors'}
+                disabled={!canManageVendors}
                 >
                   <Trash2 size={13} />
                 </button>
