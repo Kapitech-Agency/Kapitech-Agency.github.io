@@ -76,10 +76,10 @@ export const ConvertToCrmModal: React.FC<ConvertToCrmModalProps> = ({
 
   if (!isOpen) return null;
 
-  const handleConvert = () => {
+  const handleConvert = async () => {
     setIsSubmitting(true);
     try {
-      const res = convertInquiryToCrmLead(submission, dealValue, {
+      const res = await convertInquiryToCrmLead(submission, dealValue, {
         stage,
         pillar,
         assignedTo
