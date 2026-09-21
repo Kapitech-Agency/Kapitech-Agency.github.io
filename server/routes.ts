@@ -2933,6 +2933,16 @@ apiRouter.post('/ai/generate', requireAuth, requirePermission('canAccessServerAn
         return;
       }
 
+      recordAuditLog({
+        action: 'AI_GENERATION_REQUESTED',
+        actor: req.user!.username,
+        actorRole: req.user!.role,
+        ip: req.ip,
+        userAgent: req.headers['user-agent'] as string,
+        details: 'Generated an AI copilot response without persisting prompt or generated content.',
+        severity: 'info'
+      });
+
       res.json({ success: true, result: outputText });
     } finally {
       clearTimeout(timeout);
