@@ -65,6 +65,7 @@ export async function apiRequest<T = any>(
       }
       return {
         success: false,
+        data: json as T,
         error: json.error || `HTTP ${res.status}: ${res.statusText}`
       };
     }
@@ -348,6 +349,13 @@ export const api = {
       retention: number;
       encryptedAtRest?: boolean;
       privateDocumentEncryption?: boolean;
+      provider?: string;
+      configured?: boolean;
+      retentionDays?: number;
+      rpoMinutes?: number;
+      rtoMinutes?: number;
+      restoreVerified?: boolean;
+      restoreVerifiedAt?: string | null;
     }>('/api/system/backups'),
     createBackup: () => apiRequest<{ success: boolean; backup: { createdAt: string; sizeBytes: number } }>('/api/system/backups', { method: 'POST' }),
     backupIntegrity: () => apiRequest<{ success: boolean; integrity: { valid: boolean; checkedAt: string; latestName?: string; reason?: string } }>('/api/system/backups/integrity'),
@@ -366,7 +374,8 @@ export const api = {
         backupFresh: boolean;
         backupIntegrity: { valid: boolean; checkedAt: string; latestName?: string; reason?: string };
       };
-    }>('/api/system/security/status')
+    }>('/api/system/security/status'),
+    productionReadiness: () => apiRequest<{ success: boolean; productionReady: boolean; gates: Record<string, boolean>; status: any }>('/api/system/production-readiness')
   },
 
   // Notifications
