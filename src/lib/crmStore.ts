@@ -315,29 +315,15 @@ export const getCmsLeads = (): CrmLead[] => {
   return crmCache;
 };
 
-export const saveCrmLead = (lead: CrmLead): void => {
+export const saveCrmLead = async (lead: CrmLead): Promise<void> => {
   const current = getCmsLeads();
   const previous = [...current];
   const existingIdx = current.findIndex(l => l.id === lead.id);
   const now = new Date().toISOString();
-  
-  let updated: CrmLead[];
-  if (existingIdx >= 0) {
-    updated = [...current];
-    updated[existingIdx] = {
-      ...lead,
-      updatedAt: now
-    };
-  } else {
-    updated = [
-      {
-        ...lead,
-        createdAt: lead.createdAt || now,
-        updatedAt: now
-      },
-      ...current
-    ];
-  }
+
+  const updated = existingIdx >= 0
+    ? current.map((item, index) => index === existingIdx ? { ...lead, updatedAt: now } : item)
+    : [{ ...lead, createdAt: lead.createdAt || now, updatedAt: now }, ...current];
 
   crmCache = updated;
   window.dispatchEvent(new CustomEvent(CRM_EVENT_NAME, { detail: updated }));
@@ -350,33 +336,33 @@ export const saveCrmLead = (lead: CrmLead): void => {
   const request = existingIdx >= 0
     ? api.crm.updateDeal(lead.id, payload)
     : api.crm.createDeal(payload);
-  request.then((res) => {
-    if (res.success && res.data?.success !== false) return;
-    crmCache = previous;
-    window.dispatchEvent(new CustomEvent(CRM_EVENT_NAME, { detail: previous }));
-  }).catch(() => {
-    crmCache = previous;
-    window.dispatchEvent(new CustomEvent(CRM_EVENT_NAME, { detail: previous }));
-  });
+  const res = await request;
+
+  if (res.success && res.data?.success !== false) return;
+
+  crmCache = previous;
+  window.dispatchEvent(new CustomEvent(CRM_EVENT_NAME, { detail: previous }));
+  throw new Error(res.error || 'CRM deal could not be saved on the server.');
 };
 
-export const deleteCrmLead = (id: string): void => {
+
+export const deleteCrmLead = async (id: string): Promise<void> => {
   const current = getCmsLeads();
   const previous = [...current];
   const filtered = current.filter(l => l.id !== id);
   crmCache = filtered;
   window.dispatchEvent(new CustomEvent(CRM_EVENT_NAME, { detail: filtered }));
-  api.crm.deleteDeal(id).then((res) => {
-    if (res.success && res.data?.success !== false) return;
-    crmCache = previous;
-    window.dispatchEvent(new CustomEvent(CRM_EVENT_NAME, { detail: previous }));
-  }).catch(() => {
-    crmCache = previous;
-    window.dispatchEvent(new CustomEvent(CRM_EVENT_NAME, { detail: previous }));
-  });
+
+  const res = await api.crm.deleteDeal(id);
+  if (res.success && res.data?.success !== false) return;
+
+  crmCache = previous;
+  window.dispatchEvent(new CustomEvent(CRM_EVENT_NAME, { detail: previous }));
+  throw new Error(res.error || 'CRM deal could not be deleted on the server.');
 };
 
-export const updateLeadStage = (id: string, newStage: CrmStage): void => {
+
+export const updateLeadStage = async (id: string, newStage: CrmStage): Promise<void> => {
   const current = getCmsLeads();
   const lead = current.find(l => l.id === id);
   if (!lead) return;
@@ -399,10 +385,10 @@ export const updateLeadStage = (id: string, newStage: CrmStage): void => {
     updatedAt: new Date().toISOString()
   };
 
-  saveCrmLead(updated);
+  await saveCrmLead(updated);
 };
 
-export const addLeadNote = (leadId: string, text: string, type: CrmNote['type'] = 'note'): void => {
+export const addLeadNote = async (leadId: string, text: string, type: CrmNote['type'] = 'note'): Promise<void> => {
   const current = getCmsLeads();
   const lead = current.find(l => l.id === leadId);
   if (!lead) return;
@@ -421,7 +407,7 @@ export const addLeadNote = (leadId: string, text: string, type: CrmNote['type'] 
     updatedAt: new Date().toISOString()
   };
 
-  saveCrmLead(updated);
+  await saveCrmLead(updated);
 };
 
 /**
