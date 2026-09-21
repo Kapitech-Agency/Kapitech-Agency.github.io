@@ -30,9 +30,11 @@ import { useLanguage } from '../../lib/LanguageContext';
 import { useDragToScroll } from '../../lib/useDragToScroll';
 import { ScrollShadowContainer } from '../../components/ui/ScrollShadowContainer';
 import { CustomSelect } from '../../components/ui/CustomSelect';
+import { hasAdminPermission } from '../../lib/adminAuth';
 
 export const AdminClients: React.FC = () => {
   const { t, language } = useLanguage();
+  const canManageClients = hasAdminPermission('canManageClients');
   const [currency, setCurrency] = useState<CurrencyCode>(getActiveCurrency());
   const [clients, setClients] = useState<AgencyClient[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -212,6 +214,7 @@ export const AdminClients: React.FC = () => {
           </p>
         </div>
 
+        {canManageClients && (
         <button
           onClick={handleOpenCreateClient}
           className="h-10 px-4 rounded-xl bg-[#E50914] hover:bg-[#FF1E27] text-white text-xs font-mono font-bold transition-all flex items-center justify-center gap-1.5 shadow-lg shadow-[#E50914]/25 self-start sm:self-auto min-h-[40px]"
@@ -219,6 +222,7 @@ export const AdminClients: React.FC = () => {
           <Plus size={14} />
           <span>{t('admin.client.addClient')}</span>
         </button>
+        )}
       </div>
 
       {/* Critical SLA Ad-Spend Alert Banner */}
