@@ -21,6 +21,7 @@ import {
   Loader2
 } from 'lucide-react';
 import { api } from '../../lib/apiClient';
+import { hasAdminPermission } from '../../lib/adminAuth';
 import { useLanguage } from '../../lib/LanguageContext';
 import { getActiveCurrency, formatAmount, CurrencyCode, CURRENCY_EVENT } from '../../lib/currency';
 import { getAdminSession } from '../../lib/adminAuth';
@@ -59,6 +60,9 @@ export const AdminProposals: React.FC = () => {
   const session = getAdminSession();
   const [currency, setCurrency] = useState<CurrencyCode>(getActiveCurrency());
   const [proposals, setProposals] = useState<Proposal[]>([]);
+  const canManageCrm = hasAdminPermission('canManageCrm');
+  const canApproveBudgets = hasAdminPermission('canApproveBudgets');
+  const canManageInvoices = hasAdminPermission('canManageInvoices');
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
@@ -344,13 +348,13 @@ export const AdminProposals: React.FC = () => {
           </p>
         </div>
 
-        <button
+        {canManageCrm && <button
           onClick={() => setIsCreateModalOpen(true)}
           className="px-4 py-2.5 rounded-xl bg-[#E50914] hover:bg-[#B80710] text-white text-xs font-sans font-semibold flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(229,9,20,0.3)] transition-all shrink-0"
         >
           <Plus size={15} />
           <span>{language === 'id' ? 'Buat Proposal Baru' : 'New Proposal'}</span>
-        </button>
+        </button>}
       </div>
 
       {/* Metrics Row */}
@@ -505,14 +509,14 @@ export const AdminProposals: React.FC = () => {
                         >
                           <option value="draft">Draft</option>
                           <option value="review">Review</option>
-                          <option value="approved">Approved</option>
+                          {canApproveBudgets && <option value="approved">Approved</option>}
                           <option value="sent">Sent</option>
                           <option value="accepted">Accepted</option>
-                          <option value="rejected">Rejected</option>
+                          {canApproveBudgets && <option value="rejected">Rejected</option>}
                         </select>
 
                         {/* Convert to invoice button if accepted or approved */}
-                        {(p.status === 'accepted' || p.status === 'approved') && !p.invoiceId && (
+                        {canManageInvoices && (p.status === 'accepted' || p.status === 'approved') && !p.invoiceId && (
                           <button
                             onClick={() => handleConvertToInvoice(p.id)}
                             title="Convert to Invoice"
