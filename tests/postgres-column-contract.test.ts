@@ -20,10 +20,12 @@ function parseSchemaColumns(schema: string): Map<string, Set<string>> {
     }
     columns.set(table, set);
   }
-  for (const match of schema.matchAll(/ALTER TABLE\s+([a-z_][a-z0-9_]*)\s+ADD COLUMN(?: IF NOT EXISTS)?\s+([a-z_][a-z0-9_]*)/gi)) {
+  for (const match of schema.matchAll(/ALTER TABLE\s+([a-z_][a-z0-9_]*)([\s\S]*?);/gi)) {
     const table = match[1].toLowerCase();
     const set = columns.get(table) || new Set<string>();
-    set.add(match[2].toLowerCase());
+    for (const columnMatch of match[2].matchAll(/ADD COLUMN(?: IF NOT EXISTS)?\s+([a-z_][a-z0-9_]*)/gi)) {
+      set.add(columnMatch[1].toLowerCase());
+    }
     columns.set(table, set);
   }
   return columns;
