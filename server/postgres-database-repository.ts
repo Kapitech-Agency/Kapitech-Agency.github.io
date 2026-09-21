@@ -1,13 +1,14 @@
 import type { DatabaseSchema, StoredSession, StoredUser } from './db.ts';
 import { getPostgresPool } from './postgres.ts';
 import { PostgresAuthRepository } from './postgres-repository.ts';
+import { decryptSecret } from './secret-crypto.ts';
 
 type Row=Record<string,any>;
 const iso=(v:any)=>v==null?'':v instanceof Date?v.toISOString():new Date(v).toISOString();
 const date=(v:any)=>v==null?'':v instanceof Date?v.toISOString().slice(0,10):String(v).slice(0,10);
 const obj=(v:any)=>v&&typeof v==='object'?v:{};
 const base=(r:Row,x:Row={})=>({...obj(r.metadata),...x,id:r.id});
-const mapUser=(r:Row):StoredUser=>({id:r.id,name:r.name,username:r.username,email:r.email,passwordHash:r.password_hash,salt:r.salt,passwordAlgorithm:r.password_algorithm,role:r.role,stakeholderType:r.stakeholder_type,permissions:obj(r.permissions),mfaEnabled:r.mfa_enabled,mfaSecret:r.mfa_secret??undefined,mfaPendingSecret:r.mfa_pending_secret??undefined,mfaPendingSecretCreatedAt:r.mfa_pending_secret_created_at?iso(r.mfa_pending_secret_created_at):undefined,mfaRecoveryCodeHashes:Array.isArray(r.mfa_recovery_code_hashes)?r.mfa_recovery_code_hashes:[],division:r.division,status:r.status,lastLogin:r.last_login?iso(r.last_login):'',createdAt:iso(r.created_at)});
+const mapUser=(r:Row):StoredUser=>({id:r.id,name:r.name,username:r.username,email:r.email,passwordHash:r.password_hash,salt:r.salt,passwordAlgorithm:r.password_algorithm,role:r.role,stakeholderType:r.stakeholder_type,permissions:obj(r.permissions),mfaEnabled:r.mfa_enabled,mfaSecret:decryptSecret(r.mfa_secret),mfaPendingSecret:decryptSecret(r.mfa_pending_secret),mfaPendingSecretCreatedAt:r.mfa_pending_secret_created_at?iso(r.mfa_pending_secret_created_at):undefined,mfaRecoveryCodeHashes:Array.isArray(r.mfa_recovery_code_hashes)?r.mfa_recovery_code_hashes:[],division:r.division,status:r.status,lastLogin:r.last_login?iso(r.last_login):'',createdAt:iso(r.created_at)});
 const mapSession=(r:Row):StoredSession=>({tokenHash:r.token_hash,userId:r.user_id,createdAt:iso(r.created_at),lastActivityAt:iso(r.last_activity_at),expiresAt:new Date(r.expires_at).getTime(),rememberMe:r.remember_me,ip:r.ip??'',userAgent:r.user_agent,kind:r.kind,mfaFailedAttempts:r.mfa_failed_attempts});
 
 export class PostgresDatabaseRepository {
