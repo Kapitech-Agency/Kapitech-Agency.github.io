@@ -2695,13 +2695,13 @@ apiRouter.post('/migration/import-local', requireAuth, requirePermission('canRun
 // 13. PROPOSALS & QUOTATIONS (PART 12)
 // ----------------------------------------------------
 
-apiRouter.get('/crm/proposals', requireAuth, requirePermission('canManageCrm'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.get('/crm/proposals', requireAuth, requirePermission('canManageCrm'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   if (getDataSourceMode() === 'postgres') { const proposals = await postgresProposalRepository.list(); res.json({ success: true, proposals }); return; }
   const db = getDatabase();
   res.json({ success: true, proposals: db.proposals || [] });
 });
 
-apiRouter.post('/crm/proposals', requireAuth, requirePermission('canManageCrm'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.post('/crm/proposals', requireAuth, requirePermission('canManageCrm'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const data = req.body;
   const db = getDatabase();
 
@@ -2771,7 +2771,7 @@ apiRouter.post('/crm/proposals', requireAuth, requirePermission('canManageCrm'),
   res.json({ success: true, proposal: newProposal });
 });
 
-apiRouter.put('/crm/proposals/:id', requireAuth, requirePermission('canManageCrm'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.put('/crm/proposals/:id', requireAuth, requirePermission('canManageCrm'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
   const updates = req.body || {};
   const db = getDatabase();
@@ -2846,7 +2846,7 @@ apiRouter.put('/crm/proposals/:id', requireAuth, requirePermission('canManageCrm
   res.json({ success: true, proposal: db.proposals[idx] });
 });
 
-apiRouter.post('/crm/proposals/:id/approve', requireAuth, requirePermission('canApproveBudgets'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.post('/crm/proposals/:id/approve', requireAuth, requirePermission('canApproveBudgets'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
   const db = getDatabase();
   const prop = (db.proposals || []).find(p => p.id === id);
@@ -2880,7 +2880,7 @@ apiRouter.post('/crm/proposals/:id/approve', requireAuth, requirePermission('can
   res.json({ success: true, proposal: prop });
 });
 
-apiRouter.post('/crm/proposals/:id/convert-to-invoice', requireAuth, requirePermission('canManageInvoices'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.post('/crm/proposals/:id/convert-to-invoice', requireAuth, requirePermission('canManageInvoices'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
   const db = getDatabase();
   const prop = (db.proposals || []).find(p => p.id === id);
@@ -2937,7 +2937,7 @@ apiRouter.post('/crm/proposals/:id/convert-to-invoice', requireAuth, requirePerm
   res.json({ success: true, invoice: newInvoice, proposal: prop });
 });
 
-apiRouter.delete('/crm/proposals/:id', requireAuth, requirePermission('canManageCrm'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.delete('/crm/proposals/:id', requireAuth, requirePermission('canManageCrm'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
   if (getDataSourceMode() === 'postgres') { const deleted = await postgresProposalRepository.delete(id); if (!deleted) { res.status(404).json({ success: false, error: 'Proposal not found.' }); return; } res.json({ success: true, message: 'Proposal deleted.' }); return; }
   const db = getDatabase();
