@@ -7,7 +7,7 @@ export class PostgresNotificationSettingsRepository {
     return {
       targetEmail: row?.target_email || '',
       formspreeEndpoint: row?.formspree_endpoint || '',
-      telegramBotToken: row?.telegram_bot_token || '',
+      telegramBotToken: process.env.KAPITECH_TELEGRAM_BOT_TOKEN || '',
       telegramChatId: row?.telegram_chat_id || '',
       isEmailActive: Boolean(row?.is_email_active),
       isTelegramActive: Boolean(row?.is_telegram_active),
@@ -26,7 +26,7 @@ export class PostgresNotificationSettingsRepository {
     const { rows } = await getPostgresPool().query(
       `INSERT INTO notification_settings
         (id,target_email,formspree_endpoint,telegram_bot_token,telegram_chat_id,is_email_active,is_telegram_active,updated_at)
-       VALUES ('default',$1,$2,$3,$4,$5,$6,NOW())
+       VALUES ('default',$1,$2,'',$3,$4,$5,NOW())
        ON CONFLICT (id) DO UPDATE SET
          target_email=EXCLUDED.target_email,
          formspree_endpoint=EXCLUDED.formspree_endpoint,
@@ -35,7 +35,7 @@ export class PostgresNotificationSettingsRepository {
          is_telegram_active=EXCLUDED.is_telegram_active,
          updated_at=NOW()
        RETURNING *`,
-      [input.targetEmail,input.formspreeEndpoint,input.telegramBotToken || '',input.telegramChatId,input.isEmailActive,input.isTelegramActive]
+      [input.targetEmail,input.formspreeEndpoint,input.telegramChatId,input.isEmailActive,input.isTelegramActive]
     );
     const row = rows[0];
     return {
