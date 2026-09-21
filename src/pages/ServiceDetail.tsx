@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, Link, Navigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
@@ -22,22 +22,49 @@ import {
 } from 'lucide-react';
 import { AtmosphericBackground } from '../components/ui/AtmosphericBackground';
 import { useLanguage } from '../lib/LanguageContext';
-import { getServiceBySlug, allSolutionsAndServices } from '../data/servicesData';
-import { allProjects } from '../data/projectsData';
+import { ServiceItemData } from '../data/servicesData';
+import { getCmsServices, fetchServerCmsServices, getCmsProjects, fetchServerCmsProjects } from '../lib/cmsStore';
 
 export const ServiceDetail = () => {
   const { slug } = useParams<{ slug: string }>();
   const { language } = useLanguage();
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
+  const [services, setServices] = useState<ServiceItemData[]>(() => getCmsServices());
+  const [projects, setProjects] = useState(() => getCmsProjects());
+  const [isHydrating, setIsHydrating] = useState(true);
 
-  const service = slug ? getServiceBySlug(slug) : undefined;
+  useEffect(() => {
+    Promise.all([fetchServerCmsServices(), fetchServerCmsProjects()])
+      .then(([nextServices, nextProjects]) => {
+        setServices(nextServices);
+        setProjects(nextProjects);
+      })
+      .finally(() => setIsHydrating(false));
+
+    const handleCmsUpdate = () => {
+      setServices(getCmsServices());
+      setProjects(getCmsProjects());
+    };
+    window.addEventListener('kapitech_cms_updated', handleCmsUpdate);
+    return () => window.removeEventListener('kapitech_cms_updated', handleCmsUpdate);
+  }, []);
+
+  const service = slug ? services.find((item) => item.slug === slug) : undefined;
+
+  if (!service && isHydrating) {
+    return (
+      <div className="min-h-screen bg-[#0A0A0A] text-white flex items-center justify-center">
+        <div className="text-xs font-mono text-[#8E8E93]">Loading service…</div>
+      </div>
+    );
+  }
 
   if (!service) {
     return <Navigate to="/services" replace />;
   }
 
-  // Find related case studies from allProjects
-  const relatedProjects = allProjects.filter(p => 
+  // Find related case studies from CMS-backed projects
+  const relatedProjects = projects.filter(p => 
     service.caseStudySlugs.includes(p.id) ||
     p.pillar.toLowerCase().includes(service.category.toLowerCase()) ||
     p.service.toLowerCase().includes(service.category.toLowerCase()) ||

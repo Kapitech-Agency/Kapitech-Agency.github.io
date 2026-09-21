@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Layout, 
@@ -27,6 +27,8 @@ import {
 import { Link } from 'react-router-dom';
 import { AtmosphericBackground } from '../components/ui/AtmosphericBackground';
 import { useLanguage } from '../lib/LanguageContext';
+import { getCmsServices, fetchServerCmsServices } from '../lib/cmsStore';
+import { ServiceItemData } from '../data/servicesData';
 
 export interface ServiceDetail {
   id: string;
@@ -64,10 +66,54 @@ export interface StrategicSolution {
   timelineId: string;
 }
 
+const serviceItemToDetail = (item: ServiceItemData): ServiceDetail => ({
+  id: item.slug,
+  title: item.title,
+  category: item.category,
+  subtitle: item.navSubtitle,
+  subtitleId: item.navSubtitleId,
+  icon: item.category === 'Branding' ? <Palette size={24} /> : item.category === 'Design' ? <Layout size={24} /> : item.category === 'Development' ? <Code2 size={24} /> : <Rocket size={24} />,
+  summary: item.heroSubtitle,
+  summaryId: item.heroSubtitleId,
+  fullDescription: item.heroSubtitle,
+  fullDescriptionId: item.heroSubtitleId,
+  deliverables: (item.capabilities || []).map((cap) => cap.title).filter(Boolean),
+  deliverablesId: (item.capabilities || []).map((cap) => cap.titleId || cap.title).filter(Boolean),
+  tools: item.tools || [],
+  idealFor: item.businessOutcomes?.heading || 'Digital teams seeking a structured delivery partner.',
+  idealForId: item.businessOutcomes?.headingId || 'Tim digital yang membutuhkan partner delivery terstruktur.',
+  timeline: item.processStages?.map((stage) => stage.stageName).join(' → ') || 'Defined per project scope',
+  timelineId: item.processStages?.map((stage) => stage.stageNameId || stage.stageName).join(' → ') || 'Ditentukan sesuai ruang lingkup proyek'
+});
+
+const serviceItemToSolution = (item: ServiceItemData): StrategicSolution => ({
+  id: item.slug,
+  title: item.title,
+  audience: item.navSubtitle,
+  audienceId: item.navSubtitleId,
+  description: item.heroSubtitle,
+  descriptionId: item.heroSubtitleId,
+  badge: item.badge,
+  badgeId: item.badgeId,
+  icon: item.category === 'Solutions' ? <Rocket size={26} /> : <Layers size={26} />,
+  deliverables: (item.capabilities || []).map((cap) => cap.title).filter(Boolean),
+  deliverablesId: (item.capabilities || []).map((cap) => cap.titleId || cap.title).filter(Boolean),
+  timeline: item.processStages?.map((stage) => stage.stageName).join(' → ') || 'Defined per project scope',
+  timelineId: item.processStages?.map((stage) => stage.stageNameId || stage.stageName).join(' → ') || 'Ditentukan sesuai ruang lingkup proyek'
+});
+
 export const Services = () => {
   const { language } = useLanguage();
   const [selectedService, setSelectedService] = useState<ServiceDetail | StrategicSolution | null>(null);
   const [activeCategory, setActiveCategory] = useState<'All' | 'Branding' | 'Design' | 'Development'>('All');
+  const [cmsServices, setCmsServices] = useState<ServiceItemData[]>(() => getCmsServices());
+
+  useEffect(() => {
+    void fetchServerCmsServices().then(setCmsServices);
+    const handleCmsUpdate = () => setCmsServices(getCmsServices());
+    window.addEventListener('kapitech_cms_updated', handleCmsUpdate);
+    return () => window.removeEventListener('kapitech_cms_updated', handleCmsUpdate);
+  }, []);
 
   const strategicSolutions: StrategicSolution[] = [
     {
@@ -626,10 +672,28 @@ export const Services = () => {
     }
   ];
 
+  const resolvedServices = useMemo(() => {
+    const serverItems = cmsServices.filter((item) => item.type === 'service');
+    if (serverItems.length === 0) return allServices;
+    const serverBySlug = new Map(serverItems.map((item) => [item.slug, serviceItemToDetail(item)]));
+    const merged = allServices.map((item) => serverBySlug.get(item.id) || item);
+    const existingIds = new Set(allServices.map((item) => item.id));
+    return [...merged, ...serverItems.filter((item) => !existingIds.has(item.slug)).map(serviceItemToDetail)];
+  }, [cmsServices]);
+
+  const resolvedStrategicSolutions = useMemo(() => {
+    const serverItems = cmsServices.filter((item) => item.type === 'solution' || item.category === 'Solutions');
+    if (serverItems.length === 0) return strategicSolutions;
+    const serverBySlug = new Map(serverItems.map((item) => [item.slug, serviceItemToSolution(item)]));
+    const merged = strategicSolutions.map((item) => serverBySlug.get(item.id) || item);
+    const existingIds = new Set(strategicSolutions.map((item) => item.id));
+    return [...merged, ...serverItems.filter((item) => !existingIds.has(item.slug)).map(serviceItemToSolution)];
+  }, [cmsServices]);
+
   const filteredServices = useMemo(() => {
-    if (activeCategory === 'All') return allServices;
-    return allServices.filter(s => s.category === activeCategory);
-  }, [activeCategory]);
+    if (activeCategory === 'All') return resolvedServices;
+    return resolvedServices.filter(s => s.category === activeCategory);
+  }, [activeCategory, resolvedServices]);
 
   return (
     <div className="bg-[#0B0C0E] text-white min-h-screen selection:bg-brand-red selection:text-white relative" role="main">
@@ -657,10 +721,10 @@ export const Services = () => {
             <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 text-xs font-mono text-[#8A909D]">
               <span className="px-3 py-1.5 rounded-full bg-[#16181D] border border-[#262930] flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-brand-red animate-pulse shadow-[0_0_8px_rgba(255,26,26,0.6)]" />
-                <span className="text-white">3 {language === 'id' ? 'Solusi Strategis' : 'Strategic Solutions'}</span>
+                <span className="text-white">{resolvedStrategicSolutions.length} {language === 'id' ? 'Solusi Strategis' : 'Strategic Solutions'}</span>
               </span>
               <span className="px-3 py-1.5 rounded-full bg-[#16181D] border border-[#262930] text-white">
-                15 {language === 'id' ? 'Layanan Spesialis' : 'Specialized Services'}
+                {resolvedServices.length} {language === 'id' ? 'Layanan Spesialis' : 'Specialized Services'}
               </span>
               <span className="px-3 py-1.5 rounded-full bg-[#16181D] border border-[#262930] text-brand-red font-semibold">
                 Branding • Design • Development
@@ -691,7 +755,7 @@ export const Services = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {strategicSolutions.map((sol) => (
+            {resolvedStrategicSolutions.map((sol) => (
               <Link
                 key={sol.id}
                 to={`/solutions/${sol.id}`}
@@ -772,7 +836,7 @@ export const Services = () => {
           {/* Show Group Headers when 'All' is selected, or direct grid when filtered */}
           {['Branding', 'Design', 'Development'].map(cat => {
             if (activeCategory !== 'All' && activeCategory !== cat) return null;
-            const catServices = allServices.filter(s => s.category === cat);
+            const catServices = resolvedServices.filter(s => s.category === cat);
 
             return (
               <div key={cat} className="space-y-6">

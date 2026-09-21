@@ -20,13 +20,15 @@ import {
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/src/lib/utils';
 import { useLanguage } from '@/src/lib/LanguageContext';
-import { allSolutionsAndServices, ServiceItemData } from '@/src/data/servicesData';
+import { ServiceItemData } from '@/src/data/servicesData';
+import { getCmsServices, fetchServerCmsServices } from '@/src/lib/cmsStore';
 
 export const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isServicesDropdownOpen, setIsServicesDropdownOpen] = useState(false);
   const [isMobileServicesOpen, setIsMobileServicesOpen] = useState(false);
+  const [cmsServices, setCmsServices] = useState<ServiceItemData[]>(() => getCmsServices());
   const dropdownTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const location = useLocation();
@@ -39,9 +41,15 @@ export const Navbar = () => {
   });
 
   useEffect(() => {
+    void fetchServerCmsServices().then(setCmsServices);
+    const handleUpdate = () => setCmsServices(getCmsServices());
+    window.addEventListener('kapitech_cms_updated', handleUpdate);
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('kapitech_cms_updated', handleUpdate);
+    };
   }, []);
 
   // Lock body scroll when mobile menu is open
@@ -77,10 +85,10 @@ export const Navbar = () => {
   };
 
   // Organize services by categories
-  const solutions = allSolutionsAndServices.filter(s => s.category === 'Solutions');
-  const branding = allSolutionsAndServices.filter(s => s.category === 'Branding');
-  const design = allSolutionsAndServices.filter(s => s.category === 'Design');
-  const development = allSolutionsAndServices.filter(s => s.category === 'Development');
+  const solutions = cmsServices.filter(s => s.category === 'Solutions');
+  const branding = cmsServices.filter(s => s.category === 'Branding');
+  const design = cmsServices.filter(s => s.category === 'Design');
+  const development = cmsServices.filter(s => s.category === 'Development');
 
   const isServicesActive = location.pathname.startsWith('/services') || location.pathname.startsWith('/solutions');
 

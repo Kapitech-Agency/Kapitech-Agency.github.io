@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
@@ -32,11 +32,19 @@ import { PerspectiveTilt } from '../components/ui/PerspectiveTilt';
 import { Testimonials } from '../components/Testimonials';
 import { AtmosphericBackground } from '../components/ui/AtmosphericBackground';
 import { useLanguage } from '../lib/LanguageContext';
-import { allProjects } from '../data/projectsData';
+import { getCmsProjects, fetchServerCmsProjects } from '../lib/cmsStore';
 
 export const Home = () => {
   const { t, language } = useLanguage();
   const [selectedProject, setSelectedProject] = useState<any | null>(null);
+  const [previewProjects, setPreviewProjects] = useState(() => getCmsProjects().slice(0, 4));
+
+  useEffect(() => {
+    fetchServerCmsProjects().then((projects) => setPreviewProjects(projects.slice(0, 4)));
+    const handleCmsUpdate = () => setPreviewProjects(getCmsProjects().slice(0, 4));
+    window.addEventListener('kapitech_cms_updated', handleCmsUpdate);
+    return () => window.removeEventListener('kapitech_cms_updated', handleCmsUpdate);
+  }, []);
 
   const clientPartners = [
     { name: "Lumina Property", industry: language === 'id' ? "Teknologi Properti" : "Real Estate Tech", logoText: "LUMINA", desc: language === 'id' ? "Pencarian Properti & Web Interaktif 3D" : "Property Search & 3D Interactive Web" },
@@ -59,8 +67,6 @@ export const Home = () => {
     { name: "PostgreSQL", category: "Database", icon: <Layers size={18} /> },
     { name: "AWS & GCP", category: "Cloud", icon: <Shield size={18} /> },
   ];
-
-  const previewProjects = allProjects.slice(0, 4);
 
   // Redesigned Simple, High-Contrast Stats
   const stats = [
