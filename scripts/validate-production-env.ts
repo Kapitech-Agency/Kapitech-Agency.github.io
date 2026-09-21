@@ -1,4 +1,5 @@
-import { URL } from 'node:url';
+import path from 'node:path';
+import { URL, fileURLToPath } from 'node:url';
 
 export type ProductionEnvironmentValidation = {
   errors: string[];
@@ -129,17 +130,24 @@ export function validateProductionEnvironment(
   return { errors, warnings, valid: errors.length === 0 };
 }
 
-if (process.env.NODE_ENV === 'production' || process.env.CI === 'true') {
-  const result = validateProductionEnvironment();
-  if (result.warnings.length > 0) {
-    for (const warning of result.warnings) console.warn(`[Production Env] Warning: ${warning}`);
+const isDirectExecution = Boolean(
+  process.argv[1] &&
+  path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)
+);
+
+if (isDirectExecution) {
+  if (process.env.NODE_ENV === 'production' || process.env.CI === 'true') {
+    const result = validateProductionEnvironment();
+    if (result.warnings.length > 0) {
+      for (const warning of result.warnings) console.warn(`[Production Env] Warning: ${warning}`);
+    }
+    if (!result.valid) {
+      console.error('[Production Env] Validation failed:');
+      for (const error of result.errors) console.error(`- ${error}`);
+      process.exit(1);
+    }
+    console.log('[Production Env] Contract validation passed. Secret values were not printed.');
+  } else {
+    console.log('[Production Env] Skipped because NODE_ENV is not production and CI is not true.');
   }
-  if (!result.valid) {
-    console.error('[Production Env] Validation failed:');
-    for (const error of result.errors) console.error(`- ${error}`);
-    process.exit(1);
-  }
-  console.log('[Production Env] Contract validation passed. Secret values were not printed.');
-} else {
-  console.log('[Production Env] Skipped because NODE_ENV is not production and CI is not true.');
 }
