@@ -48,6 +48,7 @@ import {
   clearMfaChallengeCookie
 } from './auth';
 import { getDataSourceMode } from './data-source.ts';
+import { loadApplicationDatabase } from './application-data-repository.ts';
 import { postgresAuthRepository } from './postgres-repository.ts';
 
 
@@ -1030,8 +1031,8 @@ apiRouter.post('/leads/submit', rateLimitPublic(10, 60 * 1000), async (req: Requ
   res.json({ success: true, message: 'Inquiry submitted successfully.', id: newLead.id });
 });
 
-apiRouter.get('/leads', requireAuth, requirePermission('canManageCrm'), (req: AuthenticatedRequest, res: Response): void => {
-  const db = getDatabase();
+apiRouter.get('/leads', requireAuth, requirePermission('canManageCrm'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  const db = await loadApplicationDatabase();
   res.json({ success: true, leads: db.leads });
 });
 
@@ -1174,8 +1175,8 @@ apiRouter.post('/leads/:id/convert', requireAuth, requirePermission('canManageCr
 // 3. CRM PIPELINE & DEALS
 // ----------------------------------------------------
 
-apiRouter.get('/crm/deals', requireAuth, requirePermission('canManageCrm'), (req: AuthenticatedRequest, res: Response): void => {
-  const db = getDatabase();
+apiRouter.get('/crm/deals', requireAuth, requirePermission('canManageCrm'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  const db = await loadApplicationDatabase();
   res.json({ success: true, deals: db.crmDeals });
 });
 
