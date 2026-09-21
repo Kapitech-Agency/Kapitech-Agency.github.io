@@ -1,57 +1,4 @@
-imfunction computeAuditLogHash(log: any): string {
-  return crypto.createHash('sha256').update(JSON.stringify({
-    id: log.id, timestamp: log.timestamp, action: log.action, actor: log.actor,
-    actorRole: log.actorRole, ip: log.ip, userAgent: log.userAgent,
-    details: log.details, severity: log.severity, prevHash: log.prevHash
-  })).digest('hex');
-}
-
-function verifyAuditLogChain(db: any): { valid: boolean; checked: number; brokenAt?: string } {
-  const logs = arr(db, 'auditLogs');
-  let previousHash = 'GENESIS';
-  let checked = 0;
-  for (let index = logs.length - 1; index >= 0; index -= 1) {
-    const log = logs[index];
-    const prevHash = log.prevHash || previousHash;
-    const expectedHash = computeAuditLogHash({ ...log, prevHash });
-    checked += 1;
-    if (log.prevHash !== prevHash || log.hash !== expectedHash) {
-      return { valid: false, checked, brokenAt: String(log.id || '') };
-    }
-    previousHash = expectedHash;
-  }
-  return { valid: true, checked };
-}
-
-function verifyPrivateDocuments(db: any): { valid: boolean; checked: number; missing: string[]; malformed: string[] } {
-  const missing: string[] = [];
-  const malformed: string[] = [];
-  let checked = 0;
-  for (const document of arr(db, 'documents')) {
-    if (!document.storageKey) continue;
-    checked += 1;
-    if (!/^[a-f0-9]{64}$/.test(String(document.storageKey))) {
-      malformed.push(String(document.id || document.storageKey));
-      continue;
-    }
-    const dir = process.env.KAPITECH_PRIVATE_DOCUMENT_DIR
-      ? path.resolve(process.env.KAPITECH_PRIVATE_DOCUMENT_DIR)
-      : path.join(DATA_DIR, 'private-documents');
-    const filePath = path.join(dir, String(document.storageKey));
-    try {
-      const stat = fs.statSync(filePath);
-      if (!stat.isFile()) missing.push(String(document.id || document.storageKey));
-      else if (document.sizeBytes != null && Number(document.sizeBytes) !== stat.size) {
-        malformed.push(String(document.id || document.storageKey));
-      }
-    } catch {
-      missing.push(String(document.id || document.storageKey));
-    }
-  }
-  return { valid: missing.length === 0 && malformed.length === 0, checked, missing, malformed };
-}
-
-port crypto from 'node:crypto';
+import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import { getPostgresPool, closePostgresPool } from '../server/postgres.ts';
@@ -114,6 +61,54 @@ function duplicateIds(db: any, key: string): string[] {
     seen.add(id);
   }
   return [...duplicates];
+}
+
+function computeAuditLogHash(log: any): string {
+  return crypto.createHash('sha256').update(JSON.stringify({
+    id: log.id, timestamp: log.timestamp, action: log.action, actor: log.actor,
+    actorRole: log.actorRole, ip: log.ip, userAgent: log.userAgent,
+    details: log.details, severity: log.severity, prevHash: log.prevHash
+  })).digest('hex');
+}
+
+function verifyAuditLogChain(db: any): { valid: boolean; checked: number; brokenAt?: string } {
+  const logs = arr(db, 'auditLogs');
+  let previousHash = 'GENESIS';
+  let checked = 0;
+  for (let index = logs.length - 1; index >= 0; index -= 1) {
+    const log = logs[index];
+    const prevHash = log.prevHash || previousHash;
+    const expectedHash = computeAuditLogHash({ ...log, prevHash });
+    checked += 1;
+    if (log.prevHash !== prevHash || log.hash !== expectedHash) return { valid: false, checked, brokenAt: String(log.id || '') };
+    previousHash = expectedHash;
+  }
+  return { valid: true, checked };
+}
+
+function verifyPrivateDocuments(db: any): { valid: boolean; checked: number; missing: string[]; malformed: string[] } {
+  const missing: string[] = [];
+  const malformed: string[] = [];
+  let checked = 0;
+  const dir = process.env.KAPITECH_PRIVATE_DOCUMENT_DIR
+    ? path.resolve(process.env.KAPITECH_PRIVATE_DOCUMENT_DIR)
+    : path.join(DATA_DIR, 'private-documents');
+  for (const document of arr(db, 'documents')) {
+    if (!document.storageKey) continue;
+    checked += 1;
+    if (!/^[a-f0-9]{64}$/.test(String(document.storageKey))) {
+      malformed.push(String(document.id || document.storageKey));
+      continue;
+    }
+    try {
+      const stat = fs.statSync(path.join(dir, String(document.storageKey)));
+      if (!stat.isFile()) missing.push(String(document.id || document.storageKey));
+      else if (document.sizeBytes != null && Number(document.sizeBytes) !== stat.size) malformed.push(String(document.id || document.storageKey));
+    } catch {
+      missing.push(String(document.id || document.storageKey));
+    }
+  }
+  return { valid: missing.length === 0 && malformed.length === 0, checked, missing, malformed };
 }
 
 async function pgCountsAndFinancials(): Promise<{ counts: Record<string, number>; financials: Record<string, number> }> {
