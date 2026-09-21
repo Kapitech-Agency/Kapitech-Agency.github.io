@@ -53,8 +53,12 @@ export class PostgresTimeLogRepository {
         if (!project.rows[0]) throw new Error('Project not found.');
       }
       if (taskId) {
-        const task = await client.query('SELECT id FROM tasks WHERE id = $1 LIMIT 1', [taskId]);
+        const task = await client.query('SELECT id, project_id FROM tasks WHERE id = $1 LIMIT 1', [taskId]);
         if (!task.rows[0]) throw new Error('Task not found.');
+        const taskProjectId = task.rows[0].project_id ? String(task.rows[0].project_id) : null;
+        if (projectId && taskProjectId && taskProjectId !== projectId) {
+          throw new Error('Task does not belong to the selected project.');
+        }
       }
       await client.query(
         `INSERT INTO time_logs (id,project_id,task_id,user_id,hours,description,logged_at,created_at)
