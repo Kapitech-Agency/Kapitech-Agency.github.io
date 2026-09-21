@@ -135,7 +135,7 @@ export function getCmsServices(): ServiceItemData[] {
 export async function fetchServerCmsServices(): Promise<ServiceItemData[]> {
   try {
     const res = await api.cms.getServices();
-    if (res.success && Array.isArray(res.data?.services) && res.data.services.length > 0) {
+    if (res.success && Array.isArray(res.data?.services)) {
       const serverServices = res.data.services;
       cmsServicesCache = serverServices;
       notifyCmsUpdate('services');
@@ -149,35 +149,38 @@ export async function fetchServerCmsServices(): Promise<ServiceItemData[]> {
 
 export async function saveCmsService(service: ServiceItemData): Promise<{ success: boolean; service: ServiceItemData }> {
   const current = getCmsServices();
-  const exists = current.some(s => s.slug === service.slug);
-  let updated: ServiceItemData[];
+  const existing = current.find((s) => (
+    ((service as any).id && String((s as any).id || '') === String((service as any).id)) ||
+    s.slug === service.slug
+  ));
+  const exists = Boolean(existing);
+  const targetId = String((existing as any)?.id || (service as any).id || '');
+  const res = exists && targetId
+    ? await api.cms.updateService(targetId, service)
+    : await api.cms.createService(service);
 
-  if (exists) {
-    updated = current.map(s => s.slug === service.slug ? service : s);
-  } else {
-    updated = [service, ...current];
+  if (!res.success || !res.data?.service) {
+    throw new Error(res.error || 'CMS service could not be saved on the server.');
   }
+
+  const serverService = res.data.service as ServiceItemData;
+  const updated = exists
+    ? current.map((s) => String((s as any).id || '') === String((existing as any)?.id || targetId) ? serverService : s)
+    : [serverService, ...current];
 
   cmsServicesCache = updated;
   notifyCmsUpdate('services');
-
-  // Persist to server API
-  if (exists) {
-    api.cms.updateService(service.slug, service).catch(() => {});
-  } else {
-    api.cms.createService(service).catch(() => {});
-  }
-
-  return { success: true, service };
+  return { success: true, service: serverService };
 }
 
 export async function deleteCmsService(slug: string): Promise<boolean> {
   const current = getCmsServices();
-  const updated = current.filter(s => s.slug !== slug);
-  cmsServicesCache = updated;
+  const existing = current.find((s) => s.slug === slug || (s as any).id === slug);
+  const targetId = String((existing as any)?.id || slug);
+  const res = await api.cms.deleteService(targetId);
+  if (!res.success) throw new Error(res.error || 'CMS service could not be deleted on the server.');
+  cmsServicesCache = current.filter((s) => s.slug !== slug && String((s as any).id || '') !== targetId);
   notifyCmsUpdate('services');
-
-  api.cms.deleteService(slug).catch(() => {});
   return true;
 }
 
@@ -192,7 +195,7 @@ export function getCmsProjects(): ProjectItem[] {
 export async function fetchServerCmsProjects(): Promise<ProjectItem[]> {
   try {
     const res = await api.cms.getProjects();
-    if (res.success && Array.isArray(res.data?.projects) && res.data.projects.length > 0) {
+    if (res.success && Array.isArray(res.data?.projects)) {
       const serverProjects = res.data.projects;
       cmsProjectsCache = serverProjects;
       notifyCmsUpdate('projects');
@@ -207,34 +210,29 @@ export async function fetchServerCmsProjects(): Promise<ProjectItem[]> {
 export async function saveCmsProject(project: ProjectItem): Promise<{ success: boolean; project: ProjectItem }> {
   const current = getCmsProjects();
   const exists = current.some(p => p.id === project.id);
-  let updated: ProjectItem[];
+  const res = exists
+    ? await api.cms.updateProject(project.id, project)
+    : await api.cms.createProject(project);
 
-  if (exists) {
-    updated = current.map(p => p.id === project.id ? project : p);
-  } else {
-    updated = [project, ...current];
+  if (!res.success || !res.data?.project) {
+    throw new Error(res.error || 'CMS project could not be saved on the server.');
   }
+
+  const serverProject = res.data.project as ProjectItem;
+  const updated = exists
+    ? current.map(p => p.id === project.id ? serverProject : p)
+    : [serverProject, ...current];
 
   cmsProjectsCache = updated;
   notifyCmsUpdate('projects');
-
-  // Persist to server API
-  if (exists) {
-    api.cms.updateProject(project.id, project).catch(() => {});
-  } else {
-    api.cms.createProject(project).catch(() => {});
-  }
-
-  return { success: true, project };
+  return { success: true, project: serverProject };
 }
 
 export async function deleteCmsProject(id: string): Promise<boolean> {
-  const current = getCmsProjects();
-  const updated = current.filter(p => p.id !== id);
-  cmsProjectsCache = updated;
+  const res = await api.cms.deleteProject(id);
+  if (!res.success) throw new Error(res.error || 'CMS project could not be deleted on the server.');
+  cmsProjectsCache = getCmsProjects().filter(p => p.id !== id);
   notifyCmsUpdate('projects');
-
-  api.cms.deleteProject(id).catch(() => {});
   return true;
 }
 
@@ -254,7 +252,7 @@ export function getCmsTestimonials(): TestimonialItem[] {
 export async function fetchServerCmsTestimonials(): Promise<TestimonialItem[]> {
   try {
     const res = await api.cms.getTestimonials();
-    if (res.success && Array.isArray(res.data?.testimonials) && res.data.testimonials.length > 0) {
+    if (res.success && Array.isArray(res.data?.testimonials)) {
       const serverT = res.data.testimonials;
       cmsTestimonialsCache = serverT;
       notifyCmsUpdate('testimonials');
@@ -269,33 +267,29 @@ export async function fetchServerCmsTestimonials(): Promise<TestimonialItem[]> {
 export async function saveCmsTestimonial(testimonial: TestimonialItem): Promise<{ success: boolean; testimonial: TestimonialItem }> {
   const current = getCmsTestimonials();
   const exists = current.some(t => t.id === testimonial.id);
-  let updated: TestimonialItem[];
+  const res = exists
+    ? await api.cms.updateTestimonial(testimonial.id, testimonial)
+    : await api.cms.createTestimonial(testimonial);
 
-  if (exists) {
-    updated = current.map(t => t.id === testimonial.id ? testimonial : t);
-  } else {
-    updated = [testimonial, ...current];
+  if (!res.success || !res.data?.testimonial) {
+    throw new Error(res.error || 'CMS testimonial could not be saved on the server.');
   }
+
+  const serverTestimonial = res.data.testimonial as TestimonialItem;
+  const updated = exists
+    ? current.map(t => t.id === testimonial.id ? serverTestimonial : t)
+    : [serverTestimonial, ...current];
 
   cmsTestimonialsCache = updated;
   notifyCmsUpdate('testimonials');
-
-  if (exists) {
-    api.cms.updateTestimonial(testimonial.id, testimonial).catch(() => {});
-  } else {
-    api.cms.createTestimonial(testimonial).catch(() => {});
-  }
-
-  return { success: true, testimonial };
+  return { success: true, testimonial: serverTestimonial };
 }
 
 export async function deleteCmsTestimonial(id: string): Promise<boolean> {
-  const current = getCmsTestimonials();
-  const updated = current.filter(t => t.id !== id);
-  cmsTestimonialsCache = updated;
+  const res = await api.cms.deleteTestimonial(id);
+  if (!res.success) throw new Error(res.error || 'CMS testimonial could not be deleted on the server.');
+  cmsTestimonialsCache = getCmsTestimonials().filter(t => t.id !== id);
   notifyCmsUpdate('testimonials');
-
-  api.cms.deleteTestimonial(id).catch(() => {});
   return true;
 }
 
@@ -324,10 +318,24 @@ export async function fetchServerCmsSiteMeta(): Promise<SiteMetaSettings> {
 
 export async function saveCmsSiteMeta(settings: Partial<SiteMetaSettings>): Promise<SiteMetaSettings> {
   const current = getCmsSiteMeta();
-  const updated = { ...current, ...settings };
-  cmsSettingsCache = updated;
-  notifyCmsUpdate('settings');
+  const candidate = { ...current, ...settings };
+  const allowed: SiteMetaSettings = {
+    siteTitle: candidate.siteTitle,
+    siteDescription: candidate.siteDescription,
+    contactReceiverEmail: candidate.contactReceiverEmail,
+    defaultLanguage: candidate.defaultLanguage,
+    enableLiveChat: candidate.enableLiveChat,
+    enableSoundAlerts: candidate.enableSoundAlerts,
+    maintenanceMode: candidate.maintenanceMode
+  };
 
-  api.cms.updateSettings(updated).catch(() => {});
-  return updated;
+  const res = await api.cms.updateSettings(allowed);
+  if (!res.success || !res.data?.settings) {
+    throw new Error(res.error || 'CMS site settings could not be saved on the server.');
+  }
+
+  const serverSettings = { ...defaultSiteMeta, ...res.data.settings } as SiteMetaSettings;
+  cmsSettingsCache = serverSettings;
+  notifyCmsUpdate('settings');
+  return serverSettings;
 }

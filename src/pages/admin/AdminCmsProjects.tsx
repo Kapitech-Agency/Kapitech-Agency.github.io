@@ -20,7 +20,7 @@ import {
   Sliders,
   Tag
 } from 'lucide-react';
-import { getCmsProjects, saveCmsProject, deleteCmsProject, resetCmsProjectsToDefault } from '../../lib/cmsStore';
+import { getCmsProjects, fetchServerCmsProjects, saveCmsProject, deleteCmsProject, resetCmsProjectsToDefault } from '../../lib/cmsStore';
 import { ProjectItem } from '../../data/projectsData';
 import { useLanguage } from '../../lib/LanguageContext';
 import { useDragToScroll } from '../../lib/useDragToScroll';
@@ -50,6 +50,7 @@ export const AdminCmsProjects: React.FC = () => {
 
   useEffect(() => {
     loadProjects();
+    void fetchServerCmsProjects();
     const handleUpdate = () => loadProjects();
     window.addEventListener('kapitech_cms_updated', handleUpdate);
     return () => window.removeEventListener('kapitech_cms_updated', handleUpdate);
@@ -90,19 +91,26 @@ export const AdminCmsProjects: React.FC = () => {
     setIsModalOpen(true);
   };
 
-  const handleDelete = (id: string, title: string) => {
-    if (window.confirm(`Delete case study "${title}" from CMS?`)) {
-      deleteCmsProject(id);
+  const handleDelete = async (id: string, title: string) => {
+    if (!window.confirm(`Delete case study "${title}" from CMS?`)) return;
+    try {
+      await deleteCmsProject(id);
       loadProjects();
       setStatusMessage('Case study deleted successfully.');
       setTimeout(() => setStatusMessage(null), 3000);
+    } catch (error: any) {
+      setStatusMessage(error?.message || 'Failed to delete case study.');
     }
   };
 
-  const handleToggleFeatured = (project: ProjectItem) => {
-    const updated = { ...project, featured: !project.featured };
-    saveCmsProject(updated);
-    loadProjects();
+  const handleToggleFeatured = async (project: ProjectItem) => {
+    try {
+      const updated = { ...project, featured: !project.featured };
+      await saveCmsProject(updated);
+      loadProjects();
+    } catch (error: any) {
+      setStatusMessage(error?.message || 'Failed to update featured status.');
+    }
   };
 
   const handleFileUpload = (file: File) => {
@@ -187,19 +195,23 @@ export const AdminCmsProjects: React.FC = () => {
     });
   };
 
-  const handleSaveModal = (e: React.FormEvent) => {
+  const handleSaveModal = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingProject || !editingProject.title.trim()) {
       alert('Project title is required.');
       return;
     }
 
-    saveCmsProject(editingProject);
-    setIsModalOpen(false);
-    setEditingProject(null);
-    loadProjects();
-    setStatusMessage('Case study published successfully to live site!');
-    setTimeout(() => setStatusMessage(null), 3000);
+    try {
+      await saveCmsProject(editingProject);
+      setIsModalOpen(false);
+      setEditingProject(null);
+      loadProjects();
+      setStatusMessage('Case study published successfully to live site!');
+      setTimeout(() => setStatusMessage(null), 3000);
+    } catch (error: any) {
+      setStatusMessage(error?.message || 'Failed to save case study.');
+    }
   };
 
   const filteredProjects = projects.filter((p) => {

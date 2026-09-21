@@ -36,7 +36,7 @@ import {
   createAdminAccount,
   deleteAdminAccount
 } from '../../lib/adminAuth';
-import { getCmsSiteMeta, saveCmsSiteMeta, SiteMetaSettings } from '../../lib/cmsStore';
+import { getCmsSiteMeta, fetchServerCmsSiteMeta, saveCmsSiteMeta, SiteMetaSettings } from '../../lib/cmsStore';
 import { useLanguage } from '../../lib/LanguageContext';
 import { api } from '../../lib/apiClient';
 import { triggerFeedback } from '../../lib/uiFeedback';
@@ -94,6 +94,7 @@ export const AdminSettings: React.FC = () => {
   // Meta & Branding Settings state
   const [metaSettings, setMetaSettings] = useState<SiteMetaSettings>(getCmsSiteMeta());
   const [metaStatus, setMetaStatus] = useState<string | null>(null);
+  const [metaLoading, setMetaLoading] = useState(false);
 
   // Audit Logs state
   const [logs, setLogs] = useState<SecurityAuditLog[]>([]);
@@ -121,6 +122,16 @@ export const AdminSettings: React.FC = () => {
     configured?: boolean;
   } | null>(null);
   const [backupIntegrity, setBackupIntegrity] = useState<{ valid: boolean; checkedAt: string; reason?: string } | null>(null);
+  const [notificationSettings, setNotificationSettings] = useState<{
+    targetEmail: string;
+    formspreeEndpoint: string;
+    telegramChatId: string;
+    isEmailActive: boolean;
+    isTelegramActive: boolean;
+    hasTelegramToken: boolean;
+  } | null>(null);
+  const [notificationStatus, setNotificationStatus] = useState<{ success: boolean; message: string } | null>(null);
+  const [notificationLoading, setNotificationLoading] = useState(false);
   const [securityPosture, setSecurityPosture] = useState<{
     encryptionAtRest: boolean;
     privateDocumentEncryption: boolean;
@@ -166,6 +177,11 @@ export const AdminSettings: React.FC = () => {
     if (activeTab === 'api' && canAccessServer) {
       refreshBackups();
     }
+    if (activeTab === 'branding' && canManageCms) {
+      fetchServerCmsSiteMeta().then((settings) => {
+        if (mounted) setMetaSettings(settings);
+      });
+    }
     if (activeTab === 'security') {
       api.system.securityStatus().then((res) => {
         if (!mounted) return;
@@ -198,6 +214,47 @@ export const AdminSettings: React.FC = () => {
       }
     } catch {
       setBackupSummary(null);
+    }
+  };
+
+  const refreshNotificationSettings = async () => {
+    try {
+      const res = await api.notifications.getSettings();
+      if (res.success && res.data?.settings) {
+        setNotificationSettings(res.data.settings);
+      }
+    } catch {
+      setNotificationSettings(null);
+    }
+  };
+
+  const handleSaveNotificationSettings = async () => {
+    if (!notificationSettings) return;
+    setNotificationLoading(true);
+    setNotificationStatus(null);
+    try {
+      const res = await api.notifications.updateSettings({
+        targetEmail: notificationSettings.targetEmail,
+        formspreeEndpoint: notificationSettings.formspreeEndpoint,
+        telegramChatId: notificationSettings.telegramChatId,
+        isEmailActive: notificationSettings.isEmailActive,
+        isTelegramActive: notificationSettings.isTelegramActive
+      });
+      if (!res.success) {
+        setNotificationStatus({
+          success: false,
+          message: res.error || (language === 'id' ? 'Gagal menyimpan konfigurasi notifikasi.' : 'Failed to save notification settings.')
+        });
+        return;
+      }
+      await refreshNotificationSettings();
+      triggerFeedback('success');
+      setNotificationStatus({
+        success: true,
+        message: language === 'id' ? 'Konfigurasi notifikasi berhasil disimpan.' : 'Notification settings saved.'
+      });
+    } finally {
+      setNotificationLoading(false);
     }
   };
 
@@ -442,15 +499,26 @@ export const AdminSettings: React.FC = () => {
   };
 
   // Handle Meta Settings save
-  const handleSaveMeta = (e: React.FormEvent) => {
+  const handleSaveMeta = async (e: React.FormEvent) => {
     e.preventDefault();
-    saveCmsSiteMeta(metaSettings);
-    setMetaStatus(
-      language === 'id' 
-        ? 'Pengaturan sistem dan metadata website berhasil disimpan!' 
-        : 'System settings and site metadata successfully saved!'
-    );
-    setTimeout(() => setMetaStatus(null), 3000);
+    setMetaLoading(true);
+    setMetaStatus(null);
+    try {
+      const saved = await saveCmsSiteMeta(metaSettings);
+      setMetaSettings(saved);
+      setMetaStatus(
+        language === 'id'
+          ? 'Pengaturan website berhasil disimpan ke server.'
+          : 'Website settings were saved to the server.'
+      );
+      triggerFeedback('success');
+    } catch (error: any) {
+      setMetaStatus(error?.message || (language === 'id'
+        ? 'Gagal menyimpan pengaturan website.'
+        : 'Failed to save website settings.'));
+    } finally {
+      setMetaLoading(false);
+    }
   };
 
   const handleExportLogs = () => {
@@ -683,107 +751,129 @@ export const AdminSettings: React.FC = () => {
               </h2>
               <p className="text-xs text-[#8A94A6] font-mono">
                 {language === 'id'
-                  ? 'Konfigurasi representasi visual dan aturan SEO global untuk kapitech.id dan ams.kapitech.id.'
-                  : 'Configure visual branding, search meta tags, and global agency settings for kapitech.id.'}
+                  ? 'Kelola judul website, deskripsi SEO, email inquiry, bahasa default, dan preferensi notifikasi yang tersimpan di server.'
+                  : 'Manage website title, SEO description, inquiry email, default language, and notification preferences stored on the server.'}
               </p>
             </div>
           </div>
 
           {metaStatus && (
             <div className="mb-6 p-4 rounded-xl text-xs font-mono flex items-start gap-2.5 bg-emerald-950/40 border border-emerald-500/40 text-emerald-300">
-              <Check size={16} className="shrink-0 mt-0.5" />
+              {metaStatus.toLowerCase().includes('gagal') || metaStatus.toLowerCase().includes('failed') ? <AlertCircle size={16} className="shrink-0 mt-0.5 text-red-400" /> : <Check size={16} className="shrink-0 mt-0.5" />}
               <span>{metaStatus}</span>
             </div>
           )}
 
-          <form onSubmit={handleSaveMeta} className="space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs font-mono text-[#8A94A6] mb-1 font-semibold">
-                  {language === 'id' ? 'Nama Agensi Global' : 'Global Agency Name'}
-                </label>
-                <input
-                  type="text"
-                  value={metaSettings.agencyName}
-                  onChange={(e) => setMetaSettings({ ...metaSettings, agencyName: e.target.value })}
-                  className="w-full px-3.5 py-2.5 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl text-xs text-white focus:outline-none focus:border-[#E50914] font-mono min-h-[44px]"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-mono text-[#8A94A6] mb-1 font-semibold">
-                  {language === 'id' ? 'Domain Publik' : 'Public Domain'}
-                </label>
-                <input
-                  type="text"
-                  value="https://kapitech.id"
-                  disabled
-                  className="w-full px-3.5 py-2.5 bg-[#181B22]/50 border border-[rgba(255,255,255,0.07)] rounded-xl text-xs text-[#8A94A6] font-mono cursor-not-allowed min-h-[44px]"
-                />
-              </div>
-            </div>
-
+          <form onSubmit={handleSaveMeta} className="space-y-5">
             <div>
               <label className="block text-xs font-mono text-[#8A94A6] mb-1 font-semibold">
-                {language === 'id' ? 'Tagline / Slogan Utama' : 'Hero Tagline / Catchphrase'}
+                {language === 'id' ? 'Judul Website' : 'Website Title'}
               </label>
               <input
                 type="text"
-                value={metaSettings.tagline}
-                onChange={(e) => setMetaSettings({ ...metaSettings, tagline: e.target.value })}
+                required
+                maxLength={160}
+                value={metaSettings.siteTitle}
+                onChange={(e) => setMetaSettings({ ...metaSettings, siteTitle: e.target.value })}
                 className="w-full px-3.5 py-2.5 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl text-xs text-white focus:outline-none focus:border-[#E50914] font-mono min-h-[44px]"
               />
             </div>
 
             <div>
               <label className="block text-xs font-mono text-[#8A94A6] mb-1 font-semibold">
-                {language === 'id' ? 'Deskripsi Meta (SEO Global)' : 'Meta Description (Global SEO)'}
+                {language === 'id' ? 'Deskripsi Website / SEO' : 'Website Description / SEO'}
               </label>
               <textarea
+                required
                 rows={3}
-                value={metaSettings.metaDescription}
-                onChange={(e) => setMetaSettings({ ...metaSettings, metaDescription: e.target.value })}
+                maxLength={320}
+                value={metaSettings.siteDescription}
+                onChange={(e) => setMetaSettings({ ...metaSettings, siteDescription: e.target.value })}
                 className="w-full px-3.5 py-2.5 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl text-xs text-white focus:outline-none focus:border-[#E50914] font-mono"
               />
             </div>
 
-            <div className="pt-4 border-t border-[rgba(255,255,255,0.07)] space-y-3">
-              <label className="flex items-center gap-3 cursor-pointer select-none">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-mono text-[#8A94A6] mb-1 font-semibold">
+                  {language === 'id' ? 'Email Penerima Inquiry' : 'Inquiry Receiver Email'}
+                </label>
                 <input
-                  type="checkbox"
-                  checked={metaSettings.soundEffectsEnabled}
-                  onChange={(e) => setMetaSettings({ ...metaSettings, soundEffectsEnabled: e.target.checked })}
-                  className="w-4 h-4 rounded bg-[#181B22] border-[rgba(255,255,255,0.07)] text-[#E50914] accent-[#E50914]"
+                  type="email"
+                  required
+                  maxLength={254}
+                  value={metaSettings.contactReceiverEmail}
+                  onChange={(e) => setMetaSettings({ ...metaSettings, contactReceiverEmail: e.target.value })}
+                  className="w-full px-3.5 py-2.5 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl text-xs text-white focus:outline-none focus:border-[#E50914] font-mono min-h-[44px]"
                 />
-                <span className="text-xs text-white font-mono">
-                  {language === 'id' 
-                    ? 'Aktifkan Notifikasi Suara (Chime) saat ada lead baru masuk' 
-                    : 'Enable audio chime notification on new incoming lead submission'}
-                </span>
-              </label>
+              </div>
 
-              <label className="flex items-center gap-3 cursor-pointer select-none">
+              <div>
+                <label className="block text-xs font-mono text-[#8A94A6] mb-1 font-semibold">
+                  {language === 'id' ? 'Bahasa Default' : 'Default Language'}
+                </label>
+                <select
+                  value={metaSettings.defaultLanguage}
+                  onChange={(e) => setMetaSettings({ ...metaSettings, defaultLanguage: e.target.value as 'en' | 'id' })}
+                  className="w-full px-3.5 py-2.5 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl text-xs text-white focus:outline-none focus:border-[#E50914] font-mono min-h-[44px]"
+                >
+                  <option value="id">Indonesia</option>
+                  <option value="en">English</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="pt-4 border-t border-[rgba(255,255,255,0.07)] space-y-3">
+              <label className="flex items-center justify-between gap-4 p-3 rounded-xl bg-[#181B22] border border-[rgba(255,255,255,0.07)] cursor-pointer">
+                <span className="text-xs text-white font-mono">
+                  {language === 'id' ? 'Aktifkan Floating Contact / Live Chat' : 'Enable Floating Contact / Live Chat'}
+                </span>
                 <input
                   type="checkbox"
                   checked={metaSettings.enableLiveChat}
                   onChange={(e) => setMetaSettings({ ...metaSettings, enableLiveChat: e.target.checked })}
                   className="w-4 h-4 rounded bg-[#181B22] border-[rgba(255,255,255,0.07)] text-[#E50914] accent-[#E50914]"
                 />
+              </label>
+
+              <label className="flex items-center justify-between gap-4 p-3 rounded-xl bg-[#181B22] border border-[rgba(255,255,255,0.07)] cursor-pointer">
                 <span className="text-xs text-white font-mono">
-                  {language === 'id' 
-                    ? 'Tampilkan Floating Contact & WhatsApp Widget di pojok kanan bawah' 
-                    : 'Display Floating WhatsApp & Contact Widget on bottom-right'}
+                  {language === 'id' ? 'Aktifkan Notifikasi Suara' : 'Enable Sound Alerts'}
                 </span>
+                <input
+                  type="checkbox"
+                  checked={metaSettings.enableSoundAlerts}
+                  onChange={(e) => setMetaSettings({ ...metaSettings, enableSoundAlerts: e.target.checked })}
+                  className="w-4 h-4 rounded bg-[#181B22] border-[rgba(255,255,255,0.07)] text-[#E50914] accent-[#E50914]"
+                />
+              </label>
+
+              <label className="flex items-center justify-between gap-4 p-3 rounded-xl bg-[#181B22] border border-red-500/20 cursor-pointer">
+                <span>
+                  <span className="block text-xs text-white font-mono">
+                    {language === 'id' ? 'Maintenance Mode' : 'Maintenance Mode'}
+                  </span>
+                  <span className="block text-[10px] text-[#8A94A6] font-mono mt-0.5">
+                    {language === 'id' ? 'Gunakan hanya saat website memang sedang dipelihara.' : 'Use only when the public website is intentionally under maintenance.'}
+                  </span>
+                </span>
+                <input
+                  type="checkbox"
+                  checked={metaSettings.maintenanceMode}
+                  onChange={(e) => setMetaSettings({ ...metaSettings, maintenanceMode: e.target.checked })}
+                  className="w-4 h-4 rounded bg-[#181B22] border-red-500/40 text-[#E50914] accent-[#E50914]"
+                />
               </label>
             </div>
 
             <div className="pt-4 flex items-center justify-end">
               <button
                 type="submit"
-                className="px-5 py-2.5 rounded-xl bg-[#E50914] text-white text-xs font-mono font-bold hover:bg-[#FF1E27] transition-all shadow-md shadow-[#E50914]/20 flex items-center gap-2 min-h-[44px]"
+                disabled={metaLoading}
+                className="px-5 py-2.5 rounded-xl bg-[#E50914] text-white text-xs font-mono font-bold hover:bg-[#FF1E27] transition-all shadow-md shadow-[#E50914]/20 flex items-center gap-2 min-h-[44px] disabled:opacity-50"
               >
-                <Save size={14} />
-                <span>{language === 'id' ? 'Simpan Pengaturan Brand' : 'Save Brand Settings'}</span>
+                {metaLoading ? <RefreshCw size={14} className="animate-spin" /> : <Save size={14} />}
+                <span>{language === 'id' ? 'Simpan Pengaturan Website' : 'Save Website Settings'}</span>
               </button>
             </div>
           </form>
@@ -1493,6 +1583,104 @@ export const AdminSettings: React.FC = () => {
 
           {canAccessServer && <ProductionReadinessCard language={language} />}
 
+          {canAccessServer && notificationSettings && (
+            <div className="p-5 rounded-2xl bg-[#181B22] border border-violet-500/20 space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                    <ShieldCheck size={15} className="text-violet-400" />
+                    <span>{language === 'id' ? 'Notifikasi Lead & Inquiry' : 'Lead & Inquiry Notifications'}</span>
+                  </h3>
+                  <p className="text-[11px] text-[#8A94A6] font-mono mt-1">
+                    {language === 'id'
+                      ? 'Kelola channel dan tujuan notifikasi. Token bot tetap hanya berada di Environment Variables server.'
+                      : 'Manage channels and destinations. Bot tokens remain server-side in Environment Variables.'}
+                  </p>
+                </div>
+                <div className="text-[10px] font-mono px-3 py-1.5 rounded-lg border border-white/[0.07] bg-[#111318] text-[#8A94A6]">
+                  Telegram secret: <span className={notificationSettings.hasTelegramToken ? 'text-emerald-300' : 'text-amber-300'}>
+                    {notificationSettings.hasTelegramToken ? 'Configured' : 'Not configured'}
+                  </span>
+                </div>
+              </div>
+
+              {notificationStatus && (
+                <div className={'p-3 rounded-xl border text-xs font-mono ' + (
+                  notificationStatus.success
+                    ? 'bg-emerald-950/30 border-emerald-500/20 text-emerald-300'
+                    : 'bg-red-950/30 border-red-500/20 text-red-300'
+                )}>
+                  {notificationStatus.message}
+                </div>
+              )}
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <label className="block">
+                  <span className="block text-[10px] uppercase tracking-wider text-[#8A94A6] font-mono mb-1">Inquiry Email</span>
+                  <input
+                    type="email"
+                    value={notificationSettings.targetEmail}
+                    onChange={(e) => setNotificationSettings({ ...notificationSettings, targetEmail: e.target.value })}
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#111318] border border-white/[0.07] text-white text-xs font-mono focus:outline-none focus:border-[#E50914] min-h-[44px]"
+                  />
+                </label>
+                <label className="block">
+                  <span className="block text-[10px] uppercase tracking-wider text-[#8A94A6] font-mono mb-1">Formspree Endpoint</span>
+                  <input
+                    type="url"
+                    placeholder="https://formspree.io/f/..."
+                    value={notificationSettings.formspreeEndpoint}
+                    onChange={(e) => setNotificationSettings({ ...notificationSettings, formspreeEndpoint: e.target.value })}
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#111318] border border-white/[0.07] text-white text-xs font-mono focus:outline-none focus:border-[#E50914] min-h-[44px]"
+                  />
+                </label>
+              </div>
+
+              <label className="block">
+                <span className="block text-[10px] uppercase tracking-wider text-[#8A94A6] font-mono mb-1">Telegram Chat ID</span>
+                <input
+                  type="text"
+                  value={notificationSettings.telegramChatId}
+                  onChange={(e) => setNotificationSettings({ ...notificationSettings, telegramChatId: e.target.value })}
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-[#111318] border border-white/[0.07] text-white text-xs font-mono focus:outline-none focus:border-[#E50914] min-h-[44px]"
+                />
+              </label>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <label className="flex items-center justify-between gap-4 p-3 rounded-xl bg-[#111318] border border-white/[0.07] cursor-pointer">
+                  <span className="text-xs text-white font-mono">{language === 'id' ? 'Email Notification Aktif' : 'Email Notifications Active'}</span>
+                  <input
+                    type="checkbox"
+                    checked={notificationSettings.isEmailActive}
+                    onChange={(e) => setNotificationSettings({ ...notificationSettings, isEmailActive: e.target.checked })}
+                    className="w-4 h-4 accent-[#E50914]"
+                  />
+                </label>
+                <label className="flex items-center justify-between gap-4 p-3 rounded-xl bg-[#111318] border border-white/[0.07] cursor-pointer">
+                  <span className="text-xs text-white font-mono">{language === 'id' ? 'Telegram Notification Aktif' : 'Telegram Notifications Active'}</span>
+                  <input
+                    type="checkbox"
+                    checked={notificationSettings.isTelegramActive}
+                    onChange={(e) => setNotificationSettings({ ...notificationSettings, isTelegramActive: e.target.checked })}
+                    className="w-4 h-4 accent-[#E50914]"
+                  />
+                </label>
+              </div>
+
+              <div className="pt-2 flex justify-end">
+                <button
+                  type="button"
+                  onClick={handleSaveNotificationSettings}
+                  disabled={notificationLoading}
+                  className="min-h-[40px] px-4 rounded-xl bg-violet-600 hover:bg-violet-500 text-white text-xs font-mono font-bold flex items-center gap-2 disabled:opacity-50"
+                >
+                  {notificationLoading ? <RefreshCw size={13} className="animate-spin" /> : <Save size={13} />}
+                  <span>{language === 'id' ? 'Simpan Channel Notifikasi' : 'Save Notification Channels'}</span>
+                </button>
+              </div>
+            </div>
+          )}
+
           {canAccessServer && (
             <div className="p-5 rounded-2xl bg-[#181B22] border border-cyan-500/20 space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -1570,13 +1758,20 @@ export const AdminSettings: React.FC = () => {
                     ? `Untuk DR penuh, download encrypted backup lalu simpan di lokasi off-site yang terpisah dari Hostinger.${backupIntegrity?.valid === false && backupIntegrity.reason ? ' Integrity: ' + backupIntegrity.reason : ''}`
                     : `For full DR, download an encrypted backup and retain it off-site separately from Hostinger.${backupIntegrity?.valid === false && backupIntegrity.reason ? ' Integrity: ' + backupIntegrity.reason : ''}`}
                 </div>
-                <a
-                  href="/api/system/backups/download"
-                  className="min-h-[40px] px-3.5 rounded-xl bg-[#E50914] hover:bg-[#FF1E27] text-white text-xs font-mono font-bold flex items-center justify-center gap-2"
-                >
-                  <Download size={13} />
-                  <span>{language === 'id' ? 'Download Encrypted Backup' : 'Download Encrypted Backup'}</span>
-                </a>
+                {backupSummary?.provider && backupSummary.provider !== 'json-local' ? (
+                  <span className="min-h-[40px] px-3.5 rounded-xl bg-[#111318] border border-white/[0.07] text-[#94A3B8] text-xs font-mono flex items-center justify-center gap-2">
+                    <Database size={13} />
+                    <span>{language === 'id' ? 'Export via provider / operations' : 'Export via provider / operations'}</span>
+                  </span>
+                ) : (
+                  <a
+                    href="/api/system/backups/download"
+                    className="min-h-[40px] px-3.5 rounded-xl bg-[#E50914] hover:bg-[#FF1E27] text-white text-xs font-mono font-bold flex items-center justify-center gap-2"
+                  >
+                    <Download size={13} />
+                    <span>{language === 'id' ? 'Download Encrypted Backup' : 'Download Encrypted Backup'}</span>
+                  </a>
+                )}
               </div>
             </div>
           )}

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Quote, Plus, Star, Edit3, Trash2, Check, UserCheck, MessageSquare, Building2, MapPin } from 'lucide-react';
-import { getCmsTestimonials, saveCmsTestimonial, deleteCmsTestimonial, TestimonialItem } from '../../lib/cmsStore';
+import { getCmsTestimonials, fetchServerCmsTestimonials, saveCmsTestimonial, deleteCmsTestimonial, TestimonialItem } from '../../lib/cmsStore';
 import { useLanguage } from '../../lib/LanguageContext';
 
 export const AdminCmsTestimonials: React.FC = () => {
@@ -16,6 +16,7 @@ export const AdminCmsTestimonials: React.FC = () => {
 
   useEffect(() => {
     loadData();
+    void fetchServerCmsTestimonials();
     const handleUpdate = () => loadData();
     window.addEventListener('kapitech_cms_updated', handleUpdate);
     return () => window.removeEventListener('kapitech_cms_updated', handleUpdate);
@@ -41,27 +42,35 @@ export const AdminCmsTestimonials: React.FC = () => {
     setIsModalOpen(true);
   };
 
-  const handleDelete = (id: string, author: string) => {
+  const handleDelete = async (id: string, author: string) => {
     if (window.confirm(`Hapus testimoni dari "${author}"?`)) {
-      deleteCmsTestimonial(id);
-      loadData();
-      setStatusMessage('Testimoni berhasil dihapus.');
-      setTimeout(() => setStatusMessage(null), 3000);
+      try {
+        await deleteCmsTestimonial(id);
+        loadData();
+        setStatusMessage('Testimoni berhasil dihapus.');
+        setTimeout(() => setStatusMessage(null), 3000);
+      } catch (error: any) {
+        setStatusMessage(error?.message || 'Gagal menghapus testimoni.');
+      }
     }
   };
 
-  const handleSaveModal = (e: React.FormEvent) => {
+  const handleSaveModal = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingItem || !editingItem.author.trim() || (!editingItem.quoteId && !editingItem.quote)) {
       alert('Nama author dan isi kutipan testimoni wajib diisi.');
       return;
     }
 
-    saveCmsTestimonial(editingItem);
-    setIsModalOpen(false);
-    setEditingItem(null);
-    loadData();
-    setStatusMessage('Testimoni berhasil disimpan ke database CMS!');
+    try {
+      await saveCmsTestimonial(editingItem);
+      setIsModalOpen(false);
+      setEditingItem(null);
+      loadData();
+      setStatusMessage('Testimoni berhasil disimpan ke database CMS!');
+    } catch (error: any) {
+      setStatusMessage(error?.message || 'Gagal menyimpan testimoni.');
+    }
     setTimeout(() => setStatusMessage(null), 3000);
   };
 
