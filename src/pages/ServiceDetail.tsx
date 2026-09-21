@@ -24,7 +24,8 @@ import { AtmosphericBackground } from '../components/ui/AtmosphericBackground';
 import { useLanguage } from '../lib/LanguageContext';
 import { getServiceBySlug, allSolutionsAndServices, ServiceItemData } from '../data/servicesData';
 import { allProjects, ProjectItem } from '../data/projectsData';
-import { fetchServerCmsProjects, fetchServerCmsServices } from '../lib/cmsStore';
+import { fetchServerCmsProjects } from '../lib/cmsStore';
+import { api } from '../lib/apiClient';
 
 export const ServiceDetail = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -41,10 +42,14 @@ export const ServiceDetail = () => {
       return () => { mounted = false; };
     }
 
-    Promise.all([fetchServerCmsServices(), fetchServerCmsProjects()]).then(([serverServices, serverProjects]) => {
+    Promise.all([api.cms.getServices(), fetchServerCmsProjects()]).then(([servicesRes, serverProjects]) => {
       if (!mounted) return;
-      const serverService = serverServices.find((item) => item.slug === slug && item.type === 'service');
-      setService(serverService || undefined);
+
+      if (servicesRes.success && Array.isArray(servicesRes.data?.services)) {
+        const serverService = servicesRes.data.services.find((item: any) => item.slug === slug && item.type === 'service');
+        setService(serverService ? (serverService as ServiceItemData) : undefined);
+      }
+
       if (Array.isArray(serverProjects)) setProjects(serverProjects);
       setIsHydrating(false);
     }).catch(() => {
