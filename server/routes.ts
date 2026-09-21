@@ -1164,7 +1164,7 @@ apiRouter.post('/leads/:id/convert', requireAuth, requirePermission('canManageCr
     };
 
     if (existingClient) {
-      const createdDeal = await postgresCrmDealRepository.convertLead(lead, existingClient, deal);
+      const createdDeal = await postgresCrmDealRepository.convertLead(lead, existingClient, deal, true);
       recordAuditLog({ action: 'LEAD_CONVERTED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Converted lead "${lead.fullName}" into CRM Deal using existing client.`, severity: 'info' });
       res.json({ success: true, client: existingClient, deal: createdDeal.deal });
       return;
