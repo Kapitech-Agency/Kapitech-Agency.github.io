@@ -338,6 +338,7 @@ export const AdminProjects: React.FC = () => {
 
   const handleAddSubtaskInDrawer = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!canManageProjects) return;
     if (!selectedProject || !activeTaskDrawer || !newSubtaskTitle.trim()) return;
 
     const newSub: TaskSubtask = {
@@ -1044,12 +1045,14 @@ export const AdminProjects: React.FC = () => {
                           {st.title}
                         </span>
                       </button>
-                      <button
-                        onClick={() => handleDeleteSubtaskInDrawer(st.id)}
-                        className="text-[#64748B] hover:text-rose-400 p-1"
+                      {canManageProjects && (
+                        <button
+                          onClick={() => handleDeleteSubtaskInDrawer(st.id)}
+                          className="text-[#64748B] hover:text-rose-400 p-1"
                       >
-                        <Trash2 size={12} />
-                      </button>
+                          <Trash2 size={12} />
+                        </button>
+                      )}
                     </div>
                   ))}
 
@@ -1058,13 +1061,14 @@ export const AdminProjects: React.FC = () => {
                     <input
                       type="text"
                       value={newSubtaskTitle}
+                      disabled={!canManageProjects}
                       onChange={(e) => setNewSubtaskTitle(e.target.value)}
                       placeholder="Add subtask item and press enter..."
                       className="flex-1 px-3 py-2 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-xs text-white focus:outline-none focus:border-[#E50914] font-mono"
                     />
                     <button
                       type="submit"
-                      disabled={!newSubtaskTitle.trim()}
+                      disabled={!canManageProjects || !newSubtaskTitle.trim()}
                       className="px-3 py-2 rounded-xl bg-[#E50914] text-white text-xs font-bold disabled:opacity-50"
                     >
                       <Plus size={14} />
@@ -1076,13 +1080,15 @@ export const AdminProjects: React.FC = () => {
 
             {/* Sticky Drawer Footer */}
             <div className="sticky bottom-0 z-20 bg-[#111318]/95 backdrop-blur-md px-5 sm:px-6 py-3.5 border-t border-[rgba(255,255,255,0.07)] flex items-center justify-between shrink-0">
-              <button
-                onClick={() => handleDeleteTask(activeTaskDrawer.id)}
-                className="h-10 px-3 min-h-[40px] rounded-xl bg-red-950/40 text-red-300 border border-red-500/30 hover:bg-red-950/60 transition-colors flex items-center gap-1.5"
+              {canManageProjects && (
+                <button
+                  onClick={() => handleDeleteTask(activeTaskDrawer.id)}
+                  className="h-10 px-3 min-h-[40px] rounded-xl bg-red-950/40 text-red-300 border border-red-500/30 hover:bg-red-950/60 transition-colors flex items-center gap-1.5"
               >
                 <Trash2 size={13} />
-                <span>Delete Task</span>
-              </button>
+                  <span>Delete Task</span>
+                </button>
+              )}
 
               <button
                 onClick={() => setActiveTaskDrawer(null)}
