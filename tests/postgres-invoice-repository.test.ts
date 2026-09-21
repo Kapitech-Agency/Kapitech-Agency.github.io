@@ -40,3 +40,14 @@ test('JSON invoice updates reject payment-derived statuses without ledger state'
   assert.match(routesSource, /requestedStatus === 'paid'/);
   assert.match(routesSource, /requestedStatus === 'partially_paid'/);
 });
+
+
+test('PostgreSQL invoice payments target the authoritative invoice_payments schema', async () => {
+  const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+  const repositorySource = await fs.readFile(path.join(root, 'server/postgres-invoice-repository.ts'), 'utf8');
+  assert.match(repositorySource, /FROM invoice_payments/);
+  assert.match(repositorySource, /INSERT INTO invoice_payments/);
+  assert.doesNotMatch(repositorySource, /FROM payments/);
+  assert.doesNotMatch(repositorySource, /INSERT INTO payments/);
+  assert.match(repositorySource, /paid_at/);
+});
