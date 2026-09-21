@@ -179,9 +179,6 @@ export class PostgresDocumentRepository {
   }
 
   async grantAccess(id: string, userId: string, targetUserId: string, isMaster: boolean): Promise<void> {
-    if (!isMaster && userId !== targetUserId) {
-      throw new DocumentAccessDeniedError('Only the document owner or a master administrator can change document access.');
-    }
     const owner = await getPostgresPool().query('SELECT owner_user_id FROM documents WHERE id=$1 AND archived_at IS NULL', [id]);
     if (!owner.rows[0]) throw new DocumentNotFoundError('Document not found.');
     if (!isMaster && String(owner.rows[0].owner_user_id) !== userId) {
