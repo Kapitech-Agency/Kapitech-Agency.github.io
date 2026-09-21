@@ -430,6 +430,7 @@ async function importCore(client: any, db: AnyRecord): Promise<Record<string, nu
 
   const settings = db.cmsSettings && typeof db.cmsSettings === 'object' ? db.cmsSettings : {};
   for (const [key, value] of Object.entries(settings)) {
+    if (key === 'updatedAt') continue;
     await client.query(
       `INSERT INTO cms_settings (key,value,updated_at) VALUES ($1,$2,$3)
        ON CONFLICT (key) DO UPDATE SET value=EXCLUDED.value, updated_at=EXCLUDED.updated_at`,
