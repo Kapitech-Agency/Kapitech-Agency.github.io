@@ -12,6 +12,7 @@ import {
 } from './db';
 import { getDataSourceMode } from './data-source.ts';
 import { postgresAuthRepository } from './postgres-repository.ts';
+import { postgresSecurityControlsRepository } from './postgres-security-controls-repository.ts';
 
 interface RateLimitEntry {
   count: number;
@@ -60,6 +61,12 @@ function cleanupMaps(): void {
 }
 
 setInterval(cleanupMaps, 5 * 60 * 1000).unref();
+setInterval(() => {
+  if (getDataSourceMode() !== 'postgres') return;
+  void postgresSecurityControlsRepository.cleanupExpired().catch(error => {
+    console.error('[Security] PostgreSQL security-control cleanup failed:', error);
+  });
+}, 5 * 60 * 1000).unref();
 
 function safeEqual(a: string, b: string): boolean {
   const left = Buffer.from(a);
@@ -294,7 +301,12 @@ export function clearCsrfCookie(res: Response): void {
   res.append('Set-Cookie', `kapi_csrf=; Path=/; SameSite=Strict; Max-Age=0;${secure}`);
 }
 
-export function checkLockout(identifier: string, ip = 'unknown'): { isLocked: boolean; remainingSeconds: number } {
+export async function checkLockout(identifier: string, ip = 'unknown'): Promise<{ isLocked: boolean; remainingSeconds: number }> {
+  if (getDataSourceMode() === 'postgres') {
+    const state = await postgresSecurityControlsRepository.checkLoginLockout(identifier, ip);
+    return { isLocked: state.isLocked, remainingSeconds: state.remainingSeconds };
+  }
+
   const key = `${identifier.toLowerCase()}|${ip}`;
   const entry = loginLockouts.get(key);
   if (!entry) return { isLocked: false, remainingSeconds: 0 };
@@ -309,7 +321,12 @@ export function checkLockout(identifier: string, ip = 'unknown'): { isLocked: bo
   return { isLocked: false, remainingSeconds: 0 };
 }
 
-export function recordFailedLogin(identifier: string, ip = 'unknown'): void {
+export async function recordFailedLogin(identifier: string, ip = 'unknown'): Promise<{ isLocked: boolean; remainingSeconds: number }> {
+  if (getDataSourceMode() === 'postgres') {
+    const state = await postgresSecurityControlsRepository.recordFailedLogin(identifier, ip);
+    return { isLocked: state.isLocked, remainingSeconds: state.remainingSeconds };
+  }
+
   const key = `${identifier.toLowerCase()}|${ip}`;
   const entry = loginLockouts.get(key) || { failedAttempts: 0, lockoutUntil: 0 };
   entry.failedAttempts += 1;
@@ -317,9 +334,19 @@ export function recordFailedLogin(identifier: string, ip = 'unknown'): void {
     entry.lockoutUntil = Date.now() + LOCKOUT_DURATION_MS;
   }
   loginLockouts.set(key, entry);
+  return {
+    isLocked: entry.lockoutUntil > Date.now(),
+    remainingSeconds: entry.lockoutUntil > Date.now()
+      ? Math.ceil((entry.lockoutUntil - Date.now()) / 1000)
+      : 0
+  };
 }
 
-export function clearLockout(identifier: string, ip = 'unknown'): void {
+export async function clearLockout(identifier: string, ip = 'unknown'): Promise<void> {
+  if (getDataSourceMode() === 'postgres') {
+    await postgresSecurityControlsRepository.clearLoginLockout(identifier, ip);
+    return;
+  }
   loginLockouts.delete(`${identifier.toLowerCase()}|${ip}`);
 }
 
@@ -610,6 +637,24 @@ export function requireAnyPermission(...permissionKeys: Array<keyof StoredUser['
 
 export function rateLimitAuthenticated(maxRequests = 60, windowMs = 60 * 1000) {
   return (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
+    if (getDataSourceMode() === 'postgres') {
+      const identity = req.user?.id || req.ip || 'unknown';
+      const bucketKey = `auth:${identity}:${maxRequests}:${windowMs}`;
+      void postgresSecurityControlsRepository.consumeRateLimit(bucketKey, maxRequests, windowMs)
+        .then(state => {
+          if (!state.allowed) {
+            res.status(429).json({ success: false, error: 'Too many requests. Please try again shortly.', remainingSeconds: state.remainingSeconds });
+            return;
+          }
+          next();
+        })
+        .catch(error => {
+          console.error('[Security] PostgreSQL authenticated rate-limit check failed:', error);
+          res.status(503).json({ success: false, error: 'Security controls are temporarily unavailable.' });
+        });
+      return;
+    }
+
     const key = req.user?.id || req.ip || 'unknown';
     const now = Date.now();
     const current = authenticatedRateLimits.get(key);
@@ -629,6 +674,24 @@ export function rateLimitAuthenticated(maxRequests = 60, windowMs = 60 * 1000) {
 
 export function rateLimitPublic(maxRequests = 30, windowMs = 60 * 1000) {
   return (req: Request, res: Response, next: NextFunction): void => {
+    if (getDataSourceMode() === 'postgres') {
+      const identity = req.ip || req.socket.remoteAddress || 'unknown';
+      const bucketKey = `public:${identity}:${maxRequests}:${windowMs}`;
+      void postgresSecurityControlsRepository.consumeRateLimit(bucketKey, maxRequests, windowMs)
+        .then(state => {
+          if (!state.allowed) {
+            res.status(429).json({ success: false, error: 'Too many requests. Please slow down and try again shortly.', remainingSeconds: state.remainingSeconds });
+            return;
+          }
+          next();
+        })
+        .catch(error => {
+          console.error('[Security] PostgreSQL public rate-limit check failed:', error);
+          res.status(503).json({ success: false, error: 'Security controls are temporarily unavailable.' });
+        });
+      return;
+    }
+
     const key = req.ip || req.socket.remoteAddress || 'unknown';
     const now = Date.now();
     const current = publicRateLimits.get(key);
