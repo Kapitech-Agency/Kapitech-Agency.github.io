@@ -1,5 +1,6 @@
 -- AMS PostgreSQL migration 009
 -- Audit chain indexes and stronger operational constraints.
+-- Latest verification checkpoint: invoice numeric typing and audit legacy hash compatibility fixed.
 
 BEGIN;
 
