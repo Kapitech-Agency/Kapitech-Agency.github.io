@@ -72,6 +72,39 @@ export const AdminLayout: React.FC = () => {
     .join('')
     .toUpperCase() || 'AD';
 
+  useEffect(() => {
+    let active = true;
+
+    const validateServerSession = async () => {
+      try {
+        const res = await api.auth.me();
+        if (!active) return;
+        if (res.success && res.data?.user) {
+          const current = getAdminSession();
+          if (current) {
+            sessionStorage.setItem('kapitech_admin_profile_v2', JSON.stringify({
+              ...current,
+              user: res.data.user
+            }));
+          }
+          return;
+        }
+      } catch {
+        // Treat an invalid/revoked server session as unauthenticated.
+      }
+
+      if (active) {
+        logoutAdmin();
+        navigate('/admin/login', { replace: true });
+      }
+    };
+
+    void validateServerSession();
+    return () => {
+      active = false;
+    };
+  }, [navigate]);
+
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
