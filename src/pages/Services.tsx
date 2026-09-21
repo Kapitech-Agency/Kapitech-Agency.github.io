@@ -721,10 +721,10 @@ export const Services = () => {
             <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 text-xs font-mono text-[#8A909D]">
               <span className="px-3 py-1.5 rounded-full bg-[#16181D] border border-[#262930] flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-brand-red animate-pulse shadow-[0_0_8px_rgba(255,26,26,0.6)]" />
-                <span className="text-white">3 {language === 'id' ? 'Solusi Strategis' : 'Strategic Solutions'}</span>
+                <span className="text-white">{resolvedStrategicSolutions.length} {language === 'id' ? 'Solusi Strategis' : 'Strategic Solutions'}</span>
               </span>
               <span className="px-3 py-1.5 rounded-full bg-[#16181D] border border-[#262930] text-white">
-                15 {language === 'id' ? 'Layanan Spesialis' : 'Specialized Services'}
+                {resolvedServices.length} {language === 'id' ? 'Layanan Spesialis' : 'Specialized Services'}
               </span>
               <span className="px-3 py-1.5 rounded-full bg-[#16181D] border border-[#262930] text-brand-red font-semibold">
                 Branding • Design • Development
