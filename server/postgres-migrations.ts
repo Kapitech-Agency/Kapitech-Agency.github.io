@@ -17,10 +17,22 @@ function normalizeMigrationSql(sql: string): string {
   return sql.replace(/^\s*BEGIN;\s*/i, '').replace(/\s*COMMIT;\s*$/i, '');
 }
 
+import fsSync from 'node:fs';
+
 function defaultMigrationsDir(): string {
+  const cwdCandidate = path.resolve(process.cwd(), 'db/postgres');
   const entrypoint = process.argv[1];
-  if (entrypoint) return path.resolve(path.dirname(entrypoint), '../db/postgres');
-  return path.resolve(process.cwd(), 'db/postgres');
+  const entrypointCandidate = entrypoint
+    ? path.resolve(path.dirname(entrypoint), '../db/postgres')
+    : null;
+
+  if (entrypointCandidate) {
+    try {
+      if (fsSync.existsSync(entrypointCandidate)) return entrypointCandidate;
+    } catch {}
+  }
+
+  return cwdCandidate;
 }
 
 export async function loadPostgresMigrations(migrationsDir = defaultMigrationsDir()): Promise<Array<{ version: string; sql: string; checksum: string }>> {
