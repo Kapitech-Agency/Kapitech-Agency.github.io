@@ -59,6 +59,7 @@ import { postgresProposalRepository } from './postgres-proposal-repository.ts';
 import { postgresTaskRepository } from './postgres-task-repository.ts';
 import { postgresTimeLogRepository } from './postgres-time-log-repository.ts';
 import { postgresInvoiceRepository } from './postgres-invoice-repository.ts';
+import { postgresExpenseRepository, ExpenseImmutableError, ExpenseNotFoundError, ExpenseVersionConflictError, ExpenseProjectNotFoundError } from './postgres-expense-repository.ts';
 
 
 const ROLE_POLICIES: Record<string, {
@@ -2043,31 +2044,86 @@ apiRouter.delete('/finance/invoices/:id', requireAuth, requirePermission('canMan
 });
 
 // Expenses
-apiRouter.get('/finance/expenses', requireAuth, requirePermission('canViewFinancials'), (req: AuthenticatedRequest, res: Response): void => {
-  const db = getDatabase();
-  res.json({ success: true, expenses: db.expenses });
+apiRouter.get('/finance/expenses', requireAuth, requirePermission('canViewFinancials'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  try {
+    const expenses = getDataSourceMode() === 'postgres'
+      ? await postgresExpenseRepository.list()
+      : getDatabase().expenses.filter((expense: any) => expense.status !== 'voided');
+    res.json({ success: true, expenses });
+  } catch (error) {
+    console.error('[Expenses] Failed to load expenses:', error);
+    res.status(503).json({ success: false, error: 'Expense data is temporarily unavailable.' });
+  }
 });
 
-apiRouter.post('/finance/expenses', requireAuth, requirePermission('canManageInvoices'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.post('/finance/expenses', requireAuth, requirePermission('canManageInvoices'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const exp = req.body || {};
   const amount = Number(exp.amount);
   if (!Number.isFinite(amount) || amount <= 0 || amount > 100_000_000_000) {
     res.status(400).json({ success: false, error: 'Expense amount must be a valid positive amount.' });
     return;
   }
+
   const date = normalizeDate(exp.date, new Date().toISOString().slice(0, 10));
-  const db = getDatabase();
+  const currency = String(exp.currency || 'IDR').toUpperCase();
+  if (!/^[A-Z]{3}$/.test(currency)) {
+    res.status(400).json({ success: false, error: 'Expense currency must be a valid ISO 4217 code.' });
+    return;
+  }
+
   const newExpense = {
     id: `exp_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
-    type: ['OpEx','CapEx'].includes(String(exp.type)) ? String(exp.type) : 'OpEx',
+    type: ['OpEx', 'CapEx', 'Rentals'].includes(String(exp.type)) ? String(exp.type) : 'OpEx',
     category: cleanText(exp.category || 'General', 120),
     description: cleanText(exp.description, 500),
     amount: Math.round(amount * 100) / 100,
+    currency,
     date,
+    projectId: cleanText(exp.projectId, 100) || undefined,
     recurringInterval: cleanText(exp.recurringInterval || 'none', 40),
     recordedBy: req.user!.name || req.user!.username,
+    recordedByUserId: req.user!.id,
+    idempotencyKey: cleanText(exp.idempotencyKey || req.get('Idempotency-Key'), 100) || undefined,
     createdAt: new Date().toISOString()
   };
+
+  if (getDataSourceMode() === 'postgres') {
+    try {
+      const expense = await postgresExpenseRepository.create(newExpense);
+      recordAuditLog({
+        action: 'EXPENSE_CREATED',
+        actor: req.user!.username,
+        actorRole: req.user!.role,
+        ip: req.ip,
+        userAgent: req.headers['user-agent'] as string,
+        details: `Created expense "${expense.description || expense.id}" (${expense.currency} ${expense.amount}).`,
+        severity: 'info'
+      });
+      res.json({ success: true, expense });
+    } catch (error) {
+      if (error instanceof ExpenseProjectNotFoundError) {
+        res.status(409).json({ success: false, error: error.message });
+        return;
+      }
+      const message = error instanceof Error ? error.message : 'Expense could not be created.';
+      res.status(400).json({ success: false, error: message });
+    }
+    return;
+  }
+
+  const db = getDatabase();
+  const existingIdempotent = newExpense.idempotencyKey
+    ? db.expenses.find((expense: any) =>
+        expense.recordedByUserId === newExpense.recordedByUserId &&
+        expense.idempotencyKey === newExpense.idempotencyKey &&
+        expense.status !== 'voided'
+      )
+    : undefined;
+  if (existingIdempotent) {
+    res.json({ success: true, expense: existingIdempotent });
+    return;
+  }
+
   db.expenses.unshift(newExpense);
   saveDatabase(db);
   recordAuditLog({
@@ -2076,83 +2132,162 @@ apiRouter.post('/finance/expenses', requireAuth, requirePermission('canManageInv
     actorRole: req.user!.role,
     ip: req.ip,
     userAgent: req.headers['user-agent'] as string,
-    details: `Created expense of ${newExpense.amount}.`,
+    details: `Created expense "${newExpense.description || newExpense.id}" (${newExpense.currency} ${newExpense.amount}).`,
     severity: 'info'
   });
   res.json({ success: true, expense: newExpense });
 });
 
-apiRouter.delete('/finance/expenses/:id', requireAuth, requirePermission('canManageInvoices'), (req: AuthenticatedRequest, res: Response): void => {
+apiRouter.delete('/finance/expenses/:id', requireAuth, requirePermission('canManageInvoices'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
+  const expectedVersion = req.body?.version !== undefined ? Number(req.body.version) : undefined;
+
+  if (getDataSourceMode() === 'postgres') {
+    try {
+      const expense = await postgresExpenseRepository.void(id, Number.isFinite(expectedVersion) ? expectedVersion : undefined);
+      recordAuditLog({
+        action: 'EXPENSE_VOIDED',
+        actor: req.user!.username,
+        actorRole: req.user!.role,
+        ip: req.ip,
+        userAgent: req.headers['user-agent'] as string,
+        details: `Voided expense "${expense.description || id}" (${expense.currency} ${expense.amount}).`,
+        severity: 'warning'
+      });
+      res.json({ success: true, message: 'Expense voided.', expense });
+    } catch (error) {
+      if (error instanceof ExpenseNotFoundError) { res.status(404).json({ success: false, error: error.message }); return; }
+      if (error instanceof ExpenseVersionConflictError) { res.status(409).json({ success: false, error: error.message, code: error.code }); return; }
+      if (error instanceof ExpenseImmutableError) { res.status(409).json({ success: false, error: error.message, code: error.code }); return; }
+      res.status(400).json({ success: false, error: error instanceof Error ? error.message : 'Expense could not be voided.' });
+    }
+    return;
+  }
+
   const db = getDatabase();
   const expense = db.expenses.find((item: any) => item.id === id);
   if (!expense) {
     res.status(404).json({ success: false, error: 'Expense not found.' });
     return;
   }
-  db.expenses = db.expenses.filter(e => e.id !== id);
+  if (expense.status === 'voided') {
+    res.status(409).json({ success: false, error: 'Expense is already voided.' });
+    return;
+  }
+  if (expectedVersion !== undefined && Number(expense.version || 1) !== expectedVersion) {
+    res.status(409).json({ success: false, error: 'Expense was modified by another user.', code: 'EXPENSE_VERSION_CONFLICT' });
+    return;
+  }
+
+  expense.status = 'voided';
+  expense.version = Number(expense.version || 1) + 1;
+  expense.archivedAt = new Date().toISOString();
+  expense.voidedAt = expense.archivedAt;
+  expense.updatedAt = expense.archivedAt;
   saveDatabase(db);
   recordAuditLog({
-    action: 'EXPENSE_DELETED',
+    action: 'EXPENSE_VOIDED',
     actor: req.user!.username,
     actorRole: req.user!.role,
     ip: req.ip,
     userAgent: req.headers['user-agent'] as string,
-    details: `Deleted expense "${expense.description || id}" (${expense.amount || 0}).`,
+    details: `Voided expense "${expense.description || id}" (${expense.currency || 'IDR'} ${expense.amount || 0}).`,
     severity: 'warning'
   });
-  res.json({ success: true, message: 'Expense deleted.' });
+  res.json({ success: true, message: 'Expense voided.', expense });
 });
 
 // Financial Metrics (Authoritative server-calculated metrics)
-apiRouter.get('/finance/metrics', requireAuth, requirePermission('canViewFinancials'), (req: AuthenticatedRequest, res: Response): void => {
-  const db = getDatabase();
-  const invoices = db.invoices;
-  const expenses = db.expenses;
+apiRouter.get('/finance/metrics', requireAuth, requirePermission('canViewFinancials'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  try {
+    const usePostgres = getDataSourceMode() === 'postgres';
+    const invoices = usePostgres ? await postgresInvoiceRepository.list() : getDatabase().invoices;
+    const expenses = usePostgres ? await postgresExpenseRepository.list() : getDatabase().expenses.filter((expense: any) => expense.status !== 'voided');
 
-  let totalRevenueCollected = 0;
-  let totalBilled = 0;
-  let totalOutstanding = 0;
-  let paidCount = 0;
-  let partiallyPaidCount = 0;
-  let overdueCount = 0;
-  let draftCount = 0;
+    const byCurrency = new Map<string, {
+      currency: string;
+      totalRevenueCollected: number;
+      totalBilled: number;
+      totalOutstanding: number;
+      totalExpense: number;
+      paidCount: number;
+      partiallyPaidCount: number;
+      overdueCount: number;
+      draftCount: number;
+    }>();
 
-  for (const inv of invoices) {
-    totalBilled += inv.total || 0;
-    const paid = getInvoicePaidAmount(inv);
-    totalRevenueCollected += paid;
-    const due = getInvoiceBalanceDue(inv);
-    if (inv.status !== 'paid' && inv.status !== 'cancelled') {
-      totalOutstanding += due;
+    const getBucket = (currencyValue: unknown) => {
+      const currency = String(currencyValue || 'IDR').toUpperCase();
+      const current = byCurrency.get(currency);
+      if (current) return current;
+      const created = {
+        currency,
+        totalRevenueCollected: 0,
+        totalBilled: 0,
+        totalOutstanding: 0,
+        totalExpense: 0,
+        paidCount: 0,
+        partiallyPaidCount: 0,
+        overdueCount: 0,
+        draftCount: 0
+      };
+      byCurrency.set(currency, created);
+      return created;
+    };
+
+    for (const invoice of invoices) {
+      const bucket = getBucket(invoice.currency);
+      bucket.totalBilled += Number(invoice.total) || 0;
+      bucket.totalRevenueCollected += getInvoicePaidAmount(invoice);
+      if (invoice.status !== 'paid' && invoice.status !== 'cancelled') {
+        bucket.totalOutstanding += getInvoiceBalanceDue(invoice);
+      }
+      if (invoice.status === 'paid') bucket.paidCount += 1;
+      else if (invoice.status === 'partially_paid') bucket.partiallyPaidCount += 1;
+      else if (invoice.status === 'overdue') bucket.overdueCount += 1;
+      else if (invoice.status === 'draft') bucket.draftCount += 1;
     }
 
-    if (inv.status === 'paid') paidCount++;
-    else if (inv.status === 'partially_paid') partiallyPaidCount++;
-    else if (inv.status === 'overdue') overdueCount++;
-    else if (inv.status === 'draft') draftCount++;
+    for (const expense of expenses) {
+      const bucket = getBucket(expense.currency);
+      bucket.totalExpense += Number(expense.amount) || 0;
+    }
+
+    const primaryCurrency = String(req.query.currency || 'IDR').toUpperCase();
+    const primary = byCurrency.get(primaryCurrency) || getBucket(primaryCurrency);
+    const netProfit = primary.totalRevenueCollected - primary.totalExpense;
+    const profitMargin = primary.totalRevenueCollected > 0
+      ? ((netProfit / primary.totalRevenueCollected) * 100).toFixed(1)
+      : '0';
+
+    res.json({
+      success: true,
+      metrics: {
+        currency: primary.currency,
+        totalRevenueCollected: primary.totalRevenueCollected,
+        totalBilled: primary.totalBilled,
+        totalOutstanding: primary.totalOutstanding,
+        totalExpense: primary.totalExpense,
+        netProfit,
+        profitMargin,
+        totalInvoicesCount: invoices.filter((invoice: any) => String(invoice.currency || 'IDR').toUpperCase() === primary.currency).length,
+        paidCount: primary.paidCount,
+        partiallyPaidCount: primary.partiallyPaidCount,
+        overdueCount: primary.overdueCount,
+        draftCount: primary.draftCount,
+        byCurrency: Array.from(byCurrency.values()).map(bucket => ({
+          ...bucket,
+          netProfit: bucket.totalRevenueCollected - bucket.totalExpense,
+          profitMargin: bucket.totalRevenueCollected > 0
+            ? ((bucket.totalRevenueCollected - bucket.totalExpense) / bucket.totalRevenueCollected * 100).toFixed(1)
+            : '0'
+        }))
+      }
+    });
+  } catch (error) {
+    console.error('[Finance Metrics] Failed:', error);
+    res.status(503).json({ success: false, error: 'Financial metrics are temporarily unavailable.' });
   }
-
-  const totalExpense = expenses.reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
-  const netProfit = totalRevenueCollected - totalExpense;
-  const profitMargin = totalRevenueCollected > 0 ? ((netProfit / totalRevenueCollected) * 100).toFixed(1) : '0';
-
-  res.json({
-    success: true,
-    metrics: {
-      totalRevenueCollected,
-      totalBilled,
-      totalOutstanding,
-      totalExpense,
-      netProfit,
-      profitMargin,
-      totalInvoicesCount: invoices.length,
-      paidCount,
-      partiallyPaidCount,
-      overdueCount,
-      draftCount
-    }
-  });
 });
 
 // ----------------------------------------------------
@@ -4044,216 +4179,189 @@ apiRouter.get('/search', requireAuth, (req: AuthenticatedRequest, res: Response)
 // 19. EXECUTIVE DASHBOARD & TODAY AT KAPITECH ENGINE (PARTS 7, 30, 68)
 // ----------------------------------------------------
 
-const handleOverview = (req: AuthenticatedRequest, res: Response): void => {
-  const db = getDatabase();
+const handleOverview = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  try {
+    const usePostgres = getDataSourceMode() === 'postgres';
+    const db = getDatabase();
 
-  const isMaster = req.user!.stakeholderType === 'Master';
-  const canViewFinancials = isMaster || Boolean(req.user!.permissions?.canViewFinancials);
-  const canViewCrm = isMaster || Boolean(req.user!.permissions?.canManageCrm);
-  const canViewProjects = isMaster || Boolean(req.user!.permissions?.canManageProjects || req.user!.permissions?.canManageKanbanTasks);
-  const canViewApprovals = isMaster || Boolean(req.user!.permissions?.canApproveBudgets || req.user!.permissions?.canManageProjects);
-  const canViewAudit = isMaster || Boolean(req.user!.permissions?.canViewSecurityAuditLogs);
+    const isMaster = req.user!.stakeholderType === 'Master';
+    const canViewFinancials = isMaster || Boolean(req.user!.permissions?.canViewFinancials);
+    const canViewCrm = isMaster || Boolean(req.user!.permissions?.canManageCrm);
+    const canViewProjects = isMaster || Boolean(req.user!.permissions?.canManageProjects || req.user!.permissions?.canManageKanbanTasks);
+    const canViewApprovals = isMaster || Boolean(req.user!.permissions?.canApproveBudgets || req.user!.permissions?.canManageProjects);
+    const canViewAudit = isMaster || Boolean(req.user!.permissions?.canViewSecurityAuditLogs);
 
-  const leads = canViewCrm ? (db.leads || []) : [];
-  const deals = canViewCrm ? (db.crmDeals || []) : [];
-  const proposals = (canViewCrm || canViewFinancials || canViewApprovals) ? (db.proposals || []) : [];
-  const projects = canViewProjects ? (db.projects || []) : [];
-  const invoices = canViewFinancials ? (db.invoices || []) : [];
-  const expenses = canViewFinancials ? (db.expenses || []) : [];
-  const approvals = canViewApprovals ? (db.approvals || []) : [];
-  const tasks = canViewProjects ? (db.tasks || []) : [];
+    const leads = canViewCrm ? (db.leads || []) : [];
+    const deals = canViewCrm ? (db.crmDeals || []) : [];
+    const proposals = (canViewCrm || canViewFinancials || canViewApprovals) ? (db.proposals || []) : [];
+    const approvals = canViewApprovals ? (db.approvals || []) : [];
+    const projects = canViewProjects
+      ? (usePostgres ? await postgresProjectRepository.list() : (db.projects || []))
+      : [];
+    const tasks = canViewProjects
+      ? (usePostgres ? await postgresTaskRepository.list() : (db.tasks || []))
+      : [];
+    const invoices = canViewFinancials
+      ? (usePostgres ? await postgresInvoiceRepository.list() : (db.invoices || []))
+      : [];
+    const expenses = canViewFinancials
+      ? (usePostgres ? await postgresExpenseRepository.list() : (db.expenses || []).filter((expense: any) => expense.status !== 'voided'))
+      : [];
 
-  const openLeadsCount = canViewCrm
-    ? leads.filter(l => l.status === 'new' || l.status === 'in_review').length
-    : 0;
-  const activeDeals = canViewCrm ? deals.filter(d => d.stage !== 'won' && d.stage !== 'lost') : [];
-  const dealsInPipelineCount = activeDeals.length;
-  const activePipelineValue = activeDeals.reduce((sum, d) => sum + (Number(d.value) || 0), 0);
+    const now = new Date();
+    const currentMonthKey = now.toISOString().slice(0, 7);
+    const openLeadsCount = canViewCrm ? leads.filter(l => l.status === 'new' || l.status === 'in_review').length : 0;
+    const activeDeals = canViewCrm ? deals.filter(d => d.stage !== 'won' && d.stage !== 'lost') : [];
+    const dealsInPipelineCount = activeDeals.length;
+    const activePipelineValue = activeDeals.reduce((sum, d) => sum + (Number(d.value) || 0), 0);
+    const proposalsAwaitingCount = proposals.filter(p => ['Draft', 'Internal Review', 'Sent'].includes(String(p.status))).length;
+    const activeProjectsList = projects.filter(p => !['completed','Completed','archived','Archived'].includes(String(p.status)));
+    const activeProjectsCount = activeProjectsList.length;
+    const projectsAtRiskCount = projects.filter(p => ['At Risk','Delayed','Blocked'].includes(String(p.health))).length;
 
-  const proposalsAwaitingCount = proposals.filter(
-    p => p.status === 'Draft' || p.status === 'Internal Review' || p.status === 'Sent'
-  ).length;
-  const activeProjectsList = projects.filter(p => !['completed','Completed','archived','Archived'].includes(String(p.status)));
-  const activeProjectsCount = activeProjectsList.length;
-  const projectsAtRiskCount = projects.filter(
-    p => p.health === 'At Risk' || p.health === 'Delayed' || p.health === 'Blocked'
-  ).length;
+    const financeByCurrency = new Map<string, any>();
+    const bucket = (value: unknown) => {
+      const currency = String(value || 'IDR').toUpperCase();
+      if (!financeByCurrency.has(currency)) {
+        financeByCurrency.set(currency, {
+          currency,
+          revenueCollected: 0,
+          totalBilled: 0,
+          outstandingReceivables: 0,
+          overdueReceivables: 0,
+          operatingExpenses: 0,
+          revenueThisMonth: 0,
+          overdueInvoicesCount: 0
+        });
+      }
+      return financeByCurrency.get(currency);
+    };
 
-  const now = new Date();
-  const overdueInvoices = invoices.filter(inv => {
-    if (inv.status === 'paid' || inv.status === 'cancelled') return false;
-    if (!inv.dueDate) return false;
-    return new Date(inv.dueDate) < now;
-  });
-  const overdueInvoicesCount = overdueInvoices.length;
-  const overdueReceivables = overdueInvoices.reduce(
-    (sum, i) => sum + (
-      getInvoiceBalanceDue(i)
-    ),
-    0
-  );
-
-  const totalOutstanding = invoices
-    .filter(i => i.status !== 'paid' && i.status !== 'cancelled')
-    .reduce(
-      (sum, i) => sum + (
-        getInvoiceBalanceDue(i)
-      ),
-      0
-    );
-
-  const totalBilled = invoices.reduce((sum, i) => sum + (Number(i.total) || 0), 0);
-  const revenueCollected = invoices.reduce((sum, invoice) => sum + getInvoicePaidAmount(invoice), 0);
-  const totalExpenses = expenses.reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
-
-  const currentMonthKey = now.toISOString().slice(0, 7);
-  const revenueThisMonth = invoices.reduce((sum, invoice) => {
-    const payments = Array.isArray(invoice.payments) ? invoice.payments : [];
-    if (payments.length > 0) {
-      return sum + payments
-        .filter((payment: any) => String(payment.date || '').startsWith(currentMonthKey))
-        .reduce((paymentSum: number, payment: any) => paymentSum + (Number(payment.amount) || 0), 0);
+    for (const invoice of invoices) {
+      const b = bucket(invoice.currency);
+      b.totalBilled += Number(invoice.total) || 0;
+      b.revenueCollected += getInvoicePaidAmount(invoice);
+      if (invoice.status !== 'paid' && invoice.status !== 'cancelled') {
+        const balance = getInvoiceBalanceDue(invoice);
+        b.outstandingReceivables += balance;
+        if (invoice.dueDate && new Date(invoice.dueDate) < now) {
+          b.overdueReceivables += balance;
+          b.overdueInvoicesCount += 1;
+        }
+      }
+      for (const payment of Array.isArray(invoice.payments) ? invoice.payments : []) {
+        if (String(payment.date || '').startsWith(currentMonthKey)) {
+          b.revenueThisMonth += Number(payment.amount) || 0;
+        }
+      }
     }
 
-    const paidDate = String(invoice.paidDate || '');
-    return sum + (invoice.status === 'paid' && paidDate.startsWith(currentMonthKey) ? (Number(invoice.amountPaid) || Number(invoice.total) || 0) : 0);
-  }, 0);
+    for (const expense of expenses) {
+      const b = bucket(expense.currency);
+      b.operatingExpenses += Number(expense.amount) || 0;
+    }
 
-  const operatingExpensesThisMonth = expenses
-    .filter((expense) => String(expense.date || '').startsWith(currentMonthKey))
-    .reduce((sum, expense) => sum + (Number(expense.amount) || 0), 0);
+    const primaryCurrency = String(req.query.currency || 'IDR').toUpperCase();
+    const primary = financeByCurrency.get(primaryCurrency) || bucket(primaryCurrency);
+    const netOperatingProfitThisMonth = primary.revenueThisMonth - expenses
+      .filter(expense => String(expense.currency || 'IDR').toUpperCase() === primary.currency && String(expense.date || '').startsWith(currentMonthKey))
+      .reduce((sum, expense) => sum + (Number(expense.amount) || 0), 0);
+    const netMarginThisMonth = primary.revenueThisMonth > 0
+      ? Number(((netOperatingProfitThisMonth / primary.revenueThisMonth) * 100).toFixed(1))
+      : 0;
 
-  const netOperatingProfitThisMonth = revenueThisMonth - operatingExpensesThisMonth;
-  const netMarginThisMonth = revenueThisMonth > 0
-    ? ((netOperatingProfitThisMonth / revenueThisMonth) * 100).toFixed(1)
-    : '0';
-  const pendingApprovalsCount = approvals.filter(a => a.status === 'Pending').length;
-  const overdueTasksCount = tasks.filter(
-    t => t.status !== 'done' && t.dueDate && new Date(t.dueDate) < now
-  ).length;
+    const pendingApprovalsCount = approvals.filter(a => a.status === 'Pending').length;
+    const overdueTasksCount = tasks.filter(t => t.status !== 'done' && t.dueDate && new Date(t.dueDate) < now).length;
 
-  const stages = CRM_STAGES;
-  const pipelineByStage = canViewCrm
-    ? stages.map(st => {
-        const stageDeals = deals.filter(d => d.stage === st);
-        return {
-          stage: st,
-          count: stageDeals.length,
-          value: stageDeals.reduce((sum, d) => sum + (Number(d.value) || 0), 0)
-        };
-      })
-    : [];
+    const pipelineByStage = canViewCrm ? CRM_STAGES.map(stage => {
+      const stageDeals = deals.filter(d => d.stage === stage);
+      return { stage, count: stageDeals.length, value: stageDeals.reduce((sum, d) => sum + (Number(d.value) || 0), 0) };
+    }) : [];
 
-  const attentionItems: Array<{
-    id: string;
-    title: string;
-    description: string;
-    severity: 'danger' | 'warning' | 'info';
-    category: string;
-    linkUrl: string;
-  }> = [];
-
-  if (canViewFinancials && overdueInvoicesCount > 0) {
-    attentionItems.push({
-      id: 'att_invoices_overdue',
-      title: `${overdueInvoicesCount} Invoices Overdue`,
-      description: `Follow-up required on unpaid accounts totaling IDR ${overdueReceivables.toLocaleString()}.`,
-      severity: 'danger',
-      category: 'Finance',
-      linkUrl: '/admin/invoicing'
+    const attentionItems: Array<{id:string;title:string;description:string;severity:'danger'|'warning'|'info';category:string;linkUrl:string}> = [];
+    if (canViewFinancials && primary.overdueInvoicesCount > 0) {
+      attentionItems.push({
+        id: 'att_invoices_overdue',
+        title: primary.overdueInvoicesCount + ' Invoices Overdue',
+        description: 'Follow-up required on unpaid accounts totaling ' + primary.currency + ' ' + primary.overdueReceivables.toLocaleString(),
+        severity: 'danger', category: 'Finance', linkUrl: '/admin/invoicing'
+      });
+    }
+    if (canViewApprovals && pendingApprovalsCount > 0) attentionItems.push({
+      id:'att_pending_approvals', title: pendingApprovalsCount + ' Executive Approvals Awaiting Review',
+      description:'Budget and operational approvals are waiting for review.', severity:'warning', category:'Operations', linkUrl:'/admin/approvals'
     });
-  }
-
-  if (canViewApprovals && pendingApprovalsCount > 0) {
-    attentionItems.push({
-      id: 'att_pending_approvals',
-      title: `${pendingApprovalsCount} Executive Approvals Awaiting Review`,
-      description: 'Budget and operational approvals are waiting for review.',
-      severity: 'warning',
-      category: 'Operations',
-      linkUrl: '/admin/approvals'
+    if (canViewProjects && projectsAtRiskCount > 0) attentionItems.push({
+      id:'att_projects_risk', title: projectsAtRiskCount + ' Projects Flagged At Risk',
+      description:'Delivery timeline or resource constraints require attention.', severity:'danger', category:'Delivery', linkUrl:'/admin/projects'
     });
-  }
-
-  if (canViewProjects && projectsAtRiskCount > 0) {
-    attentionItems.push({
-      id: 'att_projects_risk',
-      title: `${projectsAtRiskCount} Projects Flagged At Risk`,
-      description: 'Delivery timeline or resource constraints require attention.',
-      severity: 'danger',
-      category: 'Delivery',
-      linkUrl: '/admin/projects'
+    if (canViewProjects && overdueTasksCount > 0) attentionItems.push({
+      id:'att_tasks_overdue', title: overdueTasksCount + ' Tasks Overdue in Active Sprints',
+      description:'Tasks passed their due dates and may require rescheduling.', severity:'warning', category:'Delivery', linkUrl:'/admin/projects'
     });
-  }
-
-  if (canViewProjects && overdueTasksCount > 0) {
-    attentionItems.push({
-      id: 'att_tasks_overdue',
-      title: `${overdueTasksCount} Tasks Overdue in Active Sprints`,
-      description: 'Tasks passed their due dates and may require rescheduling.',
-      severity: 'warning',
-      category: 'Delivery',
-      linkUrl: '/admin/projects'
+    if (canViewCrm && openLeadsCount > 3) attentionItems.push({
+      id:'att_leads_new', title: openLeadsCount + ' Inbound Inquiries Unassigned',
+      description:'Website inquiries are waiting for qualification.', severity:'info', category:'Sales', linkUrl:'/admin/inbox'
     });
-  }
 
-  if (canViewCrm && openLeadsCount > 3) {
-    attentionItems.push({
-      id: 'att_leads_new',
-      title: `${openLeadsCount} Inbound Inquiries Unassigned`,
-      description: 'Website inquiries are waiting for qualification.',
-      severity: 'info',
-      category: 'Sales',
-      linkUrl: '/admin/inbox'
+    const byCurrency = Array.from(financeByCurrency.values()).map((item:any) => ({
+      ...item,
+      netOperatingProfitThisMonth: item.revenueThisMonth - item.operatingExpenses
+    }));
+
+    res.json({
+      success: true,
+      metrics: {
+        currency: primary.currency,
+        revenueCollected: canViewFinancials ? primary.revenueCollected : null,
+        totalBilled: canViewFinancials ? primary.totalBilled : null,
+        outstandingReceivables: canViewFinancials ? primary.outstandingReceivables : null,
+        overdueReceivables: canViewFinancials ? primary.overdueReceivables : null,
+        activePipeline: canViewCrm ? activePipelineValue : null,
+        activeProjects: canViewProjects ? activeProjectsCount : 0,
+        projectsAtRisk: canViewProjects ? projectsAtRiskCount : 0,
+        pendingApprovals: canViewApprovals ? pendingApprovalsCount : 0,
+        overdueTasks: canViewProjects ? overdueTasksCount : 0,
+        openLeads: canViewCrm ? openLeadsCount : 0,
+        byCurrency
+      },
+      todayAtKapitech: {
+        openLeadsCount: canViewCrm ? openLeadsCount : 0,
+        dealsInPipelineCount: canViewCrm ? dealsInPipelineCount : 0,
+        pipelineValue: canViewFinancials ? activePipelineValue : null,
+        proposalsAwaitingCount: (canViewCrm || canViewFinancials || canViewApprovals) ? proposalsAwaitingCount : 0,
+        projectsAtRiskCount: canViewProjects ? projectsAtRiskCount : 0,
+        overdueInvoicesCount: canViewFinancials ? primary.overdueInvoicesCount : 0,
+        cashOutstanding: canViewFinancials ? primary.outstandingReceivables : null,
+        currency: primary.currency
+      },
+      financials: canViewFinancials ? {
+        currency: primary.currency,
+        revenueThisMonth: primary.revenueThisMonth,
+        cashCollected: primary.revenueThisMonth,
+        outstandingReceivables: primary.outstandingReceivables,
+        operatingExpenses: primary.operatingExpenses,
+        netOperatingProfit: netOperatingProfitThisMonth,
+        margin: netMarginThisMonth
+      } : {
+        currency: primary.currency,
+        revenueThisMonth: null,
+        cashCollected: null,
+        outstandingReceivables: null,
+        operatingExpenses: null,
+        netOperatingProfit: null,
+        margin: null
+      },
+      pipelineByStage,
+      attentionItems,
+      projects: canViewProjects ? activeProjectsList.slice(0, 10) : [],
+      recentActivity: canViewAudit ? (db.auditLogs || []).slice(0, 10) : []
     });
+  } catch (error) {
+    console.error('[Dashboard Overview] Failed:', error);
+    res.status(503).json({ success: false, error: 'Dashboard data is temporarily unavailable.' });
   }
-
-  res.json({
-    success: true,
-    metrics: {
-      revenueCollected: canViewFinancials ? revenueCollected : null,
-      totalBilled: canViewFinancials ? totalBilled : null,
-      outstandingReceivables: canViewFinancials ? totalOutstanding : null,
-      overdueReceivables: canViewFinancials ? overdueReceivables : null,
-      activePipeline: canViewCrm ? activePipelineValue : null,
-      activeProjects: canViewProjects ? activeProjectsCount : 0,
-      projectsAtRisk: canViewProjects ? projectsAtRiskCount : 0,
-      pendingApprovals: canViewApprovals ? pendingApprovalsCount : 0,
-      overdueTasks: canViewProjects ? overdueTasksCount : 0,
-      openLeads: canViewCrm ? openLeadsCount : 0
-    },
-    todayAtKapitech: {
-      openLeadsCount: canViewCrm ? openLeadsCount : 0,
-      dealsInPipelineCount: canViewCrm ? dealsInPipelineCount : 0,
-      pipelineValue: canViewFinancials ? activePipelineValue : null,
-      proposalsAwaitingCount: (canViewCrm || canViewFinancials || canViewApprovals) ? proposalsAwaitingCount : 0,
-      projectsAtRiskCount: canViewProjects ? projectsAtRiskCount : 0,
-      overdueInvoicesCount: canViewFinancials ? overdueInvoicesCount : 0,
-      cashOutstanding: canViewFinancials ? totalOutstanding : null
-    },
-    financials: canViewFinancials ? {
-      revenueThisMonth,
-      cashCollected: revenueThisMonth,
-      outstandingReceivables: totalOutstanding,
-      operatingExpenses: operatingExpensesThisMonth,
-      netOperatingProfit: netOperatingProfitThisMonth,
-      margin: netMarginThisMonth
-    } : {
-      revenueThisMonth: null,
-      cashCollected: null,
-      outstandingReceivables: null,
-      operatingExpenses: null,
-      netOperatingProfit: null,
-      margin: null
-    },
-    pipelineByStage,
-    attentionItems,
-    projects: canViewProjects ? activeProjectsList.slice(0, 10) : [],
-    recentActivity: canViewAudit ? (db.auditLogs || []).slice(0, 10) : []
-  });
 };
-apiRouter.get('/dashboard/overview', requireAuth, handleOverview);
-apiRouter.get('/executive/overview', requireAuth, handleOverview);// 3. CRM PIPELINE & DEALS
 // ----------------------------------------------------
 
 apiRouter.get('/crm/deals', requireAuth, requirePermission('canManageCrm'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
