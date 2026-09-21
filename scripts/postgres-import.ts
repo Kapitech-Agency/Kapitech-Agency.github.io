@@ -407,12 +407,14 @@ async function importCore(client: any, db: AnyRecord): Promise<Record<string, nu
   for (const row of arr(db, 'documents')) {
     const externalUrl = isHttps(row.externalUrl || row.url) ? textValue(row.externalUrl || row.url) : null;
     const sourceType = row.storageKey ? 'private_file' : 'external_link';
+    const encryptedAtRest = sourceType === 'private_file';
     await upsert(client, 'documents',
-      ['id','name','type','mime_type','size_bytes','category','related_entity','related_id','source_type','storage_key','owner_user_id','external_url','status','uploaded_at','created_at','metadata'],
+      ['id','name','type','mime_type','size_bytes','category','related_entity','related_id','source_type','storage_key','owner_user_id','external_url','status','uploaded_at','created_at','metadata','version','checksum_sha256','encrypted_at_rest','archived_at'],
       [textValue(row.id),textValue(row.name),textValue(row.type),nullableText(row.mimeType),nullableNumber(row.sizeBytes),
        nullableText(row.category),nullableText(row.relatedEntity),nullableText(row.relatedId),sourceType,nullableText(row.storageKey),
        nullableText(row.ownerUserId),externalUrl,textValue(row.status,'ready'),timestampValue(row.uploadedAt || row.uploadedDate,row.createdAt),
-       timestampValue(row.createdAt),metadata(row,['id','name','type','mimeType','sizeBytes','size','category','relatedEntity','relatedId','sourceType','storageKey','ownerUserId','owner','externalUrl','url','status','uploadedAt','uploadedDate','createdAt'])]);
+       timestampValue(row.createdAt),metadata(row,['id','name','type','mimeType','sizeBytes','size','category','relatedEntity','relatedId','sourceType','storageKey','ownerUserId','owner','externalUrl','url','status','uploadedAt','uploadedDate','createdAt','version','checksumSha256','encryptedAtRest','archivedAt']),
+       numberValue(row.version,1),nullableText(row.checksumSha256),encryptedAtRest,nullableTimestampValue(row.archivedAt)]);
     for (const userId of Array.isArray(row.accessUserIds) ? row.accessUserIds : []) {
       await client.query(
         `INSERT INTO document_access (document_id,user_id) VALUES ($1,$2)
