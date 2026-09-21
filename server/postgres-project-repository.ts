@@ -138,7 +138,21 @@ export class PostgresProjectRepository {
   }
 
   async delete(id: string): Promise<boolean> {
-    const result = await getPostgresPool().query('DELETE FROM projects WHERE id = $1', [id]);
+    const pool = getPostgresPool();
+    const dependencies = await pool.query(
+      `SELECT
+         (SELECT COUNT(*)::int FROM proposals WHERE project_id = $1) AS proposals,
+         (SELECT COUNT(*)::int FROM invoices WHERE project_id = $1) AS invoices,
+         (SELECT COUNT(*)::int FROM tasks WHERE project_id = $1) AS tasks,
+         (SELECT COUNT(*)::int FROM time_logs WHERE project_id = $1) AS time_logs`,
+      [id]
+    );
+    const row = dependencies.rows[0] || {};
+    const counts = Object.entries(row).filter(([, value]) => Number(value) > 0);
+    if (counts.length) {
+      throw new Error('PROJECT_HAS_BUSINESS_RECORDS');
+    }
+    const result = await pool.query('DELETE FROM projects WHERE id = $1', [id]);
     return result.rowCount === 1;
   }
 
