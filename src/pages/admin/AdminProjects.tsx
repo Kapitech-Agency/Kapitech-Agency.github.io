@@ -960,9 +960,13 @@ export const AdminProjects: React.FC = () => {
                   {TASK_COLUMNS.map((col) => (
                     <button
                       key={col.id}
-                      onClick={() => {
-                        updateTaskStatus(selectedProject.id, activeTaskDrawer.id, col.id);
-                        showToast(`Moved to ${col.label}`);
+                      onClick={async () => {
+                        try {
+                          await updateTaskStatus(selectedProject.id, activeTaskDrawer.id, col.id);
+                          showToast(`Moved to ${col.label}`);
+                        } catch (error: any) {
+                          showToast(error?.message || (language === 'id' ? 'Gagal memindahkan task.' : 'Failed to move task.'));
+                        }
                       }}
                       className={`px-2.5 py-1.5 rounded-xl border text-[11px] transition-all font-bold ${
                         activeTaskDrawer.status === col.id
