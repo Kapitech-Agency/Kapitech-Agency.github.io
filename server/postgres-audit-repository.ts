@@ -106,9 +106,11 @@ export class PostgresAuditRepository {
         return { valid: false, checked };
       }
 
+      const timestampUs = String(row.timestamp);
+      const timestampMs = timestampUs.replace(/(\.\d{3})\d{3}Z$/, '$1Z');
       const normalized = {
         id: row.id,
-        timestamp: String(row.timestamp),
+        timestamp: timestampUs,
         action: row.action,
         actor: row.actor,
         actorRole: row.actor_role,
@@ -118,9 +120,12 @@ export class PostgresAuditRepository {
         severity: row.severity,
         prevHash: row.prev_hash || previousHash
       };
-      const expectedHash = hashLog(normalized);
+      const expectedHashUs = hashLog(normalized);
+      const expectedHashMs = timestampMs === timestampUs
+        ? expectedHashUs
+        : hashLog({ ...normalized, timestamp: timestampMs });
 
-      if ((row.prev_hash || 'GENESIS') !== previousHash || row.hash !== expectedHash) {
+      if ((row.prev_hash || 'GENESIS') !== previousHash || (row.hash !== expectedHashUs && row.hash !== expectedHashMs)) {
         return { valid: false, checked, brokenAt: String(row.id) };
       }
 
