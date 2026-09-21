@@ -28,7 +28,10 @@ export class PostgresAuditRepository {
       );
       const previousHash = previous.rows[0]?.hash || 'GENESIS';
       const id = 'log_' + Date.now() + '_' + crypto.randomBytes(4).toString('hex');
-      const timestamp = new Date().toISOString();
+      const clock = await client.query<{ timestamp: string }>(
+        "SELECT to_char(clock_timestamp() AT TIME ZONE 'UTC','YYYY-MM-DD\"T\"HH24:MI:SS.US\"Z\"') AS timestamp"
+      );
+      const timestamp = clock.rows[0]?.timestamp || new Date().toISOString();
 
       const normalized = {
         id,
@@ -80,18 +83,32 @@ export class PostgresAuditRepository {
 
   async verifyChain(): Promise<{ valid: boolean; checked: number; brokenAt?: string }> {
     const result = await getPostgresPool().query<Row>(
-      "SELECT id,to_char(timestamp AT TIME ZONE 'UTC','YYYY-MM-DD\"T\"HH24:MI:SS.MS\"Z\"') AS timestamp," +
+      "SELECT id,to_char(timestamp AT TIME ZONE 'UTC','YYYY-MM-DD\"T\"HH24:MI:SS.US\"Z\"') AS timestamp," +
       "action,actor,actor_role,actor_user_id,ip::text AS ip,user_agent,details,severity,prev_hash,hash " +
-      "FROM audit_logs ORDER BY timestamp ASC,id ASC"
+      "FROM audit_logs"
     );
+
+    const byPrevHash = new Map<string, Row>();
+    for (const row of result.rows) {
+      const prevHash = row.prev_hash || 'GENESIS';
+      if (byPrevHash.has(prevHash)) {
+        return { valid: false, checked: 0, brokenAt: String(row.id) };
+      }
+      byPrevHash.set(prevHash, row);
+    }
 
     let previousHash = 'GENESIS';
     let checked = 0;
 
-    for (const row of result.rows) {
+    while (checked < result.rows.length) {
+      const row = byPrevHash.get(previousHash);
+      if (!row) {
+        return { valid: false, checked };
+      }
+
       const normalized = {
         id: row.id,
-        timestamp: row.timestamp instanceof Date ? row.timestamp.toISOString() : String(row.timestamp),
+        timestamp: String(row.timestamp),
         action: row.action,
         actor: row.actor,
         actorRole: row.actor_role,
@@ -107,7 +124,7 @@ export class PostgresAuditRepository {
         return { valid: false, checked, brokenAt: String(row.id) };
       }
 
-      previousHash = expectedHash;
+      previousHash = row.hash;
       checked += 1;
     }
 
