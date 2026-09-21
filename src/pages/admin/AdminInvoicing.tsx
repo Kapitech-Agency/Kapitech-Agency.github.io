@@ -58,7 +58,7 @@ export const AdminInvoicing: React.FC = () => {
   const canViewFinancials = hasAdminPermission('canViewFinancials');
   const canManageInvoices = hasAdminPermission('canManageInvoices');
   const canApproveBudgets = hasAdminPermission('canApproveBudgets');
-  const canCreateInvoice = canManageInvoices || userRole.startsWith('Tier 1') || userRole.startsWith('Tier 2') || userRole.includes('Finance');
+  const canCreateInvoice = canManageInvoices;
   const canDeleteInvoice = userRole.startsWith('Tier 1') || session?.user?.stakeholderType === 'Master';
   const [currency, setCurrency] = useState<CurrencyCode>(getActiveCurrency());
   const [invoices, setInvoices] = useState<AgencyInvoice[]>([]);
