@@ -85,5 +85,9 @@ jobs:
           test -s /tmp/health.json
           node -e "const fs=require('fs'); const x=JSON.parse(fs.readFileSync('/tmp/health.json','utf8')); if(x.status!=='ok'||x.services?.dataSource!=='postgres') process.exit(1)"
           test "$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:4173/api/auth/me)" = "401"
-          test "$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:4173/api/system/production-readiness)" = "401"
+          curl -sS -c /tmp/ams-cookies.txt -H 'Content-Type: application/json' --data '{"identifier":"admin","password":"smoke-test-password-123456","rememberMe":false}' http://127.0.0.1:4173/api/auth/login >/tmp/login.json
+          node -e "const fs=require('fs'); const x=JSON.parse(fs.readFileSync('/tmp/login.json','utf8')); if(!x.success||x.user?.stakeholderType!=='Master') process.exit(1)"
+          curl -sS -b /tmp/ams-cookies.txt http://127.0.0.1:4173/api/auth/me >/tmp/me.json
+          node -e "const fs=require('fs'); const x=JSON.parse(fs.readFileSync('/tmp/me.json','utf8')); if(!x.success||x.user?.username!=='admin') process.exit(1)"
+          test "$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:4173/api/system/production-readiness)" = "403"
           kill $PID

@@ -5,11 +5,13 @@ import { apiRouter } from './server/routes';
 import { getDataSourceMode } from './server/data-source.ts';
 import { checkPostgresConnection } from './server/postgres.ts';
 import { postgresAuthRepository } from './server/postgres-repository.ts';
+import { ensurePostgresInitialAdmin } from './server/postgres-bootstrap.ts';
 
 dotenv.config();
 
 async function startServer() {
   if (getDataSourceMode() === 'postgres') {
+    await ensurePostgresInitialAdmin();
     const migratedMfaSecrets = await postgresAuthRepository.migrateLegacyMfaSecrets();
     if (migratedMfaSecrets > 0) {
       console.log(`[Security] Re-encrypted ${migratedMfaSecrets} legacy PostgreSQL MFA secret record(s).`);
