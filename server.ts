@@ -34,16 +34,27 @@ function assertProductionDataSource(): void {
 async function startServer() {
   assertProductionDataSource();
 
-  if (getDataSourceMode() === 'postgres') {
-    await runPostgresMigrations();
-    await ensurePostgresInitialAdmin();
-    const migratedMfaSecrets = await postgresAuthRepository.migrateLegacyMfaSecrets();
-    if (migratedMfaSecrets > 0) {
-      console.log(`[Security] Re-encrypted ${migratedMfaSecrets} legacy PostgreSQL MFA secret record(s).`);
-    }
-  }
-
   const app = express();
+  let postgresReady = getDataSourceMode() !== 'postgres';
+  let postgresStartupError: string | null = null;
+
+  const initializePostgres = async (): Promise<void> => {
+    try {
+      await runPostgresMigrations();
+      await ensurePostgresInitialAdmin();
+      const migratedMfaSecrets = await postgresAuthRepository.migrateLegacyMfaSecrets();
+      if (migratedMfaSecrets > 0) {
+        console.log(`[Security] Re-encrypted ${migratedMfaSecrets} legacy PostgreSQL MFA secret record(s).`);
+      }
+      postgresReady = true;
+      postgresStartupError = null;
+      console.log('[Kapitech AMS] PostgreSQL runtime is ready.');
+    } catch (error) {
+      postgresReady = false;
+      postgresStartupError = error instanceof Error ? error.message : String(error);
+      console.error('[Kapitech AMS] PostgreSQL initialization failed. Web runtime remains online and will retry.', error);
+    }
+  };
   app.disable('x-powered-by');
   const PORT = Number(process.env.PORT) || 3000;
 
@@ -115,6 +126,21 @@ async function startServer() {
       let databaseLatencyMs: number | undefined;
 
       if (dataSource === 'postgres') {
+        if (!postgresReady) {
+          res.status(503).json({
+            status: 'starting',
+            version: process.env.APP_VERSION || '2.6.0-enterprise',
+            services: {
+              application: 'healthy',
+              database: 'initializing',
+              dataSource,
+              auth: 'waiting'
+            },
+            retryAfterSeconds: 10,
+            message: postgresStartupError || 'PostgreSQL runtime is initializing.'
+          });
+          return;
+        }
         const postgresHealth = await checkPostgresConnection();
         databaseLatencyMs = postgresHealth.latencyMs;
       } else {
@@ -146,6 +172,25 @@ async function startServer() {
         message: 'Health check failed'
       });
     }
+  });
+
+  // Keep the public web shell available while PostgreSQL initializes or recovers.
+  // Authenticated/data-changing API calls wait for the database instead of taking the whole Node process down.
+  app.use('/api', (req, res, next) => {
+    if (req.path === '/health') {
+      next();
+      return;
+    }
+    if (getDataSourceMode() === 'postgres' && !postgresReady) {
+      res.setHeader('Retry-After', '10');
+      res.status(503).json({
+        success: false,
+        code: 'DATABASE_STARTING',
+        error: 'The application is online, but PostgreSQL is still initializing. Please retry shortly.'
+      });
+      return;
+    }
+    next();
   });
 
   // API Routes
@@ -184,6 +229,18 @@ async function startServer() {
 
   app.listen(PORT, '0.0.0.0', () => {
     console.log(`[Kapitech AMS Server] Running on http://0.0.0.0:${PORT}`);
+
+    if (getDataSourceMode() === 'postgres') {
+      void initializePostgres();
+      const retryTimer = setInterval(() => {
+        if (postgresReady) {
+          clearInterval(retryTimer);
+          return;
+        }
+        void initializePostgres();
+      }, 10_000);
+      retryTimer.unref();
+    }
   });
 }
 
