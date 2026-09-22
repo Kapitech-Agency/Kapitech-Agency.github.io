@@ -3,11 +3,11 @@ import path from 'path';
 import dotenv from 'dotenv';
 import { apiRouter } from './server/routes';
 import { getDataSourceMode } from './server/data-source.ts';
-import { checkPostgresConnection } from './server/postgres.ts';
+import { checkPostgresConnection, closePostgresPool } from './server/postgres.ts';
 import { postgresAuthRepository } from './server/postgres-repository.ts';
 import { ensurePostgresInitialAdmin } from './server/postgres-bootstrap.ts';
 import { runPostgresMigrations } from './server/postgres-migrations.ts';
-import { isDataEncryptionEnabled } from './server/db.ts';
+import { flushAuditLogWrites, isDataEncryptionEnabled } from './server/db.ts';
 
 dotenv.config();
 
@@ -40,6 +40,7 @@ async function startServer() {
   const productionConfigError = validateProductionDataSource();
 
   const app = express();
+  let shuttingDown = false;
   let postgresReady = getDataSourceMode() !== 'postgres' && !productionConfigError;
   let postgresStartupError: string | null = productionConfigError;
   let postgresInitializationInFlight = false;
@@ -70,6 +71,16 @@ async function startServer() {
 
   // Hostinger/reverse-proxy aware client IP handling for rate limiting and audit logs.
   app.set('trust proxy', 1);
+
+  // Reject new requests while graceful shutdown drains in-flight work and audit writes.
+  app.use((_req, res, next) => {
+    if (!shuttingDown) {
+      next();
+      return;
+    }
+    res.setHeader('Connection', 'close');
+    res.status(503).json({ success: false, error: 'Server is shutting down. Please retry shortly.' });
+  });
 
   // Security Headers Middleware
   app.use((req, res, next) => {
@@ -236,7 +247,7 @@ async function startServer() {
     });
   }
 
-  app.listen(PORT, '0.0.0.0', () => {
+  const server = app.listen(PORT, '0.0.0.0', () => {
     console.log(`[Kapitech AMS Server] Running on http://0.0.0.0:${PORT}`);
 
     if (getDataSourceMode() === 'postgres' && !productionConfigError) {
@@ -251,6 +262,40 @@ async function startServer() {
       retryTimer.unref();
     }
   });
+
+  const SHUTDOWN_TIMEOUT_MS = 10_000;
+  let shutdownStarted = false;
+  const shutdown = async (signal: string): Promise<void> => {
+    if (shutdownStarted) return;
+    shutdownStarted = true;
+    shuttingDown = true;
+    console.info(`[Kapitech AMS] Received ${signal}; waiting for in-flight requests and audit writes.`);
+
+    const forceExitTimer = setTimeout(() => {
+      console.error('[Kapitech AMS] Graceful shutdown timed out.');
+      process.exit(1);
+    }, SHUTDOWN_TIMEOUT_MS);
+    forceExitTimer.unref();
+
+    try {
+      await new Promise<void>((resolve, reject) => {
+        server.close((error) => error ? reject(error) : resolve());
+      });
+      if (getDataSourceMode() === 'postgres') {
+        await flushAuditLogWrites();
+        await closePostgresPool();
+      }
+      clearTimeout(forceExitTimer);
+      process.exit(0);
+    } catch (error) {
+      clearTimeout(forceExitTimer);
+      console.error('[Kapitech AMS] Graceful shutdown failed:', error);
+      process.exit(1);
+    }
+  };
+
+  process.once('SIGTERM', () => { void shutdown('SIGTERM'); });
+  process.once('SIGINT', () => { void shutdown('SIGINT'); });
 }
 
 startServer().catch(err => {
