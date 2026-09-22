@@ -149,6 +149,8 @@ test('PostgreSQL commercial workflow converts proposal to invoice and returns th
     const proposal = await proposalRepository.findById(proposalId);
     assert.equal(proposal?.status, 'Accepted');
 
+    const paymentIdempotencyKey = 'CI-WORKFLOW-PAYMENT-' + suffix;
+
     const paid = await invoiceRepository.recordPayment(responseInvoice!.id, {
       id: 'ci-payment-' + suffix,
       amount: 1_000_000,
@@ -156,13 +158,33 @@ test('PostgreSQL commercial workflow converts proposal to invoice and returns th
       method: 'bank_transfer',
       reference: 'CI-WORKFLOW-PAYMENT',
       recordedBy: 'ci',
-      userId: null
+      userId: null,
+      idempotencyKey: paymentIdempotencyKey
     });
 
     assert.equal(paid?.amountPaid, 1_000_000);
     assert.equal(paid?.balanceDue, 1_000_000);
     assert.equal(paid?.status, 'partially_paid');
     assert.equal(paid?.payments.length, 1);
+
+    const replayedPayment = await invoiceRepository.recordPayment(responseInvoice!.id, {
+      id: 'ci-payment-retry-' + suffix,
+      amount: 1_000_000,
+      date: now.slice(0, 10),
+      method: 'bank_transfer',
+      reference: 'CI-WORKFLOW-PAYMENT',
+      recordedBy: 'ci',
+      userId: null,
+      idempotencyKey: paymentIdempotencyKey
+    });
+
+    assert.equal((replayedPayment as any)?.__idempotentReplay, true);
+    assert.equal(replayedPayment?.amountPaid, 1_000_000);
+    assert.equal(replayedPayment?.payments.length, 1);
+
+    const persistedClientAfterPayment = await clientRepository.findById(clientId);
+    assert.equal(persistedClientAfterPayment?.totalSpend, 1_000_000);
+
   } finally {
     const db = getPostgresPool();
     if (invoiceId) {
