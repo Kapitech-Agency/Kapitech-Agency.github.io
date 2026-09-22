@@ -300,7 +300,8 @@ test('PostgreSQL delivery workflow preserves client relation across project, tas
       dueDate: now.slice(0, 10),
       createdAt: now
     });
-    assert.equal((directTask as any).assignee, assigneeUserId);
+    assert.equal((directTask as any).assignee, 'CI Delivery Assignee');
+    assert.equal((directTask as any).assigneeUserId, assigneeUserId);
 
     const persistedDirectTask = await getPostgresPool().query(
       'SELECT assignee_user_id FROM tasks WHERE id = $1',
