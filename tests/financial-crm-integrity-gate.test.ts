@@ -1,19 +1,19 @@
 import assert from 'node:assert/strict';
-import fs from 'node:fs/promises';
+import fs from 'node:fs';
 import path from 'node:path';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
 
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
-const read=(p:string)=>fs.readFile(path.join(root,p),'utf8');
+const read=(p:string)=>fs.readFileSync(path.join(root,p),'utf8');
 
-test('financial and CRM integrity gates remain wired',async()=>{
- const [invoice,proposal,approval,crm,lead,client,project,routes]=await Promise.all([
+test('financial and CRM integrity gates remain wired',()=>{
+ const [invoice,proposal,approval,crm,lead,client,project,routes]=[
   read('server/postgres-invoice-repository.ts'),read('server/postgres-proposal-repository.ts'),
   read('server/postgres-approval-repository.ts'),read('server/postgres-crm-deal-repository.ts'),
   read('server/postgres-lead-repository.ts'),read('server/postgres-client-repository.ts'),
   read('server/postgres-project-repository.ts'),read('server/routes.ts')
- ]);
+ ];
  assert.match(invoice,/PAID_INVOICE_LINKAGE_IMMUTABLE/); assert.match(invoice,/PAID_INVOICE_TOTAL_IMMUTABLE/); assert.match(invoice,/metadata->>'idempotencyKey'/);
  assert.match(proposal,/ACCEPTED_PROPOSAL_IMMUTABLE/); assert.match(proposal,/Proposal project does not belong to the selected client/); assert.match(proposal,/Proposal deal does not belong to the selected client/);
  assert.match(approval,/INVALID_APPROVAL_STATUS/); assert.match(approval,/Approval reference not found/);
@@ -23,9 +23,9 @@ test('financial and CRM integrity gates remain wired',async()=>{
 });
 
 
-test('won CRM conversion is atomic and uses all required PostgreSQL relations',async()=>{
- const repo=await read('server/postgres-crm-deal-repository.ts');
- const routes=await read('server/routes.ts');
+test('won CRM conversion is atomic and uses all required PostgreSQL relations',()=>{
+ const repo=read('server/postgres-crm-deal-repository.ts');
+ const routes=read('server/routes.ts');
  assert.match(repo,/async convertWonDeal/);
  assert.match(repo,/FROM crm_deals WHERE id=\$1 FOR UPDATE/);
  assert.match(repo,/INSERT INTO clients/);
