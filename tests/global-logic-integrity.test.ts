@@ -142,19 +142,18 @@ test('PostgreSQL import canonicalizes lifecycle aliases and rejects unsupported 
  for(const name of ['normalizeClientStatus','normalizeCrmStage','normalizeProposalStatus','normalizeInvoiceStatus','normalizeVendorStatus','normalizeProjectStatus','normalizeTaskStatus','normalizePriority']) {
    assert.ok(importer.includes('function '+name),name);
  }
- assert.match(importer,/prospect: 'lead'/);
- assert.match(importer,/on_hold: 'inactive'/);
- assert.match(importer,/lead: 'new'/);
- assert.match(importer,/discovery: 'contacted'/);
- assert.match(importer,/assertNestedIds\\(db\\)/);
- assert.match(importer,/assertApprovalReferences\\(db\\)/);
+ for(const value of ["prospect: 'lead'","on_hold: 'inactive'","lead: 'new'","discovery: 'contacted'","assertNestedIds(db)","assertApprovalReferences(db)"]) {
+   assert.ok(importer.includes(value),value);
+ }
 });
 
 test('PostgreSQL import preserves cross-module project and time-log integrity',()=>{
  const importer=read('scripts/postgres-import.ts');
- assert.match(importer,/clientIdForProjectLinkedRow/);
- assert.match(importer,/Time log task\\/project mismatch in migration source/);
- assert.match(importer,/if \\(!timeLogProjectId\\) timeLogProjectId = taskProjectId/);
- assert.match(importer,/Invoice payment aggregate mismatch in migration source/);
- assert.match(importer,/Invoice balance aggregate mismatch in migration source/);
+ for(const value of [
+   'clientIdForProjectLinkedRow',
+   'Time log task/project mismatch in migration source',
+   'if (!timeLogProjectId) timeLogProjectId = taskProjectId',
+   'Invoice payment aggregate mismatch in migration source',
+   'Invoice balance aggregate mismatch in migration source'
+ ]) assert.ok(importer.includes(value),value);
 });
