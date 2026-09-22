@@ -23,7 +23,7 @@ test('Relational cutover import validates invoice arithmetic and time-log projec
 });
 
 
-test('Relational cutover import preserves proposal-to-invoice relation', () => {
+test('Relational cutover import preserves proposal-to-invoice relation and financial integrity', () => {
   const source = fs.readFileSync(path.resolve(process.cwd(), 'scripts/postgres-import.ts'), 'utf8');
   assert.ok(source.includes("'proposal_id'"));
   assert.ok(source.includes('nullableText(row.proposalId)'));
