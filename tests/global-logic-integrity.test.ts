@@ -47,3 +47,4 @@ test('approval API rejects unsupported reference types', () => {
   const approvalRepo = read('server/postgres-approval-repository.ts');
   assert.match(approvalRepo, /UNSUPPORTED_APPROVAL_TYPE/);
 });
+
