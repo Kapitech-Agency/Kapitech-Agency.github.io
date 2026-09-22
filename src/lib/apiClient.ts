@@ -163,6 +163,7 @@ export const api = {
         body: JSON.stringify({ currentPassword, code })
       }),
     getUsers: () => apiRequest<{ success: boolean; users: any[] }>('/api/auth/users'),
+    getTaskAssignees: () => apiRequest<{ success: boolean; assignees: Array<{ id: string; name: string; username: string; role: string; division: string }> }>('/api/auth/task-assignees'),
     createUser: (userData: any) =>
       apiRequest('/api/auth/users', {
         method: 'POST',
