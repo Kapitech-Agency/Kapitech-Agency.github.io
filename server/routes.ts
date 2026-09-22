@@ -1148,7 +1148,18 @@ apiRouter.post('/leads/submit', rateLimitPublic(10, 60 * 1000), async (req: Requ
   };
 
   if (getDataSourceMode() === 'postgres') {
-    await postgresLeadRepository.create(newLead);
+    await postgresLeadRepository.create(
+      newLead,
+      {
+        action: 'LEAD_SUBMISSION',
+        actor: cleanEmail,
+        actorRole: 'public_lead',
+        ip: req.ip,
+        userAgent: req.headers['user-agent'] as string,
+        details: `New inbound lead received from ${newLead.fullName} (${cleanEmail}).`,
+        severity: 'info'
+      }
+    );
     const postgresNotificationSettings = await postgresNotificationSettingsRepository.get();
     notificationSettings = postgresNotificationSettings;
   } else {
@@ -1170,7 +1181,7 @@ apiRouter.post('/leads/submit', rateLimitPublic(10, 60 * 1000), async (req: Requ
 
   if (jsonDb) saveDatabase(jsonDb);
 
-  recordAuditLog({
+  if (getDataSourceMode() === 'json') recordAuditLog({
     action: 'LEAD_SUBMISSION',
     actor: cleanEmail,
     actorRole: 'public_lead',
