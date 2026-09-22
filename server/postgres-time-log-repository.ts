@@ -63,6 +63,12 @@ export class PostgresTimeLogRepository {
           throw new Error('Task does not belong to the selected project.');
         }
         if (!resolvedProjectId && taskProjectId) resolvedProjectId = taskProjectId;
+        if (!resolvedProjectId && !taskProjectId) {
+          throw new Error('Task must belong to a project before time can be logged.');
+        }
+      }
+      if (!resolvedProjectId && !taskId) {
+        throw new Error('Time log must reference a project or task.');
       }
       const metadata = logMetadata(log);
       await client.query(
