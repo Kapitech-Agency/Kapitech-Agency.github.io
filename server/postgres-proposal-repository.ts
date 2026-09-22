@@ -150,10 +150,10 @@ export class PostgresProposalRepository {
       const derivedDiscountPercent = proposalSubtotal > 0
         ? proposalDiscount / proposalSubtotal * 100
         : 0;
-      const derivedDiscountAmount = Math.round(proposalSubtotal * (derivedDiscountPercent / 100));
+      const derivedDiscountAmount = Math.round(proposalSubtotal * (derivedDiscountPercent / 100) * 100) / 100;
       const derivedTaxableSubtotal = Math.max(0, proposalSubtotal - derivedDiscountAmount);
-      const derivedTaxAmount = Math.round(derivedTaxableSubtotal * (proposalTaxPercent / 100));
-      const derivedTotal = derivedTaxableSubtotal + derivedTaxAmount;
+      const derivedTaxAmount = Math.round(derivedTaxableSubtotal * (proposalTaxPercent / 100) * 100) / 100;
+      const derivedTotal = Math.round((derivedTaxableSubtotal + derivedTaxAmount) * 100) / 100;
       if (
         !Number.isFinite(proposalSubtotal) || proposalSubtotal < 0 ||
         !Number.isFinite(proposalDiscount) || proposalDiscount < 0 ||
@@ -165,12 +165,19 @@ export class PostgresProposalRepository {
       ) {
         throw new Error('PROPOSAL_FINANCIAL_TOTAL_MISMATCH');
       }
-      let n=`INV-KAPI-${new Date().getFullYear()}-${Math.floor(1000+Math.random()*999000)}`;
-      let exists=await db.query('SELECT 1 FROM invoices WHERE invoice_number=$1',[n]);
-      while(exists.rows[0]){
-        n=`INV-KAPI-${new Date().getFullYear()}-${Math.floor(1000+Math.random()*999000)}`;
-        exists=await db.query('SELECT 1 FROM invoices WHERE invoice_number=$1',[n]);
+      const invoiceYear = new Date().getFullYear();
+      await db.query(
+        'SELECT pg_advisory_xact_lock(hashtextextended($1, 9127341))',
+        [`invoice-number:${invoiceYear}`]
+      );
+      let n = '';
+      let invoiceNumberExists = true;
+      for (let attempt = 0; attempt < 10 && invoiceNumberExists; attempt++) {
+        n = `INV-KAPI-${invoiceYear}-${crypto.randomInt(1000, 1000000)}`;
+        const exists = await db.query('SELECT 1 FROM invoices WHERE invoice_number=$1 LIMIT 1', [n]);
+        invoiceNumberExists = Boolean(exists.rows[0]);
       }
+      if (invoiceNumberExists) throw new Error('INVOICE_NUMBER_GENERATION_FAILED');
       const invoice={
         id:`inv_${Date.now()}_${Math.random().toString(16).slice(2,8)}`,
         invoiceNumber:n,
