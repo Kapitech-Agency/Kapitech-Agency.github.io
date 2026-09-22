@@ -71,3 +71,15 @@ test('Read-only admin states keep mutation UI controls behind the same permissio
   assert.ok(crm.includes('if (!canManageCrm) return;'));
   assert.ok(crm.includes('disabled={!canManageCrm}'));
 });
+
+
+test('PostgreSQL approval security failures use relational audit storage', async () => {
+  const source = await fs.readFile(path.join(root, 'server/routes.ts'), 'utf8');
+  const start = source.indexOf("apiRouter.post('/approvals/:id/action'");
+  const end = source.indexOf('// ----------------------------------------------------\n// 16. DOCUMENTS', start);
+  assert.ok(start >= 0 && end > start);
+  const block = source.slice(start, end);
+  assert.ok(block.includes("await writeAuditLog(makeAuditEntry(req, 'APPROVAL_SELF_ACTION_BLOCKED'"));
+  assert.equal(block.includes("recordAuditLog({ action: 'APPROVAL_SELF_ACTION_BLOCKED'"), false);
+  assert.ok(block.includes("await writeAuditLog(makeAuditEntry("));
+});
