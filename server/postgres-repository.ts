@@ -1,6 +1,7 @@
 import type { PoolClient } from 'pg';
 import type { StoredSession, StoredUser } from './db.ts';
-import { getPostgresPool } from './postgres.ts';
+import { getPostgresPool, withPostgresTransaction } from './postgres.ts';
+import { postgresAuditLogRepository, type AuditEntry } from './postgres-audit-log-repository.ts';
 import { decryptSecret, encryptOptionalSecret, isEncryptedSecret } from './secret-crypto.ts';
 
 type UserRow = {
@@ -211,54 +212,31 @@ export class PostgresAuthRepository {
     return result.rows.map(mapUser);
   }
 
-  async deleteUser(userId: string): Promise<boolean> {
-    return withClient(async client => {
-      await client.query('BEGIN');
-      try {
-        await client.query('DELETE FROM sessions WHERE user_id = $1', [userId]);
-        const result = await client.query(
-          'DELETE FROM users WHERE id = $1 AND stakeholder_type <> $2 AND username <> $3',
-          [userId, 'Master', 'admin']
-        );
-
-        if (result.rowCount !== 1) {
-          await client.query('ROLLBACK');
-          return false;
-        }
-
-        await client.query('COMMIT');
-        return true;
-      } catch (error) {
-        await client.query('ROLLBACK');
-        throw error;
-      }
+  async deleteUser(userId: string, audit?: AuditEntry): Promise<boolean> {
+    return withPostgresTransaction(async client => {
+      await client.query('DELETE FROM sessions WHERE user_id = $1', [userId]);
+      const result = await client.query(
+        'DELETE FROM users WHERE id = $1 AND stakeholder_type <> $2 AND username <> $3',
+        [userId, 'Master', 'admin']
+      );
+      if (result.rowCount !== 1) return false;
+      if (audit) await postgresAuditLogRepository.appendWithinTransaction(client, audit);
+      return true;
     });
   }
 
-  async updateUserPolicy(userId: string, name: string, role: string, stakeholderType: string, permissions: StoredUser['permissions'], division: string, status: StoredUser['status']): Promise<StoredUser | null> {
-    return withClient(async client => {
-      await client.query('BEGIN');
-      try {
-        const result = await client.query<UserRow>(
-          `UPDATE users SET name=$2, role=$3, stakeholder_type=$4, permissions=$5, division=$6, status=$7 WHERE id=$1 RETURNING *`,
-          [userId, name, role, stakeholderType, JSON.stringify(permissions), division, status]
-        );
-
-        if (!result.rows[0]) {
-          await client.query('ROLLBACK');
-          return null;
-        }
-
-        if (status === 'suspended') {
-          await client.query('DELETE FROM sessions WHERE user_id = $1', [userId]);
-        }
-
-        await client.query('COMMIT');
-        return mapUser(result.rows[0]);
-      } catch (error) {
-        await client.query('ROLLBACK');
-        throw error;
+  async updateUserPolicy(userId: string, name: string, role: string, stakeholderType: string, permissions: StoredUser['permissions'], division: string, status: StoredUser['status'], audit?: AuditEntry): Promise<StoredUser | null> {
+    return withPostgresTransaction(async client => {
+      const result = await client.query<UserRow>(
+        `UPDATE users SET name=$2, role=$3, stakeholder_type=$4, permissions=$5, division=$6, status=$7 WHERE id=$1 RETURNING *`,
+        [userId, name, role, stakeholderType, JSON.stringify(permissions), division, status]
+      );
+      if (!result.rows[0]) return null;
+      if (status === 'suspended') {
+        await client.query('DELETE FROM sessions WHERE user_id = $1', [userId]);
       }
+      if (audit) await postgresAuditLogRepository.appendWithinTransaction(client, audit);
+      return mapUser(result.rows[0]);
     });
   }
 
@@ -266,18 +244,21 @@ export class PostgresAuthRepository {
     await getPostgresPool().query('DELETE FROM sessions WHERE user_id = $1', [userId]);
   }
 
-  async createUser(user: StoredUser): Promise<void> {
-    await getPostgresPool().query(
-      `INSERT INTO users
-       (id,name,username,email,password_hash,salt,password_algorithm,role,stakeholder_type,permissions,
-        mfa_enabled,mfa_secret,mfa_pending_secret,mfa_pending_secret_created_at,mfa_recovery_code_hashes,
-        division,status,last_login,created_at)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19)`,
-      [user.id,user.name,user.username,user.email,user.passwordHash,user.salt,user.passwordAlgorithm || 'pbkdf2-sha512',
-       user.role,user.stakeholderType,JSON.stringify(user.permissions),user.mfaEnabled,encryptOptionalSecret(user.mfaSecret),
-       encryptOptionalSecret(user.mfaPendingSecret),user.mfaPendingSecretCreatedAt || null,JSON.stringify(user.mfaRecoveryCodeHashes || []),
-       user.division,user.status,user.lastLogin || null,user.createdAt]
-    );
+  async createUser(user: StoredUser, audit?: AuditEntry): Promise<void> {
+    return withPostgresTransaction(async client => {
+      await client.query(
+        `INSERT INTO users
+         (id,name,username,email,password_hash,salt,password_algorithm,role,stakeholder_type,permissions,
+          mfa_enabled,mfa_secret,mfa_pending_secret,mfa_pending_secret_created_at,mfa_recovery_code_hashes,
+          division,status,last_login,created_at)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19)`,
+        [user.id,user.name,user.username,user.email,user.passwordHash,user.salt,user.passwordAlgorithm || 'pbkdf2-sha512',
+         user.role,user.stakeholderType,JSON.stringify(user.permissions),user.mfaEnabled,encryptOptionalSecret(user.mfaSecret),
+         encryptOptionalSecret(user.mfaPendingSecret),user.mfaPendingSecretCreatedAt || null,JSON.stringify(user.mfaRecoveryCodeHashes || []),
+         user.division,user.status,user.lastLogin || null,user.createdAt]
+      );
+      if (audit) await postgresAuditLogRepository.appendWithinTransaction(client, audit);
+    });
   }
 }
 
