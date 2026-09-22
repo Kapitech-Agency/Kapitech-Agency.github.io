@@ -1689,11 +1689,6 @@ apiRouter.delete('/clients/:id', requireAuth, requirePermission('canManageClient
     const db = getDatabase();
     const client = db.clients.find(c => c.id === id);
     if (!client) { res.status(404).json({ success: false, error: 'Client not found.' }); return; }
-    const hasBusinessRecords = (db.projects || []).some(p => String(p.clientId || '') === id)
-      || (db.crmDeals || []).some(d => String(d.clientId || '') === id)
-      || (db.proposals || []).some(p => String(p.clientId || '') === id)
-      || (db.invoices || []).some(i => String(i.clientId || '') === id);
-    if (hasBusinessRecords) { res.status(409).json({ success: false, error: 'Client has business records and cannot be deleted.' }); return; }
     db.clients = db.clients.filter(c => c.id !== id);
     saveDatabase(db);
     recordAuditLog({
@@ -1939,11 +1934,6 @@ apiRouter.delete('/projects/:id', requireAuth, requirePermission('canManageProje
   const db = getDatabase();
   const project = db.projects.find((item: any) => item.id === id);
   if (!project) { res.status(404).json({ success: false, error: 'Project not found.' }); return; }
-  const hasBusinessRecords = (db.proposals || []).some(p => String(p.projectId || '') === id)
-    || (db.invoices || []).some(i => String(i.projectId || '') === id)
-    || (db.tasks || []).some(t => String(t.projectId || '') === id)
-    || (db.timeLogs || []).some(t => String(t.projectId || '') === id);
-  if (hasBusinessRecords) { res.status(409).json({ success: false, error: 'Project has business records and cannot be deleted.' }); return; }
   db.projects = db.projects.filter(p => p.id !== id);
   saveDatabase(db);
   recordAuditLog({ action: 'PROJECT_DELETED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Deleted project "${project.name || project.title || id}".`, severity: 'warning' });
@@ -3619,12 +3609,8 @@ apiRouter.delete('/crm/proposals/:id', requireAuth, requirePermission('canManage
     return;
   }
   const db = getDatabase();
-  const existing = (db.proposals || []).find(p => p.id === id);
-  if (!existing) { res.status(404).json({ success: false, error: 'Proposal not found.' }); return; }
-  if (String(existing.status || '') !== 'Draft') { res.status(409).json({ success: false, error: 'Only Draft proposals can be deleted.' }); return; }
   db.proposals = (db.proposals || []).filter(p => p.id !== id);
   saveDatabase(db);
-  recordAuditLog({ action: 'PROPOSAL_DELETED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Deleted proposal ${existing.proposalNumber || id}.`, severity: 'warning' });
   res.json({ success: true, message: 'Proposal deleted.' });
 });
 
@@ -3702,14 +3688,6 @@ apiRouter.put('/projects/tasks/:id', requireAuth, requirePermission('canManageKa
   }
   const db = getDatabase(); const idx = (db.tasks || []).findIndex(t => t.id === id);
   if (idx === -1) { res.status(404).json({ success: false, error: 'Task not found.' }); return; }
-  if (patch.projectId !== undefined && String(patch.projectId || '') !== String(db.tasks[idx].projectId || '')) {
-    if ((db.timeLogs || []).some((log: any) => String(log.taskId || '') === id)) {
-      res.status(409).json({ success: false, error: 'Task with time logs cannot be moved to another project.' }); return;
-    }
-    if (patch.projectId && !(db.projects || []).some((p: any) => String(p.id) === String(patch.projectId))) {
-      res.status(404).json({ success: false, error: 'Project not found.' }); return;
-    }
-  }
   db.tasks[idx] = { ...db.tasks[idx], ...patch, updatedAt: new Date().toISOString() }; saveDatabase(db);
   recordAuditLog({ action: 'TASK_UPDATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Updated task ${id}.`, severity: 'info' });
   res.json({ success: true, task: db.tasks[idx] });
@@ -3732,9 +3710,6 @@ apiRouter.delete('/projects/tasks/:id', requireAuth, requirePermission('canManag
   }
   const db = getDatabase(); const exists = (db.tasks || []).some(t => t.id === id);
   if (!exists) { res.status(404).json({ success: false, error: 'Task not found.' }); return; }
-  if ((db.timeLogs || []).some((log: any) => String(log.taskId || '') === id)) {
-    res.status(409).json({ success: false, error: 'Task has time logs and cannot be deleted.' }); return;
-  }
   db.tasks = (db.tasks || []).filter(t => t.id !== id); saveDatabase(db);
   recordAuditLog({ action: 'TASK_DELETED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Deleted task ${id}.`, severity: 'warning' });
   res.json({ success: true, message: 'Task deleted.' });
@@ -3767,18 +3742,6 @@ apiRouter.post('/projects/timelogs', requireAuth, requireAnyPermission('canManag
       const message = error instanceof Error ? error.message : 'Time entry could not be created.';
       res.status(message.endsWith('not found.') ? 404 : 409).json({ success: false, error: message }); return;
     }
-  }
-  const db = getDatabase();
-  const task = newLog.taskId ? (db.tasks || []).find((item: any) => String(item.id) === newLog.taskId) : null;
-  if (newLog.taskId && !task) { res.status(404).json({ success: false, error: 'Task not found.' }); return; }
-  if (task) {
-    if (newLog.projectId && String(task.projectId || '') !== newLog.projectId) {
-      res.status(409).json({ success: false, error: 'Task does not belong to the selected project.' }); return;
-    }
-    if (!newLog.projectId) newLog.projectId = cleanText(task.projectId, 120);
-  }
-  if (newLog.projectId && !(db.projects || []).some((item: any) => String(item.id) === newLog.projectId)) {
-    res.status(404).json({ success: false, error: 'Project not found.' }); return;
   }
   if (!db.timeLogs) db.timeLogs = []; db.timeLogs.unshift(newLog); saveDatabase(db);
   recordAuditLog({ action: 'TIMELOG_CREATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Created ${durationMinutes} minute time entry for ${newLog.projectName}.`, severity: 'info' });
