@@ -135,6 +135,15 @@ export class PostgresProjectRepository {
         const linkedClient = await client.query('SELECT id FROM clients WHERE id = $1 FOR SHARE', [next.clientId]);
         if (!linkedClient.rows[0]) throw new Error('Client not found.');
       }
+      const currentClientId = current.client_id ? String(current.client_id) : null;
+      const nextClientId = next.clientId ? String(next.clientId) : null;
+      if (currentClientId !== nextClientId) {
+        const linkedBusiness = await client.query(
+          'SELECT (SELECT COUNT(*)::int FROM proposals WHERE project_id=$1) + (SELECT COUNT(*)::int FROM invoices WHERE project_id=$1) AS count',
+          [id]
+        );
+        if (Number(linkedBusiness.rows[0]?.count || 0) > 0) throw new Error('PROJECT_CLIENT_IMMUTABLE');
+      }
       await client.query(
         `UPDATE projects SET client_id=$2,name=$3,description=$4,status=$5,owner=$6,budget=$7,start_date=$8,end_date=$9,metadata=$10,updated_at=$11 WHERE id=$1`,
         [id, next.clientId || null, next.name, next.notes || null, next.status, next.teamLead || null, next.budget, next.startDate || null,
