@@ -12,7 +12,8 @@ test('Protected admin auth is server-session authoritative', async () => {
 
   assert.ok(guard.includes('api.auth.me()'));
   assert.ok(guard.includes('cacheAdminSession(res.data.user, rememberMe)'));
-  assert.ok(auth.includes('sessionStorage.setItem(ADMIN_PROFILE_KEY'));
+  assert.ok(auth.includes('(rememberMe ? localStorage : sessionStorage).setItem(ADMIN_PROFILE_KEY, serialized)'));
+  assert.ok(auth.includes('const raw = sessionStorage.getItem(ADMIN_PROFILE_KEY) || localStorage.getItem(ADMIN_PROFILE_KEY)'));
   assert.ok(auth.includes('The actual authentication state remains in the HttpOnly server cookie.'));
   assert.ok(!auth.includes("localStorage.setItem('kapitech_session_token'"));
   assert.ok(!auth.includes("localStorage.setItem('kapitech_admin_session_v1'"));
