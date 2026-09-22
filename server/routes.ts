@@ -1172,7 +1172,7 @@ apiRouter.put('/leads/:id', requireAuth, requirePermission('canManageCrm'), asyn
   if (patch.portfolioUrl !== undefined) patch.portfolioUrl = cleanOptionalUrl(patch.portfolioUrl);
 
   if (getDataSourceMode() === 'postgres') {
-    const lead = await postgresLeadRepository.update(id, patch, makeAuditEntry(req, 'LEAD_UPDATED', `Updated lead ${lead.fullName} (status: ${lead.status}).`, 'info'));
+    const lead = await postgresLeadRepository.update(id, patch, makeAuditEntry(req, 'LEAD_UPDATED', `Updated lead ${patch.fullName || id} (status: ${patch.status || 'unchanged'}).`, 'info'));
     if (!lead) {
       res.status(404).json({ success: false, error: 'Lead not found.' });
       return;
@@ -1372,7 +1372,7 @@ apiRouter.post('/crm/deals', requireAuth, requirePermission('canManageCrm'), asy
 
   if (getDataSourceMode() === 'postgres') {
     try {
-      const deal = await postgresCrmDealRepository.create(newDeal, makeAuditEntry(req, 'CRM_DEAL_CREATED', `Created CRM deal "${deal.title || deal.id}".`, 'info'));
+      const deal = await postgresCrmDealRepository.create(newDeal, makeAuditEntry(req, 'CRM_DEAL_CREATED', `Created CRM deal "${newDeal.title || newDeal.id}".`, 'info'));
             res.json({ success: true, deal });
     } catch (error) {
       res.status(400).json({ success: false, error: error instanceof Error ? error.message : 'Deal could not be created.' });
@@ -1429,7 +1429,7 @@ apiRouter.put('/crm/deals/:id', requireAuth, requirePermission('canManageCrm'), 
   }
 
   if (getDataSourceMode() === 'postgres') {
-    const deal = await postgresCrmDealRepository.update(id, patch, makeAuditEntry(req, 'CRM_DEAL_UPDATED', `Updated CRM deal "${deal.title || id}".`, 'info'));
+    const deal = await postgresCrmDealRepository.update(id, patch, makeAuditEntry(req, 'CRM_DEAL_UPDATED', `Updated CRM deal "${patch.title || id}".`, 'info'));
     if (!deal) {
       res.status(404).json({ success: false, error: 'Deal not found.' });
       return;
