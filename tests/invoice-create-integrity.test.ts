@@ -1,0 +1,15 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import test from 'node:test';
+
+test('PostgreSQL invoice creation validates line item integrity before insert', () => {
+  const source = fs.readFileSync('server/postgres-invoice-repository.ts', 'utf8');
+  const start = source.indexOf('async create(');
+  const end = source.indexOf('private async findByIdTx', start);
+  assert.ok(start >= 0 && end > start);
+  const block = source.slice(start, end);
+  assert.match(block, /INVALID_INVOICE_ITEM/);
+  assert.match(block, /INVOICE_ITEM_SUBTOTAL_MISMATCH/);
+  assert.match(block, /INVALID_INVOICE_TOTALS/);
+  assert.ok(block.indexOf('invoiceItems') < block.indexOf('INSERT INTO invoices'));
+});
