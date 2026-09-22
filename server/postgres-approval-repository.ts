@@ -48,10 +48,10 @@ export class PostgresApprovalRepository {
     const metadata = { ...input, requesterId: undefined, requesterUserId: undefined, requesterRole: undefined, status: undefined };
     const { rows } = await getPostgresPool().query(
       `INSERT INTO approvals
-        (id, type, title, value, status, requester_user_id, requester_role, approval_date, metadata, created_at, updated_at)
-       VALUES ($1,$2,$3,$4,'Pending',$5,$6,$7,$8::jsonb,$9,$9)
+        (id, type, title, value, status, reference_id, requester_user_id, requester_role, approval_date, metadata, created_at, updated_at)
+       VALUES ($1,$2,$3,$4,'Pending',$5,$6,$7,$8,$9::jsonb,$10,$10)
        RETURNING *`,
-      [input.id, type, input.title, Number(input.value || 0),
+      [input.id, type, input.title, Number(input.value || 0), referenceId || null,
        input.requesterId || null, input.requesterRole || null, input.date || null, JSON.stringify(metadata), now]
     );
     return mapRow(rows[0]);
