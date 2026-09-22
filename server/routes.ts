@@ -3189,21 +3189,12 @@ apiRouter.put('/crm/proposals/:id', requireAuth, requirePermission('canManageCrm
     if (patch.sentDate !== undefined && patch.sentDate !== null && !isValidDate(patch.sentDate)) { res.status(400).json({ success: false, error: 'Invalid proposal sent date.' }); return; }
     let proposal;
     try {
-      proposal = await postgresProposalRepository.update(id, { ...patch, items, subtotal, discount, taxPercent, tax, total });
+      proposal = await postgresProposalRepository.update(id, { ...patch, items, subtotal, discount, taxPercent, tax, total }, makeAuditEntry(req, 'PROPOSAL_UPDATED', `Updated proposal ${id}.`));
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Proposal could not be updated.';
       if (message === 'ACCEPTED_PROPOSAL_IMMUTABLE') { res.status(409).json({ success: false, error: 'Accepted proposals cannot be reopened or moved to another status.' }); return; }
       throw error;
     }
-    recordAuditLog({
-      action: 'PROPOSAL_UPDATED',
-      actor: req.user!.username,
-      actorRole: req.user!.role,
-      ip: req.ip,
-      userAgent: req.headers['user-agent'] as string,
-      details: `Updated proposal ${proposal?.proposalNumber || id}.`,
-      severity: 'info'
-    });
     res.json({ success: true, proposal }); return;
   }
 
