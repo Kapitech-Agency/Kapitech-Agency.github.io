@@ -3447,8 +3447,7 @@ apiRouter.post('/projects/tasks', requireAuth, requirePermission('canManageKanba
   };
   if (getDataSourceMode() === 'postgres') {
     try {
-      const task = await postgresTaskRepository.create(newTask);
-      recordAuditLog({ action: 'TASK_CREATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Created task "${newTask.title}".`, severity: 'info' });
+      const task = await postgresTaskRepository.create(newTask, makeAuditEntry(req, 'TASK_CREATED', `Created task "${newTask.title}".`));
       res.json({ success: true, task }); return;
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Task could not be created.';
