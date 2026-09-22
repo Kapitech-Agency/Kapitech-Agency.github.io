@@ -54,8 +54,16 @@ export class PostgresProposalRepository {
       if (next.projectId) { const x=await db.query('SELECT id,client_id FROM projects WHERE id=$1 FOR SHARE',[String(next.projectId)]); if(!x.rows[0])throw new Error('Proposal project not found.'); const projectClientId=x.rows[0].client_id?String(x.rows[0].client_id):null; if(resolvedClientId&&projectClientId&&projectClientId!==resolvedClientId)throw new Error('Proposal project does not belong to the selected client.'); if(!resolvedClientId&&projectClientId)resolvedClientId=projectClientId; }
       if (next.dealId) { const x=await db.query('SELECT id,client_id FROM crm_deals WHERE id=$1 FOR SHARE',[String(next.dealId)]); if(!x.rows[0])throw new Error('Proposal deal not found.'); const dealClientId=x.rows[0].client_id?String(x.rows[0].client_id):null; if(resolvedClientId&&dealClientId&&dealClientId!==resolvedClientId)throw new Error('Proposal deal does not belong to the selected client.'); if(!resolvedClientId&&dealClientId)resolvedClientId=dealClientId; }
       next.clientId=resolvedClientId;
-      if (next.status === 'Accepted' && String(r.rows[0].status) !== 'Accepted') {
+      const currentStatus = String(r.rows[0].status || '');
+      const nextStatus = String(next.status || currentStatus);
+      if (!['Draft','Internal Review','Sent','Approved','Rejected','Accepted'].includes(nextStatus)) {
+        throw new Error('INVALID_PROPOSAL_STATUS');
+      }
+      if (nextStatus === 'Accepted' && currentStatus !== 'Accepted') {
         throw new Error('ACCEPTED_PROPOSAL_WORKFLOW_ONLY');
+      }
+      if (['Approved','Rejected'].includes(nextStatus) && currentStatus !== nextStatus && !['Draft','Internal Review','Sent'].includes(currentStatus)) {
+        throw new Error('PROPOSAL_APPROVAL_TRANSITION_INVALID');
       }
       if (String(r.rows[0].status)==='Accepted') {
         if (patch.status !== undefined && patch.status !== 'Accepted') throw new Error('ACCEPTED_PROPOSAL_IMMUTABLE');
