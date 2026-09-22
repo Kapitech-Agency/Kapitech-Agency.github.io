@@ -2213,7 +2213,7 @@ apiRouter.delete('/finance/invoices/:id', requireAuth, requirePermission('canMan
       res.json({success:true,message:'Invoice cancelled.',invoice}); return;
     } catch(error) {
       const message=error instanceof Error?error.message:'Invoice could not be cancelled.';
-      res.status(400).json({success:false,error:message}); return;
+      res.status(message==='INVOICE_WITH_PAYMENTS_CANNOT_BE_CANCELLED'?409:400).json({success:false,error:message}); return;
     }
   }
 
@@ -2224,6 +2224,10 @@ apiRouter.delete('/finance/invoices/:id', requireAuth, requirePermission('canMan
     return;
   }
 
+  if (Array.isArray(invoice.payments) && invoice.payments.some((payment: any) => Number(payment.amount) > 0)) {
+    res.status(409).json({ success: false, error: 'INVOICE_WITH_PAYMENTS_CANNOT_BE_CANCELLED' });
+    return;
+  }
   invoice.status = 'cancelled';
   invoice.updatedAt = new Date().toISOString();
   invoice.auditTrail = [
