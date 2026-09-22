@@ -177,7 +177,9 @@ export class PostgresCrmDealRepository {
         } else if (String(invoice.client_id) !== String(clientId)) {
           throw new Error('DEAL_INVOICE_CLIENT_MISMATCH');
         }
-        if (invoice.project_id && String(invoice.project_id) !== String(project.id)) {
+        if (!invoice.project_id) {
+          await db.query('UPDATE invoices SET project_id=$2, updated_at=NOW() WHERE id=$1', [invoice.id, project.id]);
+        } else if (String(invoice.project_id) !== String(project.id)) {
           throw new Error('DEAL_INVOICE_PROJECT_MISMATCH');
         }
 
