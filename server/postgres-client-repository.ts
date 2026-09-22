@@ -1,5 +1,6 @@
 import type { AgencyClient } from '../src/lib/clientStore.ts';
-import { getPostgresPool } from './postgres.ts';
+import { getPostgresPool, withPostgresTransaction } from './postgres.ts';
+import { postgresAuditLogRepository, type AuditEntry } from './postgres-audit-log-repository.ts';
 
 type ClientRow = {
   id: string;
@@ -62,8 +63,9 @@ export class PostgresClientRepository {
     return result.rows[0] ? mapClient(result.rows[0]) : null;
   }
 
-  async create(client: AgencyClient): Promise<AgencyClient> {
-    const result = await getPostgresPool().query<ClientRow>(
+  async create(client: AgencyClient, audit?: AuditEntry): Promise<AgencyClient> {
+    return withPostgresTransaction(async db => {
+    const result = await db.query<ClientRow>(
       `INSERT INTO clients
        (id,name,company,email,phone,industry,status,notes,metadata,created_at,updated_at)
        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
@@ -72,10 +74,12 @@ export class PostgresClientRepository {
        client.industry || null, normalizeStatus(String(client.status)), client.notes || null, JSON.stringify(toMetadata(client)),
        client.createdAt, client.updatedAt]
     );
+    if (audit) await postgresAuditLogRepository.appendWithinTransaction(db, audit);
     return mapClient(result.rows[0]);
+    });
   }
 
-  async update(id: string, patch: Partial<AgencyClient>): Promise<AgencyClient | null> {
+  async update(id: string, patch: Partial<AgencyClient>, audit?: AuditEntry): Promise<AgencyClient | null> {
     const client = await getPostgresPool().connect();
     try {
       await client.query('BEGIN');
@@ -93,6 +97,7 @@ export class PostgresClientRepository {
         [id, next.name, next.company || null, next.email || null, next.phone || null, next.industry || null,
          normalizeStatus(String(next.status)), next.notes || null, JSON.stringify(toMetadata(next)), next.updatedAt]
       );
+      if (audit) await postgresAuditLogRepository.appendWithinTransaction(client, audit);
       await client.query('COMMIT');
       return result.rows[0] ? mapClient(result.rows[0]) : null;
     } catch (error) {
@@ -103,7 +108,7 @@ export class PostgresClientRepository {
     }
   }
 
-  async delete(id: string): Promise<boolean> {
+  async delete(id: string, audit?: AuditEntry): Promise<boolean> {
     const client = await getPostgresPool().connect();
     try {
       await client.query('BEGIN');
@@ -122,6 +127,7 @@ export class PostgresClientRepository {
         throw new Error('CLIENT_HAS_BUSINESS_RECORDS');
       }
       const result=await client.query('DELETE FROM clients WHERE id=$1',[id]);
+      if (audit) await postgresAuditLogRepository.appendWithinTransaction(client, audit);
       await client.query('COMMIT');
       return result.rowCount===1;
     } catch (error) {
