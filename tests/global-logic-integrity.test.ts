@@ -159,6 +159,15 @@ test('PostgreSQL import preserves cross-module project and time-log integrity',(
  ]) assert.ok(importer.includes(value),value);
 });
 
+test('PostgreSQL import preserves non-relational time-log metadata',()=>{
+ const importer=read('scripts/postgres-import.ts');
+ const start=importer.indexOf("upsert(client, 'time_logs'");
+ const block=importer.slice(start,start+1400);
+ assert.match(block,/\['id','project_id','task_id','user_id','hours','description','logged_at','created_at','metadata'\]/);
+ assert.match(block,/metadata\(row, \['id','projectId','taskId','userId','user','durationMinutes','hours','billable','date','loggedAt','notes','description','createdAt'\]\)/);
+});
+
+
 
 test('invoice repository rejects unsupported direct status mutation',()=>{
  const repo=read('server/postgres-invoice-repository.ts');
