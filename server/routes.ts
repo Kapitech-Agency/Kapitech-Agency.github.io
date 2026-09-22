@@ -1854,15 +1854,16 @@ apiRouter.put('/projects/:id', requireAuth, requirePermission('canManageProjects
   if (patch.teamMembers !== undefined) patch.teamMembers = normalizeStringArray(patch.teamMembers, 50, 160);
   if (patch.techStack !== undefined) patch.techStack = normalizeStringArray(patch.techStack, 50, 120);
   if (patch.tasks !== undefined) {
-    patch.tasks = Array.isArray(patch.tasks) ? patch.tasks.slice(0, 200) : [];
-    const previousTasks = Array.isArray(db.projects[idx].tasks) ? db.projects[idx].tasks : [];
-    const nextTaskIds = new Set(patch.tasks.map((task: any) => String(task?.id || '')));
+    const nextTasks: any[] = Array.isArray(patch.tasks) ? patch.tasks.slice(0, 200) : [];
+    patch.tasks = nextTasks;
+    const previousTasks: any[] = Array.isArray(db.projects[idx].tasks) ? db.projects[idx].tasks : [];
+    const nextTaskIds = new Set(nextTasks.map((task: any) => String(task?.id || '')));
     const removedTaskIds = previousTasks.map((task: any) => String(task?.id || '')).filter(taskId => taskId && !nextTaskIds.has(taskId));
     if (removedTaskIds.some(taskId => (db.timeLogs || []).some((log: any) => String(log.taskId || '') === taskId))) {
       res.status(409).json({ success: false, error: 'A task with time logs cannot be removed from the project.' });
       return;
     }
-    for (const task of patch.tasks) {
+    for (const task of nextTasks) {
       if (!['todo','in_progress','review','done'].includes(String(task?.status || 'todo'))) {
         res.status(400).json({ success: false, error: 'Invalid task status.' });
         return;
@@ -1873,7 +1874,7 @@ apiRouter.put('/projects/:id', requireAuth, requirePermission('canManageProjects
       }
     }
     if (req.user!.stakeholderType !== 'Master' && !req.user!.permissions?.canManageKanbanTasks) {
-      if (taskMutationFingerprint(db.projects[idx].tasks) !== taskMutationFingerprint(patch.tasks)) {
+      if (taskMutationFingerprint(db.projects[idx].tasks) !== taskMutationFingerprint(nextTasks)) {
         res.status(403).json({ success: false, error: 'Task mutations require task-management permission.' });
         return;
       }
