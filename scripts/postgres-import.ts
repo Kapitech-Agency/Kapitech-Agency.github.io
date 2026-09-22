@@ -449,6 +449,8 @@ function assertNestedIds(db: AnyRecord): void {
   const proposalItemIds = new Set<string>();
   const invoiceItemIds = new Set<string>();
   const paymentIds = new Set<string>();
+  const invoiceNumbers = new Set<string>();
+  const proposalInvoiceIds = new Set<string>();
 
   for (const row of arr(db, 'proposals')) {
     for (const item of Array.isArray(row.items) ? row.items : []) {
@@ -459,6 +461,17 @@ function assertNestedIds(db: AnyRecord): void {
     }
   }
   for (const row of arr(db, 'invoices')) {
+    const invoiceNumber = nullableText(row.invoiceNumber);
+    if (invoiceNumber) {
+      if (invoiceNumbers.has(invoiceNumber)) throw new Error('Duplicate invoice number in migration source: ' + invoiceNumber);
+      invoiceNumbers.add(invoiceNumber);
+    }
+    const proposalId = nullableText(row.proposalId);
+    if (proposalId) {
+      if (proposalInvoiceIds.has(proposalId)) throw new Error('Multiple invoices reference the same proposal in migration source: ' + proposalId);
+      proposalInvoiceIds.add(proposalId);
+    }
+
     for (const item of Array.isArray(row.items) ? row.items : []) {
       const id = nullableText(item.id);
       if (!id) throw new Error('Invoice item is missing an id: ' + textValue(row.id));
