@@ -1744,6 +1744,10 @@ apiRouter.post('/projects', requireAuth, requirePermission('canManageProjects'),
     createdAt: now,
     updatedAt: now
   };
+  if (newProject.tasks.length > 0 && !hasAdminPermission(req.user!, 'canManageKanbanTasks')) {
+    res.status(403).json({ success: false, error: 'Task mutations require task-management permission.' });
+    return;
+  }
   if (getDataSourceMode() === 'postgres') {
     const project = await postgresProjectRepository.create(newProject as any);
     recordAuditLog({ action: 'PROJECT_CREATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Created project "${newProject.name}".`, severity: 'info' });
@@ -1769,6 +1773,8 @@ apiRouter.put('/projects/:id', requireAuth, requirePermission('canManageProjects
   const { id } = req.params;
   const updates = req.body || {};
   if (getDataSourceMode() === 'postgres') {
+    const existingProject = await postgresProjectRepository.findById(id);
+    if (!existingProject) { res.status(404).json({ success: false, error: 'Project not found.' }); return; }
     const patch = pickFields(updates, ['title','name','client','clientId','clientName','clientCompany','clientEmail','serviceCategory','status','health','budget','progressPercent','startDate','targetEndDate','teamLead','teamMembers','techStack','repositoryUrl','figmaUrl','liveStagingUrl','notes','tasks','milestones','crmLeadId','updatedAt']);
     if (patch.clientEmail !== undefined) {
       patch.clientEmail = cleanText(patch.clientEmail, 254).toLowerCase();
@@ -1794,7 +1800,16 @@ apiRouter.put('/projects/:id', requireAuth, requirePermission('canManageProjects
     }
     if (patch.teamMembers !== undefined) patch.teamMembers = normalizeStringArray(patch.teamMembers, 50, 160);
     if (patch.techStack !== undefined) patch.techStack = normalizeStringArray(patch.techStack, 50, 120);
-    if (patch.tasks !== undefined) patch.tasks = Array.isArray(patch.tasks) ? patch.tasks.slice(0, 200) : [];
+    if (patch.tasks !== undefined) {
+      patch.tasks = Array.isArray(patch.tasks) ? patch.tasks.slice(0, 200) : [];
+      if (!hasAdminPermission(req.user!, 'canManageKanbanTasks')) {
+        if (taskMutationFingerprint(existingProject.tasks) !== taskMutationFingerprint(patch.tasks)) {
+          res.status(403).json({ success: false, error: 'Task mutations require task-management permission.' });
+          return;
+        }
+        delete (patch as any).tasks;
+      }
+    }
     if (patch.milestones !== undefined) patch.milestones = Array.isArray(patch.milestones) ? patch.milestones.slice(0, 50) : [];
     try {
       const project = await postgresProjectRepository.update(id, patch as any, makeAuditEntry(req, 'PROJECT_UPDATED', `Updated project ${id}.`));
@@ -1823,7 +1838,16 @@ apiRouter.put('/projects/:id', requireAuth, requirePermission('canManageProjects
   for (const key of ['repositoryUrl','figmaUrl','liveStagingUrl'] as const) if (patch[key] !== undefined) patch[key] = cleanOptionalUrl(patch[key]);
   if (patch.teamMembers !== undefined) patch.teamMembers = normalizeStringArray(patch.teamMembers, 50, 160);
   if (patch.techStack !== undefined) patch.techStack = normalizeStringArray(patch.techStack, 50, 120);
-  if (patch.tasks !== undefined) patch.tasks = Array.isArray(patch.tasks) ? patch.tasks.slice(0, 200) : [];
+  if (patch.tasks !== undefined) {
+    patch.tasks = Array.isArray(patch.tasks) ? patch.tasks.slice(0, 200) : [];
+    if (!hasAdminPermission(req.user!, 'canManageKanbanTasks')) {
+      if (taskMutationFingerprint(db.projects[idx].tasks) !== taskMutationFingerprint(patch.tasks)) {
+        res.status(403).json({ success: false, error: 'Task mutations require task-management permission.' });
+        return;
+      }
+      delete (patch as any).tasks;
+    }
+  }
   db.projects[idx] = { ...db.projects[idx], ...patch, updatedAt: new Date().toISOString() };
   saveDatabase(db);
   recordAuditLog({ action: 'PROJECT_UPDATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Updated project ${id}.`, severity: 'info' });
@@ -1888,6 +1912,29 @@ function normalizeDate(value: unknown, fallback: string): string {
 
 const INVOICE_STATUSES = new Set(['draft', 'sent', 'overdue']);
 const PAYMENT_METHODS = new Set(['bank_transfer', 'credit_card', 'cash', 'other']);
+
+function taskMutationFingerprint(value: unknown): string {
+  const tasks = Array.isArray(value) ? value : [];
+  return JSON.stringify(tasks.map((task: any) => ({
+    id: String(task?.id || ''),
+    title: String(task?.title || ''),
+    description: String(task?.description || ''),
+    status: String(task?.status || ''),
+    priority: String(task?.priority || 'medium'),
+    assignedTo: String(task?.assignedTo ?? task?.assignee ?? ''),
+    dueDate: String(task?.dueDate || ''),
+    estimatedHours: Number(task?.estimatedHours || 0),
+    actualHours: Number(task?.actualHours || 0),
+    tags: Array.isArray(task?.tags) ? task.tags.map((v: unknown) => String(v)) : [],
+    subtasks: Array.isArray(task?.subtasks)
+      ? task.subtasks.map((subtask: any) => ({
+          id: String(subtask?.id || ''),
+          title: String(subtask?.title || ''),
+          completed: Boolean(subtask?.completed)
+        }))
+      : []
+  })).sort((a, b) => a.id.localeCompare(b.id)));
+}
 
 function buildInvoiceFinancials(items: ReturnType<typeof normalizeInvoiceItems>, taxPercent: number, discountPercent: number) {
   const subtotal = items.reduce((sum, item) => sum + item.amount, 0);
