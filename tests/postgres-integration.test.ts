@@ -106,7 +106,7 @@ test('PostgreSQL commercial workflow converts proposal to invoice and returns th
       validityPeriod: '14 days',
       paymentTerms: '50% upfront',
       owner: 'ci',
-      status: 'Approved',
+      status: 'Draft',
       notes: 'Workflow integration test',
       createdDate: now.slice(0, 10),
       items: [{
@@ -118,6 +118,9 @@ test('PostgreSQL commercial workflow converts proposal to invoice and returns th
       createdAt: now,
       updatedAt: now
     });
+
+    const approved = await proposalRepository.approve(proposalId);
+    assert.equal(approved?.status, 'Approved');
 
     const responseInvoice = await proposalRepository.convertToInvoice(proposalId);
     assert.ok(responseInvoice);
