@@ -14,8 +14,13 @@ test('authentication audit events use PostgreSQL audit storage in PostgreSQL mod
     'shared audit writer must exist'
   );
   assert.ok(
-    source.includes("if (getDataSourceMode() === 'postgres') {\n    await postgresAuditLogRepository.append({"),
+    source.includes("if (getDataSourceMode() === 'postgres')") &&
+    source.includes("await postgresAuditLogRepository.append({"),
     'shared audit writer must append to PostgreSQL in PostgreSQL mode'
+  );
+  assert.ok(
+    source.includes("[Audit] PostgreSQL audit append failed:"),
+    'audit persistence failures must not break authentication responses'
   );
 
   for (const action of [
