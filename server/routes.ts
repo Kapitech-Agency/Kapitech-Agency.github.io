@@ -2011,7 +2011,7 @@ apiRouter.put('/finance/invoices/:id', requireAuth, requirePermission('canManage
       res.json({ success: true, invoice: saved }); return;
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Invoice could not be updated.';
-      res.status(message.includes('modified') || message.includes('Cancelled') || message.includes('PAID_INVOICE_LINKAGE_IMMUTABLE') || message.includes('PAID_INVOICE_TOTAL_IMMUTABLE') ? 409 : 400).json({ success: false, error: message }); return;
+      res.status(message.includes('modified') || message.includes('Cancelled') || message.includes('PAID_INVOICE_LINKAGE_IMMUTABLE') || message.includes('PAID_INVOICE_TOTAL_IMMUTABLE') || message.includes('PAID_INVOICE_ITEMS_IMMUTABLE') || message.includes('PAID_INVOICE_FINANCIAL_FIELDS_IMMUTABLE') ? 409 : 400).json({ success: false, error: message }); return;
     }
   }
 
@@ -3393,7 +3393,16 @@ apiRouter.delete('/crm/proposals/:id', requireAuth, requirePermission('canManage
   if (getDataSourceMode() === 'postgres') {
     const existing = await postgresProposalRepository.findById(id);
     if (!existing) { res.status(404).json({ success: false, error: 'Proposal not found.' }); return; }
-    const deleted = await postgresProposalRepository.delete(id);
+    let deleted: boolean;
+    try {
+      deleted = await postgresProposalRepository.delete(id);
+    } catch (error) {
+      if (error instanceof Error && error.message === 'PROPOSAL_DELETE_RESTRICTED') {
+        res.status(409).json({ success: false, error: 'Only Draft proposals can be deleted.' });
+        return;
+      }
+      throw error;
+    }
     if (!deleted) { res.status(404).json({ success: false, error: 'Proposal not found.' }); return; }
     recordAuditLog({
       action: 'PROPOSAL_DELETED',
@@ -3554,7 +3563,12 @@ apiRouter.post('/projects/timelogs', requireAuth, requireAnyPermission('canManag
 apiRouter.delete('/projects/timelogs/:id', requireAuth, requireAnyPermission('canManageKanbanTasks', 'canManageProjects'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
   if (getDataSourceMode() === 'postgres') {
-    const deleted = await postgresTimeLogRepository.delete(id);
+    let deleted: boolean;
+    try {
+      deleted = await postgresTimeLogRepository.delete(id);
+    } catch (error) {
+      throw error;
+    }
     if (!deleted) { res.status(404).json({ success: false, error: 'Time entry not found.' }); return; }
     recordAuditLog({ action: 'TIMELOG_DELETED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Deleted time entry ${id}.`, severity: 'warning' });
     res.json({ success: true, message: 'Time entry deleted.' }); return;
