@@ -4,10 +4,9 @@
  * expenses, and financial KPI metrics calculation.
  */
 
-import { getAgencyClients, saveAgencyClient } from './clientStore';
 import { api } from './apiClient';
 
-export type InvoiceStatus = 'draft' | 'sent' | 'approved' | 'partially_paid' | 'paid' | 'overdue';
+export type InvoiceStatus = 'draft' | 'sent' | 'partially_paid' | 'paid' | 'overdue';
 
 export interface InvoiceLineItem {
   id: string;
@@ -217,7 +216,7 @@ export const INITIAL_DEFAULT_INVOICES: AgencyInvoice[] = [
     taxAmount: 23100000,
     total: 233100000,
     currency: 'IDR',
-    status: 'approved',
+    status: 'sent',
     issueDate: '2026-09-02',
     dueDate: '2026-09-20',
     approvedDate: '2026-09-04',
@@ -411,43 +410,21 @@ export const updateInvoiceStatus = async (id: string, status: InvoiceStatus, act
   if (!inv) return;
 
   const now = new Date().toISOString();
-  const auditTrail = inv.auditTrail || [];
-  auditTrail.push({
+  const auditTrail = [...(inv.auditTrail || []), {
     action: `Status marked as ${status.toUpperCase()}`,
     timestamp: now,
     user: actor
-  });
+  }];
 
   const updated: AgencyInvoice = {
     ...inv,
     status,
-    approvedDate: status === 'approved' ? now.split('T')[0] : inv.approvedDate,
     paidDate: status === 'paid' ? now.split('T')[0] : inv.paidDate,
     auditTrail,
     updatedAt: now
   };
 
   await saveAgencyInvoice(updated);
-
-  // Sync client total spend if transition to paid
-  if (status === 'paid' && inv.status !== 'paid') {
-    try {
-      const clients = getAgencyClients();
-      const matchedClient = clients.find(c => 
-        (inv.clientEmail && c.email.toLowerCase() === inv.clientEmail.toLowerCase()) ||
-        (inv.clientCompany && c.company.toLowerCase() === inv.clientCompany.toLowerCase())
-      );
-      if (matchedClient) {
-        saveAgencyClient({
-          ...matchedClient,
-          totalSpend: (matchedClient.totalSpend || 0) + inv.total,
-          updatedAt: now
-        });
-      }
-    } catch (e) {
-      console.debug('Failed to sync client spend:', e);
-    }
-  }
 };
 
 export const recordInvoicePayment = async (
@@ -481,51 +458,7 @@ export const recordInvoicePayment = async (
   invoiceCache = current.map((item) => item.id === serverInvoice.id ? serverInvoice : item);
   window.dispatchEvent(new CustomEvent(FINANCE_EVENT_NAME, { detail: invoiceCache }));
 
-  if (serverInvoice.status === 'paid' && inv.status !== 'paid') {
-    try {
-      const clients = getAgencyClients();
-      const matchedClient = clients.find(c =>
-        (inv.clientEmail && c.email.toLowerCase() === inv.clientEmail.toLowerCase()) ||
-        (inv.clientCompany && c.company.toLowerCase() === inv.clientCompany.toLowerCase())
-      );
-      if (matchedClient) {
-        await saveAgencyClient({
-          ...matchedClient,
-          totalSpend: (matchedClient.totalSpend || 0) + payment.amount,
-          updatedAt: new Date().toISOString()
-        });
-      }
-    } catch (e) {
-      console.debug('Failed to sync client spend:', e);
-    }
-  }
-
   return serverInvoice;
-};
-
-export const approveInvoice = async (id: string, approverName: string = 'Executive Sponsor', note?: string): Promise<void> => {
-  const current = getAgencyInvoices();
-  const inv = current.find(i => i.id === id);
-  if (!inv) return;
-
-  const now = new Date().toISOString();
-  const auditTrail = inv.auditTrail || [];
-  auditTrail.push({
-    action: 'Executive e-Sign & Approved',
-    timestamp: now,
-    user: approverName,
-    note
-  });
-
-  const updated: AgencyInvoice = {
-    ...inv,
-    status: 'approved',
-    approvedDate: now.split('T')[0],
-    auditTrail,
-    updatedAt: now
-  };
-
-  await saveAgencyInvoice(updated);
 };
 
 export const getAgencyExpenses = (): AgencyExpense[] => {
@@ -676,7 +609,7 @@ export interface ArAgingSummary {
 }
 
 export const getAccountsReceivableAging = (invoices: AgencyInvoice[]): ArAgingSummary => {
-  const pending = invoices.filter(i => i.status === 'sent' || i.status === 'approved' || i.status === 'overdue' || i.status === 'partially_paid');
+  const pending = invoices.filter(i => i.status === 'sent' || i.status === 'overdue' || i.status === 'partially_paid');
   const now = new Date().getTime();
 
   let current = 0;
@@ -714,7 +647,6 @@ export const getAccountsReceivableAging = (invoices: AgencyInvoice[]): ArAgingSu
 export const computeFinancialMetrics = (invoices: AgencyInvoice[], expenses: AgencyExpense[]) => {
   const paidInvoices = invoices.filter(i => i.status === 'paid');
   const partiallyPaidInvoices = invoices.filter(i => i.status === 'partially_paid');
-  const approvedInvoices = invoices.filter(i => i.status === 'approved');
   const sentInvoices = invoices.filter(i => i.status === 'sent');
   const overdueInvoices = invoices.filter(i => i.status === 'overdue');
 
@@ -724,12 +656,11 @@ export const computeFinancialMetrics = (invoices: AgencyInvoice[], expenses: Age
       : (Number(invoice.amountPaid) || 0)), 0
   );
 
-  const totalApproved = approvedInvoices.reduce((sum, i) => sum + (i.balanceDue !== undefined ? i.balanceDue : i.total), 0);
   const totalSent = sentInvoices.reduce((sum, i) => sum + (i.balanceDue !== undefined ? i.balanceDue : i.total), 0);
   const partialBalance = partiallyPaidInvoices.reduce((sum, i) => sum + (i.balanceDue !== undefined ? i.balanceDue : (i.total - (i.amountPaid || 0))), 0);
   const totalOverdue = overdueInvoices.reduce((sum, i) => sum + (i.balanceDue !== undefined ? i.balanceDue : i.total), 0);
 
-  const totalOutstanding = totalSent + totalApproved + totalOverdue + partialBalance;
+  const totalOutstanding = totalSent + totalOverdue + partialBalance;
 
   const opExExpenses = expenses.filter(e => e.type !== 'CapEx').reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
   const capExExpenses = expenses.filter(e => e.type === 'CapEx').reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
@@ -751,11 +682,9 @@ export const computeFinancialMetrics = (invoices: AgencyInvoice[], expenses: Age
     totalInvoicesCount: invoices.length,
     paidCount: paidInvoices.length,
     partiallyPaidCount: partiallyPaidInvoices.length,
-    approvedCount: approvedInvoices.length,
     sentCount: sentInvoices.length,
     overdueCount: overdueInvoices.length,
     totalPaidRevenue,
-    totalApproved,
     totalOutstanding,
     totalOverdue,
     totalExpenses,
