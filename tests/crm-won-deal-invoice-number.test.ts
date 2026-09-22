@@ -15,3 +15,15 @@ test('CRM won-deal conversion serializes and checks generated invoice numbers', 
   assert.ok(route.includes("if (existingNumber.rowCount === 0) {"));
   assert.ok(route.includes("throw new Error('INVOICE_NUMBER_GENERATION_FAILED')"));
 });
+
+test('CRM won-deal replay requires exactly one conversion task and tags new tasks to the deal', () => {
+  const source = fs.readFileSync('server/postgres-crm-deal-repository.ts', 'utf8');
+  const start = source.indexOf('async convertWonDeal(');
+  assert.ok(start >= 0);
+  const route = source.slice(start, start + 16000);
+
+  assert.ok(route.includes("metadata->>'crmDealId'=$2"));
+  assert.ok(route.includes("throw new Error('MULTIPLE_TASKS_FOR_DEAL')"));
+  assert.ok(route.includes("throw new Error('INCOMPLETE_DEAL_CONVERSION')"));
+  assert.ok(route.includes('crmDealId: deal.id'));
+});
