@@ -35,3 +35,13 @@ test('financial parity participates in the reconciliation pass/fail gate', async
   const source = await fs.readFile(path.join(root, 'scripts/postgres-reconcile.ts'), 'utf8');
   assert.match(source, /const reconciliationPass = checks\.countParity && checks\.financialParity/);
 });
+
+
+test('reconciliation gates client total spend against persisted invoice payments', async () => {
+  const source = await fs.readFile(path.join(root, 'scripts/postgres-reconcile.ts'), 'utf8');
+  assert.match(source, /function pgClientSpendParity/);
+  assert.match(source, /metadata->>'totalSpend'/);
+  assert.match(source, /SUM\(ip\.amount\)/);
+  assert.match(source, /clientSpendParity/);
+  assert.match(source, /clientSpendParity\.valid/);
+});
