@@ -106,3 +106,12 @@ test('Invoice route preserves cent precision and scopes JSON reference lookups',
   const postgresCreate = block.indexOf("if (getDataSourceMode() === 'postgres')");
   assert.ok(postgresCreate > projectLookup);
 });
+
+
+test('Financial line-item integrity validates both parents when a line is moved', () => {
+  const migration = fs.readFileSync('db/postgres/032_financial_line_parent_move_integrity.sql', 'utf8');
+  assert.match(migration, /OLD\.proposal_id IS DISTINCT FROM NEW\.proposal_id/);
+  assert.match(migration, /OLD\.invoice_id IS DISTINCT FROM NEW\.invoice_id/);
+  assert.match(migration, /CREATE OR REPLACE FUNCTION enforce_proposal_line_totals_v1/);
+  assert.match(migration, /CREATE OR REPLACE FUNCTION enforce_invoice_line_totals_v1/);
+});
