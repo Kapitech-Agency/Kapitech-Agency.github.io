@@ -1,4 +1,5 @@
 import { getPostgresPool, withPostgresTransaction } from './postgres.ts';
+import { postgresAuditLogRepository, type AuditEntry } from './postgres-audit-log-repository.ts';
 
 type Row = Record<string, any>;
 const iso=(v:any)=>!v?'':v instanceof Date?v.toISOString():String(v);
@@ -19,7 +20,7 @@ export class ExpenseProjectNotFoundError extends Error{readonly code='EXPENSE_PR
 export class PostgresExpenseRepository{
   async list(){const r=await getPostgresPool().query<Row>('SELECT * FROM expenses WHERE archived_at IS NULL AND status <> $1 ORDER BY expense_date DESC, created_at DESC',['voided']);return r.rows.map(mapExpense);}
   async findById(id:string){const r=await getPostgresPool().query<Row>('SELECT * FROM expenses WHERE id=$1 LIMIT 1',[id]);return r.rows[0]?mapExpense(r.rows[0]):null;}
-  async create(input:Record<string,any>){
+  async create(input:Record<string,any>, audit?: AuditEntry){
     const userId=String(input.recordedByUserId||''), amount=Number(input.amount), currency=String(input.currency||'IDR').toUpperCase();
     const expenseDate=String(input.date||input.expenseDate||'').slice(0,10), projectId=input.projectId?String(input.projectId):null;
     const idempotencyKey=input.idempotencyKey?String(input.idempotencyKey).slice(0,100):null;
@@ -30,15 +31,18 @@ export class PostgresExpenseRepository{
       const metadata={...(input.metadata&&typeof input.metadata==='object'?input.metadata:{}),recurringInterval:input.recurringInterval??'none'};
       const result=await client.query<Row>('INSERT INTO expenses (id,type,category,description,amount,currency,expense_date,recurring_interval,project_id,recorded_by_user_id,recorded_by,status,version,idempotency_key,metadata,created_at) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,1,$13,$14,NOW()) RETURNING *',
         [String(input.id),String(input.type||'OpEx'),String(input.category||'General'),String(input.description||''),Math.round(amount*100)/100,currency,expenseDate,String(input.recurringInterval||'none'),projectId,userId,String(input.recordedBy||''),'posted',idempotencyKey,JSON.stringify(metadata)]);
+      if (audit) await postgresAuditLogRepository.appendWithinTransaction(client, audit);
       return mapExpense(result.rows[0]);
     });
   }
-  async void(id:string,expectedVersion?:number){
+  async void(id:string,expectedVersion?:number,audit?: AuditEntry){
     return withPostgresTransaction(async client=>{
       const current=await client.query<Row>('SELECT * FROM expenses WHERE id=$1 FOR UPDATE',[id]);if(!current.rows[0])throw new ExpenseNotFoundError('Expense not found.');
       const row=current.rows[0];if(row.status==='voided'||row.archived_at)throw new ExpenseImmutableError('Expense is already voided.');
       if(expectedVersion!=null&&Number(row.version)!==Number(expectedVersion))throw new ExpenseVersionConflictError('Expense was modified by another user.');
-      const result=await client.query<Row>('UPDATE expenses SET status=$2,archived_at=NOW(),version=version+1 WHERE id=$1 RETURNING *',[id,'voided']);return mapExpense(result.rows[0]);
+      const result=await client.query<Row>('UPDATE expenses SET status=$2,archived_at=NOW(),version=version+1 WHERE id=$1 RETURNING *',[id,'voided']);
+      if (audit) await postgresAuditLogRepository.appendWithinTransaction(client, audit);
+      return mapExpense(result.rows[0]);
     });
   }
 }
