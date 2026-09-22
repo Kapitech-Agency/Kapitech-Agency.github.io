@@ -10,5 +10,5 @@ test('invoice payment idempotency serializes concurrent retries inside the trans
   const block = source.slice(start, end);
   assert.match(block, /pg_advisory_xact_lock\(hashtextextended\(\$1, 9127341\)\)/);
   assert.match(block, /invoice-payment:\$\{id\}:\$\{String\(payment\.idempotencyKey\)\}/);
-  assert.match(block, /SELECT id FROM invoice_payments/);
+  assert.match(block, /SELECT id,amount,method,paid_at,reference,metadata FROM invoice_payments/);
 });
