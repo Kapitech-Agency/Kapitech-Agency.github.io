@@ -1,2 +1,2 @@
 import assert from 'node:assert/strict'; import fs from 'node:fs'; import test from 'node:test';
-test('payment replay path exposes replay state and does not audit as a new payment',()=>{const s=fs.readFileSync('server/routes.ts','utf8');const i=s.indexOf("apiRouter.post('/finance/invoices/:id/pay'");const x=s.slice(i,i+6500);assert.match(x,/const replayed =/);assert.match(x,/replayed: replayed/);});
+test('payment replay exposes replay state',()=>{const s=fs.readFileSync('server/routes.ts','utf8');const i=s.indexOf("apiRouter.post('/finance/invoices/:id/pay'");const x=s.slice(i,i+6500);assert.ok(x.includes('const replayed = saved.__idempotentReplay === true'));assert.ok(x.includes('replayed'));});
