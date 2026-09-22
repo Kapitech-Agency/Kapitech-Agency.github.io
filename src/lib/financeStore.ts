@@ -436,6 +436,7 @@ export const recordInvoicePayment = async (
     reference?: string;
     recordedBy?: string;
     notes?: string;
+    idempotencyKey?: string;
   }
 ): Promise<AgencyInvoice | null> => {
   const current = getAgencyInvoices();
@@ -447,7 +448,8 @@ export const recordInvoicePayment = async (
     date: payment.date,
     method: payment.method,
     reference: payment.reference,
-    notes: payment.notes
+    notes: payment.notes,
+    idempotencyKey: payment.idempotencyKey || `payment-${invoiceId}-${payment.reference || 'manual'}`
   });
 
   if (!result.success || !result.data?.invoice) {
