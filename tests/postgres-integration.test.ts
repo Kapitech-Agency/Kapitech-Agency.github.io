@@ -289,6 +289,17 @@ test('PostgreSQL delivery workflow preserves client relation across project, tas
     );
     assert.equal(persistedTask.rows[0]?.assignee_user_id, assigneeUserId);
 
+    const updatedProject = await projectRepository.update(projectId, {
+      updatedAt: foundProject!.updatedAt,
+      tasks: [{ ...foundProject!.tasks[0], title: 'Updated landing page', assignedTo: assigneeUsername }]
+    });
+    assert.equal(updatedProject?.tasks[0]?.title, 'Updated landing page');
+    const persistedUpdatedTask = await getPostgresPool().query(
+      'SELECT assignee_user_id FROM tasks WHERE id = $1',
+      [taskId]
+    );
+    assert.equal(persistedUpdatedTask.rows[0]?.assignee_user_id, assigneeUserId);
+
     const directTask = await taskRepository.create({
       id: directTaskId,
       projectId,
