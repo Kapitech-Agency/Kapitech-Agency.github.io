@@ -30,9 +30,7 @@ export class PostgresNotificationSettingsRepository {
          FROM notification_settings
         WHERE id = 1`
     );
-    if (audit) await postgresAuditLogRepository.appendWithinTransaction(client, audit);
     return mapNotificationSettings(rows[0]);
-    });
   }
 
   async update(input: {
@@ -43,21 +41,23 @@ export class PostgresNotificationSettingsRepository {
     isTelegramActive: boolean;
   }, audit?: AuditEntry): Promise<NotificationSettings> {
     return withPostgresTransaction(async client => {
-    const { rows } = await client.query(
-      `INSERT INTO notification_settings
-        (id, target_email, formspree_endpoint, telegram_chat_id, is_email_active, is_telegram_active, updated_at)
-       VALUES (1, $1, $2, $3, $4, $5, NOW())
-       ON CONFLICT (id) DO UPDATE SET
-         target_email = EXCLUDED.target_email,
-         formspree_endpoint = EXCLUDED.formspree_endpoint,
-         telegram_chat_id = EXCLUDED.telegram_chat_id,
-         is_email_active = EXCLUDED.is_email_active,
-         is_telegram_active = EXCLUDED.is_telegram_active,
-         updated_at = NOW()
-       RETURNING target_email, formspree_endpoint, telegram_chat_id, is_email_active, is_telegram_active, updated_at`,
-      [input.targetEmail, input.formspreeEndpoint, input.telegramChatId, input.isEmailActive, input.isTelegramActive]
-    );
-    return mapNotificationSettings(rows[0]);
+      const { rows } = await client.query(
+        `INSERT INTO notification_settings
+          (id, target_email, formspree_endpoint, telegram_chat_id, is_email_active, is_telegram_active, updated_at)
+         VALUES (1, $1, $2, $3, $4, $5, NOW())
+         ON CONFLICT (id) DO UPDATE SET
+           target_email = EXCLUDED.target_email,
+           formspree_endpoint = EXCLUDED.formspree_endpoint,
+           telegram_chat_id = EXCLUDED.telegram_chat_id,
+           is_email_active = EXCLUDED.is_email_active,
+           is_telegram_active = EXCLUDED.is_telegram_active,
+           updated_at = NOW()
+         RETURNING target_email, formspree_endpoint, telegram_chat_id, is_email_active, is_telegram_active, updated_at`,
+        [input.targetEmail, input.formspreeEndpoint, input.telegramChatId, input.isEmailActive, input.isTelegramActive]
+      );
+      if (audit) await postgresAuditLogRepository.appendWithinTransaction(client, audit);
+      return mapNotificationSettings(rows[0]);
+    });
   }
 }
 
