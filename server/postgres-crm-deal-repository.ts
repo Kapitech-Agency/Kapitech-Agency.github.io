@@ -170,13 +170,9 @@ export class PostgresCrmDealRepository {
           throw new Error('INCOMPLETE_DEAL_CONVERSION');
         }
 
-        if (project.client_id && String(project.client_id) !== String(clientId)) {
+        if (!project.client_id) {
           await db.query('UPDATE projects SET client_id=$2, updated_at=NOW() WHERE id=$1', [project.id, clientId]);
         } else if (String(project.client_id) !== String(clientId)) {
-          throw new Error('DEAL_PROJECT_CLIENT_MISMATCH');
-        }
-
-        if (String(project.client_id || clientId) !== String(clientId)) {
           throw new Error('DEAL_PROJECT_CLIENT_MISMATCH');
         }
 
