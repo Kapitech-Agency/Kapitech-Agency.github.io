@@ -251,7 +251,7 @@ export const AdminProjects: React.FC = () => {
 
   const handleAddTask = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!canManageProjects || !selectedProject || !taskTitle.trim()) return;
+    if (!canManageKanbanTasks || !selectedProject || !taskTitle.trim()) return;
 
     const subtasksList: TaskSubtask[] = initialSubtasksInput
       .split('\n')
@@ -295,7 +295,7 @@ export const AdminProjects: React.FC = () => {
   };
 
   const handleDeleteTask = async (taskId: string) => {
-    if (!canManageProjects || !selectedProject) return;
+    if (!canManageKanbanTasks || !selectedProject) return;
     const updatedTasks = selectedProject.tasks.filter(t => t.id !== taskId);
     try {
       await saveAgencyProject({
@@ -315,7 +315,7 @@ export const AdminProjects: React.FC = () => {
 
   const handleToggleSubtask = async (taskId: string, subtaskId: string, e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
-    if (!canManageProjects || !selectedProject) return;
+    if (!canManageKanbanTasks || !selectedProject) return;
 
     const updatedTasks = selectedProject.tasks.map(t => {
       if (t.id === taskId && t.subtasks) {
@@ -338,7 +338,7 @@ export const AdminProjects: React.FC = () => {
 
   const handleAddSubtaskInDrawer = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!canManageProjects) return;
+    if (!canManageKanbanTasks) return;
     if (!selectedProject || !activeTaskDrawer || !newSubtaskTitle.trim()) return;
 
     const newSub: TaskSubtask = {
@@ -368,7 +368,7 @@ export const AdminProjects: React.FC = () => {
   };
 
   const handleDeleteSubtaskInDrawer = async (subtaskId: string) => {
-    if (!selectedProject || !activeTaskDrawer) return;
+    if (!canManageKanbanTasks || !selectedProject || !activeTaskDrawer) return;
     const updatedTasks = selectedProject.tasks.map(t => {
       if (t.id === activeTaskDrawer.id && t.subtasks) {
         return { ...t, subtasks: t.subtasks.filter(st => st.id !== subtaskId) };
@@ -429,7 +429,7 @@ export const AdminProjects: React.FC = () => {
 
   const handleDropOnColumn = async (e: React.DragEvent, columnId: TaskStatus) => {
     e.preventDefault();
-    if (!canManageProjects) return;
+    if (!canManageKanbanTasks) return;
     const taskId = e.dataTransfer.getData('text/plain') || draggedTaskId;
     if (taskId && selectedProject) {
       try {
@@ -765,7 +765,7 @@ export const AdminProjects: React.FC = () => {
                 />
               </div>
 
-              {canManageProjects && (
+              {canManageKanbanTasks && (
                 <button
                   onClick={() => setIsTaskModalOpen(true)}
                 className="h-10 px-4 rounded-xl bg-[#E50914] hover:bg-[#FF1E27] text-white text-xs font-mono font-bold transition-all flex items-center justify-center gap-2 shadow-md shrink-0 min-h-[40px]"
@@ -836,8 +836,8 @@ export const AdminProjects: React.FC = () => {
                         return (
                           <div
                             key={task.id}
-                            draggable={canManageProjects}
-                            onDragStart={(e) => { if (canManageProjects) handleDragStart(e, task.id); }}
+                            draggable={canManageKanbanTasks}
+                            onDragStart={(e) => { if (canManageKanbanTasks) handleDragStart(e, task.id); }}
                             onClick={() => setActiveTaskDrawer(task)}
                             className={`draggable-card task-card bg-[#181B22] border hover:border-[#E50914]/60 p-3.5 rounded-xl space-y-2.5 shadow-md transition-all cursor-pointer group relative select-none ${
                               isDragging ? 'opacity-40 scale-95 border-[#E50914] border-dashed' : 'border-[rgba(255,255,255,0.07)]'
@@ -850,7 +850,7 @@ export const AdminProjects: React.FC = () => {
                                 {getPriorityBadge(task.priority)}
                               </div>
 
-                              {canManageProjects && (
+                              {canManageKanbanTasks && (
                                 <button
                                   onClick={(e) => {
                                     e.stopPropagation();
@@ -968,9 +968,9 @@ export const AdminProjects: React.FC = () => {
                   {TASK_COLUMNS.map((col) => (
                     <button
                       key={col.id}
-                      disabled={!canManageProjects}
+                      disabled={!canManageKanbanTasks}
                       onClick={async () => {
-                        if (!canManageProjects) return;
+                        if (!canManageKanbanTasks) return;
                         try {
                           await updateTaskStatus(selectedProject.id, activeTaskDrawer.id, col.id);
                           showToast(`Moved to ${col.label}`);
@@ -1033,7 +1033,7 @@ export const AdminProjects: React.FC = () => {
                       className="flex items-center justify-between p-2.5 rounded-xl bg-[#181B22] border border-[rgba(255,255,255,0.07)] hover:border-[#383C46] transition-colors"
                     >
                       <button
-                        disabled={!canManageProjects}
+                        disabled={!canManageKanbanTasks}
                       onClick={() => handleToggleSubtask(activeTaskDrawer.id, st.id)}
                         className="flex items-center gap-2.5 text-left min-w-0 flex-1 cursor-pointer"
                       >
@@ -1046,7 +1046,7 @@ export const AdminProjects: React.FC = () => {
                           {st.title}
                         </span>
                       </button>
-                      {canManageProjects && (
+                      {canManageKanbanTasks && (
                         <button
                           onClick={() => handleDeleteSubtaskInDrawer(st.id)}
                           className="text-[#64748B] hover:text-rose-400 p-1"
@@ -1062,14 +1062,14 @@ export const AdminProjects: React.FC = () => {
                     <input
                       type="text"
                       value={newSubtaskTitle}
-                      disabled={!canManageProjects}
+                      disabled={!canManageKanbanTasks}
                       onChange={(e) => setNewSubtaskTitle(e.target.value)}
                       placeholder="Add subtask item and press enter..."
                       className="flex-1 px-3 py-2 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-xs text-white focus:outline-none focus:border-[#E50914] font-mono"
                     />
                     <button
                       type="submit"
-                      disabled={!canManageProjects || !newSubtaskTitle.trim()}
+                      disabled={!canManageKanbanTasks || !newSubtaskTitle.trim()}
                       className="px-3 py-2 rounded-xl bg-[#E50914] text-white text-xs font-bold disabled:opacity-50"
                     >
                       <Plus size={14} />
@@ -1081,7 +1081,7 @@ export const AdminProjects: React.FC = () => {
 
             {/* Sticky Drawer Footer */}
             <div className="sticky bottom-0 z-20 bg-[#111318]/95 backdrop-blur-md px-5 sm:px-6 py-3.5 border-t border-[rgba(255,255,255,0.07)] flex items-center justify-between shrink-0">
-              {canManageProjects && (
+              {canManageKanbanTasks && (
                 <button
                   onClick={() => handleDeleteTask(activeTaskDrawer.id)}
                   className="h-10 px-3 min-h-[40px] rounded-xl bg-red-950/40 text-red-300 border border-red-500/30 hover:bg-red-950/60 transition-colors flex items-center gap-1.5"
