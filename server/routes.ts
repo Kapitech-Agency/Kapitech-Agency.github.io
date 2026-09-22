@@ -2008,7 +2008,7 @@ function normalizeInvoiceItems(value: unknown): Array<{ id: string; description:
     };
   }).filter(item => item.description && item.quantity > 0 && item.unitPrice >= 0).map(item => ({
     ...item,
-    amount: Math.round(item.quantity * item.unitPrice)
+    amount: Math.round(item.quantity * item.unitPrice * 100) / 100
   }));
 }
 
@@ -2049,11 +2049,11 @@ function taskMutationFingerprint(value: unknown): string {
 }
 
 function buildInvoiceFinancials(items: ReturnType<typeof normalizeInvoiceItems>, taxPercent: number, discountPercent: number) {
-  const subtotal = items.reduce((sum, item) => sum + item.amount, 0);
-  const discountAmount = Math.round(subtotal * (discountPercent / 100));
-  const taxableSubtotal = Math.max(0, subtotal - discountAmount);
-  const taxAmount = Math.round(taxableSubtotal * (taxPercent / 100));
-  const total = taxableSubtotal + taxAmount;
+  const subtotal = Math.round(items.reduce((sum, item) => sum + item.amount, 0) * 100) / 100;
+  const discountAmount = Math.round(subtotal * (discountPercent / 100) * 100) / 100;
+  const taxableSubtotal = Math.round(Math.max(0, subtotal - discountAmount) * 100) / 100;
+  const taxAmount = Math.round(taxableSubtotal * (taxPercent / 100) * 100) / 100;
+  const total = Math.round((taxableSubtotal + taxAmount) * 100) / 100;
   return { subtotal, discountAmount, taxableSubtotal, taxAmount, total };
 }
 
@@ -2087,17 +2087,19 @@ apiRouter.post('/finance/invoices', requireAuth, requirePermission('canManageInv
   const status = INVOICE_STATUSES.has(requestedStatus) ? requestedStatus : 'draft';
   let resolvedClientId = String(input.clientId || '').slice(0, 100) || '';
   const requestedProjectId = String(input.projectId || '').slice(0, 100);
-  if (requestedProjectId) {
-    const project = (db?.projects || []).find((item: any) => String(item.id) === requestedProjectId);
-    if (!project) { res.status(404).json({ success: false, error: 'Project not found.' }); return; }
-    const projectClientId = String(project.clientId || '').trim();
-    if (resolvedClientId && projectClientId && resolvedClientId !== projectClientId) {
-      res.status(409).json({ success: false, error: 'Project does not belong to the selected client.' }); return;
+  if (getDataSourceMode() === 'json') {
+    if (requestedProjectId) {
+      const project = (db?.projects || []).find((item: any) => String(item.id) === requestedProjectId);
+      if (!project) { res.status(404).json({ success: false, error: 'Project not found.' }); return; }
+      const projectClientId = String(project.clientId || '').trim();
+      if (resolvedClientId && projectClientId && resolvedClientId !== projectClientId) {
+        res.status(409).json({ success: false, error: 'Project does not belong to the selected client.' }); return;
+      }
+      if (!resolvedClientId && projectClientId) resolvedClientId = projectClientId;
     }
-    if (!resolvedClientId && projectClientId) resolvedClientId = projectClientId;
-  }
-  if (resolvedClientId && !(db?.clients || []).some((item: any) => String(item.id) === resolvedClientId)) {
-    res.status(404).json({ success: false, error: 'Client not found.' }); return;
+    if (resolvedClientId && !(db?.clients || []).some((item: any) => String(item.id) === resolvedClientId)) {
+      res.status(404).json({ success: false, error: 'Client not found.' }); return;
+    }
   }
   const invoice = {
     id: `inv_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
