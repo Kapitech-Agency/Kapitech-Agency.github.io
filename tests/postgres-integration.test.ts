@@ -461,3 +461,133 @@ test('PostgreSQL CRM workflow converts a lead into a linked client and deal usin
     await closePostgresPool();
   }
 });
+
+
+test('PostgreSQL won-deal conversion atomically creates linked client, project, invoice, and task', async t => {
+  if (!configured) { t.skip('KAPITECH_POSTGRES_URL is not configured'); return; }
+
+  const { PostgresCrmDealRepository } = await import('../server/postgres-crm-deal-repository.ts');
+  const { PostgresAuthRepository } = await import('../server/postgres-repository.ts');
+  const dealRepository = new PostgresCrmDealRepository();
+  const authRepository = new PostgresAuthRepository();
+  const suffix = Date.now() + '-' + Math.random().toString(16).slice(2);
+  const dealId = 'ci-won-deal-' + suffix;
+  const actorId = 'ci-won-actor-' + suffix;
+  const actorUsername = 'ci-won-actor-' + suffix;
+  const now = new Date().toISOString();
+  let clientId: string | undefined;
+  let projectId: string | undefined;
+  let invoiceId: string | undefined;
+  let taskId: string | undefined;
+
+  try {
+    await authRepository.createUser({
+      id: actorId,
+      name: 'CI Won Deal Actor',
+      username: actorUsername,
+      email: actorUsername + '@example.test',
+      passwordHash: 'ci-test',
+      salt: 'ci-test',
+      passwordAlgorithm: 'scrypt-v1',
+      role: 'Tier 3: Operational Staff',
+      stakeholderType: 'Operations',
+      permissions: {
+        canViewFinancials: false,
+        canManageInvoices: true,
+        canApproveBudgets: false,
+        canManageCrm: true,
+        canManageProjects: true,
+        canManageKanbanTasks: true,
+        canManageClients: true,
+        canManageVendors: false,
+        canManageCmsContent: false,
+        canAccessServerAndApi: false,
+        canRunDataMigration: false,
+        canViewSecurityAuditLogs: false,
+        canManageAdminAccounts: false
+      },
+      mfaEnabled: false,
+      mfaSecret: null,
+      mfaPendingSecret: null,
+      mfaRecoveryCodeHashes: [],
+      division: 'Operations',
+      status: 'active',
+      lastLogin: '',
+      createdAt: now
+    });
+
+    await dealRepository.create({
+      id: dealId,
+      title: 'CI Won Deal Conversion',
+      clientName: 'CI Won Client',
+      company: 'CI Won Company',
+      email: actorUsername + '-client@example.test',
+      phone: '',
+      servicePillar: 'Website Development',
+      value: 10_000_000,
+      stage: 'won',
+      priority: 'high',
+      probability: 1,
+      owner: actorUsername,
+      expectedCloseDate: now.slice(0, 10),
+      notes: 'Atomic conversion integration test',
+      createdAt: now,
+      updatedAt: now
+    });
+
+    const result = await dealRepository.convertWonDeal(
+      dealId,
+      { userId: actorId, username: actorUsername },
+      undefined
+    );
+
+    assert.equal(result.replayed, false);
+    clientId = String(result.client.id);
+    projectId = String(result.project.id);
+    invoiceId = String(result.invoice.id);
+
+    const persisted = await getPostgresPool().query(
+      'SELECT d.client_id AS deal_client_id, p.client_id AS project_client_id, i.client_id AS invoice_client_id, i.project_id AS invoice_project_id, (SELECT COUNT(*) FROM invoice_items WHERE invoice_id=i.id) AS invoice_item_count, (SELECT COUNT(*) FROM tasks WHERE project_id=p.id) AS task_count FROM crm_deals d JOIN projects p ON p.client_id=d.client_id AND p.metadata->>\'crmDealId\'=d.id JOIN invoices i ON i.client_id=p.client_id AND i.project_id=p.id AND i.metadata->>\'crmDealId\'=d.id WHERE d.id=$1',
+      [dealId]
+    );
+
+    assert.equal(persisted.rows.length, 1);
+    assert.equal(persisted.rows[0].deal_client_id, clientId);
+    assert.equal(persisted.rows[0].project_client_id, clientId);
+    assert.equal(persisted.rows[0].invoice_client_id, clientId);
+    assert.equal(persisted.rows[0].invoice_project_id, projectId);
+    assert.equal(Number(persisted.rows[0].invoice_item_count), 1);
+    assert.equal(Number(persisted.rows[0].task_count), 1);
+
+    const task = await getPostgresPool().query(
+      'SELECT id, assignee_user_id FROM tasks WHERE project_id=$1 LIMIT 1',
+      [projectId]
+    );
+    assert.equal(task.rows.length, 1);
+    taskId = String(task.rows[0].id);
+    assert.equal(task.rows[0].assignee_user_id, actorId);
+
+    const replay = await dealRepository.convertWonDeal(
+      dealId,
+      { userId: actorId, username: actorUsername },
+      undefined
+    );
+    assert.equal(replay.replayed, true);
+    assert.equal(String(replay.client.id), clientId);
+    assert.equal(String(replay.project.id), projectId);
+    assert.equal(String(replay.invoice.id), invoiceId);
+  } finally {
+    const db = getPostgresPool();
+    if (invoiceId) {
+      await db.query('DELETE FROM invoice_payments WHERE invoice_id=$1', [invoiceId]);
+      await db.query('DELETE FROM invoice_items WHERE invoice_id=$1', [invoiceId]);
+      await db.query('DELETE FROM invoices WHERE id=$1', [invoiceId]);
+    }
+    if (taskId) await db.query('DELETE FROM tasks WHERE id=$1', [taskId]);
+    if (projectId) await db.query('DELETE FROM projects WHERE id=$1', [projectId]);
+    await db.query('DELETE FROM crm_deals WHERE id=$1', [dealId]);
+    if (clientId) await db.query('DELETE FROM clients WHERE id=$1', [clientId]);
+    await db.query('DELETE FROM users WHERE id=$1', [actorId]);
+    await closePostgresPool();
+  }
+});
