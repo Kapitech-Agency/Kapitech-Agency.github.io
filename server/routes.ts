@@ -3140,7 +3140,7 @@ apiRouter.post('/crm/proposals', requireAuth, requirePermission('canManageCrm'),
     updatedAt: new Date().toISOString()
   };
 
-  if (getDataSourceMode() === 'postgres') { const proposal = await postgresProposalRepository.create(newProposal); recordAuditLog({ action: 'PROPOSAL_CREATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Created proposal ${proposal.proposalNumber} for ${proposal.clientName || proposal.company} (Total: ${proposal.total}).`, severity: 'info' }); res.json({ success: true, proposal }); return; }
+  if (getDataSourceMode() === 'postgres') { const proposal = await postgresProposalRepository.create(newProposal, makeAuditEntry(req, 'PROPOSAL_CREATED', `Created proposal ${newProposal.proposalNumber} (Total: ${newProposal.total}).`)); res.json({ success: true, proposal }); return; }
 
   if (!db?.proposals) db!.proposals = [];
   db!.proposals.unshift(newProposal);
