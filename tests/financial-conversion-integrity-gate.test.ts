@@ -1,4 +1,4 @@
 import assert from 'node:assert/strict'; import fs from 'node:fs'; import test from 'node:test';
 const read=(p:string)=>fs.readFileSync(p,'utf8');
 test('paid invoice cancellation is blocked',()=>{const s=read('server/postgres-invoice-repository.ts');assert.match(s,/current\.payments\.length>0.*INVOICE_WITH_PAYMENTS_CANNOT_BE_CANCELLED/);});
-test('proposal updates revalidate client project and deal relationships',()=>{const s=read('server/postgres-proposal-repository.ts');assert.match(s,/Proposal project does not belong to the selected client/);assert.match(s,/Proposal deal does not belong to the selected client/);});
+test('proposal updates revalidate client project and deal relationships',()=>{const s=read('server/postgres-proposal-repository.ts');assert.match(s,/Proposal project does not belong to the selected client/);assert.match(s,/Proposal deal does not belong to the selected client/); assert.match(s,/SELECT id, client_id FROM crm_deals WHERE id=\$1 FOR SHARE/);});
