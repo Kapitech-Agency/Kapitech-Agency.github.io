@@ -302,12 +302,16 @@ function computeAuditLogHash(log: Omit<StoredAuditLog, 'hash'>): string {
     .digest('hex');
 }
 
-function ensureAuditLogChain(db: DatabaseSchema): boolean {
+function migrateLegacyAuditLogChain(db: DatabaseSchema): boolean {
   if (!Array.isArray(db.auditLogs) || db.auditLogs.length === 0) return false;
 
-  let changed = false;
-  let previousHash = 'GENESIS';
+  // Only reconstruct genuinely legacy records when the entire chain predates
+  // hash fields. Once any hash exists, a mismatch is treated as tampering or
+  // corruption and must never be silently rewritten during startup.
+  const isLegacy = db.auditLogs.every(log => !log.hash && !log.prevHash);
+  if (!isLegacy) return false;
 
+  let previousHash = 'GENESIS';
   for (let index = db.auditLogs.length - 1; index >= 0; index -= 1) {
     const log = db.auditLogs[index];
     const normalized = {
@@ -320,19 +324,13 @@ function ensureAuditLogChain(db: DatabaseSchema): boolean {
       userAgent: log.userAgent,
       details: log.details,
       severity: log.severity,
-      prevHash: log.prevHash || previousHash
+      prevHash: previousHash
     };
-
-    const expectedHash = computeAuditLogHash(normalized);
-    if (log.prevHash !== normalized.prevHash || log.hash !== expectedHash) {
-      log.prevHash = normalized.prevHash;
-      log.hash = expectedHash;
-      changed = true;
-    }
-    previousHash = expectedHash;
+    log.prevHash = normalized.prevHash;
+    log.hash = computeAuditLogHash(normalized);
+    previousHash = log.hash;
   }
-
-  return changed;
+  return true;
 }
 
 export function verifyAuditLogChain(db: DatabaseSchema): { valid: boolean; checked: number; brokenAt?: string } {
@@ -1302,7 +1300,7 @@ export function getDatabase(): DatabaseSchema {
           saveDatabaseSync(inMemoryDb);
         }
       }
-      if (ensureAuditLogChain(inMemoryDb!)) {
+      if (migrateLegacyAuditLogChain(inMemoryDb!)) {
         saveDatabaseSync(inMemoryDb!);
       }
 
