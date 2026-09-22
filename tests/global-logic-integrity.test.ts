@@ -112,3 +112,17 @@ test('proposal repository enforces lifecycle transitions even outside HTTP route
  assert.match(repo,/currentStatus/);
  assert.match(repo,/nextStatus/);
 });
+
+
+test('task repository prevents project reassignment when historical time logs exist',()=>{
+ const repo=read('server/postgres-task-repository.ts');
+ assert.match(repo,/TASK_PROJECT_MOVE_FORBIDDEN/);
+ assert.match(repo,/SELECT COUNT\(\*\)::int AS count FROM time_logs WHERE task_id=\$1/);
+ assert.match(repo,/projectId !== \(current\.projectId \? String\(current\.projectId\) : null\)/);
+});
+test('unresolved task assignees cannot silently become metadata-only assignments',()=>{
+ const project=read('server/postgres-project-repository.ts');
+ const task=read('server/postgres-task-repository.ts');
+ assert.match(project,/ASSIGNEE_NOT_FOUND/);
+ assert.match(task,/ASSIGNEE_NOT_FOUND/);
+});
