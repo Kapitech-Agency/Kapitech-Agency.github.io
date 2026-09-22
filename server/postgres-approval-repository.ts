@@ -31,13 +31,27 @@ export class PostgresApprovalRepository {
 
   async create(input: Approval): Promise<Approval> {
     const now = new Date().toISOString();
-    const metadata = { ...input, requesterId: undefined, requesterUserId: undefined, requesterRole: undefined };
+    const supportedReferences: Record<string,string> = {
+      Invoice: 'invoices',
+      Proposal: 'proposals',
+      Project: 'projects',
+      Expense: 'expenses'
+    };
+    const type = String(input.type || 'Invoice');
+    const referenceId = String(input.referenceId || '').trim();
+    const referenceTable = supportedReferences[type];
+    if (referenceTable) {
+      if (!referenceId) throw new Error('Approval reference is required.');
+      const reference = await getPostgresPool().query(`SELECT id FROM ${referenceTable} WHERE id=$1 LIMIT 1`, [referenceId]);
+      if (!reference.rows[0]) throw new Error('Approval reference not found.');
+    }
+    const metadata = { ...input, requesterId: undefined, requesterUserId: undefined, requesterRole: undefined, status: undefined };
     const { rows } = await getPostgresPool().query(
       `INSERT INTO approvals
         (id, type, title, value, status, requester_user_id, requester_role, approval_date, metadata, created_at, updated_at)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9::jsonb,$10,$10)
+       VALUES ($1,$2,$3,$4,'Pending',$5,$6,$7,$8::jsonb,$9,$9)
        RETURNING *`,
-      [input.id, input.type, input.title, Number(input.value || 0), input.status || 'Pending',
+      [input.id, type, input.title, Number(input.value || 0),
        input.requesterId || null, input.requesterRole || null, input.date || null, JSON.stringify(metadata), now]
     );
     return mapRow(rows[0]);
@@ -59,6 +73,9 @@ export class PostgresApprovalRepository {
       if (item.status !== 'Pending') {
         await client.query('ROLLBACK');
         throw new Error('This approval request has already been resolved.');
+      }
+      if (item.requesterId && item.requesterId === reviewer.id) {
+        throw new Error('APPROVAL_SELF_ACTION_BLOCKED');
       }
       if (item.type && current.rows[0].reference_id) {
         const referenceId=String(current.rows[0].reference_id);
