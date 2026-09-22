@@ -2,7 +2,9 @@ name: AMS CI
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+      - 'hardening/**'
   pull_request:
     branches: [main]
 
@@ -98,7 +100,7 @@ jobs:
             echo "===== AMS smoke socket diagnostic ====="
             ss -ltnp | grep ':4173' || true
             echo "===== AMS smoke curl diagnostic ====="
-            curl -sS --max-time 5 -o /tmp/health-debug.json -w 'HTTP %{http_code}\n' http://127.0.0.1:4173/api/health || true
+            curl -sS --max-time 5 -o /tmp/health-debug.json -w 'HTTP %{http_code}\\n' http://127.0.0.1:4173/api/health || true
             cat /tmp/health-debug.json 2>/dev/null || true
             echo "===== AMS smoke curl stderr ====="
             cat /tmp/health.err 2>/dev/null || true
@@ -109,7 +111,7 @@ jobs:
           test "$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:4173/api/auth/me)" = "401"
           curl -sS -D /tmp/login.headers -H 'Content-Type: application/json' --data '{"identifier":"admin","password":"smoke-test-password-123456","rememberMe":false}' http://127.0.0.1:4173/api/auth/login >/tmp/login.json
           node -e "const fs=require('fs'); const x=JSON.parse(fs.readFileSync('/tmp/login.json','utf8')); if(!x.success||x.user?.stakeholderType!=='Master') process.exit(1)"
-          node -e "const fs=require('fs'); const h=fs.readFileSync('/tmp/login.headers','utf8'); const line=h.split(/\r?\n/).find(x=>/^Set-Cookie:\s*kapi_session=/i.test(x))||''; const m=line.match(/^Set-Cookie:\s*kapi_session=([^;]+)/i); if(!m||!/(?:^|;)\s*HttpOnly(?:;|$)/i.test(line)||!/\bSecure(?:;|$)/i.test(line)||!/SameSite=Strict/i.test(line)) process.exit(1); fs.writeFileSync('/tmp/session-cookie.txt', m[1])"
+          node -e "const fs=require('fs'); const h=fs.readFileSync('/tmp/login.headers','utf8'); const line=h.split(/\\r?\\n/).find(x=>/^Set-Cookie:\\s*kapi_session=/i.test(x))||''; const m=line.match(/^Set-Cookie:\\s*kapi_session=([^;]+)/i); if(!m||!/(?:^|;)\\s*HttpOnly(?:;|$)/i.test(line)||!/\\bSecure(?:;|$)/i.test(line)||!/SameSite=Strict/i.test(line)) process.exit(1); fs.writeFileSync('/tmp/session-cookie.txt', m[1])"
           SESSION_COOKIE=$(cat /tmp/session-cookie.txt)
           curl -sS -H "Cookie: kapi_session=$SESSION_COOKIE" http://127.0.0.1:4173/api/auth/me >/tmp/me.json
           node -e "const fs=require('fs'); const x=JSON.parse(fs.readFileSync('/tmp/me.json','utf8')); if(!x.success||x.user?.username!=='admin') process.exit(1)"
