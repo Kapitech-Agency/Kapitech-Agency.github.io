@@ -34,7 +34,7 @@ test('migration packaging is deterministic and fails closed when no SQL migratio
   const build = read('scripts/build-production.mjs');
   const s = read('scripts/copy-postgres-migrations.mjs');
   assert.ok(build.includes('copy-postgres-migrations.mjs'));
-  assert.match(s, /filter\(\(file\) => \/^\\d+_.+\\.sql$\/\.test\(file\)\)/);
-  assert.match(s, /dist\/db\/postgres/);
-  assert.match(s, /No PostgreSQL migration files were found to package/);
+  assert.ok(s.includes('.filter((file) => /^\\d+_.+\\.sql$/.test(file))'));
+  assert.ok(s.includes('dist/db/postgres'));
+  assert.ok(s.includes('No PostgreSQL migration files were found to package'));
 });
