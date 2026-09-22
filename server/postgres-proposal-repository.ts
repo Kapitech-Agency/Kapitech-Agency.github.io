@@ -28,7 +28,16 @@ export class PostgresProposalRepository {
         const protectedFields=['clientId','dealId','projectId','subtotal','discount','taxPercent','tax','total','currency','items'];
         if (protectedFields.some((key)=>patch[key]!==undefined)) throw new Error('ACCEPTED_PROPOSAL_IMMUTABLE');
       }await db.query('UPDATE proposals SET proposal_number=$2,title=$3,client_id=$4,deal_id=$5,project_id=$6,subtotal=$7,discount=$8,tax_percent=$9,tax=$10,total=$11,currency=$12,validity_period=$13,payment_terms=$14,owner=$15,status=$16,notes=$17,created_date=$18,sent_date=$19,approved_date=$20,metadata=$21,updated_at=$22 WHERE id=$1',[id,next.proposalNumber,next.title,next.clientId||null,next.dealId||null,next.projectId||null,next.subtotal,next.discount,next.taxPercent,next.tax,next.total,next.currency,next.validityPeriod||null,next.paymentTerms||null,next.owner||null,next.status,next.notes||null,next.createdDate||null,next.sentDate||null,next.approvedDate||null,JSON.stringify(metadata(next)),next.updatedAt]);if(patch.items!==undefined){await db.query('DELETE FROM proposal_items WHERE proposal_id=$1',[id]);for(const i of next.items||[])await this.insertItem(db,id,i)}return mapProposal((await db.query('SELECT * FROM proposals WHERE id=$1',[id])).rows[0],await this.items(db,id));});}
-  async delete(id:string){const r=await getPostgresPool().query('DELETE FROM proposals WHERE id=$1',[id]);return r.rowCount===1;}
+  async delete(id:string){
+    return withPostgresTransaction(async db=>{
+      const current=await db.query('SELECT id,status FROM proposals WHERE id=$1 FOR UPDATE',[id]);
+      if(!current.rows[0]) return false;
+      const status=String(current.rows[0].status||'');
+      if(status!=='Draft') throw new Error('PROPOSAL_DELETE_RESTRICTED');
+      const result=await db.query('DELETE FROM proposals WHERE id=$1',[id]);
+      return result.rowCount===1;
+    });
+  }
   async approve(id:string):Promise<any|null>{return this.update(id,{status:'Approved',approvedDate:new Date().toISOString().slice(0,10)});}
   async convertToInvoice(id:string):Promise<any|null>{return withPostgresTransaction(async db=>{const r=await db.query('SELECT * FROM proposals WHERE id=$1 FOR UPDATE',[id]);if(!r.rows[0])return null;const p=mapProposal(r.rows[0],await this.items(db,id));
 if(p.clientId){const x=await db.query('SELECT id FROM clients WHERE id=$1 LIMIT 1',[p.clientId]);if(!x.rows[0])throw new Error('Proposal client not found.');}

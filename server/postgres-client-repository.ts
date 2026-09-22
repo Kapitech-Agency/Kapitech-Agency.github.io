@@ -104,10 +104,32 @@ export class PostgresClientRepository {
   }
 
   async delete(id: string): Promise<boolean> {
-    const pool=getPostgresPool();
-    const r=await pool.query(`SELECT (SELECT COUNT(*)::int FROM projects WHERE client_id=$1) AS projects,(SELECT COUNT(*)::int FROM crm_deals WHERE client_id=$1) AS deals,(SELECT COUNT(*)::int FROM proposals WHERE client_id=$1) AS proposals,(SELECT COUNT(*)::int FROM invoices WHERE client_id=$1) AS invoices`,[id]);
-    if(Object.values(r.rows[0]||{}).some(v=>Number(v)>0))throw new Error('CLIENT_HAS_BUSINESS_RECORDS');
-    const result=await pool.query('DELETE FROM clients WHERE id=$1',[id]);return result.rowCount===1;
+    const client = await getPostgresPool().connect();
+    try {
+      await client.query('BEGIN');
+      const locked = await client.query('SELECT id FROM clients WHERE id=$1 FOR UPDATE',[id]);
+      if (!locked.rows[0]) { await client.query('ROLLBACK'); return false; }
+      const references = await client.query(
+        `SELECT
+          (SELECT COUNT(*)::int FROM projects WHERE client_id=$1) AS projects,
+          (SELECT COUNT(*)::int FROM crm_deals WHERE client_id=$1) AS deals,
+          (SELECT COUNT(*)::int FROM proposals WHERE client_id=$1) AS proposals,
+          (SELECT COUNT(*)::int FROM invoices WHERE client_id=$1) AS invoices`,
+        [id]
+      );
+      if (Object.values(references.rows[0] || {}).some(v=>Number(v)>0)) {
+        await client.query('ROLLBACK');
+        throw new Error('CLIENT_HAS_BUSINESS_RECORDS');
+      }
+      const result=await client.query('DELETE FROM clients WHERE id=$1',[id]);
+      await client.query('COMMIT');
+      return result.rowCount===1;
+    } catch (error) {
+      try { await client.query('ROLLBACK'); } catch {}
+      throw error;
+    } finally {
+      client.release();
+    }
   }
 }
 
