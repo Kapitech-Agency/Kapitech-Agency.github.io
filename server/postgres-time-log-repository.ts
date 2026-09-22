@@ -1,4 +1,5 @@
 import { getPostgresPool, withPostgresTransaction } from './postgres.ts';
+import { postgresAuditLogRepository, type AuditEntry } from './postgres-audit-log-repository.ts';
 
 type Row = Record<string, any>;
 const obj = (v: unknown): Record<string, unknown> => v && typeof v === 'object' ? v as Record<string, unknown> : {};
@@ -41,7 +42,7 @@ export class PostgresTimeLogRepository {
     return result.rows[0] ? mapTimeLog(result.rows[0]) : null;
   }
 
-  async create(log: Record<string, unknown>): Promise<Record<string, unknown>> {
+  async create(log: Record<string, unknown>, audit?: AuditEntry): Promise<Record<string, unknown>> {
     const durationMinutes = Number(log.durationMinutes ?? Number(log.hours || 0) * 60);
     const hours = Math.round((durationMinutes / 60) * 100) / 100;
     if (!Number.isFinite(hours) || hours <= 0) throw new Error('Time log duration must be greater than zero.');
@@ -68,13 +69,15 @@ export class PostgresTimeLogRepository {
          hours, String(log.notes ?? ''), loggedAt, log.createdAt || new Date().toISOString()]
       );
       const result = await client.query('SELECT * FROM time_logs WHERE id = $1', [log.id]);
+      if (audit) await postgresAuditLogRepository.appendWithinTransaction(client, audit);
       return mapTimeLog(result.rows[0]);
     });
   }
 
-  async delete(id: string): Promise<boolean> {
+  async delete(id: string, audit?: AuditEntry): Promise<boolean> {
     return withPostgresTransaction(async client => {
       const result = await client.query('DELETE FROM time_logs WHERE id = $1', [id]);
+      if (audit) await postgresAuditLogRepository.appendWithinTransaction(client, audit);
       return result.rowCount === 1;
     });
   }
