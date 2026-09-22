@@ -2127,8 +2127,9 @@ apiRouter.post('/finance/invoices/:id/pay', requireAuth, requirePermission('canM
     try {
       const saved = await postgresInvoiceRepository.recordPayment(req.params.id, payment);
       if (!saved) { res.status(404).json({ success:false,error:'Invoice not found.' }); return; }
-      recordAuditLog({ action:'PAYMENT_RECORDED', actor:req.user!.username, actorRole:req.user!.role, ip:req.ip, userAgent:req.headers['user-agent'] as string, details:`Recorded payment of ${payAmount} for invoice ${saved.invoiceNumber}. New status: ${saved.status}.`, severity:'info' });
-      res.json({ success:true, invoice:saved, payment }); return;
+      const replayed = Boolean(payment.idempotencyKey) && !saved.payments.some((p:any) => p.reference === payment.reference && Number(p.amount) === Number(payment.amount) && p.method === payment.method);
+      if (!replayed) recordAuditLog({ action:'PAYMENT_RECORDED', actor:req.user!.username, actorRole:req.user!.role, ip:req.ip, userAgent:req.headers['user-agent'] as string, details:`Recorded payment of ${payAmount} for invoice ${saved.invoiceNumber}. New status: ${saved.status}.`, severity:'info' });
+      res.json({ success:true, invoice:saved, payment: replayed ? undefined : payment, replayed }); return;
     } catch(error) {
       const message=error instanceof Error?error.message:'Payment could not be recorded.';
       res.status(message.includes('exceeds')||message.includes('Cancelled')?409:400).json({success:false,error:message}); return;
