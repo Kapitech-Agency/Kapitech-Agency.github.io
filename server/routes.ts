@@ -2890,8 +2890,8 @@ apiRouter.put('/notifications/settings', requireAuth, requirePermission('canAcce
       telegramChatId: nextTelegramChatId,
       isEmailActive: isEmailActive !== undefined ? Boolean(isEmailActive) : current.isEmailActive,
       isTelegramActive: isTelegramActive !== undefined ? Boolean(isTelegramActive) : current.isTelegramActive
-    });
-    recordAuditLog({ action: 'SETTINGS_UPDATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: 'Updated notification and dispatch channel settings.', severity: 'info' });
+    }, makeAuditEntry(req, 'SETTINGS_UPDATED', 'Updated notification and dispatch channel settings.', 'info'));
+
     res.json({ success: true, message: 'Notification settings saved.' });
     return;
   }
@@ -4706,20 +4706,12 @@ apiRouter.post('/notifications/:id/read', requireAuth, async (req: Authenticated
       res.status(403).json({ success: false, error: 'Notification access denied.' });
       return;
     }
-    const updated = await postgresNotificationRepository.markRead(id, req.user!.id);
+    const updated = await postgresNotificationRepository.markRead(id, req.user!.id, makeAuditEntry(req, 'NOTIFICATION_READ', `Marked notification "${id}" as read.`, 'info'));
     if (!updated) {
       res.status(403).json({ success: false, error: 'Notification access denied.' });
       return;
     }
-    recordAuditLog({
-      action: 'NOTIFICATION_READ',
-      actor: req.user!.username,
-      actorRole: req.user!.role,
-      ip: req.ip,
-      userAgent: req.headers['user-agent'] as string,
-      details: `Marked notification "${id}" as read.`,
-      severity: 'info'
-    });
+
     res.json({ success: true });
     return;
   }
@@ -4760,16 +4752,8 @@ apiRouter.post('/notifications/:id/read', requireAuth, async (req: Authenticated
 
 apiRouter.post('/notifications/mark-all-read', requireAuth, async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   if (getDataSourceMode() === 'postgres') {
-    await postgresNotificationRepository.markAllRead(req.user!.id, getHiddenNotificationTypes(req.user!));
-    recordAuditLog({
-      action: 'NOTIFICATIONS_MARKED_ALL_READ',
-      actor: req.user!.username,
-      actorRole: req.user!.role,
-      ip: req.ip,
-      userAgent: req.headers['user-agent'] as string,
-      details: 'Marked all accessible notifications as read.',
-      severity: 'info'
-    });
+    await postgresNotificationRepository.markAllRead(req.user!.id, getHiddenNotificationTypes(req.user!), makeAuditEntry(req, 'NOTIFICATIONS_MARKED_ALL_READ', 'Marked all accessible notifications as read.', 'info'));
+
     res.json({ success: true });
     return;
   }
