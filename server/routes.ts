@@ -140,15 +140,19 @@ function makeAuditEntry(req: AuthenticatedRequest, action: string, details: stri
 
 async function writeAuditLog(entry: Parameters<typeof recordAuditLog>[0]): Promise<void> {
   if (getDataSourceMode() === 'postgres') {
-    await postgresAuditLogRepository.append({
-      ...entry,
-      actor: String(entry.actor || 'system'),
-      actorRole: String(entry.actorRole || 'system'),
-      ip: String(entry.ip || ''),
-      userAgent: String(entry.userAgent || ''),
-      details: String(entry.details || ''),
-      severity: entry.severity || 'info'
-    });
+    try {
+      await postgresAuditLogRepository.append({
+        ...entry,
+        actor: String(entry.actor || 'system'),
+        actorRole: String(entry.actorRole || 'system'),
+        ip: String(entry.ip || ''),
+        userAgent: String(entry.userAgent || ''),
+        details: String(entry.details || ''),
+        severity: entry.severity || 'info'
+      });
+    } catch (error) {
+      console.error('[Audit] PostgreSQL audit append failed:', error);
+    }
     return;
   }
   recordAuditLog(entry);
