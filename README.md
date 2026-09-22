@@ -16,13 +16,14 @@ Production-grade internal Agency Management System for Kapitech Agency.
 
 ## Production environment
 
-Required:
+Core production configuration:
 - `NODE_ENV=production`
+- `KAPITECH_DATA_SOURCE=postgres`
+- `KAPITECH_POSTGRES_URL`
+- `KAPITECH_DATA_ENCRYPTION_KEY`
 - `ADMIN_INITIAL_USERNAME`
 - `ADMIN_INITIAL_PASSWORD`
-- `ADMIN_INITIAL_EMAIL`
-- `KAPITECH_DATA_ENCRYPTION_KEY`
-
+- `ADMIN_INITIAL_EMAIL` are required only when the PostgreSQL database does not already contain a Master admin. Existing PostgreSQL installations keep their existing administrator.
 Optional:
 - `KAPITECH_DATA_DIR`
 - `KAPITECH_DB_BACKUP_RETENTION` (3-30, default 14)
@@ -33,7 +34,7 @@ Optional:
 - PostgreSQL runtime: `KAPITECH_DATA_SOURCE=postgres`, `KAPITECH_POSTGRES_URL` and optional SSL/pool settings.
 - PostgreSQL mode: `KAPITECH_POSTGRES_BACKUP_PROVIDER`, `KAPITECH_POSTGRES_BACKUP_LATEST_AT`, `KAPITECH_POSTGRES_BACKUP_RESTORE_VERIFIED_AT`, `KAPITECH_POSTGRES_BACKUP_RPO_MINUTES`, `KAPITECH_POSTGRES_BACKUP_RTO_MINUTES`, `KAPITECH_POSTGRES_BACKUP_RETENTION_DAYS`
 - PostgreSQL production Document Vault: `KAPITECH_DOCUMENT_STORAGE_PROVIDER`, `KAPITECH_DOCUMENT_STORAGE_BUCKET`, `KAPITECH_DOCUMENT_STORAGE_ENDPOINT`, `KAPITECH_DOCUMENT_STORAGE_REGION`, `KAPITECH_DOCUMENT_STORAGE_ACCESS_KEY_ID`, `KAPITECH_DOCUMENT_STORAGE_SECRET_ACCESS_KEY` (optional `KAPITECH_DOCUMENT_STORAGE_SESSION_TOKEN`)
-- PostgreSQL migration chain currently runs through `014_notification_secret_removal`; Telegram bot credentials remain runtime-managed via `KAPITECH_TELEGRAM_BOT_TOKEN` and are not persisted in PostgreSQL.
+- PostgreSQL migration chain currently runs through migration 024. Telegram bot credentials remain runtime-managed via `KAPITECH_TELEGRAM_BOT_TOKEN` and are not persisted in PostgreSQL.
 - S3-compatible provider stores only application-encrypted objects; the AMS never exposes the underlying object URL.
 
 Generate a 32-byte encryption key with:
