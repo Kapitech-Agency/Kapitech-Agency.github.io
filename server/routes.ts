@@ -3610,7 +3610,11 @@ apiRouter.get('/approvals', requireAuth, requireAnyPermission('canApproveBudgets
 
 apiRouter.post('/approvals', requireAuth, requireAnyPermission('canManageProjects', 'canApproveBudgets'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const data = req.body || {};
-  const type = String(data.type || 'Invoice').trim().slice(0, 80);
+  const type = String(data.type || 'Invoice').trim();
+  if (!['Invoice','Proposal','Project','Expense'].includes(type)) {
+    res.status(400).json({ success: false, error: 'Unsupported approval type.' });
+    return;
+  }
   const referenceId = String(data.referenceId || '').trim().slice(0, 120);
   const title = String(data.title || 'Approval Request').trim().slice(0, 200);
   const reason = String(data.reason || 'Standard operational review').trim().slice(0, 2000);
