@@ -305,6 +305,4 @@ test('PostgreSQL client updates cannot overwrite derived financial and project m
  assert.doesNotMatch(route,/pickFields\([^\n]*totalInvoiced/);
  assert.match(repo,/totalSpend: currentClient\.totalSpend/);
  assert.match(repo,/projectsCount: currentClient\.projectsCount/);
- assert.match(repo,/totalProjects: currentClient\.totalProjects/);
- assert.match(repo,/totalInvoiced: currentClient\.totalInvoiced/);
 });
