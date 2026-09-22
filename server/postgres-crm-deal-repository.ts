@@ -1,4 +1,5 @@
 import { getPostgresPool, withPostgresTransaction } from './postgres.ts';
+import { postgresAuditLogRepository, type AuditEntry } from './postgres-audit-log-repository.ts';
 
 type Row = Record<string, any>;
 const iso = (v: Date | string): string => v instanceof Date ? v.toISOString() : new Date(v).toISOString();
@@ -50,8 +51,9 @@ export class PostgresCrmDealRepository {
     return result.rows[0] ? mapDeal(result.rows[0]) : null;
   }
 
-  async create(deal: any): Promise<any> {
-    const result = await getPostgresPool().query(
+  async create(deal: any, audit?: AuditEntry): Promise<any> {
+    return withPostgresTransaction(async client => {
+    const result = await client.query(
       `INSERT INTO crm_deals
        (id,title,client_id,client_name,company,email,phone,service_pillar,value,stage,priority,probability,owner,expected_close_date,metadata,created_at,updated_at)
        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17)
@@ -76,10 +78,12 @@ export class PostgresCrmDealRepository {
         deal.updatedAt
       ]
     );
+    if (audit) await postgresAuditLogRepository.appendWithinTransaction(client, audit);
     return mapDeal(result.rows[0]);
+    });
   }
 
-  async update(id: string, patch: Record<string, unknown>): Promise<any | null> {
+  async update(id: string, patch: Record<string, unknown>, audit?: AuditEntry): Promise<any | null> {
     return withPostgresTransaction(async client => {
       const current = await client.query('SELECT * FROM crm_deals WHERE id = $1 FOR UPDATE', [id]);
       if (!current.rows[0]) return null;
@@ -93,22 +97,24 @@ export class PostgresCrmDealRepository {
          Number(next.value || 0), next.stage || 'new', next.priority || 'medium', Number(next.probability || 0),
          next.owner || null, next.expectedCloseDate || null, JSON.stringify(toMetadata(next)), next.updatedAt]
       );
+      if (audit) await postgresAuditLogRepository.appendWithinTransaction(client, audit);
       return result.rows[0] ? mapDeal(result.rows[0]) : null;
     });
   }
 
-  async delete(id: string): Promise<boolean> {
+  async delete(id: string, audit?: AuditEntry): Promise<boolean> {
     return withPostgresTransaction(async client=>{
       const current=await client.query('SELECT id FROM crm_deals WHERE id=$1 FOR UPDATE',[id]);
       if(!current.rows[0])return false;
       const references=await client.query('SELECT COUNT(*)::int AS count FROM proposals WHERE deal_id=$1',[id]);
       if(Number(references.rows[0]?.count||0)>0)throw new Error('DEAL_HAS_PROPOSALS');
       const result=await client.query('DELETE FROM crm_deals WHERE id=$1',[id]);
+      if (audit) await postgresAuditLogRepository.appendWithinTransaction(client, audit);
       return result.rowCount===1;
     });
   }
 
-  async convertLead(lead: any, client: any, deal: any, clientAlreadyExists = false): Promise<{ client: any; deal: any }> {
+  async convertLead(lead: any, client: any, deal: any, clientAlreadyExists = false, audit?: AuditEntry): Promise<{ client: any; deal: any }> {
     return withPostgresTransaction(async db => {
       const leadRow=await db.query('SELECT id,status FROM leads WHERE id=$1 FOR UPDATE',[lead.id]);
       if(!leadRow.rows[0])throw new Error('Lead not found during conversion.');
@@ -153,6 +159,7 @@ export class PostgresCrmDealRepository {
       );
       const leadResult = await db.query('UPDATE leads SET status=$2,updated_at=NOW() WHERE id=$1 AND status <> $2 RETURNING *', [lead.id, 'closed']);
       if (!leadResult.rows[0]) throw new Error('Lead not found during conversion.');
+      if (audit) await postgresAuditLogRepository.appendWithinTransaction(db, audit);
       return {
         client: { ...client, id: clientResult?.rows[0]?.id || client.id },
         deal: mapDeal(dealResult.rows[0])
