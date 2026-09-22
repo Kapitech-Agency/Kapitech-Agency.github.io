@@ -174,6 +174,77 @@ function sha256Buffer(raw: Buffer): string {
   return crypto.createHash('sha256').update(raw).digest('hex');
 }
 
+function computeAuditLogHash(log: {
+  id: string;
+  timestamp: string;
+  action: string;
+  actor: string;
+  actorRole: string;
+  ip: string;
+  userAgent: string;
+  details: string;
+  severity: string;
+  prevHash: string;
+}): string {
+  return crypto.createHash('sha256').update(JSON.stringify(log), 'utf8').digest('hex');
+}
+
+function prepareAuditLogChain(db: AnyRecord): void {
+  const logs = arr(db, 'auditLogs');
+  if (!logs.length) return;
+
+  const hasAnyHash = logs.some(log => Boolean(log.hash) || Boolean(log.prevHash));
+  const hasAllHashes = logs.every(log => Boolean(log.hash) && Boolean(log.prevHash));
+
+  if (!hasAnyHash) {
+    let previousHash = 'GENESIS';
+    for (let index = logs.length - 1; index >= 0; index -= 1) {
+      const log = logs[index];
+      const normalized = {
+        id: textValue(log.id),
+        timestamp: timestampValue(log.timestamp),
+        action: textValue(log.action),
+        actor: textValue(log.actor, 'anonymous'),
+        actorRole: textValue(log.actorRole, 'visitor'),
+        ip: textValue(log.ip, '127.0.0.1'),
+        userAgent: textValue(log.userAgent, 'unknown'),
+        details: textValue(log.details),
+        severity: textValue(log.severity, 'info'),
+        prevHash: previousHash
+      };
+      log.timestamp = normalized.timestamp;
+      log.prevHash = normalized.prevHash;
+      log.hash = computeAuditLogHash(normalized);
+      previousHash = log.hash;
+    }
+    return;
+  }
+
+  if (!hasAllHashes) throw new Error('Audit log chain contains partial hash fields in migration source.');
+
+  let previousHash = 'GENESIS';
+  for (let index = logs.length - 1; index >= 0; index -= 1) {
+    const log = logs[index];
+    const normalized = {
+      id: textValue(log.id),
+      timestamp: timestampValue(log.timestamp),
+      action: textValue(log.action),
+      actor: textValue(log.actor, 'anonymous'),
+      actorRole: textValue(log.actorRole, 'visitor'),
+      ip: textValue(log.ip, '127.0.0.1'),
+      userAgent: textValue(log.userAgent, 'unknown'),
+      details: textValue(log.details),
+      severity: textValue(log.severity, 'info'),
+      prevHash: previousHash
+    };
+    const expectedHash = computeAuditLogHash(normalized);
+    if (textValue(log.prevHash) !== normalized.prevHash || textValue(log.hash) !== expectedHash) {
+      throw new Error('Audit log chain verification failed in migration source: ' + textValue(log.id));
+    }
+    previousHash = expectedHash;
+  }
+}
+
 function privateDocumentSourceDir(): string {
   return process.env.KAPITECH_PRIVATE_DOCUMENT_DIR
     ? path.resolve(process.env.KAPITECH_PRIVATE_DOCUMENT_DIR)
@@ -743,7 +814,9 @@ async function importCore(client: any, db: AnyRecord, privateDocumentMetadata: M
   );
   counts.notificationSettings = 1;
 
-  for (const row of arr(db, 'auditLogs')) {
+  const auditLogs = arr(db, 'auditLogs');
+  for (let index = auditLogs.length - 1; index >= 0; index -= 1) {
+    const row = auditLogs[index];
     await upsert(client, 'audit_logs',
       ['id','timestamp','action','actor','actor_role','actor_user_id','ip','user_agent','details','severity','prev_hash','hash'],
       [textValue(row.id),timestampValue(row.timestamp),textValue(row.action),textValue(row.actor),textValue(row.actorRole),
@@ -777,6 +850,7 @@ async function main(): Promise<void> {
   assertForeignKeys(db);
   assertNestedIds(db);
   assertApprovalReferences(db);
+  prepareAuditLogChain(db);
 
   const sourceSha256 = sha256(raw);
   const localCounts = Object.fromEntries(CORE_KEYS.map(key => [key, arr(db,key).length]));
