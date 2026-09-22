@@ -125,10 +125,15 @@ test('PostgreSQL commercial workflow converts proposal to invoice and returns th
     const responseInvoice = await proposalRepository.convertToInvoice(proposalId);
     assert.ok(responseInvoice);
     invoiceId = responseInvoice?.id;
+    assert.equal(responseInvoice?.proposalId, proposalId);
     assert.equal(responseInvoice?.clientId, clientId);
     assert.equal(responseInvoice?.total, 2_000_000);
     assert.equal(responseInvoice?.items.length, 1);
     assert.equal(responseInvoice?.items[0].description, 'Website implementation');
+
+    const replayInvoice = await proposalRepository.convertToInvoice(proposalId);
+    assert.equal(replayInvoice?.id, invoiceId);
+    assert.equal((replayInvoice as any).__idempotentReplay, true);
 
     const persistedInvoice = await invoiceRepository.findById(responseInvoice!.id);
     assert.ok(persistedInvoice);
