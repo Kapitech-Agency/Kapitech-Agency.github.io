@@ -125,12 +125,12 @@ Do not declare the application production-ready until:
 
 ## 5. Hostinger handoff
 
-The controlled deployment branch for the current production-hardening snapshot is `production/hostinger`. This branch is intentionally separate from the development/hardening branches so Hostinger can track one explicit release ref.
+The production source of truth is `main`. The former `production/hostinger` branch is kept only as a compatibility release ref and is currently identical to `main`. Do not develop or hotfix independently on `production/hostinger`.
 
 For Hostinger Node.js Web Apps, configure:
 
 - Repository: `Kapitech-Agency/Kapitech-Agency.github.io`
-- Branch: `production/hostinger`
+- Branch: `main`
 - Node.js: 22.x
 - Build command: `npm run build`
 - Start command: `npm start`
@@ -140,5 +140,5 @@ For Hostinger Node.js Web Apps, configure:
 
 The production build runner now limits Rayon worker creation to one thread by default, with an explicit `RAYON_NUM_THREADS` override available. This addresses the previously observed Hostinger `ThreadPoolBuildError: Resource temporarily unavailable` failure mode on constrained shared hosting.
 
-Hostinger's current Node.js GitHub deployment flow lets the application choose the repository branch and then automatically redeploys from the selected branch. A deployment therefore follows the connected branch, not an arbitrary commit from another hardening branch. Keep `production/hostinger` as the release branch until the hardening stack is merged into `main`.
+Hostinger's current Node.js GitHub deployment flow follows the branch configured for the application. Configure Hostinger to track `main`, so every production deployment uses the same source of truth as GitHub. Do not point Hostinger at an older hardening branch or an arbitrary commit SHA.
 
