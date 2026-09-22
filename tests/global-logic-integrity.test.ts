@@ -7,3 +7,4 @@ test('document update is transactional',()=>{const s=read('server/postgres-docum
 test('critical audit append is transaction-bound',()=>{const s=read('server/postgres-audit-log-repository.ts');for(const e of ['appendWithinTransaction','pg_advisory_xact_lock','INSERT INTO audit_logs'])assert.ok(s.includes(e),e);});
 test('approval rejects unsupported types',()=>{assert.ok(read('server/routes.ts').includes('Unsupported approval type'));assert.ok(read('server/postgres-approval-repository.ts').includes('UNSUPPORTED_APPROVAL_TYPE'));});
 test('admin user update route is defined exactly once',()=>{const s=read('server/routes.ts');assert.equal(s.split("apiRouter.put('/auth/users/:id'").length-1,1);});
+test('task assignee persistence resolves display identity to a real user id',()=>{const s=read('server/postgres-task-repository.ts');assert.ok(s.includes('resolveAssigneeUserId'));assert.ok(s.includes('lower(username) = lower($1)'));assert.ok(s.includes('assigneeUserId'));});
