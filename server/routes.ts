@@ -4362,28 +4362,55 @@ apiRouter.delete('/documents/:id', requireAuth, documentMutationMiddleware, asyn
   }
   if (!requireDocumentObjectAccess(req, res, document)) return;
 
-  const storage = getDocumentStorage();
-  try {
-    await storage.delete(document.storageKey);
-  } catch (error) {
-    console.error('[Documents] Failed to remove private content:', error);
-    res.status(500).json({ success: false, error: 'Private document content could not be removed safely.' });
-    return;
-  }
-
   if (getDataSourceMode() === 'postgres') {
-    const deleted = await postgresDocumentRepository.delete(id, makeAuditEntry(req, 'DOCUMENT_DELETED', `Deleted document "${document.name}".`, 'warning'));
-    if (!deleted) {
-      res.status(404).json({ success: false, error: 'Document not found.' });
+    const storageKey = String(document.storageKey || '');
+    try {
+      const deleted = await postgresDocumentRepository.delete(
+        id,
+        makeAuditEntry(req, 'DOCUMENT_DELETED', `Deleted document "${document.name}".`, 'warning')
+      );
+      if (!deleted) {
+        res.status(404).json({ success: false, error: 'Document not found.' });
+        return;
+      }
+      if (storageKey) {
+        try {
+          await getDocumentStorage().delete(storageKey);
+        } catch (storageError) {
+          console.error('[Documents] Postgres document storage cleanup failed:', storageError);
+          res.status(202).json({
+            success: true,
+            message: 'Document record deleted. Private storage cleanup requires retry.',
+            cleanupPending: true
+          });
+          return;
+        }
+      }
+      res.json({ success: true, message: 'Document removed.', cleanupPending: false });
+      return;
+    } catch (error) {
+      console.error('[Documents] PostgreSQL document deletion failed:', error);
+      res.status(500).json({ success: false, error: 'Document could not be deleted safely.' });
       return;
     }
-  } else {
-    const db = getDatabase();
-    db.documents = (db.documents || []).filter(d => d.id !== id);
-    saveDatabase(db);
   }
 
-  if (getDataSourceMode() !== 'postgres') recordAuditLog({
+  const storageKey = String(document.storageKey || '');
+  if (storageKey) {
+    try {
+      await getDocumentStorage().delete(storageKey);
+    } catch (error) {
+      console.error('[Documents] Failed to remove private content:', error);
+      res.status(500).json({ success: false, error: 'Private document content could not be removed safely.' });
+      return;
+    }
+  }
+
+  const db = getDatabase();
+  db.documents = (db.documents || []).filter(d => d.id !== id);
+  saveDatabase(db);
+
+  recordAuditLog({
     action: 'DOCUMENT_DELETED',
     actor: req.user!.username,
     actorRole: req.user!.role,
@@ -4395,6 +4422,7 @@ apiRouter.delete('/documents/:id', requireAuth, documentMutationMiddleware, asyn
 
   res.json({ success: true, message: 'Document removed.' });
 });
+
 apiRouter.get('/system/document-vault/status', requireAuth, requireAnyPermission('canViewSecurityAuditLogs', 'canAccessServerAndApi'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   if (getDataSourceMode() !== 'postgres') {
     res.json({ success: true, status: { datasource: 'json', objectStorageConfigured: false, integrityMetadata: false, productionReady: false } });
