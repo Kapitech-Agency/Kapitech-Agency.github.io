@@ -10,7 +10,7 @@ test('lead submissions dispatch Telegram notifications in both datasource modes'
   const source = await fs.readFile(path.join(root, 'server/routes.ts'), 'utf8');
 
   assert.ok(source.includes('dispatchLeadTelegramNotification'));
-  assert.ok(source.includes('postgresLeadRepository.create(newLead)'));
+  assert.ok(source.includes('await postgresLeadRepository.create('));
   assert.ok(source.includes('postgresNotificationSettingsRepository.get()'));
   assert.ok(source.includes('void dispatchLeadTelegramNotification(newLead, notificationSettings)'));
   assert.ok(source.includes('KAPITECH_TELEGRAM_BOT_TOKEN'));
