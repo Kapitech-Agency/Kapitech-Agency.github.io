@@ -191,8 +191,10 @@ test('JSON fallback preserves proposal approval and conversion state-machine bou
 
 test('JSON fallback prevents deletion of referenced business records',()=>{
  const route=read('server/routes.ts');
- const clients=route.slice(route.indexOf("apiRouter.delete('/clients/:id'"),route.indexOf("apiRouter.get('/projects'",route.indexOf("apiRouter.delete('/clients/:id'"))));
- const projects=route.slice(route.indexOf("apiRouter.delete('/projects/:id'"),route.indexOf("apiRouter.get('/finance/invoices'",route.indexOf("apiRouter.delete('/projects/:id'"))));
+ const clientStart=route.indexOf("apiRouter.delete('/clients/:id'");
+ const clients=route.slice(clientStart,route.indexOf("apiRouter.get('/projects'",clientStart));
+ const projectStart=route.indexOf("apiRouter.delete('/projects/:id'");
+ const projects=route.slice(projectStart,route.indexOf("apiRouter.get('/finance/invoices'",projectStart));
  assert.match(clients,/hasBusinessRecords/);
  assert.match(projects,/hasBusinessRecords/);
  assert.match(clients,/Client has business records and cannot be deleted/);
