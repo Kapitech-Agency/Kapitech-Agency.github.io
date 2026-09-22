@@ -43,13 +43,28 @@ export class PostgresInvoiceRepository {
         const quantity = Number(item.quantity);
         const unitPrice = Number(item.unitPrice);
         const amount = Number(item.amount ?? quantity * unitPrice);
-        if (!Number.isFinite(quantity) || quantity <= 0 || !Number.isFinite(unitPrice) || unitPrice < 0 || !Number.isFinite(amount) || amount < 0) {
+        const expectedAmount = Math.round(quantity * unitPrice);
+        if (!Number.isFinite(quantity) || quantity <= 0 || !Number.isFinite(unitPrice) || unitPrice < 0 || !Number.isFinite(amount) || amount < 0 || Math.abs(amount - expectedAmount) > 0.01) {
           throw new Error('INVALID_INVOICE_ITEM');
         }
         return Math.round((sum + amount) * 100) / 100;
       }, 0);
-      if (invoiceItems.length > 0 && Math.abs(itemSubtotal - Number(i.subtotal || 0)) > 0.01) {
+      if (invoiceItems.length === 0) throw new Error('INVOICE_ITEMS_REQUIRED');
+      if (Math.abs(itemSubtotal - Number(i.subtotal || 0)) > 0.01) {
         throw new Error('INVOICE_ITEM_SUBTOTAL_MISMATCH');
+      }
+      const subtotal = Math.round(Number(i.subtotal || 0) * 100) / 100;
+      const discountPercent = Math.max(0, Number(i.discountPercent || 0));
+      const discountAmount = Math.round(subtotal * (discountPercent / 100));
+      const taxableSubtotal = Math.max(0, subtotal - discountAmount);
+      const taxPercent = Math.max(0, Number(i.taxPercent || 0));
+      const taxAmount = Math.round(taxableSubtotal * (taxPercent / 100));
+      const expectedTotal = taxableSubtotal + taxAmount;
+      if (!Number.isFinite(discountPercent) || discountPercent > 100 || !Number.isFinite(taxPercent) || taxPercent > 100 ||
+          Math.abs(Number(i.discountAmount || 0) - discountAmount) > 0.01 ||
+          Math.abs(Number(i.taxAmount || 0) - taxAmount) > 0.01 ||
+          Math.abs(Number(i.total || 0) - expectedTotal) > 0.01) {
+        throw new Error('INVOICE_FINANCIAL_TOTAL_MISMATCH');
       }
       if (Number(i.total) < 0 || Number(i.subtotal || 0) < 0 || Number(i.discountAmount || 0) < 0 || Number(i.taxAmount || 0) < 0) {
         throw new Error('INVALID_INVOICE_TOTALS');
