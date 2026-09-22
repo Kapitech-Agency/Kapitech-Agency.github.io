@@ -903,6 +903,60 @@ apiRouter.post('/auth/users', requireAuth, requireMaster, async (req: Authentica
   res.json({ success: true, user: { id: newUser.id, username: newUser.username } });
 });
 
+apiRouter.put('/auth/users/:id', requireAuth, requireMaster, async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  const { id } = req.params;
+  const input = req.body || {};
+  const target = getDataSourceMode() === 'postgres'
+    ? await postgresAuthRepository.findUserById(id)
+    : getDatabase().users.find(u => u.id === id) || null;
+  if (!target) {
+    res.status(404).json({ success: false, error: 'User not found.' });
+    return;
+  }
+  if (target.stakeholderType === 'Master' || target.username === 'admin') {
+    res.status(403).json({ success: false, error: 'Root Master Admin policy cannot be modified from this route.' });
+    return;
+  }
+  const name = cleanText(input.name ?? target.name, 160);
+  const requestedRole = String(input.role ?? target.role).trim();
+  const policy = ROLE_POLICIES[requestedRole];
+  const status = input.status === 'suspended' ? 'suspended' : 'active';
+  if (!name) {
+    res.status(400).json({ success: false, error: 'Name is required.' });
+    return;
+  }
+  if (!policy) {
+    res.status(400).json({ success: false, error: 'Unsupported account role.' });
+    return;
+  }
+  const division = policy.division;
+  const updated = getDataSourceMode() === 'postgres'
+    ? await postgresAuthRepository.updateUserPolicy(id, name, requestedRole, policy.stakeholderType, policy.permissions, division, status)
+    : (() => {
+        const db = getDatabase();
+        const index = db.users.findIndex(u => u.id === id);
+        if (index < 0) return null;
+        db.users[index] = { ...db.users[index], name, role: requestedRole, stakeholderType: policy.stakeholderType, permissions: policy.permissions, division, status };
+        if (status === 'suspended') db.sessions = db.sessions.filter(s => s.userId !== id);
+        saveDatabase(db);
+        return db.users[index];
+      })();
+  if (!updated) {
+    res.status(409).json({ success: false, error: 'User could not be updated.' });
+    return;
+  }
+  recordAuditLog({
+    action: 'ACCOUNT_UPDATED',
+    actor: req.user!.username,
+    actorRole: req.user!.role,
+    ip: req.ip,
+    userAgent: req.headers['user-agent'] as string,
+    details: `Updated admin user "${target.username}" policy to "${requestedRole}" and status "${status}".`,
+    severity: 'info'
+  });
+  res.json({ success: true, user: { id: updated.id, name: updated.name, username: updated.username, email: updated.email, role: updated.role, stakeholderType: updated.stakeholderType, permissions: updated.permissions, division: updated.division, status: updated.status } });
+});
+
 apiRouter.delete('/auth/users/:id', requireAuth, requireMaster, async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
   const db = getDataSourceMode() === 'json' ? getDatabase() : undefined;
