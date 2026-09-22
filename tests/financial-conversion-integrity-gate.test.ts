@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import fs from 'node:fs/promises';
+import fs from 'node:fs';
 import test from 'node:test';
 const read=(p:string)=>fs.readFile(p,'utf8');
 test('invoice cancellation is blocked after payments in repository and route',()=>{
@@ -22,9 +22,9 @@ test('proposal conversion locks referenced records',()=>{
 });
 
 
-test('proposal conversion requires approval and is idempotent after acceptance',async()=>{
- const proposal=await fs.readFile('server/postgres-proposal-repository.ts','utf8');
- const routes=await fs.readFile('server/routes.ts','utf8');
+test('proposal conversion requires approval and is idempotent after acceptance',()=>{
+ const proposal=fs.readFileSync('server/postgres-proposal-repository.ts','utf8');
+ const routes=fs.readFileSync('server/routes.ts','utf8');
  assert.match(proposal,/proposalStatus=String\(p\.status\)/);
  assert.match(proposal,/proposalStatus !== 'Approved'/);
  assert.match(proposal,/PROPOSAL_APPROVAL_REQUIRED/);
