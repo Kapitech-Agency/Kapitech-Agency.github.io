@@ -12,3 +12,12 @@ test('Relational cutover import protects MFA secrets and migrates private docume
   assert.ok(source.includes('verified.storageSha256 !== storageSha256'));
   assert.ok(source.includes("'content_sha256','storage_sha256','storage_version','storage_provider','integrity_checked_at'"));
 });
+
+
+test('Relational cutover import validates invoice arithmetic and time-log project ownership', () => {
+  const source = fs.readFileSync(path.resolve(process.cwd(), 'scripts/postgres-import.ts'), 'utf8');
+  assert.ok(source.includes('Invoice financial total mismatch in migration source'));
+  assert.ok(source.includes('Invalid invoice line item in migration source'));
+  assert.ok(source.includes('Time log must reference a project or task in migration source'));
+  assert.ok(source.includes('Time log task must belong to a project in migration source'));
+});
