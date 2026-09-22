@@ -1744,7 +1744,7 @@ apiRouter.post('/projects', requireAuth, requirePermission('canManageProjects'),
     createdAt: now,
     updatedAt: now
   };
-  if (newProject.tasks.length > 0 && !hasAdminPermission(req.user!, 'canManageKanbanTasks')) {
+  if (newProject.tasks.length > 0 && req.user!.stakeholderType !== 'Master' && !req.user!.permissions?.canManageKanbanTasks) {
     res.status(403).json({ success: false, error: 'Task mutations require task-management permission.' });
     return;
   }
@@ -1802,7 +1802,7 @@ apiRouter.put('/projects/:id', requireAuth, requirePermission('canManageProjects
     if (patch.techStack !== undefined) patch.techStack = normalizeStringArray(patch.techStack, 50, 120);
     if (patch.tasks !== undefined) {
       patch.tasks = Array.isArray(patch.tasks) ? patch.tasks.slice(0, 200) : [];
-      if (!hasAdminPermission(req.user!, 'canManageKanbanTasks')) {
+      if (req.user!.stakeholderType !== 'Master' && !req.user!.permissions?.canManageKanbanTasks) {
         if (taskMutationFingerprint(existingProject.tasks) !== taskMutationFingerprint(patch.tasks)) {
           res.status(403).json({ success: false, error: 'Task mutations require task-management permission.' });
           return;
@@ -1840,7 +1840,7 @@ apiRouter.put('/projects/:id', requireAuth, requirePermission('canManageProjects
   if (patch.techStack !== undefined) patch.techStack = normalizeStringArray(patch.techStack, 50, 120);
   if (patch.tasks !== undefined) {
     patch.tasks = Array.isArray(patch.tasks) ? patch.tasks.slice(0, 200) : [];
-    if (!hasAdminPermission(req.user!, 'canManageKanbanTasks')) {
+    if (req.user!.stakeholderType !== 'Master' && !req.user!.permissions?.canManageKanbanTasks) {
       if (taskMutationFingerprint(db.projects[idx].tasks) !== taskMutationFingerprint(patch.tasks)) {
         res.status(403).json({ success: false, error: 'Task mutations require task-management permission.' });
         return;
