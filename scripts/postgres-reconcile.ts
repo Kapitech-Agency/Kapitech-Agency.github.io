@@ -126,6 +126,34 @@ function verifyPrivateDocuments(db: any): { valid: boolean; checked: number; mis
   return { valid: missing.length === 0 && malformed.length === 0, checked, missing, malformed };
 }
 
+async function pgClientSpendParity(): Promise<{ valid: boolean; mismatches: Array<{ id: string; recorded: number; calculated: number }> }> {
+  const result = await getPostgresPool().query<{
+    id: string;
+    recorded: string | null;
+    calculated: string | null;
+  }>(`
+    SELECT
+      c.id,
+      COALESCE(NULLIF(c.metadata->>'totalSpend','')::numeric, 0) AS recorded,
+      COALESCE(SUM(ip.amount), 0) AS calculated
+    FROM clients c
+    LEFT JOIN invoices i ON i.client_id = c.id
+    LEFT JOIN invoice_payments ip ON ip.invoice_id = i.id
+    GROUP BY c.id, c.metadata
+  `);
+
+  const mismatches = result.rows
+    .map(row => ({
+      id: String(row.id),
+      recorded: Number(row.recorded || 0),
+      calculated: Number(row.calculated || 0)
+    }))
+    .filter(row => Math.abs(row.recorded - row.calculated) > 0.005)
+    .slice(0, 100);
+
+  return { valid: mismatches.length === 0, mismatches };
+}
+
 async function pgCountsAndFinancials(): Promise<{ counts: Record<string, number>; financials: Record<string, number>; cmsSettings: Record<string, unknown>; notificationSettings: Record<string, unknown> }> {
   const pool = getPostgresPool();
   const tables: Record<string, string> = {
@@ -450,6 +478,7 @@ async function main(): Promise<void> {
 
   try {
     const postgresResult = await pgCountsAndFinancials();
+    const clientSpendParity = await pgClientSpendParity();
     const postgresCounts = postgresResult.counts;
     const postgresRecords = await pgRecordSets();
     const recordParity = buildRecordParity(db, postgresRecords);
@@ -483,7 +512,8 @@ async function main(): Promise<void> {
       notificationSettingsParity: notificationMismatches.length === 0,
       auditChainIntegrity: auditChain.valid,
       privateDocumentIntegrity: privateDocuments.valid,
-      recordFieldParity: recordParityComplete
+      recordFieldParity: recordParityComplete,
+      clientSpendParity: clientSpendParity.valid
     };
 
     const reconciliationPass = checks.countParity && checks.financialParity && checks.recordFieldParity;
@@ -499,6 +529,7 @@ async function main(): Promise<void> {
       cmsSettingsMismatches,
       notificationMismatches,
       recordParity,
+      clientSpendParity,
       auditChain,
       privateDocuments,
       financials,
