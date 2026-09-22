@@ -89,6 +89,64 @@ function normalizePriority(value: unknown): string | null {
   return raw;
 }
 
+function normalizeProposalStatus(value: unknown): string {
+  const raw = textValue(value, 'Draft').trim().toLowerCase();
+  const aliases: Record<string,string> = {
+    draft: 'Draft',
+    'internal review': 'Internal Review',
+    'internal_review': 'Internal Review',
+    sent: 'Sent',
+    approved: 'Approved',
+    rejected: 'Rejected',
+    accepted: 'Accepted'
+  };
+  const normalized = aliases[raw];
+  if (!normalized) throw new Error('Unsupported proposal status in migration source: ' + raw);
+  return normalized;
+}
+
+function normalizeInvoiceStatus(value: unknown): string {
+  const raw = textValue(value, 'draft').trim().toLowerCase();
+  const allowed = new Set(['draft','sent','partially_paid','paid','overdue','cancelled']);
+  if (!allowed.has(raw)) throw new Error('Unsupported invoice status in migration source: ' + raw);
+  return raw;
+}
+
+function normalizeVendorStatus(value: unknown): string {
+  const raw = textValue(value, 'active').trim().toLowerCase();
+  const allowed = new Set(['active','under_review','inactive','blacklisted']);
+  if (!allowed.has(raw)) throw new Error('Unsupported vendor status in migration source: ' + raw);
+  return raw;
+}
+
+function normalizeProjectStatus(value: unknown): string {
+  const raw = textValue(value).trim().toLowerCase();
+  const allowed = new Set(['planning','in_progress','review','completed','on_hold']);
+  if (!allowed.has(raw)) throw new Error('Unsupported project status in migration source: ' + raw);
+  return raw;
+}
+
+function normalizeTaskStatus(value: unknown): string {
+  const raw = textValue(value).trim().toLowerCase();
+  const allowed = new Set(['todo','in_progress','review','done']);
+  if (!allowed.has(raw)) throw new Error('Unsupported task status in migration source: ' + raw);
+  return raw;
+}
+
+function assigneeUserIdFor(row: AnyRecord, users: AnyRecord[]): string | null {
+  const candidate = nullableText(row.assigneeUserId || row.assigneeId || row.assignee);
+  if (!candidate) return null;
+  const matches = users.filter(user => {
+    const id = textValue(user.id).toLowerCase();
+    const username = textValue(user.username).trim().toLowerCase();
+    const name = textValue(user.name).trim().toLowerCase();
+    const probe = candidate.trim().toLowerCase();
+    return probe === id || probe === username || probe === name;
+  });
+  if (matches.length !== 1) throw new Error('Unresolved task assignee in migration source: ' + candidate);
+  return textValue(matches[0].id);
+}
+
 function dateValue(value: unknown): string | null {
   const text = textValue(value).trim();
   if (!text) return null;
@@ -381,7 +439,7 @@ async function importCore(client: any, db: AnyRecord, privateDocumentMetadata: M
   for (const row of arr(db, 'projects')) {
     await upsert(client, 'projects',
       ['id','client_id','name','description','status','owner','budget','start_date','end_date','metadata','created_at','updated_at'],
-      [textValue(row.id),nullableText(row.clientId),textValue(row.name || row.title),nullableText(row.description),textValue(row.status),
+      [textValue(row.id),nullableText(row.clientId),textValue(row.name || row.title),nullableText(row.description),normalizeProjectStatus(row.status),
        nullableText(row.owner),numberValue(row.budget),dateValue(row.startDate),dateValue(row.endDate),
        metadata(row,['id','clientId','name','title','description','status','owner','budget','startDate','endDate','createdAt','updatedAt']),
        timestampValue(row.createdAt),timestampValue(row.updatedAt,row.createdAt)]);
@@ -394,7 +452,7 @@ async function importCore(client: any, db: AnyRecord, privateDocumentMetadata: M
        'validity_period','payment_terms','owner','status','notes','created_date','sent_date','approved_date','metadata','created_at','updated_at'],
       [textValue(row.id),nullableText(row.proposalNumber),textValue(row.title),clientIdFor(row,clients),nullableText(row.dealId),nullableText(row.projectId),
        numberValue(row.subtotal),numberValue(row.discount),numberValue(row.taxPercent),numberValue(row.tax),numberValue(row.total),textValue(row.currency,'IDR'),
-       nullableText(row.validityPeriod),nullableText(row.paymentTerms),nullableText(row.owner),textValue(row.status),nullableText(row.notes),
+       nullableText(row.validityPeriod),nullableText(row.paymentTerms),nullableText(row.owner),normalizeProposalStatus(row.status),nullableText(row.notes),
        dateValue(row.createdDate),dateValue(row.sentDate),dateValue(row.approvedDate),metadata(row,['id','proposalNumber','title','clientId','clientName','company','dealId','projectId','items','subtotal','discount','taxPercent','tax','total','currency','validityPeriod','paymentTerms','owner','status','notes','createdDate','sentDate','approvedDate','createdAt','updatedAt']),
        timestampValue(row.createdAt),timestampValue(row.updatedAt,row.createdAt)]);
     for (const item of Array.isArray(row.items) ? row.items : []) {
@@ -412,8 +470,8 @@ async function importCore(client: any, db: AnyRecord, privateDocumentMetadata: M
   for (const row of arr(db, 'tasks')) {
     await upsert(client, 'tasks',
       ['id','project_id','title','description','status','priority','assignee_user_id','due_date','metadata','created_at','updated_at'],
-      [textValue(row.id),nullableText(row.projectId),textValue(row.title),nullableText(row.description),textValue(row.status),
-       nullableText(row.priority),nullableText(row.assigneeUserId || row.assigneeId),dateValue(row.dueDate),
+      [textValue(row.id),nullableText(row.projectId),textValue(row.title),nullableText(row.description),normalizeTaskStatus(row.status),
+       normalizePriority(row.priority),assigneeUserIdFor(row, arr(db,'users')),dateValue(row.dueDate),
        metadata(row,['id','projectId','title','description','status','priority','assigneeUserId','assigneeId','dueDate','createdAt','updatedAt']),
        timestampValue(row.createdAt),timestampValue(row.updatedAt,row.createdAt)]);
   }
@@ -432,7 +490,7 @@ async function importCore(client: any, db: AnyRecord, privateDocumentMetadata: M
       ['id','invoice_number','client_id','project_id','type','subtotal','discount_percent','discount_amount','tax_percent','tax_amount','total','amount_paid','balance_due','currency','status','issue_date','due_date','paid_date','notes','payment_terms','metadata','created_at','updated_at'],
       [textValue(row.id),nullableText(row.invoiceNumber),clientIdFor(row,clients),nullableText(row.projectId),textValue(row.type,'invoice'),
        numberValue(row.subtotal),numberValue(row.discountPercent),numberValue(row.discountAmount),numberValue(row.taxPercent),numberValue(row.taxAmount),
-       numberValue(row.total),numberValue(row.amountPaid),numberValue(row.balanceDue),textValue(row.currency,'IDR'),textValue(row.status),
+       numberValue(row.total),numberValue(row.amountPaid),numberValue(row.balanceDue),textValue(row.currency,'IDR'),normalizeInvoiceStatus(row.status),
        dateValue(row.issueDate),dateValue(row.dueDate),dateValue(row.paidDate),nullableText(row.notes),nullableText(row.paymentTerms),
        metadata(row,['id','invoiceNumber','clientId','clientName','clientCompany','clientEmail','clientPhone','projectId','type','items','subtotal','discountPercent','discountAmount','taxPercent','taxAmount','total','amountPaid','balanceDue','currency','status','issueDate','dueDate','paidDate','notes','paymentTerms','payments','createdAt','updatedAt']),
        timestampValue(row.createdAt),timestampValue(row.updatedAt,row.createdAt)]);
@@ -482,7 +540,7 @@ async function importCore(client: any, db: AnyRecord, privateDocumentMetadata: M
     await upsert(client, 'vendors',
       ['id','name','category','contact_person','email','phone','payment_terms','status','monthly_spend','notes','metadata','created_at'],
       [textValue(row.id),textValue(row.name),nullableText(row.category),nullableText(row.contactPerson),nullableText(row.email),nullableText(row.phone),
-       nullableText(row.paymentTerms),textValue(row.status,'active'),numberValue(row.monthlySpend),nullableText(row.notes),
+       nullableText(row.paymentTerms),normalizeVendorStatus(row.status),numberValue(row.monthlySpend),nullableText(row.notes),
        metadata(row,['id','name','category','contactPerson','email','phone','paymentTerms','status','monthlySpend','notes','createdAt']),
        timestampValue(row.createdAt)]);
   }
