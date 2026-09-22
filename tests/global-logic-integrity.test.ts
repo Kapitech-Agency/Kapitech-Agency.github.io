@@ -278,3 +278,19 @@ test('PostgreSQL enforces one authoritative invoice per proposal',()=>{
  assert.match(migration,/VALIDATE CONSTRAINT invoices_proposal_id_fkey_v1/);
  assert.match(repo,/SELECT \* FROM invoices WHERE proposal_id=\$1/);
 });
+
+
+test('production-critical relational hardening is present in the branch under test',()=>{
+ const invoice=read('server/postgres-invoice-repository.ts');
+ const proposal=read('server/postgres-proposal-repository.ts');
+ const crm=read('server/postgres-crm-deal-repository.ts');
+ const auth=read('src/lib/adminAuth.ts');
+ const startup=read('server.ts');
+ const migration=read('db/postgres/024_unique_proposal_invoice.sql');
+ assert.match(invoice,/SELECT metadata FROM clients WHERE id=\$1 FOR UPDATE/);
+ assert.match(proposal,/PROPOSAL_APPROVAL_REQUIRED/);
+ assert.match(crm,/async convertWonDeal/);
+ assert.match(auth,/localStorage/);
+ assert.match(startup,/postgresInitializationInFlight/);
+ assert.match(migration,/uq_invoices_proposal_id_v1/);
+});
