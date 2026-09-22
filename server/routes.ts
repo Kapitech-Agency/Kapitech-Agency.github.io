@@ -1177,7 +1177,23 @@ apiRouter.put('/leads/:id', requireAuth, requirePermission('canManageCrm'), asyn
       res.status(404).json({ success: false, error: 'Lead not found.' });
       return;
     }
-    
+    recordAuditLog({ action: 'LEAD_UPDATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Updated lead ${lead.fullName} (status: ${lead.status}).`, severity: 'info' });
+    res.json({ success: true, lead });
+    return;
+  }
+
+  const db = getDatabase();
+  const idx = db.leads.findIndex(l => l.id === id);
+  if (idx === -1) {
+    res.status(404).json({ success: false, error: 'Lead not found.' });
+    return;
+  }
+  db.leads[idx] = { ...db.leads[idx], ...patch, updatedAt: new Date().toISOString() };
+  saveDatabase(db);
+  recordAuditLog({ action: 'LEAD_UPDATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Updated lead ${db.leads[idx].fullName} (status: ${db.leads[idx].status}).`, severity: 'info' });
+  res.json({ success: true, lead: db.leads[idx] });
+});
+
 apiRouter.delete('/leads/:id', requireAuth, requirePermission('canManageCrm'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
   if (getDataSourceMode() === 'postgres') {
@@ -1187,7 +1203,23 @@ apiRouter.delete('/leads/:id', requireAuth, requirePermission('canManageCrm'), a
       return;
     }
     try { await postgresLeadRepository.delete(id, makeAuditEntry(req, 'LEAD_DELETED', `Deleted lead ${lead.fullName} (${lead.email}).`, 'warning')); } catch(error) { if(error instanceof Error&&error.message==='LEAD_IS_CLOSED'){res.status(409).json({success:false,error:'Closed leads are retained as business history and cannot be deleted.'});return;} throw error; }
-    
+    recordAuditLog({ action: 'LEAD_DELETED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Deleted lead ${lead.fullName} (${lead.email}).`, severity: 'warning' });
+    res.json({ success: true, message: 'Lead removed.' });
+    return;
+  }
+
+  const db = getDatabase();
+  const lead = db.leads.find(l => l.id === id);
+  if (!lead) {
+    res.status(404).json({ success: false, error: 'Lead not found.' });
+    return;
+  }
+  db.leads = db.leads.filter(l => l.id !== id);
+  saveDatabase(db);
+  recordAuditLog({ action: 'LEAD_DELETED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Deleted lead ${lead.fullName} (${lead.email}).`, severity: 'warning' });
+  res.json({ success: true, message: 'Lead removed.' });
+});
+
 apiRouter.post('/leads/:id/convert', requireAuth, requirePermission('canManageCrm'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
   if (getDataSourceMode() === 'postgres') {
@@ -2447,7 +2479,27 @@ apiRouter.put('/vendors/:id', requireAuth, requirePermission('canManageVendors')
     try {
       const vendor = await postgresVendorRepository.update(id, patch as any, makeAuditEntry(req, 'VENDOR_UPDATED', `Updated vendor ${id}.`, 'info'));
       if (!vendor) { res.status(404).json({ success: false, error: 'Vendor not found.' }); return; }
-      
+      recordAuditLog({ action: 'VENDOR_UPDATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Updated vendor ${id}.`, severity: 'info' });
+      res.json({ success: true, vendor });
+    } catch (error) { throw error; }
+    return;
+  }
+  const db = getDatabase();
+  const idx = db.vendors.findIndex(v => v.id === id);
+  if (idx === -1) { res.status(404).json({ success: false, error: 'Vendor not found.' }); return; }
+  const patch = pickFields(updates || {}, ['name', 'category', 'contactPerson', 'email', 'phone', 'website', 'paymentTerms', 'status', 'monthlySpend', 'notes', 'portfolioUrl', 'githubUrl', 'contracts']);
+  if (patch.email !== undefined) { patch.email = cleanText(patch.email, 254).toLowerCase(); if (patch.email && !isValidEmail(patch.email)) { res.status(400).json({ success: false, error: 'Invalid vendor email address.' }); return; } }
+  for (const key of ['website','portfolioUrl','githubUrl'] as const) if (patch[key] !== undefined) patch[key] = cleanOptionalUrl(patch[key]);
+  if (patch.status !== undefined && !['active','under_review','inactive','blacklisted'].includes(String(patch.status))) { res.status(400).json({ success: false, error: 'Invalid vendor status.' }); return; }
+  if (patch.monthlySpend !== undefined) { const numeric = normalizeNumber(patch.monthlySpend, 0, MAX_MONEY); if (numeric === null) { res.status(400).json({ success: false, error: 'Invalid vendor monthly spend.' }); return; } patch.monthlySpend = numeric; }
+  for (const key of ['name','category','contactPerson','phone','paymentTerms','notes'] as const) if (patch[key] !== undefined) patch[key] = cleanText(patch[key], key === 'notes' ? 3000 : 200);
+  if (patch.contracts !== undefined) patch.contracts = Array.isArray(patch.contracts) ? patch.contracts.slice(0, 50) : [];
+  db.vendors[idx] = { ...db.vendors[idx], ...patch, updatedAt: new Date().toISOString() };
+  saveDatabase(db);
+  recordAuditLog({ action: 'VENDOR_UPDATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Updated vendor ${id}.`, severity: 'info' });
+  res.json({ success: true, vendor: db.vendors[idx] });
+});
+
 apiRouter.delete('/vendors/:id', requireAuth, requirePermission('canManageVendors'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
   if (getDataSourceMode() === 'postgres') {
@@ -2455,7 +2507,19 @@ apiRouter.delete('/vendors/:id', requireAuth, requirePermission('canManageVendor
     if (!vendor) { res.status(404).json({ success: false, error: 'Vendor not found.' }); return; }
     const deleted = await postgresVendorRepository.delete(id, makeAuditEntry(req, 'VENDOR_DELETED', `Deleted vendor "${vendor.name}".`, 'warning'));
     if (!deleted) { res.status(404).json({ success: false, error: 'Vendor not found.' }); return; }
-    
+    recordAuditLog({ action: 'VENDOR_DELETED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Deleted vendor "${vendor.name}".`, severity: 'warning' });
+    res.json({ success: true, message: 'Vendor deleted.' });
+    return;
+  }
+  const db = getDatabase();
+  const vendor = db.vendors.find((item: any) => item.id === id);
+  if (!vendor) { res.status(404).json({ success: false, error: 'Vendor not found.' }); return; }
+  db.vendors = db.vendors.filter(v => v.id !== id);
+  saveDatabase(db);
+  recordAuditLog({ action: 'VENDOR_DELETED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Deleted vendor "${vendor.name || id}".`, severity: 'warning' });
+  res.json({ success: true, message: 'Vendor deleted.' });
+});
+
 // ----------------------------------------------------
 // 8. CMS (Services, Projects, Testimonials, Settings)
 // ----------------------------------------------------
@@ -3459,7 +3523,18 @@ apiRouter.post('/projects/timelogs', requireAuth, requireAnyPermission('canManag
   if (getDataSourceMode() === 'postgres') {
     try {
       const timeLog = await postgresTimeLogRepository.create(newLog, makeAuditEntry(req, 'TIMELOG_CREATED', `Created ${durationMinutes} minute time entry for ${newLog.projectName}.`, 'info'));
-      
+      recordAuditLog({ action: 'TIMELOG_CREATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Created ${durationMinutes} minute time entry for ${newLog.projectName}.`, severity: 'info' });
+      res.json({ success: true, timeLog }); return;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Time entry could not be created.';
+      res.status(message.endsWith('not found.') ? 404 : 409).json({ success: false, error: message }); return;
+    }
+  }
+  const db = getDatabase(); if (!db.timeLogs) db.timeLogs = []; db.timeLogs.unshift(newLog); saveDatabase(db);
+  recordAuditLog({ action: 'TIMELOG_CREATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Created ${durationMinutes} minute time entry for ${newLog.projectName}.`, severity: 'info' });
+  res.json({ success: true, timeLog: newLog });
+});
+
 apiRouter.delete('/projects/timelogs/:id', requireAuth, requireAnyPermission('canManageKanbanTasks', 'canManageProjects'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
   const canManageAllTimeLogs = Boolean(req.user!.permissions?.canManageProjects);
@@ -3472,7 +3547,20 @@ apiRouter.delete('/projects/timelogs/:id', requireAuth, requireAnyPermission('ca
     }
     const deleted = await postgresTimeLogRepository.delete(id, makeAuditEntry(req, 'TIMELOG_DELETED', `Deleted time entry ${id}.`, 'warning'));
     if (!deleted) { res.status(404).json({ success: false, error: 'Time entry not found.' }); return; }
-    
+    recordAuditLog({ action: 'TIMELOG_DELETED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Deleted time entry ${id}.`, severity: 'warning' });
+    res.json({ success: true, message: 'Time entry deleted.' }); return;
+  }
+  const db = getDatabase(); const existing = (db.timeLogs || []).find(t => t.id === id);
+  if (!existing) { res.status(404).json({ success: false, error: 'Time entry not found.' }); return; }
+  if (!canManageAllTimeLogs && String(existing.userId || '') !== String(req.user!.id)) {
+    res.status(403).json({ success: false, error: 'You can only delete your own time entries.' });
+    return;
+  }
+  db.timeLogs = (db.timeLogs || []).filter(t => t.id !== id); saveDatabase(db);
+  recordAuditLog({ action: 'TIMELOG_DELETED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Deleted time entry ${id}.`, severity: 'warning' });
+  res.json({ success: true, message: 'Time entry deleted.' });
+});
+
 // ----------------------------------------------------
 // 15. APPROVALS CENTER (PART 24)
 // ----------------------------------------------------
