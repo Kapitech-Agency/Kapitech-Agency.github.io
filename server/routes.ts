@@ -1794,9 +1794,8 @@ apiRouter.put('/projects/:id', requireAuth, requirePermission('canManageProjects
     if (patch.tasks !== undefined) patch.tasks = Array.isArray(patch.tasks) ? patch.tasks.slice(0, 200) : [];
     if (patch.milestones !== undefined) patch.milestones = Array.isArray(patch.milestones) ? patch.milestones.slice(0, 50) : [];
     try {
-      const project = await postgresProjectRepository.update(id, patch as any);
+      const project = await postgresProjectRepository.update(id, patch as any, makeAuditEntry(req, 'PROJECT_UPDATED', `Updated project ${id}.`));
       if (!project) { res.status(404).json({ success: false, error: 'Project not found.' }); return; }
-      recordAuditLog({ action: 'PROJECT_UPDATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Updated project ${id}.`, severity: 'info' });
       res.json({ success: true, project });
     } catch (error) {
       if (error instanceof ProjectConcurrencyError) { res.status(409).json({ success: false, error: error.message, code: 'PROJECT_CONFLICT' }); return; }
@@ -1834,9 +1833,8 @@ apiRouter.delete('/projects/:id', requireAuth, requirePermission('canManageProje
     const project = await postgresProjectRepository.findById(id);
     if (!project) { res.status(404).json({ success: false, error: 'Project not found.' }); return; }
     let deleted:boolean;
-    try { deleted=await postgresProjectRepository.delete(id); } catch(error) { if(error instanceof Error&&error.message==='PROJECT_HAS_BUSINESS_RECORDS'){res.status(409).json({success:false,error:'Project has business records and cannot be deleted.'});return;} throw error; }
+    try { deleted=await postgresProjectRepository.delete(id, makeAuditEntry(req, 'PROJECT_DELETED', `Deleted project "${project.name}".`, 'warning')); } catch(error) { if(error instanceof Error&&error.message==='PROJECT_HAS_BUSINESS_RECORDS'){res.status(409).json({success:false,error:'Project has business records and cannot be deleted.'});return;} throw error; }
     if (!deleted) { res.status(404).json({ success: false, error: 'Project not found.' }); return; }
-    recordAuditLog({ action: 'PROJECT_DELETED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Deleted project "${project.name}".`, severity: 'warning' });
     res.json({ success: true, message: 'Project removed.' });
     return;
   }
