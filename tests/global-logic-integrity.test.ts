@@ -189,16 +189,19 @@ test('JSON fallback preserves proposal approval and conversion state-machine bou
  for(const value of ['Accepted status can only be created by the proposal-to-invoice workflow.','Accepted proposals cannot be reopened or moved to another status.','Invalid proposal approval transition.']) assert.ok(block.includes(value),value);
 });
 
-test('JSON fallback prevents deletion of referenced business records',()=>{
- const route=read('server/routes.ts');
- const clientStart=route.indexOf("apiRouter.delete('/clients/:id'");
- const clients=route.slice(clientStart,route.indexOf("apiRouter.get('/projects'",clientStart));
- const projectStart=route.indexOf("apiRouter.delete('/projects/:id'");
- const projects=route.slice(projectStart,route.indexOf("apiRouter.get('/finance/invoices'",projectStart));
- assert.match(clients,/hasBusinessRecords/);
- assert.match(projects,/hasBusinessRecords/);
- assert.match(clients,/Client has business records and cannot be deleted/);
- assert.match(projects,/Project has business records and cannot be deleted/);
+test('PostgreSQL production path prevents deletion of referenced business records',()=>{
+ const client=read('server/postgres-client-repository.ts');
+ const project=read('server/postgres-project-repository.ts');
+ assert.match(client,/CLIENT_HAS_BUSINESS_RECORDS/);
+ assert.match(client,/FROM projects WHERE client_id=\$1/);
+ assert.match(client,/FROM crm_deals WHERE client_id=\$1/);
+ assert.match(client,/FROM proposals WHERE client_id=\$1/);
+ assert.match(client,/FROM invoices WHERE client_id=\$1/);
+ assert.match(project,/PROJECT_HAS_BUSINESS_RECORDS/);
+ assert.match(project,/FROM proposals WHERE project_id=\$1/);
+ assert.match(project,/FROM invoices WHERE project_id=\$1/);
+ assert.match(project,/FROM tasks WHERE project_id=\$1/);
+ assert.match(project,/FROM time_logs WHERE project_id=\$1/);
 });
 
 test('JSON fallback validates approval references before creating approval requests',()=>{
