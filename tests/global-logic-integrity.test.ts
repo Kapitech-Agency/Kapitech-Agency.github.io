@@ -11,6 +11,8 @@ test('task assignee persistence resolves display identity to a real user id',()=
 
 test('task response preserves display assignee while storing relational user id',()=>{const s=read('server/postgres-project-repository.ts');assert.match(s,/assignedTo: String\(metadata\.assignedTo \?\? row\.assignee_user_id \?\? ''\)/);});
 
+test('project task updates resolve display assignee through the active-user resolver',()=>{const s=read('server/postgres-project-repository.ts');const start=s.indexOf('for (const task of incoming)');const end=s.indexOf('for (const row of tasksResult.rows',start);const block=s.slice(start,end);assert.match(block,/resolveAssigneeUserId\(client, merged\.assignedTo\)/);assert.match(block,/assigneeUserId/);});
+
 test('administrator PostgreSQL account mutations bind audit to the same transaction',()=>{
  const auth=read('server/postgres-repository.ts');
  const routes=read('server/routes.ts');
@@ -45,7 +47,7 @@ test('document mutations bind PostgreSQL audit and document delete enforces obje
  for(const e of ['async create(input: any, audit?: AuditEntry)','async update(id: string, patch: any, audit?: AuditEntry)','async delete(id: string, audit?: AuditEntry)','appendWithinTransaction(client, audit)']) assert.ok(repo.includes(e),e);
  const deleteRoute=route.slice(route.indexOf("apiRouter.delete('/documents/:id'"),route.indexOf("apiRouter.get('/system/document-vault/status"));
  assert.match(deleteRoute,/requireDocumentObjectAccess\(req, res, document\)/);
- assert.match(deleteRoute,/postgresDocumentRepository\\.delete\(id, makeAuditEntry/);
+ assert.match(deleteRoute,/postgresDocumentRepository\.delete\(id, makeAuditEntry/);
 });
 
 test('private document upload rotates the storage object key before metadata commit',()=>{
