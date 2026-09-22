@@ -384,6 +384,19 @@ function assertForeignKeys(db: AnyRecord): void {
   check('documents', 'ownerUserId', users);
   check('notifications', 'recipientUserId', users);
 
+  for (const row of arr(db, 'timeLogs')) {
+    const taskId = nullableText(row.taskId);
+    const projectId = nullableText(row.projectId);
+    if (!taskId && !projectId) throw new Error('Time log must reference a project or task in migration source: ' + textValue(row.id));
+    if (taskId) {
+      const task = arr(db, 'tasks').find(item => textValue(item.id) === taskId);
+      if (!task) throw new Error('Referenced task not found in migration source: ' + taskId);
+      const taskProjectId = nullableText(task.projectId);
+      if (!taskProjectId) throw new Error('Time log task must belong to a project in migration source: ' + textValue(row.id));
+      if (projectId && projectId !== taskProjectId) throw new Error('Time log task/project mismatch in migration source: ' + textValue(row.id));
+    }
+  }
+
   for (const row of arr(db, 'documents')) {
     for (const userId of Array.isArray(row.accessUserIds) ? row.accessUserIds : []) {
       if (userId && !users.has(userId)) {
@@ -458,6 +471,35 @@ function assertNestedIds(db: AnyRecord): void {
       if (!id) throw new Error('Invoice payment is missing an id: ' + textValue(row.id));
       if (paymentIds.has(id)) throw new Error('Duplicate invoice payment id: ' + id);
       paymentIds.add(id);
+    }
+
+    const items = Array.isArray(row.items) ? row.items : [];
+    if (items.length === 0) throw new Error('Invoice has no line items in migration source: ' + textValue(row.id));
+    const subtotalFromItems = items.reduce((sum, item) => {
+      const quantity = numberValue(item.quantity);
+      const unitPrice = numberValue(item.unitPrice);
+      const amount = numberValue(item.amount, quantity * unitPrice);
+      const expectedAmount = Math.round(quantity * unitPrice);
+      if (quantity <= 0 || unitPrice < 0 || amount < 0 || Math.abs(amount - expectedAmount) > 0.01) {
+        throw new Error('Invalid invoice line item in migration source: ' + textValue(row.id));
+      }
+      return Math.round((sum + amount) * 100) / 100;
+    }, 0);
+    const subtotal = numberValue(row.subtotal);
+    const discountPercent = numberValue(row.discountPercent);
+    const taxPercent = numberValue(row.taxPercent);
+    if (discountPercent < 0 || discountPercent > 100 || taxPercent < 0 || taxPercent > 100) {
+      throw new Error('Invalid invoice financial percentages in migration source: ' + textValue(row.id));
+    }
+    const discountAmount = Math.round(subtotal * discountPercent / 100);
+    const taxableSubtotal = Math.max(0, subtotal - discountAmount);
+    const taxAmount = Math.round(taxableSubtotal * taxPercent / 100);
+    const expectedTotal = taxableSubtotal + taxAmount;
+    if (Math.abs(subtotalFromItems - subtotal) > 0.01 ||
+        Math.abs(numberValue(row.discountAmount) - discountAmount) > 0.01 ||
+        Math.abs(numberValue(row.taxAmount) - taxAmount) > 0.01 ||
+        Math.abs(numberValue(row.total) - expectedTotal) > 0.01) {
+      throw new Error('Invoice financial total mismatch in migration source: ' + textValue(row.id));
     }
 
     const total = numberValue(row.total);
