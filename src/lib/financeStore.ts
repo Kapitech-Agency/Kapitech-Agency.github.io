@@ -471,7 +471,7 @@ export const recordInvoicePayment = async (
     method: payment.method,
     reference: payment.reference,
     notes: payment.notes,
-    idempotencyKey: payment.idempotencyKey || `payment-${invoiceId}-${payment.reference || 'manual'}`
+    idempotencyKey: payment.idempotencyKey || `payment-${invoiceId}-${Date.now()}-${Math.random().toString(16).slice(2)}`
   });
 
   if (!result.success || !result.data?.invoice) {
