@@ -1,0 +1,3 @@
+import assert from 'node:assert/strict'; import fs from 'node:fs'; import test from 'node:test';
+test('postgres audit writes expose a drainable queue',()=>{const s=fs.readFileSync('server/db.ts','utf8');assert.match(s,/export function flushAuditLogWrites\(\): Promise<void>/);assert.match(s,/process\.once\('SIGTERM'/);assert.match(s,/AUDIT_DRAIN_TIMEOUT_MS = 5000/);});
+test('audit shutdown drains before exit',()=>{const s=fs.readFileSync('server/db.ts','utf8');const i=s.indexOf('const drain = async');const block=s.slice(i,i+1300);assert.match(block,/flushAuditLogWrites\(\)/);assert.match(block,/process\.exit\(0\)/);});
