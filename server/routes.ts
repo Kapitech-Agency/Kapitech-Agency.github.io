@@ -2583,8 +2583,8 @@ apiRouter.post('/cms/services', requireAuth, requirePermission('canManageCmsCont
     updatedAt: now
   };
   if (getDataSourceMode() === 'postgres') {
-    const service = await postgresCmsRepository.create('service', newService);
-    recordAuditLog({ action: 'CMS_SERVICE_CREATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Created CMS service "${service.title || newService.title}".`, severity: 'info' });
+    const service = await postgresCmsRepository.create('service', newService, makeAuditEntry(req, 'CMS_SERVICE_CREATED', `Created CMS service "${newService.title}".`, 'info'));
+    if (getDataSourceMode() === 'json') recordAuditLog({ action: 'CMS_SERVICE_CREATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Created CMS service "${service.title || newService.title}".`, severity: 'info' });
     res.json({ success: true, service });
     return;
   }
@@ -2599,9 +2599,9 @@ apiRouter.put('/cms/services/:id', requireAuth, requirePermission('canManageCmsC
   const { id } = req.params;
   const patch = pickFields(req.body || {}, ['slug','type','category','title','navSubtitle','navSubtitleId','heroHeadline','heroHeadlineId','heroSubtitle','heroSubtitleId','badge','badgeId','metrics','capabilities','technologies','deliverables','testimonial','featured','isPublished']);
   if (getDataSourceMode() === 'postgres') {
-    const service = await postgresCmsRepository.update('service', id, patch);
+    const service = await postgresCmsRepository.update('service', id, patch, makeAuditEntry(req, 'CMS_SERVICE_UPDATED', `Updated CMS service "${patch.title || id}".`, 'info'));
     if (!service) { res.status(404).json({ success: false, error: 'Service not found.' }); return; }
-    recordAuditLog({ action: 'CMS_SERVICE_UPDATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Updated CMS service "${service.title || id}".`, severity: 'info' });
+    if (getDataSourceMode() === 'json') recordAuditLog({ action: 'CMS_SERVICE_UPDATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Updated CMS service "${service.title || id}".`, severity: 'info' });
     res.json({ success: true, service });
     return;
   }
@@ -2619,8 +2619,8 @@ apiRouter.delete('/cms/services/:id', requireAuth, requirePermission('canManageC
   if (getDataSourceMode() === 'postgres') {
     const service = await postgresCmsRepository.findById('service', req.params.id);
     if (!service) { res.status(404).json({ success: false, error: 'Service not found.' }); return; }
-    await postgresCmsRepository.delete('service', req.params.id);
-    recordAuditLog({ action: 'CMS_SERVICE_DELETED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Deleted CMS service "${service.title || service.name || id}".`, severity: 'warning' });
+    await postgresCmsRepository.delete('service', req.params.id, makeAuditEntry(req, 'CMS_SERVICE_DELETED', `Deleted CMS service "${service.title || service.name || id}".`, 'warning'));
+    if (getDataSourceMode() === 'json') recordAuditLog({ action: 'CMS_SERVICE_DELETED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Deleted CMS service "${service.title || service.name || id}".`, severity: 'warning' });
     res.json({ success: true, message: 'Service deleted.' });
     return;
   }
@@ -2657,8 +2657,8 @@ apiRouter.post('/cms/projects', requireAuth, requirePermission('canManageCmsCont
     updatedAt: now
   };
   if (getDataSourceMode() === 'postgres') {
-    const project = await postgresCmsRepository.create('project', newProj);
-    recordAuditLog({ action: 'CMS_PROJECT_CREATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Created CMS project "${project.title || newProj.title}".`, severity: 'info' });
+    const project = await postgresCmsRepository.create('project', newProj, makeAuditEntry(req, 'CMS_PROJECT_CREATED', `Created CMS project "${newProj.title}".`, 'info'));
+    if (getDataSourceMode() === 'json') recordAuditLog({ action: 'CMS_PROJECT_CREATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Created CMS project "${project.title || newProj.title}".`, severity: 'info' });
     res.json({ success: true, project });
     return;
   }
@@ -2673,9 +2673,9 @@ apiRouter.put('/cms/projects/:id', requireAuth, requirePermission('canManageCmsC
   const { id } = req.params;
   const patch = pickFields(req.body || {}, ['slug','title','client','industry','pillar','service','featured','image','desc','descId','challenge','challengeId','solution','solutionId','deliverables','technologies','impact','year','isPublished']);
   if (getDataSourceMode() === 'postgres') {
-    const project = await postgresCmsRepository.update('project', id, patch);
+    const project = await postgresCmsRepository.update('project', id, patch, makeAuditEntry(req, 'CMS_PROJECT_UPDATED', `Updated CMS project "${patch.title || id}".`, 'info'));
     if (!project) { res.status(404).json({ success: false, error: 'Project not found.' }); return; }
-    recordAuditLog({ action: 'CMS_PROJECT_UPDATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Updated CMS project "${project.title || id}".`, severity: 'info' });
+    if (getDataSourceMode() === 'json') recordAuditLog({ action: 'CMS_PROJECT_UPDATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Updated CMS project "${project.title || id}".`, severity: 'info' });
     res.json({ success: true, project });
     return;
   }
@@ -2693,8 +2693,8 @@ apiRouter.delete('/cms/projects/:id', requireAuth, requirePermission('canManageC
   if (getDataSourceMode() === 'postgres') {
     const project = await postgresCmsRepository.findById('project', req.params.id);
     if (!project) { res.status(404).json({ success: false, error: 'Project not found.' }); return; }
-    await postgresCmsRepository.delete('project', req.params.id);
-    recordAuditLog({ action: 'CMS_PROJECT_DELETED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Deleted CMS project "${project.title || project.name || id}".`, severity: 'warning' });
+    await postgresCmsRepository.delete('project', req.params.id, makeAuditEntry(req, 'CMS_PROJECT_DELETED', `Deleted CMS project "${project.title || project.name || id}".`, 'warning'));
+    if (getDataSourceMode() === 'json') recordAuditLog({ action: 'CMS_PROJECT_DELETED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Deleted CMS project "${project.title || project.name || id}".`, severity: 'warning' });
     res.json({ success: true, message: 'Project deleted.' });
     return;
   }
@@ -2738,8 +2738,8 @@ apiRouter.post('/cms/testimonials', requireAuth, requirePermission('canManageCms
     updatedAt: now
   };
   if (getDataSourceMode() === 'postgres') {
-    const testimonial = await postgresCmsRepository.create('testimonial', newTestimonial);
-    recordAuditLog({ action: 'CMS_TESTIMONIAL_CREATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Created CMS testimonial "${testimonial.author || testimonial.name}".`, severity: 'info' });
+    const testimonial = await postgresCmsRepository.create('testimonial', newTestimonial, makeAuditEntry(req, 'CMS_TESTIMONIAL_CREATED', `Created CMS testimonial "${newTestimonial.author}".`, 'info'));
+    if (getDataSourceMode() === 'json') recordAuditLog({ action: 'CMS_TESTIMONIAL_CREATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Created CMS testimonial "${testimonial.author || testimonial.name}".`, severity: 'info' });
     res.json({ success: true, testimonial });
     return;
   }
@@ -2754,9 +2754,9 @@ apiRouter.put('/cms/testimonials/:id', requireAuth, requirePermission('canManage
   const { id } = req.params;
   const patch = pickFields(req.body || {}, ['quote','quoteId','author','role','company','location','rating','avatar','isPublished']);
   if (getDataSourceMode() === 'postgres') {
-    const testimonial = await postgresCmsRepository.update('testimonial', id, patch);
+    const testimonial = await postgresCmsRepository.update('testimonial', id, patch, makeAuditEntry(req, 'CMS_TESTIMONIAL_UPDATED', `Updated CMS testimonial "${patch.author || patch.name || id}".`, 'info'));
     if (!testimonial) { res.status(404).json({ success: false, error: 'Testimonial not found.' }); return; }
-    recordAuditLog({ action: 'CMS_TESTIMONIAL_UPDATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Updated CMS testimonial "${testimonial.author || id}".`, severity: 'info' });
+    if (getDataSourceMode() === 'json') recordAuditLog({ action: 'CMS_TESTIMONIAL_UPDATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Updated CMS testimonial "${testimonial.author || id}".`, severity: 'info' });
     res.json({ success: true, testimonial });
     return;
   }
@@ -2774,8 +2774,8 @@ apiRouter.delete('/cms/testimonials/:id', requireAuth, requirePermission('canMan
   if (getDataSourceMode() === 'postgres') {
     const testimonial = await postgresCmsRepository.findById('testimonial', req.params.id);
     if (!testimonial) { res.status(404).json({ success: false, error: 'Testimonial not found.' }); return; }
-    await postgresCmsRepository.delete('testimonial', req.params.id);
-    recordAuditLog({ action: 'CMS_TESTIMONIAL_DELETED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Deleted CMS testimonial "${testimonial.author || testimonial.name || id}".`, severity: 'warning' });
+    await postgresCmsRepository.delete('testimonial', req.params.id, makeAuditEntry(req, 'CMS_TESTIMONIAL_DELETED', `Deleted CMS testimonial "${testimonial.author || testimonial.name || id}".`, 'warning'));
+    if (getDataSourceMode() === 'json') recordAuditLog({ action: 'CMS_TESTIMONIAL_DELETED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Deleted CMS testimonial "${testimonial.author || testimonial.name || id}".`, severity: 'warning' });
     res.json({ success: true, message: 'Testimonial deleted.' });
     return;
   }
@@ -2816,8 +2816,8 @@ apiRouter.get('/cms/settings', requireAuth, requirePermission('canManageCmsConte
 apiRouter.put('/cms/settings', requireAuth, requirePermission('canManageCmsContent'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const patch = pickFields(req.body || {}, ['siteTitle','siteDescription','contactReceiverEmail','defaultLanguage','enableLiveChat','enableSoundAlerts','maintenanceMode']);
   if (getDataSourceMode() === 'postgres') {
-    const settings = await postgresCmsRepository.updateSettings(patch);
-    recordAuditLog({ action: 'CMS_SETTINGS_UPDATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: 'Updated CMS settings.', severity: 'info' });
+    const settings = await postgresCmsRepository.updateSettings(patch, makeAuditEntry(req, 'CMS_SETTINGS_UPDATED', 'Updated CMS settings.', 'info'));
+    if (getDataSourceMode() === 'json') recordAuditLog({ action: 'CMS_SETTINGS_UPDATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: 'Updated CMS settings.', severity: 'info' });
     res.json({ success: true, settings });
     return;
   }
