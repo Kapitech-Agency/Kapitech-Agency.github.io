@@ -579,8 +579,7 @@ export const AdminInvoicing: React.FC = () => {
                 { value: 'all', label: language === 'id' ? 'Semua Status' : 'All Status' },
                 { value: 'paid', label: language === 'id' ? 'Lunas' : 'Paid' },
                 { value: 'partially_paid', label: language === 'id' ? 'Sebagian (Partial)' : 'Partially Paid' },
-                { value: 'approved', label: language === 'id' ? 'Disetujui' : 'Approved' },
-                { value: 'sent', label: language === 'id' ? 'Terkirim' : 'Sent' },
+                              { value: 'sent', label: language === 'id' ? 'Terkirim' : 'Sent' },
                 { value: 'overdue', label: language === 'id' ? 'Jatuh Tempo' : 'Overdue' },
                 { value: 'draft', label: 'Draft' }
               ]}
