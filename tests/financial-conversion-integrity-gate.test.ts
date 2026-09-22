@@ -30,7 +30,7 @@ test('proposal conversion requires approval and is idempotent after acceptance',
  assert.ok(proposal.includes('PROPOSAL_APPROVAL_REQUIRED'));
  assert.ok(proposal.includes('__idempotentReplay:true'));
  assert.ok(proposal.includes('WHERE proposal_id=$1'));
- assert.match(routes,/PROPOSAL_APPROVAL_REQUIRED/);
+ assert.match(routes,/Proposal cannot be converted to an invoice in its current status/);
 });
 
 
