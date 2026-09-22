@@ -92,3 +92,14 @@ test('transaction-bound PostgreSQL audit routes do not append the same success e
    if (pgEnd>0) assert.equal((block.slice(0,pgEnd).match(/recordAuditLog\(/g)||[]).length,0,needle);
  }
 });
+
+
+test('core PostgreSQL state domains are enforced by the latest migration',()=>{
+ const migration=read('db/postgres/020_core_state_constraints.sql');
+ for(const name of [
+  'projects_status_v1_check','tasks_status_v1_check','tasks_priority_v1_check',
+  'proposals_status_v1_check','invoices_currency_v1_check','crm_deals_stage_v1_check',
+  'crm_deals_priority_v1_check','clients_status_v1_check','vendors_status_v1_check'
+ ]) assert.ok(migration.includes(name),name);
+ assert.match(migration,/stage IN \('new','contacted','proposal','negotiation','won','lost'\)/);
+});
