@@ -169,7 +169,7 @@ export async function fetchServerCmsServices(): Promise<ServiceItemData[]> {
   } catch (err) {
     console.debug('Failed to fetch services from server:', err);
   }
-  scheduleCmsHydrationRetry('services', () => { void fetchServerCmsServices()(); });
+  scheduleCmsHydrationRetry('services', () => { void fetchServerCmsServices(); });
   return getCmsServices();
 }
 
@@ -231,7 +231,7 @@ export async function fetchServerCmsProjects(): Promise<ProjectItem[]> {
   } catch (err) {
     console.debug('Failed to fetch projects from server:', err);
   }
-  scheduleCmsHydrationRetry('projects', () => { void fetchServerCmsProjects()(); });
+  scheduleCmsHydrationRetry('projects', () => { void fetchServerCmsProjects(); });
   return getCmsProjects();
 }
 
@@ -290,7 +290,7 @@ export async function fetchServerCmsTestimonials(): Promise<TestimonialItem[]> {
   } catch (err) {
     console.debug('Failed to fetch testimonials from server:', err);
   }
-  scheduleCmsHydrationRetry('testimonials', () => { void fetchServerCmsTestimonials()(); });
+  scheduleCmsHydrationRetry('testimonials', () => { void fetchServerCmsTestimonials(); });
   return getCmsTestimonials();
 }
 
