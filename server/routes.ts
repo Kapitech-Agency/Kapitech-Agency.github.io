@@ -1208,7 +1208,6 @@ apiRouter.put('/leads/:id', requireAuth, requirePermission('canManageCrm'), asyn
       res.status(404).json({ success: false, error: 'Lead not found.' });
       return;
     }
-    recordAuditLog({ action: 'LEAD_UPDATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Updated lead ${lead.fullName} (status: ${lead.status}).`, severity: 'info' });
     res.json({ success: true, lead });
     return;
   }
@@ -1234,7 +1233,6 @@ apiRouter.delete('/leads/:id', requireAuth, requirePermission('canManageCrm'), a
       return;
     }
     try { await postgresLeadRepository.delete(id, makeAuditEntry(req, 'LEAD_DELETED', `Deleted lead ${lead.fullName} (${lead.email}).`, 'warning')); } catch(error) { if(error instanceof Error&&error.message==='LEAD_IS_CLOSED'){res.status(409).json({success:false,error:'Closed leads are retained as business history and cannot be deleted.'});return;} throw error; }
-    recordAuditLog({ action: 'LEAD_DELETED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Deleted lead ${lead.fullName} (${lead.email}).`, severity: 'warning' });
     res.json({ success: true, message: 'Lead removed.' });
     return;
   }
@@ -1806,6 +1804,10 @@ apiRouter.put('/projects/:id', requireAuth, requirePermission('canManageProjects
     } catch (error) {
       if (error instanceof ProjectConcurrencyError) { res.status(409).json({ success: false, error: error.message, code: 'PROJECT_CONFLICT' }); return; }
       if (error instanceof Error && error.message === 'TASK_HAS_TIME_LOGS') { res.status(409).json({ success: false, error: 'A task with time logs cannot be removed from the project.', code: 'TASK_HAS_TIME_LOGS' }); return; }
+      if (error instanceof Error && ['DUPLICATE_TASK_ID','INVALID_TASK_STATUS','INVALID_TASK_PRIORITY','TASK_ID_REQUIRED'].includes(error.message)) {
+        res.status(400).json({ success: false, error: error.message });
+        return;
+      }
       throw error;
     }
     return;
@@ -2511,7 +2513,6 @@ apiRouter.put('/vendors/:id', requireAuth, requirePermission('canManageVendors')
     try {
       const vendor = await postgresVendorRepository.update(id, patch as any, makeAuditEntry(req, 'VENDOR_UPDATED', `Updated vendor ${id}.`, 'info'));
       if (!vendor) { res.status(404).json({ success: false, error: 'Vendor not found.' }); return; }
-      recordAuditLog({ action: 'VENDOR_UPDATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Updated vendor ${id}.`, severity: 'info' });
       res.json({ success: true, vendor });
     } catch (error) { throw error; }
     return;
@@ -2539,7 +2540,6 @@ apiRouter.delete('/vendors/:id', requireAuth, requirePermission('canManageVendor
     if (!vendor) { res.status(404).json({ success: false, error: 'Vendor not found.' }); return; }
     const deleted = await postgresVendorRepository.delete(id, makeAuditEntry(req, 'VENDOR_DELETED', `Deleted vendor "${vendor.name}".`, 'warning'));
     if (!deleted) { res.status(404).json({ success: false, error: 'Vendor not found.' }); return; }
-    recordAuditLog({ action: 'VENDOR_DELETED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Deleted vendor "${vendor.name}".`, severity: 'warning' });
     res.json({ success: true, message: 'Vendor deleted.' });
     return;
   }
@@ -3578,7 +3578,6 @@ apiRouter.post('/projects/timelogs', requireAuth, requireAnyPermission('canManag
   if (getDataSourceMode() === 'postgres') {
     try {
       const timeLog = await postgresTimeLogRepository.create(newLog, makeAuditEntry(req, 'TIMELOG_CREATED', `Created ${durationMinutes} minute time entry for ${newLog.projectName}.`, 'info'));
-      recordAuditLog({ action: 'TIMELOG_CREATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Created ${durationMinutes} minute time entry for ${newLog.projectName}.`, severity: 'info' });
       res.json({ success: true, timeLog }); return;
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Time entry could not be created.';
@@ -3602,7 +3601,6 @@ apiRouter.delete('/projects/timelogs/:id', requireAuth, requireAnyPermission('ca
     }
     const deleted = await postgresTimeLogRepository.delete(id, makeAuditEntry(req, 'TIMELOG_DELETED', `Deleted time entry ${id}.`, 'warning'));
     if (!deleted) { res.status(404).json({ success: false, error: 'Time entry not found.' }); return; }
-    recordAuditLog({ action: 'TIMELOG_DELETED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Deleted time entry ${id}.`, severity: 'warning' });
     res.json({ success: true, message: 'Time entry deleted.' }); return;
   }
   const db = getDatabase(); const existing = (db.timeLogs || []).find(t => t.id === id);
