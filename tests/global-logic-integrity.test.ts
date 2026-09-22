@@ -157,3 +157,25 @@ test('PostgreSQL import preserves cross-module project and time-log integrity',(
    'Invoice balance aggregate mismatch in migration source'
  ]) assert.ok(importer.includes(value),value);
 });
+
+
+test('invoice repository rejects unsupported direct status mutation',()=>{
+ const repo=read('server/postgres-invoice-repository.ts');
+ assert.match(repo,/allowedStatuses=new Set\(\['draft','sent','overdue','partially_paid','paid','cancelled'\]\)/);
+ assert.match(repo,/INVALID_INVOICE_STATUS/);
+});
+
+test('document repository never manually commits or rolls back inside shared transaction callbacks',()=>{
+ const repo=read('server/postgres-document-repository.ts');
+ const createStart=repo.indexOf('async create');
+ const updateStart=repo.indexOf('async update');
+ const deleteStart=repo.indexOf('async delete');
+ for(const block of [
+   repo.slice(createStart,updateStart),
+   repo.slice(updateStart,deleteStart),
+   repo.slice(deleteStart)
+ ]) {
+   assert.doesNotMatch(block,/client\.query\(['"](BEGIN|COMMIT|ROLLBACK)['"]\)/);
+   assert.match(block,/withPostgresTransaction/);
+ }
+});
