@@ -24,8 +24,8 @@ test('proposal-to-invoice conversion serializes invoice-number generation under 
 test('proposal-to-invoice conversion keeps balance and invoice item amounts aligned to cents', async () => {
   const source = await fs.readFile(path.join(root, 'server/postgres-proposal-repository.ts'), 'utf8');
   assert.match(source, /balanceDue:derivedTotal/);
-  assert.match(source, /Math\.round\(quantity\*unitPrice\*100\) \/ 100/);
-  assert.match(source, /amount:Math\.round\(Number\(i\.quantity\)\*Number\(i\.unitPrice\)\*100\) \/ 100/);
+  assert.match(source, /Math\.round\(quantity\s*\*\s*unitPrice\s*\*\s*100\)\s*\/\s*100/);
+  assert.match(source, /amount:Math\.round\(Number\(i\.quantity\)\s*\*\s*Number\(i\.unitPrice\)\s*\*\s*100\)\s*\/\s*100/);
 });
 
 test('financial line-total migration uses deferred database reconciliation triggers', async () => {
