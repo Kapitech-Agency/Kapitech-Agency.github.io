@@ -1648,7 +1648,7 @@ apiRouter.put('/clients/:id', requireAuth, requirePermission('canManageClients')
   const { id } = req.params;
   const updates = req.body || {};
   if (getDataSourceMode() === 'postgres') {
-    const patch = pickFields(updates || {}, ['name','company','companyName','clientName','email','phone','website','location','industry','status','contactPersonRole','notes','avatarUrl','slaDailyAdSpendBudget','currentDailyAdSpend','totalSpend','projectsCount','tier','activeRetainer','totalProjects','totalInvoiced']);
+    const patch = pickFields(updates || {}, ['name','company','companyName','clientName','email','phone','website','location','industry','status','contactPersonRole','notes','avatarUrl','slaDailyAdSpendBudget','currentDailyAdSpend','tier','activeRetainer']);
     if (patch.email !== undefined) patch.email = cleanText(patch.email, 254).toLowerCase();
     if (patch.email && !isValidEmail(patch.email)) { res.status(400).json({ success: false, error: 'Invalid client email address.' }); return; }
     if (patch.website !== undefined) patch.website = cleanOptionalUrl(patch.website);
