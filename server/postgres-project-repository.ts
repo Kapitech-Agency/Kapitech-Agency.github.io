@@ -62,6 +62,16 @@ function projectMetadata(project: AgencyProject): Record<string, unknown> {
   return { ...rest, clientId, clientName, clientCompany, clientEmail, crmLeadId, serviceCategory, progressPercent, teamLead, teamMembers, techStack, milestones, repositoryUrl, figmaUrl, liveStagingUrl };
 }
 
+async function resolveAssigneeUserId(client: { query: (text: string, values?: unknown[]) => Promise<any> }, value: unknown): Promise<string | null> {
+  const candidate = String(value ?? '').trim();
+  if (!candidate) return null;
+  const result = await client.query(
+    'SELECT id FROM users WHERE id = $1 OR lower(username) = lower($1) OR lower(name) = lower($1) LIMIT 1',
+    [candidate]
+  );
+  return result.rows[0]?.id ? String(result.rows[0].id) : null;
+}
+
 function taskMetadata(task: ProjectTask): Record<string, unknown> {
   const { id, title, description, status, priority, assignedTo, dueDate, createdAt, ...metadata } = task;
   return metadata;
@@ -198,11 +208,12 @@ export class PostgresProjectRepository {
   }
 
   private async insertTask(client: { query: (text: string, values?: unknown[]) => Promise<any> }, projectId: string, task: ProjectTask): Promise<void> {
+    const assigneeUserId = await resolveAssigneeUserId(client, task.assignedTo);
     await client.query(
       `INSERT INTO tasks (id,project_id,title,description,status,priority,assignee_user_id,due_date,metadata,created_at,updated_at)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$10)`,
-      [task.id, projectId, task.title, task.description || null, task.status, task.priority || 'medium', task.assignedTo || null, task.dueDate || null,
-       JSON.stringify({ ...taskMetadata(task), assignedTo: task.assignedTo || '' }), task.createdAt]
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)`,
+      [task.id, projectId, task.title, task.description || null, task.status, task.priority || 'medium', assigneeUserId, task.dueDate || null,
+       JSON.stringify({ ...taskMetadata(task), assignedTo: task.assignedTo || '' }), task.createdAt, task.createdAt]
     );
   }
 }
