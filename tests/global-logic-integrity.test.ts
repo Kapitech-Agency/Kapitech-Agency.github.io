@@ -296,3 +296,15 @@ test('production-critical relational hardening is present in the branch under te
  assert.match(read('db/postgres/022_audit_sequence.sql'),/GREATEST\(COALESCE/);
  assert.match(read('src/lib/adminAuth.ts'),/rememberMe \? localStorage : sessionStorage/);
 });
+
+
+test('PostgreSQL client updates cannot overwrite derived financial and project metrics',()=>{
+ const route=read('server/routes.ts');
+ const repo=read('server/postgres-client-repository.ts');
+ assert.doesNotMatch(route,/pickFields\([^\n]*totalSpend/);
+ assert.doesNotMatch(route,/pickFields\([^\n]*totalInvoiced/);
+ assert.match(repo,/totalSpend: currentClient\.totalSpend/);
+ assert.match(repo,/projectsCount: currentClient\.projectsCount/);
+ assert.match(repo,/totalProjects: currentClient\.totalProjects/);
+ assert.match(repo,/totalInvoiced: currentClient\.totalInvoiced/);
+});
