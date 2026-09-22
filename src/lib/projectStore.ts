@@ -69,16 +69,37 @@ import { api } from './apiClient';
 
 let projectServerHydrationStarted = false;
 
+let projectServerHydrationRetryCount = 0;
+let projectServerHydrationRetryTimer: number | null = null;
+
+function scheduleProjectHydrationRetry(): void {
+  if (typeof window === 'undefined' || projectServerHydrationRetryTimer !== null || projectServerHydrationRetryCount >= 6) return;
+  const delay = Math.min(30000, 3000 * 2 ** projectServerHydrationRetryCount);
+  projectServerHydrationRetryCount += 1;
+  projectServerHydrationRetryTimer = window.setTimeout(() => {
+    projectServerHydrationRetryTimer = null;
+    hydrateProjectsFromServer();
+  }, delay);
+}
+
 function hydrateProjectsFromServer(): void {
   if (!import.meta.env.PROD || projectServerHydrationStarted) return;
   projectServerHydrationStarted = true;
   api.projects.getAll().then((res) => {
-    if (!res.success || !Array.isArray(res.data?.projects)) return;
+    if (!res.success || !Array.isArray(res.data?.projects)) {
+      projectServerHydrationStarted = false;
+      scheduleProjectHydrationRetry();
+      return;
+    }
+    projectServerHydrationRetryCount = 0;
     projectsCache = res.data.projects;
     if (typeof window !== 'undefined') {
       window.dispatchEvent(new CustomEvent(PROJECT_EVENT_NAME, { detail: res.data.projects }));
     }
-  }).catch(() => {});
+  }).catch(() => {
+    projectServerHydrationStarted = false;
+    scheduleProjectHydrationRetry();
+  });
 }
 
 export const INITIAL_DEFAULT_PROJECTS: AgencyProject[] = [
