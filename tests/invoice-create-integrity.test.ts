@@ -16,3 +16,15 @@ test('PostgreSQL invoice creation validates line item integrity before insert', 
   assert.match(block, /expectedAmount = Math.round\(quantity \* unitPrice\)/);
   assert.ok(block.indexOf('invoiceItems') < block.indexOf('INSERT INTO invoices'));
 });
+
+
+test('PostgreSQL invoice updates revalidate authoritative financial totals', () => {
+  const source = fs.readFileSync('server/postgres-invoice-repository.ts', 'utf8');
+  const updateStart = source.indexOf('async update(');
+  const paymentStart = source.indexOf('async recordPayment(', updateStart);
+  assert.ok(updateStart >= 0 && paymentStart > updateStart);
+  const block = source.slice(updateStart, paymentStart);
+  assert.match(block, /this\.validateFinancials\(next\)/);
+  assert.match(source, /private validateFinancials\(invoice:any\)/);
+  assert.match(source, /INVOICE_FINANCIAL_TOTAL_MISMATCH/);
+});
