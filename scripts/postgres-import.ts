@@ -62,6 +62,33 @@ function nullableNumber(value: unknown): number | null {
   return Number.isFinite(n) ? n : null;
 }
 
+const CANONICAL_CLIENT_STATUSES = new Set(['active','inactive','completed','lead']);
+const CANONICAL_CRM_STAGES = new Set(['new','contacted','proposal','negotiation','won','lost']);
+const CANONICAL_PRIORITY = new Set(['low','medium','high','urgent']);
+
+function normalizeClientStatus(value: unknown): string {
+  const raw = textValue(value, 'active').trim().toLowerCase();
+  const aliases: Record<string,string> = { prospect: 'lead', on_hold: 'inactive' };
+  const normalized = aliases[raw] || raw;
+  if (!CANONICAL_CLIENT_STATUSES.has(normalized)) throw new Error('Unsupported client status in migration source: ' + raw);
+  return normalized;
+}
+
+function normalizeCrmStage(value: unknown): string {
+  const raw = textValue(value, 'new').trim().toLowerCase();
+  const aliases: Record<string,string> = { lead: 'new', discovery: 'contacted' };
+  const normalized = aliases[raw] || raw;
+  if (!CANONICAL_CRM_STAGES.has(normalized)) throw new Error('Unsupported CRM stage in migration source: ' + raw);
+  return normalized;
+}
+
+function normalizePriority(value: unknown): string | null {
+  const raw = nullableText(value)?.toLowerCase() || null;
+  if (!raw) return null;
+  if (!CANONICAL_PRIORITY.has(raw)) throw new Error('Unsupported priority in migration source: ' + raw);
+  return raw;
+}
+
 function dateValue(value: unknown): string | null {
   const text = textValue(value).trim();
   if (!text) return null;
@@ -334,7 +361,7 @@ async function importCore(client: any, db: AnyRecord, privateDocumentMetadata: M
     await upsert(client, 'clients',
       ['id','name','company','email','phone','industry','status','notes','metadata','created_at','updated_at'],
       [textValue(row.id),textValue(row.name || row.clientName),nullableText(row.company),nullableText(row.email),nullableText(row.phone),
-       nullableText(row.industry),textValue(row.status,'active'),nullableText(row.notes),metadata(row,['id','name','clientName','company','email','phone','industry','status','notes','createdAt','updatedAt']),
+       nullableText(row.industry),normalizeClientStatus(row.status),nullableText(row.notes),metadata(row,['id','name','clientName','company','email','phone','industry','status','notes','createdAt','updatedAt']),
        timestampValue(row.createdAt),timestampValue(row.updatedAt,row.createdAt)]);
   }
   counts.clients = arr(db,'clients').length;
@@ -344,7 +371,7 @@ async function importCore(client: any, db: AnyRecord, privateDocumentMetadata: M
     await upsert(client, 'crm_deals',
       ['id','title','client_id','client_name','company','email','phone','service_pillar','value','stage','priority','probability','owner','expected_close_date','metadata','created_at','updated_at'],
       [textValue(row.id),textValue(row.title),clientIdFor(row,clients),nullableText(row.clientName),nullableText(row.company),nullableText(row.email),
-       nullableText(row.phone),nullableText(row.servicePillar),numberValue(row.value),textValue(row.stage),nullableText(row.priority),
+       nullableText(row.phone),nullableText(row.servicePillar),numberValue(row.value),normalizeCrmStage(row.stage),normalizePriority(row.priority),
        nullableNumber(row.probability),nullableText(row.owner),dateValue(row.expectedCloseDate),
        metadata(row,['id','title','clientId','clientName','company','email','phone','servicePillar','value','stage','priority','probability','owner','expectedCloseDate','createdAt','updatedAt']),
        timestampValue(row.createdAt),timestampValue(row.updatedAt,row.createdAt)]);
