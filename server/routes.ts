@@ -3635,7 +3635,7 @@ apiRouter.post('/approvals', requireAuth, requireAnyPermission('canManageProject
   if (getDataSourceMode() === 'postgres') {
     let approval;
     try {
-      approval = await postgresApprovalRepository.create(newApproval);
+      approval = await postgresApprovalRepository.create(newApproval, makeAuditEntry(req, 'APPROVAL_CREATED', `Created approval request "${title}" for ${value}.`, riskLevel === 'Critical' ? 'critical' : riskLevel === 'High' ? 'warning' : 'info'));
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Approval request could not be created.';
       if (message.includes('reference is required') || message.includes('reference not found')) {
@@ -3645,15 +3645,7 @@ apiRouter.post('/approvals', requireAuth, requireAnyPermission('canManageProject
       throw error;
     }
     pushNotification(undefined, { title: 'Approval request pending', message: `${newApproval.title} requires an independent review.`, type: 'approval', severity: riskLevel === 'Critical' ? 'critical' : riskLevel === 'High' ? 'warning' : 'info', linkUrl: '/admin/approvals' });
-    recordAuditLog({
-      action: 'APPROVAL_CREATED',
-      actor: req.user!.username,
-      actorRole: req.user!.role,
-      ip: req.ip,
-      userAgent: req.headers['user-agent'] as string,
-      details: `Created approval request "${title}" for ${value}.`,
-      severity: riskLevel === 'Critical' ? 'critical' : riskLevel === 'High' ? 'warning' : 'info'
-    });
+
     res.status(201).json({ success: true, approval });
     return;
   }
@@ -3687,7 +3679,7 @@ apiRouter.post('/approvals/:id/action', requireAuth, requirePermission('canAppro
     const status = action === 'Approve' ? 'Approved' : action === 'Reject' ? 'Rejected' : 'Changes Requested';
     let updated;
     try {
-      updated = await postgresApprovalRepository.action(id, status, req.user!, notes);
+      updated = await postgresApprovalRepository.action(id, status, req.user!, notes, makeAuditEntry(req, `APPROVAL_${action.toUpperCase().replace(/ /g, '_')}`, `${action} decision executed for approval item "${item.title}".`, action === 'Reject' ? 'warning' : 'info'));
     } catch (error) {
       if (error instanceof Error && error.message === 'APPROVAL_SELF_ACTION_BLOCKED') {
         recordAuditLog({
@@ -3704,7 +3696,7 @@ apiRouter.post('/approvals/:id/action', requireAuth, requirePermission('canAppro
       }
       throw error;
     }
-    recordAuditLog({ action: `APPROVAL_${action.toUpperCase().replace(/ /g, '_')}`, actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `${action} decision executed for approval item "${item.title}".`, severity: action === 'Reject' ? 'warning' : 'info' });
+
     res.json({ success: true, approval: updated });
     return;
   }
