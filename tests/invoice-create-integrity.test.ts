@@ -39,3 +39,25 @@ test('PostgreSQL invoice creation preserves the proposal relational link', () =>
   assert.match(block, /INSERT INTO invoices \\(id,proposal_id,invoice_number/);
   assert.match(block, /i\.proposalId\\|\\|null/);
 });
+
+
+test('PostgreSQL invoice updates cannot break an existing proposal linkage', () => {
+  const source = fs.readFileSync('server/postgres-invoice-repository.ts', 'utf8');
+  const updateStart = source.indexOf('async update(');
+  const paymentStart = source.indexOf('async recordPayment(', updateStart);
+  assert.ok(updateStart >= 0 && paymentStart > updateStart);
+  const block = source.slice(updateStart, paymentStart);
+  assert.match(block, /current\.proposalId/);
+  assert.match(block, /PROPOSAL_LINKAGE_IMMUTABLE/);
+});
+
+
+test('PostgreSQL payment recording derives paid amount from payment rows', () => {
+  const source = fs.readFileSync('server/postgres-invoice-repository.ts', 'utf8');
+  const start = source.indexOf('async recordPayment(');
+  const end = source.indexOf('async cancel(', start);
+  assert.ok(start >= 0 && end > start);
+  const block = source.slice(start, end);
+  assert.match(block, /authoritativePaid=current\.payments\.reduce/);
+  assert.match(block, /const totalPaid=authoritativePaid\+paymentAmount/);
+});
