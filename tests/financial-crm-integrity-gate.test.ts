@@ -21,3 +21,23 @@ test('financial and CRM integrity gates remain wired',async()=>{
  assert.match(lead,/LEAD_IS_CLOSED/); assert.match(client,/CLIENT_HAS_BUSINESS_RECORDS/); assert.match(project,/PROJECT_HAS_BUSINESS_RECORDS/);
  assert.match(routes,/Idempotency-Key/); assert.match(routes,/ACCEPTED_PROPOSAL_IMMUTABLE/); assert.match(routes,/CLIENT_HAS_BUSINESS_RECORDS/); assert.match(routes,/PROJECT_HAS_BUSINESS_RECORDS/); assert.match(routes,/LEAD_IS_CLOSED/); assert.match(routes,/DEAL_HAS_PROPOSALS/);
 });
+
+
+test('won CRM conversion is atomic and uses all required PostgreSQL relations',async()=>{
+ const repo=await read('server/postgres-crm-deal-repository.ts');
+ const routes=await read('server/routes.ts');
+ assert.match(repo,/async convertWonDeal/);
+ assert.match(repo,/FROM crm_deals WHERE id=\$1 FOR UPDATE/);
+ assert.match(repo,/INSERT INTO clients/);
+ assert.match(repo,/INSERT INTO projects/);
+ assert.match(repo,/INSERT INTO tasks/);
+ assert.match(repo,/INSERT INTO invoices/);
+ assert.match(repo,/INSERT INTO invoice_items/);
+ assert.match(repo,/UPDATE crm_deals SET client_id=\$2/);
+ assert.match(repo,/withPostgresTransaction/);
+ assert.match(repo,/DEAL_NOT_WON/);
+ assert.match(repo,/INCOMPLETE_DEAL_CONVERSION/);
+ assert.match(repo,/replayed:true/);
+ assert.match(routes,/\/crm\/deals\/:id\/convert-to-project/);
+ assert.match(routes,/postgresCrmDealRepository\.convertWonDeal/);
+});
