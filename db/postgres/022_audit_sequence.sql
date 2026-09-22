@@ -20,7 +20,7 @@ WHERE logs.ctid = ordered.ctid;
 
 SELECT setval(
   'audit_logs_sequence_v1',
-  COALESCE((SELECT MAX(sequence) FROM audit_logs), 0),
+  GREATEST(COALESCE((SELECT MAX(sequence) FROM audit_logs), 0), 1),
   COALESCE((SELECT MAX(sequence) FROM audit_logs), 0) > 0
 );
 
