@@ -189,10 +189,8 @@ test('PostgreSQL commercial workflow converts proposal to invoice and returns th
     const db = getPostgresPool();
     if (invoiceId) {
       await db.query('DELETE FROM invoice_payments WHERE invoice_id = $1', [invoiceId]);
-      await db.query('DELETE FROM invoice_items WHERE invoice_id = $1', [invoiceId]);
       await db.query('DELETE FROM invoices WHERE id = $1', [invoiceId]);
     }
-    await db.query('DELETE FROM proposal_items WHERE proposal_id = $1', [proposalId]);
     await db.query('DELETE FROM proposals WHERE id = $1', [proposalId]);
     await db.query('DELETE FROM clients WHERE id = $1', [clientId]);
     await closePostgresPool();
@@ -602,7 +600,6 @@ test('PostgreSQL won-deal conversion atomically creates linked client, project, 
     const db = getPostgresPool();
     if (invoiceId) {
       await db.query('DELETE FROM invoice_payments WHERE invoice_id=$1', [invoiceId]);
-      await db.query('DELETE FROM invoice_items WHERE invoice_id=$1', [invoiceId]);
       await db.query('DELETE FROM invoices WHERE id=$1', [invoiceId]);
     }
     if (taskId) await db.query('DELETE FROM tasks WHERE id=$1', [taskId]);
