@@ -22,3 +22,5 @@ test('project CRUD backend blocks unauthorized task mutation',()=>{
   assert.match(block,/Task mutations require task-management permission/);
   assert.match(block,/canManageKanbanTasks/);
 });
+
+test('task assignee UI uses server-side active-user directory',()=>{const api=read('src/lib/apiClient.ts');const ui=read('src/pages/admin/AdminProjects.tsx');const route=read('server/routes.ts');assert.match(api,/getTaskAssignees/);assert.match(ui,/taskAssignees/);assert.match(ui,/assignee\.username/);assert.match(route,/\/auth\/task-assignees/);assert.match(route,/canManageKanbanTasks/);});
