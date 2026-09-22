@@ -61,7 +61,7 @@ export class PostgresInvoiceRepository {
         const quantity = Number(item.quantity);
         const unitPrice = Number(item.unitPrice);
         const amount = Number(item.amount ?? quantity * unitPrice);
-        const expectedAmount = Math.round(quantity * unitPrice);
+        const expectedAmount = Math.round(quantity * unitPrice * 100) / 100;
         if (!Number.isFinite(quantity) || quantity <= 0 || !Number.isFinite(unitPrice) || unitPrice < 0 || !Number.isFinite(amount) || amount < 0 || Math.abs(amount - expectedAmount) > 0.01) {
           throw new Error('INVALID_INVOICE_ITEM');
         }
@@ -73,10 +73,10 @@ export class PostgresInvoiceRepository {
       }
       const subtotal = Math.round(Number(i.subtotal || 0) * 100) / 100;
       const discountPercent = Math.max(0, Number(i.discountPercent || 0));
-      const discountAmount = Math.round(subtotal * (discountPercent / 100));
+      const discountAmount = Math.round(subtotal * (discountPercent / 100) * 100) / 100;
       const taxableSubtotal = Math.max(0, subtotal - discountAmount);
       const taxPercent = Math.max(0, Number(i.taxPercent || 0));
-      const taxAmount = Math.round(taxableSubtotal * (taxPercent / 100));
+      const taxAmount = Math.round(taxableSubtotal * (taxPercent / 100) * 100) / 100;
       const expectedTotal = taxableSubtotal + taxAmount;
       if (!Number.isFinite(discountPercent) || discountPercent > 100 || !Number.isFinite(taxPercent) || taxPercent > 100 ||
           Math.abs(Number(i.discountAmount || 0) - discountAmount) > 0.01 ||
