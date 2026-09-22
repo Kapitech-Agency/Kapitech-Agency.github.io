@@ -756,10 +756,11 @@ async function importCore(client: any, db: AnyRecord, privateDocumentMetadata: M
 
   for (const row of arr(db, 'expenses')) {
     await upsert(client, 'expenses',
-      ['id','type','category','description','amount','expense_date','recurring_interval','recorded_by_user_id','recorded_by','metadata','created_at'],
-      [textValue(row.id),textValue(row.type),textValue(row.category),textValue(row.description),numberValue(row.amount),
-       dateValue(row.date || row.expenseDate) || '1970-01-01',nullableText(row.recurringInterval),nullableText(row.recordedByUserId),
-       nullableText(row.recordedBy),metadata(row,['id','type','category','description','amount','date','expenseDate','recurringInterval','recordedByUserId','recordedBy','createdAt']),
+      ['id','type','category','description','amount','currency','expense_date','recurring_interval','project_id','recorded_by_user_id','recorded_by','status','version','idempotency_key','metadata','created_at'],
+      [textValue(row.id),textValue(row.type),textValue(row.category),textValue(row.description),numberValue(row.amount),textValue(row.currency,'IDR'),
+       dateValue(row.date || row.expenseDate) || '1970-01-01',nullableText(row.recurringInterval),nullableText(row.projectId),nullableText(row.recordedByUserId),
+       nullableText(row.recordedBy),textValue(row.status,'posted'),Number(row.version || 1),nullableText(row.idempotencyKey),
+       metadata(row,['id','type','category','description','amount','currency','date','expenseDate','recurringInterval','projectId','recordedByUserId','recordedBy','status','version','idempotencyKey','createdAt']),
        timestampValue(row.createdAt)]);
   }
   counts.expenses = arr(db,'expenses').length;
