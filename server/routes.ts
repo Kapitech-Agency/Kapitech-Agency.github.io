@@ -3562,19 +3562,25 @@ apiRouter.post('/projects/timelogs', requireAuth, requireAnyPermission('canManag
 
 apiRouter.delete('/projects/timelogs/:id', requireAuth, requireAnyPermission('canManageKanbanTasks', 'canManageProjects'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
+  const canManageAllTimeLogs = Boolean(req.user!.permissions?.canManageProjects);
   if (getDataSourceMode() === 'postgres') {
-    let deleted: boolean;
-    try {
-      deleted = await postgresTimeLogRepository.delete(id);
-    } catch (error) {
-      throw error;
+    const existing = await postgresTimeLogRepository.findById(id);
+    if (!existing) { res.status(404).json({ success: false, error: 'Time entry not found.' }); return; }
+    if (!canManageAllTimeLogs && String(existing.userId || '') !== String(req.user!.id)) {
+      res.status(403).json({ success: false, error: 'You can only delete your own time entries.' });
+      return;
     }
+    const deleted = await postgresTimeLogRepository.delete(id);
     if (!deleted) { res.status(404).json({ success: false, error: 'Time entry not found.' }); return; }
     recordAuditLog({ action: 'TIMELOG_DELETED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Deleted time entry ${id}.`, severity: 'warning' });
     res.json({ success: true, message: 'Time entry deleted.' }); return;
   }
-  const db = getDatabase(); const exists = (db.timeLogs || []).some(t => t.id === id);
-  if (!exists) { res.status(404).json({ success: false, error: 'Time entry not found.' }); return; }
+  const db = getDatabase(); const existing = (db.timeLogs || []).find(t => t.id === id);
+  if (!existing) { res.status(404).json({ success: false, error: 'Time entry not found.' }); return; }
+  if (!canManageAllTimeLogs && String(existing.userId || '') !== String(req.user!.id)) {
+    res.status(403).json({ success: false, error: 'You can only delete your own time entries.' });
+    return;
+  }
   db.timeLogs = (db.timeLogs || []).filter(t => t.id !== id); saveDatabase(db);
   recordAuditLog({ action: 'TIMELOG_DELETED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Deleted time entry ${id}.`, severity: 'warning' });
   res.json({ success: true, message: 'Time entry deleted.' });
