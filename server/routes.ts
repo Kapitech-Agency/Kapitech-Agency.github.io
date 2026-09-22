@@ -3920,7 +3920,7 @@ apiRouter.post('/documents', requireAuth, documentMutationMiddleware, async (req
 
   let created = newDoc;
   if (getDataSourceMode() === 'postgres') {
-    created = await postgresDocumentRepository.create(newDoc);
+    created = await postgresDocumentRepository.create(newDoc, makeAuditEntry(req, 'DOCUMENT_CREATED', `Created document record "${name}" (${sourceType}).`, 'info'));
   } else {
     const db = getDatabase();
     if (!db.documents) db.documents = [];
@@ -3929,7 +3929,7 @@ apiRouter.post('/documents', requireAuth, documentMutationMiddleware, async (req
     saveDatabase(db);
   }
 
-  recordAuditLog({
+  if (getDataSourceMode() !== 'postgres') recordAuditLog({
     action: 'DOCUMENT_CREATED',
     actor: req.user!.username,
     actorRole: req.user!.role,
@@ -3982,12 +3982,14 @@ apiRouter.put('/documents/:id/content', requireAuth, documentMutationMiddleware,
   }
 
   const storage = getDocumentStorage();
+  const previousStorageKey = String(document.storageKey || '');
+  const nextStorageKey = crypto.randomBytes(32).toString('hex');
   let encryptedPayload: Buffer;
   let storageSha256: string;
   try {
     encryptedPayload = encryptPrivateDocument(body);
     storageSha256 = crypto.createHash('sha256').update(encryptedPayload).digest('hex');
-    await storage.put(document.storageKey, encryptedPayload);
+    await storage.put(nextStorageKey, encryptedPayload);
   } catch (error) {
     console.error('[Documents] Private object upload failed:', error);
     res.status(500).json({ success: false, error: 'Private document storage failed.' });
@@ -4004,14 +4006,14 @@ apiRouter.put('/documents/:id/content', requireAuth, documentMutationMiddleware,
       status: 'ready',
       contentSha256,
       storageSha256,
-      storageVersion: Number(document.storageVersion || 1),
+      storageVersion: Number(document.storageVersion || 1) + 1,
       storageProvider: storage.provider,
       integrityCheckedAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       uploadedAt: new Date().toISOString()
     };
     const updated = getDataSourceMode() === 'postgres'
-      ? await postgresDocumentRepository.update(id, patch)
+      ? await postgresDocumentRepository.update(id, patch, makeAuditEntry(req, 'DOCUMENT_UPLOADED', `Uploaded private document "${document.name}" (${body.length} bytes).`, 'info'))
       : (() => {
           const db = getDatabase();
           const index = (db.documents || []).findIndex((item: any) => item.id === id);
@@ -4022,14 +4024,14 @@ apiRouter.put('/documents/:id/content', requireAuth, documentMutationMiddleware,
         })();
 
     if (!updated) {
-      try { await storage.delete(document.storageKey); } catch (cleanupError) {
+      try { await storage.delete(nextStorageKey); } catch (cleanupError) {
         console.error('[Documents] Uploaded orphan object cleanup failed:', cleanupError);
       }
       res.status(404).json({ success: false, error: 'Document not found.' });
       return;
     }
 
-    recordAuditLog({
+    if (getDataSourceMode() !== 'postgres') recordAuditLog({
       action: 'DOCUMENT_UPLOADED',
       actor: req.user!.username,
       actorRole: req.user!.role,
@@ -4038,6 +4040,11 @@ apiRouter.put('/documents/:id/content', requireAuth, documentMutationMiddleware,
       details: `Uploaded private document "${document.name}" (${body.length} bytes).`,
       severity: 'info'
     });
+
+    if (previousStorageKey && previousStorageKey !== nextStorageKey) {
+      try { await storage.delete(previousStorageKey); }
+      catch (cleanupError) { console.warn('[Documents] Previous private object cleanup failed:', cleanupError); }
+    }
 
     res.json({ success: true, document: publicDocument(updated) });
   } catch (error) {
@@ -4135,6 +4142,7 @@ apiRouter.delete('/documents/:id', requireAuth, documentMutationMiddleware, asyn
     res.status(404).json({ success: false, error: 'Document not found.' });
     return;
   }
+  if (!requireDocumentObjectAccess(req, res, document)) return;
 
   const storage = getDocumentStorage();
   try {
@@ -4146,7 +4154,7 @@ apiRouter.delete('/documents/:id', requireAuth, documentMutationMiddleware, asyn
   }
 
   if (getDataSourceMode() === 'postgres') {
-    const deleted = await postgresDocumentRepository.delete(id);
+    const deleted = await postgresDocumentRepository.delete(id, makeAuditEntry(req, 'DOCUMENT_DELETED', `Deleted document "${document.name}".`, 'warning'));
     if (!deleted) {
       res.status(404).json({ success: false, error: 'Document not found.' });
       return;
@@ -4157,7 +4165,7 @@ apiRouter.delete('/documents/:id', requireAuth, documentMutationMiddleware, asyn
     saveDatabase(db);
   }
 
-  recordAuditLog({
+  if (getDataSourceMode() !== 'postgres') recordAuditLog({
     action: 'DOCUMENT_DELETED',
     actor: req.user!.username,
     actorRole: req.user!.role,
