@@ -8,3 +8,5 @@ test('critical audit append is transaction-bound',()=>{const s=read('server/post
 test('approval rejects unsupported types',()=>{assert.ok(read('server/routes.ts').includes('Unsupported approval type'));assert.ok(read('server/postgres-approval-repository.ts').includes('UNSUPPORTED_APPROVAL_TYPE'));});
 test('admin user update route is defined exactly once',()=>{const s=read('server/routes.ts');assert.equal(s.split("apiRouter.put('/auth/users/:id'").length-1,1);});
 test('task assignee persistence resolves display identity to a real user id',()=>{const s=read('server/postgres-task-repository.ts');assert.ok(s.includes('resolveAssigneeUserId'));assert.ok(s.includes('lower(username) = lower($1)'));assert.ok(s.includes('assigneeUserId'));});
+
+test('task response preserves display assignee while storing relational user id',()=>{const s=read('server/postgres-project-repository.ts');assert.match(s,/assignedTo: String\(metadata\.assignedTo \?\? row\.assignee_user_id \?\? ''\)/);});
