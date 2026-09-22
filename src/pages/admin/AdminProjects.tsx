@@ -48,6 +48,7 @@ import { useDragToScroll } from '../../lib/useDragToScroll';
 import { ScrollShadowContainer } from '../../components/ui/ScrollShadowContainer';
 import { CustomSelect } from '../../components/ui/CustomSelect';
 import { getAdminSession, hasAdminPermission } from '../../lib/adminAuth';
+import { api } from '../../lib/apiClient';
 
 const TASK_COLUMNS: { id: TaskStatus; label: string; dotColor: string; bgAccent: string }[] = [
   { id: 'todo', label: 'To Do', dotColor: 'bg-zinc-400', bgAccent: 'group-hover:border-zinc-500/30' },
@@ -107,7 +108,8 @@ export const AdminProjects: React.FC = () => {
   const [taskTitle, setTaskTitle] = useState('');
   const [taskDesc, setTaskDesc] = useState('');
   const [taskPriority, setTaskPriority] = useState<TaskPriority>('medium');
-  const [taskAssignee, setTaskAssignee] = useState('Senior Frontend Dev');
+  const [taskAssignee, setTaskAssignee] = useState('');
+  const [taskAssignees, setTaskAssignees] = useState<Array<{ id: string; name: string; username: string; role: string; division: string }>>([]);
   const [taskDueDate, setTaskDueDate] = useState(new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]);
   const [taskStatus, setTaskStatus] = useState<TaskStatus>('todo');
   const [initialSubtasksInput, setInitialSubtasksInput] = useState('');
@@ -122,6 +124,21 @@ export const AdminProjects: React.FC = () => {
 
   useEffect(() => {
     loadData();
+    if (canManageKanbanTasks) {
+      api.auth.getTaskAssignees().then((res) => {
+        if (!res.success || !res.data?.assignees) return;
+        const next = res.data.assignees;
+        setTaskAssignees(next);
+        if (!next.some((item) => item.username === taskAssignee)) {
+          const currentUsername = getAdminSession()?.user?.username || '';
+          const fallback = next.find((item) => item.username === currentUsername) || next[0];
+          if (fallback) setTaskAssignee(fallback.username);
+        }
+      });
+    } else {
+      setTaskAssignees([]);
+      setTaskAssignee('');
+    }
     const handleUpdate = () => loadData();
     window.addEventListener(PROJECT_EVENT_NAME, handleUpdate);
 
@@ -1367,13 +1384,16 @@ export const AdminProjects: React.FC = () => {
                     <select
                       value={taskAssignee}
                       onChange={(e) => setTaskAssignee(e.target.value)}
+                      required
                       className="w-full px-3.5 py-2.5 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
                     >
-                      <option value="Lead Full-Stack Tech">Lead Full-Stack Tech</option>
-                      <option value="Senior Frontend Dev">Senior Frontend Dev</option>
-                      <option value="UI/UX Specialist">UI/UX Specialist</option>
-                      <option value="Cloud & AI Engineer">Cloud & AI Engineer</option>
-                      <option value="QA Specialist">QA Specialist</option>
+                      {taskAssignees.length === 0 ? (
+                        <option value="">No active assignees available</option>
+                      ) : taskAssignees.map((assignee) => (
+                        <option key={assignee.id} value={assignee.username}>
+                          {assignee.name} · @{assignee.username}
+                        </option>
+                      ))}
                     </select>
                   </div>
                 </div>
