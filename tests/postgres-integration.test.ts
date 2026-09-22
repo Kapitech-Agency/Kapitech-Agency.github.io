@@ -120,9 +120,9 @@ test('PostgreSQL financial line-item parent moves preserve both parent subtotals
     );
     assert.equal(invoiceState.rows[0]?.invoice_id, invoiceA);
   } finally {
-    await db.query('DELETE FROM invoice_items WHERE id = $1', [invoiceItem]);
+    // Delete parent rows first so ON DELETE CASCADE removes line items without
+    // leaving a transient parent/line mismatch in an autocommit statement.
     await db.query('DELETE FROM invoices WHERE id IN ($1, $2)', [invoiceA, invoiceB]);
-    await db.query('DELETE FROM proposal_items WHERE id = $1', [proposalItem]);
     await db.query('DELETE FROM proposals WHERE id IN ($1, $2)', [proposalA, proposalB]);
     await closePostgresPool();
   }
