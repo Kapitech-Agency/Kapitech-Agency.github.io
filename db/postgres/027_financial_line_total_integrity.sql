@@ -4,7 +4,7 @@
 
 BEGIN;
 
-DO $
+DO $$
 BEGIN
   IF EXISTS (
     SELECT 1
@@ -30,7 +30,7 @@ BEGIN
     RAISE EXCEPTION 'INVOICE_LINE_TOTAL_MISMATCH: existing invoice headers do not reconcile to line items.';
   END IF;
 END;
-$;
+$$;
 
 ALTER TABLE expenses VALIDATE CONSTRAINT expenses_amount_v2_check;
 ALTER TABLE expenses VALIDATE CONSTRAINT expenses_currency_v2_check;
