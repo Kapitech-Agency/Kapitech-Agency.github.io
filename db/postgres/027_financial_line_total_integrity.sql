@@ -4,6 +4,34 @@
 
 BEGIN;
 
+DO $
+BEGIN
+  IF EXISTS (
+    SELECT 1
+    FROM proposals p
+    WHERE p.subtotal <> COALESCE((
+      SELECT ROUND(SUM(pi.quantity * pi.unit_price), 2)
+      FROM proposal_items pi
+      WHERE pi.proposal_id = p.id
+    ), 0)
+  ) THEN
+    RAISE EXCEPTION 'PROPOSAL_LINE_TOTAL_MISMATCH: existing proposal headers do not reconcile to line items.';
+  END IF;
+
+  IF EXISTS (
+    SELECT 1
+    FROM invoices i
+    WHERE i.subtotal <> COALESCE((
+      SELECT ROUND(SUM(ii.amount), 2)
+      FROM invoice_items ii
+      WHERE ii.invoice_id = i.id
+    ), 0)
+  ) THEN
+    RAISE EXCEPTION 'INVOICE_LINE_TOTAL_MISMATCH: existing invoice headers do not reconcile to line items.';
+  END IF;
+END;
+$;
+
 ALTER TABLE expenses VALIDATE CONSTRAINT expenses_amount_v2_check;
 ALTER TABLE expenses VALIDATE CONSTRAINT expenses_currency_v2_check;
 ALTER TABLE expenses VALIDATE CONSTRAINT expenses_status_v2_check;
