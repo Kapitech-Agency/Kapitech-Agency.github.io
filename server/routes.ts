@@ -4960,15 +4960,12 @@ apiRouter.post('/notifications/:id/read', requireAuth, async (req: Authenticated
       return;
     }
     if (!canViewNotification(req.user!, notification)) {
-      recordAuditLog({
-        action: 'ACCESS_DENIED',
-        actor: req.user!.username,
-        actorRole: req.user!.role,
-        ip: req.ip,
-        userAgent: req.headers['user-agent'] as string,
-        details: `Notification access denied for "${id}".`,
-        severity: 'warning'
-      });
+      await postgresAuditLogRepository.append(makeAuditEntry(
+        req,
+        'ACCESS_DENIED',
+        `Notification access denied for "${id}".`,
+        'warning'
+      ));
       res.status(403).json({ success: false, error: 'Notification access denied.' });
       return;
     }
