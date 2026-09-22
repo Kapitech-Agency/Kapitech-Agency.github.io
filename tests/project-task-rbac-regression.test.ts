@@ -25,4 +25,4 @@ test('project CRUD backend blocks unauthorized task mutation',()=>{
 
 test('task assignee UI uses server-side active-user directory',()=>{const api=read('src/lib/apiClient.ts');const ui=read('src/pages/admin/AdminProjects.tsx');const route=read('server/routes.ts');assert.match(api,/getTaskAssignees/);assert.match(ui,/taskAssignees/);assert.match(ui,/assignee\.username/);assert.match(route,/\/auth\/task-assignees/);assert.match(route,/canManageKanbanTasks/);});
 
-test('assignee resolution excludes suspended users',()=>{const task=read('server/postgres-task-repository.ts');const project=read('server/postgres-project-repository.ts');assert.match(task,/status = 'active'/);assert.match(project,/status = 'active'/);});
+test('assignee resolution excludes suspended users',()=>{const task=read('server/postgres-task-repository.ts');const project=read('server/postgres-project-repository.ts');assert.match(task,/status = \$2/);assert.match(task,/\[candidate, 'active'\]/);assert.match(project,/status = \$2/);assert.match(project,/\[candidate, 'active'\]/);});
