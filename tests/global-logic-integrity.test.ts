@@ -103,3 +103,12 @@ test('core PostgreSQL state domains are enforced by the latest migration',()=>{
  ]) assert.ok(migration.includes(name),name);
  assert.match(migration,/stage IN \('new','contacted','proposal','negotiation','won','lost'\)/);
 });
+
+
+test('proposal repository enforces lifecycle transitions even outside HTTP routes',()=>{
+ const repo=read('server/postgres-proposal-repository.ts');
+ assert.match(repo,/INVALID_PROPOSAL_STATUS/);
+ assert.match(repo,/PROPOSAL_APPROVAL_TRANSITION_INVALID/);
+ assert.match(repo,/currentStatus/);
+ assert.match(repo,/nextStatus/);
+});
