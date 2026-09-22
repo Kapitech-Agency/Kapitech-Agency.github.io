@@ -37,7 +37,7 @@ test('won CRM conversion is atomic and uses all required PostgreSQL relations',a
  assert.match(repo,/withPostgresTransaction/);
  assert.match(repo,/DEAL_NOT_WON/);
  assert.match(repo,/INCOMPLETE_DEAL_CONVERSION/);
- assert.match(repo,/replayed:true/);
+ assert.match(repo,/replayed\s*:\s*true/);
  assert.match(routes,/\/crm\/deals\/:id\/convert-to-project/);
  assert.match(routes,/postgresCrmDealRepository\.convertWonDeal/);
 });
