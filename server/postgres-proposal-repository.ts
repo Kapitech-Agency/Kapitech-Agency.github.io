@@ -143,6 +143,28 @@ export class PostgresProposalRepository {
       if(p.dealId){const x=await db.query('SELECT id, client_id FROM crm_deals WHERE id=$1 FOR SHARE',[p.dealId]);if(!x.rows[0])throw new Error('Proposal deal not found.');if(p.clientId&&x.rows[0].client_id&&String(x.rows[0].client_id)!==String(p.clientId))throw new Error('Proposal deal does not belong to the selected client.');}
 
       const now=new Date().toISOString(),issue=now.slice(0,10),due=new Date(Date.now()+14*86400000).toISOString().slice(0,10);
+      const proposalSubtotal = Math.round(Number(p.subtotal || 0) * 100) / 100;
+      const proposalDiscount = Math.round(Number(p.discount || 0) * 100) / 100;
+      const proposalTaxPercent = Number(p.taxPercent || 0);
+      const proposalTax = Math.round(Number(p.tax || 0) * 100) / 100;
+      const derivedDiscountPercent = proposalSubtotal > 0
+        ? proposalDiscount / proposalSubtotal * 100
+        : 0;
+      const derivedDiscountAmount = Math.round(proposalSubtotal * (derivedDiscountPercent / 100));
+      const derivedTaxableSubtotal = Math.max(0, proposalSubtotal - derivedDiscountAmount);
+      const derivedTaxAmount = Math.round(derivedTaxableSubtotal * (proposalTaxPercent / 100));
+      const derivedTotal = derivedTaxableSubtotal + derivedTaxAmount;
+      if (
+        !Number.isFinite(proposalSubtotal) || proposalSubtotal < 0 ||
+        !Number.isFinite(proposalDiscount) || proposalDiscount < 0 ||
+        proposalDiscount > proposalSubtotal ||
+        !Number.isFinite(proposalTaxPercent) || proposalTaxPercent < 0 || proposalTaxPercent > 100 ||
+        Math.abs(derivedDiscountAmount - proposalDiscount) > 0.01 ||
+        Math.abs(derivedTaxAmount - proposalTax) > 0.01 ||
+        Math.abs(derivedTotal - Number(p.total || 0)) > 0.01
+      ) {
+        throw new Error('PROPOSAL_FINANCIAL_TOTAL_MISMATCH');
+      }
       let n=`INV-KAPI-${new Date().getFullYear()}-${Math.floor(1000+Math.random()*999000)}`;
       let exists=await db.query('SELECT 1 FROM invoices WHERE invoice_number=$1',[n]);
       while(exists.rows[0]){
@@ -157,11 +179,11 @@ export class PostgresProposalRepository {
         projectId:p.projectId||null,
         type:'invoice',
         subtotal:p.subtotal,
-        discountPercent:0,
-        discountAmount:p.discount,
-        taxPercent:p.taxPercent,
-        taxAmount:p.tax,
-        total:p.total,
+        discountPercent:derivedDiscountPercent,
+        discountAmount:proposalDiscount,
+        taxPercent:proposalTaxPercent,
+        taxAmount:proposalTax,
+        total:derivedTotal,
         amountPaid:0,
         balanceDue:p.total,
         currency:p.currency,
