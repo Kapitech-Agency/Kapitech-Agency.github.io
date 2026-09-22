@@ -3493,6 +3493,25 @@ apiRouter.post('/crm/proposals/:id/convert-to-invoice', requireAuth, requirePerm
   const db = getDatabase();
   const prop = (db.proposals || []).find(p => p.id === id);
   if (!prop) { res.status(404).json({ success: false, error: 'Proposal not found.' }); return; }
+  if (!['Draft','Internal Review','Sent','Approved'].includes(String(prop.status))) {
+    res.status(409).json({ success: false, error: 'Proposal cannot be converted to an invoice in its current status.' });
+    return;
+  }
+  const proposalClientId = String(prop.clientId || '').trim();
+  const proposalProjectId = String(prop.projectId || '').trim();
+  if (proposalClientId && !(db.clients || []).some((client: any) => String(client.id) === proposalClientId)) {
+    res.status(409).json({ success: false, error: 'Proposal client not found.' });
+    return;
+  }
+  if (proposalProjectId) {
+    const proposalProject = (db.projects || []).find((project: any) => String(project.id) === proposalProjectId);
+    if (!proposalProject) { res.status(409).json({ success: false, error: 'Proposal project not found.' }); return; }
+    const projectClientId = String(proposalProject.clientId || '').trim();
+    if (proposalClientId && projectClientId && proposalClientId !== projectClientId) {
+      res.status(409).json({ success: false, error: 'Proposal project does not belong to the selected client.' });
+      return;
+    }
+  }
 
   const year = new Date().getFullYear();
   let invoiceNumber = `INV-KAPI-${year}-${crypto.randomInt(1000, 1000000)}`;
