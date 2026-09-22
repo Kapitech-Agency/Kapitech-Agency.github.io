@@ -317,8 +317,15 @@ export class PostgresCrmDealRepository {
       if(!leadRow.rows[0])throw new Error('Lead not found during conversion.');
       if(String(leadRow.rows[0].status).toLowerCase()==='closed')throw new Error('Lead has already been converted.');
       let resolvedClient = client;
-      const existingByEmail = client.email
-        ? await db.query('SELECT * FROM clients WHERE lower(email)=lower($1) ORDER BY created_at ASC LIMIT 2 FOR SHARE',[client.email])
+      const normalizedClientEmail = String(client.email || '').trim().toLowerCase();
+      if (normalizedClientEmail) {
+        await db.query(
+          'SELECT pg_advisory_xact_lock(hashtextextended($1, 5612047))',
+          [`crm-lead-client:${normalizedClientEmail}`]
+        );
+      }
+      const existingByEmail = normalizedClientEmail
+        ? await db.query('SELECT * FROM clients WHERE lower(email)=lower($1) ORDER BY created_at ASC LIMIT 2 FOR SHARE',[normalizedClientEmail])
         : { rows: [] };
       if (existingByEmail.rows.length > 1) throw new Error('AMBIGUOUS_LEAD_CLIENT');
       if (existingByEmail.rows[0]) {
