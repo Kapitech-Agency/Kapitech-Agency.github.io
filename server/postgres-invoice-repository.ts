@@ -120,7 +120,8 @@ export class PostgresInvoiceRepository {
         if (!nextClientId && projectClientId) nextClientId = projectClientId;
       }
       next.clientId=nextClientId; next.projectId=nextProjectId;
-      if (current.payments.length > 0 && (nextClientId !== String(current.clientId || '') || nextProjectId !== String(current.projectId || ''))) throw new Error('PAID_INVOICE_LINKAGE_IMMUTABLE');
+      if (current.proposalId && (nextClientId !== String(current.clientId || '') || nextProjectId !== String(current.projectId || ''))) throw new Error('PROPOSAL_LINKAGE_IMMUTABLE');
+       if (current.payments.length > 0 && (nextClientId !== String(current.clientId || '') || nextProjectId !== String(current.projectId || ''))) throw new Error('PAID_INVOICE_LINKAGE_IMMUTABLE');
       if (current.payments.length > 0 && Number(next.total) !== Number(current.total)) throw new Error('PAID_INVOICE_TOTAL_IMMUTABLE');
       if (current.payments.length > 0) {
         const protectedFinancialFields = ['subtotal','discountPercent','discountAmount','taxPercent','taxAmount','currency'];
@@ -156,7 +157,8 @@ export class PostgresInvoiceRepository {
       'INSERT INTO invoice_payments (id,invoice_id,amount,paid_at,method,reference,metadata) VALUES ($1,$2,$3,$4,$5,$6,$7)',
       [payment.id,id,paymentAmount,payment.date,payment.method,payment.reference||null,JSON.stringify(paymentMetadata)]
     );
-    const totalPaid=current.amountPaid+paymentAmount;
+    const authoritativePaid=current.payments.reduce((sum:any,p:any)=>sum+Number(p.amount||0),0);
+     const totalPaid=authoritativePaid+paymentAmount;
     const balance=Math.max(0,current.total-totalPaid);
     const status=balance<=0?'paid':'partially_paid';
     const auditTrail=[...current.auditTrail,{action:'payment_recorded',timestamp:new Date().toISOString(),user:payment.recordedBy||payment.userId||'system',note:payment.reference||payment.notes||''}];
