@@ -134,6 +134,10 @@ const MAX_PUBLIC_TEXT = 4000;
 const MAX_INTERNAL_TEXT = 5000;
 const CRM_STAGES = ['new', 'contacted', 'proposal', 'negotiation', 'won', 'lost'] as const;
 const DEAL_PRIORITIES = ['low', 'medium', 'high', 'urgent'] as const;
+function makeAuditEntry(req: AuthenticatedRequest, action: string, details: string, severity = 'info') {
+  return { action, actor: req.user!.username, actorRole: req.user!.role, actorUserId: req.user!.id, ip: req.ip, userAgent: req.headers['user-agent'] as string, details, severity };
+}
+
 
 function cleanText(value: unknown, max = MAX_INTERNAL_TEXT): string {
   return String(value ?? '').trim().slice(0, max);
@@ -1957,8 +1961,7 @@ apiRouter.post('/finance/invoices', requireAuth, requirePermission('canManageInv
   (invoice as any).clientId = String(input.clientId || '').slice(0, 100) || undefined;
   if (getDataSourceMode() === 'postgres') {
     try {
-      const saved = await postgresInvoiceRepository.create(invoice);
-      recordAuditLog({ action: 'INVOICE_CREATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Created invoice ${invoice.invoiceNumber} for ${invoice.clientName} (Total: ${invoice.total}).`, severity: 'info' });
+      const saved = await postgresInvoiceRepository.create(invoice, makeAuditEntry(req, 'INVOICE_CREATED', `Created invoice ${invoice.invoiceNumber} for ${invoice.clientName} (Total: ${invoice.total}).`));
       res.json({ success: true, invoice: saved }); return;
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Invoice could not be created.';
@@ -2005,9 +2008,8 @@ apiRouter.put('/finance/invoices/:id', requireAuth, requirePermission('canManage
       updatedAt: input.updatedAt
     };
     try {
-      const saved = await postgresInvoiceRepository.update(req.params.id, patch);
+      const saved = await postgresInvoiceRepository.update(req.params.id, patch, makeAuditEntry(req, 'INVOICE_UPDATED', `Updated invoice ${req.params.id}.`));
       if (!saved) { res.status(404).json({ success: false, error: 'Invoice not found.' }); return; }
-      recordAuditLog({ action: 'INVOICE_UPDATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Updated invoice ${saved.invoiceNumber} (Status: ${saved.status}).`, severity: 'info' });
       res.json({ success: true, invoice: saved }); return;
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Invoice could not be updated.';
@@ -2209,9 +2211,8 @@ apiRouter.delete('/finance/invoices/:id', requireAuth, requirePermission('canMan
   const { id } = req.params;
   if (getDataSourceMode() === 'postgres') {
     try {
-      const invoice = await postgresInvoiceRepository.cancel(req.params.id, req.user!.username);
+      const invoice = await postgresInvoiceRepository.cancel(req.params.id, req.user!.username, makeAuditEntry(req, 'INVOICE_CANCELLED', `Cancelled invoice ${req.params.id}.`, 'warning'));
       if (!invoice) { res.status(404).json({ success:false,error:'Invoice not found.' }); return; }
-      recordAuditLog({ action:'INVOICE_CANCELLED', actor:req.user!.username, actorRole:req.user!.role, ip:req.ip, userAgent:req.headers['user-agent'] as string, details:`Cancelled invoice ${invoice.invoiceNumber}.`, severity:'warning' });
       res.json({success:true,message:'Invoice cancelled.',invoice}); return;
     } catch(error) {
       const message=error instanceof Error?error.message:'Invoice could not be cancelled.';
