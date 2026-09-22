@@ -42,7 +42,7 @@ export class PostgresApprovalRepository {
     const referenceTable = supportedReferences[type];
     if (referenceTable) {
       if (!referenceId) throw new Error('Approval reference is required.');
-      const reference = await getPostgresPool().query(`SELECT id FROM ${referenceTable} WHERE id=$1 LIMIT 1`, [referenceId]);
+      const reference = await getPostgresPool().query(`SELECT id FROM ${referenceTable} WHERE id=$1 FOR SHARE`, [referenceId]);
       if (!reference.rows[0]) throw new Error('Approval reference not found.');
     }
     const metadata = { ...input, requesterId: undefined, requesterUserId: undefined, requesterRole: undefined, status: undefined };
