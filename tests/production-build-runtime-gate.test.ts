@@ -1,27 +1,21 @@
-import { describe, expect, it } from 'vitest';
-import fs from 'fs';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import test from 'node:test';
 const read=(p:string)=>fs.readFileSync(p,'utf8');
-describe('production build and runtime gate',()=>{
- it('builds frontend, backend bundle, and packages PostgreSQL migrations',()=>{
-  const pkg=JSON.parse(read('package.json'));
-  expect(pkg.scripts.build).toContain('vite build');
-  expect(pkg.scripts.build).toContain('esbuild server.ts');
-  expect(pkg.scripts.build).toContain('copy-postgres-migrations.mjs');
-  expect(pkg.scripts.start).toBe('node dist/server.cjs');
- });
- it('requires PostgreSQL, encryption, TLS, private document storage, and backup evidence in production',()=>{
-  const s=read('scripts/validate-production-env.ts');
-  expect(s).toContain("KAPITECH_DATA_SOURCE");
-  expect(s).toContain("KAPITECH_DATA_ENCRYPTION_KEY");
-  expect(s).toContain("KAPITECH_POSTGRES_SSL");
-  expect(s).toContain("KAPITECH_DOCUMENT_STORAGE_PROVIDER");
-  expect(s).toContain("KAPITECH_POSTGRES_BACKUP_LATEST_SHA256");
-  expect(s).toContain("KAPITECH_POSTGRES_BACKUP_RESTORE_VERIFIED_AT");
- });
- it('packages all numbered SQL migrations deterministically',()=>{
-  const s=read('scripts/copy-postgres-migrations.mjs');
-  expect(s).toContain("filter((file) => /^\\d+_.+\\.sql$/.test(file))");
-  expect(s).toContain("dist/db/postgres");
-  expect(s).toContain('No PostgreSQL migration files were found to package.');
- });
+test('production build bundles backend and packages PostgreSQL migrations',()=>{
+ const pkg=JSON.parse(read('package.json'));
+ assert.match(pkg.scripts.build,/vite build/);
+ assert.match(pkg.scripts.build,/esbuild server\.ts/);
+ assert.match(pkg.scripts.build,/copy-postgres-migrations\.mjs/);
+ assert.equal(pkg.scripts.start,'node dist/server.cjs');
+});
+test('production environment gate requires database, encryption, storage and backup evidence',()=>{
+ const s=read('scripts/validate-production-env.ts');
+ for(const key of ['KAPITECH_DATA_SOURCE','KAPITECH_DATA_ENCRYPTION_KEY','KAPITECH_POSTGRES_SSL','KAPITECH_DOCUMENT_STORAGE_PROVIDER','KAPITECH_POSTGRES_BACKUP_LATEST_SHA256','KAPITECH_POSTGRES_BACKUP_RESTORE_VERIFIED_AT']) assert.ok(s.includes(key),key);
+});
+test('migration packaging is deterministic and fails closed when no SQL migrations exist',()=>{
+ const s=read('scripts/copy-postgres-migrations.mjs');
+ assert.match(s,/filter\(\(file\) => \/\^\\d\+_\.\+\\\.sql\$\/\.test\(file\)\)/);
+ assert.match(s,/dist\/db\/postgres/);
+ assert.match(s,/No PostgreSQL migration files were found to package/);
 });
