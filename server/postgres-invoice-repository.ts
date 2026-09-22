@@ -36,16 +36,16 @@ export class PostgresInvoiceRepository {
     if(items.length===0) throw new Error('INVOICE_ITEMS_REQUIRED');
     const itemSubtotal=items.reduce((sum:number,item:any)=>{
       const quantity=Number(item.quantity), unitPrice=Number(item.unitPrice), amount=Number(item.amount);
-      const expected=Math.round(quantity*unitPrice);
+      const expected=Math.round(quantity*unitPrice*100)/100;
       if(!Number.isFinite(quantity)||quantity<=0||!Number.isFinite(unitPrice)||unitPrice<0||!Number.isFinite(amount)||amount<0||Math.abs(amount-expected)>0.01) throw new Error('INVALID_INVOICE_ITEM');
       return Math.round((sum+amount)*100)/100;
     },0);
     const subtotal=Math.round(Number(invoice.subtotal||0)*100)/100;
     const discountPercent=Number(invoice.discountPercent||0), taxPercent=Number(invoice.taxPercent||0);
     if(!Number.isFinite(subtotal)||subtotal<0||!Number.isFinite(discountPercent)||discountPercent<0||discountPercent>100||!Number.isFinite(taxPercent)||taxPercent<0||taxPercent>100) throw new Error('INVALID_INVOICE_TOTALS');
-    const discountAmount=Math.round(subtotal*(discountPercent/100));
+    const discountAmount=Math.round(subtotal*(discountPercent/100)*100)/100;
     const taxableSubtotal=Math.max(0,subtotal-discountAmount);
-    const taxAmount=Math.round(taxableSubtotal*(taxPercent/100));
+    const taxAmount=Math.round(taxableSubtotal*(taxPercent/100)*100)/100;
     const expectedTotal=taxableSubtotal+taxAmount;
     if(Math.abs(itemSubtotal-subtotal)>0.01||Math.abs(Number(invoice.discountAmount||0)-discountAmount)>0.01||Math.abs(Number(invoice.taxAmount||0)-taxAmount)>0.01||Math.abs(Number(invoice.total||0)-expectedTotal)>0.01) throw new Error('INVOICE_FINANCIAL_TOTAL_MISMATCH');
   }
