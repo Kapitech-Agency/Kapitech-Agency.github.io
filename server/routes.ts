@@ -3285,16 +3285,8 @@ apiRouter.post('/crm/proposals/:id/approve', requireAuth, requirePermission('can
     const current = await postgresProposalRepository.findById(id);
     if (!current) { res.status(404).json({ success: false, error: 'Proposal not found.' }); return; }
     if (!['Draft','Internal Review','Sent'].includes(String(current.status))) { res.status(409).json({ success: false, error: 'Only draft, internal review, or sent proposals can be approved.' }); return; }
-    const approved = await postgresProposalRepository.approve(id);
-    recordAuditLog({
-      action: 'PROPOSAL_APPROVED',
-      actor: req.user!.username,
-      actorRole: req.user!.role,
-      ip: req.ip,
-      userAgent: req.headers['user-agent'] as string,
-      details: `Approved proposal ${current.proposalNumber}.`,
-      severity: 'info'
-    });
+    const approved = await postgresProposalRepository.approve(id, makeAuditEntry(req, 'PROPOSAL_APPROVED', `Approved proposal ${current.proposalNumber}.`));
+
     res.json({ success: true, proposal: approved });
     return;
   }
@@ -3330,16 +3322,8 @@ apiRouter.post('/crm/proposals/:id/convert-to-invoice', requireAuth, requirePerm
     const current = await postgresProposalRepository.findById(id);
     if (!current) { res.status(404).json({ success: false, error: 'Proposal not found.' }); return; }
     try {
-      const invoice = await postgresProposalRepository.convertToInvoice(id);
-      recordAuditLog({
-        action: 'PROPOSAL_CONVERTED_TO_INVOICE',
-        actor: req.user!.username,
-        actorRole: req.user!.role,
-        ip: req.ip,
-        userAgent: req.headers['user-agent'] as string,
-        details: `Converted proposal ${current.proposalNumber} to invoice ${invoice?.invoiceNumber || 'unknown'}.`,
-        severity: 'info'
-      });
+      const invoice = await postgresProposalRepository.convertToInvoice(id, makeAuditEntry(req, 'PROPOSAL_CONVERTED_TO_INVOICE', `Converted proposal ${current.proposalNumber} to invoice.`, 'info'));
+
       res.json({ success: true, invoice, proposal: await postgresProposalRepository.findById(id) });
     } catch (error) {
       res.status(409).json({ success: false, error: error instanceof Error ? error.message : 'Proposal could not be converted to invoice.' });
