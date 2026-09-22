@@ -52,7 +52,7 @@ test('Frontend API client literal endpoints exist on the server route surface', 
 
   assert.ok(clientPaths.size >= 20, 'Expected a broad frontend API contract surface.');
   for (const clientPath of clientPaths) {
-    const normalized = clientPath.replace(/:\w+/g, ':id');
+    const normalized = clientPath.replace(/:\w+/g, ':id').replace(/\$\{[^}]+\}/g, ':id');
     const exists = [...serverPaths].some(serverPath => serverPath.replace(/:\w+/g, ':id') === normalized);
     assert.ok(exists, 'Frontend API endpoint is not implemented by server routes: ' + clientPath);
   }
