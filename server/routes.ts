@@ -4006,6 +4006,7 @@ apiRouter.put('/documents/:id/content', requireAuth, documentMutationMiddleware,
       status: 'ready',
       contentSha256,
       storageSha256,
+      storageKey: nextStorageKey,
       storageVersion: Number(document.storageVersion || 1) + 1,
       storageProvider: storage.provider,
       integrityCheckedAt: new Date().toISOString(),
@@ -4049,7 +4050,7 @@ apiRouter.put('/documents/:id/content', requireAuth, documentMutationMiddleware,
     res.json({ success: true, document: publicDocument(updated) });
   } catch (error) {
     console.error('[Documents] Private upload metadata update failed:', error);
-    try { await storage.delete(document.storageKey); } catch (cleanupError) {
+    try { await storage.delete(nextStorageKey); } catch (cleanupError) {
       console.error('[Documents] Failed to clean up uploaded object after metadata failure:', cleanupError);
     }
     res.status(500).json({ success: false, error: 'Private document storage failed.' });
