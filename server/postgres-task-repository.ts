@@ -14,7 +14,7 @@ function mapTask(row: Row): Record<string, unknown> {
     description: row.description ?? '',
     projectId: row.project_id ?? '',
     projectName: String(metadata.projectName ?? ''),
-    assignee: String(metadata.assignee ?? metadata.assignedTo ?? ''),
+    assignee: String(row.assignee_user_id ?? metadata.assignee ?? metadata.assignedTo ?? ''),
     reporter: String(metadata.reporter ?? ''),
     priority: row.priority || 'medium',
     status: row.status,
@@ -57,10 +57,10 @@ export class PostgresTaskRepository {
       }
       await client.query(
         `INSERT INTO tasks (id,project_id,title,description,status,priority,assignee_user_id,due_date,metadata,created_at,updated_at)
-         VALUES ($1,$2,$3,$4,$5,$6,NULL,$7,$8,$9,$10)`,
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)`,
         [
           task.id, projectId, task.title, task.description || null, task.status, task.priority || 'medium',
-          task.dueDate || null, JSON.stringify(taskMetadata(task)), now, task.updatedAt || now
+          typeof task.assignee === 'string' && task.assignee ? task.assignee : null, task.dueDate || null, JSON.stringify(taskMetadata(task)), now, task.updatedAt || now
         ]
       );
       const result = await client.query('SELECT * FROM tasks WHERE id = $1', [task.id]);
@@ -84,10 +84,10 @@ export class PostgresTaskRepository {
       }
       await client.query(
         `UPDATE tasks
-         SET project_id=$2,title=$3,description=$4,status=$5,priority=$6,due_date=$7,metadata=$8,updated_at=$9
+         SET project_id=$2,title=$3,description=$4,status=$5,priority=$6,assignee_user_id=$7,due_date=$8,metadata=$9,updated_at=$10
          WHERE id=$1`,
         [id, projectId, next.title, next.description || null, next.status, next.priority || 'medium',
-         next.dueDate || null, JSON.stringify(taskMetadata(next)), next.updatedAt]
+         typeof next.assignee === 'string' && next.assignee ? next.assignee : null, next.dueDate || null, JSON.stringify(taskMetadata(next)), next.updatedAt]
       );
       const result = await client.query('SELECT * FROM tasks WHERE id = $1', [id]);
       return mapTask(result.rows[0]);
