@@ -2295,8 +2295,10 @@ apiRouter.post('/finance/expenses', requireAuth, requirePermission('canManageInv
   if (getDataSourceMode() === 'postgres') {
     try {
       const expense = await postgresExpenseRepository.create(newExpense);
-      recordAuditLog({ action:'EXPENSE_CREATED', actor:req.user!.username, actorRole:req.user!.role, ip:req.ip, userAgent:req.headers['user-agent'] as string, details:`Created expense "${expense.description || expense.id}" (${expense.currency} ${expense.amount}).`, severity:'info' });
-      res.json({ success:true, expense });
+      const replayed = expense.__idempotentReplay === true;
+      if (replayed) delete expense.__idempotentReplay;
+      if (!replayed) recordAuditLog({ action:'EXPENSE_CREATED', actor:req.user!.username, actorRole:req.user!.role, ip:req.ip, userAgent:req.headers['user-agent'] as string, details:`Created expense "${expense.description || expense.id}" (${expense.currency} ${expense.amount}).`, severity:'info' });
+      res.json({ success:true, expense, replayed });
     } catch (error) {
       if (error instanceof ExpenseProjectNotFoundError) { res.status(409).json({ success:false,error:error.message }); return; }
       res.status(400).json({ success:false,error:error instanceof Error?error.message:'Expense could not be created.' });
