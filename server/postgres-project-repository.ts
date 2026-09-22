@@ -127,7 +127,7 @@ export class PostgresProjectRepository {
       if (!currentResult.rows[0]) return null;
       const current = currentResult.rows[0] as Row;
       if (patch.updatedAt && iso(current.updated_at) !== patch.updatedAt) throw new ProjectConcurrencyError();
-      const tasksResult = await client.query('SELECT * FROM tasks WHERE project_id = $1 ORDER BY created_at ASC', [id]);
+      const tasksResult = await client.query('SELECT * FROM tasks WHERE project_id = $1 ORDER BY created_at ASC FOR UPDATE', [id]);
       const currentProject = mapProject(current, (tasksResult.rows as Row[]).map(mapTask));
       const next = { ...currentProject, ...patch, id, updatedAt: new Date().toISOString() };
       if (next.clientId) {
@@ -142,9 +142,14 @@ export class PostgresProjectRepository {
       if (patch.tasks !== undefined) {
         const incoming = Array.isArray(next.tasks) ? next.tasks : [];
         const incomingIds = new Set(incoming.map(task => String(task.id)).filter(Boolean));
+        if (incomingIds.size !== incoming.length) throw new Error('DUPLICATE_TASK_ID');
         const existingById = new Map((tasksResult.rows as Row[]).map(row => [String(row.id), row]));
         // Never delete-and-recreate tasks: historical time logs reference task IDs.
         for (const task of incoming) {
+          const taskStatus = String(task.status || 'todo');
+          const taskPriority = String(task.priority || 'medium');
+          if (!['todo','in_progress','review','done'].includes(taskStatus)) throw new Error('INVALID_TASK_STATUS');
+          if (!['low','medium','high','urgent'].includes(taskPriority)) throw new Error('INVALID_TASK_PRIORITY');
           const taskId = String(task.id || '');
           if (!taskId) throw new Error('TASK_ID_REQUIRED');
           const existingTask = existingById.get(taskId);
