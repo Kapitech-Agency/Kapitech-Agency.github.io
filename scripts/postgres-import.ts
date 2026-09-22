@@ -359,6 +359,7 @@ function assertForeignKeys(db: AnyRecord): void {
   const clients = new Set(arr(db, 'clients').map(row => row.id).filter(Boolean));
   const projects = new Set(arr(db, 'projects').map(row => row.id).filter(Boolean));
   const deals = new Set(arr(db, 'crmDeals').map(row => row.id).filter(Boolean));
+  const proposals = new Set(arr(db, 'proposals').map(row => row.id).filter(Boolean));
   const tasks = new Set(arr(db, 'tasks').map(row => row.id).filter(Boolean));
   const errors: string[] = [];
 
@@ -379,10 +380,22 @@ function assertForeignKeys(db: AnyRecord): void {
   check('timeLogs', 'userId', users);
   check('invoices', 'clientId', clients);
   check('invoices', 'projectId', projects);
+  check('invoices', 'proposalId', proposals);
   check('expenses', 'recordedByUserId', users);
+  check('expenses', 'projectId', projects);
   check('approvals', 'requesterUserId', users);
   check('documents', 'ownerUserId', users);
   check('notifications', 'recipientUserId', users);
+
+  for (const row of arr(db, 'invoices')) {
+    const invoiceClientId = clientIdFor(row, arr(db, 'clients'));
+    const projectId = nullableText(row.projectId);
+    if (invoiceClientId && projectId) {
+      const project = arr(db, 'projects').find(item => textValue(item.id) === projectId);
+      const projectClientId = project ? nullableText(project.clientId) : null;
+      if (projectClientId && invoiceClientId !== projectClientId) throw new Error('Invoice client/project relationship mismatch in migration source: ' + textValue(row.id));
+    }
+  }
 
   for (const row of arr(db, 'timeLogs')) {
     const taskId = nullableText(row.taskId);
