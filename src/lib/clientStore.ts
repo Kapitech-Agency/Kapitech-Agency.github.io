@@ -32,16 +32,37 @@ import { api } from './apiClient';
 
 let clientServerHydrationStarted = false;
 
+let clientServerHydrationRetryCount = 0;
+let clientServerHydrationRetryTimer: number | null = null;
+
+function scheduleClientHydrationRetry(): void {
+  if (typeof window === 'undefined' || clientServerHydrationRetryTimer !== null || clientServerHydrationRetryCount >= 6) return;
+  const delay = Math.min(30000, 3000 * 2 ** clientServerHydrationRetryCount);
+  clientServerHydrationRetryCount += 1;
+  clientServerHydrationRetryTimer = window.setTimeout(() => {
+    clientServerHydrationRetryTimer = null;
+    hydrateClientsFromServer();
+  }, delay);
+}
+
 function hydrateClientsFromServer(): void {
   if (!import.meta.env.PROD || clientServerHydrationStarted) return;
   clientServerHydrationStarted = true;
   api.clients.getAll().then((res) => {
-    if (!res.success || !Array.isArray(res.data?.clients)) return;
+    if (!res.success || !Array.isArray(res.data?.clients)) {
+      clientServerHydrationStarted = false;
+      scheduleClientHydrationRetry();
+      return;
+    }
+    clientServerHydrationRetryCount = 0;
     clientsCache = res.data.clients;
     if (typeof window !== 'undefined') {
       window.dispatchEvent(new CustomEvent(CLIENT_EVENT_NAME, { detail: res.data.clients }));
     }
-  }).catch(() => {});
+  }).catch(() => {
+    clientServerHydrationStarted = false;
+    scheduleClientHydrationRetry();
+  });
 }
 
 export const INITIAL_DEFAULT_CLIENTS: AgencyClient[] = [
