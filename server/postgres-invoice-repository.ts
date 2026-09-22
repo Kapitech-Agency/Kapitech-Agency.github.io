@@ -31,6 +31,24 @@ export class PostgresInvoiceRepository {
   private readonly writableStatuses = new Set(['draft','sent','overdue']);
   private async items(db:any,id:string){const r=await db.query('SELECT * FROM invoice_items WHERE invoice_id=$1 ORDER BY id ASC',[id]);return r.rows as Row[];}
   private async payments(db:any,id:string){const r=await db.query('SELECT * FROM invoice_payments WHERE invoice_id=$1 ORDER BY paid_at DESC, id DESC',[id]);return r.rows as Row[];}
+  private validateFinancials(invoice:any):void {
+    const items=Array.isArray(invoice.items)?invoice.items:[];
+    if(items.length===0) throw new Error('INVOICE_ITEMS_REQUIRED');
+    const itemSubtotal=items.reduce((sum:number,item:any)=>{
+      const quantity=Number(item.quantity), unitPrice=Number(item.unitPrice), amount=Number(item.amount);
+      const expected=Math.round(quantity*unitPrice);
+      if(!Number.isFinite(quantity)||quantity<=0||!Number.isFinite(unitPrice)||unitPrice<0||!Number.isFinite(amount)||amount<0||Math.abs(amount-expected)>0.01) throw new Error('INVALID_INVOICE_ITEM');
+      return Math.round((sum+amount)*100)/100;
+    },0);
+    const subtotal=Math.round(Number(invoice.subtotal||0)*100)/100;
+    const discountPercent=Number(invoice.discountPercent||0), taxPercent=Number(invoice.taxPercent||0);
+    if(!Number.isFinite(subtotal)||subtotal<0||!Number.isFinite(discountPercent)||discountPercent<0||discountPercent>100||!Number.isFinite(taxPercent)||taxPercent<0||taxPercent>100) throw new Error('INVALID_INVOICE_TOTALS');
+    const discountAmount=Math.round(subtotal*(discountPercent/100));
+    const taxableSubtotal=Math.max(0,subtotal-discountAmount);
+    const taxAmount=Math.round(taxableSubtotal*(taxPercent/100));
+    const expectedTotal=taxableSubtotal+taxAmount;
+    if(Math.abs(itemSubtotal-subtotal)>0.01||Math.abs(Number(invoice.discountAmount||0)-discountAmount)>0.01||Math.abs(Number(invoice.taxAmount||0)-taxAmount)>0.01||Math.abs(Number(invoice.total||0)-expectedTotal)>0.01) throw new Error('INVOICE_FINANCIAL_TOTAL_MISMATCH');
+  }
   async list():Promise<any[]>{const db=getPostgresPool();const r=await db.query('SELECT * FROM invoices ORDER BY created_at DESC');const ir=await db.query('SELECT * FROM invoice_items ORDER BY id ASC');const pr=await db.query('SELECT * FROM invoice_payments ORDER BY paid_at DESC, id DESC');const im=new Map<string,Row[]>(),pm=new Map<string,Row[]>();for(const x of ir.rows){const a=im.get(x.invoice_id)||[];a.push(x);im.set(x.invoice_id,a)}for(const x of pr.rows){const a=pm.get(x.invoice_id)||[];a.push(x);pm.set(x.invoice_id,a)}return r.rows.map((x:Row)=>mapInvoice(x,im.get(x.id)||[],pm.get(x.id)||[]));}
   async findById(id:string):Promise<any|null>{const db=getPostgresPool();const r=await db.query('SELECT * FROM invoices WHERE id=$1',[id]);if(!r.rows[0])return null;return mapInvoice(r.rows[0],await this.items(db,id),await this.payments(db,id));}
   async create(i:any,audit?:AuditEntry):Promise<any>{return withPostgresTransaction(async db=>{
@@ -119,6 +137,7 @@ export class PostgresInvoiceRepository {
         const nextItems = JSON.stringify(normalizedNextItems);
         if (currentItems !== nextItems) throw new Error('PAID_INVOICE_ITEMS_IMMUTABLE');
       }
+      this.validateFinancials(next);
       const paid=next.payments.reduce((s:any,p:any)=>s+Number(p.amount||0),0);if(Number(next.total)<paid)throw new Error('Invoice total cannot be lower than payments already recorded.');next.amountPaid=paid;next.balanceDue=Math.max(0,Number(next.total)-paid);if(patch.status==='paid'&&!(next.balanceDue===0&&next.total>0))throw new Error('Invoice can only be marked paid after the remaining balance is fully settled.');if(patch.status==='partially_paid'&&!(paid>0&&next.balanceDue>0))throw new Error('Invoice can only be partially paid when a payment has been recorded and a balance remains.');if(next.balanceDue<=0&&next.total>0)next.status='paid';else if(paid>0)next.status='partially_paid';await db.query('UPDATE invoices SET invoice_number=$2,client_id=$3,project_id=$4,type=$5,subtotal=$6,discount_percent=$7,discount_amount=$8,tax_percent=$9,tax_amount=$10,total=$11,amount_paid=$12,balance_due=$13,currency=$14,status=$15,issue_date=$16,due_date=$17,notes=$18,payment_terms=$19,metadata=$20,updated_at=$21 WHERE id=$1',[id,current.invoiceNumber,next.clientId||null,next.projectId||null,next.type,next.subtotal,next.discountPercent,next.discountAmount,next.taxPercent,next.taxAmount,next.total,paid,next.balanceDue,next.currency,next.status,next.issueDate||null,next.dueDate||null,next.notes||null,next.paymentTerms||null,JSON.stringify(metadata(next)),next.updatedAt]);if(patch.items!==undefined){await db.query('DELETE FROM invoice_items WHERE invoice_id=$1',[id]);for(const x of next.items||[])await db.query('INSERT INTO invoice_items (id,invoice_id,description,quantity,unit_price,amount) VALUES ($1,$2,$3,$4,$5,$6)',[x.id,id,x.description,x.quantity,x.unitPrice,x.amount??Number(x.quantity)*Number(x.unitPrice)])}if(audit)await postgresAuditLogRepository.appendWithinTransaction(db,audit);return this.findByIdTx(db,id);});}
   async recordPayment(id:string,payment:any,audit?:AuditEntry):Promise<any|null>{return withPostgresTransaction(async db=>{const r=await db.query('SELECT * FROM invoices WHERE id=$1 FOR UPDATE',[id]);if(!r.rows[0])return null;const current=mapInvoice(r.rows[0],await this.items(db,id),await this.payments(db,id));
     if (payment.idempotencyKey) {
