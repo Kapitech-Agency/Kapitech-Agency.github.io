@@ -905,56 +905,98 @@ apiRouter.post('/auth/users', requireAuth, requireMaster, async (req: Authentica
 
 apiRouter.put('/auth/users/:id', requireAuth, requireMaster, async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
-  const input = req.body || {};
+  const db = getDataSourceMode() === 'json' ? getDatabase() : undefined;
   const target = getDataSourceMode() === 'postgres'
     ? await postgresAuthRepository.findUserById(id)
-    : getDatabase().users.find(u => u.id === id) || null;
+    : db!.users.find(u => u.id === id) || null;
+
   if (!target) {
     res.status(404).json({ success: false, error: 'User not found.' });
     return;
   }
+
   if (target.stakeholderType === 'Master' || target.username === 'admin') {
-    res.status(403).json({ success: false, error: 'Root Master Admin policy cannot be modified from this route.' });
+    res.status(403).json({ success: false, error: 'The Root Master Admin account cannot be modified here.' });
     return;
   }
-  const name = cleanText(input.name ?? target.name, 160);
-  const requestedRole = String(input.role ?? target.role).trim();
-  const policy = ROLE_POLICIES[requestedRole];
-  const status = input.status === 'suspended' ? 'suspended' : 'active';
-  if (!name) {
-    res.status(400).json({ success: false, error: 'Name is required.' });
-    return;
-  }
+
+  const body = req.body || {};
+  const nextRole = body.role !== undefined ? String(body.role).trim() : target.role;
+  const policy = ROLE_POLICIES[nextRole];
   if (!policy) {
     res.status(400).json({ success: false, error: 'Unsupported account role.' });
     return;
   }
-  const division = policy.division;
+
+  const nextName = body.name !== undefined ? String(body.name).trim() : target.name;
+  if (!nextName || nextName.length > 160) {
+    res.status(400).json({ success: false, error: 'Name is required and must be at most 160 characters.' });
+    return;
+  }
+
+  if (body.division !== undefined && String(body.division) !== policy.division) {
+    res.status(400).json({ success: false, error: 'Division is derived from the selected role and cannot be overridden.' });
+    return;
+  }
+
+  const nextStatus = body.status !== undefined ? String(body.status) : target.status;
+  if (!['active', 'suspended'].includes(nextStatus)) {
+    res.status(400).json({ success: false, error: 'Invalid account status.' });
+    return;
+  }
+
   const updated = getDataSourceMode() === 'postgres'
-    ? await postgresAuthRepository.updateUserPolicy(id, name, requestedRole, policy.stakeholderType, policy.permissions, division, status)
+    ? await postgresAuthRepository.updateUserPolicy(
+        target.id,
+        nextName,
+        nextRole,
+        policy.stakeholderType,
+        policy.permissions,
+        policy.division,
+        nextStatus as StoredUser['status']
+      )
     : (() => {
-        const db = getDatabase();
-        const index = db.users.findIndex(u => u.id === id);
-        if (index < 0) return null;
-        db.users[index] = { ...db.users[index], name, role: requestedRole, stakeholderType: policy.stakeholderType, permissions: policy.permissions, division, status };
-        if (status === 'suspended') db.sessions = db.sessions.filter(s => s.userId !== id);
-        saveDatabase(db);
-        return db.users[index];
+        target.name = nextName;
+        target.role = nextRole;
+        target.stakeholderType = policy.stakeholderType;
+        target.division = policy.division;
+        target.permissions = policy.permissions;
+        target.status = nextStatus as StoredUser['status'];
+        if (target.status === 'suspended') db!.sessions = db!.sessions.filter(session => session.userId !== target.id);
+        saveDatabase(db!);
+        return target;
       })();
+
   if (!updated) {
     res.status(409).json({ success: false, error: 'User could not be updated.' });
     return;
   }
+
   recordAuditLog({
     action: 'ACCOUNT_UPDATED',
     actor: req.user!.username,
     actorRole: req.user!.role,
     ip: req.ip,
     userAgent: req.headers['user-agent'] as string,
-    details: `Updated admin user "${target.username}" policy to "${requestedRole}" and status "${status}".`,
-    severity: 'info'
+    details: `Updated admin user "${target.username}" policy to "${nextRole}" and status "${nextStatus}".`,
+    severity: 'warning'
   });
-  res.json({ success: true, user: { id: updated.id, name: updated.name, username: updated.username, email: updated.email, role: updated.role, stakeholderType: updated.stakeholderType, permissions: updated.permissions, division: updated.division, status: updated.status } });
+
+  res.json({
+    success: true,
+    user: {
+      id: updated.id,
+      name: updated.name,
+      username: updated.username,
+      email: updated.email,
+      role: updated.role,
+      stakeholderType: updated.stakeholderType,
+      permissions: updated.permissions,
+      division: updated.division,
+      status: updated.status,
+      permissions: updated.permissions
+    }
+  });
 });
 
 apiRouter.delete('/auth/users/:id', requireAuth, requireMaster, async (req: AuthenticatedRequest, res: Response): Promise<void> => {
@@ -999,98 +1041,6 @@ apiRouter.delete('/auth/users/:id', requireAuth, requireMaster, async (req: Auth
   res.json({ success: true, message: 'User deleted.' });
 });
 
-apiRouter.put('/auth/users/:id', requireAuth, requireMaster, async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-  const { id } = req.params;
-  const db = getDataSourceMode() === 'json' ? getDatabase() : undefined;
-  const target = getDataSourceMode() === 'postgres'
-    ? await postgresAuthRepository.findUserById(id)
-    : db!.users.find(u => u.id === id) || null;
-
-  if (!target) {
-    res.status(404).json({ success: false, error: 'User not found.' });
-    return;
-  }
-
-  if (target.stakeholderType === 'Master' || target.username === 'admin') {
-    res.status(403).json({ success: false, error: 'The Root Master Admin account cannot be modified here.' });
-    return;
-  }
-
-  const body = req.body || {};
-  const nextRole = body.role !== undefined ? String(body.role).trim() : target.role;
-  const policy = ROLE_POLICIES[nextRole];
-  if (!policy) {
-    res.status(400).json({ success: false, error: 'Unsupported account role.' });
-    return;
-  }
-
-  const nextName = body.name !== undefined ? String(body.name).trim() : target.name;
-  if (!nextName || nextName.length > 160) {
-    res.status(400).json({ success: false, error: 'Name is required and must be at most 160 characters.' });
-    return;
-  }
-
-  if (body.division !== undefined && String(body.division) !== policy.division) {
-    res.status(400).json({ success: false, error: 'Division is derived from the selected role and cannot be overridden.' });
-    return;
-  }
-
-  const nextStatus = body.status !== undefined ? String(body.status) : target.status;
-  if (!['active', 'suspended'].includes(nextStatus)) {
-    res.status(400).json({ success: false, error: 'Invalid account status.' });
-    return;
-  }
-
-  if (getDataSourceMode() === 'postgres') {
-    const updated = await postgresAuthRepository.updateUserPolicy(
-      target.id, nextName, nextRole, policy.stakeholderType, policy.permissions,
-      policy.division, nextStatus as StoredUser['status']
-    );
-    if (!updated) {
-      res.status(404).json({ success: false, error: 'User not found.' });
-      return;
-    }
-    target.name = updated.name;
-    target.role = updated.role;
-    target.stakeholderType = updated.stakeholderType;
-    target.division = updated.division;
-    target.permissions = updated.permissions;
-    target.status = updated.status;
-
-  } else {
-    target.name = nextName;
-    target.role = nextRole;
-    target.stakeholderType = policy.stakeholderType;
-    target.division = policy.division;
-    target.permissions = policy.permissions;
-    target.status = nextStatus as StoredUser['status'];
-    if (target.status === 'suspended') db!.sessions = db!.sessions.filter(session => session.userId !== target.id);
-    saveDatabase(db!);
-  }
-
-  recordAuditLog({
-    action: 'ACCOUNT_UPDATED',
-    actor: req.user!.username,
-    actorRole: req.user!.role,
-    ip: req.ip,
-    userAgent: req.headers['user-agent'] as string,
-    details: `Updated account policy/status for user "${target.username}".`,
-    severity: 'warning'
-  });
-
-  res.json({
-    success: true,
-    user: {
-      id: target.id,
-      username: target.username,
-      role: target.role,
-      stakeholderType: target.stakeholderType,
-      division: target.division,
-      status: target.status,
-      permissions: target.permissions
-    }
-  });
-});
 
 // ----------------------------------------------------
 // 2. LEADS & CONTACT SUBMISSIONS
