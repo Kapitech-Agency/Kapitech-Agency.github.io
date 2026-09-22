@@ -66,8 +66,8 @@ async function resolveAssigneeUserId(client: { query: (text: string, values?: un
   const candidate = String(value ?? '').trim();
   if (!candidate) return null;
   const result = await client.query(
-    'SELECT id FROM users WHERE status = 'active' AND (id = $1 OR lower(username) = lower($1) OR lower(name) = lower($1)) LIMIT 1',
-    [candidate]
+    'SELECT id FROM users WHERE status = $2 AND (id = $1 OR lower(username) = lower($1) OR lower(name) = lower($1)) LIMIT 1',
+    [candidate, 'active']
   );
   return result.rows[0]?.id ? String(result.rows[0].id) : null;
 }
