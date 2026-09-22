@@ -95,8 +95,16 @@ export class PostgresTaskRepository {
   }
 
   async delete(id: string): Promise<boolean> {
-    const result = await getPostgresPool().query('DELETE FROM tasks WHERE id = $1', [id]);
-    return result.rowCount === 1;
+    return withPostgresTransaction(async client => {
+      const current = await client.query('SELECT id FROM tasks WHERE id=$1 FOR UPDATE',[id]);
+      if (!current.rows[0]) return false;
+      const references = await client.query('SELECT COUNT(*)::int AS count FROM time_logs WHERE task_id=$1',[id]);
+      if (Number(references.rows[0]?.count || 0) > 0) {
+        throw new Error('TASK_HAS_TIME_LOGS');
+      }
+      const result = await client.query('DELETE FROM tasks WHERE id=$1',[id]);
+      return result.rowCount === 1;
+    });
   }
 }
 
