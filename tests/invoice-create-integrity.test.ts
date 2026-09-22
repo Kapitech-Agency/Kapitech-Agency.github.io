@@ -90,3 +90,17 @@ test('proposal-to-invoice conversion preserves amount-based proposal discounts a
   assert.match(block, /discountPercent:derivedDiscountPercent/);
   assert.match(block, /discountAmount:proposalDiscount/);
 });
+
+
+test('Invoice route preserves cent precision and does not use JSON client/project lookups in PostgreSQL mode', () => {
+  const source = fs.readFileSync('server/routes.ts', 'utf8');
+  const start = source.indexOf("apiRouter.post('/finance/invoices'");
+  const end = source.indexOf("apiRouter.put('/finance/invoices/:id'", start);
+  assert.ok(start >= 0 && end > start);
+  const block = source.slice(start, end);
+  assert.match(block, /Math\.round\(item\.quantity \* item\.unitPrice \* 100\) \/ 100/);
+  assert.match(block, /Math\.round\(subtotal \* \(discountPercent \/ 100\) \* 100\) \/ 100/);
+  assert.match(block, /Math\.round\(taxableSubtotal \* \(taxPercent \/ 100\) \* 100\) \/ 100/);
+  assert.match(block, /if \(getDataSourceMode\(\) === 'json'\)/);
+  assert.doesNotMatch(block, /const project = \(db\?\.projects \|\| \[\]\)\.find/);
+});
