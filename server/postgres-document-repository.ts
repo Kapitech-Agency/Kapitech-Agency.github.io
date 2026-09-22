@@ -1,4 +1,5 @@
-import { getPostgresPool } from './postgres.ts';
+import { getPostgresPool, withPostgresTransaction } from './postgres.ts';
+import { postgresAuditLogRepository, type AuditEntry } from './postgres-audit-log-repository.ts';
 
 type Row = Record<string, any>;
 
@@ -64,11 +65,8 @@ export class PostgresDocumentRepository {
     return document.rows[0] ? mapDocument(document.rows[0], access.rows.map(row => String(row.user_id))) : null;
   }
 
-  async create(input: any): Promise<any> {
-    const pool = getPostgresPool();
-    const client = await pool.connect();
-    try {
-      await client.query('BEGIN');
+  async create(input: any, audit?: AuditEntry): Promise<any> {
+    return withPostgresTransaction(async client => {
       const { rows } = await client.query(
         `INSERT INTO documents
           (id,name,title,type,mime_type,size,size_bytes,category,related_entity,related_id,owner,owner_user_id,source_type,status,uploaded_date,uploaded_at,external_url,storage_key,content_sha256,storage_sha256,storage_version,storage_provider,integrity_checked_at,created_at,updated_at,metadata)
@@ -89,20 +87,13 @@ export class PostgresDocumentRepository {
           [input.id, userId]
         );
       }
-      await client.query('COMMIT');
+      if (audit) await postgresAuditLogRepository.appendWithinTransaction(client, audit);
       return mapDocument(rows[0], Array.isArray(input.accessUserIds) ? input.accessUserIds : []);
-    } catch (error) {
-      await client.query('ROLLBACK');
-      throw error;
-    } finally {
-      client.release();
-    }
+    });
   }
 
-  async update(id: string, patch: any): Promise<any | null> {
-    const client = await getPostgresPool().connect();
-    try {
-      await client.query('BEGIN');
+  async update(id: string, patch: any, audit?: AuditEntry): Promise<any | null> {
+    return withPostgresTransaction(async client => {
       const currentResult = await client.query('SELECT * FROM documents WHERE id=$1 FOR UPDATE', [id]);
       if (!currentResult.rows[0]) { await client.query('ROLLBACK'); return null; }
       const accessResult = await client.query('SELECT user_id FROM document_access WHERE document_id=$1 ORDER BY user_id', [id]);
@@ -127,28 +118,17 @@ export class PostgresDocumentRepository {
       }
       const refreshed = await client.query('SELECT * FROM documents WHERE id=$1', [id]);
       const refreshedAccess = await client.query('SELECT user_id FROM document_access WHERE document_id=$1 ORDER BY user_id', [id]);
-      await client.query('COMMIT');
+      if (audit) await postgresAuditLogRepository.appendWithinTransaction(client, audit);
       return mapDocument(refreshed.rows[0], refreshedAccess.rows.map((row:any)=>String(row.user_id)));
-    } catch (error) {
-      try { await client.query('ROLLBACK'); } catch {}
-      throw error;
-    } finally { client.release(); }
+    });
   }
-  async delete(id: string): Promise<boolean> {
-    const pool = getPostgresPool();
-    const client = await pool.connect();
-    try {
-      await client.query('BEGIN');
+  async delete(id: string, audit?: AuditEntry): Promise<boolean> {
+    return withPostgresTransaction(async client => {
       await client.query('DELETE FROM document_access WHERE document_id=$1', [id]);
       const result = await client.query('DELETE FROM documents WHERE id=$1', [id]);
-      await client.query('COMMIT');
+      if (audit) await postgresAuditLogRepository.appendWithinTransaction(client, audit);
       return (result.rowCount || 0) > 0;
-    } catch (error) {
-      await client.query('ROLLBACK');
-      throw error;
-    } finally {
-      client.release();
-    }
+    });
   }
 }
 
