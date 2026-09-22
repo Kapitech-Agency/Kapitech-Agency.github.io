@@ -3497,8 +3497,16 @@ apiRouter.put('/projects/tasks/:id', requireAuth, requirePermission('canManageKa
 apiRouter.delete('/projects/tasks/:id', requireAuth, requirePermission('canManageKanbanTasks'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
   if (getDataSourceMode() === 'postgres') {
-    const deleted = await postgresTaskRepository.delete(id);
-    if (!deleted) { res.status(404).json({ success: false, error: 'Task not found.' }); return; }
+    try {
+      const deleted = await postgresTaskRepository.delete(id);
+      if (!deleted) { res.status(404).json({ success: false, error: 'Task not found.' }); return; }
+    } catch (error) {
+      if (error instanceof Error && error.message === 'TASK_HAS_TIME_LOGS') {
+        res.status(409).json({ success: false, error: 'Task has time logs and cannot be deleted.' });
+        return;
+      }
+      throw error;
+    }
     recordAuditLog({ action: 'TASK_DELETED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Deleted task ${id}.`, severity: 'warning' });
     res.json({ success: true, message: 'Task deleted.' }); return;
   }
