@@ -699,12 +699,12 @@ async function importCore(client: any, db: AnyRecord, privateDocumentMetadata: M
 
   for (const row of arr(db, 'invoices')) {
     await upsert(client, 'invoices',
-      ['id','invoice_number','client_id','project_id','type','subtotal','discount_percent','discount_amount','tax_percent','tax_amount','total','amount_paid','balance_due','currency','status','issue_date','due_date','paid_date','notes','payment_terms','metadata','created_at','updated_at'],
-      [textValue(row.id),nullableText(row.invoiceNumber),clientIdFor(row,clients),nullableText(row.projectId),textValue(row.type,'invoice'),
+      ['id','invoice_number','proposal_id','client_id','project_id','type','subtotal','discount_percent','discount_amount','tax_percent','tax_amount','total','amount_paid','balance_due','currency','status','issue_date','due_date','paid_date','notes','payment_terms','metadata','created_at','updated_at'],
+      [textValue(row.id),nullableText(row.invoiceNumber),nullableText(row.proposalId),clientIdFor(row,clients),nullableText(row.projectId),textValue(row.type,'invoice'),
        numberValue(row.subtotal),numberValue(row.discountPercent),numberValue(row.discountAmount),numberValue(row.taxPercent),numberValue(row.taxAmount),
        numberValue(row.total),numberValue(row.amountPaid),numberValue(row.balanceDue),textValue(row.currency,'IDR'),normalizeInvoiceStatus(row.status),
        dateValue(row.issueDate),dateValue(row.dueDate),dateValue(row.paidDate),nullableText(row.notes),nullableText(row.paymentTerms),
-       metadata(row,['id','invoiceNumber','clientId','clientName','clientCompany','clientEmail','clientPhone','projectId','type','items','subtotal','discountPercent','discountAmount','taxPercent','taxAmount','total','amountPaid','balanceDue','currency','status','issueDate','dueDate','paidDate','notes','paymentTerms','payments','createdAt','updatedAt']),
+       metadata(row,['id','invoiceNumber','proposalId','clientId','clientName','clientCompany','clientEmail','clientPhone','projectId','type','items','subtotal','discountPercent','discountAmount','taxPercent','taxAmount','total','amountPaid','balanceDue','currency','status','issueDate','dueDate','paidDate','notes','paymentTerms','payments','createdAt','updatedAt']),
        timestampValue(row.createdAt),timestampValue(row.updatedAt,row.createdAt)]);
     for (const item of Array.isArray(row.items) ? row.items : []) {
       await client.query(
