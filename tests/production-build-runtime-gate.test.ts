@@ -2,12 +2,16 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import test from 'node:test';
 const read=(p:string)=>fs.readFileSync(p,'utf8');
-test('production build bundles backend and packages PostgreSQL migrations',()=>{
+test('production build uses the constrained Hostinger-safe runner',()=>{
  const pkg=JSON.parse(read('package.json'));
- assert.match(pkg.scripts.build,/vite build/);
- assert.match(pkg.scripts.build,/esbuild server\.ts/);
- assert.match(pkg.scripts.build,/copy-postgres-migrations\.mjs/);
+ assert.equal(pkg.scripts.build,'node scripts/build-production.mjs');
  assert.equal(pkg.scripts.start,'node dist/server.cjs');
+ const build=read('scripts/build-production.mjs');
+ assert.match(build,/spawnSync/);
+ assert.match(build,/RAYON_NUM_THREADS/);
+ assert.match(build,/vite/);
+ assert.match(build,/esbuild/);
+ assert.match(build,/copy-postgres-migrations\\.mjs/);
 });
 test('production environment gate requires database, encryption, storage and backup evidence',()=>{
  const s=read('scripts/validate-production-env.ts');
