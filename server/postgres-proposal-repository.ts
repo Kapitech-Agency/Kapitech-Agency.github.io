@@ -193,7 +193,7 @@ export class PostgresProposalRepository {
         taxAmount:proposalTax,
         total:derivedTotal,
         amountPaid:0,
-        balanceDue:p.total,
+        balanceDue:derivedTotal,
         currency:p.currency,
         status:'draft',
         issueDate:issue,
@@ -207,12 +207,18 @@ export class PostgresProposalRepository {
         invoice.id,invoice.proposalId,invoice.invoiceNumber,invoice.clientId,invoice.projectId,invoice.type,invoice.subtotal,invoice.discountPercent,invoice.discountAmount,
         invoice.taxPercent,invoice.taxAmount,invoice.total,0,invoice.balanceDue,invoice.currency,invoice.status,issue,due,invoice.notes,invoice.paymentTerms,'{}',now,now
       ]);
-      for(const i of p.items)await db.query('INSERT INTO invoice_items (id,invoice_id,description,quantity,unit_price,amount) VALUES ($1,$2,$3,$4,$5,$6)',[`ii_${i.id}`,invoice.id,i.description,i.quantity,i.unitPrice,i.quantity*i.unitPrice]);
+      for(const i of p.items){
+        const quantity=Number(i.quantity);
+        const unitPrice=Number(i.unitPrice);
+        const amount=Math.round(quantity*unitPrice*100)/100;
+        if(!Number.isFinite(quantity)||quantity<=0||!Number.isFinite(unitPrice)||unitPrice<0) throw new Error('INVALID_PROPOSAL_ITEM');
+        await db.query('INSERT INTO invoice_items (id,invoice_id,description,quantity,unit_price,amount) VALUES ($1,$2,$3,$4,$5,$6)',[`ii_${i.id}`,invoice.id,i.description,quantity,unitPrice,amount]);
+      }
       await db.query('UPDATE proposals SET status=$2,updated_at=$3 WHERE id=$1',[id,'Accepted',now]);
       if(audit)await postgresAuditLogRepository.appendWithinTransaction(db,audit);
       return {
         ...invoice,
-        items:p.items.map((i:any)=>({id:`ii_${i.id}`,description:i.description,quantity:Number(i.quantity),unitPrice:Number(i.unitPrice),amount:Number(i.quantity)*Number(i.unitPrice)})),
+        items:p.items.map((i:any)=>({id:`ii_${i.id}`,description:i.description,quantity:Number(i.quantity),unitPrice:Number(i.unitPrice),amount:Math.round(Number(i.quantity)*Number(i.unitPrice)*100)/100})),
         payments:[],
         auditTrail:[]
       };
