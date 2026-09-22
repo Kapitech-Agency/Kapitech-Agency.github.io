@@ -47,7 +47,13 @@ DECLARE
   expected_subtotal NUMERIC(20,2);
   actual_subtotal NUMERIC(20,2);
 BEGIN
-  proposal_id_value := CASE WHEN TG_TABLE_NAME = 'proposals' THEN NEW.id ELSE CASE WHEN TG_OP = 'DELETE' THEN OLD.proposal_id ELSE NEW.proposal_id END END;
+  IF TG_TABLE_NAME = 'proposals' THEN
+    proposal_id_value := NEW.id;
+  ELSIF TG_OP = 'DELETE' THEN
+    proposal_id_value := OLD.proposal_id;
+  ELSE
+    proposal_id_value := NEW.proposal_id;
+  END IF;
   SELECT subtotal INTO expected_subtotal FROM proposals WHERE id = proposal_id_value FOR SHARE;
   IF NOT FOUND THEN
     RETURN NULL;
@@ -87,7 +93,13 @@ DECLARE
   expected_subtotal NUMERIC(20,2);
   actual_subtotal NUMERIC(20,2);
 BEGIN
-  invoice_id_value := CASE WHEN TG_TABLE_NAME = 'invoices' THEN NEW.id ELSE CASE WHEN TG_OP = 'DELETE' THEN OLD.invoice_id ELSE NEW.invoice_id END END;
+  IF TG_TABLE_NAME = 'invoices' THEN
+    invoice_id_value := NEW.id;
+  ELSIF TG_OP = 'DELETE' THEN
+    invoice_id_value := OLD.invoice_id;
+  ELSE
+    invoice_id_value := NEW.invoice_id;
+  END IF;
   SELECT subtotal INTO expected_subtotal FROM invoices WHERE id = invoice_id_value FOR SHARE;
   IF NOT FOUND THEN
     RETURN NULL;
