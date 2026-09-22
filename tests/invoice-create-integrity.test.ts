@@ -80,3 +80,18 @@ test('PostgreSQL invoice mapping treats proposal_id as authoritative relational 
   assert.match(source, /proposalId:row\.proposal_id\?\?''/);
   assert.doesNotMatch(source, /proposalId:row\.proposal_id\?\?metadata\.proposalId/);
 });
+
+test('proposal-to-invoice conversion preserves amount-based proposal discounts as invoice percentage state', () => {
+  const source = fs.readFileSync('server/postgres-proposal-repository.ts', 'utf8');
+  const start = source.indexOf('async convertToInvoice(');
+  const end = source.indexOf('private async insertItem', start);
+  assert.ok(start >= 0 && end > start);
+  const block = source.slice(start, end);
+  assert.match(block, /derivedDiscountPercent/);
+  assert.match(block, /derivedDiscountAmount/);
+  assert.match(block, /derivedTaxAmount/);
+  assert.match(block, /derivedTotal/);
+  assert.match(block, /PROPOSAL_FINANCIAL_TOTAL_MISMATCH/);
+  assert.match(block, /discountPercent:derivedDiscountPercent/);
+  assert.match(block, /discountAmount:proposalDiscount/);
+});
