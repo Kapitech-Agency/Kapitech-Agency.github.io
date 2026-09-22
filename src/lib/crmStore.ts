@@ -92,17 +92,38 @@ function normalizeServerDeal(deal: any): CrmLead {
   };
 }
 
+let crmServerHydrationRetryCount = 0;
+let crmServerHydrationRetryTimer: number | null = null;
+
+function scheduleCrmHydrationRetry(): void {
+  if (typeof window === 'undefined' || crmServerHydrationRetryTimer !== null || crmServerHydrationRetryCount >= 6) return;
+  const delay = Math.min(30000, 3000 * 2 ** crmServerHydrationRetryCount);
+  crmServerHydrationRetryCount += 1;
+  crmServerHydrationRetryTimer = window.setTimeout(() => {
+    crmServerHydrationRetryTimer = null;
+    hydrateCrmFromServer();
+  }, delay);
+}
+
 function hydrateCrmFromServer(): void {
   if (!import.meta.env.PROD || crmServerHydrationStarted) return;
   crmServerHydrationStarted = true;
   api.crm.getDeals().then((res) => {
-    if (!res.success || !Array.isArray(res.data?.deals)) return;
+    if (!res.success || !Array.isArray(res.data?.deals)) {
+      crmServerHydrationStarted = false;
+      scheduleCrmHydrationRetry();
+      return;
+    }
+    crmServerHydrationRetryCount = 0;
     const serverLeads = res.data.deals.map(normalizeServerDeal);
     crmCache = serverLeads;
     if (typeof window !== 'undefined') {
       window.dispatchEvent(new CustomEvent(CRM_EVENT_NAME, { detail: serverLeads }));
     }
-  }).catch(() => {});
+  }).catch(() => {
+    crmServerHydrationStarted = false;
+    scheduleCrmHydrationRetry();
+  });
 }
 
 
