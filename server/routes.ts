@@ -134,7 +134,7 @@ const MAX_PUBLIC_TEXT = 4000;
 const MAX_INTERNAL_TEXT = 5000;
 const CRM_STAGES = ['new', 'contacted', 'proposal', 'negotiation', 'won', 'lost'] as const;
 const DEAL_PRIORITIES = ['low', 'medium', 'high', 'urgent'] as const;
-function makeAuditEntry(req: AuthenticatedRequest, action: string, details: string, severity = 'info') {
+function makeAuditEntry(req: AuthenticatedRequest, action: string, details: string, severity: 'info' | 'warning' | 'critical' = 'info') {
   return { action, actor: req.user!.username, actorRole: req.user!.role, actorUserId: req.user!.id, ip: req.ip, userAgent: req.headers['user-agent'] as string, details, severity };
 }
 
