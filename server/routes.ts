@@ -1505,8 +1505,7 @@ apiRouter.put('/crm/deals/:id', requireAuth, requirePermission('canManageCrm'), 
   res.json({ success: true, deal: db.crmDeals[idx] });
 });
 
-apiRouter.post('/crm/deals/:id/convert-to-project',
-  requireAuth,
+apiRouter.post('/crm/deals/:id/convert-to-project', requireAuth,
   requirePermission('canManageCrm'),
   requirePermission('canManageProjects'),
   requirePermission('canManageInvoices'),
