@@ -1,4 +1,5 @@
 import { getPostgresPool, withPostgresTransaction } from './postgres.ts';
+import { postgresAuditLogRepository, type AuditEntry } from './postgres-audit-log-repository.ts';
 
 type Row = Record<string, any>;
 const iso = (v: Date | string): string => v instanceof Date ? v.toISOString() : new Date(v).toISOString();
@@ -37,8 +38,9 @@ export class PostgresLeadRepository {
     return result.rows[0] ? mapLead(result.rows[0]) : null;
   }
 
-  async create(lead: any): Promise<any> {
-    const result = await getPostgresPool().query(
+  async create(lead: any, audit?: AuditEntry): Promise<any> {
+    return withPostgresTransaction(async client => {
+    const result = await client.query(
       `INSERT INTO leads
        (id,full_name,email,company,phone,message,status,source,metadata,created_at,updated_at)
        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
@@ -46,10 +48,12 @@ export class PostgresLeadRepository {
       [lead.id, lead.fullName, lead.email || null, lead.company || null, lead.phone || null, lead.message || null,
        lead.status, lead.source || null, JSON.stringify(toMetadata(lead)), lead.createdAt, lead.updatedAt]
     );
+    if (audit) await postgresAuditLogRepository.appendWithinTransaction(client, audit);
     return mapLead(result.rows[0]);
+    });
   }
 
-  async update(id: string, patch: Record<string, unknown>): Promise<any | null> {
+  async update(id: string, patch: Record<string, unknown>, audit?: AuditEntry): Promise<any | null> {
     return withPostgresTransaction(async client => {
       const current = await client.query('SELECT * FROM leads WHERE id = $1 FOR UPDATE', [id]);
       if (!current.rows[0]) return null;
@@ -61,16 +65,18 @@ export class PostgresLeadRepository {
         [id, next.fullName, next.email || null, next.company || null, next.phone || null, next.message || null,
          next.status, next.source || null, JSON.stringify(toMetadata(next)), next.updatedAt]
       );
+      if (audit) await postgresAuditLogRepository.appendWithinTransaction(client, audit);
       return result.rows[0] ? mapLead(result.rows[0]) : null;
     });
   }
 
-  async delete(id: string): Promise<boolean> {
+  async delete(id: string, audit?: AuditEntry): Promise<boolean> {
     return withPostgresTransaction(async client => {
       const current=await client.query('SELECT status FROM leads WHERE id = $1 FOR UPDATE',[id]);
       if(!current.rows[0])return false;
       if(current.rows[0].status==='closed')throw new Error('LEAD_IS_CLOSED');
       const result=await client.query('DELETE FROM leads WHERE id = $1',[id]);
+      if (audit) await postgresAuditLogRepository.appendWithinTransaction(client, audit);
       return result.rowCount===1;
     });
   }
