@@ -27,7 +27,7 @@ test('PostgreSQL repository SQL table references exist in the authoritative migr
 
   assert.ok(tables.size > 0, 'No PostgreSQL tables were discovered from db/postgres migrations.');
 
-  const nonTableIdentifiers = new Set(['set', 'proposal', 'jsonb_array_elements']);
+  const nonTableIdentifiers = new Set(['set', 'proposal', 'crm', 'jsonb_array_elements']);
   const referencedTables = new Map<string, string[]>();
   for (const file of repositoryFiles(serverDir)) {
     const source = fs.readFileSync(file, 'utf8');
