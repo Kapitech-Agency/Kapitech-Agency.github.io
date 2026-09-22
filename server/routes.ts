@@ -2331,7 +2331,8 @@ apiRouter.post('/finance/invoices/:id/pay', requireAuth, requirePermission('canM
       res.json({ success:true, invoice:saved, payment: replayed ? undefined : payment, replayed: replayed }); return;
     } catch(error) {
       const message=error instanceof Error?error.message:'Payment could not be recorded.';
-      res.status(message.includes('exceeds')||message.includes('Cancelled')?409:400).json({success:false,error:message}); return;
+      const conflict = message.includes('exceeds') || message.includes('Cancelled') || message === 'IDEMPOTENCY_KEY_REUSE_CONFLICT' || message === 'INVOICE_PAYMENT_LEDGER_INCONSISTENT';
+      res.status(conflict ? 409 : 400).json({success:false,error:message}); return;
     }
   }
 
