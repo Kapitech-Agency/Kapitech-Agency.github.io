@@ -28,7 +28,7 @@ ALTER TABLE invoices VALIDATE CONSTRAINT invoices_currency_v1_check;
 
 ALTER TABLE crm_deals
   ADD CONSTRAINT crm_deals_stage_v1_check
-  CHECK (stage IN ('new','qualified','proposal','negotiation','won','lost')) NOT VALID;
+  CHECK (stage IN ('new','contacted','proposal','negotiation','won','lost')) NOT VALID;
 ALTER TABLE crm_deals VALIDATE CONSTRAINT crm_deals_stage_v1_check;
 
 ALTER TABLE crm_deals
