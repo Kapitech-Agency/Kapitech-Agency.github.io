@@ -1756,7 +1756,33 @@ apiRouter.post('/projects', requireAuth, requirePermission('canManageProjects'),
     createdAt: now,
     updatedAt: now
   };
-    if (newProject.tasks.length > 0 && req.user!.stakeholderType !== 'Master' && !req.user!.permissions?.canManageKanbanTasks) {
+
+  const jsonProjectDb = getDataSourceMode() === 'json' ? getDatabase() : undefined;
+  if (newProject.clientId && jsonProjectDb && !(jsonProjectDb.clients || []).some((client: any) => String(client.id) === String(newProject.clientId))) {
+    res.status(404).json({ success: false, error: 'Client not found.' });
+    return;
+  }
+  if (jsonProjectDb) {
+    const taskIds = new Set<string>();
+    for (const task of newProject.tasks as any[]) {
+      const taskId = String(task?.id || '');
+      if (!taskId || taskIds.has(taskId)) {
+        res.status(400).json({ success: false, error: 'Project tasks require unique IDs.' });
+        return;
+      }
+      taskIds.add(taskId);
+      if (!['todo','in_progress','review','done'].includes(String(task?.status || 'todo'))) {
+        res.status(400).json({ success: false, error: 'Invalid task status.' });
+        return;
+      }
+      if (!['low','medium','high','urgent'].includes(String(task?.priority || 'medium'))) {
+        res.status(400).json({ success: false, error: 'Invalid task priority.' });
+        return;
+      }
+    }
+  }
+
+  if (newProject.tasks.length > 0 && req.user!.stakeholderType !== 'Master' && !req.user!.permissions?.canManageKanbanTasks) {
     res.status(403).json({ success: false, error: 'Task mutations require task-management permission.' });
     return;
   }
@@ -1840,7 +1866,19 @@ apiRouter.put('/projects/:id', requireAuth, requirePermission('canManageProjects
   const db = getDatabase();
   const idx = db.projects.findIndex(p => p.id === id);
   if (idx === -1) { res.status(404).json({ success: false, error: 'Project not found.' }); return; }
-  const patch = pickFields(updates || {}, ['title', 'name', 'client', 'clientName', 'clientCompany', 'clientEmail', 'serviceCategory', 'status', 'health', 'budget', 'progressPercent', 'startDate', 'targetEndDate', 'teamLead', 'teamMembers', 'techStack', 'repositoryUrl', 'figmaUrl', 'liveStagingUrl', 'notes', 'tasks']);
+  const patch = pickFields(updates || {}, ['title', 'name', 'client', 'clientId', 'clientName', 'clientCompany', 'clientEmail', 'serviceCategory', 'status', 'health', 'budget', 'progressPercent', 'startDate', 'targetEndDate', 'teamLead', 'teamMembers', 'techStack', 'repositoryUrl', 'figmaUrl', 'liveStagingUrl', 'notes', 'tasks']);
+  if (patch.clientId !== undefined && patch.clientId && !(db.clients || []).some((client: any) => String(client.id) === String(patch.clientId))) {
+    res.status(404).json({ success: false, error: 'Client not found.' });
+    return;
+  }
+  if (patch.clientId !== undefined && String(patch.clientId || '') !== String(db.projects[idx].clientId || '')) {
+    const linkedBusiness = (db.proposals || []).some((item: any) => String(item.projectId || '') === id)
+      || (db.invoices || []).some((item: any) => String(item.projectId || '') === id);
+    if (linkedBusiness) {
+      res.status(409).json({ success: false, error: 'Project client cannot be changed after proposal or invoice linkage.' });
+      return;
+    }
+  }
   for (const key of ['title','name','client','clientName','clientCompany','serviceCategory','teamLead','notes'] as const) {
     if (patch[key] !== undefined) patch[key] = cleanText(patch[key], key === 'notes' ? 3000 : 200);
   }
