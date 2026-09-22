@@ -293,4 +293,6 @@ test('production-critical relational hardening is present in the branch under te
  assert.match(auth,/localStorage/);
  assert.match(startup,/postgresInitializationInFlight/);
  assert.match(migration,/uq_invoices_proposal_id_v1/);
+ assert.match(read('db/postgres/022_audit_sequence.sql'),/GREATEST\(COALESCE/);
+ assert.match(read('src/lib/adminAuth.ts'),/rememberMe \? localStorage : sessionStorage/);
 });
