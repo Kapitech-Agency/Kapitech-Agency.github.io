@@ -132,7 +132,8 @@ test('time log creation derives project relation from its referenced task',()=>{
  const repo=read('server/postgres-time-log-repository.ts');
  assert.match(repo,/let resolvedProjectId = projectId/);
  assert.match(repo,/if \(!resolvedProjectId && taskProjectId\) resolvedProjectId = taskProjectId/);
- assert.match(repo,/VALUES \(\$1,\$2,\$3,\$4,\$5,\$6,\$7,\$8\)/);
+ assert.match(repo,/INSERT INTO time_logs \(id,project_id,task_id,user_id,hours,description,logged_at,created_at,metadata\)/);
+ assert.match(repo,/VALUES \(\$1,\$2,\$3,\$4,\$5,\$6,\$7,\$8,\$9::jsonb\)/);
  assert.match(repo,/\[log\.id, resolvedProjectId, taskId/);
 });
 
