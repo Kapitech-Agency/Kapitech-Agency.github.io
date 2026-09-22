@@ -40,9 +40,15 @@ test('authentication audit events use PostgreSQL audit storage in PostgreSQL mod
 
   const authBlock = source.slice(authBlockStart, authBlockEnd);
   assert.ok(authBlock.includes('await writeAuditLog({'), 'authentication audit events must use the PostgreSQL-aware writer');
+  const jsonOnlyAuditCount = (authBlock.match(/if \(getDataSourceMode\(\) === 'json'\) recordAuditLog\(\{/g) || []).length;
+  assert.equal(jsonOnlyAuditCount, 2, 'MFA lifecycle audit writes may remain explicitly JSON-only for compatibility mode');
+  const unguardedAuditBlock = authBlock.replace(
+    /if \(getDataSourceMode\(\) === 'json'\) recordAuditLog\(\{/g,
+    ''
+  );
   assert.equal(
-    authBlock.includes("recordAuditLog({"),
+    unguardedAuditBlock.includes("recordAuditLog({"),
     false,
-    'authentication routes must not write directly to the JSON audit store'
+    'authentication routes must not write directly to the JSON audit store outside compatibility guards'
   );
 });
