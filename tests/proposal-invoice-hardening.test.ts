@@ -19,3 +19,20 @@ test('proposal-to-invoice conversion serializes invoice-number generation under 
   assert.match(source, /attempt < 10/);
   assert.match(source, /INVOICE_NUMBER_GENERATION_FAILED/);
 });
+
+
+test('proposal-to-invoice conversion keeps balance and invoice item amounts aligned to cents', async () => {
+  const source = await fs.readFile(path.join(root, 'server/postgres-proposal-repository.ts'), 'utf8');
+  assert.match(source, /balanceDue:derivedTotal/);
+  assert.match(source, /Math\.round\(quantity\*unitPrice\*100\) \/ 100/);
+  assert.match(source, /amount:Math\.round\(Number\(i\.quantity\)\*Number\(i\.unitPrice\)\*100\) \/ 100/);
+});
+
+test('financial line-total migration uses deferred database reconciliation triggers', async () => {
+  const source = await fs.readFile(path.join(root, 'db/postgres/027_financial_line_total_integrity.sql'), 'utf8');
+  assert.match(source, /CREATE CONSTRAINT TRIGGER proposal_line_totals_integrity_v1/);
+  assert.match(source, /CREATE CONSTRAINT TRIGGER invoice_line_totals_integrity_v1/);
+  assert.match(source, /DEFERRABLE INITIALLY DEFERRED/);
+  assert.match(source, /PROPOSAL_LINE_TOTAL_MISMATCH/);
+  assert.match(source, /INVOICE_LINE_TOTAL_MISMATCH/);
+});
