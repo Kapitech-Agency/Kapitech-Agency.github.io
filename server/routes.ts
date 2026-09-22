@@ -4309,15 +4309,24 @@ apiRouter.get('/documents/:id/content', requireAuth, documentAccessMiddleware, a
     const stored = await storage.get(document.storageKey);
 
     if (document.storageSha256 && stored.storageSha256 !== String(document.storageSha256)) {
-      recordAuditLog({
-        action: 'DOCUMENT_INTEGRITY_FAILURE',
-        actor: req.user!.username,
-        actorRole: req.user!.role,
-        ip: req.ip,
-        userAgent: req.headers['user-agent'] as string,
-        details: `Storage checksum mismatch for private document "${document.name}".`,
-        severity: 'critical'
-      });
+      if (getDataSourceMode() === 'postgres') {
+        await postgresAuditLogRepository.append(makeAuditEntry(
+          req,
+          'DOCUMENT_INTEGRITY_FAILURE',
+          `Storage checksum mismatch for private document "${document.name}".`,
+          'critical'
+        ));
+      } else {
+        recordAuditLog({
+          action: 'DOCUMENT_INTEGRITY_FAILURE',
+          actor: req.user!.username,
+          actorRole: req.user!.role,
+          ip: req.ip,
+          userAgent: req.headers['user-agent'] as string,
+          details: `Storage checksum mismatch for private document "${document.name}".`,
+          severity: 'critical'
+        });
+      }
       res.status(409).json({ success: false, error: 'Private document integrity verification failed.' });
       return;
     }
@@ -4325,15 +4334,24 @@ apiRouter.get('/documents/:id/content', requireAuth, documentAccessMiddleware, a
     const content = decryptPrivateDocument(stored.body);
     const actualContentSha256 = crypto.createHash('sha256').update(content).digest('hex');
     if (document.contentSha256 && actualContentSha256 !== String(document.contentSha256)) {
-      recordAuditLog({
-        action: 'DOCUMENT_INTEGRITY_FAILURE',
-        actor: req.user!.username,
-        actorRole: req.user!.role,
-        ip: req.ip,
-        userAgent: req.headers['user-agent'] as string,
-        details: `Content checksum mismatch for private document "${document.name}".`,
-        severity: 'critical'
-      });
+      if (getDataSourceMode() === 'postgres') {
+        await postgresAuditLogRepository.append(makeAuditEntry(
+          req,
+          'DOCUMENT_INTEGRITY_FAILURE',
+          `Content checksum mismatch for private document "${document.name}".`,
+          'critical'
+        ));
+      } else {
+        recordAuditLog({
+          action: 'DOCUMENT_INTEGRITY_FAILURE',
+          actor: req.user!.username,
+          actorRole: req.user!.role,
+          ip: req.ip,
+          userAgent: req.headers['user-agent'] as string,
+          details: `Content checksum mismatch for private document "${document.name}".`,
+          severity: 'critical'
+        });
+      }
       res.status(409).json({ success: false, error: 'Private document content integrity verification failed.' });
       return;
     }
@@ -4346,15 +4364,24 @@ apiRouter.get('/documents/:id/content', requireAuth, documentAccessMiddleware, a
     res.setHeader('Content-Length', content.length);
     res.end(content);
 
-    recordAuditLog({
-      action: 'DOCUMENT_DOWNLOADED',
-      actor: req.user!.username,
-      actorRole: req.user!.role,
-      ip: req.ip,
-      userAgent: req.headers['user-agent'] as string,
-      details: `Downloaded private document "${document.name}".`,
-      severity: 'info'
-    });
+    if (getDataSourceMode() === 'postgres') {
+      await postgresAuditLogRepository.append(makeAuditEntry(
+        req,
+        'DOCUMENT_DOWNLOADED',
+        `Downloaded private document "${document.name}".`,
+        'info'
+      ));
+    } else {
+      recordAuditLog({
+        action: 'DOCUMENT_DOWNLOADED',
+        actor: req.user!.username,
+        actorRole: req.user!.role,
+        ip: req.ip,
+        userAgent: req.headers['user-agent'] as string,
+        details: `Downloaded private document "${document.name}".`,
+        severity: 'info'
+      });
+    }
   } catch (error) {
     console.error('[Documents] Private download failed:', error);
     if (!res.headersSent) {
