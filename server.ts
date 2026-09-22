@@ -141,6 +141,20 @@ async function startServer() {
 
   // Health check
   app.get('/api/health', async (_req, res) => {
+    if (productionConfigError) {
+      res.status(503).json({
+        status: 'error',
+        version: process.env.APP_VERSION || '2.6.0-enterprise',
+        services: {
+          application: 'healthy',
+          database: 'misconfigured',
+          dataSource: 'invalid',
+          auth: 'blocked'
+        },
+        message: productionConfigError
+      });
+      return;
+    }
     try {
       const dataSource = getDataSourceMode();
       let databaseStatus: 'connected' | 'unavailable' = 'connected';
@@ -199,6 +213,14 @@ async function startServer() {
   app.use('/api', (req, res, next) => {
     if (req.path === '/health') {
       next();
+      return;
+    }
+    if (productionConfigError) {
+      res.status(503).json({
+        success: false,
+        code: 'PRODUCTION_DATA_SOURCE_MISCONFIGURED',
+        error: 'Production API is disabled until the PostgreSQL configuration is corrected.'
+      });
       return;
     }
     if (getDataSourceMode() === 'postgres' && !postgresReady) {
