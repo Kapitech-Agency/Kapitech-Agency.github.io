@@ -219,3 +219,15 @@ test('JSON fallback validates invoice client/project linkage before persistence'
  assert.match(block,/requestedClientId/);
  assert.match(block,/requestedProjectId/);
 });
+
+
+test('JSON fallback enforces proposal conversion prerequisites',()=>{
+ const route=read('server/routes.ts');
+ const start=route.indexOf("apiRouter.post('/crm/proposals/:id/convert-to-invoice'");
+ const end=route.indexOf("apiRouter.delete('/crm/proposals/:id'",start);
+ const block=route.slice(start,end);
+ assert.match(block,/Proposal cannot be converted to an invoice in its current status/);
+ assert.match(block,/proposalClientId/);
+ assert.match(block,/proposalProjectId/);
+ assert.match(block,/Proposal project does not belong to the selected client/);
+});
