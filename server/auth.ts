@@ -13,6 +13,7 @@ import {
 import { getDataSourceMode } from './data-source.ts';
 import { postgresAuthRepository } from './postgres-repository.ts';
 import { postgresSecurityControlsRepository } from './postgres-security-controls-repository.ts';
+import { postgresAuditLogRepository } from './postgres-audit-log-repository.ts';
 
 interface RateLimitEntry {
   count: number;
@@ -41,6 +42,24 @@ const SESSION_LIFETIME_MS = 12 * 60 * 60 * 1000;
 const EXTENDED_SESSION_LIFETIME_MS = 24 * 60 * 60 * 1000;
 const SESSION_IDLE_TIMEOUT_MS = 60 * 60 * 1000;
 const SESSION_TOUCH_INTERVAL_MS = 60 * 1000;
+
+function recordSecurityAudit(entry: Parameters<typeof recordAuditLog>[0]): void {
+  if (getDataSourceMode() === 'postgres') {
+    void postgresAuditLogRepository.append({
+      ...entry,
+      actor: String(entry.actor || 'system'),
+      actorRole: String(entry.actorRole || 'system'),
+      ip: String(entry.ip || ''),
+      userAgent: String(entry.userAgent || ''),
+      details: String(entry.details || ''),
+      severity: entry.severity || 'info'
+    }).catch(error => {
+      console.error('[Security] PostgreSQL audit append failed:', error);
+    });
+    return;
+  }
+  recordAuditLog(entry);
+}
 
 export interface AuthenticatedRequest extends Request {
   user?: StoredUser;
@@ -483,7 +502,7 @@ export function validateCsrf(req: AuthenticatedRequest, res: Response, next: Nex
   const cookieToken = cookieValue(req, 'kapi_csrf');
   const headerToken = req.get('x-csrf-token') || '';
   if (!cookieToken || !headerToken || !safeEqual(cookieToken, headerToken) || !sameOrigin(req)) {
-    recordAuditLog({
+    recordSecurityAudit({
       action: 'CSRF_BLOCKED',
       actor: req.user.username,
       actorRole: req.user.role,
@@ -520,7 +539,7 @@ function requireMfaForProtectedAccess(req: AuthenticatedRequest, res: Response):
   if (!req.user) return true;
   if (req.user.mfaEnabled) return true;
 
-  recordAuditLog({
+  recordSecurityAudit({
     action: 'MFA_REQUIRED',
     actor: req.user.username,
     actorRole: req.user.role,
@@ -569,7 +588,7 @@ export function requirePermission(permissionKey: keyof StoredUser['permissions']
       return;
     }
     if (!req.user.permissions?.[permissionKey]) {
-      recordAuditLog({
+      recordSecurityAudit({
         action: 'ACCESS_DENIED',
         actor: req.user.username,
         actorRole: req.user.role,
@@ -592,7 +611,7 @@ export function requireMaster(req: AuthenticatedRequest, res: Response, next: Ne
   }
   if (!requireMfaForProtectedAccess(req, res)) return;
   if (req.user.stakeholderType !== 'Master') {
-    recordAuditLog({
+    recordSecurityAudit({
       action: 'ACCESS_DENIED',
       actor: req.user.username,
       actorRole: req.user.role,
@@ -619,7 +638,7 @@ export function requireAnyPermission(...permissionKeys: Array<keyof StoredUser['
       return;
     }
     if (!req.user.permissions || !permissionKeys.some(key => Boolean(req.user!.permissions[key]))) {
-      recordAuditLog({
+      recordSecurityAudit({
         action: 'ACCESS_DENIED',
         actor: req.user.username,
         actorRole: req.user.role,
