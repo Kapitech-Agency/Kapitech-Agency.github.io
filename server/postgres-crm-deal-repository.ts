@@ -281,6 +281,16 @@ export class PostgresCrmDealRepository {
         ]
       );
 
+      await db.query(
+        'INSERT INTO invoice_items (id,invoice_id,description,quantity,unit_price,amount) VALUES ($1,$2,$3,1,$4,$4)',
+        [
+          `ii_crm_${deal.id}_${crypto.randomBytes(4).toString('hex')}`,
+          invoiceId,
+          `50% kickoff retainer for ${projectName}`,
+          downPayment
+        ]
+      );
+
       await db.query('UPDATE crm_deals SET client_id=$2,updated_at=$3 WHERE id=$1', [dealId, clientId, now]);
       if (audit) await postgresAuditLogRepository.appendWithinTransaction(db, audit);
 
