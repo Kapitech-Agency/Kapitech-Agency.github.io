@@ -26,7 +26,11 @@ export class PostgresExpenseRepository{
     const idempotencyKey=input.idempotencyKey?String(input.idempotencyKey).slice(0,100):null;
     if(!userId||!expenseDate||!/^[A-Z]{3}$/.test(currency)||!Number.isFinite(amount)||amount<=0) throw new Error('Valid user, date, currency, and positive expense amount are required.');
     return withPostgresTransaction(async client=>{
-      if(idempotencyKey){const existing=await client.query<Row>('SELECT * FROM expenses WHERE recorded_by_user_id=$1 AND idempotency_key=$2 LIMIT 1',[userId,idempotencyKey]);if(existing.rows[0])return { ...mapExpense(existing.rows[0]), __idempotentReplay: true };}
+      if(idempotencyKey){
+        await client.query("SELECT pg_advisory_xact_lock(hashtextextended('kapitech:expense-idempotency:' || $1 || ':' || $2, 0))",[userId,idempotencyKey]);
+        const existing=await client.query<Row>('SELECT * FROM expenses WHERE recorded_by_user_id=$1 AND idempotency_key=$2 LIMIT 1',[userId,idempotencyKey]);
+        if(existing.rows[0]) return { ...mapExpense(existing.rows[0]), __idempotentReplay: true };
+      }
       if(projectId){const project=await client.query<Row>('SELECT id FROM projects WHERE id=$1 FOR SHARE',[projectId]);if(!project.rows[0])throw new ExpenseProjectNotFoundError('Project not found.');}
       const metadata={...(input.metadata&&typeof input.metadata==='object'?input.metadata:{}),recurringInterval:input.recurringInterval??'none'};
       const result=await client.query<Row>('INSERT INTO expenses (id,type,category,description,amount,currency,expense_date,recurring_interval,project_id,recorded_by_user_id,recorded_by,status,version,idempotency_key,metadata,created_at) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,1,$13,$14,NOW()) RETURNING *',
