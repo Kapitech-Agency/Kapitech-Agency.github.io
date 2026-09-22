@@ -13,7 +13,7 @@ test('PostgreSQL invoice creation validates line item integrity before insert', 
   assert.match(block, /INVALID_INVOICE_TOTALS/);
   assert.match(block, /INVOICE_FINANCIAL_TOTAL_MISMATCH/);
   assert.match(block, /INVOICE_ITEMS_REQUIRED/);
-  assert.match(block, /expectedAmount = Math\.round\(quantity \* unitPrice(?: \* 100\) \/ 100)?\)/);
+  assert.match(block, /expectedAmount\s*=\s*Math\.round\(quantity\s*\*\s*unitPrice\s*\*\s*100\)\s*\/\s*100/);
   assert.ok(block.indexOf('invoiceItems') < block.indexOf('INSERT INTO invoices'));
 });
 
