@@ -576,9 +576,11 @@ async function importCore(client: any, db: AnyRecord, privateDocumentMetadata: M
       if (!timeLogProjectId) timeLogProjectId = taskProjectId;
     }
     await upsert(client, 'time_logs',
-      ['id','project_id','task_id','user_id','hours','description','logged_at','created_at'],
+      ['id','project_id','task_id','user_id','hours','description','logged_at','created_at','metadata'],
       [textValue(row.id),timeLogProjectId,timeLogTaskId,nullableText(row.userId),
-       numberValue(row.hours),nullableText(row.description),timestampValue(row.loggedAt || row.date,row.createdAt),timestampValue(row.createdAt,row.loggedAt || row.date)]);
+       numberValue(row.hours),nullableText(row.description),timestampValue(row.loggedAt || row.date,row.createdAt),
+       timestampValue(row.createdAt,row.loggedAt || row.date),
+       metadata(row, ['id','projectId','taskId','userId','user','durationMinutes','hours','billable','date','loggedAt','notes','description','createdAt'])]);
   }
   counts.timeLogs = arr(db,'timeLogs').length;
 
