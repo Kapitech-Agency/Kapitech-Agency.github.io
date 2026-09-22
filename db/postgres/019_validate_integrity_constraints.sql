@@ -6,7 +6,7 @@ ALTER TABLE expenses VALIDATE CONSTRAINT expenses_amount_v2_check;
 ALTER TABLE expenses VALIDATE CONSTRAINT expenses_currency_v2_check;
 ALTER TABLE expenses VALIDATE CONSTRAINT expenses_status_v2_check;
 ALTER TABLE expenses VALIDATE CONSTRAINT expenses_version_v2_check;
-ALTER TABLE expenses VALIDATE CONSTRAINT expenses_project_fk;
+ALTER TABLE expenses VALIDATE CONSTRAINT expenses_project_id_fkey;
 
 ALTER TABLE time_logs VALIDATE CONSTRAINT time_logs_hours_positive_v1;
 ALTER TABLE invoice_payments VALIDATE CONSTRAINT invoice_payments_amount_positive_v1;
