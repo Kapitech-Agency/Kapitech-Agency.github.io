@@ -93,10 +93,12 @@ export class PostgresCmsRepository {
       const currentResult = await client.query('SELECT key,value,updated_at FROM cms_settings ORDER BY key');
       const current: Record<string, any> = {};
       for (const row of currentResult.rows) current[row.key] = row.value;
-      if (currentResult.rows[0]?.updated_at) current.updatedAt = currentResult.rows[0].updated_at instanceof Date ? currentResult.rows[0].updated_at.toISOString() : new Date(currentResult.rows[0].updated_at).toISOString();
+      if (currentResult.rows[0]?.updated_at) {
+        current.updatedAt = currentResult.rows[0].updated_at instanceof Date
+          ? currentResult.rows[0].updated_at.toISOString()
+          : new Date(currentResult.rows[0].updated_at).toISOString();
+      }
       const merged = { ...current, ...patch, updatedAt: new Date().toISOString() };
-    try {
-      await client.query('BEGIN');
       for (const [key, value] of Object.entries(merged)) {
         if (key === 'updatedAt') continue;
         await client.query(
