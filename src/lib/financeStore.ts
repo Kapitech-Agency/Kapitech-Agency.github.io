@@ -95,6 +95,19 @@ export const FINANCE_EVENT_NAME = 'kapitech_finance_updated';
 
 let financeServerHydrationStarted = false;
 
+let financeServerHydrationRetryCount = 0;
+let financeServerHydrationRetryTimer: number | null = null;
+
+function scheduleFinanceHydrationRetry(): void {
+  if (typeof window === 'undefined' || financeServerHydrationRetryTimer !== null || financeServerHydrationRetryCount >= 6) return;
+  const delay = Math.min(30000, 3000 * 2 ** financeServerHydrationRetryCount);
+  financeServerHydrationRetryCount += 1;
+  financeServerHydrationRetryTimer = window.setTimeout(() => {
+    financeServerHydrationRetryTimer = null;
+    hydrateFinanceFromServer();
+  }, delay);
+}
+
 function hydrateFinanceFromServer(): void {
   if (!import.meta.env.PROD || financeServerHydrationStarted) return;
   financeServerHydrationStarted = true;
@@ -112,9 +125,18 @@ function hydrateFinanceFromServer(): void {
     if (typeof window !== 'undefined' && (invoiceRes.success || expenseRes.success)) {
       window.dispatchEvent(new CustomEvent(FINANCE_EVENT_NAME));
     }
-  }).catch(() => {});
-}
 
+    if (invoiceRes.success && expenseRes.success) {
+      financeServerHydrationRetryCount = 0;
+      return;
+    }
+    financeServerHydrationStarted = false;
+    scheduleFinanceHydrationRetry();
+  }).catch(() => {
+    financeServerHydrationStarted = false;
+    scheduleFinanceHydrationRetry();
+  });
+}
 
 export const INITIAL_DEFAULT_INVOICES: AgencyInvoice[] = [
   {
