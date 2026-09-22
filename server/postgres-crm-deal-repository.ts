@@ -168,10 +168,17 @@ export class PostgresCrmDealRepository {
           throw new Error('DEAL_PROJECT_CLIENT_MISMATCH');
         }
 
+        if (String(project.client_id || clientId) !== String(clientId)) {
+          throw new Error('DEAL_PROJECT_CLIENT_MISMATCH');
+        }
+
         if (!invoice.client_id) {
           await db.query('UPDATE invoices SET client_id=$2, updated_at=NOW() WHERE id=$1', [invoice.id, clientId]);
         } else if (String(invoice.client_id) !== String(clientId)) {
           throw new Error('DEAL_INVOICE_CLIENT_MISMATCH');
+        }
+        if (invoice.project_id && String(invoice.project_id) !== String(project.id)) {
+          throw new Error('DEAL_INVOICE_PROJECT_MISMATCH');
         }
 
         await db.query('UPDATE crm_deals SET client_id=$2, updated_at=NOW() WHERE id=$1', [dealId, clientId]);
