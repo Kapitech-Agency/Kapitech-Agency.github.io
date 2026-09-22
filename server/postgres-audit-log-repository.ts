@@ -58,6 +58,8 @@ export class PostgresAuditLogRepository {
     const client = await pool.connect();
     try {
       await client.query('BEGIN');
+      // Serialize the entire append operation so an empty chain cannot produce two GENESIS roots.
+      await client.query("SELECT pg_advisory_xact_lock(hashtextextended('kapitech:ams:audit-chain', 0))");
       const latest = await client.query(
         'SELECT hash FROM audit_logs ORDER BY timestamp DESC, id DESC LIMIT 1 FOR UPDATE'
       );
