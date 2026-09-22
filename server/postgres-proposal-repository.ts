@@ -20,10 +20,14 @@ function mapProposal(row:Row, itemRows:Row[]):any {
 function metadata(p:any){const {id,proposalNumber,title,clientId,dealId,projectId,subtotal,discount,taxPercent,tax,total,currency,validityPeriod,paymentTerms,owner,status,notes,createdDate,sentDate,approvedDate,items,createdAt,updatedAt,...rest}=p;return rest;}
 
 export class PostgresProposalRepository {
+  private readonly creatableStatuses = new Set(['Draft','Internal Review','Sent']);
   private async items(db:any,id:string){const r=await db.query('SELECT * FROM proposal_items WHERE proposal_id=$1 ORDER BY id ASC',[id]);return r.rows as Row[];}
   async list():Promise<any[]>{const db=getPostgresPool();const r=await db.query('SELECT * FROM proposals ORDER BY created_at DESC');const items=await db.query('SELECT * FROM proposal_items ORDER BY id ASC');const m=new Map<string,Row[]>();for(const i of items.rows){const a=m.get(i.proposal_id)||[];a.push(i);m.set(i.proposal_id,a)}return r.rows.map((x:Row)=>mapProposal(x,m.get(x.id)||[]));}
   async findById(id:string):Promise<any|null>{const db=getPostgresPool();const r=await db.query('SELECT * FROM proposals WHERE id=$1',[id]);if(!r.rows[0])return null;return mapProposal(r.rows[0],await this.items(db,id));}
-  async create(p:any,audit?:AuditEntry):Promise<any>{return withPostgresTransaction(async db=>{
+  async create(p:any,audit?:AuditEntry):Promise<any>{
+    const requestedStatus = String(p.status || 'Draft');
+    if (!this.creatableStatuses.has(requestedStatus)) throw new Error('PROPOSAL_CREATION_WORKFLOW_ONLY');
+    return withPostgresTransaction(async db=>{
     let resolvedClientId = p.clientId ? String(p.clientId) : null;
     if (resolvedClientId) {
       const client = await db.query('SELECT id FROM clients WHERE id=$1 FOR SHARE',[resolvedClientId]);
