@@ -3743,6 +3743,7 @@ apiRouter.post('/projects/timelogs', requireAuth, requireAnyPermission('canManag
       res.status(message.endsWith('not found.') ? 404 : 409).json({ success: false, error: message }); return;
     }
   }
+  const db = getDatabase();
   if (!db.timeLogs) db.timeLogs = []; db.timeLogs.unshift(newLog); saveDatabase(db);
   recordAuditLog({ action: 'TIMELOG_CREATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Created ${durationMinutes} minute time entry for ${newLog.projectName}.`, severity: 'info' });
   res.json({ success: true, timeLog: newLog });
