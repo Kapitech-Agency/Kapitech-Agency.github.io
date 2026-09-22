@@ -179,3 +179,41 @@ test('document repository never manually commits or rolls back inside shared tra
    assert.match(block,/withPostgresTransaction/);
  }
 });
+
+
+test('JSON fallback preserves proposal approval and conversion state-machine boundaries',()=>{
+ const route=read('server/routes.ts');
+ const start=route.indexOf("apiRouter.put('/crm/proposals/:id'");
+ const end=route.indexOf("apiRouter.post('/crm/proposals/:id/approve'",start);
+ const block=route.slice(start,end);
+ for(const value of ['Accepted status can only be created by the proposal-to-invoice workflow.','Accepted proposals cannot be reopened or moved to another status.','Invalid proposal approval transition.']) assert.ok(block.includes(value),value);
+});
+
+test('JSON fallback prevents deletion of referenced business records',()=>{
+ const route=read('server/routes.ts');
+ const clients=route.slice(route.indexOf("apiRouter.delete('/clients/:id'"),route.indexOf("apiRouter.get('/projects'",route.indexOf("apiRouter.delete('/clients/:id'"))));
+ const projects=route.slice(route.indexOf("apiRouter.delete('/projects/:id'"),route.indexOf("apiRouter.get('/finance/invoices'",route.indexOf("apiRouter.delete('/projects/:id'"))));
+ assert.match(clients,/hasBusinessRecords/);
+ assert.match(projects,/hasBusinessRecords/);
+ assert.match(clients,/Client has business records and cannot be deleted/);
+ assert.match(projects,/Project has business records and cannot be deleted/);
+});
+
+test('JSON fallback validates approval references before creating approval requests',()=>{
+ const route=read('server/routes.ts');
+ const start=route.indexOf("apiRouter.post('/approvals'");
+ const end=route.indexOf("apiRouter.post('/approvals/:id/action'",start);
+ const block=route.slice(start,end);
+ assert.match(block,/referenceTableByType/);
+ assert.match(block,/Approval reference not found/);
+});
+
+test('JSON fallback validates invoice client/project linkage before persistence',()=>{
+ const route=read('server/routes.ts');
+ const start=route.indexOf("apiRouter.put('/finance/invoices/:id'");
+ const end=route.indexOf("apiRouter.post('/finance/invoices/:id/pay'",start);
+ const block=route.slice(start,end);
+ assert.match(block,/Project does not belong to the selected client/);
+ assert.match(block,/requestedClientId/);
+ assert.match(block,/requestedProjectId/);
+});
