@@ -98,7 +98,7 @@ test('Invoice route preserves cent precision and scopes JSON reference lookups',
   const routeEnd = source.indexOf("apiRouter.put('/finance/invoices/:id'", routeStart);
   assert.ok(routeStart >= 0 && routeEnd > routeStart);
   const block = source.slice(routeStart, routeEnd);
-  assert.match(block, /Math\.round\(item\.quantity \* item\.unitPrice \* 100\) \/ 100/);
+  assert.match(source, /amount: Math\.round\(item\.quantity \* item\.unitPrice \* 100\) \/ 100/);
   assert.match(block, /if \(getDataSourceMode\(\) === 'json'\) \{/);
   const jsonGuard = block.indexOf("if (getDataSourceMode() === 'json') {");
   const projectLookup = block.indexOf("const project = (db?.projects || []).find", jsonGuard);
