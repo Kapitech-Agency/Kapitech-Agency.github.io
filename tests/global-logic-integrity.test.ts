@@ -64,3 +64,31 @@ test('private document upload rotates the storage object key before metadata com
 test('invoice generic update cannot replace authoritative payment rows',()=>{const route=read('server/routes.ts');const repo=read('server/postgres-invoice-repository.ts');const start=route.indexOf("apiRouter.put('/finance/invoices/:id'");const block=route.slice(start,route.indexOf("apiRouter.post('/finance/invoices/:id/pay'",start));assert.match(block,/pickFields\(input, \['type','clientId','projectId','leadId','currency','issueDate','dueDate','notes','paymentTerms','status'\]\)/);assert.match(block,/items, taxPercent, discountPercent/);assert.doesNotMatch(block,/\.\.\.input/);assert.match(repo,/payments:current\.payments/);});
 
 test('proposal creation cannot bypass approval or conversion workflow',()=>{const route=read('server/routes.ts');const repo=read('server/postgres-proposal-repository.ts');const start=route.indexOf("apiRouter.post('/crm/proposals'");const block=route.slice(start,route.indexOf("apiRouter.put('/crm/proposals/:id'",start));assert.match(block,/const statusValues = new Set\(\['Draft','Internal Review','Sent'\]\)/);assert.match(block,/Accepted status can only be created by the proposal-to-invoice workflow/);assert.match(repo,/creatableStatuses = new Set\(\['Draft','Internal Review','Sent'\]\)/);assert.match(repo,/PROPOSAL_CREATION_WORKFLOW_ONLY/);});
+
+test('project bulk task validation errors are returned as client errors',()=>{
+ const route=read('server/routes.ts');
+ const start=route.indexOf("apiRouter.put('/projects/:id'");
+ const block=route.slice(start,route.indexOf("apiRouter.delete('/projects/:id'",start));
+ assert.match(block,/DUPLICATE_TASK_ID/);
+ assert.match(block,/INVALID_TASK_STATUS/);
+ assert.match(block,/INVALID_TASK_PRIORITY/);
+ assert.match(block,/res\.status\(400\)/);
+});
+
+test('transaction-bound PostgreSQL audit routes do not append the same success event a second time',()=>{
+ const route=read('server/routes.ts');
+ for (const [needle,nextRoute] of [
+   ["apiRouter.put('/leads/:id'","apiRouter.delete('/leads/:id'"],
+   ["apiRouter.delete('/leads/:id'","apiRouter.post('/leads/:id/convert'"],
+   ["apiRouter.put('/vendors/:id'","apiRouter.delete('/vendors/:id'"],
+   ["apiRouter.delete('/vendors/:id'","apiRouter.post('/cms/services'"],
+   ["apiRouter.post('/projects/timelogs'","apiRouter.delete('/projects/timelogs/:id'"],
+   ["apiRouter.delete('/projects/timelogs/:id'","// ----------------------------------------------------"]
+ ] as const) {
+   const start=route.indexOf(needle);
+   const end=route.indexOf(nextRoute,start);
+   const block=route.slice(start,end);
+   const pgEnd=block.indexOf("const db = getDatabase");
+   if (pgEnd>0) assert.equal((block.slice(0,pgEnd).match(/recordAuditLog\(/g)||[]).length,0,needle);
+ }
+});
