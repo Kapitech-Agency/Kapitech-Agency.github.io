@@ -90,7 +90,13 @@ export class PostgresClientRepository {
       }
       const row = current.rows[0];
       const currentClient = mapClient(row);
-      const next = { ...currentClient, ...patch, id, updatedAt: new Date().toISOString() };
+      const { totalSpend: _ignoredTotalSpend, projectsCount: _ignoredProjectsCount, totalProjects: _ignoredTotalProjects, totalInvoiced: _ignoredTotalInvoiced, ...editablePatch } = patch as any;
+      const next = { ...currentClient, ...editablePatch, id, updatedAt: new Date().toISOString(),
+        totalSpend: currentClient.totalSpend,
+        projectsCount: currentClient.projectsCount,
+        totalProjects: currentClient.totalProjects,
+        totalInvoiced: currentClient.totalInvoiced
+      };
       const result = await client.query<ClientRow>(
         `UPDATE clients SET name=$2,company=$3,email=$4,phone=$5,industry=$6,status=$7,notes=$8,metadata=$9,updated_at=$10
          WHERE id=$1 RETURNING *`,
