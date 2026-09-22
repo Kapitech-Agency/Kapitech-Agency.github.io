@@ -119,6 +119,11 @@ test('PostgreSQL commercial workflow converts proposal to invoice and returns th
       updatedAt: now
     });
 
+    await assert.rejects(
+      () => proposalRepository.convertToInvoice(proposalId),
+      /PROPOSAL_APPROVAL_REQUIRED/
+    );
+
     const approved = await proposalRepository.approve(proposalId);
     assert.equal(approved?.status, 'Approved');
 
