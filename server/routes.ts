@@ -1800,6 +1800,7 @@ apiRouter.put('/projects/:id', requireAuth, requirePermission('canManageProjects
       res.json({ success: true, project });
     } catch (error) {
       if (error instanceof ProjectConcurrencyError) { res.status(409).json({ success: false, error: error.message, code: 'PROJECT_CONFLICT' }); return; }
+      if (error instanceof Error && error.message === 'TASK_HAS_TIME_LOGS') { res.status(409).json({ success: false, error: 'A task with time logs cannot be removed from the project.', code: 'TASK_HAS_TIME_LOGS' }); return; }
       throw error;
     }
     return;
