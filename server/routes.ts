@@ -1639,10 +1639,12 @@ apiRouter.put('/clients/:id', requireAuth, requirePermission('canManageClients')
     }
   }
   if (patch.website !== undefined) patch.website = cleanOptionalUrl(patch.website);
-  if (patch.status !== undefined && !['active','inactive','prospect','on_hold'].includes(String(patch.status))) {
+  if (patch.status !== undefined && !['active','inactive','prospect','on_hold','completed','lead'].includes(String(patch.status))) {
     res.status(400).json({ success: false, error: 'Invalid client status.' });
     return;
   }
+  if (patch.status === 'prospect') patch.status = 'lead';
+  if (patch.status === 'on_hold') patch.status = 'inactive';
   for (const key of ['name','companyName','clientName','phone','address','location','industry','tier','notes'] as const) {
     if (patch[key] !== undefined) patch[key] = cleanText(patch[key], key === 'notes' ? 3000 : 200);
   }
