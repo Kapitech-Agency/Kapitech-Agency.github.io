@@ -64,11 +64,12 @@ export class PostgresTimeLogRepository {
         }
         if (!resolvedProjectId && taskProjectId) resolvedProjectId = taskProjectId;
       }
+      const metadata = logMetadata(log);
       await client.query(
-        `INSERT INTO time_logs (id,project_id,task_id,user_id,hours,description,logged_at,created_at)
-         VALUES ($1,$2,$3,$4,$5,$6,$7,$8)`,
+        `INSERT INTO time_logs (id,project_id,task_id,user_id,hours,description,logged_at,created_at,metadata)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9::jsonb)`,
         [log.id, resolvedProjectId, taskId, typeof log.userId === 'string' && log.userId ? log.userId : null,
-         hours, String(log.notes ?? ''), loggedAt, log.createdAt || new Date().toISOString()]
+         hours, String(log.notes ?? ''), loggedAt, log.createdAt || new Date().toISOString(), JSON.stringify(metadata)]
       );
       const result = await client.query('SELECT * FROM time_logs WHERE id = $1', [log.id]);
       if (audit) await postgresAuditLogRepository.appendWithinTransaction(client, audit);
