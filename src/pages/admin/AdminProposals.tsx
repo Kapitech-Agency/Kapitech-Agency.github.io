@@ -547,14 +547,15 @@ export const AdminProposals: React.FC = () => {
                         <select
                           value={p.status}
                           onChange={(e) => handleStatusChange(p.id, e.target.value as Proposal['status'])}
-                          className="h-7 px-2 rounded bg-[#181B22] text-[#8A94A6] hover:text-white border border-white/[0.07] text-[10px] font-mono focus:outline-none"
+                          disabled={['approved', 'accepted', 'rejected'].includes(p.status)}
+                          className="h-7 px-2 rounded bg-[#181B22] text-[#8A94A6] hover:text-white border border-white/[0.07] text-[10px] font-mono focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           <option value="draft">Draft</option>
                           <option value="review">Review</option>
-                          <option value="approved">Approved</option>
                           <option value="sent">Sent</option>
-                          <option value="accepted">Accepted</option>
-                          <option value="rejected">Rejected</option>
+                          {!['draft', 'review', 'sent'].includes(p.status) && (
+                            <option value={p.status} disabled>{p.status.charAt(0).toUpperCase() + p.status.slice(1)}</option>
+                          )}
                         </select>
 
                         {/* Convert to invoice button if accepted or approved */}
