@@ -59,7 +59,7 @@ export class PostgresTimeLogRepository {
         const task = await client.query('SELECT id, project_id FROM tasks WHERE id = $1 FOR SHARE', [taskId]);
         if (!task.rows[0]) throw new Error('Task not found.');
         const taskProjectId = task.rows[0].project_id ? String(task.rows[0].project_id) : null;
-        if (resolvedProjectId && taskProjectId && taskProjectId !== resolvedProjectId) {
+        if (resolvedProjectId && taskProjectId !== resolvedProjectId) {
           throw new Error('Task does not belong to the selected project.');
         }
         if (!resolvedProjectId && taskProjectId) resolvedProjectId = taskProjectId;
