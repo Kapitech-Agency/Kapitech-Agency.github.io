@@ -95,7 +95,7 @@ export class PostgresProjectRepository {
   async create(project: AgencyProject): Promise<AgencyProject> {
     return withPostgresTransaction(async client => {
       if (project.clientId) {
-        const linkedClient = await client.query('SELECT id FROM clients WHERE id = $1 LIMIT 1', [project.clientId]);
+        const linkedClient = await client.query('SELECT id FROM clients WHERE id = $1 FOR SHARE', [project.clientId]);
         if (!linkedClient.rows[0]) throw new Error('Client not found.');
       }
       await client.query(
@@ -119,7 +119,7 @@ export class PostgresProjectRepository {
       const currentProject = mapProject(current, (tasksResult.rows as Row[]).map(mapTask));
       const next = { ...currentProject, ...patch, id, updatedAt: new Date().toISOString() };
       if (next.clientId) {
-        const linkedClient = await client.query('SELECT id FROM clients WHERE id = $1 LIMIT 1', [next.clientId]);
+        const linkedClient = await client.query('SELECT id FROM clients WHERE id = $1 FOR SHARE', [next.clientId]);
         if (!linkedClient.rows[0]) throw new Error('Client not found.');
       }
       await client.query(
