@@ -3512,7 +3512,7 @@ apiRouter.post('/projects/tasks', requireAuth, requirePermission('canManageKanba
       res.json({ success: true, task }); return;
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Task could not be created.';
-      res.status(message === 'Project not found.' ? 404 : 409).json({ success: false, error: message }); return;
+      res.status(message === 'Project not found.' ? 404 : message === 'ASSIGNEE_NOT_FOUND' ? 400 : 409).json({ success: false, error: message }); return;
     }
   }
   const db = getDatabase();
