@@ -28,3 +28,14 @@ test('PostgreSQL invoice updates revalidate authoritative financial totals', () 
   assert.match(source, /private validateFinancials\(invoice:any\)/);
   assert.match(source, /INVOICE_FINANCIAL_TOTAL_MISMATCH/);
 });
+
+
+test('PostgreSQL invoice creation preserves the proposal relational link', () => {
+  const source = fs.readFileSync('server/postgres-invoice-repository.ts', 'utf8');
+  const start = source.indexOf('async create(');
+  const end = source.indexOf('private async findByIdTx', start);
+  assert.ok(start >= 0 && end > start);
+  const block = source.slice(start, end);
+  assert.match(block, /INSERT INTO invoices \\(id,proposal_id,invoice_number/);
+  assert.match(block, /i\.proposalId\\|\\|null/);
+});
