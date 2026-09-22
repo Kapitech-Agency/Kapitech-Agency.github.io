@@ -18,5 +18,5 @@ test('time-log writes enforce task/project ownership', async () => {
   const source = await read('server/postgres-time-log-repository.ts');
   assert.match(source, /SELECT id, project_id FROM tasks WHERE id = \$1/);
   assert.match(source, /Task does not belong to the selected project/);
-  assert.match(source, /taskProjectId !== projectId/);
+  assert.match(source, /resolvedProjectId && taskProjectId && taskProjectId !== resolvedProjectId/);
 });
