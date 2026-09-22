@@ -105,6 +105,7 @@ export const AdminInvoicing: React.FC = () => {
   const [paymentAmount, setPaymentAmount] = useState<number>(0);
   const [paymentMethod, setPaymentMethod] = useState<'bank_transfer' | 'credit_card' | 'cash' | 'other'>('bank_transfer');
   const [paymentRef, setPaymentRef] = useState<string>('');
+  const [paymentIdempotencyKey, setPaymentIdempotencyKey] = useState<string>('');
   const [paymentDate, setPaymentDate] = useState<string>(new Date().toISOString().split('T')[0]);
   const [paymentNotes, setPaymentNotes] = useState<string>('');
 
@@ -279,6 +280,7 @@ export const AdminInvoicing: React.FC = () => {
     setPaymentAmount(remaining > 0 ? remaining : inv.total);
     setPaymentMethod('bank_transfer');
     setPaymentRef(`TRX-${Math.floor(100000 + Math.random() * 900000)}`);
+    setPaymentIdempotencyKey(`payment-${inv.id}-${Date.now()}-${Math.random().toString(16).slice(2)}`);
     setPaymentDate(new Date().toISOString().split('T')[0]);
     setPaymentNotes('');
   };
@@ -297,7 +299,8 @@ export const AdminInvoicing: React.FC = () => {
         method: paymentMethod,
         reference: paymentRef,
         recordedBy: session?.user?.name || session?.user?.username || 'Finance Officer',
-        notes: paymentNotes
+        notes: paymentNotes,
+        idempotencyKey: paymentIdempotencyKey
       });
       if (updated) {
         showToast(language === 'id' ? `Pembayaran dicatat untuk ${updated.invoiceNumber}` : `Payment recorded for ${updated.invoiceNumber}`);
