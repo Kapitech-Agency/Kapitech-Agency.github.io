@@ -161,8 +161,16 @@ export class PostgresCrmDealRepository {
       if (existingProjects.rows[0] && existingInvoices.rows[0] && clientId) {
         const project = existingProjects.rows[0];
         const invoice = existingInvoices.rows[0];
+        const conversionTasks = await db.query(
+          "SELECT id FROM tasks WHERE project_id=$1 AND metadata->>'crmDealId'=$2 ORDER BY created_at ASC LIMIT 2",
+          [project.id, dealId]
+        );
+        if (conversionTasks.rows.length > 1) throw new Error('MULTIPLE_TASKS_FOR_DEAL');
+        if (conversionTasks.rows.length === 0) {
+          throw new Error('INCOMPLETE_DEAL_CONVERSION');
+        }
 
-        if (!project.client_id) {
+        if (project.client_id && String(project.client_id) !== String(clientId)) {
           await db.query('UPDATE projects SET client_id=$2, updated_at=NOW() WHERE id=$1', [project.id, clientId]);
         } else if (String(project.client_id) !== String(clientId)) {
           throw new Error('DEAL_PROJECT_CLIENT_MISMATCH');
@@ -266,7 +274,7 @@ export class PostgresCrmDealRepository {
           'Initial task created by the CRM conversion workflow.',
           actor.userId,
           new Date(Date.now()+3*86400000).toISOString().slice(0,10),
-          JSON.stringify({ assignedTo: actor.username, projectName }),
+          JSON.stringify({ assignedTo: actor.username, projectName, crmDealId: deal.id }),
           now
         ]
       );
