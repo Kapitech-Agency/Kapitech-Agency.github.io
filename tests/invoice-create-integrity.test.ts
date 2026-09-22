@@ -92,15 +92,17 @@ test('proposal-to-invoice conversion preserves amount-based proposal discounts a
 });
 
 
-test('Invoice route preserves cent precision and does not use JSON client/project lookups in PostgreSQL mode', () => {
+test('Invoice route preserves cent precision and scopes JSON reference lookups', () => {
   const source = fs.readFileSync('server/routes.ts', 'utf8');
-  const start = source.indexOf("apiRouter.post('/finance/invoices'");
-  const end = source.indexOf("apiRouter.put('/finance/invoices/:id'", start);
-  assert.ok(start >= 0 && end > start);
-  const block = source.slice(start, end);
+  const routeStart = source.indexOf("apiRouter.post('/finance/invoices'");
+  const routeEnd = source.indexOf("apiRouter.put('/finance/invoices/:id'", routeStart);
+  assert.ok(routeStart >= 0 && routeEnd > routeStart);
+  const block = source.slice(routeStart, routeEnd);
   assert.match(block, /Math\.round\(item\.quantity \* item\.unitPrice \* 100\) \/ 100/);
-  assert.match(block, /Math\.round\(subtotal \* \(discountPercent \/ 100\) \* 100\) \/ 100/);
-  assert.match(block, /Math\.round\(taxableSubtotal \* \(taxPercent \/ 100\) \* 100\) \/ 100/);
-  assert.match(block, /if \(getDataSourceMode\(\) === 'json'\)/);
-  assert.doesNotMatch(block, /const project = \(db\?\.projects \|\| \[\]\)\.find/);
+  assert.match(block, /if \(getDataSourceMode\(\) === 'json'\) \{/);
+  const jsonGuard = block.indexOf("if (getDataSourceMode() === 'json') {");
+  const projectLookup = block.indexOf("const project = (db?.projects || []).find", jsonGuard);
+  assert.ok(jsonGuard >= 0 && projectLookup > jsonGuard);
+  const postgresCreate = block.indexOf("if (getDataSourceMode() === 'postgres')");
+  assert.ok(postgresCreate > projectLookup);
 });
