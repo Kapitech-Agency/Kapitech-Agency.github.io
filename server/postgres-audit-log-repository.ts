@@ -41,14 +41,14 @@ export class PostgresAuditLogRepository {
   async list(limit = 1000): Promise<any[]> {
     const safeLimit = Math.min(5000, Math.max(1, Math.floor(limit)));
     const { rows } = await getPostgresPool().query(
-      `SELECT * FROM audit_logs ORDER BY timestamp DESC LIMIT ${safeLimit}`
+      `SELECT * FROM audit_logs ORDER BY sequence DESC LIMIT ${safeLimit}`
     );
     return rows.map(mapAuditLog);
   }
 
   async appendWithinTransaction(client: { query: (text: string, values?: unknown[]) => Promise<any> }, entry: AuditEntry): Promise<any> {
     await client.query("SELECT pg_advisory_xact_lock(hashtextextended('kapitech:ams:audit-chain', 0))");
-    const latest = await client.query('SELECT hash FROM audit_logs ORDER BY timestamp DESC, id DESC LIMIT 1 FOR UPDATE');
+    const latest = await client.query('SELECT hash FROM audit_logs ORDER BY sequence DESC LIMIT 1 FOR UPDATE');
     const previousHash = latest.rows[0]?.hash || 'GENESIS';
     const id = `log_${Date.now()}_${crypto.randomBytes(4).toString('hex')}`;
     const timestamp = new Date().toISOString();
@@ -66,7 +66,7 @@ export class PostgresAuditLogRepository {
   }
   async verifyChain(): Promise<{ valid: boolean; checked: number; brokenAt?: string }> {
     const { rows } = await getPostgresPool().query(
-      'SELECT * FROM audit_logs ORDER BY timestamp DESC, id DESC'
+      'SELECT * FROM audit_logs ORDER BY sequence DESC'
     );
     let previousHash = 'GENESIS';
     let checked = 0;
