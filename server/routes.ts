@@ -3803,8 +3803,9 @@ apiRouter.post('/approvals', requireAuth, requireAnyPermission('canManageProject
     Invoice: 'invoices', Proposal: 'proposals', Project: 'projects', Expense: 'expenses'
   };
   const referenceTable = referenceTableByType[type];
-  if (getDataSourceMode() === 'json') {
-    const referenceRows = (db as any)?.[referenceTable] || [];
+  const jsonDb = getDataSourceMode() === 'json' ? getDatabase() : undefined;
+  if (jsonDb) {
+    const referenceRows = (jsonDb as any)?.[referenceTable] || [];
     if (!referenceRows.some((row: any) => String(row.id) === referenceId)) {
       res.status(409).json({ success: false, error: 'Approval reference not found.' });
       return;
