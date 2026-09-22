@@ -138,6 +138,13 @@ export class PostgresCrmDealRepository {
       if (!clientId && existingInvoices.rows[0]?.client_id) clientId = String(existingInvoices.rows[0].client_id);
 
       if (!clientId) {
+        const clientIdentity = String(deal.email || '').trim().toLowerCase() || String(deal.company || '').trim().toLowerCase();
+        if (clientIdentity) {
+          await db.query(
+            'SELECT pg_advisory_xact_lock(hashtextextended($1, 3847219))',
+            [`crm-won-client:${clientIdentity}`]
+          );
+        }
         const candidates = await db.query(
           'SELECT * FROM clients WHERE (LOWER(email)=LOWER($1) AND $1 <> \'\') OR (LOWER(company)=LOWER($2) AND $2 <> \'\') ORDER BY created_at ASC LIMIT 2',
           [String(deal.email || ''), String(deal.company || '')]
