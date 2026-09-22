@@ -3223,6 +3223,14 @@ apiRouter.put('/crm/proposals/:id', requireAuth, requirePermission('canManageCrm
     for (const key of ['title','clientName','company','dealId','projectId','validityPeriod','paymentTerms','notes'] as const) if (patch[key] !== undefined) patch[key] = cleanText(patch[key], key === 'notes' ? 3000 : 300);
     if (patch.currency !== undefined && !['IDR','USD'].includes(String(patch.currency))) { res.status(400).json({ success: false, error: 'Invalid proposal currency.' }); return; }
     if (patch.status !== undefined && !['Draft','Internal Review','Sent','Approved','Rejected','Accepted'].includes(String(patch.status))) { res.status(400).json({ success: false, error: 'Invalid proposal status.' }); return; }
+    if (['Approved', 'Rejected'].includes(String(patch.status)) && !Boolean(req.user!.permissions?.canApproveBudgets) && req.user!.stakeholderType !== 'Master') {
+      res.status(403).json({ success: false, error: 'Proposal approval status requires approval permission.' });
+      return;
+    }
+    if (patch.status === 'Accepted' && String(existing.status) !== 'Accepted') {
+      res.status(409).json({ success: false, error: 'Accepted status can only be created by the proposal-to-invoice workflow.' });
+      return;
+    }
     if (patch.sentDate !== undefined && patch.sentDate !== null && !isValidDate(patch.sentDate)) { res.status(400).json({ success: false, error: 'Invalid proposal sent date.' }); return; }
     let proposal;
     try {
@@ -3230,6 +3238,7 @@ apiRouter.put('/crm/proposals/:id', requireAuth, requirePermission('canManageCrm
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Proposal could not be updated.';
       if (message === 'ACCEPTED_PROPOSAL_IMMUTABLE') { res.status(409).json({ success: false, error: 'Accepted proposals cannot be reopened or moved to another status.' }); return; }
+      if (message === 'ACCEPTED_PROPOSAL_WORKFLOW_ONLY') { res.status(409).json({ success: false, error: 'Accepted status can only be created by the proposal-to-invoice workflow.' }); return; }
       throw error;
     }
     res.json({ success: true, proposal }); return;
@@ -3271,6 +3280,10 @@ apiRouter.put('/crm/proposals/:id', requireAuth, requirePermission('canManageCrm
   }
   if (patch.status !== undefined && !['Draft','Internal Review','Sent','Approved','Rejected','Accepted'].includes(String(patch.status))) {
     res.status(400).json({ success: false, error: 'Invalid proposal status.' });
+    return;
+  }
+  if (patch.status === 'Accepted' && String(existing.status) !== 'Accepted') {
+    res.status(409).json({ success: false, error: 'Accepted status can only be created by the proposal-to-invoice workflow.' });
     return;
   }
   if (['Approved', 'Rejected'].includes(String(patch.status)) && !Boolean(req.user!.permissions?.canApproveBudgets) && req.user!.stakeholderType !== 'Master') {
