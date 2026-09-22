@@ -128,8 +128,35 @@ export class PostgresProjectRepository {
          next.targetEndDate || null, JSON.stringify(projectMetadata(next)), next.updatedAt]
       );
       if (patch.tasks !== undefined) {
-        await client.query('DELETE FROM tasks WHERE project_id = $1', [id]);
-        for (const task of next.tasks || []) await this.insertTask(client, id, task);
+        const incoming = Array.isArray(next.tasks) ? next.tasks : [];
+        const incomingIds = new Set(incoming.map(task => String(task.id)).filter(Boolean));
+        const existingById = new Map((tasksResult.rows as Row[]).map(row => [String(row.id), row]));
+        // Never delete-and-recreate tasks: historical time logs reference task IDs.
+        for (const task of incoming) {
+          const taskId = String(task.id || '');
+          if (!taskId) throw new Error('TASK_ID_REQUIRED');
+          const existingTask = existingById.get(taskId);
+          if (existingTask) {
+            const mapped = mapTask(existingTask);
+            const merged = { ...mapped, ...task, id: taskId };
+            await client.query(
+              `UPDATE tasks SET title=$2,description=$3,status=$4,priority=$5,assignee_user_id=$6,due_date=$7,metadata=$8,updated_at=$9 WHERE id=$1 AND project_id=$10`,
+              [taskId, merged.title, merged.description || null, merged.status, merged.priority || 'medium',
+               merged.assignedTo || null, merged.dueDate || null, JSON.stringify({ ...taskMetadata(merged), assignedTo: merged.assignedTo || '' }),
+               new Date().toISOString(), id]
+            );
+          } else {
+            await this.insertTask(client, id, task);
+          }
+        }
+        for (const row of tasksResult.rows as Row[]) {
+          const taskId = String(row.id);
+          if (!incomingIds.has(taskId)) {
+            const logs = await client.query('SELECT COUNT(*)::int AS count FROM time_logs WHERE task_id=$1', [taskId]);
+            if (Number(logs.rows[0]?.count || 0) > 0) throw new Error('TASK_HAS_TIME_LOGS');
+            await client.query('DELETE FROM tasks WHERE id=$1 AND project_id=$2', [taskId, id]);
+          }
+        }
       }
       const refreshed = await client.query('SELECT * FROM projects WHERE id = $1', [id]);
       const refreshedTasks = await client.query('SELECT * FROM tasks WHERE project_id = $1 ORDER BY created_at ASC', [id]);
@@ -169,8 +196,8 @@ export class PostgresProjectRepository {
   private async insertTask(client: { query: (text: string, values?: unknown[]) => Promise<any> }, projectId: string, task: ProjectTask): Promise<void> {
     await client.query(
       `INSERT INTO tasks (id,project_id,title,description,status,priority,assignee_user_id,due_date,metadata,created_at,updated_at)
-       VALUES ($1,$2,$3,$4,$5,$6,NULL,$7,$8,$9,$9)`,
-      [task.id, projectId, task.title, task.description || null, task.status, task.priority || 'medium', task.dueDate || null,
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$10)`,
+      [task.id, projectId, task.title, task.description || null, task.status, task.priority || 'medium', task.assignedTo || null, task.dueDate || null,
        JSON.stringify({ ...taskMetadata(task), assignedTo: task.assignedTo || '' }), task.createdAt]
     );
   }
