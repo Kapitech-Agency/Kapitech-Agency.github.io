@@ -10,8 +10,8 @@ test('Legacy approval requester identity is resolved before self-action blocking
   const source = await fs.readFile(path.join(root, 'server/routes.ts'), 'utf8');
   const actionStart = source.indexOf("apiRouter.post('/approvals/:id/action'");
   const action = source.slice(actionStart, actionStart + 9000);
-  const resolveIndex = action.indexOf('if (!item.requesterId && item.requester)');
-  const selfBlockIndex = action.indexOf('if (item.requesterId && item.requesterId === req.user!.id)');
+  const resolveIndex = action.indexOf('if (!requesterId && item.requester)');
+  const selfBlockIndex = action.indexOf('if (requesterId && requesterId === req.user!.id)');
   assert.ok(resolveIndex >= 0);
   assert.ok(selfBlockIndex >= 0);
   assert.ok(resolveIndex < selfBlockIndex, 'Legacy requester must be resolved before maker-checker enforcement.');
