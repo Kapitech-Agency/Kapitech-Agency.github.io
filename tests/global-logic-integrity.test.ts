@@ -269,3 +269,12 @@ test('JSON project creation validates client references and nested task domains'
  assert.match(block,/Invalid task status/);
  assert.match(block,/Invalid task priority/);
 });
+
+
+test('PostgreSQL enforces one authoritative invoice per proposal',()=>{
+ const migration=read('db/postgres/024_unique_proposal_invoice.sql');
+ const repo=read('server/postgres-proposal-repository.ts');
+ assert.match(migration,/uq_invoices_proposal_id_v1/);
+ assert.match(migration,/VALIDATE CONSTRAINT invoices_proposal_id_fkey_v1/);
+ assert.match(repo,/SELECT \* FROM invoices WHERE proposal_id=\$1/);
+});
