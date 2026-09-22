@@ -22,7 +22,22 @@ export class PostgresProposalRepository {
   private async items(db:any,id:string){const r=await db.query('SELECT * FROM proposal_items WHERE proposal_id=$1 ORDER BY id ASC',[id]);return r.rows as Row[];}
   async list():Promise<any[]>{const db=getPostgresPool();const r=await db.query('SELECT * FROM proposals ORDER BY created_at DESC');const items=await db.query('SELECT * FROM proposal_items ORDER BY id ASC');const m=new Map<string,Row[]>();for(const i of items.rows){const a=m.get(i.proposal_id)||[];a.push(i);m.set(i.proposal_id,a)}return r.rows.map((x:Row)=>mapProposal(x,m.get(x.id)||[]));}
   async findById(id:string):Promise<any|null>{const db=getPostgresPool();const r=await db.query('SELECT * FROM proposals WHERE id=$1',[id]);if(!r.rows[0])return null;return mapProposal(r.rows[0],await this.items(db,id));}
-  async create(p:any):Promise<any>{return withPostgresTransaction(async db=>{await db.query(`INSERT INTO proposals (id,proposal_number,title,client_id,deal_id,project_id,subtotal,discount,tax_percent,tax,total,currency,validity_period,payment_terms,owner,status,notes,created_date,sent_date,approved_date,metadata,created_at,updated_at) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23)`,[p.id,p.proposalNumber,p.title,p.clientId||null,p.dealId||null,p.projectId||null,p.subtotal,p.discount,p.taxPercent,p.tax,p.total,p.currency,p.validityPeriod||null,p.paymentTerms||null,p.owner||null,p.status,p.notes||null,p.createdDate||null,p.sentDate||null,p.approvedDate||null,JSON.stringify(metadata(p)),p.createdAt,p.updatedAt]);for(const i of p.items||[])await this.insertItem(db,p.id,i);return p;});}
+  async create(p:any):Promise<any>{return withPostgresTransaction(async db=>{
+    if (p.clientId) {
+      const client = await db.query('SELECT id FROM clients WHERE id=$1 FOR SHARE',[String(p.clientId)]);
+      if (!client.rows[0]) throw new Error('Proposal client not found.');
+    }
+    if (p.projectId) {
+      const project = await db.query('SELECT id,client_id FROM projects WHERE id=$1 FOR SHARE',[String(p.projectId)]);
+      if (!project.rows[0]) throw new Error('Proposal project not found.');
+      if (p.clientId && project.rows[0].client_id && String(project.rows[0].client_id)!==String(p.clientId)) throw new Error('Proposal project does not belong to the selected client.');
+    }
+    if (p.dealId) {
+      const deal = await db.query('SELECT id,client_id FROM crm_deals WHERE id=$1 FOR SHARE',[String(p.dealId)]);
+      if (!deal.rows[0]) throw new Error('Proposal deal not found.');
+      if (p.clientId && deal.rows[0].client_id && String(deal.rows[0].client_id)!==String(p.clientId)) throw new Error('Proposal deal does not belong to the selected client.');
+    }
+    await db.query(`INSERT INTO proposals (id,proposal_number,title,client_id,deal_id,project_id,subtotal,discount,tax_percent,tax,total,currency,validity_period,payment_terms,owner,status,notes,created_date,sent_date,approved_date,metadata,created_at,updated_at) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23)`,[p.id,p.proposalNumber,p.title,p.clientId||null,p.dealId||null,p.projectId||null,p.subtotal,p.discount,p.taxPercent,p.tax,p.total,p.currency,p.validityPeriod||null,p.paymentTerms||null,p.owner||null,p.status,p.notes||null,p.createdDate||null,p.sentDate||null,p.approvedDate||null,JSON.stringify(metadata(p)),p.createdAt,p.updatedAt]);for(const i of p.items||[])await this.insertItem(db,p.id,i);return p;});}
   async update(id:string,patch:any):Promise<any|null>{return withPostgresTransaction(async db=>{const r=await db.query('SELECT * FROM proposals WHERE id=$1 FOR UPDATE',[id]);if(!r.rows[0])return null;const next={...mapProposal(r.rows[0],await this.items(db,id)),...patch,id,updatedAt:new Date().toISOString()}; if (String(r.rows[0].status)==='Accepted') {
         if (patch.status !== undefined && patch.status !== 'Accepted') throw new Error('ACCEPTED_PROPOSAL_IMMUTABLE');
         const protectedFields=['clientId','dealId','projectId','subtotal','discount','taxPercent','tax','total','currency','items'];

@@ -64,6 +64,12 @@ export class PostgresInvoiceRepository {
       next.clientId=nextClientId; next.projectId=nextProjectId;
       if (current.payments.length > 0 && (nextClientId !== String(current.clientId || '') || nextProjectId !== String(current.projectId || ''))) throw new Error('PAID_INVOICE_LINKAGE_IMMUTABLE');
       if (current.payments.length > 0 && Number(next.total) !== Number(current.total)) throw new Error('PAID_INVOICE_TOTAL_IMMUTABLE');
+      if (current.payments.length > 0) {
+        const protectedFinancialFields = ['subtotal','discountPercent','discountAmount','taxPercent','taxAmount','currency'];
+        if (protectedFinancialFields.some((key)=>patch[key]!==undefined && String(patch[key])!==String((current as any)[key]))) {
+          throw new Error('PAID_INVOICE_FINANCIAL_FIELDS_IMMUTABLE');
+        }
+      }
       if (current.payments.length > 0 && patch.items !== undefined) {
         const currentItems = JSON.stringify(current.items.map((x:any)=>({id:x.id,description:x.description,quantity:Number(x.quantity),unitPrice:Number(x.unitPrice),amount:Number(x.amount)})));
         const nextItems = JSON.stringify((next.items || []).map((x:any)=>({id:x.id,description:x.description,quantity:Number(x.quantity),unitPrice:Number(x.unitPrice),amount:Number(x.amount ?? Number(x.quantity)*Number(x.unitPrice)}))));
