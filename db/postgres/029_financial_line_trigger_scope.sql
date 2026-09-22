@@ -7,6 +7,8 @@ BEGIN;
 
 DROP TRIGGER IF EXISTS proposal_header_totals_integrity_v1 ON proposals;
 DROP TRIGGER IF EXISTS invoice_header_totals_integrity_v1 ON invoices;
+DROP TRIGGER IF EXISTS proposal_line_totals_integrity_v1 ON proposal_items;
+DROP TRIGGER IF EXISTS invoice_line_totals_integrity_v1 ON invoice_items;
 
 CREATE CONSTRAINT TRIGGER proposal_line_totals_integrity_v1
 AFTER INSERT OR UPDATE OR DELETE ON proposal_items
