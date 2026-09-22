@@ -3602,7 +3602,17 @@ apiRouter.post('/approvals', requireAuth, requireAnyPermission('canManageProject
     reason, riskLevel, status: 'Pending', createdAt: new Date().toISOString()
   };
   if (getDataSourceMode() === 'postgres') {
-    const approval = await postgresApprovalRepository.create(newApproval);
+    let approval;
+    try {
+      approval = await postgresApprovalRepository.create(newApproval);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Approval request could not be created.';
+      if (message.includes('reference is required') || message.includes('reference not found')) {
+        res.status(409).json({ success: false, error: message });
+        return;
+      }
+      throw error;
+    }
     pushNotification(undefined, { title: 'Approval request pending', message: `${newApproval.title} requires an independent review.`, type: 'approval', severity: riskLevel === 'Critical' ? 'critical' : riskLevel === 'High' ? 'warning' : 'info', linkUrl: '/admin/approvals' });
     recordAuditLog({
       action: 'APPROVAL_CREATED',
@@ -3644,7 +3654,25 @@ apiRouter.post('/approvals/:id/action', requireAuth, requirePermission('canAppro
       return;
     }
     const status = action === 'Approve' ? 'Approved' : action === 'Reject' ? 'Rejected' : 'Changes Requested';
-    const updated = await postgresApprovalRepository.action(id, status, req.user!, notes);
+    let updated;
+    try {
+      updated = await postgresApprovalRepository.action(id, status, req.user!, notes);
+    } catch (error) {
+      if (error instanceof Error && error.message === 'APPROVAL_SELF_ACTION_BLOCKED') {
+        recordAuditLog({
+          action: 'APPROVAL_SELF_ACTION_BLOCKED',
+          actor: req.user!.username,
+          actorRole: req.user!.role,
+          ip: req.ip,
+          userAgent: req.headers['user-agent'] as string,
+          details: 'Blocked self-approval action "' + action + '" on approval item "' + item.title + '".',
+          severity: 'warning'
+        });
+        res.status(403).json({ success: false, error: 'Maker-checker control: the requester cannot approve or reject their own request.' });
+        return;
+      }
+      throw error;
+    }
     recordAuditLog({ action: `APPROVAL_${action.toUpperCase().replace(/ /g, '_')}`, actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `${action} decision executed for approval item "${item.title}".`, severity: action === 'Reject' ? 'warning' : 'info' });
     res.json({ success: true, approval: updated });
     return;
