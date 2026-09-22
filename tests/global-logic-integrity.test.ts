@@ -10,3 +10,15 @@ test('admin user update route is defined exactly once',()=>{const s=read('server
 test('task assignee persistence resolves display identity to a real user id',()=>{const s=read('server/postgres-task-repository.ts');assert.ok(s.includes('resolveAssigneeUserId'));assert.ok(s.includes('lower(username) = lower($1)'));assert.ok(s.includes('assigneeUserId'));});
 
 test('task response preserves display assignee while storing relational user id',()=>{const s=read('server/postgres-project-repository.ts');assert.match(s,/assignedTo: String\(metadata\.assignedTo \?\? row\.assignee_user_id \?\? ''\)/);});
+
+test('administrator PostgreSQL account mutations bind audit to the same transaction',()=>{
+ const auth=read('server/postgres-repository.ts');
+ const routes=read('server/routes.ts');
+ for(const e of ['createUser(user: StoredUser, audit?: AuditEntry)','updateUserPolicy(userId: string, name: string, role: string, stakeholderType: string, permissions: StoredUser[\'permissions\'], division: string, status: StoredUser[\'status\'], audit?: AuditEntry)','deleteUser(userId: string, audit?: AuditEntry)']) assert.ok(auth.includes(e),e);
+ assert.match(auth,/createUser\([\s\S]*appendWithinTransaction\(client, audit\)/);
+ assert.match(auth,/updateUserPolicy\([\s\S]*appendWithinTransaction\(client, audit\)/);
+ assert.match(auth,/deleteUser\([\s\S]*appendWithinTransaction\(client, audit\)/);
+ assert.match(routes,/postgresAuthRepository\.createUser\(newUser, makeAuditEntry/);
+ assert.match(routes,/postgresAuthRepository\.updateUserPolicy\([\s\S]*makeAuditEntry/);
+ assert.match(routes,/postgresAuthRepository\.deleteUser\(id, makeAuditEntry/);
+});
