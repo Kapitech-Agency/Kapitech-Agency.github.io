@@ -1,3 +1,4 @@
+import crypto from 'node:crypto';
 import { getPostgresPool, withPostgresTransaction } from './postgres.ts';
 import { postgresAuditLogRepository, type AuditEntry } from './postgres-audit-log-repository.ts';
 
@@ -111,6 +112,184 @@ export class PostgresCrmDealRepository {
       const result=await client.query('DELETE FROM crm_deals WHERE id=$1',[id]);
       if (audit) await postgresAuditLogRepository.appendWithinTransaction(client, audit);
       return result.rowCount===1;
+    });
+  }
+
+  async convertWonDeal(dealId: string, actor: { userId: string; username: string }, audit?: AuditEntry): Promise<{ client: any; project: any; invoice: any; replayed: boolean }> {
+    return withPostgresTransaction(async db => {
+      const dealResult = await db.query('SELECT * FROM crm_deals WHERE id=$1 FOR UPDATE', [dealId]);
+      if (!dealResult.rows[0]) throw new Error('DEAL_NOT_FOUND');
+      const deal = mapDeal(dealResult.rows[0]);
+      if (String(deal.stage) !== 'won') throw new Error('DEAL_NOT_WON');
+
+      const existingProjects = await db.query(
+        "SELECT * FROM projects WHERE metadata->>'crmDealId'=$1 OR metadata->>'crmLeadId'=$1 ORDER BY created_at ASC LIMIT 2",
+        [dealId]
+      );
+      const existingInvoices = await db.query(
+        "SELECT * FROM invoices WHERE metadata->>'crmDealId'=$1 OR metadata->>'leadId'=$1 ORDER BY created_at ASC LIMIT 2",
+        [dealId]
+      );
+      if (existingProjects.rows.length > 1) throw new Error('MULTIPLE_PROJECTS_FOR_DEAL');
+      if (existingInvoices.rows.length > 1) throw new Error('MULTIPLE_INVOICES_FOR_DEAL');
+
+      let clientId = deal.clientId ? String(deal.clientId) : null;
+      if (!clientId && existingProjects.rows[0]?.client_id) clientId = String(existingProjects.rows[0].client_id);
+      if (!clientId && existingInvoices.rows[0]?.client_id) clientId = String(existingInvoices.rows[0].client_id);
+
+      if (!clientId) {
+        const candidates = await db.query(
+          'SELECT * FROM clients WHERE (LOWER(email)=LOWER($1) AND $1 <> \'\') OR (LOWER(company)=LOWER($2) AND $2 <> \'\') ORDER BY created_at ASC LIMIT 2',
+          [String(deal.email || ''), String(deal.company || '')]
+        );
+        if (candidates.rows.length > 1) throw new Error('AMBIGUOUS_DEAL_CLIENT');
+        if (candidates.rows[0]) clientId = String(candidates.rows[0].id);
+      }
+
+      if (clientId) {
+        const clientRow = await db.query('SELECT * FROM clients WHERE id=$1 FOR UPDATE', [clientId]);
+        if (!clientRow.rows[0]) throw new Error('DEAL_CLIENT_NOT_FOUND');
+      }
+
+      if (existingProjects.rows[0] && existingInvoices.rows[0] && clientId) {
+        const project = existingProjects.rows[0];
+        const invoice = existingInvoices.rows[0];
+
+        if (!project.client_id) {
+          await db.query('UPDATE projects SET client_id=$2, updated_at=NOW() WHERE id=$1', [project.id, clientId]);
+        } else if (String(project.client_id) !== String(clientId)) {
+          throw new Error('DEAL_PROJECT_CLIENT_MISMATCH');
+        }
+
+        if (!invoice.client_id) {
+          await db.query('UPDATE invoices SET client_id=$2, updated_at=NOW() WHERE id=$1', [invoice.id, clientId]);
+        } else if (String(invoice.client_id) !== String(clientId)) {
+          throw new Error('DEAL_INVOICE_CLIENT_MISMATCH');
+        }
+
+        await db.query('UPDATE crm_deals SET client_id=$2, updated_at=NOW() WHERE id=$1', [dealId, clientId]);
+
+        const refreshedProject = (await db.query('SELECT * FROM projects WHERE id=$1', [project.id])).rows[0];
+        const refreshedInvoice = (await db.query('SELECT * FROM invoices WHERE id=$1', [invoice.id])).rows[0];
+        return {
+          client: (await db.query('SELECT * FROM clients WHERE id=$1', [clientId])).rows[0],
+          project: refreshedProject,
+          invoice: refreshedInvoice,
+          replayed: true
+        };
+      }
+
+      if (existingProjects.rows[0] || existingInvoices.rows[0]) {
+        throw new Error('INCOMPLETE_DEAL_CONVERSION');
+      }
+
+      const now = new Date().toISOString();
+      const clientRecordId = clientId || `cli_${Date.now()}_${crypto.randomBytes(4).toString('hex')}`;
+      if (!clientId) {
+        await db.query(
+          `INSERT INTO clients (id,name,company,email,phone,industry,status,notes,metadata,created_at,updated_at)
+           VALUES ($1,$2,$3,$4,$5,$6,'active',$7,$8::jsonb,$9,$9)`,
+          [
+            clientRecordId,
+            String(deal.clientName || deal.company || 'Client').slice(0,160),
+            String(deal.company || '').slice(0,200) || null,
+            String(deal.email || '').slice(0,254) || null,
+            String(deal.phone || '').slice(0,40) || null,
+            String(deal.servicePillar || '').slice(0,160) || null,
+            `Converted from CRM Won Deal ${deal.id}`,
+            JSON.stringify({ crmDealId: deal.id }),
+            now
+          ]
+        );
+        clientId = clientRecordId;
+      }
+
+      const projectId = `proj_${Date.now()}_${crypto.randomBytes(4).toString('hex')}`;
+      const taskId = `task_${Date.now()}_${crypto.randomBytes(4).toString('hex')}`;
+      const projectName = `${String(deal.company || deal.clientName || 'Client').slice(0,120)} — ${String(deal.servicePillar || 'Digital Project').slice(0,100)}`;
+      const projectMetadata = {
+        clientName: deal.clientName || '',
+        clientCompany: deal.company || '',
+        clientEmail: deal.email || '',
+        serviceCategory: deal.servicePillar || '',
+        crmDealId: deal.id,
+        progressPercent: 0,
+        teamLead: actor.username,
+        teamMembers: [actor.username],
+        techStack: [],
+        milestones: [],
+        repositoryUrl: undefined,
+        figmaUrl: undefined,
+        liveStagingUrl: undefined
+      };
+
+      await db.query(
+        `INSERT INTO projects (id,client_id,name,description,status,owner,budget,start_date,end_date,metadata,created_at,updated_at)
+         VALUES ($1,$2,$3,$4,'in_progress',$5,$6,$7,$8,$9::jsonb,$10,$10)`,
+        [
+          projectId,
+          clientId,
+          projectName,
+          `CRM conversion for deal ${deal.id}`,
+          actor.username,
+          Number(deal.value || 0),
+          now.slice(0,10),
+          new Date(Date.now()+45*86400000).toISOString().slice(0,10),
+          JSON.stringify(projectMetadata),
+          now
+        ]
+      );
+
+      await db.query(
+        `INSERT INTO tasks (id,project_id,title,description,status,priority,assignee_user_id,due_date,metadata,created_at,updated_at)
+         VALUES ($1,$2,$3,$4,'todo','high',$5,$6,$7::jsonb,$8,$8)`,
+        [
+          taskId,
+          projectId,
+          `Kickoff and repository setup for ${projectName}`,
+          'Initial task created by the CRM conversion workflow.',
+          actor.userId,
+          new Date(Date.now()+3*86400000).toISOString().slice(0,10),
+          JSON.stringify({ assignedTo: actor.username, projectName }),
+          now
+        ]
+      );
+
+      const downPayment = Math.round(Number(deal.value || 0) * 0.5);
+      if (downPayment <= 0) throw new Error('DEAL_VALUE_REQUIRED');
+      const taxAmount = Math.round(downPayment * 0.11);
+      const invoiceTotal = downPayment + taxAmount;
+      const invoiceId = `inv_${Date.now()}_${crypto.randomBytes(4).toString('hex')}`;
+      const invoiceNumber = `KAPI-INV-${new Date().getFullYear()}-${crypto.randomInt(100000,999999)}`;
+
+      await db.query(
+        `INSERT INTO invoices (id,invoice_number,client_id,project_id,type,subtotal,discount_percent,discount_amount,tax_percent,tax_amount,total,amount_paid,balance_due,currency,status,issue_date,due_date,notes,payment_terms,metadata,created_at,updated_at)
+         VALUES ($1,$2,$3,$4,'invoice',$5,0,0,11,$6,$7,0,$7,'IDR','sent',$8,$9,$10,$11,$12::jsonb,$8,$8)`,
+        [
+          invoiceId,
+          invoiceNumber,
+          clientId,
+          projectId,
+          downPayment,
+          taxAmount,
+          invoiceTotal,
+          now.slice(0,10),
+          new Date(Date.now()+14*86400000).toISOString().slice(0,10),
+          `50% kickoff retainer for CRM deal ${deal.id}.`,
+          'Bank Transfer Net 14',
+          JSON.stringify({ crmDealId: deal.id, leadId: deal.id, auditTrail: [{ action:'created', timestamp:now, user:actor.username }] })
+        ]
+      );
+
+      await db.query('UPDATE crm_deals SET client_id=$2,updated_at=$3 WHERE id=$1', [dealId, clientId, now]);
+      if (audit) await postgresAuditLogRepository.appendWithinTransaction(db, audit);
+
+      return {
+        client: (await db.query('SELECT * FROM clients WHERE id=$1',[clientId])).rows[0],
+        project: (await db.query('SELECT * FROM projects WHERE id=$1',[projectId])).rows[0],
+        invoice: (await db.query('SELECT * FROM invoices WHERE id=$1',[invoiceId])).rows[0],
+        replayed: false
+      };
     });
   }
 
