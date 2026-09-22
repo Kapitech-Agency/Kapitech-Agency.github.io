@@ -2127,7 +2127,8 @@ apiRouter.post('/finance/invoices/:id/pay', requireAuth, requirePermission('canM
     try {
       const saved = await postgresInvoiceRepository.recordPayment(req.params.id, payment);
       if (!saved) { res.status(404).json({ success:false,error:'Invoice not found.' }); return; }
-      const replayed = Boolean(payment.idempotencyKey) && !saved.payments.some((p:any) => p.reference === payment.reference && Number(p.amount) === Number(payment.amount) && p.method === payment.method);
+      const replayed = saved.__idempotentReplay === true;
+      if (replayed) delete saved.__idempotentReplay;
       if (!replayed) recordAuditLog({ action:'PAYMENT_RECORDED', actor:req.user!.username, actorRole:req.user!.role, ip:req.ip, userAgent:req.headers['user-agent'] as string, details:`Recorded payment of ${payAmount} for invoice ${saved.invoiceNumber}. New status: ${saved.status}.`, severity:'info' });
       res.json({ success:true, invoice:saved, payment: replayed ? undefined : payment, replayed }); return;
     } catch(error) {
