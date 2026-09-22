@@ -142,8 +142,3 @@ The production build runner now limits Rayon worker creation to one thread by de
 
 Hostinger's current Node.js GitHub deployment flow lets the application choose the repository branch and then automatically redeploys from the selected branch. A deployment therefore follows the connected branch, not an arbitrary commit from another hardening branch. Keep `production/hostinger` as the release branch until the hardening stack is merged into `main`.
 
-
-For Hostinger Node.js Web Apps, configure the project with the repository root containing `package.json`, use Node.js 22.x, set the build command to `npm run build`, and start the application with `npm start`. The application listens on the configured `PORT` and defaults to 3000.
-
-The current Hostinger deployment documentation supports Node.js 22.x, GitHub deployment, build/start scripts from `package.json`, and port 3000 for Node.js web applications.
-
