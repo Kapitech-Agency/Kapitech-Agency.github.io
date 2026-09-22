@@ -148,12 +148,19 @@ export class PostgresAuthRepository {
     return result.rowCount ?? 0;
   }
 
-  async updateUserPassword(userId: string, passwordHash: string, salt: string, passwordAlgorithm: string): Promise<boolean> {
-    const result = await getPostgresPool().query(
-      'UPDATE users SET password_hash = $2, salt = $3, password_algorithm = $4 WHERE id = $1',
-      [userId, passwordHash, salt, passwordAlgorithm]
-    );
-    return result.rowCount === 1;
+  async updateUserPassword(userId: string, passwordHash: string, salt: string, passwordAlgorithm: string, options?: { exceptTokenHash?: string; audit?: AuditEntry }): Promise<boolean> {
+    return withPostgresTransaction(async client => {
+      const result = await client.query(
+        'UPDATE users SET password_hash = $2, salt = $3, password_algorithm = $4 WHERE id = $1',
+        [userId, passwordHash, salt, passwordAlgorithm]
+      );
+      if (result.rowCount !== 1) return false;
+      if (options?.exceptTokenHash !== undefined) {
+        await client.query('DELETE FROM sessions WHERE user_id = $1 AND token_hash <> $2', [userId, options.exceptTokenHash]);
+      }
+      if (options?.audit) await postgresAuditLogRepository.appendWithinTransaction(client, options.audit);
+      return true;
+    });
   }
 
   async touchUserLastLogin(userId: string, lastLogin: string): Promise<boolean> {
@@ -166,16 +173,28 @@ export class PostgresAuthRepository {
   async updateUserMfa(userId: string, values: {
     mfaEnabled: boolean; mfaSecret: string | null; mfaPendingSecret?: string | null;
     mfaPendingSecretCreatedAt?: string | null; mfaRecoveryCodeHashes: string[];
-  }): Promise<boolean> {
-    const result = await getPostgresPool().query(
-      `UPDATE users SET
-        mfa_enabled = $2, mfa_secret = $3, mfa_pending_secret = $4,
-        mfa_pending_secret_created_at = $5, mfa_recovery_code_hashes = $6
-       WHERE id = $1`,
-      [userId, values.mfaEnabled, values.mfaSecret, values.mfaPendingSecret ?? null,
-       values.mfaPendingSecretCreatedAt ?? null, JSON.stringify(values.mfaRecoveryCodeHashes)]
-    );
-    return result.rowCount === 1;
+  }, options?: { revokeAllSessions?: boolean; exceptTokenHash?: string; audit?: AuditEntry }): Promise<boolean> {
+    return withPostgresTransaction(async client => {
+      const result = await client.query(
+        `UPDATE users SET
+          mfa_enabled = $2, mfa_secret = $3, mfa_pending_secret = $4,
+          mfa_pending_secret_created_at = $5, mfa_recovery_code_hashes = $6
+         WHERE id = $1`,
+        [userId, values.mfaEnabled, encryptOptionalSecret(values.mfaSecret), encryptOptionalSecret(values.mfaPendingSecret),
+         values.mfaPendingSecretCreatedAt ?? null, JSON.stringify(values.mfaRecoveryCodeHashes)]
+      );
+      if (result.rowCount !== 1) return false;
+      if (options?.revokeAllSessions) {
+        await client.query(
+          options.exceptTokenHash
+            ? 'DELETE FROM sessions WHERE user_id = $1 AND token_hash <> $2'
+            : 'DELETE FROM sessions WHERE user_id = $1',
+          options.exceptTokenHash ? [userId, options.exceptTokenHash] : [userId]
+        );
+      }
+      if (options?.audit) await postgresAuditLogRepository.appendWithinTransaction(client, options.audit);
+      return true;
+    });
   }
 
   async migrateLegacyMfaSecrets(): Promise<number> {
