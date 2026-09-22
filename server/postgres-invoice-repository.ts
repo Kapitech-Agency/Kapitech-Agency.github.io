@@ -15,7 +15,7 @@ function mapInvoice(row:Row, items:Row[], payments:Row[]):any {
   }));
   const amountPaid=Number(row.amount_paid||mappedPayments.reduce((s,p)=>s+p.amount,0));
   const total=Number(row.total||0);
-  return {...metadata,id:row.id,invoiceNumber:row.invoice_number,clientId:row.client_id??'',
+  return {...metadata,id:row.id,invoiceNumber:row.invoice_number,proposalId:row.proposal_id??metadata.proposalId??'',clientId:row.client_id??'',
     projectId:row.project_id??'',type:row.type||'invoice',items:items.map(i=>({
       id:i.id,description:i.description,quantity:Number(i.quantity),unitPrice:Number(i.unit_price),amount:Number(i.amount??Number(i.quantity)*Number(i.unit_price))
     })),subtotal:Number(row.subtotal||0),discountPercent:Number(row.discount_percent||0),
@@ -25,7 +25,7 @@ function mapInvoice(row:Row, items:Row[], payments:Row[]):any {
     payments:mappedPayments,auditTrail:Array.isArray(metadata.auditTrail)?metadata.auditTrail:[],
     createdAt:iso(row.created_at),updatedAt:iso(row.updated_at)};
 }
-function metadata(i:any){const {id,invoiceNumber,clientId,projectId,type,items,subtotal,discountPercent,discountAmount,taxPercent,taxAmount,total,amountPaid,balanceDue,currency,status,issueDate,dueDate,notes,paymentTerms,payments,auditTrail,createdAt,updatedAt,...rest}=i;return {...rest,auditTrail};}
+function metadata(i:any){const {id,invoiceNumber,proposalId,clientId,projectId,type,items,subtotal,discountPercent,discountAmount,taxPercent,taxAmount,total,amountPaid,balanceDue,currency,status,issueDate,dueDate,notes,paymentTerms,payments,auditTrail,createdAt,updatedAt,...rest}=i;return {...rest,auditTrail};}
 
 export class PostgresInvoiceRepository {
   private readonly writableStatuses = new Set(['draft','sent','overdue']);
