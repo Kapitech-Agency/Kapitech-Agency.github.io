@@ -17,6 +17,41 @@ function mapProposal(row:Row, itemRows:Row[]):any {
     items:itemRows.map(i=>({id:i.id,description:i.description,quantity:Number(i.quantity),unitPrice:Number(i.unit_price)})),
     createdAt:iso(row.created_at),updatedAt:iso(row.updated_at)};
 }
+function mapExistingInvoice(row:Row,itemRows:Row[],paymentRows:Row[]):any {
+  const metadata=obj(row.metadata);
+  const amountPaid=Number(row.amount_paid||0);
+  const total=Number(row.total||0);
+  return {
+    ...metadata,
+    id:row.id,
+    invoiceNumber:row.invoice_number,
+    proposalId:row.proposal_id??'',
+    clientId:row.client_id??'',
+    projectId:row.project_id??'',
+    type:row.type||'invoice',
+    items:itemRows.map(i=>({id:i.id,description:i.description,quantity:Number(i.quantity),unitPrice:Number(i.unit_price),amount:Number(i.amount)})),
+    subtotal:Number(row.subtotal||0),
+    discountPercent:Number(row.discount_percent||0),
+    discountAmount:Number(row.discount_amount||0),
+    taxPercent:Number(row.tax_percent||0),
+    taxAmount:Number(row.tax_amount||0),
+    total,
+    amountPaid,
+    balanceDue:Math.max(0,total-amountPaid),
+    currency:row.currency,
+    status:row.status,
+    issueDate:date(row.issue_date),
+    dueDate:date(row.due_date),
+    paidDate:date(row.paid_date),
+    notes:row.notes||'',
+    paymentTerms:row.payment_terms||'',
+    payments:paymentRows.map(p=>({id:p.id,amount:Number(p.amount),date:date(p.paid_at),paidAt:date(p.paid_at),method:p.method,reference:p.reference||'',...(obj(p.metadata) as any)})),
+    auditTrail:Array.isArray(metadata.auditTrail)?metadata.auditTrail:[],
+    createdAt:iso(row.created_at),
+    updatedAt:iso(row.updated_at)
+  };
+}
+
 function metadata(p:any){const {id,proposalNumber,title,clientId,dealId,projectId,subtotal,discount,taxPercent,tax,total,currency,validityPeriod,paymentTerms,owner,status,notes,createdDate,sentDate,approvedDate,items,createdAt,updatedAt,...rest}=p;return rest;}
 
 export class PostgresProposalRepository {
@@ -82,11 +117,77 @@ export class PostgresProposalRepository {
     });
   }
   async approve(id:string,audit?:AuditEntry):Promise<any|null>{return this.update(id,{status:'Approved',approvedDate:new Date().toISOString().slice(0,10)},audit);}
-  async convertToInvoice(id:string,audit?:AuditEntry):Promise<any|null>{return withPostgresTransaction(async db=>{const r=await db.query('SELECT * FROM proposals WHERE id=$1 FOR UPDATE',[id]);if(!r.rows[0])return null;const p=mapProposal(r.rows[0],await this.items(db,id));
-if(p.clientId){const x=await db.query('SELECT id FROM clients WHERE id=$1 FOR SHARE',[p.clientId]);if(!x.rows[0])throw new Error('Proposal client not found.');}
-if(p.projectId){const x=await db.query('SELECT id, client_id FROM projects WHERE id=$1 FOR SHARE',[p.projectId]);if(!x.rows[0])throw new Error('Proposal project not found.');if(p.clientId&&x.rows[0].client_id&&String(x.rows[0].client_id)!==String(p.clientId))throw new Error('Proposal project does not belong to the selected client.');}
-if(p.dealId){const x=await db.query('SELECT id, client_id FROM crm_deals WHERE id=$1 FOR SHARE',[p.dealId]);if(!x.rows[0])throw new Error('Proposal deal not found.');if(p.clientId&&x.rows[0].client_id&&String(x.rows[0].client_id)!==String(p.clientId))throw new Error('Proposal deal does not belong to the selected client.');}
-if(!['Draft','Internal Review','Sent','Approved'].includes(String(p.status)))throw new Error('Proposal cannot be converted to an invoice in its current status.');const now=new Date().toISOString(),issue=now.slice(0,10),due=new Date(Date.now()+14*86400000).toISOString().slice(0,10);let n=`INV-KAPI-${new Date().getFullYear()}-${Math.floor(1000+Math.random()*999000)}`;let exists=await db.query('SELECT 1 FROM invoices WHERE invoice_number=$1',[n]);while(exists.rows[0]){n=`INV-KAPI-${new Date().getFullYear()}-${Math.floor(1000+Math.random()*999000)}`;exists=await db.query('SELECT 1 FROM invoices WHERE invoice_number=$1',[n]);}const invoice={id:`inv_${Date.now()}_${Math.random().toString(16).slice(2,8)}`,invoiceNumber:n,clientId:p.clientId||null,projectId:p.projectId||null,type:'invoice',subtotal:p.subtotal,discountPercent:0,discountAmount:p.discount,taxPercent:p.taxPercent,taxAmount:p.tax,total:p.total,amountPaid:0,balanceDue:p.total,currency:p.currency,status:'draft',issueDate:issue,dueDate:due,notes:`Generated from Proposal ${p.proposalNumber}. Terms: ${p.paymentTerms}`,paymentTerms:p.paymentTerms,createdAt:now,updatedAt:now};await db.query(`INSERT INTO invoices (id,invoice_number,client_id,project_id,type,subtotal,discount_percent,discount_amount,tax_percent,tax_amount,total,amount_paid,balance_due,currency,status,issue_date,due_date,notes,payment_terms,metadata,created_at,updated_at) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22)`,[invoice.id,invoice.invoiceNumber,invoice.clientId,invoice.projectId,invoice.type,invoice.subtotal,invoice.discountPercent,invoice.discountAmount,invoice.taxPercent,invoice.taxAmount,invoice.total,0,invoice.balanceDue,invoice.currency,invoice.status,issue,due,invoice.notes,invoice.paymentTerms,'{}',now,now]);for(const i of p.items)await db.query('INSERT INTO invoice_items (id,invoice_id,description,quantity,unit_price,amount) VALUES ($1,$2,$3,$4,$5,$6)',[`ii_${i.id}`,invoice.id,i.description,i.quantity,i.unitPrice,i.quantity*i.unitPrice]);await db.query('UPDATE proposals SET status=$2,updated_at=$3 WHERE id=$1',[id,'Accepted',now]);if(audit)await postgresAuditLogRepository.appendWithinTransaction(db,audit);return {...invoice,items:p.items.map((i:any)=>({id:`ii_${i.id}`,description:i.description,quantity:Number(i.quantity),unitPrice:Number(i.unitPrice),amount:Number(i.quantity)*Number(i.unitPrice)})),payments:[],auditTrail:[]};});}
+  async convertToInvoice(id:string,audit?:AuditEntry):Promise<any|null>{
+    return withPostgresTransaction(async db=>{
+      const r=await db.query('SELECT * FROM proposals WHERE id=$1 FOR UPDATE',[id]);
+      if(!r.rows[0])return null;
+      const p=mapProposal(r.rows[0],await this.items(db,id));
+
+      const linkedInvoices=await db.query('SELECT * FROM invoices WHERE proposal_id=$1 ORDER BY created_at ASC LIMIT 2',[id]);
+      if(linkedInvoices.rows.length>1) throw new Error('MULTIPLE_INVOICES_FOR_PROPOSAL');
+
+      if(String(p.status)==='Accepted'){
+        if(!linkedInvoices.rows[0]) throw new Error('ACCEPTED_PROPOSAL_INVOICE_LINK_MISSING');
+        const existing=linkedInvoices.rows[0];
+        const itemRows=await db.query('SELECT * FROM invoice_items WHERE invoice_id=$1 ORDER BY id ASC',[existing.id]);
+        const paymentRows=await db.query('SELECT * FROM invoice_payments WHERE invoice_id=$1 ORDER BY paid_at DESC, id DESC',[existing.id]);
+        return {
+          ...mapExistingInvoice(existing,itemRows.rows,paymentRows.rows),
+          __idempotentReplay:true
+        };
+      }
+
+      if(String(p.status)!=='Approved')throw new Error('PROPOSAL_APPROVAL_REQUIRED');
+      if(p.clientId){const x=await db.query('SELECT id FROM clients WHERE id=$1 FOR SHARE',[p.clientId]);if(!x.rows[0])throw new Error('Proposal client not found.');}
+      if(p.projectId){const x=await db.query('SELECT id, client_id FROM projects WHERE id=$1 FOR SHARE',[p.projectId]);if(!x.rows[0])throw new Error('Proposal project not found.');if(p.clientId&&x.rows[0].client_id&&String(x.rows[0].client_id)!==String(p.clientId))throw new Error('Proposal project does not belong to the selected client.');}
+      if(p.dealId){const x=await db.query('SELECT id, client_id FROM crm_deals WHERE id=$1 FOR SHARE',[p.dealId]);if(!x.rows[0])throw new Error('Proposal deal not found.');if(p.clientId&&x.rows[0].client_id&&String(x.rows[0].client_id)!==String(p.clientId))throw new Error('Proposal deal does not belong to the selected client.');}
+
+      const now=new Date().toISOString(),issue=now.slice(0,10),due=new Date(Date.now()+14*86400000).toISOString().slice(0,10);
+      let n=`INV-KAPI-${new Date().getFullYear()}-${Math.floor(1000+Math.random()*999000)}`;
+      let exists=await db.query('SELECT 1 FROM invoices WHERE invoice_number=$1',[n]);
+      while(exists.rows[0]){
+        n=`INV-KAPI-${new Date().getFullYear()}-${Math.floor(1000+Math.random()*999000)}`;
+        exists=await db.query('SELECT 1 FROM invoices WHERE invoice_number=$1',[n]);
+      }
+      const invoice={
+        id:`inv_${Date.now()}_${Math.random().toString(16).slice(2,8)}`,
+        invoiceNumber:n,
+        proposalId:id,
+        clientId:p.clientId||null,
+        projectId:p.projectId||null,
+        type:'invoice',
+        subtotal:p.subtotal,
+        discountPercent:0,
+        discountAmount:p.discount,
+        taxPercent:p.taxPercent,
+        taxAmount:p.tax,
+        total:p.total,
+        amountPaid:0,
+        balanceDue:p.total,
+        currency:p.currency,
+        status:'draft',
+        issueDate:issue,
+        dueDate:due,
+        notes:`Generated from Proposal ${p.proposalNumber}. Terms: ${p.paymentTerms}`,
+        paymentTerms:p.paymentTerms,
+        createdAt:now,
+        updatedAt:now
+      };
+      await db.query(`INSERT INTO invoices (id,proposal_id,invoice_number,client_id,project_id,type,subtotal,discount_percent,discount_amount,tax_percent,tax_amount,total,amount_paid,balance_due,currency,status,issue_date,due_date,notes,payment_terms,metadata,created_at,updated_at) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23)`,[
+        invoice.id,invoice.proposalId,invoice.invoiceNumber,invoice.clientId,invoice.projectId,invoice.type,invoice.subtotal,invoice.discountPercent,invoice.discountAmount,
+        invoice.taxPercent,invoice.taxAmount,invoice.total,0,invoice.balanceDue,invoice.currency,invoice.status,issue,due,invoice.notes,invoice.paymentTerms,'{}',now,now
+      ]);
+      for(const i of p.items)await db.query('INSERT INTO invoice_items (id,invoice_id,description,quantity,unit_price,amount) VALUES ($1,$2,$3,$4,$5,$6)',[`ii_${i.id}`,invoice.id,i.description,i.quantity,i.unitPrice,i.quantity*i.unitPrice]);
+      await db.query('UPDATE proposals SET status=$2,updated_at=$3 WHERE id=$1',[id,'Accepted',now]);
+      if(audit)await postgresAuditLogRepository.appendWithinTransaction(db,audit);
+      return {
+        ...invoice,
+        items:p.items.map((i:any)=>({id:`ii_${i.id}`,description:i.description,quantity:Number(i.quantity),unitPrice:Number(i.unitPrice),amount:Number(i.quantity)*Number(i.unitPrice)})),
+        payments:[],
+        auditTrail:[]
+      };
+    });
+  }
   private async insertItem(db:any,pid:string,i:any){await db.query('INSERT INTO proposal_items (id,proposal_id,description,quantity,unit_price) VALUES ($1,$2,$3,$4,$5)',[i.id,pid,i.description,i.quantity,i.unitPrice]);}
 }
 export const postgresProposalRepository=new PostgresProposalRepository();
