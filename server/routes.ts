@@ -3934,7 +3934,7 @@ apiRouter.post('/approvals/:id/action', requireAuth, requirePermission('canAppro
     if (!item) { res.status(404).json({ success: false, error: 'Approval item not found.' }); return; }
     if (item.status !== 'Pending') { res.status(409).json({ success: false, error: 'This approval request has already been resolved.' }); return; }
     if (item.requesterId === req.user!.id) {
-      recordAuditLog({ action: 'APPROVAL_SELF_ACTION_BLOCKED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Blocked self-approval action "${action}" on approval item "${item.title}".`, severity: 'warning' });
+      await writeAuditLog(makeAuditEntry(req, 'APPROVAL_SELF_ACTION_BLOCKED', `Blocked self-approval action "${action}" on approval item "${item.title}".`, 'warning'));
       res.status(403).json({ success: false, error: 'Maker-checker control: the requester cannot approve or reject their own request.' });
       return;
     }
@@ -3944,15 +3944,12 @@ apiRouter.post('/approvals/:id/action', requireAuth, requirePermission('canAppro
       updated = await postgresApprovalRepository.action(id, status, req.user!, notes, makeAuditEntry(req, `APPROVAL_${action.toUpperCase().replace(/ /g, '_')}`, `${action} decision executed for approval item "${item.title}".`, action === 'Reject' ? 'warning' : 'info'));
     } catch (error) {
       if (error instanceof Error && error.message === 'APPROVAL_SELF_ACTION_BLOCKED') {
-        recordAuditLog({
-          action: 'APPROVAL_SELF_ACTION_BLOCKED',
-          actor: req.user!.username,
-          actorRole: req.user!.role,
-          ip: req.ip,
-          userAgent: req.headers['user-agent'] as string,
-          details: 'Blocked self-approval action "' + action + '" on approval item "' + item.title + '".',
-          severity: 'warning'
-        });
+        await writeAuditLog(makeAuditEntry(
+          req,
+          'APPROVAL_SELF_ACTION_BLOCKED',
+          'Blocked self-approval action "' + action + '" on approval item "' + item.title + '".',
+          'warning'
+        ));
         res.status(403).json({ success: false, error: 'Maker-checker control: the requester cannot approve or reject their own request.' });
         return;
       }
@@ -4040,7 +4037,7 @@ function requireDocumentObjectAccess(req: AuthenticatedRequest, res: Response, d
   if (!document) return true;
 
   if (!canAccessDocument(req, document)) {
-    recordAuditLog({
+    void writeAuditLog({
       action: 'DOCUMENT_ACCESS_DENIED',
       actor: req.user?.username || 'anonymous',
       actorRole: req.user?.role || 'visitor',
