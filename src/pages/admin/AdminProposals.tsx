@@ -220,9 +220,6 @@ export const AdminProposals: React.FC = () => {
 
     setIsSubmitting(true);
     try {
-      const validUntilDate = new Date();
-      validUntilDate.setDate(validUntilDate.getDate() + Number(formValidDays));
-
       const payload = {
         title: formTitle,
         clientName: formClientName,
@@ -243,7 +240,7 @@ export const AdminProposals: React.FC = () => {
 
       const res = await api.proposals.create(payload);
       if (res.success && res.data?.proposal) {
-        setProposals(prev => [res.data.proposal, ...prev]);
+        setProposals(prev => [normalizeProposal(res.data.proposal), ...prev]);
         setIsCreateModalOpen(false);
         showToast(language === 'id' ? 'Proposal berhasil diterbitkan!' : 'Proposal created successfully!');
         // Reset form
