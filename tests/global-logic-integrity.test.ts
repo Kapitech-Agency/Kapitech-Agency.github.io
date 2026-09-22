@@ -231,3 +231,15 @@ test('JSON fallback enforces proposal conversion prerequisites',()=>{
  assert.match(block,/proposalProjectId/);
  assert.match(block,/Proposal project does not belong to the selected client/);
 });
+
+
+test('JSON project creation validates client references and nested task domains',()=>{
+ const route=read('server/routes.ts');
+ const start=route.indexOf("apiRouter.post('/projects'");
+ const end=route.indexOf("apiRouter.get('/projects/:id'",start);
+ const block=route.slice(start,end);
+ assert.match(block,/Client not found/);
+ assert.match(block,/Project tasks require unique IDs/);
+ assert.match(block,/Invalid task status/);
+ assert.match(block,/Invalid task priority/);
+});
