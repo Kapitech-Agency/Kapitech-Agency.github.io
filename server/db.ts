@@ -1385,28 +1385,6 @@ export function saveDatabase(db: DatabaseSchema): Promise<void> {
   return Promise.resolve();
 }
 
-const AUDIT_DRAIN_TIMEOUT_MS = 5000;
-let auditShutdownHookInstalled = false;
-function installAuditShutdownHook(): void {
-  if (auditShutdownHookInstalled || getDataSourceMode() !== 'postgres') return;
-  auditShutdownHookInstalled = true;
-  const drain = async (signal: string) => {
-    try {
-      await Promise.race([
-        flushAuditLogWrites(),
-        new Promise((_, reject) => setTimeout(() => reject(new Error('audit drain timeout')), AUDIT_DRAIN_TIMEOUT_MS))
-      ]);
-    } catch (error) {
-      console.error(`[AuditLog] Failed to drain queued PostgreSQL audit writes during ${signal}:`, error);
-    } finally {
-      process.exit(0);
-    }
-  };
-  process.once('SIGTERM', () => { void drain('SIGTERM'); });
-  process.once('SIGINT', () => { void drain('SIGINT'); });
-}
-installAuditShutdownHook();
-
 const PERIODIC_BACKUP_INTERVAL_MS = 6 * 60 * 60 * 1000;
 setInterval(() => {
   try {
