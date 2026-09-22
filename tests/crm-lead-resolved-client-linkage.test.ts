@@ -9,6 +9,6 @@ test('CRM lead conversion persists the resolved existing client id on the new de
   assert.ok(start >= 0 && end > start);
   const block = source.slice(start, end);
   assert.match(block, /resolvedClient\s*=\s*\{/);
-  assert.match(block, /\[\s*\n\s*resolvedClient\.id,/);
-  assert.doesNotMatch(block, /INSERT INTO crm_deals[\s\S]{0,1800}\[\s*\n\s*deal\.id,[\s\S]{0,300}\n\s*client\.id,/);
+  assert.match(block, /INSERT INTO crm_deals[\s\S]{0,2200}resolvedClient\.id/);
+  assert.doesNotMatch(block, /INSERT INTO crm_deals[\s\S]{0,2200}deal\.id,[\s\S]{0,700}\n\s*client\.id,/);
 });
