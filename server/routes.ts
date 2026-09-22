@@ -1158,28 +1158,12 @@ apiRouter.put('/leads/:id', requireAuth, requirePermission('canManageCrm'), asyn
   if (patch.portfolioUrl !== undefined) patch.portfolioUrl = cleanOptionalUrl(patch.portfolioUrl);
 
   if (getDataSourceMode() === 'postgres') {
-    const lead = await postgresLeadRepository.update(id, patch);
+    const lead = await postgresLeadRepository.update(id, patch, makeAuditEntry(req, 'LEAD_UPDATED', `Updated lead ${lead.fullName} (status: ${lead.status}).`, 'info'));
     if (!lead) {
       res.status(404).json({ success: false, error: 'Lead not found.' });
       return;
     }
-    recordAuditLog({ action: 'LEAD_UPDATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Updated lead ${lead.fullName} (status: ${lead.status}).`, severity: 'info' });
-    res.json({ success: true, lead });
-    return;
-  }
-
-  const db = getDatabase();
-  const idx = db.leads.findIndex(l => l.id === id);
-  if (idx === -1) {
-    res.status(404).json({ success: false, error: 'Lead not found.' });
-    return;
-  }
-  db.leads[idx] = { ...db.leads[idx], ...patch, updatedAt: new Date().toISOString() };
-  saveDatabase(db);
-  recordAuditLog({ action: 'LEAD_UPDATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Updated lead ${db.leads[idx].fullName} (status: ${db.leads[idx].status}).`, severity: 'info' });
-  res.json({ success: true, lead: db.leads[idx] });
-});
-
+    
 apiRouter.delete('/leads/:id', requireAuth, requirePermission('canManageCrm'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
   if (getDataSourceMode() === 'postgres') {
@@ -1188,24 +1172,8 @@ apiRouter.delete('/leads/:id', requireAuth, requirePermission('canManageCrm'), a
       res.status(404).json({ success: false, error: 'Lead not found.' });
       return;
     }
-    try { await postgresLeadRepository.delete(id); } catch(error) { if(error instanceof Error&&error.message==='LEAD_IS_CLOSED'){res.status(409).json({success:false,error:'Closed leads are retained as business history and cannot be deleted.'});return;} throw error; }
-    recordAuditLog({ action: 'LEAD_DELETED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Deleted lead ${lead.fullName} (${lead.email}).`, severity: 'warning' });
-    res.json({ success: true, message: 'Lead removed.' });
-    return;
-  }
-
-  const db = getDatabase();
-  const lead = db.leads.find(l => l.id === id);
-  if (!lead) {
-    res.status(404).json({ success: false, error: 'Lead not found.' });
-    return;
-  }
-  db.leads = db.leads.filter(l => l.id !== id);
-  saveDatabase(db);
-  recordAuditLog({ action: 'LEAD_DELETED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Deleted lead ${lead.fullName} (${lead.email}).`, severity: 'warning' });
-  res.json({ success: true, message: 'Lead removed.' });
-});
-
+    try { await postgresLeadRepository.delete(id, makeAuditEntry(req, 'LEAD_DELETED', `Deleted lead ${lead.fullName} (${lead.email}).`, 'warning')); } catch(error) { if(error instanceof Error&&error.message==='LEAD_IS_CLOSED'){res.status(409).json({success:false,error:'Closed leads are retained as business history and cannot be deleted.'});return;} throw error; }
+    
 apiRouter.post('/leads/:id/convert', requireAuth, requirePermission('canManageCrm'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
   if (getDataSourceMode() === 'postgres') {
@@ -1360,17 +1328,8 @@ apiRouter.post('/crm/deals', requireAuth, requirePermission('canManageCrm'), asy
 
   if (getDataSourceMode() === 'postgres') {
     try {
-      const deal = await postgresCrmDealRepository.create(newDeal);
-      recordAuditLog({
-        action: 'CRM_DEAL_CREATED',
-        actor: req.user!.username,
-        actorRole: req.user!.role,
-        ip: req.ip,
-        userAgent: req.headers['user-agent'] as string,
-        details: `Created CRM deal "${deal.title || deal.id}".`,
-        severity: 'info'
-      });
-      res.json({ success: true, deal });
+      const deal = await postgresCrmDealRepository.create(newDeal, makeAuditEntry(req, 'CRM_DEAL_CREATED', `Created CRM deal "${deal.title || deal.id}".`, 'info'));
+            res.json({ success: true, deal });
     } catch (error) {
       res.status(400).json({ success: false, error: error instanceof Error ? error.message : 'Deal could not be created.' });
     }
@@ -1426,21 +1385,12 @@ apiRouter.put('/crm/deals/:id', requireAuth, requirePermission('canManageCrm'), 
   }
 
   if (getDataSourceMode() === 'postgres') {
-    const deal = await postgresCrmDealRepository.update(id, patch);
+    const deal = await postgresCrmDealRepository.update(id, patch, makeAuditEntry(req, 'CRM_DEAL_UPDATED', `Updated CRM deal "${deal.title || id}".`, 'info'));
     if (!deal) {
       res.status(404).json({ success: false, error: 'Deal not found.' });
       return;
     }
-    recordAuditLog({
-      action: 'CRM_DEAL_UPDATED',
-      actor: req.user!.username,
-      actorRole: req.user!.role,
-      ip: req.ip,
-      userAgent: req.headers['user-agent'] as string,
-      details: `Updated CRM deal "${deal.title || id}".`,
-      severity: 'info'
-    });
-    res.json({ success: true, deal });
+        res.json({ success: true, deal });
     return;
   }
 
@@ -1472,17 +1422,8 @@ apiRouter.delete('/crm/deals/:id', requireAuth, requirePermission('canManageCrm'
       res.status(404).json({ success: false, error: 'Deal not found.' });
       return;
     }
-    try { await postgresCrmDealRepository.delete(id); } catch(error) { if(error instanceof Error&&error.message==='DEAL_HAS_PROPOSALS'){res.status(409).json({success:false,error:'Deal is referenced by proposals and cannot be deleted.'});return;} throw error; }
-    recordAuditLog({
-      action: 'CRM_DEAL_DELETED',
-      actor: req.user!.username,
-      actorRole: req.user!.role,
-      ip: req.ip,
-      userAgent: req.headers['user-agent'] as string,
-      details: `Deleted CRM deal "${deal.title || id}".`,
-      severity: 'warning'
-    });
-    res.json({ success: true, message: 'Deal deleted.' });
+    try { await postgresCrmDealRepository.delete(id, makeAuditEntry(req, 'CRM_DEAL_DELETED', `Deleted CRM deal "${deal.title || id}".`, 'warning')); } catch(error) { if(error instanceof Error&&error.message==='DEAL_HAS_PROPOSALS'){res.status(409).json({success:false,error:'Deal is referenced by proposals and cannot be deleted.'});return;} throw error; }
+        res.json({ success: true, message: 'Deal deleted.' });
     return;
   }
 
@@ -1558,17 +1499,8 @@ apiRouter.post('/clients', requireAuth, requirePermission('canManageClients'), a
     updatedAt: new Date().toISOString()
   };
   if (getDataSourceMode() === 'postgres') {
-    const client = await postgresClientRepository.create(newClient as any);
-    recordAuditLog({
-      action: 'CLIENT_CREATED',
-      actor: req.user!.username,
-      actorRole: req.user!.role,
-      ip: req.ip,
-      userAgent: req.headers['user-agent'] as string,
-      details: `Created client "${newClient.company || newClient.clientName}".`,
-      severity: 'info'
-    });
-    res.json({ success: true, client });
+    const client = await postgresClientRepository.create(newClient as any, makeAuditEntry(req, 'CLIENT_CREATED', `Created client "${newClient.company || newClient.clientName}".`, 'info'));
+        res.json({ success: true, client });
     return;
   }
   db!.clients.unshift(newClient);
@@ -1596,18 +1528,9 @@ apiRouter.put('/clients/:id', requireAuth, requirePermission('canManageClients')
     if (patch.email && !isValidEmail(patch.email)) { res.status(400).json({ success: false, error: 'Invalid client email address.' }); return; }
     if (patch.website !== undefined) patch.website = cleanOptionalUrl(patch.website);
     if (patch.status !== undefined && !['active','inactive','prospect','on_hold'].includes(String(patch.status))) { res.status(400).json({ success: false, error: 'Invalid client status.' }); return; }
-    const updated = await postgresClientRepository.update(id, patch as any);
+    const updated = await postgresClientRepository.update(id, patch as any, makeAuditEntry(req, 'CLIENT_UPDATED', `Updated client ${id}.`, 'info'));
     if (!updated) { res.status(404).json({ success: false, error: 'Client not found.' }); return; }
-    recordAuditLog({
-      action: 'CLIENT_UPDATED',
-      actor: req.user!.username,
-      actorRole: req.user!.role,
-      ip: req.ip,
-      userAgent: req.headers['user-agent'] as string,
-      details: `Updated client ${id}.`,
-      severity: 'info'
-    });
-    res.json({ success: true, client: updated });
+        res.json({ success: true, client: updated });
     return;
   }
   const db = getDataSourceMode() === 'json' ? getDatabase() : undefined;
@@ -1664,18 +1587,9 @@ apiRouter.delete('/clients/:id', requireAuth, requirePermission('canManageClient
   const { id } = req.params;
   if (getDataSourceMode() === 'postgres') {
     let deleted:boolean;
-    try { deleted=await postgresClientRepository.delete(id); } catch(error) { if(error instanceof Error&&error.message==='CLIENT_HAS_BUSINESS_RECORDS'){res.status(409).json({success:false,error:'Client has business records and cannot be deleted.'});return;} throw error; }
+    try { deleted=await postgresClientRepository.delete(id, makeAuditEntry(req, 'CLIENT_DELETED', `Deleted client ${id}.`, 'warning')); } catch(error) { if(error instanceof Error&&error.message==='CLIENT_HAS_BUSINESS_RECORDS'){res.status(409).json({success:false,error:'Client has business records and cannot be deleted.'});return;} throw error; }
     if (!deleted) { res.status(404).json({ success: false, error: 'Client not found.' }); return; }
-    recordAuditLog({
-      action: 'CLIENT_DELETED',
-      actor: req.user!.username,
-      actorRole: req.user!.role,
-      ip: req.ip,
-      userAgent: req.headers['user-agent'] as string,
-      details: `Deleted client ${id}.`,
-      severity: 'warning'
-    });
-    res.json({ success: true, message: 'Client deleted.' });
+        res.json({ success: true, message: 'Client deleted.' });
     return;
   }
   {
@@ -1749,24 +1663,8 @@ apiRouter.post('/projects', requireAuth, requirePermission('canManageProjects'),
     return;
   }
   if (getDataSourceMode() === 'postgres') {
-    const project = await postgresProjectRepository.create(newProject as any);
-    recordAuditLog({ action: 'PROJECT_CREATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Created project "${newProject.name}".`, severity: 'info' });
-    res.json({ success: true, project });
-    return;
-  }
-  const db = getDatabase();
-  db.projects.unshift(newProject);
-  saveDatabase(db);
-  recordAuditLog({
-    action: 'PROJECT_CREATED',
-    actor: req.user!.username,
-    actorRole: req.user!.role,
-    ip: req.ip,
-    userAgent: req.headers['user-agent'] as string,
-    details: `Created project "${newProject.name}".`,
-    severity: 'info'
-  });
-  res.json({ success: true, project: newProject });
+    const project = await postgresProjectRepository.create(newProject as any, makeAuditEntry(req, 'PROJECT_CREATED', `Created project "${newProject.name}".`, 'info'));
+      res.json({ success: true, project: newProject });
 });
 
 apiRouter.put('/projects/:id', requireAuth, requirePermission('canManageProjects'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
@@ -2471,24 +2369,8 @@ apiRouter.post('/vendors', requireAuth, requirePermission('canManageVendors'), a
     updatedAt: now
   };
   if (getDataSourceMode() === 'postgres') {
-    const vendor = await postgresVendorRepository.create(newVendor as any);
-    recordAuditLog({ action: 'VENDOR_CREATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Created vendor "${newVendor.name}".`, severity: 'info' });
-    res.json({ success: true, vendor });
-    return;
-  }
-  const db = getDatabase();
-  db.vendors.unshift(newVendor);
-  saveDatabase(db);
-  recordAuditLog({
-    action: 'VENDOR_CREATED',
-    actor: req.user!.username,
-    actorRole: req.user!.role,
-    ip: req.ip,
-    userAgent: req.headers['user-agent'] as string,
-    details: `Created vendor "${newVendor.name}".`,
-    severity: 'info'
-  });
-  res.json({ success: true, vendor: newVendor });
+    const vendor = await postgresVendorRepository.create(newVendor as any, makeAuditEntry(req, 'VENDOR_CREATED', `Created vendor "${newVendor.name}".`, 'info'));
+      res.json({ success: true, vendor: newVendor });
 });
 
 apiRouter.put('/vendors/:id', requireAuth, requirePermission('canManageVendors'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
@@ -2521,49 +2403,17 @@ apiRouter.put('/vendors/:id', requireAuth, requirePermission('canManageVendors')
     if (patch.skills !== undefined) patch.skills = normalizeStringArray(patch.skills, 100, 120);
     if (patch.contracts !== undefined) patch.contracts = Array.isArray(patch.contracts) ? patch.contracts.slice(0, 50) : [];
     try {
-      const vendor = await postgresVendorRepository.update(id, patch as any);
+      const vendor = await postgresVendorRepository.update(id, patch as any, makeAuditEntry(req, 'VENDOR_UPDATED', `Updated vendor ${id}.`, 'info'));
       if (!vendor) { res.status(404).json({ success: false, error: 'Vendor not found.' }); return; }
-      recordAuditLog({ action: 'VENDOR_UPDATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Updated vendor ${id}.`, severity: 'info' });
-      res.json({ success: true, vendor });
-    } catch (error) { throw error; }
-    return;
-  }
-  const db = getDatabase();
-  const idx = db.vendors.findIndex(v => v.id === id);
-  if (idx === -1) { res.status(404).json({ success: false, error: 'Vendor not found.' }); return; }
-  const patch = pickFields(updates || {}, ['name', 'category', 'contactPerson', 'email', 'phone', 'website', 'paymentTerms', 'status', 'monthlySpend', 'notes', 'portfolioUrl', 'githubUrl', 'contracts']);
-  if (patch.email !== undefined) { patch.email = cleanText(patch.email, 254).toLowerCase(); if (patch.email && !isValidEmail(patch.email)) { res.status(400).json({ success: false, error: 'Invalid vendor email address.' }); return; } }
-  for (const key of ['website','portfolioUrl','githubUrl'] as const) if (patch[key] !== undefined) patch[key] = cleanOptionalUrl(patch[key]);
-  if (patch.status !== undefined && !['active','under_review','inactive','blacklisted'].includes(String(patch.status))) { res.status(400).json({ success: false, error: 'Invalid vendor status.' }); return; }
-  if (patch.monthlySpend !== undefined) { const numeric = normalizeNumber(patch.monthlySpend, 0, MAX_MONEY); if (numeric === null) { res.status(400).json({ success: false, error: 'Invalid vendor monthly spend.' }); return; } patch.monthlySpend = numeric; }
-  for (const key of ['name','category','contactPerson','phone','paymentTerms','notes'] as const) if (patch[key] !== undefined) patch[key] = cleanText(patch[key], key === 'notes' ? 3000 : 200);
-  if (patch.contracts !== undefined) patch.contracts = Array.isArray(patch.contracts) ? patch.contracts.slice(0, 50) : [];
-  db.vendors[idx] = { ...db.vendors[idx], ...patch, updatedAt: new Date().toISOString() };
-  saveDatabase(db);
-  recordAuditLog({ action: 'VENDOR_UPDATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Updated vendor ${id}.`, severity: 'info' });
-  res.json({ success: true, vendor: db.vendors[idx] });
-});
-
+      
 apiRouter.delete('/vendors/:id', requireAuth, requirePermission('canManageVendors'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
   if (getDataSourceMode() === 'postgres') {
     const vendor = await postgresVendorRepository.findById(id);
     if (!vendor) { res.status(404).json({ success: false, error: 'Vendor not found.' }); return; }
-    const deleted = await postgresVendorRepository.delete(id);
+    const deleted = await postgresVendorRepository.delete(id, makeAuditEntry(req, 'VENDOR_DELETED', `Deleted vendor "${vendor.name}".`, 'warning'));
     if (!deleted) { res.status(404).json({ success: false, error: 'Vendor not found.' }); return; }
-    recordAuditLog({ action: 'VENDOR_DELETED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Deleted vendor "${vendor.name}".`, severity: 'warning' });
-    res.json({ success: true, message: 'Vendor deleted.' });
-    return;
-  }
-  const db = getDatabase();
-  const vendor = db.vendors.find((item: any) => item.id === id);
-  if (!vendor) { res.status(404).json({ success: false, error: 'Vendor not found.' }); return; }
-  db.vendors = db.vendors.filter(v => v.id !== id);
-  saveDatabase(db);
-  recordAuditLog({ action: 'VENDOR_DELETED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Deleted vendor "${vendor.name || id}".`, severity: 'warning' });
-  res.json({ success: true, message: 'Vendor deleted.' });
-});
-
+    
 // ----------------------------------------------------
 // 8. CMS (Services, Projects, Testimonials, Settings)
 // ----------------------------------------------------
@@ -3426,7 +3276,7 @@ apiRouter.delete('/crm/proposals/:id', requireAuth, requirePermission('canManage
     if (!existing) { res.status(404).json({ success: false, error: 'Proposal not found.' }); return; }
     let deleted: boolean;
     try {
-      deleted = await postgresProposalRepository.delete(id);
+      deleted = await postgresProposalRepository.delete(id, makeAuditEntry(req, 'PROPOSAL_DELETED', `Deleted proposal ${existing.proposalNumber}.`, 'warning'));
     } catch (error) {
       if (error instanceof Error && error.message === 'PROPOSAL_DELETE_RESTRICTED') {
         res.status(409).json({ success: false, error: 'Only Draft proposals can be deleted.' });
@@ -3435,16 +3285,7 @@ apiRouter.delete('/crm/proposals/:id', requireAuth, requirePermission('canManage
       throw error;
     }
     if (!deleted) { res.status(404).json({ success: false, error: 'Proposal not found.' }); return; }
-    recordAuditLog({
-      action: 'PROPOSAL_DELETED',
-      actor: req.user!.username,
-      actorRole: req.user!.role,
-      ip: req.ip,
-      userAgent: req.headers['user-agent'] as string,
-      details: `Deleted proposal ${existing.proposalNumber}.`,
-      severity: 'warning'
-    });
-    res.json({ success: true, message: 'Proposal deleted.' });
+        res.json({ success: true, message: 'Proposal deleted.' });
     return;
   }
   const db = getDatabase();
@@ -3575,19 +3416,8 @@ apiRouter.post('/projects/timelogs', requireAuth, requireAnyPermission('canManag
   };
   if (getDataSourceMode() === 'postgres') {
     try {
-      const timeLog = await postgresTimeLogRepository.create(newLog);
-      recordAuditLog({ action: 'TIMELOG_CREATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Created ${durationMinutes} minute time entry for ${newLog.projectName}.`, severity: 'info' });
-      res.json({ success: true, timeLog }); return;
-    } catch (error) {
-      const message = error instanceof Error ? error.message : 'Time entry could not be created.';
-      res.status(message.endsWith('not found.') ? 404 : 409).json({ success: false, error: message }); return;
-    }
-  }
-  const db = getDatabase(); if (!db.timeLogs) db.timeLogs = []; db.timeLogs.unshift(newLog); saveDatabase(db);
-  recordAuditLog({ action: 'TIMELOG_CREATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Created ${durationMinutes} minute time entry for ${newLog.projectName}.`, severity: 'info' });
-  res.json({ success: true, timeLog: newLog });
-});
-
+      const timeLog = await postgresTimeLogRepository.create(newLog, makeAuditEntry(req, 'TIMELOG_CREATED', `Created ${durationMinutes} minute time entry for ${newLog.projectName}.`, 'info'));
+      
 apiRouter.delete('/projects/timelogs/:id', requireAuth, requireAnyPermission('canManageKanbanTasks', 'canManageProjects'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
   const canManageAllTimeLogs = Boolean(req.user!.permissions?.canManageProjects);
@@ -3598,22 +3428,9 @@ apiRouter.delete('/projects/timelogs/:id', requireAuth, requireAnyPermission('ca
       res.status(403).json({ success: false, error: 'You can only delete your own time entries.' });
       return;
     }
-    const deleted = await postgresTimeLogRepository.delete(id);
+    const deleted = await postgresTimeLogRepository.delete(id, makeAuditEntry(req, 'TIMELOG_DELETED', `Deleted time entry ${id}.`, 'warning'));
     if (!deleted) { res.status(404).json({ success: false, error: 'Time entry not found.' }); return; }
-    recordAuditLog({ action: 'TIMELOG_DELETED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Deleted time entry ${id}.`, severity: 'warning' });
-    res.json({ success: true, message: 'Time entry deleted.' }); return;
-  }
-  const db = getDatabase(); const existing = (db.timeLogs || []).find(t => t.id === id);
-  if (!existing) { res.status(404).json({ success: false, error: 'Time entry not found.' }); return; }
-  if (!canManageAllTimeLogs && String(existing.userId || '') !== String(req.user!.id)) {
-    res.status(403).json({ success: false, error: 'You can only delete your own time entries.' });
-    return;
-  }
-  db.timeLogs = (db.timeLogs || []).filter(t => t.id !== id); saveDatabase(db);
-  recordAuditLog({ action: 'TIMELOG_DELETED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Deleted time entry ${id}.`, severity: 'warning' });
-  res.json({ success: true, message: 'Time entry deleted.' });
-});
-
+    
 // ----------------------------------------------------
 // 15. APPROVALS CENTER (PART 24)
 // ----------------------------------------------------
