@@ -1929,6 +1929,7 @@ function normalizeDate(value: unknown, fallback: string): string {
 }
 
 const INVOICE_STATUSES = new Set(['draft', 'sent', 'overdue']);
+const INVOICE_UPDATE_STATUSES = new Set(['draft', 'sent', 'overdue', 'partially_paid', 'paid']);
 const PAYMENT_METHODS = new Set(['bank_transfer', 'credit_card', 'cash', 'other']);
 
 function taskMutationFingerprint(value: unknown): string {
@@ -2063,6 +2064,10 @@ apiRouter.put('/finance/invoices/:id', requireAuth, requirePermission('canManage
     const taxPercent = input.taxPercent !== undefined ? Math.min(100, Math.max(0, Number(input.taxPercent) || 0)) : Number(existing.taxPercent) || 0;
     const discountPercent = input.discountPercent !== undefined ? Math.min(100, Math.max(0, Number(input.discountPercent) || 0)) : Number(existing.discountPercent) || 0;
     const financials = buildInvoiceFinancials(items, taxPercent, discountPercent);
+    if (input.status !== undefined && !INVOICE_UPDATE_STATUSES.has(String(input.status))) {
+      res.status(400).json({ success: false, error: 'Invalid invoice status.' });
+      return;
+    }
     const editableInvoiceFields = pickFields(input, ['type','clientId','projectId','leadId','currency','issueDate','dueDate','notes','paymentTerms','status']);
     const patch = {
       ...editableInvoiceFields, items, taxPercent, discountPercent, ...financials,
@@ -2117,6 +2122,10 @@ apiRouter.put('/finance/invoices/:id', requireAuth, requirePermission('canManage
   }
 
   const requestedStatus = String(input.status || existing.status);
+  if (input.status !== undefined && !INVOICE_UPDATE_STATUSES.has(requestedStatus)) {
+    res.status(400).json({ success: false, error: 'Invalid invoice status.' });
+    return;
+  }
   let status = INVOICE_STATUSES.has(requestedStatus) ? requestedStatus : existing.status;
   if (requestedStatus === 'paid' && !(amountPaid >= total && total > 0)) {
     res.status(409).json({ success: false, error: 'Invoice can only be marked paid after the remaining balance is fully settled.' });
