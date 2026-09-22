@@ -138,6 +138,22 @@ function makeAuditEntry(req: AuthenticatedRequest, action: string, details: stri
   return { action, actor: req.user!.username, actorRole: req.user!.role, actorUserId: req.user!.id, ip: req.ip, userAgent: req.headers['user-agent'] as string, details, severity };
 }
 
+async function writeAuditLog(entry: Parameters<typeof recordAuditLog>[0]): Promise<void> {
+  if (getDataSourceMode() === 'postgres') {
+    await postgresAuditLogRepository.append({
+      ...entry,
+      actor: String(entry.actor || 'system'),
+      actorRole: String(entry.actorRole || 'system'),
+      ip: String(entry.ip || ''),
+      userAgent: String(entry.userAgent || ''),
+      details: String(entry.details || ''),
+      severity: entry.severity || 'info'
+    });
+    return;
+  }
+  recordAuditLog(entry);
+}
+
 
 function cleanText(value: unknown, max = MAX_INTERNAL_TEXT): string {
   return String(value ?? '').trim().slice(0, max);
@@ -362,7 +378,7 @@ apiRouter.post('/auth/login', rateLimitPublic(10, 15 * 60 * 1000), async (req: R
       res.status(503).json({ success: false, error: 'Authentication security controls are temporarily unavailable.' });
       return;
     }
-    recordAuditLog({
+    await writeAuditLog({
       action: 'LOGIN_FAILED',
       actor: cleanIdentifier,
       actorRole: 'anonymous',
@@ -392,7 +408,7 @@ apiRouter.post('/auth/login', rateLimitPublic(10, 15 * 60 * 1000), async (req: R
       res.status(503).json({ success: false, error: 'Authentication security controls are temporarily unavailable.' });
       return;
     }
-    recordAuditLog({
+    await writeAuditLog({
       action: 'LOGIN_FAILED',
       actor: user.username,
       actorRole: user.role,
@@ -439,7 +455,7 @@ apiRouter.post('/auth/login', rateLimitPublic(10, 15 * 60 * 1000), async (req: R
       setMfaChallengeCookie(res, challenge);
       setCsrfCookie(res);
 
-      recordAuditLog({
+      await writeAuditLog({
         action: 'LOGIN_MFA_CHALLENGE',
         actor: user.username,
         actorRole: user.role,
@@ -468,7 +484,7 @@ apiRouter.post('/auth/login', rateLimitPublic(10, 15 * 60 * 1000), async (req: R
     else saveDatabase(db);
     const session = await createSession(user, ip, userAgent, Boolean(rememberMe));
 
-    recordAuditLog({
+    await writeAuditLog({
       action: 'LOGIN_SUCCESS',
       actor: user.username,
       actorRole: user.role,
@@ -539,7 +555,7 @@ apiRouter.post('/auth/mfa/verify', rateLimitPublic(10, 5 * 60 * 1000), async (re
     if (failedAttempts >= 5) {
       clearMfaChallengeCookie(res);
     }
-    recordAuditLog({
+    await writeAuditLog({
       action: 'MFA_VERIFY_FAILED',
       actor: user?.username || 'unknown',
       actorRole: user?.role || 'anonymous',
@@ -564,7 +580,7 @@ apiRouter.post('/auth/mfa/verify', rateLimitPublic(10, 5 * 60 * 1000), async (re
   clearMfaChallengeCookie(res);
   setCsrfCookie(res);
 
-  recordAuditLog({
+  await writeAuditLog({
     action: 'LOGIN_SUCCESS',
     actor: user.username,
     actorRole: user.role,
@@ -726,7 +742,7 @@ apiRouter.post('/auth/logout', requireAuth, async (req: AuthenticatedRequest, re
     await revokeSession(req.sessionToken);
   }
   if (req.user) {
-    recordAuditLog({
+    await writeAuditLog({
       action: 'LOGOUT',
       actor: req.user.username,
       actorRole: req.user.role,
