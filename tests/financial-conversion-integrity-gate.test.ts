@@ -33,3 +33,14 @@ test('proposal conversion requires approval and is idempotent after acceptance',
  assert.match(proposal,/proposal_id=\$1/);
  assert.match(routes,/PROPOSAL_APPROVAL_REQUIRED/);
 });
+
+
+test('invoice payment updates client total spend inside the PostgreSQL transaction',()=>{
+ const repo=fs.readFileSync('server/postgres-invoice-repository.ts','utf8');
+ assert.match(repo,/SELECT metadata FROM clients WHERE id=\$1 FOR UPDATE/);
+ assert.match(repo,/totalSpend/);
+ assert.match(repo,/UPDATE clients SET metadata=\$2,updated_at=\$3 WHERE id=\$1/);
+ assert.match(repo,/__idempotentReplay/);
+ const finance=fs.readFileSync('src/lib/financeStore.ts','utf8');
+ assert.doesNotMatch(finance,/saveAgencyClient\(/);
+});
