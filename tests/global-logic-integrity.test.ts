@@ -37,3 +37,24 @@ test('deferred PostgreSQL integrity constraints have a final validation migratio
 });
 
 test('proposal generic update cannot bypass approval permission or invoice-conversion workflow',()=>{const route=read('server/routes.ts');const repo=read('server/postgres-proposal-repository.ts');const pg=route.slice(route.indexOf("apiRouter.put('/crm/proposals/:id'"),route.indexOf("apiRouter.post('/crm/proposals/:id/approve'"));assert.match(pg,/canApproveBudgets/);assert.match(pg,/status === 'Accepted'/);assert.match(repo,/ACCEPTED_PROPOSAL_WORKFLOW_ONLY/);});
+
+
+test('document mutations bind PostgreSQL audit and document delete enforces object access',()=>{
+ const repo=read('server/postgres-document-repository.ts');
+ const route=read('server/routes.ts');
+ for(const e of ['async create(input: any, audit?: AuditEntry)','async update(id: string, patch: any, audit?: AuditEntry)','async delete(id: string, audit?: AuditEntry)','appendWithinTransaction(client, audit)']) assert.ok(repo.includes(e),e);
+ const deleteRoute=route.slice(route.indexOf("apiRouter.delete('/documents/:id'"),route.indexOf("apiRouter.get('/system/document-vault/status"));
+ assert.match(deleteRoute,/requireDocumentObjectAccess\(req, res, document\)/);
+ assert.match(deleteRoute,/postgresDocumentRepository\\.delete\(id, makeAuditEntry/);
+});
+
+test('private document upload rotates the storage object key before metadata commit',()=>{
+ const route=read('server/routes.ts');
+ const upload=route.slice(route.indexOf("apiRouter.put('/documents/:id/content'"),route.indexOf("apiRouter.get('/documents/:id/content'"));
+ assert.match(upload,/const previousStorageKey = String\(document\.storageKey \|\| ''\)/);
+ assert.match(upload,/const nextStorageKey = crypto\.randomBytes\(32\)\.toString\('hex'\)/);
+ assert.match(upload,/storageKey: nextStorageKey/);
+ assert.match(upload,/await storage\.put\(nextStorageKey, encryptedPayload\)/);
+ assert.match(upload,/storageVersion: Number\(document\.storageVersion \|\| 1\) \+ 1/);
+ assert.match(upload,/await storage\.delete\(previousStorageKey\)/);
+});
