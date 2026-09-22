@@ -1670,13 +1670,28 @@ apiRouter.post('/projects', requireAuth, requirePermission('canManageProjects'),
     createdAt: now,
     updatedAt: now
   };
-  if (newProject.tasks.length > 0 && req.user!.stakeholderType !== 'Master' && !req.user!.permissions?.canManageKanbanTasks) {
+    if (newProject.tasks.length > 0 && req.user!.stakeholderType !== 'Master' && !req.user!.permissions?.canManageKanbanTasks) {
     res.status(403).json({ success: false, error: 'Task mutations require task-management permission.' });
     return;
   }
   if (getDataSourceMode() === 'postgres') {
     const project = await postgresProjectRepository.create(newProject as any, makeAuditEntry(req, 'PROJECT_CREATED', `Created project "${newProject.name}".`, 'info'));
-      res.json({ success: true, project: newProject });
+    res.json({ success: true, project });
+    return;
+  }
+  const db = getDatabase();
+  db.projects.unshift(newProject);
+  saveDatabase(db);
+  recordAuditLog({
+    action: 'PROJECT_CREATED',
+    actor: req.user!.username,
+    actorRole: req.user!.role,
+    ip: req.ip,
+    userAgent: req.headers['user-agent'] as string,
+    details: `Created project "${newProject.name}".`,
+    severity: 'info'
+  });
+  res.json({ success: true, project: newProject });
 });
 
 apiRouter.put('/projects/:id', requireAuth, requirePermission('canManageProjects'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
@@ -2382,7 +2397,22 @@ apiRouter.post('/vendors', requireAuth, requirePermission('canManageVendors'), a
   };
   if (getDataSourceMode() === 'postgres') {
     const vendor = await postgresVendorRepository.create(newVendor as any, makeAuditEntry(req, 'VENDOR_CREATED', `Created vendor "${newVendor.name}".`, 'info'));
-      res.json({ success: true, vendor: newVendor });
+    res.json({ success: true, vendor });
+    return;
+  }
+  const db = getDatabase();
+  db.vendors.unshift(newVendor);
+  saveDatabase(db);
+  recordAuditLog({
+    action: 'VENDOR_CREATED',
+    actor: req.user!.username,
+    actorRole: req.user!.role,
+    ip: req.ip,
+    userAgent: req.headers['user-agent'] as string,
+    details: `Created vendor "${newVendor.name}".`,
+    severity: 'info'
+  });
+  res.json({ success: true, vendor: newVendor });
 });
 
 apiRouter.put('/vendors/:id', requireAuth, requirePermission('canManageVendors'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
