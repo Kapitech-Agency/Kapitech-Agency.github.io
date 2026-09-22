@@ -126,3 +126,12 @@ test('unresolved task assignees cannot silently become metadata-only assignments
  assert.match(project,/ASSIGNEE_NOT_FOUND/);
  assert.match(task,/ASSIGNEE_NOT_FOUND/);
 });
+
+
+test('time log creation derives project relation from its referenced task',()=>{
+ const repo=read('server/postgres-time-log-repository.ts');
+ assert.match(repo,/let resolvedProjectId = projectId/);
+ assert.match(repo,/if \(!resolvedProjectId && taskProjectId\) resolvedProjectId = taskProjectId/);
+ assert.match(repo,/VALUES \(\$1,\$2,\$3,\$4,\$5,\$6,\$7,\$8\)/);
+ assert.match(repo,/\[log\.id, resolvedProjectId, taskId/);
+});
