@@ -276,7 +276,24 @@ export class PostgresCrmDealRepository {
       const taxAmount = Math.round(downPayment * 0.11);
       const invoiceTotal = downPayment + taxAmount;
       const invoiceId = `inv_${Date.now()}_${crypto.randomBytes(4).toString('hex')}`;
-      const invoiceNumber = `KAPI-INV-${new Date().getFullYear()}-${crypto.randomInt(100000,999999)}`;
+      const invoiceYear = new Date().getFullYear();
+      await db.query(
+        'SELECT pg_advisory_xact_lock(hashtextextended($1, 3847219))',
+        [`crm-won-invoice-number:${invoiceYear}`]
+      );
+      let invoiceNumber = '';
+      for (let attempt = 0; attempt < 10; attempt += 1) {
+        const candidate = `KAPI-INV-${invoiceYear}-${crypto.randomInt(100000,999999)}`;
+        const existingNumber = await db.query(
+          'SELECT 1 FROM invoices WHERE invoice_number=$1 LIMIT 1',
+          [candidate]
+        );
+        if (existingNumber.rowCount === 0) {
+          invoiceNumber = candidate;
+          break;
+        }
+      }
+      if (!invoiceNumber) throw new Error('INVOICE_NUMBER_GENERATION_FAILED');
 
       await db.query(
         `INSERT INTO invoices (id,invoice_number,client_id,project_id,type,subtotal,discount_percent,discount_amount,tax_percent,tax_amount,total,amount_paid,balance_due,currency,status,issue_date,due_date,notes,payment_terms,metadata,created_at,updated_at)
