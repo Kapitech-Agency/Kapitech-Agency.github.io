@@ -171,16 +171,23 @@ test('PostgreSQL delivery workflow preserves client relation across project, tas
   const { PostgresClientRepository } = await import('../server/postgres-client-repository.ts');
   const { PostgresProjectRepository } = await import('../server/postgres-project-repository.ts');
   const { PostgresTimeLogRepository } = await import('../server/postgres-time-log-repository.ts');
+  const { PostgresTaskRepository } = await import('../server/postgres-task-repository.ts');
+  const { PostgresAuthRepository } = await import('../server/postgres-repository.ts');
 
   const clientRepository = new PostgresClientRepository();
   const projectRepository = new PostgresProjectRepository();
   const timeLogRepository = new PostgresTimeLogRepository();
+  const taskRepository = new PostgresTaskRepository();
+  const authRepository = new PostgresAuthRepository();
 
   const suffix = Date.now() + '-' + Math.random().toString(16).slice(2);
   const clientId = 'ci-delivery-client-' + suffix;
   const projectId = 'ci-delivery-project-' + suffix;
   const taskId = 'ci-delivery-task-' + suffix;
   const timeLogId = 'ci-delivery-log-' + suffix;
+  const directTaskId = 'ci-delivery-direct-task-' + suffix;
+  const assigneeUserId = 'ci-delivery-assignee-' + suffix;
+  const assigneeUsername = 'ci-delivery-assignee-' + suffix;
   const now = new Date().toISOString();
   let created = false;
 
@@ -200,6 +207,41 @@ test('PostgreSQL delivery workflow preserves client relation across project, tas
       notes: 'Delivery workflow integration test',
       createdAt: now,
       updatedAt: now
+    });
+
+    await authRepository.createUser({
+      id: assigneeUserId,
+      name: 'CI Delivery Assignee',
+      username: assigneeUsername,
+      email: assigneeUsername + '@example.test',
+      passwordHash: 'ci-test',
+      salt: 'ci-test',
+      passwordAlgorithm: 'scrypt-v1',
+      role: 'Tier 3: Operational Staff',
+      stakeholderType: 'Operations',
+      permissions: {
+        canViewFinancials: false,
+        canManageInvoices: false,
+        canApproveBudgets: false,
+        canManageCrm: false,
+        canManageProjects: true,
+        canManageKanbanTasks: true,
+        canManageClients: false,
+        canManageVendors: false,
+        canManageCmsContent: false,
+        canAccessServerAndApi: false,
+        canRunDataMigration: false,
+        canViewSecurityAuditLogs: false,
+        canManageAdminAccounts: false
+      },
+      mfaEnabled: false,
+      mfaSecret: null,
+      mfaPendingSecret: null,
+      mfaRecoveryCodeHashes: [],
+      division: 'Operations',
+      status: 'active',
+      lastLogin: '',
+      createdAt: now
     });
 
     const project = await projectRepository.create({
@@ -225,7 +267,7 @@ test('PostgreSQL delivery workflow preserves client relation across project, tas
         description: 'Integration test task',
         status: 'todo',
         priority: 'high',
-        assignedTo: '',
+        assignedTo: assigneeUsername,
         dueDate: now.slice(0, 10),
         createdAt: now
       }],
@@ -242,6 +284,31 @@ test('PostgreSQL delivery workflow preserves client relation across project, tas
     const foundProject = await projectRepository.findById(projectId);
     assert.equal(foundProject?.clientId, clientId);
     assert.equal(foundProject?.tasks[0]?.id, taskId);
+
+    const persistedTask = await getPostgresPool().query(
+      'SELECT assignee_user_id FROM tasks WHERE id = $1',
+      [taskId]
+    );
+    assert.equal(persistedTask.rows[0]?.assignee_user_id, assigneeUserId);
+
+    const directTask = await taskRepository.create({
+      id: directTaskId,
+      projectId,
+      title: 'Direct task assignment check',
+      description: 'Integration test task assignment',
+      status: 'todo',
+      priority: 'medium',
+      assignee: 'CI Delivery Assignee',
+      dueDate: now.slice(0, 10),
+      createdAt: now
+    });
+    assert.equal((directTask as any).assignee, assigneeUserId);
+
+    const persistedDirectTask = await getPostgresPool().query(
+      'SELECT assignee_user_id FROM tasks WHERE id = $1',
+      [directTaskId]
+    );
+    assert.equal(persistedDirectTask.rows[0]?.assignee_user_id, assigneeUserId);
 
     const timeLog = await timeLogRepository.create({
       id: timeLogId,
@@ -263,9 +330,10 @@ test('PostgreSQL delivery workflow preserves client relation across project, tas
   } finally {
     const db = getPostgresPool();
     await db.query('DELETE FROM time_logs WHERE id = $1', [timeLogId]);
-    if (created) await db.query('DELETE FROM tasks WHERE id = $1', [taskId]);
+    await db.query('DELETE FROM tasks WHERE id IN ($1, $2)', [taskId, directTaskId]);
     await db.query('DELETE FROM projects WHERE id = $1', [projectId]);
     await db.query('DELETE FROM clients WHERE id = $1', [clientId]);
+    await db.query('DELETE FROM users WHERE id = $1', [assigneeUserId]);
     await closePostgresPool();
   }
 });
