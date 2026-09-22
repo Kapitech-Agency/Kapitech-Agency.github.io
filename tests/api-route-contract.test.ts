@@ -8,7 +8,7 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
 test('API route contract protects state-changing and private routes', async () => {
   const source = await fs.readFile(path.join(root, 'server/routes.ts'), 'utf8');
-  const routePattern = /apiRouter\.(get|post|put|patch|delete)\(\s*(['`])([^'`]+)\2,([^\n]*)/g;
+  const routePattern = /apiRouter\.(get|post|put|patch|delete)\(\s*(['\"])([^'\"]+)\2,([\s\S]*?)\)\s*=>/g;
   const publicRoutes = new Set(['POST /auth/login','POST /auth/mfa/verify','POST /leads/submit','GET /cms/services','GET /cms/projects','GET /cms/testimonials','GET /cms/public-settings']);
   const routes: Array<{ method: string; path: string; tail: string }> = [];
   let match: RegExpExecArray | null;
