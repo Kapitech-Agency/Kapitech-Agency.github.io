@@ -225,7 +225,7 @@ test('PostgreSQL delivery workflow preserves client relation across project, tas
         description: 'Integration test task',
         status: 'todo',
         priority: 'high',
-        assignedTo: 'ci',
+        assignedTo: '',
         dueDate: now.slice(0, 10),
         createdAt: now
       }],
