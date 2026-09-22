@@ -50,11 +50,11 @@ export class PostgresTimeLogRepository {
     const taskId = typeof log.taskId === 'string' && log.taskId ? log.taskId : null;
     return withPostgresTransaction(async client => {
       if (projectId) {
-        const project = await client.query('SELECT id FROM projects WHERE id = $1 LIMIT 1', [projectId]);
+        const project = await client.query('SELECT id FROM projects WHERE id = $1 FOR SHARE', [projectId]);
         if (!project.rows[0]) throw new Error('Project not found.');
       }
       if (taskId) {
-        const task = await client.query('SELECT id, project_id FROM tasks WHERE id = $1 LIMIT 1', [taskId]);
+        const task = await client.query('SELECT id, project_id FROM tasks WHERE id = $1 FOR SHARE', [taskId]);
         if (!task.rows[0]) throw new Error('Task not found.');
         const taskProjectId = task.rows[0].project_id ? String(task.rows[0].project_id) : null;
         if (projectId && taskProjectId && taskProjectId !== projectId) {
