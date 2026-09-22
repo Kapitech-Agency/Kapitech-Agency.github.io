@@ -1853,6 +1853,23 @@ apiRouter.put('/projects/:id', requireAuth, requirePermission('canManageProjects
   if (patch.techStack !== undefined) patch.techStack = normalizeStringArray(patch.techStack, 50, 120);
   if (patch.tasks !== undefined) {
     patch.tasks = Array.isArray(patch.tasks) ? patch.tasks.slice(0, 200) : [];
+    const previousTasks = Array.isArray(db.projects[idx].tasks) ? db.projects[idx].tasks : [];
+    const nextTaskIds = new Set(patch.tasks.map((task: any) => String(task?.id || '')));
+    const removedTaskIds = previousTasks.map((task: any) => String(task?.id || '')).filter(taskId => taskId && !nextTaskIds.has(taskId));
+    if (removedTaskIds.some(taskId => (db.timeLogs || []).some((log: any) => String(log.taskId || '') === taskId))) {
+      res.status(409).json({ success: false, error: 'A task with time logs cannot be removed from the project.' });
+      return;
+    }
+    for (const task of patch.tasks) {
+      if (!['todo','in_progress','review','done'].includes(String(task?.status || 'todo'))) {
+        res.status(400).json({ success: false, error: 'Invalid task status.' });
+        return;
+      }
+      if (!['low','medium','high','urgent'].includes(String(task?.priority || 'medium'))) {
+        res.status(400).json({ success: false, error: 'Invalid task priority.' });
+        return;
+      }
+    }
     if (req.user!.stakeholderType !== 'Master' && !req.user!.permissions?.canManageKanbanTasks) {
       if (taskMutationFingerprint(db.projects[idx].tasks) !== taskMutationFingerprint(patch.tasks)) {
         res.status(403).json({ success: false, error: 'Task mutations require task-management permission.' });
@@ -1992,6 +2009,20 @@ apiRouter.post('/finance/invoices', requireAuth, requirePermission('canManageInv
   const dueDate = normalizeDate(input.dueDate, new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10));
   const requestedStatus = String(input.status || 'draft');
   const status = INVOICE_STATUSES.has(requestedStatus) ? requestedStatus : 'draft';
+  let resolvedClientId = String(input.clientId || '').slice(0, 100) || '';
+  const requestedProjectId = String(input.projectId || '').slice(0, 100);
+  if (requestedProjectId) {
+    const project = (db?.projects || []).find((item: any) => String(item.id) === requestedProjectId);
+    if (!project) { res.status(404).json({ success: false, error: 'Project not found.' }); return; }
+    const projectClientId = String(project.clientId || '').trim();
+    if (resolvedClientId && projectClientId && resolvedClientId !== projectClientId) {
+      res.status(409).json({ success: false, error: 'Project does not belong to the selected client.' }); return;
+    }
+    if (!resolvedClientId && projectClientId) resolvedClientId = projectClientId;
+  }
+  if (resolvedClientId && !(db?.clients || []).some((item: any) => String(item.id) === resolvedClientId)) {
+    res.status(404).json({ success: false, error: 'Client not found.' }); return;
+  }
   const invoice = {
     id: `inv_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
     invoiceNumber,
@@ -2026,7 +2057,7 @@ apiRouter.post('/finance/invoices', requireAuth, requirePermission('canManageInv
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   };
-  (invoice as any).clientId = String(input.clientId || '').slice(0, 100) || undefined;
+  (invoice as any).clientId = resolvedClientId || undefined;
   if (getDataSourceMode() === 'postgres') {
     try {
       const saved = await postgresInvoiceRepository.create(invoice, makeAuditEntry(req, 'INVOICE_CREATED', `Created invoice ${invoice.invoiceNumber} for ${invoice.clientName} (Total: ${invoice.total}).`));
@@ -2110,6 +2141,17 @@ apiRouter.put('/finance/invoices/:id', requireAuth, requirePermission('canManage
     return;
   }
 
+  const requestedClientId = input.clientId !== undefined ? String(input.clientId || '').slice(0, 100) : String(existing.clientId || '');
+  const requestedProjectId = input.projectId !== undefined ? String(input.projectId || '').slice(0, 100) : String(existing.projectId || '');
+  const linkedProject = requestedProjectId ? (db.projects || []).find((item: any) => String(item.id) === requestedProjectId) : null;
+  if (requestedProjectId && !linkedProject) { res.status(404).json({ success: false, error: 'Project not found.' }); return; }
+  const linkedProjectClientId = String(linkedProject?.clientId || '').trim();
+  if (requestedClientId && !(db.clients || []).some((item: any) => String(item.id) === requestedClientId)) {
+    res.status(404).json({ success: false, error: 'Client not found.' }); return;
+  }
+  if (requestedClientId && linkedProjectClientId && requestedClientId !== linkedProjectClientId) {
+    res.status(409).json({ success: false, error: 'Project does not belong to the selected client.' }); return;
+  }
   const taxPercent = input.taxPercent !== undefined ? Math.min(100, Math.max(0, Number(input.taxPercent) || 0)) : Number(existing.taxPercent) || 0;
   const discountPercent = input.discountPercent !== undefined ? Math.min(100, Math.max(0, Number(input.discountPercent) || 0)) : Number(existing.discountPercent) || 0;
   const { subtotal, discountAmount, taxableSubtotal, taxAmount, total } = buildInvoiceFinancials(items, taxPercent, discountPercent);
@@ -3298,6 +3340,35 @@ apiRouter.put('/crm/proposals/:id', requireAuth, requirePermission('canManageCrm
   }
 
   const existing = db!.proposals[idx];
+
+  if (updates.status !== undefined) {
+    const requestedStatus = String(updates.status);
+    if (!['Draft','Internal Review','Sent','Approved','Rejected','Accepted'].includes(requestedStatus)) {
+      res.status(400).json({ success: false, error: 'Invalid proposal status.' });
+      return;
+    }
+    if (['Approved', 'Rejected'].includes(requestedStatus) && req.user!.stakeholderType !== 'Master' && !req.user!.permissions?.canApproveBudgets) {
+      res.status(403).json({ success: false, error: 'Proposal approval status requires approval permission.' });
+      return;
+    }
+    if (requestedStatus === 'Accepted' && String(existing.status) !== 'Accepted') {
+      res.status(409).json({ success: false, error: 'Accepted status can only be created by the proposal-to-invoice workflow.' });
+      return;
+    }
+    if (String(existing.status) === 'Accepted' && requestedStatus !== 'Accepted') {
+      res.status(409).json({ success: false, error: 'Accepted proposals cannot be reopened or moved to another status.' });
+      return;
+    }
+    if (['Approved','Rejected'].includes(requestedStatus) && String(existing.status) === requestedStatus) {
+      res.status(409).json({ success: false, error: 'Proposal is already in the requested approval state.' });
+      return;
+    }
+    if (['Approved','Rejected'].includes(requestedStatus) && !['Draft','Internal Review','Sent'].includes(String(existing.status))) {
+      res.status(409).json({ success: false, error: 'Invalid proposal approval transition.' });
+      return;
+    }
+  }
+
   const items = Array.isArray(updates.items) ? updates.items.slice(0, 100).map((item: any) => ({
     id: cleanText(item?.id || crypto.randomBytes(4).toString('hex'), 80),
     description: cleanText(item?.description, 500),
@@ -3708,6 +3779,18 @@ apiRouter.post('/approvals', requireAuth, requireAnyPermission('canManageProject
     res.status(400).json({ success: false, error: 'Approval title, reason, and a valid non-negative value are required.' });
     return;
   }
+  const referenceTableByType: Record<string, string> = {
+    Invoice: 'invoices', Proposal: 'proposals', Project: 'projects', Expense: 'expenses'
+  };
+  const referenceTable = referenceTableByType[type];
+  if (getDataSourceMode() === 'json') {
+    const referenceRows = (db as any)?.[referenceTable] || [];
+    if (!referenceRows.some((row: any) => String(row.id) === referenceId)) {
+      res.status(409).json({ success: false, error: 'Approval reference not found.' });
+      return;
+    }
+  }
+
   const newApproval = {
     id: `appr_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
     type, referenceId, title,
