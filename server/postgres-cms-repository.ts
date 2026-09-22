@@ -1,4 +1,5 @@
-import { getPostgresPool } from './postgres.ts';
+import { getPostgresPool, withPostgresTransaction } from './postgres.ts';
+import { postgresAuditLogRepository, type AuditEntry } from './postgres-audit-log-repository.ts';
 
 type CmsKind = 'service' | 'project' | 'testimonial';
 
@@ -29,43 +30,54 @@ export class PostgresCmsRepository {
     return rows[0] ? mapRow(kind, rows[0]) : null;
   }
 
-  async create(kind: CmsKind, input: any): Promise<any> {
-    const table = tableFor(kind);
-    const now = input.createdAt || new Date().toISOString();
-    const name = input.name || input.title || input.author || '';
-    const description = input.description || input.desc || '';
-    const company = input.company || '';
-    const quote = input.quote || '';
-    const { rows } = await getPostgresPool().query(
-      `INSERT INTO ${table} (id,name,slug,description,company,quote,data,created_at,updated_at)
-       VALUES ($1,$2,$3,$4,$5,$6,$7::jsonb,$8,$8)
-       RETURNING *`,
-      [input.id,name,input.slug || null,description,company,quote,JSON.stringify(input),now]
-    );
-    return mapRow(kind, rows[0]);
+  async create(kind: CmsKind, input: any, audit?: AuditEntry): Promise<any> {
+    return withPostgresTransaction(async client => {
+      const table = tableFor(kind);
+      const now = input.createdAt || new Date().toISOString();
+      const name = input.name || input.title || input.author || '';
+      const description = input.description || input.desc || '';
+      const company = input.company || '';
+      const quote = input.quote || '';
+      const { rows } = await client.query(
+        `INSERT INTO ${table} (id,name,slug,description,company,quote,data,created_at,updated_at)
+         VALUES ($1,$2,$3,$4,$5,$6,$7::jsonb,$8,$8)
+         RETURNING *`,
+        [input.id,name,input.slug || null,description,company,quote,JSON.stringify(input),now]
+      );
+      if (audit) await postgresAuditLogRepository.appendWithinTransaction(client, audit);
+      return mapRow(kind, rows[0]);
+    });
   }
 
-  async update(kind: CmsKind, id: string, patch: any): Promise<any | null> {
-    const current = await this.findById(kind, id);
-    if (!current) return null;
-    const merged = { ...current, ...patch, updatedAt: new Date().toISOString() };
-    const table = tableFor(kind);
-    const name = merged.name || merged.title || merged.author || '';
-    const description = merged.description || merged.desc || '';
-    const company = merged.company || '';
-    const quote = merged.quote || '';
-    const { rows } = await getPostgresPool().query(
-      `UPDATE ${table}
-       SET name=$2,slug=$3,description=$4,company=$5,quote=$6,data=$7::jsonb,updated_at=$8
-       WHERE id=$1 RETURNING *`,
-      [id,name,merged.slug || null,description,company,quote,JSON.stringify(merged),merged.updatedAt]
-    );
-    return rows[0] ? mapRow(kind, rows[0]) : null;
+  async update(kind: CmsKind, id: string, patch: any, audit?: AuditEntry): Promise<any | null> {
+    return withPostgresTransaction(async client => {
+      const currentResult = await client.query(`SELECT * FROM ${tableFor(kind)} WHERE id=$1 FOR UPDATE`, [id]);
+      if (!currentResult.rows[0]) return null;
+      const current = mapRow(kind, currentResult.rows[0]);
+      const merged = { ...current, ...patch, updatedAt: new Date().toISOString() };
+      const table = tableFor(kind);
+      const name = merged.name || merged.title || merged.author || '';
+      const description = merged.description || merged.desc || '';
+      const company = merged.company || '';
+      const quote = merged.quote || '';
+      const { rows } = await client.query(
+        `UPDATE ${table}
+         SET name=$2,slug=$3,description=$4,company=$5,quote=$6,data=$7::jsonb,updated_at=$8
+         WHERE id=$1 RETURNING *`,
+        [id,name,merged.slug || null,description,company,quote,JSON.stringify(merged),merged.updatedAt]
+      );
+      if (audit) await postgresAuditLogRepository.appendWithinTransaction(client, audit);
+      return rows[0] ? mapRow(kind, rows[0]) : null;
+    });
   }
 
-  async delete(kind: CmsKind, id: string): Promise<boolean> {
-    const { rowCount } = await getPostgresPool().query(`DELETE FROM ${tableFor(kind)} WHERE id=$1`, [id]);
-    return (rowCount || 0) > 0;
+  async delete(kind: CmsKind, id: string, audit?: AuditEntry): Promise<boolean> {
+    return withPostgresTransaction(async client => {
+      const { rowCount } = await client.query(`DELETE FROM ${tableFor(kind)} WHERE id=$1`, [id]);
+      if (rowCount !== 1) return false;
+      if (audit) await postgresAuditLogRepository.appendWithinTransaction(client, audit);
+      return true;
+    });
   }
 
   async getSettings(): Promise<Record<string, any>> {
@@ -76,10 +88,13 @@ export class PostgresCmsRepository {
     return settings;
   }
 
-  async updateSettings(patch: Record<string, any>): Promise<Record<string, any>> {
-    const current = await this.getSettings();
-    const merged = { ...current, ...patch, updatedAt: new Date().toISOString() };
-    const client = await getPostgresPool().connect();
+  async updateSettings(patch: Record<string, any>, audit?: AuditEntry): Promise<Record<string, any>> {
+    return withPostgresTransaction(async client => {
+      const currentResult = await client.query('SELECT key,value,updated_at FROM cms_settings ORDER BY key');
+      const current: Record<string, any> = {};
+      for (const row of currentResult.rows) current[row.key] = row.value;
+      if (currentResult.rows[0]?.updated_at) current.updatedAt = currentResult.rows[0].updated_at instanceof Date ? currentResult.rows[0].updated_at.toISOString() : new Date(currentResult.rows[0].updated_at).toISOString();
+      const merged = { ...current, ...patch, updatedAt: new Date().toISOString() };
     try {
       await client.query('BEGIN');
       for (const [key, value] of Object.entries(merged)) {
@@ -90,14 +105,9 @@ export class PostgresCmsRepository {
           [key, JSON.stringify(value)]
         );
       }
-      await client.query('COMMIT');
+      if (audit) await postgresAuditLogRepository.appendWithinTransaction(client, audit);
       return merged;
-    } catch (error) {
-      await client.query('ROLLBACK');
-      throw error;
-    } finally {
-      client.release();
-    }
+    });
   }
 }
 
