@@ -2328,7 +2328,7 @@ apiRouter.post('/finance/invoices/:id/pay', requireAuth, requirePermission('canM
       const replayed = saved.__idempotentReplay === true;
       if (replayed) delete saved.__idempotentReplay;
       
-      res.json({ success:true, invoice:saved, payment: replayed ? undefined : payment, replayed }); return;
+      res.json({ success:true, invoice:saved, payment: replayed ? undefined : payment, replayed: replayed }); return;
     } catch(error) {
       const message=error instanceof Error?error.message:'Payment could not be recorded.';
       res.status(message.includes('exceeds')||message.includes('Cancelled')?409:400).json({success:false,error:message}); return;
