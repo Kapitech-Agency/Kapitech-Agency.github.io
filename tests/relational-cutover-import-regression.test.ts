@@ -21,3 +21,10 @@ test('Relational cutover import validates invoice arithmetic and time-log projec
   assert.ok(source.includes('Time log must reference a project or task in migration source'));
   assert.ok(source.includes('Time log task must belong to a project in migration source'));
 });
+
+
+test('Relational cutover import preserves proposal-to-invoice relation', () => {
+  const source = fs.readFileSync(path.resolve(process.cwd(), 'scripts/postgres-import.ts'), 'utf8');
+  assert.ok(source.includes("'proposal_id'"));
+  assert.ok(source.includes('nullableText(row.proposalId)'));
+});
