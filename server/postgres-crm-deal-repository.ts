@@ -347,7 +347,7 @@ export class PostgresCrmDealRepository {
         [
           deal.id,
           deal.title || 'Untitled Deal',
-          client.id,
+          resolvedClient.id,
           deal.clientName || null,
           deal.company || client.company || null,
           deal.email || client.email || null,
