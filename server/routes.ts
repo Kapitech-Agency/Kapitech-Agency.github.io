@@ -648,11 +648,20 @@ apiRouter.post('/auth/mfa/setup/verify', requireAuth, rateLimitAuthenticated(10,
   user.mfaEnabled = true;
   const recoveryCodes = generateMfaRecoveryCodes(8);
   user.mfaRecoveryCodeHashes = recoveryCodes.map(hashMfaRecoveryCode);
-  if (getDataSourceMode() === 'postgres') await postgresAuthRepository.updateUserMfa(user.id, { mfaEnabled: true, mfaSecret: user.mfaSecret || null, mfaPendingSecret: null, mfaPendingSecretCreatedAt: null, mfaRecoveryCodeHashes: user.mfaRecoveryCodeHashes });
-  else saveDatabase(db!);
-  await revokeAllUserSessions(user.id, req.sessionToken ? hashSessionToken(req.sessionToken) : undefined);
+  if (getDataSourceMode() === 'postgres') {
+    await postgresAuthRepository.updateUserMfa(
+      user.id,
+      { mfaEnabled: true, mfaSecret: user.mfaSecret || null, mfaPendingSecret: null, mfaPendingSecretCreatedAt: null, mfaRecoveryCodeHashes: user.mfaRecoveryCodeHashes },
+      {
+        revokeAllSessions: true,
+        exceptTokenHash: req.sessionToken ? hashSessionToken(req.sessionToken) : undefined,
+        audit: makeAuditEntry(req, 'MFA_ENABLED', 'TOTP multi-factor authentication enabled for the account.', 'info')
+      }
+    );
+  } else saveDatabase(db!);
+  if (getDataSourceMode() === 'json') await revokeAllUserSessions(user.id, req.sessionToken ? hashSessionToken(req.sessionToken) : undefined);
 
-  recordAuditLog({
+  if (getDataSourceMode() === 'json') recordAuditLog({
     action: 'MFA_ENABLED',
     actor: user.username,
     actorRole: user.role,
@@ -684,11 +693,19 @@ apiRouter.post('/auth/mfa/disable', requireAuth, rateLimitAuthenticated(5, 15 * 
   user.mfaSecret = undefined;
   user.mfaPendingSecret = undefined;
   user.mfaRecoveryCodeHashes = [];
-  if (getDataSourceMode() === 'postgres') await postgresAuthRepository.updateUserMfa(user.id, { mfaEnabled: false, mfaSecret: null, mfaPendingSecret: null, mfaPendingSecretCreatedAt: null, mfaRecoveryCodeHashes: [] });
-  else saveDatabase(db!);
-  await revokeAllUserSessions(user.id);
+  if (getDataSourceMode() === 'postgres') {
+    await postgresAuthRepository.updateUserMfa(
+      user.id,
+      { mfaEnabled: false, mfaSecret: null, mfaPendingSecret: null, mfaPendingSecretCreatedAt: null, mfaRecoveryCodeHashes: [] },
+      {
+        revokeAllSessions: true,
+        audit: makeAuditEntry(req, 'MFA_DISABLED', 'TOTP multi-factor authentication disabled for the account.', 'warning')
+      }
+    );
+  } else saveDatabase(db!);
+  if (getDataSourceMode() === 'json') await revokeAllUserSessions(user.id);
 
-  recordAuditLog({
+  if (getDataSourceMode() === 'json') recordAuditLog({
     action: 'MFA_DISABLED',
     actor: user.username,
     actorRole: user.role,
@@ -775,13 +792,23 @@ apiRouter.post('/auth/change-password', requireAuth, rateLimitAuthenticated(10, 
     dbUser.salt = prepared.salt;
     dbUser.passwordHash = prepared.passwordHash;
     dbUser.passwordAlgorithm = prepared.passwordAlgorithm;
-    if (getDataSourceMode() === 'postgres') await postgresAuthRepository.updateUserPassword(user.id, prepared.passwordHash, prepared.salt, prepared.passwordAlgorithm);
-    else saveDatabase(db!);
-    if (req.sessionToken) {
+    if (getDataSourceMode() === 'postgres') {
+      await postgresAuthRepository.updateUserPassword(
+        user.id,
+        prepared.passwordHash,
+        prepared.salt,
+        prepared.passwordAlgorithm,
+        {
+          exceptTokenHash: req.sessionToken ? hashSessionToken(req.sessionToken) : undefined,
+          audit: makeAuditEntry(req, 'PASSWORD_CHANGED', `User ${user.username} changed their password.`, 'info')
+        }
+      );
+    } else saveDatabase(db!);
+    if (getDataSourceMode() === 'json' && req.sessionToken) {
       await revokeAllUserSessions(user.id, hashSessionToken(req.sessionToken));
     }
 
-    recordAuditLog({
+    if (getDataSourceMode() === 'json') recordAuditLog({
       action: 'PASSWORD_CHANGED',
       actor: user.username,
       actorRole: user.role,
