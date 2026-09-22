@@ -1822,7 +1822,7 @@ apiRouter.put('/projects/:id', requireAuth, requirePermission('canManageProjects
     } catch (error) {
       if (error instanceof ProjectConcurrencyError) { res.status(409).json({ success: false, error: error.message, code: 'PROJECT_CONFLICT' }); return; }
       if (error instanceof Error && error.message === 'TASK_HAS_TIME_LOGS') { res.status(409).json({ success: false, error: 'A task with time logs cannot be removed from the project.', code: 'TASK_HAS_TIME_LOGS' }); return; }
-      if (error instanceof Error && ['DUPLICATE_TASK_ID','INVALID_TASK_STATUS','INVALID_TASK_PRIORITY','TASK_ID_REQUIRED'].includes(error.message)) {
+      if (error instanceof Error && ['DUPLICATE_TASK_ID','INVALID_TASK_STATUS','INVALID_TASK_PRIORITY','TASK_ID_REQUIRED','ASSIGNEE_NOT_FOUND'].includes(error.message)) {
         res.status(400).json({ success: false, error: error.message });
         return;
       }
