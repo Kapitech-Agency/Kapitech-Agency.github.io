@@ -1,4 +1,5 @@
 import { getPostgresPool, withPostgresTransaction } from './postgres.ts';
+import { postgresAuditLogRepository, type AuditEntry } from './postgres-audit-log-repository.ts';
 
 type Row = Record<string, any>;
 const obj = (v: unknown): Record<string, unknown> => v && typeof v === 'object' ? v as Record<string, unknown> : {};
@@ -47,7 +48,7 @@ export class PostgresTaskRepository {
     return result.rows[0] ? mapTask(result.rows[0]) : null;
   }
 
-  async create(task: Record<string, unknown>): Promise<Record<string, unknown>> {
+  async create(task: Record<string, unknown>, audit?: AuditEntry): Promise<Record<string, unknown>> {
     const now = typeof task.createdAt === 'string' ? task.createdAt : new Date().toISOString();
     const projectId = typeof task.projectId === 'string' && task.projectId ? task.projectId : null;
     return withPostgresTransaction(async client => {
@@ -64,11 +65,12 @@ export class PostgresTaskRepository {
         ]
       );
       const result = await client.query('SELECT * FROM tasks WHERE id = $1', [task.id]);
+      if (audit) await postgresAuditLogRepository.appendWithinTransaction(client, audit);
       return mapTask(result.rows[0]);
     });
   }
 
-  async update(id: string, patch: Record<string, unknown>): Promise<Record<string, unknown> | null> {
+  async update(id: string, patch: Record<string, unknown>, audit?: AuditEntry): Promise<Record<string, unknown> | null> {
     return withPostgresTransaction(async client => {
       const currentResult = await client.query('SELECT * FROM tasks WHERE id = $1 FOR UPDATE', [id]);
       if (!currentResult.rows[0]) return null;
@@ -90,11 +92,12 @@ export class PostgresTaskRepository {
          typeof next.assignee === 'string' && next.assignee ? next.assignee : null, next.dueDate || null, JSON.stringify(taskMetadata(next)), next.updatedAt]
       );
       const result = await client.query('SELECT * FROM tasks WHERE id = $1', [id]);
+      if (audit) await postgresAuditLogRepository.appendWithinTransaction(client, audit);
       return mapTask(result.rows[0]);
     });
   }
 
-  async delete(id: string): Promise<boolean> {
+  async delete(id: string, audit?: AuditEntry): Promise<boolean> {
     return withPostgresTransaction(async client => {
       const current = await client.query('SELECT id FROM tasks WHERE id=$1 FOR UPDATE',[id]);
       if (!current.rows[0]) return false;
@@ -103,6 +106,7 @@ export class PostgresTaskRepository {
         throw new Error('TASK_HAS_TIME_LOGS');
       }
       const result = await client.query('DELETE FROM tasks WHERE id=$1',[id]);
+      if (audit) await postgresAuditLogRepository.appendWithinTransaction(client, audit);
       return result.rowCount === 1;
     });
   }
