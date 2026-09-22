@@ -993,8 +993,7 @@ apiRouter.put('/auth/users/:id', requireAuth, requireMaster, async (req: Authent
       stakeholderType: updated.stakeholderType,
       permissions: updated.permissions,
       division: updated.division,
-      status: updated.status,
-      permissions: updated.permissions
+      status: updated.status
     }
   });
 });
