@@ -340,6 +340,8 @@ test('PostgreSQL delivery workflow preserves client relation across project, tas
     assert.equal(timeLog.taskId, taskId);
     assert.equal(timeLog.durationMinutes, 150);
     assert.equal(timeLog.hours, 2.5);
+    assert.equal((timeLog as any).user, 'CI');
+    assert.equal((timeLog as any).billable, true);
   } finally {
     const db = getPostgresPool();
     await db.query('DELETE FROM time_logs WHERE id = $1', [timeLogId]);
