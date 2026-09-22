@@ -23,3 +23,5 @@ test('Secret encryption does not double-encrypt already protected values', () =>
 test('Invalid encrypted secret payload is rejected', () => {
   assert.throws(() => decryptSecret('KAPI-SECRET-V1:broken'));
 });
+
+test('Password changes and MFA transitions pass audit and session-revocation options to PostgreSQL repository',()=>{const s=fs.readFileSync(new URL('../server/routes.ts', import.meta.url),'utf8');assert.match(s,/postgresAuthRepository\.updateUserPassword\([\s\S]*exceptTokenHash:[\s\S]*audit: makeAuditEntry\(req, 'PASSWORD_CHANGED'/);assert.match(s,/postgresAuthRepository\.updateUserMfa\([\s\S]*revokeAllSessions: true[\s\S]*audit: makeAuditEntry\(req, 'MFA_ENABLED'/);assert.match(s,/postgresAuthRepository\.updateUserMfa\([\s\S]*revokeAllSessions: true[\s\S]*audit: makeAuditEntry\(req, 'MFA_DISABLED'/);});
