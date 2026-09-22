@@ -51,11 +51,11 @@ export class PostgresInvoiceRepository {
       const nextClientId = next.clientId ? String(next.clientId) : null;
       const nextProjectId = next.projectId ? String(next.projectId) : null;
       if (nextClientId) {
-        const client = await db.query('SELECT id FROM clients WHERE id=$1 LIMIT 1',[nextClientId]);
+        const client = await db.query('SELECT id FROM clients WHERE id=$1 FOR SHARE',[nextClientId]);
         if (!client.rows[0]) throw new Error('Client not found.');
       }
       if (nextProjectId) {
-        const project = await db.query('SELECT id, client_id FROM projects WHERE id=$1 LIMIT 1',[nextProjectId]);
+        const project = await db.query('SELECT id, client_id FROM projects WHERE id=$1 FOR SHARE',[nextProjectId]);
         if (!project.rows[0]) throw new Error('Project not found.');
         if (nextClientId && project.rows[0].client_id && String(project.rows[0].client_id) !== nextClientId) {
           throw new Error('Project does not belong to the selected client.');
