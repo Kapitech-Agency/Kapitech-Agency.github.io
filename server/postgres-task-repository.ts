@@ -37,7 +37,8 @@ async function resolveAssigneeUserId(client: { query: (text: string, values?: un
     'SELECT id FROM users WHERE status = $2 AND (id = $1 OR lower(username) = lower($1) OR lower(name) = lower($1)) LIMIT 1',
     [candidate, 'active']
   );
-  return result.rows[0]?.id ? String(result.rows[0].id) : null;
+  if (!result.rows[0]?.id) throw new Error('ASSIGNEE_NOT_FOUND');
+  return String(result.rows[0].id);
 }
 
 function taskMetadata(task: Record<string, unknown>): Record<string, unknown> {
