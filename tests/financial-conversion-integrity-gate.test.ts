@@ -25,12 +25,11 @@ test('proposal conversion locks referenced records',()=>{
 test('proposal conversion requires approval and is idempotent after acceptance',()=>{
  const proposal=fs.readFileSync('server/postgres-proposal-repository.ts','utf8');
  const routes=fs.readFileSync('server/routes.ts','utf8');
- assert.match(proposal,/String\(p\.status\)==='Accepted'/);
- assert.match(proposal,/String\(p\.status\)!=='Approved'/);
- assert.match(proposal,/PROPOSAL_APPROVAL_REQUIRED/);
- assert.match(proposal,/PROPOSAL_APPROVAL_REQUIRED/);
- assert.match(proposal,/__idempotentReplay:true/);
- assert.match(proposal,/proposal_id=\$1/);
+ assert.ok(proposal.includes("String(p.status)==='Accepted'"));
+ assert.ok(proposal.includes("String(p.status)!=='Approved'"));
+ assert.ok(proposal.includes('PROPOSAL_APPROVAL_REQUIRED'));
+ assert.ok(proposal.includes('__idempotentReplay:true'));
+ assert.ok(proposal.includes('WHERE proposal_id=$1'));
  assert.match(routes,/PROPOSAL_APPROVAL_REQUIRED/);
 });
 
