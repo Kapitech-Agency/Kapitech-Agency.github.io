@@ -27,3 +27,13 @@ test('CRM won-deal replay requires exactly one conversion task and tags new task
   assert.ok(route.includes("throw new Error('INCOMPLETE_DEAL_CONVERSION')"));
   assert.ok(route.includes('crmDealId: deal.id'));
 });
+
+test('CRM conversion maps integrity conflicts to HTTP 409', () => {
+  const source = fs.readFileSync('server/routes.ts', 'utf8');
+  const start = source.indexOf("apiRouter.post('/crm/deals/:id/convert-to-project'");
+  assert.ok(start >= 0);
+  const route = source.slice(start, start + 5000);
+  assert.match(route, /DEAL_INVOICE_PROJECT_MISMATCH/);
+  assert.match(route, /MULTIPLE_TASKS_FOR_DEAL/);
+  assert.match(route, /res\.status\(status\)/);
+});
