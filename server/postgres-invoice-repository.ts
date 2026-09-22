@@ -27,11 +27,14 @@ function mapInvoice(row:Row, items:Row[], payments:Row[]):any {
 function metadata(i:any){const {id,invoiceNumber,clientId,projectId,type,items,subtotal,discountPercent,discountAmount,taxPercent,taxAmount,total,amountPaid,balanceDue,currency,status,issueDate,dueDate,notes,paymentTerms,payments,auditTrail,createdAt,updatedAt,...rest}=i;return {...rest,auditTrail};}
 
 export class PostgresInvoiceRepository {
+  private readonly writableStatuses = new Set(['draft','sent','overdue','cancelled']);
   private async items(db:any,id:string){const r=await db.query('SELECT * FROM invoice_items WHERE invoice_id=$1 ORDER BY id ASC',[id]);return r.rows as Row[];}
   private async payments(db:any,id:string){const r=await db.query('SELECT * FROM invoice_payments WHERE invoice_id=$1 ORDER BY paid_at DESC, id DESC',[id]);return r.rows as Row[];}
   async list():Promise<any[]>{const db=getPostgresPool();const r=await db.query('SELECT * FROM invoices ORDER BY created_at DESC');const ir=await db.query('SELECT * FROM invoice_items ORDER BY id ASC');const pr=await db.query('SELECT * FROM invoice_payments ORDER BY paid_at DESC, id DESC');const im=new Map<string,Row[]>(),pm=new Map<string,Row[]>();for(const x of ir.rows){const a=im.get(x.invoice_id)||[];a.push(x);im.set(x.invoice_id,a)}for(const x of pr.rows){const a=pm.get(x.invoice_id)||[];a.push(x);pm.set(x.invoice_id,a)}return r.rows.map((x:Row)=>mapInvoice(x,im.get(x.id)||[],pm.get(x.id)||[]));}
   async findById(id:string):Promise<any|null>{const db=getPostgresPool();const r=await db.query('SELECT * FROM invoices WHERE id=$1',[id]);if(!r.rows[0])return null;return mapInvoice(r.rows[0],await this.items(db,id),await this.payments(db,id));}
   async create(i:any):Promise<any>{return withPostgresTransaction(async db=>{
+      const requestedStatus = String(i.status || 'draft');
+      if (!this.writableStatuses.has(requestedStatus)) throw new Error('INVALID_INVOICE_STATUS');
       const clientId = i.clientId ? String(i.clientId) : null;
       const projectId = i.projectId ? String(i.projectId) : null;
       if (clientId) {
