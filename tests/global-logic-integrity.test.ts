@@ -26,3 +26,12 @@ test('administrator PostgreSQL account mutations bind audit to the same transact
 test('CMS PostgreSQL mutations bind route audit to repository transaction',()=>{const route=read('server/routes.ts');const cms=read('server/postgres-cms-repository.ts');assert.match(cms,/async create\(kind: CmsKind, input: any, audit\?: AuditEntry/);assert.match(cms,/async update\(kind: CmsKind, id: string, patch: any, audit\?: AuditEntry/);assert.match(cms,/async delete\(kind: CmsKind, id: string, audit\?: AuditEntry/);assert.match(cms,/async updateSettings\(patch: Record<string, any>, audit\?: AuditEntry/);assert.match(route,/postgresCmsRepository\.create\('service', newService, makeAuditEntry/);assert.match(route,/postgresCmsRepository\.update\('service', id, patch, makeAuditEntry/);assert.match(route,/postgresCmsRepository\.delete\('service', req\.params\.id, makeAuditEntry/);assert.match(route,/postgresCmsRepository\.updateSettings\(patch, makeAuditEntry/);});
 
 test('notification read and operational settings mutations are transaction-bound to audit',()=>{const n=read('server/postgres-notification-repository.ts');const s=read('server/postgres-notification-settings-repository.ts');const r=read('server/routes.ts');assert.match(n,/async markRead\([\s\S]*audit\?: AuditEntry/);assert.match(n,/async markAllRead\([\s\S]*audit\?: AuditEntry/);assert.match(n,/appendWithinTransaction\(client, audit\)/);assert.match(s,/async update\([\s\S]*audit\?: AuditEntry/);assert.match(s,/appendWithinTransaction\(client, audit\)/);assert.match(r,/postgresNotificationRepository\.markRead\([^)]*makeAuditEntry/);assert.match(r,/postgresNotificationRepository\.markAllRead\([^)]*makeAuditEntry/);});
+
+test('deferred PostgreSQL integrity constraints have a final validation migration',()=>{
+  const source = read('db/postgres/019_validate_integrity_constraints.sql');
+  for (const name of [
+    'expenses_amount_v2_check','expenses_currency_v2_check','expenses_status_v2_check','expenses_version_v2_check','expenses_project_fk',
+    'time_logs_hours_positive_v1','invoice_payments_amount_positive_v1','invoice_items_quantity_positive_v1','invoice_items_amount_nonnegative_v1',
+    'proposal_items_quantity_positive_v1','invoices_amounts_nonnegative_v1','invoices_status_v1','approvals_status_v1'
+  ]) assert.ok(source.includes(`VALIDATE CONSTRAINT ${name}`), name);
+});
