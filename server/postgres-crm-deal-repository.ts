@@ -309,15 +309,32 @@ export class PostgresCrmDealRepository {
       const leadRow=await db.query('SELECT id,status FROM leads WHERE id=$1 FOR UPDATE',[lead.id]);
       if(!leadRow.rows[0])throw new Error('Lead not found during conversion.');
       if(String(leadRow.rows[0].status).toLowerCase()==='closed')throw new Error('Lead has already been converted.');
-      if(clientAlreadyExists){const existing=await db.query('SELECT id FROM clients WHERE id=$1 FOR SHARE',[client.id]);if(!existing.rows[0])throw new Error('Existing client not found during conversion.');}
-      const clientResult = clientAlreadyExists ? null : await db.query(
+      let resolvedClient = client;
+      const existingByEmail = client.email
+        ? await db.query('SELECT * FROM clients WHERE lower(email)=lower($1) ORDER BY created_at ASC LIMIT 2 FOR SHARE',[client.email])
+        : { rows: [] };
+      if (existingByEmail.rows.length > 1) throw new Error('AMBIGUOUS_LEAD_CLIENT');
+      if (existingByEmail.rows[0]) {
+        resolvedClient = {
+          ...client,
+          ...existingByEmail.rows[0],
+          id: existingByEmail.rows[0].id,
+          totalSpend: Number(existingByEmail.rows[0].metadata?.totalSpend || 0),
+          projectsCount: Number(existingByEmail.rows[0].metadata?.projectsCount || 0)
+        };
+      } else if (clientAlreadyExists) {
+        const existing=await db.query('SELECT * FROM clients WHERE id=$1 FOR SHARE',[client.id]);
+        if(!existing.rows[0])throw new Error('Existing client not found during conversion.');
+        resolvedClient={...client,...existing.rows[0],id:existing.rows[0].id};
+      }
+      const clientResult = existingByEmail.rows[0] || clientAlreadyExists ? null : await db.query(
         `INSERT INTO clients
          (id,name,company,email,phone,industry,status,notes,metadata,created_at,updated_at)
          VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
          RETURNING *`,
-        [client.id, client.name, client.company || null, client.email || null, client.phone || null, client.industry || null,
-         client.status || 'active', client.notes || null, JSON.stringify({
-           ...client,
+        [resolvedClient.id, resolvedClient.name, resolvedClient.company || null, resolvedClient.email || null, resolvedClient.phone || null, resolvedClient.industry || null,
+         resolvedClient.status || 'active', resolvedClient.notes || null, JSON.stringify({
+           ...resolvedClient,
            id: undefined, name: undefined, company: undefined, email: undefined, phone: undefined,
            industry: undefined, status: undefined, notes: undefined, createdAt: undefined, updatedAt: undefined
          }), client.createdAt, client.updatedAt]
@@ -351,7 +368,7 @@ export class PostgresCrmDealRepository {
       if (!leadResult.rows[0]) throw new Error('Lead not found during conversion.');
       if (audit) await postgresAuditLogRepository.appendWithinTransaction(db, audit);
       return {
-        client: { ...client, id: clientResult?.rows[0]?.id || client.id },
+        client: { ...resolvedClient, id: clientResult?.rows[0]?.id || resolvedClient.id },
         deal: mapDeal(dealResult.rows[0])
       };
     });
