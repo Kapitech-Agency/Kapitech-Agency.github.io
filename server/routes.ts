@@ -901,18 +901,21 @@ apiRouter.post('/auth/users', requireAuth, requireMaster, async (req: Authentica
     createdAt: new Date().toISOString()
   };
 
-  if (getDataSourceMode() === 'postgres') await postgresAuthRepository.createUser(newUser);
-  else { db!.users.push(newUser); saveDatabase(db!); }
-
-  recordAuditLog({
-    action: 'ACCOUNT_CREATED',
-    actor: req.user!.username,
-    actorRole: req.user!.role,
-    ip: req.ip,
-    userAgent: req.headers['user-agent'] as string,
-    details: `Created admin user "${newUser.username}" (${newUser.role}).`,
-    severity: 'info'
-  });
+  if (getDataSourceMode() === 'postgres') {
+    await postgresAuthRepository.createUser(newUser, makeAuditEntry(req, 'ACCOUNT_CREATED', `Created admin user "${newUser.username}" (${newUser.role}).`, 'info'));
+  } else {
+    db!.users.push(newUser);
+    saveDatabase(db!);
+    recordAuditLog({
+      action: 'ACCOUNT_CREATED',
+      actor: req.user!.username,
+      actorRole: req.user!.role,
+      ip: req.ip,
+      userAgent: req.headers['user-agent'] as string,
+      details: `Created admin user "${newUser.username}" (${newUser.role}).`,
+      severity: 'info'
+    });
+  }
 
   res.json({ success: true, user: { id: newUser.id, username: newUser.username } });
 });
@@ -967,7 +970,8 @@ apiRouter.put('/auth/users/:id', requireAuth, requireMaster, async (req: Authent
         policy.stakeholderType,
         policy.permissions,
         policy.division,
-        nextStatus as StoredUser['status']
+        nextStatus as StoredUser['status'],
+        makeAuditEntry(req, 'ACCOUNT_UPDATED', `Updated admin user "${target.username}" policy to "${nextRole}" and status "${nextStatus}".`, 'warning')
       )
     : (() => {
         target.name = nextName;
@@ -986,7 +990,7 @@ apiRouter.put('/auth/users/:id', requireAuth, requireMaster, async (req: Authent
     return;
   }
 
-  recordAuditLog({
+  if (getDataSourceMode() === 'json')   recordAuditLog({
     action: 'ACCOUNT_UPDATED',
     actor: req.user!.username,
     actorRole: req.user!.role,
@@ -1030,7 +1034,7 @@ apiRouter.delete('/auth/users/:id', requireAuth, requireMaster, async (req: Auth
   }
 
   if (getDataSourceMode() === 'postgres') {
-    const deleted = await postgresAuthRepository.deleteUser(id);
+    const deleted = await postgresAuthRepository.deleteUser(id, makeAuditEntry(req, 'ACCOUNT_DELETED', `Deleted user "${target.username}".`, 'warning'));
     if (!deleted) {
       res.status(409).json({ success: false, error: 'User could not be deleted.' });
       return;
@@ -1041,7 +1045,7 @@ apiRouter.delete('/auth/users/:id', requireAuth, requireMaster, async (req: Auth
     saveDatabase(db!);
   }
 
-  recordAuditLog({
+  if (getDataSourceMode() === 'json')   recordAuditLog({
     action: 'ACCOUNT_DELETED',
     actor: req.user!.username,
     actorRole: req.user!.role,
