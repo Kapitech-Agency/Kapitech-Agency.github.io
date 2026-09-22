@@ -207,7 +207,10 @@ export const api = {
         method: 'PUT',
         body: JSON.stringify(updates)
       }),
-    deleteDeal: (id: string) => apiRequest(`/api/crm/deals/${id}`, { method: 'DELETE' })
+    deleteDeal: (id: string) => apiRequest(`/api/crm/deals/${id}`, { method: 'DELETE' }),
+    convertWonDeal: (id: string) => apiRequest<{ success: boolean; replayed: boolean; client: any; project: any; invoice: any }>(`/api/crm/deals/${id}/convert-to-project`, {
+      method: 'POST'
+    })
   },
 
   // Clients
