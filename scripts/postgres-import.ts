@@ -362,25 +362,26 @@ function clientIdForProjectLinkedRow(row: AnyRecord, clients: AnyRecord[], proje
 }
 
 function assertNestedIds(db: AnyRecord): void {
+  const proposalItemIds = new Set<string>();
+  const invoiceItemIds = new Set<string>();
+  const paymentIds = new Set<string>();
+
   for (const row of arr(db, 'proposals')) {
-    const ids = new Set<string>();
     for (const item of Array.isArray(row.items) ? row.items : []) {
       const id = nullableText(item.id);
       if (!id) throw new Error('Proposal item is missing an id: ' + textValue(row.id));
-      if (ids.has(id)) throw new Error('Duplicate proposal item id: ' + id);
-      ids.add(id);
+      if (proposalItemIds.has(id)) throw new Error('Duplicate proposal item id: ' + id);
+      proposalItemIds.add(id);
     }
   }
   for (const row of arr(db, 'invoices')) {
-    const itemIds = new Set<string>();
     for (const item of Array.isArray(row.items) ? row.items : []) {
       const id = nullableText(item.id);
       if (!id) throw new Error('Invoice item is missing an id: ' + textValue(row.id));
-      if (itemIds.has(id)) throw new Error('Duplicate invoice item id: ' + id);
-      itemIds.add(id);
+      if (invoiceItemIds.has(id)) throw new Error('Duplicate invoice item id: ' + id);
+      invoiceItemIds.add(id);
     }
 
-    const paymentIds = new Set<string>();
     for (const payment of Array.isArray(row.payments) ? row.payments : []) {
       const id = nullableText(payment.id);
       if (!id) throw new Error('Invoice payment is missing an id: ' + textValue(row.id));
