@@ -1880,7 +1880,7 @@ function normalizeDate(value: unknown, fallback: string): string {
   return fallback;
 }
 
-const INVOICE_STATUSES = new Set(['draft', 'sent', 'approved', 'overdue', 'cancelled']);
+const INVOICE_STATUSES = new Set(['draft', 'sent', 'overdue', 'cancelled']);
 const PAYMENT_METHODS = new Set(['bank_transfer', 'credit_card', 'cash', 'other']);
 
 function buildInvoiceFinancials(items: ReturnType<typeof normalizeInvoiceItems>, taxPercent: number, discountPercent: number) {
