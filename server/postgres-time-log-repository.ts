@@ -50,6 +50,7 @@ export class PostgresTimeLogRepository {
     const projectId = typeof log.projectId === 'string' && log.projectId ? log.projectId : null;
     const taskId = typeof log.taskId === 'string' && log.taskId ? log.taskId : null;
     return withPostgresTransaction(async client => {
+      let resolvedProjectId = projectId;
       if (projectId) {
         const project = await client.query('SELECT id FROM projects WHERE id = $1 FOR SHARE', [projectId]);
         if (!project.rows[0]) throw new Error('Project not found.');
@@ -58,14 +59,15 @@ export class PostgresTimeLogRepository {
         const task = await client.query('SELECT id, project_id FROM tasks WHERE id = $1 FOR SHARE', [taskId]);
         if (!task.rows[0]) throw new Error('Task not found.');
         const taskProjectId = task.rows[0].project_id ? String(task.rows[0].project_id) : null;
-        if (projectId && taskProjectId && taskProjectId !== projectId) {
+        if (resolvedProjectId && taskProjectId && taskProjectId !== resolvedProjectId) {
           throw new Error('Task does not belong to the selected project.');
         }
+        if (!resolvedProjectId && taskProjectId) resolvedProjectId = taskProjectId;
       }
       await client.query(
         `INSERT INTO time_logs (id,project_id,task_id,user_id,hours,description,logged_at,created_at)
          VALUES ($1,$2,$3,$4,$5,$6,$7,$8)`,
-        [log.id, projectId, taskId, typeof log.userId === 'string' && log.userId ? log.userId : null,
+        [log.id, resolvedProjectId, taskId, typeof log.userId === 'string' && log.userId ? log.userId : null,
          hours, String(log.notes ?? ''), loggedAt, log.createdAt || new Date().toISOString()]
       );
       const result = await client.query('SELECT * FROM time_logs WHERE id = $1', [log.id]);
