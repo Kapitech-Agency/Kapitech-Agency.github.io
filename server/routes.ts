@@ -2127,11 +2127,11 @@ apiRouter.post('/finance/invoices/:id/pay', requireAuth, requirePermission('canM
     const date = normalizeDate(input.date, new Date().toISOString().slice(0,10));
     const payment = { id: `pay_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`, amount: Math.round(payAmount*100)/100, date, method, reference: String(input.reference||'').trim().slice(0,160), notes: String(input.notes||'').trim().slice(0,1000), idempotencyKey: String(input.idempotencyKey || req.get('Idempotency-Key') || '').trim().slice(0,100), recordedBy: req.user!.name || req.user!.username, userId: req.user!.id };
     try {
-      const saved = await postgresInvoiceRepository.recordPayment(req.params.id, payment);
+      const saved = await postgresInvoiceRepository.recordPayment(req.params.id, payment, makeAuditEntry(req, 'PAYMENT_RECORDED', `Recorded payment of ${payment.amount} for invoice ${req.params.id}.`));
       if (!saved) { res.status(404).json({ success:false,error:'Invoice not found.' }); return; }
       const replayed = saved.__idempotentReplay === true;
       if (replayed) delete saved.__idempotentReplay;
-      if (!replayed) recordAuditLog({ action:'PAYMENT_RECORDED', actor:req.user!.username, actorRole:req.user!.role, ip:req.ip, userAgent:req.headers['user-agent'] as string, details:`Recorded payment of ${payAmount} for invoice ${saved.invoiceNumber}. New status: ${saved.status}.`, severity:'info' });
+      
       res.json({ success:true, invoice:saved, payment: replayed ? undefined : payment, replayed }); return;
     } catch(error) {
       const message=error instanceof Error?error.message:'Payment could not be recorded.';
