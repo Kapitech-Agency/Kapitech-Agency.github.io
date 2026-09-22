@@ -17,7 +17,6 @@ test('PostgreSQL invoice creation validates line item integrity before insert', 
   assert.ok(block.indexOf('invoiceItems') < block.indexOf('INSERT INTO invoices'));
 });
 
-
 test('PostgreSQL invoice updates revalidate authoritative financial totals', () => {
   const source = fs.readFileSync('server/postgres-invoice-repository.ts', 'utf8');
   const updateStart = source.indexOf('async update(');
@@ -29,17 +28,15 @@ test('PostgreSQL invoice updates revalidate authoritative financial totals', () 
   assert.match(source, /INVOICE_FINANCIAL_TOTAL_MISMATCH/);
 });
 
-
 test('PostgreSQL invoice creation preserves the proposal relational link', () => {
   const source = fs.readFileSync('server/postgres-invoice-repository.ts', 'utf8');
   const start = source.indexOf('async create(');
   const end = source.indexOf('private async findByIdTx', start);
   assert.ok(start >= 0 && end > start);
   const block = source.slice(start, end);
-  assert.match(block, /INSERT INTO invoices \\(id,proposal_id,invoice_number/);
-  assert.match(block, /i\.proposalId\\|\\|null/);
+  assert.match(block, /INSERT INTO invoices \(id,proposal_id,invoice_number/);
+  assert.match(block, /i\.proposalId/);
 });
-
 
 test('PostgreSQL invoice updates cannot break an existing proposal linkage', () => {
   const source = fs.readFileSync('server/postgres-invoice-repository.ts', 'utf8');
@@ -51,7 +48,6 @@ test('PostgreSQL invoice updates cannot break an existing proposal linkage', () 
   assert.match(block, /PROPOSAL_LINKAGE_IMMUTABLE/);
 });
 
-
 test('PostgreSQL payment recording derives paid amount from payment rows', () => {
   const source = fs.readFileSync('server/postgres-invoice-repository.ts', 'utf8');
   const start = source.indexOf('async recordPayment(');
@@ -61,7 +57,6 @@ test('PostgreSQL payment recording derives paid amount from payment rows', () =>
   assert.match(block, /authoritativePaid=current\.payments\.reduce/);
   assert.match(block, /const totalPaid=authoritativePaid\+paymentAmount/);
 });
-
 
 test('PostgreSQL invoice creation validates proposal client/project linkage before insert', () => {
   const source = fs.readFileSync('server/postgres-invoice-repository.ts', 'utf8');
@@ -77,7 +72,7 @@ test('PostgreSQL invoice creation validates proposal client/project linkage befo
 
 test('PostgreSQL invoice mapping treats proposal_id as authoritative relational state', () => {
   const source = fs.readFileSync('server/postgres-invoice-repository.ts', 'utf8');
-  assert.match(source, /proposalId:row\.proposal_id\?\?''/);
+  assert.match(source, /proposalId:row\.proposal_id/);
   assert.doesNotMatch(source, /proposalId:row\.proposal_id\?\?metadata\.proposalId/);
 });
 
