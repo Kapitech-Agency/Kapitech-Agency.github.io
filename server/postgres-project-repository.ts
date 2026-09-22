@@ -20,7 +20,7 @@ function mapTask(row: Row): ProjectTask {
     description: row.description ?? undefined,
     status: row.status as ProjectTask['status'],
     priority: (row.priority || 'medium') as ProjectTask['priority'],
-    assignedTo: typeof row.assignee_user_id === 'string' ? row.assignee_user_id : String(metadata.assignedTo || ''),
+    assignedTo: String(metadata.assignedTo ?? row.assignee_user_id ?? ''),
     dueDate: date(row.due_date),
     createdAt: iso(row.created_at)
   };
