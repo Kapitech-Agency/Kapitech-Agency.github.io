@@ -1,4 +1,22 @@
-import assert from 'node:assert/strict'; import fs from 'node:fs'; import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import test from 'node:test';
 const read=(p:string)=>fs.readFileSync(p,'utf8');
-test('paid invoice cancellation is blocked',()=>{const s=read('server/postgres-invoice-repository.ts');assert.match(s,/current\.payments\.length>0.*INVOICE_WITH_PAYMENTS_CANNOT_BE_CANCELLED/); const routes=read('server/routes.ts'); assert.match(routes,/INVOICE_WITH_PAYMENTS_CANNOT_BE_CANCELLED/);});
-test('proposal updates revalidate client project and deal relationships',()=>{const s=read('server/postgres-proposal-repository.ts');assert.match(s,/Proposal project does not belong to the selected client/);assert.match(s,/Proposal deal does not belong to the selected client/); assert.match(s,/SELECT id, client_id FROM crm_deals WHERE id=\$1 FOR SHARE/);});
+test('invoice cancellation is blocked after payments in repository and route',()=>{
+ const repo=read('server/postgres-invoice-repository.ts'); const routes=read('server/routes.ts');
+ assert.match(repo,/current\.payments\.length>0.*INVOICE_WITH_PAYMENTS_CANNOT_BE_CANCELLED/);
+ assert.match(routes,/INVOICE_WITH_PAYMENTS_CANNOT_BE_CANCELLED/);
+});
+test('proposal updates validate related records',()=>{
+ const s=read('server/postgres-proposal-repository.ts');
+ assert.match(s,/SELECT id FROM clients WHERE id=\$1 FOR SHARE/);
+ assert.match(s,/SELECT id,client_id FROM projects WHERE id=\$1 FOR SHARE/);
+ assert.match(s,/SELECT id,client_id FROM crm_deals WHERE id=\$1 FOR SHARE/);
+});
+test('proposal conversion locks referenced records',()=>{
+ const s=read('server/postgres-proposal-repository.ts'); const i=s.indexOf('async convertToInvoice');
+ assert.ok(i>=0); const x=s.slice(i);
+ assert.match(x,/SELECT id FROM clients WHERE id=\$1 FOR SHARE/);
+ assert.match(x,/SELECT id, client_id FROM projects WHERE id=\$1 FOR SHARE/);
+ assert.match(x,/SELECT id, client_id FROM crm_deals WHERE id=\$1 FOR SHARE/);
+});
