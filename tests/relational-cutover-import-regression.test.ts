@@ -35,3 +35,19 @@ test('Relational cutover import rejects duplicate invoice references before data
   assert.ok(source.includes('Duplicate invoice number in migration source'));
   assert.ok(source.includes('Multiple invoices reference the same proposal in migration source'));
 });
+
+
+test('PostgreSQL importer validates invoice proposal and client/project references', () => {
+  const source = fs.readFileSync('scripts/postgres-import.ts', 'utf8');
+  assert.match(source, /check\('invoices', 'proposalId', proposals\)/);
+  assert.match(source, /Invoice client\/project relationship mismatch/);
+});
+
+test('PostgreSQL importer preserves authoritative expense lifecycle fields', () => {
+  const source = fs.readFileSync('scripts/postgres-import.ts', 'utf8');
+  assert.match(source, /'project_id'/);
+  assert.match(source, /'status'/);
+  assert.match(source, /'version'/);
+  assert.match(source, /'idempotency_key'/);
+  assert.match(source, /timestampValue\(row\.createdAt\)/);
+});
