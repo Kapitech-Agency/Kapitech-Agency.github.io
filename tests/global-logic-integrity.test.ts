@@ -135,3 +135,26 @@ test('time log creation derives project relation from its referenced task',()=>{
  assert.match(repo,/VALUES \(\$1,\$2,\$3,\$4,\$5,\$6,\$7,\$8\)/);
  assert.match(repo,/\[log\.id, resolvedProjectId, taskId/);
 });
+
+
+test('PostgreSQL import canonicalizes lifecycle aliases and rejects unsupported states',()=>{
+ const importer=read('scripts/postgres-import.ts');
+ for(const name of ['normalizeClientStatus','normalizeCrmStage','normalizeProposalStatus','normalizeInvoiceStatus','normalizeVendorStatus','normalizeProjectStatus','normalizeTaskStatus','normalizePriority']) {
+   assert.ok(importer.includes('function '+name),name);
+ }
+ assert.match(importer,/prospect: 'lead'/);
+ assert.match(importer,/on_hold: 'inactive'/);
+ assert.match(importer,/lead: 'new'/);
+ assert.match(importer,/discovery: 'contacted'/);
+ assert.match(importer,/assertNestedIds\\(db\\)/);
+ assert.match(importer,/assertApprovalReferences\\(db\\)/);
+});
+
+test('PostgreSQL import preserves cross-module project and time-log integrity',()=>{
+ const importer=read('scripts/postgres-import.ts');
+ assert.match(importer,/clientIdForProjectLinkedRow/);
+ assert.match(importer,/Time log task\\/project mismatch in migration source/);
+ assert.match(importer,/if \\(!timeLogProjectId\\) timeLogProjectId = taskProjectId/);
+ assert.match(importer,/Invoice payment aggregate mismatch in migration source/);
+ assert.match(importer,/Invoice balance aggregate mismatch in migration source/);
+});
