@@ -38,6 +38,22 @@ export class PostgresInvoiceRepository {
       if (!this.writableStatuses.has(requestedStatus)) throw new Error('INVALID_INVOICE_STATUS');
       let resolvedClientId = i.clientId ? String(i.clientId) : null;
       const projectId = i.projectId ? String(i.projectId) : null;
+      const invoiceItems = Array.isArray(i.items) ? i.items : [];
+      const itemSubtotal = invoiceItems.reduce((sum: number, item: any) => {
+        const quantity = Number(item.quantity);
+        const unitPrice = Number(item.unitPrice);
+        const amount = Number(item.amount ?? quantity * unitPrice);
+        if (!Number.isFinite(quantity) || quantity <= 0 || !Number.isFinite(unitPrice) || unitPrice < 0 || !Number.isFinite(amount) || amount < 0) {
+          throw new Error('INVALID_INVOICE_ITEM');
+        }
+        return Math.round((sum + amount) * 100) / 100;
+      }, 0);
+      if (invoiceItems.length > 0 && Math.abs(itemSubtotal - Number(i.subtotal || 0)) > 0.01) {
+        throw new Error('INVOICE_ITEM_SUBTOTAL_MISMATCH');
+      }
+      if (Number(i.total) < 0 || Number(i.subtotal || 0) < 0 || Number(i.discountAmount || 0) < 0 || Number(i.taxAmount || 0) < 0) {
+        throw new Error('INVALID_INVOICE_TOTALS');
+      }
       if (resolvedClientId) {
         const client = await db.query('SELECT id FROM clients WHERE id=$1 FOR SHARE',[resolvedClientId]);
         if (!client.rows[0]) throw new Error('Client not found.');
@@ -51,7 +67,7 @@ export class PostgresInvoiceRepository {
         }
         if (!resolvedClientId && projectClientId) resolvedClientId = projectClientId;
       }
-      await db.query('INSERT INTO invoices (id,invoice_number,client_id,project_id,type,subtotal,discount_percent,discount_amount,tax_percent,tax_amount,total,amount_paid,balance_due,currency,status,issue_date,due_date,notes,payment_terms,metadata,created_at,updated_at) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22)',[i.id,i.invoiceNumber,resolvedClientId,projectId,i.type||'invoice',i.subtotal,i.discountPercent||0,i.discountAmount||0,i.taxPercent||0,i.taxAmount||0,i.total,0,i.total,i.currency||'IDR',i.status||'draft',i.issueDate||null,i.dueDate||null,i.notes||null,i.paymentTerms||null,JSON.stringify(metadata(i)),i.createdAt,i.updatedAt]);for(const x of i.items||[])await db.query('INSERT INTO invoice_items (id,invoice_id,description,quantity,unit_price,amount) VALUES ($1,$2,$3,$4,$5,$6)',[x.id,i.id,x.description,x.quantity,x.unitPrice,x.amount??Number(x.quantity)*Number(x.unitPrice)]);if(audit)await postgresAuditLogRepository.appendWithinTransaction(db,audit);return this.findByIdTx(db,i.id);});}
+      await db.query('INSERT INTO invoices (id,invoice_number,client_id,project_id,type,subtotal,discount_percent,discount_amount,tax_percent,tax_amount,total,amount_paid,balance_due,currency,status,issue_date,due_date,notes,payment_terms,metadata,created_at,updated_at) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22)',[i.id,i.invoiceNumber,resolvedClientId,projectId,i.type||'invoice',i.subtotal,i.discountPercent||0,i.discountAmount||0,i.taxPercent||0,i.taxAmount||0,i.total,0,i.total,i.currency||'IDR',i.status||'draft',i.issueDate||null,i.dueDate||null,i.notes||null,i.paymentTerms||null,JSON.stringify(metadata(i)),i.createdAt,i.updatedAt]);for(const x of invoiceItems)await db.query('INSERT INTO invoice_items (id,invoice_id,description,quantity,unit_price,amount) VALUES ($1,$2,$3,$4,$5,$6)',[x.id,i.id,x.description,x.quantity,x.unitPrice,x.amount??Number(x.quantity)*Number(x.unitPrice)]);if(audit)await postgresAuditLogRepository.appendWithinTransaction(db,audit);return this.findByIdTx(db,i.id);});}
   private async findByIdTx(db:any,id:string){const r=await db.query('SELECT * FROM invoices WHERE id=$1',[id]);if(!r.rows[0])return null;return mapInvoice(r.rows[0],await this.items(db,id),await this.payments(db,id));}
   async update(id:string,patch:any,audit?:AuditEntry):Promise<any|null>{return withPostgresTransaction(async db=>{const r=await db.query('SELECT * FROM invoices WHERE id=$1 FOR UPDATE',[id]);if(!r.rows[0])return null;const current=mapInvoice(r.rows[0],await this.items(db,id),await this.payments(db,id));const allowedStatuses=new Set(['draft','sent','overdue','partially_paid','paid','cancelled']);if(patch.status!==undefined&&!allowedStatuses.has(String(patch.status)))throw new Error('INVALID_INVOICE_STATUS');if(current.status==='cancelled'&&patch.status&&patch.status!=='cancelled')throw new Error('Cancelled invoices cannot be reopened.');
       if (patch.status === 'cancelled') throw new Error('INVOICE_CANCELLATION_REQUIRES_CANCEL_ENDPOINT');if(patch.updatedAt&&current.updatedAt!==patch.updatedAt)throw new Error('Invoice has been modified since it was loaded. Refresh and retry.');const next={...current,...patch,id,updatedAt:new Date().toISOString(),payments:current.payments};
