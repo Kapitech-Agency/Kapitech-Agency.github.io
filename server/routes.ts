@@ -1295,13 +1295,31 @@ apiRouter.post('/leads/:id/convert', requireAuth, requirePermission('canManageCr
     };
 
     if (existingClient) {
-      const createdDeal = await postgresCrmDealRepository.convertLead(lead, existingClient, deal, true, makeAuditEntry(req, 'LEAD_CONVERTED', `Converted lead "${lead.fullName}" into CRM Deal using existing client.`, 'info'));
-      res.json({ success: true, client: existingClient, deal: createdDeal.deal });
+      try {
+        const createdDeal = await postgresCrmDealRepository.convertLead(lead, existingClient, deal, true, makeAuditEntry(req, 'LEAD_CONVERTED', `Converted lead "${lead.fullName}" into CRM Deal using existing client.`, 'info'));
+        res.json({ success: true, client: existingClient, deal: createdDeal.deal });
+      } catch (error) {
+        const message = error instanceof Error ? error.message : 'Lead conversion could not be completed.';
+        if (message.includes('already been converted') || message.includes('during conversion')) {
+          res.status(409).json({ success: false, error: message });
+          return;
+        }
+        throw error;
+      }
       return;
     }
 
-    const converted = await postgresCrmDealRepository.convertLead(lead, client, deal, false, makeAuditEntry(req, 'LEAD_CONVERTED', `Converted lead "${lead.fullName}" into Client & CRM Deal.`, 'info'));
-    res.json({ success: true, client, deal: converted.deal });
+    try {
+      const converted = await postgresCrmDealRepository.convertLead(lead, client, deal, false, makeAuditEntry(req, 'LEAD_CONVERTED', `Converted lead "${lead.fullName}" into Client & CRM Deal.`, 'info'));
+      res.json({ success: true, client, deal: converted.deal });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Lead conversion could not be completed.';
+      if (message.includes('already been converted') || message.includes('during conversion')) {
+        res.status(409).json({ success: false, error: message });
+        return;
+      }
+      throw error;
+    }
     return;
   }
 
