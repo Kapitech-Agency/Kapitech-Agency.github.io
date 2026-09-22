@@ -95,7 +95,7 @@ export class PostgresDocumentRepository {
   async update(id: string, patch: any, audit?: AuditEntry): Promise<any | null> {
     return withPostgresTransaction(async client => {
       const currentResult = await client.query('SELECT * FROM documents WHERE id=$1 FOR UPDATE', [id]);
-      if (!currentResult.rows[0]) { await client.query('ROLLBACK'); return null; }
+      if (!currentResult.rows[0]) return null;
       const accessResult = await client.query('SELECT user_id FROM document_access WHERE document_id=$1 ORDER BY user_id', [id]);
       const current = mapDocument(currentResult.rows[0], accessResult.rows.map((row:any)=>String(row.user_id)));
       const merged = { ...current, ...patch, updatedAt: new Date().toISOString() };
