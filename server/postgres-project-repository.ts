@@ -1,5 +1,6 @@
 import type { AgencyProject, ProjectTask } from '../src/lib/projectStore.ts';
 import { getPostgresPool, withPostgresTransaction } from './postgres.ts';
+import { postgresAuditLogRepository, type AuditEntry } from './postgres-audit-log-repository.ts';
 
 type Row = Record<string, any>;
 const iso = (v: Date | string): string => v instanceof Date ? v.toISOString() : new Date(v).toISOString();
@@ -109,7 +110,7 @@ export class PostgresProjectRepository {
     });
   }
 
-  async update(id: string, patch: Partial<AgencyProject>): Promise<AgencyProject | null> {
+  async update(id: string, patch: Partial<AgencyProject>, audit?: AuditEntry): Promise<AgencyProject | null> {
     return withPostgresTransaction(async client => {
       const currentResult = await client.query('SELECT * FROM projects WHERE id = $1 FOR UPDATE', [id]);
       if (!currentResult.rows[0]) return null;
@@ -160,11 +161,13 @@ export class PostgresProjectRepository {
       }
       const refreshed = await client.query('SELECT * FROM projects WHERE id = $1', [id]);
       const refreshedTasks = await client.query('SELECT * FROM tasks WHERE project_id = $1 ORDER BY created_at ASC', [id]);
-      return mapProject(refreshed.rows[0], (refreshedTasks.rows as Row[]).map(mapTask));
+      const result = mapProject(refreshed.rows[0], (refreshedTasks.rows as Row[]).map(mapTask));
+      if (audit) await postgresAuditLogRepository.appendWithinTransaction(client, audit);
+      return result;
     });
   }
 
-  async delete(id: string): Promise<boolean> {
+  async delete(id: string, audit?: AuditEntry): Promise<boolean> {
     const client = await getPostgresPool().connect();
     try {
       await client.query('BEGIN');
@@ -183,6 +186,7 @@ export class PostgresProjectRepository {
         throw new Error('PROJECT_HAS_BUSINESS_RECORDS');
       }
       const result=await client.query('DELETE FROM projects WHERE id=$1',[id]);
+      if (audit) await postgresAuditLogRepository.appendWithinTransaction(client, audit);
       await client.query('COMMIT');
       return result.rowCount===1;
     } catch (error) {
