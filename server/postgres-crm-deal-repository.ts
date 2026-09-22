@@ -151,7 +151,7 @@ export class PostgresCrmDealRepository {
           deal.updatedAt
         ]
       );
-      const leadResult = await db.query('UPDATE leads SET status=$2,updated_at=$3 WHERE id=$1 AND status <> $4 RETURNING *', [lead.id, 'closed', deal.createdAt]);
+      const leadResult = await db.query('UPDATE leads SET status=$2,updated_at=NOW() WHERE id=$1 AND status <> $2 RETURNING *', [lead.id, 'closed']);
       if (!leadResult.rows[0]) throw new Error('Lead not found during conversion.');
       return {
         client: { ...client, id: clientResult?.rows[0]?.id || client.id },
