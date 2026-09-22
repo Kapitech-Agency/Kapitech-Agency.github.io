@@ -10,4 +10,6 @@ test('time log creation rejects a task with no project when a project is explici
   const block = source.slice(start, end);
   assert.match(block, /taskProjectId !== resolvedProjectId/);
   assert.doesNotMatch(block, /resolvedProjectId && taskProjectId && taskProjectId !== resolvedProjectId/);
+  assert.match(block, /Task must belong to a project before time can be logged/);
+  assert.match(source, /Time log must reference a project or task/);
 });
