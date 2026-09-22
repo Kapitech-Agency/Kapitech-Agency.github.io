@@ -23,7 +23,20 @@ test('administrator PostgreSQL account mutations bind audit to the same transact
  assert.match(routes,/postgresAuthRepository\.createUser\(newUser, makeAuditEntry/);
  assert.match(routes,/postgresAuthRepository\.updateUserPolicy\([\s\S]*makeAuditEntry/);
  assert.match(routes,/postgresAuthRepository\.deleteUser\(id, makeAuditEntry/);
+})
+
+test('audit chain uses a PostgreSQL canonical sequence instead of timestamp/id ordering',()=>{
+ const repo=read('server/postgres-audit-log-repository.ts');
+ const migration=read('db/postgres/022_audit_sequence.sql');
+ assert.match(repo,/ORDER BY sequence DESC LIMIT \$\{safeLimit\}/);
+ assert.match(repo,/ORDER BY sequence DESC LIMIT 1 FOR UPDATE/);
+ assert.match(repo,/SELECT \* FROM audit_logs ORDER BY sequence DESC/);
+ assert.match(migration,/ADD COLUMN IF NOT EXISTS sequence BIGINT/);
+ assert.match(migration,/ROW_NUMBER\(\) OVER \(ORDER BY timestamp ASC, id ASC\)/);
+ assert.match(migration,/nextval\('audit_logs_sequence_v1'\)/);
+ assert.match(migration,/uq_audit_logs_sequence_v1/);
 });
+;
 
 test('CMS PostgreSQL mutations bind route audit to repository transaction',()=>{const route=read('server/routes.ts');const cms=read('server/postgres-cms-repository.ts');assert.match(cms,/async create\(kind: CmsKind, input: any, audit\?: AuditEntry/);assert.match(cms,/async update\(kind: CmsKind, id: string, patch: any, audit\?: AuditEntry/);assert.match(cms,/async delete\(kind: CmsKind, id: string, audit\?: AuditEntry/);assert.match(cms,/async updateSettings\(patch: Record<string, any>, audit\?: AuditEntry/);assert.match(route,/postgresCmsRepository\.create\('service', newService, makeAuditEntry/);assert.match(route,/postgresCmsRepository\.update\('service', id, patch, makeAuditEntry/);assert.match(route,/postgresCmsRepository\.delete\('service', req\.params\.id, makeAuditEntry/);assert.match(route,/postgresCmsRepository\.updateSettings\(patch, makeAuditEntry/);});
 
