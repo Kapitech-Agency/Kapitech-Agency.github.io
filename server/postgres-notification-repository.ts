@@ -1,4 +1,5 @@
-import { getPostgresPool } from './postgres.ts';
+import { getPostgresPool, withPostgresTransaction } from './postgres.ts';
+import { postgresAuditLogRepository, type AuditEntry } from './postgres-audit-log-repository.ts';
 
 type Row = Record<string, any>;
 
@@ -60,38 +61,45 @@ export class PostgresNotificationRepository {
     return mapNotification(rows[0]);
   }
 
-  async markRead(id: string, userId: string): Promise<any | null> {
-    const { rows } = await getPostgresPool().query(
-      `UPDATE notifications
-       SET read_by = CASE
-         WHEN read_by @> $2::jsonb THEN read_by
-         ELSE read_by || $2::jsonb
-       END,
-       read = TRUE
-       WHERE id = $1
-         AND (recipient_user_id IS NULL OR recipient_user_id = $3)
-       RETURNING *`,
-      [id, JSON.stringify([userId]), userId]
-    );
-    return rows[0] ? mapNotification(rows[0]) : null;
+  async markRead(id: string, userId: string, audit?: AuditEntry): Promise<any | null> {
+    return withPostgresTransaction(async client => {
+      const { rows } = await client.query(
+        `UPDATE notifications
+         SET read_by = CASE
+           WHEN read_by @> $2::jsonb THEN read_by
+           ELSE read_by || $2::jsonb
+         END,
+         read = TRUE
+         WHERE id = $1
+           AND (recipient_user_id IS NULL OR recipient_user_id = $3)
+         RETURNING *`,
+        [id, JSON.stringify([userId]), userId]
+      );
+      if (!rows[0]) return null;
+      if (audit) await postgresAuditLogRepository.appendWithinTransaction(client, audit);
+      return mapNotification(rows[0]);
+    });
   }
 
-  async markAllRead(userId: string, hiddenTypes: string[] = []): Promise<number> {
-    const { rowCount } = await getPostgresPool().query(
-      `UPDATE notifications
-       SET read_by = (
-         SELECT COALESCE(jsonb_agg(DISTINCT value), '[]'::jsonb)
-         FROM jsonb_array_elements(
-           CASE WHEN jsonb_typeof(read_by) = 'array' THEN read_by ELSE '[]'::jsonb END
-           || $1::jsonb
-         ) AS value
-       ),
-       read = TRUE
-       WHERE (recipient_user_id IS NULL OR recipient_user_id = $2)
-         AND NOT (type = ANY($3::text[]))`,
-      [JSON.stringify([userId]), userId, hiddenTypes]
-    );
-    return rowCount || 0;
+  async markAllRead(userId: string, hiddenTypes: string[] = [], audit?: AuditEntry): Promise<number> {
+    return withPostgresTransaction(async client => {
+      const { rowCount } = await client.query(
+        `UPDATE notifications
+         SET read_by = (
+           SELECT COALESCE(jsonb_agg(DISTINCT value), '[]'::jsonb)
+           FROM jsonb_array_elements(
+             CASE WHEN jsonb_typeof(read_by) = 'array' THEN read_by ELSE '[]'::jsonb END
+             || $1::jsonb
+           ) AS value
+         ),
+         read = TRUE
+         WHERE (recipient_user_id IS NULL OR recipient_user_id = $2)
+           AND NOT (type = ANY($3::text[]))`,
+        [JSON.stringify([userId]), userId, hiddenTypes]
+      );
+      if (audit) await postgresAuditLogRepository.appendWithinTransaction(client, audit);
+      return rowCount || 0;
+    });
   }
 
   async findById(id: string): Promise<any | null> {
