@@ -2033,8 +2033,9 @@ apiRouter.put('/finance/invoices/:id', requireAuth, requirePermission('canManage
     const taxPercent = input.taxPercent !== undefined ? Math.min(100, Math.max(0, Number(input.taxPercent) || 0)) : Number(existing.taxPercent) || 0;
     const discountPercent = input.discountPercent !== undefined ? Math.min(100, Math.max(0, Number(input.discountPercent) || 0)) : Number(existing.discountPercent) || 0;
     const financials = buildInvoiceFinancials(items, taxPercent, discountPercent);
+    const editableInvoiceFields = pickFields(input, ['type','clientId','projectId','leadId','currency','issueDate','dueDate','notes','paymentTerms','status']);
     const patch = {
-      ...input, items, taxPercent, discountPercent, ...financials,
+      ...editableInvoiceFields, items, taxPercent, discountPercent, ...financials,
       clientId: input.clientId !== undefined ? String(input.clientId).slice(0,100) : existing.clientId,
       projectId: input.projectId !== undefined ? String(input.projectId).slice(0,100) : existing.projectId,
       currency: input.currency === 'USD' || input.currency === 'IDR' ? input.currency : existing.currency,
@@ -3147,8 +3148,18 @@ apiRouter.post('/crm/proposals', requireAuth, requirePermission('canManageCrm'),
   const taxableAmount = Math.max(0, subtotal - discount);
   const tax = Math.round(taxableAmount * (taxPercent / 100));
   const total = taxableAmount + tax;
-  const statusValues = new Set(['Draft','Internal Review','Sent','Approved','Rejected','Accepted']);
-  const status = statusValues.has(String(data.status)) ? String(data.status) : 'Draft';
+  const requestedStatus = String(data.status || 'Draft');
+  const statusValues = new Set(['Draft','Internal Review','Sent']);
+  if (!statusValues.has(requestedStatus)) {
+    res.status(requestedStatus === 'Approved' || requestedStatus === 'Rejected' ? 403 : 409).json({
+      success: false,
+      error: requestedStatus === 'Accepted'
+        ? 'Accepted status can only be created by the proposal-to-invoice workflow.'
+        : 'Proposal approval status must use the approval workflow.'
+    });
+    return;
+  }
+  const status = requestedStatus;
   const currency = data.currency === 'USD' ? 'USD' : 'IDR';
   const newProposal = {
     id: `prop_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
