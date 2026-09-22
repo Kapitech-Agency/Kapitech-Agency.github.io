@@ -35,3 +35,5 @@ test('deferred PostgreSQL integrity constraints have a final validation migratio
     'proposal_items_quantity_positive_v1','invoices_amounts_nonnegative_v1','invoices_status_v1','approvals_status_v1'
   ]) assert.ok(source.includes(`VALIDATE CONSTRAINT ${name}`), name);
 });
+
+test('proposal generic update cannot bypass approval permission or invoice-conversion workflow',()=>{const route=read('server/routes.ts');const repo=read('server/postgres-proposal-repository.ts');const pg=route.slice(route.indexOf("apiRouter.put('/crm/proposals/:id'"),route.indexOf("apiRouter.post('/crm/proposals/:id/approve'"));assert.match(pg,/canApproveBudgets/);assert.match(pg,/status === 'Accepted'/);assert.match(repo,/ACCEPTED_PROPOSAL_WORKFLOW_ONLY/);});
