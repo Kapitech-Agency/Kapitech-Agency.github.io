@@ -3476,9 +3476,8 @@ apiRouter.put('/projects/tasks/:id', requireAuth, requirePermission('canManageKa
   if (patch.subtasks !== undefined) patch.subtasks = Array.isArray(patch.subtasks) ? patch.subtasks.slice(0, 50) : [];
   if (getDataSourceMode() === 'postgres') {
     try {
-      const task = await postgresTaskRepository.update(id, patch);
+      const task = await postgresTaskRepository.update(id, patch, makeAuditEntry(req, 'TASK_UPDATED', `Updated task ${id}.`));
       if (!task) { res.status(404).json({ success: false, error: 'Task not found.' }); return; }
-      recordAuditLog({ action: 'TASK_UPDATED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Updated task ${id}.`, severity: 'info' });
       res.json({ success: true, task }); return;
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Task could not be updated.';
@@ -3496,7 +3495,7 @@ apiRouter.delete('/projects/tasks/:id', requireAuth, requirePermission('canManag
   const { id } = req.params;
   if (getDataSourceMode() === 'postgres') {
     try {
-      const deleted = await postgresTaskRepository.delete(id);
+      const deleted = await postgresTaskRepository.delete(id, makeAuditEntry(req, 'TASK_DELETED', `Deleted task ${id}.`, 'warning'));
       if (!deleted) { res.status(404).json({ success: false, error: 'Task not found.' }); return; }
     } catch (error) {
       if (error instanceof Error && error.message === 'TASK_HAS_TIME_LOGS') {
@@ -3505,7 +3504,6 @@ apiRouter.delete('/projects/tasks/:id', requireAuth, requirePermission('canManag
       }
       throw error;
     }
-    recordAuditLog({ action: 'TASK_DELETED', actor: req.user!.username, actorRole: req.user!.role, ip: req.ip, userAgent: req.headers['user-agent'] as string, details: `Deleted task ${id}.`, severity: 'warning' });
     res.json({ success: true, message: 'Task deleted.' }); return;
   }
   const db = getDatabase(); const exists = (db.tasks || []).some(t => t.id === id);
