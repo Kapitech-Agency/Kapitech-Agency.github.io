@@ -1544,7 +1544,7 @@ apiRouter.post('/crm/deals/:id/convert-to-project', requireAuth,
       const message = error instanceof Error ? error.message : 'CRM deal conversion failed.';
       const status =
         message === 'DEAL_NOT_FOUND' ? 404 :
-        ['DEAL_NOT_WON','DEAL_VALUE_REQUIRED','DEAL_CLIENT_NOT_FOUND','DEAL_PROJECT_CLIENT_MISMATCH','DEAL_INVOICE_CLIENT_MISMATCH','AMBIGUOUS_DEAL_CLIENT','INCOMPLETE_DEAL_CONVERSION','MULTIPLE_PROJECTS_FOR_DEAL','MULTIPLE_INVOICES_FOR_DEAL'].includes(message) ? 409 :
+        ['DEAL_NOT_WON','DEAL_VALUE_REQUIRED','DEAL_CLIENT_NOT_FOUND','DEAL_PROJECT_CLIENT_MISMATCH','DEAL_INVOICE_CLIENT_MISMATCH','DEAL_INVOICE_PROJECT_MISMATCH','AMBIGUOUS_DEAL_CLIENT','INCOMPLETE_DEAL_CONVERSION','MULTIPLE_PROJECTS_FOR_DEAL','MULTIPLE_INVOICES_FOR_DEAL','MULTIPLE_TASKS_FOR_DEAL'].includes(message) ? 409 :
         400;
       res.status(status).json({ success: false, error: message });
     }
