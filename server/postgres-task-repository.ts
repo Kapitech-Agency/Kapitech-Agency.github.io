@@ -97,6 +97,10 @@ export class PostgresTaskRepository {
         const project = await client.query('SELECT id FROM projects WHERE id = $1 LIMIT 1', [projectId]);
         if (!project.rows[0]) throw new Error('Project not found.');
       }
+      if (projectId !== (current.projectId ? String(current.projectId) : null)) {
+        const logs = await client.query('SELECT COUNT(*)::int AS count FROM time_logs WHERE task_id=$1', [id]);
+        if (Number(logs.rows[0]?.count || 0) > 0) throw new Error('TASK_PROJECT_MOVE_FORBIDDEN');
+      }
       const assigneeUserId = await resolveAssigneeUserId(client, next.assignee);
       await client.query(
         `UPDATE tasks
