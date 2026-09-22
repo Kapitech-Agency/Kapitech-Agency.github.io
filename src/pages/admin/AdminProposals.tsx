@@ -54,6 +54,64 @@ interface Proposal {
   invoiceId?: string;
 }
 
+const PROPOSAL_STATUS_TO_API: Record<Proposal['status'], string> = {
+  draft: 'Draft',
+  review: 'Internal Review',
+  approved: 'Approved',
+  sent: 'Sent',
+  accepted: 'Accepted',
+  rejected: 'Rejected'
+};
+
+function normalizeProposalStatus(value: unknown): Proposal['status'] {
+  switch (String(value || '').trim().toLowerCase()) {
+    case 'review':
+    case 'internal review':
+    case 'internal_review':
+      return 'review';
+    case 'approved':
+      return 'approved';
+    case 'sent':
+      return 'sent';
+    case 'accepted':
+      return 'accepted';
+    case 'rejected':
+      return 'rejected';
+    case 'draft':
+    default:
+      return 'draft';
+  }
+}
+
+function normalizeProposal(raw: any): Proposal {
+  return {
+    id: String(raw.id || ''),
+    proposalNumber: String(raw.proposalNumber || ''),
+    title: String(raw.title || ''),
+    clientName: String(raw.clientName || raw.name || ''),
+    clientEmail: String(raw.clientEmail || raw.email || ''),
+    clientCompany: String(raw.clientCompany || raw.company || ''),
+    status: normalizeProposalStatus(raw.status),
+    lineItems: Array.isArray(raw.lineItems || raw.items) ? (raw.lineItems || raw.items).map((item: any) => ({
+      id: String(item.id || ''),
+      description: String(item.description || ''),
+      quantity: Number(item.quantity) || 0,
+      unitPrice: Number(item.unitPrice) || 0,
+      total: Number(item.total ?? item.amount ?? ((Number(item.quantity) || 0) * (Number(item.unitPrice) || 0)))
+    })) : [],
+    subtotal: Number(raw.subtotal) || 0,
+    discount: Number(raw.discount) || 0,
+    tax: Number(raw.tax ?? raw.taxAmount) || 0,
+    total: Number(raw.total) || 0,
+    paymentTerms: raw.paymentTerms,
+    validUntil: String(raw.validUntil || raw.validityPeriod || ''),
+    createdAt: String(raw.createdAt || raw.createdDate || new Date().toISOString()),
+    approvedBy: raw.approvedBy,
+    approvedAt: raw.approvedAt,
+    invoiceId: raw.invoiceId || raw.invoice?.id
+  };
+}
+
 export const AdminProposals: React.FC = () => {
   const { language, t } = useLanguage();
   const session = getAdminSession();
@@ -104,26 +162,7 @@ export const AdminProposals: React.FC = () => {
     try {
       const res = await api.proposals.getAll();
       if (res.success && res.data?.proposals) {
-        const normalized = res.data.proposals.map((raw: any) => ({
-          id: raw.id,
-          proposalNumber: raw.proposalNumber,
-          title: raw.title,
-          clientName: raw.clientName,
-          clientEmail: raw.clientEmail || raw.email || '',
-          clientCompany: raw.clientCompany || raw.company || '',
-          status: (raw.status ? raw.status.toLowerCase() : 'draft') as Proposal['status'],
-          lineItems: raw.lineItems || raw.items || [],
-          subtotal: Number(raw.subtotal) || 0,
-          discount: Number(raw.discount) || 0,
-          tax: Number(raw.tax) || 0,
-          total: Number(raw.total) || 0,
-          paymentTerms: raw.paymentTerms,
-          validUntil: raw.validUntil || raw.validityPeriod || '30 Days',
-          createdAt: raw.createdAt || raw.createdDate || new Date().toISOString(),
-          approvedBy: raw.approvedBy,
-          approvedAt: raw.approvedAt,
-          invoiceId: raw.invoiceId
-        }));
+        const normalized = res.data.proposals.map(normalizeProposal);
         setProposals(normalized);
       }
     } catch {
@@ -181,30 +220,27 @@ export const AdminProposals: React.FC = () => {
 
     setIsSubmitting(true);
     try {
-      const validUntilDate = new Date();
-      validUntilDate.setDate(validUntilDate.getDate() + Number(formValidDays));
-
       const payload = {
         title: formTitle,
         clientName: formClientName,
-        clientCompany: formClientCompany,
+        company: formClientCompany,
         clientEmail: formClientEmail,
         paymentTerms: formPaymentTerms,
-        validUntil: validUntilDate.toISOString().split('T')[0],
+        validityPeriod: `${Number(formValidDays)} Days`,
+        currency: currency,
         discount: Number(formDiscount),
-        tax: Number(formTax),
-        lineItems: formItems.map(item => ({
+        taxPercent: Number(formTaxRate),
+        items: formItems.map(item => ({
           id: item.id,
           description: item.description,
           quantity: Number(item.quantity),
-          unitPrice: Number(item.unitPrice),
-          total: Number(item.quantity) * Number(item.unitPrice)
+          unitPrice: Number(item.unitPrice)
         }))
       };
 
       const res = await api.proposals.create(payload);
       if (res.success && res.data?.proposal) {
-        setProposals(prev => [res.data.proposal, ...prev]);
+        setProposals(prev => [normalizeProposal(res.data.proposal), ...prev]);
         setIsCreateModalOpen(false);
         showToast(language === 'id' ? 'Proposal berhasil diterbitkan!' : 'Proposal created successfully!');
         // Reset form
@@ -226,7 +262,8 @@ export const AdminProposals: React.FC = () => {
     try {
       const res = await api.proposals.approve(id);
       if (res.success && res.data?.proposal) {
-        setProposals(prev => prev.map(p => p.id === id ? res.data.proposal : p));
+        const normalized = normalizeProposal(res.data.proposal);
+        setProposals(prev => prev.map(p => p.id === id ? normalized : p));
         showToast(language === 'id' ? 'Proposal disetujui secara internal.' : 'Proposal approved internally.');
       } else {
         showToast(res.error || 'Approval failed.');
@@ -244,10 +281,12 @@ export const AdminProposals: React.FC = () => {
       return;
     }
     try {
-      const res = await api.proposals.update(id, { status: newStatus });
+      const apiStatus = PROPOSAL_STATUS_TO_API[newStatus];
+      const res = await api.proposals.update(id, { status: apiStatus });
       if (res.success && res.data?.proposal) {
-        setProposals(prev => prev.map(p => p.id === id ? res.data.proposal : p));
-        showToast(`${language === 'id' ? 'Status diubah ke' : 'Status changed to'} ${newStatus}`);
+        const normalized = normalizeProposal(res.data.proposal);
+        setProposals(prev => prev.map(p => p.id === id ? normalized : p));
+        showToast(`${language === 'id' ? 'Status diubah ke' : 'Status changed to'} ${normalized.status}`);
       }
     } catch {
       showToast('Failed to update status.');
@@ -508,14 +547,15 @@ export const AdminProposals: React.FC = () => {
                         <select
                           value={p.status}
                           onChange={(e) => handleStatusChange(p.id, e.target.value as Proposal['status'])}
-                          className="h-7 px-2 rounded bg-[#181B22] text-[#8A94A6] hover:text-white border border-white/[0.07] text-[10px] font-mono focus:outline-none"
+                          disabled={['approved', 'accepted', 'rejected'].includes(p.status)}
+                          className="h-7 px-2 rounded bg-[#181B22] text-[#8A94A6] hover:text-white border border-white/[0.07] text-[10px] font-mono focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           <option value="draft">Draft</option>
                           <option value="review">Review</option>
-                          <option value="approved">Approved</option>
                           <option value="sent">Sent</option>
-                          <option value="accepted">Accepted</option>
-                          <option value="rejected">Rejected</option>
+                          {!['draft', 'review', 'sent'].includes(p.status) && (
+                            <option value={p.status} disabled>{p.status.charAt(0).toUpperCase() + p.status.slice(1)}</option>
+                          )}
                         </select>
 
                         {/* Convert to invoice button if accepted or approved */}

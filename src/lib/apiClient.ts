@@ -163,6 +163,7 @@ export const api = {
         body: JSON.stringify({ currentPassword, code })
       }),
     getUsers: () => apiRequest<{ success: boolean; users: any[] }>('/api/auth/users'),
+    getTaskAssignees: () => apiRequest<{ success: boolean; assignees: Array<{ id: string; name: string; username: string; role: string; division: string }> }>('/api/auth/task-assignees'),
     createUser: (userData: any) =>
       apiRequest('/api/auth/users', {
         method: 'POST',
@@ -206,7 +207,10 @@ export const api = {
         method: 'PUT',
         body: JSON.stringify(updates)
       }),
-    deleteDeal: (id: string) => apiRequest(`/api/crm/deals/${id}`, { method: 'DELETE' })
+    deleteDeal: (id: string) => apiRequest(`/api/crm/deals/${id}`, { method: 'DELETE' }),
+    convertWonDeal: (id: string) => apiRequest<{ success: boolean; replayed: boolean; client: any; project: any; invoice: any }>(`/api/crm/deals/${id}/convert-to-project`, {
+      method: 'POST'
+    })
   },
 
   // Clients
@@ -254,7 +258,7 @@ export const api = {
         method: 'PUT',
         body: JSON.stringify(updates)
       }),
-    payInvoice: (id: string, payment: { amount: number; date?: string; method?: string; reference?: string; notes?: string }) =>
+    payInvoice: (id: string, payment: { amount: number; date?: string; method?: string; reference?: string; notes?: string; idempotencyKey?: string }) =>
       apiRequest(`/api/finance/invoices/${id}/pay`, {
         method: 'POST',
         body: JSON.stringify(payment)

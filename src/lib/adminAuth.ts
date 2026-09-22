@@ -147,7 +147,7 @@ const ADMIN_PROFILE_KEY = 'kapitech_admin_profile_v2';
 export function getAdminSession(): AdminSession | null {
   if (typeof window === 'undefined') return null;
   try {
-    const raw = sessionStorage.getItem(ADMIN_PROFILE_KEY);
+    const raw = sessionStorage.getItem(ADMIN_PROFILE_KEY) || localStorage.getItem(ADMIN_PROFILE_KEY);
     if (!raw) return null;
     const session = JSON.parse(raw) as AdminSession;
     if (!session?.user || (session.expiresAt && session.expiresAt <= Date.now())) {
@@ -162,11 +162,13 @@ export function getAdminSession(): AdminSession | null {
 }
 
 export function cacheAdminSession(user: AdminUser, rememberMe: boolean): AdminSession {
-  // Only cache the non-secret user profile for the current browser session.
-  // The actual authentication state remains in the HttpOnly server cookie.
+  // Only cache the non-secret user profile. Authentication remains in the HttpOnly server cookie.
   const durationMs = rememberMe ? 24 * 60 * 60 * 1000 : 12 * 60 * 60 * 1000;
   const session: AdminSession = { user, expiresAt: Date.now() + durationMs, rememberMe };
-  sessionStorage.setItem(ADMIN_PROFILE_KEY, JSON.stringify(session));
+  const serialized = JSON.stringify(session);
+  sessionStorage.removeItem(ADMIN_PROFILE_KEY);
+  localStorage.removeItem(ADMIN_PROFILE_KEY);
+  (rememberMe ? localStorage : sessionStorage).setItem(ADMIN_PROFILE_KEY, serialized);
   return session;
 }
 

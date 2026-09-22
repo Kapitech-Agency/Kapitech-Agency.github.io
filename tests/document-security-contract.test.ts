@@ -1,26 +1,4 @@
-import assert from 'node:assert/strict';
-import fs from 'node:fs/promises';
-import path from 'node:path';
-import test from 'node:test';
-import { fileURLToPath } from 'node:url';
-
-const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const read = (file: string) => fs.readFile(path.join(root, file), 'utf8');
-
-test('private document routes enforce object-level access controls', async () => {
-  const routes = await read('server/routes.ts');
-  for (const fragment of ['/documents', '/documents/:id/content']) {
-    const index = routes.indexOf(fragment);
-    assert.ok(index >= 0, 'Missing document route: ' + fragment);
-    const window = routes.slice(Math.max(0, index - 100), index + 700);
-    assert.match(window, /requireAuth/);
-    assert.match(window, /documentAccessMiddleware|documentMutationMiddleware/);
-  }
-});
-
-test('production private-document storage cannot silently fall back to local disk', async () => {
-  const routes = await read('server/routes.ts');
-  assert.match(routes, /KAPITECH_DOCUMENT_STORAGE_PROVIDER/);
-  assert.match(routes, /s3|s3-compatible/);
-  assert.match(routes, /NODE_ENV.*production|production/);
-});
+import assert from 'node:assert/strict'; import fs from 'node:fs/promises'; import path from 'node:path'; import test from 'node:test'; import {fileURLToPath} from 'node:url';
+const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..'); const read=(f:string)=>fs.readFile(path.join(root,f),'utf8');
+test('private document routes enforce object access',async()=>{const s=await read('server/routes.ts');assert.ok(s.includes("apiRouter.get('/documents', requireAuth, documentAccessMiddleware"));assert.ok(s.includes("apiRouter.get('/documents/:id/content', requireAuth, documentAccessMiddleware"));assert.ok(s.includes('requireDocumentObjectAccess(req, res, document)'));});
+test('private document storage is explicit in production',async()=>{const s=await read('server/routes.ts');for(const e of ['KAPITECH_DOCUMENT_STORAGE_PROVIDER','s3','production'])assert.ok(s.includes(e),e);});

@@ -1,0 +1,43 @@
+name: AMS Quality Gate
+
+on:
+  push:
+    branches:
+      - main
+      - 'hardening/**'
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Typecheck, tests, and production build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run lint
+
+      - name: Regression tests
+        run: npm test
+
+      - name: Production build
+        env:
+          RAYON_NUM_THREADS: 1
+        run: npm run build

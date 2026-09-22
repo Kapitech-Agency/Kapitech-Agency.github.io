@@ -43,8 +43,11 @@ async function startServer() {
   let shuttingDown = false;
   let postgresReady = getDataSourceMode() !== 'postgres' && !productionConfigError;
   let postgresStartupError: string | null = productionConfigError;
+  let postgresInitializationInFlight = false;
 
   const initializePostgres = async (): Promise<void> => {
+    if (postgresInitializationInFlight || postgresReady || productionConfigError) return;
+    postgresInitializationInFlight = true;
     try {
       await runPostgresMigrations();
       await ensurePostgresInitialAdmin();
@@ -59,6 +62,8 @@ async function startServer() {
       postgresReady = false;
       postgresStartupError = error instanceof Error ? error.message : String(error);
       console.error('[Kapitech AMS] PostgreSQL initialization failed. Web runtime remains online and will retry.', error);
+    } finally {
+      postgresInitializationInFlight = false;
     }
   };
   app.disable('x-powered-by');
@@ -67,8 +72,7 @@ async function startServer() {
   // Hostinger/reverse-proxy aware client IP handling for rate limiting and audit logs.
   app.set('trust proxy', 1);
 
-  // Reject new requests on an existing keep-alive connection while the server
-  // waits for in-flight work to finish and its audit events to be persisted.
+  // Reject new requests while graceful shutdown drains in-flight work and audit writes.
   app.use((_req, res, next) => {
     if (!shuttingDown) {
       next();
@@ -137,6 +141,20 @@ async function startServer() {
 
   // Health check
   app.get('/api/health', async (_req, res) => {
+    if (productionConfigError) {
+      res.status(503).json({
+        status: 'error',
+        version: process.env.APP_VERSION || '2.6.0-enterprise',
+        services: {
+          application: 'healthy',
+          database: 'misconfigured',
+          dataSource: 'invalid',
+          auth: 'blocked'
+        },
+        message: productionConfigError
+      });
+      return;
+    }
     try {
       const dataSource = getDataSourceMode();
       let databaseStatus: 'connected' | 'unavailable' = 'connected';
@@ -195,6 +213,14 @@ async function startServer() {
   app.use('/api', (req, res, next) => {
     if (req.path === '/health') {
       next();
+      return;
+    }
+    if (productionConfigError) {
+      res.status(503).json({
+        success: false,
+        code: 'PRODUCTION_DATA_SOURCE_MISCONFIGURED',
+        error: 'Production API is disabled until the PostgreSQL configuration is corrected.'
+      });
       return;
     }
     if (getDataSourceMode() === 'postgres' && !postgresReady) {

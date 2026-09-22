@@ -37,6 +37,30 @@ let cmsTestimonialsCache: TestimonialItem[] | null = null;
 let cmsSettingsCache: SiteMetaSettings | null = null;
 export const CMS_EVENT_KEY = 'kapitech_cms_updated';
 
+const cmsHydrationRetryState: Record<'services' | 'projects' | 'testimonials' | 'settings', { count: number; timer: number | null }> = {
+  services: { count: 0, timer: null },
+  projects: { count: 0, timer: null },
+  testimonials: { count: 0, timer: null },
+  settings: { count: 0, timer: null }
+};
+
+function scheduleCmsHydrationRetry(type: 'services' | 'projects' | 'testimonials' | 'settings', retry: () => void): void {
+  if (typeof window === 'undefined') return;
+  const state = cmsHydrationRetryState[type];
+  if (state.timer !== null || state.count >= 6) return;
+  const delay = Math.min(30000, 3000 * 2 ** state.count);
+  state.count += 1;
+  state.timer = window.setTimeout(() => {
+    state.timer = null;
+    retry();
+  }, delay);
+}
+
+function markCmsHydrationSuccess(type: 'services' | 'projects' | 'testimonials' | 'settings'): void {
+  cmsHydrationRetryState[type].count = 0;
+}
+
+
 export const defaultTestimonials: TestimonialItem[] = [
   {
     id: 't_01',
@@ -136,6 +160,7 @@ export async function fetchServerCmsServices(): Promise<ServiceItemData[]> {
   try {
     const res = await api.cms.getServices();
     if (res.success && Array.isArray(res.data?.services)) {
+      markCmsHydrationSuccess('services');
       const serverServices = res.data.services;
       cmsServicesCache = serverServices;
       notifyCmsUpdate('services');
@@ -144,6 +169,7 @@ export async function fetchServerCmsServices(): Promise<ServiceItemData[]> {
   } catch (err) {
     console.debug('Failed to fetch services from server:', err);
   }
+  scheduleCmsHydrationRetry('services', () => { void fetchServerCmsServices(); });
   return getCmsServices();
 }
 
@@ -196,6 +222,7 @@ export async function fetchServerCmsProjects(): Promise<ProjectItem[]> {
   try {
     const res = await api.cms.getProjects();
     if (res.success && Array.isArray(res.data?.projects)) {
+      markCmsHydrationSuccess('projects');
       const serverProjects = res.data.projects;
       cmsProjectsCache = serverProjects;
       notifyCmsUpdate('projects');
@@ -204,6 +231,7 @@ export async function fetchServerCmsProjects(): Promise<ProjectItem[]> {
   } catch (err) {
     console.debug('Failed to fetch projects from server:', err);
   }
+  scheduleCmsHydrationRetry('projects', () => { void fetchServerCmsProjects(); });
   return getCmsProjects();
 }
 
@@ -253,6 +281,7 @@ export async function fetchServerCmsTestimonials(): Promise<TestimonialItem[]> {
   try {
     const res = await api.cms.getTestimonials();
     if (res.success && Array.isArray(res.data?.testimonials)) {
+      markCmsHydrationSuccess('testimonials');
       const serverT = res.data.testimonials;
       cmsTestimonialsCache = serverT;
       notifyCmsUpdate('testimonials');
@@ -261,6 +290,7 @@ export async function fetchServerCmsTestimonials(): Promise<TestimonialItem[]> {
   } catch (err) {
     console.debug('Failed to fetch testimonials from server:', err);
   }
+  scheduleCmsHydrationRetry('testimonials', () => { void fetchServerCmsTestimonials(); });
   return getCmsTestimonials();
 }
 
@@ -305,6 +335,7 @@ export async function fetchServerCmsSiteMeta(): Promise<SiteMetaSettings> {
   try {
     const res = await api.cms.getSettings();
     if (res.success && res.data?.settings) {
+      markCmsHydrationSuccess('settings');
       const s = { ...defaultSiteMeta, ...res.data.settings };
       cmsSettingsCache = s;
       notifyCmsUpdate('settings');
@@ -313,6 +344,7 @@ export async function fetchServerCmsSiteMeta(): Promise<SiteMetaSettings> {
   } catch (err) {
     console.debug('Failed to fetch site settings from server:', err);
   }
+  scheduleCmsHydrationRetry('settings', () => { void fetchServerCmsSiteMeta(); });
   return getCmsSiteMeta();
 }
 

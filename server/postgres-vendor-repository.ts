@@ -1,5 +1,6 @@
 import type { AgencyVendor } from '../src/lib/vendorStore.ts';
-import { getPostgresPool } from './postgres.ts';
+import { getPostgresPool, withPostgresTransaction } from './postgres.ts';
+import { postgresAuditLogRepository, type AuditEntry } from './postgres-audit-log-repository.ts';
 
 type VendorRow = {
   id: string; name: string; category: string | null; contact_person: string | null;
@@ -55,18 +56,21 @@ export class PostgresVendorRepository {
     return result.rows[0] ? mapVendor(result.rows[0]) : null;
   }
 
-  async create(vendor: AgencyVendor): Promise<AgencyVendor> {
-    const result = await getPostgresPool().query<VendorRow>(
+  async create(vendor: AgencyVendor, audit?: AuditEntry): Promise<AgencyVendor> {
+    return withPostgresTransaction(async db => {
+    const result = await db.query<VendorRow>(
       `INSERT INTO vendors (id,name,category,contact_person,email,phone,payment_terms,status,monthly_spend,notes,metadata,created_at)
        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) RETURNING *`,
       [vendor.id, vendor.name, vendor.primaryCategory, vendor.companyName || null, vendor.email || null, vendor.phone || null,
        typeof (vendor as any).paymentTerms === 'string' ? (vendor as any).paymentTerms : null, vendor.status, 0, vendor.notes || null,
        JSON.stringify({ ...toMetadata(vendor), updatedAt: vendor.updatedAt }), vendor.createdAt]
     );
+    if (audit) await postgresAuditLogRepository.appendWithinTransaction(db, audit);
     return mapVendor(result.rows[0]);
+    });
   }
 
-  async update(id: string, patch: Partial<AgencyVendor>): Promise<AgencyVendor | null> {
+  async update(id: string, patch: Partial<AgencyVendor>, audit?: AuditEntry): Promise<AgencyVendor | null> {
     const client = await getPostgresPool().connect();
     try {
       await client.query('BEGIN');
@@ -79,6 +83,7 @@ export class PostgresVendorRepository {
         [id, next.name, next.primaryCategory, next.companyName || null, next.email || null, next.phone || null,
          (next as any).paymentTerms || null, next.status, next.notes || null, JSON.stringify({ ...toMetadata(next), updatedAt: next.updatedAt })]
       );
+      if (audit) await postgresAuditLogRepository.appendWithinTransaction(client, audit);
       await client.query('COMMIT');
       return result.rows[0] ? mapVendor(result.rows[0]) : null;
     } catch (error) {
@@ -89,9 +94,12 @@ export class PostgresVendorRepository {
     }
   }
 
-  async delete(id: string): Promise<boolean> {
-    const result = await getPostgresPool().query('DELETE FROM vendors WHERE id = $1', [id]);
-    return result.rowCount === 1;
+  async delete(id: string, audit?: AuditEntry): Promise<boolean> {
+    return withPostgresTransaction(async client => {
+      const result = await client.query('DELETE FROM vendors WHERE id = $1', [id]);
+      if (audit) await postgresAuditLogRepository.appendWithinTransaction(client, audit);
+      return result.rowCount === 1;
+    });
   }
 }
 

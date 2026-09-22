@@ -1,4 +1,5 @@
-import { getPostgresPool } from './postgres.ts';
+import { getPostgresPool, withPostgresTransaction } from './postgres.ts';
+import { postgresAuditLogRepository, type AuditEntry } from './postgres-audit-log-repository.ts';
 
 type Row = Record<string, any>;
 
@@ -64,11 +65,8 @@ export class PostgresDocumentRepository {
     return document.rows[0] ? mapDocument(document.rows[0], access.rows.map(row => String(row.user_id))) : null;
   }
 
-  async create(input: any): Promise<any> {
-    const pool = getPostgresPool();
-    const client = await pool.connect();
-    try {
-      await client.query('BEGIN');
+  async create(input: any, audit?: AuditEntry): Promise<any> {
+    return withPostgresTransaction(async client => {
       const { rows } = await client.query(
         `INSERT INTO documents
           (id,name,title,type,mime_type,size,size_bytes,category,related_entity,related_id,owner,owner_user_id,source_type,status,uploaded_date,uploaded_at,external_url,storage_key,content_sha256,storage_sha256,storage_version,storage_provider,integrity_checked_at,created_at,updated_at,metadata)
@@ -89,69 +87,48 @@ export class PostgresDocumentRepository {
           [input.id, userId]
         );
       }
-      await client.query('COMMIT');
+      if (audit) await postgresAuditLogRepository.appendWithinTransaction(client, audit);
       return mapDocument(rows[0], Array.isArray(input.accessUserIds) ? input.accessUserIds : []);
-    } catch (error) {
-      await client.query('ROLLBACK');
-      throw error;
-    } finally {
-      client.release();
-    }
+    });
   }
 
-  async update(id: string, patch: any): Promise<any | null> {
-    const current = await this.findById(id);
-    if (!current) return null;
-    const merged = { ...current, ...patch, updatedAt: new Date().toISOString() };
-    const { rows } = await getPostgresPool().query(
-      `UPDATE documents SET
+  async update(id: string, patch: any, audit?: AuditEntry): Promise<any | null> {
+    return withPostgresTransaction(async client => {
+      const currentResult = await client.query('SELECT * FROM documents WHERE id=$1 FOR UPDATE', [id]);
+      if (!currentResult.rows[0]) return null;
+      const accessResult = await client.query('SELECT user_id FROM document_access WHERE document_id=$1 ORDER BY user_id', [id]);
+      const current = mapDocument(currentResult.rows[0], accessResult.rows.map((row:any)=>String(row.user_id)));
+      const merged = { ...current, ...patch, updatedAt: new Date().toISOString() };
+      await client.query(`UPDATE documents SET
         name=$2,title=$3,type=$4,mime_type=$5,size=$6,size_bytes=$7,category=$8,related_entity=$9,related_id=$10,
         owner=$11,owner_user_id=$12,source_type=$13,status=$14,uploaded_date=$15,uploaded_at=$16,external_url=$17,
         storage_key=$18,content_sha256=$19,storage_sha256=$20,storage_version=$21,storage_provider=$22,integrity_checked_at=$23,updated_at=$24,metadata=$25::jsonb
-       WHERE id=$1 RETURNING *`,
-      [
+       WHERE id=$1`, [
         id,merged.name,merged.title,merged.type,merged.mimeType,merged.size,merged.sizeBytes,merged.category,
         merged.relatedEntity,merged.relatedId,merged.owner,merged.ownerUserId || null,merged.sourceType,merged.status,
         merged.uploadedDate || null,merged.uploadedAt || null,merged.url || merged.externalUrl || null,merged.storageKey || null,
-        merged.contentSha256 || null,merged.storageSha256 || null,Number(merged.storageVersion || 1),merged.storageProvider || null,merged.integrityCheckedAt || null,merged.updatedAt,JSON.stringify(merged.metadata || {})
-      ]
-    );
-    if (!rows[0]) return null;
-    if (patch.accessUserIds !== undefined) {
-      const pool = getPostgresPool();
-      const client = await pool.connect();
-      try {
-        await client.query('BEGIN');
+        merged.contentSha256 || null,merged.storageSha256 || null,Number(merged.storageVersion || 1),merged.storageProvider || null,
+        merged.integrityCheckedAt || null,merged.updatedAt,JSON.stringify(merged.metadata || {})
+      ]);
+      if (patch.accessUserIds !== undefined) {
         await client.query('DELETE FROM document_access WHERE document_id=$1', [id]);
         for (const userId of Array.isArray(patch.accessUserIds) ? patch.accessUserIds : []) {
           await client.query('INSERT INTO document_access (document_id,user_id) VALUES ($1,$2) ON CONFLICT DO NOTHING', [id,userId]);
         }
-        await client.query('COMMIT');
-      } catch (error) {
-        await client.query('ROLLBACK');
-        throw error;
-      } finally {
-        client.release();
       }
-    }
-    return this.findById(id);
+      const refreshed = await client.query('SELECT * FROM documents WHERE id=$1', [id]);
+      const refreshedAccess = await client.query('SELECT user_id FROM document_access WHERE document_id=$1 ORDER BY user_id', [id]);
+      if (audit) await postgresAuditLogRepository.appendWithinTransaction(client, audit);
+      return mapDocument(refreshed.rows[0], refreshedAccess.rows.map((row:any)=>String(row.user_id)));
+    });
   }
-
-  async delete(id: string): Promise<boolean> {
-    const pool = getPostgresPool();
-    const client = await pool.connect();
-    try {
-      await client.query('BEGIN');
+  async delete(id: string, audit?: AuditEntry): Promise<boolean> {
+    return withPostgresTransaction(async client => {
       await client.query('DELETE FROM document_access WHERE document_id=$1', [id]);
       const result = await client.query('DELETE FROM documents WHERE id=$1', [id]);
-      await client.query('COMMIT');
+      if (audit) await postgresAuditLogRepository.appendWithinTransaction(client, audit);
       return (result.rowCount || 0) > 0;
-    } catch (error) {
-      await client.query('ROLLBACK');
-      throw error;
-    } finally {
-      client.release();
-    }
+    });
   }
 }
 

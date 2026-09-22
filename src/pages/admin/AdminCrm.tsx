@@ -48,9 +48,6 @@ import {
   exportCrmLeadsToCsv,
   CRM_EVENT_NAME 
 } from '../../lib/crmStore';
-import { saveAgencyProject, AgencyProject } from '../../lib/projectStore';
-import { saveAgencyInvoice } from '../../lib/financeStore';
-import { saveAgencyClient, AgencyClient } from '../../lib/clientStore';
 import { useLanguage } from '../../lib/LanguageContext';
 import { useDragToScroll } from '../../lib/useDragToScroll';
 import { ScrollShadowContainer } from '../../components/ui/ScrollShadowContainer';
@@ -231,166 +228,33 @@ export const AdminCrm: React.FC = () => {
     setConvertingLeadId(lead.id);
 
     try {
-      const [projectsRes, invoicesRes] = await Promise.all([api.projects.getAll(), api.finance.getInvoices()]);
-      const alreadyConverted = Boolean(
-        (projectsRes.success && projectsRes.data?.projects?.some((project: any) => project.crmLeadId === lead.id)) ||
-        (invoicesRes.success && invoicesRes.data?.invoices?.some((invoice: any) => invoice.leadId === lead.id))
-      );
-      if (alreadyConverted) {
-        showToast(language === 'id' ? 'Deal ini sudah pernah dikonversi ke operasional.' : 'This deal has already been converted into an operational record.');
-        return;
+      const res = await api.crm.convertWonDeal(lead.id);
+      if (!res.success || !res.data?.project || !res.data?.invoice || !res.data?.client) {
+        throw new Error(res.error || 'Deal conversion failed.');
       }
-    } catch (error) {
-      showToast(error instanceof Error ? error.message : (language === 'id' ? 'Gagal memeriksa status conversion deal.' : 'Failed to verify deal conversion state.'));
-      setConvertingLeadId(null);
-      return;
-    }
 
-    const projectId = 'proj_' + Date.now().toString(36);
-    const invoiceId = 'inv_' + Date.now().toString(36);
-    const clientId = 'cli_' + Date.now().toString(36);
-
-    const newProj: AgencyProject = {
-      id: projectId,
-      name: `${lead.company} — ${lead.servicePillar}`,
-      clientName: lead.clientName,
-      clientCompany: lead.company,
-      clientEmail: lead.email || '',
-      crmLeadId: lead.id,
-      serviceCategory: lead.servicePillar,
-      status: 'in_progress',
-      budget: lead.dealValue,
-      progressPercent: 15,
-      startDate: new Date().toISOString().split('T')[0],
-      targetEndDate: new Date(Date.now() + 45 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-      teamLead: 'Principal Tech Lead',
-      teamMembers: ['Senior Frontend Dev', 'UI/UX Specialist'],
-      techStack: ['Next.js 14', 'TypeScript', 'Tailwind CSS'],
-      liveStagingUrl: 'https://staging.app.kapitech.id',
-      milestones: [
-        { id: 'm_1', title: 'Sprint 1: Architecture & UI Spec', dueDate: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], completed: false },
-        { id: 'm_2', title: 'Sprint 2: Core Engineering Handover', dueDate: new Date(Date.now() + 45 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], completed: false }
-      ],
-      tasks: [
-        {
-          id: 't_init_1',
-          title: `Kickoff sprint architecture and repository setup for ${lead.company}`,
-          status: 'in_progress',
-          priority: 'high',
-          assignedTo: 'Lead Full-Stack Tech',
-          dueDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-          createdAt: new Date().toISOString(),
-          subtasks: [
-            { id: 'st_1', title: 'Setup GitHub repository with CI/CD', completed: false },
-            { id: 'st_2', title: 'Initialize staging domain at kapitech.id', completed: false }
-          ]
-        }
-      ],
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    };
-
-    const downPaymentAmount = Math.round(lead.dealValue * 0.5);
-    const taxAmount = Math.round(downPaymentAmount * 0.11);
-    const invoicePayload = {
-      id: invoiceId,
-      invoiceNumber: `KAPI-INV-${new Date().getFullYear()}-${Date.now().toString().slice(-6)}`,
-      type: 'invoice',
-      clientName: lead.clientName,
-      clientCompany: lead.company,
-      clientEmail: lead.email || '',
-      clientPhone: lead.phone || '',
-      projectId: projectId,
-      leadId: lead.id,
-      items: [
-        {
-          id: 'item_1',
-          description: `${lead.company} — 50% Kickoff Retainer & Sprint Deliverables (${lead.servicePillar})`,
-          quantity: 1,
-          unitPrice: downPaymentAmount,
-          amount: downPaymentAmount
-        }
-      ],
-      subtotal: downPaymentAmount,
-      discountPercent: 0,
-      discountAmount: 0,
-      taxPercent: 11,
-      taxAmount,
-      total: downPaymentAmount + taxAmount,
-      currency: 'IDR',
-      status: 'sent',
-      issueDate: new Date().toISOString().split('T')[0],
-      dueDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-      notes: 'Invoice Retainer Down Payment 50% untuk memulai sprint implementasi teknis.',
-      paymentTerms: 'Bank Transfer Net 14. Mandiri: 123-00-998877-1 / BCA: 889-012-3344 a/n PT Kapitech Digital Indonesia',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    };
-
-    const clientPayload: AgencyClient = {
-      id: clientId,
-      name: lead.clientName,
-      company: lead.company,
-      email: lead.email || '',
-      phone: lead.phone || '',
-      location: 'Indonesia',
-      industry: lead.servicePillar,
-      status: 'active',
-      totalSpend: 0,
-      projectsCount: 1,
-      contactPersonRole: 'Primary Stakeholder',
-      notes: `Converted from CRM Closed Won Deal (${lead.servicePillar})`,
-      slaDailyAdSpendBudget: 10000000,
-      currentDailyAdSpend: 5000000,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    };
-
-    let projectCreated = false;
-    let invoiceCreated = false;
-
-    try {
-      await saveAgencyProject(newProj);
-      projectCreated = true;
-
-      const invoiceRes = await api.finance.createInvoice(invoicePayload);
-      if (!invoiceRes.success || !invoiceRes.data?.invoice) {
-        throw new Error(invoiceRes.error || 'Invoice could not be created on the server.');
-      }
-      invoiceCreated = true;
-
-      await saveAgencyClient(clientPayload);
       showToast(
-        language === 'id'
-          ? 'Deal berhasil dikonversi: Project, Invoice DP 50%, dan Client berhasil dibuat di server.'
-          : 'Deal converted: Project, 50% Retainer Invoice, and Client were created on the server.'
+        res.data.replayed
+          ? (language === 'id'
+            ? 'Deal ini sudah dikonversi. Data operasional yang sama dikembalikan.'
+            : 'This deal was already converted. The existing operational records were returned.')
+          : (language === 'id'
+            ? 'Deal berhasil dikonversi secara atomic ke Client, Project, dan Invoice.'
+            : 'Deal was atomically converted to Client, Project, and Invoice.')
       );
+      await loadLeads();
     } catch (error: any) {
-      if (invoiceCreated) {
-        try {
-          await api.finance.deleteInvoice(invoiceId);
-        } catch (rollbackError) {
-          console.debug('Invoice rollback failed after CRM conversion error:', rollbackError);
-        }
-      }
-      if (projectCreated) {
-        try {
-          const { deleteAgencyProject } = await import('../../lib/projectStore');
-          await deleteAgencyProject(projectId);
-        } catch (rollbackError) {
-          console.debug('Project rollback failed after CRM conversion error:', rollbackError);
-        }
-      }
       showToast(
         error?.message ||
         (language === 'id'
-          ? 'Konversi deal gagal. Tidak ada status sukses yang ditampilkan.'
-          : 'Deal conversion failed. No success state was recorded.')
+          ? 'Konversi deal gagal. Tidak ada record parsial yang dibuat.'
+          : 'Deal conversion failed. No partial records were created.')
       );
     } finally {
       setConvertingLeadId(null);
     }
   };
+
   const handleOpenLeadDrawer = (lead: CrmLead) => {
     setSelectedLead(lead);
     setIsDrawerOpen(true);

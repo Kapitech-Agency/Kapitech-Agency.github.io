@@ -16,3 +16,12 @@ test('CLI migration runner delegates to the same runtime migration implementatio
   assert.ok(source.includes("runPostgresMigrations"));
   assert.ok(!source.includes('CREATE TABLE IF NOT EXISTS schema_migrations'));
 });
+
+test('PostgreSQL startup retry cannot run concurrent initialization attempts', () => {
+  const source = fs.readFileSync(path.resolve(process.cwd(), 'server.ts'), 'utf8');
+  assert.match(source, /let postgresInitializationInFlight = false/);
+  assert.match(source, /if \(postgresInitializationInFlight \|\| postgresReady \|\| productionConfigError\) return/);
+  assert.match(source, /postgresInitializationInFlight = true/);
+  assert.match(source, /postgresInitializationInFlight = false/);
+  assert.match(source, /finally \{/);
+});

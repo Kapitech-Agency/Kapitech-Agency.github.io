@@ -48,14 +48,35 @@ export const VENDOR_EVENT_NAME = 'kapitech_vendors_updated';
 
 let vendorServerHydrationStarted = false;
 
+let vendorServerHydrationRetryCount = 0;
+let vendorServerHydrationRetryTimer: number | null = null;
+
+function scheduleVendorHydrationRetry(): void {
+  if (typeof window === 'undefined' || vendorServerHydrationRetryTimer !== null || vendorServerHydrationRetryCount >= 6) return;
+  const delay = Math.min(30000, 3000 * 2 ** vendorServerHydrationRetryCount);
+  vendorServerHydrationRetryCount += 1;
+  vendorServerHydrationRetryTimer = window.setTimeout(() => {
+    vendorServerHydrationRetryTimer = null;
+    hydrateVendorsFromServer();
+  }, delay);
+}
+
 function hydrateVendorsFromServer(): void {
   if (!import.meta.env.PROD || vendorServerHydrationStarted) return;
   vendorServerHydrationStarted = true;
   api.vendors.getAll().then((res) => {
-    if (!res.success || !Array.isArray(res.data?.vendors)) return;
+    if (!res.success || !Array.isArray(res.data?.vendors)) {
+      vendorServerHydrationStarted = false;
+      scheduleVendorHydrationRetry();
+      return;
+    }
+    vendorServerHydrationRetryCount = 0;
     vendorsCache = res.data.vendors;
     if (typeof window !== 'undefined') window.dispatchEvent(new Event(VENDOR_EVENT_NAME));
-  }).catch(() => {});
+  }).catch(() => {
+    vendorServerHydrationStarted = false;
+    scheduleVendorHydrationRetry();
+  });
 }
 
 const defaultVendors: AgencyVendor[] = [

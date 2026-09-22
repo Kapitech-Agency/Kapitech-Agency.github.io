@@ -105,6 +105,7 @@ export const AdminInvoicing: React.FC = () => {
   const [paymentAmount, setPaymentAmount] = useState<number>(0);
   const [paymentMethod, setPaymentMethod] = useState<'bank_transfer' | 'credit_card' | 'cash' | 'other'>('bank_transfer');
   const [paymentRef, setPaymentRef] = useState<string>('');
+  const [paymentIdempotencyKey, setPaymentIdempotencyKey] = useState<string>('');
   const [paymentDate, setPaymentDate] = useState<string>(new Date().toISOString().split('T')[0]);
   const [paymentNotes, setPaymentNotes] = useState<string>('');
 
@@ -279,6 +280,7 @@ export const AdminInvoicing: React.FC = () => {
     setPaymentAmount(remaining > 0 ? remaining : inv.total);
     setPaymentMethod('bank_transfer');
     setPaymentRef(`TRX-${Math.floor(100000 + Math.random() * 900000)}`);
+    setPaymentIdempotencyKey(`payment-${inv.id}-${Date.now()}-${Math.random().toString(16).slice(2)}`);
     setPaymentDate(new Date().toISOString().split('T')[0]);
     setPaymentNotes('');
   };
@@ -297,7 +299,8 @@ export const AdminInvoicing: React.FC = () => {
         method: paymentMethod,
         reference: paymentRef,
         recordedBy: session?.user?.name || session?.user?.username || 'Finance Officer',
-        notes: paymentNotes
+        notes: paymentNotes,
+        idempotencyKey: paymentIdempotencyKey
       });
       if (updated) {
         showToast(language === 'id' ? `Pembayaran dicatat untuk ${updated.invoiceNumber}` : `Payment recorded for ${updated.invoiceNumber}`);
@@ -579,8 +582,7 @@ export const AdminInvoicing: React.FC = () => {
                 { value: 'all', label: language === 'id' ? 'Semua Status' : 'All Status' },
                 { value: 'paid', label: language === 'id' ? 'Lunas' : 'Paid' },
                 { value: 'partially_paid', label: language === 'id' ? 'Sebagian (Partial)' : 'Partially Paid' },
-                { value: 'approved', label: language === 'id' ? 'Disetujui' : 'Approved' },
-                { value: 'sent', label: language === 'id' ? 'Terkirim' : 'Sent' },
+                              { value: 'sent', label: language === 'id' ? 'Terkirim' : 'Sent' },
                 { value: 'overdue', label: language === 'id' ? 'Jatuh Tempo' : 'Overdue' },
                 { value: 'draft', label: 'Draft' }
               ]}
@@ -1092,7 +1094,6 @@ export const AdminInvoicing: React.FC = () => {
                       options={[
                         { value: 'draft', label: 'Draft', badge: 'Draft', badgeColor: 'bg-slate-500/10 text-slate-400 border border-slate-500/20' },
                         { value: 'sent', label: 'Sent', badge: 'Sent', badgeColor: 'bg-blue-500/10 text-blue-400 border border-blue-500/20' },
-                        { value: 'paid', label: 'Paid', badge: 'Paid', badgeColor: 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' },
                         { value: 'overdue', label: 'Overdue', badge: 'Overdue', badgeColor: 'bg-red-500/10 text-red-400 border border-red-500/20' }
                       ]}
                       className="w-full"

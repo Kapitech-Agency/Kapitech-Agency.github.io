@@ -31,3 +31,18 @@ test('staging importer validates source duplicates and foreign keys before writi
   assert.match(source, /assertForeignKeys\(db\)/);
   assert.match(source, /documents\.accessUserIds/);
 });
+
+
+test('staging importer preserves and verifies the JSON audit hash chain', async () => {
+  const source = await fs.readFile(path.join(root, 'scripts/postgres-import.ts'), 'utf8');
+
+  assert.match(source, /function computeAuditLogHash/);
+  assert.match(source, /function prepareAuditLogChain/);
+  assert.match(source, /const hasAnyHash = logs\.some/);
+  assert.match(source, /const hasAllHashes = logs\.every/);
+  assert.match(source, /Audit log chain contains partial hash fields/);
+  assert.match(source, /Audit log chain verification failed in migration source/);
+  assert.match(source, /for \(let index = logs\.length - 1; index >= 0; index -= 1\)/);
+  assert.match(source, /const auditLogs = arr\(db, 'auditLogs'\)/);
+  assert.match(source, /for \(let index = auditLogs\.length - 1; index >= 0; index -= 1\)/);
+});

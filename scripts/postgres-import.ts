@@ -62,6 +62,91 @@ function nullableNumber(value: unknown): number | null {
   return Number.isFinite(n) ? n : null;
 }
 
+const CANONICAL_CLIENT_STATUSES = new Set(['active','inactive','completed','lead']);
+const CANONICAL_CRM_STAGES = new Set(['new','contacted','proposal','negotiation','won','lost']);
+const CANONICAL_PRIORITY = new Set(['low','medium','high','urgent']);
+
+function normalizeClientStatus(value: unknown): string {
+  const raw = textValue(value, 'active').trim().toLowerCase();
+  const aliases: Record<string,string> = { prospect: 'lead', on_hold: 'inactive' };
+  const normalized = aliases[raw] || raw;
+  if (!CANONICAL_CLIENT_STATUSES.has(normalized)) throw new Error('Unsupported client status in migration source: ' + raw);
+  return normalized;
+}
+
+function normalizeCrmStage(value: unknown): string {
+  const raw = textValue(value, 'new').trim().toLowerCase();
+  const aliases: Record<string,string> = { lead: 'new', discovery: 'contacted' };
+  const normalized = aliases[raw] || raw;
+  if (!CANONICAL_CRM_STAGES.has(normalized)) throw new Error('Unsupported CRM stage in migration source: ' + raw);
+  return normalized;
+}
+
+function normalizePriority(value: unknown): string | null {
+  const raw = nullableText(value)?.toLowerCase() || null;
+  if (!raw) return null;
+  if (!CANONICAL_PRIORITY.has(raw)) throw new Error('Unsupported priority in migration source: ' + raw);
+  return raw;
+}
+
+function normalizeProposalStatus(value: unknown): string {
+  const raw = textValue(value, 'Draft').trim().toLowerCase();
+  const aliases: Record<string,string> = {
+    draft: 'Draft',
+    'internal review': 'Internal Review',
+    'internal_review': 'Internal Review',
+    sent: 'Sent',
+    approved: 'Approved',
+    rejected: 'Rejected',
+    accepted: 'Accepted'
+  };
+  const normalized = aliases[raw];
+  if (!normalized) throw new Error('Unsupported proposal status in migration source: ' + raw);
+  return normalized;
+}
+
+function normalizeInvoiceStatus(value: unknown): string {
+  const raw = textValue(value, 'draft').trim().toLowerCase();
+  const allowed = new Set(['draft','sent','partially_paid','paid','overdue','cancelled']);
+  if (!allowed.has(raw)) throw new Error('Unsupported invoice status in migration source: ' + raw);
+  return raw;
+}
+
+function normalizeVendorStatus(value: unknown): string {
+  const raw = textValue(value, 'active').trim().toLowerCase();
+  const allowed = new Set(['active','under_review','inactive','blacklisted']);
+  if (!allowed.has(raw)) throw new Error('Unsupported vendor status in migration source: ' + raw);
+  return raw;
+}
+
+function normalizeProjectStatus(value: unknown): string {
+  const raw = textValue(value).trim().toLowerCase();
+  const allowed = new Set(['planning','in_progress','review','completed','on_hold']);
+  if (!allowed.has(raw)) throw new Error('Unsupported project status in migration source: ' + raw);
+  return raw;
+}
+
+function normalizeTaskStatus(value: unknown): string {
+  const raw = textValue(value).trim().toLowerCase();
+  const allowed = new Set(['todo','in_progress','review','done']);
+  if (!allowed.has(raw)) throw new Error('Unsupported task status in migration source: ' + raw);
+  return raw;
+}
+
+function assigneeUserIdFor(row: AnyRecord, users: AnyRecord[]): string | null {
+  const candidate = nullableText(row.assigneeUserId || row.assigneeId || row.assignee);
+  if (!candidate) return null;
+  const matches = users.filter(user => {
+    const id = textValue(user.id).toLowerCase();
+    const username = textValue(user.username).trim().toLowerCase();
+    const name = textValue(user.name).trim().toLowerCase();
+    const probe = candidate.trim().toLowerCase();
+    return probe === id || probe === username || probe === name;
+  });
+  if (matches.length !== 1) throw new Error('Unresolved task assignee in migration source: ' + candidate);
+  return textValue(matches[0].id);
+}
+
 function dateValue(value: unknown): string | null {
   const text = textValue(value).trim();
   if (!text) return null;
@@ -87,6 +172,77 @@ function sha256(raw: string): string {
 
 function sha256Buffer(raw: Buffer): string {
   return crypto.createHash('sha256').update(raw).digest('hex');
+}
+
+function computeAuditLogHash(log: {
+  id: string;
+  timestamp: string;
+  action: string;
+  actor: string;
+  actorRole: string;
+  ip: string;
+  userAgent: string;
+  details: string;
+  severity: string;
+  prevHash: string;
+}): string {
+  return crypto.createHash('sha256').update(JSON.stringify(log), 'utf8').digest('hex');
+}
+
+function prepareAuditLogChain(db: AnyRecord): void {
+  const logs = arr(db, 'auditLogs');
+  if (!logs.length) return;
+
+  const hasAnyHash = logs.some(log => Boolean(log.hash) || Boolean(log.prevHash));
+  const hasAllHashes = logs.every(log => Boolean(log.hash) && Boolean(log.prevHash));
+
+  if (!hasAnyHash) {
+    let previousHash = 'GENESIS';
+    for (let index = logs.length - 1; index >= 0; index -= 1) {
+      const log = logs[index];
+      const normalized = {
+        id: textValue(log.id),
+        timestamp: timestampValue(log.timestamp),
+        action: textValue(log.action),
+        actor: textValue(log.actor, 'anonymous'),
+        actorRole: textValue(log.actorRole, 'visitor'),
+        ip: textValue(log.ip, '127.0.0.1'),
+        userAgent: textValue(log.userAgent, 'unknown'),
+        details: textValue(log.details),
+        severity: textValue(log.severity, 'info'),
+        prevHash: previousHash
+      };
+      log.timestamp = normalized.timestamp;
+      log.prevHash = normalized.prevHash;
+      log.hash = computeAuditLogHash(normalized);
+      previousHash = log.hash;
+    }
+    return;
+  }
+
+  if (!hasAllHashes) throw new Error('Audit log chain contains partial hash fields in migration source.');
+
+  let previousHash = 'GENESIS';
+  for (let index = logs.length - 1; index >= 0; index -= 1) {
+    const log = logs[index];
+    const normalized = {
+      id: textValue(log.id),
+      timestamp: timestampValue(log.timestamp),
+      action: textValue(log.action),
+      actor: textValue(log.actor, 'anonymous'),
+      actorRole: textValue(log.actorRole, 'visitor'),
+      ip: textValue(log.ip, '127.0.0.1'),
+      userAgent: textValue(log.userAgent, 'unknown'),
+      details: textValue(log.details),
+      severity: textValue(log.severity, 'info'),
+      prevHash: previousHash
+    };
+    const expectedHash = computeAuditLogHash(normalized);
+    if (textValue(log.prevHash) !== normalized.prevHash || textValue(log.hash) !== expectedHash) {
+      throw new Error('Audit log chain verification failed in migration source: ' + textValue(log.id));
+    }
+    previousHash = expectedHash;
+  }
 }
 
 function privateDocumentSourceDir(): string {
@@ -203,6 +359,7 @@ function assertForeignKeys(db: AnyRecord): void {
   const clients = new Set(arr(db, 'clients').map(row => row.id).filter(Boolean));
   const projects = new Set(arr(db, 'projects').map(row => row.id).filter(Boolean));
   const deals = new Set(arr(db, 'crmDeals').map(row => row.id).filter(Boolean));
+  const proposals = new Set(arr(db, 'proposals').map(row => row.id).filter(Boolean));
   const tasks = new Set(arr(db, 'tasks').map(row => row.id).filter(Boolean));
   const errors: string[] = [];
 
@@ -223,10 +380,35 @@ function assertForeignKeys(db: AnyRecord): void {
   check('timeLogs', 'userId', users);
   check('invoices', 'clientId', clients);
   check('invoices', 'projectId', projects);
+  check('invoices', 'proposalId', proposals);
   check('expenses', 'recordedByUserId', users);
+  check('expenses', 'projectId', projects);
   check('approvals', 'requesterUserId', users);
   check('documents', 'ownerUserId', users);
   check('notifications', 'recipientUserId', users);
+
+  for (const row of arr(db, 'invoices')) {
+    const invoiceClientId = clientIdFor(row, arr(db, 'clients'));
+    const projectId = nullableText(row.projectId);
+    if (invoiceClientId && projectId) {
+      const project = arr(db, 'projects').find(item => textValue(item.id) === projectId);
+      const projectClientId = project ? nullableText(project.clientId) : null;
+      if (projectClientId && invoiceClientId !== projectClientId) throw new Error('Invoice client/project relationship mismatch in migration source: ' + textValue(row.id));
+    }
+  }
+
+  for (const row of arr(db, 'timeLogs')) {
+    const taskId = nullableText(row.taskId);
+    const projectId = nullableText(row.projectId);
+    if (!taskId && !projectId) throw new Error('Time log must reference a project or task in migration source: ' + textValue(row.id));
+    if (taskId) {
+      const task = arr(db, 'tasks').find(item => textValue(item.id) === taskId);
+      if (!task) throw new Error('Referenced task not found in migration source: ' + taskId);
+      const taskProjectId = nullableText(task.projectId);
+      if (!taskProjectId) throw new Error('Time log task must belong to a project in migration source: ' + textValue(row.id));
+      if (projectId && projectId !== taskProjectId) throw new Error('Time log task/project mismatch in migration source: ' + textValue(row.id));
+    }
+  }
 
   for (const row of arr(db, 'documents')) {
     for (const userId of Array.isArray(row.accessUserIds) ? row.accessUserIds : []) {
@@ -259,6 +441,132 @@ function clientIdFor(row: AnyRecord, clients: AnyRecord[]): string | null {
     return (name && clientName === name) || (company && clientCompany === company);
   });
   return matches.length === 1 ? textValue(matches[0].id) : null;
+}
+
+function clientIdForProjectLinkedRow(row: AnyRecord, clients: AnyRecord[], projects: AnyRecord[]): string | null {
+  const directClientId = clientIdFor(row, clients);
+  const projectId = nullableText(row.projectId);
+  if (!projectId) return directClientId;
+
+  const project = projects.find(item => textValue(item.id) === projectId);
+  if (!project) throw new Error('Referenced project not found in migration source: ' + projectId);
+
+  const projectClientId = nullableText(project.clientId);
+  if (directClientId && projectClientId && directClientId !== projectClientId) {
+    throw new Error('Client/project relationship mismatch in migration source: ' + textValue(row.id));
+  }
+  return directClientId || projectClientId;
+}
+
+function assertNestedIds(db: AnyRecord): void {
+  const proposalItemIds = new Set<string>();
+  const invoiceItemIds = new Set<string>();
+  const paymentIds = new Set<string>();
+  const invoiceNumbers = new Set<string>();
+  const proposalInvoiceIds = new Set<string>();
+
+  for (const row of arr(db, 'proposals')) {
+    for (const item of Array.isArray(row.items) ? row.items : []) {
+      const id = nullableText(item.id);
+      if (!id) throw new Error('Proposal item is missing an id: ' + textValue(row.id));
+      if (proposalItemIds.has(id)) throw new Error('Duplicate proposal item id: ' + id);
+      proposalItemIds.add(id);
+    }
+  }
+  for (const row of arr(db, 'invoices')) {
+    const invoiceNumber = nullableText(row.invoiceNumber);
+    if (invoiceNumber) {
+      if (invoiceNumbers.has(invoiceNumber)) throw new Error('Duplicate invoice number in migration source: ' + invoiceNumber);
+      invoiceNumbers.add(invoiceNumber);
+    }
+    const proposalId = nullableText(row.proposalId);
+    if (proposalId) {
+      if (proposalInvoiceIds.has(proposalId)) throw new Error('Multiple invoices reference the same proposal in migration source: ' + proposalId);
+      proposalInvoiceIds.add(proposalId);
+    }
+
+    for (const item of Array.isArray(row.items) ? row.items : []) {
+      const id = nullableText(item.id);
+      if (!id) throw new Error('Invoice item is missing an id: ' + textValue(row.id));
+      if (invoiceItemIds.has(id)) throw new Error('Duplicate invoice item id: ' + id);
+      invoiceItemIds.add(id);
+    }
+
+    for (const payment of Array.isArray(row.payments) ? row.payments : []) {
+      const id = nullableText(payment.id);
+      if (!id) throw new Error('Invoice payment is missing an id: ' + textValue(row.id));
+      if (paymentIds.has(id)) throw new Error('Duplicate invoice payment id: ' + id);
+      paymentIds.add(id);
+    }
+
+    const items = Array.isArray(row.items) ? row.items : [];
+    if (items.length === 0) throw new Error('Invoice has no line items in migration source: ' + textValue(row.id));
+    const subtotalFromItems = items.reduce((sum, item) => {
+      const quantity = numberValue(item.quantity);
+      const unitPrice = numberValue(item.unitPrice);
+      const amount = numberValue(item.amount, quantity * unitPrice);
+      const expectedAmount = Math.round(quantity * unitPrice);
+      if (quantity <= 0 || unitPrice < 0 || amount < 0 || Math.abs(amount - expectedAmount) > 0.01) {
+        throw new Error('Invalid invoice line item in migration source: ' + textValue(row.id));
+      }
+      return Math.round((sum + amount) * 100) / 100;
+    }, 0);
+    const subtotal = numberValue(row.subtotal);
+    const discountPercent = numberValue(row.discountPercent);
+    const taxPercent = numberValue(row.taxPercent);
+    if (discountPercent < 0 || discountPercent > 100 || taxPercent < 0 || taxPercent > 100) {
+      throw new Error('Invalid invoice financial percentages in migration source: ' + textValue(row.id));
+    }
+    const discountAmount = Math.round(subtotal * discountPercent / 100);
+    const taxableSubtotal = Math.max(0, subtotal - discountAmount);
+    const taxAmount = Math.round(taxableSubtotal * taxPercent / 100);
+    const expectedTotal = taxableSubtotal + taxAmount;
+    if (Math.abs(subtotalFromItems - subtotal) > 0.01 ||
+        Math.abs(numberValue(row.discountAmount) - discountAmount) > 0.01 ||
+        Math.abs(numberValue(row.taxAmount) - taxAmount) > 0.01 ||
+        Math.abs(numberValue(row.total) - expectedTotal) > 0.01) {
+      throw new Error('Invoice financial total mismatch in migration source: ' + textValue(row.id));
+    }
+
+    const total = numberValue(row.total);
+    const paid = numberValue(row.amountPaid);
+    const balance = numberValue(row.balanceDue);
+    const paymentSum = (Array.isArray(row.payments) ? row.payments : [])
+      .reduce((sum, payment) => sum + numberValue(payment.amount), 0);
+    if (Math.abs(paymentSum - paid) > 0.01) {
+      throw new Error('Invoice payment aggregate mismatch in migration source: ' + textValue(row.id));
+    }
+    const expectedBalance = Math.max(total - paymentSum, 0);
+    if (Math.abs(expectedBalance - balance) > 0.01) {
+      throw new Error('Invoice balance aggregate mismatch in migration source: ' + textValue(row.id));
+    }
+    if (normalizeInvoiceStatus(row.status) === 'cancelled' && paymentSum > 0.01) {
+      throw new Error('Cancelled invoice cannot contain payments in migration source: ' + textValue(row.id));
+    }
+  }
+
+  for (const row of arr(db, 'documents')) {
+    const ids = new Set<string>();
+    for (const userId of Array.isArray(row.accessUserIds) ? row.accessUserIds : []) {
+      const id = nullableText(userId);
+      if (id && ids.has(id)) throw new Error('Duplicate document access user id: ' + id);
+      if (id) ids.add(id);
+    }
+  }
+}
+
+function assertApprovalReferences(db: AnyRecord): void {
+  const tables: Record<string, string> = { Invoice: 'invoices', Proposal: 'proposals', Project: 'projects', Expense: 'expenses' };
+  for (const row of arr(db, 'approvals')) {
+    const type = textValue(row.type, 'Invoice');
+    const table = tables[type];
+    if (!table) throw new Error('Unsupported approval type in migration source: ' + type);
+    const ref = nullableText(row.referenceId);
+    if (!ref) throw new Error('Approval reference is missing in migration source: ' + textValue(row.id));
+    if (!arr(db, table).some(item => textValue(item.id) === ref)) {
+      throw new Error('Broken approval reference in migration source: ' + textValue(row.id));
+    }
+  }
 }
 
 function metadata(row: AnyRecord, known: string[]): string {
@@ -334,7 +642,7 @@ async function importCore(client: any, db: AnyRecord, privateDocumentMetadata: M
     await upsert(client, 'clients',
       ['id','name','company','email','phone','industry','status','notes','metadata','created_at','updated_at'],
       [textValue(row.id),textValue(row.name || row.clientName),nullableText(row.company),nullableText(row.email),nullableText(row.phone),
-       nullableText(row.industry),textValue(row.status,'active'),nullableText(row.notes),metadata(row,['id','name','clientName','company','email','phone','industry','status','notes','createdAt','updatedAt']),
+       nullableText(row.industry),normalizeClientStatus(row.status),nullableText(row.notes),metadata(row,['id','name','clientName','company','email','phone','industry','status','notes','createdAt','updatedAt']),
        timestampValue(row.createdAt),timestampValue(row.updatedAt,row.createdAt)]);
   }
   counts.clients = arr(db,'clients').length;
@@ -344,7 +652,7 @@ async function importCore(client: any, db: AnyRecord, privateDocumentMetadata: M
     await upsert(client, 'crm_deals',
       ['id','title','client_id','client_name','company','email','phone','service_pillar','value','stage','priority','probability','owner','expected_close_date','metadata','created_at','updated_at'],
       [textValue(row.id),textValue(row.title),clientIdFor(row,clients),nullableText(row.clientName),nullableText(row.company),nullableText(row.email),
-       nullableText(row.phone),nullableText(row.servicePillar),numberValue(row.value),textValue(row.stage),nullableText(row.priority),
+       nullableText(row.phone),nullableText(row.servicePillar),numberValue(row.value),normalizeCrmStage(row.stage),normalizePriority(row.priority),
        nullableNumber(row.probability),nullableText(row.owner),dateValue(row.expectedCloseDate),
        metadata(row,['id','title','clientId','clientName','company','email','phone','servicePillar','value','stage','priority','probability','owner','expectedCloseDate','createdAt','updatedAt']),
        timestampValue(row.createdAt),timestampValue(row.updatedAt,row.createdAt)]);
@@ -354,20 +662,21 @@ async function importCore(client: any, db: AnyRecord, privateDocumentMetadata: M
   for (const row of arr(db, 'projects')) {
     await upsert(client, 'projects',
       ['id','client_id','name','description','status','owner','budget','start_date','end_date','metadata','created_at','updated_at'],
-      [textValue(row.id),nullableText(row.clientId),textValue(row.name || row.title),nullableText(row.description),textValue(row.status),
+      [textValue(row.id),nullableText(row.clientId),textValue(row.name || row.title),nullableText(row.description),normalizeProjectStatus(row.status),
        nullableText(row.owner),numberValue(row.budget),dateValue(row.startDate),dateValue(row.endDate),
        metadata(row,['id','clientId','name','title','description','status','owner','budget','startDate','endDate','createdAt','updatedAt']),
        timestampValue(row.createdAt),timestampValue(row.updatedAt,row.createdAt)]);
   }
   counts.projects = arr(db,'projects').length;
 
+  const projects = arr(db,'projects');
   for (const row of arr(db, 'proposals')) {
     await upsert(client, 'proposals',
       ['id','proposal_number','title','client_id','deal_id','project_id','subtotal','discount','tax_percent','tax','total','currency',
        'validity_period','payment_terms','owner','status','notes','created_date','sent_date','approved_date','metadata','created_at','updated_at'],
-      [textValue(row.id),nullableText(row.proposalNumber),textValue(row.title),clientIdFor(row,clients),nullableText(row.dealId),nullableText(row.projectId),
+      [textValue(row.id),nullableText(row.proposalNumber),textValue(row.title),clientIdForProjectLinkedRow(row,clients,projects),nullableText(row.dealId),nullableText(row.projectId),
        numberValue(row.subtotal),numberValue(row.discount),numberValue(row.taxPercent),numberValue(row.tax),numberValue(row.total),textValue(row.currency,'IDR'),
-       nullableText(row.validityPeriod),nullableText(row.paymentTerms),nullableText(row.owner),textValue(row.status),nullableText(row.notes),
+       nullableText(row.validityPeriod),nullableText(row.paymentTerms),nullableText(row.owner),normalizeProposalStatus(row.status),nullableText(row.notes),
        dateValue(row.createdDate),dateValue(row.sentDate),dateValue(row.approvedDate),metadata(row,['id','proposalNumber','title','clientId','clientName','company','dealId','projectId','items','subtotal','discount','taxPercent','tax','total','currency','validityPeriod','paymentTerms','owner','status','notes','createdDate','sentDate','approvedDate','createdAt','updatedAt']),
        timestampValue(row.createdAt),timestampValue(row.updatedAt,row.createdAt)]);
     for (const item of Array.isArray(row.items) ? row.items : []) {
@@ -385,29 +694,43 @@ async function importCore(client: any, db: AnyRecord, privateDocumentMetadata: M
   for (const row of arr(db, 'tasks')) {
     await upsert(client, 'tasks',
       ['id','project_id','title','description','status','priority','assignee_user_id','due_date','metadata','created_at','updated_at'],
-      [textValue(row.id),nullableText(row.projectId),textValue(row.title),nullableText(row.description),textValue(row.status),
-       nullableText(row.priority),nullableText(row.assigneeUserId || row.assigneeId),dateValue(row.dueDate),
+      [textValue(row.id),nullableText(row.projectId),textValue(row.title),nullableText(row.description),normalizeTaskStatus(row.status),
+       normalizePriority(row.priority),assigneeUserIdFor(row, arr(db,'users')),dateValue(row.dueDate),
        metadata(row,['id','projectId','title','description','status','priority','assigneeUserId','assigneeId','dueDate','createdAt','updatedAt']),
        timestampValue(row.createdAt),timestampValue(row.updatedAt,row.createdAt)]);
   }
   counts.tasks = arr(db,'tasks').length;
 
+  const taskRows = arr(db,'tasks');
   for (const row of arr(db, 'timeLogs')) {
+    const timeLogTaskId = nullableText(row.taskId);
+    let timeLogProjectId = nullableText(row.projectId);
+    if (timeLogTaskId) {
+      const task = taskRows.find(item => textValue(item.id) === timeLogTaskId);
+      if (!task) throw new Error('Referenced task not found in migration source: ' + timeLogTaskId);
+      const taskProjectId = nullableText(task.projectId);
+      if (timeLogProjectId && taskProjectId && timeLogProjectId !== taskProjectId) {
+        throw new Error('Time log task/project mismatch in migration source: ' + textValue(row.id));
+      }
+      if (!timeLogProjectId) timeLogProjectId = taskProjectId;
+    }
     await upsert(client, 'time_logs',
-      ['id','project_id','task_id','user_id','hours','description','logged_at','created_at'],
-      [textValue(row.id),nullableText(row.projectId),nullableText(row.taskId),nullableText(row.userId),
-       numberValue(row.hours),nullableText(row.description),timestampValue(row.loggedAt || row.date,row.createdAt),timestampValue(row.createdAt,row.loggedAt || row.date)]);
+      ['id','project_id','task_id','user_id','hours','description','logged_at','created_at','metadata'],
+      [textValue(row.id),timeLogProjectId,timeLogTaskId,nullableText(row.userId),
+       numberValue(row.hours),nullableText(row.description),timestampValue(row.loggedAt || row.date,row.createdAt),
+       timestampValue(row.createdAt,row.loggedAt || row.date),
+       metadata(row, ['id','projectId','taskId','userId','user','durationMinutes','hours','billable','date','loggedAt','notes','description','createdAt'])]);
   }
   counts.timeLogs = arr(db,'timeLogs').length;
 
   for (const row of arr(db, 'invoices')) {
     await upsert(client, 'invoices',
-      ['id','invoice_number','client_id','project_id','type','subtotal','discount_percent','discount_amount','tax_percent','tax_amount','total','amount_paid','balance_due','currency','status','issue_date','due_date','paid_date','notes','payment_terms','metadata','created_at','updated_at'],
-      [textValue(row.id),nullableText(row.invoiceNumber),clientIdFor(row,clients),nullableText(row.projectId),textValue(row.type,'invoice'),
+      ['id','invoice_number','proposal_id','client_id','project_id','type','subtotal','discount_percent','discount_amount','tax_percent','tax_amount','total','amount_paid','balance_due','currency','status','issue_date','due_date','paid_date','notes','payment_terms','metadata','created_at','updated_at'],
+      [textValue(row.id),nullableText(row.invoiceNumber),nullableText(row.proposalId),clientIdFor(row,clients),nullableText(row.projectId),textValue(row.type,'invoice'),
        numberValue(row.subtotal),numberValue(row.discountPercent),numberValue(row.discountAmount),numberValue(row.taxPercent),numberValue(row.taxAmount),
-       numberValue(row.total),numberValue(row.amountPaid),numberValue(row.balanceDue),textValue(row.currency,'IDR'),textValue(row.status),
+       numberValue(row.total),numberValue(row.amountPaid),numberValue(row.balanceDue),textValue(row.currency,'IDR'),normalizeInvoiceStatus(row.status),
        dateValue(row.issueDate),dateValue(row.dueDate),dateValue(row.paidDate),nullableText(row.notes),nullableText(row.paymentTerms),
-       metadata(row,['id','invoiceNumber','clientId','clientName','clientCompany','clientEmail','clientPhone','projectId','type','items','subtotal','discountPercent','discountAmount','taxPercent','taxAmount','total','amountPaid','balanceDue','currency','status','issueDate','dueDate','paidDate','notes','paymentTerms','payments','createdAt','updatedAt']),
+       metadata(row,['id','invoiceNumber','proposalId','clientId','clientName','clientCompany','clientEmail','clientPhone','projectId','type','items','subtotal','discountPercent','discountAmount','taxPercent','taxAmount','total','amountPaid','balanceDue','currency','status','issueDate','dueDate','paidDate','notes','paymentTerms','payments','createdAt','updatedAt']),
        timestampValue(row.createdAt),timestampValue(row.updatedAt,row.createdAt)]);
     for (const item of Array.isArray(row.items) ? row.items : []) {
       await client.query(
@@ -433,10 +756,11 @@ async function importCore(client: any, db: AnyRecord, privateDocumentMetadata: M
 
   for (const row of arr(db, 'expenses')) {
     await upsert(client, 'expenses',
-      ['id','type','category','description','amount','expense_date','recurring_interval','recorded_by_user_id','recorded_by','metadata','created_at'],
-      [textValue(row.id),textValue(row.type),textValue(row.category),textValue(row.description),numberValue(row.amount),
-       dateValue(row.date || row.expenseDate) || '1970-01-01',nullableText(row.recurringInterval),nullableText(row.recordedByUserId),
-       nullableText(row.recordedBy),metadata(row,['id','type','category','description','amount','date','expenseDate','recurringInterval','recordedByUserId','recordedBy','createdAt']),
+      ['id','type','category','description','amount','currency','expense_date','recurring_interval','project_id','recorded_by_user_id','recorded_by','status','version','idempotency_key','metadata','created_at'],
+      [textValue(row.id),textValue(row.type),textValue(row.category),textValue(row.description),numberValue(row.amount),textValue(row.currency,'IDR'),
+       dateValue(row.date || row.expenseDate) || '1970-01-01',nullableText(row.recurringInterval),nullableText(row.projectId),nullableText(row.recordedByUserId),
+       nullableText(row.recordedBy),textValue(row.status,'posted'),Number(row.version || 1),nullableText(row.idempotencyKey),
+       metadata(row,['id','type','category','description','amount','currency','date','expenseDate','recurringInterval','projectId','recordedByUserId','recordedBy','status','version','idempotencyKey','createdAt']),
        timestampValue(row.createdAt)]);
   }
   counts.expenses = arr(db,'expenses').length;
@@ -455,7 +779,7 @@ async function importCore(client: any, db: AnyRecord, privateDocumentMetadata: M
     await upsert(client, 'vendors',
       ['id','name','category','contact_person','email','phone','payment_terms','status','monthly_spend','notes','metadata','created_at'],
       [textValue(row.id),textValue(row.name),nullableText(row.category),nullableText(row.contactPerson),nullableText(row.email),nullableText(row.phone),
-       nullableText(row.paymentTerms),textValue(row.status,'active'),numberValue(row.monthlySpend),nullableText(row.notes),
+       nullableText(row.paymentTerms),normalizeVendorStatus(row.status),numberValue(row.monthlySpend),nullableText(row.notes),
        metadata(row,['id','name','category','contactPerson','email','phone','paymentTerms','status','monthlySpend','notes','createdAt']),
        timestampValue(row.createdAt)]);
   }
@@ -559,7 +883,9 @@ async function importCore(client: any, db: AnyRecord, privateDocumentMetadata: M
   );
   counts.notificationSettings = 1;
 
-  for (const row of arr(db, 'auditLogs')) {
+  const auditLogs = arr(db, 'auditLogs');
+  for (let index = auditLogs.length - 1; index >= 0; index -= 1) {
+    const row = auditLogs[index];
     await upsert(client, 'audit_logs',
       ['id','timestamp','action','actor','actor_role','actor_user_id','ip','user_agent','details','severity','prev_hash','hash'],
       [textValue(row.id),timestampValue(row.timestamp),textValue(row.action),textValue(row.actor),textValue(row.actorRole),
@@ -591,6 +917,9 @@ async function main(): Promise<void> {
   const db = JSON.parse(decrypt(raw)) as AnyRecord;
   assertNoDuplicateIds(db);
   assertForeignKeys(db);
+  assertNestedIds(db);
+  assertApprovalReferences(db);
+  prepareAuditLogChain(db);
 
   const sourceSha256 = sha256(raw);
   const localCounts = Object.fromEntries(CORE_KEYS.map(key => [key, arr(db,key).length]));

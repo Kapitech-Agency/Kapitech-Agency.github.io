@@ -1,6 +1,7 @@
 import type { PoolClient } from 'pg';
 import type { StoredSession, StoredUser } from './db.ts';
-import { getPostgresPool } from './postgres.ts';
+import { getPostgresPool, withPostgresTransaction } from './postgres.ts';
+import { postgresAuditLogRepository, type AuditEntry } from './postgres-audit-log-repository.ts';
 import { decryptSecret, encryptOptionalSecret, isEncryptedSecret } from './secret-crypto.ts';
 
 type UserRow = {
@@ -147,12 +148,19 @@ export class PostgresAuthRepository {
     return result.rowCount ?? 0;
   }
 
-  async updateUserPassword(userId: string, passwordHash: string, salt: string, passwordAlgorithm: string): Promise<boolean> {
-    const result = await getPostgresPool().query(
-      'UPDATE users SET password_hash = $2, salt = $3, password_algorithm = $4 WHERE id = $1',
-      [userId, passwordHash, salt, passwordAlgorithm]
-    );
-    return result.rowCount === 1;
+  async updateUserPassword(userId: string, passwordHash: string, salt: string, passwordAlgorithm: string, options?: { exceptTokenHash?: string; audit?: AuditEntry }): Promise<boolean> {
+    return withPostgresTransaction(async client => {
+      const result = await client.query(
+        'UPDATE users SET password_hash = $2, salt = $3, password_algorithm = $4 WHERE id = $1',
+        [userId, passwordHash, salt, passwordAlgorithm]
+      );
+      if (result.rowCount !== 1) return false;
+      if (options?.exceptTokenHash !== undefined) {
+        await client.query('DELETE FROM sessions WHERE user_id = $1 AND token_hash <> $2', [userId, options.exceptTokenHash]);
+      }
+      if (options?.audit) await postgresAuditLogRepository.appendWithinTransaction(client, options.audit);
+      return true;
+    });
   }
 
   async touchUserLastLogin(userId: string, lastLogin: string): Promise<boolean> {
@@ -165,16 +173,28 @@ export class PostgresAuthRepository {
   async updateUserMfa(userId: string, values: {
     mfaEnabled: boolean; mfaSecret: string | null; mfaPendingSecret?: string | null;
     mfaPendingSecretCreatedAt?: string | null; mfaRecoveryCodeHashes: string[];
-  }): Promise<boolean> {
-    const result = await getPostgresPool().query(
-      `UPDATE users SET
-        mfa_enabled = $2, mfa_secret = $3, mfa_pending_secret = $4,
-        mfa_pending_secret_created_at = $5, mfa_recovery_code_hashes = $6
-       WHERE id = $1`,
-      [userId, values.mfaEnabled, values.mfaSecret, values.mfaPendingSecret ?? null,
-       values.mfaPendingSecretCreatedAt ?? null, JSON.stringify(values.mfaRecoveryCodeHashes)]
-    );
-    return result.rowCount === 1;
+  }, options?: { revokeAllSessions?: boolean; exceptTokenHash?: string; audit?: AuditEntry }): Promise<boolean> {
+    return withPostgresTransaction(async client => {
+      const result = await client.query(
+        `UPDATE users SET
+          mfa_enabled = $2, mfa_secret = $3, mfa_pending_secret = $4,
+          mfa_pending_secret_created_at = $5, mfa_recovery_code_hashes = $6
+         WHERE id = $1`,
+        [userId, values.mfaEnabled, encryptOptionalSecret(values.mfaSecret), encryptOptionalSecret(values.mfaPendingSecret),
+         values.mfaPendingSecretCreatedAt ?? null, JSON.stringify(values.mfaRecoveryCodeHashes)]
+      );
+      if (result.rowCount !== 1) return false;
+      if (options?.revokeAllSessions) {
+        await client.query(
+          options.exceptTokenHash
+            ? 'DELETE FROM sessions WHERE user_id = $1 AND token_hash <> $2'
+            : 'DELETE FROM sessions WHERE user_id = $1',
+          options.exceptTokenHash ? [userId, options.exceptTokenHash] : [userId]
+        );
+      }
+      if (options?.audit) await postgresAuditLogRepository.appendWithinTransaction(client, options.audit);
+      return true;
+    });
   }
 
   async migrateLegacyMfaSecrets(): Promise<number> {
@@ -211,54 +231,31 @@ export class PostgresAuthRepository {
     return result.rows.map(mapUser);
   }
 
-  async deleteUser(userId: string): Promise<boolean> {
-    return withClient(async client => {
-      await client.query('BEGIN');
-      try {
-        await client.query('DELETE FROM sessions WHERE user_id = $1', [userId]);
-        const result = await client.query(
-          'DELETE FROM users WHERE id = $1 AND stakeholder_type <> $2 AND username <> $3',
-          [userId, 'Master', 'admin']
-        );
-
-        if (result.rowCount !== 1) {
-          await client.query('ROLLBACK');
-          return false;
-        }
-
-        await client.query('COMMIT');
-        return true;
-      } catch (error) {
-        await client.query('ROLLBACK');
-        throw error;
-      }
+  async deleteUser(userId: string, audit?: AuditEntry): Promise<boolean> {
+    return withPostgresTransaction(async client => {
+      const result = await client.query(
+        'DELETE FROM users WHERE id = $1 AND stakeholder_type <> $2 AND username <> $3 RETURNING id',
+        [userId, 'Master', 'admin']
+      );
+      if (result.rowCount !== 1) return false;
+      await client.query('DELETE FROM sessions WHERE user_id = $1', [userId]);
+      if (audit) await postgresAuditLogRepository.appendWithinTransaction(client, audit);
+      return true;
     });
   }
 
-  async updateUserPolicy(userId: string, name: string, role: string, stakeholderType: string, permissions: StoredUser['permissions'], division: string, status: StoredUser['status']): Promise<StoredUser | null> {
-    return withClient(async client => {
-      await client.query('BEGIN');
-      try {
-        const result = await client.query<UserRow>(
-          `UPDATE users SET name=$2, role=$3, stakeholder_type=$4, permissions=$5, division=$6, status=$7 WHERE id=$1 RETURNING *`,
-          [userId, name, role, stakeholderType, JSON.stringify(permissions), division, status]
-        );
-
-        if (!result.rows[0]) {
-          await client.query('ROLLBACK');
-          return null;
-        }
-
-        if (status === 'suspended') {
-          await client.query('DELETE FROM sessions WHERE user_id = $1', [userId]);
-        }
-
-        await client.query('COMMIT');
-        return mapUser(result.rows[0]);
-      } catch (error) {
-        await client.query('ROLLBACK');
-        throw error;
+  async updateUserPolicy(userId: string, name: string, role: string, stakeholderType: string, permissions: StoredUser['permissions'], division: string, status: StoredUser['status'], audit?: AuditEntry): Promise<StoredUser | null> {
+    return withPostgresTransaction(async client => {
+      const result = await client.query<UserRow>(
+        `UPDATE users SET name=$2, role=$3, stakeholder_type=$4, permissions=$5, division=$6, status=$7 WHERE id=$1 RETURNING *`,
+        [userId, name, role, stakeholderType, JSON.stringify(permissions), division, status]
+      );
+      if (!result.rows[0]) return null;
+      if (status === 'suspended') {
+        await client.query('DELETE FROM sessions WHERE user_id = $1', [userId]);
       }
+      if (audit) await postgresAuditLogRepository.appendWithinTransaction(client, audit);
+      return mapUser(result.rows[0]);
     });
   }
 
@@ -266,18 +263,21 @@ export class PostgresAuthRepository {
     await getPostgresPool().query('DELETE FROM sessions WHERE user_id = $1', [userId]);
   }
 
-  async createUser(user: StoredUser): Promise<void> {
-    await getPostgresPool().query(
-      `INSERT INTO users
-       (id,name,username,email,password_hash,salt,password_algorithm,role,stakeholder_type,permissions,
-        mfa_enabled,mfa_secret,mfa_pending_secret,mfa_pending_secret_created_at,mfa_recovery_code_hashes,
-        division,status,last_login,created_at)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19)`,
-      [user.id,user.name,user.username,user.email,user.passwordHash,user.salt,user.passwordAlgorithm || 'pbkdf2-sha512',
-       user.role,user.stakeholderType,JSON.stringify(user.permissions),user.mfaEnabled,encryptOptionalSecret(user.mfaSecret),
-       encryptOptionalSecret(user.mfaPendingSecret),user.mfaPendingSecretCreatedAt || null,JSON.stringify(user.mfaRecoveryCodeHashes || []),
-       user.division,user.status,user.lastLogin || null,user.createdAt]
-    );
+  async createUser(user: StoredUser, audit?: AuditEntry): Promise<void> {
+    return withPostgresTransaction(async client => {
+      await client.query(
+        `INSERT INTO users
+         (id,name,username,email,password_hash,salt,password_algorithm,role,stakeholder_type,permissions,
+          mfa_enabled,mfa_secret,mfa_pending_secret,mfa_pending_secret_created_at,mfa_recovery_code_hashes,
+          division,status,last_login,created_at)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19)`,
+        [user.id,user.name,user.username,user.email,user.passwordHash,user.salt,user.passwordAlgorithm || 'pbkdf2-sha512',
+         user.role,user.stakeholderType,JSON.stringify(user.permissions),user.mfaEnabled,encryptOptionalSecret(user.mfaSecret),
+         encryptOptionalSecret(user.mfaPendingSecret),user.mfaPendingSecretCreatedAt || null,JSON.stringify(user.mfaRecoveryCodeHashes || []),
+         user.division,user.status,user.lastLogin || null,user.createdAt]
+      );
+      if (audit) await postgresAuditLogRepository.appendWithinTransaction(client, audit);
+    });
   }
 }
 
