@@ -1578,7 +1578,7 @@ apiRouter.post('/clients', requireAuth, requirePermission('canManageClients'), a
     website,
     location: cleanText(clientData.location, 160),
     industry: cleanText(clientData.industry, 160),
-    status: clientData.status ? String(clientData.status) : 'prospect',
+    status: clientData.status === 'prospect' ? 'lead' : clientData.status === 'on_hold' ? 'inactive' : clientData.status ? String(clientData.status) : 'lead',
     totalSpend: totalSpend ?? 0,
     projectsCount: projectsCount ?? 0,
     contactPersonRole: cleanText(clientData.contactPersonRole, 160),
