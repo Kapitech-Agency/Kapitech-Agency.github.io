@@ -103,7 +103,7 @@ export class PostgresProjectRepository {
     return project.rows[0] ? mapProject(project.rows[0], (tasks.rows as Row[]).map(mapTask)) : null;
   }
 
-  async create(project: AgencyProject): Promise<AgencyProject> {
+  async create(project: AgencyProject, audit?: AuditEntry): Promise<AgencyProject> {
     return withPostgresTransaction(async client => {
       if (project.clientId) {
         const linkedClient = await client.query('SELECT id FROM clients WHERE id = $1 FOR SHARE', [project.clientId]);
@@ -116,6 +116,7 @@ export class PostgresProjectRepository {
          project.startDate || null, project.targetEndDate || null, JSON.stringify(projectMetadata(project)), project.createdAt, project.updatedAt]
       );
       for (const task of project.tasks || []) await this.insertTask(client, project.id, task);
+      if (audit) await postgresAuditLogRepository.appendWithinTransaction(client, audit);
       return project;
     });
   }
