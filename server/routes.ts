@@ -2295,10 +2295,9 @@ apiRouter.post('/finance/expenses', requireAuth, requirePermission('canManageInv
   };
   if (getDataSourceMode() === 'postgres') {
     try {
-      const expense = await postgresExpenseRepository.create(newExpense);
+      const expense = await postgresExpenseRepository.create(newExpense, makeAuditEntry(req, 'EXPENSE_CREATED', `Created expense "${newExpense.description || newExpense.id}" (${newExpense.currency} ${newExpense.amount}).`));
       const replayed = expense.__idempotentReplay === true;
       if (replayed) delete expense.__idempotentReplay;
-      if (!replayed) recordAuditLog({ action:'EXPENSE_CREATED', actor:req.user!.username, actorRole:req.user!.role, ip:req.ip, userAgent:req.headers['user-agent'] as string, details:`Created expense "${expense.description || expense.id}" (${expense.currency} ${expense.amount}).`, severity:'info' });
       res.json({ success:true, expense, replayed });
     } catch (error) {
       if (error instanceof ExpenseProjectNotFoundError) { res.status(409).json({ success:false,error:error.message }); return; }
@@ -2319,8 +2318,7 @@ apiRouter.delete('/finance/expenses/:id', requireAuth, requirePermission('canMan
   const expectedVersion=req.body?.version!==undefined?Number(req.body.version):undefined;
   if(getDataSourceMode()==='postgres'){
     try{
-      const expense=await postgresExpenseRepository.void(id,Number.isFinite(expectedVersion)?expectedVersion:undefined);
-      recordAuditLog({action:'EXPENSE_VOIDED',actor:req.user!.username,actorRole:req.user!.role,ip:req.ip,userAgent:req.headers['user-agent'] as string,details:`Voided expense "${expense.description || id}" (${expense.currency} ${expense.amount}).`,severity:'warning'});
+      const expense=await postgresExpenseRepository.void(id,Number.isFinite(expectedVersion)?expectedVersion:undefined,makeAuditEntry(req,'EXPENSE_VOIDED',`Voided expense "${id}".`,'warning'));
       res.json({success:true,message:'Expense voided.',expense});
     }catch(error){
       if(error instanceof ExpenseNotFoundError){res.status(404).json({success:false,error:error.message});return;}
