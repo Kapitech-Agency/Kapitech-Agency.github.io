@@ -189,7 +189,6 @@ test('PostgreSQL delivery workflow preserves client relation across project, tas
   const assigneeUserId = 'ci-delivery-assignee-' + suffix;
   const assigneeUsername = 'ci-delivery-assignee-' + suffix;
   const now = new Date().toISOString();
-  let created = false;
 
   try {
     await clientRepository.create({
@@ -276,7 +275,6 @@ test('PostgreSQL delivery workflow preserves client relation across project, tas
       updatedAt: now
     });
 
-    created = true;
     assert.equal(project.clientId, clientId);
     assert.equal(project.tasks.length, 1);
     assert.equal(project.tasks[0].id, taskId);
