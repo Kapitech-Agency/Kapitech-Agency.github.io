@@ -264,7 +264,7 @@ export class PostgresCrmDealRepository {
 
       await db.query(
         `INSERT INTO invoices (id,invoice_number,client_id,project_id,type,subtotal,discount_percent,discount_amount,tax_percent,tax_amount,total,amount_paid,balance_due,currency,status,issue_date,due_date,notes,payment_terms,metadata,created_at,updated_at)
-         VALUES ($1,$2,$3,$4,'invoice',$5,0,0,11,$6,$7,0,$7,'IDR','sent',$8,$9,$10,$11,$12::jsonb,$8,$8)`,
+         VALUES ($1,$2,$3,$4,'invoice',$5,0,0,11,$6,$7,0,$7,'IDR','sent',$8,$9,$10,$11,$12::jsonb,$13,$13)`,
         [
           invoiceId,
           invoiceNumber,
@@ -277,7 +277,8 @@ export class PostgresCrmDealRepository {
           new Date(Date.now()+14*86400000).toISOString().slice(0,10),
           `50% kickoff retainer for CRM deal ${deal.id}.`,
           'Bank Transfer Net 14',
-          JSON.stringify({ crmDealId: deal.id, leadId: deal.id, auditTrail: [{ action:'created', timestamp:now, user:actor.username }] })
+          JSON.stringify({ crmDealId: deal.id, leadId: deal.id, auditTrail: [{ action:'created', timestamp:now, user:actor.username }] }),
+          now
         ]
       );
 
