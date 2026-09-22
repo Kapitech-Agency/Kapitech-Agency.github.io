@@ -94,9 +94,12 @@ export class PostgresVendorRepository {
     }
   }
 
-  async delete(id: string): Promise<boolean> {
-    const result = await getPostgresPool().query('DELETE FROM vendors WHERE id = $1', [id]);
-    return result.rowCount === 1;
+  async delete(id: string, audit?: AuditEntry): Promise<boolean> {
+    return withPostgresTransaction(async client => {
+      const result = await client.query('DELETE FROM vendors WHERE id = $1', [id]);
+      if (audit) await postgresAuditLogRepository.appendWithinTransaction(client, audit);
+      return result.rowCount === 1;
+    });
   }
 }
 
