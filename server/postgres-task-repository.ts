@@ -29,6 +29,16 @@ function mapTask(row: Row): Record<string, unknown> {
   };
 }
 
+async function resolveAssigneeUserId(client: { query: (text: string, values?: unknown[]) => Promise<any> }, value: unknown): Promise<string | null> {
+  const candidate = String(value ?? '').trim();
+  if (!candidate) return null;
+  const result = await client.query(
+    'SELECT id FROM users WHERE id = $1 OR lower(username) = lower($1) OR lower(name) = lower($1) LIMIT 1',
+    [candidate]
+  );
+  return result.rows[0]?.id ? String(result.rows[0].id) : null;
+}
+
 function taskMetadata(task: Record<string, unknown>): Record<string, unknown> {
   const {
     id, title, description, projectId, projectName, assignee, reporter, priority, status, dueDate,
@@ -56,12 +66,13 @@ export class PostgresTaskRepository {
         const project = await client.query('SELECT id FROM projects WHERE id = $1 LIMIT 1', [projectId]);
         if (!project.rows[0]) throw new Error('Project not found.');
       }
+      const assigneeUserId = await resolveAssigneeUserId(client, task.assignee);
       await client.query(
         `INSERT INTO tasks (id,project_id,title,description,status,priority,assignee_user_id,due_date,metadata,created_at,updated_at)
          VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)`,
         [
           task.id, projectId, task.title, task.description || null, task.status, task.priority || 'medium',
-          typeof task.assignee === 'string' && task.assignee ? task.assignee : null, task.dueDate || null, JSON.stringify(taskMetadata(task)), now, task.updatedAt || now
+          assigneeUserId, task.dueDate || null, JSON.stringify(taskMetadata(task)), now, task.updatedAt || now
         ]
       );
       const result = await client.query('SELECT * FROM tasks WHERE id = $1', [task.id]);
@@ -84,12 +95,13 @@ export class PostgresTaskRepository {
         const project = await client.query('SELECT id FROM projects WHERE id = $1 LIMIT 1', [projectId]);
         if (!project.rows[0]) throw new Error('Project not found.');
       }
+      const assigneeUserId = await resolveAssigneeUserId(client, next.assignee);
       await client.query(
         `UPDATE tasks
          SET project_id=$2,title=$3,description=$4,status=$5,priority=$6,assignee_user_id=$7,due_date=$8,metadata=$9,updated_at=$10
          WHERE id=$1`,
         [id, projectId, next.title, next.description || null, next.status, next.priority || 'medium',
-         typeof next.assignee === 'string' && next.assignee ? next.assignee : null, next.dueDate || null, JSON.stringify(taskMetadata(next)), next.updatedAt]
+         assigneeUserId, next.dueDate || null, JSON.stringify(taskMetadata(next)), next.updatedAt]
       );
       const result = await client.query('SELECT * FROM tasks WHERE id = $1', [id]);
       if (audit) await postgresAuditLogRepository.appendWithinTransaction(client, audit);
