@@ -138,10 +138,32 @@ export class PostgresProjectRepository {
   }
 
   async delete(id: string): Promise<boolean> {
-    const pool=getPostgresPool();
-    const r=await pool.query(`SELECT (SELECT COUNT(*)::int FROM proposals WHERE project_id=$1) AS proposals,(SELECT COUNT(*)::int FROM invoices WHERE project_id=$1) AS invoices,(SELECT COUNT(*)::int FROM tasks WHERE project_id=$1) AS tasks,(SELECT COUNT(*)::int FROM time_logs WHERE project_id=$1) AS time_logs`,[id]);
-    if(Object.values(r.rows[0]||{}).some(v=>Number(v)>0))throw new Error('PROJECT_HAS_BUSINESS_RECORDS');
-    const result=await pool.query('DELETE FROM projects WHERE id=$1',[id]);return result.rowCount===1;
+    const client = await getPostgresPool().connect();
+    try {
+      await client.query('BEGIN');
+      const locked = await client.query('SELECT id FROM projects WHERE id=$1 FOR UPDATE',[id]);
+      if (!locked.rows[0]) { await client.query('ROLLBACK'); return false; }
+      const references = await client.query(
+        `SELECT
+          (SELECT COUNT(*)::int FROM proposals WHERE project_id=$1) AS proposals,
+          (SELECT COUNT(*)::int FROM invoices WHERE project_id=$1) AS invoices,
+          (SELECT COUNT(*)::int FROM tasks WHERE project_id=$1) AS tasks,
+          (SELECT COUNT(*)::int FROM time_logs WHERE project_id=$1) AS time_logs`,
+        [id]
+      );
+      if (Object.values(references.rows[0] || {}).some(v=>Number(v)>0)) {
+        await client.query('ROLLBACK');
+        throw new Error('PROJECT_HAS_BUSINESS_RECORDS');
+      }
+      const result=await client.query('DELETE FROM projects WHERE id=$1',[id]);
+      await client.query('COMMIT');
+      return result.rowCount===1;
+    } catch (error) {
+      try { await client.query('ROLLBACK'); } catch {}
+      throw error;
+    } finally {
+      client.release();
+    }
   }
 
   private async insertTask(client: { query: (text: string, values?: unknown[]) => Promise<any> }, projectId: string, task: ProjectTask): Promise<void> {
