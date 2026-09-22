@@ -151,10 +151,11 @@ export class PostgresProjectRepository {
           if (existingTask) {
             const mapped = mapTask(existingTask);
             const merged = { ...mapped, ...task, id: taskId };
+            const assigneeUserId = await resolveAssigneeUserId(client, merged.assignedTo);
             await client.query(
               `UPDATE tasks SET title=$2,description=$3,status=$4,priority=$5,assignee_user_id=$6,due_date=$7,metadata=$8,updated_at=$9 WHERE id=$1 AND project_id=$10`,
               [taskId, merged.title, merged.description || null, merged.status, merged.priority || 'medium',
-               merged.assignedTo || null, merged.dueDate || null, JSON.stringify({ ...taskMetadata(merged), assignedTo: merged.assignedTo || '' }),
+               assigneeUserId, merged.dueDate || null, JSON.stringify({ ...taskMetadata(merged), assignedTo: merged.assignedTo || '' }),
                new Date().toISOString(), id]
             );
           } else {
