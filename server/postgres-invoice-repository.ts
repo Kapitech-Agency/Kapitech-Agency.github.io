@@ -94,7 +94,36 @@ export class PostgresInvoiceRepository {
       const duplicate = await db.query("SELECT id FROM invoice_payments WHERE invoice_id=$1 AND metadata->>'idempotencyKey'=$2 LIMIT 1",[id,String(payment.idempotencyKey)]);
       if (duplicate.rows[0]) { const replayed = await this.findByIdTx(db,id); return replayed ? { ...replayed, __idempotentReplay: true } : replayed; }
     }
-    if(current.status==='cancelled')throw new Error('Cancelled invoices cannot receive payments.');if(Number(payment.amount)<=0||Number(payment.amount)>current.balanceDue)throw new Error('Payment exceeds the current invoice balance.');await db.query('INSERT INTO invoice_payments (id,invoice_id,amount,paid_at,method,reference,metadata) VALUES ($1,$2,$3,$4,$5,$6,$7)',[payment.id,id,payment.amount,payment.date,payment.method,payment.reference||null,JSON.stringify({recordedBy:payment.recordedBy||payment.userId||'system',notes:payment.notes||'',idempotencyKey:payment.idempotencyKey||undefined})]);const totalPaid=current.amountPaid+Number(payment.amount),balance=Math.max(0,current.total-totalPaid),status=balance<=0?'paid':'partially_paid';const auditTrail=[...current.auditTrail,{action:'payment_recorded',timestamp:new Date().toISOString(),user:payment.recordedBy||payment.userId||'system',note:payment.reference||payment.notes||''}];await db.query('UPDATE invoices SET amount_paid=$2,balance_due=$3,status=$4,metadata=$5,updated_at=$6 WHERE id=$1',[id,totalPaid,balance,status,JSON.stringify({...metadata(current),auditTrail:auditTrail}),new Date().toISOString()]);if(audit)await postgresAuditLogRepository.appendWithinTransaction(db,audit);return this.findByIdTx(db,id);});}
+    if(current.status==='cancelled')throw new Error('Cancelled invoices cannot receive payments.');
+    const paymentAmount=Number(payment.amount);
+    if(!Number.isFinite(paymentAmount)||paymentAmount<=0||paymentAmount>current.balanceDue)throw new Error('Payment exceeds the current invoice balance.');
+    const paymentMetadata={recordedBy:payment.recordedBy||payment.userId||'system',notes:payment.notes||'',idempotencyKey:payment.idempotencyKey||undefined};
+    await db.query(
+      'INSERT INTO invoice_payments (id,invoice_id,amount,paid_at,method,reference,metadata) VALUES ($1,$2,$3,$4,$5,$6,$7)',
+      [payment.id,id,paymentAmount,payment.date,payment.method,payment.reference||null,JSON.stringify(paymentMetadata)]
+    );
+    const totalPaid=current.amountPaid+paymentAmount;
+    const balance=Math.max(0,current.total-totalPaid);
+    const status=balance<=0?'paid':'partially_paid';
+    const auditTrail=[...current.auditTrail,{action:'payment_recorded',timestamp:new Date().toISOString(),user:payment.recordedBy||payment.userId||'system',note:payment.reference||payment.notes||''}];
+    const updatedAt=new Date().toISOString();
+    await db.query(
+      'UPDATE invoices SET amount_paid=$2,balance_due=$3,status=$4,metadata=$5,updated_at=$6 WHERE id=$1',
+      [id,totalPaid,balance,status,JSON.stringify({...metadata(current),auditTrail}),updatedAt]
+    );
+    if(current.clientId){
+      const clientRow=await db.query('SELECT metadata FROM clients WHERE id=$1 FOR UPDATE',[current.clientId]);
+      if(!clientRow.rows[0])throw new Error('Invoice client reference is invalid.');
+      const clientMetadata=obj(clientRow.rows[0].metadata);
+      const previousSpend=Number(clientMetadata.totalSpend||0);
+      if(!Number.isFinite(previousSpend)||previousSpend<0)throw new Error('Client total spend is invalid.');
+      const nextSpend=Math.round((previousSpend+paymentAmount)*100)/100;
+      await db.query(
+        'UPDATE clients SET metadata=$2,updated_at=$3 WHERE id=$1',
+        [current.clientId,JSON.stringify({...clientMetadata,totalSpend:nextSpend}),updatedAt]
+      );
+    }
+    if(audit)await postgresAuditLogRepository.appendWithinTransaction(db,audit);return this.findByIdTx(db,id);});}
   async cancel(id:string,user:string,audit?:AuditEntry):Promise<any|null>{return withPostgresTransaction(async db=>{const r=await db.query('SELECT * FROM invoices WHERE id=$1 FOR UPDATE',[id]);if(!r.rows[0])return null;const current=mapInvoice(r.rows[0],await this.items(db,id),await this.payments(db,id));if(current.status==='cancelled')return current;if(current.payments.length>0)throw new Error('INVOICE_WITH_PAYMENTS_CANNOT_BE_CANCELLED');const auditTrail=[...current.auditTrail,{action:'cancelled',timestamp:new Date().toISOString(),user}];await db.query('UPDATE invoices SET status=$2,metadata=$3,updated_at=$4 WHERE id=$1',[id,'cancelled',JSON.stringify({...metadata(current),auditTrail:auditTrail}),new Date().toISOString()]);if(audit)await postgresAuditLogRepository.appendWithinTransaction(db,audit);return this.findByIdTx(db,id);});}
   async delete(id:string,audit?:AuditEntry){return this.cancel(id,'system',audit);}
 }
