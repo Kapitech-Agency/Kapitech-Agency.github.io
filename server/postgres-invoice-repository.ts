@@ -15,7 +15,7 @@ function mapInvoice(row:Row, items:Row[], payments:Row[]):any {
   }));
   const amountPaid=Number(row.amount_paid||mappedPayments.reduce((s,p)=>s+p.amount,0));
   const total=Number(row.total||0);
-  return {...metadata,id:row.id,invoiceNumber:row.invoice_number,proposalId:row.proposal_id??metadata.proposalId??'',clientId:row.client_id??'',
+  return {...metadata,id:row.id,invoiceNumber:row.invoice_number,proposalId:row.proposal_id??'',clientId:row.client_id??'',
     projectId:row.project_id??'',type:row.type||'invoice',items:items.map(i=>({
       id:i.id,description:i.description,quantity:Number(i.quantity),unitPrice:Number(i.unit_price),amount:Number(i.amount??Number(i.quantity)*Number(i.unit_price))
     })),subtotal:Number(row.subtotal||0),discountPercent:Number(row.discount_percent||0),
@@ -90,6 +90,16 @@ export class PostgresInvoiceRepository {
       if (resolvedClientId) {
         const client = await db.query('SELECT id FROM clients WHERE id=$1 FOR SHARE',[resolvedClientId]);
         if (!client.rows[0]) throw new Error('Client not found.');
+      }
+      if (i.proposalId) {
+        const proposal = await db.query('SELECT id, client_id, project_id FROM proposals WHERE id=$1 FOR SHARE',[String(i.proposalId)]);
+        if (!proposal.rows[0]) throw new Error('Proposal not found.');
+        const proposalClientId = proposal.rows[0].client_id ? String(proposal.rows[0].client_id) : null;
+        const proposalProjectId = proposal.rows[0].project_id ? String(proposal.rows[0].project_id) : null;
+        if (proposalClientId && resolvedClientId && proposalClientId !== resolvedClientId) throw new Error('Proposal does not belong to the selected client.');
+        if (proposalProjectId && projectId && proposalProjectId !== projectId) throw new Error('Proposal does not belong to the selected project.');
+        if (!resolvedClientId && proposalClientId) resolvedClientId = proposalClientId;
+        if (!projectId && proposalProjectId) throw new Error('Proposal-linked invoice requires the proposal project linkage to be preserved.');
       }
       if (projectId) {
         const project = await db.query('SELECT id, client_id FROM projects WHERE id=$1 FOR SHARE',[projectId]);
