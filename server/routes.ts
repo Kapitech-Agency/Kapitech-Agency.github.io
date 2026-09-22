@@ -3163,7 +3163,7 @@ apiRouter.post('/ai/generate', requireAuth, requirePermission('canAccessServerAn
         return;
       }
 
-      recordAuditLog({
+      await writeAuditLog({
         action: 'AI_GENERATION_REQUESTED',
         actor: req.user!.username,
         actorRole: req.user!.role,
