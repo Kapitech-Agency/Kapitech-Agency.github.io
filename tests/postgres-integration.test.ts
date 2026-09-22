@@ -29,6 +29,106 @@ test('PostgreSQL repository can load the complete schema when configured', async
 });
 
 
+test('PostgreSQL financial line-item parent moves preserve both parent subtotals', async t => {
+  if (!configured) { t.skip('KAPITECH_POSTGRES_URL is not configured'); return; }
+
+  const db = getPostgresPool();
+  const suffix = Date.now() + '-' + Math.random().toString(16).slice(2);
+  const proposalA = 'ci-parent-move-proposal-a-' + suffix;
+  const proposalB = 'ci-parent-move-proposal-b-' + suffix;
+  const proposalItem = 'ci-parent-move-proposal-item-' + suffix;
+  const invoiceA = 'ci-parent-move-invoice-a-' + suffix;
+  const invoiceB = 'ci-parent-move-invoice-b-' + suffix;
+  const invoiceItem = 'ci-parent-move-invoice-item-' + suffix;
+  const now = new Date().toISOString();
+
+  try {
+    await db.query(
+      `INSERT INTO proposals (
+        id, proposal_number, title, subtotal, discount, tax_percent, tax, total,
+        currency, status, created_date, created_at, updated_at
+      ) VALUES
+        ($1, $2, 'CI Parent Move A', 100, 0, 0, 0, 100, 'IDR', 'Draft', CURRENT_DATE, $3, $3),
+        ($4, $5, 'CI Parent Move B', 200, 0, 0, 0, 200, 'IDR', 'Draft', CURRENT_DATE, $3, $3)`,
+      [proposalA, 'CI-PMA-' + suffix, now, proposalB, 'CI-PMB-' + suffix]
+    );
+    await db.query(
+      `INSERT INTO proposal_items (id, proposal_id, description, quantity, unit_price)
+       VALUES ($1, $2, 'Parent move line', 1, 100)`,
+      [proposalItem, proposalA]
+    );
+
+    await assert.rejects(async () => {
+      const client = await db.connect();
+      try {
+        await client.query('BEGIN');
+        await client.query(
+          'UPDATE proposal_items SET proposal_id = $1 WHERE id = $2',
+          [proposalB, proposalItem]
+        );
+        await client.query('COMMIT');
+      } catch (error) {
+        try { await client.query('ROLLBACK'); } catch {}
+        throw error;
+      } finally {
+        client.release();
+      }
+    }, /PROPOSAL_LINE_TOTAL_MISMATCH/);
+
+    const proposalState = await db.query(
+      'SELECT proposal_id FROM proposal_items WHERE id = $1',
+      [proposalItem]
+    );
+    assert.equal(proposalState.rows[0]?.proposal_id, proposalA);
+
+    await db.query(
+      `INSERT INTO invoices (
+        id, invoice_number, subtotal, discount_percent, discount_amount,
+        tax_percent, tax_amount, total, amount_paid, balance_due,
+        currency, status, issue_date, created_at, updated_at
+      ) VALUES
+        ($1, $2, 100, 0, 0, 0, 0, 100, 0, 100, 'IDR', 'draft', CURRENT_DATE, $3, $3),
+        ($4, $5, 200, 0, 0, 0, 0, 200, 0, 200, 'IDR', 'draft', CURRENT_DATE, $3, $3)`,
+      [invoiceA, 'CI-IMA-' + suffix, now, invoiceB, 'CI-IMB-' + suffix]
+    );
+    await db.query(
+      `INSERT INTO invoice_items (id, invoice_id, description, quantity, unit_price, amount)
+       VALUES ($1, $2, 'Parent move invoice line', 1, 100, 100)`,
+      [invoiceItem, invoiceA]
+    );
+
+    await assert.rejects(async () => {
+      const client = await db.connect();
+      try {
+        await client.query('BEGIN');
+        await client.query(
+          'UPDATE invoice_items SET invoice_id = $1 WHERE id = $2',
+          [invoiceB, invoiceItem]
+        );
+        await client.query('COMMIT');
+      } catch (error) {
+        try { await client.query('ROLLBACK'); } catch {}
+        throw error;
+      } finally {
+        client.release();
+      }
+    }, /INVOICE_LINE_TOTAL_MISMATCH/);
+
+    const invoiceState = await db.query(
+      'SELECT invoice_id FROM invoice_items WHERE id = $1',
+      [invoiceItem]
+    );
+    assert.equal(invoiceState.rows[0]?.invoice_id, invoiceA);
+  } finally {
+    await db.query('DELETE FROM invoice_items WHERE id = $1', [invoiceItem]);
+    await db.query('DELETE FROM invoices WHERE id IN ($1, $2)', [invoiceA, invoiceB]);
+    await db.query('DELETE FROM proposal_items WHERE id = $1', [proposalItem]);
+    await db.query('DELETE FROM proposals WHERE id IN ($1, $2)', [proposalA, proposalB]);
+    await closePostgresPool();
+  }
+});
+
+
 test('PostgreSQL security controls can consume a live rate-limit bucket', async t => {
   if (!configured) { t.skip('KAPITECH_POSTGRES_URL is not configured'); return; }
 
