@@ -60,3 +60,7 @@ test('private document upload rotates the storage object key before metadata com
  assert.match(upload,/storageVersion: Number\(document\.storageVersion \|\| 1\) \+ 1/);
  assert.match(upload,/await storage\.delete\(previousStorageKey\)/);
 });
+
+test('invoice generic update cannot replace authoritative payment rows',()=>{const route=read('server/routes.ts');const repo=read('server/postgres-invoice-repository.ts');const start=route.indexOf("apiRouter.put('/finance/invoices/:id'");const block=route.slice(start,route.indexOf("apiRouter.post('/finance/invoices/:id/pay'",start));assert.match(block,/pickFields\(input, \['type','clientId','projectId','leadId','currency','issueDate','dueDate','notes','paymentTerms','status'\]\)/);assert.match(block,/items, taxPercent, discountPercent/);assert.doesNotMatch(block,/\.\.\.input/);assert.match(repo,/payments:current\.payments/);});
+
+test('proposal creation cannot bypass approval or conversion workflow',()=>{const route=read('server/routes.ts');const repo=read('server/postgres-proposal-repository.ts');const start=route.indexOf("apiRouter.post('/crm/proposals'");const block=route.slice(start,route.indexOf("apiRouter.put('/crm/proposals/:id'",start));assert.match(block,/const statusValues = new Set\(\['Draft','Internal Review','Sent'\]\)/);assert.match(block,/Accepted status can only be created by the proposal-to-invoice workflow/);assert.match(repo,/creatableStatuses = new Set\(\['Draft','Internal Review','Sent'\]\)/);assert.match(repo,/PROPOSAL_CREATION_WORKFLOW_ONLY/);});
