@@ -307,3 +307,13 @@ test('PostgreSQL client updates cannot overwrite derived financial and project m
  assert.match(repo,/totalSpend: currentClient\.totalSpend/);
  assert.match(repo,/projectsCount: currentClient\.projectsCount/);
 });
+
+
+test('PostgreSQL public lead submission keeps audit inside the relational transaction',()=>{
+ const route=read('server/routes.ts');
+ const start=route.indexOf("apiRouter.post('/leads/submit'");
+ const end=route.indexOf("apiRouter.get('/leads'",start);
+ const block=route.slice(start,end);
+ assert.match(block,/postgresLeadRepository\.create\(\s*newLead,\s*\{\s*action: 'LEAD_SUBMISSION'/s);
+ assert.match(block,/if \(getDataSourceMode\(\) === 'json'\) recordAuditLog/);
+});
