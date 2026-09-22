@@ -42,8 +42,11 @@ async function startServer() {
   const app = express();
   let postgresReady = getDataSourceMode() !== 'postgres' && !productionConfigError;
   let postgresStartupError: string | null = productionConfigError;
+  let postgresInitializationInFlight = false;
 
   const initializePostgres = async (): Promise<void> => {
+    if (postgresInitializationInFlight || postgresReady || productionConfigError) return;
+    postgresInitializationInFlight = true;
     try {
       await runPostgresMigrations();
       await ensurePostgresInitialAdmin();
@@ -58,6 +61,8 @@ async function startServer() {
       postgresReady = false;
       postgresStartupError = error instanceof Error ? error.message : String(error);
       console.error('[Kapitech AMS] PostgreSQL initialization failed. Web runtime remains online and will retry.', error);
+    } finally {
+      postgresInitializationInFlight = false;
     }
   };
   app.disable('x-powered-by');
