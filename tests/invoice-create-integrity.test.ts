@@ -61,3 +61,22 @@ test('PostgreSQL payment recording derives paid amount from payment rows', () =>
   assert.match(block, /authoritativePaid=current\.payments\.reduce/);
   assert.match(block, /const totalPaid=authoritativePaid\+paymentAmount/);
 });
+
+
+test('PostgreSQL invoice creation validates proposal client/project linkage before insert', () => {
+  const source = fs.readFileSync('server/postgres-invoice-repository.ts', 'utf8');
+  const start = source.indexOf('async create(');
+  const end = source.indexOf('private async findByIdTx', start);
+  assert.ok(start >= 0 && end > start);
+  const block = source.slice(start, end);
+  assert.match(block, /SELECT id, client_id, project_id FROM proposals/);
+  assert.match(block, /Proposal does not belong to the selected client/);
+  assert.match(block, /Proposal does not belong to the selected project/);
+  assert.match(block, /Proposal-linked invoice requires the proposal project linkage to be preserved/);
+});
+
+test('PostgreSQL invoice mapping treats proposal_id as authoritative relational state', () => {
+  const source = fs.readFileSync('server/postgres-invoice-repository.ts', 'utf8');
+  assert.match(source, /proposalId:row\.proposal_id\?\?''/);
+  assert.doesNotMatch(source, /proposalId:row\.proposal_id\?\?metadata\.proposalId/);
+});
