@@ -301,8 +301,9 @@ test('production-critical relational hardening is present in the branch under te
 test('PostgreSQL client updates cannot overwrite derived financial and project metrics',()=>{
  const route=read('server/routes.ts');
  const repo=read('server/postgres-client-repository.ts');
- assert.doesNotMatch(route,/pickFields\([^\n]*totalSpend/);
- assert.doesNotMatch(route,/pickFields\([^\n]*totalInvoiced/);
+ const postgresClientRoute = route.slice(route.indexOf("apiRouter.put('/clients/:id'"), route.indexOf("apiRouter.put('/clients/:id'") + 1800);
+ assert.doesNotMatch(postgresClientRoute,/totalSpend/);
+ assert.doesNotMatch(postgresClientRoute,/totalInvoiced/);
  assert.match(repo,/totalSpend: currentClient\.totalSpend/);
  assert.match(repo,/projectsCount: currentClient\.projectsCount/);
 });
