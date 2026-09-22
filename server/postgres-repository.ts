@@ -233,12 +233,12 @@ export class PostgresAuthRepository {
 
   async deleteUser(userId: string, audit?: AuditEntry): Promise<boolean> {
     return withPostgresTransaction(async client => {
-      await client.query('DELETE FROM sessions WHERE user_id = $1', [userId]);
       const result = await client.query(
-        'DELETE FROM users WHERE id = $1 AND stakeholder_type <> $2 AND username <> $3',
+        'DELETE FROM users WHERE id = $1 AND stakeholder_type <> $2 AND username <> $3 RETURNING id',
         [userId, 'Master', 'admin']
       );
       if (result.rowCount !== 1) return false;
+      await client.query('DELETE FROM sessions WHERE user_id = $1', [userId]);
       if (audit) await postgresAuditLogRepository.appendWithinTransaction(client, audit);
       return true;
     });
