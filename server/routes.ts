@@ -1505,6 +1505,41 @@ apiRouter.put('/crm/deals/:id', requireAuth, requirePermission('canManageCrm'), 
   res.json({ success: true, deal: db.crmDeals[idx] });
 });
 
+apiRouter.post('/crm/deals/:id/convert-to-project',
+  requireAuth,
+  requirePermission('canManageCrm'),
+  requirePermission('canManageProjects'),
+  requirePermission('canManageInvoices'),
+  requirePermission('canManageClients'),
+  async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    if (getDataSourceMode() !== 'postgres') {
+      res.status(409).json({ success: false, error: 'Won-deal conversion requires PostgreSQL production mode.' });
+      return;
+    }
+
+    try {
+      const result = await postgresCrmDealRepository.convertWonDeal(
+        String(req.params.id),
+        { userId: req.user!.id, username: req.user!.username },
+        makeAuditEntry(req, 'CRM_DEAL_CONVERTED', `Converted won CRM deal "${req.params.id}" into client, project, and invoice records.`, 'info')
+      );
+      res.status(result.replayed ? 200 : 201).json({
+        success: true,
+        replayed: result.replayed,
+        client: result.client,
+        project: result.project,
+        invoice: result.invoice
+      });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'CRM deal conversion failed.';
+      const status =
+        message === 'DEAL_NOT_FOUND' ? 404 :
+        ['DEAL_NOT_WON','DEAL_VALUE_REQUIRED','DEAL_CLIENT_NOT_FOUND','DEAL_PROJECT_CLIENT_MISMATCH','DEAL_INVOICE_CLIENT_MISMATCH','AMBIGUOUS_DEAL_CLIENT','INCOMPLETE_DEAL_CONVERSION','MULTIPLE_PROJECTS_FOR_DEAL','MULTIPLE_INVOICES_FOR_DEAL'].includes(message) ? 409 :
+        400;
+      res.status(status).json({ success: false, error: message });
+    }
+  });
+
 apiRouter.delete('/crm/deals/:id', requireAuth, requirePermission('canManageCrm'), async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const { id } = req.params;
   if (getDataSourceMode() === 'postgres') {
