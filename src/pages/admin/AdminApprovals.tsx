@@ -161,12 +161,12 @@ export const AdminApprovals: React.FC = () => {
   const getRiskBadge = (level: string) => {
     const l = level?.toLowerCase();
     if (l === 'high') {
-      return <span className="px-2 py-0.5 rounded text-[9px] font-sans bg-red-500/10 text-red-400 border border-red-500/30 uppercase font-bold">High Risk</span>;
+      return <span className="px-2 py-0.5 rounded text-xs font-sans bg-red-500/10 text-red-400 border border-red-500/30 uppercase font-bold">High Risk</span>;
     }
     if (l === 'medium') {
-      return <span className="px-2 py-0.5 rounded text-[9px] font-sans bg-amber-500/10 text-amber-400 border border-amber-500/30 uppercase font-bold">Medium Risk</span>;
+      return <span className="px-2 py-0.5 rounded text-xs font-sans bg-amber-500/10 text-amber-400 border border-amber-500/30 uppercase font-bold">Medium Risk</span>;
     }
-    return <span className="px-2 py-0.5 rounded text-[9px] font-sans bg-zinc-800 text-zinc-300 border border-white/10 uppercase font-bold">Low Risk</span>;
+    return <span className="px-2 py-0.5 rounded text-xs font-sans bg-zinc-800 text-zinc-300 border border-white/10 uppercase font-bold">Low Risk</span>;
   };
 
   return (
@@ -195,53 +195,53 @@ export const AdminApprovals: React.FC = () => {
       {/* KPI Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <div className="p-4 rounded-xl bg-[var(--k-bg)] border border-white/[0.07] space-y-1">
-          <div className="text-[11px] font-sans text-[var(--k-text-secondary)] flex items-center justify-between">
+          <div className="text-xs font-sans text-[var(--k-text-secondary)] flex items-center justify-between">
             <span>{language === 'id' ? 'Menunggu Otorisasi' : 'Pending Authorization'}</span>
             <Clock size={13} className="text-amber-400" />
           </div>
           <div className="text-lg sm:text-xl font-bold font-sans text-amber-400">
             {metrics.pendingCount}
           </div>
-          <div className="text-[10px] font-sans text-[var(--k-text-secondary)]">
+          <div className="text-xs font-sans text-[var(--k-text-secondary)]">
             {language === 'id' ? 'Perlu tindakan eksekutif' : 'Action required'}
           </div>
         </div>
 
         <div className="p-4 rounded-xl bg-[var(--k-bg)] border border-white/[0.07] space-y-1">
-          <div className="text-[11px] font-sans text-[var(--k-text-secondary)] flex items-center justify-between">
+          <div className="text-xs font-sans text-[var(--k-text-secondary)] flex items-center justify-between">
             <span>{language === 'id' ? 'Nilai Tertunda' : 'Pending Value'}</span>
             <DollarSign size={13} className="text-[var(--k-red)]" />
           </div>
           <div className="text-lg sm:text-xl font-bold font-sans text-white">
             {formatAmount(metrics.totalPendingValue, currency)}
           </div>
-          <div className="text-[10px] font-sans text-[var(--k-text-secondary)]">
+          <div className="text-xs font-sans text-[var(--k-text-secondary)]">
             {language === 'id' ? 'Total nilai menunggu review' : 'Total financial exposure'}
           </div>
         </div>
 
         <div className="p-4 rounded-xl bg-[var(--k-bg)] border border-white/[0.07] space-y-1">
-          <div className="text-[11px] font-sans text-[var(--k-text-secondary)] flex items-center justify-between">
+          <div className="text-xs font-sans text-[var(--k-text-secondary)] flex items-center justify-between">
             <span>{language === 'id' ? 'Tinggi Risiko' : 'High Risk Items'}</span>
             <AlertTriangle size={13} className="text-red-400" />
           </div>
           <div className="text-lg sm:text-xl font-bold font-sans text-red-400">
             {metrics.highRiskPending}
           </div>
-          <div className="text-[10px] font-sans text-red-400/80">
+          <div className="text-xs font-sans text-red-400/80">
             {language === 'id' ? 'Perlu hak persetujuan' : 'Requires approval permission'}
           </div>
         </div>
 
         <div className="p-4 rounded-xl bg-[var(--k-bg)] border border-white/[0.07] space-y-1">
-          <div className="text-[11px] font-sans text-[var(--k-text-secondary)] flex items-center justify-between">
+          <div className="text-xs font-sans text-[var(--k-text-secondary)] flex items-center justify-between">
             <span>{language === 'id' ? 'Telah Disetujui' : 'Total Approved'}</span>
             <CheckCircle2 size={13} className="text-emerald-400" />
           </div>
           <div className="text-lg sm:text-xl font-bold font-sans text-emerald-400">
             {metrics.approvedCount}
           </div>
-          <div className="text-[10px] font-sans text-[var(--k-text-secondary)]">
+          <div className="text-xs font-sans text-[var(--k-text-secondary)]">
             {language === 'id' ? 'Tercatat dalam audit trail' : 'Logged in audit trail'}
           </div>
         </div>
@@ -316,7 +316,7 @@ export const AdminApprovals: React.FC = () => {
                   <div className="min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="font-bold text-sm text-white">{item.title}</span>
-                      <span className="px-2 py-0.5 rounded text-[9px] font-sans uppercase bg-[var(--k-surface)] text-[var(--k-text-secondary)] border border-white/[0.07]">
+                      <span className="px-2 py-0.5 rounded text-xs font-sans uppercase bg-[var(--k-surface)] text-[var(--k-text-secondary)] border border-white/[0.07]">
                         {item.type}
                       </span>
                       {getRiskBadge(item.riskLevel)}
@@ -324,7 +324,7 @@ export const AdminApprovals: React.FC = () => {
                     {item.reason && (
                       <p className="text-xs text-[var(--k-text-secondary)] mt-1 leading-relaxed">{item.reason}</p>
                     )}
-                    <div className="text-[10px] font-sans text-[var(--k-text-secondary)] flex items-center gap-3 mt-2">
+                    <div className="text-xs font-sans text-[var(--k-text-secondary)] flex items-center gap-3 mt-2">
                       <span className="flex items-center gap-1">
                         <User size={11} />
                         <span>Requested by {item.requester}</span>
@@ -347,7 +347,7 @@ export const AdminApprovals: React.FC = () => {
                 <div className="flex sm:flex-col items-end justify-between sm:justify-start gap-2 shrink-0">
                   {item.value > 0 && (
                     <div className="text-right">
-                      <div className="text-[10px] font-sans text-[var(--k-text-secondary)]">Value</div>
+                      <div className="text-xs font-sans text-[var(--k-text-secondary)]">Value</div>
                       <div className="font-bold font-sans text-white text-sm">
                         {formatAmount(item.value, currency)}
                       </div>
@@ -378,7 +378,7 @@ export const AdminApprovals: React.FC = () => {
                       </button>
                     </div>
                   ) : (
-                    <span className={`px-2.5 py-0.5 rounded text-[10px] font-sans font-bold uppercase border ${
+                    <span className={`px-2.5 py-0.5 rounded text-xs font-sans font-bold uppercase border ${
                       item.status.toLowerCase() === 'approved'
                         ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30'
                         : item.status.toLowerCase() === 'rejected'
@@ -392,7 +392,7 @@ export const AdminApprovals: React.FC = () => {
               </div>
 
               {item.reviewNotes && (
-                <div className="text-[11px] font-sans text-[var(--k-text-secondary)] bg-[var(--k-surface)]/50 p-2.5 rounded-lg border border-white/[0.04] flex items-center gap-2">
+                <div className="text-xs font-sans text-[var(--k-text-secondary)] bg-[var(--k-surface)]/50 p-2.5 rounded-lg border border-white/[0.04] flex items-center gap-2">
                   <MessageSquare size={12} className="text-[var(--k-red)] shrink-0" />
                   <span>Decision notes: {item.reviewNotes}</span>
                 </div>
@@ -422,7 +422,7 @@ export const AdminApprovals: React.FC = () => {
             <form onSubmit={handleDecisionSubmit} className="p-5 space-y-4 text-xs font-sans">
               <div>
                 <div className="font-bold text-white text-sm">{activeItem.title}</div>
-                <div className="text-[11px] font-sans text-[var(--k-text-secondary)] mt-0.5">
+                <div className="text-xs font-sans text-[var(--k-text-secondary)] mt-0.5">
                   Requested by: {activeItem.requester}
                 </div>
                 {activeItem.value > 0 && (
@@ -433,7 +433,7 @@ export const AdminApprovals: React.FC = () => {
               </div>
 
               <div className="space-y-1">
-                <label className="text-[11px] font-sans text-[var(--k-text-secondary)]">Action</label>
+                <label className="text-xs font-sans text-[var(--k-text-secondary)]">Action</label>
                 <div className="grid grid-cols-3 gap-2 font-sans text-xs">
                   <button
                     type="button"
@@ -472,7 +472,7 @@ export const AdminApprovals: React.FC = () => {
               </div>
 
               <div className="space-y-1">
-                <label className="text-[11px] font-sans text-[var(--k-text-secondary)]">Decision Notes / Reason</label>
+                <label className="text-xs font-sans text-[var(--k-text-secondary)]">Decision Notes / Reason</label>
                 <textarea
                   rows={3}
                   value={decisionNotes}
