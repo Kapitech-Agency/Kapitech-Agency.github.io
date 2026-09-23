@@ -12,7 +12,7 @@ export const CookiePolicy = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="min-h-screen pt-28 sm:pt-36 md:pt-40 pb-16 sm:pb-20 px-4 sm:px-6 md:px-12 bg-[[var(--k-bg-deep)]] text-[[var(--k-text-secondary)]] font-light relative selection:bg-brand-red selection:text-white"
+      className="min-h-screen pt-28 sm:pt-36 md:pt-40 pb-16 sm:pb-20 px-4 sm:px-6 md:px-12 bg-[var(--k-bg-deep)]] text-[var(--k-text-secondary)]] font-light relative selection:bg-brand-red selection:text-white"
     >
       <AtmosphericBackground 
         imageUrl="/hero_background_3d.png"
@@ -20,7 +20,7 @@ export const CookiePolicy = () => {
         disableGrayscale={true}
       />
       <div className="max-w-4xl mx-auto relative z-10">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[[var(--k-border)]] bg-[#161616] text-white text-xs font-sans mb-4">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[var(--k-border)]] bg-[#161616] text-white text-xs font-sans mb-4">
           <Cookie className="w-3 h-3 text-brand-red" />
           <span>{language === 'id' ? 'Preferensi Cookie & Privasi' : 'Cookie Preferences & Privacy'}</span>
         </div>
@@ -32,7 +32,7 @@ export const CookiePolicy = () => {
         </p>
         
         {language === 'id' ? (
-          <div className="space-y-12 text-base md:text-lg leading-relaxed text-[[var(--k-text-secondary)]]">
+          <div className="space-y-12 text-base md:text-lg leading-relaxed text-[var(--k-text-secondary)]]">
             <section>
               <h2 className="text-2xl font-sans font-bold text-white mb-4">1. Apa Itu Cookie?</h2>
               <p>
@@ -64,7 +64,7 @@ export const CookiePolicy = () => {
             </section>
           </div>
         ) : (
-          <div className="space-y-12 text-base md:text-lg leading-relaxed text-[[var(--k-text-secondary)]]">
+          <div className="space-y-12 text-base md:text-lg leading-relaxed text-[var(--k-text-secondary)]]">
             <section>
               <h2 className="text-2xl font-sans font-bold text-white mb-4">1. What Are Cookies?</h2>
               <p>
