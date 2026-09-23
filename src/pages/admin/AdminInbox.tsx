@@ -774,7 +774,7 @@ export const AdminInbox: React.FC = () => {
 
                         {/* Name & Company */}
                         <td className="p-3.5">
-                          <div className="font-bold text-white font-sans text-sm flex items-center gap-1.5">
+                          <div className="font-bold text-[var(--k-text)] font-sans text-sm flex items-center gap-1.5">
                             <span>{item.fullName}</span>
                             {isConverted && (
                               <span className="text-[9px] font-sans px-1.5 py-0.2 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
@@ -967,7 +967,7 @@ export const AdminInbox: React.FC = () => {
 
                     {/* Client Name & Company */}
                     <div className="flex items-baseline justify-between gap-2 mb-1">
-                      <h3 className="font-bold text-sm text-white font-sans truncate">
+                      <h3 className="font-bold text-sm text-[var(--k-text)] font-sans truncate">
                         {item.fullName || 'Anonymous Client'}
                       </h3>
                       <span className="text-xs font-sans font-bold text-emerald-400 shrink-0">
@@ -1032,7 +1032,7 @@ export const AdminInbox: React.FC = () => {
                 <div className="flex items-start justify-between gap-4 pb-5 border-b border-[rgba(255,255,255,0.07)] mb-5">
                   <div className="flex items-start gap-3.5">
                     {/* Client Avatar Initials */}
-                    <div className="w-12 h-12 rounded-[var(--k-card-radius)] bg-gradient-to-br from-[var(--k-surface-raised)] to-[var(--k-surface-raised)] border border-white/10 flex items-center justify-center text-white font-sans font-bold text-lg shrink-0 shadow-inner">
+                    <div className="w-12 h-12 rounded-[var(--k-card-radius)] bg-[var(--k-surface-raised)] border border-white/10 flex items-center justify-center text-[var(--k-text)] font-sans font-bold text-lg shrink-0 shadow-inner">
                       {selectedSubmission.fullName.charAt(0).toUpperCase()}
                     </div>
 
@@ -1332,7 +1332,7 @@ export const AdminInbox: React.FC = () => {
                       <select
                         value={selectedSubmission.assignedTo || 'Lead Full-Stack Tech'}
                         onChange={(e) => handleAssigneeChange(selectedSubmission.id, e.target.value)}
-                        className="w-full px-3 py-2 bg-[var(--k-surface)] border border-[rgba(255,255,255,0.08)] rounded-[var(--k-control-radius)] text-xs text-white font-sans focus:border-emerald-500"
+                        className="w-full px-3 py-2 bg-[var(--k-surface)] border border-[rgba(255,255,255,0.08)] rounded-[var(--k-control-radius)] text-xs text-[var(--k-text)] font-sans focus:border-emerald-500"
                       >
                         <option value="Lead Full-Stack Tech">Lead Full-Stack Tech (Engineering)</option>
                         <option value="Senior UI/UX Designer">Senior UI/UX Designer (Design)</option>
