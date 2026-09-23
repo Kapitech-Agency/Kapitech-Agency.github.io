@@ -662,3 +662,214 @@ body:not(:has([data-kapi-admin="true"])) a[role="button"] {
     -webkit-backdrop-filter: none !important;
   }
 }
+
+
+/* ==========================================================================
+   FINAL PAGE-SCALE CONSISTENCY PASS
+   ========================================================================== */
+:root {
+  --k-red: #B00020;
+  --k-red-hover: #C1121F;
+  --k-red-soft: rgba(176,0,32,.12);
+  --k-red-border: rgba(176,0,32,.34);
+  --k-font-ui: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Helvetica, Arial, sans-serif;
+  --k-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  --k-radius-control: 12px;
+  --k-radius-surface: 18px;
+  --k-radius-sheet: 24px;
+  --k-motion: 180ms;
+  --k-ease: cubic-bezier(.22,1,.36,1);
+}
+
+html, body, button, input, select, textarea { font-family: var(--k-font-ui); }
+code, pre, kbd, .font-mono { font-family: var(--k-font-mono); }
+
+/* Public typography */
+.kapi-public-shell h1 { font-size: clamp(2.25rem,5vw,4.25rem) !important; line-height:1.04 !important; letter-spacing:-.045em !important; }
+.kapi-public-shell h2 { font-size: clamp(1.875rem,3.5vw,2.75rem) !important; line-height:1.08 !important; letter-spacing:-.035em !important; }
+.kapi-public-shell h3 { font-size: clamp(1.5rem,2.5vw,2rem) !important; line-height:1.15 !important; letter-spacing:-.025em !important; }
+.kapi-public-shell h4 { font-size:1.25rem !important; line-height:1.2 !important; }
+.kapi-public-shell p { font-size:.9375rem; line-height:1.55; }
+
+/* AMS typography */
+[data-kapi-admin="true"] h1 { font-size:clamp(1.75rem,2.5vw,2.5rem) !important; line-height:1.08 !important; letter-spacing:-.035em !important; }
+[data-kapi-admin="true"] h2 { font-size:clamp(1.5rem,2vw,2rem) !important; line-height:1.12 !important; letter-spacing:-.03em !important; }
+[data-kapi-admin="true"] h3 { font-size:1.25rem !important; line-height:1.18 !important; letter-spacing:-.02em !important; }
+[data-kapi-admin="true"] h4 { font-size:1.0625rem !important; line-height:1.2 !important; }
+[data-kapi-admin="true"] p { font-size:.875rem; line-height:1.5; }
+
+/* Public card density */
+.kapi-public-shell .kapi-card { padding:20px !important; border-radius:var(--k-radius-surface) !important; }
+@media (min-width:640px){ .kapi-public-shell .kapi-card{padding:24px !important;} }
+.kapi-public-shell .kapi-card-title{font-size:1.25rem !important;line-height:1.2 !important;}
+.kapi-public-shell .kapi-card-desc{font-size:.875rem !important;line-height:1.55 !important;}
+
+/* AMS card density */
+[data-kapi-admin="true"] .ams-content .kapi-card,
+[data-kapi-admin="true"] .ams-content .metric-card,
+[data-kapi-admin="true"] .ams-content .glass-panel {
+  border-radius:16px !important;
+  padding:20px !important;
+}
+[data-kapi-admin="true"] .ams-content .metric-card{padding:18px !important}
+
+/* Liquid Glass only on navigation/control chrome. */
+[data-kapi-admin="true"] .ams-sidebar,
+[data-kapi-admin="true"] .ams-header,
+[data-kapi-admin="true"] .ams-mobile-nav {
+  background:rgba(24,24,27,.72) !important;
+  border-color:rgba(255,255,255,.10) !important;
+  box-shadow:0 8px 30px rgba(0,0,0,.20) !important;
+  backdrop-filter:saturate(180%) blur(24px);
+  -webkit-backdrop-filter:saturate(180%) blur(24px);
+}
+
+/* Sidebar containment: labels and badges cannot push the layout wider. */
+[data-kapi-admin="true"] .ams-sidebar-nav a{min-width:0;width:100%;min-height:40px}
+[data-kapi-admin="true"] .ams-sidebar-nav a > div{min-width:0;overflow:hidden}
+[data-kapi-admin="true"] .ams-sidebar-nav a > div > span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+[data-kapi-admin="true"] .ams-sidebar-nav a > span:not([class*="absolute"]){max-width:72px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* Search: compact, no browser white focus ring. */
+[data-kapi-admin="true"] .ams-search{height:40px}
+[data-kapi-admin="true"] .ams-search input{
+  height:40px !important;
+  min-height:40px !important;
+  border-radius:12px !important;
+  outline:none !important;
+  box-shadow:none !important;
+  font-size:.8125rem !important;
+}
+[data-kapi-admin="true"] .ams-search input:focus,
+[data-kapi-admin="true"] .ams-search input:focus-visible{
+  outline:none !important;
+  box-shadow:0 0 0 3px rgba(176,0,32,.10) !important;
+  border-color:rgba(176,0,32,.48) !important;
+}
+
+/* Buttons: rounded rectangles by default, circles only for explicit icon controls. */
+.kapi-public-shell .kapi-button,
+.kapi-public-shell a.kapi-button,
+[data-kapi-admin="true"] button:not([aria-label]) {
+  border-radius:14px !important;
+}
+.kapi-public-shell button.rounded-full:has(svg),
+[data-kapi-admin="true"] button.rounded-full:has(svg) {
+  aspect-ratio:1/1;
+  padding-inline:.625rem;
+}
+[data-kapi-admin="true"] button.w-8.h-8.rounded-full,
+[data-kapi-admin="true"] button.w-9.h-9.rounded-full,
+[data-kapi-admin="true"] button.w-10.h-10.rounded-full,
+[data-kapi-admin="true"] button.w-11.h-11.rounded-full,
+[data-kapi-admin="true"] button.w-12.h-12.rounded-full {
+  padding:0 !important;
+  aspect-ratio:1/1;
+}
+
+/* Compact segmented controls should not inherit the desktop 40px button floor. */
+[data-kapi-admin="true"] .ams-header button.rounded-md,
+[data-kapi-admin="true"] #ams-mobile-more-sheet button.rounded-md {
+  min-height:30px !important;
+}
+[data-kapi-admin="true"] .ams-header button.rounded-md { padding-block:0 !important; }
+
+/* Consistent control geometry. */
+[data-kapi-admin="true"] select{height:40px;border-radius:12px !important}
+.kapi-public-shell input,.kapi-public-shell select,.kapi-public-shell textarea{
+  min-height:44px;border-radius:12px !important;font-family:var(--k-font-ui);
+}
+
+/* No mouse focus ring, strong keyboard focus ring. */
+[data-kapi-admin="true"] input:focus,
+[data-kapi-admin="true"] textarea:focus,
+[data-kapi-admin="true"] select:focus,
+[data-kapi-admin="true"] button:focus{outline:none}
+[data-kapi-admin="true"] :where(a,button,input,select,textarea):focus-visible{
+  outline:2px solid rgba(176,0,32,.75);
+  outline-offset:2px;
+  box-shadow:none;
+}
+
+/* Shared motion and touch behavior. */
+.kapi-public-shell button,[data-kapi-admin="true"] button{
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+  transition:transform var(--k-motion) var(--k-ease),background-color var(--k-motion) var(--k-ease),border-color var(--k-motion) var(--k-ease),color var(--k-motion) var(--k-ease),box-shadow var(--k-motion) var(--k-ease),opacity var(--k-motion) var(--k-ease) !important;
+}
+.kapi-public-shell button:hover,[data-kapi-admin="true"] button:hover{transform:translateY(-1px)}
+.kapi-public-shell button:active,[data-kapi-admin="true"] button:active{transform:scale(.975)}
+
+/* Prevent dense pages from creating horizontal overflow. */
+[data-kapi-admin="true"] .ams-main,
+[data-kapi-admin="true"] .ams-content,
+[data-kapi-admin="true"] .ams-main > *,
+[data-kapi-admin="true"] .ams-content > * { min-width:0;max-width:100%; }
+[data-kapi-admin="true"] .overflow-x-auto{max-width:100%;overscroll-behavior-inline:contain}
+[data-kapi-admin="true"] table{max-width:100%}
+
+/* Modal baseline. */
+[data-kapi-admin="true"] [role="dialog"]{
+  max-width:min(100%,960px);
+  border-radius:var(--k-radius-sheet) !important;
+  border-color:rgba(255,255,255,.12) !important;
+  box-shadow:0 24px 80px rgba(0,0,0,.45) !important;
+  overflow:hidden;
+}
+[data-kapi-admin="true"] [role="dialog"] :where(input,select,textarea){min-height:40px;border-radius:12px !important}
+[data-kapi-admin="true"] [role="dialog"] :where(button){min-height:40px}
+
+/* Public section container rhythm. */
+.kapi-public-shell section > .max-w-7xl,
+.kapi-public-shell section > .max-w-6xl,
+.kapi-public-shell section > .max-w-5xl {
+  width:min(100% - 32px,1200px);
+  margin-inline:auto;
+}
+@media (min-width:768px){
+  .kapi-public-shell section > .max-w-7xl,
+  .kapi-public-shell section > .max-w-6xl,
+  .kapi-public-shell section > .max-w-5xl { width:min(100% - 64px,1200px); }
+}
+@media (min-width:1440px){
+  .kapi-public-shell section > .max-w-7xl,
+  .kapi-public-shell section > .max-w-6xl,
+  .kapi-public-shell section > .max-w-5xl { width:min(100% - 96px,1200px); }
+}
+
+/* Legacy public red aliases collapse to the Kapitech red. */
+.kapi-public-shell [class*="bg-[#E01414]"],
+.kapi-public-shell [class*="bg-[#CC001F]"],
+.kapi-public-shell [class*="bg-[#E50914]"] { background-color:var(--k-red) !important; }
+.kapi-public-shell [class*="text-[#FF1E27]"],
+.kapi-public-shell [class*="text-[#E50914]"] { color:var(--k-red) !important; }
+
+/* Reduced transparency / motion. */
+@media (prefers-reduced-transparency:reduce){
+  [data-kapi-admin="true"] .ams-sidebar,
+  [data-kapi-admin="true"] .ams-header,
+  [data-kapi-admin="true"] .ams-mobile-nav,
+  [data-kapi-admin="true"] .glass-panel,
+  [data-kapi-admin="true"] .metric-card,
+  [data-kapi-admin="true"] .ams-surface,
+  .kapi-public-shell .kapi-card {
+    backdrop-filter:none !important;
+    -webkit-backdrop-filter:none !important;
+  }
+  [data-kapi-admin="true"] .ams-sidebar,
+  [data-kapi-admin="true"] .ams-header,
+  [data-kapi-admin="true"] .ams-mobile-nav { background:#18181B !important; }
+}
+@media (max-width:767px){
+  [data-kapi-admin="true"] .ams-content{padding:20px 16px 96px !important}
+  [data-kapi-admin="true"] .ams-content .kapi-card,
+  [data-kapi-admin="true"] .ams-content .metric-card,
+  [data-kapi-admin="true"] .ams-content .glass-panel{padding:16px !important}
+  [data-kapi-admin="true"] .ams-search{max-width:48vw !important}
+}
+@media (max-width:479px){[data-kapi-admin="true"] .ams-content{padding-inline:12px !important}}
+@media (pointer:coarse){
+  [data-kapi-admin="true"] button,
+  [data-kapi-admin="true"] a[role="button"] { min-height:44px; }
+  [data-kapi-admin="true"] .ams-search input{height:44px !important;min-height:44px !important}
+}
