@@ -300,12 +300,12 @@ export const Work = () => {
       )}
 
       {/* Filter & Search Bar Section */}
-      <section className="py-4 sm:py-6 md:py-8 px-4 sm:px-6 md:px-12 sticky top-16 sm:top-20 z-30 bg-[var(--k-bg)]/95 backdrop-blur-xl border-b border-[var(--k-border)] shadow-[var(--k-shadow-sm)]">
-        <div className="max-w-7xl mx-auto space-y-3 sm:space-y-4">
+      <section className="kapi-work-filter-section py-4 sm:py-6 md:py-8 px-4 sm:px-6 md:px-12 sticky top-16 sm:top-20 z-30 bg-[var(--k-bg)]/95 backdrop-blur-xl border-b border-[var(--k-border)] shadow-[var(--k-shadow-sm)]">
+        <div className="max-w-7xl mx-auto space-y-3 sm:space-y-4 kapi-work-filter-inner">
           {/* Top Controls: Main Pillars + Instant Search */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4">
             {/* Primary Pillar Tabs */}
-            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 bg-[var(--k-surface)] p-1 sm:p-1.5 rounded-xl border border-[var(--k-border)]">
+            <div className="kapi-work-pillar-tabs flex flex-wrap items-center gap-1.5 sm:gap-2 bg-[var(--k-surface)] p-1 sm:p-1.5 rounded-xl border border-[var(--k-border)]">
               {[
                 { key: 'All', labelEn: 'All Disciplines', labelId: 'Semua Bidang' },
                 { key: 'Visual Experience', labelEn: 'Visual Experience', labelId: 'Visual Experience' },
@@ -351,9 +351,9 @@ export const Work = () => {
           </div>
 
           {/* Granular Service Pill Filter Scroll with Drag-to-Scroll & Right Black Fade */}
-          <div className="relative group/filter">
+          <div className="relative group/filter kapi-work-service-rail">
             {/* Right Fade Black Gradient */}
-            <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-16 sm:w-24 bg-gradient-to-l from-[var(--k-bg)] via-[var(--k-bg)]/80 to-transparent z-10" />
+            <div className="kapi-work-filter-fade pointer-events-none absolute right-0 top-0 bottom-0 z-10" />
 
             <div 
               ref={serviceScrollRef}
@@ -362,7 +362,7 @@ export const Work = () => {
               onMouseUp={handleMouseUpOrLeaveService}
               onMouseLeave={handleMouseUpOrLeaveService}
               onWheel={handleWheelService}
-              className={`flex items-center gap-2 overflow-x-auto overflow-y-hidden py-1.5 pr-16 select-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden ${
+              className={`kapi-work-service-scroll flex items-center gap-2 overflow-x-auto overflow-y-hidden py-1.5 pr-16 select-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden ${
                 isDraggingService ? 'cursor-grabbing' : 'cursor-grab'
               }`}
             >
@@ -521,13 +521,13 @@ export const Work = () => {
       {/* Case Study Detail Modal */}
       <AnimatePresence>
         {selectedProject && (
-          <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 sm:p-6 overflow-y-auto bg-black/85 backdrop-blur-md kapi-modal-backdrop">
+          <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 sm:p-6 overflow-y-auto bg-black/85 backdrop-blur-md kapi-modal-backdrop" data-public-modal-backdrop>
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ duration: 0.25 }}
-              className="relative w-full max-w-4xl bg-[var(--k-surface)] border border-[var(--k-border)] rounded-2xl overflow-hidden shadow-[var(--k-shadow-sm)] my-8 max-h-[90vh] flex flex-col"
+              className="relative w-full max-w-4xl bg-[var(--k-surface)] border border-[var(--k-border)] rounded-2xl overflow-hidden shadow-[var(--k-shadow-sm)] my-8 max-h-[90vh] flex flex-col kapi-modal-panel" data-public-modal
             >
               {/* Modal Header Bar */}
               <div className="sticky top-0 z-20 flex items-center justify-between p-4 sm:p-5 bg-[var(--k-surface)]/95 backdrop-blur-md border-b border-[var(--k-border)] gap-3">
