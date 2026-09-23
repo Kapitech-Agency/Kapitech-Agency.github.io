@@ -183,12 +183,12 @@ export const Footer = () => {
               <Link 
                 to="/contact" 
                 id="footer-cta-button"
-                className="min-h-[44px] px-7 sm:px-8 bg-brand-red hover:bg-[var(--k-red-hover)] text-white rounded-full font-semibold text-xs uppercase tracking-wider transition-all duration-300 flex items-center gap-3 shadow-[var(--k-shadow-sm)] shadow-brand-red/20 hover:-translate-y-0.5"
+                className="kapi-footer-cta"
               >
                 <span>{t('footer.cta.button')}</span>
                 <ArrowUpRight size={18} />
               </Link>
-              <div className="text-xs font-sans text-[var(--k-text-secondary)] flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-[var(--k-surface)] border border-[var(--k-border)]">
+              <div className="kapi-footer-status">
                 <span className="w-2 h-2 rounded-full bg-brand-red animate-pulse shadow-[0_0_8px_rgba(255,26,26,0.6)]" />
                 <span>{language === 'id' ? 'Tangerang Selatan, ID' : 'South Tangerang, ID'} • {localTime || '12:00:00'} WIB</span>
               </div>
