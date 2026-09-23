@@ -312,7 +312,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg p-2 text-[#A1A1A6] transition-colors hover:bg-white/[.06] hover:text-white"
+            className="rounded-[var(--k-control-radius)] p-2 text-[#A1A1A6] transition-colors hover:bg-white/[.06] hover:text-[var(--k-text)]"
             aria-label={language === 'id' ? 'Tutup pencarian' : 'Close search'}
           >
             <X size={16} />
@@ -322,7 +322,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
         <div className="max-h-[440px] space-y-2 overflow-y-auto p-2 custom-scrollbar" role="listbox" aria-label="Command results">
           {searchResults.length > 0 && (
             <div>
-              <div className="px-3 py-1.5 text-[10px] font-mono uppercase tracking-wider text-[#A1A1A6]">
+              <div className="px-3 py-1.5 text-[10px] font-sans uppercase tracking-wider text-[#A1A1A6]">
                 {language === 'id' ? 'Hasil Pencarian Database' : 'Database Records'} ({searchResults.length})
               </div>
               <div className="space-y-1">
@@ -336,17 +336,17 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
                       aria-selected={isActive}
                       onMouseEnter={() => setActiveIndex(index)}
                       onClick={() => runSelected(index)}
-                      className={`group flex w-full items-center justify-between rounded-xl p-2.5 text-left transition-colors ${isActive ? 'bg-white/[.07]' : 'hover:bg-white/[.045]'}`}
+                      className={`group flex w-full items-center justify-between rounded-[var(--k-control-radius)] p-2.5 text-left transition-colors ${isActive ? 'bg-white/[.07]' : 'hover:bg-white/[.045]'}`}
                     >
                       <div className="flex min-w-0 items-center gap-2.5">
-                        <span className={`shrink-0 rounded border px-2 py-0.5 text-[9px] font-mono font-bold uppercase ${getBadgeColor(result.type)}`}>
+                        <span className={`shrink-0 rounded border px-2 py-0.5 text-[9px] font-sans font-bold uppercase ${getBadgeColor(result.type)}`}>
                           {result.type}
                         </span>
                         <div className="min-w-0">
-                          <div className={`truncate text-xs font-semibold transition-colors ${isActive ? 'text-white' : 'text-[#F5F5F7]'}`}>
+                          <div className={`truncate text-xs font-semibold transition-colors ${isActive ? 'text-[var(--k-text)]' : 'text-[#F5F5F7]'}`}>
                             {result.name}
                           </div>
-                          <div className="flex items-center gap-2 text-[10px] font-mono text-[#A1A1A6]">
+                          <div className="flex items-center gap-2 text-[10px] font-sans text-[#A1A1A6]">
                             {result.status && <span>Status: {result.status}</span>}
                             {result.owner && <span>• {result.owner}</span>}
                           </div>
@@ -362,13 +362,13 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
 
           <div>
             {searchResults.length > 0 && (
-              <div className="mt-2 border-t border-white/[.07] px-3 py-1.5 text-[10px] font-mono uppercase tracking-wider text-[#A1A1A6]">
+              <div className="mt-2 border-t border-white/[.07] px-3 py-1.5 text-[10px] font-sans uppercase tracking-wider text-[#A1A1A6]">
                 {language === 'id' ? 'Perintah & Modul' : 'Commands & Navigation'}
               </div>
             )}
 
             {filteredActions.length === 0 && searchResults.length === 0 ? (
-              <div className="p-8 text-center text-xs font-mono text-[#A1A1A6]">
+              <div className="p-8 text-center text-xs font-sans text-[#A1A1A6]">
                 {language === 'id' ? 'Tidak ada hasil untuk pencarian tersebut.' : 'No commands or records match your search.'}
               </div>
             ) : (
@@ -385,23 +385,23 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
                     aria-selected={isActive}
                     onMouseEnter={() => setActiveIndex(selectableIndex)}
                     onClick={() => runSelected(selectableIndex)}
-                    className={`group flex w-full items-center justify-between rounded-xl p-2.5 text-left transition-colors ${isActive ? 'bg-white/[.07]' : 'hover:bg-white/[.045]'}`}
+                    className={`group flex w-full items-center justify-between rounded-[var(--k-control-radius)] p-2.5 text-left transition-colors ${isActive ? 'bg-white/[.07]' : 'hover:bg-white/[.045]'}`}
                   >
                     <div className="flex min-w-0 items-center gap-3">
-                      <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border transition-colors ${isActive ? 'border-white/[.14] bg-white/[.07] text-white' : 'border-white/[.07] bg-white/[.025] text-[#A1A1A6]'}`}>
+                      <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-[var(--k-control-radius)] border transition-colors ${isActive ? 'border-white/[.14] bg-white/[.07] text-[var(--k-text)]' : 'border-white/[.07] bg-white/[.025] text-[#A1A1A6]'}`}>
                         <Icon size={15} />
                       </div>
                       <div className="min-w-0">
                         <div className="truncate text-xs font-semibold text-[#F5F5F7]">
                           {item.title}
                         </div>
-                        <div className="text-[10px] font-mono text-[#A1A1A6]">
+                        <div className="text-[10px] font-sans text-[#A1A1A6]">
                           {item.category}
                         </div>
                       </div>
                     </div>
                     <div className="flex shrink-0 items-center gap-2">
-                      <span className="rounded bg-white/[.025] px-2 py-0.5 text-[10px] font-mono text-[#A1A1A6] border border-white/[.07]">
+                      <span className="rounded bg-white/[.025] px-2 py-0.5 text-[10px] font-sans text-[#A1A1A6] border border-white/[.07]">
                         {item.shortcut}
                       </span>
                       <ArrowRight size={12} className={`transition-all ${isActive ? 'translate-x-0.5 text-[#B00020]' : 'text-[#6E6E73]'}`} />
@@ -413,7 +413,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
           </div>
         </div>
 
-        <div className="flex items-center justify-between border-t border-white/[.08] bg-white/[.025] p-3 text-[11px] font-mono text-[#A1A1A6]">
+        <div className="flex items-center justify-between border-t border-white/[.08] bg-white/[.025] p-3 text-[11px] font-sans text-[#A1A1A6]">
           <div className="flex items-center gap-3">
             <span>↑↓ Navigate</span>
             <span>↵ Select</span>
