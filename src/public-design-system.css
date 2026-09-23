@@ -104,11 +104,20 @@
   margin-inline: auto;
 }
 
-.kapi-public-shell .max-w-6xl,
-.kapi-public-shell .max-w-5xl,
-.kapi-public-shell .max-w-4xl,
+.kapi-public-shell .max-w-6xl {
+  width: min(calc(100% - 2 * var(--pub-gutter)), 1152px);
+  margin-inline: auto;
+}
+.kapi-public-shell .max-w-5xl {
+  width: min(calc(100% - 2 * var(--pub-gutter)), 1024px);
+  margin-inline: auto;
+}
+.kapi-public-shell .max-w-4xl {
+  width: min(calc(100% - 2 * var(--pub-gutter)), 896px);
+  margin-inline: auto;
+}
 .kapi-public-shell .max-w-3xl {
-  width: min(calc(100% - 2 * var(--pub-gutter)), 1040px);
+  width: min(calc(100% - 2 * var(--pub-gutter)), 768px);
   margin-inline: auto;
 }
 
@@ -159,8 +168,10 @@
 }
 
 .kapi-public-shell .kapi-public-nav .kapi-nav-inner > a:first-child img {
+  width: auto !important;
   height: 25px !important;
-  max-width: 34px;
+  max-width: 180px !important;
+  object-fit: contain;
 }
 
 .kapi-public-shell .kapi-public-nav .kapi-nav-inner > a:first-child span {
@@ -1153,5 +1164,169 @@
 
   .kapi-public-shell .kapi-not-found {
     min-height: calc(100svh - 64px) !important;
+  }
+}
+
+
+/* --------------------------------------------------------------------------
+   Public utility containment
+   The page JSX still contains legacy Tailwind utilities. These rules keep
+   those utilities from overriding the rebuilt visual language.
+   -------------------------------------------------------------------------- */
+
+.kapi-public-shell button,
+.kapi-public-shell a {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.kapi-public-shell button.rounded-full,
+.kapi-public-shell a.rounded-full {
+  border-radius: 12px !important;
+}
+
+.kapi-public-shell button[class*="rounded-full"],
+.kapi-public-shell a[class*="rounded-full"] {
+  border-radius: 12px !important;
+}
+
+.kapi-public-shell button[class*="px-"][class*="py-"],
+.kapi-public-shell a[class*="px-"][class*="py-"] {
+  min-height: 42px;
+}
+
+.kapi-public-shell h1[class*="text-7xl"],
+.kapi-public-shell h1[class*="text-8xl"],
+.kapi-public-shell h2[class*="text-7xl"],
+.kapi-public-shell h2[class*="text-8xl"] {
+  font-size: clamp(2.5rem, 5vw, 4.7rem) !important;
+  line-height: 1 !important;
+  letter-spacing: -.06em !important;
+}
+
+.kapi-public-shell h1[class*="text-6xl"],
+.kapi-public-shell h2[class*="text-6xl"] {
+  font-size: clamp(2.25rem, 4.4vw, 4rem) !important;
+  line-height: 1.02 !important;
+  letter-spacing: -.05em !important;
+}
+
+.kapi-public-shell .shadow-2xl,
+.kapi-public-shell .shadow-xl,
+.kapi-public-shell [class*="shadow-[0_0_20px"] {
+  box-shadow: 0 18px 56px rgba(0,0,0,.22) !important;
+}
+
+.kapi-public-shell [class*="bg-brand-red"] {
+  --tw-bg-opacity: 1;
+  background-color: var(--pub-red) !important;
+}
+
+.kapi-public-shell [class*="text-brand-red"] {
+  color: var(--pub-red) !important;
+}
+
+.kapi-public-shell [class*="border-brand-red"] {
+  border-color: rgba(176,0,32,.35) !important;
+}
+
+.kapi-public-shell input,
+.kapi-public-shell textarea,
+.kapi-public-shell select {
+  font-family: inherit;
+}
+
+.kapi-public-shell input[type="checkbox"],
+.kapi-public-shell input[type="radio"] {
+  accent-color: var(--pub-red);
+}
+
+.kapi-public-shell img {
+  max-width: 100%;
+}
+
+.kapi-public-shell .kapi-nav-icon-button {
+  width: 42px !important;
+  height: 42px !important;
+  min-width: 42px !important;
+  min-height: 42px !important;
+  padding: 0 !important;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--pub-border) !important;
+  border-radius: 12px !important;
+  background: rgba(255,255,255,.035) !important;
+  color: var(--pub-text) !important;
+}
+
+.kapi-public-shell .kapi-nav-icon-button:hover {
+  background: rgba(255,255,255,.075) !important;
+  border-color: var(--pub-border-strong) !important;
+}
+
+.kapi-public-shell .kapi-public-nav .kapi-nav-inner {
+  width: min(calc(100% - 2 * var(--pub-gutter)), var(--pub-content)) !important;
+}
+
+.kapi-public-shell .kapi-public-nav-links {
+  flex: 1 1 auto;
+  justify-content: flex-end;
+}
+
+.kapi-public-shell .kapi-public-nav-links .kapi-nav-group {
+  flex: 0 1 auto;
+}
+
+.kapi-public-shell .kapi-public-nav-links .kapi-nav-group a,
+.kapi-public-shell .kapi-public-nav-links .kapi-nav-group button {
+  min-width: max-content;
+}
+
+.kapi-public-shell .kapi-public-footer img {
+  object-fit: contain;
+}
+
+.kapi-public-shell .kapi-public-footer ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.kapi-public-shell .kapi-public-footer li {
+  margin: 0;
+}
+
+@media (max-width: 1100px) and (min-width: 768px) {
+  .kapi-public-shell .kapi-public-nav .kapi-nav-inner {
+    gap: 10px;
+  }
+
+  .kapi-public-shell .kapi-nav-group > a,
+  .kapi-public-shell .kapi-nav-group > div > button {
+    padding-inline: 9px !important;
+  }
+
+  .kapi-public-shell .kapi-nav-cta {
+    min-width: 116px;
+    padding-inline: 11px !important;
+  }
+
+  .kapi-public-shell .kapi-language-option {
+    min-width: 32px;
+  }
+}
+
+@media (max-width: 767px) {
+  .kapi-public-shell button[class*="px-"][class*="py-"],
+  .kapi-public-shell a[class*="px-"][class*="py-"] {
+    min-height: 44px;
+  }
+
+  .kapi-public-shell h1[class*="text-7xl"],
+  .kapi-public-shell h1[class*="text-8xl"],
+  .kapi-public-shell h2[class*="text-7xl"],
+  .kapi-public-shell h2[class*="text-8xl"] {
+    font-size: clamp(2.35rem, 11vw, 3.7rem) !important;
   }
 }
