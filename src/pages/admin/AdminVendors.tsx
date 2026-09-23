@@ -291,45 +291,45 @@ export const AdminVendors: React.FC = () => {
       {/* Top Summary Metrics */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 w-full">
         <div className="w-full h-full p-4 rounded-xl bg-[var(--k-bg)] border border-[rgba(255,255,255,0.07)] flex flex-col justify-between">
-          <div className="text-[11px] font-sans text-[var(--k-text-secondary)] uppercase tracking-wider">
+          <div className="text-xs font-sans text-[var(--k-text-secondary)] uppercase tracking-wider">
             {language === 'id' ? 'Total Mitra Terdaftar' : 'Total Vetted Vendors'}
           </div>
           <div className="mt-2 text-2xl font-bold font-sans text-white">{vendors.length}</div>
-          <div className="text-[10px] font-sans text-emerald-400 mt-1 flex items-center gap-1">
+          <div className="text-xs font-sans text-emerald-400 mt-1 flex items-center gap-1">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
             <span>{vendors.filter(v => v.status === 'active').length} Active</span>
           </div>
         </div>
 
         <div className="w-full h-full p-4 rounded-xl bg-[var(--k-bg)] border border-[rgba(255,255,255,0.07)] flex flex-col justify-between">
-          <div className="text-[11px] font-sans text-[var(--k-text-secondary)] uppercase tracking-wider">
+          <div className="text-xs font-sans text-[var(--k-text-secondary)] uppercase tracking-wider">
             {language === 'id' ? 'Spesialis Freelance' : 'Freelance Talent'}
           </div>
           <div className="mt-2 text-2xl font-bold font-sans text-white">
             {vendors.filter(v => v.type === 'freelancer' || v.type === 'contractor').length}
           </div>
-          <div className="text-[10px] font-sans text-[var(--k-text-secondary)] mt-1">Design, Dev & 3D</div>
+          <div className="text-xs font-sans text-[var(--k-text-secondary)] mt-1">Design, Dev & 3D</div>
         </div>
 
         <div className="w-full h-full p-4 rounded-xl bg-[var(--k-bg)] border border-[rgba(255,255,255,0.07)] flex flex-col justify-between">
-          <div className="text-[11px] font-sans text-[var(--k-text-secondary)] uppercase tracking-wider">
+          <div className="text-xs font-sans text-[var(--k-text-secondary)] uppercase tracking-wider">
             {language === 'id' ? 'Partner Agensi' : 'Agency Partners'}
           </div>
           <div className="mt-2 text-2xl font-bold font-sans text-white">
             {vendors.filter(v => v.type === 'agency_partner').length}
           </div>
-          <div className="text-[10px] font-sans text-cyan-400 mt-1">DevOps, Cloud & Legal</div>
+          <div className="text-xs font-sans text-cyan-400 mt-1">DevOps, Cloud & Legal</div>
         </div>
 
         <div className="w-full h-full p-4 rounded-xl bg-[var(--k-bg)] border border-[rgba(255,255,255,0.07)] flex flex-col justify-between">
-          <div className="text-[11px] font-sans text-[var(--k-text-secondary)] uppercase tracking-wider">
+          <div className="text-xs font-sans text-[var(--k-text-secondary)] uppercase tracking-wider">
             {language === 'id' ? 'Rata-rata Rating SLA' : 'Avg Performance SLA'}
           </div>
           <div className="mt-2 text-2xl font-bold font-sans text-white flex items-center gap-1.5">
             <span>4.9</span>
             <Star size={16} className="text-amber-400 fill-amber-400" />
           </div>
-          <div className="text-[10px] font-sans text-[var(--k-text-secondary)] mt-1">From 42 verified deliverables</div>
+          <div className="text-xs font-sans text-[var(--k-text-secondary)] mt-1">From 42 verified deliverables</div>
         </div>
       </div>
 
@@ -426,7 +426,7 @@ export const AdminVendors: React.FC = () => {
                         <span 
                           onClick={(e) => handleToggleVettedQuick(vendor, e)}
                           title={language === 'id' ? 'Mitra Terverifikasi Kapitech (Klik untuk ubah)' : 'Kapitech Vetted Talent (Click to toggle)'}
-                          className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[9px] font-sans font-bold bg-[var(--k-red)]/15 text-[var(--k-red)] border border-[var(--k-red)]/30 cursor-pointer hover:bg-[var(--k-red)]/25 transition-colors"
+                          className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-xs font-sans font-bold bg-[var(--k-red)]/15 text-[var(--k-red)] border border-[var(--k-red)]/30 cursor-pointer hover:bg-[var(--k-red)]/25 transition-colors"
                         >
                           <ShieldCheck size={10} />
                           <span>Vetted</span>
@@ -434,7 +434,7 @@ export const AdminVendors: React.FC = () => {
                       )}
                     </div>
                     {vendor.companyName && (
-                      <p className="text-[11px] font-sans text-[var(--k-text-secondary)] flex items-center gap-1">
+                      <p className="text-xs font-sans text-[var(--k-text-secondary)] flex items-center gap-1">
                         <Building2 size={11} className="text-[#5C626E]" />
                         <span>{vendor.companyName}</span>
                       </p>
@@ -444,7 +444,7 @@ export const AdminVendors: React.FC = () => {
 
                 <div className="flex items-center gap-1.5">
                   <span
-                    className={`px-2 py-0.5 rounded-full text-[10px] font-sans capitalize ${
+                    className={`px-2 py-0.5 rounded-full text-xs font-sans capitalize ${
                       vendor.status === 'active'
                         ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'
                         : vendor.status === 'under_review'
@@ -460,13 +460,13 @@ export const AdminVendors: React.FC = () => {
               {/* Category & Hourly Rate */}
               <div className="mt-4 flex items-center justify-between pb-3 border-b border-[rgba(255,255,255,0.07)]">
                 <div>
-                  <span className="text-[10px] font-sans text-[#5C626E] uppercase block">
+                  <span className="text-xs font-sans text-[#5C626E] uppercase block">
                     {language === 'id' ? 'Spesialisasi' : 'Pillar'}
                   </span>
                   <span className="text-xs font-semibold text-white mt-0.5 block">{vendor.primaryCategory}</span>
                 </div>
                 <div className="text-right">
-                  <span className="text-[10px] font-sans text-[#5C626E] uppercase block">
+                  <span className="text-xs font-sans text-[#5C626E] uppercase block">
                     {language === 'id' ? 'Tarif Jam' : 'Hourly Rate'}
                   </span>
                   <span className="text-xs font-sans font-bold text-emerald-400 mt-0.5 block">
@@ -477,14 +477,14 @@ export const AdminVendors: React.FC = () => {
 
               {/* Skills Tags */}
               <div className="mt-3.5 space-y-1.5">
-                <span className="text-[10px] font-sans text-[#5C626E] uppercase block">
+                <span className="text-xs font-sans text-[#5C626E] uppercase block">
                   {language === 'id' ? 'Keahlian Inti' : 'Core Tech Stack'}
                 </span>
                 <div className="flex flex-wrap gap-1.5">
                   {vendor.skills.map((skill, idx) => (
                     <span
                       key={idx}
-                      className="px-2 py-0.5 rounded-md bg-[var(--k-surface)] border border-[rgba(255,255,255,0.07)] text-[10px] font-sans text-[var(--k-text-secondary)]"
+                      className="px-2 py-0.5 rounded-md bg-[var(--k-surface)] border border-[rgba(255,255,255,0.07)] text-xs font-sans text-[var(--k-text-secondary)]"
                     >
                       {skill}
                     </span>
@@ -498,7 +498,7 @@ export const AdminVendors: React.FC = () => {
               <div className="flex items-center gap-1.5 text-xs font-sans text-amber-400">
                 <Star size={13} className="fill-amber-400 text-amber-400" />
                 <span className="font-bold">{vendor.rating.toFixed(1)}</span>
-                <span className="text-[10px] text-[#5C626E]">({vendor.completedProjectsCount} projects)</span>
+                <span className="text-xs text-[#5C626E]">({vendor.completedProjectsCount} projects)</span>
               </div>
 
               <div className="flex items-center gap-1.5">
@@ -551,7 +551,7 @@ export const AdminVendors: React.FC = () => {
       {isDrawerOpen && selectedVendor && (
         <div className="fixed inset-0 z-50 flex">
           <div className="fixed inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setIsDrawerOpen(false)} />
-          <div className="relative ml-auto w-full max-w-md bg-[var(--k-bg)] border-l border-[rgba(255,255,255,0.07)] h-full flex flex-col justify-between p-6 z-10 shadow-2xl overflow-y-auto animate-in slide-in-from-right duration-200">
+          <div className="relative ml-auto w-full max-w-md bg-[var(--k-bg)] border-l border-[rgba(255,255,255,0.07)] h-full flex flex-col justify-between p-6 z-10 shadow-[var(--k-shadow-sm)] overflow-y-auto animate-in slide-in-from-right duration-200">
             <div>
               <div className="flex items-center justify-between pb-4 border-b border-[rgba(255,255,255,0.07)]">
                 <div className="flex items-center gap-3">
@@ -562,7 +562,7 @@ export const AdminVendors: React.FC = () => {
                     <div className="flex items-center gap-2">
                       <h3 className="text-sm font-bold text-white">{selectedVendor.name}</h3>
                       {(selectedVendor.isVetted ?? true) && (
-                        <span className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[10px] font-sans font-bold bg-[var(--k-red)]/15 text-[var(--k-red)] border border-[var(--k-red)]/30">
+                        <span className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-xs font-sans font-bold bg-[var(--k-red)]/15 text-[var(--k-red)] border border-[var(--k-red)]/30">
                           <ShieldCheck size={11} />
                           <span>Vetted</span>
                         </span>
@@ -581,7 +581,7 @@ export const AdminVendors: React.FC = () => {
 
               <div className="py-4 space-y-4 text-xs font-sans">
                 <div>
-                  <span className="text-[10px] font-sans text-[#5C626E] uppercase block mb-1">
+                  <span className="text-xs font-sans text-[#5C626E] uppercase block mb-1">
                     {language === 'id' ? 'Kontak & Lokasi' : 'Contact & Location'}
                   </span>
                   <div className="space-y-1.5 bg-[var(--k-surface)] p-3 rounded-xl border border-[rgba(255,255,255,0.07)]">
@@ -603,18 +603,18 @@ export const AdminVendors: React.FC = () => {
                 </div>
 
                 <div>
-                  <span className="text-[10px] font-sans text-[#5C626E] uppercase block mb-1">
+                  <span className="text-xs font-sans text-[#5C626E] uppercase block mb-1">
                     {language === 'id' ? 'Tarif & Kontrak' : 'Rate & Contracts'}
                   </span>
                   <div className="bg-[var(--k-surface)] p-3 rounded-xl border border-[rgba(255,255,255,0.07)] flex items-center justify-between">
                     <div>
-                      <span className="text-[10px] font-sans text-[var(--k-text-secondary)]">Standard Hourly</span>
+                      <span className="text-xs font-sans text-[var(--k-text-secondary)]">Standard Hourly</span>
                       <p className="text-sm font-sans font-bold text-emerald-400">
                         {formatAmount(selectedVendor.hourlyRate, currency)}/hr
                       </p>
                     </div>
                     <div className="text-right">
-                      <span className="text-[10px] font-sans text-[var(--k-text-secondary)]">Engagement</span>
+                      <span className="text-xs font-sans text-[var(--k-text-secondary)]">Engagement</span>
                       <p className="text-xs font-semibold text-white capitalize">{selectedVendor.type.replace('_', ' ')}</p>
                     </div>
                   </div>
@@ -622,7 +622,7 @@ export const AdminVendors: React.FC = () => {
 
                 {selectedVendor.notes && (
                   <div>
-                    <span className="text-[10px] font-sans text-[#5C626E] uppercase block mb-1">
+                    <span className="text-xs font-sans text-[#5C626E] uppercase block mb-1">
                       {language === 'id' ? 'Catatan Kinerja' : 'Performance Notes'}
                     </span>
                     <div className="bg-[var(--k-surface)] p-3 rounded-xl border border-[rgba(255,255,255,0.07)] text-[var(--k-text-secondary)] leading-relaxed">
@@ -652,7 +652,7 @@ export const AdminVendors: React.FC = () => {
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="fixed inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setIsModalOpen(false)} />
-          <div className="relative w-full max-w-lg bg-[var(--k-bg)] border border-[rgba(255,255,255,0.07)] rounded-xl shadow-2xl p-6 z-10 animate-in zoom-in-95 duration-150">
+          <div className="relative w-full max-w-lg bg-[var(--k-bg)] border border-[rgba(255,255,255,0.07)] rounded-xl shadow-[var(--k-shadow-sm)] p-6 z-10 animate-in zoom-in-95 duration-150">
             <div className="flex items-center justify-between pb-4 border-b border-[rgba(255,255,255,0.07)]">
               <h3 className="text-sm font-bold text-white">
                 {editingVendor
@@ -674,7 +674,7 @@ export const AdminVendors: React.FC = () => {
             <form onSubmit={handleSaveVendor} className="py-4 space-y-3.5 max-h-[75vh] overflow-y-auto pr-1 custom-scrollbar">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-[11px] font-sans text-[var(--k-text-secondary)] uppercase block mb-1">
+                  <label className="text-xs font-sans text-[var(--k-text-secondary)] uppercase block mb-1">
                     {language === 'id' ? 'Nama Lengkap *' : 'Full Name *'}
                   </label>
                   <input
@@ -688,7 +688,7 @@ export const AdminVendors: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="text-[11px] font-sans text-[var(--k-text-secondary)] uppercase block mb-1">
+                  <label className="text-xs font-sans text-[var(--k-text-secondary)] uppercase block mb-1">
                     {language === 'id' ? 'Nama Perusahaan / Studio' : 'Company / Studio'}
                   </label>
                   <input
@@ -703,7 +703,7 @@ export const AdminVendors: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-[11px] font-sans text-[var(--k-text-secondary)] uppercase block mb-1">Email *</label>
+                  <label className="text-xs font-sans text-[var(--k-text-secondary)] uppercase block mb-1">Email *</label>
                   <input
                     type="email"
                     required
@@ -715,7 +715,7 @@ export const AdminVendors: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="text-[11px] font-sans text-[var(--k-text-secondary)] uppercase block mb-1">
+                  <label className="text-xs font-sans text-[var(--k-text-secondary)] uppercase block mb-1">
                     {language === 'id' ? 'Telepon / WhatsApp' : 'Phone / WhatsApp'}
                   </label>
                   <input
@@ -730,7 +730,7 @@ export const AdminVendors: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-[11px] font-sans text-[var(--k-text-secondary)] uppercase block mb-1">
+                  <label className="text-xs font-sans text-[var(--k-text-secondary)] uppercase block mb-1">
                     {language === 'id' ? 'Kategori Layanan' : 'Category'}
                   </label>
                   <CustomSelect
@@ -748,7 +748,7 @@ export const AdminVendors: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="text-[11px] font-sans text-[var(--k-text-secondary)] uppercase block mb-1">
+                  <label className="text-xs font-sans text-[var(--k-text-secondary)] uppercase block mb-1">
                     {language === 'id' ? 'Tarif per Jam (IDR)' : 'Hourly Rate (IDR)'}
                   </label>
                   <input
@@ -762,7 +762,7 @@ export const AdminVendors: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-[11px] font-sans text-[var(--k-text-secondary)] uppercase block mb-1">
+                  <label className="text-xs font-sans text-[var(--k-text-secondary)] uppercase block mb-1">
                     {language === 'id' ? 'Tipe Kemitraan' : 'Engagement Type'}
                   </label>
                   <CustomSelect
@@ -777,7 +777,7 @@ export const AdminVendors: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="text-[11px] font-sans text-[var(--k-text-secondary)] uppercase block mb-1">
+                  <label className="text-xs font-sans text-[var(--k-text-secondary)] uppercase block mb-1">
                     {language === 'id' ? 'Status' : 'Status'}
                   </label>
                   <CustomSelect
@@ -799,7 +799,7 @@ export const AdminVendors: React.FC = () => {
                     <ShieldCheck size={14} className="text-[var(--k-red)]" />
                     <span>{language === 'id' ? 'Mitra Terverifikasi (Vetted)' : 'Kapitech Vetted Talent'}</span>
                   </span>
-                  <p className="text-[11px] text-[var(--k-text-secondary)] mt-0.5">
+                  <p className="text-xs text-[var(--k-text-secondary)] mt-0.5">
                     {language === 'id' 
                       ? 'Tandai bahwa portfolio, NDA, dan review SLA telah divalidasi oleh partner agensi.' 
                       : 'Flag that NDA, portfolio deliverables, and background check have been passed.'}
@@ -814,7 +814,7 @@ export const AdminVendors: React.FC = () => {
               </div>
 
               <div>
-                <label className="text-[11px] font-sans text-[var(--k-text-secondary)] uppercase block mb-1">
+                <label className="text-xs font-sans text-[var(--k-text-secondary)] uppercase block mb-1">
                   {language === 'id' ? 'Keahlian (pisahkan koma)' : 'Skills (comma separated)'}
                 </label>
                 <input
@@ -827,7 +827,7 @@ export const AdminVendors: React.FC = () => {
               </div>
 
               <div>
-                <label className="text-[11px] font-sans text-[var(--k-text-secondary)] uppercase block mb-1">
+                <label className="text-xs font-sans text-[var(--k-text-secondary)] uppercase block mb-1">
                   {language === 'id' ? 'Catatan & Evaluasi SLA' : 'Notes & SLA Review'}
                 </label>
                 <textarea
