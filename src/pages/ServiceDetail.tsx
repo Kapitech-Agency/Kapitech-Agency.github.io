@@ -111,7 +111,7 @@ export const ServiceDetail = () => {
             </div>
 
             {/* Headline */}
-            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-sans tracking-tight text-white leading-[1.1] mb-6">
+            <h1 className="kapi-display-title">
               {language === 'id' ? service.heroHeadlineId : service.heroHeadline}
             </h1>
 
