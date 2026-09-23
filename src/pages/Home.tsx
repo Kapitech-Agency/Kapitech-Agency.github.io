@@ -105,7 +105,7 @@ export const Home = () => {
             transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
           >
             {/* Status Chip */}
-            <div className="kapi-hero-status inline-flex items-center gap-2.5 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full border border-white/10 bg-white/[0.045] backdrop-blur-xl mb-6 sm:mb-8">
+            <div className="kapi-hero-status kapi-hero-status">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-red opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-red"></span>
@@ -132,14 +132,14 @@ export const Home = () => {
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-center">
               <Link 
                 to="/contact" 
-                className="kapi-button kapi-button-primary kapi-start-project px-7 sm:px-8 bg-brand-red hover:bg-[var(--k-red-hover)] text-white rounded-[14px] text-xs font-semibold uppercase tracking-wider transition-colors duration-300 flex items-center justify-center gap-2"
+                className="kapi-button kapi-button-primary kapi-start-project"
               >
                 <span>{language === 'id' ? 'Mulai Proyek' : 'Start a Project'}</span>
                 <ArrowUpRight size={16} />
               </Link>
               <Link 
                 to="/work" 
-                className="kapi-button kapi-button-secondary px-7 sm:px-8 rounded-[14px] border border-white/[.12] bg-white/[.045] hover:bg-white/[.08] text-white transition-colors duration-300 text-xs font-semibold uppercase tracking-wider flex items-center justify-center gap-2 active:scale-[.98]"
+                className="kapi-button kapi-button-secondary"
               >
                 <span>{language === 'id' ? 'Jelajahi 50 Portofolio' : 'Explore 50 Case Studies'}</span>
               </Link>
@@ -155,27 +155,27 @@ export const Home = () => {
             {stats.map((stat, i) => (
               <div 
                 key={i} 
-                className="kapi-card relative p-5 sm:p-6 rounded-[18px] border border-white/[.10] hover:border-brand-red/35 transition-all duration-300 group flex flex-col justify-between min-h-[168px]"
+                className="kapi-card kapi-stat-card"
               >
                 <div className="flex items-center justify-between mb-4">
                   <span className="text-xs font-sans uppercase tracking-[0.14em] text-brand-red font-semibold">
                     {stat.label}
                   </span>
-                  <span className="text-xs font-sans px-2 py-1 rounded-full bg-white/[.035] border border-white/[.10] text-[var(--k-text-tertiary)]">
+                  <span className="text-xs font-sans kapi-stat-index">
                     0{i + 1}
                   </span>
                 </div>
 
                 <div className="my-2">
-                  <div className="text-2xl sm:text-3xl font-sans font-bold text-white tracking-[-0.03em] group-hover:text-brand-red transition-colors">
+                  <div className="kapi-stat-value">
                     {stat.value}
                   </div>
-                  <div className="text-sm font-sans text-brand-red font-medium mt-1">
+                  <div className="kapi-stat-subvalue">
                     {stat.subValue}
                   </div>
                 </div>
 
-                <p className="text-sm text-[var(--k-text-secondary)] font-light leading-relaxed pt-3 border-t border-white/[.08] mt-2">
+                <p className="kapi-stat-desc">
                   {stat.desc}
                 </p>
               </div>
