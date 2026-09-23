@@ -65,7 +65,7 @@ export class PostgresTaskRepository {
     const projectId = typeof task.projectId === 'string' && task.projectId ? task.projectId : null;
     return withPostgresTransaction(async client => {
       if (projectId) {
-        const project = await client.query('SELECT id FROM projects WHERE id = $1 LIMIT 1', [projectId]);
+        const project = await client.query('SELECT id FROM projects WHERE id = $1 FOR UPDATE', [projectId]);
         if (!project.rows[0]) throw new Error('Project not found.');
       }
       const assigneeUserId = await resolveAssigneeUserId(client, task.assignee);
@@ -77,6 +77,9 @@ export class PostgresTaskRepository {
           assigneeUserId, task.dueDate || null, JSON.stringify(taskMetadata(task)), now, task.updatedAt || now
         ]
       );
+      if (projectId) {
+        await client.query('UPDATE projects SET updated_at = NOW() WHERE id = $1', [projectId]);
+      }
       const result = await client.query('SELECT * FROM tasks WHERE id = $1', [task.id]);
       if (audit) await postgresAuditLogRepository.appendWithinTransaction(client, audit);
       return mapTask(result.rows[0]);
@@ -85,6 +88,15 @@ export class PostgresTaskRepository {
 
   async update(id: string, patch: Record<string, unknown>, audit?: AuditEntry): Promise<Record<string, unknown> | null> {
     return withPostgresTransaction(async client => {
+      const currentSnapshot = await client.query('SELECT project_id, updated_at FROM tasks WHERE id = $1 LIMIT 1', [id]);
+      if (!currentSnapshot.rows[0]) return null;
+      const currentProjectId = currentSnapshot.rows[0].project_id ? String(currentSnapshot.rows[0].project_id) : null;
+      const requestedProjectId = typeof patch.projectId === 'string' && patch.projectId ? patch.projectId : currentProjectId;
+      const projectIds = Array.from(new Set([currentProjectId, requestedProjectId].filter((value): value is string => Boolean(value)))).sort();
+      for (const projectId of projectIds) {
+        const project = await client.query('SELECT id FROM projects WHERE id = $1 FOR UPDATE', [projectId]);
+        if (!project.rows[0]) throw new Error('Project not found.');
+      }
       const currentResult = await client.query('SELECT * FROM tasks WHERE id = $1 FOR UPDATE', [id]);
       if (!currentResult.rows[0]) return null;
       const current = mapTask(currentResult.rows[0]);
@@ -93,12 +105,12 @@ export class PostgresTaskRepository {
       }
       const next: Record<string, unknown> = { ...current, ...patch, id, updatedAt: new Date().toISOString() };
       const projectId = typeof next.projectId === 'string' && next.projectId ? next.projectId : null;
-      if (projectId) {
-        const project = await client.query('SELECT id FROM projects WHERE id = $1 LIMIT 1', [projectId]);
+      if (projectId && !projectIds.includes(projectId)) {
+        const project = await client.query('SELECT id FROM projects WHERE id = $1 FOR UPDATE', [projectId]);
         if (!project.rows[0]) throw new Error('Project not found.');
       }
       if (projectId !== (current.projectId ? String(current.projectId) : null)) {
-        const logs = await client.query('SELECT COUNT(*)::int AS count FROM time_logs WHERE task_id=$1', [id]);
+        const logs = await client.query('SELECT COUNT(*)::int AS count FROM time_logs WHERE task_id=$1',[id]);
         if (Number(logs.rows[0]?.count || 0) > 0) throw new Error('TASK_PROJECT_MOVE_FORBIDDEN');
       }
       const assigneeUserId = await resolveAssigneeUserId(client, next.assignee);
@@ -109,6 +121,12 @@ export class PostgresTaskRepository {
         [id, projectId, next.title, next.description || null, next.status, next.priority || 'medium',
          assigneeUserId, next.dueDate || null, JSON.stringify(taskMetadata(next)), next.updatedAt]
       );
+      if (currentProjectId) {
+        await client.query('UPDATE projects SET updated_at = NOW() WHERE id = $1', [currentProjectId]);
+      }
+      if (projectId && projectId !== currentProjectId) {
+        await client.query('UPDATE projects SET updated_at = NOW() WHERE id = $1', [projectId]);
+      }
       const result = await client.query('SELECT * FROM tasks WHERE id = $1', [id]);
       if (audit) await postgresAuditLogRepository.appendWithinTransaction(client, audit);
       return mapTask(result.rows[0]);
@@ -117,13 +135,23 @@ export class PostgresTaskRepository {
 
   async delete(id: string, audit?: AuditEntry): Promise<boolean> {
     return withPostgresTransaction(async client => {
-      const current = await client.query('SELECT id FROM tasks WHERE id=$1 FOR UPDATE',[id]);
+      const snapshot = await client.query('SELECT project_id FROM tasks WHERE id=$1 LIMIT 1',[id]);
+      if (!snapshot.rows[0]) return false;
+      const projectId = snapshot.rows[0].project_id ? String(snapshot.rows[0].project_id) : null;
+      if (projectId) {
+        const project = await client.query('SELECT id FROM projects WHERE id=$1 FOR UPDATE',[projectId]);
+        if (!project.rows[0]) return false;
+      }
+      const current = await client.query('SELECT id, project_id FROM tasks WHERE id=$1 FOR UPDATE',[id]);
       if (!current.rows[0]) return false;
       const references = await client.query('SELECT COUNT(*)::int AS count FROM time_logs WHERE task_id=$1',[id]);
       if (Number(references.rows[0]?.count || 0) > 0) {
         throw new Error('TASK_HAS_TIME_LOGS');
       }
       const result = await client.query('DELETE FROM tasks WHERE id=$1',[id]);
+      if (result.rowCount === 1 && projectId) {
+        await client.query('UPDATE projects SET updated_at = NOW() WHERE id = $1', [projectId]);
+      }
       if (audit) await postgresAuditLogRepository.appendWithinTransaction(client, audit);
       return result.rowCount === 1;
     });
