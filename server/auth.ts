@@ -254,10 +254,7 @@ export async function incrementMfaChallengeFailures(token: string): Promise<numb
 
   const tokenHash = hashSessionToken(token);
   if (getDataSourceMode() === 'postgres') {
-    const session = await postgresAuthRepository.findSession(tokenHash);
-    if (!session || session.kind !== 'mfa' || session.expiresAt <= Date.now()) return 0;
-    const requestedAttempts = (session.mfaFailedAttempts || 0) + 1;
-    const failedAttempts = await postgresAuthRepository.updateMfaFailedAttempts(tokenHash, requestedAttempts);
+    const failedAttempts = await postgresAuthRepository.updateMfaFailedAttempts(tokenHash, 1);
     if (failedAttempts >= 5) await postgresAuthRepository.deleteSession(tokenHash);
     return failedAttempts;
   }
