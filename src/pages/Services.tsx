@@ -421,37 +421,6 @@ export const Services = () => {
       timelineId: '2 - 4 Minggu'
     },
     {
-      id: 'mobile-app-design',
-      title: 'Mobile App Design',
-      category: 'Design',
-      subtitle: 'Apps your users love',
-      subtitleId: 'Aplikasi mobile iOS & Android yang dicintai pengguna',
-      icon: <Smartphone size={24} />,
-      summary: 'iOS Human Interface and Android Material 3 compliant mobile interfaces designed for natural single-handed ergonomics.',
-      summaryId: 'Antarmuka aplikasi iOS & Android berstandar resmi (Apple HIG / Material 3) yang nyaman digunakan satu tangan.',
-      fullDescription: 'We design thumb-friendly navigation, tactile micro-interactions, dark/light mode parity, and intuitive onboarding screens that minimize churn.',
-      fullDescriptionId: 'Kami merancang navigasi ramah ibu jari, mikro-interaksi responsif, dukungan tema gelap/terang, dan alur onboarding yang mudah dipahami pengguna baru.',
-      deliverables: [
-        'Complete iOS & Android Flow Wireframes & Hi-Fi UI',
-        'Native Component Library (Apple HIG & Material 3)',
-        'Micro-Interactions & Animated Transition Prototypes',
-        'App Store & Google Play Screenshot Mockup Pack',
-        'Handoff Specs with Exportable 1x, 2x, 3x Assets'
-      ],
-      deliverablesId: [
-        'Wireframe & Desain UI Resolusi Tinggi untuk iOS dan Android',
-        'Pustaka Komponen Asli (Apple HIG & Material 3)',
-        'Prototipe Animasi Transisi & Mikro-Interaksi',
-        'Paket Tangkapan Layar Promosi App Store & Google Play',
-        'Aset Ekspor Siap Pakai (1x, 2x, 3x) untuk Mobile Engineer'
-      ],
-      tools: ['Figma', 'Protopie', 'LottieFiles'],
-      idealFor: 'Mobile-first startups, fintech wallets, healthcare apps, and on-demand services.',
-      idealForId: 'Startup mobile-first, aplikasi fintech, dompet digital, dan layanan on-demand.',
-      timeline: '3 - 6 Weeks',
-      timelineId: '3 - 6 Minggu'
-    },
-    {
       id: 'website-redesign',
       title: 'Website Redesign',
       category: 'Design',
