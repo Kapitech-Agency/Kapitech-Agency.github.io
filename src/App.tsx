@@ -176,16 +176,16 @@ function AppShell() {
 
   if (!isAdminRoute && maintenanceMode) {
     return (
-      <div className="min-h-screen bg-[#0B0C0E] text-white flex items-center justify-center px-6">
+      <div className="kapi-public-shell min-h-screen bg-[var(--k-bg-deep)] text-white flex items-center justify-center px-6">
         <div className="w-full max-w-xl text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-brand-red/30 bg-brand-red/10 text-brand-red text-[11px] font-mono uppercase tracking-[0.16em] mb-6">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-brand-red/30 bg-brand-red/10 text-brand-red text-xs font-sans uppercase tracking-[0.16em] mb-6">
             <span className="w-2 h-2 rounded-full bg-brand-red animate-pulse" />
             <span>Maintenance</span>
           </div>
-          <h1 className="text-3xl sm:text-5xl font-display font-bold tracking-tight mb-4">
+          <h1 className="text-3xl sm:text-5xl font-sans font-bold tracking-[-0.04em] leading-[1.05] mb-4">
             We’re working on the site.
           </h1>
-          <p className="text-sm sm:text-base text-[#8A909D] leading-relaxed max-w-lg mx-auto">
+          <p className="text-sm sm:text-base text-[var(--k-text-secondary)] leading-relaxed max-w-lg mx-auto">
             {language === 'id'
               ? 'Website Kapitech sedang dalam pemeliharaan. Silakan kembali beberapa saat lagi.'
               : 'Kapitech is currently performing maintenance. Please check back shortly.'}
