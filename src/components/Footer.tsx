@@ -63,7 +63,7 @@ export const Footer = () => {
   ];
 
   const designServices = [
-    { name: 'UI/UX Design', desc: 'Web & mobile app design', href: '/services/ui-ux-design' },
+    { name: 'UI/UX Design', desc: 'Web product and interface design', href: '/services/ui-ux-design' },
     { name: 'Website Design', desc: 'Custom websites & landings', href: '/services/website-design' },
     { name: 'Website Redesign', desc: 'Modern look, higher impact', href: '/services/website-redesign' },
     { name: 'Product UX/UI Audit', desc: 'Insights that drive results', href: '/services/product-ux-ui-audit' },
