@@ -163,10 +163,10 @@ export const Footer = () => {
   ];
 
   return (
-    <footer className="kapi-public-footer relative bg-[var(--k-bg)] pt-20 pb-12 px-4 sm:px-6 md:px-12 overflow-hidden border-t border-[var(--k-border)]" id="main-footer">
+    <footer className="kapi-public-footer relative bg-[var(--k-bg)] pt-16 pb-10 px-4 sm:px-6 md:px-12 overflow-hidden border-t border-[var(--k-border)]" id="main-footer">
       <div className="max-w-7xl mx-auto relative z-10">
         {/* Top CTA Banner */}
-        <div className="pb-16 mb-16 border-b border-[var(--k-border)]">
+        <div className="pb-12 mb-12 border-b border-[var(--k-border)]">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
             <div className="lg:col-span-8">
               <span className="text-brand-red font-sans font-semibold tracking-widest uppercase text-xs mb-3 block">
@@ -227,7 +227,7 @@ export const Footer = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="w-full min-h-[44px] bg-[var(--k-surface)] border border-[var(--k-border)] rounded-xl px-4 py-3 text-xs text-white placeholder:text-[var(--k-text-secondary)]/70 focus:outline-none focus:border-brand-red transition-colors"
+                  className="w-full min-h-[44px] bg-[var(--k-surface)] border border-[var(--k-border)] rounded-xl px-4 py-3 text-xs text-white placeholder:text-[var(--k-text-secondary)]/70 focus:outline-none focus-visible:outline-none focus:border-brand-red transition-colors"
                 />
                 <button 
                   type="submit"
