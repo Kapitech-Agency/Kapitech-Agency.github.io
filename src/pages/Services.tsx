@@ -910,7 +910,7 @@ export const Services = () => {
                 </div>
                 <button
                   onClick={() => setSelectedService(null)}
-                  className="w-9 h-9 rounded-full bg-[var(--k-bg)] hover:bg-white/10 border border-[var(--k-border)] flex items-center justify-center text-[var(--k-text-secondary)] hover:text-white transition-colors"
+                  className="w-9 h-9 kapi-modal-close"
                   aria-label="Close modal"
                 >
                   <X size={18} />
@@ -931,7 +931,7 @@ export const Services = () => {
                   </p>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-xl bg-[var(--k-bg)] border border-[var(--k-border)]">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 kapi-inset-card">
                   <div>
                     <span className="text-xs font-sans text-[var(--k-text-secondary)] uppercase block mb-1">
                       {language === 'id' ? 'Estimasi Pengerjaan' : 'Estimated Timeline'}
@@ -974,7 +974,7 @@ export const Services = () => {
                     </h4>
                     <div className="flex flex-wrap gap-2">
                       {selectedService.tools.map((tool, idx) => (
-                        <span key={idx} className="px-3 py-1 rounded-lg bg-[var(--k-bg)] border border-[var(--k-border)] text-xs font-sans text-[var(--k-text-secondary)]">
+                        <span key={idx} className="kapi-tech-tag">
                           {tool}
                         </span>
                       ))}
