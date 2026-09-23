@@ -265,7 +265,7 @@ export const AdminClients: React.FC = () => {
           <div className="text-3xl font-sans font-bold text-white tracking-tight">
             {clients.length}
           </div>
-          <div className="mt-3 pt-2 border-t border-[rgba(255,255,255,0.07)] text-[11px] font-sans text-[var(--k-text-secondary)]">
+          <div className="mt-3 pt-2 border-t border-[rgba(255,255,255,0.07)] text-xs font-sans text-[var(--k-text-secondary)]">
             {language === 'id' ? 'Klien Enterprise & SME' : 'Across Enterprise & SME tiers'}
           </div>
         </div>
@@ -280,7 +280,7 @@ export const AdminClients: React.FC = () => {
           <div className="text-3xl font-sans font-bold text-emerald-400 tracking-tight">
             {activeAccountsCount}
           </div>
-          <div className="mt-3 pt-2 border-t border-[rgba(255,255,255,0.07)] text-[11px] font-sans text-emerald-400">
+          <div className="mt-3 pt-2 border-t border-[rgba(255,255,255,0.07)] text-xs font-sans text-emerald-400">
             {language === 'id' ? 'Retainer & Sprint Aktif' : 'Active Retainers & Sprints'}
           </div>
         </div>
@@ -295,7 +295,7 @@ export const AdminClients: React.FC = () => {
           <div className="text-2xl sm:text-3xl font-sans font-bold text-white tracking-tight">
             {formatAmount(totalLifetimeSpend, currency)}
           </div>
-          <div className="mt-3 pt-2 border-t border-[rgba(255,255,255,0.07)] text-[11px] font-sans text-purple-400">
+          <div className="mt-3 pt-2 border-t border-[rgba(255,255,255,0.07)] text-xs font-sans text-purple-400">
             {language === 'id' ? 'Total Nilai Kontrak Billed' : 'Cumulative Billed Value'}
           </div>
         </div>
@@ -350,9 +350,9 @@ export const AdminClients: React.FC = () => {
                 <div className="flex items-start justify-between gap-2">
                   <div>
                     <div className="font-bold text-white text-base">{client.name}</div>
-                    <div className="text-[11px] text-[var(--k-red)] font-semibold">{client.contactPersonRole}</div>
+                    <div className="text-xs text-[var(--k-red)] font-semibold">{client.contactPersonRole}</div>
                   </div>
-                  <span className={`px-2.5 py-1 rounded-lg text-[10px] font-sans font-bold uppercase shrink-0 ${
+                  <span className={`px-2.5 py-1 rounded-lg text-xs font-sans font-bold uppercase shrink-0 ${
                     client.status === 'active'
                       ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
                       : client.status === 'completed'
@@ -368,7 +368,7 @@ export const AdminClients: React.FC = () => {
                   <Building2 size={13} className="text-[var(--k-text-secondary)] shrink-0" />
                   <span className="font-semibold text-white">{client.company}</span>
                   <span className="text-[var(--k-text-tertiary)]">•</span>
-                  <span className="text-[11px] text-[var(--k-text-secondary)] truncate">{client.industry}</span>
+                  <span className="text-xs text-[var(--k-text-secondary)] truncate">{client.industry}</span>
                 </div>
 
                 {/* Contact: Email & Phone */}
@@ -390,7 +390,7 @@ export const AdminClients: React.FC = () => {
                     </a>
                   )}
                   {client.location && (
-                    <div className="flex items-center gap-1.5 text-[var(--k-text-tertiary)] text-[11px]">
+                    <div className="flex items-center gap-1.5 text-[var(--k-text-tertiary)] text-xs">
                       <MapPin size={12} className="shrink-0" />
                       <span>{client.location}</span>
                     </div>
@@ -402,18 +402,18 @@ export const AdminClients: React.FC = () => {
                   <div>
                     {client.slaDailyAdSpendBudget ? (
                       <div>
-                        <div className="text-[10px] uppercase font-sans text-[var(--k-text-secondary)]">Daily SLA Ad-Spend</div>
+                        <div className="text-xs uppercase font-sans text-[var(--k-text-secondary)]">Daily SLA Ad-Spend</div>
                         <div className={`font-bold font-sans text-sm flex items-center gap-1 ${isOverBudget ? 'text-red-400' : 'text-emerald-400'}`}>
                           {isOverBudget && <AlertTriangle size={12} className="text-red-400 shrink-0" />}
                           <span>{formatAmount(client.currentDailyAdSpend || 0, currency)}</span>
                         </div>
-                        <div className="text-[10px] font-sans text-[#5C626E]">
+                        <div className="text-xs font-sans text-[#5C626E]">
                           Cap: {formatAmount(client.slaDailyAdSpendBudget, currency)}/day
                         </div>
                       </div>
                     ) : (
                       <div>
-                        <div className="text-[10px] uppercase font-sans text-[var(--k-text-secondary)]">Lifetime Spend</div>
+                        <div className="text-xs uppercase font-sans text-[var(--k-text-secondary)]">Lifetime Spend</div>
                         <div className="font-bold font-sans text-white text-sm">
                           {formatAmount(client.totalSpend || 0, currency)}
                         </div>
@@ -467,7 +467,7 @@ export const AdminClients: React.FC = () => {
       >
         <table className="w-full text-left text-xs font-sans min-w-[760px]">
           <thead className="sticky top-0 z-10 bg-[var(--k-bg)]">
-            <tr className="border-b border-[rgba(255,255,255,0.07)] text-[var(--k-text-secondary)] bg-[var(--k-surface)] font-sans text-[11px]">
+            <tr className="border-b border-[rgba(255,255,255,0.07)] text-[var(--k-text-secondary)] bg-[var(--k-surface)] font-sans text-xs">
               <th className="py-3 px-4 font-semibold">{t('admin.client.colName')}</th>
               <th className="py-3 px-4 font-semibold">{t('admin.client.colCompany')}</th>
               <th className="py-3 px-4 font-semibold">{t('admin.client.colContact')}</th>
@@ -491,16 +491,16 @@ export const AdminClients: React.FC = () => {
                   <tr key={client.id} className={`hover:bg-[var(--k-surface)] transition-colors group ${isOverBudget ? 'bg-red-950/20' : ''}`}>
                     <td className="py-3.5 px-4">
                       <div className="font-bold text-white text-sm">{client.name}</div>
-                      <div className="text-[10px] text-[var(--k-red)] font-semibold">{client.contactPersonRole}</div>
+                      <div className="text-xs text-[var(--k-red)] font-semibold">{client.contactPersonRole}</div>
                     </td>
                     <td className="py-3.5 px-4">
                       <div className="font-bold text-white flex items-center gap-1.5">
                         <Building2 size={12} className="text-[var(--k-text-secondary)]" />
                         <span>{client.company}</span>
                       </div>
-                      <div className="text-[10px] text-[var(--k-text-secondary)]">{client.industry}</div>
+                      <div className="text-xs text-[var(--k-text-secondary)]">{client.industry}</div>
                     </td>
-                    <td className="py-3.5 px-4 text-[var(--k-text-secondary)] space-y-0.5 text-[11px]">
+                    <td className="py-3.5 px-4 text-[var(--k-text-secondary)] space-y-0.5 text-xs">
                       <div className="flex items-center gap-1 text-white">
                         <Mail size={11} className="text-[var(--k-text-secondary)]" />
                         <span>{client.email}</span>
@@ -525,16 +525,16 @@ export const AdminClients: React.FC = () => {
                             {isOverBudget && <AlertTriangle size={12} className="text-red-400 shrink-0" />}
                             <span>{formatAmount(client.currentDailyAdSpend || 0, currency)}</span>
                           </div>
-                          <div className="text-[10px] text-[#5C626E]">
+                          <div className="text-xs text-[#5C626E]">
                             Cap: {formatAmount(client.slaDailyAdSpendBudget, currency)}/day
                           </div>
                         </div>
                       ) : (
-                        <span className="text-[#5C626E] text-[11px]">No SLA Cap</span>
+                        <span className="text-[#5C626E] text-xs">No SLA Cap</span>
                       )}
                     </td>
                     <td className="py-3.5 px-4">
-                      <span className={`px-2 py-0.5 rounded text-[10px] font-sans font-bold uppercase ${
+                      <span className={`px-2 py-0.5 rounded text-xs font-sans font-bold uppercase ${
                         client.status === 'active'
                           ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
                           : client.status === 'completed'
@@ -575,7 +575,7 @@ export const AdminClients: React.FC = () => {
       {/* 5. Create / Edit Client Modal */}
       {isClientModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-[var(--k-bg)] border border-[rgba(255,255,255,0.07)] rounded-xl w-full max-w-lg p-6 space-y-4 shadow-2xl my-8 text-xs font-sans">
+          <div className="bg-[var(--k-bg)] border border-[rgba(255,255,255,0.07)] rounded-xl w-full max-w-lg p-6 space-y-4 shadow-[var(--k-shadow-sm)] my-8 text-xs font-sans">
             <div className="flex items-center justify-between pb-3 border-b border-[rgba(255,255,255,0.07)]">
               <h2 className="text-base font-bold font-sans text-white flex items-center gap-2">
                 <Users className="text-[var(--k-red)]" size={18} />
