@@ -9,7 +9,7 @@ import {
   X, 
   Layers, 
   Sparkles, 
-  Smartphone, 
+
   Globe, 
   Cpu, 
   TrendingUp,
@@ -362,12 +362,12 @@ export const Services = () => {
       id: 'ui-ux-design',
       title: 'UI/UX Design',
       category: 'Design',
-      subtitle: 'Web & mobile app design',
+      subtitle: 'Web product and interface design',
       subtitleId: 'Desain antarmuka web dan aplikasi mobile terpadu',
       icon: <Layout size={24} />,
       summary: 'Figma design systems, intuitive user experience architectures, and clickable prototypes tested with real users.',
       summaryId: 'Sistem desain Figma modular, arsitektur informasi intuitif, dan prototipe interaktif siap uji untuk web serta aplikasi mobile.',
-      fullDescription: 'We balance aesthetic precision with frictionless usability. From multi-tiered SaaS platforms to high-frequency mobile apps, we design interfaces people love to use daily.',
+      fullDescription: 'We balance aesthetic precision with frictionless usability. From multi-tiered SaaS platforms to high-traffic web products, we design interfaces people love to use daily.',
       fullDescriptionId: 'Kami menggabungkan keindahan estetika dengan kemudahan navigasi tanpa hambatan. Mulai dari platform SaaS hingga aplikasi mobile, kami ciptakan UI yang disukai pengguna.',
       deliverables: [
         'Complete Responsive Screen UI (Desktop, Tablet, Mobile)',
@@ -384,7 +384,7 @@ export const Services = () => {
         'Spesifikasi Hand-off Desain Siap Implementasi Developer'
       ],
       tools: ['Figma', 'FigJam', 'Miro', 'Spline 3D', 'Lottie'],
-      idealFor: 'SaaS companies, mobile app startups, and digital transformation initiatives.',
+      idealFor: 'SaaS companies, digital product teams, and transformation initiatives.',
       idealForId: 'Perusahaan SaaS, startup aplikasi mobile, dan proyek transformasi digital.',
       timeline: '3 - 6 Weeks',
       timelineId: '3 - 6 Minggu'
