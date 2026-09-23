@@ -885,13 +885,13 @@ export const Services = () => {
       {/* Service / Solution Detail Modal */}
       <AnimatePresence>
         {selectedService && (
-          <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 sm:p-6 overflow-y-auto bg-black/85 backdrop-blur-md kapi-modal-backdrop">
+          <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 sm:p-6 overflow-y-auto bg-black/85 backdrop-blur-md kapi-modal-backdrop" data-public-modal-backdrop>
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ duration: 0.25 }}
-              className="relative w-full max-w-3xl kapi-card rounded-[24px] overflow-hidden my-8 max-h-[90vh] flex flex-col"
+              className="relative w-full max-w-3xl kapi-card rounded-[24px] overflow-hidden my-8 max-h-[90vh] flex flex-col kapi-modal-panel" data-public-modal
             >
               {/* Modal Header */}
               <div className="sticky top-0 z-20 flex items-center justify-between p-4 sm:p-6 bg-[var(--k-surface)]/95 backdrop-blur border-b border-[var(--k-border)]">
