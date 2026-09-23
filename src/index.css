@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
 /* ==========================================================================
@@ -842,5 +842,252 @@ body:has([data-kapi-admin="true"]) .kapi-noise-overlay {
     background: var(--ams-surface-solid);
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
+  }
+}
+
+
+/* ==========================================================================
+   AMS APPLE-INSPIRED DESIGN SYSTEM v1
+   Functional glass + content-first surfaces + Kapitech brand.
+   ========================================================================== */
+
+:root {
+  --brand-red: #E63946;
+  --brand-charcoal: #1D1D1D;
+  --ams-bg-primary: #101012;
+  --ams-bg-secondary: #18181B;
+  --ams-surface-muted: #222226;
+  --ams-text-primary: #F5F5F7;
+  --ams-text-secondary: #A1A1A6;
+  --ams-text-tertiary: #8E8E93;
+  --ams-border-subtle: rgba(255,255,255,0.10);
+  --ams-border-medium: rgba(255,255,255,0.16);
+  --ams-success: #2E7D32;
+  --ams-warning: #B26A00;
+  --ams-danger: #B42318;
+  --ams-info: #2563EB;
+  --ams-radius-sm: 8px;
+  --ams-radius-md: 12px;
+  --ams-radius-lg: 16px;
+  --ams-radius-xl: 20px;
+  --ams-radius-2xl: 28px;
+  --ams-shadow-1: 0 2px 10px rgba(0,0,0,0.04);
+  --ams-shadow-2: 0 8px 24px rgba(0,0,0,0.08);
+  --ams-shadow-3: 0 16px 50px rgba(0,0,0,0.12);
+  --ams-shadow-4: 0 24px 80px rgba(0,0,0,0.18);
+  --ams-motion-fast: 120ms;
+  --ams-motion-standard: 180ms;
+  --ams-motion-layout: 240ms;
+  --ams-motion-modal: 280ms;
+  --ams-ease-standard: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* The AMS uses Manrope as its product font while retaining the existing
+   technical monospace treatment for IDs, timestamps and dense data. */
+[data-kapi-admin="true"] {
+  font-family: 'Manrope', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: var(--ams-bg-primary);
+  color: var(--ams-text-primary);
+  --ams-glass-navigation: rgba(24, 24, 27, 0.72);
+  --ams-glass-floating: rgba(24, 24, 27, 0.82);
+  --ams-glass-modal: rgba(24, 24, 27, 0.90);
+}
+
+[data-kapi-admin="true"] .ams-shell {
+  background:
+    radial-gradient(circle at 15% 0%, rgba(230,57,70,0.045), transparent 30%),
+    var(--ams-bg-primary);
+}
+
+[data-kapi-admin="true"] .ams-sidebar,
+[data-kapi-admin="true"] .ams-header,
+[data-kapi-admin="true"] .ams-mobile-nav {
+  background: var(--ams-glass-navigation);
+  border-color: var(--ams-border-subtle);
+  backdrop-filter: blur(24px) saturate(145%);
+  -webkit-backdrop-filter: blur(24px) saturate(145%);
+}
+
+[data-kapi-admin="true"] .ams-sidebar {
+  width: 248px;
+  box-shadow: 8px 0 30px rgba(0,0,0,0.06);
+}
+
+[data-kapi-admin="true"] .ams-sidebar.ams-sidebar-collapsed {
+  width: 76px;
+}
+
+[data-kapi-admin="true"] .ams-sidebar-brand {
+  background: transparent;
+  border-color: var(--ams-border-subtle);
+}
+
+[data-kapi-admin="true"] .ams-sidebar-nav a {
+  min-height: 40px;
+  border-radius: var(--ams-radius-md);
+}
+
+[data-kapi-admin="true"] .ams-sidebar-nav a[aria-current="page"] {
+  background: rgba(230,57,70,0.12);
+  box-shadow: inset 0 0 0 1px rgba(230,57,70,0.12);
+}
+
+[data-kapi-admin="true"] .ams-sidebar-nav a[aria-current="page"] svg {
+  color: var(--brand-red) !important;
+}
+
+[data-kapi-admin="true"] .ams-header {
+  min-height: 64px;
+  border-bottom: 1px solid var(--ams-border-subtle);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.02);
+}
+
+[data-kapi-admin="true"] .ams-search {
+  background: rgba(255,255,255,0.055);
+  border: 1px solid var(--ams-border-subtle);
+  border-radius: var(--ams-radius-md);
+}
+
+[data-kapi-admin="true"] .ams-search:focus-within {
+  border-color: rgba(230,57,70,0.55);
+  box-shadow: 0 0 0 3px rgba(230,57,70,0.12);
+}
+
+[data-kapi-admin="true"] .ams-content {
+  width: min(100%, 1600px);
+  margin-inline: auto;
+  padding: 32px 40px;
+}
+
+[data-kapi-admin="true"] .ams-mobile-nav {
+  border-top: 1px solid var(--ams-border-subtle);
+  box-shadow: 0 -8px 30px rgba(0,0,0,0.10);
+}
+
+[data-kapi-admin="true"] .ams-mobile-nav a {
+  min-height: 48px;
+  border-radius: var(--ams-radius-md);
+}
+
+[data-kapi-admin="true"] .ams-mobile-nav a[aria-current="page"] {
+  background: rgba(230,57,70,0.12);
+  color: var(--ams-text-primary);
+}
+
+[data-kapi-admin="true"] .ams-mobile-nav a[aria-current="page"] svg {
+  color: var(--brand-red) !important;
+}
+
+[data-kapi-admin="true"] .ams-glass-floating {
+  background: var(--ams-glass-floating);
+  border: 1px solid rgba(255,255,255,0.12);
+  box-shadow: var(--ams-shadow-2);
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+}
+
+[data-kapi-admin="true"] .ams-glass-modal {
+  background: var(--ams-glass-modal);
+  border: 1px solid rgba(255,255,255,0.14);
+  box-shadow: var(--ams-shadow-4);
+  backdrop-filter: blur(28px) saturate(135%);
+  -webkit-backdrop-filter: blur(28px) saturate(135%);
+}
+
+[data-kapi-admin="true"] .ams-content .kapi-card,
+[data-kapi-admin="true"] .ams-content .metric-card,
+[data-kapi-admin="true"] .ams-content .glass-panel {
+  border-radius: var(--ams-radius-md);
+  box-shadow: var(--ams-shadow-1);
+  transition:
+    transform var(--ams-motion-standard) var(--ams-ease-standard),
+    border-color var(--ams-motion-standard) var(--ams-ease-standard),
+    box-shadow var(--ams-motion-standard) var(--ams-ease-standard);
+}
+
+[data-kapi-admin="true"] .ams-content .kapi-card:hover,
+[data-kapi-admin="true"] .ams-content .metric-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--ams-shadow-2);
+}
+
+[data-kapi-admin="true"] button,
+[data-kapi-admin="true"] a,
+[data-kapi-admin="true"] input,
+[data-kapi-admin="true"] select,
+[data-kapi-admin="true"] textarea {
+  font-family: inherit;
+}
+
+[data-kapi-admin="true"] input,
+[data-kapi-admin="true"] select,
+[data-kapi-admin="true"] textarea {
+  border-radius: var(--ams-radius-md);
+}
+
+[data-kapi-admin="true"] :where(button, a, input, select, textarea):focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--brand-red) 70%, white);
+  outline-offset: 2px;
+}
+
+@supports not ((backdrop-filter: blur(1px))) {
+  [data-kapi-admin="true"] .ams-sidebar,
+  [data-kapi-admin="true"] .ams-header,
+  [data-kapi-admin="true"] .ams-mobile-nav,
+  [data-kapi-admin="true"] .ams-glass-floating,
+  [data-kapi-admin="true"] .ams-glass-modal {
+    background: var(--ams-bg-secondary);
+  }
+}
+
+@media (max-width: 1023px) {
+  [data-kapi-admin="true"] .ams-content {
+    padding: 24px;
+  }
+}
+
+@media (max-width: 767px) {
+  [data-kapi-admin="true"] .ams-content {
+    padding: 20px 16px calc(88px + env(safe-area-inset-bottom));
+  }
+
+  [data-kapi-admin="true"] .ams-header {
+    min-height: 56px;
+  }
+
+  [data-kapi-admin="true"] .ams-sidebar {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  [data-kapi-admin="true"] .ams-sidebar,
+  [data-kapi-admin="true"] .ams-header,
+  [data-kapi-admin="true"] .ams-mobile-nav,
+  [data-kapi-admin="true"] .ams-glass-floating,
+  [data-kapi-admin="true"] .ams-glass-modal {
+    background: var(--ams-bg-secondary);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-kapi-admin="true"] .ams-sidebar,
+  [data-kapi-admin="true"] .ams-header,
+  [data-kapi-admin="true"] .ams-mobile-nav,
+  [data-kapi-admin="true"] .ams-content .kapi-card,
+  [data-kapi-admin="true"] .ams-content .metric-card {
+    transition: none !important;
+  }
+}
+
+@media (max-width: 479px) {
+  [data-kapi-admin="true"] .ams-content {
+    padding-inline: 12px;
+  }
+
+  [data-kapi-admin="true"] .ams-header .ams-search {
+    max-width: 42vw;
   }
 }
