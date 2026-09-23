@@ -209,7 +209,7 @@ function AppShell() {
 
 export default function App() {
   // Remove legacy browser-persisted AMS data from older builds.
-  // Sensitive CRM, finance, project, vendor, client and inbox data is now server-authoritative.
+  // Current admin session keys are intentionally preserved because authentication is session-authoritative.
   useEffect(() => {
     if (!import.meta.env.PROD) return;
     const legacyKeys = [
@@ -228,9 +228,7 @@ export default function App() {
       'kapitech_cms_services_v1',
       'kapitech_cms_projects_v1',
       'kapitech_cms_testimonials_v1',
-      'kapitech_cms_settings_v1',
-      'kapitech_session_token',
-      'kapitech_admin_session_v1'
+      'kapitech_cms_settings_v1'
     ];
 
     for (const key of legacyKeys) {
