@@ -148,6 +148,180 @@
 
 
 /* ==========================================================================
+   AMS UI SYSTEM
+   Dense, calm, Apple-inspired admin workspace. Scoped to admin routes only.
+   ========================================================================== */
+.admin-shell {
+  --ams-bg: #090A0F;
+  --ams-surface: #111318;
+  --ams-surface-2: #151820;
+  --ams-elevated: #1B1F27;
+  --ams-text: #F5F5F7;
+  --ams-secondary: #A1A1A6;
+  --ams-muted: #71717A;
+  --ams-border: rgba(255,255,255,.085);
+  --ams-border-strong: rgba(255,255,255,.15);
+  --ams-red: #B00020;
+  --ams-red-hover: #C1121F;
+  --ams-red-soft: rgba(176,0,32,.12);
+  --ams-radius-control: 10px;
+  --ams-radius-card: 16px;
+  --ams-radius-panel: 20px;
+  color: var(--ams-text);
+  background: var(--ams-bg);
+  min-height: 100%;
+}
+.admin-shell .kapi-card {
+  background: var(--ams-surface);
+  border: 1px solid var(--ams-border);
+  border-radius: var(--ams-radius-card);
+  box-shadow: 0 10px 30px rgba(0,0,0,.18);
+}
+.admin-shell button,
+.admin-shell [role="button"] {
+  transition: background-color .18s ease, border-color .18s ease, color .18s ease, transform .18s ease;
+}
+.admin-shell button:active,
+.admin-shell [role="button"]:active { transform: scale(.98); }
+.admin-shell input,
+.admin-shell textarea,
+.admin-shell select {
+  min-height: 42px;
+  border-radius: var(--ams-radius-control);
+  border: 1px solid var(--ams-border);
+  background: var(--ams-surface);
+  color: var(--ams-text);
+}
+.admin-shell input:focus,
+.admin-shell textarea:focus,
+.admin-shell select:focus {
+  outline: none;
+  border-color: rgba(176,0,32,.65);
+  box-shadow: 0 0 0 3px rgba(176,0,32,.10);
+}
+.admin-shell table { border-collapse: separate; border-spacing: 0; }
+.admin-shell th {
+  color: var(--ams-muted);
+  font-size: .6875rem;
+  font-weight: 600;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+.admin-shell td {
+  color: var(--ams-secondary);
+  border-top: 1px solid rgba(255,255,255,.055);
+}
+.admin-shell .ams-page-title {
+  color: var(--ams-text);
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
+  line-height: 1.1;
+  letter-spacing: -.035em;
+  font-weight: 650;
+}
+.admin-shell .ams-page-subtitle {
+  color: var(--ams-secondary);
+  font-size: .8125rem;
+  line-height: 1.55;
+}
+.admin-shell .ams-section-title {
+  color: var(--ams-text);
+  font-size: 1rem;
+  line-height: 1.3;
+  font-weight: 600;
+}
+.admin-shell .ams-kpi {
+  min-height: 148px;
+  padding: 18px;
+}
+.admin-shell .ams-kpi-value {
+  font-size: clamp(1.45rem, 2.5vw, 2rem);
+  line-height: 1.05;
+  letter-spacing: -.035em;
+  font-weight: 650;
+}
+.admin-shell .ams-muted { color: var(--ams-secondary); }
+.admin-shell .ams-meta { color: var(--ams-muted); font-size: .6875rem; }
+.admin-shell .ams-action {
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1px solid var(--ams-border);
+  border-radius: 10px;
+  background: var(--ams-surface-2);
+  color: var(--ams-text);
+}
+.admin-shell .ams-action:hover { border-color: var(--ams-border-strong); background: var(--ams-elevated); }
+.admin-shell .ams-action-primary {
+  background: var(--ams-red);
+  border-color: var(--ams-red);
+  color: #fff;
+}
+.admin-shell .ams-action-primary:hover { background: var(--ams-red-hover); }
+.admin-shell .ams-sidebar {
+  background: rgba(17,19,24,.94);
+  border-right: 1px solid var(--ams-border);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+.admin-shell .ams-topbar {
+  background: rgba(9,10,15,.82);
+  border-bottom: 1px solid var(--ams-border);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+.admin-shell .ams-nav-item {
+  min-height: 40px;
+  border-radius: 10px;
+  color: var(--ams-secondary);
+}
+.admin-shell .ams-nav-item:hover { color: var(--ams-text); background: rgba(255,255,255,.045); }
+.admin-shell .ams-nav-item.is-active {
+  color: var(--ams-text);
+  background: var(--ams-red-soft);
+  box-shadow: inset 2px 0 0 var(--ams-red);
+}
+.admin-shell .ams-divider { border-color: var(--ams-border); }
+.admin-shell .ams-status {
+  display: inline-flex;
+  align-items: center;
+  min-height: 26px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  border: 1px solid var(--ams-border);
+  background: rgba(255,255,255,.035);
+  font-size: .6875rem;
+  font-weight: 600;
+}
+.admin-shell .ams-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  background: rgba(0,0,0,.58);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+.admin-shell .ams-modal {
+  position: relative;
+  z-index: 310;
+  border: 1px solid var(--ams-border-strong);
+  border-radius: var(--ams-radius-panel);
+  background: rgba(17,19,24,.96);
+  box-shadow: 0 30px 90px rgba(0,0,0,.55);
+}
+@media (max-width: 768px) {
+  .admin-shell .ams-kpi { min-height: 132px; padding: 16px; }
+  .admin-shell .ams-page-title { font-size: 1.5rem; }
+  .admin-shell .ams-action { min-height: 42px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .admin-shell *, .admin-shell *::before, .admin-shell *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+  }
+}
+
+/* ==========================================================================
    ENTERPRISE AMS UTILITY & MICRO-DETAIL GLASS CLASSES
    ========================================================================== */
 .glass-panel {
