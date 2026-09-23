@@ -778,7 +778,7 @@ export const AdminProjects: React.FC = () => {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder={language === 'id' ? 'Cari tugas sprint...' : 'Filter sprint tasks...'}
-                  className="w-full pl-8 pr-3 py-2 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.08)] rounded-[var(--k-control-radius)] text-xs text-white focus:outline-none focus:border-[var(--k-red)] placeholder:text-[var(--k-text-secondary)] font-sans h-10 min-h-[40px]"
+                  className="w-full pl-8 pr-3 py-2 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.08)] rounded-[var(--k-control-radius)] text-xs text-white focus:border-[var(--k-red-border)] placeholder:text-[var(--k-text-secondary)] font-sans h-10 min-h-[40px]"
                 />
               </div>
 
@@ -1082,7 +1082,7 @@ export const AdminProjects: React.FC = () => {
                       disabled={!canManageKanbanTasks}
                       onChange={(e) => setNewSubtaskTitle(e.target.value)}
                       placeholder="Add subtask item and press enter..."
-                      className="flex-1 px-3 py-2 bg-[var(--k-bg)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-xs text-white focus:outline-none focus:border-[var(--k-red)] font-sans"
+                      className="flex-1 px-3 py-2 bg-[var(--k-bg)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-xs text-white focus:border-[var(--k-red-border)] font-sans"
                     />
                     <button
                       type="submit"
@@ -1150,7 +1150,7 @@ export const AdminProjects: React.FC = () => {
                     onChange={(e) => setProjName(e.target.value)}
                     required
                     placeholder="e.g. Lumina Luxury Real Estate Headless Web Platform"
-                    className="w-full px-3.5 py-2.5 bg-[var(--k-bg)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:outline-none focus:border-[var(--k-red)]"
+                    className="w-full px-3.5 py-2.5 bg-[var(--k-bg)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:border-[var(--k-red-border)]"
                   />
                 </div>
 
@@ -1162,7 +1162,7 @@ export const AdminProjects: React.FC = () => {
                       value={clientName}
                       onChange={(e) => setClientName(e.target.value)}
                       placeholder="e.g. Marcus Thorne"
-                      className="w-full px-3.5 py-2.5 bg-[var(--k-bg)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:outline-none focus:border-[var(--k-red)]"
+                      className="w-full px-3.5 py-2.5 bg-[var(--k-bg)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:border-[var(--k-red-border)]"
                     />
                   </div>
                   <div>
@@ -1173,7 +1173,7 @@ export const AdminProjects: React.FC = () => {
                       onChange={(e) => setClientCompany(e.target.value)}
                       required
                       placeholder="e.g. Lumina Real Estate Global"
-                      className="w-full px-3.5 py-2.5 bg-[var(--k-bg)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:outline-none focus:border-[var(--k-red)]"
+                      className="w-full px-3.5 py-2.5 bg-[var(--k-bg)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:border-[var(--k-red-border)]"
                     />
                   </div>
                 </div>
@@ -1187,7 +1187,7 @@ export const AdminProjects: React.FC = () => {
                       onChange={(e) => setDriName(e.target.value)}
                       required
                       placeholder={language === 'id' ? 'Contoh: Principal Tech Lead' : 'e.g. Principal Tech Lead'}
-                      className="w-full px-3.5 py-2.5 bg-[var(--k-bg)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:outline-none focus:border-[var(--k-red)]"
+                      className="w-full px-3.5 py-2.5 bg-[var(--k-bg)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:border-[var(--k-red-border)]"
                     />
                     <p className="mt-1 text-[10px] text-[var(--k-text-secondary)]">{language === 'id' ? 'Satu orang memegang akuntabilitas delivery proyek.' : 'One person owns delivery accountability for the project.'}</p>
                   </div>
@@ -1205,7 +1205,7 @@ export const AdminProjects: React.FC = () => {
                     <select
                       value={serviceCategory}
                       onChange={(e) => setServiceCategory(e.target.value)}
-                      className="w-full px-3.5 py-2.5 bg-[var(--k-bg)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:outline-none focus:border-[var(--k-red)]"
+                      className="w-full px-3.5 py-2.5 bg-[var(--k-bg)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:border-[var(--k-red-border)]"
                     >
                       <option value="Web Development">Web Development</option>
                       <option value="Mobile App">Mobile App</option>
@@ -1221,7 +1221,7 @@ export const AdminProjects: React.FC = () => {
                       type="number"
                       value={budget}
                       onChange={(e) => setBudget(Number(e.target.value))}
-                      className="w-full px-3.5 py-2.5 bg-[var(--k-bg)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:outline-none focus:border-[var(--k-red)]"
+                      className="w-full px-3.5 py-2.5 bg-[var(--k-bg)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:border-[var(--k-red-border)]"
                     />
                   </div>
 
@@ -1230,7 +1230,7 @@ export const AdminProjects: React.FC = () => {
                     <select
                       value={projStatus}
                       onChange={(e) => setProjStatus(e.target.value as ProjectStatus)}
-                      className="w-full px-3.5 py-2.5 bg-[var(--k-bg)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:outline-none focus:border-[var(--k-red)]"
+                      className="w-full px-3.5 py-2.5 bg-[var(--k-bg)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:border-[var(--k-red-border)]"
                     >
                       <option value="planning">Planning</option>
                       <option value="in_progress">In Progress</option>
@@ -1248,7 +1248,7 @@ export const AdminProjects: React.FC = () => {
                       type="date"
                       value={startDate}
                       onChange={(e) => setStartDate(e.target.value)}
-                      className="w-full px-3.5 py-2.5 bg-[var(--k-bg)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:outline-none focus:border-[var(--k-red)]"
+                      className="w-full px-3.5 py-2.5 bg-[var(--k-bg)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:border-[var(--k-red-border)]"
                     />
                   </div>
                   <div>
@@ -1257,7 +1257,7 @@ export const AdminProjects: React.FC = () => {
                       type="date"
                       value={targetEndDate}
                       onChange={(e) => setTargetEndDate(e.target.value)}
-                      className="w-full px-3.5 py-2.5 bg-[var(--k-bg)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:outline-none focus:border-[var(--k-red)]"
+                      className="w-full px-3.5 py-2.5 bg-[var(--k-bg)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:border-[var(--k-red-border)]"
                     />
                   </div>
                 </div>
@@ -1269,7 +1269,7 @@ export const AdminProjects: React.FC = () => {
                     value={techStackInput}
                     onChange={(e) => setTechStackInput(e.target.value)}
                     placeholder="e.g. Next.js 14, TypeScript, Tailwind CSS, PostgreSQL"
-                    className="w-full px-3.5 py-2.5 bg-[var(--k-bg)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:outline-none focus:border-[var(--k-red)]"
+                    className="w-full px-3.5 py-2.5 bg-[var(--k-bg)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:border-[var(--k-red-border)]"
                   />
                 </div>
 
@@ -1281,7 +1281,7 @@ export const AdminProjects: React.FC = () => {
                       value={repoUrl}
                       onChange={(e) => setRepoUrl(e.target.value)}
                       placeholder="https://github.com/kapitech-agency/..."
-                      className="w-full px-3.5 py-2.5 bg-[var(--k-bg)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:outline-none focus:border-[var(--k-red)]"
+                      className="w-full px-3.5 py-2.5 bg-[var(--k-bg)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:border-[var(--k-red-border)]"
                     />
                   </div>
                   <div>
@@ -1291,7 +1291,7 @@ export const AdminProjects: React.FC = () => {
                       value={stagingUrl}
                       onChange={(e) => setStagingUrl(e.target.value)}
                       placeholder="https://staging.app.kapitech.id"
-                      className="w-full px-3.5 py-2.5 bg-[var(--k-bg)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:outline-none focus:border-[var(--k-red)]"
+                      className="w-full px-3.5 py-2.5 bg-[var(--k-bg)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:border-[var(--k-red-border)]"
                     />
                   </div>
                 </div>
@@ -1349,7 +1349,7 @@ export const AdminProjects: React.FC = () => {
                     value={taskTitle}
                     onChange={(e) => setTaskTitle(e.target.value)}
                     placeholder="e.g. Implement Mapbox Vector Tile Cluster Loader"
-                    className="w-full px-3.5 py-2.5 bg-[var(--k-bg)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:outline-none focus:border-[var(--k-red)]"
+                    className="w-full px-3.5 py-2.5 bg-[var(--k-bg)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:border-[var(--k-red-border)]"
                   />
                 </div>
 
@@ -1360,7 +1360,7 @@ export const AdminProjects: React.FC = () => {
                     value={taskDesc}
                     onChange={(e) => setTaskDesc(e.target.value)}
                     placeholder="Acceptance criteria and technical notes..."
-                    className="w-full px-3.5 py-2 bg-[var(--k-bg)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:outline-none focus:border-[var(--k-red)] font-sans"
+                    className="w-full px-3.5 py-2 bg-[var(--k-bg)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:border-[var(--k-red-border)] font-sans"
                   />
                 </div>
 
@@ -1370,7 +1370,7 @@ export const AdminProjects: React.FC = () => {
                     <select
                       value={taskPriority}
                       onChange={(e) => setTaskPriority(e.target.value as TaskPriority)}
-                      className="w-full px-3.5 py-2.5 bg-[var(--k-bg)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:outline-none focus:border-[var(--k-red)]"
+                      className="w-full px-3.5 py-2.5 bg-[var(--k-bg)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:border-[var(--k-red-border)]"
                     >
                       <option value="low">Low</option>
                       <option value="medium">Medium</option>
@@ -1385,7 +1385,7 @@ export const AdminProjects: React.FC = () => {
                       value={taskAssignee}
                       onChange={(e) => setTaskAssignee(e.target.value)}
                       required
-                      className="w-full px-3.5 py-2.5 bg-[var(--k-bg)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:outline-none focus:border-[var(--k-red)]"
+                      className="w-full px-3.5 py-2.5 bg-[var(--k-bg)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:border-[var(--k-red-border)]"
                     >
                       {taskAssignees.length === 0 ? (
                         <option value="">No active assignees available</option>
@@ -1404,7 +1404,7 @@ export const AdminProjects: React.FC = () => {
                     <select
                       value={taskStatus}
                       onChange={(e) => setTaskStatus(e.target.value as TaskStatus)}
-                      className="w-full px-3.5 py-2.5 bg-[var(--k-bg)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:outline-none focus:border-[var(--k-red)]"
+                      className="w-full px-3.5 py-2.5 bg-[var(--k-bg)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:border-[var(--k-red-border)]"
                     >
                       <option value="todo">To Do</option>
                       <option value="in_progress">In Progress</option>
@@ -1419,7 +1419,7 @@ export const AdminProjects: React.FC = () => {
                       type="date"
                       value={taskDueDate}
                       onChange={(e) => setTaskDueDate(e.target.value)}
-                      className="w-full px-3.5 py-2.5 bg-[var(--k-bg)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:outline-none focus:border-[var(--k-red)]"
+                      className="w-full px-3.5 py-2.5 bg-[var(--k-bg)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:border-[var(--k-red-border)]"
                     />
                   </div>
                 </div>
@@ -1431,7 +1431,7 @@ export const AdminProjects: React.FC = () => {
                     value={initialSubtasksInput}
                     onChange={(e) => setInitialSubtasksInput(e.target.value)}
                     placeholder="Setup API endpoints&#10;Add unit tests"
-                    className="w-full px-3.5 py-2 bg-[var(--k-bg)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:outline-none focus:border-[var(--k-red)]"
+                    className="w-full px-3.5 py-2 bg-[var(--k-bg)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:border-[var(--k-red-border)]"
                   />
                 </div>
               </div>
