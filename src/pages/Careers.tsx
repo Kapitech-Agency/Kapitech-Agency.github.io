@@ -682,7 +682,7 @@ export const Careers = () => {
             <div className="flex flex-wrap items-center gap-3 pt-2">
               <a 
                 href="#open-positions"
-                className="px-5 py-2.5 rounded-[14px] bg-white text-black hover:bg-neutral-200 text-xs font-sans font-bold uppercase tracking-wider transition-all duration-300 flex items-center gap-2"
+                className="px-5 py-2.5 kapi-action-button bg-white text-black hover:bg-neutral-200 text-xs font-sans font-bold uppercase tracking-wider transition-all duration-300 flex items-center gap-2"
               >
                 <span>{language === 'id' ? 'Posisi Studio On-site' : 'Studio Open Roles'}</span>
                 <ArrowUpRight size={14} />
@@ -692,7 +692,7 @@ export const Careers = () => {
                   setIsFreelanceModalOpen(true);
                   setIsVendorSubmitted(false);
                 }}
-                className="px-5 py-2.5 rounded-[14px] bg-brand-red hover:bg-white hover:text-black text-white text-xs font-sans font-bold uppercase tracking-wider transition-all duration-300 flex items-center gap-2 shadow-[var(--k-shadow-sm)] shadow-brand-red/20"
+                className="px-5 py-2.5 kapi-action-button bg-brand-red hover:bg-white hover:text-black text-white text-xs font-sans font-bold uppercase tracking-wider transition-all duration-300 flex items-center gap-2 shadow-[var(--k-shadow-sm)] shadow-brand-red/20"
               >
                 <FolderGit2 size={14} />
                 <span>{language === 'id' ? 'Daftar sebagai Freelance Vendor' : 'Apply as Freelance Vendor'}</span>
@@ -711,7 +711,7 @@ export const Careers = () => {
                 <Users className="w-3.5 h-3.5 text-brand-red" />
                 <span>{language === 'id' ? '12 Talenta Spesialis' : '12 Specialist Talents'}</span>
               </div>
-              <h2 className="text-2xl sm:text-4xl md:text-5xl font-sans font-bold text-white tracking-tight">
+              <h2 className="text-2xl sm:text-4xl md:kapi-section-title font-sans font-bold text-white tracking-tight">
                 {language === 'id' ? 'Bergabung Bersama 12 Talenta Terbaik Kami' : 'Join with our 12 great talents'}
               </h2>
             </div>
@@ -837,7 +837,7 @@ export const Careers = () => {
                 <div className="mt-5 sm:mt-6 pt-4 border-t border-[var(--k-border)] flex justify-end">
                   <button
                     onClick={() => setSelectedTalent(null)}
-                    className="w-full sm:w-auto px-6 py-2.5 rounded-[14px] bg-brand-red hover:bg-white hover:text-black text-white text-xs font-sans font-medium transition-colors"
+                    className="w-full sm:w-auto px-6 py-2.5 kapi-action-button bg-brand-red hover:bg-white hover:text-black text-white text-xs font-sans font-medium transition-colors"
                   >
                     {language === 'id' ? 'Tutup Profil' : 'Close Profile'}
                   </button>
@@ -856,7 +856,7 @@ export const Careers = () => {
               <span className="text-brand-red font-sans font-semibold tracking-widest uppercase text-xs mb-3 block">
                 {language === 'id' ? 'Peluang Terbuka' : 'Current Opportunities'}
               </span>
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-sans font-bold text-white tracking-tight">
+              <h2 className="text-3xl sm:text-4xl md:kapi-section-title font-sans font-bold text-white tracking-tight">
                 {language === 'id' ? 'Posisi yang Sedang Dibuka' : 'Available Roles'}
               </h2>
             </div>
@@ -911,7 +911,7 @@ export const Careers = () => {
                   </div>
 
                   <div className="flex items-center gap-3 shrink-0 pt-2 lg:pt-0">
-                    <span className="px-5 py-2.5 rounded-[14px] bg-[var(--k-bg-deep)] group-hover:bg-brand-red text-white text-xs font-sans font-semibold uppercase tracking-wider transition-all duration-300 flex items-center gap-2 border border-[var(--k-border)] group-hover:border-brand-red">
+                    <span className="px-5 py-2.5 kapi-action-button bg-[var(--k-bg-deep)] group-hover:bg-brand-red text-white text-xs font-sans font-semibold uppercase tracking-wider transition-all duration-300 flex items-center gap-2 border border-[var(--k-border)] group-hover:border-brand-red">
                       <span>{language === 'id' ? 'Lihat Detail & Lamar' : 'View Role & Apply'}</span>
                       <ArrowUpRight size={14} />
                     </span>
@@ -936,7 +936,7 @@ export const Careers = () => {
                 <Globe className="w-3.5 h-3.5 text-brand-red" />
                 <span>{language === 'id' ? 'Kemitraan Terbuka • 100% Remote (WFA)' : 'Open Network • 100% Remote (WFA)'}</span>
               </div>
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-sans font-bold text-white tracking-tight">
+              <h2 className="text-3xl sm:text-4xl md:kapi-section-title font-sans font-bold text-white tracking-tight">
                 {language === 'id' ? 'Apply as a Freelance Vendor' : 'Apply as a Freelance Vendor'}
               </h2>
               <p className="mt-4 text-sm sm:text-base text-[var(--k-text-secondary)] font-light leading-relaxed">
@@ -953,7 +953,7 @@ export const Careers = () => {
                   setIsFreelanceModalOpen(true);
                   setIsVendorSubmitted(false);
                 }}
-                className="w-full sm:w-auto px-6 py-3.5 rounded-[14px] bg-brand-red hover:bg-white text-white hover:text-black font-semibold text-xs font-sans uppercase tracking-wider transition-all duration-300 shadow-[var(--k-shadow-sm)] shadow-brand-red/20 flex items-center justify-center gap-2.5"
+                className="w-full sm:w-auto px-6 py-3.5 kapi-action-button bg-brand-red hover:bg-white text-white hover:text-black font-semibold text-xs font-sans uppercase tracking-wider transition-all duration-300 shadow-[var(--k-shadow-sm)] shadow-brand-red/20 flex items-center justify-center gap-2.5"
               >
                 <FolderGit2 size={16} />
                 <span>{language === 'id' ? 'Daftar sebagai Freelance Vendor' : 'Apply as Freelance Vendor'}</span>
@@ -1165,7 +1165,7 @@ export const Careers = () => {
             <span className="text-brand-red font-sans font-semibold tracking-widest uppercase text-xs mb-3 block">
               {language === 'id' ? 'Nilai & Keuntungan Studio' : 'Studio Culture & Core Values'}
             </span>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-sans font-bold text-white tracking-tight">
+            <h2 className="text-3xl sm:text-4xl md:kapi-section-title font-sans font-bold text-white tracking-tight">
               {language === 'id' ? 'Lingkungan Kerja Berorientasi Prestasi' : 'Craft, Autonomy, and Real Growth'}
             </h2>
           </div>
@@ -1517,7 +1517,7 @@ export const Careers = () => {
                           setIsFreelanceModalOpen(false);
                           setIsVendorSubmitted(false);
                         }}
-                        className="px-6 py-2.5 rounded-[14px] bg-white text-black hover:bg-neutral-200 text-xs font-sans font-bold uppercase tracking-wider transition-colors"
+                        className="px-6 py-2.5 kapi-action-button bg-white text-black hover:bg-neutral-200 text-xs font-sans font-bold uppercase tracking-wider transition-colors"
                       >
                         {language === 'id' ? 'Tutup Formulir' : 'Close Form'}
                       </button>
