@@ -46,7 +46,14 @@ export const AdminSettings: React.FC = () => {
   const { language, t } = useLanguage();
   const [searchParams, setSearchParams] = useSearchParams();
   const session = getAdminSession();
-  const storedCreds = getStoredAdminCredentials();
+  const storedCreds = getStoredAdminCredentials() ?? {
+    username: '',
+    email: '',
+    displayName: '',
+    role: 'Unknown',
+    division: 'Operations',
+    mfaEnabled: false
+  };
 
   // Tab: profile, branding, rbac, security, api, audit
   const paramTab = searchParams.get('tab');
