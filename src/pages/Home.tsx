@@ -144,7 +144,7 @@ export const Home = () => {
                 <span>{language === 'id' ? 'Jelajahi 50 Portofolio' : 'Explore 50 Case Studies'}</span>
               </Link>
             </div>
-          </div>
+          </motion.div>
         </div>
       </section>
 
