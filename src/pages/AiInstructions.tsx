@@ -24,24 +24,24 @@ export const AiInstructions = () => {
           <Sparkles className="w-3 h-3 text-brand-red" />
           <span>{language === 'id' ? 'Standar & Etika AI' : 'AI Standards & Ethics'}</span>
         </div>
-        <h1 className="text-4xl sm:text-5xl md:text-7xl font-sans font-bold text-white mb-4 tracking-tighter">
+        <h1 className="text-[clamp(42px,7vw,72px)] leading-[0.98] font-sans font-bold text-white mb-4 tracking-[-0.055em]">
           {language === 'id' ? 'Panduan & Kebijakan AI.' : 'AI Instructions & Ethics.'}
         </h1>
-        <p className="text-xs sm:text-sm uppercase tracking-widest text-brand-red font-sans font-semibold mb-12">
+        <p className="text-xs sm:text-sm uppercase tracking-[0.11em] leading-[1.35] text-brand-red font-sans font-semibold mb-10">
           {language === 'id' ? 'Terakhir Diperbarui: Maret 2026' : 'Last Updated: March 2026'}
         </p>
         
         {language === 'id' ? (
-          <div className="space-y-12 text-base md:text-lg leading-relaxed text-[var(--k-text-secondary)]">
+          <div className="space-y-14 text-[15px] md:text-base leading-[1.75] text-[var(--k-text-secondary)]">
             <section>
-              <h2 className="text-2xl font-sans font-bold text-white mb-4">1. Filosofi Pemanfaatan AI di Kapitech</h2>
+              <h2 className="text-[clamp(21px,2.2vw,26px)] leading-[1.18] font-sans font-bold text-white mb-4 tracking-[-0.025em]">1. Filosofi Pemanfaatan AI di Kapitech</h2>
               <p>
                 Di PT Kapitech Digital Indonesia ("Kapitech Agency"), kami memandang Artificial Intelligence (AI) sebagai instrumen penguat kemampuan manusia (human-augmentation tool), bukan pengganti pertimbangan kreatif, arsitektur rekayasa, atau akuntabilitas etis. Kami memanfaatkan model pembelajaran mesin canggih untuk mempercepat eksplorasi konsep, audit keamanan kode, dan optimasi alur kerja tanpa pernah mengorbankan integritas, orisinalitas, dan keamanan data klien.
               </p>
             </section>
 
             <section>
-              <h2 className="text-2xl font-sans font-bold text-white mb-4">2. Privasi & Kerahasiaan Data Klien</h2>
+              <h2 className="text-[clamp(21px,2.2vw,26px)] leading-[1.18] font-sans font-bold text-white mb-4 tracking-[-0.025em]">2. Privasi & Kerahasiaan Data Klien</h2>
               <p className="mb-4">Perlindungan hak kekayaan intelektual (HAKI) dan data rahasia klien adalah prioritas mutlak kami:</p>
               <ul className="list-disc pl-6 space-y-2">
                 <li><strong className="text-white">Tanpa Pelatihan Model Publik:</strong> Tidak ada aset kepemilikan klien, kode sumber (source code), data keuangan, atau dokumen strategi bisnis yang diunggah atau digunakan untuk melatih (train) model AI publik pihak ketiga.</li>
@@ -51,7 +51,7 @@ export const AiInstructions = () => {
             </section>
 
             <section>
-              <h2 className="text-2xl font-sans font-bold text-white mb-4">3. Standar Rekayasa Kode & Validasi Manusia</h2>
+              <h2 className="text-[clamp(21px,2.2vw,26px)] leading-[1.18] font-sans font-bold text-white mb-4 tracking-[-0.025em]">3. Standar Rekayasa Kode & Validasi Manusia</h2>
               <p className="mb-4">Setiap baris kode atau aset yang dihasilkan atau dioptimalkan dengan bantuan AI wajib melalui kontrol kualitas ketat:</p>
               <ul className="list-disc pl-6 space-y-2">
                 <li><strong className="text-white">Tinjauan Arsitek Senior (Human-in-the-Loop):</strong> Tidak ada kode yang diintegrasikan ke codebase produksi tanpa review manual dan persetujuan dari Senior Software Engineer atau Tech Lead kami.</li>
@@ -61,30 +61,30 @@ export const AiInstructions = () => {
             </section>
 
             <section>
-              <h2 className="text-2xl font-sans font-bold text-white mb-4">4. Hak Cipta & Keaslian Desain</h2>
+              <h2 className="text-[clamp(21px,2.2vw,26px)] leading-[1.18] font-sans font-bold text-white mb-4 tracking-[-0.025em]">4. Hak Cipta & Keaslian Desain</h2>
               <p>
                 Eksplorasi visual dan konsep desain selalu dipimpin oleh desainer manusia kami. Setiap aset final, identitas merek, tipografi, dan antarmuka UI/UX yang diserahkan kepada klien adalah karya orisinal berhak cipta eksklusif yang siap untuk didaftarkan sebagai merek dagang resmi klien.
               </p>
             </section>
 
             <section>
-              <h2 className="text-2xl font-sans font-bold text-white mb-4">5. Kontak & Transparansi</h2>
+              <h2 className="text-[clamp(21px,2.2vw,26px)] leading-[1.18] font-sans font-bold text-white mb-4 tracking-[-0.025em]">5. Kontak & Transparansi</h2>
               <p>
                 Jika Anda memiliki pertanyaan mengenai tata kelola AI, kebijakan privasi model, atau kepatuhan teknis di Kapitech, silakan hubungi tim kepatuhan kami di <a href="mailto:hello@kapitech.id" className="text-brand-red hover:underline">hello@kapitech.id</a>.
               </p>
             </section>
           </div>
         ) : (
-          <div className="space-y-12 text-base md:text-lg leading-relaxed text-[var(--k-text-secondary)]">
+          <div className="space-y-14 text-[15px] md:text-base leading-[1.75] text-[var(--k-text-secondary)]">
             <section>
-              <h2 className="text-2xl font-sans font-bold text-white mb-4">1. AI Utilization Philosophy</h2>
+              <h2 className="text-[clamp(21px,2.2vw,26px)] leading-[1.18] font-sans font-bold text-white mb-4 tracking-[-0.025em]">1. AI Utilization Philosophy</h2>
               <p>
                 At PT Kapitech Digital Indonesia ("Kapitech Agency"), we view Artificial Intelligence (AI) as a human-augmentation instrument rather than a replacement for creative vision, engineering judgment, or ethical accountability. We leverage advanced machine learning models to accelerate concept prototyping, codebase security audits, and workflow telemetry without compromising originality, craft, or client data safety.
               </p>
             </section>
 
             <section>
-              <h2 className="text-2xl font-sans font-bold text-white mb-4">2. Client Data Privacy & Confidentiality</h2>
+              <h2 className="text-[clamp(21px,2.2vw,26px)] leading-[1.18] font-sans font-bold text-white mb-4 tracking-[-0.025em]">2. Client Data Privacy & Confidentiality</h2>
               <p className="mb-4">Safeguarding client intellectual property and confidential records is non-negotiable:</p>
               <ul className="list-disc pl-6 space-y-2">
                 <li><strong className="text-white">No Public Model Training:</strong> No proprietary client source code, financial records, strategic blueprints, or user database records are ever used to train third-party public AI models.</li>
@@ -94,7 +94,7 @@ export const AiInstructions = () => {
             </section>
 
             <section>
-              <h2 className="text-2xl font-sans font-bold text-white mb-4">3. Code Engineering Standards & Human-in-the-Loop</h2>
+              <h2 className="text-[clamp(21px,2.2vw,26px)] leading-[1.18] font-sans font-bold text-white mb-4 tracking-[-0.025em]">3. Code Engineering Standards & Human-in-the-Loop</h2>
               <p className="mb-4">All AI-assisted engineering and architectural deliverables must satisfy rigorous human verification checkpoints:</p>
               <ul className="list-disc pl-6 space-y-2">
                 <li><strong className="text-white">Mandatory Senior Peer Review:</strong> No AI-generated code is deployed into client production environments without manual code review and explicit sign-off from our Tech Leads.</li>
@@ -104,14 +104,14 @@ export const AiInstructions = () => {
             </section>
 
             <section>
-              <h2 className="text-2xl font-sans font-bold text-white mb-4">4. Copyright & Visual Authenticity</h2>
+              <h2 className="text-[clamp(21px,2.2vw,26px)] leading-[1.18] font-sans font-bold text-white mb-4 tracking-[-0.025em]">4. Copyright & Visual Authenticity</h2>
               <p>
                 Visual design, brand identities, typography hierarchies, and UI/UX systems are authored under the creative direction of our human design team. All final client deliverables represent original, bespoke assets fully transferable to the client for commercial trademarking.
               </p>
             </section>
 
             <section>
-              <h2 className="text-2xl font-sans font-bold text-white mb-4">5. Contact & Governance</h2>
+              <h2 className="text-[clamp(21px,2.2vw,26px)] leading-[1.18] font-sans font-bold text-white mb-4 tracking-[-0.025em]">5. Contact & Governance</h2>
               <p>
                 For questions regarding Kapitech’s AI governance policies, security compliance, or model integration protocols, contact our governance squad at <a href="mailto:hello@kapitech.id" className="text-brand-red hover:underline">hello@kapitech.id</a>.
               </p>
