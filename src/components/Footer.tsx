@@ -184,7 +184,7 @@ export const Footer = () => {
               <Link 
                 to="/contact" 
                 id="footer-cta-button"
-                className="h-12 sm:h-14 min-h-[44px] px-7 sm:px-8 bg-brand-red hover:bg-[var(--k-red-hover)] text-white rounded-full font-semibold text-xs uppercase tracking-wider transition-all duration-300 flex items-center gap-3 shadow-[var(--k-shadow-sm)] shadow-brand-red/20 hover:scale-[1.02]"
+                className="min-h-[44px] px-7 sm:px-8 bg-brand-red hover:bg-[var(--k-red-hover)] text-white rounded-full font-semibold text-xs uppercase tracking-wider transition-all duration-300 flex items-center gap-3 shadow-[var(--k-shadow-sm)] shadow-brand-red/20 hover:-translate-y-0.5"
               >
                 <span>{t('footer.cta.button')}</span>
                 <ArrowUpRight size={18} />
@@ -217,7 +217,7 @@ export const Footer = () => {
             
             {/* Newsletter Subscription */}
             <div className="pt-2">
-              <span className="text-[11px] font-sans text-[var(--k-text-secondary)] uppercase tracking-wider block mb-2 font-medium">
+              <span className="text-xs font-sans text-[var(--k-text-secondary)] uppercase tracking-wider block mb-2 font-medium">
                 {language === 'id' ? 'Berlangganan Wawasan Proyek' : 'Subscribe for Project Insights'}
               </span>
               <form onSubmit={handleSubscribe} className="relative max-w-sm">
@@ -237,7 +237,7 @@ export const Footer = () => {
                 </button>
               </form>
               {isSubscribed && (
-                <p className="text-[11px] text-brand-red font-sans mt-2 flex items-center gap-1.5">
+                <p className="text-xs text-brand-red font-sans mt-2 flex items-center gap-1.5">
                   <CheckCircle2 size={12} /> {language === 'id' ? 'Terima kasih telah berlangganan info Kapitech Agency.' : 'Thank you for subscribing to Kapitech Agency updates.'}
                 </p>
               )}
@@ -321,7 +321,7 @@ export const Footer = () => {
                 <li key={policy.name}>
                   <Link 
                     to={policy.href} 
-                    className="text-[var(--k-text-secondary)]/80 hover:text-white transition-colors block text-[11px]"
+                    className="text-[var(--k-text-secondary)]/80 hover:text-white transition-colors block text-xs"
                   >
                     {policy.name}
                   </Link>
@@ -341,8 +341,8 @@ export const Footer = () => {
                   <Mail size={13} />
                 </div>
                 <div className="min-w-0">
-                  <span className="text-[10px] font-sans text-[var(--k-text-secondary)]/70 block leading-tight">{t('footer.clientInquiry')}</span>
-                  <span className="font-medium text-white group-hover:text-brand-red text-[11px] truncate block">hello@kapitech.id</span>
+                  <span className="text-xs font-sans text-[var(--k-text-secondary)]/70 block leading-tight">{t('footer.clientInquiry')}</span>
+                  <span className="font-medium text-white group-hover:text-brand-red text-xs truncate block">hello@kapitech.id</span>
                 </div>
               </a>
 
@@ -351,8 +351,8 @@ export const Footer = () => {
                   <Globe size={13} />
                 </div>
                 <div className="min-w-0">
-                  <span className="text-[10px] font-sans text-[var(--k-text-secondary)]/70 block leading-tight">{language === 'id' ? 'Kerja Sama Bisnis' : 'Business Inquiry'}</span>
-                  <span className="font-medium text-white group-hover:text-brand-red text-[11px] truncate block">business@kapitech.id</span>
+                  <span className="text-xs font-sans text-[var(--k-text-secondary)]/70 block leading-tight">{language === 'id' ? 'Kerja Sama Bisnis' : 'Business Inquiry'}</span>
+                  <span className="font-medium text-white group-hover:text-brand-red text-xs truncate block">business@kapitech.id</span>
                 </div>
               </a>
 
@@ -361,8 +361,8 @@ export const Footer = () => {
                   <Briefcase size={13} />
                 </div>
                 <div className="min-w-0">
-                  <span className="text-[10px] font-sans text-[var(--k-text-secondary)]/70 block leading-tight">{t('footer.recruitment')}</span>
-                  <span className="font-medium text-white group-hover:text-brand-red text-[11px] truncate block">recruitment@kapitech.id</span>
+                  <span className="text-xs font-sans text-[var(--k-text-secondary)]/70 block leading-tight">{t('footer.recruitment')}</span>
+                  <span className="font-medium text-white group-hover:text-brand-red text-xs truncate block">recruitment@kapitech.id</span>
                 </div>
               </a>
 
@@ -371,8 +371,8 @@ export const Footer = () => {
                   <Phone size={13} />
                 </div>
                 <div className="min-w-0">
-                  <span className="text-[10px] font-sans text-[var(--k-text-secondary)]/70 block leading-tight">{t('footer.phone')}</span>
-                  <span className="font-medium text-white group-hover:text-brand-red text-[11px] block">+62 877-6995-7062</span>
+                  <span className="text-xs font-sans text-[var(--k-text-secondary)]/70 block leading-tight">{t('footer.phone')}</span>
+                  <span className="font-medium text-white group-hover:text-brand-red text-xs block">+62 877-6995-7062</span>
                 </div>
               </a>
 
@@ -381,8 +381,8 @@ export const Footer = () => {
                   <MapPin size={13} />
                 </div>
                 <div className="space-y-0.5">
-                  <span className="text-[10px] font-sans text-[var(--k-text-secondary)]/70 block leading-tight">{t('footer.addressTitle')}</span>
-                  <p className="leading-tight text-white/90 text-[11px] font-light">
+                  <span className="text-xs font-sans text-[var(--k-text-secondary)]/70 block leading-tight">{t('footer.addressTitle')}</span>
+                  <p className="leading-tight text-white/90 text-xs font-light">
                     {t('footer.address')}
                   </p>
                 </div>
@@ -419,7 +419,7 @@ export const Footer = () => {
           <div className="flex items-center gap-4 sm:gap-6">
             <Link 
               to="/admin/login" 
-              className="text-[var(--k-text-tertiary)] hover:text-[var(--k-text-secondary)] transition-colors text-[11px] font-sans"
+              className="text-[var(--k-text-tertiary)] hover:text-[var(--k-text-secondary)] transition-colors text-xs font-sans"
               title="Kapitech Internal Admin Portal"
             >
               <span>Admin Portal</span>
