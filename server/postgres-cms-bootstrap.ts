@@ -5,6 +5,7 @@ import { allSolutionsAndServices } from '../src/data/servicesData.ts';
 type SeedKind = 'services' | 'projects';
 
 const SEED_VERSION = 'public-cms-defaults-v1';
+const CMS_BOOTSTRAP_LOCK_KEY = 726150391;
 
 function seedId(kind: SeedKind): string {
   return `${SEED_VERSION}:${kind}`;
@@ -18,6 +19,7 @@ export async function ensurePostgresCmsDefaults(): Promise<void> {
 
   try {
     await client.query('BEGIN');
+    await client.query('SELECT pg_advisory_xact_lock($1::bigint)', [CMS_BOOTSTRAP_LOCK_KEY]);
 
     const seedRows = await client.query<{ key: string }>(
       'SELECT key FROM cms_seed_state WHERE key = ANY($1::text[]) FOR UPDATE',
