@@ -14,6 +14,8 @@ test('PostgreSQL restore rehearsal restores into an isolated database', async ()
   assert.match(source, /const command = isCustomDump \? 'pg_restore' : 'psql'/);
   assert.match(source, /PostgreSQL restore rehearsal target must not be the production database/);
   assert.match(source, /Restore rehearsal target must be an empty PostgreSQL database/);
+  assert.match(source, /\['--no-owner', '--exit-on-error', '--single-transaction'/);
+  assert.match(source, /\['--set=ON_ERROR_STOP=1', '--single-transaction'/);
 });
 
 test('PostgreSQL restore rehearsal emits verifiable backup evidence', async () => {
