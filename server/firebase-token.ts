@@ -87,19 +87,20 @@ export async function verifyFirebaseIdToken(idToken: string): Promise<VerifiedFi
   if (!Number.isFinite(payload.auth_time) || payload.auth_time > now + 60) throw new Error('Firebase ID token authentication time is invalid.');
 
   const certificates = await getFirebaseCertificates();
-  const certificate = certificates[header.kid];
+  let certificate = certificates[header.kid];
   if (!certificate) {
     certificateCache = null;
     const refreshedCertificates = await getFirebaseCertificates();
-    if (!refreshedCertificates[header.kid]) throw new Error('Firebase ID token signing key is unknown.');
+    certificate = refreshedCertificates[header.kid];
   }
+  if (!certificate) throw new Error('Firebase ID token signing key is unknown.');
 
   const signingInput = `${parts[0]}.${parts[1]}`;
   const signature = base64UrlDecode(parts[2]);
   const verified = crypto.verify(
     'RSA-SHA256',
     Buffer.from(signingInput, 'utf8'),
-    certificate || getCertificateForKey(certificates, header.kid),
+    certificate,
     signature
   );
   if (!verified) throw new Error('Firebase ID token signature verification failed.');
@@ -118,8 +119,3 @@ export async function verifyFirebaseIdToken(idToken: string): Promise<VerifiedFi
   };
 }
 
-function getCertificateForKey(certificates: Record<string, string>, kid: string): string {
-  const certificate = certificates[kid];
-  if (!certificate) throw new Error('Firebase ID token signing key is unknown.');
-  return certificate;
-}
