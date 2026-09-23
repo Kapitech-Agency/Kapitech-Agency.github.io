@@ -214,30 +214,30 @@ export const Home = () => {
             >
               {[
                 { name: 'interprefy', style: 'font-sans font-bold tracking-tight text-2xl sm:text-3xl lowercase' },
-                { name: 'PLAYERS HEALTH', style: 'font-serif font-black tracking-widest text-lg sm:text-xl uppercase' },
+                { name: 'PLAYERS HEALTH', style: 'font-sans font-black tracking-widest text-lg sm:text-xl uppercase' },
                 { name: 'AUTOMATTIC', style: 'font-sans font-bold tracking-wider text-xl sm:text-2xl uppercase' },
-                { name: 'WordPress.com', style: 'font-serif font-bold tracking-normal text-2xl sm:text-3xl' },
+                { name: 'WordPress.com', style: 'font-sans font-bold tracking-normal text-2xl sm:text-3xl' },
                 { name: 'CHALHOUB GROUP', style: 'font-sans font-extrabold tracking-widest text-lg sm:text-xl uppercase' },
                 { name: 'GREIF', style: 'font-sans font-black tracking-widest text-2xl sm:text-3xl uppercase' },
                 { name: 'Sinta Health', style: 'font-sans font-bold tracking-tight text-xl sm:text-2xl' },
                 { name: 'BlockDB Networks', style: 'font-sans font-semibold tracking-wider text-lg sm:text-xl uppercase' },
                 { name: 'Orbit Cloud', style: 'font-sans font-black tracking-tighter text-2xl sm:text-3xl uppercase' },
-                { name: 'Zenora Systems', style: 'font-serif font-semibold tracking-wide text-xl sm:text-2xl' },
+                { name: 'Zenora Systems', style: 'font-sans font-semibold tracking-wide text-xl sm:text-2xl' },
                 { name: 'Lumina Realty', style: 'font-sans font-extrabold tracking-widest text-lg sm:text-xl uppercase' },
                 { name: 'Solaris CleanTech', style: 'font-sans font-bold tracking-tight text-xl sm:text-2xl' },
                 { name: 'Nexus Fintech', style: 'font-sans font-black tracking-wide text-xl sm:text-2xl uppercase' },
                 { name: 'Kross Security', style: 'font-sans font-extrabold tracking-widest text-lg sm:text-xl uppercase' },
                 // Duplicate set for seamless continuous loop
                 { name: 'interprefy', style: 'font-sans font-bold tracking-tight text-2xl sm:text-3xl lowercase' },
-                { name: 'PLAYERS HEALTH', style: 'font-serif font-black tracking-widest text-lg sm:text-xl uppercase' },
+                { name: 'PLAYERS HEALTH', style: 'font-sans font-black tracking-widest text-lg sm:text-xl uppercase' },
                 { name: 'AUTOMATTIC', style: 'font-sans font-bold tracking-wider text-xl sm:text-2xl uppercase' },
-                { name: 'WordPress.com', style: 'font-serif font-bold tracking-normal text-2xl sm:text-3xl' },
+                { name: 'WordPress.com', style: 'font-sans font-bold tracking-normal text-2xl sm:text-3xl' },
                 { name: 'CHALHOUB GROUP', style: 'font-sans font-extrabold tracking-widest text-lg sm:text-xl uppercase' },
                 { name: 'GREIF', style: 'font-sans font-black tracking-widest text-2xl sm:text-3xl uppercase' },
                 { name: 'Sinta Health', style: 'font-sans font-bold tracking-tight text-xl sm:text-2xl' },
                 { name: 'BlockDB Networks', style: 'font-sans font-semibold tracking-wider text-lg sm:text-xl uppercase' },
                 { name: 'Orbit Cloud', style: 'font-sans font-black tracking-tighter text-2xl sm:text-3xl uppercase' },
-                { name: 'Zenora Systems', style: 'font-serif font-semibold tracking-wide text-xl sm:text-2xl' },
+                { name: 'Zenora Systems', style: 'font-sans font-semibold tracking-wide text-xl sm:text-2xl' },
                 { name: 'Lumina Realty', style: 'font-sans font-extrabold tracking-widest text-lg sm:text-xl uppercase' },
                 { name: 'Solaris CleanTech', style: 'font-sans font-bold tracking-tight text-xl sm:text-2xl' },
                 { name: 'Nexus Fintech', style: 'font-sans font-black tracking-wide text-xl sm:text-2xl uppercase' },
@@ -472,7 +472,7 @@ export const Home = () => {
                   <img 
                     src={project.image} 
                     alt={project.title}
-                    className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500"
+                    className="w-full h-full object-cover group-hover:scale-[1.01] transition-transform duration-500"
                     loading="lazy"
                   />
                   <div className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-[var(--k-bg)]/90 backdrop-blur-md text-xs font-sans text-brand-red border border-[var(--k-border)]">
