@@ -873,3 +873,149 @@ code, pre, kbd, .font-mono { font-family: var(--k-font-mono); }
   [data-kapi-admin="true"] a[role="button"] { min-height:44px; }
   [data-kapi-admin="true"] .ams-search input{height:44px !important;min-height:44px !important}
 }
+
+
+/* ==========================================================================
+   FINAL RESPONSIVE / COMPONENT HARDENING
+   ========================================================================== */
+
+/* The desktop AMS header contains several utility groups. Keep it usable at
+   tablet widths instead of allowing controls to squeeze or overflow. */
+[data-kapi-admin="true"] .ams-header-utility {
+  min-width: 0;
+  flex: 1 1 auto;
+  justify-content: flex-end;
+}
+[data-kapi-admin="true"] .ams-header-utility > * { flex: 0 0 auto; }
+[data-kapi-admin="true"] .ams-header-utility .ams-header-clock { white-space: nowrap; }
+@media (max-width: 1180px) {
+  [data-kapi-admin="true"] .ams-header-utility { gap: 6px; }
+  [data-kapi-admin="true"] .ams-header-utility .ams-header-clock,
+  [data-kapi-admin="true"] .ams-header-utility .ams-header-public-link { display:none !important; }
+  [data-kapi-admin="true"] .ams-search { width: clamp(180px, 26vw, 280px) !important; }
+}
+@media (max-width: 900px) and (min-width: 768px) {
+  [data-kapi-admin="true"] .ams-header { padding-inline: 14px !important; }
+  [data-kapi-admin="true"] .ams-search { width: min(34vw, 240px) !important; }
+  [data-kapi-admin="true"] .ams-header-utility > :nth-child(1) { display:none !important; }
+  [data-kapi-admin="true"] .ams-header-utility { gap:4px; }
+}
+
+/* Never let dense labels or data cells create a second page width. */
+[data-kapi-admin="true"] .ams-content :where(.flex,.grid) > * { min-width: 0; }
+[data-kapi-admin="true"] .ams-content :where(h1,h2,h3,h4,p,span,label,td,th) {
+  overflow-wrap: anywhere;
+}
+[data-kapi-admin="true"] .ams-content table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+[data-kapi-admin="true"] .ams-content th {
+  white-space: nowrap;
+}
+[data-kapi-admin="true"] .ams-content td {
+  max-width: 28rem;
+}
+[data-kapi-admin="true"] .ams-content td :where(a,button,span) {
+  max-width: 100%;
+}
+
+/* Inputs must look identical whether rendered by a page or a modal. */
+[data-kapi-admin="true"] :where(input,select,textarea) {
+  color: var(--k-apple-text) !important;
+}
+[data-kapi-admin="true"] :where(input,select,textarea)::placeholder {
+  color: var(--k-apple-text-3) !important;
+  opacity: 1;
+}
+[data-kapi-admin="true"] :where(input,select,textarea):disabled {
+  opacity: .55;
+  cursor: not-allowed;
+}
+[data-kapi-admin="true"] :where(button,a)[aria-disabled="true"],
+[data-kapi-admin="true"] :where(button,a):disabled {
+  opacity: .55;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* Keep icon controls square. Text controls stay rounded rectangles. */
+[data-kapi-admin="true"] button[class*="w-8"][class*="h-8"],
+[data-kapi-admin="true"] button[class*="w-9"][class*="h-9"],
+[data-kapi-admin="true"] button[class*="w-10"][class*="h-10"],
+[data-kapi-admin="true"] button[class*="w-11"][class*="h-11"],
+[data-kapi-admin="true"] button[class*="w-12"][class*="h-12"] {
+  aspect-ratio: 1;
+  min-width: 0;
+  padding-inline: 0 !important;
+}
+
+/* Public controls use the same geometry as the system buttons. */
+.kapi-public-shell :where(input,select,textarea) {
+  font-family: var(--k-font-ui);
+  border-radius: 12px;
+}
+.kapi-public-shell :where(input,select,textarea)::placeholder {
+  color: rgba(161,161,170,.72);
+}
+.kapi-public-shell :where(button,a.kapi-button) {
+  -webkit-font-smoothing: antialiased;
+}
+.kapi-public-shell :where(button,a.kapi-button):disabled,
+.kapi-public-shell :where(button,a.kapi-button)[aria-disabled="true"] {
+  opacity:.5;
+  cursor:not-allowed;
+  transform:none !important;
+}
+
+/* Dialogs/sheets must fit short mobile viewports without clipping their actions. */
+[data-kapi-admin="true"] [role="dialog"] {
+  width: min(960px, calc(100vw - 24px));
+  max-height: min(88dvh, 900px);
+}
+[data-kapi-admin="true"] [role="dialog"] > :where(.overflow-y-auto,[class*="overflow-y-auto"]) {
+  min-height: 0;
+}
+@media (max-width: 767px) {
+  [data-kapi-admin="true"] [role="dialog"] {
+    width: calc(100vw - 20px);
+    max-height: calc(100dvh - 20px);
+    border-radius: 20px !important;
+  }
+  [data-kapi-admin="true"] [role="dialog"] :where(td,th) {
+    padding-inline: 10px !important;
+  }
+}
+
+/* Avoid accidental hover movement on touch devices. */
+@media (hover: none) {
+  .kapi-public-shell button:hover,
+  [data-kapi-admin="true"] button:hover,
+  .kapi-card:hover {
+    transform: none !important;
+  }
+}
+
+/* Public sections should not inherit arbitrary legacy horizontal overflow. */
+.kapi-public-shell {
+  overflow-x: clip;
+}
+.kapi-public-shell img,
+.kapi-public-shell video,
+[data-kapi-admin="true"] img,
+[data-kapi-admin="true"] video {
+  max-width: 100%;
+}
+
+/* Reduce the chance of clipped text caused by legacy nowrap utilities. */
+[data-kapi-admin="true"] .ams-sidebar-nav a {
+  white-space: normal;
+}
+[data-kapi-admin="true"] .ams-sidebar-nav a .truncate {
+  white-space: nowrap;
+}
+
+/* Preserve the Apple restraint: no decorative giant shadows on ordinary cards. */
+[data-kapi-admin="true"] .ams-content :where(.kapi-card,.metric-card,.glass-panel,.ams-surface) {
+  box-shadow: 0 1px 0 rgba(255,255,255,.025) inset, 0 12px 36px rgba(0,0,0,.14) !important;
+}
