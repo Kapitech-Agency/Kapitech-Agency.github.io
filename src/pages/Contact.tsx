@@ -447,14 +447,14 @@ export const Contact = () => {
                           setSelectedServices([]);
                           setBudgetRange('');
                         }}
-                        className="w-full sm:w-auto px-6 py-3 rounded-full bg-brand-red text-white text-xs font-semibold uppercase tracking-wider hover:bg-[var(--k-red-hover)] transition-colors active:scale-95 shadow-[var(--k-shadow-sm)] shadow-brand-red/15 min-h-[44px]"
+                        className="w-full sm:w-auto px-6 py-3 rounded-[14px] bg-brand-red text-white text-xs font-semibold uppercase tracking-wider hover:bg-[var(--k-red-hover)] transition-colors active:scale-95 shadow-[var(--k-shadow-sm)] shadow-brand-red/15 min-h-[44px]"
                       >
                         {language === 'id' ? 'Kirim Pesan Lainnya' : 'Send Another Message'}
                       </button>
 
                       <a
                         href="/inbox"
-                        className="w-full sm:w-auto px-6 py-3 rounded-full bg-[var(--k-bg)] border border-[var(--k-border)] hover:border-brand-red/50 text-white text-xs font-sans font-semibold uppercase tracking-wider transition-colors min-h-[44px] flex items-center justify-center gap-2"
+                        className="w-full sm:w-auto px-6 py-3 rounded-[14px] bg-[var(--k-bg)] border border-[var(--k-border)] hover:border-brand-red/50 text-white text-xs font-sans font-semibold uppercase tracking-wider transition-colors min-h-[44px] flex items-center justify-center gap-2"
                       >
                         <span>{language === 'id' ? 'Lihat di Inbox Database' : 'View in Inbox'}</span>
                         <ArrowUpRight size={14} />
@@ -639,7 +639,7 @@ export const Contact = () => {
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="w-full py-3.5 sm:py-4 rounded-full bg-brand-red hover:bg-[var(--k-red-hover)] text-white font-semibold text-xs uppercase tracking-wider transition-colors flex items-center justify-center gap-2 shadow-[var(--k-shadow-sm)] shadow-brand-red/15 active:scale-95 min-h-[44px]"
+                      className="w-full py-3.5 sm:py-4 rounded-[14px] bg-brand-red hover:bg-[var(--k-red-hover)] text-white font-semibold text-xs uppercase tracking-wider transition-colors flex items-center justify-center gap-2 shadow-[var(--k-shadow-sm)] shadow-brand-red/15 active:scale-95 min-h-[44px]"
                     >
                       {isSubmitting ? (
                         <span>{language === 'id' ? 'Mengirimkan Detail...' : 'Submitting Details...'}</span>
@@ -700,7 +700,7 @@ export const Contact = () => {
           <div className="flex justify-center">
             <button
               onClick={() => setShowAllFaqs(prev => !prev)}
-              className="px-7 sm:px-8 py-3.5 rounded-full border border-[var(--k-border)] bg-[var(--k-surface)] hover:bg-[var(--k-surface-raised)] text-white text-xs font-semibold uppercase tracking-wider transition-all duration-300 flex items-center gap-2 active:scale-95 min-h-[44px]"
+              className="px-7 sm:px-8 py-3.5 rounded-[14px] border border-[var(--k-border)] bg-[var(--k-surface)] hover:bg-[var(--k-surface-raised)] text-white text-xs font-semibold uppercase tracking-wider transition-all duration-300 flex items-center gap-2 active:scale-95 min-h-[44px]"
             >
               <span>
                 {language === 'id'
