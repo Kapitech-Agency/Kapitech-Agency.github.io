@@ -961,3 +961,27 @@ body {
     background: var(--k-surface);
   }
 }
+
+/* Public navigation materials: glass belongs to the floating control layer. */
+.kapi-public-shell .kapi-glass-nav-menu,
+.kapi-public-shell .kapi-glass-mobile-menu {
+  background:
+    linear-gradient(180deg, rgba(28,29,34,.84), rgba(10,11,14,.76));
+  border-color: rgba(255,255,255,.12);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.06),
+    0 24px 70px rgba(0,0,0,.36);
+  backdrop-filter: saturate(180%) blur(28px);
+  -webkit-backdrop-filter: saturate(180%) blur(28px);
+}
+.kapi-public-shell .kapi-glass-mobile-menu {
+  overflow-y: auto;
+}
+@media (prefers-reduced-transparency: reduce) {
+  .kapi-public-shell .kapi-glass-nav-menu,
+  .kapi-public-shell .kapi-glass-mobile-menu {
+    background: var(--k-surface);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
