@@ -447,7 +447,7 @@ export const Contact = () => {
                           setSelectedServices([]);
                           setBudgetRange('');
                         }}
-                        className="w-full sm:w-auto px-6 py-3 rounded-full bg-brand-red text-white text-xs font-semibold uppercase tracking-wider hover:bg-[var(--k-red-hover)] transition-colors active:scale-95 shadow-lg shadow-brand-red/20 min-h-[44px]"
+                        className="w-full sm:w-auto px-6 py-3 rounded-full bg-brand-red text-white text-xs font-semibold uppercase tracking-wider hover:bg-[var(--k-red-hover)] transition-colors active:scale-95 shadow-[var(--k-shadow-sm)] shadow-brand-red/15 min-h-[44px]"
                       >
                         {language === 'id' ? 'Kirim Pesan Lainnya' : 'Send Another Message'}
                       </button>
@@ -525,7 +525,7 @@ export const Contact = () => {
                           value={formState.name}
                           onChange={handleInputChange}
                           placeholder={language === 'id' ? 'cth. Budi Santoso' : 'e.g. John Doe'}
-                          className={`w-full bg-[var(--k-bg)] border ${formErrors.name ? 'border-brand-red' : 'border-[var(--k-border)]'} rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-base sm:text-xs text-white placeholder:text-[var(--k-text-secondary)]/50 focus:outline-none focus-visible:outline-none focus:border-brand-red font-sans min-h-[44px]`}
+                          className={`w-full bg-[var(--k-bg)] border ${formErrors.name ? 'border-brand-red' : 'border-[var(--k-border)]'} rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-base sm:text-xs text-white placeholder:text-[var(--k-text-secondary)]/50 focus-visible:outline-none focus:border-brand-red font-sans min-h-[44px]`}
                         />
                         {formErrors.name && (
                           <p className="text-xs font-sans text-brand-red mt-1 flex items-center gap-1">
@@ -545,7 +545,7 @@ export const Contact = () => {
                           value={formState.email}
                           onChange={handleInputChange}
                           placeholder="john@company.com"
-                          className={`w-full bg-[var(--k-bg)] border ${formErrors.email ? 'border-brand-red' : 'border-[var(--k-border)]'} rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-base sm:text-xs text-white placeholder:text-[var(--k-text-secondary)]/50 focus:outline-none focus-visible:outline-none focus:border-brand-red font-sans min-h-[44px]`}
+                          className={`w-full bg-[var(--k-bg)] border ${formErrors.email ? 'border-brand-red' : 'border-[var(--k-border)]'} rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-base sm:text-xs text-white placeholder:text-[var(--k-text-secondary)]/50 focus-visible:outline-none focus:border-brand-red font-sans min-h-[44px]`}
                         />
                         {formErrors.email && (
                           <p className="text-xs font-sans text-brand-red mt-1 flex items-center gap-1">
@@ -567,7 +567,7 @@ export const Contact = () => {
                           value={formState.company}
                           onChange={handleInputChange}
                           placeholder="e.g. Acme Corp"
-                          className="w-full bg-[var(--k-bg)] border border-[var(--k-border)] rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-base sm:text-xs text-white placeholder:text-[var(--k-text-secondary)]/50 focus:outline-none focus-visible:outline-none focus:border-brand-red font-sans min-h-[44px]"
+                          className="w-full bg-[var(--k-bg)] border border-[var(--k-border)] rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-base sm:text-xs text-white placeholder:text-[var(--k-text-secondary)]/50 focus-visible:outline-none focus:border-brand-red font-sans min-h-[44px]"
                         />
                       </div>
                       <div>
@@ -580,7 +580,7 @@ export const Contact = () => {
                           value={formState.phone}
                           onChange={handleInputChange}
                           placeholder="+62 812-xxxx-xxxx"
-                          className={`w-full bg-[var(--k-bg)] border ${formErrors.phone ? 'border-brand-red' : 'border-[var(--k-border)]'} rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-base sm:text-xs text-white placeholder:text-[var(--k-text-secondary)]/50 focus:outline-none focus-visible:outline-none focus:border-brand-red font-sans min-h-[44px]`}
+                          className={`w-full bg-[var(--k-bg)] border ${formErrors.phone ? 'border-brand-red' : 'border-[var(--k-border)]'} rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-base sm:text-xs text-white placeholder:text-[var(--k-text-secondary)]/50 focus-visible:outline-none focus:border-brand-red font-sans min-h-[44px]`}
                         />
                         {formErrors.phone && (
                           <p className="text-xs font-sans text-brand-red mt-1 flex items-center gap-1">
@@ -626,7 +626,7 @@ export const Contact = () => {
                         value={formState.message}
                         onChange={handleInputChange}
                         placeholder={language === 'id' ? 'Ceritakan tentang kebutuhan produk yang ingin dibangun, tantangan saat ini, target rilis, dll...' : 'Tell us about what you want to build, existing challenges, desired launch dates, etc...'}
-                        className={`w-full bg-[var(--k-bg)] border ${formErrors.message ? 'border-brand-red' : 'border-[var(--k-border)]'} rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-base sm:text-xs text-white placeholder:text-[var(--k-text-secondary)]/50 focus:outline-none focus-visible:outline-none focus:border-brand-red resize-none font-sans`}
+                        className={`w-full bg-[var(--k-bg)] border ${formErrors.message ? 'border-brand-red' : 'border-[var(--k-border)]'} rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-base sm:text-xs text-white placeholder:text-[var(--k-text-secondary)]/50 focus-visible:outline-none focus:border-brand-red resize-none font-sans`}
                       />
                       {formErrors.message && (
                         <p className="text-xs font-sans text-brand-red mt-1 flex items-center gap-1">
@@ -639,7 +639,7 @@ export const Contact = () => {
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="w-full py-3.5 sm:py-4 rounded-full bg-brand-red hover:bg-[var(--k-red-hover)] text-white font-semibold text-xs uppercase tracking-wider transition-colors flex items-center justify-center gap-2 shadow-lg shadow-brand-red/20 active:scale-95 min-h-[44px]"
+                      className="w-full py-3.5 sm:py-4 rounded-full bg-brand-red hover:bg-[var(--k-red-hover)] text-white font-semibold text-xs uppercase tracking-wider transition-colors flex items-center justify-center gap-2 shadow-[var(--k-shadow-sm)] shadow-brand-red/15 active:scale-95 min-h-[44px]"
                     >
                       {isSubmitting ? (
                         <span>{language === 'id' ? 'Mengirimkan Detail...' : 'Submitting Details...'}</span>
