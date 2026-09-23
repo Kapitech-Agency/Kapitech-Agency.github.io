@@ -127,7 +127,7 @@ export const Home = () => {
   ];
 
   return (
-    <div className="bg-[#0B0C0E] text-white min-h-screen selection:bg-brand-red selection:text-white" role="main">
+    <div className="bg-[[var(--k-bg)]] text-white min-h-screen selection:bg-brand-red selection:text-white" role="main">
       {/* Hero Section */}
       <section className="kapi-home-hero relative min-h-[85vh] sm:min-h-[90vh] flex flex-col justify-center px-4 sm:px-6 md:px-12 pt-28 sm:pt-36 md:pt-40 pb-16 sm:pb-20 overflow-hidden bg-black">
         <AtmosphericBackground 
@@ -145,12 +145,12 @@ export const Home = () => {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-red opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-red"></span>
               </span>
-              <span className="text-[10px] sm:text-[11px] font-mono tracking-wider uppercase text-[#8A909D]">
+              <span className="text-[10px] sm:text-[11px] font-sans tracking-wider uppercase text-[[var(--k-text-secondary)]]">
                 Digital Product Design & Development Agency
               </span>
             </div>
             
-            <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-display font-bold leading-[1.1] sm:leading-[1.05] tracking-tight mb-5 sm:mb-8 text-white">
+            <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-sans font-bold leading-[1.1] sm:leading-[1.05] tracking-tight mb-5 sm:mb-8 text-white">
               {language === 'id' ? (
                 <>Studio produk digital yang dirancang untuk <span className="text-brand-red">membangun & memperluas</span> bisnis Anda.</>
               ) : (
@@ -158,7 +158,7 @@ export const Home = () => {
               )}
             </h1>
             
-            <p className="text-sm sm:text-base md:text-xl text-[#8A909D] font-light leading-relaxed max-w-2xl mb-8 sm:mb-12">
+            <p className="text-sm sm:text-base md:text-xl text-[[var(--k-text-secondary)]] font-light leading-relaxed max-w-2xl mb-8 sm:mb-12">
               {language === 'id'
                 ? 'Kami merancang dan mengembangkan website berkinerja tinggi, aplikasi web kustom, sistem visual, dan infrastruktur cloud terpercaya untuk bisnis visioner.'
                 : 'We design and develop high-performance websites, custom web applications, visual systems, and resilient cloud infrastructures for visionary enterprises.'}
@@ -184,33 +184,33 @@ export const Home = () => {
       </section>
 
       {/* REDESIGNED STATS SECTION - Minimal, Simple, High-Contrast & Sleek */}
-      <section className="py-12 sm:py-16 px-4 sm:px-6 md:px-12 bg-[#0B0C0E] border-y border-[#262930]" aria-label="Key Agency Statistics">
+      <section className="py-12 sm:py-16 px-4 sm:px-6 md:px-12 bg-[[var(--k-bg)]] border-y border-[[var(--k-border)]]" aria-label="Key Agency Statistics">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {stats.map((stat, i) => (
               <div 
                 key={i} 
-                className="relative p-6 rounded-2xl bg-[#16181D] border border-[#262930] hover:border-brand-red/40 transition-all duration-300 group flex flex-col justify-between"
+                className="relative p-6 rounded-2xl bg-[[var(--k-surface)]] border border-[[var(--k-border)]] hover:border-brand-red/40 transition-all duration-300 group flex flex-col justify-between"
               >
                 <div className="flex items-center justify-between mb-4">
-                  <span className="text-[11px] font-mono uppercase tracking-widest text-brand-red font-semibold">
+                  <span className="text-[11px] font-sans uppercase tracking-widest text-brand-red font-semibold">
                     {stat.label}
                   </span>
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#0B0C0E] border border-[#262930] text-[#8A909D]">
+                  <span className="text-[10px] font-sans px-2 py-0.5 rounded bg-[[var(--k-bg)]] border border-[[var(--k-border)]] text-[[var(--k-text-secondary)]]">
                     0{i + 1}
                   </span>
                 </div>
 
                 <div className="my-2">
-                  <div className="text-2xl sm:text-3xl lg:text-4xl font-display font-bold text-white tracking-tight group-hover:text-brand-red transition-colors">
+                  <div className="text-2xl sm:text-3xl lg:text-4xl font-sans font-bold text-white tracking-tight group-hover:text-brand-red transition-colors">
                     {stat.value}
                   </div>
-                  <div className="text-xs font-mono text-brand-red font-medium mt-1">
+                  <div className="text-xs font-sans text-brand-red font-medium mt-1">
                     {stat.subValue}
                   </div>
                 </div>
 
-                <p className="text-xs text-[#8A909D] font-light leading-relaxed pt-3 border-t border-[#262930] mt-2">
+                <p className="text-xs text-[[var(--k-text-secondary)]] font-light leading-relaxed pt-3 border-t border-[[var(--k-border)]] mt-2">
                   {stat.desc}
                 </p>
               </div>
@@ -220,12 +220,12 @@ export const Home = () => {
       </section>
 
       {/* CLIENTS & PARTNERS SECTION - LOOPING CAROUSEL WITH SIDE SHADOWS */}
-      <section className="py-14 sm:py-20 bg-[#0B0C0E] border-b border-[#262930] overflow-hidden relative" id="clients">
+      <section className="py-14 sm:py-20 bg-[[var(--k-bg)]] border-b border-[[var(--k-border)]] overflow-hidden relative" id="clients">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12 mb-8 sm:mb-10 text-center">
-          <span className="text-brand-red font-mono font-semibold tracking-widest uppercase text-xs mb-2 block">
+          <span className="text-brand-red font-sans font-semibold tracking-widest uppercase text-xs mb-2 block">
             {language === 'id' ? 'KLIEN & MITRA TERPERCAYA' : 'TRUSTED BY INNOVATION LEADERS'}
           </span>
-          <h2 className="text-xl sm:text-2xl md:text-3xl font-display font-bold tracking-tight text-white">
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-sans font-bold tracking-tight text-white">
             {language === 'id' 
               ? 'Dipercaya oleh 50+ perusahaan global & startup bervaluasi tinggi' 
               : 'Empowering 50+ global scaleups, enterprise leaders & venture-backed products'}
@@ -236,10 +236,10 @@ export const Home = () => {
         <div className="relative w-full overflow-hidden py-4">
           
           {/* Left Gradient Shadow */}
-          <div className="absolute left-0 top-0 bottom-0 w-24 sm:w-40 bg-gradient-to-r from-[#0B0C0E] via-[#0B0C0E]/90 to-transparent z-20 pointer-events-none" />
+          <div className="absolute left-0 top-0 bottom-0 w-24 sm:w-40 bg-gradient-to-r from-[[var(--k-bg)]] via-[[var(--k-bg)]]/90 to-transparent z-20 pointer-events-none" />
           
           {/* Right Gradient Shadow */}
-          <div className="absolute right-0 top-0 bottom-0 w-24 sm:w-40 bg-gradient-to-l from-[#0B0C0E] via-[#0B0C0E]/90 to-transparent z-20 pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-0 w-24 sm:w-40 bg-gradient-to-l from-[[var(--k-bg)]] via-[[var(--k-bg)]]/90 to-transparent z-20 pointer-events-none" />
 
           {/* Marquee Motion Container */}
           <div className="flex w-max">
@@ -255,39 +255,39 @@ export const Home = () => {
               {[
                 { name: 'interprefy', style: 'font-sans font-bold tracking-tight text-2xl sm:text-3xl lowercase' },
                 { name: 'PLAYERS HEALTH', style: 'font-serif font-black tracking-widest text-lg sm:text-xl uppercase' },
-                { name: 'AUTOMATTIC', style: 'font-mono font-bold tracking-wider text-xl sm:text-2xl uppercase' },
+                { name: 'AUTOMATTIC', style: 'font-sans font-bold tracking-wider text-xl sm:text-2xl uppercase' },
                 { name: 'WordPress.com', style: 'font-serif font-bold tracking-normal text-2xl sm:text-3xl' },
                 { name: 'CHALHOUB GROUP', style: 'font-sans font-extrabold tracking-widest text-lg sm:text-xl uppercase' },
-                { name: 'GREIF', style: 'font-mono font-black tracking-widest text-2xl sm:text-3xl uppercase' },
+                { name: 'GREIF', style: 'font-sans font-black tracking-widest text-2xl sm:text-3xl uppercase' },
                 { name: 'Sinta Health', style: 'font-sans font-bold tracking-tight text-xl sm:text-2xl' },
-                { name: 'BlockDB Networks', style: 'font-mono font-semibold tracking-wider text-lg sm:text-xl uppercase' },
+                { name: 'BlockDB Networks', style: 'font-sans font-semibold tracking-wider text-lg sm:text-xl uppercase' },
                 { name: 'Orbit Cloud', style: 'font-sans font-black tracking-tighter text-2xl sm:text-3xl uppercase' },
                 { name: 'Zenora Systems', style: 'font-serif font-semibold tracking-wide text-xl sm:text-2xl' },
                 { name: 'Lumina Realty', style: 'font-sans font-extrabold tracking-widest text-lg sm:text-xl uppercase' },
-                { name: 'Solaris CleanTech', style: 'font-mono font-bold tracking-tight text-xl sm:text-2xl' },
+                { name: 'Solaris CleanTech', style: 'font-sans font-bold tracking-tight text-xl sm:text-2xl' },
                 { name: 'Nexus Fintech', style: 'font-sans font-black tracking-wide text-xl sm:text-2xl uppercase' },
-                { name: 'Kross Security', style: 'font-mono font-extrabold tracking-widest text-lg sm:text-xl uppercase' },
+                { name: 'Kross Security', style: 'font-sans font-extrabold tracking-widest text-lg sm:text-xl uppercase' },
                 // Duplicate set for seamless continuous loop
                 { name: 'interprefy', style: 'font-sans font-bold tracking-tight text-2xl sm:text-3xl lowercase' },
                 { name: 'PLAYERS HEALTH', style: 'font-serif font-black tracking-widest text-lg sm:text-xl uppercase' },
-                { name: 'AUTOMATTIC', style: 'font-mono font-bold tracking-wider text-xl sm:text-2xl uppercase' },
+                { name: 'AUTOMATTIC', style: 'font-sans font-bold tracking-wider text-xl sm:text-2xl uppercase' },
                 { name: 'WordPress.com', style: 'font-serif font-bold tracking-normal text-2xl sm:text-3xl' },
                 { name: 'CHALHOUB GROUP', style: 'font-sans font-extrabold tracking-widest text-lg sm:text-xl uppercase' },
-                { name: 'GREIF', style: 'font-mono font-black tracking-widest text-2xl sm:text-3xl uppercase' },
+                { name: 'GREIF', style: 'font-sans font-black tracking-widest text-2xl sm:text-3xl uppercase' },
                 { name: 'Sinta Health', style: 'font-sans font-bold tracking-tight text-xl sm:text-2xl' },
-                { name: 'BlockDB Networks', style: 'font-mono font-semibold tracking-wider text-lg sm:text-xl uppercase' },
+                { name: 'BlockDB Networks', style: 'font-sans font-semibold tracking-wider text-lg sm:text-xl uppercase' },
                 { name: 'Orbit Cloud', style: 'font-sans font-black tracking-tighter text-2xl sm:text-3xl uppercase' },
                 { name: 'Zenora Systems', style: 'font-serif font-semibold tracking-wide text-xl sm:text-2xl' },
                 { name: 'Lumina Realty', style: 'font-sans font-extrabold tracking-widest text-lg sm:text-xl uppercase' },
-                { name: 'Solaris CleanTech', style: 'font-mono font-bold tracking-tight text-xl sm:text-2xl' },
+                { name: 'Solaris CleanTech', style: 'font-sans font-bold tracking-tight text-xl sm:text-2xl' },
                 { name: 'Nexus Fintech', style: 'font-sans font-black tracking-wide text-xl sm:text-2xl uppercase' },
-                { name: 'Kross Security', style: 'font-mono font-extrabold tracking-widest text-lg sm:text-xl uppercase' }
+                { name: 'Kross Security', style: 'font-sans font-extrabold tracking-widest text-lg sm:text-xl uppercase' }
               ].map((logo, idx) => (
                 <div 
                   key={idx}
                   className="flex items-center justify-center shrink-0 opacity-40 hover:opacity-100 transition-opacity duration-300 cursor-default px-4"
                 >
-                  <span className={`${logo.style} text-[#8A909D] hover:text-white whitespace-nowrap`}>
+                  <span className={`${logo.style} text-[[var(--k-text-secondary)]] hover:text-white whitespace-nowrap`}>
                     {logo.name}
                   </span>
                 </div>
@@ -298,14 +298,14 @@ export const Home = () => {
       </section>
 
       {/* SOLUTIONS & 3 CORE PILLARS SECTION */}
-      <section className="py-16 sm:py-24 md:py-32 px-4 sm:px-6 md:px-12 bg-[#0B0C0E] border-b border-[#262930] relative z-10" id="services">
+      <section className="py-16 sm:py-24 md:py-32 px-4 sm:px-6 md:px-12 bg-[[var(--k-bg)]] border-b border-[[var(--k-border)]] relative z-10" id="services">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 sm:gap-6 mb-12 sm:mb-16">
             <div>
-              <span className="text-brand-red font-mono font-semibold tracking-widest uppercase text-xs mb-2 sm:mb-3 block">
+              <span className="text-brand-red font-sans font-semibold tracking-widest uppercase text-xs mb-2 sm:mb-3 block">
                 {language === 'id' ? 'Layanan & Solusi Lengkap' : 'Solutions & Core Capabilities'}
               </span>
-              <h2 className="text-2xl sm:text-3xl md:text-5xl font-display font-bold tracking-tight text-white">
+              <h2 className="text-2xl sm:text-3xl md:text-5xl font-sans font-bold tracking-tight text-white">
                 {language === 'id' ? 'Solusi Strategis & Keahlian Studio' : 'Strategic Solutions & Studio Craft'}
               </h2>
             </div>
@@ -343,21 +343,21 @@ export const Home = () => {
               <Link 
                 key={idx} 
                 to={`/solutions/${sol.slug}`}
-                className="group p-6 sm:p-7 rounded-2xl bg-[#16181D] border border-[#262930] hover:border-brand-red/40 hover:bg-[#1E2128] transition-all flex flex-col justify-between"
+                className="group p-6 sm:p-7 rounded-2xl bg-[[var(--k-surface)]] border border-[[var(--k-border)]] hover:border-brand-red/40 hover:bg-[[var(--k-surface-raised)]] transition-all flex flex-col justify-between"
               >
                 <div>
-                  <span className="text-[10px] font-mono uppercase tracking-widest text-brand-red font-semibold block mb-1">
+                  <span className="text-[10px] font-sans uppercase tracking-widest text-brand-red font-semibold block mb-1">
                     {sol.audience}
                   </span>
-                  <h3 className="text-xl font-display font-bold text-white group-hover:text-brand-red transition-colors mb-2">
+                  <h3 className="text-xl font-sans font-bold text-white group-hover:text-brand-red transition-colors mb-2">
                     {sol.title}
                   </h3>
-                  <p className="text-xs sm:text-sm text-[#8A909D] font-light leading-relaxed">
+                  <p className="text-xs sm:text-sm text-[[var(--k-text-secondary)]] font-light leading-relaxed">
                     {sol.desc}
                   </p>
                 </div>
-                <div className="pt-4 mt-4 border-t border-[#262930]">
-                  <div className="text-xs font-mono text-brand-red group-hover:text-white flex items-center gap-1.5 transition-colors">
+                <div className="pt-4 mt-4 border-t border-[[var(--k-border)]]">
+                  <div className="text-xs font-sans text-brand-red group-hover:text-white flex items-center gap-1.5 transition-colors">
                     <span>{language === 'id' ? 'Lihat Detail Subpage' : 'Explore Subpage'}</span>
                     <ArrowUpRight size={13} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                   </div>
@@ -481,14 +481,14 @@ export const Home = () => {
       </section>
 
       {/* FEATURED PROJECTS PREVIEW (Linked to 50 Case Studies) */}
-      <section className="py-16 sm:py-24 md:py-32 px-4 sm:px-6 md:px-12 bg-[#0B0C0E] border-b border-[#262930] relative z-10" id="work">
+      <section className="py-16 sm:py-24 md:py-32 px-4 sm:px-6 md:px-12 bg-[[var(--k-bg)]] border-b border-[[var(--k-border)]] relative z-10" id="work">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 sm:gap-6 mb-10 sm:mb-16">
             <div>
-              <span className="text-brand-red font-mono font-semibold tracking-widest uppercase text-xs mb-2 sm:mb-3 block">
+              <span className="text-brand-red font-sans font-semibold tracking-widest uppercase text-xs mb-2 sm:mb-3 block">
                 {language === 'id' ? 'Studi Kasus Unggulan' : 'Featured Case Studies'}
               </span>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold tracking-tight text-white">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-sans font-bold tracking-tight text-white">
                 {language === 'id' ? 'Karya Nyata & Berkelanjutan' : 'Real Work for Real Leaders'}
               </h2>
             </div>
@@ -506,40 +506,40 @@ export const Home = () => {
               <Link 
                 key={project.id}
                 to="/work"
-                className="group rounded-2xl overflow-hidden bg-[#16181D] border border-[#262930] hover:border-brand-red/40 transition-all duration-300 flex flex-col"
+                className="group rounded-2xl overflow-hidden bg-[[var(--k-surface)]] border border-[[var(--k-border)]] hover:border-brand-red/40 transition-all duration-300 flex flex-col"
               >
-                <div className="relative aspect-[16/10] overflow-hidden bg-[#0B0C0E]">
+                <div className="relative aspect-[16/10] overflow-hidden bg-[[var(--k-bg)]]">
                   <img 
                     src={project.image} 
                     alt={project.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     loading="lazy"
                   />
-                  <div className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-[#0B0C0E]/90 backdrop-blur-md text-[10px] font-mono text-brand-red border border-[#262930]">
+                  <div className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-[[var(--k-bg)]]/90 backdrop-blur-md text-[10px] font-sans text-brand-red border border-[[var(--k-border)]]">
                     {project.impact[0] ? `${project.impact[0].value} ${project.impact[0].label}` : project.year}
                   </div>
                 </div>
                 <div className="p-6 sm:p-8 flex flex-col flex-grow justify-between">
                   <div>
                     <div className="flex items-center justify-between gap-3 mb-2">
-                      <span className="text-[11px] font-mono font-medium text-brand-red uppercase tracking-wider">
+                      <span className="text-[11px] font-sans font-medium text-brand-red uppercase tracking-wider">
                         {project.service}
                       </span>
-                      <span className="text-[11px] font-light text-[#8A909D]">
+                      <span className="text-[11px] font-light text-[[var(--k-text-secondary)]]">
                         {project.client}
                       </span>
                     </div>
-                    <h3 className="text-xl sm:text-2xl font-display font-bold mb-2.5 text-white group-hover:text-brand-red transition-colors">
+                    <h3 className="text-xl sm:text-2xl font-sans font-bold mb-2.5 text-white group-hover:text-brand-red transition-colors">
                       {project.title}
                     </h3>
-                    <p className="text-xs sm:text-sm text-[#8A909D] font-light leading-relaxed mb-5">
+                    <p className="text-xs sm:text-sm text-[[var(--k-text-secondary)]] font-light leading-relaxed mb-5">
                       {language === 'id' ? project.descId : project.desc}
                     </p>
                   </div>
-                  <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-[#262930]">
+                  <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-[[var(--k-border)]]">
                     <div className="flex flex-wrap gap-1.5">
                       {project.technologies.slice(0, 3).map((item) => (
-                        <span key={item} className="px-2 py-0.5 rounded bg-[#0B0C0E] border border-[#262930] text-[10px] font-mono text-[#8A909D]">
+                        <span key={item} className="px-2 py-0.5 rounded bg-[[var(--k-bg)]] border border-[[var(--k-border)]] text-[10px] font-sans text-[[var(--k-text-secondary)]]">
                           {item}
                         </span>
                       ))}
@@ -556,13 +556,13 @@ export const Home = () => {
       </section>
 
       {/* WORKING PROCESS STEPPING */}
-      <section className="py-16 sm:py-24 px-4 sm:px-6 md:px-12 bg-[#0B0C0E] border-b border-[#262930]">
+      <section className="py-16 sm:py-24 px-4 sm:px-6 md:px-12 bg-[[var(--k-bg)]] border-b border-[[var(--k-border)]]">
         <div className="max-w-7xl mx-auto">
           <div className="max-w-2xl mb-12 sm:mb-16">
-            <span className="text-brand-red font-mono font-semibold tracking-widest uppercase text-xs mb-3 block">
+            <span className="text-brand-red font-sans font-semibold tracking-widest uppercase text-xs mb-3 block">
               {language === 'id' ? 'Alur Kerja Studio' : 'Our Working Framework'}
             </span>
-            <h2 className="text-2xl sm:text-4xl md:text-5xl font-display font-bold tracking-tight text-white">
+            <h2 className="text-2xl sm:text-4xl md:text-5xl font-sans font-bold tracking-tight text-white">
               {language === 'id' ? 'Eksekusi Tangkas & Terukur' : 'Disciplined Agile Execution'}
             </h2>
           </div>
@@ -571,16 +571,16 @@ export const Home = () => {
             {processSteps.map((step) => (
               <div 
                 key={step.step}
-                className="p-6 rounded-2xl bg-[#16181D] border border-[#262930] hover:border-brand-red/30 transition-colors flex flex-col justify-between"
+                className="p-6 rounded-2xl bg-[[var(--k-surface)]] border border-[[var(--k-border)]] hover:border-brand-red/30 transition-colors flex flex-col justify-between"
               >
-                <div className="text-2xl font-display font-bold text-brand-red font-mono mb-4">
+                <div className="text-2xl font-sans font-bold text-brand-red font-sans mb-4">
                   {step.step}
                 </div>
                 <div>
-                  <h3 className="text-lg font-display font-bold text-white mb-2">
+                  <h3 className="text-lg font-sans font-bold text-white mb-2">
                     {step.title}
                   </h3>
-                  <p className="text-xs sm:text-sm text-[#8A909D] font-light leading-relaxed">
+                  <p className="text-xs sm:text-sm text-[[var(--k-text-secondary)]] font-light leading-relaxed">
                     {step.desc}
                   </p>
                 </div>
