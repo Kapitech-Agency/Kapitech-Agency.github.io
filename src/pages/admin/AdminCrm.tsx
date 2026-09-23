@@ -365,14 +365,14 @@ export const AdminCrm: React.FC = () => {
   const getPriorityBadge = (priority: CrmPriority) => {
     switch (priority) {
       case 'urgent':
-        return <span className="px-2 py-0.5 rounded bg-rose-500/20 text-rose-400 border border-rose-500/30 text-[9px] font-sans font-bold uppercase">Urgent</span>;
+        return <span className="px-2 py-0.5 rounded bg-rose-500/20 text-rose-400 border border-rose-500/30 text-xs font-sans font-bold uppercase">Urgent</span>;
       case 'high':
-        return <span className="px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 border border-amber-500/30 text-[9px] font-sans font-bold uppercase">High</span>;
+        return <span className="px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 border border-amber-500/30 text-xs font-sans font-bold uppercase">High</span>;
       case 'medium':
-        return <span className="px-2 py-0.5 rounded bg-rose-500/20 text-rose-400 border border-rose-500/30 text-[9px] font-sans font-bold uppercase">Medium</span>;
+        return <span className="px-2 py-0.5 rounded bg-rose-500/20 text-rose-400 border border-rose-500/30 text-xs font-sans font-bold uppercase">Medium</span>;
       case 'low':
       default:
-        return <span className="px-2 py-0.5 rounded bg-zinc-500/20 text-zinc-400 border border-zinc-500/30 text-[9px] font-sans font-bold uppercase">Low</span>;
+        return <span className="px-2 py-0.5 rounded bg-zinc-500/20 text-zinc-400 border border-zinc-500/30 text-xs font-sans font-bold uppercase">Low</span>;
     }
   };
 
@@ -407,7 +407,7 @@ export const AdminCrm: React.FC = () => {
             </div>
             <h1 className="text-xl sm:text-2xl font-sans font-bold text-white flex items-center gap-2.5">
               <span>{t('admin.crm.title')}</span>
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-sans font-bold uppercase tracking-wider bg-[var(--k-red)]/15 text-[var(--k-red)] border border-[var(--k-red)]/30">
+              <span className="px-2 py-0.5 rounded-full text-xs font-sans font-bold uppercase tracking-wider bg-[var(--k-red)]/15 text-[var(--k-red)] border border-[var(--k-red)]/30">
                 Enterprise
               </span>
             </h1>
@@ -490,7 +490,7 @@ export const AdminCrm: React.FC = () => {
               {formatAmount(metrics.totalPipelineValue, currency)}
             </div>
           </div>
-          <div className="flex items-center justify-between mt-4 pt-3 border-t border-[rgba(255,255,255,0.07)] text-[11px] font-sans">
+          <div className="flex items-center justify-between mt-4 pt-3 border-t border-[rgba(255,255,255,0.07)] text-xs font-sans">
             <span className="text-[var(--k-text-secondary)]">
               {metrics.activeDealsCount} {language === 'id' ? 'Prospek Aktif' : 'Active Deals'}
             </span>
@@ -516,7 +516,7 @@ export const AdminCrm: React.FC = () => {
               {formatAmount(metrics.totalWonValue, currency)}
             </div>
           </div>
-          <div className="flex items-center justify-between mt-4 pt-3 border-t border-[rgba(255,255,255,0.07)] text-[11px] font-sans">
+          <div className="flex items-center justify-between mt-4 pt-3 border-t border-[rgba(255,255,255,0.07)] text-xs font-sans">
             <span className="text-[var(--k-text-secondary)]">
               {language === 'id' ? 'Win Rate:' : 'Win Rate:'}
             </span>
@@ -533,31 +533,31 @@ export const AdminCrm: React.FC = () => {
               <Activity size={14} className="text-[var(--k-red)]" />
               <span>{language === 'id' ? 'Corong Konversi Tahapan' : 'Stage Conversion Funnel'}</span>
             </span>
-            <span className="text-[10px] font-sans px-2 py-0.5 rounded bg-[var(--k-surface-raised)] text-[var(--k-text-secondary)] border border-[rgba(255,255,255,0.07)]">
+            <span className="text-xs font-sans px-2 py-0.5 rounded bg-[var(--k-surface-raised)] text-[var(--k-text-secondary)] border border-[rgba(255,255,255,0.07)]">
               Lead → Won Conversion
             </span>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 my-auto py-2">
             <div className="bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] p-2 text-center">
-              <div className="text-[10px] font-sans text-[var(--k-text-secondary)] truncate">Lead→Scope</div>
+              <div className="text-xs font-sans text-[var(--k-text-secondary)] truncate">Lead→Scope</div>
               <div className="text-sm font-bold font-sans text-white mt-0.5">{funnelStats.leadToScope}%</div>
             </div>
             <div className="bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] p-2 text-center">
-              <div className="text-[10px] font-sans text-[var(--k-text-secondary)] truncate">Scope→Pitch</div>
+              <div className="text-xs font-sans text-[var(--k-text-secondary)] truncate">Scope→Pitch</div>
               <div className="text-sm font-bold font-sans text-white mt-0.5">{funnelStats.scopeToPitch}%</div>
             </div>
             <div className="bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] p-2 text-center">
-              <div className="text-[10px] font-sans text-[var(--k-text-secondary)] truncate">Pitch→SOW</div>
+              <div className="text-xs font-sans text-[var(--k-text-secondary)] truncate">Pitch→SOW</div>
               <div className="text-sm font-bold font-sans text-white mt-0.5">{funnelStats.pitchToSow}%</div>
             </div>
             <div className="bg-[var(--k-surface-raised)] border border-emerald-500/20 bg-emerald-950/15 rounded-[var(--k-control-radius)] p-2 text-center">
-              <div className="text-[10px] font-sans text-emerald-400 truncate">SOW→Won</div>
+              <div className="text-xs font-sans text-emerald-400 truncate">SOW→Won</div>
               <div className="text-sm font-bold font-sans text-emerald-400 mt-0.5">{funnelStats.sowToWon}%</div>
             </div>
           </div>
 
-          <div className="flex items-center justify-between mt-3 pt-3 border-t border-[rgba(255,255,255,0.07)] text-[11px] font-sans">
+          <div className="flex items-center justify-between mt-3 pt-3 border-t border-[rgba(255,255,255,0.07)] text-xs font-sans">
             <span className="text-[var(--k-text-secondary)]">
               {language === 'id' ? 'Rata-rata Deal:' : 'Avg Deal:'} {formatAmount(metrics.avgDealSize, currency, true)}
             </span>
@@ -677,11 +677,11 @@ export const AdminCrm: React.FC = () => {
                         <h3 className="text-xs font-bold font-sans text-white truncate">
                           {language === 'id' ? stageDef.labelId : stageDef.label}
                         </h3>
-                        <span className="text-[10px] font-sans px-1.5 py-0.2 rounded bg-[var(--k-surface-raised)] text-[var(--k-text-secondary)] border border-[rgba(255,255,255,0.07)] shrink-0">
+                        <span className="text-xs font-sans px-1.5 py-0.2 rounded bg-[var(--k-surface-raised)] text-[var(--k-text-secondary)] border border-[rgba(255,255,255,0.07)] shrink-0">
                           {stageLeads.length}
                         </span>
                       </div>
-                      <div className="text-[11px] font-sans text-emerald-400 font-semibold mt-1">
+                      <div className="text-xs font-sans text-emerald-400 font-semibold mt-1">
                         {formatAmount(stageSum, currency, true)}
                       </div>
                     </div>
@@ -698,7 +698,7 @@ export const AdminCrm: React.FC = () => {
                   {/* Column Cards Stream */}
                   <div className="p-3 space-y-3 overflow-y-auto flex-1 max-h-[calc(100vh-320px)] min-h-[180px] scrollbar-thin">
                     {stageLeads.length === 0 ? (
-                      <div className="py-8 text-center text-[var(--k-text-secondary)] text-[11px] font-sans border border-dashed border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)]">
+                      <div className="py-8 text-center text-[var(--k-text-secondary)] text-xs font-sans border border-dashed border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)]">
                         {language === 'id' ? 'Tarik deal ke sini' : 'Drop deals here'}
                       </div>
                     ) : (
@@ -717,7 +717,7 @@ export const AdminCrm: React.FC = () => {
                           >
                             {/* Top Card Info */}
                             <div className="flex items-start justify-between gap-2 mb-2">
-                              <span className={`text-[9px] font-sans px-2 py-0.5 rounded border font-semibold truncate max-w-[130px] ${getPillarColor(lead.servicePillar)}`}>
+                              <span className={`text-xs font-sans px-2 py-0.5 rounded border font-semibold truncate max-w-[130px] ${getPillarColor(lead.servicePillar)}`}>
                                 {lead.servicePillar}
                               </span>
                               <div className="flex items-center gap-1">
@@ -732,7 +732,7 @@ export const AdminCrm: React.FC = () => {
                             <h4 className="text-xs font-bold text-white font-sans leading-snug group-hover:text-[var(--k-red)] transition-colors line-clamp-1">
                               {lead.clientName}
                             </h4>
-                            <p className="text-[11px] text-[var(--k-text-secondary)] font-sans truncate mb-2.5">
+                            <p className="text-xs text-[var(--k-text-secondary)] font-sans truncate mb-2.5">
                               {lead.company}
                             </p>
 
@@ -741,7 +741,7 @@ export const AdminCrm: React.FC = () => {
                               <span className="text-emerald-400 font-bold font-sans text-sm tracking-tight">
                                 {formatAmount(lead.dealValue, currency)}
                               </span>
-                              <span className="text-[10px] text-[var(--k-text-secondary)] font-sans px-1.5 py-0.5 rounded bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] shrink-0">
+                              <span className="text-xs text-[var(--k-text-secondary)] font-sans px-1.5 py-0.5 rounded bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] shrink-0">
                                 {lead.source}
                               </span>
                             </div>
@@ -754,7 +754,7 @@ export const AdminCrm: React.FC = () => {
                                   <button
                                     onClick={() => handleStageChange(lead.id, 'won')}
                                     title={language === 'id' ? 'Tandai Deal Dimenangkan (Won)' : 'Mark deal as Won'}
-                                    className="h-7 px-2.5 rounded-[var(--k-control-radius)] bg-emerald-950/60 hover:bg-emerald-900/80 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold font-sans transition-all flex items-center gap-1 active:scale-95 whitespace-nowrap"
+                                    className="h-7 px-2.5 rounded-[var(--k-control-radius)] bg-emerald-950/60 hover:bg-emerald-900/80 text-emerald-400 border border-emerald-500/30 text-xs font-bold font-sans transition-all flex items-center gap-1 active:scale-95 whitespace-nowrap"
                                   >
                                     <Check size={11} className="text-emerald-400" />
                                     <span>Won</span>
@@ -764,14 +764,14 @@ export const AdminCrm: React.FC = () => {
                                   <button
                                     onClick={() => handleConvertToProject(lead)}
                                     title={language === 'id' ? 'Konversi ke Proyek Aktif' : 'Convert deal to Agency Project'}
-                                    className="h-7 px-2.5 rounded-[var(--k-control-radius)] bg-[var(--k-red)]/20 hover:bg-[var(--k-red)]/40 text-[var(--k-red)] border border-[var(--k-red)]/30 text-[10px] font-bold font-sans transition-all flex items-center gap-1 active:scale-95 shadow-sm whitespace-nowrap"
+                                    className="h-7 px-2.5 rounded-[var(--k-control-radius)] bg-[var(--k-red)]/20 hover:bg-[var(--k-red)]/40 text-[var(--k-red)] border border-[var(--k-red)]/30 text-xs font-bold font-sans transition-all flex items-center gap-1 active:scale-95 shadow-sm whitespace-nowrap"
                                   >
                                     <Layers size={11} />
                                     <span>Project</span>
                                   </button>
                                 )}
                                 {lead.stage === 'lost' && (
-                                  <span className="text-[10px] font-sans text-[var(--k-text-secondary)] px-2 py-1 rounded bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] whitespace-nowrap">
+                                  <span className="text-xs font-sans text-[var(--k-text-secondary)] px-2 py-1 rounded bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] whitespace-nowrap">
                                     Closed Lost
                                   </span>
                                 )}
@@ -793,7 +793,7 @@ export const AdminCrm: React.FC = () => {
                                 <button
                                   onClick={() => handleOpenLeadDrawer(lead)}
                                   title={language === 'id' ? 'Lihat profil lead & catatan' : 'Inspect lead profile & notes'}
-                                  className="h-7 px-2.5 rounded-[var(--k-control-radius)] bg-[var(--k-surface-raised)] hover:bg-[var(--k-surface-raised)] text-[var(--k-text-secondary)] hover:text-white border border-[rgba(255,255,255,0.07)] text-[10px] font-sans transition-all flex items-center gap-1 active:scale-95 whitespace-nowrap"
+                                  className="h-7 px-2.5 rounded-[var(--k-control-radius)] bg-[var(--k-surface-raised)] hover:bg-[var(--k-surface-raised)] text-[var(--k-text-secondary)] hover:text-white border border-[rgba(255,255,255,0.07)] text-xs font-sans transition-all flex items-center gap-1 active:scale-95 whitespace-nowrap"
                                 >
                                   <span>Inspect</span>
                                   <ArrowUpRight size={11} />
@@ -832,7 +832,7 @@ export const AdminCrm: React.FC = () => {
                       <div className="font-bold text-white text-base font-sans">{lead.clientName}</div>
                       <div className="text-xs text-[var(--k-text-secondary)] font-sans">{lead.company}</div>
                     </div>
-                    <span className="px-2.5 py-1 rounded-[var(--k-control-radius)] bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] text-[11px] font-sans text-[#D0D4DC] shrink-0 font-semibold">
+                    <span className="px-2.5 py-1 rounded-[var(--k-control-radius)] bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] text-xs font-sans text-[#D0D4DC] shrink-0 font-semibold">
                       {language === 'id'
                         ? (CRM_STAGE_DEFINITIONS.find(s => s.key === lead.stage)?.labelId || lead.stage)
                         : (CRM_STAGE_DEFINITIONS.find(s => s.key === lead.stage)?.label || lead.stage)}
@@ -841,12 +841,12 @@ export const AdminCrm: React.FC = () => {
 
                   {/* Pillar & Priority Badge */}
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className={`text-[10px] font-sans px-2.5 py-1 rounded-[var(--k-control-radius)] border font-semibold ${getPillarColor(lead.servicePillar)}`}>
+                    <span className={`text-xs font-sans px-2.5 py-1 rounded-[var(--k-control-radius)] border font-semibold ${getPillarColor(lead.servicePillar)}`}>
                       {lead.servicePillar}
                     </span>
                     {getPriorityBadge(lead.priority)}
                     {lead.source && (
-                      <span className="text-[10px] font-sans text-[var(--k-text-secondary)] bg-[var(--k-surface-raised)] px-2 py-0.5 rounded border border-[rgba(255,255,255,0.04)]">
+                      <span className="text-xs font-sans text-[var(--k-text-secondary)] bg-[var(--k-surface-raised)] px-2 py-0.5 rounded border border-[rgba(255,255,255,0.04)]">
                         {lead.source}
                       </span>
                     )}
@@ -855,12 +855,12 @@ export const AdminCrm: React.FC = () => {
                   {/* Value & Actions Footer */}
                   <div className="pt-2 border-t border-[rgba(255,255,255,0.06)] flex items-center justify-between gap-2">
                     <div>
-                      <div className="text-[10px] font-sans uppercase text-[var(--k-text-secondary)]">Deal Value</div>
+                      <div className="text-xs font-sans uppercase text-[var(--k-text-secondary)]">Deal Value</div>
                       <div className="font-bold text-emerald-400 font-sans text-base">
                         {formatAmount(lead.dealValue, currency)}
                       </div>
                       {lead.expectedCloseDate && (
-                        <div className="text-[10px] font-sans text-[#5C626E]">
+                        <div className="text-xs font-sans text-[#5C626E]">
                           Target: {lead.expectedCloseDate}
                         </div>
                       )}
@@ -913,10 +913,10 @@ export const AdminCrm: React.FC = () => {
           </div>
 
           {/* Desktop Table View */}
-          <div className="hidden md:block bg-[var(--k-surface)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-card-radius)] overflow-hidden shadow-xl">
+          <div className="hidden md:block bg-[var(--k-surface)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-card-radius)] overflow-hidden shadow-[var(--k-shadow-sm)]">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs font-sans">
-                <thead className="bg-[var(--k-surface-raised)] text-[var(--k-text-secondary)] border-b border-[rgba(255,255,255,0.07)] uppercase text-[10px] tracking-wider">
+                <thead className="bg-[var(--k-surface-raised)] text-[var(--k-text-secondary)] border-b border-[rgba(255,255,255,0.07)] uppercase text-xs tracking-wider">
                   <tr>
                     <th className="py-3.5 px-4">{language === 'id' ? 'Klien & Perusahaan' : 'Client & Company'}</th>
                     <th className="py-3.5 px-4">{language === 'id' ? 'Pilar Layanan' : 'Service Pillar'}</th>
@@ -946,13 +946,13 @@ export const AdminCrm: React.FC = () => {
                           <div className="font-bold text-white font-sans text-sm">
                             {lead.clientName}
                           </div>
-                          <div className="text-[11px] text-[var(--k-text-secondary)]">
+                          <div className="text-xs text-[var(--k-text-secondary)]">
                             {lead.company}
                           </div>
                         </td>
 
                         <td className="py-3.5 px-4">
-                          <span className={`text-[10px] font-sans px-2 py-0.5 rounded border font-semibold ${getPillarColor(lead.servicePillar)}`}>
+                          <span className={`text-xs font-sans px-2 py-0.5 rounded border font-semibold ${getPillarColor(lead.servicePillar)}`}>
                             {lead.servicePillar}
                           </span>
                         </td>
@@ -962,7 +962,7 @@ export const AdminCrm: React.FC = () => {
                         </td>
 
                         <td className="py-3.5 px-4">
-                          <span className="px-2 py-0.5 rounded bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] text-[11px] text-[#D0D4DC]">
+                          <span className="px-2 py-0.5 rounded bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] text-xs text-[#D0D4DC]">
                             {language === 'id'
                               ? (CRM_STAGE_DEFINITIONS.find(s => s.key === lead.stage)?.labelId || lead.stage)
                               : (CRM_STAGE_DEFINITIONS.find(s => s.key === lead.stage)?.label || lead.stage)}
@@ -1034,18 +1034,18 @@ export const AdminCrm: React.FC = () => {
       {/* 5. CLIENT & DEAL PROFILE DRAWER */}
       {isDrawerOpen && selectedLead && (
         <div className="fixed inset-0 z-50 flex justify-end bg-black/80 backdrop-blur-sm">
-          <div className="bg-[var(--k-surface)] border-l border-[rgba(255,255,255,0.07)] w-full sm:max-w-xl h-full flex flex-col justify-between p-5 sm:p-7 overflow-y-auto shadow-2xl animate-in slide-in-from-right duration-300 font-sans text-xs">
+          <div className="bg-[var(--k-surface)] border-l border-[rgba(255,255,255,0.07)] w-full sm:max-w-xl h-full flex flex-col justify-between p-5 sm:p-7 overflow-y-auto shadow-[var(--k-shadow-sm)] animate-in slide-in-from-right duration-300 font-sans text-xs">
             
             <div className="space-y-6">
               {/* Drawer Top Header */}
               <div className="flex items-start justify-between gap-4 pb-5 border-b border-[rgba(255,255,255,0.07)]">
                 <div>
                   <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-                    <span className={`px-2.5 py-0.5 rounded text-[10px] border font-semibold ${getPillarColor(selectedLead.servicePillar)}`}>
+                    <span className={`px-2.5 py-0.5 rounded text-xs border font-semibold ${getPillarColor(selectedLead.servicePillar)}`}>
                       {selectedLead.servicePillar}
                     </span>
                     {getPriorityBadge(selectedLead.priority)}
-                    <span className="text-[10px] text-[var(--k-text-secondary)]">
+                    <span className="text-xs text-[var(--k-text-secondary)]">
                       ID: {selectedLead.id}
                     </span>
                   </div>
@@ -1068,7 +1068,7 @@ export const AdminCrm: React.FC = () => {
               {/* Deal Value & Stage Selector Widget */}
               <div className="p-4 rounded-[var(--k-control-radius)] bg-[var(--k-surface)] border border-[rgba(255,255,255,0.07)] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
-                  <div className="text-[10px] text-[var(--k-text-secondary)] uppercase tracking-wider font-semibold">
+                  <div className="text-xs text-[var(--k-text-secondary)] uppercase tracking-wider font-semibold">
                     {language === 'id' ? 'Valuasi Prospek' : 'Deal Valuation'}
                   </div>
                   <div className="text-2xl font-bold font-sans text-emerald-400 font-sans">
@@ -1119,7 +1119,7 @@ export const AdminCrm: React.FC = () => {
                         href={`https://wa.me/${cleanPhone(selectedLead.phone)}?text=Halo%20${encodeURIComponent(selectedLead.clientName)},%20kami%20dari%20Kapitech%20Agency...`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-[10px] text-emerald-400 hover:underline flex items-center gap-0.5"
+                        className="text-xs text-emerald-400 hover:underline flex items-center gap-0.5"
                       >
                         <span>Chat WA</span>
                         <ExternalLink size={10} />
@@ -1134,7 +1134,7 @@ export const AdminCrm: React.FC = () => {
 
               {/* Scope Description */}
               <div>
-                <label className="block text-[var(--k-text-secondary)] uppercase tracking-wider mb-2 font-semibold text-[11px]">
+                <label className="block text-[var(--k-text-secondary)] uppercase tracking-wider mb-2 font-semibold text-xs">
                   {language === 'id' ? 'Deskripsi Scope & Catatan Klien' : 'Project Scope & Acceptance Notes'}
                 </label>
                 <div className="p-4 rounded-[var(--k-control-radius)] bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] text-gray-200 leading-relaxed font-sans text-xs">
@@ -1144,7 +1144,7 @@ export const AdminCrm: React.FC = () => {
 
               {/* Activity Log / Notes Stream */}
               <div>
-                <label className="block text-[var(--k-text-secondary)] uppercase tracking-wider mb-2 font-semibold text-[11px]">
+                <label className="block text-[var(--k-text-secondary)] uppercase tracking-wider mb-2 font-semibold text-xs">
                   {language === 'id' ? 'Riwayat Aktivitas & Catatan Meeting' : 'Activity Timeline & Meeting Notes'}
                 </label>
 
@@ -1172,7 +1172,7 @@ export const AdminCrm: React.FC = () => {
                   {selectedLead.notes && selectedLead.notes.length > 0 ? (
                     selectedLead.notes.slice().reverse().map((note) => (
                       <div key={note.id} className="p-3 rounded-[var(--k-control-radius)] bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] text-xs">
-                        <div className="flex items-center justify-between text-[10px] text-[var(--k-text-secondary)] mb-1">
+                        <div className="flex items-center justify-between text-xs text-[var(--k-text-secondary)] mb-1">
                           <span className="text-[var(--k-red)] font-semibold">{note.author}</span>
                           <span>{new Date(note.createdAt).toLocaleString()}</span>
                         </div>
@@ -1233,7 +1233,7 @@ export const AdminCrm: React.FC = () => {
       {/* 6. CREATE / EDIT DEAL MODAL */}
       {isAddModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-[var(--k-surface)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-card-radius)] w-full max-w-xl max-h-[90vh] overflow-y-auto p-6 shadow-2xl">
+          <div className="bg-[var(--k-surface)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-card-radius)] w-full max-w-xl max-h-[90vh] overflow-y-auto p-6 shadow-[var(--k-shadow-sm)]">
             <div className="flex items-center justify-between pb-4 mb-4 border-b border-[rgba(255,255,255,0.07)]">
               <h3 className="font-sans font-bold text-white text-lg flex items-center gap-2">
                 <Briefcase className="text-[var(--k-red)]" size={20} />
