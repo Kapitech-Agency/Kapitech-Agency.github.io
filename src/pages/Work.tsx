@@ -546,7 +546,7 @@ export const Work = () => {
                 </div>
                 <button
                   onClick={() => setSelectedProject(null)}
-                  className="w-9 h-9 rounded-full bg-[var(--k-bg)] hover:bg-white/10 border border-[var(--k-border)] flex items-center justify-center text-[var(--k-text-secondary)] hover:text-white transition-colors shrink-0 min-h-[44px] min-w-[44px]"
+                  className="w-9 h-9 kapi-modal-close shrink-0 min-h-[44px] min-w-[44px]"
                   aria-label="Close case study modal"
                 >
                   <X size={18} />
@@ -580,7 +580,7 @@ export const Work = () => {
                   </h4>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     {selectedProject.impact.map((item, idx) => (
-                      <div key={idx} className="p-4 rounded-xl bg-[var(--k-bg)] border border-[var(--k-border)]">
+                      <div key={idx} className="kapi-inset-card">
                         <span className="text-2xl sm:text-3xl font-sans font-bold text-white block mb-1">
                           {item.value}
                         </span>
@@ -594,7 +594,7 @@ export const Work = () => {
 
                 {/* Challenge & Solution */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="p-5 rounded-xl bg-[var(--k-bg)] border border-[var(--k-border)]">
+                  <div className="kapi-inset-card">
                     <h4 className="text-xs font-sans uppercase tracking-wider text-[var(--k-text-secondary)] mb-2 font-semibold flex items-center gap-2">
                       <span className="w-2 h-2 rounded-full bg-[var(--k-text-secondary)]" />
                       <span>{language === 'id' ? 'Tantangan Bisnis' : 'The Challenge'}</span>
@@ -604,7 +604,7 @@ export const Work = () => {
                     </p>
                   </div>
 
-                  <div className="p-5 rounded-xl bg-[var(--k-bg)] border border-[var(--k-border)]">
+                  <div className="kapi-inset-card">
                     <h4 className="text-xs font-sans uppercase tracking-wider text-brand-red mb-2 font-semibold flex items-center gap-2">
                       <span className="w-2 h-2 rounded-full bg-brand-red" />
                       <span>{language === 'id' ? 'Solusi & Rekayasa Kapitech' : 'Our Solution & Execution'}</span>
@@ -637,7 +637,7 @@ export const Work = () => {
                     </h4>
                     <div className="flex flex-wrap gap-2">
                       {selectedProject.technologies.map((tech, idx) => (
-                        <span key={idx} className="px-3 py-1 rounded-lg bg-[var(--k-bg)] border border-[var(--k-border)] text-xs font-sans text-[var(--k-text-secondary)]">
+                        <span key={idx} className="kapi-tech-tag">
                           {tech}
                         </span>
                       ))}
