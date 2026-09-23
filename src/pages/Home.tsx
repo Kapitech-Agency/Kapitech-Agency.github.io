@@ -129,17 +129,18 @@ export const Home = () => {
   return (
     <div className="bg-[#0B0C0E] text-white min-h-screen selection:bg-brand-red selection:text-white" role="main">
       {/* Hero Section */}
-      <section className="relative min-h-[85vh] sm:min-h-[90vh] flex flex-col justify-center px-4 sm:px-6 md:px-12 pt-28 sm:pt-36 md:pt-40 pb-16 sm:pb-20 overflow-hidden">
+      <section className="kapi-home-hero relative min-h-[85vh] sm:min-h-[90vh] flex flex-col justify-center px-4 sm:px-6 md:px-12 pt-28 sm:pt-36 md:pt-40 pb-16 sm:pb-20 overflow-hidden bg-black">
         <AtmosphericBackground 
           imageUrl="/hero_background_3d.png"
-          opacity={0.12}
-          disableGrayscale={true}
+          opacity={0.055}
+          disableGrayscale={false}
+          className="kapi-hero-atmosphere"
         />
 
         <div className="max-w-7xl mx-auto w-full relative z-10">
           <div className="max-w-4xl">
             {/* Status Chip */}
-            <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full border border-[#262930] bg-[#16181D]/80 backdrop-blur-md mb-6 sm:mb-8">
+            <div className="kapi-hero-status inline-flex items-center gap-2.5 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full border border-white/10 bg-white/[0.045] backdrop-blur-xl mb-6 sm:mb-8">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-red opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-red"></span>
@@ -166,14 +167,14 @@ export const Home = () => {
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-center">
               <Link 
                 to="/contact" 
-                className="h-12 sm:h-13 px-7 sm:px-8 bg-brand-red hover:bg-[#CC001F] text-white rounded-full text-xs font-semibold uppercase tracking-wider transition-colors duration-300 flex items-center justify-center gap-2 shadow-lg shadow-brand-red/20 active:scale-95"
+                className="kapi-button kapi-button-primary h-12 sm:h-13 px-7 sm:px-8 bg-brand-red hover:bg-brand-red text-white rounded-full text-xs font-semibold uppercase tracking-wider transition-colors duration-300 flex items-center justify-center gap-2 shadow-lg shadow-brand-red/20 active:scale-95"
               >
                 <span>{language === 'id' ? 'Mulai Proyek' : 'Start a Project'}</span>
                 <ArrowUpRight size={16} />
               </Link>
               <Link 
                 to="/work" 
-                className="h-12 sm:h-13 px-7 sm:px-8 rounded-full border border-[#262930] bg-[#16181D] hover:bg-[#1E2128] text-white transition-colors duration-300 text-xs font-semibold uppercase tracking-wider flex items-center justify-center gap-2 active:scale-95"
+                className="kapi-button kapi-button-secondary h-12 sm:h-13 px-7 sm:px-8 rounded-full border border-white/12 bg-white/[0.045] hover:bg-white/[0.08] text-white transition-colors duration-300 text-xs font-semibold uppercase tracking-wider flex items-center justify-center gap-2 active:scale-95"
               >
                 <span>{language === 'id' ? 'Jelajahi 50 Portofolio' : 'Explore 50 Case Studies'}</span>
               </Link>
