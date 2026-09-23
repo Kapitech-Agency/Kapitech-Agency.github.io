@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence, useScroll, useSpring } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import { 
   Menu, 
   X, 
@@ -33,14 +33,7 @@ export const Navbar = () => {
 
   const location = useLocation();
   const { language, setLanguage, t } = useLanguage();
-  const { scrollYProgress } = useScroll();
-  const scaleX = useSpring(scrollYProgress, {
-    stiffness: 100,
-    damping: 30,
-    restDelta: 0.001
-  });
-
-  useEffect(() => {
+    useEffect(() => {
     void fetchServerCmsServices().then(setCmsServices);
     const handleUpdate = () => setCmsServices(getCmsServices());
     window.addEventListener('kapitech_cms_updated', handleUpdate);
@@ -102,11 +95,6 @@ export const Navbar = () => {
             : "bg-[var(--k-bg-deep)]/80 backdrop-blur-sm py-3 sm:py-3.5 border-[var(--k-border)]/60"
         )}
       >
-        {/* Scroll Progress Bar */}
-        <motion.div 
-          className="absolute top-0 left-0 right-0 h-[2px] bg-brand-red origin-left"
-          style={{ scaleX }}
-        />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12 flex items-center justify-between kapi-nav-inner">
           <Link to="/" className="flex items-center gap-2.5 sm:gap-3 group py-1 shrink-0" aria-label="Kapitech Agency Home">
             <img 
@@ -128,7 +116,7 @@ export const Navbar = () => {
               <Link 
                 to="/work" 
                 className={cn(
-                  "relative inline-flex items-center h-7 text-xs font-medium uppercase tracking-[0.16em] leading-none transition-colors",
+                  "relative inline-flex items-center min-h-10 px-3 rounded-[10px] text-sm font-medium leading-none transition-colors",
                   location.pathname === '/work' ? "text-brand-red font-semibold" : "text-[var(--k-text-secondary)] hover:text-white"
                 )}
               >
@@ -149,7 +137,7 @@ export const Navbar = () => {
                   type="button"
                   onClick={() => setIsServicesDropdownOpen(prev => !prev)}
                   className={cn(
-                    "relative inline-flex items-center gap-1.5 h-7 text-xs font-medium uppercase tracking-[0.16em] leading-none transition-colors cursor-pointer outline-none",
+                    "relative inline-flex items-center gap-1.5 min-h-10 px-3 rounded-[10px] text-sm font-medium leading-none transition-colors cursor-pointer outline-none",
                     isServicesActive || isServicesDropdownOpen ? "text-brand-red font-semibold" : "text-[var(--k-text-secondary)] hover:text-white"
                   )}
                   aria-expanded={isServicesDropdownOpen}
