@@ -643,9 +643,9 @@ export const Careers = () => {
   };
 
   return (
-    <div className="bg-[[var(--k-bg-deep)]] text-white min-h-screen selection:bg-brand-red selection:text-white relative" role="main">
+    <div className="bg-[var(--k-bg-deep)] text-white min-h-screen selection:bg-brand-red selection:text-white relative" role="main">
       {/* Hero Section */}
-      <section className="relative pt-32 sm:pt-36 md:pt-40 pb-16 sm:pb-20 px-4 sm:px-6 md:px-12 border-b border-[[var(--k-border)]] overflow-hidden">
+      <section className="relative pt-32 sm:pt-36 md:pt-40 pb-16 sm:pb-20 px-4 sm:px-6 md:px-12 border-b border-[var(--k-border)] overflow-hidden">
         <AtmosphericBackground 
           imageUrl="/hero_background_3d.png"
           opacity={0.06}
@@ -666,7 +666,7 @@ export const Careers = () => {
               }
             </p>
             <div className="flex flex-wrap items-center gap-3 text-xs font-sans text-[[var(--k-text-secondary)]] mb-6">
-              <span className="px-3 py-1.5 rounded-full bg-[#161616] border border-[[var(--k-border)]] flex items-center gap-2">
+              <span className="px-3 py-1.5 rounded-full bg-[#161616] border border-[var(--k-border)] flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                 <span>2 {language === 'id' ? 'Posisi Studio Terbuka' : 'Studio Roles Hiring'}</span>
               </span>
@@ -674,7 +674,7 @@ export const Careers = () => {
                 <Sparkles size={12} />
                 <span>{language === 'id' ? 'Freelance Vendor Network (WFA Terbuka)' : 'Freelance Vendor Network (WFA Open)'}</span>
               </span>
-              <span className="px-3 py-1.5 rounded-full bg-[#161616] border border-[[var(--k-border)]]">
+              <span className="px-3 py-1.5 rounded-full bg-[#161616] border border-[var(--k-border)]">
                 {language === 'id' ? 'Studio di Tangerang Selatan' : 'Studio in South Tangerang'}
               </span>
             </div>
@@ -692,7 +692,7 @@ export const Careers = () => {
                   setIsFreelanceModalOpen(true);
                   setIsVendorSubmitted(false);
                 }}
-                className="px-5 py-2.5 rounded-full bg-brand-red hover:bg-white hover:text-black text-white text-xs font-sans font-bold uppercase tracking-wider transition-all duration-300 flex items-center gap-2 shadow-lg shadow-brand-red/20"
+                className="px-5 py-2.5 rounded-full bg-brand-red hover:bg-white hover:text-black text-white text-xs font-sans font-bold uppercase tracking-wider transition-all duration-300 flex items-center gap-2 shadow-[var(--k-shadow-sm)] shadow-brand-red/20"
               >
                 <FolderGit2 size={14} />
                 <span>{language === 'id' ? 'Daftar sebagai Freelance Vendor' : 'Apply as Freelance Vendor'}</span>
@@ -703,7 +703,7 @@ export const Careers = () => {
       </section>
 
       {/* SECTION: Join With Our 12 Great Talents */}
-      <section className="py-16 sm:py-24 border-b border-[[var(--k-border)]] bg-[[var(--k-bg-deep)]] relative overflow-hidden">
+      <section className="py-16 sm:py-24 border-b border-[var(--k-border)] bg-[var(--k-bg-deep)] relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12 mb-10">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div>
@@ -751,7 +751,7 @@ export const Careers = () => {
                 >
                   <button
                     onClick={() => setSelectedTalent(talent)}
-                    className="group relative rounded-2xl sm:rounded-3xl overflow-hidden border border-[[var(--k-border)]] bg-[#161616] transition-all duration-500 hover:scale-[1.04] hover:-translate-y-1.5 hover:border-brand-red/60 hover:shadow-[0_16px_36px_rgba(255,26,26,0.22)] cursor-pointer aspect-[3/4] p-0 block w-full text-left focus:outline-none focus:ring-2 focus:ring-brand-red/50"
+                    className="group relative rounded-2xl sm:rounded-[var(--k-sheet-radius)] overflow-hidden border border-[var(--k-border)] bg-[#161616] transition-all duration-500 hover:scale-[1.04] hover:-translate-y-1.5 hover:border-brand-red/60 hover:shadow-[0_16px_36px_rgba(255,26,26,0.22)] cursor-pointer aspect-[3/4] p-0 block w-full text-left focus:outline-none focus:ring-2 focus:ring-brand-red/50"
                     title={`${talent.name} - ${talent.role}`}
                     aria-label={`View photo and profile of ${talent.name}`}
                   >
@@ -784,7 +784,7 @@ export const Careers = () => {
                 animate={{ scale: 1, opacity: 1, y: 0 }}
                 exit={{ scale: 0.95, opacity: 0, y: 20 }}
                 onClick={(e) => e.stopPropagation()}
-                className="relative w-full max-w-lg bg-[#161616] border border-[[var(--k-border)]] rounded-3xl p-5 sm:p-8 shadow-2xl overflow-hidden my-6"
+                className="relative w-full max-w-lg bg-[#161616] border border-[var(--k-border)] rounded-[var(--k-sheet-radius)] p-5 sm:p-8 shadow-[var(--k-shadow-sm)] overflow-hidden my-6"
               >
                 <button
                   onClick={() => setSelectedTalent(null)}
@@ -795,7 +795,7 @@ export const Careers = () => {
                 </button>
 
                 <div className="flex items-center gap-4 mb-5 sm:mb-6 pr-8">
-                  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden border border-brand-red/30 bg-[[var(--k-bg-deep)]] shrink-0 relative shadow-lg shadow-brand-red/10">
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden border border-brand-red/30 bg-[var(--k-bg-deep)] shrink-0 relative shadow-[var(--k-shadow-sm)] shadow-brand-red/10">
                     <img 
                       src={selectedTalent.image} 
                       alt={selectedTalent.name}
@@ -815,7 +815,7 @@ export const Careers = () => {
                   </div>
                 </div>
 
-                <div className="space-y-3.5 sm:space-y-4 text-xs font-light text-white/80 border-t border-[[var(--k-border)]] pt-4">
+                <div className="space-y-3.5 sm:space-y-4 text-xs font-light text-white/80 border-t border-[var(--k-border)] pt-4">
                   <div>
                     <span className="text-[10px] font-sans uppercase text-[[var(--k-text-secondary)]] block mb-1">
                       {language === 'id' ? 'Fokus Keahlian' : 'Core Specialty'}
@@ -834,7 +834,7 @@ export const Careers = () => {
                   </div>
                 </div>
 
-                <div className="mt-5 sm:mt-6 pt-4 border-t border-[[var(--k-border)]] flex justify-end">
+                <div className="mt-5 sm:mt-6 pt-4 border-t border-[var(--k-border)] flex justify-end">
                   <button
                     onClick={() => setSelectedTalent(null)}
                     className="w-full sm:w-auto px-6 py-2.5 bg-brand-red hover:bg-white hover:text-black text-white text-xs font-sans font-medium rounded-full transition-colors"
@@ -849,7 +849,7 @@ export const Careers = () => {
       </section>
 
       {/* SECTION: Current Opportunities */}
-      <section className="py-16 sm:py-24 px-4 sm:px-6 md:px-12 border-b border-[[var(--k-border)]]" id="open-positions">
+      <section className="py-16 sm:py-24 px-4 sm:px-6 md:px-12 border-b border-[var(--k-border)]" id="open-positions">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
             <div>
@@ -874,7 +874,7 @@ export const Careers = () => {
                 key={pos.id}
                 whileHover={{ y: -2 }}
                 onClick={() => setSelectedPosition(pos)}
-                className="cursor-pointer group p-6 sm:p-8 lg:p-10 rounded-2xl border border-[[var(--k-border)]] bg-[#161616] hover:border-brand-red/50 transition-all duration-300"
+                className="cursor-pointer group p-6 sm:p-8 lg:p-10 rounded-2xl border border-[var(--k-border)] bg-[#161616] hover:border-brand-red/50 transition-all duration-300"
               >
                 <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
                   <div className="space-y-3 max-w-3xl">
@@ -882,7 +882,7 @@ export const Careers = () => {
                       <span className="px-3 py-1 rounded-full bg-brand-red/10 border border-brand-red/30 text-brand-red text-xs font-sans font-medium">
                         {pos.workplace}
                       </span>
-                      <span className="px-3 py-1 rounded-full bg-[[var(--k-bg-deep)]] border border-[[var(--k-border)]] text-[[var(--k-text-secondary)]] text-xs font-sans">
+                      <span className="px-3 py-1 rounded-full bg-[var(--k-bg-deep)] border border-[var(--k-border)] text-[[var(--k-text-secondary)]] text-xs font-sans">
                         {pos.department}
                       </span>
                       <span className="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-sans">
@@ -911,7 +911,7 @@ export const Careers = () => {
                   </div>
 
                   <div className="flex items-center gap-3 shrink-0 pt-2 lg:pt-0">
-                    <span className="px-5 py-2.5 rounded-full bg-[[var(--k-bg-deep)]] group-hover:bg-brand-red text-white text-xs font-sans font-semibold uppercase tracking-wider transition-all duration-300 flex items-center gap-2 border border-[[var(--k-border)]] group-hover:border-brand-red">
+                    <span className="px-5 py-2.5 rounded-full bg-[var(--k-bg-deep)] group-hover:bg-brand-red text-white text-xs font-sans font-semibold uppercase tracking-wider transition-all duration-300 flex items-center gap-2 border border-[var(--k-border)] group-hover:border-brand-red">
                       <span>{language === 'id' ? 'Lihat Detail & Lamar' : 'View Role & Apply'}</span>
                       <ArrowUpRight size={14} />
                     </span>
@@ -924,7 +924,7 @@ export const Careers = () => {
       </section>
 
       {/* SECTION: Apply as Freelance Vendor / Freelance Partner Network */}
-      <section className="py-16 sm:py-24 px-4 sm:px-6 md:px-12 border-b border-[[var(--k-border)]] bg-[[var(--k-bg-deep)]] relative overflow-hidden" id="freelance-vendor">
+      <section className="py-16 sm:py-24 px-4 sm:px-6 md:px-12 border-b border-[var(--k-border)] bg-[var(--k-bg-deep)] relative overflow-hidden" id="freelance-vendor">
         {/* Subtle Background Glow */}
         <div className="absolute top-0 right-1/4 w-96 h-96 bg-brand-red/5 rounded-full blur-3xl pointer-events-none" />
 
@@ -953,7 +953,7 @@ export const Careers = () => {
                   setIsFreelanceModalOpen(true);
                   setIsVendorSubmitted(false);
                 }}
-                className="w-full sm:w-auto px-6 py-3.5 rounded-full bg-brand-red hover:bg-white text-white hover:text-black font-semibold text-xs font-sans uppercase tracking-wider transition-all duration-300 shadow-xl shadow-brand-red/20 flex items-center justify-center gap-2.5"
+                className="w-full sm:w-auto px-6 py-3.5 rounded-full bg-brand-red hover:bg-white text-white hover:text-black font-semibold text-xs font-sans uppercase tracking-wider transition-all duration-300 shadow-[var(--k-shadow-sm)] shadow-brand-red/20 flex items-center justify-center gap-2.5"
               >
                 <FolderGit2 size={16} />
                 <span>{language === 'id' ? 'Daftar sebagai Freelance Vendor' : 'Apply as Freelance Vendor'}</span>
@@ -1024,9 +1024,9 @@ export const Careers = () => {
           {/* 4 In-Depth Information Columns */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {/* 1. Keterangan & Deskripsi */}
-            <div className="p-6 sm:p-7 rounded-2xl border border-[[var(--k-border)]] bg-[#161616] flex flex-col justify-between hover:border-brand-red/30 transition-all">
+            <div className="p-6 sm:p-7 rounded-2xl border border-[var(--k-border)] bg-[#161616] flex flex-col justify-between hover:border-brand-red/30 transition-all">
               <div>
-                <div className="w-11 h-11 rounded-xl bg-[[var(--k-bg-deep)]] border border-[[var(--k-border)]] flex items-center justify-center text-white mb-5">
+                <div className="w-11 h-11 rounded-xl bg-[var(--k-bg-deep)] border border-[var(--k-border)] flex items-center justify-center text-white mb-5">
                   <Layers size={20} className="text-brand-red" />
                 </div>
                 <h3 className="text-lg font-sans font-bold text-white mb-3">
@@ -1056,9 +1056,9 @@ export const Careers = () => {
             </div>
 
             {/* 2. Aturan & Ketentuan */}
-            <div className="p-6 sm:p-7 rounded-2xl border border-[[var(--k-border)]] bg-[#161616] flex flex-col justify-between hover:border-brand-red/30 transition-all">
+            <div className="p-6 sm:p-7 rounded-2xl border border-[var(--k-border)] bg-[#161616] flex flex-col justify-between hover:border-brand-red/30 transition-all">
               <div>
-                <div className="w-11 h-11 rounded-xl bg-[[var(--k-bg-deep)]] border border-[[var(--k-border)]] flex items-center justify-center text-white mb-5">
+                <div className="w-11 h-11 rounded-xl bg-[var(--k-bg-deep)] border border-[var(--k-border)] flex items-center justify-center text-white mb-5">
                   <ShieldCheck size={20} className="text-brand-red" />
                 </div>
                 <h3 className="text-lg font-sans font-bold text-white mb-3">
@@ -1088,9 +1088,9 @@ export const Careers = () => {
             </div>
 
             {/* 3. Benefit & Keuntungan */}
-            <div className="p-6 sm:p-7 rounded-2xl border border-[[var(--k-border)]] bg-[#161616] flex flex-col justify-between hover:border-brand-red/30 transition-all">
+            <div className="p-6 sm:p-7 rounded-2xl border border-[var(--k-border)] bg-[#161616] flex flex-col justify-between hover:border-brand-red/30 transition-all">
               <div>
-                <div className="w-11 h-11 rounded-xl bg-[[var(--k-bg-deep)]] border border-[[var(--k-border)]] flex items-center justify-center text-white mb-5">
+                <div className="w-11 h-11 rounded-xl bg-[var(--k-bg-deep)] border border-[var(--k-border)] flex items-center justify-center text-white mb-5">
                   <DollarSign size={20} className="text-brand-red" />
                 </div>
                 <h3 className="text-lg font-sans font-bold text-white mb-3">
@@ -1120,9 +1120,9 @@ export const Careers = () => {
             </div>
 
             {/* 4. Apa yang Kami Butuhkan */}
-            <div className="p-6 sm:p-7 rounded-2xl border border-[[var(--k-border)]] bg-[#161616] flex flex-col justify-between hover:border-brand-red/30 transition-all">
+            <div className="p-6 sm:p-7 rounded-2xl border border-[var(--k-border)] bg-[#161616] flex flex-col justify-between hover:border-brand-red/30 transition-all">
               <div>
-                <div className="w-11 h-11 rounded-xl bg-[[var(--k-bg-deep)]] border border-[[var(--k-border)]] flex items-center justify-center text-white mb-5">
+                <div className="w-11 h-11 rounded-xl bg-[var(--k-bg-deep)] border border-[var(--k-border)] flex items-center justify-center text-white mb-5">
                   <Code2 size={20} className="text-brand-red" />
                 </div>
                 <h3 className="text-lg font-sans font-bold text-white mb-3">
@@ -1159,7 +1159,7 @@ export const Careers = () => {
       </section>
 
       {/* SECTION: Benefits & Perks */}
-      <section className="py-16 sm:py-24 px-4 sm:px-6 md:px-12 border-b border-[[var(--k-border)]] bg-[[var(--k-bg-deep)]]">
+      <section className="py-16 sm:py-24 px-4 sm:px-6 md:px-12 border-b border-[var(--k-border)] bg-[var(--k-bg-deep)]">
         <div className="max-w-7xl mx-auto">
           <div className="max-w-3xl mb-12">
             <span className="text-brand-red font-sans font-semibold tracking-widest uppercase text-xs mb-3 block">
@@ -1174,7 +1174,7 @@ export const Careers = () => {
             {benefits.map((benefit, i) => (
               <div 
                 key={i}
-                className="p-6 sm:p-8 rounded-2xl border border-[[var(--k-border)]] bg-[#161616] hover:border-brand-red/30 transition-all duration-300 flex flex-col justify-between"
+                className="p-6 sm:p-8 rounded-2xl border border-[var(--k-border)] bg-[#161616] hover:border-brand-red/30 transition-all duration-300 flex flex-col justify-between"
               >
                 <div className="w-12 h-12 rounded-xl bg-brand-red/10 border border-brand-red/30 flex items-center justify-center text-brand-red mb-6">
                   {benefit.icon}
@@ -1202,10 +1202,10 @@ export const Careers = () => {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ duration: 0.25 }}
-              className="relative w-full max-w-3xl bg-[#161616] border border-[[var(--k-border)]] rounded-2xl overflow-hidden shadow-2xl my-8 max-h-[90vh] flex flex-col"
+              className="relative w-full max-w-3xl bg-[#161616] border border-[var(--k-border)] rounded-2xl overflow-hidden shadow-[var(--k-shadow-sm)] my-8 max-h-[90vh] flex flex-col"
             >
               {/* Sticky Modal Header with Role Title */}
-              <div className="sticky top-0 z-20 p-5 sm:p-6 bg-[#161616]/95 backdrop-blur-md border-b border-[[var(--k-border)]] space-y-3">
+              <div className="sticky top-0 z-20 p-5 sm:p-6 bg-[#161616]/95 backdrop-blur-md border-b border-[var(--k-border)] space-y-3">
                 <div className="flex items-start justify-between gap-4">
                   <div className="space-y-1.5 min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
@@ -1226,7 +1226,7 @@ export const Careers = () => {
                       setSelectedPosition(null);
                       setIsSubmitted(false);
                     }}
-                    className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/5 hover:bg-white/15 border border-[[var(--k-border)]] flex items-center justify-center text-[[var(--k-text-secondary)]] hover:text-white transition-colors shrink-0"
+                    className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/5 hover:bg-white/15 border border-[var(--k-border)] flex items-center justify-center text-[[var(--k-text-secondary)]] hover:text-white transition-colors shrink-0"
                     aria-label="Close modal"
                   >
                     <X size={18} />
@@ -1284,7 +1284,7 @@ export const Careers = () => {
                 </div>
 
                 {/* Application Form */}
-                <div className="pt-6 border-t border-[[var(--k-border)]]">
+                <div className="pt-6 border-t border-[var(--k-border)]">
                   <h4 className="text-lg font-sans font-bold text-white mb-2">
                     {language === 'id' ? 'Kirimkan Lamaran Anda' : 'Submit Your Application'}
                   </h4>
@@ -1336,7 +1336,7 @@ export const Careers = () => {
                             value={formData.name}
                             onChange={handleInputChange}
                             placeholder={language === 'id' ? 'e.g. Alex Pratama' : 'e.g. Alex Morgan'}
-                            className={`w-full min-h-[44px] bg-[[var(--k-bg)]] border rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-sans ${applicantErrors.name ? 'border-brand-red' : 'border-[[var(--k-border)]]'}`}
+                            className={`w-full min-h-[44px] bg-[var(--k-bg)] border rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-sans ${applicantErrors.name ? 'border-brand-red' : 'border-[var(--k-border)]'}`}
                           />
                           {applicantErrors.name && (
                             <span className="text-[11px] font-sans text-brand-red mt-1 block">{applicantErrors.name}</span>
@@ -1354,7 +1354,7 @@ export const Careers = () => {
                             value={formData.email}
                             onChange={handleInputChange}
                             placeholder="alex@example.com"
-                            className={`w-full min-h-[44px] bg-[[var(--k-bg)]] border rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-sans ${applicantErrors.email ? 'border-brand-red' : 'border-[[var(--k-border)]]'}`}
+                            className={`w-full min-h-[44px] bg-[var(--k-bg)] border rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-sans ${applicantErrors.email ? 'border-brand-red' : 'border-[var(--k-border)]'}`}
                           />
                           {applicantErrors.email && (
                             <span className="text-[11px] font-sans text-brand-red mt-1 block">{applicantErrors.email}</span>
@@ -1374,7 +1374,7 @@ export const Careers = () => {
                             value={formData.phone}
                             onChange={handleInputChange}
                             placeholder="+62 812-3456-7890"
-                            className={`w-full min-h-[44px] bg-[[var(--k-bg)]] border rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-sans ${applicantErrors.phone ? 'border-brand-red' : 'border-[[var(--k-border)]]'}`}
+                            className={`w-full min-h-[44px] bg-[var(--k-bg)] border rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-sans ${applicantErrors.phone ? 'border-brand-red' : 'border-[var(--k-border)]'}`}
                           />
                           {applicantErrors.phone && (
                             <span className="text-[11px] font-sans text-brand-red mt-1 block">{applicantErrors.phone}</span>
@@ -1392,7 +1392,7 @@ export const Careers = () => {
                             value={formData.portfolio}
                             onChange={handleInputChange}
                             placeholder="https://linkedin.com/in/... or https://behance.net/..."
-                            className="w-full min-h-[44px] bg-[[var(--k-bg)]] border border-[[var(--k-border)]] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-sans"
+                            className="w-full min-h-[44px] bg-[var(--k-bg)] border border-[var(--k-border)] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-sans"
                           />
                         </div>
                       </div>
@@ -1407,7 +1407,7 @@ export const Careers = () => {
                           value={formData.coverLetter}
                           onChange={handleInputChange}
                           placeholder={language === 'id' ? 'Ceritakan secara singkat pengalaman dan motivasi Anda...' : 'Briefly describe your relevant background and motivations...'}
-                          className="w-full bg-[[var(--k-bg)]] border border-[[var(--k-border)]] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-sans"
+                          className="w-full bg-[var(--k-bg)] border border-[var(--k-border)] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-sans"
                         />
                       </div>
 
@@ -1415,7 +1415,7 @@ export const Careers = () => {
                         <label className="block text-[11px] font-sans text-[[var(--k-text-secondary)]] mb-1.5 uppercase">
                           {language === 'id' ? 'Unggah CV / Resume (PDF maks 5MB)' : 'Upload Resume / CV (PDF max 5MB)'}
                         </label>
-                        <div className="relative border border-dashed border-[[var(--k-border)]] rounded-xl p-4 text-center hover:border-brand-red/50 transition-colors bg-[[var(--k-bg)]]/50">
+                        <div className="relative border border-dashed border-[var(--k-border)] rounded-xl p-4 text-center hover:border-brand-red/50 transition-colors bg-[var(--k-bg)]/50">
                           <input 
                             type="file"
                             accept=".pdf,.doc,.docx"
@@ -1434,7 +1434,7 @@ export const Careers = () => {
 
                       <button
                         type="submit"
-                        className="w-full min-h-[44px] py-3 rounded-xl bg-brand-red hover:bg-white text-white hover:text-black font-semibold text-xs font-sans uppercase tracking-wider transition-all duration-300 shadow-lg shadow-brand-red/20 flex items-center justify-center gap-2"
+                        className="w-full min-h-[44px] py-3 rounded-xl bg-brand-red hover:bg-white text-white hover:text-black font-semibold text-xs font-sans uppercase tracking-wider transition-all duration-300 shadow-[var(--k-shadow-sm)] shadow-brand-red/20 flex items-center justify-center gap-2"
                       >
                         <span>{language === 'id' ? 'Kirimkan Lamaran Sekarang' : 'Submit Application Now'}</span>
                         <ArrowUpRight size={16} />
@@ -1456,10 +1456,10 @@ export const Careers = () => {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ duration: 0.25 }}
-              className="relative w-full max-w-3xl bg-[#161616] border border-brand-red/40 rounded-2xl overflow-hidden shadow-2xl my-8 max-h-[90vh] flex flex-col"
+              className="relative w-full max-w-3xl bg-[#161616] border border-brand-red/40 rounded-2xl overflow-hidden shadow-[var(--k-shadow-sm)] my-8 max-h-[90vh] flex flex-col"
             >
               {/* Sticky Modal Header */}
-              <div className="sticky top-0 z-20 p-5 sm:p-6 bg-[#161616]/95 backdrop-blur-md border-b border-[[var(--k-border)]] space-y-3">
+              <div className="sticky top-0 z-20 p-5 sm:p-6 bg-[#161616]/95 backdrop-blur-md border-b border-[var(--k-border)] space-y-3">
                 <div className="flex items-start justify-between gap-4">
                   <div className="space-y-1.5 min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
@@ -1480,7 +1480,7 @@ export const Careers = () => {
                       setIsFreelanceModalOpen(false);
                       setIsVendorSubmitted(false);
                     }}
-                    className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/5 hover:bg-white/15 border border-[[var(--k-border)]] flex items-center justify-center text-[[var(--k-text-secondary)]] hover:text-white transition-colors shrink-0"
+                    className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/5 hover:bg-white/15 border border-[var(--k-border)] flex items-center justify-center text-[[var(--k-text-secondary)]] hover:text-white transition-colors shrink-0"
                     aria-label="Close modal"
                   >
                     <X size={18} />
@@ -1551,7 +1551,7 @@ export const Careers = () => {
                           value={vendorFormData.name}
                           onChange={handleVendorInputChange}
                           placeholder={language === 'id' ? 'e.g. Budi Santoso / Studio Koding' : 'e.g. Alex Morgan / Pixel Studio'}
-                          className={`w-full min-h-[44px] bg-[[var(--k-bg)]] border rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-sans ${vendorErrors.name ? 'border-brand-red' : 'border-[[var(--k-border)]]'}`}
+                          className={`w-full min-h-[44px] bg-[var(--k-bg)] border rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-sans ${vendorErrors.name ? 'border-brand-red' : 'border-[var(--k-border)]'}`}
                         />
                         {vendorErrors.name && (
                           <span className="text-[11px] font-sans text-brand-red mt-1 block">{vendorErrors.name}</span>
@@ -1569,7 +1569,7 @@ export const Careers = () => {
                           value={vendorFormData.email}
                           onChange={handleVendorInputChange}
                           placeholder="freelancer@example.com"
-                          className={`w-full min-h-[44px] bg-[[var(--k-bg)]] border rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-sans ${vendorErrors.email ? 'border-brand-red' : 'border-[[var(--k-border)]]'}`}
+                          className={`w-full min-h-[44px] bg-[var(--k-bg)] border rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-sans ${vendorErrors.email ? 'border-brand-red' : 'border-[var(--k-border)]'}`}
                         />
                         {vendorErrors.email && (
                           <span className="text-[11px] font-sans text-brand-red mt-1 block">{vendorErrors.email}</span>
@@ -1589,7 +1589,7 @@ export const Careers = () => {
                           value={vendorFormData.phone}
                           onChange={handleVendorInputChange}
                           placeholder="+62 812-3456-7890"
-                          className={`w-full min-h-[44px] bg-[[var(--k-bg)]] border rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-sans ${vendorErrors.phone ? 'border-brand-red' : 'border-[[var(--k-border)]]'}`}
+                          className={`w-full min-h-[44px] bg-[var(--k-bg)] border rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-sans ${vendorErrors.phone ? 'border-brand-red' : 'border-[var(--k-border)]'}`}
                         />
                         {vendorErrors.phone && (
                           <span className="text-[11px] font-sans text-brand-red mt-1 block">{vendorErrors.phone}</span>
@@ -1605,7 +1605,7 @@ export const Careers = () => {
                           required
                           value={vendorFormData.specialty}
                           onChange={handleVendorInputChange}
-                          className="w-full min-h-[44px] bg-[[var(--k-bg)]] border border-[[var(--k-border)]] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white focus:outline-none focus:border-brand-red font-sans"
+                          className="w-full min-h-[44px] bg-[var(--k-bg)] border border-[var(--k-border)] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white focus:outline-none focus:border-brand-red font-sans"
                         >
                           <option value="UI/UX & Product Design">UI/UX & Product Design (Figma, Systems, Prototyping)</option>
                           <option value="Frontend Web Development">Frontend Web Dev (React, Next.js, Tailwind, Motion)</option>
@@ -1630,7 +1630,7 @@ export const Careers = () => {
                           value={vendorFormData.portfolio}
                           onChange={handleVendorInputChange}
                           placeholder="https://behance.net/... or https://github.com/..."
-                          className="w-full min-h-[44px] bg-[[var(--k-bg)]] border border-[[var(--k-border)]] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-sans"
+                          className="w-full min-h-[44px] bg-[var(--k-bg)] border border-[var(--k-border)] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-sans"
                         />
                       </div>
 
@@ -1644,7 +1644,7 @@ export const Careers = () => {
                           value={vendorFormData.rateCard}
                           onChange={handleVendorInputChange}
                           placeholder={language === 'id' ? 'e.g. Rp 5.000.000 - Rp 15.000.000 / project' : 'e.g. $25 - $45 / hour or per project range'}
-                          className="w-full min-h-[44px] bg-[[var(--k-bg)]] border border-[[var(--k-border)]] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-sans"
+                          className="w-full min-h-[44px] bg-[var(--k-bg)] border border-[var(--k-border)] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-sans"
                         />
                       </div>
                     </div>
@@ -1658,7 +1658,7 @@ export const Careers = () => {
                           name="experienceYears"
                           value={vendorFormData.experienceYears}
                           onChange={handleVendorInputChange}
-                          className="w-full min-h-[44px] bg-[[var(--k-bg)]] border border-[[var(--k-border)]] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white focus:outline-none focus:border-brand-red font-sans"
+                          className="w-full min-h-[44px] bg-[var(--k-bg)] border border-[var(--k-border)] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white focus:outline-none focus:border-brand-red font-sans"
                         >
                           <option value="1-2 Years">1 - 2 Years</option>
                           <option value="3-5 Years">3 - 5 Years (Mid-Level)</option>
@@ -1677,13 +1677,13 @@ export const Careers = () => {
                           value={vendorFormData.tools}
                           onChange={handleVendorInputChange}
                           placeholder="e.g. Figma, React, Next.js, After Effects, Blender"
-                          className="w-full min-h-[44px] bg-[[var(--k-bg)]] border border-[[var(--k-border)]] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-sans"
+                          className="w-full min-h-[44px] bg-[var(--k-bg)] border border-[var(--k-border)] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-sans"
                         />
                       </div>
                     </div>
 
                     {/* MANDATORY CHECKBOXES (Crucial Requirements) */}
-                    <div className="p-4 rounded-xl bg-[[var(--k-bg)]] border border-[[var(--k-border)]] space-y-3">
+                    <div className="p-4 rounded-xl bg-[var(--k-bg)] border border-[var(--k-border)] space-y-3">
                       <span className="text-[11px] font-sans uppercase text-brand-red font-bold block mb-1">
                         {language === 'id' ? 'Konfirmasi Aturan & Ketentuan Kerja Sama *' : 'Mandatory Terms & Policy Acknowledgment *'}
                       </span>
@@ -1695,7 +1695,7 @@ export const Careers = () => {
                           required
                           checked={vendorFormData.agreedWfa}
                           onChange={handleVendorInputChange}
-                          className="mt-0.5 rounded border-[[var(--k-border)]] text-brand-red focus:ring-brand-red bg-[[var(--k-surface)]] w-4 h-4 shrink-0"
+                          className="mt-0.5 rounded border-[var(--k-border)] text-brand-red focus:ring-brand-red bg-[[var(--k-surface)]] w-4 h-4 shrink-0"
                         />
                         <span>
                           <strong>100% WFA & Project-Based:</strong> {language === 'id' 
@@ -1711,7 +1711,7 @@ export const Careers = () => {
                           required
                           checked={vendorFormData.agreedDevice}
                           onChange={handleVendorInputChange}
-                          className="mt-0.5 rounded border-[[var(--k-border)]] text-brand-red focus:ring-brand-red bg-[[var(--k-surface)]] w-4 h-4 shrink-0"
+                          className="mt-0.5 rounded border-[var(--k-border)] text-brand-red focus:ring-brand-red bg-[[var(--k-surface)]] w-4 h-4 shrink-0"
                         />
                         <span>
                           <strong>BYOD (No Device Provided):</strong> {language === 'id'
@@ -1727,7 +1727,7 @@ export const Careers = () => {
                           required
                           checked={vendorFormData.agreedNda}
                           onChange={handleVendorInputChange}
-                          className="mt-0.5 rounded border-[[var(--k-border)]] text-brand-red focus:ring-brand-red bg-[[var(--k-surface)]] w-4 h-4 shrink-0"
+                          className="mt-0.5 rounded border-[var(--k-border)] text-brand-red focus:ring-brand-red bg-[[var(--k-surface)]] w-4 h-4 shrink-0"
                         />
                         <span>
                           <strong>NDA & Deadline Discipline:</strong> {language === 'id'
@@ -1747,7 +1747,7 @@ export const Careers = () => {
                         value={vendorFormData.notes}
                         onChange={handleVendorInputChange}
                         placeholder={language === 'id' ? 'Ceritakan proyek terbaik yang pernah Anda kerjakan atau keahlian spesifik Anda...' : 'Highlight your proudest past projects or unique skill sets...'}
-                        className="w-full bg-[[var(--k-bg)]] border border-[[var(--k-border)]] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-sans"
+                        className="w-full bg-[var(--k-bg)] border border-[var(--k-border)] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-sans"
                       />
                     </div>
 
@@ -1755,7 +1755,7 @@ export const Careers = () => {
                       <label className="block text-[11px] font-sans text-[[var(--k-text-secondary)]] mb-1.5 uppercase font-semibold">
                         {language === 'id' ? 'Unggah CV / Portofolio PDF (Opsional, maks 5MB)' : 'Upload CV / Portfolio PDF (Optional, max 5MB)'}
                       </label>
-                      <div className="relative border border-dashed border-[[var(--k-border)]] rounded-xl p-4 text-center hover:border-brand-red/50 transition-colors bg-[[var(--k-bg)]]/50">
+                      <div className="relative border border-dashed border-[var(--k-border)] rounded-xl p-4 text-center hover:border-brand-red/50 transition-colors bg-[var(--k-bg)]/50">
                         <input 
                           type="file"
                           accept=".pdf,.doc,.docx"
@@ -1774,7 +1774,7 @@ export const Careers = () => {
 
                     <button
                       type="submit"
-                      className="w-full min-h-[44px] py-3.5 rounded-xl bg-brand-red hover:bg-white text-white hover:text-black font-semibold text-xs font-sans uppercase tracking-wider transition-all duration-300 shadow-xl shadow-brand-red/20 flex items-center justify-center gap-2"
+                      className="w-full min-h-[44px] py-3.5 rounded-xl bg-brand-red hover:bg-white text-white hover:text-black font-semibold text-xs font-sans uppercase tracking-wider transition-all duration-300 shadow-[var(--k-shadow-sm)] shadow-brand-red/20 flex items-center justify-center gap-2"
                     >
                       <span>{language === 'id' ? 'Kirimkan Pendaftaran Freelance Vendor' : 'Submit Vendor Application'}</span>
                       <ArrowUpRight size={16} />
