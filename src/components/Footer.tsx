@@ -206,7 +206,7 @@ export const Footer = () => {
                 alt="Kapitech Agency" 
                 className="h-6 sm:h-7 w-auto max-h-7 object-contain transition-opacity duration-300 group-hover:opacity-90 shrink-0 select-none"
               />
-              <span className="font-sans font-bold text-lg tracking-tight text-white group-hover:text-brand-red transition-colors">
+              <span className="font-sans font-bold text-lg tracking-tight text-white group-hover:text-white transition-colors">
                 Kapitech Agency
               </span>
             </Link>
@@ -219,19 +219,21 @@ export const Footer = () => {
               <span className="text-xs font-sans text-[var(--k-text-secondary)] uppercase tracking-wider block mb-2 font-medium">
                 {language === 'id' ? 'Berlangganan Wawasan Proyek' : 'Subscribe for Project Insights'}
               </span>
-              <form onSubmit={handleSubscribe} className="relative max-w-sm">
-                <input 
-                  type="email" 
-                  placeholder={language === 'id' ? 'Masukkan email bisnis Anda...' : 'Enter your work email...'} 
+              <form onSubmit={handleSubscribe} className="kapi-newsletter max-w-sm">
+                <label className="sr-only" htmlFor="footer-newsletter-email">
+                  {language === 'id' ? 'Email kerja' : 'Work email'}
+                </label>
+                <input
+                  id="footer-newsletter-email"
+                  type="email"
+                  placeholder={language === 'id' ? 'Masukkan email bisnis Anda...' : 'Enter your work email...'}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="w-full min-h-[44px] bg-[var(--k-surface)] border border-[var(--k-border)] rounded-xl px-4 py-3 text-xs text-white placeholder:text-[var(--k-text-secondary)]/70 focus:outline-none focus-visible:outline-none focus:border-brand-red transition-colors"
+                  autoComplete="email"
+                  className="kapi-newsletter-input"
                 />
-                <button 
-                  type="submit"
-                  className="absolute right-1.5 top-1/2 -translate-y-1/2 px-3.5 py-1.5 rounded-lg bg-brand-red text-white text-xs font-semibold hover:bg-[var(--k-red-hover)] transition-colors min-h-[34px]"
-                >
+                <button type="submit" className="kapi-newsletter-button">
                   {isSubscribed ? (language === 'id' ? 'Terdaftar!' : 'Subscribed!') : (language === 'id' ? 'Langganan' : 'Subscribe')}
                 </button>
               </form>
@@ -245,7 +247,7 @@ export const Footer = () => {
 
           {/* Col 2: Branding & Design (2 cols) */}
           <div className="lg:col-span-2">
-            <h4 className="text-xs font-sans uppercase tracking-wider text-brand-red mb-5 font-semibold">
+            <h4 className="text-xs font-sans uppercase tracking-wider text-white mb-5 font-semibold">
               Branding & Design
             </h4>
             <ul className="space-y-2.5 text-xs">
@@ -255,7 +257,7 @@ export const Footer = () => {
                     to={srv.href} 
                     className="group block text-[var(--k-text-secondary)] hover:text-white transition-colors"
                   >
-                    <span className="font-medium group-hover:text-brand-red transition-colors">{srv.name}</span>
+                    <span className="font-medium group-hover:text-white transition-colors">{srv.name}</span>
                   </Link>
                 </li>
               ))}
@@ -264,7 +266,7 @@ export const Footer = () => {
 
           {/* Col 3: Development & Solutions (2 cols) */}
           <div className="lg:col-span-2">
-            <h4 className="text-xs font-sans uppercase tracking-wider text-brand-red mb-5 font-semibold">
+            <h4 className="text-xs font-sans uppercase tracking-wider text-white mb-5 font-semibold">
               Development & Solutions
             </h4>
             <ul className="space-y-2.5 text-xs">
@@ -274,7 +276,7 @@ export const Footer = () => {
                     to={srv.href} 
                     className="group block text-[var(--k-text-secondary)] hover:text-white transition-colors"
                   >
-                    <span className="font-medium group-hover:text-brand-red transition-colors">{srv.name}</span>
+                    <span className="font-medium group-hover:text-white transition-colors">{srv.name}</span>
                   </Link>
                 </li>
               ))}
@@ -283,7 +285,7 @@ export const Footer = () => {
           
           {/* Col 4: Company & Case Studies (2 cols) */}
           <div className="lg:col-span-2">
-            <h4 className="text-xs font-sans uppercase tracking-wider text-brand-red mb-5 font-semibold">
+            <h4 className="text-xs font-sans uppercase tracking-wider text-white mb-5 font-semibold">
               {language === 'id' ? 'Perusahaan & Portofolio' : 'Company & Portfolio'}
             </h4>
             <ul className="space-y-2.5 text-xs">
@@ -298,7 +300,7 @@ export const Footer = () => {
                 <li key={item.name}>
                   <Link 
                     to={item.href} 
-                    className="text-[var(--k-text-secondary)] hover:text-brand-red transition-colors flex items-center gap-2"
+                    className="text-[var(--k-text-secondary)] hover:text-white transition-colors flex items-center gap-2"
                   >
                     <span>{item.name}</span>
                   </Link>
@@ -306,7 +308,7 @@ export const Footer = () => {
               ))}
             </ul>
 
-            <h4 className="text-xs font-sans uppercase tracking-wider text-brand-red mt-6 mb-3 font-semibold">
+            <h4 className="text-xs font-sans uppercase tracking-wider text-white mt-6 mb-3 font-semibold">
               {language === 'id' ? 'Kebijakan & Legalitas' : 'Policy & Legal'}
             </h4>
             <ul className="space-y-2 text-xs">
@@ -331,11 +333,11 @@ export const Footer = () => {
 
           {/* Col 5: Direct Office & Contacts (2 cols) */}
           <div className="lg:col-span-2">
-            <h4 className="text-xs font-sans uppercase tracking-wider text-brand-red mb-5 font-semibold">
+            <h4 className="text-xs font-sans uppercase tracking-wider text-white mb-5 font-semibold">
               {t('footer.contactsTitle')}
             </h4>
             <div className="space-y-3.5 text-xs text-[var(--k-text-secondary)]">
-              <a href="mailto:hello@kapitech.id" className="flex items-center gap-2.5 hover:text-brand-red transition-colors group min-h-[36px]">
+              <a href="mailto:hello@kapitech.id" className="flex items-center gap-2.5 hover:text-white transition-colors group min-h-[36px]">
                 <div className="w-7 h-7 rounded-lg bg-[var(--k-surface)] border border-[var(--k-border)] flex items-center justify-center text-brand-red group-hover:border-brand-red/40 shrink-0">
                   <Mail size={13} />
                 </div>
@@ -345,7 +347,7 @@ export const Footer = () => {
                 </div>
               </a>
 
-              <a href="mailto:business@kapitech.id" className="flex items-center gap-2.5 hover:text-brand-red transition-colors group min-h-[36px]">
+              <a href="mailto:business@kapitech.id" className="flex items-center gap-2.5 hover:text-white transition-colors group min-h-[36px]">
                 <div className="w-7 h-7 rounded-lg bg-[var(--k-surface)] border border-[var(--k-border)] flex items-center justify-center text-brand-red group-hover:border-brand-red/40 shrink-0">
                   <Globe size={13} />
                 </div>
@@ -355,7 +357,7 @@ export const Footer = () => {
                 </div>
               </a>
 
-              <a href="mailto:recruitment@kapitech.id" className="flex items-center gap-2.5 hover:text-brand-red transition-colors group min-h-[36px]">
+              <a href="mailto:recruitment@kapitech.id" className="flex items-center gap-2.5 hover:text-white transition-colors group min-h-[36px]">
                 <div className="w-7 h-7 rounded-lg bg-[var(--k-surface)] border border-[var(--k-border)] flex items-center justify-center text-brand-red group-hover:border-brand-red/40 shrink-0">
                   <Briefcase size={13} />
                 </div>
@@ -365,7 +367,7 @@ export const Footer = () => {
                 </div>
               </a>
 
-              <a href="tel:+6287769957062" className="flex items-center gap-2.5 hover:text-brand-red transition-colors group min-h-[36px]">
+              <a href="tel:+6287769957062" className="flex items-center gap-2.5 hover:text-white transition-colors group min-h-[36px]">
                 <div className="w-7 h-7 rounded-lg bg-[var(--k-surface)] border border-[var(--k-border)] flex items-center justify-center text-brand-red group-hover:border-brand-red/40 shrink-0">
                   <Phone size={13} />
                 </div>
