@@ -4,28 +4,11 @@ import { motion, AnimatePresence } from 'motion/react';
 import { 
   ArrowUpRight, 
   CheckCircle2, 
-  Globe, 
-  Cpu, 
-  Layout, 
   Code2, 
-  Palette, 
-  Box, 
-  Shield, 
   Layers, 
   X, 
-  Smartphone, 
   Sparkles, 
-  Building2, 
-  Briefcase, 
-  Users, 
-  BarChart3, 
   ChevronRight,
-  Video,
-  Film,
-  ShoppingCart,
-  Server,
-  Wrench,
-  TrendingUp,
   Target
 } from 'lucide-react';
 import { PerspectiveTilt } from '../components/ui/PerspectiveTilt';
@@ -45,28 +28,6 @@ export const Home = () => {
     window.addEventListener('kapitech_cms_updated', handleCmsUpdate);
     return () => window.removeEventListener('kapitech_cms_updated', handleCmsUpdate);
   }, []);
-  const clientPartners = [
-    { name: "Lumina Property", industry: language === 'id' ? "Teknologi Properti" : "Real Estate Tech", logoText: "LUMINA", desc: language === 'id' ? "Pencarian Properti & Web Interaktif 3D" : "Property Search & 3D Interactive Web" },
-    { name: "Nexus Fintech", industry: language === 'id' ? "Layanan Finansial" : "Financial Services", logoText: "NEXUS", desc: language === 'id' ? "UI Mobile Banking & Dashboard Finansial" : "Mobile Banking & Dashboard UI" },
-    { name: "Aura Creative", industry: language === 'id' ? "Media Digital" : "Digital Media", logoText: "AURA", desc: language === 'id' ? "Identitas Brand & Sistem Web" : "Brand Identity & Web Systems" },
-    { name: "Solaris CleanTech", industry: language === 'id' ? "Energi Terbarukan" : "Renewable Energy", logoText: "SOLARIS", desc: language === 'id' ? "Portal Monitoring Real-Time" : "Real-time Monitoring Portal" },
-    { name: "Vivid Commerce", industry: language === 'id' ? "Ritel & E-Commerce" : "Retail & E-commerce", logoText: "VIVID", desc: language === 'id' ? "Platform E-Commerce Headless" : "Headless E-commerce Platform" },
-    { name: "Kross Cloud", industry: language === 'id' ? "Keamanan Siber" : "Cybersecurity", logoText: "KROSS", desc: language === 'id' ? "Arsitektur Keamanan Enterprise" : "Enterprise Security Architecture" },
-    { name: "Zenora Health", industry: language === 'id' ? "Teknologi Kesehatan" : "HealthTech", logoText: "ZENORA", desc: language === 'id' ? "Aplikasi Manajemen Pasien" : "Patient Management Application" },
-    { name: "Orbit Dynamics", industry: "B2B SaaS", logoText: "ORBIT", desc: language === 'id' ? "Sistem UI/UX Platform Cloud" : "Cloud Platform UI/UX System" },
-  ];
-
-  const techStack = [
-    { name: "React", category: "Frontend", icon: <Layout size={18} /> },
-    { name: "Next.js", category: "Full-Stack", icon: <Globe size={18} /> },
-    { name: "TypeScript", category: "Core", icon: <Code2 size={18} /> },
-    { name: "Tailwind CSS", category: "Styling", icon: <Palette size={18} /> },
-    { name: "Node.js", category: "Backend", icon: <Cpu size={18} /> },
-    { name: "Figma", category: "Design", icon: <Box size={18} /> },
-    { name: "PostgreSQL", category: "Database", icon: <Layers size={18} /> },
-    { name: "AWS & GCP", category: "Cloud", icon: <Shield size={18} /> },
-  ];
-
   // Redesigned Simple, High-Contrast Stats
   const stats = [
     { 
