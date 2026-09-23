@@ -1445,10 +1445,16 @@ body:has([data-kapi-admin="true"]) .kapi-noise-overlay {
 .kapi-public-shell .rounded-2xl { border-radius: 22px; }
 .kapi-public-shell .rounded-3xl { border-radius: 28px; }
 
-.kapi-public-shell .rounded-xl > .rounded-lg,
-.kapi-public-shell .rounded-2xl > .rounded-xl,
+.kapi-public-shell .rounded-xl > .rounded-lg {
+  border-radius: 12px;
+}
+
+.kapi-public-shell .rounded-2xl > .rounded-xl {
+  border-radius: 16px;
+}
+
 .kapi-public-shell .rounded-3xl > .rounded-2xl {
-  border-radius: calc(inherit - 6px);
+  border-radius: 22px;
 }
 
 /* Red is reserved for emphasis, selection and key actions. */
