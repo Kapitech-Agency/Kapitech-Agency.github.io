@@ -306,7 +306,7 @@ export const AdminCmsProjects: React.FC = () => {
                 alt={project.title}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[var(--k-bg)] via-transparent to-black/40" />
+              <div className="absolute inset-0 bg-[linear-gradient(to_top,var(--k-bg),transparent_65%,rgba(0,0,0,.4))]" />
 
               {/* Badges on image */}
               <div className="absolute top-3 left-3 flex items-center gap-1.5">
@@ -322,7 +322,7 @@ export const AdminCmsProjects: React.FC = () => {
               <div className="absolute top-3 right-3 flex items-center gap-1">
                 <button
                   onClick={() => handleToggleFeatured(project)}
-                  className={`p-1.5 rounded-lg border text-xs transition-colors backdrop-blur-sm ${
+                  className={`p-1.5 rounded-[var(--k-control-radius)] border text-xs transition-colors ${
                     project.featured
                       ? 'bg-amber-500/30 text-amber-300 border-amber-500/50'
                       : 'bg-black/50 text-[var(--k-text-secondary)] border-white/10 hover:text-white'
@@ -447,7 +447,7 @@ export const AdminCmsProjects: React.FC = () => {
                 <div className="w-full max-w-sm bg-[var(--k-bg)] border border-[rgba(255,255,255,0.07)] rounded-2xl overflow-hidden shadow-2xl">
                   <div className="relative h-48 w-full bg-[var(--k-bg)]">
                     <img src={editingProject.image} alt={editingProject.title} className="w-full h-full object-cover" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#111317] via-transparent to-black/40" />
+                    <div className="absolute inset-0 bg-[linear-gradient(to_top,var(--k-bg),transparent_65%,rgba(0,0,0,.4))]" />
                     <div className="absolute top-3 left-3 px-2 py-0.5 rounded text-[10px] font-sans font-semibold bg-rose-500/20 text-rose-300 border border-rose-500/40">
                       {editingProject.pillar}
                     </div>
