@@ -216,7 +216,7 @@
 }
 .kapi-public-shell .kapi-public-nav-links > div:first-child a[aria-current="page"],
 .kapi-public-shell .kapi-public-nav-links > div:first-child button[aria-expanded="true"] {
-  background: rgba(176,0,32,.11);
+  background: rgba(176,0,32,.07);
 }
 .kapi-public-shell .kapi-public-nav img { flex-shrink: 0; }
 
@@ -1207,7 +1207,7 @@ body:has(.kapi-public-shell .kapi-modal-backdrop) { overflow: hidden; }
 }
 .kapi-public-shell .kapi-nav-cta,
 .kapi-public-shell .kapi-start-project {
-  min-width: 118px;
+  min-width: 132px;
   width: auto;
   padding-inline: 15px;
   white-space: nowrap;
@@ -1402,4 +1402,14 @@ body:has(.kapi-public-shell .kapi-modal-backdrop) { overflow: hidden; }
     max-height: calc(100dvh - 24px);
     margin-block: 12px;
   }
+}
+
+/* Final navigation correction */
+.kapi-public-shell .kapi-nav-cta span,
+.kapi-public-shell .kapi-start-project span { white-space: nowrap; }
+.kapi-public-shell .kapi-nav-cta { justify-content: center; gap: 8px; }
+.kapi-public-shell .kapi-nav-cta svg { flex: 0 0 auto; }
+.kapi-public-shell .kapi-public-nav-links > div:first-child button[aria-expanded="true"] {
+  color: var(--pub-text) !important;
+  background: rgba(176,0,32,.07) !important;
 }
