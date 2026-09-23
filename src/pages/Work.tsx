@@ -300,7 +300,7 @@ export const Work = () => {
       )}
 
       {/* Filter & Search Bar Section */}
-      <section className="py-4 sm:py-6 md:py-8 px-4 sm:px-6 md:px-12 sticky top-16 sm:top-20 z-30 bg-[[var(--k-bg)]]/95 backdrop-blur-xl border-b border-[[var(--k-border)]] shadow-xl">
+      <section className="py-4 sm:py-6 md:py-8 px-4 sm:px-6 md:px-12 sticky top-16 sm:top-20 z-30 bg-[[var(--k-bg)]]/95 backdrop-blur-xl border-b border-[[var(--k-border)]] shadow-[var(--k-shadow-sm)]">
         <div className="max-w-7xl mx-auto space-y-3 sm:space-y-4">
           {/* Top Controls: Main Pillars + Instant Search */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4">
@@ -316,7 +316,7 @@ export const Work = () => {
                   onClick={() => handlePillarChange(tab.key)}
                   className={`px-3 sm:px-4 py-2.5 sm:py-2 rounded-lg text-xs font-sans font-medium transition-all duration-200 min-h-[44px] flex items-center justify-center ${
                     activePillar === tab.key
-                      ? 'bg-brand-red text-white shadow-lg shadow-brand-red/20'
+                      ? 'bg-brand-red text-white shadow-[var(--k-shadow-sm)] shadow-brand-red/20'
                       : 'text-[[var(--k-text-secondary)]] hover:text-white hover:bg-white/5'
                   }`}
                 >
@@ -507,7 +507,7 @@ export const Work = () => {
                 <div className="text-center pt-12">
                   <button
                     onClick={() => setVisibleCount(prev => prev + 12)}
-                    className="px-8 py-3.5 rounded-full bg-[[var(--k-surface)]] hover:bg-brand-red text-white border border-[[var(--k-border)]] hover:border-brand-red text-xs font-sans font-semibold transition-all duration-300 shadow-lg min-h-[44px]"
+                    className="px-8 py-3.5 rounded-full bg-[[var(--k-surface)]] hover:bg-brand-red text-white border border-[[var(--k-border)]] hover:border-brand-red text-xs font-sans font-semibold transition-all duration-300 shadow-[var(--k-shadow-sm)] min-h-[44px]"
                   >
                     {language === 'id' ? 'Muat Lebih Banyak Studi Kasus' : 'Load More Case Studies'} ({filteredProjects.length - visibleCount} {language === 'id' ? 'tersisa' : 'remaining'})
                   </button>
@@ -527,7 +527,7 @@ export const Work = () => {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ duration: 0.25 }}
-              className="relative w-full max-w-4xl bg-[[var(--k-surface)]] border border-[[var(--k-border)]] rounded-2xl overflow-hidden shadow-2xl my-8 max-h-[90vh] flex flex-col"
+              className="relative w-full max-w-4xl bg-[[var(--k-surface)]] border border-[[var(--k-border)]] rounded-2xl overflow-hidden shadow-[var(--k-shadow-sm)] my-8 max-h-[90vh] flex flex-col"
             >
               {/* Modal Header Bar */}
               <div className="sticky top-0 z-20 flex items-center justify-between p-4 sm:p-5 bg-[[var(--k-surface)]]/95 backdrop-blur-md border-b border-[[var(--k-border)]] gap-3">
@@ -658,7 +658,7 @@ export const Work = () => {
                   <Link
                     to="/contact"
                     onClick={() => setSelectedProject(null)}
-                    className="px-6 py-3 rounded-full bg-brand-red hover:bg-[[var(--k-red-hover)]] text-white text-xs font-semibold uppercase tracking-wider transition-colors shrink-0 flex items-center gap-2 shadow-lg shadow-brand-red/20 min-h-[44px]"
+                    className="px-6 py-3 rounded-full bg-brand-red hover:bg-[[var(--k-red-hover)]] text-white text-xs font-semibold uppercase tracking-wider transition-colors shrink-0 flex items-center gap-2 shadow-[var(--k-shadow-sm)] shadow-brand-red/20 min-h-[44px]"
                   >
                     <span>{language === 'id' ? 'Mulai Konsultasi' : 'Start Project'}</span>
                     <ArrowUpRight size={14} />
