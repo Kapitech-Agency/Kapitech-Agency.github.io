@@ -1963,3 +1963,132 @@
     animation: none !important;
   }
 }
+
+
+/* FINAL PUBLIC COMPOSITION PASS */
+.kapi-public-shell .kapi-page-hero {
+  min-height: 480px;
+  display: flex;
+  align-items: flex-end;
+  padding-top: 152px;
+  padding-bottom: 72px;
+  background:
+    radial-gradient(circle at 78% 42%, rgba(176,0,32,.075), transparent 30%),
+    var(--pub-bg);
+}
+.kapi-public-shell .kapi-page-hero > .max-w-7xl { width: 100%; }
+.kapi-public-shell .kapi-page-hero h1,
+.kapi-public-shell .kapi-page-hero .kapi-display-title {
+  max-width: 820px;
+}
+.kapi-public-shell .kapi-page-hero .kapi-page-description {
+  max-width: 680px;
+  margin-top: 24px;
+  margin-bottom: 0;
+  line-height: 1.7;
+}
+.kapi-public-shell .kapi-meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 28px;
+}
+.kapi-public-shell .kapi-meta-row > * {
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  padding-inline: 12px;
+  border: 1px solid rgba(255,255,255,.09);
+  border-radius: 10px;
+  background: rgba(255,255,255,.035);
+  color: var(--pub-text-2);
+  font-size: 11px;
+}
+.kapi-public-shell .kapi-page-hero .kapi-status {
+  border: 0;
+  background: transparent;
+  padding-inline: 0;
+}
+.kapi-public-shell .kapi-work-filter-section {
+  border-color: rgba(255,255,255,.08);
+  background: rgba(9,10,15,.82);
+  backdrop-filter: blur(24px) saturate(135%);
+  -webkit-backdrop-filter: blur(24px) saturate(135%);
+}
+.kapi-public-shell .kapi-work-filter-inner {
+  max-width: var(--pub-content);
+}
+.kapi-public-shell .kapi-work-filter-section .kapi-work-pillar-tabs {
+  border-radius: 13px;
+  padding: 4px;
+  background: rgba(255,255,255,.035);
+  border-color: rgba(255,255,255,.08);
+}
+.kapi-public-shell .kapi-work-filter-section .kapi-work-pillar-tabs button {
+  border-radius: 9px;
+  min-height: 40px;
+  padding-inline: 14px;
+}
+.kapi-public-shell .kapi-work-filter-section input {
+  border-radius: 11px;
+  background: rgba(255,255,255,.035);
+}
+.kapi-public-shell .kapi-work-filter-section .kapi-work-service-scroll button {
+  min-height: 36px;
+  border-radius: 9px;
+}
+.kapi-public-shell .kapi-public-footer {
+  padding-top: 80px;
+  padding-bottom: 32px;
+}
+.kapi-public-shell .kapi-public-footer .kapi-footer-cta {
+  min-height: 48px;
+  padding-inline: 18px;
+  border-radius: 12px;
+  transition: transform 180ms ease, background 180ms ease;
+}
+.kapi-public-shell .kapi-public-footer .kapi-footer-cta:hover {
+  transform: translateY(-2px);
+}
+.kapi-public-shell .kapi-public-footer a:not(.kapi-footer-cta):hover {
+  color: #fff;
+}
+.kapi-public-shell .kapi-newsletter {
+  display: flex;
+  gap: 8px;
+}
+.kapi-public-shell .kapi-newsletter-input {
+  min-width: 0;
+  height: 44px;
+  border-radius: 10px;
+}
+.kapi-public-shell .kapi-newsletter-button {
+  min-width: 104px;
+  height: 44px;
+  border-radius: 10px;
+}
+.kapi-public-shell :where(.kapi-card, .kapi-service-card, .kapi-project-card) {
+  transition: transform 220ms cubic-bezier(.22,1,.36,1), border-color 180ms ease, background 180ms ease, box-shadow 220ms ease;
+}
+.kapi-public-shell :where(.kapi-card, .kapi-service-card, .kapi-project-card):hover {
+  transform: translateY(-2px);
+}
+@media (max-width: 767px) {
+  .kapi-public-shell .kapi-page-hero {
+    min-height: 430px;
+    padding-top: 122px;
+    padding-bottom: 56px;
+  }
+  .kapi-public-shell .kapi-meta-row {
+    margin-top: 22px;
+  }
+  .kapi-public-shell .kapi-public-footer {
+    padding-top: 60px;
+  }
+  .kapi-public-shell .kapi-newsletter {
+    flex-direction: column;
+  }
+  .kapi-public-shell .kapi-newsletter-button {
+    width: 100%;
+  }
+}
