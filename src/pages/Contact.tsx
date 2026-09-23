@@ -268,9 +268,9 @@ export const Contact = () => {
   const displayedFaqs = showAllFaqs ? allFaqs : allFaqs.slice(0, 4);
 
   return (
-    <div className="bg-[var(--k-bg)] text-white min-h-screen selection:bg-brand-red selection:text-white relative" role="main">
+    <div className="kapi-page-shell bg-[var(--k-bg)] text-white min-h-screen selection:bg-brand-red selection:text-white relative" role="main">
       {/* Hero Section */}
-      <section className="relative pt-28 sm:pt-32 md:pt-36 pb-12 sm:pb-16 px-4 sm:px-6 md:px-12 border-b border-[var(--k-border)] overflow-hidden">
+      <section className="kapi-page-hero relative pt-28 sm:pt-32 md:pt-36 pb-12 sm:pb-16 px-4 sm:px-6 md:px-12 border-b border-[var(--k-border)] overflow-hidden">
         <AtmosphericBackground imageUrl="/hero_background_3d.png" opacity={0.12} disableGrayscale={true} />
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="max-w-3xl">
