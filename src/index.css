@@ -1091,3 +1091,531 @@ body:has([data-kapi-admin="true"]) .kapi-noise-overlay {
     max-width: 42vw;
   }
 }
+
+
+/* ==========================================================================
+   KAPITECH UNIFIED PUBLIC + AMS VISUAL SYSTEM
+   Public website shares the same design language as AMS without turning
+   content surfaces into a wall of glass. Navigation and floating actions
+   carry the translucent layer; content remains calm and readable.
+   ========================================================================== */
+.kapi-public-shell {
+  --public-red: #E63946;
+  --public-charcoal: #1D1D1D;
+  --public-bg: #0B0C0E;
+  --public-surface: rgba(22, 24, 29, 0.82);
+  --public-surface-strong: #16181D;
+  --public-border: rgba(255,255,255,0.10);
+  --public-border-strong: rgba(255,255,255,0.16);
+  --public-text: #F5F5F7;
+  --public-muted: #A1A1A6;
+  --public-radius: 22px;
+  font-family: Manrope, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: var(--public-bg);
+}
+
+.kapi-public-shell main {
+  position: relative;
+  z-index: 2;
+}
+
+.kapi-public-shell h1,
+.kapi-public-shell h2,
+.kapi-public-shell h3,
+.kapi-public-shell h4 {
+  letter-spacing: -0.035em;
+}
+
+.kapi-public-shell section {
+  border-color: var(--public-border);
+}
+
+.kapi-public-nav {
+  background: rgba(11,12,14,0.62) !important;
+  border-color: rgba(255,255,255,0.09) !important;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.18);
+  -webkit-backdrop-filter: saturate(180%) blur(22px);
+  backdrop-filter: saturate(180%) blur(22px);
+}
+
+.kapi-public-nav-links > div:first-child,
+.kapi-public-nav .bg-\\[\\#16181D\\] {
+  background: rgba(255,255,255,0.055) !important;
+  border-color: rgba(255,255,255,0.10) !important;
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
+}
+
+.kapi-public-nav a,
+.kapi-public-nav button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.kapi-public-shell .kapi-card {
+  background: linear-gradient(145deg, rgba(255,255,255,0.065), rgba(255,255,255,0.025));
+  border-color: var(--public-border);
+  border-radius: var(--public-radius);
+  box-shadow: 0 18px 45px rgba(0,0,0,0.20);
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
+}
+
+.kapi-public-shell .kapi-card:hover {
+  background: linear-gradient(145deg, rgba(255,255,255,0.085), rgba(255,255,255,0.035));
+  border-color: rgba(230,57,70,0.36);
+  transform: translateY(-4px);
+}
+
+.kapi-public-shell .glass,
+.kapi-public-shell .glass-panel {
+  background: rgba(22,24,29,0.68);
+  border-color: var(--public-border);
+  -webkit-backdrop-filter: saturate(160%) blur(20px);
+  backdrop-filter: saturate(160%) blur(20px);
+}
+
+.kapi-public-shell input,
+.kapi-public-shell textarea,
+.kapi-public-shell select {
+  background: rgba(255,255,255,0.045) !important;
+  border-color: var(--public-border) !important;
+  border-radius: 14px;
+}
+
+.kapi-public-shell input:focus,
+.kapi-public-shell textarea:focus,
+.kapi-public-shell select:focus {
+  border-color: rgba(230,57,70,0.62) !important;
+  box-shadow: 0 0 0 4px rgba(230,57,70,0.10);
+}
+
+.kapi-public-shell a[class*="bg-brand-red"],
+.kapi-public-shell button[class*="bg-brand-red"] {
+  background: var(--public-red);
+  box-shadow: 0 10px 28px rgba(230,57,70,0.18);
+}
+
+.kapi-public-footer {
+  background: linear-gradient(180deg, rgba(11,12,14,0.96), #090A0F) !important;
+  border-top-color: rgba(255,255,255,0.09) !important;
+}
+
+.kapi-public-footer .bg-\\[\\#16181D\\] {
+  background: rgba(255,255,255,0.045) !important;
+  border-color: rgba(255,255,255,0.09) !important;
+}
+
+.kapi-public-shell ::selection {
+  background: rgba(230,57,70,0.78);
+  color: #fff;
+}
+
+@media (max-width: 767px) {
+  .kapi-public-nav {
+    -webkit-backdrop-filter: saturate(150%) blur(16px);
+    backdrop-filter: saturate(150%) blur(16px);
+  }
+  .kapi-public-shell .kapi-card {
+    border-radius: 18px;
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+  }
+}
+
+@supports not ((backdrop-filter: blur(1px))) {
+  .kapi-public-nav,
+  .kapi-public-shell .kapi-card,
+  .kapi-public-shell .glass,
+  .kapi-public-shell .glass-panel {
+    background: #16181D !important;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .kapi-public-nav,
+  .kapi-public-shell .kapi-card,
+  .kapi-public-shell .glass,
+  .kapi-public-shell .glass-panel {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: #16181D !important;
+  }
+}
+
+
+/* ==========================================================================
+   APPLE HIG HIERARCHY + TYPE SCALE + COMPOSITION v2
+   Kapitech adaptation: Apple-inspired structure, not Apple branding.
+   ========================================================================== */
+:root {
+  --k-type-display: clamp(2.75rem, 7vw, 6.75rem);
+  --k-type-title-1: clamp(2.25rem, 5vw, 4.5rem);
+  --k-type-title-2: clamp(1.875rem, 3.5vw, 3rem);
+  --k-type-title-3: clamp(1.5rem, 2.5vw, 2.125rem);
+  --k-type-headline: 1.375rem;
+  --k-type-body: 1rem;
+  --k-type-callout: 1.0625rem;
+  --k-type-subheadline: 0.9375rem;
+  --k-type-footnote: 0.8125rem;
+  --k-type-caption: 0.6875rem;
+  --k-leading-display: 0.98;
+  --k-leading-title: 1.06;
+  --k-leading-body: 1.55;
+  --k-tracking-display: -0.055em;
+  --k-tracking-title: -0.04em;
+  --k-content-max: 1280px;
+  --k-content-wide: 1440px;
+  --k-gutter: clamp(1rem, 4vw, 4rem);
+  --k-section-y: clamp(5rem, 10vw, 9rem);
+  --k-control-height: 44px;
+  --k-radius-control: 14px;
+  --k-radius-surface: 22px;
+  --k-motion-standard: 240ms;
+  --k-motion-emphasis: 360ms;
+  --k-motion-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Public typography follows a small, deliberate hierarchy.
+   Avoid thin/light weights for readable UI text. */
+.kapi-public-shell {
+  font-family: Manrope, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: var(--k-type-body);
+  line-height: var(--k-leading-body);
+  color: var(--public-text);
+}
+
+.kapi-public-shell h1 {
+  font-size: var(--k-type-title-1) !important;
+  line-height: var(--k-leading-title) !important;
+  letter-spacing: var(--k-tracking-title) !important;
+  font-weight: 700 !important;
+  text-wrap: balance;
+}
+
+.kapi-public-shell h2 {
+  font-size: var(--k-type-title-2) !important;
+  line-height: var(--k-leading-title) !important;
+  letter-spacing: var(--k-tracking-title) !important;
+  font-weight: 700 !important;
+  text-wrap: balance;
+}
+
+.kapi-public-shell h3 {
+  font-size: var(--k-type-title-3) !important;
+  line-height: 1.12 !important;
+  letter-spacing: -0.032em !important;
+  font-weight: 650 !important;
+  text-wrap: balance;
+}
+
+.kapi-public-shell h4 {
+  font-size: var(--k-type-headline) !important;
+  line-height: 1.2 !important;
+  letter-spacing: -0.022em !important;
+  font-weight: 650 !important;
+}
+
+.kapi-public-shell p {
+  font-size: var(--k-type-body);
+  line-height: var(--k-leading-body);
+  color: var(--public-muted);
+}
+
+.kapi-public-shell small,
+.kapi-public-shell [class*="text-xs"] {
+  line-height: 1.4;
+}
+
+.kapi-public-shell .font-light {
+  font-weight: 400 !important;
+}
+
+.kapi-public-shell .font-mono {
+  font-size: var(--k-type-caption);
+  line-height: 1.4;
+  letter-spacing: 0.06em;
+}
+
+/* Editorial / hero display: use intentionally, not for every heading. */
+.kapi-public-shell .text-gradient,
+.kapi-public-shell [class*="text-7xl"],
+.kapi-public-shell [class*="text-8xl"] {
+  letter-spacing: var(--k-tracking-display) !important;
+  line-height: var(--k-leading-display) !important;
+  font-weight: 700 !important;
+}
+
+/* Content composition: align to shared leading/trailing edges and
+   constrain reading width instead of stretching every section full-width. */
+.kapi-public-shell section {
+  width: 100%;
+  margin-inline: auto;
+}
+
+.kapi-public-shell section > .max-w-7xl,
+.kapi-public-shell section > .max-w-6xl,
+.kapi-public-shell section > .max-w-5xl,
+.kapi-public-shell section > .max-w-4xl,
+.kapi-public-shell section > .max-w-3xl {
+  width: min(calc(100% - (var(--k-gutter) * 2)), var(--k-content-max));
+  margin-inline: auto;
+}
+
+.kapi-public-shell .max-w-7xl {
+  max-width: var(--k-content-wide);
+}
+
+.kapi-public-shell .max-w-prose {
+  max-width: 68ch;
+}
+
+/* Section rhythm is expressed by grouping and whitespace, not decoration. */
+.kapi-public-shell section[class*="py-"],
+.kapi-public-shell section[class*="pt-"] {
+  scroll-margin-top: 96px;
+}
+
+.kapi-public-shell [class*="space-y-"] > * + * {
+  --tw-space-y-reverse: 0;
+}
+
+/* Prefer grouped controls over individually decorated controls. */
+.kapi-public-shell button,
+.kapi-public-shell a[role="button"],
+.kapi-public-shell a[class*="rounded-full"][class*="px-"] {
+  min-height: var(--k-control-height);
+}
+
+.kapi-public-shell button,
+.kapi-public-shell input,
+.kapi-public-shell select,
+.kapi-public-shell textarea {
+  transition:
+    background-color var(--k-motion-standard) var(--k-motion-ease),
+    border-color var(--k-motion-standard) var(--k-motion-ease),
+    box-shadow var(--k-motion-standard) var(--k-motion-ease),
+    transform var(--k-motion-standard) var(--k-motion-ease),
+    opacity var(--k-motion-standard) var(--k-motion-ease);
+}
+
+.kapi-public-shell button:hover,
+.kapi-public-shell a[role="button"]:hover {
+  transform: translateY(-1px);
+}
+
+.kapi-public-shell button:active,
+.kapi-public-shell a[role="button"]:active {
+  transform: scale(0.985);
+  transition-duration: 120ms;
+}
+
+/* Content layer: standard material, not Liquid Glass. */
+.kapi-public-shell .kapi-card {
+  background: rgba(255,255,255,0.045);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border-radius: var(--k-radius-surface);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.14);
+}
+
+.kapi-public-shell .kapi-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.20);
+}
+
+/* Only floating/navigation surfaces receive the glass treatment. */
+.kapi-public-nav,
+.kapi-public-footer .social-glass,
+.kapi-public-shell [data-glass],
+.kapi-public-shell .floating-action {
+  -webkit-backdrop-filter: saturate(180%) blur(22px);
+  backdrop-filter: saturate(180%) blur(22px);
+}
+
+/* Avoid glass-on-glass stacking. */
+.kapi-public-shell .kapi-card .glass,
+.kapi-public-shell .kapi-card .glass-panel {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  background: rgba(255,255,255,0.035);
+}
+
+/* Shared concentricity: inner controls nest inside parent radii. */
+.kapi-public-shell .rounded-xl { border-radius: 18px; }
+.kapi-public-shell .rounded-2xl { border-radius: 22px; }
+.kapi-public-shell .rounded-3xl { border-radius: 28px; }
+
+.kapi-public-shell .rounded-xl > .rounded-lg,
+.kapi-public-shell .rounded-2xl > .rounded-xl,
+.kapi-public-shell .rounded-3xl > .rounded-2xl {
+  border-radius: calc(inherit - 6px);
+}
+
+/* Red is reserved for emphasis, selection and key actions. */
+.kapi-public-shell .text-brand-red {
+  color: var(--brand-red) !important;
+}
+
+.kapi-public-shell .bg-brand-red {
+  background: var(--brand-red) !important;
+}
+
+.kapi-public-shell .border-brand-red {
+  border-color: var(--brand-red) !important;
+}
+
+/* Public background should be quiet. Remove the old constantly moving mesh
+   from the primary reading layer; motion belongs to interaction. */
+.kapi-public-shell ~ .kapi-fluid-background,
+.kapi-public-shell ~ .kapi-noise-overlay {
+  animation: none !important;
+}
+
+body:not(:has([data-kapi-admin="true"])) .kapi-fluid-background::before,
+body:not(:has([data-kapi-admin="true"])) .kapi-fluid-background::after {
+  animation: none !important;
+  opacity: 0.055;
+}
+
+/* AMS typography and composition use the same hierarchy, scaled for dense work. */
+[data-kapi-admin="true"] {
+  font-family: Manrope, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+[data-kapi-admin="true"] h1 {
+  font-size: clamp(1.75rem, 2.8vw, 2.75rem) !important;
+  line-height: 1.08 !important;
+  letter-spacing: -0.04em !important;
+  font-weight: 700 !important;
+  text-wrap: balance;
+}
+
+[data-kapi-admin="true"] h2 {
+  font-size: clamp(1.375rem, 2vw, 2rem) !important;
+  line-height: 1.12 !important;
+  letter-spacing: -0.032em !important;
+  font-weight: 700 !important;
+}
+
+[data-kapi-admin="true"] h3 {
+  font-size: 1.25rem !important;
+  line-height: 1.18 !important;
+  letter-spacing: -0.022em !important;
+  font-weight: 650 !important;
+}
+
+[data-kapi-admin="true"] p {
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+
+[data-kapi-admin="true"] .ams-content {
+  width: min(100%, var(--k-content-wide));
+  padding-block: clamp(1.5rem, 3vw, 3rem);
+}
+
+[data-kapi-admin="true"] .ams-content > * + * {
+  margin-top: clamp(1.25rem, 2.5vw, 2rem);
+}
+
+/* Dense work surfaces remain opaque. Glass is reserved for navigation and
+   transient/floating controls, matching Apple's hierarchy guidance. */
+[data-kapi-admin="true"] .ams-content .kapi-card,
+[data-kapi-admin="true"] .ams-content .metric-card,
+[data-kapi-admin="true"] .ams-content .glass-panel {
+  background: var(--ams-bg-secondary);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border-radius: var(--ams-radius-lg);
+}
+
+/* Sidebar/header float above the content plane. */
+[data-kapi-admin="true"] .ams-sidebar,
+[data-kapi-admin="true"] .ams-header,
+[data-kapi-admin="true"] .ams-mobile-nav {
+  -webkit-backdrop-filter: saturate(180%) blur(24px);
+  backdrop-filter: saturate(180%) blur(24px);
+}
+
+/* Tables should communicate grouping through alignment and whitespace. */
+[data-kapi-admin="true"] table th,
+[data-kapi-admin="true"] table td {
+  vertical-align: middle;
+}
+
+[data-kapi-admin="true"] table th {
+  color: var(--ams-text-secondary);
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+
+[data-kapi-admin="true"] table td {
+  font-size: 0.875rem;
+}
+
+[data-kapi-admin="true"] .ams-kicker {
+  font-family: inherit;
+  font-size: var(--k-type-caption);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+/* Motion: use opacity/transform, short distances, and one coherent easing curve. */
+[data-kapi-admin="true"] button,
+[data-kapi-admin="true"] a,
+[data-kapi-admin="true"] input,
+[data-kapi-admin="true"] select,
+[data-kapi-admin="true"] textarea {
+  transition-duration: var(--k-motion-standard);
+  transition-timing-function: var(--k-motion-ease);
+}
+
+@media (max-width: 767px) {
+  :root {
+    --k-section-y: 4rem;
+    --k-gutter: 1rem;
+  }
+
+  .kapi-public-shell h1 {
+    font-size: clamp(2.125rem, 10vw, 3.25rem) !important;
+  }
+
+  .kapi-public-shell h2 {
+    font-size: clamp(1.75rem, 7vw, 2.5rem) !important;
+  }
+
+  .kapi-public-shell h3 {
+    font-size: 1.375rem !important;
+  }
+
+  .kapi-public-shell p {
+    font-size: 0.9375rem;
+  }
+
+  [data-kapi-admin="true"] h1 {
+    font-size: clamp(1.625rem, 8vw, 2.25rem) !important;
+  }
+
+  [data-kapi-admin="true"] h2 {
+    font-size: 1.5rem !important;
+  }
+
+  [data-kapi-admin="true"] h3 {
+    font-size: 1.125rem !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kapi-public-shell *,
+  .kapi-public-shell *::before,
+  .kapi-public-shell *::after,
+  [data-kapi-admin="true"] *,
+  [data-kapi-admin="true"] *::before,
+  [data-kapi-admin="true"] *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
