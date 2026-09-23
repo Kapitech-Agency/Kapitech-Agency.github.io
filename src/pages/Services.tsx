@@ -665,9 +665,9 @@ export const Services = () => {
   }, [activeCategory, resolvedServices]);
 
   return (
-    <div className="bg-[var(--k-bg)] text-white min-h-screen selection:bg-brand-red selection:text-white relative" role="main">
+    <div className="kapi-page-shell bg-[var(--k-bg)] text-white min-h-screen selection:bg-brand-red selection:text-white relative" role="main">
       {/* Hero Section */}
-      <section className="relative pt-32 sm:pt-36 md:pt-40 pb-16 sm:pb-20 px-4 sm:px-6 md:px-12 border-b border-[var(--k-border)] overflow-hidden">
+      <section className="kapi-page-hero relative pt-32 sm:pt-36 md:pt-40 pb-16 sm:pb-20 px-4 sm:px-6 md:px-12 border-b border-[var(--k-border)] overflow-hidden">
         <AtmosphericBackground 
           imageUrl="/hero_background_3d.png"
           opacity={0.06}
