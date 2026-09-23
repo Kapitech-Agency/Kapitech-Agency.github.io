@@ -1110,7 +1110,7 @@ body:has([data-kapi-admin="true"]) .kapi-noise-overlay {
   --public-text: #F5F5F7;
   --public-muted: #A1A1A6;
   --public-radius: 22px;
-  font-family: Manrope, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
   background: var(--public-bg);
 }
 
@@ -1278,7 +1278,7 @@ body:has([data-kapi-admin="true"]) .kapi-noise-overlay {
 /* Public typography follows a small, deliberate hierarchy.
    Avoid thin/light weights for readable UI text. */
 .kapi-public-shell {
-  font-family: Manrope, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
   font-size: var(--k-type-body);
   line-height: var(--k-leading-body);
   color: var(--public-text);
@@ -1485,7 +1485,7 @@ body:not(:has([data-kapi-admin="true"])) .kapi-fluid-background::after {
 
 /* AMS typography and composition use the same hierarchy, scaled for dense work. */
 [data-kapi-admin="true"] {
-  font-family: Manrope, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
 }
 
 [data-kapi-admin="true"] h1 {
@@ -1623,5 +1623,148 @@ body:not(:has([data-kapi-admin="true"])) .kapi-fluid-background::after {
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+
+/* APPLE UI CONSISTENCY PASS v2 */
+:root {
+  --k-red: #B00020;
+  --k-red-hover: #C1121F;
+  --k-red-soft: rgba(176,0,32,.12);
+  --k-red-border: rgba(176,0,32,.34);
+  --k-font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  --k-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  --k-radius-control: 12px;
+  --k-radius-surface: 18px;
+  --k-radius-sheet: 24px;
+  --k-motion: 180ms;
+  --k-ease: cubic-bezier(.22,1,.36,1);
+}
+html, body, button, input, select, textarea { font-family: var(--k-font-ui); }
+code, pre, kbd, .font-mono { font-family: var(--k-font-mono); }
+.kapi-public-shell, [data-kapi-admin="true"] {
+  --brand-red: var(--k-red);
+  --primary-red: var(--k-red);
+  --primary-red-hover: var(--k-red-hover);
+  --color-brand-red: var(--k-red);
+  --color-brand-red-bright: var(--k-red-hover);
+  --color-brand-red-hover: var(--k-red-hover);
+  --public-red: var(--k-red);
+  --ams-accent-soft: var(--k-red-soft);
+  font-family: var(--k-font-ui);
+}
+
+/* One proportional type scale. */
+.kapi-public-shell h1 { font-size: clamp(2.25rem,5vw,4.25rem) !important; line-height:1.04 !important; letter-spacing:-.045em !important; }
+.kapi-public-shell h2 { font-size: clamp(1.875rem,3.5vw,2.75rem) !important; line-height:1.08 !important; letter-spacing:-.035em !important; }
+.kapi-public-shell h3 { font-size: clamp(1.5rem,2.5vw,2rem) !important; line-height:1.15 !important; letter-spacing:-.025em !important; }
+.kapi-public-shell h4 { font-size:1.25rem !important; line-height:1.2 !important; }
+.kapi-public-shell p { font-size:.9375rem; line-height:1.55; }
+[data-kapi-admin="true"] h1 { font-size:clamp(1.75rem,2.5vw,2.5rem) !important; line-height:1.08 !important; letter-spacing:-.035em !important; }
+[data-kapi-admin="true"] h2 { font-size:clamp(1.5rem,2vw,2rem) !important; line-height:1.12 !important; letter-spacing:-.03em !important; }
+[data-kapi-admin="true"] h3 { font-size:1.25rem !important; line-height:1.18 !important; letter-spacing:-.02em !important; }
+[data-kapi-admin="true"] h4 { font-size:1.0625rem !important; line-height:1.2 !important; }
+[data-kapi-admin="true"] p { font-size:.875rem; line-height:1.5; }
+
+/* Proportional cards: public establishes the visual reference; AMS is denser. */
+.kapi-public-shell .kapi-card { padding:20px !important; border-radius:var(--k-radius-surface) !important; }
+@media (min-width:640px){ .kapi-public-shell .kapi-card{padding:24px !important;} }
+.kapi-public-shell .kapi-card-header{margin-bottom:16px}
+.kapi-public-shell .kapi-card-title{font-size:1.25rem !important;line-height:1.2;margin-bottom:8px}
+.kapi-public-shell .kapi-card-desc{font-size:.875rem;line-height:1.55;margin-bottom:16px}
+.kapi-public-shell .kapi-card-footer{padding-top:16px}
+[data-kapi-admin="true"] .ams-content { width:min(100%,1440px) !important; padding:24px 32px !important; }
+[data-kapi-admin="true"] .ams-content .kapi-card,
+[data-kapi-admin="true"] .ams-content .metric-card,
+[data-kapi-admin="true"] .ams-content .glass-panel { border-radius:16px !important; padding:20px !important; }
+[data-kapi-admin="true"] .ams-content .metric-card{padding:18px !important}
+[data-kapi-admin="true"] .ams-content .kapi-card-title{font-size:1.0625rem !important}
+[data-kapi-admin="true"] .ams-content .kapi-card-desc{font-size:.8125rem;line-height:1.5}
+
+/* Liquid Glass belongs to navigation/floating layers, content stays calm. */
+[data-kapi-admin="true"] .ams-sidebar,
+[data-kapi-admin="true"] .ams-header,
+[data-kapi-admin="true"] .ams-mobile-nav {
+  background:rgba(24,24,27,.72) !important;
+  border-color:rgba(255,255,255,.10) !important;
+  box-shadow:0 8px 30px rgba(0,0,0,.20);
+  backdrop-filter:saturate(180%) blur(24px);
+  -webkit-backdrop-filter:saturate(180%) blur(24px);
+}
+
+/* Sidebar text cannot escape or collide with badges. */
+[data-kapi-admin="true"] .ams-sidebar-nav a{min-width:0;width:100%;min-height:40px}
+[data-kapi-admin="true"] .ams-sidebar-nav a > div{min-width:0;overflow:hidden}
+[data-kapi-admin="true"] .ams-sidebar-nav a > div > span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+[data-kapi-admin="true"] .ams-sidebar-nav .text-\\[11px\\]{line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+[data-kapi-admin="true"] .ams-sidebar-nav a > span{max-width:72px;overflow:hidden;text-overflow:ellipsis}
+
+/* Search focus is quiet: no browser white outline. */
+[data-kapi-admin="true"] .ams-search,
+[data-kapi-admin="true"] .ams-search input{outline:none !important}
+[data-kapi-admin="true"] .ams-search:focus-within{border-color:rgba(176,0,32,.48) !important;box-shadow:0 0 0 3px rgba(176,0,32,.10) !important}
+[data-kapi-admin="true"] .ams-search input:focus{outline:none !important;box-shadow:none !important;border-color:transparent !important}
+
+/* All buttons have one coherent hover/press language. */
+.kapi-public-shell button,[data-kapi-admin="true"] button{
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+  transition:transform var(--k-motion) var(--k-ease),background-color var(--k-motion) var(--k-ease),border-color var(--k-motion) var(--k-ease),color var(--k-motion) var(--k-ease),box-shadow var(--k-motion) var(--k-ease),opacity var(--k-motion) var(--k-ease) !important;
+}
+.kapi-public-shell button:hover,[data-kapi-admin="true"] button:hover{transform:translateY(-1px)}
+.kapi-public-shell button:active,[data-kapi-admin="true"] button:active{transform:scale(.975);transition-duration:100ms !important}
+
+/* True icon buttons stay circular. Text pills remain pills. */
+.kapi-public-shell button.rounded-full:has(svg),
+[data-kapi-admin="true"] button.rounded-full:has(svg){aspect-ratio:1/1;padding-inline:.625rem}
+.kapi-public-shell button.w-8.h-8.rounded-full,
+.kapi-public-shell button.w-9.h-9.rounded-full,
+.kapi-public-shell button.w-10.h-10.rounded-full,
+.kapi-public-shell button.w-11.h-11.rounded-full,
+.kapi-public-shell button.w-12.h-12.rounded-full,
+[data-kapi-admin="true"] button.w-8.h-8.rounded-full,
+[data-kapi-admin="true"] button.w-9.h-9.rounded-full,
+[data-kapi-admin="true"] button.w-10.h-10.rounded-full,
+[data-kapi-admin="true"] button.w-11.h-11.rounded-full,
+[data-kapi-admin="true"] button.w-12.h-12.rounded-full{padding:0 !important;aspect-ratio:1/1}
+
+/* Unified icon weight and sizing. */
+[data-kapi-admin="true"] svg,.kapi-public-shell .kapi-card-icon-box svg{stroke-width:1.8}
+[data-kapi-admin="true"] .ams-sidebar-nav svg{width:17px;height:17px}
+[data-kapi-admin="true"] .ams-content .metric-card svg{width:18px;height:18px}
+
+/* Shared search/select geometry. */
+[data-kapi-admin="true"] .ams-search,[data-kapi-admin="true"] .ams-search input{height:40px;border-radius:12px !important}
+[data-kapi-admin="true"] .ams-search input{font-size:.8125rem !important}
+[data-kapi-admin="true"] .ams-search kbd{height:24px;min-width:28px;display:inline-flex;align-items:center;justify-content:center;border-radius:7px}
+[data-kapi-admin="true"] select{height:40px;border-radius:12px !important}
+
+/* One modal/sheet baseline. */
+[data-kapi-admin="true"] [role="dialog"]{border-radius:var(--k-radius-sheet) !important;border-color:rgba(255,255,255,.12) !important;box-shadow:0 24px 80px rgba(0,0,0,.45) !important;overflow:hidden}
+[data-kapi-admin="true"] [role="dialog"] :where(input,select,textarea){min-height:40px;border-radius:12px !important}
+[data-kapi-admin="true"] [role="dialog"] :where(button){min-height:40px}
+[data-kapi-admin="true"] [role="dialog"] :where(h1,h2,h3){text-wrap:balance}
+
+/* Keyboard focus only. Mouse focus never produces a white ring. */
+[data-kapi-admin="true"] input:focus,
+[data-kapi-admin="true"] textarea:focus,
+[data-kapi-admin="true"] select:focus,
+[data-kapi-admin="true"] button:focus{outline:none}
+[data-kapi-admin="true"] :where(a,button,input,select,textarea):focus-visible{outline:2px solid rgba(176,0,32,.75);outline-offset:2px;box-shadow:none}
+
+/* Public controls share the same control geometry. */
+.kapi-public-shell input,.kapi-public-shell select,.kapi-public-shell textarea{min-height:44px;border-radius:12px !important;font-family:var(--k-font-ui)}
+@media (max-width:767px){
+  [data-kapi-admin="true"] .ams-content{padding:20px 16px 96px !important}
+  [data-kapi-admin="true"] .ams-content .kapi-card,
+  [data-kapi-admin="true"] .ams-content .metric-card,
+  [data-kapi-admin="true"] .ams-content .glass-panel{padding:16px !important}
+  [data-kapi-admin="true"] .ams-search{max-width:48vw !important}
+}
+@media (max-width:479px){[data-kapi-admin="true"] .ams-content{padding-inline:12px !important}}
+@media (prefers-reduced-transparency:reduce){
+  [data-kapi-admin="true"] .ams-sidebar,[data-kapi-admin="true"] .ams-header,[data-kapi-admin="true"] .ams-mobile-nav{
+    background:#18181B !important;backdrop-filter:none;-webkit-backdrop-filter:none
   }
 }
