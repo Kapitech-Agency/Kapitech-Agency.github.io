@@ -763,7 +763,7 @@ export const Services = () => {
               >
                 <div>
                   <div className="flex items-center justify-between mb-6">
-                    <div className="w-12 h-12 rounded-xl bg-brand-red/10 border border-brand-red/30 flex items-center justify-center text-brand-red group-hover:scale-110 transition-transform">
+                    <div className="w-12 h-12 rounded-xl bg-brand-red/10 border border-brand-red/30 flex items-center justify-center text-brand-red group-hover:scale-[1.02] transition-transform">
                       {sol.icon}
                     </div>
                     <span className="px-2.5 py-1 rounded-full bg-[var(--k-text-secondary)]/10 border border-[var(--k-text-secondary)]/30 text-xs font-sans text-[var(--k-text-secondary)] font-semibold">
@@ -865,7 +865,7 @@ export const Services = () => {
                     >
                       <div>
                         <div className="flex items-center justify-between mb-5">
-                          <div className="w-11 h-11 rounded-xl bg-brand-red/10 border border-brand-red/30 flex items-center justify-center text-brand-red group-hover:scale-110 transition-transform">
+                          <div className="w-11 h-11 rounded-xl bg-brand-red/10 border border-brand-red/30 flex items-center justify-center text-brand-red group-hover:scale-[1.02] transition-transform">
                             {srv.icon}
                           </div>
                           <span className="px-2.5 py-1 rounded-full bg-[var(--k-bg)] border border-[var(--k-border)] text-xs font-sans text-[var(--k-text-secondary)]">
