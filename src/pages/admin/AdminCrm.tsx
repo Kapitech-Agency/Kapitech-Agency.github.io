@@ -578,7 +578,7 @@ export const AdminCrm: React.FC = () => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={language === 'id' ? 'Cari prospek, perusahaan, atau kata kunci...' : 'Search leads, companies, or keywords...'}
-              className="w-full pl-9 pr-3.5 py-2 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-xs text-white placeholder-[var(--k-text-secondary)] focus:outline-none focus:border-[var(--k-red)] font-sans h-10 min-h-[40px]"
+              className="w-full pl-9 pr-3.5 py-2 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-xs text-white placeholder-[var(--k-text-secondary)] focus:border-[var(--k-red-border)] font-sans h-10 min-h-[40px]"
             />
           </div>
 
@@ -1082,7 +1082,7 @@ export const AdminCrm: React.FC = () => {
                     value={selectedLead.stage}
                     disabled={!canManageCrm}
                     onChange={(e) => handleStageChange(selectedLead.id, e.target.value as CrmStage)}
-                    className="px-3 py-1.5 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-xs text-white focus:outline-none focus:border-[var(--k-red)] font-sans"
+                    className="px-3 py-1.5 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-xs text-white focus:border-[var(--k-red-border)] font-sans"
                   >
                     {CRM_STAGE_DEFINITIONS.map(s => (
                       <option key={s.key} value={s.key}>
@@ -1156,7 +1156,7 @@ export const AdminCrm: React.FC = () => {
                     onChange={(e) => setNewNoteText(e.target.value)}
                     disabled={!canManageCrm}
                     placeholder={language === 'id' ? 'Catat ringkasan meeting atau jadwal follow-up...' : 'Log call, meeting summary, or follow-up note...'}
-                    className="flex-1 px-3.5 py-2 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-xs text-white placeholder-[var(--k-text-secondary)] focus:outline-none focus:border-[var(--k-red)] font-sans min-h-[44px]"
+                    className="flex-1 px-3.5 py-2 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-xs text-white placeholder-[var(--k-text-secondary)] focus:border-[var(--k-red-border)] font-sans min-h-[44px]"
                   />
                   <button
                     type="submit"
@@ -1254,7 +1254,7 @@ export const AdminCrm: React.FC = () => {
                     value={formClientName}
                     onChange={(e) => setFormClientName(e.target.value)}
                     placeholder="e.g. Adrian Wicaksono"
-                    className="w-full px-3.5 py-2.5 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:outline-none focus:border-[var(--k-red)] min-h-[44px]"
+                    className="w-full px-3.5 py-2.5 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:border-[var(--k-red-border)] min-h-[44px]"
                   />
                 </div>
                 <div>
@@ -1265,7 +1265,7 @@ export const AdminCrm: React.FC = () => {
                     value={formCompany}
                     onChange={(e) => setFormCompany(e.target.value)}
                     placeholder="e.g. Bank Mandiri FinTech Division"
-                    className="w-full px-3.5 py-2.5 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:outline-none focus:border-[var(--k-red)] min-h-[44px]"
+                    className="w-full px-3.5 py-2.5 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:border-[var(--k-red-border)] min-h-[44px]"
                   />
                 </div>
               </div>
@@ -1278,7 +1278,7 @@ export const AdminCrm: React.FC = () => {
                     value={formEmail}
                     onChange={(e) => setFormEmail(e.target.value)}
                     placeholder="adrian@company.com"
-                    className="w-full px-3.5 py-2.5 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:outline-none focus:border-[var(--k-red)] min-h-[44px]"
+                    className="w-full px-3.5 py-2.5 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:border-[var(--k-red-border)] min-h-[44px]"
                   />
                 </div>
                 <div>
@@ -1288,7 +1288,7 @@ export const AdminCrm: React.FC = () => {
                     value={formPhone}
                     onChange={(e) => setFormPhone(e.target.value)}
                     placeholder="+62 812-3456-7890"
-                    className="w-full px-3.5 py-2.5 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:outline-none focus:border-[var(--k-red)] min-h-[44px]"
+                    className="w-full px-3.5 py-2.5 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:border-[var(--k-red-border)] min-h-[44px]"
                   />
                 </div>
               </div>
@@ -1299,7 +1299,7 @@ export const AdminCrm: React.FC = () => {
                   <select
                     value={formPillar}
                     onChange={(e) => setFormPillar(e.target.value as CrmServicePillar)}
-                    className="w-full px-3 py-2.5 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:outline-none focus:border-[var(--k-red)] min-h-[44px]"
+                    className="w-full px-3 py-2.5 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:border-[var(--k-red-border)] min-h-[44px]"
                   >
                     <option value="Web Development">Web Development</option>
                     <option value="Mobile App">Mobile App</option>
@@ -1316,7 +1316,7 @@ export const AdminCrm: React.FC = () => {
                     type="number"
                     value={formDealValue}
                     onChange={(e) => setFormDealValue(Number(e.target.value))}
-                    className="w-full px-3.5 py-2.5 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:outline-none focus:border-[var(--k-red)] min-h-[44px]"
+                    className="w-full px-3.5 py-2.5 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:border-[var(--k-red-border)] min-h-[44px]"
                   />
                 </div>
 
@@ -1325,7 +1325,7 @@ export const AdminCrm: React.FC = () => {
                   <select
                     value={formStage}
                     onChange={(e) => setFormStage(e.target.value as CrmStage)}
-                    className="w-full px-3 py-2.5 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:outline-none focus:border-[var(--k-red)] min-h-[44px]"
+                    className="w-full px-3 py-2.5 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:border-[var(--k-red-border)] min-h-[44px]"
                   >
                     {CRM_STAGE_DEFINITIONS.map(s => (
                       <option key={s.key} value={s.key}>
@@ -1342,7 +1342,7 @@ export const AdminCrm: React.FC = () => {
                   <select
                     value={formPriority}
                     onChange={(e) => setFormPriority(e.target.value as CrmPriority)}
-                    className="w-full px-3 py-2.5 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:outline-none focus:border-[var(--k-red)] min-h-[44px]"
+                    className="w-full px-3 py-2.5 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:border-[var(--k-red-border)] min-h-[44px]"
                   >
                     <option value="low">Low</option>
                     <option value="medium">Medium</option>
@@ -1357,7 +1357,7 @@ export const AdminCrm: React.FC = () => {
                     type="date"
                     value={formExpectedClose}
                     onChange={(e) => setFormExpectedClose(e.target.value)}
-                    className="w-full px-3.5 py-2.5 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:outline-none focus:border-[var(--k-red)] min-h-[44px]"
+                    className="w-full px-3.5 py-2.5 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:border-[var(--k-red-border)] min-h-[44px]"
                   />
                 </div>
               </div>
@@ -1369,7 +1369,7 @@ export const AdminCrm: React.FC = () => {
                   value={formDescription}
                   onChange={(e) => setFormDescription(e.target.value)}
                   placeholder={language === 'id' ? 'Kebutuhan teknis, ekspektasi timeline, catatan budget...' : 'Requirements, tech stack expectations, budget notes...'}
-                  className="w-full px-3.5 py-2 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:outline-none focus:border-[var(--k-red)] font-sans text-xs"
+                  className="w-full px-3.5 py-2 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:border-[var(--k-red-border)] font-sans text-xs"
                 />
               </div>
 
