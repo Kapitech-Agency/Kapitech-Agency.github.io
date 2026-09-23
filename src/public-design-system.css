@@ -220,6 +220,64 @@
 }
 .kapi-public-shell .kapi-public-nav img { flex-shrink: 0; }
 
+/* Home page components */
+.kapi-public-shell .kapi-hero-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 32px;
+  padding: 7px 12px;
+  margin-bottom: 28px;
+  border: 1px solid var(--pub-border);
+  border-radius: 999px;
+  background: rgba(255,255,255,.035);
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
+  backdrop-filter: blur(18px) saturate(150%);
+}
+.kapi-public-shell .kapi-stat-card {
+  min-height: 168px;
+  padding: 22px;
+}
+.kapi-public-shell .kapi-stat-index {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 30px;
+  min-height: 26px;
+  padding-inline: 8px;
+  border: 1px solid var(--pub-border);
+  border-radius: 8px;
+  background: rgba(255,255,255,.035);
+  color: var(--pub-text-muted);
+  font-size: .6875rem;
+  line-height: 1;
+  font-weight: 650;
+}
+.kapi-public-shell .kapi-stat-value {
+  font-size: 1.875rem;
+  line-height: 1.1;
+  letter-spacing: -.035em;
+  font-weight: 700;
+}
+.kapi-public-shell .kapi-stat-subvalue {
+  margin-top: 4px;
+  color: var(--pub-red);
+  font-size: .875rem;
+  line-height: 1.4;
+  font-weight: 600;
+}
+.kapi-public-shell .kapi-stat-desc {
+  margin-top: 8px;
+  padding-top: 12px;
+  border-top: 1px solid var(--pub-border);
+  color: var(--pub-text-secondary);
+  font-size: .8125rem;
+  line-height: 1.5;
+}
+@media (max-width: 767px) {
+  .kapi-public-shell .kapi-stat-card { min-height: 152px; padding: 18px; }
+}
+
 /* Navigation component geometry */
 .kapi-public-shell .kapi-nav-group {
   display: flex;
