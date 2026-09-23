@@ -401,7 +401,7 @@ export const AdminLayout: React.FC = () => {
   return (
     <div
       data-kapi-admin="true"
-      className="ams-shell h-screen w-full bg-[var(--k-bg)] text-[var(--k-text)] flex flex-col md:flex-row selection:bg-[var(--k-red)] selection:text-[var(--k-text)] font-sans antialiased overflow-hidden"
+      className="admin-shell ams-shell h-screen w-full bg-[var(--k-bg)] text-[var(--k-text)] flex flex-col md:flex-row selection:bg-[var(--k-red)] selection:text-[var(--k-text)] font-sans antialiased overflow-hidden"
     >
       
       {/* Universal Command Palette */}
@@ -414,7 +414,7 @@ export const AdminLayout: React.FC = () => {
       {/* DESKTOP SIDEBAR */}
       {/* ------------------------------------------------------------- */}
       <aside 
-        className={`ams-sidebar ams-sidebar-nav hidden md:flex flex-col bg-[var(--k-surface)] border-r border-[var(--k-border)] shrink-0 h-full z-30 transition-all duration-300 ${
+        className={`ams-sidebar ams-sidebar-nav hidden md:flex flex-col ams-sidebar bg-[var(--k-surface)] border-r border-[var(--k-border)] shrink-0 h-full z-30 transition-all duration-300 ${
           sidebarCollapsed ? 'w-20 ams-sidebar-collapsed' : 'w-64'
         }`}
       >
