@@ -19,6 +19,8 @@
 
   --k-font-ui: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
     "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --k-font: var(--k-font-ui);
+  --k-shadow-sm: 0 8px 24px rgba(0,0,0,.18);
   --k-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
   --k-control: 40px;
