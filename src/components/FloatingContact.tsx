@@ -84,11 +84,11 @@ export const FloatingContact = () => {
                       onClick={() => setIsOpen(false)}
                       className="flex items-center justify-end gap-2.5 sm:gap-3 group min-h-[44px]"
                     >
-                      <span className="px-3.5 py-2 rounded-xl bg-[var(--k-surface)] border border-[var(--k-border)] text-xs font-medium text-white shadow-lg transition-all group-hover:border-brand-red/60 group-hover:text-brand-red whitespace-nowrap">
+                      <span className="px-3.5 py-2 rounded-xl bg-[var(--k-surface)] border border-[var(--k-border)] text-xs font-medium text-white shadow-[var(--k-shadow-sm)] transition-all group-hover:border-brand-red/60 group-hover:text-brand-red whitespace-nowrap">
                         {option.label}
                       </span>
                       <div className={cn(
-                        "w-11 h-11 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-white shadow-lg transition-transform hover:scale-[1.02] active:scale-95 shrink-0",
+                        "w-11 h-11 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-white shadow-[var(--k-shadow-sm)] transition-transform hover:scale-[1.02] active:scale-95 shrink-0",
                         option.color
                       )}>
                         {option.icon}
@@ -102,11 +102,11 @@ export const FloatingContact = () => {
                       onClick={() => setIsOpen(false)}
                       className="flex items-center justify-end gap-2.5 sm:gap-3 group min-h-[44px]"
                     >
-                      <span className="px-3.5 py-2 rounded-xl bg-[var(--k-surface)] border border-[var(--k-border)] text-xs font-medium text-white shadow-lg transition-all group-hover:border-brand-red/60 group-hover:text-brand-red whitespace-nowrap">
+                      <span className="px-3.5 py-2 rounded-xl bg-[var(--k-surface)] border border-[var(--k-border)] text-xs font-medium text-white shadow-[var(--k-shadow-sm)] transition-all group-hover:border-brand-red/60 group-hover:text-brand-red whitespace-nowrap">
                         {option.label}
                       </span>
                       <div className={cn(
-                        "w-11 h-11 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-white shadow-lg transition-transform hover:scale-[1.02] active:scale-95 shrink-0",
+                        "w-11 h-11 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-white shadow-[var(--k-shadow-sm)] transition-transform hover:scale-[1.02] active:scale-95 shrink-0",
                         option.color
                       )}>
                         {option.icon}
