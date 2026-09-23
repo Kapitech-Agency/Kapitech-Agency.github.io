@@ -462,7 +462,7 @@ export const AdminInbox: React.FC = () => {
           {toastMessage.link && (
             <Link
               to={toastMessage.link}
-              className="px-3 py-1 rounded-lg bg-emerald-500 text-black font-bold hover:bg-emerald-400 transition-colors flex items-center gap-1 shrink-0 ml-3"
+              className="px-3 py-1 rounded-[var(--k-control-radius)] bg-emerald-500 text-black font-bold hover:bg-emerald-400 transition-colors flex items-center gap-1 shrink-0 ml-3"
             >
               <span>{toastMessage.linkText || 'Open'}</span>
               <ExternalLink size={11} />
@@ -628,7 +628,7 @@ export const AdminInbox: React.FC = () => {
           <div className="flex items-center bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.08)] rounded-[var(--k-control-radius)] p-0.5">
             <button
               onClick={() => setViewMode('split')}
-              className={`px-2.5 py-1.5 rounded-lg text-xs font-sans transition-all flex items-center gap-1.5 ${
+              className={`px-2.5 py-1.5 rounded-[var(--k-control-radius)] text-xs font-sans transition-all flex items-center gap-1.5 ${
                 viewMode === 'split'
                   ? 'bg-[var(--k-surface)] text-white font-bold border border-white/10 shadow-sm'
                   : 'text-[var(--k-text-secondary)] hover:text-white'
@@ -640,7 +640,7 @@ export const AdminInbox: React.FC = () => {
             </button>
             <button
               onClick={() => setViewMode('table')}
-              className={`px-2.5 py-1.5 rounded-lg text-xs font-sans transition-all flex items-center gap-1.5 ${
+              className={`px-2.5 py-1.5 rounded-[var(--k-control-radius)] text-xs font-sans transition-all flex items-center gap-1.5 ${
                 viewMode === 'table'
                   ? 'bg-[var(--k-surface)] text-white font-bold border border-white/10 shadow-sm'
                   : 'text-[var(--k-text-secondary)] hover:text-white'
@@ -836,7 +836,7 @@ export const AdminInbox: React.FC = () => {
                                 href={`https://wa.me/${cleanPhoneForWhatsApp(item.phone)}?text=Halo%20${encodeURIComponent(item.fullName)},%20terima%20kasih%20telah%20menghubungi%20Kapitech%20Agency...`}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="p-1.5 rounded-lg bg-emerald-950/60 hover:bg-emerald-900/80 text-emerald-400 border border-emerald-500/20"
+                                className="p-1.5 rounded-[var(--k-control-radius)] bg-emerald-950/60 hover:bg-emerald-900/80 text-emerald-400 border border-emerald-500/20"
                                 title="Chat on WhatsApp"
                               >
                                 <ExternalLink size={12} />
@@ -847,7 +847,7 @@ export const AdminInbox: React.FC = () => {
                                 handleSelectSubmission(item);
                                 setViewMode('split');
                               }}
-                              className="px-2.5 py-1 rounded-lg bg-[var(--k-surface-raised)] hover:bg-[var(--k-surface-raised)] text-[var(--k-text-secondary)] hover:text-white border border-white/5 text-[11px]"
+                              className="px-2.5 py-1 rounded-[var(--k-control-radius)] bg-[var(--k-surface-raised)] hover:bg-[var(--k-surface-raised)] text-[var(--k-text-secondary)] hover:text-white border border-white/5 text-[11px]"
                             >
                               {language === 'id' ? 'Buka' : 'Inspect'}
                             </button>
@@ -1083,7 +1083,7 @@ export const AdminInbox: React.FC = () => {
                     {isSubmissionConverted(selectedSubmission.id) ? (
                       <Link
                         to="/admin/crm"
-                        className="h-9 px-3.5 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/20 text-xs font-sans font-bold transition-all flex items-center gap-1.5"
+                        className="h-9 px-3.5 rounded-[var(--k-control-radius)] bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/20 text-xs font-sans font-bold transition-all flex items-center gap-1.5"
                       >
                         <ShieldCheck size={14} />
                         <span>{language === 'id' ? 'Buka Deal di CRM' : 'View CRM Deal'}</span>
@@ -1092,7 +1092,7 @@ export const AdminInbox: React.FC = () => {
                     ) : (
                       <button
                         onClick={() => setIsCrmModalOpen(true)}
-                        className="h-9 px-3.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-sans font-bold transition-all flex items-center gap-1.5 shadow-md shadow-emerald-500/20"
+                        className="h-9 px-3.5 rounded-[var(--k-control-radius)] bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-sans font-bold transition-all flex items-center gap-1.5 shadow-md shadow-emerald-500/20"
                       >
                         <Briefcase size={14} />
                         <span>{language === 'id' ? 'Konversi ke CRM' : 'Convert to CRM'}</span>
@@ -1102,7 +1102,7 @@ export const AdminInbox: React.FC = () => {
                     {/* Quick Canned Response Template Picker */}
                     <button
                       onClick={() => setIsCannedModalOpen(true)}
-                      className="h-9 px-3.5 rounded-lg bg-[var(--k-surface)] hover:bg-[var(--k-surface-raised)] text-white border border-[rgba(255,255,255,0.08)] text-xs font-sans font-semibold transition-colors flex items-center gap-1.5"
+                      className="h-9 px-3.5 rounded-[var(--k-control-radius)] bg-[var(--k-surface)] hover:bg-[var(--k-surface-raised)] text-white border border-[rgba(255,255,255,0.08)] text-xs font-sans font-semibold transition-colors flex items-center gap-1.5"
                     >
                       <Sparkles size={13} className="text-[var(--k-red)]" />
                       <span>{language === 'id' ? 'Respon Cepat' : 'Canned Response'}</span>
@@ -1117,7 +1117,7 @@ export const AdminInbox: React.FC = () => {
                         href={`https://wa.me/${cleanPhoneForWhatsApp(selectedSubmission.phone)}?text=Halo%20${encodeURIComponent(selectedSubmission.fullName)},%20kami%20dari%20Kapitech%20Agency.%20Menindaklanjuti%20formulir%20konsultasi%20proyek%20Anda...`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="h-9 px-3 rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-500/30 text-xs font-sans transition-colors flex items-center gap-1"
+                        className="h-9 px-3 rounded-[var(--k-control-radius)] bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-500/30 text-xs font-sans transition-colors flex items-center gap-1"
                         title="Chat via WhatsApp"
                       >
                         <span>WhatsApp</span>
@@ -1128,7 +1128,7 @@ export const AdminInbox: React.FC = () => {
                     {/* Mailto */}
                     <a
                       href={`mailto:${selectedSubmission.email}?subject=Kapitech Agency - Project Brief Follow-up&body=Dear ${encodeURIComponent(selectedSubmission.fullName)},%0D%0A%0D%0AThank you for reaching out to Kapitech Agency regarding your project brief.`}
-                      className="h-9 px-3 rounded-lg bg-[var(--k-red)] hover:bg-[var(--k-red)] text-white text-xs font-sans font-semibold transition-colors flex items-center gap-1 shadow-sm"
+                      className="h-9 px-3 rounded-[var(--k-control-radius)] bg-[var(--k-red)] hover:bg-[var(--k-red)] text-white text-xs font-sans font-semibold transition-colors flex items-center gap-1 shadow-sm"
                       title="Compose Email"
                     >
                       <Mail size={13} />
