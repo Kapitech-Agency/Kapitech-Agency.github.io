@@ -273,6 +273,16 @@ h4 { font-size: 1.0625rem !important; line-height: 1.25 !important; letter-spaci
   width: 256px !important;
   min-width: 256px !important;
 }
+[data-kapi-admin="true"] .ams-sidebar.ams-sidebar-collapsed {
+  width: 80px !important;
+  min-width: 80px !important;
+}
+@media (max-width: 767px) {
+  [data-kapi-admin="true"] .ams-sidebar.ams-sidebar-collapsed {
+    width: min(86vw, 320px) !important;
+    min-width: 0 !important;
+  }
+}
 [data-kapi-admin="true"] .ams-sidebar-nav a {
   min-width: 0 !important;
   min-height: 40px !important;
@@ -382,6 +392,21 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   backdrop-filter: saturate(180%) blur(24px) !important;
   -webkit-backdrop-filter: saturate(180%) blur(24px) !important;
 }
+
+/* Public card and control geometry uses the same Apple grammar without changing brand colors. */
+.kapi-card {
+  padding: 20px !important;
+  border-radius: var(--ui-card-radius) !important;
+}
+.kapi-card .kapi-card-icon-box { width: 44px !important; height: 44px !important; border-radius: 12px !important; }
+.kapi-card .kapi-card-icon-box svg { width: 20px !important; height: 20px !important; stroke-width: 1.9 !important; }
+.kapi-card .kapi-card-title { font-size: 18px !important; line-height: 1.2 !important; margin-bottom: 8px !important; }
+.kapi-card .kapi-card-desc { font-size: 14px !important; line-height: 1.5 !important; margin-bottom: 16px !important; }
+.kapi-card .kapi-card-footer { padding-top: 14px !important; font-size: 13px !important; }
+.kapi-card .kapi-card-arrow { width: 32px !important; height: 32px !important; min-width: 32px !important; }
+
+/* Public controls inherit Kapitech red while keeping Apple interaction grammar. */
+button, [role="button"] { -webkit-tap-highlight-color: transparent; }
 
 /* Mobile rhythm. */
 @media (max-width: 767px) {
