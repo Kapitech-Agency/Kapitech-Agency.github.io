@@ -98,7 +98,7 @@ export const Navbar = () => {
         className={cn(
           "kapi-public-nav fixed top-0 left-0 w-full z-50 transition-all duration-300 border-b",
           isScrolled 
-            ? "bg-[[var(--k-bg-deep)]]/95 backdrop-blur-md py-3 sm:py-3.5 border-[[var(--k-border)]] shadow-lg shadow-[[var(--k-bg-deep)]]/80" 
+            ? "bg-[[var(--k-bg-deep)]]/95 backdrop-blur-md py-3 sm:py-3.5 border-[[var(--k-border)]] shadow-[var(--k-shadow-sm)] shadow-[[var(--k-bg-deep)]]/80" 
             : "bg-[[var(--k-bg-deep)]]/80 backdrop-blur-sm py-4 sm:py-5 border-[[var(--k-border)]]/60"
         )}
       >
@@ -640,7 +640,7 @@ export const Navbar = () => {
                 <Link
                   to="/contact"
                   onClick={() => setIsMenuOpen(false)}
-                  className="w-full h-12 rounded-xl bg-brand-red hover:bg-[[var(--k-red-hover)]] text-white flex items-center justify-center text-xs font-semibold uppercase tracking-wider gap-2 shadow-lg shadow-brand-red/20 active:scale-[0.98] transition-all cursor-pointer"
+                  className="w-full h-12 rounded-xl bg-brand-red hover:bg-[[var(--k-red-hover)]] text-white flex items-center justify-center text-xs font-semibold uppercase tracking-wider gap-2 shadow-[var(--k-shadow-sm)] shadow-brand-red/20 active:scale-[0.98] transition-all cursor-pointer"
                 >
                   <span>{t('nav.startProject')}</span>
                   <ArrowUpRight size={16} />
