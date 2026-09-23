@@ -346,21 +346,21 @@ export const About = () => {
             <div className="grid grid-cols-3 gap-3 sm:gap-6 pt-5 sm:pt-6 border-t border-[var(--k-border)]">
               <div>
                 <span className="text-2xl sm:text-3xl md:text-4xl font-sans font-bold text-white block">50+</span>
-                <span className="text-[10px] sm:text-xs font-sans text-[var(--k-text-secondary)] uppercase">{t('about.stats.projects')}</span>
+                <span className="text-xs font-sans text-[var(--k-text-secondary)] uppercase">{t('about.stats.projects')}</span>
               </div>
               <div>
                 <span className="text-2xl sm:text-3xl md:text-4xl font-sans font-bold text-[var(--k-text-secondary)] block">3+</span>
-                <span className="text-[10px] sm:text-xs font-sans text-[var(--k-text-secondary)] uppercase">{t('about.stats.experience')}</span>
+                <span className="text-xs font-sans text-[var(--k-text-secondary)] uppercase">{t('about.stats.experience')}</span>
               </div>
               <div>
                 <span className="text-2xl sm:text-3xl md:text-4xl font-sans font-bold text-brand-red block">100%</span>
-                <span className="text-[10px] sm:text-xs font-sans text-[var(--k-text-secondary)] uppercase">{t('about.stats.craft')}</span>
+                <span className="text-xs font-sans text-[var(--k-text-secondary)] uppercase">{t('about.stats.craft')}</span>
               </div>
             </div>
           </div>
 
           <div className="lg:col-span-6">
-            <div className="rounded-2xl sm:rounded-[24px] overflow-hidden border border-[var(--k-border)] shadow-2xl relative aspect-[16/10] sm:aspect-[4/3] bg-[#161616]">
+            <div className="rounded-2xl sm:rounded-[24px] overflow-hidden border border-[var(--k-border)] shadow-[0_20px_60px_rgba(0,0,0,.28)] relative aspect-[16/10] sm:aspect-[4/3] bg-[#161616]">
               <img
                 src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=1200"
                 alt="Kapitech Agency Team Collaboration"
@@ -368,7 +368,7 @@ export const About = () => {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[var(--k-bg-deep)]/90 via-[var(--k-bg-deep)]/20 to-transparent flex items-end p-5 sm:p-8">
                 <div>
-                  <span className="text-[10px] sm:text-xs font-sans text-brand-red uppercase tracking-wider block mb-1 font-semibold">
+                  <span className="text-xs font-sans text-brand-red uppercase tracking-wider block mb-1 font-semibold">
                     {language === 'id' ? 'Komitmen Kami' : 'Our Commitment'}
                   </span>
                   <p className="text-sm sm:text-base font-sans font-semibold text-white">
