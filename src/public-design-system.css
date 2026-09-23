@@ -1157,3 +1157,15 @@ body:has(.kapi-public-shell .kapi-modal-backdrop) { overflow: hidden; }
   .kapi-public-shell .kapi-card-header { gap: 8px; }
   .kapi-public-shell .kapi-card-pill { max-width: 52%; overflow: hidden; text-overflow: ellipsis; }
 }
+
+.kapi-public-shell .kapi-footer-title {
+  max-width: 760px;
+  color: var(--pub-text);
+  font-size: clamp(2rem, 4.2vw, 3.75rem);
+  line-height: 1.05;
+  letter-spacing: -.045em;
+  font-weight: 600;
+}
+@media (max-width: 640px) {
+  .kapi-public-shell .kapi-footer-title { font-size: clamp(1.9rem, 9vw, 2.6rem); }
+}
