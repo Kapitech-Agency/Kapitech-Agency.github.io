@@ -35,6 +35,20 @@
   --pub-shadow-sm: 0 8px 30px rgba(0,0,0,.18);
   --pub-shadow-lg: 0 24px 80px rgba(0,0,0,.42);
   --pub-ease: cubic-bezier(.22,1,.36,1);
+
+  /* Compatibility aliases for existing JSX utility classes.
+     The UI is rebuilt, but page structure/data do not need to be rewritten. */
+  --k-bg: var(--pub-bg);
+  --k-bg-deep: var(--pub-bg);
+  --k-surface: var(--pub-surface);
+  --k-surface-raised: var(--pub-surface-2);
+  --k-border: var(--pub-border);
+  --k-text-primary: var(--pub-text);
+  --k-text-secondary: var(--pub-text-2);
+  --k-text-muted: var(--pub-text-3);
+  --k-shadow-sm: 0 8px 30px rgba(0,0,0,.18);
+  --k-shadow-md: 0 16px 42px rgba(0,0,0,.24);
+  --k-shadow-lg: 0 24px 80px rgba(0,0,0,.42);
   --pub-fast: 140ms;
   --pub-normal: 200ms;
   color: var(--pub-text);
