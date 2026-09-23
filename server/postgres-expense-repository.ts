@@ -26,13 +26,37 @@ export class PostgresExpenseRepository{
     const idempotencyKey=input.idempotencyKey?String(input.idempotencyKey).slice(0,100):null;
     if(!userId||!expenseDate||!/^[A-Z]{3}$/.test(currency)||!Number.isFinite(amount)||amount<=0) throw new Error('Valid user, date, currency, and positive expense amount are required.');
     return withPostgresTransaction(async client=>{
+      const requestFingerprint=JSON.stringify({
+        type:String(input.type||'OpEx'),
+        category:String(input.category||'General'),
+        description:String(input.description||''),
+        amount:Math.round(amount*100)/100,
+        currency,
+        date:expenseDate,
+        projectId:projectId||'',
+        recurringInterval:String(input.recurringInterval||'none')
+      });
       if(idempotencyKey){
         await client.query("SELECT pg_advisory_xact_lock(hashtextextended('kapitech:expense-idempotency:' || $1 || ':' || $2, 0))",[userId,idempotencyKey]);
         const existing=await client.query<Row>('SELECT * FROM expenses WHERE recorded_by_user_id=$1 AND idempotency_key=$2 LIMIT 1',[userId,idempotencyKey]);
-        if(existing.rows[0]) return { ...mapExpense(existing.rows[0]), __idempotentReplay: true };
+        if(existing.rows[0]){
+          const existingMetadata=existing.rows[0].metadata&&typeof existing.rows[0].metadata==='object'&&!Array.isArray(existing.rows[0].metadata)?existing.rows[0].metadata:{};
+          const storedFingerprint=String(existingMetadata.requestFingerprint||JSON.stringify({
+            type:String(existing.rows[0].type||'OpEx'),
+            category:String(existing.rows[0].category||'General'),
+            description:String(existing.rows[0].description||''),
+            amount:Math.round(Number(existing.rows[0].amount||0)*100)/100,
+            currency:String(existing.rows[0].currency||'IDR'),
+            date:dateValue(existing.rows[0].expense_date),
+            projectId:existing.rows[0].project_id?String(existing.rows[0].project_id):'',
+            recurringInterval:String(existing.rows[0].recurring_interval||'none')
+          }));
+          if(storedFingerprint!==requestFingerprint) throw new Error('EXPENSE_IDEMPOTENCY_KEY_REUSE_CONFLICT');
+          return { ...mapExpense(existing.rows[0]), __idempotentReplay: true };
+        }
       }
       if(projectId){const project=await client.query<Row>('SELECT id FROM projects WHERE id=$1 FOR SHARE',[projectId]);if(!project.rows[0])throw new ExpenseProjectNotFoundError('Project not found.');}
-      const metadata={...(input.metadata&&typeof input.metadata==='object'?input.metadata:{}),recurringInterval:input.recurringInterval??'none'};
+      const metadata={...(input.metadata&&typeof input.metadata==='object'?input.metadata:{}),recurringInterval:input.recurringInterval??'none',requestFingerprint};
       const result=await client.query<Row>('INSERT INTO expenses (id,type,category,description,amount,currency,expense_date,recurring_interval,project_id,recorded_by_user_id,recorded_by,status,version,idempotency_key,metadata,created_at) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,1,$13,$14,NOW()) RETURNING *',
         [String(input.id),String(input.type||'OpEx'),String(input.category||'General'),String(input.description||''),Math.round(amount*100)/100,currency,expenseDate,String(input.recurringInterval||'none'),projectId,userId,String(input.recordedBy||''),'posted',idempotencyKey,JSON.stringify(metadata)]);
       if (audit) await postgresAuditLogRepository.appendWithinTransaction(client, audit);
