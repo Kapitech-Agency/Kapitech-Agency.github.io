@@ -11,3 +11,4 @@ data/
 kapitech_db.json
 
 .kapitech-ams-data/
+.env
