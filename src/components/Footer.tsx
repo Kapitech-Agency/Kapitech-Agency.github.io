@@ -184,7 +184,7 @@ export const Footer = () => {
               <Link 
                 to="/contact" 
                 id="footer-cta-button"
-                className="h-12 sm:h-14 min-h-[44px] px-7 sm:px-8 bg-brand-red hover:bg-[[var(--k-red-hover)]] text-white rounded-full font-semibold text-xs uppercase tracking-wider transition-all duration-300 flex items-center gap-3 shadow-lg shadow-brand-red/20 hover:scale-[1.02]"
+                className="h-12 sm:h-14 min-h-[44px] px-7 sm:px-8 bg-brand-red hover:bg-[[var(--k-red-hover)]] text-white rounded-full font-semibold text-xs uppercase tracking-wider transition-all duration-300 flex items-center gap-3 shadow-[var(--k-shadow-sm)] shadow-brand-red/20 hover:scale-[1.02]"
               >
                 <span>{t('footer.cta.button')}</span>
                 <ArrowUpRight size={18} />
