@@ -163,19 +163,19 @@ export const Footer = () => {
   ];
 
   return (
-    <footer className="kapi-public-footer relative bg-[#0B0C0E] pt-20 pb-12 px-4 sm:px-6 md:px-12 overflow-hidden border-t border-[#262930]" id="main-footer">
+    <footer className="kapi-public-footer relative bg-[[var(--k-bg)]] pt-20 pb-12 px-4 sm:px-6 md:px-12 overflow-hidden border-t border-[[var(--k-border)]]" id="main-footer">
       <div className="max-w-7xl mx-auto relative z-10">
         {/* Top CTA Banner */}
-        <div className="pb-16 mb-16 border-b border-[#262930]">
+        <div className="pb-16 mb-16 border-b border-[[var(--k-border)]]">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
             <div className="lg:col-span-8">
-              <span className="text-brand-red font-mono font-semibold tracking-widest uppercase text-xs mb-3 block">
+              <span className="text-brand-red font-sans font-semibold tracking-widest uppercase text-xs mb-3 block">
                 {t('footer.cta.tag')}
               </span>
-              <h2 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-display font-bold tracking-tight mb-4 text-white">
+              <h2 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-sans font-bold tracking-tight mb-4 text-white">
                 {t('footer.cta.title')}
               </h2>
-              <p className="text-sm md:text-base text-[#8A909D] font-light max-w-2xl leading-relaxed">
+              <p className="text-sm md:text-base text-[[var(--k-text-secondary)]] font-light max-w-2xl leading-relaxed">
                 {t('footer.cta.desc')}
               </p>
             </div>
@@ -184,12 +184,12 @@ export const Footer = () => {
               <Link 
                 to="/contact" 
                 id="footer-cta-button"
-                className="h-12 sm:h-14 min-h-[44px] px-7 sm:px-8 bg-brand-red hover:bg-[#E01414] text-white rounded-full font-semibold text-xs uppercase tracking-wider transition-all duration-300 flex items-center gap-3 shadow-lg shadow-brand-red/20 hover:scale-[1.02]"
+                className="h-12 sm:h-14 min-h-[44px] px-7 sm:px-8 bg-brand-red hover:bg-[[var(--k-red-hover)]] text-white rounded-full font-semibold text-xs uppercase tracking-wider transition-all duration-300 flex items-center gap-3 shadow-lg shadow-brand-red/20 hover:scale-[1.02]"
               >
                 <span>{t('footer.cta.button')}</span>
                 <ArrowUpRight size={18} />
               </Link>
-              <div className="text-xs font-mono text-[#8A909D] flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-[#16181D] border border-[#262930]">
+              <div className="text-xs font-sans text-[[var(--k-text-secondary)]] flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-[[var(--k-surface)]] border border-[[var(--k-border)]]">
                 <span className="w-2 h-2 rounded-full bg-brand-red animate-pulse shadow-[0_0_8px_rgba(255,26,26,0.6)]" />
                 <span>{language === 'id' ? 'Tangerang Selatan, ID' : 'South Tangerang, ID'} • {localTime || '12:00:00'} WIB</span>
               </div>
@@ -207,17 +207,17 @@ export const Footer = () => {
                 alt="Kapitech Agency" 
                 className="h-6 sm:h-7 w-auto max-h-7 object-contain transition-opacity duration-300 group-hover:opacity-90 shrink-0 select-none"
               />
-              <span className="font-display font-bold text-lg tracking-tight text-white group-hover:text-brand-red transition-colors">
+              <span className="font-sans font-bold text-lg tracking-tight text-white group-hover:text-brand-red transition-colors">
                 Kapitech Agency
               </span>
             </Link>
-            <p className="text-xs text-[#8A909D] font-light leading-relaxed max-w-sm">
+            <p className="text-xs text-[[var(--k-text-secondary)]] font-light leading-relaxed max-w-sm">
               {t('footer.about')}
             </p>
             
             {/* Newsletter Subscription */}
             <div className="pt-2">
-              <span className="text-[11px] font-mono text-[#8A909D] uppercase tracking-wider block mb-2 font-medium">
+              <span className="text-[11px] font-sans text-[[var(--k-text-secondary)]] uppercase tracking-wider block mb-2 font-medium">
                 {language === 'id' ? 'Berlangganan Wawasan Proyek' : 'Subscribe for Project Insights'}
               </span>
               <form onSubmit={handleSubscribe} className="relative max-w-sm">
@@ -227,17 +227,17 @@ export const Footer = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="w-full min-h-[44px] bg-[#16181D] border border-[#262930] rounded-xl px-4 py-3 text-xs text-white placeholder:text-[#8A909D]/70 focus:outline-none focus:border-brand-red transition-colors"
+                  className="w-full min-h-[44px] bg-[[var(--k-surface)]] border border-[[var(--k-border)]] rounded-xl px-4 py-3 text-xs text-white placeholder:text-[[var(--k-text-secondary)]]/70 focus:outline-none focus:border-brand-red transition-colors"
                 />
                 <button 
                   type="submit"
-                  className="absolute right-1.5 top-1/2 -translate-y-1/2 px-3.5 py-1.5 rounded-lg bg-brand-red text-white text-xs font-semibold hover:bg-[#E01414] transition-colors min-h-[34px]"
+                  className="absolute right-1.5 top-1/2 -translate-y-1/2 px-3.5 py-1.5 rounded-lg bg-brand-red text-white text-xs font-semibold hover:bg-[[var(--k-red-hover)]] transition-colors min-h-[34px]"
                 >
                   {isSubscribed ? (language === 'id' ? 'Terdaftar!' : 'Subscribed!') : (language === 'id' ? 'Langganan' : 'Subscribe')}
                 </button>
               </form>
               {isSubscribed && (
-                <p className="text-[11px] text-brand-red font-mono mt-2 flex items-center gap-1.5">
+                <p className="text-[11px] text-brand-red font-sans mt-2 flex items-center gap-1.5">
                   <CheckCircle2 size={12} /> {language === 'id' ? 'Terima kasih telah berlangganan info Kapitech Agency.' : 'Thank you for subscribing to Kapitech Agency updates.'}
                 </p>
               )}
@@ -246,7 +246,7 @@ export const Footer = () => {
 
           {/* Col 2: Branding & Design (2 cols) */}
           <div className="lg:col-span-2">
-            <h4 className="text-xs font-mono uppercase tracking-wider text-brand-red mb-5 font-semibold">
+            <h4 className="text-xs font-sans uppercase tracking-wider text-brand-red mb-5 font-semibold">
               Branding & Design
             </h4>
             <ul className="space-y-2.5 text-xs">
@@ -254,7 +254,7 @@ export const Footer = () => {
                 <li key={srv.name}>
                   <Link 
                     to={srv.href} 
-                    className="group block text-[#8A909D] hover:text-white transition-colors"
+                    className="group block text-[[var(--k-text-secondary)]] hover:text-white transition-colors"
                   >
                     <span className="font-medium group-hover:text-brand-red transition-colors">{srv.name}</span>
                   </Link>
@@ -265,7 +265,7 @@ export const Footer = () => {
 
           {/* Col 3: Development & Solutions (2 cols) */}
           <div className="lg:col-span-2">
-            <h4 className="text-xs font-mono uppercase tracking-wider text-brand-red mb-5 font-semibold">
+            <h4 className="text-xs font-sans uppercase tracking-wider text-brand-red mb-5 font-semibold">
               Development & Solutions
             </h4>
             <ul className="space-y-2.5 text-xs">
@@ -273,7 +273,7 @@ export const Footer = () => {
                 <li key={srv.name}>
                   <Link 
                     to={srv.href} 
-                    className="group block text-[#8A909D] hover:text-white transition-colors"
+                    className="group block text-[[var(--k-text-secondary)]] hover:text-white transition-colors"
                   >
                     <span className="font-medium group-hover:text-brand-red transition-colors">{srv.name}</span>
                   </Link>
@@ -284,7 +284,7 @@ export const Footer = () => {
           
           {/* Col 4: Company & Case Studies (2 cols) */}
           <div className="lg:col-span-2">
-            <h4 className="text-xs font-mono uppercase tracking-wider text-brand-red mb-5 font-semibold">
+            <h4 className="text-xs font-sans uppercase tracking-wider text-brand-red mb-5 font-semibold">
               {language === 'id' ? 'Perusahaan & Portofolio' : 'Company & Portfolio'}
             </h4>
             <ul className="space-y-2.5 text-xs">
@@ -299,7 +299,7 @@ export const Footer = () => {
                 <li key={item.name}>
                   <Link 
                     to={item.href} 
-                    className="text-[#8A909D] hover:text-brand-red transition-colors flex items-center gap-2"
+                    className="text-[[var(--k-text-secondary)]] hover:text-brand-red transition-colors flex items-center gap-2"
                   >
                     <span>{item.name}</span>
                   </Link>
@@ -307,7 +307,7 @@ export const Footer = () => {
               ))}
             </ul>
 
-            <h4 className="text-xs font-mono uppercase tracking-wider text-brand-red mt-6 mb-3 font-semibold">
+            <h4 className="text-xs font-sans uppercase tracking-wider text-brand-red mt-6 mb-3 font-semibold">
               {language === 'id' ? 'Kebijakan & Legalitas' : 'Policy & Legal'}
             </h4>
             <ul className="space-y-2 text-xs">
@@ -321,7 +321,7 @@ export const Footer = () => {
                 <li key={policy.name}>
                   <Link 
                     to={policy.href} 
-                    className="text-[#8A909D]/80 hover:text-white transition-colors block text-[11px]"
+                    className="text-[[var(--k-text-secondary)]]/80 hover:text-white transition-colors block text-[11px]"
                   >
                     {policy.name}
                   </Link>
@@ -332,56 +332,56 @@ export const Footer = () => {
 
           {/* Col 5: Direct Office & Contacts (2 cols) */}
           <div className="lg:col-span-2">
-            <h4 className="text-xs font-mono uppercase tracking-wider text-brand-red mb-5 font-semibold">
+            <h4 className="text-xs font-sans uppercase tracking-wider text-brand-red mb-5 font-semibold">
               {t('footer.contactsTitle')}
             </h4>
-            <div className="space-y-3.5 text-xs text-[#8A909D]">
+            <div className="space-y-3.5 text-xs text-[[var(--k-text-secondary)]]">
               <a href="mailto:hello@kapitech.id" className="flex items-center gap-2.5 hover:text-brand-red transition-colors group min-h-[36px]">
-                <div className="w-7 h-7 rounded-lg bg-[#16181D] border border-[#262930] flex items-center justify-center text-brand-red group-hover:border-brand-red/40 shrink-0">
+                <div className="w-7 h-7 rounded-lg bg-[[var(--k-surface)]] border border-[[var(--k-border)]] flex items-center justify-center text-brand-red group-hover:border-brand-red/40 shrink-0">
                   <Mail size={13} />
                 </div>
                 <div className="min-w-0">
-                  <span className="text-[10px] font-mono text-[#8A909D]/70 block leading-tight">{t('footer.clientInquiry')}</span>
+                  <span className="text-[10px] font-sans text-[[var(--k-text-secondary)]]/70 block leading-tight">{t('footer.clientInquiry')}</span>
                   <span className="font-medium text-white group-hover:text-brand-red text-[11px] truncate block">hello@kapitech.id</span>
                 </div>
               </a>
 
               <a href="mailto:business@kapitech.id" className="flex items-center gap-2.5 hover:text-brand-red transition-colors group min-h-[36px]">
-                <div className="w-7 h-7 rounded-lg bg-[#16181D] border border-[#262930] flex items-center justify-center text-brand-red group-hover:border-brand-red/40 shrink-0">
+                <div className="w-7 h-7 rounded-lg bg-[[var(--k-surface)]] border border-[[var(--k-border)]] flex items-center justify-center text-brand-red group-hover:border-brand-red/40 shrink-0">
                   <Globe size={13} />
                 </div>
                 <div className="min-w-0">
-                  <span className="text-[10px] font-mono text-[#8A909D]/70 block leading-tight">{language === 'id' ? 'Kerja Sama Bisnis' : 'Business Inquiry'}</span>
+                  <span className="text-[10px] font-sans text-[[var(--k-text-secondary)]]/70 block leading-tight">{language === 'id' ? 'Kerja Sama Bisnis' : 'Business Inquiry'}</span>
                   <span className="font-medium text-white group-hover:text-brand-red text-[11px] truncate block">business@kapitech.id</span>
                 </div>
               </a>
 
               <a href="mailto:recruitment@kapitech.id" className="flex items-center gap-2.5 hover:text-brand-red transition-colors group min-h-[36px]">
-                <div className="w-7 h-7 rounded-lg bg-[#16181D] border border-[#262930] flex items-center justify-center text-brand-red group-hover:border-brand-red/40 shrink-0">
+                <div className="w-7 h-7 rounded-lg bg-[[var(--k-surface)]] border border-[[var(--k-border)]] flex items-center justify-center text-brand-red group-hover:border-brand-red/40 shrink-0">
                   <Briefcase size={13} />
                 </div>
                 <div className="min-w-0">
-                  <span className="text-[10px] font-mono text-[#8A909D]/70 block leading-tight">{t('footer.recruitment')}</span>
+                  <span className="text-[10px] font-sans text-[[var(--k-text-secondary)]]/70 block leading-tight">{t('footer.recruitment')}</span>
                   <span className="font-medium text-white group-hover:text-brand-red text-[11px] truncate block">recruitment@kapitech.id</span>
                 </div>
               </a>
 
               <a href="tel:+6287769957062" className="flex items-center gap-2.5 hover:text-brand-red transition-colors group min-h-[36px]">
-                <div className="w-7 h-7 rounded-lg bg-[#16181D] border border-[#262930] flex items-center justify-center text-brand-red group-hover:border-brand-red/40 shrink-0">
+                <div className="w-7 h-7 rounded-lg bg-[[var(--k-surface)]] border border-[[var(--k-border)]] flex items-center justify-center text-brand-red group-hover:border-brand-red/40 shrink-0">
                   <Phone size={13} />
                 </div>
                 <div className="min-w-0">
-                  <span className="text-[10px] font-mono text-[#8A909D]/70 block leading-tight">{t('footer.phone')}</span>
+                  <span className="text-[10px] font-sans text-[[var(--k-text-secondary)]]/70 block leading-tight">{t('footer.phone')}</span>
                   <span className="font-medium text-white group-hover:text-brand-red text-[11px] block">+62 877-6995-7062</span>
                 </div>
               </a>
 
               <div className="flex items-start gap-2.5 pt-1">
-                <div className="w-7 h-7 rounded-lg bg-[#16181D] border border-[#262930] flex items-center justify-center text-brand-red shrink-0 mt-0.5">
+                <div className="w-7 h-7 rounded-lg bg-[[var(--k-surface)]] border border-[[var(--k-border)]] flex items-center justify-center text-brand-red shrink-0 mt-0.5">
                   <MapPin size={13} />
                 </div>
                 <div className="space-y-0.5">
-                  <span className="text-[10px] font-mono text-[#8A909D]/70 block leading-tight">{t('footer.addressTitle')}</span>
+                  <span className="text-[10px] font-sans text-[[var(--k-text-secondary)]]/70 block leading-tight">{t('footer.addressTitle')}</span>
                   <p className="leading-tight text-white/90 text-[11px] font-light">
                     {t('footer.address')}
                   </p>
@@ -392,8 +392,8 @@ export const Footer = () => {
         </div>
 
         {/* Social Media Links Bar (Crisp Monochrome Logo Icons) */}
-        <div className="py-6 border-t border-[#262930] flex flex-col md:flex-row items-center justify-between gap-4">
-          <span className="text-xs font-mono text-[#8A909D] uppercase tracking-widest">
+        <div className="py-6 border-t border-[[var(--k-border)]] flex flex-col md:flex-row items-center justify-between gap-4">
+          <span className="text-xs font-sans text-[[var(--k-text-secondary)]] uppercase tracking-widest">
             {language === 'id' ? 'Kanal Resmi & Media Sosial' : 'Official Channels & Social Media'}
           </span>
           <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
@@ -405,7 +405,7 @@ export const Footer = () => {
                 rel="noopener noreferrer"
                 aria-label={social.name}
                 title={social.name}
-                className="w-11 h-11 min-h-[44px] min-w-[44px] rounded-xl flex items-center justify-center text-[#8A909D] hover:text-white bg-[#16181D] hover:bg-[#20232B] hover:border-brand-red/30 border border-[#262930] transition-all duration-200"
+                className="w-11 h-11 min-h-[44px] min-w-[44px] rounded-xl flex items-center justify-center text-[[var(--k-text-secondary)]] hover:text-white bg-[[var(--k-surface)]] hover:bg-[[var(--k-surface-raised)]] hover:border-brand-red/30 border border-[[var(--k-border)]] transition-all duration-200"
               >
                 {social.icon}
               </a>
@@ -414,12 +414,12 @@ export const Footer = () => {
         </div>
 
         {/* Bottom Copyright Bar */}
-        <div className="pt-6 border-t border-[#262930] flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-[#8A909D]">
+        <div className="pt-6 border-t border-[[var(--k-border)]] flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-[[var(--k-text-secondary)]]">
           <p>© 2021-2026 Kapitech. {language === 'id' ? 'Beroperasi di bawah naungan PT Kapitech Digital Indonesia.' : 'Operating under PT Kapitech Digital Indonesia.'} {t('footer.rights')}</p>
           <div className="flex items-center gap-4 sm:gap-6">
             <Link 
               to="/admin/login" 
-              className="text-[#5C626E] hover:text-[#8A909D] transition-colors text-[11px] font-mono"
+              className="text-[[var(--k-text-tertiary)]] hover:text-[[var(--k-text-secondary)]] transition-colors text-[11px] font-sans"
               title="Kapitech Internal Admin Portal"
             >
               <span>Admin Portal</span>
@@ -427,7 +427,7 @@ export const Footer = () => {
             <button 
               onClick={scrollToTop} 
               id="footer-back-to-top"
-              className="flex items-center gap-1.5 hover:text-white transition-colors py-2 px-3 min-h-[36px] rounded-lg bg-[#16181D] hover:bg-[#20232B] border border-[#262930]"
+              className="flex items-center gap-1.5 hover:text-white transition-colors py-2 px-3 min-h-[36px] rounded-lg bg-[[var(--k-surface)]] hover:bg-[[var(--k-surface-raised)]] border border-[[var(--k-border)]]"
             >
               <span>{t('footer.backToTop')}</span>
               <ArrowUp size={14} />
