@@ -877,7 +877,7 @@ export const AdminLayout: React.FC = () => {
           </div>
 
           {/* Minimalist Global Search Bar */}
-          <div className="ams-search relative w-64 lg:w-80">
+          <div className="ams-search relative w-64 lg:w-80 shrink-0">
             <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--k-text-secondary)]" />
             <input
               type="text"
@@ -892,7 +892,7 @@ export const AdminLayout: React.FC = () => {
           </div>
 
           {/* Topbar Controls Container */}
-          <div className="flex items-center gap-3 text-xs font-sans text-[var(--k-text-secondary)]">
+          <div className="ams-header-utility flex items-center gap-3 text-xs font-sans text-[var(--k-text-secondary)]">
             {/* Currency Switcher (IDR / USD) */}
             <div className="flex items-center bg-[var(--k-surface)] border border-[var(--k-border)] rounded-[var(--k-control-radius)] p-[3px] font-sans text-xs">
               <button
@@ -942,7 +942,7 @@ export const AdminLayout: React.FC = () => {
             </div>
 
             {/* Live Studio Clock */}
-            <div className="flex items-center gap-1.5 bg-[var(--k-surface)] px-2.5 py-1.5 rounded-[var(--k-control-radius)] border border-[var(--k-border)] text-xs font-sans text-[var(--k-text-secondary)]">
+            <div className="ams-header-clock flex items-center gap-1.5 bg-[var(--k-surface)] px-2.5 py-1.5 rounded-[var(--k-control-radius)] border border-[var(--k-border)] text-xs font-sans text-[var(--k-text-secondary)]">
               <Clock size={12} className="text-[var(--k-red)]" />
               <span className="text-[var(--k-text)] font-medium">{currentTime || 'Jakarta WIB'}</span>
             </div>
@@ -1033,7 +1033,7 @@ export const AdminLayout: React.FC = () => {
               to="/"
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden lg:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-[var(--k-control-radius)] bg-[var(--k-surface)] border border-[var(--k-border)] hover:border-white/20 text-xs font-sans text-[var(--k-text-secondary)] hover:text-[var(--k-text)] transition-colors"
+              className="ams-header-public-link hidden lg:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-[var(--k-control-radius)] bg-[var(--k-surface)] border border-[var(--k-border)] hover:border-white/20 text-xs font-sans text-[var(--k-text-secondary)] hover:text-[var(--k-text)] transition-colors"
             >
               <span>kapitech.id</span>
               <ExternalLink size={10} />

@@ -98,7 +98,12 @@ export const Home = () => {
         />
 
         <div className="max-w-7xl mx-auto w-full relative z-10">
-          <div className="max-w-4xl">
+          <motion.div
+            className="max-w-4xl"
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          >
             {/* Status Chip */}
             <div className="kapi-hero-status inline-flex items-center gap-2.5 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full border border-white/10 bg-white/[0.045] backdrop-blur-xl mb-6 sm:mb-8">
               <span className="relative flex h-2 w-2">
@@ -110,7 +115,7 @@ export const Home = () => {
               </span>
             </div>
             
-            <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-sans font-bold leading-[1.1] sm:leading-[1.05] tracking-tight mb-5 sm:mb-8 text-white">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-sans font-bold leading-[1.04] sm:leading-[1.02] tracking-[-0.045em] mb-5 sm:mb-7 text-white">
               {language === 'id' ? (
                 <>Studio produk digital yang dirancang untuk <span className="text-brand-red">membangun & memperluas</span> bisnis Anda.</>
               ) : (
@@ -118,7 +123,7 @@ export const Home = () => {
               )}
             </h1>
             
-            <p className="text-sm sm:text-base md:text-xl text-[var(--k-text-secondary)] font-light leading-relaxed max-w-2xl mb-8 sm:mb-12">
+            <p className="text-sm sm:text-base md:text-lg text-[var(--k-text-secondary)] font-light leading-relaxed max-w-2xl mb-8 sm:mb-10">
               {language === 'id'
                 ? 'Kami merancang dan mengembangkan website berkinerja tinggi, aplikasi web kustom, sistem visual, dan infrastruktur cloud terpercaya untuk bisnis visioner.'
                 : 'We design and develop high-performance websites, custom web applications, visual systems, and resilient cloud infrastructures for visionary enterprises.'}
@@ -127,19 +132,19 @@ export const Home = () => {
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-center">
               <Link 
                 to="/contact" 
-                className="kapi-button kapi-button-primary px-7 sm:px-8 bg-brand-red hover:bg-[var(--k-red-hover)] text-white rounded-full text-xs font-semibold uppercase tracking-wider transition-colors duration-300 flex items-center justify-center gap-2 active:scale-[.98]"
+                className="kapi-button kapi-button-primary kapi-start-project px-7 sm:px-8 bg-brand-red hover:bg-[var(--k-red-hover)] text-white rounded-[14px] text-xs font-semibold uppercase tracking-wider transition-colors duration-300 flex items-center justify-center gap-2"
               >
                 <span>{language === 'id' ? 'Mulai Proyek' : 'Start a Project'}</span>
                 <ArrowUpRight size={16} />
               </Link>
               <Link 
                 to="/work" 
-                className="kapi-button kapi-button-secondary px-7 sm:px-8 rounded-full border border-white/[.12] bg-white/[.045] hover:bg-white/[.08] text-white transition-colors duration-300 text-xs font-semibold uppercase tracking-wider flex items-center justify-center gap-2 active:scale-[.98]"
+                className="kapi-button kapi-button-secondary px-7 sm:px-8 rounded-[14px] border border-white/[.12] bg-white/[.045] hover:bg-white/[.08] text-white transition-colors duration-300 text-xs font-semibold uppercase tracking-wider flex items-center justify-center gap-2 active:scale-[.98]"
               >
                 <span>{language === 'id' ? 'Jelajahi 50 Portofolio' : 'Explore 50 Case Studies'}</span>
               </Link>
             </div>
-          </div>
+          </motion.div>
         </div>
       </section>
 

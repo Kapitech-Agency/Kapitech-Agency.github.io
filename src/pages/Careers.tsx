@@ -682,7 +682,7 @@ export const Careers = () => {
             <div className="flex flex-wrap items-center gap-3 pt-2">
               <a 
                 href="#open-positions"
-                className="px-5 py-2.5 rounded-full bg-white text-black hover:bg-neutral-200 text-xs font-sans font-bold uppercase tracking-wider transition-all duration-300 flex items-center gap-2"
+                className="px-5 py-2.5 rounded-[14px] bg-white text-black hover:bg-neutral-200 text-xs font-sans font-bold uppercase tracking-wider transition-all duration-300 flex items-center gap-2"
               >
                 <span>{language === 'id' ? 'Posisi Studio On-site' : 'Studio Open Roles'}</span>
                 <ArrowUpRight size={14} />
@@ -692,7 +692,7 @@ export const Careers = () => {
                   setIsFreelanceModalOpen(true);
                   setIsVendorSubmitted(false);
                 }}
-                className="px-5 py-2.5 rounded-full bg-brand-red hover:bg-white hover:text-black text-white text-xs font-sans font-bold uppercase tracking-wider transition-all duration-300 flex items-center gap-2 shadow-[var(--k-shadow-sm)] shadow-brand-red/20"
+                className="px-5 py-2.5 rounded-[14px] bg-brand-red hover:bg-white hover:text-black text-white text-xs font-sans font-bold uppercase tracking-wider transition-all duration-300 flex items-center gap-2 shadow-[var(--k-shadow-sm)] shadow-brand-red/20"
               >
                 <FolderGit2 size={14} />
                 <span>{language === 'id' ? 'Daftar sebagai Freelance Vendor' : 'Apply as Freelance Vendor'}</span>
@@ -776,7 +776,7 @@ export const Careers = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/70 backdrop-blur-xl overflow-y-auto"
+              className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/70 backdrop-blur-xl overflow-y-auto kapi-modal-backdrop"
               onClick={() => setSelectedTalent(null)}
             >
               <motion.div
@@ -837,7 +837,7 @@ export const Careers = () => {
                 <div className="mt-5 sm:mt-6 pt-4 border-t border-[var(--k-border)] flex justify-end">
                   <button
                     onClick={() => setSelectedTalent(null)}
-                    className="w-full sm:w-auto px-6 py-2.5 bg-brand-red hover:bg-white hover:text-black text-white text-xs font-sans font-medium rounded-full transition-colors"
+                    className="w-full sm:w-auto px-6 py-2.5 rounded-[14px] bg-brand-red hover:bg-white hover:text-black text-white text-xs font-sans font-medium transition-colors"
                   >
                     {language === 'id' ? 'Tutup Profil' : 'Close Profile'}
                   </button>
@@ -911,7 +911,7 @@ export const Careers = () => {
                   </div>
 
                   <div className="flex items-center gap-3 shrink-0 pt-2 lg:pt-0">
-                    <span className="px-5 py-2.5 rounded-full bg-[var(--k-bg-deep)] group-hover:bg-brand-red text-white text-xs font-sans font-semibold uppercase tracking-wider transition-all duration-300 flex items-center gap-2 border border-[var(--k-border)] group-hover:border-brand-red">
+                    <span className="px-5 py-2.5 rounded-[14px] bg-[var(--k-bg-deep)] group-hover:bg-brand-red text-white text-xs font-sans font-semibold uppercase tracking-wider transition-all duration-300 flex items-center gap-2 border border-[var(--k-border)] group-hover:border-brand-red">
                       <span>{language === 'id' ? 'Lihat Detail & Lamar' : 'View Role & Apply'}</span>
                       <ArrowUpRight size={14} />
                     </span>
@@ -953,7 +953,7 @@ export const Careers = () => {
                   setIsFreelanceModalOpen(true);
                   setIsVendorSubmitted(false);
                 }}
-                className="w-full sm:w-auto px-6 py-3.5 rounded-full bg-brand-red hover:bg-white text-white hover:text-black font-semibold text-xs font-sans uppercase tracking-wider transition-all duration-300 shadow-[var(--k-shadow-sm)] shadow-brand-red/20 flex items-center justify-center gap-2.5"
+                className="w-full sm:w-auto px-6 py-3.5 rounded-[14px] bg-brand-red hover:bg-white text-white hover:text-black font-semibold text-xs font-sans uppercase tracking-wider transition-all duration-300 shadow-[var(--k-shadow-sm)] shadow-brand-red/20 flex items-center justify-center gap-2.5"
               >
                 <FolderGit2 size={16} />
                 <span>{language === 'id' ? 'Daftar sebagai Freelance Vendor' : 'Apply as Freelance Vendor'}</span>
@@ -1196,7 +1196,7 @@ export const Careers = () => {
       {/* Detail & Application Modal */}
       <AnimatePresence>
         {selectedPosition && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 overflow-y-auto bg-black/70 backdrop-blur-xl">
+          <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 sm:p-6 overflow-y-auto bg-black/70 backdrop-blur-xl kapi-modal-backdrop">
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -1450,7 +1450,7 @@ export const Careers = () => {
       {/* Freelance Vendor Application Modal */}
       <AnimatePresence>
         {isFreelanceModalOpen && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 overflow-y-auto bg-black/70 backdrop-blur-xl">
+          <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 sm:p-6 overflow-y-auto bg-black/70 backdrop-blur-xl kapi-modal-backdrop">
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -1517,7 +1517,7 @@ export const Careers = () => {
                           setIsFreelanceModalOpen(false);
                           setIsVendorSubmitted(false);
                         }}
-                        className="px-6 py-2.5 rounded-full bg-white text-black hover:bg-neutral-200 text-xs font-sans font-bold uppercase tracking-wider transition-colors"
+                        className="px-6 py-2.5 rounded-[14px] bg-white text-black hover:bg-neutral-200 text-xs font-sans font-bold uppercase tracking-wider transition-colors"
                       >
                         {language === 'id' ? 'Tutup Formulir' : 'Close Form'}
                       </button>

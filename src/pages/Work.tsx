@@ -374,7 +374,7 @@ export const Work = () => {
                     setActiveService(srv);
                     setVisibleCount(12);
                   }}
-                  className={`px-3.5 py-2 rounded-full text-xs font-sans whitespace-nowrap transition-all duration-200 shrink-0 border min-h-[38px] flex items-center ${
+                  className={`px-3.5 py-2 rounded-[10px] text-xs font-sans whitespace-nowrap transition-all duration-200 shrink-0 border min-h-[38px] flex items-center ${
                     activeService === srv
                       ? 'bg-brand-red text-white border-brand-red font-semibold shadow-md shadow-brand-red/20'
                       : 'bg-[var(--k-surface)] text-[var(--k-text-secondary)] border-[var(--k-border)] hover:border-brand-red/40 hover:text-white'
@@ -433,7 +433,7 @@ export const Work = () => {
                   setActiveService('All');
                   setSearchQuery('');
                 }}
-                className="px-6 py-3 rounded-full bg-brand-red text-white text-xs font-sans font-semibold hover:bg-[var(--k-red-hover)] transition-colors min-h-[44px]"
+                className="px-6 py-3 rounded-[14px] bg-brand-red text-white text-xs font-sans font-semibold hover:bg-[var(--k-red-hover)] transition-colors min-h-[44px]"
               >
                 {language === 'id' ? 'Lihat Semua 50 Portofolio' : 'View All 50 Projects'}
               </button>
@@ -507,7 +507,7 @@ export const Work = () => {
                 <div className="text-center pt-12">
                   <button
                     onClick={() => setVisibleCount(prev => prev + 12)}
-                    className="px-8 py-3.5 rounded-full bg-[var(--k-surface)] hover:bg-brand-red text-white border border-[var(--k-border)] hover:border-brand-red text-xs font-sans font-semibold transition-all duration-300 shadow-[var(--k-shadow-sm)] min-h-[44px]"
+                    className="px-8 py-3.5 rounded-[14px] bg-[var(--k-surface)] hover:bg-brand-red text-white border border-[var(--k-border)] hover:border-brand-red text-xs font-sans font-semibold transition-all duration-300 shadow-[var(--k-shadow-sm)] min-h-[44px]"
                   >
                     {language === 'id' ? 'Muat Lebih Banyak Studi Kasus' : 'Load More Case Studies'} ({filteredProjects.length - visibleCount} {language === 'id' ? 'tersisa' : 'remaining'})
                   </button>
@@ -521,7 +521,7 @@ export const Work = () => {
       {/* Case Study Detail Modal */}
       <AnimatePresence>
         {selectedProject && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 overflow-y-auto bg-black/85 backdrop-blur-md">
+          <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 sm:p-6 overflow-y-auto bg-black/85 backdrop-blur-md kapi-modal-backdrop">
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -658,7 +658,7 @@ export const Work = () => {
                   <Link
                     to="/contact"
                     onClick={() => setSelectedProject(null)}
-                    className="px-6 py-3 rounded-full bg-brand-red hover:bg-[var(--k-red-hover)] text-white text-xs font-semibold uppercase tracking-wider transition-colors shrink-0 flex items-center gap-2 shadow-[var(--k-shadow-sm)] shadow-brand-red/20 min-h-[44px]"
+                    className="px-6 py-3 rounded-[14px] bg-brand-red hover:bg-[var(--k-red-hover)] text-white text-xs font-semibold uppercase tracking-wider transition-colors shrink-0 flex items-center gap-2 shadow-[var(--k-shadow-sm)] shadow-brand-red/20 min-h-[44px]"
                   >
                     <span>{language === 'id' ? 'Mulai Konsultasi' : 'Start Project'}</span>
                     <ArrowUpRight size={14} />

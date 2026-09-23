@@ -88,7 +88,7 @@ export const FloatingContact = () => {
                         {option.label}
                       </span>
                       <div className={cn(
-                        "w-11 h-11 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-white shadow-[var(--k-shadow-sm)] transition-transform hover:scale-[1.02] active:scale-95 shrink-0",
+                        "w-11 h-11 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-white shadow-[var(--k-shadow-sm)] transition-transform hover:translate-y-[-1px] active:scale-95 shrink-0",
                         option.color
                       )}>
                         {option.icon}
@@ -106,7 +106,7 @@ export const FloatingContact = () => {
                         {option.label}
                       </span>
                       <div className={cn(
-                        "w-11 h-11 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-white shadow-[var(--k-shadow-sm)] transition-transform hover:scale-[1.02] active:scale-95 shrink-0",
+                        "w-11 h-11 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-white shadow-[var(--k-shadow-sm)] transition-transform hover:translate-y-[-1px] active:scale-95 shrink-0",
                         option.color
                       )}>
                         {option.icon}

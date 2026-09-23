@@ -88,14 +88,14 @@ export const Testimonials = () => {
           <div className="flex items-center gap-2.5 self-start sm:self-auto">
             <button 
               onClick={prev}
-              className="w-11 h-11 rounded-full border border-[var(--k-border)] bg-[var(--k-surface)] flex items-center justify-center text-[var(--k-text-secondary)] hover:text-white hover:border-brand-red/50 active:scale-95 transition-all"
+              className="w-11 h-11 rounded-full border border-[var(--k-border)] bg-[var(--k-surface)] flex items-center justify-center text-[var(--k-text-secondary)] hover:text-white hover:border-brand-red/50 hover:-translate-y-0.5 active:scale-95 transition-all"
               aria-label="Previous testimonials"
             >
               <ChevronLeft size={18} />
             </button>
             <button 
               onClick={next}
-              className="w-11 h-11 rounded-full border border-[var(--k-border)] bg-[var(--k-surface)] flex items-center justify-center text-[var(--k-text-secondary)] hover:text-white hover:border-brand-red/50 active:scale-95 transition-all"
+              className="w-11 h-11 rounded-full border border-[var(--k-border)] bg-[var(--k-surface)] flex items-center justify-center text-[var(--k-text-secondary)] hover:text-white hover:border-brand-red/50 hover:-translate-y-0.5 active:scale-95 transition-all"
               aria-label="Next testimonials"
             >
               <ChevronRight size={18} />
