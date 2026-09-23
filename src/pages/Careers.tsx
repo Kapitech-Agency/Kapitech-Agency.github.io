@@ -659,13 +659,13 @@ export const Careers = () => {
             <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-sans font-bold tracking-tight text-white mb-6">
               {language === 'id' ? 'Berkarya Bersama Kapitech.' : 'Build the Future With Us.'}
             </h1>
-            <p className="text-base sm:text-lg text-[[var(--k-text-secondary)]] font-light leading-relaxed mb-6">
+            <p className="text-base sm:text-lg text-[var(--k-text-secondary)]] font-light leading-relaxed mb-6">
               {language === 'id'
                 ? 'Kami membuka kesempatan bagi talenta on-site studio di Tangerang Selatan serta jaringan Freelance Vendor berbasis proyek (100% WFA) untuk berkolaborasi menggarap produk digital kelas dunia.'
                 : 'We offer on-site studio roles in South Tangerang as well as a global Freelance Vendor network (100% WFA, Project-Based) to build exceptional digital products together.'
               }
             </p>
-            <div className="flex flex-wrap items-center gap-3 text-xs font-sans text-[[var(--k-text-secondary)]] mb-6">
+            <div className="flex flex-wrap items-center gap-3 text-xs font-sans text-[var(--k-text-secondary)]] mb-6">
               <span className="px-3 py-1.5 rounded-full bg-[#161616] border border-[var(--k-border)] flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                 <span>2 {language === 'id' ? 'Posisi Studio Terbuka' : 'Studio Roles Hiring'}</span>
@@ -715,7 +715,7 @@ export const Careers = () => {
                 {language === 'id' ? 'Bergabung Bersama 12 Talenta Terbaik Kami' : 'Join with our 12 great talents'}
               </h2>
             </div>
-            <p className="text-xs sm:text-sm text-[[var(--k-text-secondary)]] font-light max-w-md">
+            <p className="text-xs sm:text-sm text-[var(--k-text-secondary)]] font-light max-w-md">
               {language === 'id'
                 ? 'Bekerja bahu-membahu bersama para insinyur software, desainer visual, animator 3D, dan spesialis kreatif kami.'
                 : 'Collaborate shoulder-to-shoulder with our multidisciplinary squad of software engineers, visual designers, 3D animators, and creative strategists.'
@@ -809,7 +809,7 @@ export const Careers = () => {
                     <h3 className="text-lg sm:text-xl font-sans font-bold text-white truncate">
                       {selectedTalent.name}
                     </h3>
-                    <p className="text-xs text-[[var(--k-text-secondary)]] truncate">
+                    <p className="text-xs text-[var(--k-text-secondary)]] truncate">
                       {selectedTalent.role}
                     </p>
                   </div>
@@ -817,7 +817,7 @@ export const Careers = () => {
 
                 <div className="space-y-3.5 sm:space-y-4 text-xs font-light text-white/80 border-t border-[var(--k-border)] pt-4">
                   <div>
-                    <span className="text-[10px] font-sans uppercase text-[[var(--k-text-secondary)]] block mb-1">
+                    <span className="text-[10px] font-sans uppercase text-[var(--k-text-secondary)]] block mb-1">
                       {language === 'id' ? 'Fokus Keahlian' : 'Core Specialty'}
                     </span>
                     <p className="font-sans text-brand-red font-medium text-xs sm:text-sm">
@@ -825,10 +825,10 @@ export const Careers = () => {
                     </p>
                   </div>
                   <div>
-                    <span className="text-[10px] font-sans uppercase text-[[var(--k-text-secondary)]] block mb-1">
+                    <span className="text-[10px] font-sans uppercase text-[var(--k-text-secondary)]] block mb-1">
                       {language === 'id' ? 'Tentang Praktik Kerja' : 'About Craft & Practice'}
                     </span>
-                    <p className="leading-relaxed text-[[var(--k-text-secondary)]]">
+                    <p className="leading-relaxed text-[var(--k-text-secondary)]]">
                       {selectedTalent.bio}
                     </p>
                   </div>
@@ -860,7 +860,7 @@ export const Careers = () => {
                 {language === 'id' ? 'Posisi yang Sedang Dibuka' : 'Available Roles'}
               </h2>
             </div>
-            <p className="text-xs sm:text-sm text-[[var(--k-text-secondary)]] font-light max-w-md">
+            <p className="text-xs sm:text-sm text-[var(--k-text-secondary)]] font-light max-w-md">
               {language === 'id'
                 ? 'Klik salah satu posisi di bawah ini untuk melihat detail kualifikasi, tanggung jawab, dan mengirimkan lamaran langsung.'
                 : 'Click any role below to review full responsibilities, qualification benchmarks, and submit your application.'
@@ -882,7 +882,7 @@ export const Careers = () => {
                       <span className="px-3 py-1 rounded-full bg-brand-red/10 border border-brand-red/30 text-brand-red text-xs font-sans font-medium">
                         {pos.workplace}
                       </span>
-                      <span className="px-3 py-1 rounded-full bg-[var(--k-bg-deep)] border border-[var(--k-border)] text-[[var(--k-text-secondary)]] text-xs font-sans">
+                      <span className="px-3 py-1 rounded-full bg-[var(--k-bg-deep)] border border-[var(--k-border)] text-[var(--k-text-secondary)]] text-xs font-sans">
                         {pos.department}
                       </span>
                       <span className="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-sans">
@@ -894,11 +894,11 @@ export const Careers = () => {
                       {pos.title}
                     </h3>
 
-                    <p className="text-sm text-[[var(--k-text-secondary)]] font-light leading-relaxed">
+                    <p className="text-sm text-[var(--k-text-secondary)]] font-light leading-relaxed">
                       {pos.summary}
                     </p>
 
-                    <div className="flex flex-wrap items-center gap-4 text-xs font-sans text-[[var(--k-text-secondary)]] pt-1">
+                    <div className="flex flex-wrap items-center gap-4 text-xs font-sans text-[var(--k-text-secondary)]] pt-1">
                       <div className="flex items-center gap-1.5">
                         <MapPin size={13} className="text-brand-red" />
                         <span>{pos.location}</span>
@@ -939,7 +939,7 @@ export const Careers = () => {
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-sans font-bold text-white tracking-tight">
                 {language === 'id' ? 'Apply as a Freelance Vendor' : 'Apply as a Freelance Vendor'}
               </h2>
-              <p className="mt-4 text-sm sm:text-base text-[[var(--k-text-secondary)]] font-light leading-relaxed">
+              <p className="mt-4 text-sm sm:text-base text-[var(--k-text-secondary)]] font-light leading-relaxed">
                 {language === 'id'
                   ? 'Kapitech secara aktif berkolaborasi dengan para freelancer bertalenta, independent designer, dan developer profesional untuk menggarap proyek-proyek inovatif skala global & nasional. Pekerjaan bersifat 100% WFA (Work From Anywhere) dengan sistem kontrak berbasis proyek (Project-Based).'
                   : 'Kapitech actively collaborates with top-tier freelancers, independent designers, and specialized developers to execute high-stakes digital products for global scaleups. All engagements are 100% remote (WFA) under a project-based contract model.'
@@ -972,7 +972,7 @@ export const Careers = () => {
                 <h4 className="text-xs font-sans uppercase tracking-wider text-brand-red font-bold mb-1">
                   {language === 'id' ? '100% WFA (Remote)' : '100% WFA (Remote)'}
                 </h4>
-                <p className="text-xs text-[[var(--k-text-secondary)]] font-light">
+                <p className="text-xs text-[var(--k-text-secondary)]] font-light">
                   {language === 'id' ? 'Bekerja fleksibel dari mana saja tanpa batasan geografi.' : 'Work from anywhere globally with complete location flexibility.'}
                 </p>
               </div>
@@ -986,7 +986,7 @@ export const Careers = () => {
                 <h4 className="text-xs font-sans uppercase tracking-wider text-brand-red font-bold mb-1">
                   {language === 'id' ? 'Project-Based' : 'Project-Based'}
                 </h4>
-                <p className="text-xs text-[[var(--k-text-secondary)]] font-light">
+                <p className="text-xs text-[var(--k-text-secondary)]] font-light">
                   {language === 'id' ? 'Kontrak penugasan per milestone proyek dengan scope terdefinisi jelas.' : 'Engagement scoped per milestone with clear deliverables and fees.'}
                 </p>
               </div>
@@ -1000,7 +1000,7 @@ export const Careers = () => {
                 <h4 className="text-xs font-sans uppercase tracking-wider text-amber-400 font-bold mb-1">
                   {language === 'id' ? 'BYOD (No Device)' : 'BYOD (No Device)'}
                 </h4>
-                <p className="text-xs text-[[var(--k-text-secondary)]] font-light">
+                <p className="text-xs text-[var(--k-text-secondary)]] font-light">
                   {language === 'id' ? 'Kami TIDAK menyediakan device/laptop. Gunakan perangkat & lisensi pribadi.' : 'We do NOT provide devices/hardware. BYOD with your own workstations.'}
                 </p>
               </div>
@@ -1014,7 +1014,7 @@ export const Careers = () => {
                 <h4 className="text-xs font-sans uppercase tracking-wider text-emerald-400 font-bold mb-1">
                   {language === 'id' ? 'NDA & Ketepatan Waktu' : 'NDA & Strict Deadlines'}
                 </h4>
-                <p className="text-xs text-[[var(--k-text-secondary)]] font-light">
+                <p className="text-xs text-[var(--k-text-secondary)]] font-light">
                   {language === 'id' ? 'Kerahasiaan data klien terjamin & disiplin deadline yang tinggi.' : 'Signed client NDA protection & rigorous milestone adherence.'}
                 </p>
               </div>
@@ -1032,7 +1032,7 @@ export const Careers = () => {
                 <h3 className="text-lg font-sans font-bold text-white mb-3">
                   {language === 'id' ? 'Deskripsi Kemitraan' : 'Partnership Model'}
                 </h3>
-                <p className="text-xs text-[[var(--k-text-secondary)]] font-light leading-relaxed mb-4">
+                <p className="text-xs text-[var(--k-text-secondary)]] font-light leading-relaxed mb-4">
                   {language === 'id'
                     ? 'Kami menjembatani talenta spesialis dengan proyek riil dari klien korporat, startup VC, dan scaleup internasional tanpa birokrasi berbelit.'
                     : 'We connect specialized independent contractors with real projects from venture-backed startups and enterprises with zero unnecessary friction.'
@@ -1064,7 +1064,7 @@ export const Careers = () => {
                 <h3 className="text-lg font-sans font-bold text-white mb-3">
                   {language === 'id' ? 'Aturan & Ketentuan' : 'Rules & Standards'}
                 </h3>
-                <p className="text-xs text-[[var(--k-text-secondary)]] font-light leading-relaxed mb-4">
+                <p className="text-xs text-[var(--k-text-secondary)]] font-light leading-relaxed mb-4">
                   {language === 'id'
                     ? 'Integritas, kepatuhan pada milestone yang telah disetujui, dan standar kualitas adalah nilai utama kami.'
                     : 'Integrity, adherence to committed milestone deadlines, and pristine craft quality are non-negotiables.'
@@ -1096,7 +1096,7 @@ export const Careers = () => {
                 <h3 className="text-lg font-sans font-bold text-white mb-3">
                   {language === 'id' ? 'Benefit & Keuntungan' : 'Vendor Benefits'}
                 </h3>
-                <p className="text-xs text-[[var(--k-text-secondary)]] font-light leading-relaxed mb-4">
+                <p className="text-xs text-[var(--k-text-secondary)]] font-light leading-relaxed mb-4">
                   {language === 'id'
                     ? 'Dapatkan apresiasi finansial yang pantas atas keahlian Anda dengan kepastian pembayaran yang transparan.'
                     : 'Receive fair, premium milestone compensation with prompt payouts upon approved deliverables.'
@@ -1128,7 +1128,7 @@ export const Careers = () => {
                 <h3 className="text-lg font-sans font-bold text-white mb-3">
                   {language === 'id' ? 'Keahlian yang Dicari' : 'Roles & Skills We Need'}
                 </h3>
-                <p className="text-xs text-[[var(--k-text-secondary)]] font-light leading-relaxed mb-4">
+                <p className="text-xs text-[var(--k-text-secondary)]] font-light leading-relaxed mb-4">
                   {language === 'id'
                     ? 'Kami secara berkelanjutan menyaring mitra vendor pada domain berikut:'
                     : 'We continuously recruit high-caliber vendor partners across these domains:'
@@ -1183,7 +1183,7 @@ export const Careers = () => {
                   <h3 className="text-lg font-sans font-bold text-white mb-2">
                     {benefit.title}
                   </h3>
-                  <p className="text-xs sm:text-sm text-[[var(--k-text-secondary)]] font-light leading-relaxed">
+                  <p className="text-xs sm:text-sm text-[var(--k-text-secondary)]] font-light leading-relaxed">
                     {benefit.desc}
                   </p>
                 </div>
@@ -1212,7 +1212,7 @@ export const Careers = () => {
                       <span className="px-2.5 py-0.5 rounded-full bg-brand-red/15 border border-brand-red/40 text-brand-red text-[11px] font-sans font-semibold">
                         {selectedPosition.workplace}
                       </span>
-                      <span className="text-[11px] font-sans text-[[var(--k-text-secondary)]]">
+                      <span className="text-[11px] font-sans text-[var(--k-text-secondary)]]">
                         {selectedPosition.department}
                       </span>
                     </div>
@@ -1226,14 +1226,14 @@ export const Careers = () => {
                       setSelectedPosition(null);
                       setIsSubmitted(false);
                     }}
-                    className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/5 hover:bg-white/15 border border-[var(--k-border)] flex items-center justify-center text-[[var(--k-text-secondary)]] hover:text-white transition-colors shrink-0"
+                    className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/5 hover:bg-white/15 border border-[var(--k-border)] flex items-center justify-center text-[var(--k-text-secondary)]] hover:text-white transition-colors shrink-0"
                     aria-label="Close modal"
                   >
                     <X size={18} />
                   </button>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-xs font-sans text-[[var(--k-text-secondary)]]">
+                <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-xs font-sans text-[var(--k-text-secondary)]]">
                   <span className="flex items-center gap-1.5">
                     <MapPin size={13} className="text-brand-red shrink-0" />
                     <span>{selectedPosition.location}</span>
@@ -1288,7 +1288,7 @@ export const Careers = () => {
                   <h4 className="text-lg font-sans font-bold text-white mb-2">
                     {language === 'id' ? 'Kirimkan Lamaran Anda' : 'Submit Your Application'}
                   </h4>
-                  <p className="text-xs text-[[var(--k-text-secondary)]] font-light mb-6">
+                  <p className="text-xs text-[var(--k-text-secondary)]] font-light mb-6">
                     {language === 'id'
                       ? 'Lengkapi formulir di bawah ini atau kirimkan CV & portofolio Anda langsung ke recruitment@kapitech.id'
                       : 'Fill in the form below or send your resume and portfolio directly to recruitment@kapitech.id'
@@ -1326,7 +1326,7 @@ export const Careers = () => {
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-[11px] font-sans text-[[var(--k-text-secondary)]] mb-1.5 uppercase">
+                          <label className="block text-[11px] font-sans text-[var(--k-text-secondary)]] mb-1.5 uppercase">
                             {language === 'id' ? 'Nama Lengkap *' : 'Full Name *'}
                           </label>
                           <input 
@@ -1344,7 +1344,7 @@ export const Careers = () => {
                         </div>
 
                         <div>
-                          <label className="block text-[11px] font-sans text-[[var(--k-text-secondary)]] mb-1.5 uppercase">
+                          <label className="block text-[11px] font-sans text-[var(--k-text-secondary)]] mb-1.5 uppercase">
                             {language === 'id' ? 'Alamat Email *' : 'Email Address *'}
                           </label>
                           <input 
@@ -1364,7 +1364,7 @@ export const Careers = () => {
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-[11px] font-sans text-[[var(--k-text-secondary)]] mb-1.5 uppercase">
+                          <label className="block text-[11px] font-sans text-[var(--k-text-secondary)]] mb-1.5 uppercase">
                             {language === 'id' ? 'Nomor WhatsApp / HP *' : 'Phone / WhatsApp *'}
                           </label>
                           <input 
@@ -1382,7 +1382,7 @@ export const Careers = () => {
                         </div>
 
                         <div>
-                          <label className="block text-[11px] font-sans text-[[var(--k-text-secondary)]] mb-1.5 uppercase">
+                          <label className="block text-[11px] font-sans text-[var(--k-text-secondary)]] mb-1.5 uppercase">
                             {language === 'id' ? 'Tautan Portofolio / LinkedIn *' : 'Portfolio / LinkedIn URL *'}
                           </label>
                           <input 
@@ -1398,7 +1398,7 @@ export const Careers = () => {
                       </div>
 
                       <div>
-                        <label className="block text-[11px] font-sans text-[[var(--k-text-secondary)]] mb-1.5 uppercase">
+                        <label className="block text-[11px] font-sans text-[var(--k-text-secondary)]] mb-1.5 uppercase">
                           {language === 'id' ? 'Pesan / Pengantar Singkat' : 'Cover Note / Introduction'}
                         </label>
                         <textarea 
@@ -1412,7 +1412,7 @@ export const Careers = () => {
                       </div>
 
                       <div>
-                        <label className="block text-[11px] font-sans text-[[var(--k-text-secondary)]] mb-1.5 uppercase">
+                        <label className="block text-[11px] font-sans text-[var(--k-text-secondary)]] mb-1.5 uppercase">
                           {language === 'id' ? 'Unggah CV / Resume (PDF maks 5MB)' : 'Upload Resume / CV (PDF max 5MB)'}
                         </label>
                         <div className="relative border border-dashed border-[var(--k-border)] rounded-xl p-4 text-center hover:border-brand-red/50 transition-colors bg-[var(--k-bg)]/50">
@@ -1423,7 +1423,7 @@ export const Careers = () => {
                             className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
                           />
                           <Upload className="w-5 h-5 text-white/40 mx-auto mb-1.5" />
-                          <span className="text-xs text-[[var(--k-text-secondary)]] font-sans block">
+                          <span className="text-xs text-[var(--k-text-secondary)]] font-sans block">
                             {formData.resume ? formData.resume.name : (language === 'id' ? 'Klik atau seret file CV Anda ke sini' : 'Click or drag your CV file here')}
                           </span>
                         </div>
@@ -1480,14 +1480,14 @@ export const Careers = () => {
                       setIsFreelanceModalOpen(false);
                       setIsVendorSubmitted(false);
                     }}
-                    className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/5 hover:bg-white/15 border border-[var(--k-border)] flex items-center justify-center text-[[var(--k-text-secondary)]] hover:text-white transition-colors shrink-0"
+                    className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/5 hover:bg-white/15 border border-[var(--k-border)] flex items-center justify-center text-[var(--k-text-secondary)]] hover:text-white transition-colors shrink-0"
                     aria-label="Close modal"
                   >
                     <X size={18} />
                   </button>
                 </div>
 
-                <p className="text-xs text-[[var(--k-text-secondary)]] font-light">
+                <p className="text-xs text-[var(--k-text-secondary)]] font-light">
                   {language === 'id'
                     ? 'Daftarkan profil Anda untuk bergabung dalam jaringan vendor spesialis Kapitech. Kami akan menghubungi Anda ketika terdapat proyek yang cocok dengan keahlian Anda.'
                     : 'Submit your profile to join Kapitech’s vetted vendor network. We will reach out when a project matching your expertise becomes available.'
@@ -1505,7 +1505,7 @@ export const Careers = () => {
                     <h3 className="text-xl sm:text-2xl font-sans font-bold text-white">
                       {language === 'id' ? 'Pendaftaran Vendor Berhasil Diterima!' : 'Vendor Application Received!'}
                     </h3>
-                    <p className="text-xs sm:text-sm text-[[var(--k-text-secondary)]] max-w-lg mx-auto font-light leading-relaxed">
+                    <p className="text-xs sm:text-sm text-[var(--k-text-secondary)]] max-w-lg mx-auto font-light leading-relaxed">
                       {language === 'id'
                         ? 'Terima kasih atas minat Anda bermitra dengan Kapitech. Tim operasional dan tech/creative lead kami akan meninjau portofolio Anda dan menghubungi Anda via WhatsApp/Email saat proyek baru dimulai.'
                         : 'Thank you for registering. Our creative and engineering leads will review your portfolio and reach out via WhatsApp/Email when matching project scopes kick off.'
@@ -1541,7 +1541,7 @@ export const Careers = () => {
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-[11px] font-sans text-[[var(--k-text-secondary)]] mb-1.5 uppercase font-semibold">
+                        <label className="block text-[11px] font-sans text-[var(--k-text-secondary)]] mb-1.5 uppercase font-semibold">
                           {language === 'id' ? 'Nama Lengkap / Studio *' : 'Full Name / Studio Name *'}
                         </label>
                         <input 
@@ -1559,7 +1559,7 @@ export const Careers = () => {
                       </div>
 
                       <div>
-                        <label className="block text-[11px] font-sans text-[[var(--k-text-secondary)]] mb-1.5 uppercase font-semibold">
+                        <label className="block text-[11px] font-sans text-[var(--k-text-secondary)]] mb-1.5 uppercase font-semibold">
                           {language === 'id' ? 'Alamat Email *' : 'Email Address *'}
                         </label>
                         <input 
@@ -1579,7 +1579,7 @@ export const Careers = () => {
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-[11px] font-sans text-[[var(--k-text-secondary)]] mb-1.5 uppercase font-semibold">
+                        <label className="block text-[11px] font-sans text-[var(--k-text-secondary)]] mb-1.5 uppercase font-semibold">
                           {language === 'id' ? 'Nomor WhatsApp Aktif *' : 'WhatsApp Number (Active) *'}
                         </label>
                         <input 
@@ -1597,7 +1597,7 @@ export const Careers = () => {
                       </div>
 
                       <div>
-                        <label className="block text-[11px] font-sans text-[[var(--k-text-secondary)]] mb-1.5 uppercase font-semibold">
+                        <label className="block text-[11px] font-sans text-[var(--k-text-secondary)]] mb-1.5 uppercase font-semibold">
                           {language === 'id' ? 'Spesialisasi Utama *' : 'Primary Specialty *'}
                         </label>
                         <select
@@ -1620,7 +1620,7 @@ export const Careers = () => {
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-[11px] font-sans text-[[var(--k-text-secondary)]] mb-1.5 uppercase font-semibold">
+                        <label className="block text-[11px] font-sans text-[var(--k-text-secondary)]] mb-1.5 uppercase font-semibold">
                           {language === 'id' ? 'Tautan Portofolio / GitHub / Dribbble *' : 'Portfolio / GitHub / Dribbble URL *'}
                         </label>
                         <input 
@@ -1635,7 +1635,7 @@ export const Careers = () => {
                       </div>
 
                       <div>
-                        <label className="block text-[11px] font-sans text-[[var(--k-text-secondary)]] mb-1.5 uppercase font-semibold">
+                        <label className="block text-[11px] font-sans text-[var(--k-text-secondary)]] mb-1.5 uppercase font-semibold">
                           {language === 'id' ? 'Ekspektasi Rate Card (per Proyek / Jam)' : 'Rate Card Expectation (per Project / Hourly)'}
                         </label>
                         <input 
@@ -1651,7 +1651,7 @@ export const Careers = () => {
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-[11px] font-sans text-[[var(--k-text-secondary)]] mb-1.5 uppercase font-semibold">
+                        <label className="block text-[11px] font-sans text-[var(--k-text-secondary)]] mb-1.5 uppercase font-semibold">
                           {language === 'id' ? 'Pengalaman Profesional' : 'Years of Experience'}
                         </label>
                         <select
@@ -1668,7 +1668,7 @@ export const Careers = () => {
                       </div>
 
                       <div>
-                        <label className="block text-[11px] font-sans text-[[var(--k-text-secondary)]] mb-1.5 uppercase font-semibold">
+                        <label className="block text-[11px] font-sans text-[var(--k-text-secondary)]] mb-1.5 uppercase font-semibold">
                           {language === 'id' ? 'Alat Kerja / Stack Utama' : 'Core Tools & Tech Stack'}
                         </label>
                         <input 
@@ -1695,7 +1695,7 @@ export const Careers = () => {
                           required
                           checked={vendorFormData.agreedWfa}
                           onChange={handleVendorInputChange}
-                          className="mt-0.5 rounded border-[var(--k-border)] text-brand-red focus:ring-brand-red bg-[[var(--k-surface)]] w-4 h-4 shrink-0"
+                          className="mt-0.5 rounded border-[var(--k-border)] text-brand-red focus:ring-brand-red bg-[var(--k-surface)]] w-4 h-4 shrink-0"
                         />
                         <span>
                           <strong>100% WFA & Project-Based:</strong> {language === 'id' 
@@ -1711,7 +1711,7 @@ export const Careers = () => {
                           required
                           checked={vendorFormData.agreedDevice}
                           onChange={handleVendorInputChange}
-                          className="mt-0.5 rounded border-[var(--k-border)] text-brand-red focus:ring-brand-red bg-[[var(--k-surface)]] w-4 h-4 shrink-0"
+                          className="mt-0.5 rounded border-[var(--k-border)] text-brand-red focus:ring-brand-red bg-[var(--k-surface)]] w-4 h-4 shrink-0"
                         />
                         <span>
                           <strong>BYOD (No Device Provided):</strong> {language === 'id'
@@ -1727,7 +1727,7 @@ export const Careers = () => {
                           required
                           checked={vendorFormData.agreedNda}
                           onChange={handleVendorInputChange}
-                          className="mt-0.5 rounded border-[var(--k-border)] text-brand-red focus:ring-brand-red bg-[[var(--k-surface)]] w-4 h-4 shrink-0"
+                          className="mt-0.5 rounded border-[var(--k-border)] text-brand-red focus:ring-brand-red bg-[var(--k-surface)]] w-4 h-4 shrink-0"
                         />
                         <span>
                           <strong>NDA & Deadline Discipline:</strong> {language === 'id'
@@ -1738,7 +1738,7 @@ export const Careers = () => {
                     </div>
 
                     <div>
-                      <label className="block text-[11px] font-sans text-[[var(--k-text-secondary)]] mb-1.5 uppercase font-semibold">
+                      <label className="block text-[11px] font-sans text-[var(--k-text-secondary)]] mb-1.5 uppercase font-semibold">
                         {language === 'id' ? 'Catatan Tambahan / Deskripsi Keahlian' : 'Additional Notes / Key Highlights'}
                       </label>
                       <textarea 
@@ -1752,7 +1752,7 @@ export const Careers = () => {
                     </div>
 
                     <div>
-                      <label className="block text-[11px] font-sans text-[[var(--k-text-secondary)]] mb-1.5 uppercase font-semibold">
+                      <label className="block text-[11px] font-sans text-[var(--k-text-secondary)]] mb-1.5 uppercase font-semibold">
                         {language === 'id' ? 'Unggah CV / Portofolio PDF (Opsional, maks 5MB)' : 'Upload CV / Portfolio PDF (Optional, max 5MB)'}
                       </label>
                       <div className="relative border border-dashed border-[var(--k-border)] rounded-xl p-4 text-center hover:border-brand-red/50 transition-colors bg-[var(--k-bg)]/50">
@@ -1763,7 +1763,7 @@ export const Careers = () => {
                           className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
                         />
                         <Upload className="w-5 h-5 text-white/40 mx-auto mb-1.5" />
-                        <span className="text-xs text-[[var(--k-text-secondary)]] font-sans block">
+                        <span className="text-xs text-[var(--k-text-secondary)]] font-sans block">
                           {vendorFormData.resume ? vendorFormData.resume.name : (language === 'id' ? 'Klik atau seret file dokumen Anda ke sini' : 'Click or drag your document here')}
                         </span>
                       </div>
