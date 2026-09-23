@@ -12,6 +12,16 @@ function requirePostgresUrl(): string {
   return url;
 }
 
+function readPositiveIntegerEnv(name: string, fallback: number): number {
+  const raw = process.env[name]?.trim();
+  if (!raw) return fallback;
+  const value = Number(raw);
+  if (!Number.isInteger(value) || value <= 0) {
+    throw new Error(`${name} must be a positive integer.`);
+  }
+  return value;
+}
+
 function postgresSslConfig(): false | { rejectUnauthorized: boolean } {
   const mode = (process.env.KAPITECH_POSTGRES_SSL || 'require').trim().toLowerCase();
   if (mode === 'disable' || mode === 'false' || mode === 'off') return false;
@@ -29,10 +39,10 @@ export function getPostgresPool(): Pool {
   pool = new Pool({
     connectionString: requirePostgresUrl(),
     ssl: postgresSslConfig(),
-    max: Number(process.env.KAPITECH_POSTGRES_POOL_MAX || 10),
-    idleTimeoutMillis: Number(process.env.KAPITECH_POSTGRES_IDLE_TIMEOUT_MS || 10_000),
-    connectionTimeoutMillis: Number(process.env.KAPITECH_POSTGRES_CONNECTION_TIMEOUT_MS || 5_000),
-    statement_timeout: Number(process.env.KAPITECH_POSTGRES_STATEMENT_TIMEOUT_MS || 15_000),
+    max: readPositiveIntegerEnv('KAPITECH_POSTGRES_POOL_MAX', 10),
+    idleTimeoutMillis: readPositiveIntegerEnv('KAPITECH_POSTGRES_IDLE_TIMEOUT_MS', 10_000),
+    connectionTimeoutMillis: readPositiveIntegerEnv('KAPITECH_POSTGRES_CONNECTION_TIMEOUT_MS', 5_000),
+    statement_timeout: readPositiveIntegerEnv('KAPITECH_POSTGRES_STATEMENT_TIMEOUT_MS', 15_000),
     application_name: 'kapitech-ams'
   });
 
