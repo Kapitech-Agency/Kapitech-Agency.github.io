@@ -62,6 +62,9 @@ export async function apiRequest<T = any>(
     if (!res.ok) {
       if (res.status === 401 && typeof window !== 'undefined') {
         clearSessionToken();
+        sessionStorage.removeItem('kapitech_admin_profile_v2');
+        localStorage.removeItem('kapitech_admin_profile_v2');
+        window.dispatchEvent(new Event('kapitech_auth_state_changed'));
       }
       return {
         success: false,
