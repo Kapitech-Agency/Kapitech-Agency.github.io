@@ -156,7 +156,7 @@ export const Navbar = () => {
               <Link 
                 to="/about" 
                 className={cn(
-                  "relative inline-flex items-center h-7 text-xs font-medium uppercase tracking-[0.16em] leading-none transition-colors",
+                  "relative inline-flex items-center min-h-10 px-3 rounded-[10px] text-sm font-medium leading-none transition-colors",
                   location.pathname === '/about' ? "text-brand-red font-semibold" : "text-[var(--k-text-secondary)] hover:text-white"
                 )}
               >
@@ -171,7 +171,7 @@ export const Navbar = () => {
               <Link 
                 to="/careers" 
                 className={cn(
-                  "relative inline-flex items-center h-7 text-xs font-medium uppercase tracking-[0.16em] leading-none transition-colors",
+                  "relative inline-flex items-center min-h-10 px-3 rounded-[10px] text-sm font-medium leading-none transition-colors",
                   location.pathname === '/careers' ? "text-brand-red font-semibold" : "text-[var(--k-text-secondary)] hover:text-white"
                 )}
               >
