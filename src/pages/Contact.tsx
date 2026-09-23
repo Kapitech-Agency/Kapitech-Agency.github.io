@@ -324,13 +324,13 @@ export const Contact = () => {
                     <Mail size={16} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <span className="text-[10px] sm:text-[11px] font-sans text-[var(--k-text-secondary)] uppercase block mb-0.5">
+                    <span className="text-xs font-sans text-[var(--k-text-secondary)] uppercase block mb-0.5">
                       {language === 'id' ? 'Konsultasi Klien & Proyek' : 'Client Inquiries'}
                     </span>
                     <a href="mailto:hello@kapitech.id" className="text-xs sm:text-sm font-semibold text-white hover:text-brand-red transition-colors block truncate">
                       hello@kapitech.id
                     </a>
-                    <p className="text-[10px] sm:text-[11px] text-[var(--k-text-secondary)]/70 mt-0.5">
+                    <p className="text-xs text-[var(--k-text-secondary)]/70 mt-0.5">
                       {language === 'id' ? 'Tanggapan terjamin dalam 24 jam kerja' : 'Responses guaranteed within 24 business hours'}
                     </p>
                   </div>
@@ -342,13 +342,13 @@ export const Contact = () => {
                     <Globe size={16} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <span className="text-[10px] sm:text-[11px] font-sans text-[var(--k-text-secondary)] uppercase block mb-0.5">
+                    <span className="text-xs font-sans text-[var(--k-text-secondary)] uppercase block mb-0.5">
                       {language === 'id' ? 'Kemitraan & Korporasi' : 'Partnerships & Corporate'}
                     </span>
                     <a href="mailto:business@kapitech.id" className="text-xs sm:text-sm font-semibold text-white hover:text-brand-red transition-colors block truncate">
                       business@kapitech.id
                     </a>
-                    <p className="text-[10px] sm:text-[11px] text-[var(--k-text-secondary)]/70 mt-0.5">
+                    <p className="text-xs text-[var(--k-text-secondary)]/70 mt-0.5">
                       {language === 'id' ? 'Untuk kebutuhan vendor, enterprise, dan media' : 'For vendor, enterprise, and press inquiries'}
                     </p>
                   </div>
@@ -360,13 +360,13 @@ export const Contact = () => {
                     <Mail size={16} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <span className="text-[10px] sm:text-[11px] font-sans text-[var(--k-text-secondary)] uppercase block mb-0.5">
+                    <span className="text-xs font-sans text-[var(--k-text-secondary)] uppercase block mb-0.5">
                       {language === 'id' ? 'Karir & Rekrutmen' : 'Careers & Talent'}
                     </span>
                     <a href="mailto:recruitment@kapitech.id" className="text-xs sm:text-sm font-semibold text-white hover:text-brand-red transition-colors block truncate">
                       recruitment@kapitech.id
                     </a>
-                    <p className="text-[10px] sm:text-[11px] text-[var(--k-text-secondary)]/70 mt-0.5">
+                    <p className="text-xs text-[var(--k-text-secondary)]/70 mt-0.5">
                       {language === 'id' ? 'Untuk lamaran kerja dan program magang' : 'For job applications and internships'}
                     </p>
                   </div>
@@ -378,13 +378,13 @@ export const Contact = () => {
                     <Phone size={16} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <span className="text-[10px] sm:text-[11px] font-sans text-[var(--k-text-secondary)] uppercase block mb-0.5">
+                    <span className="text-xs font-sans text-[var(--k-text-secondary)] uppercase block mb-0.5">
                       {language === 'id' ? 'Telepon Langsung / WhatsApp' : 'Direct Phone / WhatsApp'}
                     </span>
                     <a href="tel:+6287769957062" className="text-xs sm:text-sm font-semibold text-white hover:text-brand-red transition-colors block truncate">
                       +62 877-6995-7062
                     </a>
-                    <p className="text-[10px] sm:text-[11px] text-[var(--k-text-secondary)]/70 mt-0.5">
+                    <p className="text-xs text-[var(--k-text-secondary)]/70 mt-0.5">
                       {language === 'id' ? 'Tersedia Senin - Jumat, 09:00 - 18:00 WIB' : 'Available Mon-Fri, 09:00 - 18:00 WIB'}
                     </p>
                   </div>
@@ -396,7 +396,7 @@ export const Contact = () => {
                     <MapPin size={16} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <span className="text-[10px] sm:text-[11px] font-sans text-[var(--k-text-secondary)] uppercase block mb-0.5">
+                    <span className="text-xs font-sans text-[var(--k-text-secondary)] uppercase block mb-0.5">
                       {language === 'id' ? 'Alamat Kantor Pusat' : 'Headquarters Address'}
                     </span>
                     <p className="text-xs text-white leading-relaxed font-light">
@@ -411,13 +411,13 @@ export const Contact = () => {
                     <Clock size={16} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <span className="text-[10px] sm:text-[11px] font-sans text-[var(--k-text-secondary)] uppercase block mb-0.5">
+                    <span className="text-xs font-sans text-[var(--k-text-secondary)] uppercase block mb-0.5">
                       {language === 'id' ? 'Jam Operasional' : 'Operating Hours'}
                     </span>
                     <p className="text-xs sm:text-sm font-semibold text-white">
                       {language === 'id' ? 'Senin - Jumat: 09:00 - 18:00 WIB' : 'Monday - Friday: 09:00 - 18:00 WIB'}
                     </p>
-                    <p className="text-[10px] sm:text-[11px] text-[var(--k-text-secondary)]/70 mt-0.5">GMT+7 (Waktu Indonesia Barat)</p>
+                    <p className="text-xs text-[var(--k-text-secondary)]/70 mt-0.5">GMT+7 (Waktu Indonesia Barat)</p>
                   </div>
                 </div>
               </div>
@@ -491,7 +491,7 @@ export const Contact = () => {
 
                     {/* Services Selection */}
                     <div>
-                      <label className="block text-[10px] sm:text-[11px] font-sans text-[var(--k-text-secondary)] uppercase mb-2">
+                      <label className="block text-xs font-sans text-[var(--k-text-secondary)] uppercase mb-2">
                         {language === 'id' ? 'Layanan apa yang Anda butuhkan?' : 'What services do you need?'}
                       </label>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -516,7 +516,7 @@ export const Contact = () => {
                     {/* Basic Info Inputs */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4">
                       <div>
-                        <label className="block text-[10px] sm:text-[11px] font-sans text-[var(--k-text-secondary)] uppercase mb-1">
+                        <label className="block text-xs font-sans text-[var(--k-text-secondary)] uppercase mb-1">
                           {language === 'id' ? 'Nama Lengkap *' : 'Your Name *'}
                         </label>
                         <input
@@ -526,17 +526,17 @@ export const Contact = () => {
                           value={formState.name}
                           onChange={handleInputChange}
                           placeholder={language === 'id' ? 'cth. Budi Santoso' : 'e.g. John Doe'}
-                          className={`w-full bg-[var(--k-bg)] border ${formErrors.name ? 'border-brand-red' : 'border-[var(--k-border)]'} rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-base sm:text-xs text-white placeholder:text-[var(--k-text-secondary)]/50 focus:outline-none focus-visible:outline-none focus-visible:outline-none focus:border-brand-red font-sans min-h-[44px]`}
+                          className={`w-full bg-[var(--k-bg)] border ${formErrors.name ? 'border-brand-red' : 'border-[var(--k-border)]'} rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-base sm:text-xs text-white placeholder:text-[var(--k-text-secondary)]/50 focus:outline-none focus-visible:outline-none focus:border-brand-red font-sans min-h-[44px]`}
                         />
                         {formErrors.name && (
-                          <p className="text-[11px] font-sans text-brand-red mt-1 flex items-center gap-1">
+                          <p className="text-xs font-sans text-brand-red mt-1 flex items-center gap-1">
                             <AlertCircle size={12} />
                             <span>{formErrors.name}</span>
                           </p>
                         )}
                       </div>
                       <div>
-                        <label className="block text-[10px] sm:text-[11px] font-sans text-[var(--k-text-secondary)] uppercase mb-1">
+                        <label className="block text-xs font-sans text-[var(--k-text-secondary)] uppercase mb-1">
                           {language === 'id' ? 'Email Kantor *' : 'Work Email *'}
                         </label>
                         <input
@@ -546,10 +546,10 @@ export const Contact = () => {
                           value={formState.email}
                           onChange={handleInputChange}
                           placeholder="john@company.com"
-                          className={`w-full bg-[var(--k-bg)] border ${formErrors.email ? 'border-brand-red' : 'border-[var(--k-border)]'} rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-base sm:text-xs text-white placeholder:text-[var(--k-text-secondary)]/50 focus:outline-none focus-visible:outline-none focus-visible:outline-none focus:border-brand-red font-sans min-h-[44px]`}
+                          className={`w-full bg-[var(--k-bg)] border ${formErrors.email ? 'border-brand-red' : 'border-[var(--k-border)]'} rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-base sm:text-xs text-white placeholder:text-[var(--k-text-secondary)]/50 focus:outline-none focus-visible:outline-none focus:border-brand-red font-sans min-h-[44px]`}
                         />
                         {formErrors.email && (
-                          <p className="text-[11px] font-sans text-brand-red mt-1 flex items-center gap-1">
+                          <p className="text-xs font-sans text-brand-red mt-1 flex items-center gap-1">
                             <AlertCircle size={12} />
                             <span>{formErrors.email}</span>
                           </p>
@@ -559,7 +559,7 @@ export const Contact = () => {
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4">
                       <div>
-                        <label className="block text-[10px] sm:text-[11px] font-sans text-[var(--k-text-secondary)] uppercase mb-1">
+                        <label className="block text-xs font-sans text-[var(--k-text-secondary)] uppercase mb-1">
                           {language === 'id' ? 'Nama Perusahaan / Brand' : 'Company / Brand Name'}
                         </label>
                         <input
@@ -568,11 +568,11 @@ export const Contact = () => {
                           value={formState.company}
                           onChange={handleInputChange}
                           placeholder="e.g. Acme Corp"
-                          className="w-full bg-[var(--k-bg)] border border-[var(--k-border)] rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-base sm:text-xs text-white placeholder:text-[var(--k-text-secondary)]/50 focus:outline-none focus-visible:outline-none focus-visible:outline-none focus:border-brand-red font-sans min-h-[44px]"
+                          className="w-full bg-[var(--k-bg)] border border-[var(--k-border)] rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-base sm:text-xs text-white placeholder:text-[var(--k-text-secondary)]/50 focus:outline-none focus-visible:outline-none focus:border-brand-red font-sans min-h-[44px]"
                         />
                       </div>
                       <div>
-                        <label className="block text-[10px] sm:text-[11px] font-sans text-[var(--k-text-secondary)] uppercase mb-1">
+                        <label className="block text-xs font-sans text-[var(--k-text-secondary)] uppercase mb-1">
                           {language === 'id' ? 'Nomor WhatsApp / Telepon' : 'Phone / WhatsApp'}
                         </label>
                         <input
@@ -581,10 +581,10 @@ export const Contact = () => {
                           value={formState.phone}
                           onChange={handleInputChange}
                           placeholder="+62 812-xxxx-xxxx"
-                          className={`w-full bg-[var(--k-bg)] border ${formErrors.phone ? 'border-brand-red' : 'border-[var(--k-border)]'} rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-base sm:text-xs text-white placeholder:text-[var(--k-text-secondary)]/50 focus:outline-none focus-visible:outline-none focus-visible:outline-none focus:border-brand-red font-sans min-h-[44px]`}
+                          className={`w-full bg-[var(--k-bg)] border ${formErrors.phone ? 'border-brand-red' : 'border-[var(--k-border)]'} rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-base sm:text-xs text-white placeholder:text-[var(--k-text-secondary)]/50 focus:outline-none focus-visible:outline-none focus:border-brand-red font-sans min-h-[44px]`}
                         />
                         {formErrors.phone && (
-                          <p className="text-[11px] font-sans text-brand-red mt-1 flex items-center gap-1">
+                          <p className="text-xs font-sans text-brand-red mt-1 flex items-center gap-1">
                             <AlertCircle size={12} />
                             <span>{formErrors.phone}</span>
                           </p>
@@ -594,7 +594,7 @@ export const Contact = () => {
 
                     {/* Estimated Budget */}
                     <div>
-                      <label className="block text-[10px] sm:text-[11px] font-sans text-[var(--k-text-secondary)] uppercase mb-2">
+                      <label className="block text-xs font-sans text-[var(--k-text-secondary)] uppercase mb-2">
                         {language === 'id' ? 'Estimasi Anggaran Proyek' : 'Estimated Budget Range'}
                       </label>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -617,7 +617,7 @@ export const Contact = () => {
 
                     {/* Project Message */}
                     <div>
-                      <label className="block text-[10px] sm:text-[11px] font-sans text-[var(--k-text-secondary)] uppercase mb-1">
+                      <label className="block text-xs font-sans text-[var(--k-text-secondary)] uppercase mb-1">
                         {language === 'id' ? 'Detail Proyek & Tujuan *' : 'Project Details & Goals *'}
                       </label>
                       <textarea
@@ -627,10 +627,10 @@ export const Contact = () => {
                         value={formState.message}
                         onChange={handleInputChange}
                         placeholder={language === 'id' ? 'Ceritakan tentang kebutuhan produk yang ingin dibangun, tantangan saat ini, target rilis, dll...' : 'Tell us about what you want to build, existing challenges, desired launch dates, etc...'}
-                        className={`w-full bg-[var(--k-bg)] border ${formErrors.message ? 'border-brand-red' : 'border-[var(--k-border)]'} rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-base sm:text-xs text-white placeholder:text-[var(--k-text-secondary)]/50 focus:outline-none focus-visible:outline-none focus-visible:outline-none focus:border-brand-red resize-none font-sans`}
+                        className={`w-full bg-[var(--k-bg)] border ${formErrors.message ? 'border-brand-red' : 'border-[var(--k-border)]'} rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-base sm:text-xs text-white placeholder:text-[var(--k-text-secondary)]/50 focus:outline-none focus-visible:outline-none focus:border-brand-red resize-none font-sans`}
                       />
                       {formErrors.message && (
-                        <p className="text-[11px] font-sans text-brand-red mt-1 flex items-center gap-1">
+                        <p className="text-xs font-sans text-brand-red mt-1 flex items-center gap-1">
                           <AlertCircle size={12} />
                           <span>{formErrors.message}</span>
                         </p>
