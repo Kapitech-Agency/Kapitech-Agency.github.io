@@ -546,7 +546,7 @@ export const AdminSettings: React.FC = () => {
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[rgba(255,255,255,0.07)]">
         <div>
-          <h1 className="text-2xl font-display font-bold text-white flex items-center gap-3">
+          <h1 className="text-2xl font-sans font-bold text-white flex items-center gap-3">
             <Settings className="text-[var(--k-red)]" size={24} />
             <span>{language === 'id' ? 'Pengaturan Sistem & Keamanan' : 'System Settings & Security'}</span>
           </h1>
@@ -649,7 +649,7 @@ export const AdminSettings: React.FC = () => {
               <UserCheck size={20} />
             </div>
             <div>
-              <h2 className="text-base font-bold font-display text-white">
+              <h2 className="text-base font-bold font-sans text-white">
                 {language === 'id' ? 'Profil & Identitas Master' : 'Master Profile & Identity'}
               </h2>
               <p className="text-xs text-[var(--k-text-secondary)] font-sans">
@@ -753,7 +753,7 @@ export const AdminSettings: React.FC = () => {
               <Palette size={20} />
             </div>
             <div>
-              <h2 className="text-base font-bold font-display text-white">
+              <h2 className="text-base font-bold font-sans text-white">
                 {language === 'id' ? 'Identitas Brand, Metadata & Notifikasi' : 'Brand Identity, Metadata & Notification Rules'}
               </h2>
               <p className="text-xs text-[var(--k-text-secondary)] font-sans">
@@ -910,7 +910,7 @@ export const AdminSettings: React.FC = () => {
                   <Users size={20} />
                 </div>
                 <div>
-                  <h2 className="text-base font-bold font-display text-white">
+                  <h2 className="text-base font-bold font-sans text-white">
                     {language === 'id' ? 'Manajemen Akun Stakeholder & Teknisi' : 'Stakeholder & Technical Accounts'}
                   </h2>
                   <p className="text-xs text-[var(--k-text-secondary)] font-sans">
@@ -1055,7 +1055,7 @@ export const AdminSettings: React.FC = () => {
                 <Layers size={20} />
               </div>
               <div>
-                <h2 className="text-base font-bold font-display text-white">
+                <h2 className="text-base font-bold font-sans text-white">
                   {language === 'id' ? 'Standar Hirarki Hak Akses Stakeholder Kapitech' : 'Kapitech Stakeholder Access Standards'}
                 </h2>
                 <p className="text-xs text-[var(--k-text-secondary)] font-sans">
@@ -1137,7 +1137,7 @@ export const AdminSettings: React.FC = () => {
                   <UserPlus size={18} />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold font-display text-white">
+                  <h3 className="text-base font-bold font-sans text-white">
                     {language === 'id' ? 'Tambah Akun Stakeholder / Teknisi' : 'Add Stakeholder / Technical Account'}
                   </h3>
                   <p className="text-[11px] font-sans text-[var(--k-text-secondary)]">
@@ -1399,7 +1399,7 @@ export const AdminSettings: React.FC = () => {
               <Lock size={20} />
             </div>
             <div>
-              <h2 className="text-base font-bold font-display text-white">
+              <h2 className="text-base font-bold font-sans text-white">
                 {language === 'id' ? 'Kebijakan Keamanan & Password' : 'Security & Password Policy'}
               </h2>
               <p className="text-xs text-[var(--k-text-secondary)] font-sans">
@@ -1563,7 +1563,7 @@ export const AdminSettings: React.FC = () => {
               <Database size={20} />
             </div>
             <div>
-              <h2 className="text-base font-bold font-display text-white">
+              <h2 className="text-base font-bold font-sans text-white">
                 {language === 'id' ? 'Integrasi Server & API' : 'Server & API Integrations'}
               </h2>
               <p className="text-xs text-[var(--k-text-secondary)] font-sans mt-1">
@@ -1797,7 +1797,7 @@ export const AdminSettings: React.FC = () => {
           
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-[rgba(255,255,255,0.07)]">
             <div>
-              <h2 className="text-base font-bold font-display text-white flex items-center gap-2">
+              <h2 className="text-base font-bold font-sans text-white flex items-center gap-2">
                 <ShieldCheck size={18} className="text-[var(--k-red)]" />
                 <span>{language === 'id' ? 'Riwayat Audit Aktivitas & Keamanan' : 'Security & Activity Audit Trail'}</span>
               </h2>
