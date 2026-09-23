@@ -243,9 +243,6 @@ export default function App() {
     }
   }, []);
 
-  return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, []);
-
   return (
     <LanguageProvider>
       <Router>
