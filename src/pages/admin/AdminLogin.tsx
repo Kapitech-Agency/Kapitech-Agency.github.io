@@ -4,6 +4,7 @@ import { Lock, KeyRound, Mail, Eye, EyeOff, AlertCircle, ArrowRight, ArrowLeft, 
 import { api } from '../../lib/apiClient';
 import { authenticateAdmin, cacheAdminSession } from '../../lib/adminAuth';
 import { useLanguage } from '../../lib/LanguageContext';
+import { isFirebaseAuthConfigured, signInWithFirebasePassword } from '../../lib/firebaseAuth';
 
 export const AdminLogin: React.FC = () => {
   const { language } = useLanguage();
@@ -19,6 +20,7 @@ export const AdminLogin: React.FC = () => {
   const [mfaRequired, setMfaRequired] = useState(false);
   const [mfaRecoveryMode, setMfaRecoveryMode] = useState(false);
   const [mfaCode, setMfaCode] = useState('');
+  const [firebaseLoading, setFirebaseLoading] = useState(false);
 
   const searchParams = new URLSearchParams(location.search);
   const redirectUrl = searchParams.get('redirect') || '/admin/dashboard';
@@ -63,6 +65,44 @@ export const AdminLogin: React.FC = () => {
         : (language === 'id' ? 'Terjadi kendala saat login.' : 'Unable to sign in.'));
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleFirebaseLogin = async () => {
+    setErrorMessage(null);
+    if (!identifier.trim() || !password) {
+      setErrorMessage(language === 'id'
+        ? 'Masukkan email Firebase dan password.'
+        : 'Enter your Firebase email and password.');
+      return;
+    }
+    if (!isFirebaseAuthConfigured()) {
+      setErrorMessage(language === 'id'
+        ? 'Firebase belum dikonfigurasi pada deployment ini.'
+        : 'Firebase is not configured for this deployment.');
+      return;
+    }
+
+    setFirebaseLoading(true);
+    try {
+      const idToken = await signInWithFirebasePassword(identifier, password);
+      const result = await api.auth.firebaseLogin({ idToken, rememberMe });
+      if (result.success && result.data?.success && result.data.user) {
+        if (result.data.requiresMfa) {
+          setMfaRequired(true);
+          setMfaCode('');
+          return;
+        }
+        cacheAdminSession(result.data.user, rememberMe);
+        window.dispatchEvent(new Event('kapitech_auth_state_changed'));
+        navigate(redirectUrl, { replace: true });
+      } else {
+        setErrorMessage(result.error || (language === 'id' ? 'Autentikasi Firebase gagal.' : 'Firebase authentication failed.'));
+      }
+    } catch (err: unknown) {
+      setErrorMessage(err instanceof Error ? err.message : (language === 'id' ? 'Login Firebase gagal.' : 'Firebase sign-in failed.'));
+    } finally {
+      setFirebaseLoading(false);
     }
   };
 
@@ -199,6 +239,19 @@ export const AdminLogin: React.FC = () => {
               />
               {language === 'id' ? 'Pertahankan sesi di perangkat ini' : 'Keep this session on this device'}
             </label>
+
+            {isFirebaseAuthConfigured() && (
+              <button
+                type="button"
+                disabled={loading || firebaseLoading}
+                onClick={handleFirebaseLogin}
+                className="w-full h-11 rounded-xl bg-white/[0.06] hover:bg-white/[0.1] disabled:bg-[#262930] border border-white/[0.08] text-white text-xs font-bold font-mono uppercase tracking-wider flex items-center justify-center gap-2 transition-colors"
+              >
+                {firebaseLoading
+                  ? (language === 'id' ? 'Menghubungkan Firebase…' : 'Connecting Firebase…')
+                  : (language === 'id' ? 'Masuk dengan Firebase' : 'Sign in with Firebase')}
+              </button>
+            )}
 
             <button
               type="submit"

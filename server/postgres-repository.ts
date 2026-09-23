@@ -72,6 +72,21 @@ export class PostgresAuthRepository {
     return result.rows[0] ? mapUser(result.rows[0]) : null;
   }
 
+  async findUserByFirebaseUid(firebaseUid: string): Promise<StoredUser | null> {
+    const result = await getPostgresPool().query<UserRow>(
+      'SELECT * FROM users WHERE firebase_uid = $1 LIMIT 1', [firebaseUid]
+    );
+    return result.rows[0] ? mapUser(result.rows[0]) : null;
+  }
+
+  async linkFirebaseUid(userId: string, firebaseUid: string): Promise<boolean> {
+    const result = await getPostgresPool().query(
+      'UPDATE users SET firebase_uid = $2 WHERE id = $1 AND firebase_uid IS NULL RETURNING id',
+      [userId, firebaseUid]
+    );
+    return result.rowCount === 1;
+  }
+
   async findUserByUsername(username: string): Promise<StoredUser | null> {
     const result = await getPostgresPool().query<UserRow>(
       'SELECT * FROM users WHERE username = $1 LIMIT 1', [username]

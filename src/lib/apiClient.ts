@@ -131,6 +131,11 @@ export const api = {
         method: 'POST',
         body: JSON.stringify(body)
       }),
+    firebaseLogin: (body: { idToken: string; rememberMe?: boolean }) =>
+      apiRequest<{ success: boolean; requiresMfa?: boolean; provider?: string; user: any }>('/api/auth/firebase-login', {
+        method: 'POST',
+        body: JSON.stringify(body)
+      }),
     logout: () => apiRequest('/api/auth/logout', { method: 'POST' }),
     me: () => apiRequest<{ success: boolean; user: any }>('/api/auth/me'),
     changePassword: (body: { currentPassword: string; newPassword: string }) =>
