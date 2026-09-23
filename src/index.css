@@ -14,14 +14,14 @@
   /* Borders & Glassmorphism */
   --border-subtle: rgba(255, 255, 255, 0.07);
   --border-medium: rgba(255, 255, 255, 0.12);
-  --border-active: rgba(229, 9, 20, 0.4);
+  --border-active: rgba(176, 0, 32, 0.4);
 
   /* Red Brand Accent (Refined Strategy) */
-  --primary-red: #E50914;
-  --primary-red-hover: #FF1E27;
-  --primary-red-glow: 0 0 16px rgba(229, 9, 20, 0.25);
-  --primary-red-subtle: rgba(229, 9, 20, 0.08);
-  --primary-red-border: rgba(229, 9, 20, 0.3);
+  --primary-red: #B00020;
+  --primary-red-hover: #C1121F;
+  --primary-red-glow: 0 0 16px rgba(176, 0, 32, 0.25);
+  --primary-red-subtle: rgba(176, 0, 32, 0.08);
+  --primary-red-border: rgba(176, 0, 32, 0.3);
 
   /* Typography & Foreground Tokens */
   --text-primary: #F8FAFC;
@@ -35,12 +35,12 @@
   --radius-pill: 9999px;
 
   /* Legacy compatibility aliases */
-  --kapi-red-primary: #E50914;
-  --kapi-red-electric: #FF1E27;
-  --kapi-red-hover: #FF1E27;
-  --kapi-red-glow: rgba(229, 9, 20, 0.12);
-  --kapi-red-glow-hover: rgba(229, 9, 20, 0.25);
-  --kapi-red-border-hover: rgba(229, 9, 20, 0.5);
+  --kapi-red-primary: #B00020;
+  --kapi-red-electric: #C1121F;
+  --kapi-red-hover: #C1121F;
+  --kapi-red-glow: rgba(176, 0, 32, 0.12);
+  --kapi-red-glow-hover: rgba(176, 0, 32, 0.25);
+  --kapi-red-border-hover: rgba(176, 0, 32, 0.5);
 
   --kapi-bg-obsidian: #090A0F;
   --kapi-bg-charcoal-deep: #111318;
@@ -69,10 +69,10 @@
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
   
   /* Primary Accent: Refined Brand Red */
-  --color-brand-red: #E50914;
-  --color-brand-red-bright: #FF1E27;
-  --color-brand-red-hover: #FF1E27;
-  --color-brand-red-glow: rgba(229, 9, 20, 0.25);
+  --color-brand-red: #B00020;
+  --color-brand-red-bright: #C1121F;
+  --color-brand-red-hover: #C1121F;
+  --color-brand-red-glow: rgba(176, 0, 32, 0.25);
 
   /* Surfaces - Strict Solid Dark Palette */
   --color-dark-base: #090A0F;
