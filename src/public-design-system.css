@@ -1704,3 +1704,112 @@
     padding-inline: 14px;
   }
 }
+
+
+/* -------------------------------------------------------------------------- */
+/* Shared content components */
+/* -------------------------------------------------------------------------- */
+
+.kapi-public-shell .kapi-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 20px;
+}
+
+.kapi-public-shell .kapi-card-tag,
+.kapi-public-shell .kapi-tech-tag {
+  min-height: 28px;
+  padding: 5px 9px;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--pub-border);
+  border-radius: 8px;
+  background: rgba(255,255,255,.025);
+  color: var(--pub-text-2);
+  font-size: 11px;
+  line-height: 1.2;
+}
+
+.kapi-public-shell .kapi-tech-tag {
+  min-height: 30px;
+  padding-inline: 10px;
+  background: rgba(255,255,255,.035);
+}
+
+.kapi-public-shell .kapi-faq-card {
+  padding: 20px;
+  border: 1px solid var(--pub-border);
+  border-radius: var(--pub-radius-lg);
+  background: var(--pub-surface);
+  transition: border-color 180ms ease, background 180ms ease, transform 180ms ease;
+}
+
+.kapi-public-shell .kapi-faq-card:hover {
+  background: var(--pub-surface-2);
+  transform: translateY(-1px);
+}
+
+.kapi-public-shell .kapi-start-project {
+  min-height: 48px;
+}
+
+.kapi-public-shell .kapi-glass-sheet-accent {
+  border-color: rgba(176,0,32,.24);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.04), 0 18px 60px rgba(0,0,0,.22);
+}
+
+.kapi-public-shell .kapi-contact-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.kapi-public-shell .kapi-contact-action {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.kapi-public-shell .kapi-contact-label {
+  max-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateX(8px);
+  transition: max-width 180ms ease, opacity 180ms ease, transform 180ms ease;
+}
+
+.kapi-public-shell .kapi-contact-action:hover .kapi-contact-label,
+.kapi-public-shell .kapi-contact-action:focus-visible .kapi-contact-label {
+  max-width: 180px;
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.kapi-public-shell .kapi-contact-icon {
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 44px;
+  border: 1px solid var(--pub-border);
+  border-radius: 50%;
+  background: rgba(17,18,22,.9);
+  box-shadow: var(--pub-shadow-sm);
+}
+
+@media (max-width: 767px) {
+  .kapi-public-shell .kapi-contact-label {
+    max-width: 180px;
+    opacity: 1;
+    transform: none;
+  }
+
+  .kapi-public-shell .kapi-contact-actions {
+    align-items: flex-end;
+  }
+}
