@@ -114,7 +114,7 @@ export const AdminLogin: React.FC = () => {
           {language === 'id' ? 'Kembali ke Website' : 'Back to Website'}
         </Link>
 
-        <div className="bg-[var(--k-surface)] border border-white/[0.08] rounded-[var(--k-card-radius)] p-7 shadow-2xl">
+        <div className="bg-[var(--k-surface)] border border-white/[0.08] rounded-[var(--k-card-radius)] p-7 shadow-[var(--k-shadow-sm)]">
           <div className="text-center mb-7">
             <div className="w-12 h-12 rounded-[var(--k-card-radius)] bg-[var(--k-red)]/10 border border-[var(--k-red)]/30 flex items-center justify-center text-[var(--k-red)] mx-auto mb-4">
               <Lock size={24} />
@@ -281,7 +281,7 @@ export const AdminLogin: React.FC = () => {
           </form>
           )}
 
-          <p className="mt-5 pt-4 border-t border-white/[0.07] text-[11px] text-[var(--k-text-tertiary)] font-sans text-center">
+          <p className="mt-5 pt-4 border-t border-white/[0.07] text-xs text-[var(--k-text-tertiary)] font-sans text-center">
             {language === 'id'
               ? 'Sesi diverifikasi oleh server.'
               : 'Session is verified by the server.'}
