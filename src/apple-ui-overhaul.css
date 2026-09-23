@@ -1202,3 +1202,32 @@ body:has(.kapi-public-shell .kapi-modal-backdrop) .kapi-public-nav {
     font-size: .95rem !important;
   }
 }
+
+
+/* Final public type correction: Apple-like hierarchy uses fewer, smaller display
+   jumps. Individual hero rules may opt into a slightly larger scale. */
+.kapi-public-shell h1 {
+  font-size: clamp(2rem, 4.2vw, 3.75rem) !important;
+  line-height: 1.04 !important;
+}
+.kapi-public-shell h2 {
+  font-size: clamp(1.7rem, 3vw, 2.45rem) !important;
+  line-height: 1.1 !important;
+}
+.kapi-public-shell h3 {
+  font-size: clamp(1.2rem, 2vw, 1.7rem) !important;
+}
+.kapi-public-shell h4 {
+  font-size: 1.1rem !important;
+}
+.kapi-public-shell p {
+  font-size: .9375rem;
+}
+.kapi-home-hero h1 {
+  font-size: clamp(2.3rem, 4.8vw, 4rem) !important;
+}
+@media (max-width: 767px) {
+  .kapi-public-shell h1 { font-size: clamp(1.9rem, 9vw, 3rem) !important; }
+  .kapi-public-shell h2 { font-size: clamp(1.55rem, 7vw, 2.15rem) !important; }
+  .kapi-home-hero h1 { font-size: clamp(2.15rem, 10vw, 3.2rem) !important; }
+}
