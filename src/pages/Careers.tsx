@@ -759,7 +759,7 @@ export const Careers = () => {
                     <img 
                       src={talent.image} 
                       alt={talent.name}
-                      className="w-full h-full object-cover object-top sm:object-center brightness-[0.70] contrast-[1.15] saturate-[0.85] group-hover:brightness-[0.92] group-hover:saturate-[1.02] group-hover:scale-105 transition-all duration-700 ease-out"
+                      className="w-full h-full object-cover object-top sm:object-center brightness-[0.70] contrast-[1.15] saturate-[0.85] group-hover:brightness-[0.92] group-hover:saturate-[1.02] group-hover:scale-[1.02] transition-all duration-700 ease-out"
                       loading="lazy"
                     />
                   </button>
