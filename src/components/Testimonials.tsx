@@ -71,7 +71,7 @@ export const Testimonials = () => {
   );
 
   return (
-    <section className="py-16 sm:py-24 md:py-32 px-4 sm:px-6 md:px-12 bg-[[var(--k-bg-deep)]] border-b border-[[var(--k-border)]]" id="testimonials">
+    <section className="py-16 sm:py-24 md:py-32 px-4 sm:px-6 md:px-12 bg-[var(--k-bg-deep)]] border-b border-[var(--k-border)]]" id="testimonials">
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12 sm:mb-16">
           <div>
@@ -85,14 +85,14 @@ export const Testimonials = () => {
           <div className="flex items-center gap-2.5 self-start sm:self-auto">
             <button 
               onClick={prev}
-              className="w-11 h-11 rounded-full border border-[[var(--k-border)]] bg-[#161616] flex items-center justify-center text-[[var(--k-text-secondary)]] hover:text-white hover:border-brand-red/50 active:scale-95 transition-all"
+              className="w-11 h-11 rounded-full border border-[var(--k-border)]] bg-[#161616] flex items-center justify-center text-[var(--k-text-secondary)]] hover:text-white hover:border-brand-red/50 active:scale-95 transition-all"
               aria-label="Previous testimonials"
             >
               <ChevronLeft size={18} />
             </button>
             <button 
               onClick={next}
-              className="w-11 h-11 rounded-full border border-[[var(--k-border)]] bg-[#161616] flex items-center justify-center text-[[var(--k-text-secondary)]] hover:text-white hover:border-brand-red/50 active:scale-95 transition-all"
+              className="w-11 h-11 rounded-full border border-[var(--k-border)]] bg-[#161616] flex items-center justify-center text-[var(--k-text-secondary)]] hover:text-white hover:border-brand-red/50 active:scale-95 transition-all"
               aria-label="Next testimonials"
             >
               <ChevronRight size={18} />
@@ -111,7 +111,7 @@ export const Testimonials = () => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -15 }}
                 transition={{ duration: 0.3, delay: index * 0.06 }}
-                className="p-6 sm:p-8 rounded-2xl bg-[#161616] border border-[[var(--k-border)]] flex flex-col justify-between min-h-[260px] sm:min-h-[300px] transition-colors hover:border-brand-red/40"
+                className="p-6 sm:p-8 rounded-2xl bg-[#161616] border border-[var(--k-border)]] flex flex-col justify-between min-h-[260px] sm:min-h-[300px] transition-colors hover:border-brand-red/40"
               >
                 <div>
                   <div className="flex items-center justify-between mb-4 sm:mb-5">
@@ -122,15 +122,15 @@ export const Testimonials = () => {
                       ))}
                     </div>
                   </div>
-                  <p className="text-xs sm:text-sm text-[[var(--k-text-secondary)]] font-light leading-relaxed">
+                  <p className="text-xs sm:text-sm text-[var(--k-text-secondary)]] font-light leading-relaxed">
                     "{item.quote}"
                   </p>
                 </div>
 
-                <div className="pt-4 sm:pt-5 mt-4 border-t border-[[var(--k-border)]]">
+                <div className="pt-4 sm:pt-5 mt-4 border-t border-[var(--k-border)]]">
                   <h4 className="text-sm font-semibold text-white">{item.author}</h4>
                   <p className="text-xs text-brand-red font-medium mt-0.5">{item.role}, {item.company}</p>
-                  <p className="text-[11px] text-[[var(--k-text-secondary)]]/70 font-sans mt-0.5">{item.location}</p>
+                  <p className="text-[11px] text-[var(--k-text-secondary)]]/70 font-sans mt-0.5">{item.location}</p>
                 </div>
               </motion.div>
             ))}
@@ -144,7 +144,7 @@ export const Testimonials = () => {
               key={i}
               onClick={() => setCurrentIndex(i)}
               className={`h-2 rounded-full transition-all duration-300 ${
-                currentIndex === i ? 'w-8 bg-brand-red' : 'w-2 bg-[[var(--k-border)]]'
+                currentIndex === i ? 'w-8 bg-brand-red' : 'w-2 bg-[var(--k-border)]]'
               }`}
               aria-label={`Go to slide ${i + 1}`}
             />
