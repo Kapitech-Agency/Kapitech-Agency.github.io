@@ -532,7 +532,7 @@ export const AdminLayout: React.FC = () => {
         <div className="p-3 border-t border-[var(--k-border)] bg-[var(--k-surface)] space-y-2.5">
           <div className={`flex items-center justify-between ${sidebarCollapsed ? 'flex-col gap-2' : ''}`}>
             <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-8 h-8 rounded-[var(--k-control-radius)] bg-gradient-to-br from-[var(--k-red)] to-[var(--k-red)] border border-white/10 flex items-center justify-center text-xs font-sans text-[var(--k-text)] font-bold shrink-0 shadow-sm">
+              <div className="w-8 h-8 rounded-[var(--k-control-radius)] bg-[var(--k-red)] border border-white/10 flex items-center justify-center text-xs font-sans text-[var(--k-text)] font-bold shrink-0 shadow-sm">
                 {adminInitials}
               </div>
               {!sidebarCollapsed && (
@@ -779,7 +779,7 @@ export const AdminLayout: React.FC = () => {
             {/* Bottom session details */}
             <div className="p-3.5 border-t border-[var(--k-border)] bg-[var(--k-surface-raised)] flex items-center justify-between shrink-0">
               <div className="flex items-center gap-2.5 min-w-0">
-                <div className="w-8 h-8 rounded-[var(--k-control-radius)] bg-gradient-to-br from-[var(--k-red)] to-[var(--k-red)] border border-white/10 flex items-center justify-center text-xs font-sans text-[var(--k-text)] font-bold shrink-0 shadow-sm">
+                <div className="w-8 h-8 rounded-[var(--k-control-radius)] bg-[var(--k-red)] border border-white/10 flex items-center justify-center text-xs font-sans text-[var(--k-text)] font-bold shrink-0 shadow-sm">
                   {roleMeta.accountProfile.avatarLabel}
                 </div>
                 <div className="min-w-0">
