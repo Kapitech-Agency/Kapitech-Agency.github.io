@@ -775,6 +775,46 @@
   border-radius: var(--pub-radius-button) !important;
 }
 
+/* Public form controls */
+.kapi-public-shell .kapi-form-control {
+  width: 100%;
+  min-height: 46px;
+  padding: 11px 14px;
+  border: 1px solid var(--pub-border);
+  border-radius: 12px;
+  outline: none;
+  background: var(--pub-surface);
+  color: var(--pub-text);
+  font-family: inherit;
+  font-size: .875rem;
+  line-height: 1.45;
+  transition: border-color var(--pub-fast) ease, background-color var(--pub-fast) ease, box-shadow var(--pub-fast) ease;
+}
+.kapi-public-shell .kapi-form-control::placeholder {
+  color: var(--pub-text-muted);
+}
+.kapi-public-shell .kapi-form-control:hover {
+  border-color: var(--pub-border-strong);
+}
+.kapi-public-shell .kapi-form-control:focus {
+  border-color: rgba(176,0,32,.72);
+  background: var(--pub-surface-2);
+  box-shadow: 0 0 0 3px rgba(176,0,32,.12);
+}
+.kapi-public-shell .kapi-form-control.is-error {
+  border-color: var(--pub-red);
+}
+.kapi-public-shell .kapi-form-textarea {
+  min-height: 128px;
+  resize: vertical;
+}
+.kapi-public-shell .kapi-form-control[type="number"],
+.kapi-public-shell .kapi-form-control[type="tel"],
+.kapi-public-shell .kapi-form-control[type="email"],
+.kapi-public-shell .kapi-form-control[type="text"] {
+  appearance: none;
+}
+
 /* Footer CTA and local status */
 .kapi-public-shell .kapi-footer-cta {
   min-height: 44px;
