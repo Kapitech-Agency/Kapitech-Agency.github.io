@@ -530,6 +530,138 @@ body {
   border-color: var(--k-red-border) !important;
 }
 
+
+/* AMS compatibility map: existing feature markup inherits the single Apple system. */
+.ams-shell {
+  background: var(--k-bg) !important;
+  color: var(--k-text) !important;
+  font-family: var(--k-font) !important;
+}
+.ams-shell .font-mono {
+  font-family: var(--k-font) !important;
+}
+.ams-shell [class*="bg-[#090A0F]"],
+.ams-shell [class*="bg-[#111318]"],
+.ams-shell [class*="bg-[#181B22]"],
+.ams-shell [class*="bg-[#21252F]"],
+.ams-shell [class*="bg-[#222630]"] {
+  background-color: var(--k-surface) !important;
+}
+.ams-shell [class*="border-[rgba(255,255,255,0.07)]"],
+.ams-shell [class*="border-white/[0.07]"],
+.ams-shell [class*="border-white/10"] {
+  border-color: var(--k-border) !important;
+}
+.ams-shell [class*="text-[#8A94A6]"],
+.ams-shell [class*="text-[#64748B]"] {
+  color: var(--k-text-secondary) !important;
+}
+.ams-shell [class*="text-[#E50914]"],
+.ams-shell [class*="text-[#FF1E27]"],
+.ams-shell [class*="bg-[#E50914]"],
+.ams-shell [class*="border-[#E50914]"] {
+  --tw-ring-color: var(--k-red);
+  color: var(--k-red) !important;
+  border-color: var(--k-red-border) !important;
+}
+.ams-shell [class*="bg-[#E50914]"] {
+  background-color: var(--k-red) !important;
+  color: #fff !important;
+}
+.ams-shell [class*="bg-[rgba(229,9,20,0.1)]"],
+.ams-shell [class*="bg-[#E50914]/10"],
+.ams-shell [class*="bg-[#E50914]/15"] {
+  background-color: var(--k-red-soft) !important;
+}
+.ams-shell [class*="hover:bg-[#FF1E27]"]:hover,
+.ams-shell [class*="hover:bg-[#E50914]"]:hover {
+  background-color: var(--k-red-hover) !important;
+}
+.ams-shell input,
+.ams-shell textarea,
+.ams-shell select {
+  outline: none !important;
+  box-shadow: none;
+}
+.ams-shell input:focus,
+.ams-shell textarea:focus,
+.ams-shell select:focus {
+  outline: none !important;
+}
+.ams-shell input:focus-visible,
+.ams-shell textarea:focus-visible,
+.ams-shell select:focus-visible {
+  border-color: var(--k-red-border) !important;
+  box-shadow: 0 0 0 3px var(--k-red-soft) !important;
+}
+.ams-shell button {
+  -webkit-tap-highlight-color: transparent;
+}
+.ams-shell [class*="rounded-2xl"],
+.ams-shell [class*="rounded-3xl"] {
+  border-radius: var(--k-card-radius);
+}
+.ams-shell .ams-card,
+.ams-shell .metric-card,
+.ams-shell .glass-panel {
+  border-radius: var(--k-card-radius) !important;
+}
+.ams-shell [class*="shadow-lg"],
+.ams-shell [class*="shadow-xl"],
+.ams-shell [class*="shadow-2xl"] {
+  box-shadow: var(--k-shadow-sm);
+}
+.ams-shell .ams-sidebar,
+.ams-shell .ams-topbar,
+.ams-shell .glass-sidebar,
+.ams-shell .glass-topbar {
+  background: rgba(21, 22, 25, .88) !important;
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-color: var(--k-border) !important;
+}
+.ams-shell .ams-sidebar-nav a,
+.ams-shell .ams-sidebar-nav button {
+  min-width: 0;
+}
+.ams-shell .ams-sidebar-nav a > span,
+.ams-shell .ams-sidebar-nav button > span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ams-shell table {
+  border-color: var(--k-border);
+}
+.ams-shell th {
+  color: var(--k-text-secondary);
+  font-weight: 600;
+}
+.ams-shell td {
+  color: var(--k-text);
+}
+.ams-shell .custom-scrollbar {
+  scrollbar-color: rgba(255,255,255,.16) transparent;
+}
+.ams-shell .custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.ams-shell .custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,.16);
+  border-radius: 999px;
+}
+@media (max-width: 767px) {
+  .ams-shell .ams-main-content,
+  .ams-shell main {
+    min-width: 0;
+  }
+  .ams-shell .overflow-x-auto {
+    max-width: 100%;
+  }
+}
+
 @media (prefers-reduced-transparency: reduce) {
   .kapi-public-nav,
   .kapi-public-shell .floating-action,
