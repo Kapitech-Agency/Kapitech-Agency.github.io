@@ -1019,3 +1019,186 @@ code, pre, kbd, .font-mono { font-family: var(--k-font-mono); }
 [data-kapi-admin="true"] .ams-content :where(.kapi-card,.metric-card,.glass-panel,.ams-surface) {
   box-shadow: 0 1px 0 rgba(255,255,255,.025) inset, 0 12px 36px rgba(0,0,0,.14) !important;
 }
+
+
+/* ==========================================================================
+   PUBLIC UX REFINEMENT v2
+   ========================================================================== */
+
+/* Keep the Apple-inspired hierarchy restrained. Hero type is display-scale,
+   not billboard-scale, and body copy stays comfortably readable. */
+.kapi-home-hero h1 {
+  font-size: clamp(2.35rem, 5vw, 4.15rem) !important;
+  max-width: 900px;
+  line-height: 1.02 !important;
+  letter-spacing: -.05em !important;
+}
+.kapi-home-hero p {
+  font-size: clamp(.95rem, 1.2vw, 1.08rem) !important;
+  max-width: 650px;
+}
+
+/* Public buttons are calm rounded rectangles. Pills remain reserved for
+   compact chips and language controls. */
+.kapi-public-shell :where(a.kapi-button, button.kapi-button, .kapi-nav-cta, .kapi-start-project) {
+  border-radius: 14px !important;
+  min-height: 44px;
+}
+.kapi-public-shell :where(a.kapi-button, button.kapi-button) {
+  text-transform: none !important;
+  letter-spacing: -.005em !important;
+}
+
+/* One restrained hover model: lift + material shift, never aggressive scaling. */
+.kapi-public-shell :where(a.kapi-button, button.kapi-button, .kapi-nav-cta) {
+  transition:
+    transform 220ms cubic-bezier(.22,1,.36,1),
+    background-color 180ms ease,
+    border-color 180ms ease,
+    box-shadow 220ms ease,
+    color 180ms ease !important;
+}
+.kapi-public-shell :where(a.kapi-button, button.kapi-button, .kapi-nav-cta):hover {
+  transform: translateY(-2px);
+}
+.kapi-public-shell :where(a.kapi-button, button.kapi-button, .kapi-nav-cta):active {
+  transform: translateY(0) scale(.985);
+}
+.kapi-public-shell :where(a.kapi-button, button.kapi-button, .kapi-nav-cta):focus-visible {
+  transform: none;
+}
+
+/* Primary CTA motion is intentionally subtle: a soft travelling highlight
+   and icon drift, rather than a distracting pulse. */
+.kapi-public-shell .kapi-start-project {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+.kapi-public-shell .kapi-start-project::before,
+.kapi-public-shell .kapi-nav-cta::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 42%;
+  transform: translateX(-150%) skewX(-18deg);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.18), transparent);
+  pointer-events: none;
+}
+.kapi-public-shell .kapi-start-project:hover::before,
+.kapi-public-shell .kapi-nav-cta:hover::before {
+  animation: kapi-cta-sheen 900ms cubic-bezier(.22,1,.36,1) 1;
+}
+.kapi-public-shell .kapi-start-project svg,
+.kapi-public-shell .kapi-nav-cta svg {
+  transition: transform 220ms cubic-bezier(.22,1,.36,1);
+}
+.kapi-public-shell .kapi-start-project:hover svg,
+.kapi-public-shell .kapi-nav-cta:hover svg {
+  transform: translate(2px,-2px);
+}
+@keyframes kapi-cta-sheen {
+  from { transform: translateX(-150%) skewX(-18deg); }
+  to { transform: translateX(330%) skewX(-18deg); }
+}
+
+/* Hero atmospheric motion: slow, almost imperceptible depth. */
+.kapi-home-hero .kapi-hero-atmosphere {
+  animation: kapi-hero-breathe 16s ease-in-out infinite alternate;
+  transform-origin: center;
+}
+@keyframes kapi-hero-breathe {
+  from { transform: scale(1) translate3d(0,0,0); opacity: .055; }
+  to { transform: scale(1.035) translate3d(0,-8px,0); opacity: .075; }
+}
+.kapi-home-hero::after {
+  content: "";
+  position: absolute;
+  width: 42vw;
+  height: 42vw;
+  max-width: 560px;
+  max-height: 560px;
+  left: 50%;
+  top: 34%;
+  transform: translate(-50%,-50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(176,0,32,.055), transparent 68%);
+  filter: blur(10px);
+  pointer-events: none;
+  animation: kapi-hero-orbit 20s ease-in-out infinite alternate;
+}
+@keyframes kapi-hero-orbit {
+  from { transform: translate(-50%,-50%) scale(.96); opacity:.45; }
+  to { transform: translate(-46%,-52%) scale(1.04); opacity:.75; }
+}
+
+/* Navigation should read as one floating material, not a dark slab. */
+.kapi-public-shell .kapi-public-nav {
+  background: rgba(12,13,17,.64) !important;
+  border-bottom-color: rgba(255,255,255,.08) !important;
+  box-shadow: 0 8px 30px rgba(0,0,0,.16) !important;
+  backdrop-filter: saturate(180%) blur(24px) !important;
+  -webkit-backdrop-filter: saturate(180%) blur(24px) !important;
+}
+
+/* Modal layering: backdrop must sit above the fixed navbar; sheet itself above
+   the backdrop. Use a dedicated public modal layer rather than changing the
+   global navbar z-index. */
+.kapi-public-shell [data-public-modal-backdrop],
+.kapi-public-shell .kapi-modal-backdrop {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 200 !important;
+  background: rgba(4,5,7,.48) !important;
+  backdrop-filter: blur(14px) saturate(125%) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(125%) !important;
+}
+.kapi-public-shell [data-public-modal],
+.kapi-public-shell .kapi-modal {
+  position: fixed !important;
+  z-index: 210 !important;
+  max-width: min(960px, calc(100vw - 24px)) !important;
+  max-height: min(88dvh, 900px) !important;
+}
+.kapi-public-shell [data-public-modal] > *,
+.kapi-public-shell .kapi-modal > * {
+  position: relative;
+  z-index: 1;
+}
+body:has(.kapi-public-shell [data-public-modal-backdrop]),
+body:has(.kapi-public-shell .kapi-modal-backdrop) {
+  overflow: hidden;
+}
+body:has(.kapi-public-shell [data-public-modal-backdrop]) .kapi-public-nav,
+body:has(.kapi-public-shell .kapi-modal-backdrop) .kapi-public-nav {
+  filter: none;
+}
+
+/* If a modal is portalled outside the public shell, these semantic hooks still
+   guarantee the correct stacking. */
+[data-public-modal-backdrop] {
+  z-index: 200 !important;
+}
+[data-public-modal] {
+  z-index: 210 !important;
+}
+
+/* Keep decorative motion off when requested by the user/device. */
+@media (prefers-reduced-motion: reduce) {
+  .kapi-home-hero .kapi-hero-atmosphere,
+  .kapi-home-hero::after {
+    animation: none !important;
+  }
+  .kapi-public-shell .kapi-start-project::before,
+  .kapi-public-shell .kapi-nav-cta::before {
+    animation: none !important;
+  }
+}
+@media (max-width: 767px) {
+  .kapi-home-hero h1 {
+    font-size: clamp(2.15rem, 10vw, 3.25rem) !important;
+  }
+  .kapi-home-hero p {
+    font-size: .95rem !important;
+  }
+}
