@@ -50,9 +50,11 @@ export function validateProductionEnvironment(
       const parsed = new URL(postgresUrl);
       if (!['postgres:', 'postgresql:'].includes(parsed.protocol)) {
         errors.push('KAPITECH_POSTGRES_URL must use postgres:// or postgresql://.');
+      } else if (!parsed.hostname || !parsed.pathname || parsed.pathname === '/') {
+        errors.push('KAPITECH_POSTGRES_URL must include a PostgreSQL host and database name.');
       }
     } catch {
-      errors.push('KAPITECH_POSTGRES_URL must be a valid PostgreSQL URL.');
+      errors.push('KAPITECH_POSTGRES_URL must be a valid PostgreSQL URL. Use postgresql://USER:PASSWORD@HOST:PORT/DATABASE and URL-encode special characters in the username/password.');
     }
   }
 
