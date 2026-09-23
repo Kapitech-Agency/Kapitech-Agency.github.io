@@ -1717,9 +1717,9 @@ code, pre, kbd, .font-mono { font-family: var(--k-font-mono); }
 .kapi-public-shell button:hover,[data-kapi-admin="true"] button:hover{transform:translateY(-1px)}
 .kapi-public-shell button:active,[data-kapi-admin="true"] button:active{transform:scale(.975);transition-duration:100ms !important}
 
-/* True icon buttons stay circular. Text pills remain pills. */
-.kapi-public-shell button.rounded-full:has(svg),
-[data-kapi-admin="true"] button.rounded-full:has(svg){aspect-ratio:1/1;padding-inline:.625rem}
+/* Icon-only circular buttons stay square. Text + icon buttons remain pills. */
+.kapi-public-shell button.rounded-full[aria-label]:has(svg),
+[data-kapi-admin="true"] button.rounded-full[aria-label]:has(svg){aspect-ratio:1/1;padding-inline:.625rem}
 .kapi-public-shell button.w-8.h-8.rounded-full,
 .kapi-public-shell button.w-9.h-9.rounded-full,
 .kapi-public-shell button.w-10.h-10.rounded-full,
