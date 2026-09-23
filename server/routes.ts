@@ -5431,7 +5431,7 @@ const handleOverview = async (req: AuthenticatedRequest, res: Response): Promise
     const projects=canViewProjects?(usePostgres?await postgresProjectRepository.list():(db!.projects||[])):[],tasks=canViewProjects?(usePostgres?await postgresTaskRepository.list():(db!.tasks||[])):[];
     const invoices=canViewFinancials?(usePostgres?await postgresInvoiceRepository.list():(db.invoices||=[])):[];
     const expenses=canViewFinancials?(usePostgres?await postgresExpenseRepository.list():(db.expenses||[]).filter((e:any)=>e.status!=='voided')):[];
-    const now=new Date(),monthKey=now.toISOString().slice(0,7);
+    const now=new Date(),monthKey=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Jakarta',year:'numeric',month:'2-digit'}).format(now);
     const openLeadsCount=canViewCrm?leads.filter(l=>l.status==='new'||l.status==='in_review').length:0;
     const activeDeals=canViewCrm?deals.filter(d=>d.stage!=='won'&&d.stage!=='lost'):[],dealsInPipelineCount=activeDeals.length,activePipelineValue=activeDeals.reduce((s,d)=>s+(Number(d.value)||0),0);
     const proposalsAwaitingCount=proposals.filter(p=>['Draft','Internal Review','Sent'].includes(String(p.status))).length;
