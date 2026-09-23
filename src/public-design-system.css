@@ -854,6 +854,37 @@
   background: var(--pub-bg);
 }
 
+/* Contact choices, FAQ and action controls */
+.kapi-public-shell .kapi-choice-button {
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid var(--pub-border);
+  border-radius: 12px;
+  background: var(--pub-surface);
+  color: var(--pub-text-secondary);
+  text-align: left;
+  transition: border-color var(--pub-fast) ease, background-color var(--pub-fast) ease, color var(--pub-fast) ease, transform var(--pub-fast) var(--pub-ease);
+}
+.kapi-public-shell .kapi-choice-button:hover { border-color: var(--pub-border-strong); color: var(--pub-text); transform: translateY(-1px); }
+.kapi-public-shell .kapi-choice-button.is-selected,
+.kapi-public-shell .kapi-choice-button[aria-pressed="true"] {
+  border-color: rgba(176,0,32,.68);
+  background: var(--pub-red-soft);
+  color: var(--pub-text);
+}
+.kapi-public-shell .kapi-faq-card {
+  min-height: 170px;
+  padding: 22px;
+  border: 1px solid var(--pub-border);
+  border-radius: 20px;
+  background: var(--pub-surface);
+  box-shadow: var(--pub-shadow);
+}
+.kapi-public-shell .kapi-action-button {
+  min-height: 44px;
+  border-radius: 14px;
+}
+
 /* Public form controls */
 .kapi-public-shell .kapi-form-control {
   width: 100%;
