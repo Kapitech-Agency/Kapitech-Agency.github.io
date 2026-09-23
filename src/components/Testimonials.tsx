@@ -11,7 +11,9 @@ export const Testimonials = () => {
   const [itemsPerSlide, setItemsPerSlide] = useState(3);
 
   useEffect(() => {
-    void fetchServerCmsTestimonials().then(setCmsTestimonials);
+    void fetchServerCmsTestimonials().then((items) => {
+      setCmsTestimonials(items.length > 0 ? items : getCmsTestimonials());
+    });
     const handleUpdate = () => {
       setCmsTestimonials(getCmsTestimonials());
     };
@@ -35,7 +37,9 @@ export const Testimonials = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const testimonials = cmsTestimonials.map(t => ({
+  const testimonials = cmsTestimonials
+    .filter((t) => t.isPublished !== false)
+    .map(t => ({
     quote: language === 'id' ? (t.quoteId || t.quote) : (t.quote || t.quoteId),
     author: t.author,
     role: t.role,
@@ -43,7 +47,7 @@ export const Testimonials = () => {
     location: t.location,
     rating: t.rating || 5
   }));
-  const totalSlides = Math.ceil(testimonials.length / itemsPerSlide);
+  const totalSlides = Math.max(1, Math.ceil(testimonials.length / itemsPerSlide));
   const hasTestimonials = testimonials.length > 0;
 
   const next = () => {
