@@ -802,3 +802,238 @@ button, [role="button"] { -webkit-tap-highlight-color: transparent; }
     padding-inline: 12px !important;
   }
 }
+
+
+/* ==========================================================================
+   APPLE-REFERENCE MODE v4
+   Directly follows Apple_Design.md geometry and typography.
+   Only the interactive accent is remapped to Kapitech red.
+   ========================================================================== */
+:root {
+  --apple-ref-red: #B00020;
+  --apple-ref-red-focus: #C1121F;
+  --apple-ref-ink: #1D1D1F;
+  --apple-ref-parchment: #F5F5F7;
+  --apple-ref-pearl: #FAFAFC;
+  --apple-ref-dark-1: #272729;
+  --apple-ref-dark-2: #2A2A2C;
+  --apple-ref-black: #000000;
+}
+
+/* Exact reference typography ladder */
+.kapi-public-shell,
+[data-kapi-admin="true"] {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+}
+.kapi-public-shell h1, .kapi-public-shell h2, .kapi-public-shell h3,
+.kapi-public-shell h4, .kapi-public-shell h5, .kapi-public-shell h6 {
+  font-weight: 600 !important;
+  letter-spacing: -0.374px !important;
+}
+.kapi-public-shell h1 { font-size: 56px !important; line-height: 1.07 !important; letter-spacing: -0.28px !important; }
+.kapi-public-shell h2 { font-size: 40px !important; line-height: 1.10 !important; letter-spacing: 0 !important; }
+.kapi-public-shell h3 { font-size: 34px !important; line-height: 1.47 !important; }
+.kapi-public-shell h4 { font-size: 21px !important; line-height: 1.19 !important; letter-spacing: .231px !important; }
+.kapi-public-shell p { font-size: 17px !important; line-height: 1.47 !important; letter-spacing: -.374px !important; font-weight: 400 !important; }
+
+.kapi-public-shell button,
+.kapi-public-shell a,
+[data-kapi-admin="true"] button,
+[data-kapi-admin="true"] a {
+  font-weight: 400;
+  letter-spacing: -.224px;
+}
+.kapi-public-shell button,
+.kapi-public-shell a[role="button"] {
+  border-radius: 9999px !important;
+  padding: 11px 22px !important;
+  min-height: 44px !important;
+}
+.kapi-public-shell button[class*="icon"],
+.kapi-public-shell [aria-label] > svg {
+  flex-shrink: 0;
+}
+.kapi-public-shell button:active,
+.kapi-public-shell a[role="button"]:active,
+[data-kapi-admin="true"] button:active {
+  transform: scale(.95) !important;
+}
+
+/* Apple page rhythm: edge-to-edge sections, no decorative chrome. */
+.kapi-public-shell > main > section,
+.kapi-public-shell section.kapi-section {
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+.kapi-public-shell .kapi-card {
+  border-radius: 18px !important;
+  box-shadow: none !important;
+  background: #fff !important;
+  border: 1px solid rgba(0,0,0,.08) !important;
+  padding: 24px !important;
+}
+.kapi-public-shell .kapi-card::before,
+.kapi-public-shell .kapi-card::after {
+  display: none !important;
+}
+.kapi-public-shell .kapi-card:hover {
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* Primary action = Kapitech red, but Apple geometry */
+.kapi-public-shell .bg-brand-red,
+.kapi-public-shell [class*="bg-brand-red"] {
+  background: var(--apple-ref-red) !important;
+  color: #fff !important;
+  border-color: var(--apple-ref-red) !important;
+}
+.kapi-public-shell .bg-brand-red:hover,
+.kapi-public-shell [class*="bg-brand-red"]:hover {
+  background: var(--apple-ref-red-focus) !important;
+}
+.kapi-public-shell .text-brand-red,
+.kapi-public-shell [class*="text-brand-red"] {
+  color: var(--apple-ref-red) !important;
+}
+.kapi-public-shell .border-brand-red,
+.kapi-public-shell [class*="border-brand-red"] {
+  border-color: var(--apple-ref-red) !important;
+}
+
+/* Global nav: exact 44px Apple-style chassis. */
+.kapi-public-nav {
+  height: 44px !important;
+  min-height: 44px !important;
+  border-radius: 0 !important;
+  background: #000 !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+.kapi-public-nav a,
+.kapi-public-nav button {
+  min-height: 32px !important;
+  border-radius: 8px !important;
+  padding: 8px 15px !important;
+  font-size: 12px !important;
+  line-height: 1 !important;
+  letter-spacing: -.12px !important;
+}
+.kapi-public-nav a:hover,
+.kapi-public-nav button:hover {
+  background: transparent !important;
+  transform: none !important;
+}
+.kapi-public-nav .active,
+.kapi-public-nav [aria-current="page"] {
+  background: transparent !important;
+  color: #fff !important;
+}
+
+/* Apple search geometry: 44px pill, not a rectangular SaaS field. */
+.kapi-public-shell input[type="search"],
+.kapi-public-shell .search-input,
+[data-kapi-admin="true"] .ams-search,
+[data-kapi-admin="true"] input[type="search"] {
+  height: 44px !important;
+  min-height: 44px !important;
+  border-radius: 9999px !important;
+  padding: 12px 20px !important;
+  font-size: 17px !important;
+  line-height: 1.47 !important;
+}
+[data-kapi-admin="true"] input:focus,
+[data-kapi-admin="true"] textarea:focus,
+[data-kapi-admin="true"] select:focus,
+.kapi-public-shell input:focus,
+.kapi-public-shell textarea:focus,
+.kapi-public-shell select:focus {
+  outline: 2px solid rgba(176,0,32,.45) !important;
+  outline-offset: 1px !important;
+  box-shadow: none !important;
+}
+
+/* Apple-style utility surfaces: hairlines, no card shadows. */
+[data-kapi-admin="true"] .ams-content .kapi-card,
+[data-kapi-admin="true"] .ams-content .metric-card,
+[data-kapi-admin="true"] .ams-content .glass-panel {
+  box-shadow: none !important;
+  border: 1px solid rgba(255,255,255,.08) !important;
+}
+[data-kapi-admin="true"] .ams-content .kapi-card:hover,
+[data-kapi-admin="true"] .ams-content .metric-card:hover {
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+/* Keep AMS chrome glass, but match Apple's restraint. */
+[data-kapi-admin="true"] .ams-sidebar,
+[data-kapi-admin="true"] .ams-header,
+[data-kapi-admin="true"] .ams-mobile-nav {
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  background: rgba(24,24,27,.78) !important;
+  border-color: rgba(255,255,255,.10) !important;
+  backdrop-filter: saturate(180%) blur(20px) !important;
+  -webkit-backdrop-filter: saturate(180%) blur(20px) !important;
+}
+
+/* Sidebar labels must never escape their navigation cell. */
+[data-kapi-admin="true"] .ams-sidebar-nav a {
+  min-width: 0 !important;
+  overflow: hidden !important;
+  white-space: nowrap !important;
+  text-overflow: ellipsis !important;
+}
+[data-kapi-admin="true"] .ams-sidebar-nav a > span,
+[data-kapi-admin="true"] .ams-sidebar-nav a > div {
+  min-width: 0 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+/* Dropdown geometry */
+[data-kapi-admin="true"] [role="menu"],
+[data-kapi-admin="true"] [role="listbox"] {
+  border-radius: 11px !important;
+  box-shadow: 0 18px 50px rgba(0,0,0,.28) !important;
+}
+[data-kapi-admin="true"] [role="menuitem"],
+[data-kapi-admin="true"] [role="option"] {
+  min-height: 36px !important;
+  border-radius: 8px !important;
+  padding: 8px 12px !important;
+}
+
+/* Modal = Apple sheet/chassis geometry */
+[data-kapi-admin="true"] [role="dialog"] {
+  border-radius: 18px !important;
+  box-shadow: 0 28px 80px rgba(0,0,0,.42) !important;
+}
+[data-kapi-admin="true"] .fixed.inset-0.z-50 {
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+}
+
+/* Responsive Apple reference breakpoints */
+@media (max-width: 1068px) {
+  .kapi-public-shell h1 { font-size: 40px !important; }
+}
+@media (max-width: 833px) {
+  .kapi-public-shell h1 { font-size: 34px !important; }
+  .kapi-public-shell h2 { font-size: 34px !important; }
+  .kapi-public-shell section { padding-block: 48px !important; }
+}
+@media (max-width: 640px) {
+  .kapi-public-shell h1 { font-size: 34px !important; }
+  .kapi-public-shell h2 { font-size: 28px !important; }
+  .kapi-public-shell h3 { font-size: 24px !important; }
+  .kapi-public-shell p { font-size: 17px !important; }
+}
+@media (max-width: 419px) {
+  .kapi-public-shell h1 { font-size: 28px !important; }
+  .kapi-public-shell h2 { font-size: 28px !important; }
+}
