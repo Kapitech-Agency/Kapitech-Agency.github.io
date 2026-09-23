@@ -803,3 +803,43 @@ button, [role="button"] { -webkit-tap-highlight-color: transparent; }
     padding-inline: 12px !important;
   }
 }
+
+
+/* Final UI guardrails: keep legacy red utilities from reintroducing the old neon
+   accent and keep the AMS navigation surface neutral. */
+[data-kapi-admin="true"] .ams-sidebar,
+[data-kapi-admin="true"] .ams-sidebar-brand {
+  background: rgba(18,18,21,.78) !important;
+  color: #F5F5F7;
+}
+[data-kapi-admin="true"] .ams-sidebar-nav {
+  background: transparent !important;
+}
+[data-kapi-admin="true"] [class*="bg-[#E50914]"],
+[data-kapi-admin="true"] [class*="bg-[#E01414]"],
+[data-kapi-admin="true"] [class*="bg-[#CC001F]"],
+[data-kapi-admin="true"] [class*="bg-[#FF1E27]"],
+[data-kapi-admin="true"] [class*="bg-[#E60023]"],
+[data-kapi-admin="true"] [class*="bg-[#E63946]"] {
+  background-color: var(--kapitech-red) !important;
+}
+[data-kapi-admin="true"] [class*="text-[#E50914]"],
+[data-kapi-admin="true"] [class*="text-[#FF1E27]"],
+[data-kapi-admin="true"] [class*="text-[#E60023]"],
+[data-kapi-admin="true"] [class*="text-[#E63946]"] {
+  color: var(--kapitech-red) !important;
+}
+[data-kapi-admin="true"] [class*="border-[#E50914]"],
+[data-kapi-admin="true"] [class*="border-[#E01414]"],
+[data-kapi-admin="true"] [class*="border-[#CC001F]"],
+[data-kapi-admin="true"] [class*="border-[#FF1E27]"],
+[data-kapi-admin="true"] [class*="border-[#E60023]"],
+[data-kapi-admin="true"] [class*="border-[#E63946]"] {
+  border-color: var(--kapitech-red-border) !important;
+}
+
+/* Text + icon CTA buttons must never inherit icon-only aspect-ratio rules. */
+.kapi-public-shell button.rounded-full:not([aria-label]):has(svg),
+[data-kapi-admin="true"] button.rounded-full:not([aria-label]):has(svg) {
+  aspect-ratio: auto !important;
+}
