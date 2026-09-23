@@ -1169,3 +1169,237 @@ body:has(.kapi-public-shell .kapi-modal-backdrop) { overflow: hidden; }
 @media (max-width: 640px) {
   .kapi-public-shell .kapi-footer-title { font-size: clamp(1.9rem, 9vw, 2.6rem); }
 }
+
+
+/* ==========================================================================
+   PUBLIC UI REFINEMENT PASS
+   Geometry, hierarchy, overflow and interaction corrections.
+   Keep this scoped to the public shell. No AMS selectors here.
+   ========================================================================== */
+
+/* Stable page frame */
+.kapi-public-shell .max-w-7xl {
+  width: min(calc(100% - 2 * var(--pub-gutter)), var(--pub-content)) !important;
+  margin-inline: auto;
+}
+.kapi-public-shell .max-w-6xl,
+.kapi-public-shell .max-w-5xl,
+.kapi-public-shell .max-w-4xl,
+.kapi-public-shell .max-w-3xl {
+  margin-inline: auto;
+}
+
+/* Navigation: prevent CTA wrapping and keep the control group optically balanced. */
+.kapi-public-shell .kapi-public-nav {
+  min-height: 68px;
+}
+.kapi-public-shell .kapi-public-nav > div {
+  min-height: 68px;
+}
+.kapi-public-shell .kapi-nav-group {
+  flex: 0 0 auto;
+  gap: 2px;
+}
+.kapi-public-shell .kapi-nav-group > a,
+.kapi-public-shell .kapi-nav-group > div > button {
+  white-space: nowrap;
+  min-width: max-content;
+}
+.kapi-public-shell .kapi-nav-cta,
+.kapi-public-shell .kapi-start-project {
+  min-width: 118px;
+  width: auto;
+  padding-inline: 15px;
+  white-space: nowrap;
+  flex: 0 0 auto;
+}
+.kapi-public-shell .kapi-language-switcher {
+  flex: 0 0 auto;
+}
+
+/* Hero: tighter desktop composition, no oversized empty stage. */
+.kapi-public-shell .kapi-home-hero {
+  min-height: clamp(680px, 78svh, 760px);
+  padding-top: 112px !important;
+  padding-bottom: 72px !important;
+}
+.kapi-public-shell .kapi-home-hero > .max-w-7xl {
+  display: flex;
+  align-items: center;
+  min-height: 100%;
+}
+.kapi-public-shell .kapi-home-hero .max-w-4xl {
+  max-width: 820px;
+}
+.kapi-public-shell .kapi-home-hero h1 {
+  max-width: 820px;
+}
+.kapi-public-shell .kapi-home-hero p {
+  max-width: 650px;
+  margin-top: 18px;
+  margin-bottom: 28px !important;
+}
+
+/* Work filters: never allow the filter rail to resize the page. */
+.kapi-public-shell .kapi-work-filter-section {
+  overflow: clip;
+}
+.kapi-public-shell .kapi-work-filter-inner {
+  min-width: 0;
+}
+.kapi-public-shell .kapi-work-pillar-tabs {
+  min-width: 0;
+  max-width: 100%;
+}
+.kapi-public-shell .kapi-work-pillar-tabs button {
+  white-space: nowrap;
+}
+.kapi-public-shell .kapi-work-service-rail {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+}
+.kapi-public-shell .kapi-work-service-scroll {
+  min-width: 0;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x proximity;
+  padding-inline-end: 72px;
+}
+.kapi-public-shell .kapi-work-service-scroll::-webkit-scrollbar { display: none; }
+.kapi-public-shell .kapi-work-service-scroll > button {
+  scroll-snap-align: start;
+}
+.kapi-public-shell .kapi-work-filter-fade {
+  width: 72px;
+  background: linear-gradient(90deg, transparent, var(--pub-bg) 76%) !important;
+}
+@media (min-width: 1024px) {
+  .kapi-public-shell .kapi-work-filter-section {
+    top: 68px !important;
+  }
+}
+@media (max-width: 767px) {
+  .kapi-public-shell .kapi-work-filter-section {
+    position: relative !important;
+    top: auto !important;
+    box-shadow: none !important;
+  }
+  .kapi-public-shell .kapi-work-pillar-tabs {
+    width: 100%;
+    overflow-x: auto;
+    flex-wrap: nowrap !important;
+    scrollbar-width: none;
+  }
+  .kapi-public-shell .kapi-work-pillar-tabs::-webkit-scrollbar { display: none; }
+  .kapi-public-shell .kapi-work-pillar-tabs button { flex: 0 0 auto; }
+}
+
+/* Cards: consistent optical weight across pages. */
+.kapi-public-shell .kapi-card {
+  border-radius: 18px !important;
+}
+.kapi-public-shell .kapi-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 34px rgba(0,0,0,.17) !important;
+}
+
+/* Modal stack: force the backdrop above navigation and the sheet above the backdrop. */
+.kapi-public-shell .kapi-modal-backdrop {
+  isolation: isolate;
+}
+.kapi-public-shell .kapi-modal-backdrop > [data-public-modal],
+.kapi-public-shell .kapi-modal-backdrop > .kapi-modal,
+.kapi-public-shell .kapi-modal-backdrop > [role="dialog"] {
+  position: relative;
+  z-index: 210 !important;
+}
+.kapi-public-shell .kapi-modal-close {
+  width: 40px !important;
+  height: 40px !important;
+  min-width: 40px !important;
+  min-height: 40px !important;
+  border-radius: 12px !important;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,.045) !important;
+  border: 1px solid var(--pub-border) !important;
+}
+.kapi-public-shell .kapi-modal-close:hover {
+  background: rgba(255,255,255,.085) !important;
+  border-color: var(--pub-border-strong) !important;
+}
+.kapi-public-shell .kapi-modal-panel {
+  width: min(100%, 960px);
+  max-height: min(88dvh, 900px);
+  margin-block: 24px;
+}
+
+/* Footer: preserve the 12-column rhythm while preventing narrow columns. */
+.kapi-public-shell .kapi-public-footer .grid.lg\:grid-cols-12 {
+  align-items: start;
+}
+.kapi-public-shell .kapi-public-footer .lg\:col-span-2 {
+  min-width: 0;
+}
+.kapi-public-shell .kapi-public-footer .lg\:col-span-2 a,
+.kapi-public-shell .kapi-public-footer .lg\:col-span-2 li {
+  min-width: 0;
+}
+.kapi-public-shell .kapi-newsletter {
+  display: grid;
+  gap: 10px;
+}
+.kapi-public-shell .kapi-newsletter-input {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 13px;
+  border: 1px solid var(--pub-border);
+  border-radius: 12px;
+  background: var(--pub-surface);
+  color: var(--pub-text);
+  outline: none;
+}
+.kapi-public-shell .kapi-newsletter-button {
+  width: fit-content;
+  min-height: 40px;
+  padding-inline: 0;
+  border: 0 !important;
+  background: transparent !important;
+  color: var(--pub-text);
+  box-shadow: none !important;
+  border-radius: 8px !important;
+}
+.kapi-public-shell .kapi-newsletter-button:hover {
+  color: var(--pub-red);
+}
+@media (min-width: 1024px) {
+  .kapi-public-shell .kapi-public-footer {
+    padding-top: 72px !important;
+  }
+  .kapi-public-shell .kapi-footer-title {
+    font-size: clamp(2rem, 3.2vw, 3.25rem);
+  }
+}
+@media (max-width: 767px) {
+  .kapi-public-shell .kapi-public-nav {
+    min-height: 64px;
+  }
+  .kapi-public-shell .kapi-public-nav > div {
+    min-height: 64px;
+  }
+  .kapi-public-shell .kapi-home-hero {
+    min-height: 680px;
+    padding-top: 104px !important;
+    padding-bottom: 56px !important;
+  }
+  .kapi-public-shell .kapi-home-hero > .max-w-7xl {
+    align-items: center;
+  }
+  .kapi-public-shell .kapi-modal-panel {
+    max-height: calc(100dvh - 24px);
+    margin-block: 12px;
+  }
+}
