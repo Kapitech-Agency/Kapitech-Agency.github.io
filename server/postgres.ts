@@ -47,25 +47,39 @@ export async function query(text: string, values: unknown[] = []): Promise<unkno
   return getPostgresPool().query(text, values);
 }
 
+function isRetryableTransactionError(error: unknown): boolean {
+  const code = typeof error === 'object' && error !== null && 'code' in error
+    ? String((error as { code?: unknown }).code || '')
+    : '';
+  return code === '40001' || code === '40P01';
+}
+
 export async function withPostgresTransaction<T>(
   operation: (client: PoolClient) => Promise<T>
 ): Promise<T> {
-  const client = await getPostgresPool().connect();
-  try {
-    await client.query('BEGIN');
-    const result = await operation(client);
-    await client.query('COMMIT');
-    return result;
-  } catch (error) {
+  const maxRetries = 2;
+
+  for (let attempt = 0; attempt <= maxRetries; attempt += 1) {
+    const client = await getPostgresPool().connect();
     try {
-      await client.query('ROLLBACK');
-    } catch (rollbackError) {
-      console.error('[PostgreSQL] Transaction rollback failed:', rollbackError);
+      await client.query('BEGIN');
+      const result = await operation(client);
+      await client.query('COMMIT');
+      return result;
+    } catch (error) {
+      try {
+        await client.query('ROLLBACK');
+      } catch (rollbackError) {
+        console.error('[PostgreSQL] Transaction rollback failed:', rollbackError);
+      }
+      if (!isRetryableTransactionError(error) || attempt === maxRetries) throw error;
+      console.warn(`[PostgreSQL] Retrying transient transaction failure (attempt ${attempt + 2}/${maxRetries + 1}).`);
+    } finally {
+      client.release();
     }
-    throw error;
-  } finally {
-    client.release();
   }
+
+  throw new Error('PostgreSQL transaction retry loop exited unexpectedly.');
 }
 
 export async function checkPostgresConnection(): Promise<{ ok: boolean; latencyMs: number }> {
