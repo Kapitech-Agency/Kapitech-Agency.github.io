@@ -1,0 +1,751 @@
+/* ==========================================================================
+   KAPITECH PUBLIC UI SYSTEM
+   Apple-inspired hierarchy + Liquid Glass + Untitled UI component discipline.
+   Public site only. AMS styling remains isolated in index.css.
+   ========================================================================== */
+
+.kapi-public-shell {
+  --pub-bg: #090A0F;
+  --pub-surface: #111318;
+  --pub-surface-2: #151820;
+  --pub-surface-elevated: #1B1F27;
+  --pub-glass: rgba(20, 22, 28, .72);
+  --pub-glass-strong: rgba(20, 22, 28, .88);
+  --pub-text: #F5F5F7;
+  --pub-text-secondary: #A1A1A6;
+  --pub-text-muted: #71717A;
+  --pub-red: #B00020;
+  --pub-red-hover: #C1121F;
+  --pub-red-soft: rgba(176,0,32,.12);
+  --pub-border: rgba(255,255,255,.085);
+  --pub-border-strong: rgba(255,255,255,.15);
+  --pub-control: 44px;
+  --pub-radius-control: 12px;
+  --pub-radius-button: 14px;
+  --pub-radius-card: 20px;
+  --pub-radius-sheet: 24px;
+  --pub-content: 1200px;
+  --pub-wide: 1320px;
+  --pub-gutter: clamp(20px, 4vw, 64px);
+  --pub-section: clamp(72px, 9vw, 128px);
+  --pub-ease: cubic-bezier(.22,1,.36,1);
+  --pub-fast: 160ms;
+  --pub-standard: 240ms;
+  --pub-slow: 520ms;
+
+  /* Transitional brand tokens: retained only where existing public JSX still references them. */
+  --k-bg-deep: var(--pub-bg);
+  --k-bg: var(--pub-bg);
+  --k-surface: var(--pub-surface);
+  --k-surface-raised: var(--pub-surface-elevated);
+  --k-border: var(--pub-border);
+  --k-text-secondary: var(--pub-text-secondary);
+  --k-text-muted: var(--pub-text-muted);
+  --k-red-hover: var(--pub-red-hover);
+  --k-shadow-sm: 0 8px 24px rgba(0,0,0,.18);
+
+  position: relative;
+  isolation: isolate;
+  min-height: 100vh;
+  overflow-x: clip;
+  color: var(--pub-text);
+  background: var(--pub-bg);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  letter-spacing: -.011em;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.kapi-public-shell *,
+.kapi-public-shell *::before,
+.kapi-public-shell *::after { box-sizing: border-box; }
+
+.kapi-public-shell :where(a) {
+  color: inherit;
+  text-decoration: none;
+}
+
+.kapi-public-shell :where(button,input,select,textarea) {
+  font: inherit;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.kapi-public-shell :where(img,video,svg) { max-width: 100%; }
+
+.kapi-public-shell :where(.flex,.grid) > * { min-width: 0; }
+
+.kapi-public-shell ::selection {
+  color: #fff;
+  background: var(--pub-red);
+}
+
+.kapi-public-shell :where(h1,h2,h3,h4,h5,h6) {
+  margin: 0;
+  color: var(--pub-text);
+  font-family: inherit;
+  text-wrap: balance;
+}
+
+.kapi-public-shell h1 {
+  font-size: clamp(2.25rem, 5vw, 4rem) !important;
+  line-height: 1.04 !important;
+  letter-spacing: -.05em !important;
+  font-weight: 700 !important;
+}
+
+.kapi-public-shell h2 {
+  font-size: clamp(1.8rem, 3.25vw, 2.65rem) !important;
+  line-height: 1.08 !important;
+  letter-spacing: -.038em !important;
+  font-weight: 650 !important;
+}
+
+.kapi-public-shell h3 {
+  font-size: clamp(1.2rem, 1.8vw, 1.6rem) !important;
+  line-height: 1.18 !important;
+  letter-spacing: -.025em !important;
+  font-weight: 650 !important;
+}
+
+.kapi-public-shell h4 {
+  font-size: 1.05rem !important;
+  line-height: 1.3 !important;
+}
+
+.kapi-public-shell p {
+  color: var(--pub-text-secondary);
+  font-size: .9375rem;
+  line-height: 1.58;
+}
+
+.kapi-public-shell :where(.text-xs) { font-size: .72rem !important; line-height: 1.4 !important; }
+.kapi-public-shell :where(.text-sm) { font-size: .875rem !important; line-height: 1.5 !important; }
+.kapi-public-shell :where(.text-base) { font-size: .9375rem !important; line-height: 1.55 !important; }
+.kapi-public-shell :where(.text-xl) { font-size: 1.125rem !important; line-height: 1.45 !important; }
+.kapi-public-shell :where(.text-2xl) { font-size: 1.45rem !important; line-height: 1.15 !important; }
+.kapi-public-shell :where(.text-3xl) { font-size: 1.8rem !important; line-height: 1.1 !important; }
+.kapi-public-shell :where(.text-4xl) { font-size: 2.15rem !important; line-height: 1.06 !important; }
+.kapi-public-shell :where(.text-5xl) { font-size: 2.65rem !important; line-height: 1.03 !important; }
+.kapi-public-shell :where(.text-6xl,.text-7xl,.text-8xl) {
+  font-size: clamp(2.25rem, 5vw, 4rem) !important;
+  line-height: 1.04 !important;
+}
+.kapi-public-shell :where(.font-black,.font-extrabold) { font-weight: 700 !important; }
+
+/* Layout */
+.kapi-public-shell main { position: relative; z-index: 1; }
+.kapi-public-shell section {
+  width: 100%;
+  scroll-margin-top: 92px;
+}
+.kapi-public-shell section > :where(.max-w-7xl,.max-w-6xl,.max-w-5xl,.max-w-4xl,.max-w-3xl) {
+  width: min(calc(100% - 2 * var(--pub-gutter)), var(--pub-content));
+  margin-inline: auto;
+}
+.kapi-public-shell :where(.max-w-7xl) { max-width: var(--pub-wide); }
+.kapi-public-shell :where(.max-w-prose) { max-width: 68ch; }
+
+/* Hero */
+.kapi-public-shell .kapi-home-hero {
+  position: relative;
+  min-height: min(840px, 92svh);
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  isolation: isolate;
+  background:
+    radial-gradient(680px 380px at 50% 4%, rgba(176,0,32,.105), transparent 70%),
+    var(--pub-bg) !important;
+}
+.kapi-public-shell .kapi-home-hero::before {
+  content: "";
+  position: absolute;
+  inset: -18%;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(420px 260px at 48% 40%, rgba(176,0,32,.075), transparent 72%),
+    radial-gradient(360px 220px at 76% 25%, rgba(255,255,255,.025), transparent 74%);
+  animation: kapi-public-breathe 18s var(--pub-ease) infinite alternate;
+}
+.kapi-public-shell .kapi-home-hero > * { position: relative; z-index: 1; }
+.kapi-public-shell .kapi-home-hero h1 { max-width: 900px; }
+.kapi-public-shell .kapi-home-hero p {
+  max-width: 680px;
+  font-size: 1rem !important;
+  line-height: 1.6 !important;
+}
+@keyframes kapi-public-breathe {
+  from { transform: translate3d(-1%,0,0) scale(1); opacity: .72; }
+  to { transform: translate3d(1.5%,1%,0) scale(1.035); opacity: 1; }
+}
+
+/* Navigation: functional glass layer, never content-glass. */
+.kapi-public-shell .kapi-public-nav {
+  z-index: 50 !important;
+  background: rgba(9,10,15,.68) !important;
+  border-color: rgba(255,255,255,.09) !important;
+  box-shadow: 0 8px 28px rgba(0,0,0,.16) !important;
+  -webkit-backdrop-filter: saturate(180%) blur(24px);
+  backdrop-filter: saturate(180%) blur(24px);
+}
+.kapi-public-shell .kapi-public-nav-links > div:first-child {
+  gap: 2px !important;
+  padding: 4px !important;
+  background: rgba(255,255,255,.035) !important;
+  border: 1px solid rgba(255,255,255,.075) !important;
+  border-radius: 14px !important;
+}
+.kapi-public-shell .kapi-public-nav-links > div:first-child > a,
+.kapi-public-shell .kapi-public-nav-links > div:first-child > div {
+  min-height: 36px;
+  padding-inline: 10px;
+  border-radius: 10px;
+}
+.kapi-public-shell .kapi-public-nav a,
+.kapi-public-shell .kapi-public-nav button {
+  transition: color var(--pub-fast) ease, background-color var(--pub-fast) ease, border-color var(--pub-fast) ease, opacity var(--pub-fast) ease, transform var(--pub-fast) var(--pub-ease);
+}
+.kapi-public-shell .kapi-public-nav a:hover,
+.kapi-public-shell .kapi-public-nav button:hover { transform: none; }
+.kapi-public-shell .kapi-public-nav-links > div:first-child > a:hover,
+.kapi-public-shell .kapi-public-nav-links > div:first-child > div:hover {
+  background: rgba(255,255,255,.055);
+}
+.kapi-public-shell .kapi-public-nav-links > div:first-child a[aria-current="page"],
+.kapi-public-shell .kapi-public-nav-links > div:first-child button[aria-expanded="true"] {
+  background: rgba(176,0,32,.11);
+}
+.kapi-public-shell .kapi-public-nav img { flex-shrink: 0; }
+
+/* Desktop mega menu */
+.kapi-public-shell .kapi-glass-nav-menu {
+  background: rgba(13,15,20,.94) !important;
+  border-color: var(--pub-border) !important;
+  box-shadow: 0 28px 70px rgba(0,0,0,.42) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(150%);
+  backdrop-filter: blur(28px) saturate(150%);
+}
+.kapi-public-shell .kapi-glass-nav-menu > div {
+  min-width: 0;
+}
+.kapi-public-shell .kapi-glass-nav-menu .group {
+  border-radius: 12px !important;
+}
+.kapi-public-shell .kapi-glass-nav-menu .group:hover {
+  background: rgba(255,255,255,.045) !important;
+  border-color: rgba(255,255,255,.08) !important;
+}
+
+/* Buttons: rectangles by default. Pills are reserved for status/chips. */
+.kapi-public-shell :where(button,a[role="button"],a.kapi-button,.kapi-start-project,.kapi-nav-cta) {
+  min-height: var(--pub-control);
+  border-radius: var(--pub-radius-button) !important;
+  font-family: inherit;
+  font-size: .875rem !important;
+  font-weight: 600 !important;
+  letter-spacing: -.005em !important;
+  text-transform: none !important;
+  transition:
+    transform var(--pub-fast) var(--pub-ease),
+    background-color var(--pub-fast) ease,
+    border-color var(--pub-fast) ease,
+    color var(--pub-fast) ease,
+    box-shadow var(--pub-fast) ease,
+    opacity var(--pub-fast) ease !important;
+}
+.kapi-public-shell :where(button:hover,a[role="button"]:hover,a.kapi-button:hover,.kapi-start-project:hover,.kapi-nav-cta:hover) {
+  transform: translateY(-1px);
+}
+.kapi-public-shell :where(button:active,a[role="button"]:active,a.kapi-button:active,.kapi-start-project:active,.kapi-nav-cta:active) {
+  transform: scale(.985);
+}
+.kapi-public-shell :where(button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible) {
+  outline: 2px solid rgba(176,0,32,.82);
+  outline-offset: 2px;
+}
+/* Primary / secondary actions */
+.kapi-public-shell :where(.kapi-button-primary,.kapi-start-project,.kapi-nav-cta) {
+  background: var(--pub-red) !important;
+  color: #fff !important;
+  border: 1px solid transparent !important;
+  box-shadow: 0 8px 24px rgba(176,0,32,.18) !important;
+  position: relative;
+  overflow: hidden;
+}
+.kapi-public-shell :where(.kapi-button-primary,.kapi-start-project,.kapi-nav-cta):hover {
+  background: var(--pub-red-hover) !important;
+  box-shadow: 0 12px 30px rgba(176,0,32,.24) !important;
+}
+.kapi-public-shell .kapi-start-project::before,
+.kapi-public-shell .kapi-nav-cta::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 -45%;
+  width: 28%;
+  background: linear-gradient(100deg, transparent, rgba(255,255,255,.28), transparent);
+  transform: skewX(-18deg);
+  pointer-events: none;
+}
+@media (hover:hover) and (pointer:fine) {
+  .kapi-public-shell .kapi-start-project:hover::before,
+  .kapi-public-shell .kapi-nav-cta:hover::before {
+    animation: kapi-public-sheen 800ms var(--pub-ease) 1;
+  }
+}
+@keyframes kapi-public-sheen {
+  from { transform: translateX(-130%) skewX(-18deg); }
+  to { transform: translateX(420%) skewX(-18deg); }
+}
+.kapi-public-shell .kapi-start-project svg,
+.kapi-public-shell .kapi-nav-cta svg { transition: transform var(--pub-standard) var(--pub-ease); }
+@media (hover:hover) and (pointer:fine) {
+  .kapi-public-shell .kapi-start-project:hover svg,
+  .kapi-public-shell .kapi-nav-cta:hover svg { transform: translate(2px,-2px); }
+}
+.kapi-public-shell .kapi-button-secondary {
+  background: rgba(255,255,255,.045) !important;
+  color: var(--pub-text) !important;
+  border: 1px solid var(--pub-border-strong) !important;
+  box-shadow: none !important;
+}
+.kapi-public-shell .kapi-button-secondary:hover {
+  background: rgba(255,255,255,.075) !important;
+  border-color: rgba(255,255,255,.22) !important;
+}
+
+/* Component rhythm and geometry.
+   Keep curvature concentric: control 12-14px, card 20px, sheet 24px.
+   Pills are reserved for status metadata, not primary actions. */
+.kapi-public-shell .kapi-section,
+.kapi-public-shell .kapi-section-header { min-width: 0; }
+.kapi-public-shell .kapi-section {
+  padding-block: var(--pub-section);
+}
+.kapi-public-shell .kapi-section-header {
+  display: grid;
+  gap: 12px;
+  margin-bottom: clamp(28px, 4vw, 48px);
+}
+.kapi-public-shell .kapi-section-eyebrow {
+  color: var(--pub-red);
+  font-size: .6875rem;
+  line-height: 1.35;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+.kapi-public-shell .kapi-section-title {
+  max-width: 760px;
+}
+.kapi-public-shell .kapi-section-description {
+  max-width: 680px;
+  margin: 0;
+}
+.kapi-public-shell .kapi-control {
+  min-height: var(--pub-control);
+  border-radius: var(--pub-radius-control);
+}
+.kapi-public-shell .kapi-status,
+.kapi-public-shell .kapi-badge {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  min-height: 28px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--pub-border);
+  background: rgba(255,255,255,.045);
+  color: var(--pub-text-secondary);
+  font-size: .6875rem;
+  line-height: 1.3;
+  font-weight: 650;
+}
+.kapi-public-shell .kapi-status-dot {
+  width: 7px;
+  height: 7px;
+  flex: 0 0 7px;
+  border-radius: 50%;
+  background: var(--pub-red);
+}
+.kapi-public-shell .kapi-grid {
+  display: grid;
+  gap: clamp(16px, 2vw, 24px);
+}
+.kapi-public-shell .kapi-grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.kapi-public-shell .kapi-grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.kapi-public-shell .kapi-grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+@media (max-width: 1023px) {
+  .kapi-public-shell .kapi-grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 767px) {
+  .kapi-public-shell .kapi-section { padding-block: var(--pub-section); }
+  .kapi-public-shell .kapi-grid-2,
+  .kapi-public-shell .kapi-grid-3,
+  .kapi-public-shell .kapi-grid-4 { grid-template-columns: 1fr; }
+}
+/* Generic content cards */
+.kapi-public-shell .kapi-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: var(--pub-surface) !important;
+  border: 1px solid var(--pub-border) !important;
+  border-radius: var(--pub-radius-card) !important;
+  box-shadow: 0 10px 34px rgba(0,0,0,.14) !important;
+  overflow: hidden;
+  transition: transform var(--pub-standard) var(--pub-ease), border-color var(--pub-standard) ease, background-color var(--pub-standard) ease, box-shadow var(--pub-standard) ease !important;
+}
+.kapi-public-shell .kapi-card:hover {
+  transform: translateY(-2px);
+  background: var(--pub-surface-2) !important;
+  border-color: var(--pub-border-strong) !important;
+  box-shadow: 0 16px 42px rgba(0,0,0,.19) !important;
+}
+.kapi-public-shell .kapi-card::before,
+.kapi-public-shell .kapi-card::after { display: none !important; }
+
+.kapi-public-shell .kapi-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 22px 22px 0;
+}
+.kapi-public-shell .kapi-card-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: 20px 22px;
+}
+.kapi-public-shell .kapi-card-footer {
+  display: flex;
+  align-items: center;
+  min-height: 58px;
+  padding: 0 22px;
+  border-top: 1px solid var(--pub-border);
+}
+.kapi-public-shell .kapi-card-footer a {
+  min-height: 58px;
+}
+.kapi-public-shell .kapi-card-title {
+  margin: 0 0 8px;
+  font-size: 1.2rem !important;
+  line-height: 1.2 !important;
+  letter-spacing: -.025em !important;
+}
+.kapi-public-shell .kapi-card-desc {
+  margin: 0;
+  color: var(--pub-text-secondary) !important;
+  font-size: .875rem !important;
+  line-height: 1.55 !important;
+}
+.kapi-public-shell .kapi-card-icon-box {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 44px !important;
+  height: 44px !important;
+  border-radius: 12px !important;
+  background: rgba(255,255,255,.04) !important;
+  border: 1px solid var(--pub-border) !important;
+}
+.kapi-public-shell .kapi-card-pill,
+.kapi-public-shell .kapi-card-tag {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  min-height: 28px;
+  padding: 4px 9px;
+  border-radius: 999px !important;
+  background: rgba(255,255,255,.045);
+  border: 1px solid var(--pub-border);
+  color: var(--pub-text-secondary);
+  font-size: .6875rem;
+  line-height: 1.2;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.kapi-public-shell .kapi-card-pill {
+  color: var(--pub-text-muted);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+.kapi-public-shell .kapi-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: auto;
+  padding-top: 20px;
+}
+.kapi-public-shell .kapi-card-arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 34px !important;
+  height: 34px !important;
+  border-radius: 50% !important;
+  background: rgba(255,255,255,.045) !important;
+  border: 1px solid var(--pub-border) !important;
+  transition: transform var(--pub-standard) var(--pub-ease), background-color var(--pub-standard) ease, border-color var(--pub-standard) ease;
+}
+.kapi-public-shell .kapi-card:hover .kapi-card-arrow {
+  transform: translate(2px,-2px);
+  background: var(--pub-red) !important;
+  border-color: var(--pub-red) !important;
+}
+
+/* Media/project cards */
+.kapi-public-shell :where(.group.rounded-2xl,.group.rounded-xl) {
+  transition: transform var(--pub-standard) var(--pub-ease), border-color var(--pub-standard) ease, background-color var(--pub-standard) ease, box-shadow var(--pub-standard) ease !important;
+}
+.kapi-public-shell :where(.group.rounded-2xl,.group.rounded-xl):hover {
+  transform: translateY(-2px);
+  border-color: var(--pub-border-strong) !important;
+  box-shadow: 0 16px 42px rgba(0,0,0,.16);
+}
+.kapi-public-shell :where(.group.rounded-2xl,.group.rounded-xl) img {
+  transition: transform 600ms var(--pub-ease);
+}
+.kapi-public-shell :where(.group.rounded-2xl,.group.rounded-xl):hover img {
+  transform: scale(1.018);
+}
+
+/* Forms, inputs, selects, textareas */
+.kapi-public-shell :where(input,select,textarea) {
+  min-height: var(--pub-control);
+  width: 100%;
+  border-radius: var(--pub-radius-control) !important;
+  border: 1px solid var(--pub-border) !important;
+  background: rgba(255,255,255,.04) !important;
+  color: var(--pub-text) !important;
+  font-size: .9375rem !important;
+  outline: none !important;
+  box-shadow: none !important;
+  transition: border-color var(--pub-fast) ease, background-color var(--pub-fast) ease, box-shadow var(--pub-fast) ease !important;
+}
+.kapi-public-shell :where(textarea) {
+  min-height: 128px;
+  resize: vertical;
+}
+.kapi-public-shell :where(input,select,textarea):focus {
+  border-color: rgba(176,0,32,.65) !important;
+  background: rgba(255,255,255,.055) !important;
+  box-shadow: 0 0 0 3px rgba(176,0,32,.10) !important;
+}
+.kapi-public-shell :where(input,textarea)::placeholder { color: rgba(161,161,166,.68); }
+
+/* Select readability */
+.kapi-public-shell select option {
+  background: #111318;
+  color: #F5F5F7;
+}
+
+/* Mobile drawer */
+.kapi-public-shell .kapi-glass-mobile-menu {
+  z-index: 100 !important;
+  background: rgba(9,10,15,.94) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(145%);
+  backdrop-filter: blur(28px) saturate(145%);
+}
+.kapi-public-shell .kapi-glass-mobile-menu > div:first-child {
+  border-color: var(--pub-border) !important;
+}
+.kapi-public-shell .kapi-glass-mobile-menu a,
+.kapi-public-shell .kapi-glass-mobile-menu button {
+  transition: background-color var(--pub-fast) ease, border-color var(--pub-fast) ease, color var(--pub-fast) ease, transform var(--pub-fast) var(--pub-ease);
+}
+.kapi-public-shell .kapi-glass-mobile-menu .rounded-2xl {
+  border-radius: 16px !important;
+}
+.kapi-public-shell .kapi-glass-mobile-menu .bg-\[var\(--k-surface\)\] {
+  background: rgba(255,255,255,.035) !important;
+}
+.kapi-public-shell .kapi-glass-mobile-menu .rounded-full {
+  border-radius: var(--pub-radius-button) !important;
+}
+
+/* Footer */
+.kapi-public-shell .kapi-public-footer {
+  position: relative;
+  z-index: 1;
+  background: var(--pub-bg) !important;
+  border-top: 1px solid var(--pub-border) !important;
+}
+.kapi-public-shell .kapi-public-footer a:hover { color: #fff; }
+
+/* Floating contact: compact utility layer, separate from content. */
+.kapi-public-shell .kapi-contact-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  background: rgba(0,0,0,.52);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+}
+.kapi-public-shell .kapi-floating-contact {
+  position: fixed;
+  right: clamp(16px, 3vw, 32px);
+  bottom: clamp(16px, 3vw, 32px);
+  z-index: 95;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}
+.kapi-public-shell .kapi-contact-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+  margin-bottom: 8px;
+  max-width: min(360px, 86vw);
+}
+.kapi-public-shell .kapi-contact-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  min-height: 44px;
+}
+.kapi-public-shell .kapi-contact-label {
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 12px;
+  border: 1px solid var(--pub-border);
+  border-radius: 12px;
+  background: rgba(17,19,24,.92);
+  color: var(--pub-text);
+  font-size: .75rem;
+  font-weight: 600;
+  white-space: nowrap;
+  box-shadow: 0 8px 24px rgba(0,0,0,.22);
+  transition: border-color var(--pub-fast) ease, color var(--pub-fast) ease, background-color var(--pub-fast) ease;
+}
+.kapi-public-shell .kapi-contact-action:hover .kapi-contact-label {
+  border-color: rgba(176,0,32,.48);
+  color: #fff;
+  background: rgba(24,27,34,.96);
+}
+.kapi-public-shell .kapi-contact-icon {
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px !important;
+  color: #fff;
+  border: 1px solid rgba(255,255,255,.1);
+  box-shadow: 0 10px 26px rgba(0,0,0,.25);
+  transition: transform var(--pub-fast) var(--pub-ease), border-color var(--pub-fast) ease;
+}
+.kapi-public-shell .kapi-contact-action:hover .kapi-contact-icon {
+  transform: translateY(-1px);
+  border-color: rgba(255,255,255,.2);
+}
+@media (max-width: 479px) {
+  .kapi-public-shell .kapi-floating-contact { right: 12px; bottom: 12px; }
+  .kapi-public-shell .kapi-contact-label { max-width: 68vw; overflow: hidden; text-overflow: ellipsis; }
+}
+
+/* Modal/sheet: always above navbar, with navbar blurred behind backdrop. */
+.kapi-public-shell :where([data-public-modal-backdrop],.kapi-modal-backdrop) {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 200 !important;
+  background: rgba(4,5,8,.62) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(120%);
+  backdrop-filter: blur(18px) saturate(120%);
+}
+.kapi-public-shell :where([data-public-modal],.kapi-modal,[role="dialog"]) {
+  z-index: 210 !important;
+  border-radius: var(--pub-radius-sheet) !important;
+  border: 1px solid rgba(255,255,255,.12) !important;
+  background: rgba(17,19,24,.96) !important;
+  box-shadow: 0 28px 90px rgba(0,0,0,.52) !important;
+  overflow: hidden;
+}
+body:has(.kapi-public-shell [data-public-modal-backdrop]),
+body:has(.kapi-public-shell .kapi-modal-backdrop) { overflow: hidden; }
+
+/* Loading / empty states */
+.kapi-public-shell [role="status"] {
+  color: var(--pub-text-secondary);
+}
+.kapi-public-shell :where(.animate-spin) {
+  animation-duration: .8s;
+}
+
+/* Accessibility and motion */
+.kapi-public-shell :where(a,button,input,select,textarea):focus-visible {
+  outline: 2px solid rgba(176,0,32,.78);
+  outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .kapi-public-shell *,
+  .kapi-public-shell *::before,
+  .kapi-public-shell *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .kapi-public-shell .kapi-public-nav,
+  .kapi-public-shell .kapi-glass-nav-menu,
+  .kapi-public-shell .kapi-glass-mobile-menu,
+  .kapi-public-shell :where([data-public-modal-backdrop],.kapi-modal-backdrop),
+  .kapi-public-shell :where(.floating-action,.kapi-floating-contact) {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  .kapi-public-shell .kapi-public-nav,
+  .kapi-public-shell .kapi-glass-nav-menu,
+  .kapi-public-shell .kapi-glass-mobile-menu { background: var(--pub-surface) !important; }
+}
+
+/* Responsive hierarchy */
+@media (max-width: 1023px) {
+  .kapi-public-shell { --pub-gutter: 24px; }
+  .kapi-public-shell .kapi-public-nav-links { gap: 10px !important; }
+}
+@media (max-width: 767px) {
+  .kapi-public-shell {
+    --pub-gutter: 16px;
+    --pub-section: 64px;
+  }
+  .kapi-public-shell h1 {
+    font-size: clamp(2rem, 9.5vw, 3.1rem) !important;
+    line-height: 1.04 !important;
+  }
+  .kapi-public-shell h2 { font-size: clamp(1.6rem, 7vw, 2.2rem) !important; }
+  .kapi-public-shell h3 { font-size: 1.22rem !important; }
+  .kapi-public-shell .kapi-home-hero {
+    min-height: 760px;
+    background:
+      radial-gradient(460px 280px at 50% 4%, rgba(176,0,32,.10), transparent 72%),
+      var(--pub-bg) !important;
+  }
+  .kapi-public-shell .kapi-home-hero p { font-size: .9375rem !important; }
+  .kapi-public-shell .kapi-card { border-radius: 16px !important; }
+  .kapi-public-shell .kapi-card-header { padding: 18px 18px 0; }
+  .kapi-public-shell .kapi-card-body { padding: 18px; }
+  .kapi-public-shell .kapi-card-footer { padding-inline: 18px; }
+  .kapi-public-shell .kapi-card-footer a { min-height: 54px; }
+  .kapi-public-shell .kapi-public-nav-links { display: none !important; }
+}
+@media (max-width: 479px) {
+  .kapi-public-shell h1 { font-size: clamp(1.9rem, 10.5vw, 2.65rem) !important; }
+  .kapi-public-shell :where(.px-8,.px-10) { padding-inline: 18px !important; }
+  .kapi-public-shell .kapi-home-hero { min-height: 720px; }
+  .kapi-public-shell .kapi-card-header { gap: 8px; }
+  .kapi-public-shell .kapi-card-pill { max-width: 52%; overflow: hidden; text-overflow: ellipsis; }
+}
