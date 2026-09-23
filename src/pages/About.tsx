@@ -516,7 +516,7 @@ export const About = () => {
             {techStack.map((stack) => (
               <div 
                 key={stack.category} 
-                className="p-6 sm:p-7 rounded-2xl sm:rounded-[24px] bg-[var(--k-surface)] border border-[var(--k-border)] hover:border-brand-red/50 hover:bg-[#1E1E1E] transition-all duration-300 flex flex-col justify-between group"
+                className="p-6 sm:p-7 rounded-2xl sm:rounded-[24px] bg-[var(--k-surface)] border border-[var(--k-border)] hover:border-brand-red/50 hover:bg-[var(--k-surface-raised)] transition-all duration-300 flex flex-col justify-between group"
               >
                 <div>
                   <div className="flex items-center justify-between mb-5 sm:mb-6">
