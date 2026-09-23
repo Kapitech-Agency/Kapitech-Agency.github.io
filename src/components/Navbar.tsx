@@ -128,7 +128,7 @@ export const Navbar = () => {
               <Link 
                 to="/work" 
                 className={cn(
-                  "relative inline-flex items-center h-7 text-[11px] font-medium uppercase tracking-[0.16em] leading-none transition-colors",
+                  "relative inline-flex items-center h-7 text-xs font-medium uppercase tracking-[0.16em] leading-none transition-colors",
                   location.pathname === '/work' ? "text-brand-red font-semibold" : "text-[var(--k-text-secondary)] hover:text-white"
                 )}
               >
@@ -149,7 +149,7 @@ export const Navbar = () => {
                   type="button"
                   onClick={() => setIsServicesDropdownOpen(prev => !prev)}
                   className={cn(
-                    "relative inline-flex items-center gap-1.5 h-7 text-[11px] font-medium uppercase tracking-[0.16em] leading-none transition-colors cursor-pointer outline-none",
+                    "relative inline-flex items-center gap-1.5 h-7 text-xs font-medium uppercase tracking-[0.16em] leading-none transition-colors cursor-pointer outline-none",
                     isServicesActive || isServicesDropdownOpen ? "text-brand-red font-semibold" : "text-[var(--k-text-secondary)] hover:text-white"
                   )}
                   aria-expanded={isServicesDropdownOpen}
@@ -168,7 +168,7 @@ export const Navbar = () => {
               <Link 
                 to="/about" 
                 className={cn(
-                  "relative inline-flex items-center h-7 text-[11px] font-medium uppercase tracking-[0.16em] leading-none transition-colors",
+                  "relative inline-flex items-center h-7 text-xs font-medium uppercase tracking-[0.16em] leading-none transition-colors",
                   location.pathname === '/about' ? "text-brand-red font-semibold" : "text-[var(--k-text-secondary)] hover:text-white"
                 )}
               >
@@ -183,7 +183,7 @@ export const Navbar = () => {
               <Link 
                 to="/careers" 
                 className={cn(
-                  "relative inline-flex items-center h-7 text-[11px] font-medium uppercase tracking-[0.16em] leading-none transition-colors",
+                  "relative inline-flex items-center h-7 text-xs font-medium uppercase tracking-[0.16em] leading-none transition-colors",
                   location.pathname === '/careers' ? "text-brand-red font-semibold" : "text-[var(--k-text-secondary)] hover:text-white"
                 )}
               >
@@ -198,14 +198,14 @@ export const Navbar = () => {
             {/* Start Project CTA */}
             <Link
               to="/contact"
-              className="relative inline-flex h-10 px-5 lg:px-6 items-center justify-center gap-2 rounded-full bg-brand-red hover:bg-[var(--k-red-hover)] text-white text-[11px] font-semibold uppercase tracking-[0.14em] border border-brand-red transition-colors duration-200 shrink-0"
+              className="relative inline-flex h-10 px-5 lg:px-6 items-center justify-center gap-2 rounded-full bg-brand-red hover:bg-[var(--k-red-hover)] text-white text-xs font-semibold uppercase tracking-[0.14em] border border-brand-red transition-colors duration-200 shrink-0"
             >
               <span>{t('nav.startProject')}</span>
               <ChevronRight size={14} aria-hidden="true" />
             </Link>
 
             {/* Language Switcher EN | ID */}
-            <div className="flex items-center h-10 p-1 rounded-full bg-[var(--k-surface)] border border-[var(--k-border)] text-[11px] font-sans font-semibold backdrop-blur-md">
+            <div className="flex items-center h-10 p-1 rounded-full bg-[var(--k-surface)] border border-[var(--k-border)] text-xs font-sans font-semibold backdrop-blur-md">
               <button
                 onClick={() => setLanguage('en')}
                 className={cn(
@@ -235,7 +235,7 @@ export const Navbar = () => {
 
           {/* Mobile Right Controls: Language Switcher & Hamburger Toggle */}
           <div className="flex items-center gap-2 sm:gap-3 md:hidden">
-            <div className="flex items-center p-0.5 rounded-full bg-[var(--k-surface)] border border-[var(--k-border)] text-[11px] font-sans font-semibold">
+            <div className="flex items-center p-0.5 rounded-full bg-[var(--k-surface)] border border-[var(--k-border)] text-xs font-sans font-semibold">
               <button
                 onClick={() => setLanguage('en')}
                 className={cn(
@@ -400,7 +400,7 @@ export const Navbar = () => {
                   <span>{language === 'id' ? 'Lihat Semua Gambaran Layanan' : 'Browse All Services Overview'}</span>
                   <ArrowUpRight className="w-3.5 h-3.5 text-brand-red" />
                 </Link>
-                <div className="font-sans text-[11px] text-[var(--k-text-secondary)]">
+                <div className="font-sans text-xs text-[var(--k-text-secondary)]">
                   3 Strategic Solutions &bull; 15 Dedicated Services
                 </div>
               </div>
@@ -434,7 +434,7 @@ export const Navbar = () => {
               </Link>
               
               <div className="flex items-center gap-2">
-                <div className="flex items-center p-0.5 rounded-full bg-[var(--k-surface)] border border-[var(--k-border)] text-[11px] font-sans font-semibold">
+                <div className="flex items-center p-0.5 rounded-full bg-[var(--k-surface)] border border-[var(--k-border)] text-xs font-sans font-semibold">
                   <button
                     onClick={() => setLanguage('en')}
                     className={cn(
@@ -511,7 +511,7 @@ export const Navbar = () => {
                     >
                       {/* Solutions */}
                       <div>
-                        <div className="text-[11px] font-sans text-brand-red font-semibold uppercase tracking-wider mb-2">
+                        <div className="text-xs font-sans text-brand-red font-semibold uppercase tracking-wider mb-2">
                           SOLUTIONS
                         </div>
                         <div className="space-y-2 pl-2 border-l border-[var(--k-border)]">
@@ -530,7 +530,7 @@ export const Navbar = () => {
 
                       {/* Branding */}
                       <div>
-                        <div className="text-[11px] font-sans text-brand-red font-semibold uppercase tracking-wider mb-2">
+                        <div className="text-xs font-sans text-brand-red font-semibold uppercase tracking-wider mb-2">
                           BRANDING
                         </div>
                         <div className="space-y-2 pl-2 border-l border-[var(--k-border)]">
@@ -549,7 +549,7 @@ export const Navbar = () => {
 
                       {/* Design */}
                       <div>
-                        <div className="text-[11px] font-sans text-brand-red font-semibold uppercase tracking-wider mb-2">
+                        <div className="text-xs font-sans text-brand-red font-semibold uppercase tracking-wider mb-2">
                           DESIGN
                         </div>
                         <div className="space-y-2 pl-2 border-l border-[var(--k-border)]">
@@ -568,7 +568,7 @@ export const Navbar = () => {
 
                       {/* Development */}
                       <div>
-                        <div className="text-[11px] font-sans text-brand-red font-semibold uppercase tracking-wider mb-2">
+                        <div className="text-xs font-sans text-brand-red font-semibold uppercase tracking-wider mb-2">
                           DEVELOPMENT
                         </div>
                         <div className="space-y-2 pl-2 border-l border-[var(--k-border)]">
