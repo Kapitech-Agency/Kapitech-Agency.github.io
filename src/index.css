@@ -1,4 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
 /* ==========================================================================
@@ -103,7 +102,7 @@
     font-family: var(--font-sans);
     overflow-x: hidden;
     width: 100%;
-    selection-background-color: #E60023;
+    selection-background-color: #B00020;
     selection-color: #FFFFFF;
   }
 
@@ -113,7 +112,7 @@
   input:focus-visible,
   textarea:focus-visible,
   select:focus-visible {
-    outline: 2px solid #E60023;
+    outline: 2px solid #B00020;
     outline-offset: 2px;
   }
 
@@ -157,15 +156,18 @@
   height: 100vh;
   z-index: 0;
   pointer-events: none;
-  background: radial-gradient(
-    circle at 50% 0%, 
-    var(--kapi-bg-charcoal-deep) 0%, 
-    var(--kapi-bg-obsidian) 75%
-  );
+  background: var(--kapi-bg-obsidian);
   overflow: hidden;
 }
 
-/* Ambient Fluid Orbs Mesh */
+/* Apple-inspired surfaces: depth comes from spacing and surfaces, not decorative gradients. */
+.kapi-fluid-background::before,
+.kapi-fluid-background::after,
+.kapi-noise-overlay {
+  display: none !important;
+}
+
+/* Ambient Orbs Mesh disabled for the restrained Apple hierarchy. */
 .kapi-fluid-background::before,
 .kapi-fluid-background::after {
   content: '';
