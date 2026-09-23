@@ -7,6 +7,7 @@ import { getDataSourceMode } from './server/data-source.ts';
 import { checkPostgresConnection, closePostgresPool } from './server/postgres.ts';
 import { postgresAuthRepository } from './server/postgres-repository.ts';
 import { ensurePostgresInitialAdmin } from './server/postgres-bootstrap.ts';
+import { ensurePostgresCmsDefaults } from './server/postgres-cms-bootstrap.ts';
 import { runPostgresMigrations } from './server/postgres-migrations.ts';
 import { flushAuditLogWrites, isDataEncryptionEnabled } from './server/db.ts';
 
@@ -65,6 +66,7 @@ async function startServer() {
     try {
       await runPostgresMigrations();
       await ensurePostgresInitialAdmin();
+      await ensurePostgresCmsDefaults();
       const migratedMfaSecrets = await postgresAuthRepository.migrateLegacyMfaSecrets();
       if (migratedMfaSecrets > 0) {
         console.log(`[Security] Re-encrypted ${migratedMfaSecrets} legacy PostgreSQL MFA secret record(s).`);
