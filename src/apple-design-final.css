@@ -337,7 +337,8 @@ h4 { font-size: 1.0625rem !important; line-height: 1.25 !important; letter-spaci
 }
 
 /* Buttons always communicate hover and press. Keep movement subtle and consistent. */
-button {
+.kapi-public-shell button,
+[data-kapi-admin="true"] button {
   transition:
     transform 180ms var(--ui-ease),
     background-color 180ms var(--ui-ease),
@@ -345,16 +346,38 @@ button {
     color 180ms var(--ui-ease),
     box-shadow 180ms var(--ui-ease) !important;
 }
-button:hover { transform: translateY(-1px); }
-button:active { transform: translateY(0) scale(.975); }
-button:disabled,
-button[aria-disabled="true"] { transform: none !important; }
+.kapi-public-shell button:hover,
+[data-kapi-admin="true"] button:hover { transform: translateY(-1px); }
+.kapi-public-shell button:active,
+[data-kapi-admin="true"] button:active { transform: translateY(0) scale(.975); }
+.kapi-public-shell button:disabled,
+[data-kapi-admin="true"] button:disabled,
+.kapi-public-shell button[aria-disabled="true"],
+[data-kapi-admin="true"] button[aria-disabled="true"] { transform: none !important; }
 
 /* Focus: no white browser outline. Keyboard focus stays visible in brand red. */
-a:focus, button:focus, input:focus, select:focus, textarea:focus {
+.kapi-public-shell a:focus,
+.kapi-public-shell button:focus,
+.kapi-public-shell input:focus,
+.kapi-public-shell select:focus,
+.kapi-public-shell textarea:focus,
+[data-kapi-admin="true"] a:focus,
+[data-kapi-admin="true"] button:focus,
+[data-kapi-admin="true"] input:focus,
+[data-kapi-admin="true"] select:focus,
+[data-kapi-admin="true"] textarea:focus {
   outline: none !important;
 }
-a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+.kapi-public-shell a:focus-visible,
+.kapi-public-shell button:focus-visible,
+.kapi-public-shell input:focus-visible,
+.kapi-public-shell select:focus-visible,
+.kapi-public-shell textarea:focus-visible,
+[data-kapi-admin="true"] a:focus-visible,
+[data-kapi-admin="true"] button:focus-visible,
+[data-kapi-admin="true"] input:focus-visible,
+[data-kapi-admin="true"] select:focus-visible,
+[data-kapi-admin="true"] textarea:focus-visible {
   outline: 2px solid rgba(176,0,32,.82) !important;
   outline-offset: 2px !important;
   box-shadow: none !important;
