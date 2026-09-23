@@ -90,12 +90,15 @@ export const Home = () => {
     <div className="bg-[var(--k-bg)] text-white min-h-screen selection:bg-brand-red selection:text-white" role="main">
       {/* Hero Section */}
       <section className="kapi-home-hero relative min-h-[85vh] sm:min-h-[90vh] flex flex-col justify-center px-4 sm:px-6 md:px-12 pt-28 sm:pt-36 md:pt-40 pb-16 sm:pb-20 overflow-hidden bg-black">
-        <AtmosphericBackground 
+        <AtmosphericBackground
           imageUrl="/hero_background_3d.png"
           opacity={0.055}
           disableGrayscale={false}
           className="kapi-hero-atmosphere"
         />
+        <div className="kapi-hero-orbit kapi-hero-orbit-one" aria-hidden="true" />
+        <div className="kapi-hero-orbit kapi-hero-orbit-two" aria-hidden="true" />
+        <div className="kapi-hero-grid" aria-hidden="true" />
 
         <div className="max-w-7xl mx-auto w-full relative z-10">
           <motion.div
@@ -115,6 +118,7 @@ export const Home = () => {
               </span>
             </div>
             
+            <div className="kapi-hero-eyebrow">Kapitech Agency <span aria-hidden="true">/</span> Digital Product Studio</div>
             <h1 className="kapi-display-title">
               {language === 'id' ? (
                 <>Studio produk digital yang dirancang untuk <span className="text-brand-red">membangun & memperluas</span> bisnis Anda.</>
@@ -130,9 +134,9 @@ export const Home = () => {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-center">
-              <Link 
-                to="/contact" 
-                className="kapi-button kapi-button-primary kapi-start-project"
+              <Link
+                to="/contact"
+                className="kapi-button kapi-button-primary kapi-start-project kapi-hero-cta"
               >
                 <span>{language === 'id' ? 'Mulai Proyek' : 'Start a Project'}</span>
                 <ArrowUpRight size={16} />
