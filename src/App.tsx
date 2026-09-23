@@ -245,10 +245,6 @@ export default function App() {
     <LanguageProvider>
       <Router>
         <ScrollToTop />
-        {/* Ambient Fluid Mesh Background Layers */}
-        <div className="kapi-fluid-background" aria-hidden="true" />
-        <div className="kapi-noise-overlay" aria-hidden="true" />
-
         <AppShell />
       </Router>
     </LanguageProvider>
