@@ -195,46 +195,14 @@ export const Navbar = () => {
               </Link>
             </div>
 
-            {/* Start Project CTA with Rotating Clockwise Red Glow */}
-            <div className="kapi-public-cta-wrap relative p-[1.5px] rounded-full overflow-hidden group/cta flex items-center justify-center shrink-0">
-              <motion.div
-                className="absolute -inset-[200%] w-[500%] h-[500%] will-change-transform"
-                style={{
-                  background: 'conic-gradient(from 0deg, transparent 0deg, transparent 200deg, rgba(230,0,35,0.1) 240deg, rgba(230,0,35,0.5) 300deg, rgba(255,31,61,0.95) 340deg, #E60023 360deg)',
-                }}
-                animate={{
-                  rotate: [0, 360],
-                }}
-                transition={{
-                  duration: 3.2,
-                  repeat: Infinity,
-                  ease: "linear",
-                }}
-              />
-
-              <motion.div 
-                className="absolute -inset-[200%] w-[500%] h-[500%] blur-[8px] opacity-70 group-hover/cta:opacity-100 transition-opacity duration-500 will-change-transform"
-                style={{
-                  background: 'conic-gradient(from 0deg, transparent 0deg, transparent 200deg, rgba(230,0,35,0.15) 250deg, rgba(230,0,35,0.6) 310deg, #E60023 360deg)',
-                }}
-                animate={{
-                  rotate: [0, 360],
-                }}
-                transition={{
-                  duration: 3.2,
-                  repeat: Infinity,
-                  ease: "linear",
-                }}
-              />
-
-              <Link 
-                to="/contact" 
-                className="relative z-10 h-10 px-5 lg:px-6 bg-[#16181D] hover:bg-brand-red text-white hover:text-white rounded-full text-[11px] font-bold uppercase tracking-[0.16em] transition-all duration-300 flex items-center gap-2 shrink-0 active:scale-95 border border-[#262930]"
-              >
-                <span className="relative z-10">{t('nav.startProject')}</span>
-                <ChevronRight size={14} className="relative z-10 opacity-80 group-hover/cta:translate-x-0.5 transition-transform duration-300" />
-              </Link>
-            </div>
+            {/* Start Project CTA */}
+            <Link
+              to="/contact"
+              className="relative inline-flex h-10 px-5 lg:px-6 items-center justify-center gap-2 rounded-full bg-brand-red hover:bg-brand-red text-white text-[11px] font-semibold uppercase tracking-[0.14em] border border-brand-red transition-colors duration-200 shrink-0"
+            >
+              <span>{t('nav.startProject')}</span>
+              <ChevronRight size={14} aria-hidden="true" />
+            </Link>
 
             {/* Language Switcher EN | ID */}
             <div className="flex items-center h-10 p-1 rounded-full bg-[#16181D] border border-[#262930] text-[11px] font-mono font-semibold backdrop-blur-md">
