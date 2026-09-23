@@ -526,7 +526,7 @@ export const Contact = () => {
                           value={formState.name}
                           onChange={handleInputChange}
                           placeholder={language === 'id' ? 'cth. Budi Santoso' : 'e.g. John Doe'}
-                          className={`w-full bg-[var(--k-bg)] border ${formErrors.name ? 'border-brand-red' : 'border-[var(--k-border)]'} rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-base sm:text-xs text-white placeholder:text-[var(--k-text-secondary)]/50 focus:outline-none focus-visible:outline-none focus:border-brand-red font-sans min-h-[44px]`}
+                          className={`w-full bg-[var(--k-bg)] border ${formErrors.name ? 'border-brand-red' : 'border-[var(--k-border)]'} rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-base sm:text-xs text-white placeholder:text-[var(--k-text-secondary)]/50 focus:outline-none focus-visible:outline-none focus-visible:outline-none focus:border-brand-red font-sans min-h-[44px]`}
                         />
                         {formErrors.name && (
                           <p className="text-[11px] font-sans text-brand-red mt-1 flex items-center gap-1">
@@ -546,7 +546,7 @@ export const Contact = () => {
                           value={formState.email}
                           onChange={handleInputChange}
                           placeholder="john@company.com"
-                          className={`w-full bg-[var(--k-bg)] border ${formErrors.email ? 'border-brand-red' : 'border-[var(--k-border)]'} rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-base sm:text-xs text-white placeholder:text-[var(--k-text-secondary)]/50 focus:outline-none focus-visible:outline-none focus:border-brand-red font-sans min-h-[44px]`}
+                          className={`w-full bg-[var(--k-bg)] border ${formErrors.email ? 'border-brand-red' : 'border-[var(--k-border)]'} rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-base sm:text-xs text-white placeholder:text-[var(--k-text-secondary)]/50 focus:outline-none focus-visible:outline-none focus-visible:outline-none focus:border-brand-red font-sans min-h-[44px]`}
                         />
                         {formErrors.email && (
                           <p className="text-[11px] font-sans text-brand-red mt-1 flex items-center gap-1">
@@ -568,7 +568,7 @@ export const Contact = () => {
                           value={formState.company}
                           onChange={handleInputChange}
                           placeholder="e.g. Acme Corp"
-                          className="w-full bg-[var(--k-bg)] border border-[var(--k-border)] rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-base sm:text-xs text-white placeholder:text-[var(--k-text-secondary)]/50 focus:outline-none focus-visible:outline-none focus:border-brand-red font-sans min-h-[44px]"
+                          className="w-full bg-[var(--k-bg)] border border-[var(--k-border)] rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-base sm:text-xs text-white placeholder:text-[var(--k-text-secondary)]/50 focus:outline-none focus-visible:outline-none focus-visible:outline-none focus:border-brand-red font-sans min-h-[44px]"
                         />
                       </div>
                       <div>
@@ -581,7 +581,7 @@ export const Contact = () => {
                           value={formState.phone}
                           onChange={handleInputChange}
                           placeholder="+62 812-xxxx-xxxx"
-                          className={`w-full bg-[var(--k-bg)] border ${formErrors.phone ? 'border-brand-red' : 'border-[var(--k-border)]'} rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-base sm:text-xs text-white placeholder:text-[var(--k-text-secondary)]/50 focus:outline-none focus-visible:outline-none focus:border-brand-red font-sans min-h-[44px]`}
+                          className={`w-full bg-[var(--k-bg)] border ${formErrors.phone ? 'border-brand-red' : 'border-[var(--k-border)]'} rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-base sm:text-xs text-white placeholder:text-[var(--k-text-secondary)]/50 focus:outline-none focus-visible:outline-none focus-visible:outline-none focus:border-brand-red font-sans min-h-[44px]`}
                         />
                         {formErrors.phone && (
                           <p className="text-[11px] font-sans text-brand-red mt-1 flex items-center gap-1">
@@ -627,7 +627,7 @@ export const Contact = () => {
                         value={formState.message}
                         onChange={handleInputChange}
                         placeholder={language === 'id' ? 'Ceritakan tentang kebutuhan produk yang ingin dibangun, tantangan saat ini, target rilis, dll...' : 'Tell us about what you want to build, existing challenges, desired launch dates, etc...'}
-                        className={`w-full bg-[var(--k-bg)] border ${formErrors.message ? 'border-brand-red' : 'border-[var(--k-border)]'} rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-base sm:text-xs text-white placeholder:text-[var(--k-text-secondary)]/50 focus:outline-none focus-visible:outline-none focus:border-brand-red resize-none font-sans`}
+                        className={`w-full bg-[var(--k-bg)] border ${formErrors.message ? 'border-brand-red' : 'border-[var(--k-border)]'} rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-base sm:text-xs text-white placeholder:text-[var(--k-text-secondary)]/50 focus:outline-none focus-visible:outline-none focus-visible:outline-none focus:border-brand-red resize-none font-sans`}
                       />
                       {formErrors.message && (
                         <p className="text-[11px] font-sans text-brand-red mt-1 flex items-center gap-1">
