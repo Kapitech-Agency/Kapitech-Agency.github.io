@@ -666,7 +666,7 @@ export const Careers = () => {
               }
             </p>
             <div className="flex flex-wrap items-center gap-3 text-xs font-sans text-[var(--k-text-secondary)] mb-6">
-              <span className="px-3 py-1.5 rounded-full bg-[#161616] border border-[var(--k-border)] flex items-center gap-2">
+              <span className="px-3 py-1.5 rounded-full bg-[var(--k-surface)] border border-[var(--k-border)] flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                 <span>2 {language === 'id' ? 'Posisi Studio Terbuka' : 'Studio Roles Hiring'}</span>
               </span>
@@ -674,7 +674,7 @@ export const Careers = () => {
                 <Sparkles size={12} />
                 <span>{language === 'id' ? 'Freelance Vendor Network (WFA Terbuka)' : 'Freelance Vendor Network (WFA Open)'}</span>
               </span>
-              <span className="px-3 py-1.5 rounded-full bg-[#161616] border border-[var(--k-border)]">
+              <span className="px-3 py-1.5 rounded-full bg-[var(--k-surface)] border border-[var(--k-border)]">
                 {language === 'id' ? 'Studio di Tangerang Selatan' : 'Studio in South Tangerang'}
               </span>
             </div>
@@ -751,7 +751,7 @@ export const Careers = () => {
                 >
                   <button
                     onClick={() => setSelectedTalent(talent)}
-                    className="group relative rounded-2xl sm:rounded-[var(--k-sheet-radius)] overflow-hidden border border-[var(--k-border)] bg-[#161616] transition-all duration-500 hover:-translate-y-1 hover:-translate-y-1.5 hover:border-brand-red/60 hover:shadow-[0_16px_36px_rgba(0,0,0,.28)] cursor-pointer aspect-[3/4] p-0 block w-full text-left focus:outline-none focus-visible:outline-none focus-visible:outline-none focus:ring-2 focus:ring-brand-red/50"
+                    className="group relative rounded-2xl sm:rounded-[var(--k-sheet-radius)] overflow-hidden border border-[var(--k-border)] bg-[var(--k-surface)] transition-all duration-500 hover:-translate-y-1 hover:border-brand-red/60 hover:shadow-[0_16px_36px_rgba(0,0,0,.28)] cursor-pointer aspect-[3/4] p-0 block w-full text-left focus:outline-none focus-visible:outline-none focus:ring-2 focus:ring-brand-red/50"
                     title={`${talent.name} - ${talent.role}`}
                     aria-label={`View photo and profile of ${talent.name}`}
                   >
@@ -784,7 +784,7 @@ export const Careers = () => {
                 animate={{ scale: 1, opacity: 1, y: 0 }}
                 exit={{ scale: 0.95, opacity: 0, y: 20 }}
                 onClick={(e) => e.stopPropagation()}
-                className="relative w-full max-w-lg bg-[#161616] border border-[var(--k-border)] rounded-[var(--k-sheet-radius)] p-5 sm:p-8 shadow-[var(--k-shadow-sm)] overflow-hidden my-6"
+                className="relative w-full max-w-lg bg-[var(--k-surface)] border border-[var(--k-border)] rounded-[var(--k-sheet-radius)] p-5 sm:p-8 shadow-[var(--k-shadow-sm)] overflow-hidden my-6"
               >
                 <button
                   onClick={() => setSelectedTalent(null)}
@@ -803,7 +803,7 @@ export const Careers = () => {
                     />
                   </div>
                   <div className="min-w-0">
-                    <span className="text-[11px] sm:text-xs font-sans text-brand-red font-semibold block mb-0.5 truncate">
+                    <span className="text-xs sm:text-xs font-sans text-brand-red font-semibold block mb-0.5 truncate">
                       {selectedTalent.department} • {selectedTalent.experience}
                     </span>
                     <h3 className="text-lg sm:text-xl font-sans font-bold text-white truncate">
@@ -817,7 +817,7 @@ export const Careers = () => {
 
                 <div className="space-y-3.5 sm:space-y-4 text-xs font-light text-white/80 border-t border-[var(--k-border)] pt-4">
                   <div>
-                    <span className="text-[10px] font-sans uppercase text-[var(--k-text-secondary)] block mb-1">
+                    <span className="text-xs font-sans uppercase text-[var(--k-text-secondary)] block mb-1">
                       {language === 'id' ? 'Fokus Keahlian' : 'Core Specialty'}
                     </span>
                     <p className="font-sans text-brand-red font-medium text-xs sm:text-sm">
@@ -825,7 +825,7 @@ export const Careers = () => {
                     </p>
                   </div>
                   <div>
-                    <span className="text-[10px] font-sans uppercase text-[var(--k-text-secondary)] block mb-1">
+                    <span className="text-xs font-sans uppercase text-[var(--k-text-secondary)] block mb-1">
                       {language === 'id' ? 'Tentang Praktik Kerja' : 'About Craft & Practice'}
                     </span>
                     <p className="leading-relaxed text-[var(--k-text-secondary)]">
@@ -874,7 +874,7 @@ export const Careers = () => {
                 key={pos.id}
                 whileHover={{ y: -2 }}
                 onClick={() => setSelectedPosition(pos)}
-                className="cursor-pointer group p-6 sm:p-8 lg:p-10 rounded-2xl border border-[var(--k-border)] bg-[#161616] hover:border-brand-red/50 transition-all duration-300"
+                className="cursor-pointer group p-6 sm:p-8 lg:p-10 rounded-2xl border border-[var(--k-border)] bg-[var(--k-surface)] hover:border-brand-red/50 transition-all duration-300"
               >
                 <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
                   <div className="space-y-3 max-w-3xl">
@@ -963,7 +963,7 @@ export const Careers = () => {
           </div>
 
           {/* Key Work Policy Banner (Crucial Terms Callout) */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-12 p-5 sm:p-6 rounded-2xl bg-[#161616] border border-brand-red/30">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-12 p-5 sm:p-6 rounded-2xl bg-[var(--k-surface)] border border-brand-red/30">
             <div className="flex items-start gap-3.5">
               <div className="w-10 h-10 rounded-xl bg-brand-red/15 border border-brand-red/30 flex items-center justify-center text-brand-red shrink-0">
                 <Globe size={18} />
@@ -1024,7 +1024,7 @@ export const Careers = () => {
           {/* 4 In-Depth Information Columns */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {/* 1. Keterangan & Deskripsi */}
-            <div className="p-6 sm:p-7 rounded-2xl border border-[var(--k-border)] bg-[#161616] flex flex-col justify-between hover:border-brand-red/30 transition-all">
+            <div className="p-6 sm:p-7 rounded-2xl border border-[var(--k-border)] bg-[var(--k-surface)] flex flex-col justify-between hover:border-brand-red/30 transition-all">
               <div>
                 <div className="w-11 h-11 rounded-xl bg-[var(--k-bg-deep)] border border-[var(--k-border)] flex items-center justify-center text-white mb-5">
                   <Layers size={20} className="text-brand-red" />
@@ -1056,7 +1056,7 @@ export const Careers = () => {
             </div>
 
             {/* 2. Aturan & Ketentuan */}
-            <div className="p-6 sm:p-7 rounded-2xl border border-[var(--k-border)] bg-[#161616] flex flex-col justify-between hover:border-brand-red/30 transition-all">
+            <div className="p-6 sm:p-7 rounded-2xl border border-[var(--k-border)] bg-[var(--k-surface)] flex flex-col justify-between hover:border-brand-red/30 transition-all">
               <div>
                 <div className="w-11 h-11 rounded-xl bg-[var(--k-bg-deep)] border border-[var(--k-border)] flex items-center justify-center text-white mb-5">
                   <ShieldCheck size={20} className="text-brand-red" />
@@ -1088,7 +1088,7 @@ export const Careers = () => {
             </div>
 
             {/* 3. Benefit & Keuntungan */}
-            <div className="p-6 sm:p-7 rounded-2xl border border-[var(--k-border)] bg-[#161616] flex flex-col justify-between hover:border-brand-red/30 transition-all">
+            <div className="p-6 sm:p-7 rounded-2xl border border-[var(--k-border)] bg-[var(--k-surface)] flex flex-col justify-between hover:border-brand-red/30 transition-all">
               <div>
                 <div className="w-11 h-11 rounded-xl bg-[var(--k-bg-deep)] border border-[var(--k-border)] flex items-center justify-center text-white mb-5">
                   <DollarSign size={20} className="text-brand-red" />
@@ -1120,7 +1120,7 @@ export const Careers = () => {
             </div>
 
             {/* 4. Apa yang Kami Butuhkan */}
-            <div className="p-6 sm:p-7 rounded-2xl border border-[var(--k-border)] bg-[#161616] flex flex-col justify-between hover:border-brand-red/30 transition-all">
+            <div className="p-6 sm:p-7 rounded-2xl border border-[var(--k-border)] bg-[var(--k-surface)] flex flex-col justify-between hover:border-brand-red/30 transition-all">
               <div>
                 <div className="w-11 h-11 rounded-xl bg-[var(--k-bg-deep)] border border-[var(--k-border)] flex items-center justify-center text-white mb-5">
                   <Code2 size={20} className="text-brand-red" />
@@ -1174,7 +1174,7 @@ export const Careers = () => {
             {benefits.map((benefit, i) => (
               <div 
                 key={i}
-                className="p-6 sm:p-8 rounded-2xl border border-[var(--k-border)] bg-[#161616] hover:border-brand-red/30 transition-all duration-300 flex flex-col justify-between"
+                className="p-6 sm:p-8 rounded-2xl border border-[var(--k-border)] bg-[var(--k-surface)] hover:border-brand-red/30 transition-all duration-300 flex flex-col justify-between"
               >
                 <div className="w-12 h-12 rounded-xl bg-brand-red/10 border border-brand-red/30 flex items-center justify-center text-brand-red mb-6">
                   {benefit.icon}
@@ -1202,17 +1202,17 @@ export const Careers = () => {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ duration: 0.25 }}
-              className="relative w-full max-w-3xl bg-[#161616] border border-[var(--k-border)] rounded-2xl overflow-hidden shadow-[var(--k-shadow-sm)] my-8 max-h-[90vh] flex flex-col"
+              className="relative w-full max-w-3xl bg-[var(--k-surface)] border border-[var(--k-border)] rounded-2xl overflow-hidden shadow-[var(--k-shadow-sm)] my-8 max-h-[90vh] flex flex-col"
             >
               {/* Sticky Modal Header with Role Title */}
-              <div className="sticky top-0 z-20 p-5 sm:p-6 bg-[#161616]/95 backdrop-blur-md border-b border-[var(--k-border)] space-y-3">
+              <div className="sticky top-0 z-20 p-5 sm:p-6 bg-[var(--k-surface)]/95 backdrop-blur-md border-b border-[var(--k-border)] space-y-3">
                 <div className="flex items-start justify-between gap-4">
                   <div className="space-y-1.5 min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className="px-2.5 py-0.5 rounded-full bg-brand-red/15 border border-brand-red/40 text-brand-red text-[11px] font-sans font-semibold">
+                      <span className="px-2.5 py-0.5 rounded-full bg-brand-red/15 border border-brand-red/40 text-brand-red text-xs font-sans font-semibold">
                         {selectedPosition.workplace}
                       </span>
-                      <span className="text-[11px] font-sans text-[var(--k-text-secondary)]">
+                      <span className="text-xs font-sans text-[var(--k-text-secondary)]">
                         {selectedPosition.department}
                       </span>
                     </div>
@@ -1243,7 +1243,7 @@ export const Careers = () => {
                     <span>{selectedPosition.type}</span>
                   </span>
                   {selectedPosition.compensation && (
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 text-[11px]">
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 text-xs">
                       <Award size={13} className="shrink-0" />
                       <span><strong>{language === 'id' ? 'Kompensasi:' : 'Compensation:'}</strong> {selectedPosition.compensation}</span>
                     </span>
@@ -1326,7 +1326,7 @@ export const Careers = () => {
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-[11px] font-sans text-[var(--k-text-secondary)] mb-1.5 uppercase">
+                          <label className="block text-xs font-sans text-[var(--k-text-secondary)] mb-1.5 uppercase">
                             {language === 'id' ? 'Nama Lengkap *' : 'Full Name *'}
                           </label>
                           <input 
@@ -1336,15 +1336,15 @@ export const Careers = () => {
                             value={formData.name}
                             onChange={handleInputChange}
                             placeholder={language === 'id' ? 'e.g. Alex Pratama' : 'e.g. Alex Morgan'}
-                            className={`w-full min-h-[44px] bg-[var(--k-bg)] border rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus-visible:outline-none focus-visible:outline-none focus:border-brand-red font-sans ${applicantErrors.name ? 'border-brand-red' : 'border-[var(--k-border)]'}`}
+                            className={`w-full min-h-[44px] bg-[var(--k-bg)] border rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus-visible:outline-none focus:border-brand-red font-sans ${applicantErrors.name ? 'border-brand-red' : 'border-[var(--k-border)]'}`}
                           />
                           {applicantErrors.name && (
-                            <span className="text-[11px] font-sans text-brand-red mt-1 block">{applicantErrors.name}</span>
+                            <span className="text-xs font-sans text-brand-red mt-1 block">{applicantErrors.name}</span>
                           )}
                         </div>
 
                         <div>
-                          <label className="block text-[11px] font-sans text-[var(--k-text-secondary)] mb-1.5 uppercase">
+                          <label className="block text-xs font-sans text-[var(--k-text-secondary)] mb-1.5 uppercase">
                             {language === 'id' ? 'Alamat Email *' : 'Email Address *'}
                           </label>
                           <input 
@@ -1354,17 +1354,17 @@ export const Careers = () => {
                             value={formData.email}
                             onChange={handleInputChange}
                             placeholder="alex@example.com"
-                            className={`w-full min-h-[44px] bg-[var(--k-bg)] border rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus-visible:outline-none focus-visible:outline-none focus:border-brand-red font-sans ${applicantErrors.email ? 'border-brand-red' : 'border-[var(--k-border)]'}`}
+                            className={`w-full min-h-[44px] bg-[var(--k-bg)] border rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus-visible:outline-none focus:border-brand-red font-sans ${applicantErrors.email ? 'border-brand-red' : 'border-[var(--k-border)]'}`}
                           />
                           {applicantErrors.email && (
-                            <span className="text-[11px] font-sans text-brand-red mt-1 block">{applicantErrors.email}</span>
+                            <span className="text-xs font-sans text-brand-red mt-1 block">{applicantErrors.email}</span>
                           )}
                         </div>
                       </div>
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-[11px] font-sans text-[var(--k-text-secondary)] mb-1.5 uppercase">
+                          <label className="block text-xs font-sans text-[var(--k-text-secondary)] mb-1.5 uppercase">
                             {language === 'id' ? 'Nomor WhatsApp / HP *' : 'Phone / WhatsApp *'}
                           </label>
                           <input 
@@ -1374,15 +1374,15 @@ export const Careers = () => {
                             value={formData.phone}
                             onChange={handleInputChange}
                             placeholder="+62 812-3456-7890"
-                            className={`w-full min-h-[44px] bg-[var(--k-bg)] border rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus-visible:outline-none focus-visible:outline-none focus:border-brand-red font-sans ${applicantErrors.phone ? 'border-brand-red' : 'border-[var(--k-border)]'}`}
+                            className={`w-full min-h-[44px] bg-[var(--k-bg)] border rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus-visible:outline-none focus:border-brand-red font-sans ${applicantErrors.phone ? 'border-brand-red' : 'border-[var(--k-border)]'}`}
                           />
                           {applicantErrors.phone && (
-                            <span className="text-[11px] font-sans text-brand-red mt-1 block">{applicantErrors.phone}</span>
+                            <span className="text-xs font-sans text-brand-red mt-1 block">{applicantErrors.phone}</span>
                           )}
                         </div>
 
                         <div>
-                          <label className="block text-[11px] font-sans text-[var(--k-text-secondary)] mb-1.5 uppercase">
+                          <label className="block text-xs font-sans text-[var(--k-text-secondary)] mb-1.5 uppercase">
                             {language === 'id' ? 'Tautan Portofolio / LinkedIn *' : 'Portfolio / LinkedIn URL *'}
                           </label>
                           <input 
@@ -1392,13 +1392,13 @@ export const Careers = () => {
                             value={formData.portfolio}
                             onChange={handleInputChange}
                             placeholder="https://linkedin.com/in/... or https://behance.net/..."
-                            className="w-full min-h-[44px] bg-[var(--k-bg)] border border-[var(--k-border)] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus-visible:outline-none focus-visible:outline-none focus:border-brand-red font-sans"
+                            className="w-full min-h-[44px] bg-[var(--k-bg)] border border-[var(--k-border)] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus-visible:outline-none focus:border-brand-red font-sans"
                           />
                         </div>
                       </div>
 
                       <div>
-                        <label className="block text-[11px] font-sans text-[var(--k-text-secondary)] mb-1.5 uppercase">
+                        <label className="block text-xs font-sans text-[var(--k-text-secondary)] mb-1.5 uppercase">
                           {language === 'id' ? 'Pesan / Pengantar Singkat' : 'Cover Note / Introduction'}
                         </label>
                         <textarea 
@@ -1407,12 +1407,12 @@ export const Careers = () => {
                           value={formData.coverLetter}
                           onChange={handleInputChange}
                           placeholder={language === 'id' ? 'Ceritakan secara singkat pengalaman dan motivasi Anda...' : 'Briefly describe your relevant background and motivations...'}
-                          className="w-full bg-[var(--k-bg)] border border-[var(--k-border)] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus-visible:outline-none focus-visible:outline-none focus:border-brand-red font-sans"
+                          className="w-full bg-[var(--k-bg)] border border-[var(--k-border)] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus-visible:outline-none focus:border-brand-red font-sans"
                         />
                       </div>
 
                       <div>
-                        <label className="block text-[11px] font-sans text-[var(--k-text-secondary)] mb-1.5 uppercase">
+                        <label className="block text-xs font-sans text-[var(--k-text-secondary)] mb-1.5 uppercase">
                           {language === 'id' ? 'Unggah CV / Resume (PDF maks 5MB)' : 'Upload Resume / CV (PDF max 5MB)'}
                         </label>
                         <div className="relative border border-dashed border-[var(--k-border)] rounded-xl p-4 text-center hover:border-brand-red/50 transition-colors bg-[var(--k-bg)]/50">
@@ -1428,7 +1428,7 @@ export const Careers = () => {
                           </span>
                         </div>
                         {applicantErrors.resume && (
-                          <span className="text-[11px] font-sans text-brand-red mt-1 block">{applicantErrors.resume}</span>
+                          <span className="text-xs font-sans text-brand-red mt-1 block">{applicantErrors.resume}</span>
                         )}
                       </div>
 
@@ -1456,17 +1456,17 @@ export const Careers = () => {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ duration: 0.25 }}
-              className="relative w-full max-w-3xl bg-[#161616] border border-brand-red/40 rounded-2xl overflow-hidden shadow-[var(--k-shadow-sm)] my-8 max-h-[90vh] flex flex-col"
+              className="relative w-full max-w-3xl bg-[var(--k-surface)] border border-brand-red/40 rounded-2xl overflow-hidden shadow-[var(--k-shadow-sm)] my-8 max-h-[90vh] flex flex-col"
             >
               {/* Sticky Modal Header */}
-              <div className="sticky top-0 z-20 p-5 sm:p-6 bg-[#161616]/95 backdrop-blur-md border-b border-[var(--k-border)] space-y-3">
+              <div className="sticky top-0 z-20 p-5 sm:p-6 bg-[var(--k-surface)]/95 backdrop-blur-md border-b border-[var(--k-border)] space-y-3">
                 <div className="flex items-start justify-between gap-4">
                   <div className="space-y-1.5 min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className="px-2.5 py-0.5 rounded-full bg-brand-red/15 border border-brand-red/40 text-brand-red text-[11px] font-sans font-semibold">
+                      <span className="px-2.5 py-0.5 rounded-full bg-brand-red/15 border border-brand-red/40 text-brand-red text-xs font-sans font-semibold">
                         100% WFA • Project-Based
                       </span>
-                      <span className="px-2.5 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-[11px] font-sans">
+                      <span className="px-2.5 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-sans">
                         BYOD (No Device Provided)
                       </span>
                     </div>
@@ -1541,7 +1541,7 @@ export const Careers = () => {
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-[11px] font-sans text-[var(--k-text-secondary)] mb-1.5 uppercase font-semibold">
+                        <label className="block text-xs font-sans text-[var(--k-text-secondary)] mb-1.5 uppercase font-semibold">
                           {language === 'id' ? 'Nama Lengkap / Studio *' : 'Full Name / Studio Name *'}
                         </label>
                         <input 
@@ -1551,15 +1551,15 @@ export const Careers = () => {
                           value={vendorFormData.name}
                           onChange={handleVendorInputChange}
                           placeholder={language === 'id' ? 'e.g. Budi Santoso / Studio Koding' : 'e.g. Alex Morgan / Pixel Studio'}
-                          className={`w-full min-h-[44px] bg-[var(--k-bg)] border rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus-visible:outline-none focus-visible:outline-none focus:border-brand-red font-sans ${vendorErrors.name ? 'border-brand-red' : 'border-[var(--k-border)]'}`}
+                          className={`w-full min-h-[44px] bg-[var(--k-bg)] border rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus-visible:outline-none focus:border-brand-red font-sans ${vendorErrors.name ? 'border-brand-red' : 'border-[var(--k-border)]'}`}
                         />
                         {vendorErrors.name && (
-                          <span className="text-[11px] font-sans text-brand-red mt-1 block">{vendorErrors.name}</span>
+                          <span className="text-xs font-sans text-brand-red mt-1 block">{vendorErrors.name}</span>
                         )}
                       </div>
 
                       <div>
-                        <label className="block text-[11px] font-sans text-[var(--k-text-secondary)] mb-1.5 uppercase font-semibold">
+                        <label className="block text-xs font-sans text-[var(--k-text-secondary)] mb-1.5 uppercase font-semibold">
                           {language === 'id' ? 'Alamat Email *' : 'Email Address *'}
                         </label>
                         <input 
@@ -1569,17 +1569,17 @@ export const Careers = () => {
                           value={vendorFormData.email}
                           onChange={handleVendorInputChange}
                           placeholder="freelancer@example.com"
-                          className={`w-full min-h-[44px] bg-[var(--k-bg)] border rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus-visible:outline-none focus-visible:outline-none focus:border-brand-red font-sans ${vendorErrors.email ? 'border-brand-red' : 'border-[var(--k-border)]'}`}
+                          className={`w-full min-h-[44px] bg-[var(--k-bg)] border rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus-visible:outline-none focus:border-brand-red font-sans ${vendorErrors.email ? 'border-brand-red' : 'border-[var(--k-border)]'}`}
                         />
                         {vendorErrors.email && (
-                          <span className="text-[11px] font-sans text-brand-red mt-1 block">{vendorErrors.email}</span>
+                          <span className="text-xs font-sans text-brand-red mt-1 block">{vendorErrors.email}</span>
                         )}
                       </div>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-[11px] font-sans text-[var(--k-text-secondary)] mb-1.5 uppercase font-semibold">
+                        <label className="block text-xs font-sans text-[var(--k-text-secondary)] mb-1.5 uppercase font-semibold">
                           {language === 'id' ? 'Nomor WhatsApp Aktif *' : 'WhatsApp Number (Active) *'}
                         </label>
                         <input 
@@ -1589,15 +1589,15 @@ export const Careers = () => {
                           value={vendorFormData.phone}
                           onChange={handleVendorInputChange}
                           placeholder="+62 812-3456-7890"
-                          className={`w-full min-h-[44px] bg-[var(--k-bg)] border rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus-visible:outline-none focus-visible:outline-none focus:border-brand-red font-sans ${vendorErrors.phone ? 'border-brand-red' : 'border-[var(--k-border)]'}`}
+                          className={`w-full min-h-[44px] bg-[var(--k-bg)] border rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus-visible:outline-none focus:border-brand-red font-sans ${vendorErrors.phone ? 'border-brand-red' : 'border-[var(--k-border)]'}`}
                         />
                         {vendorErrors.phone && (
-                          <span className="text-[11px] font-sans text-brand-red mt-1 block">{vendorErrors.phone}</span>
+                          <span className="text-xs font-sans text-brand-red mt-1 block">{vendorErrors.phone}</span>
                         )}
                       </div>
 
                       <div>
-                        <label className="block text-[11px] font-sans text-[var(--k-text-secondary)] mb-1.5 uppercase font-semibold">
+                        <label className="block text-xs font-sans text-[var(--k-text-secondary)] mb-1.5 uppercase font-semibold">
                           {language === 'id' ? 'Spesialisasi Utama *' : 'Primary Specialty *'}
                         </label>
                         <select
@@ -1605,7 +1605,7 @@ export const Careers = () => {
                           required
                           value={vendorFormData.specialty}
                           onChange={handleVendorInputChange}
-                          className="w-full min-h-[44px] bg-[var(--k-bg)] border border-[var(--k-border)] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white focus:outline-none focus-visible:outline-none focus-visible:outline-none focus:border-brand-red font-sans"
+                          className="w-full min-h-[44px] bg-[var(--k-bg)] border border-[var(--k-border)] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white focus:outline-none focus-visible:outline-none focus:border-brand-red font-sans"
                         >
                           <option value="UI/UX & Product Design">UI/UX & Product Design (Figma, Systems, Prototyping)</option>
                           <option value="Frontend Web Development">Frontend Web Dev (React, Next.js, Tailwind, Motion)</option>
@@ -1620,7 +1620,7 @@ export const Careers = () => {
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-[11px] font-sans text-[var(--k-text-secondary)] mb-1.5 uppercase font-semibold">
+                        <label className="block text-xs font-sans text-[var(--k-text-secondary)] mb-1.5 uppercase font-semibold">
                           {language === 'id' ? 'Tautan Portofolio / GitHub / Dribbble *' : 'Portfolio / GitHub / Dribbble URL *'}
                         </label>
                         <input 
@@ -1630,12 +1630,12 @@ export const Careers = () => {
                           value={vendorFormData.portfolio}
                           onChange={handleVendorInputChange}
                           placeholder="https://behance.net/... or https://github.com/..."
-                          className="w-full min-h-[44px] bg-[var(--k-bg)] border border-[var(--k-border)] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus-visible:outline-none focus-visible:outline-none focus:border-brand-red font-sans"
+                          className="w-full min-h-[44px] bg-[var(--k-bg)] border border-[var(--k-border)] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus-visible:outline-none focus:border-brand-red font-sans"
                         />
                       </div>
 
                       <div>
-                        <label className="block text-[11px] font-sans text-[var(--k-text-secondary)] mb-1.5 uppercase font-semibold">
+                        <label className="block text-xs font-sans text-[var(--k-text-secondary)] mb-1.5 uppercase font-semibold">
                           {language === 'id' ? 'Ekspektasi Rate Card (per Proyek / Jam)' : 'Rate Card Expectation (per Project / Hourly)'}
                         </label>
                         <input 
@@ -1644,21 +1644,21 @@ export const Careers = () => {
                           value={vendorFormData.rateCard}
                           onChange={handleVendorInputChange}
                           placeholder={language === 'id' ? 'e.g. Rp 5.000.000 - Rp 15.000.000 / project' : 'e.g. $25 - $45 / hour or per project range'}
-                          className="w-full min-h-[44px] bg-[var(--k-bg)] border border-[var(--k-border)] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus-visible:outline-none focus-visible:outline-none focus:border-brand-red font-sans"
+                          className="w-full min-h-[44px] bg-[var(--k-bg)] border border-[var(--k-border)] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus-visible:outline-none focus:border-brand-red font-sans"
                         />
                       </div>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-[11px] font-sans text-[var(--k-text-secondary)] mb-1.5 uppercase font-semibold">
+                        <label className="block text-xs font-sans text-[var(--k-text-secondary)] mb-1.5 uppercase font-semibold">
                           {language === 'id' ? 'Pengalaman Profesional' : 'Years of Experience'}
                         </label>
                         <select
                           name="experienceYears"
                           value={vendorFormData.experienceYears}
                           onChange={handleVendorInputChange}
-                          className="w-full min-h-[44px] bg-[var(--k-bg)] border border-[var(--k-border)] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white focus:outline-none focus-visible:outline-none focus-visible:outline-none focus:border-brand-red font-sans"
+                          className="w-full min-h-[44px] bg-[var(--k-bg)] border border-[var(--k-border)] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white focus:outline-none focus-visible:outline-none focus:border-brand-red font-sans"
                         >
                           <option value="1-2 Years">1 - 2 Years</option>
                           <option value="3-5 Years">3 - 5 Years (Mid-Level)</option>
@@ -1668,7 +1668,7 @@ export const Careers = () => {
                       </div>
 
                       <div>
-                        <label className="block text-[11px] font-sans text-[var(--k-text-secondary)] mb-1.5 uppercase font-semibold">
+                        <label className="block text-xs font-sans text-[var(--k-text-secondary)] mb-1.5 uppercase font-semibold">
                           {language === 'id' ? 'Alat Kerja / Stack Utama' : 'Core Tools & Tech Stack'}
                         </label>
                         <input 
@@ -1677,14 +1677,14 @@ export const Careers = () => {
                           value={vendorFormData.tools}
                           onChange={handleVendorInputChange}
                           placeholder="e.g. Figma, React, Next.js, After Effects, Blender"
-                          className="w-full min-h-[44px] bg-[var(--k-bg)] border border-[var(--k-border)] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus-visible:outline-none focus-visible:outline-none focus:border-brand-red font-sans"
+                          className="w-full min-h-[44px] bg-[var(--k-bg)] border border-[var(--k-border)] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus-visible:outline-none focus:border-brand-red font-sans"
                         />
                       </div>
                     </div>
 
                     {/* MANDATORY CHECKBOXES (Crucial Requirements) */}
                     <div className="p-4 rounded-xl bg-[var(--k-bg)] border border-[var(--k-border)] space-y-3">
-                      <span className="text-[11px] font-sans uppercase text-brand-red font-bold block mb-1">
+                      <span className="text-xs font-sans uppercase text-brand-red font-bold block mb-1">
                         {language === 'id' ? 'Konfirmasi Aturan & Ketentuan Kerja Sama *' : 'Mandatory Terms & Policy Acknowledgment *'}
                       </span>
 
@@ -1738,7 +1738,7 @@ export const Careers = () => {
                     </div>
 
                     <div>
-                      <label className="block text-[11px] font-sans text-[var(--k-text-secondary)] mb-1.5 uppercase font-semibold">
+                      <label className="block text-xs font-sans text-[var(--k-text-secondary)] mb-1.5 uppercase font-semibold">
                         {language === 'id' ? 'Catatan Tambahan / Deskripsi Keahlian' : 'Additional Notes / Key Highlights'}
                       </label>
                       <textarea 
@@ -1747,12 +1747,12 @@ export const Careers = () => {
                         value={vendorFormData.notes}
                         onChange={handleVendorInputChange}
                         placeholder={language === 'id' ? 'Ceritakan proyek terbaik yang pernah Anda kerjakan atau keahlian spesifik Anda...' : 'Highlight your proudest past projects or unique skill sets...'}
-                        className="w-full bg-[var(--k-bg)] border border-[var(--k-border)] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus-visible:outline-none focus-visible:outline-none focus:border-brand-red font-sans"
+                        className="w-full bg-[var(--k-bg)] border border-[var(--k-border)] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus-visible:outline-none focus:border-brand-red font-sans"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-[11px] font-sans text-[var(--k-text-secondary)] mb-1.5 uppercase font-semibold">
+                      <label className="block text-xs font-sans text-[var(--k-text-secondary)] mb-1.5 uppercase font-semibold">
                         {language === 'id' ? 'Unggah CV / Portofolio PDF (Opsional, maks 5MB)' : 'Upload CV / Portfolio PDF (Optional, max 5MB)'}
                       </label>
                       <div className="relative border border-dashed border-[var(--k-border)] rounded-xl p-4 text-center hover:border-brand-red/50 transition-colors bg-[var(--k-bg)]/50">
@@ -1768,7 +1768,7 @@ export const Careers = () => {
                         </span>
                       </div>
                       {vendorErrors.resume && (
-                        <span className="text-[11px] font-sans text-brand-red mt-1 block">{vendorErrors.resume}</span>
+                        <span className="text-xs font-sans text-brand-red mt-1 block">{vendorErrors.resume}</span>
                       )}
                     </div>
 
