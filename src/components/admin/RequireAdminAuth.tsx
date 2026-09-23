@@ -15,6 +15,11 @@ export const RequireAdminAuth: React.FC<RequireAdminAuthProps> = ({ children }) 
     let mounted = true;
     let rememberMe = false;
 
+    const handleAuthStateChanged = () => {
+      if (mounted) setStatus('unauthenticated');
+    };
+    window.addEventListener('kapitech_auth_state_changed', handleAuthStateChanged);
+
     try {
       const raw =
         sessionStorage.getItem('kapitech_admin_profile_v2') ||
@@ -48,7 +53,10 @@ export const RequireAdminAuth: React.FC<RequireAdminAuthProps> = ({ children }) 
       if (mounted) setStatus('unauthenticated');
     });
 
-    return () => { mounted = false; };
+    return () => {
+      mounted = false;
+      window.removeEventListener('kapitech_auth_state_changed', handleAuthStateChanged);
+    };
   }, []);
 
   if (status === 'checking') {
