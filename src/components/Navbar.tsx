@@ -122,7 +122,7 @@ export const Navbar = () => {
 
           {/* Desktop Navigation */}
           <div className="kapi-public-nav-links hidden md:flex items-center gap-4 lg:gap-6">
-            <div className="flex items-center gap-5 lg:gap-6 px-5 py-1.5 rounded-full bg-white/[.04] backdrop-blur-md border border-white/[.10]">
+            <div className="flex items-center gap-5 lg:gap-6 px-5 py-1.5 rounded-[14px] bg-white/[.04] backdrop-blur-md border border-white/[.10]">
               
               {/* Work Link */}
               <Link 
@@ -205,11 +205,11 @@ export const Navbar = () => {
             </Link>
 
             {/* Language Switcher EN | ID */}
-            <div className="flex items-center h-10 p-1 rounded-full bg-[var(--k-surface)] border border-[var(--k-border)] text-xs font-sans font-semibold backdrop-blur-md">
+            <div className="flex items-center h-10 p-1 rounded-[12px] bg-[var(--k-surface)] border border-[var(--k-border)] text-xs font-sans font-semibold backdrop-blur-md">
               <button
                 onClick={() => setLanguage('en')}
                 className={cn(
-                  "h-full px-3 rounded-full transition-all duration-300 flex items-center justify-center cursor-pointer",
+                  "h-full px-3 rounded-[9px] transition-all duration-300 flex items-center justify-center cursor-pointer",
                   language === 'en'
                     ? "bg-brand-red text-white shadow-sm font-bold"
                     : "text-[var(--k-text-secondary)] hover:text-white hover:bg-white/5"
@@ -221,7 +221,7 @@ export const Navbar = () => {
               <button
                 onClick={() => setLanguage('id')}
                 className={cn(
-                  "h-full px-3 rounded-full transition-all duration-300 flex items-center justify-center cursor-pointer",
+                  "h-full px-3 rounded-[9px] transition-all duration-300 flex items-center justify-center cursor-pointer",
                   language === 'id'
                     ? "bg-brand-red text-white shadow-sm font-bold"
                     : "text-[var(--k-text-secondary)] hover:text-white hover:bg-white/5"
@@ -235,11 +235,11 @@ export const Navbar = () => {
 
           {/* Mobile Right Controls: Language Switcher & Hamburger Toggle */}
           <div className="flex items-center gap-2 sm:gap-3 md:hidden">
-            <div className="flex items-center p-0.5 rounded-full bg-[var(--k-surface)] border border-[var(--k-border)] text-xs font-sans font-semibold">
+            <div className="flex items-center p-0.5 rounded-[12px] bg-[var(--k-surface)] border border-[var(--k-border)] text-xs font-sans font-semibold">
               <button
                 onClick={() => setLanguage('en')}
                 className={cn(
-                  "min-w-[36px] min-h-[36px] py-1 px-2.5 rounded-full transition-colors flex items-center justify-center cursor-pointer",
+                  "min-w-[36px] min-h-[36px] py-1 px-2.5 rounded-[9px] transition-colors flex items-center justify-center cursor-pointer",
                   language === 'en' ? "bg-brand-red text-white font-bold" : "text-[var(--k-text-secondary)]"
                 )}
                 aria-label="Switch to English"
@@ -249,7 +249,7 @@ export const Navbar = () => {
               <button
                 onClick={() => setLanguage('id')}
                 className={cn(
-                  "min-w-[36px] min-h-[36px] py-1 px-2.5 rounded-full transition-colors flex items-center justify-center cursor-pointer",
+                  "min-w-[36px] min-h-[36px] py-1 px-2.5 rounded-[9px] transition-colors flex items-center justify-center cursor-pointer",
                   language === 'id' ? "bg-brand-red text-white font-bold" : "text-[var(--k-text-secondary)]"
                 )}
                 aria-label="Ganti ke Bahasa Indonesia"
@@ -434,11 +434,11 @@ export const Navbar = () => {
               </Link>
               
               <div className="flex items-center gap-2">
-                <div className="flex items-center p-0.5 rounded-full bg-[var(--k-surface)] border border-[var(--k-border)] text-xs font-sans font-semibold">
+                <div className="flex items-center p-0.5 rounded-[12px] bg-[var(--k-surface)] border border-[var(--k-border)] text-xs font-sans font-semibold">
                   <button
                     onClick={() => setLanguage('en')}
                     className={cn(
-                      "min-w-[36px] min-h-[36px] py-1 px-2.5 rounded-full transition-colors flex items-center justify-center cursor-pointer",
+                      "min-w-[36px] min-h-[36px] py-1 px-2.5 rounded-[9px] transition-colors flex items-center justify-center cursor-pointer",
                       language === 'en' ? "bg-brand-red text-white font-bold" : "text-[var(--k-text-secondary)]"
                     )}
                   >
@@ -447,7 +447,7 @@ export const Navbar = () => {
                   <button
                     onClick={() => setLanguage('id')}
                     className={cn(
-                      "min-w-[36px] min-h-[36px] py-1 px-2.5 rounded-full transition-colors flex items-center justify-center cursor-pointer",
+                      "min-w-[36px] min-h-[36px] py-1 px-2.5 rounded-[9px] transition-colors flex items-center justify-center cursor-pointer",
                       language === 'id' ? "bg-brand-red text-white font-bold" : "text-[var(--k-text-secondary)]"
                     )}
                   >
