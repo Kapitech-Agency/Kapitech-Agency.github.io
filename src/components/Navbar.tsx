@@ -122,7 +122,7 @@ export const Navbar = () => {
 
           {/* Desktop Navigation */}
           <div className="kapi-public-nav-links hidden md:flex items-center gap-4 lg:gap-6">
-            <div className="flex items-center gap-5 lg:gap-6 px-5 py-1.5 rounded-[14px] bg-white/[.04] backdrop-blur-md border border-white/[.10]">
+            <div className="flex items-center gap-5 lg:gap-6 kapi-nav-group">
               
               {/* Work Link */}
               <Link 
@@ -198,18 +198,18 @@ export const Navbar = () => {
             {/* Start Project CTA */}
             <Link
               to="/contact"
-              className="kapi-nav-cta relative inline-flex h-10 px-5 lg:px-6 items-center justify-center gap-2 rounded-[14px] bg-brand-red hover:bg-[var(--k-red-hover)] text-white text-xs font-semibold uppercase tracking-[0.12em] border border-brand-red transition-colors duration-200 shrink-0"
+              className="kapi-nav-cta"
             >
               <span>{t('nav.startProject')}</span>
               <ChevronRight size={14} aria-hidden="true" />
             </Link>
 
             {/* Language Switcher EN | ID */}
-            <div className="flex items-center h-10 p-1 rounded-[12px] bg-[var(--k-surface)] border border-[var(--k-border)] text-xs font-sans font-semibold backdrop-blur-md">
+            <div className="kapi-language-switcher">
               <button
                 onClick={() => setLanguage('en')}
                 className={cn(
-                  "h-full px-3 rounded-[9px] transition-all duration-300 flex items-center justify-center cursor-pointer",
+                  "kapi-language-option",
                   language === 'en'
                     ? "bg-brand-red text-white shadow-sm font-bold"
                     : "text-[var(--k-text-secondary)] hover:text-white hover:bg-white/5"
@@ -221,7 +221,7 @@ export const Navbar = () => {
               <button
                 onClick={() => setLanguage('id')}
                 className={cn(
-                  "h-full px-3 rounded-[9px] transition-all duration-300 flex items-center justify-center cursor-pointer",
+                  "kapi-language-option",
                   language === 'id'
                     ? "bg-brand-red text-white shadow-sm font-bold"
                     : "text-[var(--k-text-secondary)] hover:text-white hover:bg-white/5"
@@ -239,7 +239,7 @@ export const Navbar = () => {
               <button
                 onClick={() => setLanguage('en')}
                 className={cn(
-                  "min-w-[36px] min-h-[36px] py-1 px-2.5 rounded-[9px] transition-colors flex items-center justify-center cursor-pointer",
+                  "kapi-language-option",
                   language === 'en' ? "bg-brand-red text-white font-bold" : "text-[var(--k-text-secondary)]"
                 )}
                 aria-label="Switch to English"
@@ -249,7 +249,7 @@ export const Navbar = () => {
               <button
                 onClick={() => setLanguage('id')}
                 className={cn(
-                  "min-w-[36px] min-h-[36px] py-1 px-2.5 rounded-[9px] transition-colors flex items-center justify-center cursor-pointer",
+                  "kapi-language-option",
                   language === 'id' ? "bg-brand-red text-white font-bold" : "text-[var(--k-text-secondary)]"
                 )}
                 aria-label="Ganti ke Bahasa Indonesia"
@@ -259,7 +259,7 @@ export const Navbar = () => {
             </div>
 
             <button 
-              className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-[var(--k-surface)] border border-[var(--k-border)] flex items-center justify-center text-white active:bg-white/20 transition-colors shrink-0 cursor-pointer"
+              className="kapi-nav-icon-button"
               onClick={() => setIsMenuOpen(true)}
               aria-label="Open Navigation Menu"
             >
@@ -280,7 +280,7 @@ export const Navbar = () => {
               transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
               onMouseEnter={handleMouseEnterServices}
               onMouseLeave={handleMouseLeaveServices}
-              className="hidden md:block absolute top-full left-0 w-full kapi-glass-nav-menu border-b border-[var(--k-border)] shadow-[0_25px_60px_rgba(0,0,0,0.95)] py-8 px-6 lg:px-12"
+              className="kapi-mega-menu hidden md:block"
             >
               <div className="max-w-7xl mx-auto grid grid-cols-4 gap-8 lg:gap-10">
                 
@@ -438,7 +438,7 @@ export const Navbar = () => {
                   <button
                     onClick={() => setLanguage('en')}
                     className={cn(
-                      "min-w-[36px] min-h-[36px] py-1 px-2.5 rounded-[9px] transition-colors flex items-center justify-center cursor-pointer",
+                      "kapi-language-option",
                       language === 'en' ? "bg-brand-red text-white font-bold" : "text-[var(--k-text-secondary)]"
                     )}
                   >
@@ -447,7 +447,7 @@ export const Navbar = () => {
                   <button
                     onClick={() => setLanguage('id')}
                     className={cn(
-                      "min-w-[36px] min-h-[36px] py-1 px-2.5 rounded-[9px] transition-colors flex items-center justify-center cursor-pointer",
+                      "kapi-language-option",
                       language === 'id' ? "bg-brand-red text-white font-bold" : "text-[var(--k-text-secondary)]"
                     )}
                   >
@@ -457,7 +457,7 @@ export const Navbar = () => {
 
                 <button 
                   onClick={() => setIsMenuOpen(false)} 
-                  className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-[var(--k-surface)] border border-[var(--k-border)] hover:bg-[var(--k-red-hover)] hover:text-white active:scale-95 transition-all text-white flex items-center justify-center shrink-0 cursor-pointer"
+                  className="kapi-nav-icon-button"
                   aria-label="Close menu"
                 >
                   <X size={22} />
@@ -473,7 +473,7 @@ export const Navbar = () => {
                 to="/work"
                 onClick={() => setIsMenuOpen(false)}
                 className={cn(
-                  "flex items-center justify-between py-3.5 px-4 rounded-2xl transition-colors min-h-[48px]",
+                  "kapi-mobile-nav-item",
                   location.pathname === '/work' 
                     ? "bg-[var(--k-surface)] text-white font-bold border border-brand-red/40" 
                     : "text-[var(--k-text-secondary)] hover:text-white hover:bg-[var(--k-surface)] active:bg-[var(--k-surface)]"
@@ -487,7 +487,7 @@ export const Navbar = () => {
               </Link>
 
               {/* Services & Solutions (Accordion in Mobile Menu) */}
-              <div className="rounded-2xl border border-[var(--k-border)] bg-[var(--k-surface)] overflow-hidden">
+              <div className="kapi-mobile-service-group">
                 <button
                   type="button"
                   onClick={() => setIsMobileServicesOpen(prev => !prev)}
@@ -605,7 +605,7 @@ export const Navbar = () => {
                 to="/about"
                 onClick={() => setIsMenuOpen(false)}
                 className={cn(
-                  "flex items-center justify-between py-3.5 px-4 rounded-2xl transition-colors min-h-[48px]",
+                  "kapi-mobile-nav-item",
                   location.pathname === '/about' 
                     ? "bg-[var(--k-surface)] text-white font-bold border border-brand-red/40" 
                     : "text-[var(--k-text-secondary)] hover:text-white hover:bg-[var(--k-surface)] active:bg-[var(--k-surface)]"
@@ -623,7 +623,7 @@ export const Navbar = () => {
                 to="/careers"
                 onClick={() => setIsMenuOpen(false)}
                 className={cn(
-                  "flex items-center justify-between py-3.5 px-4 rounded-2xl transition-colors min-h-[48px]",
+                  "kapi-mobile-nav-item",
                   location.pathname === '/careers' 
                     ? "bg-[var(--k-surface)] text-white font-bold border border-brand-red/40" 
                     : "text-[var(--k-text-secondary)] hover:text-white hover:bg-[var(--k-surface)] active:bg-[var(--k-surface)]"
@@ -640,7 +640,7 @@ export const Navbar = () => {
                 <Link
                   to="/contact"
                   onClick={() => setIsMenuOpen(false)}
-                  className="w-full min-h-[44px] rounded-full bg-brand-red hover:bg-[var(--k-red-hover)] text-white flex items-center justify-center text-xs font-semibold uppercase tracking-wider gap-2 shadow-[var(--k-shadow-sm)] shadow-brand-red/20 active:scale-[0.98] transition-all cursor-pointer"
+                  className="kapi-mobile-cta"
                 >
                   <span>{t('nav.startProject')}</span>
                   <ArrowUpRight size={16} />
@@ -655,7 +655,7 @@ export const Navbar = () => {
                   href="https://wa.me/6287769957062?text=Halo%20Kapitech%20Agency,%20saya%20ingin%20konsultasi%20proyek."
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-3 rounded-xl bg-[var(--k-surface)] border border-[var(--k-border)] flex items-center gap-2.5 text-white active:bg-[var(--k-surface-raised)] transition-colors min-h-[44px]"
+                  className="kapi-mobile-contact"
                 >
                   <Phone size={15} className="text-brand-red shrink-0" />
                   <span className="truncate">+62 877-6995-7062 (WhatsApp)</span>
@@ -663,14 +663,14 @@ export const Navbar = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   <a
                     href="mailto:business@kapitech.id"
-                    className="p-3 rounded-xl bg-[var(--k-surface)] border border-brand-red/30 flex items-center gap-2.5 text-white active:bg-[var(--k-surface-raised)] transition-colors min-h-[44px]"
+                    className="kapi-mobile-contact kapi-mobile-contact-primary"
                   >
                     <Mail size={15} className="text-brand-red shrink-0" />
                     <span className="truncate">business@kapitech.id</span>
                   </a>
                   <a
                     href="mailto:hello@kapitech.id"
-                    className="p-3 rounded-xl bg-[var(--k-surface)] border border-[var(--k-border)] flex items-center gap-2.5 text-white active:bg-[var(--k-surface-raised)] transition-colors min-h-[44px]"
+                    className="kapi-mobile-contact"
                   >
                     <Mail size={15} className="text-[var(--k-text-secondary)] shrink-0" />
                     <span className="truncate">hello@kapitech.id</span>
