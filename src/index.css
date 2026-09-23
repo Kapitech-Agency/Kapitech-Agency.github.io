@@ -818,7 +818,7 @@ body:has([data-kapi-admin="true"]) .kapi-noise-overlay {
 
 /* ==========================================================================
    AMS FINAL CONSISTENCY
-   Public UI is intentionally isolated in public-apple.css.
+   Public UI is intentionally isolated in public-design-system.css.
    ========================================================================== */
 :root {
   --k-red: #B00020;
