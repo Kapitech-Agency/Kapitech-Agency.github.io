@@ -566,7 +566,7 @@ export const About = () => {
           </p>
           <Link
             to="/contact"
-            className="inline-flex items-center justify-center gap-2 px-8 py-3.5 sm:py-4 rounded-full bg-brand-red hover:bg-[var(--k-red-hover)] text-white font-semibold text-xs uppercase tracking-wider transition-colors shadow-lg shadow-brand-red/20 active:scale-95"
+            className="inline-flex items-center justify-center gap-2 px-8 py-3.5 sm:py-4 rounded-full bg-brand-red hover:bg-[var(--k-red-hover)] text-white font-semibold text-xs uppercase tracking-wider transition-colors shadow-[var(--k-shadow-sm)] shadow-brand-red/15 active:scale-95"
           >
             <span>{language === 'id' ? 'Mulai Diskusi' : 'Start a Conversation'}</span>
             <ArrowUpRight size={16} />
