@@ -35,17 +35,17 @@ export const NotFound = () => {
             : 'The requested architecture could not be located. The path may have been decommissioned or moved to a secure server.'}
         </p>
 
-        <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-6">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-4 w-full max-w-lg mx-auto">
           <Link 
             to="/" 
-            className="kapi-button kapi-button-primary group px-8 md:px-10 bg-brand-red text-white rounded-full font-bold flex items-center gap-3 hover:bg-white hover:text-black transition-all duration-300 text-xs md:text-sm uppercase tracking-wider shadow-[0_0_25px_rgba(255,26,26,0.3)]"
+            className="kapi-button kapi-button-primary group min-h-12 w-full sm:w-auto px-6 md:px-8 bg-brand-red text-white rounded-[12px] font-bold flex items-center justify-center gap-3 hover:bg-white hover:text-black transition-all duration-300 text-sm shadow-[0_0_25px_rgba(176,0,32,0.24)]"
           >
             <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
             {language === 'id' ? 'Kembali ke Beranda' : 'Return to Home'}
           </Link>
           <Link 
             to="/contact" 
-            className="kapi-button kapi-button-secondary px-8 md:px-10 border border-[var(--k-border)] bg-[var(--k-surface)] hover:border-brand-red/50 transition-all font-semibold tracking-wider uppercase text-xs text-white"
+            className="kapi-button kapi-button-secondary min-h-12 w-full sm:w-auto px-6 md:px-8 border border-[var(--k-border)] bg-[var(--k-surface)] hover:border-brand-red/50 transition-all font-semibold text-sm text-white"
           >
             {language === 'id' ? 'Hubungi Bantuan' : 'Contact Support'}
           </Link>
