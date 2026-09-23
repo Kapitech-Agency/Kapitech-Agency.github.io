@@ -751,7 +751,7 @@ export const Careers = () => {
                 >
                   <button
                     onClick={() => setSelectedTalent(talent)}
-                    className="group relative rounded-2xl sm:rounded-[var(--k-sheet-radius)] overflow-hidden border border-[var(--k-border)] bg-[#161616] transition-all duration-500 hover:scale-[1.04] hover:-translate-y-1.5 hover:border-brand-red/60 hover:shadow-[0_16px_36px_rgba(255,26,26,0.22)] cursor-pointer aspect-[3/4] p-0 block w-full text-left focus:outline-none focus:ring-2 focus:ring-brand-red/50"
+                    className="group relative rounded-2xl sm:rounded-[var(--k-sheet-radius)] overflow-hidden border border-[var(--k-border)] bg-[#161616] transition-all duration-500 hover:-translate-y-1 hover:-translate-y-1.5 hover:border-brand-red/60 hover:shadow-[0_16px_36px_rgba(255,26,26,0.22)] cursor-pointer aspect-[3/4] p-0 block w-full text-left focus:outline-none focus-visible:outline-none focus:ring-2 focus:ring-brand-red/50"
                     title={`${talent.name} - ${talent.role}`}
                     aria-label={`View photo and profile of ${talent.name}`}
                   >
@@ -1336,7 +1336,7 @@ export const Careers = () => {
                             value={formData.name}
                             onChange={handleInputChange}
                             placeholder={language === 'id' ? 'e.g. Alex Pratama' : 'e.g. Alex Morgan'}
-                            className={`w-full min-h-[44px] bg-[var(--k-bg)] border rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-sans ${applicantErrors.name ? 'border-brand-red' : 'border-[var(--k-border)]'}`}
+                            className={`w-full min-h-[44px] bg-[var(--k-bg)] border rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus-visible:outline-none focus:border-brand-red font-sans ${applicantErrors.name ? 'border-brand-red' : 'border-[var(--k-border)]'}`}
                           />
                           {applicantErrors.name && (
                             <span className="text-[11px] font-sans text-brand-red mt-1 block">{applicantErrors.name}</span>
@@ -1354,7 +1354,7 @@ export const Careers = () => {
                             value={formData.email}
                             onChange={handleInputChange}
                             placeholder="alex@example.com"
-                            className={`w-full min-h-[44px] bg-[var(--k-bg)] border rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-sans ${applicantErrors.email ? 'border-brand-red' : 'border-[var(--k-border)]'}`}
+                            className={`w-full min-h-[44px] bg-[var(--k-bg)] border rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus-visible:outline-none focus:border-brand-red font-sans ${applicantErrors.email ? 'border-brand-red' : 'border-[var(--k-border)]'}`}
                           />
                           {applicantErrors.email && (
                             <span className="text-[11px] font-sans text-brand-red mt-1 block">{applicantErrors.email}</span>
@@ -1374,7 +1374,7 @@ export const Careers = () => {
                             value={formData.phone}
                             onChange={handleInputChange}
                             placeholder="+62 812-3456-7890"
-                            className={`w-full min-h-[44px] bg-[var(--k-bg)] border rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-sans ${applicantErrors.phone ? 'border-brand-red' : 'border-[var(--k-border)]'}`}
+                            className={`w-full min-h-[44px] bg-[var(--k-bg)] border rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus-visible:outline-none focus:border-brand-red font-sans ${applicantErrors.phone ? 'border-brand-red' : 'border-[var(--k-border)]'}`}
                           />
                           {applicantErrors.phone && (
                             <span className="text-[11px] font-sans text-brand-red mt-1 block">{applicantErrors.phone}</span>
@@ -1392,7 +1392,7 @@ export const Careers = () => {
                             value={formData.portfolio}
                             onChange={handleInputChange}
                             placeholder="https://linkedin.com/in/... or https://behance.net/..."
-                            className="w-full min-h-[44px] bg-[var(--k-bg)] border border-[var(--k-border)] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-sans"
+                            className="w-full min-h-[44px] bg-[var(--k-bg)] border border-[var(--k-border)] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus-visible:outline-none focus:border-brand-red font-sans"
                           />
                         </div>
                       </div>
@@ -1407,7 +1407,7 @@ export const Careers = () => {
                           value={formData.coverLetter}
                           onChange={handleInputChange}
                           placeholder={language === 'id' ? 'Ceritakan secara singkat pengalaman dan motivasi Anda...' : 'Briefly describe your relevant background and motivations...'}
-                          className="w-full bg-[var(--k-bg)] border border-[var(--k-border)] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-sans"
+                          className="w-full bg-[var(--k-bg)] border border-[var(--k-border)] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus-visible:outline-none focus:border-brand-red font-sans"
                         />
                       </div>
 
@@ -1551,7 +1551,7 @@ export const Careers = () => {
                           value={vendorFormData.name}
                           onChange={handleVendorInputChange}
                           placeholder={language === 'id' ? 'e.g. Budi Santoso / Studio Koding' : 'e.g. Alex Morgan / Pixel Studio'}
-                          className={`w-full min-h-[44px] bg-[var(--k-bg)] border rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-sans ${vendorErrors.name ? 'border-brand-red' : 'border-[var(--k-border)]'}`}
+                          className={`w-full min-h-[44px] bg-[var(--k-bg)] border rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus-visible:outline-none focus:border-brand-red font-sans ${vendorErrors.name ? 'border-brand-red' : 'border-[var(--k-border)]'}`}
                         />
                         {vendorErrors.name && (
                           <span className="text-[11px] font-sans text-brand-red mt-1 block">{vendorErrors.name}</span>
@@ -1569,7 +1569,7 @@ export const Careers = () => {
                           value={vendorFormData.email}
                           onChange={handleVendorInputChange}
                           placeholder="freelancer@example.com"
-                          className={`w-full min-h-[44px] bg-[var(--k-bg)] border rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-sans ${vendorErrors.email ? 'border-brand-red' : 'border-[var(--k-border)]'}`}
+                          className={`w-full min-h-[44px] bg-[var(--k-bg)] border rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus-visible:outline-none focus:border-brand-red font-sans ${vendorErrors.email ? 'border-brand-red' : 'border-[var(--k-border)]'}`}
                         />
                         {vendorErrors.email && (
                           <span className="text-[11px] font-sans text-brand-red mt-1 block">{vendorErrors.email}</span>
@@ -1589,7 +1589,7 @@ export const Careers = () => {
                           value={vendorFormData.phone}
                           onChange={handleVendorInputChange}
                           placeholder="+62 812-3456-7890"
-                          className={`w-full min-h-[44px] bg-[var(--k-bg)] border rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-sans ${vendorErrors.phone ? 'border-brand-red' : 'border-[var(--k-border)]'}`}
+                          className={`w-full min-h-[44px] bg-[var(--k-bg)] border rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus-visible:outline-none focus:border-brand-red font-sans ${vendorErrors.phone ? 'border-brand-red' : 'border-[var(--k-border)]'}`}
                         />
                         {vendorErrors.phone && (
                           <span className="text-[11px] font-sans text-brand-red mt-1 block">{vendorErrors.phone}</span>
@@ -1605,7 +1605,7 @@ export const Careers = () => {
                           required
                           value={vendorFormData.specialty}
                           onChange={handleVendorInputChange}
-                          className="w-full min-h-[44px] bg-[var(--k-bg)] border border-[var(--k-border)] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white focus:outline-none focus:border-brand-red font-sans"
+                          className="w-full min-h-[44px] bg-[var(--k-bg)] border border-[var(--k-border)] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white focus:outline-none focus-visible:outline-none focus:border-brand-red font-sans"
                         >
                           <option value="UI/UX & Product Design">UI/UX & Product Design (Figma, Systems, Prototyping)</option>
                           <option value="Frontend Web Development">Frontend Web Dev (React, Next.js, Tailwind, Motion)</option>
@@ -1630,7 +1630,7 @@ export const Careers = () => {
                           value={vendorFormData.portfolio}
                           onChange={handleVendorInputChange}
                           placeholder="https://behance.net/... or https://github.com/..."
-                          className="w-full min-h-[44px] bg-[var(--k-bg)] border border-[var(--k-border)] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-sans"
+                          className="w-full min-h-[44px] bg-[var(--k-bg)] border border-[var(--k-border)] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus-visible:outline-none focus:border-brand-red font-sans"
                         />
                       </div>
 
@@ -1644,7 +1644,7 @@ export const Careers = () => {
                           value={vendorFormData.rateCard}
                           onChange={handleVendorInputChange}
                           placeholder={language === 'id' ? 'e.g. Rp 5.000.000 - Rp 15.000.000 / project' : 'e.g. $25 - $45 / hour or per project range'}
-                          className="w-full min-h-[44px] bg-[var(--k-bg)] border border-[var(--k-border)] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-sans"
+                          className="w-full min-h-[44px] bg-[var(--k-bg)] border border-[var(--k-border)] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus-visible:outline-none focus:border-brand-red font-sans"
                         />
                       </div>
                     </div>
@@ -1658,7 +1658,7 @@ export const Careers = () => {
                           name="experienceYears"
                           value={vendorFormData.experienceYears}
                           onChange={handleVendorInputChange}
-                          className="w-full min-h-[44px] bg-[var(--k-bg)] border border-[var(--k-border)] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white focus:outline-none focus:border-brand-red font-sans"
+                          className="w-full min-h-[44px] bg-[var(--k-bg)] border border-[var(--k-border)] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white focus:outline-none focus-visible:outline-none focus:border-brand-red font-sans"
                         >
                           <option value="1-2 Years">1 - 2 Years</option>
                           <option value="3-5 Years">3 - 5 Years (Mid-Level)</option>
@@ -1677,7 +1677,7 @@ export const Careers = () => {
                           value={vendorFormData.tools}
                           onChange={handleVendorInputChange}
                           placeholder="e.g. Figma, React, Next.js, After Effects, Blender"
-                          className="w-full min-h-[44px] bg-[var(--k-bg)] border border-[var(--k-border)] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-sans"
+                          className="w-full min-h-[44px] bg-[var(--k-bg)] border border-[var(--k-border)] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus-visible:outline-none focus:border-brand-red font-sans"
                         />
                       </div>
                     </div>
@@ -1747,7 +1747,7 @@ export const Careers = () => {
                         value={vendorFormData.notes}
                         onChange={handleVendorInputChange}
                         placeholder={language === 'id' ? 'Ceritakan proyek terbaik yang pernah Anda kerjakan atau keahlian spesifik Anda...' : 'Highlight your proudest past projects or unique skill sets...'}
-                        className="w-full bg-[var(--k-bg)] border border-[var(--k-border)] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-brand-red font-sans"
+                        className="w-full bg-[var(--k-bg)] border border-[var(--k-border)] rounded-xl px-4 py-2.5 text-base sm:text-xs text-white placeholder:text-white/30 focus:outline-none focus-visible:outline-none focus:border-brand-red font-sans"
                       />
                     </div>
 
