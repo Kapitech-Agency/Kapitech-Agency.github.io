@@ -261,7 +261,7 @@
 }
 
 .kapi-public-shell .kapi-public-nav-links {
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: flex-end;
   gap: 24px;
@@ -288,6 +288,8 @@
   color: var(--pub-text-2);
   font-size: 14px;
   font-weight: 600;
+  letter-spacing: -.012em;
+  text-transform: none;
   white-space: nowrap;
   transition: color 180ms ease, background 180ms ease;
 }
@@ -373,6 +375,7 @@
 }
 
 .kapi-public-shell .kapi-mega-menu {
+  display: none;
   position: fixed;
   top: 72px;
   left: 50%;
@@ -1042,6 +1045,16 @@
 /* -------------------------------------------------------------------------- */
 /* Responsive */
 /* -------------------------------------------------------------------------- */
+
+@media (min-width: 768px) {
+  .kapi-public-shell .kapi-public-nav-links {
+    display: flex;
+  }
+
+  .kapi-public-shell .kapi-mega-menu {
+    display: block;
+  }
+}
 
 @media (max-width: 1100px) {
   .kapi-public-shell .kapi-public-nav,
