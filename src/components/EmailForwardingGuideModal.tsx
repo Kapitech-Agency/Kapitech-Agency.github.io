@@ -26,7 +26,7 @@ export const EmailForwardingGuideModal: React.FC<EmailForwardingGuideModalProps>
         {/* Header */}
         <div className="flex items-center justify-between pb-4 border-b border-[rgba(255,255,255,0.07)] mb-5">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-[#E50914]/10 border border-[#E50914]/30 flex items-center justify-center text-[#FF1E27]">
+            <div className="w-9 h-9 rounded-xl bg-[var(--k-red)]/10 border border-[var(--k-red-border)] flex items-center justify-center text-[var(--k-red)]">
               <Mail size={18} />
             </div>
             <div>
@@ -64,7 +64,7 @@ export const EmailForwardingGuideModal: React.FC<EmailForwardingGuideModalProps>
               <span>business@kapitech.id / kapitechagency@gmail.com</span>
               <button
                 onClick={() => copyToClipboard('business@kapitech.id', 'email')}
-                className="text-[#FF1E27] hover:underline text-[11px] flex items-center gap-1"
+                className="text-[var(--k-red)] hover:underline text-[11px] flex items-center gap-1"
               >
                 {copiedKey === 'email' ? <Check size={13} /> : <Copy size={13} />}
                 <span>{copiedKey === 'email' ? 'Tersalin' : 'Salin'}</span>
@@ -74,14 +74,14 @@ export const EmailForwardingGuideModal: React.FC<EmailForwardingGuideModalProps>
 
           <div className="p-4 rounded-xl bg-[#181B22] border border-[rgba(255,255,255,0.07)]">
             <h3 className="font-bold text-white mb-1.5 flex items-center gap-2">
-              <Sparkles size={15} className="text-[#FF1E27]" />
+              <Sparkles size={15} className="text-[var(--k-red)]" />
               <span>2. Opsi Penyedia Email Relay (EmailJS / Resend API)</span>
             </h3>
             <p className="text-[#8A94A6] leading-relaxed mb-2">
               Untuk mengaktifkan pengiriman email SMTP/API otomatis secara live tanpa server perantara:
             </p>
             <ol className="list-decimal list-inside space-y-1.5 text-[#8A94A6] pl-1 font-sans">
-              <li>Daftar gratis di <a href="https://www.emailjs.com" target="_blank" rel="noreferrer" className="text-[#FF1E27] hover:underline inline-flex items-center gap-0.5">EmailJS.com <ExternalLink size={10} /></a> atau <a href="https://resend.com" target="_blank" rel="noreferrer" className="text-[#FF1E27] hover:underline inline-flex items-center gap-0.5">Resend.com <ExternalLink size={10} /></a>.</li>
+              <li>Daftar gratis di <a href="https://www.emailjs.com" target="_blank" rel="noreferrer" className="text-[var(--k-red)] hover:underline inline-flex items-center gap-0.5">EmailJS.com <ExternalLink size={10} /></a> atau <a href="https://resend.com" target="_blank" rel="noreferrer" className="text-[var(--k-red)] hover:underline inline-flex items-center gap-0.5">Resend.com <ExternalLink size={10} /></a>.</li>
               <li>Buat Email Service yang terhubung ke akun Gmail atau domain <code className="text-white">@kapitech.id</code>.</li>
               <li>Salin <code className="text-white">SERVICE_ID</code>, <code className="text-white">TEMPLATE_ID</code>, dan <code className="text-white">PUBLIC_KEY</code> ke file konfigurasi <code className="text-white">src/lib/emailService.ts</code>.</li>
             </ol>
@@ -102,7 +102,7 @@ export const EmailForwardingGuideModal: React.FC<EmailForwardingGuideModalProps>
         <div className="pt-5 mt-5 border-t border-[rgba(255,255,255,0.07)] flex items-center justify-end">
           <button
             onClick={onClose}
-            className="px-5 py-2 rounded-xl bg-[#E50914] text-white text-xs font-mono font-bold hover:bg-[#FF1E27] transition-all shadow-md shadow-[#E50914]/20"
+            className="px-5 py-2 rounded-xl bg-[var(--k-red)] text-white text-xs font-mono font-bold hover:bg-[var(--k-red-hover)] transition-all shadow-md shadow-[var(--k-red)]/20"
           >
             Mengerti & Tutup
           </button>
