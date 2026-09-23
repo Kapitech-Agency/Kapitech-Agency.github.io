@@ -81,8 +81,8 @@ if (Number(before[0]?.count || 0) !== 0) {
 
 const env = postgresCliEnv();
 const cliArgs = isCustomDump
-  ? ['--no-owner', '--exit-on-error', '--dbname=' + encodeURIComponent(env.PGDATABASE || ''), backupPath]
-  : ['--set=ON_ERROR_STOP=1', '--dbname=' + encodeURIComponent(env.PGDATABASE || ''), '--file', backupPath];
+  ? ['--no-owner', '--exit-on-error', '--single-transaction', '--dbname=' + encodeURIComponent(env.PGDATABASE || ''), backupPath]
+  : ['--set=ON_ERROR_STOP=1', '--single-transaction', '--dbname=' + encodeURIComponent(env.PGDATABASE || ''), '--file', backupPath];
 
 const command = isCustomDump ? 'pg_restore' : 'psql';
 await execFileAsync(command, cliArgs, { env, maxBuffer: 8 * 1024 * 1024 });
