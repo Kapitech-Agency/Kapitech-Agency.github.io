@@ -99,13 +99,13 @@ export const Home = () => {
 
         <div className="max-w-7xl mx-auto w-full relative z-10">
           <motion.div
-            className="max-w-4xl"
+            className="max-w-4xl kapi-home-content"
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
           >
             {/* Status Chip */}
-            <div className="kapi-hero-status kapi-hero-status">
+            <div className="kapi-hero-status">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-red opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-red"></span>
