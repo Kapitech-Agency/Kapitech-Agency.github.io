@@ -455,6 +455,47 @@
   border-color: rgba(255,255,255,.22) !important;
 }
 
+/* Shared public page rhythm */
+.kapi-public-shell .kapi-page-shell {
+  min-height: 100vh;
+  background: var(--pub-bg) !important;
+  color: var(--pub-text);
+}
+.kapi-public-shell .kapi-page-hero {
+  min-height: 520px;
+  display: flex;
+  align-items: flex-end;
+  padding-top: 136px !important;
+  padding-bottom: 64px !important;
+  background: var(--pub-bg) !important;
+}
+.kapi-public-shell .kapi-page-hero > .max-w-7xl {
+  width: min(calc(100% - 2 * var(--pub-gutter)), var(--pub-content));
+}
+.kapi-public-shell .kapi-page-hero h1 {
+  max-width: 860px;
+  margin-bottom: 20px !important;
+}
+.kapi-public-shell .kapi-page-hero p {
+  max-width: 680px;
+  font-size: 1rem !important;
+  line-height: 1.6 !important;
+}
+.kapi-public-shell .kapi-page-hero [class*="tracking-widest"] {
+  margin-bottom: 12px !important;
+  font-size: .6875rem !important;
+  line-height: 1.35 !important;
+  letter-spacing: .12em !important;
+}
+@media (max-width: 767px) {
+  .kapi-public-shell .kapi-page-hero {
+    min-height: 460px;
+    padding-top: 112px !important;
+    padding-bottom: 48px !important;
+  }
+  .kapi-public-shell .kapi-page-hero h1 { margin-bottom: 16px !important; }
+}
+
 /* Component rhythm and geometry.
    Keep curvature concentric: control 12-14px, card 20px, sheet 24px.
    Pills are reserved for status metadata, not primary actions. */
