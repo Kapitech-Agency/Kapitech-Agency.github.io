@@ -81,8 +81,9 @@ h4 { font-size: 1.0625rem !important; line-height: 1.2 !important; }
 [data-kapi-admin="true"] button:hover, .kapi-public-shell button:hover { transform: translateY(-1px); }
 [data-kapi-admin="true"] button:active, .kapi-public-shell button:active { transform: scale(.975); }
 
-/* Circular controls keep a true square box. */
-[data-kapi-admin="true"] button.rounded-full:has(svg), .kapi-public-shell button.rounded-full:has(svg) { aspect-ratio: 1 / 1 !important; padding-inline: .625rem !important; }
+/* Circular icon-only controls keep a true square box. */
+[data-kapi-admin="true"] button.rounded-full[aria-label]:has(svg),
+.kapi-public-shell button.rounded-full[aria-label]:has(svg) { aspect-ratio: 1 / 1 !important; padding-inline: .625rem !important; }
 
 /* Keyboard focus remains visible, mouse focus remains quiet. */
 [data-kapi-admin="true"] :where(a,button,input,select,textarea):focus { outline: none !important; }
@@ -319,7 +320,7 @@ h4 { font-size: 1.0625rem !important; line-height: 1.25 !important; letter-spaci
 [data-kapi-admin="true"] button[aria-label] svg { width: 18px; height: 18px; }
 
 /* Circular icon buttons: only icon-only labelled controls become 1:1. Text pills remain pills. */
-[data-kapi-admin="true"] button.rounded-full:has(svg) {
+[data-kapi-admin="true"] button.rounded-full[aria-label]:has(svg) {
   aspect-ratio: auto !important;
 }
 [data-kapi-admin="true"] button.rounded-full[aria-label]:has(svg) {
