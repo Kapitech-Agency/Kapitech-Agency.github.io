@@ -370,8 +370,8 @@ export const AdminProposals: React.FC = () => {
     <div className="space-y-6 animate-in fade-in duration-200">
       {/* Toast Notification */}
       {notification && (
-        <div className="fixed top-20 right-6 z-50 px-4 py-2.5 rounded-xl bg-[var(--k-surface)] border border-[var(--k-red)]/40 text-white text-xs font-sans shadow-[0_8px_30px_rgba(0,0,0,0.8)] flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-[var(--k-red)] animate-ping" />
+        <div className="fixed top-20 right-6 z-50 px-4 py-2.5 rounded-xl bg-[var(--ams-surface)] border border-[var(--ams-red)]/40 text-white text-xs font-sans shadow-[0_8px_30px_rgba(0,0,0,0.8)] flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-[var(--ams-red)] animate-ping" />
           <span>{notification}</span>
         </div>
       )}
@@ -380,10 +380,10 @@ export const AdminProposals: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold font-sans tracking-tight text-white flex items-center gap-2.5">
-            <FileText className="text-[var(--k-red)]" size={24} />
+            <FileText className="text-[var(--ams-red)]" size={24} />
             <span>{language === 'id' ? 'Proposal & Estimasi Anggaran' : 'Proposals & Quotations'}</span>
           </h1>
-          <p className="text-xs font-sans text-[var(--k-text-secondary)] mt-1">
+          <p className="text-xs font-sans text-[var(--ams-secondary)] mt-1">
             {language === 'id' 
               ? 'Penerbitan proposal komersial, persetujuan bertingkat, dan konversi instan ke invoice klien.' 
               : 'Commercial proposals, multi-tier executive approvals, and 1-click invoice conversion.'}
@@ -392,7 +392,7 @@ export const AdminProposals: React.FC = () => {
 
         <button
           onClick={() => setIsCreateModalOpen(true)}
-          className="px-4 py-2.5 rounded-xl bg-[var(--k-red)] hover:bg-[var(--k-red)] text-white text-xs font-sans font-semibold flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(229,9,20,0.3)] transition-all shrink-0"
+          className="px-4 py-2.5 rounded-xl bg-[var(--ams-red)] hover:bg-[var(--ams-red)] text-white text-xs font-sans font-semibold flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(229,9,20,0.3)] transition-all shrink-0"
         >
           <Plus size={15} />
           <span>{language === 'id' ? 'Buat Proposal Baru' : 'New Proposal'}</span>
@@ -401,34 +401,34 @@ export const AdminProposals: React.FC = () => {
 
       {/* Metrics Row */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        <div className="p-4 rounded-xl bg-[var(--k-bg)] border border-white/[0.07] space-y-1">
-          <div className="text-xs font-sans text-[var(--k-text-secondary)] flex items-center justify-between">
+        <div className="p-4 rounded-xl bg-[var(--ams-bg)] border border-white/[0.07] space-y-1">
+          <div className="text-xs font-sans text-[var(--ams-secondary)] flex items-center justify-between">
             <span>{language === 'id' ? 'Total Nilai Ditawarkan' : 'Total Proposed'}</span>
-            <TrendingUp size={13} className="text-[var(--k-red)]" />
+            <TrendingUp size={13} className="text-[var(--ams-red)]" />
           </div>
           <div className="text-lg sm:text-xl font-bold font-sans text-white">
             {formatAmount(metrics.totalValue, currency)}
           </div>
-          <div className="text-xs font-sans text-[var(--k-text-secondary)]">
+          <div className="text-xs font-sans text-[var(--ams-secondary)]">
             {metrics.totalCount} {language === 'id' ? 'dokumen diterbitkan' : 'proposals generated'}
           </div>
         </div>
 
-        <div className="p-4 rounded-xl bg-[var(--k-bg)] border border-white/[0.07] space-y-1">
-          <div className="text-xs font-sans text-[var(--k-text-secondary)] flex items-center justify-between">
+        <div className="p-4 rounded-xl bg-[var(--ams-bg)] border border-white/[0.07] space-y-1">
+          <div className="text-xs font-sans text-[var(--ams-secondary)] flex items-center justify-between">
             <span>{language === 'id' ? 'Proposal Aktif' : 'Active Pipeline'}</span>
             <Clock size={13} className="text-amber-400" />
           </div>
           <div className="text-lg sm:text-xl font-bold font-sans text-amber-400">
             {metrics.activeProposals}
           </div>
-          <div className="text-xs font-sans text-[var(--k-text-secondary)]">
+          <div className="text-xs font-sans text-[var(--ams-secondary)]">
             {language === 'id' ? 'Menunggu keputusan klien' : 'Pending client decision'}
           </div>
         </div>
 
-        <div className="p-4 rounded-xl bg-[var(--k-bg)] border border-white/[0.07] space-y-1">
-          <div className="text-xs font-sans text-[var(--k-text-secondary)] flex items-center justify-between">
+        <div className="p-4 rounded-xl bg-[var(--ams-bg)] border border-white/[0.07] space-y-1">
+          <div className="text-xs font-sans text-[var(--ams-secondary)] flex items-center justify-between">
             <span>{language === 'id' ? 'Nilai Dimenangkan' : 'Won Revenue'}</span>
             <CheckCircle2 size={13} className="text-emerald-400" />
           </div>
@@ -440,30 +440,30 @@ export const AdminProposals: React.FC = () => {
           </div>
         </div>
 
-        <div className="p-4 rounded-xl bg-[var(--k-bg)] border border-white/[0.07] space-y-1">
-          <div className="text-xs font-sans text-[var(--k-text-secondary)] flex items-center justify-between">
+        <div className="p-4 rounded-xl bg-[var(--ams-bg)] border border-white/[0.07] space-y-1">
+          <div className="text-xs font-sans text-[var(--ams-secondary)] flex items-center justify-between">
             <span>{language === 'id' ? 'Tingkat Kemenangan' : 'Win Rate'}</span>
             <ShieldCheck size={13} className="text-purple-400" />
           </div>
           <div className="text-lg sm:text-xl font-bold font-sans text-purple-400">
             {metrics.winRate}%
           </div>
-          <div className="text-xs font-sans text-[var(--k-text-secondary)]">
+          <div className="text-xs font-sans text-[var(--ams-secondary)]">
             {language === 'id' ? 'Berdasarkan konversi klien' : 'Proposal conversion'}
           </div>
         </div>
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-3 rounded-xl bg-[var(--k-bg)] border border-white/[0.07]">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-3 rounded-xl bg-[var(--ams-bg)] border border-white/[0.07]">
         <div className="relative flex-1">
-          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--k-text-secondary)]" />
+          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--ams-secondary)]" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={language === 'id' ? 'Cari nomor proposal, judul proyek, atau nama klien...' : 'Search proposal #, project title, or client...'}
-            className="w-full h-8 pl-8 pr-3 text-xs bg-[var(--k-surface)] text-white placeholder-[var(--k-text-secondary)] rounded-lg border border-white/[0.07] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--k-red)]/40 focus:border-[var(--k-red)] font-sans"
+            className="w-full h-8 pl-8 pr-3 text-xs bg-[var(--ams-surface)] text-white placeholder-[var(--ams-secondary)] rounded-lg border border-white/[0.07] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ams-red)]/40 focus:border-[var(--ams-red)] font-sans"
           />
         </div>
 
@@ -474,8 +474,8 @@ export const AdminProposals: React.FC = () => {
               onClick={() => setStatusFilter(st)}
               className={`px-2.5 py-1 rounded-lg text-xs font-sans capitalize whitespace-nowrap transition-colors ${
                 statusFilter === st
-                  ? 'bg-[var(--k-red)]/15 text-[var(--k-red)] border border-[var(--k-red)]/30 font-semibold'
-                  : 'text-[var(--k-text-secondary)] hover:text-white hover:bg-white/[0.04]'
+                  ? 'bg-[var(--ams-red)]/15 text-[var(--ams-red)] border border-[var(--ams-red)]/30 font-semibold'
+                  : 'text-[var(--ams-secondary)] hover:text-white hover:bg-white/[0.04]'
               }`}
             >
               {st}
@@ -485,21 +485,21 @@ export const AdminProposals: React.FC = () => {
       </div>
 
       {/* Proposals Table */}
-      <div className="rounded-xl bg-[var(--k-bg)] border border-white/[0.07] overflow-hidden">
+      <div className="rounded-xl bg-[var(--ams-bg)] border border-white/[0.07] overflow-hidden">
         {isLoading ? (
-          <div className="p-12 text-center text-xs font-sans text-[var(--k-text-secondary)] flex flex-col items-center justify-center gap-2">
-            <Loader2 className="animate-spin text-[var(--k-red)]" size={20} />
+          <div className="p-12 text-center text-xs font-sans text-[var(--ams-secondary)] flex flex-col items-center justify-center gap-2">
+            <Loader2 className="animate-spin text-[var(--ams-red)]" size={20} />
             <span>Loading proposals...</span>
           </div>
         ) : filteredProposals.length === 0 ? (
-          <div className="p-12 text-center text-xs font-sans text-[var(--k-text-secondary)]">
+          <div className="p-12 text-center text-xs font-sans text-[var(--ams-secondary)]">
             {language === 'id' ? 'Tidak ada proposal yang sesuai.' : 'No proposals found.'}
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse min-w-[750px]">
               <thead>
-                <tr className="border-b border-white/[0.07] bg-[var(--k-surface)]/50 text-xs font-sans text-[var(--k-text-secondary)] uppercase">
+                <tr className="border-b border-white/[0.07] bg-[var(--ams-surface)]/50 text-xs font-sans text-[var(--ams-secondary)] uppercase">
                   <th className="py-3 px-4">Ref / Title</th>
                   <th className="py-3 px-4">Client</th>
                   <th className="py-3 px-4">Value</th>
@@ -513,8 +513,8 @@ export const AdminProposals: React.FC = () => {
                   <tr key={p.id} className="hover:bg-white/[0.02] transition-colors">
                     <td className="py-3.5 px-4">
                       <div className="font-semibold text-white">{p.title}</div>
-                      <div className="text-xs font-sans text-[var(--k-text-secondary)] flex items-center gap-2 mt-0.5">
-                        <span className="text-[var(--k-red)] font-semibold">{p.proposalNumber}</span>
+                      <div className="text-xs font-sans text-[var(--ams-secondary)] flex items-center gap-2 mt-0.5">
+                        <span className="text-[var(--ams-red)] font-semibold">{p.proposalNumber}</span>
                         <span>•</span>
                         <span>{p.lineItems?.length || 0} line items</span>
                       </div>
@@ -522,7 +522,7 @@ export const AdminProposals: React.FC = () => {
                     <td className="py-3.5 px-4">
                       <div className="font-medium text-white">{p.clientName}</div>
                       {p.clientCompany && (
-                        <div className="text-xs font-sans text-[var(--k-text-secondary)]">{p.clientCompany}</div>
+                        <div className="text-xs font-sans text-[var(--ams-secondary)]">{p.clientCompany}</div>
                       )}
                     </td>
                     <td className="py-3.5 px-4">
@@ -530,7 +530,7 @@ export const AdminProposals: React.FC = () => {
                         {formatAmount(p.total, currency)}
                       </div>
                       {p.discount > 0 && (
-                        <div className="text-xs font-sans text-[var(--k-text-secondary)]">
+                        <div className="text-xs font-sans text-[var(--ams-secondary)]">
                           Disc: {formatAmount(p.discount, currency)}
                         </div>
                       )}
@@ -538,7 +538,7 @@ export const AdminProposals: React.FC = () => {
                     <td className="py-3.5 px-4">
                       {getStatusBadge(p.status)}
                     </td>
-                    <td className="py-3.5 px-4 font-sans text-xs text-[var(--k-text-secondary)]">
+                    <td className="py-3.5 px-4 font-sans text-xs text-[var(--ams-secondary)]">
                       {p.validUntil}
                     </td>
                     <td className="py-3.5 px-4 text-right">
@@ -548,7 +548,7 @@ export const AdminProposals: React.FC = () => {
                           value={p.status}
                           onChange={(e) => handleStatusChange(p.id, e.target.value as Proposal['status'])}
                           disabled={['approved', 'accepted', 'rejected'].includes(p.status)}
-                          className="h-7 px-2 rounded bg-[var(--k-surface)] text-[var(--k-text-secondary)] hover:text-white border border-white/[0.07] text-xs font-sans focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--k-red)]/40 disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="h-7 px-2 rounded bg-[var(--ams-surface)] text-[var(--ams-secondary)] hover:text-white border border-white/[0.07] text-xs font-sans focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ams-red)]/40 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           <option value="draft">Draft</option>
                           <option value="review">Review</option>
@@ -574,7 +574,7 @@ export const AdminProposals: React.FC = () => {
                         <button
                           onClick={() => setPreviewProposal(p)}
                           title="View Details"
-                          className="p-1.5 rounded hover:bg-white/[0.06] text-[var(--k-text-secondary)] hover:text-white transition-colors"
+                          className="p-1.5 rounded hover:bg-white/[0.06] text-[var(--ams-secondary)] hover:text-white transition-colors"
                         >
                           <Eye size={14} />
                         </button>
@@ -583,7 +583,7 @@ export const AdminProposals: React.FC = () => {
                         <button
                           onClick={() => handleDelete(p.id)}
                           title="Delete"
-                          className="p-1.5 rounded hover:bg-red-500/10 text-[var(--k-text-secondary)] hover:text-red-400 transition-colors"
+                          className="p-1.5 rounded hover:bg-red-500/10 text-[var(--ams-secondary)] hover:text-red-400 transition-colors"
                         >
                           <Trash2 size={13} />
                         </button>
@@ -600,17 +600,17 @@ export const AdminProposals: React.FC = () => {
       {/* CREATE PROPOSAL MODAL */}
       {isCreateModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="bg-[var(--k-bg)] border border-white/[0.07] rounded-2xl w-full max-w-2xl max-h-[90vh] flex flex-col shadow-[0_24px_64px_rgba(0,0,0,0.8)] overflow-hidden">
-            <div className="p-4 border-b border-white/[0.07] flex items-center justify-between bg-[var(--k-surface)]">
+          <div className="bg-[var(--ams-bg)] border border-white/[0.07] rounded-2xl w-full max-w-2xl max-h-[90vh] flex flex-col shadow-[0_24px_64px_rgba(0,0,0,0.8)] overflow-hidden">
+            <div className="p-4 border-b border-white/[0.07] flex items-center justify-between bg-[var(--ams-surface)]">
               <div className="flex items-center gap-2">
-                <FileText className="text-[var(--k-red)]" size={18} />
+                <FileText className="text-[var(--ams-red)]" size={18} />
                 <h3 className="text-sm font-bold font-sans text-white">
                   {language === 'id' ? 'Buat Proposal & Estimasi Baru' : 'New Commercial Proposal'}
                 </h3>
               </div>
               <button
                 onClick={() => setIsCreateModalOpen(false)}
-                className="p-1 text-[var(--k-text-secondary)] hover:text-white rounded-lg hover:bg-white/[0.06]"
+                className="p-1 text-[var(--ams-secondary)] hover:text-white rounded-lg hover:bg-white/[0.06]"
               >
                 <X size={16} />
               </button>
@@ -619,50 +619,50 @@ export const AdminProposals: React.FC = () => {
             <form onSubmit={handleCreateProposal} className="p-5 overflow-y-auto space-y-4 flex-1 custom-scrollbar text-xs font-sans">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="text-xs font-sans text-[var(--k-text-secondary)]">Proposal Title *</label>
+                  <label className="text-xs font-sans text-[var(--ams-secondary)]">Proposal Title *</label>
                   <input
                     type="text"
                     required
                     value={formTitle}
                     onChange={(e) => setFormTitle(e.target.value)}
                     placeholder="e.g. Kapitech AI Automation Platform"
-                    className="w-full h-8 px-3 rounded-lg bg-[var(--k-surface)] text-white border border-white/[0.07] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--k-red)]/40 focus:border-[var(--k-red)]"
+                    className="w-full h-8 px-3 rounded-lg bg-[var(--ams-surface)] text-white border border-white/[0.07] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ams-red)]/40 focus:border-[var(--ams-red)]"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-sans text-[var(--k-text-secondary)]">Client Contact Name *</label>
+                  <label className="text-xs font-sans text-[var(--ams-secondary)]">Client Contact Name *</label>
                   <input
                     type="text"
                     required
                     value={formClientName}
                     onChange={(e) => setFormClientName(e.target.value)}
                     placeholder="e.g. Raditya Pratama"
-                    className="w-full h-8 px-3 rounded-lg bg-[var(--k-surface)] text-white border border-white/[0.07] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--k-red)]/40 focus:border-[var(--k-red)]"
+                    className="w-full h-8 px-3 rounded-lg bg-[var(--ams-surface)] text-white border border-white/[0.07] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ams-red)]/40 focus:border-[var(--ams-red)]"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="text-xs font-sans text-[var(--k-text-secondary)]">Company Name</label>
+                  <label className="text-xs font-sans text-[var(--ams-secondary)]">Company Name</label>
                   <input
                     type="text"
                     value={formClientCompany}
                     onChange={(e) => setFormClientCompany(e.target.value)}
                     placeholder="e.g. PT Nusantara Digital"
-                    className="w-full h-8 px-3 rounded-lg bg-[var(--k-surface)] text-white border border-white/[0.07] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--k-red)]/40 focus:border-[var(--k-red)]"
+                    className="w-full h-8 px-3 rounded-lg bg-[var(--ams-surface)] text-white border border-white/[0.07] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ams-red)]/40 focus:border-[var(--ams-red)]"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-sans text-[var(--k-text-secondary)]">Client Email</label>
+                  <label className="text-xs font-sans text-[var(--ams-secondary)]">Client Email</label>
                   <input
                     type="email"
                     value={formClientEmail}
                     onChange={(e) => setFormClientEmail(e.target.value)}
                     placeholder="e.g. client@company.id"
-                    className="w-full h-8 px-3 rounded-lg bg-[var(--k-surface)] text-white border border-white/[0.07] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--k-red)]/40 focus:border-[var(--k-red)]"
+                    className="w-full h-8 px-3 rounded-lg bg-[var(--ams-surface)] text-white border border-white/[0.07] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ams-red)]/40 focus:border-[var(--ams-red)]"
                   />
                 </div>
               </div>
@@ -670,11 +670,11 @@ export const AdminProposals: React.FC = () => {
               {/* Line Items Builder */}
               <div className="space-y-2 pt-2 border-t border-white/[0.07]">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-sans text-[var(--k-text-secondary)] uppercase tracking-wider">Line Items</span>
+                  <span className="text-xs font-sans text-[var(--ams-secondary)] uppercase tracking-wider">Line Items</span>
                   <button
                     type="button"
                     onClick={handleAddItem}
-                    className="px-2 py-0.5 rounded bg-[var(--k-surface)] hover:bg-[var(--k-surface-raised)] text-xs font-sans text-[var(--k-red)] border border-[var(--k-red)]/30 flex items-center gap-1"
+                    className="px-2 py-0.5 rounded bg-[var(--ams-surface)] hover:bg-[var(--ams-elevated)] text-xs font-sans text-[var(--ams-red)] border border-[var(--ams-red)]/30 flex items-center gap-1"
                   >
                     <Plus size={12} />
                     <span>Add Item</span>
@@ -683,7 +683,7 @@ export const AdminProposals: React.FC = () => {
 
                 <div className="space-y-2">
                   {formItems.map((item, idx) => (
-                    <div key={item.id} className="p-3 rounded-xl bg-[var(--k-surface)] border border-white/[0.07] grid grid-cols-1 sm:grid-cols-12 gap-2 items-center">
+                    <div key={item.id} className="p-3 rounded-xl bg-[var(--ams-surface)] border border-white/[0.07] grid grid-cols-1 sm:grid-cols-12 gap-2 items-center">
                       <div className="sm:col-span-6">
                         <input
                           type="text"
@@ -691,7 +691,7 @@ export const AdminProposals: React.FC = () => {
                           value={item.description}
                           onChange={(e) => handleItemChange(item.id, 'description', e.target.value)}
                           placeholder="Scope description / Deliverable..."
-                          className="w-full h-7 px-2.5 rounded bg-[var(--k-bg)] text-white border border-white/[0.07] text-xs"
+                          className="w-full h-7 px-2.5 rounded bg-[var(--ams-bg)] text-white border border-white/[0.07] text-xs"
                         />
                       </div>
                       <div className="sm:col-span-2">
@@ -702,7 +702,7 @@ export const AdminProposals: React.FC = () => {
                           value={item.quantity}
                           onChange={(e) => handleItemChange(item.id, 'quantity', Math.max(1, Number(e.target.value)))}
                           placeholder="Qty"
-                          className="w-full h-7 px-2 rounded bg-[var(--k-bg)] text-white border border-white/[0.07] text-xs font-sans"
+                          className="w-full h-7 px-2 rounded bg-[var(--ams-bg)] text-white border border-white/[0.07] text-xs font-sans"
                         />
                       </div>
                       <div className="sm:col-span-3">
@@ -714,7 +714,7 @@ export const AdminProposals: React.FC = () => {
                           value={item.unitPrice}
                           onChange={(e) => handleItemChange(item.id, 'unitPrice', Number(e.target.value))}
                           placeholder="Unit Price (IDR)"
-                          className="w-full h-7 px-2 rounded bg-[var(--k-bg)] text-white border border-white/[0.07] text-xs font-sans"
+                          className="w-full h-7 px-2 rounded bg-[var(--ams-bg)] text-white border border-white/[0.07] text-xs font-sans"
                         />
                       </div>
                       <div className="sm:col-span-1 flex justify-end">
@@ -722,7 +722,7 @@ export const AdminProposals: React.FC = () => {
                           type="button"
                           onClick={() => handleRemoveItem(item.id)}
                           disabled={formItems.length === 1}
-                          className="p-1 text-[var(--k-text-secondary)] hover:text-red-400 disabled:opacity-30"
+                          className="p-1 text-[var(--ams-secondary)] hover:text-red-400 disabled:opacity-30"
                         >
                           <Trash2 size={13} />
                         </button>
@@ -736,40 +736,40 @@ export const AdminProposals: React.FC = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-3 border-t border-white/[0.07]">
                 <div className="space-y-2">
                   <div className="space-y-1">
-                    <label className="text-xs font-sans text-[var(--k-text-secondary)]">Payment Terms</label>
+                    <label className="text-xs font-sans text-[var(--ams-secondary)]">Payment Terms</label>
                     <input
                       type="text"
                       value={formPaymentTerms}
                       onChange={(e) => setFormPaymentTerms(e.target.value)}
-                      className="w-full h-8 px-3 rounded-lg bg-[var(--k-surface)] text-white border border-white/[0.07] text-xs"
+                      className="w-full h-8 px-3 rounded-lg bg-[var(--ams-surface)] text-white border border-white/[0.07] text-xs"
                     />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-xs font-sans text-[var(--k-text-secondary)]">Validity Period (Days)</label>
+                    <label className="text-xs font-sans text-[var(--ams-secondary)]">Validity Period (Days)</label>
                     <input
                       type="number"
                       value={formValidDays}
                       onChange={(e) => setFormValidDays(Number(e.target.value))}
-                      className="w-full h-8 px-3 rounded-lg bg-[var(--k-surface)] text-white border border-white/[0.07] text-xs font-sans"
+                      className="w-full h-8 px-3 rounded-lg bg-[var(--ams-surface)] text-white border border-white/[0.07] text-xs font-sans"
                     />
                   </div>
                 </div>
 
-                <div className="p-3 rounded-xl bg-[var(--k-surface)] border border-white/[0.07] space-y-1.5 font-sans text-xs">
-                  <div className="flex justify-between text-[var(--k-text-secondary)]">
+                <div className="p-3 rounded-xl bg-[var(--ams-surface)] border border-white/[0.07] space-y-1.5 font-sans text-xs">
+                  <div className="flex justify-between text-[var(--ams-secondary)]">
                     <span>Subtotal</span>
                     <span>{formatAmount(formSubtotal, currency)}</span>
                   </div>
-                  <div className="flex items-center justify-between text-[var(--k-text-secondary)]">
+                  <div className="flex items-center justify-between text-[var(--ams-secondary)]">
                     <span>Discount (IDR)</span>
                     <input
                       type="number"
                       value={formDiscount}
                       onChange={(e) => setFormDiscount(Number(e.target.value))}
-                      className="w-24 h-6 px-1.5 rounded bg-[var(--k-bg)] text-right text-white border border-white/[0.07]"
+                      className="w-24 h-6 px-1.5 rounded bg-[var(--ams-bg)] text-right text-white border border-white/[0.07]"
                     />
                   </div>
-                  <div className="flex justify-between text-[var(--k-text-secondary)]">
+                  <div className="flex justify-between text-[var(--ams-secondary)]">
                     <span>PPN (11%)</span>
                     <span>{formatAmount(formTax, currency)}</span>
                   </div>
@@ -784,14 +784,14 @@ export const AdminProposals: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsCreateModalOpen(false)}
-                  className="px-4 py-2 rounded-xl bg-[var(--k-surface)] hover:bg-[var(--k-surface-raised)] text-[var(--k-text-secondary)] hover:text-white text-xs font-sans transition-colors"
+                  className="px-4 py-2 rounded-xl bg-[var(--ams-surface)] hover:bg-[var(--ams-elevated)] text-[var(--ams-secondary)] hover:text-white text-xs font-sans transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-5 py-2 rounded-xl bg-[var(--k-red)] hover:bg-[var(--k-red)] text-white text-xs font-sans font-semibold flex items-center gap-2 shadow-[0_0_15px_rgba(229,9,20,0.3)] disabled:opacity-50"
+                  className="px-5 py-2 rounded-xl bg-[var(--ams-red)] hover:bg-[var(--ams-red)] text-white text-xs font-sans font-semibold flex items-center gap-2 shadow-[0_0_15px_rgba(229,9,20,0.3)] disabled:opacity-50"
                 >
                   {isSubmitting ? <Loader2 size={13} className="animate-spin" /> : <Plus size={14} />}
                   <span>Generate Proposal</span>
@@ -805,15 +805,15 @@ export const AdminProposals: React.FC = () => {
       {/* PREVIEW PROPOSAL MODAL */}
       {previewProposal && (
         <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="bg-[var(--k-bg)] border border-white/[0.07] rounded-2xl w-full max-w-xl shadow-[0_24px_64px_rgba(0,0,0,0.8)] overflow-hidden">
-            <div className="p-4 border-b border-white/[0.07] flex items-center justify-between bg-[var(--k-surface)]">
+          <div className="bg-[var(--ams-bg)] border border-white/[0.07] rounded-2xl w-full max-w-xl shadow-[0_24px_64px_rgba(0,0,0,0.8)] overflow-hidden">
+            <div className="p-4 border-b border-white/[0.07] flex items-center justify-between bg-[var(--ams-surface)]">
               <div className="flex items-center gap-2">
-                <span className="text-[var(--k-red)] font-sans font-bold text-xs">{previewProposal.proposalNumber}</span>
+                <span className="text-[var(--ams-red)] font-sans font-bold text-xs">{previewProposal.proposalNumber}</span>
                 <span className="text-white font-semibold text-xs truncate max-w-[280px]">{previewProposal.title}</span>
               </div>
               <button
                 onClick={() => setPreviewProposal(null)}
-                className="p-1 text-[var(--k-text-secondary)] hover:text-white rounded-lg hover:bg-white/[0.06]"
+                className="p-1 text-[var(--ams-secondary)] hover:text-white rounded-lg hover:bg-white/[0.06]"
               >
                 <X size={16} />
               </button>
@@ -823,26 +823,26 @@ export const AdminProposals: React.FC = () => {
               <div className="flex justify-between items-start border-b border-white/[0.07] pb-3">
                 <div>
                   <div className="font-bold text-sm text-white">{previewProposal.clientName}</div>
-                  <div className="text-xs font-sans text-[var(--k-text-secondary)]">{previewProposal.clientCompany}</div>
+                  <div className="text-xs font-sans text-[var(--ams-secondary)]">{previewProposal.clientCompany}</div>
                   {previewProposal.clientEmail && (
-                    <div className="text-xs font-sans text-[var(--k-text-secondary)]">{previewProposal.clientEmail}</div>
+                    <div className="text-xs font-sans text-[var(--ams-secondary)]">{previewProposal.clientEmail}</div>
                   )}
                 </div>
                 <div className="text-right">
-                  <div className="text-xs font-sans text-[var(--k-text-secondary)]">Valid Until</div>
+                  <div className="text-xs font-sans text-[var(--ams-secondary)]">Valid Until</div>
                   <div className="font-sans text-white font-semibold">{previewProposal.validUntil}</div>
                   <div className="mt-1">{getStatusBadge(previewProposal.status)}</div>
                 </div>
               </div>
 
               <div className="space-y-2">
-                <div className="text-xs font-sans text-[var(--k-text-secondary)] uppercase tracking-wider">Scope Deliverables</div>
-                <div className="divide-y divide-white/[0.04] bg-[var(--k-surface)] rounded-xl border border-white/[0.07] p-3">
+                <div className="text-xs font-sans text-[var(--ams-secondary)] uppercase tracking-wider">Scope Deliverables</div>
+                <div className="divide-y divide-white/[0.04] bg-[var(--ams-surface)] rounded-xl border border-white/[0.07] p-3">
                   {previewProposal.lineItems?.map((item) => (
                     <div key={item.id} className="py-2 flex justify-between items-center text-xs">
                       <div>
                         <div className="text-white font-medium">{item.description}</div>
-                        <div className="text-xs font-sans text-[var(--k-text-secondary)]">{item.quantity} × {formatAmount(item.unitPrice, currency)}</div>
+                        <div className="text-xs font-sans text-[var(--ams-secondary)]">{item.quantity} × {formatAmount(item.unitPrice, currency)}</div>
                       </div>
                       <div className="font-sans font-bold text-emerald-400">
                         {formatAmount(item.total, currency)}
@@ -852,18 +852,18 @@ export const AdminProposals: React.FC = () => {
                 </div>
               </div>
 
-              <div className="p-3 rounded-xl bg-[var(--k-surface)] border border-white/[0.07] space-y-1 text-xs font-sans">
-                <div className="flex justify-between text-[var(--k-text-secondary)]">
+              <div className="p-3 rounded-xl bg-[var(--ams-surface)] border border-white/[0.07] space-y-1 text-xs font-sans">
+                <div className="flex justify-between text-[var(--ams-secondary)]">
                   <span>Subtotal</span>
                   <span>{formatAmount(previewProposal.subtotal, currency)}</span>
                 </div>
                 {previewProposal.discount > 0 && (
-                  <div className="flex justify-between text-[var(--k-text-secondary)]">
+                  <div className="flex justify-between text-[var(--ams-secondary)]">
                     <span>Discount</span>
                     <span>-{formatAmount(previewProposal.discount, currency)}</span>
                   </div>
                 )}
-                <div className="flex justify-between text-[var(--k-text-secondary)]">
+                <div className="flex justify-between text-[var(--ams-secondary)]">
                   <span>Tax</span>
                   <span>+{formatAmount(previewProposal.tax, currency)}</span>
                 </div>
@@ -874,7 +874,7 @@ export const AdminProposals: React.FC = () => {
               </div>
 
               {previewProposal.paymentTerms && (
-                <div className="text-xs font-sans text-[var(--k-text-secondary)] bg-[var(--k-surface)]/50 p-2.5 rounded-lg border border-white/[0.04]">
+                <div className="text-xs font-sans text-[var(--ams-secondary)] bg-[var(--ams-surface)]/50 p-2.5 rounded-lg border border-white/[0.04]">
                   Terms: {previewProposal.paymentTerms}
                 </div>
               )}
@@ -884,7 +884,7 @@ export const AdminProposals: React.FC = () => {
                   onClick={() => {
                     window.print();
                   }}
-                  className="px-3 py-1.5 rounded-lg bg-[var(--k-surface)] hover:bg-[var(--k-surface-raised)] text-xs font-sans text-[var(--k-text-secondary)] hover:text-white flex items-center gap-1.5 border border-white/[0.07]"
+                  className="px-3 py-1.5 rounded-lg bg-[var(--ams-surface)] hover:bg-[var(--ams-elevated)] text-xs font-sans text-[var(--ams-secondary)] hover:text-white flex items-center gap-1.5 border border-white/[0.07]"
                 >
                   <Download size={13} />
                   <span>Export / Print</span>
