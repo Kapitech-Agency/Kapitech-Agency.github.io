@@ -379,7 +379,7 @@ export const AdminCrm: React.FC = () => {
   const getPillarColor = (pillar: CrmServicePillar) => {
     switch (pillar) {
       case 'Web Development':
-        return 'text-[var(--k-red)] bg-[var(--k-red)]/10 border-[var(--k-red)]/30';
+        return 'text-[var(--ams-red)] bg-[var(--ams-red)]/10 border-[var(--ams-red)]/30';
       case 'Mobile App':
         return 'text-rose-400 bg-rose-500/10 border-rose-500/30';
       case 'UI/UX Design':
@@ -402,17 +402,17 @@ export const AdminCrm: React.FC = () => {
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-6 border-b border-[rgba(255,255,255,0.07)]">
         <div>
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-[var(--k-control-radius)] bg-[var(--k-red)]/10 border border-[var(--k-red)]/30 flex items-center justify-center text-[var(--k-red)] shrink-0">
+            <div className="w-9 h-9 rounded-[var(--ams-radius-control)] bg-[var(--ams-red)]/10 border border-[var(--ams-red)]/30 flex items-center justify-center text-[var(--ams-red)] shrink-0">
               <Briefcase size={18} />
             </div>
             <h1 className="text-xl sm:text-2xl font-sans font-bold text-white flex items-center gap-2.5">
               <span>{t('admin.crm.title')}</span>
-              <span className="px-2 py-0.5 rounded-full text-xs font-sans font-bold uppercase tracking-wider bg-[var(--k-red)]/15 text-[var(--k-red)] border border-[var(--k-red)]/30">
+              <span className="px-2 py-0.5 rounded-full text-xs font-sans font-bold uppercase tracking-wider bg-[var(--ams-red)]/15 text-[var(--ams-red)] border border-[var(--ams-red)]/30">
                 Enterprise
               </span>
             </h1>
           </div>
-          <p className="text-xs text-[var(--k-text-secondary)] mt-1.5 font-sans max-w-2xl">
+          <p className="text-xs text-[var(--ams-secondary)] mt-1.5 font-sans max-w-2xl">
             {language === 'id'
               ? 'Lacak progres tahapan deal, kualifikasi brief teknis klien, dan konversi peluang menjadi sprint proyek aktif.'
               : 'Track deal stages, qualify inbound scoping, and convert won opportunities directly to active project sprints.'}
@@ -421,23 +421,23 @@ export const AdminCrm: React.FC = () => {
 
         <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
           {/* Currency Switcher */}
-          <div className="h-10 p-1 flex items-center rounded-[var(--k-control-radius)] bg-[var(--k-surface)] border border-[rgba(255,255,255,0.07)] font-sans text-xs">
+          <div className="h-10 p-1 flex items-center rounded-[var(--ams-radius-control)] bg-[var(--ams-surface)] border border-[rgba(255,255,255,0.07)] font-sans text-xs">
             <button
               onClick={() => handleCurrencyToggle('IDR')}
-              className={`h-8 px-3 rounded-[var(--k-control-radius)] transition-all font-bold flex items-center justify-center ${
+              className={`h-8 px-3 rounded-[var(--ams-radius-control)] transition-all font-bold flex items-center justify-center ${
                 currency === 'IDR'
-                  ? 'bg-[var(--k-red)] text-white shadow-sm'
-                  : 'text-[var(--k-text-secondary)] hover:text-white'
+                  ? 'bg-[var(--ams-red)] text-white shadow-sm'
+                  : 'text-[var(--ams-secondary)] hover:text-white'
               }`}
             >
               IDR (Rp)
             </button>
             <button
               onClick={() => handleCurrencyToggle('USD')}
-              className={`h-8 px-3 rounded-[var(--k-control-radius)] transition-all font-bold flex items-center justify-center ${
+              className={`h-8 px-3 rounded-[var(--ams-radius-control)] transition-all font-bold flex items-center justify-center ${
                 currency === 'USD'
-                  ? 'bg-[var(--k-red)] text-white shadow-sm'
-                  : 'text-[var(--k-text-secondary)] hover:text-white'
+                  ? 'bg-[var(--ams-red)] text-white shadow-sm'
+                  : 'text-[var(--ams-secondary)] hover:text-white'
               }`}
             >
               USD ($)
@@ -446,17 +446,17 @@ export const AdminCrm: React.FC = () => {
 
           <button
             onClick={() => exportCrmLeadsToCsv(filteredLeads)}
-            className="h-10 px-3.5 rounded-[var(--k-control-radius)] bg-[var(--k-surface)] hover:bg-[var(--k-surface-raised)] text-white border border-[rgba(255,255,255,0.07)] text-xs font-sans transition-all flex items-center justify-center gap-2 min-h-[40px]"
+            className="h-10 px-3.5 rounded-[var(--ams-radius-control)] bg-[var(--ams-surface)] hover:bg-[var(--ams-elevated)] text-white border border-[rgba(255,255,255,0.07)] text-xs font-sans transition-all flex items-center justify-center gap-2 min-h-[40px]"
             title={t('admin.action.exportCsv')}
           >
-            <Download size={14} className="text-[var(--k-text-secondary)]" />
+            <Download size={14} className="text-[var(--ams-secondary)]" />
             <span className="hidden sm:inline">{t('admin.action.exportCsv')}</span>
           </button>
 
           {canManageCrm && (
             <button
               onClick={() => handleOpenAddModal('new')}
-            className="h-10 px-4 rounded-[var(--k-control-radius)] bg-[var(--k-red)] hover:bg-[var(--k-red)] text-white text-xs font-sans font-bold transition-all flex items-center justify-center gap-2 shadow-lg shadow-[var(--k-red)]/20 min-h-[40px]"
+            className="h-10 px-4 rounded-[var(--ams-radius-control)] bg-[var(--ams-red)] hover:bg-[var(--ams-red)] text-white text-xs font-sans font-bold transition-all flex items-center justify-center gap-2 shadow-lg shadow-[var(--ams-red)]/20 min-h-[40px]"
           >
             <Plus size={15} />
               <span>{t('admin.crm.addDeal')}</span>
@@ -467,7 +467,7 @@ export const AdminCrm: React.FC = () => {
 
       {/* Toast Alert */}
       {statusMessage && (
-        <div className="p-3.5 rounded-[var(--k-control-radius)] bg-emerald-950/40 border border-emerald-500/40 text-emerald-300 text-xs font-sans flex items-center gap-2 animate-in fade-in duration-300">
+        <div className="p-3.5 rounded-[var(--ams-radius-control)] bg-emerald-950/40 border border-emerald-500/40 text-emerald-300 text-xs font-sans flex items-center gap-2 animate-in fade-in duration-300">
           <Check size={15} />
           <span>{statusMessage}</span>
         </div>
@@ -476,13 +476,13 @@ export const AdminCrm: React.FC = () => {
       {/* 2. Enterprise CRM KPI Funnel & Metrics Bar */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-4 sm:gap-6">
         {/* Active Pipeline Card */}
-        <div className="lg:col-span-4 bg-[var(--k-surface)] border border-[rgba(255,255,255,0.07)] p-5 sm:p-6 rounded-[var(--k-card-radius)] flex flex-col justify-between group hover:border-[#383C46] transition-all">
+        <div className="lg:col-span-4 bg-[var(--ams-surface)] border border-[rgba(255,255,255,0.07)] p-5 sm:p-6 rounded-[var(--ams-radius-card)] flex flex-col justify-between group hover:border-[#383C46] transition-all">
           <div>
-            <div className="flex items-center justify-between text-[var(--k-text-secondary)] mb-3">
+            <div className="flex items-center justify-between text-[var(--ams-secondary)] mb-3">
               <span className="text-xs font-sans uppercase tracking-wider font-semibold">
                 {language === 'id' ? 'Pipeline Aktif' : 'Active Pipeline'}
               </span>
-              <div className="w-8 h-8 rounded-[var(--k-control-radius)] bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+              <div className="w-8 h-8 rounded-[var(--ams-radius-control)] bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
                 <Layers size={16} />
               </div>
             </div>
@@ -491,7 +491,7 @@ export const AdminCrm: React.FC = () => {
             </div>
           </div>
           <div className="flex items-center justify-between mt-4 pt-3 border-t border-[rgba(255,255,255,0.07)] text-xs font-sans">
-            <span className="text-[var(--k-text-secondary)]">
+            <span className="text-[var(--ams-secondary)]">
               {metrics.activeDealsCount} {language === 'id' ? 'Prospek Aktif' : 'Active Deals'}
             </span>
             <span className="text-emerald-400 font-semibold flex items-center gap-1">
@@ -502,13 +502,13 @@ export const AdminCrm: React.FC = () => {
         </div>
 
         {/* Closed Won Card */}
-        <div className="lg:col-span-3 bg-[var(--k-surface)] border border-[rgba(255,255,255,0.07)] p-5 sm:p-6 rounded-[var(--k-card-radius)] flex flex-col justify-between group hover:border-[#383C46] transition-all">
+        <div className="lg:col-span-3 bg-[var(--ams-surface)] border border-[rgba(255,255,255,0.07)] p-5 sm:p-6 rounded-[var(--ams-radius-card)] flex flex-col justify-between group hover:border-[#383C46] transition-all">
           <div>
-            <div className="flex items-center justify-between text-[var(--k-text-secondary)] mb-3">
+            <div className="flex items-center justify-between text-[var(--ams-secondary)] mb-3">
               <span className="text-xs font-sans uppercase tracking-wider font-semibold">
                 {language === 'id' ? 'Closed Won (Q3)' : 'Closed Won (Q3)'}
               </span>
-              <div className="w-8 h-8 rounded-[var(--k-control-radius)] bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+              <div className="w-8 h-8 rounded-[var(--ams-radius-control)] bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
                 <CheckCircle2 size={16} />
               </div>
             </div>
@@ -517,7 +517,7 @@ export const AdminCrm: React.FC = () => {
             </div>
           </div>
           <div className="flex items-center justify-between mt-4 pt-3 border-t border-[rgba(255,255,255,0.07)] text-xs font-sans">
-            <span className="text-[var(--k-text-secondary)]">
+            <span className="text-[var(--ams-secondary)]">
               {language === 'id' ? 'Win Rate:' : 'Win Rate:'}
             </span>
             <span className="text-white font-bold font-sans">
@@ -527,41 +527,41 @@ export const AdminCrm: React.FC = () => {
         </div>
 
         {/* Stage Conversion Funnel */}
-        <div className="md:col-span-2 lg:col-span-5 bg-[var(--k-surface)] border border-[rgba(255,255,255,0.07)] p-5 sm:p-6 rounded-[var(--k-card-radius)] flex flex-col justify-between group hover:border-[#383C46] transition-all">
-          <div className="flex items-center justify-between text-[var(--k-text-secondary)] mb-2">
+        <div className="md:col-span-2 lg:col-span-5 bg-[var(--ams-surface)] border border-[rgba(255,255,255,0.07)] p-5 sm:p-6 rounded-[var(--ams-radius-card)] flex flex-col justify-between group hover:border-[#383C46] transition-all">
+          <div className="flex items-center justify-between text-[var(--ams-secondary)] mb-2">
             <span className="text-xs font-sans uppercase tracking-wider font-semibold flex items-center gap-2 text-white">
-              <Activity size={14} className="text-[var(--k-red)]" />
+              <Activity size={14} className="text-[var(--ams-red)]" />
               <span>{language === 'id' ? 'Corong Konversi Tahapan' : 'Stage Conversion Funnel'}</span>
             </span>
-            <span className="text-xs font-sans px-2 py-0.5 rounded bg-[var(--k-surface-raised)] text-[var(--k-text-secondary)] border border-[rgba(255,255,255,0.07)]">
+            <span className="text-xs font-sans px-2 py-0.5 rounded bg-[var(--ams-elevated)] text-[var(--ams-secondary)] border border-[rgba(255,255,255,0.07)]">
               Lead → Won Conversion
             </span>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 my-auto py-2">
-            <div className="bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] p-2 text-center">
-              <div className="text-xs font-sans text-[var(--k-text-secondary)] truncate">Lead→Scope</div>
+            <div className="bg-[var(--ams-elevated)] border border-[rgba(255,255,255,0.07)] rounded-[var(--ams-radius-control)] p-2 text-center">
+              <div className="text-xs font-sans text-[var(--ams-secondary)] truncate">Lead→Scope</div>
               <div className="text-sm font-bold font-sans text-white mt-0.5">{funnelStats.leadToScope}%</div>
             </div>
-            <div className="bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] p-2 text-center">
-              <div className="text-xs font-sans text-[var(--k-text-secondary)] truncate">Scope→Pitch</div>
+            <div className="bg-[var(--ams-elevated)] border border-[rgba(255,255,255,0.07)] rounded-[var(--ams-radius-control)] p-2 text-center">
+              <div className="text-xs font-sans text-[var(--ams-secondary)] truncate">Scope→Pitch</div>
               <div className="text-sm font-bold font-sans text-white mt-0.5">{funnelStats.scopeToPitch}%</div>
             </div>
-            <div className="bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] p-2 text-center">
-              <div className="text-xs font-sans text-[var(--k-text-secondary)] truncate">Pitch→SOW</div>
+            <div className="bg-[var(--ams-elevated)] border border-[rgba(255,255,255,0.07)] rounded-[var(--ams-radius-control)] p-2 text-center">
+              <div className="text-xs font-sans text-[var(--ams-secondary)] truncate">Pitch→SOW</div>
               <div className="text-sm font-bold font-sans text-white mt-0.5">{funnelStats.pitchToSow}%</div>
             </div>
-            <div className="bg-[var(--k-surface-raised)] border border-emerald-500/20 bg-emerald-950/15 rounded-[var(--k-control-radius)] p-2 text-center">
+            <div className="bg-[var(--ams-elevated)] border border-emerald-500/20 bg-emerald-950/15 rounded-[var(--ams-radius-control)] p-2 text-center">
               <div className="text-xs font-sans text-emerald-400 truncate">SOW→Won</div>
               <div className="text-sm font-bold font-sans text-emerald-400 mt-0.5">{funnelStats.sowToWon}%</div>
             </div>
           </div>
 
           <div className="flex items-center justify-between mt-3 pt-3 border-t border-[rgba(255,255,255,0.07)] text-xs font-sans">
-            <span className="text-[var(--k-text-secondary)]">
+            <span className="text-[var(--ams-secondary)]">
               {language === 'id' ? 'Rata-rata Deal:' : 'Avg Deal:'} {formatAmount(metrics.avgDealSize, currency, true)}
             </span>
-            <span className="text-[var(--k-text-secondary)]">
+            <span className="text-[var(--ams-secondary)]">
               {language === 'id' ? 'Proposal & Negosiasi:' : 'Proposal & SOW:'} <span className="text-purple-400 font-semibold">{formatAmount(metrics.negotiationValue, currency, true)}</span>
             </span>
           </div>
@@ -569,16 +569,16 @@ export const AdminCrm: React.FC = () => {
       </div>
 
       {/* 3. Filter Bar & View Mode Switcher */}
-      <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 bg-[var(--k-surface)] border border-[rgba(255,255,255,0.07)] p-4 sm:p-5 rounded-[var(--k-card-radius)]">
+      <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 bg-[var(--ams-surface)] border border-[rgba(255,255,255,0.07)] p-4 sm:p-5 rounded-[var(--ams-radius-card)]">
         <div className="flex flex-wrap items-center gap-3 flex-1">
           <div className="relative flex-1 min-w-[200px] max-w-md">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--k-text-secondary)]" size={14} />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--ams-secondary)]" size={14} />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={language === 'id' ? 'Cari prospek, perusahaan, atau kata kunci...' : 'Search leads, companies, or keywords...'}
-              className="w-full pl-9 pr-3.5 py-2 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-xs text-white placeholder-[var(--k-text-secondary)] focus:border-[var(--k-red-border)] font-sans h-10 min-h-[40px]"
+              className="w-full pl-9 pr-3.5 py-2 bg-[var(--ams-elevated)] border border-[rgba(255,255,255,0.07)] rounded-[var(--ams-radius-control)] text-xs text-white placeholder-[var(--ams-secondary)] focus:border-[var(--k-red-border)] font-sans h-10 min-h-[40px]"
             />
           </div>
 
@@ -609,13 +609,13 @@ export const AdminCrm: React.FC = () => {
           />
         </div>
 
-        <div className="flex items-center gap-1 bg-[var(--k-surface-raised)] p-1 rounded-[var(--k-control-radius)] border border-[rgba(255,255,255,0.07)] self-start md:self-auto shrink-0">
+        <div className="flex items-center gap-1 bg-[var(--ams-elevated)] p-1 rounded-[var(--ams-radius-control)] border border-[rgba(255,255,255,0.07)] self-start md:self-auto shrink-0">
           <button
             onClick={() => setViewMode('kanban')}
-            className={`flex items-center gap-2 px-3 py-1.5 rounded-[var(--k-control-radius)] text-xs font-sans font-semibold transition-all min-h-[38px] ${
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-[var(--ams-radius-control)] text-xs font-sans font-semibold transition-all min-h-[38px] ${
               viewMode === 'kanban'
-                ? 'bg-[var(--k-surface)] text-white shadow-sm border border-[rgba(255,255,255,0.07)]'
-                : 'text-[var(--k-text-secondary)] hover:text-white'
+                ? 'bg-[var(--ams-surface)] text-white shadow-sm border border-[rgba(255,255,255,0.07)]'
+                : 'text-[var(--ams-secondary)] hover:text-white'
             }`}
           >
             <Kanban size={13} />
@@ -623,10 +623,10 @@ export const AdminCrm: React.FC = () => {
           </button>
           <button
             onClick={() => setViewMode('list')}
-            className={`flex items-center gap-2 px-3 py-1.5 rounded-[var(--k-control-radius)] text-xs font-sans font-semibold transition-all min-h-[38px] ${
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-[var(--ams-radius-control)] text-xs font-sans font-semibold transition-all min-h-[38px] ${
               viewMode === 'list'
-                ? 'bg-[var(--k-surface)] text-white shadow-sm border border-[rgba(255,255,255,0.07)]'
-                : 'text-[var(--k-text-secondary)] hover:text-white'
+                ? 'bg-[var(--ams-surface)] text-white shadow-sm border border-[rgba(255,255,255,0.07)]'
+                : 'text-[var(--ams-secondary)] hover:text-white'
             }`}
           >
             <List size={13} />
@@ -659,12 +659,12 @@ export const AdminCrm: React.FC = () => {
                   onDragOver={(e) => handleDragOverColumn(e, stageDef.key)}
                   onDragLeave={handleDragLeaveColumn}
                   onDrop={(e) => handleDropOnColumn(e, stageDef.key)}
-                  className={`bg-[var(--k-surface)] border rounded-[var(--k-card-radius)] flex flex-col flex-1 min-w-[280px] max-w-[340px] shrink-0 transition-all ${
-                    isOver ? 'border-[var(--k-red)] ring-2 ring-[var(--k-red)]/30 bg-[var(--k-red)]/5' : 'border-[rgba(255,255,255,0.07)]'
+                  className={`bg-[var(--ams-surface)] border rounded-[var(--ams-radius-card)] flex flex-col flex-1 min-w-[280px] max-w-[340px] shrink-0 transition-all ${
+                    isOver ? 'border-[var(--ams-red)] ring-2 ring-[var(--ams-red)]/30 bg-[var(--ams-red)]/5' : 'border-[rgba(255,255,255,0.07)]'
                   }`}
                 >
                   {/* Column Header */}
-                  <div className="p-3.5 border-b border-[rgba(255,255,255,0.07)] flex items-center justify-between bg-[var(--k-surface)] rounded-t-2xl">
+                  <div className="p-3.5 border-b border-[rgba(255,255,255,0.07)] flex items-center justify-between bg-[var(--ams-surface)] rounded-t-2xl">
                     <div className="min-w-0 pr-2">
                       <div className="flex items-center gap-2">
                         <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${
@@ -677,7 +677,7 @@ export const AdminCrm: React.FC = () => {
                         <h3 className="text-xs font-bold font-sans text-white truncate">
                           {language === 'id' ? stageDef.labelId : stageDef.label}
                         </h3>
-                        <span className="text-xs font-sans px-1.5 py-0.2 rounded bg-[var(--k-surface-raised)] text-[var(--k-text-secondary)] border border-[rgba(255,255,255,0.07)] shrink-0">
+                        <span className="text-xs font-sans px-1.5 py-0.2 rounded bg-[var(--ams-elevated)] text-[var(--ams-secondary)] border border-[rgba(255,255,255,0.07)] shrink-0">
                           {stageLeads.length}
                         </span>
                       </div>
@@ -689,7 +689,7 @@ export const AdminCrm: React.FC = () => {
                     <button
                       onClick={() => handleOpenAddModal(stageDef.key)}
                       title={`Add deal to ${stageDef.labelId}`}
-                      className="p-1 rounded-[var(--k-control-radius)] bg-[var(--k-surface-raised)] hover:bg-[var(--k-surface-raised)] text-[var(--k-text-secondary)] hover:text-white border border-[rgba(255,255,255,0.07)] transition-colors shrink-0"
+                      className="p-1 rounded-[var(--ams-radius-control)] bg-[var(--ams-elevated)] hover:bg-[var(--ams-elevated)] text-[var(--ams-secondary)] hover:text-white border border-[rgba(255,255,255,0.07)] transition-colors shrink-0"
                     >
                       <Plus size={13} />
                     </button>
@@ -698,7 +698,7 @@ export const AdminCrm: React.FC = () => {
                   {/* Column Cards Stream */}
                   <div className="p-3 space-y-3 overflow-y-auto flex-1 max-h-[calc(100vh-320px)] min-h-[180px] scrollbar-thin">
                     {stageLeads.length === 0 ? (
-                      <div className="py-8 text-center text-[var(--k-text-secondary)] text-xs font-sans border border-dashed border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)]">
+                      <div className="py-8 text-center text-[var(--ams-secondary)] text-xs font-sans border border-dashed border-[rgba(255,255,255,0.07)] rounded-[var(--ams-radius-control)]">
                         {language === 'id' ? 'Tarik deal ke sini' : 'Drop deals here'}
                       </div>
                     ) : (
@@ -711,8 +711,8 @@ export const AdminCrm: React.FC = () => {
                             draggable={canManageCrm}
                             onDragStart={(e) => { if (canManageCrm) handleDragStart(e, lead.id); }}
                             onClick={() => handleOpenLeadDrawer(lead)}
-                            className={`draggable-card kanban-card bg-[var(--k-surface)] hover:bg-[var(--k-surface-raised)] border hover:border-[var(--k-red)]/60 rounded-[var(--k-control-radius)] p-3.5 cursor-pointer transition-all shadow-md group relative ${
-                              isDragging ? 'opacity-40 scale-95 border-[var(--k-red)] border-dashed' : 'border-[rgba(255,255,255,0.07)]'
+                            className={`draggable-card kanban-card bg-[var(--ams-surface)] hover:bg-[var(--ams-elevated)] border hover:border-[var(--ams-red)]/60 rounded-[var(--ams-radius-control)] p-3.5 cursor-pointer transition-all shadow-md group relative ${
+                              isDragging ? 'opacity-40 scale-95 border-[var(--ams-red)] border-dashed' : 'border-[rgba(255,255,255,0.07)]'
                             }`}
                           >
                             {/* Top Card Info */}
@@ -722,17 +722,17 @@ export const AdminCrm: React.FC = () => {
                               </span>
                               <div className="flex items-center gap-1">
                                 {getPriorityBadge(lead.priority)}
-                                <div className="text-[var(--k-text-secondary)] group-hover:text-[var(--k-text-secondary)] cursor-grab" data-drag-handle>
+                                <div className="text-[var(--ams-secondary)] group-hover:text-[var(--ams-secondary)] cursor-grab" data-drag-handle>
                                   <GripVertical size={13} />
                                 </div>
                               </div>
                             </div>
 
                             {/* Client & Company */}
-                            <h4 className="text-xs font-bold text-white font-sans leading-snug group-hover:text-[var(--k-red)] transition-colors line-clamp-1">
+                            <h4 className="text-xs font-bold text-white font-sans leading-snug group-hover:text-[var(--ams-red)] transition-colors line-clamp-1">
                               {lead.clientName}
                             </h4>
-                            <p className="text-xs text-[var(--k-text-secondary)] font-sans truncate mb-2.5">
+                            <p className="text-xs text-[var(--ams-secondary)] font-sans truncate mb-2.5">
                               {lead.company}
                             </p>
 
@@ -741,7 +741,7 @@ export const AdminCrm: React.FC = () => {
                               <span className="text-emerald-400 font-bold font-sans text-sm tracking-tight">
                                 {formatAmount(lead.dealValue, currency)}
                               </span>
-                              <span className="text-xs text-[var(--k-text-secondary)] font-sans px-1.5 py-0.5 rounded bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] shrink-0">
+                              <span className="text-xs text-[var(--ams-secondary)] font-sans px-1.5 py-0.5 rounded bg-[var(--ams-elevated)] border border-[rgba(255,255,255,0.07)] shrink-0">
                                 {lead.source}
                               </span>
                             </div>
@@ -754,7 +754,7 @@ export const AdminCrm: React.FC = () => {
                                   <button
                                     onClick={() => handleStageChange(lead.id, 'won')}
                                     title={language === 'id' ? 'Tandai Deal Dimenangkan (Won)' : 'Mark deal as Won'}
-                                    className="h-7 px-2.5 rounded-[var(--k-control-radius)] bg-emerald-950/60 hover:bg-emerald-900/80 text-emerald-400 border border-emerald-500/30 text-xs font-bold font-sans transition-all flex items-center gap-1 active:scale-95 whitespace-nowrap"
+                                    className="h-7 px-2.5 rounded-[var(--ams-radius-control)] bg-emerald-950/60 hover:bg-emerald-900/80 text-emerald-400 border border-emerald-500/30 text-xs font-bold font-sans transition-all flex items-center gap-1 active:scale-95 whitespace-nowrap"
                                   >
                                     <Check size={11} className="text-emerald-400" />
                                     <span>Won</span>
@@ -764,14 +764,14 @@ export const AdminCrm: React.FC = () => {
                                   <button
                                     onClick={() => handleConvertToProject(lead)}
                                     title={language === 'id' ? 'Konversi ke Proyek Aktif' : 'Convert deal to Agency Project'}
-                                    className="h-7 px-2.5 rounded-[var(--k-control-radius)] bg-[var(--k-red)]/20 hover:bg-[var(--k-red)]/40 text-[var(--k-red)] border border-[var(--k-red)]/30 text-xs font-bold font-sans transition-all flex items-center gap-1 active:scale-95 shadow-sm whitespace-nowrap"
+                                    className="h-7 px-2.5 rounded-[var(--ams-radius-control)] bg-[var(--ams-red)]/20 hover:bg-[var(--ams-red)]/40 text-[var(--ams-red)] border border-[var(--ams-red)]/30 text-xs font-bold font-sans transition-all flex items-center gap-1 active:scale-95 shadow-sm whitespace-nowrap"
                                   >
                                     <Layers size={11} />
                                     <span>Project</span>
                                   </button>
                                 )}
                                 {lead.stage === 'lost' && (
-                                  <span className="text-xs font-sans text-[var(--k-text-secondary)] px-2 py-1 rounded bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] whitespace-nowrap">
+                                  <span className="text-xs font-sans text-[var(--ams-secondary)] px-2 py-1 rounded bg-[var(--ams-elevated)] border border-[rgba(255,255,255,0.07)] whitespace-nowrap">
                                     Closed Lost
                                   </span>
                                 )}
@@ -785,7 +785,7 @@ export const AdminCrm: React.FC = () => {
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     title={language === 'id' ? 'Kirim Pesan WhatsApp' : 'Send WhatsApp message'}
-                                    className="h-7 w-7 rounded-[var(--k-control-radius)] bg-[var(--k-surface-raised)] hover:bg-emerald-950/60 text-[var(--k-text-secondary)] hover:text-emerald-400 border border-[rgba(255,255,255,0.07)] hover:border-emerald-500/30 transition-all flex items-center justify-center shrink-0"
+                                    className="h-7 w-7 rounded-[var(--ams-radius-control)] bg-[var(--ams-elevated)] hover:bg-emerald-950/60 text-[var(--ams-secondary)] hover:text-emerald-400 border border-[rgba(255,255,255,0.07)] hover:border-emerald-500/30 transition-all flex items-center justify-center shrink-0"
                                   >
                                     <Send size={11} />
                                   </a>
@@ -793,7 +793,7 @@ export const AdminCrm: React.FC = () => {
                                 <button
                                   onClick={() => handleOpenLeadDrawer(lead)}
                                   title={language === 'id' ? 'Lihat profil lead & catatan' : 'Inspect lead profile & notes'}
-                                  className="h-7 px-2.5 rounded-[var(--k-control-radius)] bg-[var(--k-surface-raised)] hover:bg-[var(--k-surface-raised)] text-[var(--k-text-secondary)] hover:text-white border border-[rgba(255,255,255,0.07)] text-xs font-sans transition-all flex items-center gap-1 active:scale-95 whitespace-nowrap"
+                                  className="h-7 px-2.5 rounded-[var(--ams-radius-control)] bg-[var(--ams-elevated)] hover:bg-[var(--ams-elevated)] text-[var(--ams-secondary)] hover:text-white border border-[rgba(255,255,255,0.07)] text-xs font-sans transition-all flex items-center gap-1 active:scale-95 whitespace-nowrap"
                                 >
                                   <span>Inspect</span>
                                   <ArrowUpRight size={11} />
@@ -816,7 +816,7 @@ export const AdminCrm: React.FC = () => {
           {/* Mobile Card Stream (Zero Horizontal Scrolling) */}
           <div className="md:hidden space-y-3">
             {filteredLeads.length === 0 ? (
-              <div className="bg-[var(--k-surface)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] p-8 text-center text-[var(--k-text-secondary)] font-sans text-xs">
+              <div className="bg-[var(--ams-surface)] border border-[rgba(255,255,255,0.07)] rounded-[var(--ams-radius-control)] p-8 text-center text-[var(--ams-secondary)] font-sans text-xs">
                 {language === 'id' ? 'Tidak ada deal yang cocok.' : 'No matching leads found.'}
               </div>
             ) : (
@@ -824,15 +824,15 @@ export const AdminCrm: React.FC = () => {
                 <div
                   key={lead.id}
                   onClick={() => handleOpenLeadDrawer(lead)}
-                  className="bg-[var(--k-surface)] hover:bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] hover:border-[rgba(255,255,255,0.15)] rounded-[var(--k-control-radius)] p-4 space-y-3 transition-all cursor-pointer shadow-lg"
+                  className="bg-[var(--ams-surface)] hover:bg-[var(--ams-elevated)] border border-[rgba(255,255,255,0.07)] hover:border-[rgba(255,255,255,0.15)] rounded-[var(--ams-radius-control)] p-4 space-y-3 transition-all cursor-pointer shadow-lg"
                 >
                   {/* Header: Client, Company & Stage */}
                   <div className="flex items-start justify-between gap-2">
                     <div>
                       <div className="font-bold text-white text-base font-sans">{lead.clientName}</div>
-                      <div className="text-xs text-[var(--k-text-secondary)] font-sans">{lead.company}</div>
+                      <div className="text-xs text-[var(--ams-secondary)] font-sans">{lead.company}</div>
                     </div>
-                    <span className="px-2.5 py-1 rounded-[var(--k-control-radius)] bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] text-xs font-sans text-[#D0D4DC] shrink-0 font-semibold">
+                    <span className="px-2.5 py-1 rounded-[var(--ams-radius-control)] bg-[var(--ams-elevated)] border border-[rgba(255,255,255,0.07)] text-xs font-sans text-[#D0D4DC] shrink-0 font-semibold">
                       {language === 'id'
                         ? (CRM_STAGE_DEFINITIONS.find(s => s.key === lead.stage)?.labelId || lead.stage)
                         : (CRM_STAGE_DEFINITIONS.find(s => s.key === lead.stage)?.label || lead.stage)}
@@ -841,12 +841,12 @@ export const AdminCrm: React.FC = () => {
 
                   {/* Pillar & Priority Badge */}
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className={`text-xs font-sans px-2.5 py-1 rounded-[var(--k-control-radius)] border font-semibold ${getPillarColor(lead.servicePillar)}`}>
+                    <span className={`text-xs font-sans px-2.5 py-1 rounded-[var(--ams-radius-control)] border font-semibold ${getPillarColor(lead.servicePillar)}`}>
                       {lead.servicePillar}
                     </span>
                     {getPriorityBadge(lead.priority)}
                     {lead.source && (
-                      <span className="text-xs font-sans text-[var(--k-text-secondary)] bg-[var(--k-surface-raised)] px-2 py-0.5 rounded border border-[rgba(255,255,255,0.04)]">
+                      <span className="text-xs font-sans text-[var(--ams-secondary)] bg-[var(--ams-elevated)] px-2 py-0.5 rounded border border-[rgba(255,255,255,0.04)]">
                         {lead.source}
                       </span>
                     )}
@@ -855,7 +855,7 @@ export const AdminCrm: React.FC = () => {
                   {/* Value & Actions Footer */}
                   <div className="pt-2 border-t border-[rgba(255,255,255,0.06)] flex items-center justify-between gap-2">
                     <div>
-                      <div className="text-xs font-sans uppercase text-[var(--k-text-secondary)]">Deal Value</div>
+                      <div className="text-xs font-sans uppercase text-[var(--ams-secondary)]">Deal Value</div>
                       <div className="font-bold text-emerald-400 font-sans text-base">
                         {formatAmount(lead.dealValue, currency)}
                       </div>
@@ -871,7 +871,7 @@ export const AdminCrm: React.FC = () => {
                         <button
                           onClick={() => handleConvertToProject(lead)}
                           title="Create project"
-                          className="w-9 h-9 rounded-[var(--k-control-radius)] bg-emerald-950/40 text-emerald-400 hover:bg-emerald-950/80 border border-emerald-500/30 flex items-center justify-center min-h-[36px] min-w-[36px]"
+                          className="w-9 h-9 rounded-[var(--ams-radius-control)] bg-emerald-950/40 text-emerald-400 hover:bg-emerald-950/80 border border-emerald-500/30 flex items-center justify-center min-h-[36px] min-w-[36px]"
                         >
                           <Layers size={13} />
                         </button>
@@ -881,7 +881,7 @@ export const AdminCrm: React.FC = () => {
                           href={`https://wa.me/${cleanPhone(lead.phone)}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="w-9 h-9 rounded-[var(--k-control-radius)] bg-[var(--k-surface-raised)] text-emerald-400 hover:bg-emerald-950/50 border border-[rgba(255,255,255,0.07)] hover:border-emerald-500/30 flex items-center justify-center min-h-[36px] min-w-[36px]"
+                          className="w-9 h-9 rounded-[var(--ams-radius-control)] bg-[var(--ams-elevated)] text-emerald-400 hover:bg-emerald-950/50 border border-[rgba(255,255,255,0.07)] hover:border-emerald-500/30 flex items-center justify-center min-h-[36px] min-w-[36px]"
                           title="WhatsApp client"
                         >
                           <Send size={13} />
@@ -891,14 +891,14 @@ export const AdminCrm: React.FC = () => {
                         <>
                           <button
                             onClick={() => handleOpenEditModal(lead)}
-                            className="w-9 h-9 rounded-[var(--k-control-radius)] bg-[var(--k-surface-raised)] text-[var(--k-text-secondary)] hover:text-white border border-[rgba(255,255,255,0.07)] flex items-center justify-center min-h-[36px] min-w-[36px]"
+                            className="w-9 h-9 rounded-[var(--ams-radius-control)] bg-[var(--ams-elevated)] text-[var(--ams-secondary)] hover:text-white border border-[rgba(255,255,255,0.07)] flex items-center justify-center min-h-[36px] min-w-[36px]"
                             title="Edit deal"
                           >
                             <Edit3 size={13} />
                           </button>
                           <button
                             onClick={() => handleDeleteLead(lead.id, lead.clientName)}
-                            className="w-9 h-9 rounded-[var(--k-control-radius)] bg-[var(--k-surface-raised)] text-[var(--k-text-secondary)] hover:text-red-400 border border-[rgba(255,255,255,0.07)] hover:border-red-500/40 flex items-center justify-center min-h-[36px] min-w-[36px]"
+                            className="w-9 h-9 rounded-[var(--ams-radius-control)] bg-[var(--ams-elevated)] text-[var(--ams-secondary)] hover:text-red-400 border border-[rgba(255,255,255,0.07)] hover:border-red-500/40 flex items-center justify-center min-h-[36px] min-w-[36px]"
                             title="Delete deal"
                           >
                             <Trash2 size={13} />
@@ -913,10 +913,10 @@ export const AdminCrm: React.FC = () => {
           </div>
 
           {/* Desktop Table View */}
-          <div className="hidden md:block bg-[var(--k-surface)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-card-radius)] overflow-hidden shadow-[var(--k-shadow-sm)]">
+          <div className="hidden md:block bg-[var(--ams-surface)] border border-[rgba(255,255,255,0.07)] rounded-[var(--ams-radius-card)] overflow-hidden shadow-[var(--k-shadow-sm)]">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs font-sans">
-                <thead className="bg-[var(--k-surface-raised)] text-[var(--k-text-secondary)] border-b border-[rgba(255,255,255,0.07)] uppercase text-xs tracking-wider">
+                <thead className="bg-[var(--ams-elevated)] text-[var(--ams-secondary)] border-b border-[rgba(255,255,255,0.07)] uppercase text-xs tracking-wider">
                   <tr>
                     <th className="py-3.5 px-4">{language === 'id' ? 'Klien & Perusahaan' : 'Client & Company'}</th>
                     <th className="py-3.5 px-4">{language === 'id' ? 'Pilar Layanan' : 'Service Pillar'}</th>
@@ -931,7 +931,7 @@ export const AdminCrm: React.FC = () => {
                 <tbody className="divide-y divide-[#30363D]">
                   {filteredLeads.length === 0 ? (
                     <tr>
-                      <td colSpan={8} className="py-8 text-center text-[var(--k-text-secondary)] font-sans">
+                      <td colSpan={8} className="py-8 text-center text-[var(--ams-secondary)] font-sans">
                         {language === 'id' ? 'Tidak ada deal yang cocok.' : 'No matching leads found.'}
                       </td>
                     </tr>
@@ -940,13 +940,13 @@ export const AdminCrm: React.FC = () => {
                       <tr
                         key={lead.id}
                         onClick={() => handleOpenLeadDrawer(lead)}
-                        className="hover:bg-[var(--k-surface-raised)] transition-colors cursor-pointer"
+                        className="hover:bg-[var(--ams-elevated)] transition-colors cursor-pointer"
                       >
                         <td className="py-3.5 px-4">
                           <div className="font-bold text-white font-sans text-sm">
                             {lead.clientName}
                           </div>
-                          <div className="text-xs text-[var(--k-text-secondary)]">
+                          <div className="text-xs text-[var(--ams-secondary)]">
                             {lead.company}
                           </div>
                         </td>
@@ -962,7 +962,7 @@ export const AdminCrm: React.FC = () => {
                         </td>
 
                         <td className="py-3.5 px-4">
-                          <span className="px-2 py-0.5 rounded bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] text-xs text-[#D0D4DC]">
+                          <span className="px-2 py-0.5 rounded bg-[var(--ams-elevated)] border border-[rgba(255,255,255,0.07)] text-xs text-[#D0D4DC]">
                             {language === 'id'
                               ? (CRM_STAGE_DEFINITIONS.find(s => s.key === lead.stage)?.labelId || lead.stage)
                               : (CRM_STAGE_DEFINITIONS.find(s => s.key === lead.stage)?.label || lead.stage)}
@@ -973,11 +973,11 @@ export const AdminCrm: React.FC = () => {
                           {getPriorityBadge(lead.priority)}
                         </td>
 
-                        <td className="py-3.5 px-4 text-[var(--k-text-secondary)]">
+                        <td className="py-3.5 px-4 text-[var(--ams-secondary)]">
                           {lead.source}
                         </td>
 
-                        <td className="py-3.5 px-4 text-[var(--k-text-secondary)]">
+                        <td className="py-3.5 px-4 text-[var(--ams-secondary)]">
                           {lead.expectedCloseDate || '-'}
                         </td>
 
@@ -987,7 +987,7 @@ export const AdminCrm: React.FC = () => {
                               <button
                                 onClick={() => handleConvertToProject(lead)}
                                 title="Create project"
-                                className="w-9 h-9 rounded-[var(--k-control-radius)] bg-emerald-950/40 text-emerald-400 hover:bg-emerald-950/80 border border-emerald-500/30 flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
+                                className="w-9 h-9 rounded-[var(--ams-radius-control)] bg-emerald-950/40 text-emerald-400 hover:bg-emerald-950/80 border border-emerald-500/30 flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
                               >
                                 <Layers size={13} />
                               </button>
@@ -997,7 +997,7 @@ export const AdminCrm: React.FC = () => {
                                 href={`https://wa.me/${cleanPhone(lead.phone)}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="w-9 h-9 rounded-[var(--k-control-radius)] bg-[var(--k-surface-raised)] text-emerald-400 hover:bg-emerald-950/50 border border-[rgba(255,255,255,0.07)] hover:border-emerald-500/30 flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
+                                className="w-9 h-9 rounded-[var(--ams-radius-control)] bg-[var(--ams-elevated)] text-emerald-400 hover:bg-emerald-950/50 border border-[rgba(255,255,255,0.07)] hover:border-emerald-500/30 flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
                                 title="WhatsApp client"
                               >
                                 <Send size={13} />
@@ -1006,7 +1006,7 @@ export const AdminCrm: React.FC = () => {
                             <button
                               onClick={() => handleOpenEditModal(lead)}
                               disabled={!canManageCrm}
-                              className="w-9 h-9 rounded-[var(--k-control-radius)] bg-[var(--k-surface-raised)] text-[var(--k-text-secondary)] hover:text-white border border-[rgba(255,255,255,0.07)] flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
+                              className="w-9 h-9 rounded-[var(--ams-radius-control)] bg-[var(--ams-elevated)] text-[var(--ams-secondary)] hover:text-white border border-[rgba(255,255,255,0.07)] flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
                               title="Edit deal"
                             >
                               <Edit3 size={13} />
@@ -1014,7 +1014,7 @@ export const AdminCrm: React.FC = () => {
                             <button
                               onClick={() => handleDeleteLead(lead.id, lead.clientName)}
                               disabled={!canManageCrm}
-                              className="w-9 h-9 rounded-[var(--k-control-radius)] bg-[var(--k-surface-raised)] text-[var(--k-text-secondary)] hover:text-red-400 border border-[rgba(255,255,255,0.07)] hover:border-red-500/40 flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
+                              className="w-9 h-9 rounded-[var(--ams-radius-control)] bg-[var(--ams-elevated)] text-[var(--ams-secondary)] hover:text-red-400 border border-[rgba(255,255,255,0.07)] hover:border-red-500/40 flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
                               title="Delete deal"
                             >
                               <Trash2 size={13} />
@@ -1034,7 +1034,7 @@ export const AdminCrm: React.FC = () => {
       {/* 5. CLIENT & DEAL PROFILE DRAWER */}
       {isDrawerOpen && selectedLead && (
         <div className="fixed inset-0 z-50 flex justify-end bg-black/80 backdrop-blur-sm">
-          <div className="bg-[var(--k-surface)] border-l border-[rgba(255,255,255,0.07)] w-full sm:max-w-xl h-full flex flex-col justify-between p-5 sm:p-7 overflow-y-auto shadow-[var(--k-shadow-sm)] animate-in slide-in-from-right duration-300 font-sans text-xs">
+          <div className="bg-[var(--ams-surface)] border-l border-[rgba(255,255,255,0.07)] w-full sm:max-w-xl h-full flex flex-col justify-between p-5 sm:p-7 overflow-y-auto shadow-[var(--k-shadow-sm)] animate-in slide-in-from-right duration-300 font-sans text-xs">
             
             <div className="space-y-6">
               {/* Drawer Top Header */}
@@ -1045,30 +1045,30 @@ export const AdminCrm: React.FC = () => {
                       {selectedLead.servicePillar}
                     </span>
                     {getPriorityBadge(selectedLead.priority)}
-                    <span className="text-xs text-[var(--k-text-secondary)]">
+                    <span className="text-xs text-[var(--ams-secondary)]">
                       ID: {selectedLead.id}
                     </span>
                   </div>
                   <h2 className="text-xl sm:text-2xl font-bold font-sans text-white">
                     {selectedLead.clientName}
                   </h2>
-                  <p className="text-xs text-[var(--k-red)] font-semibold mt-0.5">
+                  <p className="text-xs text-[var(--ams-red)] font-semibold mt-0.5">
                     {selectedLead.company}
                   </p>
                 </div>
 
                 <button
                   onClick={() => setIsDrawerOpen(false)}
-                  className="w-8 h-8 rounded-[var(--k-control-radius)] bg-[var(--k-surface-raised)] hover:bg-[var(--k-surface-raised)] text-[var(--k-text-secondary)] hover:text-white border border-[rgba(255,255,255,0.07)] flex items-center justify-center transition-colors text-xs font-sans"
+                  className="w-8 h-8 rounded-[var(--ams-radius-control)] bg-[var(--ams-elevated)] hover:bg-[var(--ams-elevated)] text-[var(--ams-secondary)] hover:text-white border border-[rgba(255,255,255,0.07)] flex items-center justify-center transition-colors text-xs font-sans"
                 >
                   <X size={15} />
                 </button>
               </div>
 
               {/* Deal Value & Stage Selector Widget */}
-              <div className="p-4 rounded-[var(--k-control-radius)] bg-[var(--k-surface)] border border-[rgba(255,255,255,0.07)] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="p-4 rounded-[var(--ams-radius-control)] bg-[var(--ams-surface)] border border-[rgba(255,255,255,0.07)] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
-                  <div className="text-xs text-[var(--k-text-secondary)] uppercase tracking-wider font-semibold">
+                  <div className="text-xs text-[var(--ams-secondary)] uppercase tracking-wider font-semibold">
                     {language === 'id' ? 'Valuasi Prospek' : 'Deal Valuation'}
                   </div>
                   <div className="text-2xl font-bold font-sans text-emerald-400 font-sans">
@@ -1077,12 +1077,12 @@ export const AdminCrm: React.FC = () => {
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <span className="text-xs text-[var(--k-text-secondary)]">{language === 'id' ? 'Tahap:' : 'Stage:'}</span>
+                  <span className="text-xs text-[var(--ams-secondary)]">{language === 'id' ? 'Tahap:' : 'Stage:'}</span>
                   <select
                     value={selectedLead.stage}
                     disabled={!canManageCrm}
                     onChange={(e) => handleStageChange(selectedLead.id, e.target.value as CrmStage)}
-                    className="px-3 py-1.5 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-xs text-white focus:border-[var(--k-red-border)] font-sans"
+                    className="px-3 py-1.5 bg-[var(--ams-elevated)] border border-[rgba(255,255,255,0.07)] rounded-[var(--ams-radius-control)] text-xs text-white focus:border-[var(--k-red-border)] font-sans"
                   >
                     {CRM_STAGE_DEFINITIONS.map(s => (
                       <option key={s.key} value={s.key}>
@@ -1095,23 +1095,23 @@ export const AdminCrm: React.FC = () => {
 
               {/* Client Contact Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div className="p-3.5 rounded-[var(--k-control-radius)] bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)]">
-                  <div className="flex items-center gap-1.5 text-[var(--k-text-secondary)] mb-1">
-                    <Mail size={13} className="text-[var(--k-red)]" />
+                <div className="p-3.5 rounded-[var(--ams-radius-control)] bg-[var(--ams-elevated)] border border-[rgba(255,255,255,0.07)]">
+                  <div className="flex items-center gap-1.5 text-[var(--ams-secondary)] mb-1">
+                    <Mail size={13} className="text-[var(--ams-red)]" />
                     <span>{language === 'id' ? 'Email Klien' : 'Client Email'}</span>
                   </div>
                   <a 
                     href={`mailto:${selectedLead.email}`}
-                    className="text-white hover:text-[var(--k-red)] transition-colors break-all block"
+                    className="text-white hover:text-[var(--ams-red)] transition-colors break-all block"
                   >
                     {selectedLead.email || '-'}
                   </a>
                 </div>
 
-                <div className="p-3.5 rounded-[var(--k-control-radius)] bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)]">
-                  <div className="flex items-center justify-between text-[var(--k-text-secondary)] mb-1">
+                <div className="p-3.5 rounded-[var(--ams-radius-control)] bg-[var(--ams-elevated)] border border-[rgba(255,255,255,0.07)]">
+                  <div className="flex items-center justify-between text-[var(--ams-secondary)] mb-1">
                     <div className="flex items-center gap-1.5">
-                      <Phone size={13} className="text-[var(--k-red)]" />
+                      <Phone size={13} className="text-[var(--ams-red)]" />
                       <span>WhatsApp / Phone</span>
                     </div>
                     {selectedLead.phone && (
@@ -1134,17 +1134,17 @@ export const AdminCrm: React.FC = () => {
 
               {/* Scope Description */}
               <div>
-                <label className="block text-[var(--k-text-secondary)] uppercase tracking-wider mb-2 font-semibold text-xs">
+                <label className="block text-[var(--ams-secondary)] uppercase tracking-wider mb-2 font-semibold text-xs">
                   {language === 'id' ? 'Deskripsi Scope & Catatan Klien' : 'Project Scope & Acceptance Notes'}
                 </label>
-                <div className="p-4 rounded-[var(--k-control-radius)] bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] text-gray-200 leading-relaxed font-sans text-xs">
+                <div className="p-4 rounded-[var(--ams-radius-control)] bg-[var(--ams-elevated)] border border-[rgba(255,255,255,0.07)] text-gray-200 leading-relaxed font-sans text-xs">
                   {selectedLead.description || (language === 'id' ? 'Belum ada catatan scope proyek.' : 'No detailed scope notes provided.')}
                 </div>
               </div>
 
               {/* Activity Log / Notes Stream */}
               <div>
-                <label className="block text-[var(--k-text-secondary)] uppercase tracking-wider mb-2 font-semibold text-xs">
+                <label className="block text-[var(--ams-secondary)] uppercase tracking-wider mb-2 font-semibold text-xs">
                   {language === 'id' ? 'Riwayat Aktivitas & Catatan Meeting' : 'Activity Timeline & Meeting Notes'}
                 </label>
 
@@ -1156,12 +1156,12 @@ export const AdminCrm: React.FC = () => {
                     onChange={(e) => setNewNoteText(e.target.value)}
                     disabled={!canManageCrm}
                     placeholder={language === 'id' ? 'Catat ringkasan meeting atau jadwal follow-up...' : 'Log call, meeting summary, or follow-up note...'}
-                    className="flex-1 px-3.5 py-2 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-xs text-white placeholder-[var(--k-text-secondary)] focus:border-[var(--k-red-border)] font-sans min-h-[44px]"
+                    className="flex-1 px-3.5 py-2 bg-[var(--ams-elevated)] border border-[rgba(255,255,255,0.07)] rounded-[var(--ams-radius-control)] text-xs text-white placeholder-[var(--ams-secondary)] focus:border-[var(--k-red-border)] font-sans min-h-[44px]"
                   />
                   <button
                     type="submit"
                     disabled={!canManageCrm || !newNoteText.trim()}
-                    className="px-3.5 py-2 rounded-[var(--k-control-radius)] bg-[var(--k-red)] hover:bg-[var(--k-red)] text-white text-xs font-sans font-bold transition-colors flex items-center gap-1 shrink-0 min-h-[44px]"
+                    className="px-3.5 py-2 rounded-[var(--ams-radius-control)] bg-[var(--ams-red)] hover:bg-[var(--ams-red)] text-white text-xs font-sans font-bold transition-colors flex items-center gap-1 shrink-0 min-h-[44px]"
                   >
                     <Plus size={13} />
                     <span>{language === 'id' ? 'Catat' : 'Log'}</span>
@@ -1171,16 +1171,16 @@ export const AdminCrm: React.FC = () => {
                 <div className="space-y-2 max-h-44 overflow-y-auto pr-1">
                   {selectedLead.notes && selectedLead.notes.length > 0 ? (
                     selectedLead.notes.slice().reverse().map((note) => (
-                      <div key={note.id} className="p-3 rounded-[var(--k-control-radius)] bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] text-xs">
-                        <div className="flex items-center justify-between text-xs text-[var(--k-text-secondary)] mb-1">
-                          <span className="text-[var(--k-red)] font-semibold">{note.author}</span>
+                      <div key={note.id} className="p-3 rounded-[var(--ams-radius-control)] bg-[var(--ams-elevated)] border border-[rgba(255,255,255,0.07)] text-xs">
+                        <div className="flex items-center justify-between text-xs text-[var(--ams-secondary)] mb-1">
+                          <span className="text-[var(--ams-red)] font-semibold">{note.author}</span>
                           <span>{new Date(note.createdAt).toLocaleString()}</span>
                         </div>
                         <p className="text-[#D0D4DC] leading-snug">{note.text}</p>
                       </div>
                     ))
                   ) : (
-                    <div className="text-center py-4 text-xs text-[var(--k-text-secondary)]">
+                    <div className="text-center py-4 text-xs text-[var(--ams-secondary)]">
                       {language === 'id' ? 'Belum ada catatan aktivitas.' : 'No activity notes logged yet.'}
                     </div>
                   )}
@@ -1195,7 +1195,7 @@ export const AdminCrm: React.FC = () => {
                 {canManageCrm && (
                   <button
                     onClick={() => handleOpenEditModal(selectedLead)}
-                    className="px-3.5 py-2 rounded-[var(--k-control-radius)] bg-[var(--k-surface)] hover:bg-[var(--k-surface-raised)] text-white border border-[rgba(255,255,255,0.07)] text-xs transition-colors flex items-center gap-1.5 min-h-[40px]"
+                    className="px-3.5 py-2 rounded-[var(--ams-radius-control)] bg-[var(--ams-surface)] hover:bg-[var(--ams-elevated)] text-white border border-[rgba(255,255,255,0.07)] text-xs transition-colors flex items-center gap-1.5 min-h-[40px]"
                 >
                   <Edit3 size={13} />
                     <span>{t('admin.action.edit')}</span>
@@ -1204,7 +1204,7 @@ export const AdminCrm: React.FC = () => {
                 {canManageCrm && (
                   <button
                     onClick={() => handleDeleteLead(selectedLead.id, selectedLead.clientName)}
-                  className="p-2 rounded-[var(--k-control-radius)] bg-[var(--k-surface)] hover:bg-red-950/40 text-[var(--k-text-secondary)] hover:text-red-400 border border-[rgba(255,255,255,0.07)] hover:border-red-500/30 transition-colors min-h-[40px] min-w-[40px] flex items-center justify-center"
+                  className="p-2 rounded-[var(--ams-radius-control)] bg-[var(--ams-surface)] hover:bg-red-950/40 text-[var(--ams-secondary)] hover:text-red-400 border border-[rgba(255,255,255,0.07)] hover:border-red-500/30 transition-colors min-h-[40px] min-w-[40px] flex items-center justify-center"
                   title="Delete deal"
                 >
                     <Trash2 size={15} />
@@ -1216,7 +1216,7 @@ export const AdminCrm: React.FC = () => {
                 <button
                   onClick={() => handleConvertToProject(selectedLead)}
                   disabled={convertingLeadId === selectedLead.id}
-                  className="px-4 py-2 rounded-[var(--k-control-radius)] bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center gap-1.5 shadow-lg shadow-emerald-600/20 min-h-[40px] disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="px-4 py-2 rounded-[var(--ams-radius-control)] bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center gap-1.5 shadow-lg shadow-emerald-600/20 min-h-[40px] disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   {convertingLeadId === selectedLead.id ? <Clock size={13} className="animate-spin" /> : <Layers size={13} />}
                   <span>{convertingLeadId === selectedLead.id
@@ -1233,13 +1233,13 @@ export const AdminCrm: React.FC = () => {
       {/* 6. CREATE / EDIT DEAL MODAL */}
       {isAddModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-[var(--k-surface)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-card-radius)] w-full max-w-xl max-h-[90vh] overflow-y-auto p-6 shadow-[var(--k-shadow-sm)]">
+          <div className="bg-[var(--ams-surface)] border border-[rgba(255,255,255,0.07)] rounded-[var(--ams-radius-card)] w-full max-w-xl max-h-[90vh] overflow-y-auto p-6 shadow-[var(--k-shadow-sm)]">
             <div className="flex items-center justify-between pb-4 mb-4 border-b border-[rgba(255,255,255,0.07)]">
               <h3 className="font-sans font-bold text-white text-lg flex items-center gap-2">
-                <Briefcase className="text-[var(--k-red)]" size={20} />
+                <Briefcase className="text-[var(--ams-red)]" size={20} />
                 <span>{editingLead ? (language === 'id' ? 'Edit Data Prospek' : 'Edit CRM Deal') : t('admin.crm.addDeal')}</span>
               </h3>
-              <button onClick={() => setIsAddModalOpen(false)} className="p-1.5 text-[var(--k-text-secondary)] hover:text-white rounded-[var(--k-control-radius)] bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)]">
+              <button onClick={() => setIsAddModalOpen(false)} className="p-1.5 text-[var(--ams-secondary)] hover:text-white rounded-[var(--ams-radius-control)] bg-[var(--ams-elevated)] border border-[rgba(255,255,255,0.07)]">
                 <X size={16} />
               </button>
             </div>
@@ -1247,59 +1247,59 @@ export const AdminCrm: React.FC = () => {
             <form onSubmit={handleSaveLead} className="space-y-4 text-xs font-sans">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[var(--k-text-secondary)] mb-1 font-semibold">{language === 'id' ? 'Nama PIC Klien *' : 'Client PIC Name *'}</label>
+                  <label className="block text-[var(--ams-secondary)] mb-1 font-semibold">{language === 'id' ? 'Nama PIC Klien *' : 'Client PIC Name *'}</label>
                   <input
                     type="text"
                     required
                     value={formClientName}
                     onChange={(e) => setFormClientName(e.target.value)}
                     placeholder="e.g. Adrian Wicaksono"
-                    className="w-full px-3.5 py-2.5 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:border-[var(--k-red-border)] min-h-[44px]"
+                    className="w-full px-3.5 py-2.5 bg-[var(--ams-elevated)] border border-[rgba(255,255,255,0.07)] rounded-[var(--ams-radius-control)] text-white focus:border-[var(--k-red-border)] min-h-[44px]"
                   />
                 </div>
                 <div>
-                  <label className="block text-[var(--k-text-secondary)] mb-1 font-semibold">{language === 'id' ? 'Nama Perusahaan / Brand *' : 'Company Name *'}</label>
+                  <label className="block text-[var(--ams-secondary)] mb-1 font-semibold">{language === 'id' ? 'Nama Perusahaan / Brand *' : 'Company Name *'}</label>
                   <input
                     type="text"
                     required
                     value={formCompany}
                     onChange={(e) => setFormCompany(e.target.value)}
                     placeholder="e.g. Bank Mandiri FinTech Division"
-                    className="w-full px-3.5 py-2.5 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:border-[var(--k-red-border)] min-h-[44px]"
+                    className="w-full px-3.5 py-2.5 bg-[var(--ams-elevated)] border border-[rgba(255,255,255,0.07)] rounded-[var(--ams-radius-control)] text-white focus:border-[var(--k-red-border)] min-h-[44px]"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[var(--k-text-secondary)] mb-1 font-semibold">Email</label>
+                  <label className="block text-[var(--ams-secondary)] mb-1 font-semibold">Email</label>
                   <input
                     type="email"
                     value={formEmail}
                     onChange={(e) => setFormEmail(e.target.value)}
                     placeholder="adrian@company.com"
-                    className="w-full px-3.5 py-2.5 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:border-[var(--k-red-border)] min-h-[44px]"
+                    className="w-full px-3.5 py-2.5 bg-[var(--ams-elevated)] border border-[rgba(255,255,255,0.07)] rounded-[var(--ams-radius-control)] text-white focus:border-[var(--k-red-border)] min-h-[44px]"
                   />
                 </div>
                 <div>
-                  <label className="block text-[var(--k-text-secondary)] mb-1 font-semibold">Phone / WhatsApp</label>
+                  <label className="block text-[var(--ams-secondary)] mb-1 font-semibold">Phone / WhatsApp</label>
                   <input
                     type="text"
                     value={formPhone}
                     onChange={(e) => setFormPhone(e.target.value)}
                     placeholder="+62 812-3456-7890"
-                    className="w-full px-3.5 py-2.5 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:border-[var(--k-red-border)] min-h-[44px]"
+                    className="w-full px-3.5 py-2.5 bg-[var(--ams-elevated)] border border-[rgba(255,255,255,0.07)] rounded-[var(--ams-radius-control)] text-white focus:border-[var(--k-red-border)] min-h-[44px]"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-[var(--k-text-secondary)] mb-1 font-semibold">{language === 'id' ? 'Pilar Layanan' : 'Service Pillar'}</label>
+                  <label className="block text-[var(--ams-secondary)] mb-1 font-semibold">{language === 'id' ? 'Pilar Layanan' : 'Service Pillar'}</label>
                   <select
                     value={formPillar}
                     onChange={(e) => setFormPillar(e.target.value as CrmServicePillar)}
-                    className="w-full px-3 py-2.5 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:border-[var(--k-red-border)] min-h-[44px]"
+                    className="w-full px-3 py-2.5 bg-[var(--ams-elevated)] border border-[rgba(255,255,255,0.07)] rounded-[var(--ams-radius-control)] text-white focus:border-[var(--k-red-border)] min-h-[44px]"
                   >
                     <option value="Web Development">Web Development</option>
                     <option value="Mobile App">Mobile App</option>
@@ -1311,21 +1311,21 @@ export const AdminCrm: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-[var(--k-text-secondary)] mb-1 font-semibold">{language === 'id' ? 'Nilai Deal (IDR)' : 'Deal Value (IDR)'}</label>
+                  <label className="block text-[var(--ams-secondary)] mb-1 font-semibold">{language === 'id' ? 'Nilai Deal (IDR)' : 'Deal Value (IDR)'}</label>
                   <input
                     type="number"
                     value={formDealValue}
                     onChange={(e) => setFormDealValue(Number(e.target.value))}
-                    className="w-full px-3.5 py-2.5 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:border-[var(--k-red-border)] min-h-[44px]"
+                    className="w-full px-3.5 py-2.5 bg-[var(--ams-elevated)] border border-[rgba(255,255,255,0.07)] rounded-[var(--ams-radius-control)] text-white focus:border-[var(--k-red-border)] min-h-[44px]"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[var(--k-text-secondary)] mb-1 font-semibold">{language === 'id' ? 'Tahap' : 'Stage'}</label>
+                  <label className="block text-[var(--ams-secondary)] mb-1 font-semibold">{language === 'id' ? 'Tahap' : 'Stage'}</label>
                   <select
                     value={formStage}
                     onChange={(e) => setFormStage(e.target.value as CrmStage)}
-                    className="w-full px-3 py-2.5 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:border-[var(--k-red-border)] min-h-[44px]"
+                    className="w-full px-3 py-2.5 bg-[var(--ams-elevated)] border border-[rgba(255,255,255,0.07)] rounded-[var(--ams-radius-control)] text-white focus:border-[var(--k-red-border)] min-h-[44px]"
                   >
                     {CRM_STAGE_DEFINITIONS.map(s => (
                       <option key={s.key} value={s.key}>
@@ -1338,11 +1338,11 @@ export const AdminCrm: React.FC = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[var(--k-text-secondary)] mb-1 font-semibold">{language === 'id' ? 'Prioritas' : 'Priority'}</label>
+                  <label className="block text-[var(--ams-secondary)] mb-1 font-semibold">{language === 'id' ? 'Prioritas' : 'Priority'}</label>
                   <select
                     value={formPriority}
                     onChange={(e) => setFormPriority(e.target.value as CrmPriority)}
-                    className="w-full px-3 py-2.5 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:border-[var(--k-red-border)] min-h-[44px]"
+                    className="w-full px-3 py-2.5 bg-[var(--ams-elevated)] border border-[rgba(255,255,255,0.07)] rounded-[var(--ams-radius-control)] text-white focus:border-[var(--k-red-border)] min-h-[44px]"
                   >
                     <option value="low">Low</option>
                     <option value="medium">Medium</option>
@@ -1352,24 +1352,24 @@ export const AdminCrm: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-[var(--k-text-secondary)] mb-1 font-semibold">{language === 'id' ? 'Target Tanggal Closing' : 'Target Close Date'}</label>
+                  <label className="block text-[var(--ams-secondary)] mb-1 font-semibold">{language === 'id' ? 'Target Tanggal Closing' : 'Target Close Date'}</label>
                   <input
                     type="date"
                     value={formExpectedClose}
                     onChange={(e) => setFormExpectedClose(e.target.value)}
-                    className="w-full px-3.5 py-2.5 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:border-[var(--k-red-border)] min-h-[44px]"
+                    className="w-full px-3.5 py-2.5 bg-[var(--ams-elevated)] border border-[rgba(255,255,255,0.07)] rounded-[var(--ams-radius-control)] text-white focus:border-[var(--k-red-border)] min-h-[44px]"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-[var(--k-text-secondary)] mb-1 font-semibold">{language === 'id' ? 'Ringkasan / Scope Kebutuhan' : 'Brief / Project Scope'}</label>
+                <label className="block text-[var(--ams-secondary)] mb-1 font-semibold">{language === 'id' ? 'Ringkasan / Scope Kebutuhan' : 'Brief / Project Scope'}</label>
                 <textarea
                   rows={3}
                   value={formDescription}
                   onChange={(e) => setFormDescription(e.target.value)}
                   placeholder={language === 'id' ? 'Kebutuhan teknis, ekspektasi timeline, catatan budget...' : 'Requirements, tech stack expectations, budget notes...'}
-                  className="w-full px-3.5 py-2 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:border-[var(--k-red-border)] font-sans text-xs"
+                  className="w-full px-3.5 py-2 bg-[var(--ams-elevated)] border border-[rgba(255,255,255,0.07)] rounded-[var(--ams-radius-control)] text-white focus:border-[var(--k-red-border)] font-sans text-xs"
                 />
               </div>
 
@@ -1377,13 +1377,13 @@ export const AdminCrm: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsAddModalOpen(false)}
-                  className="h-10 px-4 rounded-[var(--k-control-radius)] bg-[var(--k-surface-raised)] text-[var(--k-text-secondary)] hover:text-white border border-[rgba(255,255,255,0.07)] text-xs font-sans font-medium transition-colors min-h-[40px]"
+                  className="h-10 px-4 rounded-[var(--ams-radius-control)] bg-[var(--ams-elevated)] text-[var(--ams-secondary)] hover:text-white border border-[rgba(255,255,255,0.07)] text-xs font-sans font-medium transition-colors min-h-[40px]"
                 >
                   {t('admin.action.cancel')}
                 </button>
                 <button
                   type="submit"
-                  className="h-10 px-5 rounded-[var(--k-control-radius)] bg-[var(--k-red)] text-white font-sans font-bold text-xs hover:bg-[var(--k-red)] transition-all shadow-md shadow-[var(--k-red)]/20 min-h-[40px]"
+                  className="h-10 px-5 rounded-[var(--ams-radius-control)] bg-[var(--ams-red)] text-white font-sans font-bold text-xs hover:bg-[var(--ams-red)] transition-all shadow-md shadow-[var(--ams-red)]/20 min-h-[40px]"
                 >
                   {editingLead ? (language === 'id' ? 'Simpan Perubahan' : 'Update Deal') : (language === 'id' ? 'Buat Deal' : 'Save Deal')}
                 </button>
