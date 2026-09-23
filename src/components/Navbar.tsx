@@ -198,7 +198,7 @@ export const Navbar = () => {
             {/* Start Project CTA */}
             <Link
               to="/contact"
-              className="relative inline-flex h-10 px-5 lg:px-6 items-center justify-center gap-2 rounded-full bg-brand-red hover:bg-[var(--k-red-hover)] text-white text-xs font-semibold uppercase tracking-[0.14em] border border-brand-red transition-colors duration-200 shrink-0"
+              className="kapi-nav-cta relative inline-flex h-10 px-5 lg:px-6 items-center justify-center gap-2 rounded-[14px] bg-brand-red hover:bg-[var(--k-red-hover)] text-white text-xs font-semibold uppercase tracking-[0.12em] border border-brand-red transition-colors duration-200 shrink-0"
             >
               <span>{t('nav.startProject')}</span>
               <ChevronRight size={14} aria-hidden="true" />
