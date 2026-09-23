@@ -408,7 +408,7 @@ export const ServiceDetail = () => {
 
         {/* BUSINESS OUTCOMES & DISCOVERY CALL BANNER */}
         <div className="mb-20 sm:mb-28">
-          <div className="rounded-3xl border border-[[var(--k-border)]] bg-[#161616] p-8 sm:p-12 lg:p-16">
+          <div className="rounded-[var(--k-sheet-radius)] border border-[[var(--k-border)]] bg-[#161616] p-8 sm:p-12 lg:p-16">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
               <div className="lg:col-span-7 space-y-6">
                 <div className="text-xs font-sans uppercase tracking-widest text-brand-red">
