@@ -231,7 +231,7 @@ export const AdminCmsProjects: React.FC = () => {
       {/* Top Title & Actions */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[rgba(255,255,255,0.07)]">
         <div>
-          <h1 className="text-2xl font-display font-bold text-white flex items-center gap-3">
+          <h1 className="text-2xl font-sans font-bold text-white flex items-center gap-3">
             <FolderKanban className="text-[var(--k-red)]" size={24} />
             <span>{t('admin.nav.cmsProjects')}</span>
           </h1>
@@ -335,7 +335,7 @@ export const AdminCmsProjects: React.FC = () => {
 
               <div className="absolute bottom-3 left-3 right-3">
                 <div className="text-[11px] font-sans text-white/80">{project.client}</div>
-                <div className="text-base font-bold font-display text-white truncate drop-shadow-md">
+                <div className="text-base font-bold font-sans text-white truncate drop-shadow-md">
                   {project.title}
                 </div>
               </div>
@@ -401,7 +401,7 @@ export const AdminCmsProjects: React.FC = () => {
             <div className="flex items-center justify-between pb-4 border-b border-[rgba(255,255,255,0.07)] mb-6">
               <div className="flex items-center gap-3">
                 <FolderKanban className="text-[var(--k-red)]" size={20} />
-                <h2 className="text-lg font-bold font-display text-white">
+                <h2 className="text-lg font-bold font-sans text-white">
                   {editingProject.title ? `Edit: ${editingProject.title}` : 'Add New Case Study'}
                 </h2>
               </div>
@@ -453,7 +453,7 @@ export const AdminCmsProjects: React.FC = () => {
                     </div>
                     <div className="absolute bottom-3 left-3 right-3">
                       <div className="text-[10px] text-white/80">{editingProject.client || 'Client Name'}</div>
-                      <div className="text-base font-bold font-display text-white truncate">
+                      <div className="text-base font-bold font-sans text-white truncate">
                         {editingProject.title || 'Untitled Case Study'}
                       </div>
                     </div>
