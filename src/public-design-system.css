@@ -455,6 +455,33 @@
   border-color: rgba(255,255,255,.22) !important;
 }
 
+/* Public page text and metadata */
+.kapi-public-shell .kapi-page-description {
+  max-width: 680px;
+  color: var(--pub-text-secondary);
+  font-size: 1rem;
+  line-height: 1.62;
+  font-weight: 400;
+}
+.kapi-public-shell .kapi-meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  color: var(--pub-text-secondary);
+  font-size: .75rem;
+}
+.kapi-public-shell .kapi-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 30px;
+  padding: 6px 10px;
+  border: 1px solid var(--pub-border);
+  border-radius: 999px;
+  background: rgba(255,255,255,.035);
+}
+
 /* Semantic typography */
 .kapi-public-shell .kapi-display-title {
   margin: 0;
