@@ -245,7 +245,7 @@ export const DataMigrationModal: React.FC<DataMigrationModalProps> = ({
         {/* Sticky Header */}
         <div className="sticky top-0 z-20 bg-[#0D0F12]/95 backdrop-blur-md px-5 sm:px-6 py-4 border-b border-[#262930] flex items-center justify-between shrink-0">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-[var(--k-control-radius)] bg-[#E60023]/15 text-[#FF1F3D] border border-[#E60023]/30 flex items-center justify-center shrink-0">
+            <div className="w-8 h-8 rounded-[var(--k-control-radius)] bg-[var(--k-red)]/15 text-[var(--k-red)] border border-[var(--k-red)]/30 flex items-center justify-center shrink-0">
               <FileSpreadsheet size={18} />
             </div>
             <div>
@@ -280,11 +280,11 @@ export const DataMigrationModal: React.FC<DataMigrationModalProps> = ({
                 }}
                 className={`p-3 rounded-[var(--k-control-radius)] border flex flex-row sm:flex-col items-center gap-2 sm:gap-1.5 text-xs font-sans transition-all min-h-[44px] sm:min-h-[auto] ${
                   targetModule === 'clients'
-                    ? 'bg-[#E60023]/15 border-[#E60023] text-[var(--k-text)] font-bold shadow-sm'
+                    ? 'bg-[var(--k-red)]/15 border-[var(--k-red)] text-[var(--k-text)] font-bold shadow-sm'
                     : 'bg-[#121418] border-[#262930] text-[#8A909D] hover:text-[var(--k-text)]'
                 }`}
               >
-                <Users size={16} className={targetModule === 'clients' ? 'text-[#FF1F3D]' : 'text-[#8A909D]'} />
+                <Users size={16} className={targetModule === 'clients' ? 'text-[var(--k-red)]' : 'text-[#8A909D]'} />
                 <span>{language === 'id' ? 'Klien & Leads' : 'Clients & Leads'}</span>
               </button>
 
@@ -296,11 +296,11 @@ export const DataMigrationModal: React.FC<DataMigrationModalProps> = ({
                 }}
                 className={`p-3 rounded-[var(--k-control-radius)] border flex flex-row sm:flex-col items-center gap-2 sm:gap-1.5 text-xs font-sans transition-all min-h-[44px] sm:min-h-[auto] ${
                   targetModule === 'projects'
-                    ? 'bg-[#E60023]/15 border-[#E60023] text-[var(--k-text)] font-bold shadow-sm'
+                    ? 'bg-[var(--k-red)]/15 border-[var(--k-red)] text-[var(--k-text)] font-bold shadow-sm'
                     : 'bg-[#121418] border-[#262930] text-[#8A909D] hover:text-[var(--k-text)]'
                 }`}
               >
-                <Layers size={16} className={targetModule === 'projects' ? 'text-[#FF1F3D]' : 'text-[#8A909D]'} />
+                <Layers size={16} className={targetModule === 'projects' ? 'text-[var(--k-red)]' : 'text-[#8A909D]'} />
                 <span>{language === 'id' ? 'Proyek Sprint' : 'Active Projects'}</span>
               </button>
 
@@ -312,11 +312,11 @@ export const DataMigrationModal: React.FC<DataMigrationModalProps> = ({
                 }}
                 className={`p-3 rounded-[var(--k-control-radius)] border flex flex-row sm:flex-col items-center gap-2 sm:gap-1.5 text-xs font-sans transition-all min-h-[44px] sm:min-h-[auto] ${
                   targetModule === 'invoices'
-                    ? 'bg-[#E60023]/15 border-[#E60023] text-[var(--k-text)] font-bold shadow-sm'
+                    ? 'bg-[var(--k-red)]/15 border-[var(--k-red)] text-[var(--k-text)] font-bold shadow-sm'
                     : 'bg-[#121418] border-[#262930] text-[#8A909D] hover:text-[var(--k-text)]'
                 }`}
               >
-                <Receipt size={16} className={targetModule === 'invoices' ? 'text-[#FF1F3D]' : 'text-[#8A909D]'} />
+                <Receipt size={16} className={targetModule === 'invoices' ? 'text-[var(--k-red)]' : 'text-[#8A909D]'} />
                 <span>{language === 'id' ? 'Invoice & Transaksi' : 'Invoices & Billing'}</span>
               </button>
             </div>
@@ -339,7 +339,7 @@ export const DataMigrationModal: React.FC<DataMigrationModalProps> = ({
           </div>
 
           {/* Drag & Drop File Ingestion Area */}
-          <div className="relative border-2 border-dashed border-[#262930] hover:border-[#E60023]/50 rounded-[var(--k-card-radius)] p-6 text-center transition-colors bg-[#121418]/50">
+          <div className="relative border-2 border-dashed border-[#262930] hover:border-[var(--k-red)]/50 rounded-[var(--k-card-radius)] p-6 text-center transition-colors bg-[#121418]/50">
             <input
               type="file"
               accept=".csv"
@@ -393,7 +393,7 @@ export const DataMigrationModal: React.FC<DataMigrationModalProps> = ({
             type="button"
             onClick={handleExecuteImport}
             disabled={parsing || !file}
-            className="h-10 px-5 min-h-[40px] rounded-[var(--k-control-radius)] bg-[#E60023] hover:bg-[#FF1F3D] disabled:opacity-50 text-[var(--k-text)] text-xs font-sans font-bold shadow-lg shadow-[#E60023]/25 flex items-center gap-2 transition-all"
+            className="h-10 px-5 min-h-[40px] rounded-[var(--k-control-radius)] bg-[var(--k-red)] hover:bg-[var(--k-red-hover)] disabled:opacity-50 text-[var(--k-text)] text-xs font-sans font-bold shadow-lg shadow-[var(--k-red)]/25 flex items-center gap-2 transition-all"
           >
             <FileCheck2 size={15} />
             <span>{parsing ? 'Processing...' : language === 'id' ? 'Mulai Impor Data' : 'Execute Import'}</span>
