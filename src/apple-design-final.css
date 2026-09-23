@@ -482,15 +482,21 @@ body {
 
 /* Legacy utility bridge: keep existing page markup on the same visual tokens.
    This is a compatibility map, not a second design layer. */
-.kapi-public-shell [class*="bg-[#0B0C0E]"],
+.kapi-public-shell [class*="bg-[#0B0C0E]"] {
+  background-color: var(--k-bg) !important;
+}
 .kapi-public-shell [class*="bg-[#0A0A0A]"],
+.kapi-public-shell [class*="bg-[#161616]"] {
+  background-color: var(--k-bg-deep) !important;
+}
 .kapi-public-shell [class*="bg-[#16181D]"],
-.kapi-public-shell [class*="bg-[#161616]"],
+.kapi-public-shell [class*="bg-[#1E1E1E]"] {
+  background-color: var(--k-surface) !important;
+}
 .kapi-public-shell [class*="bg-[#1E2128]"],
-.kapi-public-shell [class*="bg-[#1E1E1E]"],
 .kapi-public-shell [class*="bg-[#20232B]"],
 .kapi-public-shell [class*="bg-[#262930]"] {
-  background-color: var(--k-surface) !important;
+  background-color: var(--k-surface-raised) !important;
 }
 .kapi-public-shell [class*="border-[#262930]"],
 .kapi-public-shell [class*="border-[#2A2A2A]"],
