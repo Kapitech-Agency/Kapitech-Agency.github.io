@@ -435,3 +435,30 @@ p { font-size: var(--type-body); line-height: var(--leading-body); }
     max-width: 100%;
   }
 }
+
+
+/* Public-site type scale override. Scoped away from AMS. */
+body:not(:has([data-kapi-admin="true"])) h1 {
+  font-size: var(--type-h1) !important;
+  line-height: var(--leading-heading) !important;
+  letter-spacing: -.045em !important;
+}
+body:not(:has([data-kapi-admin="true"])) h2 {
+  font-size: var(--type-h2) !important;
+  line-height: var(--leading-heading) !important;
+  letter-spacing: -.035em !important;
+}
+body:not(:has([data-kapi-admin="true"])) h3 {
+  font-size: var(--type-h3) !important;
+  line-height: 1.15 !important;
+  letter-spacing: -.025em !important;
+}
+body:not(:has([data-kapi-admin="true"])) h4 {
+  font-size: var(--type-h4) !important;
+  line-height: 1.25 !important;
+  letter-spacing: -.018em !important;
+}
+body:not(:has([data-kapi-admin="true"])) button,
+body:not(:has([data-kapi-admin="true"])) a[role="button"] {
+  font-family: inherit;
+}
