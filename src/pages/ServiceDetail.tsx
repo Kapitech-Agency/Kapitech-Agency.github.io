@@ -91,7 +91,7 @@ export const ServiceDetail = () => {
             <span>{language === 'id' ? 'Semua Solusi & Layanan' : 'All Solutions & Services'}</span>
           </Link>
           <ChevronRight className="w-3.5 h-3.5 text-[var(--k-text-secondary)]" />
-          <span className="text-[var(--k-text-secondary)] uppercase tracking-wider font-sans text-[11px]">
+          <span className="text-[var(--k-text-secondary)] uppercase tracking-wider font-sans text-xs">
             {service.category}
           </span>
           <ChevronRight className="w-3.5 h-3.5 text-[var(--k-text-secondary)]" />
@@ -111,7 +111,7 @@ export const ServiceDetail = () => {
             </div>
 
             {/* Headline */}
-            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-serif tracking-tight text-white leading-[1.1] mb-6">
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-sans tracking-tight text-white leading-[1.1] mb-6">
               {language === 'id' ? service.heroHeadlineId : service.heroHeadline}
             </h1>
 
@@ -131,7 +131,7 @@ export const ServiceDetail = () => {
               </Link>
               <a
                 href="#case-studies"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full border border-[var(--k-border)] bg-[#161616] text-white font-medium text-sm hover:border-brand-red/50 transition-all duration-200"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full border border-[var(--k-border)] bg-[var(--k-surface)] text-white font-medium text-sm hover:border-brand-red/50 transition-all duration-200"
               >
                 <span>{language === 'id' ? 'Lihat Studi Kasus' : 'View Case Studies'}</span>
                 <ChevronDown className="w-4 h-4" />
@@ -141,7 +141,7 @@ export const ServiceDetail = () => {
 
           {/* METRICS SIDEBAR */}
           <div className="lg:col-span-4 w-full">
-            <div className="rounded-2xl border border-[var(--k-border)] bg-[#161616] backdrop-blur-md p-6 sm:p-8 space-y-6">
+            <div className="kapi-card p-6 sm:p-8 space-y-6">
               <div className="text-xs font-sans uppercase tracking-widest text-[var(--k-text-secondary)] flex items-center justify-between">
                 <span>{language === 'id' ? 'METRIK KINERJA' : 'PERFORMANCE METRICS'}</span>
                 <Sparkles className="w-4 h-4 text-brand-red" />
@@ -149,7 +149,7 @@ export const ServiceDetail = () => {
               <div className="space-y-6 divide-y divide-[var(--k-border)]">
                 {service.metrics.map((metric, idx) => (
                   <div key={idx} className={idx > 0 ? 'pt-6' : ''}>
-                    <div className="text-3xl sm:text-4xl font-serif text-white tracking-tight">
+                    <div className="text-3xl sm:text-4xl font-sans text-white tracking-tight">
                       {metric.value}
                     </div>
                     <div className="text-xs sm:text-sm text-[var(--k-text-secondary)] mt-1">
@@ -182,14 +182,14 @@ export const ServiceDetail = () => {
         {/* TESTIMONIAL PULL QUOTE */}
         {service.testimonial && (
           <div className="mb-20 sm:mb-28">
-            <div className="relative rounded-2xl border border-[var(--k-border)] bg-[#161616] p-8 sm:p-12 backdrop-blur-lg overflow-hidden">
+            <div className="relative kapi-card p-8 sm:p-12 overflow-hidden">
               <div className="absolute top-0 right-0 w-64 h-64 bg-brand-red/10 rounded-full blur-3xl pointer-events-none" />
               <div className="flex items-center gap-1.5 text-brand-red mb-6">
                 {[...Array(5)].map((_, i) => (
                   <Star key={i} className="w-4 h-4 fill-current" />
                 ))}
               </div>
-              <blockquote className="text-xl sm:text-2xl lg:text-3xl font-serif text-white leading-relaxed mb-8">
+              <blockquote className="text-xl sm:text-2xl lg:text-3xl font-sans text-white leading-relaxed mb-8">
                 &ldquo;{language === 'id' ? service.testimonial.quoteId : service.testimonial.quote}&rdquo;
               </blockquote>
               <div className="flex items-center gap-4">
@@ -218,7 +218,7 @@ export const ServiceDetail = () => {
             <div className="text-xs font-sans uppercase tracking-widest text-brand-red mb-3">
               {language === 'id' ? 'TANTANGAN & SOLUSI' : 'CHALLENGE & SOLUTION'}
             </div>
-            <h2 className="text-2xl sm:text-4xl font-serif text-white tracking-tight">
+            <h2 className="text-2xl sm:text-4xl font-sans text-white tracking-tight">
               {language === 'id' ? 'Menghadapi hambatan umum produk digital?' : 'Facing common digital bottlenecks?'}
             </h2>
           </div>
@@ -227,7 +227,7 @@ export const ServiceDetail = () => {
             {service.problemsSolutions.map((item, idx) => (
               <div 
                 key={idx}
-                className="rounded-2xl border border-[var(--k-border)] bg-[#161616] p-6 sm:p-8 flex flex-col justify-between hover:border-brand-red/40 transition-all duration-300"
+                className="kapi-card p-6 sm:p-8 flex flex-col justify-between hover:border-brand-red/40 transition-all duration-300"
               >
                 <div>
                   {/* Problem Block */}
@@ -269,7 +269,7 @@ export const ServiceDetail = () => {
             <div className="text-xs font-sans uppercase tracking-widest text-brand-red mb-3">
               {language === 'id' ? 'KAPABILITAS UTAMA' : 'CORE CAPABILITIES'}
             </div>
-            <h2 className="text-2xl sm:text-4xl font-serif text-white tracking-tight">
+            <h2 className="text-2xl sm:text-4xl font-sans text-white tracking-tight">
               {language === 'id' ? 'Apa yang kami kerjakan untuk Anda' : 'What we deliver for your business'}
             </h2>
           </div>
@@ -278,7 +278,7 @@ export const ServiceDetail = () => {
             {service.capabilities.map((cap, idx) => (
               <div 
                 key={idx}
-                className="rounded-2xl border border-[var(--k-border)] bg-[#161616] p-6 hover:border-brand-red/40 transition-all duration-300 group"
+                className="kapi-card p-6 hover:border-brand-red/40 transition-all duration-300 group"
               >
                 <div className="w-10 h-10 rounded-xl bg-[var(--k-bg-deep)] border border-[var(--k-border)] flex items-center justify-center text-white mb-4 group-hover:border-brand-red/40 group-hover:text-brand-red transition-colors">
                   <Layers className="w-5 h-5 text-brand-red" />
@@ -301,7 +301,7 @@ export const ServiceDetail = () => {
               <div className="text-xs font-sans uppercase tracking-widest text-brand-red mb-3">
                 {language === 'id' ? 'BUKTI NYATA' : 'PROVEN CASE STUDIES'}
               </div>
-              <h2 className="text-2xl sm:text-4xl font-serif text-white tracking-tight">
+              <h2 className="text-2xl sm:text-4xl font-sans text-white tracking-tight">
                 {language === 'id' ? 'Proyek terkait yang telah kami rilis' : 'Related work we have shipped'}
               </h2>
             </div>
@@ -319,25 +319,25 @@ export const ServiceDetail = () => {
               <Link
                 key={project.id}
                 to={`/work`}
-                className="group block rounded-2xl border border-[var(--k-border)] bg-[#161616] overflow-hidden hover:border-brand-red/50 transition-all duration-300"
+                className="kapi-card group block overflow-hidden hover:border-brand-red/50 transition-all duration-300"
               >
                 <div className="relative aspect-[16/10] overflow-hidden bg-[var(--k-bg-deep)]">
                   <img
                     src={project.image}
                     alt={project.title}
                     referrerPolicy="no-referrer"
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-80" />
                   <div className="absolute top-3 left-3">
-                    <span className="px-2.5 py-1 rounded-full text-[11px] font-sans bg-black/80 backdrop-blur-md border border-[var(--k-border)] text-white">
+                    <span className="px-2.5 py-1 rounded-full text-xs font-sans bg-black/80 backdrop-blur-md border border-[var(--k-border)] text-white">
                       {project.service}
                     </span>
                   </div>
                 </div>
                 <div className="p-6">
                   <div className="flex items-center justify-between gap-2 mb-2">
-                    <h3 className="text-lg font-serif font-medium text-white group-hover:text-brand-red transition-colors truncate">
+                    <h3 className="text-lg font-sans font-medium text-white group-hover:text-brand-red transition-colors truncate">
                       {project.title}
                     </h3>
                     <ArrowUpRight className="w-4 h-4 text-[var(--k-text-secondary)] group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all shrink-0" />
@@ -349,7 +349,7 @@ export const ServiceDetail = () => {
                     {project.technologies.slice(0, 2).map((tech, idx) => (
                       <span
                         key={idx}
-                        className="px-2 py-0.5 rounded text-[10px] font-sans bg-[var(--k-bg-deep)] border border-[var(--k-border)] text-[var(--k-text-secondary)]"
+                        className="px-2 py-0.5 rounded text-xs font-sans bg-[var(--k-bg-deep)] border border-[var(--k-border)] text-[var(--k-text-secondary)]"
                       >
                         {tech}
                       </span>
@@ -367,7 +367,7 @@ export const ServiceDetail = () => {
             <div className="text-xs font-sans uppercase tracking-widest text-brand-red mb-3">
               {language === 'id' ? 'METODOLOGI KERJA' : 'PROCESS & METHODOLOGY'}
             </div>
-            <h2 className="text-2xl sm:text-4xl font-serif text-white tracking-tight">
+            <h2 className="text-2xl sm:text-4xl font-sans text-white tracking-tight">
               {language === 'id' ? 'Tahapan pelaksanaan terstruktur' : 'How we execute from day one'}
             </h2>
           </div>
@@ -376,10 +376,10 @@ export const ServiceDetail = () => {
             {service.processStages.map((stage, idx) => (
               <div 
                 key={idx}
-                className="rounded-2xl border border-[var(--k-border)] bg-[#161616] p-6 flex flex-col justify-between hover:border-brand-red/40 transition-all duration-300"
+                className="rounded-2xl border border-[var(--k-border)] bg-[var(--k-surface)] p-6 flex flex-col justify-between hover:border-brand-red/40 transition-all duration-300"
               >
                 <div>
-                  <div className="text-3xl font-serif text-[var(--k-text-secondary)] font-light mb-4">
+                  <div className="text-3xl font-sans text-[var(--k-text-secondary)] font-light mb-4">
                     {stage.stageNumber}
                   </div>
                   <h3 className="text-base font-semibold text-white mb-2">
@@ -391,7 +391,7 @@ export const ServiceDetail = () => {
                 </div>
 
                 <div className="pt-4 border-t border-[var(--k-border)] space-y-1.5">
-                  <div className="text-[11px] font-sans uppercase tracking-wider text-[var(--k-text-secondary)] mb-2">
+                  <div className="text-xs font-sans uppercase tracking-wider text-[var(--k-text-secondary)] mb-2">
                     {language === 'id' ? 'Hasil Kerja:' : 'Deliverables:'}
                   </div>
                   {(language === 'id' ? stage.deliverablesId : stage.deliverables).map((del, dIdx) => (
@@ -408,13 +408,13 @@ export const ServiceDetail = () => {
 
         {/* BUSINESS OUTCOMES & DISCOVERY CALL BANNER */}
         <div className="mb-20 sm:mb-28">
-          <div className="rounded-[var(--k-sheet-radius)] border border-[var(--k-border)] bg-[#161616] p-8 sm:p-12 lg:p-16">
+          <div className="kapi-card rounded-[var(--k-sheet-radius)] p-8 sm:p-12 lg:p-16">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
               <div className="lg:col-span-7 space-y-6">
                 <div className="text-xs font-sans uppercase tracking-widest text-brand-red">
                   {language === 'id' ? 'NILAI TAMBAH BISNIS' : 'TANGIBLE ROI'}
                 </div>
-                <h2 className="text-2xl sm:text-4xl font-serif text-white tracking-tight">
+                <h2 className="text-2xl sm:text-4xl font-sans text-white tracking-tight">
                   {language === 'id' ? service.businessOutcomes.headingId : service.businessOutcomes.heading}
                 </h2>
                 <div className="space-y-3.5 pt-2">
@@ -434,7 +434,7 @@ export const ServiceDetail = () => {
                   <div className="w-12 h-12 rounded-full bg-brand-red/10 border border-brand-red/30 flex items-center justify-center text-brand-red mx-auto">
                     <Sparkles className="w-6 h-6" />
                   </div>
-                  <h3 className="text-xl font-serif text-white">
+                  <h3 className="text-xl font-sans text-white">
                     {language === 'id' ? 'Siap mendiskusikan kebutuhan Anda?' : 'Ready to discuss your project?'}
                   </h3>
                   <p className="text-xs sm:text-sm text-[var(--k-text-secondary)] leading-relaxed">
@@ -465,7 +465,7 @@ export const ServiceDetail = () => {
               <div className="text-xs font-sans uppercase tracking-widest text-brand-red mb-3">
                 {language === 'id' ? 'PERTANYAAN UMUM' : 'FREQUENTLY ASKED QUESTIONS'}
               </div>
-              <h2 className="text-2xl sm:text-4xl font-serif text-white tracking-tight">
+              <h2 className="text-2xl sm:text-4xl font-sans text-white tracking-tight">
                 {language === 'id' ? 'Hal yang sering ditanyakan' : 'Everything you need to know'}
               </h2>
             </div>
@@ -476,7 +476,7 @@ export const ServiceDetail = () => {
                 return (
                   <div
                     key={idx}
-                    className="rounded-2xl border border-[var(--k-border)] bg-[#161616] overflow-hidden transition-colors"
+                    className="kapi-card overflow-hidden transition-colors"
                   >
                     <button
                       type="button"
