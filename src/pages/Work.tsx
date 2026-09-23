@@ -374,7 +374,7 @@ export const Work = () => {
                     setActiveService(srv);
                     setVisibleCount(12);
                   }}
-                  className={`px-3.5 py-2 rounded-full text-xs font-sans whitespace-nowrap transition-all duration-200 shrink-0 border min-h-[38px] flex items-center ${
+                  className={`px-3.5 py-2 rounded-[10px] text-xs font-sans whitespace-nowrap transition-all duration-200 shrink-0 border min-h-[38px] flex items-center ${
                     activeService === srv
                       ? 'bg-brand-red text-white border-brand-red font-semibold shadow-md shadow-brand-red/20'
                       : 'bg-[var(--k-surface)] text-[var(--k-text-secondary)] border-[var(--k-border)] hover:border-brand-red/40 hover:text-white'
