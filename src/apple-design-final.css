@@ -868,3 +868,153 @@ body {
     -webkit-backdrop-filter: none;
   }
 }
+
+
+/* Public site final stabilization: geometry, legacy-token cleanup, responsive containment. */
+.kapi-public-shell {
+  min-width: 0;
+  width: 100%;
+  background: var(--k-bg) !important;
+}
+
+.kapi-public-shell main,
+.kapi-public-shell section,
+.kapi-public-shell article,
+.kapi-public-shell header,
+.kapi-public-shell footer {
+  min-width: 0;
+}
+
+.kapi-public-shell img,
+.kapi-public-shell video,
+.kapi-public-shell svg {
+  max-width: 100%;
+}
+
+.kapi-public-shell img {
+  display: block;
+}
+
+.kapi-public-shell [class*="bg-[#E50914]"],
+.kapi-public-shell [class*="bg-[#FF1E27]"] {
+  background-color: var(--k-red) !important;
+  color: #fff !important;
+}
+
+.kapi-public-shell [class*="hover:bg-[#FF1E27]"]:hover,
+.kapi-public-shell [class*="hover:bg-[#E50914]"]:hover {
+  background-color: var(--k-red-hover) !important;
+}
+
+.kapi-public-shell [class*="text-[#FF1E27]"],
+.kapi-public-shell [class*="text-[#E50914]"] {
+  color: var(--k-red) !important;
+}
+
+.kapi-public-shell [class*="border-[#E50914]"],
+.kapi-public-shell [class*="border-[#FF1E27]"] {
+  border-color: var(--k-red-border) !important;
+}
+
+.kapi-public-shell :where(a, button, input, select, textarea):focus {
+  outline: none !important;
+}
+
+.kapi-public-shell :where(a, button, input, select, textarea):focus-visible {
+  outline: 2px solid rgba(176,0,32,.72) !important;
+  outline-offset: 2px;
+}
+
+.kapi-public-shell textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.kapi-public-shell .kapi-public-nav {
+  isolation: isolate;
+}
+
+.kapi-public-shell .kapi-public-nav img {
+  max-height: 28px;
+  object-fit: contain;
+}
+
+.kapi-public-shell :where(.rounded-2xl) {
+  border-radius: var(--k-card-radius) !important;
+}
+
+.kapi-public-shell :where(.rounded-3xl) {
+  border-radius: var(--k-sheet-radius) !important;
+}
+
+.kapi-public-shell :where(.shadow-2xl, .shadow-xl, .shadow-lg) {
+  box-shadow: var(--k-shadow-sm) !important;
+}
+
+.kapi-public-shell :where(.grid, .flex) {
+  min-width: 0;
+}
+
+.kapi-public-shell :where(.grid > *, .flex > *) {
+  min-width: 0;
+}
+
+.kapi-public-shell :where(.truncate, [class*="truncate"]) {
+  min-width: 0;
+}
+
+.kapi-public-shell .kapi-card,
+.kapi-public-shell [data-public-card] {
+  contain: layout paint;
+}
+
+@media (max-width: 767px) {
+  .kapi-public-shell {
+    padding-bottom: 0;
+  }
+
+  .kapi-public-shell .max-w-7xl {
+    width: 100%;
+  }
+
+  .kapi-public-shell section {
+    scroll-margin-top: 76px;
+  }
+
+  .kapi-public-shell .kapi-card {
+    padding: 18px !important;
+    border-radius: 16px !important;
+  }
+
+  .kapi-public-shell .kapi-button {
+    min-height: 44px !important;
+  }
+
+  .kapi-public-shell :where(.px-4, .sm\\:px-6, .md\\:px-12) {
+    min-width: 0;
+  }
+}
+
+@media (max-width: 479px) {
+  .kapi-public-shell h1 {
+    letter-spacing: -.045em !important;
+  }
+
+  .kapi-public-shell h2 {
+    letter-spacing: -.035em !important;
+  }
+
+  .kapi-public-shell .kapi-card {
+    padding: 16px !important;
+  }
+}
+
+@media (hover: none) {
+  .kapi-public-shell .kapi-card:hover {
+    transform: none;
+  }
+
+  .kapi-public-shell button:hover {
+    transform: none;
+  }
+}
