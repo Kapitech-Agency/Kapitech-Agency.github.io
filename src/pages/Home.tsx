@@ -107,17 +107,6 @@ export const Home = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
           >
-            {/* Status Chip */}
-            <div className="kapi-hero-status">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-red opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-red"></span>
-              </span>
-              <span className="text-xs font-sans tracking-wider uppercase text-[var(--k-text-secondary)]">
-                Digital Product Design & Development Agency
-              </span>
-            </div>
-            
             <div className="kapi-hero-eyebrow">Kapitech Agency <span aria-hidden="true">/</span> Digital Product Studio</div>
             <h1 className="kapi-display-title">
               {language === 'id' ? (
