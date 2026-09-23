@@ -455,6 +455,31 @@
   border-color: rgba(255,255,255,.22) !important;
 }
 
+/* Semantic typography */
+.kapi-public-shell .kapi-display-title {
+  margin: 0;
+  max-width: 900px;
+  color: var(--pub-text);
+  font-family: inherit;
+  font-size: clamp(2.25rem, 5vw, 4rem);
+  line-height: 1.04;
+  letter-spacing: -.05em;
+  font-weight: 700;
+  text-wrap: balance;
+}
+.kapi-public-shell .kapi-display-title span { color: var(--pub-red); }
+@media (max-width: 767px) {
+  .kapi-public-shell .kapi-display-title {
+    font-size: clamp(2rem, 9.5vw, 3.1rem);
+    line-height: 1.04;
+  }
+}
+@media (max-width: 479px) {
+  .kapi-public-shell .kapi-display-title {
+    font-size: clamp(1.9rem, 10.5vw, 2.65rem);
+  }
+}
+
 /* Shared public page rhythm */
 .kapi-public-shell .kapi-page-shell {
   min-height: 100vh;
