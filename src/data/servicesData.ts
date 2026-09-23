@@ -1033,7 +1033,7 @@ export const allSolutionsAndServices: ServiceItemData[] = [
     type: 'service',
     category: 'Design',
     title: 'UI/UX Design',
-    navSubtitle: 'Web & mobile app design',
+    navSubtitle: 'Web product and interface design',
     navSubtitleId: 'Desain antarmuka web dan aplikasi mobile terpadu',
     heroHeadline: 'High-conversion UI/UX design studio for web & mobile apps',
     heroHeadlineId: 'Studio desain UI/UX berkonversi tinggi untuk web & aplikasi mobile',
