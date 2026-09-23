@@ -154,6 +154,59 @@ async function pgClientSpendParity(): Promise<{ valid: boolean; mismatches: Arra
   return { valid: mismatches.length === 0, mismatches };
 }
 
+async function pgFinanceIntegrity(): Promise<{
+  valid: boolean;
+  invoiceMismatches: Array<{ id: string; total: number; recordedPaid: number; paymentPaid: number; recordedBalance: number; expectedBalance: number; status: string; expectedStatus: string }>;
+  unvalidatedConstraints: string[];
+}> {
+  const pool = getPostgresPool();
+  const invoiceResult = await pool.query<{
+    id: string;
+    total: string;
+    amount_paid: string;
+    balance_due: string;
+    status: string;
+    payment_paid: string;
+  }>(
+    `SELECT i.id, i.total, i.amount_paid, i.balance_due, i.status,
+            COALESCE(SUM(ip.amount), 0) AS payment_paid
+       FROM invoices i
+       LEFT JOIN invoice_payments ip ON ip.invoice_id = i.id
+      GROUP BY i.id, i.total, i.amount_paid, i.balance_due, i.status`
+  );
+
+  const invoiceMismatches = invoiceResult.rows.map(row => {
+    const total = Number(row.total || 0);
+    const recordedPaid = Number(row.amount_paid || 0);
+    const paymentPaid = Number(row.payment_paid || 0);
+    const recordedBalance = Number(row.balance_due || 0);
+    const expectedBalance = Math.max(0, total - paymentPaid);
+    const expectedStatus = paymentPaid >= total && total > 0
+      ? 'paid'
+      : paymentPaid > 0
+        ? 'partially_paid'
+        : row.status === 'cancelled'
+          ? 'cancelled'
+          : row.status;
+    return { id: String(row.id), total, recordedPaid, paymentPaid, recordedBalance, expectedBalance, status: String(row.status), expectedStatus };
+  }).filter(row =>
+    Math.abs(row.recordedPaid - row.paymentPaid) > 0.005 ||
+    Math.abs(row.recordedBalance - row.expectedBalance) > 0.005 ||
+    (row.status !== 'cancelled' && row.status !== row.expectedStatus)
+  ).slice(0, 100);
+
+  const constraintResult = await pool.query<{ table_name: string; constraint_name: string }>(
+    `SELECT c.conrelid::regclass::text AS table_name, c.conname AS constraint_name
+       FROM pg_constraint c
+      WHERE NOT c.convalidated
+        AND c.conrelid::regclass::text IN ('expenses')
+      ORDER BY c.conrelid::regclass::text, c.conname`
+  );
+
+  const unvalidatedConstraints = constraintResult.rows.map(row => `${row.table_name}.${row.constraint_name}`);
+  return { valid: invoiceMismatches.length === 0 && unvalidatedConstraints.length === 0, invoiceMismatches, unvalidatedConstraints };
+}
+
 async function pgCountsAndFinancials(): Promise<{ counts: Record<string, number>; financials: Record<string, number>; cmsSettings: Record<string, unknown>; notificationSettings: Record<string, unknown> }> {
   const pool = getPostgresPool();
   const tables: Record<string, string> = {
@@ -479,6 +532,7 @@ async function main(): Promise<void> {
   try {
     const postgresResult = await pgCountsAndFinancials();
     const clientSpendParity = await pgClientSpendParity();
+    const financeIntegrity = await pgFinanceIntegrity();
     const postgresCounts = postgresResult.counts;
     const postgresRecords = await pgRecordSets();
     const recordParity = buildRecordParity(db, postgresRecords);
@@ -513,7 +567,8 @@ async function main(): Promise<void> {
       auditChainIntegrity: auditChain.valid,
       privateDocumentIntegrity: privateDocuments.valid,
       recordFieldParity: recordParityComplete,
-      clientSpendParity: clientSpendParity.valid
+      clientSpendParity: clientSpendParity.valid,
+      financeIntegrity: financeIntegrity.valid
     };
 
     const reconciliationPass = checks.countParity && checks.financialParity && checks.recordFieldParity;
@@ -530,6 +585,7 @@ async function main(): Promise<void> {
       notificationMismatches,
       recordParity,
       clientSpendParity,
+      financeIntegrity,
       auditChain,
       privateDocuments,
       financials,
