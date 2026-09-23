@@ -482,6 +482,15 @@
   background: rgba(255,255,255,.035);
 }
 
+.kapi-public-shell .kapi-section-title {
+  margin: 0;
+  color: var(--pub-text);
+  font-size: clamp(1.75rem, 3.2vw, 2.75rem);
+  line-height: 1.08;
+  letter-spacing: -.035em;
+  font-weight: 600;
+}
+
 /* Semantic typography */
 .kapi-public-shell .kapi-display-title {
   margin: 0;
