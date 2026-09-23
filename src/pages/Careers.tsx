@@ -776,7 +776,7 @@ export const Careers = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/70 backdrop-blur-xl overflow-y-auto kapi-modal-backdrop"
+              className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/70 backdrop-blur-xl overflow-y-auto kapi-modal-backdrop" data-public-modal-backdrop
               onClick={() => setSelectedTalent(null)}
             >
               <motion.div
@@ -1196,13 +1196,13 @@ export const Careers = () => {
       {/* Detail & Application Modal */}
       <AnimatePresence>
         {selectedPosition && (
-          <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 sm:p-6 overflow-y-auto bg-black/70 backdrop-blur-xl kapi-modal-backdrop">
+          <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 sm:p-6 overflow-y-auto bg-black/70 backdrop-blur-xl kapi-modal-backdrop" data-public-modal-backdrop>
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ duration: 0.25 }}
-              className="relative w-full max-w-3xl kapi-glass-sheet my-6 sm:my-8 max-h-[min(92vh,980px)] flex flex-col"
+              className="relative w-full max-w-3xl kapi-glass-sheet kapi-modal-panel my-6 sm:my-8 max-h-[min(92vh,980px)] flex flex-col" data-public-modal
             >
               {/* Sticky Modal Header with Role Title */}
               <div className="sticky top-0 z-20 p-5 sm:p-6 bg-[rgba(21,22,25,.82)] backdrop-blur-xl border-b border-[var(--k-border)] space-y-3">
