@@ -109,7 +109,7 @@ export class PostgresAuthRepository {
     return result.rowCount === 1;
   }
 
-  async updateMfaFailedAttempts(tokenHash: string, attempts: number): Promise<boolean> {
+  async updateMfaFailedAttempts(tokenHash: string, attempts: number): Promise<number> {
     // The MFA failure counter must be monotonic under concurrent requests.
     // Use an atomic increment in PostgreSQL rather than a read/modify/write
     // sequence so parallel verification attempts cannot overwrite each other.
@@ -120,7 +120,7 @@ export class PostgresAuthRepository {
        RETURNING mfa_failed_attempts`,
       [tokenHash, Math.max(1, Math.floor(attempts))]
     );
-    return result.rowCount === 1;
+    return result.rows[0] ? Number(result.rows[0].mfa_failed_attempts) : 0;
   }
 
   async pruneUserSessions(userId: string, maxSessions = 5): Promise<void> {
