@@ -447,14 +447,14 @@ export const Contact = () => {
                           setSelectedServices([]);
                           setBudgetRange('');
                         }}
-                        className="w-full sm:w-auto px-6 py-3 rounded-[14px] bg-brand-red text-white text-xs font-semibold uppercase tracking-wider hover:bg-[var(--k-red-hover)] transition-colors active:scale-95 shadow-[var(--k-shadow-sm)] shadow-brand-red/15 min-h-[44px]"
+                        className="w-full sm:w-auto px-6 py-3 kapi-action-button bg-brand-red text-white text-xs font-semibold uppercase tracking-wider hover:bg-[var(--k-red-hover)] transition-colors active:scale-95 shadow-[var(--k-shadow-sm)] shadow-brand-red/15 min-h-[44px]"
                       >
                         {language === 'id' ? 'Kirim Pesan Lainnya' : 'Send Another Message'}
                       </button>
 
                       <a
                         href="/inbox"
-                        className="w-full sm:w-auto px-6 py-3 rounded-[14px] bg-[var(--k-bg)] border border-[var(--k-border)] hover:border-brand-red/50 text-white text-xs font-sans font-semibold uppercase tracking-wider transition-colors min-h-[44px] flex items-center justify-center gap-2"
+                        className="w-full sm:w-auto px-6 py-3 kapi-action-button bg-[var(--k-bg)] border border-[var(--k-border)] hover:border-brand-red/50 text-white text-xs font-sans font-semibold uppercase tracking-wider transition-colors min-h-[44px] flex items-center justify-center gap-2"
                       >
                         <span>{language === 'id' ? 'Lihat di Inbox Database' : 'View in Inbox'}</span>
                         <ArrowUpRight size={14} />
@@ -499,7 +499,7 @@ export const Contact = () => {
                             type="button"
                             key={srv}
                             onClick={() => toggleService(srv)}
-                            className={`p-3 rounded-xl text-xs text-left border transition-colors flex items-center justify-between min-h-[44px] ${
+                            className={`kapi-choice-button text-xs text-left border transition-colors flex items-center justify-between min-h-[44px] ${
                               selectedServices.includes(srv)
                                 ? 'bg-brand-red/20 border-brand-red text-white'
                                 : 'bg-[var(--k-bg)] border-[var(--k-border)] text-[var(--k-text-secondary)] hover:border-brand-red/40 hover:text-white'
@@ -602,7 +602,7 @@ export const Contact = () => {
                             type="button"
                             key={opt}
                             onClick={() => setBudgetRange(opt)}
-                            className={`p-3 rounded-xl text-xs text-left border transition-colors min-h-[44px] flex items-center ${
+                            className={`kapi-choice-button text-xs text-left border transition-colors min-h-[44px] flex items-center ${
                               budgetRange === opt
                                 ? 'bg-brand-red text-white font-semibold border-brand-red shadow-md shadow-brand-red/20'
                                 : 'bg-[var(--k-bg)] border-[var(--k-border)] text-[var(--k-text-secondary)] hover:border-brand-red/40 hover:text-white'
@@ -639,7 +639,7 @@ export const Contact = () => {
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="w-full py-3.5 sm:py-4 rounded-[14px] bg-brand-red hover:bg-[var(--k-red-hover)] text-white font-semibold text-xs uppercase tracking-wider transition-colors flex items-center justify-center gap-2 shadow-[var(--k-shadow-sm)] shadow-brand-red/15 active:scale-95 min-h-[44px]"
+                      className="w-full py-3.5 sm:py-4 kapi-action-button bg-brand-red hover:bg-[var(--k-red-hover)] text-white font-semibold text-xs uppercase tracking-wider transition-colors flex items-center justify-center gap-2 shadow-[var(--k-shadow-sm)] shadow-brand-red/15 active:scale-95 min-h-[44px]"
                     >
                       {isSubmitting ? (
                         <span>{language === 'id' ? 'Mengirimkan Detail...' : 'Submitting Details...'}</span>
@@ -682,7 +682,7 @@ export const Contact = () => {
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: i * 0.05 }}
-                className="p-6 sm:p-8 rounded-2xl bg-[var(--k-surface)] border border-[var(--k-border)] flex flex-col justify-between min-h-[150px] sm:min-h-[170px] hover:border-brand-red/40 transition-colors"
+                className="kapi-faq-card flex flex-col justify-between min-h-[150px] sm:min-h-[170px] hover:border-brand-red/40 transition-colors"
               >
                 <div>
                   <h3 className="text-sm sm:text-base font-sans font-bold text-white mb-2 sm:mb-3">
@@ -700,7 +700,7 @@ export const Contact = () => {
           <div className="flex justify-center">
             <button
               onClick={() => setShowAllFaqs(prev => !prev)}
-              className="px-7 sm:px-8 py-3.5 rounded-[14px] border border-[var(--k-border)] bg-[var(--k-surface)] hover:bg-[var(--k-surface-raised)] text-white text-xs font-semibold uppercase tracking-wider transition-all duration-300 flex items-center gap-2 active:scale-95 min-h-[44px]"
+              className="px-7 sm:px-8 py-3.5 kapi-action-button border border-[var(--k-border)] bg-[var(--k-surface)] hover:bg-[var(--k-surface-raised)] text-white text-xs font-semibold uppercase tracking-wider transition-all duration-300 flex items-center gap-2 active:scale-95 min-h-[44px]"
             >
               <span>
                 {language === 'id'
