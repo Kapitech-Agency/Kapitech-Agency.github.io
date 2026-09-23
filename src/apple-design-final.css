@@ -1,328 +1,406 @@
-/* Final Apple-inspired hierarchy overrides. Content stays calm. Navigation carries translucency. */
-:root {
-  --kapitech-red: #B00020;
-  --kapitech-red-hover: #C1121F;
-  --kapitech-red-soft: rgba(176, 0, 32, 0.12);
-  --kapitech-red-border: rgba(176, 0, 32, 0.34);
-  --apple-ease: cubic-bezier(0.22, 1, 0.36, 1);
-  --apple-control: 40px;
-  --apple-radius-control: 12px;
-  --apple-radius-card: 16px;
-}
+/* Kapitech UI system: one clean Apple-inspired layer.
+   Keep content calm. Use glass only where it creates real hierarchy. */
 
-/* One typography hierarchy across public and AMS. */
-html, body, button, input, textarea, select, option {
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
-}
-
-body { letter-spacing: -0.011em; }
-h1 { font-size: clamp(2rem, 4.4vw, 3.75rem) !important; line-height: 1.05 !important; letter-spacing: -0.045em !important; }
-h2 { font-size: clamp(1.6rem, 3vw, 2.5rem) !important; line-height: 1.08 !important; letter-spacing: -0.035em !important; }
-h3 { font-size: clamp(1.2rem, 2vw, 1.75rem) !important; line-height: 1.15 !important; letter-spacing: -0.025em !important; }
-h4 { font-size: 1.0625rem !important; line-height: 1.2 !important; }
-
-/* Public cards establish the visual reference. */
-.kapi-public-shell .kapi-card {
-  padding: 20px !important;
-  border-radius: var(--apple-radius-card) !important;
-  background: rgba(17, 19, 24, 0.92) !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-}
-.kapi-public-shell .kapi-card:hover { transform: translateY(-3px) !important; }
-.kapi-public-shell .kapi-card-header { margin-bottom: 16px !important; }
-.kapi-public-shell .kapi-card-icon-box { width: 44px !important; height: 44px !important; border-radius: 12px !important; }
-.kapi-public-shell .kapi-card-icon-box svg { width: 20px !important; height: 20px !important; }
-.kapi-public-shell .kapi-card-title { font-size: 1.125rem !important; line-height: 1.2 !important; margin-bottom: 8px !important; }
-.kapi-public-shell .kapi-card-desc { font-size: .875rem !important; line-height: 1.5 !important; margin-bottom: 16px !important; }
-.kapi-public-shell .kapi-card-footer { padding-top: 14px !important; font-size: .8125rem !important; }
-.kapi-public-shell .kapi-card-arrow { width: 32px !important; height: 32px !important; min-width: 32px !important; }
-
-/* AMS content remains solid and dense. */
-[data-kapi-admin="true"] .ams-content { width: min(100%, 1440px) !important; padding: 24px 32px 40px !important; }
-[data-kapi-admin="true"] .ams-content .kapi-card,
-[data-kapi-admin="true"] .ams-content .metric-card,
-[data-kapi-admin="true"] .ams-content .glass-panel {
-  border-radius: var(--apple-radius-card) !important;
-  padding: 18px !important;
-}
-[data-kapi-admin="true"] .ams-content .metric-card { min-height: 112px; }
-[data-kapi-admin="true"] .ams-content .kapi-card-title { font-size: 1.0625rem !important; }
-[data-kapi-admin="true"] .ams-content .kapi-card-desc { font-size: .8125rem !important; line-height: 1.5 !important; }
-
-/* Liquid Glass is reserved for navigation and transient controls. */
-[data-kapi-admin="true"] .ams-sidebar,
-[data-kapi-admin="true"] .ams-header,
-[data-kapi-admin="true"] .ams-mobile-nav {
-  background: rgba(24, 24, 27, 0.72) !important;
-  border-color: rgba(255, 255, 255, 0.10) !important;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.20) !important;
-  backdrop-filter: saturate(180%) blur(24px) !important;
-  -webkit-backdrop-filter: saturate(180%) blur(24px) !important;
-}
-
-/* Navigation labels must never collide with badges or leave their box. */
-[data-kapi-admin="true"] .ams-sidebar-nav a { min-width: 0 !important; width: 100% !important; min-height: 40px !important; }
-[data-kapi-admin="true"] .ams-sidebar-nav a > div { min-width: 0 !important; overflow: hidden !important; }
-[data-kapi-admin="true"] .ams-sidebar-nav a > div > span { min-width: 0 !important; overflow: hidden !important; text-overflow: ellipsis !important; white-space: nowrap !important; }
-[data-kapi-admin="true"] .ams-sidebar-nav a > span { max-width: 72px !important; overflow: hidden !important; text-overflow: ellipsis !important; white-space: nowrap !important; flex-shrink: 0 !important; }
-
-/* Search uses a quiet container focus state, never the browser white ring. */
-[data-kapi-admin="true"] .ams-search,
-[data-kapi-admin="true"] .ams-search input { outline: none !important; }
-[data-kapi-admin="true"] .ams-search { height: var(--apple-control) !important; border-radius: var(--apple-radius-control) !important; }
-[data-kapi-admin="true"] .ams-search input { height: var(--apple-control) !important; border-radius: var(--apple-radius-control) !important; }
-[data-kapi-admin="true"] .ams-search:focus-within { border-color: var(--kapitech-red-border) !important; box-shadow: 0 0 0 3px var(--kapitech-red-soft) !important; }
-[data-kapi-admin="true"] .ams-search input:focus { outline: none !important; box-shadow: none !important; }
-
-/* Shared controls. */
-[data-kapi-admin="true"] select { min-height: var(--apple-control) !important; height: var(--apple-control) !important; border-radius: var(--apple-radius-control) !important; }
-[data-kapi-admin="true"] button, .kapi-public-shell button { transition: transform 180ms var(--apple-ease), background-color 180ms var(--apple-ease), border-color 180ms var(--apple-ease), color 180ms var(--apple-ease), box-shadow 180ms var(--apple-ease) !important; }
-[data-kapi-admin="true"] button:hover, .kapi-public-shell button:hover { transform: translateY(-1px); }
-[data-kapi-admin="true"] button:active, .kapi-public-shell button:active { transform: scale(.975); }
-
-/* Circular icon-only controls keep a true square box. */
-[data-kapi-admin="true"] button.rounded-full[aria-label]:has(svg),
-.kapi-public-shell button.rounded-full[aria-label]:has(svg) { aspect-ratio: 1 / 1 !important; padding-inline: .625rem !important; }
-
-/* Keyboard focus remains visible, mouse focus remains quiet. */
-[data-kapi-admin="true"] :where(a,button,input,select,textarea):focus { outline: none !important; }
-[data-kapi-admin="true"] :where(a,button,input,select,textarea):focus-visible { outline: 2px solid rgba(176, 0, 32, .78) !important; outline-offset: 2px !important; box-shadow: none !important; }
-.kapi-public-shell :where(a,button,input,select,textarea):focus { outline: none; }
-.kapi-public-shell :where(a,button,input,select,textarea):focus-visible { outline: 2px solid rgba(176, 0, 32, .78); outline-offset: 2px; }
-
-/* Final brand-red normalization for utility classes still emitted by older components. */
-.kapi-public-shell [class*="bg-[#E50914]"],
-.kapi-public-shell [class*="bg-[#E01414]"],
-.kapi-public-shell [class*="bg-[#CC001F]"],
-.kapi-public-shell [class*="bg-[#FF1E27]"] { background-color: var(--kapitech-red) !important; }
-.kapi-public-shell [class*="text-[#E50914]"],
-.kapi-public-shell [class*="text-[#FF1E27]"] { color: var(--kapitech-red) !important; }
-.kapi-public-shell [class*="border-[#E50914]"],
-.kapi-public-shell [class*="border-[#E01414]"] { border-color: var(--kapitech-red-border) !important; }
-
-@media (max-width: 767px) {
-  [data-kapi-admin="true"] .ams-content { padding: 20px 16px 96px !important; }
-  [data-kapi-admin="true"] .ams-content .kapi-card,
-  [data-kapi-admin="true"] .ams-content .metric-card,
-  [data-kapi-admin="true"] .ams-content .glass-panel { padding: 16px !important; }
-  [data-kapi-admin="true"] .ams-content .metric-card { min-height: 104px; }
-  [data-kapi-admin="true"] .ams-search { max-width: min(48vw, 280px) !important; }
-  .kapi-public-shell .kapi-card { padding: 16px !important; }
-}
-
-@media (max-width: 479px) {
-  [data-kapi-admin="true"] .ams-content { padding-inline: 12px !important; }
-}
-
-@media (prefers-reduced-transparency: reduce) {
-  [data-kapi-admin="true"] .ams-sidebar,
-  [data-kapi-admin="true"] .ams-header,
-  [data-kapi-admin="true"] .ams-mobile-nav { background: #18181B !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  [data-kapi-admin="true"] *, .kapi-public-shell * { transition-duration: .001ms !important; animation-duration: .001ms !important; animation-iteration-count: 1 !important; }
-}
-
-/* FINAL CONSISTENCY PASS v2 */
-
-/* FINAL CONSISTENCY PASS v2 */
 :root {
   --k-red: #B00020;
   --k-red-hover: #C1121F;
   --k-red-soft: rgba(176, 0, 32, .12);
   --k-red-border: rgba(176, 0, 32, .30);
-  --ui-control-h: 40px;
-  --ui-control-radius: 12px;
-  --ui-card-radius: 16px;
-  --ui-modal-radius: 20px;
-  --ui-space-1: 4px;
-  --ui-space-2: 8px;
-  --ui-space-3: 12px;
-  --ui-space-4: 16px;
-  --ui-space-5: 20px;
-  --ui-space-6: 24px;
-  --ui-space-7: 32px;
-  --ui-ease: cubic-bezier(.22,1,.36,1);
+
+  --k-bg: #0B0C0E;
+  --k-bg-deep: #000000;
+  --k-surface: #151619;
+  --k-surface-raised: #1B1C20;
+  --k-text: #F5F5F7;
+  --k-text-secondary: #A1A1A6;
+  --k-text-tertiary: #6E6E73;
+  --k-border: rgba(255,255,255,.10);
+  --k-border-strong: rgba(255,255,255,.16);
+
+  --k-font-ui: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
+    "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --k-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  --k-control: 40px;
+  --k-control-radius: 12px;
+  --k-card-radius: 18px;
+  --k-sheet-radius: 24px;
+
+  --k-ease: cubic-bezier(.22,1,.36,1);
+  --k-motion: 180ms;
 }
 
-/* One type family. Mono is reserved for actual code/data, not UI labels. */
-html, body, button, input, textarea, select, option,
-.font-sans, .font-display, .font-heading {
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
-    "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
-}
-[data-kapi-admin="true"] .font-mono {
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+html,
+body,
+button,
+input,
+select,
+textarea,
+option {
+  font-family: var(--k-font-ui);
 }
 
-/* Remove legacy bright-red values everywhere in rendered Tailwind utilities. */
-[class*="bg-[#E50914]"], [class*="bg-[#E01414]"], [class*="bg-[#E60023]"],
-[class*="bg-[#E63946]"], [class*="bg-[#CC001F]"], [class*="bg-[#FF1E27]"] {
-  background-color: var(--k-red) !important;
+code,
+pre,
+kbd {
+  font-family: var(--k-font-mono);
 }
-[class*="text-[#E50914]"], [class*="text-[#E01414]"], [class*="text-[#E60023]"],
-[class*="text-[#E63946]"], [class*="text-[#CC001F]"], [class*="text-[#FF1E27]"] {
+
+body {
+  background: var(--k-bg);
+  color: var(--k-text);
+  letter-spacing: -.011em;
+}
+
+.kapi-public-shell {
+  background: var(--k-bg);
+  color: var(--k-text);
+  font-family: var(--k-font-ui);
+}
+
+/* Public foundation */
+.kapi-public-shell section {
+  position: relative;
+}
+
+.kapi-public-shell .kapi-home-hero {
+  background: #000 !important;
+  isolation: isolate;
+}
+
+.kapi-public-shell .kapi-home-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 78% 42%, rgba(255,255,255,.055), transparent 34%),
+    linear-gradient(180deg, rgba(0,0,0,.08), rgba(0,0,0,.34));
+}
+
+.kapi-public-shell .kapi-hero-atmosphere img {
+  filter: grayscale(1) contrast(.92);
+  mix-blend-mode: screen;
+  opacity: .055 !important;
+}
+
+.kapi-public-shell .kapi-atmospheric img {
+  filter: grayscale(1) contrast(.92);
+  opacity: .055;
+}
+
+.kapi-public-shell h1 {
+  font-size: clamp(2.5rem, 6vw, 5.5rem) !important;
+  line-height: 1.02 !important;
+  letter-spacing: -.055em !important;
+  font-weight: 700 !important;
+  text-wrap: balance;
+}
+
+.kapi-public-shell h2 {
+  font-size: clamp(2rem, 3.5vw, 3rem) !important;
+  line-height: 1.08 !important;
+  letter-spacing: -.04em !important;
+  font-weight: 700 !important;
+  text-wrap: balance;
+}
+
+.kapi-public-shell h3 {
+  font-size: clamp(1.35rem, 2vw, 1.8rem) !important;
+  line-height: 1.15 !important;
+  letter-spacing: -.025em !important;
+  font-weight: 650 !important;
+}
+
+.kapi-public-shell p {
+  color: var(--k-text-secondary);
+  line-height: 1.55;
+}
+
+.kapi-public-shell .font-mono {
+  font-family: var(--k-font-ui);
+}
+
+/* Red is an accent, never the primary canvas. */
+.kapi-public-shell .text-brand-red,
+.kapi-public-shell .text-red-500,
+.kapi-public-shell .text-red-600 {
   color: var(--k-red) !important;
 }
-[class*="border-[#E50914]"], [class*="border-[#E01414]"], [class*="border-[#E60023]"],
-[class*="border-[#E63946]"], [class*="border-[#CC001F]"], [class*="border-[#FF1E27]"] {
-  border-color: var(--k-red-border) !important;
+
+.kapi-public-shell .bg-brand-red {
+  background-color: var(--k-red) !important;
 }
 
-/* Public typography scale: fewer jumps, predictable hierarchy. */
-body { font-size: 16px; line-height: 1.5; }
-h1 { font-size: clamp(2rem, 4vw, 3.5rem) !important; line-height: 1.06 !important; letter-spacing: -.04em !important; }
-h2 { font-size: clamp(1.625rem, 2.8vw, 2.5rem) !important; line-height: 1.10 !important; letter-spacing: -.03em !important; }
-h3 { font-size: clamp(1.25rem, 2vw, 1.75rem) !important; line-height: 1.18 !important; letter-spacing: -.02em !important; }
-h4 { font-size: 1.0625rem !important; line-height: 1.25 !important; letter-spacing: -.01em !important; }
-
-/* Public cards are the reference geometry for AMS content cards. */
-.kapi-card {
-  padding: 20px !important;
-  border-radius: var(--ui-card-radius) !important;
+.kapi-public-shell .border-brand-red {
+  border-color: var(--k-red) !important;
 }
-.kapi-card-header { margin-bottom: 16px !important; }
-.kapi-card-icon-box { width: 44px !important; height: 44px !important; min-width: 44px !important; border-radius: 12px !important; }
-.kapi-card-icon-box svg { width: 20px !important; height: 20px !important; stroke-width: 1.9 !important; }
-.kapi-card-title { font-size: 18px !important; line-height: 1.22 !important; margin-bottom: 8px !important; }
-.kapi-card-desc { font-size: 14px !important; line-height: 1.5 !important; margin-bottom: 16px !important; }
-.kapi-card-footer { padding-top: 14px !important; font-size: 13px !important; }
-.kapi-card-arrow { width: 32px !important; height: 32px !important; min-width: 32px !important; }
 
-/* AMS content uses the same proportions, not oversized dashboard cards. */
+/* Buttons */
+.kapi-public-shell .kapi-button {
+  min-height: 44px;
+  border-radius: 999px;
+  font-family: var(--k-font-ui);
+  font-weight: 600;
+  letter-spacing: -.005em;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.kapi-public-shell .kapi-button-primary {
+  background: var(--k-red) !important;
+  box-shadow: 0 8px 24px rgba(176,0,32,.18);
+}
+
+.kapi-public-shell .kapi-button-primary:hover {
+  background: var(--k-red-hover) !important;
+  box-shadow: 0 10px 30px rgba(176,0,32,.22);
+}
+
+.kapi-public-shell .kapi-button-secondary {
+  background: rgba(255,255,255,.045) !important;
+  border-color: var(--k-border-strong) !important;
+}
+
+.kapi-public-shell .kapi-button-secondary:hover {
+  background: rgba(255,255,255,.08) !important;
+  border-color: rgba(255,255,255,.22) !important;
+}
+
+/* Hero status is a quiet glass capsule. */
+.kapi-public-shell .kapi-hero-status {
+  color: var(--k-text-secondary);
+  border-color: rgba(255,255,255,.12) !important;
+  background: rgba(255,255,255,.045) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
+}
+
+/* Content surfaces: opaque first, glass only for floating surfaces. */
+.kapi-public-shell .kapi-card {
+  padding: 22px !important;
+  border-radius: var(--k-card-radius) !important;
+  background: var(--k-surface) !important;
+  border: 1px solid var(--k-border) !important;
+  box-shadow: 0 10px 30px rgba(0,0,0,.14);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.kapi-public-shell .kapi-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255,255,255,.15) !important;
+  box-shadow: 0 16px 40px rgba(0,0,0,.20);
+}
+
+.kapi-public-shell .kapi-card-title {
+  font-size: 1.125rem !important;
+  line-height: 1.22 !important;
+}
+
+.kapi-public-shell .kapi-card-desc {
+  font-size: .875rem !important;
+  line-height: 1.55 !important;
+}
+
+/* Navigation/floating surfaces are the only full glass treatment. */
+.kapi-public-nav,
+.kapi-public-shell .floating-action,
+.kapi-public-footer .social-glass,
+.kapi-public-shell [data-glass] {
+  background: rgba(21,22,25,.72);
+  border-color: var(--k-border);
+  backdrop-filter: saturate(180%) blur(22px);
+  -webkit-backdrop-filter: saturate(180%) blur(22px);
+}
+
+/* Keep decorative layers quiet. */
+.kapi-public-shell .kapi-fluid-background,
+.kapi-public-shell .kapi-noise-overlay {
+  pointer-events: none;
+}
+
+/* Controls */
+.kapi-public-shell input,
+.kapi-public-shell select,
+.kapi-public-shell textarea {
+  font-family: var(--k-font-ui);
+  border-radius: var(--k-control-radius);
+}
+
+.kapi-public-shell :where(a,button,input,select,textarea):focus {
+  outline: none;
+}
+
+.kapi-public-shell :where(a,button,input,select,textarea):focus-visible {
+  outline: 2px solid rgba(176,0,32,.78);
+  outline-offset: 2px;
+  box-shadow: none;
+}
+
+.kapi-public-shell button {
+  transition:
+    transform var(--k-motion) var(--k-ease),
+    background-color var(--k-motion) var(--k-ease),
+    border-color var(--k-motion) var(--k-ease),
+    color var(--k-motion) var(--k-ease),
+    box-shadow var(--k-motion) var(--k-ease),
+    opacity var(--k-motion) var(--k-ease);
+}
+
+.kapi-public-shell button:hover {
+  transform: translateY(-1px);
+}
+
+.kapi-public-shell button:active {
+  transform: scale(.985);
+}
+
+.kapi-public-shell button:disabled {
+  transform: none;
+}
+
+/* AMS foundation */
+[data-kapi-admin="true"] {
+  color: var(--k-text);
+  font-family: var(--k-font-ui);
+}
+
+[data-kapi-admin="true"] h1 {
+  font-size: clamp(1.75rem, 2.6vw, 2.5rem) !important;
+  line-height: 1.08 !important;
+  letter-spacing: -.035em !important;
+  font-weight: 700 !important;
+  text-wrap: balance;
+}
+
+[data-kapi-admin="true"] h2 {
+  font-size: clamp(1.4rem, 2vw, 2rem) !important;
+  line-height: 1.12 !important;
+  letter-spacing: -.03em !important;
+  font-weight: 700 !important;
+}
+
+[data-kapi-admin="true"] h3 {
+  font-size: 1.2rem !important;
+  line-height: 1.18 !important;
+  letter-spacing: -.02em !important;
+  font-weight: 650 !important;
+}
+
 [data-kapi-admin="true"] .ams-content {
-  width: min(100%, 1440px) !important;
-  padding: 24px 32px 40px !important;
+  width: min(100%, 1440px);
+  padding: 24px 32px 40px;
 }
+
 [data-kapi-admin="true"] .ams-content .kapi-card,
 [data-kapi-admin="true"] .ams-content .metric-card,
 [data-kapi-admin="true"] .ams-content .glass-panel {
-  border-radius: var(--ui-card-radius) !important;
-  padding: 20px !important;
+  padding: 18px !important;
+  border-radius: 16px !important;
+  background: var(--k-surface) !important;
+  border: 1px solid var(--k-border) !important;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
-[data-kapi-admin="true"] .ams-content .metric-card {
-  min-height: 104px !important;
-}
-[data-kapi-admin="true"] .ams-content .kapi-card-title { font-size: 17px !important; }
-[data-kapi-admin="true"] .ams-content .kapi-card-desc { font-size: 14px !important; }
-[data-kapi-admin="true"] .ams-content :where(.text-2xl,.text-3xl,.text-4xl) { line-height: 1.15 !important; }
 
-/* Unified controls. */
+[data-kapi-admin="true"] .ams-content .metric-card {
+  min-height: 104px;
+}
+
+/* AMS glass is reserved for the app chrome. */
+[data-kapi-admin="true"] .ams-sidebar,
+[data-kapi-admin="true"] .ams-header,
+[data-kapi-admin="true"] .ams-mobile-nav {
+  background: rgba(21,22,25,.78) !important;
+  border-color: var(--k-border) !important;
+  box-shadow: 0 8px 30px rgba(0,0,0,.20);
+  backdrop-filter: saturate(180%) blur(24px);
+  -webkit-backdrop-filter: saturate(180%) blur(24px);
+}
+
+/* Sidebar containment */
+[data-kapi-admin="true"] .ams-sidebar {
+  width: 256px !important;
+  min-width: 256px !important;
+}
+
+[data-kapi-admin="true"] .ams-sidebar.ams-sidebar-collapsed {
+  width: 80px !important;
+  min-width: 80px !important;
+}
+
+[data-kapi-admin="true"] .ams-sidebar-nav a {
+  min-width: 0 !important;
+  min-height: 40px !important;
+  overflow: hidden !important;
+  border-radius: 10px !important;
+}
+
+[data-kapi-admin="true"] .ams-sidebar-nav a > div,
+[data-kapi-admin="true"] .ams-sidebar-nav a > div > span {
+  min-width: 0 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+/* AMS controls */
 [data-kapi-admin="true"] input,
 [data-kapi-admin="true"] select,
 [data-kapi-admin="true"] textarea,
 [data-kapi-admin="true"] .ams-search,
-[data-kapi-admin="true"] .ams-control,
-[data-kapi-admin="true"] .ams-dropdown-item {
-  font-family: inherit !important;
+[data-kapi-admin="true"] .ams-control {
+  font-family: var(--k-font-ui) !important;
 }
+
 [data-kapi-admin="true"] input,
 [data-kapi-admin="true"] select,
 [data-kapi-admin="true"] .ams-search,
 [data-kapi-admin="true"] .ams-control {
-  min-height: var(--ui-control-h) !important;
-  height: var(--ui-control-h) !important;
-  border-radius: var(--ui-control-radius) !important;
+  min-height: var(--k-control) !important;
+  height: var(--k-control) !important;
+  border-radius: var(--k-control-radius) !important;
 }
-[data-kapi-admin="true"] textarea {
-  border-radius: var(--ui-control-radius) !important;
-}
-[data-kapi-admin="true"] .ams-search {
+
+[data-kapi-admin="true"] .ams-search,
+[data-kapi-admin="true"] .ams-search input {
   outline: none !important;
-  box-shadow: none !important;
 }
+
 [data-kapi-admin="true"] .ams-search:focus-within {
-  outline: none !important;
   border-color: var(--k-red-border) !important;
   box-shadow: 0 0 0 3px var(--k-red-soft) !important;
 }
-[data-kapi-admin="true"] .ams-search input,
+
 [data-kapi-admin="true"] .ams-search input:focus {
   outline: none !important;
   box-shadow: none !important;
 }
 
-/* Selects/dropdowns share one geometry and density. */
-[data-kapi-admin="true"] .ams-control {
-  padding: 0 12px !important;
-  gap: 8px !important;
-}
-[data-kapi-admin="true"] .ams-dropdown-surface {
-  min-width: 180px !important;
-  padding: 4px !important;
-  border-radius: 14px !important;
-  font-size: 13px !important;
-}
-[data-kapi-admin="true"] .ams-dropdown-item {
-  min-height: 36px !important;
-  padding: 8px 10px !important;
-  border-radius: 10px !important;
-  font-size: 13px !important;
-}
-[data-kapi-admin="true"] .ams-dropdown-item svg,
-[data-kapi-admin="true"] .ams-control svg {
-  width: 16px !important;
-  height: 16px !important;
-  min-width: 16px !important;
-  stroke-width: 1.9 !important;
+[data-kapi-admin="true"] button {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  transition:
+    transform var(--k-motion) var(--k-ease),
+    background-color var(--k-motion) var(--k-ease),
+    border-color var(--k-motion) var(--k-ease),
+    color var(--k-motion) var(--k-ease),
+    box-shadow var(--k-motion) var(--k-ease);
 }
 
-/* Sidebar: every label is contained, ellipsized and vertically centered. */
-[data-kapi-admin="true"] .ams-sidebar {
-  width: 256px !important;
-  min-width: 256px !important;
-}
-[data-kapi-admin="true"] .ams-sidebar.ams-sidebar-collapsed {
-  width: 80px !important;
-  min-width: 80px !important;
-}
-@media (max-width: 767px) {
-  [data-kapi-admin="true"] .ams-sidebar.ams-sidebar-collapsed {
-    width: min(86vw, 320px) !important;
-    min-width: 0 !important;
-  }
-}
-[data-kapi-admin="true"] .ams-sidebar-nav a {
-  min-width: 0 !important;
-  min-height: 40px !important;
-  padding: 8px 12px !important;
-  gap: 10px !important;
-  overflow: hidden !important;
-  border-radius: 10px !important;
-}
-[data-kapi-admin="true"] .ams-sidebar-nav a > div,
-[data-kapi-admin="true"] .ams-sidebar-nav a > div > span {
-  min-width: 0 !important;
-  overflow: hidden !important;
-}
-[data-kapi-admin="true"] .ams-sidebar-nav a > div > span {
-  display: block !important;
-  text-overflow: ellipsis !important;
-  white-space: nowrap !important;
-  line-height: 20px !important;
-}
-[data-kapi-admin="true"] .ams-sidebar-nav a svg {
-  width: 18px !important;
-  height: 18px !important;
-  min-width: 18px !important;
-  stroke-width: 1.9 !important;
+[data-kapi-admin="true"] button:hover {
+  transform: translateY(-1px);
 }
 
-/* Icon system: one optical size for controls, one for navigation, no mixed strokes. */
-[data-kapi-admin="true"] button svg,
-[data-kapi-admin="true"] a svg {
-  flex: 0 0 auto;
-  stroke-width: 1.9;
+[data-kapi-admin="true"] button:active {
+  transform: scale(.975);
 }
-[data-kapi-admin="true"] button:not([aria-label]) svg { width: 16px; height: 16px; }
-[data-kapi-admin="true"] button[aria-label] svg { width: 18px; height: 18px; }
 
-/* Circular icon buttons: only icon-only labelled controls become 1:1. Text pills remain pills. */
-[data-kapi-admin="true"] button.rounded-full[aria-label]:has(svg) {
-  aspect-ratio: auto !important;
+[data-kapi-admin="true"] button:disabled {
+  transform: none;
 }
+
+/* Icon-only controls stay circular. */
 [data-kapi-admin="true"] button.rounded-full[aria-label]:has(svg) {
   width: 40px !important;
   min-width: 40px !important;
@@ -331,481 +409,31 @@ h4 { font-size: 1.0625rem !important; line-height: 1.25 !important; letter-spaci
   padding: 0 !important;
   border-radius: 9999px !important;
 }
-.kapi-card-arrow,
-[data-kapi-admin="true"] .kapi-card-arrow {
-  aspect-ratio: 1 / 1 !important;
+
+[data-kapi-admin="true"] :where(a,button,input,select,textarea):focus {
+  outline: none;
 }
 
-/* Buttons always communicate hover and press. Keep movement subtle and consistent. */
-.kapi-public-shell button,
-[data-kapi-admin="true"] button {
-  transition:
-    transform 180ms var(--ui-ease),
-    background-color 180ms var(--ui-ease),
-    border-color 180ms var(--ui-ease),
-    color 180ms var(--ui-ease),
-    box-shadow 180ms var(--ui-ease) !important;
-}
-.kapi-public-shell button:hover,
-[data-kapi-admin="true"] button:hover { transform: translateY(-1px); }
-.kapi-public-shell button:active,
-[data-kapi-admin="true"] button:active { transform: translateY(0) scale(.975); }
-.kapi-public-shell button:disabled,
-[data-kapi-admin="true"] button:disabled,
-.kapi-public-shell button[aria-disabled="true"],
-[data-kapi-admin="true"] button[aria-disabled="true"] { transform: none !important; }
-
-/* Focus: no white browser outline. Keyboard focus stays visible in brand red. */
-.kapi-public-shell a:focus,
-.kapi-public-shell button:focus,
-.kapi-public-shell input:focus,
-.kapi-public-shell select:focus,
-.kapi-public-shell textarea:focus,
-[data-kapi-admin="true"] a:focus,
-[data-kapi-admin="true"] button:focus,
-[data-kapi-admin="true"] input:focus,
-[data-kapi-admin="true"] select:focus,
-[data-kapi-admin="true"] textarea:focus {
-  outline: none !important;
-}
-.kapi-public-shell a:focus-visible,
-.kapi-public-shell button:focus-visible,
-.kapi-public-shell input:focus-visible,
-.kapi-public-shell select:focus-visible,
-.kapi-public-shell textarea:focus-visible,
-[data-kapi-admin="true"] a:focus-visible,
-[data-kapi-admin="true"] button:focus-visible,
-[data-kapi-admin="true"] input:focus-visible,
-[data-kapi-admin="true"] select:focus-visible,
-[data-kapi-admin="true"] textarea:focus-visible {
-  outline: 2px solid rgba(176,0,32,.82) !important;
-  outline-offset: 2px !important;
-  box-shadow: none !important;
-}
-
-/* Modals/sheets: one consistent container, padding rhythm and mobile behavior. */
-[data-kapi-admin="true"] .fixed.inset-0.z-50 > div:not(.fixed):not(.h-full),
-[data-kapi-admin="true"] .fixed.inset-0.z-50 > div.relative {
-  border-radius: var(--ui-modal-radius) !important;
-  max-width: min(720px, calc(100vw - 32px)) !important;
-  max-height: calc(100vh - 48px) !important;
-}
-[data-kapi-admin="true"] .fixed.inset-0.z-50 > div.relative > :first-child,
-[data-kapi-admin="true"] .fixed.inset-0.z-50 > div:not(.fixed):not(.h-full) > :first-child {
-  border-top-left-radius: var(--ui-modal-radius) !important;
-  border-top-right-radius: var(--ui-modal-radius) !important;
-}
-[data-kapi-admin="true"] .fixed.inset-0.z-50 > div.relative :where(.p-6,.sm\:p-7,.sm\:p-8) {
-  padding: 20px !important;
-}
-[data-kapi-admin="true"] .fixed.inset-0.z-50 > div.h-full {
-  border-radius: 24px 24px 0 0 !important;
-}
-@media (min-width: 768px) {
-  [data-kapi-admin="true"] .fixed.inset-0.z-50 > div.h-full {
-    border-radius: 20px 0 0 20px !important;
-  }
-}
-
-/* Liquid Glass stays on navigation/transient UI, not content cards. */
-[data-kapi-admin="true"] .ams-sidebar,
-[data-kapi-admin="true"] .ams-header,
-[data-kapi-admin="true"] .ams-mobile-nav {
-  background: rgba(24,24,27,.72) !important;
-  border-color: rgba(255,255,255,.10) !important;
-  backdrop-filter: saturate(180%) blur(24px) !important;
-  -webkit-backdrop-filter: saturate(180%) blur(24px) !important;
-}
-
-/* Public card and control geometry uses the same Apple grammar without changing brand colors. */
-.kapi-card {
-  padding: 20px !important;
-  border-radius: var(--ui-card-radius) !important;
-}
-.kapi-card .kapi-card-icon-box { width: 44px !important; height: 44px !important; border-radius: 12px !important; }
-.kapi-card .kapi-card-icon-box svg { width: 20px !important; height: 20px !important; stroke-width: 1.9 !important; }
-.kapi-card .kapi-card-title { font-size: 18px !important; line-height: 1.2 !important; margin-bottom: 8px !important; }
-.kapi-card .kapi-card-desc { font-size: 14px !important; line-height: 1.5 !important; margin-bottom: 16px !important; }
-.kapi-card .kapi-card-footer { padding-top: 14px !important; font-size: 13px !important; }
-.kapi-card .kapi-card-arrow { width: 32px !important; height: 32px !important; min-width: 32px !important; }
-
-/* Public controls inherit Kapitech red while keeping Apple interaction grammar. */
-button, [role="button"] { -webkit-tap-highlight-color: transparent; }
-
-/* Mobile rhythm. */
-@media (max-width: 767px) {
-  [data-kapi-admin="true"] .ams-sidebar { width: min(86vw, 320px) !important; min-width: 0 !important; }
-  [data-kapi-admin="true"] .ams-content { padding: 20px 16px 96px !important; }
-  [data-kapi-admin="true"] .ams-content .kapi-card,
-  [data-kapi-admin="true"] .ams-content .metric-card,
-  [data-kapi-admin="true"] .ams-content .glass-panel { padding: 16px !important; }
-  [data-kapi-admin="true"] .ams-search { width: min(100%, 320px) !important; max-width: none !important; }
-  .kapi-card { padding: 16px !important; }
-}
-@media (max-width: 479px) {
-  [data-kapi-admin="true"] .ams-content { padding-inline: 12px !important; }
-}
-
-/* Respect reduced motion/transparency while preserving hierarchy. */
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { transition-duration: .001ms !important; animation-duration: .001ms !important; animation-iteration-count: 1 !important; }
-}
-@media (prefers-reduced-transparency: reduce) {
-  [data-kapi-admin="true"] .ams-sidebar,
-  [data-kapi-admin="true"] .ams-header,
-  [data-kapi-admin="true"] .ams-mobile-nav {
-    background: #18181B !important;
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-  }
-}
-
-
-/* ==========================================================================
-   APPLE FEEL REFINEMENT v3
-   Kapitech palette only. No Apple blue, no decorative gradients.
-   The visual language is intentionally quieter: hierarchy, translucency,
-   optical alignment, restrained motion and generous negative space.
-   ========================================================================== */
-
-:root {
-  --apple-surface: rgba(255,255,255,.045);
-  --apple-surface-strong: rgba(255,255,255,.065);
-  --apple-border: rgba(255,255,255,.10);
-  --apple-border-strong: rgba(255,255,255,.15);
-  --apple-shadow: 0 18px 50px rgba(0,0,0,.22);
-  --apple-shadow-soft: 0 8px 28px rgba(0,0,0,.16);
-  --apple-red-glass: rgba(176,0,32,.14);
-  --apple-focus: 0 0 0 3px rgba(176,0,32,.14);
-}
-
-/* Public shell: quieter canvas and stronger content hierarchy. */
-.kapi-public-shell {
-  color: #F5F5F7;
-  background: #090A0F;
-}
-
-.kapi-public-shell .kapi-card {
-  background: rgba(255,255,255,.035) !important;
-  border: 1px solid rgba(255,255,255,.085) !important;
-  box-shadow: 0 8px 28px rgba(0,0,0,.14) !important;
-  transform: none !important;
-  transition:
-    transform 220ms var(--k-ease),
-    border-color 220ms var(--k-ease),
-    background-color 220ms var(--k-ease),
-    box-shadow 220ms var(--k-ease) !important;
-}
-
-/* Remove the old cursor-following glow/shimmer. Apple surfaces are calm. */
-.kapi-card::before,
-.kapi-card::after {
-  display: none !important;
-}
-
-.kapi-public-shell .kapi-card:hover {
-  transform: translateY(-2px) !important;
-  background: rgba(255,255,255,.05) !important;
-  border-color: rgba(255,255,255,.14) !important;
-  box-shadow: var(--apple-shadow-soft) !important;
-}
-
-.kapi-public-shell .kapi-card:hover .kapi-card-icon-box {
-  transform: none !important;
-  background: var(--apple-red-glass) !important;
-  border-color: rgba(176,0,32,.30) !important;
-  color: var(--k-red) !important;
-}
-
-.kapi-public-shell .kapi-card:hover .kapi-card-title {
-  color: #F5F5F7 !important;
-}
-
-/* Navigation is the primary Liquid Glass layer on the public site. */
-.kapi-public-nav {
-  background: rgba(15,15,18,.68) !important;
-  border: 1px solid rgba(255,255,255,.09) !important;
-  box-shadow: 0 10px 35px rgba(0,0,0,.18) !important;
-  backdrop-filter: saturate(180%) blur(24px) !important;
-  -webkit-backdrop-filter: saturate(180%) blur(24px) !important;
-}
-
-.kapi-public-nav a,
-.kapi-public-nav button {
-  min-height: 40px;
-  border-radius: 10px;
-}
-
-.kapi-public-nav a:hover,
-.kapi-public-nav button:hover {
-  transform: none !important;
-  background: rgba(255,255,255,.055);
-}
-
-.kapi-public-nav .active,
-.kapi-public-nav [aria-current="page"] {
-  background: rgba(176,0,32,.12) !important;
-  color: #FFFFFF !important;
-}
-
-/* Public CTAs: one accent, one geometry. */
-.kapi-public-shell button,
-.kapi-public-shell a[role="button"] {
-  min-height: 44px;
-  border-radius: 12px;
-  font-weight: 600;
-  letter-spacing: -.01em;
-}
-
-.kapi-public-shell .bg-brand-red,
-.kapi-public-shell [class*="bg-brand-red"] {
-  background: var(--k-red) !important;
-}
-
-.kapi-public-shell .bg-brand-red:hover,
-.kapi-public-shell [class*="bg-brand-red"]:hover {
-  background: var(--k-red-hover) !important;
-}
-
-/* Do not turn every link into a floating button. */
-.kapi-public-shell a:not([role="button"]):hover {
-  text-decoration-thickness: 1px;
-  text-underline-offset: 3px;
-}
-
-/* Apple-like display hierarchy: large, compact and deliberate. */
-.kapi-public-shell h1,
-.kapi-public-shell h2,
-.kapi-public-shell h3,
-.kapi-public-shell h4 {
-  text-wrap: balance;
-  color: #F5F5F7 !important;
-}
-
-.kapi-public-shell h1 {
-  font-weight: 700 !important;
-}
-
-.kapi-public-shell h2 {
-  font-weight: 650 !important;
-}
-
-.kapi-public-shell h3,
-.kapi-public-shell h4 {
-  font-weight: 600 !important;
-}
-
-.kapi-public-shell p {
-  color: #A1A1AA;
-}
-
-/* Floating contact action is glass first, brand second. */
-.kapi-public-shell .floating-action {
-  background: rgba(24,24,27,.72) !important;
-  border: 1px solid rgba(255,255,255,.12) !important;
-  box-shadow: var(--apple-shadow-soft) !important;
-  backdrop-filter: saturate(180%) blur(20px) !important;
-  -webkit-backdrop-filter: saturate(180%) blur(20px) !important;
-}
-
-.kapi-public-shell .floating-action:hover {
-  background: rgba(176,0,32,.88) !important;
-  border-color: rgba(255,255,255,.16) !important;
-}
-
-/* AMS becomes a product UI, not a generic admin template. */
-[data-kapi-admin="true"] {
-  --ams-bg-primary: #090A0F;
-  --ams-bg-secondary: #111318;
-  --ams-bg-tertiary: #181B22;
-}
-
-[data-kapi-admin="true"] .ams-content {
-  padding-top: 28px !important;
-  padding-bottom: 48px !important;
-}
-
-[data-kapi-admin="true"] .ams-content > * + * {
-  margin-top: 20px !important;
-}
-
-[data-kapi-admin="true"] .ams-content .kapi-card,
-[data-kapi-admin="true"] .ams-content .metric-card,
-[data-kapi-admin="true"] .ams-content .glass-panel {
-  background: #111318 !important;
-  border: 1px solid rgba(255,255,255,.075) !important;
-  box-shadow: 0 8px 24px rgba(0,0,0,.14) !important;
-  transition:
-    border-color 180ms var(--k-ease),
-    background-color 180ms var(--k-ease),
-    box-shadow 180ms var(--k-ease) !important;
-}
-
-[data-kapi-admin="true"] .ams-content .kapi-card:hover,
-[data-kapi-admin="true"] .ams-content .metric-card:hover {
-  transform: none !important;
-  border-color: rgba(255,255,255,.12) !important;
-  box-shadow: 0 12px 34px rgba(0,0,0,.18) !important;
-}
-
-/* Metric cards should feel like compact Apple information tiles. */
-[data-kapi-admin="true"] .ams-content .metric-card {
-  min-height: 96px !important;
-  padding: 18px !important;
-}
-
-[data-kapi-admin="true"] .ams-content .metric-card :where(.text-2xl,.text-3xl,.text-4xl) {
-  letter-spacing: -.035em !important;
-  font-weight: 650 !important;
-}
-
-/* Glass navigation: translucent, layered, but not glowing. */
-[data-kapi-admin="true"] .ams-sidebar,
-[data-kapi-admin="true"] .ams-header,
-[data-kapi-admin="true"] .ams-mobile-nav {
-  background: rgba(18,18,21,.70) !important;
-  border-color: rgba(255,255,255,.085) !important;
-  box-shadow: 0 12px 36px rgba(0,0,0,.22) !important;
-  backdrop-filter: saturate(180%) blur(28px) !important;
-  -webkit-backdrop-filter: saturate(180%) blur(28px) !important;
-}
-
-[data-kapi-admin="true"] .ams-sidebar-nav a {
-  color: #A1A1AA !important;
-}
-
-[data-kapi-admin="true"] .ams-sidebar-nav a:hover {
-  background: rgba(255,255,255,.045) !important;
-  color: #F5F5F7 !important;
-  transform: none !important;
-}
-
-[data-kapi-admin="true"] .ams-sidebar-nav a[aria-current="page"],
-[data-kapi-admin="true"] .ams-sidebar-nav a.active {
-  background: rgba(176,0,32,.14) !important;
-  color: #FFFFFF !important;
-  box-shadow: inset 2px 0 0 var(--k-red) !important;
-}
-
-[data-kapi-admin="true"] .ams-sidebar-nav a[aria-current="page"] svg,
-[data-kapi-admin="true"] .ams-sidebar-nav a.active svg {
-  color: var(--k-red) !important;
-}
-
-/* Header controls should read as one glass control group. */
-[data-kapi-admin="true"] .ams-header input,
-[data-kapi-admin="true"] .ams-header .ams-search,
-[data-kapi-admin="true"] .ams-header .ams-control,
-[data-kapi-admin="true"] .ams-header button {
-  border-color: rgba(255,255,255,.09) !important;
-}
-
-[data-kapi-admin="true"] .ams-header input:focus,
-[data-kapi-admin="true"] .ams-header .ams-search:focus-within {
-  border-color: rgba(176,0,32,.42) !important;
-  box-shadow: var(--apple-focus) !important;
-}
-
-/* Form fields: quiet by default, red only on interaction. */
-[data-kapi-admin="true"] input,
-[data-kapi-admin="true"] select,
-[data-kapi-admin="true"] textarea,
-.kapi-public-shell input,
-.kapi-public-shell select,
-.kapi-public-shell textarea {
-  background: rgba(255,255,255,.035) !important;
-  border-color: rgba(255,255,255,.10) !important;
-  color: #F5F5F7 !important;
-}
-
-[data-kapi-admin="true"] input:hover,
-[data-kapi-admin="true"] select:hover,
-[data-kapi-admin="true"] textarea:hover,
-.kapi-public-shell input:hover,
-.kapi-public-shell select:hover,
-.kapi-public-shell textarea:hover {
-  border-color: rgba(255,255,255,.16) !important;
-}
-
-[data-kapi-admin="true"] input:focus,
-[data-kapi-admin="true"] select:focus,
-[data-kapi-admin="true"] textarea:focus,
-.kapi-public-shell input:focus,
-.kapi-public-shell select:focus,
-.kapi-public-shell textarea:focus {
-  border-color: rgba(176,0,32,.46) !important;
-  box-shadow: var(--apple-focus) !important;
-}
-
-/* Dropdowns use a single floating surface. */
-[data-kapi-admin="true"] .ams-dropdown-surface,
-[data-kapi-admin="true"] [role="menu"],
-[data-kapi-admin="true"] [role="listbox"] {
-  background: rgba(28,28,31,.88) !important;
-  border: 1px solid rgba(255,255,255,.10) !important;
-  border-radius: 14px !important;
-  box-shadow: 0 18px 50px rgba(0,0,0,.34) !important;
-  backdrop-filter: saturate(180%) blur(24px) !important;
-  -webkit-backdrop-filter: saturate(180%) blur(24px) !important;
-}
-
-[data-kapi-admin="true"] .ams-dropdown-item:hover,
-[data-kapi-admin="true"] [role="menuitem"]:hover,
-[data-kapi-admin="true"] [role="option"]:hover {
-  background: rgba(255,255,255,.06) !important;
-}
-
-/* Modal backdrop and sheets follow Apple's separation model. */
-[data-kapi-admin="true"] .fixed.inset-0.z-50 {
-  background: rgba(0,0,0,.58) !important;
-  backdrop-filter: blur(8px) !important;
-  -webkit-backdrop-filter: blur(8px) !important;
+[data-kapi-admin="true"] :where(a,button,input,select,textarea):focus-visible {
+  outline: 2px solid rgba(176,0,32,.78);
+  outline-offset: 2px;
+  box-shadow: none;
 }
 
 [data-kapi-admin="true"] [role="dialog"] {
-  background: #181B22 !important;
-  border: 1px solid rgba(255,255,255,.10) !important;
-  box-shadow: 0 28px 90px rgba(0,0,0,.48) !important;
+  border-radius: var(--k-sheet-radius) !important;
+  border-color: var(--k-border) !important;
+  box-shadow: 0 24px 80px rgba(0,0,0,.45) !important;
+  overflow: hidden;
 }
 
-/* Tables: reduce visual noise, increase alignment. */
-[data-kapi-admin="true"] table {
-  border-collapse: separate !important;
-  border-spacing: 0 !important;
-}
-
-[data-kapi-admin="true"] table tbody tr {
-  border-color: rgba(255,255,255,.06) !important;
-  transition: background-color 160ms var(--k-ease) !important;
-}
-
-[data-kapi-admin="true"] table tbody tr:hover {
-  background: rgba(255,255,255,.025) !important;
-}
-
-/* Remove generic transform language from non-button links. */
-[data-kapi-admin="true"] a:hover {
-  transform: none;
-}
-
-/* Icon optical sizing. */
-[data-kapi-admin="true"] svg {
-  vector-effect: non-scaling-stroke;
-}
-
-[data-kapi-admin="true"] .ams-sidebar-nav svg {
-  width: 18px !important;
-  height: 18px !important;
-  stroke-width: 1.8 !important;
-}
-
-/* Touch targets remain Apple-like without making desktop controls oversized. */
 @media (max-width: 767px) {
-  .kapi-public-shell button,
-  .kapi-public-shell a[role="button"],
-  [data-kapi-admin="true"] button,
-  [data-kapi-admin="true"] a[role="button"] {
-    min-height: 44px;
+  .kapi-public-shell h1 {
+    font-size: clamp(2.25rem, 11vw, 3.5rem) !important;
+  }
+
+  .kapi-public-shell h2 {
+    font-size: clamp(1.8rem, 8vw, 2.5rem) !important;
   }
 
   .kapi-public-shell .kapi-card {
@@ -815,54 +443,234 @@ button, [role="button"] { -webkit-tap-highlight-color: transparent; }
   [data-kapi-admin="true"] .ams-content {
     padding: 20px 16px 96px !important;
   }
-}
 
-@media (max-width: 479px) {
-  .kapi-public-shell .kapi-card {
+  [data-kapi-admin="true"] .ams-content .kapi-card,
+  [data-kapi-admin="true"] .ams-content .metric-card,
+  [data-kapi-admin="true"] .ams-content .glass-panel {
     padding: 16px !important;
   }
 
+  [data-kapi-admin="true"] .ams-search {
+    max-width: min(48vw, 280px) !important;
+  }
+
+  [data-kapi-admin="true"] .ams-sidebar.ams-sidebar-collapsed {
+    width: min(86vw, 320px) !important;
+    min-width: 0 !important;
+  }
+}
+
+@media (max-width: 479px) {
   [data-kapi-admin="true"] .ams-content {
     padding-inline: 12px !important;
   }
 }
 
-
-/* Final UI guardrails: keep legacy red utilities from reintroducing the old neon
-   accent and keep the AMS navigation surface neutral. */
-[data-kapi-admin="true"] .ams-sidebar,
-[data-kapi-admin="true"] .ams-sidebar-brand {
-  background: rgba(18,18,21,.78) !important;
-  color: #F5F5F7;
-}
-[data-kapi-admin="true"] .ams-sidebar-nav {
-  background: transparent !important;
-}
-[data-kapi-admin="true"] [class*="bg-[#E50914]"],
-[data-kapi-admin="true"] [class*="bg-[#E01414]"],
-[data-kapi-admin="true"] [class*="bg-[#CC001F]"],
-[data-kapi-admin="true"] [class*="bg-[#FF1E27]"],
-[data-kapi-admin="true"] [class*="bg-[#E60023]"],
-[data-kapi-admin="true"] [class*="bg-[#E63946]"] {
-  background-color: var(--kapitech-red) !important;
-}
-[data-kapi-admin="true"] [class*="text-[#E50914]"],
-[data-kapi-admin="true"] [class*="text-[#FF1E27]"],
-[data-kapi-admin="true"] [class*="text-[#E60023]"],
-[data-kapi-admin="true"] [class*="text-[#E63946]"] {
-  color: var(--kapitech-red) !important;
-}
-[data-kapi-admin="true"] [class*="border-[#E50914]"],
-[data-kapi-admin="true"] [class*="border-[#E01414]"],
-[data-kapi-admin="true"] [class*="border-[#CC001F]"],
-[data-kapi-admin="true"] [class*="border-[#FF1E27]"],
-[data-kapi-admin="true"] [class*="border-[#E60023]"],
-[data-kapi-admin="true"] [class*="border-[#E63946]"] {
-  border-color: var(--kapitech-red-border) !important;
+@media (prefers-reduced-motion: reduce) {
+  .kapi-public-shell *,
+  .kapi-public-shell *::before,
+  .kapi-public-shell *::after,
+  [data-kapi-admin="true"] *,
+  [data-kapi-admin="true"] *::before,
+  [data-kapi-admin="true"] *::after {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
-/* Text + icon CTA buttons must never inherit icon-only aspect-ratio rules. */
-.kapi-public-shell button.rounded-full:not([aria-label]):has(svg),
-[data-kapi-admin="true"] button.rounded-full:not([aria-label]):has(svg) {
-  aspect-ratio: auto !important;
+/* Legacy utility bridge: keep existing page markup on the same visual tokens.
+   This is a compatibility map, not a second design layer. */
+.kapi-public-shell [class*="bg-[#0B0C0E]"] {
+  background-color: var(--k-bg) !important;
+}
+.kapi-public-shell [class*="bg-[#0A0A0A]"],
+.kapi-public-shell [class*="bg-[#161616]"] {
+  background-color: var(--k-bg-deep) !important;
+}
+.kapi-public-shell [class*="bg-[#16181D]"],
+.kapi-public-shell [class*="bg-[#1E1E1E]"] {
+  background-color: var(--k-surface) !important;
+}
+.kapi-public-shell [class*="bg-[#1E2128]"],
+.kapi-public-shell [class*="bg-[#20232B]"],
+.kapi-public-shell [class*="bg-[#262930]"] {
+  background-color: var(--k-surface-raised) !important;
+}
+.kapi-public-shell [class*="border-[#262930]"],
+.kapi-public-shell [class*="border-[#2A2A2A]"],
+.kapi-public-shell [class*="border-[#1E2128]"] {
+  border-color: var(--k-border) !important;
+}
+.kapi-public-shell [class*="text-[#8A909D]"],
+.kapi-public-shell [class*="text-[#8E8E93]"],
+.kapi-public-shell [class*="text-[#8A94A6]"] {
+  color: var(--k-text-secondary) !important;
+}
+.kapi-public-shell [class*="text-[#FF6B00]"],
+.kapi-public-shell [class*="bg-[#FF6B00]"],
+.kapi-public-shell [class*="border-[#FF6B00]"] {
+  color: var(--k-red) !important;
+  border-color: var(--k-red-border) !important;
+}
+.kapi-public-shell [class*="bg-[#FF6B00]"] {
+  background-color: var(--k-red) !important;
+}
+.kapi-public-shell [class*="bg-[#E01414]"],
+.kapi-public-shell [class*="bg-[#CC001F]"] {
+  background-color: var(--k-red) !important;
+}
+.kapi-public-shell [class*="text-[#E01414]"],
+.kapi-public-shell [class*="text-[#CC001F]"] {
+  color: var(--k-red) !important;
+}
+.kapi-public-shell [class*="border-[#E01414]"],
+.kapi-public-shell [class*="border-[#CC001F]"] {
+  border-color: var(--k-red-border) !important;
+}
+
+
+/* AMS compatibility map: existing feature markup inherits the single Apple system. */
+.ams-shell {
+  background: var(--k-bg) !important;
+  color: var(--k-text) !important;
+  font-family: var(--k-font) !important;
+}
+.ams-shell .font-mono {
+  font-family: var(--k-font) !important;
+}
+.ams-shell [class*="bg-[#090A0F]"],
+.ams-shell [class*="bg-[#111318]"],
+.ams-shell [class*="bg-[#181B22]"],
+.ams-shell [class*="bg-[#21252F]"],
+.ams-shell [class*="bg-[#222630]"] {
+  background-color: var(--k-surface) !important;
+}
+.ams-shell [class*="border-[rgba(255,255,255,0.07)]"],
+.ams-shell [class*="border-white/[0.07]"],
+.ams-shell [class*="border-white/10"] {
+  border-color: var(--k-border) !important;
+}
+.ams-shell [class*="text-[#8A94A6]"],
+.ams-shell [class*="text-[#64748B]"] {
+  color: var(--k-text-secondary) !important;
+}
+.ams-shell [class*="text-[#E50914]"],
+.ams-shell [class*="text-[#FF1E27]"],
+.ams-shell [class*="bg-[#E50914]"],
+.ams-shell [class*="border-[#E50914]"] {
+  --tw-ring-color: var(--k-red);
+  color: var(--k-red) !important;
+  border-color: var(--k-red-border) !important;
+}
+.ams-shell [class*="bg-[#E50914]"] {
+  background-color: var(--k-red) !important;
+  color: #fff !important;
+}
+.ams-shell [class*="bg-[rgba(229,9,20,0.1)]"],
+.ams-shell [class*="bg-[#E50914]/10"],
+.ams-shell [class*="bg-[#E50914]/15"] {
+  background-color: var(--k-red-soft) !important;
+}
+.ams-shell [class*="hover:bg-[#FF1E27]"]:hover,
+.ams-shell [class*="hover:bg-[#E50914]"]:hover {
+  background-color: var(--k-red-hover) !important;
+}
+.ams-shell input,
+.ams-shell textarea,
+.ams-shell select {
+  outline: none !important;
+  box-shadow: none;
+}
+.ams-shell input:focus,
+.ams-shell textarea:focus,
+.ams-shell select:focus {
+  outline: none !important;
+}
+.ams-shell input:focus-visible,
+.ams-shell textarea:focus-visible,
+.ams-shell select:focus-visible {
+  border-color: var(--k-red-border) !important;
+  box-shadow: 0 0 0 3px var(--k-red-soft) !important;
+}
+.ams-shell button {
+  -webkit-tap-highlight-color: transparent;
+}
+.ams-shell [class*="rounded-2xl"],
+.ams-shell [class*="rounded-3xl"] {
+  border-radius: var(--k-card-radius);
+}
+.ams-shell .ams-card,
+.ams-shell .metric-card,
+.ams-shell .glass-panel {
+  border-radius: var(--k-card-radius) !important;
+}
+.ams-shell [class*="shadow-lg"],
+.ams-shell [class*="shadow-xl"],
+.ams-shell [class*="shadow-2xl"] {
+  box-shadow: var(--k-shadow-sm);
+}
+.ams-shell .ams-sidebar,
+.ams-shell .ams-topbar,
+.ams-shell .glass-sidebar,
+.ams-shell .glass-topbar {
+  background: rgba(21, 22, 25, .88) !important;
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-color: var(--k-border) !important;
+}
+.ams-shell .ams-sidebar-nav a,
+.ams-shell .ams-sidebar-nav button {
+  min-width: 0;
+}
+.ams-shell .ams-sidebar-nav a > span,
+.ams-shell .ams-sidebar-nav button > span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ams-shell table {
+  border-color: var(--k-border);
+}
+.ams-shell th {
+  color: var(--k-text-secondary);
+  font-weight: 600;
+}
+.ams-shell td {
+  color: var(--k-text);
+}
+.ams-shell .custom-scrollbar {
+  scrollbar-color: rgba(255,255,255,.16) transparent;
+}
+.ams-shell .custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.ams-shell .custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,.16);
+  border-radius: 999px;
+}
+@media (max-width: 767px) {
+  .ams-shell .ams-main-content,
+  .ams-shell main {
+    min-width: 0;
+  }
+  .ams-shell .overflow-x-auto {
+    max-width: 100%;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .kapi-public-nav,
+  .kapi-public-shell .floating-action,
+  .kapi-public-footer .social-glass,
+  [data-kapi-admin="true"] .ams-sidebar,
+  [data-kapi-admin="true"] .ams-header,
+  [data-kapi-admin="true"] .ams-mobile-nav {
+    background: var(--k-surface) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
 }

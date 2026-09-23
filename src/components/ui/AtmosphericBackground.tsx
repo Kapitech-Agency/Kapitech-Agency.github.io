@@ -15,7 +15,7 @@ export const AtmosphericBackground: React.FC<AtmosphericBackgroundProps> = ({
   disableGrayscale = true,
 }) => {
   return (
-    <div className={cn("absolute inset-0 pointer-events-none overflow-hidden -z-10", className)}>
+    <div className={cn("kapi-atmospheric absolute inset-0 pointer-events-none overflow-hidden -z-10", className)}>
       <img
         src={imageUrl}
         alt=""
