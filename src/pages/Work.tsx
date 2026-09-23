@@ -305,7 +305,7 @@ export const Work = () => {
           {/* Top Controls: Main Pillars + Instant Search */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4">
             {/* Primary Pillar Tabs */}
-            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 bg-[[var(--k-surface)]] p-1 sm:p-1.5 rounded-xl border border-[[var(--k-border)]]">
+            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 bg-[var(--k-surface)] p-1 sm:p-1.5 rounded-xl border border-[var(--k-border)]">
               {[
                 { key: 'All', labelEn: 'All Disciplines', labelId: 'Semua Bidang' },
                 { key: 'Visual Experience', labelEn: 'Visual Experience', labelId: 'Visual Experience' },
@@ -336,7 +336,7 @@ export const Work = () => {
                   setVisibleCount(12);
                 }}
                 placeholder={language === 'id' ? 'Cari studi kasus, klien, stack...' : 'Search case study, client, tech...'}
-                className="w-full bg-[[var(--k-surface)]] border border-[[var(--k-border)]] rounded-xl pl-10 pr-9 py-2.5 text-base sm:text-xs text-white placeholder:text-[[var(--k-text-secondary)]] focus:outline-none focus:border-brand-red transition-colors font-sans min-h-[44px]"
+                className="w-full bg-[var(--k-surface)] border border-[var(--k-border)] rounded-xl pl-10 pr-9 py-2.5 text-base sm:text-xs text-white placeholder:text-[var(--k-text-secondary)] focus:outline-none focus:border-brand-red focus:ring-2 focus:ring-brand-red/20 transition-colors font-sans min-h-[44px]"
               />
               {searchQuery && (
                 <button
@@ -416,7 +416,7 @@ export const Work = () => {
       <section className="py-12 sm:py-16 px-4 sm:px-6 md:px-12 bg-[[var(--k-bg)]]">
         <div className="max-w-7xl mx-auto">
           {filteredProjects.length === 0 ? (
-            <div className="text-center py-24 border border-dashed border-[[var(--k-border)]] rounded-2xl p-8 bg-[[var(--k-surface)]]/50">
+            <div className="text-center py-24 border border-dashed border-[var(--k-border)] rounded-2xl p-8 bg-[var(--k-surface)]/50">
               <Search className="w-10 h-10 text-[[var(--k-text-secondary)]] mx-auto mb-4" />
               <h3 className="text-xl font-sans font-bold text-white mb-2">
                 {language === 'id' ? 'Studi Kasus Tidak Ditemukan' : 'No Case Studies Found'}
@@ -449,7 +449,7 @@ export const Work = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3 }}
                     onClick={() => setSelectedProject(project)}
-                    className="cursor-pointer group rounded-2xl overflow-hidden border border-[[var(--k-border)]] bg-[[var(--k-surface)]] hover:bg-[[var(--k-surface-raised)]] hover:border-brand-red/40 transition-all duration-300 flex flex-col h-full"
+                    className="cursor-pointer group rounded-2xl overflow-hidden border border-[var(--k-border)] bg-[var(--k-surface)] hover:bg-[var(--k-surface-raised)] hover:border-brand-red/40 transition-all duration-300 flex flex-col h-full"
                   >
                     {/* Thumbnail Image */}
                     <div className="relative aspect-[16/10] overflow-hidden bg-[[var(--k-bg)]]">
@@ -507,7 +507,7 @@ export const Work = () => {
                 <div className="text-center pt-12">
                   <button
                     onClick={() => setVisibleCount(prev => prev + 12)}
-                    className="px-8 py-3.5 rounded-full bg-[[var(--k-surface)]] hover:bg-brand-red text-white border border-[[var(--k-border)]] hover:border-brand-red text-xs font-sans font-semibold transition-all duration-300 shadow-[var(--k-shadow-sm)] min-h-[44px]"
+                    className="px-8 py-3.5 rounded-full bg-[var(--k-surface)] hover:bg-brand-red text-white border border-[var(--k-border)] hover:border-brand-red text-xs font-sans font-semibold transition-all duration-300 shadow-[var(--k-shadow-sm)] min-h-[44px]"
                   >
                     {language === 'id' ? 'Muat Lebih Banyak Studi Kasus' : 'Load More Case Studies'} ({filteredProjects.length - visibleCount} {language === 'id' ? 'tersisa' : 'remaining'})
                   </button>
@@ -527,10 +527,10 @@ export const Work = () => {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ duration: 0.25 }}
-              className="relative w-full max-w-4xl bg-[[var(--k-surface)]] border border-[[var(--k-border)]] rounded-2xl overflow-hidden shadow-[var(--k-shadow-sm)] my-8 max-h-[90vh] flex flex-col"
+              className="relative w-full max-w-4xl bg-[var(--k-surface)] border border-[var(--k-border)] rounded-2xl overflow-hidden shadow-[var(--k-shadow-sm)] my-8 max-h-[90vh] flex flex-col"
             >
               {/* Modal Header Bar */}
-              <div className="sticky top-0 z-20 flex items-center justify-between p-4 sm:p-5 bg-[[var(--k-surface)]]/95 backdrop-blur-md border-b border-[[var(--k-border)]] gap-3">
+              <div className="sticky top-0 z-20 flex items-center justify-between p-4 sm:p-5 bg-[var(--k-surface)]/95 backdrop-blur-md border-b border-[var(--k-border)] gap-3">
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2 mb-1">
                     <span className="px-2.5 py-0.5 rounded-full bg-brand-red/10 border border-brand-red/30 text-brand-red text-[11px] font-sans font-medium">
