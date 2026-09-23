@@ -401,7 +401,7 @@ export const AdminLayout: React.FC = () => {
   return (
     <div
       data-kapi-admin="true"
-      className="h-screen w-full bg-[#090A0F] text-[#F8FAFC] flex flex-col md:flex-row selection:bg-[#E50914] selection:text-white font-sans antialiased overflow-hidden"
+      className="ams-shell h-screen w-full bg-[#090A0F] text-[#F8FAFC] flex flex-col md:flex-row selection:bg-[#E50914] selection:text-white font-sans antialiased overflow-hidden"
     >
       
       {/* Universal Command Palette */}
@@ -414,13 +414,13 @@ export const AdminLayout: React.FC = () => {
       {/* DESKTOP SIDEBAR */}
       {/* ------------------------------------------------------------- */}
       <aside 
-        className={`hidden md:flex flex-col bg-[#111318] border-r border-white/[0.07] shrink-0 h-full z-30 transition-all duration-300 ${
-          sidebarCollapsed ? 'w-20' : 'w-64 lg:w-72'
+        className={`ams-sidebar ams-sidebar-nav hidden md:flex flex-col bg-[#111318] border-r border-white/[0.07] shrink-0 h-full z-30 transition-all duration-300 ${
+          sidebarCollapsed ? 'w-20 ams-sidebar-collapsed' : 'w-64 lg:w-72'
         }`}
       >
         
         {/* Brand Header */}
-        <div className={`h-16 border-b border-white/[0.07] flex items-center bg-[#111318] transition-all ${
+        <div className={`ams-sidebar-brand h-16 border-b border-white/[0.07] flex items-center bg-[#111318] transition-all ${
           sidebarCollapsed ? 'justify-center px-2' : 'justify-between px-4'
         }`}>
           {!sidebarCollapsed ? (
@@ -459,7 +459,7 @@ export const AdminLayout: React.FC = () => {
         </div>
 
         {/* Navigation List - 4 Structured Sections Filtered by Dynamic RBAC */}
-        <div className="flex-1 px-3 py-3 space-y-4 overflow-y-auto custom-scrollbar">
+        <div className="ams-sidebar-nav flex-1 px-3 py-3 space-y-4 overflow-y-auto custom-scrollbar">
           {filteredNavSections.map((section) => (
             <div key={section.id} className="space-y-1">
               {!sidebarCollapsed && (
@@ -806,10 +806,10 @@ export const AdminLayout: React.FC = () => {
       {/* ------------------------------------------------------------- */}
       {/* MAIN CONTENT AREA */}
       {/* ------------------------------------------------------------- */}
-      <main className="flex-1 flex flex-col min-w-0 h-full overflow-y-auto bg-[#090A0F] custom-scrollbar pb-[calc(4.75rem+env(safe-area-inset-bottom))] md:pb-0">
+      <main className="ams-main flex-1 flex flex-col min-w-0 h-full overflow-y-auto bg-[#090A0F] custom-scrollbar pb-[calc(4.75rem+env(safe-area-inset-bottom))] md:pb-0">
 
         {/* Mobile-first top bar */}
-        <header className="md:hidden sticky top-0 z-40 h-14 px-3 border-b border-white/[0.07] bg-[#090A0F]/95 backdrop-blur-xl flex items-center justify-between shrink-0">
+        <header className="ams-header md:hidden sticky top-0 z-40 h-14 px-3 border-b border-white/[0.07] bg-[#090A0F]/95 backdrop-blur-xl flex items-center justify-between shrink-0">
           <button
             onClick={() => setMobileMenuOpen(true)}
             aria-label={language === 'id' ? 'Buka menu lainnya' : 'Open more navigation'}
@@ -859,7 +859,7 @@ export const AdminLayout: React.FC = () => {
         </header>
         
         {/* Sticky Desktop Topbar Header: Clean & Minimal */}
-        <header className="hidden md:flex h-16 px-4 sm:px-6 lg:px-8 border-b border-white/[0.07] bg-[#090A0F]/95 backdrop-blur-md sticky top-0 z-30 items-center justify-between shrink-0 shadow-[0_1px_0_rgba(255,255,255,0.02),0_4px_24px_rgba(0,0,0,0.6)]">
+        <header className="ams-header hidden md:flex h-16 px-4 sm:px-6 lg:px-8 border-b border-white/[0.07] bg-[#090A0F]/95 backdrop-blur-md sticky top-0 z-30 items-center justify-between shrink-0 shadow-[0_1px_0_rgba(255,255,255,0.02),0_4px_24px_rgba(0,0,0,0.6)]">
           {/* Breadcrumb Navigation */}
           <div className="flex items-center gap-2 text-xs font-sans text-[#8A94A6]">
             {sidebarCollapsed && (
@@ -877,7 +877,7 @@ export const AdminLayout: React.FC = () => {
           </div>
 
           {/* Minimalist Global Search Bar */}
-          <div className="relative w-64 lg:w-80">
+          <div className="ams-search relative w-64 lg:w-80">
             <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8A94A6]" />
             <input
               type="text"
@@ -1042,12 +1042,12 @@ export const AdminLayout: React.FC = () => {
         </header>
 
         {/* View Outlet */}
-        <div className="flex-1 p-4 sm:p-6 lg:p-7 w-full max-w-[1700px] mx-auto">
+        <div className="ams-content flex-1 p-4 sm:p-6 lg:p-7 w-full max-w-[1700px] mx-auto">
           <Outlet />
         </div>
 
         {/* Mobile-first bottom navigation */}
-        <nav className="md:hidden fixed left-0 right-0 bottom-0 z-40 border-t border-white/[0.07] bg-[#090A0F]/95 backdrop-blur-xl px-2 pt-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))]">
+        <nav className="ams-mobile-nav md:hidden fixed left-0 right-0 bottom-0 z-40 border-t border-white/[0.07] bg-[#090A0F]/95 backdrop-blur-xl px-2 pt-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))]">
           <div className="grid grid-cols-5 gap-1 max-w-xl mx-auto">
             {mobileNavItems.map((item) => {
               const Icon = item.icon;
