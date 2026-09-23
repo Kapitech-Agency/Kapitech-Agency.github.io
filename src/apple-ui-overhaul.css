@@ -462,3 +462,203 @@ body:not(:has([data-kapi-admin="true"])) button,
 body:not(:has([data-kapi-admin="true"])) a[role="button"] {
   font-family: inherit;
 }
+
+
+/* --------------------------------------------------------------------------
+   Final consistency pass
+   These rules neutralize legacy utility conflicts that were causing the
+   stretched controls, clipped sidebar labels, and oversized search field.
+   -------------------------------------------------------------------------- */
+
+/* Buttons with text should use Apple-style rounded rectangles.
+   Circular geometry is reserved for explicit icon-only controls. */
+[data-kapi-admin="true"] button.rounded-full:not([aria-label]),
+[data-kapi-admin="true"] a.rounded-full.bg-brand-red,
+[data-kapi-admin="true"] a.rounded-full[class*="bg-[var(--k-red)"] {
+  border-radius: 14px !important;
+}
+
+.kapi-public-shell button.rounded-full.bg-brand-red,
+.kapi-public-shell a.rounded-full.bg-brand-red,
+.kapi-public-shell a.rounded-full[class*="bg-brand-red"] {
+  border-radius: 14px !important;
+}
+
+.kapi-public-shell button.rounded-full:not([aria-label]),
+.kapi-public-shell a.rounded-full[class*="px-"][class*="py-"]:not([aria-label]) {
+  border-radius: 14px !important;
+}
+
+/* Compact segmented controls must not inherit the 40px global button floor. */
+[data-kapi-admin="true"] .ams-header button.rounded-md,
+[data-kapi-admin="true"] .ams-sidebar button.rounded-md,
+[data-kapi-admin="true"] #ams-mobile-more-sheet button.rounded-md {
+  min-height: 32px !important;
+}
+
+[data-kapi-admin="true"] .ams-header .flex.items-center > button.rounded-md,
+[data-kapi-admin="true"] #ams-mobile-more-sheet .flex.items-center > button.rounded {
+  min-height: 30px !important;
+}
+
+/* The AMS global input floor must not stretch the compact command/search field. */
+[data-kapi-admin="true"] .ams-search input {
+  height: 36px !important;
+  min-height: 36px !important;
+  line-height: 1.25 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+[data-kapi-admin="true"] .ams-search input:focus,
+[data-kapi-admin="true"] .ams-search input:focus-visible {
+  outline: none !important;
+  box-shadow: 0 0 0 3px rgba(176,0,32,.10) !important;
+}
+
+/* Sidebar labels never escape their navigation cells. */
+[data-kapi-admin="true"] .ams-sidebar-nav a {
+  min-width: 0;
+  max-width: 100%;
+}
+
+[data-kapi-admin="true"] .ams-sidebar-nav a > div,
+[data-kapi-admin="true"] .ams-sidebar-nav a > div > span {
+  min-width: 0;
+}
+
+[data-kapi-admin="true"] .ams-sidebar-nav a > div > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+[data-kapi-admin="true"] .ams-sidebar-nav a > span:not([class*="absolute"]) {
+  max-width: 4.5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Prevent flex/grid children from forcing horizontal overflow in dense AMS screens. */
+[data-kapi-admin="true"] .ams-main,
+[data-kapi-admin="true"] .ams-content,
+[data-kapi-admin="true"] .ams-main > *,
+[data-kapi-admin="true"] .ams-content > * {
+  min-width: 0;
+  max-width: 100%;
+}
+
+[data-kapi-admin="true"] table {
+  table-layout: auto;
+}
+
+[data-kapi-admin="true"] .overflow-x-auto {
+  max-width: 100%;
+  overscroll-behavior-inline: contain;
+}
+
+/* Modal/sheet content follows one visual geometry across every AMS module. */
+[data-kapi-admin="true"] [role="dialog"] {
+  max-width: min(100%, 960px);
+}
+
+[data-kapi-admin="true"] [role="dialog"] input,
+[data-kapi-admin="true"] [role="dialog"] select,
+[data-kapi-admin="true"] [role="dialog"] textarea {
+  min-height: 44px;
+}
+
+[data-kapi-admin="true"] [role="dialog"] h1,
+[data-kapi-admin="true"] [role="dialog"] h2,
+[data-kapi-admin="true"] [role="dialog"] h3 {
+  text-wrap: balance;
+}
+
+/* Touch targets stay usable without making desktop controls oversized. */
+@media (pointer: coarse) {
+  [data-kapi-admin="true"] button:not(.h-4):not(.h-5):not(.h-6),
+  [data-kapi-admin="true"] a[role="button"] {
+    min-height: 44px;
+  }
+
+  [data-kapi-admin="true"] .ams-search input {
+    min-height: 44px !important;
+    height: 44px !important;
+  }
+}
+
+/* Reduce visual noise from legacy utility shadows and gradients in AMS. */
+[data-kapi-admin="true"] .ams-main [class*="shadow-2xl"],
+[data-kapi-admin="true"] .ams-main [class*="shadow-xl"] {
+  box-shadow: 0 18px 48px rgba(0,0,0,.22) !important;
+}
+
+[data-kapi-admin="true"] .ams-main [class*="bg-gradient-to-"] {
+  background-image: none !important;
+}
+
+/* Public pages: preserve pills for status chips, but never for primary actions. */
+.kapi-public-shell .kapi-button,
+.kapi-public-shell a.kapi-button {
+  border-radius: 14px !important;
+}
+
+/* Consistent content width and section rhythm across public pages. */
+.kapi-public-shell main > section {
+  width: 100%;
+}
+
+.kapi-public-shell section > .max-w-7xl,
+.kapi-public-shell section > .max-w-6xl,
+.kapi-public-shell section > .max-w-5xl {
+  width: min(100% - 32px, 1200px);
+  margin-inline: auto;
+}
+
+@media (min-width: 768px) {
+  .kapi-public-shell section > .max-w-7xl,
+  .kapi-public-shell section > .max-w-6xl,
+  .kapi-public-shell section > .max-w-5xl {
+    width: min(100% - 64px, 1200px);
+  }
+}
+
+@media (min-width: 1440px) {
+  .kapi-public-shell section > .max-w-7xl,
+  .kapi-public-shell section > .max-w-6xl,
+  .kapi-public-shell section > .max-w-5xl {
+    width: min(100% - 96px, 1200px);
+  }
+}
+
+@media (max-width: 767px) {
+  [data-kapi-admin="true"] .ams-sidebar-nav {
+    padding-bottom: 12px;
+  }
+
+  [data-kapi-admin="true"] .ams-main {
+    padding-bottom: calc(4.75rem + env(safe-area-inset-bottom));
+  }
+
+  .kapi-public-shell section > .max-w-7xl,
+  .kapi-public-shell section > .max-w-6xl,
+  .kapi-public-shell section > .max-w-5xl {
+    width: min(100% - 28px, 1200px);
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .kapi-public-shell .kapi-card,
+  .kapi-public-shell .kapi-glass-sheet,
+  [data-kapi-admin="true"] .ams-header,
+  [data-kapi-admin="true"] .glass-panel,
+  [data-kapi-admin="true"] .metric-card,
+  [data-kapi-admin="true"] .ams-surface,
+  [data-kapi-admin="true"] .glass-sidebar {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+}
