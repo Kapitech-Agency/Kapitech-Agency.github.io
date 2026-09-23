@@ -809,7 +809,7 @@ export const AdminLayout: React.FC = () => {
       <main className="ams-main flex-1 flex flex-col min-w-0 h-full overflow-y-auto bg-[var(--k-bg)] custom-scrollbar pb-[calc(4.75rem+env(safe-area-inset-bottom))] md:pb-0">
 
         {/* Mobile-first top bar */}
-        <header className="ams-header md:hidden sticky top-0 z-40 h-14 px-3 border-b border-[var(--k-border)] bg-[var(--k-bg)]/95 backdrop-blur-xl flex items-center justify-between shrink-0">
+        <header className="ams-topbar ams-header md:hidden sticky top-0 z-40 h-14 px-3 border-b border-[var(--k-border)] bg-[var(--k-bg)]/95 backdrop-blur-xl flex items-center justify-between shrink-0">
           <button
             onClick={() => setMobileMenuOpen(true)}
             aria-label={language === 'id' ? 'Buka menu lainnya' : 'Open more navigation'}
@@ -859,7 +859,7 @@ export const AdminLayout: React.FC = () => {
         </header>
         
         {/* Sticky Desktop Topbar Header: Clean & Minimal */}
-        <header className="ams-header hidden md:flex h-16 px-4 sm:px-6 lg:px-8 border-b border-[var(--k-border)] bg-[var(--k-bg)]/95 backdrop-blur-md sticky top-0 z-30 items-center justify-between shrink-0 shadow-[0_1px_0_rgba(255,255,255,0.02),0_4px_24px_rgba(0,0,0,0.6)]">
+        <header className="ams-topbar ams-header hidden md:flex h-16 px-4 sm:px-6 lg:px-8 border-b border-[var(--k-border)] bg-[var(--k-bg)]/95 backdrop-blur-md sticky top-0 z-30 items-center justify-between shrink-0 shadow-[0_1px_0_rgba(255,255,255,0.02),0_4px_24px_rgba(0,0,0,0.6)]">
           {/* Breadcrumb Navigation */}
           <div className="flex items-center gap-2 text-xs font-sans text-[var(--k-text-secondary)]">
             {sidebarCollapsed && (
