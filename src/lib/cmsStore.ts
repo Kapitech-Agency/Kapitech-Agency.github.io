@@ -283,9 +283,13 @@ export async function fetchServerCmsTestimonials(): Promise<TestimonialItem[]> {
     if (res.success && Array.isArray(res.data?.testimonials)) {
       markCmsHydrationSuccess('testimonials');
       const serverT = res.data.testimonials;
-      cmsTestimonialsCache = serverT;
-      notifyCmsUpdate('testimonials');
-      return serverT;
+      if (serverT.length > 0) {
+        cmsTestimonialsCache = serverT;
+        notifyCmsUpdate('testimonials');
+        return serverT;
+      }
+      // Keep the curated public fallback when the CMS is reachable but has no records.
+      return getCmsTestimonials();
     }
   } catch (err) {
     console.debug('Failed to fetch testimonials from server:', err);
