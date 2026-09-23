@@ -775,6 +775,41 @@
   border-radius: var(--pub-radius-button) !important;
 }
 
+/* Footer CTA and local status */
+.kapi-public-shell .kapi-footer-cta {
+  min-height: 44px;
+  padding-inline: 22px;
+  border-radius: 14px;
+  background: var(--pub-red);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: .875rem;
+  line-height: 1;
+  font-weight: 600;
+  box-shadow: 0 8px 24px rgba(176,0,32,.18);
+  transition: transform var(--pub-fast) var(--pub-ease), background-color var(--pub-fast) ease, box-shadow var(--pub-fast) ease;
+}
+.kapi-public-shell .kapi-footer-cta:hover {
+  transform: translateY(-1px);
+  background: var(--pub-red-hover);
+  box-shadow: 0 12px 30px rgba(176,0,32,.24);
+}
+.kapi-public-shell .kapi-footer-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 32px;
+  padding: 7px 12px;
+  border: 1px solid var(--pub-border);
+  border-radius: 999px;
+  background: rgba(255,255,255,.035);
+  color: var(--pub-text-secondary);
+  font-size: .6875rem;
+  line-height: 1.3;
+}
+
 /* Footer */
 .kapi-public-shell .kapi-public-footer {
   position: relative;
