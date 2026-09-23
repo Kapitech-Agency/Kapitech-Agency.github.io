@@ -2676,7 +2676,7 @@ apiRouter.post('/finance/expenses', requireAuth, requirePermission('canManageInv
       if (replayed) delete expense.__idempotentReplay;
       res.json({ success:true, expense, replayed });
     } catch (error) {
-      if (error instanceof ExpenseProjectNotFoundError) { res.status(409).json({ success:false,error:error.message }); return; }
+      if (error instanceof ExpenseProjectNotFoundError || (error instanceof Error && error.message === 'EXPENSE_IDEMPOTENCY_KEY_REUSE_CONFLICT')) { res.status(409).json({ success:false,error:error.message }); return; }
       res.status(400).json({ success:false,error:error instanceof Error?error.message:'Expense could not be created.' });
     }
     return;
