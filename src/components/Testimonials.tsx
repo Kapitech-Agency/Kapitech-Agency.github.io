@@ -44,12 +44,15 @@ export const Testimonials = () => {
     rating: t.rating || 5
   }));
   const totalSlides = Math.ceil(testimonials.length / itemsPerSlide);
+  const hasTestimonials = testimonials.length > 0;
 
   const next = () => {
+    if (totalSlides <= 1) return;
     setCurrentIndex((prev) => (prev + 1) % totalSlides);
   };
 
   const prev = () => {
+    if (totalSlides <= 1) return;
     setCurrentIndex((prev) => (prev - 1 + totalSlides) % totalSlides);
   };
 
@@ -85,14 +88,14 @@ export const Testimonials = () => {
           <div className="flex items-center gap-2.5 self-start sm:self-auto">
             <button 
               onClick={prev}
-              className="w-11 h-11 rounded-full border border-[var(--k-border)] bg-[#161616] flex items-center justify-center text-[var(--k-text-secondary)] hover:text-white hover:border-brand-red/50 active:scale-95 transition-all"
+              className="w-11 h-11 rounded-full border border-[var(--k-border)] bg-[var(--k-surface)] flex items-center justify-center text-[var(--k-text-secondary)] hover:text-white hover:border-brand-red/50 active:scale-95 transition-all"
               aria-label="Previous testimonials"
             >
               <ChevronLeft size={18} />
             </button>
             <button 
               onClick={next}
-              className="w-11 h-11 rounded-full border border-[var(--k-border)] bg-[#161616] flex items-center justify-center text-[var(--k-text-secondary)] hover:text-white hover:border-brand-red/50 active:scale-95 transition-all"
+              className="w-11 h-11 rounded-full border border-[var(--k-border)] bg-[var(--k-surface)] flex items-center justify-center text-[var(--k-text-secondary)] hover:text-white hover:border-brand-red/50 active:scale-95 transition-all"
               aria-label="Next testimonials"
             >
               <ChevronRight size={18} />
@@ -100,7 +103,11 @@ export const Testimonials = () => {
           </div>
         </div>
 
-        <div className={`grid gap-4 sm:gap-6 md:gap-8 ${
+        {!hasTestimonials ? (
+          <div className="kapi-card min-h-[180px] flex items-center justify-center text-center text-sm text-[var(--k-text-secondary)]">
+            {language === 'id' ? 'Belum ada testimoni yang tersedia.' : 'No testimonials are available yet.'}
+          </div>
+        ) : <div className={`grid gap-4 sm:gap-6 md:gap-8 ${
           itemsPerSlide === 1 ? 'grid-cols-1' : itemsPerSlide === 2 ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
         }`}>
           <AnimatePresence mode="wait">
@@ -111,7 +118,7 @@ export const Testimonials = () => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -15 }}
                 transition={{ duration: 0.3, delay: index * 0.06 }}
-                className="p-6 sm:p-8 rounded-2xl bg-[#161616] border border-[var(--k-border)] flex flex-col justify-between min-h-[260px] sm:min-h-[300px] transition-colors hover:border-brand-red/40"
+                className="kapi-card p-6 sm:p-8 flex flex-col justify-between min-h-[260px] sm:min-h-[300px] transition-colors hover:border-brand-red/40"
               >
                 <div>
                   <div className="flex items-center justify-between mb-4 sm:mb-5">
@@ -130,15 +137,15 @@ export const Testimonials = () => {
                 <div className="pt-4 sm:pt-5 mt-4 border-t border-[var(--k-border)]">
                   <h4 className="text-sm font-semibold text-white">{item.author}</h4>
                   <p className="text-xs text-brand-red font-medium mt-0.5">{item.role}, {item.company}</p>
-                  <p className="text-[11px] text-[var(--k-text-secondary)]/70 font-sans mt-0.5">{item.location}</p>
+                  <p className="text-xs text-[var(--k-text-secondary)]/70 font-sans mt-0.5">{item.location}</p>
                 </div>
               </motion.div>
             ))}
           </AnimatePresence>
-        </div>
+        </div>}
 
         {/* Carousel Dots */}
-        <div className="flex justify-center gap-2 mt-8 sm:mt-10">
+        {hasTestimonials && totalSlides > 1 && <div className="flex justify-center gap-2 mt-8 sm:mt-10">
           {[...Array(totalSlides)].map((_, i) => (
             <button
               key={i}
@@ -149,7 +156,7 @@ export const Testimonials = () => {
               aria-label={`Go to slide ${i + 1}`}
             />
           ))}
-        </div>
+        </div>}
       </div>
     </section>
   );
