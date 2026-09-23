@@ -80,7 +80,7 @@ export const AdminCmsTestimonials: React.FC = () => {
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[rgba(255,255,255,0.07)]">
         <div>
-          <h1 className="text-2xl font-display font-bold text-white flex items-center gap-3">
+          <h1 className="text-2xl font-sans font-bold text-white flex items-center gap-3">
             <Quote className="text-[var(--k-red)]" size={24} />
             <span>CMS: Client Testimonials & Social Proof</span>
           </h1>
@@ -165,7 +165,7 @@ export const AdminCmsTestimonials: React.FC = () => {
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-[var(--k-bg)] border border-[rgba(255,255,255,0.07)] rounded-2xl max-w-lg w-full p-6 sm:p-7 shadow-2xl">
             <div className="flex items-center justify-between pb-4 border-b border-[rgba(255,255,255,0.07)] mb-5">
-              <h2 className="text-base font-bold font-display text-white">
+              <h2 className="text-base font-bold font-sans text-white">
                 {editingItem.author ? `Edit: ${editingItem.author}` : (language === 'id' ? 'Tambah Testimoni Klien' : 'Add Client Testimonial')}
               </h2>
               <button onClick={() => setIsModalOpen(false)} className="text-[var(--k-text-secondary)] hover:text-white text-xs font-sans">
