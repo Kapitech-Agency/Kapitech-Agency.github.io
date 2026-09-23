@@ -353,21 +353,21 @@ export const AdminInvoicing: React.FC = () => {
     switch (status) {
       case 'paid':
         return (
-          <span className="px-2.5 py-1 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-[10px] font-sans font-bold flex items-center gap-1.5">
+          <span className="px-2.5 py-1 rounded-[var(--k-control-radius)] bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-[10px] font-sans font-bold flex items-center gap-1.5">
             <CheckCircle2 size={12} />
             <span>PAID</span>
           </span>
         );
       case 'sent':
         return (
-          <span className="px-2.5 py-1 rounded-lg bg-rose-500/10 text-rose-400 border border-rose-500/30 text-[10px] font-sans font-bold flex items-center gap-1.5">
+          <span className="px-2.5 py-1 rounded-[var(--k-control-radius)] bg-rose-500/10 text-rose-400 border border-rose-500/30 text-[10px] font-sans font-bold flex items-center gap-1.5">
             <Send size={12} />
             <span>SENT</span>
           </span>
         );
       case 'overdue':
         return (
-          <span className="px-2.5 py-1 rounded-lg bg-rose-500/10 text-rose-400 border border-rose-500/30 text-[10px] font-sans font-bold flex items-center gap-1.5 animate-pulse">
+          <span className="px-2.5 py-1 rounded-[var(--k-control-radius)] bg-rose-500/10 text-rose-400 border border-rose-500/30 text-[10px] font-sans font-bold flex items-center gap-1.5 animate-pulse">
             <AlertCircle size={12} />
             <span>OVERDUE</span>
           </span>
@@ -375,7 +375,7 @@ export const AdminInvoicing: React.FC = () => {
       case 'draft':
       default:
         return (
-          <span className="px-2.5 py-1 rounded-lg bg-zinc-500/10 text-zinc-400 border border-zinc-500/30 text-[10px] font-sans font-bold flex items-center gap-1.5">
+          <span className="px-2.5 py-1 rounded-[var(--k-control-radius)] bg-zinc-500/10 text-zinc-400 border border-zinc-500/30 text-[10px] font-sans font-bold flex items-center gap-1.5">
             <Clock size={12} />
             <span>DRAFT</span>
           </span>
@@ -457,7 +457,7 @@ export const AdminInvoicing: React.FC = () => {
           <div>
             <div className="flex items-center justify-between text-[var(--k-text-secondary)] mb-2">
               <span className="text-xs font-sans uppercase font-semibold">{t('admin.fin.revenuePaid')}</span>
-              <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+              <div className="w-8 h-8 rounded-[var(--k-control-radius)] bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
                 <DollarSign size={16} />
               </div>
             </div>
@@ -476,7 +476,7 @@ export const AdminInvoicing: React.FC = () => {
           <div>
             <div className="flex items-center justify-between text-[var(--k-text-secondary)] mb-2">
               <span className="text-xs font-sans uppercase font-semibold">{t('admin.fin.outstanding')}</span>
-              <div className="w-8 h-8 rounded-lg bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-400">
+              <div className="w-8 h-8 rounded-[var(--k-control-radius)] bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-400">
                 <Clock size={16} />
               </div>
             </div>
@@ -495,7 +495,7 @@ export const AdminInvoicing: React.FC = () => {
           <div>
             <div className="flex items-center justify-between text-[var(--k-text-secondary)] mb-2">
               <span className="text-xs font-sans uppercase font-semibold">{t('admin.fin.expenses')}</span>
-              <div className="w-8 h-8 rounded-lg bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-400">
+              <div className="w-8 h-8 rounded-[var(--k-control-radius)] bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-400">
                 <TrendingDown size={16} />
               </div>
             </div>
@@ -514,7 +514,7 @@ export const AdminInvoicing: React.FC = () => {
           <div>
             <div className="flex items-center justify-between text-[var(--k-text-secondary)] mb-2">
               <span className="text-xs font-sans uppercase font-semibold">{t('admin.fin.netProfit')}</span>
-              <div className="w-8 h-8 rounded-lg bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400">
+              <div className="w-8 h-8 rounded-[var(--k-control-radius)] bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400">
                 <TrendingUp size={16} />
               </div>
             </div>
@@ -539,7 +539,7 @@ export const AdminInvoicing: React.FC = () => {
         <div className="flex items-center gap-1.5 bg-[var(--k-surface-raised)] p-1 rounded-[var(--k-control-radius)] border border-[rgba(255,255,255,0.07)] shrink-0">
           <button
             onClick={() => setActiveTab('invoices')}
-            className={`px-3.5 py-1.5 rounded-lg text-xs font-sans transition-all flex items-center gap-1.5 ${
+            className={`px-3.5 py-1.5 rounded-[var(--k-control-radius)] text-xs font-sans transition-all flex items-center gap-1.5 ${
               activeTab === 'invoices'
                 ? 'bg-[var(--k-red)] text-white font-bold shadow-md'
                 : 'text-[var(--k-text-secondary)] hover:text-white'
@@ -550,7 +550,7 @@ export const AdminInvoicing: React.FC = () => {
           </button>
           <button
             onClick={() => setActiveTab('expenses')}
-            className={`px-3.5 py-1.5 rounded-lg text-xs font-sans transition-all flex items-center gap-1.5 ${
+            className={`px-3.5 py-1.5 rounded-[var(--k-control-radius)] text-xs font-sans transition-all flex items-center gap-1.5 ${
               activeTab === 'expenses'
                 ? 'bg-[var(--k-red)] text-white font-bold shadow-md'
                 : 'text-[var(--k-text-secondary)] hover:text-white'
@@ -856,7 +856,7 @@ export const AdminInvoicing: React.FC = () => {
                   className="bg-[var(--k-surface)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-card-radius)] p-4 space-y-3 shadow-lg"
                 >
                   <div className="flex items-center justify-between">
-                    <span className="px-2.5 py-1 rounded-lg bg-amber-500/10 text-amber-300 border border-amber-500/20 text-[10px] font-sans font-bold">
+                    <span className="px-2.5 py-1 rounded-[var(--k-control-radius)] bg-amber-500/10 text-amber-300 border border-amber-500/20 text-[10px] font-sans font-bold">
                       {exp.category}
                     </span>
                     <span className="text-[11px] font-sans text-[var(--k-text-secondary)]">{exp.date}</span>
@@ -952,7 +952,7 @@ export const AdminInvoicing: React.FC = () => {
               </h3>
               <button 
                 onClick={() => setIsInvoiceModalOpen(false)} 
-                className="w-8 h-8 rounded-lg text-[var(--k-text-secondary)] hover:text-white bg-[#0B0C0E] border border-[rgba(255,255,255,0.07)] flex items-center justify-center transition-colors shrink-0 ml-3"
+                className="w-8 h-8 rounded-[var(--k-control-radius)] text-[var(--k-text-secondary)] hover:text-white bg-[#0B0C0E] border border-[rgba(255,255,255,0.07)] flex items-center justify-center transition-colors shrink-0 ml-3"
               >
                 <X size={16} />
               </button>
@@ -1147,7 +1147,7 @@ export const AdminInvoicing: React.FC = () => {
               </h3>
               <button 
                 onClick={() => setIsExpenseModalOpen(false)} 
-                className="w-8 h-8 rounded-lg text-[var(--k-text-secondary)] hover:text-white bg-[#0B0C0E] border border-[rgba(255,255,255,0.07)] flex items-center justify-center transition-colors shrink-0 ml-3"
+                className="w-8 h-8 rounded-[var(--k-control-radius)] text-[var(--k-text-secondary)] hover:text-white bg-[#0B0C0E] border border-[rgba(255,255,255,0.07)] flex items-center justify-center transition-colors shrink-0 ml-3"
               >
                 <X size={16} />
               </button>
@@ -1407,7 +1407,7 @@ export const AdminInvoicing: React.FC = () => {
             {/* Sticky Header for Preview Modal */}
             <div className="sticky top-0 z-20 bg-white/95 backdrop-blur-md px-6 py-4 border-b border-zinc-200 flex items-center justify-between shrink-0">
               <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-lg bg-zinc-900 flex items-center justify-center p-1 shadow-sm">
+                <div className="w-7 h-7 rounded-[var(--k-control-radius)] bg-zinc-900 flex items-center justify-center p-1 shadow-sm">
                   <img src="/favicon.png" alt="Kapitech" className="w-full h-full object-contain" />
                 </div>
                 <div>
