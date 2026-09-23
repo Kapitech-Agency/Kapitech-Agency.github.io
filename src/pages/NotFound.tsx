@@ -45,7 +45,7 @@ export const NotFound = () => {
           </Link>
           <Link 
             to="/contact" 
-            className="kapi-button kapi-button-secondary px-8 md:px-10 border border-[var(--k-border)] bg-[#161616] hover:border-brand-red/50 transition-all font-semibold tracking-wider uppercase text-xs text-white"
+            className="kapi-button kapi-button-secondary px-8 md:px-10 border border-[var(--k-border)] bg-[var(--k-surface)] hover:border-brand-red/50 transition-all font-semibold tracking-wider uppercase text-xs text-white"
           >
             {language === 'id' ? 'Hubungi Bantuan' : 'Contact Support'}
           </Link>
