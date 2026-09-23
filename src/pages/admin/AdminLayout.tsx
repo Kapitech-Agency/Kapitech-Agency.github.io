@@ -646,7 +646,7 @@ export const AdminLayout: React.FC = () => {
                 <div className="flex items-center bg-[var(--k-surface)] border border-[var(--k-border)] rounded-md p-0.5">
                   <button
                     onClick={() => setLanguage('en')}
-                    className={`px-2 py-0.5 rounded text-[10px] font-bold transition-all ${
+                    className={`px-2 py-0.5 rounded text-xs font-bold transition-all ${
                       language === 'en' ? 'bg-[var(--k-surface-raised)] text-[var(--k-text)] shadow-sm border border-white/10' : 'text-[var(--k-text-secondary)]'
                     }`}
                   >
@@ -654,7 +654,7 @@ export const AdminLayout: React.FC = () => {
                   </button>
                   <button
                     onClick={() => setLanguage('id')}
-                    className={`px-2 py-0.5 rounded text-[10px] font-bold transition-all ${
+                    className={`px-2 py-0.5 rounded text-xs font-bold transition-all ${
                       language === 'id' ? 'bg-[var(--k-surface-raised)] text-[var(--k-text)] shadow-sm border border-white/10' : 'text-[var(--k-text-secondary)]'
                     }`}
                   >
@@ -668,7 +668,7 @@ export const AdminLayout: React.FC = () => {
                 <div className="flex items-center bg-[var(--k-surface)] border border-[var(--k-border)] rounded-md p-0.5">
                   <button
                     onClick={() => handleSwitchCurrency('IDR')}
-                    className={`px-2 py-0.5 rounded text-[10px] font-bold transition-all ${
+                    className={`px-2 py-0.5 rounded text-xs font-bold transition-all ${
                       currency === 'IDR' ? 'bg-[var(--k-surface-raised)] text-emerald-400 shadow-sm border border-white/10' : 'text-[var(--k-text-secondary)]'
                     }`}
                   >
@@ -676,7 +676,7 @@ export const AdminLayout: React.FC = () => {
                   </button>
                   <button
                     onClick={() => handleSwitchCurrency('USD')}
-                    className={`px-2 py-0.5 rounded text-[10px] font-bold transition-all ${
+                    className={`px-2 py-0.5 rounded text-xs font-bold transition-all ${
                       currency === 'USD' ? 'bg-[var(--k-surface-raised)] text-emerald-400 shadow-sm border border-white/10' : 'text-[var(--k-text-secondary)]'
                     }`}
                   >
@@ -716,7 +716,7 @@ export const AdminLayout: React.FC = () => {
                           <span className="truncate">{item.label}</span>
                         </div>
                         {item.badge !== null && item.badge !== undefined && (
-                          <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold shrink-0 ${item.badgeColor || 'bg-[var(--k-surface-raised)] text-[var(--k-text-secondary)] border border-[var(--k-border)]'}`}>
+                          <span className={`px-2 py-0.5 rounded-full text-xs font-bold shrink-0 ${item.badgeColor || 'bg-[var(--k-surface-raised)] text-[var(--k-text-secondary)] border border-[var(--k-border)]'}`}>
                             {item.badge}
                           </span>
                         )}
@@ -825,7 +825,7 @@ export const AdminLayout: React.FC = () => {
               <img src="/white.png" alt="Kapitech" className="h-3.5 w-auto object-contain" />
             </div>
             <div className="min-w-0 text-left">
-              <div className="text-[11px] font-bold text-[var(--k-text)] tracking-tight flex items-center gap-1">
+              <div className="text-xs font-bold text-[var(--k-text)] tracking-tight flex items-center gap-1">
                 <span>KAPITECH</span>
                 <span className="text-[8px] font-sans px-1 py-0.5 rounded bg-[var(--k-red)]/10 text-[var(--k-red)] border border-[var(--k-red-border)]">AMS</span>
               </div>
@@ -975,7 +975,7 @@ export const AdminLayout: React.FC = () => {
                       <Bell size={14} className="text-[var(--k-red)]" />
                       <span className="text-xs font-bold text-[var(--k-text)]">Notifications</span>
                       {unreadNotificationsCount > 0 && (
-                        <span className="px-1.5 py-0.2 rounded text-[9px] font-sans bg-[var(--k-red)]/20 text-[var(--k-red)] font-bold">
+                        <span className="px-1.5 py-0.2 rounded text-xs font-sans bg-[var(--k-red)]/20 text-[var(--k-red)] font-bold">
                           {unreadNotificationsCount} unread
                         </span>
                       )}
@@ -1006,11 +1006,11 @@ export const AdminLayout: React.FC = () => {
                         >
                           <div className="flex items-start justify-between gap-2">
                             <span className="font-semibold text-[var(--k-text)]">{n.title}</span>
-                            <span className="text-[9px] font-sans text-[var(--k-text-secondary)] shrink-0">
+                            <span className="text-xs font-sans text-[var(--k-text-secondary)] shrink-0">
                               {new Date(n.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                             </span>
                           </div>
-                          <p className="text-[var(--k-text-secondary)] text-[11px] mt-0.5 leading-relaxed">{n.message}</p>
+                          <p className="text-[var(--k-text-secondary)] text-xs mt-0.5 leading-relaxed">{n.message}</p>
                           {n.link && (
                             <Link
                               to={n.link}
@@ -1058,7 +1058,7 @@ export const AdminLayout: React.FC = () => {
                   to={item.to}
                   aria-current={active ? 'page' : undefined}
                   aria-label={item.badge ? `${item.label}, ${item.badge}` : item.label}
-                  className={`relative min-h-12 min-w-0 rounded-[var(--k-control-radius)] flex flex-col items-center justify-center gap-1 text-[9px] font-sans focus-visible:ring-2 focus-visible:ring-[var(--k-red)]/40 ${active ? 'bg-[var(--k-red)]/10 text-[var(--k-text)]' : 'text-[var(--k-text-secondary)]'}`}
+                  className={`relative min-h-12 min-w-0 rounded-[var(--k-control-radius)] flex flex-col items-center justify-center gap-1 text-xs font-sans focus-visible:ring-2 focus-visible:ring-[var(--k-red)]/40 ${active ? 'bg-[var(--k-red)]/10 text-[var(--k-text)]' : 'text-[var(--k-text-secondary)]'}`}
                 >
                   <Icon size={17} className={active ? 'text-[var(--k-red)]' : ''} />
                   <span className="truncate max-w-full px-1">{item.label}</span>
