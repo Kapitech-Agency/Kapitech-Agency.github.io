@@ -663,7 +663,7 @@ export const AdminInbox: React.FC = () => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={language === 'id' ? 'Cari nama, email, perusahaan, jasa, atau isi brief...' : 'Search name, email, company, requested stack, or message...'}
-              className="w-full pl-10 pr-8 py-2 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-xs text-white focus:outline-none focus:border-[var(--k-red)] placeholder:text-[var(--k-text-secondary)] font-sans h-10 min-h-[40px]"
+              className="w-full pl-10 pr-8 py-2 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-xs text-white focus:border-[var(--k-red-border)] placeholder:text-[var(--k-text-secondary)] font-sans h-10 min-h-[40px]"
             />
             {searchQuery && (
               <button
@@ -680,7 +680,7 @@ export const AdminInbox: React.FC = () => {
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
-              className="w-full py-2 px-3 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-xs text-white focus:outline-none focus:border-[var(--k-red)] font-sans h-10 min-h-[40px]"
+              className="w-full py-2 px-3 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-xs text-white focus:border-[var(--k-red-border)] font-sans h-10 min-h-[40px]"
             >
               <option value="all">{language === 'id' ? 'Semua Status' : 'All Status'}</option>
               <option value="new">Status: New</option>
@@ -695,7 +695,7 @@ export const AdminInbox: React.FC = () => {
             <select
               value={filterPriority}
               onChange={(e) => setFilterPriority(e.target.value)}
-              className="w-full py-2 px-3 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-xs text-white focus:outline-none focus:border-[var(--k-red)] font-sans h-10 min-h-[40px]"
+              className="w-full py-2 px-3 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-xs text-white focus:border-[var(--k-red-border)] font-sans h-10 min-h-[40px]"
             >
               <option value="all">{language === 'id' ? 'Semua Prioritas' : 'All Priorities'}</option>
               <option value="urgent">Urgent</option>
@@ -1307,7 +1307,7 @@ export const AdminInbox: React.FC = () => {
                         placeholder={language === 'id' 
                           ? 'Tulis catatan teknis, rangkuman discovery call, kesepakatan timeline, atau petunjuk khusus untuk tim...' 
                           : 'Enter technical scoping notes, discovery call summary, milestone commitments, or specific client instructions...'}
-                        className="w-full p-3.5 bg-[var(--k-surface)] border border-[rgba(255,255,255,0.08)] rounded-[var(--k-control-radius)] text-xs text-white placeholder:text-[var(--k-text-secondary)] font-sans focus:outline-none focus:border-[var(--k-red)] leading-relaxed"
+                        className="w-full p-3.5 bg-[var(--k-surface)] border border-[rgba(255,255,255,0.08)] rounded-[var(--k-control-radius)] text-xs text-white placeholder:text-[var(--k-text-secondary)] font-sans focus:border-[var(--k-red-border)] leading-relaxed"
                       />
 
                       <div className="flex items-center justify-end">
@@ -1332,7 +1332,7 @@ export const AdminInbox: React.FC = () => {
                       <select
                         value={selectedSubmission.assignedTo || 'Lead Full-Stack Tech'}
                         onChange={(e) => handleAssigneeChange(selectedSubmission.id, e.target.value)}
-                        className="w-full px-3 py-2 bg-[var(--k-surface)] border border-[rgba(255,255,255,0.08)] rounded-[var(--k-control-radius)] text-xs text-white font-sans focus:outline-none focus:border-emerald-500"
+                        className="w-full px-3 py-2 bg-[var(--k-surface)] border border-[rgba(255,255,255,0.08)] rounded-[var(--k-control-radius)] text-xs text-white font-sans focus:border-emerald-500"
                       >
                         <option value="Lead Full-Stack Tech">Lead Full-Stack Tech (Engineering)</option>
                         <option value="Senior UI/UX Designer">Senior UI/UX Designer (Design)</option>
@@ -1355,7 +1355,7 @@ export const AdminInbox: React.FC = () => {
                       disabled={isUpdating}
                       value={selectedSubmission.status}
                       onChange={(e) => handleStatusChange(selectedSubmission.id, e.target.value as ContactSubmission['status'])}
-                      className="text-xs py-2 px-3 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:outline-none focus:border-[var(--k-red)] font-sans min-h-[38px]"
+                      className="text-xs py-2 px-3 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:border-[var(--k-red-border)] font-sans min-h-[38px]"
                     >
                       <option value="new">New</option>
                       <option value="in-review">In Review</option>
@@ -1370,7 +1370,7 @@ export const AdminInbox: React.FC = () => {
                     <select
                       value={selectedSubmission.priority || 'normal'}
                       onChange={(e) => handlePriorityChange(selectedSubmission.id, e.target.value as ContactSubmission['priority'])}
-                      className="text-xs py-2 px-3 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:outline-none focus:border-[var(--k-red)] font-sans min-h-[38px]"
+                      className="text-xs py-2 px-3 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:border-[var(--k-red-border)] font-sans min-h-[38px]"
                     >
                       <option value="urgent">Urgent</option>
                       <option value="high">High</option>
