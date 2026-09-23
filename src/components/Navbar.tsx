@@ -96,7 +96,7 @@ export const Navbar = () => {
     <>
       <nav
         className={cn(
-          "fixed top-0 left-0 w-full z-50 transition-all duration-300 border-b",
+          "kapi-public-nav fixed top-0 left-0 w-full z-50 transition-all duration-300 border-b",
           isScrolled 
             ? "bg-[#0A0A0A]/95 backdrop-blur-md py-3 sm:py-3.5 border-[#2A2A2A] shadow-lg shadow-[#0A0A0A]/80" 
             : "bg-[#0A0A0A]/80 backdrop-blur-sm py-4 sm:py-5 border-[#2A2A2A]/60"
@@ -121,7 +121,7 @@ export const Navbar = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-6 lg:gap-8">
+          <div className="kapi-public-nav-links hidden md:flex items-center gap-6 lg:gap-8">
             <div className="flex items-center gap-5 lg:gap-6 px-6 py-2 rounded-full bg-[#16181D] backdrop-blur-md border border-[#262930]">
               
               {/* Work Link */}
@@ -196,7 +196,7 @@ export const Navbar = () => {
             </div>
 
             {/* Start Project CTA with Rotating Clockwise Red Glow */}
-            <div className="relative p-[1.5px] rounded-full overflow-hidden group/cta flex items-center justify-center shrink-0">
+            <div className="kapi-public-cta-wrap relative p-[1.5px] rounded-full overflow-hidden group/cta flex items-center justify-center shrink-0">
               <motion.div
                 className="absolute -inset-[200%] w-[500%] h-[500%] will-change-transform"
                 style={{
