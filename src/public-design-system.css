@@ -1525,3 +1525,441 @@
     padding-inline: 16px;
   }
 }
+
+
+/* ==========================================================================
+   PUBLIC UI FINAL SYSTEM
+   Apple-inspired composition: quiet surfaces, precise geometry, restrained motion.
+   This is the only active public-site stylesheet.
+   ========================================================================== */
+
+.kapi-public-shell {
+  --pub-content: 1240px;
+  --pub-gutter: clamp(20px, 4vw, 56px);
+  --pub-red: #b00020;
+  --pub-red-hover: #c1121f;
+  --pub-bg: #090a0f;
+  --pub-surface: #15161a;
+  --pub-surface-2: #1c1d22;
+  --pub-text: #f5f5f7;
+  --pub-text-2: #a1a1a6;
+  --pub-text-3: #737379;
+  --pub-border: rgba(255,255,255,.10);
+  --pub-border-strong: rgba(255,255,255,.17);
+}
+
+.kapi-public-shell .kapi-public-nav {
+  height: 72px;
+  padding: 0;
+  background: rgba(9,10,15,.58) !important;
+  border-color: rgba(255,255,255,.08) !important;
+  box-shadow: 0 8px 30px rgba(0,0,0,.10);
+  backdrop-filter: blur(22px) saturate(145%);
+  -webkit-backdrop-filter: blur(22px) saturate(145%);
+  transition: background 260ms ease, border-color 260ms ease, box-shadow 260ms ease;
+}
+
+.kapi-public-shell .kapi-public-nav.kapi-nav-scrolled {
+  background: rgba(9,10,15,.84) !important;
+  border-color: rgba(255,255,255,.12) !important;
+  box-shadow: 0 14px 40px rgba(0,0,0,.22);
+}
+
+.kapi-public-shell .kapi-public-nav.kapi-nav-top {
+  background: rgba(9,10,15,.48) !important;
+}
+
+.kapi-public-shell .kapi-public-nav .kapi-nav-inner {
+  height: 72px;
+  max-width: var(--pub-content);
+  width: calc(100% - (var(--pub-gutter) * 2));
+  padding: 0;
+}
+
+.kapi-public-shell .kapi-public-nav .kapi-nav-inner > a:first-child {
+  min-height: 44px;
+  padding: 0 8px;
+  margin-left: -8px;
+  border-radius: 12px;
+  transition: background 180ms ease, transform 180ms ease;
+}
+
+.kapi-public-shell .kapi-public-nav .kapi-nav-inner > a:first-child:hover {
+  background: rgba(255,255,255,.055);
+  transform: translateY(-1px);
+}
+
+.kapi-public-shell .kapi-public-nav-links {
+  align-items: center;
+  gap: 12px;
+}
+
+.kapi-public-shell .kapi-nav-group {
+  gap: 2px;
+  padding: 4px;
+  border: 1px solid rgba(255,255,255,.06);
+  border-radius: 15px;
+  background: rgba(255,255,255,.025);
+}
+
+.kapi-public-shell .kapi-nav-link {
+  position: relative;
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 13px;
+  border-radius: 11px;
+  color: var(--pub-text-2);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -.01em;
+  line-height: 1;
+  transition: color 180ms ease, background 180ms ease, transform 180ms ease;
+}
+
+.kapi-public-shell .kapi-nav-link:hover {
+  color: var(--pub-text);
+  background: rgba(255,255,255,.065);
+  transform: translateY(-1px);
+}
+
+.kapi-public-shell .kapi-nav-link:focus-visible {
+  outline: 2px solid rgba(193,18,31,.75);
+  outline-offset: 2px;
+}
+
+.kapi-public-shell .kapi-nav-link > span:last-child {
+  left: 12px;
+  right: 12px;
+  bottom: 5px;
+  width: auto !important;
+  height: 1.5px;
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 180ms ease;
+}
+
+.kapi-public-shell .kapi-nav-link:hover > span:last-child,
+.kapi-public-shell .kapi-nav-link.text-brand-red > span:last-child {
+  transform: scaleX(1);
+}
+
+.kapi-public-shell .kapi-nav-services-trigger {
+  border: 0;
+  font: inherit;
+  cursor: pointer;
+}
+
+.kapi-public-shell .kapi-nav-cta {
+  min-height: 40px;
+  padding: 0 15px;
+  border-radius: 11px;
+  background: var(--pub-red);
+  color: #fff;
+  box-shadow: 0 7px 20px rgba(176,0,32,.20);
+  transition: transform 180ms ease, background 180ms ease, box-shadow 180ms ease;
+}
+
+.kapi-public-shell .kapi-nav-cta:hover {
+  background: var(--pub-red-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(176,0,32,.28);
+}
+
+.kapi-public-shell .kapi-language-switcher {
+  padding: 3px;
+  gap: 2px;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 11px;
+  background: rgba(255,255,255,.035);
+}
+
+.kapi-public-shell .kapi-language-option {
+  min-width: 32px;
+  min-height: 32px;
+  padding: 0 7px;
+  border-radius: 8px;
+  font-size: 10px;
+  letter-spacing: .05em;
+  transition: background 160ms ease, color 160ms ease;
+}
+
+.kapi-public-shell .kapi-nav-icon-button {
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255,255,255,.09);
+  border-radius: 11px;
+  background: rgba(255,255,255,.045);
+  color: var(--pub-text);
+  transition: background 160ms ease, transform 160ms ease;
+}
+
+.kapi-public-shell .kapi-nav-icon-button:hover {
+  background: rgba(255,255,255,.09);
+  transform: translateY(-1px);
+}
+
+.kapi-public-shell .kapi-mega-menu {
+  top: 72px;
+  left: 50%;
+  width: min(var(--pub-content), calc(100vw - 40px));
+  margin-left: 0;
+  transform: translateX(-50%);
+  padding: 24px;
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 20px;
+  background: rgba(17,18,22,.92);
+  box-shadow: 0 28px 80px rgba(0,0,0,.36);
+  backdrop-filter: blur(30px) saturate(140%);
+  -webkit-backdrop-filter: blur(30px) saturate(140%);
+}
+
+.kapi-public-shell .kapi-home-hero {
+  position: relative;
+  isolation: isolate;
+  min-height: min(840px, 92svh);
+  padding-top: clamp(140px, 16vh, 184px);
+  padding-bottom: clamp(84px, 9vh, 120px);
+  background:
+    radial-gradient(circle at 72% 34%, rgba(176,0,32,.12), transparent 28%),
+    radial-gradient(circle at 24% 78%, rgba(255,255,255,.035), transparent 30%),
+    var(--pub-bg);
+}
+
+.kapi-public-shell .kapi-home-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(115deg, transparent 0%, rgba(255,255,255,.028) 45%, transparent 62%);
+  transform: translateX(-35%);
+  animation: kapi-hero-sheen 14s ease-in-out infinite;
+}
+
+.kapi-public-shell .kapi-home-hero::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -180px;
+  width: 620px;
+  height: 360px;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(ellipse, rgba(176,0,32,.12), transparent 68%);
+  transform: translateX(-50%);
+  filter: blur(28px);
+  animation: kapi-hero-breathe 8s ease-in-out infinite;
+}
+
+.kapi-public-shell .kapi-hero-grid {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: .28;
+  background-image:
+    linear-gradient(rgba(255,255,255,.028) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.028) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: linear-gradient(to bottom, black, transparent 72%);
+  -webkit-mask-image: linear-gradient(to bottom, black, transparent 72%);
+}
+
+.kapi-public-shell .kapi-hero-orbit {
+  position: absolute;
+  z-index: -1;
+  width: 220px;
+  height: 220px;
+  border: 1px solid rgba(255,255,255,.055);
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(.2px);
+}
+
+.kapi-public-shell .kapi-hero-orbit::after {
+  content: "";
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  top: 22px;
+  right: 36px;
+  border-radius: 50%;
+  background: rgba(176,0,32,.72);
+  box-shadow: 0 0 20px rgba(176,0,32,.40);
+}
+
+.kapi-public-shell .kapi-hero-orbit-one {
+  top: 19%;
+  right: 8%;
+  animation: kapi-orbit-float 10s ease-in-out infinite;
+}
+
+.kapi-public-shell .kapi-hero-orbit-two {
+  width: 340px;
+  height: 340px;
+  right: -90px;
+  top: 34%;
+  opacity: .48;
+  animation: kapi-orbit-float 14s ease-in-out infinite reverse;
+}
+
+.kapi-public-shell .kapi-home-content {
+  position: relative;
+}
+
+.kapi-public-shell .kapi-hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 24px;
+  color: var(--pub-text-2);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.kapi-public-shell .kapi-hero-eyebrow span {
+  color: var(--pub-red);
+}
+
+.kapi-public-shell .kapi-home-content .kapi-hero-status {
+  width: fit-content;
+  max-width: 100%;
+  margin-bottom: 18px;
+  border: 1px solid rgba(255,255,255,.075);
+  background: rgba(255,255,255,.035);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.kapi-public-shell .kapi-display-title {
+  max-width: 940px;
+  font-size: clamp(52px, 7.2vw, 92px);
+  line-height: .91;
+  letter-spacing: -.072em;
+  font-weight: 700;
+  text-wrap: balance;
+}
+
+.kapi-public-shell .kapi-home-content > p {
+  max-width: 660px;
+  margin-top: 30px;
+  margin-bottom: 0;
+  color: var(--pub-text-2);
+  font-size: clamp(16px, 1.45vw, 19px);
+  line-height: 1.65;
+}
+
+.kapi-public-shell .kapi-home-content > div:last-child {
+  margin-top: 32px;
+}
+
+.kapi-public-shell .kapi-hero-cta {
+  box-shadow: 0 12px 30px rgba(176,0,32,.22);
+  transition: transform 180ms ease, background 180ms ease, box-shadow 180ms ease;
+}
+
+.kapi-public-shell .kapi-hero-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 36px rgba(176,0,32,.30);
+}
+
+.kapi-public-shell .kapi-button-secondary {
+  background: rgba(255,255,255,.035);
+  border-color: rgba(255,255,255,.11);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: transform 180ms ease, background 180ms ease, border-color 180ms ease;
+}
+
+.kapi-public-shell .kapi-button-secondary:hover {
+  background: rgba(255,255,255,.075);
+  border-color: rgba(255,255,255,.18);
+  transform: translateY(-2px);
+}
+
+@keyframes kapi-hero-sheen {
+  0%, 100% { transform: translateX(-35%); opacity: .35; }
+  50% { transform: translateX(35%); opacity: .70; }
+}
+
+@keyframes kapi-hero-breathe {
+  0%, 100% { transform: translateX(-50%) scale(.92); opacity: .55; }
+  50% { transform: translateX(-50%) scale(1.04); opacity: .9; }
+}
+
+@keyframes kapi-orbit-float {
+  0%, 100% { transform: translate3d(0,0,0) rotate(0deg); }
+  50% { transform: translate3d(0,-12px,0) rotate(4deg); }
+}
+
+.kapi-public-shell :where(a,button,input,textarea,select):focus-visible {
+  outline: 2px solid rgba(193,18,31,.82);
+  outline-offset: 3px;
+}
+
+@media (max-width: 767px) {
+  .kapi-public-shell .kapi-public-nav,
+  .kapi-public-shell .kapi-public-nav .kapi-nav-inner {
+    height: 64px;
+  }
+
+  .kapi-public-shell .kapi-public-nav .kapi-nav-inner {
+    width: calc(100% - 32px);
+  }
+
+  .kapi-public-shell .kapi-home-hero {
+    min-height: 760px;
+    padding: 132px 20px 76px;
+  }
+
+  .kapi-public-shell .kapi-display-title {
+    font-size: clamp(45px, 12.6vw, 62px);
+    line-height: .94;
+  }
+
+  .kapi-public-shell .kapi-hero-eyebrow {
+    margin-bottom: 20px;
+    font-size: 10px;
+  }
+
+  .kapi-public-shell .kapi-home-content > p {
+    margin-top: 24px;
+    font-size: 16px;
+  }
+
+  .kapi-public-shell .kapi-home-content > div:last-child {
+    margin-top: 26px;
+  }
+
+  .kapi-public-shell .kapi-hero-orbit-one {
+    top: 14%;
+    right: -90px;
+    opacity: .6;
+  }
+
+  .kapi-public-shell .kapi-hero-orbit-two {
+    right: -180px;
+    top: 40%;
+    opacity: .25;
+  }
+
+  .kapi-public-shell .kapi-hero-grid {
+    background-size: 56px 56px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kapi-public-shell .kapi-home-hero::before,
+  .kapi-public-shell .kapi-home-hero::after,
+  .kapi-public-shell .kapi-hero-orbit {
+    animation: none !important;
+  }
+}
