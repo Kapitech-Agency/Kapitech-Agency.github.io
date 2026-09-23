@@ -330,7 +330,7 @@ export const About = () => {
             </p>
 
             {/* Address callout */}
-            <div className="p-4 sm:p-5 rounded-2xl bg-[#161616] border border-[var(--k-border)] flex items-start gap-3">
+            <div className="p-4 sm:p-5 rounded-2xl bg-[var(--k-surface)] border border-[var(--k-border)] flex items-start gap-3">
               <MapPin size={18} className="text-brand-red shrink-0 mt-0.5" />
               <div className="text-xs">
                 <span className="font-sans text-[var(--k-text-secondary)] uppercase block mb-1">
@@ -346,21 +346,21 @@ export const About = () => {
             <div className="grid grid-cols-3 gap-3 sm:gap-6 pt-5 sm:pt-6 border-t border-[var(--k-border)]">
               <div>
                 <span className="text-2xl sm:text-3xl md:text-4xl font-sans font-bold text-white block">50+</span>
-                <span className="text-[10px] sm:text-xs font-sans text-[var(--k-text-secondary)] uppercase">{t('about.stats.projects')}</span>
+                <span className="text-xs font-sans text-[var(--k-text-secondary)] uppercase">{t('about.stats.projects')}</span>
               </div>
               <div>
                 <span className="text-2xl sm:text-3xl md:text-4xl font-sans font-bold text-[var(--k-text-secondary)] block">3+</span>
-                <span className="text-[10px] sm:text-xs font-sans text-[var(--k-text-secondary)] uppercase">{t('about.stats.experience')}</span>
+                <span className="text-xs font-sans text-[var(--k-text-secondary)] uppercase">{t('about.stats.experience')}</span>
               </div>
               <div>
                 <span className="text-2xl sm:text-3xl md:text-4xl font-sans font-bold text-brand-red block">100%</span>
-                <span className="text-[10px] sm:text-xs font-sans text-[var(--k-text-secondary)] uppercase">{t('about.stats.craft')}</span>
+                <span className="text-xs font-sans text-[var(--k-text-secondary)] uppercase">{t('about.stats.craft')}</span>
               </div>
             </div>
           </div>
 
           <div className="lg:col-span-6">
-            <div className="rounded-2xl sm:rounded-[24px] overflow-hidden border border-[var(--k-border)] shadow-2xl relative aspect-[16/10] sm:aspect-[4/3] bg-[#161616]">
+            <div className="rounded-2xl sm:rounded-[24px] overflow-hidden border border-[var(--k-border)] shadow-[0_20px_60px_rgba(0,0,0,.28)] relative aspect-[16/10] sm:aspect-[4/3] bg-[var(--k-surface)]">
               <img
                 src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=1200"
                 alt="Kapitech Agency Team Collaboration"
@@ -368,7 +368,7 @@ export const About = () => {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[var(--k-bg-deep)]/90 via-[var(--k-bg-deep)]/20 to-transparent flex items-end p-5 sm:p-8">
                 <div>
-                  <span className="text-[10px] sm:text-xs font-sans text-brand-red uppercase tracking-wider block mb-1 font-semibold">
+                  <span className="text-xs font-sans text-brand-red uppercase tracking-wider block mb-1 font-semibold">
                     {language === 'id' ? 'Komitmen Kami' : 'Our Commitment'}
                   </span>
                   <p className="text-sm sm:text-base font-sans font-semibold text-white">
@@ -401,22 +401,22 @@ export const About = () => {
             {team.map((member) => (
               <div
                 key={member.name}
-                className="rounded-2xl bg-[#111318] border border-white/[0.07] overflow-hidden flex flex-col justify-between group hover:border-brand-red/40 transition-colors"
+                className="rounded-2xl bg-[var(--k-surface)] border border-white/[0.07] overflow-hidden flex flex-col justify-between group hover:border-brand-red/40 transition-colors"
               >
                 <div>
-                  <div className="w-full aspect-[864/810] overflow-hidden bg-[#181B22] relative flex items-center justify-center">
+                  <div className="w-full aspect-[864/810] overflow-hidden bg-[var(--k-surface-raised)] relative flex items-center justify-center">
                     <img
                       src={member.image}
                       alt={member.name}
                       referrerPolicy="no-referrer"
-                      className="w-full h-full object-contain object-top group-hover:scale-105 transition-transform duration-500"
+                      className="w-full h-full object-contain object-top group-hover:scale-[1.02] transition-transform duration-500"
                     />
                   </div>
                   <div className="p-4 sm:p-5">
                     <h3 className="text-sm sm:text-base font-sans font-bold text-white mb-0.5 sm:mb-1">
                       {member.name}
                     </h3>
-                    <p className="text-[10px] sm:text-[11px] font-sans text-brand-red uppercase tracking-wider mb-2.5 sm:mb-3 font-medium">
+                    <p className="text-xs font-sans text-brand-red uppercase tracking-wider mb-2.5 sm:mb-3 font-medium">
                       {member.role}
                     </p>
                     <p className="text-xs text-[var(--k-text-secondary)] font-light leading-relaxed">
@@ -451,7 +451,7 @@ export const About = () => {
             {values.map((v, i) => (
               <div
                 key={i}
-                className="p-6 sm:p-8 rounded-2xl bg-[#161616] border border-[var(--k-border)] flex flex-col justify-between min-h-[200px] sm:min-h-[240px] hover:border-brand-red/40 transition-colors"
+                className="p-6 sm:p-8 rounded-2xl bg-[var(--k-surface)] border border-[var(--k-border)] flex flex-col justify-between min-h-[200px] sm:min-h-[240px] hover:border-brand-red/40 transition-colors"
               >
                 <div>
                   <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-brand-red/10 border border-brand-red/20 flex items-center justify-center text-brand-red mb-5 sm:mb-6">
@@ -482,7 +482,7 @@ export const About = () => {
             {journey.map((item) => (
               <div
                 key={item.year}
-                className="p-6 sm:p-8 rounded-2xl bg-[#161616] border border-[var(--k-border)] flex flex-col justify-between min-h-[180px] sm:min-h-[220px] hover:border-brand-red/40 transition-colors"
+                className="p-6 sm:p-8 rounded-2xl bg-[var(--k-surface)] border border-[var(--k-border)] flex flex-col justify-between min-h-[180px] sm:min-h-[220px] hover:border-brand-red/40 transition-colors"
               >
                 <div>
                   <span className="text-xl sm:text-2xl font-sans font-bold text-brand-red font-sans block mb-3 sm:mb-4">
@@ -516,14 +516,14 @@ export const About = () => {
             {techStack.map((stack) => (
               <div 
                 key={stack.category} 
-                className="p-6 sm:p-7 rounded-2xl sm:rounded-[24px] bg-[#161616] border border-[var(--k-border)] hover:border-brand-red/50 hover:bg-[#1E1E1E] transition-all duration-300 flex flex-col justify-between group"
+                className="p-6 sm:p-7 rounded-2xl sm:rounded-[24px] bg-[var(--k-surface)] border border-[var(--k-border)] hover:border-brand-red/50 hover:bg-[#1E1E1E] transition-all duration-300 flex flex-col justify-between group"
               >
                 <div>
                   <div className="flex items-center justify-between mb-5 sm:mb-6">
-                    <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-brand-red/10 border border-brand-red/20 flex items-center justify-center group-hover:scale-105 transition-transform">
+                    <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-brand-red/10 border border-brand-red/20 flex items-center justify-center group-hover:scale-[1.02] transition-transform">
                       {stack.icon}
                     </div>
-                    <span className="text-[9px] sm:text-[10px] font-sans px-2.5 py-1 rounded-full bg-[var(--k-bg-deep)] text-[var(--k-text-secondary)] border border-[var(--k-border)]">
+                    <span className="text-xs font-sans px-2.5 py-1 rounded-full bg-[var(--k-bg-deep)] text-[var(--k-text-secondary)] border border-[var(--k-border)]">
                       {stack.badge}
                     </span>
                   </div>
@@ -542,7 +542,7 @@ export const About = () => {
                         className="flex items-center justify-between p-2 rounded-xl bg-[var(--k-bg-deep)] border border-[var(--k-border)] hover:border-brand-red/30 transition-colors"
                       >
                         <span className="text-xs font-medium text-white">{tool.name}</span>
-                        <span className="text-[9px] sm:text-[10px] font-sans text-[var(--k-text-secondary)] uppercase">{tool.level}</span>
+                        <span className="text-xs font-sans text-[var(--k-text-secondary)] uppercase">{tool.level}</span>
                       </div>
                     ))}
                   </div>

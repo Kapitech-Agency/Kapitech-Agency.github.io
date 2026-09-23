@@ -1442,23 +1442,6 @@ body:has([data-kapi-admin="true"]) .kapi-noise-overlay {
   background: rgba(255,255,255,0.035);
 }
 
-/* Shared concentricity: inner controls nest inside parent radii. */
-.kapi-public-shell .rounded-xl { border-radius: 18px; }
-.kapi-public-shell .rounded-2xl { border-radius: 22px; }
-.kapi-public-shell .rounded-3xl { border-radius: 28px; }
-
-.kapi-public-shell .rounded-xl > .rounded-lg {
-  border-radius: 12px;
-}
-
-.kapi-public-shell .rounded-2xl > .rounded-xl {
-  border-radius: 16px;
-}
-
-.kapi-public-shell .rounded-3xl > .rounded-2xl {
-  border-radius: 22px;
-}
-
 /* Red is reserved for emphasis, selection and key actions. */
 .kapi-public-shell .text-brand-red {
   color: var(--brand-red) !important;
@@ -1770,15 +1753,6 @@ code, pre, kbd, .font-mono { font-family: var(--k-font-mono); }
     background:#18181B !important;backdrop-filter:none;-webkit-backdrop-filter:none
   }
 }
-
-/* Normalize remaining legacy public red literals. */
-.kapi-public-shell [class*="bg-[#E01414]"],
-.kapi-public-shell [class*="bg-[#CC001F]"],
-.kapi-public-shell [class*="bg-[#E50914]"] { background-color:var(--k-red) !important; }
-.kapi-public-shell [class*="text-[#FF1E27]"],
-.kapi-public-shell [class*="text-[#E50914]"] { color:var(--k-red) !important; }
-.kapi-public-shell [class*="border-[#E50914]"],
-.kapi-public-shell [class*="border-[#E01414]"] { border-color:var(--k-red-border) !important; }
 
 /* Desktop modal content follows the same Apple sheet geometry. */
 @media (min-width:768px){

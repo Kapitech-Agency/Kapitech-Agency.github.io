@@ -145,7 +145,7 @@ export const Home = () => {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-red opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-red"></span>
               </span>
-              <span className="text-[10px] sm:text-[11px] font-sans tracking-wider uppercase text-[var(--k-text-secondary)]">
+              <span className="text-xs font-sans tracking-wider uppercase text-[var(--k-text-secondary)]">
                 Digital Product Design & Development Agency
               </span>
             </div>
@@ -167,14 +167,14 @@ export const Home = () => {
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-center">
               <Link 
                 to="/contact" 
-                className="kapi-button kapi-button-primary h-12 sm:h-13 px-7 sm:px-8 bg-brand-red hover:bg-brand-red text-white rounded-full text-xs font-semibold uppercase tracking-wider transition-colors duration-300 flex items-center justify-center gap-2 shadow-lg shadow-brand-red/20 active:scale-95"
+                className="kapi-button kapi-button-primary px-7 sm:px-8 bg-brand-red hover:bg-[var(--k-red-hover)] text-white rounded-full text-xs font-semibold uppercase tracking-wider transition-colors duration-300 flex items-center justify-center gap-2 active:scale-[.98]"
               >
                 <span>{language === 'id' ? 'Mulai Proyek' : 'Start a Project'}</span>
                 <ArrowUpRight size={16} />
               </Link>
               <Link 
                 to="/work" 
-                className="kapi-button kapi-button-secondary h-12 sm:h-13 px-7 sm:px-8 rounded-full border border-white/12 bg-white/[0.045] hover:bg-white/[0.08] text-white transition-colors duration-300 text-xs font-semibold uppercase tracking-wider flex items-center justify-center gap-2 active:scale-95"
+                className="kapi-button kapi-button-secondary px-7 sm:px-8 rounded-full border border-white/[.12] bg-white/[.045] hover:bg-white/[.08] text-white transition-colors duration-300 text-xs font-semibold uppercase tracking-wider flex items-center justify-center gap-2 active:scale-[.98]"
               >
                 <span>{language === 'id' ? 'Jelajahi 50 Portofolio' : 'Explore 50 Case Studies'}</span>
               </Link>
@@ -190,27 +190,27 @@ export const Home = () => {
             {stats.map((stat, i) => (
               <div 
                 key={i} 
-                className="relative p-6 rounded-2xl bg-[var(--k-surface)] border border-[var(--k-border)] hover:border-brand-red/40 transition-all duration-300 group flex flex-col justify-between"
+                className="kapi-card relative p-5 sm:p-6 rounded-[18px] border border-white/[.10] hover:border-brand-red/35 transition-all duration-300 group flex flex-col justify-between min-h-[168px]"
               >
                 <div className="flex items-center justify-between mb-4">
-                  <span className="text-[11px] font-sans uppercase tracking-widest text-brand-red font-semibold">
+                  <span className="text-xs font-sans uppercase tracking-[0.14em] text-brand-red font-semibold">
                     {stat.label}
                   </span>
-                  <span className="text-[10px] font-sans px-2 py-0.5 rounded bg-[var(--k-bg)] border border-[var(--k-border)] text-[var(--k-text-secondary)]">
+                  <span className="text-xs font-sans px-2 py-1 rounded-full bg-white/[.035] border border-white/[.10] text-[var(--k-text-tertiary)]">
                     0{i + 1}
                   </span>
                 </div>
 
                 <div className="my-2">
-                  <div className="text-2xl sm:text-3xl lg:text-4xl font-sans font-bold text-white tracking-tight group-hover:text-brand-red transition-colors">
+                  <div className="text-2xl sm:text-3xl font-sans font-bold text-white tracking-[-0.03em] group-hover:text-brand-red transition-colors">
                     {stat.value}
                   </div>
-                  <div className="text-xs font-sans text-brand-red font-medium mt-1">
+                  <div className="text-sm font-sans text-brand-red font-medium mt-1">
                     {stat.subValue}
                   </div>
                 </div>
 
-                <p className="text-xs text-[var(--k-text-secondary)] font-light leading-relaxed pt-3 border-t border-[var(--k-border)] mt-2">
+                <p className="text-sm text-[var(--k-text-secondary)] font-light leading-relaxed pt-3 border-t border-white/[.08] mt-2">
                   {stat.desc}
                 </p>
               </div>
@@ -346,7 +346,7 @@ export const Home = () => {
                 className="group p-6 sm:p-7 rounded-2xl bg-[var(--k-surface)] border border-[var(--k-border)] hover:border-brand-red/40 hover:bg-[var(--k-surface-raised)] transition-all flex flex-col justify-between"
               >
                 <div>
-                  <span className="text-[10px] font-sans uppercase tracking-widest text-brand-red font-semibold block mb-1">
+                  <span className="text-xs font-sans uppercase tracking-widest text-brand-red font-semibold block mb-1">
                     {sol.audience}
                   </span>
                   <h3 className="text-xl font-sans font-bold text-white group-hover:text-brand-red transition-colors mb-2">
@@ -512,20 +512,20 @@ export const Home = () => {
                   <img 
                     src={project.image} 
                     alt={project.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500"
                     loading="lazy"
                   />
-                  <div className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-[var(--k-bg)]/90 backdrop-blur-md text-[10px] font-sans text-brand-red border border-[var(--k-border)]">
+                  <div className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-[var(--k-bg)]/90 backdrop-blur-md text-xs font-sans text-brand-red border border-[var(--k-border)]">
                     {project.impact[0] ? `${project.impact[0].value} ${project.impact[0].label}` : project.year}
                   </div>
                 </div>
                 <div className="p-6 sm:p-8 flex flex-col flex-grow justify-between">
                   <div>
                     <div className="flex items-center justify-between gap-3 mb-2">
-                      <span className="text-[11px] font-sans font-medium text-brand-red uppercase tracking-wider">
+                      <span className="text-xs font-sans font-medium text-brand-red uppercase tracking-wider">
                         {project.service}
                       </span>
-                      <span className="text-[11px] font-light text-[var(--k-text-secondary)]">
+                      <span className="text-xs font-light text-[var(--k-text-secondary)]">
                         {project.client}
                       </span>
                     </div>
@@ -539,7 +539,7 @@ export const Home = () => {
                   <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-[var(--k-border)]">
                     <div className="flex flex-wrap gap-1.5">
                       {project.technologies.slice(0, 3).map((item) => (
-                        <span key={item} className="px-2 py-0.5 rounded bg-[var(--k-bg)] border border-[var(--k-border)] text-[10px] font-sans text-[var(--k-text-secondary)]">
+                        <span key={item} className="px-2 py-0.5 rounded bg-[var(--k-bg)] border border-[var(--k-border)] text-xs font-sans text-[var(--k-text-secondary)]">
                           {item}
                         </span>
                       ))}

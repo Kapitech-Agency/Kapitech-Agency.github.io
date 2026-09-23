@@ -20,7 +20,7 @@ export const EditorialPolicy = () => {
         disableGrayscale={true}
       />
       <div className="max-w-4xl mx-auto relative z-10">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[var(--k-border)] bg-[#161616] text-white text-xs font-sans mb-4">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[var(--k-border)] bg-[var(--k-surface)] text-white text-xs font-sans mb-4">
           <BookOpen className="w-3 h-3 text-brand-red" />
           <span>{language === 'id' ? 'Standar Konten & Publikasi' : 'Content & Publication Standards'}</span>
         </div>
