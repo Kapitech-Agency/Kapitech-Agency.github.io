@@ -1080,3 +1080,7 @@ body:has([data-kapi-admin="true"]) .kapi-noise-overlay {
   [data-kapi-admin="true"] .fixed.inset-0.z-50 > div.h-full { border-radius: 24px 24px 0 0 !important; }
 }
 
+
+.admin-shell .ams-panel { min-height: 100%; }
+.admin-shell .ams-inbox-item { padding: 14px; border: 1px solid var(--ams-border); border-radius: 14px; background: var(--ams-surface); }
+.admin-shell .ams-empty-state { padding: 24px; text-align: center; color: var(--ams-secondary); font-size: .75rem; border: 1px solid var(--ams-border); border-radius: 12px; background: rgba(17,19,24,.55); }
