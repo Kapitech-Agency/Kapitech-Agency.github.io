@@ -101,6 +101,17 @@ test('production preflight CLI executes successfully with a valid synthetic envi
 });
 
 
+test('rejects invalid PostgreSQL pool runtime settings', () => {
+  const env = validEnv();
+  env.KAPITECH_POSTGRES_POOL_MAX = '0';
+  env.KAPITECH_POSTGRES_IDLE_TIMEOUT_MS = 'not-a-number';
+  env.KAPITECH_POSTGRES_CONNECTION_TIMEOUT_MS = '1.5';
+  env.KAPITECH_POSTGRES_STATEMENT_TIMEOUT_MS = '-1';
+  const result = validateProductionEnvironment(env);
+  assert.equal(result.valid, false);
+  assert.equal(result.errors.filter(error => error.includes('KAPITECH_POSTGRES_') && error.includes('positive integer')).length, 4);
+});
+
 test('rejects malformed PostgreSQL connection URLs before runtime startup', () => {
   const env = validEnv();
   env.KAPITECH_POSTGRES_URL = 'not-a-postgresql-url';
