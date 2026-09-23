@@ -181,14 +181,14 @@ export const Work = () => {
             <h1 className="kapi-display-title">
               {language === 'id' ? 'Karya Nyata. Dampak Nyata.' : 'Crafted for Real Impact.'}
             </h1>
-            <p className="text-base sm:text-lg text-[var(--k-text-secondary)] font-light leading-relaxed mb-6">
+            <p className="kapi-page-description mb-6">
               {language === 'id' 
                 ? 'Jelajahi 50 studi kasus dan portofolio komprehensif kami yang mencakup pilar Visual Experience dan Innovation Development untuk para pemimpin industri global.'
                 : 'Explore our portfolio of 50 comprehensive case studies spanning Visual Experience and Innovation Development across global industry leaders.'
               }
             </p>
-            <div className="flex flex-wrap items-center gap-3 text-xs font-sans text-[var(--k-text-secondary)]">
-              <span className="px-3 py-1.5 rounded-full bg-[var(--k-surface)] border border-[var(--k-border)] flex items-center gap-2">
+            <div className="kapi-meta-row">
+              <span className="kapi-status">
                 <span className="w-2 h-2 rounded-full bg-brand-red animate-pulse" />
                 <span>50 {language === 'id' ? 'Studi Kasus Lengkap' : 'Case Studies Verified'}</span>
               </span>
