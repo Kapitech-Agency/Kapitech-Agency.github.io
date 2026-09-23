@@ -405,7 +405,7 @@ export const AdminCrm: React.FC = () => {
             <div className="w-9 h-9 rounded-[var(--k-control-radius)] bg-[var(--k-red)]/10 border border-[var(--k-red)]/30 flex items-center justify-center text-[var(--k-red)] shrink-0">
               <Briefcase size={18} />
             </div>
-            <h1 className="text-xl sm:text-2xl font-display font-bold text-white flex items-center gap-2.5">
+            <h1 className="text-xl sm:text-2xl font-sans font-bold text-white flex items-center gap-2.5">
               <span>{t('admin.crm.title')}</span>
               <span className="px-2 py-0.5 rounded-full text-[10px] font-sans font-bold uppercase tracking-wider bg-[var(--k-red)]/15 text-[var(--k-red)] border border-[var(--k-red)]/30">
                 Enterprise
@@ -486,7 +486,7 @@ export const AdminCrm: React.FC = () => {
                 <Layers size={16} />
               </div>
             </div>
-            <div className="text-2xl sm:text-3xl font-display font-bold text-white tracking-tight break-words font-sans">
+            <div className="text-2xl sm:text-3xl font-sans font-bold text-white tracking-tight break-words font-sans">
               {formatAmount(metrics.totalPipelineValue, currency)}
             </div>
           </div>
@@ -512,7 +512,7 @@ export const AdminCrm: React.FC = () => {
                 <CheckCircle2 size={16} />
               </div>
             </div>
-            <div className="text-2xl sm:text-3xl font-display font-bold text-emerald-400 tracking-tight break-words font-sans">
+            <div className="text-2xl sm:text-3xl font-sans font-bold text-emerald-400 tracking-tight break-words font-sans">
               {formatAmount(metrics.totalWonValue, currency)}
             </div>
           </div>
@@ -674,7 +674,7 @@ export const AdminCrm: React.FC = () => {
                           stageDef.key === 'proposal' ? 'bg-red-400' :
                           stageDef.key === 'contacted' ? 'bg-amber-400' : 'bg-zinc-500'
                         }`} />
-                        <h3 className="text-xs font-bold font-display text-white truncate">
+                        <h3 className="text-xs font-bold font-sans text-white truncate">
                           {language === 'id' ? stageDef.labelId : stageDef.label}
                         </h3>
                         <span className="text-[10px] font-sans px-1.5 py-0.2 rounded bg-[var(--k-surface-raised)] text-[var(--k-text-secondary)] border border-[rgba(255,255,255,0.07)] shrink-0">
@@ -729,7 +729,7 @@ export const AdminCrm: React.FC = () => {
                             </div>
 
                             {/* Client & Company */}
-                            <h4 className="text-xs font-bold text-white font-display leading-snug group-hover:text-[var(--k-red)] transition-colors line-clamp-1">
+                            <h4 className="text-xs font-bold text-white font-sans leading-snug group-hover:text-[var(--k-red)] transition-colors line-clamp-1">
                               {lead.clientName}
                             </h4>
                             <p className="text-[11px] text-[var(--k-text-secondary)] font-sans truncate mb-2.5">
@@ -738,7 +738,7 @@ export const AdminCrm: React.FC = () => {
 
                             {/* Deal Value & Source */}
                             <div className="flex items-center justify-between text-xs font-sans pb-2.5 mb-2.5 border-t border-[rgba(255,255,255,0.07)] pt-2">
-                              <span className="text-emerald-400 font-bold font-display text-sm tracking-tight">
+                              <span className="text-emerald-400 font-bold font-sans text-sm tracking-tight">
                                 {formatAmount(lead.dealValue, currency)}
                               </span>
                               <span className="text-[10px] text-[var(--k-text-secondary)] font-sans px-1.5 py-0.5 rounded bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] shrink-0">
@@ -829,7 +829,7 @@ export const AdminCrm: React.FC = () => {
                   {/* Header: Client, Company & Stage */}
                   <div className="flex items-start justify-between gap-2">
                     <div>
-                      <div className="font-bold text-white text-base font-display">{lead.clientName}</div>
+                      <div className="font-bold text-white text-base font-sans">{lead.clientName}</div>
                       <div className="text-xs text-[var(--k-text-secondary)] font-sans">{lead.company}</div>
                     </div>
                     <span className="px-2.5 py-1 rounded-[var(--k-control-radius)] bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] text-[11px] font-sans text-[#D0D4DC] shrink-0 font-semibold">
@@ -943,7 +943,7 @@ export const AdminCrm: React.FC = () => {
                         className="hover:bg-[var(--k-surface-raised)] transition-colors cursor-pointer"
                       >
                         <td className="py-3.5 px-4">
-                          <div className="font-bold text-white font-display text-sm">
+                          <div className="font-bold text-white font-sans text-sm">
                             {lead.clientName}
                           </div>
                           <div className="text-[11px] text-[var(--k-text-secondary)]">
@@ -957,7 +957,7 @@ export const AdminCrm: React.FC = () => {
                           </span>
                         </td>
 
-                        <td className="py-3.5 px-4 text-right font-bold text-emerald-400 font-display text-sm font-sans">
+                        <td className="py-3.5 px-4 text-right font-bold text-emerald-400 font-sans text-sm font-sans">
                           {formatAmount(lead.dealValue, currency)}
                         </td>
 
@@ -1049,7 +1049,7 @@ export const AdminCrm: React.FC = () => {
                       ID: {selectedLead.id}
                     </span>
                   </div>
-                  <h2 className="text-xl sm:text-2xl font-bold font-display text-white">
+                  <h2 className="text-xl sm:text-2xl font-bold font-sans text-white">
                     {selectedLead.clientName}
                   </h2>
                   <p className="text-xs text-[var(--k-red)] font-semibold mt-0.5">
@@ -1071,7 +1071,7 @@ export const AdminCrm: React.FC = () => {
                   <div className="text-[10px] text-[var(--k-text-secondary)] uppercase tracking-wider font-semibold">
                     {language === 'id' ? 'Valuasi Prospek' : 'Deal Valuation'}
                   </div>
-                  <div className="text-2xl font-bold font-display text-emerald-400 font-sans">
+                  <div className="text-2xl font-bold font-sans text-emerald-400 font-sans">
                     {formatAmount(selectedLead.dealValue, currency)}
                   </div>
                 </div>
@@ -1235,7 +1235,7 @@ export const AdminCrm: React.FC = () => {
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
           <div className="bg-[var(--k-surface)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-card-radius)] w-full max-w-xl max-h-[90vh] overflow-y-auto p-6 shadow-2xl">
             <div className="flex items-center justify-between pb-4 mb-4 border-b border-[rgba(255,255,255,0.07)]">
-              <h3 className="font-display font-bold text-white text-lg flex items-center gap-2">
+              <h3 className="font-sans font-bold text-white text-lg flex items-center gap-2">
                 <Briefcase className="text-[var(--k-red)]" size={20} />
                 <span>{editingLead ? (language === 'id' ? 'Edit Data Prospek' : 'Edit CRM Deal') : t('admin.crm.addDeal')}</span>
               </h3>
