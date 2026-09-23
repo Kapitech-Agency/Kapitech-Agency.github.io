@@ -1,6 +1,7 @@
 import express from 'express';
 import path from 'path';
 import dotenv from 'dotenv';
+import { URL } from 'node:url';
 import { apiRouter } from './server/routes';
 import { getDataSourceMode } from './server/data-source.ts';
 import { checkPostgresConnection, closePostgresPool } from './server/postgres.ts';
@@ -19,8 +20,21 @@ function validateProductionDataSource(): string | null {
     return 'Production runtime requires KAPITECH_DATA_SOURCE=postgres.';
   }
 
-  if (!process.env.KAPITECH_POSTGRES_URL?.trim()) {
+  const postgresUrl = process.env.KAPITECH_POSTGRES_URL?.trim();
+  if (!postgresUrl) {
     return 'Production runtime requires KAPITECH_POSTGRES_URL.';
+  }
+
+  try {
+    const parsed = new URL(postgresUrl);
+    if (!['postgres:', 'postgresql:'].includes(parsed.protocol)) {
+      return 'KAPITECH_POSTGRES_URL must use postgres:// or postgresql://.';
+    }
+    if (!parsed.hostname || !parsed.pathname || parsed.pathname === '/') {
+      return 'KAPITECH_POSTGRES_URL must include a PostgreSQL host and database name.';
+    }
+  } catch {
+    return 'KAPITECH_POSTGRES_URL is invalid. Use postgresql://USER:PASSWORD@HOST:PORT/DATABASE and URL-encode special characters in the username/password.';
   }
 
   if (!process.env.KAPITECH_DATA_ENCRYPTION_KEY?.trim()) {
