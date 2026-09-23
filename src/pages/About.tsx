@@ -360,7 +360,7 @@ export const About = () => {
           </div>
 
           <div className="lg:col-span-6">
-            <div className="rounded-2xl sm:rounded-3xl overflow-hidden border border-[var(--k-border)] shadow-2xl relative aspect-[16/10] sm:aspect-[4/3] bg-[#161616]">
+            <div className="rounded-2xl sm:rounded-[24px] overflow-hidden border border-[var(--k-border)] shadow-2xl relative aspect-[16/10] sm:aspect-[4/3] bg-[#161616]">
               <img
                 src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=1200"
                 alt="Kapitech Agency Team Collaboration"
@@ -516,7 +516,7 @@ export const About = () => {
             {techStack.map((stack) => (
               <div 
                 key={stack.category} 
-                className="p-6 sm:p-7 rounded-2xl sm:rounded-3xl bg-[#161616] border border-[var(--k-border)] hover:border-brand-red/50 hover:bg-[#1E1E1E] transition-all duration-300 flex flex-col justify-between group"
+                className="p-6 sm:p-7 rounded-2xl sm:rounded-[24px] bg-[#161616] border border-[var(--k-border)] hover:border-brand-red/50 hover:bg-[#1E1E1E] transition-all duration-300 flex flex-col justify-between group"
               >
                 <div>
                   <div className="flex items-center justify-between mb-5 sm:mb-6">
