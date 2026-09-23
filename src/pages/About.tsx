@@ -556,7 +556,7 @@ export const About = () => {
       {/* Bottom CTA */}
       <section className="py-16 sm:py-24 px-4 sm:px-6 md:px-12 text-center relative z-10 bg-[var(--k-bg-deep)]">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-2xl sm:text-3xl md:text-5xl font-sans font-bold mb-4 sm:mb-6 text-white">
+          <h2 className="text-2xl sm:text-3xl md:kapi-section-title font-sans font-bold mb-4 sm:mb-6 text-white">
             {language === 'id' ? 'Siap berkolaborasi membangun produk digital Anda berikutnya?' : 'Ready to collaborate on your next digital product?'}
           </h2>
           <p className="text-xs sm:text-sm md:text-base text-[var(--k-text-secondary)] font-light leading-relaxed mb-6 sm:mb-8 max-w-xl mx-auto">
@@ -566,7 +566,7 @@ export const About = () => {
           </p>
           <Link
             to="/contact"
-            className="inline-flex items-center justify-center gap-2 px-8 py-3.5 sm:py-4 rounded-[14px] bg-brand-red hover:bg-[var(--k-red-hover)] text-white font-semibold text-xs uppercase tracking-wider transition-colors shadow-[var(--k-shadow-sm)] shadow-brand-red/15 active:scale-95"
+            className="inline-flex items-center justify-center gap-2 px-8 py-3.5 sm:py-4 kapi-action-button bg-brand-red hover:bg-[var(--k-red-hover)] text-white font-semibold text-xs uppercase tracking-wider transition-colors shadow-[var(--k-shadow-sm)] shadow-brand-red/15 active:scale-95"
           >
             <span>{language === 'id' ? 'Mulai Diskusi' : 'Start a Conversation'}</span>
             <ArrowUpRight size={16} />
