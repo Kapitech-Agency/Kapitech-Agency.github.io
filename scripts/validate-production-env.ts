@@ -45,6 +45,21 @@ export function validateProductionEnvironment(
   }
 
   const postgresUrl = required(env, 'KAPITECH_POSTGRES_URL', errors);
+  const poolSettings: Array<[string, number]> = [
+    ['KAPITECH_POSTGRES_POOL_MAX', 10],
+    ['KAPITECH_POSTGRES_IDLE_TIMEOUT_MS', 10_000],
+    ['KAPITECH_POSTGRES_CONNECTION_TIMEOUT_MS', 5_000],
+    ['KAPITECH_POSTGRES_STATEMENT_TIMEOUT_MS', 15_000],
+  ];
+  for (const [name, fallback] of poolSettings) {
+    const raw = (env[name] || '').trim();
+    if (!raw) continue;
+    const value = Number(raw);
+    if (!Number.isInteger(value) || value <= 0) {
+      errors.push(`${name} must be a positive integer; default is ${fallback}.`);
+    }
+  }
+
   if (postgresUrl) {
     try {
       const parsed = new URL(postgresUrl);
