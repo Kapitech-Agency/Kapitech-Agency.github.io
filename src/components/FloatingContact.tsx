@@ -88,7 +88,7 @@ export const FloatingContact = () => {
                         {option.label}
                       </span>
                       <div className={cn(
-                        "w-11 h-11 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center text-white shadow-xl transition-transform hover:scale-105 active:scale-95 shrink-0",
+                        "w-11 h-11 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-white shadow-lg transition-transform hover:scale-105 active:scale-95 shrink-0",
                         option.color
                       )}>
                         {option.icon}
@@ -106,7 +106,7 @@ export const FloatingContact = () => {
                         {option.label}
                       </span>
                       <div className={cn(
-                        "w-11 h-11 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center text-white shadow-xl transition-transform hover:scale-105 active:scale-95 shrink-0",
+                        "w-11 h-11 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-white shadow-lg transition-transform hover:scale-105 active:scale-95 shrink-0",
                         option.color
                       )}>
                         {option.icon}
@@ -133,10 +133,10 @@ export const FloatingContact = () => {
                 whileTap={{ scale: 0.95 }}
                 aria-label={isOpen ? "Tutup Kontak Cepat" : "Buka Kontak Cepat"}
                 className={cn(
-                  "w-12 h-12 sm:w-14 sm:h-14 min-h-[44px] min-w-[44px] rounded-2xl sm:rounded-[1.75rem] flex items-center justify-center text-white shadow-xl transition-all duration-300",
+                  "w-12 h-12 sm:w-14 sm:h-14 min-h-[44px] min-w-[44px] rounded-full flex items-center justify-center text-white shadow-xl transition-all duration-300",
                   isOpen 
                     ? "bg-[var(--k-surface)] border border-[var(--k-border)]" 
-                    : "bg-brand-red shadow-brand-red/30 shadow-lg"
+                    : "bg-brand-red shadow-[0_10px_28px_rgba(176,0,32,.28)]"
                 )}
               >
                 {isOpen ? <X size={22} /> : <MessageSquare size={22} />}
