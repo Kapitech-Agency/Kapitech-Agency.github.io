@@ -115,7 +115,7 @@ export const Home = () => {
               </span>
             </div>
             
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-sans font-bold leading-[1.04] sm:leading-[1.02] tracking-[-0.045em] mb-5 sm:mb-7 text-white">
+            <h1 className="kapi-display-title">
               {language === 'id' ? (
                 <>Studio produk digital yang dirancang untuk <span className="text-brand-red">membangun & memperluas</span> bisnis Anda.</>
               ) : (
