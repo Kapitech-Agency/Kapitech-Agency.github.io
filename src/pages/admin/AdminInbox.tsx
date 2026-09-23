@@ -480,7 +480,7 @@ export const AdminInbox: React.FC = () => {
             <div className="w-8 h-8 rounded-[var(--k-control-radius)] bg-[var(--k-red)]/10 border border-[var(--k-red)]/30 flex items-center justify-center text-[var(--k-red)] shrink-0">
               <Inbox size={18} />
             </div>
-            <h1 className="text-2xl sm:text-3xl font-display font-bold text-white tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-sans font-bold text-white tracking-tight">
               {language === 'id' ? 'Kotak Masuk Prospek & Pesan' : 'Leads & Inquiry Inbox'}
             </h1>
             <span className="text-xs font-sans py-0.5 px-2.5 bg-[var(--k-surface)] border border-[rgba(255,255,255,0.07)] rounded-full text-[var(--k-text-secondary)]">
@@ -874,7 +874,7 @@ export const AdminInbox: React.FC = () => {
             <Inbox size={32} />
           </div>
           <div className="space-y-1.5">
-            <h3 className="text-white font-bold font-display text-base sm:text-lg">
+            <h3 className="text-white font-bold font-sans text-base sm:text-lg">
               {submissions.length === 0
                 ? (language === 'id' ? 'Kotak Masuk Masih Kosong' : 'No Inbound Records Found')
                 : (language === 'id' ? 'Tidak Ada Pesan yang Sesuai Kriteria' : 'No Inbound Records Match Your Filters')}
@@ -1032,7 +1032,7 @@ export const AdminInbox: React.FC = () => {
                 <div className="flex items-start justify-between gap-4 pb-5 border-b border-[rgba(255,255,255,0.07)] mb-5">
                   <div className="flex items-start gap-3.5">
                     {/* Client Avatar Initials */}
-                    <div className="w-12 h-12 rounded-[var(--k-card-radius)] bg-gradient-to-br from-[var(--k-surface-raised)] to-[var(--k-surface-raised)] border border-white/10 flex items-center justify-center text-white font-display font-bold text-lg shrink-0 shadow-inner">
+                    <div className="w-12 h-12 rounded-[var(--k-card-radius)] bg-gradient-to-br from-[var(--k-surface-raised)] to-[var(--k-surface-raised)] border border-white/10 flex items-center justify-center text-white font-sans font-bold text-lg shrink-0 shadow-inner">
                       {selectedSubmission.fullName.charAt(0).toUpperCase()}
                     </div>
 
@@ -1045,7 +1045,7 @@ export const AdminInbox: React.FC = () => {
                         </span>
                       </div>
                       
-                      <h2 className="text-xl sm:text-2xl font-bold font-display text-white tracking-tight">
+                      <h2 className="text-xl sm:text-2xl font-bold font-sans text-white tracking-tight">
                         {selectedSubmission.fullName}
                       </h2>
 
@@ -1397,7 +1397,7 @@ export const AdminInbox: React.FC = () => {
               <div className="w-16 h-16 rounded-[var(--k-card-radius)] bg-[var(--k-surface-raised)] border border-white/5 flex items-center justify-center text-[#383C46] mb-4">
                 <Inbox size={32} />
               </div>
-              <h3 className="text-white font-medium mb-1 font-display text-base">
+              <h3 className="text-white font-medium mb-1 font-sans text-base">
                 {language === 'id' ? 'Pilih Pesan untuk Membaca Brief' : 'Select a Brief to Inspect'}
               </h3>
               <p className="text-xs text-[var(--k-text-secondary)] max-w-sm font-sans leading-relaxed">
