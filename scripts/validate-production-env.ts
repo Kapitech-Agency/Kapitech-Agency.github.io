@@ -74,6 +74,11 @@ export function validateProductionEnvironment(
     }
   }
 
+  const firebaseEnabled = /^true$/i.test((env.KAPITECH_FIREBASE_AUTH_ENABLED || '').trim());
+  if (firebaseEnabled && !(env.FIREBASE_PROJECT_ID || '').trim()) {
+    errors.push('FIREBASE_PROJECT_ID is required when KAPITECH_FIREBASE_AUTH_ENABLED=true.');
+  }
+
   const appUrl = required(env, 'APP_URL', errors);
   if (appUrl) {
     try {
