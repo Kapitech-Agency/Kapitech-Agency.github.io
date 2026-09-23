@@ -211,7 +211,7 @@ export const AdminDocuments: React.FC = () => {
                   : 'bg-[var(--k-bg)] border-white/[0.07] text-[var(--k-text-secondary)] hover:text-white hover:border-white/20'
               }`}
             >
-              <div className="text-[10px] font-sans uppercase tracking-wider capitalize">{cat}</div>
+              <div className="text-xs font-sans uppercase tracking-wider capitalize">{cat}</div>
               <div className="text-lg font-bold font-sans text-white mt-1">{count}</div>
             </button>
           );
@@ -259,7 +259,7 @@ export const AdminDocuments: React.FC = () => {
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse min-w-[700px]">
               <thead>
-                <tr className="border-b border-white/[0.07] bg-[var(--k-surface)]/50 text-[10px] font-sans text-[var(--k-text-secondary)] uppercase">
+                <tr className="border-b border-white/[0.07] bg-[var(--k-surface)]/50 text-xs font-sans text-[var(--k-text-secondary)] uppercase">
                   <th className="py-3 px-4">Document Title</th>
                   <th className="py-3 px-4">Category</th>
                   <th className="py-3 px-4">Size</th>
@@ -285,23 +285,23 @@ export const AdminDocuments: React.FC = () => {
                           </div>
                           <div>
                             <div className="font-semibold text-white">{docTitle}</div>
-                            <div className="text-[10px] font-sans text-[var(--k-text-secondary)]">{docType}</div>
+                            <div className="text-xs font-sans text-[var(--k-text-secondary)]">{docType}</div>
                           </div>
                         </div>
                       </td>
                       <td className="py-3.5 px-4">
-                        <span className="px-2 py-0.5 rounded text-[10px] font-sans uppercase bg-[var(--k-surface)] text-[var(--k-text-secondary)] border border-white/[0.07]">
+                        <span className="px-2 py-0.5 rounded text-xs font-sans uppercase bg-[var(--k-surface)] text-[var(--k-text-secondary)] border border-white/[0.07]">
                           {doc.category}
                         </span>
                       </td>
-                      <td className="py-3.5 px-4 font-sans text-[11px] text-[var(--k-text-secondary)]">
+                      <td className="py-3.5 px-4 font-sans text-xs text-[var(--k-text-secondary)]">
                         {docSize}
                       </td>
-                      <td className="py-3.5 px-4 font-sans text-[11px] text-zinc-300">
+                      <td className="py-3.5 px-4 font-sans text-xs text-zinc-300">
                         {doc.relatedEntity || 'General'}
                       </td>
                       <td className="py-3.5 px-4">
-                        <span className={'px-2 py-0.5 rounded text-[10px] font-sans uppercase border ' + (
+                        <span className={'px-2 py-0.5 rounded text-xs font-sans uppercase border ' + (
                           doc.status === 'ready' || doc.sourceType === 'external_link'
                             ? 'bg-emerald-500/10 text-emerald-300 border-emerald-500/20'
                             : 'bg-amber-500/10 text-amber-300 border-amber-500/20'
@@ -309,9 +309,9 @@ export const AdminDocuments: React.FC = () => {
                           {doc.status === 'ready' || doc.sourceType === 'external_link' ? 'ready' : 'pending'}
                         </span>
                       </td>
-                      <td className="py-3.5 px-4 font-sans text-[11px] text-[var(--k-text-secondary)]">
+                      <td className="py-3.5 px-4 font-sans text-xs text-[var(--k-text-secondary)]">
                         <div>{docDate}</div>
-                        <div className="text-[9px] text-[var(--k-text-secondary)]/70">by {docOwner}</div>
+                        <div className="text-xs text-[var(--k-text-secondary)]/70">by {docOwner}</div>
                       </td>
                       <td className="py-3.5 px-4 text-right">
                         <div className="flex items-center justify-end gap-1.5">
@@ -367,7 +367,7 @@ export const AdminDocuments: React.FC = () => {
 
             <form onSubmit={handleUploadSubmit} className="p-5 space-y-4 text-xs font-sans">
               <div className="space-y-1">
-                <label className="text-[11px] font-sans text-[var(--k-text-secondary)]">Document Title *</label>
+                <label className="text-xs font-sans text-[var(--k-text-secondary)]">Document Title *</label>
                 <input
                   type="text"
                   required
@@ -380,7 +380,7 @@ export const AdminDocuments: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="text-[11px] font-sans text-[var(--k-text-secondary)]">Category</label>
+                  <label className="text-xs font-sans text-[var(--k-text-secondary)]">Category</label>
                   <select
                     value={uploadCategory}
                     onChange={(e) => setUploadCategory(e.target.value)}
@@ -395,7 +395,7 @@ export const AdminDocuments: React.FC = () => {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-[11px] font-sans text-[var(--k-text-secondary)]">Related Entity</label>
+                  <label className="text-xs font-sans text-[var(--k-text-secondary)]">Related Entity</label>
                   <select
                     value={uploadRelatedType}
                     onChange={(e) => setUploadRelatedType(e.target.value)}
@@ -410,15 +410,15 @@ export const AdminDocuments: React.FC = () => {
               </div>
 
               <div className="space-y-1">
-                <label className="text-[11px] font-sans text-[var(--k-text-secondary)]">{language === 'id' ? 'File Dokumen *' : 'Document File *'}</label>
+                <label className="text-xs font-sans text-[var(--k-text-secondary)]">{language === 'id' ? 'File Dokumen *' : 'Document File *'}</label>
                 <input
                   type="file"
                   required
                   accept={allowedDocumentTypes}
                   onChange={(e) => setUploadFile(e.target.files?.[0] || null)}
-                  className="w-full h-10 px-2 py-2 rounded-lg bg-[var(--k-surface)] text-white border border-white/[0.07] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--k-red)]/40 focus:border-[var(--k-red)] text-[11px]"
+                  className="w-full h-10 px-2 py-2 rounded-lg bg-[var(--k-surface)] text-white border border-white/[0.07] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--k-red)]/40 focus:border-[var(--k-red)] text-xs"
                 />
-                <p className="text-[10px] text-[var(--k-text-tertiary)] font-sans">
+                <p className="text-xs text-[var(--k-text-tertiary)] font-sans">
                   {language === 'id'
                     ? 'File disimpan di server-side private vault, di luar static web root. Maksimal 25 MB. Akses selalu melalui session + RBAC.'
                     : 'Files are stored in a server-side private vault outside the static web root. Max 25 MB. Access requires session + RBAC.'}
