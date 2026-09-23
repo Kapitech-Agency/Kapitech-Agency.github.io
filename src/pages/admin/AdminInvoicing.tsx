@@ -571,7 +571,7 @@ export const AdminInvoicing: React.FC = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={language === 'id' ? 'Cari no invoice, klien...' : 'Search invoice number, client...'}
-                className="w-full pl-8 pr-3 py-2 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-xs text-white placeholder-[var(--k-text-secondary)] focus:outline-none focus:border-[var(--k-red)] font-sans"
+                className="w-full pl-8 pr-3 py-2 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-xs text-white placeholder-[var(--k-text-secondary)] focus:border-[var(--k-red-border)] font-sans"
               />
             </div>
 
@@ -992,7 +992,7 @@ export const AdminInvoicing: React.FC = () => {
                       onChange={(e) => setClientName(e.target.value)}
                       required
                       placeholder="e.g. Marcus Thorne"
-                      className="w-full px-3 py-2.5 bg-[#0B0C0E] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:outline-none focus:border-[var(--k-red)]"
+                      className="w-full px-3 py-2.5 bg-[#0B0C0E] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:border-[var(--k-red-border)]"
                     />
                   </div>
                   <div>
@@ -1003,7 +1003,7 @@ export const AdminInvoicing: React.FC = () => {
                       onChange={(e) => setClientCompany(e.target.value)}
                       required
                       placeholder="e.g. Lumina Real Estate"
-                      className="w-full px-3 py-2.5 bg-[#0B0C0E] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:outline-none focus:border-[var(--k-red)]"
+                      className="w-full px-3 py-2.5 bg-[#0B0C0E] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:border-[var(--k-red-border)]"
                     />
                   </div>
                 </div>
@@ -1016,7 +1016,7 @@ export const AdminInvoicing: React.FC = () => {
                       value={clientEmail}
                       onChange={(e) => setClientEmail(e.target.value)}
                       placeholder="client@company.com"
-                      className="w-full px-3 py-2.5 bg-[#0B0C0E] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:outline-none focus:border-[var(--k-red)]"
+                      className="w-full px-3 py-2.5 bg-[#0B0C0E] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:border-[var(--k-red-border)]"
                     />
                   </div>
                   <div>
@@ -1026,7 +1026,7 @@ export const AdminInvoicing: React.FC = () => {
                       value={clientPhone}
                       onChange={(e) => setClientPhone(e.target.value)}
                       placeholder="+62 811-XXXX-XXXX"
-                      className="w-full px-3 py-2.5 bg-[#0B0C0E] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:outline-none focus:border-[var(--k-red)]"
+                      className="w-full px-3 py-2.5 bg-[#0B0C0E] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:border-[var(--k-red-border)]"
                     />
                   </div>
                 </div>
@@ -1039,7 +1039,7 @@ export const AdminInvoicing: React.FC = () => {
                       rows={2}
                       value={itemDesc}
                       onChange={(e) => setItemDesc(e.target.value)}
-                      className="w-full px-3 py-2 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:outline-none focus:border-[var(--k-red)]"
+                      className="w-full px-3 py-2 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:border-[var(--k-red-border)]"
                     />
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -1049,7 +1049,7 @@ export const AdminInvoicing: React.FC = () => {
                         type="number"
                         value={itemAmount}
                         onChange={(e) => setItemAmount(Number(e.target.value))}
-                        className="w-full px-3 py-2.5 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:outline-none focus:border-[var(--k-red)]"
+                        className="w-full px-3 py-2.5 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:border-[var(--k-red-border)]"
                       />
                     </div>
                     <div>
@@ -1058,7 +1058,7 @@ export const AdminInvoicing: React.FC = () => {
                         type="number"
                         value={taxPercent}
                         onChange={(e) => setTaxPercent(Number(e.target.value))}
-                        className="w-full px-3 py-2.5 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:outline-none focus:border-[var(--k-red)]"
+                        className="w-full px-3 py-2.5 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:border-[var(--k-red-border)]"
                       />
                     </div>
                   </div>
@@ -1074,7 +1074,7 @@ export const AdminInvoicing: React.FC = () => {
                       type="date"
                       value={issueDate}
                       onChange={(e) => setIssueDate(e.target.value)}
-                      className="w-full px-3 py-2.5 bg-[#0B0C0E] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:outline-none focus:border-[var(--k-red)]"
+                      className="w-full px-3 py-2.5 bg-[#0B0C0E] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:border-[var(--k-red-border)]"
                     />
                   </div>
                   <div>
@@ -1083,7 +1083,7 @@ export const AdminInvoicing: React.FC = () => {
                       type="date"
                       value={dueDate}
                       onChange={(e) => setDueDate(e.target.value)}
-                      className="w-full px-3 py-2.5 bg-[#0B0C0E] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:outline-none focus:border-[var(--k-red)]"
+                      className="w-full px-3 py-2.5 bg-[#0B0C0E] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:border-[var(--k-red-border)]"
                     />
                   </div>
                   <div>
@@ -1108,7 +1108,7 @@ export const AdminInvoicing: React.FC = () => {
                     rows={2}
                     value={invoiceNotes}
                     onChange={(e) => setInvoiceNotes(e.target.value)}
-                    className="w-full px-3 py-2 bg-[#0B0C0E] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:outline-none focus:border-[var(--k-red)]"
+                    className="w-full px-3 py-2 bg-[#0B0C0E] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:border-[var(--k-red-border)]"
                   />
                 </div>
               </div>
@@ -1181,7 +1181,7 @@ export const AdminInvoicing: React.FC = () => {
                     onChange={(e) => setExpDesc(e.target.value)}
                     required
                     placeholder="e.g. Google Cloud Run cluster billing"
-                    className="w-full px-3 py-2.5 bg-[#0B0C0E] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:outline-none focus:border-[var(--k-red)]"
+                    className="w-full px-3 py-2.5 bg-[#0B0C0E] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:border-[var(--k-red-border)]"
                   />
                 </div>
 
@@ -1193,7 +1193,7 @@ export const AdminInvoicing: React.FC = () => {
                       value={expAmount}
                       onChange={(e) => setExpAmount(Number(e.target.value))}
                       required
-                      className="w-full px-3 py-2.5 bg-[#0B0C0E] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:outline-none focus:border-[var(--k-red)]"
+                      className="w-full px-3 py-2.5 bg-[#0B0C0E] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:border-[var(--k-red-border)]"
                     />
                   </div>
                   <div>
@@ -1202,7 +1202,7 @@ export const AdminInvoicing: React.FC = () => {
                       type="date"
                       value={expDate}
                       onChange={(e) => setExpDate(e.target.value)}
-                      className="w-full px-3 py-2.5 bg-[#0B0C0E] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:outline-none focus:border-[var(--k-red)]"
+                      className="w-full px-3 py-2.5 bg-[#0B0C0E] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] text-white focus:border-[var(--k-red-border)]"
                     />
                   </div>
                 </div>
@@ -1313,7 +1313,7 @@ export const AdminInvoicing: React.FC = () => {
                     required
                     min={1}
                     max={paymentModalInvoice.total}
-                    className="w-full px-3.5 py-2.5 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.08)] rounded-[var(--k-control-radius)] text-white text-sm focus:outline-none focus:border-emerald-500 font-bold font-sans"
+                    className="w-full px-3.5 py-2.5 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.08)] rounded-[var(--k-control-radius)] text-white text-sm focus:border-emerald-500 font-bold font-sans"
                   />
                 </div>
 
@@ -1343,7 +1343,7 @@ export const AdminInvoicing: React.FC = () => {
                       value={paymentDate}
                       onChange={(e) => setPaymentDate(e.target.value)}
                       required
-                      className="w-full px-3 py-2.5 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.08)] rounded-[var(--k-control-radius)] text-white focus:outline-none focus:border-emerald-500 font-sans"
+                      className="w-full px-3 py-2.5 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.08)] rounded-[var(--k-control-radius)] text-white focus:border-emerald-500 font-sans"
                     />
                   </div>
                 </div>
@@ -1358,7 +1358,7 @@ export const AdminInvoicing: React.FC = () => {
                     value={paymentRef}
                     onChange={(e) => setPaymentRef(e.target.value)}
                     placeholder="e.g. BCA-WS-99882312 or MANDIRI-TRX-102"
-                    className="w-full px-3 py-2.5 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.08)] rounded-[var(--k-control-radius)] text-white focus:outline-none focus:border-emerald-500 font-sans"
+                    className="w-full px-3 py-2.5 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.08)] rounded-[var(--k-control-radius)] text-white focus:border-emerald-500 font-sans"
                   />
                 </div>
 
@@ -1372,7 +1372,7 @@ export const AdminInvoicing: React.FC = () => {
                     value={paymentNotes}
                     onChange={(e) => setPaymentNotes(e.target.value)}
                     placeholder="e.g. Received via Bank Mandiri 123-00-998877-1"
-                    className="w-full px-3 py-2.5 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.08)] rounded-[var(--k-control-radius)] text-white focus:outline-none focus:border-emerald-500 font-sans"
+                    className="w-full px-3 py-2.5 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.08)] rounded-[var(--k-control-radius)] text-white focus:border-emerald-500 font-sans"
                   />
                 </div>
               </div>
