@@ -1557,3 +1557,150 @@
     padding-inline: 16px;
   }
 }
+
+
+/* -------------------------------------------------------------------------- */
+/* Navigation interaction geometry */
+/* -------------------------------------------------------------------------- */
+
+.kapi-public-shell .kapi-nav-link {
+  position: relative;
+  min-height: 40px;
+  padding: 0 13px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -.01em;
+  white-space: nowrap;
+  transition: color 180ms ease, background 180ms ease;
+}
+
+.kapi-public-shell .kapi-nav-link:hover {
+  background: rgba(255,255,255,.035);
+}
+
+.kapi-public-shell .kapi-nav-link:focus-visible,
+.kapi-public-shell .kapi-nav-icon-button:focus-visible,
+.kapi-public-shell .kapi-language-option:focus-visible,
+.kapi-public-shell .kapi-mobile-nav-item:focus-visible,
+.kapi-public-shell .kapi-mobile-cta:focus-visible {
+  outline: 2px solid rgba(176,0,32,.9);
+  outline-offset: 2px;
+}
+
+.kapi-public-shell .kapi-nav-services-trigger {
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.kapi-public-shell .kapi-nav-cta {
+  min-height: 40px;
+  padding: 0 15px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border-radius: 10px;
+  background: var(--pub-red);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.kapi-public-shell .kapi-mobile-nav-item {
+  width: 100%;
+  min-height: 58px;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border: 1px solid transparent;
+  border-radius: 14px;
+  font-size: 20px;
+  line-height: 1.1;
+  transition: background 180ms ease, border-color 180ms ease, color 180ms ease, transform 180ms ease;
+}
+
+.kapi-public-shell .kapi-mobile-nav-item:active {
+  transform: scale(.99);
+}
+
+.kapi-public-shell .kapi-mobile-service-group {
+  border: 1px solid transparent;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.kapi-public-shell .kapi-mobile-service-group > button {
+  border-radius: 14px;
+}
+
+.kapi-public-shell .kapi-mobile-service-group > button:hover {
+  background: rgba(255,255,255,.035);
+}
+
+.kapi-public-shell .kapi-mobile-cta {
+  width: 100%;
+  min-height: 50px;
+}
+
+.kapi-public-shell .kapi-mobile-contact {
+  min-height: 44px;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid var(--pub-border);
+  border-radius: 10px;
+  background: rgba(255,255,255,.025);
+  color: var(--pub-text-2);
+  transition: background 180ms ease, border-color 180ms ease, color 180ms ease;
+}
+
+.kapi-public-shell .kapi-mobile-contact:hover {
+  background: rgba(255,255,255,.05);
+  border-color: var(--pub-border-strong);
+  color: var(--pub-text);
+}
+
+.kapi-public-shell .kapi-glass-mobile-menu {
+  color: var(--pub-text);
+}
+
+@media (max-width: 767px) {
+  .kapi-public-shell .kapi-public-nav,
+  .kapi-public-shell .kapi-public-nav .kapi-nav-inner {
+    height: 64px;
+  }
+
+  .kapi-public-shell .kapi-nav-link {
+    min-height: 44px;
+  }
+
+  .kapi-public-shell .kapi-glass-mobile-menu {
+    padding: 16px 20px 20px !important;
+  }
+
+  .kapi-public-shell .kapi-mobile-nav-item {
+    min-height: 56px;
+  }
+}
+
+@media (max-width: 420px) {
+  .kapi-public-shell .kapi-glass-mobile-menu {
+    padding-inline: 16px !important;
+  }
+
+  .kapi-public-shell .kapi-mobile-nav-item {
+    min-height: 54px;
+    padding-inline: 14px;
+  }
+}
