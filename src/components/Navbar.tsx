@@ -280,7 +280,7 @@ export const Navbar = () => {
               transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
               onMouseEnter={handleMouseEnterServices}
               onMouseLeave={handleMouseLeaveServices}
-              className="hidden md:block absolute top-full left-0 w-full bg-[var(--k-surface)]/98 backdrop-blur-2xl border-b border-[var(--k-border)] shadow-[0_25px_60px_rgba(0,0,0,0.95)] py-8 px-6 lg:px-12"
+              className="hidden md:block absolute top-full left-0 w-full kapi-glass-nav-menu border-b border-[var(--k-border)] shadow-[0_25px_60px_rgba(0,0,0,0.95)] py-8 px-6 lg:px-12"
             >
               <div className="max-w-7xl mx-auto grid grid-cols-4 gap-8 lg:gap-10">
                 
@@ -417,7 +417,7 @@ export const Navbar = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25 }}
-            className="fixed inset-0 z-[100] bg-[var(--k-bg)]/98 flex flex-col p-4 sm:p-6 overflow-y-auto"
+            className="fixed inset-0 z-[100] kapi-glass-mobile-menu flex flex-col p-4 sm:p-6 overflow-y-auto"
           >
             {/* Header in Mobile Menu */}
             <div className="flex justify-between items-center pb-4 border-b border-[var(--k-border)] shrink-0">
