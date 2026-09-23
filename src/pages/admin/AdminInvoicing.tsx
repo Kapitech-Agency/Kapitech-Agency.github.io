@@ -353,21 +353,21 @@ export const AdminInvoicing: React.FC = () => {
     switch (status) {
       case 'paid':
         return (
-          <span className="px-2.5 py-1 rounded-[var(--k-control-radius)] bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-[10px] font-sans font-bold flex items-center gap-1.5">
+          <span className="px-2.5 py-1 rounded-[var(--k-control-radius)] bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-xs font-sans font-bold flex items-center gap-1.5">
             <CheckCircle2 size={12} />
             <span>PAID</span>
           </span>
         );
       case 'sent':
         return (
-          <span className="px-2.5 py-1 rounded-[var(--k-control-radius)] bg-rose-500/10 text-rose-400 border border-rose-500/30 text-[10px] font-sans font-bold flex items-center gap-1.5">
+          <span className="px-2.5 py-1 rounded-[var(--k-control-radius)] bg-rose-500/10 text-rose-400 border border-rose-500/30 text-xs font-sans font-bold flex items-center gap-1.5">
             <Send size={12} />
             <span>SENT</span>
           </span>
         );
       case 'overdue':
         return (
-          <span className="px-2.5 py-1 rounded-[var(--k-control-radius)] bg-rose-500/10 text-rose-400 border border-rose-500/30 text-[10px] font-sans font-bold flex items-center gap-1.5 animate-pulse">
+          <span className="px-2.5 py-1 rounded-[var(--k-control-radius)] bg-rose-500/10 text-rose-400 border border-rose-500/30 text-xs font-sans font-bold flex items-center gap-1.5 animate-pulse">
             <AlertCircle size={12} />
             <span>OVERDUE</span>
           </span>
@@ -375,7 +375,7 @@ export const AdminInvoicing: React.FC = () => {
       case 'draft':
       default:
         return (
-          <span className="px-2.5 py-1 rounded-[var(--k-control-radius)] bg-zinc-500/10 text-zinc-400 border border-zinc-500/30 text-[10px] font-sans font-bold flex items-center gap-1.5">
+          <span className="px-2.5 py-1 rounded-[var(--k-control-radius)] bg-zinc-500/10 text-zinc-400 border border-zinc-500/30 text-xs font-sans font-bold flex items-center gap-1.5">
             <Clock size={12} />
             <span>DRAFT</span>
           </span>
@@ -465,7 +465,7 @@ export const AdminInvoicing: React.FC = () => {
               {formatAmount(metrics.totalPaidRevenue, currency)}
             </div>
           </div>
-          <div className="flex items-center justify-between mt-4 pt-3 border-t border-[rgba(255,255,255,0.07)] text-[11px] font-sans">
+          <div className="flex items-center justify-between mt-4 pt-3 border-t border-[rgba(255,255,255,0.07)] text-xs font-sans">
             <span className="text-[var(--k-text-secondary)]">{metrics.paidCount} {language === 'id' ? 'Invoice Lunas' : 'Paid Invoices'}</span>
             <span className="text-emerald-400 font-semibold">{metrics.collectionRate}% {language === 'id' ? 'Tertagih' : 'Collected'}</span>
           </div>
@@ -484,7 +484,7 @@ export const AdminInvoicing: React.FC = () => {
               {formatAmount(metrics.totalOutstanding, currency)}
             </div>
           </div>
-          <div className="flex items-center justify-between mt-4 pt-3 border-t border-[rgba(255,255,255,0.07)] text-[11px] font-sans">
+          <div className="flex items-center justify-between mt-4 pt-3 border-t border-[rgba(255,255,255,0.07)] text-xs font-sans">
             <span className="text-[var(--k-text-secondary)]">{metrics.sentCount} {language === 'id' ? 'Invoice Tertunda' : 'Pending Invoices'}</span>
             <span className="text-red-400 font-semibold">{language === 'id' ? 'Menunggu Pelunasan' : 'Awaiting Settlement'}</span>
           </div>
@@ -503,7 +503,7 @@ export const AdminInvoicing: React.FC = () => {
               {formatAmount(metrics.totalExpenses, currency)}
             </div>
           </div>
-          <div className="flex items-center justify-between mt-4 pt-3 border-t border-[rgba(255,255,255,0.07)] text-[11px] font-sans">
+          <div className="flex items-center justify-between mt-4 pt-3 border-t border-[rgba(255,255,255,0.07)] text-xs font-sans">
             <span className="text-[var(--k-text-secondary)]">{expenses.length} {language === 'id' ? 'Catatan' : 'Records'}</span>
             <span className="text-rose-400 font-semibold">Infrastructure & Ops</span>
           </div>
@@ -522,7 +522,7 @@ export const AdminInvoicing: React.FC = () => {
               {formatAmount(metrics.netOperatingProfit, currency)}
             </div>
           </div>
-          <div className="flex items-center justify-between mt-4 pt-3 border-t border-[rgba(255,255,255,0.07)] text-[11px] font-sans">
+          <div className="flex items-center justify-between mt-4 pt-3 border-t border-[rgba(255,255,255,0.07)] text-xs font-sans">
             <span className="text-[var(--k-text-secondary)]">Margin</span>
             <span className="text-purple-400 font-semibold">
               {metrics.totalPaidRevenue > 0 ? Math.round((metrics.netOperatingProfit / metrics.totalPaidRevenue) * 100) : 0}% Net
@@ -634,14 +634,14 @@ export const AdminInvoicing: React.FC = () => {
                   {/* Client & Dates */}
                   <div className="bg-[var(--k-surface-raised)]/60 rounded-[var(--k-control-radius)] p-3 border border-[rgba(255,255,255,0.04)] space-y-1.5 text-xs font-sans">
                     <div className="flex items-center justify-between">
-                      <span className="text-[var(--k-text-secondary)] text-[11px]">{language === 'id' ? 'Klien:' : 'Client:'}</span>
+                      <span className="text-[var(--k-text-secondary)] text-xs">{language === 'id' ? 'Klien:' : 'Client:'}</span>
                       <span className="font-bold text-white text-right">{inv.clientName}</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-[var(--k-text-secondary)] text-[11px]">{language === 'id' ? 'Perusahaan:' : 'Company:'}</span>
+                      <span className="text-[var(--k-text-secondary)] text-xs">{language === 'id' ? 'Perusahaan:' : 'Company:'}</span>
                       <span className="text-[#C5CEE0] text-right truncate max-w-[180px]">{inv.clientCompany}</span>
                     </div>
-                    <div className="flex items-center justify-between pt-1 border-t border-[rgba(255,255,255,0.05)] text-[11px]">
+                    <div className="flex items-center justify-between pt-1 border-t border-[rgba(255,255,255,0.05)] text-xs">
                       <span className="text-[var(--k-text-secondary)]">Issue: {inv.issueDate}</span>
                       <span className="text-[var(--k-red)] font-semibold">Due: {inv.dueDate}</span>
                     </div>
@@ -650,16 +650,16 @@ export const AdminInvoicing: React.FC = () => {
                   {/* Amount & Actions */}
                   <div className="flex items-center justify-between pt-1">
                     <div>
-                      <div className="text-[10px] uppercase font-sans text-[var(--k-text-secondary)]">{language === 'id' ? 'Total Tagihan' : 'Total Amount'}</div>
+                      <div className="text-xs uppercase font-sans text-[var(--k-text-secondary)]">{language === 'id' ? 'Total Tagihan' : 'Total Amount'}</div>
                       <div className="text-base font-bold text-emerald-400 font-sans">
                         {formatAmount(inv.total, currency)}
                       </div>
-                      <div className="text-[10px] font-sans text-[var(--k-text-secondary)]">
+                      <div className="text-xs font-sans text-[var(--k-text-secondary)]">
                         incl. {inv.taxPercent}% PPN
                       </div>
                       {((inv.amountPaid && inv.amountPaid > 0) || inv.status === 'partially_paid') && (
                         <div className="mt-1.5 space-y-1">
-                          <div className="flex items-center gap-2 text-[10px] font-sans">
+                          <div className="flex items-center gap-2 text-xs font-sans">
                             <span className="text-emerald-400">Paid: {formatAmount(inv.amountPaid || 0, currency)}</span>
                             <span className="text-amber-400 font-semibold">Due: {formatAmount(inv.balanceDue ?? (inv.total - (inv.amountPaid || 0)), currency)}</span>
                           </div>
@@ -682,7 +682,7 @@ export const AdminInvoicing: React.FC = () => {
                           title="Record Payment"
                         >
                           <CreditCard size={13} />
-                          <span className="text-[11px] font-semibold">Pay</span>
+                          <span className="text-xs font-semibold">Pay</span>
                         </button>
                       )}
                       <button
@@ -723,17 +723,17 @@ export const AdminInvoicing: React.FC = () => {
             shadowBg="surface"
             shadowSize="md"
             className="hidden md:block rounded-[var(--k-card-radius)] overflow-hidden"
-            scrollClassName="bg-[var(--k-surface)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-card-radius)] overflow-x-auto shadow-xl select-none"
+            scrollClassName="bg-[var(--k-surface)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-card-radius)] overflow-x-auto shadow-[var(--k-shadow-sm)] select-none"
           >
             <table className="w-full text-left text-xs font-sans min-w-[750px]">
               <thead className="sticky top-0 z-10 bg-[var(--k-surface)]">
                 <tr className="border-b border-[rgba(255,255,255,0.07)] bg-[var(--k-surface-raised)] text-[var(--k-text-secondary)]">
-                  <th className="py-3 px-4 font-semibold uppercase text-[10px]">Invoice #</th>
-                  <th className="py-3 px-4 font-semibold uppercase text-[10px]">{language === 'id' ? 'Klien & Perusahaan' : 'Client & Company'}</th>
-                  <th className="py-3 px-4 font-semibold uppercase text-[10px]">{language === 'id' ? 'Tanggal / Jatuh Tempo' : 'Issue / Due Date'}</th>
-                  <th className="py-3 px-4 font-semibold uppercase text-[10px]">{language === 'id' ? 'Nominal' : 'Amount'}</th>
-                  <th className="py-3 px-4 font-semibold uppercase text-[10px]">Status</th>
-                  <th className="py-3 px-4 font-semibold uppercase text-[10px] text-right">{language === 'id' ? 'Aksi' : 'Actions'}</th>
+                  <th className="py-3 px-4 font-semibold uppercase text-xs">Invoice #</th>
+                  <th className="py-3 px-4 font-semibold uppercase text-xs">{language === 'id' ? 'Klien & Perusahaan' : 'Client & Company'}</th>
+                  <th className="py-3 px-4 font-semibold uppercase text-xs">{language === 'id' ? 'Tanggal / Jatuh Tempo' : 'Issue / Due Date'}</th>
+                  <th className="py-3 px-4 font-semibold uppercase text-xs">{language === 'id' ? 'Nominal' : 'Amount'}</th>
+                  <th className="py-3 px-4 font-semibold uppercase text-xs">Status</th>
+                  <th className="py-3 px-4 font-semibold uppercase text-xs text-right">{language === 'id' ? 'Aksi' : 'Actions'}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[rgba(255,255,255,0.07)]">
@@ -757,20 +757,20 @@ export const AdminInvoicing: React.FC = () => {
                       </td>
                       <td className="py-3.5 px-4">
                         <div className="font-bold text-white">{inv.clientName}</div>
-                        <div className="text-[11px] text-[var(--k-text-secondary)]">{inv.clientCompany}</div>
+                        <div className="text-xs text-[var(--k-text-secondary)]">{inv.clientCompany}</div>
                       </td>
                       <td className="py-3.5 px-4 text-[var(--k-text-secondary)]">
                         <div>Issue: {inv.issueDate}</div>
-                        <div className="text-[10px] text-[var(--k-text-secondary)]">Due: {inv.dueDate}</div>
+                        <div className="text-xs text-[var(--k-text-secondary)]">Due: {inv.dueDate}</div>
                       </td>
                       <td className="py-3.5 px-4 font-bold text-emerald-400 font-sans">
                         {formatAmount(inv.total, currency)}
-                        <div className="text-[10px] font-sans text-[var(--k-text-secondary)] font-normal">
+                        <div className="text-xs font-sans text-[var(--k-text-secondary)] font-normal">
                           incl. {inv.taxPercent}% PPN
                         </div>
                         {((inv.amountPaid && inv.amountPaid > 0) || inv.status === 'partially_paid') && (
                           <div className="mt-1 space-y-1">
-                            <div className="flex items-center gap-2 text-[10px] font-sans font-normal">
+                            <div className="flex items-center gap-2 text-xs font-sans font-normal">
                               <span className="text-emerald-400">Paid: {formatAmount(inv.amountPaid || 0, currency)}</span>
                               <span className="text-amber-400 font-semibold">Bal: {formatAmount(inv.balanceDue ?? (inv.total - (inv.amountPaid || 0)), currency)}</span>
                             </div>
@@ -803,7 +803,7 @@ export const AdminInvoicing: React.FC = () => {
                               title="Record Payment"
                             >
                               <CreditCard size={13} />
-                              <span className="text-[11px] font-semibold">Pay</span>
+                              <span className="text-xs font-semibold">Pay</span>
                             </button>
                           )}
                           <button
@@ -856,21 +856,21 @@ export const AdminInvoicing: React.FC = () => {
                   className="bg-[var(--k-surface)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-card-radius)] p-4 space-y-3 shadow-lg"
                 >
                   <div className="flex items-center justify-between">
-                    <span className="px-2.5 py-1 rounded-[var(--k-control-radius)] bg-amber-500/10 text-amber-300 border border-amber-500/20 text-[10px] font-sans font-bold">
+                    <span className="px-2.5 py-1 rounded-[var(--k-control-radius)] bg-amber-500/10 text-amber-300 border border-amber-500/20 text-xs font-sans font-bold">
                       {exp.category}
                     </span>
-                    <span className="text-[11px] font-sans text-[var(--k-text-secondary)]">{exp.date}</span>
+                    <span className="text-xs font-sans text-[var(--k-text-secondary)]">{exp.date}</span>
                   </div>
 
                   <div className="text-white font-medium text-sm font-sans">{exp.description}</div>
 
                   <div className="flex items-center justify-between pt-2 border-t border-[rgba(255,255,255,0.05)]">
                     <div>
-                      <div className="text-[10px] font-sans text-[var(--k-text-secondary)]">{language === 'id' ? 'Nominal Pengeluaran' : 'Expense Amount'}</div>
+                      <div className="text-xs font-sans text-[var(--k-text-secondary)]">{language === 'id' ? 'Nominal Pengeluaran' : 'Expense Amount'}</div>
                       <div className="text-base font-bold text-rose-400 font-sans">
                         {formatAmount(exp.amount, currency)}
                       </div>
-                      <div className="text-[10px] font-sans text-[var(--k-text-secondary)]">
+                      <div className="text-xs font-sans text-[var(--k-text-secondary)]">
                         {language === 'id' ? 'Oleh: ' : 'By: '} {exp.recordedBy}
                       </div>
                     </div>
@@ -893,17 +893,17 @@ export const AdminInvoicing: React.FC = () => {
           {/* Desktop View: Full Expense Table */}
           <div 
             ref={tableScrollRef}
-            className="hidden md:block bg-[var(--k-surface)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-card-radius)] overflow-x-auto shadow-xl select-none"
+            className="hidden md:block bg-[var(--k-surface)] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-card-radius)] overflow-x-auto shadow-[var(--k-shadow-sm)] select-none"
           >
             <table className="w-full text-left text-xs font-sans min-w-[650px]">
               <thead className="sticky top-0 z-10 bg-[var(--k-surface)]">
                 <tr className="border-b border-[rgba(255,255,255,0.07)] bg-[var(--k-surface-raised)] text-[var(--k-text-secondary)]">
-                  <th className="py-3 px-4 font-semibold uppercase text-[10px]">{language === 'id' ? 'Tanggal' : 'Date'}</th>
-                  <th className="py-3 px-4 font-semibold uppercase text-[10px]">{language === 'id' ? 'Kategori' : 'Category'}</th>
-                  <th className="py-3 px-4 font-semibold uppercase text-[10px]">{language === 'id' ? 'Deskripsi' : 'Description'}</th>
-                  <th className="py-3 px-4 font-semibold uppercase text-[10px]">{language === 'id' ? 'Nominal' : 'Amount'}</th>
-                  <th className="py-3 px-4 font-semibold uppercase text-[10px]">{language === 'id' ? 'Dicatat Oleh' : 'Recorded By'}</th>
-                  <th className="py-3 px-4 font-semibold uppercase text-[10px] text-right">{language === 'id' ? 'Aksi' : 'Action'}</th>
+                  <th className="py-3 px-4 font-semibold uppercase text-xs">{language === 'id' ? 'Tanggal' : 'Date'}</th>
+                  <th className="py-3 px-4 font-semibold uppercase text-xs">{language === 'id' ? 'Kategori' : 'Category'}</th>
+                  <th className="py-3 px-4 font-semibold uppercase text-xs">{language === 'id' ? 'Deskripsi' : 'Description'}</th>
+                  <th className="py-3 px-4 font-semibold uppercase text-xs">{language === 'id' ? 'Nominal' : 'Amount'}</th>
+                  <th className="py-3 px-4 font-semibold uppercase text-xs">{language === 'id' ? 'Dicatat Oleh' : 'Recorded By'}</th>
+                  <th className="py-3 px-4 font-semibold uppercase text-xs text-right">{language === 'id' ? 'Aksi' : 'Action'}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[rgba(255,255,255,0.07)]">
@@ -911,7 +911,7 @@ export const AdminInvoicing: React.FC = () => {
                   <tr key={exp.id} className="hover:bg-[#1C2128] transition-colors">
                     <td className="py-3.5 px-4 text-[var(--k-text-secondary)]">{exp.date}</td>
                     <td className="py-3.5 px-4">
-                      <span className="px-2 py-0.5 rounded bg-[var(--k-surface-raised)] text-amber-400 border border-amber-500/20 text-[10px]">
+                      <span className="px-2 py-0.5 rounded bg-[var(--k-surface-raised)] text-amber-400 border border-amber-500/20 text-xs">
                         {exp.category}
                       </span>
                     </td>
@@ -942,7 +942,7 @@ export const AdminInvoicing: React.FC = () => {
       {/* 5. Create / Edit Invoice Modal (Mobile Fullscreen + Sticky Header) */}
       {isInvoiceModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-0 sm:p-4 overflow-y-auto">
-          <div className="bg-[var(--k-surface-raised)] border-0 sm:border sm:border-[rgba(255,255,255,0.07)] rounded-none sm:rounded-[var(--k-card-radius)] w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-2xl shadow-2xl flex flex-col overflow-hidden">
+          <div className="bg-[var(--k-surface-raised)] border-0 sm:border sm:border-[rgba(255,255,255,0.07)] rounded-none sm:rounded-[var(--k-card-radius)] w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-2xl shadow-[var(--k-shadow-sm)] flex flex-col overflow-hidden">
             
             {/* Sticky Header */}
             <div className="sticky top-0 z-20 bg-[var(--k-surface-raised)]/95 backdrop-blur-md px-5 sm:px-6 py-4 border-b border-[rgba(255,255,255,0.07)] flex items-center justify-between shrink-0">
@@ -965,7 +965,7 @@ export const AdminInvoicing: React.FC = () => {
                   <div className="p-3 bg-[#0B0C0E] border border-[rgba(255,255,255,0.07)] rounded-[var(--k-control-radius)] space-y-1.5">
                     <label className="block text-[var(--k-text-secondary)] font-semibold flex items-center justify-between">
                       <span>{language === 'id' ? 'Tautkan ke Proyek yang Disetujui (Approved)' : 'Link to Approved Project'}</span>
-                      <span className="text-[10px] text-emerald-400 font-sans">Status: Approved / In Progress</span>
+                      <span className="text-xs text-emerald-400 font-sans">Status: Approved / In Progress</span>
                     </label>
                     <CustomSelect
                       value={selectedProjectId}
@@ -1137,7 +1137,7 @@ export const AdminInvoicing: React.FC = () => {
       {/* 6. Record Expense Modal (Mobile Fullscreen + Sticky Header) */}
       {isExpenseModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-0 sm:p-4 overflow-y-auto">
-          <div className="bg-[var(--k-surface-raised)] border-0 sm:border sm:border-[rgba(255,255,255,0.07)] rounded-none sm:rounded-[var(--k-card-radius)] w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-md shadow-2xl flex flex-col overflow-hidden">
+          <div className="bg-[var(--k-surface-raised)] border-0 sm:border sm:border-[rgba(255,255,255,0.07)] rounded-none sm:rounded-[var(--k-card-radius)] w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-md shadow-[var(--k-shadow-sm)] flex flex-col overflow-hidden">
             
             {/* Sticky Header */}
             <div className="sticky top-0 z-20 bg-[var(--k-surface-raised)]/95 backdrop-blur-md px-5 sm:px-6 py-4 border-b border-[rgba(255,255,255,0.07)] flex items-center justify-between shrink-0">
@@ -1232,7 +1232,7 @@ export const AdminInvoicing: React.FC = () => {
       {/* 6b. Record Payment Modal */}
       {paymentModalInvoice && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-          <div className="bg-[var(--k-surface)] border border-[rgba(255,255,255,0.1)] rounded-[var(--k-card-radius)] w-full max-w-lg shadow-2xl relative overflow-hidden flex flex-col max-h-[92vh]">
+          <div className="bg-[var(--k-surface)] border border-[rgba(255,255,255,0.1)] rounded-[var(--k-card-radius)] w-full max-w-lg shadow-[var(--k-shadow-sm)] relative overflow-hidden flex flex-col max-h-[92vh]">
             {/* Modal Header */}
             <div className="sticky top-0 z-20 bg-[var(--k-surface-raised)]/95 backdrop-blur-md px-5 sm:px-6 py-4 border-b border-[rgba(255,255,255,0.07)] flex items-center justify-between shrink-0">
               <div className="flex items-center gap-2.5">
@@ -1243,7 +1243,7 @@ export const AdminInvoicing: React.FC = () => {
                   <h3 className="text-sm font-bold text-white font-sans">
                     {language === 'id' ? 'Catat Pembayaran Klien' : 'Record Client Payment'}
                   </h3>
-                  <p className="text-[11px] font-sans text-[var(--k-text-secondary)]">
+                  <p className="text-xs font-sans text-[var(--k-text-secondary)]">
                     {paymentModalInvoice.invoiceNumber} • {paymentModalInvoice.clientName}
                   </p>
                 </div>
@@ -1290,7 +1290,7 @@ export const AdminInvoicing: React.FC = () => {
                           const rem = paymentModalInvoice.balanceDue ?? (paymentModalInvoice.total - (paymentModalInvoice.amountPaid || 0));
                           setPaymentAmount(rem > 0 ? rem : paymentModalInvoice.total);
                         }}
-                        className="px-2 py-0.5 rounded bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px]"
+                        className="px-2 py-0.5 rounded bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs"
                       >
                         100% Full
                       </button>
@@ -1300,7 +1300,7 @@ export const AdminInvoicing: React.FC = () => {
                           const rem = paymentModalInvoice.balanceDue ?? (paymentModalInvoice.total - (paymentModalInvoice.amountPaid || 0));
                           setPaymentAmount(Math.round(rem / 2));
                         }}
-                        className="px-2 py-0.5 rounded bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/30 text-[10px]"
+                        className="px-2 py-0.5 rounded bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/30 text-xs"
                       >
                         50% DP
                       </button>
@@ -1402,7 +1402,7 @@ export const AdminInvoicing: React.FC = () => {
       {/* 7. Printable Invoice Preview Slide-Over / Modal (Mobile Fullscreen + Sticky Header) */}
       {previewInvoice && (
         <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-0 sm:p-4 overflow-y-auto">
-          <div className="bg-white text-zinc-900 rounded-none sm:rounded-[var(--k-card-radius)] w-full h-full sm:h-auto sm:max-h-[92vh] sm:max-w-2xl shadow-2xl font-sans relative flex flex-col overflow-hidden">
+          <div className="bg-white text-zinc-900 rounded-none sm:rounded-[var(--k-card-radius)] w-full h-full sm:h-auto sm:max-h-[92vh] sm:max-w-2xl shadow-[var(--k-shadow-sm)] font-sans relative flex flex-col overflow-hidden">
             
             {/* Sticky Header for Preview Modal */}
             <div className="sticky top-0 z-20 bg-white/95 backdrop-blur-md px-6 py-4 border-b border-zinc-200 flex items-center justify-between shrink-0">
@@ -1412,7 +1412,7 @@ export const AdminInvoicing: React.FC = () => {
                 </div>
                 <div>
                   <span className="text-sm font-bold font-sans tracking-tight text-zinc-900 block">KAPITECH INVOICE</span>
-                  <span className="text-[11px] font-sans text-zinc-500">{previewInvoice.invoiceNumber}</span>
+                  <span className="text-xs font-sans text-zinc-500">{previewInvoice.invoiceNumber}</span>
                 </div>
               </div>
               <button
@@ -1464,7 +1464,7 @@ export const AdminInvoicing: React.FC = () => {
               <div className="overflow-x-auto mb-6">
                 <table className="w-full text-xs text-left border-collapse min-w-[320px]">
                   <thead>
-                    <tr className="border-b-2 border-zinc-900 text-zinc-900 font-sans uppercase text-[10px]">
+                    <tr className="border-b-2 border-zinc-900 text-zinc-900 font-sans uppercase text-xs">
                       <th className="py-2">Description</th>
                       <th className="py-2 text-right">Qty</th>
                       <th className="py-2 text-right">Price</th>
@@ -1488,10 +1488,10 @@ export const AdminInvoicing: React.FC = () => {
               <div className="flex flex-col sm:flex-row sm:justify-between gap-4 mb-6 text-xs font-sans">
                 {previewInvoice.payments && previewInvoice.payments.length > 0 ? (
                   <div className="flex-1 bg-zinc-50 border border-zinc-200 rounded-[var(--k-control-radius)] p-3">
-                    <span className="text-[10px] font-bold text-zinc-900 uppercase block mb-2">Recorded Payment Ledger:</span>
+                    <span className="text-xs font-bold text-zinc-900 uppercase block mb-2">Recorded Payment Ledger:</span>
                     <div className="space-y-1.5">
                       {previewInvoice.payments.map((p, idx) => (
-                        <div key={idx} className="flex justify-between items-center text-[11px] text-zinc-700">
+                        <div key={idx} className="flex justify-between items-center text-xs text-zinc-700">
                           <span>{p.date} • {p.method.replace('_', ' ')} {p.reference ? `(${p.reference})` : ''}</span>
                           <span className="font-bold text-emerald-600">{formatIDR(p.amount)}</span>
                         </div>
@@ -1533,7 +1533,7 @@ export const AdminInvoicing: React.FC = () => {
               {/* Bank details & Signoff */}
               <div className="bg-zinc-50 p-4 rounded-[var(--k-control-radius)] text-xs text-zinc-600 border border-zinc-200">
                 <strong className="text-zinc-900 block mb-1">Bank Payment Wire Instructions:</strong>
-                <p className="font-sans text-[11px] leading-relaxed">
+                <p className="font-sans text-xs leading-relaxed">
                   Bank Mandiri Indonesia (Cabang Serpong)<br />
                   Account Number: <strong className="text-zinc-900">123-00-998877-1</strong><br />
                   Beneficiary: <strong className="text-zinc-900">PT KAPITECH DIGITAL INDONESIA</strong>
