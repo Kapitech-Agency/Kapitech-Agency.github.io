@@ -71,6 +71,7 @@ import { getDocumentStorage } from './document-storage.ts';
 import { getPostgresBackupHealth } from './postgres-backup-health.ts';
 import { checkPostgresConnection, getPostgresPool } from './postgres.ts';
 import { loadPostgresMigrations } from './postgres-migrations.ts';
+import { isFirebaseAuthEnabled, verifyFirebaseIdToken } from './firebase-token.ts';
 
 
 const ROLE_POLICIES: Record<string, {
@@ -524,6 +525,136 @@ apiRouter.post('/auth/login', rateLimitPublic(10, 15 * 60 * 1000), async (req: R
       success: false,
       error: 'Login could not be completed because the server session store is unavailable. Check the server runtime logs.'
     });
+  }
+});
+
+apiRouter.post('/auth/firebase-login', rateLimitPublic(10, 15 * 60 * 1000), async (req: Request, res: Response): Promise<void> => {
+  const origin = req.get('origin');
+  if (origin && origin !== `${req.protocol}://${req.get('host')}`) {
+    res.status(403).json({ success: false, error: 'Security validation failed.' });
+    return;
+  }
+
+  if (!isFirebaseAuthEnabled()) {
+    res.status(404).json({ success: false, error: 'Firebase authentication is not enabled.' });
+    return;
+  }
+
+  if (getDataSourceMode() !== 'postgres') {
+    res.status(503).json({ success: false, error: 'Firebase authentication requires the PostgreSQL datasource.' });
+    return;
+  }
+
+  const idToken = String(req.body?.idToken || '').trim();
+  const rememberMe = Boolean(req.body?.rememberMe);
+  if (!idToken || idToken.length > 5000) {
+    res.status(400).json({ success: false, error: 'A valid Firebase ID token is required.' });
+    return;
+  }
+
+  const ip = req.ip || req.socket.remoteAddress || '127.0.0.1';
+  const userAgent = req.headers['user-agent'] || 'unknown';
+
+  try {
+    const firebaseUser = await verifyFirebaseIdToken(idToken);
+    const user = await postgresAuthRepository.findUserByIdentifier(firebaseUser.email);
+
+    if (!user || user.status === 'suspended') {
+      await writeAuditLog({
+        action: 'LOGIN_FAILED_FIREBASE',
+        actor: firebaseUser.email,
+        actorRole: 'anonymous',
+        ip,
+        userAgent,
+        details: 'Firebase identity verified, but no active PostgreSQL AMS account is mapped to the verified email address.',
+        severity: 'warning'
+      });
+      res.status(401).json({ success: false, error: 'No active AMS account is mapped to this Firebase email address.' });
+      return;
+    }
+
+    if (user.mfaEnabled) {
+      if (!user.mfaSecret) {
+        res.status(503).json({ success: false, error: 'MFA is enabled but not configured correctly. Contact a Master administrator.' });
+        return;
+      }
+
+      const challenge = await issueMfaChallenge(user.id, rememberMe);
+      setMfaChallengeCookie(res, challenge);
+      setCsrfCookie(res);
+
+      await writeAuditLog({
+        action: 'LOGIN_MFA_CHALLENGE_FIREBASE',
+        actor: user.username,
+        actorRole: user.role,
+        ip,
+        userAgent,
+        details: 'Firebase identity accepted; TOTP second factor is required to complete the server session.',
+        severity: 'info'
+      });
+
+      res.json({
+        success: true,
+        requiresMfa: true,
+        provider: 'firebase',
+        user: {
+          id: user.id,
+          username: user.username,
+          email: user.email,
+          mfaEnabled: true
+        }
+      });
+      return;
+    }
+
+    const nowIso = new Date().toISOString();
+    user.lastLogin = nowIso;
+    await postgresAuthRepository.touchUserLastLogin(user.id, nowIso);
+    const session = await createSession(user, ip, userAgent, rememberMe);
+
+    await writeAuditLog({
+      action: 'LOGIN_SUCCESS_FIREBASE',
+      actor: user.username,
+      actorRole: user.role,
+      ip,
+      userAgent,
+      details: `User ${user.username} authenticated through Firebase and mapped to the PostgreSQL AMS account.`,
+      severity: 'info'
+    });
+
+    const cookieMaxAge = rememberMe ? 24 * 3600 : 12 * 3600;
+    const secureCookie = process.env.NODE_ENV === 'production' ? ' Secure;' : '';
+    res.append('Set-Cookie', `kapi_session=${session.token}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${cookieMaxAge};${secureCookie}`);
+    setCsrfCookie(res);
+
+    res.json({
+      success: true,
+      provider: 'firebase',
+      user: {
+        id: user.id,
+        name: user.name,
+        username: user.username,
+        email: user.email,
+        role: user.role,
+        stakeholderType: user.stakeholderType,
+        permissions: user.permissions,
+        division: user.division,
+        mfaEnabled: user.mfaEnabled,
+        lastLogin: user.lastLogin
+      }
+    });
+  } catch (error) {
+    console.error('[Auth] Firebase login failed:', error);
+    await writeAuditLog({
+      action: 'LOGIN_FAILED_FIREBASE',
+      actor: 'firebase',
+      actorRole: 'anonymous',
+      ip,
+      userAgent,
+      details: 'Firebase ID token verification or PostgreSQL account mapping failed.',
+      severity: 'warning'
+    });
+    res.status(401).json({ success: false, error: 'Firebase authentication could not be verified.' });
   }
 });
 
