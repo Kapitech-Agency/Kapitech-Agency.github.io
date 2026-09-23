@@ -147,11 +147,11 @@ export const GlobalExecutiveDashboard: React.FC = () => {
         <div>
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <h1 className="text-xl sm:text-2xl font-bold font-sans tracking-tight text-[var(--k-text)]">
+            <h1 className="ams-page-title">
               {language === 'id' ? 'Executive Briefing & Kendali Operasi' : 'Executive Overview & Operations'}
             </h1>
           </div>
-          <p className="text-xs font-sans text-[var(--k-text-secondary)] mt-1">
+          <p className="ams-page-subtitle mt-1">
             {language === 'id'
               ? 'Snapshot server saat ini untuk pipeline, piutang, risiko proyek, dan prioritas tindakan.'
               : 'Current server snapshot for sales pipeline, receivables, project delivery, and action priorities.'}
@@ -165,7 +165,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
           <button
             onClick={fetchOverview}
             disabled={isLoading}
-            className="px-3 py-1.5 rounded-[var(--k-control-radius)] bg-[var(--k-surface)] hover:bg-[var(--k-surface-raised)] text-[var(--k-text)] border border-[var(--k-border)] text-xs font-sans flex items-center gap-1.5 transition-all disabled:opacity-50"
+            className="ams-action flex items-center gap-1.5 disabled:opacity-50"
             title="Refresh metrics from server"
           >
             <RefreshCw size={13} className={isLoading ? 'animate-spin text-[var(--k-red)]' : 'text-[var(--k-text-secondary)]'} />
@@ -186,7 +186,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
       {/* ------------------------------------------------------------- */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Revenue Collected */}
-        <div className="p-4 rounded-[var(--k-card-radius)] kapi-card flex flex-col justify-between hover:border-[var(--k-border-strong)] transition-colors">
+        <div className="kapi-card ams-kpi flex flex-col justify-between hover:border-[var(--k-border-strong)] transition-colors">
           <div className="flex items-center justify-between text-xs font-sans text-[var(--k-text-secondary)]">
             <span>{language === 'id' ? 'Pendapatan Diterima' : 'Revenue Collected'}</span>
             <div className="w-7 h-7 rounded-[var(--k-control-radius)] bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
@@ -194,10 +194,10 @@ export const GlobalExecutiveDashboard: React.FC = () => {
             </div>
           </div>
           <div className="mt-3">
-            <div className="text-2xl font-bold font-sans text-[var(--k-text)] tracking-tight">
+            <div className="ams-kpi-value">
               {formatCurrency(metrics.revenueCollected)}
             </div>
-            <div className="text-[10px] font-sans text-[var(--k-text-secondary)] mt-1 flex items-center gap-1">
+            <div className="ams-meta mt-1 flex items-center gap-1">
               <span>Billed Total:</span>
               <span className="text-zinc-300 font-semibold">{formatCurrency(metrics.totalBilled)}</span>
             </div>
@@ -205,7 +205,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
         </div>
 
         {/* Outstanding Receivables */}
-        <div className="p-4 rounded-[var(--k-card-radius)] kapi-card flex flex-col justify-between hover:border-[var(--k-border-strong)] transition-colors">
+        <div className="kapi-card ams-kpi flex flex-col justify-between hover:border-[var(--k-border-strong)] transition-colors">
           <div className="flex items-center justify-between text-xs font-sans text-[var(--k-text-secondary)]">
             <span>{language === 'id' ? 'Piutang Berjalan' : 'Outstanding Receivables'}</span>
             <div className={`w-7 h-7 rounded-[var(--k-control-radius)] flex items-center justify-center ${metrics.overdueReceivables > 0 ? 'bg-red-500/10 border border-red-500/30 text-red-400' : 'bg-amber-500/10 border border-amber-500/20 text-amber-400'}`}>
@@ -213,7 +213,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
             </div>
           </div>
           <div className="mt-3">
-            <div className="text-2xl font-bold font-sans text-[var(--k-text)] tracking-tight">
+            <div className="ams-kpi-value">
               {formatCurrency(metrics.outstandingReceivables)}
             </div>
             <div className="text-[10px] font-sans mt-1 flex items-center gap-1">
@@ -230,7 +230,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
         </div>
 
         {/* Active Pipeline */}
-        <div className="p-4 rounded-[var(--k-card-radius)] kapi-card flex flex-col justify-between hover:border-[var(--k-border-strong)] transition-colors">
+        <div className="kapi-card ams-kpi flex flex-col justify-between hover:border-[var(--k-border-strong)] transition-colors">
           <div className="flex items-center justify-between text-xs font-sans text-[var(--k-text-secondary)]">
             <span>{language === 'id' ? 'Nilai Pipeline Aktif' : 'Active Pipeline'}</span>
             <div className="w-7 h-7 rounded-[var(--k-control-radius)] bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400">
@@ -238,10 +238,10 @@ export const GlobalExecutiveDashboard: React.FC = () => {
             </div>
           </div>
           <div className="mt-3">
-            <div className="text-2xl font-bold font-sans text-[var(--k-text)] tracking-tight">
+            <div className="ams-kpi-value">
               {formatCurrency(metrics.activePipeline)}
             </div>
-            <div className="text-[10px] font-sans text-[var(--k-text-secondary)] mt-1 flex items-center gap-1">
+            <div className="ams-meta mt-1 flex items-center gap-1">
               <span>Active Deals:</span>
               <span className="text-zinc-300 font-semibold">{data?.todayAtKapitech?.dealsInPipelineCount || 0}</span>
               <span className="text-zinc-500">•</span>
@@ -252,7 +252,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
         </div>
 
         {/* Active Projects */}
-        <div className="p-4 rounded-[var(--k-card-radius)] kapi-card flex flex-col justify-between hover:border-[var(--k-border-strong)] transition-colors">
+        <div className="kapi-card ams-kpi flex flex-col justify-between hover:border-[var(--k-border-strong)] transition-colors">
           <div className="flex items-center justify-between text-xs font-sans text-[var(--k-text-secondary)]">
             <span>{language === 'id' ? 'Proyek Berjalan' : 'Active Projects'}</span>
             <div className="w-7 h-7 rounded-[var(--k-control-radius)] bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
@@ -260,7 +260,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
             </div>
           </div>
           <div className="mt-3">
-            <div className="text-2xl font-bold font-sans text-[var(--k-text)] tracking-tight">
+            <div className="ams-kpi-value">
               {metrics.activeProjects}
             </div>
             <div className="text-[10px] font-sans mt-1 flex items-center gap-1">
