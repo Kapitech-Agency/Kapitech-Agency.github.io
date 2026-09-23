@@ -89,10 +89,8 @@ export const Navbar = () => {
     <>
       <nav
         className={cn(
-          "kapi-public-nav fixed top-0 left-0 w-full z-50 transition-all duration-300 border-b",
-          isScrolled 
-            ? "bg-[var(--k-bg-deep)]/95 backdrop-blur-md py-3 sm:py-3.5 border-[var(--k-border)] shadow-[var(--k-shadow-sm)] shadow-[var(--k-bg-deep)]/80" 
-            : "bg-[var(--k-bg-deep)]/80 backdrop-blur-sm py-3 sm:py-3.5 border-[var(--k-border)]/60"
+          "kapi-public-nav fixed top-0 left-0 w-full z-50 border-b",
+          isScrolled ? "kapi-nav-scrolled" : "kapi-nav-top"
         )}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12 flex items-center justify-between kapi-nav-inner">
@@ -116,7 +114,7 @@ export const Navbar = () => {
               <Link 
                 to="/work" 
                 className={cn(
-                  "relative inline-flex items-center min-h-10 px-3 rounded-[10px] text-sm font-medium leading-none transition-colors",
+                  "kapi-nav-link",
                   location.pathname === '/work' ? "text-brand-red font-semibold" : "text-[var(--k-text-secondary)] hover:text-white"
                 )}
               >
@@ -137,7 +135,7 @@ export const Navbar = () => {
                   type="button"
                   onClick={() => setIsServicesDropdownOpen(prev => !prev)}
                   className={cn(
-                    "relative inline-flex items-center gap-1.5 min-h-10 px-3 rounded-[10px] text-sm font-medium leading-none transition-colors cursor-pointer outline-none",
+                    "kapi-nav-link kapi-nav-services-trigger",
                     isServicesActive || isServicesDropdownOpen ? "text-brand-red font-semibold" : "text-[var(--k-text-secondary)] hover:text-white"
                   )}
                   aria-expanded={isServicesDropdownOpen}
@@ -156,7 +154,7 @@ export const Navbar = () => {
               <Link 
                 to="/about" 
                 className={cn(
-                  "relative inline-flex items-center min-h-10 px-3 rounded-[10px] text-sm font-medium leading-none transition-colors",
+                  "kapi-nav-link",
                   location.pathname === '/about' ? "text-brand-red font-semibold" : "text-[var(--k-text-secondary)] hover:text-white"
                 )}
               >
