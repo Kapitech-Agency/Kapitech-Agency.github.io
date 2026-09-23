@@ -342,7 +342,7 @@ export const AdminLayout: React.FC = () => {
           label: language === 'id' ? 'Akun & Hak Akses' : 'Accounts & RBAC',
           icon: Users,
           badge: 'RBAC',
-          badgeColor: 'bg-[var(--k-red)]/10 text-[var(--k-red)] border border-[var(--k-red-border)] font-sans text-[9px] font-bold'
+          badgeColor: 'bg-[var(--k-red)]/10 text-[var(--k-red)] border border-[var(--k-red-border)] font-sans text-xs font-bold'
         }
       ]
     }
@@ -415,7 +415,7 @@ export const AdminLayout: React.FC = () => {
       {/* ------------------------------------------------------------- */}
       <aside 
         className={`ams-sidebar ams-sidebar-nav hidden md:flex flex-col bg-[var(--k-surface)] border-r border-[var(--k-border)] shrink-0 h-full z-30 transition-all duration-300 ${
-          sidebarCollapsed ? 'w-20 ams-sidebar-collapsed' : 'w-64 lg:w-72'
+          sidebarCollapsed ? 'w-20 ams-sidebar-collapsed' : 'w-64'
         }`}
       >
         
@@ -432,11 +432,11 @@ export const AdminLayout: React.FC = () => {
                 <div className="min-w-0">
                   <div className="font-sans font-bold text-[var(--k-text)] text-sm tracking-tight flex items-center gap-1.5">
                     <span>KAPITECH</span>
-                    <span className="text-[10px] font-sans px-1.5 py-0.5 rounded bg-[var(--k-red)]/10 text-[var(--k-red)] border border-[var(--k-red-border)] font-semibold">
+                    <span className="text-xs font-sans px-1.5 py-0.5 rounded bg-[var(--k-red)]/10 text-[var(--k-red)] border border-[var(--k-red-border)] font-semibold">
                       AMS
                     </span>
                   </div>
-                  <p className="text-[10px] font-sans text-[var(--k-text-secondary)] -mt-0.5 truncate">Agency Management System</p>
+                  <p className="text-xs font-sans text-[var(--k-text-secondary)] -mt-0.5 truncate">Agency Management System</p>
                 </div>
               </Link>
               <button
@@ -450,7 +450,7 @@ export const AdminLayout: React.FC = () => {
           ) : (
             <Link 
               to="/admin/dashboard" 
-              className="w-9 h-9 rounded-[var(--k-control-radius)] bg-[var(--k-surface-raised)] border border-white/10 flex items-center justify-center shrink-0 shadow-sm hover:border-[var(--k-red-border)] hover:scale-105 transition-all p-1.5"
+              className="w-9 h-9 rounded-[var(--k-control-radius)] bg-[var(--k-surface-raised)] border border-white/10 flex items-center justify-center shrink-0 shadow-sm hover:border-[var(--k-red-border)] hover:scale-[1.02] transition-all p-1.5"
               title="Kapitech AMS Dashboard"
             >
               <img src="/favicon.png" alt="Kapitech" className="w-full h-full object-contain" />
@@ -463,7 +463,7 @@ export const AdminLayout: React.FC = () => {
           {filteredNavSections.map((section) => (
             <div key={section.id} className="space-y-1">
               {!sidebarCollapsed && (
-                <div className="text-[11px] font-sans text-[var(--k-text-secondary)] font-bold tracking-wider px-3 pt-2 pb-1 uppercase">
+                <div className="text-xs font-sans text-[var(--k-text-secondary)] font-bold tracking-wider px-3 pt-2 pb-1 uppercase">
                   {t(section.titleKey)}
                 </div>
               )}
@@ -497,7 +497,7 @@ export const AdminLayout: React.FC = () => {
                     </div>
 
                     {!sidebarCollapsed && item.badge !== null && item.badge !== undefined && (
-                      <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-semibold ml-auto shrink-0 ${
+                      <span className={`px-1.5 py-0.5 rounded-full text-xs font-semibold ml-auto shrink-0 ${
                         item.badgeColor || 'bg-[var(--k-surface-raised)] text-[var(--k-text-secondary)] border border-[var(--k-border)]'
                       }`}>
                         {item.badge}
@@ -540,7 +540,7 @@ export const AdminLayout: React.FC = () => {
                   <div className="text-xs font-semibold text-[var(--k-text)] truncate">
                     {adminDisplayName}
                   </div>
-                  <div className="text-[10px] font-sans text-[var(--k-text-secondary)] truncate flex items-center gap-1">
+                  <div className="text-xs font-sans text-[var(--k-text-secondary)] truncate flex items-center gap-1">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
                     <span className="truncate">{adminUsername}</span>
                   </div>
@@ -560,7 +560,7 @@ export const AdminLayout: React.FC = () => {
           {/* Active Stakeholder Role (Production Readonly / Dev Simulator) */}
           {!sidebarCollapsed && (
             <div className="pt-2 border-t border-[var(--k-border)]">
-              <div className="flex items-center justify-between text-[10px] font-sans text-[var(--k-text-secondary)] mb-1 px-0.5">
+              <div className="flex items-center justify-between text-xs font-sans text-[var(--k-text-secondary)] mb-1 px-0.5">
                 <span className="flex items-center gap-1">
                   <ShieldCheck size={11} className="text-[var(--k-red)]" />
                   <span>{language === 'id' ? 'Hak Akses Peran' : 'Active Role'}</span>
@@ -573,7 +573,7 @@ export const AdminLayout: React.FC = () => {
                 <select
                   value={rbacRole}
                   onChange={(e) => setRbacRole(e.target.value as StakeholderRole)}
-                  className="w-full h-7 px-2 rounded-[var(--k-control-radius)] bg-[var(--k-surface-raised)] text-[var(--k-text)] border border-[var(--k-border)] hover:border-[var(--k-text-secondary)]/60 text-[11px] font-sans focus:border-[var(--k-red-border)] transition-colors cursor-pointer"
+                  className="w-full h-7 px-2 rounded-[var(--k-control-radius)] bg-[var(--k-surface-raised)] text-[var(--k-text)] border border-[var(--k-border)] hover:border-[var(--k-text-secondary)]/60 text-xs font-sans focus:border-[var(--k-red-border)] transition-colors cursor-pointer"
                   title="Select Stakeholder Role to switch RBAC permissions (DEV only)"
                 >
                   <option value="executive">1. Stakeholder Executive (Full Access)</option>
@@ -583,7 +583,7 @@ export const AdminLayout: React.FC = () => {
                   <option value="client_viewer">5. Client / Viewer</option>
                 </select>
               ) : (
-                <div className="w-full px-2 py-1 rounded-[var(--k-control-radius)] bg-[var(--k-surface-raised)] text-zinc-200 border border-[var(--k-border)] text-[11px] font-sans truncate">
+                <div className="w-full px-2 py-1 rounded-[var(--k-control-radius)] bg-[var(--k-surface-raised)] text-zinc-200 border border-[var(--k-border)] text-xs font-sans truncate">
                   {roleMeta.title}
                 </div>
               )}
@@ -622,11 +622,11 @@ export const AdminLayout: React.FC = () => {
                 <div>
                   <div className="font-sans font-bold text-[var(--k-text)] text-sm tracking-tight flex items-center gap-1.5">
                     <span>KAPITECH</span>
-                    <span className="text-[10px] font-sans px-1.5 py-0.5 rounded bg-[var(--k-red)]/10 text-[var(--k-red)] border border-[var(--k-red-border)] font-semibold">
+                    <span className="text-xs font-sans px-1.5 py-0.5 rounded bg-[var(--k-red)]/10 text-[var(--k-red)] border border-[var(--k-red-border)] font-semibold">
                       AMS
                     </span>
                   </div>
-                  <p className="text-[10px] font-sans text-[var(--k-text-secondary)] -mt-0.5">Agency Management System</p>
+                  <p className="text-xs font-sans text-[var(--k-text-secondary)] -mt-0.5">Agency Management System</p>
                 </div>
               </Link>
 
@@ -641,7 +641,7 @@ export const AdminLayout: React.FC = () => {
 
             {/* Quick Preferences Bar inside Drawer */}
             <div className="px-4 py-2.5 bg-[var(--k-surface-raised)] border-b border-[var(--k-border)] flex items-center justify-between shrink-0">
-              <div className="flex items-center gap-1 text-[11px] font-sans text-[var(--k-text-secondary)]">
+              <div className="flex items-center gap-1 text-xs font-sans text-[var(--k-text-secondary)]">
                 <span>{language === 'id' ? 'Bahasa:' : 'Lang:'}</span>
                 <div className="flex items-center bg-[var(--k-surface)] border border-[var(--k-border)] rounded-md p-0.5">
                   <button
@@ -663,7 +663,7 @@ export const AdminLayout: React.FC = () => {
                 </div>
               </div>
 
-              <div className="flex items-center gap-1 text-[11px] font-sans text-[var(--k-text-secondary)]">
+              <div className="flex items-center gap-1 text-xs font-sans text-[var(--k-text-secondary)]">
                 <span>{language === 'id' ? 'Valuta:' : 'Curr:'}</span>
                 <div className="flex items-center bg-[var(--k-surface)] border border-[var(--k-border)] rounded-md p-0.5">
                   <button
@@ -690,7 +690,7 @@ export const AdminLayout: React.FC = () => {
             <div className="flex-1 overflow-y-auto p-3 space-y-4 custom-scrollbar">
               {filteredNavSections.map((section) => (
                 <div key={section.id} className="space-y-1">
-                  <div className="text-[10px] font-sans text-[var(--k-text-secondary)] font-bold tracking-wider px-3 pt-1 uppercase">
+                  <div className="text-xs font-sans text-[var(--k-text-secondary)] font-bold tracking-wider px-3 pt-1 uppercase">
                     {t(section.titleKey)}
                   </div>
                   {section.items.map((item) => {
@@ -746,7 +746,7 @@ export const AdminLayout: React.FC = () => {
               {/* Mobile Role Selector (Production Readonly / Dev Simulator) */}
               <div className="pt-2">
                 <div className="p-3 rounded-[var(--k-control-radius)] bg-[var(--k-surface-raised)] border border-[var(--k-border)] space-y-1.5">
-                  <div className="flex items-center justify-between text-[10px] font-sans text-[var(--k-text-secondary)]">
+                  <div className="flex items-center justify-between text-xs font-sans text-[var(--k-text-secondary)]">
                     <span className="flex items-center gap-1">
                       <ShieldCheck size={11} className="text-[var(--k-red)]" />
                       <span>{language === 'id' ? 'Hak Akses Peran' : 'Active Role'}</span>
@@ -784,7 +784,7 @@ export const AdminLayout: React.FC = () => {
                 </div>
                 <div className="min-w-0">
                   <div className="text-xs font-semibold text-[var(--k-text)] truncate">{adminDisplayName}</div>
-                  <div className="text-[10px] font-sans text-[var(--k-text-secondary)] truncate flex items-center gap-1">
+                  <div className="text-xs font-sans text-[var(--k-text-secondary)] truncate flex items-center gap-1">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
                     <span className="truncate">{adminUsername}</span>
                   </div>
@@ -850,7 +850,7 @@ export const AdminLayout: React.FC = () => {
             >
               <Bell size={17} />
               {unreadNotificationsCount > 0 && (
-                <span className="absolute -top-1 -right-1 min-w-4 h-4 px-1 rounded-full bg-[var(--k-red)] text-[var(--k-text)] font-sans text-[9px] font-bold flex items-center justify-center">
+                <span className="absolute -top-1 -right-1 min-w-4 h-4 px-1 rounded-full bg-[var(--k-red)] text-[var(--k-text)] font-sans text-xs font-bold flex items-center justify-center">
                   {unreadNotificationsCount}
                 </span>
               )}
@@ -886,7 +886,7 @@ export const AdminLayout: React.FC = () => {
               placeholder={t('admin.dash.searchPlaceholder') || "Search projects, clients, tasks (⌘K)..."}
               className="w-full h-8 pl-8 pr-12 text-xs bg-[var(--k-surface)] text-[var(--k-text)] placeholder-[var(--k-text-secondary)] rounded-[var(--k-control-radius)] border border-[var(--k-border)] hover:border-white/20 focus:border-[var(--k-red-border)] transition-colors cursor-pointer"
             />
-            <kbd className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] font-sans text-[var(--k-text-secondary)] bg-[var(--k-surface-raised)] border border-[var(--k-border)] px-1.5 py-0.5 rounded pointer-events-none">
+            <kbd className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs font-sans text-[var(--k-text-secondary)] bg-[var(--k-surface-raised)] border border-[var(--k-border)] px-1.5 py-0.5 rounded pointer-events-none">
               ⌘K
             </kbd>
           </div>
@@ -942,7 +942,7 @@ export const AdminLayout: React.FC = () => {
             </div>
 
             {/* Live Studio Clock */}
-            <div className="flex items-center gap-1.5 bg-[var(--k-surface)] px-2.5 py-1.5 rounded-[var(--k-control-radius)] border border-[var(--k-border)] text-[11px] font-sans text-[var(--k-text-secondary)]">
+            <div className="flex items-center gap-1.5 bg-[var(--k-surface)] px-2.5 py-1.5 rounded-[var(--k-control-radius)] border border-[var(--k-border)] text-xs font-sans text-[var(--k-text-secondary)]">
               <Clock size={12} className="text-[var(--k-red)]" />
               <span className="text-[var(--k-text)] font-medium">{currentTime || 'Jakarta WIB'}</span>
             </div>
@@ -958,7 +958,7 @@ export const AdminLayout: React.FC = () => {
               >
                 <Bell size={14} />
                 {unreadNotificationsCount > 0 && (
-                  <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[var(--k-red)] text-[var(--k-text)] font-sans text-[9px] font-bold flex items-center justify-center animate-pulse">
+                  <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[var(--k-red)] text-[var(--k-text)] font-sans text-xs font-bold flex items-center justify-center animate-pulse">
                     {unreadNotificationsCount}
                   </span>
                 )}
@@ -983,7 +983,7 @@ export const AdminLayout: React.FC = () => {
                     {unreadNotificationsCount > 0 && (
                       <button
                         onClick={handleMarkAllRead}
-                        className="text-[10px] font-sans text-[var(--k-text-secondary)] hover:text-[var(--k-text)] flex items-center gap-1 transition-colors"
+                        className="text-xs font-sans text-[var(--k-text-secondary)] hover:text-[var(--k-text)] flex items-center gap-1 transition-colors"
                       >
                         <CheckCheck size={12} />
                         <span>Mark all read</span>
@@ -1015,7 +1015,7 @@ export const AdminLayout: React.FC = () => {
                             <Link
                               to={n.link}
                               onClick={() => setNotificationsOpen(false)}
-                              className="text-[10px] font-sans text-[var(--k-red)] hover:underline mt-1.5 inline-block"
+                              className="text-xs font-sans text-[var(--k-red)] hover:underline mt-1.5 inline-block"
                             >
                               View details →
                             </Link>
@@ -1033,7 +1033,7 @@ export const AdminLayout: React.FC = () => {
               to="/"
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden lg:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-[var(--k-control-radius)] bg-[var(--k-surface)] border border-[var(--k-border)] hover:border-white/20 text-[11px] font-sans text-[var(--k-text-secondary)] hover:text-[var(--k-text)] transition-colors"
+              className="hidden lg:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-[var(--k-control-radius)] bg-[var(--k-surface)] border border-[var(--k-border)] hover:border-white/20 text-xs font-sans text-[var(--k-text-secondary)] hover:text-[var(--k-text)] transition-colors"
             >
               <span>kapitech.id</span>
               <ExternalLink size={10} />
