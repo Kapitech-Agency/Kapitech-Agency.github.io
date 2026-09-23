@@ -171,7 +171,7 @@ export const Footer = () => {
               <span className="text-brand-red font-sans font-semibold tracking-widest uppercase text-xs mb-3 block">
                 {t('footer.cta.tag')}
               </span>
-              <h2 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-sans font-bold tracking-tight mb-4 text-white">
+              <h2 className="kapi-footer-title mb-4">
                 {t('footer.cta.title')}
               </h2>
               <p className="text-sm md:text-base text-[var(--k-text-secondary)] font-light max-w-2xl leading-relaxed">
