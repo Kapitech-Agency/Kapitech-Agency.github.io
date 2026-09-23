@@ -98,7 +98,12 @@ export const Home = () => {
         />
 
         <div className="max-w-7xl mx-auto w-full relative z-10">
-          <motion.div className="max-w-4xl" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}>
+          <motion.div
+            className="max-w-4xl"
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          >
             {/* Status Chip */}
             <div className="kapi-hero-status inline-flex items-center gap-2.5 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full border border-white/10 bg-white/[0.045] backdrop-blur-xl mb-6 sm:mb-8">
               <span className="relative flex h-2 w-2">
