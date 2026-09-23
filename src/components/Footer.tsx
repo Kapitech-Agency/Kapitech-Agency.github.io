@@ -163,7 +163,7 @@ export const Footer = () => {
   ];
 
   return (
-    <footer className="relative bg-[#0B0C0E] pt-20 pb-12 px-4 sm:px-6 md:px-12 overflow-hidden border-t border-[#262930]" id="main-footer">
+    <footer className="kapi-public-footer relative bg-[#0B0C0E] pt-20 pb-12 px-4 sm:px-6 md:px-12 overflow-hidden border-t border-[#262930]" id="main-footer">
       <div className="max-w-7xl mx-auto relative z-10">
         {/* Top CTA Banner */}
         <div className="pb-16 mb-16 border-b border-[#262930]">
