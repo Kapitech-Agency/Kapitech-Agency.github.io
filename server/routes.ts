@@ -557,7 +557,33 @@ apiRouter.post('/auth/firebase-login', rateLimitPublic(10, 15 * 60 * 1000), asyn
 
   try {
     const firebaseUser = await verifyFirebaseIdToken(idToken);
-    const user = await postgresAuthRepository.findUserByIdentifier(firebaseUser.email);
+    let user = await postgresAuthRepository.findUserByFirebaseUid(firebaseUser.uid);
+
+    if (!user) {
+      user = await postgresAuthRepository.findUserByIdentifier(firebaseUser.email);
+      if (!user || user.status === 'suspended') {
+        await writeAuditLog({
+          action: 'LOGIN_FAILED_FIREBASE',
+          actor: firebaseUser.email,
+          actorRole: 'anonymous',
+          ip,
+          userAgent,
+          details: 'Firebase identity verified, but no active PostgreSQL AMS account is mapped to the verified email address.',
+          severity: 'warning'
+        });
+        res.status(401).json({ success: false, error: 'No active AMS account is mapped to this Firebase email address.' });
+        return;
+      }
+
+      const linked = await postgresAuthRepository.linkFirebaseUid(user.id, firebaseUser.uid);
+      if (!linked) {
+        const existingFirebaseUser = await postgresAuthRepository.findUserByFirebaseUid(firebaseUser.uid);
+        if (!existingFirebaseUser || existingFirebaseUser.id !== user.id) {
+          res.status(409).json({ success: false, error: 'This Firebase identity is already linked to another AMS account.' });
+          return;
+        }
+      }
+    }
 
     if (!user || user.status === 'suspended') {
       await writeAuditLog({
