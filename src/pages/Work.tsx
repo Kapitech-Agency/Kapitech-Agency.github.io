@@ -178,7 +178,7 @@ export const Work = () => {
             <span className="text-brand-red font-sans font-semibold tracking-widest uppercase text-xs mb-3 block">
               {language === 'id' ? 'Koleksi Portofolio & Studi Kasus' : 'Portfolio & Case Studies'}
             </span>
-            <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-sans font-bold tracking-tight text-white mb-6">
+            <h1 className="kapi-display-title">
               {language === 'id' ? 'Karya Nyata. Dampak Nyata.' : 'Crafted for Real Impact.'}
             </h1>
             <p className="text-base sm:text-lg text-[var(--k-text-secondary)] font-light leading-relaxed mb-6">
