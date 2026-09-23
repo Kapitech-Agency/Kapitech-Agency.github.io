@@ -99,3 +99,13 @@ test('production preflight CLI executes successfully with a valid synthetic envi
   assert.equal(result.status, 0, result.stderr || result.stdout);
   assert.match(result.stdout, /Contract validation passed/);
 });
+
+
+test('rejects malformed PostgreSQL connection URLs before runtime startup', () => {
+  const env = validEnv();
+  env.KAPITECH_POSTGRES_URL = 'postgresql://user:bad password@example.com:5432/kapitech';
+  const result = validateProductionEnvironment(env);
+  assert.equal(result.valid, false);
+  assert.ok(result.errors.some(error => error.includes('KAPITECH_POSTGRES_URL')));
+  assert.ok(result.errors.some(error => error.includes('URL-encode')));
+});
