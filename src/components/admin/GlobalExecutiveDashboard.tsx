@@ -216,7 +216,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
             <div className="ams-kpi-value">
               {formatCurrency(metrics.outstandingReceivables)}
             </div>
-            <div className="text-[10px] font-sans mt-1 flex items-center gap-1">
+            <div className="ams-meta mt-1 flex items-center gap-1">
               {metrics.overdueReceivables > 0 ? (
                 <span className="text-red-400 font-bold flex items-center gap-1">
                   <AlertTriangle size={11} />
@@ -263,7 +263,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
             <div className="ams-kpi-value">
               {metrics.activeProjects}
             </div>
-            <div className="text-[10px] font-sans mt-1 flex items-center gap-1">
+            <div className="ams-meta mt-1 flex items-center gap-1">
               {metrics.projectsAtRisk > 0 ? (
                 <span className="text-amber-400 font-semibold flex items-center gap-1">
                   <AlertTriangle size={11} />
@@ -283,7 +283,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
       {/* ------------------------------------------------------------- */}
       {/* 3. NEEDS ATTENTION: ACTIONABLE OPERATIONAL SIGNALS */}
       {/* ------------------------------------------------------------- */}
-      <div className="p-5 rounded-[var(--k-card-radius)] bg-[var(--k-bg)] border border-[var(--k-border)]">
+      <div className="kapi-card ams-panel p-5">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <AlertTriangle className="text-[var(--k-red)]" size={16} />
@@ -300,7 +300,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
         </div>
 
         {attentionItems.length === 0 ? (
-          <div className="p-6 text-center rounded-[var(--k-control-radius)] bg-[var(--k-surface)]/40 border border-white/[0.04]">
+          <div className="ams-empty-state bg-[var(--k-surface)]/40 border border-white/[0.04]">
             <CheckCircle2 className="mx-auto text-emerald-400 mb-2" size={24} />
             <p className="text-xs font-sans text-[var(--k-text)] font-medium">
               {language === 'id' ? 'Semua parameter operasional dalam batas normal.' : 'All operational parameters are currently healthy.'}
@@ -316,7 +316,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
               return (
                 <div
                   key={item.id}
-                  className={`p-3.5 rounded-[var(--k-card-radius)] border flex items-start justify-between gap-3 transition-all ${
+                  className={`kapi-card ams-inbox-item border flex items-start justify-between gap-3 transition-all ${
                     isDanger 
                       ? 'bg-red-950/20 border-red-500/30 hover:border-red-500/50' 
                       : 'bg-amber-950/20 border-amber-500/30 hover:border-amber-500/50'
@@ -352,7 +352,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
       {/* ------------------------------------------------------------- */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Sales Pipeline Breakdown */}
-        <div className="p-5 rounded-[var(--k-card-radius)] bg-[var(--k-bg)] border border-[var(--k-border)] space-y-4">
+        <div className="kapi-card ams-panel p-5 space-y-4">
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-sm font-bold font-sans text-[var(--k-text)] flex items-center gap-2">
@@ -391,7 +391,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
         </div>
 
         {/* Financial Operating Summary */}
-        <div className="p-5 rounded-[var(--k-card-radius)] bg-[var(--k-bg)] border border-[var(--k-border)] space-y-4">
+        <div className="kapi-card ams-panel p-5 space-y-4">
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-sm font-bold font-sans text-[var(--k-text)] flex items-center gap-2">
@@ -444,7 +444,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
       {/* ------------------------------------------------------------- */}
       {/* 5. ACTIVE PROJECTS STATUS (DELIVERY HEALTH) */}
       {/* ------------------------------------------------------------- */}
-      <div className="p-5 rounded-[var(--k-card-radius)] bg-[var(--k-bg)] border border-[var(--k-border)] space-y-4">
+      <div className="kapi-card ams-panel p-5 space-y-4">
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-sm font-bold font-sans text-[var(--k-text)] flex items-center gap-2">
@@ -463,7 +463,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
         </div>
 
         {recentProjects.length === 0 ? (
-          <div className="p-8 text-center text-xs font-sans text-[var(--k-text-secondary)] rounded-[var(--k-control-radius)] bg-[var(--k-surface)]/30 border border-white/[0.04]">
+          <div className="ams-empty-state">
             No active projects currently enrolled in registry.
           </div>
         ) : (
@@ -529,7 +529,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
       {/* ------------------------------------------------------------- */}
       {/* 6. RECENT AUDIT ACTIVITY (IMMUTABLE SERVER ACTIVITY TRAIL) */}
       {/* ------------------------------------------------------------- */}
-      <div className="p-5 rounded-[var(--k-card-radius)] bg-[var(--k-bg)] border border-[var(--k-border)] space-y-4">
+      <div className="kapi-card ams-panel p-5 space-y-4">
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-sm font-bold font-sans text-[var(--k-text)] flex items-center gap-2">
