@@ -109,14 +109,16 @@ export class PostgresAuthRepository {
     return result.rowCount === 1;
   }
 
-  async updateMfaFailedAttempts(tokenHash: string, attempts: number): Promise<number> {
-    // The MFA failure counter must be monotonic under concurrent requests.
-    // Use an atomic increment in PostgreSQL rather than a read/modify/write
-    // sequence so parallel verification attempts cannot overwrite each other.
+  async updateMfaFailedAttempts(tokenHash: string, attempts = 1): Promise<number> {
+    // MFA failure tracking is security-sensitive: the increment and validity
+    // check must happen in one SQL statement so concurrent attempts cannot
+    // overwrite each other's counters or increment an expired/non-MFA session.
     const result = await getPostgresPool().query<{ mfa_failed_attempts: number }>(
       `UPDATE sessions
-       SET mfa_failed_attempts = GREATEST(mfa_failed_attempts + 1, $2)
+       SET mfa_failed_attempts = mfa_failed_attempts + GREATEST(1, $2)
        WHERE token_hash = $1
+         AND kind = 'mfa'
+         AND expires_at > NOW()
        RETURNING mfa_failed_attempts`,
       [tokenHash, Math.max(1, Math.floor(attempts))]
     );
