@@ -11,7 +11,7 @@ export const PrivacyPolicy = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="min-h-screen pt-28 sm:pt-36 md:pt-40 pb-16 sm:pb-20 px-4 sm:px-6 md:px-12 bg-[var(--k-bg-deep)]] text-[var(--k-text-secondary)]] font-light relative selection:bg-brand-red selection:text-white"
+      className="min-h-screen pt-28 sm:pt-36 md:pt-40 pb-16 sm:pb-20 px-4 sm:px-6 md:px-12 bg-[var(--k-bg-deep)] text-[var(--k-text-secondary)] font-light relative selection:bg-brand-red selection:text-white"
     >
       <AtmosphericBackground 
         imageUrl="/hero_background_3d.png"
@@ -27,7 +27,7 @@ export const PrivacyPolicy = () => {
         </p>
         
         {language === 'id' ? (
-          <div className="space-y-12 text-base md:text-lg leading-relaxed text-[var(--k-text-secondary)]]">
+          <div className="space-y-12 text-base md:text-lg leading-relaxed text-[var(--k-text-secondary)]">
             <section>
               <h2 className="text-2xl font-sans font-bold text-white mb-4">1. Pendahuluan</h2>
               <p>
@@ -84,7 +84,7 @@ export const PrivacyPolicy = () => {
             </section>
           </div>
         ) : (
-          <div className="space-y-12 text-base md:text-lg leading-relaxed text-[var(--k-text-secondary)]]">
+          <div className="space-y-12 text-base md:text-lg leading-relaxed text-[var(--k-text-secondary)]">
             <section>
               <h2 className="text-2xl font-sans font-bold text-white mb-4">1. Introduction</h2>
               <p>

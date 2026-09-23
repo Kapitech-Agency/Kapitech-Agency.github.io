@@ -696,9 +696,9 @@ export const Services = () => {
   }, [activeCategory, resolvedServices]);
 
   return (
-    <div className="bg-[var(--k-bg)]] text-white min-h-screen selection:bg-brand-red selection:text-white relative" role="main">
+    <div className="bg-[var(--k-bg)] text-white min-h-screen selection:bg-brand-red selection:text-white relative" role="main">
       {/* Hero Section */}
-      <section className="relative pt-32 sm:pt-36 md:pt-40 pb-16 sm:pb-20 px-4 sm:px-6 md:px-12 border-b border-[var(--k-border)]] overflow-hidden">
+      <section className="relative pt-32 sm:pt-36 md:pt-40 pb-16 sm:pb-20 px-4 sm:px-6 md:px-12 border-b border-[var(--k-border)] overflow-hidden">
         <AtmosphericBackground 
           imageUrl="/hero_background_3d.png"
           opacity={0.06}
@@ -712,21 +712,21 @@ export const Services = () => {
             <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-sans font-bold tracking-tight text-white mb-6">
               {language === 'id' ? 'Layanan & Solusi Digital.' : 'Services & Strategic Solutions.'}
             </h1>
-            <p className="text-base sm:text-lg text-[var(--k-text-secondary)]] font-light leading-relaxed mb-6">
+            <p className="text-base sm:text-lg text-[var(--k-text-secondary)] font-light leading-relaxed mb-6">
               {language === 'id'
                 ? 'Pilihan solusi strategis dan keahlian spesialis terlengkap untuk mentransformasi identitas brand, desain produk digital, dan rekayasa web skala modern.'
                 : 'Complete strategic solutions and specialized capabilities to transform brand identity, digital product design, and high-performance web engineering.'
               }
             </p>
-            <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 text-xs font-sans text-[var(--k-text-secondary)]]">
-              <span className="px-3 py-1.5 rounded-full bg-[var(--k-surface)]] border border-[var(--k-border)]] flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 text-xs font-sans text-[var(--k-text-secondary)]">
+              <span className="px-3 py-1.5 rounded-full bg-[var(--k-surface)] border border-[var(--k-border)] flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-brand-red animate-pulse shadow-[0_0_8px_rgba(255,26,26,0.6)]" />
                 <span className="text-white">{resolvedStrategicSolutions.length} {language === 'id' ? 'Solusi Strategis' : 'Strategic Solutions'}</span>
               </span>
-              <span className="px-3 py-1.5 rounded-full bg-[var(--k-surface)]] border border-[var(--k-border)]] text-white">
+              <span className="px-3 py-1.5 rounded-full bg-[var(--k-surface)] border border-[var(--k-border)] text-white">
                 {resolvedServices.length} {language === 'id' ? 'Layanan Spesialis' : 'Specialized Services'}
               </span>
-              <span className="px-3 py-1.5 rounded-full bg-[var(--k-surface)]] border border-[var(--k-border)]] text-brand-red font-semibold">
+              <span className="px-3 py-1.5 rounded-full bg-[var(--k-surface)] border border-[var(--k-border)] text-brand-red font-semibold">
                 Branding • Design • Development
               </span>
             </div>
@@ -735,7 +735,7 @@ export const Services = () => {
       </section>
 
       {/* SECTION 1: STRATEGIC SOLUTIONS (Always visible above filter) */}
-      <section className="py-14 sm:py-20 px-4 sm:px-6 md:px-12 border-b border-[var(--k-border)]] bg-[var(--k-bg)]] relative">
+      <section className="py-14 sm:py-20 px-4 sm:px-6 md:px-12 border-b border-[var(--k-border)] bg-[var(--k-bg)] relative">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
             <div>
@@ -746,7 +746,7 @@ export const Services = () => {
                 STRATEGIC SOLUTIONS
               </h2>
             </div>
-            <p className="text-xs sm:text-sm text-[var(--k-text-secondary)]] font-light max-w-md">
+            <p className="text-xs sm:text-sm text-[var(--k-text-secondary)] font-light max-w-md">
               {language === 'id'
                 ? 'Format kemitraan strategis yang dirancang fleksibel untuk akselerasi ekosistem enterprise, UKM berkembang, maupun ekspansi tim internal.'
                 : 'Tailored strategic engagement models engineered for enterprise ecosystems, scaling SMEs, and dedicated team expansion.'
@@ -759,14 +759,14 @@ export const Services = () => {
               <Link
                 key={sol.id}
                 to={`/solutions/${sol.id}`}
-                className="group relative rounded-2xl p-6 sm:p-8 bg-[var(--k-surface)]] hover:bg-[var(--k-surface-raised)]] border border-[var(--k-border)]] hover:border-brand-red/60 transition-all duration-300 flex flex-col justify-between"
+                className="group relative rounded-2xl p-6 sm:p-8 bg-[var(--k-surface)] hover:bg-[var(--k-surface-raised)] border border-[var(--k-border)] hover:border-brand-red/60 transition-all duration-300 flex flex-col justify-between"
               >
                 <div>
                   <div className="flex items-center justify-between mb-6">
                     <div className="w-12 h-12 rounded-xl bg-brand-red/10 border border-brand-red/30 flex items-center justify-center text-brand-red group-hover:scale-110 transition-transform">
                       {sol.icon}
                     </div>
-                    <span className="px-2.5 py-1 rounded-full bg-[var(--k-text-secondary)]]/10 border border-[var(--k-text-secondary)]]/30 text-[10px] sm:text-[11px] font-sans text-[var(--k-text-secondary)]] font-semibold">
+                    <span className="px-2.5 py-1 rounded-full bg-[var(--k-text-secondary)]/10 border border-[var(--k-text-secondary)]/30 text-[10px] sm:text-[11px] font-sans text-[var(--k-text-secondary)] font-semibold">
                       {language === 'id' ? sol.badgeId : sol.badge}
                     </span>
                   </div>
@@ -775,17 +775,17 @@ export const Services = () => {
                     {sol.title}
                   </h3>
 
-                  <span className="text-xs font-sans text-[var(--k-text-secondary)]] block mb-4">
+                  <span className="text-xs font-sans text-[var(--k-text-secondary)] block mb-4">
                     {language === 'id' ? sol.audienceId : sol.audience}
                   </span>
 
-                  <p className="text-xs sm:text-sm text-[var(--k-text-secondary)]] font-light leading-relaxed mb-6">
+                  <p className="text-xs sm:text-sm text-[var(--k-text-secondary)] font-light leading-relaxed mb-6">
                     {language === 'id' ? sol.descriptionId : sol.description}
                   </p>
                 </div>
 
-                <div className="pt-4 border-t border-[var(--k-border)]] flex items-center justify-between">
-                  <span className="text-xs font-sans text-[var(--k-text-secondary)]]/70">
+                <div className="pt-4 border-t border-[var(--k-border)] flex items-center justify-between">
+                  <span className="text-xs font-sans text-[var(--k-text-secondary)]/70">
                     {language === 'id' ? sol.timelineId : sol.timeline}
                   </span>
                   <div className="flex items-center gap-1.5 text-xs font-sans text-brand-red font-semibold group-hover:translate-x-1 transition-transform">
@@ -800,9 +800,9 @@ export const Services = () => {
       </section>
 
       {/* Pillar Filter Tabs */}
-      <section className="py-6 sm:py-8 px-4 sm:px-6 md:px-12 border-b border-[var(--k-border)]] bg-[var(--k-bg)]]/95 sticky top-16 sm:top-20 z-30 backdrop-blur-md">
+      <section className="py-6 sm:py-8 px-4 sm:px-6 md:px-12 border-b border-[var(--k-border)] bg-[var(--k-bg)]/95 sticky top-16 sm:top-20 z-30 backdrop-blur-md">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
-          <div className="flex flex-wrap items-center gap-2 bg-[var(--k-surface)]] p-1.5 rounded-xl border border-[var(--k-border)]] w-full sm:w-auto">
+          <div className="flex flex-wrap items-center gap-2 bg-[var(--k-surface)] p-1.5 rounded-xl border border-[var(--k-border)] w-full sm:w-auto">
             {[
               { key: 'All', labelEn: 'All Services (15)', labelId: 'Semua Layanan (15)' },
               { key: 'Branding', labelEn: '1. Branding (5)', labelId: '1. Branding (5)' },
@@ -815,7 +815,7 @@ export const Services = () => {
                 className={`flex-1 sm:flex-none min-h-[44px] px-3.5 sm:px-4 py-2 rounded-lg text-xs font-sans font-medium transition-all duration-200 text-center ${
                   activeCategory === tab.key
                     ? 'bg-brand-red text-white shadow-lg shadow-brand-red/20 font-bold'
-                    : 'text-[var(--k-text-secondary)]] hover:text-white hover:bg-white/5'
+                    : 'text-[var(--k-text-secondary)] hover:text-white hover:bg-white/5'
                 }`}
               >
                 {language === 'id' ? tab.labelId : tab.labelEn}
@@ -823,7 +823,7 @@ export const Services = () => {
             ))}
           </div>
 
-          <span className="text-xs font-sans text-[var(--k-text-secondary)]] hidden sm:block">
+          <span className="text-xs font-sans text-[var(--k-text-secondary)] hidden sm:block">
             {language === 'id' ? `Menampilkan ${filteredServices.length} Layanan Spesialis` : `Showing ${filteredServices.length} Specialized Services`}
           </span>
         </div>
@@ -841,7 +841,7 @@ export const Services = () => {
             return (
               <div key={cat} className="space-y-6">
                 {/* Category Pillar Header */}
-                <div className="flex items-center justify-between pb-4 border-b border-[var(--k-border)]]">
+                <div className="flex items-center justify-between pb-4 border-b border-[var(--k-border)]">
                   <div className="flex items-center gap-3">
                     <span className="text-xs font-sans tracking-widest text-brand-red font-semibold uppercase">
                       {cat === 'Branding' ? '01. ' : cat === 'Design' ? '02. ' : '03. '}
@@ -850,7 +850,7 @@ export const Services = () => {
                       {cat}
                     </h2>
                   </div>
-                  <span className="text-xs font-sans text-[var(--k-text-secondary)]]">
+                  <span className="text-xs font-sans text-[var(--k-text-secondary)]">
                     5 {language === 'id' ? 'Layanan Terintegrasi' : 'Capabilities'}
                   </span>
                 </div>
@@ -861,14 +861,14 @@ export const Services = () => {
                     <Link
                       key={srv.id}
                       to={`/services/${srv.id}`}
-                      className="group rounded-2xl p-6 sm:p-7 bg-[var(--k-surface)]] hover:bg-[var(--k-surface-raised)]] border border-[var(--k-border)]] hover:border-brand-red/50 transition-all duration-300 flex flex-col justify-between"
+                      className="group rounded-2xl p-6 sm:p-7 bg-[var(--k-surface)] hover:bg-[var(--k-surface-raised)] border border-[var(--k-border)] hover:border-brand-red/50 transition-all duration-300 flex flex-col justify-between"
                     >
                       <div>
                         <div className="flex items-center justify-between mb-5">
                           <div className="w-11 h-11 rounded-xl bg-brand-red/10 border border-brand-red/30 flex items-center justify-center text-brand-red group-hover:scale-110 transition-transform">
                             {srv.icon}
                           </div>
-                          <span className="px-2.5 py-1 rounded-full bg-[var(--k-bg)]] border border-[var(--k-border)]] text-[10px] sm:text-[11px] font-sans text-[var(--k-text-secondary)]]">
+                          <span className="px-2.5 py-1 rounded-full bg-[var(--k-bg)] border border-[var(--k-border)] text-[10px] sm:text-[11px] font-sans text-[var(--k-text-secondary)]">
                             {srv.category}
                           </span>
                         </div>
@@ -881,13 +881,13 @@ export const Services = () => {
                           {language === 'id' ? srv.subtitleId : srv.subtitle}
                         </p>
 
-                        <p className="text-xs sm:text-sm text-[var(--k-text-secondary)]] font-light leading-relaxed mb-5 line-clamp-3">
+                        <p className="text-xs sm:text-sm text-[var(--k-text-secondary)] font-light leading-relaxed mb-5 line-clamp-3">
                           {language === 'id' ? srv.summaryId : srv.summary}
                         </p>
 
-                        <div className="pt-3.5 border-t border-[var(--k-border)]] space-y-1.5 mb-5">
+                        <div className="pt-3.5 border-t border-[var(--k-border)] space-y-1.5 mb-5">
                           {(language === 'id' ? srv.deliverablesId : srv.deliverables).slice(0, 2).map((item, idx) => (
-                            <div key={idx} className="flex items-center gap-2 text-xs text-[var(--k-text-secondary)]] font-light truncate">
+                            <div key={idx} className="flex items-center gap-2 text-xs text-[var(--k-text-secondary)] font-light truncate">
                               <CheckCircle2 size={13} className="text-emerald-400 shrink-0" />
                               <span className="truncate">{item}</span>
                             </div>
@@ -895,8 +895,8 @@ export const Services = () => {
                         </div>
                       </div>
 
-                      <div className="pt-3.5 border-t border-[var(--k-border)]] flex items-center justify-between">
-                        <span className="text-xs font-sans text-[var(--k-text-secondary)]]/70">
+                      <div className="pt-3.5 border-t border-[var(--k-border)] flex items-center justify-between">
+                        <span className="text-xs font-sans text-[var(--k-text-secondary)]/70">
                           {language === 'id' ? srv.timelineId : srv.timeline}
                         </span>
                         <div className="flex items-center gap-1.5 text-xs font-sans text-brand-red font-semibold group-hover:translate-x-1 transition-transform">
@@ -922,10 +922,10 @@ export const Services = () => {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ duration: 0.25 }}
-              className="relative w-full max-w-3xl bg-[var(--k-surface)]] border border-[var(--k-border)]] rounded-2xl overflow-hidden shadow-2xl my-8 max-h-[90vh] flex flex-col"
+              className="relative w-full max-w-3xl bg-[var(--k-surface)] border border-[var(--k-border)] rounded-2xl overflow-hidden shadow-2xl my-8 max-h-[90vh] flex flex-col"
             >
               {/* Modal Header */}
-              <div className="sticky top-0 z-20 flex items-center justify-between p-4 sm:p-6 bg-[var(--k-surface)]]/95 backdrop-blur border-b border-[var(--k-border)]]">
+              <div className="sticky top-0 z-20 flex items-center justify-between p-4 sm:p-6 bg-[var(--k-surface)]/95 backdrop-blur border-b border-[var(--k-border)]">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-xl bg-brand-red/10 border border-brand-red/30 flex items-center justify-center text-brand-red">
                     {selectedService.icon}
@@ -941,7 +941,7 @@ export const Services = () => {
                 </div>
                 <button
                   onClick={() => setSelectedService(null)}
-                  className="w-9 h-9 rounded-full bg-[var(--k-bg)]] hover:bg-white/10 border border-[var(--k-border)]] flex items-center justify-center text-[var(--k-text-secondary)]] hover:text-white transition-colors"
+                  className="w-9 h-9 rounded-full bg-[var(--k-bg)] hover:bg-white/10 border border-[var(--k-border)] flex items-center justify-center text-[var(--k-text-secondary)] hover:text-white transition-colors"
                   aria-label="Close modal"
                 >
                   <X size={18} />
@@ -951,10 +951,10 @@ export const Services = () => {
               {/* Modal Scrollable Content */}
               <div className="overflow-y-auto p-6 sm:p-8 space-y-6">
                 <div>
-                  <h4 className="text-xs font-sans uppercase tracking-wider text-[var(--k-text-secondary)]] mb-2 font-semibold">
+                  <h4 className="text-xs font-sans uppercase tracking-wider text-[var(--k-text-secondary)] mb-2 font-semibold">
                     {language === 'id' ? 'Deskripsi & Ruang Lingkup' : 'Overview & Scope'}
                   </h4>
-                  <p className="text-sm text-[var(--k-text-secondary)]] leading-relaxed font-light">
+                  <p className="text-sm text-[var(--k-text-secondary)] leading-relaxed font-light">
                     {'fullDescription' in selectedService 
                       ? (language === 'id' ? selectedService.fullDescriptionId : selectedService.fullDescription)
                       : (language === 'id' ? selectedService.descriptionId : selectedService.description)
@@ -962,9 +962,9 @@ export const Services = () => {
                   </p>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-xl bg-[var(--k-bg)]] border border-[var(--k-border)]]">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-xl bg-[var(--k-bg)] border border-[var(--k-border)]">
                   <div>
-                    <span className="text-[11px] font-sans text-[var(--k-text-secondary)]] uppercase block mb-1">
+                    <span className="text-[11px] font-sans text-[var(--k-text-secondary)] uppercase block mb-1">
                       {language === 'id' ? 'Estimasi Pengerjaan' : 'Estimated Timeline'}
                     </span>
                     <span className="text-sm font-sans font-semibold text-white">
@@ -972,10 +972,10 @@ export const Services = () => {
                     </span>
                   </div>
                   <div>
-                    <span className="text-[11px] font-sans text-[var(--k-text-secondary)]] uppercase block mb-1">
+                    <span className="text-[11px] font-sans text-[var(--k-text-secondary)] uppercase block mb-1">
                       {language === 'id' ? 'Target Kebutuhan' : 'Target Audience'}
                     </span>
-                    <span className="text-xs text-[var(--k-text-secondary)]] font-light block leading-snug">
+                    <span className="text-xs text-[var(--k-text-secondary)] font-light block leading-snug">
                       {'idealFor' in selectedService 
                         ? (language === 'id' ? selectedService.idealForId : selectedService.idealFor)
                         : (language === 'id' ? selectedService.audienceId : selectedService.audience)
@@ -990,7 +990,7 @@ export const Services = () => {
                   </h4>
                   <ul className="space-y-2">
                     {(language === 'id' ? selectedService.deliverablesId : selectedService.deliverables).map((item, idx) => (
-                      <li key={idx} className="flex items-start gap-2.5 text-xs sm:text-sm text-[var(--k-text-secondary)]] font-light">
+                      <li key={idx} className="flex items-start gap-2.5 text-xs sm:text-sm text-[var(--k-text-secondary)] font-light">
                         <CheckCircle2 size={15} className="text-emerald-400 shrink-0 mt-0.5" />
                         <span>{item}</span>
                       </li>
@@ -1000,12 +1000,12 @@ export const Services = () => {
 
                 {'tools' in selectedService && selectedService.tools && (
                   <div>
-                    <h4 className="text-xs font-sans uppercase tracking-wider text-[var(--k-text-secondary)]] mb-3 font-semibold">
+                    <h4 className="text-xs font-sans uppercase tracking-wider text-[var(--k-text-secondary)] mb-3 font-semibold">
                       {language === 'id' ? 'Alat & Standar Teknologi' : 'Tools & Technologies'}
                     </h4>
                     <div className="flex flex-wrap gap-2">
                       {selectedService.tools.map((tool, idx) => (
-                        <span key={idx} className="px-3 py-1 rounded-lg bg-[var(--k-bg)]] border border-[var(--k-border)]] text-xs font-sans text-[var(--k-text-secondary)]]">
+                        <span key={idx} className="px-3 py-1 rounded-lg bg-[var(--k-bg)] border border-[var(--k-border)] text-xs font-sans text-[var(--k-text-secondary)]">
                           {tool}
                         </span>
                       ))}
@@ -1014,16 +1014,16 @@ export const Services = () => {
                 )}
 
                 {/* Modal Footer CTA */}
-                <div className="pt-4 border-t border-[var(--k-border)]] flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="pt-4 border-t border-[var(--k-border)] flex flex-col sm:flex-row items-center justify-between gap-4">
                   <div>
-                    <span className="text-xs text-[var(--k-text-secondary)]] font-light block">
+                    <span className="text-xs text-[var(--k-text-secondary)] font-light block">
                       {language === 'id' ? 'Konsultasikan kebutuhan spesifik Anda dengan tim kami.' : 'Consult your specific requirements with our team.'}
                     </span>
                   </div>
                   <Link
                     to="/contact"
                     onClick={() => setSelectedService(null)}
-                    className="w-full sm:w-auto min-h-[44px] px-6 py-2.5 rounded-full bg-brand-red hover:bg-[var(--k-red-hover)]] text-white font-semibold text-xs uppercase tracking-wider transition-colors flex items-center justify-center gap-2"
+                    className="w-full sm:w-auto min-h-[44px] px-6 py-2.5 rounded-full bg-brand-red hover:bg-[var(--k-red-hover)] text-white font-semibold text-xs uppercase tracking-wider transition-colors flex items-center justify-center gap-2"
                   >
                     <span>{language === 'id' ? 'Mulai Proyek Ini' : 'Start This Project'}</span>
                     <ArrowUpRight size={14} />
