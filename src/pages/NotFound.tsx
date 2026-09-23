@@ -21,7 +21,7 @@ export const NotFound = () => {
         className="relative z-10 text-center"
       >
         <div className="flex items-center justify-center gap-4 mb-8">
-          <div className="p-4 rounded-2xl bg-[#161616] border border-[var(--k-border)] text-brand-red shadow-[0_0_25px_rgba(255,26,26,0.15)]">
+          <div className="p-4 rounded-2xl bg-[var(--k-surface)] border border-[var(--k-border)] text-brand-red shadow-[var(--k-shadow-sm)]">
             <Terminal size={48} />
           </div>
         </div>
@@ -38,14 +38,14 @@ export const NotFound = () => {
         <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-6">
           <Link 
             to="/" 
-            className="group px-8 md:px-10 py-4 md:py-5 bg-brand-red text-white rounded-full font-bold flex items-center gap-3 hover:bg-white hover:text-black transition-all duration-300 text-xs md:text-sm uppercase tracking-wider shadow-[0_0_25px_rgba(255,26,26,0.3)]"
+            className="kapi-button kapi-button-primary group px-8 md:px-10 bg-brand-red text-white rounded-full font-bold flex items-center gap-3 hover:bg-white hover:text-black transition-all duration-300 text-xs md:text-sm uppercase tracking-wider shadow-[0_0_25px_rgba(255,26,26,0.3)]"
           >
             <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
             {language === 'id' ? 'Kembali ke Beranda' : 'Return to Home'}
           </Link>
           <Link 
             to="/contact" 
-            className="px-8 md:px-10 py-4 md:py-5 rounded-full border border-[var(--k-border)] bg-[#161616] hover:border-brand-red/50 transition-all font-semibold tracking-wider uppercase text-xs text-white"
+            className="kapi-button kapi-button-secondary px-8 md:px-10 border border-[var(--k-border)] bg-[#161616] hover:border-brand-red/50 transition-all font-semibold tracking-wider uppercase text-xs text-white"
           >
             {language === 'id' ? 'Hubungi Bantuan' : 'Contact Support'}
           </Link>
@@ -54,7 +54,7 @@ export const NotFound = () => {
 
       {/* Technical Details */}
       <div className="absolute bottom-12 left-12 hidden md:block">
-        <div className="flex flex-col gap-2 text-[10px] font-sans text-[var(--k-text-secondary)]/60 uppercase tracking-widest">
+        <div className="flex flex-col gap-2 text-xs font-sans text-[var(--k-text-secondary)]/60 uppercase tracking-widest">
           <span>Error_Code: 0x404_NOT_FOUND</span>
           <span>Status: DECOMMISSIONED</span>
           <span>Location: KAPITECH_ROUTER</span>
