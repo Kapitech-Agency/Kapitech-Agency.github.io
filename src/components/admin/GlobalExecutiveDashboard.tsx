@@ -151,7 +151,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
               {language === 'id' ? 'Executive Briefing & Kendali Operasi' : 'Executive Overview & Operations'}
             </h1>
           </div>
-          <p className="text-xs font-mono text-[#8A94A6] mt-1">
+          <p className="text-xs font-sans text-[var(--k-text-secondary)] mt-1">
             {language === 'id'
               ? 'Snapshot server saat ini untuk pipeline, piutang, risiko proyek, dan prioritas tindakan.'
               : 'Current server snapshot for sales pipeline, receivables, project delivery, and action priorities.'}
@@ -159,23 +159,23 @@ export const GlobalExecutiveDashboard: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-3 shrink-0">
-          <span className="text-[11px] font-mono text-[#8A94A6]">
+          <span className="text-[11px] font-sans text-[var(--k-text-secondary)]">
             {language === 'id' ? 'Diperbarui:' : 'Synced:'} {lastRefreshed.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
           </span>
           <button
             onClick={fetchOverview}
             disabled={isLoading}
-            className="px-3 py-1.5 rounded-lg bg-[#181B22] hover:bg-[#21252F] text-white border border-white/[0.07] text-xs font-mono flex items-center gap-1.5 transition-all disabled:opacity-50"
+            className="px-3 py-1.5 rounded-lg bg-[var(--k-surface)] hover:bg-[var(--k-surface-raised)] text-white border border-white/[0.07] text-xs font-sans flex items-center gap-1.5 transition-all disabled:opacity-50"
             title="Refresh metrics from server"
           >
-            <RefreshCw size={13} className={isLoading ? 'animate-spin text-[#E50914]' : 'text-[#8A94A6]'} />
+            <RefreshCw size={13} className={isLoading ? 'animate-spin text-[var(--k-red)]' : 'text-[var(--k-text-secondary)]'} />
             <span>{isLoading ? 'Syncing...' : 'Refresh'}</span>
           </button>
         </div>
       </div>
 
       {error && (
-        <div className="p-3 rounded-xl bg-red-950/40 border border-red-500/40 text-red-200 text-xs font-mono flex items-center justify-between">
+        <div className="p-3 rounded-xl bg-red-950/40 border border-red-500/40 text-red-200 text-xs font-sans flex items-center justify-between">
           <span>{error}</span>
           <button onClick={fetchOverview} className="underline hover:text-white">Retry</button>
         </div>
@@ -186,8 +186,8 @@ export const GlobalExecutiveDashboard: React.FC = () => {
       {/* ------------------------------------------------------------- */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Revenue Collected */}
-        <div className="p-4 rounded-xl bg-[#111318] border border-white/[0.07] flex flex-col justify-between hover:border-white/20 transition-all">
-          <div className="flex items-center justify-between text-xs font-mono text-[#8A94A6]">
+        <div className="p-4 rounded-xl bg-[var(--k-bg)] border border-white/[0.07] flex flex-col justify-between hover:border-white/20 transition-all">
+          <div className="flex items-center justify-between text-xs font-sans text-[var(--k-text-secondary)]">
             <span>{language === 'id' ? 'Pendapatan Diterima' : 'Revenue Collected'}</span>
             <div className="w-7 h-7 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
               <DollarSign size={15} />
@@ -197,7 +197,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
             <div className="text-2xl font-bold font-sans text-white tracking-tight">
               {formatCurrency(metrics.revenueCollected)}
             </div>
-            <div className="text-[10px] font-mono text-[#8A94A6] mt-1 flex items-center gap-1">
+            <div className="text-[10px] font-sans text-[var(--k-text-secondary)] mt-1 flex items-center gap-1">
               <span>Billed Total:</span>
               <span className="text-zinc-300 font-semibold">{formatCurrency(metrics.totalBilled)}</span>
             </div>
@@ -205,8 +205,8 @@ export const GlobalExecutiveDashboard: React.FC = () => {
         </div>
 
         {/* Outstanding Receivables */}
-        <div className="p-4 rounded-xl bg-[#111318] border border-white/[0.07] flex flex-col justify-between hover:border-white/20 transition-all">
-          <div className="flex items-center justify-between text-xs font-mono text-[#8A94A6]">
+        <div className="p-4 rounded-xl bg-[var(--k-bg)] border border-white/[0.07] flex flex-col justify-between hover:border-white/20 transition-all">
+          <div className="flex items-center justify-between text-xs font-sans text-[var(--k-text-secondary)]">
             <span>{language === 'id' ? 'Piutang Berjalan' : 'Outstanding Receivables'}</span>
             <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${metrics.overdueReceivables > 0 ? 'bg-red-500/10 border border-red-500/30 text-red-400' : 'bg-amber-500/10 border border-amber-500/20 text-amber-400'}`}>
               <TrendingUp size={15} />
@@ -216,7 +216,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
             <div className="text-2xl font-bold font-sans text-white tracking-tight">
               {formatCurrency(metrics.outstandingReceivables)}
             </div>
-            <div className="text-[10px] font-mono mt-1 flex items-center gap-1">
+            <div className="text-[10px] font-sans mt-1 flex items-center gap-1">
               {metrics.overdueReceivables > 0 ? (
                 <span className="text-red-400 font-bold flex items-center gap-1">
                   <AlertTriangle size={11} />
@@ -230,8 +230,8 @@ export const GlobalExecutiveDashboard: React.FC = () => {
         </div>
 
         {/* Active Pipeline */}
-        <div className="p-4 rounded-xl bg-[#111318] border border-white/[0.07] flex flex-col justify-between hover:border-white/20 transition-all">
-          <div className="flex items-center justify-between text-xs font-mono text-[#8A94A6]">
+        <div className="p-4 rounded-xl bg-[var(--k-bg)] border border-white/[0.07] flex flex-col justify-between hover:border-white/20 transition-all">
+          <div className="flex items-center justify-between text-xs font-sans text-[var(--k-text-secondary)]">
             <span>{language === 'id' ? 'Nilai Pipeline Aktif' : 'Active Pipeline'}</span>
             <div className="w-7 h-7 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400">
               <Kanban size={15} />
@@ -241,7 +241,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
             <div className="text-2xl font-bold font-sans text-white tracking-tight">
               {formatCurrency(metrics.activePipeline)}
             </div>
-            <div className="text-[10px] font-mono text-[#8A94A6] mt-1 flex items-center gap-1">
+            <div className="text-[10px] font-sans text-[var(--k-text-secondary)] mt-1 flex items-center gap-1">
               <span>Active Deals:</span>
               <span className="text-zinc-300 font-semibold">{data?.todayAtKapitech?.dealsInPipelineCount || 0}</span>
               <span className="text-zinc-500">•</span>
@@ -252,8 +252,8 @@ export const GlobalExecutiveDashboard: React.FC = () => {
         </div>
 
         {/* Active Projects */}
-        <div className="p-4 rounded-xl bg-[#111318] border border-white/[0.07] flex flex-col justify-between hover:border-white/20 transition-all">
-          <div className="flex items-center justify-between text-xs font-mono text-[#8A94A6]">
+        <div className="p-4 rounded-xl bg-[var(--k-bg)] border border-white/[0.07] flex flex-col justify-between hover:border-white/20 transition-all">
+          <div className="flex items-center justify-between text-xs font-sans text-[var(--k-text-secondary)]">
             <span>{language === 'id' ? 'Proyek Berjalan' : 'Active Projects'}</span>
             <div className="w-7 h-7 rounded-lg bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
               <Layers size={15} />
@@ -263,7 +263,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
             <div className="text-2xl font-bold font-sans text-white tracking-tight">
               {metrics.activeProjects}
             </div>
-            <div className="text-[10px] font-mono mt-1 flex items-center gap-1">
+            <div className="text-[10px] font-sans mt-1 flex items-center gap-1">
               {metrics.projectsAtRisk > 0 ? (
                 <span className="text-amber-400 font-semibold flex items-center gap-1">
                   <AlertTriangle size={11} />
@@ -283,29 +283,29 @@ export const GlobalExecutiveDashboard: React.FC = () => {
       {/* ------------------------------------------------------------- */}
       {/* 3. NEEDS ATTENTION: ACTIONABLE OPERATIONAL SIGNALS */}
       {/* ------------------------------------------------------------- */}
-      <div className="p-5 rounded-xl bg-[#111318] border border-white/[0.07]">
+      <div className="p-5 rounded-xl bg-[var(--k-bg)] border border-white/[0.07]">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <AlertTriangle className="text-[#FF1E27]" size={16} />
+            <AlertTriangle className="text-[var(--k-red)]" size={16} />
             <h2 className="text-sm font-bold font-sans text-white">
               {language === 'id' ? 'Prioritas Tindakan Eksekutif (Needs Attention)' : 'Executive Action Priorities (Needs Attention)'}
             </h2>
-            <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-[#E50914]/20 text-[#FF1E27]">
+            <span className="px-2 py-0.5 rounded-full text-[10px] font-sans font-bold bg-[var(--k-red)]/20 text-[var(--k-red)]">
               {attentionItems.length}
             </span>
           </div>
-          <span className="text-[10px] font-mono text-[#8A94A6]">
+          <span className="text-[10px] font-sans text-[var(--k-text-secondary)]">
             {language === 'id' ? 'Dipicu otomatis dari data operasional' : 'Auto-derived from system records'}
           </span>
         </div>
 
         {attentionItems.length === 0 ? (
-          <div className="p-6 text-center rounded-lg bg-[#181B22]/40 border border-white/[0.04]">
+          <div className="p-6 text-center rounded-lg bg-[var(--k-surface)]/40 border border-white/[0.04]">
             <CheckCircle2 className="mx-auto text-emerald-400 mb-2" size={24} />
             <p className="text-xs font-sans text-white font-medium">
               {language === 'id' ? 'Semua parameter operasional dalam batas normal.' : 'All operational parameters are currently healthy.'}
             </p>
-            <p className="text-[11px] font-mono text-[#8A94A6] mt-0.5">
+            <p className="text-[11px] font-sans text-[var(--k-text-secondary)] mt-0.5">
               No overdue invoices, blocked projects, or pending authorizations requiring immediate partner signoff.
             </p>
           </div>
@@ -324,18 +324,18 @@ export const GlobalExecutiveDashboard: React.FC = () => {
                 >
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
-                      <span className={`px-1.5 py-0.2 rounded text-[9px] font-mono uppercase font-bold ${
+                      <span className={`px-1.5 py-0.2 rounded text-[9px] font-sans uppercase font-bold ${
                         isDanger ? 'bg-red-500/20 text-red-400' : 'bg-amber-500/20 text-amber-400'
                       }`}>
                         {item.category}
                       </span>
                       <h4 className="text-xs font-semibold text-white">{item.title}</h4>
                     </div>
-                    <p className="text-[11px] text-[#8A94A6] leading-relaxed">{item.description}</p>
+                    <p className="text-[11px] text-[var(--k-text-secondary)] leading-relaxed">{item.description}</p>
                   </div>
                   <Link
                     to={item.linkUrl}
-                    className="p-1.5 rounded-lg bg-[#181B22] hover:bg-[#21252F] text-white border border-white/[0.07] shrink-0 text-xs font-mono flex items-center gap-1 hover:border-[#E50914] transition-colors"
+                    className="p-1.5 rounded-lg bg-[var(--k-surface)] hover:bg-[var(--k-surface-raised)] text-white border border-white/[0.07] shrink-0 text-xs font-sans flex items-center gap-1 hover:border-[var(--k-red)] transition-colors"
                   >
                     <span>Resolve</span>
                     <ArrowUpRight size={12} />
@@ -352,18 +352,18 @@ export const GlobalExecutiveDashboard: React.FC = () => {
       {/* ------------------------------------------------------------- */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Sales Pipeline Breakdown */}
-        <div className="p-5 rounded-xl bg-[#111318] border border-white/[0.07] space-y-4">
+        <div className="p-5 rounded-xl bg-[var(--k-bg)] border border-white/[0.07] space-y-4">
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-sm font-bold font-sans text-white flex items-center gap-2">
-                <Kanban size={15} className="text-[#FF1E27]" />
+                <Kanban size={15} className="text-[var(--k-red)]" />
                 <span>{language === 'id' ? 'Sebaran Tahapan Pipeline CRM' : 'Sales Pipeline by Stage'}</span>
               </h3>
-              <p className="text-[10px] font-mono text-[#8A94A6] mt-0.5">Current deal distribution</p>
+              <p className="text-[10px] font-sans text-[var(--k-text-secondary)] mt-0.5">Current deal distribution</p>
             </div>
             <Link
               to="/admin/crm"
-              className="text-xs font-mono text-[#FF1E27] hover:underline flex items-center gap-1"
+              className="text-xs font-sans text-[var(--k-red)] hover:underline flex items-center gap-1"
             >
               <span>Open CRM</span>
               <ArrowUpRight size={12} />
@@ -372,18 +372,18 @@ export const GlobalExecutiveDashboard: React.FC = () => {
 
           <div className="space-y-2.5">
             {pipelineStages.length === 0 ? (
-              <div className="p-6 text-center text-xs font-mono text-[#8A94A6]">
+              <div className="p-6 text-center text-xs font-sans text-[var(--k-text-secondary)]">
                 No deals currently in pipeline.
               </div>
             ) : (
               pipelineStages.map((st) => (
-                <div key={st.stage} className="p-2.5 rounded-lg bg-[#181B22] border border-white/[0.04] flex items-center justify-between text-xs">
+                <div key={st.stage} className="p-2.5 rounded-lg bg-[var(--k-surface)] border border-white/[0.04] flex items-center justify-between text-xs">
                   <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-[#E50914]" />
-                    <span className="font-mono uppercase text-[#F8FAFC] text-[11px] font-semibold">{st.stage}</span>
-                    <span className="text-[10px] font-mono text-[#8A94A6]">({st.count} deals)</span>
+                    <span className="w-2 h-2 rounded-full bg-[var(--k-red)]" />
+                    <span className="font-sans uppercase text-[#F8FAFC] text-[11px] font-semibold">{st.stage}</span>
+                    <span className="text-[10px] font-sans text-[var(--k-text-secondary)]">({st.count} deals)</span>
                   </div>
-                  <span className="font-mono text-zinc-300 font-bold">{formatCurrency(st.value)}</span>
+                  <span className="font-sans text-zinc-300 font-bold">{formatCurrency(st.value)}</span>
                 </div>
               ))
             )}
@@ -391,18 +391,18 @@ export const GlobalExecutiveDashboard: React.FC = () => {
         </div>
 
         {/* Financial Operating Summary */}
-        <div className="p-5 rounded-xl bg-[#111318] border border-white/[0.07] space-y-4">
+        <div className="p-5 rounded-xl bg-[var(--k-bg)] border border-white/[0.07] space-y-4">
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-sm font-bold font-sans text-white flex items-center gap-2">
                 <DollarSign size={15} className="text-emerald-400" />
                 <span>{language === 'id' ? 'Ringkasan Keuangan Operasional' : 'Financial Operating Summary'}</span>
               </h3>
-              <p className="text-[10px] font-mono text-[#8A94A6] mt-0.5">Current financial snapshot</p>
+              <p className="text-[10px] font-sans text-[var(--k-text-secondary)] mt-0.5">Current financial snapshot</p>
             </div>
             <Link
               to="/admin/invoicing"
-              className="text-xs font-mono text-[#FF1E27] hover:underline flex items-center gap-1"
+              className="text-xs font-sans text-[var(--k-red)] hover:underline flex items-center gap-1"
             >
               <span>Invoicing</span>
               <ArrowUpRight size={12} />
@@ -410,29 +410,29 @@ export const GlobalExecutiveDashboard: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-2 gap-3 text-xs">
-            <div className="p-3 rounded-lg bg-[#181B22] border border-white/[0.04]">
-              <div className="text-[10px] font-mono text-[#8A94A6]">Operating Expenses (OpEx)</div>
+            <div className="p-3 rounded-lg bg-[var(--k-surface)] border border-white/[0.04]">
+              <div className="text-[10px] font-sans text-[var(--k-text-secondary)]">Operating Expenses (OpEx)</div>
               <div className="text-base font-bold font-sans text-white mt-1">
                 {formatCurrency(data?.financials?.operatingExpenses || 0)}
               </div>
             </div>
 
-            <div className="p-3 rounded-lg bg-[#181B22] border border-white/[0.04]">
-              <div className="text-[10px] font-mono text-[#8A94A6]">Net Operating Margin</div>
+            <div className="p-3 rounded-lg bg-[var(--k-surface)] border border-white/[0.04]">
+              <div className="text-[10px] font-sans text-[var(--k-text-secondary)]">Net Operating Margin</div>
               <div className="text-base font-bold font-sans text-emerald-400 mt-1">
                 {data?.financials?.margin || '0'}%
               </div>
             </div>
 
-            <div className="p-3 rounded-lg bg-[#181B22] border border-white/[0.04]">
-              <div className="text-[10px] font-mono text-[#8A94A6]">Net Operating Profit</div>
+            <div className="p-3 rounded-lg bg-[var(--k-surface)] border border-white/[0.04]">
+              <div className="text-[10px] font-sans text-[var(--k-text-secondary)]">Net Operating Profit</div>
               <div className={`text-base font-bold font-sans mt-1 ${(data?.financials?.netOperatingProfit || 0) >= 0 ? 'text-white' : 'text-red-400'}`}>
                 {formatCurrency(data?.financials?.netOperatingProfit || 0)}
               </div>
             </div>
 
-            <div className="p-3 rounded-lg bg-[#181B22] border border-white/[0.04]">
-              <div className="text-[10px] font-mono text-[#8A94A6]">Proposals Awaiting Approval</div>
+            <div className="p-3 rounded-lg bg-[var(--k-surface)] border border-white/[0.04]">
+              <div className="text-[10px] font-sans text-[var(--k-text-secondary)]">Proposals Awaiting Approval</div>
               <div className="text-base font-bold font-sans text-zinc-300 mt-1">
                 {data?.todayAtKapitech?.proposalsAwaitingCount || 0}
               </div>
@@ -444,18 +444,18 @@ export const GlobalExecutiveDashboard: React.FC = () => {
       {/* ------------------------------------------------------------- */}
       {/* 5. ACTIVE PROJECTS STATUS (DELIVERY HEALTH) */}
       {/* ------------------------------------------------------------- */}
-      <div className="p-5 rounded-xl bg-[#111318] border border-white/[0.07] space-y-4">
+      <div className="p-5 rounded-xl bg-[var(--k-bg)] border border-white/[0.07] space-y-4">
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-sm font-bold font-sans text-white flex items-center gap-2">
-              <Layers size={15} className="text-[#FF1E27]" />
+              <Layers size={15} className="text-[var(--k-red)]" />
               <span>{language === 'id' ? 'Status Eksekusi Proyek Klien' : 'Client Project Delivery Status'}</span>
             </h3>
-            <p className="text-[10px] font-mono text-[#8A94A6] mt-0.5">Current active engagements from project registry</p>
+            <p className="text-[10px] font-sans text-[var(--k-text-secondary)] mt-0.5">Current active engagements from project registry</p>
           </div>
           <Link
             to="/admin/projects"
-            className="text-xs font-mono text-[#FF1E27] hover:underline flex items-center gap-1"
+            className="text-xs font-sans text-[var(--k-red)] hover:underline flex items-center gap-1"
           >
             <span>All Projects</span>
             <ArrowUpRight size={12} />
@@ -463,14 +463,14 @@ export const GlobalExecutiveDashboard: React.FC = () => {
         </div>
 
         {recentProjects.length === 0 ? (
-          <div className="p-8 text-center text-xs font-mono text-[#8A94A6] rounded-lg bg-[#181B22]/30 border border-white/[0.04]">
+          <div className="p-8 text-center text-xs font-sans text-[var(--k-text-secondary)] rounded-lg bg-[var(--k-surface)]/30 border border-white/[0.04]">
             No active projects currently enrolled in registry.
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
               <thead>
-                <tr className="border-b border-white/[0.07] text-[10px] font-mono text-[#8A94A6] uppercase">
+                <tr className="border-b border-white/[0.07] text-[10px] font-sans text-[var(--k-text-secondary)] uppercase">
                   <th className="py-2.5 px-3">Project</th>
                   <th className="py-2.5 px-3">Client</th>
                   <th className="py-2.5 px-3">Health</th>
@@ -489,11 +489,11 @@ export const GlobalExecutiveDashboard: React.FC = () => {
                           <span className="truncate max-w-[220px]">{p.title || p.name || 'Untitled Project'}</span>
                         </div>
                       </td>
-                      <td className="py-3 px-3 text-zinc-400 font-mono text-[11px]">
+                      <td className="py-3 px-3 text-zinc-400 font-sans text-[11px]">
                         {p.client || 'Internal'}
                       </td>
                       <td className="py-3 px-3">
-                        <span className={`px-2 py-0.5 rounded text-[10px] font-mono uppercase font-bold ${
+                        <span className={`px-2 py-0.5 rounded text-[10px] font-sans uppercase font-bold ${
                           p.health === 'On Track'
                             ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
                             : isAtRisk
@@ -503,16 +503,16 @@ export const GlobalExecutiveDashboard: React.FC = () => {
                           {p.health || 'Active'}
                         </span>
                       </td>
-                      <td className="py-3 px-3 font-mono text-[11px] text-white">
+                      <td className="py-3 px-3 font-sans text-[11px] text-white">
                         {formatCurrency(p.contractValue || p.budget || 0)}
                       </td>
-                      <td className="py-3 px-3 font-mono text-[11px] text-[#8A94A6]">
+                      <td className="py-3 px-3 font-sans text-[11px] text-[var(--k-text-secondary)]">
                         {p.deadline || p.targetDeliveryDate || 'N/A'}
                       </td>
                       <td className="py-3 px-3 text-right">
                         <button
                           onClick={() => navigate('/admin/projects')}
-                          className="text-[11px] font-mono text-[#FF1E27] hover:underline"
+                          className="text-[11px] font-sans text-[var(--k-red)] hover:underline"
                         >
                           View →
                         </button>
@@ -529,18 +529,18 @@ export const GlobalExecutiveDashboard: React.FC = () => {
       {/* ------------------------------------------------------------- */}
       {/* 6. RECENT AUDIT ACTIVITY (IMMUTABLE SERVER ACTIVITY TRAIL) */}
       {/* ------------------------------------------------------------- */}
-      <div className="p-5 rounded-xl bg-[#111318] border border-white/[0.07] space-y-4">
+      <div className="p-5 rounded-xl bg-[var(--k-bg)] border border-white/[0.07] space-y-4">
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-sm font-bold font-sans text-white flex items-center gap-2">
-              <Activity size={15} className="text-[#FF1E27]" />
+              <Activity size={15} className="text-[var(--k-red)]" />
               <span>{language === 'id' ? 'Log Aktivitas Sistem & Audit Trail' : 'System Audit Trail & Operations Feed'}</span>
             </h3>
-            <p className="text-[10px] font-mono text-[#8A94A6] mt-0.5">Events recorded by the server audit log</p>
+            <p className="text-[10px] font-sans text-[var(--k-text-secondary)] mt-0.5">Events recorded by the server audit log</p>
           </div>
           <Link
             to="/admin/settings"
-            className="text-xs font-mono text-[#8A94A6] hover:text-white flex items-center gap-1"
+            className="text-xs font-sans text-[var(--k-text-secondary)] hover:text-white flex items-center gap-1"
           >
             <span>Full Audit Logs</span>
             <ExternalLink size={11} />
@@ -549,20 +549,20 @@ export const GlobalExecutiveDashboard: React.FC = () => {
 
         <div className="space-y-2">
           {recentLogs.length === 0 ? (
-            <div className="p-6 text-center text-xs font-mono text-[#8A94A6]">
+            <div className="p-6 text-center text-xs font-sans text-[var(--k-text-secondary)]">
               No audit activities recorded.
             </div>
           ) : (
             recentLogs.slice(0, 6).map((log, idx) => (
-              <div key={log.id || idx} className="p-2.5 rounded-lg bg-[#181B22] border border-white/[0.04] flex items-center justify-between text-xs font-mono">
+              <div key={log.id || idx} className="p-2.5 rounded-lg bg-[var(--k-surface)] border border-white/[0.04] flex items-center justify-between text-xs font-sans">
                 <div className="flex items-center gap-3 min-w-0">
                   <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${
                     log.severity === 'danger' ? 'bg-red-500' : log.severity === 'warning' ? 'bg-amber-400' : 'bg-emerald-400'
                   }`} />
                   <span className="font-bold text-white uppercase text-[10px] shrink-0">{log.action}</span>
-                  <span className="text-[#8A94A6] truncate">{log.details || log.message}</span>
+                  <span className="text-[var(--k-text-secondary)] truncate">{log.details || log.message}</span>
                 </div>
-                <div className="text-[10px] text-[#8A94A6] shrink-0 ml-2">
+                <div className="text-[10px] text-[var(--k-text-secondary)] shrink-0 ml-2">
                   {log.timestamp ? new Date(log.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Recent'}
                 </div>
               </div>
