@@ -523,6 +523,82 @@
 }
 .kapi-public-shell .kapi-public-footer a:hover { color: #fff; }
 
+/* Floating contact: compact utility layer, separate from content. */
+.kapi-public-shell .kapi-contact-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  background: rgba(0,0,0,.52);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+}
+.kapi-public-shell .kapi-floating-contact {
+  position: fixed;
+  right: clamp(16px, 3vw, 32px);
+  bottom: clamp(16px, 3vw, 32px);
+  z-index: 95;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}
+.kapi-public-shell .kapi-contact-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+  margin-bottom: 8px;
+  max-width: min(360px, 86vw);
+}
+.kapi-public-shell .kapi-contact-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  min-height: 44px;
+}
+.kapi-public-shell .kapi-contact-label {
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 12px;
+  border: 1px solid var(--pub-border);
+  border-radius: 12px;
+  background: rgba(17,19,24,.92);
+  color: var(--pub-text);
+  font-size: .75rem;
+  font-weight: 600;
+  white-space: nowrap;
+  box-shadow: 0 8px 24px rgba(0,0,0,.22);
+  transition: border-color var(--pub-fast) ease, color var(--pub-fast) ease, background-color var(--pub-fast) ease;
+}
+.kapi-public-shell .kapi-contact-action:hover .kapi-contact-label {
+  border-color: rgba(176,0,32,.48);
+  color: #fff;
+  background: rgba(24,27,34,.96);
+}
+.kapi-public-shell .kapi-contact-icon {
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px !important;
+  color: #fff;
+  border: 1px solid rgba(255,255,255,.1);
+  box-shadow: 0 10px 26px rgba(0,0,0,.25);
+  transition: transform var(--pub-fast) var(--pub-ease), border-color var(--pub-fast) ease;
+}
+.kapi-public-shell .kapi-contact-action:hover .kapi-contact-icon {
+  transform: translateY(-1px);
+  border-color: rgba(255,255,255,.2);
+}
+@media (max-width: 479px) {
+  .kapi-public-shell .kapi-floating-contact { right: 12px; bottom: 12px; }
+  .kapi-public-shell .kapi-contact-label { max-width: 68vw; overflow: hidden; text-overflow: ellipsis; }
+}
+
 /* Floating contact */
 .kapi-public-shell :where(.floating-action,.kapi-floating-contact) {
   z-index: 60 !important;
