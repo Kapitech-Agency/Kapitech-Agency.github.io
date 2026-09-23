@@ -313,22 +313,14 @@ export function clearAuditLogs(): void {
 // Credentials retrieval helper
 export function getStoredAdminCredentials() {
   const session = getAdminSession();
-  if (!session) {
-    return {
-      username: 'admin',
-      email: 'admin@ams.kapitech.id',
-      displayName: 'Master Administrator',
-      role: 'Tier 1: Top Management / Sponsor',
-      division: 'Management',
-      mfaEnabled: false
-    };
-  }
+  if (!session) return null;
+
   return {
     username: session.user.username,
     email: session.user.email,
     displayName: session.user.name || session.user.username,
-    role: session.user.role || 'Tier 1: Top Management / Sponsor',
-    division: session.user.division || 'Management',
+    role: session.user.role || 'Unknown',
+    division: session.user.division || 'Operations',
     mfaEnabled: Boolean(session.user.mfaEnabled)
   };
 }
