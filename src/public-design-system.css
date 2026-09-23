@@ -775,6 +775,58 @@
   border-radius: var(--pub-radius-button) !important;
 }
 
+/* Shared interactive component geometry */
+.kapi-public-shell .kapi-carousel-button {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  border: 1px solid var(--pub-border);
+  border-radius: 12px;
+  background: var(--pub-surface);
+  color: var(--pub-text-secondary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform var(--pub-fast) var(--pub-ease), border-color var(--pub-fast) ease, color var(--pub-fast) ease, background-color var(--pub-fast) ease;
+}
+.kapi-public-shell .kapi-carousel-button:hover {
+  color: var(--pub-text);
+  border-color: rgba(176,0,32,.45);
+  background: var(--pub-surface-2);
+  transform: translateY(-1px);
+}
+.kapi-public-shell .kapi-carousel-button:active { transform: scale(.97); }
+.kapi-public-shell .kapi-modal-close {
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  border: 1px solid var(--pub-border);
+  border-radius: 12px;
+  background: var(--pub-surface);
+  color: var(--pub-text-secondary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.kapi-public-shell .kapi-tech-tag {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  padding: 5px 10px;
+  border: 1px solid var(--pub-border);
+  border-radius: 8px;
+  background: rgba(255,255,255,.025);
+  color: var(--pub-text-secondary);
+  font-size: .6875rem;
+  line-height: 1.35;
+}
+.kapi-public-shell .kapi-inset-card {
+  padding: 16px;
+  border: 1px solid var(--pub-border);
+  border-radius: 14px;
+  background: var(--pub-bg);
+}
+
 /* Public form controls */
 .kapi-public-shell .kapi-form-control {
   width: 100%;
