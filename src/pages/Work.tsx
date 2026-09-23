@@ -336,7 +336,7 @@ export const Work = () => {
                   setVisibleCount(12);
                 }}
                 placeholder={language === 'id' ? 'Cari studi kasus, klien, stack...' : 'Search case study, client, tech...'}
-                className="w-full bg-[var(--k-surface)] border border-[var(--k-border)] rounded-xl pl-10 pr-9 py-2.5 text-base sm:text-xs text-white placeholder:text-[var(--k-text-secondary)] focus:outline-none focus:border-brand-red focus:ring-2 focus:ring-brand-red/20 transition-colors font-sans min-h-[44px]"
+                className="w-full bg-[var(--k-surface)] border border-[var(--k-border)] rounded-xl pl-10 pr-9 py-2.5 text-base sm:text-xs text-white placeholder:text-[var(--k-text-secondary)] focus:outline-none focus-visible:outline-none focus:border-brand-red focus:ring-2 focus:ring-brand-red/20 transition-colors font-sans min-h-[44px]"
               />
               {searchQuery && (
                 <button

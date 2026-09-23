@@ -99,7 +99,7 @@ export const Navbar = () => {
           "kapi-public-nav fixed top-0 left-0 w-full z-50 transition-all duration-300 border-b",
           isScrolled 
             ? "bg-[var(--k-bg-deep)]/95 backdrop-blur-md py-3 sm:py-3.5 border-[var(--k-border)] shadow-[var(--k-shadow-sm)] shadow-[var(--k-bg-deep)]/80" 
-            : "bg-[var(--k-bg-deep)]/80 backdrop-blur-sm py-4 sm:py-5 border-[var(--k-border)]/60"
+            : "bg-[var(--k-bg-deep)]/80 backdrop-blur-sm py-3.5 sm:py-4 border-[var(--k-border)]/60"
         )}
       >
         {/* Scroll Progress Bar */}
@@ -121,7 +121,7 @@ export const Navbar = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="kapi-public-nav-links hidden md:flex items-center gap-6 lg:gap-8">
+          <div className="kapi-public-nav-links hidden md:flex items-center gap-5 lg:gap-7">
             <div className="flex items-center gap-5 lg:gap-6 px-6 py-2 rounded-full bg-[var(--k-surface)] backdrop-blur-md border border-[var(--k-border)]">
               
               {/* Work Link */}
