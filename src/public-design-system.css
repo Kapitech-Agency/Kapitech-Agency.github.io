@@ -1217,16 +1217,16 @@
   box-shadow: 0 18px 56px rgba(0,0,0,.22) !important;
 }
 
-.kapi-public-shell [class*="bg-brand-red"] {
+.kapi-public-shell [class~="bg-brand-red"] {
   --tw-bg-opacity: 1;
   background-color: var(--pub-red) !important;
 }
 
-.kapi-public-shell [class*="text-brand-red"] {
+.kapi-public-shell [class~="text-brand-red"] {
   color: var(--pub-red) !important;
 }
 
-.kapi-public-shell [class*="border-brand-red"] {
+.kapi-public-shell [class~="border-brand-red"] {
   border-color: rgba(176,0,32,.35) !important;
 }
 
