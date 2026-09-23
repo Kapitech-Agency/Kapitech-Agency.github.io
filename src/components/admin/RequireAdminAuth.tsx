@@ -61,10 +61,10 @@ export const RequireAdminAuth: React.FC<RequireAdminAuthProps> = ({ children }) 
 
   if (status === 'checking') {
     return (
-      <div className="min-h-screen bg-[#090A0F] text-white flex items-center justify-center">
+      <div className="min-h-screen bg-[var(--k-bg)] text-[var(--k-text)] flex items-center justify-center">
         <div className="text-center">
-          <div className="w-8 h-8 border-2 border-white/10 border-t-[#E50914] rounded-full animate-spin mx-auto mb-3" />
-          <p className="text-xs font-mono text-[#8A94A6]">Verifying server session…</p>
+          <div className="w-8 h-8 border-2 border-white/10 border-t-[var(--k-red)] rounded-full animate-spin mx-auto mb-3" />
+          <p className="text-xs font-sans text-[var(--k-text-secondary)]">Verifying server session…</p>
         </div>
       </div>
     );
