@@ -270,7 +270,7 @@ export const Home = () => {
               <span className="text-brand-red font-sans font-semibold tracking-widest uppercase text-xs mb-2 sm:mb-3 block">
                 {language === 'id' ? 'Layanan & Solusi Lengkap' : 'Solutions & Core Capabilities'}
               </span>
-              <h2 className="text-2xl sm:text-3xl md:text-5xl font-sans font-bold tracking-tight text-white">
+              <h2 className="kapi-section-title">
                 {language === 'id' ? 'Solusi Strategis & Keahlian Studio' : 'Strategic Solutions & Studio Craft'}
               </h2>
             </div>
@@ -527,7 +527,7 @@ export const Home = () => {
             <span className="text-brand-red font-sans font-semibold tracking-widest uppercase text-xs mb-3 block">
               {language === 'id' ? 'Alur Kerja Studio' : 'Our Working Framework'}
             </span>
-            <h2 className="text-2xl sm:text-4xl md:text-5xl font-sans font-bold tracking-tight text-white">
+            <h2 className="kapi-section-title">
               {language === 'id' ? 'Eksekusi Tangkas & Terukur' : 'Disciplined Agile Execution'}
             </h2>
           </div>
