@@ -57,19 +57,19 @@ export const FloatingContact = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setIsOpen(false)}
-            className="fixed inset-0 bg-black/50 backdrop-blur-xs z-[90]"
+            className="kapi-contact-backdrop"
           />
         )}
       </AnimatePresence>
 
-      <div className="fixed bottom-4 right-4 sm:bottom-8 sm:right-8 z-[95] flex flex-col items-end gap-3">
+      <div className="kapi-floating-contact">
         <AnimatePresence>
           {isOpen && (
             <motion.div
               initial={{ opacity: 0, scale: 0.85, y: 15 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.85, y: 15 }}
-              className="flex flex-col gap-2.5 mb-2 max-w-[85vw]"
+              className="kapi-contact-actions"
             >
               {contactOptions.map((option, i) => (
                 <motion.div
@@ -82,15 +82,12 @@ export const FloatingContact = () => {
                     <Link
                       to={option.href}
                       onClick={() => setIsOpen(false)}
-                      className="flex items-center justify-end gap-2.5 sm:gap-3 group min-h-[44px]"
+                      className="kapi-contact-action"
                     >
-                      <span className="px-3.5 py-2 rounded-xl bg-[var(--k-surface)] border border-[var(--k-border)] text-xs font-medium text-white shadow-[var(--k-shadow-sm)] transition-all group-hover:border-brand-red/60 group-hover:text-brand-red whitespace-nowrap">
+                      <span className="kapi-contact-label">
                         {option.label}
                       </span>
-                      <div className={cn(
-                        "w-11 h-11 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-white shadow-[var(--k-shadow-sm)] transition-transform hover:translate-y-[-1px] active:scale-95 shrink-0",
-                        option.color
-                      )}>
+                      <div className={cn("kapi-contact-icon", option.color)}>
                         {option.icon}
                       </div>
                     </Link>
@@ -100,15 +97,12 @@ export const FloatingContact = () => {
                       target={option.isExternal ? "_blank" : undefined}
                       rel={option.isExternal ? "noopener noreferrer" : undefined}
                       onClick={() => setIsOpen(false)}
-                      className="flex items-center justify-end gap-2.5 sm:gap-3 group min-h-[44px]"
+                      className="kapi-contact-action"
                     >
-                      <span className="px-3.5 py-2 rounded-xl bg-[var(--k-surface)] border border-[var(--k-border)] text-xs font-medium text-white shadow-[var(--k-shadow-sm)] transition-all group-hover:border-brand-red/60 group-hover:text-brand-red whitespace-nowrap">
+                      <span className="kapi-contact-label">
                         {option.label}
                       </span>
-                      <div className={cn(
-                        "w-11 h-11 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-white shadow-[var(--k-shadow-sm)] transition-transform hover:translate-y-[-1px] active:scale-95 shrink-0",
-                        option.color
-                      )}>
+                      <div className={cn("kapi-contact-icon", option.color)}>
                         {option.icon}
                       </div>
                     </a>
