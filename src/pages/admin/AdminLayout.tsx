@@ -532,7 +532,7 @@ export const AdminLayout: React.FC = () => {
         <div className="p-3 border-t border-[var(--k-border)] bg-[var(--k-surface)] space-y-2.5">
           <div className={`flex items-center justify-between ${sidebarCollapsed ? 'flex-col gap-2' : ''}`}>
             <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-8 h-8 rounded-[var(--k-control-radius)] bg-gradient-to-br from-[#E50914] to-[#B80710] border border-white/10 flex items-center justify-center text-xs font-sans text-white font-bold shrink-0 shadow-sm">
+              <div className="w-8 h-8 rounded-[var(--k-control-radius)] bg-gradient-to-br from-[var(--k-red)] to-[var(--k-red)] border border-white/10 flex items-center justify-center text-xs font-sans text-white font-bold shrink-0 shadow-sm">
                 {adminInitials}
               </div>
               {!sidebarCollapsed && (
@@ -573,7 +573,7 @@ export const AdminLayout: React.FC = () => {
                 <select
                   value={rbacRole}
                   onChange={(e) => setRbacRole(e.target.value as StakeholderRole)}
-                  className="w-full h-7 px-2 rounded-[var(--k-control-radius)] bg-[var(--k-surface-raised)] text-white border border-[var(--k-border)] hover:border-[#8A94A6]/60 text-[11px] font-sans focus:outline-none focus:border-[#E50914] transition-colors cursor-pointer"
+                  className="w-full h-7 px-2 rounded-[var(--k-control-radius)] bg-[var(--k-surface-raised)] text-white border border-[var(--k-border)] hover:border-[#8A94A6]/60 text-[11px] font-sans focus:outline-none focus:border-[var(--k-red)] transition-colors cursor-pointer"
                   title="Select Stakeholder Role to switch RBAC permissions (DEV only)"
                 >
                   <option value="executive">1. Stakeholder Executive (Full Access)</option>
@@ -759,7 +759,7 @@ export const AdminLayout: React.FC = () => {
                     <select
                       value={rbacRole}
                       onChange={(e) => setRbacRole(e.target.value as StakeholderRole)}
-                      className="w-full h-8 px-2 rounded-[var(--k-control-radius)] bg-[var(--k-surface)] text-white border border-[var(--k-border)] text-xs font-sans focus:outline-none focus:border-[#E50914] cursor-pointer"
+                      className="w-full h-8 px-2 rounded-[var(--k-control-radius)] bg-[var(--k-surface)] text-white border border-[var(--k-border)] text-xs font-sans focus:outline-none focus:border-[var(--k-red)] cursor-pointer"
                     >
                       <option value="executive">1. Stakeholder Executive (Full Access)</option>
                       <option value="pm">2. Project Manager</option>
@@ -779,7 +779,7 @@ export const AdminLayout: React.FC = () => {
             {/* Bottom session details */}
             <div className="p-3.5 border-t border-[var(--k-border)] bg-[var(--k-surface-raised)] flex items-center justify-between shrink-0">
               <div className="flex items-center gap-2.5 min-w-0">
-                <div className="w-8 h-8 rounded-[var(--k-control-radius)] bg-gradient-to-br from-[#E50914] to-[#B80710] border border-white/10 flex items-center justify-center text-xs font-sans text-white font-bold shrink-0 shadow-sm">
+                <div className="w-8 h-8 rounded-[var(--k-control-radius)] bg-gradient-to-br from-[var(--k-red)] to-[var(--k-red)] border border-white/10 flex items-center justify-center text-xs font-sans text-white font-bold shrink-0 shadow-sm">
                   {roleMeta.accountProfile.avatarLabel}
                 </div>
                 <div className="min-w-0">
@@ -815,7 +815,7 @@ export const AdminLayout: React.FC = () => {
             aria-label={language === 'id' ? 'Buka menu lainnya' : 'Open more navigation'}
             aria-expanded={mobileMenuOpen}
             aria-controls="ams-mobile-more-sheet"
-            className="min-w-[44px] min-h-[44px] rounded-[var(--k-control-radius)] bg-[var(--k-surface)] border border-[var(--k-border)] text-[var(--k-text-secondary)] flex items-center justify-center active:scale-95 transition-transform focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E50914]/70"
+            className="min-w-[44px] min-h-[44px] rounded-[var(--k-control-radius)] bg-[var(--k-surface)] border border-[var(--k-border)] text-[var(--k-text-secondary)] flex items-center justify-center active:scale-95 transition-transform focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--k-red)]/70"
           >
             <MoreHorizontal size={19} />
           </button>
@@ -846,7 +846,7 @@ export const AdminLayout: React.FC = () => {
             <button
               onClick={() => setNotificationsOpen(!notificationsOpen)}
               aria-label="Notifications"
-              className="relative min-w-[44px] min-h-[44px] rounded-[var(--k-control-radius)] bg-[var(--k-surface)] border border-[var(--k-border)] text-[var(--k-text-secondary)] flex items-center justify-center active:scale-95 transition-transform focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E50914]/70"
+              className="relative min-w-[44px] min-h-[44px] rounded-[var(--k-control-radius)] bg-[var(--k-surface)] border border-[var(--k-border)] text-[var(--k-text-secondary)] flex items-center justify-center active:scale-95 transition-transform focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--k-red)]/70"
             >
               <Bell size={17} />
               {unreadNotificationsCount > 0 && (
@@ -884,7 +884,7 @@ export const AdminLayout: React.FC = () => {
               onClick={() => setCommandPaletteOpen(true)}
               readOnly
               placeholder={t('admin.dash.searchPlaceholder') || "Search projects, clients, tasks (⌘K)..."}
-              className="w-full h-8 pl-8 pr-12 text-xs bg-[var(--k-surface)] text-white placeholder-[#8A94A6] rounded-[var(--k-control-radius)] border border-[var(--k-border)] hover:border-white/20 focus:outline-none focus:border-[#E50914] transition-colors cursor-pointer"
+              className="w-full h-8 pl-8 pr-12 text-xs bg-[var(--k-surface)] text-white placeholder-[#8A94A6] rounded-[var(--k-control-radius)] border border-[var(--k-border)] hover:border-white/20 focus:outline-none focus:border-[var(--k-red)] transition-colors cursor-pointer"
             />
             <kbd className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] font-sans text-[var(--k-text-secondary)] bg-[var(--k-surface-raised)] border border-[var(--k-border)] px-1.5 py-0.5 rounded pointer-events-none">
               ⌘K
@@ -1058,7 +1058,7 @@ export const AdminLayout: React.FC = () => {
                   to={item.to}
                   aria-current={active ? 'page' : undefined}
                   aria-label={item.badge ? `${item.label}, ${item.badge}` : item.label}
-                  className={`relative min-h-12 min-w-0 rounded-[var(--k-control-radius)] flex flex-col items-center justify-center gap-1 text-[9px] font-sans focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E50914]/70 ${active ? 'bg-[var(--k-red)]/10 text-white' : 'text-[var(--k-text-secondary)]'}`}
+                  className={`relative min-h-12 min-w-0 rounded-[var(--k-control-radius)] flex flex-col items-center justify-center gap-1 text-[9px] font-sans focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--k-red)]/70 ${active ? 'bg-[var(--k-red)]/10 text-white' : 'text-[var(--k-text-secondary)]'}`}
                 >
                   <Icon size={17} className={active ? 'text-[var(--k-red)]' : ''} />
                   <span className="truncate max-w-full px-1">{item.label}</span>
