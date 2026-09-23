@@ -206,11 +206,11 @@ export const AdminClients: React.FC = () => {
       {/* 1. Header & Actions */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[rgba(255,255,255,0.07)]">
         <div>
-          <h1 className="text-2xl font-sans font-bold text-white flex items-center gap-3 tracking-tight">
-            <Users className="text-[var(--k-red)]" size={26} />
+          <h1 className="ams-page-title flex items-center gap-3">
+            <Users className="text-[var(--ams-red)]" size={26} />
             <span>{t('admin.client.title')}</span>
           </h1>
-          <p className="text-xs font-sans text-[var(--k-text-secondary)] mt-1">
+          <p className="text-xs font-sans text-[var(--ams-secondary)] mt-1">
             {t('admin.client.subtitle')}
           </p>
         </div>
@@ -218,7 +218,7 @@ export const AdminClients: React.FC = () => {
         {canManageClients && (
           <button
             onClick={handleOpenCreateClient}
-          className="h-10 px-4 rounded-xl bg-[var(--k-red)] hover:bg-[var(--k-red)] text-white text-xs font-sans font-bold transition-all flex items-center justify-center gap-1.5 shadow-lg shadow-[var(--k-red)]/25 self-start sm:self-auto min-h-[40px]"
+          className="h-10 px-4 rounded-xl bg-[var(--ams-red)] hover:bg-[var(--ams-red)] text-white text-xs font-sans font-bold transition-all flex items-center justify-center gap-1.5 shadow-lg shadow-[var(--ams-red)]/25 self-start sm:self-auto min-h-[40px]"
         >
           <Plus size={14} />
             <span>{t('admin.client.addClient')}</span>
@@ -255,23 +255,23 @@ export const AdminClients: React.FC = () => {
 
       {/* 2. Key Metrics Summary (3 cols) */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 w-full">
-        <div className="w-full h-full bg-[var(--k-bg)] border border-[rgba(255,255,255,0.07)] p-5 rounded-xl flex flex-col justify-between">
-          <div className="flex items-center justify-between text-[var(--k-text-secondary)] mb-2">
+        <div className="w-full h-full bg-[var(--ams-bg)] border border-[rgba(255,255,255,0.07)] p-5 rounded-xl flex flex-col justify-between">
+          <div className="flex items-center justify-between text-[var(--ams-secondary)] mb-2">
             <span className="text-xs font-sans uppercase font-semibold">{t('admin.client.totalClients')}</span>
-            <div className="w-8 h-8 rounded-lg bg-[var(--k-surface)] border border-[rgba(255,255,255,0.07)] flex items-center justify-center text-white">
+            <div className="w-8 h-8 rounded-lg bg-[var(--ams-surface)] border border-[rgba(255,255,255,0.07)] flex items-center justify-center text-white">
               <Users size={16} />
             </div>
           </div>
           <div className="text-3xl font-sans font-bold text-white tracking-tight">
             {clients.length}
           </div>
-          <div className="mt-3 pt-2 border-t border-[rgba(255,255,255,0.07)] text-xs font-sans text-[var(--k-text-secondary)]">
+          <div className="mt-3 pt-2 border-t border-[rgba(255,255,255,0.07)] text-xs font-sans text-[var(--ams-secondary)]">
             {language === 'id' ? 'Klien Enterprise & SME' : 'Across Enterprise & SME tiers'}
           </div>
         </div>
 
-        <div className="w-full h-full bg-[var(--k-bg)] border border-[rgba(255,255,255,0.07)] p-5 rounded-xl flex flex-col justify-between">
-          <div className="flex items-center justify-between text-[var(--k-text-secondary)] mb-2">
+        <div className="w-full h-full bg-[var(--ams-bg)] border border-[rgba(255,255,255,0.07)] p-5 rounded-xl flex flex-col justify-between">
+          <div className="flex items-center justify-between text-[var(--ams-secondary)] mb-2">
             <span className="text-xs font-sans uppercase font-semibold">{t('admin.client.activeAccounts')}</span>
             <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
               <UserCheck size={16} />
@@ -285,8 +285,8 @@ export const AdminClients: React.FC = () => {
           </div>
         </div>
 
-        <div className="w-full h-full bg-[var(--k-bg)] border border-[rgba(255,255,255,0.07)] p-5 rounded-xl flex flex-col justify-between">
-          <div className="flex items-center justify-between text-[var(--k-text-secondary)] mb-2">
+        <div className="w-full h-full bg-[var(--ams-bg)] border border-[rgba(255,255,255,0.07)] p-5 rounded-xl flex flex-col justify-between">
+          <div className="flex items-center justify-between text-[var(--ams-secondary)] mb-2">
             <span className="text-xs font-sans uppercase font-semibold">{t('admin.client.lifetimeSpend')}</span>
             <div className="w-8 h-8 rounded-lg bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400">
               <DollarSign size={16} />
@@ -302,7 +302,7 @@ export const AdminClients: React.FC = () => {
       </div>
 
       {/* 3. Search & Filter Bar */}
-      <div className="w-full flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[var(--k-bg)] border border-[rgba(255,255,255,0.07)] p-4 rounded-xl">
+      <div className="w-full flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[var(--ams-bg)] border border-[rgba(255,255,255,0.07)] p-4 rounded-xl">
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#5C626E]" size={14} />
           <input
@@ -310,7 +310,7 @@ export const AdminClients: React.FC = () => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={t('admin.client.searchPlaceholder')}
-            className="w-full pl-9 pr-3 py-2 bg-[var(--k-surface)] border border-[rgba(255,255,255,0.07)] rounded-xl text-xs text-white placeholder:text-[#5C626E] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--k-red)]/40 focus:border-[var(--k-red)] font-sans"
+            className="w-full pl-9 pr-3 py-2 bg-[var(--ams-surface)] border border-[rgba(255,255,255,0.07)] rounded-xl text-xs text-white placeholder:text-[#5C626E] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ams-red)]/40 focus:border-[var(--ams-red)] font-sans"
           />
         </div>
 
@@ -333,7 +333,7 @@ export const AdminClients: React.FC = () => {
       {/* Mobile View: Clean Client Cards (Zero Horizontal Scrolling) */}
       <div className="md:hidden space-y-3">
         {filteredClients.length === 0 ? (
-          <div className="py-12 text-center text-[var(--k-text-secondary)] bg-[var(--k-bg)] border border-[rgba(255,255,255,0.07)] rounded-xl text-xs font-sans">
+          <div className="py-12 text-center text-[var(--ams-secondary)] bg-[var(--ams-bg)] border border-[rgba(255,255,255,0.07)] rounded-xl text-xs font-sans">
             {language === 'id' ? 'Tidak ada data klien yang sesuai.' : 'No clients found.'}
           </div>
         ) : (
@@ -342,7 +342,7 @@ export const AdminClients: React.FC = () => {
             return (
               <div 
                 key={client.id}
-                className={`bg-[var(--k-bg)] border rounded-xl p-4 space-y-3 transition-all shadow-lg ${
+                className={`bg-[var(--ams-bg)] border rounded-xl p-4 space-y-3 transition-all shadow-lg ${
                   isOverBudget ? 'border-red-500/50 bg-red-950/10' : 'border-[rgba(255,255,255,0.07)] hover:border-[rgba(255,255,255,0.15)]'
                 }`}
               >
@@ -350,7 +350,7 @@ export const AdminClients: React.FC = () => {
                 <div className="flex items-start justify-between gap-2">
                   <div>
                     <div className="font-bold text-white text-base">{client.name}</div>
-                    <div className="text-xs text-[var(--k-red)] font-semibold">{client.contactPersonRole}</div>
+                    <div className="text-xs text-[var(--ams-red)] font-semibold">{client.contactPersonRole}</div>
                   </div>
                   <span className={`px-2.5 py-1 rounded-lg text-xs font-sans font-bold uppercase shrink-0 ${
                     client.status === 'active'
@@ -364,20 +364,20 @@ export const AdminClients: React.FC = () => {
                 </div>
 
                 {/* Company & Industry */}
-                <div className="flex items-center gap-2 text-xs font-sans text-[#C5CEE0] bg-[var(--k-surface)]/60 p-2.5 rounded-lg border border-[rgba(255,255,255,0.04)]">
-                  <Building2 size={13} className="text-[var(--k-text-secondary)] shrink-0" />
+                <div className="flex items-center gap-2 text-xs font-sans text-[#C5CEE0] bg-[var(--ams-surface)]/60 p-2.5 rounded-lg border border-[rgba(255,255,255,0.04)]">
+                  <Building2 size={13} className="text-[var(--ams-secondary)] shrink-0" />
                   <span className="font-semibold text-white">{client.company}</span>
                   <span className="text-[var(--k-text-tertiary)]">•</span>
-                  <span className="text-xs text-[var(--k-text-secondary)] truncate">{client.industry}</span>
+                  <span className="text-xs text-[var(--ams-secondary)] truncate">{client.industry}</span>
                 </div>
 
                 {/* Contact: Email & Phone */}
-                <div className="grid grid-cols-1 gap-1.5 text-xs font-sans text-[var(--k-text-secondary)]">
+                <div className="grid grid-cols-1 gap-1.5 text-xs font-sans text-[var(--ams-secondary)]">
                   <a 
                     href={`mailto:${client.email}`}
                     className="flex items-center gap-1.5 text-[#C5CEE0] hover:text-white transition-colors truncate"
                   >
-                    <Mail size={12} className="text-[var(--k-text-secondary)] shrink-0" />
+                    <Mail size={12} className="text-[var(--ams-secondary)] shrink-0" />
                     <span className="truncate">{client.email}</span>
                   </a>
                   {client.phone && (
@@ -385,7 +385,7 @@ export const AdminClients: React.FC = () => {
                       href={`tel:${client.phone}`}
                       className="flex items-center gap-1.5 text-[#C5CEE0] hover:text-white transition-colors"
                     >
-                      <Phone size={12} className="text-[var(--k-text-secondary)] shrink-0" />
+                      <Phone size={12} className="text-[var(--ams-secondary)] shrink-0" />
                       <span>{client.phone}</span>
                     </a>
                   )}
@@ -402,7 +402,7 @@ export const AdminClients: React.FC = () => {
                   <div>
                     {client.slaDailyAdSpendBudget ? (
                       <div>
-                        <div className="text-xs uppercase font-sans text-[var(--k-text-secondary)]">Daily SLA Ad-Spend</div>
+                        <div className="text-xs uppercase font-sans text-[var(--ams-secondary)]">Daily SLA Ad-Spend</div>
                         <div className={`font-bold font-sans text-sm flex items-center gap-1 ${isOverBudget ? 'text-red-400' : 'text-emerald-400'}`}>
                           {isOverBudget && <AlertTriangle size={12} className="text-red-400 shrink-0" />}
                           <span>{formatAmount(client.currentDailyAdSpend || 0, currency)}</span>
@@ -413,7 +413,7 @@ export const AdminClients: React.FC = () => {
                       </div>
                     ) : (
                       <div>
-                        <div className="text-xs uppercase font-sans text-[var(--k-text-secondary)]">Lifetime Spend</div>
+                        <div className="text-xs uppercase font-sans text-[var(--ams-secondary)]">Lifetime Spend</div>
                         <div className="font-bold font-sans text-white text-sm">
                           {formatAmount(client.totalSpend || 0, currency)}
                         </div>
@@ -427,7 +427,7 @@ export const AdminClients: React.FC = () => {
                         href={`https://wa.me/${client.phone.replace(/\D/g, '')}`}
                         target="_blank"
                         rel="noreferrer"
-                        className="w-9 h-9 rounded-xl bg-[var(--k-surface)] hover:bg-emerald-950/40 text-emerald-400 border border-[rgba(255,255,255,0.07)] hover:border-emerald-500/30 flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
+                        className="w-9 h-9 rounded-xl bg-[var(--ams-surface)] hover:bg-emerald-950/40 text-emerald-400 border border-[rgba(255,255,255,0.07)] hover:border-emerald-500/30 flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
                         title="Chat WhatsApp"
                       >
                         <Phone size={13} />
@@ -435,7 +435,7 @@ export const AdminClients: React.FC = () => {
                     )}
                     <button
                       onClick={() => handleOpenEditClient(client)}
-                      className="w-9 h-9 rounded-xl bg-[var(--k-surface)] hover:bg-[var(--k-surface-raised)] text-[var(--k-text-secondary)] hover:text-white border border-[rgba(255,255,255,0.07)] flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
+                      className="w-9 h-9 rounded-xl bg-[var(--ams-surface)] hover:bg-[var(--ams-elevated)] text-[var(--ams-secondary)] hover:text-white border border-[rgba(255,255,255,0.07)] flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
                       title={canManageClients ? 'Edit Client' : 'No permission to edit clients'}
                     disabled={!canManageClients}
                     >
@@ -443,7 +443,7 @@ export const AdminClients: React.FC = () => {
                     </button>
                     <button
                       onClick={() => handleDeleteClient(client.id, client.name)}
-                      className="w-9 h-9 rounded-xl bg-[var(--k-surface)] hover:bg-red-950/40 text-[var(--k-text-secondary)] hover:text-red-400 border border-[rgba(255,255,255,0.07)] hover:border-red-500/30 flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
+                      className="w-9 h-9 rounded-xl bg-[var(--ams-surface)] hover:bg-red-950/40 text-[var(--ams-secondary)] hover:text-red-400 border border-[rgba(255,255,255,0.07)] hover:border-red-500/30 flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
                       title={canManageClients ? 'Delete Client' : 'No permission to delete clients'}
                     disabled={!canManageClients}
                     >
@@ -463,11 +463,11 @@ export const AdminClients: React.FC = () => {
         shadowBg="surface"
         shadowSize="md"
         className="hidden md:block w-full rounded-xl overflow-hidden"
-        scrollClassName="w-full bg-[var(--k-bg)] border border-[rgba(255,255,255,0.07)] rounded-xl overflow-x-auto select-none cursor-grab active:cursor-grabbing custom-scrollbar max-h-[750px] overflow-y-auto"
+        scrollClassName="w-full bg-[var(--ams-bg)] border border-[rgba(255,255,255,0.07)] rounded-xl overflow-x-auto select-none cursor-grab active:cursor-grabbing custom-scrollbar max-h-[750px] overflow-y-auto"
       >
         <table className="w-full text-left text-xs font-sans min-w-[760px]">
-          <thead className="sticky top-0 z-10 bg-[var(--k-bg)]">
-            <tr className="border-b border-[rgba(255,255,255,0.07)] text-[var(--k-text-secondary)] bg-[var(--k-surface)] font-sans text-xs">
+          <thead className="sticky top-0 z-10 bg-[var(--ams-bg)]">
+            <tr className="border-b border-[rgba(255,255,255,0.07)] text-[var(--ams-secondary)] bg-[var(--ams-surface)] font-sans text-xs">
               <th className="py-3 px-4 font-semibold">{t('admin.client.colName')}</th>
               <th className="py-3 px-4 font-semibold">{t('admin.client.colCompany')}</th>
               <th className="py-3 px-4 font-semibold">{t('admin.client.colContact')}</th>
@@ -480,7 +480,7 @@ export const AdminClients: React.FC = () => {
           <tbody className="divide-y divide-[rgba(255,255,255,0.07)]">
             {filteredClients.length === 0 ? (
               <tr>
-                <td colSpan={7} className="py-12 text-center text-[var(--k-text-secondary)]">
+                <td colSpan={7} className="py-12 text-center text-[var(--ams-secondary)]">
                   {language === 'id' ? 'Tidak ada data klien yang sesuai.' : 'No clients found.'}
                 </td>
               </tr>
@@ -488,33 +488,33 @@ export const AdminClients: React.FC = () => {
               filteredClients.map((client) => {
                 const isOverBudget = client.slaDailyAdSpendBudget && client.currentDailyAdSpend && client.currentDailyAdSpend > client.slaDailyAdSpendBudget;
                 return (
-                  <tr key={client.id} className={`hover:bg-[var(--k-surface)] transition-colors group ${isOverBudget ? 'bg-red-950/20' : ''}`}>
+                  <tr key={client.id} className={`hover:bg-[var(--ams-surface)] transition-colors group ${isOverBudget ? 'bg-red-950/20' : ''}`}>
                     <td className="py-3.5 px-4">
                       <div className="font-bold text-white text-sm">{client.name}</div>
-                      <div className="text-xs text-[var(--k-red)] font-semibold">{client.contactPersonRole}</div>
+                      <div className="text-xs text-[var(--ams-red)] font-semibold">{client.contactPersonRole}</div>
                     </td>
                     <td className="py-3.5 px-4">
                       <div className="font-bold text-white flex items-center gap-1.5">
-                        <Building2 size={12} className="text-[var(--k-text-secondary)]" />
+                        <Building2 size={12} className="text-[var(--ams-secondary)]" />
                         <span>{client.company}</span>
                       </div>
-                      <div className="text-xs text-[var(--k-text-secondary)]">{client.industry}</div>
+                      <div className="text-xs text-[var(--ams-secondary)]">{client.industry}</div>
                     </td>
-                    <td className="py-3.5 px-4 text-[var(--k-text-secondary)] space-y-0.5 text-xs">
+                    <td className="py-3.5 px-4 text-[var(--ams-secondary)] space-y-0.5 text-xs">
                       <div className="flex items-center gap-1 text-white">
-                        <Mail size={11} className="text-[var(--k-text-secondary)]" />
+                        <Mail size={11} className="text-[var(--ams-secondary)]" />
                         <span>{client.email}</span>
                       </div>
                       {client.phone && (
                         <div className="flex items-center gap-1">
-                          <Phone size={11} className="text-[var(--k-text-secondary)]" />
+                          <Phone size={11} className="text-[var(--ams-secondary)]" />
                           <span>{client.phone}</span>
                         </div>
                       )}
                     </td>
-                    <td className="py-3.5 px-4 text-[var(--k-text-secondary)]">
+                    <td className="py-3.5 px-4 text-[var(--ams-secondary)]">
                       <div className="flex items-center gap-1">
-                        <MapPin size={11} className="text-[var(--k-text-secondary)]" />
+                        <MapPin size={11} className="text-[var(--ams-secondary)]" />
                         <span>{client.location}</span>
                       </div>
                     </td>
@@ -548,7 +548,7 @@ export const AdminClients: React.FC = () => {
                       <div className="flex items-center justify-end gap-1.5">
                         <button
                           onClick={() => handleOpenEditClient(client)}
-                          className="w-9 h-9 rounded-xl bg-[var(--k-surface)] hover:bg-[var(--k-surface-raised)] text-[var(--k-text-secondary)] hover:text-white border border-[rgba(255,255,255,0.07)] flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
+                          className="w-9 h-9 rounded-xl bg-[var(--ams-surface)] hover:bg-[var(--ams-elevated)] text-[var(--ams-secondary)] hover:text-white border border-[rgba(255,255,255,0.07)] flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
                           title={canManageClients ? 'Edit Client' : 'No permission to edit clients'}
                         disabled={!canManageClients}
                         >
@@ -556,7 +556,7 @@ export const AdminClients: React.FC = () => {
                         </button>
                         <button
                           onClick={() => handleDeleteClient(client.id, client.name)}
-                          className="w-9 h-9 rounded-xl bg-[var(--k-surface)] hover:bg-red-950/40 text-[var(--k-text-secondary)] hover:text-red-400 border border-[rgba(255,255,255,0.07)] hover:border-red-500/30 flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
+                          className="w-9 h-9 rounded-xl bg-[var(--ams-surface)] hover:bg-red-950/40 text-[var(--ams-secondary)] hover:text-red-400 border border-[rgba(255,255,255,0.07)] hover:border-red-500/30 flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
                           title={canManageClients ? 'Delete Client' : 'No permission to delete clients'}
                         disabled={!canManageClients}
                         >
@@ -575,15 +575,15 @@ export const AdminClients: React.FC = () => {
       {/* 5. Create / Edit Client Modal */}
       {isClientModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-[var(--k-bg)] border border-[rgba(255,255,255,0.07)] rounded-xl w-full max-w-lg p-6 space-y-4 shadow-[var(--k-shadow-sm)] my-8 text-xs font-sans">
+          <div className="bg-[var(--ams-bg)] border border-[rgba(255,255,255,0.07)] rounded-xl w-full max-w-lg p-6 space-y-4 shadow-[var(--k-shadow-sm)] my-8 text-xs font-sans">
             <div className="flex items-center justify-between pb-3 border-b border-[rgba(255,255,255,0.07)]">
               <h2 className="text-base font-bold font-sans text-white flex items-center gap-2">
-                <Users className="text-[var(--k-red)]" size={18} />
+                <Users className="text-[var(--ams-red)]" size={18} />
                 <span>{editingClient ? (language === 'id' ? 'Edit Profil Klien' : 'Edit Client Profile') : (language === 'id' ? 'Tambah Klien Baru' : 'Add New Client')}</span>
               </h2>
               <button
                 onClick={() => setIsClientModalOpen(false)}
-                className="p-1.5 rounded-lg text-[var(--k-text-secondary)] hover:text-white bg-[var(--k-surface)] border border-[rgba(255,255,255,0.07)]"
+                className="p-1.5 rounded-lg text-[var(--ams-secondary)] hover:text-white bg-[var(--ams-surface)] border border-[rgba(255,255,255,0.07)]"
               >
                 <X size={14} />
               </button>
@@ -592,98 +592,98 @@ export const AdminClients: React.FC = () => {
             <form onSubmit={handleSaveClient} className="space-y-3.5">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[var(--k-text-secondary)] mb-1 font-semibold">{language === 'id' ? 'Nama Kontak (PIC) *' : 'Contact Person (PIC) *'}</label>
+                  <label className="block text-[var(--ams-secondary)] mb-1 font-semibold">{language === 'id' ? 'Nama Kontak (PIC) *' : 'Contact Person (PIC) *'}</label>
                   <input
                     type="text"
                     required
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="e.g. John Doe"
-                    className="w-full px-3 py-2 bg-[var(--k-surface)] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--k-red)]/40 focus:border-[var(--k-red)]"
+                    className="w-full px-3 py-2 bg-[var(--ams-surface)] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ams-red)]/40 focus:border-[var(--ams-red)]"
                   />
                 </div>
                 <div>
-                  <label className="block text-[var(--k-text-secondary)] mb-1 font-semibold">{language === 'id' ? 'Perusahaan Klien *' : 'Company Name *'}</label>
+                  <label className="block text-[var(--ams-secondary)] mb-1 font-semibold">{language === 'id' ? 'Perusahaan Klien *' : 'Company Name *'}</label>
                   <input
                     type="text"
                     required
                     value={company}
                     onChange={(e) => setCompany(e.target.value)}
                     placeholder="e.g. Acme Global Tech"
-                    className="w-full px-3 py-2 bg-[var(--k-surface)] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--k-red)]/40 focus:border-[var(--k-red)]"
+                    className="w-full px-3 py-2 bg-[var(--ams-surface)] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ams-red)]/40 focus:border-[var(--ams-red)]"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[var(--k-text-secondary)] mb-1 font-semibold">PIC Role / Title</label>
+                  <label className="block text-[var(--ams-secondary)] mb-1 font-semibold">PIC Role / Title</label>
                   <input
                     type="text"
                     value={role}
                     onChange={(e) => setRole(e.target.value)}
                     placeholder="Managing Director, VP Engineering..."
-                    className="w-full px-3 py-2 bg-[var(--k-surface)] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--k-red)]/40 focus:border-[var(--k-red)]"
+                    className="w-full px-3 py-2 bg-[var(--ams-surface)] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ams-red)]/40 focus:border-[var(--ams-red)]"
                   />
                 </div>
                 <div>
-                  <label className="block text-[var(--k-text-secondary)] mb-1 font-semibold">Industry</label>
+                  <label className="block text-[var(--ams-secondary)] mb-1 font-semibold">Industry</label>
                   <input
                     type="text"
                     value={industry}
                     onChange={(e) => setIndustry(e.target.value)}
                     placeholder="Fintech, Real Estate, E-Commerce..."
-                    className="w-full px-3 py-2 bg-[var(--k-surface)] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--k-red)]/40 focus:border-[var(--k-red)]"
+                    className="w-full px-3 py-2 bg-[var(--ams-surface)] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ams-red)]/40 focus:border-[var(--ams-red)]"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[var(--k-text-secondary)] mb-1 font-semibold">Email Klien</label>
+                  <label className="block text-[var(--ams-secondary)] mb-1 font-semibold">Email Klien</label>
                   <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="contact@company.com"
-                    className="w-full px-3 py-2 bg-[var(--k-surface)] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--k-red)]/40 focus:border-[var(--k-red)]"
+                    className="w-full px-3 py-2 bg-[var(--ams-surface)] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ams-red)]/40 focus:border-[var(--ams-red)]"
                   />
                 </div>
                 <div>
-                  <label className="block text-[var(--k-text-secondary)] mb-1 font-semibold">Phone / WhatsApp</label>
+                  <label className="block text-[var(--ams-secondary)] mb-1 font-semibold">Phone / WhatsApp</label>
                   <input
                     type="text"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     placeholder="+62 811-XXXX-XXXX"
-                    className="w-full px-3 py-2 bg-[var(--k-surface)] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--k-red)]/40 focus:border-[var(--k-red)]"
+                    className="w-full px-3 py-2 bg-[var(--ams-surface)] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ams-red)]/40 focus:border-[var(--ams-red)]"
                   />
                 </div>
               </div>
 
               {/* SLA Ad Spend Cap Section */}
-              <div className="p-3 bg-[var(--k-surface)] border border-[rgba(255,255,255,0.07)] rounded-xl space-y-2">
+              <div className="p-3 bg-[var(--ams-surface)] border border-[rgba(255,255,255,0.07)] rounded-xl space-y-2">
                 <div className="flex items-center gap-1.5 text-amber-400 font-bold">
                   <Activity size={13} />
                   <span>SLA Daily Ad-Spend Cap & Tracking (IDR)</span>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-[var(--k-text-secondary)] mb-1 font-semibold">SLA Agreed Daily Budget Cap</label>
+                    <label className="block text-[var(--ams-secondary)] mb-1 font-semibold">SLA Agreed Daily Budget Cap</label>
                     <input
                       type="number"
                       value={slaDailyBudget}
                       onChange={(e) => setSlaDailyBudget(Number(e.target.value))}
-                      className="w-full px-3 py-2 bg-[var(--k-bg)] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--k-red)]/40 focus:border-[var(--k-red)]"
+                      className="w-full px-3 py-2 bg-[var(--ams-bg)] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ams-red)]/40 focus:border-[var(--ams-red)]"
                     />
                   </div>
                   <div>
-                    <label className="block text-[var(--k-text-secondary)] mb-1 font-semibold">Current Actual Daily Spend</label>
+                    <label className="block text-[var(--ams-secondary)] mb-1 font-semibold">Current Actual Daily Spend</label>
                     <input
                       type="number"
                       value={currentDailySpend}
                       onChange={(e) => setCurrentDailySpend(Number(e.target.value))}
-                      className="w-full px-3 py-2 bg-[var(--k-bg)] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--k-red)]/40 focus:border-[var(--k-red)]"
+                      className="w-full px-3 py-2 bg-[var(--ams-bg)] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ams-red)]/40 focus:border-[var(--ams-red)]"
                     />
                   </div>
                 </div>
@@ -691,17 +691,17 @@ export const AdminClients: React.FC = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[var(--k-text-secondary)] mb-1 font-semibold">{language === 'id' ? 'Lokasi' : 'Location'}</label>
+                  <label className="block text-[var(--ams-secondary)] mb-1 font-semibold">{language === 'id' ? 'Lokasi' : 'Location'}</label>
                   <input
                     type="text"
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
                     placeholder="Jakarta, Indonesia"
-                    className="w-full px-3 py-2 bg-[var(--k-surface)] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--k-red)]/40 focus:border-[var(--k-red)]"
+                    className="w-full px-3 py-2 bg-[var(--ams-surface)] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ams-red)]/40 focus:border-[var(--ams-red)]"
                   />
                 </div>
                 <div>
-                  <label className="block text-[var(--k-text-secondary)] mb-1 font-semibold">Account Status</label>
+                  <label className="block text-[var(--ams-secondary)] mb-1 font-semibold">Account Status</label>
                   <CustomSelect
                     value={clientStatus}
                     onChange={(val) => setClientStatus(val as any)}
@@ -718,13 +718,13 @@ export const AdminClients: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-[var(--k-text-secondary)] mb-1 font-semibold">{language === 'id' ? 'Catatan & Preferensi Klien' : 'Client Notes & Requirements'}</label>
+                <label className="block text-[var(--ams-secondary)] mb-1 font-semibold">{language === 'id' ? 'Catatan & Preferensi Klien' : 'Client Notes & Requirements'}</label>
                 <textarea
                   rows={2}
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   placeholder="Special client preferences, NDA details, billing notes..."
-                  className="w-full px-3 py-2 bg-[var(--k-surface)] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--k-red)]/40 focus:border-[var(--k-red)]"
+                  className="w-full px-3 py-2 bg-[var(--ams-surface)] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ams-red)]/40 focus:border-[var(--ams-red)]"
                 />
               </div>
 
@@ -732,13 +732,13 @@ export const AdminClients: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsClientModalOpen(false)}
-                  className="h-10 px-4 rounded-xl bg-[var(--k-surface)] hover:bg-[var(--k-surface-raised)] text-[var(--k-text-secondary)] hover:text-white border border-[rgba(255,255,255,0.07)] font-sans text-xs transition-colors min-h-[40px]"
+                  className="h-10 px-4 rounded-xl bg-[var(--ams-surface)] hover:bg-[var(--ams-elevated)] text-[var(--ams-secondary)] hover:text-white border border-[rgba(255,255,255,0.07)] font-sans text-xs transition-colors min-h-[40px]"
                 >
                   {language === 'id' ? 'Batal' : 'Cancel'}
                 </button>
                 <button
                   type="submit"
-                  className="h-10 px-5 rounded-xl bg-[var(--k-red)] hover:bg-[var(--k-red)] text-white font-sans font-bold text-xs shadow-lg shadow-[var(--k-red)]/25 transition-all min-h-[40px]"
+                  className="h-10 px-5 rounded-xl bg-[var(--ams-red)] hover:bg-[var(--ams-red)] text-white font-sans font-bold text-xs shadow-lg shadow-[var(--ams-red)]/25 transition-all min-h-[40px]"
                 >
                   {language === 'id' ? 'Simpan Klien' : 'Save Client'}
                 </button>
