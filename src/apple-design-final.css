@@ -763,3 +763,37 @@ body {
     transform: none;
   }
 }
+
+
+/* Public control geometry: one predictable button system. */
+.kapi-public-shell :where(button.kapi-button, a.kapi-button) {
+  min-height: 44px !important;
+  padding-block: 0 !important;
+  padding-inline: 20px !important;
+  border-radius: 9999px !important;
+  line-height: 1 !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.kapi-public-shell :where(button.kapi-button, a.kapi-button).px-7,
+.kapi-public-shell :where(button.kapi-button, a.kapi-button).sm\\:px-8 {
+  padding-inline: 28px !important;
+}
+.kapi-public-shell :where(button.kapi-button, a.kapi-button) svg {
+  flex: 0 0 auto;
+}
+.kapi-public-shell :where(button, a[role="button"])[class*="bg-brand-red"] {
+  min-height: 44px;
+  border-radius: 9999px;
+}
+@media (max-width: 639px) {
+  .kapi-public-shell :where(button.kapi-button, a.kapi-button) {
+    padding-inline: 18px !important;
+  }
+  .kapi-public-shell :where(button.kapi-button, a.kapi-button).px-7,
+  .kapi-public-shell :where(button.kapi-button, a.kapi-button).sm\\:px-8 {
+    padding-inline: 22px !important;
+  }
+}
