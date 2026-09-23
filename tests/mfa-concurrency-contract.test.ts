@@ -15,7 +15,7 @@ test('PostgreSQL MFA failure counter is atomic under concurrent verification att
   assert.ok(methodStart >= 0 && methodEnd > methodStart, 'MFA failure update method must exist');
 
   const method = repositorySource.slice(methodStart, methodEnd);
-  assert.match(method, /SET mfa_failed_attempts = GREATEST\(mfa_failed_attempts \+ 1, \$2\)/);
+  assert.match(method, /SET mfa_failed_attempts = mfa_failed_attempts \+ GREATEST\(1, \$2\)/);
   assert.match(method, /AND kind = 'mfa'/);
   assert.match(method, /AND expires_at > NOW\(\)/);
   assert.match(method, /RETURNING mfa_failed_attempts/);
