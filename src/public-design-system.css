@@ -963,6 +963,15 @@ body:has(.kapi-public-shell .kapi-modal-backdrop) { overflow: hidden; }
   animation-duration: .8s;
 }
 
+@media (max-width: 767px) {
+  .kapi-public-shell :where([data-public-modal],.kapi-modal,[role="dialog"]) {
+    width: calc(100% - 24px);
+    max-height: calc(100dvh - 24px);
+    margin-inline: auto;
+    border-radius: 20px !important;
+  }
+}
+
 /* Accessibility and motion */
 .kapi-public-shell :where(a,button,input,select,textarea):focus-visible {
   outline: 2px solid rgba(176,0,32,.78);
@@ -1019,7 +1028,7 @@ body:has(.kapi-public-shell .kapi-modal-backdrop) { overflow: hidden; }
   .kapi-public-shell .kapi-card-header { padding: 18px 18px 0; }
   .kapi-public-shell .kapi-card-body { padding: 18px; }
   .kapi-public-shell .kapi-card-footer { padding-inline: 18px; }
-  .kapi-public-shell .kapi-card-footer a { min-height: 54px; }
+  .kapi-public-shell .kapi-card-footer a { min-height: 44px; }
   .kapi-public-shell .kapi-public-nav-links { display: none !important; }
 }
 @media (max-width: 479px) {
