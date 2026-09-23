@@ -9,7 +9,6 @@ import {
   X, 
   Sparkles, 
   ChevronRight,
-  Target
 } from 'lucide-react';
 import { PerspectiveTilt } from '../components/ui/PerspectiveTilt';
 import { Testimonials } from '../components/Testimonials';
