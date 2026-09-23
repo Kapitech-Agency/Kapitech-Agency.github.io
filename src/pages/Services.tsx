@@ -766,7 +766,7 @@ export const Services = () => {
                     <div className="w-12 h-12 rounded-xl bg-brand-red/10 border border-brand-red/30 flex items-center justify-center text-brand-red group-hover:scale-110 transition-transform">
                       {sol.icon}
                     </div>
-                    <span className="px-2.5 py-1 rounded-full bg-[var(--k-text-secondary)]/10 border border-[var(--k-text-secondary)]/30 text-[10px] sm:text-[11px] font-sans text-[var(--k-text-secondary)] font-semibold">
+                    <span className="px-2.5 py-1 rounded-full bg-[var(--k-text-secondary)]/10 border border-[var(--k-text-secondary)]/30 text-xs font-sans text-[var(--k-text-secondary)] font-semibold">
                       {language === 'id' ? sol.badgeId : sol.badge}
                     </span>
                   </div>
@@ -814,7 +814,7 @@ export const Services = () => {
                 onClick={() => setActiveCategory(tab.key as any)}
                 className={`flex-1 sm:flex-none min-h-[44px] px-3.5 sm:px-4 py-2 rounded-lg text-xs font-sans font-medium transition-all duration-200 text-center ${
                   activeCategory === tab.key
-                    ? 'bg-brand-red text-white shadow-lg shadow-brand-red/20 font-bold'
+                    ? 'bg-brand-red text-white shadow-[0_10px_28px_rgba(176,0,32,.18)] font-bold'
                     : 'text-[var(--k-text-secondary)] hover:text-white hover:bg-white/5'
                 }`}
               >
@@ -868,7 +868,7 @@ export const Services = () => {
                           <div className="w-11 h-11 rounded-xl bg-brand-red/10 border border-brand-red/30 flex items-center justify-center text-brand-red group-hover:scale-110 transition-transform">
                             {srv.icon}
                           </div>
-                          <span className="px-2.5 py-1 rounded-full bg-[var(--k-bg)] border border-[var(--k-border)] text-[10px] sm:text-[11px] font-sans text-[var(--k-text-secondary)]">
+                          <span className="px-2.5 py-1 rounded-full bg-[var(--k-bg)] border border-[var(--k-border)] text-xs font-sans text-[var(--k-text-secondary)]">
                             {srv.category}
                           </span>
                         </div>
@@ -922,7 +922,7 @@ export const Services = () => {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ duration: 0.25 }}
-              className="relative w-full max-w-3xl bg-[var(--k-surface)] border border-[var(--k-border)] rounded-2xl overflow-hidden shadow-2xl my-8 max-h-[90vh] flex flex-col"
+              className="relative w-full max-w-3xl kapi-card rounded-[24px] overflow-hidden my-8 max-h-[90vh] flex flex-col"
             >
               {/* Modal Header */}
               <div className="sticky top-0 z-20 flex items-center justify-between p-4 sm:p-6 bg-[var(--k-surface)]/95 backdrop-blur border-b border-[var(--k-border)]">
@@ -931,7 +931,7 @@ export const Services = () => {
                     {selectedService.icon}
                   </div>
                   <div>
-                    <span className="text-[11px] font-sans text-brand-red block">
+                    <span className="text-xs font-sans text-brand-red block">
                       {'category' in selectedService ? selectedService.category : 'Strategic Solution'}
                     </span>
                     <h3 className="text-base sm:text-xl font-sans font-bold text-white">
@@ -964,7 +964,7 @@ export const Services = () => {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-xl bg-[var(--k-bg)] border border-[var(--k-border)]">
                   <div>
-                    <span className="text-[11px] font-sans text-[var(--k-text-secondary)] uppercase block mb-1">
+                    <span className="text-xs font-sans text-[var(--k-text-secondary)] uppercase block mb-1">
                       {language === 'id' ? 'Estimasi Pengerjaan' : 'Estimated Timeline'}
                     </span>
                     <span className="text-sm font-sans font-semibold text-white">
@@ -972,7 +972,7 @@ export const Services = () => {
                     </span>
                   </div>
                   <div>
-                    <span className="text-[11px] font-sans text-[var(--k-text-secondary)] uppercase block mb-1">
+                    <span className="text-xs font-sans text-[var(--k-text-secondary)] uppercase block mb-1">
                       {language === 'id' ? 'Target Kebutuhan' : 'Target Audience'}
                     </span>
                     <span className="text-xs text-[var(--k-text-secondary)] font-light block leading-snug">
