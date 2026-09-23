@@ -198,7 +198,7 @@ export const Navbar = () => {
             {/* Start Project CTA */}
             <Link
               to="/contact"
-              className="relative inline-flex h-10 px-5 lg:px-6 items-center justify-center gap-2 rounded-full bg-brand-red hover:bg-brand-red text-white text-[11px] font-semibold uppercase tracking-[0.14em] border border-brand-red transition-colors duration-200 shrink-0"
+              className="relative inline-flex h-10 px-5 lg:px-6 items-center justify-center gap-2 rounded-full bg-brand-red hover:bg-[var(--k-red-hover)] text-white text-[11px] font-semibold uppercase tracking-[0.14em] border border-brand-red transition-colors duration-200 shrink-0"
             >
               <span>{t('nav.startProject')}</span>
               <ChevronRight size={14} aria-hidden="true" />
@@ -457,7 +457,7 @@ export const Navbar = () => {
 
                 <button 
                   onClick={() => setIsMenuOpen(false)} 
-                  className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-[var(--k-surface)] border border-[var(--k-border)] hover:bg-brand-red hover:text-white active:scale-95 transition-all text-white flex items-center justify-center shrink-0 cursor-pointer"
+                  className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-[var(--k-surface)] border border-[var(--k-border)] hover:bg-[var(--k-red-hover)] hover:text-white active:scale-95 transition-all text-white flex items-center justify-center shrink-0 cursor-pointer"
                   aria-label="Close menu"
                 >
                   <X size={22} />
@@ -640,7 +640,7 @@ export const Navbar = () => {
                 <Link
                   to="/contact"
                   onClick={() => setIsMenuOpen(false)}
-                  className="w-full h-12 rounded-xl bg-brand-red hover:bg-[var(--k-red-hover)] text-white flex items-center justify-center text-xs font-semibold uppercase tracking-wider gap-2 shadow-[var(--k-shadow-sm)] shadow-brand-red/20 active:scale-[0.98] transition-all cursor-pointer"
+                  className="w-full min-h-[44px] rounded-full bg-brand-red hover:bg-[var(--k-red-hover)] text-white flex items-center justify-center text-xs font-semibold uppercase tracking-wider gap-2 shadow-[var(--k-shadow-sm)] shadow-brand-red/20 active:scale-[0.98] transition-all cursor-pointer"
                 >
                   <span>{t('nav.startProject')}</span>
                   <ArrowUpRight size={16} />
@@ -684,7 +684,7 @@ export const Navbar = () => {
                   <Linkedin className="text-[var(--k-text-secondary)] hover:text-white cursor-pointer" size={16} />
                   <Twitter className="text-[var(--k-text-secondary)] hover:text-white cursor-pointer" size={16} />
                 </div>
-                <span className="font-sans text-[10px] text-[var(--k-text-secondary)]">Tangerang Selatan, ID</span>
+                <span className="font-sans text-xs text-[var(--k-text-secondary)]">Tangerang Selatan, ID</span>
               </div>
             </div>
           </motion.div>
