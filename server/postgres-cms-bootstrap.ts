@@ -75,10 +75,11 @@ export async function ensurePostgresCmsDefaults(): Promise<void> {
             [
               item.id,
               item.title,
-              item.slug,
+              item.id,
               item.desc,
               JSON.stringify({
                 ...item,
+                slug: item.id,
                 createdAt: now,
                 updatedAt: now
               }),
