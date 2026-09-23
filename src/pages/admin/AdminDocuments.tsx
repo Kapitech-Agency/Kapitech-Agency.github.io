@@ -168,8 +168,8 @@ export const AdminDocuments: React.FC = () => {
     <div className="space-y-6 animate-in fade-in duration-200">
       {/* Toast Notification */}
       {notification && (
-        <div className="fixed top-20 right-6 z-50 px-4 py-2.5 rounded-xl bg-[#181B22] border border-[#E50914]/40 text-white text-xs font-mono shadow-[0_8px_30px_rgba(0,0,0,0.8)] flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-[#E50914] animate-ping" />
+        <div className="fixed top-20 right-6 z-50 px-4 py-2.5 rounded-xl bg-[var(--k-surface)] border border-[var(--k-red)]/40 text-white text-xs font-sans shadow-[0_8px_30px_rgba(0,0,0,0.8)] flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-[var(--k-red)] animate-ping" />
           <span>{notification}</span>
         </div>
       )}
@@ -178,10 +178,10 @@ export const AdminDocuments: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold font-sans tracking-tight text-white flex items-center gap-2.5">
-            <FolderOpen className="text-[#FF1E27]" size={24} />
+            <FolderOpen className="text-[var(--k-red)]" size={24} />
             <span>{language === 'id' ? 'Brankas Dokumen & Aset Agency' : 'Documents & Asset Vault'}</span>
           </h1>
-          <p className="text-xs font-mono text-[#8A94A6] mt-1">
+          <p className="text-xs font-sans text-[var(--k-text-secondary)] mt-1">
             {language === 'id' 
               ? 'Arsip kontrak digital, NDA, proposal komersial, berkas kepatuhan pajak, dan deliverable proyek.' 
               : 'Digital contract repository, NDAs, commercial proposals, tax compliance, and project assets.'}
@@ -190,7 +190,7 @@ export const AdminDocuments: React.FC = () => {
 
         <button
           onClick={() => setIsUploadModalOpen(true)}
-          className="px-4 py-2.5 rounded-xl bg-[#E50914] hover:bg-[#B80710] text-white text-xs font-sans font-semibold flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(229,9,20,0.3)] transition-all shrink-0"
+          className="px-4 py-2.5 rounded-xl bg-[var(--k-red)] hover:bg-[var(--k-red)] text-white text-xs font-sans font-semibold flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(229,9,20,0.3)] transition-all shrink-0"
         >
           <Plus size={15} />
           <span>{language === 'id' ? 'Unggah Dokumen' : 'Upload Document'}</span>
@@ -207,27 +207,27 @@ export const AdminDocuments: React.FC = () => {
               onClick={() => setCategoryFilter(categoryFilter === cat ? 'all' : cat)}
               className={`p-3 rounded-xl border text-left transition-all ${
                 categoryFilter === cat
-                  ? 'bg-[#E50914]/10 border-[#E50914]/40 text-white'
-                  : 'bg-[#111318] border-white/[0.07] text-[#8A94A6] hover:text-white hover:border-white/20'
+                  ? 'bg-[var(--k-red)]/10 border-[var(--k-red)]/40 text-white'
+                  : 'bg-[var(--k-bg)] border-white/[0.07] text-[var(--k-text-secondary)] hover:text-white hover:border-white/20'
               }`}
             >
-              <div className="text-[10px] font-mono uppercase tracking-wider capitalize">{cat}</div>
-              <div className="text-lg font-bold font-mono text-white mt-1">{count}</div>
+              <div className="text-[10px] font-sans uppercase tracking-wider capitalize">{cat}</div>
+              <div className="text-lg font-bold font-sans text-white mt-1">{count}</div>
             </button>
           );
         })}
       </div>
 
       {/* Search and Filters */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-3 rounded-xl bg-[#111318] border border-white/[0.07]">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-3 rounded-xl bg-[var(--k-bg)] border border-white/[0.07]">
         <div className="relative flex-1">
-          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8A94A6]" />
+          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--k-text-secondary)]" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={language === 'id' ? 'Cari judul file, tag, atau nomor kontrak...' : 'Search document title or references...'}
-            className="w-full h-8 pl-8 pr-3 text-xs bg-[#181B22] text-white placeholder-[#8A94A6] rounded-lg border border-white/[0.07] focus:outline-none focus:border-[#E50914] font-sans"
+            className="w-full h-8 pl-8 pr-3 text-xs bg-[var(--k-surface)] text-white placeholder-[var(--k-text-secondary)] rounded-lg border border-white/[0.07] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--k-red)]/40 focus:border-[var(--k-red)] font-sans"
           />
         </div>
 
@@ -235,7 +235,7 @@ export const AdminDocuments: React.FC = () => {
           {categoryFilter !== 'all' && (
             <button
               onClick={() => setCategoryFilter('all')}
-              className="px-2.5 py-1 rounded-lg text-xs font-mono bg-zinc-800 text-zinc-300 flex items-center gap-1 hover:text-white"
+              className="px-2.5 py-1 rounded-lg text-xs font-sans bg-zinc-800 text-zinc-300 flex items-center gap-1 hover:text-white"
             >
               <span>Reset filter ({categoryFilter})</span>
               <X size={12} />
@@ -245,21 +245,21 @@ export const AdminDocuments: React.FC = () => {
       </div>
 
       {/* Documents Grid / Table */}
-      <div className="rounded-xl bg-[#111318] border border-white/[0.07] overflow-hidden">
+      <div className="rounded-xl bg-[var(--k-bg)] border border-white/[0.07] overflow-hidden">
         {isLoading ? (
-          <div className="p-12 text-center text-xs font-mono text-[#8A94A6] flex flex-col items-center justify-center gap-2">
-            <Loader2 className="animate-spin text-[#FF1E27]" size={20} />
+          <div className="p-12 text-center text-xs font-sans text-[var(--k-text-secondary)] flex flex-col items-center justify-center gap-2">
+            <Loader2 className="animate-spin text-[var(--k-red)]" size={20} />
             <span>Loading document vault...</span>
           </div>
         ) : filteredDocs.length === 0 ? (
-          <div className="p-12 text-center text-xs font-mono text-[#8A94A6]">
+          <div className="p-12 text-center text-xs font-sans text-[var(--k-text-secondary)]">
             {language === 'id' ? 'Belum ada dokumen di registri.' : 'No documents found in the registry.'}
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse min-w-[700px]">
               <thead>
-                <tr className="border-b border-white/[0.07] bg-[#181B22]/50 text-[10px] font-mono text-[#8A94A6] uppercase">
+                <tr className="border-b border-white/[0.07] bg-[var(--k-surface)]/50 text-[10px] font-sans text-[var(--k-text-secondary)] uppercase">
                   <th className="py-3 px-4">Document Title</th>
                   <th className="py-3 px-4">Category</th>
                   <th className="py-3 px-4">Size</th>
@@ -280,28 +280,28 @@ export const AdminDocuments: React.FC = () => {
                     <tr key={doc.id} className="hover:bg-white/[0.02] transition-colors">
                       <td className="py-3.5 px-4">
                         <div className="flex items-center gap-2.5">
-                          <div className="w-7 h-7 rounded-lg bg-[#181B22] border border-white/[0.07] flex items-center justify-center text-[#FF1E27] shrink-0">
+                          <div className="w-7 h-7 rounded-lg bg-[var(--k-surface)] border border-white/[0.07] flex items-center justify-center text-[var(--k-red)] shrink-0">
                             <FileText size={14} />
                           </div>
                           <div>
                             <div className="font-semibold text-white">{docTitle}</div>
-                            <div className="text-[10px] font-mono text-[#8A94A6]">{docType}</div>
+                            <div className="text-[10px] font-sans text-[var(--k-text-secondary)]">{docType}</div>
                           </div>
                         </div>
                       </td>
                       <td className="py-3.5 px-4">
-                        <span className="px-2 py-0.5 rounded text-[10px] font-mono uppercase bg-[#181B22] text-[#8A94A6] border border-white/[0.07]">
+                        <span className="px-2 py-0.5 rounded text-[10px] font-sans uppercase bg-[var(--k-surface)] text-[var(--k-text-secondary)] border border-white/[0.07]">
                           {doc.category}
                         </span>
                       </td>
-                      <td className="py-3.5 px-4 font-mono text-[11px] text-[#8A94A6]">
+                      <td className="py-3.5 px-4 font-sans text-[11px] text-[var(--k-text-secondary)]">
                         {docSize}
                       </td>
-                      <td className="py-3.5 px-4 font-mono text-[11px] text-zinc-300">
+                      <td className="py-3.5 px-4 font-sans text-[11px] text-zinc-300">
                         {doc.relatedEntity || 'General'}
                       </td>
                       <td className="py-3.5 px-4">
-                        <span className={'px-2 py-0.5 rounded text-[10px] font-mono uppercase border ' + (
+                        <span className={'px-2 py-0.5 rounded text-[10px] font-sans uppercase border ' + (
                           doc.status === 'ready' || doc.sourceType === 'external_link'
                             ? 'bg-emerald-500/10 text-emerald-300 border-emerald-500/20'
                             : 'bg-amber-500/10 text-amber-300 border-amber-500/20'
@@ -309,9 +309,9 @@ export const AdminDocuments: React.FC = () => {
                           {doc.status === 'ready' || doc.sourceType === 'external_link' ? 'ready' : 'pending'}
                         </span>
                       </td>
-                      <td className="py-3.5 px-4 font-mono text-[11px] text-[#8A94A6]">
+                      <td className="py-3.5 px-4 font-sans text-[11px] text-[var(--k-text-secondary)]">
                         <div>{docDate}</div>
-                        <div className="text-[9px] text-[#8A94A6]/70">by {docOwner}</div>
+                        <div className="text-[9px] text-[var(--k-text-secondary)]/70">by {docOwner}</div>
                       </td>
                       <td className="py-3.5 px-4 text-right">
                         <div className="flex items-center justify-end gap-1.5">
@@ -321,7 +321,7 @@ export const AdminDocuments: React.FC = () => {
                               target="_blank"
                               rel="noopener noreferrer"
                               title={language === 'id' ? 'Buka dokumen' : 'Open document'}
-                              className="p-1.5 rounded hover:bg-white/[0.06] text-[#8A94A6] hover:text-white transition-colors"
+                              className="p-1.5 rounded hover:bg-white/[0.06] text-[var(--k-text-secondary)] hover:text-white transition-colors"
                             >
                               <Download size={14} />
                             </a>
@@ -333,7 +333,7 @@ export const AdminDocuments: React.FC = () => {
                           <button
                             onClick={() => handleDelete(doc.id)}
                             title="Delete"
-                            className="p-1.5 rounded hover:bg-red-500/10 text-[#8A94A6] hover:text-red-400 transition-colors"
+                            className="p-1.5 rounded hover:bg-red-500/10 text-[var(--k-text-secondary)] hover:text-red-400 transition-colors"
                           >
                             <Trash2 size={13} />
                           </button>
@@ -351,15 +351,15 @@ export const AdminDocuments: React.FC = () => {
       {/* UPLOAD MODAL */}
       {isUploadModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="bg-[#111318] border border-white/[0.07] rounded-2xl w-full max-w-md shadow-[0_24px_64px_rgba(0,0,0,0.8)] overflow-hidden">
-            <div className="p-4 border-b border-white/[0.07] flex items-center justify-between bg-[#181B22]">
+          <div className="bg-[var(--k-bg)] border border-white/[0.07] rounded-2xl w-full max-w-md shadow-[0_24px_64px_rgba(0,0,0,0.8)] overflow-hidden">
+            <div className="p-4 border-b border-white/[0.07] flex items-center justify-between bg-[var(--k-surface)]">
               <h3 className="text-sm font-bold font-sans text-white flex items-center gap-2">
-                <UploadCloud size={16} className="text-[#FF1E27]" />
+                <UploadCloud size={16} className="text-[var(--k-red)]" />
                 <span>Add Document to Registry</span>
               </h3>
               <button
                 onClick={() => setIsUploadModalOpen(false)}
-                className="p-1 text-[#8A94A6] hover:text-white rounded-lg hover:bg-white/[0.06]"
+                className="p-1 text-[var(--k-text-secondary)] hover:text-white rounded-lg hover:bg-white/[0.06]"
               >
                 <X size={16} />
               </button>
@@ -367,24 +367,24 @@ export const AdminDocuments: React.FC = () => {
 
             <form onSubmit={handleUploadSubmit} className="p-5 space-y-4 text-xs font-sans">
               <div className="space-y-1">
-                <label className="text-[11px] font-mono text-[#8A94A6]">Document Title *</label>
+                <label className="text-[11px] font-sans text-[var(--k-text-secondary)]">Document Title *</label>
                 <input
                   type="text"
                   required
                   value={uploadTitle}
                   onChange={(e) => setUploadTitle(e.target.value)}
                   placeholder="e.g. Master Services Agreement 2026"
-                  className="w-full h-8 px-3 rounded-lg bg-[#181B22] text-white border border-white/[0.07] focus:outline-none focus:border-[#E50914]"
+                  className="w-full h-8 px-3 rounded-lg bg-[var(--k-surface)] text-white border border-white/[0.07] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--k-red)]/40 focus:border-[var(--k-red)]"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="text-[11px] font-mono text-[#8A94A6]">Category</label>
+                  <label className="text-[11px] font-sans text-[var(--k-text-secondary)]">Category</label>
                   <select
                     value={uploadCategory}
                     onChange={(e) => setUploadCategory(e.target.value)}
-                    className="w-full h-8 px-2.5 rounded-lg bg-[#181B22] text-white border border-white/[0.07] focus:outline-none text-xs font-mono"
+                    className="w-full h-8 px-2.5 rounded-lg bg-[var(--k-surface)] text-white border border-white/[0.07] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--k-red)]/40 text-xs font-sans"
                   >
                     <option value="Contract">Contract</option>
                     <option value="Proposal">Proposal</option>
@@ -395,11 +395,11 @@ export const AdminDocuments: React.FC = () => {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-[11px] font-mono text-[#8A94A6]">Related Entity</label>
+                  <label className="text-[11px] font-sans text-[var(--k-text-secondary)]">Related Entity</label>
                   <select
                     value={uploadRelatedType}
                     onChange={(e) => setUploadRelatedType(e.target.value)}
-                    className="w-full h-8 px-2.5 rounded-lg bg-[#181B22] text-white border border-white/[0.07] focus:outline-none text-xs font-mono"
+                    className="w-full h-8 px-2.5 rounded-lg bg-[var(--k-surface)] text-white border border-white/[0.07] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--k-red)]/40 text-xs font-sans"
                   >
                     <option value="General">General</option>
                     <option value="Client">Client</option>
@@ -410,15 +410,15 @@ export const AdminDocuments: React.FC = () => {
               </div>
 
               <div className="space-y-1">
-                <label className="text-[11px] font-mono text-[#8A94A6]">{language === 'id' ? 'File Dokumen *' : 'Document File *'}</label>
+                <label className="text-[11px] font-sans text-[var(--k-text-secondary)]">{language === 'id' ? 'File Dokumen *' : 'Document File *'}</label>
                 <input
                   type="file"
                   required
                   accept={allowedDocumentTypes}
                   onChange={(e) => setUploadFile(e.target.files?.[0] || null)}
-                  className="w-full h-10 px-2 py-2 rounded-lg bg-[#181B22] text-white border border-white/[0.07] focus:outline-none focus:border-[#E50914] text-[11px]"
+                  className="w-full h-10 px-2 py-2 rounded-lg bg-[var(--k-surface)] text-white border border-white/[0.07] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--k-red)]/40 focus:border-[var(--k-red)] text-[11px]"
                 />
-                <p className="text-[10px] text-[#64748B] font-mono">
+                <p className="text-[10px] text-[var(--k-text-tertiary)] font-sans">
                   {language === 'id'
                     ? 'File disimpan di server-side private vault, di luar static web root. Maksimal 25 MB. Akses selalu melalui session + RBAC.'
                     : 'Files are stored in a server-side private vault outside the static web root. Max 25 MB. Access requires session + RBAC.'}
@@ -429,14 +429,14 @@ export const AdminDocuments: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsUploadModalOpen(false)}
-                  className="px-4 py-2 rounded-xl bg-[#181B22] hover:bg-[#21252F] text-[#8A94A6] text-xs font-mono"
+                  className="px-4 py-2 rounded-xl bg-[var(--k-surface)] hover:bg-[var(--k-surface-raised)] text-[var(--k-text-secondary)] text-xs font-sans"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-5 py-2 rounded-xl bg-[#E50914] hover:bg-[#B80710] text-white text-xs font-sans font-semibold disabled:opacity-50 flex items-center gap-1.5"
+                  className="px-5 py-2 rounded-xl bg-[var(--k-red)] hover:bg-[var(--k-red)] text-white text-xs font-sans font-semibold disabled:opacity-50 flex items-center gap-1.5"
                 >
                   {isSubmitting ? <Loader2 size={13} className="animate-spin" /> : <Plus size={14} />}
                   <span>{language === 'id' ? 'Simpan ke Private Vault' : 'Store in Private Vault'}</span>
