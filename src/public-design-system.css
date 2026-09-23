@@ -1394,3 +1394,134 @@
   .kapi-public-shell .kapi-button-primary:hover,
   .kapi-public-shell .kapi-floating-contact:hover { transform: none; }
 }
+
+
+/* ==========================================================================
+   PUBLIC PAGE COMPOSITION PASS
+   Page-specific geometry built on the shared tokens above.
+   ========================================================================== */
+
+.kapi-public-shell #services .grid > *,
+.kapi-public-shell #work .grid > *,
+.kapi-public-shell #clients + section .grid > * {
+  min-width: 0;
+}
+
+.kapi-public-shell #services .grid > div {
+  min-height: 248px;
+  padding: 24px;
+  border-radius: var(--radius-card);
+}
+
+.kapi-public-shell #services .grid > div > div:first-child {
+  min-height: 44px;
+  width: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.kapi-public-shell #work .grid > article {
+  min-width: 0;
+  min-height: 100%;
+}
+
+.kapi-public-shell #work .grid > article > div:last-child {
+  min-height: 214px;
+}
+
+.kapi-public-shell .kapi-page-hero > .max-w-7xl > .max-w-3xl,
+.kapi-public-shell .kapi-page-hero > .max-w-7xl > .max-w-4xl {
+  max-width: 760px;
+}
+
+.kapi-public-shell .kapi-work-filter-section input {
+  height: 44px;
+  min-height: 44px;
+}
+
+.kapi-public-shell .kapi-work-filter-section .kapi-work-pillar-tabs button {
+  min-width: 92px;
+}
+
+.kapi-public-shell .kapi-work-filter-section .kapi-work-service-scroll button {
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.kapi-public-shell .kapi-work-filter-section + section .grid > article {
+  min-width: 0;
+}
+
+.kapi-public-shell .kapi-work-filter-section + section .grid > article > div:last-child {
+  min-height: 190px;
+}
+
+.kapi-public-shell .kapi-service-detail > .max-w-7xl {
+  max-width: var(--pub-content);
+}
+
+.kapi-public-shell .kapi-service-detail .grid {
+  align-items: stretch;
+}
+
+.kapi-public-shell .kapi-service-detail .kapi-card {
+  height: 100%;
+}
+
+.kapi-public-shell .kapi-service-detail section h2 {
+  max-width: 760px;
+}
+
+.kapi-public-shell .kapi-service-detail .mb-20,
+.kapi-public-shell .kapi-service-detail .mb-20.sm\:mb-28 {
+  scroll-margin-top: 96px;
+}
+
+.kapi-public-shell .kapi-policy-page .inline-flex {
+  max-width: 100%;
+}
+
+.kapi-public-shell .kapi-policy-page ul,
+.kapi-public-shell .kapi-policy-page ol {
+  margin-top: 16px;
+}
+
+.kapi-public-shell .kapi-not-found .kapi-button {
+  justify-content: center;
+}
+
+@media (max-width: 767px) {
+  .kapi-public-shell #services .grid > div {
+    min-height: 0;
+    padding: 20px;
+  }
+
+  .kapi-public-shell #work .grid > article > div:last-child,
+  .kapi-public-shell .kapi-work-filter-section + section .grid > article > div:last-child {
+    min-height: 0;
+  }
+
+  .kapi-public-shell .kapi-work-filter-section .kapi-work-pillar-tabs button {
+    min-width: 0;
+  }
+
+  .kapi-public-shell .kapi-work-filter-section .kapi-work-service-scroll button {
+    max-width: 180px;
+  }
+
+  .kapi-public-shell .kapi-service-detail {
+    padding-top: 112px;
+  }
+}
+
+@media (max-width: 420px) {
+  .kapi-public-shell #services .grid > div {
+    padding: 18px;
+  }
+
+  .kapi-public-shell .kapi-work-filter-section {
+    padding-inline: 16px;
+  }
+}
