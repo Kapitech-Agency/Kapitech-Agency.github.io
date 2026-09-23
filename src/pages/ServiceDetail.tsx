@@ -53,8 +53,8 @@ export const ServiceDetail = () => {
 
   if (!service && isHydrating) {
     return (
-      <div className="min-h-screen bg-[var(--k-bg-deep)]] text-white flex items-center justify-center">
-        <div className="text-xs font-sans text-[var(--k-text-secondary)]]">Loading service…</div>
+      <div className="min-h-screen bg-[var(--k-bg-deep)] text-white flex items-center justify-center">
+        <div className="text-xs font-sans text-[var(--k-text-secondary)]">Loading service…</div>
       </div>
     );
   }
@@ -76,25 +76,25 @@ export const ServiceDetail = () => {
   };
 
   return (
-    <div className="relative min-h-screen bg-[var(--k-bg-deep)]] text-white selection:bg-brand-red selection:text-white pt-28 pb-24 overflow-hidden">
+    <div className="relative min-h-screen bg-[var(--k-bg-deep)] text-white selection:bg-brand-red selection:text-white pt-28 pb-24 overflow-hidden">
       <AtmosphericBackground />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* BREADCRUMB & BACK NAVIGATION */}
-        <div className="flex items-center gap-3 text-xs sm:text-sm text-[var(--k-text-secondary)]] mb-8 sm:mb-12">
+        <div className="flex items-center gap-3 text-xs sm:text-sm text-[var(--k-text-secondary)] mb-8 sm:mb-12">
           <Link 
             to="/services" 
-            className="inline-flex items-center gap-1.5 text-[var(--k-text-secondary)]] hover:text-white transition-colors duration-200"
+            className="inline-flex items-center gap-1.5 text-[var(--k-text-secondary)] hover:text-white transition-colors duration-200"
           >
             <ArrowLeft className="w-4 h-4" />
             <span>{language === 'id' ? 'Semua Solusi & Layanan' : 'All Solutions & Services'}</span>
           </Link>
-          <ChevronRight className="w-3.5 h-3.5 text-[var(--k-text-secondary)]]" />
-          <span className="text-[var(--k-text-secondary)]] uppercase tracking-wider font-sans text-[11px]">
+          <ChevronRight className="w-3.5 h-3.5 text-[var(--k-text-secondary)]" />
+          <span className="text-[var(--k-text-secondary)] uppercase tracking-wider font-sans text-[11px]">
             {service.category}
           </span>
-          <ChevronRight className="w-3.5 h-3.5 text-[var(--k-text-secondary)]]" />
+          <ChevronRight className="w-3.5 h-3.5 text-[var(--k-text-secondary)]" />
           <span className="text-white font-medium truncate max-w-[200px] sm:max-w-none">
             {service.title}
           </span>
@@ -116,7 +116,7 @@ export const ServiceDetail = () => {
             </h1>
 
             {/* Subtitle */}
-            <p className="text-base sm:text-xl text-[var(--k-text-secondary)]] font-light leading-relaxed max-w-3xl mb-10">
+            <p className="text-base sm:text-xl text-[var(--k-text-secondary)] font-light leading-relaxed max-w-3xl mb-10">
               {language === 'id' ? service.heroSubtitleId : service.heroSubtitle}
             </p>
 
@@ -131,7 +131,7 @@ export const ServiceDetail = () => {
               </Link>
               <a
                 href="#case-studies"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full border border-[var(--k-border)]] bg-[#161616] text-white font-medium text-sm hover:border-brand-red/50 transition-all duration-200"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full border border-[var(--k-border)] bg-[#161616] text-white font-medium text-sm hover:border-brand-red/50 transition-all duration-200"
               >
                 <span>{language === 'id' ? 'Lihat Studi Kasus' : 'View Case Studies'}</span>
                 <ChevronDown className="w-4 h-4" />
@@ -141,18 +141,18 @@ export const ServiceDetail = () => {
 
           {/* METRICS SIDEBAR */}
           <div className="lg:col-span-4 w-full">
-            <div className="rounded-2xl border border-[var(--k-border)]] bg-[#161616] backdrop-blur-md p-6 sm:p-8 space-y-6">
-              <div className="text-xs font-sans uppercase tracking-widest text-[var(--k-text-secondary)]] flex items-center justify-between">
+            <div className="rounded-2xl border border-[var(--k-border)] bg-[#161616] backdrop-blur-md p-6 sm:p-8 space-y-6">
+              <div className="text-xs font-sans uppercase tracking-widest text-[var(--k-text-secondary)] flex items-center justify-between">
                 <span>{language === 'id' ? 'METRIK KINERJA' : 'PERFORMANCE METRICS'}</span>
                 <Sparkles className="w-4 h-4 text-brand-red" />
               </div>
-              <div className="space-y-6 divide-y divide-[var(--k-border)]]">
+              <div className="space-y-6 divide-y divide-[var(--k-border)]">
                 {service.metrics.map((metric, idx) => (
                   <div key={idx} className={idx > 0 ? 'pt-6' : ''}>
                     <div className="text-3xl sm:text-4xl font-serif text-white tracking-tight">
                       {metric.value}
                     </div>
-                    <div className="text-xs sm:text-sm text-[var(--k-text-secondary)]] mt-1">
+                    <div className="text-xs sm:text-sm text-[var(--k-text-secondary)] mt-1">
                       {language === 'id' ? metric.labelId : metric.label}
                     </div>
                   </div>
@@ -160,15 +160,15 @@ export const ServiceDetail = () => {
               </div>
 
               {/* Tools Stack */}
-              <div className="pt-6 border-t border-[var(--k-border)]]">
-                <div className="text-xs font-sans uppercase tracking-wider text-[var(--k-text-secondary)]] mb-3">
+              <div className="pt-6 border-t border-[var(--k-border)]">
+                <div className="text-xs font-sans uppercase tracking-wider text-[var(--k-text-secondary)] mb-3">
                   {language === 'id' ? 'TOOLCHAIN & STANDAR' : 'TOOLCHAIN & STACK'}
                 </div>
                 <div className="flex flex-wrap gap-1.5">
                   {service.tools.map((tool, idx) => (
                     <span 
                       key={idx}
-                      className="px-2.5 py-1 rounded-md text-xs font-sans bg-[var(--k-bg-deep)]] border border-[var(--k-border)]] text-[var(--k-text-secondary)]]"
+                      className="px-2.5 py-1 rounded-md text-xs font-sans bg-[var(--k-bg-deep)] border border-[var(--k-border)] text-[var(--k-text-secondary)]"
                     >
                       {tool}
                     </span>
@@ -182,7 +182,7 @@ export const ServiceDetail = () => {
         {/* TESTIMONIAL PULL QUOTE */}
         {service.testimonial && (
           <div className="mb-20 sm:mb-28">
-            <div className="relative rounded-2xl border border-[var(--k-border)]] bg-[#161616] p-8 sm:p-12 backdrop-blur-lg overflow-hidden">
+            <div className="relative rounded-2xl border border-[var(--k-border)] bg-[#161616] p-8 sm:p-12 backdrop-blur-lg overflow-hidden">
               <div className="absolute top-0 right-0 w-64 h-64 bg-brand-red/10 rounded-full blur-3xl pointer-events-none" />
               <div className="flex items-center gap-1.5 text-brand-red mb-6">
                 {[...Array(5)].map((_, i) => (
@@ -197,13 +197,13 @@ export const ServiceDetail = () => {
                   src={service.testimonial.avatar}
                   alt={service.testimonial.author}
                   referrerPolicy="no-referrer"
-                  className="w-12 h-12 rounded-full object-cover border border-[var(--k-border)]]"
+                  className="w-12 h-12 rounded-full object-cover border border-[var(--k-border)]"
                 />
                 <div>
                   <div className="text-base font-semibold text-white">
                     {service.testimonial.author}
                   </div>
-                  <div className="text-xs sm:text-sm text-[var(--k-text-secondary)]]">
+                  <div className="text-xs sm:text-sm text-[var(--k-text-secondary)]">
                     {service.testimonial.role} &bull; <span className="text-white">{service.testimonial.company}</span>
                   </div>
                 </div>
@@ -227,11 +227,11 @@ export const ServiceDetail = () => {
             {service.problemsSolutions.map((item, idx) => (
               <div 
                 key={idx}
-                className="rounded-2xl border border-[var(--k-border)]] bg-[#161616] p-6 sm:p-8 flex flex-col justify-between hover:border-brand-red/40 transition-all duration-300"
+                className="rounded-2xl border border-[var(--k-border)] bg-[#161616] p-6 sm:p-8 flex flex-col justify-between hover:border-brand-red/40 transition-all duration-300"
               >
                 <div>
                   {/* Problem Block */}
-                  <div className="mb-6 pb-6 border-b border-[var(--k-border)]]">
+                  <div className="mb-6 pb-6 border-b border-[var(--k-border)]">
                     <div className="text-xs font-sans uppercase tracking-wider text-red-400 mb-2 flex items-center gap-1.5">
                       <span className="w-1.5 h-1.5 rounded-full bg-red-400" />
                       <span>{language === 'id' ? 'Tantangan' : 'The Problem'}</span>
@@ -239,7 +239,7 @@ export const ServiceDetail = () => {
                     <h3 className="text-lg font-medium text-white mb-2">
                       {language === 'id' ? item.problemTitleId : item.problemTitle}
                     </h3>
-                    <p className="text-sm text-[var(--k-text-secondary)]] leading-relaxed">
+                    <p className="text-sm text-[var(--k-text-secondary)] leading-relaxed">
                       {language === 'id' ? item.problemDescId : item.problemDesc}
                     </p>
                   </div>
@@ -253,7 +253,7 @@ export const ServiceDetail = () => {
                     <h4 className="text-base font-semibold text-white mb-2">
                       {language === 'id' ? item.solutionTitleId : item.solutionTitle}
                     </h4>
-                    <p className="text-sm text-[var(--k-text-secondary)]] leading-relaxed">
+                    <p className="text-sm text-[var(--k-text-secondary)] leading-relaxed">
                       {language === 'id' ? item.solutionDescId : item.solutionDesc}
                     </p>
                   </div>
@@ -278,15 +278,15 @@ export const ServiceDetail = () => {
             {service.capabilities.map((cap, idx) => (
               <div 
                 key={idx}
-                className="rounded-2xl border border-[var(--k-border)]] bg-[#161616] p-6 hover:border-brand-red/40 transition-all duration-300 group"
+                className="rounded-2xl border border-[var(--k-border)] bg-[#161616] p-6 hover:border-brand-red/40 transition-all duration-300 group"
               >
-                <div className="w-10 h-10 rounded-xl bg-[var(--k-bg-deep)]] border border-[var(--k-border)]] flex items-center justify-center text-white mb-4 group-hover:border-brand-red/40 group-hover:text-brand-red transition-colors">
+                <div className="w-10 h-10 rounded-xl bg-[var(--k-bg-deep)] border border-[var(--k-border)] flex items-center justify-center text-white mb-4 group-hover:border-brand-red/40 group-hover:text-brand-red transition-colors">
                   <Layers className="w-5 h-5 text-brand-red" />
                 </div>
                 <h3 className="text-base font-medium text-white mb-2">
                   {language === 'id' ? cap.titleId : cap.title}
                 </h3>
-                <p className="text-xs sm:text-sm text-[var(--k-text-secondary)]] leading-relaxed">
+                <p className="text-xs sm:text-sm text-[var(--k-text-secondary)] leading-relaxed">
                   {language === 'id' ? cap.descId : cap.desc}
                 </p>
               </div>
@@ -307,7 +307,7 @@ export const ServiceDetail = () => {
             </div>
             <Link
               to="/work"
-              className="inline-flex items-center gap-2 text-sm text-[var(--k-text-secondary)]] hover:text-white font-medium transition-colors"
+              className="inline-flex items-center gap-2 text-sm text-[var(--k-text-secondary)] hover:text-white font-medium transition-colors"
             >
               <span>{language === 'id' ? 'Lihat Semua 250+ Proyek' : 'View All 250+ Projects'}</span>
               <ArrowUpRight className="w-4 h-4" />
@@ -319,9 +319,9 @@ export const ServiceDetail = () => {
               <Link
                 key={project.id}
                 to={`/work`}
-                className="group block rounded-2xl border border-[var(--k-border)]] bg-[#161616] overflow-hidden hover:border-brand-red/50 transition-all duration-300"
+                className="group block rounded-2xl border border-[var(--k-border)] bg-[#161616] overflow-hidden hover:border-brand-red/50 transition-all duration-300"
               >
-                <div className="relative aspect-[16/10] overflow-hidden bg-[var(--k-bg-deep)]]">
+                <div className="relative aspect-[16/10] overflow-hidden bg-[var(--k-bg-deep)]">
                   <img
                     src={project.image}
                     alt={project.title}
@@ -330,7 +330,7 @@ export const ServiceDetail = () => {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-80" />
                   <div className="absolute top-3 left-3">
-                    <span className="px-2.5 py-1 rounded-full text-[11px] font-sans bg-black/80 backdrop-blur-md border border-[var(--k-border)]] text-white">
+                    <span className="px-2.5 py-1 rounded-full text-[11px] font-sans bg-black/80 backdrop-blur-md border border-[var(--k-border)] text-white">
                       {project.service}
                     </span>
                   </div>
@@ -340,16 +340,16 @@ export const ServiceDetail = () => {
                     <h3 className="text-lg font-serif font-medium text-white group-hover:text-brand-red transition-colors truncate">
                       {project.title}
                     </h3>
-                    <ArrowUpRight className="w-4 h-4 text-[var(--k-text-secondary)]] group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all shrink-0" />
+                    <ArrowUpRight className="w-4 h-4 text-[var(--k-text-secondary)] group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all shrink-0" />
                   </div>
-                  <p className="text-xs sm:text-sm text-[var(--k-text-secondary)]] line-clamp-2 leading-relaxed mb-4">
+                  <p className="text-xs sm:text-sm text-[var(--k-text-secondary)] line-clamp-2 leading-relaxed mb-4">
                     {language === 'id' ? project.descId : project.desc}
                   </p>
                   <div className="flex flex-wrap gap-1.5">
                     {project.technologies.slice(0, 2).map((tech, idx) => (
                       <span
                         key={idx}
-                        className="px-2 py-0.5 rounded text-[10px] font-sans bg-[var(--k-bg-deep)]] border border-[var(--k-border)]] text-[var(--k-text-secondary)]]"
+                        className="px-2 py-0.5 rounded text-[10px] font-sans bg-[var(--k-bg-deep)] border border-[var(--k-border)] text-[var(--k-text-secondary)]"
                       >
                         {tech}
                       </span>
@@ -376,22 +376,22 @@ export const ServiceDetail = () => {
             {service.processStages.map((stage, idx) => (
               <div 
                 key={idx}
-                className="rounded-2xl border border-[var(--k-border)]] bg-[#161616] p-6 flex flex-col justify-between hover:border-brand-red/40 transition-all duration-300"
+                className="rounded-2xl border border-[var(--k-border)] bg-[#161616] p-6 flex flex-col justify-between hover:border-brand-red/40 transition-all duration-300"
               >
                 <div>
-                  <div className="text-3xl font-serif text-[var(--k-text-secondary)]] font-light mb-4">
+                  <div className="text-3xl font-serif text-[var(--k-text-secondary)] font-light mb-4">
                     {stage.stageNumber}
                   </div>
                   <h3 className="text-base font-semibold text-white mb-2">
                     {language === 'id' ? stage.stageNameId : stage.stageName}
                   </h3>
-                  <p className="text-xs sm:text-sm text-[var(--k-text-secondary)]] leading-relaxed mb-6">
+                  <p className="text-xs sm:text-sm text-[var(--k-text-secondary)] leading-relaxed mb-6">
                     {language === 'id' ? stage.stageDescId : stage.stageDesc}
                   </p>
                 </div>
 
-                <div className="pt-4 border-t border-[var(--k-border)]] space-y-1.5">
-                  <div className="text-[11px] font-sans uppercase tracking-wider text-[var(--k-text-secondary)]] mb-2">
+                <div className="pt-4 border-t border-[var(--k-border)] space-y-1.5">
+                  <div className="text-[11px] font-sans uppercase tracking-wider text-[var(--k-text-secondary)] mb-2">
                     {language === 'id' ? 'Hasil Kerja:' : 'Deliverables:'}
                   </div>
                   {(language === 'id' ? stage.deliverablesId : stage.deliverables).map((del, dIdx) => (
@@ -408,7 +408,7 @@ export const ServiceDetail = () => {
 
         {/* BUSINESS OUTCOMES & DISCOVERY CALL BANNER */}
         <div className="mb-20 sm:mb-28">
-          <div className="rounded-[var(--k-sheet-radius)] border border-[var(--k-border)]] bg-[#161616] p-8 sm:p-12 lg:p-16">
+          <div className="rounded-[var(--k-sheet-radius)] border border-[var(--k-border)] bg-[#161616] p-8 sm:p-12 lg:p-16">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
               <div className="lg:col-span-7 space-y-6">
                 <div className="text-xs font-sans uppercase tracking-widest text-brand-red">
@@ -421,7 +421,7 @@ export const ServiceDetail = () => {
                   {(language === 'id' ? service.businessOutcomes.benefitsId : service.businessOutcomes.benefits).map((benefit, idx) => (
                     <div key={idx} className="flex items-start gap-3">
                       <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
-                      <span className="text-sm sm:text-base text-[var(--k-text-secondary)]] leading-relaxed">
+                      <span className="text-sm sm:text-base text-[var(--k-text-secondary)] leading-relaxed">
                         {benefit}
                       </span>
                     </div>
@@ -430,14 +430,14 @@ export const ServiceDetail = () => {
               </div>
 
               <div className="lg:col-span-5 w-full">
-                <div className="rounded-2xl border border-[var(--k-border)]] bg-[var(--k-bg-deep)]] p-6 sm:p-8 space-y-5 text-center">
+                <div className="rounded-2xl border border-[var(--k-border)] bg-[var(--k-bg-deep)] p-6 sm:p-8 space-y-5 text-center">
                   <div className="w-12 h-12 rounded-full bg-brand-red/10 border border-brand-red/30 flex items-center justify-center text-brand-red mx-auto">
                     <Sparkles className="w-6 h-6" />
                   </div>
                   <h3 className="text-xl font-serif text-white">
                     {language === 'id' ? 'Siap mendiskusikan kebutuhan Anda?' : 'Ready to discuss your project?'}
                   </h3>
-                  <p className="text-xs sm:text-sm text-[var(--k-text-secondary)]] leading-relaxed">
+                  <p className="text-xs sm:text-sm text-[var(--k-text-secondary)] leading-relaxed">
                     {language === 'id' 
                       ? 'Jadwalkan sesi konsultasi gratis 30 menit bersama tim arsitek produk kami.' 
                       : 'Schedule a free 30-minute discovery call with our senior product architects.'}
@@ -449,7 +449,7 @@ export const ServiceDetail = () => {
                     <span>{language === 'id' ? 'Mulai Proyek Sekarang' : 'Start a Project Now'}</span>
                     <ArrowUpRight className="w-4 h-4" />
                   </Link>
-                  <div className="text-xs text-[var(--k-text-secondary)]] font-sans">
+                  <div className="text-xs text-[var(--k-text-secondary)] font-sans">
                     business@kapitech.id &bull; 48-hr Response SLA
                   </div>
                 </div>
@@ -476,7 +476,7 @@ export const ServiceDetail = () => {
                 return (
                   <div
                     key={idx}
-                    className="rounded-2xl border border-[var(--k-border)]] bg-[#161616] overflow-hidden transition-colors"
+                    className="rounded-2xl border border-[var(--k-border)] bg-[#161616] overflow-hidden transition-colors"
                   >
                     <button
                       type="button"
@@ -487,7 +487,7 @@ export const ServiceDetail = () => {
                         {language === 'id' ? faq.qId : faq.q}
                       </span>
                       <ChevronDown
-                        className={`w-5 h-5 shrink-0 text-[var(--k-text-secondary)]] transition-transform duration-300 ${
+                        className={`w-5 h-5 shrink-0 text-[var(--k-text-secondary)] transition-transform duration-300 ${
                           isOpen ? 'rotate-180 text-white' : ''
                         }`}
                       />
@@ -501,7 +501,7 @@ export const ServiceDetail = () => {
                           exit={{ height: 0, opacity: 0 }}
                           transition={{ duration: 0.25 }}
                         >
-                          <div className="px-6 pb-6 text-sm text-[var(--k-text-secondary)]] leading-relaxed border-t border-[var(--k-border)]] pt-4">
+                          <div className="px-6 pb-6 text-sm text-[var(--k-text-secondary)] leading-relaxed border-t border-[var(--k-border)] pt-4">
                             {language === 'id' ? faq.aId : faq.a}
                           </div>
                         </motion.div>
@@ -515,10 +515,10 @@ export const ServiceDetail = () => {
         )}
 
         {/* BOTTOM GLOBAL NAVIGATION STRIP (Browse other services) */}
-        <div className="pt-12 border-t border-[var(--k-border)]] flex flex-col sm:flex-row items-center justify-between gap-6">
+        <div className="pt-12 border-t border-[var(--k-border)] flex flex-col sm:flex-row items-center justify-between gap-6">
           <Link
             to="/services"
-            className="inline-flex items-center gap-2 text-sm text-[var(--k-text-secondary)]] hover:text-white transition-colors"
+            className="inline-flex items-center gap-2 text-sm text-[var(--k-text-secondary)] hover:text-white transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             <span>{language === 'id' ? 'Kembali ke Semua Layanan' : 'Back to All Services'}</span>
