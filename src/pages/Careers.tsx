@@ -837,7 +837,7 @@ export const Careers = () => {
                 <div className="mt-5 sm:mt-6 pt-4 border-t border-[var(--k-border)] flex justify-end">
                   <button
                     onClick={() => setSelectedTalent(null)}
-                    className="w-full sm:w-auto px-6 py-2.5 rounded-[14px] bg-brand-red hover:bg-white hover:text-black text-white text-xs font-sans font-medium rounded-full transition-colors"
+                    className="w-full sm:w-auto px-6 py-2.5 rounded-[14px] bg-brand-red hover:bg-white hover:text-black text-white text-xs font-sans font-medium transition-colors"
                   >
                     {language === 'id' ? 'Tutup Profil' : 'Close Profile'}
                   </button>
