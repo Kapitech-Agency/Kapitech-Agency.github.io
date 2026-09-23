@@ -1813,3 +1813,43 @@
     align-items: flex-end;
   }
 }
+
+
+.kapi-public-shell .kapi-hero-grid {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: linear-gradient(to bottom, black, transparent 72%);
+  -webkit-mask-image: linear-gradient(to bottom, black, transparent 72%);
+  opacity: .72;
+}
+
+.kapi-public-shell .kapi-mobile-contact-primary {
+  background: rgba(176,0,32,.06);
+  border-color: rgba(176,0,32,.22);
+}
+
+.kapi-public-shell .kapi-carousel-button {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--pub-border);
+  border-radius: 50%;
+  background: rgba(255,255,255,.035);
+  color: var(--pub-text);
+  transition: background 180ms ease, border-color 180ms ease, transform 180ms ease;
+}
+
+.kapi-public-shell .kapi-carousel-button:hover {
+  background: rgba(255,255,255,.07);
+  border-color: var(--pub-border-strong);
+  transform: translateY(-1px);
+}
