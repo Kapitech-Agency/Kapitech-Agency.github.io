@@ -43,7 +43,6 @@ export const Contact = () => {
     // Design
     'UI/UX Design (Web & Mobile)',
     'Website Design & Landings',
-    'Mobile App Design (iOS & Android)',
     'Website Redesign',
     'Product UX/UI Audit',
     // Development
@@ -198,7 +197,7 @@ export const Contact = () => {
   const faqsEn = [
     {
       q: "What is your typical project turnaround time?",
-      a: "Standard corporate websites and brand systems take between 3 to 6 weeks. Full-scale custom web applications, SaaS platforms, and mobile apps typically range from 6 to 14 weeks depending on the technical complexity and feature set."
+      a: "Standard corporate websites and brand systems take between 3 to 6 weeks. Full-scale custom web applications and SaaS platforms typically range from 6 to 14 weeks depending on the technical complexity and feature set."
     },
     {
       q: "Do you sign Non-Disclosure Agreements (NDAs)?",
@@ -226,7 +225,7 @@ export const Contact = () => {
     },
     {
       q: "What core tech stack do you specialize in?",
-      a: "Our core engineering ecosystem centers around modern React, Next.js (App Router), TypeScript, Tailwind CSS, Node.js, Express, PostgreSQL, Firebase, and React Native for mobile applications."
+      a: "Our core engineering ecosystem centers around modern React, Next.js (App Router), TypeScript, Tailwind CSS, Node.js, Express, PostgreSQL, and Firebase for production web applications."
     }
   ];
 
@@ -261,7 +260,7 @@ export const Contact = () => {
     },
     {
       q: "Apa saja teknologi (tech stack) utama yang menjadi spesialisasi Anda?",
-      a: "Ekosistem rekayasa utama kami berpusat pada React modern, Next.js (App Router), TypeScript, Tailwind CSS, Node.js, Express, PostgreSQL, Firebase, serta React Native untuk aplikasi mobile."
+      a: "Ekosistem rekayasa utama kami berpusat pada React modern, Next.js (App Router), TypeScript, Tailwind CSS, Node.js, Express, PostgreSQL, dan Firebase untuk aplikasi web production."
     }
   ];
 
