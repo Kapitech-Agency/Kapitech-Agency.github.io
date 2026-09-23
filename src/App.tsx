@@ -11,6 +11,7 @@ import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 import { FloatingContact } from './components/FloatingContact';
 import { api } from './lib/apiClient';
+import { cn } from './lib/utils';
 
 // Route-level code splitting keeps rarely visited pages out of the initial JavaScript bundle.
 // Named exports are adapted to React.lazy's default-export contract.
@@ -195,7 +196,7 @@ function AppShell() {
   }
 
   return (
-    <div className="relative z-10 text-white selection:bg-brand-red selection:text-white min-h-screen flex flex-col">
+    <div className={cn("relative z-10 text-white selection:bg-brand-red selection:text-white min-h-screen flex flex-col", !isAdminRoute && "kapi-public-shell")}>
       {!isAdminRoute && <Navbar />}
       <main className="flex-grow flex flex-col">
         <AnimatedRoutes />
