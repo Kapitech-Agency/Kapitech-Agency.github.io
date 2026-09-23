@@ -1,0 +1,553 @@
+/* ==========================================================================
+   KAPITECH PUBLIC APPLE UI
+   Clean public-site system. No legacy public selectors.
+   Source principles: Apple UI hierarchy, clarity, deference, continuity,
+   functional glass, restrained motion, accessibility, responsive composition.
+   ========================================================================== */
+
+.kapi-public-shell {
+  --pub-bg: #090A0F;
+  --pub-surface: #111318;
+  --pub-surface-elevated: #181B22;
+  --pub-surface-glass: rgba(17,19,24,.72);
+  --pub-text: #F5F5F7;
+  --pub-text-secondary: #A1A1A6;
+  --pub-text-muted: #71717A;
+  --pub-red: #B00020;
+  --pub-red-hover: #C1121F;
+  --pub-red-soft: rgba(176,0,32,.12);
+  --pub-border: rgba(255,255,255,.09);
+  --pub-border-strong: rgba(255,255,255,.15);
+  --pub-control: 44px;
+  --pub-radius-control: 12px;
+  --pub-radius-button: 14px;
+  --pub-radius-card: 20px;
+  --pub-radius-sheet: 24px;
+  --pub-content: 1200px;
+  --pub-wide: 1320px;
+  --pub-gutter: clamp(20px,4vw,64px);
+  --pub-section: clamp(72px,9vw,128px);
+  --pub-ease: cubic-bezier(.22,1,.36,1);
+  --pub-fast: 160ms;
+  --pub-standard: 240ms;
+  --pub-slow: 520ms;
+  position: relative;
+  isolation: isolate;
+  min-height: 100vh;
+  color: var(--pub-text);
+  background: var(--pub-bg);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  letter-spacing: -.011em;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.kapi-public-shell *,
+.kapi-public-shell *::before,
+.kapi-public-shell *::after { box-sizing: border-box; }
+
+.kapi-public-shell :where(button,a,input,select,textarea) {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.kapi-public-shell :where(a) {
+  color: inherit;
+  text-decoration: none;
+}
+
+.kapi-public-shell :where(img,video,svg) { max-width: 100%; }
+
+.kapi-public-shell :where(.flex,.grid) > * { min-width: 0; }
+
+.kapi-public-shell ::selection {
+  color: #fff;
+  background: var(--pub-red);
+}
+
+.kapi-public-shell :where(h1,h2,h3,h4,h5,h6) {
+  margin: 0;
+  color: var(--pub-text);
+  font-family: inherit;
+  font-weight: 650;
+  text-wrap: balance;
+}
+
+.kapi-public-shell h1 {
+  font-size: clamp(2.35rem,5.2vw,4.25rem) !important;
+  line-height: 1.03 !important;
+  letter-spacing: -.052em !important;
+  font-weight: 700 !important;
+}
+
+.kapi-public-shell h2 {
+  font-size: clamp(1.8rem,3.3vw,2.7rem) !important;
+  line-height: 1.08 !important;
+  letter-spacing: -.038em !important;
+  font-weight: 650 !important;
+}
+
+.kapi-public-shell h3 {
+  font-size: clamp(1.2rem,1.9vw,1.65rem) !important;
+  line-height: 1.15 !important;
+  letter-spacing: -.026em !important;
+}
+
+.kapi-public-shell h4 {
+  font-size: 1.08rem !important;
+  line-height: 1.25 !important;
+}
+
+.kapi-public-shell p {
+  color: var(--pub-text-secondary);
+  font-size: .9375rem;
+  line-height: 1.58;
+}
+
+.kapi-public-shell :where(.text-xs) {
+  font-size: .72rem !important;
+  line-height: 1.4 !important;
+}
+
+.kapi-public-shell :where(.text-sm) {
+  font-size: .875rem !important;
+  line-height: 1.5 !important;
+}
+
+.kapi-public-shell :where(.text-base) {
+  font-size: .9375rem !important;
+  line-height: 1.55 !important;
+}
+
+.kapi-public-shell :where(.text-xl) {
+  font-size: 1.125rem !important;
+  line-height: 1.5 !important;
+}
+
+.kapi-public-shell :where(.text-2xl) {
+  font-size: 1.45rem !important;
+  line-height: 1.15 !important;
+}
+
+.kapi-public-shell :where(.text-3xl) {
+  font-size: 1.8rem !important;
+  line-height: 1.1 !important;
+}
+
+.kapi-public-shell :where(.text-4xl) {
+  font-size: 2.15rem !important;
+  line-height: 1.06 !important;
+}
+
+.kapi-public-shell :where(.text-5xl) {
+  font-size: 2.65rem !important;
+  line-height: 1.02 !important;
+}
+
+.kapi-public-shell :where(.text-6xl,.text-7xl,.text-8xl) {
+  font-size: clamp(2.35rem,5.2vw,4.25rem) !important;
+  line-height: 1.03 !important;
+}
+
+.kapi-public-shell :where(.font-light) { font-weight: 400 !important; }
+.kapi-public-shell :where(.font-bold,.font-extrabold,.font-black) { font-weight: 650 !important; }
+
+/* Shared page composition */
+.kapi-public-shell main { position: relative; z-index: 1; }
+
+.kapi-public-shell section {
+  width: 100%;
+  border-color: var(--pub-border);
+  scroll-margin-top: 88px;
+}
+
+.kapi-public-shell section > :where(.max-w-7xl,.max-w-6xl,.max-w-5xl,.max-w-4xl,.max-w-3xl) {
+  width: min(calc(100% - 2 * var(--pub-gutter)), var(--pub-content));
+  margin-inline: auto;
+}
+
+.kapi-public-shell :where(.max-w-7xl) { max-width: var(--pub-wide); }
+
+.kapi-public-shell :where(.max-w-prose) { max-width: 68ch; }
+
+.kapi-public-shell :where(section[class*="py-"],section[class*="pt-"],section[class*="pb-"]) {
+  scroll-margin-top: 88px;
+}
+
+/* Quiet background. Decorative mesh is disabled; hero owns its motion. */
+.kapi-public-shell ~ .kapi-fluid-background,
+.kapi-public-shell ~ .kapi-noise-overlay,
+.kapi-public-shell + .kapi-fluid-background,
+.kapi-public-shell + .kapi-noise-overlay {
+  display: none !important;
+}
+
+.kapi-public-shell :where(.bg-\[var\(--k-bg-deep\)\],.bg-\[var\(--k-bg\)\],.bg-black) {
+  background-color: transparent !important;
+}
+
+.kapi-public-shell .kapi-home-hero {
+  position: relative;
+  min-height: min(860px, 92svh);
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  background:
+    radial-gradient(720px 420px at 50% 0%, rgba(176,0,32,.11), transparent 68%),
+    var(--pub-bg) !important;
+}
+
+.kapi-public-shell .kapi-home-hero::before {
+  content: "";
+  position: absolute;
+  inset: -20%;
+  pointer-events: none;
+  background:
+    radial-gradient(500px 280px at 50% 42%, rgba(176,0,32,.07), transparent 72%),
+    radial-gradient(420px 260px at 72% 28%, rgba(255,255,255,.025), transparent 72%);
+  animation: kapi-public-breathe 18s var(--pub-ease) infinite alternate;
+}
+
+.kapi-public-shell .kapi-home-hero > * { position: relative; z-index: 1; }
+
+@keyframes kapi-public-breathe {
+  from { transform: translate3d(-1%,0,0) scale(1); opacity: .72; }
+  to { transform: translate3d(1.5%,1%,0) scale(1.035); opacity: 1; }
+}
+
+.kapi-public-shell .kapi-home-hero h1 { max-width: 900px; }
+.kapi-public-shell .kapi-home-hero p { max-width: 680px; font-size: 1rem !important; line-height: 1.6 !important; }
+
+/* Navigation is the primary Liquid Glass layer. */
+.kapi-public-shell .kapi-public-nav {
+  z-index: 50 !important;
+  background: rgba(9,10,15,.68) !important;
+  border-color: rgba(255,255,255,.085) !important;
+  box-shadow: 0 8px 28px rgba(0,0,0,.16) !important;
+  -webkit-backdrop-filter: saturate(180%) blur(24px);
+  backdrop-filter: saturate(180%) blur(24px);
+}
+
+.kapi-public-shell .kapi-public-nav-links > div:first-child {
+  background: rgba(255,255,255,.045) !important;
+  border: 1px solid rgba(255,255,255,.075) !important;
+  box-shadow: inset 0 1px rgba(255,255,255,.025);
+}
+
+.kapi-public-shell .kapi-public-nav a,
+.kapi-public-shell .kapi-public-nav button {
+  transition: color var(--pub-fast) ease, background-color var(--pub-fast) ease, opacity var(--pub-fast) ease, transform var(--pub-fast) var(--pub-ease);
+}
+
+.kapi-public-shell .kapi-public-nav a:hover,
+.kapi-public-shell .kapi-public-nav button:hover { transform: none; }
+
+.kapi-public-shell .kapi-public-nav a:focus-visible,
+.kapi-public-shell .kapi-public-nav button:focus-visible {
+  outline: 2px solid rgba(255,255,255,.7);
+  outline-offset: 3px;
+}
+
+/* One button geometry. Pills are reserved for status/chips only. */
+.kapi-public-shell :where(button,a[role="button"],a.kapi-button,.kapi-start-project,.kapi-nav-cta) {
+  min-height: var(--pub-control);
+  border-radius: var(--pub-radius-button) !important;
+  font-family: inherit;
+  font-size: .875rem !important;
+  font-weight: 600 !important;
+  letter-spacing: -.005em !important;
+  text-transform: none !important;
+  transition:
+    transform var(--pub-fast) var(--pub-ease),
+    background-color var(--pub-fast) ease,
+    border-color var(--pub-fast) ease,
+    color var(--pub-fast) ease,
+    box-shadow var(--pub-fast) ease,
+    opacity var(--pub-fast) ease !important;
+}
+
+.kapi-public-shell :where(button:hover,a[role="button"]:hover,a.kapi-button:hover,.kapi-start-project:hover,.kapi-nav-cta:hover) {
+  transform: translateY(-1px);
+}
+
+.kapi-public-shell :where(button:active,a[role="button"]:active,a.kapi-button:active,.kapi-start-project:active,.kapi-nav-cta:active) {
+  transform: scale(.985);
+}
+
+.kapi-public-shell :where(button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible) {
+  outline: 2px solid rgba(176,0,32,.82);
+  outline-offset: 2px;
+}
+
+/* Normalize legacy rounded-full text controls into Apple-style rectangles. */
+.kapi-public-shell :where(a.rounded-full,button.rounded-full)[class*="px-"] {
+  border-radius: var(--pub-radius-button) !important;
+}
+
+/* Primary action */
+.kapi-public-shell :where(.kapi-button-primary,.kapi-start-project,.kapi-nav-cta)[class*="bg-brand-red"],
+.kapi-public-shell .kapi-button-primary,
+.kapi-public-shell .kapi-start-project,
+.kapi-public-shell .kapi-nav-cta {
+  background: var(--pub-red) !important;
+  color: #fff !important;
+  border: 1px solid transparent !important;
+  box-shadow: 0 8px 24px rgba(176,0,32,.18) !important;
+  overflow: hidden;
+  position: relative;
+}
+
+.kapi-public-shell .kapi-start-project::before,
+.kapi-public-shell .kapi-nav-cta::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 -45%;
+  width: 28%;
+  background: linear-gradient(100deg, transparent, rgba(255,255,255,.28), transparent);
+  transform: skewX(-18deg);
+  pointer-events: none;
+}
+
+.kapi-public-shell .kapi-start-project:hover,
+.kapi-public-shell .kapi-nav-cta:hover {
+  background: var(--pub-red-hover) !important;
+  box-shadow: 0 12px 30px rgba(176,0,32,.24) !important;
+}
+
+@media (hover:hover) and (pointer:fine) {
+  .kapi-public-shell .kapi-start-project:hover::before,
+  .kapi-public-shell .kapi-nav-cta:hover::before {
+    animation: kapi-public-sheen 800ms var(--pub-ease) 1;
+  }
+}
+
+@keyframes kapi-public-sheen {
+  from { transform: translateX(-130%) skewX(-18deg); }
+  to { transform: translateX(420%) skewX(-18deg); }
+}
+
+.kapi-public-shell .kapi-start-project svg,
+.kapi-public-shell .kapi-nav-cta svg {
+  transition: transform var(--pub-standard) var(--pub-ease);
+}
+
+@media (hover:hover) and (pointer:fine) {
+  .kapi-public-shell .kapi-start-project:hover svg,
+  .kapi-public-shell .kapi-nav-cta:hover svg { transform: translate(2px,-2px); }
+}
+
+/* Secondary action */
+.kapi-public-shell .kapi-button-secondary {
+  background: rgba(255,255,255,.045) !important;
+  color: var(--pub-text) !important;
+  border: 1px solid var(--pub-border-strong) !important;
+  box-shadow: none !important;
+}
+
+.kapi-public-shell .kapi-button-secondary:hover {
+  background: rgba(255,255,255,.075) !important;
+  border-color: rgba(255,255,255,.22) !important;
+}
+
+/* Content surfaces stay calm and opaque. */
+.kapi-public-shell .kapi-card {
+  position: relative;
+  background: var(--pub-surface) !important;
+  border: 1px solid var(--pub-border) !important;
+  border-radius: var(--pub-radius-card) !important;
+  box-shadow: 0 10px 34px rgba(0,0,0,.14) !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  overflow: hidden;
+  transition:
+    transform var(--pub-standard) var(--pub-ease),
+    border-color var(--pub-standard) ease,
+    background-color var(--pub-standard) ease,
+    box-shadow var(--pub-standard) ease !important;
+}
+
+.kapi-public-shell .kapi-card:hover {
+  transform: translateY(-2px);
+  background: var(--pub-surface-elevated) !important;
+  border-color: var(--pub-border-strong) !important;
+  box-shadow: 0 16px 42px rgba(0,0,0,.19) !important;
+}
+
+.kapi-public-shell .kapi-card::before,
+.kapi-public-shell .kapi-card::after { display: none !important; }
+
+.kapi-public-shell .kapi-card-title {
+  font-size: 1.2rem !important;
+  line-height: 1.2 !important;
+  letter-spacing: -.025em !important;
+  margin-bottom: .5rem;
+}
+
+.kapi-public-shell .kapi-card-desc {
+  color: var(--pub-text-secondary) !important;
+  font-size: .875rem !important;
+  line-height: 1.55 !important;
+}
+
+.kapi-public-shell .kapi-card-icon-box {
+  width: 44px !important;
+  height: 44px !important;
+  border-radius: 12px !important;
+  background: rgba(255,255,255,.04) !important;
+  border: 1px solid var(--pub-border) !important;
+}
+
+.kapi-public-shell .kapi-card-arrow {
+  width: 34px !important;
+  height: 34px !important;
+  border-radius: 50% !important;
+  background: rgba(255,255,255,.045) !important;
+  border: 1px solid var(--pub-border) !important;
+}
+
+.kapi-public-shell .kapi-card:hover .kapi-card-arrow {
+  transform: translate(2px,-2px);
+  background: var(--pub-red) !important;
+  border-color: var(--pub-red) !important;
+}
+
+/* Status / category chips may remain pills. */
+.kapi-public-shell :where(.rounded-full)[class*="text-xs"],
+.kapi-public-shell :where(.rounded-full)[class*="uppercase"],
+.kapi-public-shell .kapi-card-pill {
+  border-radius: 999px !important;
+}
+
+/* Forms */
+.kapi-public-shell :where(input,select,textarea) {
+  min-height: var(--pub-control);
+  border-radius: var(--pub-radius-control) !important;
+  border: 1px solid var(--pub-border) !important;
+  background: rgba(255,255,255,.04) !important;
+  color: var(--pub-text) !important;
+  font: inherit;
+  font-size: .9375rem !important;
+  outline: none !important;
+  box-shadow: none !important;
+  transition: border-color var(--pub-fast) ease, background-color var(--pub-fast) ease, box-shadow var(--pub-fast) ease !important;
+}
+
+.kapi-public-shell :where(input,select,textarea):focus {
+  border-color: rgba(176,0,32,.65) !important;
+  background: rgba(255,255,255,.055) !important;
+  box-shadow: 0 0 0 3px rgba(176,0,32,.10) !important;
+}
+
+.kapi-public-shell :where(input,textarea)::placeholder { color: rgba(161,161,166,.7); }
+
+/* Footer */
+.kapi-public-shell .kapi-public-footer {
+  position: relative;
+  z-index: 1;
+  background: var(--pub-bg) !important;
+  border-top: 1px solid var(--pub-border) !important;
+}
+
+.kapi-public-shell .kapi-public-footer a:hover { color: #fff; }
+
+.kapi-public-shell .kapi-public-footer :where(.bg-\[\#16181D\]) {
+  background: rgba(255,255,255,.035) !important;
+  border-color: var(--pub-border) !important;
+}
+
+/* Floating contact is glass, not content. */
+.kapi-public-shell :where(.floating-action,.kapi-floating-contact) {
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
+}
+
+/* Modal: always above navigation. */
+.kapi-public-shell :where([data-public-modal-backdrop],.kapi-modal-backdrop) {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 200 !important;
+  background: rgba(4,5,8,.64) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(120%);
+  backdrop-filter: blur(14px) saturate(120%);
+}
+
+.kapi-public-shell :where([data-public-modal],.kapi-modal) {
+  z-index: 210 !important;
+}
+
+.kapi-public-shell :where([role="dialog"]) {
+  z-index: 210 !important;
+  border-radius: var(--pub-radius-sheet) !important;
+  border: 1px solid rgba(255,255,255,.12) !important;
+  background: rgba(17,19,24,.96) !important;
+  box-shadow: 0 28px 90px rgba(0,0,0,.52) !important;
+}
+
+body:has(.kapi-public-shell [data-public-modal-backdrop]),
+body:has(.kapi-public-shell .kapi-modal-backdrop) { overflow: hidden; }
+
+/* Keep route transitions quiet. */
+.kapi-public-shell .motion-safe\:animate-pulse { animation-duration: 2.4s; }
+
+/* Reduced motion is a first-class state. */
+@media (prefers-reduced-motion: reduce) {
+  .kapi-public-shell *,
+  .kapi-public-shell *::before,
+  .kapi-public-shell *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Responsive hierarchy */
+@media (max-width: 767px) {
+  .kapi-public-shell {
+    --pub-gutter: 16px;
+    --pub-section: 64px;
+  }
+
+  .kapi-public-shell h1 {
+    font-size: clamp(2rem,9.5vw,3.15rem) !important;
+    line-height: 1.04 !important;
+  }
+
+  .kapi-public-shell h2 {
+    font-size: clamp(1.6rem,7vw,2.2rem) !important;
+  }
+
+  .kapi-public-shell h3 { font-size: 1.25rem !important; }
+
+  .kapi-public-shell .kapi-home-hero {
+    min-height: 760px;
+    background:
+      radial-gradient(460px 280px at 50% 4%, rgba(176,0,32,.10), transparent 72%),
+      var(--pub-bg) !important;
+  }
+
+  .kapi-public-shell .kapi-home-hero p { font-size: .9375rem !important; }
+
+  .kapi-public-shell :where(a.kapi-button,button.kapi-button,.kapi-start-project,.kapi-nav-cta) {
+    min-height: 44px;
+  }
+
+  .kapi-public-shell .kapi-card { border-radius: 16px !important; }
+}
+
+@media (max-width: 479px) {
+  .kapi-public-shell h1 { font-size: clamp(1.9rem,10.5vw,2.65rem) !important; }
+  .kapi-public-shell :where(.px-8,.px-10) { padding-inline: 18px !important; }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .kapi-public-shell .kapi-public-nav,
+  .kapi-public-shell :where([data-public-modal-backdrop],.kapi-modal-backdrop),
+  .kapi-public-shell :where(.floating-action,.kapi-floating-contact) {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  .kapi-public-shell .kapi-public-nav { background: var(--pub-surface) !important; }
+}
