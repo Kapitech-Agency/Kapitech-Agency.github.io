@@ -356,16 +356,16 @@ export const AdminCrm: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5 sm:space-y-6">
       
       {/* 1. Header & Actions */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-6 border-b border-[var(--line)]">
+      <div className="ams-dashboard-header flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-card bg-[var(--accent)]/10 border border-[var(--accent)]/30 flex items-center justify-center text-[var(--danger)] shrink-0">
               <Briefcase size={18} />
             </div>
-            <h1 className="text-xl font-display font-semibold text-[var(--text)] flex items-center gap-2.5">
+            <h1 className="ams-page-title flex items-center gap-2.5">
               <span>{t('admin.crm.title')}</span>
               <span className="px-2 py-0.5 rounded-badge text-[10px] font-sans font-semibold normal-case tracking-normal bg-[var(--accent)]/15 text-[var(--danger)] border border-[var(--accent)]/30">
                 Enterprise
@@ -406,7 +406,7 @@ export const AdminCrm: React.FC = () => {
 
           <button
             onClick={() => exportCrmLeadsToCsv(filteredLeads)}
-            className="min-h-10 px-3.5 rounded-control bg-[var(--panel)] hover:bg-[var(--panel-hover)] text-[var(--text)] border border-[var(--line)] text-xs font-sans transition-all flex items-center justify-center gap-2 min-h-10"
+            className="min-h-10 px-3.5 rounded-control bg-[var(--panel)] hover:bg-[var(--panel-hover)] text-[var(--text)] border border-[var(--line)] text-xs font-sans transition-colors flex items-center justify-center gap-2"
             title={t('admin.action.exportCsv')}
           >
             <Download size={14} className="text-[var(--muted)]" />
@@ -418,7 +418,7 @@ export const AdminCrm: React.FC = () => {
                           <button
                             onClick={() => handleOpenAddModal('new')}
                             disabled={!canManageCrm}
-                            className="min-h-10 px-4 rounded-control bg-[var(--accent)] hover:bg-[var(--panel-hover)] text-white text-xs font-sans font-medium transition-colors flex items-center justify-center gap-2"
+                            className="min-h-10 px-4 rounded-control bg-[var(--accent)] hover:bg-[var(--accent)] text-white text-xs font-sans font-medium transition-colors flex items-center justify-center gap-2"
                           >
                             <Plus size={15} />
                             <span>{t('admin.crm.addDeal')}</span>
@@ -532,9 +532,9 @@ export const AdminCrm: React.FC = () => {
       </div>
 
       {/* 3. Filter Bar & View Mode Switcher */}
-      <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 bg-[var(--panel)] border border-[var(--line)] p-4 sm:p-5 rounded-card">
-        <div className="flex flex-wrap items-center gap-3 flex-1">
-          <div className="relative flex-1 min-w-[200px] max-w-md">
+      <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 bg-[var(--panel)] border border-[var(--line)] p-3 sm:p-4 rounded-card">
+        <div className="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-2.5 flex-1 min-w-0">
+          <div className="relative flex-1 min-w-0 sm:min-w-[220px] max-w-none lg:max-w-md">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--muted)]" size={14} />
             <input
               type="text"
@@ -572,7 +572,7 @@ export const AdminCrm: React.FC = () => {
           />
         </div>
 
-        <div className="flex items-center gap-1 bg-[var(--panel)] p-1 rounded-card border border-[var(--line)] self-start md:self-auto shrink-0">
+        <div className="flex items-center gap-1 bg-[var(--bg)] p-1 rounded-card border border-[var(--line)] self-stretch lg:self-auto shrink-0">
           <button
             onClick={() => setViewMode('kanban')}
             className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-sans font-semibold transition-all min-h-[38px] ${
@@ -659,7 +659,7 @@ export const AdminCrm: React.FC = () => {
                   </div>
 
                   {/* Column Cards Stream */}
-                  <div className="p-3 space-y-3 overflow-y-auto flex-1 max-h-[calc(100vh-320px)] min-h-[180px] scrollbar-thin">
+                  <div className="p-3 space-y-3 overflow-y-auto flex-1 max-h-[calc(100dvh-320px)] min-h-[180px] scrollbar-thin">
                     {stageLeads.length === 0 ? (
                       <div className="py-8 text-center text-[var(--muted)] text-[11px] font-sans border border-dashed border-[var(--line)] rounded-card">
                         {language === 'id' ? 'Tarik deal ke sini' : 'Drop deals here'}
@@ -834,7 +834,7 @@ export const AdminCrm: React.FC = () => {
                         <button
                           onClick={() => handleConvertToProject(lead)}
                           title="Create project"
-                          className="w-9 h-9 rounded-card bg-emerald-950/40 text-[var(--success)] hover:bg-emerald-950/80 border border-[var(--success)]/30 flex items-center justify-center min-h-10 min-w-10"
+                          className="w-10 h-10 rounded-control bg-emerald-950/40 text-[var(--success)] hover:bg-emerald-950/80 border border-[var(--success)]/30 flex items-center justify-center min-h-10 min-w-10"
                         >
                           <Layers size={13} />
                         </button>
@@ -852,7 +852,7 @@ export const AdminCrm: React.FC = () => {
                       )}
                       <button
                         onClick={() => handleOpenEditModal(lead)}
-                        className="w-9 h-9 rounded-card bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] flex items-center justify-center min-h-10 min-w-10"
+                        className="w-10 h-10 rounded-control bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] flex items-center justify-center min-h-10 min-w-10"
                         title="Edit deal"
                       >
                         <Edit3 size={13} />
@@ -964,7 +964,7 @@ export const AdminCrm: React.FC = () => {
                             )}
                             <button
                               onClick={() => handleOpenEditModal(lead)}
-                              className="w-9 h-9 rounded-card bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] flex items-center justify-center transition-colors min-h-10 min-w-10"
+                              className="w-10 h-10 rounded-control bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] flex items-center justify-center transition-colors min-h-10 min-w-10"
                               title="Edit deal"
                             >
                               <Edit3 size={13} />
