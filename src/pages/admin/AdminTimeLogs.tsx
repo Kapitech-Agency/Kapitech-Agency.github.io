@@ -98,7 +98,7 @@ export const AdminTimeLogs: React.FC = () => {
   };
 
   return (
-    <div className="h-full overflow-y-auto bg-[var(--bg)] text-white">
+    <div className="h-full overflow-y-auto bg-[var(--bg)] text-[var(--text)]">
       <div className="max-w-[1500px] mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
         <header className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
           <div>
@@ -108,7 +108,7 @@ export const AdminTimeLogs: React.FC = () => {
             <h1 className="mt-2 text-xl font-semibold tracking-tight">Time Tracking</h1>
             <p className="mt-1 text-[13px] leading-5 text-[var(--muted)] max-w-2xl">Record delivery time against projects and tasks, with billable visibility for operational reporting.</p>
           </div>
-          <button onClick={() => void load()} className="inline-flex items-center justify-center gap-2 h-10 px-4 rounded-[var(--ams-radius-control)] border border-white/[0.08] bg-[var(--panel)] text-sm text-white hover:bg-[var(--panel)] transition-colors">
+          <button onClick={() => void load()} className="inline-flex items-center justify-center gap-2 h-10 px-4 rounded-[var(--ams-radius-control)] border border-white/[0.08] bg-[var(--panel)] text-sm text-[var(--text)] hover:bg-[var(--panel)] transition-colors">
             <RefreshCw size={14} /> Refresh
           </button>
         </header>
@@ -169,7 +169,7 @@ export const AdminTimeLogs: React.FC = () => {
                   <input type="checkbox" checked={billable} onChange={e => setBillable(e.target.checked)} className="accent-[var(--accent)]" />
                   Billable
                 </label>
-                <button disabled={saving} className="h-10 px-4 rounded-[var(--ams-radius-control)] bg-[var(--accent)] hover:bg-[var(--danger)] disabled:opacity-50 text-white text-xs font-semibold inline-flex items-center gap-2">
+                <button disabled={saving} className="h-10 px-4 rounded-[var(--ams-radius-control)] bg-[var(--accent)] hover:bg-[var(--danger)] disabled:opacity-50 text-[var(--text)] text-xs font-semibold inline-flex items-center gap-2">
                   {saving ? 'Saving…' : 'Add entry'}
                 </button>
               </div>
@@ -191,7 +191,7 @@ export const AdminTimeLogs: React.FC = () => {
           ) : logs.length === 0 ? (
             <div className="p-8 text-center">
               <Clock3 size={22} className="mx-auto text-[var(--muted)]" />
-              <p className="mt-3 text-sm text-white">No time entries yet</p>
+              <p className="mt-3 text-sm text-[var(--text)]">No time entries yet</p>
               <p className="mt-1 text-xs text-[var(--muted)]">Add the first delivery time entry above.</p>
             </div>
           ) : (
@@ -212,12 +212,12 @@ export const AdminTimeLogs: React.FC = () => {
                     <tr key={log.id} className="hover:bg-white/[0.02]">
                       <td className="px-4 py-3 text-xs text-[var(--text)] whitespace-nowrap">{log.date}</td>
                       <td className="px-4 py-3">
-                        <div className="text-xs font-medium text-white">{log.projectName || 'General'}</div>
+                        <div className="text-xs font-medium text-[var(--text)]">{log.projectName || 'General'}</div>
                         <div className="text-[11px] text-[var(--muted)] mt-0.5">{log.taskTitle || 'General activity'}</div>
                       </td>
                       <td className="px-4 py-3 text-xs text-[var(--text)]">{log.user || '—'}</td>
-                      <td className="px-4 py-3 text-xs font-semibold text-white">{formatMinutes(Number(log.durationMinutes || 0))}</td>
-                      <td className="px-4 py-3"><span className="inline-flex px-2 py-1 rounded-full border border-white/[0.07] text-[10px] text-[var(--text)]">{log.billable ? 'Billable' : 'Non-billable'}</span></td>
+                      <td className="px-4 py-3 text-xs font-semibold text-[var(--text)]">{formatMinutes(Number(log.durationMinutes || 0))}</td>
+                      <td className="px-4 py-3"><span className="inline-flex px-2 py-1 rounded-badge border border-line text-[10px] text-[var(--text)]">{log.billable ? 'Billable' : 'Non-billable'}</span></td>
                       <td className="px-4 py-3 text-right">
                         {(canDeleteAll || log.userId === getAdminSession()?.user?.id) && (
                           <button onClick={() => void remove(log)} className="w-8 h-8 inline-flex items-center justify-center rounded-lg text-[var(--muted)] hover:text-[var(--danger)] hover:bg-[var(--accent)]/10" title="Delete time entry">
