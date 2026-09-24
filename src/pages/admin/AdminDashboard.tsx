@@ -30,13 +30,11 @@ import {
   Percent,
   FileSpreadsheet
 } from 'lucide-react';
-import { getAdminSession, getAuditLogs, SecurityAuditLog } from '../../lib/adminAuth';
+import { getAdminSession, SecurityAuditLog } from '../../lib/adminAuth';
 import { ContactSubmission } from '../../lib/submissions';
 import { AgencyProject } from '../../lib/projectStore';
 import { CrmLead, CrmServicePillar, CrmSource } from '../../lib/crmStore';
 import { 
-  getAgencyInvoices, 
-  getAgencyExpenses, 
   computeFinancialMetrics, 
   getMonthlyCashFlowSeries, 
   getAccountsReceivableAging,
@@ -46,7 +44,7 @@ import {
   computeInvoiceTotals,
   InvoiceLineItem
 } from '../../lib/financeStore';
-import { getAgencyClients, AgencyClient, CLIENT_EVENT_NAME } from '../../lib/clientStore';
+import { AgencyClient } from '../../lib/clientStore';
 import { useLanguage } from '../../lib/LanguageContext';
 import { api } from '../../lib/apiClient';
 import { useRbacRole, StakeholderRole, ROLE_DEFINITIONS } from '../../lib/rbacEngine';
