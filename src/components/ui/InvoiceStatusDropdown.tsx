@@ -87,7 +87,7 @@ export const InvoiceStatusDropdown: React.FC<InvoiceStatusDropdownProps> = ({
         aria-haspopup="listbox"
         aria-expanded={isOpen}
         className={`flex items-center justify-between gap-2 rounded-badge font-sans text-xs font-semibold border transition-colors duration-150 select-none ${
-          size === 'sm' ? 'px-2.5 py-1 text-[11px]' : 'px-3 py-1.5 text-xs'
+          size === 'sm' ? 'min-h-10 sm:min-h-7 px-2.5 py-1 text-[11px]' : 'min-h-10 sm:min-h-8 px-3 py-1.5 text-xs'
         } ${current.badgeClass} ${
           isOpen ? 'outline outline-2 outline-accent outline-offset-2' : 'hover:brightness-110'
         } ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
@@ -123,7 +123,7 @@ export const InvoiceStatusDropdown: React.FC<InvoiceStatusDropdownProps> = ({
                     onChange(item);
                     setIsOpen(false);
                   }}
-                  className={`w-full flex items-center justify-between px-2.5 py-2 rounded-control text-left transition-colors ${
+                  className={`w-full flex items-center justify-between min-h-10 sm:min-h-9 px-2.5 py-2 rounded-control text-left transition-colors ${
                     isSelected
                       ? 'bg-bg text-fg font-semibold'
                       : 'text-muted hover:text-fg hover:bg-bg'
