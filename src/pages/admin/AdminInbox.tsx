@@ -966,9 +966,6 @@ export const AdminInbox: React.FC = () => {
               </button>
             )}
 
-            {submissions.length === 0 && (
-              
-            )}
           </div>
         </div>
       ) : (
