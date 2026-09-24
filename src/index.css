@@ -2881,3 +2881,245 @@ body {
     min-height: 0;
   }
 }
+
+
+/* ==========================================================================
+   AMS DESIGN SYSTEM SOURCE OF TRUTH
+   Scoped to .ams-shell. Tokens mirror AMS-DESIGN-SYSTEM.md exactly.
+   ========================================================================== */
+.ams-shell {
+  --bg:#09090c;
+  --panel:#0f0f14;
+  --line:#20202a;
+  --text:#f3f3f6;
+  --muted:#8b8b99;
+  --accent:#dc143c;
+  --accent-text:#ff4d6d;
+  --series-2:#34d399;
+  --series-3:#5b8cff;
+  --series-4:#b9b9c6;
+  --success:#34d399;
+  --warning:#f5a524;
+  --danger:#f97066;
+  --info:#5b8cff;
+  --ams-sidebar:220px;
+  --ams-sidebar-collapsed:64px;
+  --ams-topbar:52px;
+  --ams-page-pad:24px;
+  --ams-gap:12px;
+  font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;
+  background:var(--bg) !important;
+  color:var(--text);
+}
+.ams-shell,
+.ams-shell * { box-sizing:border-box; }
+.ams-shell :where(h1,h2,h3,h4,h5,h6,p) { margin-block-start:0; }
+.ams-shell :where(h1,h2,h3,h4,h5,h6) {
+  font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif !important;
+  color:var(--text);
+  text-transform:none !important;
+  letter-spacing:0 !important;
+}
+.ams-shell h1 { font-size:20px !important; line-height:28px !important; font-weight:600 !important; }
+.ams-shell h2 { font-size:14px !important; line-height:20px !important; font-weight:600 !important; }
+.ams-shell h3 { font-size:14px !important; line-height:20px !important; font-weight:600 !important; }
+.ams-shell p,.ams-shell label,.ams-shell td,.ams-shell th { font-family:inherit; }
+.ams-shell p { font-size:13px; line-height:18px; color:var(--muted); }
+.ams-shell .tabular-nums,
+.ams-shell table,
+.ams-shell [data-value] { font-variant-numeric:tabular-nums; }
+
+/* Shell geometry */
+.ams-shell > aside {
+  width:var(--ams-sidebar) !important;
+  min-width:var(--ams-sidebar) !important;
+  background:var(--panel) !important;
+  border-right:1px solid var(--line) !important;
+  box-shadow:none !important;
+}
+.ams-shell > aside[class*="w-[72px]"] { width:var(--ams-sidebar-collapsed) !important; min-width:var(--ams-sidebar-collapsed) !important; }
+.ams-shell > main {
+  min-width:0;
+  background:var(--bg) !important;
+  box-shadow:none !important;
+}
+.ams-shell > main > header,
+.ams-shell > main > header:first-child {
+  height:var(--ams-topbar) !important;
+  min-height:var(--ams-topbar) !important;
+  background:var(--bg) !important;
+  border-bottom:1px solid var(--line) !important;
+  box-shadow:none !important;
+}
+.ams-shell > main > .flex-1 {
+  padding:var(--ams-page-pad) !important;
+  max-width:none !important;
+}
+.ams-shell .grid { gap:var(--ams-gap); }
+.ams-shell .space-y-6 > :not([hidden]) ~ :not([hidden]) { margin-top:24px; }
+.ams-shell .space-y-8 > :not([hidden]) ~ :not([hidden]) { margin-top:32px; }
+
+/* Sidebar */
+.ams-shell > aside a {
+  min-height:36px;
+  padding:8px 10px;
+  border-radius:8px;
+  color:var(--muted);
+  box-shadow:none !important;
+  font-size:13px;
+  font-weight:400;
+}
+.ams-shell > aside a:hover { color:var(--text); background:color-mix(in srgb,var(--text) 4%,transparent); }
+.ams-shell > aside a[class*="bg-[rgba(229,9,20,0.1)]"],
+.ams-shell > aside a[aria-current="page"] {
+  color:var(--text) !important;
+  background:color-mix(in srgb,var(--accent) 14%,transparent) !important;
+}
+.ams-shell > aside a .text-\[10px\],
+.ams-shell > aside a .text-\[11px\] { text-transform:none; letter-spacing:0; }
+.ams-shell > aside button { box-shadow:none !important; }
+
+/* Cards */
+.ams-shell .ams-card,
+.ams-shell [class*="bg-[#111318]"][class*="border"] {
+  background:var(--panel) !important;
+  border:1px solid var(--line) !important;
+  border-radius:12px !important;
+  box-shadow:none !important;
+}
+.ams-shell .ams-card:hover,
+.ams-shell [class*="hover:shadow-"]:hover { box-shadow:none !important; transform:none !important; }
+.ams-shell .ams-stat { background:var(--panel) !important; border-color:var(--line) !important; border-radius:8px !important; }
+
+/* Controls */
+.ams-shell button,
+.ams-shell a[role="button"] {
+  font-family:inherit;
+  border-radius:8px;
+  box-shadow:none !important;
+  text-transform:none !important;
+  letter-spacing:0 !important;
+}
+.ams-shell input:not([type="checkbox"]):not([type="radio"]),
+.ams-shell textarea,
+.ams-shell select {
+  height:36px;
+  min-height:36px !important;
+  border:1px solid var(--line) !important;
+  border-radius:8px !important;
+  background:var(--panel) !important;
+  color:var(--text) !important;
+  box-shadow:none !important;
+  font:400 13px/18px Inter,system-ui,sans-serif;
+}
+.ams-shell textarea { height:auto; min-height:96px !important; padding:8px 12px; }
+.ams-shell input::placeholder,.ams-shell textarea::placeholder { color:var(--muted) !important; opacity:1; }
+.ams-shell input:focus,.ams-shell textarea:focus,.ams-shell select:focus,
+.ams-shell input:focus-visible,.ams-shell textarea:focus-visible,.ams-shell select:focus-visible {
+  outline:2px solid var(--accent) !important;
+  outline-offset:2px;
+  border-color:var(--accent) !important;
+  box-shadow:none !important;
+}
+.ams-shell button:focus-visible,.ams-shell a:focus-visible {
+  outline:2px solid var(--accent) !important;
+  outline-offset:2px;
+}
+.ams-shell button:disabled { opacity:.55; }
+
+/* Primary / secondary / destructive */
+.ams-shell button[class*="bg-[#E50914]"],
+.ams-shell button[class*="bg-\[var(--k-red)\]"],
+.ams-shell a[class*="bg-[#E50914]"] {
+  background:var(--accent) !important;
+  color:#fff !important;
+}
+.ams-shell button[class*="bg-[#E50914]"]:hover,
+.ams-shell a[class*="bg-[#E50914]"]:hover { background:#c40f34 !important; }
+.ams-shell button[class*="red-950"],
+.ams-shell button[class*="bg-red-950"] { color:var(--danger) !important; }
+.ams-shell [role="alert"] { border-color:color-mix(in srgb,var(--danger) 45%,var(--line)) !important; }
+
+/* Status colors: crimson is never an error color */
+.ams-shell .text-red-300,.ams-shell .text-red-400,
+.ams-shell .text-red-500 { color:var(--danger) !important; }
+.ams-shell .text-emerald-400,.ams-shell .text-green-400 { color:var(--success) !important; }
+.ams-shell .text-amber-400,.ams-shell .text-yellow-400 { color:var(--warning) !important; }
+.ams-shell .text-blue-400,.ams-shell .text-cyan-400 { color:var(--info) !important; }
+
+/* Tables */
+.ams-shell table { width:100%; border-collapse:separate; border-spacing:0; }
+.ams-shell thead th {
+  height:40px;
+  padding:0 12px;
+  color:var(--muted) !important;
+  background:var(--panel);
+  border-bottom:1px solid var(--line);
+  font-size:12px !important;
+  line-height:16px !important;
+  font-weight:400 !important;
+  text-transform:none !important;
+  letter-spacing:0 !important;
+}
+.ams-shell tbody td {
+  height:40px;
+  padding:0 12px;
+  border-bottom:1px solid var(--line);
+  color:var(--text);
+  font-size:13px;
+  line-height:18px;
+}
+.ams-shell tbody tr:hover td { background:color-mix(in srgb,var(--text) 4%,transparent); }
+
+/* Badges */
+.ams-shell [class*="rounded-full"] {
+  border-radius:5px !important;
+}
+.ams-shell [class*="rounded-full"][class*="px-"] {
+  min-height:24px;
+  font-size:12px !important;
+  font-weight:600;
+}
+
+/* Remove decorative visual noise from AMS */
+.ams-shell [class*="backdrop-blur"],
+.ams-shell [class*="bg-gradient"],
+.ams-shell [class*="bg-radial"] { backdrop-filter:none !important; }
+.ams-shell [class*="shadow-"],
+.ams-shell [class*="drop-shadow"] { box-shadow:none !important; filter:none !important; }
+.ams-shell [class*="hover:scale"],
+.ams-shell [class*="hover:-translate"],
+.ams-shell [class*="hover:translate"] { transform:none !important; }
+.ams-shell .animate-pulse,.ams-shell .animate-ping,.ams-shell .animate-bounce { animation:none !important; }
+
+/* Dialog / popover */
+.ams-shell [role="dialog"],
+.ams-shell dialog {
+  background:var(--panel) !important;
+  color:var(--text);
+  border:1px solid var(--line) !important;
+  border-radius:12px !important;
+  box-shadow:none !important;
+}
+
+/* Responsive */
+@media (max-width:1099px) {
+  .ams-shell > .hidden.md\\:flex { width:var(--ams-sidebar) !important; min-width:var(--ams-sidebar) !important; }
+}
+@media (max-width:899px) {
+  .ams-shell > aside { width:min(320px,88vw) !important; min-width:min(320px,88vw) !important; }
+}
+@media (max-width:599px) {
+  .ams-shell > main > .flex-1 { padding:14px !important; padding-bottom:calc(14px + env(safe-area-inset-bottom)) !important; }
+  .ams-shell .grid { gap:12px; }
+  .ams-shell input:not([type="checkbox"]):not([type="radio"]),
+  .ams-shell select { min-height:40px !important; height:40px; }
+  .ams-shell button,.ams-shell a[role="button"] { min-height:40px; }
+}
+@media (prefers-reduced-motion:reduce) {
+  .ams-shell *, .ams-shell *::before, .ams-shell *::after {
+    animation:none !important;
+    transition-duration:.01ms !important;
+    scroll-behavior:auto !important;
+  }
+}
