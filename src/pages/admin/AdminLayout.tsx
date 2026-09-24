@@ -364,13 +364,9 @@ export const AdminLayout: React.FC = () => {
             <Link
               to={settingsItem.to}
               title={sidebarCollapsed ? settingsItem.label : undefined}
-              className={`relative flex items-center gap-2.5 px-2.5 py-2 rounded-control text-[13px] font-sans min-h-[40px] transition-colors $
-                sidebarCollapsed ? 'w-10 mx-auto justify-center px-0' : ''
-              } $
-                ${isItemActive(settingsItem.to)
-                  ? 'bg-accent/15 text-fg font-medium'
-                  : 'text-muted hover:text-fg hover:bg-bg'}
-              }`}
+              className={`relative flex items-center gap-2.5 px-2.5 py-2 rounded-control text-[13px] font-sans min-h-[40px] transition-colors ${sidebarCollapsed ? 'w-10 mx-auto justify-center px-0' : ''} ${isItemActive(settingsItem.to)
+                ? 'bg-accent/15 text-fg font-medium'
+                : 'text-muted hover:text-fg hover:bg-bg'}`}
             >
               <UntitledIcon name="settings" size={16} className={isItemActive(settingsItem.to) ? 'text-accent-text' : 'text-muted'} />
               {!sidebarCollapsed && <span className="truncate">{settingsItem.label}</span>}
