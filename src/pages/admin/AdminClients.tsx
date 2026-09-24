@@ -208,7 +208,7 @@ export const AdminClients: React.FC = () => {
       {/* 1. Header & Actions */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[var(--line)]">
         <div>
-          <h1 className="text-xl font-sans font-semibold text-white flex items-center gap-3 tracking-tight">
+          <h1 className="text-xl font-sans font-semibold text-[var(--text)] flex items-center gap-3 tracking-tight">
             <Users className="text-[var(--accent)]" size={26} />
             <span>{t('admin.client.title')}</span>
           </h1>
@@ -220,7 +220,7 @@ export const AdminClients: React.FC = () => {
         {canManageClients && (
           <button
             onClick={handleOpenCreateClient}
-            className="h-10 px-4 rounded-xl bg-[var(--accent)] hover:bg-[var(--danger)] text-white text-xs font-sans font-bold transition-all flex items-center justify-center gap-1.5 shadow-lg shadow-[var(--accent)]/25 self-start sm:self-auto min-h-[40px]"
+            className="h-10 px-4 rounded-xl bg-[var(--accent)] hover:bg-[var(--danger)] text-[var(--text)] text-xs font-sans font-bold transition-all flex items-center justify-center gap-1.5 shadow-lg shadow-[var(--accent)]/25 self-start sm:self-auto min-h-[40px]"
           >
             <Plus size={14} />
             <span>{t('admin.client.addClient')}</span>
@@ -230,7 +230,7 @@ export const AdminClients: React.FC = () => {
 
       {/* Critical SLA Ad-Spend Alert Banner */}
       {clientsExceedingSla.length > 0 && (
-        <div className="p-4 rounded-xl bg-red-950/40 border border-red-500/40 text-white space-y-2 animate-pulse">
+        <div className="p-4 rounded-xl bg-red-950/40 border border-red-500/40 text-[var(--text)] space-y-2 animate-pulse">
           <div className="flex items-center gap-2.5 text-red-400 font-bold font-sans text-xs normal-case tracking-normal">
             <ShieldAlert size={16} />
             <span>CRITICAL SLA VIOLATION WARNING: Daily Ad-Spend Exceeded Cap</span>
@@ -249,7 +249,7 @@ export const AdminClients: React.FC = () => {
       )}
 
       {statusMessage && (
-        <div className="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-sans flex items-center gap-2">
+        <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-sans flex items-center gap-2">
           <Check size={14} />
           <span>{statusMessage}</span>
         </div>
@@ -260,11 +260,11 @@ export const AdminClients: React.FC = () => {
         <div className="w-full h-full bg-[var(--panel)] border border-[var(--line)] p-5 rounded-xl flex flex-col justify-between">
           <div className="flex items-center justify-between text-[var(--muted)] mb-2">
             <span className="text-xs font-sans normal-case font-semibold">{t('admin.client.totalClients')}</span>
-            <div className="w-8 h-8 rounded-lg bg-[var(--panel)] border border-[var(--line)] flex items-center justify-center text-white">
+            <div className="w-8 h-8 rounded-lg bg-[var(--panel)] border border-[var(--line)] flex items-center justify-center text-[var(--text)]">
               <Users size={16} />
             </div>
           </div>
-          <div className="text-3xl font-sans font-bold text-white tracking-tight">
+          <div className="text-3xl font-sans font-bold text-[var(--text)] tracking-tight">
             {clients.length}
           </div>
           <div className="mt-3 pt-2 border-t border-[var(--line)] text-[11px] font-sans text-[var(--muted)]">
@@ -294,7 +294,7 @@ export const AdminClients: React.FC = () => {
               <DollarSign size={16} />
             </div>
           </div>
-          <div className="text-2xl sm:text-3xl font-sans font-bold text-white tracking-tight">
+          <div className="text-2xl sm:text-3xl font-sans font-bold text-[var(--text)] tracking-tight">
             {formatAmount(totalLifetimeSpend, currency)}
           </div>
           <div className="mt-3 pt-2 border-t border-[var(--line)] text-[11px] font-sans text-purple-400">
@@ -312,7 +312,7 @@ export const AdminClients: React.FC = () => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={t('admin.client.searchPlaceholder')}
-            className="w-full pl-9 pr-3 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-xs text-white placeholder:text-[var(--muted)] focus:outline-none focus:border-[var(--accent)] font-sans"
+            className="w-full pl-9 pr-3 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-xs text-[var(--text)] placeholder:text-[var(--muted)] focus:outline-none focus:border-[var(--accent)] font-sans"
           />
         </div>
 
@@ -351,7 +351,7 @@ export const AdminClients: React.FC = () => {
                 {/* Header: Name, Role & Status */}
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <div className="font-bold text-white text-base">{client.name}</div>
+                    <div className="font-bold text-[var(--text)] text-base">{client.name}</div>
                     <div className="text-[11px] text-[var(--danger)] font-semibold">{client.contactPersonRole}</div>
                   </div>
                   <span className={`px-2.5 py-1 rounded-lg text-[10px] font-sans font-bold normal-case shrink-0 ${
@@ -368,7 +368,7 @@ export const AdminClients: React.FC = () => {
                 {/* Company & Industry */}
                 <div className="flex items-center gap-2 text-xs font-sans text-[var(--text)] bg-[var(--panel)]/60 p-2.5 rounded-lg border border-[var(--line)]">
                   <Building2 size={13} className="text-[var(--muted)] shrink-0" />
-                  <span className="font-semibold text-white">{client.company}</span>
+                  <span className="font-semibold text-[var(--text)]">{client.company}</span>
                   <span className="text-[var(--muted)]">•</span>
                   <span className="text-[11px] text-[var(--muted)] truncate">{client.industry}</span>
                 </div>
@@ -377,7 +377,7 @@ export const AdminClients: React.FC = () => {
                 <div className="grid grid-cols-1 gap-1.5 text-xs font-sans text-[var(--muted)]">
                   <a 
                     href={`mailto:${client.email}`}
-                    className="flex items-center gap-1.5 text-[var(--text)] hover:text-white transition-colors truncate"
+                    className="flex items-center gap-1.5 text-[var(--text)] hover:text-[var(--text)] transition-colors truncate"
                   >
                     <Mail size={12} className="text-[var(--muted)] shrink-0" />
                     <span className="truncate">{client.email}</span>
@@ -385,7 +385,7 @@ export const AdminClients: React.FC = () => {
                   {client.phone && (
                     <a 
                       href={`tel:${client.phone}`}
-                      className="flex items-center gap-1.5 text-[var(--text)] hover:text-white transition-colors"
+                      className="flex items-center gap-1.5 text-[var(--text)] hover:text-[var(--text)] transition-colors"
                     >
                       <Phone size={12} className="text-[var(--muted)] shrink-0" />
                       <span>{client.phone}</span>
@@ -416,7 +416,7 @@ export const AdminClients: React.FC = () => {
                     ) : (
                       <div>
                         <div className="text-[10px] normal-case font-sans text-[var(--muted)]">Lifetime Spend</div>
-                        <div className="font-bold font-sans text-white text-sm">
+                        <div className="font-bold font-sans text-[var(--text)] text-sm">
                           {formatAmount(client.totalSpend || 0, currency)}
                         </div>
                       </div>
@@ -437,7 +437,7 @@ export const AdminClients: React.FC = () => {
                     )}
                     <button
                       onClick={() => handleOpenEditClient(client)}
-                      className="w-9 h-9 rounded-xl bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--muted)] hover:text-white border border-[var(--line)] flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
+                      className="w-9 h-9 rounded-xl bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
                       title="Edit Client"
                     >
                       <Edit3 size={13} />
@@ -489,19 +489,19 @@ export const AdminClients: React.FC = () => {
                 const isOverBudget = client.slaDailyAdSpendBudget && client.currentDailyAdSpend && client.currentDailyAdSpend > client.slaDailyAdSpendBudget;
                 return (
                   <tr key={client.id} className={`hover:bg-[var(--panel)] transition-colors group ${isOverBudget ? 'bg-red-950/20' : ''}`}>
-                    <td className="py-3.5 px-4">
-                      <div className="font-bold text-white text-sm">{client.name}</div>
+                    <td className="py-3 px-4">
+                      <div className="font-bold text-[var(--text)] text-sm">{client.name}</div>
                       <div className="text-[10px] text-[var(--accent)] font-semibold">{client.contactPersonRole}</div>
                     </td>
-                    <td className="py-3.5 px-4">
-                      <div className="font-bold text-white flex items-center gap-1.5">
+                    <td className="py-3 px-4">
+                      <div className="font-bold text-[var(--text)] flex items-center gap-1.5">
                         <Building2 size={12} className="text-[var(--muted)]" />
                         <span>{client.company}</span>
                       </div>
                       <div className="text-[10px] text-[var(--muted)]">{client.industry}</div>
                     </td>
-                    <td className="py-3.5 px-4 text-[var(--muted)] space-y-0.5 text-[11px]">
-                      <div className="flex items-center gap-1 text-white">
+                    <td className="py-3 px-4 text-[var(--muted)] space-y-0.5 text-[11px]">
+                      <div className="flex items-center gap-1 text-[var(--text)]">
                         <Mail size={11} className="text-[var(--muted)]" />
                         <span>{client.email}</span>
                       </div>
@@ -512,13 +512,13 @@ export const AdminClients: React.FC = () => {
                         </div>
                       )}
                     </td>
-                    <td className="py-3.5 px-4 text-[var(--muted)]">
+                    <td className="py-3 px-4 text-[var(--muted)]">
                       <div className="flex items-center gap-1">
                         <MapPin size={11} className="text-[var(--muted)]" />
                         <span>{client.location}</span>
                       </div>
                     </td>
-                    <td className="py-3.5 px-4 font-sans text-xs">
+                    <td className="py-3 px-4 font-sans text-xs">
                       {client.slaDailyAdSpendBudget ? (
                         <div>
                           <div className={`font-bold flex items-center gap-1 ${isOverBudget ? 'text-red-400' : 'text-emerald-400'}`}>
@@ -533,7 +533,7 @@ export const AdminClients: React.FC = () => {
                         <span className="text-[var(--muted)] text-[11px]">No SLA Cap</span>
                       )}
                     </td>
-                    <td className="py-3.5 px-4">
+                    <td className="py-3 px-4">
                       <span className={`px-2 py-0.5 rounded text-[10px] font-sans font-bold normal-case ${
                         client.status === 'active'
                           ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
@@ -544,11 +544,11 @@ export const AdminClients: React.FC = () => {
                         {client.status}
                       </span>
                     </td>
-                    <td className="py-3.5 px-4 text-right">
+                    <td className="py-3 px-4 text-right">
                       <div className="flex items-center justify-end gap-1.5">
                         <button
                           onClick={() => handleOpenEditClient(client)}
-                          className="w-9 h-9 rounded-xl bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--muted)] hover:text-white border border-[var(--line)] flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
+                          className="w-9 h-9 rounded-xl bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
                           title="Edit Client"
                         >
                           <Edit3 size={13} />
@@ -575,13 +575,13 @@ export const AdminClients: React.FC = () => {
         <div className="fixed inset-0 z-50 bg-black/80  flex items-center justify-center p-4 overflow-y-auto">
           <div className="bg-[var(--panel)] border border-[var(--line)] rounded-xl w-full max-w-lg p-6 space-y-4 shadow-none my-8 text-xs font-sans">
             <div className="flex items-center justify-between pb-3 border-b border-[var(--line)]">
-              <h2 className="text-base font-bold font-sans text-white flex items-center gap-2">
+              <h2 className="text-base font-bold font-sans text-[var(--text)] flex items-center gap-2">
                 <Users className="text-[var(--accent)]" size={18} />
                 <span>{editingClient ? (language === 'id' ? 'Edit Profil Klien' : 'Edit Client Profile') : (language === 'id' ? 'Tambah Klien Baru' : 'Add New Client')}</span>
               </h2>
               <button
                 onClick={() => setIsClientModalOpen(false)}
-                className="p-1.5 rounded-lg text-[var(--muted)] hover:text-white bg-[var(--panel)] border border-[var(--line)]"
+                className="p-1.5 rounded-lg text-[var(--muted)] hover:text-[var(--text)] bg-[var(--panel)] border border-[var(--line)]"
               >
                 <X size={14} />
               </button>
@@ -597,7 +597,7 @@ export const AdminClients: React.FC = () => {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="e.g. John Doe"
-                    className="w-full px-3 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
+                    className="w-full px-3 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                   />
                 </div>
                 <div>
@@ -608,7 +608,7 @@ export const AdminClients: React.FC = () => {
                     value={company}
                     onChange={(e) => setCompany(e.target.value)}
                     placeholder="e.g. Acme Global Tech"
-                    className="w-full px-3 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
+                    className="w-full px-3 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                   />
                 </div>
               </div>
@@ -621,7 +621,7 @@ export const AdminClients: React.FC = () => {
                     value={role}
                     onChange={(e) => setRole(e.target.value)}
                     placeholder="Managing Director, VP Engineering..."
-                    className="w-full px-3 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
+                    className="w-full px-3 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                   />
                 </div>
                 <div>
@@ -631,7 +631,7 @@ export const AdminClients: React.FC = () => {
                     value={industry}
                     onChange={(e) => setIndustry(e.target.value)}
                     placeholder="Fintech, Real Estate, E-Commerce..."
-                    className="w-full px-3 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
+                    className="w-full px-3 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                   />
                 </div>
               </div>
@@ -644,7 +644,7 @@ export const AdminClients: React.FC = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="contact@company.com"
-                    className="w-full px-3 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
+                    className="w-full px-3 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                   />
                 </div>
                 <div>
@@ -654,7 +654,7 @@ export const AdminClients: React.FC = () => {
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     placeholder="+62 811-XXXX-XXXX"
-                    className="w-full px-3 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
+                    className="w-full px-3 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                   />
                 </div>
               </div>
@@ -672,7 +672,7 @@ export const AdminClients: React.FC = () => {
                       type="number"
                       value={slaDailyBudget}
                       onChange={(e) => setSlaDailyBudget(Number(e.target.value))}
-                      className="w-full px-3 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
+                      className="w-full px-3 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                     />
                   </div>
                   <div>
@@ -681,7 +681,7 @@ export const AdminClients: React.FC = () => {
                       type="number"
                       value={currentDailySpend}
                       onChange={(e) => setCurrentDailySpend(Number(e.target.value))}
-                      className="w-full px-3 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
+                      className="w-full px-3 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                     />
                   </div>
                 </div>
@@ -695,7 +695,7 @@ export const AdminClients: React.FC = () => {
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
                     placeholder="Jakarta, Indonesia"
-                    className="w-full px-3 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
+                    className="w-full px-3 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                   />
                 </div>
                 <div>
@@ -722,7 +722,7 @@ export const AdminClients: React.FC = () => {
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   placeholder="Special client preferences, NDA details, billing notes..."
-                  className="w-full px-3 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
+                  className="w-full px-3 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                 />
               </div>
 
@@ -730,13 +730,13 @@ export const AdminClients: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsClientModalOpen(false)}
-                  className="h-10 px-4 rounded-xl bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--muted)] hover:text-white border border-[var(--line)] font-sans text-xs transition-colors min-h-[40px]"
+                  className="h-10 px-4 rounded-xl bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] font-sans text-xs transition-colors min-h-[40px]"
                 >
                   {language === 'id' ? 'Batal' : 'Cancel'}
                 </button>
                 <button
                   type="submit"
-                  className="h-10 px-5 rounded-xl bg-[var(--accent)] hover:bg-[var(--danger)] text-white font-sans font-bold text-xs shadow-lg shadow-[var(--accent)]/25 transition-all min-h-[40px]"
+                  className="h-10 px-5 rounded-xl bg-[var(--accent)] hover:bg-[var(--danger)] text-[var(--text)] font-sans font-bold text-xs shadow-lg shadow-[var(--accent)]/25 transition-all min-h-[40px]"
                 >
                   {language === 'id' ? 'Simpan Klien' : 'Save Client'}
                 </button>
