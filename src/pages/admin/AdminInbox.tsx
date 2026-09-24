@@ -347,7 +347,7 @@ export const AdminInbox: React.FC = () => {
       `"${s.phone || ''}"`,
       `"${(s.services || []).join(', ')}"`,
       `"${s.budget || ''}"`,
-      `"${crmDeals.some(d => (d as any).inquiryId === s.id) ? 'YES' : 'NO'}",`
+      `"${crmDeals.some(d => (d as any).inquiryId === s.id) ? 'YES' : 'NO'}`,
       `"${(s.message || '').replace(/"/g, '""')}"`,
       `"${s.source || ''}"`
     ]);
