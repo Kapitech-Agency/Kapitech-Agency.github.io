@@ -274,7 +274,7 @@ export const AdminVendors: React.FC = () => {
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold font-sans text-white tracking-tight flex items-center gap-2.5">
+          <h1 className="text-xl sm:text-2xl font-semibold font-sans text-[var(--text)] tracking-tight flex items-center gap-2.5">
             <Users className="text-[var(--accent)]" size={24} />
             <span>{language === 'id' ? 'Direktori Vendor & Kontraktor' : 'Vendor & Talent Directory'}</span>
           </h1>
@@ -289,7 +289,7 @@ export const AdminVendors: React.FC = () => {
           <button
             onClick={handleOpenAdd}
                             disabled={!canManageVendors}
-            className="h-10 px-4 rounded-xl bg-[var(--accent)] hover:bg-[var(--danger)] text-white text-xs font-semibold shadow-lg shadow-[var(--accent)]/25 flex items-center gap-2 transition-all min-h-[40px]"
+            className="h-10 px-4 rounded-card bg-[var(--accent)] hover:bg-[var(--danger)] text-[var(--text)] text-xs font-semibold shadow-none shadow-[var(--accent)]/25 flex items-center gap-2 transition-all min-h-[40px]"
           >
             <Plus size={15} />
             <span>{language === 'id' ? 'Tambah Vendor' : 'Add Vendor'}</span>
@@ -299,12 +299,12 @@ export const AdminVendors: React.FC = () => {
 
       {/* Success Notification */}
       {statusMessage && (
-        <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-sans flex items-center justify-between animate-in fade-in duration-200">
+        <div className="p-3 rounded-card bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-sans flex items-center justify-between animate-in fade-in duration-200">
           <div className="flex items-center gap-2">
             <CheckCircle2 size={16} />
             <span>{statusMessage}</span>
           </div>
-          <button onClick={() => setStatusMessage(null)} className="text-emerald-400 hover:text-white">
+          <button onClick={() => setStatusMessage(null)} className="text-emerald-400 hover:text-[var(--text)]">
             <X size={14} />
           </button>
         </div>
@@ -312,42 +312,42 @@ export const AdminVendors: React.FC = () => {
 
       {/* Top Summary Metrics */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 w-full">
-        <div className="w-full h-full p-4 rounded-xl bg-[var(--panel)] border border-[rgba(255,255,255,0.07)] flex flex-col justify-between">
+        <div className="w-full h-full p-4 rounded-card bg-[var(--panel)] border border-[var(--line)] flex flex-col justify-between">
           <div className="text-[11px] font-sans text-[var(--muted)] normal-case tracking-normal">
             {language === 'id' ? 'Total Mitra Terdaftar' : 'Total Vetted Vendors'}
           </div>
-          <div className="mt-2 text-2xl font-bold font-sans text-white">{vendors.length}</div>
+          <div className="mt-2 text-2xl font-semibold font-sans text-[var(--text)]">{vendors.length}</div>
           <div className="text-[10px] font-sans text-emerald-400 mt-1 flex items-center gap-1">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
             <span>{vendors.filter(v => v.status === 'active').length} Active</span>
           </div>
         </div>
 
-        <div className="w-full h-full p-4 rounded-xl bg-[var(--panel)] border border-[rgba(255,255,255,0.07)] flex flex-col justify-between">
+        <div className="w-full h-full p-4 rounded-card bg-[var(--panel)] border border-[var(--line)] flex flex-col justify-between">
           <div className="text-[11px] font-sans text-[var(--muted)] normal-case tracking-normal">
             {language === 'id' ? 'Spesialis Freelance' : 'Freelance Talent'}
           </div>
-          <div className="mt-2 text-2xl font-bold font-sans text-white">
+          <div className="mt-2 text-2xl font-semibold font-sans text-[var(--text)]">
             {vendors.filter(v => v.type === 'freelancer' || v.type === 'contractor').length}
           </div>
           <div className="text-[10px] font-sans text-[var(--muted)] mt-1">Design, Dev & 3D</div>
         </div>
 
-        <div className="w-full h-full p-4 rounded-xl bg-[var(--panel)] border border-[rgba(255,255,255,0.07)] flex flex-col justify-between">
+        <div className="w-full h-full p-4 rounded-card bg-[var(--panel)] border border-[var(--line)] flex flex-col justify-between">
           <div className="text-[11px] font-sans text-[var(--muted)] normal-case tracking-normal">
             {language === 'id' ? 'Partner Agensi' : 'Agency Partners'}
           </div>
-          <div className="mt-2 text-2xl font-bold font-sans text-white">
+          <div className="mt-2 text-2xl font-semibold font-sans text-[var(--text)]">
             {vendors.filter(v => v.type === 'agency_partner').length}
           </div>
           <div className="text-[10px] font-sans text-cyan-400 mt-1">DevOps, Cloud & Legal</div>
         </div>
 
-        <div className="w-full h-full p-4 rounded-xl bg-[var(--panel)] border border-[rgba(255,255,255,0.07)] flex flex-col justify-between">
+        <div className="w-full h-full p-4 rounded-card bg-[var(--panel)] border border-[var(--line)] flex flex-col justify-between">
           <div className="text-[11px] font-sans text-[var(--muted)] normal-case tracking-normal">
             {language === 'id' ? 'Rata-rata Rating SLA' : 'Avg Performance SLA'}
           </div>
-          <div className="mt-2 text-2xl font-bold font-sans text-white flex items-center gap-1.5">
+          <div className="mt-2 text-2xl font-semibold font-sans text-[var(--text)] flex items-center gap-1.5">
             <span>4.9</span>
             <Star size={16} className="text-amber-400 fill-amber-400" />
           </div>
@@ -356,7 +356,7 @@ export const AdminVendors: React.FC = () => {
       </div>
 
       {/* Filter & Search Bar */}
-      <div className="w-full p-4 rounded-xl bg-[var(--panel)] border border-[rgba(255,255,255,0.07)] flex flex-col lg:flex-row items-center justify-between gap-3">
+      <div className="w-full p-4 rounded-card bg-[var(--panel)] border border-[var(--line)] flex flex-col lg:flex-row items-center justify-between gap-3">
         <div className="relative w-full lg:w-96">
           <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5C626E]" />
           <input
@@ -364,7 +364,7 @@ export const AdminVendors: React.FC = () => {
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
             placeholder={language === 'id' ? 'Cari nama, keahlian, atau email...' : 'Search name, skills, or email...'}
-            className="w-full pl-9 pr-3 py-2 rounded-xl bg-[var(--panel)] border border-[rgba(255,255,255,0.07)] text-xs font-sans text-white placeholder:text-[#5C626E] focus:outline-none focus:border-[var(--accent)] h-10 min-h-[40px]"
+            className="w-full pl-9 pr-3 py-2 rounded-card bg-[var(--panel)] border border-[var(--line)] text-xs font-sans text-[var(--text)] placeholder:text-[#5C626E] focus:outline-none focus:border-[var(--accent)] h-10 min-h-[40px]"
           />
         </div>
 
@@ -430,25 +430,25 @@ export const AdminVendors: React.FC = () => {
         {filteredVendors.map(vendor => (
           <div
             key={vendor.id}
-            className="w-full h-full p-5 rounded-xl bg-[var(--panel)] border border-[rgba(255,255,255,0.07)] hover:border-[rgba(255,255,255,0.14)] transition-all flex flex-col justify-between group"
+            className="w-full h-full p-5 rounded-card bg-[var(--panel)] border border-[var(--line)] hover:border-[rgba(255,255,255,0.14)] transition-all flex flex-col justify-between group"
           >
             <div>
               {/* Header Card */}
               <div className="flex items-start justify-between gap-3">
                 <div className="flex items-center gap-3">
-                  <div className="w-11 h-11 rounded-xl bg-[var(--panel)] border border-[rgba(255,255,255,0.07)] flex items-center justify-center font-bold text-sm text-white shadow-inner">
+                  <div className="w-11 h-11 rounded-card bg-[var(--panel)] border border-[var(--line)] flex items-center justify-center font-semibold text-sm text-[var(--text)] shadow-inner">
                     {vendor.name.charAt(0).toUpperCase()}
                   </div>
                   <div>
                     <div className="flex items-center gap-1.5 flex-wrap">
-                      <h3 className="text-sm font-bold text-white group-hover:text-[var(--accent)] transition-colors">
+                      <h3 className="text-sm font-semibold text-[var(--text)] group-hover:text-[var(--accent)] transition-colors">
                         {vendor.name}
                       </h3>
                       {(vendor.isVetted ?? true) && (
                         <span 
                           onClick={(e) => handleToggleVettedQuick(vendor, e)}
                           title={language === 'id' ? 'Mitra Terverifikasi Kapitech (Klik untuk ubah)' : 'Kapitech Vetted Talent (Click to toggle)'}
-                          className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[9px] font-sans font-bold bg-[var(--accent)]/15 text-[var(--danger)] border border-[var(--accent)]/30 cursor-pointer hover:bg-[var(--accent)]/25 transition-colors"
+                          className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[9px] font-sans font-semibold bg-[var(--accent)]/15 text-[var(--danger)] border border-[var(--accent)]/30 cursor-pointer hover:bg-[var(--accent)]/25 transition-colors"
                         >
                           <ShieldCheck size={10} />
                           <span>Vetted</span>
@@ -480,18 +480,18 @@ export const AdminVendors: React.FC = () => {
               </div>
 
               {/* Category & Hourly Rate */}
-              <div className="mt-4 flex items-center justify-between pb-3 border-b border-[rgba(255,255,255,0.07)]">
+              <div className="mt-4 flex items-center justify-between pb-3 border-b border-[var(--line)]">
                 <div>
                   <span className="text-[10px] font-sans text-[#5C626E] normal-case block">
                     {language === 'id' ? 'Spesialisasi' : 'Pillar'}
                   </span>
-                  <span className="text-xs font-semibold text-white mt-0.5 block">{vendor.primaryCategory}</span>
+                  <span className="text-xs font-semibold text-[var(--text)] mt-0.5 block">{vendor.primaryCategory}</span>
                 </div>
                 <div className="text-right">
                   <span className="text-[10px] font-sans text-[#5C626E] normal-case block">
                     {language === 'id' ? 'Tarif Jam' : 'Hourly Rate'}
                   </span>
-                  <span className="text-xs font-sans font-bold text-emerald-400 mt-0.5 block">
+                  <span className="text-xs font-sans font-semibold text-emerald-400 mt-0.5 block">
                     {formatAmount(vendor.hourlyRate, currency)}/hr
                   </span>
                 </div>
@@ -506,7 +506,7 @@ export const AdminVendors: React.FC = () => {
                   {vendor.skills.map((skill, idx) => (
                     <span
                       key={idx}
-                      className="px-2 py-0.5 rounded-md bg-[var(--panel)] border border-[rgba(255,255,255,0.07)] text-[10px] font-sans text-[var(--muted)]"
+                      className="px-2 py-0.5 rounded-md bg-[var(--panel)] border border-[var(--line)] text-[10px] font-sans text-[var(--muted)]"
                     >
                       {skill}
                     </span>
@@ -516,10 +516,10 @@ export const AdminVendors: React.FC = () => {
             </div>
 
             {/* Bottom Actions */}
-            <div className="mt-5 pt-3.5 border-t border-[rgba(255,255,255,0.07)] flex items-center justify-between">
+            <div className="mt-5 pt-3.5 border-t border-[var(--line)] flex items-center justify-between">
               <div className="flex items-center gap-1.5 text-xs font-sans text-amber-400">
                 <Star size={13} className="fill-amber-400 text-amber-400" />
-                <span className="font-bold">{vendor.rating.toFixed(1)}</span>
+                <span className="font-semibold">{vendor.rating.toFixed(1)}</span>
                 <span className="text-[10px] text-[#5C626E]">({vendor.completedProjectsCount} projects)</span>
               </div>
 
@@ -529,14 +529,14 @@ export const AdminVendors: React.FC = () => {
                     setSelectedVendor(vendor);
                     setIsDrawerOpen(true);
                   }}
-                  className="px-2.5 py-1 rounded-lg bg-[var(--panel)] hover:bg-[#21252F] border border-[rgba(255,255,255,0.07)] text-xs font-sans text-white transition-colors"
+                  className="px-2.5 py-1 rounded-lg bg-[var(--panel)] hover:bg-[var(--panel-hover)] border border-[var(--line)] text-xs font-sans text-[var(--text)] transition-colors"
                 >
                   {language === 'id' ? 'Detail' : 'View'}
                 </button>
                 <button
                   onClick={() => handleOpenEdit(vendor)}
                                   disabled={!canManageVendors}
-                  className="p-1.5 rounded-lg bg-[var(--panel)] hover:bg-[#21252F] border border-[rgba(255,255,255,0.07)] text-[var(--muted)] hover:text-white transition-colors"
+                  className="p-1.5 rounded-lg bg-[var(--panel)] hover:bg-[var(--panel-hover)] border border-[var(--line)] text-[var(--muted)] hover:text-[var(--text)] transition-colors"
                   title="Edit Vendor"
                 >
                   <Edit3 size={13} />
@@ -544,7 +544,7 @@ export const AdminVendors: React.FC = () => {
                 <button
                   onClick={() => handleDeleteVendor(vendor.id, vendor.name)}
                            disabled={!canManageVendors}
-                  className="p-1.5 rounded-lg bg-[var(--panel)] hover:bg-red-950/40 border border-[rgba(255,255,255,0.07)] text-[var(--muted)] hover:text-red-400 transition-colors"
+                  className="p-1.5 rounded-lg bg-[var(--panel)] hover:bg-red-950/40 border border-[var(--line)] text-[var(--muted)] hover:text-red-400 transition-colors"
                   title="Delete Vendor"
                 >
                   <Trash2 size={13} />
@@ -556,9 +556,9 @@ export const AdminVendors: React.FC = () => {
       </div>
 
       {filteredVendors.length === 0 && (
-        <div className="w-full p-12 rounded-xl bg-[var(--panel)] border border-[rgba(255,255,255,0.07)] text-center">
+        <div className="w-full p-12 rounded-card bg-[var(--panel)] border border-[var(--line)] text-center">
           <Users size={32} className="mx-auto text-[#5C626E] mb-3" />
-          <h3 className="text-sm font-bold text-white">
+          <h3 className="text-sm font-semibold text-[var(--text)]">
             {language === 'id' ? 'Tidak ada vendor yang cocok' : 'No matching vendors found'}
           </h3>
           <p className="text-xs font-sans text-[var(--muted)] mt-1 max-w-sm mx-auto">
@@ -573,18 +573,18 @@ export const AdminVendors: React.FC = () => {
       {isDrawerOpen && selectedVendor && (
         <div className="fixed inset-0 z-50 flex">
           <div className="fixed inset-0 bg-black/80 " onClick={() => setIsDrawerOpen(false)} />
-          <div className="relative ml-auto w-full max-w-md bg-[var(--panel)] border-l border-[rgba(255,255,255,0.07)] h-full flex flex-col justify-between p-6 z-10 shadow-none overflow-y-auto animate-in slide-in-from-right duration-200">
+          <div className="relative ml-auto w-full max-w-md bg-[var(--panel)] border-l border-[var(--line)] h-full flex flex-col justify-between p-6 z-10 shadow-none overflow-y-auto animate-in slide-in-from-right duration-200">
             <div>
-              <div className="flex items-center justify-between pb-4 border-b border-[rgba(255,255,255,0.07)]">
+              <div className="flex items-center justify-between pb-4 border-b border-[var(--line)]">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-[var(--accent)] flex items-center justify-center font-bold text-white text-sm">
+                  <div className="w-10 h-10 rounded-card bg-[var(--accent)] flex items-center justify-center font-semibold text-[var(--text)] text-sm">
                     {selectedVendor.name.charAt(0).toUpperCase()}
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <h3 className="text-sm font-bold text-white">{selectedVendor.name}</h3>
+                      <h3 className="text-sm font-semibold text-[var(--text)]">{selectedVendor.name}</h3>
                       {(selectedVendor.isVetted ?? true) && (
-                        <span className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[10px] font-sans font-bold bg-[var(--accent)]/15 text-[var(--danger)] border border-[var(--accent)]/30">
+                        <span className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[10px] font-sans font-semibold bg-[var(--accent)]/15 text-[var(--danger)] border border-[var(--accent)]/30">
                           <ShieldCheck size={11} />
                           <span>Vetted</span>
                         </span>
@@ -595,7 +595,7 @@ export const AdminVendors: React.FC = () => {
                 </div>
                 <button
                   onClick={() => setIsDrawerOpen(false)}
-                  className="p-1.5 rounded-lg bg-[var(--panel)] text-[var(--muted)] hover:text-white border border-[rgba(255,255,255,0.07)]"
+                  className="p-1.5 rounded-lg bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)]"
                 >
                   <X size={15} />
                 </button>
@@ -606,10 +606,10 @@ export const AdminVendors: React.FC = () => {
                   <span className="text-[10px] font-sans text-[#5C626E] normal-case block mb-1">
                     {language === 'id' ? 'Kontak & Lokasi' : 'Contact & Location'}
                   </span>
-                  <div className="space-y-1.5 bg-[var(--panel)] p-3 rounded-xl border border-[rgba(255,255,255,0.07)]">
+                  <div className="space-y-1.5 bg-[var(--panel)] p-3 rounded-card border border-[var(--line)]">
                     <div className="flex items-center gap-2 text-[var(--muted)]">
                       <Mail size={13} className="text-[var(--accent)]" />
-                      <a href={`mailto:${selectedVendor.email}`} className="text-white hover:underline">
+                      <a href={`mailto:${selectedVendor.email}`} className="text-[var(--text)] hover:underline">
                         {selectedVendor.email}
                       </a>
                     </div>
@@ -628,16 +628,16 @@ export const AdminVendors: React.FC = () => {
                   <span className="text-[10px] font-sans text-[#5C626E] normal-case block mb-1">
                     {language === 'id' ? 'Tarif & Kontrak' : 'Rate & Contracts'}
                   </span>
-                  <div className="bg-[var(--panel)] p-3 rounded-xl border border-[rgba(255,255,255,0.07)] flex items-center justify-between">
+                  <div className="bg-[var(--panel)] p-3 rounded-card border border-[var(--line)] flex items-center justify-between">
                     <div>
                       <span className="text-[10px] font-sans text-[var(--muted)]">Standard Hourly</span>
-                      <p className="text-sm font-sans font-bold text-emerald-400">
+                      <p className="text-sm font-sans font-semibold text-emerald-400">
                         {formatAmount(selectedVendor.hourlyRate, currency)}/hr
                       </p>
                     </div>
                     <div className="text-right">
                       <span className="text-[10px] font-sans text-[var(--muted)]">Engagement</span>
-                      <p className="text-xs font-semibold text-white capitalize">{selectedVendor.type.replace('_', ' ')}</p>
+                      <p className="text-xs font-semibold text-[var(--text)] capitalize">{selectedVendor.type.replace('_', ' ')}</p>
                     </div>
                   </div>
                 </div>
@@ -647,7 +647,7 @@ export const AdminVendors: React.FC = () => {
                     <span className="text-[10px] font-sans text-[#5C626E] normal-case block mb-1">
                       {language === 'id' ? 'Catatan Kinerja' : 'Performance Notes'}
                     </span>
-                    <div className="bg-[var(--panel)] p-3 rounded-xl border border-[rgba(255,255,255,0.07)] text-[var(--muted)] leading-relaxed">
+                    <div className="bg-[var(--panel)] p-3 rounded-card border border-[var(--line)] text-[var(--muted)] leading-relaxed">
                       {selectedVendor.notes}
                     </div>
                   </div>
@@ -655,13 +655,13 @@ export const AdminVendors: React.FC = () => {
               </div>
             </div>
 
-            <div className="pt-4 border-t border-[rgba(255,255,255,0.07)] flex items-center justify-end gap-2">
+            <div className="pt-4 border-t border-[var(--line)] flex items-center justify-end gap-2">
               <button
                 onClick={() => {
                   setIsDrawerOpen(false);
                   handleOpenEdit(selectedVendor);
                 }}
-                className="px-4 py-2 rounded-xl bg-[var(--accent)] hover:bg-[var(--danger)] text-white text-xs font-semibold"
+                className="px-4 py-2 rounded-card bg-[var(--accent)] hover:bg-[var(--danger)] text-[var(--text)] text-xs font-semibold"
               >
                 {language === 'id' ? 'Edit Profil' : 'Edit Profile'}
               </button>
@@ -674,9 +674,9 @@ export const AdminVendors: React.FC = () => {
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="fixed inset-0 bg-black/80 " onClick={() => setIsModalOpen(false)} />
-          <div className="relative w-full max-w-lg bg-[var(--panel)] border border-[rgba(255,255,255,0.07)] rounded-xl shadow-none p-6 z-10 animate-in zoom-in-95 duration-150">
-            <div className="flex items-center justify-between pb-4 border-b border-[rgba(255,255,255,0.07)]">
-              <h3 className="text-sm font-bold text-white">
+          <div className="relative w-full max-w-lg bg-[var(--panel)] border border-[var(--line)] rounded-card shadow-none p-6 z-10 animate-in zoom-in-95 duration-150">
+            <div className="flex items-center justify-between pb-4 border-b border-[var(--line)]">
+              <h3 className="text-sm font-semibold text-[var(--text)]">
                 {editingVendor
                   ? language === 'id'
                     ? 'Edit Profil Vendor'
@@ -687,7 +687,7 @@ export const AdminVendors: React.FC = () => {
               </h3>
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="p-1.5 rounded-lg bg-[var(--panel)] text-[var(--muted)] hover:text-white border border-[rgba(255,255,255,0.07)]"
+                className="p-1.5 rounded-lg bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)]"
               >
                 <X size={15} />
               </button>
@@ -705,7 +705,7 @@ export const AdminVendors: React.FC = () => {
                     value={formName}
                     onChange={e => setFormName(e.target.value)}
                     placeholder="e.g. Dimas Pratama"
-                    className="w-full px-3 py-2 rounded-xl bg-[var(--panel)] border border-[rgba(255,255,255,0.07)] text-xs font-sans text-white focus:outline-none focus:border-[var(--accent)]"
+                    className="w-full px-3 py-2 rounded-card bg-[var(--panel)] border border-[var(--line)] text-xs font-sans text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                   />
                 </div>
 
@@ -718,7 +718,7 @@ export const AdminVendors: React.FC = () => {
                     value={formCompany}
                     onChange={e => setFormCompany(e.target.value)}
                     placeholder="e.g. PixelCraft Studio"
-                    className="w-full px-3 py-2 rounded-xl bg-[var(--panel)] border border-[rgba(255,255,255,0.07)] text-xs font-sans text-white focus:outline-none focus:border-[var(--accent)]"
+                    className="w-full px-3 py-2 rounded-card bg-[var(--panel)] border border-[var(--line)] text-xs font-sans text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                   />
                 </div>
               </div>
@@ -732,7 +732,7 @@ export const AdminVendors: React.FC = () => {
                     value={formEmail}
                     onChange={e => setFormEmail(e.target.value)}
                     placeholder="talent@example.com"
-                    className="w-full px-3 py-2 rounded-xl bg-[var(--panel)] border border-[rgba(255,255,255,0.07)] text-xs font-sans text-white focus:outline-none focus:border-[var(--accent)]"
+                    className="w-full px-3 py-2 rounded-card bg-[var(--panel)] border border-[var(--line)] text-xs font-sans text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                   />
                 </div>
 
@@ -745,7 +745,7 @@ export const AdminVendors: React.FC = () => {
                     value={formPhone}
                     onChange={e => setFormPhone(e.target.value)}
                     placeholder="+62 812..."
-                    className="w-full px-3 py-2 rounded-xl bg-[var(--panel)] border border-[rgba(255,255,255,0.07)] text-xs font-sans text-white focus:outline-none focus:border-[var(--accent)]"
+                    className="w-full px-3 py-2 rounded-card bg-[var(--panel)] border border-[var(--line)] text-xs font-sans text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                   />
                 </div>
               </div>
@@ -777,7 +777,7 @@ export const AdminVendors: React.FC = () => {
                     type="number"
                     value={formRate}
                     onChange={e => setFormRate(Number(e.target.value))}
-                    className="w-full px-3 py-2 rounded-xl bg-[var(--panel)] border border-[rgba(255,255,255,0.07)] text-xs font-sans text-white focus:outline-none focus:border-[var(--accent)]"
+                    className="w-full px-3 py-2 rounded-card bg-[var(--panel)] border border-[var(--line)] text-xs font-sans text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                   />
                 </div>
               </div>
@@ -815,9 +815,9 @@ export const AdminVendors: React.FC = () => {
               </div>
 
               {/* Vetted Status Verification Toggle */}
-              <div className="p-3 rounded-xl bg-[var(--panel)] border border-[rgba(255,255,255,0.07)] flex items-center justify-between">
+              <div className="p-3 rounded-card bg-[var(--panel)] border border-[var(--line)] flex items-center justify-between">
                 <div>
-                  <span className="text-xs font-semibold text-white flex items-center gap-1.5">
+                  <span className="text-xs font-semibold text-[var(--text)] flex items-center gap-1.5">
                     <ShieldCheck size={14} className="text-[var(--accent)]" />
                     <span>{language === 'id' ? 'Mitra Terverifikasi (Vetted)' : 'Kapitech Vetted Talent'}</span>
                   </span>
@@ -844,7 +844,7 @@ export const AdminVendors: React.FC = () => {
                   value={formSkills}
                   onChange={e => setFormSkills(e.target.value)}
                   placeholder="Next.js, Tailwind, Docker, Three.js"
-                  className="w-full px-3 py-2 rounded-xl bg-[var(--panel)] border border-[rgba(255,255,255,0.07)] text-xs font-sans text-white focus:outline-none focus:border-[var(--accent)]"
+                  className="w-full px-3 py-2 rounded-card bg-[var(--panel)] border border-[var(--line)] text-xs font-sans text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                 />
               </div>
 
@@ -857,21 +857,21 @@ export const AdminVendors: React.FC = () => {
                   value={formNotes}
                   onChange={e => setFormNotes(e.target.value)}
                   placeholder="Reliable performance and clean deliverables..."
-                  className="w-full px-3 py-2 rounded-xl bg-[var(--panel)] border border-[rgba(255,255,255,0.07)] text-xs font-sans text-white focus:outline-none focus:border-[var(--accent)]"
+                  className="w-full px-3 py-2 rounded-card bg-[var(--panel)] border border-[var(--line)] text-xs font-sans text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                 />
               </div>
 
-              <div className="pt-4 border-t border-[rgba(255,255,255,0.07)] flex items-center justify-end gap-2">
+              <div className="pt-4 border-t border-[var(--line)] flex items-center justify-end gap-2">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 rounded-xl bg-[var(--panel)] hover:bg-[#21252F] text-white text-xs font-semibold border border-[rgba(255,255,255,0.07)]"
+                  className="px-4 py-2 rounded-card bg-[var(--panel)] hover:bg-[var(--panel-hover)] text-[var(--text)] text-xs font-semibold border border-[var(--line)]"
                 >
                   {language === 'id' ? 'Batal' : 'Cancel'}
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-xl bg-[var(--accent)] hover:bg-[var(--danger)] text-white text-xs font-semibold shadow-lg shadow-[var(--accent)]/25"
+                  className="px-5 py-2 rounded-card bg-[var(--accent)] hover:bg-[var(--danger)] text-[var(--text)] text-xs font-semibold shadow-none shadow-[var(--accent)]/25"
                 >
                   {language === 'id' ? 'Simpan Vendor' : 'Save Vendor'}
                 </button>
