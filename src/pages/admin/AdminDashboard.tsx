@@ -534,7 +534,7 @@ export const AdminDashboard: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 sm:space-y-8 animate-in fade-in duration-300">
+    <div className="space-y-6 sm:space-y-8">
       
       {/* ------------------------------------------------------------- */}
       {/* GLOBAL TOAST NOTIFICATION BANNER                               */}
@@ -556,7 +556,7 @@ export const AdminDashboard: React.FC = () => {
               {language === 'id' ? 'Ikhtisar Eksekutif Agensi' : 'Executive Agency Overview'}
             </h1>
             <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-[11px] font-mono font-bold text-emerald-400">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
               <span>ams.kapitech.id · Live</span>
             </div>
           </div>
