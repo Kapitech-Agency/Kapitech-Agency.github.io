@@ -880,12 +880,12 @@ export const AdminInbox: React.FC = () => {
         </div>
       ) : filteredItems.length === 0 ? (
         /* SINGLE UNIFIED EMPTY STATE - PREVENTS DUPLICATE BOXES */
-        <div className="bg-[var(--panel)] border border-[var(--line)] rounded-card p-12 sm:p-16 text-center text-[var(--muted)] space-y-4">
+        <div className="ams-empty-state bg-[var(--panel)] border border-[var(--line)] rounded-card p-12 sm:p-16 text-center text-[var(--muted)] space-y-4 flex flex-col items-center">
           <div className="w-16 h-16 rounded-card bg-[var(--panel)] border border-[var(--line)] flex items-center justify-center text-[var(--line)] mx-auto">
             <Inbox size={32} />
           </div>
           <div className="space-y-1.5">
-            <h3 className="text-[var(--text)] font-semibold font-display text-base sm:text-lg">
+            <h3 className="text-[var(--text)] font-semibold font-display text-base sm:text-lg text-center">
               {submissions.length === 0
                 ? (language === 'id' ? 'Kotak Masuk Masih Kosong' : 'No Inbound Records Found')
                 : (language === 'id' ? 'Tidak Ada Pesan yang Sesuai Kriteria' : 'No Inbound Records Match Your Filters')}
