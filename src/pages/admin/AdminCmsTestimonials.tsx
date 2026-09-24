@@ -73,7 +73,7 @@ export const AdminCmsTestimonials: React.FC = () => {
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[var(--line)]">
         <div>
-          <h1 className="text-xl sm:text-2xl font-display font-semibold text-[var(--text)] flex items-center gap-3">
+          <h1 className="ams-page-title">
             <Quote className="text-[var(--danger)]" size={24} />
             <span>CMS: Client Testimonials & Social Proof</span>
           </h1>
@@ -158,7 +158,7 @@ export const AdminCmsTestimonials: React.FC = () => {
         <div className="fixed inset-0 bg-black/80  z-50 flex items-center justify-center p-4">
           <div className="bg-[var(--panel)] border border-[var(--line)] rounded-card max-w-lg w-full p-4 sm:p-5 shadow-none">
             <div className="flex items-center justify-between pb-4 border-b border-[var(--line)] mb-5">
-              <h2 className="text-base font-semibold font-display text-[var(--text)]">
+              <h2 className="text-base font-semibold font-sans text-[var(--text)]">
                 {editingItem.author ? `Edit: ${editingItem.author}` : (language === 'id' ? 'Tambah Testimoni Klien' : 'Add Client Testimonial')}
               </h2>
               <button onClick={() => setIsModalOpen(false)} className="text-[var(--muted)] hover:text-white text-xs font-sans">
