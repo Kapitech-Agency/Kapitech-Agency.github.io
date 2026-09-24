@@ -1,19 +1,27 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useLocation, useNavigate, Outlet } from 'react-router-dom';
-import { UntitledIcon, UntitledIconName } from '../../components/ui/UntitledIcon';import { getAdminSession, logoutAdmin } from '../../lib/adminAuth';
+import {
+  Home,
+  Inbox,
+  Users,
+  Receipt,
+  Briefcase,
+  Landmark,
+  Shield,
+  Layers,
+  FileText,
+  Clock3,
+  Settings,
+  ChevronLeft,
+  Menu,
+  X,
+  LogOut
+} from 'lucide-react';
+import { getAdminSession, logoutAdmin } from '../../lib/adminAuth';
 import { useLanguage } from '../../lib/LanguageContext';
 import { CommandPalette } from '../../components/admin/CommandPalette';
 import { AdminNotificationCenter } from '../../components/admin/AdminNotificationCenter';
 import { useRbacRole } from '../../lib/rbacEngine';
-
-
-
-const U = (name: UntitledIconName) => (props: { size?: number; className?: string }) => (
-  <UntitledIcon name={name} size={props.size ?? 18} className={props.className} />
-);
-const AmsChevron = U('chevron');
-const AmsMenu = U('menu');
-const AmsClose = U('close');
 
 interface NavItem {
   key: string;
@@ -70,7 +78,7 @@ export const AdminLayout: React.FC = () => {
     }
   };
 
-  // 4 Logical Sections (with Consolidated Single U('settings') U('menu'))
+  // 4 Logical Sections (with Consolidated Single Settings U('menu'))
   const navSections: NavSection[] = [
     {
       id: 'core',
@@ -80,35 +88,35 @@ export const AdminLayout: React.FC = () => {
           key: 'dashboard',
           to: '/admin/dashboard',
           label: t('admin.nav.dashboard'),
-          icon: U('home'),
+          icon: Home,
           badge: null
         },
         {
           key: 'inbox',
           to: '/admin/inbox',
           label: t('admin.nav.inbox'),
-          icon: U('inbox'),
+          icon: Inbox,
           badge: null
         },
         {
           key: 'crm',
           to: '/admin/crm',
           label: t('admin.nav.crm'),
-          icon: U('users'),
+          icon: Users,
           badge: null
         },
         {
           key: 'proposals',
           to: '/admin/proposals',
           label: language === 'id' ? 'Proposal & Penawaran' : 'Proposals & Quotes',
-          icon: U('receipt'),
+          icon: Receipt,
           badge: null
         },
         {
           key: 'projects',
           to: '/admin/projects',
           label: t('admin.nav.projects'),
-          icon: U('briefcase'),
+          icon: Briefcase,
           badge: null
         }
       ]
@@ -121,28 +129,28 @@ export const AdminLayout: React.FC = () => {
           key: 'invoicing',
           to: '/admin/invoicing',
           label: t('admin.nav.invoicing'),
-          icon: U('bank'),
+          icon: Landmark,
           badge: null
         },
         {
           key: 'clients',
           to: '/admin/clients',
           label: t('admin.nav.clients'),
-          icon: U('users'),
+          icon: Users,
           badge: null
         },
         {
           key: 'vendors',
           to: '/admin/vendors',
           label: t('admin.nav.vendors'),
-          icon: U('briefcase'),
+          icon: Briefcase,
           badge: null
         },
         {
           key: 'approvals',
           to: '/admin/approvals',
           label: language === 'id' ? 'Pusat Persetujuan' : 'Approval Center',
-          icon: U('shield'),
+          icon: Shield,
           badge: null
         }
       ]
@@ -155,35 +163,35 @@ export const AdminLayout: React.FC = () => {
           key: 'services',
           to: '/admin/cms/services',
           label: t('admin.nav.servicesCatalog'),
-          icon: U('layers'),
+          icon: Layers,
           badge: null
         },
         {
           key: 'cms_projects',
           to: '/admin/cms/projects',
           label: t('admin.nav.caseStudies'),
-          icon: U('layers'),
+          icon: Layers,
           badge: null
         },
         {
           key: 'testimonials',
           to: '/admin/cms/testimonials',
           label: t('admin.cms.testiTitle'),
-          icon: U('users'),
+          icon: Users,
           badge: null
         },
         {
           key: 'documents',
           to: '/admin/documents',
           label: language === 'id' ? 'Dokumen' : 'Documents',
-          icon: U('file'),
+          icon: FileText,
           badge: null
         },
         {
           key: 'timelogs',
           to: '/admin/time-logs',
           label: language === 'id' ? 'Pelacakan Waktu' : 'Time Tracking',
-          icon: U('clock'),
+          icon: Clock3,
           badge: null
         }
       ]
@@ -196,7 +204,7 @@ export const AdminLayout: React.FC = () => {
           key: 'settings',
           to: '/admin/settings',
           label: t('admin.nav.settings'),
-          icon: U('settings'),
+          icon: Settings,
           badge: null
         },
       ]
@@ -292,7 +300,7 @@ export const AdminLayout: React.FC = () => {
                 className="w-8 h-8 rounded-lg bg-bg hover:bg-panel text-muted hover:text-fg border border-line transition-colors flex items-center justify-center shrink-0"
                 title="Collapse sidebar"
               >
-                <AmsChevron size={15} />
+                <ChevronLeft size={15} />
               </button>
             </>
           ) : (
@@ -399,7 +407,7 @@ export const AdminLayout: React.FC = () => {
               title={t('admin.nav.logout')}
               className="p-2 flex items-center justify-center rounded-lg bg-bg hover:bg-danger/10 text-muted hover:text-accent-text border border-line hover:border-accent/30 transition-all shrink-0"
             >
-              <UntitledIcon name="logout" size={15} />
+              <LogOut size={15} />
             </button>
           </div>
 
@@ -417,7 +425,7 @@ export const AdminLayout: React.FC = () => {
             aria-label="Open navigation menu"
             className="w-9 h-9 flex items-center justify-center rounded-lg bg-bg text-fg border border-line hover:bg-panel transition-colors "
           >
-            <AmsMenu size={20} />
+            <Menu size={20} />
           </button>
 
           <Link to="/admin/dashboard" className="flex items-center gap-2">
@@ -472,7 +480,7 @@ export const AdminLayout: React.FC = () => {
                 aria-label="Close navigation menu"
                 className="w-9 h-9 flex items-center justify-center rounded-lg bg-bg text-muted hover:text-fg border border-line transition-colors"
               >
-                <AmsClose size={18} />
+                <X size={18} />
               </button>
             </div>
 
@@ -554,7 +562,7 @@ export const AdminLayout: React.FC = () => {
                 aria-label="Logout"
                 className="px-3 py-2 min-h-[40px] rounded-control bg-panel hover:bg-bg border border-line hover:border-accent/30 text-muted hover:text-fg text-xs font-sans flex items-center gap-1.5 shrink-0 transition-all"
               >
-                <UntitledIcon name="logout" size={14} />
+                <LogOut size={14} />
                 <span>{t('admin.nav.logout')}</span>
               </button>
             </div>
