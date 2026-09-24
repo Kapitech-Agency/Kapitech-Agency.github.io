@@ -222,7 +222,7 @@ export const AdminCmsProjects: React.FC = () => {
       {/* Top Title & Actions */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[var(--line)]">
         <div>
-          <h1 className="text-xl font-display font-semibold text-[var(--text)] flex items-center gap-3">
+          <h1 className="ams-page-title">
             <FolderKanban className="text-[var(--danger)]" size={24} />
             <span>{t('admin.nav.cmsProjects')}</span>
           </h1>
@@ -313,7 +313,7 @@ export const AdminCmsProjects: React.FC = () => {
               <div className="absolute top-3 right-3 flex items-center gap-1">
                 <button
                   onClick={() => handleToggleFeatured(project)}
-                  className={`p-1.5 rounded-lg border text-xs transition-colors  ${
+                  className={`p-1.5 rounded-control border text-xs transition-colors  ${
                     project.featured
                       ? 'bg-[var(--warning)]/10 text-[var(--warning)] border-[var(--warning)]/30'
                       : 'bg-[var(--panel)] text-[var(--muted)] border-[var(--line)] hover:text-[var(--text)]'
@@ -326,7 +326,7 @@ export const AdminCmsProjects: React.FC = () => {
 
               <div className="absolute bottom-3 left-3 right-3">
                 <div className="text-[11px] font-sans text-[var(--text)]/80">{project.client}</div>
-                <div className="text-base font-semibold font-display text-[var(--text)] truncate">
+                <div className="text-base font-semibold font-sans text-[var(--text)] truncate">
                   {project.title}
                 </div>
               </div>
@@ -364,7 +364,7 @@ export const AdminCmsProjects: React.FC = () => {
                 <div className="flex items-center gap-1.5">
                   <button
                     onClick={() => handleOpenEdit(project)}
-                    className="p-1.5 rounded-lg bg-[var(--panel)] hover:bg-[var(--panel-hover)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] transition-colors"
+                    className="p-1.5 rounded-control bg-[var(--panel)] hover:bg-[var(--panel-hover)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] transition-colors"
                     title="Edit Case Study"
                   >
                     <Edit3 size={13} />
@@ -372,7 +372,7 @@ export const AdminCmsProjects: React.FC = () => {
 
                   <button
                     onClick={() => handleDelete(project.id, project.title)}
-                    className="p-1.5 rounded-lg bg-[var(--panel)] hover:bg-[var(--accent)]/10 text-[var(--muted)] hover:text-[var(--danger)] border border-[var(--line)] hover:border-[var(--danger)]/30 transition-colors"
+                    className="p-1.5 rounded-control bg-[var(--panel)] hover:bg-[var(--accent)]/10 text-[var(--muted)] hover:text-[var(--danger)] border border-[var(--line)] hover:border-[var(--danger)]/30 transition-colors"
                     title="Delete Case Study"
                   >
                     <Trash2 size={13} />
@@ -392,14 +392,14 @@ export const AdminCmsProjects: React.FC = () => {
             <div className="flex items-center justify-between pb-4 border-b border-[var(--line)] mb-6">
               <div className="flex items-center gap-3">
                 <FolderKanban className="text-[var(--danger)]" size={20} />
-                <h2 className="text-lg font-semibold font-display text-[var(--text)]">
+                <h2 className="text-lg font-semibold font-sans text-[var(--text)]">
                   {editingProject.title ? `Edit: ${editingProject.title}` : 'Add New Case Study'}
                 </h2>
               </div>
 
               <div className="flex items-center gap-3">
                 {/* Modal Tab Switcher */}
-                <div className="flex items-center rounded-lg bg-[var(--panel)] border border-[var(--line)] p-0.5">
+                <div className="flex items-center rounded-control bg-[var(--panel)] border border-[var(--line)] p-0.5">
                   <button
                     type="button"
                     onClick={() => setModalTab('details')}
@@ -423,7 +423,7 @@ export const AdminCmsProjects: React.FC = () => {
 
                 <button
                   onClick={() => setIsModalOpen(false)}
-                  className="p-1.5 rounded-lg bg-[var(--panel)] hover:bg-[var(--panel-hover)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)]"
+                  className="p-1.5 rounded-control bg-[var(--panel)] hover:bg-[var(--panel-hover)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)]"
                 >
                   <X size={15} />
                 </button>
@@ -444,7 +444,7 @@ export const AdminCmsProjects: React.FC = () => {
                     </div>
                     <div className="absolute bottom-3 left-3 right-3">
                       <div className="text-[10px] text-[var(--text)]/80">{editingProject.client || 'Client Name'}</div>
-                      <div className="text-base font-semibold font-display text-[var(--text)] truncate">
+                      <div className="text-base font-semibold font-sans text-[var(--text)] truncate">
                         {editingProject.title || 'Untitled Case Study'}
                       </div>
                     </div>
@@ -463,7 +463,7 @@ export const AdminCmsProjects: React.FC = () => {
                     {editingProject.impact && editingProject.impact.length > 0 && (
                       <div className="grid grid-cols-2 gap-2 pt-2 border-t border-[var(--line)]">
                         {editingProject.impact.map((imp, idx) => (
-                          <div key={idx} className="bg-[var(--panel)] p-2 rounded-lg border border-[var(--line)]">
+                          <div key={idx} className="bg-[var(--panel)] p-2 rounded-control border border-[var(--line)]">
                             <div className="text-[9px] text-[var(--muted)] normal-case">{imp.label}</div>
                             <div className="text-xs font-semibold text-[var(--success)]">{imp.value}</div>
                           </div>
@@ -548,7 +548,7 @@ export const AdminCmsProjects: React.FC = () => {
                   >
                     <div className="flex flex-col items-center justify-center gap-2">
                       {editingProject.image ? (
-                        <div className="relative w-36 h-20 rounded-lg overflow-hidden border border-[var(--line)] mb-1">
+                        <div className="relative w-36 h-20 rounded-control overflow-hidden border border-[var(--line)] mb-1">
                           <img src={editingProject.image} alt="Preview" className="w-full h-full object-cover" />
                         </div>
                       ) : (
@@ -621,7 +621,7 @@ export const AdminCmsProjects: React.FC = () => {
                     {editingProject.technologies.map((tech, idx) => (
                       <span
                         key={idx}
-                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[var(--panel)] border border-[var(--line)] text-[var(--text)] text-[11px]"
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-control bg-[var(--panel)] border border-[var(--line)] text-[var(--text)] text-[11px]"
                       >
                         <span>{tech}</span>
                         <button
@@ -665,7 +665,7 @@ export const AdminCmsProjects: React.FC = () => {
                   {editingProject.impact && editingProject.impact.length > 0 && (
                     <div className="flex flex-wrap gap-2">
                       {editingProject.impact.map((imp, idx) => (
-                        <div key={idx} className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[var(--panel)] border border-[var(--line)]">
+                        <div key={idx} className="flex items-center gap-2 px-3 py-1.5 rounded-control bg-[var(--panel)] border border-[var(--line)]">
                           <span className="text-[var(--muted)]">{imp.label}:</span>
                           <span className="text-[var(--success)] font-semibold">{imp.value}</span>
                           <button
