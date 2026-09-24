@@ -199,7 +199,7 @@ export const AdminCmsServices: React.FC = () => {
             <Cpu size={14} />
             <span>Service Catalog & Execution Engine</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-sans font-semibold text-[var(--text)] tracking-tight flex items-center gap-3">
+          <h1 className="ams-page-title">
             <span>Agency Services (SEO & Dev)</span>
           </h1>
           <p className="text-xs sm:text-sm text-[var(--muted)] mt-1">
@@ -241,7 +241,7 @@ export const AdminCmsServices: React.FC = () => {
             <div className="text-xs font-sans text-[var(--muted)]">SEO & Growth Services</div>
             <div className="text-xl font-sans font-semibold text-[var(--text)] mt-0.5">3 Modules</div>
           </div>
-          <div className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-400">
+          <div className="w-8 h-8 rounded-control bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-400">
             <SearchCode size={16} />
           </div>
         </div>
@@ -251,7 +251,7 @@ export const AdminCmsServices: React.FC = () => {
             <div className="text-xs font-sans text-[var(--muted)]">Development & Cloud</div>
             <div className="text-xl font-sans font-semibold text-[var(--text)] mt-0.5">5 Stacks</div>
           </div>
-          <div className="w-8 h-8 rounded-lg bg-[var(--accent)]/10 border border-[var(--accent)]/30 flex items-center justify-center text-[var(--accent)]">
+          <div className="w-8 h-8 rounded-control bg-[var(--accent)]/10 border border-[var(--accent)]/30 flex items-center justify-center text-[var(--accent)]">
             <FileCode2 size={16} />
           </div>
         </div>
@@ -261,7 +261,7 @@ export const AdminCmsServices: React.FC = () => {
             <div className="text-xs font-sans text-[var(--muted)]">UI/UX Design Systems</div>
             <div className="text-xl font-sans font-semibold text-[var(--text)] mt-0.5">4 Systems</div>
           </div>
-          <div className="w-8 h-8 rounded-lg bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400">
+          <div className="w-8 h-8 rounded-control bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400">
             <PenTool size={16} />
           </div>
         </div>
@@ -271,7 +271,7 @@ export const AdminCmsServices: React.FC = () => {
             <div className="text-xs font-sans text-[var(--muted)]">Standard Delivery SLA</div>
             <div className="text-xl font-sans font-semibold text-emerald-400 mt-0.5">7 - 14 Days</div>
           </div>
-          <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+          <div className="w-8 h-8 rounded-control bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
             <ShieldCheck size={16} />
           </div>
         </div>
@@ -284,7 +284,7 @@ export const AdminCmsServices: React.FC = () => {
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-sans transition-all ${
+              className={`px-3 py-1.5 rounded-control text-xs font-sans transition-all ${
                 selectedCategory === cat
                   ? 'bg-[var(--accent)] text-[var(--text)] font-semibold shadow-none'
                   : 'text-[var(--muted)] hover:text-[var(--text)] hover:bg-[var(--panel)]'
@@ -342,7 +342,7 @@ export const AdminCmsServices: React.FC = () => {
                 </div>
                 <div className="flex flex-wrap gap-1.5">
                   {item.capabilities.slice(0, 3).map((c, idx) => (
-                    <span key={idx} className="text-[10px] font-sans px-2 py-0.5 rounded-lg bg-[var(--panel)] text-[#F8FAFC] border border-[var(--line)]">
+                    <span key={idx} className="text-[10px] font-sans px-2 py-0.5 rounded-control bg-[var(--panel)] text-[#F8FAFC] border border-[var(--line)]">
                       {c.title || c.titleId}
                     </span>
                   ))}
@@ -368,7 +368,7 @@ export const AdminCmsServices: React.FC = () => {
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setSelectedServiceForDetail(item)}
-                  className="px-2.5 py-1 rounded-lg bg-[var(--panel)] hover:bg-[var(--panel-hover)] border border-[var(--line)] text-[var(--text)] text-[11px] font-sans flex items-center gap-1 transition-colors"
+                  className="px-2.5 py-1 rounded-control bg-[var(--panel)] hover:bg-[var(--panel-hover)] border border-[var(--line)] text-[var(--text)] text-[11px] font-sans flex items-center gap-1 transition-colors"
                 >
                   <Eye size={12} className="text-[var(--muted)]" />
                   <span>Inspect</span>
@@ -377,7 +377,7 @@ export const AdminCmsServices: React.FC = () => {
                   href={`/services/${item.slug}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-2.5 py-1 rounded-lg bg-[var(--accent)]/10 hover:bg-[var(--accent)]/20 text-[var(--accent)] border border-[var(--accent)]/30 text-[11px] font-sans flex items-center gap-1 transition-colors"
+                  className="px-2.5 py-1 rounded-control bg-[var(--accent)]/10 hover:bg-[var(--accent)]/20 text-[var(--accent)] border border-[var(--accent)]/30 text-[11px] font-sans flex items-center gap-1 transition-colors"
                 >
                   <span>Live</span>
                   <ExternalLink size={11} />
@@ -395,7 +395,7 @@ export const AdminCmsServices: React.FC = () => {
           <div className="bg-[var(--panel)] border border-[var(--line)] rounded-card w-full max-w-2xl shadow-none p-4 sm:p-6 relative max-h-[90vh] overflow-y-auto custom-scrollbar animate-in zoom-in-95 duration-150">
             <button
               onClick={() => setSelectedServiceForDetail(null)}
-              className="absolute top-4 right-4 p-1.5 rounded-lg text-[var(--muted)] hover:text-[var(--text)] bg-[var(--panel)] border border-[var(--line)]"
+              className="absolute top-4 right-4 p-1.5 rounded-control text-[var(--muted)] hover:text-[var(--text)] bg-[var(--panel)] border border-[var(--line)]"
             >
               <X size={16} />
             </button>
@@ -508,7 +508,7 @@ export const AdminCmsServices: React.FC = () => {
           <div className="bg-[var(--panel)] border border-[var(--line)] rounded-card w-full max-w-lg shadow-none p-4 sm:p-6 relative max-h-[90vh] overflow-y-auto custom-scrollbar animate-in zoom-in-95 duration-150">
             <button
               onClick={() => setIsAddModalOpen(false)}
-              className="absolute top-4 right-4 p-1.5 rounded-lg text-[var(--muted)] hover:text-[var(--text)] bg-[var(--panel)] border border-[var(--line)]"
+              className="absolute top-4 right-4 p-1.5 rounded-control text-[var(--muted)] hover:text-[var(--text)] bg-[var(--panel)] border border-[var(--line)]"
             >
               <X size={16} />
             </button>
@@ -597,7 +597,7 @@ export const AdminCmsServices: React.FC = () => {
                 </div>
                 <div className="space-y-1.5 max-h-32 overflow-y-auto custom-scrollbar">
                   {tempCapabilities.map((cap, idx) => (
-                    <div key={idx} className="flex items-center justify-between p-2 rounded-lg bg-[var(--panel)] border border-[var(--line)] text-[11px]">
+                    <div key={idx} className="flex items-center justify-between p-2 rounded-control bg-[var(--panel)] border border-[var(--line)] text-[11px]">
                       <span className="text-[var(--text)] truncate">{cap}</span>
                       <button
                         type="button"
