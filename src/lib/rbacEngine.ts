@@ -231,12 +231,14 @@ const MODULE_PERMISSION_MAP: Record<string, keyof ServerPermissions | 'authentic
   cms_projects: 'canManageCmsContent',
   testimonials: 'canManageCmsContent',
   settings: 'authenticated',
+  timelogs: 'authenticated',
   rbac: 'canManageAdminAccounts'
 };
 
 const MODULE_ANY_PERMISSION_MAP: Record<string, Array<keyof ServerPermissions>> = {
   clients: ['canManageClients', 'canManageCrm'],
   documents: ['canManageProjects', 'canManageCrm', 'canViewFinancials', 'canViewSecurityAuditLogs'],
+  timelogs: ['canManageProjects', 'canManageKanbanTasks'],
   projects: ['canManageProjects', 'canManageKanbanTasks'],
   approvals: ['canApproveBudgets', 'canManageProjects', 'canViewFinancials'],
   settings: ['canManageAdminAccounts', 'canAccessServerAndApi', 'canViewSecurityAuditLogs', 'canManageCrm', 'canManageProjects', 'canViewFinancials']
