@@ -740,7 +740,7 @@ export const AdminInvoicing: React.FC = () => {
               expenses.map((exp) => (
                 <div 
                   key={exp.id}
-                  className="bg-[var(--panel)] border border-[var(--line)] rounded-card p-4 space-y-3 shadow-lg"
+                  className="bg-[var(--panel)] border border-[var(--line)] rounded-card p-4 space-y-3"
                 >
                   <div className="flex items-center justify-between">
                     <span className="px-2.5 py-1 rounded-lg bg-[var(--warning)]/10 text-amber-300 border border-amber-500/20 text-[10px] font-sans font-semibold">
