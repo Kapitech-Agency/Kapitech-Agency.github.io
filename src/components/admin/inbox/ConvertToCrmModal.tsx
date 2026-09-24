@@ -300,7 +300,7 @@ export const ConvertToCrmModal: React.FC<ConvertToCrmModalProps> = ({
             type="button"
             disabled={isSubmitting}
             onClick={handleConvert}
-            className="px-5 py-2.5 rounded-[var(--k-control-radius)] bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-sans font-bold transition-all flex items-center gap-2 shadow-lg shadow-emerald-500/20"
+            className="px-5 py-2.5 rounded-[var(--k-control-radius)] bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-sans font-medium transition-colors flex items-center gap-2 shadow-none"
           >
             <span>{language === 'id' ? 'Konfirmasi & Buat Lead CRM' : 'Confirm & Create CRM Deal'}</span>
             <ArrowRight size={14} />
