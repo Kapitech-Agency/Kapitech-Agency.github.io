@@ -67,6 +67,7 @@ export const Contact = () => {
     // Design
     'Desain UI/UX (Web & Mobile)',
     'Desain Website & Landing Page',
+    'Desain Aplikasi Mobile (iOS/Android)',
     'Redesain Website & Modernisasi',
     'Audit UX/UI Produk Digital',
     // Development
@@ -297,7 +298,7 @@ export const Contact = () => {
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
             {/* Left Column: Direct Info & Location */}
-            <div className="kapi-contact-info lg:col-span-5 space-y-6 sm:space-y-8">
+            <div className="lg:col-span-5 space-y-6 sm:space-y-8">
               <div>
                 <span className="text-xs font-sans uppercase tracking-wider text-brand-red block mb-2 font-semibold">
                   {language === 'id' ? 'Informasi Perusahaan' : 'Corporate Information'}
@@ -422,7 +423,7 @@ export const Contact = () => {
             </div>
 
             {/* Right Column: Interactive Consultation Form */}
-            <div className="kapi-contact-form lg:col-span-7">
+            <div className="lg:col-span-7">
               <div className="p-5 sm:p-8 md:p-12 rounded-2xl sm:rounded-[24px] bg-[var(--k-surface)] border border-[var(--k-border)]">
                 {isSubmitted ? (
                   <div className="text-center py-12 sm:py-16 space-y-4">
@@ -492,18 +493,7 @@ export const Contact = () => {
                       <label className="block text-xs font-sans text-[var(--k-text-secondary)] uppercase mb-2">
                         {language === 'id' ? 'Layanan apa yang Anda butuhkan?' : 'What services do you need?'}
                       </label>
-                      <div className="kapi-service-select-mobile">
-                        <select
-                          value={selectedServices[0] || ''}
-                          onChange={(e) => setSelectedServices(e.target.value ? [e.target.value] : [])}
-                          className="kapi-form-control"
-                          aria-label={language === 'id' ? 'Pilih layanan' : 'Select a service'}
-                        >
-                          <option value="">{language === 'id' ? 'Pilih layanan' : 'Select a service'}</option>
-                          {serviceOptions.map((srv) => <option key={srv} value={srv}>{srv}</option>)}
-                        </select>
-                      </div>
-                      <div className="kapi-service-options-desktop grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         {serviceOptions.map((srv) => (
                           <button
                             type="button"
