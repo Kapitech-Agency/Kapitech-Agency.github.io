@@ -792,7 +792,13 @@ export const AdminInvoicing: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-[var(--line)]">
-                {expenses.map((exp) => (
+                {expenses.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="py-12 px-4 text-center text-xs font-sans text-[var(--muted)]">
+                      {language === 'id' ? 'Tidak ada catatan pengeluaran yang sesuai kriteria.' : 'No expense records found matching criteria.'}
+                    </td>
+                  </tr>
+                ) : expenses.map((exp) => (
                   <tr key={exp.id} className="hover:bg-panel transition-colors">
                     <td className="py-3 px-4 text-[var(--muted)]">{exp.date}</td>
                     <td className="py-3 px-4">
