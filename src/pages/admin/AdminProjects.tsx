@@ -574,7 +574,7 @@ export const AdminProjects: React.FC = () => {
                   PIC: <strong className="text-[var(--text)]">{selectedProject.clientName}</strong> ({selectedProject.clientCompany})
                 </span>
               </div>
-              <h2 className="text-xl font-display font-semibold text-[var(--text)] tracking-tight">
+              <h2 className="text-xl font-sans font-semibold text-[var(--text)] tracking-tight">
                 {selectedProject.name}
               </h2>
             </div>
@@ -713,7 +713,7 @@ export const AdminProjects: React.FC = () => {
         <div className="space-y-4">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-3 border-b border-[var(--line)]">
             <div>
-              <h3 className="text-base font-display font-semibold text-[var(--text)] flex items-center gap-2">
+              <h3 className="text-base font-sans font-semibold text-[var(--text)] flex items-center gap-2">
                 <ListTodo className="text-[var(--danger)]" size={18} />
                 <span>Task Execution Board</span>
               </h3>
@@ -905,7 +905,7 @@ export const AdminProjects: React.FC = () => {
             <div className="sticky top-0 z-20 bg-[var(--panel)]/95  px-5 sm:px-6 py-4 border-b border-[var(--line)] flex items-center justify-between shrink-0">
               <div className="flex items-center gap-2">
                 <ListTodo className="text-[var(--danger)]" size={18} />
-                <span className="font-display font-semibold text-[var(--text)] text-base">Task Details</span>
+                <span className="font-sans font-semibold text-[var(--text)] text-base">Task Details</span>
               </div>
               <button
                 onClick={() => setActiveTaskDrawer(null)}
@@ -926,7 +926,7 @@ export const AdminProjects: React.FC = () => {
                     Created {new Date(activeTaskDrawer.createdAt).toLocaleDateString()}
                   </span>
                 </div>
-                <h3 className="text-lg font-semibold font-display text-[var(--text)]">
+                <h3 className="text-lg font-semibold font-sans text-[var(--text)]">
                   {activeTaskDrawer.title}
                 </h3>
               </div>
@@ -944,7 +944,7 @@ export const AdminProjects: React.FC = () => {
                       }}
                       className={`px-2.5 py-1.5 rounded-card border text-[11px] transition-all font-semibold ${
                         activeTaskDrawer.status === col.id
-                          ? 'bg-[var(--accent)] text-[var(--text)] border-[var(--accent)] shadow-sm'
+                          ? 'bg-[var(--accent)] text-[var(--text)] border-[var(--accent)] shadow-none'
                           : 'bg-[var(--panel)] text-[var(--muted)] border-[var(--line)] hover:text-[var(--text)]'
                       }`}
                     >
@@ -1068,7 +1068,7 @@ export const AdminProjects: React.FC = () => {
           <div className="bg-[var(--panel)] border-0 sm:border sm:border-[var(--line)] rounded-none sm:rounded-card w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-2xl shadow-none flex flex-col overflow-hidden animate-in zoom-in-95 duration-150">
             {/* Sticky Header */}
             <div className="sticky top-0 z-20 bg-[var(--panel)]/95  px-5 sm:px-6 py-4 border-b border-[var(--line)] flex items-center justify-between shrink-0">
-              <h3 className="font-display font-semibold text-[var(--text)] text-base sm:text-lg flex items-center gap-2">
+              <h3 className="font-sans font-semibold text-[var(--text)] text-base sm:text-lg flex items-center gap-2">
                 <Layers className="text-[var(--danger)]" size={20} />
                 <span>{editingProject ? 'Edit Project' : 'Create New Agency Project'}</span>
               </h3>
@@ -1238,7 +1238,7 @@ export const AdminProjects: React.FC = () => {
           <div className="bg-[var(--panel)] border-0 sm:border sm:border-[var(--line)] rounded-none sm:rounded-card w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-lg shadow-none flex flex-col overflow-hidden animate-in zoom-in-95 duration-150">
             {/* Sticky Header */}
             <div className="sticky top-0 z-20 bg-[var(--panel)]/95  px-5 sm:px-6 py-4 border-b border-[var(--line)] flex items-center justify-between shrink-0">
-              <h3 className="font-display font-semibold text-[var(--text)] text-base flex items-center gap-2">
+              <h3 className="font-sans font-semibold text-[var(--text)] text-base flex items-center gap-2">
                 <ListTodo className="text-[var(--danger)]" size={18} />
                 <span>Add Task to Sprint</span>
               </h3>
