@@ -1762,3 +1762,49 @@ body {
       calc(100% - 11px) 50%;
   }
 }
+
+
+/* Premium mobile module ergonomics */
+.ams-table-scroll {
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  overscroll-behavior-inline: contain;
+}
+.ams-kanban-scroll {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-inline: contain;
+  scrollbar-width: thin;
+}
+@media (max-width: 767px) {
+  .ams-table-scroll,
+  .ams-shell .overflow-x-auto {
+    max-width: 100%;
+    border-radius: 12px;
+    scrollbar-width: thin;
+  }
+  .ams-kanban-scroll {
+    min-width: max-content;
+    padding-bottom: 6px;
+    scroll-snap-type: x proximity;
+  }
+  .ams-kanban-scroll > * {
+    scroll-snap-align: start;
+  }
+  .ams-shell .task-card,
+  .ams-shell .kanban-card {
+    touch-action: pan-y;
+  }
+  .ams-shell [class*="overflow-x-auto"] table {
+    min-width: 680px;
+  }
+  .ams-shell [class*="overflow-x-auto"] th,
+  .ams-shell [class*="overflow-x-auto"] td {
+    white-space: nowrap;
+  }
+}
+@media (max-width: 390px) {
+  .ams-shell .task-card,
+  .ams-shell .kanban-card {
+    min-width: 272px;
+  }
+}
