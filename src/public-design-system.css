@@ -2557,3 +2557,427 @@
     gap:16px !important;
   }
 }
+
+
+/* ==========================================================================
+   FINAL SYSTEM PASS v6 — spacing + type scale + responsive layout
+   One rhythm, one hierarchy, one container system.
+   ========================================================================== */
+
+.kapi-public-shell{
+  --space-1:4px;
+  --space-2:8px;
+  --space-3:12px;
+  --space-4:16px;
+  --space-5:20px;
+  --space-6:24px;
+  --space-7:32px;
+  --space-8:40px;
+  --space-9:48px;
+  --space-10:64px;
+  --space-11:80px;
+  --space-12:96px;
+  --space-13:120px;
+  --type-xs:12px;
+  --type-sm:14px;
+  --type-body:16px;
+  --type-lg:20px;
+  --type-xl:28px;
+  --type-2xl:36px;
+  --type-3xl:48px;
+  --type-display:clamp(48px,6.2vw,92px);
+}
+
+/* Container: never let nested Tailwind widths create a second gutter. */
+.kapi-public-shell .max-w-7xl,
+.kapi-public-shell .max-w-6xl,
+.kapi-public-shell .max-w-5xl,
+.kapi-public-shell .max-w-4xl,
+.kapi-public-shell .max-w-3xl{
+  margin-inline:auto;
+}
+
+/* Semantic type scale */
+.kapi-public-shell p{
+  font-size:var(--type-body);
+  line-height:1.6;
+}
+.kapi-public-shell :where(.text-xs){
+  font-size:var(--type-xs) !important;
+  line-height:1.45 !important;
+}
+.kapi-public-shell :where(.text-sm){
+  font-size:var(--type-sm) !important;
+  line-height:1.5 !important;
+}
+.kapi-public-shell :where(.text-base){
+  font-size:var(--type-body) !important;
+  line-height:1.55 !important;
+}
+.kapi-public-shell :where(.text-lg){
+  font-size:var(--type-lg) !important;
+  line-height:1.35 !important;
+}
+.kapi-public-shell :where(.text-xl){
+  font-size:var(--type-xl) !important;
+  line-height:1.2 !important;
+}
+.kapi-public-shell :where(.text-2xl){
+  font-size:var(--type-2xl) !important;
+  line-height:1.1 !important;
+}
+.kapi-public-shell :where(.text-3xl,.text-4xl){
+  font-size:clamp(30px,3.4vw,48px) !important;
+  line-height:1.05 !important;
+}
+.kapi-public-shell :where(.text-5xl,.text-6xl,.text-7xl,.text-8xl,.text-9xl){
+  font-size:var(--type-display) !important;
+  line-height:.96 !important;
+  letter-spacing:-.065em !important;
+}
+
+/* Headings use semantic hierarchy even when page JSX mixes utility sizes. */
+.kapi-public-shell h1{
+  font-size:var(--type-display);
+  line-height:.96;
+  letter-spacing:-.065em;
+  font-weight:700;
+  text-wrap:balance;
+}
+.kapi-public-shell h2{
+  font-size:clamp(30px,3.4vw,48px);
+  line-height:1.05;
+  letter-spacing:-.045em;
+  font-weight:700;
+  text-wrap:balance;
+}
+.kapi-public-shell h3{
+  font-size:clamp(20px,2vw,28px);
+  line-height:1.18;
+  letter-spacing:-.03em;
+  font-weight:700;
+  text-wrap:balance;
+}
+.kapi-public-shell h4{
+  font-size:16px;
+  line-height:1.3;
+  letter-spacing:-.015em;
+  font-weight:700;
+}
+.kapi-public-shell label{
+  font-size:12px !important;
+  line-height:1.4 !important;
+  font-weight:600;
+}
+
+/* Section rhythm: generous on desktop, compressed on mobile. */
+.kapi-public-shell section:not(.kapi-home-hero):not(.kapi-page-hero){
+  padding-top:clamp(64px,7vw,104px);
+  padding-bottom:clamp(64px,7vw,104px);
+}
+.kapi-public-shell section:not(.kapi-home-hero):not(.kapi-page-hero) > .max-w-7xl,
+.kapi-public-shell section:not(.kapi-home-hero):not(.kapi-page-hero) > .max-w-6xl,
+.kapi-public-shell section:not(.kapi-home-hero):not(.kapi-page-hero) > .max-w-5xl{
+  width:min(calc(100% - 2 * var(--pub-gutter)),var(--pub-content));
+}
+
+/* Standard section intro spacing */
+.kapi-public-shell section :where(.mb-10,.mb-12,.mb-14,.mb-16){
+  margin-bottom:var(--space-8) !important;
+}
+.kapi-public-shell section :where(.mb-5,.mb-6,.mb-8){
+  margin-bottom:var(--space-6) !important;
+}
+.kapi-public-shell section :where(.gap-10,.gap-12,.gap-14,.gap-16){
+  gap:var(--space-8) !important;
+}
+.kapi-public-shell section :where(.gap-6,.gap-7,.gap-8){
+  gap:var(--space-6) !important;
+}
+
+/* Cards: consistent internal geometry */
+.kapi-public-shell .kapi-card,
+.kapi-public-shell .kapi-inset-card{
+  border-radius:var(--pub-radius-lg);
+}
+.kapi-public-shell .kapi-card > :where(.p-5,.p-6,.p-7,.p-8),
+.kapi-public-shell .kapi-inset-card > :where(.p-5,.p-6,.p-7,.p-8){
+  padding:24px !important;
+}
+.kapi-public-shell :where(.rounded-2xl,.rounded-\[24px\]){
+  border-radius:var(--pub-radius-lg) !important;
+}
+
+/* Grid rhythm */
+.kapi-public-shell .kapi-grid-12{
+  gap:24px;
+}
+.kapi-public-shell .grid{
+  min-width:0;
+}
+.kapi-public-shell .grid > *{
+  min-width:0;
+}
+
+/* Navigation geometry */
+.kapi-public-shell .kapi-public-nav,
+.kapi-public-shell .kapi-public-nav .kapi-nav-inner{
+  height:72px;
+}
+.kapi-public-shell .kapi-public-nav-links{
+  gap:20px;
+}
+
+/* Hero proportions */
+.kapi-public-shell .kapi-home-hero{
+  min-height:min(820px,calc(100svh - 8px));
+  padding-top:clamp(120px,15vh,168px);
+  padding-bottom:clamp(72px,9vh,104px);
+}
+.kapi-public-shell .kapi-page-hero{
+  min-height:440px;
+  padding-top:132px;
+  padding-bottom:64px;
+}
+.kapi-public-shell .kapi-home-content{
+  max-width:960px;
+}
+.kapi-public-shell .kapi-home-content > p{
+  max-width:680px;
+  margin-top:24px;
+  font-size:clamp(16px,1.35vw,19px);
+  line-height:1.65;
+}
+.kapi-public-shell .kapi-home-content > div:last-child{
+  margin-top:28px;
+}
+
+/* Service / feature layouts: prevent accidental giant cards */
+.kapi-public-shell .kapi-stat-card{
+  min-height:180px;
+}
+.kapi-public-shell .kapi-card-title{
+  font-size:18px;
+  line-height:1.3;
+}
+.kapi-public-shell .kapi-card-desc{
+  font-size:14px;
+  line-height:1.6;
+}
+
+/* Footer rhythm */
+.kapi-public-shell .kapi-public-footer{
+  padding-top:72px !important;
+  padding-bottom:32px !important;
+}
+.kapi-public-shell .kapi-public-footer h2{
+  font-size:clamp(30px,3.6vw,48px);
+}
+.kapi-public-shell .kapi-public-footer h4{
+  font-size:12px;
+  line-height:1.4;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+}
+.kapi-public-shell .kapi-public-footer ul{
+  margin:0;
+  padding:0;
+}
+.kapi-public-shell .kapi-public-footer li{
+  line-height:1.45;
+}
+
+/* Forms: same vertical rhythm everywhere */
+.kapi-public-shell .kapi-contact-form form{
+  gap:24px;
+}
+.kapi-public-shell .kapi-form-control,
+.kapi-public-shell .kapi-contact-form input,
+.kapi-public-shell .kapi-contact-form textarea,
+.kapi-public-shell .kapi-contact-form select{
+  min-height:48px;
+  font-size:16px !important;
+  line-height:1.4 !important;
+}
+.kapi-public-shell .kapi-contact-form textarea{
+  min-height:132px;
+  padding-top:14px;
+  padding-bottom:14px;
+}
+.kapi-public-shell .kapi-choice-button{
+  min-height:48px !important;
+  padding:10px 13px !important;
+  border-radius:12px !important;
+  font-size:14px !important;
+  line-height:1.35 !important;
+}
+
+/* Prevent common long-copy layout failures */
+.kapi-public-shell :where(a,button,span,p,h1,h2,h3,h4){
+  overflow-wrap:break-word;
+}
+.kapi-public-shell button{
+  white-space:normal;
+}
+.kapi-public-shell :where(.truncate){
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+@media (max-width:767px){
+  .kapi-public-shell{
+    --pub-gutter:16px;
+  }
+
+  .kapi-public-shell section:not(.kapi-home-hero):not(.kapi-page-hero){
+    padding-top:52px !important;
+    padding-bottom:52px !important;
+  }
+
+  .kapi-public-shell .kapi-home-hero{
+    min-height:calc(100svh - 8px);
+    padding:104px 16px 56px;
+    align-items:center;
+  }
+
+  .kapi-public-shell .kapi-page-hero{
+    min-height:340px;
+    padding:112px 16px 48px;
+  }
+
+  .kapi-public-shell .kapi-display-title,
+  .kapi-public-shell h1,
+  .kapi-public-shell :where(.text-5xl,.text-6xl,.text-7xl,.text-8xl,.text-9xl){
+    font-size:clamp(38px,11.5vw,52px) !important;
+    line-height:.98 !important;
+    letter-spacing:-.055em !important;
+  }
+
+  .kapi-public-shell h2,
+  .kapi-public-shell .kapi-section-title,
+  .kapi-public-shell :where(.text-3xl,.text-4xl){
+    font-size:clamp(28px,8vw,36px) !important;
+    line-height:1.06 !important;
+    letter-spacing:-.045em !important;
+  }
+
+  .kapi-public-shell h3{
+    font-size:21px;
+  }
+
+  .kapi-public-shell p{
+    font-size:15px;
+    line-height:1.58;
+  }
+
+  .kapi-public-shell .kapi-page-description{
+    margin-top:16px;
+    font-size:15px;
+    line-height:1.6;
+  }
+
+  .kapi-public-shell .kapi-hero-eyebrow,
+  .kapi-public-shell .kapi-hero-status,
+  .kapi-public-shell .kapi-status{
+    margin-bottom:16px;
+    font-size:10px;
+  }
+
+  .kapi-public-shell .kapi-home-content > p{
+    margin-top:18px;
+    font-size:16px;
+    line-height:1.55;
+  }
+
+  .kapi-public-shell .kapi-home-content > div:last-child{
+    margin-top:24px;
+  }
+
+  .kapi-public-shell .kapi-grid-12{
+    grid-template-columns:1fr;
+    gap:16px;
+  }
+
+  .kapi-public-shell .kapi-card > :where(.p-5,.p-6,.p-7,.p-8),
+  .kapi-public-shell .kapi-inset-card > :where(.p-5,.p-6,.p-7,.p-8){
+    padding:20px !important;
+  }
+
+  .kapi-public-shell .kapi-stat-card{
+    min-height:0;
+    padding:20px;
+  }
+
+  .kapi-public-shell .kapi-public-footer{
+    padding-top:52px !important;
+  }
+
+  .kapi-public-shell .kapi-public-footer > .max-w-7xl{
+    width:calc(100% - 32px);
+  }
+
+  .kapi-public-shell .kapi-public-footer .grid{
+    grid-template-columns:1fr !important;
+    gap:28px !important;
+    margin-bottom:40px !important;
+  }
+
+  .kapi-public-shell .kapi-contact-form form{
+    gap:20px;
+  }
+
+  .kapi-public-shell .kapi-contact-form > div{
+    padding:20px !important;
+    border-radius:16px !important;
+  }
+
+  .kapi-public-shell .kapi-contact-form .grid{
+    gap:16px !important;
+  }
+
+  .kapi-public-shell .kapi-contact-form input,
+  .kapi-public-shell .kapi-contact-form textarea,
+  .kapi-public-shell .kapi-contact-form select{
+    font-size:16px !important;
+  }
+}
+
+@media (max-width:420px){
+  .kapi-public-shell{
+    --pub-gutter:14px;
+  }
+
+  .kapi-public-shell section:not(.kapi-home-hero):not(.kapi-page-hero){
+    padding-top:44px !important;
+    padding-bottom:44px !important;
+  }
+
+  .kapi-public-shell .kapi-home-hero{
+    padding:96px 14px 48px;
+  }
+
+  .kapi-public-shell .kapi-page-hero{
+    min-height:316px;
+    padding:100px 14px 40px;
+  }
+
+  .kapi-public-shell .kapi-display-title,
+  .kapi-public-shell h1{
+    font-size:clamp(36px,11vw,47px) !important;
+  }
+
+  .kapi-public-shell h2,
+  .kapi-public-shell .kapi-section-title{
+    font-size:28px !important;
+  }
+
+  .kapi-public-shell .kapi-home-content > div:last-child a,
+  .kapi-public-shell .kapi-home-content > div:last-child button{
+    min-height:48px;
+  }
+
+  .kapi-public-shell .kapi-public-footer{
+    padding-top:44px !important;
+  }
+}
