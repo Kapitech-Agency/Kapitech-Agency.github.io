@@ -448,7 +448,7 @@ export const AdminVendors: React.FC = () => {
                         <span 
                           onClick={(e) => handleToggleVettedQuick(vendor, e)}
                           title={language === 'id' ? 'Mitra Terverifikasi Kapitech (Klik untuk ubah)' : 'Kapitech Vetted Talent (Click to toggle)'}
-                          className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[9px] font-sans font-semibold bg-[var(--accent)]/15 text-[var(--danger)] border border-[var(--accent)]/30 cursor-pointer hover:bg-[var(--accent)]/25 transition-colors"
+                          className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[9px] font-sans font-semibold bg-[var(--accent)]/10 text-[var(--accent-text)] border border-[var(--accent)]/30 cursor-pointer hover:bg-[var(--accent)]/15 transition-colors"
                         >
                           <ShieldCheck size={10} />
                           <span>Vetted</span>
@@ -584,7 +584,7 @@ export const AdminVendors: React.FC = () => {
                     <div className="flex items-center gap-2">
                       <h3 className="text-sm font-semibold text-[var(--text)]">{selectedVendor.name}</h3>
                       {(selectedVendor.isVetted ?? true) && (
-                        <span className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[10px] font-sans font-semibold bg-[var(--accent)]/15 text-[var(--danger)] border border-[var(--accent)]/30">
+                        <span className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[10px] font-sans font-semibold bg-[var(--accent)]/10 text-[var(--accent-text)] border border-[var(--accent)]/30">
                           <ShieldCheck size={11} />
                           <span>Vetted</span>
                         </span>
@@ -595,7 +595,7 @@ export const AdminVendors: React.FC = () => {
                 </div>
                 <button
                   onClick={() => setIsDrawerOpen(false)}
-                  className="p-1.5 rounded-lg bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)]"
+                  className="min-h-10 min-w-10 rounded-control bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] flex items-center justify-center"
                 >
                   <X size={15} />
                 </button>
