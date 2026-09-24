@@ -164,7 +164,7 @@ export const FloatingContact = () => {
                   "w-12 h-12 sm:w-14 sm:h-14 min-h-[44px] min-w-[44px] rounded-full flex items-center justify-center text-white shadow-[var(--k-shadow-sm)] transition-all duration-300",
                   isOpen 
                     ? "bg-[var(--k-surface)] border border-[var(--k-border)]" 
-                    : "bg-brand-red shadow-[0_10px_28px_rgba(230,57,70,.28)]"
+                    : "bg-brand-red shadow-[0_10px_28px_rgba(176,0,32,.22)]"
                 )}
               >
                 {isOpen ? <X size={22} /> : <MessageSquare size={22} />}
