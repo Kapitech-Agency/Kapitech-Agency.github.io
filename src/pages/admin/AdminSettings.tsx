@@ -59,6 +59,8 @@ export const AdminSettings: React.FC = () => {
     mfaEnabled: false
   };
   const canAccessServer = session?.user?.stakeholderType === 'Master' || Boolean(session?.user?.permissions?.canAccessServerAndApi);
+  const canManageAdminAccounts = session?.user?.stakeholderType === 'Master' || Boolean(session?.user?.permissions?.canManageAdminAccounts);
+  const canViewAuditLogs = session?.user?.stakeholderType === 'Master' || Boolean(session?.user?.permissions?.canViewSecurityAuditLogs);
 
   // Tab: profile, branding, rbac, security, api, audit
   const paramTab = searchParams.get('tab');
@@ -73,6 +75,9 @@ export const AdminSettings: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'profile' | 'branding' | 'rbac' | 'security' | 'api' | 'audit'>(initialTab);
 
   const handleTabChange = (tab: 'profile' | 'branding' | 'rbac' | 'security' | 'api' | 'audit') => {
+    if (tab === 'rbac' && !canManageAdminAccounts) return;
+    if (tab === 'api' && !canAccessServer) return;
+    if (tab === 'audit' && !canViewAuditLogs) return;
     setActiveTab(tab);
     setSearchParams({ tab });
   };
@@ -405,6 +410,7 @@ export const AdminSettings: React.FC = () => {
 
         <button
           onClick={() => handleTabChange('rbac')}
+           disabled={!canManageAdminAccounts}
           className={`px-4 py-2.5 rounded-xl text-xs font-mono transition-all flex items-center gap-2 shrink-0 min-h-[44px] ${
             activeTab === 'rbac'
               ? 'bg-[#E50914] text-white font-bold shadow-[0_0_12px_rgba(229,9,20,0.25)]'
@@ -429,6 +435,7 @@ export const AdminSettings: React.FC = () => {
 
         <button
           onClick={() => handleTabChange('api')}
+           disabled={!canAccessServer}
           className={`px-4 py-2.5 rounded-xl text-xs font-mono transition-all flex items-center gap-2 shrink-0 min-h-[44px] ${
             activeTab === 'api'
               ? 'bg-[#E50914] text-white font-bold shadow-[0_0_12px_rgba(229,9,20,0.25)]'
@@ -441,6 +448,7 @@ export const AdminSettings: React.FC = () => {
 
         <button
           onClick={() => handleTabChange('audit')}
+           disabled={!canViewAuditLogs}
           className={`px-4 py-2.5 rounded-xl text-xs font-mono transition-all flex items-center gap-2 shrink-0 min-h-[44px] ${
             activeTab === 'audit'
               ? 'bg-[#E50914] text-white font-bold shadow-[0_0_12px_rgba(229,9,20,0.25)]'
@@ -675,7 +683,7 @@ export const AdminSettings: React.FC = () => {
       )}
 
       {/* TAB 3: ROLE MATRIX & ACCOUNTS MANAGEMENT (STAKEHOLDER EXECUTIVE & TEKNISI IT) */}
-      {activeTab === 'rbac' && (
+      {activeTab === 'rbac' && canManageAdminAccounts && (
         <div className="w-full space-y-6">
           {/* Notification banner */}
           {accountActionMessage && (
@@ -1359,7 +1367,7 @@ export const AdminSettings: React.FC = () => {
       )}
 
       {/* TAB 5: API & CLOUD CONNECTIONS */}
-      {activeTab === 'api' && (
+      {activeTab === 'api' && canAccessServer && (
         <div className="w-full max-w-4xl space-y-4">
           {canAccessServer && <ProductionReadinessCard language={language} />}
           {canAccessServer && (
@@ -1456,7 +1464,7 @@ export const AdminSettings: React.FC = () => {
       )}
 
       {/* TAB 6: AUDIT TRAIL */}
-      {activeTab === 'audit' && (
+      {activeTab === 'audit' && canViewAuditLogs && (
         <div className="w-full bg-[#111318] border border-[rgba(255,255,255,0.07)] rounded-2xl p-5 sm:p-8">
           
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-[rgba(255,255,255,0.07)]">
