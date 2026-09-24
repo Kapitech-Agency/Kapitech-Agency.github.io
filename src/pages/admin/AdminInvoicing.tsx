@@ -1300,10 +1300,10 @@ export const AdminInvoicing: React.FC = () => {
       {/* 7. Printable Invoice Preview Slide-Over / Modal (Mobile Fullscreen + Sticky Header) */}
       {previewInvoice && (
         <div className="fixed inset-0 z-50 bg-black/85  flex items-center justify-center p-0 sm:p-4 overflow-y-auto">
-          <div className="bg-white text-zinc-900 rounded-none sm:rounded-card w-full h-full sm:h-auto sm:max-h-[92vh] sm:max-w-2xl shadow-none font-sans relative flex flex-col overflow-hidden">
+          <div className="bg-[var(--panel)] text-[var(--text)] border border-[var(--line)] rounded-none sm:rounded-card w-full h-full sm:h-auto sm:max-h-[92vh] sm:max-w-2xl shadow-none font-sans relative flex flex-col overflow-hidden">
             
             {/* Sticky Header for Preview Modal */}
-            <div className="sticky top-0 z-20 bg-white/95  px-6 py-4 border-b border-zinc-200 flex items-center justify-between shrink-0">
+            <div className="sticky top-0 z-20 bg-[var(--panel)] px-4 sm:px-6 py-4 border-b border-[var(--line)] flex items-center justify-between shrink-0">
               <div className="flex items-center gap-2">
                 <div className="w-7 h-7 rounded-lg bg-zinc-900 flex items-center justify-center p-1 shadow-sm">
                   <img src="/favicon.png" alt="Kapitech" className="w-full h-full object-contain" />
