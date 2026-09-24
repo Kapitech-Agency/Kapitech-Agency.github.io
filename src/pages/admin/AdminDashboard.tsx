@@ -428,7 +428,7 @@ export const AdminDashboard: React.FC = () => {
       {/* GLOBAL TOAST NOTIFICATION BANNER                               */}
       {/* ------------------------------------------------------------- */}
       {notification && (
-        <div className="fixed top-20 right-5 z-50 flex items-center gap-2.5 bg-[var(--panel)] text-[var(--text)] px-4 py-3 rounded-lg border border-[var(--line)] shadow-none">
+        <div className="fixed top-20 right-5 z-50 flex items-center gap-2.5 bg-[var(--panel)] text-[var(--text)] px-4 py-3 rounded-control border border-[var(--line)] shadow-none">
           <Activity size={15} className="text-[var(--accent)]" />
           <span className="text-xs font-sans font-medium">{notification}</span>
         </div>
@@ -488,7 +488,7 @@ export const AdminDashboard: React.FC = () => {
             </button>
             <button
               onClick={() => setPeriodFilter('q3')}
-              className={`px-2.5 py-1 rounded-lg transition-all ${
+              className={`px-2.5 py-1 rounded-control transition-all ${
                 periodFilter === 'q3' 
                   ? 'bg-[var(--accent)] text-[var(--text)] font-semibold' 
                   : 'text-[var(--muted)] hover:text-[var(--text)]'
@@ -498,7 +498,7 @@ export const AdminDashboard: React.FC = () => {
             </button>
             <button
               onClick={() => setPeriodFilter('ytd')}
-              className={`px-2.5 py-1 rounded-lg transition-all ${
+              className={`px-2.5 py-1 rounded-control transition-all ${
                 periodFilter === 'ytd' 
                   ? 'bg-[var(--accent)] text-[var(--text)] font-semibold' 
                   : 'text-[var(--muted)] hover:text-[var(--text)]'
@@ -565,7 +565,7 @@ export const AdminDashboard: React.FC = () => {
               <span className="text-[11px] font-sans normal-case tracking-normal font-semibold">
                 {language === 'id' ? 'Total Pendapatan Realisasi' : 'Gross Realized Revenue'}
               </span>
-              <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-control bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center">
                 <DollarSign size={16} />
               </div>
             </div>
@@ -603,7 +603,7 @@ export const AdminDashboard: React.FC = () => {
               <span className="text-[11px] font-sans normal-case tracking-normal font-semibold">
                 {language === 'id' ? 'Pipeline Deal Aktif' : 'Active CRM Pipeline'}
               </span>
-              <div className="w-8 h-8 rounded-lg bg-[var(--accent)]/10 border border-[var(--accent)]/25 text-[var(--danger)] flex items-center justify-center">
+              <div className="w-8 h-8 rounded-control bg-[var(--accent)]/10 border border-[var(--accent)]/25 text-[var(--danger)] flex items-center justify-center">
                 <Kanban size={16} />
               </div>
             </div>
@@ -639,7 +639,7 @@ export const AdminDashboard: React.FC = () => {
               <span className="text-[11px] font-sans normal-case tracking-normal font-semibold">
                 {language === 'id' ? 'Rasio Konversi & Kemenangan' : 'Conversion & Win Rate'}
               </span>
-              <div className="w-8 h-8 rounded-lg bg-violet-500/10 border border-violet-500/20 text-violet-400 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-control bg-violet-500/10 border border-violet-500/20 text-violet-400 flex items-center justify-center">
                 <Percent size={15} />
               </div>
             </div>
@@ -674,7 +674,7 @@ export const AdminDashboard: React.FC = () => {
               <span className="text-[11px] font-sans normal-case tracking-normal font-semibold">
                 {language === 'id' ? 'Proyek Aktif & SLA Rilis' : 'Active Projects & Delivery SLA'}
               </span>
-              <div className="w-8 h-8 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-control bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 flex items-center justify-center">
                 <Layers size={16} />
               </div>
             </div>
@@ -785,7 +785,7 @@ export const AdminDashboard: React.FC = () => {
                         <span>Progress</span>
                         <span className="text-[var(--text)] font-semibold">{proj.progressPercent}%</span>
                       </div>
-                      <div className="h-1.5 w-full bg-white/[0.07] rounded-full overflow-hidden">
+                      <div className="h-1.5 w-full bg-panel/[0.07] rounded-full overflow-hidden">
                         <div 
                           className="h-full bg-[var(--accent)] rounded-full transition-all duration-500" 
                           style={{ width: `${proj.progressPercent}%` }} 
@@ -905,7 +905,7 @@ export const AdminDashboard: React.FC = () => {
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-0.5 rounded-control bg-[var(--panel)] p-0.5 border border-line text-[10px] font-sans">
               <button
                 onClick={() => setActivityTab('all')}
-                className={`flex-1 py-1 rounded-lg transition-all ${
+                className={`flex-1 py-1 rounded-control transition-all ${
                   activityTab === 'all' ? 'bg-[var(--accent)] text-[var(--text)] font-semibold' : 'text-[var(--muted)] hover:text-[var(--text)]'
                 }`}
               >
@@ -913,7 +913,7 @@ export const AdminDashboard: React.FC = () => {
               </button>
               <button
                 onClick={() => setActivityTab('deals')}
-                className={`flex-1 py-1 rounded-lg transition-all ${
+                className={`flex-1 py-1 rounded-control transition-all ${
                   activityTab === 'deals' ? 'bg-[var(--accent)] text-[var(--text)] font-semibold' : 'text-[var(--muted)] hover:text-[var(--text)]'
                 }`}
               >
@@ -921,7 +921,7 @@ export const AdminDashboard: React.FC = () => {
               </button>
               <button
                 onClick={() => setActivityTab('invoices')}
-                className={`flex-1 py-1 rounded-lg transition-all ${
+                className={`flex-1 py-1 rounded-control transition-all ${
                   activityTab === 'invoices' ? 'bg-[var(--accent)] text-[var(--text)] font-semibold' : 'text-[var(--muted)] hover:text-[var(--text)]'
                 }`}
               >
@@ -929,7 +929,7 @@ export const AdminDashboard: React.FC = () => {
               </button>
               <button
                 onClick={() => setActivityTab('projects')}
-                className={`flex-1 py-1 rounded-lg transition-all ${
+                className={`flex-1 py-1 rounded-control transition-all ${
                   activityTab === 'projects' ? 'bg-[var(--accent)] text-[var(--text)] font-semibold' : 'text-[var(--muted)] hover:text-[var(--text)]'
                 }`}
               >
