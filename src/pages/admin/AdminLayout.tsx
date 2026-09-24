@@ -2,7 +2,6 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useLocation, useNavigate, Outlet } from 'react-router-dom';
 import { UntitledIcon, UntitledIconName } from '../../components/ui/UntitledIcon';import { getAdminSession, logoutAdmin } from '../../lib/adminAuth';
 import { useLanguage } from '../../lib/LanguageContext';
-import { getActiveCurrency, setActiveCurrency, CurrencyCode, CURRENCY_EVENT } from '../../lib/currency';
 import { CommandPalette } from '../../components/admin/CommandPalette';
 import { AdminNotificationCenter } from '../../components/admin/AdminNotificationCenter';
 import { useRbacRole } from '../../lib/rbacEngine';
@@ -42,37 +41,6 @@ export const AdminLayout: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
-  const [currency, setCurrencyState] = useState<CurrencyCode>(getActiveCurrency());
-
-  // Dynamic RBAC Permission Engine
-  const { roleMeta, isAllowed } = useRbacRole(
-    session?.user?.stakeholderType,
-    session?.user?.division,
-    session?.user?.role,
-    session?.user?.permissions
-  );
-
-  useEffect(() => {
-    const handleCurrencyChange = (e: Event) => {
-      const custom = e as CustomEvent<{ currency: CurrencyCode }>;
-      if (custom.detail?.currency) {
-        setCurrencyState(custom.detail.currency);
-      }
-    };
-    window.addEventListener(CURRENCY_EVENT, handleCurrencyChange);
-    return () => window.removeEventListener(CURRENCY_EVENT, handleCurrencyChange);
-  }, []);
-
-  useEffect(() => {
-    const handleOpenCmd = () => setCommandPaletteOpen(true);
-    window.addEventListener('open_command_palette', handleOpenCmd);
-    return () => window.removeEventListener('open_command_palette', handleOpenCmd);
-  }, []);
-
-  const handleSwitchCurrency = (c: CurrencyCode) => {
-    setCurrencyState(c);
-    setActiveCurrency(c);
-  };
 
   useEffect(() => {
     setMobileMenuOpen(false);
@@ -272,7 +240,7 @@ export const AdminLayout: React.FC = () => {
   }
 
   return (
-    <div className="h-screen w-full bg-[#090A0F] text-[#F8FAFC] flex flex-col md:flex-row selection:bg-[#E50914] selection:text-white font-sans antialiased overflow-hidden ams-shell">
+    <div className="h-screen w-full bg-bg text-fg flex flex-col md:flex-row selection:bg-accent selection:text-fg font-sans antialiased overflow-hidden ams-shell">
       
       {/* Universal Command Palette */}
       <CommandPalette 
@@ -284,34 +252,34 @@ export const AdminLayout: React.FC = () => {
       {/* DESKTOP SIDEBAR */}
       {/* ------------------------------------------------------------- */}
       <aside 
-        className={`hidden md:flex flex-col bg-[#111318] border-r border-white/[0.07] shrink-0 h-full z-30 transition-colors duration-150 ${
+        className={`hidden md:flex flex-col bg-panel border-r border-line shrink-0 h-full z-30 transition-colors duration-150 ${
           sidebarCollapsed ? 'w-[64px]' : 'w-[220px]'
         }`}
       >
         
         {/* Brand Header */}
-        <div className={`h-[60px] border-b border-white/[0.07] flex items-center bg-[#111318] transition-all ${
+        <div className={`h-[52px] border-b border-line flex items-center bg-panel transition-all ${
           sidebarCollapsed ? 'justify-center px-2' : 'justify-between px-4'
         }`}>
           {!sidebarCollapsed ? (
             <>
               <Link to="/admin/dashboard" className="flex items-center gap-3 group overflow-hidden">
-                <div className="h-8 px-2.5 rounded-lg bg-[#181B22] border border-white/10 flex items-center justify-center shrink-0 shadow-sm group-hover:border-[#E50914]/40 transition-colors">
+                <div className="h-8 px-2.5 rounded-lg bg-bg border border-line flex items-center justify-center shrink-0  group-hover:border-accent/40 transition-colors">
                   <img src="/white.png" alt="Kapitech" className="h-3.5 w-auto object-contain" />
                 </div>
                 <div className="min-w-0">
-                  <div className="font-sans font-bold text-white text-sm tracking-tight flex items-center gap-1.5">
+                  <div className="font-sans font-bold text-fg text-sm tracking-tight flex items-center gap-1.5">
                     <span>KAPITECH</span>
-                    <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#E50914]/10 text-[#FF1E27] border border-[#E50914]/30 font-semibold">
+                    <span className="text-[10px] font-sans px-1.5 py-0.5 rounded bg-accent/10 text-accent-text border border-accent/30 font-semibold">
                       AMS
                     </span>
                   </div>
-                  <p className="text-[10px] font-mono text-[#8A94A6] -mt-0.5 truncate">Agency Management System</p>
+                  <p className="text-[10px] font-sans text-muted -mt-0.5 truncate">Agency Management System</p>
                 </div>
               </Link>
               <button
                 onClick={() => setSidebarCollapsed(true)}
-                className="w-8 h-8 rounded-lg bg-[#181B22] hover:bg-[#21252F] text-[#8A94A6] hover:text-white border border-white/[0.07] transition-colors flex items-center justify-center shrink-0"
+                className="w-8 h-8 rounded-lg bg-bg hover:bg-panel text-muted hover:text-fg border border-line transition-colors flex items-center justify-center shrink-0"
                 title="Collapse sidebar"
               >
                 <AmsChevron size={15} />
@@ -320,7 +288,7 @@ export const AdminLayout: React.FC = () => {
           ) : (
             <Link 
               to="/admin/dashboard" 
-              className="w-9 h-9 rounded-xl bg-[#181B22] border border-white/10 flex items-center justify-center shrink-0 shadow-sm hover:border-[#E50914]/40 transition-all p-1.5"
+              className="w-9 h-9 rounded-xl bg-bg border border-line flex items-center justify-center shrink-0 shadow-sm hover:border-accent/40 transition-all p-1.5"
               title="Kapitech AMS Dashboard"
             >
               <img src="/favicon.png" alt="Kapitech" className="w-full h-full object-contain" />
@@ -329,11 +297,11 @@ export const AdminLayout: React.FC = () => {
         </div>
 
         {/* Navigation List - 4 Structured Sections Filtered by Dynamic RBAC */}
-        <div className="flex-1 px-2 py-3 space-y-4 overflow-y-auto custom-scrollbar">
+        <div className="flex-1 px-2 py-3 space-y-3 overflow-y-auto custom-scrollbar">
           {filteredNavSections.map((section) => (
-            <div key={section.id} className="space-y-1.5">
+            <div key={section.id} className="space-y-1">
               {!sidebarCollapsed && (
-                <div className="text-[11px] font-mono text-[#8A94A6] font-bold tracking-wider px-3 pt-2 pb-1 uppercase">
+                <div className="text-[11px] font-sans text-muted font-bold tracking-wider px-3 pt-2 pb-1 uppercase">
                   {t(section.titleKey)}
                 </div>
               )}
@@ -349,25 +317,25 @@ export const AdminLayout: React.FC = () => {
                     key={item.to}
                     to={item.to}
                     title={sidebarCollapsed ? item.label : undefined}
-                    className={`relative flex items-center justify-between px-3 py-2 rounded-lg text-xs font-sans transition-all duration-150 group ${
+                    className={`relative flex items-center justify-between px-2.5 py-2 rounded-control text-[13px] font-sans transition-colors duration-150 group ${
                       active
-                        ? 'bg-[rgba(229,9,20,0.1)] text-white font-medium shadow-sm'
-                        : 'text-[#8A94A6] hover:text-white hover:bg-white/[0.04]'
+                        ? 'bg-accent/15 text-fg font-medium shadow-sm'
+                        : 'text-muted hover:text-fg hover:bg-white/[0.04]'
                     } ${sidebarCollapsed ? 'w-10 h-10 mx-auto justify-center px-0 py-0' : ''}`}
                   >
                     {/* Linear-style Left Indicator Strip */}
                     {active && (
-                      <span className="absolute left-0 top-1.5 bottom-1.5 w-[3px] bg-[#E50914] rounded-r-full" />
+                      <span className="absolute left-0 top-1.5 bottom-1.5 w-[3px] bg-accent rounded-r-full" />
                     )}
 
                     <div className="flex items-center gap-2.5 min-w-0">
-                      <Icon size={17} className={active ? 'text-[#E50914] shrink-0' : 'text-[#8A94A6] group-hover:text-white shrink-0 transition-colors'} />
+                      <Icon size={16} className={active ? 'text-accent-text shrink-0' : 'text-muted group-hover:text-fg shrink-0 transition-colors'} />
                       {!sidebarCollapsed && <span className="truncate">{item.label}</span>}
                     </div>
 
                     {!sidebarCollapsed && item.badge !== null && item.badge !== undefined && (
-                      <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-semibold ml-auto shrink-0 ${
-                        item.badgeColor || 'bg-[#181B22] text-[#8A94A6] border border-white/[0.07]'
+                      <span className={`px-1.5 py-0.5 rounded-badge text-xs font-semibold ml-auto shrink-0 ${
+                        item.badgeColor || 'bg-bg text-muted border border-line'
                       }`}>
                         {item.badge}
                       </span>
@@ -381,18 +349,18 @@ export const AdminLayout: React.FC = () => {
         </div>
 
         {/* Footer: Admin Profile & Discrete Role Simulator Dropdown */}
-        <div className="p-2.5 border-t border-white/[0.07] bg-[#111318] space-y-2.5">
+        <div className="p-2.5 border-t border-line bg-panel space-y-2.5">
           <div className={`flex items-center justify-between ${sidebarCollapsed ? 'flex-col gap-2.5' : ''}`}>
             <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-8 h-8 rounded-lg bg-[#E50914] border border-white/10 flex items-center justify-center text-xs font-sans text-white font-bold shrink-0 shadow-sm">
+              <div className="w-8 h-8 rounded-lg bg-accent border border-line flex items-center justify-center text-xs font-sans text-fg font-bold shrink-0 shadow-sm">
                 {roleMeta.accountProfile.avatarLabel}
               </div>
               {!sidebarCollapsed && (
                 <div className="min-w-0">
-                  <div className="text-xs font-semibold text-white truncate">
+                  <div className="text-xs font-semibold text-fg truncate">
                     {roleMeta.accountProfile.displayName}
                   </div>
-                  <div className="text-[10px] font-mono text-[#8A94A6] truncate flex items-center gap-1">
+                  <div className="text-[10px] font-sans text-muted truncate flex items-center gap-1">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
                     <span className="truncate">{roleMeta.accountProfile.accountId}</span>
                   </div>
@@ -403,7 +371,7 @@ export const AdminLayout: React.FC = () => {
             <button
               onClick={handleLogout}
               title={t('admin.nav.logout')}
-              className="p-2 flex items-center justify-center rounded-lg bg-[#181B22] hover:bg-red-950/40 text-[#8A94A6] hover:text-[#FF1E27] border border-white/[0.07] hover:border-[#E50914]/30 transition-all shrink-0"
+              className="p-2 flex items-center justify-center rounded-lg bg-bg hover:bg-danger/10 text-muted hover:text-accent-text border border-line hover:border-accent/30 transition-all shrink-0"
             >
               <UntitledIcon name="logout" size={15} />
             </button>
@@ -416,36 +384,36 @@ export const AdminLayout: React.FC = () => {
       {/* ------------------------------------------------------------- */}
       {/* MOBILE TOPBAR - Single, sleek, non-cluttered header */}
       {/* ------------------------------------------------------------- */}
-      <div className="md:hidden flex items-center justify-between px-3.5 py-2.5 bg-[#111318] border-b border-white/[0.07] sticky top-0 z-40 shrink-0 shadow-[0_4px_20px_rgba(0,0,0,0.5)] h-14">
+      <div className="md:hidden flex items-center justify-between px-3.5 py-2.5 bg-panel border-b border-line sticky top-0 z-40 shrink-0 shadow-[0_4px_20px_rgba(0,0,0,0.5)] h-14">
         <div className="flex items-center gap-2.5">
           <button
             onClick={() => setMobileMenuOpen(true)}
             aria-label="Open navigation menu"
-            className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl bg-[#181B22] text-white border border-white/[0.07] hover:bg-[#21252F] active:scale-95 transition-all shadow-sm"
+            className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl bg-bg text-fg border border-line hover:bg-panel active:scale-95 transition-all shadow-sm"
           >
             <AmsMenu size={20} />
           </button>
 
           <Link to="/admin/dashboard" className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-[#E50914] flex items-center justify-center text-white font-bold text-xs shadow-none shrink-0">
+            <div className="w-7 h-7 rounded-lg bg-accent flex items-center justify-center text-fg font-bold text-xs shadow-none shrink-0">
               K
             </div>
             <div className="min-w-0">
-              <span className="font-sans font-bold text-[#F8FAFC] text-xs tracking-tight block truncate">KAPITECH AMS</span>
-              <span className="text-[9px] font-mono text-[#8A94A6] block truncate -mt-0.5">{activeItemLabel}</span>
+              <span className="font-sans font-bold text-fg text-xs tracking-tight block truncate">KAPITECH AMS</span>
+              <span className="text-[9px] font-sans text-muted block truncate -mt-0.5">{activeItemLabel}</span>
             </div>
           </Link>
         </div>
 
         <div className="flex items-center gap-2">
           {/* Mobile Language Switcher */}
-          <div className="flex items-center bg-[#181B22] border border-white/[0.07] rounded-lg p-0.5 font-mono text-[10px]">
+          <div className="flex items-center bg-bg border border-line rounded-lg p-0.5 font-sans text-[10px]">
             <button
               onClick={() => setLanguage('en')}
               className={`px-2 py-1 rounded-md font-semibold transition-all ${
                 language === 'en'
-                  ? 'bg-[#111318] text-white shadow-sm border border-white/10 font-bold'
-                  : 'text-[#8A94A6]'
+                  ? 'bg-panel text-fg shadow-sm border border-line font-bold'
+                  : 'text-muted'
               }`}
             >
               EN
@@ -454,8 +422,8 @@ export const AdminLayout: React.FC = () => {
               onClick={() => setLanguage('id')}
               className={`px-2 py-1 rounded-md font-semibold transition-all ${
                 language === 'id'
-                  ? 'bg-[#111318] text-white shadow-sm border border-white/10 font-bold'
-                  : 'text-[#8A94A6]'
+                  ? 'bg-panel text-fg shadow-sm border border-line font-bold'
+                  : 'text-muted'
               }`}
             >
               ID
@@ -465,7 +433,7 @@ export const AdminLayout: React.FC = () => {
           {/* Quick Currency Pill */}
           <button
             onClick={() => handleSwitchCurrency(currency === 'IDR' ? 'USD' : 'IDR')}
-            className="px-2.5 py-1.5 rounded-lg bg-[#181B22] border border-white/[0.07] text-[10px] font-mono font-bold text-emerald-400 hover:bg-[#21252F] transition-all min-h-[36px]"
+            className="px-2.5 py-1.5 rounded-lg bg-bg border border-line text-[10px] font-sans font-bold text-emerald-400 hover:bg-panel transition-all min-h-[36px]"
             title="Toggle Currency"
           >
             {currency}
@@ -481,90 +449,44 @@ export const AdminLayout: React.FC = () => {
             onClick={() => setMobileMenuOpen(false)}
           />
 
-          <div className="relative w-[300px] max-w-[85vw] bg-[#111318] border-r border-white/[0.07] h-[100dvh] flex flex-col justify-between z-50 shadow-[4px_0_30px_rgba(0,0,0,0.8)] overflow-hidden animate-in slide-in-from-left duration-200">
+          <div className="relative w-[300px] max-w-[85vw] bg-panel border-r border-line h-[100dvh] flex flex-col justify-between z-50 shadow-[4px_0_30px_rgba(0,0,0,0.8)] overflow-hidden animate-in slide-in-from-left duration-200">
             
             {/* Drawer Header */}
-            <div className="p-4 border-b border-white/[0.07] flex items-center justify-between bg-[#111318] shrink-0">
+            <div className="p-4 border-b border-line flex items-center justify-between bg-panel shrink-0">
               <Link 
                 to="/admin/dashboard" 
                 onClick={() => setMobileMenuOpen(false)}
                 className="flex items-center gap-2.5"
               >
-                <div className="h-8 px-2.5 rounded-lg bg-[#181B22] border border-white/10 flex items-center justify-center shrink-0 shadow-sm">
+                <div className="h-8 px-2.5 rounded-lg bg-bg border border-line flex items-center justify-center shrink-0 shadow-sm">
                   <img src="/white.png" alt="Kapitech" className="h-3.5 w-auto object-contain" />
                 </div>
                 <div>
-                  <div className="font-sans font-bold text-[#F8FAFC] text-sm tracking-tight flex items-center gap-1.5">
+                  <div className="font-sans font-bold text-fg text-sm tracking-tight flex items-center gap-1.5">
                     <span>KAPITECH</span>
-                    <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#E50914]/10 text-[#FF1E27] border border-[#E50914]/30 font-semibold">
+                    <span className="text-[10px] font-sans px-1.5 py-0.5 rounded bg-accent/10 text-accent-text border border-accent/30 font-semibold">
                       AMS
                     </span>
                   </div>
-                  <p className="text-[10px] font-mono text-[#8A94A6] -mt-0.5">Agency Management System</p>
+                  <p className="text-[10px] font-sans text-muted -mt-0.5">Agency Management System</p>
                 </div>
               </Link>
 
               <button
                 onClick={() => setMobileMenuOpen(false)}
                 aria-label="Close navigation menu"
-                className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl bg-[#181B22] text-[#8A94A6] hover:text-white border border-white/[0.07] active:scale-95 transition-all"
+                className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl bg-bg text-muted hover:text-fg border border-line active:scale-95 transition-all"
               >
                 <AmsClose size={18} />
               </button>
             </div>
 
-            {/* Quick Preferences Bar inside Drawer */}
-            <div className="px-4 py-2.5 bg-[#181B22] border-b border-white/[0.07] flex items-center justify-between shrink-0">
-              <div className="flex items-center gap-1 text-[11px] font-mono text-[#8A94A6]">
-                <span>{language === 'id' ? 'Bahasa:' : 'Lang:'}</span>
-                <div className="flex items-center bg-[#111318] border border-white/[0.07] rounded-md p-0.5">
-                  <button
-                    onClick={() => setLanguage('en')}
-                    className={`px-2 py-0.5 rounded text-[10px] font-bold transition-all ${
-                      language === 'en' ? 'bg-[#181B22] text-white shadow-sm border border-white/10' : 'text-[#8A94A6]'
-                    }`}
-                  >
-                    EN
-                  </button>
-                  <button
-                    onClick={() => setLanguage('id')}
-                    className={`px-2 py-0.5 rounded text-[10px] font-bold transition-all ${
-                      language === 'id' ? 'bg-[#181B22] text-white shadow-sm border border-white/10' : 'text-[#8A94A6]'
-                    }`}
-                  >
-                    ID
-                  </button>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-1 text-[11px] font-mono text-[#8A94A6]">
-                <span>{language === 'id' ? 'Valuta:' : 'Curr:'}</span>
-                <div className="flex items-center bg-[#111318] border border-white/[0.07] rounded-md p-0.5">
-                  <button
-                    onClick={() => handleSwitchCurrency('IDR')}
-                    className={`px-2 py-0.5 rounded text-[10px] font-bold transition-all ${
-                      currency === 'IDR' ? 'bg-[#181B22] text-emerald-400 shadow-sm border border-white/10' : 'text-[#8A94A6]'
-                    }`}
-                  >
-                    IDR
-                  </button>
-                  <button
-                    onClick={() => handleSwitchCurrency('USD')}
-                    className={`px-2 py-0.5 rounded text-[10px] font-bold transition-all ${
-                      currency === 'USD' ? 'bg-[#181B22] text-emerald-400 shadow-sm border border-white/10' : 'text-[#8A94A6]'
-                    }`}
-                  >
-                    USD
-                  </button>
-                </div>
-              </div>
-            </div>
 
             {/* Scrollable Navigation List Filtered by Dynamic RBAC */}
             <div className="flex-1 overflow-y-auto p-3 space-y-4 custom-scrollbar">
               {filteredNavSections.map((section) => (
                 <div key={section.id} className="space-y-1">
-                  <div className="text-[10px] font-mono text-[#8A94A6] font-bold tracking-wider px-3 pt-1 uppercase">
+                  <div className="text-[10px] font-sans text-muted font-bold tracking-wider px-3 pt-1 uppercase">
                     {t(section.titleKey)}
                   </div>
                   {section.items.map((item) => {
@@ -578,19 +500,19 @@ export const AdminLayout: React.FC = () => {
                         onClick={() => setMobileMenuOpen(false)}
                         className={`relative flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-sans transition-all min-h-[44px] group ${
                           active 
-                            ? 'bg-[rgba(229,9,20,0.1)] text-white font-semibold shadow-sm' 
-                            : 'text-[#8A94A6] hover:text-white hover:bg-white/[0.04]'
+                            ? 'bg-accent/15 text-fg font-semibold shadow-sm' 
+                            : 'text-muted hover:text-fg hover:bg-white/[0.04]'
                         }`}
                       >
                         {active && (
-                          <span className="absolute left-0 top-2 bottom-2 w-[3px] bg-[#E50914] rounded-r-full" />
+                          <span className="absolute left-0 top-2 bottom-2 w-[3px] bg-accent rounded-r-full" />
                         )}
                         <div className="flex items-center gap-3 min-w-0">
-                          <Icon size={17} className={active ? 'text-[#E50914] shrink-0' : 'text-[#8A94A6] shrink-0'} />
+                          <Icon size={17} className={active ? 'text-accent-text shrink-0' : 'text-muted shrink-0'} />
                           <span className="truncate">{item.label}</span>
                         </div>
                         {item.badge !== null && item.badge !== undefined && (
-                          <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold shrink-0 ${item.badgeColor || 'bg-[#181B22] text-[#8A94A6] border border-white/[0.07]'}`}>
+                          <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold shrink-0 ${item.badgeColor || 'bg-bg text-muted border border-line'}`}>
                             {item.badge}
                           </span>
                         )}
@@ -603,14 +525,14 @@ export const AdminLayout: React.FC = () => {
             </div>
 
             {/* Bottom session details */}
-            <div className="p-3.5 border-t border-white/[0.07] bg-[#181B22] flex items-center justify-between shrink-0">
+            <div className="p-3.5 border-t border-line bg-bg flex items-center justify-between shrink-0">
               <div className="flex items-center gap-2.5 min-w-0">
-                <div className="w-8 h-8 rounded-lg bg-[#E50914] border border-white/10 flex items-center justify-center text-xs font-sans text-white font-bold shrink-0 shadow-sm">
+                <div className="w-8 h-8 rounded-lg bg-accent border border-line flex items-center justify-center text-xs font-sans text-fg font-bold shrink-0 shadow-sm">
                   {roleMeta.accountProfile.avatarLabel}
                 </div>
                 <div className="min-w-0">
-                  <div className="text-xs font-semibold text-[#F8FAFC] truncate">{roleMeta.accountProfile.displayName}</div>
-                  <div className="text-[10px] font-mono text-[#8A94A6] truncate flex items-center gap-1">
+                  <div className="text-xs font-semibold text-fg truncate">{roleMeta.accountProfile.displayName}</div>
+                  <div className="text-[10px] font-sans text-muted truncate flex items-center gap-1">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
                     <span className="truncate">{roleMeta.accountProfile.accountId}</span>
                   </div>
@@ -619,7 +541,7 @@ export const AdminLayout: React.FC = () => {
               <button
                 onClick={handleLogout}
                 aria-label="Logout"
-                className="px-3 py-2 min-h-[44px] rounded-xl bg-[#111318] hover:bg-red-950/50 border border-white/[0.07] hover:border-[#E50914]/30 text-[#8A94A6] hover:text-[#FF1E27] text-xs font-mono flex items-center gap-1.5 shrink-0 transition-all"
+                className="px-3 py-2 min-h-[44px] rounded-xl bg-panel hover:bg-red-950/50 border border-line hover:border-accent/30 text-muted hover:text-accent-text text-xs font-sans flex items-center gap-1.5 shrink-0 transition-all"
               >
                 <UntitledIcon name="logout" size={14} />
                 <span>{t('admin.nav.logout')}</span>
@@ -632,45 +554,11 @@ export const AdminLayout: React.FC = () => {
       {/* ------------------------------------------------------------- */}
       {/* MAIN CONTENT AREA & DESKTOP STICKY TOPBAR */}
       {/* ------------------------------------------------------------- */}
-      <main className="flex-1 flex flex-col min-w-0 h-full overflow-y-auto bg-[#090A0F] custom-scrollbar">
+      <main className="flex-1 flex flex-col min-w-0 h-full overflow-y-auto bg-bg custom-scrollbar">
         
-        {/* Sticky Desktop Topbar Header: Clean & Minimal */}
-        <header className="hidden md:flex h-[60px] px-4 sm:px-5 lg:px-6 border-b border-white/[0.07] bg-[#090A0F]/95 backdrop-blur-md sticky top-0 z-30 items-center justify-between shrink-0 shadow-[0_1px_0_rgba(255,255,255,0.02),0_4px_24px_rgba(0,0,0,0.6)]">
-          {/* Breadcrumb Navigation */}
-          <div className="flex items-center gap-2 text-xs font-sans text-[#8A94A6]">
-            {sidebarCollapsed && (
-              <button
-                onClick={() => setSidebarCollapsed(false)}
-                className="w-8 h-8 rounded-lg bg-[#111318] hover:bg-[#181B22] text-[#8A94A6] hover:text-white border border-white/[0.07] hover:border-[#E50914]/30 transition-all mr-1.5 flex items-center justify-center shrink-0 shadow-sm"
-                title="Expand sidebar"
-              >
-                <AmsChevron size={15} />
-              </button>
-            )}
-            <span className="font-semibold text-white">Kapitech AMS</span>
-            <AmsChevron size={13} className="text-[#8A94A6]" />
-            <span className="text-[#A1A1AA] font-medium truncate">{activeItemLabel}</span>
-          </div>
-
-          {/* Minimalist Global U('search') Bar */}
-          <div className="relative w-64 lg:w-80">
-            <AmsSearch size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8A94A6]" />
-            <input
-              type="text"
-              onClick={() => setCommandPaletteOpen(true)}
-              readOnly
-              placeholder={t('admin.dash.searchPlaceholder') || 'Search projects, clients, tasks (⌘K)...'}
-              className="w-full h-8 pl-8 pr-12 text-xs bg-[#111318] text-white placeholder-[#8A94A6] rounded-lg border border-white/[0.07] hover:border-white/20 focus:outline-none focus:border-[#E50914] transition-colors cursor-pointer"
-            />
-            <kbd className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] font-mono text-[#8A94A6] bg-[#181B22] border border-white/[0.07] px-1.5 py-0.5 rounded pointer-events-none">
-              ⌘K
-            </kbd>
-          </div>
-
-          {/* Notifications only */}
-          <div className="flex items-center">
-            <AdminNotificationCenter />
-          </div>
+        {/* Sticky desktop top bar */}
+        <header className="hidden md:flex h-[52px] px-6 border-b border-line bg-bg sticky top-0 z-30 items-center justify-end shrink-0">
+          <AdminNotificationCenter />
         </header>
 
         {/* View Outlet */}
