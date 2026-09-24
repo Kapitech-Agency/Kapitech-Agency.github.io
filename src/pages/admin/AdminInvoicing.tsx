@@ -795,7 +795,7 @@ export const AdminInvoicing: React.FC = () => {
                 {expenses.length === 0 ? (
                   <tr>
                     <td colSpan={6} className="p-0">
-                      <div className="min-h-[180px] flex flex-col items-center justify-center text-center px-6 py-10 bg-[var(--panel)] border border-[var(--line)] rounded-card">
+                      <div className="p-8 text-center bg-[var(--panel)] border border-[var(--line)] rounded-card">
                         <Receipt size={22} className="text-[var(--muted)] mb-2" />
                         <p className="text-sm font-semibold text-[var(--text)] text-center">
                           {language === 'id' ? 'Tidak ada pengeluaran yang sesuai kriteria.' : 'No expenses found matching criteria.'}
