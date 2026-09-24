@@ -525,7 +525,7 @@ export const AdminLayout: React.FC = () => {
       <main className="flex-1 flex flex-col min-w-0 h-full overflow-y-auto bg-bg custom-scrollbar">
         
         {/* Sticky desktop top bar */}
-        <header className="hidden md:flex h-[52px] px-6 border-b border-line bg-bg sticky top-0 z-30 items-center justify-end shrink-0">
+        <header className="hidden min-[900px]:flex h-[52px] px-6 border-b border-line bg-bg sticky top-0 z-30 items-center justify-end shrink-0">
           <AdminNotificationCenter />
         </header>
 
