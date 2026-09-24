@@ -890,7 +890,7 @@ export const AdminInbox: React.FC = () => {
                 ? (language === 'id' ? 'Kotak Masuk Masih Kosong' : 'No Inbound Records Found')
                 : (language === 'id' ? 'Tidak Ada Pesan yang Sesuai Kriteria' : 'No Inbound Records Match Your Filters')}
             </h3>
-            <p className="text-xs sm:text-sm text-[var(--muted)] max-w-md mx-auto font-sans leading-relaxed">
+            <p className="text-xs sm:text-sm text-[var(--muted)] max-w-md mx-auto font-sans leading-relaxed text-center">
               {submissions.length === 0
                 ? (language === 'id'
                     ? 'Belum ada brief proyek klien, lamaran karir, atau pesan masuk dari formulir website.'
