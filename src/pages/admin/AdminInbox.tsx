@@ -40,8 +40,7 @@ import {
 } from 'lucide-react';
 import { 
   ContactSubmission, 
-  subscribeToInbox, 
-  updateSubmission,
+   updateSubmission,
   deleteSubmission, 
   submitToInbox 
 } from '../../lib/submissions';
@@ -65,6 +64,7 @@ import { EmailForwardingGuideModal } from '../../components/EmailForwardingGuide
 import { CannedResponsesModal } from '../../components/admin/inbox/CannedResponsesModal';
 import { ConvertToCrmModal } from '../../components/admin/inbox/ConvertToCrmModal';
 import { useLanguage } from '../../lib/LanguageContext';
+import { api } from '../../lib/apiClient';
 
 export const AdminInbox: React.FC = () => {
   const { language } = useLanguage();
@@ -118,33 +118,25 @@ export const AdminInbox: React.FC = () => {
     localStorage.setItem('kapitech_inbox_sound', String(next));
   };
 
-  // Subscribe to real-time incoming briefs
-  useEffect(() => {
-    requestDesktopNotificationPermission();
-
-    const unsubscribe = subscribeToInbox((items) => {
-      setSubmissions(items);
-
-      // Sound and Desktop notification on newly arrived submission
-      if (prevCount !== null && items.length > prevCount) {
-        const latest = items[0];
-        if (soundEnabled) {
-          playNotificationSound();
-        }
-        showDesktopNotification(
-          language === 'id' 
-            ? `Pesan Baru: ${latest?.fullName || 'Klien Baru'}` 
-            : `New Inbound: ${latest?.fullName || 'New Client'}`,
-          `${latest?.company ? latest.company + ' • ' : ''}${latest?.message?.substring(0, 75)}...`
-        );
-      }
-
-      setPrevCount(items.length);
+  // Server-backed inbox refresh. The API is the only source of truth.
+  const refreshInbox = async () => {
+    const res = await api.leads.getAll();
+    if (!res.success || !Array.isArray(res.data?.leads)) {
       setLoading(false);
-    });
+      return;
+    }
+    const items = res.data.leads as ContactSubmission[];
+    setSubmissions(items);
+    setPrevCount(items.length);
+    setLoading(false);
+  };
 
-    return () => unsubscribe();
-  }, [prevCount, soundEnabled, language]);
+  useEffect(() => {
+    void refreshInbox();
+    const timer = window.setInterval(() => void refreshInbox(), 30000);
+    return () => window.clearInterval(timer);
+  }, []);
+
 
   // Keep selected submission in sync with store
   useEffect(() => {
@@ -168,7 +160,9 @@ export const AdminInbox: React.FC = () => {
   const handleStatusChange = async (id: string, newStatus: ContactSubmission['status']) => {
     setIsUpdating(true);
     try {
-      await updateSubmission(id, { status: newStatus });
+      const res = await api.leads.update(id, { status: newStatus });
+      if (!res.success) throw new Error(res.error || 'Status update failed');
+      await refreshInbox();
     } catch (err) {
       console.error('Failed to update status:', err);
     } finally {
@@ -179,7 +173,9 @@ export const AdminInbox: React.FC = () => {
   // Priority update
   const handlePriorityChange = async (id: string, newPriority: ContactSubmission['priority']) => {
     try {
-      await updateSubmission(id, { priority: newPriority });
+      const res = await api.leads.update(id, { priority: newPriority });
+      if (!res.success) throw new Error(res.error || 'Priority update failed');
+      await refreshInbox();
     } catch (err) {
       console.error('Failed to update priority:', err);
     }
@@ -188,7 +184,9 @@ export const AdminInbox: React.FC = () => {
   // Assignee update
   const handleAssigneeChange = async (id: string, assignee: string) => {
     try {
-      await updateSubmission(id, { assignedTo: assignee });
+      const res = await api.leads.update(id, { assignedTo: assignee });
+      if (!res.success) throw new Error(res.error || 'Assignee update failed');
+      await refreshInbox();
     } catch (err) {
       console.error('Failed to update assignee:', err);
     }
@@ -198,7 +196,9 @@ export const AdminInbox: React.FC = () => {
   const handleToggleStar = async (e: React.MouseEvent, id: string, currentStarred?: boolean) => {
     e.stopPropagation();
     try {
-      await updateSubmission(id, { starred: !currentStarred });
+      const res = await api.leads.update(id, { starred: !currentStarred });
+      if (!res.success) throw new Error(res.error || 'Star update failed');
+      await refreshInbox();
     } catch (err) {
       console.error('Failed to toggle star:', err);
     }
@@ -209,7 +209,9 @@ export const AdminInbox: React.FC = () => {
     if (!selectedSubmission) return;
     setIsSavingNote(true);
     try {
-      await updateSubmission(selectedSubmission.id, { internalNotes: internalNoteDraft });
+      const res = await api.leads.update(selectedSubmission.id, { internalNotes: internalNoteDraft });
+      if (!res.success) throw new Error(res.error || 'Notes update failed');
+      await refreshInbox();
       setToastMessage({
         text: language === 'id' ? 'Catatan internal agensi berhasil disimpan.' : 'Internal team notes saved successfully.'
       });
@@ -229,7 +231,9 @@ export const AdminInbox: React.FC = () => {
     if (!window.confirm(confirmMsg)) return;
 
     try {
-      await deleteSubmission(id);
+      const res = await api.leads.delete(id);
+      if (!res.success) throw new Error(res.error || 'Delete failed');
+      await refreshInbox();
       if (selectedSubmission?.id === id) {
         setSelectedSubmission(null);
       }
@@ -252,7 +256,8 @@ export const AdminInbox: React.FC = () => {
     if (!window.confirm(confirmMsg)) return;
 
     for (const item of unread) {
-      await updateSubmission(item.id, { status: 'in-review' });
+      const res = await api.leads.update(item.id, { status: 'in-review' });
+      if (!res.success) throw new Error(res.error || 'Bulk status update failed');
     }
     setToastMessage({
       text: language === 'id' ? `${unread.length} pesan ditandai telah ditinjau.` : `${unread.length} messages marked as In Review.`
