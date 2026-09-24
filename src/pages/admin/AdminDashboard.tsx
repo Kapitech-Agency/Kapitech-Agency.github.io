@@ -1,25 +1,24 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { UntitledIcon } from '../../components/ui/UntitledIcon';
+import {
+  Plus,
+  TrendingUp,
+  DollarSign,
+  Receipt,
+  CheckCircle2,
+  Layers,
+  Activity,
+  ShieldCheck,
+  Download,
+  Columns3,
+  Inbox,
+  X,
+  ChevronRight,
+  Cpu,
+  Percent
+} from 'lucide-react';
 
-const A = (name: React.ComponentProps<typeof UntitledIcon>['name']) => (props: { size?: number; className?: string }) => (
-  <UntitledIcon name={name} size={props.size ?? 18} className={props.className} />
-);
-const Plus = A('plus');
-const TrendingUp = A('trend-up');
-const DollarSign = A('bank');
-const Receipt = A('receipt');
-const CheckCircle2 = A('check-circle');
-const Layers = A('layers');
-const Activity = A('activity');
-const ShieldCheck = A('shield');
-const Download = A('download');
-const Kanban = A('columns');
-const Inbox = A('inbox');
-const X = A('x');
-const ChevronRight = A('chevron-right');
-const Cpu = A('cpu');
-const Percent = A('percent');
+const Kanban = Columns3;
 import { getAdminSession, SecurityAuditLog } from '../../lib/adminAuth';
 import { ContactSubmission } from '../../lib/submissions';
 import { AgencyProject } from '../../lib/projectStore';
