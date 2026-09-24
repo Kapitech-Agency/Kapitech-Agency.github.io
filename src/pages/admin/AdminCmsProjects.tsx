@@ -438,7 +438,7 @@ export const AdminCmsProjects: React.FC = () => {
                 <div className="w-full max-w-sm bg-[var(--panel)] border border-[var(--line)] rounded-card overflow-hidden shadow-none">
                   <div className="relative h-48 w-full bg-[var(--bg)]">
                     <img src={editingProject.image} alt={editingProject.title} className="w-full h-full object-cover" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#111317] via-transparent to-black/40" />
+                    <div className="absolute inset-0 bg-black/40" />
                     <div className="absolute top-3 left-3 px-2 py-0.5 rounded text-[10px] font-sans font-semibold bg-rose-500/20 text-rose-300 border border-rose-500/40">
                       {editingProject.pillar}
                     </div>
