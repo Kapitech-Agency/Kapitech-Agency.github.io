@@ -381,31 +381,12 @@ export const AdminDocuments: React.FC = () => {
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
                   <label className="text-xs font-sans text-[var(--ams-secondary)]">Category</label>
-                  <select
-                    value={uploadCategory}
-                    onChange={(e) => setUploadCategory(e.target.value)}
-                    className="w-full min-h-10 sm:h-9 px-2.5 rounded-control bg-[var(--panel)] text-[var(--text)] border border-[var(--line)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ams-red)]/40 text-xs font-sans"
-                  >
-                    <option value="Contract">Contract</option>
-                    <option value="Proposal">Proposal</option>
-                    <option value="Invoice">Invoice</option>
-                    <option value="Deliverable">Deliverable</option>
-                    <option value="Compliance">Compliance</option>
-                  </select>
+                  <CustomSelect value={uploadCategory} onChange={setUploadCategory} options={['Contract','Proposal','Invoice','Deliverable','Compliance'].map(value => ({value,label:value}))} className="w-full" />
                 </div>
 
                 <div className="space-y-1">
                   <label className="text-xs font-sans text-[var(--ams-secondary)]">Related Entity</label>
-                  <select
-                    value={uploadRelatedType}
-                    onChange={(e) => setUploadRelatedType(e.target.value)}
-                    className="w-full min-h-10 sm:h-9 px-2.5 rounded-control bg-[var(--panel)] text-[var(--text)] border border-[var(--line)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ams-red)]/40 text-xs font-sans"
-                  >
-                    <option value="General">General</option>
-                    <option value="Client">Client</option>
-                    <option value="Deal">Deal</option>
-                    <option value="Project">Project</option>
-                  </select>
+                  <CustomSelect value={uploadRelatedType} onChange={setUploadRelatedType} options={['General','Client','Deal','Project'].map(value => ({value,label:value}))} className="w-full" />
                 </div>
               </div>
 
