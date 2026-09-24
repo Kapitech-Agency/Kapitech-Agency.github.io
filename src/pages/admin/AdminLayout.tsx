@@ -19,7 +19,7 @@ const AmsCheck = U('check');
 const AmsMenu = U('menu');
 const AmsClose = U('close');
 const AmsSearch = U('search');
-const AmsCalendar = U('calendar');
+const AmsCalendar = U('file');
 
 interface NavItem {
   key: string;
