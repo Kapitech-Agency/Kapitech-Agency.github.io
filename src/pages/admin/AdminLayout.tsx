@@ -483,13 +483,15 @@ export const AdminLayout: React.FC = () => {
                   <ShieldCheck size={11} className="text-[#E50914]" />
                   <span>{language === 'id' ? 'Hak Akses Peran' : 'Active Role'}</span>
                 </span>
-                <span className="text-[8px] px-1 py-0.2 rounded bg-[#181B22] border border-white/[0.07] text-[#E50914] font-bold">RBAC</span>
+                <span className="text-[8px] px-1 py-0.5 rounded bg-[#181B22] border border-white/[0.07] text-[#E50914] font-bold">LOCKED</span>
               </div>
               <select
                 value={rbacRole}
                 onChange={(e) => setRbacRole(e.target.value as StakeholderRole)}
-                className="w-full h-7 px-2 rounded-lg bg-[#181B22] text-white border border-white/[0.07] hover:border-[#8A94A6]/60 text-[11px] font-mono focus:outline-none focus:border-[#E50914] transition-colors cursor-pointer"
-                title="Select Stakeholder Role to switch RBAC permissions"
+                disabled={Boolean(session?.user?.stakeholderType)}
+                aria-disabled={Boolean(session?.user?.stakeholderType)}
+                className="w-full h-8 px-2 rounded-lg bg-[#181B22] text-white border border-white/[0.07] text-[11px] font-mono focus:outline-none focus:border-[#E50914] transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
+                title={session?.user?.stakeholderType ? "Role is locked by the authenticated RBAC policy" : "Development-only role simulator"}
               >
                 <option value="executive">1. Stakeholder Executive (Full Access)</option>
                 <option value="pm">2. Project Manager</option>
@@ -713,9 +715,9 @@ export const AdminLayout: React.FC = () => {
                   <div className="flex items-center justify-between text-[10px] font-mono text-[#8A94A6]">
                     <span className="flex items-center gap-1">
                       <ShieldCheck size={11} className="text-[#E50914]" />
-                      <span>{language === 'id' ? 'Hak Akses Peran' : 'Active Role'}</span>
+                      <span>{language === 'id' ? 'Peran Aktif' : 'Active Role'}</span>
                     </span>
-                    <span className="text-[8px] px-1 py-0.2 rounded bg-[#111318] border border-white/[0.07] text-[#E50914] font-bold">RBAC</span>
+                    <span className="text-[8px] px-1 py-0.5 rounded bg-[#111318] border border-white/[0.07] text-[#E50914] font-bold">LOCKED</span>
                   </div>
                   <select
                     value={rbacRole}
