@@ -689,7 +689,7 @@ export const Services = () => {
             </p>
             <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 text-xs font-sans text-[var(--k-text-secondary)]">
               <span className="px-3 py-1.5 rounded-full bg-[var(--k-surface)] border border-[var(--k-border)] flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-brand-red animate-pulse shadow-[0_0_8px_rgba(230,57,70,0.6)]" />
+                <span className="w-2 h-2 rounded-full bg-brand-red animate-pulse shadow-[0_0_8px_rgba(176,0,32,0.45)]" />
                 <span className="text-white">{resolvedStrategicSolutions.length} {language === 'id' ? 'Solusi Strategis' : 'Strategic Solutions'}</span>
               </span>
               <span className="px-3 py-1.5 rounded-full bg-[var(--k-surface)] border border-[var(--k-border)] text-white">
@@ -783,7 +783,7 @@ export const Services = () => {
                 onClick={() => setActiveCategory(tab.key as any)}
                 className={`flex-1 sm:flex-none min-h-[44px] px-3.5 sm:px-4 py-2 rounded-lg text-xs font-sans font-medium transition-all duration-200 text-center ${
                   activeCategory === tab.key
-                    ? 'bg-brand-red text-white shadow-[0_10px_28px_rgba(230,57,70,.18)] font-bold'
+                    ? 'bg-brand-red text-white shadow-[0_10px_28px_rgba(176,0,32,.16)] font-bold'
                     : 'text-[var(--k-text-secondary)] hover:text-white hover:bg-white/5'
                 }`}
               >
