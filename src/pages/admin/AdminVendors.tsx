@@ -30,10 +30,6 @@ import {
   VendorContract,
   VendorType,
   VendorStatus,
-  getAgencyVendors,
-  saveAgencyVendor,
-  deleteAgencyVendor,
-  VENDOR_EVENT_NAME
 } from '../../lib/vendorStore';
 import { formatAmount, getActiveCurrency, CurrencyCode, CURRENCY_EVENT } from '../../lib/currency';
 import { useLanguage } from '../../lib/LanguageContext';
@@ -94,9 +90,7 @@ export const AdminVendors: React.FC = () => {
 
   useEffect(() => {
     loadVendors();
-    const handleUpdate = () => loadVendors();
-    window.addEventListener(VENDOR_EVENT_NAME, handleUpdate);
-    return () => window.removeEventListener(VENDOR_EVENT_NAME, handleUpdate);
+    void loadVendors();
   }, [canViewVendors, language]);
 
   useEffect(() => {
