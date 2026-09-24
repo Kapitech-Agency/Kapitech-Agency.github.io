@@ -32,10 +32,16 @@ interface NavSection {
 }
 
 export const AdminLayout: React.FC = () => {
-  const { t } = useLanguage();
+  const { language, t } = useLanguage();
   const location = useLocation();
   const navigate = useNavigate();
   const session = getAdminSession();
+  const { roleMeta, isAllowed } = useRbacRole(
+    session?.user?.stakeholderType,
+    session?.user?.division,
+    session?.user?.role,
+    session?.user?.permissions
+  );
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
