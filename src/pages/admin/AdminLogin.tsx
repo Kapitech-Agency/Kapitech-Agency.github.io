@@ -104,7 +104,7 @@ export const AdminLogin: React.FC = () => {
   const mfaEnabledNotice = searchParams.get('mfaEnabled') === '1';
 
   return (
-    <div data-kapi-admin="true" className="min-h-screen bg-[var(--k-bg)] text-[var(--text)] flex items-center justify-center px-4 py-10">
+    <div data-kapi-admin="true" className="min-h-screen bg-[var(--bg)] text-[var(--text)] flex items-center justify-center px-4 py-10">
       <div className="w-full max-w-md">
         <Link
           to="/"
@@ -281,7 +281,7 @@ export const AdminLogin: React.FC = () => {
           </form>
           )}
 
-          <p className="mt-5 pt-4 border-t border-white/[0.07] text-xs text-[var(--muted)] font-sans text-center">
+          <p className="mt-5 pt-4 border-t border-[var(--line)] text-xs text-[var(--muted)] font-sans text-center">
             {language === 'id'
               ? 'Sesi diverifikasi oleh server.'
               : 'Session is verified by the server.'}
