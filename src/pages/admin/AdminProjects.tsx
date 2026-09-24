@@ -36,10 +36,6 @@ import {
   TaskStatus,
   TaskPriority,
   TaskSubtask,
-  getAgencyProjects,
-  saveAgencyProject,
-  deleteAgencyProject,
-  updateTaskStatus,
   PROJECT_EVENT_NAME
 } from '../../lib/projectStore';
 import { formatAmount, getActiveCurrency, CURRENCY_EVENT, CurrencyCode } from '../../lib/currency';
@@ -113,16 +109,24 @@ export const AdminProjects: React.FC = () => {
   const [taskStatus, setTaskStatus] = useState<TaskStatus>('todo');
   const [initialSubtasksInput, setInitialSubtasksInput] = useState('');
 
-  const loadData = () => {
-    const list = getAgencyProjects();
+  const loadData = async () => {
+    const res = await api.projects.getAll();
+    if (!res.success || !Array.isArray(res.data?.projects)) { showToast(res.error || 'Unable to load projects.'); return; }
+    const list = res.data.projects as AgencyProject[];
     setProjects(list);
-    if (list.length > 0 && (!selectedProjectId || !list.some(p => p.id === selectedProjectId))) {
-      setSelectedProjectId(list[0].id);
-    }
+    if (list.length > 0 && (!selectedProjectId || !list.some(p => p.id === selectedProjectId))) setSelectedProjectId(list[0].id);
+  };
+
+  const persistProject = (project: AgencyProject) => {
+    const exists = projects.some(item => item.id === project.id);
+    void (exists ? api.projects.update(project.id, project) : api.projects.create(project)).then((res) => {
+      if (!res.success) { showToast(res.error || 'Project update failed.'); return; }
+      void loadData();
+    });
   };
 
   useEffect(() => {
-    loadData();
+    void loadData();
     if (canManageKanbanTasks) {
       void api.auth.getTaskAssignees().then((res) => {
         if (!res.success || !res.data?.assignees) return;
@@ -138,8 +142,6 @@ export const AdminProjects: React.FC = () => {
       setTaskAssignees([]);
       setTaskAssignee('');
     }
-    const handleUpdate = () => loadData();
-    window.addEventListener(PROJECT_EVENT_NAME, handleUpdate);
 
     const handleCurrencyChange = (e: any) => {
       setCurrency(e.detail?.currency || getActiveCurrency());
@@ -147,7 +149,6 @@ export const AdminProjects: React.FC = () => {
     window.addEventListener(CURRENCY_EVENT, handleCurrencyChange);
 
     return () => {
-      window.removeEventListener(PROJECT_EVENT_NAME, handleUpdate);
       window.removeEventListener(CURRENCY_EVENT, handleCurrencyChange);
     };
   }, []);
@@ -242,7 +243,7 @@ export const AdminProjects: React.FC = () => {
       updatedAt: new Date().toISOString()
     };
 
-    saveAgencyProject(projectData);
+    persistProject(projectData);
     setSelectedProjectId(projectData.id);
     setIsProjectModalOpen(false);
     showToast(language === 'id' ? 'Proyek berhasil disimpan.' : 'Project successfully saved.');
@@ -250,7 +251,7 @@ export const AdminProjects: React.FC = () => {
 
   const handleDeleteProject = (id: string, name: string) => {
     if (window.confirm(`Hapus proyek "${name}" beserta seluruh task board?`)) {
-      deleteAgencyProject(id);
+      void api.projects.delete(id).then((res) => { if (res.success) void loadData(); else showToast(res.error || 'Project delete failed.'); });
       showToast(language === 'id' ? 'Proyek dihapus.' : 'Project deleted.');
     }
   };
@@ -412,7 +413,7 @@ export const AdminProjects: React.FC = () => {
     e.preventDefault();
     const taskId = e.dataTransfer.getData('text/plain') || draggedTaskId;
     if (taskId && selectedProject) {
-      updateTaskStatus(selectedProject.id, taskId, columnId);
+      void api.tasks.update(taskId, { status: columnId }).then((res) => { if (res.success) void loadData(); else showToast(res.error || 'Task status update failed.'); });
       const colLabel = TASK_COLUMNS.find(c => c.id === columnId)?.label || columnId;
       showToast(`Task moved to ${colLabel}`);
     }
