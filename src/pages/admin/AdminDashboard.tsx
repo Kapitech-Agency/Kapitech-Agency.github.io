@@ -455,17 +455,17 @@ export const AdminDashboard: React.FC = () => {
         </div>
 
         {/* Action Toolbar with Strictly ONE '+' icon per button */}
-        <div className="ams-dashboard-actions flex items-center gap-2 overflow-x-auto pb-1">
+        <div className="ams-dashboard-actions flex flex-wrap items-center gap-2 w-full xl:w-auto">
 
           {/* Authenticated role context is server-authoritative. */}
-          <div className="h-9 px-2.5 rounded-lg bg-[var(--panel)] border border-white/[0.07] text-[11px] font-sans text-[var(--muted)] flex items-center gap-2 shrink-0" title="Role is controlled by authenticated RBAC policy">
+          <div className="min-h-10 xl:h-9 px-2.5 rounded-control bg-[var(--panel)] border border-line text-[11px] font-sans text-[var(--muted)] flex items-center gap-2 shrink-0 max-w-full" title="Role is controlled by authenticated RBAC policy">
             <ShieldCheck size={13} className="text-[var(--accent)]" />\n            <span className="text-white font-semibold">{roleMeta?.title || ROLE_DEFINITIONS[rbacRole]?.title || "Authenticated role"}</span>
           </div>
           
           {/* Currency Switcher Pill */}
           <button
             onClick={handleToggleCurrency}
-            className="h-9 px-3 rounded-lg bg-[var(--panel)] hover:bg-[var(--panel)] border border-white/[0.07] hover:border-white/15 text-xs font-sans font-semibold text-[var(--text)] transition-all flex items-center gap-1.5 shrink-0"
+            className="min-h-10 xl:h-9 px-3 rounded-control bg-[var(--panel)] hover:bg-[var(--panel)] border border-line hover:border-accent/30 text-xs font-sans font-semibold text-[var(--text)] transition-all flex items-center gap-1.5 shrink-0"
             title="Switch Currency IDR / USD"
           >
             <DollarSign size={13} className="text-[var(--accent)]" />
@@ -474,7 +474,7 @@ export const AdminDashboard: React.FC = () => {
           </button>
 
           {/* Timeframe Selector */}
-          <div className="flex items-center rounded-lg bg-[var(--panel)] p-0.5 border border-white/[0.07] text-[11px] font-sans shrink-0">
+          <div className="flex items-center rounded-control bg-[var(--panel)] p-0.5 border border-line text-[11px] font-sans shrink-0 max-w-full overflow-x-auto">
             <button
               onClick={() => setPeriodFilter('thisMonth')}
               className={`px-2.5 py-1 rounded-md transition-all ${
@@ -510,7 +510,7 @@ export const AdminDashboard: React.FC = () => {
           {/* Export CSV Summary */}
           <button
             onClick={handleExportSummaryCSV}
-            className="h-9 px-3 rounded-lg bg-[var(--panel)] hover:bg-[var(--panel)] border border-white/[0.07] hover:border-white/15 text-xs font-sans font-semibold text-[var(--text)] transition-all flex items-center gap-1.5 shrink-0"
+            className="min-h-10 xl:h-9 px-3 rounded-control bg-[var(--panel)] hover:bg-[var(--panel)] border border-line hover:border-accent/30 text-xs font-sans font-semibold text-[var(--text)] transition-all flex items-center gap-1.5 shrink-0"
             title="Download CSV Executive Summary"
           >
             <Download size={13} className="text-cyan-400" />
@@ -543,7 +543,7 @@ export const AdminDashboard: React.FC = () => {
           {isAllowed('projects') && (
             <button
               onClick={() => setIsNewProjectModalOpen(true)}
-              className="h-9 px-3.5 rounded-xl bg-[var(--accent)] hover:bg-[var(--danger)] text-white text-xs font-sans font-semibold transition-all flex items-center gap-1.5 shadow-[0_0_16px_rgba(229,9,20,0.3)]"
+              className="min-h-10 xl:h-9 px-3.5 rounded-control bg-[var(--accent)] hover:bg-[var(--danger)] text-white text-xs font-sans font-semibold transition-colors flex items-center gap-1.5"
             >
               <Plus size={14} />
               <span>{language === 'id' ? 'Mulai Proyek' : 'New Project'}</span>
@@ -558,7 +558,7 @@ export const AdminDashboard: React.FC = () => {
       <div className="ams-kpi-grid grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
         
         {/* Metric Card 1: Gross Realized Revenue */}
-        <div className="p-5 rounded-xl bg-[var(--panel)] border border-white/[0.07]  flex flex-col justify-between group transition-colors duration-150">
+        <div className="p-4 sm:p-5 rounded-card bg-[var(--panel)] border border-line flex flex-col justify-between group transition-colors duration-150 min-w-0">
           <div>
             <div className="flex items-center justify-between text-[var(--muted)] mb-3">
               <span className="text-[11px] font-sans normal-case tracking-normal font-semibold">
@@ -596,7 +596,7 @@ export const AdminDashboard: React.FC = () => {
         </div>
 
         {/* Metric Card 2: Active CRM Deals & Pipeline */}
-        <div className="p-5 rounded-xl bg-[var(--panel)] border border-white/[0.07]  flex flex-col justify-between group transition-colors duration-150">
+        <div className="p-4 sm:p-5 rounded-card bg-[var(--panel)] border border-line flex flex-col justify-between group transition-colors duration-150 min-w-0">
           <div>
             <div className="flex items-center justify-between text-[var(--muted)] mb-3">
               <span className="text-[11px] font-sans normal-case tracking-normal font-semibold">
@@ -632,7 +632,7 @@ export const AdminDashboard: React.FC = () => {
         </div>
 
         {/* Metric Card 3: Conversion & Win Rate */}
-        <div className="p-5 rounded-xl bg-[var(--panel)] border border-white/[0.07]  flex flex-col justify-between group transition-colors duration-150">
+        <div className="p-4 sm:p-5 rounded-card bg-[var(--panel)] border border-line flex flex-col justify-between group transition-colors duration-150 min-w-0">
           <div>
             <div className="flex items-center justify-between text-[var(--muted)] mb-3">
               <span className="text-[11px] font-sans normal-case tracking-normal font-semibold">
@@ -667,7 +667,7 @@ export const AdminDashboard: React.FC = () => {
         </div>
 
         {/* Metric Card 4: Active Client Projects & Delivery SLA */}
-        <div className="p-5 rounded-xl bg-[var(--panel)] border border-white/[0.07]  flex flex-col justify-between group transition-colors duration-150">
+        <div className="p-4 sm:p-5 rounded-card bg-[var(--panel)] border border-line flex flex-col justify-between group transition-colors duration-150 min-w-0">
           <div>
             <div className="flex items-center justify-between text-[var(--muted)] mb-3">
               <span className="text-[11px] font-sans normal-case tracking-normal font-semibold">
@@ -737,7 +737,7 @@ export const AdminDashboard: React.FC = () => {
         <div className="xl:col-span-8 space-y-6">
           
           {/* Section: Priority Active Projects */}
-          <div className="p-5 sm:p-6 rounded-xl bg-[var(--panel)] border border-white/[0.07] space-y-4">
+          <div className="p-4 sm:p-5 rounded-card bg-[var(--panel)] border border-line space-y-4 min-w-0">
             <div className="flex items-center justify-between pb-3 border-b border-white/[0.07]">
               <div>
                 <h3 className="text-base font-heading font-bold text-white tracking-tight flex items-center gap-2">
@@ -778,8 +778,8 @@ export const AdminDashboard: React.FC = () => {
                     </p>
                   </div>
 
-                  <div className="flex items-center gap-4 sm:shrink-0">
-                    <div className="w-28 sm:w-36 space-y-1">
+                  <div className="flex items-center justify-between gap-3 sm:shrink-0 min-w-0">
+                    <div className="w-24 sm:w-36 space-y-1 shrink-0">
                       <div className="flex justify-between text-[10px] font-sans text-[var(--muted)]">
                         <span>Progress</span>
                         <span className="text-white font-bold">{proj.progressPercent}%</span>
@@ -792,7 +792,7 @@ export const AdminDashboard: React.FC = () => {
                       </div>
                     </div>
 
-                    <div className="text-right text-[11px] font-sans">
+                    <div className="text-right text-[11px] font-sans min-w-0 max-w-[46%]">
                       <div className="text-white font-bold">
                         {formatCurrency(proj.budget, currency)}
                       </div>
@@ -807,7 +807,7 @@ export const AdminDashboard: React.FC = () => {
           </div>
 
           {/* Section: Recent Invoices & Financial Ledger */}
-          <div className="p-5 sm:p-6 rounded-xl bg-[var(--panel)] border border-white/[0.07] space-y-4">
+          <div className="p-4 sm:p-5 rounded-card bg-[var(--panel)] border border-line space-y-4 min-w-0">
             <div className="flex items-center justify-between pb-3 border-b border-white/[0.07]">
               <div>
                 <h3 className="text-base font-heading font-bold text-white tracking-tight flex items-center gap-2">
@@ -890,7 +890,7 @@ export const AdminDashboard: React.FC = () => {
         <div className="xl:col-span-4 space-y-6">
           
           {/* Widget 1: Real-Time Agency Activity Feed */}
-          <div className="p-5 sm:p-6 rounded-xl bg-[var(--panel)] border border-white/[0.07] space-y-4">
+          <div className="p-4 sm:p-5 rounded-card bg-[var(--panel)] border border-line space-y-4 min-w-0">
             <div className="flex items-center justify-between pb-3 border-b border-white/[0.07]">
               <div className="flex items-center gap-2">
                 <Activity size={16} className="text-emerald-400" />
@@ -901,7 +901,7 @@ export const AdminDashboard: React.FC = () => {
             </div>
 
             {/* Filter Tabs */}
-            <div className="flex items-center gap-1 rounded-xl bg-[var(--panel)] p-0.5 border border-white/[0.07] text-[10px] font-sans">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-0.5 rounded-control bg-[var(--panel)] p-0.5 border border-line text-[10px] font-sans">
               <button
                 onClick={() => setActivityTab('all')}
                 className={`flex-1 py-1 rounded-lg transition-all ${
@@ -966,7 +966,7 @@ export const AdminDashboard: React.FC = () => {
           </div>
 
           {/* Widget 2: Protected Inbox Inbound Inquiries Triage */}
-          <div className="p-5 sm:p-6 rounded-xl bg-[var(--panel)] border border-white/[0.07] space-y-4">
+          <div className="p-4 sm:p-5 rounded-card bg-[var(--panel)] border border-line space-y-4 min-w-0">
             <div className="flex items-center justify-between pb-3 border-b border-white/[0.07]">
               <div className="flex items-center gap-2">
                 <Inbox size={16} className="text-purple-400" />
@@ -994,7 +994,7 @@ export const AdminDashboard: React.FC = () => {
                     key={sub.id}
                     className="p-3 rounded-xl bg-[var(--panel)] border border-white/[0.05] hover:border-white/15 transition-all space-y-2"
                   >
-                    <div className="flex items-center justify-between text-xs">
+                    <div className="flex items-start justify-between gap-3 text-xs min-w-0">
                       <span className="font-semibold text-white">
                         {sub.fullName} {sub.company ? `(${sub.company})` : ''}
                       </span>
@@ -1029,19 +1029,19 @@ export const AdminDashboard: React.FC = () => {
             </div>
 
             <div className="space-y-2 text-[11px]">
-              <div className="flex justify-between">
+              <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
                 <span className="text-[var(--muted)]">Core Domain:</span>
                 <span className="text-white font-semibold">https://kapitech.id (Edge CDN)</span>
               </div>
-              <div className="flex justify-between">
+              <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
                 <span className="text-[var(--muted)]">AMS Domain:</span>
                 <span className="text-white font-semibold">https://ams.kapitech.id (Cloud Run)</span>
               </div>
-              <div className="flex justify-between">
+              <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
                 <span className="text-[var(--muted)]">RBAC Policy:</span>
                 <span className="text-emerald-400 font-semibold">Zero-Trust Enforced</span>
               </div>
-              <div className="flex justify-between">
+              <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
                 <span className="text-[var(--muted)]">Security Vulnerabilities:</span>
                 <span className="text-emerald-400 font-bold">0 High / 0 Critical</span>
               </div>
@@ -1058,7 +1058,7 @@ export const AdminDashboard: React.FC = () => {
       {/* MODAL 1: ADD CRM LEAD */}
       {isAddLeadModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80  animate-in fade-in duration-200">
-          <div className="w-full max-w-md bg-[var(--panel)] border border-white/20 rounded-card p-6 shadow-none space-y-5 animate-in zoom-in-95 duration-200">
+          <div className="w-full max-w-md max-h-[calc(100dvh-2rem)] overflow-y-auto bg-[var(--panel)] border border-line rounded-card p-4 sm:p-6 shadow-none space-y-5 animate-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between pb-3 border-b border-white/[0.07]">
               <h3 className="text-lg font-heading font-bold text-white">
                 {language === 'id' ? 'Tambah Lead CRM Baru' : 'Add New CRM Lead'}
@@ -1158,7 +1158,7 @@ export const AdminDashboard: React.FC = () => {
       {/* MODAL 2: QUICK INVOICE */}
       {isNewInvoiceModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80  animate-in fade-in duration-200">
-          <div className="w-full max-w-md bg-[var(--panel)] border border-white/20 rounded-card p-6 shadow-none space-y-5 animate-in zoom-in-95 duration-200">
+          <div className="w-full max-w-md max-h-[calc(100dvh-2rem)] overflow-y-auto bg-[var(--panel)] border border-line rounded-card p-4 sm:p-6 shadow-none space-y-5 animate-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between pb-3 border-b border-white/[0.07]">
               <h3 className="text-lg font-heading font-bold text-white">
                 {language === 'id' ? 'Terbitkan Invoice Klien' : 'Create Client Invoice'}
@@ -1207,11 +1207,11 @@ export const AdminDashboard: React.FC = () => {
               </div>
 
               <div className="p-3 rounded-xl bg-[var(--panel)] border border-white/[0.07] text-[11px] font-sans text-[var(--muted)] space-y-1">
-                <div className="flex justify-between">
+                <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
                   <span>Subtotal:</span>
                   <span className="text-white">{formatCurrency(parseFloat(quickInvAmount) || 0, 'IDR')}</span>
                 </div>
-                <div className="flex justify-between">
+                <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
                   <span>PPN (11%):</span>
                   <span className="text-white">{formatCurrency(Math.round((parseFloat(quickInvAmount) || 0) * 0.11), 'IDR')}</span>
                 </div>
@@ -1244,7 +1244,7 @@ export const AdminDashboard: React.FC = () => {
       {/* MODAL 3: QUICK PROJECT */}
       {isNewProjectModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80  animate-in fade-in duration-200">
-          <div className="w-full max-w-md bg-[var(--panel)] border border-white/20 rounded-card p-6 shadow-none space-y-5 animate-in zoom-in-95 duration-200">
+          <div className="w-full max-w-md max-h-[calc(100dvh-2rem)] overflow-y-auto bg-[var(--panel)] border border-line rounded-card p-4 sm:p-6 shadow-none space-y-5 animate-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between pb-3 border-b border-white/[0.07]">
               <h3 className="text-lg font-heading font-bold text-white">
                 {language === 'id' ? 'Mulai Proyek Sprint Baru' : 'Initiate Active Project'}
@@ -1331,7 +1331,7 @@ export const AdminDashboard: React.FC = () => {
       {/* MODAL 4: RECORD EXPENSE */}
       {isRecordExpenseModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80  animate-in fade-in duration-200">
-          <div className="w-full max-w-md bg-[var(--panel)] border border-white/20 rounded-card p-6 shadow-none space-y-5 animate-in zoom-in-95 duration-200">
+          <div className="w-full max-w-md max-h-[calc(100dvh-2rem)] overflow-y-auto bg-[var(--panel)] border border-line rounded-card p-4 sm:p-6 shadow-none space-y-5 animate-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between pb-3 border-b border-white/[0.07]">
               <h3 className="text-lg font-heading font-bold text-white">
                 {language === 'id' ? 'Catat Biaya Operasional' : 'Record Operating Expense'}
