@@ -13,6 +13,7 @@ import {
   Clock3,
   Settings,
   ChevronLeft,
+  ChevronRight,
   Menu,
   X,
   LogOut
@@ -318,7 +319,7 @@ export const AdminLayout: React.FC = () => {
                 onClick={() => setSidebarCollapsed(false)}
                 aria-label="Expand sidebar"
                 title="Expand sidebar"
-                className="absolute -right-1 min-h-10 min-w-10 rounded-control bg-bg hover:bg-panel-hover text-muted hover:text-fg border border-line flex items-center justify-center transition-colors"
+                className="absolute right-1 min-h-10 min-w-10 rounded-control bg-bg hover:bg-panel-hover text-muted hover:text-fg border border-line flex items-center justify-center transition-colors"
               >
                 <ChevronRight size={15} />
               </button>
