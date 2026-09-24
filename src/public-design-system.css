@@ -2981,3 +2981,35 @@
     padding-top:44px !important;
   }
 }
+
+
+/* Typography guardrails: utility classes must not overpower component semantics. */
+.kapi-public-shell h1.text-xl,
+.kapi-public-shell h1.text-2xl,
+.kapi-public-shell h1.text-3xl,
+.kapi-public-shell h1.text-4xl{font-size:var(--type-display) !important;line-height:.96 !important;}
+.kapi-public-shell h2.text-xl,
+.kapi-public-shell h2.text-2xl{font-size:clamp(28px,3.4vw,48px) !important;line-height:1.05 !important;}
+.kapi-public-shell h3.text-xl,
+.kapi-public-shell h3.text-2xl,
+.kapi-public-shell h3.text-3xl{font-size:clamp(20px,2vw,28px) !important;line-height:1.18 !important;}
+.kapi-public-shell .kapi-mobile-nav-item .text-xl{
+  font-size:20px !important;
+  line-height:1.25 !important;
+}
+.kapi-public-shell .kapi-mobile-nav-item{
+  min-height:52px;
+}
+@media (max-width:767px){
+  .kapi-public-shell h2.text-xl,
+  .kapi-public-shell h2.text-2xl,
+  .kapi-public-shell h2.text-3xl,
+  .kapi-public-shell h2.text-4xl{
+    font-size:28px !important;
+  }
+  .kapi-public-shell h3.text-xl,
+  .kapi-public-shell h3.text-2xl,
+  .kapi-public-shell h3.text-3xl{
+    font-size:21px !important;
+  }
+}
