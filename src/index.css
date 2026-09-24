@@ -13,14 +13,14 @@
   /* Borders & Glassmorphism */
   --border-subtle: rgba(255, 255, 255, 0.07);
   --border-medium: rgba(255, 255, 255, 0.12);
-  --border-active: rgba(176, 0, 32, 0.4);
+  --border-active: rgba(230,57,70, 0.4);
 
   /* Red Brand Accent (Refined Strategy) */
   --primary-red: #E63946;
   --primary-red-hover: #C92F3C;
-  --primary-red-glow: 0 0 16px rgba(176, 0, 32, 0.25);
-  --primary-red-subtle: rgba(176, 0, 32, 0.08);
-  --primary-red-border: rgba(176, 0, 32, 0.3);
+  --primary-red-glow: 0 0 16px rgba(230,57,70, 0.25);
+  --primary-red-subtle: rgba(230,57,70, 0.08);
+  --primary-red-border: rgba(230,57,70, 0.3);
 
   /* Typography & Foreground Tokens */
   --text-primary: #F8FAFC;
@@ -37,9 +37,9 @@
   --kapi-red-primary: #E63946;
   --kapi-red-electric: #C92F3C;
   --kapi-red-hover: #C92F3C;
-  --kapi-red-glow: rgba(176, 0, 32, 0.12);
-  --kapi-red-glow-hover: rgba(176, 0, 32, 0.25);
-  --kapi-red-border-hover: rgba(176, 0, 32, 0.5);
+  --kapi-red-glow: rgba(230,57,70, 0.12);
+  --kapi-red-glow-hover: rgba(230,57,70, 0.25);
+  --kapi-red-border-hover: rgba(230,57,70, 0.5);
 
   --kapi-bg-obsidian: #090A0F;
   --kapi-bg-charcoal-deep: #111318;
@@ -71,7 +71,7 @@
   --color-brand-red: #E63946;
   --color-brand-red-bright: #C92F3C;
   --color-brand-red-hover: #C92F3C;
-  --color-brand-red-glow: rgba(176, 0, 32, 0.25);
+  --color-brand-red-glow: rgba(230,57,70, 0.25);
 
   /* Surfaces - Strict Solid Dark Palette */
   --color-dark-base: #090A0F;
@@ -372,7 +372,7 @@
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(229, 9, 20, 0.5);
+  background: rgba(230,57,70, 0.5);
 }
 
 
@@ -410,7 +410,7 @@
 }
 
 [data-kapi-admin="true"] ::selection {
-  background: rgba(229, 9, 20, 0.85);
+  background: rgba(230,57,70, 0.85);
   color: #fff;
 }
 
@@ -469,7 +469,7 @@
   --ams-divider: rgba(255, 255, 255, 0.075);
   --ams-divider-strong: rgba(255, 255, 255, 0.12);
   --ams-focus-ring: rgba(255, 255, 255, 0.92);
-  --ams-accent-soft: rgba(229, 9, 20, 0.11);
+  --ams-accent-soft: rgba(230,57,70, 0.11);
   --ams-ease: cubic-bezier(0.22, 1, 0.36, 1);
   --ams-motion-fast: 160ms;
   --ams-motion-standard: 240ms;
@@ -521,7 +521,7 @@ body:has([data-kapi-admin="true"]) .kapi-noise-overlay {
 [data-kapi-admin="true"] textarea:focus-visible {
   outline: 2px solid var(--ams-focus-ring);
   outline-offset: 2px;
-  box-shadow: 0 0 0 4px rgba(229, 9, 20, 0.22);
+  box-shadow: 0 0 0 4px rgba(230,57,70, 0.22);
 }
 
 [data-kapi-admin="true"] main {
@@ -998,7 +998,7 @@ body:has([data-kapi-admin="true"]) .kapi-noise-overlay {
   --k-red: #E63946;
   --k-red-hover: #C92F3C;
   --k-red-soft: rgba(230,57,70,.12);
-  --k-red-border: rgba(176,0,32,.34);
+  --k-red-border: rgba(230,57,70,.34);
   --k-font-ui: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", Helvetica, Arial, sans-serif;
   --k-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
   --k-radius-control: 12px;
@@ -1035,7 +1035,7 @@ body:has([data-kapi-admin="true"]) .kapi-noise-overlay {
 [data-kapi-admin="true"] .ams-content .metric-card svg { width: 18px; height: 18px; }
 [data-kapi-admin="true"] .ams-search,
 [data-kapi-admin="true"] .ams-search input { outline: none !important; }
-[data-kapi-admin="true"] .ams-search:focus-within { border-color: rgba(176,0,32,.48) !important; box-shadow: 0 0 0 3px rgba(230,57,70,.10) !important; }
+[data-kapi-admin="true"] .ams-search:focus-within { border-color: rgba(230,57,70,.48) !important; box-shadow: 0 0 0 3px rgba(230,57,70,.10) !important; }
 [data-kapi-admin="true"] .ams-search input:focus { outline: none !important; box-shadow: none !important; border-color: transparent !important; }
 [data-kapi-admin="true"] .ams-search,
 [data-kapi-admin="true"] .ams-search input { height: 40px; border-radius: 12px !important; }
@@ -1049,7 +1049,7 @@ body:has([data-kapi-admin="true"]) .kapi-noise-overlay {
 [data-kapi-admin="true"] textarea:focus,
 [data-kapi-admin="true"] select:focus,
 [data-kapi-admin="true"] button:focus { outline: none; }
-[data-kapi-admin="true"] :where(a,button,input,select,textarea):focus-visible { outline: 2px solid rgba(176,0,32,.75); outline-offset: 2px; box-shadow: none; }
+[data-kapi-admin="true"] :where(a,button,input,select,textarea):focus-visible { outline: 2px solid rgba(230,57,70,.75); outline-offset: 2px; box-shadow: none; }
 @media (max-width: 767px) {
   [data-kapi-admin="true"] .ams-content { padding: 20px 16px 96px !important; }
   [data-kapi-admin="true"] .ams-content .kapi-card,
