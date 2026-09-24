@@ -257,7 +257,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
       case 'Deal': return 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30';
       case 'Client': return 'bg-blue-500/10 text-blue-400 border-blue-500/30';
       case 'Project': return 'bg-amber-500/10 text-amber-400 border-amber-500/30';
-      case 'Invoice': return 'bg-[#B00020]/10 text-[#E63946] border-[#B00020]/30';
+      case 'Invoice': return 'bg-[#E63946]/10 text-[#E63946] border-[#E63946]/30';
       case 'Proposal': return 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30';
       default: return 'bg-zinc-800 text-zinc-300 border-white/10';
     }
