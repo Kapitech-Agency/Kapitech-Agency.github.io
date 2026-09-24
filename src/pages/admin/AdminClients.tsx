@@ -65,13 +65,18 @@ export const AdminClients: React.FC = () => {
   const [slaDailyBudget, setSlaDailyBudget] = useState<number>(5000000);
   const [currentDailySpend, setCurrentDailySpend] = useState<number>(3500000);
 
-  const loadData = () => {
-    setClients(getAgencyClients());
+  const loadData = async () => {
+    try {
+      const res = await api.clients.getAll();
+      if (res.success && Array.isArray(res.data?.clients)) setClients(res.data.clients as AgencyClient[]);
+    } catch {
+      showToast(language === 'id' ? 'Gagal memuat client.' : 'Failed to load clients.');
+    }
   };
 
   useEffect(() => {
     loadData();
-    const handleUpdate = () => loadData();
+    const handleUpdate = () => { void loadData(); }
     window.addEventListener(CLIENT_EVENT_NAME, handleUpdate);
 
     const handleCurrencyChange = (e: any) => {
