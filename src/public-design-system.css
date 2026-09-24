@@ -1812,6 +1812,43 @@
   min-width: 0;
 }
 
+/* Final footer and accent hierarchy */
+.kapi-public-shell .kapi-footer-heading{
+  display:block;
+  max-width:12ch;
+  margin-bottom:24px!important;
+  text-wrap:balance;
+}
+.kapi-public-shell .kapi-public-footer .kapi-footer-status{
+  margin-top:24px;
+}
+.kapi-public-shell .kapi-public-footer .kapi-newsletter{
+  margin-top:20px;
+}
+.kapi-public-shell .kapi-public-footer .kapi-footer-cta{
+  margin-top:24px;
+}
+.kapi-public-shell .kapi-footer-links a:hover,
+.kapi-public-shell .kapi-public-footer nav a:hover{
+  color:var(--pub-text)!important;
+}
+.kapi-public-shell .kapi-footer-links a:hover::before,
+.kapi-public-shell .kapi-public-footer nav a:hover::before{
+  content:"";
+  display:inline-block;
+  width:4px;
+  height:4px;
+  margin-right:7px;
+  vertical-align:middle;
+  border-radius:50%;
+  background:var(--pub-red);
+}
+@media (max-width:767px){
+  .kapi-public-shell .kapi-footer-heading{max-width:10ch;margin-bottom:20px!important}
+  .kapi-public-shell .kapi-public-footer .kapi-footer-status{margin-top:20px}
+  .kapi-public-shell .kapi-public-footer .kapi-newsletter{margin-top:18px}
+}
+
 /* Accessibility preferences */
 @media (prefers-reduced-transparency: reduce) {
   .kapi-public-shell .kapi-public-nav,
