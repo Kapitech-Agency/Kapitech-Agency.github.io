@@ -3123,3 +3123,364 @@ body {
     scroll-behavior:auto !important;
   }
 }
+
+
+/* ==========================================================================
+   AMS DESIGN SYSTEM FINAL LAYER
+   Source of truth: AMS-DESIGN-SYSTEM.md
+   Scoped to .ams-shell so the public website is unaffected.
+   ========================================================================== */
+.ams-shell {
+  --bg: #09090c;
+  --panel: #0f0f14;
+  --line: #20202a;
+  --text: #f3f3f6;
+  --muted: #8b8b99;
+  --accent: #dc143c;
+  --accent-text: #ff4d6d;
+  --series-2: #34d399;
+  --series-3: #5b8cff;
+  --series-4: #b9b9c6;
+  --success: #34d399;
+  --warning: #f5a524;
+  --danger: #f97066;
+  --info: #5b8cff;
+}
+
+@theme inline {
+  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --color-bg: var(--bg);
+  --color-panel: var(--panel);
+  --color-line: var(--line);
+  --color-fg: var(--text);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-text: var(--accent-text);
+  --color-series-2: var(--series-2);
+  --color-series-3: var(--series-3);
+  --color-series-4: var(--series-4);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  --color-info: var(--info);
+  --radius-badge: 5px;
+  --radius-chip: 6px;
+  --radius-control: 8px;
+  --radius-card: 12px;
+}
+
+.ams-shell,
+.ams-shell * {
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+.ams-shell {
+  background: var(--bg) !important;
+  color: var(--text) !important;
+}
+
+.ams-shell aside,
+.ams-shell .bg-panel,
+.ams-shell .glass-panel,
+.ams-shell .metric-card,
+.ams-shell .ams-card {
+  background: var(--panel);
+  border-color: var(--line);
+  box-shadow: none !important;
+}
+
+.ams-shell main,
+.ams-shell main > div {
+  background-color: var(--bg);
+}
+
+.ams-shell aside {
+  width: 220px;
+  border-right: 1px solid var(--line);
+}
+
+.ams-shell h1 {
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.ams-shell h2 {
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+.ams-shell h3,
+.ams-shell h4 {
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+.ams-shell p,
+.ams-shell td,
+.ams-shell th,
+.ams-shell button,
+.ams-shell input,
+.ams-shell select,
+.ams-shell textarea {
+  font-size: 13px;
+  line-height: 18px;
+}
+.ams-shell .text-\[10px\],
+.ams-shell .text-\[11px\] {
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: 0;
+}
+.ams-shell .text-\[9px\] {
+  font-size: 10px;
+  line-height: 14px;
+}
+
+.ams-shell > aside > div:first-child {
+  height: 52px;
+  min-height: 52px;
+  border-bottom: 1px solid var(--line);
+}
+
+.ams-shell aside a {
+  min-height: 36px;
+}
+.ams-shell aside a:hover {
+  background: color-mix(in srgb, var(--text) 4%, transparent);
+}
+.ams-shell aside a[title] {
+  min-width: 40px;
+}
+
+.ams-shell input:not([type="checkbox"]):not([type="radio"]),
+.ams-shell select,
+.ams-shell textarea {
+  background: var(--panel) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 8px;
+  box-shadow: none !important;
+}
+.ams-shell input:not([type="checkbox"]):not([type="radio"]),
+.ams-shell select {
+  min-height: 36px;
+}
+.ams-shell textarea {
+  min-height: 96px;
+}
+.ams-shell input::placeholder,
+.ams-shell textarea::placeholder {
+  color: var(--muted);
+}
+.ams-shell input:focus,
+.ams-shell input:focus-visible,
+.ams-shell select:focus,
+.ams-shell select:focus-visible,
+.ams-shell textarea:focus,
+.ams-shell textarea:focus-visible {
+  outline: 2px solid var(--accent) !important;
+  outline-offset: 2px;
+  border-color: var(--accent) !important;
+  box-shadow: none !important;
+}
+
+.ams-shell button {
+  border-radius: 8px;
+  box-shadow: none !important;
+}
+.ams-shell button:focus-visible,
+.ams-shell a:focus-visible {
+  outline: 2px solid var(--accent) !important;
+  outline-offset: 2px;
+}
+.ams-shell button[class*="bg-[#E50914]"],
+.ams-shell button[class*="bg-red-500"],
+.ams-shell button[class*="bg-red-600"] {
+  background: var(--accent) !important;
+  color: #fff !important;
+}
+.ams-shell button[class*="bg-[#E50914]"]:hover,
+.ams-shell button[class*="bg-red-500"]:hover,
+.ams-shell button[class*="bg-red-600"]:hover {
+  background: #c40f34 !important;
+}
+.ams-shell button[class*="bg-red-700"],
+.ams-shell button[class*="bg-red-800"] {
+  background: #a10c2b !important;
+}
+.ams-shell button[class*="danger"],
+.ams-shell [data-variant="destructive"] {
+  color: var(--danger);
+}
+
+.ams-shell [class*="bg-[#090A0F]"],
+.ams-shell [class*="bg-[#0D0F14]"],
+.ams-shell [class*="bg-[#111318]"] {
+  background-color: var(--panel) !important;
+}
+.ams-shell [class*="bg-[#181B22]"],
+.ams-shell [class*="bg-[#21252F]"] {
+  background-color: color-mix(in srgb, var(--panel) 82%, var(--text)) !important;
+}
+.ams-shell [class*="text-[#F8FAFC]"],
+.ams-shell [class*="text-[#F5F5F7]"],
+.ams-shell [class*="text-white"] {
+  color: var(--text) !important;
+}
+.ams-shell [class*="text-[#8A94A6]"],
+.ams-shell [class*="text-[#A1A1A6]"] {
+  color: var(--muted) !important;
+}
+.ams-shell [class*="text-[#E50914]"],
+.ams-shell [class*="text-[#FF1E27]"],
+.ams-shell [class*="text-[#B00020]"] {
+  color: var(--accent-text) !important;
+}
+.ams-shell [class*="bg-[#E50914]"],
+.ams-shell [class*="bg-[rgba(229,9,20"] {
+  background-color: color-mix(in srgb, var(--accent) 14%, transparent) !important;
+}
+.ams-shell [class*="border-[#E50914]"] {
+  border-color: color-mix(in srgb, var(--accent) 40%, transparent) !important;
+}
+.ams-shell [class*="border-white/"],
+.ams-shell [class*="border-white\/[0."] {
+  border-color: var(--line) !important;
+}
+
+.ams-shell .metric-card,
+.ams-shell .ams-card,
+.ams-shell .glass-panel {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 16px;
+}
+.ams-shell .metric-card:hover {
+  transform: none;
+  border-color: var(--line);
+}
+
+.ams-shell table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+.ams-shell th {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 600;
+  letter-spacing: 0;
+  border-bottom: 1px solid var(--line);
+}
+.ams-shell td {
+  border-bottom: 1px solid var(--line);
+}
+.ams-shell tbody tr:hover {
+  background: color-mix(in srgb, var(--text) 4%, transparent);
+}
+.ams-shell td,
+.ams-shell th {
+  font-variant-numeric: tabular-nums;
+}
+
+.ams-shell .rounded-\[24px\],
+.ams-shell .rounded-3xl,
+.ams-shell .rounded-2xl {
+  border-radius: 12px !important;
+}
+.ams-shell .rounded-xl {
+  border-radius: 8px !important;
+}
+.ams-shell .rounded-lg {
+  border-radius: 8px !important;
+}
+
+.ams-shell [class*="shadow-"],
+.ams-shell [class*="drop-shadow-"] {
+  box-shadow: none !important;
+  filter: none !important;
+}
+.ams-shell [class*="backdrop-blur"] {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.ams-shell .text-red-400,
+.ams-shell .text-red-500,
+.ams-shell .text-red-600 {
+  color: var(--danger) !important;
+}
+.ams-shell .bg-red-950\/,
+.ams-shell .bg-red-900\/ {
+  background-color: color-mix(in srgb, var(--danger) 14%, transparent) !important;
+}
+
+.ams-shell > main > header {
+  height: 52px;
+  min-height: 52px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+  box-shadow: none !important;
+}
+.ams-shell > main > div:last-child {
+  padding: 24px;
+  max-width: none;
+}
+
+.ams-shell .custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--line);
+}
+.ams-shell .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--muted);
+}
+
+@media (max-width: 1099px) and (min-width: 900px) {
+  .ams-shell .grid {
+    min-width: 0;
+  }
+}
+@media (max-width: 899px) {
+  .ams-shell > aside {
+    width: 64px;
+  }
+}
+@media (max-width: 767px) {
+  .ams-shell > aside {
+    width: 220px;
+  }
+  .ams-shell > div.md\\:hidden {
+    min-height: 52px;
+    height: 52px;
+    background: var(--panel);
+    border-bottom: 1px solid var(--line);
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+  }
+  .ams-shell > main > div:last-child {
+    padding: 14px;
+    padding-bottom: max(24px, env(safe-area-inset-bottom));
+  }
+  .ams-shell input:not([type="checkbox"]):not([type="radio"]),
+  .ams-shell select,
+  .ams-shell textarea {
+    font-size: 16px;
+  }
+}
+@media (max-width: 600px) {
+  .ams-shell > main > div:last-child {
+    padding: 14px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ams-shell *,
+  .ams-shell *::before,
+  .ams-shell *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
