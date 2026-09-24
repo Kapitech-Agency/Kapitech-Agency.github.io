@@ -62,7 +62,7 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 2, scale: 0.98 }}
             transition={{ duration: 0.12, ease: 'easeOut' }}
-            className={`absolute z-50 mt-1.5 min-w-[190px] bg-[#161922]/98 backdrop-blur-xl border border-[rgba(255,255,255,0.08)] rounded-lg p-1 shadow-[0_16px_40px_rgba(0,0,0,0.6)] space-y-0.5 font-sans text-xs ${
+            className={`absolute z-50 mt-1.5 min-w-[190px] bg-panel border border-line rounded-control p-1 shadow-none space-y-0.5 font-sans text-xs ${
               align === 'right' ? 'right-0' : 'left-0'
             } ${menuClassName}`}
           >
@@ -77,10 +77,10 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
                   }}
                   className={`w-full flex items-center justify-between px-3 py-2 rounded-md text-left transition-colors ${
                     item.variant === 'danger'
-                      ? 'text-red-400 hover:text-red-200 hover:bg-red-950/40'
+                      ? 'text-danger hover:text-fg hover:bg-danger/10'
                       : item.variant === 'warning'
-                      ? 'text-amber-400 hover:text-amber-200 hover:bg-amber-950/40'
-                      : 'text-[#94A3B8] hover:text-[#F8FAFC] hover:bg-[#1B1E2B]'
+                      ? 'text-warning hover:text-fg hover:bg-warning/10'
+                      : 'text-muted hover:text-fg hover:bg-bg'
                   }`}
                 >
                   <div className="flex items-center gap-2.5 min-w-0">
@@ -88,7 +88,7 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
                     <span className="truncate font-medium">{item.label}</span>
                   </div>
                   {item.badge && (
-                    <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-[rgba(255,255,255,0.06)] text-[#94A3B8]">
+                    <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-bg text-muted border border-line">
                       {item.badge}
                     </span>
                   )}
