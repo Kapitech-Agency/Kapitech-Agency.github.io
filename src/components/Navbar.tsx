@@ -122,7 +122,7 @@ export const Navbar = () => {
               </Link>
 
               {/* SERVICES DROPDOWN TRIGGER */}
-              <div 
+              <div
                 className="relative flex items-center h-10"
                 onMouseEnter={handleMouseEnterServices}
                 onMouseLeave={handleMouseLeaveServices}
