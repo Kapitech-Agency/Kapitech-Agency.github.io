@@ -99,14 +99,14 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
         } ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} ${triggerClassName}`}
       >
         <div className="flex items-center gap-2 min-w-0 pr-2">
-          {prefixIcon && <span className="text-[#8A94A6] shrink-0">{prefixIcon}</span>}
+          {prefixIcon && <span className="text-muted shrink-0">{prefixIcon}</span>}
           {selectedOption?.icon && <span className="shrink-0">{selectedOption.icon}</span>}
           <span className="truncate font-medium text-xs">
             {selectedOption ? selectedOption.label : placeholder}
           </span>
           {selectedOption?.badge && (
             <span
-              className={`px-1.5 py-0.5 rounded text-[9px] uppercase font-bold shrink-0 ${
+              className={`px-1.5 py-0.5 rounded text-[10px] font-semibold shrink-0 ${
                 selectedOption.badgeColor || 'bg-bg text-muted border border-line'
               }`}
             >
@@ -115,13 +115,13 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
           )}
         </div>
 
-        <UntitledIcon name="chevron" size={size === 'xs' ? 14 : 16} className="text-[#8A94A6] shrink-0" />
+        <UntitledIcon name="chevron" size={size === 'xs' ? 14 : 16} className="text-muted shrink-0" />
       </button>
 
       {isOpen && (
           <div
             role="listbox"
-            className={`absolute z-[100] mt-1 min-w-[140px] sm:min-w-[180px] max-w-[calc(100vw-32px)] sm:max-w-[280px] max-h-[280px] overflow-y-auto bg-[#111318] border border-[rgba(255,255,255,0.09)] rounded-[10px] p-1 shadow-[0_8px_20px_rgba(0,0,0,0.28)] space-y-0.5 font-sans text-xs custom-scrollbar ${
+            className={`absolute z-[100] mt-1 min-w-[140px] sm:min-w-[180px] max-w-[calc(100vw-32px)] sm:max-w-[280px] max-h-[280px] overflow-y-auto bg-panel border border-line rounded-control p-1 shadow-none space-y-0.5 font-sans text-xs custom-scrollbar ${
               align === 'right' ? 'right-0' : 'left-0'
             } ${menuClassName}`}
           >
@@ -137,7 +137,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
                   }}
                   role="option"
                   aria-selected={isSelected}
-                  className={`w-full flex items-center justify-between min-h-9 px-3 py-2 rounded-[7px] text-left transition-colors group ${
+                  className={`w-full flex items-center justify-between min-h-9 px-3 py-2 rounded-control text-left transition-colors group ${
                     isSelected
                       ? 'bg-bg text-fg font-semibold border border-line'
                       : 'text-muted hover:text-fg hover:bg-bg'
@@ -168,14 +168,14 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
                       <span
                         className={`px-1.5 py-0.5 rounded text-[9px] font-bold ${
                           isSelected
-                            ? 'bg-white/20 text-white'
+                            ? 'bg-bg text-fg border border-line'
                             : option.badgeColor || 'bg-bg text-muted border border-line'
                         }`}
                       >
                         {option.badge}
                       </span>
                     )}
-                    {isSelected && <UntitledIcon name="check" size={14} className="text-[#E50914] shrink-0" />}
+                    {isSelected && <UntitledIcon name="check" size={14} className="text-accent-text shrink-0" />}
                   </div>
                 </button>
               );
