@@ -20,6 +20,7 @@ import {
 } from '../../../lib/crmStore';
 import { useLanguage } from '../../../lib/LanguageContext';
 import { formatAmount, getActiveCurrency, CurrencyCode } from '../../../lib/currency';
+import { CustomSelect } from '../../ui/CustomSelect';
 
 interface ConvertToCrmModalProps {
   isOpen: boolean;
@@ -272,16 +273,18 @@ export const ConvertToCrmModal: React.FC<ConvertToCrmModalProps> = ({
               <User size={13} className="text-[var(--accent)]" />
               <span>{language === 'id' ? 'Penanggung Jawab (Owner)' : 'Assigned Team Lead'}</span>
             </label>
-            <select
+            <CustomSelect
               value={assignedTo}
-              onChange={(e) => setAssignedTo(e.target.value)}
-              className="w-full px-3 py-2.5 bg-[var(--panel)] border border-line rounded-control text-xs text-[var(--text)] font-sans focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30 focus:border-[var(--accent)]"
-            >
-              <option value="Lead Full-Stack Tech">Lead Full-Stack Tech (Engineering)</option>
-              <option value="Senior UI/UX Designer">Senior UI/UX Designer (Product)</option>
-              <option value="Technical Project Manager">Technical Project Manager (Delivery)</option>
-              <option value="Business Director">Business Director (Account Closing)</option>
-            </select>
+              onChange={setAssignedTo}
+              className="w-full"
+              size="sm"
+              options={[
+                { value: 'Lead Full-Stack Tech', label: 'Lead Full-Stack Tech (Engineering)' },
+                { value: 'Senior UI/UX Designer', label: 'Senior UI/UX Designer (Product)' },
+                { value: 'Technical Project Manager', label: 'Technical Project Manager (Delivery)' },
+                { value: 'Business Director', label: 'Business Director (Account Closing)' }
+              ]}
+            />
           </div>
 
         </div>
