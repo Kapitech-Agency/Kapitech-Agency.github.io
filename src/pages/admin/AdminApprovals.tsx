@@ -152,28 +152,28 @@ export const AdminApprovals: React.FC = () => {
 
   const getTypeIcon = (type: string) => {
     const t = type.toLowerCase();
-    if (t.includes('invoice')) return <Receipt size={14} className="text-[var(--ams-red)]" />;
-    if (t.includes('budget') || t.includes('expense')) return <DollarSign size={14} className="text-emerald-400" />;
-    if (t.includes('proposal')) return <FileText size={14} className="text-blue-400" />;
-    return <Layers size={14} className="text-purple-400" />;
+    if (t.includes('invoice')) return <Receipt size={14} className="text-[var(--accent)]" />;
+    if (t.includes('budget') || t.includes('expense')) return <DollarSign size={14} className="text-[var(--success)]" />;
+    if (t.includes('proposal')) return <FileText size={14} className="text-[var(--info)]" />;
+    return <Layers size={14} className="text-[var(--info)]" />;
   };
 
   const getRiskBadge = (level: string) => {
     const l = level?.toLowerCase();
     if (l === 'high') {
-      return <span className="px-2 py-0.5 rounded text-xs font-sans bg-red-500/10 text-red-400 border border-red-500/30 normal-case font-bold">High Risk</span>;
+      return <span className="px-2 py-0.5 rounded text-xs font-sans bg-red-500/10 text-[var(--danger)] border border-red-500/30 normal-case font-semibold">High Risk</span>;
     }
     if (l === 'medium') {
-      return <span className="px-2 py-0.5 rounded text-xs font-sans bg-amber-500/10 text-amber-400 border border-amber-500/30 normal-case font-bold">Medium Risk</span>;
+      return <span className="px-2 py-0.5 rounded text-xs font-sans bg-amber-500/10 text-[var(--warning)] border border-amber-500/30 normal-case font-semibold">Medium Risk</span>;
     }
-    return <span className="px-2 py-0.5 rounded text-xs font-sans bg-zinc-800 text-zinc-300 border border-white/10 normal-case font-bold">Low Risk</span>;
+    return <span className="px-2 py-0.5 rounded text-xs font-sans bg-zinc-800 text-zinc-300 border border-[var(--line)] normal-case font-semibold">Low Risk</span>;
   };
 
   return (
     <div className="space-y-6 animate-in fade-in duration-200">
       {/* Toast Notification */}
       {notification && (
-        <div className="fixed top-20 right-6 z-50 px-4 py-2.5 rounded-xl bg-[var(--ams-surface)] border border-[var(--ams-red)]/40 text-white text-xs font-sans shadow-[0_8px_30px_rgba(0,0,0,0.8)] flex items-center gap-2">
+        <div className="fixed top-20 right-6 z-50 px-4 py-2.5 rounded-card bg-[var(--panel)] border border-[var(--ams-red)]/40 text-[var(--text)] text-xs font-sans shadow-[0_8px_30px_rgba(0,0,0,0.8)] flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-[var(--ams-red)] animate-ping" />
           <span>{notification}</span>
         </div>
@@ -181,11 +181,11 @@ export const AdminApprovals: React.FC = () => {
 
       {/* Header */}
       <div>
-        <h1 className="text-xl sm:text-2xl font-bold font-sans tracking-tight text-white flex items-center gap-2.5">
-          <ShieldCheck className="text-[var(--ams-red)]" size={24} />
+        <h1 className="text-xl sm:text-2xl font-semibold font-sans tracking-tight text-[var(--text)] flex items-center gap-2.5">
+          <ShieldCheck className="text-[var(--accent)]" size={24} />
           <span>{language === 'id' ? 'Pusat Persetujuan Eksekutif' : 'Executive Approvals Center'}</span>
         </h1>
-        <p className="text-xs font-sans text-[var(--ams-secondary)] mt-1">
+        <p className="text-xs font-sans text-[var(--muted)] mt-1">
           {language === 'id' 
             ? 'Otorisasi anggaran klien, invoice berisiko tinggi, proposal komersial, dan pengeluaran operasional.' 
             : 'Multi-level executive authorization for budgets, high-value invoices, and operational expenses.'}
@@ -194,82 +194,82 @@ export const AdminApprovals: React.FC = () => {
 
       {/* KPI Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        <div className="p-4 rounded-xl bg-[var(--ams-bg)] border border-white/[0.07] space-y-1">
-          <div className="text-xs font-sans text-[var(--ams-secondary)] flex items-center justify-between">
+        <div className="p-4 rounded-card bg-[var(--bg)] border border-[var(--line)] space-y-1">
+          <div className="text-xs font-sans text-[var(--muted)] flex items-center justify-between">
             <span>{language === 'id' ? 'Menunggu Otorisasi' : 'Pending Authorization'}</span>
-            <Clock size={13} className="text-amber-400" />
+            <Clock size={13} className="text-[var(--warning)]" />
           </div>
-          <div className="text-lg sm:text-xl font-bold font-sans text-amber-400">
+          <div className="text-lg sm:text-xl font-semibold font-sans text-[var(--warning)]">
             {metrics.pendingCount}
           </div>
-          <div className="text-xs font-sans text-[var(--ams-secondary)]">
+          <div className="text-xs font-sans text-[var(--muted)]">
             {language === 'id' ? 'Perlu tindakan eksekutif' : 'Action required'}
           </div>
         </div>
 
-        <div className="p-4 rounded-xl bg-[var(--ams-bg)] border border-white/[0.07] space-y-1">
-          <div className="text-xs font-sans text-[var(--ams-secondary)] flex items-center justify-between">
+        <div className="p-4 rounded-card bg-[var(--bg)] border border-[var(--line)] space-y-1">
+          <div className="text-xs font-sans text-[var(--muted)] flex items-center justify-between">
             <span>{language === 'id' ? 'Nilai Tertunda' : 'Pending Value'}</span>
-            <DollarSign size={13} className="text-[var(--ams-red)]" />
+            <DollarSign size={13} className="text-[var(--accent)]" />
           </div>
-          <div className="text-lg sm:text-xl font-bold font-sans text-white">
+          <div className="text-lg sm:text-xl font-semibold font-sans text-[var(--text)]">
             {formatAmount(metrics.totalPendingValue, currency)}
           </div>
-          <div className="text-xs font-sans text-[var(--ams-secondary)]">
+          <div className="text-xs font-sans text-[var(--muted)]">
             {language === 'id' ? 'Total nilai menunggu review' : 'Total financial exposure'}
           </div>
         </div>
 
-        <div className="p-4 rounded-xl bg-[var(--ams-bg)] border border-white/[0.07] space-y-1">
-          <div className="text-xs font-sans text-[var(--ams-secondary)] flex items-center justify-between">
+        <div className="p-4 rounded-card bg-[var(--bg)] border border-[var(--line)] space-y-1">
+          <div className="text-xs font-sans text-[var(--muted)] flex items-center justify-between">
             <span>{language === 'id' ? 'Tinggi Risiko' : 'High Risk Items'}</span>
-            <AlertTriangle size={13} className="text-red-400" />
+            <AlertTriangle size={13} className="text-[var(--danger)]" />
           </div>
-          <div className="text-lg sm:text-xl font-bold font-sans text-red-400">
+          <div className="text-lg sm:text-xl font-semibold font-sans text-[var(--danger)]">
             {metrics.highRiskPending}
           </div>
-          <div className="text-xs font-sans text-red-400/80">
+          <div className="text-xs font-sans text-[var(--danger)]/80">
             {language === 'id' ? 'Perlu hak persetujuan' : 'Requires approval permission'}
           </div>
         </div>
 
-        <div className="p-4 rounded-xl bg-[var(--ams-bg)] border border-white/[0.07] space-y-1">
-          <div className="text-xs font-sans text-[var(--ams-secondary)] flex items-center justify-between">
+        <div className="p-4 rounded-card bg-[var(--bg)] border border-[var(--line)] space-y-1">
+          <div className="text-xs font-sans text-[var(--muted)] flex items-center justify-between">
             <span>{language === 'id' ? 'Telah Disetujui' : 'Total Approved'}</span>
-            <CheckCircle2 size={13} className="text-emerald-400" />
+            <CheckCircle2 size={13} className="text-[var(--success)]" />
           </div>
-          <div className="text-lg sm:text-xl font-bold font-sans text-emerald-400">
+          <div className="text-lg sm:text-xl font-semibold font-sans text-[var(--success)]">
             {metrics.approvedCount}
           </div>
-          <div className="text-xs font-sans text-[var(--ams-secondary)]">
+          <div className="text-xs font-sans text-[var(--muted)]">
             {language === 'id' ? 'Tercatat dalam audit trail' : 'Logged in audit trail'}
           </div>
         </div>
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-3 rounded-xl bg-[var(--ams-bg)] border border-white/[0.07]">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-3 rounded-card bg-[var(--bg)] border border-[var(--line)]">
         <div className="relative flex-1">
-          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--ams-secondary)]" />
+          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted)]" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={language === 'id' ? 'Cari judul, pemohon, atau catatan...' : 'Search title, requester, or notes...'}
-            className="w-full h-8 pl-8 pr-3 text-xs bg-[var(--ams-surface)] text-white placeholder-[var(--ams-secondary)] rounded-lg border border-white/[0.07] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ams-red)]/40 focus:border-[var(--ams-red)] font-sans"
+            className="w-full h-9 pl-8 pr-3 text-xs bg-[var(--panel)] text-[var(--text)] placeholder-[var(--ams-secondary)] rounded-control border border-[var(--line)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ams-red)]/40 focus:border-[var(--ams-red)] font-sans"
           />
         </div>
 
         <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
-          <div className="flex items-center gap-1 bg-[var(--ams-surface)] p-1 rounded-lg border border-white/[0.07]">
+          <div className="flex items-center gap-1 bg-[var(--panel)] p-1 rounded-control border border-[var(--line)]">
             {(['Pending', 'Approved', 'Rejected', 'all'] as const).map((st) => (
               <button
                 key={st}
                 onClick={() => setStatusFilter(st)}
                 className={`px-2.5 py-1 rounded-md text-xs font-sans capitalize transition-all ${
                   statusFilter === st
-                    ? 'bg-[var(--ams-bg)] text-white shadow-sm border border-white/10 font-bold'
-                    : 'text-[var(--ams-secondary)] hover:text-white'
+                    ? 'bg-[var(--bg)] text-[var(--text)] shadow-sm border border-[var(--line)] font-semibold'
+                    : 'text-[var(--muted)] hover:text-[var(--text)]'
                 }`}
               >
                 {st}
@@ -280,7 +280,7 @@ export const AdminApprovals: React.FC = () => {
           <select
             value={typeFilter}
             onChange={(e) => setTypeFilter(e.target.value)}
-            className="h-8 px-2.5 rounded-lg bg-[var(--ams-surface)] text-[var(--ams-secondary)] border border-white/[0.07] text-xs font-sans focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ams-red)]/40"
+            className="h-9 px-2.5 rounded-control bg-[var(--panel)] text-[var(--muted)] border border-[var(--line)] text-xs font-sans focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ams-red)]/40"
           >
             <option value="all">All Types</option>
             <option value="invoice">Invoice</option>
@@ -294,37 +294,37 @@ export const AdminApprovals: React.FC = () => {
       {/* Approvals List */}
       <div className="space-y-3">
         {isLoading ? (
-          <div className="p-12 rounded-xl bg-[var(--ams-bg)] border border-white/[0.07] text-center text-xs font-sans text-[var(--ams-secondary)] flex flex-col items-center justify-center gap-2">
-            <Loader2 className="animate-spin text-[var(--ams-red)]" size={20} />
+          <div className="p-12 rounded-card bg-[var(--bg)] border border-[var(--line)] text-center text-xs font-sans text-[var(--muted)] flex flex-col items-center justify-center gap-2">
+            <Loader2 className="animate-spin text-[var(--accent)]" size={20} />
             <span>Loading authorization items...</span>
           </div>
         ) : filteredApprovals.length === 0 ? (
-          <div className="p-12 rounded-xl bg-[var(--ams-bg)] border border-white/[0.07] text-center text-xs font-sans text-[var(--ams-secondary)]">
+          <div className="p-12 rounded-card bg-[var(--bg)] border border-[var(--line)] text-center text-xs font-sans text-[var(--muted)]">
             {language === 'id' ? 'Tidak ada permintaan otorisasi.' : 'No authorization items match criteria.'}
           </div>
         ) : (
           filteredApprovals.map((item) => (
             <div 
               key={item.id}
-              className="p-4 rounded-xl bg-[var(--ams-bg)] border border-white/[0.07] hover:border-white/20 transition-all space-y-3"
+              className="p-4 rounded-card bg-[var(--bg)] border border-[var(--line)] hover:border-white/20 transition-all space-y-3"
             >
               <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
                 <div className="flex items-start gap-3 min-w-0">
-                  <div className="w-8 h-8 rounded-lg bg-[var(--ams-surface)] border border-white/[0.07] flex items-center justify-center shrink-0">
+                  <div className="w-8 h-9 rounded-control bg-[var(--panel)] border border-[var(--line)] flex items-center justify-center shrink-0">
                     {getTypeIcon(item.type)}
                   </div>
                   <div className="min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="font-bold text-sm text-white">{item.title}</span>
-                      <span className="px-2 py-0.5 rounded text-xs font-sans normal-case bg-[var(--ams-surface)] text-[var(--ams-secondary)] border border-white/[0.07]">
+                      <span className="font-semibold text-sm text-[var(--text)]">{item.title}</span>
+                      <span className="px-2 py-0.5 rounded text-xs font-sans normal-case bg-[var(--panel)] text-[var(--muted)] border border-[var(--line)]">
                         {item.type}
                       </span>
                       {getRiskBadge(item.riskLevel)}
                     </div>
                     {item.reason && (
-                      <p className="text-xs text-[var(--ams-secondary)] mt-1 leading-relaxed">{item.reason}</p>
+                      <p className="text-xs text-[var(--muted)] mt-1 leading-relaxed">{item.reason}</p>
                     )}
-                    <div className="text-xs font-sans text-[var(--ams-secondary)] flex items-center gap-3 mt-2">
+                    <div className="text-xs font-sans text-[var(--muted)] flex items-center gap-3 mt-2">
                       <span className="flex items-center gap-1">
                         <User size={11} />
                         <span>Requested by {item.requester}</span>
@@ -337,7 +337,7 @@ export const AdminApprovals: React.FC = () => {
                       {item.reviewedBy && (
                         <>
                           <span>•</span>
-                          <span className="text-emerald-400">Decided by {item.reviewedBy}</span>
+                          <span className="text-[var(--success)]">Decided by {item.reviewedBy}</span>
                         </>
                       )}
                     </div>
@@ -347,8 +347,8 @@ export const AdminApprovals: React.FC = () => {
                 <div className="flex sm:flex-col items-end justify-between sm:justify-start gap-2 shrink-0">
                   {item.value > 0 && (
                     <div className="text-right">
-                      <div className="text-xs font-sans text-[var(--ams-secondary)]">Value</div>
-                      <div className="font-bold font-sans text-white text-sm">
+                      <div className="text-xs font-sans text-[var(--muted)]">Value</div>
+                      <div className="font-semibold font-sans text-[var(--text)] text-sm">
                         {formatAmount(item.value, currency)}
                       </div>
                     </div>
@@ -361,7 +361,7 @@ export const AdminApprovals: React.FC = () => {
                           setActiveItem(item);
                           setDecisionAction('Approve');
                         }}
-                        className="px-3 py-1 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-400 border border-emerald-500/30 text-xs font-sans font-semibold flex items-center gap-1 transition-colors"
+                        className="px-3 py-1 rounded-control bg-emerald-500/15 hover:bg-emerald-500/25 text-[var(--success)] border border-emerald-500/30 text-xs font-sans font-semibold flex items-center gap-1 transition-colors"
                       >
                         <Check size={12} />
                         <span>Approve</span>
@@ -371,19 +371,19 @@ export const AdminApprovals: React.FC = () => {
                           setActiveItem(item);
                           setDecisionAction('Reject');
                         }}
-                        className="px-3 py-1 rounded-lg bg-red-500/15 hover:bg-red-500/25 text-red-400 border border-red-500/30 text-xs font-sans font-semibold flex items-center gap-1 transition-colors"
+                        className="px-3 py-1 rounded-control bg-red-500/15 hover:bg-red-500/25 text-[var(--danger)] border border-red-500/30 text-xs font-sans font-semibold flex items-center gap-1 transition-colors"
                       >
                         <X size={12} />
                         <span>Reject</span>
                       </button>
                     </div>
                   ) : (
-                    <span className={`px-2.5 py-0.5 rounded text-xs font-sans font-bold normal-case border ${
+                    <span className={`px-2.5 py-0.5 rounded text-xs font-sans font-semibold normal-case border ${
                       item.status.toLowerCase() === 'approved'
-                        ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30'
+                        ? 'bg-emerald-500/15 text-[var(--success)] border-emerald-500/30'
                         : item.status.toLowerCase() === 'rejected'
-                        ? 'bg-red-500/15 text-red-400 border-red-500/30'
-                        : 'bg-amber-500/15 text-amber-400 border-amber-500/30'
+                        ? 'bg-red-500/15 text-[var(--danger)] border-red-500/30'
+                        : 'bg-amber-500/15 text-[var(--warning)] border-amber-500/30'
                     }`}>
                       {item.status}
                     </span>
@@ -392,8 +392,8 @@ export const AdminApprovals: React.FC = () => {
               </div>
 
               {item.reviewNotes && (
-                <div className="text-xs font-sans text-[var(--ams-secondary)] bg-[var(--ams-surface)]/50 p-2.5 rounded-lg border border-white/[0.04] flex items-center gap-2">
-                  <MessageSquare size={12} className="text-[var(--ams-red)] shrink-0" />
+                <div className="text-xs font-sans text-[var(--muted)] bg-[var(--panel)]/50 p-2.5 rounded-control border border-white/[0.04] flex items-center gap-2">
+                  <MessageSquare size={12} className="text-[var(--accent)] shrink-0" />
                   <span>Decision notes: {item.reviewNotes}</span>
                 </div>
               )}
@@ -405,15 +405,15 @@ export const AdminApprovals: React.FC = () => {
       {/* DECISION MODAL */}
       {activeItem && canApproveBudgets && (
         <div className="fixed inset-0 z-50 bg-black/85  flex items-center justify-center p-4">
-          <div className="bg-[var(--ams-bg)] border border-white/[0.07] rounded-card w-full max-w-md shadow-[0_24px_64px_rgba(0,0,0,0.8)] overflow-hidden">
-            <div className="p-4 border-b border-white/[0.07] flex items-center justify-between bg-[var(--ams-surface)]">
-              <h3 className="text-sm font-bold font-sans text-white flex items-center gap-2">
-                <ShieldCheck size={16} className="text-[var(--ams-red)]" />
+          <div className="bg-[var(--bg)] border border-[var(--line)] rounded-card w-full max-w-md shadow-[0_24px_64px_rgba(0,0,0,0.8)] overflow-hidden">
+            <div className="p-4 border-b border-[var(--line)] flex items-center justify-between bg-[var(--panel)]">
+              <h3 className="text-sm font-semibold font-sans text-[var(--text)] flex items-center gap-2">
+                <ShieldCheck size={16} className="text-[var(--accent)]" />
                 <span>Executive Decision Confirmation</span>
               </h3>
               <button
                 onClick={() => setActiveItem(null)}
-                className="p-1 text-[var(--ams-secondary)] hover:text-white rounded-lg hover:bg-white/[0.06]"
+                className="p-1 text-[var(--muted)] hover:text-[var(--text)] rounded-control hover:bg-white/[0.06]"
               >
                 <X size={16} />
               </button>
@@ -421,27 +421,27 @@ export const AdminApprovals: React.FC = () => {
 
             <form onSubmit={handleDecisionSubmit} className="p-5 space-y-4 text-xs font-sans">
               <div>
-                <div className="font-bold text-white text-sm">{activeItem.title}</div>
-                <div className="text-xs font-sans text-[var(--ams-secondary)] mt-0.5">
+                <div className="font-semibold text-[var(--text)] text-sm">{activeItem.title}</div>
+                <div className="text-xs font-sans text-[var(--muted)] mt-0.5">
                   Requested by: {activeItem.requester}
                 </div>
                 {activeItem.value > 0 && (
-                  <div className="text-xs font-sans font-bold text-emerald-400 mt-1">
+                  <div className="text-xs font-sans font-semibold text-[var(--success)] mt-1">
                     Value: {formatAmount(activeItem.value, currency)}
                   </div>
                 )}
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-sans text-[var(--ams-secondary)]">Action</label>
+                <label className="text-xs font-sans text-[var(--muted)]">Action</label>
                 <div className="grid grid-cols-3 gap-2 font-sans text-xs">
                   <button
                     type="button"
                     onClick={() => setDecisionAction('Approve')}
-                    className={`py-2 rounded-lg border text-center transition-all ${
+                    className={`py-2 rounded-control border text-center transition-all ${
                       decisionAction === 'Approve'
-                        ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/50 font-bold'
-                        : 'bg-[var(--ams-surface)] text-[var(--ams-secondary)] border-white/[0.07]'
+                        ? 'bg-emerald-500/20 text-[var(--success)] border-emerald-500/50 font-semibold'
+                        : 'bg-[var(--panel)] text-[var(--muted)] border-[var(--line)]'
                     }`}
                   >
                     Approve
@@ -449,10 +449,10 @@ export const AdminApprovals: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setDecisionAction('Request Changes')}
-                    className={`py-2 rounded-lg border text-center transition-all ${
+                    className={`py-2 rounded-control border text-center transition-all ${
                       decisionAction === 'Request Changes'
-                        ? 'bg-amber-500/20 text-amber-400 border-amber-500/50 font-bold'
-                        : 'bg-[var(--ams-surface)] text-[var(--ams-secondary)] border-white/[0.07]'
+                        ? 'bg-amber-500/20 text-[var(--warning)] border-amber-500/50 font-semibold'
+                        : 'bg-[var(--panel)] text-[var(--muted)] border-[var(--line)]'
                     }`}
                   >
                     Changes
@@ -460,10 +460,10 @@ export const AdminApprovals: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setDecisionAction('Reject')}
-                    className={`py-2 rounded-lg border text-center transition-all ${
+                    className={`py-2 rounded-control border text-center transition-all ${
                       decisionAction === 'Reject'
-                        ? 'bg-red-500/20 text-red-400 border-red-500/50 font-bold'
-                        : 'bg-[var(--ams-surface)] text-[var(--ams-secondary)] border-white/[0.07]'
+                        ? 'bg-red-500/20 text-[var(--danger)] border-red-500/50 font-semibold'
+                        : 'bg-[var(--panel)] text-[var(--muted)] border-[var(--line)]'
                     }`}
                   >
                     Reject
@@ -472,28 +472,28 @@ export const AdminApprovals: React.FC = () => {
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-sans text-[var(--ams-secondary)]">Decision Notes / Reason</label>
+                <label className="text-xs font-sans text-[var(--muted)]">Decision Notes / Reason</label>
                 <textarea
                   rows={3}
                   value={decisionNotes}
                   onChange={(e) => setDecisionNotes(e.target.value)}
                   placeholder="Record rationale for the immutable security audit log..."
-                  className="w-full p-2.5 rounded-lg bg-[var(--ams-surface)] text-white border border-white/[0.07] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ams-red)]/40 focus:border-[var(--ams-red)] text-xs resize-none"
+                  className="w-full p-2.5 rounded-control bg-[var(--panel)] text-[var(--text)] border border-[var(--line)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ams-red)]/40 focus:border-[var(--ams-red)] text-xs resize-none"
                 />
               </div>
 
-              <div className="pt-3 border-t border-white/[0.07] flex items-center justify-end gap-2">
+              <div className="pt-3 border-t border-[var(--line)] flex items-center justify-end gap-2">
                 <button
                   type="button"
                   onClick={() => setActiveItem(null)}
-                  className="px-4 py-2 rounded-xl bg-[var(--ams-surface)] hover:bg-[var(--ams-elevated)] text-[var(--ams-secondary)] text-xs font-sans"
+                  className="px-4 py-2 rounded-card bg-[var(--panel)] hover:bg-[var(--ams-elevated)] text-[var(--muted)] text-xs font-sans"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-5 py-2 rounded-xl bg-[var(--ams-red)] hover:bg-[var(--ams-red)] text-white text-xs font-sans font-semibold disabled:opacity-50 flex items-center gap-1.5"
+                  className="px-5 py-2 rounded-card bg-[var(--ams-red)] hover:bg-[var(--ams-red)] text-[var(--text)] text-xs font-sans font-semibold disabled:opacity-50 flex items-center gap-1.5"
                 >
                   {isSubmitting ? <Loader2 size={13} className="animate-spin" /> : <ShieldCheck size={14} />}
                   <span>Confirm Decision</span>
