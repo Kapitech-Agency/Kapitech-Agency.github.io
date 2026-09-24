@@ -748,7 +748,7 @@ export const AdminCrm: React.FC = () => {
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     title={language === 'id' ? 'Kirim Pesan WhatsApp' : 'Send WhatsApp message'}
-                                    className="h-7 w-7 rounded-lg bg-[var(--panel)] hover:bg-emerald-950/60 text-[var(--muted)] hover:text-emerald-400 border border-[var(--line)] hover:border-emerald-500/30 transition-all flex items-center justify-center shrink-0"
+                                    className="h-8 w-8 rounded-control bg-[var(--panel)] hover:bg-emerald-950/60 text-[var(--muted)] hover:text-emerald-400 border border-[var(--line)] hover:border-emerald-500/30 transition-all flex items-center justify-center shrink-0"
                                   >
                                     <Send size={11} />
                                   </a>
@@ -834,7 +834,7 @@ export const AdminCrm: React.FC = () => {
                         <button
                           onClick={() => handleConvertToProject(lead)}
                           title="Create project"
-                          className="w-9 h-9 rounded-xl bg-emerald-950/40 text-emerald-400 hover:bg-emerald-950/80 border border-emerald-500/30 flex items-center justify-center min-h-[36px] min-w-[36px]"
+                          className="w-9 h-9 rounded-xl bg-emerald-950/40 text-emerald-400 hover:bg-emerald-950/80 border border-emerald-500/30 flex items-center justify-center min-h-10 min-w-10"
                         >
                           <Layers size={13} />
                         </button>
@@ -844,7 +844,7 @@ export const AdminCrm: React.FC = () => {
                           href={`https://wa.me/${cleanPhone(lead.phone)}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="w-9 h-9 rounded-xl bg-[var(--panel)] text-emerald-400 hover:bg-emerald-950/50 border border-[var(--line)] hover:border-emerald-500/30 flex items-center justify-center min-h-[36px] min-w-[36px]"
+                          className="w-9 h-9 rounded-xl bg-[var(--panel)] text-emerald-400 hover:bg-emerald-950/50 border border-[var(--line)] hover:border-emerald-500/30 flex items-center justify-center min-h-10 min-w-10"
                           title="WhatsApp client"
                         >
                           <Send size={13} />
@@ -852,14 +852,14 @@ export const AdminCrm: React.FC = () => {
                       )}
                       <button
                         onClick={() => handleOpenEditModal(lead)}
-                        className="w-9 h-9 rounded-xl bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] flex items-center justify-center min-h-[36px] min-w-[36px]"
+                        className="w-9 h-9 rounded-xl bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] flex items-center justify-center min-h-10 min-w-10"
                         title="Edit deal"
                       >
                         <Edit3 size={13} />
                       </button>
                       <button
                         onClick={() => handleDeleteLead(lead.id, lead.clientName)}
-                        className="w-9 h-9 rounded-xl bg-[var(--panel)] text-[var(--muted)] hover:text-red-400 border border-[var(--line)] hover:border-red-500/40 flex items-center justify-center min-h-[36px] min-w-[36px]"
+                        className="w-9 h-9 rounded-xl bg-[var(--panel)] text-[var(--muted)] hover:text-red-400 border border-[var(--line)] hover:border-red-500/40 flex items-center justify-center min-h-10 min-w-10"
                         title="Delete deal"
                       >
                         <Trash2 size={13} />
@@ -946,7 +946,7 @@ export const AdminCrm: React.FC = () => {
                               <button
                                 onClick={() => handleConvertToProject(lead)}
                                 title="Create project"
-                                className="w-9 h-9 rounded-xl bg-emerald-950/40 text-emerald-400 hover:bg-emerald-950/80 border border-emerald-500/30 flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
+                                className="w-9 h-9 rounded-xl bg-emerald-950/40 text-emerald-400 hover:bg-emerald-950/80 border border-emerald-500/30 flex items-center justify-center transition-colors min-h-10 min-w-10"
                               >
                                 <Layers size={13} />
                               </button>
@@ -956,7 +956,7 @@ export const AdminCrm: React.FC = () => {
                                 href={`https://wa.me/${cleanPhone(lead.phone)}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="w-9 h-9 rounded-xl bg-[var(--panel)] text-emerald-400 hover:bg-emerald-950/50 border border-[var(--line)] hover:border-emerald-500/30 flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
+                                className="w-9 h-9 rounded-xl bg-[var(--panel)] text-emerald-400 hover:bg-emerald-950/50 border border-[var(--line)] hover:border-emerald-500/30 flex items-center justify-center transition-colors min-h-10 min-w-10"
                                 title="WhatsApp client"
                               >
                                 <Send size={13} />
@@ -964,14 +964,14 @@ export const AdminCrm: React.FC = () => {
                             )}
                             <button
                               onClick={() => handleOpenEditModal(lead)}
-                              className="w-9 h-9 rounded-xl bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
+                              className="w-9 h-9 rounded-xl bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] flex items-center justify-center transition-colors min-h-10 min-w-10"
                               title="Edit deal"
                             >
                               <Edit3 size={13} />
                             </button>
                             <button
                               onClick={() => handleDeleteLead(lead.id, lead.clientName)}
-                              className="w-9 h-9 rounded-xl bg-[var(--panel)] text-[var(--muted)] hover:text-red-400 border border-[var(--line)] hover:border-red-500/40 flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
+                              className="w-9 h-9 rounded-xl bg-[var(--panel)] text-[var(--muted)] hover:text-red-400 border border-[var(--line)] hover:border-red-500/40 flex items-center justify-center transition-colors min-h-10 min-w-10"
                               title="Delete deal"
                             >
                               <Trash2 size={13} />
