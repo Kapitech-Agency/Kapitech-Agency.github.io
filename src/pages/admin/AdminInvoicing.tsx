@@ -308,7 +308,7 @@ export const AdminInvoicing: React.FC = () => {
       {/* 1. Header & Actions */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[var(--line)]">
         <div>
-          <h1 className="text-2xl font-display font-bold text-white flex items-center gap-3">
+          <h1 className="text-xl font-display font-semibold text-white flex items-center gap-3">
             <Receipt className="text-[var(--danger)]" size={26} />
             <span>{t('admin.fin.title')}</span>
           </h1>
@@ -347,7 +347,7 @@ export const AdminInvoicing: React.FC = () => {
       )}
 
       {/* 2. Key Financial KPIs (1 col mobile, 2 col tablet, 4 col desktop) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         
         {/* Metric 1: Collected Revenue */}
         <div className="bg-[var(--panel)] border border-[var(--line)] p-5 rounded-card flex flex-col justify-between h-full group hover:border-[var(--line)] transition-all">
@@ -1328,7 +1328,7 @@ export const AdminInvoicing: React.FC = () => {
               </div>
 
               {/* Billed To */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6 text-xs">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4 text-xs">
                 <div>
                   <span className="text-zinc-400 normal-case font-sans font-semibold block mb-1">Billed To:</span>
                   <strong className="text-sm text-zinc-900 block">{previewInvoice.clientName}</strong>
