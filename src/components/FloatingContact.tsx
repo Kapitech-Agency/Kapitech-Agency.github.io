@@ -11,52 +11,18 @@ export const FloatingContact = () => {
   const { language } = useLanguage();
 
   useEffect(() => {
-    const hero = document.querySelector<HTMLElement>('.kapi-home-hero, .kapi-page-hero');
-
-    if (!hero || typeof IntersectionObserver === 'undefined') {
-      const syncFromScroll = () => {
-        setIsVisible(window.scrollY > Math.max(240, window.innerHeight * 0.45));
-        if (window.scrollY <= Math.max(240, window.innerHeight * 0.45)) {
-          setIsOpen(false);
-        }
-      };
-
-      syncFromScroll();
-      window.addEventListener('scroll', syncFromScroll, { passive: true });
-      return () => window.removeEventListener('scroll', syncFromScroll);
-    }
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        const shouldShow = !entry.isIntersecting && entry.boundingClientRect.bottom <= 0;
-        setIsVisible(shouldShow);
-        if (!shouldShow) {
-          setIsOpen(false);
-        }
-      },
-      {
-        threshold: 0,
-        rootMargin: '0px 0px -12% 0px',
-      }
-    );
-
-    observer.observe(hero);
-
-    return () => observer.disconnect();
-  }, []);
-
-  useEffect(() => {
-    if (!isOpen) return;
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
+    const toggleVisibility = () => {
+      if (window.scrollY > 160) {
+        setIsVisible(true);
+      } else {
+        setIsVisible(false);
         setIsOpen(false);
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen]);
+    window.addEventListener('scroll', toggleVisibility);
+    return () => window.removeEventListener('scroll', toggleVisibility);
+  }, []);
 
   const contactOptions = [
     {
@@ -164,7 +130,7 @@ export const FloatingContact = () => {
                   "w-12 h-12 sm:w-14 sm:h-14 min-h-[44px] min-w-[44px] rounded-full flex items-center justify-center text-white shadow-[var(--k-shadow-sm)] transition-all duration-300",
                   isOpen 
                     ? "bg-[var(--k-surface)] border border-[var(--k-border)]" 
-                    : "bg-brand-red shadow-[0_10px_28px_rgba(176,0,32,.22)]"
+                    : "bg-brand-red shadow-[0_10px_28px_rgba(176,0,32,.28)]"
                 )}
               >
                 {isOpen ? <X size={22} /> : <MessageSquare size={22} />}
