@@ -64,9 +64,9 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
   }, [isOpen]);
 
   const sizeClasses = {
-    xs: 'px-2.5 py-1.5 text-[11px] gap-2 rounded-md',
-    sm: 'px-3 py-1.5 text-xs gap-2.5 rounded-lg',
-    md: 'px-3.5 py-2 text-xs gap-3 rounded-lg'
+    xs: 'h-8 px-2.5 text-[11px] gap-2 rounded-lg',
+    sm: 'h-9 px-3 text-xs gap-2.5 rounded-lg',
+    md: 'h-10 px-3.5 text-sm gap-3 rounded-lg'
   };
 
   return (
@@ -88,12 +88,14 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
             setIsOpen(v => !v);
           }
         }}
-        className={`flex items-center justify-between font-sans transition-all duration-150 border select-none ${
+        aria-haspopup="listbox"
+        aria-expanded={isOpen}
+        className={`flex items-center justify-between font-sans transition-colors duration-150 border select-none ${
           sizeClasses[size]
         } ${
           isOpen
-            ? 'bg-[#181B22] border-[#E50914] text-white shadow-none'
-            : 'bg-[#181B22] hover:bg-[#1B1E25] border-[rgba(255,255,255,0.09)] hover:border-[rgba(255,255,255,0.14)] text-[#F8FAFC]'
+            ? 'bg-[#181B22] border-[#E50914] text-white ring-2 ring-[#E50914]/10 shadow-none'
+            : 'bg-[#181B22] hover:bg-[#21252F] border-[rgba(255,255,255,0.10)] hover:border-[rgba(255,255,255,0.16)] text-[#F8FAFC]'
         } ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} ${triggerClassName}`}
       >
         <div className="flex items-center gap-2 min-w-0 pr-2">
@@ -118,7 +120,8 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
 
       {isOpen && (
           <div
-            className={`absolute z-[100] mt-1 min-w-[140px] sm:min-w-[180px] max-w-[calc(100vw-32px)] sm:max-w-[260px] max-h-[260px] overflow-y-auto bg-[#111318] border border-[rgba(255,255,255,0.07)] rounded-[10px] p-1 shadow-[0_12px_28px_rgba(0,0,0,0.42)] space-y-0.5 font-sans text-xs custom-scrollbar ${
+            role="listbox"
+            className={`absolute z-[100] mt-1 min-w-[140px] sm:min-w-[180px] max-w-[calc(100vw-32px)] sm:max-w-[280px] max-h-[280px] overflow-y-auto bg-[#111318] border border-[rgba(255,255,255,0.09)] rounded-[10px] p-1 shadow-[0_8px_20px_rgba(0,0,0,0.28)] space-y-0.5 font-sans text-xs custom-scrollbar ${
               align === 'right' ? 'right-0' : 'left-0'
             } ${menuClassName}`}
           >
@@ -132,7 +135,9 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
                     onChange(option.value);
                     setIsOpen(false);
                   }}
-                  className={`w-full flex items-center justify-between px-3 py-2 rounded-[7px] text-left transition-colors group ${
+                  role="option"
+                  aria-selected={isSelected}
+                  className={`w-full flex items-center justify-between min-h-9 px-3 py-2 rounded-[7px] text-left transition-colors group ${
                     isSelected
                       ? 'bg-[#181B22] text-[#F8FAFC] font-semibold border border-[rgba(255,255,255,0.07)]'
                       : 'text-[#8A94A6] hover:text-[#F8FAFC] hover:bg-[#181B22]'
