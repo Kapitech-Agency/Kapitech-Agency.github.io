@@ -498,7 +498,7 @@ export const AdminInbox: React.FC = () => {
             <div className="w-8 h-8 rounded-xl bg-[var(--accent)]/10 border border-[var(--accent)]/30 flex items-center justify-center text-[var(--danger)] shrink-0">
               <Inbox size={18} />
             </div>
-            <h1 className="text-2xl sm:text-3xl font-display font-bold text-white tracking-tight">
+            <h1 className="text-xl font-display font-semibold text-white tracking-tight">
               {language === 'id' ? 'Kotak Masuk Prospek & Pesan' : 'Leads & Inquiry Inbox'}
             </h1>
             <span className="text-xs font-sans py-0.5 px-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-full text-[var(--muted)]">
@@ -553,7 +553,7 @@ export const AdminInbox: React.FC = () => {
       {/* ------------------------------------------------------------- */}
       {/* 2. EXECUTIVE KPI SUMMARY RIBBON */}
       {/* ------------------------------------------------------------- */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {/* Metric 1: Total Inbound */}
         <div className="p-4 rounded-card bg-[var(--panel)] border border-[var(--line)] space-y-1">
           <div className="flex items-center justify-between text-xs font-sans text-[var(--muted)]">
@@ -940,7 +940,7 @@ export const AdminInbox: React.FC = () => {
         </div>
       ) : (
         /* SPLIT MASTER-DETAIL VIEW (when items exist) */
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 items-start">
           
           {/* Left: Master Briefs List Pane */}
           <div className={`space-y-3 ${
