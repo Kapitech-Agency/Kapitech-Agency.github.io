@@ -239,11 +239,11 @@ export const DataMigrationModal: React.FC<DataMigrationModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-0 sm:p-4 overflow-y-auto">
-      <div className="fixed inset-0 bg-black/80 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-2xl bg-[#0D0F12] border-0 sm:border sm:border-[#262930] rounded-none sm:rounded-[var(--k-card-radius)] shadow-2xl z-10 flex flex-col overflow-hidden animate-in zoom-in-95 duration-150">
+      <div className="fixed inset-0 bg-black/80 " onClick={onClose} />
+      <div className="relative w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-2xl bg-[#0D0F12] border-0 sm:border sm:border-[#262930] rounded-none sm:rounded-[var(--k-card-radius)] shadow-none z-10 flex flex-col overflow-hidden animate-in zoom-in-95 duration-150">
         
         {/* Sticky Header */}
-        <div className="sticky top-0 z-20 bg-[#0D0F12]/95 backdrop-blur-md px-5 sm:px-6 py-4 border-b border-[#262930] flex items-center justify-between shrink-0">
+        <div className="sticky top-0 z-20 bg-[#0D0F12]/95  px-5 sm:px-6 py-4 border-b border-[#262930] flex items-center justify-between shrink-0">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-[var(--k-control-radius)] bg-[var(--k-red)]/15 text-[var(--k-red)] border border-[var(--k-red)]/30 flex items-center justify-center shrink-0">
               <FileSpreadsheet size={18} />
@@ -268,7 +268,7 @@ export const DataMigrationModal: React.FC<DataMigrationModalProps> = ({
         {/* Scrollable Body */}
         <div className="p-5 sm:p-6 overflow-y-auto flex-1 space-y-4 custom-scrollbar">
           <div>
-            <label className="text-[11px] font-sans text-[#8A909D] uppercase block mb-2">
+            <label className="text-[11px] font-sans text-[#8A909D] normal-case block mb-2">
               {language === 'id' ? 'Pilih Modul Tujuan Migrasi' : 'Select Target Destination Module'}
             </label>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
@@ -370,7 +370,7 @@ export const DataMigrationModal: React.FC<DataMigrationModalProps> = ({
           {/* Preview rows if available */}
           {previewRows.length > 0 && (
             <div className="space-y-1.5">
-              <div className="text-[11px] font-sans text-[#8A909D] uppercase">
+              <div className="text-[11px] font-sans text-[#8A909D] normal-case">
                 {language === 'id' ? 'Pratinjau 5 Baris Data Pertama' : 'Preview (First 5 Rows Ingested)'}
               </div>
               <div className="max-h-36 overflow-auto custom-scrollbar border border-[#262930] rounded-[var(--k-control-radius)] bg-[#121418] p-2 text-[10px] font-sans text-[#8A909D]">
@@ -381,7 +381,7 @@ export const DataMigrationModal: React.FC<DataMigrationModalProps> = ({
         </div>
 
         {/* Sticky Footer */}
-        <div className="sticky bottom-0 z-20 bg-[#0D0F12]/95 backdrop-blur-md px-5 sm:px-6 py-3.5 border-t border-[#262930] flex items-center justify-end gap-2.5 shrink-0">
+        <div className="sticky bottom-0 z-20 bg-[#0D0F12]/95  px-5 sm:px-6 py-3.5 border-t border-[#262930] flex items-center justify-end gap-2.5 shrink-0">
           <button
             type="button"
             onClick={onClose}
