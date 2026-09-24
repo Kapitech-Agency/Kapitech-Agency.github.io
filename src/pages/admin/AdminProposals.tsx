@@ -443,7 +443,7 @@ export const AdminProposals: React.FC = () => {
             <span>{language === 'id' ? 'Proposal Aktif' : 'Active Pipeline'}</span>
             <Clock size={13} className="text-[var(--warning)]" />
           </div>
-          <div className="text-lg sm:text-xl font-bold font-sans text-[var(--warning)]">
+          <div className="text-lg sm:text-xl font-semibold font-sans text-[var(--warning)]">
             {metrics.activeProposals}
           </div>
           <div className="text-xs font-sans text-[var(--ams-secondary)]">
@@ -456,7 +456,7 @@ export const AdminProposals: React.FC = () => {
             <span>{language === 'id' ? 'Nilai Dimenangkan' : 'Won Revenue'}</span>
             <CheckCircle2 size={13} className="text-[var(--success)]" />
           </div>
-          <div className="text-lg sm:text-xl font-bold font-sans text-[var(--success)]">
+          <div className="text-lg sm:text-xl font-semibold font-sans text-[var(--success)]">
             {formatAmount(metrics.acceptedValue, currency)}
           </div>
           <div className="text-xs font-sans text-[var(--success)]/80">
@@ -469,7 +469,7 @@ export const AdminProposals: React.FC = () => {
             <span>{language === 'id' ? 'Tingkat Kemenangan' : 'Win Rate'}</span>
             <ShieldCheck size={13} className="text-[var(--info)]" />
           </div>
-          <div className="text-lg sm:text-xl font-bold font-sans text-[var(--info)]">
+          <div className="text-lg sm:text-xl font-semibold font-sans text-[var(--info)]">
             {metrics.winRate}%
           </div>
           <div className="text-xs font-sans text-[var(--ams-secondary)]">
@@ -550,7 +550,7 @@ export const AdminProposals: React.FC = () => {
                       )}
                     </td>
                     <td className="py-3 px-4">
-                      <div className="font-bold font-sans text-[var(--success)]">
+                      <div className="font-semibold font-sans text-[var(--success)]">
                         {formatAmount(p.total, currency)}
                       </div>
                       {p.discount > 0 && (
@@ -798,7 +798,7 @@ export const AdminProposals: React.FC = () => {
                     <span>PPN (11%)</span>
                     <span>{formatAmount(formTax, currency)}</span>
                   </div>
-                  <div className="pt-2 border-t border-[var(--line)] flex justify-between text-sm font-bold text-[var(--text)]">
+                  <div className="pt-2 border-t border-[var(--line)] flex justify-between text-sm font-semibold text-[var(--text)]">
                     <span>Total Proposal</span>
                     <span className="text-[var(--success)]">{formatAmount(formTotal, currency)}</span>
                   </div>
@@ -816,7 +816,7 @@ export const AdminProposals: React.FC = () => {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-5 py-2 rounded-xl min-h-10 px-4 rounded-control bg-[var(--accent)] hover:bg-[var(--accent)] text-white text-xs font-sans font-medium flex items-center gap-2 disabled:opacity-50"
+                  className="px-5 py-2 rounded-control min-h-10 px-4 rounded-control bg-[var(--accent)] hover:bg-[var(--accent)] text-white text-xs font-sans font-medium flex items-center gap-2 disabled:opacity-50"
                 >
                   {isSubmitting ? <Loader2 size={13} className="animate-spin" /> : <Plus size={14} />}
                   <span>Generate Proposal</span>
@@ -833,7 +833,7 @@ export const AdminProposals: React.FC = () => {
           <div className="bg-[var(--ams-bg)] border border-[var(--line)] rounded-card w-full max-w-xl shadow-[0_24px_64px_rgba(0,0,0,0.55)] overflow-hidden">
             <div className="p-4 border-b border-[var(--line)] flex items-center justify-between bg-[var(--panel)]">
               <div className="flex items-center gap-2">
-                <span className="text-[var(--accent)] font-sans font-bold text-xs">{previewProposal.proposalNumber}</span>
+                <span className="text-[var(--accent)] font-sans font-semibold text-xs">{previewProposal.proposalNumber}</span>
                 <span className="text-[var(--text)] font-semibold text-xs truncate max-w-[280px]">{previewProposal.title}</span>
               </div>
               <button
@@ -847,7 +847,7 @@ export const AdminProposals: React.FC = () => {
             <div className="p-5 space-y-4 text-xs font-sans">
               <div className="flex justify-between items-start border-b border-[var(--line)] pb-3">
                 <div>
-                  <div className="font-bold text-sm text-[var(--text)]">{previewProposal.clientName}</div>
+                  <div className="font-semibold text-sm text-[var(--text)]">{previewProposal.clientName}</div>
                   <div className="text-xs font-sans text-[var(--ams-secondary)]">{previewProposal.clientCompany}</div>
                   {previewProposal.clientEmail && (
                     <div className="text-xs font-sans text-[var(--ams-secondary)]">{previewProposal.clientEmail}</div>
@@ -869,7 +869,7 @@ export const AdminProposals: React.FC = () => {
                         <div className="text-[var(--text)] font-medium">{item.description}</div>
                         <div className="text-xs font-sans text-[var(--ams-secondary)]">{item.quantity} × {formatAmount(item.unitPrice, currency)}</div>
                       </div>
-                      <div className="font-sans font-bold text-[var(--success)]">
+                      <div className="font-sans font-semibold text-[var(--success)]">
                         {formatAmount(item.total, currency)}
                       </div>
                     </div>
@@ -892,7 +892,7 @@ export const AdminProposals: React.FC = () => {
                   <span>Tax</span>
                   <span>+{formatAmount(previewProposal.tax, currency)}</span>
                 </div>
-                <div className="pt-2 border-t border-[var(--line)] flex justify-between text-sm font-bold text-[var(--text)]">
+                <div className="pt-2 border-t border-[var(--line)] flex justify-between text-sm font-semibold text-[var(--text)]">
                   <span>Grand Total</span>
                   <span className="text-[var(--success)]">{formatAmount(previewProposal.total, currency)}</span>
                 </div>
