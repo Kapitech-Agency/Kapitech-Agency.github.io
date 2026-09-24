@@ -39,7 +39,7 @@ const statusConfigs: Record<InvoiceStatus, StatusConfig> = {
   },
   draft: {
     label: 'Draft',
-    badgeClass: 'bg-bg text-muted border-line',
+    badgeClass: 'bg-panel text-muted border-line',
     icon: FileText
   }
 };
@@ -125,8 +125,8 @@ export const InvoiceStatusDropdown: React.FC<InvoiceStatusDropdownProps> = ({
                   }}
                   className={`w-full flex items-center justify-between min-h-10 sm:min-h-9 px-2.5 py-2 rounded-control text-left transition-colors ${
                     isSelected
-                      ? 'bg-bg text-fg font-semibold'
-                      : 'text-muted hover:text-fg hover:bg-bg'
+                      ? 'bg-panel-hover text-fg font-semibold'
+                      : 'text-muted hover:text-fg hover:bg-panel-hover'
                   }`}
                 >
                   <span className="flex items-center gap-2 min-w-0">
