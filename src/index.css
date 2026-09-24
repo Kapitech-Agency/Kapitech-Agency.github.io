@@ -1084,3 +1084,85 @@ body:has([data-kapi-admin="true"]) .kapi-noise-overlay {
 .admin-shell .ams-panel { min-height: 100%; }
 .admin-shell .ams-inbox-item { padding: 14px; border: 1px solid var(--ams-border); border-radius: 14px; background: var(--ams-surface); }
 .admin-shell .ams-empty-state { padding: 24px; text-align: center; color: var(--ams-secondary); font-size: .75rem; border: 1px solid var(--ams-border); border-radius: 12px; background: rgba(17,19,24,.55); }
+
+/* KAPITECH APPLE UI QA OVERRIDE v2 */
+:root{--k-apple-red:#E63946;--k-apple-red-dark:#C92F3C;--k-apple-bg:#0B0B0D;--k-apple-surface:#151517;--k-apple-border:rgba(255,255,255,.10);--k-apple-border-strong:rgba(255,255,255,.16);--k-apple-text:#F5F5F7;--k-apple-secondary:#A1A1A6;--k-apple-tertiary:#86868B;--k-apple-radius-sm:10px;--k-apple-radius-md:14px;--k-apple-radius-lg:18px;--k-apple-radius-xl:22px;--k-apple-ease:cubic-bezier(.22,1,.36,1)}
+html{text-rendering:optimizeLegibility}
+button,a,input,select,textarea{-webkit-tap-highlight-color:transparent}
+img,svg,video,canvas{max-width:100%}
+.kapi-public-shell,.admin-shell,[data-kapi-admin=true]{min-width:0;overflow-wrap:anywhere}
+
+/* PUBLIC */
+.kapi-public-shell{--pub-red:var(--k-apple-red);--pub-red-hover:var(--k-apple-red-dark);--pub-bg:var(--k-apple-bg);--pub-surface:rgba(24,24,27,.78);--pub-text:var(--k-apple-text);--pub-text-secondary:var(--k-apple-secondary);--pub-border:var(--k-apple-border);background:var(--pub-bg);color:var(--pub-text)}
+.kapi-public-shell h1,.kapi-public-shell h2,.kapi-public-shell h3,.kapi-public-shell h4{color:var(--pub-text);text-wrap:balance}
+.kapi-public-shell h1{font-size:clamp(2.5rem,7vw,5.5rem);line-height:.98;letter-spacing:-.055em;font-weight:700}
+.kapi-public-shell h2{font-size:clamp(2rem,4.5vw,3.5rem);line-height:1.02;letter-spacing:-.045em;font-weight:650}
+.kapi-public-shell h3{font-size:clamp(1.25rem,2.5vw,1.75rem);line-height:1.15;letter-spacing:-.025em;font-weight:650}
+.kapi-public-shell p{color:var(--pub-text-secondary);line-height:1.65}
+.kapi-public-shell .max-w-7xl{max-width:1200px}
+.kapi-public-shell .kapi-public-nav,.kapi-public-shell .kapi-nav-top,.kapi-public-shell .kapi-nav-scrolled,.kapi-public-shell .kapi-mega-menu,.kapi-public-shell .kapi-glass-mobile-menu,.kapi-public-shell .kapi-glass-sheet{border-color:var(--pub-border)!important;background:rgba(11,11,13,.72)!important;backdrop-filter:saturate(180%) blur(24px);-webkit-backdrop-filter:saturate(180%) blur(24px)}
+.kapi-public-shell .kapi-nav-link,.kapi-public-shell .kapi-nav-services-trigger{min-height:44px;border-radius:var(--k-apple-radius-sm);color:var(--pub-text-secondary)}
+.kapi-public-shell .kapi-nav-link:hover,.kapi-public-shell .kapi-nav-services-trigger:hover{color:var(--pub-text);background:rgba(255,255,255,.055)}
+.kapi-public-shell .kapi-nav-link.kapi-nav-active,.kapi-public-shell .kapi-nav-services-trigger[aria-expanded=true]{color:var(--pub-text)!important}
+.kapi-public-shell .kapi-nav-link.kapi-nav-active::after,.kapi-public-shell .kapi-nav-services-trigger[aria-expanded=true]::after{background:rgba(230,57,70,.11)!important;box-shadow:inset 0 0 0 1px rgba(230,57,70,.14)!important}
+.kapi-public-shell .kapi-nav-cta,.kapi-public-shell .kapi-button-primary,.kapi-public-shell .kapi-footer-cta{min-height:44px;border-radius:999px!important;background:var(--pub-red)!important;border:1px solid var(--pub-red)!important;color:#fff!important;box-shadow:0 8px 24px rgba(230,57,70,.18);transition:transform 180ms var(--k-apple-ease),background-color 180ms ease,box-shadow 180ms ease}
+.kapi-public-shell .kapi-nav-cta:hover,.kapi-public-shell .kapi-button-primary:hover,.kapi-public-shell .kapi-footer-cta:hover{background:var(--pub-red-hover)!important;transform:translateY(-1px);box-shadow:0 12px 30px rgba(230,57,70,.23)}
+.kapi-public-shell .kapi-card,.kapi-public-shell .kapi-service-card{border:1px solid var(--pub-border)!important;border-radius:var(--k-apple-radius-lg)!important;background:rgba(21,21,23,.76)!important;box-shadow:0 12px 36px rgba(0,0,0,.16)!important;transition:transform 220ms var(--k-apple-ease),border-color 180ms ease,background-color 180ms ease,box-shadow 220ms ease}
+.kapi-public-shell .kapi-card:hover,.kapi-public-shell .kapi-service-card:hover{transform:translateY(-2px);border-color:rgba(230,57,70,.24)!important;background:rgba(27,27,30,.86)!important;box-shadow:0 18px 44px rgba(0,0,0,.20)!important}
+.kapi-public-shell .kapi-card-icon-box,.kapi-public-shell .kapi-service-icon{width:44px;height:44px;border-radius:12px!important}
+.kapi-public-shell input,.kapi-public-shell textarea,.kapi-public-shell select{min-height:44px;border-radius:var(--k-apple-radius-sm)!important;background:rgba(255,255,255,.045)!important;border:1px solid var(--pub-border)!important;color:var(--pub-text)!important}
+.kapi-public-shell .kapi-modal-panel{border-radius:var(--k-apple-radius-xl)!important;background:rgba(21,21,23,.94)!important;border:1px solid var(--k-apple-border-strong)!important;box-shadow:0 30px 90px rgba(0,0,0,.50)!important;backdrop-filter:blur(28px) saturate(150%);-webkit-backdrop-filter:blur(28px) saturate(150%)}
+
+/* AMS */
+[data-kapi-admin=true],.admin-shell{--ams-bg-primary:#0B0B0D;--ams-surface:#19191C;--ams-surface-2:#202024;--ams-elevated:#252529;--ams-text-primary:#F5F5F7;--ams-text-secondary:#A1A1A6;--ams-text-tertiary:#86868B;--ams-red:#E63946;--ams-red-hover:#C92F3C;--ams-border:rgba(255,255,255,.095);--ams-border-strong:rgba(255,255,255,.15);--ams-radius-control:10px;--ams-radius-card:16px;--ams-radius-panel:20px;background:var(--ams-bg-primary);color:var(--ams-text-primary);font-family:'Manrope',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+[data-kapi-admin=true] .ams-shell{background:var(--ams-bg-primary)!important}
+[data-kapi-admin=true] .ams-sidebar,[data-kapi-admin=true] .ams-header,[data-kapi-admin=true] .ams-mobile-nav{background:rgba(21,21,23,.78)!important;border-color:var(--ams-border)!important;backdrop-filter:saturate(180%) blur(24px);-webkit-backdrop-filter:saturate(180%) blur(24px)}
+[data-kapi-admin=true] .ams-sidebar{width:248px}
+[data-kapi-admin=true] .ams-sidebar.ams-sidebar-collapsed{width:72px}
+[data-kapi-admin=true] .ams-sidebar-nav a{min-height:44px;border-radius:12px;color:var(--ams-text-secondary)}
+[data-kapi-admin=true] .ams-sidebar-nav a:hover{color:var(--ams-text-primary);background:rgba(255,255,255,.045)}
+[data-kapi-admin=true] .ams-sidebar-nav a[aria-current=page]{color:var(--ams-text-primary);background:rgba(230,57,70,.12)!important;box-shadow:inset 3px 0 0 var(--ams-red),inset 0 0 0 1px rgba(230,57,70,.10)}
+[data-kapi-admin=true] .kapi-card,[data-kapi-admin=true] .ams-surface,[data-kapi-admin=true] .metric-card{border:1px solid var(--ams-border)!important;border-radius:var(--ams-radius-card)!important;background:rgba(25,25,28,.82)!important;box-shadow:none!important}
+[data-kapi-admin=true] .kapi-card:hover,[data-kapi-admin=true] .metric-card:hover{transform:translateY(-1px);background:rgba(31,31,35,.90)!important;border-color:var(--ams-border-strong)!important;box-shadow:0 12px 34px rgba(0,0,0,.20)!important}
+[data-kapi-admin=true] .ams-page-title{font-size:clamp(1.5rem,2.6vw,2.25rem);line-height:1.08;letter-spacing:-.045em;font-weight:700}
+[data-kapi-admin=true] .ams-page-subtitle{color:var(--ams-text-secondary);max-width:70ch}
+[data-kapi-admin=true] .ams-kpi{min-height:136px;padding:20px}
+[data-kapi-admin=true] .ams-kpi-value{font-size:clamp(1.4rem,2.4vw,2rem);font-weight:700;letter-spacing:-.045em}
+[data-kapi-admin=true] input,[data-kapi-admin=true] select,[data-kapi-admin=true] textarea{min-height:44px!important;border-radius:10px!important;background:rgba(255,255,255,.045)!important;border:1px solid var(--ams-border)!important;color:var(--ams-text-primary)!important;box-shadow:none!important}
+[data-kapi-admin=true] input::placeholder,[data-kapi-admin=true] textarea::placeholder{color:#71717A!important}
+[data-kapi-admin=true] th{color:var(--ams-text-tertiary)!important;font-size:11px!important;font-weight:650;letter-spacing:.045em}
+[data-kapi-admin=true] td{border-top-color:rgba(255,255,255,.055)!important;color:var(--ams-text-secondary);line-height:1.45}
+[data-kapi-admin=true] .ams-action{min-height:44px;border-radius:10px;background:var(--ams-surface-2);border-color:var(--ams-border)}
+[data-kapi-admin=true] .ams-action-primary{background:var(--ams-red)!important;border-color:var(--ams-red)!important;color:#fff!important}
+[data-kapi-admin=true] .ams-action-primary:hover{background:var(--ams-red-hover)!important}
+[data-kapi-admin=true] .ams-status{min-height:28px;border-radius:999px;padding-inline:10px}
+
+/* Focus: no white click outline. Red ring only for keyboard navigation. */
+.kapi-public-shell input:focus,.kapi-public-shell textarea:focus,.kapi-public-shell select:focus,[data-kapi-admin=true] input:focus,[data-kapi-admin=true] textarea:focus,[data-kapi-admin=true] select:focus{outline:none!important;box-shadow:none!important}
+.kapi-public-shell input:focus-visible,.kapi-public-shell textarea:focus-visible,.kapi-public-shell select:focus-visible,[data-kapi-admin=true] input:focus-visible,[data-kapi-admin=true] textarea:focus-visible,[data-kapi-admin=true] select:focus-visible{outline:2px solid rgba(230,57,70,.72)!important;outline-offset:2px;box-shadow:0 0 0 4px rgba(230,57,70,.12)!important}
+.kapi-public-shell button:focus-visible,.kapi-public-shell a:focus-visible,[data-kapi-admin=true] button:focus-visible,[data-kapi-admin=true] a:focus-visible{outline:2px solid rgba(230,57,70,.78)!important;outline-offset:3px;box-shadow:none!important}
+
+/* Prevent stretched circular controls and preserve intentional pill buttons. */
+.kapi-public-shell button.rounded-full,[data-kapi-admin=true] button.rounded-full{aspect-ratio:auto;flex:0 0 auto}
+[data-kapi-admin=true] .fixed.inset-0[class*="backdrop-blur"]{background:rgba(0,0,0,.62)!important;backdrop-filter:blur(18px) saturate(120%)!important;-webkit-backdrop-filter:blur(18px) saturate(120%)!important}
+[data-kapi-admin=true] .fixed.inset-0[class*="backdrop-blur"]>div{max-width:min(720px,calc(100vw - 32px));max-height:calc(100svh - 32px);border-radius:var(--ams-radius-panel)!important;border-color:var(--ams-border-strong)!important;background:rgba(25,25,28,.96)!important;box-shadow:0 30px 90px rgba(0,0,0,.55)!important}
+[data-kapi-admin=true] .overflow-x-auto{max-width:100%;overscroll-behavior-inline:contain}
+
+@media(max-width:767px){
+ .kapi-public-shell h1{font-size:clamp(2.35rem,13vw,4rem);letter-spacing:-.05em}
+ .kapi-public-shell h2{font-size:clamp(1.9rem,9vw,3rem)}
+ .kapi-public-shell .kapi-nav-inner{min-height:60px;height:60px}
+ [data-kapi-admin=true] .ams-sidebar{width:min(88vw,320px)}
+ [data-kapi-admin=true] .ams-page-title{font-size:1.5rem}
+ [data-kapi-admin=true] .ams-kpi{min-height:124px;padding:16px}
+ [data-kapi-admin=true] .kapi-card,[data-kapi-admin=true] .ams-surface,[data-kapi-admin=true] .metric-card{border-radius:14px!important}
+ [data-kapi-admin=true] button,[data-kapi-admin=true] a[role=button]{min-height:44px}
+ [data-kapi-admin=true] .overflow-x-auto{scrollbar-width:none}
+ [data-kapi-admin=true] .overflow-x-auto::-webkit-scrollbar{display:none}
+}
+@media(prefers-reduced-motion:reduce){
+ .kapi-public-shell *,.kapi-public-shell *::before,.kapi-public-shell *::after,[data-kapi-admin=true] *,[data-kapi-admin=true] *::before,[data-kapi-admin=true] *::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+}
+@media(prefers-reduced-transparency:reduce){
+ .kapi-public-shell .kapi-public-nav,.kapi-public-shell .kapi-nav-top,.kapi-public-shell .kapi-nav-scrolled,.kapi-public-shell .kapi-mega-menu,.kapi-public-shell .kapi-glass-mobile-menu,.kapi-public-shell .kapi-glass-sheet,[data-kapi-admin=true] .ams-sidebar,[data-kapi-admin=true] .ams-header,[data-kapi-admin=true] .ams-mobile-nav{background:var(--k-apple-surface)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+}
