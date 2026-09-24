@@ -618,7 +618,7 @@ export const AdminCrm: React.FC = () => {
           bottomOffset="bottom-4"
           scrollClassName="overflow-x-auto pb-4 select-none cursor-grab active:cursor-grabbing scrollbar-thin"
         >
-          <div className="flex gap-4 min-w-[1400px] xl:min-w-full items-start">
+          <div className="ams-kanban-scroll flex gap-4 min-w-[1400px] xl:min-w-full items-start">
             
             {CRM_STAGE_DEFINITIONS.map((stageDef) => {
               const stageLeads = filteredLeads.filter(l => l.stage === stageDef.key);
