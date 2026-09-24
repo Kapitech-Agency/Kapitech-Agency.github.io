@@ -504,14 +504,7 @@ export const AdminCmsProjects: React.FC = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div>
                     <label className="block text-[var(--muted)] mb-1 font-semibold">Studio Pillar</label>
-                    <select
-                      value={editingProject.pillar}
-                      onChange={(e) => setEditingProject({ ...editingProject, pillar: e.target.value as any })}
-                      className="w-full px-3 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)] font-sans"
-                    >
-                      <option value="Visual Experience">Visual Experience</option>
-                      <option value="Innovation Development">Innovation Development</option>
-                    </select>
+                    <CustomSelect value={editingProject.pillar} onChange={(value) => setEditingProject({ ...editingProject, pillar: value as any })} options={[{value:'Visual Experience',label:'Visual Experience'},{value:'Innovation Development',label:'Innovation Development'}]} className="w-full" />
                   </div>
 
                   <div>
