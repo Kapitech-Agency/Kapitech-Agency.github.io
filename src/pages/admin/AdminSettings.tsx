@@ -385,9 +385,9 @@ export const AdminSettings: React.FC = () => {
     <div className="space-y-6">
       
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[var(--line)]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-6 border-b border-[var(--line)]">
         <div>
-          <h1 className="text-2xl font-display font-bold text-white flex items-center gap-3">
+          <h1 className="text-xl font-display font-semibold text-white flex items-center gap-3">
             <Settings className="text-[var(--accent)]" size={24} />
             <span>{language === 'id' ? 'Pengaturan Sistem & Keamanan' : 'System Settings & Security'}</span>
           </h1>
@@ -479,7 +479,7 @@ export const AdminSettings: React.FC = () => {
 
       {/* TAB 1: PROFILE & MASTER ACCOUNT */}
       {activeTab === 'profile' && (
-        <div className="w-full max-w-4xl bg-[var(--panel)] border border-[var(--line)] rounded-card p-5 sm:p-8">
+        <div className="w-full max-w-4xl bg-[var(--panel)] border border-[var(--line)] rounded-card p-5 sm:p-6">
           <div className="flex items-center gap-3 mb-6 pb-4 border-b border-[var(--line)]">
             <div className="w-10 h-10 rounded-xl bg-[var(--accent)]/10 border border-[var(--accent)]/30 flex items-center justify-center text-[var(--accent)] shrink-0">
               <UserCheck size={20} />
@@ -508,7 +508,7 @@ export const AdminSettings: React.FC = () => {
           )}
 
           <form onSubmit={handleUpdateSecurity} className="space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="block text-xs font-sans text-[var(--muted)] mb-1 font-semibold">
                   {language === 'id' ? 'Nama Pengguna (Username)' : 'Username'}
@@ -581,7 +581,7 @@ export const AdminSettings: React.FC = () => {
 
       {/* TAB 2: BRAND IDENTITY & SEO */}
       {activeTab === 'branding' && (
-        <div className="w-full max-w-4xl bg-[var(--panel)] border border-[var(--line)] rounded-card p-5 sm:p-8">
+        <div className="w-full max-w-4xl bg-[var(--panel)] border border-[var(--line)] rounded-card p-5 sm:p-6">
           <div className="flex items-center gap-3 mb-6 pb-4 border-b border-[var(--line)]">
             <div className="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 shrink-0">
               <Palette size={20} />
@@ -606,7 +606,7 @@ export const AdminSettings: React.FC = () => {
           )}
 
           <form onSubmit={handleSaveMeta} className="space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="block text-xs font-sans text-[var(--muted)] mb-1 font-semibold">
                   {language === 'id' ? 'Nama Agensi Global' : 'Global Agency Name'}
@@ -715,8 +715,8 @@ export const AdminSettings: React.FC = () => {
           )}
 
           {/* Accounts Management Section */}
-          <div className="bg-[var(--panel)] border border-[var(--line)] rounded-card p-5 sm:p-8 space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-[var(--line)]">
+          <div className="bg-[var(--panel)] border border-[var(--line)] rounded-card p-5 sm:p-6 space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-5 border-b border-[var(--line)]">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-[var(--accent)]/10 border border-[var(--accent)]/30 flex items-center justify-center text-[var(--danger)] shrink-0">
                   <Users size={20} />
@@ -744,7 +744,7 @@ export const AdminSettings: React.FC = () => {
             </div>
 
             {/* Accounts Grid / List */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
               {accounts.map((acc) => {
                 const isExecutive = acc.role === 'Stakeholder Executive' || acc.stakeholderType === 'Executive';
                 const isIT = acc.role === 'Teknisi IT / Systems Engineer' || acc.stakeholderType === 'IT_Technical';
@@ -861,7 +861,7 @@ export const AdminSettings: React.FC = () => {
           </div>
 
           {/* Reference RBAC Matrix */}
-          <div className="w-full bg-[var(--panel)] border border-[var(--line)] rounded-card p-5 sm:p-8 space-y-6">
+          <div className="w-full bg-[var(--panel)] border border-[var(--line)] rounded-card p-5 sm:p-6 space-y-6">
             <div className="flex items-center gap-3 pb-4 border-b border-[var(--line)]">
               <div className="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 shrink-0">
                 <Layers size={20} />
@@ -1051,7 +1051,7 @@ export const AdminSettings: React.FC = () => {
               </div>
 
               {/* Personal Details */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-sans text-[var(--muted)] normal-case tracking-normal mb-1.5 font-semibold">
                     {language === 'id' ? 'Nama Lengkap' : 'Full Name'} *
@@ -1263,7 +1263,7 @@ export const AdminSettings: React.FC = () => {
 
       {/* TAB 4: SECURITY & MFA POLICY */}
       {activeTab === 'security' && (
-        <div className="w-full max-w-4xl bg-[var(--panel)] border border-[var(--line)] rounded-card p-5 sm:p-8 space-y-6">
+        <div className="w-full max-w-4xl bg-[var(--panel)] border border-[var(--line)] rounded-card p-5 sm:p-6 space-y-6">
           <div className="flex items-center gap-3 pb-4 border-b border-[var(--line)]">
             <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 shrink-0">
               <Lock size={20} />
@@ -1394,7 +1394,7 @@ export const AdminSettings: React.FC = () => {
               <p className="text-[11px] text-[var(--muted)] font-sans mt-1">Provider-managed backup retention reported by the server.</p>
             </div>
           )}
-          <div className="w-full max-w-4xl bg-[var(--panel)] border border-[var(--line)] rounded-card p-5 sm:p-8 space-y-6">
+          <div className="w-full max-w-4xl bg-[var(--panel)] border border-[var(--line)] rounded-card p-5 sm:p-6 space-y-6">
           <div className="flex items-center gap-3 pb-4 border-b border-[var(--line)]">
             <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0">
               <Database size={20} />
@@ -1431,7 +1431,7 @@ export const AdminSettings: React.FC = () => {
               />
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="block text-[var(--muted)] mb-1 font-semibold">
                   {language === 'id' ? 'Host Server SMTP' : 'SMTP Server Host'}
@@ -1482,9 +1482,9 @@ export const AdminSettings: React.FC = () => {
 
       {/* TAB 6: AUDIT TRAIL */}
       {activeTab === 'audit' && canViewAuditLogs && (
-        <div className="w-full bg-[var(--panel)] border border-[var(--line)] rounded-card p-5 sm:p-8">
+        <div className="w-full bg-[var(--panel)] border border-[var(--line)] rounded-card p-5 sm:p-6">
           
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-[var(--line)]">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-[var(--line)]">
             <div>
               <h2 className="text-base font-bold font-display text-white flex items-center gap-2">
                 <ShieldCheck size={18} className="text-[var(--accent)]" />
