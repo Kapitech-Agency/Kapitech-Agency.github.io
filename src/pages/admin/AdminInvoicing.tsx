@@ -271,14 +271,14 @@ export const AdminInvoicing: React.FC = () => {
     setPaymentNotes('');
   };
 
-  const handleRecordPaymentSubmit = (e: React.FormEvent) => {
+  const handleRecordPaymentSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!paymentModalInvoice) return;
     if (paymentAmount <= 0) {
       showToast(language === 'id' ? 'Nominal pembayaran harus lebih besar dari 0' : 'Payment amount must be greater than 0');
       return;
     }
-    const updated = recordInvoicePayment(paymentModalInvoice.id, {
+    const updated = await recordInvoicePayment(paymentModalInvoice.id, {
       amount: paymentAmount,
       date: paymentDate,
       method: paymentMethod,
