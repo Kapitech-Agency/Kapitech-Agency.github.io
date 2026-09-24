@@ -94,8 +94,8 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
           sizeClasses[size]
         } ${
           isOpen
-            ? 'bg-[#181B22] border-[#E50914] text-white ring-2 ring-[#E50914]/10 shadow-none'
-            : 'bg-[#181B22] hover:bg-[#21252F] border-[rgba(255,255,255,0.10)] hover:border-[rgba(255,255,255,0.16)] text-[#F8FAFC]'
+            ? 'bg-panel border-accent text-fg shadow-none'
+            : 'bg-panel hover:bg-bg border-line hover:border-muted text-fg'
         } ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} ${triggerClassName}`}
       >
         <div className="flex items-center gap-2 min-w-0 pr-2">
@@ -107,7 +107,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
           {selectedOption?.badge && (
             <span
               className={`px-1.5 py-0.5 rounded text-[9px] uppercase font-bold shrink-0 ${
-                selectedOption.badgeColor || 'bg-[rgba(255,255,255,0.07)] text-[#8A94A6]'
+                selectedOption.badgeColor || 'bg-bg text-muted border border-line'
               }`}
             >
               {selectedOption.badge}
@@ -139,13 +139,13 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
                   aria-selected={isSelected}
                   className={`w-full flex items-center justify-between min-h-9 px-3 py-2 rounded-[7px] text-left transition-colors group ${
                     isSelected
-                      ? 'bg-[#181B22] text-[#F8FAFC] font-semibold border border-[rgba(255,255,255,0.07)]'
-                      : 'text-[#8A94A6] hover:text-[#F8FAFC] hover:bg-[#181B22]'
+                      ? 'bg-bg text-fg font-semibold border border-line'
+                      : 'text-muted hover:text-fg hover:bg-bg'
                   }`}
                 >
                   <div className="flex items-center gap-2.5 min-w-0 pr-2">
                     {option.icon && (
-                      <span className={isSelected ? 'text-[#E50914]' : 'text-[#8A94A6] group-hover:text-white'}>
+                      <span className={isSelected ? 'text-accent-text' : 'text-muted group-hover:text-fg'}>
                         {option.icon}
                       </span>
                     )}
@@ -154,7 +154,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
                       {option.description && (
                         <div
                           className={`text-[10px] truncate ${
-                            isSelected ? 'text-[#8A94A6]' : 'text-[#5C626E]'
+                            isSelected ? 'text-muted' : 'text-muted'
                           }`}
                         >
                           {option.description}
@@ -169,7 +169,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
                         className={`px-1.5 py-0.5 rounded text-[9px] font-bold ${
                           isSelected
                             ? 'bg-white/20 text-white'
-                            : option.badgeColor || 'bg-[rgba(255,255,255,0.07)] text-[#8A94A6]'
+                            : option.badgeColor || 'bg-bg text-muted border border-line'
                         }`}
                       >
                         {option.badge}
