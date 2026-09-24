@@ -26,7 +26,6 @@ import {
 } from 'lucide-react';
 import { allSolutionsAndServices, ServiceItemData } from '../../data/servicesData';
 import { useLanguage } from '../../lib/LanguageContext';
-import { ServiceItemData } from '../../data/servicesData';
 import { api } from '../../lib/apiClient';
 
 export const AdminCmsServices: React.FC = () => {
