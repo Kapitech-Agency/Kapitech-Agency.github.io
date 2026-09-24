@@ -257,14 +257,14 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-start justify-center bg-black/70 p-4 pt-16 sm:pt-24 "
+      className="fixed inset-0 z-50 flex items-start justify-center bg-black/70 p-4 pt-16 sm:pt-24"
       role="presentation"
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) onClose();
       }}
     >
       <div
-        className="w-full max-w-xl overflow-hidden rounded-[24px] border border-line bg-panel shadow-[0_24px_64px_rgba(0,0,0,.55)]  flex max-h-[80vh] flex-col"
+        className="w-full max-w-xl overflow-hidden rounded-control border border-line bg-panel flex max-h-[80vh] flex-col"
         role="dialog"
         aria-modal="true"
         aria-label={language === 'id' ? 'Command Palette' : 'Command Palette'}
@@ -286,14 +286,14 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
                 ? 'Cari deal, invoice, proyek, proposal, atau modul (⌘K)...'
                 : 'Search deals, invoices, projects, proposals, or modules (⌘K)...'
             }
-            className="flex-1 bg-transparent text-sm text-fg placeholder-[#A1A1A6] font-sans outline-none"
+            className="flex-1 bg-transparent text-sm text-fg placeholder-muted font-sans outline-none"
             aria-label={language === 'id' ? 'Pencarian AMS' : 'AMS search'}
             autoComplete="off"
           />
           <button
             type="button"
             onClick={onClose}
-            className="rounded-control p-2 text-muted transition-colors hover:bg-panel hover:text-[var(--k-text)]"
+            className="rounded-control p-2 text-muted transition-colors hover:bg-panel hover:text-fg"
             aria-label={language === 'id' ? 'Tutup pencarian' : 'Close search'}
           >
             <X size={16} />
@@ -317,14 +317,14 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
                       aria-selected={isActive}
                       onMouseEnter={() => setActiveIndex(index)}
                       onClick={() => runSelected(index)}
-                      className={`group flex w-full items-center justify-between rounded-[var(--k-control-radius)] p-2.5 text-left transition-colors ${isActive ? 'bg-panel' : 'hover:bg-bg'}`}
+                      className={`group flex w-full items-center justify-between rounded-control p-2.5 text-left transition-colors ${isActive ? 'bg-panel' : 'hover:bg-bg'}`}
                     >
                       <div className="flex min-w-0 items-center gap-2.5">
                         <span className={`shrink-0 rounded border px-2 py-0.5 text-[9px] font-sans font-bold uppercase ${getBadgeColor(result.type)}`}>
                           {result.type}
                         </span>
                         <div className="min-w-0">
-                          <div className={`truncate text-xs font-semibold transition-colors ${isActive ? 'text-[var(--k-text)]' : 'text-fg'}`}>
+                          <div className={`truncate text-xs font-semibold transition-colors ${isActive ? 'text-fg' : 'text-fg'}`}>
                             {result.name}
                           </div>
                           <div className="flex items-center gap-2 text-[10px] font-sans text-muted">
@@ -385,7 +385,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
                       <span className="rounded bg-bg px-2 py-0.5 text-[10px] font-sans text-muted border border-line">
                         {item.shortcut}
                       </span>
-                      <ArrowRight size={12} className={`transition-all ${isActive ? 'translate-x-0.5 text-accent-text' : 'text-muted'}`} />
+                      <ArrowRight size={12} className={`transition-all ${isActive ? 'text-accent-text' : 'text-muted'}`} />
                     </div>
                   </button>
                 );
