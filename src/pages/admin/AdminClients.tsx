@@ -27,11 +27,13 @@ import {
 } from '../../lib/clientStore';
 import { formatAmount, getActiveCurrency, CURRENCY_EVENT, CurrencyCode } from '../../lib/currency';
 import { useLanguage } from '../../lib/LanguageContext';
+import { hasAdminPermission } from '../../lib/adminAuth';
 import { useDragToScroll } from '../../lib/useDragToScroll';
 import { ScrollShadowContainer } from '../../components/ui/ScrollShadowContainer';
 import { CustomSelect } from '../../components/ui/CustomSelect';
 
 export const AdminClients: React.FC = () => {
+  const canManageClients = hasAdminPermission('canManageClients');
   const { t, language } = useLanguage();
   const [currency, setCurrency] = useState<CurrencyCode>(getActiveCurrency());
   const [clients, setClients] = useState<AgencyClient[]>([]);
@@ -152,6 +154,7 @@ export const AdminClients: React.FC = () => {
 
   const handleSaveClient = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!canManageClients) return;
     if (!name.trim() || !company.trim()) {
       alert('Client Name and Company are required.');
       return;
@@ -183,6 +186,7 @@ export const AdminClients: React.FC = () => {
   };
 
   const handleDeleteClient = (id: string, clientName: string) => {
+    if (!canManageClients) return;
     if (window.confirm(`Hapus catatan klien "${clientName}"?`)) {
       deleteAgencyClient(id);
       showToast(language === 'id' ? 'Klien dihapus.' : 'Client deleted.');
@@ -204,13 +208,15 @@ export const AdminClients: React.FC = () => {
           </p>
         </div>
 
-        <button
-          onClick={handleOpenCreateClient}
-          className="h-10 px-4 rounded-xl bg-[#E50914] hover:bg-[#FF1E27] text-white text-xs font-mono font-bold transition-all flex items-center justify-center gap-1.5 shadow-lg shadow-[#E50914]/25 self-start sm:self-auto min-h-[40px]"
-        >
-          <Plus size={14} />
-          <span>{t('admin.client.addClient')}</span>
-        </button>
+        {canManageClients && (
+          <button
+            onClick={handleOpenCreateClient}
+            className="h-10 px-4 rounded-xl bg-[#E50914] hover:bg-[#FF1E27] text-white text-xs font-mono font-bold transition-all flex items-center justify-center gap-1.5 shadow-lg shadow-[#E50914]/25 self-start sm:self-auto min-h-[40px]"
+          >
+            <Plus size={14} />
+            <span>{t('admin.client.addClient')}</span>
+          </button>
+        )}
       </div>
 
       {/* Critical SLA Ad-Spend Alert Banner */}
