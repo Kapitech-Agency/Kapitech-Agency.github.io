@@ -13,6 +13,7 @@ import {
 import { api } from '../../lib/apiClient';
 import { useLanguage } from '../../lib/LanguageContext';
 import { hasAdminPermission } from '../../lib/adminAuth';
+import { CustomSelect } from '../../components/ui/CustomSelect';
 
 interface DocumentItem {
   id: string;
