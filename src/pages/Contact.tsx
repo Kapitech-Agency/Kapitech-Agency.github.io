@@ -67,7 +67,6 @@ export const Contact = () => {
     // Design
     'Desain UI/UX (Web & Mobile)',
     'Desain Website & Landing Page',
-    'Desain Aplikasi Mobile (iOS/Android)',
     'Redesain Website & Modernisasi',
     'Audit UX/UI Produk Digital',
     // Development
