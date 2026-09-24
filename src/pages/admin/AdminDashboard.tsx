@@ -534,14 +534,14 @@ export const AdminDashboard: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 sm:space-y-8">
+    <div className="ams-dashboard space-y-5 sm:space-y-6">
       
       {/* ------------------------------------------------------------- */}
       {/* GLOBAL TOAST NOTIFICATION BANNER                               */}
       {/* ------------------------------------------------------------- */}
       {notification && (
-        <div className="fixed top-5 right-5 z-50 flex items-center gap-2.5 bg-[#181B22] text-white px-4 py-3 rounded-xl border border-[#E50914] shadow-[0_0_24px_rgba(229,9,20,0.35)] animate-in fade-in slide-in-from-top-3 duration-200">
-          <Sparkles size={16} className="text-[#E50914]" />
+        <div className="fixed top-20 right-5 z-50 flex items-center gap-2.5 bg-[#111318] text-white px-4 py-3 rounded-lg border border-white/[0.10] shadow-xl">
+          <Activity size={15} className="text-[#E50914]" />
           <span className="text-xs font-mono font-medium">{notification}</span>
         </div>
       )}
@@ -549,15 +549,15 @@ export const AdminDashboard: React.FC = () => {
       {/* ------------------------------------------------------------- */}
       {/* 1. TOP HEADER & QUICK ACTION TOOLBAR (8PT GRID SYSTEM)        */}
       {/* ------------------------------------------------------------- */}
-      <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 pb-2 border-b border-white/[0.07]">
+      <div className="ams-dashboard-header flex flex-col xl:flex-row xl:items-center justify-between gap-4 pb-4 border-b border-white/[0.07]">
         <div>
-          <div className="flex items-center gap-3 flex-wrap">
-            <h1 className="text-2xl sm:text-3xl font-heading font-bold text-[#F8FAFC] tracking-tight">
+          <div className="flex items-center gap-2.5 flex-wrap">
+            <h1 className="text-2xl sm:text-[25px] font-heading font-bold text-[#F8FAFC] tracking-[-0.025em]">
               {language === 'id' ? 'Ikhtisar Eksekutif Agensi' : 'Executive Agency Overview'}
             </h1>
-            <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-[11px] font-mono font-bold text-emerald-400">
+            <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-emerald-500/[0.07] border border-emerald-500/15 text-[10px] font-mono font-semibold text-emerald-400">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-              <span>ams.kapitech.id · Live</span>
+              <span>System live</span>
             </div>
           </div>
           <p className="text-xs sm:text-sm text-[#8A94A6] mt-1 font-sans">
@@ -568,32 +568,15 @@ export const AdminDashboard: React.FC = () => {
         </div>
 
         {/* Action Toolbar with Strictly ONE '+' icon per button */}
-        <div className="flex flex-wrap items-center gap-2.5">
+        <div className="ams-dashboard-actions flex items-center gap-2 overflow-x-auto pb-1">
 
-          {/* Stakeholder Role Switcher Pill */}
-          <div className="h-9 px-2.5 rounded-xl bg-[#111318] border border-white/[0.07] text-xs font-mono flex items-center gap-1.5 shadow-sm">
-            <ShieldCheck size={13} className="text-[#E50914]" />
-            <select
-              value={rbacRole}
-              onChange={(e) => {
-                const nextRole = e.target.value as StakeholderRole;
-                setRbacRole(nextRole);
-                showToast(`${language === 'id' ? 'Beralih ke peran:' : 'Switched active role:'} ${ROLE_DEFINITIONS[nextRole].title}`);
-              }}
-              className="bg-transparent text-white font-mono text-xs focus:outline-none cursor-pointer"
-            >
-              <option value="executive" className="bg-[#181B22] text-white">1. Stakeholder Executive (Full Access)</option>
-              <option value="pm" className="bg-[#181B22] text-white">2. Project Manager</option>
-              <option value="finance" className="bg-[#181B22] text-white">3. Financial Officer</option>
-              <option value="account_manager" className="bg-[#181B22] text-white">4. Account Manager</option>
-              <option value="client_viewer" className="bg-[#181B22] text-white">5. Client / Viewer</option>
-            </select>
-          </div>
+          {/* Authenticated role context is server-authoritative. */}
+          <div className="h-9 px-2.5 rounded-lg bg-[#111318] border border-white/[0.07] text-[11px] font-mono text-[#8A94A6] flex items-center gap-2 shrink-0" title="Role is controlled by authenticated RBAC policy">\n            <ShieldCheck size={13} className="text-[#E50914]" />\n            <span className="text-white font-semibold">{roleMeta?.title || ROLE_DEFINITIONS[rbacRole]?.title || "Authenticated role"}</span>\n          </div>
           
           {/* Currency Switcher Pill */}
           <button
             onClick={handleToggleCurrency}
-            className="h-9 px-3 rounded-xl bg-[#111318] hover:bg-[#181B22] border border-white/[0.07] hover:border-white/20 text-xs font-mono font-bold text-[#F8FAFC] transition-all flex items-center gap-1.5 shadow-sm"
+            className="h-9 px-3 rounded-lg bg-[#111318] hover:bg-[#181B22] border border-white/[0.07] hover:border-white/15 text-xs font-mono font-semibold text-[#F8FAFC] transition-all flex items-center gap-1.5 shrink-0"
             title="Switch Currency IDR / USD"
           >
             <DollarSign size={13} className="text-[#E50914]" />
@@ -602,10 +585,10 @@ export const AdminDashboard: React.FC = () => {
           </button>
 
           {/* Timeframe Selector */}
-          <div className="flex items-center rounded-xl bg-[#111318] p-0.5 border border-white/[0.07] text-[11px] font-mono">
+          <div className="flex items-center rounded-lg bg-[#111318] p-0.5 border border-white/[0.07] text-[11px] font-mono shrink-0">
             <button
               onClick={() => setPeriodFilter('thisMonth')}
-              className={`px-2.5 py-1 rounded-lg transition-all ${
+              className={`px-2.5 py-1 rounded-md transition-all ${
                 periodFilter === 'thisMonth' 
                   ? 'bg-[#E50914] text-white font-bold shadow-sm' 
                   : 'text-[#8A94A6] hover:text-white'
@@ -638,7 +621,7 @@ export const AdminDashboard: React.FC = () => {
           {/* Export CSV Summary */}
           <button
             onClick={handleExportSummaryCSV}
-            className="h-9 px-3 rounded-xl bg-[#111318] hover:bg-[#181B22] border border-white/[0.07] hover:border-white/20 text-xs font-sans font-semibold text-[#F8FAFC] transition-all flex items-center gap-1.5 shadow-sm"
+            className="h-9 px-3 rounded-lg bg-[#111318] hover:bg-[#181B22] border border-white/[0.07] hover:border-white/15 text-xs font-sans font-semibold text-[#F8FAFC] transition-all flex items-center gap-1.5 shrink-0"
             title="Download CSV Executive Summary"
           >
             <Download size={13} className="text-cyan-400" />
