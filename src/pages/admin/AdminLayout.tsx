@@ -12,6 +12,14 @@ import { useRbacRole, StakeholderRole, ROLE_DEFINITIONS } from '../../lib/rbacEn
 const U = (name: UntitledIconName) => (props: { size?: number; className?: string }) => (
   <UntitledIcon name={name} size={props.size ?? 18} className={props.className} />
 );
+const AmsChevron = U('chevron');
+const AmsHome = U('home');
+const AmsSettings = U('settings');
+const AmsCheck = U('check');
+const AmsMenu = U('menu');
+const AmsClose = U('close');
+const AmsSearch = U('search');
+const AmsCalendar = U('calendar');
 
 interface NavItem {
   key: string;
@@ -328,7 +336,7 @@ export const AdminLayout: React.FC = () => {
                 className="w-8 h-8 rounded-lg bg-[#181B22] hover:bg-[#21252F] text-[#8A94A6] hover:text-white border border-white/[0.07] transition-colors flex items-center justify-center shrink-0"
                 title="Collapse sidebar"
               >
-                <U('chevron') size={15} />
+                <AmsChevron size={15} />
               </button>
             </>
           ) : (
@@ -402,10 +410,10 @@ export const AdminLayout: React.FC = () => {
                 className="flex items-center justify-between px-3 py-2 rounded-lg text-xs font-mono text-[#8A94A6] hover:text-white hover:bg-white/[0.04] transition-all border border-white/[0.07]"
               >
                 <div className="flex items-center gap-2">
-                  <U('home') size={14} className="text-emerald-400" />
+                  <AmsHome size={14} className="text-emerald-400" />
                   <span>{t('admin.nav.viewSite')}</span>
                 </div>
-                <U('chevron') size={11} className="text-[#8A94A6]" />
+                <AmsChevron size={11} className="text-[#8A94A6]" />
               </Link>
             </div>
           )}
@@ -436,7 +444,7 @@ export const AdminLayout: React.FC = () => {
               title={t('admin.nav.logout')}
               className="p-2 flex items-center justify-center rounded-lg bg-[#181B22] hover:bg-red-950/40 text-[#8A94A6] hover:text-[#FF1E27] border border-white/[0.07] hover:border-[#E50914]/30 transition-all shrink-0"
             >
-              <U('settings') size={14} />
+              <AmsSettings size={14} />
             </button>
           </div>
 
@@ -445,7 +453,7 @@ export const AdminLayout: React.FC = () => {
             <div className="pt-2 border-t border-white/[0.07]">
               <div className="flex items-center justify-between text-[10px] font-mono text-[#8A94A6] mb-1 px-0.5">
                 <span className="flex items-center gap-1">
-                  <U('check') size={11} className="text-[#E50914]" />
+                  <AmsCheck size={11} className="text-[#E50914]" />
                   <span>{language === 'id' ? 'Hak Akses Peran' : 'Active Role'}</span>
                 </span>
                 <span className="text-[8px] px-1 py-0.5 rounded bg-[#181B22] border border-white/[0.07] text-[#E50914] font-bold">LOCKED</span>
@@ -480,7 +488,7 @@ export const AdminLayout: React.FC = () => {
             aria-label="Open navigation menu"
             className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl bg-[#181B22] text-white border border-white/[0.07] hover:bg-[#21252F] active:scale-95 transition-all shadow-sm"
           >
-            <U('menu') size={20} />
+            <AmsMenu size={20} />
           </button>
 
           <Link to="/admin/dashboard" className="flex items-center gap-2">
@@ -566,7 +574,7 @@ export const AdminLayout: React.FC = () => {
                 aria-label="Close navigation menu"
                 className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl bg-[#181B22] text-[#8A94A6] hover:text-white border border-white/[0.07] active:scale-95 transition-all"
               >
-                <U('close') size={18} />
+                <AmsClose size={18} />
               </button>
             </div>
 
@@ -667,10 +675,10 @@ export const AdminLayout: React.FC = () => {
                   className="flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-mono text-emerald-400 bg-[#181B22] hover:bg-[#21252F] border border-white/[0.07] min-h-[44px] transition-colors"
                 >
                   <div className="flex items-center gap-2.5">
-                    <U('home') size={15} />
+                    <AmsHome size={15} />
                     <span>{t('admin.nav.viewSite')}</span>
                   </div>
-                  <U('chevron') size={12} className="text-[#8A94A6]" />
+                  <AmsChevron size={12} className="text-[#8A94A6]" />
                 </Link>
               </div>
 
@@ -679,7 +687,7 @@ export const AdminLayout: React.FC = () => {
                 <div className="p-3 rounded-xl bg-[#181B22] border border-white/[0.07] space-y-1.5">
                   <div className="flex items-center justify-between text-[10px] font-mono text-[#8A94A6]">
                     <span className="flex items-center gap-1">
-                      <U('check') size={11} className="text-[#E50914]" />
+                      <AmsCheck size={11} className="text-[#E50914]" />
                       <span>{language === 'id' ? 'Peran Aktif' : 'Active Role'}</span>
                     </span>
                     <span className="text-[8px] px-1 py-0.5 rounded bg-[#111318] border border-white/[0.07] text-[#E50914] font-bold">LOCKED</span>
@@ -718,7 +726,7 @@ export const AdminLayout: React.FC = () => {
                 aria-label="Logout"
                 className="px-3 py-2 min-h-[44px] rounded-xl bg-[#111318] hover:bg-red-950/50 border border-white/[0.07] hover:border-[#E50914]/30 text-[#8A94A6] hover:text-[#FF1E27] text-xs font-mono flex items-center gap-1.5 shrink-0 transition-all"
               >
-                <U('settings') size={14} />
+                <AmsSettings size={14} />
                 <span>{t('admin.nav.logout')}</span>
               </button>
             </div>
@@ -741,17 +749,17 @@ export const AdminLayout: React.FC = () => {
                 className="w-8 h-8 rounded-lg bg-[#111318] hover:bg-[#181B22] text-[#8A94A6] hover:text-white border border-white/[0.07] hover:border-[#E50914]/30 transition-all mr-1.5 flex items-center justify-center shrink-0 shadow-sm"
                 title="Expand sidebar"
               >
-                <U('chevron') size={15} />
+                <AmsChevron size={15} />
               </button>
             )}
             <span className="font-semibold text-white">Kapitech AMS</span>
-            <U('chevron') size={13} className="text-[#8A94A6]" />
+            <AmsChevron size={13} className="text-[#8A94A6]" />
             <span className="text-[#A1A1AA] font-medium truncate">{activeItemLabel}</span>
           </div>
 
           {/* Minimalist Global U('search') Bar */}
           <div className="relative w-64 lg:w-80">
-            <U('search') size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8A94A6]" />
+            <AmsSearch size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8A94A6]" />
             <input
               type="text"
               onClick={() => setCommandPaletteOpen(true)}
@@ -816,7 +824,7 @@ export const AdminLayout: React.FC = () => {
 
             {/* Live Studio U('calendar') */}
             <div className="flex items-center gap-1.5 bg-[#111318] px-2.5 py-1.5 rounded-lg border border-white/[0.07] text-[11px] font-mono text-[#8A94A6]">
-              <U('calendar') size={12} className="text-[#FF1E27]" />
+              <AmsCalendar size={12} className="text-[#FF1E27]" />
               <span className="text-white font-medium">{currentTime || 'Jakarta WIB'}</span>
             </div>
 
@@ -828,7 +836,7 @@ export const AdminLayout: React.FC = () => {
               className="hidden lg:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[#111318] border border-white/[0.07] hover:border-white/20 text-[11px] font-mono text-[#8A94A6] hover:text-white transition-colors"
             >
               <span>kapitech.id</span>
-              <U('chevron') size={10} />
+              <AmsChevron size={10} />
             </Link>
           </div>
         </header>
