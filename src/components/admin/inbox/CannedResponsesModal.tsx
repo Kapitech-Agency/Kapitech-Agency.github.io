@@ -211,12 +211,12 @@ https://kapitech.id`
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
       <div 
-        className="fixed inset-0 bg-black/80 backdrop-blur-md transition-opacity" 
+        className="fixed inset-0 bg-black/80  transition-opacity" 
         onClick={onClose}
       />
 
       {/* Modal Dialog */}
-      <div className="relative w-full max-w-2xl max-h-[85vh] bg-[var(--k-surface)] border border-[rgba(255,255,255,0.08)] rounded-[var(--k-card-radius)] shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-2xl max-h-[85vh] bg-[var(--k-surface)] border border-[rgba(255,255,255,0.08)] rounded-[var(--k-card-radius)] shadow-none flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         
         {/* Header */}
         <div className="p-5 border-b border-[rgba(255,255,255,0.07)] flex items-center justify-between bg-[var(--k-surface)]">
