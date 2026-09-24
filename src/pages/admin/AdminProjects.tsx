@@ -534,7 +534,7 @@ export const AdminProjects: React.FC = () => {
                 onClick={() => setSelectedProjectId(proj.id)}
                 className={`px-4 py-3 rounded-card border font-sans text-left transition-all shrink-0 min-w-[220px] max-w-[280px] flex flex-col justify-between ${
                   isSelected
-                    ? 'bg-[var(--panel)] border-[var(--accent)] ring-1 ring-[var(--accent)]/30 shadow-lg shadow-[var(--accent)]/10'
+                    ? 'bg-[var(--panel)] border-[var(--accent)] ring-1 ring-[var(--accent)]/30'
                     : 'bg-[var(--panel)] border-[var(--line)] hover:border-[var(--line)] hover:bg-[var(--panel)]'
                 }`}
               >
@@ -811,7 +811,7 @@ export const AdminProjects: React.FC = () => {
                             draggable={canManageKanbanTasks}
                             onDragStart={(e) => handleDragStart(e, task.id)}
                             onClick={() => setActiveTaskDrawer(task)}
-                            className={`draggable-card task-card bg-[var(--panel)] border hover:border-[var(--accent)]/60 p-3.5 rounded-card space-y-2.5 shadow-md transition-all cursor-pointer group relative select-none ${
+                            className={`draggable-card task-card bg-[var(--panel)] border hover:border-[var(--accent)]/60 p-3.5 rounded-card space-y-2.5 transition-all cursor-pointer group relative select-none ${
                               isDragging ? 'opacity-40 scale-95 border-[var(--accent)] border-dashed' : 'border-[var(--line)]'
                             }`}
                           >
