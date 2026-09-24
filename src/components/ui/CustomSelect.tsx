@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ChevronDown, Check } from 'lucide-react';
+import { UntitledIcon } from './UntitledIcon';
 
 export interface SelectOption {
   value: string;
@@ -92,8 +92,8 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
           sizeClasses[size]
         } ${
           isOpen
-            ? 'bg-[#181B22] border-[#E50914] text-white shadow-[0_0_12px_rgba(229,9,20,0.15)]'
-            : 'bg-[#181B22] hover:bg-[#21252F] border-[rgba(255,255,255,0.07)] hover:border-[rgba(255,255,255,0.14)] text-[#F8FAFC]'
+            ? 'bg-[#181B22] border-[#E50914] text-white shadow-none'
+            : 'bg-[#181B22] hover:bg-[#1B1E25] border-[rgba(255,255,255,0.09)] hover:border-[rgba(255,255,255,0.14)] text-[#F8FAFC]'
         } ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} ${triggerClassName}`}
       >
         <div className="flex items-center gap-2 min-w-0 pr-2">
@@ -113,17 +113,12 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
           )}
         </div>
 
-        <ChevronDown
-          size={size === 'xs' ? 12 : 14}
-          className={`text-[#8A94A6] transition-transform duration-200 shrink-0 ${
-            isOpen ? 'rotate-180 text-[#E50914]' : ''
-          }`}
-        />
+        <UntitledIcon name="chevron" size={size === 'xs' ? 14 : 16} className="text-[#8A94A6] shrink-0" />
       </button>
 
       {isOpen && (
           <div
-            className={`absolute z-[100] mt-1 min-w-[140px] sm:min-w-[180px] max-w-[calc(100vw-32px)] sm:max-w-[260px] max-h-[260px] overflow-y-auto bg-[#111318] border border-[rgba(255,255,255,0.07)] rounded-xl p-1 shadow-[0_16px_40px_rgba(0,0,0,0.8)] space-y-0.5 font-sans text-xs custom-scrollbar ${
+            className={`absolute z-[100] mt-1 min-w-[140px] sm:min-w-[180px] max-w-[calc(100vw-32px)] sm:max-w-[260px] max-h-[260px] overflow-y-auto bg-[#111318] border border-[rgba(255,255,255,0.07)] rounded-[10px] p-1 shadow-[0_12px_28px_rgba(0,0,0,0.42)] space-y-0.5 font-sans text-xs custom-scrollbar ${
               align === 'right' ? 'right-0' : 'left-0'
             } ${menuClassName}`}
           >
@@ -137,7 +132,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
                     onChange(option.value);
                     setIsOpen(false);
                   }}
-                  className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-left transition-colors group ${
+                  className={`w-full flex items-center justify-between px-3 py-2 rounded-[7px] text-left transition-colors group ${
                     isSelected
                       ? 'bg-[#181B22] text-[#F8FAFC] font-semibold border border-[rgba(255,255,255,0.07)]'
                       : 'text-[#8A94A6] hover:text-[#F8FAFC] hover:bg-[#181B22]'
@@ -175,7 +170,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
                         {option.badge}
                       </span>
                     )}
-                    {isSelected && <Check size={13} className="text-[#E50914] shrink-0" />}
+                    {isSelected && <UntitledIcon name="check" size={14} className="text-[#E50914] shrink-0" />}
                   </div>
                 </button>
               );
