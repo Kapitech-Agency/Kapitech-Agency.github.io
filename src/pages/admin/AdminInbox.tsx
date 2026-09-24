@@ -637,7 +637,7 @@ export const AdminInbox: React.FC = () => {
                 <button
                   key={tab.key}
                   onClick={() => setFilterType(tab.key)}
-                  className={`h-9 px-3 rounded-xl text-xs font-sans transition-all flex items-center gap-2 border min-h-[36px] ${
+                  className={`h-9 px-3 rounded-xl text-xs font-sans transition-all flex items-center gap-2 border min-h-10 ${
                     filterType === tab.key
                       ? 'bg-[var(--accent)] text-[var(--text)] border-[var(--accent)] font-bold shadow-sm'
                       : 'bg-[var(--panel)] text-[var(--muted)] border-[var(--line)] hover:text-[var(--text)]'
@@ -1099,7 +1099,7 @@ export const AdminInbox: React.FC = () => {
                     {/* Close button on desktop */}
                     <button
                       onClick={() => setSelectedSubmission(null)}
-                      className="hidden lg:inline-flex text-xs text-[var(--muted)] hover:text-[var(--text)] px-3 py-2 rounded-xl bg-[var(--panel)] border border-[var(--line)] min-h-[36px] items-center"
+                      className="hidden lg:inline-flex text-xs text-[var(--muted)] hover:text-[var(--text)] px-3 py-2 rounded-control bg-[var(--panel)] border border-[var(--line)] min-h-10 items-center"
                     >
                       ✕
                     </button>
