@@ -211,7 +211,7 @@ export const AdminDocuments: React.FC = () => {
                   : 'bg-[var(--ams-bg)] border-white/[0.07] text-[var(--ams-secondary)] hover:text-white hover:border-white/20'
               }`}
             >
-              <div className="text-xs font-sans uppercase tracking-wider capitalize">{cat}</div>
+              <div className="text-xs font-sans normal-case tracking-normal capitalize">{cat}</div>
               <div className="text-lg font-bold font-sans text-white mt-1">{count}</div>
             </button>
           );
@@ -259,7 +259,7 @@ export const AdminDocuments: React.FC = () => {
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse min-w-[700px]">
               <thead>
-                <tr className="border-b border-white/[0.07] bg-[var(--ams-surface)]/50 text-xs font-sans text-[var(--ams-secondary)] uppercase">
+                <tr className="border-b border-white/[0.07] bg-[var(--ams-surface)]/50 text-xs font-sans text-[var(--ams-secondary)] normal-case">
                   <th className="py-3 px-4">Document Title</th>
                   <th className="py-3 px-4">Category</th>
                   <th className="py-3 px-4">Size</th>
@@ -290,7 +290,7 @@ export const AdminDocuments: React.FC = () => {
                         </div>
                       </td>
                       <td className="py-3.5 px-4">
-                        <span className="px-2 py-0.5 rounded text-xs font-sans uppercase bg-[var(--ams-surface)] text-[var(--ams-secondary)] border border-white/[0.07]">
+                        <span className="px-2 py-0.5 rounded text-xs font-sans normal-case bg-[var(--ams-surface)] text-[var(--ams-secondary)] border border-white/[0.07]">
                           {doc.category}
                         </span>
                       </td>
@@ -301,7 +301,7 @@ export const AdminDocuments: React.FC = () => {
                         {doc.relatedEntity || 'General'}
                       </td>
                       <td className="py-3.5 px-4">
-                        <span className={'px-2 py-0.5 rounded text-xs font-sans uppercase border ' + (
+                        <span className={'px-2 py-0.5 rounded text-xs font-sans normal-case border ' + (
                           doc.status === 'ready' || doc.sourceType === 'external_link'
                             ? 'bg-emerald-500/10 text-emerald-300 border-emerald-500/20'
                             : 'bg-amber-500/10 text-amber-300 border-amber-500/20'
@@ -350,8 +350,8 @@ export const AdminDocuments: React.FC = () => {
 
       {/* UPLOAD MODAL */}
       {isUploadModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="bg-[var(--ams-bg)] border border-white/[0.07] rounded-2xl w-full max-w-md shadow-[0_24px_64px_rgba(0,0,0,0.8)] overflow-hidden">
+        <div className="fixed inset-0 z-50 bg-black/85  flex items-center justify-center p-4">
+          <div className="bg-[var(--ams-bg)] border border-white/[0.07] rounded-card w-full max-w-md shadow-[0_24px_64px_rgba(0,0,0,0.8)] overflow-hidden">
             <div className="p-4 border-b border-white/[0.07] flex items-center justify-between bg-[var(--ams-surface)]">
               <h3 className="text-sm font-bold font-sans text-white flex items-center gap-2">
                 <UploadCloud size={16} className="text-[var(--ams-red)]" />
