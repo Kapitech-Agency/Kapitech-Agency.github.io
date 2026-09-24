@@ -226,7 +226,7 @@ export const AdminLayout: React.FC = () => {
           key: 'documents',
           to: '/admin/documents',
           label: language === 'id' ? 'Documents' : 'Documents',
-          icon: U('clock'),
+          icon: U('file'),
           badge: null
         },
         {
