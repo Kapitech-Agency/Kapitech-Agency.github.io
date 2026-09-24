@@ -313,7 +313,7 @@ export const AdminDashboard: React.FC = () => {
     e.preventDefault();
     if (!newLeadName.trim() || !newLeadCompany.trim()) return;
 
-    const leadObj: CrmLead = {
+    const leadPayload = {
       clientName: newLeadName.trim(),
       company: newLeadCompany.trim(),
       email: newLeadEmail.trim(),
@@ -324,17 +324,16 @@ export const AdminDashboard: React.FC = () => {
       priority: 'high',
       source: 'Referral',
       title: `${newLeadCompany.trim()} Lead`,
-      expectedCloseDate: new Date(Date.now() + 30 * 86400000).toISOString().split('T')[0],
-      owner: session?.user?.username || undefined,
       notes: [],
     };
 
-    await api.crm.createDeal(leadObj);
+    const res = await api.crm.createDeal(leadPayload);
+    if (!res.success) { showToast(res.error || 'Lead could not be created.'); return; }
     setIsAddLeadModalOpen(false);
     setNewLeadName('');
     setNewLeadCompany('');
     setNewLeadEmail('');
-    showToast(language === 'id' ? `Lead baru berhasil ditambahkan: ${leadObj.company}` : `Lead created successfully: ${leadObj.company}`);
+    showToast(language === 'id' ? `Lead baru berhasil ditambahkan: ${newLeadCompany.trim()}` : `Lead created successfully: ${newLeadCompany.trim()}`);
   };
 
   const handleCreateInvoice = async (e: React.FormEvent) => {
