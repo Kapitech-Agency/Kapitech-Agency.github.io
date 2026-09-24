@@ -438,7 +438,7 @@ export const AdminInvoicing: React.FC = () => {
             onClick={() => setActiveTab('invoices')}
             className={`px-3.5 py-1.5 rounded-lg text-xs font-sans transition-all flex items-center gap-1.5 ${
               activeTab === 'invoices'
-                ? 'bg-[var(--accent)] text-[var(--text)] font-semibold shadow-md'
+                ? 'bg-[var(--accent)] text-[var(--text)] font-semibold'
                 : 'text-[var(--muted)] hover:text-[var(--text)]'
             }`}
           >
@@ -449,7 +449,7 @@ export const AdminInvoicing: React.FC = () => {
             onClick={() => setActiveTab('expenses')}
             className={`px-3.5 py-1.5 rounded-lg text-xs font-sans transition-all flex items-center gap-1.5 ${
               activeTab === 'expenses'
-                ? 'bg-[var(--accent)] text-[var(--text)] font-semibold shadow-md'
+                ? 'bg-[var(--accent)] text-[var(--text)] font-semibold'
                 : 'text-[var(--muted)] hover:text-[var(--text)]'
             }`}
           >
@@ -502,7 +502,7 @@ export const AdminInvoicing: React.FC = () => {
               filteredInvoices.map((inv) => (
                 <div 
                   key={inv.id}
-                  className="bg-[var(--panel)] border border-[var(--line)] hover:border-[var(--line)] rounded-card p-4 space-y-3.5 transition-all shadow-lg"
+                  className="bg-[var(--panel)] border border-[var(--line)] hover:border-[var(--line)] rounded-card p-4 space-y-3.5 transition-colors"
                 >
                   {/* Card Header: Invoice # & Status */}
                   <div className="flex items-center justify-between gap-2">
@@ -1272,7 +1272,7 @@ export const AdminInvoicing: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="h-10 px-5 rounded-card bg-emerald-600 hover:bg-emerald-500 text-[var(--text)] text-xs font-sans font-semibold transition-all shadow-lg shadow-emerald-600/20 min-h-10 flex items-center gap-1.5"
+                  className="h-10 px-5 rounded-card bg-emerald-600 hover:bg-emerald-500 text-[var(--text)] text-xs font-sans font-semibold transition-colors shadow-emerald-600/20 min-h-10 flex items-center gap-1.5"
                 >
                   <Check size={14} />
                   <span>{language === 'id' ? 'Simpan Pembayaran' : 'Confirm Payment'}</span>
