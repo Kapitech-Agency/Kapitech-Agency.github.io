@@ -585,7 +585,7 @@ export const AdminProjects: React.FC = () => {
                   href={selectedProject.repositoryUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-3 py-1.5 rounded-xl bg-[var(--panel)] hover:bg-[var(--panel)] border border-[var(--line)] text-xs font-sans text-[var(--muted)] hover:text-white transition-colors flex items-center gap-1.5"
+                  className="min-h-10 px-3 py-1.5 rounded-control bg-[var(--panel)] hover:bg-[var(--panel)] border border-[var(--line)] text-xs font-sans text-[var(--muted)] hover:text-white transition-colors flex items-center gap-1.5"
                 >
                   <GitBranch size={13} className="text-[var(--danger)]" />
                   <span>Repo</span>
@@ -607,7 +607,7 @@ export const AdminProjects: React.FC = () => {
               {canManageProjects && (
                 <button
                   onClick={() => handleOpenEditProject(selectedProject)}
-                  className="p-2 rounded-xl bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--muted)] hover:text-white border border-[var(--line)] transition-colors"
+                  className="p-2.5 min-h-10 min-w-10 rounded-control bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--muted)] hover:text-white border border-[var(--line)] transition-colors"
                   title="Edit Project Details"
                 >
                   <Edit3 size={14} />
@@ -617,7 +617,7 @@ export const AdminProjects: React.FC = () => {
               {canDeleteProjects && (
                 <button
                   onClick={() => handleDeleteProject(selectedProject.id, selectedProject.name)}
-                  className="p-2 rounded-xl bg-[var(--panel)] hover:bg-red-950/40 text-[var(--muted)] hover:text-red-400 border border-[var(--line)] hover:border-red-500/30 transition-colors"
+                  className="p-2.5 min-h-10 min-w-10 rounded-control bg-[var(--panel)] hover:bg-red-950/40 text-[var(--muted)] hover:text-red-400 border border-[var(--line)] hover:border-red-500/30 transition-colors"
                   title="Delete Project"
                 >
                   <Trash2 size={14} />
@@ -740,7 +740,7 @@ export const AdminProjects: React.FC = () => {
               {canManageKanbanTasks && (
                 <button
                   onClick={() => setIsTaskModalOpen(true)}
-                  className="h-10 px-4 rounded-xl bg-[var(--accent)] hover:bg-[var(--danger)] text-white text-xs font-sans font-bold transition-all flex items-center justify-center gap-2 shadow-md shrink-0 min-h-[40px]"
+                  className="h-10 px-4 rounded-control bg-[var(--accent)] hover:bg-[var(--danger)] text-white text-xs font-sans font-medium transition-colors flex items-center justify-center gap-2 shrink-0 min-h-10"
                 >
                   <Plus size={14} />
                   <span>{t('admin.proj.addTask')}</span>
