@@ -130,7 +130,7 @@ export const ConvertToCrmModal: React.FC<ConvertToCrmModalProps> = ({
               <Briefcase size={18} />
             </div>
             <div>
-              <h3 className="text-base font-semibold text-[var(--text)] font-display flex items-center gap-2">
+              <h3 className="text-base font-semibold text-[var(--text)] font-sans flex items-center gap-2">
                 <span>{language === 'id' ? 'Konversi ke Agency CRM Pipeline' : 'Convert to Agency CRM Pipeline'}</span>
                 <Sparkles size={14} className="text-[var(--accent)]" />
               </h3>
