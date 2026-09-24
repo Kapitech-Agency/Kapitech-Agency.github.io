@@ -114,12 +114,12 @@ export const AdminLogin: React.FC = () => {
           {language === 'id' ? 'Kembali ke Website' : 'Back to Website'}
         </Link>
 
-        <div className="bg-[var(--k-surface)] border border-white/[0.08] rounded-[var(--k-card-radius)] p-7 shadow-[var(--k-shadow-sm)]">
+        <div className="bg-[var(--k-surface)] border border-[var(--line)] rounded-[var(--k-card-radius)] p-7 shadow-none">
           <div className="text-center mb-7">
             <div className="w-12 h-12 rounded-[var(--k-card-radius)] bg-[var(--k-red)]/10 border border-[var(--k-red)]/30 flex items-center justify-center text-[var(--k-red)] mx-auto mb-4">
               <Lock size={24} />
             </div>
-            <h1 className="text-2xl font-bold tracking-tight">
+            <h1 className="text-2xl font-semibold tracking-tight">
               {language === 'id' ? 'Portal Admin Internal' : 'Internal Admin Portal'}
             </h1>
             <p className="text-xs text-[var(--k-text-secondary)] mt-2 leading-relaxed">
@@ -158,7 +158,7 @@ export const AdminLogin: React.FC = () => {
                   disabled={loading}
                   value={identifier}
                   onChange={(e) => setIdentifier(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 bg-[var(--k-surface-raised)] border border-white/[0.08] rounded-[var(--k-control-radius)] text-sm text-[var(--k-text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--k-red)]/40 focus:border-[var(--k-red)] font-sans"
+                  className="w-full pl-10 pr-4 py-2.5 bg-[var(--k-surface-raised)] border border-[var(--line)] rounded-[var(--k-control-radius)] text-sm text-[var(--k-text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 focus:border-[var(--accent)] font-sans"
                   placeholder="admin atau email"
                 />
               </div>
@@ -176,7 +176,7 @@ export const AdminLogin: React.FC = () => {
                   disabled={loading}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-10 pr-10 py-2.5 bg-[var(--k-surface-raised)] border border-white/[0.08] rounded-[var(--k-control-radius)] text-sm text-[var(--k-text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--k-red)]/40 focus:border-[var(--k-red)] font-sans"
+                  className="w-full pl-10 pr-10 py-2.5 bg-[var(--k-surface-raised)] border border-[var(--line)] rounded-[var(--k-control-radius)] text-sm text-[var(--k-text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 focus:border-[var(--accent)] font-sans"
                   placeholder="••••••••"
                 />
                 <button
@@ -240,7 +240,7 @@ export const AdminLogin: React.FC = () => {
                 disabled={loading}
                 value={mfaCode}
                 onChange={(e) => setMfaCode(mfaRecoveryMode ? e.target.value.toUpperCase().slice(0, 128) : e.target.value.replace(/\D/g, "").slice(0, 6))}
-                className={`w-full px-4 py-3 bg-[var(--k-surface-raised)] border border-white/[0.08] rounded-[var(--k-control-radius)] text-center text-xl text-[var(--k-text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--k-red)]/40 focus:border-[var(--k-red)] font-sans ${mfaRecoveryMode ? "tracking-[0.12em]" : "tracking-[0.4em]"}`}
+                className={`w-full px-4 py-3 bg-[var(--k-surface-raised)] border border-[var(--line)] rounded-[var(--k-control-radius)] text-center text-xl text-[var(--k-text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 focus:border-[var(--accent)] font-sans ${mfaRecoveryMode ? "tracking-[0.12em]" : "tracking-[0.4em]"}`}
                 placeholder={mfaRecoveryMode ? "XXXX-XXXX-XXXX" : "000000"}
               />
             </div>
@@ -264,7 +264,7 @@ export const AdminLogin: React.FC = () => {
                 setErrorMessage(null);
               }}
               disabled={loading}
-              className="w-full h-10 rounded-[var(--k-control-radius)] bg-transparent border border-white/[0.08] text-[var(--k-text-secondary)] hover:text-[var(--k-text)] text-xs font-sans font-bold transition-colors flex items-center justify-center gap-2"
+              className="w-full h-10 rounded-[var(--k-control-radius)] bg-transparent border border-[var(--line)] text-[var(--k-text-secondary)] hover:text-[var(--k-text)] text-xs font-sans font-semibold transition-colors flex items-center justify-center gap-2"
             >
               {mfaRecoveryMode ? (language === 'id' ? 'Gunakan kode authenticator' : 'Use authenticator code') : (language === 'id' ? 'Gunakan recovery code' : 'Use recovery code')}
             </button>
@@ -273,7 +273,7 @@ export const AdminLogin: React.FC = () => {
               type="button"
               onClick={handleBackToPassword}
               disabled={loading}
-              className="w-full h-10 rounded-[var(--k-control-radius)] bg-[var(--k-surface-raised)] text-[var(--k-text-secondary)] hover:text-[var(--k-text)] text-xs font-sans font-bold transition-colors flex items-center justify-center gap-2"
+              className="w-full h-10 rounded-[var(--k-control-radius)] bg-[var(--k-surface-raised)] text-[var(--k-text-secondary)] hover:text-[var(--k-text)] text-xs font-sans font-semibold transition-colors flex items-center justify-center gap-2"
             >
               <ArrowLeft size={14} />
               {language === 'id' ? 'Kembali ke login password' : 'Back to password sign-in'}
