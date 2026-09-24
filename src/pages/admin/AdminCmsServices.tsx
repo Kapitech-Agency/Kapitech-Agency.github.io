@@ -26,6 +26,7 @@ import {
 } from 'lucide-react';
 import { allSolutionsAndServices, ServiceItemData } from '../../data/servicesData';
 import { useLanguage } from '../../lib/LanguageContext';
+import { CustomSelect } from '../../components/ui/CustomSelect';
 import { api } from '../../lib/apiClient';
 
 export const AdminCmsServices: React.FC = () => {
@@ -549,16 +550,7 @@ export const AdminCmsServices: React.FC = () => {
                 </div>
                 <div>
                   <label className="block text-[var(--muted)] mb-1 font-medium">Category</label>
-                  <select
-                    value={newCategory}
-                    onChange={(e) => setNewCategory(e.target.value as any)}
-                    className="w-full px-3 py-2 rounded-card bg-[var(--panel)] border border-[var(--line)] text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
-                  >
-                    <option value="Development">Development</option>
-                    <option value="Design">Design</option>
-                    <option value="Branding">Branding</option>
-                    <option value="Solutions">Solutions</option>
-                  </select>
+                  <CustomSelect value={newCategory} onChange={(value) => setNewCategory(value as any)} options={[{value:'Development',label:'Development'},{value:'Design',label:'Design'},{value:'Branding',label:'Branding'},{value:'Solutions',label:'Solutions'}]} className="w-full" />
                 </div>
               </div>
 
