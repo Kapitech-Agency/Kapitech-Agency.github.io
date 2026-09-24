@@ -384,7 +384,7 @@ export const AdminProposals: React.FC = () => {
       case 'accepted':
         return <span className="px-2 py-0.5 rounded text-xs font-sans bg-[var(--success)]/10 text-[var(--success)] border border-[var(--success)]/30">Accepted</span>;
       case 'rejected':
-        return <span className="px-2 py-0.5 rounded text-xs font-sans bg-red-500/10 text-red-400 border border-red-500/30">Rejected</span>;
+        return <span className="px-2 py-0.5 rounded text-xs font-sans bg-[var(--danger)]/10 text-[var(--danger)] border border-[var(--danger)]/30">Rejected</span>;
     }
   };
 
@@ -392,8 +392,8 @@ export const AdminProposals: React.FC = () => {
     <div className="space-y-6 animate-in fade-in duration-200">
       {/* Toast Notification */}
       {notification && (
-        <div className="fixed top-20 right-6 z-50 px-4 py-2.5 rounded-card bg-[var(--panel)] border border-[var(--ams-red)]/40 text-[var(--text)] text-xs font-sans shadow-[0_8px_30px_rgba(0,0,0,0.8)] flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-[var(--ams-red)] animate-ping" />
+        <div className="fixed top-20 right-6 z-50 px-4 py-2.5 rounded-card bg-[var(--panel)] border border-[var(--line)] text-[var(--text)] text-xs font-sans shadow-none flex items-center gap-2">
+          <span className="w-2 h-2 rounded-badge bg-[var(--accent)]" />
           <span>{notification}</span>
         </div>
       )}
@@ -416,7 +416,7 @@ export const AdminProposals: React.FC = () => {
           onClick={() => setIsCreateModalOpen(true)}
           disabled={!canManageCrm}
           title={!canManageCrm ? 'Requires CRM permission' : undefined}
-          className="px-4 py-2.5 rounded-xl bg-[var(--accent)] hover:bg-[var(--accent)] text-white text-xs font-sans font-medium flex items-center justify-center gap-2 rounded-control min-h-10 px-3 transition-colors shrink-0"
+          className="px-4 py-2.5 rounded-control bg-[var(--accent)] hover:bg-[var(--accent)] text-white text-xs font-sans font-medium flex items-center justify-center gap-2 min-h-10 px-3 transition-colors shrink-0"
         >
           <Plus size={15} />
           <span>{language === 'id' ? 'Buat Proposal Baru' : 'New Proposal'}</span>
@@ -430,7 +430,7 @@ export const AdminProposals: React.FC = () => {
             <span>{language === 'id' ? 'Total Nilai Ditawarkan' : 'Total Proposed'}</span>
             <TrendingUp size={13} className="text-[var(--accent)]" />
           </div>
-          <div className="text-lg sm:text-xl font-bold font-sans text-[var(--text)]">
+          <div className="text-lg sm:text-xl font-semibold font-sans text-[var(--text)]">
             {formatAmount(metrics.totalValue, currency)}
           </div>
           <div className="text-xs font-sans text-[var(--ams-secondary)]">
@@ -487,7 +487,7 @@ export const AdminProposals: React.FC = () => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={language === 'id' ? 'Cari nomor proposal, judul proyek, atau nama klien...' : 'Search proposal #, project title, or client...'}
-            className="w-full min-h-10 sm:h-9 pl-8 pr-3 text-xs bg-[var(--ams-surface)] text-[var(--text)] placeholder-[var(--ams-secondary)] rounded-control border border-[var(--line)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ams-red)]/40 focus:border-[var(--ams-red)] font-sans"
+            className="w-full min-h-10 sm:h-9 pl-8 pr-3 text-xs bg-[var(--panel)] text-[var(--text)] placeholder-[var(--ams-secondary)] rounded-control border border-[var(--line)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ams-red)]/40 focus:border-[var(--accent)] font-sans"
           />
         </div>
 
@@ -498,7 +498,7 @@ export const AdminProposals: React.FC = () => {
               onClick={() => setStatusFilter(st)}
               className={`px-2.5 py-1 rounded-lg text-xs font-sans capitalize whitespace-nowrap transition-colors ${
                 statusFilter === st
-                  ? 'bg-[var(--ams-red)]/15 text-[var(--accent)] border border-[var(--ams-red)]/30 font-semibold'
+                  ? 'bg-[var(--ams-red)]/15 text-[var(--accent)] border border-[var(--accent)]/30 font-semibold'
                   : 'text-[var(--ams-secondary)] hover:text-[var(--text)] hover:bg-[var(--panel-hover)]'
               }`}
             >
@@ -523,7 +523,7 @@ export const AdminProposals: React.FC = () => {
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse min-w-[750px]">
               <thead>
-                <tr className="border-b border-[var(--line)] bg-[var(--ams-surface)]/50 text-xs font-sans text-[var(--ams-secondary)] normal-case">
+                <tr className="border-b border-[var(--line)] bg-[var(--panel)]/50 text-xs font-sans text-[var(--ams-secondary)] normal-case">
                   <th className="py-3 px-4">Ref / Title</th>
                   <th className="py-3 px-4">Client</th>
                   <th className="py-3 px-4">Value</th>
@@ -626,10 +626,10 @@ export const AdminProposals: React.FC = () => {
       {isCreateModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/80  flex items-center justify-center p-4">
           <div className="bg-[var(--ams-bg)] border border-[var(--line)] rounded-card w-full max-w-2xl max-h-[90vh] flex flex-col shadow-[0_24px_64px_rgba(0,0,0,0.55)] overflow-hidden">
-            <div className="p-4 border-b border-[var(--line)] flex items-center justify-between bg-[var(--ams-surface)]">
+            <div className="p-4 border-b border-[var(--line)] flex items-center justify-between bg-[var(--panel)]">
               <div className="flex items-center gap-2">
                 <FileText className="text-[var(--accent)]" size={18} />
-                <h3 className="text-sm font-bold font-sans text-[var(--text)]">
+                <h3 className="text-sm font-semibold font-sans text-[var(--text)]">
                   {language === 'id' ? 'Buat Proposal & Estimasi Baru' : 'New Commercial Proposal'}
                 </h3>
               </div>
@@ -651,7 +651,7 @@ export const AdminProposals: React.FC = () => {
                     value={formTitle}
                     onChange={(e) => setFormTitle(e.target.value)}
                     placeholder="e.g. Kapitech AI Automation Platform"
-                    className="w-full min-h-10 sm:h-9 px-3 rounded-control bg-[var(--panel)] text-[var(--text)] border border-[var(--line)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ams-red)]/40 focus:border-[var(--ams-red)]"
+                    className="w-full min-h-10 sm:h-9 px-3 rounded-control bg-[var(--panel)] text-[var(--text)] border border-[var(--line)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ams-red)]/40 focus:border-[var(--accent)]"
                   />
                 </div>
 
@@ -663,7 +663,7 @@ export const AdminProposals: React.FC = () => {
                     value={formClientName}
                     onChange={(e) => setFormClientName(e.target.value)}
                     placeholder="e.g. Raditya Pratama"
-                    className="w-full min-h-10 sm:h-9 px-3 rounded-control bg-[var(--panel)] text-[var(--text)] border border-[var(--line)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ams-red)]/40 focus:border-[var(--ams-red)]"
+                    className="w-full min-h-10 sm:h-9 px-3 rounded-control bg-[var(--panel)] text-[var(--text)] border border-[var(--line)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ams-red)]/40 focus:border-[var(--accent)]"
                   />
                 </div>
               </div>
@@ -676,7 +676,7 @@ export const AdminProposals: React.FC = () => {
                     value={formClientCompany}
                     onChange={(e) => setFormClientCompany(e.target.value)}
                     placeholder="e.g. PT Nusantara Digital"
-                    className="w-full min-h-10 sm:h-9 px-3 rounded-control bg-[var(--panel)] text-[var(--text)] border border-[var(--line)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ams-red)]/40 focus:border-[var(--ams-red)]"
+                    className="w-full min-h-10 sm:h-9 px-3 rounded-control bg-[var(--panel)] text-[var(--text)] border border-[var(--line)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ams-red)]/40 focus:border-[var(--accent)]"
                   />
                 </div>
 
@@ -687,7 +687,7 @@ export const AdminProposals: React.FC = () => {
                     value={formClientEmail}
                     onChange={(e) => setFormClientEmail(e.target.value)}
                     placeholder="e.g. client@company.id"
-                    className="w-full min-h-10 sm:h-9 px-3 rounded-control bg-[var(--panel)] text-[var(--text)] border border-[var(--line)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ams-red)]/40 focus:border-[var(--ams-red)]"
+                    className="w-full min-h-10 sm:h-9 px-3 rounded-control bg-[var(--panel)] text-[var(--text)] border border-[var(--line)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ams-red)]/40 focus:border-[var(--accent)]"
                   />
                 </div>
               </div>
@@ -699,7 +699,7 @@ export const AdminProposals: React.FC = () => {
                   <button
                     type="button"
                     onClick={handleAddItem}
-                    className="px-2 py-0.5 rounded-control bg-[var(--panel)] hover:bg-[var(--ams-elevated)] text-xs font-sans text-[var(--accent)] border border-[var(--ams-red)]/30 flex items-center gap-1"
+                    className="px-2 py-0.5 rounded-control bg-[var(--panel)] hover:bg-[var(--ams-elevated)] text-xs font-sans text-[var(--accent)] border border-[var(--accent)]/30 flex items-center gap-1"
                   >
                     <Plus size={12} />
                     <span>Add Item</span>
@@ -809,14 +809,14 @@ export const AdminProposals: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsCreateModalOpen(false)}
-                  className="px-4 py-2 rounded-card bg-[var(--panel)] hover:bg-[var(--ams-elevated)] text-[var(--ams-secondary)] hover:text-[var(--text)] text-xs font-sans transition-colors"
+                  className="min-h-10 px-4 py-2 rounded-control bg-[var(--panel)] hover:bg-[var(--panel-hover)] text-[var(--muted)] hover:text-[var(--text)] text-xs font-sans transition-colors border border-[var(--line)]"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-5 py-2 rounded-xl bg-[var(--ams-red)] hover:bg-[var(--ams-red)] text-[var(--text)] text-xs font-sans font-semibold flex items-center gap-2 shadow-[0_0_15px_rgba(229,9,20,0.3)] disabled:opacity-50"
+                  className="px-5 py-2 rounded-xl min-h-10 px-4 rounded-control bg-[var(--accent)] hover:bg-[var(--accent)] text-white text-xs font-sans font-medium flex items-center gap-2 disabled:opacity-50"
                 >
                   {isSubmitting ? <Loader2 size={13} className="animate-spin" /> : <Plus size={14} />}
                   <span>Generate Proposal</span>
@@ -831,7 +831,7 @@ export const AdminProposals: React.FC = () => {
       {previewProposal && (
         <div className="fixed inset-0 z-50 bg-black/85  flex items-center justify-center p-4">
           <div className="bg-[var(--ams-bg)] border border-[var(--line)] rounded-card w-full max-w-xl shadow-[0_24px_64px_rgba(0,0,0,0.55)] overflow-hidden">
-            <div className="p-4 border-b border-[var(--line)] flex items-center justify-between bg-[var(--ams-surface)]">
+            <div className="p-4 border-b border-[var(--line)] flex items-center justify-between bg-[var(--panel)]">
               <div className="flex items-center gap-2">
                 <span className="text-[var(--accent)] font-sans font-bold text-xs">{previewProposal.proposalNumber}</span>
                 <span className="text-[var(--text)] font-semibold text-xs truncate max-w-[280px]">{previewProposal.title}</span>
@@ -862,7 +862,7 @@ export const AdminProposals: React.FC = () => {
 
               <div className="space-y-2">
                 <div className="text-xs font-sans text-[var(--ams-secondary)] normal-case tracking-normal">Scope Deliverables</div>
-                <div className="divide-y divide-[var(--line)] bg-[var(--ams-surface)] rounded-xl border border-[var(--line)] p-3">
+                <div className="divide-y divide-[var(--line)] bg-[var(--panel)] rounded-card border border-[var(--line)] p-3">
                   {previewProposal.lineItems?.map((item) => (
                     <div key={item.id} className="py-2 flex justify-between items-center text-xs">
                       <div>
@@ -899,7 +899,7 @@ export const AdminProposals: React.FC = () => {
               </div>
 
               {previewProposal.paymentTerms && (
-                <div className="text-xs font-sans text-[var(--ams-secondary)] bg-[var(--ams-surface)]/50 p-2.5 rounded-lg border border-white/[0.04]">
+                <div className="text-xs font-sans text-[var(--ams-secondary)] bg-[var(--panel)]/50 p-2.5 rounded-lg border border-white/[0.04]">
                   Terms: {previewProposal.paymentTerms}
                 </div>
               )}
@@ -923,7 +923,7 @@ export const AdminProposals: React.FC = () => {
                         setPreviewProposal(null);
                       }}
                       disabled={!canApproveBudgets}
-                      className="px-3 py-1.5 rounded-lg bg-blue-500/20 text-blue-400 border border-blue-500/30 text-xs font-sans font-semibold"
+                      className="px-3 py-1.5 rounded-lg bg-[var(--info)]/10 text-[var(--info)] border border-[var(--info)]/30 min-h-10 px-3 rounded-control text-xs font-sans font-semibold"
                     >
                       Approve Proposal
                     </button>
@@ -934,7 +934,7 @@ export const AdminProposals: React.FC = () => {
                         handleConvertToInvoice(previewProposal.id);
                         setPreviewProposal(null);
                       }}
-                      className="px-3 py-1.5 rounded-lg bg-emerald-500 text-black font-semibold text-xs font-sans"
+                      className="px-3 py-1.5 rounded-lg bg-[var(--success)] text-black font-medium min-h-10 px-3 rounded-control text-xs font-sans"
                     >
                       Convert to Invoice
                     </button>
