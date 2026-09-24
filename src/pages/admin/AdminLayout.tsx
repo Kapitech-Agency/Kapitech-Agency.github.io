@@ -54,6 +54,7 @@ export const AdminLayout: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
+  const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
 
   useEffect(() => {
     setMobileMenuOpen(false);
@@ -71,11 +72,12 @@ export const AdminLayout: React.FC = () => {
     };
   }, [mobileMenuOpen]);
 
-  const handleLogout = () => {
-    if (window.confirm(t('admin.nav.logoutConfirm'))) {
-      logoutAdmin();
-      navigate('/admin/login', { replace: true });
-    }
+  const handleLogout = () => setLogoutConfirmOpen(true);
+
+  const confirmLogout = () => {
+    setLogoutConfirmOpen(false);
+    logoutAdmin();
+    navigate('/admin/login', { replace: true });
   };
 
   // 4 Logical Sections (with Consolidated Single Settings U('menu'))
@@ -304,13 +306,23 @@ export const AdminLayout: React.FC = () => {
               </button>
             </>
           ) : (
-            <Link 
-              to="/admin/dashboard" 
-              className="min-h-10 min-w-10 rounded-control bg-bg border border-line flex items-center justify-center shrink-0 hover:border-accent/40 transition-colors p-1.5"
-              title="Kapitech AMS Dashboard"
-            >
-              <img src="/favicon.png" alt="Kapitech" className="w-full h-full object-contain" />
-            </Link>
+            <div className="relative flex items-center justify-center w-full">
+              <Link
+                to="/admin/dashboard"
+                className="min-h-10 min-w-10 rounded-control bg-bg border border-line flex items-center justify-center shrink-0 hover:border-accent/40 transition-colors p-1.5"
+                title="Kapitech AMS Dashboard"
+              >
+                <img src="/favicon.png" alt="Kapitech" className="w-full h-full object-contain" />
+              </Link>
+              <button
+                onClick={() => setSidebarCollapsed(false)}
+                aria-label="Expand sidebar"
+                title="Expand sidebar"
+                className="absolute -right-1 min-h-10 min-w-10 rounded-control bg-bg hover:bg-panel-hover text-muted hover:text-fg border border-line flex items-center justify-center transition-colors"
+              >
+                <ChevronRight size={15} />
+              </button>
+            </div>
           )}
         </div>
 
@@ -414,6 +426,21 @@ export const AdminLayout: React.FC = () => {
         </div>
 
       </aside>
+
+      {logoutConfirmOpen && (
+        <div className="fixed inset-0 z-[70] bg-black/70 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="logout-title">
+          <div className="w-full max-w-sm rounded-card bg-panel border border-line overflow-hidden">
+            <div className="p-4 border-b border-line">
+              <h2 id="logout-title" className="text-sm font-semibold text-fg">{language === 'id' ? 'Keluar dari AMS?' : 'Sign out of AMS?'}</h2>
+              <p className="mt-1.5 text-xs leading-relaxed text-muted">{t('admin.nav.logoutConfirm')}</p>
+            </div>
+            <div className="p-4 flex items-center justify-end gap-2">
+              <button type="button" onClick={() => setLogoutConfirmOpen(false)} className="min-h-10 px-3 rounded-control bg-panel border border-line text-xs font-medium text-muted hover:text-fg hover:bg-panel-hover">{language === 'id' ? 'Batal' : 'Cancel'}</button>
+              <button type="button" onClick={confirmLogout} className="min-h-10 px-3 rounded-control bg-danger/10 border border-danger/30 text-danger hover:bg-danger/15 text-xs font-semibold">{language === 'id' ? 'Keluar' : 'Sign out'}</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ------------------------------------------------------------- */}
       {/* MOBILE TOPBAR - Single, sleek, non-cluttered header */}
