@@ -112,7 +112,7 @@ export const Home = () => {
               {language === 'id' ? (
                 <>Studio produk digital yang dirancang untuk <span className="text-brand-red">membangun & memperluas</span> bisnis Anda.</>
               ) : (
-                <>Digital product studio crafted to <span className="text-brand-red">build & scale</span> your business.</>
+                <>Digital product design & development crafted to <span className="text-brand-red">build & scale</span> your business.</>
               )}
             </h1>
             
