@@ -64,9 +64,9 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
   }, [isOpen]);
 
   const sizeClasses = {
-    xs: 'h-8 px-2.5 text-[11px] gap-2 rounded-lg',
-    sm: 'h-9 px-3 text-xs gap-2.5 rounded-lg',
-    md: 'h-10 px-3.5 text-sm gap-3 rounded-lg'
+    xs: 'h-10 sm:h-8 px-2.5 text-[11px] gap-2 rounded-control',
+    sm: 'h-10 sm:h-9 px-3 text-xs gap-2.5 rounded-control',
+    md: 'h-10 px-3.5 text-sm gap-3 rounded-control'
   };
 
   return (
@@ -137,7 +137,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
                   }}
                   role="option"
                   aria-selected={isSelected}
-                  className={`w-full flex items-center justify-between min-h-9 px-3 py-2 rounded-control text-left transition-colors group ${
+                  className={`w-full flex items-center justify-between min-h-10 sm:min-h-9 px-3 py-2 rounded-control text-left transition-colors group ${
                     isSelected
                       ? 'bg-bg text-fg font-semibold border border-line'
                       : 'text-muted hover:text-fg hover:bg-bg'
