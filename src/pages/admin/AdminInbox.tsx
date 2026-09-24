@@ -481,7 +481,7 @@ export const AdminInbox: React.FC = () => {
           {toastMessage.link && (
             <Link
               to={toastMessage.link}
-              className="px-3 py-1 rounded-lg bg-[var(--success)] text-[var(--bg)] font-medium hover:bg-[var(--success)]/90 transition-colors flex items-center gap-1 shrink-0 ml-3"
+              className="px-3 py-1 rounded-control bg-[var(--success)] text-[var(--bg)] font-medium hover:bg-[var(--success)]/90 transition-colors flex items-center gap-1 shrink-0 ml-3"
             >
               <span>{toastMessage.linkText || 'Open'}</span>
               <ExternalLink size={11} />
@@ -499,7 +499,7 @@ export const AdminInbox: React.FC = () => {
             <div className="w-8 h-8 rounded-card bg-[var(--accent)]/10 border border-[var(--accent)]/30 flex items-center justify-center text-[var(--danger)] shrink-0">
               <Inbox size={18} />
             </div>
-            <h1 className="text-xl font-display font-semibold text-[var(--text)] tracking-tight">
+            <h1 className="text-xl font-sans font-semibold text-[var(--text)] tracking-tight">
               {language === 'id' ? 'Kotak Masuk Prospek & Pesan' : 'Leads & Inquiry Inbox'}
             </h1>
             <span className="text-xs font-sans py-0.5 px-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-full text-[var(--muted)]">
@@ -659,7 +659,7 @@ export const AdminInbox: React.FC = () => {
           <div className="flex items-center bg-[var(--panel)] border border-[var(--line)] rounded-card p-0.5">
             <button
               onClick={() => setViewMode('split')}
-              className={`px-2.5 py-1.5 rounded-lg text-xs font-sans transition-all flex items-center gap-1.5 ${
+              className={`px-2.5 py-1.5 rounded-control text-xs font-sans transition-all flex items-center gap-1.5 ${
                 viewMode === 'split'
                   ? 'bg-[var(--panel)] text-[var(--text)] font-semibold border border-white/10'
                   : 'text-[var(--muted)] hover:text-[var(--text)]'
@@ -671,7 +671,7 @@ export const AdminInbox: React.FC = () => {
             </button>
             <button
               onClick={() => setViewMode('table')}
-              className={`px-2.5 py-1.5 rounded-lg text-xs font-sans transition-all flex items-center gap-1.5 ${
+              className={`px-2.5 py-1.5 rounded-control text-xs font-sans transition-all flex items-center gap-1.5 ${
                 viewMode === 'table'
                   ? 'bg-[var(--panel)] text-[var(--text)] font-semibold border border-white/10'
                   : 'text-[var(--muted)] hover:text-[var(--text)]'
@@ -847,7 +847,7 @@ export const AdminInbox: React.FC = () => {
                                 href={`https://wa.me/${cleanPhoneForWhatsApp(item.phone)}?text=Halo%20${encodeURIComponent(item.fullName)},%20terima%20kasih%20telah%20menghubungi%20Kapitech%20Agency...`}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="p-1.5 rounded-lg bg-emerald-950/60 hover:bg-emerald-900/80 text-emerald-400 border border-emerald-500/20"
+                                className="p-1.5 rounded-control bg-emerald-950/60 hover:bg-emerald-900/80 text-emerald-400 border border-emerald-500/20"
                                 title="Chat on WhatsApp"
                               >
                                 <ExternalLink size={12} />
@@ -858,7 +858,7 @@ export const AdminInbox: React.FC = () => {
                                 handleSelectSubmission(item);
                                 setViewMode('split');
                               }}
-                              className="px-2.5 py-1 rounded-lg bg-[var(--panel)] hover:bg-[var(--panel-hover)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] text-[11px]"
+                              className="px-2.5 py-1 rounded-control bg-[var(--panel)] hover:bg-[var(--panel-hover)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] text-[11px]"
                             >
                               {language === 'id' ? 'Buka' : 'Inspect'}
                             </button>
@@ -885,7 +885,7 @@ export const AdminInbox: React.FC = () => {
             <Inbox size={32} />
           </div>
           <div className="space-y-1.5">
-            <h3 className="text-[var(--text)] font-semibold font-display text-base sm:text-lg text-center">
+            <h3 className="text-[var(--text)] font-semibold font-sans text-base sm:text-lg text-center">
               {submissions.length === 0
                 ? (language === 'id' ? 'Kotak Masuk Masih Kosong' : 'No Inbound Records Found')
                 : (language === 'id' ? 'Tidak Ada Pesan yang Sesuai Kriteria' : 'No Inbound Records Match Your Filters')}
@@ -1043,7 +1043,7 @@ export const AdminInbox: React.FC = () => {
                 <div className="flex items-start justify-between gap-4 pb-5 border-b border-[var(--line)] mb-5">
                   <div className="flex items-start gap-3">
                     {/* Client Avatar Initials */}
-                    <div className="w-12 h-12 rounded-card bg-gradient-to-br from-[var(--panel)] to-[var(--panel)] border border-white/10 flex items-center justify-center text-[var(--text)] font-display font-semibold text-lg shrink-0 shadow-inner">
+                    <div className="w-12 h-12 rounded-card bg-gradient-to-br from-[var(--panel)] to-[var(--panel)] border border-white/10 flex items-center justify-center text-[var(--text)] font-sans font-semibold text-lg shrink-0 shadow-inner">
                       {selectedSubmission.fullName.charAt(0).toUpperCase()}
                     </div>
 
@@ -1056,7 +1056,7 @@ export const AdminInbox: React.FC = () => {
                         </span>
                       </div>
                       
-                      <h2 className="text-xl sm:text-2xl font-semibold font-display text-[var(--text)] tracking-tight">
+                      <h2 className="text-xl sm:text-2xl font-semibold font-sans text-[var(--text)] tracking-tight">
                         {selectedSubmission.fullName}
                       </h2>
 
@@ -1094,7 +1094,7 @@ export const AdminInbox: React.FC = () => {
                     {crmDeals.some(d => (d as any).inquiryId === selectedSubmission.id) ? (
                       <Link
                         to="/admin/crm"
-                        className="h-9 px-3.5 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/20 text-xs font-sans font-semibold transition-all flex items-center gap-1.5"
+                        className="h-9 px-3.5 rounded-control bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/20 text-xs font-sans font-semibold transition-all flex items-center gap-1.5"
                       >
                         <ShieldCheck size={14} />
                         <span>{language === 'id' ? 'Buka Deal di CRM' : 'View CRM Deal'}</span>
@@ -1103,7 +1103,7 @@ export const AdminInbox: React.FC = () => {
                     ) : (
                       <button
                         onClick={() => setIsCrmModalOpen(true)}
-                        className="h-9 px-3.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-sans font-semibold transition-colors flex items-center gap-1.5"
+                        className="h-9 px-3.5 rounded-control bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-sans font-semibold transition-colors flex items-center gap-1.5"
                       >
                         <Briefcase size={14} />
                         <span>{language === 'id' ? 'Konversi ke CRM' : 'Convert to CRM'}</span>
@@ -1113,7 +1113,7 @@ export const AdminInbox: React.FC = () => {
                     {/* Quick Canned Response Template Picker */}
                     <button
                       onClick={() => setIsCannedModalOpen(true)}
-                      className="h-9 px-3.5 rounded-lg bg-[var(--panel)] hover:bg-[var(--panel-hover)] text-[var(--text)] border border-[var(--line)] text-xs font-sans font-semibold transition-colors flex items-center gap-1.5"
+                      className="h-9 px-3.5 rounded-control bg-[var(--panel)] hover:bg-[var(--panel-hover)] text-[var(--text)] border border-[var(--line)] text-xs font-sans font-semibold transition-colors flex items-center gap-1.5"
                     >
                       <Sparkles size={13} className="text-[var(--danger)]" />
                       <span>{language === 'id' ? 'Respon Cepat' : 'Canned Response'}</span>
@@ -1128,7 +1128,7 @@ export const AdminInbox: React.FC = () => {
                         href={`https://wa.me/${cleanPhoneForWhatsApp(selectedSubmission.phone)}?text=Halo%20${encodeURIComponent(selectedSubmission.fullName)},%20kami%20dari%20Kapitech%20Agency.%20Menindaklanjuti%20formulir%20konsultasi%20proyek%20Anda...`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="h-9 px-3 rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-500/30 text-xs font-sans transition-colors flex items-center gap-1"
+                        className="h-9 px-3 rounded-control bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-500/30 text-xs font-sans transition-colors flex items-center gap-1"
                         title="Chat via WhatsApp"
                       >
                         <span>WhatsApp</span>
@@ -1139,7 +1139,7 @@ export const AdminInbox: React.FC = () => {
                     {/* Mailto */}
                     <a
                       href={`mailto:${selectedSubmission.email}?subject=Kapitech Agency - Project Brief Follow-up&body=Dear ${encodeURIComponent(selectedSubmission.fullName)},%0D%0A%0D%0AThank you for reaching out to Kapitech Agency regarding your project brief.`}
-                      className="h-9 px-3 rounded-lg bg-[var(--accent)] hover:bg-[var(--accent)] text-[var(--text)] text-xs font-sans font-semibold transition-colors flex items-center gap-1"
+                      className="h-9 px-3 rounded-control bg-[var(--accent)] hover:bg-[var(--accent)] text-[var(--text)] text-xs font-sans font-semibold transition-colors flex items-center gap-1"
                       title="Compose Email"
                     >
                       <Mail size={13} />
@@ -1380,7 +1380,7 @@ export const AdminInbox: React.FC = () => {
               <div className="w-16 h-16 rounded-card bg-[var(--panel)] border border-[var(--line)] flex items-center justify-center text-[var(--line)] mb-4">
                 <Inbox size={32} />
               </div>
-              <h3 className="text-[var(--text)] font-medium mb-1 font-display text-base">
+              <h3 className="text-[var(--text)] font-medium mb-1 font-sans text-base">
                 {language === 'id' ? 'Pilih Pesan untuk Membaca Brief' : 'Select a Brief to Inspect'}
               </h3>
               <p className="text-xs text-[var(--muted)] max-w-sm font-sans leading-relaxed">
