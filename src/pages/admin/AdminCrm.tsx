@@ -717,7 +717,7 @@ export const AdminCrm: React.FC = () => {
                                   <button
                                     onClick={() => handleStageChange(lead.id, 'won')}
                                     title={language === 'id' ? 'Tandai Deal Dimenangkan (Won)' : 'Mark deal as Won'}
-                                    className="h-7 px-2.5 rounded-lg bg-emerald-950/60 hover:bg-emerald-900/80 text-[var(--success)] border border-[var(--success)]/30 text-[10px] font-semibold font-sans transition-all flex items-center gap-1 active:scale-95 whitespace-nowrap"
+                                    className="h-10 sm:h-7 min-h-10 sm:min-h-0 px-2.5 rounded-control bg-emerald-950/60 hover:bg-emerald-900/80 text-[var(--success)] border border-[var(--success)]/30 text-[10px] font-semibold font-sans transition-all flex items-center gap-1 active:scale-95 whitespace-nowrap"
                                   >
                                     <Check size={11} className="text-[var(--success)]" />
                                     <span>Won</span>
@@ -727,7 +727,7 @@ export const AdminCrm: React.FC = () => {
                                   <button
                                     onClick={() => handleConvertToProject(lead)}
                                     title={language === 'id' ? 'Konversi ke Proyek Aktif' : 'Convert deal to Agency Project'}
-                                    className="h-7 px-2.5 rounded-lg bg-[var(--accent)]/20 hover:bg-[var(--accent)]/40 text-[var(--danger)] border border-[var(--accent)]/30 text-[10px] font-semibold font-sans transition-all flex items-center gap-1 active:scale-95 shadow-sm whitespace-nowrap"
+                                    className="h-10 sm:h-7 min-h-10 sm:min-h-0 px-2.5 rounded-control bg-[var(--accent)]/20 hover:bg-[var(--accent)]/40 text-[var(--danger)] border border-[var(--accent)]/30 text-[10px] font-semibold font-sans transition-all flex items-center gap-1 active:scale-95 shadow-sm whitespace-nowrap"
                                   >
                                     <Layers size={11} />
                                     <span>Project</span>
@@ -756,7 +756,7 @@ export const AdminCrm: React.FC = () => {
                                 <button
                                   onClick={() => handleOpenLeadDrawer(lead)}
                                   title={language === 'id' ? 'Lihat profil lead & catatan' : 'Inspect lead profile & notes'}
-                                  className="h-7 px-2.5 rounded-lg bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] text-[10px] font-sans transition-all flex items-center gap-1 active:scale-95 whitespace-nowrap"
+                                  className="h-10 sm:h-7 min-h-10 sm:min-h-0 px-2.5 rounded-control bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] text-[10px] font-sans transition-all flex items-center gap-1 active:scale-95 whitespace-nowrap"
                                 >
                                   <span>Inspect</span>
                                   <ArrowUpRight size={11} />
