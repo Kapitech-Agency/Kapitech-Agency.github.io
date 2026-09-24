@@ -25,7 +25,11 @@ import {
   ShieldCheck,
   Activity,
   Sliders,
-  Users
+  Users,
+  FileText,
+  CheckCircle2,
+  FileStack,
+  Clock3
 } from 'lucide-react';
 import { getAdminSession, logoutAdmin } from '../../lib/adminAuth';
 import { subscribeToInbox, ContactSubmission } from '../../lib/submissions';
@@ -64,7 +68,12 @@ export const AdminLayout: React.FC = () => {
   const [currency, setCurrencyState] = useState<CurrencyCode>(getActiveCurrency());
 
   // Dynamic RBAC Permission Engine
-  const { role: rbacRole, setRole: setRbacRole, roleMeta, isAllowed } = useRbacRole();
+  const { role: rbacRole, setRole: setRbacRole, roleMeta, isAllowed } = useRbacRole(
+    session?.user?.stakeholderType,
+    session?.user?.division,
+    session?.user?.role,
+    session?.user?.permissions
+  );
 
   useEffect(() => {
     const updateTime = () => {
@@ -165,6 +174,13 @@ export const AdminLayout: React.FC = () => {
           badge: null
         },
         {
+          key: 'proposals',
+          to: '/admin/proposals',
+          label: language === 'id' ? 'Proposal & Quotation' : 'Proposals & Quotes',
+          icon: FileText,
+          badge: null
+        },
+        {
           key: 'projects',
           to: '/admin/projects',
           label: t('admin.nav.projects'),
@@ -197,6 +213,13 @@ export const AdminLayout: React.FC = () => {
           label: t('admin.nav.vendors'),
           icon: Briefcase,
           badge: null
+        },
+        {
+          key: 'approvals',
+          to: '/admin/approvals',
+          label: language === 'id' ? 'Approval Center' : 'Approval Center',
+          icon: CheckCircle2,
+          badge: null
         }
       ]
     },
@@ -224,6 +247,20 @@ export const AdminLayout: React.FC = () => {
           label: t('admin.cms.testiTitle'),
           icon: Quote,
           badge: null
+        },
+        {
+          key: 'documents',
+          to: '/admin/documents',
+          label: language === 'id' ? 'Documents' : 'Documents',
+          icon: FileStack,
+          badge: null
+        },
+        {
+          key: 'timelogs',
+          to: '/admin/time-logs',
+          label: language === 'id' ? 'Time Tracking' : 'Time Tracking',
+          icon: Clock3,
+          badge: null
         }
       ]
     },
@@ -238,13 +275,6 @@ export const AdminLayout: React.FC = () => {
           icon: Settings,
           badge: null
         },
-        {
-          key: 'rbac',
-          to: '/admin/settings?tab=rbac',
-          label: language === 'id' ? 'Akun & Hak Akses' : 'Accounts & RBAC',
-          icon: Users,
-          badge: null
-        }
       ]
     }
   ];
