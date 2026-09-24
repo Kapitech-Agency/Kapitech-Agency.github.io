@@ -1894,3 +1894,19 @@
  .kapi-public-shell .kapi-mega-menu > div:first-child{gap:14px}
  .kapi-public-shell .kapi-mega-menu a{padding:9px}
 }
+
+
+/* Mobile-first foundation: compact geometry is the default; larger layouts opt in. */
+.kapi-public-shell .kapi-nav-inner{min-height:64px;height:64px}
+.kapi-public-shell .kapi-public-footer{padding-top:56px;padding-bottom:24px}
+.kapi-public-shell .kapi-footer-title{font-size:clamp(34px,9vw,48px);line-height:1.02}
+.kapi-public-shell .kapi-mega-menu{max-height:calc(100svh - 80px);overflow:auto}
+.kapi-public-shell .kapi-nav-top,.kapi-public-shell .kapi-nav-scrolled{background:var(--pub-glass-c)}
+@media (min-width:768px){
+ .kapi-public-shell .kapi-nav-inner{height:72px}
+ .kapi-public-shell .kapi-public-footer{padding-top:80px;padding-bottom:32px}
+ .kapi-public-shell .kapi-footer-title{font-size:clamp(34px,4vw,58px)}
+ .kapi-public-shell .kapi-nav-top{background:rgba(9,10,15,.48)}
+ .kapi-public-shell .kapi-nav-scrolled{background:var(--pub-glass-c)}
+ .kapi-public-shell .kapi-mega-menu{max-height:calc(100svh - 96px)}
+}
