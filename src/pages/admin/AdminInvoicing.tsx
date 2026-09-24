@@ -48,7 +48,7 @@ import { useDragToScroll } from '../../lib/useDragToScroll';
 import { ScrollShadowContainer } from '../../components/ui/ScrollShadowContainer';
 import { CustomSelect } from '../../components/ui/CustomSelect';
 import { InvoiceStatusDropdown } from '../../components/ui/InvoiceStatusDropdown';
-import { getAgencyProjects, AgencyProject } from '../../lib/projectStore';
+import { AgencyProject } from '../../lib/projectStore';
 import { getAdminSession, hasAdminPermission } from '../../lib/adminAuth';
 
 export const AdminInvoicing: React.FC = () => {
@@ -108,15 +108,14 @@ export const AdminInvoicing: React.FC = () => {
   const [paymentDate, setPaymentDate] = useState<string>(new Date().toISOString().split('T')[0]);
   const [paymentNotes, setPaymentNotes] = useState<string>('');
 
-  const loadData = () => {
-    setInvoices(getAgencyInvoices());
-    setExpenses(getAgencyExpenses());
+  const loadData = async () => {
+    const [invoiceRes, expenseRes] = await Promise.all([api.finance.getInvoices(), api.finance.getExpenses()]);
+    if (invoiceRes.success && Array.isArray(invoiceRes.data?.invoices)) setInvoices(invoiceRes.data.invoices as AgencyInvoice[]);
+    if (expenseRes.success && Array.isArray(expenseRes.data?.expenses)) setExpenses(expenseRes.data.expenses as AgencyExpense[]);
   };
 
   useEffect(() => {
-    loadData();
-    const handleUpdate = () => loadData();
-    window.addEventListener(FINANCE_EVENT_NAME, handleUpdate);
+    void loadData();
 
     const handleCurrencyChange = (e: any) => {
       setCurrency(e.detail?.currency || getActiveCurrency());
@@ -124,12 +123,15 @@ export const AdminInvoicing: React.FC = () => {
     window.addEventListener(CURRENCY_EVENT, handleCurrencyChange);
 
     return () => {
-      window.removeEventListener(FINANCE_EVENT_NAME, handleUpdate);
       window.removeEventListener(CURRENCY_EVENT, handleCurrencyChange);
     };
   }, []);
 
-  const metrics = useMemo(() => computeFinancialMetrics(invoices, expenses), [invoices, expenses]);
+  const metrics = useMemo(() => ({
+    totalRevenue: invoices.reduce((s, i) => s + Number(i.total || 0), 0),
+    totalExpenses: expenses.reduce((s, e) => s + Number(e.amount || 0), 0),
+    netProfit: invoices.reduce((s, i) => s + Number(i.amountPaid || 0), 0) - expenses.reduce((s, e) => s + Number(e.amount || 0), 0)
+  }), [invoices, expenses]);
 
   const filteredInvoices = useMemo(() => {
     return invoices.filter(inv => {
@@ -147,8 +149,9 @@ export const AdminInvoicing: React.FC = () => {
     setTimeout(() => setStatusMessage(null), 3500);
   };
 
-  const handleOpenCreateInvoice = () => {
-    const allProj = getAgencyProjects();
+  const handleOpenCreateInvoice = async () => {
+    const projectRes = await api.projects.getAll();
+    const allProj = (projectRes.success && Array.isArray(projectRes.data?.projects) ? projectRes.data.projects : []) as AgencyProject[];
     setAvailableProjects(allProj);
     const approvedProj = allProj.filter(p => p.status === 'in_progress' || p.status === 'completed' || p.status === 'review');
     
@@ -208,7 +211,7 @@ export const AdminInvoicing: React.FC = () => {
     setIsInvoiceModalOpen(true);
   };
 
-  const handleSaveInvoice = (e: React.FormEvent) => {
+  const handleSaveInvoice = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!clientName.trim() || !clientCompany.trim()) {
       alert('Client Name and Company are required.');
@@ -249,14 +252,18 @@ export const AdminInvoicing: React.FC = () => {
       updatedAt: new Date().toISOString()
     };
 
-    saveAgencyInvoice(invData);
+    const res = editingInvoice ? await api.finance.updateInvoice(invData.id, invData) : await api.finance.createInvoice(invData);
+    if (!res.success) { showToast(res.error || 'Invoice gagal disimpan.'); return; }
+    await loadData();
     setIsInvoiceModalOpen(false);
     showToast(language === 'id' ? 'Invoice berhasil disimpan.' : 'Invoice successfully saved.');
   };
 
-  const handleDeleteInvoice = (id: string, invNum: string) => {
+  const handleDeleteInvoice = async (id: string, invNum: string) => {
     if (window.confirm(`Hapus invoice ${invNum}?`)) {
-      deleteAgencyInvoice(id);
+      const res = await api.finance.deleteInvoice(id);
+      if (!res.success) { showToast(res.error || 'Invoice gagal dihapus.'); return; }
+      await loadData();
       showToast(language === 'id' ? 'Invoice dihapus.' : 'Invoice deleted.');
     }
   };
@@ -278,7 +285,7 @@ export const AdminInvoicing: React.FC = () => {
       showToast(language === 'id' ? 'Nominal pembayaran harus lebih besar dari 0' : 'Payment amount must be greater than 0');
       return;
     }
-    const updated = await recordInvoicePayment(paymentModalInvoice.id, {
+    const updated = await api.finance.payInvoice(paymentModalInvoice.id, {
       amount: paymentAmount,
       date: paymentDate,
       method: paymentMethod,
@@ -286,13 +293,14 @@ export const AdminInvoicing: React.FC = () => {
       recordedBy: session?.user?.name || session?.user?.username || 'Finance Officer',
       notes: paymentNotes
     });
-    if (updated) {
+    if (updated.success) {
+      await loadData();
       showToast(language === 'id' ? `Pembayaran dicatat untuk ${updated.invoiceNumber}` : `Payment recorded for ${updated.invoiceNumber}`);
       setPaymentModalInvoice(null);
     }
   };
 
-  const handleSaveExpense = (e: React.FormEvent) => {
+  const handleSaveExpense = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!expDesc.trim() || !expAmount) {
       alert('Description and amount are required.');
@@ -308,15 +316,19 @@ export const AdminInvoicing: React.FC = () => {
       recordedBy: 'Principal Admin'
     };
 
-    saveAgencyExpense(newExpense);
+    const res = await api.finance.createExpense(newExpense);
+    if (!res.success) { showToast(res.error || 'Expense gagal disimpan.'); return; }
+    await loadData();
     setIsExpenseModalOpen(false);
     setExpDesc('');
     showToast(language === 'id' ? 'Pengeluaran berhasil dicatat.' : 'Expense successfully recorded.');
   };
 
-  const handleDeleteExpense = (id: string) => {
+  const handleDeleteExpense = async (id: string) => {
     if (window.confirm('Hapus catatan pengeluaran ini?')) {
-      deleteAgencyExpense(id);
+      const res = await api.finance.deleteExpense(id);
+      if (!res.success) { showToast(res.error || 'Expense gagal dihapus.'); return; }
+      await loadData();
       showToast(language === 'id' ? 'Pengeluaran dihapus.' : 'Expense deleted.');
     }
   };
