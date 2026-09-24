@@ -349,7 +349,7 @@ export const AdminDashboard: React.FC = () => {
   };
 
   // Quick Action Modal Submit Handlers
-  const handleCreateLead = (e: React.FormEvent) => {
+  const handleCreateLead = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newLeadName.trim() || !newLeadCompany.trim()) return;
 
@@ -380,7 +380,7 @@ export const AdminDashboard: React.FC = () => {
     showToast(language === 'id' ? `Lead baru berhasil ditambahkan: ${leadObj.company}` : `Lead created successfully: ${leadObj.company}`);
   };
 
-  const handleCreateInvoice = (e: React.FormEvent) => {
+  const handleCreateInvoice = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!quickInvCompany.trim()) return;
 
@@ -428,7 +428,7 @@ export const AdminDashboard: React.FC = () => {
     showToast(language === 'id' ? `Invoice baru diterbitkan: ${invObj.invoiceNumber}` : `Invoice created: ${invObj.invoiceNumber}`);
   };
 
-  const handleCreateProject = (e: React.FormEvent) => {
+  const handleCreateProject = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!quickProjTitle.trim() || !quickProjClient.trim()) return;
 
@@ -475,7 +475,7 @@ export const AdminDashboard: React.FC = () => {
     showToast(language === 'id' ? `Proyek baru dimulai: ${projObj.name}` : `Project initiated: ${projObj.name}`);
   };
 
-  const handleRecordExpense = (e: React.FormEvent) => {
+  const handleRecordExpense = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!quickExpDesc.trim()) return;
 
