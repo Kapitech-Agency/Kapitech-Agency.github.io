@@ -751,7 +751,7 @@ export const Careers = () => {
                 >
                   <button
                     onClick={() => setSelectedTalent(talent)}
-                    className="group relative rounded-2xl sm:rounded-[var(--k-sheet-radius)] overflow-hidden border border-[var(--k-border)] bg-[var(--k-surface)] transition-all duration-500 hover:-translate-y-1 hover:border-brand-red/60 hover:shadow-[0_16px_36px_rgba(0,0,0,.28)] cursor-pointer aspect-[3/4] p-0 block w-full text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-red/30"
+                    className="group relative rounded-2xl sm:rounded-[var(--k-sheet-radius)] overflow-hidden border border-[var(--k-border)] bg-[var(--k-surface)] transition-all duration-500 hover:-translate-y-1 hover:border-brand-red/60 hover:shadow-[0_16px_36px_rgba(0,0,0,.28)] cursor-pointer aspect-[3/4] p-0 block w-full text-left focus-visible:outline-none focus:ring-2 focus:ring-brand-red/50"
                     title={`${talent.name} - ${talent.role}`}
                     aria-label={`View photo and profile of ${talent.name}`}
                   >
