@@ -313,7 +313,7 @@ export const AdminLayout: React.FC = () => {
   return (
     <div className="h-screen w-full bg-[#090A0F] text-[#F8FAFC] flex flex-col md:flex-row selection:bg-[#E50914] selection:text-white font-sans antialiased overflow-hidden ams-shell">
       
-      <div className="fixed right-4 top-3 md:right-5 md:top-3 z-[60]"><AdminNotificationCenter /></div>\n\n      {/* Universal Command Palette */}
+      {/* Universal Command Palette */}
       <CommandPalette 
         isOpen={commandPaletteOpen} 
         onClose={() => setCommandPaletteOpen(false)} 
@@ -324,12 +324,12 @@ export const AdminLayout: React.FC = () => {
       {/* ------------------------------------------------------------- */}
       <aside 
         className={`hidden md:flex flex-col bg-[#111318] border-r border-white/[0.07] shrink-0 h-full z-30 transition-all duration-300 ${
-          sidebarCollapsed ? 'w-20' : 'w-64 lg:w-72'
+          sidebarCollapsed ? 'w-[72px]' : 'w-[236px]'
         }`}
       >
         
         {/* Brand Header */}
-        <div className={`h-16 border-b border-white/[0.07] flex items-center bg-[#111318] transition-all ${
+        <div className={`h-[60px] border-b border-white/[0.07] flex items-center bg-[#111318] transition-all ${
           sidebarCollapsed ? 'justify-center px-2' : 'justify-between px-4'
         }`}>
           {!sidebarCollapsed ? (
@@ -368,7 +368,7 @@ export const AdminLayout: React.FC = () => {
         </div>
 
         {/* Navigation List - 4 Structured Sections Filtered by Dynamic RBAC */}
-        <div className="flex-1 px-3 py-3 space-y-4 overflow-y-auto custom-scrollbar">
+        <div className="flex-1 px-2.5 py-3 space-y-3 overflow-y-auto custom-scrollbar">
           {filteredNavSections.map((section) => (
             <div key={section.id} className="space-y-1">
               {!sidebarCollapsed && (
@@ -757,7 +757,7 @@ export const AdminLayout: React.FC = () => {
       <main className="flex-1 flex flex-col min-w-0 h-full overflow-y-auto bg-[#090A0F] custom-scrollbar">
         
         {/* Sticky Desktop Topbar Header: Clean & Minimal */}
-        <header className="hidden md:flex h-16 px-4 sm:px-6 lg:px-8 border-b border-white/[0.07] bg-[#090A0F]/95 backdrop-blur-md sticky top-0 z-30 items-center justify-between shrink-0 shadow-[0_1px_0_rgba(255,255,255,0.02),0_4px_24px_rgba(0,0,0,0.6)]">
+        <header className="hidden md:flex h-[60px] px-4 sm:px-5 lg:px-6 border-b border-white/[0.07] bg-[#090A0F]/95 backdrop-blur-md sticky top-0 z-30 items-center justify-between shrink-0 shadow-[0_1px_0_rgba(255,255,255,0.02),0_4px_24px_rgba(0,0,0,0.6)]">
           {/* Breadcrumb Navigation */}
           <div className="flex items-center gap-2 text-xs font-sans text-[#8A94A6]">
             {sidebarCollapsed && (
@@ -790,8 +790,8 @@ export const AdminLayout: React.FC = () => {
           </div>
 
           {/* Topbar Controls Container */}
-          <div className="flex items-center gap-3 text-xs font-sans text-[#8A94A6]">
-            {/* Currency Switcher (IDR / USD) */}
+          <div className="flex items-center gap-2 text-xs font-sans text-[#8A94A6]">
+            {/* Notifications */}\n            <AdminNotificationCenter />\n\n            {/* Currency Switcher (IDR / USD) */}
             <div className="flex items-center bg-[#111318] border border-white/[0.07] rounded-lg p-[3px] font-mono text-xs">
               <button
                 onClick={() => handleSwitchCurrency('IDR')}
@@ -859,7 +859,7 @@ export const AdminLayout: React.FC = () => {
         </header>
 
         {/* View Outlet */}
-        <div className="flex-1 p-4 sm:p-6 lg:p-7 w-full max-w-[1700px] mx-auto">
+        <div className="flex-1 p-4 sm:p-5 lg:p-6 w-full max-w-[1560px] mx-auto">
           <Outlet />
         </div>
 
