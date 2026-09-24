@@ -326,7 +326,7 @@ export const DataMigrationModal: React.FC<DataMigrationModalProps> = ({
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 rounded-[var(--k-control-radius)] bg-[var(--panel)] border border-[var(--line)]">
             <div className="text-xs font-sans text-[var(--muted)]">
               <span className="text-[var(--k-text)] font-semibold block">{language === 'id' ? 'Download Format Template Resmi' : 'Download Predefined Template'}</span>
-              <span className="text-[11px] font-sans text-[#5C626E]">CSV format formatted for {targetModule}</span>
+              <span className="text-[11px] font-sans text-[var(--muted)]">CSV format formatted for {targetModule}</span>
             </div>
             <button
               type="button"
@@ -350,7 +350,7 @@ export const DataMigrationModal: React.FC<DataMigrationModalProps> = ({
             <p className="text-xs font-sans text-[var(--k-text)] font-semibold">
               {file ? file.name : language === 'id' ? 'Klik atau tarik file CSV ke sini' : 'Click or drag & drop CSV file here'}
             </p>
-            <p className="text-[10px] font-sans text-[#5C626E] mt-1">
+            <p className="text-[10px] font-sans text-[var(--muted)] mt-1">
               Max file size 10MB • UTF-8 CSV Encoding
             </p>
           </div>
