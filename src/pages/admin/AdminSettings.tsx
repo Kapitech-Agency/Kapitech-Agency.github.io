@@ -403,9 +403,9 @@ export const AdminSettings: React.FC = () => {
       <div className="flex items-center gap-2 border-b border-[var(--line)] pb-2 overflow-x-auto custom-scrollbar">
         <button
           onClick={() => handleTabChange('profile')}
-          className={`px-4 py-2.5 rounded-xl text-xs font-sans transition-all flex items-center gap-2 shrink-0 min-h-[44px] ${
+          className={`px-4 py-2.5 rounded-xl text-xs font-sans transition-all flex items-center gap-2 shrink-0 min-h-10 ${
             activeTab === 'profile'
-              ? 'bg-[var(--accent)] text-white font-bold shadow-[0_0_12px_rgba(229,9,20,0.25)]'
+              ? 'bg-[var(--accent)] text-white font-bold '
               : 'text-[var(--muted)] hover:text-white hover:bg-[var(--panel)]'
           }`}
         >
@@ -415,9 +415,9 @@ export const AdminSettings: React.FC = () => {
 
         <button
           onClick={() => handleTabChange('branding')}
-          className={`px-4 py-2.5 rounded-xl text-xs font-sans transition-all flex items-center gap-2 shrink-0 min-h-[44px] ${
+          className={`px-4 py-2.5 rounded-xl text-xs font-sans transition-all flex items-center gap-2 shrink-0 min-h-10 ${
             activeTab === 'branding'
-              ? 'bg-[var(--accent)] text-white font-bold shadow-[0_0_12px_rgba(229,9,20,0.25)]'
+              ? 'bg-[var(--accent)] text-white font-bold '
               : 'text-[var(--muted)] hover:text-white hover:bg-[var(--panel)]'
           }`}
         >
@@ -428,9 +428,9 @@ export const AdminSettings: React.FC = () => {
         <button
           onClick={() => handleTabChange('rbac')}
            disabled={!canManageAdminAccounts}
-          className={`px-4 py-2.5 rounded-xl text-xs font-sans transition-all flex items-center gap-2 shrink-0 min-h-[44px] ${
+          className={`px-4 py-2.5 rounded-xl text-xs font-sans transition-all flex items-center gap-2 shrink-0 min-h-10 ${
             activeTab === 'rbac'
-              ? 'bg-[var(--accent)] text-white font-bold shadow-[0_0_12px_rgba(229,9,20,0.25)]'
+              ? 'bg-[var(--accent)] text-white font-bold '
               : 'text-[var(--muted)] hover:text-white hover:bg-[var(--panel)]'
           }`}
         >
@@ -440,9 +440,9 @@ export const AdminSettings: React.FC = () => {
 
         <button
           onClick={() => handleTabChange('security')}
-          className={`px-4 py-2.5 rounded-xl text-xs font-sans transition-all flex items-center gap-2 shrink-0 min-h-[44px] ${
+          className={`px-4 py-2.5 rounded-xl text-xs font-sans transition-all flex items-center gap-2 shrink-0 min-h-10 ${
             activeTab === 'security'
-              ? 'bg-[var(--accent)] text-white font-bold shadow-[0_0_12px_rgba(229,9,20,0.25)]'
+              ? 'bg-[var(--accent)] text-white font-bold '
               : 'text-[var(--muted)] hover:text-white hover:bg-[var(--panel)]'
           }`}
         >
@@ -453,9 +453,9 @@ export const AdminSettings: React.FC = () => {
         <button
           onClick={() => handleTabChange('api')}
            disabled={!canAccessServer}
-          className={`px-4 py-2.5 rounded-xl text-xs font-sans transition-all flex items-center gap-2 shrink-0 min-h-[44px] ${
+          className={`px-4 py-2.5 rounded-xl text-xs font-sans transition-all flex items-center gap-2 shrink-0 min-h-10 ${
             activeTab === 'api'
-              ? 'bg-[var(--accent)] text-white font-bold shadow-[0_0_12px_rgba(229,9,20,0.25)]'
+              ? 'bg-[var(--accent)] text-white font-bold '
               : 'text-[var(--muted)] hover:text-white hover:bg-[var(--panel)]'
           }`}
         >
@@ -466,9 +466,9 @@ export const AdminSettings: React.FC = () => {
         <button
           onClick={() => handleTabChange('audit')}
            disabled={!canViewAuditLogs}
-          className={`px-4 py-2.5 rounded-xl text-xs font-sans transition-all flex items-center gap-2 shrink-0 min-h-[44px] ${
+          className={`px-4 py-2.5 rounded-xl text-xs font-sans transition-all flex items-center gap-2 shrink-0 min-h-10 ${
             activeTab === 'audit'
-              ? 'bg-[var(--accent)] text-white font-bold shadow-[0_0_12px_rgba(229,9,20,0.25)]'
+              ? 'bg-[var(--accent)] text-white font-bold '
               : 'text-[var(--muted)] hover:text-white hover:bg-[var(--panel)]'
           }`}
         >
@@ -518,7 +518,7 @@ export const AdminSettings: React.FC = () => {
                   required
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-xs text-white focus:outline-none focus:border-[var(--accent)] font-sans min-h-[44px]"
+                  className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-xs text-white focus:outline-none focus:border-[var(--accent)] font-sans min-h-10"
                 />
               </div>
 
@@ -531,7 +531,7 @@ export const AdminSettings: React.FC = () => {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-xs text-white focus:outline-none focus:border-[var(--accent)] font-sans min-h-[44px]"
+                  className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-xs text-white focus:outline-none focus:border-[var(--accent)] font-sans min-h-10"
                 />
               </div>
             </div>
@@ -561,7 +561,7 @@ export const AdminSettings: React.FC = () => {
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
                 placeholder={language === 'id' ? 'Masukkan password admin saat ini...' : 'Enter your current password...'}
-                className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-xs text-white focus:outline-none focus:border-[var(--accent)] font-sans min-h-[44px]"
+                className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-xs text-white focus:outline-none focus:border-[var(--accent)] font-sans min-h-10"
               />
             </div>
 
@@ -569,7 +569,7 @@ export const AdminSettings: React.FC = () => {
               <button
                 type="submit"
                 disabled={securityLoading}
-                className="px-5 py-2.5 rounded-xl bg-[var(--accent)] text-white text-xs font-sans font-bold hover:bg-[var(--danger)] transition-all shadow-md shadow-[var(--accent)]/20 flex items-center gap-2 disabled:opacity-50 min-h-[44px]"
+                className="px-5 py-2.5 rounded-xl bg-[var(--accent)] text-white text-xs font-sans font-bold hover:bg-[var(--danger)] transition-all shadow-md shadow-[var(--accent)]/20 flex items-center gap-2 disabled:opacity-50 min-h-10"
               >
                 {securityLoading ? <RefreshCw size={14} className="animate-spin" /> : <Save size={14} />}
                 <span>{language === 'id' ? 'Perbarui Akun Master' : 'Update Master Account'}</span>
@@ -615,7 +615,7 @@ export const AdminSettings: React.FC = () => {
                   type="text"
                   value={metaSettings.agencyName}
                   onChange={(e) => setMetaSettings({ ...metaSettings, agencyName: e.target.value })}
-                  className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-xs text-white focus:outline-none focus:border-[var(--accent)] font-sans min-h-[44px]"
+                  className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-xs text-white focus:outline-none focus:border-[var(--accent)] font-sans min-h-10"
                 />
               </div>
 
@@ -627,7 +627,7 @@ export const AdminSettings: React.FC = () => {
                   type="text"
                   value="https://kapitech.id"
                   disabled
-                  className="w-full px-3.5 py-2.5 bg-[var(--panel)]/50 border border-[var(--line)] rounded-xl text-xs text-[var(--muted)] font-sans cursor-not-allowed min-h-[44px]"
+                  className="w-full px-3.5 py-2.5 bg-[var(--panel)]/50 border border-[var(--line)] rounded-xl text-xs text-[var(--muted)] font-sans cursor-not-allowed min-h-10"
                 />
               </div>
             </div>
@@ -640,7 +640,7 @@ export const AdminSettings: React.FC = () => {
                 type="text"
                 value={metaSettings.tagline}
                 onChange={(e) => setMetaSettings({ ...metaSettings, tagline: e.target.value })}
-                className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-xs text-white focus:outline-none focus:border-[var(--accent)] font-sans min-h-[44px]"
+                className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-xs text-white focus:outline-none focus:border-[var(--accent)] font-sans min-h-10"
               />
             </div>
 
@@ -689,7 +689,7 @@ export const AdminSettings: React.FC = () => {
             <div className="pt-4 flex items-center justify-end">
               <button
                 type="submit"
-                className="px-5 py-2.5 rounded-xl bg-[var(--accent)] text-white text-xs font-sans font-bold hover:bg-[var(--danger)] transition-all shadow-md shadow-[var(--accent)]/20 flex items-center gap-2 min-h-[44px]"
+                className="px-5 py-2.5 rounded-xl bg-[var(--accent)] text-white text-xs font-sans font-bold hover:bg-[var(--danger)] transition-all shadow-md shadow-[var(--accent)]/20 flex items-center gap-2 min-h-10"
               >
                 <Save size={14} />
                 <span>{language === 'id' ? 'Simpan Pengaturan Brand' : 'Save Brand Settings'}</span>
@@ -1312,7 +1312,7 @@ export const AdminSettings: React.FC = () => {
                 type="number"
                 value={sessionTimeoutMin}
                 onChange={(e) => setSessionTimeoutMin(parseInt(e.target.value) || 60)}
-                className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-xs text-white font-sans focus:outline-none focus:border-[var(--accent)] min-h-[44px]"
+                className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-xs text-white font-sans focus:outline-none focus:border-[var(--accent)] min-h-10"
               />
               <p className="text-[10px] text-[var(--muted)] font-sans">
                 {language === 'id'
@@ -1336,7 +1336,7 @@ export const AdminSettings: React.FC = () => {
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-xs text-white focus:outline-none focus:border-[var(--accent)] font-sans min-h-[44px]"
+                    className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-xs text-white focus:outline-none focus:border-[var(--accent)] font-sans min-h-10"
                   />
                 </div>
 
@@ -1349,7 +1349,7 @@ export const AdminSettings: React.FC = () => {
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-xs text-white focus:outline-none focus:border-[var(--accent)] font-sans min-h-[44px]"
+                    className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-xs text-white focus:outline-none focus:border-[var(--accent)] font-sans min-h-10"
                   />
                 </div>
               </div>
@@ -1364,7 +1364,7 @@ export const AdminSettings: React.FC = () => {
                   value={currentPassword}
                   onChange={(e) => setCurrentPassword(e.target.value)}
                   placeholder={language === 'id' ? 'Masukkan password admin saat ini...' : 'Enter your current admin password...'}
-                  className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-xs text-white focus:outline-none focus:border-[var(--accent)] font-sans min-h-[44px]"
+                  className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-xs text-white focus:outline-none focus:border-[var(--accent)] font-sans min-h-10"
                 />
               </div>
 
@@ -1372,7 +1372,7 @@ export const AdminSettings: React.FC = () => {
                 <button
                   type="submit"
                   disabled={securityLoading}
-                  className="px-5 py-2.5 rounded-xl bg-[var(--accent)] text-white text-xs font-sans font-bold hover:bg-[var(--danger)] transition-all flex items-center gap-2 min-h-[44px]"
+                  className="px-5 py-2.5 rounded-xl bg-[var(--accent)] text-white text-xs font-sans font-bold hover:bg-[var(--danger)] transition-all flex items-center gap-2 min-h-10"
                 >
                   <Save size={14} />
                   <span>{language === 'id' ? 'Update Password Terenkripsi' : 'Update Encrypted Password'}</span>
@@ -1427,7 +1427,7 @@ export const AdminSettings: React.FC = () => {
                 type="text"
                 value={webhookUrl}
                 onChange={(e) => setWebhookUrl(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)] font-sans min-h-[44px]"
+                className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)] font-sans min-h-10"
               />
             </div>
 
@@ -1440,7 +1440,7 @@ export const AdminSettings: React.FC = () => {
                   type="text"
                   value={smtpHost}
                   onChange={(e) => setSmtpHost(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)] font-sans min-h-[44px]"
+                  className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)] font-sans min-h-10"
                 />
               </div>
 
@@ -1452,7 +1452,7 @@ export const AdminSettings: React.FC = () => {
                   type="text"
                   value={smtpPort}
                   onChange={(e) => setSmtpPort(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)] font-sans min-h-[44px]"
+                  className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)] font-sans min-h-10"
                 />
               </div>
             </div>
@@ -1465,7 +1465,7 @@ export const AdminSettings: React.FC = () => {
                 type="text"
                 value={cloudRunRegion}
                 onChange={(e) => setCloudRunRegion(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)] font-sans min-h-[44px]"
+                className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)] font-sans min-h-10"
               />
             </div>
             <div className="pt-3 border-t border-[var(--line)]">
