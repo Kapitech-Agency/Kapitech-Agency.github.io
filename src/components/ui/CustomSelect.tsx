@@ -95,7 +95,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
         } ${
           isOpen
             ? 'bg-panel border-accent text-fg shadow-none'
-            : 'bg-panel hover:bg-bg border-line hover:border-muted text-fg'
+            : 'bg-panel hover:bg-panel-hover border-line hover:border-muted text-fg'
         } ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} ${triggerClassName}`}
       >
         <div className="flex items-center gap-2 min-w-0 pr-2">
@@ -107,7 +107,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
           {selectedOption?.badge && (
             <span
               className={`px-1.5 py-0.5 rounded text-[10px] font-semibold shrink-0 ${
-                selectedOption.badgeColor || 'bg-bg text-muted border border-line'
+                selectedOption.badgeColor || 'bg-panel-hover text-muted border border-line'
               }`}
             >
               {selectedOption.badge}
@@ -140,7 +140,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
                   className={`w-full flex items-center justify-between min-h-10 sm:min-h-9 px-3 py-2 rounded-control text-left transition-colors group ${
                     isSelected
                       ? 'bg-bg text-fg font-semibold border border-line'
-                      : 'text-muted hover:text-fg hover:bg-bg'
+                      : 'text-muted hover:text-fg hover:bg-panel-hover'
                   }`}
                 >
                   <div className="flex items-center gap-2.5 min-w-0 pr-2">
@@ -166,10 +166,10 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
                   <div className="flex items-center gap-1.5 shrink-0">
                     {option.badge && (
                       <span
-                        className={`px-1.5 py-0.5 rounded text-[9px] font-bold ${
+                        className={`px-1.5 py-0.5 rounded text-[9px] font-semibold ${
                           isSelected
                             ? 'bg-bg text-fg border border-line'
-                            : option.badgeColor || 'bg-bg text-muted border border-line'
+                            : option.badgeColor || 'bg-panel-hover text-muted border border-line'
                         }`}
                       >
                         {option.badge}
