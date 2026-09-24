@@ -239,7 +239,7 @@ export const AdminLayout: React.FC = () => {
   }
 
   return (
-    <div className="h-screen w-full bg-bg text-fg flex flex-col md:flex-row selection:bg-accent selection:text-fg font-sans antialiased overflow-hidden ams-shell">
+    <div className="h-screen w-full bg-bg text-fg flex flex-col min-[900px]:flex-row selection:bg-accent selection:text-fg font-sans antialiased overflow-hidden ams-shell">
       
       {/* Universal Command Palette */}
       <CommandPalette 
@@ -251,7 +251,7 @@ export const AdminLayout: React.FC = () => {
       {/* DESKTOP SIDEBAR */}
       {/* ------------------------------------------------------------- */}
       <aside 
-        className={`hidden md:flex flex-col bg-panel border-r border-line shrink-0 h-full z-30 transition-colors duration-150 ${
+        className={`hidden min-[900px]:flex flex-col bg-panel border-r border-line shrink-0 h-full z-30 transition-colors duration-150 ${
           sidebarCollapsed ? 'w-[64px]' : 'w-[220px]'
         }`}
       >
@@ -383,7 +383,7 @@ export const AdminLayout: React.FC = () => {
       {/* ------------------------------------------------------------- */}
       {/* MOBILE TOPBAR - Single, sleek, non-cluttered header */}
       {/* ------------------------------------------------------------- */}
-      <div className="md:hidden flex items-center justify-between px-3.5 py-2.5 bg-panel border-b border-line sticky top-0 z-40 shrink-0 shadow-[0_4px_20px_rgba(0,0,0,0.5)] h-14">
+      <div className="min-[900px]:hidden ams-mobile-topbar flex items-center justify-between px-3.5 py-2.5 bg-panel border-b border-line sticky top-0 z-40 shrink-0 shadow-[0_4px_20px_rgba(0,0,0,0.5)] h-14">
         <div className="flex items-center gap-2.5">
           <button
             onClick={() => setMobileMenuOpen(true)}
@@ -411,7 +411,7 @@ export const AdminLayout: React.FC = () => {
 
       {/* Mobile Drawer Overlay & U('menu') (Global standard sliding drawer from left) */}
       {mobileMenuOpen && (
-        <div className="md:hidden fixed inset-0 z-50 flex">
+        <div className="min-[900px]:hidden ams-mobile-drawer fixed inset-0 z-50 flex">
           <div 
             className="fixed inset-0 bg-black/80 backdrop-blur-md transition-opacity" 
             onClick={() => setMobileMenuOpen(false)}
