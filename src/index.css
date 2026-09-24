@@ -3484,3 +3484,77 @@ body {
     transition-duration: 0.01ms !important;
   }
 }
+
+
+/* Final responsive and hierarchy corrections. */
+.ams-shell .uppercase {
+  text-transform: none !important;
+}
+.ams-shell [class*="tracking-"] {
+  letter-spacing: 0 !important;
+}
+.ams-shell .grid {
+  column-gap: 12px;
+  row-gap: 12px;
+}
+.ams-shell section + section {
+  margin-top: 24px;
+}
+.ams-shell .tabular-nums,
+.ams-shell table,
+.ams-shell td,
+.ams-shell th {
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 899px) {
+  .ams-shell aside.hidden {
+    display: none !important;
+  }
+
+  .ams-shell .ams-mobile-topbar {
+    min-height: 52px;
+    height: 52px;
+    padding: 0 14px;
+    background: var(--panel);
+    border-bottom: 1px solid var(--line);
+    box-shadow: none !important;
+  }
+
+  .ams-shell .ams-mobile-topbar button {
+    min-width: 40px;
+    min-height: 40px;
+  }
+
+  .ams-shell .ams-mobile-drawer > div.relative {
+    width: min(280px, 86vw);
+    max-width: 86vw;
+    background: var(--panel);
+    border-right: 1px solid var(--line);
+    box-shadow: none !important;
+  }
+
+  .ams-shell .ams-mobile-drawer .custom-scrollbar {
+    overscroll-behavior: contain;
+  }
+
+  .ams-shell .ams-mobile-drawer a {
+    min-height: 40px;
+  }
+
+  .ams-shell > main > div:last-child {
+    padding: 16px;
+  }
+}
+
+@media (min-width: 900px) {
+  .ams-shell > aside {
+    width: 220px !important;
+  }
+}
+
+@media (max-width: 599px) {
+  .ams-shell > main > div:last-child {
+    padding: 14px;
+  }
+}
