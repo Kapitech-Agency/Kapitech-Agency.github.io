@@ -48,9 +48,6 @@ import {
   exportCrmLeadsToCsv,
   CRM_EVENT_NAME 
 } from '../../lib/crmStore';
-import { saveAgencyProject, AgencyProject } from '../../lib/projectStore';
-import { saveAgencyInvoice } from '../../lib/financeStore';
-import { saveAgencyClient } from '../../lib/clientStore';
 import { useLanguage } from '../../lib/LanguageContext';
 import { useDragToScroll } from '../../lib/useDragToScroll';
 import { ScrollShadowContainer } from '../../components/ui/ScrollShadowContainer';
@@ -96,14 +93,15 @@ export const AdminCrm: React.FC = () => {
   const [formDescription, setFormDescription] = useState('');
   const [formExpectedClose, setFormExpectedClose] = useState('');
 
-  const loadLeads = () => {
-    setLeads(getCmsLeads());
+  const loadLeads = async () => {
+    try {
+      const res = await api.crm.getDeals();
+      if (res.success && Array.isArray(res.data?.deals)) setLeads(res.data.deals as CrmLead[]);
+    } catch { showToast(language === 'id' ? 'Gagal memuat CRM.' : 'Failed to load CRM.'); }
   };
 
   useEffect(() => {
-    loadLeads();
-    const handleUpdate = () => loadLeads();
-    window.addEventListener(CRM_EVENT_NAME, handleUpdate);
+    void loadLeads();
 
     const handleCurr = (e: Event) => {
       const custom = e as CustomEvent<{ currency: CurrencyCode }>;
@@ -114,7 +112,6 @@ export const AdminCrm: React.FC = () => {
     window.addEventListener(CURRENCY_EVENT, handleCurr);
 
     return () => {
-      window.removeEventListener(CRM_EVENT_NAME, handleUpdate);
       window.removeEventListener(CURRENCY_EVENT, handleCurr);
     };
   }, []);
@@ -207,8 +204,10 @@ export const AdminCrm: React.FC = () => {
     setDragOverStage(null);
   };
 
-  const handleStageChange = (leadId: string, newStage: CrmStage) => {
-    updateLeadStage(leadId, newStage);
+  const handleStageChange = async (leadId: string, newStage: CrmStage) => {
+    const res = await api.crm.updateDeal(leadId, { stage: newStage });
+    if (!res.success) { showToast(res.error || (language === 'id' ? 'Tahap deal gagal diperbarui.' : 'Failed to update deal stage.')); return; }
+    await loadLeads();
     const stageDef = CRM_STAGE_DEFINITIONS.find(s => s.key === newStage);
     const stageName = language === 'id' ? (stageDef?.labelId || newStage) : (stageDef?.label || newStage);
     showToast(language === 'id' ? `Tahap deal diperbarui ke ${stageName}` : `Lead stage updated to ${stageName}`);
@@ -276,7 +275,7 @@ export const AdminCrm: React.FC = () => {
     setIsAddModalOpen(true);
   };
 
-  const handleSaveLead = (e: React.FormEvent) => {
+  const handleSaveLead = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!canManageCrm) return;
     if (!formClientName.trim() || !formCompany.trim()) {
@@ -303,15 +302,19 @@ export const AdminCrm: React.FC = () => {
       updatedAt: new Date().toISOString()
     };
 
-    saveCrmLead(leadData);
+    const res = editingLead ? await api.crm.updateDeal(leadData.id, leadData) : await api.crm.createDeal(leadData);
+    if (!res.success) { showToast(res.error || (language === 'id' ? 'Deal gagal disimpan.' : 'Deal could not be saved.')); return; }
+    await loadLeads();
     setIsAddModalOpen(false);
     showToast(editingLead ? (language === 'id' ? 'Data prospek berhasil diperbarui.' : 'Deal updated successfully.') : (language === 'id' ? 'Deal prospek baru berhasil dibuat.' : 'New deal created successfully.'));
   };
 
-  const handleDeleteLead = (id: string, name: string) => {
+  const handleDeleteLead = async (id: string, name: string) => {
     if (!canManageCrm) return;
     if (window.confirm(language === 'id' ? `Hapus prospek ${name}?` : `Delete lead ${name}?`)) {
-      deleteCrmLead(id);
+      const res = await api.crm.deleteDeal(id);
+      if (!res.success) { showToast(res.error || 'Delete failed.'); return; }
+      await loadLeads();
       if (selectedLead && selectedLead.id === id) {
         setIsDrawerOpen(false);
         setSelectedLead(null);
@@ -320,13 +323,16 @@ export const AdminCrm: React.FC = () => {
     }
   };
 
-  const handleAddNote = (e: React.FormEvent) => {
+  const handleAddNote = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedLead || !newNoteText.trim()) return;
 
-    addLeadNote(selectedLead.id, newNoteText.trim(), 'note');
+    const nextNotes = [...(selectedLead.notes || []), { id: `note_${Date.now().toString(36)}`, text: newNoteText.trim(), type: 'note', createdAt: new Date().toISOString() }];
+    const res = await api.crm.updateDeal(selectedLead.id, { notes: nextNotes });
+    if (!res.success) { showToast(res.error || (language === 'id' ? 'Catatan gagal disimpan.' : 'Note could not be saved.')); return; }
+    await loadLeads();
     setNewNoteText('');
-    const updated = getCmsLeads().find(l => l.id === selectedLead.id);
+    const updated = leads.find(l => l.id === selectedLead.id);
     if (updated) setSelectedLead(updated);
     showToast(language === 'id' ? 'Catatan aktivitas ditambahkan.' : 'Activity note added.');
   };
