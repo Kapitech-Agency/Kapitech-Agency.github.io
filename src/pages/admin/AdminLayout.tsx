@@ -479,7 +479,7 @@ export const AdminLayout: React.FC = () => {
 
             {/* Scrollable Navigation List Filtered by Dynamic RBAC */}
             <div className="flex-1 overflow-y-auto p-3 space-y-4 custom-scrollbar">
-              {filteredNavSections.map((section) => (
+              {contentNavSections.map((section) => (
                 <div key={section.id} className="space-y-1">
                   <div className="text-[11px] font-sans text-muted font-medium px-3 pt-1">
                     {t(section.titleKey)}
