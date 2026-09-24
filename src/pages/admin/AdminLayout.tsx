@@ -285,7 +285,7 @@ export const AdminLayout: React.FC = () => {
       {/* ------------------------------------------------------------- */}
       <aside 
         className={`hidden md:flex flex-col bg-[#111318] border-r border-white/[0.07] shrink-0 h-full z-30 transition-colors duration-150 ${
-          sidebarCollapsed ? 'w-[72px]' : 'w-[236px]'
+          sidebarCollapsed ? 'w-[64px]' : 'w-[220px]'
         }`}
       >
         
