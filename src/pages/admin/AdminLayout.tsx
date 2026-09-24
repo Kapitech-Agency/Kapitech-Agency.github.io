@@ -273,9 +273,9 @@ export const AdminLayout: React.FC = () => {
                   <img src="/white.png" alt="Kapitech" className="h-3.5 w-auto object-contain" />
                 </div>
                 <div className="min-w-0">
-                  <div className="font-sans font-bold text-fg text-sm tracking-tight flex items-center gap-1.5">
+                  <div className="font-sans font-semibold text-fg text-sm flex items-center gap-1.5">
                     <span>KAPITECH</span>
-                    <span className="text-[10px] font-sans px-1.5 py-0.5 rounded bg-accent/10 text-accent-text border border-accent/30 font-semibold">
+                    <span className="text-xs font-sans px-1.5 py-0.5 rounded-badge text-accent-text border border-accent/30 font-semibold">
                       AMS
                     </span>
                   </div>
@@ -293,7 +293,7 @@ export const AdminLayout: React.FC = () => {
           ) : (
             <Link 
               to="/admin/dashboard" 
-              className="w-9 h-9 rounded-xl bg-bg border border-line flex items-center justify-center shrink-0 shadow-sm hover:border-accent/40 transition-all p-1.5"
+              className="w-9 h-9 rounded-lg bg-bg border border-line flex items-center justify-center shrink-0 hover:border-accent/40 transition-colors p-1.5"
               title="Kapitech AMS Dashboard"
             >
               <img src="/favicon.png" alt="Kapitech" className="w-full h-full object-contain" />
@@ -306,7 +306,7 @@ export const AdminLayout: React.FC = () => {
           {filteredNavSections.map((section) => (
             <div key={section.id} className="space-y-1">
               {!sidebarCollapsed && (
-                <div className="text-[11px] font-sans text-muted font-bold tracking-wider px-3 pt-2 pb-1 uppercase">
+                <div className="text-xs font-sans text-muted font-medium px-3 pt-2 pb-1">
                   {t(section.titleKey)}
                 </div>
               )}
@@ -324,7 +324,7 @@ export const AdminLayout: React.FC = () => {
                     title={sidebarCollapsed ? item.label : undefined}
                     className={`relative flex items-center justify-between px-2.5 py-2 rounded-control text-[13px] font-sans transition-colors duration-150 group ${
                       active
-                        ? 'bg-accent/15 text-fg font-medium shadow-sm'
+                        ? 'bg-accent/15 text-fg font-medium'
                         : 'text-muted hover:text-fg hover:bg-white/[0.04]'
                     } ${sidebarCollapsed ? 'w-10 h-10 mx-auto justify-center px-0 py-0' : ''}`}
                   >
@@ -357,7 +357,7 @@ export const AdminLayout: React.FC = () => {
         <div className="p-2.5 border-t border-line bg-panel space-y-2.5">
           <div className={`flex items-center justify-between ${sidebarCollapsed ? 'flex-col gap-2.5' : ''}`}>
             <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-8 h-8 rounded-lg bg-accent border border-line flex items-center justify-center text-xs font-sans text-fg font-bold shrink-0 shadow-sm">
+              <div className="w-8 h-8 rounded-lg bg-accent border border-line flex items-center justify-center text-xs font-sans text-fg font-bold shrink-0 ">
                 {roleMeta.accountProfile.avatarLabel}
               </div>
               {!sidebarCollapsed && (
@@ -365,7 +365,7 @@ export const AdminLayout: React.FC = () => {
                   <div className="text-xs font-semibold text-fg truncate">
                     {roleMeta.accountProfile.displayName}
                   </div>
-                  <div className="text-[10px] font-sans text-muted truncate flex items-center gap-1">
+                  <div className="text-xs font-sans text-muted truncate flex items-center gap-1">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
                     <span className="truncate">{roleMeta.accountProfile.accountId}</span>
                   </div>
@@ -389,12 +389,12 @@ export const AdminLayout: React.FC = () => {
       {/* ------------------------------------------------------------- */}
       {/* MOBILE TOPBAR - Single, sleek, non-cluttered header */}
       {/* ------------------------------------------------------------- */}
-      <div className="min-[900px]:hidden ams-mobile-topbar flex items-center justify-between px-3.5 py-2.5 bg-panel border-b border-line sticky top-0 z-40 shrink-0 shadow-[0_4px_20px_rgba(0,0,0,0.5)] h-14">
+      <div className="min-[900px]:hidden ams-mobile-topbar flex items-center justify-between px-3.5 bg-panel border-b border-line sticky top-0 z-40 shrink-0 h-[52px]">
         <div className="flex items-center gap-2.5">
           <button
             onClick={() => setMobileMenuOpen(true)}
             aria-label="Open navigation menu"
-            className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl bg-bg text-fg border border-line hover:bg-panel active:scale-95 transition-all shadow-sm"
+            className="w-9 h-9 flex items-center justify-center rounded-lg bg-bg text-fg border border-line hover:bg-panel transition-colors "
           >
             <AmsMenu size={20} />
           </button>
@@ -404,7 +404,7 @@ export const AdminLayout: React.FC = () => {
               K
             </div>
             <div className="min-w-0">
-              <span className="font-sans font-bold text-fg text-xs tracking-tight block truncate">KAPITECH AMS</span>
+              <span className="font-sans font-semibold text-fg text-xs block truncate">KAPITECH AMS</span>
               <span className="text-[9px] font-sans text-muted block truncate -mt-0.5">{activeItemLabel}</span>
             </div>
           </Link>
@@ -419,11 +419,11 @@ export const AdminLayout: React.FC = () => {
       {mobileMenuOpen && (
         <div className="min-[900px]:hidden ams-mobile-drawer fixed inset-0 z-50 flex">
           <div 
-            className="fixed inset-0 bg-black/80 backdrop-blur-md transition-opacity" 
+            className="fixed inset-0 bg-black/70 transition-opacity" 
             onClick={() => setMobileMenuOpen(false)}
           />
 
-          <div className="relative w-[300px] max-w-[85vw] bg-panel border-r border-line h-[100dvh] flex flex-col justify-between z-50 shadow-[4px_0_30px_rgba(0,0,0,0.8)] overflow-hidden animate-in slide-in-from-left duration-200">
+          <div className="relative w-[280px] max-w-[86vw] bg-panel border-r border-line h-[100dvh] flex flex-col justify-between z-50 overflow-hidden animate-in slide-in-from-left duration-200">
             
             {/* Drawer Header */}
             <div className="p-4 border-b border-line flex items-center justify-between bg-panel shrink-0">
@@ -432,13 +432,13 @@ export const AdminLayout: React.FC = () => {
                 onClick={() => setMobileMenuOpen(false)}
                 className="flex items-center gap-2.5"
               >
-                <div className="h-8 px-2.5 rounded-lg bg-bg border border-line flex items-center justify-center shrink-0 shadow-sm">
+                <div className="h-8 px-2.5 rounded-lg bg-bg border border-line flex items-center justify-center shrink-0 ">
                   <img src="/white.png" alt="Kapitech" className="h-3.5 w-auto object-contain" />
                 </div>
                 <div>
-                  <div className="font-sans font-bold text-fg text-sm tracking-tight flex items-center gap-1.5">
+                  <div className="font-sans font-semibold text-fg text-sm flex items-center gap-1.5">
                     <span>KAPITECH</span>
-                    <span className="text-[10px] font-sans px-1.5 py-0.5 rounded bg-accent/10 text-accent-text border border-accent/30 font-semibold">
+                    <span className="text-xs font-sans px-1.5 py-0.5 rounded-badge text-accent-text border border-accent/30 font-semibold">
                       AMS
                     </span>
                   </div>
@@ -449,7 +449,7 @@ export const AdminLayout: React.FC = () => {
               <button
                 onClick={() => setMobileMenuOpen(false)}
                 aria-label="Close navigation menu"
-                className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl bg-bg text-muted hover:text-fg border border-line active:scale-95 transition-all"
+                className="w-9 h-9 flex items-center justify-center rounded-lg bg-bg text-muted hover:text-fg border border-line transition-colors"
               >
                 <AmsClose size={18} />
               </button>
@@ -474,7 +474,7 @@ export const AdminLayout: React.FC = () => {
                         onClick={() => setMobileMenuOpen(false)}
                         className={`relative flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-sans transition-all min-h-[44px] group ${
                           active 
-                            ? 'bg-accent/15 text-fg font-semibold shadow-sm' 
+                            ? 'bg-accent/15 text-fg font-semibold ' 
                             : 'text-muted hover:text-fg hover:bg-white/[0.04]'
                         }`}
                       >
@@ -501,12 +501,12 @@ export const AdminLayout: React.FC = () => {
             {/* Bottom session details */}
             <div className="p-3.5 border-t border-line bg-bg flex items-center justify-between shrink-0">
               <div className="flex items-center gap-2.5 min-w-0">
-                <div className="w-8 h-8 rounded-lg bg-accent border border-line flex items-center justify-center text-xs font-sans text-fg font-bold shrink-0 shadow-sm">
+                <div className="w-8 h-8 rounded-lg bg-accent border border-line flex items-center justify-center text-xs font-sans text-fg font-bold shrink-0 ">
                   {roleMeta.accountProfile.avatarLabel}
                 </div>
                 <div className="min-w-0">
                   <div className="text-xs font-semibold text-fg truncate">{roleMeta.accountProfile.displayName}</div>
-                  <div className="text-[10px] font-sans text-muted truncate flex items-center gap-1">
+                  <div className="text-xs font-sans text-muted truncate flex items-center gap-1">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
                     <span className="truncate">{roleMeta.accountProfile.accountId}</span>
                   </div>
