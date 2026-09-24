@@ -260,7 +260,7 @@ export const AdminClients: React.FC = () => {
         <div className="w-full h-full bg-[var(--panel)] border border-[var(--line)] p-5 rounded-card flex flex-col justify-between">
           <div className="flex items-center justify-between text-[var(--muted)] mb-2">
             <span className="text-xs font-sans normal-case font-semibold">{t('admin.client.totalClients')}</span>
-            <div className="w-8 h-8 rounded-lg bg-[var(--panel)] border border-[var(--line)] flex items-center justify-center text-[var(--text)]">
+            <div className="w-8 h-8 rounded-control bg-[var(--panel)] border border-[var(--line)] flex items-center justify-center text-[var(--text)]">
               <Users size={16} />
             </div>
           </div>
@@ -275,7 +275,7 @@ export const AdminClients: React.FC = () => {
         <div className="w-full h-full bg-[var(--panel)] border border-[var(--line)] p-5 rounded-card flex flex-col justify-between">
           <div className="flex items-center justify-between text-[var(--muted)] mb-2">
             <span className="text-xs font-sans normal-case font-semibold">{t('admin.client.activeAccounts')}</span>
-            <div className="w-8 h-8 rounded-lg bg-[var(--success)]/10 border border-[var(--success)]/30 flex items-center justify-center text-[var(--success)]">
+            <div className="w-8 h-8 rounded-control bg-[var(--success)]/10 border border-[var(--success)]/30 flex items-center justify-center text-[var(--success)]">
               <UserCheck size={16} />
             </div>
           </div>
@@ -290,7 +290,7 @@ export const AdminClients: React.FC = () => {
         <div className="w-full h-full bg-[var(--panel)] border border-[var(--line)] p-5 rounded-card flex flex-col justify-between">
           <div className="flex items-center justify-between text-[var(--muted)] mb-2">
             <span className="text-xs font-sans normal-case font-semibold">{t('admin.client.lifetimeSpend')}</span>
-            <div className="w-8 h-8 rounded-lg bg-[var(--panel-hover)] border border-[var(--line)] flex items-center justify-center text-[var(--muted)]">
+            <div className="w-8 h-8 rounded-control bg-[var(--panel-hover)] border border-[var(--line)] flex items-center justify-center text-[var(--muted)]">
               <DollarSign size={16} />
             </div>
           </div>
@@ -354,7 +354,7 @@ export const AdminClients: React.FC = () => {
                     <div className="font-semibold text-[var(--text)] text-base">{client.name}</div>
                     <div className="text-[11px] text-[var(--danger)] font-semibold">{client.contactPersonRole}</div>
                   </div>
-                  <span className={`px-2.5 py-1 rounded-lg text-[10px] font-sans font-semibold normal-case shrink-0 ${
+                  <span className={`px-2.5 py-1 rounded-control text-[10px] font-sans font-semibold normal-case shrink-0 ${
                     client.status === 'active'
                       ? 'bg-[var(--success)]/10 text-[var(--success)] border border-[var(--success)]/30'
                       : client.status === 'completed'
@@ -366,7 +366,7 @@ export const AdminClients: React.FC = () => {
                 </div>
 
                 {/* Company & Industry */}
-                <div className="flex items-center gap-2 text-xs font-sans text-[var(--text)] bg-[var(--panel)]/60 p-2.5 rounded-lg border border-[var(--line)]">
+                <div className="flex items-center gap-2 text-xs font-sans text-[var(--text)] bg-[var(--panel)]/60 p-2.5 rounded-control border border-[var(--line)]">
                   <Building2 size={13} className="text-[var(--muted)] shrink-0" />
                   <span className="font-semibold text-[var(--text)]">{client.company}</span>
                   <span className="text-[var(--muted)]">•</span>
@@ -581,7 +581,7 @@ export const AdminClients: React.FC = () => {
               </h2>
               <button
                 onClick={() => setIsClientModalOpen(false)}
-                className="p-1.5 rounded-lg text-[var(--muted)] hover:text-[var(--text)] bg-[var(--panel)] border border-[var(--line)]"
+                className="p-1.5 rounded-control text-[var(--muted)] hover:text-[var(--text)] bg-[var(--panel)] border border-[var(--line)]"
               >
                 <X size={14} />
               </button>
