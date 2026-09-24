@@ -347,7 +347,7 @@ export const AdminInbox: React.FC = () => {
       `"${s.phone || ''}"`,
       `"${(s.services || []).join(', ')}"`,
       `"${s.budget || ''}"`,
-      `"${isSubmissionConverted(s.id) ? 'YES' : 'NO'}"`,
+      `"${crmDeals.some(d => (d as any).inquiryId === s.id) ? 'YES' : 'NO'}",`
       `"${(s.message || '').replace(/"/g, '""')}"`,
       `"${s.source || ''}"`
     ]);
@@ -514,19 +514,6 @@ export const AdminInbox: React.FC = () => {
 
         {/* Global Controls */}
         <div className="flex flex-wrap items-center gap-2">
-          {/* Sound alert toggle */}
-          <button
-            onClick={handleToggleSound}
-            className={`h-10 w-10 rounded-xl border text-xs font-mono transition-colors flex items-center justify-center min-h-[40px] min-w-[40px] ${
-              soundEnabled 
-                ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400' 
-                : 'bg-[#111318] border-[rgba(255,255,255,0.07)] text-[#8A94A6]'
-            }`}
-            title={soundEnabled ? (language === 'id' ? 'Suara Notifikasi: Aktif' : 'Sound Alerts: Active') : (language === 'id' ? 'Suara Notifikasi: Nonaktif' : 'Sound Alerts: Off')}
-          >
-            {soundEnabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
-          </button>
-
           {/* Email alerts guide modal button */}
           <button
             onClick={() => setIsEmailModalOpen(true)}
@@ -963,7 +950,7 @@ export const AdminInbox: React.FC = () => {
           }`}>
             {filteredItems.map((item) => {
               const isSelected = selectedSubmission?.id === item.id;
-              const isConverted = isSubmissionConverted(item.id);
+              const isConverted = crmDeals.some(d => (d as any).inquiryId === item.id);
 
               return (
                 <div
