@@ -36,7 +36,6 @@ import {
   TaskStatus,
   TaskPriority,
   TaskSubtask,
-  PROJECT_EVENT_NAME
 } from '../../lib/projectStore';
 import { formatAmount, getActiveCurrency, CURRENCY_EVENT, CurrencyCode } from '../../lib/currency';
 import { useLanguage } from '../../lib/LanguageContext';
@@ -208,7 +207,7 @@ export const AdminProjects: React.FC = () => {
     setIsProjectModalOpen(true);
   };
 
-  const handleSaveProject = (e: React.FormEvent) => {
+  const handleSaveProject = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!projName.trim() || !clientCompany.trim()) {
       alert('Project Title and Client Company are required.');
