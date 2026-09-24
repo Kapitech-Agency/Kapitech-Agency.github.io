@@ -203,12 +203,12 @@ export const AdminClients: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5 sm:space-y-6">
       
       {/* 1. Header & Actions */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[var(--line)]">
+      <div className="ams-dashboard-header flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl font-sans font-semibold text-[var(--text)] flex items-center gap-3 tracking-tight">
+          <h1 className="ams-page-title flex items-center gap-3">
             <Users className="text-[var(--accent)]" size={26} />
             <span>{t('admin.client.title')}</span>
           </h1>
@@ -220,7 +220,7 @@ export const AdminClients: React.FC = () => {
         {canManageClients && (
           <button
             onClick={handleOpenCreateClient}
-            className="min-h-10 px-4 rounded-control bg-[var(--accent)] hover:bg-[var(--panel-hover)] text-white text-xs font-sans font-medium transition-colors flex items-center justify-center gap-1.5 self-start sm:self-auto"
+            className="min-h-10 px-4 rounded-control bg-[var(--accent)] hover:bg-[var(--accent-text)] text-white text-xs font-sans font-medium transition-colors flex items-center justify-center gap-1.5 self-start sm:self-auto"
           >
             <Plus size={14} />
             <span>{t('admin.client.addClient')}</span>
@@ -305,7 +305,7 @@ export const AdminClients: React.FC = () => {
 
       {/* 3. Search & Filter Bar */}
       <div className="w-full flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[var(--panel)] border border-[var(--line)] p-4 rounded-card">
-        <div className="relative flex-1 max-w-sm">
+        <div className="relative flex-1 min-w-0 max-w-sm">
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--muted)]" size={14} />
           <input
             type="text"
@@ -597,7 +597,7 @@ export const AdminClients: React.FC = () => {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="e.g. John Doe"
-                    className="w-full px-3 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
+                    className="w-full px-3 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                   />
                 </div>
                 <div>
