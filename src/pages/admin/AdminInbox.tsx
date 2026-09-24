@@ -469,7 +469,7 @@ export const AdminInbox: React.FC = () => {
   }, [selectedSubmission, crmDeals]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5 sm:space-y-6">
       
       {/* Toast Notification */}
       {toastMessage && (
@@ -556,7 +556,7 @@ export const AdminInbox: React.FC = () => {
       {/* ------------------------------------------------------------- */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {/* Metric 1: Total Inbound */}
-        <div className="p-4 rounded-card bg-[var(--panel)] border border-[var(--line)] space-y-1">
+        <div className="p-4 rounded-[12px] bg-[var(--panel)] border border-[var(--line)] space-y-1">
           <div className="flex items-center justify-between text-xs font-sans text-[var(--muted)]">
             <span>{language === 'id' ? 'Total Masuk' : 'Total Inbound'}</span>
             <Inbox size={14} className="text-[var(--muted)]" />
