@@ -316,7 +316,7 @@ export const SubmissionsInbox: React.FC = () => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={language === 'id' ? 'Cari nama, email, perusahaan, keahlian, atau isi pesan...' : 'Search by name, email, company, specialty, or message...'}
-            className="w-full pl-10 pr-4 py-2.5 bg-[#16181D] border border-[#262930] rounded-xl text-sm text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-red/30 focus:border-brand-red placeholder:text-[#5C626E]"
+            className="w-full pl-10 pr-4 py-2.5 bg-[#16181D] border border-[#262930] rounded-xl text-sm text-white focus:outline-none focus:border-brand-red placeholder:text-[#5C626E]"
           />
         </div>
 
@@ -326,7 +326,7 @@ export const SubmissionsInbox: React.FC = () => {
           <select
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value)}
-            className="w-full py-2.5 px-3 bg-[#16181D] border border-[#262930] rounded-xl text-sm text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-red/30 focus:border-brand-red"
+            className="w-full py-2.5 px-3 bg-[#16181D] border border-[#262930] rounded-xl text-sm text-white focus:outline-none focus:border-brand-red"
           >
             <option value="all">{language === 'id' ? 'Semua Status' : 'All Statuses'}</option>
             <option value="new">Status: New</option>
@@ -569,7 +569,7 @@ export const SubmissionsInbox: React.FC = () => {
                   disabled={isUpdating}
                   value={selectedSubmission.status}
                   onChange={(e) => handleStatusChange(selectedSubmission.id, e.target.value as ContactSubmission['status'])}
-                  className="text-xs py-1.5 px-2.5 bg-[#0B0C0E] border border-[#262930] rounded-lg text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-red/30 focus:border-brand-red font-mono"
+                  className="text-xs py-1.5 px-2.5 bg-[#0B0C0E] border border-[#262930] rounded-lg text-white focus:outline-none focus:border-brand-red font-mono"
                 >
                   <option value="new">New</option>
                   <option value="in-review">In Review</option>
