@@ -53,7 +53,19 @@ export const AdminLayout: React.FC = () => {
   );
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {\n    try { return window.localStorage.getItem('kapitech_ams_sidebar_collapsed') === '1'; } catch { return false; }\n  });\n\n  useEffect(() => {\n    try { window.localStorage.setItem('kapitech_ams_sidebar_collapsed', sidebarCollapsed ? '1' : '0'); } catch {}\n  }, [sidebarCollapsed]);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+    try {
+      return window.localStorage.getItem('kapitech_ams_sidebar_collapsed') === '1';
+    } catch {
+      return false;
+    }
+  });
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem('kapitech_ams_sidebar_collapsed', sidebarCollapsed ? '1' : '0');
+    } catch {}
+  }, [sidebarCollapsed]);
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
   const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
 
