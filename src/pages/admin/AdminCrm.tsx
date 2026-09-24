@@ -57,6 +57,7 @@ import { ScrollShadowContainer } from '../../components/ui/ScrollShadowContainer
 import { CustomSelect } from '../../components/ui/CustomSelect';
 import { formatAmount, getActiveCurrency, setGlobalCurrency, CurrencyCode, CURRENCY_EVENT } from '../../lib/currency';
 import { hasAdminPermission } from '../../lib/adminAuth';
+import { api } from '../../lib/apiClient';
 
 export const AdminCrm: React.FC = () => {
   const { language, t } = useLanguage();
