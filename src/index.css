@@ -609,9 +609,75 @@
 
 
 
-/* AMS control cleanup. Keep actions compact, readable, and consistent. */
+/* AMS design system: consistent hierarchy, spacing, controls and restrained depth. */
+.ams-shell {
+  --ams-bg: #090A0F;
+  --ams-surface: #111318;
+  --ams-surface-raised: #181B22;
+  --ams-border: rgba(255,255,255,0.07);
+  --ams-border-strong: rgba(255,255,255,0.12);
+  --ams-text: #F8FAFC;
+  --ams-secondary: #8A94A6;
+  --ams-muted: #64748B;
+  --ams-accent: #E50914;
+  --ams-accent-hover: #FF1E27;
+  --ams-radius-card: 14px;
+  --ams-radius-control: 9px;
+  --ams-content-max: 1500px;
+  --ams-page-pad: clamp(16px, 2vw, 32px);
+}
 .ams-shell button { font-family: var(--font-sans); letter-spacing: -0.01em; }
 .ams-shell button:disabled { cursor: not-allowed; }
-.ams-shell button:not([class*="rounded-full"]) { border-radius: 10px; }
-.ams-shell input, .ams-shell textarea, .ams-shell select { border-radius: 10px; }
+.ams-shell input, .ams-shell textarea, .ams-shell select {
+  border-radius: var(--ams-radius-control);
+  border-color: var(--ams-border);
+}
+.ams-shell input:not([type="checkbox"]):not([type="radio"]),
+.ams-shell select {
+  min-height: 40px;
+}
+.ams-shell input:focus, .ams-shell textarea:focus, .ams-shell select:focus {
+  outline: none;
+  border-color: rgba(229,9,20,0.65);
+  box-shadow: 0 0 0 3px rgba(229,9,20,0.08);
+}
+.ams-shell textarea { min-height: 96px; }
+.ams-shell table { border-collapse: separate; border-spacing: 0; }
+.ams-shell th { font-weight: 600; letter-spacing: 0.02em; }
 .ams-shell [class*="shadow-[0_0_"] { box-shadow: none !important; }
+.ams-shell .ams-control {
+  min-height: 40px;
+  padding: 0 12px;
+  background: var(--ams-bg);
+  color: var(--ams-text);
+  border: 1px solid var(--ams-border);
+  border-radius: var(--ams-radius-control);
+  font-size: 13px;
+  transition: border-color .16s ease, background-color .16s ease, box-shadow .16s ease;
+}
+.ams-shell .ams-control:hover { border-color: var(--ams-border-strong); }
+.ams-shell .ams-control::placeholder { color: var(--ams-muted); }
+.ams-shell .ams-card {
+  background: var(--ams-surface);
+  border: 1px solid var(--ams-border);
+  border-radius: var(--ams-radius-card);
+}
+.ams-shell .ams-section-title {
+  font-size: 12px;
+  line-height: 1.4;
+  font-weight: 650;
+  color: var(--ams-text);
+}
+.ams-shell .ams-section-label {
+  font-size: 10px;
+  line-height: 1.4;
+  font-weight: 650;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  color: var(--ams-muted);
+}
+@media (max-width: 767px) {
+  .ams-shell input:not([type="checkbox"]):not([type="radio"]),
+  .ams-shell select { min-height: 44px; }
+  .ams-shell .ams-control { min-height: 44px; }
+}
