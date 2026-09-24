@@ -316,7 +316,7 @@ export const AdminDashboard: React.FC = () => {
   };
 
   // Convert Inbox Inquiry to CRM Lead directly
-  const handleConvertInboxToLead = (sub: ContactSubmission) => {
+  const handleConvertInboxToLead = async (sub: ContactSubmission) => {
     const newLead: CrmLead = {
       id: 'lead_' + Date.now().toString(36),
       clientName: sub.fullName,
