@@ -414,6 +414,8 @@ export const AdminProposals: React.FC = () => {
 
         <button
           onClick={() => setIsCreateModalOpen(true)}
+          disabled={!canManageCrm}
+          title={!canManageCrm ? 'Requires CRM permission' : undefined}
           className="px-4 py-2.5 rounded-xl bg-[var(--ams-red)] hover:bg-[var(--ams-red)] text-white text-xs font-sans font-semibold flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(229,9,20,0.3)] transition-all shrink-0"
         >
           <Plus size={15} />
