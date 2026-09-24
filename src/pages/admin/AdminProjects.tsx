@@ -1130,6 +1130,7 @@ export const AdminProjects: React.FC = () => {
                     >
                       <option value="" disabled>Select service category</option>
                       <option value="Web Development">Web Development</option>
+                      <option value="Mobile App">Mobile App</option>
                       <option value="UI/UX Design System">UI/UX Design System</option>
                       <option value="Cloud Architecture">Cloud Architecture</option>
                       <option value="AI / LLM Integration">AI / LLM Integration</option>
