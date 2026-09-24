@@ -521,7 +521,7 @@ export const AdminDashboard: React.FC = () => {
           {isAllowed('crm') && (
             <button
               onClick={() => setIsAddLeadModalOpen(true)}
-              className="h-9 px-3 rounded-xl bg-[var(--panel)] hover:bg-[var(--panel)] border border-[var(--line)]  text-xs font-sans font-semibold text-[var(--text)] transition-all flex items-center gap-1.5 shadow-sm"
+              className="h-9 px-3 rounded-card bg-[var(--panel)] hover:bg-[var(--panel)] border border-[var(--line)]  text-xs font-sans font-semibold text-[var(--text)] transition-all flex items-center gap-1.5 shadow-sm"
             >
               <Plus size={14} className="text-emerald-400" />
               <span>{language === 'id' ? 'Tambah Lead' : 'Add Lead'}</span>
@@ -532,7 +532,7 @@ export const AdminDashboard: React.FC = () => {
           {isAllowed('invoicing') && (
             <button
               onClick={() => setIsNewInvoiceModalOpen(true)}
-              className="h-9 px-3 rounded-xl bg-[var(--panel)] hover:bg-[var(--panel)] border border-[var(--line)]  text-xs font-sans font-semibold text-[var(--text)] transition-all flex items-center gap-1.5 shadow-sm"
+              className="h-9 px-3 rounded-card bg-[var(--panel)] hover:bg-[var(--panel)] border border-[var(--line)]  text-xs font-sans font-semibold text-[var(--text)] transition-all flex items-center gap-1.5 shadow-sm"
             >
               <Plus size={14} className="text-purple-400" />
               <span>{language === 'id' ? 'Buat Invoice' : 'New Invoice'}</span>
@@ -762,7 +762,7 @@ export const AdminDashboard: React.FC = () => {
                 <div
                   key={proj.id}
                   onClick={() => navigate('/admin/projects')}
-                  className="p-4 rounded-xl bg-[var(--panel)] border border-[var(--line)]  transition-all cursor-pointer group flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+                  className="p-4 rounded-card bg-[var(--panel)] border border-[var(--line)]  transition-all cursor-pointer group flex flex-col sm:flex-row sm:items-center justify-between gap-3"
                 >
                   <div className="space-y-1">
                     <div className="flex items-center gap-2 flex-wrap">
@@ -946,7 +946,7 @@ export const AdminDashboard: React.FC = () => {
                 activityFeed.map((item) => (
                   <div
                     key={item.id}
-                    className="p-3 rounded-xl bg-[var(--panel)] border border-white/[0.05] hover:border-white/15 transition-all space-y-1"
+                    className="p-3 rounded-card bg-[var(--panel)] border border-[var(--line)] hover:border-[var(--line)] transition-all space-y-1"
                   >
                     <div className="flex items-center justify-between text-[11px]">
                       <span className="font-semibold text-[var(--text)] truncate max-w-[200px]">
@@ -985,14 +985,14 @@ export const AdminDashboard: React.FC = () => {
 
             <div className="space-y-3">
               {inboxSubmissions.length === 0 ? (
-                <div className="p-4 rounded-xl bg-[var(--panel)] text-center text-xs font-sans text-[var(--muted)]">
+                <div className="p-4 rounded-card bg-[var(--panel)] text-center text-xs font-sans text-[var(--muted)]">
                   {language === 'id' ? 'Semua inquiry situs publik telah ditindaklanjuti.' : 'All public site inquiries have been triaged.'}
                 </div>
               ) : (
                 inboxSubmissions.slice(0, 3).map((sub) => (
                   <div
                     key={sub.id}
-                    className="p-3 rounded-xl bg-[var(--panel)] border border-white/[0.05] hover:border-white/15 transition-all space-y-2"
+                    className="p-3 rounded-card bg-[var(--panel)] border border-[var(--line)] hover:border-[var(--line)] transition-all space-y-2"
                   >
                     <div className="flex items-start justify-between gap-3 text-xs min-w-0">
                       <span className="font-semibold text-[var(--text)]">
@@ -1019,7 +1019,7 @@ export const AdminDashboard: React.FC = () => {
           </div>
 
           {/* Widget 3: Agency SLA & Infrastructure Security Health */}
-          <div className="p-5 rounded-xl bg-[var(--panel)] border border-[var(--line)] space-y-3 font-sans text-xs">
+          <div className="p-5 rounded-card bg-[var(--panel)] border border-[var(--line)] space-y-3 font-sans text-xs">
             <div className="flex items-center justify-between text-[var(--muted)] pb-2 border-b border-[var(--line)]">
               <span className="font-semibold text-[var(--text)] flex items-center gap-1.5">
                 <Cpu size={14} className="text-cyan-400" />
@@ -1080,7 +1080,7 @@ export const AdminDashboard: React.FC = () => {
                   value={newLeadName}
                   onChange={(e) => setNewLeadName(e.target.value)}
                   placeholder="e.g. Irwan Prasetyo"
-                  className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-xl outline-none"
+                  className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-card outline-none"
                 />
               </div>
 
@@ -1092,7 +1092,7 @@ export const AdminDashboard: React.FC = () => {
                   value={newLeadCompany}
                   onChange={(e) => setNewLeadCompany(e.target.value)}
                   placeholder="e.g. PT Bank Central Asia"
-                  className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-xl outline-none"
+                  className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-card outline-none"
                 />
               </div>
 
@@ -1103,7 +1103,7 @@ export const AdminDashboard: React.FC = () => {
                   value={newLeadEmail}
                   onChange={(e) => setNewLeadEmail(e.target.value)}
                   placeholder="name@company.com"
-                  className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-xl outline-none"
+                  className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-card outline-none"
                 />
               </div>
 
@@ -1113,7 +1113,7 @@ export const AdminDashboard: React.FC = () => {
                   <select
                     value={newLeadPillar}
                     onChange={(e) => setNewLeadPillar(e.target.value as CrmServicePillar)}
-                    className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-xl outline-none"
+                    className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-card outline-none"
                   >
                     <option value="Web Development">Web Development</option>
                     <option value="AI & Cloud Solutions">AI & Cloud Solutions</option>
@@ -1130,7 +1130,7 @@ export const AdminDashboard: React.FC = () => {
                     type="number"
                     value={newLeadValue}
                     onChange={(e) => setNewLeadValue(e.target.value)}
-                    className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-xl outline-none"
+                    className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-card outline-none"
                   />
                 </div>
               </div>
@@ -1139,13 +1139,13 @@ export const AdminDashboard: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsAddLeadModalOpen(false)}
-                  className="px-4 py-2 rounded-xl bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] font-semibold"
+                  className="px-4 py-2 rounded-card bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] font-semibold"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-xl bg-[var(--accent)] hover:bg-[var(--danger)] text-[var(--text)] font-semibold transition-all shadow-[0_0_16px_rgba(229,9,20,0.3)]"
+                  className="px-4 py-2 rounded-card bg-[var(--accent)] hover:bg-[var(--accent)] text-[var(--text)] font-semibold transition-colors"
                 >
                   Save Lead
                 </button>
@@ -1180,7 +1180,7 @@ export const AdminDashboard: React.FC = () => {
                   value={quickInvCompany}
                   onChange={(e) => setQuickInvCompany(e.target.value)}
                   placeholder="e.g. PT Astra Digital Ventura"
-                  className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-xl outline-none"
+                  className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-card outline-none"
                 />
               </div>
 
@@ -1191,7 +1191,7 @@ export const AdminDashboard: React.FC = () => {
                   required
                   value={quickInvAmount}
                   onChange={(e) => setQuickInvAmount(e.target.value)}
-                  className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-xl outline-none"
+                  className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-card outline-none"
                 />
               </div>
 
@@ -1202,11 +1202,11 @@ export const AdminDashboard: React.FC = () => {
                   value={quickInvDesc}
                   onChange={(e) => setQuickInvDesc(e.target.value)}
                   placeholder="Sprint Retainer 50% Kickoff"
-                  className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-xl outline-none"
+                  className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-card outline-none"
                 />
               </div>
 
-              <div className="p-3 rounded-xl bg-[var(--panel)] border border-[var(--line)] text-[11px] font-sans text-[var(--muted)] space-y-1">
+              <div className="p-3 rounded-card bg-[var(--panel)] border border-[var(--line)] text-[11px] font-sans text-[var(--muted)] space-y-1">
                 <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
                   <span>Subtotal:</span>
                   <span className="text-[var(--text)]">{formatCurrency(parseFloat(quickInvAmount) || 0, 'IDR')}</span>
@@ -1225,13 +1225,13 @@ export const AdminDashboard: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsNewInvoiceModalOpen(false)}
-                  className="px-4 py-2 rounded-xl bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] font-semibold"
+                  className="px-4 py-2 rounded-card bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] font-semibold"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-xl bg-[var(--accent)] hover:bg-[var(--danger)] text-[var(--text)] font-semibold transition-all shadow-[0_0_16px_rgba(229,9,20,0.3)]"
+                  className="px-4 py-2 rounded-card bg-[var(--accent)] hover:bg-[var(--accent)] text-[var(--text)] font-semibold transition-colors"
                 >
                   Dispatch Invoice
                 </button>
@@ -1266,7 +1266,7 @@ export const AdminDashboard: React.FC = () => {
                   value={quickProjTitle}
                   onChange={(e) => setQuickProjTitle(e.target.value)}
                   placeholder="e.g. NextGen Mobile Banking Modernization"
-                  className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-xl outline-none"
+                  className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-card outline-none"
                 />
               </div>
 
@@ -1278,7 +1278,7 @@ export const AdminDashboard: React.FC = () => {
                   value={quickProjClient}
                   onChange={(e) => setQuickProjClient(e.target.value)}
                   placeholder="e.g. Telkomsel Labs"
-                  className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-xl outline-none"
+                  className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-card outline-none"
                 />
               </div>
 
@@ -1288,7 +1288,7 @@ export const AdminDashboard: React.FC = () => {
                   <select
                     value={quickProjPillar}
                     onChange={(e) => setQuickProjPillar(e.target.value)}
-                    className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-xl outline-none"
+                    className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-card outline-none"
                   >
                     <option value="AI & Cloud Solutions">AI & Cloud Solutions</option>
                     <option value="Web Development">Web Development</option>
@@ -1303,7 +1303,7 @@ export const AdminDashboard: React.FC = () => {
                     type="number"
                     value={quickProjBudget}
                     onChange={(e) => setQuickProjBudget(e.target.value)}
-                    className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-xl outline-none"
+                    className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-card outline-none"
                   />
                 </div>
               </div>
@@ -1312,13 +1312,13 @@ export const AdminDashboard: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsNewProjectModalOpen(false)}
-                  className="px-4 py-2 rounded-xl bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] font-semibold"
+                  className="px-4 py-2 rounded-card bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] font-semibold"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-xl bg-[var(--accent)] hover:bg-[var(--danger)] text-[var(--text)] font-semibold transition-all shadow-[0_0_16px_rgba(229,9,20,0.3)]"
+                  className="px-4 py-2 rounded-card bg-[var(--accent)] hover:bg-[var(--accent)] text-[var(--text)] font-semibold transition-colors"
                 >
                   Start Project
                 </button>
@@ -1353,7 +1353,7 @@ export const AdminDashboard: React.FC = () => {
                   value={quickExpDesc}
                   onChange={(e) => setQuickExpDesc(e.target.value)}
                   placeholder="e.g. AWS & GCP Kubernetes Cluster Tier"
-                  className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-xl outline-none"
+                  className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-card outline-none"
                 />
               </div>
 
@@ -1363,7 +1363,7 @@ export const AdminDashboard: React.FC = () => {
                   <select
                     value={quickExpCategory}
                     onChange={(e) => setQuickExpCategory(e.target.value)}
-                    className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-xl outline-none"
+                    className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-card outline-none"
                   >
                     <option value="Software & Cloud">Software & Cloud</option>
                     <option value="Salaries & Contractors">Salaries & Contractors</option>
@@ -1380,7 +1380,7 @@ export const AdminDashboard: React.FC = () => {
                     required
                     value={quickExpAmount}
                     onChange={(e) => setQuickExpAmount(e.target.value)}
-                    className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-xl outline-none"
+                    className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-card outline-none"
                   />
                 </div>
               </div>
@@ -1389,13 +1389,13 @@ export const AdminDashboard: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsRecordExpenseModalOpen(false)}
-                  className="px-4 py-2 rounded-xl bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] font-semibold"
+                  className="px-4 py-2 rounded-card bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] font-semibold"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-xl bg-[var(--accent)] hover:bg-[var(--danger)] text-[var(--text)] font-semibold transition-all shadow-[0_0_16px_rgba(229,9,20,0.3)]"
+                  className="px-4 py-2 rounded-card bg-[var(--accent)] hover:bg-[var(--accent)] text-[var(--text)] font-semibold transition-colors"
                 >
                   Save Expense
                 </button>
