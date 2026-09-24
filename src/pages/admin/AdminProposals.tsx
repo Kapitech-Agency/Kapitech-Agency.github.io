@@ -497,7 +497,7 @@ export const AdminProposals: React.FC = () => {
             <button
               key={st}
               onClick={() => setStatusFilter(st)}
-              className={`px-2.5 py-1 rounded-lg text-xs font-sans capitalize whitespace-nowrap transition-colors ${
+              className={`px-2.5 py-1 rounded-control text-xs font-sans capitalize whitespace-nowrap transition-colors ${
                 statusFilter === st
                   ? 'bg-[var(--ams-red)]/15 text-[var(--accent)] border border-[var(--accent)]/30 font-semibold'
                   : 'text-[var(--ams-secondary)] hover:text-[var(--text)] hover:bg-[var(--panel-hover)]'
@@ -902,7 +902,7 @@ export const AdminProposals: React.FC = () => {
               </div>
 
               {previewProposal.paymentTerms && (
-                <div className="text-xs font-sans text-[var(--ams-secondary)] bg-[var(--panel)]/50 p-2.5 rounded-lg border border-white/[0.04]">
+                <div className="text-xs font-sans text-[var(--ams-secondary)] bg-[var(--panel)]/50 p-2.5 rounded-control border border-white/[0.04]">
                   Terms: {previewProposal.paymentTerms}
                 </div>
               )}
@@ -926,7 +926,7 @@ export const AdminProposals: React.FC = () => {
                         setPreviewProposal(null);
                       }}
                       disabled={!canApproveBudgets}
-                      className="px-3 py-1.5 rounded-lg bg-[var(--info)]/10 text-[var(--info)] border border-[var(--info)]/30 min-h-10 px-3 rounded-control text-xs font-sans font-semibold"
+                      className="px-3 py-1.5 rounded-control bg-[var(--info)]/10 text-[var(--info)] border border-[var(--info)]/30 min-h-10 px-3 rounded-control text-xs font-sans font-semibold"
                     >
                       Approve Proposal
                     </button>
@@ -937,7 +937,7 @@ export const AdminProposals: React.FC = () => {
                         handleConvertToInvoice(previewProposal.id);
                         setPreviewProposal(null);
                       }}
-                      className="px-3 py-1.5 rounded-lg bg-[var(--success)] text-black font-medium min-h-10 px-3 rounded-control text-xs font-sans"
+                      className="px-3 py-1.5 rounded-control bg-[var(--success)] text-black font-medium min-h-10 px-3 rounded-control text-xs font-sans"
                     >
                       Convert to Invoice
                     </button>
