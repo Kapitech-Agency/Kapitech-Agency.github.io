@@ -216,19 +216,19 @@ https://kapitech.id`
       />
 
       {/* Modal Dialog */}
-      <div className="relative w-full max-w-2xl max-h-[85vh] bg-[var(--k-surface)] border border-[rgba(255,255,255,0.08)] rounded-[var(--k-card-radius)] shadow-none flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-2xl max-h-[85vh] bg-[var(--panel)] border border-line rounded-card shadow-none flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         
         {/* Header */}
-        <div className="p-5 border-b border-[rgba(255,255,255,0.07)] flex items-center justify-between bg-[var(--k-surface)]">
+        <div className="p-5 border-b border-line flex items-center justify-between bg-[var(--panel)]">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-[var(--k-control-radius)] bg-[var(--k-red)]/10 border border-[var(--k-red)]/30 flex items-center justify-center text-[var(--k-red)]">
+            <div className="min-h-10 min-w-10 rounded-control bg-[var(--accent)]/10 border border-[var(--accent)]/30 flex items-center justify-center text-[var(--accent)]">
               <MessageSquare size={16} />
             </div>
             <div>
-              <h3 className="text-base font-bold text-[var(--k-text)] font-display">
+              <h3 className="text-base font-semibold text-[var(--text)] font-display">
                 {language === 'id' ? 'Template Respon Cepat Agensi' : 'Executive Canned Responses'}
               </h3>
-              <p className="text-xs text-[var(--k-text-secondary)] font-sans">
+              <p className="text-xs text-[var(--muted)] font-sans">
                 {language === 'id' ? `Disesuaikan untuk: ${clientName}` : `Personalized for: ${clientName}`}
               </p>
             </div>
@@ -236,7 +236,7 @@ https://kapitech.id`
 
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-[var(--k-control-radius)] bg-[var(--k-surface-raised)] hover:bg-[var(--k-surface-raised)] text-[var(--k-text-secondary)] hover:text-[var(--k-text)] transition-colors flex items-center justify-center border border-[rgba(255,255,255,0.07)]"
+            className="min-h-10 min-w-10 rounded-control bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] transition-colors flex items-center justify-center border border-line"
           >
             <X size={16} />
           </button>
@@ -251,16 +251,16 @@ https://kapitech.id`
             return (
               <div 
                 key={tpl.key}
-                className="p-4 rounded-[var(--k-control-radius)] bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] hover:border-white/20 transition-all space-y-3"
+                className="p-4 rounded-control bg-[var(--panel)] border border-line hover:border-[var(--line)] transition-all space-y-3"
               >
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 rounded-[var(--k-control-radius)] bg-[var(--k-surface)] flex items-center justify-center text-[var(--k-red)] shrink-0">
+                    <div className="w-6 h-6 rounded-control bg-[var(--panel)] flex items-center justify-center text-[var(--accent)] shrink-0">
                       <Icon size={13} />
                     </div>
                     <div>
-                      <h4 className="text-xs font-bold text-[var(--k-text)] font-sans">{tpl.title}</h4>
-                      <span className="text-[10px] font-sans text-[var(--k-text-secondary)]">{tpl.category}</span>
+                      <h4 className="text-xs font-semibold text-[var(--text)] font-sans">{tpl.title}</h4>
+                      <span className="text-[10px] font-sans text-[var(--muted)]">{tpl.category}</span>
                     </div>
                   </div>
 
@@ -268,10 +268,10 @@ https://kapitech.id`
                     {/* Copy Body */}
                     <button
                       onClick={() => handleCopy(tpl.key, tpl.body)}
-                      className={`h-8 px-2.5 rounded-[var(--k-control-radius)] text-xs font-sans transition-all flex items-center gap-1.5 border ${
+                      className={`min-h-10 px-2.5 rounded-control text-xs font-sans transition-all flex items-center gap-1.5 border ${
                         isCopied 
-                          ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40 font-bold' 
-                          : 'bg-[var(--k-surface)] text-[var(--k-text-secondary)] border-white/10 hover:text-[var(--k-text)] hover:border-white/20'
+                          ? 'bg-[var(--success)]/10 text-[var(--success)] border-[var(--success)]/30 font-semibold' 
+                          : 'bg-[var(--panel)] text-[var(--muted)] border-line hover:text-[var(--text)] hover:border-[var(--line)]'
                       }`}
                       title="Copy response body"
                     >
@@ -283,7 +283,7 @@ https://kapitech.id`
                     <a
                       href={`mailto:${submission.email}?subject=${encodeURIComponent(tpl.subject)}&body=${encodeURIComponent(tpl.body)}`}
                       onClick={onClose}
-                      className="h-8 px-2.5 rounded-[var(--k-control-radius)] bg-[var(--k-red)] hover:bg-[var(--k-red)] text-[var(--k-text)] text-xs font-sans font-semibold transition-colors flex items-center gap-1.5 shadow-none"
+                      className="min-h-10 px-2.5 rounded-control bg-[var(--accent)] hover:bg-[var(--accent)] text-[var(--text)] text-xs font-sans font-semibold transition-colors flex items-center gap-1.5 shadow-none"
                       title="Send via default Email Client"
                     >
                       <Send size={12} />
@@ -297,7 +297,7 @@ https://kapitech.id`
                         target="_blank"
                         rel="noopener noreferrer"
                         onClick={onClose}
-                        className="h-8 px-2.5 rounded-[var(--k-control-radius)] bg-emerald-600 hover:bg-emerald-500 text-[var(--k-text)] text-xs font-sans font-semibold transition-colors flex items-center gap-1.5"
+                        className="min-h-10 px-2.5 rounded-control bg-[var(--success)] hover:bg-[var(--success)]/90 text-[var(--text)] text-xs font-sans font-semibold transition-colors flex items-center gap-1.5"
                         title="Send via WhatsApp"
                       >
                         <span>WA</span>
@@ -308,7 +308,7 @@ https://kapitech.id`
                 </div>
 
                 {/* Body Preview */}
-                <div className="p-3 rounded-[var(--k-control-radius)] bg-[var(--k-surface)] border border-[rgba(255,255,255,0.05)] text-[11px] text-[var(--k-text-secondary)] font-sans leading-relaxed whitespace-pre-wrap max-h-36 overflow-y-auto">
+                <div className="p-3 rounded-control bg-[var(--panel)] border border-line text-[11px] text-[var(--muted)] font-sans leading-relaxed whitespace-pre-wrap max-h-36 overflow-y-auto">
                   {tpl.body}
                 </div>
               </div>
@@ -317,11 +317,11 @@ https://kapitech.id`
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t border-[rgba(255,255,255,0.07)] bg-[var(--k-surface)] flex items-center justify-between text-xs font-sans text-[var(--k-text-secondary)]">
+        <div className="p-4 border-t border-line bg-[var(--panel)] flex items-center justify-between text-xs font-sans text-[var(--muted)]">
           <span>{language === 'id' ? 'Format teks otomatis menyertakan identitas brief.' : 'Templates auto-merge client brief variables.'}</span>
           <button
             onClick={onClose}
-            className="px-3 py-1.5 rounded-[var(--k-control-radius)] bg-[var(--k-surface-raised)] text-[var(--k-text)] hover:bg-[var(--k-surface-raised)] border border-white/10 transition-colors"
+            className="min-h-10 px-3 rounded-control bg-[var(--panel)] text-[var(--text)] hover:bg-[var(--panel)] border border-line transition-colors"
           >
             {language === 'id' ? 'Tutup' : 'Close'}
           </button>
