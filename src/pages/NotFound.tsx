@@ -38,7 +38,7 @@ export const NotFound = () => {
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-4 w-full max-w-lg mx-auto">
           <Link 
             to="/" 
-            className="kapi-button kapi-button-primary group min-h-12 w-full sm:w-auto px-6 md:px-8 bg-brand-red text-white rounded-[12px] font-bold flex items-center justify-center gap-3 hover:bg-white hover:text-black transition-all duration-300 text-sm shadow-[0_0_25px_rgba(230,57,70,0.24)]"
+            className="kapi-button kapi-button-primary group min-h-12 w-full sm:w-auto px-6 md:px-8 bg-brand-red text-white rounded-[12px] font-bold flex items-center justify-center gap-3 hover:bg-white hover:text-black transition-all duration-300 text-sm shadow-[0_0_25px_rgba(176,0,32,0.18)]"
           >
             <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
             {language === 'id' ? 'Kembali ke Beranda' : 'Return to Home'}
