@@ -161,7 +161,7 @@ export const ConvertToCrmModal: React.FC<ConvertToCrmModalProps> = ({
             </div>
             <div>
               <span className="text-[10px] font-sans text-[var(--k-text-secondary)] block mb-0.5">{language === 'id' ? 'Perusahaan / Organisasi' : 'Company / Brand'}</span>
-              <span className="text-xs font-medium text-[#D0D4DC] flex items-center gap-1.5">
+              <span className="text-xs font-medium text-[var(--text)] flex items-center gap-1.5">
                 <Building2 size={13} className="text-emerald-400" />
                 {submission.company || 'Individual Client'}
               </span>
