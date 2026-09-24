@@ -1163,7 +1163,11 @@
   font-size: clamp(72px, 14vw, 180px) !important;
   line-height: .85 !important;
   letter-spacing: -.08em !important;
+}
 
+.kapi-public-shell .kapi-not-found .kapi-button {
+  min-width: 148px;
+}
 
 /* -------------------------------------------------------------------------- */
 /* Final geometry + responsive composition                                    */
