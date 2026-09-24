@@ -386,7 +386,7 @@ export const AdminLayout: React.FC = () => {
         <div className="p-2.5 border-t border-line bg-panel space-y-2.5">
           <div className={`flex items-center justify-between ${sidebarCollapsed ? 'flex-col gap-2.5' : ''}`}>
             <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-8 h-8 rounded-lg bg-accent border border-line flex items-center justify-center text-xs font-sans text-fg font-bold shrink-0 ">
+              <div className="w-8 h-8 rounded-lg bg-accent border border-line flex items-center justify-center text-xs font-sans text-fg font-semibold shrink-0 ">
                 {roleMeta.accountProfile.avatarLabel}
               </div>
               {!sidebarCollapsed && (
@@ -429,7 +429,7 @@ export const AdminLayout: React.FC = () => {
           </button>
 
           <Link to="/admin/dashboard" className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-accent flex items-center justify-center text-fg font-bold text-xs shadow-none shrink-0">
+            <div className="w-7 h-7 rounded-lg bg-accent flex items-center justify-center text-fg font-semibold text-xs shadow-none shrink-0">
               K
             </div>
             <div className="min-w-0">
@@ -501,7 +501,7 @@ export const AdminLayout: React.FC = () => {
                         key={item.to}
                         to={item.to}
                         onClick={() => setMobileMenuOpen(false)}
-                        className={`relative flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-sans transition-all min-h-10 group ${
+                        className={`relative flex items-center justify-between px-3 py-2.5 rounded-control text-xs font-sans transition-all min-h-10 group ${
                           active 
                             ? 'bg-accent/15 text-fg font-semibold ' 
                             : 'text-muted hover:text-fg hover:bg-panel-hover'
@@ -546,7 +546,7 @@ export const AdminLayout: React.FC = () => {
             {/* Bottom session details */}
             <div className="p-3.5 border-t border-line bg-bg flex items-center justify-between shrink-0">
               <div className="flex items-center gap-2.5 min-w-0">
-                <div className="w-8 h-8 rounded-lg bg-accent border border-line flex items-center justify-center text-xs font-sans text-fg font-bold shrink-0 ">
+                <div className="w-8 h-8 rounded-lg bg-accent border border-line flex items-center justify-center text-xs font-sans text-fg font-semibold shrink-0 ">
                   {roleMeta.accountProfile.avatarLabel}
                 </div>
                 <div className="min-w-0">
