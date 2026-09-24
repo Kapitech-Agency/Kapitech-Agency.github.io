@@ -16,8 +16,8 @@
   --border-active: rgba(176, 0, 32, 0.4);
 
   /* Red Brand Accent (Refined Strategy) */
-  --primary-red: #B00020;
-  --primary-red-hover: #C1121F;
+  --primary-red: #E63946;
+  --primary-red-hover: #C92F3C;
   --primary-red-glow: 0 0 16px rgba(176, 0, 32, 0.25);
   --primary-red-subtle: rgba(176, 0, 32, 0.08);
   --primary-red-border: rgba(176, 0, 32, 0.3);
@@ -34,9 +34,9 @@
   --radius-pill: 9999px;
 
   /* Legacy compatibility aliases */
-  --kapi-red-primary: #B00020;
-  --kapi-red-electric: #C1121F;
-  --kapi-red-hover: #C1121F;
+  --kapi-red-primary: #E63946;
+  --kapi-red-electric: #C92F3C;
+  --kapi-red-hover: #C92F3C;
   --kapi-red-glow: rgba(176, 0, 32, 0.12);
   --kapi-red-glow-hover: rgba(176, 0, 32, 0.25);
   --kapi-red-border-hover: rgba(176, 0, 32, 0.5);
@@ -68,9 +68,9 @@
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
   
   /* Primary Accent: Refined Brand Red */
-  --color-brand-red: #B00020;
-  --color-brand-red-bright: #C1121F;
-  --color-brand-red-hover: #C1121F;
+  --color-brand-red: #E63946;
+  --color-brand-red-bright: #C92F3C;
+  --color-brand-red-hover: #C92F3C;
   --color-brand-red-glow: rgba(176, 0, 32, 0.25);
 
   /* Surfaces - Strict Solid Dark Palette */
@@ -102,7 +102,7 @@
     font-family: var(--font-sans);
     overflow-x: hidden;
     width: 100%;
-    selection-background-color: #B00020;
+    selection-background-color: #E63946;
     selection-color: #FFFFFF;
   }
 
@@ -112,7 +112,7 @@
   input:focus-visible,
   textarea:focus-visible,
   select:focus-visible {
-    outline: 2px solid #B00020;
+    outline: 2px solid #E63946;
     outline-offset: 2px;
   }
 
@@ -161,8 +161,8 @@
   --ams-muted: #71717A;
   --ams-border: rgba(255,255,255,.085);
   --ams-border-strong: rgba(255,255,255,.15);
-  --ams-red: #B00020;
-  --ams-red-hover: #C1121F;
+  --ams-red: #E63946;
+  --ams-red-hover: #C92F3C;
   --ams-red-soft: rgba(176,0,32,.12);
   --ams-radius-control: 10px;
   --ams-radius-card: 16px;
@@ -995,8 +995,8 @@ body:has([data-kapi-admin="true"]) .kapi-noise-overlay {
    Public UI is intentionally isolated in public-design-system.css.
    ========================================================================== */
 :root {
-  --k-red: #B00020;
-  --k-red-hover: #C1121F;
+  --k-red: #E63946;
+  --k-red-hover: #C92F3C;
   --k-red-soft: rgba(176,0,32,.12);
   --k-red-border: rgba(176,0,32,.34);
   --k-font-ui: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", Helvetica, Arial, sans-serif;
@@ -1166,3 +1166,7 @@ img,svg,video,canvas{max-width:100%}
 @media(prefers-reduced-transparency:reduce){
  .kapi-public-shell .kapi-public-nav,.kapi-public-shell .kapi-nav-top,.kapi-public-shell .kapi-nav-scrolled,.kapi-public-shell .kapi-mega-menu,.kapi-public-shell .kapi-glass-mobile-menu,.kapi-public-shell .kapi-glass-sheet,[data-kapi-admin=true] .ams-sidebar,[data-kapi-admin=true] .ams-header,[data-kapi-admin=true] .ams-mobile-nav{background:var(--k-apple-surface)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
 }
+
+/* KAPITECH ACCENT NORMALIZATION v1 */
+/* Legacy red tokens are mapped to the single Kapitech accent so old utility classes remain visually consistent. */
+:root{--k-brand-red:#E63946;--k-brand-red-dark:#C92F3C}
