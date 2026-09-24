@@ -171,7 +171,7 @@ export const Footer = () => {
               <span className="text-brand-red font-sans font-semibold tracking-widest uppercase text-xs mb-3 block">
                 {t('footer.cta.tag')}
               </span>
-              <h2 className="kapi-footer-title mb-4">
+              <h2 className="kapi-footer-title mb-4 kapi-footer-heading">
                 {t('footer.cta.title')}
               </h2>
               <p className="text-sm md:text-base text-[var(--k-text-secondary)] font-light max-w-2xl leading-relaxed">
@@ -183,7 +183,7 @@ export const Footer = () => {
               <Link 
                 to="/contact" 
                 id="footer-cta-button"
-                className="kapi-footer-cta"
+                className="kapi-footer-cta kapi-footer-cta"
               >
                 <span>{t('footer.cta.button')}</span>
                 <ArrowUpRight size={18} />
