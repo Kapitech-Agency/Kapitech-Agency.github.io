@@ -2481,3 +2481,37 @@ body {
   .ams-shell main [class*="text-xl"] { font-size: 17px !important; }
   .ams-shell main [class*="text-lg"] { font-size: 15px !important; }
 }
+
+
+/* Icon scale system */
+.ams-shell main svg { stroke-width: 1.8; }
+.ams-shell main h1 > svg,
+.ams-shell main h1 svg:first-child { width: 19px !important; height: 19px !important; }
+.ams-shell main h2 > svg,
+.ams-shell main h2 svg:first-child { width: 17px !important; height: 17px !important; }
+.ams-shell main button > svg,
+.ams-shell main a > svg { width: 15px; height: 15px; }
+.ams-shell main [class*="w-9"][class*="h-9"] > svg,
+.ams-shell main [class*="w-10"][class*="h-10"] > svg { width: 17px; height: 17px; }
+.ams-shell main [class*="w-8"][class*="h-8"] > svg { width: 15px; height: 15px; }
+
+.ams-shell main .border-b {
+  border-bottom-color: rgba(255,255,255,.075);
+}
+
+.ams-shell main input::placeholder,
+.ams-shell main textarea::placeholder {
+  color: #5f6978;
+  opacity: 1;
+}
+
+.ams-shell main [role="status"],
+.ams-shell main [role="alert"] {
+  border-radius: 10px;
+}
+
+.ams-shell main .bg-red-950\/40,
+.ams-shell main .bg-red-950\/50 {
+  background: rgba(229,9,20,.06);
+  border-color: rgba(229,9,20,.20);
+}
