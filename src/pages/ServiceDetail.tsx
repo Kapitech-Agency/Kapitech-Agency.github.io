@@ -124,14 +124,14 @@ export const ServiceDetail = () => {
             <div className="flex flex-wrap items-center gap-4">
               <Link
                 to={`/contact?service=${encodeURIComponent(service.title)}`}
-                className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-[12px] bg-brand-red text-white font-semibold text-sm hover:bg-white hover:text-black transition-all duration-300 shadow-[0_0_25px_rgba(176,0,32,0.18)] group"
+                className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-[14px] bg-brand-red text-white font-semibold text-sm hover:bg-white hover:text-black transition-all duration-300 shadow-[0_0_25px_rgba(255,26,26,0.3)] group"
               >
                 <span>{language === 'id' ? 'Mulai Proyek Ini' : 'Start This Project'}</span>
                 <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
               </Link>
               <a
                 href="#case-studies"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-[12px] border border-[var(--k-border)] bg-[var(--k-surface)] text-white font-medium text-sm hover:border-brand-red/50 transition-all duration-200"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-[14px] border border-[var(--k-border)] bg-[var(--k-surface)] text-white font-medium text-sm hover:border-brand-red/50 transition-all duration-200"
               >
                 <span>{language === 'id' ? 'Lihat Studi Kasus' : 'View Case Studies'}</span>
                 <ChevronDown className="w-4 h-4" />
@@ -444,7 +444,7 @@ export const ServiceDetail = () => {
                   </p>
                   <Link
                     to={`/contact?service=${encodeURIComponent(service.title)}`}
-                    className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-[12px] bg-brand-red text-white font-semibold text-sm hover:bg-white hover:text-black transition-all duration-300 shadow-[0_0_20px_rgba(176,0,32,0.18)]"
+                    className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-[14px] bg-brand-red text-white font-semibold text-sm hover:bg-white hover:text-black transition-all duration-300 shadow-[0_0_20px_rgba(255,26,26,0.3)]"
                   >
                     <span>{language === 'id' ? 'Mulai Proyek Sekarang' : 'Start a Project Now'}</span>
                     <ArrowUpRight className="w-4 h-4" />
@@ -525,7 +525,7 @@ export const ServiceDetail = () => {
           </Link>
           <Link
             to="/contact"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-[12px] bg-brand-red text-white text-sm font-medium hover:bg-white hover:text-black transition-all shadow-[0_0_20px_rgba(176,0,32,0.18)]"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-[14px] bg-brand-red text-white text-sm font-medium hover:bg-white hover:text-black transition-all shadow-[0_0_20px_rgba(255,26,26,0.3)]"
           >
             <span>{language === 'id' ? 'Konsultasi Gratis' : 'Book a Discovery Call'}</span>
             <ArrowUpRight className="w-4 h-4" />
