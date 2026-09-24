@@ -143,7 +143,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
       {/* ------------------------------------------------------------- */}
       {/* 1. HEADER WITH SERVER STATUS & REFRESH */}
       {/* ------------------------------------------------------------- */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-line">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[var(--line)]">
         <div>
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
@@ -342,7 +342,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
                   </div>
                   <Link
                     to={item.linkUrl}
-                    className="min-h-10 min-w-10 px-2 rounded-control bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--text)] border border-line shrink-0 text-xs font-sans flex items-center gap-1 hover:border-[var(--accent)] transition-colors"
+                    className="min-h-10 min-w-10 px-2 rounded-control bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--text)] border border-[var(--line)] shrink-0 text-xs font-sans flex items-center gap-1 hover:border-[var(--accent)] transition-colors"
                   >
                     <span>Resolve</span>
                     <ArrowUpRight size={12} />
@@ -384,7 +384,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
               </div>
             ) : (
               pipelineStages.map((st) => (
-                <div key={st.stage} className="p-2.5 rounded-control bg-[var(--panel)] border border-line flex items-center justify-between text-xs">
+                <div key={st.stage} className="p-2.5 rounded-control bg-[var(--panel)] border border-[var(--line)] flex items-center justify-between text-xs">
                   <div className="flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-[var(--accent)]" />
                     <span className="font-sans uppercase text-[#F8FAFC] text-[11px] font-semibold">{st.stage}</span>
@@ -417,28 +417,28 @@ export const GlobalExecutiveDashboard: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-2 gap-3 text-xs">
-            <div className="p-3 rounded-control bg-[var(--panel)] border border-line">
+            <div className="p-3 rounded-control bg-[var(--panel)] border border-[var(--line)]">
               <div className="text-[10px] font-sans text-[var(--muted)]">Operating Expenses (OpEx)</div>
               <div className="text-base font-semibold font-sans text-[var(--text)] mt-1">
                 {formatCurrency(data?.financials?.operatingExpenses || 0)}
               </div>
             </div>
 
-            <div className="p-3 rounded-control bg-[var(--panel)] border border-line">
+            <div className="p-3 rounded-control bg-[var(--panel)] border border-[var(--line)]">
               <div className="text-[10px] font-sans text-[var(--muted)]">Net Operating Margin</div>
               <div className="text-base font-semibold font-sans text-[var(--success)] mt-1">
                 {data?.financials?.margin || '0'}%
               </div>
             </div>
 
-            <div className="p-3 rounded-control bg-[var(--panel)] border border-line">
+            <div className="p-3 rounded-control bg-[var(--panel)] border border-[var(--line)]">
               <div className="text-[10px] font-sans text-[var(--muted)]">Net Operating Profit</div>
               <div className={`text-base font-semibold font-sans mt-1 ${(data?.financials?.netOperatingProfit || 0) >= 0 ? 'text-[var(--text)]' : 'text-[var(--danger)]'}`}>
                 {formatCurrency(data?.financials?.netOperatingProfit || 0)}
               </div>
             </div>
 
-            <div className="p-3 rounded-control bg-[var(--panel)] border border-line">
+            <div className="p-3 rounded-control bg-[var(--panel)] border border-[var(--line)]">
               <div className="text-[10px] font-sans text-[var(--muted)]">Proposals Awaiting Approval</div>
               <div className="text-base font-semibold font-sans text-[var(--text)] mt-1">
                 {data?.todayAtKapitech?.proposalsAwaitingCount || 0}
@@ -477,7 +477,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
               <thead>
-                <tr className="border-b border-line text-[10px] font-sans text-[var(--muted)] uppercase">
+                <tr className="border-b border-[var(--line)] text-[10px] font-sans text-[var(--muted)] uppercase">
                   <th className="py-2.5 px-3">Project</th>
                   <th className="py-2.5 px-3">Client</th>
                   <th className="py-2.5 px-3">Health</th>
@@ -561,7 +561,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
             </div>
           ) : (
             recentLogs.slice(0, 6).map((log, idx) => (
-              <div key={log.id || idx} className="p-2.5 rounded-control bg-[var(--panel)] border border-line flex items-center justify-between text-xs font-sans">
+              <div key={log.id || idx} className="p-2.5 rounded-control bg-[var(--panel)] border border-[var(--line)] flex items-center justify-between text-xs font-sans">
                 <div className="flex items-center gap-3 min-w-0">
                   <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${
                     log.severity === 'danger' ? 'bg-[var(--danger)]' : log.severity === 'warning' ? 'bg-[var(--warning)]' : 'bg-[var(--success)]'
