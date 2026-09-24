@@ -283,7 +283,7 @@ https://kapitech.id`
                     <a
                       href={`mailto:${submission.email}?subject=${encodeURIComponent(tpl.subject)}&body=${encodeURIComponent(tpl.body)}`}
                       onClick={onClose}
-                      className="h-8 px-2.5 rounded-[var(--k-control-radius)] bg-[var(--k-red)] hover:bg-[var(--k-red)] text-[var(--k-text)] text-xs font-sans font-semibold transition-colors flex items-center gap-1.5 shadow-sm"
+                      className="h-8 px-2.5 rounded-[var(--k-control-radius)] bg-[var(--k-red)] hover:bg-[var(--k-red)] text-[var(--k-text)] text-xs font-sans font-semibold transition-colors flex items-center gap-1.5 shadow-none"
                       title="Send via default Email Client"
                     >
                       <Send size={12} />
