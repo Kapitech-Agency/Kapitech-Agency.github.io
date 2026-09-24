@@ -297,7 +297,7 @@ export const AdminLayout: React.FC = () => {
               </Link>
               <button
                 onClick={() => setSidebarCollapsed(true)}
-                className="w-8 h-8 rounded-lg bg-bg hover:bg-panel text-muted hover:text-fg border border-line transition-colors flex items-center justify-center shrink-0"
+                className="min-h-10 min-w-10 rounded-control bg-bg hover:bg-panel text-muted hover:text-fg border border-line transition-colors flex items-center justify-center shrink-0"
                 title="Collapse sidebar"
               >
                 <ChevronLeft size={15} />
@@ -306,7 +306,7 @@ export const AdminLayout: React.FC = () => {
           ) : (
             <Link 
               to="/admin/dashboard" 
-              className="w-9 h-9 rounded-lg bg-bg border border-line flex items-center justify-center shrink-0 hover:border-accent/40 transition-colors p-1.5"
+              className="min-h-10 min-w-10 rounded-control bg-bg border border-line flex items-center justify-center shrink-0 hover:border-accent/40 transition-colors p-1.5"
               title="Kapitech AMS Dashboard"
             >
               <img src="/favicon.png" alt="Kapitech" className="w-full h-full object-contain" />
@@ -324,7 +324,7 @@ export const AdminLayout: React.FC = () => {
                 </div>
               )}
               {sidebarCollapsed && (
-                <div className="w-5 h-px bg-white/[0.07] mx-auto my-3" />
+                <div className="w-5 h-px bg-line mx-auto my-3" />
               )}
               {section.items.map((item) => {
                 const Icon = item.icon;
@@ -338,7 +338,7 @@ export const AdminLayout: React.FC = () => {
                     className={`relative flex items-center justify-between px-2.5 py-2 rounded-control text-[13px] font-sans transition-colors duration-150 group ${
                       active
                         ? 'bg-accent/15 text-fg font-medium'
-                        : 'text-muted hover:text-fg hover:bg-white/[0.04]'
+                        : 'text-muted hover:text-fg hover:bg-panel-hover'
                     } ${sidebarCollapsed ? 'w-10 h-10 mx-auto justify-center px-0 py-0' : ''}`}
                   >
                     {/* Linear-style Left Indicator Strip */}
@@ -423,7 +423,7 @@ export const AdminLayout: React.FC = () => {
           <button
             onClick={() => setMobileMenuOpen(true)}
             aria-label="Open navigation menu"
-            className="w-9 h-9 flex items-center justify-center rounded-lg bg-bg text-fg border border-line hover:bg-panel transition-colors "
+            className="min-h-10 min-w-10 flex items-center justify-center rounded-control bg-bg text-fg border border-line hover:bg-panel transition-colors "
           >
             <Menu size={20} />
           </button>
@@ -478,7 +478,7 @@ export const AdminLayout: React.FC = () => {
               <button
                 onClick={() => setMobileMenuOpen(false)}
                 aria-label="Close navigation menu"
-                className="w-9 h-9 flex items-center justify-center rounded-lg bg-bg text-muted hover:text-fg border border-line transition-colors"
+                className="min-h-10 min-w-10 flex items-center justify-center rounded-control bg-bg text-muted hover:text-fg border border-line transition-colors"
               >
                 <X size={18} />
               </button>
@@ -501,10 +501,10 @@ export const AdminLayout: React.FC = () => {
                         key={item.to}
                         to={item.to}
                         onClick={() => setMobileMenuOpen(false)}
-                        className={`relative flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-sans transition-all min-h-[44px] group ${
+                        className={`relative flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-sans transition-all min-h-10 group ${
                           active 
                             ? 'bg-accent/15 text-fg font-semibold ' 
-                            : 'text-muted hover:text-fg hover:bg-white/[0.04]'
+                            : 'text-muted hover:text-fg hover:bg-panel-hover'
                         }`}
                       >
                         {active && (
