@@ -242,17 +242,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
 
   if (!isOpen) return null;
 
-  const getBadgeColor = (type: string) => {
-    switch (type) {
-      case 'Lead': return 'bg-purple-500/10 text-purple-400 border-purple-500/30';
-      case 'Deal': return 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30';
-      case 'Client': return 'bg-blue-500/10 text-blue-400 border-blue-500/30';
-      case 'Project': return 'bg-amber-500/10 text-amber-400 border-amber-500/30';
-      case 'Invoice': return 'bg-[#B00020]/10 text-[#B00020] border-[#B00020]/30';
-      case 'Proposal': return 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30';
-      default: return 'bg-zinc-800 text-zinc-300 border-white/10';
-    }
-  };
+  const getBadgeColor = (_type: string) => 'bg-panel text-muted border-line';
 
   const runSelected = (index: number) => {
     const selected = selectableItems[index];
@@ -267,24 +257,24 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-start justify-center bg-black/80 p-4 pt-16 backdrop-blur-md sm:pt-24 animate-in fade-in duration-150"
+      className="fixed inset-0 z-50 flex items-start justify-center bg-black/70 p-4 pt-16 sm:pt-24 "
       role="presentation"
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) onClose();
       }}
     >
       <div
-        className="w-full max-w-xl overflow-hidden rounded-[24px] border border-white/[.10] bg-[#151619] shadow-[0_24px_64px_rgba(0,0,0,.55)] animate-in zoom-in-95 duration-150 flex max-h-[80vh] flex-col"
+        className="w-full max-w-xl overflow-hidden rounded-[24px] border border-line bg-panel shadow-[0_24px_64px_rgba(0,0,0,.55)]  flex max-h-[80vh] flex-col"
         role="dialog"
         aria-modal="true"
         aria-label={language === 'id' ? 'Command Palette' : 'Command Palette'}
         onMouseDown={(event) => event.stopPropagation()}
       >
-        <div className="flex items-center gap-3 border-b border-white/[.08] bg-white/[.025] p-4">
+        <div className="flex items-center gap-3 border-b border-line bg-bg p-4">
           {isSearching ? (
-            <Loader2 size={18} className="shrink-0 animate-spin text-[#B00020]" />
+            <Loader2 size={18} className="shrink-0  text-accent-text" />
           ) : (
-            <Search size={18} className="shrink-0 text-[#A1A1A6]" />
+            <Search size={18} className="shrink-0 text-muted" />
           )}
           <input
             ref={inputRef}
@@ -296,14 +286,14 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
                 ? 'Cari deal, invoice, proyek, proposal, atau modul (⌘K)...'
                 : 'Search deals, invoices, projects, proposals, or modules (⌘K)...'
             }
-            className="flex-1 bg-transparent text-sm text-[#F5F5F7] placeholder-[#A1A1A6] font-sans outline-none"
+            className="flex-1 bg-transparent text-sm text-fg placeholder-[#A1A1A6] font-sans outline-none"
             aria-label={language === 'id' ? 'Pencarian AMS' : 'AMS search'}
             autoComplete="off"
           />
           <button
             type="button"
             onClick={onClose}
-            className="rounded-[var(--k-control-radius)] p-2 text-[#A1A1A6] transition-colors hover:bg-white/[.06] hover:text-[var(--k-text)]"
+            className="rounded-control p-2 text-muted transition-colors hover:bg-panel hover:text-[var(--k-text)]"
             aria-label={language === 'id' ? 'Tutup pencarian' : 'Close search'}
           >
             <X size={16} />
@@ -313,7 +303,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
         <div className="max-h-[440px] space-y-2 overflow-y-auto p-2 custom-scrollbar" role="listbox" aria-label="Command results">
           {searchResults.length > 0 && (
             <div>
-              <div className="px-3 py-1.5 text-[10px] font-sans uppercase tracking-wider text-[#A1A1A6]">
+              <div className="px-3 py-1.5 text-[10px] font-sans tracking-normal text-muted">
                 {language === 'id' ? 'Hasil Pencarian Database' : 'Database Records'} ({searchResults.length})
               </div>
               <div className="space-y-1">
@@ -327,23 +317,23 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
                       aria-selected={isActive}
                       onMouseEnter={() => setActiveIndex(index)}
                       onClick={() => runSelected(index)}
-                      className={`group flex w-full items-center justify-between rounded-[var(--k-control-radius)] p-2.5 text-left transition-colors ${isActive ? 'bg-white/[.07]' : 'hover:bg-white/[.045]'}`}
+                      className={`group flex w-full items-center justify-between rounded-[var(--k-control-radius)] p-2.5 text-left transition-colors ${isActive ? 'bg-panel' : 'hover:bg-bg'}`}
                     >
                       <div className="flex min-w-0 items-center gap-2.5">
                         <span className={`shrink-0 rounded border px-2 py-0.5 text-[9px] font-sans font-bold uppercase ${getBadgeColor(result.type)}`}>
                           {result.type}
                         </span>
                         <div className="min-w-0">
-                          <div className={`truncate text-xs font-semibold transition-colors ${isActive ? 'text-[var(--k-text)]' : 'text-[#F5F5F7]'}`}>
+                          <div className={`truncate text-xs font-semibold transition-colors ${isActive ? 'text-[var(--k-text)]' : 'text-fg'}`}>
                             {result.name}
                           </div>
-                          <div className="flex items-center gap-2 text-[10px] font-sans text-[#A1A1A6]">
+                          <div className="flex items-center gap-2 text-[10px] font-sans text-muted">
                             {result.status && <span>Status: {result.status}</span>}
                             {result.owner && <span>• {result.owner}</span>}
                           </div>
                         </div>
                       </div>
-                      <ArrowRight size={12} className={`shrink-0 transition-all ${isActive ? 'translate-x-0.5 text-[#B00020]' : 'text-[#6E6E73]'}`} />
+                      <ArrowRight size={12} className={`shrink-0 transition-colors ${isActive ? ' text-accent-text' : 'text-muted'}`} />
                     </button>
                   );
                 })}
@@ -353,13 +343,13 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
 
           <div>
             {searchResults.length > 0 && (
-              <div className="mt-2 border-t border-white/[.07] px-3 py-1.5 text-[10px] font-sans uppercase tracking-wider text-[#A1A1A6]">
+              <div className="mt-2 border-t border-line px-3 py-1.5 text-[10px] font-sans tracking-normal text-muted">
                 {language === 'id' ? 'Perintah & Modul' : 'Commands & Navigation'}
               </div>
             )}
 
             {filteredActions.length === 0 && searchResults.length === 0 ? (
-              <div className="p-8 text-center text-xs font-sans text-[#A1A1A6]">
+              <div className="p-8 text-center text-xs font-sans text-muted">
                 {language === 'id' ? 'Tidak ada hasil untuk pencarian tersebut.' : 'No commands or records match your search.'}
               </div>
             ) : (
@@ -376,26 +366,26 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
                     aria-selected={isActive}
                     onMouseEnter={() => setActiveIndex(selectableIndex)}
                     onClick={() => runSelected(selectableIndex)}
-                    className={`group flex w-full items-center justify-between rounded-[var(--k-control-radius)] p-2.5 text-left transition-colors ${isActive ? 'bg-white/[.07]' : 'hover:bg-white/[.045]'}`}
+                    className={`group flex w-full items-center justify-between rounded-[var(--k-control-radius)] p-2.5 text-left transition-colors ${isActive ? 'bg-panel' : 'hover:bg-bg'}`}
                   >
                     <div className="flex min-w-0 items-center gap-3">
-                      <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-[var(--k-control-radius)] border transition-colors ${isActive ? 'border-white/[.14] bg-white/[.07] text-[var(--k-text)]' : 'border-white/[.07] bg-white/[.025] text-[#A1A1A6]'}`}>
+                      <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-[var(--k-control-radius)] border transition-colors ${isActive ? 'border-line bg-panel text-[var(--k-text)]' : 'border-line bg-bg text-muted'}`}>
                         <Icon size={15} />
                       </div>
                       <div className="min-w-0">
-                        <div className="truncate text-xs font-semibold text-[#F5F5F7]">
+                        <div className="truncate text-xs font-semibold text-fg">
                           {item.title}
                         </div>
-                        <div className="text-[10px] font-sans text-[#A1A1A6]">
+                        <div className="text-[10px] font-sans text-muted">
                           {item.category}
                         </div>
                       </div>
                     </div>
                     <div className="flex shrink-0 items-center gap-2">
-                      <span className="rounded bg-white/[.025] px-2 py-0.5 text-[10px] font-sans text-[#A1A1A6] border border-white/[.07]">
+                      <span className="rounded bg-bg px-2 py-0.5 text-[10px] font-sans text-muted border border-line">
                         {item.shortcut}
                       </span>
-                      <ArrowRight size={12} className={`transition-all ${isActive ? 'translate-x-0.5 text-[#B00020]' : 'text-[#6E6E73]'}`} />
+                      <ArrowRight size={12} className={`transition-all ${isActive ? 'translate-x-0.5 text-accent-text' : 'text-muted'}`} />
                     </div>
                   </button>
                 );
@@ -404,13 +394,13 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
           </div>
         </div>
 
-        <div className="flex items-center justify-between border-t border-white/[.08] bg-white/[.025] p-3 text-[11px] font-sans text-[#A1A1A6]">
+        <div className="flex items-center justify-between border-t border-line bg-bg p-3 text-[11px] font-sans text-muted">
           <div className="flex items-center gap-3">
             <span>↑↓ Navigate</span>
             <span>↵ Select</span>
             <span>ESC Close</span>
           </div>
-          <div className="flex items-center gap-1 font-semibold text-[#B00020]">
+          <div className="flex items-center gap-1 font-semibold text-accent-text">
             <Command size={11} />
             <span>KAPITECH AMS</span>
           </div>
