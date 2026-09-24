@@ -83,7 +83,7 @@ function scheduleProjectHydrationRetry(): void {
 }
 
 function hydrateProjectsFromServer(): void {
-  if (!import.meta.env.PROD || projectServerHydrationStarted) return;
+  if (projectServerHydrationStarted) return;
   projectServerHydrationStarted = true;
   api.projects.getAll().then((res) => {
     if (!res.success || !Array.isArray(res.data?.projects)) {

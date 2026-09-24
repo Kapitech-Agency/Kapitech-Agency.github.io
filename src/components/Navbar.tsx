@@ -90,8 +90,8 @@ export const Navbar = () => {
         className={cn(
           "fixed top-0 left-0 w-full z-50 transition-all duration-300 border-b",
           isScrolled 
-            ? "bg-[#0A0A0A]/95 backdrop-blur-md py-3 sm:py-3.5 border-[#2A2A2A] shadow-lg shadow-[#0A0A0A]/80" 
-            : "bg-[#0A0A0A]/80 backdrop-blur-sm py-4 sm:py-5 border-[#2A2A2A]/60"
+            ? "bg-[var(--k-bg)]/95 backdrop-blur-md py-3 sm:py-3.5 border-[#2A2A2A] shadow-lg shadow-[var(--k-bg)]/80" 
+            : "bg-[var(--k-bg)]/80 backdrop-blur-sm py-4 sm:py-5 border-[#2A2A2A]/60"
         )}
       >
         {/* Scroll Progress Bar */}
@@ -114,7 +114,7 @@ export const Navbar = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-6 lg:gap-8">
-            <div className="flex items-center gap-5 lg:gap-6 px-6 py-2 rounded-full bg-[#16181D] backdrop-blur-md border border-[#262930]">
+            <div className="flex items-center gap-5 lg:gap-6 px-6 py-2 rounded-full bg-[var(--k-surface)] backdrop-blur-md border border-[var(--k-border)]">
               
               {/* Work Link */}
               <Link 
@@ -221,7 +221,7 @@ export const Navbar = () => {
 
               <Link 
                 to="/contact" 
-                className="relative z-10 h-10 px-5 lg:px-6 bg-[#16181D] hover:bg-brand-red text-white hover:text-white rounded-full text-[11px] font-bold uppercase tracking-[0.16em] transition-all duration-300 flex items-center gap-2 shrink-0 active:scale-95 border border-[#262930]"
+                className="relative z-10 h-10 px-5 lg:px-6 bg-[var(--k-surface)] hover:bg-brand-red text-white hover:text-white rounded-full text-[11px] font-bold uppercase tracking-[0.16em] transition-all duration-300 flex items-center gap-2 shrink-0 active:scale-95 border border-[var(--k-border)]"
               >
                 <span className="relative z-10">{t('nav.startProject')}</span>
                 <ChevronRight size={14} className="relative z-10 opacity-80 group-hover/cta:translate-x-0.5 transition-transform duration-300" />
@@ -229,7 +229,7 @@ export const Navbar = () => {
             </div>
 
             {/* Language Switcher EN | ID */}
-            <div className="flex items-center h-10 p-1 rounded-full bg-[#16181D] border border-[#262930] text-[11px] font-mono font-semibold backdrop-blur-md">
+            <div className="flex items-center h-10 p-1 rounded-full bg-[var(--k-surface)] border border-[var(--k-border)] text-[11px] font-mono font-semibold backdrop-blur-md">
               <button
                 onClick={() => setLanguage('en')}
                 className={cn(
@@ -259,7 +259,7 @@ export const Navbar = () => {
 
           {/* Mobile Right Controls: Language Switcher & Hamburger Toggle */}
           <div className="flex items-center gap-2 sm:gap-3 md:hidden">
-            <div className="flex items-center p-0.5 rounded-full bg-[#16181D] border border-[#262930] text-[11px] font-mono font-semibold">
+            <div className="flex items-center p-0.5 rounded-full bg-[var(--k-surface)] border border-[var(--k-border)] text-[11px] font-mono font-semibold">
               <button
                 onClick={() => setLanguage('en')}
                 className={cn(
@@ -283,7 +283,7 @@ export const Navbar = () => {
             </div>
 
             <button 
-              className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-[#16181D] border border-[#262930] flex items-center justify-center text-white active:bg-white/20 transition-colors shrink-0 cursor-pointer"
+              className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-[var(--k-surface)] border border-[var(--k-border)] flex items-center justify-center text-white active:bg-white/20 transition-colors shrink-0 cursor-pointer"
               onClick={() => setIsMenuOpen(true)}
               aria-label="Open Navigation Menu"
             >
@@ -304,13 +304,13 @@ export const Navbar = () => {
               transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
               onMouseEnter={handleMouseEnterServices}
               onMouseLeave={handleMouseLeaveServices}
-              className="hidden md:block absolute top-full left-0 w-full bg-[#16181D]/98 backdrop-blur-2xl border-b border-[#262930] shadow-[0_25px_60px_rgba(0,0,0,0.95)] py-8 px-6 lg:px-12"
+              className="hidden md:block absolute top-full left-0 w-full bg-[var(--k-surface)]/98 backdrop-blur-2xl border-b border-[var(--k-border)] shadow-[0_25px_60px_rgba(0,0,0,0.95)] py-8 px-6 lg:px-12"
             >
               <div className="max-w-7xl mx-auto grid grid-cols-4 gap-8 lg:gap-10">
                 
                 {/* COLUMN 1: SOLUTIONS */}
                 <div className="space-y-4">
-                  <div className="flex items-center gap-2 pb-3 border-b border-[#262930] text-xs font-mono tracking-widest text-brand-red uppercase font-semibold">
+                  <div className="flex items-center gap-2 pb-3 border-b border-[var(--k-border)] text-xs font-mono tracking-widest text-brand-red uppercase font-semibold">
                     <Sparkles className="w-3.5 h-3.5 text-brand-red" />
                     <span>SOLUTIONS</span>
                   </div>
@@ -320,7 +320,7 @@ export const Navbar = () => {
                         key={item.slug}
                         to={`/solutions/${item.slug}`}
                         onClick={() => setIsServicesDropdownOpen(false)}
-                        className="group block p-2.5 rounded-xl hover:bg-[#1E2128] border border-transparent hover:border-[#262930] transition-all duration-200"
+                        className="group block p-2.5 rounded-xl hover:bg-[#1E2128] border border-transparent hover:border-[var(--k-border)] transition-all duration-200"
                       >
                         <div className="flex items-center justify-between text-sm font-semibold text-white group-hover:text-brand-red transition-colors">
                           <span>{item.title}</span>
@@ -336,7 +336,7 @@ export const Navbar = () => {
 
                 {/* COLUMN 2: BRANDING */}
                 <div className="space-y-4">
-                  <div className="flex items-center gap-2 pb-3 border-b border-[#262930] text-xs font-mono tracking-widest text-brand-red uppercase font-semibold">
+                  <div className="flex items-center gap-2 pb-3 border-b border-[var(--k-border)] text-xs font-mono tracking-widest text-brand-red uppercase font-semibold">
                     <Palette className="w-3.5 h-3.5 text-brand-red" />
                     <span>BRANDING</span>
                   </div>
@@ -346,7 +346,7 @@ export const Navbar = () => {
                         key={item.slug}
                         to={`/services/${item.slug}`}
                         onClick={() => setIsServicesDropdownOpen(false)}
-                        className="group block p-2.5 rounded-xl hover:bg-[#1E2128] border border-transparent hover:border-[#262930] transition-all duration-200"
+                        className="group block p-2.5 rounded-xl hover:bg-[#1E2128] border border-transparent hover:border-[var(--k-border)] transition-all duration-200"
                       >
                         <div className="flex items-center justify-between text-sm font-semibold text-white group-hover:text-brand-red transition-colors">
                           <span>{item.title}</span>
@@ -362,7 +362,7 @@ export const Navbar = () => {
 
                 {/* COLUMN 3: DESIGN */}
                 <div className="space-y-4">
-                  <div className="flex items-center gap-2 pb-3 border-b border-[#262930] text-xs font-mono tracking-widest text-brand-red uppercase font-semibold">
+                  <div className="flex items-center gap-2 pb-3 border-b border-[var(--k-border)] text-xs font-mono tracking-widest text-brand-red uppercase font-semibold">
                     <Layers className="w-3.5 h-3.5 text-brand-red" />
                     <span>DESIGN</span>
                   </div>
@@ -372,7 +372,7 @@ export const Navbar = () => {
                         key={item.slug}
                         to={`/services/${item.slug}`}
                         onClick={() => setIsServicesDropdownOpen(false)}
-                        className="group block p-2.5 rounded-xl hover:bg-[#1E2128] border border-transparent hover:border-[#262930] transition-all duration-200"
+                        className="group block p-2.5 rounded-xl hover:bg-[#1E2128] border border-transparent hover:border-[var(--k-border)] transition-all duration-200"
                       >
                         <div className="flex items-center justify-between text-sm font-semibold text-white group-hover:text-brand-red transition-colors">
                           <span>{item.title}</span>
@@ -388,7 +388,7 @@ export const Navbar = () => {
 
                 {/* COLUMN 4: DEVELOPMENT */}
                 <div className="space-y-4">
-                  <div className="flex items-center gap-2 pb-3 border-b border-[#262930] text-xs font-mono tracking-widest text-brand-red uppercase font-semibold">
+                  <div className="flex items-center gap-2 pb-3 border-b border-[var(--k-border)] text-xs font-mono tracking-widest text-brand-red uppercase font-semibold">
                     <Code2 className="w-3.5 h-3.5 text-brand-red" />
                     <span>DEVELOPMENT</span>
                   </div>
@@ -398,7 +398,7 @@ export const Navbar = () => {
                         key={item.slug}
                         to={`/services/${item.slug}`}
                         onClick={() => setIsServicesDropdownOpen(false)}
-                        className="group block p-2.5 rounded-xl hover:bg-[#1E2128] border border-transparent hover:border-[#262930] transition-all duration-200"
+                        className="group block p-2.5 rounded-xl hover:bg-[#1E2128] border border-transparent hover:border-[var(--k-border)] transition-all duration-200"
                       >
                         <div className="flex items-center justify-between text-sm font-semibold text-white group-hover:text-brand-red transition-colors">
                           <span>{item.title}</span>
@@ -415,7 +415,7 @@ export const Navbar = () => {
               </div>
 
               {/* Bottom Quick Hub Bar */}
-              <div className="max-w-7xl mx-auto mt-6 pt-4 border-t border-[#262930] flex items-center justify-between text-xs text-[#8A909D]">
+              <div className="max-w-7xl mx-auto mt-6 pt-4 border-t border-[var(--k-border)] flex items-center justify-between text-xs text-[#8A909D]">
                 <Link 
                   to="/services" 
                   onClick={() => setIsServicesDropdownOpen(false)}
@@ -441,10 +441,10 @@ export const Navbar = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25 }}
-            className="fixed inset-0 z-[100] bg-[#0B0C0E]/98 flex flex-col p-4 sm:p-6 overflow-y-auto"
+            className="fixed inset-0 z-[100] bg-[var(--k-bg)]/98 flex flex-col p-4 sm:p-6 overflow-y-auto"
           >
             {/* Header in Mobile Menu */}
-            <div className="flex justify-between items-center pb-4 border-b border-[#262930] shrink-0">
+            <div className="flex justify-between items-center pb-4 border-b border-[var(--k-border)] shrink-0">
               <Link 
                 to="/" 
                 onClick={() => setIsMenuOpen(false)}
@@ -458,7 +458,7 @@ export const Navbar = () => {
               </Link>
               
               <div className="flex items-center gap-2">
-                <div className="flex items-center p-0.5 rounded-full bg-[#16181D] border border-[#262930] text-[11px] font-mono font-semibold">
+                <div className="flex items-center p-0.5 rounded-full bg-[var(--k-surface)] border border-[var(--k-border)] text-[11px] font-mono font-semibold">
                   <button
                     onClick={() => setLanguage('en')}
                     className={cn(
@@ -481,7 +481,7 @@ export const Navbar = () => {
 
                 <button 
                   onClick={() => setIsMenuOpen(false)} 
-                  className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-[#16181D] border border-[#262930] hover:bg-brand-red hover:text-white active:scale-95 transition-all text-white flex items-center justify-center shrink-0 cursor-pointer"
+                  className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-xl bg-[var(--k-surface)] border border-[var(--k-border)] hover:bg-brand-red hover:text-white active:scale-95 transition-all text-white flex items-center justify-center shrink-0 cursor-pointer"
                   aria-label="Close menu"
                 >
                   <X size={22} />
@@ -499,8 +499,8 @@ export const Navbar = () => {
                 className={cn(
                   "flex items-center justify-between py-3.5 px-4 rounded-2xl transition-colors min-h-[48px]",
                   location.pathname === '/work' 
-                    ? "bg-[#16181D] text-white font-bold border border-brand-red/40" 
-                    : "text-[#8A909D] hover:text-white hover:bg-[#16181D] active:bg-[#16181D]"
+                    ? "bg-[var(--k-surface)] text-white font-bold border border-brand-red/40" 
+                    : "text-[#8A909D] hover:text-white hover:bg-[var(--k-surface)] active:bg-[var(--k-surface)]"
                 )}
               >
                 <div className="flex items-center gap-3">
@@ -511,7 +511,7 @@ export const Navbar = () => {
               </Link>
 
               {/* Services & Solutions (Accordion in Mobile Menu) */}
-              <div className="rounded-2xl border border-[#262930] bg-[#16181D] overflow-hidden">
+              <div className="rounded-2xl border border-[var(--k-border)] bg-[var(--k-surface)] overflow-hidden">
                 <button
                   type="button"
                   onClick={() => setIsMobileServicesOpen(prev => !prev)}
@@ -531,14 +531,14 @@ export const Navbar = () => {
                       animate={{ height: 'auto', opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
                       transition={{ duration: 0.2 }}
-                      className="px-4 pb-4 space-y-4 border-t border-[#262930] pt-3"
+                      className="px-4 pb-4 space-y-4 border-t border-[var(--k-border)] pt-3"
                     >
                       {/* Solutions */}
                       <div>
                         <div className="text-[11px] font-mono text-brand-red font-semibold uppercase tracking-wider mb-2">
                           SOLUTIONS
                         </div>
-                        <div className="space-y-2 pl-2 border-l border-[#262930]">
+                        <div className="space-y-2 pl-2 border-l border-[var(--k-border)]">
                           {solutions.map(item => (
                             <Link
                               key={item.slug}
@@ -557,7 +557,7 @@ export const Navbar = () => {
                         <div className="text-[11px] font-mono text-brand-red font-semibold uppercase tracking-wider mb-2">
                           BRANDING
                         </div>
-                        <div className="space-y-2 pl-2 border-l border-[#262930]">
+                        <div className="space-y-2 pl-2 border-l border-[var(--k-border)]">
                           {branding.map(item => (
                             <Link
                               key={item.slug}
@@ -576,7 +576,7 @@ export const Navbar = () => {
                         <div className="text-[11px] font-mono text-brand-red font-semibold uppercase tracking-wider mb-2">
                           DESIGN
                         </div>
-                        <div className="space-y-2 pl-2 border-l border-[#262930]">
+                        <div className="space-y-2 pl-2 border-l border-[var(--k-border)]">
                           {design.map(item => (
                             <Link
                               key={item.slug}
@@ -595,7 +595,7 @@ export const Navbar = () => {
                         <div className="text-[11px] font-mono text-brand-red font-semibold uppercase tracking-wider mb-2">
                           DEVELOPMENT
                         </div>
-                        <div className="space-y-2 pl-2 border-l border-[#262930]">
+                        <div className="space-y-2 pl-2 border-l border-[var(--k-border)]">
                           {development.map(item => (
                             <Link
                               key={item.slug}
@@ -631,8 +631,8 @@ export const Navbar = () => {
                 className={cn(
                   "flex items-center justify-between py-3.5 px-4 rounded-2xl transition-colors min-h-[48px]",
                   location.pathname === '/about' 
-                    ? "bg-[#16181D] text-white font-bold border border-brand-red/40" 
-                    : "text-[#8A909D] hover:text-white hover:bg-[#16181D] active:bg-[#16181D]"
+                    ? "bg-[var(--k-surface)] text-white font-bold border border-brand-red/40" 
+                    : "text-[#8A909D] hover:text-white hover:bg-[var(--k-surface)] active:bg-[var(--k-surface)]"
                 )}
               >
                 <div className="flex items-center gap-3">
@@ -649,8 +649,8 @@ export const Navbar = () => {
                 className={cn(
                   "flex items-center justify-between py-3.5 px-4 rounded-2xl transition-colors min-h-[48px]",
                   location.pathname === '/careers' 
-                    ? "bg-[#16181D] text-white font-bold border border-brand-red/40" 
-                    : "text-[#8A909D] hover:text-white hover:bg-[#16181D] active:bg-[#16181D]"
+                    ? "bg-[var(--k-surface)] text-white font-bold border border-brand-red/40" 
+                    : "text-[#8A909D] hover:text-white hover:bg-[var(--k-surface)] active:bg-[var(--k-surface)]"
                 )}
               >
                 <div className="flex items-center gap-3">
@@ -673,13 +673,13 @@ export const Navbar = () => {
             </div>
 
             {/* Quick Contact & Footer in Drawer */}
-            <div className="pt-4 border-t border-[#262930] space-y-3 shrink-0">
+            <div className="pt-4 border-t border-[var(--k-border)] space-y-3 shrink-0">
               <div className="grid grid-cols-1 gap-2 text-xs">
                 <a
                   href="https://wa.me/6287769957062?text=Halo%20Kapitech%20Agency,%20saya%20ingin%20konsultasi%20proyek."
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-3 rounded-xl bg-[#16181D] border border-[#262930] flex items-center gap-2.5 text-white active:bg-[#1E2128] transition-colors min-h-[44px]"
+                  className="p-3 rounded-xl bg-[var(--k-surface)] border border-[var(--k-border)] flex items-center gap-2.5 text-white active:bg-[#1E2128] transition-colors min-h-[44px]"
                 >
                   <Phone size={15} className="text-brand-red shrink-0" />
                   <span className="truncate">+62 877-6995-7062 (WhatsApp)</span>
@@ -687,14 +687,14 @@ export const Navbar = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   <a
                     href="mailto:business@kapitech.id"
-                    className="p-3 rounded-xl bg-[#16181D] border border-brand-red/30 flex items-center gap-2.5 text-white active:bg-[#1E2128] transition-colors min-h-[44px]"
+                    className="p-3 rounded-xl bg-[var(--k-surface)] border border-brand-red/30 flex items-center gap-2.5 text-white active:bg-[#1E2128] transition-colors min-h-[44px]"
                   >
                     <Mail size={15} className="text-brand-red shrink-0" />
                     <span className="truncate">business@kapitech.id</span>
                   </a>
                   <a
                     href="mailto:hello@kapitech.id"
-                    className="p-3 rounded-xl bg-[#16181D] border border-[#262930] flex items-center gap-2.5 text-white active:bg-[#1E2128] transition-colors min-h-[44px]"
+                    className="p-3 rounded-xl bg-[var(--k-surface)] border border-[var(--k-border)] flex items-center gap-2.5 text-white active:bg-[#1E2128] transition-colors min-h-[44px]"
                   >
                     <Mail size={15} className="text-[#8A909D] shrink-0" />
                     <span className="truncate">hello@kapitech.id</span>

@@ -389,7 +389,7 @@ export const AdminInbox: React.FC = () => {
       case 'inquiry':
       default:
         return (
-          <span className="px-2 py-0.5 rounded-md bg-[#E50914]/10 border border-[#E50914]/30 text-[#FF1E27] text-[10px] font-mono flex items-center gap-1 font-semibold">
+          <span className="px-2 py-0.5 rounded-md bg-[var(--k-red)]/10 border border-[var(--k-red)]/30 text-[var(--k-red-hover)] text-[10px] font-mono flex items-center gap-1 font-semibold">
             <MessageSquare size={10} />
             <span>Client Brief</span>
           </span>
@@ -427,7 +427,7 @@ export const AdminInbox: React.FC = () => {
         );
       default:
         return (
-          <span className="px-2 py-0.5 rounded-md text-[10px] font-mono bg-[#181B22] text-[#8A94A6] border border-white/5">
+          <span className="px-2 py-0.5 rounded-md text-[10px] font-mono bg-[var(--k-surface-raised)] text-[var(--k-text-secondary)] border border-white/5">
             {status}
           </span>
         );
@@ -495,17 +495,17 @@ export const AdminInbox: React.FC = () => {
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-6 border-b border-[rgba(255,255,255,0.07)]">
         <div>
           <div className="flex items-center gap-2.5 mb-1.5 flex-wrap">
-            <div className="w-8 h-8 rounded-xl bg-[#E50914]/10 border border-[#E50914]/30 flex items-center justify-center text-[#FF1E27] shrink-0">
+            <div className="w-8 h-8 rounded-xl bg-[var(--k-red)]/10 border border-[var(--k-red)]/30 flex items-center justify-center text-[var(--k-red-hover)] shrink-0">
               <Inbox size={18} />
             </div>
             <h1 className="text-2xl sm:text-3xl font-display font-bold text-white tracking-tight">
               {language === 'id' ? 'Kotak Masuk Prospek & Pesan' : 'Leads & Inquiry Inbox'}
             </h1>
-            <span className="text-xs font-mono py-0.5 px-2.5 bg-[#111318] border border-[rgba(255,255,255,0.07)] rounded-full text-[#8A94A6]">
+            <span className="text-xs font-mono py-0.5 px-2.5 bg-[var(--k-surface)] border border-[rgba(255,255,255,0.07)] rounded-full text-[var(--k-text-secondary)]">
               {submissions.length} {language === 'id' ? 'Pesan Aktif' : 'Inbound Briefs'}
             </span>
           </div>
-          <p className="text-xs sm:text-sm text-[#8A94A6] font-mono">
+          <p className="text-xs sm:text-sm text-[var(--k-text-secondary)] font-mono">
             {language === 'id'
               ? 'Pusat kualifikasi prospek masuk, triage brief klien, respon cepat, dan sinkronisasi instan ke CRM Pipeline.'
               : 'Unified intake console for qualifying client briefs, dispatching fast responses, and converting deals into CRM.'}
@@ -517,10 +517,10 @@ export const AdminInbox: React.FC = () => {
           {/* Email alerts guide modal button */}
           <button
             onClick={() => setIsEmailModalOpen(true)}
-            className="h-10 px-3.5 rounded-xl bg-[#111318] hover:bg-[#181B22] text-[#8A94A6] hover:text-white border border-[rgba(255,255,255,0.07)] text-xs font-mono transition-colors flex items-center gap-1.5 min-h-[40px]"
+            className="h-10 px-3.5 rounded-xl bg-[var(--k-surface)] hover:bg-[var(--k-surface-raised)] text-[var(--k-text-secondary)] hover:text-white border border-[rgba(255,255,255,0.07)] text-xs font-mono transition-colors flex items-center gap-1.5 min-h-[40px]"
             title="Configure forwarding rules"
           >
-            <Mail size={14} className="text-[#FF1E27]" />
+            <Mail size={14} className="text-[var(--k-red-hover)]" />
             <span>{language === 'id' ? 'Rules Email' : 'Email Alerts'}</span>
           </button>
 
@@ -528,7 +528,7 @@ export const AdminInbox: React.FC = () => {
           {metrics.newCount > 0 && (
             <button
               onClick={handleMarkAllRead}
-              className="h-10 px-3.5 rounded-xl bg-[#111318] hover:bg-[#181B22] text-[#8A94A6] hover:text-white border border-[rgba(255,255,255,0.07)] text-xs font-mono transition-colors flex items-center gap-1.5 min-h-[40px]"
+              className="h-10 px-3.5 rounded-xl bg-[var(--k-surface)] hover:bg-[var(--k-surface-raised)] text-[var(--k-text-secondary)] hover:text-white border border-[rgba(255,255,255,0.07)] text-xs font-mono transition-colors flex items-center gap-1.5 min-h-[40px]"
             >
               <Check size={14} />
               <span>{language === 'id' ? 'Tandai Dibaca' : 'Mark Read'}</span>
@@ -541,7 +541,7 @@ export const AdminInbox: React.FC = () => {
           {submissions.length > 0 && (
             <button
               onClick={handleExportCSV}
-              className="h-10 px-3.5 rounded-xl bg-[#111318] hover:bg-[#181B22] text-[#8A94A6] hover:text-white border border-[rgba(255,255,255,0.07)] text-xs font-mono transition-colors flex items-center gap-1.5 min-h-[40px]"
+              className="h-10 px-3.5 rounded-xl bg-[var(--k-surface)] hover:bg-[var(--k-surface-raised)] text-[var(--k-text-secondary)] hover:text-white border border-[rgba(255,255,255,0.07)] text-xs font-mono transition-colors flex items-center gap-1.5 min-h-[40px]"
             >
               <Download size={14} />
               <span>Export CSV</span>
@@ -555,22 +555,22 @@ export const AdminInbox: React.FC = () => {
       {/* ------------------------------------------------------------- */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {/* Metric 1: Total Inbound */}
-        <div className="p-4 rounded-2xl bg-[#111318] border border-[rgba(255,255,255,0.07)] space-y-1">
-          <div className="flex items-center justify-between text-xs font-mono text-[#8A94A6]">
+        <div className="p-4 rounded-2xl bg-[var(--k-surface)] border border-[rgba(255,255,255,0.07)] space-y-1">
+          <div className="flex items-center justify-between text-xs font-mono text-[var(--k-text-secondary)]">
             <span>{language === 'id' ? 'Total Masuk' : 'Total Inbound'}</span>
-            <Inbox size={14} className="text-[#8A94A6]" />
+            <Inbox size={14} className="text-[var(--k-text-secondary)]" />
           </div>
           <div className="text-2xl font-bold font-mono text-white">
             {metrics.total}
           </div>
-          <p className="text-[11px] font-mono text-[#64748B]">
+          <p className="text-[11px] font-mono text-[var(--k-text-muted)]">
             {language === 'id' ? 'Seluruh kanal formulir' : 'All intake touchpoints'}
           </p>
         </div>
 
         {/* Metric 2: Action Needed / New */}
-        <div className="p-4 rounded-2xl bg-[#111318] border border-[rgba(255,255,255,0.07)] space-y-1">
-          <div className="flex items-center justify-between text-xs font-mono text-[#8A94A6]">
+        <div className="p-4 rounded-2xl bg-[var(--k-surface)] border border-[rgba(255,255,255,0.07)] space-y-1">
+          <div className="flex items-center justify-between text-xs font-mono text-[var(--k-text-secondary)]">
             <span>{language === 'id' ? 'Perlu Ditinjau' : 'Action Needed'}</span>
             <AlertCircle size={14} className="text-rose-400" />
           </div>
@@ -580,35 +580,35 @@ export const AdminInbox: React.FC = () => {
               <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping" />
             )}
           </div>
-          <p className="text-[11px] font-mono text-[#64748B]">
+          <p className="text-[11px] font-mono text-[var(--k-text-muted)]">
             {language === 'id' ? 'Belum dikualifikasi' : 'Pending initial triage'}
           </p>
         </div>
 
         {/* Metric 3: Converted to CRM */}
-        <div className="p-4 rounded-2xl bg-[#111318] border border-[rgba(255,255,255,0.07)] space-y-1">
-          <div className="flex items-center justify-between text-xs font-mono text-[#8A94A6]">
+        <div className="p-4 rounded-2xl bg-[var(--k-surface)] border border-[rgba(255,255,255,0.07)] space-y-1">
+          <div className="flex items-center justify-between text-xs font-mono text-[var(--k-text-secondary)]">
             <span>{language === 'id' ? 'Dikonversi ke CRM' : 'Converted to CRM'}</span>
             <Briefcase size={14} className="text-emerald-400" />
           </div>
           <div className="text-2xl font-bold font-mono text-emerald-400">
-            {metrics.convertedCount} <span className="text-xs text-[#8A94A6]">({metrics.conversionRate}%)</span>
+            {metrics.convertedCount} <span className="text-xs text-[var(--k-text-secondary)]">({metrics.conversionRate}%)</span>
           </div>
-          <p className="text-[11px] font-mono text-[#64748B]">
+          <p className="text-[11px] font-mono text-[var(--k-text-muted)]">
             {language === 'id' ? 'Aktif dalam pipeline agensi' : 'Active deal opportunities'}
           </p>
         </div>
 
         {/* Metric 4: Estimated Pipeline Volume */}
-        <div className="p-4 rounded-2xl bg-[#111318] border border-[rgba(255,255,255,0.07)] space-y-1">
-          <div className="flex items-center justify-between text-xs font-mono text-[#8A94A6]">
+        <div className="p-4 rounded-2xl bg-[var(--k-surface)] border border-[rgba(255,255,255,0.07)] space-y-1">
+          <div className="flex items-center justify-between text-xs font-mono text-[var(--k-text-secondary)]">
             <span>{language === 'id' ? 'Volume Peluang' : 'Intake Valuation'}</span>
             <TrendingUp size={14} className="text-emerald-400" />
           </div>
           <div className="text-xl sm:text-2xl font-bold font-mono text-white truncate">
             {formatAmount(metrics.totalPipelineValue, currency)}
           </div>
-          <p className="text-[11px] font-mono text-[#64748B]">
+          <p className="text-[11px] font-mono text-[var(--k-text-muted)]">
             {language === 'id' ? 'Estimasi nilai brief masuk' : 'Cumulative brief budget estimate'}
           </p>
         </div>
@@ -617,7 +617,7 @@ export const AdminInbox: React.FC = () => {
       {/* ------------------------------------------------------------- */}
       {/* 3. UNIFIED FILTER TABS & TOOLBAR */}
       {/* ------------------------------------------------------------- */}
-      <div className="bg-[#111318] border border-[rgba(255,255,255,0.07)] p-4 sm:p-5 rounded-2xl space-y-3">
+      <div className="bg-[var(--k-surface)] border border-[rgba(255,255,255,0.07)] p-4 sm:p-5 rounded-2xl space-y-3">
         
         {/* Top Channel Category Tabs */}
         <div className="flex flex-wrap items-center justify-between gap-3">
@@ -639,13 +639,13 @@ export const AdminInbox: React.FC = () => {
                   onClick={() => setFilterType(tab.key)}
                   className={`h-9 px-3 rounded-xl text-xs font-mono transition-all flex items-center gap-2 border min-h-[36px] ${
                     filterType === tab.key
-                      ? 'bg-[#E50914] text-white border-[#E50914] font-bold shadow-sm'
-                      : 'bg-[#181B22] text-[#8A94A6] border-[rgba(255,255,255,0.07)] hover:text-white'
+                      ? 'bg-[var(--k-red)] text-white border-[var(--k-red)] font-bold shadow-sm'
+                      : 'bg-[var(--k-surface-raised)] text-[var(--k-text-secondary)] border-[rgba(255,255,255,0.07)] hover:text-white'
                   }`}
                 >
                   <span>{tab.label}</span>
                   <span className={`px-1.5 py-0.2 rounded-full text-[10px] ${
-                    filterType === tab.key ? 'bg-black/30 text-white' : 'bg-[#111318] text-[#8A94A6]'
+                    filterType === tab.key ? 'bg-black/30 text-white' : 'bg-[var(--k-surface)] text-[var(--k-text-secondary)]'
                   }`}>
                     {count}
                   </span>
@@ -655,13 +655,13 @@ export const AdminInbox: React.FC = () => {
           </div>
 
           {/* View Switcher: Split View vs Data Table View */}
-          <div className="flex items-center bg-[#181B22] border border-[rgba(255,255,255,0.08)] rounded-xl p-0.5">
+          <div className="flex items-center bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.08)] rounded-xl p-0.5">
             <button
               onClick={() => setViewMode('split')}
               className={`px-2.5 py-1.5 rounded-lg text-xs font-mono transition-all flex items-center gap-1.5 ${
                 viewMode === 'split'
-                  ? 'bg-[#111318] text-white font-bold border border-white/10 shadow-sm'
-                  : 'text-[#8A94A6] hover:text-white'
+                  ? 'bg-[var(--k-surface)] text-white font-bold border border-white/10 shadow-sm'
+                  : 'text-[var(--k-text-secondary)] hover:text-white'
               }`}
               title="Split Master-Detail View"
             >
@@ -672,8 +672,8 @@ export const AdminInbox: React.FC = () => {
               onClick={() => setViewMode('table')}
               className={`px-2.5 py-1.5 rounded-lg text-xs font-mono transition-all flex items-center gap-1.5 ${
                 viewMode === 'table'
-                  ? 'bg-[#111318] text-white font-bold border border-white/10 shadow-sm'
-                  : 'text-[#8A94A6] hover:text-white'
+                  ? 'bg-[var(--k-surface)] text-white font-bold border border-white/10 shadow-sm'
+                  : 'text-[var(--k-text-secondary)] hover:text-white'
               }`}
               title="Spreadsheet Table View"
             >
@@ -687,18 +687,18 @@ export const AdminInbox: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-12 gap-3 pt-1">
           {/* Universal Search */}
           <div className="relative md:col-span-6">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#8A94A6]" size={15} />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--k-text-secondary)]" size={15} />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={language === 'id' ? 'Cari nama, email, perusahaan, jasa, atau isi brief...' : 'Search name, email, company, requested stack, or message...'}
-              className="w-full pl-10 pr-8 py-2 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl text-xs text-white focus:outline-none focus:border-[#E50914] placeholder:text-[#64748B] font-mono h-10 min-h-[40px]"
+              className="w-full pl-10 pr-8 py-2 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-xl text-xs text-white focus:outline-none focus:border-[var(--k-red)] placeholder:text-[var(--k-text-muted)] font-mono h-10 min-h-[40px]"
             />
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8A94A6] hover:text-white text-xs"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--k-text-secondary)] hover:text-white text-xs"
               >
                 ✕
               </button>
@@ -710,7 +710,7 @@ export const AdminInbox: React.FC = () => {
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
-              className="w-full py-2 px-3 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl text-xs text-white focus:outline-none focus:border-[#E50914] font-mono h-10 min-h-[40px]"
+              className="w-full py-2 px-3 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-xl text-xs text-white focus:outline-none focus:border-[var(--k-red)] font-mono h-10 min-h-[40px]"
             >
               <option value="all">{language === 'id' ? 'Semua Status' : 'All Status'}</option>
               <option value="new">Status: New</option>
@@ -725,7 +725,7 @@ export const AdminInbox: React.FC = () => {
             <select
               value={filterPriority}
               onChange={(e) => setFilterPriority(e.target.value)}
-              className="w-full py-2 px-3 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl text-xs text-white focus:outline-none focus:border-[#E50914] font-mono h-10 min-h-[40px]"
+              className="w-full py-2 px-3 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-xl text-xs text-white focus:outline-none focus:border-[var(--k-red)] font-mono h-10 min-h-[40px]"
             >
               <option value="all">{language === 'id' ? 'Semua Prioritas' : 'All Priorities'}</option>
               <option value="urgent">Urgent</option>
@@ -742,7 +742,7 @@ export const AdminInbox: React.FC = () => {
               className={`w-full h-10 px-3 rounded-xl border text-xs font-mono transition-colors flex items-center justify-center gap-2 ${
                 onlyStarred
                   ? 'bg-amber-500/10 border-amber-500/30 text-amber-400 font-bold'
-                  : 'bg-[#181B22] border-[rgba(255,255,255,0.07)] text-[#8A94A6] hover:text-white'
+                  : 'bg-[var(--k-surface-raised)] border-[rgba(255,255,255,0.07)] text-[var(--k-text-secondary)] hover:text-white'
               }`}
             >
               <Star size={14} className={onlyStarred ? 'fill-amber-400 text-amber-400' : ''} />
@@ -757,11 +757,11 @@ export const AdminInbox: React.FC = () => {
       {/* ------------------------------------------------------------- */}
       {viewMode === 'table' ? (
         /* DENSE SPREADSHEET TABLE VIEW */
-        <div className="bg-[#111318] border border-[rgba(255,255,255,0.07)] rounded-2xl overflow-hidden shadow-xl">
+        <div className="bg-[var(--k-surface)] border border-[rgba(255,255,255,0.07)] rounded-2xl overflow-hidden shadow-xl">
           <div className="overflow-x-auto custom-scrollbar">
             <table className="w-full text-left border-collapse text-xs font-mono">
               <thead>
-                <tr className="bg-[#181B22] border-b border-[rgba(255,255,255,0.07)] text-[#8A94A6]">
+                <tr className="bg-[var(--k-surface-raised)] border-b border-[rgba(255,255,255,0.07)] text-[var(--k-text-secondary)]">
                   <th className="p-3.5 w-10 text-center">★</th>
                   <th className="p-3.5">{language === 'id' ? 'Klien & Perusahaan' : 'Client & Company'}</th>
                   <th className="p-3.5">{language === 'id' ? 'Kanal' : 'Channel'}</th>
@@ -775,7 +775,7 @@ export const AdminInbox: React.FC = () => {
               <tbody className="divide-y divide-[rgba(255,255,255,0.05)]">
                 {filteredItems.length === 0 ? (
                   <tr>
-                    <td colSpan={8} className="p-12 text-center text-[#8A94A6]">
+                    <td colSpan={8} className="p-12 text-center text-[var(--k-text-secondary)]">
                       <Inbox size={32} className="mx-auto text-[#383C46] mb-2" />
                       <p>{language === 'id' ? 'Tidak ada data pesan yang sesuai kriteria.' : 'No records match your filters.'}</p>
                     </td>
@@ -790,7 +790,7 @@ export const AdminInbox: React.FC = () => {
                           handleSelectSubmission(item);
                           setViewMode('split');
                         }}
-                        className="hover:bg-[#181B22] cursor-pointer transition-colors group"
+                        className="hover:bg-[var(--k-surface-raised)] cursor-pointer transition-colors group"
                       >
                         {/* Star */}
                         <td className="p-3.5 text-center" onClick={(e) => handleToggleStar(e, item.id, item.starred)}>
@@ -812,7 +812,7 @@ export const AdminInbox: React.FC = () => {
                               </span>
                             )}
                           </div>
-                          <div className="text-[11px] text-[#8A94A6] truncate max-w-[200px]">
+                          <div className="text-[11px] text-[var(--k-text-secondary)] truncate max-w-[200px]">
                             {item.company || item.email}
                           </div>
                         </td>
@@ -827,15 +827,15 @@ export const AdminInbox: React.FC = () => {
                           <div className="flex flex-wrap gap-1">
                             {item.services && item.services.length > 0 ? (
                               item.services.slice(0, 2).map((svc, i) => (
-                                <span key={i} className="px-1.5 py-0.5 rounded bg-[#111318] border border-white/5 text-[10px] text-[#A0AEC0]">
+                                <span key={i} className="px-1.5 py-0.5 rounded bg-[var(--k-surface)] border border-white/5 text-[10px] text-[#A0AEC0]">
                                   {svc}
                                 </span>
                               ))
                             ) : (
-                              <span className="text-[#64748B] text-[10px]">{item.specialty || '-'}</span>
+                              <span className="text-[var(--k-text-muted)] text-[10px]">{item.specialty || '-'}</span>
                             )}
                             {item.services && item.services.length > 2 && (
-                              <span className="text-[10px] text-[#64748B]">+{item.services.length - 2}</span>
+                              <span className="text-[10px] text-[var(--k-text-muted)]">+{item.services.length - 2}</span>
                             )}
                           </div>
                         </td>
@@ -854,7 +854,7 @@ export const AdminInbox: React.FC = () => {
                         </td>
 
                         {/* Date */}
-                        <td className="p-3.5 text-[11px] text-[#64748B] whitespace-nowrap">
+                        <td className="p-3.5 text-[11px] text-[var(--k-text-muted)] whitespace-nowrap">
                           {formatRelativeTime(item.createdAt)}
                         </td>
 
@@ -877,7 +877,7 @@ export const AdminInbox: React.FC = () => {
                                 handleSelectSubmission(item);
                                 setViewMode('split');
                               }}
-                              className="px-2.5 py-1 rounded-lg bg-[#181B22] hover:bg-[#21252F] text-[#8A94A6] hover:text-white border border-white/5 text-[11px]"
+                              className="px-2.5 py-1 rounded-lg bg-[var(--k-surface-raised)] hover:bg-[var(--k-surface-subtle)] text-[var(--k-text-secondary)] hover:text-white border border-white/5 text-[11px]"
                             >
                               {language === 'id' ? 'Buka' : 'Inspect'}
                             </button>
@@ -893,14 +893,14 @@ export const AdminInbox: React.FC = () => {
         </div>
       ) : loading ? (
         /* LOADING STATE */
-        <div className="flex flex-col items-center justify-center py-20 text-[#8A94A6] space-y-3 bg-[#111318] border border-[rgba(255,255,255,0.07)] rounded-2xl">
-          <RefreshCw className="animate-spin text-[#E50914]" size={24} />
+        <div className="flex flex-col items-center justify-center py-20 text-[var(--k-text-secondary)] space-y-3 bg-[var(--k-surface)] border border-[rgba(255,255,255,0.07)] rounded-2xl">
+          <RefreshCw className="animate-spin text-[var(--k-red)]" size={24} />
           <p className="text-xs font-mono">{language === 'id' ? 'Memuat pesan masuk...' : 'Syncing inbox records...'}</p>
         </div>
       ) : filteredItems.length === 0 ? (
         /* SINGLE UNIFIED EMPTY STATE - PREVENTS DUPLICATE BOXES */
-        <div className="bg-[#111318] border border-[rgba(255,255,255,0.07)] rounded-2xl p-12 sm:p-16 text-center text-[#8A94A6] space-y-4">
-          <div className="w-16 h-16 rounded-2xl bg-[#181B22] border border-white/5 flex items-center justify-center text-[#383C46] mx-auto">
+        <div className="bg-[var(--k-surface)] border border-[rgba(255,255,255,0.07)] rounded-2xl p-12 sm:p-16 text-center text-[var(--k-text-secondary)] space-y-4">
+          <div className="w-16 h-16 rounded-2xl bg-[var(--k-surface-raised)] border border-white/5 flex items-center justify-center text-[#383C46] mx-auto">
             <Inbox size={32} />
           </div>
           <div className="space-y-1.5">
@@ -909,7 +909,7 @@ export const AdminInbox: React.FC = () => {
                 ? (language === 'id' ? 'Kotak Masuk Masih Kosong' : 'No Inbound Records Found')
                 : (language === 'id' ? 'Tidak Ada Pesan yang Sesuai Kriteria' : 'No Inbound Records Match Your Filters')}
             </h3>
-            <p className="text-xs sm:text-sm text-[#8A94A6] max-w-md mx-auto font-mono leading-relaxed">
+            <p className="text-xs sm:text-sm text-[var(--k-text-secondary)] max-w-md mx-auto font-mono leading-relaxed">
               {submissions.length === 0
                 ? (language === 'id'
                     ? 'Belum ada brief proyek klien, lamaran karir, atau pesan masuk dari formulir website.'
@@ -930,7 +930,7 @@ export const AdminInbox: React.FC = () => {
                   setFilterType('all');
                   setOnlyStarred(false);
                 }}
-                className="h-9 px-4 rounded-xl bg-[#181B22] hover:bg-[#21252F] text-white border border-[rgba(255,255,255,0.07)] text-xs font-mono font-medium transition-colors"
+                className="h-9 px-4 rounded-xl bg-[var(--k-surface-raised)] hover:bg-[var(--k-surface-subtle)] text-white border border-[rgba(255,255,255,0.07)] text-xs font-mono font-medium transition-colors"
               >
                 {language === 'id' ? 'Reset Semua Filter' : 'Reset All Filters'}
               </button>
@@ -958,15 +958,15 @@ export const AdminInbox: React.FC = () => {
                   onClick={() => handleSelectSubmission(item)}
                   className={`relative p-4 rounded-2xl border transition-all cursor-pointer font-mono group ${
                     isSelected
-                      ? 'bg-[#181B22] border-[#E50914] shadow-lg shadow-[#E50914]/10'
+                      ? 'bg-[var(--k-surface-raised)] border-[var(--k-red)] shadow-lg shadow-[var(--k-red)]/10'
                       : item.status === 'new'
-                      ? 'bg-[#111318] border-rose-500/30 hover:border-rose-500/50'
-                      : 'bg-[#111318] border-[rgba(255,255,255,0.07)] hover:border-[#383C46] hover:bg-[#181B22]'
+                      ? 'bg-[var(--k-surface)] border-rose-500/30 hover:border-rose-500/50'
+                      : 'bg-[var(--k-surface)] border-[rgba(255,255,255,0.07)] hover:border-[#383C46] hover:bg-[var(--k-surface-raised)]'
                   }`}
                 >
                     {/* Linear-style Left Accent Strip */}
                     {isSelected && (
-                      <span className="absolute left-0 top-3 bottom-3 w-1 bg-[#E50914] rounded-r-full" />
+                      <span className="absolute left-0 top-3 bottom-3 w-1 bg-[var(--k-red)] rounded-r-full" />
                     )}
 
                     {/* Top Row: Channel, Status, Star, Timestamp */}
@@ -985,11 +985,11 @@ export const AdminInbox: React.FC = () => {
                       <div className="flex items-center gap-2 shrink-0">
                         <button
                           onClick={(e) => handleToggleStar(e, item.id, item.starred)}
-                          className="p-1 text-[#64748B] hover:text-amber-400 transition-colors"
+                          className="p-1 text-[var(--k-text-muted)] hover:text-amber-400 transition-colors"
                         >
                           <Star size={13} className={item.starred ? 'fill-amber-400 text-amber-400' : ''} />
                         </button>
-                        <span className="text-[10px] text-[#64748B]">
+                        <span className="text-[10px] text-[var(--k-text-muted)]">
                           {formatRelativeTime(item.createdAt)}
                         </span>
                       </div>
@@ -1005,7 +1005,7 @@ export const AdminInbox: React.FC = () => {
                       </span>
                     </div>
 
-                    <div className="text-xs text-[#8A94A6] truncate mb-2">
+                    <div className="text-xs text-[var(--k-text-secondary)] truncate mb-2">
                       {item.company || item.positionTitle || item.email}
                     </div>
 
@@ -1013,12 +1013,12 @@ export const AdminInbox: React.FC = () => {
                     {item.services && item.services.length > 0 && (
                       <div className="flex flex-wrap gap-1 mb-2.5">
                         {item.services.slice(0, 3).map((svc, i) => (
-                          <span key={i} className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-[#111318] border border-white/5 text-[#94A3B8]">
+                          <span key={i} className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-[var(--k-surface)] border border-white/5 text-[#94A3B8]">
                             {svc}
                           </span>
                         ))}
                         {item.services.length > 3 && (
-                          <span className="text-[9px] font-mono text-[#64748B] self-center">
+                          <span className="text-[9px] font-mono text-[var(--k-text-muted)] self-center">
                             +{item.services.length - 3}
                           </span>
                         )}
@@ -1044,14 +1044,14 @@ export const AdminInbox: React.FC = () => {
 
           {/* Right: Message Reader & Command Hub Pane */}
           {selectedSubmission ? (
-            <div className="col-span-12 lg:col-span-7 bg-[#111318] border border-[rgba(255,255,255,0.07)] rounded-2xl p-5 sm:p-7 flex flex-col justify-between shadow-2xl">
+            <div className="col-span-12 lg:col-span-7 bg-[var(--k-surface)] border border-[rgba(255,255,255,0.07)] rounded-2xl p-5 sm:p-7 flex flex-col justify-between shadow-2xl">
               <div>
                 
                 {/* Mobile Back Button */}
                 <div className="lg:hidden mb-4 pb-3 border-b border-[rgba(255,255,255,0.07)]">
                   <button
                     onClick={() => setSelectedSubmission(null)}
-                    className="flex items-center gap-2 text-xs font-mono text-[#8A94A6] hover:text-white transition-colors min-h-[44px]"
+                    className="flex items-center gap-2 text-xs font-mono text-[var(--k-text-secondary)] hover:text-white transition-colors min-h-[44px]"
                   >
                     <ArrowLeft size={16} />
                     <span>{language === 'id' ? 'Kembali ke Daftar Pesan' : 'Back to Briefs List'}</span>
@@ -1062,7 +1062,7 @@ export const AdminInbox: React.FC = () => {
                 <div className="flex items-start justify-between gap-4 pb-5 border-b border-[rgba(255,255,255,0.07)] mb-5">
                   <div className="flex items-start gap-3.5">
                     {/* Client Avatar Initials */}
-                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#181B22] to-[#21252F] border border-white/10 flex items-center justify-center text-white font-display font-bold text-lg shrink-0 shadow-inner">
+                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[var(--k-surface-raised)] to-[var(--k-surface-subtle)] border border-white/10 flex items-center justify-center text-white font-display font-bold text-lg shrink-0 shadow-inner">
                       {selectedSubmission.fullName.charAt(0).toUpperCase()}
                     </div>
 
@@ -1070,7 +1070,7 @@ export const AdminInbox: React.FC = () => {
                       <div className="flex items-center gap-2 mb-1 flex-wrap">
                         {renderChannelBadge(selectedSubmission.type)}
                         {renderStatusBadge(selectedSubmission.status)}
-                        <span className="text-[10px] font-mono text-[#64748B]">
+                        <span className="text-[10px] font-mono text-[var(--k-text-muted)]">
                           ID: {selectedSubmission.id}
                         </span>
                       </div>
@@ -1090,7 +1090,7 @@ export const AdminInbox: React.FC = () => {
                     {/* Star toggle */}
                     <button
                       onClick={(e) => handleToggleStar(e, selectedSubmission.id, selectedSubmission.starred)}
-                      className="p-2 rounded-xl bg-[#181B22] border border-[rgba(255,255,255,0.07)] text-[#8A94A6] hover:text-amber-400 transition-colors"
+                      className="p-2 rounded-xl bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] text-[var(--k-text-secondary)] hover:text-amber-400 transition-colors"
                       title="Star this brief"
                     >
                       <Star size={15} className={selectedSubmission.starred ? 'fill-amber-400 text-amber-400' : ''} />
@@ -1099,7 +1099,7 @@ export const AdminInbox: React.FC = () => {
                     {/* Close button on desktop */}
                     <button
                       onClick={() => setSelectedSubmission(null)}
-                      className="hidden lg:inline-flex text-xs text-[#8A94A6] hover:text-white px-3 py-2 rounded-xl bg-[#181B22] border border-[rgba(255,255,255,0.07)] min-h-[36px] items-center"
+                      className="hidden lg:inline-flex text-xs text-[var(--k-text-secondary)] hover:text-white px-3 py-2 rounded-xl bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] min-h-[36px] items-center"
                     >
                       ✕
                     </button>
@@ -1107,7 +1107,7 @@ export const AdminInbox: React.FC = () => {
                 </div>
 
                 {/* Primary Action Ribbon (Quick Canned Replies, WA, Email, Convert to CRM) */}
-                <div className="p-3 rounded-xl bg-[#181B22] border border-[rgba(255,255,255,0.07)] flex flex-wrap items-center justify-between gap-2.5 mb-5">
+                <div className="p-3 rounded-xl bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] flex flex-wrap items-center justify-between gap-2.5 mb-5">
                   <div className="flex items-center gap-2 flex-wrap">
                     {/* 1-Click Convert to CRM Lead */}
                     {crmDeals.some(d => (d as any).inquiryId === selectedSubmission.id) ? (
@@ -1132,9 +1132,9 @@ export const AdminInbox: React.FC = () => {
                     {/* Quick Canned Response Template Picker */}
                     <button
                       onClick={() => setIsCannedModalOpen(true)}
-                      className="h-9 px-3.5 rounded-lg bg-[#111318] hover:bg-[#21252F] text-white border border-[rgba(255,255,255,0.08)] text-xs font-mono font-semibold transition-colors flex items-center gap-1.5"
+                      className="h-9 px-3.5 rounded-lg bg-[var(--k-surface)] hover:bg-[var(--k-surface-subtle)] text-white border border-[rgba(255,255,255,0.08)] text-xs font-mono font-semibold transition-colors flex items-center gap-1.5"
                     >
-                      <Sparkles size={13} className="text-[#FF1E27]" />
+                      <Sparkles size={13} className="text-[var(--k-red-hover)]" />
                       <span>{language === 'id' ? 'Respon Cepat' : 'Canned Response'}</span>
                     </button>
                   </div>
@@ -1158,7 +1158,7 @@ export const AdminInbox: React.FC = () => {
                     {/* Mailto */}
                     <a
                       href={`mailto:${selectedSubmission.email}?subject=Kapitech Agency - Project Brief Follow-up&body=Dear ${encodeURIComponent(selectedSubmission.fullName)},%0D%0A%0D%0AThank you for reaching out to Kapitech Agency regarding your project brief.`}
-                      className="h-9 px-3 rounded-lg bg-[#E50914] hover:bg-[#FF1E27] text-white text-xs font-mono font-semibold transition-colors flex items-center gap-1 shadow-sm"
+                      className="h-9 px-3 rounded-lg bg-[var(--k-red)] hover:bg-[var(--k-red-hover)] text-white text-xs font-mono font-semibold transition-colors flex items-center gap-1 shadow-sm"
                       title="Compose Email"
                     >
                       <Mail size={13} />
@@ -1173,8 +1173,8 @@ export const AdminInbox: React.FC = () => {
                     onClick={() => setDetailTab('brief')}
                     className={`pb-1 text-xs font-mono font-semibold transition-colors border-b-2 ${
                       detailTab === 'brief'
-                        ? 'text-white border-[#E50914]'
-                        : 'text-[#8A94A6] border-transparent hover:text-white'
+                        ? 'text-white border-[var(--k-red)]'
+                        : 'text-[var(--k-text-secondary)] border-transparent hover:text-white'
                     }`}
                   >
                     {language === 'id' ? 'Detail Brief & Kontak' : 'Brief & Contact Specs'}
@@ -1184,8 +1184,8 @@ export const AdminInbox: React.FC = () => {
                     onClick={() => setDetailTab('notes')}
                     className={`pb-1 text-xs font-mono font-semibold transition-colors border-b-2 flex items-center gap-1.5 ${
                       detailTab === 'notes'
-                        ? 'text-white border-[#E50914]'
-                        : 'text-[#8A94A6] border-transparent hover:text-white'
+                        ? 'text-white border-[var(--k-red)]'
+                        : 'text-[var(--k-text-secondary)] border-transparent hover:text-white'
                     }`}
                   >
                     <span>{language === 'id' ? 'Catatan Tim Agensi' : 'Internal Team Notes'}</span>
@@ -1201,15 +1201,15 @@ export const AdminInbox: React.FC = () => {
                     {/* Contact Specs Cards */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       {/* Email Card */}
-                      <div className="p-3.5 rounded-xl bg-[#181B22] border border-[rgba(255,255,255,0.07)]">
-                        <div className="flex items-center justify-between text-xs font-mono text-[#8A94A6] mb-1">
+                      <div className="p-3.5 rounded-xl bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)]">
+                        <div className="flex items-center justify-between text-xs font-mono text-[var(--k-text-secondary)] mb-1">
                           <div className="flex items-center gap-1.5">
-                            <Mail size={13} className="text-[#FF1E27]" />
+                            <Mail size={13} className="text-[var(--k-red-hover)]" />
                             <span>Email</span>
                           </div>
                           <button
                             onClick={() => handleCopyText(selectedSubmission.email, 'email')}
-                            className="text-[10px] text-[#FF1E27] hover:underline flex items-center gap-1 font-mono"
+                            className="text-[10px] text-[var(--k-red-hover)] hover:underline flex items-center gap-1 font-mono"
                           >
                             <Copy size={11} />
                             <span>{copiedId === 'email' ? (language === 'id' ? 'Tersalin!' : 'Copied!') : (language === 'id' ? 'Salin' : 'Copy')}</span>
@@ -1217,23 +1217,23 @@ export const AdminInbox: React.FC = () => {
                         </div>
                         <a 
                           href={`mailto:${selectedSubmission.email}`}
-                          className="text-xs font-mono font-medium text-white hover:text-[#FF1E27] transition-colors break-all block"
+                          className="text-xs font-mono font-medium text-white hover:text-[var(--k-red-hover)] transition-colors break-all block"
                         >
                           {selectedSubmission.email}
                         </a>
                       </div>
 
                       {/* Phone Card */}
-                      <div className="p-3.5 rounded-xl bg-[#181B22] border border-[rgba(255,255,255,0.07)]">
-                        <div className="flex items-center justify-between text-xs font-mono text-[#8A94A6] mb-1">
+                      <div className="p-3.5 rounded-xl bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)]">
+                        <div className="flex items-center justify-between text-xs font-mono text-[var(--k-text-secondary)] mb-1">
                           <div className="flex items-center gap-1.5">
-                            <Phone size={13} className="text-[#FF1E27]" />
+                            <Phone size={13} className="text-[var(--k-red-hover)]" />
                             <span>WhatsApp / {language === 'id' ? 'Telepon' : 'Phone'}</span>
                           </div>
                           {selectedSubmission.phone && (
                             <button
                               onClick={() => handleCopyText(selectedSubmission.phone || '', 'phone')}
-                              className="text-[10px] text-[#FF1E27] hover:underline flex items-center gap-1 font-mono"
+                              className="text-[10px] text-[var(--k-red-hover)] hover:underline flex items-center gap-1 font-mono"
                             >
                               <Copy size={11} />
                               <span>{copiedId === 'phone' ? (language === 'id' ? 'Tersalin!' : 'Copied!') : (language === 'id' ? 'Salin' : 'Copy')}</span>
@@ -1249,15 +1249,15 @@ export const AdminInbox: React.FC = () => {
                     {/* Scope & Budget Cards */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       {/* Services */}
-                      <div className="p-3.5 rounded-xl bg-[#181B22] border border-[rgba(255,255,255,0.07)]">
-                        <div className="flex items-center gap-2 text-xs font-mono text-[#8A94A6] mb-1.5">
-                          <Tag size={13} className="text-[#FF1E27]" />
+                      <div className="p-3.5 rounded-xl bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)]">
+                        <div className="flex items-center gap-2 text-xs font-mono text-[var(--k-text-secondary)] mb-1.5">
+                          <Tag size={13} className="text-[var(--k-red-hover)]" />
                           <span>{language === 'id' ? 'Layanan / Spesialisasi' : 'Requested Services'}</span>
                         </div>
                         <div className="flex flex-wrap gap-1.5">
                           {selectedSubmission.services && selectedSubmission.services.length > 0 ? (
                             selectedSubmission.services.map((svc, i) => (
-                              <span key={i} className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#111318] border border-[rgba(255,255,255,0.07)] text-[#D0D4DC]">
+                              <span key={i} className="text-[10px] font-mono px-2 py-0.5 rounded bg-[var(--k-surface)] border border-[rgba(255,255,255,0.07)] text-[#D0D4DC]">
                                 {svc}
                               </span>
                             ))
@@ -1270,10 +1270,10 @@ export const AdminInbox: React.FC = () => {
                       </div>
 
                       {/* Budget */}
-                      <div className="p-3.5 rounded-xl bg-[#181B22] border border-[rgba(255,255,255,0.07)]">
-                        <div className="flex items-center justify-between text-xs font-mono text-[#8A94A6] mb-1">
+                      <div className="p-3.5 rounded-xl bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)]">
+                        <div className="flex items-center justify-between text-xs font-mono text-[var(--k-text-secondary)] mb-1">
                           <div className="flex items-center gap-1.5">
-                            <DollarSign size={13} className="text-[#FF1E27]" />
+                            <DollarSign size={13} className="text-[var(--k-red-hover)]" />
                             <span>{language === 'id' ? 'Estimasi Anggaran' : 'Budget Bracket'}</span>
                           </div>
                           <span className="text-emerald-400 font-bold">
@@ -1289,24 +1289,24 @@ export const AdminInbox: React.FC = () => {
                     {/* Message Body */}
                     <div>
                       <div className="flex items-center justify-between mb-2">
-                        <label className="text-xs font-mono text-[#8A94A6] uppercase tracking-wider block font-semibold">
+                        <label className="text-xs font-mono text-[var(--k-text-secondary)] uppercase tracking-wider block font-semibold">
                           {language === 'id' ? 'Detail Pesan / Brief Klien' : 'Client Brief Statement'}
                         </label>
                         <button
                           onClick={() => handleCopyText(selectedSubmission.message, 'msg')}
-                          className="text-[10px] text-[#8A94A6] hover:text-white flex items-center gap-1 font-mono"
+                          className="text-[10px] text-[var(--k-text-secondary)] hover:text-white flex items-center gap-1 font-mono"
                         >
                           <Copy size={11} />
                           <span>{copiedId === 'msg' ? (language === 'id' ? 'Tersalin' : 'Copied') : (language === 'id' ? 'Salin Brief' : 'Copy Brief')}</span>
                         </button>
                       </div>
-                      <div className="p-4 rounded-xl bg-[#181B22] border border-[rgba(255,255,255,0.07)] text-xs text-gray-200 whitespace-pre-wrap leading-relaxed max-h-64 overflow-y-auto font-sans shadow-inner">
+                      <div className="p-4 rounded-xl bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] text-xs text-gray-200 whitespace-pre-wrap leading-relaxed max-h-64 overflow-y-auto font-sans shadow-inner">
                         {selectedSubmission.message}
                       </div>
                     </div>
 
                     {/* Metadata Specs */}
-                    <div className="p-3 rounded-xl bg-[#181B22]/50 border border-white/5 text-[11px] font-mono text-[#64748B] grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <div className="p-3 rounded-xl bg-[var(--k-surface-raised)]/50 border border-white/5 text-[11px] font-mono text-[var(--k-text-muted)] grid grid-cols-1 sm:grid-cols-2 gap-2">
                       <div>{language === 'id' ? 'Kanal Sumber:' : 'Intake Source:'} <span className="text-[#A0AEC0]">{selectedSubmission.source || 'Website Form'}</span></div>
                       <div>{language === 'id' ? 'Waktu Diterima:' : 'Timestamp:'} <span className="text-[#A0AEC0]">{new Date(selectedSubmission.createdAt).toLocaleString()}</span></div>
                       {selectedSubmission.userAgent && (
@@ -1319,13 +1319,13 @@ export const AdminInbox: React.FC = () => {
                 {/* TAB 2: INTERNAL TEAM NOTES & COLLABORATION */}
                 {detailTab === 'notes' && (
                   <div className="space-y-4">
-                    <div className="p-4 rounded-xl bg-[#181B22] border border-[rgba(255,255,255,0.07)] space-y-3">
+                    <div className="p-4 rounded-xl bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] space-y-3">
                       <div className="flex items-center justify-between">
                         <label className="text-xs font-mono text-white font-semibold flex items-center gap-1.5">
-                          <FileText size={14} className="text-[#FF1E27]" />
+                          <FileText size={14} className="text-[var(--k-red-hover)]" />
                           <span>{language === 'id' ? 'Catatan Rahasia Agensi' : 'Private Agency Team Notes'}</span>
                         </label>
-                        <span className="text-[10px] font-mono text-[#64748B]">
+                        <span className="text-[10px] font-mono text-[var(--k-text-muted)]">
                           {language === 'id' ? 'Hanya terlihat oleh staf AMS' : 'Visible only to AMS staff'}
                         </span>
                       </div>
@@ -1337,7 +1337,7 @@ export const AdminInbox: React.FC = () => {
                         placeholder={language === 'id' 
                           ? 'Tulis catatan teknis, rangkuman discovery call, kesepakatan timeline, atau petunjuk khusus untuk tim...' 
                           : 'Enter technical scoping notes, discovery call summary, milestone commitments, or specific client instructions...'}
-                        className="w-full p-3.5 bg-[#111318] border border-[rgba(255,255,255,0.08)] rounded-xl text-xs text-white placeholder:text-[#64748B] font-mono focus:outline-none focus:border-[#E50914] leading-relaxed"
+                        className="w-full p-3.5 bg-[var(--k-surface)] border border-[rgba(255,255,255,0.08)] rounded-xl text-xs text-white placeholder:text-[var(--k-text-muted)] font-mono focus:outline-none focus:border-[var(--k-red)] leading-relaxed"
                       />
 
                       <div className="flex items-center justify-end">
@@ -1345,7 +1345,7 @@ export const AdminInbox: React.FC = () => {
                           type="button"
                           disabled={isSavingNote}
                           onClick={handleSaveInternalNote}
-                          className="px-4 py-2 rounded-xl bg-[#E50914] hover:bg-[#FF1E27] text-white text-xs font-mono font-bold transition-all flex items-center gap-1.5 shadow-md shadow-[#E50914]/20"
+                          className="px-4 py-2 rounded-xl bg-[var(--k-red)] hover:bg-[var(--k-red-hover)] text-white text-xs font-mono font-bold transition-all flex items-center gap-1.5 shadow-md shadow-[var(--k-red)]/20"
                         >
                           <Check size={14} />
                           <span>{isSavingNote ? (language === 'id' ? 'Menyimpan...' : 'Saving...') : (language === 'id' ? 'Simpan Catatan' : 'Save Notes')}</span>
@@ -1354,15 +1354,15 @@ export const AdminInbox: React.FC = () => {
                     </div>
 
                     {/* Assigned Owner Setting */}
-                    <div className="p-4 rounded-xl bg-[#181B22] border border-[rgba(255,255,255,0.07)] space-y-2">
-                      <label className="text-xs font-mono text-[#8A94A6] flex items-center gap-1.5">
+                    <div className="p-4 rounded-xl bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] space-y-2">
+                      <label className="text-xs font-mono text-[var(--k-text-secondary)] flex items-center gap-1.5">
                         <User size={13} className="text-emerald-400" />
                         <span>{language === 'id' ? 'Penanggung Jawab Kualifikasi' : 'Assigned Triage Lead'}</span>
                       </label>
                       <select
                         value={selectedSubmission.assignedTo || 'Lead Full-Stack Tech'}
                         onChange={(e) => handleAssigneeChange(selectedSubmission.id, e.target.value)}
-                        className="w-full px-3 py-2 bg-[#111318] border border-[rgba(255,255,255,0.08)] rounded-xl text-xs text-white font-mono focus:outline-none focus:border-emerald-500"
+                        className="w-full px-3 py-2 bg-[var(--k-surface)] border border-[rgba(255,255,255,0.08)] rounded-xl text-xs text-white font-mono focus:outline-none focus:border-emerald-500"
                       >
                         <option value="Lead Full-Stack Tech">Lead Full-Stack Tech (Engineering)</option>
                         <option value="Senior UI/UX Designer">Senior UI/UX Designer (Design)</option>
@@ -1380,12 +1380,12 @@ export const AdminInbox: React.FC = () => {
                 <div className="flex items-center gap-3 flex-wrap">
                   {/* Status Selector */}
                   <div className="flex items-center gap-1.5">
-                    <span className="text-xs font-mono text-[#8A94A6]">Status:</span>
+                    <span className="text-xs font-mono text-[var(--k-text-secondary)]">Status:</span>
                     <select
                       disabled={isUpdating}
                       value={selectedSubmission.status}
                       onChange={(e) => handleStatusChange(selectedSubmission.id, e.target.value as ContactSubmission['status'])}
-                      className="text-xs py-2 px-3 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914] font-mono min-h-[38px]"
+                      className="text-xs py-2 px-3 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[var(--k-red)] font-mono min-h-[38px]"
                     >
                       <option value="new">New</option>
                       <option value="in-review">In Review</option>
@@ -1396,11 +1396,11 @@ export const AdminInbox: React.FC = () => {
 
                   {/* Priority Selector */}
                   <div className="flex items-center gap-1.5">
-                    <span className="text-xs font-mono text-[#8A94A6]">Priority:</span>
+                    <span className="text-xs font-mono text-[var(--k-text-secondary)]">Priority:</span>
                     <select
                       value={selectedSubmission.priority || 'normal'}
                       onChange={(e) => handlePriorityChange(selectedSubmission.id, e.target.value as ContactSubmission['priority'])}
-                      className="text-xs py-2 px-3 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914] font-mono min-h-[38px]"
+                      className="text-xs py-2 px-3 bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[var(--k-red)] font-mono min-h-[38px]"
                     >
                       <option value="urgent">Urgent</option>
                       <option value="high">High</option>
@@ -1413,7 +1413,7 @@ export const AdminInbox: React.FC = () => {
                 {/* Delete Button */}
                 <button
                   onClick={() => handleDelete(selectedSubmission.id)}
-                  className="h-10 w-10 p-2 rounded-xl bg-[#181B22] border border-[rgba(255,255,255,0.07)] text-[#8A94A6] hover:text-red-400 hover:border-red-500/40 transition-colors min-h-[40px] min-w-[40px] flex items-center justify-center"
+                  className="h-10 w-10 p-2 rounded-xl bg-[var(--k-surface-raised)] border border-[rgba(255,255,255,0.07)] text-[var(--k-text-secondary)] hover:text-red-400 hover:border-red-500/40 transition-colors min-h-[40px] min-w-[40px] flex items-center justify-center"
                   title={language === 'id' ? 'Hapus pesan ini secara permanen' : 'Delete this brief permanently'}
                 >
                   <Trash2 size={16} />
@@ -1423,14 +1423,14 @@ export const AdminInbox: React.FC = () => {
             </div>
           ) : (
             /* Empty State on Desktop when no submission is selected */
-            <div className="hidden lg:flex lg:col-span-7 bg-[#111318] border border-[rgba(255,255,255,0.07)] rounded-2xl p-12 flex-col items-center justify-center text-center text-[#8A94A6] min-h-[460px]">
-              <div className="w-16 h-16 rounded-2xl bg-[#181B22] border border-white/5 flex items-center justify-center text-[#383C46] mb-4">
+            <div className="hidden lg:flex lg:col-span-7 bg-[var(--k-surface)] border border-[rgba(255,255,255,0.07)] rounded-2xl p-12 flex-col items-center justify-center text-center text-[var(--k-text-secondary)] min-h-[460px]">
+              <div className="w-16 h-16 rounded-2xl bg-[var(--k-surface-raised)] border border-white/5 flex items-center justify-center text-[#383C46] mb-4">
                 <Inbox size={32} />
               </div>
               <h3 className="text-white font-medium mb-1 font-display text-base">
                 {language === 'id' ? 'Pilih Pesan untuk Membaca Brief' : 'Select a Brief to Inspect'}
               </h3>
-              <p className="text-xs text-[#8A94A6] max-w-sm font-mono leading-relaxed">
+              <p className="text-xs text-[var(--k-text-secondary)] max-w-sm font-mono leading-relaxed">
                 {language === 'id'
                   ? 'Klik salah satu pesan di sebelah kiri untuk melihat rincian brief, template respon cepat, kontak WhatsApp/Email, dan konversi ke pipeline CRM.'
                   : 'Click any submission on the left to examine technical brief specs, dispatch executive canned responses, and convert into active CRM deals.'}

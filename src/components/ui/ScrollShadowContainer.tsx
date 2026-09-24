@@ -71,22 +71,22 @@ export const ScrollShadowContainer: React.FC<ScrollShadowContainerProps> = ({
   // Background color mapping
   const bgClassMap = {
     app: {
-      left: 'from-[#090A0F] via-[#090A0F]/85 to-transparent',
-      right: 'from-[#090A0F] via-[#090A0F]/85 to-transparent',
-      top: 'from-[#090A0F] via-[#090A0F]/85 to-transparent',
-      bottom: 'from-[#090A0F] via-[#090A0F]/85 to-transparent'
+      left: 'from-[var(--k-bg)] via-[var(--k-bg)]/85 to-transparent',
+      right: 'from-[var(--k-bg)] via-[var(--k-bg)]/85 to-transparent',
+      top: 'from-[var(--k-bg)] via-[var(--k-bg)]/85 to-transparent',
+      bottom: 'from-[var(--k-bg)] via-[var(--k-bg)]/85 to-transparent'
     },
     surface: {
-      left: 'from-[#111318] via-[#111318]/85 to-transparent',
-      right: 'from-[#111318] via-[#111318]/85 to-transparent',
-      top: 'from-[#111318] via-[#111318]/85 to-transparent',
-      bottom: 'from-[#111318] via-[#111318]/85 to-transparent'
+      left: 'from-[var(--k-surface)] via-[var(--k-surface)]/85 to-transparent',
+      right: 'from-[var(--k-surface)] via-[var(--k-surface)]/85 to-transparent',
+      top: 'from-[var(--k-surface)] via-[var(--k-surface)]/85 to-transparent',
+      bottom: 'from-[var(--k-surface)] via-[var(--k-surface)]/85 to-transparent'
     },
     elevated: {
-      left: 'from-[#181B22] via-[#181B22]/85 to-transparent',
-      right: 'from-[#181B22] via-[#181B22]/85 to-transparent',
-      top: 'from-[#181B22] via-[#181B22]/85 to-transparent',
-      bottom: 'from-[#181B22] via-[#181B22]/85 to-transparent'
+      left: 'from-[var(--k-surface-raised)] via-[var(--k-surface-raised)]/85 to-transparent',
+      right: 'from-[var(--k-surface-raised)] via-[var(--k-surface-raised)]/85 to-transparent',
+      top: 'from-[var(--k-surface-raised)] via-[var(--k-surface-raised)]/85 to-transparent',
+      bottom: 'from-[var(--k-surface-raised)] via-[var(--k-surface-raised)]/85 to-transparent'
     },
     transparent: {
       left: 'from-black/80 via-black/40 to-transparent',
@@ -156,7 +156,7 @@ export const ScrollShadowContainer: React.FC<ScrollShadowContainerProps> = ({
             type="button"
             onClick={() => scrollBy(-scrollStep, 0, true)}
             aria-label="Scroll left"
-            className={`hidden md:flex absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-[#181B22]/90 hover:bg-[#21252F] text-white border border-white/10 shadow-xl items-center justify-center z-30 transition-all duration-200 ${
+            className={`hidden md:flex absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-[var(--k-surface-raised)]/90 hover:bg-[var(--k-surface-subtle)] text-white border border-white/10 shadow-xl items-center justify-center z-30 transition-all duration-200 ${
               canScrollLeft
                 ? 'opacity-0 group-hover/scroll-shadow:opacity-100 pointer-events-auto'
                 : 'opacity-0 pointer-events-none'
@@ -168,7 +168,7 @@ export const ScrollShadowContainer: React.FC<ScrollShadowContainerProps> = ({
             type="button"
             onClick={() => scrollBy(scrollStep, 0, true)}
             aria-label="Scroll right"
-            className={`hidden md:flex absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-[#181B22]/90 hover:bg-[#21252F] text-white border border-white/10 shadow-xl items-center justify-center z-30 transition-all duration-200 ${
+            className={`hidden md:flex absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-[var(--k-surface-raised)]/90 hover:bg-[var(--k-surface-subtle)] text-white border border-white/10 shadow-xl items-center justify-center z-30 transition-all duration-200 ${
               canScrollRight
                 ? 'opacity-0 group-hover/scroll-shadow:opacity-100 pointer-events-auto'
                 : 'opacity-0 pointer-events-none'

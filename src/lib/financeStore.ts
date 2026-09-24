@@ -109,7 +109,7 @@ function scheduleFinanceHydrationRetry(): void {
 }
 
 function hydrateFinanceFromServer(): void {
-  if (!import.meta.env.PROD || financeServerHydrationStarted) return;
+  if (financeServerHydrationStarted) return;
   financeServerHydrationStarted = true;
 
   Promise.all([api.finance.getInvoices(), api.finance.getExpenses()]).then(([invoiceRes, expenseRes]) => {

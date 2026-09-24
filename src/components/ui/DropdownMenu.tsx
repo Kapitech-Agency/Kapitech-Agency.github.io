@@ -80,7 +80,7 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
                       ? 'text-red-400 hover:text-red-200 hover:bg-red-950/40'
                       : item.variant === 'warning'
                       ? 'text-amber-400 hover:text-amber-200 hover:bg-amber-950/40'
-                      : 'text-[#94A3B8] hover:text-[#F8FAFC] hover:bg-[#1B1E2B]'
+                      : 'text-[#94A3B8] hover:text-[var(--k-text)] hover:bg-[#1B1E2B]'
                   }`}
                 >
                   <div className="flex items-center gap-2.5 min-w-0">

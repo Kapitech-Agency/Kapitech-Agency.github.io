@@ -428,8 +428,8 @@ export const AdminDashboard: React.FC = () => {
       {/* GLOBAL TOAST NOTIFICATION BANNER                               */}
       {/* ------------------------------------------------------------- */}
       {notification && (
-        <div className="fixed top-20 right-5 z-50 flex items-center gap-2.5 bg-[#111318] text-white px-4 py-3 rounded-lg border border-white/[0.10] shadow-xl">
-          <Activity size={15} className="text-[#E50914]" />
+        <div className="fixed top-20 right-5 z-50 flex items-center gap-2.5 bg-[var(--k-surface)] text-white px-4 py-3 rounded-lg border border-white/[0.10] shadow-xl">
+          <Activity size={15} className="text-[var(--k-red)]" />
           <span className="text-xs font-mono font-medium">{notification}</span>
         </div>
       )}
@@ -440,7 +440,7 @@ export const AdminDashboard: React.FC = () => {
       <div className="ams-dashboard-header flex flex-col xl:flex-row xl:items-center justify-between gap-4 pb-4 border-b border-white/[0.07]">
         <div>
           <div className="flex items-center gap-2.5 flex-wrap">
-            <h1 className="text-2xl sm:text-[25px] font-heading font-bold text-[#F8FAFC] tracking-[-0.025em]">
+            <h1 className="text-2xl sm:text-[25px] font-heading font-bold text-[var(--k-text)] tracking-[-0.025em]">
               {language === 'id' ? 'Ikhtisar Eksekutif Agensi' : 'Executive Agency Overview'}
             </h1>
             <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-emerald-500/[0.07] border border-emerald-500/15 text-[10px] font-mono font-semibold text-emerald-400">
@@ -448,7 +448,7 @@ export const AdminDashboard: React.FC = () => {
               <span>System live</span>
             </div>
           </div>
-          <p className="text-xs sm:text-sm text-[#8A94A6] mt-1 font-sans">
+          <p className="text-xs sm:text-sm text-[var(--k-text-secondary)] mt-1 font-sans">
             {language === 'id' 
               ? 'Pantau metrik pendapatan multi-mata uang, pipeline deal, eksekusi sprint proyek, dan kesehatan finansial real-time.' 
               : 'Real-time multi-currency revenue metrics, CRM pipeline valuation, sprint deliverables, and agency financial health.'}
@@ -459,29 +459,29 @@ export const AdminDashboard: React.FC = () => {
         <div className="ams-dashboard-actions flex items-center gap-2 overflow-x-auto pb-1">
 
           {/* Authenticated role context is server-authoritative. */}
-          <div className="h-9 px-2.5 rounded-lg bg-[#111318] border border-white/[0.07] text-[11px] font-mono text-[#8A94A6] flex items-center gap-2 shrink-0" title="Role is controlled by authenticated RBAC policy">
-            <ShieldCheck size={13} className="text-[#E50914]" />\n            <span className="text-white font-semibold">{roleMeta?.title || ROLE_DEFINITIONS[rbacRole]?.title || "Authenticated role"}</span>
+          <div className="h-9 px-2.5 rounded-lg bg-[var(--k-surface)] border border-white/[0.07] text-[11px] font-mono text-[var(--k-text-secondary)] flex items-center gap-2 shrink-0" title="Role is controlled by authenticated RBAC policy">
+            <ShieldCheck size={13} className="text-[var(--k-red)]" />\n            <span className="text-white font-semibold">{roleMeta?.title || ROLE_DEFINITIONS[rbacRole]?.title || "Authenticated role"}</span>
           </div>
           
           {/* Currency Switcher Pill */}
           <button
             onClick={handleToggleCurrency}
-            className="h-9 px-3 rounded-lg bg-[#111318] hover:bg-[#181B22] border border-white/[0.07] hover:border-white/15 text-xs font-mono font-semibold text-[#F8FAFC] transition-all flex items-center gap-1.5 shrink-0"
+            className="h-9 px-3 rounded-lg bg-[var(--k-surface)] hover:bg-[var(--k-surface-raised)] border border-white/[0.07] hover:border-white/15 text-xs font-mono font-semibold text-[var(--k-text)] transition-all flex items-center gap-1.5 shrink-0"
             title="Switch Currency IDR / USD"
           >
-            <DollarSign size={13} className="text-[#E50914]" />
+            <DollarSign size={13} className="text-[var(--k-red)]" />
             <span>{currency}</span>
-            <span className="text-[10px] text-[#8A94A6] font-normal">({currency === 'IDR' ? 'USD' : 'IDR'})</span>
+            <span className="text-[10px] text-[var(--k-text-secondary)] font-normal">({currency === 'IDR' ? 'USD' : 'IDR'})</span>
           </button>
 
           {/* Timeframe Selector */}
-          <div className="flex items-center rounded-lg bg-[#111318] p-0.5 border border-white/[0.07] text-[11px] font-mono shrink-0">
+          <div className="flex items-center rounded-lg bg-[var(--k-surface)] p-0.5 border border-white/[0.07] text-[11px] font-mono shrink-0">
             <button
               onClick={() => setPeriodFilter('thisMonth')}
               className={`px-2.5 py-1 rounded-md transition-all ${
                 periodFilter === 'thisMonth' 
-                  ? 'bg-[#E50914] text-white font-bold shadow-sm' 
-                  : 'text-[#8A94A6] hover:text-white'
+                  ? 'bg-[var(--k-red)] text-white font-bold shadow-sm' 
+                  : 'text-[var(--k-text-secondary)] hover:text-white'
               }`}
             >
               {language === 'id' ? 'Bulan Ini' : 'This Month'}
@@ -490,8 +490,8 @@ export const AdminDashboard: React.FC = () => {
               onClick={() => setPeriodFilter('q3')}
               className={`px-2.5 py-1 rounded-lg transition-all ${
                 periodFilter === 'q3' 
-                  ? 'bg-[#E50914] text-white font-bold shadow-sm' 
-                  : 'text-[#8A94A6] hover:text-white'
+                  ? 'bg-[var(--k-red)] text-white font-bold shadow-sm' 
+                  : 'text-[var(--k-text-secondary)] hover:text-white'
               }`}
             >
               Q3 2026
@@ -500,8 +500,8 @@ export const AdminDashboard: React.FC = () => {
               onClick={() => setPeriodFilter('ytd')}
               className={`px-2.5 py-1 rounded-lg transition-all ${
                 periodFilter === 'ytd' 
-                  ? 'bg-[#E50914] text-white font-bold shadow-sm' 
-                  : 'text-[#8A94A6] hover:text-white'
+                  ? 'bg-[var(--k-red)] text-white font-bold shadow-sm' 
+                  : 'text-[var(--k-text-secondary)] hover:text-white'
               }`}
             >
               YTD
@@ -511,7 +511,7 @@ export const AdminDashboard: React.FC = () => {
           {/* Export CSV Summary */}
           <button
             onClick={handleExportSummaryCSV}
-            className="h-9 px-3 rounded-lg bg-[#111318] hover:bg-[#181B22] border border-white/[0.07] hover:border-white/15 text-xs font-sans font-semibold text-[#F8FAFC] transition-all flex items-center gap-1.5 shrink-0"
+            className="h-9 px-3 rounded-lg bg-[var(--k-surface)] hover:bg-[var(--k-surface-raised)] border border-white/[0.07] hover:border-white/15 text-xs font-sans font-semibold text-[var(--k-text)] transition-all flex items-center gap-1.5 shrink-0"
             title="Download CSV Executive Summary"
           >
             <Download size={13} className="text-cyan-400" />
@@ -522,7 +522,7 @@ export const AdminDashboard: React.FC = () => {
           {isAllowed('crm') && (
             <button
               onClick={() => setIsAddLeadModalOpen(true)}
-              className="h-9 px-3 rounded-xl bg-[#111318] hover:bg-[#181B22] border border-white/[0.07]  text-xs font-sans font-semibold text-[#F8FAFC] transition-all flex items-center gap-1.5 shadow-sm"
+              className="h-9 px-3 rounded-xl bg-[var(--k-surface)] hover:bg-[var(--k-surface-raised)] border border-white/[0.07]  text-xs font-sans font-semibold text-[var(--k-text)] transition-all flex items-center gap-1.5 shadow-sm"
             >
               <Plus size={14} className="text-emerald-400" />
               <span>{language === 'id' ? 'Tambah Lead' : 'Add Lead'}</span>
@@ -533,7 +533,7 @@ export const AdminDashboard: React.FC = () => {
           {isAllowed('invoicing') && (
             <button
               onClick={() => setIsNewInvoiceModalOpen(true)}
-              className="h-9 px-3 rounded-xl bg-[#111318] hover:bg-[#181B22] border border-white/[0.07]  text-xs font-sans font-semibold text-[#F8FAFC] transition-all flex items-center gap-1.5 shadow-sm"
+              className="h-9 px-3 rounded-xl bg-[var(--k-surface)] hover:bg-[var(--k-surface-raised)] border border-white/[0.07]  text-xs font-sans font-semibold text-[var(--k-text)] transition-all flex items-center gap-1.5 shadow-sm"
             >
               <Plus size={14} className="text-purple-400" />
               <span>{language === 'id' ? 'Buat Invoice' : 'New Invoice'}</span>
@@ -544,7 +544,7 @@ export const AdminDashboard: React.FC = () => {
           {isAllowed('projects') && (
             <button
               onClick={() => setIsNewProjectModalOpen(true)}
-              className="h-9 px-3.5 rounded-xl bg-[#E50914] hover:bg-[#FF1E27] text-white text-xs font-sans font-semibold transition-all flex items-center gap-1.5 shadow-[0_0_16px_rgba(229,9,20,0.3)]"
+              className="h-9 px-3.5 rounded-xl bg-[var(--k-red)] hover:bg-[var(--k-red-hover)] text-white text-xs font-sans font-semibold transition-all flex items-center gap-1.5 shadow-[0_0_16px_rgba(229,9,20,0.3)]"
             >
               <Plus size={14} />
               <span>{language === 'id' ? 'Mulai Proyek' : 'New Project'}</span>
@@ -559,9 +559,9 @@ export const AdminDashboard: React.FC = () => {
       <div className="ams-kpi-grid grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-5">
         
         {/* Metric Card 1: Gross Realized Revenue */}
-        <div className="p-5 rounded-xl bg-[#111318] border border-white/[0.07]  flex flex-col justify-between group transition-colors duration-150">
+        <div className="p-5 rounded-xl bg-[var(--k-surface)] border border-white/[0.07]  flex flex-col justify-between group transition-colors duration-150">
           <div>
-            <div className="flex items-center justify-between text-[#8A94A6] mb-3">
+            <div className="flex items-center justify-between text-[var(--k-text-secondary)] mb-3">
               <span className="text-[11px] font-mono uppercase tracking-wider font-semibold">
                 {language === 'id' ? 'Total Pendapatan Realisasi' : 'Gross Realized Revenue'}
               </span>
@@ -570,12 +570,12 @@ export const AdminDashboard: React.FC = () => {
               </div>
             </div>
             
-            <div className="text-2xl lg:text-[28px] font-mono font-bold text-[#F8FAFC] tracking-tight leading-none">
+            <div className="text-2xl lg:text-[28px] font-mono font-bold text-[var(--k-text)] tracking-tight leading-none">
               {formatCurrency(finMetrics.totalPaidRevenue, currency)}
             </div>
 
             {/* Dual Currency Sub-Display */}
-            <div className="text-[11px] font-mono text-[#8A94A6] mt-1.5">
+            <div className="text-[11px] font-mono text-[var(--k-text-secondary)] mt-1.5">
               ≈ {currency === 'IDR' 
                   ? formatAmount(finMetrics.totalPaidRevenue, 'USD')
                   : formatIDR(finMetrics.totalPaidRevenue > 0 ? finMetrics.totalPaidRevenue : 0)}
@@ -587,7 +587,7 @@ export const AdminDashboard: React.FC = () => {
               <TrendingUp size={12} />
               Server calculated
             </span>
-            <span className="text-[#8A94A6]">
+            <span className="text-[var(--k-text-secondary)]">
               {language === 'id' ? 'Piutang: ' : 'Receivables: '}
               <strong className="text-white font-semibold">
                 {formatCurrency(finMetrics.totalOutstanding, currency)}
@@ -597,22 +597,22 @@ export const AdminDashboard: React.FC = () => {
         </div>
 
         {/* Metric Card 2: Active CRM Deals & Pipeline */}
-        <div className="p-5 rounded-xl bg-[#111318] border border-white/[0.07]  flex flex-col justify-between group transition-colors duration-150">
+        <div className="p-5 rounded-xl bg-[var(--k-surface)] border border-white/[0.07]  flex flex-col justify-between group transition-colors duration-150">
           <div>
-            <div className="flex items-center justify-between text-[#8A94A6] mb-3">
+            <div className="flex items-center justify-between text-[var(--k-text-secondary)] mb-3">
               <span className="text-[11px] font-mono uppercase tracking-wider font-semibold">
                 {language === 'id' ? 'Pipeline Deal Aktif' : 'Active CRM Pipeline'}
               </span>
-              <div className="w-8 h-8 rounded-lg bg-[#E50914]/10 border border-[#E50914]/25 text-[#FF1E27] flex items-center justify-center">
+              <div className="w-8 h-8 rounded-lg bg-[var(--k-red)]/10 border border-[var(--k-red)]/25 text-[var(--k-red-hover)] flex items-center justify-center">
                 <Kanban size={16} />
               </div>
             </div>
 
-            <div className="text-2xl lg:text-[28px] font-mono font-bold text-[#F8FAFC] tracking-tight leading-none">
+            <div className="text-2xl lg:text-[28px] font-mono font-bold text-[var(--k-text)] tracking-tight leading-none">
               {formatCurrency(pipelineMetrics.totalPipelineValue, currency)}
             </div>
 
-            <div className="text-[11px] font-mono text-[#8A94A6] mt-1.5">
+            <div className="text-[11px] font-mono text-[var(--k-text-secondary)] mt-1.5">
               ≈ {currency === 'IDR'
                   ? formatAmount(pipelineMetrics.totalPipelineValue > 0 ? pipelineMetrics.totalPipelineValue : 0, 'USD')
                   : formatIDR(pipelineMetrics.totalPipelineValue > 0 ? pipelineMetrics.totalPipelineValue : 0)}
@@ -620,10 +620,10 @@ export const AdminDashboard: React.FC = () => {
           </div>
 
           <div className="mt-4 pt-3 border-t border-white/[0.07] flex items-center justify-between text-[11px] font-mono">
-            <span className="text-[#FF1E27] font-semibold flex items-center gap-1">
+            <span className="text-[var(--k-red-hover)] font-semibold flex items-center gap-1">
               {pipelineMetrics.activeLeadsCount} {language === 'id' ? 'Deal Terkualifikasi' : 'Qualified Deals'}
             </span>
-            <span className="text-[#8A94A6]">
+            <span className="text-[var(--k-text-secondary)]">
               {language === 'id' ? 'Rata-rata: ' : 'Avg: '}
               <strong className="text-white font-semibold">
                 {formatCurrency(pipelineMetrics.avgDealSize, currency)}
@@ -633,9 +633,9 @@ export const AdminDashboard: React.FC = () => {
         </div>
 
         {/* Metric Card 3: Conversion & Win Rate */}
-        <div className="p-5 rounded-xl bg-[#111318] border border-white/[0.07]  flex flex-col justify-between group transition-colors duration-150">
+        <div className="p-5 rounded-xl bg-[var(--k-surface)] border border-white/[0.07]  flex flex-col justify-between group transition-colors duration-150">
           <div>
-            <div className="flex items-center justify-between text-[#8A94A6] mb-3">
+            <div className="flex items-center justify-between text-[var(--k-text-secondary)] mb-3">
               <span className="text-[11px] font-mono uppercase tracking-wider font-semibold">
                 {language === 'id' ? 'Rasio Konversi & Kemenangan' : 'Conversion & Win Rate'}
               </span>
@@ -644,7 +644,7 @@ export const AdminDashboard: React.FC = () => {
               </div>
             </div>
 
-            <div className="text-2xl lg:text-[28px] font-mono font-bold text-[#F8FAFC] tracking-tight leading-none">
+            <div className="text-2xl lg:text-[28px] font-mono font-bold text-[var(--k-text)] tracking-tight leading-none">
               {pipelineMetrics.conversionRate}%
             </div>
 
@@ -658,7 +658,7 @@ export const AdminDashboard: React.FC = () => {
             <span className="text-violet-400 font-semibold">
               {pipelineMetrics.wonLeadsCount} {language === 'id' ? 'Won' : 'Won Deals'}
             </span>
-            <span className="text-[#8A94A6]">
+            <span className="text-[var(--k-text-secondary)]">
               {language === 'id' ? 'Margin Bersih: ' : 'Net Margin: '}
               <strong className="text-white font-semibold">
                 {finMetrics.netMarginPercent}%
@@ -668,9 +668,9 @@ export const AdminDashboard: React.FC = () => {
         </div>
 
         {/* Metric Card 4: Active Client Projects & Delivery SLA */}
-        <div className="p-5 rounded-xl bg-[#111318] border border-white/[0.07]  flex flex-col justify-between group transition-colors duration-150">
+        <div className="p-5 rounded-xl bg-[var(--k-surface)] border border-white/[0.07]  flex flex-col justify-between group transition-colors duration-150">
           <div>
-            <div className="flex items-center justify-between text-[#8A94A6] mb-3">
+            <div className="flex items-center justify-between text-[var(--k-text-secondary)] mb-3">
               <span className="text-[11px] font-mono uppercase tracking-wider font-semibold">
                 {language === 'id' ? 'Proyek Aktif & SLA Rilis' : 'Active Projects & Delivery SLA'}
               </span>
@@ -679,7 +679,7 @@ export const AdminDashboard: React.FC = () => {
               </div>
             </div>
 
-            <div className="text-2xl lg:text-[28px] font-mono font-bold text-[#F8FAFC] tracking-tight leading-none">
+            <div className="text-2xl lg:text-[28px] font-mono font-bold text-[var(--k-text)] tracking-tight leading-none">
               {projectMetrics.total} {language === 'id' ? 'Sprint' : 'Sprints'}
             </div>
 
@@ -693,7 +693,7 @@ export const AdminDashboard: React.FC = () => {
             <span className="text-cyan-400 font-semibold">
               {projectMetrics.inProgress} {language === 'id' ? 'Dalam Eksekusi' : 'In Production'}
             </span>
-            <span className="text-[#8A94A6]">
+            <span className="text-[var(--k-text-secondary)]">
               {language === 'id' ? 'Kendala Kritis: ' : 'Roadblocks: '}
               <strong className="text-emerald-400 font-semibold">0</strong>
             </span>
@@ -738,20 +738,20 @@ export const AdminDashboard: React.FC = () => {
         <div className="xl:col-span-8 space-y-6">
           
           {/* Section: Priority Active Projects */}
-          <div className="p-5 sm:p-6 rounded-xl bg-[#111318] border border-white/[0.07] space-y-4">
+          <div className="p-5 sm:p-6 rounded-xl bg-[var(--k-surface)] border border-white/[0.07] space-y-4">
             <div className="flex items-center justify-between pb-3 border-b border-white/[0.07]">
               <div>
                 <h3 className="text-base font-heading font-bold text-white tracking-tight flex items-center gap-2">
                   <Layers size={17} className="text-cyan-400" />
                   <span>{language === 'id' ? 'Proyek Klien Prioritas & Status Sprint' : 'Priority Active Projects & Deliverables'}</span>
                 </h3>
-                <p className="text-xs text-[#8A94A6] mt-0.5 font-sans">
+                <p className="text-xs text-[var(--k-text-secondary)] mt-0.5 font-sans">
                   {language === 'id' ? 'Status delivery SLA, milestone sprint aktif, dan anggaran terkelola.' : 'Current sprint health, milestone delivery progress, and allocated budgets.'}
                 </p>
               </div>
               <button
                 onClick={() => navigate('/admin/projects')}
-                className="text-xs font-mono text-[#E50914] hover:text-[#FF1E27] font-semibold flex items-center gap-1"
+                className="text-xs font-mono text-[var(--k-red)] hover:text-[var(--k-red-hover)] font-semibold flex items-center gap-1"
               >
                 <span>{language === 'id' ? 'Task Board' : 'View All'}</span>
                 <ChevronRight size={13} />
@@ -763,7 +763,7 @@ export const AdminDashboard: React.FC = () => {
                 <div
                   key={proj.id}
                   onClick={() => navigate('/admin/projects')}
-                  className="p-4 rounded-xl bg-[#181B22] border border-white/[0.07]  transition-all cursor-pointer group flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+                  className="p-4 rounded-xl bg-[var(--k-surface-raised)] border border-white/[0.07]  transition-all cursor-pointer group flex flex-col sm:flex-row sm:items-center justify-between gap-3"
                 >
                   <div className="space-y-1">
                     <div className="flex items-center gap-2 flex-wrap">
@@ -774,20 +774,20 @@ export const AdminDashboard: React.FC = () => {
                         {proj.serviceCategory}
                       </span>
                     </div>
-                    <p className="text-xs text-[#8A94A6]">
-                      {proj.clientCompany || proj.clientName} • {language === 'id' ? 'Lead' : 'Lead'}: <strong className="text-[#F8FAFC]">{proj.teamLead}</strong>
+                    <p className="text-xs text-[var(--k-text-secondary)]">
+                      {proj.clientCompany || proj.clientName} • {language === 'id' ? 'Lead' : 'Lead'}: <strong className="text-[var(--k-text)]">{proj.teamLead}</strong>
                     </p>
                   </div>
 
                   <div className="flex items-center gap-4 sm:shrink-0">
                     <div className="w-28 sm:w-36 space-y-1">
-                      <div className="flex justify-between text-[10px] font-mono text-[#8A94A6]">
+                      <div className="flex justify-between text-[10px] font-mono text-[var(--k-text-secondary)]">
                         <span>Progress</span>
                         <span className="text-white font-bold">{proj.progressPercent}%</span>
                       </div>
                       <div className="h-1.5 w-full bg-white/[0.07] rounded-full overflow-hidden">
                         <div 
-                          className="h-full bg-[#E50914] rounded-full transition-all duration-500" 
+                          className="h-full bg-[var(--k-red)] rounded-full transition-all duration-500" 
                           style={{ width: `${proj.progressPercent}%` }} 
                         />
                       </div>
@@ -808,20 +808,20 @@ export const AdminDashboard: React.FC = () => {
           </div>
 
           {/* Section: Recent Invoices & Financial Ledger */}
-          <div className="p-5 sm:p-6 rounded-xl bg-[#111318] border border-white/[0.07] space-y-4">
+          <div className="p-5 sm:p-6 rounded-xl bg-[var(--k-surface)] border border-white/[0.07] space-y-4">
             <div className="flex items-center justify-between pb-3 border-b border-white/[0.07]">
               <div>
                 <h3 className="text-base font-heading font-bold text-white tracking-tight flex items-center gap-2">
                   <Receipt size={17} className="text-emerald-400" />
                   <span>{language === 'id' ? 'Buku Besar Invoice & Penerimaan' : 'Recent Invoices & Cashflow Ledger'}</span>
                 </h3>
-                <p className="text-xs text-[#8A94A6] mt-0.5 font-sans">
+                <p className="text-xs text-[var(--k-text-secondary)] mt-0.5 font-sans">
                   {language === 'id' ? 'Status penagihan, pembayaran klien, dan termin transfer bank.' : 'Realized billing records, payment verification, and wire transfer terms.'}
                 </p>
               </div>
               <button
                 onClick={() => navigate('/admin/invoicing')}
-                className="text-xs font-mono text-[#E50914] hover:text-[#FF1E27] font-semibold flex items-center gap-1"
+                className="text-xs font-mono text-[var(--k-red)] hover:text-[var(--k-red-hover)] font-semibold flex items-center gap-1"
               >
                 <span>{language === 'id' ? 'Semua Invoice' : 'View Financials'}</span>
                 <ChevronRight size={13} />
@@ -831,7 +831,7 @@ export const AdminDashboard: React.FC = () => {
             <div className="overflow-x-auto custom-scrollbar">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="border-b border-white/[0.07] text-[11px] font-mono text-[#8A94A6]">
+                  <tr className="border-b border-white/[0.07] text-[11px] font-mono text-[var(--k-text-secondary)]">
                     <th className="pb-2.5 font-semibold">INVOICE #</th>
                     <th className="pb-2.5 font-semibold">KLIEN / PERUSAHAAN</th>
                     <th className="pb-2.5 font-semibold">TOTAL TAGIHAN</th>
@@ -848,18 +848,18 @@ export const AdminDashboard: React.FC = () => {
                       <tr 
                         key={inv.id}
                         onClick={() => navigate('/admin/invoicing')}
-                        className="hover:bg-[#181B22]/60 cursor-pointer transition-colors"
+                        className="hover:bg-[var(--k-surface-raised)]/60 cursor-pointer transition-colors"
                       >
                         <td className="py-3 text-white font-bold">
                           {inv.invoiceNumber}
                         </td>
-                        <td className="py-3 text-[#8A94A6]">
+                        <td className="py-3 text-[var(--k-text-secondary)]">
                           <div className="text-white font-semibold">{inv.clientCompany}</div>
-                          <div className="text-[10px] text-[#8A94A6]">{inv.clientName}</div>
+                          <div className="text-[10px] text-[var(--k-text-secondary)]">{inv.clientName}</div>
                         </td>
                         <td className="py-3 text-white font-bold">
                           <div>{formatCurrency(inv.total, currency)}</div>
-                          <div className="text-[10px] text-[#8A94A6]">
+                          <div className="text-[10px] text-[var(--k-text-secondary)]">
                             {currency === 'IDR' ? formatAmount(inv.total, 'USD') : formatIDR(inv.total)}
                           </div>
                         </td>
@@ -875,7 +875,7 @@ export const AdminDashboard: React.FC = () => {
                             {inv.status.toUpperCase()}
                           </span>
                         </td>
-                        <td className="py-3 text-right text-[#8A94A6]">
+                        <td className="py-3 text-right text-[var(--k-text-secondary)]">
                           {inv.dueDate}
                         </td>
                       </tr>
@@ -891,7 +891,7 @@ export const AdminDashboard: React.FC = () => {
         <div className="xl:col-span-4 space-y-6">
           
           {/* Widget 1: Real-Time Agency Activity Feed */}
-          <div className="p-5 sm:p-6 rounded-xl bg-[#111318] border border-white/[0.07] space-y-4">
+          <div className="p-5 sm:p-6 rounded-xl bg-[var(--k-surface)] border border-white/[0.07] space-y-4">
             <div className="flex items-center justify-between pb-3 border-b border-white/[0.07]">
               <div className="flex items-center gap-2">
                 <Activity size={16} className="text-emerald-400" />
@@ -902,11 +902,11 @@ export const AdminDashboard: React.FC = () => {
             </div>
 
             {/* Filter Tabs */}
-            <div className="flex items-center gap-1 rounded-xl bg-[#181B22] p-0.5 border border-white/[0.07] text-[10px] font-mono">
+            <div className="flex items-center gap-1 rounded-xl bg-[var(--k-surface-raised)] p-0.5 border border-white/[0.07] text-[10px] font-mono">
               <button
                 onClick={() => setActivityTab('all')}
                 className={`flex-1 py-1 rounded-lg transition-all ${
-                  activityTab === 'all' ? 'bg-[#E50914] text-white font-bold' : 'text-[#8A94A6] hover:text-white'
+                  activityTab === 'all' ? 'bg-[var(--k-red)] text-white font-bold' : 'text-[var(--k-text-secondary)] hover:text-white'
                 }`}
               >
                 All
@@ -914,7 +914,7 @@ export const AdminDashboard: React.FC = () => {
               <button
                 onClick={() => setActivityTab('deals')}
                 className={`flex-1 py-1 rounded-lg transition-all ${
-                  activityTab === 'deals' ? 'bg-[#E50914] text-white font-bold' : 'text-[#8A94A6] hover:text-white'
+                  activityTab === 'deals' ? 'bg-[var(--k-red)] text-white font-bold' : 'text-[var(--k-text-secondary)] hover:text-white'
                 }`}
               >
                 Deals
@@ -922,7 +922,7 @@ export const AdminDashboard: React.FC = () => {
               <button
                 onClick={() => setActivityTab('invoices')}
                 className={`flex-1 py-1 rounded-lg transition-all ${
-                  activityTab === 'invoices' ? 'bg-[#E50914] text-white font-bold' : 'text-[#8A94A6] hover:text-white'
+                  activityTab === 'invoices' ? 'bg-[var(--k-red)] text-white font-bold' : 'text-[var(--k-text-secondary)] hover:text-white'
                 }`}
               >
                 Invoices
@@ -930,7 +930,7 @@ export const AdminDashboard: React.FC = () => {
               <button
                 onClick={() => setActivityTab('projects')}
                 className={`flex-1 py-1 rounded-lg transition-all ${
-                  activityTab === 'projects' ? 'bg-[#E50914] text-white font-bold' : 'text-[#8A94A6] hover:text-white'
+                  activityTab === 'projects' ? 'bg-[var(--k-red)] text-white font-bold' : 'text-[var(--k-text-secondary)] hover:text-white'
                 }`}
               >
                 Projects
@@ -940,24 +940,24 @@ export const AdminDashboard: React.FC = () => {
             {/* Stream List */}
             <div className="space-y-3 max-h-[340px] overflow-y-auto custom-scrollbar pr-1">
               {activityFeed.length === 0 ? (
-                <div className="text-center py-6 text-xs text-[#8A94A6] font-mono">
+                <div className="text-center py-6 text-xs text-[var(--k-text-secondary)] font-mono">
                   {language === 'id' ? 'Belum ada aktivitas tercatat.' : 'No recent activity recorded.'}
                 </div>
               ) : (
                 activityFeed.map((item) => (
                   <div
                     key={item.id}
-                    className="p-3 rounded-xl bg-[#181B22] border border-white/[0.05] hover:border-white/15 transition-all space-y-1"
+                    className="p-3 rounded-xl bg-[var(--k-surface-raised)] border border-white/[0.05] hover:border-white/15 transition-all space-y-1"
                   >
                     <div className="flex items-center justify-between text-[11px]">
                       <span className="font-semibold text-white truncate max-w-[200px]">
                         {item.title}
                       </span>
-                      <span className="text-[10px] font-mono text-[#8A94A6] shrink-0">
+                      <span className="text-[10px] font-mono text-[var(--k-text-secondary)] shrink-0">
                         {item.time}
                       </span>
                     </div>
-                    <p className="text-[11px] text-[#8A94A6] truncate">
+                    <p className="text-[11px] text-[var(--k-text-secondary)] truncate">
                       {item.desc}
                     </p>
                   </div>
@@ -967,7 +967,7 @@ export const AdminDashboard: React.FC = () => {
           </div>
 
           {/* Widget 2: Protected Inbox Inbound Inquiries Triage */}
-          <div className="p-5 sm:p-6 rounded-xl bg-[#111318] border border-white/[0.07] space-y-4">
+          <div className="p-5 sm:p-6 rounded-xl bg-[var(--k-surface)] border border-white/[0.07] space-y-4">
             <div className="flex items-center justify-between pb-3 border-b border-white/[0.07]">
               <div className="flex items-center gap-2">
                 <Inbox size={16} className="text-purple-400" />
@@ -977,7 +977,7 @@ export const AdminDashboard: React.FC = () => {
               </div>
               <button
                 onClick={() => navigate('/admin/inbox')}
-                className="text-xs font-mono text-[#E50914] hover:text-[#FF1E27] font-semibold flex items-center gap-1"
+                className="text-xs font-mono text-[var(--k-red)] hover:text-[var(--k-red-hover)] font-semibold flex items-center gap-1"
               >
                 <span>{language === 'id' ? 'Buka Inbox' : 'Open Inbox'}</span>
                 <ChevronRight size={13} />
@@ -986,14 +986,14 @@ export const AdminDashboard: React.FC = () => {
 
             <div className="space-y-3">
               {inboxSubmissions.length === 0 ? (
-                <div className="p-4 rounded-xl bg-[#181B22] text-center text-xs font-mono text-[#8A94A6]">
+                <div className="p-4 rounded-xl bg-[var(--k-surface-raised)] text-center text-xs font-mono text-[var(--k-text-secondary)]">
                   {language === 'id' ? 'Semua inquiry situs publik telah ditindaklanjuti.' : 'All public site inquiries have been triaged.'}
                 </div>
               ) : (
                 inboxSubmissions.slice(0, 3).map((sub) => (
                   <div
                     key={sub.id}
-                    className="p-3 rounded-xl bg-[#181B22] border border-white/[0.05] hover:border-white/15 transition-all space-y-2"
+                    className="p-3 rounded-xl bg-[var(--k-surface-raised)] border border-white/[0.05] hover:border-white/15 transition-all space-y-2"
                   >
                     <div className="flex items-center justify-between text-xs">
                       <span className="font-semibold text-white">
@@ -1004,12 +1004,12 @@ export const AdminDashboard: React.FC = () => {
                       </span>
                     </div>
 
-                    <p className="text-[11px] text-[#8A94A6] line-clamp-2">
+                    <p className="text-[11px] text-[var(--k-text-secondary)] line-clamp-2">
                       {sub.message || 'New inbound inquiry from public contact form.'}
                     </p>
 
                     <div className="flex items-center justify-between pt-1">
-                      <span className="text-[10px] font-mono text-[#8A94A6]">
+                      <span className="text-[10px] font-mono text-[var(--k-text-secondary)]">
                         {sub.services?.join(', ') || 'AI / Cloud'}
                       </span>
                     </div>
@@ -1020,8 +1020,8 @@ export const AdminDashboard: React.FC = () => {
           </div>
 
           {/* Widget 3: Agency SLA & Infrastructure Security Health */}
-          <div className="p-5 rounded-xl bg-[#111318] border border-white/[0.07] space-y-3 font-mono text-xs">
-            <div className="flex items-center justify-between text-[#8A94A6] pb-2 border-b border-white/[0.07]">
+          <div className="p-5 rounded-xl bg-[var(--k-surface)] border border-white/[0.07] space-y-3 font-mono text-xs">
+            <div className="flex items-center justify-between text-[var(--k-text-secondary)] pb-2 border-b border-white/[0.07]">
               <span className="font-semibold text-white flex items-center gap-1.5">
                 <Cpu size={14} className="text-cyan-400" />
                 INFRASTRUCTURE & SLA
@@ -1031,19 +1031,19 @@ export const AdminDashboard: React.FC = () => {
 
             <div className="space-y-2 text-[11px]">
               <div className="flex justify-between">
-                <span className="text-[#8A94A6]">Core Domain:</span>
+                <span className="text-[var(--k-text-secondary)]">Core Domain:</span>
                 <span className="text-white font-semibold">https://kapitech.id (Edge CDN)</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[#8A94A6]">AMS Domain:</span>
+                <span className="text-[var(--k-text-secondary)]">AMS Domain:</span>
                 <span className="text-white font-semibold">https://ams.kapitech.id (Cloud Run)</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[#8A94A6]">RBAC Policy:</span>
+                <span className="text-[var(--k-text-secondary)]">RBAC Policy:</span>
                 <span className="text-emerald-400 font-semibold">Zero-Trust Enforced</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-[#8A94A6]">Security Vulnerabilities:</span>
+                <span className="text-[var(--k-text-secondary)]">Security Vulnerabilities:</span>
                 <span className="text-emerald-400 font-bold">0 High / 0 Critical</span>
               </div>
             </div>
@@ -1059,14 +1059,14 @@ export const AdminDashboard: React.FC = () => {
       {/* MODAL 1: ADD CRM LEAD */}
       {isAddLeadModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
-          <div className="w-full max-w-md bg-[#111318] border border-white/20 rounded-2xl p-6 shadow-2xl space-y-5 animate-in zoom-in-95 duration-200">
+          <div className="w-full max-w-md bg-[var(--k-surface)] border border-white/20 rounded-2xl p-6 shadow-2xl space-y-5 animate-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between pb-3 border-b border-white/[0.07]">
               <h3 className="text-lg font-heading font-bold text-white">
                 {language === 'id' ? 'Tambah Lead CRM Baru' : 'Add New CRM Lead'}
               </h3>
               <button 
                 onClick={() => setIsAddLeadModalOpen(false)}
-                className="text-[#8A94A6] hover:text-white transition-colors"
+                className="text-[var(--k-text-secondary)] hover:text-white transition-colors"
               >
                 <X size={18} />
               </button>
@@ -1074,47 +1074,47 @@ export const AdminDashboard: React.FC = () => {
 
             <form onSubmit={handleCreateLead} className="space-y-4 text-xs font-sans">
               <div>
-                <label className="block text-[#8A94A6] font-mono mb-1">Client Contact Name *</label>
+                <label className="block text-[var(--k-text-secondary)] font-mono mb-1">Client Contact Name *</label>
                 <input
                   type="text"
                   required
                   value={newLeadName}
                   onChange={(e) => setNewLeadName(e.target.value)}
                   placeholder="e.g. Irwan Prasetyo"
-                  className="w-full h-10 px-3 bg-[#181B22] border border-white/[0.07] focus:border-[#E50914] text-white rounded-xl outline-none"
+                  className="w-full h-10 px-3 bg-[var(--k-surface-raised)] border border-white/[0.07] focus:border-[var(--k-red)] text-white rounded-xl outline-none"
                 />
               </div>
 
               <div>
-                <label className="block text-[#8A94A6] font-mono mb-1">Company / Enterprise *</label>
+                <label className="block text-[var(--k-text-secondary)] font-mono mb-1">Company / Enterprise *</label>
                 <input
                   type="text"
                   required
                   value={newLeadCompany}
                   onChange={(e) => setNewLeadCompany(e.target.value)}
                   placeholder="e.g. PT Bank Central Asia"
-                  className="w-full h-10 px-3 bg-[#181B22] border border-white/[0.07] focus:border-[#E50914] text-white rounded-xl outline-none"
+                  className="w-full h-10 px-3 bg-[var(--k-surface-raised)] border border-white/[0.07] focus:border-[var(--k-red)] text-white rounded-xl outline-none"
                 />
               </div>
 
               <div>
-                <label className="block text-[#8A94A6] font-mono mb-1">Work Email</label>
+                <label className="block text-[var(--k-text-secondary)] font-mono mb-1">Work Email</label>
                 <input
                   type="email"
                   value={newLeadEmail}
                   onChange={(e) => setNewLeadEmail(e.target.value)}
                   placeholder="name@company.com"
-                  className="w-full h-10 px-3 bg-[#181B22] border border-white/[0.07] focus:border-[#E50914] text-white rounded-xl outline-none"
+                  className="w-full h-10 px-3 bg-[var(--k-surface-raised)] border border-white/[0.07] focus:border-[var(--k-red)] text-white rounded-xl outline-none"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[#8A94A6] font-mono mb-1">Service Pillar</label>
+                  <label className="block text-[var(--k-text-secondary)] font-mono mb-1">Service Pillar</label>
                   <select
                     value={newLeadPillar}
                     onChange={(e) => setNewLeadPillar(e.target.value as CrmServicePillar)}
-                    className="w-full h-10 px-3 bg-[#181B22] border border-white/[0.07] focus:border-[#E50914] text-white rounded-xl outline-none"
+                    className="w-full h-10 px-3 bg-[var(--k-surface-raised)] border border-white/[0.07] focus:border-[var(--k-red)] text-white rounded-xl outline-none"
                   >
                     <option value="Web Development">Web Development</option>
                     <option value="AI & Cloud Solutions">AI & Cloud Solutions</option>
@@ -1126,12 +1126,12 @@ export const AdminDashboard: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-[#8A94A6] font-mono mb-1">Estimated Value (IDR)</label>
+                  <label className="block text-[var(--k-text-secondary)] font-mono mb-1">Estimated Value (IDR)</label>
                   <input
                     type="number"
                     value={newLeadValue}
                     onChange={(e) => setNewLeadValue(e.target.value)}
-                    className="w-full h-10 px-3 bg-[#181B22] border border-white/[0.07] focus:border-[#E50914] text-white rounded-xl outline-none"
+                    className="w-full h-10 px-3 bg-[var(--k-surface-raised)] border border-white/[0.07] focus:border-[var(--k-red)] text-white rounded-xl outline-none"
                   />
                 </div>
               </div>
@@ -1140,13 +1140,13 @@ export const AdminDashboard: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsAddLeadModalOpen(false)}
-                  className="px-4 py-2 rounded-xl bg-[#181B22] text-[#8A94A6] hover:text-white font-semibold"
+                  className="px-4 py-2 rounded-xl bg-[var(--k-surface-raised)] text-[var(--k-text-secondary)] hover:text-white font-semibold"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-xl bg-[#E50914] hover:bg-[#FF1E27] text-white font-semibold transition-all shadow-[0_0_16px_rgba(229,9,20,0.3)]"
+                  className="px-4 py-2 rounded-xl bg-[var(--k-red)] hover:bg-[var(--k-red-hover)] text-white font-semibold transition-all shadow-[0_0_16px_rgba(229,9,20,0.3)]"
                 >
                   Save Lead
                 </button>
@@ -1159,14 +1159,14 @@ export const AdminDashboard: React.FC = () => {
       {/* MODAL 2: QUICK INVOICE */}
       {isNewInvoiceModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
-          <div className="w-full max-w-md bg-[#111318] border border-white/20 rounded-2xl p-6 shadow-2xl space-y-5 animate-in zoom-in-95 duration-200">
+          <div className="w-full max-w-md bg-[var(--k-surface)] border border-white/20 rounded-2xl p-6 shadow-2xl space-y-5 animate-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between pb-3 border-b border-white/[0.07]">
               <h3 className="text-lg font-heading font-bold text-white">
                 {language === 'id' ? 'Terbitkan Invoice Klien' : 'Create Client Invoice'}
               </h3>
               <button 
                 onClick={() => setIsNewInvoiceModalOpen(false)}
-                className="text-[#8A94A6] hover:text-white transition-colors"
+                className="text-[var(--k-text-secondary)] hover:text-white transition-colors"
               >
                 <X size={18} />
               </button>
@@ -1174,40 +1174,40 @@ export const AdminDashboard: React.FC = () => {
 
             <form onSubmit={handleCreateInvoice} className="space-y-4 text-xs font-sans">
               <div>
-                <label className="block text-[#8A94A6] font-mono mb-1">Client Company *</label>
+                <label className="block text-[var(--k-text-secondary)] font-mono mb-1">Client Company *</label>
                 <input
                   type="text"
                   required
                   value={quickInvCompany}
                   onChange={(e) => setQuickInvCompany(e.target.value)}
                   placeholder="e.g. PT Astra Digital Ventura"
-                  className="w-full h-10 px-3 bg-[#181B22] border border-white/[0.07] focus:border-[#E50914] text-white rounded-xl outline-none"
+                  className="w-full h-10 px-3 bg-[var(--k-surface-raised)] border border-white/[0.07] focus:border-[var(--k-red)] text-white rounded-xl outline-none"
                 />
               </div>
 
               <div>
-                <label className="block text-[#8A94A6] font-mono mb-1">Billing Amount (IDR)</label>
+                <label className="block text-[var(--k-text-secondary)] font-mono mb-1">Billing Amount (IDR)</label>
                 <input
                   type="number"
                   required
                   value={quickInvAmount}
                   onChange={(e) => setQuickInvAmount(e.target.value)}
-                  className="w-full h-10 px-3 bg-[#181B22] border border-white/[0.07] focus:border-[#E50914] text-white rounded-xl outline-none"
+                  className="w-full h-10 px-3 bg-[var(--k-surface-raised)] border border-white/[0.07] focus:border-[var(--k-red)] text-white rounded-xl outline-none"
                 />
               </div>
 
               <div>
-                <label className="block text-[#8A94A6] font-mono mb-1">Description / Milestone</label>
+                <label className="block text-[var(--k-text-secondary)] font-mono mb-1">Description / Milestone</label>
                 <input
                   type="text"
                   value={quickInvDesc}
                   onChange={(e) => setQuickInvDesc(e.target.value)}
                   placeholder="Sprint Retainer 50% Kickoff"
-                  className="w-full h-10 px-3 bg-[#181B22] border border-white/[0.07] focus:border-[#E50914] text-white rounded-xl outline-none"
+                  className="w-full h-10 px-3 bg-[var(--k-surface-raised)] border border-white/[0.07] focus:border-[var(--k-red)] text-white rounded-xl outline-none"
                 />
               </div>
 
-              <div className="p-3 rounded-xl bg-[#181B22] border border-white/[0.07] text-[11px] font-mono text-[#8A94A6] space-y-1">
+              <div className="p-3 rounded-xl bg-[var(--k-surface-raised)] border border-white/[0.07] text-[11px] font-mono text-[var(--k-text-secondary)] space-y-1">
                 <div className="flex justify-between">
                   <span>Subtotal:</span>
                   <span className="text-white">{formatCurrency(parseFloat(quickInvAmount) || 0, 'IDR')}</span>
@@ -1226,13 +1226,13 @@ export const AdminDashboard: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsNewInvoiceModalOpen(false)}
-                  className="px-4 py-2 rounded-xl bg-[#181B22] text-[#8A94A6] hover:text-white font-semibold"
+                  className="px-4 py-2 rounded-xl bg-[var(--k-surface-raised)] text-[var(--k-text-secondary)] hover:text-white font-semibold"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-xl bg-[#E50914] hover:bg-[#FF1E27] text-white font-semibold transition-all shadow-[0_0_16px_rgba(229,9,20,0.3)]"
+                  className="px-4 py-2 rounded-xl bg-[var(--k-red)] hover:bg-[var(--k-red-hover)] text-white font-semibold transition-all shadow-[0_0_16px_rgba(229,9,20,0.3)]"
                 >
                   Dispatch Invoice
                 </button>
@@ -1245,14 +1245,14 @@ export const AdminDashboard: React.FC = () => {
       {/* MODAL 3: QUICK PROJECT */}
       {isNewProjectModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
-          <div className="w-full max-w-md bg-[#111318] border border-white/20 rounded-2xl p-6 shadow-2xl space-y-5 animate-in zoom-in-95 duration-200">
+          <div className="w-full max-w-md bg-[var(--k-surface)] border border-white/20 rounded-2xl p-6 shadow-2xl space-y-5 animate-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between pb-3 border-b border-white/[0.07]">
               <h3 className="text-lg font-heading font-bold text-white">
                 {language === 'id' ? 'Mulai Proyek Sprint Baru' : 'Initiate Active Project'}
               </h3>
               <button 
                 onClick={() => setIsNewProjectModalOpen(false)}
-                className="text-[#8A94A6] hover:text-white transition-colors"
+                className="text-[var(--k-text-secondary)] hover:text-white transition-colors"
               >
                 <X size={18} />
               </button>
@@ -1260,36 +1260,36 @@ export const AdminDashboard: React.FC = () => {
 
             <form onSubmit={handleCreateProject} className="space-y-4 text-xs font-sans">
               <div>
-                <label className="block text-[#8A94A6] font-mono mb-1">Project Name *</label>
+                <label className="block text-[var(--k-text-secondary)] font-mono mb-1">Project Name *</label>
                 <input
                   type="text"
                   required
                   value={quickProjTitle}
                   onChange={(e) => setQuickProjTitle(e.target.value)}
                   placeholder="e.g. NextGen Mobile Banking Modernization"
-                  className="w-full h-10 px-3 bg-[#181B22] border border-white/[0.07] focus:border-[#E50914] text-white rounded-xl outline-none"
+                  className="w-full h-10 px-3 bg-[var(--k-surface-raised)] border border-white/[0.07] focus:border-[var(--k-red)] text-white rounded-xl outline-none"
                 />
               </div>
 
               <div>
-                <label className="block text-[#8A94A6] font-mono mb-1">Client Entity *</label>
+                <label className="block text-[var(--k-text-secondary)] font-mono mb-1">Client Entity *</label>
                 <input
                   type="text"
                   required
                   value={quickProjClient}
                   onChange={(e) => setQuickProjClient(e.target.value)}
                   placeholder="e.g. Telkomsel Labs"
-                  className="w-full h-10 px-3 bg-[#181B22] border border-white/[0.07] focus:border-[#E50914] text-white rounded-xl outline-none"
+                  className="w-full h-10 px-3 bg-[var(--k-surface-raised)] border border-white/[0.07] focus:border-[var(--k-red)] text-white rounded-xl outline-none"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[#8A94A6] font-mono mb-1">Service Pillar</label>
+                  <label className="block text-[var(--k-text-secondary)] font-mono mb-1">Service Pillar</label>
                   <select
                     value={quickProjPillar}
                     onChange={(e) => setQuickProjPillar(e.target.value)}
-                    className="w-full h-10 px-3 bg-[#181B22] border border-white/[0.07] focus:border-[#E50914] text-white rounded-xl outline-none"
+                    className="w-full h-10 px-3 bg-[var(--k-surface-raised)] border border-white/[0.07] focus:border-[var(--k-red)] text-white rounded-xl outline-none"
                   >
                     <option value="AI & Cloud Solutions">AI & Cloud Solutions</option>
                     <option value="Web Development">Web Development</option>
@@ -1299,12 +1299,12 @@ export const AdminDashboard: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-[#8A94A6] font-mono mb-1">Budget Pool (IDR)</label>
+                  <label className="block text-[var(--k-text-secondary)] font-mono mb-1">Budget Pool (IDR)</label>
                   <input
                     type="number"
                     value={quickProjBudget}
                     onChange={(e) => setQuickProjBudget(e.target.value)}
-                    className="w-full h-10 px-3 bg-[#181B22] border border-white/[0.07] focus:border-[#E50914] text-white rounded-xl outline-none"
+                    className="w-full h-10 px-3 bg-[var(--k-surface-raised)] border border-white/[0.07] focus:border-[var(--k-red)] text-white rounded-xl outline-none"
                   />
                 </div>
               </div>
@@ -1313,13 +1313,13 @@ export const AdminDashboard: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsNewProjectModalOpen(false)}
-                  className="px-4 py-2 rounded-xl bg-[#181B22] text-[#8A94A6] hover:text-white font-semibold"
+                  className="px-4 py-2 rounded-xl bg-[var(--k-surface-raised)] text-[var(--k-text-secondary)] hover:text-white font-semibold"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-xl bg-[#E50914] hover:bg-[#FF1E27] text-white font-semibold transition-all shadow-[0_0_16px_rgba(229,9,20,0.3)]"
+                  className="px-4 py-2 rounded-xl bg-[var(--k-red)] hover:bg-[var(--k-red-hover)] text-white font-semibold transition-all shadow-[0_0_16px_rgba(229,9,20,0.3)]"
                 >
                   Start Project
                 </button>
@@ -1332,14 +1332,14 @@ export const AdminDashboard: React.FC = () => {
       {/* MODAL 4: RECORD EXPENSE */}
       {isRecordExpenseModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
-          <div className="w-full max-w-md bg-[#111318] border border-white/20 rounded-2xl p-6 shadow-2xl space-y-5 animate-in zoom-in-95 duration-200">
+          <div className="w-full max-w-md bg-[var(--k-surface)] border border-white/20 rounded-2xl p-6 shadow-2xl space-y-5 animate-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between pb-3 border-b border-white/[0.07]">
               <h3 className="text-lg font-heading font-bold text-white">
                 {language === 'id' ? 'Catat Biaya Operasional' : 'Record Operating Expense'}
               </h3>
               <button 
                 onClick={() => setIsRecordExpenseModalOpen(false)}
-                className="text-[#8A94A6] hover:text-white transition-colors"
+                className="text-[var(--k-text-secondary)] hover:text-white transition-colors"
               >
                 <X size={18} />
               </button>
@@ -1347,24 +1347,24 @@ export const AdminDashboard: React.FC = () => {
 
             <form onSubmit={handleRecordExpense} className="space-y-4 text-xs font-sans">
               <div>
-                <label className="block text-[#8A94A6] font-mono mb-1">Expense Description *</label>
+                <label className="block text-[var(--k-text-secondary)] font-mono mb-1">Expense Description *</label>
                 <input
                   type="text"
                   required
                   value={quickExpDesc}
                   onChange={(e) => setQuickExpDesc(e.target.value)}
                   placeholder="e.g. AWS & GCP Kubernetes Cluster Tier"
-                  className="w-full h-10 px-3 bg-[#181B22] border border-white/[0.07] focus:border-[#E50914] text-white rounded-xl outline-none"
+                  className="w-full h-10 px-3 bg-[var(--k-surface-raised)] border border-white/[0.07] focus:border-[var(--k-red)] text-white rounded-xl outline-none"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[#8A94A6] font-mono mb-1">Category</label>
+                  <label className="block text-[var(--k-text-secondary)] font-mono mb-1">Category</label>
                   <select
                     value={quickExpCategory}
                     onChange={(e) => setQuickExpCategory(e.target.value)}
-                    className="w-full h-10 px-3 bg-[#181B22] border border-white/[0.07] focus:border-[#E50914] text-white rounded-xl outline-none"
+                    className="w-full h-10 px-3 bg-[var(--k-surface-raised)] border border-white/[0.07] focus:border-[var(--k-red)] text-white rounded-xl outline-none"
                   >
                     <option value="Software & Cloud">Software & Cloud</option>
                     <option value="Salaries & Contractors">Salaries & Contractors</option>
@@ -1375,13 +1375,13 @@ export const AdminDashboard: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-[#8A94A6] font-mono mb-1">Amount (IDR) *</label>
+                  <label className="block text-[var(--k-text-secondary)] font-mono mb-1">Amount (IDR) *</label>
                   <input
                     type="number"
                     required
                     value={quickExpAmount}
                     onChange={(e) => setQuickExpAmount(e.target.value)}
-                    className="w-full h-10 px-3 bg-[#181B22] border border-white/[0.07] focus:border-[#E50914] text-white rounded-xl outline-none"
+                    className="w-full h-10 px-3 bg-[var(--k-surface-raised)] border border-white/[0.07] focus:border-[var(--k-red)] text-white rounded-xl outline-none"
                   />
                 </div>
               </div>
@@ -1390,13 +1390,13 @@ export const AdminDashboard: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsRecordExpenseModalOpen(false)}
-                  className="px-4 py-2 rounded-xl bg-[#181B22] text-[#8A94A6] hover:text-white font-semibold"
+                  className="px-4 py-2 rounded-xl bg-[var(--k-surface-raised)] text-[var(--k-text-secondary)] hover:text-white font-semibold"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-xl bg-[#E50914] hover:bg-[#FF1E27] text-white font-semibold transition-all shadow-[0_0_16px_rgba(229,9,20,0.3)]"
+                  className="px-4 py-2 rounded-xl bg-[var(--k-red)] hover:bg-[var(--k-red-hover)] text-white font-semibold transition-all shadow-[0_0_16px_rgba(229,9,20,0.3)]"
                 >
                   Save Expense
                 </button>

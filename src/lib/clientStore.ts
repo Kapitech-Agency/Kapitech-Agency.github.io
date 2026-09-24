@@ -46,7 +46,7 @@ function scheduleClientHydrationRetry(): void {
 }
 
 function hydrateClientsFromServer(): void {
-  if (!import.meta.env.PROD || clientServerHydrationStarted) return;
+  if (clientServerHydrationStarted) return;
   clientServerHydrationStarted = true;
   api.clients.getAll().then((res) => {
     if (!res.success || !Array.isArray(res.data?.clients)) {

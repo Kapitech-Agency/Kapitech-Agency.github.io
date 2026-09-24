@@ -532,7 +532,7 @@ export const AdminProposals: React.FC = () => {
                   <th className="py-3 px-4 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/[0.04] text-xs font-sans text-[#F8FAFC]">
+              <tbody className="divide-y divide-white/[0.04] text-xs font-sans text-[var(--k-text)]">
                 {filteredProposals.map((p) => (
                   <tr key={p.id} className="hover:bg-white/[0.02] transition-colors">
                     <td className="py-3.5 px-4">

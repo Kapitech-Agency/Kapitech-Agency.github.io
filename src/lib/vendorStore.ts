@@ -62,7 +62,7 @@ function scheduleVendorHydrationRetry(): void {
 }
 
 function hydrateVendorsFromServer(): void {
-  if (!import.meta.env.PROD || vendorServerHydrationStarted) return;
+  if (vendorServerHydrationStarted) return;
   vendorServerHydrationStarted = true;
   api.vendors.getAll().then((res) => {
     if (!res.success || !Array.isArray(res.data?.vendors)) {

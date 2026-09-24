@@ -283,7 +283,7 @@ export const About = () => {
   const team = language === 'id' ? teamId : teamEn;
 
   return (
-    <div className="bg-[#0A0A0A] text-white min-h-screen selection:bg-brand-red selection:text-white relative" role="main">
+    <div className="bg-[var(--k-bg)] text-white min-h-screen selection:bg-brand-red selection:text-white relative" role="main">
       {/* Hero Section */}
       <section className="relative pt-28 sm:pt-32 md:pt-36 pb-12 sm:pb-16 px-4 sm:px-6 md:px-12 border-b border-[#2A2A2A] overflow-hidden">
         <AtmosphericBackground imageUrl="/hero_background_3d.png" opacity={0.12} disableGrayscale={true} />
@@ -307,7 +307,7 @@ export const About = () => {
       </section>
 
       {/* Company Story / Mission */}
-      <section className="py-16 sm:py-24 px-4 sm:px-6 md:px-12 border-b border-[#2A2A2A] bg-[#0A0A0A] relative z-10">
+      <section className="py-16 sm:py-24 px-4 sm:px-6 md:px-12 border-b border-[#2A2A2A] bg-[var(--k-bg)] relative z-10">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
           <div className="lg:col-span-6 space-y-5 sm:space-y-6">
             <span className="text-xs font-mono uppercase tracking-wider text-brand-red block font-semibold">
@@ -366,7 +366,7 @@ export const About = () => {
                 alt="Kapitech Agency Team Collaboration"
                 className="w-full h-full object-cover object-center"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A]/90 via-[#0A0A0A]/20 to-transparent flex items-end p-5 sm:p-8">
+              <div className="absolute inset-0 bg-gradient-to-t from-[var(--k-bg)]/90 via-[var(--k-bg)]/20 to-transparent flex items-end p-5 sm:p-8">
                 <div>
                   <span className="text-[10px] sm:text-xs font-mono text-brand-red uppercase tracking-wider block mb-1 font-semibold">
                     {language === 'id' ? 'Komitmen Kami' : 'Our Commitment'}
@@ -401,10 +401,10 @@ export const About = () => {
             {team.map((member) => (
               <div
                 key={member.name}
-                className="rounded-2xl bg-[#111318] border border-white/[0.07] overflow-hidden flex flex-col justify-between group hover:border-brand-red/40 transition-colors"
+                className="rounded-2xl bg-[var(--k-surface)] border border-white/[0.07] overflow-hidden flex flex-col justify-between group hover:border-brand-red/40 transition-colors"
               >
                 <div>
-                  <div className="w-full aspect-[864/810] overflow-hidden bg-[#181B22] relative flex items-center justify-center">
+                  <div className="w-full aspect-[864/810] overflow-hidden bg-[var(--k-surface-raised)] relative flex items-center justify-center">
                     <img
                       src={member.image}
                       alt={member.name}
@@ -431,7 +431,7 @@ export const About = () => {
       </section>
 
       {/* Core Principles / Values */}
-      <section className="py-16 sm:py-24 px-4 sm:px-6 md:px-12 border-b border-[#2A2A2A] bg-[#0A0A0A] relative z-10">
+      <section className="py-16 sm:py-24 px-4 sm:px-6 md:px-12 border-b border-[#2A2A2A] bg-[var(--k-bg)] relative z-10">
         <div className="max-w-7xl mx-auto">
           <div className="max-w-2xl mb-10 sm:mb-16">
             <span className="text-brand-red font-mono font-semibold tracking-widest uppercase text-xs mb-2 sm:mb-3 block">
@@ -498,7 +498,7 @@ export const About = () => {
       </section>
 
       {/* Redesigned Technology Stack Grid */}
-      <section className="py-16 sm:py-24 px-4 sm:px-6 md:px-12 bg-[#0A0A0A] border-b border-[#2A2A2A] relative z-10">
+      <section className="py-16 sm:py-24 px-4 sm:px-6 md:px-12 bg-[var(--k-bg)] border-b border-[#2A2A2A] relative z-10">
         <div className="max-w-7xl mx-auto">
           <div className="max-w-2xl mb-10 sm:mb-16">
             <span className="text-brand-red font-mono font-semibold tracking-widest uppercase text-xs mb-2 sm:mb-3 block">
@@ -523,7 +523,7 @@ export const About = () => {
                     <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-brand-red/10 border border-brand-red/20 flex items-center justify-center group-hover:scale-105 transition-transform">
                       {stack.icon}
                     </div>
-                    <span className="text-[9px] sm:text-[10px] font-mono px-2.5 py-1 rounded-full bg-[#0A0A0A] text-[#FF6B00] border border-[#2A2A2A]">
+                    <span className="text-[9px] sm:text-[10px] font-mono px-2.5 py-1 rounded-full bg-[var(--k-bg)] text-[#FF6B00] border border-[#2A2A2A]">
                       {stack.badge}
                     </span>
                   </div>
@@ -539,7 +539,7 @@ export const About = () => {
                     {stack.tools.map((tool) => (
                       <div 
                         key={tool.name} 
-                        className="flex items-center justify-between p-2 rounded-xl bg-[#0A0A0A] border border-[#2A2A2A] hover:border-brand-red/30 transition-colors"
+                        className="flex items-center justify-between p-2 rounded-xl bg-[var(--k-bg)] border border-[#2A2A2A] hover:border-brand-red/30 transition-colors"
                       >
                         <span className="text-xs font-medium text-white">{tool.name}</span>
                         <span className="text-[9px] sm:text-[10px] font-mono text-[#8E8E93] uppercase">{tool.level}</span>
@@ -554,7 +554,7 @@ export const About = () => {
       </section>
 
       {/* Bottom CTA */}
-      <section className="py-16 sm:py-24 px-4 sm:px-6 md:px-12 text-center relative z-10 bg-[#0A0A0A]">
+      <section className="py-16 sm:py-24 px-4 sm:px-6 md:px-12 text-center relative z-10 bg-[var(--k-bg)]">
         <div className="max-w-3xl mx-auto">
           <h2 className="text-2xl sm:text-3xl md:text-5xl font-display font-bold mb-4 sm:mb-6 text-white">
             {language === 'id' ? 'Siap berkolaborasi membangun produk digital Anda berikutnya?' : 'Ready to collaborate on your next digital product?'}

@@ -99,7 +99,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
         } ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} ${triggerClassName}`}
       >
         <div className="flex items-center gap-2 min-w-0 pr-2">
-          {prefixIcon && <span className="text-[#8A94A6] shrink-0">{prefixIcon}</span>}
+          {prefixIcon && <span className="text-[var(--k-text-secondary)] shrink-0">{prefixIcon}</span>}
           {selectedOption?.icon && <span className="shrink-0">{selectedOption.icon}</span>}
           <span className="truncate font-medium text-xs">
             {selectedOption ? selectedOption.label : placeholder}
@@ -115,13 +115,13 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
           )}
         </div>
 
-        <UntitledIcon name="chevron" size={size === 'xs' ? 14 : 16} className="text-[#8A94A6] shrink-0" />
+        <UntitledIcon name="chevron" size={size === 'xs' ? 14 : 16} className="text-[var(--k-text-secondary)] shrink-0" />
       </button>
 
       {isOpen && (
           <div
             role="listbox"
-            className={`absolute z-[100] mt-1 min-w-[140px] sm:min-w-[180px] max-w-[calc(100vw-32px)] sm:max-w-[280px] max-h-[280px] overflow-y-auto bg-[#111318] border border-[rgba(255,255,255,0.09)] rounded-[10px] p-1 shadow-[0_8px_20px_rgba(0,0,0,0.28)] space-y-0.5 font-sans text-xs custom-scrollbar ${
+            className={`absolute z-[100] mt-1 min-w-[140px] sm:min-w-[180px] max-w-[calc(100vw-32px)] sm:max-w-[280px] max-h-[280px] overflow-y-auto bg-[var(--k-surface)] border border-[rgba(255,255,255,0.09)] rounded-[10px] p-1 shadow-[0_8px_20px_rgba(0,0,0,0.28)] space-y-0.5 font-sans text-xs custom-scrollbar ${
               align === 'right' ? 'right-0' : 'left-0'
             } ${menuClassName}`}
           >
@@ -175,7 +175,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
                         {option.badge}
                       </span>
                     )}
-                    {isSelected && <UntitledIcon name="check" size={14} className="text-[#E50914] shrink-0" />}
+                    {isSelected && <UntitledIcon name="check" size={14} className="text-[var(--k-red)] shrink-0" />}
                   </div>
                 </button>
               );

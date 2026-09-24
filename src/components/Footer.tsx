@@ -163,10 +163,10 @@ export const Footer = () => {
   ];
 
   return (
-    <footer className="relative bg-[#0B0C0E] pt-20 pb-12 px-4 sm:px-6 md:px-12 overflow-hidden border-t border-[#262930]" id="main-footer">
+    <footer className="relative bg-[var(--k-bg)] pt-20 pb-12 px-4 sm:px-6 md:px-12 overflow-hidden border-t border-[var(--k-border)]" id="main-footer">
       <div className="max-w-7xl mx-auto relative z-10">
         {/* Top CTA Banner */}
-        <div className="pb-16 mb-16 border-b border-[#262930]">
+        <div className="pb-16 mb-16 border-b border-[var(--k-border)]">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
             <div className="lg:col-span-8">
               <span className="text-brand-red font-mono font-semibold tracking-widest uppercase text-xs mb-3 block">
@@ -189,7 +189,7 @@ export const Footer = () => {
                 <span>{t('footer.cta.button')}</span>
                 <ArrowUpRight size={18} />
               </Link>
-              <div className="text-xs font-mono text-[#8A909D] flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-[#16181D] border border-[#262930]">
+              <div className="text-xs font-mono text-[#8A909D] flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-[var(--k-surface)] border border-[var(--k-border)]">
                 <span className="w-2 h-2 rounded-full bg-brand-red animate-pulse shadow-[0_0_8px_rgba(255,26,26,0.6)]" />
                 <span>{language === 'id' ? 'Tangerang Selatan, ID' : 'South Tangerang, ID'} • {localTime || '12:00:00'} WIB</span>
               </div>
@@ -227,7 +227,7 @@ export const Footer = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="w-full min-h-[44px] bg-[#16181D] border border-[#262930] rounded-xl px-4 py-3 text-xs text-white placeholder:text-[#8A909D]/70 focus:outline-none focus:border-brand-red transition-colors"
+                  className="w-full min-h-[44px] bg-[var(--k-surface)] border border-[var(--k-border)] rounded-xl px-4 py-3 text-xs text-white placeholder:text-[#8A909D]/70 focus:outline-none focus:border-brand-red transition-colors"
                 />
                 <button 
                   type="submit"
@@ -337,7 +337,7 @@ export const Footer = () => {
             </h4>
             <div className="space-y-3.5 text-xs text-[#8A909D]">
               <a href="mailto:hello@kapitech.id" className="flex items-center gap-2.5 hover:text-brand-red transition-colors group min-h-[36px]">
-                <div className="w-7 h-7 rounded-lg bg-[#16181D] border border-[#262930] flex items-center justify-center text-brand-red group-hover:border-brand-red/40 shrink-0">
+                <div className="w-7 h-7 rounded-lg bg-[var(--k-surface)] border border-[var(--k-border)] flex items-center justify-center text-brand-red group-hover:border-brand-red/40 shrink-0">
                   <Mail size={13} />
                 </div>
                 <div className="min-w-0">
@@ -347,7 +347,7 @@ export const Footer = () => {
               </a>
 
               <a href="mailto:business@kapitech.id" className="flex items-center gap-2.5 hover:text-brand-red transition-colors group min-h-[36px]">
-                <div className="w-7 h-7 rounded-lg bg-[#16181D] border border-[#262930] flex items-center justify-center text-brand-red group-hover:border-brand-red/40 shrink-0">
+                <div className="w-7 h-7 rounded-lg bg-[var(--k-surface)] border border-[var(--k-border)] flex items-center justify-center text-brand-red group-hover:border-brand-red/40 shrink-0">
                   <Globe size={13} />
                 </div>
                 <div className="min-w-0">
@@ -357,7 +357,7 @@ export const Footer = () => {
               </a>
 
               <a href="mailto:recruitment@kapitech.id" className="flex items-center gap-2.5 hover:text-brand-red transition-colors group min-h-[36px]">
-                <div className="w-7 h-7 rounded-lg bg-[#16181D] border border-[#262930] flex items-center justify-center text-brand-red group-hover:border-brand-red/40 shrink-0">
+                <div className="w-7 h-7 rounded-lg bg-[var(--k-surface)] border border-[var(--k-border)] flex items-center justify-center text-brand-red group-hover:border-brand-red/40 shrink-0">
                   <Briefcase size={13} />
                 </div>
                 <div className="min-w-0">
@@ -367,7 +367,7 @@ export const Footer = () => {
               </a>
 
               <a href="tel:+6287769957062" className="flex items-center gap-2.5 hover:text-brand-red transition-colors group min-h-[36px]">
-                <div className="w-7 h-7 rounded-lg bg-[#16181D] border border-[#262930] flex items-center justify-center text-brand-red group-hover:border-brand-red/40 shrink-0">
+                <div className="w-7 h-7 rounded-lg bg-[var(--k-surface)] border border-[var(--k-border)] flex items-center justify-center text-brand-red group-hover:border-brand-red/40 shrink-0">
                   <Phone size={13} />
                 </div>
                 <div className="min-w-0">
@@ -377,7 +377,7 @@ export const Footer = () => {
               </a>
 
               <div className="flex items-start gap-2.5 pt-1">
-                <div className="w-7 h-7 rounded-lg bg-[#16181D] border border-[#262930] flex items-center justify-center text-brand-red shrink-0 mt-0.5">
+                <div className="w-7 h-7 rounded-lg bg-[var(--k-surface)] border border-[var(--k-border)] flex items-center justify-center text-brand-red shrink-0 mt-0.5">
                   <MapPin size={13} />
                 </div>
                 <div className="space-y-0.5">
@@ -392,7 +392,7 @@ export const Footer = () => {
         </div>
 
         {/* Social Media Links Bar (Crisp Monochrome Logo Icons) */}
-        <div className="py-6 border-t border-[#262930] flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="py-6 border-t border-[var(--k-border)] flex flex-col md:flex-row items-center justify-between gap-4">
           <span className="text-xs font-mono text-[#8A909D] uppercase tracking-widest">
             {language === 'id' ? 'Kanal Resmi & Media Sosial' : 'Official Channels & Social Media'}
           </span>
@@ -405,7 +405,7 @@ export const Footer = () => {
                 rel="noopener noreferrer"
                 aria-label={social.name}
                 title={social.name}
-                className="w-11 h-11 min-h-[44px] min-w-[44px] rounded-xl flex items-center justify-center text-[#8A909D] hover:text-white bg-[#16181D] hover:bg-[#20232B] hover:border-brand-red/30 border border-[#262930] transition-all duration-200"
+                className="w-11 h-11 min-h-[44px] min-w-[44px] rounded-xl flex items-center justify-center text-[#8A909D] hover:text-white bg-[var(--k-surface)] hover:bg-[#20232B] hover:border-brand-red/30 border border-[var(--k-border)] transition-all duration-200"
               >
                 {social.icon}
               </a>
@@ -414,7 +414,7 @@ export const Footer = () => {
         </div>
 
         {/* Bottom Copyright Bar */}
-        <div className="pt-6 border-t border-[#262930] flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-[#8A909D]">
+        <div className="pt-6 border-t border-[var(--k-border)] flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-[#8A909D]">
           <p>© 2021-2026 Kapitech. {language === 'id' ? 'Beroperasi di bawah naungan PT Kapitech Digital Indonesia.' : 'Operating under PT Kapitech Digital Indonesia.'} {t('footer.rights')}</p>
           <div className="flex items-center gap-4 sm:gap-6">
             <Link 
@@ -427,7 +427,7 @@ export const Footer = () => {
             <button 
               onClick={scrollToTop} 
               id="footer-back-to-top"
-              className="flex items-center gap-1.5 hover:text-white transition-colors py-2 px-3 min-h-[36px] rounded-lg bg-[#16181D] hover:bg-[#20232B] border border-[#262930]"
+              className="flex items-center gap-1.5 hover:text-white transition-colors py-2 px-3 min-h-[36px] rounded-lg bg-[var(--k-surface)] hover:bg-[#20232B] border border-[var(--k-border)]"
             >
               <span>{t('footer.backToTop')}</span>
               <ArrowUp size={14} />
