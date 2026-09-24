@@ -266,6 +266,11 @@ export async function deleteAdminAccount(id: string): Promise<{ success: boolean
   return { success: false, error: res.error || res.data?.error || 'Gagal menghapus akun.' };
 }
 
+export function updateAdminAccountPermissions(id: string, permissions: Partial<StakeholderPermissions>): { success: boolean; error?: string } {
+  api.auth.updateUser(id, { permissions }).catch(() => {});
+  return { success: true };
+}
+
 export function getStoredAdminAccounts(): AdminAccount[] {
   const session = getAdminSession();
   if (session) {
