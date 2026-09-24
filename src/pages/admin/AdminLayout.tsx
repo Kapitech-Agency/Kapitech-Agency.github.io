@@ -32,10 +32,10 @@ import {
   Clock3
 } from 'lucide-react';
 import { getAdminSession, logoutAdmin } from '../../lib/adminAuth';
-import { subscribeToInbox, ContactSubmission } from '../../lib/submissions';
 import { useLanguage } from '../../lib/LanguageContext';
 import { getActiveCurrency, setActiveCurrency, CurrencyCode, CURRENCY_EVENT } from '../../lib/currency';
 import { CommandPalette } from '../../components/admin/CommandPalette';
+import { AdminNotificationCenter } from '../../components/admin/AdminNotificationCenter';
 import { useRbacRole, StakeholderRole, ROLE_DEFINITIONS } from '../../lib/rbacEngine';
 
 interface NavItem {
@@ -63,7 +63,6 @@ export const AdminLayout: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
-  const [unreadCount, setUnreadCount] = useState(0);
   const [currentTime, setCurrentTime] = useState<string>('');
   const [currency, setCurrencyState] = useState<CurrencyCode>(getActiveCurrency());
 
@@ -115,14 +114,6 @@ export const AdminLayout: React.FC = () => {
   };
 
   useEffect(() => {
-    const unsub = subscribeToInbox((items: ContactSubmission[]) => {
-      const newItems = items.filter(i => i.status === 'new').length;
-      setUnreadCount(newItems);
-    });
-    return () => unsub();
-  }, []);
-
-  useEffect(() => {
     setMobileMenuOpen(false);
   }, [location.pathname]);
 
@@ -163,8 +154,7 @@ export const AdminLayout: React.FC = () => {
           to: '/admin/inbox',
           label: t('admin.nav.inbox'),
           icon: Inbox,
-          badge: unreadCount > 0 ? unreadCount : null,
-          badgeColor: 'bg-[#E50914] text-white font-bold animate-pulse'
+          badge: null
         },
         {
           key: 'crm',
@@ -323,7 +313,7 @@ export const AdminLayout: React.FC = () => {
   return (
     <div className="h-screen w-full bg-[#090A0F] text-[#F8FAFC] flex flex-col md:flex-row selection:bg-[#E50914] selection:text-white font-sans antialiased overflow-hidden ams-shell">
       
-      {/* Universal Command Palette */}
+      <div className="fixed right-4 top-3 md:right-5 md:top-3 z-[60]"><AdminNotificationCenter /></div>\n\n      {/* Universal Command Palette */}
       <CommandPalette 
         isOpen={commandPaletteOpen} 
         onClose={() => setCommandPaletteOpen(false)} 
