@@ -295,7 +295,7 @@ export const AdminInvoicing: React.FC = () => {
     });
     if (updated.success) {
       await loadData();
-      showToast(language === 'id' ? `Pembayaran dicatat untuk ${updated.invoiceNumber}` : `Payment recorded for ${updated.invoiceNumber}`);
+      showToast(language === 'id' ? `Pembayaran dicatat untuk ${updated.data?.invoice?.invoiceNumber || paymentModalInvoice.invoiceNumber}` : `Payment recorded for ${updated.invoiceNumber}`);
       setPaymentModalInvoice(null);
     }
   };
