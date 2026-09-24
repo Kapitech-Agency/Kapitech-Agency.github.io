@@ -439,7 +439,7 @@ export const AdminDashboard: React.FC = () => {
       <div className="ams-dashboard-header flex flex-col xl:flex-row xl:items-center justify-between gap-4 pb-4 border-b border-white/[0.07]">
         <div>
           <div className="flex items-center gap-2.5 flex-wrap">
-            <h1 className="text-xl font-heading font-semibold text-[#F8FAFC] tracking-[-0.025em]">
+            <h1 className="text-xl font-heading font-semibold text-[var(--text)] tracking-[-0.025em]">
               {language === 'id' ? 'Ikhtisar Eksekutif Agensi' : 'Executive Agency Overview'}
             </h1>
             <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-emerald-500/[0.07] border border-emerald-500/15 text-[10px] font-sans font-semibold text-emerald-400">
@@ -465,7 +465,7 @@ export const AdminDashboard: React.FC = () => {
           {/* Currency Switcher Pill */}
           <button
             onClick={handleToggleCurrency}
-            className="h-9 px-3 rounded-lg bg-[var(--panel)] hover:bg-[var(--panel)] border border-white/[0.07] hover:border-white/15 text-xs font-sans font-semibold text-[#F8FAFC] transition-all flex items-center gap-1.5 shrink-0"
+            className="h-9 px-3 rounded-lg bg-[var(--panel)] hover:bg-[var(--panel)] border border-white/[0.07] hover:border-white/15 text-xs font-sans font-semibold text-[var(--text)] transition-all flex items-center gap-1.5 shrink-0"
             title="Switch Currency IDR / USD"
           >
             <DollarSign size={13} className="text-[var(--accent)]" />
@@ -510,7 +510,7 @@ export const AdminDashboard: React.FC = () => {
           {/* Export CSV Summary */}
           <button
             onClick={handleExportSummaryCSV}
-            className="h-9 px-3 rounded-lg bg-[var(--panel)] hover:bg-[var(--panel)] border border-white/[0.07] hover:border-white/15 text-xs font-sans font-semibold text-[#F8FAFC] transition-all flex items-center gap-1.5 shrink-0"
+            className="h-9 px-3 rounded-lg bg-[var(--panel)] hover:bg-[var(--panel)] border border-white/[0.07] hover:border-white/15 text-xs font-sans font-semibold text-[var(--text)] transition-all flex items-center gap-1.5 shrink-0"
             title="Download CSV Executive Summary"
           >
             <Download size={13} className="text-cyan-400" />
@@ -521,7 +521,7 @@ export const AdminDashboard: React.FC = () => {
           {isAllowed('crm') && (
             <button
               onClick={() => setIsAddLeadModalOpen(true)}
-              className="h-9 px-3 rounded-xl bg-[var(--panel)] hover:bg-[var(--panel)] border border-white/[0.07]  text-xs font-sans font-semibold text-[#F8FAFC] transition-all flex items-center gap-1.5 shadow-sm"
+              className="h-9 px-3 rounded-xl bg-[var(--panel)] hover:bg-[var(--panel)] border border-white/[0.07]  text-xs font-sans font-semibold text-[var(--text)] transition-all flex items-center gap-1.5 shadow-sm"
             >
               <Plus size={14} className="text-emerald-400" />
               <span>{language === 'id' ? 'Tambah Lead' : 'Add Lead'}</span>
@@ -532,7 +532,7 @@ export const AdminDashboard: React.FC = () => {
           {isAllowed('invoicing') && (
             <button
               onClick={() => setIsNewInvoiceModalOpen(true)}
-              className="h-9 px-3 rounded-xl bg-[var(--panel)] hover:bg-[var(--panel)] border border-white/[0.07]  text-xs font-sans font-semibold text-[#F8FAFC] transition-all flex items-center gap-1.5 shadow-sm"
+              className="h-9 px-3 rounded-xl bg-[var(--panel)] hover:bg-[var(--panel)] border border-white/[0.07]  text-xs font-sans font-semibold text-[var(--text)] transition-all flex items-center gap-1.5 shadow-sm"
             >
               <Plus size={14} className="text-purple-400" />
               <span>{language === 'id' ? 'Buat Invoice' : 'New Invoice'}</span>
@@ -569,7 +569,7 @@ export const AdminDashboard: React.FC = () => {
               </div>
             </div>
             
-            <div className="text-2xl lg:text-[28px] font-sans font-bold text-[#F8FAFC] tracking-tight leading-none">
+            <div className="text-2xl lg:text-[28px] font-sans font-bold text-[var(--text)] tracking-tight leading-none">
               {formatCurrency(finMetrics.totalPaidRevenue, currency)}
             </div>
 
@@ -607,7 +607,7 @@ export const AdminDashboard: React.FC = () => {
               </div>
             </div>
 
-            <div className="text-2xl lg:text-[28px] font-sans font-bold text-[#F8FAFC] tracking-tight leading-none">
+            <div className="text-2xl lg:text-[28px] font-sans font-bold text-[var(--text)] tracking-tight leading-none">
               {formatCurrency(pipelineMetrics.totalPipelineValue, currency)}
             </div>
 
@@ -643,7 +643,7 @@ export const AdminDashboard: React.FC = () => {
               </div>
             </div>
 
-            <div className="text-2xl lg:text-[28px] font-sans font-bold text-[#F8FAFC] tracking-tight leading-none">
+            <div className="text-2xl lg:text-[28px] font-sans font-bold text-[var(--text)] tracking-tight leading-none">
               {pipelineMetrics.conversionRate}%
             </div>
 
@@ -678,7 +678,7 @@ export const AdminDashboard: React.FC = () => {
               </div>
             </div>
 
-            <div className="text-2xl lg:text-[28px] font-sans font-bold text-[#F8FAFC] tracking-tight leading-none">
+            <div className="text-2xl lg:text-[28px] font-sans font-bold text-[var(--text)] tracking-tight leading-none">
               {projectMetrics.total} {language === 'id' ? 'Sprint' : 'Sprints'}
             </div>
 
@@ -774,7 +774,7 @@ export const AdminDashboard: React.FC = () => {
                       </span>
                     </div>
                     <p className="text-xs text-[var(--muted)]">
-                      {proj.clientCompany || proj.clientName} • {language === 'id' ? 'Lead' : 'Lead'}: <strong className="text-[#F8FAFC]">{proj.teamLead}</strong>
+                      {proj.clientCompany || proj.clientName} • {language === 'id' ? 'Lead' : 'Lead'}: <strong className="text-[var(--text)]">{proj.teamLead}</strong>
                     </p>
                   </div>
 
