@@ -56,10 +56,12 @@ import { useDragToScroll } from '../../lib/useDragToScroll';
 import { ScrollShadowContainer } from '../../components/ui/ScrollShadowContainer';
 import { CustomSelect } from '../../components/ui/CustomSelect';
 import { formatAmount, getActiveCurrency, setGlobalCurrency, CurrencyCode, CURRENCY_EVENT } from '../../lib/currency';
+import { hasAdminPermission } from '../../lib/adminAuth';
 
 export const AdminCrm: React.FC = () => {
   const { language, t } = useLanguage();
   const kanbanScrollRef = useDragToScroll<HTMLDivElement>();
+  const canManageCrm = hasAdminPermission('canManageCrm');
   const [leads, setLeads] = useState<CrmLead[]>([]);
   const [viewMode, setViewMode] = useState<'kanban' | 'list'>('kanban');
   const [currency, setCurrency] = useState<CurrencyCode>(getActiveCurrency());
@@ -362,6 +364,7 @@ export const AdminCrm: React.FC = () => {
 
   const handleSaveLead = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!canManageCrm) return;
     if (!formClientName.trim() || !formCompany.trim()) {
       alert(language === 'id' ? 'Nama klien dan perusahaan wajib diisi.' : 'Client name and company are required.');
       return;
@@ -392,6 +395,7 @@ export const AdminCrm: React.FC = () => {
   };
 
   const handleDeleteLead = (id: string, name: string) => {
+    if (!canManageCrm) return;
     if (window.confirm(language === 'id' ? `Hapus prospek ${name}?` : `Delete lead ${name}?`)) {
       deleteCrmLead(id);
       if (selectedLead && selectedLead.id === id) {
@@ -504,13 +508,18 @@ export const AdminCrm: React.FC = () => {
             <span className="hidden sm:inline">{t('admin.action.exportCsv')}</span>
           </button>
 
-          <button
-            onClick={() => handleOpenAddModal('new')}
-            className="h-10 px-4 rounded-xl bg-[#E50914] hover:bg-[#FF1E27] text-white text-xs font-mono font-bold transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#E50914]/20 min-h-[40px]"
-          >
-            <Plus size={15} />
-            <span>{t('admin.crm.addDeal')}</span>
-          </button>
+          {canManageCrm && (
+                        <>
+                          <button
+                            onClick={() => handleOpenAddModal('new')}
+                            disabled={!canManageCrm}
+                            className="h-10 px-4 rounded-xl bg-[#E50914] hover:bg-[#FF1E27] text-white text-xs font-mono font-bold transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#E50914]/20 min-h-[40px]"
+                          >
+                            <Plus size={15} />
+                            <span>{t('admin.crm.addDeal')}</span>
+                          </button>
+                        </>
+                      )}
         </div>
       </div>
 
