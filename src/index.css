@@ -1247,3 +1247,108 @@
 @media (max-width: 899px) {
   .ams-shell > aside { transition: transform 150ms ease, width 150ms ease, min-width 150ms ease; }
 }
+
+
+/* AMS surface reconciliation: existing legacy markup mapped to the canonical
+   application surface without changing public-site styles. */
+.ams-shell .kapi-card {
+  background: var(--panel) !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 12px !important;
+  padding: 16px !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  transform: none !important;
+  overflow: hidden;
+}
+.ams-shell .kapi-card::before,
+.ams-shell .kapi-card::after {
+  display: none !important;
+}
+.ams-shell .kapi-card:hover {
+  background: var(--panel) !important;
+  border-color: var(--line) !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+.ams-shell .ams-kpi {
+  background: transparent !important;
+  border: 0 !important;
+  padding: 0 !important;
+  min-width: 0;
+}
+.ams-shell .ams-kpi:hover {
+  background: transparent !important;
+  border-color: transparent !important;
+}
+.ams-shell .ams-kpi-value {
+  color: var(--text);
+  font-size: 24px;
+  line-height: 32px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+.ams-shell .ams-meta {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 16px;
+}
+.ams-shell .ams-page-title {
+  color: var(--text);
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.ams-shell .ams-action {
+  min-height: 40px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 500;
+}
+.ams-shell .ams-action:hover {
+  color: var(--text);
+  background: color-mix(in srgb, var(--text) 4%, var(--panel));
+}
+.ams-shell .ams-action:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.ams-shell [class*="text-white/"] {
+  color: var(--muted) !important;
+}
+.ams-shell .ams-mobile-drawer {
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+}
+.ams-shell .ams-mobile-drawer > .relative {
+  width: min(300px, 86vw);
+  max-width: 86vw;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.ams-shell .ams-mobile-drawer a,
+.ams-shell .ams-mobile-drawer button {
+  min-height: 40px;
+}
+.ams-shell .ams-mobile-topbar {
+  padding-top: env(safe-area-inset-top);
+  height: calc(52px + env(safe-area-inset-top));
+}
+@media (max-width: 599px) {
+  .ams-shell .ams-page-title {
+    font-size: 18px;
+    line-height: 24px;
+  }
+  .ams-shell .kapi-card {
+    padding: 14px !important;
+  }
+  .ams-shell .ams-kpi {
+    padding: 0 !important;
+  }
+}
