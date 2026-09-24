@@ -32,7 +32,7 @@ interface NavSection {
 }
 
 export const AdminLayout: React.FC = () => {
-  const { language, setLanguage, t } = useLanguage();
+  const { t } = useLanguage();
   const location = useLocation();
   const navigate = useNavigate();
   const session = getAdminSession();
