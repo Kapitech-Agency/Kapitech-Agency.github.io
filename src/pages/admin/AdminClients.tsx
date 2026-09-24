@@ -28,6 +28,7 @@ import {
 import { formatAmount, getActiveCurrency, CURRENCY_EVENT, CurrencyCode } from '../../lib/currency';
 import { useLanguage } from '../../lib/LanguageContext';
 import { hasAdminPermission } from '../../lib/adminAuth';
+import { api } from '../../lib/apiClient';
 import { useDragToScroll } from '../../lib/useDragToScroll';
 import { ScrollShadowContainer } from '../../components/ui/ScrollShadowContainer';
 import { CustomSelect } from '../../components/ui/CustomSelect';
@@ -152,7 +153,7 @@ export const AdminClients: React.FC = () => {
     setIsClientModalOpen(true);
   };
 
-  const handleSaveClient = (e: React.FormEvent) => {
+  const handleSaveClient = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!canManageClients) return;
     if (!name.trim() || !company.trim()) {
@@ -180,7 +181,15 @@ export const AdminClients: React.FC = () => {
       updatedAt: new Date().toISOString()
     };
 
-    saveAgencyClient(clientData);
+    if (!canManageClients) return;
+    const res = editingClient
+      ? await api.clients.update(clientData.id, clientData)
+      : await api.clients.create(clientData);
+    if (!res.success || !res.data?.client) {
+      setStatusMessage(res.error || (language === 'id' ? 'Client gagal disimpan.' : 'Failed to save client.'));
+      return;
+    }
+    setClients(prev => editingClient ? prev.map(item => item.id === clientData.id ? res.data!.client as AgencyClient : item) : [res.data!.client as AgencyClient, ...prev]);
     setIsClientModalOpen(false);
     showToast(language === 'id' ? 'Klien berhasil disimpan.' : 'Client record saved.');
   };
@@ -188,7 +197,11 @@ export const AdminClients: React.FC = () => {
   const handleDeleteClient = (id: string, clientName: string) => {
     if (!canManageClients) return;
     if (window.confirm(`Hapus catatan klien "${clientName}"?`)) {
-      deleteAgencyClient(id);
+      if (!canManageClients) return;
+      void api.clients.delete(id).then((res) => {
+        if (!res.success) { setStatusMessage(res.error || 'Failed to delete client.'); return; }
+        setClients(prev => prev.filter(item => item.id !== id));
+      }).catch(() => setStatusMessage(language === 'id' ? 'Client gagal dihapus.' : 'Failed to delete client.'));
       showToast(language === 'id' ? 'Klien dihapus.' : 'Client deleted.');
     }
   };
