@@ -256,6 +256,10 @@ export function useRbacRole(
   const [currentRole, setCurrentRoleState] = useState<StakeholderRole>(actualRole || getStoredRole);
 
   useEffect(() => {
+    if (actualRole) setCurrentRoleState(actualRole);
+  }, [actualRole]);
+
+  useEffect(() => {
     const handler = (e: Event) => {
       const custom = e as CustomEvent<{ role: StakeholderRole }>;
       if (custom.detail?.role && ROLE_DEFINITIONS[custom.detail.role]) {
@@ -267,6 +271,8 @@ export function useRbacRole(
   }, []);
 
   const switchRole = (newRole: StakeholderRole) => {
+    // Production/session-backed RBAC is authoritative. Role switching exists only
+    // as a local development simulator when no authenticated stakeholder is present.
     if (actualRole || !import.meta.env.DEV) return;
     setStoredRole(newRole);
     setCurrentRoleState(newRole);
