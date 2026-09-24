@@ -628,8 +628,7 @@ export const AdminDashboard: React.FC = () => {
 
           <div className="mt-4 pt-3 border-t border-white/[0.07] flex items-center justify-between text-[11px] font-mono">
             <span className="text-[#FF1E27] font-semibold flex items-center gap-1">
-              <Sparkles size={12} />
-              {pipelineMetrics.activeLeadsCount || 5} {language === 'id' ? 'Deal Terkualifikasi' : 'Qualified Deals'}
+              {pipelineMetrics.activeLeadsCount} {language === 'id' ? 'Deal Terkualifikasi' : 'Qualified Deals'}
             </span>
             <span className="text-[#8A94A6]">
               {language === 'id' ? 'Rata-rata: ' : 'Avg: '}
