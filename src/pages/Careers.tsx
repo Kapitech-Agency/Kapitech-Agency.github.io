@@ -711,7 +711,7 @@ export const Careers = () => {
                 <Users className="w-3.5 h-3.5 text-brand-red" />
                 <span>{language === 'id' ? '12 Talenta Spesialis' : '12 Specialist Talents'}</span>
               </div>
-              <h2 className="text-2xl sm:text-4xl md:kapi-section-title font-sans font-bold text-white tracking-tight">
+              <h2 className="text-2xl sm:text-4xl kapi-section-title font-sans font-bold text-white tracking-tight">
                 {language === 'id' ? 'Bergabung Bersama 12 Talenta Terbaik Kami' : 'Join with our 12 great talents'}
               </h2>
             </div>
@@ -856,7 +856,7 @@ export const Careers = () => {
               <span className="text-brand-red font-sans font-semibold tracking-widest uppercase text-xs mb-3 block">
                 {language === 'id' ? 'Peluang Terbuka' : 'Current Opportunities'}
               </span>
-              <h2 className="text-3xl sm:text-4xl md:kapi-section-title font-sans font-bold text-white tracking-tight">
+              <h2 className="text-3xl sm:text-4xl kapi-section-title font-sans font-bold text-white tracking-tight">
                 {language === 'id' ? 'Posisi yang Sedang Dibuka' : 'Available Roles'}
               </h2>
             </div>
@@ -936,7 +936,7 @@ export const Careers = () => {
                 <Globe className="w-3.5 h-3.5 text-brand-red" />
                 <span>{language === 'id' ? 'Kemitraan Terbuka • 100% Remote (WFA)' : 'Open Network • 100% Remote (WFA)'}</span>
               </div>
-              <h2 className="text-3xl sm:text-4xl md:kapi-section-title font-sans font-bold text-white tracking-tight">
+              <h2 className="text-3xl sm:text-4xl kapi-section-title font-sans font-bold text-white tracking-tight">
                 {language === 'id' ? 'Apply as a Freelance Vendor' : 'Apply as a Freelance Vendor'}
               </h2>
               <p className="mt-4 text-sm sm:text-base text-[var(--k-text-secondary)] font-light leading-relaxed">
@@ -1165,7 +1165,7 @@ export const Careers = () => {
             <span className="text-brand-red font-sans font-semibold tracking-widest uppercase text-xs mb-3 block">
               {language === 'id' ? 'Nilai & Keuntungan Studio' : 'Studio Culture & Core Values'}
             </span>
-            <h2 className="text-3xl sm:text-4xl md:kapi-section-title font-sans font-bold text-white tracking-tight">
+            <h2 className="text-3xl sm:text-4xl kapi-section-title font-sans font-bold text-white tracking-tight">
               {language === 'id' ? 'Lingkungan Kerja Berorientasi Prestasi' : 'Craft, Autonomy, and Real Growth'}
             </h2>
           </div>
