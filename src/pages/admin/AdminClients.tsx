@@ -206,7 +206,7 @@ export const AdminClients: React.FC = () => {
     <div className="space-y-6">
       
       {/* 1. Header & Actions */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[rgba(255,255,255,0.07)]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[var(--line)]">
         <div>
           <h1 className="text-2xl font-sans font-bold text-white flex items-center gap-3 tracking-tight">
             <Users className="text-[var(--accent)]" size={26} />
@@ -257,22 +257,22 @@ export const AdminClients: React.FC = () => {
 
       {/* 2. Key Metrics Summary (3 cols) */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 w-full">
-        <div className="w-full h-full bg-[var(--panel)] border border-[rgba(255,255,255,0.07)] p-5 rounded-xl flex flex-col justify-between">
+        <div className="w-full h-full bg-[var(--panel)] border border-[var(--line)] p-5 rounded-xl flex flex-col justify-between">
           <div className="flex items-center justify-between text-[var(--muted)] mb-2">
             <span className="text-xs font-sans normal-case font-semibold">{t('admin.client.totalClients')}</span>
-            <div className="w-8 h-8 rounded-lg bg-[var(--panel)] border border-[rgba(255,255,255,0.07)] flex items-center justify-center text-white">
+            <div className="w-8 h-8 rounded-lg bg-[var(--panel)] border border-[var(--line)] flex items-center justify-center text-white">
               <Users size={16} />
             </div>
           </div>
           <div className="text-3xl font-sans font-bold text-white tracking-tight">
             {clients.length}
           </div>
-          <div className="mt-3 pt-2 border-t border-[rgba(255,255,255,0.07)] text-[11px] font-sans text-[var(--muted)]">
+          <div className="mt-3 pt-2 border-t border-[var(--line)] text-[11px] font-sans text-[var(--muted)]">
             {language === 'id' ? 'Klien Enterprise & SME' : 'Across Enterprise & SME tiers'}
           </div>
         </div>
 
-        <div className="w-full h-full bg-[var(--panel)] border border-[rgba(255,255,255,0.07)] p-5 rounded-xl flex flex-col justify-between">
+        <div className="w-full h-full bg-[var(--panel)] border border-[var(--line)] p-5 rounded-xl flex flex-col justify-between">
           <div className="flex items-center justify-between text-[var(--muted)] mb-2">
             <span className="text-xs font-sans normal-case font-semibold">{t('admin.client.activeAccounts')}</span>
             <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
@@ -282,12 +282,12 @@ export const AdminClients: React.FC = () => {
           <div className="text-3xl font-sans font-bold text-emerald-400 tracking-tight">
             {activeAccountsCount}
           </div>
-          <div className="mt-3 pt-2 border-t border-[rgba(255,255,255,0.07)] text-[11px] font-sans text-emerald-400">
+          <div className="mt-3 pt-2 border-t border-[var(--line)] text-[11px] font-sans text-emerald-400">
             {language === 'id' ? 'Retainer & Sprint Aktif' : 'Active Retainers & Sprints'}
           </div>
         </div>
 
-        <div className="w-full h-full bg-[var(--panel)] border border-[rgba(255,255,255,0.07)] p-5 rounded-xl flex flex-col justify-between">
+        <div className="w-full h-full bg-[var(--panel)] border border-[var(--line)] p-5 rounded-xl flex flex-col justify-between">
           <div className="flex items-center justify-between text-[var(--muted)] mb-2">
             <span className="text-xs font-sans normal-case font-semibold">{t('admin.client.lifetimeSpend')}</span>
             <div className="w-8 h-8 rounded-lg bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400">
@@ -297,22 +297,22 @@ export const AdminClients: React.FC = () => {
           <div className="text-2xl sm:text-3xl font-sans font-bold text-white tracking-tight">
             {formatAmount(totalLifetimeSpend, currency)}
           </div>
-          <div className="mt-3 pt-2 border-t border-[rgba(255,255,255,0.07)] text-[11px] font-sans text-purple-400">
+          <div className="mt-3 pt-2 border-t border-[var(--line)] text-[11px] font-sans text-purple-400">
             {language === 'id' ? 'Total Nilai Kontrak Billed' : 'Cumulative Billed Value'}
           </div>
         </div>
       </div>
 
       {/* 3. Search & Filter Bar */}
-      <div className="w-full flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[var(--panel)] border border-[rgba(255,255,255,0.07)] p-4 rounded-xl">
+      <div className="w-full flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[var(--panel)] border border-[var(--line)] p-4 rounded-xl">
         <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#5C626E]" size={14} />
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--muted)]" size={14} />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={t('admin.client.searchPlaceholder')}
-            className="w-full pl-9 pr-3 py-2 bg-[var(--panel)] border border-[rgba(255,255,255,0.07)] rounded-xl text-xs text-white placeholder:text-[#5C626E] focus:outline-none focus:border-[var(--accent)] font-sans"
+            className="w-full pl-9 pr-3 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-xs text-white placeholder:text-[var(--muted)] focus:outline-none focus:border-[var(--accent)] font-sans"
           />
         </div>
 
@@ -335,7 +335,7 @@ export const AdminClients: React.FC = () => {
       {/* Mobile View: Clean Client Cards (Zero Horizontal Scrolling) */}
       <div className="md:hidden space-y-3">
         {filteredClients.length === 0 ? (
-          <div className="py-12 text-center text-[var(--muted)] bg-[var(--panel)] border border-[rgba(255,255,255,0.07)] rounded-xl text-xs font-sans">
+          <div className="py-12 text-center text-[var(--muted)] bg-[var(--panel)] border border-[var(--line)] rounded-xl text-xs font-sans">
             {language === 'id' ? 'Tidak ada data klien yang sesuai.' : 'No clients found.'}
           </div>
         ) : (
@@ -345,7 +345,7 @@ export const AdminClients: React.FC = () => {
               <div 
                 key={client.id}
                 className={`bg-[var(--panel)] border rounded-xl p-4 space-y-3 transition-all shadow-lg ${
-                  isOverBudget ? 'border-red-500/50 bg-red-950/10' : 'border-[rgba(255,255,255,0.07)] hover:border-[rgba(255,255,255,0.15)]'
+                  isOverBudget ? 'border-red-500/50 bg-red-950/10' : 'border-[var(--line)] hover:border-[var(--line)]'
                 }`}
               >
                 {/* Header: Name, Role & Status */}
@@ -366,10 +366,10 @@ export const AdminClients: React.FC = () => {
                 </div>
 
                 {/* Company & Industry */}
-                <div className="flex items-center gap-2 text-xs font-sans text-[#C5CEE0] bg-[var(--panel)]/60 p-2.5 rounded-lg border border-[rgba(255,255,255,0.04)]">
+                <div className="flex items-center gap-2 text-xs font-sans text-[var(--text)] bg-[var(--panel)]/60 p-2.5 rounded-lg border border-[var(--line)]">
                   <Building2 size={13} className="text-[var(--muted)] shrink-0" />
                   <span className="font-semibold text-white">{client.company}</span>
-                  <span className="text-[#64748B]">•</span>
+                  <span className="text-[var(--muted)]">•</span>
                   <span className="text-[11px] text-[var(--muted)] truncate">{client.industry}</span>
                 </div>
 
@@ -377,7 +377,7 @@ export const AdminClients: React.FC = () => {
                 <div className="grid grid-cols-1 gap-1.5 text-xs font-sans text-[var(--muted)]">
                   <a 
                     href={`mailto:${client.email}`}
-                    className="flex items-center gap-1.5 text-[#C5CEE0] hover:text-white transition-colors truncate"
+                    className="flex items-center gap-1.5 text-[var(--text)] hover:text-white transition-colors truncate"
                   >
                     <Mail size={12} className="text-[var(--muted)] shrink-0" />
                     <span className="truncate">{client.email}</span>
@@ -385,14 +385,14 @@ export const AdminClients: React.FC = () => {
                   {client.phone && (
                     <a 
                       href={`tel:${client.phone}`}
-                      className="flex items-center gap-1.5 text-[#C5CEE0] hover:text-white transition-colors"
+                      className="flex items-center gap-1.5 text-[var(--text)] hover:text-white transition-colors"
                     >
                       <Phone size={12} className="text-[var(--muted)] shrink-0" />
                       <span>{client.phone}</span>
                     </a>
                   )}
                   {client.location && (
-                    <div className="flex items-center gap-1.5 text-[#64748B] text-[11px]">
+                    <div className="flex items-center gap-1.5 text-[var(--muted)] text-[11px]">
                       <MapPin size={12} className="shrink-0" />
                       <span>{client.location}</span>
                     </div>
@@ -400,7 +400,7 @@ export const AdminClients: React.FC = () => {
                 </div>
 
                 {/* SLA Ad-Spend Status & Actions */}
-                <div className="pt-2 border-t border-[rgba(255,255,255,0.06)] flex items-center justify-between gap-2">
+                <div className="pt-2 border-t border-[var(--line)] flex items-center justify-between gap-2">
                   <div>
                     {client.slaDailyAdSpendBudget ? (
                       <div>
@@ -409,7 +409,7 @@ export const AdminClients: React.FC = () => {
                           {isOverBudget && <AlertTriangle size={12} className="text-red-400 shrink-0" />}
                           <span>{formatAmount(client.currentDailyAdSpend || 0, currency)}</span>
                         </div>
-                        <div className="text-[10px] font-sans text-[#5C626E]">
+                        <div className="text-[10px] font-sans text-[var(--muted)]">
                           Cap: {formatAmount(client.slaDailyAdSpendBudget, currency)}/day
                         </div>
                       </div>
@@ -429,7 +429,7 @@ export const AdminClients: React.FC = () => {
                         href={`https://wa.me/${client.phone.replace(/\D/g, '')}`}
                         target="_blank"
                         rel="noreferrer"
-                        className="w-9 h-9 rounded-xl bg-[var(--panel)] hover:bg-emerald-950/40 text-emerald-400 border border-[rgba(255,255,255,0.07)] hover:border-emerald-500/30 flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
+                        className="w-9 h-9 rounded-xl bg-[var(--panel)] hover:bg-emerald-950/40 text-emerald-400 border border-[var(--line)] hover:border-emerald-500/30 flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
                         title="Chat WhatsApp"
                       >
                         <Phone size={13} />
@@ -437,14 +437,14 @@ export const AdminClients: React.FC = () => {
                     )}
                     <button
                       onClick={() => handleOpenEditClient(client)}
-                      className="w-9 h-9 rounded-xl bg-[var(--panel)] hover:bg-[#21252F] text-[var(--muted)] hover:text-white border border-[rgba(255,255,255,0.07)] flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
+                      className="w-9 h-9 rounded-xl bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--muted)] hover:text-white border border-[var(--line)] flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
                       title="Edit Client"
                     >
                       <Edit3 size={13} />
                     </button>
                     <button
                       onClick={() => handleDeleteClient(client.id, client.name)}
-                      className="w-9 h-9 rounded-xl bg-[var(--panel)] hover:bg-red-950/40 text-[var(--muted)] hover:text-red-400 border border-[rgba(255,255,255,0.07)] hover:border-red-500/30 flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
+                      className="w-9 h-9 rounded-xl bg-[var(--panel)] hover:bg-red-950/40 text-[var(--muted)] hover:text-red-400 border border-[var(--line)] hover:border-red-500/30 flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
                       title="Delete Client"
                     >
                       <Trash2 size={13} />
@@ -463,11 +463,11 @@ export const AdminClients: React.FC = () => {
         shadowBg="surface"
         shadowSize="md"
         className="hidden md:block w-full rounded-xl overflow-hidden"
-        scrollClassName="w-full bg-[var(--panel)] border border-[rgba(255,255,255,0.07)] rounded-xl overflow-x-auto select-none cursor-grab active:cursor-grabbing custom-scrollbar max-h-[750px] overflow-y-auto"
+        scrollClassName="w-full bg-[var(--panel)] border border-[var(--line)] rounded-xl overflow-x-auto select-none cursor-grab active:cursor-grabbing custom-scrollbar max-h-[750px] overflow-y-auto"
       >
         <table className="w-full text-left text-xs font-sans min-w-[760px]">
           <thead className="sticky top-0 z-10 bg-[var(--panel)]">
-            <tr className="border-b border-[rgba(255,255,255,0.07)] text-[var(--muted)] bg-[var(--panel)] font-sans text-[11px]">
+            <tr className="border-b border-[var(--line)] text-[var(--muted)] bg-[var(--panel)] font-sans text-[11px]">
               <th className="py-3 px-4 font-semibold">{t('admin.client.colName')}</th>
               <th className="py-3 px-4 font-semibold">{t('admin.client.colCompany')}</th>
               <th className="py-3 px-4 font-semibold">{t('admin.client.colContact')}</th>
@@ -477,7 +477,7 @@ export const AdminClients: React.FC = () => {
               <th className="py-3 px-4 font-semibold text-right">{t('admin.client.colActions')}</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-[rgba(255,255,255,0.07)]">
+          <tbody className="divide-y divide-[var(--line)]">
             {filteredClients.length === 0 ? (
               <tr>
                 <td colSpan={7} className="py-12 text-center text-[var(--muted)]">
@@ -525,12 +525,12 @@ export const AdminClients: React.FC = () => {
                             {isOverBudget && <AlertTriangle size={12} className="text-red-400 shrink-0" />}
                             <span>{formatAmount(client.currentDailyAdSpend || 0, currency)}</span>
                           </div>
-                          <div className="text-[10px] text-[#5C626E]">
+                          <div className="text-[10px] text-[var(--muted)]">
                             Cap: {formatAmount(client.slaDailyAdSpendBudget, currency)}/day
                           </div>
                         </div>
                       ) : (
-                        <span className="text-[#5C626E] text-[11px]">No SLA Cap</span>
+                        <span className="text-[var(--muted)] text-[11px]">No SLA Cap</span>
                       )}
                     </td>
                     <td className="py-3.5 px-4">
@@ -548,14 +548,14 @@ export const AdminClients: React.FC = () => {
                       <div className="flex items-center justify-end gap-1.5">
                         <button
                           onClick={() => handleOpenEditClient(client)}
-                          className="w-9 h-9 rounded-xl bg-[var(--panel)] hover:bg-[#21252F] text-[var(--muted)] hover:text-white border border-[rgba(255,255,255,0.07)] flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
+                          className="w-9 h-9 rounded-xl bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--muted)] hover:text-white border border-[var(--line)] flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
                           title="Edit Client"
                         >
                           <Edit3 size={13} />
                         </button>
                         <button
                           onClick={() => handleDeleteClient(client.id, client.name)}
-                          className="w-9 h-9 rounded-xl bg-[var(--panel)] hover:bg-red-950/40 text-[var(--muted)] hover:text-red-400 border border-[rgba(255,255,255,0.07)] hover:border-red-500/30 flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
+                          className="w-9 h-9 rounded-xl bg-[var(--panel)] hover:bg-red-950/40 text-[var(--muted)] hover:text-red-400 border border-[var(--line)] hover:border-red-500/30 flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
                           title="Delete Client"
                         >
                           <Trash2 size={13} />
@@ -573,15 +573,15 @@ export const AdminClients: React.FC = () => {
       {/* 5. Create / Edit Client Modal */}
       {isClientModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/80  flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-[var(--panel)] border border-[rgba(255,255,255,0.07)] rounded-xl w-full max-w-lg p-6 space-y-4 shadow-none my-8 text-xs font-sans">
-            <div className="flex items-center justify-between pb-3 border-b border-[rgba(255,255,255,0.07)]">
+          <div className="bg-[var(--panel)] border border-[var(--line)] rounded-xl w-full max-w-lg p-6 space-y-4 shadow-none my-8 text-xs font-sans">
+            <div className="flex items-center justify-between pb-3 border-b border-[var(--line)]">
               <h2 className="text-base font-bold font-sans text-white flex items-center gap-2">
                 <Users className="text-[var(--accent)]" size={18} />
                 <span>{editingClient ? (language === 'id' ? 'Edit Profil Klien' : 'Edit Client Profile') : (language === 'id' ? 'Tambah Klien Baru' : 'Add New Client')}</span>
               </h2>
               <button
                 onClick={() => setIsClientModalOpen(false)}
-                className="p-1.5 rounded-lg text-[var(--muted)] hover:text-white bg-[var(--panel)] border border-[rgba(255,255,255,0.07)]"
+                className="p-1.5 rounded-lg text-[var(--muted)] hover:text-white bg-[var(--panel)] border border-[var(--line)]"
               >
                 <X size={14} />
               </button>
@@ -597,7 +597,7 @@ export const AdminClients: React.FC = () => {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="e.g. John Doe"
-                    className="w-full px-3 py-2 bg-[var(--panel)] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
+                    className="w-full px-3 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
                   />
                 </div>
                 <div>
@@ -608,7 +608,7 @@ export const AdminClients: React.FC = () => {
                     value={company}
                     onChange={(e) => setCompany(e.target.value)}
                     placeholder="e.g. Acme Global Tech"
-                    className="w-full px-3 py-2 bg-[var(--panel)] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
+                    className="w-full px-3 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
                   />
                 </div>
               </div>
@@ -621,7 +621,7 @@ export const AdminClients: React.FC = () => {
                     value={role}
                     onChange={(e) => setRole(e.target.value)}
                     placeholder="Managing Director, VP Engineering..."
-                    className="w-full px-3 py-2 bg-[var(--panel)] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
+                    className="w-full px-3 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
                   />
                 </div>
                 <div>
@@ -631,7 +631,7 @@ export const AdminClients: React.FC = () => {
                     value={industry}
                     onChange={(e) => setIndustry(e.target.value)}
                     placeholder="Fintech, Real Estate, E-Commerce..."
-                    className="w-full px-3 py-2 bg-[var(--panel)] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
+                    className="w-full px-3 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
                   />
                 </div>
               </div>
@@ -644,7 +644,7 @@ export const AdminClients: React.FC = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="contact@company.com"
-                    className="w-full px-3 py-2 bg-[var(--panel)] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
+                    className="w-full px-3 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
                   />
                 </div>
                 <div>
@@ -654,13 +654,13 @@ export const AdminClients: React.FC = () => {
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     placeholder="+62 811-XXXX-XXXX"
-                    className="w-full px-3 py-2 bg-[var(--panel)] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
+                    className="w-full px-3 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
                   />
                 </div>
               </div>
 
               {/* SLA Ad Spend Cap Section */}
-              <div className="p-3 bg-[var(--panel)] border border-[rgba(255,255,255,0.07)] rounded-xl space-y-2">
+              <div className="p-3 bg-[var(--panel)] border border-[var(--line)] rounded-xl space-y-2">
                 <div className="flex items-center gap-1.5 text-amber-400 font-bold">
                   <Activity size={13} />
                   <span>SLA Daily Ad-Spend Cap & Tracking (IDR)</span>
@@ -672,7 +672,7 @@ export const AdminClients: React.FC = () => {
                       type="number"
                       value={slaDailyBudget}
                       onChange={(e) => setSlaDailyBudget(Number(e.target.value))}
-                      className="w-full px-3 py-2 bg-[var(--panel)] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
+                      className="w-full px-3 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
                     />
                   </div>
                   <div>
@@ -681,7 +681,7 @@ export const AdminClients: React.FC = () => {
                       type="number"
                       value={currentDailySpend}
                       onChange={(e) => setCurrentDailySpend(Number(e.target.value))}
-                      className="w-full px-3 py-2 bg-[var(--panel)] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
+                      className="w-full px-3 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
                     />
                   </div>
                 </div>
@@ -695,7 +695,7 @@ export const AdminClients: React.FC = () => {
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
                     placeholder="Jakarta, Indonesia"
-                    className="w-full px-3 py-2 bg-[var(--panel)] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
+                    className="w-full px-3 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
                   />
                 </div>
                 <div>
@@ -722,15 +722,15 @@ export const AdminClients: React.FC = () => {
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   placeholder="Special client preferences, NDA details, billing notes..."
-                  className="w-full px-3 py-2 bg-[var(--panel)] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
+                  className="w-full px-3 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-[rgba(255,255,255,0.07)]">
+              <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-[var(--line)]">
                 <button
                   type="button"
                   onClick={() => setIsClientModalOpen(false)}
-                  className="h-10 px-4 rounded-xl bg-[var(--panel)] hover:bg-[#21252F] text-[var(--muted)] hover:text-white border border-[rgba(255,255,255,0.07)] font-sans text-xs transition-colors min-h-[40px]"
+                  className="h-10 px-4 rounded-xl bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--muted)] hover:text-white border border-[var(--line)] font-sans text-xs transition-colors min-h-[40px]"
                 >
                   {language === 'id' ? 'Batal' : 'Cancel'}
                 </button>
