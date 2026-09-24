@@ -298,7 +298,7 @@ export const AdminLayout: React.FC = () => {
       {/* DESKTOP SIDEBAR */}
       {/* ------------------------------------------------------------- */}
       <aside 
-        className={`hidden md:flex flex-col bg-[#111318] border-r border-white/[0.07] shrink-0 h-full z-30 transition-all duration-300 ${
+        className={`hidden md:flex flex-col bg-[#111318] border-r border-white/[0.07] shrink-0 h-full z-30 transition-colors duration-150 ${
           sidebarCollapsed ? 'w-[72px]' : 'w-[236px]'
         }`}
       >
@@ -334,7 +334,7 @@ export const AdminLayout: React.FC = () => {
           ) : (
             <Link 
               to="/admin/dashboard" 
-              className="w-9 h-9 rounded-xl bg-[#181B22] border border-white/10 flex items-center justify-center shrink-0 shadow-sm hover:border-[#E50914]/40 hover:scale-105 transition-all p-1.5"
+              className="w-9 h-9 rounded-xl bg-[#181B22] border border-white/10 flex items-center justify-center shrink-0 shadow-sm hover:border-[#E50914]/40 transition-all p-1.5"
               title="Kapitech AMS Dashboard"
             >
               <img src="/favicon.png" alt="Kapitech" className="w-full h-full object-contain" />
@@ -415,7 +415,7 @@ export const AdminLayout: React.FC = () => {
         <div className="p-3 border-t border-white/[0.07] bg-[#111318] space-y-2.5">
           <div className={`flex items-center justify-between ${sidebarCollapsed ? 'flex-col gap-2' : ''}`}>
             <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#E50914] to-[#B80710] border border-white/10 flex items-center justify-center text-xs font-sans text-white font-bold shrink-0 shadow-sm">
+              <div className="w-8 h-8 rounded-lg bg-[#E50914] border border-white/10 flex items-center justify-center text-xs font-sans text-white font-bold shrink-0 shadow-sm">
                 {roleMeta.accountProfile.avatarLabel}
               </div>
               {!sidebarCollapsed && (
@@ -484,7 +484,7 @@ export const AdminLayout: React.FC = () => {
           </button>
 
           <Link to="/admin/dashboard" className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#E50914] to-[#FF1E27] flex items-center justify-center text-white font-bold text-xs shadow-[0_0_12px_rgba(229,9,20,0.35)] shrink-0">
+            <div className="w-7 h-7 rounded-lg bg-[#E50914] flex items-center justify-center text-white font-bold text-xs shadow-none shrink-0">
               K
             </div>
             <div className="min-w-0">
@@ -702,7 +702,7 @@ export const AdminLayout: React.FC = () => {
             {/* Bottom session details */}
             <div className="p-3.5 border-t border-white/[0.07] bg-[#181B22] flex items-center justify-between shrink-0">
               <div className="flex items-center gap-2.5 min-w-0">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#E50914] to-[#B80710] border border-white/10 flex items-center justify-center text-xs font-sans text-white font-bold shrink-0 shadow-sm">
+                <div className="w-8 h-8 rounded-lg bg-[#E50914] border border-white/10 flex items-center justify-center text-xs font-sans text-white font-bold shrink-0 shadow-sm">
                   {roleMeta.accountProfile.avatarLabel}
                 </div>
                 <div className="min-w-0">
