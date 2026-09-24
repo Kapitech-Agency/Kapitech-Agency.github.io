@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Quote, Plus, Star, Edit3, Trash2, Check, UserCheck, MessageSquare, Building2, MapPin } from 'lucide-react';
-import { getCmsTestimonials, saveCmsTestimonial, deleteCmsTestimonial, TestimonialItem } from '../../lib/cmsStore';
+import { TestimonialItem } from '../../lib/cmsStore';
+import { api } from '../../lib/apiClient';
 import { useLanguage } from '../../lib/LanguageContext';
 
 export const AdminCmsTestimonials: React.FC = () => {
@@ -10,15 +11,13 @@ export const AdminCmsTestimonials: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
 
-  const loadData = () => {
-    setTestimonials(getCmsTestimonials());
+  const loadData = async () => {
+    const res = await api.cms.getTestimonials();
+    if (res.success && Array.isArray(res.data?.testimonials)) setTestimonials(res.data.testimonials as TestimonialItem[]);
   };
 
   useEffect(() => {
-    loadData();
-    const handleUpdate = () => loadData();
-    window.addEventListener('kapitech_cms_updated', handleUpdate);
-    return () => window.removeEventListener('kapitech_cms_updated', handleUpdate);
+    void loadData();
   }, []);
 
   const handleOpenAdd = () => {
@@ -41,26 +40,29 @@ export const AdminCmsTestimonials: React.FC = () => {
     setIsModalOpen(true);
   };
 
-  const handleDelete = (id: string, author: string) => {
+  const handleDelete = async (id: string, author: string) => {
     if (window.confirm(`Hapus testimoni dari "${author}"?`)) {
-      deleteCmsTestimonial(id);
-      loadData();
+      const res = await api.cms.deleteTestimonial(id);
+      if (!res.success) { setStatusMessage(res.error || 'Delete failed.'); return; }
+      await loadData();
       setStatusMessage('Testimoni berhasil dihapus.');
       setTimeout(() => setStatusMessage(null), 3000);
     }
   };
 
-  const handleSaveModal = (e: React.FormEvent) => {
+  const handleSaveModal = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingItem || !editingItem.author.trim() || (!editingItem.quoteId && !editingItem.quote)) {
       alert('Nama author dan isi kutipan testimoni wajib diisi.');
       return;
     }
 
-    saveCmsTestimonial(editingItem);
+    const exists = testimonials.some(item => item.id === editingItem.id);
+    const res = exists ? await api.cms.updateTestimonial(editingItem.id, editingItem) : await api.cms.createTestimonial(editingItem);
+    if (!res.success) { setStatusMessage(res.error || 'Failed to save testimonial.'); return; }
     setIsModalOpen(false);
     setEditingItem(null);
-    loadData();
+    await loadData();
     setStatusMessage('Testimoni berhasil disimpan ke database CMS!');
     setTimeout(() => setStatusMessage(null), 3000);
   };
