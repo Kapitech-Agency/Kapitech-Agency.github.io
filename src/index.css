@@ -1808,3 +1808,364 @@ body {
     min-width: 272px;
   }
 }
+
+
+/* ==========================================================================
+   AMS FINAL UI NORMALIZATION
+   Scoped to .ams-shell so public website styles are never affected.
+   ========================================================================== */
+
+.ams-shell {
+  --ams-bg: #090A0F;
+  --ams-surface: #111318;
+  --ams-surface-raised: #181B22;
+  --ams-surface-subtle: #21252F;
+  --ams-border: rgba(255,255,255,.07);
+  --ams-border-strong: rgba(255,255,255,.12);
+  --ams-text: #F8FAFC;
+  --ams-secondary: #8A94A6;
+  --ams-muted: #64748B;
+  --ams-accent: #E50914;
+  --ams-accent-hover: #FF1E27;
+  --ams-success: #34D399;
+  --ams-warning: #FBBF24;
+  --ams-danger: #FF1E27;
+  --ams-radius-card: 14px;
+  --ams-radius-control: 9px;
+  --ams-content-max: 1700px;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  letter-spacing: normal;
+  background: var(--ams-bg);
+}
+
+.ams-shell,
+.ams-shell * {
+  box-sizing: border-box;
+}
+
+.ams-shell h1,
+.ams-shell h2,
+.ams-shell h3,
+.ams-shell h4,
+.ams-shell h5,
+.ams-shell h6 {
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: var(--ams-text);
+  letter-spacing: -0.02em;
+}
+
+.ams-shell h1 { font-size: 24px; line-height: 1.2; font-weight: 700; }
+.ams-shell h2 { font-size: 18px; line-height: 1.3; font-weight: 650; }
+.ams-shell h3 { font-size: 15px; line-height: 1.35; font-weight: 650; }
+.ams-shell p { font-size: 13px; line-height: 1.55; }
+.ams-shell label { font-size: 12px; line-height: 1.4; font-weight: 550; color: var(--ams-secondary); }
+
+.ams-shell main {
+  background: var(--ams-bg);
+  min-width: 0;
+}
+
+.ams-shell main > .flex-1 {
+  width: 100%;
+  max-width: var(--ams-content-max);
+  padding: 24px 28px 40px;
+}
+
+.ams-shell header {
+  height: 64px;
+  background: rgba(9,10,15,.94);
+  border-color: var(--ams-border);
+  box-shadow: 0 1px 0 rgba(255,255,255,.02);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.ams-shell aside {
+  background: var(--ams-surface);
+  border-color: var(--ams-border);
+}
+
+.ams-shell aside a {
+  min-height: 38px;
+  border-radius: 9px;
+}
+
+.ams-shell aside a:hover {
+  background: rgba(255,255,255,.035);
+}
+
+.ams-shell aside a[class*="bg-[rgba(229,9,20"] {
+  background: rgba(229,9,20,.10);
+}
+
+.ams-shell input,
+.ams-shell textarea,
+.ams-shell select,
+.ams-shell button {
+  font-family: inherit;
+}
+
+.ams-shell input:not([type="checkbox"]):not([type="radio"]),
+.ams-shell textarea,
+.ams-shell select {
+  border-radius: var(--ams-radius-control);
+  border-color: var(--ams-border);
+  background: var(--ams-surface);
+  color: var(--ams-text);
+  min-height: 38px;
+  box-shadow: none;
+}
+
+.ams-shell input:not([type="checkbox"]):not([type="radio"]):focus,
+.ams-shell textarea:focus,
+.ams-shell select:focus {
+  border-color: rgba(229,9,20,.55);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(229,9,20,.10);
+}
+
+.ams-shell select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, #8A94A6 50%), linear-gradient(135deg, #8A94A6 50%, transparent 50%);
+  background-position: calc(100% - 15px) 16px, calc(100% - 10px) 16px;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+  padding-right: 32px;
+}
+
+.ams-shell button {
+  border-radius: var(--ams-radius-control);
+  transition: background-color .16s ease, border-color .16s ease, color .16s ease, opacity .16s ease;
+}
+
+.ams-shell button:hover {
+  transform: none !important;
+}
+
+.ams-shell button:active {
+  transform: translateY(1px) !important;
+}
+
+.ams-shell [class*="rounded-2xl"],
+.ams-shell [class*="rounded-[16px]"] {
+  border-radius: var(--ams-radius-card);
+}
+
+.ams-shell [class*="shadow-"] {
+  box-shadow: none;
+}
+
+.ams-shell [class*="backdrop-blur"] {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.ams-shell table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.ams-shell table thead th {
+  height: 42px;
+  padding: 10px 12px;
+  color: #8A94A6;
+  font-size: 11px;
+  line-height: 1.35;
+  font-weight: 650;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  background: rgba(17,19,24,.75);
+  border-bottom: 1px solid var(--ams-border);
+}
+
+.ams-shell table tbody td {
+  padding: 11px 12px;
+  color: #D7DCE5;
+  font-size: 13px;
+  line-height: 1.45;
+  border-bottom: 1px solid rgba(255,255,255,.045);
+  vertical-align: middle;
+}
+
+.ams-shell table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.ams-shell table tbody tr:hover td {
+  background: rgba(255,255,255,.018);
+}
+
+.ams-shell .ams-table-scroll {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  border-radius: var(--ams-radius-card);
+}
+
+.ams-shell .ams-table-scroll > table {
+  min-width: 720px;
+}
+
+.ams-shell .ams-kanban-scroll {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scroll-snap-type: x proximity;
+}
+
+.ams-shell .ams-kanban-scroll > * {
+  scroll-snap-align: start;
+}
+
+.ams-shell [role="dialog"] {
+  max-width: min(720px, calc(100vw - 32px));
+  max-height: min(88dvh, 900px);
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+.ams-shell [role="dialog"] form {
+  min-width: 0;
+}
+
+.ams-shell .fixed.inset-0 {
+  overscroll-behavior: contain;
+}
+
+.ams-shell .animate-pulse,
+.ams-shell .animate-bounce,
+.ams-shell .animate-spin:not([aria-label*="load"]):not(.loading) {
+  animation: none !important;
+}
+
+.ams-shell [class*="animate-in"],
+.ams-shell [class*="animate-out"],
+.ams-shell [class*="duration-300"],
+.ams-shell [class*="duration-500"] {
+  animation-duration: 160ms !important;
+}
+
+.ams-shell .ams-notification-center {
+  z-index: 70;
+}
+
+.ams-shell .ams-action-row,
+.ams-shell .flex.items-center.gap-2,
+.ams-shell .flex.items-center.gap-3 {
+  min-width: 0;
+}
+
+.ams-shell .overflow-x-auto {
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 767px) {
+  .ams-shell main > .flex-1 {
+    padding: 16px 14px 88px;
+  }
+
+  .ams-shell header {
+    height: 56px;
+  }
+
+  .ams-shell h1 { font-size: 20px; }
+  .ams-shell h2 { font-size: 17px; }
+  .ams-shell h3 { font-size: 14px; }
+  .ams-shell p { font-size: 13px; }
+
+  .ams-shell aside {
+    width: min(320px, 88vw);
+  }
+
+  .ams-shell .grid {
+    min-width: 0;
+  }
+
+  .ams-shell .ams-table-scroll {
+    margin-inline: -2px;
+    width: calc(100% + 4px);
+    border-radius: 10px;
+  }
+
+  .ams-shell .ams-table-scroll > table {
+    min-width: 680px;
+  }
+
+  .ams-shell table thead th,
+  .ams-shell table tbody td {
+    padding: 10px;
+  }
+
+  .ams-shell .ams-kanban-scroll {
+    margin-inline: -2px;
+    width: calc(100% + 4px);
+    padding-bottom: 6px;
+  }
+
+  .ams-shell .ams-kanban-scroll > div,
+  .ams-shell .ams-kanban-scroll > section {
+    min-width: max-content;
+  }
+
+  .ams-shell [role="dialog"] {
+    max-width: calc(100vw - 20px);
+    max-height: calc(100dvh - 24px);
+    border-radius: 14px;
+  }
+
+  .ams-shell button,
+  .ams-shell a[role="button"] {
+    min-height: 40px;
+  }
+
+  .ams-shell .fixed.right-4.top-3,
+  .ams-shell .fixed.right-5.top-3 {
+    right: 10px;
+    top: 8px;
+  }
+}
+
+@media (max-width: 520px) {
+  .ams-shell main > .flex-1 {
+    padding-inline: 10px;
+  }
+
+  .ams-shell .flex.flex-wrap,
+  .ams-shell .flex.items-center {
+    min-width: 0;
+  }
+
+  .ams-shell .overflow-x-auto {
+    max-width: 100%;
+  }
+
+  .ams-shell .ams-kanban-scroll > * {
+    min-width: 272px;
+  }
+
+  .ams-shell [role="dialog"] {
+    max-width: calc(100vw - 12px);
+    max-height: calc(100dvh - 12px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ams-shell *,
+  .ams-shell *::before,
+  .ams-shell *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
