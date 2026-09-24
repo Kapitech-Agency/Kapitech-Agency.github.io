@@ -448,7 +448,7 @@ export const AdminDashboard: React.FC = () => {
               <span>System live</span>
             </div>
           </div>
-          <p className="!text-xs sm:!text-sm !text-[var(--muted)] mt-1 font-sans leading-[18px] max-w-3xl text-left">
+          <p className="text-xs sm:text-sm text-[var(--muted)] mt-1 font-sans leading-[18px] max-w-3xl text-left">
             {language === 'id' 
               ? 'Pantau metrik pendapatan multi-mata uang, pipeline deal, eksekusi sprint proyek, dan kesehatan finansial real-time.' 
               : 'Real-time multi-currency revenue metrics, CRM pipeline valuation, sprint deliverables, and agency financial health.'}
