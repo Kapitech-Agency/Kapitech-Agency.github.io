@@ -656,7 +656,7 @@ export const AdminInvoicing: React.FC = () => {
                         <InvoiceStatusDropdown
                           status={inv.status}
                           onChange={(newStatus) => {
-                            updateInvoiceStatus(inv.id, newStatus);
+                            void api.finance.updateInvoice(inv.id, { status: newStatus }).then((res) => { if (res.success) void loadData(); else showToast(res.error || 'Status update failed.'); });
                             showToast(`Status updated to ${newStatus.toUpperCase()}`);
                           }}
                         />
