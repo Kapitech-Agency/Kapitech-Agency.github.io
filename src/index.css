@@ -1557,3 +1557,123 @@
     scroll-behavior: auto !important;
   }
 }
+
+
+/* ==========================================================================
+   AMS POLISH PASS: NAVIGATION, CRM AND MOBILE-FIRST SURFACES
+   ========================================================================== */
+
+.ams-shell .ams-sidebar-toggle {
+  position: relative;
+  z-index: 2;
+  flex: 0 0 40px;
+  pointer-events: auto;
+}
+
+.ams-shell aside {
+  overflow: hidden;
+}
+
+.ams-shell aside > div:first-child {
+  flex: 0 0 52px;
+}
+
+.ams-shell aside a,
+.ams-shell aside button {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.ams-shell .ams-mobile-drawer {
+  overscroll-behavior: contain;
+}
+
+.ams-shell .ams-mobile-drawer > div[role="document"],
+.ams-shell .ams-mobile-drawer > div.relative {
+  overscroll-behavior: contain;
+}
+
+.ams-shell .ams-kanban-scroll {
+  min-height: 0;
+  width: max-content;
+}
+
+.ams-shell .kanban-card {
+  min-height: 126px;
+}
+
+.ams-shell input,
+.ams-shell textarea,
+.ams-shell select {
+  color: var(--text);
+  background-color: var(--panel);
+}
+
+.ams-shell input::placeholder,
+.ams-shell textarea::placeholder {
+  color: var(--muted);
+  opacity: 1;
+}
+
+.ams-shell input:focus,
+.ams-shell textarea:focus,
+.ams-shell select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 18%, transparent);
+}
+
+.ams-shell [role="dialog"] {
+  overscroll-behavior: contain;
+}
+
+.ams-shell [role="dialog"] > div {
+  border-radius: 12px;
+  border-color: var(--line);
+  box-shadow: none;
+}
+
+.ams-shell .ams-mobile-drawer [role="document"] {
+  max-height: none;
+}
+
+@media (min-width: 900px) {
+  .ams-shell aside {
+    transition: width 180ms ease;
+  }
+
+  .ams-shell aside .ams-sidebar-toggle {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 899px) {
+  .ams-shell .ams-kanban-scroll {
+    gap: 12px;
+    min-width: max-content;
+  }
+
+  .ams-shell .kanban-card {
+    min-height: 118px;
+  }
+
+  .ams-shell [role="dialog"] > div {
+    width: min(100%, calc(100vw - 24px));
+    margin: 12px;
+  }
+}
+
+@media (max-width: 599px) {
+  .ams-shell .ams-kanban-scroll {
+    gap: 10px;
+  }
+
+  .ams-shell .kanban-card {
+    min-height: 112px;
+  }
+
+  .ams-shell .ams-dashboard-header,
+  .ams-shell > main [class*="pb-6"][class*="border-b"] {
+    padding-bottom: 16px;
+  }
+}
