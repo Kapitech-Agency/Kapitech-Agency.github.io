@@ -393,7 +393,7 @@ export const AdminProposals: React.FC = () => {
     <div className="space-y-6 animate-in fade-in duration-200">
       {/* Toast Notification */}
       {notification && (
-        <div className="fixed top-20 right-6 z-50 px-4 py-2.5 rounded-card bg-[var(--panel)] border border-[var(--line)] text-[var(--text)] text-xs font-sans shadow-none flex items-center gap-2">
+        <div className="fixed top-20 right-6 z-50 px-4 py-2.5 rounded-[12px] bg-[var(--panel)] border border-[var(--line)] text-[var(--text)] text-xs font-sans shadow-none flex items-center gap-2">
           <span className="w-2 h-2 rounded-badge bg-[var(--accent)]" />
           <span>{notification}</span>
         </div>
@@ -402,7 +402,7 @@ export const AdminProposals: React.FC = () => {
       {/* Header & Main Actions */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl sm:text-2xl font-semibold font-sans tracking-tight text-[var(--text)] flex items-center gap-2.5">
+          <h1 className="ams-page-title flex items-center gap-2.5">
             <FileText className="text-[var(--accent)]" size={24} />
             <span>{language === 'id' ? 'Proposal & Estimasi Anggaran' : 'Proposals & Quotations'}</span>
           </h1>
@@ -480,7 +480,7 @@ export const AdminProposals: React.FC = () => {
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-3 rounded-card bg-[var(--panel)] border border-[var(--line)]">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-3 sm:p-4 rounded-card bg-[var(--panel)] border border-[var(--line)]">
         <div className="relative flex-1">
           <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--ams-secondary)]" />
           <input
