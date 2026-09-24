@@ -102,11 +102,11 @@ export const AdminTimeLogs: React.FC = () => {
       <div className="max-w-[1500px] mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
         <header className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
           <div>
-            <div className="flex items-center gap-2 text-[11px] font-sans normal-case tracking-[0.14em] text-[var(--muted)]">
+            <div className="flex items-center gap-2 text-[11px] font-sans normal-case tracking-normal text-[var(--muted)]">
               <Clock3 size={13} className="text-[var(--accent)]" /> Delivery Operations
             </div>
-            <h1 className="mt-2 text-2xl sm:text-3xl font-semibold tracking-tight">Time Tracking</h1>
-            <p className="mt-1 text-sm text-[var(--muted)] max-w-2xl">Record delivery time against projects and tasks, with billable visibility for operational reporting.</p>
+            <h1 className="mt-2 text-xl font-semibold tracking-tight">Time Tracking</h1>
+            <p className="mt-1 text-[13px] leading-5 text-[var(--muted)] max-w-2xl">Record delivery time against projects and tasks, with billable visibility for operational reporting.</p>
           </div>
           <button onClick={() => void load()} className="inline-flex items-center justify-center gap-2 h-10 px-4 rounded-[var(--ams-radius-control)] border border-white/[0.08] bg-[var(--panel)] text-sm text-white hover:bg-[var(--panel)] transition-colors">
             <RefreshCw size={14} /> Refresh
@@ -119,7 +119,7 @@ export const AdminTimeLogs: React.FC = () => {
             ['Billable time', formatMinutes(billableMinutes), ReceiptText],
             ['Entries', String(logs.length), CalendarDays]
           ].map(([label, value, Icon]: any) => (
-            <div key={label} className="rounded-[var(--ams-radius-card)] border border-white/[0.07] bg-[var(--panel)] p-4 sm:p-5">
+            <div key={label} className="rounded-[var(--ams-radius-card)] border border-white/[0.07] bg-[var(--panel)] p-4">
               <div className="flex items-center justify-between">
                 <span className="text-xs text-[var(--muted)]">{label}</span>
                 <Icon size={15} className="text-[var(--accent)]" />
@@ -177,7 +177,7 @@ export const AdminTimeLogs: React.FC = () => {
           </form>
         )}
 
-        {status && <div className="rounded-xl border border-white/[0.07] bg-[var(--panel)] px-4 py-3 text-xs text-[#CBD5E1]">{status}</div>}
+        {status && <div className="rounded-xl border border-white/[0.07] bg-[var(--panel)] px-4 py-3 text-xs text-[var(--text)]">{status}</div>}
 
         <section className="rounded-[var(--ams-radius-card)] border border-white/[0.07] bg-[var(--panel)] overflow-hidden">
           <div className="px-4 sm:px-5 py-4 border-b border-white/[0.07] flex items-center justify-between">
@@ -190,14 +190,14 @@ export const AdminTimeLogs: React.FC = () => {
             <div className="p-8 text-sm text-[var(--muted)]">Loading time entries…</div>
           ) : logs.length === 0 ? (
             <div className="p-8 text-center">
-              <Clock3 size={22} className="mx-auto text-[#64748B]" />
+              <Clock3 size={22} className="mx-auto text-[var(--muted)]" />
               <p className="mt-3 text-sm text-white">No time entries yet</p>
               <p className="mt-1 text-xs text-[var(--muted)]">Add the first delivery time entry above.</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full min-w-[760px] text-left">
-                <thead className="bg-[#0D0F14] text-[10px] normal-case tracking-normal text-[#64748B]">
+                <thead className="bg-[#0D0F14] text-xs normal-case tracking-normal text-[var(--muted)]">
                   <tr>
                     <th className="px-4 py-3 font-medium">Date</th>
                     <th className="px-4 py-3 font-medium">Project / Task</th>
@@ -210,14 +210,14 @@ export const AdminTimeLogs: React.FC = () => {
                 <tbody className="divide-y divide-white/[0.05]">
                   {logs.map(log => (
                     <tr key={log.id} className="hover:bg-white/[0.02]">
-                      <td className="px-4 py-3 text-xs text-[#CBD5E1] whitespace-nowrap">{log.date}</td>
+                      <td className="px-4 py-3 text-xs text-[var(--text)] whitespace-nowrap">{log.date}</td>
                       <td className="px-4 py-3">
                         <div className="text-xs font-medium text-white">{log.projectName || 'General'}</div>
-                        <div className="text-[11px] text-[#64748B] mt-0.5">{log.taskTitle || 'General activity'}</div>
+                        <div className="text-[11px] text-[var(--muted)] mt-0.5">{log.taskTitle || 'General activity'}</div>
                       </td>
-                      <td className="px-4 py-3 text-xs text-[#CBD5E1]">{log.user || '—'}</td>
+                      <td className="px-4 py-3 text-xs text-[var(--text)]">{log.user || '—'}</td>
                       <td className="px-4 py-3 text-xs font-semibold text-white">{formatMinutes(Number(log.durationMinutes || 0))}</td>
-                      <td className="px-4 py-3"><span className="inline-flex px-2 py-1 rounded-full border border-white/[0.07] text-[10px] text-[#CBD5E1]">{log.billable ? 'Billable' : 'Non-billable'}</span></td>
+                      <td className="px-4 py-3"><span className="inline-flex px-2 py-1 rounded-full border border-white/[0.07] text-[10px] text-[var(--text)]">{log.billable ? 'Billable' : 'Non-billable'}</span></td>
                       <td className="px-4 py-3 text-right">
                         {(canDeleteAll || log.userId === getAdminSession()?.user?.id) && (
                           <button onClick={() => void remove(log)} className="w-8 h-8 inline-flex items-center justify-center rounded-lg text-[var(--muted)] hover:text-[var(--danger)] hover:bg-[var(--accent)]/10" title="Delete time entry">
