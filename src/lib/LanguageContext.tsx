@@ -103,8 +103,8 @@ const translations: Record<Language, Record<string, string>> = {
     // Admin Suite Navigation & Shell
     'admin.nav.dashboard': 'Dashboard Overview',
     'admin.nav.inbox': 'Leads & Inbox',
-    'admin.nav.crm': 'Client CRM & Sales Pipeline',
-    'admin.nav.invoicing': 'Financial Management & Invoicing',
+    'admin.nav.crm': 'CRM & Sales',
+    'admin.nav.invoicing': 'Finance & Invoicing',
     'admin.nav.projects': 'Projects & Tasks',
     'admin.nav.vendors': 'Vendor Directory',
     'admin.nav.clients': 'Client Directory',
@@ -222,11 +222,11 @@ const translations: Record<Language, Record<string, string>> = {
 
     // Nav Section Headers & Titles
     'admin.nav.coreOperations': 'CORE OPERATIONS',
-    'admin.nav.financeRevenue': 'FINANCE & REVENUE',
-    'admin.nav.contentPortfolio': 'CONTENT & PORTFOLIO',
-    'admin.nav.administration': 'ADMINISTRATION & SYSTEM',
-    'admin.nav.servicesCatalog': 'Service Catalog & Pricing',
-    'admin.nav.caseStudies': 'Case Studies & Showcase',
+    'admin.nav.financeRevenue': 'FINANCE',
+    'admin.nav.contentPortfolio': 'CONTENT',
+    'admin.nav.administration': 'SYSTEM',
+    'admin.nav.servicesCatalog': 'Services & Pricing',
+    'admin.nav.caseStudies': 'Portfolio & Case Studies',
     'admin.nav.auditTrail': 'Audit Trail & Security',
 
     // Admin Inbox
