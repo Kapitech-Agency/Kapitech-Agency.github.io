@@ -87,7 +87,7 @@ export const InvoiceStatusDropdown: React.FC<InvoiceStatusDropdownProps> = ({
         className={`flex items-center justify-between gap-2 rounded-[10px] font-sans text-xs font-semibold border transition-colors duration-150 select-none ${
           size === 'sm' ? 'px-2.5 py-1 text-[11px]' : 'px-3 py-1.5 text-xs'
         } ${current.badgeClass} ${
-          isOpen ? 'border-[rgba(230,57,70,.55)]' : 'hover:brightness-110'
+          isOpen ? 'border-[rgba(176,0,32,.55)]' : 'hover:brightness-110'
         } ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
       >
         <div className="flex items-center gap-1.5 min-w-0">
