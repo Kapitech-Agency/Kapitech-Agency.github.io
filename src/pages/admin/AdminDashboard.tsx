@@ -238,7 +238,7 @@ export const AdminDashboard: React.FC = () => {
         desc: `${formatCurrency(l.dealValue, currency)} • ${l.servicePillar}`,
         time: l.updatedAt ? new Date(l.updatedAt).toLocaleDateString([], { month: 'short', day: 'numeric' }) : 'Recent',
         type: 'deal',
-        badgeColor: 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'
+        badgeColor: 'bg-[var(--success)]/10 text-[var(--success)] border border-[var(--success)]/30'
       });
     });
 
@@ -252,8 +252,8 @@ export const AdminDashboard: React.FC = () => {
         time: inv.issueDate || 'Recent',
         type: 'invoice',
         badgeColor: isPaid 
-          ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30' 
-          : 'bg-amber-500/15 text-amber-400 border border-amber-500/30'
+          ? 'bg-[var(--success)]/10 text-[var(--success)] border border-[var(--success)]/30' 
+          : 'bg-[var(--warning)]/10 text-[var(--warning)] border border-[var(--warning)]/30'
       });
     });
 
@@ -265,7 +265,7 @@ export const AdminDashboard: React.FC = () => {
         desc: `${p.clientCompany || p.clientName} • ${p.progressPercent}% ${language === 'id' ? 'selesai' : 'progress'}`,
         time: p.targetEndDate || 'In Sprint',
         type: 'project',
-        badgeColor: 'bg-cyan-500/15 text-cyan-400 border border-cyan-500/30'
+        badgeColor: 'bg-[var(--info)]/10 text-[var(--info)] border border-[var(--info)]/30'
       });
     });
 
@@ -277,7 +277,7 @@ export const AdminDashboard: React.FC = () => {
         desc: sub.company ? `${sub.company} • ${sub.services?.join(', ') || 'General'}` : (sub.message?.slice(0, 45) || 'Inquiry'),
         time: sub.timestamp ? new Date(sub.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'New',
         type: 'inbox',
-        badgeColor: 'bg-purple-500/15 text-purple-400 border border-purple-500/30'
+        badgeColor: 'bg-[var(--info)]/10 text-[var(--info)] border border-[var(--info)]/30'
       });
     });
 
@@ -427,7 +427,7 @@ export const AdminDashboard: React.FC = () => {
       {/* GLOBAL TOAST NOTIFICATION BANNER                               */}
       {/* ------------------------------------------------------------- */}
       {notification && (
-        <div className="fixed top-20 right-5 z-50 flex items-center gap-2.5 bg-[var(--panel)] text-white px-4 py-3 rounded-lg border border-white/[0.10] shadow-none">
+        <div className="fixed top-20 right-5 z-50 flex items-center gap-2.5 bg-[var(--panel)] text-[var(--text)] px-4 py-3 rounded-lg border border-[var(--line)] shadow-none">
           <Activity size={15} className="text-[var(--accent)]" />
           <span className="text-xs font-sans font-medium">{notification}</span>
         </div>
@@ -436,7 +436,7 @@ export const AdminDashboard: React.FC = () => {
       {/* ------------------------------------------------------------- */}
       {/* 1. TOP HEADER & QUICK ACTION TOOLBAR (8PT GRID SYSTEM)        */}
       {/* ------------------------------------------------------------- */}
-      <div className="ams-dashboard-header flex flex-col xl:flex-row xl:items-center justify-between gap-4 pb-4 border-b border-white/[0.07]">
+      <div className="ams-dashboard-header flex flex-col xl:flex-row xl:items-center justify-between gap-4 pb-4 border-b border-[var(--line)]">
         <div>
           <div className="flex items-center gap-2.5 flex-wrap">
             <h1 className="text-xl font-heading font-semibold text-[var(--text)] tracking-[-0.025em]">
@@ -459,7 +459,7 @@ export const AdminDashboard: React.FC = () => {
 
           {/* Authenticated role context is server-authoritative. */}
           <div className="min-h-10 xl:h-9 px-2.5 rounded-control bg-[var(--panel)] border border-line text-[11px] font-sans text-[var(--muted)] flex items-center gap-2 shrink-0 max-w-full" title="Role is controlled by authenticated RBAC policy">
-            <ShieldCheck size={13} className="text-[var(--accent)]" />\n            <span className="text-white font-semibold">{roleMeta?.title || ROLE_DEFINITIONS[rbacRole]?.title || "Authenticated role"}</span>
+            <ShieldCheck size={13} className="text-[var(--accent)]" />\n            <span className="text-[var(--text)] font-semibold">{roleMeta?.title || ROLE_DEFINITIONS[rbacRole]?.title || "Authenticated role"}</span>
           </div>
           
           {/* Currency Switcher Pill */}
@@ -479,8 +479,8 @@ export const AdminDashboard: React.FC = () => {
               onClick={() => setPeriodFilter('thisMonth')}
               className={`px-2.5 py-1 rounded-md transition-all ${
                 periodFilter === 'thisMonth' 
-                  ? 'bg-[var(--accent)] text-white font-bold shadow-sm' 
-                  : 'text-[var(--muted)] hover:text-white'
+                  ? 'bg-[var(--accent)] text-[var(--text)] font-semibold shadow-sm' 
+                  : 'text-[var(--muted)] hover:text-[var(--text)]'
               }`}
             >
               {language === 'id' ? 'Bulan Ini' : 'This Month'}
@@ -489,8 +489,8 @@ export const AdminDashboard: React.FC = () => {
               onClick={() => setPeriodFilter('q3')}
               className={`px-2.5 py-1 rounded-lg transition-all ${
                 periodFilter === 'q3' 
-                  ? 'bg-[var(--accent)] text-white font-bold shadow-sm' 
-                  : 'text-[var(--muted)] hover:text-white'
+                  ? 'bg-[var(--accent)] text-[var(--text)] font-semibold shadow-sm' 
+                  : 'text-[var(--muted)] hover:text-[var(--text)]'
               }`}
             >
               Q3 2026
@@ -499,8 +499,8 @@ export const AdminDashboard: React.FC = () => {
               onClick={() => setPeriodFilter('ytd')}
               className={`px-2.5 py-1 rounded-lg transition-all ${
                 periodFilter === 'ytd' 
-                  ? 'bg-[var(--accent)] text-white font-bold shadow-sm' 
-                  : 'text-[var(--muted)] hover:text-white'
+                  ? 'bg-[var(--accent)] text-[var(--text)] font-semibold shadow-sm' 
+                  : 'text-[var(--muted)] hover:text-[var(--text)]'
               }`}
             >
               YTD
@@ -521,7 +521,7 @@ export const AdminDashboard: React.FC = () => {
           {isAllowed('crm') && (
             <button
               onClick={() => setIsAddLeadModalOpen(true)}
-              className="h-9 px-3 rounded-xl bg-[var(--panel)] hover:bg-[var(--panel)] border border-white/[0.07]  text-xs font-sans font-semibold text-[var(--text)] transition-all flex items-center gap-1.5 shadow-sm"
+              className="h-9 px-3 rounded-xl bg-[var(--panel)] hover:bg-[var(--panel)] border border-[var(--line)]  text-xs font-sans font-semibold text-[var(--text)] transition-all flex items-center gap-1.5 shadow-sm"
             >
               <Plus size={14} className="text-emerald-400" />
               <span>{language === 'id' ? 'Tambah Lead' : 'Add Lead'}</span>
@@ -532,7 +532,7 @@ export const AdminDashboard: React.FC = () => {
           {isAllowed('invoicing') && (
             <button
               onClick={() => setIsNewInvoiceModalOpen(true)}
-              className="h-9 px-3 rounded-xl bg-[var(--panel)] hover:bg-[var(--panel)] border border-white/[0.07]  text-xs font-sans font-semibold text-[var(--text)] transition-all flex items-center gap-1.5 shadow-sm"
+              className="h-9 px-3 rounded-xl bg-[var(--panel)] hover:bg-[var(--panel)] border border-[var(--line)]  text-xs font-sans font-semibold text-[var(--text)] transition-all flex items-center gap-1.5 shadow-sm"
             >
               <Plus size={14} className="text-purple-400" />
               <span>{language === 'id' ? 'Buat Invoice' : 'New Invoice'}</span>
@@ -543,7 +543,7 @@ export const AdminDashboard: React.FC = () => {
           {isAllowed('projects') && (
             <button
               onClick={() => setIsNewProjectModalOpen(true)}
-              className="min-h-10 xl:h-9 px-3.5 rounded-control bg-[var(--accent)] hover:bg-[var(--danger)] text-white text-xs font-sans font-semibold transition-colors flex items-center gap-1.5"
+              className="min-h-10 xl:h-9 px-3.5 rounded-control bg-[var(--accent)] hover:bg-[var(--danger)] text-[var(--text)] text-xs font-sans font-semibold transition-colors flex items-center gap-1.5"
             >
               <Plus size={14} />
               <span>{language === 'id' ? 'Mulai Proyek' : 'New Project'}</span>
@@ -569,7 +569,7 @@ export const AdminDashboard: React.FC = () => {
               </div>
             </div>
             
-            <div className="text-2xl lg:text-[28px] font-sans font-bold text-[var(--text)] tracking-tight leading-none">
+            <div className="text-2xl lg:text-[28px] font-sans font-semibold text-[var(--text)] tracking-tight leading-none">
               {formatCurrency(finMetrics.totalPaidRevenue, currency)}
             </div>
 
@@ -581,14 +581,14 @@ export const AdminDashboard: React.FC = () => {
             </div>
           </div>
 
-          <div className="mt-4 pt-3 border-t border-white/[0.07] flex items-center justify-between text-[11px] font-sans">
+          <div className="mt-4 pt-3 border-t border-[var(--line)] flex items-center justify-between text-[11px] font-sans">
             <span className="text-emerald-400 font-semibold flex items-center gap-1">
               <TrendingUp size={12} />
               Server calculated
             </span>
             <span className="text-[var(--muted)]">
               {language === 'id' ? 'Piutang: ' : 'Receivables: '}
-              <strong className="text-white font-semibold">
+              <strong className="text-[var(--text)] font-semibold">
                 {formatCurrency(finMetrics.totalOutstanding, currency)}
               </strong>
             </span>
@@ -607,7 +607,7 @@ export const AdminDashboard: React.FC = () => {
               </div>
             </div>
 
-            <div className="text-2xl lg:text-[28px] font-sans font-bold text-[var(--text)] tracking-tight leading-none">
+            <div className="text-2xl lg:text-[28px] font-sans font-semibold text-[var(--text)] tracking-tight leading-none">
               {formatCurrency(pipelineMetrics.totalPipelineValue, currency)}
             </div>
 
@@ -618,13 +618,13 @@ export const AdminDashboard: React.FC = () => {
             </div>
           </div>
 
-          <div className="mt-4 pt-3 border-t border-white/[0.07] flex items-center justify-between text-[11px] font-sans">
+          <div className="mt-4 pt-3 border-t border-[var(--line)] flex items-center justify-between text-[11px] font-sans">
             <span className="text-[var(--danger)] font-semibold flex items-center gap-1">
               {pipelineMetrics.activeLeadsCount} {language === 'id' ? 'Deal Terkualifikasi' : 'Qualified Deals'}
             </span>
             <span className="text-[var(--muted)]">
               {language === 'id' ? 'Rata-rata: ' : 'Avg: '}
-              <strong className="text-white font-semibold">
+              <strong className="text-[var(--text)] font-semibold">
                 {formatCurrency(pipelineMetrics.avgDealSize, currency)}
               </strong>
             </span>
@@ -643,7 +643,7 @@ export const AdminDashboard: React.FC = () => {
               </div>
             </div>
 
-            <div className="text-2xl lg:text-[28px] font-sans font-bold text-[var(--text)] tracking-tight leading-none">
+            <div className="text-2xl lg:text-[28px] font-sans font-semibold text-[var(--text)] tracking-tight leading-none">
               {pipelineMetrics.conversionRate}%
             </div>
 
@@ -653,13 +653,13 @@ export const AdminDashboard: React.FC = () => {
             </div>
           </div>
 
-          <div className="mt-4 pt-3 border-t border-white/[0.07] flex items-center justify-between text-[11px] font-sans">
+          <div className="mt-4 pt-3 border-t border-[var(--line)] flex items-center justify-between text-[11px] font-sans">
             <span className="text-violet-400 font-semibold">
               {pipelineMetrics.wonLeadsCount} {language === 'id' ? 'Won' : 'Won Deals'}
             </span>
             <span className="text-[var(--muted)]">
               {language === 'id' ? 'Margin Bersih: ' : 'Net Margin: '}
-              <strong className="text-white font-semibold">
+              <strong className="text-[var(--text)] font-semibold">
                 {finMetrics.netMarginPercent}%
               </strong>
             </span>
@@ -678,7 +678,7 @@ export const AdminDashboard: React.FC = () => {
               </div>
             </div>
 
-            <div className="text-2xl lg:text-[28px] font-sans font-bold text-[var(--text)] tracking-tight leading-none">
+            <div className="text-2xl lg:text-[28px] font-sans font-semibold text-[var(--text)] tracking-tight leading-none">
               {projectMetrics.total} {language === 'id' ? 'Sprint' : 'Sprints'}
             </div>
 
@@ -688,7 +688,7 @@ export const AdminDashboard: React.FC = () => {
             </div>
           </div>
 
-          <div className="mt-4 pt-3 border-t border-white/[0.07] flex items-center justify-between text-[11px] font-sans">
+          <div className="mt-4 pt-3 border-t border-[var(--line)] flex items-center justify-between text-[11px] font-sans">
             <span className="text-cyan-400 font-semibold">
               {projectMetrics.inProgress} {language === 'id' ? 'Dalam Eksekusi' : 'In Production'}
             </span>
@@ -704,7 +704,7 @@ export const AdminDashboard: React.FC = () => {
       {/* Backend-backed finance and CRM snapshot */}
       <div className="ams-summary-grid grid grid-cols-1 xl:grid-cols-2 gap-3">
         <section className="ams-card p-5">
-          <div className="flex items-center justify-between pb-3 border-b border-white/[0.07]">
+          <div className="flex items-center justify-between pb-3 border-b border-[var(--line)]">
             <div><h3 className="ams-section-title">{language === 'id' ? 'Ringkasan Keuangan' : 'Financial Summary'}</h3><p className="ams-section-subtitle">{language === 'id' ? 'Data dihitung di server.' : 'Calculated by the backend.'}</p></div>
             <button onClick={() => navigate('/admin/invoicing')} className="ams-link-button">{language === 'id' ? 'Buka' : 'Open'}</button>
           </div>
@@ -716,7 +716,7 @@ export const AdminDashboard: React.FC = () => {
           </div>
         </section>
         <section className="ams-card p-5">
-          <div className="flex items-center justify-between pb-3 border-b border-white/[0.07]">
+          <div className="flex items-center justify-between pb-3 border-b border-[var(--line)]">
             <div><h3 className="ams-section-title">{language === 'id' ? 'Pipeline CRM' : 'CRM Pipeline'}</h3><p className="ams-section-subtitle">{language === 'id' ? 'Distribusi deal dari server.' : 'Deal distribution from the backend.'}</p></div>
             <button onClick={() => navigate('/admin/crm')} className="ams-link-button">{language === 'id' ? 'Buka' : 'Open'}</button>
           </div>
@@ -738,9 +738,9 @@ export const AdminDashboard: React.FC = () => {
           
           {/* Section: Priority Active Projects */}
           <div className="p-4 sm:p-5 rounded-card bg-[var(--panel)] border border-line space-y-4 min-w-0">
-            <div className="flex items-center justify-between pb-3 border-b border-white/[0.07]">
+            <div className="flex items-center justify-between pb-3 border-b border-[var(--line)]">
               <div>
-                <h3 className="text-base font-heading font-bold text-white tracking-tight flex items-center gap-2">
+                <h3 className="text-base font-heading font-semibold text-[var(--text)] tracking-tight flex items-center gap-2">
                   <Layers size={17} className="text-cyan-400" />
                   <span>{language === 'id' ? 'Proyek Klien Prioritas & Status Sprint' : 'Priority Active Projects & Deliverables'}</span>
                 </h3>
@@ -762,11 +762,11 @@ export const AdminDashboard: React.FC = () => {
                 <div
                   key={proj.id}
                   onClick={() => navigate('/admin/projects')}
-                  className="p-4 rounded-xl bg-[var(--panel)] border border-white/[0.07]  transition-all cursor-pointer group flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+                  className="p-4 rounded-xl bg-[var(--panel)] border border-[var(--line)]  transition-all cursor-pointer group flex flex-col sm:flex-row sm:items-center justify-between gap-3"
                 >
                   <div className="space-y-1">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-sm font-semibold text-white  transition-colors">
+                      <span className="text-sm font-semibold text-[var(--text)]  transition-colors">
                         {proj.name}
                       </span>
                       <span className="text-[10px] font-sans px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/25 font-semibold">
@@ -782,7 +782,7 @@ export const AdminDashboard: React.FC = () => {
                     <div className="w-24 sm:w-36 space-y-1 shrink-0">
                       <div className="flex justify-between text-[10px] font-sans text-[var(--muted)]">
                         <span>Progress</span>
-                        <span className="text-white font-bold">{proj.progressPercent}%</span>
+                        <span className="text-[var(--text)] font-semibold">{proj.progressPercent}%</span>
                       </div>
                       <div className="h-1.5 w-full bg-white/[0.07] rounded-full overflow-hidden">
                         <div 
@@ -793,7 +793,7 @@ export const AdminDashboard: React.FC = () => {
                     </div>
 
                     <div className="text-right text-[11px] font-sans min-w-0 max-w-[46%]">
-                      <div className="text-white font-bold">
+                      <div className="text-[var(--text)] font-semibold">
                         {formatCurrency(proj.budget, currency)}
                       </div>
                       <span className="text-emerald-400 text-[10px]">
@@ -808,9 +808,9 @@ export const AdminDashboard: React.FC = () => {
 
           {/* Section: Recent Invoices & Financial Ledger */}
           <div className="p-4 sm:p-5 rounded-card bg-[var(--panel)] border border-line space-y-4 min-w-0">
-            <div className="flex items-center justify-between pb-3 border-b border-white/[0.07]">
+            <div className="flex items-center justify-between pb-3 border-b border-[var(--line)]">
               <div>
-                <h3 className="text-base font-heading font-bold text-white tracking-tight flex items-center gap-2">
+                <h3 className="text-base font-heading font-semibold text-[var(--text)] tracking-tight flex items-center gap-2">
                   <Receipt size={17} className="text-emerald-400" />
                   <span>{language === 'id' ? 'Buku Besar Invoice & Penerimaan' : 'Recent Invoices & Cashflow Ledger'}</span>
                 </h3>
@@ -830,7 +830,7 @@ export const AdminDashboard: React.FC = () => {
             <div className="overflow-x-auto custom-scrollbar">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="border-b border-white/[0.07] text-[11px] font-sans text-[var(--muted)]">
+                  <tr className="border-b border-[var(--line)] text-[11px] font-sans text-[var(--muted)]">
                     <th className="pb-2.5 font-semibold">INVOICE #</th>
                     <th className="pb-2.5 font-semibold">KLIEN / PERUSAHAAN</th>
                     <th className="pb-2.5 font-semibold">TOTAL TAGIHAN</th>
@@ -849,21 +849,21 @@ export const AdminDashboard: React.FC = () => {
                         onClick={() => navigate('/admin/invoicing')}
                         className="hover:bg-[var(--panel)]/60 cursor-pointer transition-colors"
                       >
-                        <td className="py-3 text-white font-bold">
+                        <td className="py-3 text-[var(--text)] font-semibold">
                           {inv.invoiceNumber}
                         </td>
                         <td className="py-3 text-[var(--muted)]">
-                          <div className="text-white font-semibold">{inv.clientCompany}</div>
+                          <div className="text-[var(--text)] font-semibold">{inv.clientCompany}</div>
                           <div className="text-[10px] text-[var(--muted)]">{inv.clientName}</div>
                         </td>
-                        <td className="py-3 text-white font-bold">
+                        <td className="py-3 text-[var(--text)] font-semibold">
                           <div>{formatCurrency(inv.total, currency)}</div>
                           <div className="text-[10px] text-[var(--muted)]">
                             {currency === 'IDR' ? formatAmount(inv.total, 'USD') : formatIDR(inv.total)}
                           </div>
                         </td>
                         <td className="py-3">
-                          <span className={`inline-flex items-center gap-1 text-[10px] font-sans font-bold px-2 py-0.5 rounded-full border ${
+                          <span className={`inline-flex items-center gap-1 text-[10px] font-sans font-semibold px-2 py-0.5 rounded-full border ${
                             isPaid 
                               ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/25 shadow-[0_0_12px_rgba(16,185,129,0.2)]'
                               : isOverdue
@@ -891,10 +891,10 @@ export const AdminDashboard: React.FC = () => {
           
           {/* Widget 1: Real-Time Agency Activity Feed */}
           <div className="p-4 sm:p-5 rounded-card bg-[var(--panel)] border border-line space-y-4 min-w-0">
-            <div className="flex items-center justify-between pb-3 border-b border-white/[0.07]">
+            <div className="flex items-center justify-between pb-3 border-b border-[var(--line)]">
               <div className="flex items-center gap-2">
                 <Activity size={16} className="text-emerald-400" />
-                <h3 className="text-base font-heading font-bold text-white tracking-tight">
+                <h3 className="text-base font-heading font-semibold text-[var(--text)] tracking-tight">
                   {language === 'id' ? 'Aktivitas Agensi Real-Time' : 'Live Activity Stream'}
                 </h3>
               </div>
@@ -905,7 +905,7 @@ export const AdminDashboard: React.FC = () => {
               <button
                 onClick={() => setActivityTab('all')}
                 className={`flex-1 py-1 rounded-lg transition-all ${
-                  activityTab === 'all' ? 'bg-[var(--accent)] text-white font-bold' : 'text-[var(--muted)] hover:text-white'
+                  activityTab === 'all' ? 'bg-[var(--accent)] text-[var(--text)] font-semibold' : 'text-[var(--muted)] hover:text-[var(--text)]'
                 }`}
               >
                 All
@@ -913,7 +913,7 @@ export const AdminDashboard: React.FC = () => {
               <button
                 onClick={() => setActivityTab('deals')}
                 className={`flex-1 py-1 rounded-lg transition-all ${
-                  activityTab === 'deals' ? 'bg-[var(--accent)] text-white font-bold' : 'text-[var(--muted)] hover:text-white'
+                  activityTab === 'deals' ? 'bg-[var(--accent)] text-[var(--text)] font-semibold' : 'text-[var(--muted)] hover:text-[var(--text)]'
                 }`}
               >
                 Deals
@@ -921,7 +921,7 @@ export const AdminDashboard: React.FC = () => {
               <button
                 onClick={() => setActivityTab('invoices')}
                 className={`flex-1 py-1 rounded-lg transition-all ${
-                  activityTab === 'invoices' ? 'bg-[var(--accent)] text-white font-bold' : 'text-[var(--muted)] hover:text-white'
+                  activityTab === 'invoices' ? 'bg-[var(--accent)] text-[var(--text)] font-semibold' : 'text-[var(--muted)] hover:text-[var(--text)]'
                 }`}
               >
                 Invoices
@@ -929,7 +929,7 @@ export const AdminDashboard: React.FC = () => {
               <button
                 onClick={() => setActivityTab('projects')}
                 className={`flex-1 py-1 rounded-lg transition-all ${
-                  activityTab === 'projects' ? 'bg-[var(--accent)] text-white font-bold' : 'text-[var(--muted)] hover:text-white'
+                  activityTab === 'projects' ? 'bg-[var(--accent)] text-[var(--text)] font-semibold' : 'text-[var(--muted)] hover:text-[var(--text)]'
                 }`}
               >
                 Projects
@@ -949,7 +949,7 @@ export const AdminDashboard: React.FC = () => {
                     className="p-3 rounded-xl bg-[var(--panel)] border border-white/[0.05] hover:border-white/15 transition-all space-y-1"
                   >
                     <div className="flex items-center justify-between text-[11px]">
-                      <span className="font-semibold text-white truncate max-w-[200px]">
+                      <span className="font-semibold text-[var(--text)] truncate max-w-[200px]">
                         {item.title}
                       </span>
                       <span className="text-[10px] font-sans text-[var(--muted)] shrink-0">
@@ -967,10 +967,10 @@ export const AdminDashboard: React.FC = () => {
 
           {/* Widget 2: Protected Inbox Inbound Inquiries Triage */}
           <div className="p-4 sm:p-5 rounded-card bg-[var(--panel)] border border-line space-y-4 min-w-0">
-            <div className="flex items-center justify-between pb-3 border-b border-white/[0.07]">
+            <div className="flex items-center justify-between pb-3 border-b border-[var(--line)]">
               <div className="flex items-center gap-2">
                 <Inbox size={16} className="text-purple-400" />
-                <h3 className="text-base font-heading font-bold text-white tracking-tight">
+                <h3 className="text-base font-heading font-semibold text-[var(--text)] tracking-tight">
                   {language === 'id' ? 'Inquiry Masuk kapitech.id' : 'Inbound Inquiries Triage'}
                 </h3>
               </div>
@@ -995,7 +995,7 @@ export const AdminDashboard: React.FC = () => {
                     className="p-3 rounded-xl bg-[var(--panel)] border border-white/[0.05] hover:border-white/15 transition-all space-y-2"
                   >
                     <div className="flex items-start justify-between gap-3 text-xs min-w-0">
-                      <span className="font-semibold text-white">
+                      <span className="font-semibold text-[var(--text)]">
                         {sub.fullName} {sub.company ? `(${sub.company})` : ''}
                       </span>
                       <span className="text-[10px] font-sans text-purple-400">
@@ -1019,23 +1019,23 @@ export const AdminDashboard: React.FC = () => {
           </div>
 
           {/* Widget 3: Agency SLA & Infrastructure Security Health */}
-          <div className="p-5 rounded-xl bg-[var(--panel)] border border-white/[0.07] space-y-3 font-sans text-xs">
-            <div className="flex items-center justify-between text-[var(--muted)] pb-2 border-b border-white/[0.07]">
-              <span className="font-semibold text-white flex items-center gap-1.5">
+          <div className="p-5 rounded-xl bg-[var(--panel)] border border-[var(--line)] space-y-3 font-sans text-xs">
+            <div className="flex items-center justify-between text-[var(--muted)] pb-2 border-b border-[var(--line)]">
+              <span className="font-semibold text-[var(--text)] flex items-center gap-1.5">
                 <Cpu size={14} className="text-cyan-400" />
                 INFRASTRUCTURE & SLA
               </span>
-              <span className="text-emerald-400 font-bold">99.98% HEALTHY</span>
+              <span className="text-emerald-400 font-semibold">99.98% HEALTHY</span>
             </div>
 
             <div className="space-y-2 text-[11px]">
               <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
                 <span className="text-[var(--muted)]">Core Domain:</span>
-                <span className="text-white font-semibold">https://kapitech.id (Edge CDN)</span>
+                <span className="text-[var(--text)] font-semibold">https://kapitech.id (Edge CDN)</span>
               </div>
               <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
                 <span className="text-[var(--muted)]">AMS Domain:</span>
-                <span className="text-white font-semibold">https://ams.kapitech.id (Cloud Run)</span>
+                <span className="text-[var(--text)] font-semibold">https://ams.kapitech.id (Cloud Run)</span>
               </div>
               <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
                 <span className="text-[var(--muted)]">RBAC Policy:</span>
@@ -1043,7 +1043,7 @@ export const AdminDashboard: React.FC = () => {
               </div>
               <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
                 <span className="text-[var(--muted)]">Security Vulnerabilities:</span>
-                <span className="text-emerald-400 font-bold">0 High / 0 Critical</span>
+                <span className="text-emerald-400 font-semibold">0 High / 0 Critical</span>
               </div>
             </div>
           </div>
@@ -1059,13 +1059,13 @@ export const AdminDashboard: React.FC = () => {
       {isAddLeadModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80  animate-in fade-in duration-200">
           <div className="w-full max-w-md max-h-[calc(100dvh-2rem)] overflow-y-auto bg-[var(--panel)] border border-line rounded-card p-4 sm:p-6 shadow-none space-y-5 animate-in zoom-in-95 duration-200">
-            <div className="flex items-center justify-between pb-3 border-b border-white/[0.07]">
-              <h3 className="text-lg font-heading font-bold text-white">
+            <div className="flex items-center justify-between pb-3 border-b border-[var(--line)]">
+              <h3 className="text-lg font-heading font-semibold text-[var(--text)]">
                 {language === 'id' ? 'Tambah Lead CRM Baru' : 'Add New CRM Lead'}
               </h3>
               <button 
                 onClick={() => setIsAddLeadModalOpen(false)}
-                className="text-[var(--muted)] hover:text-white transition-colors"
+                className="text-[var(--muted)] hover:text-[var(--text)] transition-colors"
               >
                 <X size={18} />
               </button>
@@ -1080,7 +1080,7 @@ export const AdminDashboard: React.FC = () => {
                   value={newLeadName}
                   onChange={(e) => setNewLeadName(e.target.value)}
                   placeholder="e.g. Irwan Prasetyo"
-                  className="w-full h-10 px-3 bg-[var(--panel)] border border-white/[0.07] focus:border-[var(--accent)] text-white rounded-xl outline-none"
+                  className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-xl outline-none"
                 />
               </div>
 
@@ -1092,7 +1092,7 @@ export const AdminDashboard: React.FC = () => {
                   value={newLeadCompany}
                   onChange={(e) => setNewLeadCompany(e.target.value)}
                   placeholder="e.g. PT Bank Central Asia"
-                  className="w-full h-10 px-3 bg-[var(--panel)] border border-white/[0.07] focus:border-[var(--accent)] text-white rounded-xl outline-none"
+                  className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-xl outline-none"
                 />
               </div>
 
@@ -1103,7 +1103,7 @@ export const AdminDashboard: React.FC = () => {
                   value={newLeadEmail}
                   onChange={(e) => setNewLeadEmail(e.target.value)}
                   placeholder="name@company.com"
-                  className="w-full h-10 px-3 bg-[var(--panel)] border border-white/[0.07] focus:border-[var(--accent)] text-white rounded-xl outline-none"
+                  className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-xl outline-none"
                 />
               </div>
 
@@ -1113,7 +1113,7 @@ export const AdminDashboard: React.FC = () => {
                   <select
                     value={newLeadPillar}
                     onChange={(e) => setNewLeadPillar(e.target.value as CrmServicePillar)}
-                    className="w-full h-10 px-3 bg-[var(--panel)] border border-white/[0.07] focus:border-[var(--accent)] text-white rounded-xl outline-none"
+                    className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-xl outline-none"
                   >
                     <option value="Web Development">Web Development</option>
                     <option value="AI & Cloud Solutions">AI & Cloud Solutions</option>
@@ -1130,22 +1130,22 @@ export const AdminDashboard: React.FC = () => {
                     type="number"
                     value={newLeadValue}
                     onChange={(e) => setNewLeadValue(e.target.value)}
-                    className="w-full h-10 px-3 bg-[var(--panel)] border border-white/[0.07] focus:border-[var(--accent)] text-white rounded-xl outline-none"
+                    className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-xl outline-none"
                   />
                 </div>
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-4 border-t border-white/[0.07]">
+              <div className="flex items-center justify-end gap-3 pt-4 border-t border-[var(--line)]">
                 <button
                   type="button"
                   onClick={() => setIsAddLeadModalOpen(false)}
-                  className="px-4 py-2 rounded-xl bg-[var(--panel)] text-[var(--muted)] hover:text-white font-semibold"
+                  className="px-4 py-2 rounded-xl bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] font-semibold"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-xl bg-[var(--accent)] hover:bg-[var(--danger)] text-white font-semibold transition-all shadow-[0_0_16px_rgba(229,9,20,0.3)]"
+                  className="px-4 py-2 rounded-xl bg-[var(--accent)] hover:bg-[var(--danger)] text-[var(--text)] font-semibold transition-all shadow-[0_0_16px_rgba(229,9,20,0.3)]"
                 >
                   Save Lead
                 </button>
@@ -1159,13 +1159,13 @@ export const AdminDashboard: React.FC = () => {
       {isNewInvoiceModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80  animate-in fade-in duration-200">
           <div className="w-full max-w-md max-h-[calc(100dvh-2rem)] overflow-y-auto bg-[var(--panel)] border border-line rounded-card p-4 sm:p-6 shadow-none space-y-5 animate-in zoom-in-95 duration-200">
-            <div className="flex items-center justify-between pb-3 border-b border-white/[0.07]">
-              <h3 className="text-lg font-heading font-bold text-white">
+            <div className="flex items-center justify-between pb-3 border-b border-[var(--line)]">
+              <h3 className="text-lg font-heading font-semibold text-[var(--text)]">
                 {language === 'id' ? 'Terbitkan Invoice Klien' : 'Create Client Invoice'}
               </h3>
               <button 
                 onClick={() => setIsNewInvoiceModalOpen(false)}
-                className="text-[var(--muted)] hover:text-white transition-colors"
+                className="text-[var(--muted)] hover:text-[var(--text)] transition-colors"
               >
                 <X size={18} />
               </button>
@@ -1180,7 +1180,7 @@ export const AdminDashboard: React.FC = () => {
                   value={quickInvCompany}
                   onChange={(e) => setQuickInvCompany(e.target.value)}
                   placeholder="e.g. PT Astra Digital Ventura"
-                  className="w-full h-10 px-3 bg-[var(--panel)] border border-white/[0.07] focus:border-[var(--accent)] text-white rounded-xl outline-none"
+                  className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-xl outline-none"
                 />
               </div>
 
@@ -1191,7 +1191,7 @@ export const AdminDashboard: React.FC = () => {
                   required
                   value={quickInvAmount}
                   onChange={(e) => setQuickInvAmount(e.target.value)}
-                  className="w-full h-10 px-3 bg-[var(--panel)] border border-white/[0.07] focus:border-[var(--accent)] text-white rounded-xl outline-none"
+                  className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-xl outline-none"
                 />
               </div>
 
@@ -1202,36 +1202,36 @@ export const AdminDashboard: React.FC = () => {
                   value={quickInvDesc}
                   onChange={(e) => setQuickInvDesc(e.target.value)}
                   placeholder="Sprint Retainer 50% Kickoff"
-                  className="w-full h-10 px-3 bg-[var(--panel)] border border-white/[0.07] focus:border-[var(--accent)] text-white rounded-xl outline-none"
+                  className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-xl outline-none"
                 />
               </div>
 
-              <div className="p-3 rounded-xl bg-[var(--panel)] border border-white/[0.07] text-[11px] font-sans text-[var(--muted)] space-y-1">
+              <div className="p-3 rounded-xl bg-[var(--panel)] border border-[var(--line)] text-[11px] font-sans text-[var(--muted)] space-y-1">
                 <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
                   <span>Subtotal:</span>
-                  <span className="text-white">{formatCurrency(parseFloat(quickInvAmount) || 0, 'IDR')}</span>
+                  <span className="text-[var(--text)]">{formatCurrency(parseFloat(quickInvAmount) || 0, 'IDR')}</span>
                 </div>
                 <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
                   <span>PPN (11%):</span>
-                  <span className="text-white">{formatCurrency(Math.round((parseFloat(quickInvAmount) || 0) * 0.11), 'IDR')}</span>
+                  <span className="text-[var(--text)]">{formatCurrency(Math.round((parseFloat(quickInvAmount) || 0) * 0.11), 'IDR')}</span>
                 </div>
-                <div className="flex justify-between pt-1 border-t border-white/[0.07] font-bold text-white">
+                <div className="flex justify-between pt-1 border-t border-[var(--line)] font-semibold text-[var(--text)]">
                   <span>Total Due:</span>
                   <span className="text-emerald-400">{formatCurrency(Math.round((parseFloat(quickInvAmount) || 0) * 1.11), 'IDR')}</span>
                 </div>
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-4 border-t border-white/[0.07]">
+              <div className="flex items-center justify-end gap-3 pt-4 border-t border-[var(--line)]">
                 <button
                   type="button"
                   onClick={() => setIsNewInvoiceModalOpen(false)}
-                  className="px-4 py-2 rounded-xl bg-[var(--panel)] text-[var(--muted)] hover:text-white font-semibold"
+                  className="px-4 py-2 rounded-xl bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] font-semibold"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-xl bg-[var(--accent)] hover:bg-[var(--danger)] text-white font-semibold transition-all shadow-[0_0_16px_rgba(229,9,20,0.3)]"
+                  className="px-4 py-2 rounded-xl bg-[var(--accent)] hover:bg-[var(--danger)] text-[var(--text)] font-semibold transition-all shadow-[0_0_16px_rgba(229,9,20,0.3)]"
                 >
                   Dispatch Invoice
                 </button>
@@ -1245,13 +1245,13 @@ export const AdminDashboard: React.FC = () => {
       {isNewProjectModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80  animate-in fade-in duration-200">
           <div className="w-full max-w-md max-h-[calc(100dvh-2rem)] overflow-y-auto bg-[var(--panel)] border border-line rounded-card p-4 sm:p-6 shadow-none space-y-5 animate-in zoom-in-95 duration-200">
-            <div className="flex items-center justify-between pb-3 border-b border-white/[0.07]">
-              <h3 className="text-lg font-heading font-bold text-white">
+            <div className="flex items-center justify-between pb-3 border-b border-[var(--line)]">
+              <h3 className="text-lg font-heading font-semibold text-[var(--text)]">
                 {language === 'id' ? 'Mulai Proyek Sprint Baru' : 'Initiate Active Project'}
               </h3>
               <button 
                 onClick={() => setIsNewProjectModalOpen(false)}
-                className="text-[var(--muted)] hover:text-white transition-colors"
+                className="text-[var(--muted)] hover:text-[var(--text)] transition-colors"
               >
                 <X size={18} />
               </button>
@@ -1266,7 +1266,7 @@ export const AdminDashboard: React.FC = () => {
                   value={quickProjTitle}
                   onChange={(e) => setQuickProjTitle(e.target.value)}
                   placeholder="e.g. NextGen Mobile Banking Modernization"
-                  className="w-full h-10 px-3 bg-[var(--panel)] border border-white/[0.07] focus:border-[var(--accent)] text-white rounded-xl outline-none"
+                  className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-xl outline-none"
                 />
               </div>
 
@@ -1278,7 +1278,7 @@ export const AdminDashboard: React.FC = () => {
                   value={quickProjClient}
                   onChange={(e) => setQuickProjClient(e.target.value)}
                   placeholder="e.g. Telkomsel Labs"
-                  className="w-full h-10 px-3 bg-[var(--panel)] border border-white/[0.07] focus:border-[var(--accent)] text-white rounded-xl outline-none"
+                  className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-xl outline-none"
                 />
               </div>
 
@@ -1288,7 +1288,7 @@ export const AdminDashboard: React.FC = () => {
                   <select
                     value={quickProjPillar}
                     onChange={(e) => setQuickProjPillar(e.target.value)}
-                    className="w-full h-10 px-3 bg-[var(--panel)] border border-white/[0.07] focus:border-[var(--accent)] text-white rounded-xl outline-none"
+                    className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-xl outline-none"
                   >
                     <option value="AI & Cloud Solutions">AI & Cloud Solutions</option>
                     <option value="Web Development">Web Development</option>
@@ -1303,22 +1303,22 @@ export const AdminDashboard: React.FC = () => {
                     type="number"
                     value={quickProjBudget}
                     onChange={(e) => setQuickProjBudget(e.target.value)}
-                    className="w-full h-10 px-3 bg-[var(--panel)] border border-white/[0.07] focus:border-[var(--accent)] text-white rounded-xl outline-none"
+                    className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-xl outline-none"
                   />
                 </div>
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-4 border-t border-white/[0.07]">
+              <div className="flex items-center justify-end gap-3 pt-4 border-t border-[var(--line)]">
                 <button
                   type="button"
                   onClick={() => setIsNewProjectModalOpen(false)}
-                  className="px-4 py-2 rounded-xl bg-[var(--panel)] text-[var(--muted)] hover:text-white font-semibold"
+                  className="px-4 py-2 rounded-xl bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] font-semibold"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-xl bg-[var(--accent)] hover:bg-[var(--danger)] text-white font-semibold transition-all shadow-[0_0_16px_rgba(229,9,20,0.3)]"
+                  className="px-4 py-2 rounded-xl bg-[var(--accent)] hover:bg-[var(--danger)] text-[var(--text)] font-semibold transition-all shadow-[0_0_16px_rgba(229,9,20,0.3)]"
                 >
                   Start Project
                 </button>
@@ -1332,13 +1332,13 @@ export const AdminDashboard: React.FC = () => {
       {isRecordExpenseModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80  animate-in fade-in duration-200">
           <div className="w-full max-w-md max-h-[calc(100dvh-2rem)] overflow-y-auto bg-[var(--panel)] border border-line rounded-card p-4 sm:p-6 shadow-none space-y-5 animate-in zoom-in-95 duration-200">
-            <div className="flex items-center justify-between pb-3 border-b border-white/[0.07]">
-              <h3 className="text-lg font-heading font-bold text-white">
+            <div className="flex items-center justify-between pb-3 border-b border-[var(--line)]">
+              <h3 className="text-lg font-heading font-semibold text-[var(--text)]">
                 {language === 'id' ? 'Catat Biaya Operasional' : 'Record Operating Expense'}
               </h3>
               <button 
                 onClick={() => setIsRecordExpenseModalOpen(false)}
-                className="text-[var(--muted)] hover:text-white transition-colors"
+                className="text-[var(--muted)] hover:text-[var(--text)] transition-colors"
               >
                 <X size={18} />
               </button>
@@ -1353,7 +1353,7 @@ export const AdminDashboard: React.FC = () => {
                   value={quickExpDesc}
                   onChange={(e) => setQuickExpDesc(e.target.value)}
                   placeholder="e.g. AWS & GCP Kubernetes Cluster Tier"
-                  className="w-full h-10 px-3 bg-[var(--panel)] border border-white/[0.07] focus:border-[var(--accent)] text-white rounded-xl outline-none"
+                  className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-xl outline-none"
                 />
               </div>
 
@@ -1363,7 +1363,7 @@ export const AdminDashboard: React.FC = () => {
                   <select
                     value={quickExpCategory}
                     onChange={(e) => setQuickExpCategory(e.target.value)}
-                    className="w-full h-10 px-3 bg-[var(--panel)] border border-white/[0.07] focus:border-[var(--accent)] text-white rounded-xl outline-none"
+                    className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-xl outline-none"
                   >
                     <option value="Software & Cloud">Software & Cloud</option>
                     <option value="Salaries & Contractors">Salaries & Contractors</option>
@@ -1380,22 +1380,22 @@ export const AdminDashboard: React.FC = () => {
                     required
                     value={quickExpAmount}
                     onChange={(e) => setQuickExpAmount(e.target.value)}
-                    className="w-full h-10 px-3 bg-[var(--panel)] border border-white/[0.07] focus:border-[var(--accent)] text-white rounded-xl outline-none"
+                    className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-xl outline-none"
                   />
                 </div>
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-4 border-t border-white/[0.07]">
+              <div className="flex items-center justify-end gap-3 pt-4 border-t border-[var(--line)]">
                 <button
                   type="button"
                   onClick={() => setIsRecordExpenseModalOpen(false)}
-                  className="px-4 py-2 rounded-xl bg-[var(--panel)] text-[var(--muted)] hover:text-white font-semibold"
+                  className="px-4 py-2 rounded-xl bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] font-semibold"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-xl bg-[var(--accent)] hover:bg-[var(--danger)] text-white font-semibold transition-all shadow-[0_0_16px_rgba(229,9,20,0.3)]"
+                  className="px-4 py-2 rounded-xl bg-[var(--accent)] hover:bg-[var(--danger)] text-[var(--text)] font-semibold transition-all shadow-[0_0_16px_rgba(229,9,20,0.3)]"
                 >
                   Save Expense
                 </button>
