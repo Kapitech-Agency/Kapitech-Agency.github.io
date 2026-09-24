@@ -115,7 +115,7 @@ export const Navbar = () => {
                 to="/work" 
                 className={cn(
                   "kapi-nav-link",
-                  location.pathname === '/work' ? "text-brand-red font-semibold" : "text-[var(--k-text-secondary)] hover:text-white"
+                  location.pathname === '/work' ? "kapi-nav-active text-white" : "text-[var(--k-text-secondary)] hover:text-white"
                 )}
               >
                 <span>{t('nav.work')}</span>
@@ -136,7 +136,7 @@ export const Navbar = () => {
                   onClick={() => setIsServicesDropdownOpen(prev => !prev)}
                   className={cn(
                     "kapi-nav-link kapi-nav-services-trigger",
-                    isServicesActive || isServicesDropdownOpen ? "text-brand-red font-semibold" : "text-[var(--k-text-secondary)] hover:text-white"
+                    isServicesActive || isServicesDropdownOpen ? "text-white" : "text-[var(--k-text-secondary)] hover:text-white"
                   )}
                   aria-expanded={isServicesDropdownOpen}
                   aria-haspopup="true"
@@ -155,7 +155,7 @@ export const Navbar = () => {
                 to="/about" 
                 className={cn(
                   "kapi-nav-link",
-                  location.pathname === '/about' ? "text-brand-red font-semibold" : "text-[var(--k-text-secondary)] hover:text-white"
+                  location.pathname === '/about' ? "kapi-nav-active text-white" : "text-[var(--k-text-secondary)] hover:text-white"
                 )}
               >
                 <span>{t('nav.about')}</span>
@@ -170,7 +170,7 @@ export const Navbar = () => {
                 to="/careers" 
                 className={cn(
                   "relative inline-flex items-center min-h-10 px-3 rounded-[10px] text-sm font-medium leading-none transition-colors",
-                  location.pathname === '/careers' ? "text-brand-red font-semibold" : "text-[var(--k-text-secondary)] hover:text-white"
+                  location.pathname === '/careers' ? "kapi-nav-active text-white" : "text-[var(--k-text-secondary)] hover:text-white"
                 )}
               >
                 <span>{t('nav.careers')}</span>
