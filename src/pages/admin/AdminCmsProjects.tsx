@@ -372,7 +372,7 @@ export const AdminCmsProjects: React.FC = () => {
 
                   <button
                     onClick={() => handleDelete(project.id, project.title)}
-                    className="p-1.5 rounded-lg bg-[var(--panel)] hover:bg-[var(--danger)]/10 text-[var(--muted)] hover:text-[var(--danger)] border border-[var(--line)] hover:border-[var(--danger)]/30 transition-colors"
+                    className="p-1.5 rounded-lg bg-[var(--panel)] hover:bg-[var(--accent)]/10 text-[var(--muted)] hover:text-[var(--danger)] border border-[var(--line)] hover:border-[var(--danger)]/30 transition-colors"
                     title="Delete Case Study"
                   >
                     <Trash2 size={13} />
@@ -709,7 +709,7 @@ export const AdminCmsProjects: React.FC = () => {
                     </button>
                     <button
                       type="submit"
-                      className="px-5 py-2 rounded-control bg-[var(--accent)] text-[var(--text)] font-semibold hover:bg-[var(--danger)] transition-all shadow-none"
+                      className="px-5 py-2 rounded-control bg-[var(--accent)] text-[var(--text)] font-semibold hover:bg-[var(--accent)] transition-all shadow-none"
                     >
                       Save Case Study
                     </button>
