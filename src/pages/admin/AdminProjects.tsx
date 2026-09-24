@@ -1289,20 +1289,18 @@ export const AdminProjects: React.FC = () => {
 
                   <div>
                     <label className="block text-[var(--muted)] mb-1 font-semibold">Assignee</label>
-                    <select
+                    <CustomSelect
                       value={taskAssignee}
-                      onChange={(e) => setTaskAssignee(e.target.value)}
-                      required
-                      className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
-                    >
-                      {taskAssignees.length === 0 ? (
-                        <option value="">No active assignees available</option>
-                      ) : taskAssignees.map((assignee) => (
-                        <option key={assignee.id} value={assignee.username}>
-                          {assignee.name} · @{assignee.username}
-                        </option>
-                      ))}
-                    </select>
+                      onChange={setTaskAssignee}
+                      disabled={taskAssignees.length === 0}
+                      className="w-full"
+                      size="sm"
+                      placeholder="No active assignees available"
+                      options={taskAssignees.map((assignee) => ({
+                        value: assignee.username,
+                        label: `${assignee.name} · @${assignee.username}`
+                      }))}
+                    />
                   </div>
                 </div>
 
