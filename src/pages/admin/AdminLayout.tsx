@@ -307,10 +307,10 @@ export const AdminLayout: React.FC = () => {
               </button>
             </>
           ) : (
-            <div className="relative flex items-center justify-center w-full">
+            <div className="relative flex items-center justify-center w-full h-8">
               <Link
                 to="/admin/dashboard"
-                className="min-h-10 min-w-10 rounded-control bg-bg border border-line flex items-center justify-center shrink-0 hover:border-accent/40 transition-colors p-1.5"
+                className="h-7 w-7 rounded-control bg-bg border border-line flex items-center justify-center shrink-0 hover:border-accent/40 transition-colors p-1"
                 title="Kapitech AMS Dashboard"
               >
                 <img src="/favicon.png" alt="Kapitech" className="w-full h-full object-contain" />
@@ -319,7 +319,7 @@ export const AdminLayout: React.FC = () => {
                 onClick={() => setSidebarCollapsed(false)}
                 aria-label="Expand sidebar"
                 title="Expand sidebar"
-                className="absolute right-1 min-h-10 min-w-10 rounded-control bg-bg hover:bg-panel-hover text-muted hover:text-fg border border-line flex items-center justify-center transition-colors"
+                className="absolute right-0 h-8 w-8 rounded-control bg-bg hover:bg-panel-hover text-muted hover:text-fg border border-line flex items-center justify-center transition-colors"
               >
                 <ChevronRight size={15} />
               </button>
