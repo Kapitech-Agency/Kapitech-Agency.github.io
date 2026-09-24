@@ -272,12 +272,9 @@ export const AdminVendors: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-[var(--line)]">
         <div>
-          <h1 className="text-xl sm:text-2xl font-semibold font-sans text-[var(--text)] tracking-tight flex items-center gap-2.5">
-            <Users className="text-[var(--accent)]" size={24} />
-            <span>{language === 'id' ? 'Direktori Vendor & Kontraktor' : 'Vendor & Talent Directory'}</span>
-          </h1>
+          <h1 className="text-xl sm:text-2xl font-semibold font-sans text-[var(--text)] tracking-tight">{language === 'id' ? 'Direktori Vendor & Kontraktor' : 'Vendor & Talent Directory'}</h1>
           <p className="text-xs font-sans text-[var(--muted)] mt-1">
             {language === 'id'
               ? 'Database mitra agensi, freelance spesialis terverifikasi, tarif per jam, dan evaluasi performa SLA.'
