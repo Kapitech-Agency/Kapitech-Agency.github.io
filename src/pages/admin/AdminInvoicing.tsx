@@ -636,7 +636,7 @@ export const AdminInvoicing: React.FC = () => {
                   </tr>
                 ) : (
                   filteredInvoices.map((inv) => (
-                    <tr key={inv.id} className="hover:bg-[#1C2128] transition-colors group">
+                    <tr key={inv.id} className="hover:bg-panel transition-colors group">
                       <td className="py-3.5 px-4 font-bold text-white font-display">
                         <button 
                           onClick={() => setPreviewInvoice(inv)} 
@@ -793,7 +793,7 @@ export const AdminInvoicing: React.FC = () => {
               </thead>
               <tbody className="divide-y divide-[var(--line)]">
                 {expenses.map((exp) => (
-                  <tr key={exp.id} className="hover:bg-[#1C2128] transition-colors">
+                  <tr key={exp.id} className="hover:bg-panel transition-colors">
                     <td className="py-3.5 px-4 text-[var(--muted)]">{exp.date}</td>
                     <td className="py-3.5 px-4">
                       <span className="px-2 py-0.5 rounded bg-[var(--panel)] text-amber-400 border border-amber-500/20 text-[10px]">
