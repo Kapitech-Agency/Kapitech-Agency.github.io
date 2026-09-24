@@ -42,6 +42,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
 
   const selectedOption = options.find((opt) => opt.value === value);
+  const selectedIndex = Math.max(0, options.findIndex((opt) => opt.value === value));
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -74,7 +75,20 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
       <button
         type="button"
         disabled={disabled}
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => !disabled && setIsOpen(!isOpen)}
+        onKeyDown={(e) => {
+          if (disabled) return;
+          if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+            e.preventDefault();
+            const delta = e.key === 'ArrowDown' ? 1 : -1;
+            const next = options[(selectedIndex + delta + options.length) % options.length];
+            if (next) onChange(next.value);
+            setIsOpen(true);
+          } else if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            setIsOpen(v => !v);
+          }
+        }}
         className={`flex items-center justify-between font-sans transition-all duration-150 border select-none ${
           sizeClasses[size]
         } ${
@@ -115,7 +129,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 2, scale: 0.98 }}
             transition={{ duration: 0.12, ease: 'easeOut' }}
-            className={`absolute z-50 mt-1 min-w-[140px] sm:min-w-[180px] max-w-[calc(100vw-32px)] sm:max-w-[260px] max-h-[260px] overflow-y-auto bg-[#111318] border border-[rgba(255,255,255,0.07)] rounded-xl p-1 shadow-[0_16px_40px_rgba(0,0,0,0.8)] space-y-0.5 font-sans text-xs custom-scrollbar ${
+            className={`absolute z-[100] mt-1 min-w-[140px] sm:min-w-[180px] max-w-[calc(100vw-32px)] sm:max-w-[260px] max-h-[260px] overflow-y-auto bg-[#111318] border border-[rgba(255,255,255,0.07)] rounded-xl p-1 shadow-[0_16px_40px_rgba(0,0,0,0.8)] space-y-0.5 font-sans text-xs custom-scrollbar ${
               align === 'right' ? 'right-0' : 'left-0'
             } ${menuClassName}`}
           >
