@@ -174,7 +174,7 @@ export const AdminApprovals: React.FC = () => {
     <div className="space-y-6 animate-in fade-in duration-200">
       {/* Toast Notification */}
       {notification && (
-        <div className="fixed top-20 right-6 z-50 px-4 py-2.5 rounded-card bg-[var(--panel)] border border-[var(--accent)]/40 text-[var(--text)] text-xs font-sans shadow-none flex items-center gap-2">
+        <div className="fixed top-20 right-6 z-50 px-4 py-2.5 rounded-[12px] bg-[var(--panel)] border border-[var(--accent)]/40 text-[var(--text)] text-xs font-sans shadow-none flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-[var(--accent)] " />
           <span>{notification}</span>
         </div>
@@ -484,14 +484,14 @@ export const AdminApprovals: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setActiveItem(null)}
-                  className="px-4 py-2 rounded-card bg-[var(--panel)] hover:bg-[var(--panel-hover)] text-[var(--muted)] text-xs font-sans"
+                  className="px-4 py-2 rounded-[12px] bg-[var(--panel)] hover:bg-[var(--panel-hover)] text-[var(--muted)] text-xs font-sans"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-5 py-2 rounded-card bg-[var(--accent)] hover:bg-[var(--accent)] text-[var(--text)] text-xs font-sans font-semibold disabled:opacity-50 flex items-center gap-1.5"
+                  className="px-5 py-2 rounded-[8px] bg-[var(--accent)] hover:bg-[#c40f34] text-[var(--text)] text-xs font-sans font-semibold disabled:opacity-50 flex items-center gap-1.5"
                 >
                   {isSubmitting ? <Loader2 size={13} className="animate-spin" /> : <ShieldCheck size={14} />}
                   <span>Confirm Decision</span>
