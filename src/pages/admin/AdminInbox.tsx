@@ -38,28 +38,14 @@ import {
   ShieldCheck,
   AlertCircle
 } from 'lucide-react';
-import { 
-  ContactSubmission, 
-   updateSubmission,
-  deleteSubmission, 
-  submitToInbox 
-} from '../../lib/submissions';
-import { 
-  isSubmissionConverted,
-  getCmsLeads,
-  formatIDR 
-} from '../../lib/crmStore';
+import { ContactSubmission } from '../../lib/submissions';
+import { CrmLead } from '../../lib/crmStore';
 import { 
   formatAmount, 
   getActiveCurrency, 
   CurrencyCode, 
   CURRENCY_EVENT 
 } from '../../lib/currency';
-import { 
-  playNotificationSound, 
-  requestDesktopNotificationPermission, 
-  showDesktopNotification 
-} from '../../lib/notifications';
 import { EmailForwardingGuideModal } from '../../components/EmailForwardingGuideModal';
 import { CannedResponsesModal } from '../../components/admin/inbox/CannedResponsesModal';
 import { ConvertToCrmModal } from '../../components/admin/inbox/ConvertToCrmModal';
@@ -74,6 +60,7 @@ export const AdminInbox: React.FC = () => {
   const [submissions, setSubmissions] = useState<ContactSubmission[]>([]);
   const [loading, setLoading] = useState(true);
   const [currency, setCurrency] = useState<CurrencyCode>(getActiveCurrency());
+  const [crmDeals, setCrmDeals] = useState<CrmLead[]>([]);
 
   // Filters & Views
   const [filterType, setFilterType] = useState<string>('all');
@@ -96,9 +83,6 @@ export const AdminInbox: React.FC = () => {
   const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [testSending, setTestSending] = useState(false);
-  const [soundEnabled, setSoundEnabled] = useState(() => {
-    return localStorage.getItem('kapitech_inbox_sound') !== 'false';
-  });
   const [prevCount, setPrevCount] = useState<number | null>(null);
   const [toastMessage, setToastMessage] = useState<{ text: string; link?: string; linkText?: string } | null>(null);
 
@@ -111,16 +95,10 @@ export const AdminInbox: React.FC = () => {
     return () => window.removeEventListener(CURRENCY_EVENT, handleCurrencyChange);
   }, []);
 
-  // Sync Sound Preference
-  const handleToggleSound = () => {
-    const next = !soundEnabled;
-    setSoundEnabled(next);
-    localStorage.setItem('kapitech_inbox_sound', String(next));
-  };
-
   // Server-backed inbox refresh. The API is the only source of truth.
   const refreshInbox = async () => {
-    const res = await api.leads.getAll();
+    const [res, dealsRes] = await Promise.all([api.leads.getAll(), api.crm.getDeals()]);
+    if (dealsRes.success && Array.isArray(dealsRes.data?.deals)) setCrmDeals(dealsRes.data.deals as CrmLead[]);
     if (!res.success || !Array.isArray(res.data?.leads)) {
       setLoading(false);
       return;
@@ -315,7 +293,7 @@ export const AdminInbox: React.FC = () => {
   const metrics = useMemo(() => {
     const total = submissions.length;
     const newCount = submissions.filter(s => s.status === 'new').length;
-    const convertedCount = submissions.filter(s => isSubmissionConverted(s.id)).length;
+    const convertedCount = submissions.filter(s => crmDeals.some(d => (d as any).inquiryId === s.id)).length;
     const conversionRate = total > 0 ? Math.round((convertedCount / total) * 100) : 0;
     
     // Sum estimated deal volume
@@ -486,8 +464,8 @@ export const AdminInbox: React.FC = () => {
   // Find linked lead if converted
   const linkedLead = useMemo(() => {
     if (!selectedSubmission) return null;
-    return getCmsLeads().find(l => l.inquiryId === selectedSubmission.id) || null;
-  }, [selectedSubmission]);
+    return crmDeals.find(l => (l as any).inquiryId === selectedSubmission.id) || null;
+  }, [selectedSubmission, crmDeals]);
 
   return (
     <div className="space-y-6">
@@ -817,7 +795,7 @@ export const AdminInbox: React.FC = () => {
                   </tr>
                 ) : (
                   filteredItems.map((item) => {
-                    const isConverted = isSubmissionConverted(item.id);
+                    const isConverted = crmDeals.some(d => (d as any).inquiryId === item.id);
                     return (
                       <tr 
                         key={item.id}
@@ -1145,7 +1123,7 @@ export const AdminInbox: React.FC = () => {
                 <div className="p-3 rounded-xl bg-[#181B22] border border-[rgba(255,255,255,0.07)] flex flex-wrap items-center justify-between gap-2.5 mb-5">
                   <div className="flex items-center gap-2 flex-wrap">
                     {/* 1-Click Convert to CRM Lead */}
-                    {isSubmissionConverted(selectedSubmission.id) ? (
+                    {crmDeals.some(d => (d as any).inquiryId === selectedSubmission.id) ? (
                       <Link
                         to="/admin/crm"
                         className="h-9 px-3.5 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/20 text-xs font-mono font-bold transition-all flex items-center gap-1.5"
