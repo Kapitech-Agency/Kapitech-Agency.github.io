@@ -17,7 +17,6 @@ const AmsHome = U('home');
 const AmsMenu = U('menu');
 const AmsClose = U('close');
 const AmsSearch = U('search');
-const AmsCalendar = U('clock');
 
 interface NavItem {
   key: string;
@@ -44,7 +43,6 @@ export const AdminLayout: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
-  const [currentTime, setCurrentTime] = useState<string>('');
   const [currency, setCurrencyState] = useState<CurrencyCode>(getActiveCurrency());
 
   // Dynamic RBAC Permission Engine
@@ -721,72 +719,9 @@ export const AdminLayout: React.FC = () => {
             </kbd>
           </div>
 
-          {/* Topbar Controls Container */}
-          <div className="flex items-center gap-2 text-xs font-sans text-[#8A94A6]">
-            {/* Notifications */}\n            <AdminNotificationCenter />\n\n            {/* Currency Switcher (IDR / USD) */}
-            <div className="flex items-center bg-[#111318] border border-white/[0.07] rounded-lg p-[3px] font-mono text-xs">
-              <button
-                onClick={() => handleSwitchCurrency('IDR')}
-                className={`px-2.5 py-1 rounded-md font-semibold transition-all ${
-                  currency === 'IDR'
-                    ? 'bg-[#181B22] text-emerald-400 shadow-sm border border-white/10'
-                    : 'text-[#8A94A6] hover:text-white'
-                }`}
-              >
-                IDR
-              </button>
-              <button
-                onClick={() => handleSwitchCurrency('USD')}
-                className={`px-2.5 py-1 rounded-md font-semibold transition-all ${
-                  currency === 'USD'
-                    ? 'bg-[#181B22] text-emerald-400 shadow-sm border border-white/10'
-                    : 'text-[#8A94A6] hover:text-white'
-                }`}
-              >
-                USD
-              </button>
-            </div>
-
-            {/* Language Switcher (EN / ID) */}
-            <div className="flex items-center bg-[#111318] border border-white/[0.07] rounded-lg p-[3px] font-mono text-xs">
-              <button
-                onClick={() => setLanguage('en')}
-                className={`px-2.5 py-1 rounded-md font-semibold transition-all ${
-                  language === 'en'
-                    ? 'bg-[#181B22] text-white shadow-sm border border-white/10'
-                    : 'text-[#8A94A6] hover:text-white'
-                }`}
-              >
-                EN
-              </button>
-              <button
-                onClick={() => setLanguage('id')}
-                className={`px-2.5 py-1 rounded-md font-semibold transition-all ${
-                  language === 'id'
-                    ? 'bg-[#181B22] text-white shadow-sm border border-white/10'
-                    : 'text-[#8A94A6] hover:text-white'
-                }`}
-              >
-                ID
-              </button>
-            </div>
-
-            {/* Live Studio U('calendar') */}
-            <div className="flex items-center gap-1.5 bg-[#111318] px-2.5 py-1.5 rounded-lg border border-white/[0.07] text-[11px] font-mono text-[#8A94A6]">
-              <AmsCalendar size={12} className="text-[#FF1E27]" />
-              <span className="text-white font-medium">{currentTime || 'Jakarta WIB'}</span>
-            </div>
-
-            {/* Public Domain Switcher */}
-            <Link
-              to="/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hidden lg:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[#111318] border border-white/[0.07] hover:border-white/20 text-[11px] font-mono text-[#8A94A6] hover:text-white transition-colors"
-            >
-              <span>kapitech.id</span>
-              <AmsChevron size={10} />
-            </Link>
+          {/* Notifications only */}
+          <div className="flex items-center">
+            <AdminNotificationCenter />
           </div>
         </header>
 
