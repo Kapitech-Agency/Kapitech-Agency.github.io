@@ -87,24 +87,24 @@ export const AdminDashboard: React.FC = () => {
   const [newLeadCompany, setNewLeadCompany] = useState('');
   const [newLeadEmail, setNewLeadEmail] = useState('');
   const [newLeadPillar, setNewLeadPillar] = useState<CrmServicePillar>('Web Development');
-  const [newLeadValue, setNewLeadValue] = useState('150000000');
+  const [newLeadValue, setNewLeadValue] = useState('0');
   const [newLeadPriority, setNewLeadPriority] = useState<'normal' | 'high' | 'urgent'>('high');
 
   // Quick Invoice Form State
   const [quickInvClient, setQuickInvClient] = useState('');
   const [quickInvCompany, setQuickInvCompany] = useState('');
-  const [quickInvAmount, setQuickInvAmount] = useState('65000000');
+  const [quickInvAmount, setQuickInvAmount] = useState('0');
   const [quickInvDesc, setQuickInvDesc] = useState('Sprint Retainer & Deliverables');
 
   // Quick Project Form State
   const [quickProjTitle, setQuickProjTitle] = useState('');
   const [quickProjClient, setQuickProjClient] = useState('');
   const [quickProjPillar, setQuickProjPillar] = useState('AI & Cloud Solutions');
-  const [quickProjBudget, setQuickProjBudget] = useState('120000000');
+  const [quickProjBudget, setQuickProjBudget] = useState('0');
 
   // Quick Expense Form State
   const [quickExpDesc, setQuickExpDesc] = useState('');
-  const [quickExpAmount, setQuickExpAmount] = useState('12500000');
+  const [quickExpAmount, setQuickExpAmount] = useState('0');
   const [quickExpCategory, setQuickExpCategory] = useState('Software & Cloud');
 
 
@@ -322,7 +322,7 @@ export const AdminDashboard: React.FC = () => {
       email: newLeadEmail.trim(),
       phone: '',
       servicePillar: newLeadPillar,
-      dealValue: parseFloat(newLeadValue) || 150000000,
+      dealValue: parseFloat(newLeadValue) || 0,
       stage: 'new',
       priority: 'high',
       source: 'Referral',
@@ -346,7 +346,7 @@ export const AdminDashboard: React.FC = () => {
     e.preventDefault();
     if (!quickInvCompany.trim()) return;
 
-    const amt = parseFloat(quickInvAmount) || 65000000;
+    const amt = parseFloat(quickInvAmount) || 0;
     const items: InvoiceLineItem[] = [
       {
         id: 'item_1',
@@ -394,7 +394,7 @@ export const AdminDashboard: React.FC = () => {
     e.preventDefault();
     if (!quickProjTitle.trim() || !quickProjClient.trim()) return;
 
-    const budget = parseFloat(quickProjBudget) || 120000000;
+    const budget = parseFloat(quickProjBudget) || 0;
     const projObj: AgencyProject = {
       id: 'proj_' + Date.now().toString(36),
       name: quickProjTitle.trim(),
@@ -441,7 +441,7 @@ export const AdminDashboard: React.FC = () => {
     e.preventDefault();
     if (!quickExpDesc.trim()) return;
 
-    const amt = parseFloat(quickExpAmount) || 12500000;
+    const amt = parseFloat(quickExpAmount) || 0;
     const expObj: AgencyExpense = {
       id: 'exp_' + Date.now().toString(36),
       type: 'OpEx',
@@ -649,8 +649,8 @@ export const AdminDashboard: React.FC = () => {
             {/* Dual Currency Sub-Display */}
             <div className="text-[11px] font-mono text-[#8A94A6] mt-1.5">
               ≈ {currency === 'IDR' 
-                  ? formatAmount(finMetrics.totalPaidRevenue > 0 ? finMetrics.totalPaidRevenue : 439800000, 'USD')
-                  : formatIDR(finMetrics.totalPaidRevenue > 0 ? finMetrics.totalPaidRevenue : 439800000)}
+                  ? formatAmount(finMetrics.totalPaidRevenue, 'USD')
+                  : formatIDR(finMetrics.totalPaidRevenue > 0 ? finMetrics.totalPaidRevenue : 0)}
             </div>
           </div>
 
@@ -681,13 +681,13 @@ export const AdminDashboard: React.FC = () => {
             </div>
 
             <div className="text-2xl lg:text-[28px] font-mono font-bold text-[#F8FAFC] tracking-tight leading-none">
-              {formatCurrency(pipelineMetrics.totalPipelineValue > 0 ? pipelineMetrics.totalPipelineValue : 1040000000, currency)}
+              {formatCurrency(pipelineMetrics.totalPipelineValue, currency)}
             </div>
 
             <div className="text-[11px] font-mono text-[#8A94A6] mt-1.5">
               ≈ {currency === 'IDR'
-                  ? formatAmount(pipelineMetrics.totalPipelineValue > 0 ? pipelineMetrics.totalPipelineValue : 1040000000, 'USD')
-                  : formatIDR(pipelineMetrics.totalPipelineValue > 0 ? pipelineMetrics.totalPipelineValue : 1040000000)}
+                  ? formatAmount(pipelineMetrics.totalPipelineValue > 0 ? pipelineMetrics.totalPipelineValue : 0, 'USD')
+                  : formatIDR(pipelineMetrics.totalPipelineValue > 0 ? pipelineMetrics.totalPipelineValue : 0)}
             </div>
           </div>
 
