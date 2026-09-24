@@ -13,7 +13,6 @@ const U = (name: UntitledIconName) => (props: { size?: number; className?: strin
   <UntitledIcon name={name} size={props.size ?? 18} className={props.className} />
 );
 const AmsChevron = U('chevron');
-const AmsHome = U('home');
 const AmsMenu = U('menu');
 const AmsClose = U('close');
 const AmsSearch = U('search');
@@ -52,23 +51,6 @@ export const AdminLayout: React.FC = () => {
     session?.user?.role,
     session?.user?.permissions
   );
-
-  useEffect(() => {
-    const updateTime = () => {
-      const now = new Date();
-      setCurrentTime(
-        now.toLocaleTimeString(language === 'id' ? 'id-ID' : 'en-US', { 
-          hour: '2-digit', 
-          minute: '2-digit', 
-          second: '2-digit',
-          timeZone: 'Asia/Jakarta' 
-        }) + ' WIB'
-      );
-    };
-    updateTime();
-    const interval = setInterval(updateTime, 1000);
-    return () => clearInterval(interval);
-  }, [language]);
 
   useEffect(() => {
     const handleCurrencyChange = (e: Event) => {
@@ -347,16 +329,16 @@ export const AdminLayout: React.FC = () => {
         </div>
 
         {/* Navigation List - 4 Structured Sections Filtered by Dynamic RBAC */}
-        <div className="flex-1 px-2.5 py-3 space-y-3 overflow-y-auto custom-scrollbar">
+        <div className="flex-1 px-2 py-3 space-y-4 overflow-y-auto custom-scrollbar">
           {filteredNavSections.map((section) => (
-            <div key={section.id} className="space-y-1">
+            <div key={section.id} className="space-y-1.5">
               {!sidebarCollapsed && (
                 <div className="text-[11px] font-mono text-[#8A94A6] font-bold tracking-wider px-3 pt-2 pb-1 uppercase">
                   {t(section.titleKey)}
                 </div>
               )}
               {sidebarCollapsed && (
-                <div className="w-6 h-px bg-white/[0.07] mx-auto my-2" />
+                <div className="w-5 h-px bg-white/[0.07] mx-auto my-3" />
               )}
               {section.items.map((item) => {
                 const Icon = item.icon;
@@ -371,7 +353,7 @@ export const AdminLayout: React.FC = () => {
                       active
                         ? 'bg-[rgba(229,9,20,0.1)] text-white font-medium shadow-sm'
                         : 'text-[#8A94A6] hover:text-white hover:bg-white/[0.04]'
-                    } ${sidebarCollapsed ? 'justify-center px-0' : ''}`}
+                    } ${sidebarCollapsed ? 'w-10 h-10 mx-auto justify-center px-0 py-0' : ''}`}
                   >
                     {/* Linear-style Left Indicator Strip */}
                     {active && (
@@ -379,7 +361,7 @@ export const AdminLayout: React.FC = () => {
                     )}
 
                     <div className="flex items-center gap-2.5 min-w-0">
-                      <Icon size={16} className={active ? 'text-[#E50914] shrink-0' : 'text-[#8A94A6] group-hover:text-white shrink-0 transition-colors'} />
+                      <Icon size={17} className={active ? 'text-[#E50914] shrink-0' : 'text-[#8A94A6] group-hover:text-white shrink-0 transition-colors'} />
                       {!sidebarCollapsed && <span className="truncate">{item.label}</span>}
                     </div>
 
@@ -396,28 +378,11 @@ export const AdminLayout: React.FC = () => {
             </div>
           ))}
 
-          {/* Public Agency Link */}
-          {!sidebarCollapsed && (
-            <div className="pt-2">
-              <Link
-                to="/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-between px-3 py-2 rounded-lg text-xs font-mono text-[#8A94A6] hover:text-white hover:bg-white/[0.04] transition-all border border-white/[0.07]"
-              >
-                <div className="flex items-center gap-2">
-                  <AmsHome size={14} className="text-emerald-400" />
-                  <span>{t('admin.nav.viewSite')}</span>
-                </div>
-                <AmsChevron size={11} className="text-[#8A94A6]" />
-              </Link>
-            </div>
-          )}
         </div>
 
         {/* Footer: Admin Profile & Discrete Role Simulator Dropdown */}
-        <div className="p-3 border-t border-white/[0.07] bg-[#111318] space-y-2.5">
-          <div className={`flex items-center justify-between ${sidebarCollapsed ? 'flex-col gap-2' : ''}`}>
+        <div className="p-2.5 border-t border-white/[0.07] bg-[#111318] space-y-2.5">
+          <div className={`flex items-center justify-between ${sidebarCollapsed ? 'flex-col gap-2.5' : ''}`}>
             <div className="flex items-center gap-2.5 min-w-0">
               <div className="w-8 h-8 rounded-lg bg-[#E50914] border border-white/10 flex items-center justify-center text-xs font-sans text-white font-bold shrink-0 shadow-sm">
                 {roleMeta.accountProfile.avatarLabel}
@@ -634,23 +599,6 @@ export const AdminLayout: React.FC = () => {
                   })}
                 </div>
               ))}
-
-              {/* Public Agency Site Link */}
-              <div className="pt-2">
-                <Link
-                  to="/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-mono text-emerald-400 bg-[#181B22] hover:bg-[#21252F] border border-white/[0.07] min-h-[44px] transition-colors"
-                >
-                  <div className="flex items-center gap-2.5">
-                    <AmsHome size={15} />
-                    <span>{t('admin.nav.viewSite')}</span>
-                  </div>
-                  <AmsChevron size={12} className="text-[#8A94A6]" />
-                </Link>
-              </div>
 
             </div>
 
