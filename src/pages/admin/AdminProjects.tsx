@@ -46,10 +46,10 @@ import { getAdminSession, hasAdminPermission } from '../../lib/adminAuth';
 import { api } from '../../lib/apiClient';
 
 const TASK_COLUMNS: { id: TaskStatus; label: string; dotColor: string; bgAccent: string }[] = [
-  { id: 'todo', label: 'To Do', dotColor: 'bg-zinc-400', bgAccent: 'group-hover:border-zinc-500/30' },
-  { id: 'in_progress', label: 'In Progress', dotColor: 'bg-red-400', bgAccent: 'group-hover:border-red-500/30' },
-  { id: 'review', label: 'Review & QA', dotColor: 'bg-amber-400', bgAccent: 'group-hover:border-amber-500/30' },
-  { id: 'done', label: 'Done', dotColor: 'bg-emerald-400', bgAccent: 'group-hover:border-emerald-500/30' }
+  { id: 'todo', label: 'To Do', dotColor: 'bg-zinc-400', bgAccent: 'group-hover:border-[var(--line)]' },
+  { id: 'in_progress', label: 'In Progress', dotColor: 'bg-[var(--danger)]', bgAccent: 'group-hover:border-[var(--danger)]/30' },
+  { id: 'review', label: 'Review & QA', dotColor: 'bg-[var(--warning)]', bgAccent: 'group-hover:border-[var(--warning)]/30' },
+  { id: 'done', label: 'Done', dotColor: 'bg-[var(--success)]', bgAccent: 'group-hover:border-[var(--success)]/30' }
 ];
 
 export const AdminProjects: React.FC = () => {
@@ -424,27 +424,27 @@ export const AdminProjects: React.FC = () => {
     switch (priority) {
       case 'urgent':
         return (
-          <span className="px-2 py-0.5 rounded bg-[var(--danger)]/10 text-[var(--danger)] border border-[var(--danger)]/30 text-[10px] font-sans font-bold normal-case flex items-center gap-1 shadow-sm shadow-rose-500/20">
-            <span className="w-1.5 h-1.5 rounded-full bg-rose-400 animate-pulse" />
+          <span className="px-2 py-0.5 rounded bg-[var(--danger)]/10 text-[var(--danger)] border border-[var(--danger)]/30 text-[10px] font-sans font-semibold normal-case flex items-center gap-1 shadow-none">
+            <span className="w-1.5 h-1.5 rounded-full bg-[var(--danger)] animate-pulse" />
             Urgent
           </span>
         );
       case 'high':
         return (
-          <span className="px-2 py-0.5 rounded bg-[var(--warning)]/10 text-[var(--warning)] border border-[var(--warning)]/30 text-[10px] font-sans font-bold normal-case">
+          <span className="px-2 py-0.5 rounded bg-[var(--warning)]/10 text-[var(--warning)] border border-[var(--warning)]/30 text-[10px] font-sans font-semibold normal-case">
             High
           </span>
         );
       case 'medium':
         return (
-          <span className="px-2 py-0.5 rounded bg-[var(--danger)]/10 text-[var(--danger)] border border-[var(--danger)]/30 text-[10px] font-sans font-bold normal-case">
+          <span className="px-2 py-0.5 rounded bg-[var(--danger)]/10 text-[var(--danger)] border border-[var(--danger)]/30 text-[10px] font-sans font-semibold normal-case">
             Medium
           </span>
         );
       case 'low':
       default:
         return (
-          <span className="px-2 py-0.5 rounded bg-[var(--panel-hover)] text-[var(--muted)] border border-[var(--line)] text-[10px] font-sans font-bold normal-case">
+          <span className="px-2 py-0.5 rounded bg-[var(--panel-hover)] text-[var(--muted)] border border-[var(--line)] text-[10px] font-sans font-semibold normal-case">
             Low
           </span>
         );
@@ -539,17 +539,17 @@ export const AdminProjects: React.FC = () => {
                 }`}
               >
                 <div className="flex items-center justify-between gap-2 mb-1.5 w-full">
-                  <span className={`text-[9px] normal-case px-1.5 py-0.5 rounded font-bold ${
+                  <span className={`text-[9px] normal-case px-1.5 py-0.5 rounded font-semibold ${
                     proj.status === 'completed' ? 'bg-emerald-500/20 text-emerald-400' :
                     proj.status === 'in_progress' ? 'bg-red-500/20 text-red-400' : 'bg-zinc-500/20 text-zinc-400'
                   }`}>
                     {proj.status}
                   </span>
-                  <span className="text-[10px] text-[var(--muted)] font-bold">
+                  <span className="text-[10px] text-[var(--muted)] font-semibold">
                     {proj.progressPercent}%
                   </span>
                 </div>
-                <div className="font-bold text-xs text-[var(--text)] truncate w-full mb-0.5">
+                <div className="font-semibold text-xs text-[var(--text)] truncate w-full mb-0.5">
                   {proj.name}
                 </div>
                 <div className="text-[10px] text-[var(--muted)] truncate w-full">
@@ -567,7 +567,7 @@ export const AdminProjects: React.FC = () => {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
             <div className="space-y-1 min-w-0">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="px-2.5 py-0.5 rounded-full bg-[var(--accent)]/15 text-[var(--danger)] border border-[var(--accent)]/30 text-[10px] font-sans font-bold normal-case tracking-normal">
+                <span className="px-2.5 py-0.5 rounded-full bg-[var(--accent)]/15 text-[var(--danger)] border border-[var(--accent)]/30 text-[10px] font-sans font-semibold normal-case tracking-normal">
                   {selectedProject.serviceCategory}
                 </span>
                 <span className="text-xs font-sans text-[var(--muted)]">
@@ -637,20 +637,20 @@ export const AdminProjects: React.FC = () => {
                     style={{ width: `${selectedProject.progressPercent}%` }}
                   />
                 </div>
-                <span className="font-bold text-[var(--text)] text-xs">{selectedProject.progressPercent}%</span>
+                <span className="font-semibold text-[var(--text)] text-xs">{selectedProject.progressPercent}%</span>
               </div>
             </div>
 
             <div>
               <div className="text-[var(--muted)] mb-1 text-[11px]">{language === 'id' ? 'Total Nilai Kontrak' : 'Total Contract Budget'}</div>
-              <div className="font-bold text-emerald-400 text-sm">
+              <div className="font-semibold text-emerald-400 text-sm">
                 {formatAmount(selectedProject.budget, currency)}
               </div>
             </div>
 
             <div>
               <div className="text-[var(--muted)] mb-1 text-[11px]">Timeline Target</div>
-              <div className="text-[var(--text)] font-bold">
+              <div className="text-[var(--text)] font-semibold">
                 {selectedProject.startDate} → {selectedProject.targetEndDate}
               </div>
             </div>
@@ -786,9 +786,9 @@ export const AdminProjects: React.FC = () => {
                   <div className="flex items-center justify-between pb-3 mb-3 border-b border-[var(--line)] select-none">
                     <div className="flex items-center gap-2">
                       <div className={`w-2.5 h-2.5 rounded-full ${col.dotColor}`} />
-                      <span className="text-xs font-sans font-bold text-[var(--text)] normal-case">{col.label}</span>
+                      <span className="text-xs font-sans font-semibold text-[var(--text)] normal-case">{col.label}</span>
                     </div>
-                    <span className="px-2 py-0.5 rounded-full bg-[var(--panel)] text-[var(--muted)] text-[10px] font-sans font-bold border border-[var(--line)]">
+                    <span className="px-2 py-0.5 rounded-full bg-[var(--panel)] text-[var(--muted)] text-[10px] font-sans font-semibold border border-[var(--line)]">
                       {colTasks.length}
                     </span>
                   </div>
@@ -835,7 +835,7 @@ export const AdminProjects: React.FC = () => {
                             </div>
 
                             {/* Task Title */}
-                            <h4 className="font-bold text-xs text-[var(--text)] leading-snug group-hover:text-[var(--danger)] transition-colors">
+                            <h4 className="font-semibold text-xs text-[var(--text)] leading-snug group-hover:text-[var(--danger)] transition-colors">
                               {task.title}
                             </h4>
 
@@ -854,11 +854,11 @@ export const AdminProjects: React.FC = () => {
                                     <CheckSquare size={11} className="text-[var(--danger)]" />
                                     <span>Subtasks</span>
                                   </span>
-                                  <span className="font-bold text-[var(--text)]">{completedSubs}/{totalSubs}</span>
+                                  <span className="font-semibold text-[var(--text)]">{completedSubs}/{totalSubs}</span>
                                 </div>
                                 <div className="w-full bg-[var(--bg)] h-1.5 rounded-full overflow-hidden border border-[var(--line)]">
                                   <div
-                                    className="bg-emerald-400 h-full rounded-full transition-all duration-300"
+                                    className="bg-[var(--success)] h-full rounded-full transition-all duration-300"
                                     style={{ width: `${(completedSubs / totalSubs) * 100}%` }}
                                   />
                                 </div>
@@ -868,7 +868,7 @@ export const AdminProjects: React.FC = () => {
                             {/* Footer: Assignee & Due Date Notice */}
                             <div className="flex items-center justify-between pt-2 border-t border-[var(--line)] text-[10px] font-sans">
                               <span className="text-[var(--muted)] flex items-center gap-1.5 truncate max-w-[140px]">
-                                <div className="w-4 h-4 rounded-full bg-[var(--panel)] border border-white/10 flex items-center justify-center text-[9px] text-[var(--text)] font-bold">
+                                <div className="w-4 h-4 rounded-full bg-[var(--panel)] border border-white/10 flex items-center justify-center text-[9px] text-[var(--text)] font-semibold">
                                   {task.assignedTo.charAt(0)}
                                 </div>
                                 <span className="truncate">{task.assignedTo}</span>
@@ -926,7 +926,7 @@ export const AdminProjects: React.FC = () => {
                     Created {new Date(activeTaskDrawer.createdAt).toLocaleDateString()}
                   </span>
                 </div>
-                <h3 className="text-lg font-bold font-display text-[var(--text)]">
+                <h3 className="text-lg font-semibold font-display text-[var(--text)]">
                   {activeTaskDrawer.title}
                 </h3>
               </div>
@@ -942,7 +942,7 @@ export const AdminProjects: React.FC = () => {
                         void api.tasks.update(activeTaskDrawer.id, { status: col.id }).then((res) => { if (res.success) void loadData(); else showToast(res.error || 'Task status update failed.'); });
                         showToast(`Moved to ${col.label}`);
                       }}
-                      className={`px-2.5 py-1.5 rounded-card border text-[11px] transition-all font-bold ${
+                      className={`px-2.5 py-1.5 rounded-card border text-[11px] transition-all font-semibold ${
                         activeTaskDrawer.status === col.id
                           ? 'bg-[var(--accent)] text-[var(--text)] border-[var(--accent)] shadow-sm'
                           : 'bg-[var(--panel)] text-[var(--muted)] border-[var(--line)] hover:text-[var(--text)]'
@@ -957,15 +957,15 @@ export const AdminProjects: React.FC = () => {
               {/* Assignee & Due Date Grid */}
               <div className="grid grid-cols-2 gap-3 p-3 rounded-card bg-[var(--panel)] border border-[var(--line)]">
                 <div>
-                  <div className="text-[10px] text-[var(--muted)] normal-case font-bold mb-1">Assignee</div>
-                  <div className="text-[var(--text)] font-bold flex items-center gap-1.5">
+                  <div className="text-[10px] text-[var(--muted)] normal-case font-semibold mb-1">Assignee</div>
+                  <div className="text-[var(--text)] font-semibold flex items-center gap-1.5">
                     <User size={13} className="text-[var(--danger)]" />
                     <span>{activeTaskDrawer.assignedTo}</span>
                   </div>
                 </div>
                 <div>
-                  <div className="text-[10px] text-[var(--muted)] normal-case font-bold mb-1">Due Date</div>
-                  <div className="text-[var(--text)] font-bold flex items-center gap-1.5">
+                  <div className="text-[10px] text-[var(--muted)] normal-case font-semibold mb-1">Due Date</div>
+                  <div className="text-[var(--text)] font-semibold flex items-center gap-1.5">
                     <Calendar size={13} className="text-emerald-400" />
                     <span>{activeTaskDrawer.dueDate}</span>
                   </div>
@@ -1030,7 +1030,7 @@ export const AdminProjects: React.FC = () => {
                     <button
                       type="submit"
                       disabled={!newSubtaskTitle.trim()}
-                      className="px-3 py-2 rounded-control bg-[var(--accent)] text-[var(--text)] text-xs font-bold disabled:opacity-50"
+                      className="px-3 py-2 rounded-control bg-[var(--accent)] text-[var(--text)] text-xs font-semibold disabled:opacity-50"
                     >
                       <Plus size={14} />
                     </button>
@@ -1230,7 +1230,7 @@ export const AdminProjects: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="min-h-10 px-6 min-h-10 rounded-control bg-[var(--accent)] text-[var(--text)] font-sans font-bold hover:bg-[var(--panel-hover)] transition-all shadow-md shadow-[var(--accent)]/20"
+                  className="min-h-10 px-6 min-h-10 rounded-control bg-[var(--accent)] text-[var(--text)] font-sans font-semibold hover:bg-[var(--panel-hover)] transition-all shadow-none"
                 >
                   Save Project
                 </button>
@@ -1369,7 +1369,7 @@ export const AdminProjects: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="min-h-10 px-6 min-h-10 rounded-control bg-[var(--accent)] text-[var(--text)] font-sans font-bold hover:bg-[var(--panel-hover)] transition-all shadow-md shadow-[var(--accent)]/20"
+                  className="min-h-10 px-6 min-h-10 rounded-control bg-[var(--accent)] text-[var(--text)] font-sans font-semibold hover:bg-[var(--panel-hover)] transition-all shadow-none"
                 >
                   Add Task
                 </button>
