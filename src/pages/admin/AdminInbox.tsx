@@ -1353,32 +1353,13 @@ export const AdminInbox: React.FC = () => {
                   {/* Status Selector */}
                   <div className="flex items-center gap-1.5">
                     <span className="text-xs font-sans text-[var(--muted)]">Status:</span>
-                    <select
-                      disabled={isUpdating}
-                      value={selectedSubmission.status}
-                      onChange={(e) => handleStatusChange(selectedSubmission.id, e.target.value as ContactSubmission['status'])}
-                      className="text-xs py-2 px-3 bg-[var(--panel)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)] font-sans min-h-[38px]"
-                    >
-                      <option value="new">New</option>
-                      <option value="in-review">In Review</option>
-                      <option value="contacted">Contacted</option>
-                      <option value="closed">Closed Deal</option>
-                    </select>
+                    <CustomSelect disabled={isUpdating} value={selectedSubmission.status} onChange={(value) => handleStatusChange(selectedSubmission.id, value as ContactSubmission['status'])} options={[{value:'new',label:'New'},{value:'in-review',label:'In Review'},{value:'contacted',label:'Contacted'},{value:'closed',label:'Closed Deal'}]} />
                   </div>
 
                   {/* Priority Selector */}
                   <div className="flex items-center gap-1.5">
                     <span className="text-xs font-sans text-[var(--muted)]">Priority:</span>
-                    <select
-                      value={selectedSubmission.priority || 'normal'}
-                      onChange={(e) => handlePriorityChange(selectedSubmission.id, e.target.value as ContactSubmission['priority'])}
-                      className="text-xs py-2 px-3 bg-[var(--panel)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)] font-sans min-h-[38px]"
-                    >
-                      <option value="urgent">Urgent</option>
-                      <option value="high">High</option>
-                      <option value="normal">Normal</option>
-                      <option value="low">Low</option>
-                    </select>
+                    <CustomSelect value={selectedSubmission.priority || 'normal'} onChange={(value) => handlePriorityChange(selectedSubmission.id, value as ContactSubmission['priority'])} options={[{value:'urgent',label:'Urgent'},{value:'high',label:'High'},{value:'normal',label:'Normal'},{value:'low',label:'Low'}]} />
                   </div>
                 </div>
 
