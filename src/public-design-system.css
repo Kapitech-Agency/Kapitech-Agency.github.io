@@ -3013,3 +3013,76 @@
     font-size:21px !important;
   }
 }
+
+
+/* Public secondary routes: service detail, policies, and 404 */
+.kapi-public-shell .kapi-service-detail{
+  padding-top:120px!important;
+  padding-bottom:80px!important;
+}
+.kapi-public-shell .kapi-service-detail > .max-w-7xl{
+  width:min(calc(100% - 2 * var(--pub-gutter)),var(--pub-content))!important;
+}
+.kapi-public-shell .kapi-service-detail .kapi-card{
+  border-radius:16px!important;
+}
+.kapi-public-shell .kapi-service-detail .mb-20{margin-bottom:64px!important}
+.kapi-public-shell .kapi-service-detail .mb-28{margin-bottom:80px!important}
+.kapi-public-shell .kapi-service-detail .mb-12{margin-bottom:40px!important}
+.kapi-public-shell .kapi-service-detail .p-16{padding:40px!important}
+.kapi-public-shell .kapi-service-detail .p-12{padding:32px!important}
+.kapi-public-shell .kapi-policy-page{
+  padding:120px var(--pub-gutter) 72px!important;
+}
+.kapi-public-shell .kapi-policy-page > .max-w-4xl{
+  width:min(896px,calc(100% - 2 * var(--pub-gutter)))!important;
+}
+.kapi-public-shell .kapi-policy-page h1{
+  max-width:18ch;
+}
+.kapi-public-shell .kapi-policy-page h2{
+  margin-top:40px;
+  margin-bottom:12px;
+}
+.kapi-public-shell .kapi-policy-page h3{
+  margin-top:28px;
+  margin-bottom:10px;
+}
+.kapi-public-shell .kapi-policy-page p,
+.kapi-public-shell .kapi-policy-page li{
+  font-size:15px;
+  line-height:1.72;
+}
+.kapi-public-shell .kapi-not-found{
+  min-height:calc(100svh - 72px);
+  padding:120px var(--pub-gutter) 64px!important;
+}
+@media(max-width:767px){
+  .kapi-public-shell .kapi-service-detail{
+    padding-top:92px!important;
+    padding-bottom:56px!important;
+  }
+  .kapi-public-shell .kapi-service-detail .mb-20,
+  .kapi-public-shell .kapi-service-detail .mb-28{margin-bottom:48px!important}
+  .kapi-public-shell .kapi-service-detail .mb-12{margin-bottom:32px!important}
+  .kapi-public-shell .kapi-service-detail .p-16,
+  .kapi-public-shell .kapi-service-detail .p-12{padding:20px!important}
+  .kapi-public-shell .kapi-policy-page{
+    padding:92px 16px 52px!important;
+  }
+  .kapi-public-shell .kapi-policy-page h2{
+    margin-top:32px;
+  }
+  .kapi-public-shell .kapi-policy-page h3{
+    margin-top:24px;
+  }
+  .kapi-public-shell .kapi-not-found{
+    min-height:calc(100svh - 60px);
+    padding:92px 16px 48px!important;
+  }
+  .kapi-public-shell .kapi-not-found .text-5xl,
+  .kapi-public-shell .kapi-not-found .text-8xl{
+    font-size:72px!important;
+    line-height:.95!important;
+  }
+}
