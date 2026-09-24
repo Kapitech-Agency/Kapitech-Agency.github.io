@@ -26,36 +26,23 @@ import {
 } from 'lucide-react';
 import { allSolutionsAndServices, ServiceItemData } from '../../data/servicesData';
 import { useLanguage } from '../../lib/LanguageContext';
-import { 
-  getCmsServices, 
-  fetchServerCmsServices, 
-  saveCmsService, 
-  deleteCmsService, 
-  CMS_EVENT_KEY 
-} from '../../lib/cmsStore';
+import { ServiceItemData } from '../../data/servicesData';
+import { api } from '../../lib/apiClient';
 
 export const AdminCmsServices: React.FC = () => {
   const { language } = useLanguage();
-  const [servicesList, setServicesList] = useState<ServiceItemData[]>(getCmsServices);
+  const [servicesList, setServicesList] = useState<ServiceItemData[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
 
-  // Sync with server on mount and listen to updates
+  // Backend is the only CMS source of truth.
   React.useEffect(() => {
-    fetchServerCmsServices().then(data => {
-      if (Array.isArray(data) && data.length > 0) {
-        setServicesList(data);
-      }
+    void api.cms.getServices().then((res) => {
+      if (res.success && Array.isArray(res.data?.services)) setServicesList(res.data.services as ServiceItemData[]);
     });
-
-    const handleUpdate = () => {
-      setServicesList(getCmsServices());
-    };
-    window.addEventListener(CMS_EVENT_KEY, handleUpdate);
-    return () => window.removeEventListener(CMS_EVENT_KEY, handleUpdate);
   }, []);
-  
+
   // Modals & Editing State
   const [editingService, setEditingService] = useState<ServiceItemData | null>(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -179,8 +166,9 @@ export const AdminCmsServices: React.FC = () => {
       faqs: []
     };
 
-    saveCmsService(newService);
-    setServicesList([newService, ...servicesList]);
+    const res = await api.cms.createService(newService);
+    if (!res.success) { setStatusMessage(res.error || 'Service could not be created.'); return; }
+    setServicesList((current) => [newService, ...current]);
     setIsAddModalOpen(false);
     setNewTitle('');
     setNewSlug('');
@@ -190,9 +178,10 @@ export const AdminCmsServices: React.FC = () => {
     setTimeout(() => setStatusMessage(null), 4000);
   };
 
-  const handleDeleteService = (slug: string) => {
+  const handleDeleteService = async (slug: string) => {
     if (window.confirm(language === 'id' ? 'Apakah Anda yakin ingin menghapus layanan ini?' : 'Are you sure you want to delete this service?')) {
-      deleteCmsService(slug);
+      const res = await api.cms.deleteService(slug);
+      if (!res.success) { setStatusMessage(res.error || 'Service could not be deleted.'); return; }
       setServicesList(servicesList.filter(s => s.slug !== slug));
       setSelectedServiceForDetail(null);
       setStatusMessage(language === 'id' ? 'Layanan berhasil dihapus.' : 'Service successfully deleted.');
