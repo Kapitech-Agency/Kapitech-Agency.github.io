@@ -1812,6 +1812,7 @@
   min-width: 0;
 }
 
+.kapi-public-shell .kapi-nav-active{color:var(--pub-text)!important}
 /* Final footer and accent hierarchy */
 .kapi-public-shell .kapi-footer-heading{
   display:block;
