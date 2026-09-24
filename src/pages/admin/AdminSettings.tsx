@@ -28,20 +28,19 @@ import {
 import { 
   getAdminSession, 
   updateAdminCredentials, 
-  getAuditLogs, 
+  fetchServerAuditLogs,
   clearAuditLogs, 
   SecurityAuditLog,
   getStoredAdminCredentials,
   AdminAccount,
   AdminTier,
   StakeholderPermissions,
-  getStoredAdminAccounts,
+  fetchAdminAccounts,
   createAdminAccount,
   deleteAdminAccount,
-  updateAdminAccountPermissions,
-  getDefaultPermissionsForRole
+    getDefaultPermissionsForRole
 } from '../../lib/adminAuth';
-import { getCmsSiteMeta, saveCmsSiteMeta, SiteMetaSettings } from '../../lib/cmsStore';
+import { SiteMetaSettings } from '../../lib/cmsStore';
 import { useLanguage } from '../../lib/LanguageContext';
 import { api } from '../../lib/apiClient';
 import { ProductionReadinessCard } from '../../components/admin/ProductionReadinessCard';
@@ -107,7 +106,9 @@ export const AdminSettings: React.FC = () => {
   const [sessionTimeoutMin, setSessionTimeoutMin] = useState(120);
 
   // Meta & Branding Settings state
-  const [metaSettings, setMetaSettings] = useState<SiteMetaSettings>(getCmsSiteMeta());
+  const [metaSettings, setMetaSettings] = useState<SiteMetaSettings>({
+    siteTitle: '', siteDescription: '', contactReceiverEmail: '', defaultLanguage: language, enableLiveChat: false, enableSoundAlerts: false, maintenanceMode: false
+  });
   const [metaStatus, setMetaStatus] = useState<string | null>(null);
 
   // API Connections state
@@ -141,9 +142,20 @@ export const AdminSettings: React.FC = () => {
   const [tempPermissions, setTempPermissions] = useState<StakeholderPermissions>(getDefaultPermissionsForRole('Stakeholder Executive'));
 
   useEffect(() => {
-    setLogs(getAuditLogs());
-    setAccounts(getStoredAdminAccounts());
-  }, [activeTab]);
+    let mounted = true;
+    if (activeTab === 'audit' && canViewAuditLogs) {
+      void fetchServerAuditLogs().then((next) => { if (mounted) setLogs(next); });
+    }
+    if (activeTab === 'rbac' && canManageAdminAccounts) {
+      void fetchAdminAccounts().then((next) => { if (mounted) setAccounts(next); });
+    }
+    if (activeTab === 'branding') {
+      void api.cms.getSettings().then((res) => {
+        if (mounted && res.success && res.data?.settings) setMetaSettings(res.data.settings as SiteMetaSettings);
+      });
+    }
+    return () => { mounted = false; };
+  }, [activeTab, canViewAuditLogs, canManageAdminAccounts]);
 
   useEffect(() => {
     if (!canAccessServer || activeTab !== 'api') return;
@@ -158,8 +170,9 @@ export const AdminSettings: React.FC = () => {
     return () => { mounted = false; };
   }, [activeTab, canAccessServer]);
 
-  const refreshAccounts = () => {
-    setAccounts(getStoredAdminAccounts());
+  const refreshAccounts = async () => {
+    const next = await fetchAdminAccounts();
+    setAccounts(next);
   };
 
   const handleOpenAddAccount = () => {
@@ -199,7 +212,7 @@ export const AdminSettings: React.FC = () => {
     });
 
     if (res.success) {
-      refreshAccounts();
+      await refreshAccounts();
       setAccountActionMessage({
         success: true,
         message: language === 'id' 
@@ -242,9 +255,9 @@ export const AdminSettings: React.FC = () => {
     setIsEditPermsModalOpen(true);
   };
 
-  const handleSavePermissions = () => {
+  const handleSavePermissions = async () => {
     if (!editingAccount) return;
-    const res = updateAdminAccountPermissions(editingAccount.id, tempPermissions);
+    const res = await api.auth.updateUser(editingAccount.id, { permissions: tempPermissions });
     if (res.success) {
       refreshAccounts();
       setIsEditPermsModalOpen(false);
@@ -331,9 +344,13 @@ export const AdminSettings: React.FC = () => {
   };
 
   // Handle Meta Settings save
-  const handleSaveMeta = (e: React.FormEvent) => {
+  const handleSaveMeta = async (e: React.FormEvent) => {
     e.preventDefault();
-    saveCmsSiteMeta(metaSettings);
+    const res = await api.cms.updateSettings(metaSettings);
+    if (!res.success) {
+      setMetaStatus(res.error || (language === 'id' ? 'Gagal menyimpan pengaturan.' : 'Failed to save settings.'));
+      return;
+    }
     setMetaStatus(
       language === 'id' 
         ? 'Pengaturan sistem dan metadata website berhasil disimpan!' 
