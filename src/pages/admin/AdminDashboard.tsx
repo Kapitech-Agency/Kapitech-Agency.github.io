@@ -13,7 +13,6 @@ import {
   Calendar, 
   ArrowUpRight, 
   Building2, 
-  Sparkles, 
   ShieldCheck, 
   Download, 
   Kanban, 
@@ -35,11 +34,7 @@ import { ContactSubmission } from '../../lib/submissions';
 import { AgencyProject } from '../../lib/projectStore';
 import { CrmLead, CrmServicePillar, CrmSource } from '../../lib/crmStore';
 import { 
-  computeFinancialMetrics, 
-  getMonthlyCashFlowSeries, 
-  getAccountsReceivableAging,
-  FINANCE_EVENT_NAME,
-  AgencyInvoice,
+    AgencyInvoice,
   AgencyExpense,
   computeInvoiceTotals,
   InvoiceLineItem
@@ -74,6 +69,7 @@ export const AdminDashboard: React.FC = () => {
   const [inboxSubmissions, setInboxSubmissions] = useState<ContactSubmission[]>([]);
   const [auditLogs, setAuditLogs] = useState<SecurityAuditLog[]>([]);
   const [currency, setCurrencyState] = useState<CurrencyCode>(() => getActiveCurrency());
+  const [serverFinanceMetrics, setServerFinanceMetrics] = useState<any>({ totalRevenueCollected: 0, totalOutstanding: 0, totalExpense: 0, netProfit: 0, profitMargin: '0', overdueCount: 0 });
 
   // Interactive Period & Segment Filters
   const [periodFilter, setPeriodFilter] = useState<'thisMonth' | 'q3' | 'ytd'>('thisMonth');
@@ -111,8 +107,6 @@ export const AdminDashboard: React.FC = () => {
   const [quickExpAmount, setQuickExpAmount] = useState('12500000');
   const [quickExpCategory, setQuickExpCategory] = useState('Software & Cloud');
 
-  // Hover state for interactive SVG charts
-  const [hoveredChartMonth, setHoveredChartMonth] = useState<string | null>(null);
 
   const showToast = (msg: string) => {
     setNotification(msg);
@@ -123,14 +117,15 @@ export const AdminDashboard: React.FC = () => {
   useEffect(() => {
     let active = true;
     const refresh = async () => {
-      const [invoiceRes, expenseRes, crmRes, projectRes, clientRes, leadRes, auditRes] = await Promise.all([
+      const [invoiceRes, expenseRes, crmRes, projectRes, clientRes, leadRes, auditRes, financeMetricsRes] = await Promise.all([
         api.finance.getInvoices(),
         api.finance.getExpenses(),
         api.crm.getDeals(),
         api.projects.getAll(),
         api.clients.getAll(),
         api.leads.getAll(),
-        api.auditLogs.getAll()
+        api.auditLogs.getAll(),
+        api.finance.getMetrics()
       ]);
       if (!active) return;
       if (invoiceRes.success) setInvoices((invoiceRes.data?.invoices || []) as AgencyInvoice[]);
@@ -140,6 +135,7 @@ export const AdminDashboard: React.FC = () => {
       if (clientRes.success) setClients((clientRes.data?.clients || []) as AgencyClient[]);
       if (leadRes.success) setInboxSubmissions((leadRes.data?.leads || []) as ContactSubmission[]);
       if (auditRes.success) setAuditLogs((auditRes.data?.logs || []) as SecurityAuditLog[]);
+      if (financeMetricsRes.success && financeMetricsRes.data?.metrics) setServerFinanceMetrics(financeMetricsRes.data.metrics);
     };
     void refresh();
     const timer = window.setInterval(() => void refresh(), 30000);
@@ -148,13 +144,14 @@ export const AdminDashboard: React.FC = () => {
 
 
   // 1. FINANCIAL METRICS & KPI ENGINE
-  const finMetrics = useMemo(() => {
-    return computeFinancialMetrics(invoices, expenses);
-  }, [invoices, expenses]);
-
-  const cashFlowSeries = useMemo(() => {
-    return getMonthlyCashFlowSeries(invoices, expenses);
-  }, [invoices, expenses]);
+  const finMetrics = useMemo(() => ({
+    totalPaidRevenue: Number(serverFinanceMetrics.totalRevenueCollected || 0),
+    totalOutstanding: Number(serverFinanceMetrics.totalOutstanding || 0),
+    totalExpenses: Number(serverFinanceMetrics.totalExpense || 0),
+    netOperatingProfit: Number(serverFinanceMetrics.netProfit || 0),
+    netMarginPercent: Number(serverFinanceMetrics.profitMargin || 0),
+    totalOverdue: 0
+  }), [serverFinanceMetrics]);
 
   // 2. CRM PIPELINE KPI ENGINE
   const pipelineMetrics = useMemo(() => {
@@ -162,8 +159,8 @@ export const AdminDashboard: React.FC = () => {
     const wonLeads = leads.filter(l => l.stage === 'won');
     const totalPipelineValue = activeLeads.reduce((sum, l) => sum + (l.dealValue || 0), 0);
     const wonTotalValue = wonLeads.reduce((sum, l) => sum + (l.dealValue || 0), 0);
-    const conversionRate = leads.length > 0 ? Math.round((wonLeads.length / leads.length) * 100) : 68;
-    const avgDealSize = activeLeads.length > 0 ? Math.round(totalPipelineValue / activeLeads.length) : 180000000;
+    const conversionRate = leads.length > 0 ? Math.round((wonLeads.length / leads.length) * 100) : 0;
+    const avgDealSize = activeLeads.length > 0 ? Math.round(totalPipelineValue / activeLeads.length) : 0;
 
     // Stage Distribution
     const stageCounts = {
@@ -190,7 +187,7 @@ export const AdminDashboard: React.FC = () => {
     const total = projects.length;
     const inProgress = projects.filter(p => p.status === 'in_progress').length;
     const completed = projects.filter(p => p.status === 'completed').length;
-    const slaRate = total > 0 ? 96 : 96;
+    const slaRate = 0;
 
     return {
       total,
@@ -201,11 +198,10 @@ export const AdminDashboard: React.FC = () => {
   }, [projects]);
 
   // Accounts Receivable vs Accounts Payable & Aging
-  const arAging = useMemo(() => getAccountsReceivableAging(invoices), [invoices]);
   const arApMetrics = useMemo(() => {
     const arTotal = finMetrics.totalOutstanding + finMetrics.totalOverdue;
     const apTotal = finMetrics.totalExpenses;
-    const netRatio = apTotal > 0 ? (arTotal / apTotal).toFixed(1) : '3.2';
+    const netRatio = apTotal > 0 ? (arTotal / apTotal).toFixed(1) : '0';
     const healthStatus: 'optimal' | 'moderate' | 'action_needed' = 
       arTotal >= apTotal ? 'optimal' : arTotal >= apTotal * 0.7 ? 'moderate' : 'action_needed';
 
@@ -214,9 +210,8 @@ export const AdminDashboard: React.FC = () => {
       apTotal,
       netRatio,
       healthStatus,
-      aging: arAging
     };
-  }, [finMetrics, arAging]);
+  }, [finMetrics]);
 
   // Upcoming Critical Project Deadlines sorted by targetEndDate
   const upcomingDeadlines = useMemo(() => {
@@ -313,39 +308,6 @@ export const AdminDashboard: React.FC = () => {
     setActiveCurrency(next);
     setCurrencyState(next);
     showToast(`${language === 'id' ? 'Mata uang diubah ke' : 'Currency switched to'} ${next}`);
-  };
-
-  // Convert Inbox Inquiry to CRM Lead directly
-  const handleConvertInboxToLead = async (sub: ContactSubmission) => {
-    const newLead: CrmLead = {
-      id: 'lead_' + Date.now().toString(36),
-      clientName: sub.fullName,
-      company: sub.company || sub.fullName,
-      email: sub.email,
-      phone: sub.phone || '',
-      servicePillar: 'Web Development',
-      dealValue: 120000000,
-      stage: 'new',
-      priority: 'high',
-      source: 'Website Form',
-      description: sub.message || 'Converted from website contact inquiry.',
-      expectedCloseDate: new Date(Date.now() + 30 * 86400000).toISOString().split('T')[0],
-      assignedTo: 'Lead Full-Stack Tech',
-      notes: [
-        {
-          id: 'note_' + Date.now(),
-          author: session?.user.username || 'Admin',
-          text: `Inbound inquiry converted to CRM lead: ${sub.message || ''}`,
-          createdAt: new Date().toISOString(),
-          type: 'note'
-        }
-      ],
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    };
-
-    await api.crm.createDeal(newLead);
-    showToast(language === 'id' ? `Inquiry dikonversi menjadi CRM Lead: ${sub.fullName}` : `Inquiry converted to CRM Lead: ${sub.fullName}`);
   };
 
   // Quick Action Modal Submit Handlers
@@ -681,7 +643,7 @@ export const AdminDashboard: React.FC = () => {
             </div>
             
             <div className="text-2xl lg:text-[28px] font-mono font-bold text-[#F8FAFC] tracking-tight leading-none">
-              {formatCurrency(finMetrics.totalPaidRevenue > 0 ? finMetrics.totalPaidRevenue : 439800000, currency)}
+              {formatCurrency(finMetrics.totalPaidRevenue, currency)}
             </div>
 
             {/* Dual Currency Sub-Display */}
@@ -695,12 +657,12 @@ export const AdminDashboard: React.FC = () => {
           <div className="mt-4 pt-3 border-t border-white/[0.07] flex items-center justify-between text-[11px] font-mono">
             <span className="text-emerald-400 font-semibold flex items-center gap-1">
               <TrendingUp size={12} />
-              +24.8% MoM
+              Server calculated
             </span>
             <span className="text-[#8A94A6]">
               {language === 'id' ? 'Piutang: ' : 'Receivables: '}
               <strong className="text-white font-semibold">
-                {formatCurrency(finMetrics.totalOutstanding > 0 ? finMetrics.totalOutstanding : 130100000, currency)}
+                {formatCurrency(finMetrics.totalOutstanding, currency)}
               </strong>
             </span>
           </div>
@@ -772,7 +734,7 @@ export const AdminDashboard: React.FC = () => {
             <span className="text-[#8A94A6]">
               {language === 'id' ? 'Margin Bersih: ' : 'Net Margin: '}
               <strong className="text-white font-semibold">
-                {finMetrics.netMarginPercent || 48}%
+                {finMetrics.netMarginPercent}%
               </strong>
             </span>
           </div>
@@ -905,7 +867,7 @@ export const AdminDashboard: React.FC = () => {
               <div>
                 <span className="text-[#8A94A6] block text-[10px] uppercase">{language === 'id' ? 'Laba Operasional' : 'Operating Profit'}</span>
                 <span className="text-emerald-400 font-bold text-sm">
-                  {formatCurrency(finMetrics.netOperatingProfit > 0 ? finMetrics.netOperatingProfit : 246500000, currency)}
+                  {formatCurrency(finMetrics.netOperatingProfit > 0 ? finMetrics.netOperatingProfit : 0, currency)}
                 </span>
               </div>
               <div>
@@ -1461,13 +1423,6 @@ export const AdminDashboard: React.FC = () => {
                       <span className="text-[10px] font-mono text-[#8A94A6]">
                         {sub.services?.join(', ') || 'AI / Cloud'}
                       </span>
-                      <button
-                        onClick={() => handleConvertInboxToLead(sub)}
-                        className="text-[10px] font-mono font-bold px-2 py-1 rounded bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-400 border border-emerald-500/30 transition-all flex items-center gap-1"
-                      >
-                        <Sparkles size={11} />
-                        <span>{language === 'id' ? 'Konversi ke Lead' : 'Convert to Lead'}</span>
-                      </button>
                     </div>
                   </div>
                 ))
