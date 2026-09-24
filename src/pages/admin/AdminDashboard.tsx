@@ -479,7 +479,7 @@ export const AdminDashboard: React.FC = () => {
               onClick={() => setPeriodFilter('thisMonth')}
               className={`px-2.5 py-1 rounded-md transition-all ${
                 periodFilter === 'thisMonth' 
-                  ? 'bg-[var(--accent)] text-[var(--text)] font-semibold shadow-sm' 
+                  ? 'bg-[var(--accent)] text-[var(--text)] font-semibold' 
                   : 'text-[var(--muted)] hover:text-[var(--text)]'
               }`}
             >
@@ -489,7 +489,7 @@ export const AdminDashboard: React.FC = () => {
               onClick={() => setPeriodFilter('q3')}
               className={`px-2.5 py-1 rounded-lg transition-all ${
                 periodFilter === 'q3' 
-                  ? 'bg-[var(--accent)] text-[var(--text)] font-semibold shadow-sm' 
+                  ? 'bg-[var(--accent)] text-[var(--text)] font-semibold' 
                   : 'text-[var(--muted)] hover:text-[var(--text)]'
               }`}
             >
@@ -499,7 +499,7 @@ export const AdminDashboard: React.FC = () => {
               onClick={() => setPeriodFilter('ytd')}
               className={`px-2.5 py-1 rounded-lg transition-all ${
                 periodFilter === 'ytd' 
-                  ? 'bg-[var(--accent)] text-[var(--text)] font-semibold shadow-sm' 
+                  ? 'bg-[var(--accent)] text-[var(--text)] font-semibold' 
                   : 'text-[var(--muted)] hover:text-[var(--text)]'
               }`}
             >
@@ -521,7 +521,7 @@ export const AdminDashboard: React.FC = () => {
           {isAllowed('crm') && (
             <button
               onClick={() => setIsAddLeadModalOpen(true)}
-              className="h-9 px-3 rounded-card bg-[var(--panel)] hover:bg-[var(--panel)] border border-[var(--line)]  text-xs font-sans font-semibold text-[var(--text)] transition-all flex items-center gap-1.5 shadow-sm"
+              className="h-9 px-3 rounded-card bg-[var(--panel)] hover:bg-[var(--panel)] border border-[var(--line)]  text-xs font-sans font-semibold text-[var(--text)] transition-colors flex items-center gap-1.5"
             >
               <Plus size={14} className="text-emerald-400" />
               <span>{language === 'id' ? 'Tambah Lead' : 'Add Lead'}</span>
@@ -532,7 +532,7 @@ export const AdminDashboard: React.FC = () => {
           {isAllowed('invoicing') && (
             <button
               onClick={() => setIsNewInvoiceModalOpen(true)}
-              className="h-9 px-3 rounded-card bg-[var(--panel)] hover:bg-[var(--panel)] border border-[var(--line)]  text-xs font-sans font-semibold text-[var(--text)] transition-all flex items-center gap-1.5 shadow-sm"
+              className="h-9 px-3 rounded-card bg-[var(--panel)] hover:bg-[var(--panel)] border border-[var(--line)]  text-xs font-sans font-semibold text-[var(--text)] transition-colors flex items-center gap-1.5"
             >
               <Plus size={14} className="text-purple-400" />
               <span>{language === 'id' ? 'Buat Invoice' : 'New Invoice'}</span>
@@ -543,7 +543,7 @@ export const AdminDashboard: React.FC = () => {
           {isAllowed('projects') && (
             <button
               onClick={() => setIsNewProjectModalOpen(true)}
-              className="min-h-10 xl:h-9 px-3.5 rounded-control bg-[var(--accent)] hover:bg-[var(--danger)] text-[var(--text)] text-xs font-sans font-semibold transition-colors flex items-center gap-1.5"
+              className="min-h-10 xl:h-9 px-3.5 rounded-control bg-[var(--accent)] hover:bg-[var(--accent)] text-[var(--text)] text-xs font-sans font-semibold transition-colors flex items-center gap-1.5"
             >
               <Plus size={14} />
               <span>{language === 'id' ? 'Mulai Proyek' : 'New Project'}</span>
