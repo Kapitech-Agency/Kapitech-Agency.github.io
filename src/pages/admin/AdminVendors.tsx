@@ -38,9 +38,13 @@ import {
 import { formatAmount, getActiveCurrency, CurrencyCode, CURRENCY_EVENT } from '../../lib/currency';
 import { useLanguage } from '../../lib/LanguageContext';
 import { CustomSelect } from '../../components/ui/CustomSelect';
+import { api } from '../../lib/apiClient';
+import { hasAdminPermission } from '../../lib/adminAuth';
 
 export const AdminVendors: React.FC = () => {
   const { t, language } = useLanguage();
+  const canManageVendors = hasAdminPermission('canManageVendors');
+  const canViewVendors = canManageVendors || hasAdminPermission('canViewFinancials');
   const [vendors, setVendors] = useState<AgencyVendor[]>([]);
   const [currency, setCurrency] = useState<CurrencyCode>(getActiveCurrency());
   const [searchQuery, setSearchQuery] = useState('');
@@ -73,8 +77,19 @@ export const AdminVendors: React.FC = () => {
   const [formStatus, setFormStatus] = useState<VendorStatus>('active');
   const [formIsVetted, setFormIsVetted] = useState<boolean>(true);
 
-  const loadVendors = () => {
-    setVendors(getAgencyVendors());
+  const loadVendors = async () => {
+    if (!canViewVendors) {
+      setVendors([]);
+      return;
+    }
+    try {
+      const res = await api.vendors.getAll();
+      if (res.success && Array.isArray(res.data?.vendors)) {
+        setVendors(res.data.vendors as AgencyVendor[]);
+      }
+    } catch {
+      setStatusMessage(language === 'id' ? 'Vendor gagal dimuat.' : 'Failed to load vendors.');
+    }
   };
 
   useEffect(() => {
@@ -82,7 +97,7 @@ export const AdminVendors: React.FC = () => {
     const handleUpdate = () => loadVendors();
     window.addEventListener(VENDOR_EVENT_NAME, handleUpdate);
     return () => window.removeEventListener(VENDOR_EVENT_NAME, handleUpdate);
-  }, []);
+  }, [canViewVendors, language]);
 
   useEffect(() => {
     const handleCurrency = (e: Event) => {
@@ -160,7 +175,14 @@ export const AdminVendors: React.FC = () => {
       isVetted: !(v.isVetted ?? true),
       updatedAt: new Date().toISOString()
     };
-    saveAgencyVendor(updated);
+    if (!canManageVendors) return;
+    void api.vendors.update(updated.id, updated).then((res) => {
+      if (res.success && res.data?.vendor) {
+        setVendors(prev => prev.map(item => item.id === updated.id ? res.data!.vendor as AgencyVendor : item));
+      }
+    }).catch(() => {
+      setStatusMessage(language === 'id' ? 'Gagal memperbarui vendor.' : 'Failed to update vendor.');
+    });
     if (selectedVendor && selectedVendor.id === v.id) {
       setSelectedVendor(updated);
     }
@@ -208,7 +230,21 @@ export const AdminVendors: React.FC = () => {
       updatedAt: new Date().toISOString()
     };
 
-    saveAgencyVendor(vendorToSave);
+    if (!canManageVendors) {
+      setStatusMessage(language === 'id' ? 'Anda tidak memiliki izin mengelola vendor.' : 'You do not have permission to manage vendors.');
+      return;
+    }
+    const response = editingVendor
+      ? await api.vendors.update(vendorToSave.id, vendorToSave)
+      : await api.vendors.create(vendorToSave);
+    if (!response.success || !response.data?.vendor) {
+      setStatusMessage(response.error || (language === 'id' ? 'Vendor gagal disimpan.' : 'Failed to save vendor.'));
+      return;
+    }
+    const savedVendor = response.data.vendor as AgencyVendor;
+    setVendors(prev => editingVendor
+      ? prev.map(item => item.id === savedVendor.id ? savedVendor : item)
+      : [savedVendor, ...prev]);
     setIsModalOpen(false);
     setStatusMessage(language === 'id' ? 'Data vendor berhasil disimpan!' : 'Vendor profile saved successfully!');
     setTimeout(() => setStatusMessage(null), 3500);
@@ -220,13 +256,19 @@ export const AdminVendors: React.FC = () => {
 
   const handleDeleteVendor = (id: string, name: string) => {
     if (window.confirm(language === 'id' ? `Hapus vendor ${name}?` : `Delete vendor ${name}?`)) {
-      deleteAgencyVendor(id);
+      if (!canManageVendors) return;
+      void api.vendors.delete(id).then((res) => {
+        if (!res.success) {
+          setStatusMessage(res.error || (language === 'id' ? 'Vendor gagal dihapus.' : 'Failed to delete vendor.'));
+          return;
+        }
+        setVendors(prev => prev.filter(item => item.id !== id));
       if (selectedVendor?.id === id) {
         setIsDrawerOpen(false);
         setSelectedVendor(null);
       }
-      setStatusMessage(language === 'id' ? 'Vendor telah dihapus.' : 'Vendor deleted successfully.');
-      setTimeout(() => setStatusMessage(null), 3000);
+        setStatusMessage(language === 'id' ? 'Vendor telah dihapus.' : 'Vendor deleted successfully.');
+        setTimeout(() => setStatusMessage(null), 3000);
     }
   };
 
@@ -249,6 +291,7 @@ export const AdminVendors: React.FC = () => {
         <div className="flex items-center gap-3 shrink-0">
           <button
             onClick={handleOpenAdd}
+                            disabled={!canManageVendors}
             className="h-10 px-4 rounded-xl bg-[#E50914] hover:bg-[#FF1E27] text-white text-xs font-semibold shadow-lg shadow-[#E50914]/25 flex items-center gap-2 transition-all min-h-[40px]"
           >
             <Plus size={15} />
@@ -495,6 +538,7 @@ export const AdminVendors: React.FC = () => {
                 </button>
                 <button
                   onClick={() => handleOpenEdit(vendor)}
+                                  disabled={!canManageVendors}
                   className="p-1.5 rounded-lg bg-[#181B22] hover:bg-[#21252F] border border-[rgba(255,255,255,0.07)] text-[#8A94A6] hover:text-white transition-colors"
                   title="Edit Vendor"
                 >
@@ -502,6 +546,7 @@ export const AdminVendors: React.FC = () => {
                 </button>
                 <button
                   onClick={() => handleDeleteVendor(vendor.id, vendor.name)}
+                           disabled={!canManageVendors}
                   className="p-1.5 rounded-lg bg-[#181B22] hover:bg-red-950/40 border border-[rgba(255,255,255,0.07)] text-[#8A94A6] hover:text-red-400 transition-colors"
                   title="Delete Vendor"
                 >
