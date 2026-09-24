@@ -489,9 +489,9 @@ export const AdminProjects: React.FC = () => {
     <div className="space-y-6">
       
       {/* 1. Header & Project Actions */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[var(--line)]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-6 border-b border-[var(--line)]">
         <div>
-          <h1 className="text-2xl font-display font-bold text-white flex items-center gap-3">
+          <h1 className="text-xl font-display font-semibold text-white flex items-center gap-3">
             <Layers className="text-[var(--danger)]" size={24} />
             <span>{t('admin.nav.projects')}</span>
           </h1>
@@ -564,7 +564,7 @@ export const AdminProjects: React.FC = () => {
       {/* 3. Selected Project Overview Hero Card */}
       {selectedProject && (
         <div className="bg-[var(--panel)] border border-[var(--line)] rounded-card p-5 space-y-4">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
             <div className="space-y-1 min-w-0">
               <div className="flex flex-wrap items-center gap-2">
                 <span className="px-2.5 py-0.5 rounded-full bg-[var(--accent)]/15 text-[var(--danger)] border border-[var(--accent)]/30 text-[10px] font-sans font-bold normal-case tracking-normal">
@@ -627,7 +627,7 @@ export const AdminProjects: React.FC = () => {
           </div>
 
           {/* Progress & Milestone Overview */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 pt-3 border-t border-[var(--line)] text-xs font-sans">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-3 pt-3 border-t border-[var(--line)] text-xs font-sans">
             <div>
               <div className="text-[var(--muted)] mb-1 text-[11px]">Sprint Progress</div>
               <div className="flex items-center gap-2">
@@ -757,7 +757,7 @@ export const AdminProjects: React.FC = () => {
             showNavButtons={true}
             scrollStep={340}
             bottomOffset="bottom-4"
-            scrollClassName="flex gap-4 overflow-x-auto pb-4 pt-1 cursor-grab active:cursor-grabbing scrollbar-thin"
+            scrollClassName="flex gap-3 overflow-x-auto pb-4 pt-1 cursor-grab active:cursor-grabbing scrollbar-thin"
           >
             {TASK_COLUMNS.map((col) => {
               const colTasks = selectedProject.tasks
@@ -1095,7 +1095,7 @@ export const AdminProjects: React.FC = () => {
                   />
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block text-[var(--muted)] mb-1 font-semibold">Client PIC Name</label>
                     <input
@@ -1119,7 +1119,7 @@ export const AdminProjects: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   <div>
                     <label className="block text-[var(--muted)] mb-1 font-semibold">Service Category</label>
                     <select
@@ -1163,7 +1163,7 @@ export const AdminProjects: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block text-[var(--muted)] mb-1 font-semibold">Start Date</label>
                     <input
@@ -1195,7 +1195,7 @@ export const AdminProjects: React.FC = () => {
                   />
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block text-[var(--muted)] mb-1 font-semibold">Repository URL</label>
                     <input
@@ -1286,7 +1286,7 @@ export const AdminProjects: React.FC = () => {
                   />
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block text-[var(--muted)] mb-1 font-semibold">Priority</label>
                     <select
@@ -1320,7 +1320,7 @@ export const AdminProjects: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block text-[var(--muted)] mb-1 font-semibold">Initial Stage</label>
                     <select
