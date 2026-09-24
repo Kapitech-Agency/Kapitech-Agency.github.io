@@ -543,7 +543,7 @@ export const AdminLayout: React.FC = () => {
               </Link>
             )}
 
-            {/* Bottom session details */
+            {/* Bottom session details */}
             <div className="p-3.5 border-t border-line bg-bg flex items-center justify-between shrink-0">
               <div className="flex items-center gap-2.5 min-w-0">
                 <div className="w-8 h-8 rounded-lg bg-accent border border-line flex items-center justify-center text-xs font-sans text-fg font-bold shrink-0 ">
