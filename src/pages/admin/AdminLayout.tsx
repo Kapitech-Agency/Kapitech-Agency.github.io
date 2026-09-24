@@ -61,15 +61,21 @@ export const AdminLayout: React.FC = () => {
     setMobileMenuOpen(false);
   }, [location.pathname]);
 
-  // Lock background scroll when mobile sidebar drawer is open
+  // Mobile navigation is a true drawer: lock the page behind it and allow Escape to close it.
   useEffect(() => {
-    if (mobileMenuOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-    }
+    if (!mobileMenuOpen) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setMobileMenuOpen(false);
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
     return () => {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener('keydown', handleKeyDown);
     };
   }, [mobileMenuOpen]);
 
@@ -467,9 +473,16 @@ export const AdminLayout: React.FC = () => {
 
       {/* Mobile Drawer Overlay & U('menu') (Global standard sliding drawer from left) */}
       {mobileMenuOpen && (
-        <div className="min-[900px]:hidden ams-mobile-drawer fixed inset-0 z-50 flex">
-          <div 
-            className="fixed inset-0 bg-black/70 transition-opacity" 
+        <div
+          className="min-[900px]:hidden ams-mobile-drawer fixed inset-0 z-50 flex"
+          role="dialog"
+          aria-modal="true"
+          aria-label="AMS navigation"
+        >
+          <button
+            type="button"
+            aria-label="Close navigation menu"
+            className="fixed inset-0 bg-black/70 transition-opacity cursor-default"
             onClick={() => setMobileMenuOpen(false)}
           />
 
@@ -597,7 +610,7 @@ export const AdminLayout: React.FC = () => {
       <main className="flex-1 flex flex-col min-w-0 h-full overflow-y-auto bg-bg custom-scrollbar">
         
         {/* Sticky desktop top bar */}
-        <header className="hidden min-[900px]:flex h-[52px] px-6 border-b border-line bg-bg sticky top-0 z-30 items-center justify-end shrink-0">
+        <header className="hidden min-[900px]:flex h-[52px] px-6 border-b border-line bg-bg sticky top-0 z-30 items-center justify-end shrink-0" aria-label="AMS top bar">
           <AdminNotificationCenter />
         </header>
 
