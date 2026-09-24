@@ -115,6 +115,8 @@ function normalizeProposal(raw: any): Proposal {
 export const AdminProposals: React.FC = () => {
   const { language, t } = useLanguage();
   const session = getAdminSession();
+  const canManageCrm = hasAdminPermission('canManageCrm');
+  const canManageInvoices = hasAdminPermission('canManageInvoices');
   const canApproveBudgets = hasAdminPermission('canApproveBudgets');
   const [currency, setCurrency] = useState<CurrencyCode>(getActiveCurrency());
   const [proposals, setProposals] = useState<Proposal[]>([]);
@@ -213,6 +215,10 @@ export const AdminProposals: React.FC = () => {
 
   const handleCreateProposal = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!canManageCrm) {
+      showToast(language === 'id' ? 'Anda tidak memiliki izin mengelola proposal.' : 'You do not have permission to manage proposals.');
+      return;
+    }
     if (!formTitle.trim() || !formClientName.trim()) {
       showToast('Please fill in title and client name.');
       return;
@@ -259,6 +265,10 @@ export const AdminProposals: React.FC = () => {
   };
 
   const handleApproveProposal = async (id: string) => {
+    if (!canApproveBudgets) {
+      showToast(language === 'id' ? 'Anda tidak memiliki izin persetujuan.' : 'You do not have approval permission.');
+      return;
+    }
     try {
       const res = await api.proposals.approve(id);
       if (res.success && res.data?.proposal) {
@@ -274,6 +284,10 @@ export const AdminProposals: React.FC = () => {
   };
 
   const handleStatusChange = async (id: string, newStatus: Proposal['status']) => {
+    if (!canManageCrm) {
+      showToast(language === 'id' ? 'Anda tidak memiliki izin mengubah proposal.' : 'You do not have permission to update proposals.');
+      return;
+    }
     if (['approved', 'rejected'].includes(newStatus) && !canApproveBudgets) {
       showToast(language === 'id'
         ? 'Status Approved/Rejected hanya dapat diubah oleh user dengan hak Approval.'
@@ -294,6 +308,10 @@ export const AdminProposals: React.FC = () => {
   };
 
   const handleConvertToInvoice = async (id: string) => {
+    if (!canManageInvoices) {
+      showToast(language === 'id' ? 'Anda tidak memiliki izin membuat invoice.' : 'You do not have invoice permission.');
+      return;
+    }
     if (!window.confirm(language === 'id' ? 'Konversi proposal ini menjadi invoice resmi?' : 'Convert this approved proposal to an official invoice?')) {
       return;
     }
@@ -312,6 +330,10 @@ export const AdminProposals: React.FC = () => {
   };
 
   const handleDelete = async (id: string) => {
+    if (!canManageCrm) {
+      showToast(language === 'id' ? 'Anda tidak memiliki izin menghapus proposal.' : 'You do not have permission to delete proposals.');
+      return;
+    }
     if (!window.confirm('Delete proposal?')) return;
     try {
       const res = await api.proposals.delete(id);
@@ -562,7 +584,8 @@ export const AdminProposals: React.FC = () => {
                         {(p.status === 'accepted' || p.status === 'approved') && !p.invoiceId && (
                           <button
                             onClick={() => handleConvertToInvoice(p.id)}
-                            title="Convert to Invoice"
+                            disabled={!canManageInvoices}
+                            title={!canManageInvoices ? 'Requires invoice permission' : 'Convert to Invoice'}
                             className="px-2 py-1 rounded bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-400 border border-emerald-500/30 text-xs font-sans font-semibold flex items-center gap-1 transition-colors"
                           >
                             <Receipt size={11} />
@@ -897,6 +920,7 @@ export const AdminProposals: React.FC = () => {
                         handleApproveProposal(previewProposal.id);
                         setPreviewProposal(null);
                       }}
+                      disabled={!canApproveBudgets}
                       className="px-3 py-1.5 rounded-lg bg-blue-500/20 text-blue-400 border border-blue-500/30 text-xs font-sans font-semibold"
                     >
                       Approve Proposal
