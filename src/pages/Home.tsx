@@ -107,7 +107,7 @@ export const Home = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
           >
-            <div className="kapi-hero-eyebrow">Kapitech Agency <span aria-hidden="true">/</span> Digital Product Studio</div>
+            <div className="kapi-hero-eyebrow">Kapitech Agency <span aria-hidden="true">/</span> Digital Product Design & Development Agency</div>
             <h1 className="kapi-display-title">
               {language === 'id' ? (
                 <>Studio produk digital yang dirancang untuk <span className="text-brand-red">membangun & memperluas</span> bisnis Anda.</>
