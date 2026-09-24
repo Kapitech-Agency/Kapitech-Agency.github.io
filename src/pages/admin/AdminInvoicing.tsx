@@ -71,18 +71,18 @@ export const AdminInvoicing: React.FC = () => {
   const [clientEmail, setClientEmail] = useState('');
   const [clientPhone, setClientPhone] = useState('');
   const [itemDesc, setItemDesc] = useState('');
-  const [itemAmount, setItemAmount] = useState<number>(35000000);
-  const [issueDate, setIssueDate] = useState(new Date().toISOString().split('T')[0]);
+  const [itemAmount, setItemAmount] = useState<number>(0);
+  const [issueDate, setIssueDate] = useState('');
   const [dueDate, setDueDate] = useState(new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]);
   const [taxPercent, setTaxPercent] = useState<number>(11);
   const [invoiceStatus, setInvoiceStatus] = useState<InvoiceStatus>('sent');
-  const [invoiceNotes, setInvoiceNotes] = useState('Payment via Bank Mandiri / BCA Wire Transfer.');
+  const [invoiceNotes, setInvoiceNotes] = useState('');
 
   // Modal State for Expense
   const [isExpenseModalOpen, setIsExpenseModalOpen] = useState(false);
   const [expCategory, setExpCategory] = useState<AgencyExpense['category']>('Software & Cloud');
   const [expDesc, setExpDesc] = useState('');
-  const [expAmount, setExpAmount] = useState<number>(2500000);
+  const [expAmount, setExpAmount] = useState<number>(0);
   const [expDate, setExpDate] = useState(new Date().toISOString().split('T')[0]);
 
   // Invoice Detail / Printable Preview Modal
@@ -138,6 +138,28 @@ export const AdminInvoicing: React.FC = () => {
   const showToast = (msg: string) => {
     setStatusMessage(msg);
     setTimeout(() => setStatusMessage(null), 3500);
+  };
+
+  const handleOpenEditInvoice = (invoice: AgencyInvoice) => {
+    setEditingInvoice(invoice);
+    setSelectedProjectId(invoice.projectId || '');
+    setClientName(invoice.clientName || ''); setClientCompany(invoice.clientCompany || '');
+    setClientEmail(invoice.clientEmail || ''); setClientPhone(invoice.clientPhone || '');
+    setItemDesc(invoice.items?.[0]?.description || ''); setItemAmount(Number(invoice.items?.[0]?.unitPrice || 0));
+    setIssueDate(invoice.issueDate || ''); setDueDate(invoice.dueDate || '');
+    setTaxPercent(Number(invoice.taxPercent || 0)); setInvoiceStatus(invoice.status || 'draft'); setInvoiceNotes(invoice.notes || '');
+    setIsInvoiceModalOpen(true);
+  };
+
+  const handleSelectProjectChange = (projectId: string) => {
+    setSelectedProjectId(projectId);
+    const project = availableProjects.find((item) => item.id === projectId);
+    if (!project) return;
+    setClientName(project.clientName || project.client || '');
+    setClientCompany(project.clientCompany || project.client || '');
+    setClientEmail(project.clientEmail || '');
+    setItemDesc(project.name || project.title || '');
+    setItemAmount(Number(project.budget || 0));
   };
 
   const handleOpenCreateInvoice = async () => {
