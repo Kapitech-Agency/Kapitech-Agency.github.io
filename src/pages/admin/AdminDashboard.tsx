@@ -36,7 +36,6 @@ import { CrmLead, CrmServicePillar, CrmSource } from '../../lib/crmStore';
 import { 
     AgencyInvoice,
   AgencyExpense,
-  computeInvoiceTotals,
   InvoiceLineItem
 } from '../../lib/financeStore';
 import { AgencyClient } from '../../lib/clientStore';
@@ -316,22 +315,19 @@ export const AdminDashboard: React.FC = () => {
     if (!newLeadName.trim() || !newLeadCompany.trim()) return;
 
     const leadObj: CrmLead = {
-      id: 'lead_' + Date.now().toString(36),
       clientName: newLeadName.trim(),
       company: newLeadCompany.trim(),
       email: newLeadEmail.trim(),
       phone: '',
       servicePillar: newLeadPillar,
-      dealValue: parseFloat(newLeadValue) || 0,
+      value: parseFloat(newLeadValue) || 0,
       stage: 'new',
       priority: 'high',
       source: 'Referral',
-      description: 'Created via AMS Quick Action Toolbar',
+      title: `${newLeadCompany.trim()} Lead`,
       expectedCloseDate: new Date(Date.now() + 30 * 86400000).toISOString().split('T')[0],
-      assignedTo: 'Lead Tech',
+      owner: session?.user?.username || undefined,
       notes: [],
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
     };
 
     await api.crm.createDeal(leadObj);
@@ -347,19 +343,9 @@ export const AdminDashboard: React.FC = () => {
     if (!quickInvCompany.trim()) return;
 
     const amt = parseFloat(quickInvAmount) || 0;
-    const items: InvoiceLineItem[] = [
-      {
-        id: 'item_1',
-        description: quickInvDesc,
-        quantity: 1,
-        unitPrice: amt,
-        amount: amt
-      }
-    ];
+    const items = [{ description: quickInvDesc.trim() || 'Service', quantity: 1, unitPrice: amt }];
 
-    const { subtotal, discountAmount, taxAmount, total } = computeInvoiceTotals(items, 11, 0);
-
-    const invObj: AgencyInvoice = {
+        const invObj: AgencyInvoice = {
       id: 'inv_' + Date.now().toString(36),
       invoiceNumber: `KAPI-INV-${new Date().getFullYear()}-${Math.floor(100 + Math.random() * 900)}`,
       clientName: quickInvClient.trim() || quickInvCompany.trim(),
@@ -396,7 +382,6 @@ export const AdminDashboard: React.FC = () => {
 
     const budget = parseFloat(quickProjBudget) || 0;
     const projObj: AgencyProject = {
-      id: 'proj_' + Date.now().toString(36),
       name: quickProjTitle.trim(),
       clientName: quickProjClient.trim(),
       clientCompany: quickProjClient.trim(),
@@ -443,7 +428,6 @@ export const AdminDashboard: React.FC = () => {
 
     const amt = parseFloat(quickExpAmount) || 0;
     const expObj: AgencyExpense = {
-      id: 'exp_' + Date.now().toString(36),
       type: 'OpEx',
       category: quickExpCategory as any,
       description: quickExpDesc.trim(),
