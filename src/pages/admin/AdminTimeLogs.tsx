@@ -1,6 +1,7 @@
 import React, { FormEvent, useEffect, useMemo, useState } from 'react';
 import { Clock3, Plus, Trash2, RefreshCw, CalendarDays, Timer, ReceiptText } from 'lucide-react';
 import { api } from '../../lib/apiClient';
+import { CustomSelect } from '../../components/ui/CustomSelect';
 import { getAdminSession, hasAdminPermission } from '../../lib/adminAuth';
 
 
@@ -144,10 +145,11 @@ export const AdminTimeLogs: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
               <label className="space-y-1.5">
                 <span className="text-[11px] text-[var(--muted)]">Project</span>
-                <select value={projectId} onChange={e => handleProjectChange(e.target.value)} className="ams-control w-full">
-                  <option value="">General</option>
-                  {projects.map(project => <option key={project.id} value={project.id}>{project.name}</option>)}
-                </select>
+                <CustomSelect
+                  value={projectId}
+                  onChange={handleProjectChange}
+                  options={[{ value: "", label: "General" }, ...projects.map(project => ({ value: project.id, label: project.name }))]}
+                />
               </label>
               <label className="space-y-1.5">
                 <span className="text-[11px] text-[var(--muted)]">Task</span>
