@@ -103,7 +103,7 @@ export const AdminTimeLogs: React.FC = () => {
       <div className="max-w-[1500px] mx-auto p-4 sm:p-5 lg:p-6 space-y-6">
         <header className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4 pb-5 border-b border-[var(--line)]">
           <div>
-            <div className="pb-4 border-b border-[var(--line)]">
+            <div>
               <h1 className="text-xl font-semibold tracking-tight">Time Tracking</h1>
               <p className="mt-1 text-[13px] leading-[18px] text-[var(--muted)]">Track project time and billable work.</p>
             </div>
