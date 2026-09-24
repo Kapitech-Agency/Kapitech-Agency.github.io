@@ -58,7 +58,7 @@ export const AdminInvoicing: React.FC = () => {
   const canViewFinancials = hasAdminPermission('canViewFinancials');
   const canManageInvoices = hasAdminPermission('canManageInvoices');
   const canApproveBudgets = hasAdminPermission('canApproveBudgets');
-  const canCreateInvoice = canManageInvoices || userRole.startsWith('Tier 1') || userRole.startsWith('Tier 2') || userRole.includes('Finance');
+  const canCreateInvoice = canManageInvoices;
   const canDeleteInvoice = userRole.startsWith('Tier 1') || session?.user?.stakeholderType === 'Master';
   const [currency, setCurrency] = useState<CurrencyCode>(getActiveCurrency());
   const [invoices, setInvoices] = useState<AgencyInvoice[]>([]);
@@ -394,13 +394,14 @@ export const AdminInvoicing: React.FC = () => {
         <div className="flex flex-wrap items-center gap-2.5">
           <button
             onClick={() => setIsExpenseModalOpen(true)}
-            className="h-10 px-4 rounded-xl bg-[#181B22] hover:bg-[#21252F] text-white text-xs font-mono font-bold border border-[rgba(255,255,255,0.07)] transition-all flex items-center justify-center gap-1.5 min-h-[40px]"
+            disabled={!canManageInvoices}
+            className="h-10 px-4 rounded-xl bg-[#181B22] hover:bg-[#21252F] text-white text-xs font-mono font-bold border border-[rgba(255,255,255,0.07)] transition-all flex items-center justify-center gap-1.5 min-h-[40px] disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Plus size={14} />
             <span>{t('admin.fin.recordExpense')}</span>
           </button>
 
-          {canCreateInvoice && (
+          {canManageInvoices && (
             <button
               onClick={handleOpenCreateInvoice}
               className="h-10 px-4 rounded-xl bg-[#E50914] hover:bg-[#FF1E27] text-white text-xs font-mono font-bold transition-all flex items-center justify-center gap-1.5 shadow-lg shadow-[#E50914]/20 min-h-[40px]"
