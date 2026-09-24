@@ -2381,3 +2381,179 @@
     height: 48px !important;
   }
 }
+
+
+/* ==========================================================================
+   FINAL QA v5 — interaction geometry, mobile forms, editorial rhythm
+   ========================================================================== */
+
+.kapi-public-shell .kapi-contact-actions{
+  z-index:2145 !important;
+  border:1px solid rgba(255,255,255,.10) !important;
+  border-radius:16px !important;
+  box-shadow:0 20px 60px rgba(0,0,0,.38), inset 0 1px 0 rgba(255,255,255,.05) !important;
+  overflow:hidden;
+}
+.kapi-public-shell .kapi-contact-action{
+  min-height:48px !important;
+  padding:8px 10px !important;
+  border-radius:10px !important;
+}
+.kapi-public-shell .kapi-contact-action:hover,
+.kapi-public-shell .kapi-contact-action:focus-visible{
+  background:rgba(255,255,255,.06) !important;
+}
+.kapi-public-shell .kapi-contact-icon{
+  width:36px !important;
+  height:36px !important;
+  min-width:36px !important;
+  border-radius:10px !important;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.kapi-public-shell .kapi-floating-contact button:focus-visible{
+  outline:2px solid var(--pub-red) !important;
+  outline-offset:3px;
+}
+.kapi-public-shell .kapi-contact-backdrop{
+  background:rgba(0,0,0,.42) !important;
+  backdrop-filter:blur(4px);
+  -webkit-backdrop-filter:blur(4px);
+}
+
+.kapi-public-shell .kapi-service-select-mobile{
+  position:relative;
+}
+.kapi-public-shell .kapi-service-select-mobile select{
+  appearance:none !important;
+  -webkit-appearance:none !important;
+  width:100% !important;
+  min-height:50px !important;
+  padding:0 42px 0 14px !important;
+  border:1px solid var(--k-border) !important;
+  border-radius:12px !important;
+  background:var(--k-surface) !important;
+  color:var(--k-text) !important;
+  font-family:Manrope,ui-sans-serif,system-ui,sans-serif !important;
+  font-size:15px !important;
+  line-height:1.35 !important;
+}
+.kapi-public-shell .kapi-service-select-mobile select:focus{
+  outline:0 !important;
+  border-color:rgba(230,57,70,.72) !important;
+  box-shadow:0 0 0 3px rgba(230,57,70,.14) !important;
+}
+.kapi-public-shell .kapi-service-select-mobile::after{
+  content:"";
+  position:absolute;
+  right:14px;
+  top:50%;
+  width:8px;
+  height:8px;
+  border-right:1.5px solid rgba(255,255,255,.72);
+  border-bottom:1.5px solid rgba(255,255,255,.72);
+  transform:translateY(-65%) rotate(45deg);
+  pointer-events:none;
+}
+.kapi-public-shell .kapi-service-select-mobile option{
+  background:#151517;
+  color:#fff;
+}
+
+.kapi-public-shell .kapi-contact-form form{
+  max-width:720px;
+}
+.kapi-public-shell .kapi-contact-form input,
+.kapi-public-shell .kapi-contact-form textarea,
+.kapi-public-shell .kapi-contact-form select{
+  border-color:rgba(255,255,255,.10) !important;
+  background:rgba(255,255,255,.035) !important;
+}
+.kapi-public-shell .kapi-contact-form input:hover,
+.kapi-public-shell .kapi-contact-form textarea:hover,
+.kapi-public-shell .kapi-contact-form select:hover{
+  border-color:rgba(255,255,255,.18) !important;
+}
+.kapi-public-shell .kapi-contact-form input:focus,
+.kapi-public-shell .kapi-contact-form textarea:focus,
+.kapi-public-shell .kapi-contact-form select:focus{
+  outline:none !important;
+  border-color:rgba(230,57,70,.68) !important;
+  box-shadow:0 0 0 3px rgba(230,57,70,.12) !important;
+}
+
+.kapi-public-shell .kapi-page-hero{
+  background:
+    radial-gradient(circle at 78% 36%, rgba(230,57,70,.10), transparent 32%),
+    linear-gradient(180deg, rgba(255,255,255,.018), transparent 68%),
+    var(--k-bg) !important;
+}
+.kapi-public-shell .kapi-home-hero{
+  background:
+    radial-gradient(circle at 78% 38%, rgba(230,57,70,.14), transparent 34%),
+    linear-gradient(180deg, rgba(255,255,255,.02), transparent 70%),
+    var(--k-bg) !important;
+}
+.kapi-public-shell .kapi-home-content .kapi-display-title,
+.kapi-public-shell .kapi-page-hero .kapi-display-title{
+  text-wrap:balance;
+}
+.kapi-public-shell .kapi-home-content .text-brand-red,
+.kapi-public-shell .kapi-page-hero .text-brand-red{
+  text-shadow:0 0 28px rgba(230,57,70,.16);
+}
+
+@media (max-width:767px){
+  .kapi-public-shell .kapi-floating-contact{
+    right:14px !important;
+  }
+  .kapi-public-shell .kapi-contact-actions{
+    width:min(292px,calc(100vw - 28px)) !important;
+    bottom:62px !important;
+  }
+  .kapi-public-shell .kapi-contact-action{
+    min-height:50px !important;
+  }
+  .kapi-public-shell .kapi-page-shell > section{
+    padding-top:48px !important;
+    padding-bottom:48px !important;
+  }
+  .kapi-public-shell .kapi-page-shell > section:first-of-type{
+    padding-top:0 !important;
+  }
+  .kapi-public-shell .kapi-home-content > div:last-child{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:10px;
+  }
+  .kapi-public-shell .kapi-home-content > div:last-child a,
+  .kapi-public-shell .kapi-home-content > div:last-child button{
+    width:100%;
+    justify-content:center;
+  }
+  .kapi-public-shell .kapi-contact-form{
+    padding:0 !important;
+  }
+  .kapi-public-shell .kapi-contact-info{
+    margin-top:8px;
+  }
+  .kapi-public-shell .kapi-public-footer{
+    padding-top:48px !important;
+  }
+  .kapi-public-shell .kapi-public-footer .grid{
+    row-gap:32px !important;
+  }
+}
+@media (max-width:420px){
+  .kapi-public-shell .kapi-home-content .kapi-display-title{
+    font-size:clamp(37px,11.5vw,49px);
+    letter-spacing:-.055em;
+  }
+  .kapi-public-shell .kapi-page-hero .kapi-display-title{
+    font-size:clamp(35px,10.8vw,47px);
+  }
+  .kapi-public-shell .kapi-contact-form form{
+    gap:16px !important;
+  }
+}
