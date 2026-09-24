@@ -43,12 +43,22 @@ import {
 } from '../../lib/adminAuth';
 import { getCmsSiteMeta, saveCmsSiteMeta, SiteMetaSettings } from '../../lib/cmsStore';
 import { useLanguage } from '../../lib/LanguageContext';
+import { api } from '../../lib/apiClient';
+import { ProductionReadinessCard } from '../../components/admin/ProductionReadinessCard';
 
 export const AdminSettings: React.FC = () => {
   const { language, t } = useLanguage();
   const [searchParams, setSearchParams] = useSearchParams();
   const session = getAdminSession();
-  const storedCreds = getStoredAdminCredentials();
+  const storedCreds = getStoredAdminCredentials() ?? {
+    username: '',
+    email: '',
+    displayName: '',
+    role: 'Unknown',
+    division: 'Operations',
+    mfaEnabled: false
+  };
+  const canAccessServer = session?.user?.stakeholderType === 'Master' || Boolean(session?.user?.permissions?.canAccessServerAndApi);
 
   // Tab: profile, branding, rbac, security, api, audit
   const paramTab = searchParams.get('tab');
@@ -104,6 +114,7 @@ export const AdminSettings: React.FC = () => {
 
   // Audit Logs state
   const [logs, setLogs] = useState<SecurityAuditLog[]>([]);
+  const [backupRetentionDays, setBackupRetentionDays] = useState(14);
 
   // Accounts Management state (Stakeholder Executive & Teknisi IT)
   const [accounts, setAccounts] = useState<AdminAccount[]>([]);
@@ -128,6 +139,19 @@ export const AdminSettings: React.FC = () => {
     setLogs(getAuditLogs());
     setAccounts(getStoredAdminAccounts());
   }, [activeTab]);
+
+  useEffect(() => {
+    if (!canAccessServer || activeTab !== 'api') return;
+    let mounted = true;
+    void api.system.getBackups().then((res) => {
+      if (!mounted || !res.data) return;
+      const retention = res.data.retention ?? res.data.retentionDays ?? 14;
+      setBackupRetentionDays(Number(retention) || 14);
+    }).catch(() => {
+      if (mounted) setBackupRetentionDays(14);
+    });
+    return () => { mounted = false; };
+  }, [activeTab, canAccessServer]);
 
   const refreshAccounts = () => {
     setAccounts(getStoredAdminAccounts());
@@ -1336,7 +1360,16 @@ export const AdminSettings: React.FC = () => {
 
       {/* TAB 5: API & CLOUD CONNECTIONS */}
       {activeTab === 'api' && (
-        <div className="w-full max-w-4xl bg-[#111318] border border-[rgba(255,255,255,0.07)] rounded-2xl p-5 sm:p-8 space-y-6">
+        <div className="w-full max-w-4xl space-y-4">
+          {canAccessServer && <ProductionReadinessCard language={language} />}
+          {canAccessServer && (
+            <div className="p-4 rounded-xl bg-[#111318] border border-[rgba(255,255,255,0.07)]">
+              <div className="text-[10px] font-mono uppercase tracking-wider text-[#64748B]">Backup Retention</div>
+              <div className="text-sm font-semibold text-white mt-1">{backupRetentionDays} days</div>
+              <p className="text-[11px] text-[#64748B] font-mono mt-1">Provider-managed backup retention reported by the server.</p>
+            </div>
+          )}
+          <div className="w-full max-w-4xl bg-[#111318] border border-[rgba(255,255,255,0.07)] rounded-2xl p-5 sm:p-8 space-y-6">
           <div className="flex items-center gap-3 pb-4 border-b border-[rgba(255,255,255,0.07)]">
             <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0">
               <Database size={20} />
