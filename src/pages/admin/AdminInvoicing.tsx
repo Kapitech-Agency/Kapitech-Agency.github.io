@@ -321,7 +321,7 @@ export const AdminInvoicing: React.FC = () => {
           <button
             onClick={() => setIsExpenseModalOpen(true)}
             disabled={!canManageInvoices}
-            className="h-10 px-4 rounded-xl bg-[var(--panel)] hover:bg-[var(--panel)] text-white text-xs font-sans font-bold border border-[var(--line)] transition-all flex items-center justify-center gap-1.5 min-h-[40px] disabled:opacity-50 disabled:cursor-not-allowed"
+            className="h-10 px-4 rounded-control bg-[var(--panel)] hover:bg-[var(--panel)] text-white text-xs font-sans font-bold border border-[var(--line)] transition-all flex items-center justify-center gap-1.5 min-h-[40px] disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Plus size={14} />
             <span>{t('admin.fin.recordExpense')}</span>
@@ -570,7 +570,7 @@ export const AdminInvoicing: React.FC = () => {
                       {inv.status !== 'paid' && (
                         <button
                           onClick={() => handleOpenPaymentModal(inv)}
-                          className="h-9 px-2.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-sans flex items-center justify-center gap-1 transition-colors min-h-[36px]"
+                          className="h-9 px-2.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-sans flex items-center justify-center gap-1 transition-colors min-h-10"
                           title="Record Payment"
                         >
                           <CreditCard size={13} />
@@ -579,7 +579,7 @@ export const AdminInvoicing: React.FC = () => {
                       )}
                       <button
                         onClick={() => setPreviewInvoice(inv)}
-                        className="h-9 px-3 rounded-xl bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--muted)] hover:text-white border border-[var(--line)] text-xs font-sans flex items-center justify-center gap-1 transition-colors min-h-[36px]"
+                        className="h-9 px-3 rounded-control bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--muted)] hover:text-white border border-[var(--line)] text-xs font-sans flex items-center justify-center gap-1 transition-colors min-h-10"
                         title="Preview & Print Invoice"
                       >
                         <FileText size={13} />
@@ -587,7 +587,7 @@ export const AdminInvoicing: React.FC = () => {
                       </button>
                       <button
                         onClick={() => handleOpenEditInvoice(inv)}
-                        className="w-9 h-9 rounded-xl bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--muted)] hover:text-white border border-[var(--line)] flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
+                        className="w-9 h-9 rounded-control bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--muted)] hover:text-white border border-[var(--line)] flex items-center justify-center transition-colors min-h-10 min-w-10"
                         title="Edit Invoice"
                       >
                         <Edit3 size={14} />
@@ -595,7 +595,7 @@ export const AdminInvoicing: React.FC = () => {
                       {canDeleteInvoice && (
                         <button
                           onClick={() => handleDeleteInvoice(inv.id, inv.invoiceNumber)}
-                          className="w-9 h-9 rounded-xl bg-[var(--panel)] hover:bg-red-950/40 text-[var(--muted)] hover:text-red-400 border border-[var(--line)] hover:border-red-500/30 flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
+                          className="w-9 h-9 rounded-xl bg-[var(--panel)] hover:bg-red-950/40 text-[var(--muted)] hover:text-red-400 border border-[var(--line)] hover:border-red-500/30 flex items-center justify-center transition-colors min-h-10 min-w-10"
                           title="Delete Invoice"
                         >
                           <Trash2 size={14} />
@@ -688,7 +688,7 @@ export const AdminInvoicing: React.FC = () => {
                           {inv.status !== 'paid' && (
                             <button
                               onClick={() => handleOpenPaymentModal(inv)}
-                              className="h-9 px-2.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-sans flex items-center justify-center gap-1 transition-colors min-h-[36px]"
+                              className="h-9 px-2.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-sans flex items-center justify-center gap-1 transition-colors min-h-10"
                               title="Record Payment"
                             >
                               <CreditCard size={13} />
@@ -697,14 +697,14 @@ export const AdminInvoicing: React.FC = () => {
                           )}
                           <button
                             onClick={() => setPreviewInvoice(inv)}
-                            className="w-9 h-9 rounded-xl bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--muted)] hover:text-white border border-[var(--line)] flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
+                            className="w-9 h-9 rounded-control bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--muted)] hover:text-white border border-[var(--line)] flex items-center justify-center transition-colors min-h-10 min-w-10"
                             title="Preview & Print Invoice"
                           >
                             <FileText size={14} />
                           </button>
                           <button
                             onClick={() => handleOpenEditInvoice(inv)}
-                            className="w-9 h-9 rounded-xl bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--muted)] hover:text-white border border-[var(--line)] flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
+                            className="w-9 h-9 rounded-control bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--muted)] hover:text-white border border-[var(--line)] flex items-center justify-center transition-colors min-h-10 min-w-10"
                             title="Edit Invoice"
                           >
                             <Edit3 size={14} />
@@ -712,7 +712,7 @@ export const AdminInvoicing: React.FC = () => {
                           {canDeleteInvoice && (
                             <button
                               onClick={() => handleDeleteInvoice(inv.id, inv.invoiceNumber)}
-                              className="w-9 h-9 rounded-xl bg-[var(--panel)] hover:bg-red-950/40 text-[var(--muted)] hover:text-red-400 border border-[var(--line)] hover:border-red-500/30 flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
+                              className="w-9 h-9 rounded-xl bg-[var(--panel)] hover:bg-red-950/40 text-[var(--muted)] hover:text-red-400 border border-[var(--line)] hover:border-red-500/30 flex items-center justify-center transition-colors min-h-10 min-w-10"
                               title="Delete Invoice"
                             >
                               <Trash2 size={14} />
@@ -764,7 +764,7 @@ export const AdminInvoicing: React.FC = () => {
 
                     <button
                       onClick={() => handleDeleteExpense(exp.id)}
-                      className="w-9 h-9 rounded-xl bg-[var(--panel)] hover:bg-red-950/40 text-[var(--muted)] hover:text-red-400 border border-[var(--line)] hover:border-red-500/30 flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
+                      className="w-9 h-9 rounded-xl bg-[var(--panel)] hover:bg-red-950/40 text-[var(--muted)] hover:text-red-400 border border-[var(--line)] hover:border-red-500/30 flex items-center justify-center transition-colors min-h-10 min-w-10"
                       title="Delete Record"
                     >
                       <Trash2 size={14} />
@@ -808,7 +808,7 @@ export const AdminInvoicing: React.FC = () => {
                     <td className="py-3 px-4 text-right">
                       <button
                         onClick={() => handleDeleteExpense(exp.id)}
-                        className="w-9 h-9 rounded-xl bg-[var(--panel)] hover:bg-red-950/40 text-[var(--muted)] hover:text-red-400 border border-[var(--line)] hover:border-red-500/30 inline-flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
+                        className="w-9 h-9 rounded-xl bg-[var(--panel)] hover:bg-red-950/40 text-[var(--muted)] hover:text-red-400 border border-[var(--line)] hover:border-red-500/30 inline-flex items-center justify-center transition-colors min-h-10 min-w-10"
                         title="Delete Record"
                       >
                         <Trash2 size={14} />
@@ -1134,7 +1134,7 @@ export const AdminInvoicing: React.FC = () => {
               </div>
               <button
                 onClick={() => setPaymentModalInvoice(null)}
-                className="w-8 h-8 rounded-xl bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--muted)] hover:text-white flex items-center justify-center transition-colors border border-[var(--line)]"
+                className="w-8 h-8 rounded-control bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--muted)] hover:text-white flex items-center justify-center transition-colors border border-[var(--line)]"
               >
                 <X size={15} />
               </button>
@@ -1266,7 +1266,7 @@ export const AdminInvoicing: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setPaymentModalInvoice(null)}
-                  className="h-10 px-4 rounded-xl bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--muted)] hover:text-white border border-[var(--line)] text-xs font-sans font-medium transition-colors min-h-[40px]"
+                  className="h-10 px-4 rounded-control bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--muted)] hover:text-white border border-[var(--line)] text-xs font-sans font-medium transition-colors min-h-[40px]"
                 >
                   {language === 'id' ? 'Batal' : 'Cancel'}
                 </button>
