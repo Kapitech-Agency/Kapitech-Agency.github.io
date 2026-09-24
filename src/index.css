@@ -1664,3 +1664,101 @@ body {
     transition-duration: .01ms !important;
   }
 }
+
+
+/* ==========================================================================
+   PREMIUM CONTROL LAYER
+   Native controls retain semantic/accessibility behavior, but the visual
+   presentation is unified so dropdowns feel custom and premium.
+   ========================================================================== */
+.ams-shell select,
+.kapi-public-shell select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image:
+    linear-gradient(45deg, transparent 50%, currentColor 50%),
+    linear-gradient(135deg, currentColor 50%, transparent 50%);
+  background-position:
+    calc(100% - 15px) 50%,
+    calc(100% - 10px) 50%;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+  padding-right: 34px !important;
+  transition:
+    border-color 180ms ease,
+    background-color 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
+}
+.ams-shell select:hover:not(:disabled),
+.kapi-public-shell select:hover:not(:disabled) {
+  border-color: rgba(255,255,255,.14);
+  background-color: #151820;
+}
+.ams-shell select:focus-visible,
+.kapi-public-shell select:focus-visible {
+  border-color: rgba(229,9,20,.72);
+  box-shadow: 0 0 0 3px rgba(229,9,20,.10);
+}
+.ams-shell select:disabled,
+.kapi-public-shell select:disabled {
+  background-image:
+    linear-gradient(45deg, transparent 50%, #64748B 50%),
+    linear-gradient(135deg, #64748B 50%, transparent 50%);
+}
+
+/* Consistent premium surfaces for common module controls. */
+.ams-shell [class*="rounded-xl"][class*="border-white"],
+.ams-shell [class*="rounded-2xl"][class*="border-white"] {
+  border-color: var(--ams-border);
+}
+.ams-shell button,
+.ams-shell a,
+.ams-shell select,
+.ams-shell input,
+.ams-shell textarea {
+  transition-timing-function: cubic-bezier(.2,.8,.2,1);
+}
+.ams-shell button:not(:disabled):active {
+  transform: translateY(1px);
+}
+.ams-shell .ams-card,
+.ams-shell .metric-card,
+.ams-shell .glass-panel {
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
+}
+.ams-shell .ams-card:hover,
+.ams-shell .metric-card:hover {
+  box-shadow: 0 10px 28px rgba(0,0,0,.24);
+}
+
+/* Never let a locked role selector look like an available action. */
+.ams-shell select[aria-disabled="true"] {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image:
+    linear-gradient(45deg, transparent 50%, #64748B 50%),
+    linear-gradient(135deg, #64748B 50%, transparent 50%);
+  border-style: solid;
+}
+
+/* Disabled controls remain legible instead of disappearing. */
+.ams-shell button:disabled,
+.ams-shell input:disabled,
+.ams-shell textarea:disabled,
+.ams-shell select:disabled {
+  opacity: .62;
+}
+
+@media (max-width: 767px) {
+  .ams-shell select,
+  .kapi-public-shell select {
+    min-height: 44px;
+    background-position:
+      calc(100% - 16px) 50%,
+      calc(100% - 11px) 50%;
+  }
+}
