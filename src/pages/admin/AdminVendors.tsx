@@ -674,7 +674,7 @@ export const AdminVendors: React.FC = () => {
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="fixed inset-0 bg-black/80 " onClick={() => setIsModalOpen(false)} />
-          <div className="relative w-full max-w-lg bg-[var(--panel)] border border-[var(--line)] rounded-card shadow-none p-6 z-10 animate-in zoom-in-95 duration-150">
+          <div className="relative w-full max-w-lg bg-[var(--panel)] border border-[var(--line)] rounded-card shadow-none p-4 sm:p-6 z-10 animate-in zoom-in-95 duration-150">
             <div className="flex items-center justify-between pb-4 border-b border-[var(--line)]">
               <h3 className="text-sm font-semibold text-[var(--text)]">
                 {editingVendor
