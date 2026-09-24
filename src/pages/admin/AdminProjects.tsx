@@ -240,6 +240,7 @@ export const AdminProjects: React.FC = () => {
 
   const handleAddTask = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!canManageKanbanTasks) return;
     if (!selectedProject || !taskTitle.trim()) return;
 
     const subtasksList: TaskSubtask[] = initialSubtasksInput
@@ -485,13 +486,15 @@ export const AdminProjects: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-3">
-          <button
-            onClick={handleOpenCreateProject}
-            className="h-10 px-4 rounded-xl bg-[#E50914] hover:bg-[#FF1E27] text-white text-xs font-mono font-bold transition-all flex items-center gap-2 shadow-lg shadow-[#E50914]/20 min-h-[40px]"
-          >
-            <Plus size={15} />
-            <span>{language === 'id' ? 'Buat Proyek Baru' : 'New Project'}</span>
-          </button>
+          {canManageProjects && (
+            <button
+              onClick={handleOpenCreateProject}
+              className="h-10 px-4 rounded-xl bg-[#E50914] hover:bg-[#FF1E27] text-white text-xs font-mono font-bold transition-all flex items-center gap-2 shadow-lg shadow-[#E50914]/20 min-h-[40px]"
+            >
+              <Plus size={15} />
+              <span>{language === 'id' ? 'Buat Proyek Baru' : 'New Project'}</span>
+            </button>
+          )}
         </div>
       </div>
 
@@ -717,13 +720,15 @@ export const AdminProjects: React.FC = () => {
                 />
               </div>
 
-              <button
-                onClick={() => setIsTaskModalOpen(true)}
-                className="h-10 px-4 rounded-xl bg-[#E50914] hover:bg-[#FF1E27] text-white text-xs font-mono font-bold transition-all flex items-center justify-center gap-2 shadow-md shrink-0 min-h-[40px]"
-              >
-                <Plus size={14} />
-                <span>{t('admin.proj.addTask')}</span>
-              </button>
+              {canManageKanbanTasks && (
+                <button
+                  onClick={() => setIsTaskModalOpen(true)}
+                  className="h-10 px-4 rounded-xl bg-[#E50914] hover:bg-[#FF1E27] text-white text-xs font-mono font-bold transition-all flex items-center justify-center gap-2 shadow-md shrink-0 min-h-[40px]"
+                >
+                  <Plus size={14} />
+                  <span>{t('admin.proj.addTask')}</span>
+                </button>
+              )}
             </div>
           </div>
 
@@ -786,7 +791,7 @@ export const AdminProjects: React.FC = () => {
                         return (
                           <div
                             key={task.id}
-                            draggable={true}
+                            draggable={canManageKanbanTasks}
                             onDragStart={(e) => handleDragStart(e, task.id)}
                             onClick={() => setActiveTaskDrawer(task)}
                             className={`draggable-card task-card bg-[#181B22] border hover:border-[#E50914]/60 p-3.5 rounded-xl space-y-2.5 shadow-md transition-all cursor-pointer group relative select-none ${
