@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Layout, 
@@ -9,7 +9,7 @@ import {
   X, 
   Layers, 
   Sparkles, 
-
+  Smartphone, 
   Globe, 
   Cpu, 
   TrendingUp,
@@ -27,8 +27,6 @@ import {
 import { Link } from 'react-router-dom';
 import { AtmosphericBackground } from '../components/ui/AtmosphericBackground';
 import { useLanguage } from '../lib/LanguageContext';
-import { getCmsServices, fetchServerCmsServices } from '../lib/cmsStore';
-import { ServiceItemData } from '../data/servicesData';
 
 export interface ServiceDetail {
   id: string;
@@ -66,54 +64,10 @@ export interface StrategicSolution {
   timelineId: string;
 }
 
-const serviceItemToDetail = (item: ServiceItemData): ServiceDetail => ({
-  id: item.slug,
-  title: item.title,
-  category: item.category,
-  subtitle: item.navSubtitle,
-  subtitleId: item.navSubtitleId,
-  icon: item.category === 'Branding' ? <Palette size={24} /> : item.category === 'Design' ? <Layout size={24} /> : item.category === 'Development' ? <Code2 size={24} /> : <Rocket size={24} />,
-  summary: item.heroSubtitle,
-  summaryId: item.heroSubtitleId,
-  fullDescription: item.heroSubtitle,
-  fullDescriptionId: item.heroSubtitleId,
-  deliverables: (item.capabilities || []).map((cap) => cap.title).filter(Boolean),
-  deliverablesId: (item.capabilities || []).map((cap) => cap.titleId || cap.title).filter(Boolean),
-  tools: item.tools || [],
-  idealFor: item.businessOutcomes?.heading || 'Digital teams seeking a structured delivery partner.',
-  idealForId: item.businessOutcomes?.headingId || 'Tim digital yang membutuhkan partner delivery terstruktur.',
-  timeline: item.processStages?.map((stage) => stage.stageName).join(' → ') || 'Defined per project scope',
-  timelineId: item.processStages?.map((stage) => stage.stageNameId || stage.stageName).join(' → ') || 'Ditentukan sesuai ruang lingkup proyek'
-});
-
-const serviceItemToSolution = (item: ServiceItemData): StrategicSolution => ({
-  id: item.slug,
-  title: item.title,
-  audience: item.navSubtitle,
-  audienceId: item.navSubtitleId,
-  description: item.heroSubtitle,
-  descriptionId: item.heroSubtitleId,
-  badge: item.badge,
-  badgeId: item.badgeId,
-  icon: item.category === 'Solutions' ? <Rocket size={26} /> : <Layers size={26} />,
-  deliverables: (item.capabilities || []).map((cap) => cap.title).filter(Boolean),
-  deliverablesId: (item.capabilities || []).map((cap) => cap.titleId || cap.title).filter(Boolean),
-  timeline: item.processStages?.map((stage) => stage.stageName).join(' → ') || 'Defined per project scope',
-  timelineId: item.processStages?.map((stage) => stage.stageNameId || stage.stageName).join(' → ') || 'Ditentukan sesuai ruang lingkup proyek'
-});
-
 export const Services = () => {
   const { language } = useLanguage();
   const [selectedService, setSelectedService] = useState<ServiceDetail | StrategicSolution | null>(null);
   const [activeCategory, setActiveCategory] = useState<'All' | 'Branding' | 'Design' | 'Development'>('All');
-  const [cmsServices, setCmsServices] = useState<ServiceItemData[]>(() => getCmsServices());
-
-  useEffect(() => {
-    void fetchServerCmsServices().then(setCmsServices);
-    const handleCmsUpdate = () => setCmsServices(getCmsServices());
-    window.addEventListener('kapitech_cms_updated', handleCmsUpdate);
-    return () => window.removeEventListener('kapitech_cms_updated', handleCmsUpdate);
-  }, []);
 
   const strategicSolutions: StrategicSolution[] = [
     {
@@ -362,12 +316,12 @@ export const Services = () => {
       id: 'ui-ux-design',
       title: 'UI/UX Design',
       category: 'Design',
-      subtitle: 'Web product and interface design',
+      subtitle: 'Web & mobile app design',
       subtitleId: 'Desain antarmuka web dan aplikasi mobile terpadu',
       icon: <Layout size={24} />,
       summary: 'Figma design systems, intuitive user experience architectures, and clickable prototypes tested with real users.',
       summaryId: 'Sistem desain Figma modular, arsitektur informasi intuitif, dan prototipe interaktif siap uji untuk web serta aplikasi mobile.',
-      fullDescription: 'We balance aesthetic precision with frictionless usability. From multi-tiered SaaS platforms to high-traffic web products, we design interfaces people love to use daily.',
+      fullDescription: 'We balance aesthetic precision with frictionless usability. From multi-tiered SaaS platforms to high-frequency mobile apps, we design interfaces people love to use daily.',
       fullDescriptionId: 'Kami menggabungkan keindahan estetika dengan kemudahan navigasi tanpa hambatan. Mulai dari platform SaaS hingga aplikasi mobile, kami ciptakan UI yang disukai pengguna.',
       deliverables: [
         'Complete Responsive Screen UI (Desktop, Tablet, Mobile)',
@@ -384,7 +338,7 @@ export const Services = () => {
         'Spesifikasi Hand-off Desain Siap Implementasi Developer'
       ],
       tools: ['Figma', 'FigJam', 'Miro', 'Spline 3D', 'Lottie'],
-      idealFor: 'SaaS companies, digital product teams, and transformation initiatives.',
+      idealFor: 'SaaS companies, mobile app startups, and digital transformation initiatives.',
       idealForId: 'Perusahaan SaaS, startup aplikasi mobile, dan proyek transformasi digital.',
       timeline: '3 - 6 Weeks',
       timelineId: '3 - 6 Minggu'
@@ -419,6 +373,37 @@ export const Services = () => {
       idealForId: 'Bisnis yang meluncurkan website baru, agensi, dan firma profesional.',
       timeline: '2 - 4 Weeks',
       timelineId: '2 - 4 Minggu'
+    },
+    {
+      id: 'mobile-app-design',
+      title: 'Mobile App Design',
+      category: 'Design',
+      subtitle: 'Apps your users love',
+      subtitleId: 'Aplikasi mobile iOS & Android yang dicintai pengguna',
+      icon: <Smartphone size={24} />,
+      summary: 'iOS Human Interface and Android Material 3 compliant mobile interfaces designed for natural single-handed ergonomics.',
+      summaryId: 'Antarmuka aplikasi iOS & Android berstandar resmi (Apple HIG / Material 3) yang nyaman digunakan satu tangan.',
+      fullDescription: 'We design thumb-friendly navigation, tactile micro-interactions, dark/light mode parity, and intuitive onboarding screens that minimize churn.',
+      fullDescriptionId: 'Kami merancang navigasi ramah ibu jari, mikro-interaksi responsif, dukungan tema gelap/terang, dan alur onboarding yang mudah dipahami pengguna baru.',
+      deliverables: [
+        'Complete iOS & Android Flow Wireframes & Hi-Fi UI',
+        'Native Component Library (Apple HIG & Material 3)',
+        'Micro-Interactions & Animated Transition Prototypes',
+        'App Store & Google Play Screenshot Mockup Pack',
+        'Handoff Specs with Exportable 1x, 2x, 3x Assets'
+      ],
+      deliverablesId: [
+        'Wireframe & Desain UI Resolusi Tinggi untuk iOS dan Android',
+        'Pustaka Komponen Asli (Apple HIG & Material 3)',
+        'Prototipe Animasi Transisi & Mikro-Interaksi',
+        'Paket Tangkapan Layar Promosi App Store & Google Play',
+        'Aset Ekspor Siap Pakai (1x, 2x, 3x) untuk Mobile Engineer'
+      ],
+      tools: ['Figma', 'Protopie', 'LottieFiles'],
+      idealFor: 'Mobile-first startups, fintech wallets, healthcare apps, and on-demand services.',
+      idealForId: 'Startup mobile-first, aplikasi fintech, dompet digital, dan layanan on-demand.',
+      timeline: '3 - 6 Weeks',
+      timelineId: '3 - 6 Minggu'
     },
     {
       id: 'website-redesign',
@@ -641,33 +626,15 @@ export const Services = () => {
     }
   ];
 
-  const resolvedServices = useMemo(() => {
-    const serverItems = cmsServices.filter((item) => item.type === 'service');
-    if (serverItems.length === 0) return allServices;
-    const serverBySlug = new Map(serverItems.map((item) => [item.slug, serviceItemToDetail(item)]));
-    const merged = allServices.map((item) => serverBySlug.get(item.id) || item);
-    const existingIds = new Set(allServices.map((item) => item.id));
-    return [...merged, ...serverItems.filter((item) => !existingIds.has(item.slug)).map(serviceItemToDetail)];
-  }, [cmsServices]);
-
-  const resolvedStrategicSolutions = useMemo(() => {
-    const serverItems = cmsServices.filter((item) => item.type === 'solution' || item.category === 'Solutions');
-    if (serverItems.length === 0) return strategicSolutions;
-    const serverBySlug = new Map(serverItems.map((item) => [item.slug, serviceItemToSolution(item)]));
-    const merged = strategicSolutions.map((item) => serverBySlug.get(item.id) || item);
-    const existingIds = new Set(strategicSolutions.map((item) => item.id));
-    return [...merged, ...serverItems.filter((item) => !existingIds.has(item.slug)).map(serviceItemToSolution)];
-  }, [cmsServices]);
-
   const filteredServices = useMemo(() => {
-    if (activeCategory === 'All') return resolvedServices;
-    return resolvedServices.filter(s => s.category === activeCategory);
-  }, [activeCategory, resolvedServices]);
+    if (activeCategory === 'All') return allServices;
+    return allServices.filter(s => s.category === activeCategory);
+  }, [activeCategory]);
 
   return (
-    <div className="kapi-page-shell bg-[var(--k-bg)] text-white min-h-screen selection:bg-brand-red selection:text-white relative" role="main">
+    <div className="bg-[#0B0C0E] text-white min-h-screen selection:bg-brand-red selection:text-white relative" role="main">
       {/* Hero Section */}
-      <section className="kapi-page-hero relative pt-32 sm:pt-36 md:pt-40 pb-16 sm:pb-20 px-4 sm:px-6 md:px-12 border-b border-[var(--k-border)] overflow-hidden">
+      <section className="relative pt-32 sm:pt-36 md:pt-40 pb-16 sm:pb-20 px-4 sm:px-6 md:px-12 border-b border-[#262930] overflow-hidden">
         <AtmosphericBackground 
           imageUrl="/hero_background_3d.png"
           opacity={0.06}
@@ -675,27 +642,27 @@ export const Services = () => {
         />
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="max-w-3xl">
-            <span className="text-brand-red font-sans font-semibold tracking-widest uppercase text-xs mb-3 block">
+            <span className="text-brand-red font-mono font-semibold tracking-widest uppercase text-xs mb-3 block">
               {language === 'id' ? 'Layanan & Solusi Lengkap' : 'Solutions & Specialized Services'}
             </span>
-            <h1 className="kapi-display-title">
+            <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-display font-bold tracking-tight text-white mb-6">
               {language === 'id' ? 'Layanan & Solusi Digital.' : 'Services & Strategic Solutions.'}
             </h1>
-            <p className="text-base sm:text-lg text-[var(--k-text-secondary)] font-light leading-relaxed mb-6">
+            <p className="text-base sm:text-lg text-[#8A909D] font-light leading-relaxed mb-6">
               {language === 'id'
                 ? 'Pilihan solusi strategis dan keahlian spesialis terlengkap untuk mentransformasi identitas brand, desain produk digital, dan rekayasa web skala modern.'
                 : 'Complete strategic solutions and specialized capabilities to transform brand identity, digital product design, and high-performance web engineering.'
               }
             </p>
-            <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 text-xs font-sans text-[var(--k-text-secondary)]">
-              <span className="px-3 py-1.5 rounded-full bg-[var(--k-surface)] border border-[var(--k-border)] flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 text-xs font-mono text-[#8A909D]">
+              <span className="px-3 py-1.5 rounded-full bg-[#16181D] border border-[#262930] flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-brand-red animate-pulse shadow-[0_0_8px_rgba(255,26,26,0.6)]" />
-                <span className="text-white">{resolvedStrategicSolutions.length} {language === 'id' ? 'Solusi Strategis' : 'Strategic Solutions'}</span>
+                <span className="text-white">3 {language === 'id' ? 'Solusi Strategis' : 'Strategic Solutions'}</span>
               </span>
-              <span className="px-3 py-1.5 rounded-full bg-[var(--k-surface)] border border-[var(--k-border)] text-white">
-                {resolvedServices.length} {language === 'id' ? 'Layanan Spesialis' : 'Specialized Services'}
+              <span className="px-3 py-1.5 rounded-full bg-[#16181D] border border-[#262930] text-white">
+                15 {language === 'id' ? 'Layanan Spesialis' : 'Specialized Services'}
               </span>
-              <span className="px-3 py-1.5 rounded-full bg-[var(--k-surface)] border border-[var(--k-border)] text-brand-red font-semibold">
+              <span className="px-3 py-1.5 rounded-full bg-[#16181D] border border-[#262930] text-brand-red font-semibold">
                 Branding • Design • Development
               </span>
             </div>
@@ -704,18 +671,18 @@ export const Services = () => {
       </section>
 
       {/* SECTION 1: STRATEGIC SOLUTIONS (Always visible above filter) */}
-      <section className="py-14 sm:py-20 px-4 sm:px-6 md:px-12 border-b border-[var(--k-border)] bg-[var(--k-bg)] relative">
+      <section className="py-14 sm:py-20 px-4 sm:px-6 md:px-12 border-b border-[#262930] bg-[#0B0C0E] relative">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
             <div>
-              <span className="text-xs font-sans uppercase tracking-widest text-brand-red mb-2 block font-semibold">
+              <span className="text-xs font-mono uppercase tracking-widest text-brand-red mb-2 block font-semibold">
                 {language === 'id' ? 'Kategori Solusi' : 'Solutions Overview'}
               </span>
-              <h2 className="text-2xl sm:text-4xl font-sans font-bold text-white tracking-tight">
+              <h2 className="text-2xl sm:text-4xl font-display font-bold text-white tracking-tight">
                 STRATEGIC SOLUTIONS
               </h2>
             </div>
-            <p className="text-xs sm:text-sm text-[var(--k-text-secondary)] font-light max-w-md">
+            <p className="text-xs sm:text-sm text-[#8A909D] font-light max-w-md">
               {language === 'id'
                 ? 'Format kemitraan strategis yang dirancang fleksibel untuk akselerasi ekosistem enterprise, UKM berkembang, maupun ekspansi tim internal.'
                 : 'Tailored strategic engagement models engineered for enterprise ecosystems, scaling SMEs, and dedicated team expansion.'
@@ -724,40 +691,40 @@ export const Services = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {resolvedStrategicSolutions.map((sol) => (
+            {strategicSolutions.map((sol) => (
               <Link
                 key={sol.id}
                 to={`/solutions/${sol.id}`}
-                className="group relative rounded-2xl p-6 sm:p-8 bg-[var(--k-surface)] hover:bg-[var(--k-surface-raised)] border border-[var(--k-border)] hover:border-brand-red/60 transition-all duration-300 flex flex-col justify-between"
+                className="group relative rounded-2xl p-6 sm:p-8 bg-[#16181D] hover:bg-[#20232B] border border-[#262930] hover:border-brand-red/60 transition-all duration-300 flex flex-col justify-between"
               >
                 <div>
                   <div className="flex items-center justify-between mb-6">
-                    <div className="w-12 h-12 rounded-xl bg-brand-red/10 border border-brand-red/30 flex items-center justify-center text-brand-red group-hover:scale-[1.02] transition-transform">
+                    <div className="w-12 h-12 rounded-xl bg-brand-red/10 border border-brand-red/30 flex items-center justify-center text-brand-red group-hover:scale-110 transition-transform">
                       {sol.icon}
                     </div>
-                    <span className="px-2.5 py-1 rounded-full bg-[var(--k-text-secondary)]/10 border border-[var(--k-text-secondary)]/30 text-xs font-sans text-[var(--k-text-secondary)] font-semibold">
+                    <span className="px-2.5 py-1 rounded-full bg-[#FF6B00]/10 border border-[#FF6B00]/30 text-[10px] sm:text-[11px] font-mono text-[#FF6B00] font-semibold">
                       {language === 'id' ? sol.badgeId : sol.badge}
                     </span>
                   </div>
 
-                  <h3 className="text-xl sm:text-2xl font-sans font-bold text-white group-hover:text-brand-red transition-colors mb-1.5">
+                  <h3 className="text-xl sm:text-2xl font-display font-bold text-white group-hover:text-brand-red transition-colors mb-1.5">
                     {sol.title}
                   </h3>
 
-                  <span className="text-xs font-sans text-[var(--k-text-secondary)] block mb-4">
+                  <span className="text-xs font-mono text-[#8A909D] block mb-4">
                     {language === 'id' ? sol.audienceId : sol.audience}
                   </span>
 
-                  <p className="text-xs sm:text-sm text-[var(--k-text-secondary)] font-light leading-relaxed mb-6">
+                  <p className="text-xs sm:text-sm text-[#8A909D] font-light leading-relaxed mb-6">
                     {language === 'id' ? sol.descriptionId : sol.description}
                   </p>
                 </div>
 
-                <div className="pt-4 border-t border-[var(--k-border)] flex items-center justify-between">
-                  <span className="text-xs font-sans text-[var(--k-text-secondary)]/70">
+                <div className="pt-4 border-t border-[#262930] flex items-center justify-between">
+                  <span className="text-xs font-mono text-[#8A909D]/70">
                     {language === 'id' ? sol.timelineId : sol.timeline}
                   </span>
-                  <div className="flex items-center gap-1.5 text-xs font-sans text-brand-red font-semibold group-hover:translate-x-1 transition-transform">
+                  <div className="flex items-center gap-1.5 text-xs font-mono text-brand-red font-semibold group-hover:translate-x-1 transition-transform">
                     <span>{language === 'id' ? 'Detail Solusi' : 'Explore Solution'}</span>
                     <ArrowUpRight size={14} />
                   </div>
@@ -769,9 +736,9 @@ export const Services = () => {
       </section>
 
       {/* Pillar Filter Tabs */}
-      <section className="py-6 sm:py-8 px-4 sm:px-6 md:px-12 border-b border-[var(--k-border)] bg-[var(--k-bg)]/95 sticky top-16 sm:top-20 z-30 backdrop-blur-md">
+      <section className="py-6 sm:py-8 px-4 sm:px-6 md:px-12 border-b border-[#262930] bg-[#0B0C0E]/95 sticky top-16 sm:top-20 z-30 backdrop-blur-md">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
-          <div className="flex flex-wrap items-center gap-2 bg-[var(--k-surface)] p-1.5 rounded-xl border border-[var(--k-border)] w-full sm:w-auto">
+          <div className="flex flex-wrap items-center gap-2 bg-[#16181D] p-1.5 rounded-xl border border-[#262930] w-full sm:w-auto">
             {[
               { key: 'All', labelEn: 'All Services (15)', labelId: 'Semua Layanan (15)' },
               { key: 'Branding', labelEn: '1. Branding (5)', labelId: '1. Branding (5)' },
@@ -781,10 +748,10 @@ export const Services = () => {
               <button
                 key={tab.key}
                 onClick={() => setActiveCategory(tab.key as any)}
-                className={`flex-1 sm:flex-none min-h-[44px] px-3.5 sm:px-4 py-2 rounded-lg text-xs font-sans font-medium transition-all duration-200 text-center ${
+                className={`flex-1 sm:flex-none min-h-[44px] px-3.5 sm:px-4 py-2 rounded-lg text-xs font-mono font-medium transition-all duration-200 text-center ${
                   activeCategory === tab.key
-                    ? 'bg-brand-red text-white shadow-[0_10px_28px_rgba(176,0,32,.18)] font-bold'
-                    : 'text-[var(--k-text-secondary)] hover:text-white hover:bg-white/5'
+                    ? 'bg-brand-red text-white shadow-lg shadow-brand-red/20 font-bold'
+                    : 'text-[#8A909D] hover:text-white hover:bg-white/5'
                 }`}
               >
                 {language === 'id' ? tab.labelId : tab.labelEn}
@@ -792,7 +759,7 @@ export const Services = () => {
             ))}
           </div>
 
-          <span className="text-xs font-sans text-[var(--k-text-secondary)] hidden sm:block">
+          <span className="text-xs font-mono text-[#8A909D] hidden sm:block">
             {language === 'id' ? `Menampilkan ${filteredServices.length} Layanan Spesialis` : `Showing ${filteredServices.length} Specialized Services`}
           </span>
         </div>
@@ -805,21 +772,21 @@ export const Services = () => {
           {/* Show Group Headers when 'All' is selected, or direct grid when filtered */}
           {['Branding', 'Design', 'Development'].map(cat => {
             if (activeCategory !== 'All' && activeCategory !== cat) return null;
-            const catServices = resolvedServices.filter(s => s.category === cat);
+            const catServices = allServices.filter(s => s.category === cat);
 
             return (
               <div key={cat} className="space-y-6">
                 {/* Category Pillar Header */}
-                <div className="flex items-center justify-between pb-4 border-b border-[var(--k-border)]">
+                <div className="flex items-center justify-between pb-4 border-b border-[#262930]">
                   <div className="flex items-center gap-3">
-                    <span className="text-xs font-sans tracking-widest text-brand-red font-semibold uppercase">
+                    <span className="text-xs font-mono tracking-widest text-brand-red font-semibold uppercase">
                       {cat === 'Branding' ? '01. ' : cat === 'Design' ? '02. ' : '03. '}
                     </span>
-                    <h2 className="text-2xl sm:text-3xl font-sans font-bold uppercase tracking-tight text-white">
+                    <h2 className="text-2xl sm:text-3xl font-display font-bold uppercase tracking-tight text-white">
                       {cat}
                     </h2>
                   </div>
-                  <span className="text-xs font-sans text-[var(--k-text-secondary)]">
+                  <span className="text-xs font-mono text-[#8A909D]">
                     5 {language === 'id' ? 'Layanan Terintegrasi' : 'Capabilities'}
                   </span>
                 </div>
@@ -830,33 +797,33 @@ export const Services = () => {
                     <Link
                       key={srv.id}
                       to={`/services/${srv.id}`}
-                      className="group rounded-2xl p-6 sm:p-7 bg-[var(--k-surface)] hover:bg-[var(--k-surface-raised)] border border-[var(--k-border)] hover:border-brand-red/50 transition-all duration-300 flex flex-col justify-between"
+                      className="group rounded-2xl p-6 sm:p-7 bg-[#16181D] hover:bg-[#20232B] border border-[#262930] hover:border-brand-red/50 transition-all duration-300 flex flex-col justify-between"
                     >
                       <div>
                         <div className="flex items-center justify-between mb-5">
-                          <div className="w-11 h-11 rounded-xl bg-brand-red/10 border border-brand-red/30 flex items-center justify-center text-brand-red group-hover:scale-[1.02] transition-transform">
+                          <div className="w-11 h-11 rounded-xl bg-brand-red/10 border border-brand-red/30 flex items-center justify-center text-brand-red group-hover:scale-110 transition-transform">
                             {srv.icon}
                           </div>
-                          <span className="px-2.5 py-1 rounded-full bg-[var(--k-bg)] border border-[var(--k-border)] text-xs font-sans text-[var(--k-text-secondary)]">
+                          <span className="px-2.5 py-1 rounded-full bg-[#0B0C0E] border border-[#262930] text-[10px] sm:text-[11px] font-mono text-[#8A909D]">
                             {srv.category}
                           </span>
                         </div>
 
-                        <h3 className="text-lg sm:text-xl font-sans font-bold text-white group-hover:text-brand-red transition-colors mb-1">
+                        <h3 className="text-lg sm:text-xl font-display font-bold text-white group-hover:text-brand-red transition-colors mb-1">
                           {srv.title}
                         </h3>
 
-                        <p className="text-xs font-sans text-brand-red/90 mb-3.5">
+                        <p className="text-xs font-mono text-brand-red/90 mb-3.5">
                           {language === 'id' ? srv.subtitleId : srv.subtitle}
                         </p>
 
-                        <p className="text-xs sm:text-sm text-[var(--k-text-secondary)] font-light leading-relaxed mb-5 line-clamp-3">
+                        <p className="text-xs sm:text-sm text-[#8A909D] font-light leading-relaxed mb-5 line-clamp-3">
                           {language === 'id' ? srv.summaryId : srv.summary}
                         </p>
 
-                        <div className="pt-3.5 border-t border-[var(--k-border)] space-y-1.5 mb-5">
+                        <div className="pt-3.5 border-t border-[#262930] space-y-1.5 mb-5">
                           {(language === 'id' ? srv.deliverablesId : srv.deliverables).slice(0, 2).map((item, idx) => (
-                            <div key={idx} className="flex items-center gap-2 text-xs text-[var(--k-text-secondary)] font-light truncate">
+                            <div key={idx} className="flex items-center gap-2 text-xs text-[#8A909D] font-light truncate">
                               <CheckCircle2 size={13} className="text-emerald-400 shrink-0" />
                               <span className="truncate">{item}</span>
                             </div>
@@ -864,11 +831,11 @@ export const Services = () => {
                         </div>
                       </div>
 
-                      <div className="pt-3.5 border-t border-[var(--k-border)] flex items-center justify-between">
-                        <span className="text-xs font-sans text-[var(--k-text-secondary)]/70">
+                      <div className="pt-3.5 border-t border-[#262930] flex items-center justify-between">
+                        <span className="text-xs font-mono text-[#8A909D]/70">
                           {language === 'id' ? srv.timelineId : srv.timeline}
                         </span>
-                        <div className="flex items-center gap-1.5 text-xs font-sans text-brand-red font-semibold group-hover:translate-x-1 transition-transform">
+                        <div className="flex items-center gap-1.5 text-xs font-mono text-brand-red font-semibold group-hover:translate-x-1 transition-transform">
                           <span>{language === 'id' ? 'Detail' : 'Explore'}</span>
                           <ArrowUpRight size={14} />
                         </div>
@@ -885,32 +852,32 @@ export const Services = () => {
       {/* Service / Solution Detail Modal */}
       <AnimatePresence>
         {selectedService && (
-          <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 sm:p-6 overflow-y-auto bg-black/85 backdrop-blur-md kapi-modal-backdrop" data-public-modal-backdrop>
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 overflow-y-auto bg-black/85 backdrop-blur-md">
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ duration: 0.25 }}
-              className="relative w-full max-w-3xl kapi-card rounded-[24px] overflow-hidden my-8 max-h-[90vh] flex flex-col kapi-modal-panel" data-public-modal
+              className="relative w-full max-w-3xl bg-[#16181D] border border-[#262930] rounded-2xl overflow-hidden shadow-2xl my-8 max-h-[90vh] flex flex-col"
             >
               {/* Modal Header */}
-              <div className="sticky top-0 z-20 flex items-center justify-between p-4 sm:p-6 bg-[var(--k-surface)]/95 backdrop-blur border-b border-[var(--k-border)]">
+              <div className="sticky top-0 z-20 flex items-center justify-between p-4 sm:p-6 bg-[#16181D]/95 backdrop-blur border-b border-[#262930]">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-xl bg-brand-red/10 border border-brand-red/30 flex items-center justify-center text-brand-red">
                     {selectedService.icon}
                   </div>
                   <div>
-                    <span className="text-xs font-sans text-brand-red block">
+                    <span className="text-[11px] font-mono text-brand-red block">
                       {'category' in selectedService ? selectedService.category : 'Strategic Solution'}
                     </span>
-                    <h3 className="text-base sm:text-xl font-sans font-bold text-white">
+                    <h3 className="text-base sm:text-xl font-display font-bold text-white">
                       {selectedService.title}
                     </h3>
                   </div>
                 </div>
                 <button
                   onClick={() => setSelectedService(null)}
-                  className="w-9 h-9 kapi-modal-close"
+                  className="w-9 h-9 rounded-full bg-[#0B0C0E] hover:bg-white/10 border border-[#262930] flex items-center justify-center text-[#8A909D] hover:text-white transition-colors"
                   aria-label="Close modal"
                 >
                   <X size={18} />
@@ -920,10 +887,10 @@ export const Services = () => {
               {/* Modal Scrollable Content */}
               <div className="overflow-y-auto p-6 sm:p-8 space-y-6">
                 <div>
-                  <h4 className="text-xs font-sans uppercase tracking-wider text-[var(--k-text-secondary)] mb-2 font-semibold">
+                  <h4 className="text-xs font-mono uppercase tracking-wider text-[#8A909D] mb-2 font-semibold">
                     {language === 'id' ? 'Deskripsi & Ruang Lingkup' : 'Overview & Scope'}
                   </h4>
-                  <p className="text-sm text-[var(--k-text-secondary)] leading-relaxed font-light">
+                  <p className="text-sm text-[#8A909D] leading-relaxed font-light">
                     {'fullDescription' in selectedService 
                       ? (language === 'id' ? selectedService.fullDescriptionId : selectedService.fullDescription)
                       : (language === 'id' ? selectedService.descriptionId : selectedService.description)
@@ -931,20 +898,20 @@ export const Services = () => {
                   </p>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 kapi-inset-card">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-xl bg-[#0B0C0E] border border-[#262930]">
                   <div>
-                    <span className="text-xs font-sans text-[var(--k-text-secondary)] uppercase block mb-1">
+                    <span className="text-[11px] font-mono text-[#8A909D] uppercase block mb-1">
                       {language === 'id' ? 'Estimasi Pengerjaan' : 'Estimated Timeline'}
                     </span>
-                    <span className="text-sm font-sans font-semibold text-white">
+                    <span className="text-sm font-display font-semibold text-white">
                       {language === 'id' ? selectedService.timelineId : selectedService.timeline}
                     </span>
                   </div>
                   <div>
-                    <span className="text-xs font-sans text-[var(--k-text-secondary)] uppercase block mb-1">
+                    <span className="text-[11px] font-mono text-[#8A909D] uppercase block mb-1">
                       {language === 'id' ? 'Target Kebutuhan' : 'Target Audience'}
                     </span>
-                    <span className="text-xs text-[var(--k-text-secondary)] font-light block leading-snug">
+                    <span className="text-xs text-[#8A909D] font-light block leading-snug">
                       {'idealFor' in selectedService 
                         ? (language === 'id' ? selectedService.idealForId : selectedService.idealFor)
                         : (language === 'id' ? selectedService.audienceId : selectedService.audience)
@@ -954,12 +921,12 @@ export const Services = () => {
                 </div>
 
                 <div>
-                  <h4 className="text-xs font-sans uppercase tracking-wider text-brand-red mb-3 font-semibold">
+                  <h4 className="text-xs font-mono uppercase tracking-wider text-brand-red mb-3 font-semibold">
                     {language === 'id' ? 'Deliverable & Serah Terima' : 'Key Deliverables'}
                   </h4>
                   <ul className="space-y-2">
                     {(language === 'id' ? selectedService.deliverablesId : selectedService.deliverables).map((item, idx) => (
-                      <li key={idx} className="flex items-start gap-2.5 text-xs sm:text-sm text-[var(--k-text-secondary)] font-light">
+                      <li key={idx} className="flex items-start gap-2.5 text-xs sm:text-sm text-[#8A909D] font-light">
                         <CheckCircle2 size={15} className="text-emerald-400 shrink-0 mt-0.5" />
                         <span>{item}</span>
                       </li>
@@ -969,12 +936,12 @@ export const Services = () => {
 
                 {'tools' in selectedService && selectedService.tools && (
                   <div>
-                    <h4 className="text-xs font-sans uppercase tracking-wider text-[var(--k-text-secondary)] mb-3 font-semibold">
+                    <h4 className="text-xs font-mono uppercase tracking-wider text-[#8A909D] mb-3 font-semibold">
                       {language === 'id' ? 'Alat & Standar Teknologi' : 'Tools & Technologies'}
                     </h4>
                     <div className="flex flex-wrap gap-2">
                       {selectedService.tools.map((tool, idx) => (
-                        <span key={idx} className="kapi-tech-tag">
+                        <span key={idx} className="px-3 py-1 rounded-lg bg-[#0B0C0E] border border-[#262930] text-xs font-mono text-[#8A909D]">
                           {tool}
                         </span>
                       ))}
@@ -983,16 +950,16 @@ export const Services = () => {
                 )}
 
                 {/* Modal Footer CTA */}
-                <div className="pt-4 border-t border-[var(--k-border)] flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="pt-4 border-t border-[#262930] flex flex-col sm:flex-row items-center justify-between gap-4">
                   <div>
-                    <span className="text-xs text-[var(--k-text-secondary)] font-light block">
+                    <span className="text-xs text-[#8A909D] font-light block">
                       {language === 'id' ? 'Konsultasikan kebutuhan spesifik Anda dengan tim kami.' : 'Consult your specific requirements with our team.'}
                     </span>
                   </div>
                   <Link
                     to="/contact"
                     onClick={() => setSelectedService(null)}
-                    className="w-full sm:w-auto min-h-[44px] px-6 py-2.5 kapi-action-button bg-brand-red hover:bg-[var(--k-red-hover)] text-white font-semibold text-xs uppercase tracking-wider transition-colors flex items-center justify-center gap-2"
+                    className="w-full sm:w-auto min-h-[44px] px-6 py-2.5 rounded-full bg-brand-red hover:bg-[#E01414] text-white font-semibold text-xs uppercase tracking-wider transition-colors flex items-center justify-center gap-2"
                   >
                     <span>{language === 'id' ? 'Mulai Proyek Ini' : 'Start This Project'}</span>
                     <ArrowUpRight size={14} />

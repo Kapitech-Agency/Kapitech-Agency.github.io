@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { AnimatePresence, motion } from 'motion/react';
-import { Check, ChevronDown } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { ChevronDown, Check } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 
 export interface SelectOption {
   value: string;
@@ -36,93 +36,91 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
   align = 'left',
   size = 'sm',
   disabled = false,
-  prefixIcon,
+  prefixIcon
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const selectedOption = options.find((option) => option.value === value);
+
+  const selectedOption = options.find((opt) => opt.value === value);
 
   useEffect(() => {
-    const handleOutsideClick = (event: MouseEvent) => {
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(event.target as Node)
-      ) {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
         setIsOpen(false);
       }
     };
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        setIsOpen(false);
-      }
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsOpen(false);
     };
 
     if (isOpen) {
-      document.addEventListener('mousedown', handleOutsideClick);
+      document.addEventListener('mousedown', handleClickOutside);
       document.addEventListener('keydown', handleKeyDown);
     }
-
     return () => {
-      document.removeEventListener('mousedown', handleOutsideClick);
+      document.removeEventListener('mousedown', handleClickOutside);
       document.removeEventListener('keydown', handleKeyDown);
     };
   }, [isOpen]);
 
-  const sizes = {
-    xs: 'h-9 gap-2 px-3 text-[11px]',
-    sm: 'h-10 gap-2 px-3 text-xs',
-    md: 'h-10 gap-2 px-3.5 text-sm',
+  const sizeClasses = {
+    xs: 'px-2.5 py-1.5 text-[11px] gap-2 rounded-md',
+    sm: 'px-3 py-1.5 text-xs gap-2.5 rounded-lg',
+    md: 'px-3.5 py-2 text-xs gap-3 rounded-lg'
   };
 
   return (
-    <div
-      ref={containerRef}
-      className={`relative inline-block text-left ${className}`}
-    >
+    <div className={`relative inline-block text-left ${className}`} ref={containerRef}>
       <button
         type="button"
         disabled={disabled}
-        aria-expanded={isOpen}
-        onClick={() => setIsOpen((open) => !open)}
-        className={`ams-control flex w-full items-center justify-between rounded-[12px] border bg-[#181B22] text-[#F5F5F7] transition-colors duration-150 select-none ${sizes[size]} ${isOpen ? 'border-[rgba(176,0,32,.55)]' : 'border-[rgba(255,255,255,.09)] hover:border-[rgba(255,255,255,.16)]'} ${disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'} ${triggerClassName}`}
+        onClick={() => setIsOpen(!isOpen)}
+        className={`flex items-center justify-between font-sans transition-all duration-150 border select-none ${
+          sizeClasses[size]
+        } ${
+          isOpen
+            ? 'bg-[#181B22] border-[#E50914] text-white shadow-[0_0_12px_rgba(229,9,20,0.15)]'
+            : 'bg-[#181B22] hover:bg-[#21252F] border-[rgba(255,255,255,0.07)] hover:border-[rgba(255,255,255,0.14)] text-[#F8FAFC]'
+        } ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} ${triggerClassName}`}
       >
-        <span className="flex min-w-0 items-center gap-2 pr-2">
-          {prefixIcon && (
-            <span className="shrink-0 text-[#A1A1AA]">{prefixIcon}</span>
-          )}
-          {selectedOption?.icon && (
-            <span className="shrink-0">{selectedOption.icon}</span>
-          )}
-          <span className="truncate font-medium">
-            {selectedOption?.label ?? placeholder}
+        <div className="flex items-center gap-2 min-w-0 pr-2">
+          {prefixIcon && <span className="text-[#8A94A6] shrink-0">{prefixIcon}</span>}
+          {selectedOption?.icon && <span className="shrink-0">{selectedOption.icon}</span>}
+          <span className="truncate font-medium text-xs">
+            {selectedOption ? selectedOption.label : placeholder}
           </span>
           {selectedOption?.badge && (
             <span
-              className={`shrink-0 rounded-md px-1.5 py-0.5 text-[9px] font-semibold ${selectedOption.badgeColor ?? 'bg-white/[.06] text-[#A1A1AA]'}`}
+              className={`px-1.5 py-0.5 rounded text-[9px] uppercase font-bold shrink-0 ${
+                selectedOption.badgeColor || 'bg-[rgba(255,255,255,0.07)] text-[#8A94A6]'
+              }`}
             >
               {selectedOption.badge}
             </span>
           )}
-        </span>
+        </div>
+
         <ChevronDown
-          size={15}
-          className={`shrink-0 text-[#A1A1AA] transition-transform duration-150 ${isOpen ? 'rotate-180 text-[#B00020]' : ''}`}
+          size={size === 'xs' ? 12 : 14}
+          className={`text-[#8A94A6] transition-transform duration-200 shrink-0 ${
+            isOpen ? 'rotate-180 text-[#E50914]' : ''
+          }`}
         />
       </button>
 
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: 4 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 2 }}
-            transition={{ duration: 0.12 }}
-            className={`ams-dropdown-surface absolute z-50 mt-1.5 max-h-[280px] min-w-[180px] max-w-[calc(100vw-24px)] overflow-y-auto rounded-[14px] border border-white/[.10] bg-[#1C1C1F]/95 p-1 shadow-[0_18px_50px_rgba(0,0,0,.34)] backdrop-blur-xl ${align === 'right' ? 'right-0' : 'left-0'} ${menuClassName}`}
+            initial={{ opacity: 0, y: 4, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 2, scale: 0.98 }}
+            transition={{ duration: 0.12, ease: 'easeOut' }}
+            className={`absolute z-50 mt-1 min-w-[140px] sm:min-w-[180px] max-w-[calc(100vw-32px)] sm:max-w-[260px] max-h-[260px] overflow-y-auto bg-[#111318] border border-[rgba(255,255,255,0.07)] rounded-xl p-1 shadow-[0_16px_40px_rgba(0,0,0,0.8)] space-y-0.5 font-sans text-xs custom-scrollbar ${
+              align === 'right' ? 'right-0' : 'left-0'
+            } ${menuClassName}`}
           >
             {options.map((option) => {
-              const selected = option.value === value;
-
+              const isSelected = option.value === value;
               return (
                 <button
                   key={option.value}
@@ -131,36 +129,46 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
                     onChange(option.value);
                     setIsOpen(false);
                   }}
-                  className={`ams-dropdown-item flex min-h-9 w-full items-center justify-between gap-2 rounded-[10px] px-2.5 py-2 text-left text-xs transition-colors ${selected ? 'bg-white/[.07] text-white' : 'text-[#A1A1AA] hover:bg-white/[.055] hover:text-white'}`}
+                  className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-left transition-colors group ${
+                    isSelected
+                      ? 'bg-[#181B22] text-[#F8FAFC] font-semibold border border-[rgba(255,255,255,0.07)]'
+                      : 'text-[#8A94A6] hover:text-[#F8FAFC] hover:bg-[#181B22]'
+                  }`}
                 >
-                  <span className="flex min-w-0 items-center gap-2.5">
+                  <div className="flex items-center gap-2.5 min-w-0 pr-2">
                     {option.icon && (
-                      <span className="shrink-0">{option.icon}</span>
-                    )}
-                    <span className="min-w-0 truncate">
-                      <span className="block truncate font-medium">
-                        {option.label}
+                      <span className={isSelected ? 'text-[#E50914]' : 'text-[#8A94A6] group-hover:text-white'}>
+                        {option.icon}
                       </span>
+                    )}
+                    <div className="truncate">
+                      <div className="truncate font-medium">{option.label}</div>
                       {option.description && (
-                        <span className="block truncate text-[10px] text-[#71717A]">
+                        <div
+                          className={`text-[10px] truncate ${
+                            isSelected ? 'text-[#8A94A6]' : 'text-[#5C626E]'
+                          }`}
+                        >
                           {option.description}
-                        </span>
+                        </div>
                       )}
-                    </span>
-                  </span>
+                    </div>
+                  </div>
 
-                  <span className="flex shrink-0 items-center gap-1.5">
+                  <div className="flex items-center gap-1.5 shrink-0">
                     {option.badge && (
                       <span
-                        className={`rounded-md px-1.5 py-0.5 text-[9px] font-semibold ${option.badgeColor ?? 'bg-white/[.06] text-[#A1A1AA]'}`}
+                        className={`px-1.5 py-0.5 rounded text-[9px] font-bold ${
+                          isSelected
+                            ? 'bg-white/20 text-white'
+                            : option.badgeColor || 'bg-[rgba(255,255,255,0.07)] text-[#8A94A6]'
+                        }`}
                       >
                         {option.badge}
                       </span>
                     )}
-                    {selected && (
-                      <Check size={14} className="text-[#B00020]" />
-                    )}
-                  </span>
+                    {isSelected && <Check size={13} className="text-[#E50914] shrink-0" />}
+                  </div>
                 </button>
               );
             })}
@@ -170,5 +178,4 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
     </div>
   );
 };
-
 export default CustomSelect;

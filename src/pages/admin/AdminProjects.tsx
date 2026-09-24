@@ -48,7 +48,6 @@ import { useDragToScroll } from '../../lib/useDragToScroll';
 import { ScrollShadowContainer } from '../../components/ui/ScrollShadowContainer';
 import { CustomSelect } from '../../components/ui/CustomSelect';
 import { getAdminSession, hasAdminPermission } from '../../lib/adminAuth';
-import { api } from '../../lib/apiClient';
 
 const TASK_COLUMNS: { id: TaskStatus; label: string; dotColor: string; bgAccent: string }[] = [
   { id: 'todo', label: 'To Do', dotColor: 'bg-zinc-400', bgAccent: 'group-hover:border-zinc-500/30' },
@@ -101,15 +100,13 @@ export const AdminProjects: React.FC = () => {
   const [repoUrl, setRepoUrl] = useState('');
   const [stagingUrl, setStagingUrl] = useState('');
   const [projStatus, setProjStatus] = useState<ProjectStatus>('in_progress');
-  const [driName, setDriName] = useState('Principal Tech Lead');
 
   // Task Creation Modal State
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
   const [taskTitle, setTaskTitle] = useState('');
   const [taskDesc, setTaskDesc] = useState('');
   const [taskPriority, setTaskPriority] = useState<TaskPriority>('medium');
-  const [taskAssignee, setTaskAssignee] = useState('');
-  const [taskAssignees, setTaskAssignees] = useState<Array<{ id: string; name: string; username: string; role: string; division: string }>>([]);
+  const [taskAssignee, setTaskAssignee] = useState('Senior Frontend Dev');
   const [taskDueDate, setTaskDueDate] = useState(new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]);
   const [taskStatus, setTaskStatus] = useState<TaskStatus>('todo');
   const [initialSubtasksInput, setInitialSubtasksInput] = useState('');
@@ -124,21 +121,6 @@ export const AdminProjects: React.FC = () => {
 
   useEffect(() => {
     loadData();
-    if (canManageKanbanTasks) {
-      api.auth.getTaskAssignees().then((res) => {
-        if (!res.success || !res.data?.assignees) return;
-        const next = res.data.assignees;
-        setTaskAssignees(next);
-        if (!next.some((item) => item.username === taskAssignee)) {
-          const currentUsername = getAdminSession()?.user?.username || '';
-          const fallback = next.find((item) => item.username === currentUsername) || next[0];
-          if (fallback) setTaskAssignee(fallback.username);
-        }
-      });
-    } else {
-      setTaskAssignees([]);
-      setTaskAssignee('');
-    }
     const handleUpdate = () => loadData();
     window.addEventListener(PROJECT_EVENT_NAME, handleUpdate);
 
@@ -187,7 +169,6 @@ export const AdminProjects: React.FC = () => {
     setRepoUrl('');
     setStagingUrl('https://staging.app.kapitech.id');
     setProjStatus('in_progress');
-    setDriName('Principal Tech Lead');
     setIsProjectModalOpen(true);
   };
 
@@ -206,14 +187,13 @@ export const AdminProjects: React.FC = () => {
     setRepoUrl(proj.repositoryUrl || '');
     setStagingUrl(proj.liveStagingUrl || '');
     setProjStatus(proj.status);
-    setDriName(proj.teamLead || 'Principal Tech Lead');
     setIsProjectModalOpen(true);
   };
 
-  const handleSaveProject = async (e: React.FormEvent) => {
+  const handleSaveProject = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!projName.trim() || !clientCompany.trim() || !driName.trim()) {
-      alert(language === 'id' ? 'Nama proyek, perusahaan klien, dan DRI wajib diisi.' : 'Project name, client company, and DRI are required.');
+    if (!projName.trim() || !clientCompany.trim()) {
+      alert('Project Title and Client Company are required.');
       return;
     }
 
@@ -231,7 +211,7 @@ export const AdminProjects: React.FC = () => {
       progressPercent: Number(progressPercent) || 0,
       startDate,
       targetEndDate,
-      teamLead: driName.trim(),
+      teamLead: editingProject?.teamLead || 'Principal Tech Lead',
       teamMembers: editingProject?.teamMembers || ['Lead Frontend', 'UI Designer', 'QA Specialist'],
       techStack: techArr,
       repositoryUrl: repoUrl,
@@ -245,30 +225,22 @@ export const AdminProjects: React.FC = () => {
       updatedAt: new Date().toISOString()
     };
 
-    try {
-      await saveAgencyProject(projectData);
-      setSelectedProjectId(projectData.id);
-      setIsProjectModalOpen(false);
-      showToast(language === 'id' ? 'Proyek berhasil disimpan ke server.' : 'Project successfully saved to server.');
-    } catch (error: any) {
-      showToast(error?.message || (language === 'id' ? 'Gagal menyimpan proyek. Refresh data lalu coba lagi.' : 'Project save failed. Refresh the data and try again.'));
-    }
+    saveAgencyProject(projectData);
+    setSelectedProjectId(projectData.id);
+    setIsProjectModalOpen(false);
+    showToast(language === 'id' ? 'Proyek berhasil disimpan.' : 'Project successfully saved.');
   };
 
-  const handleDeleteProject = async (id: string, name: string) => {
+  const handleDeleteProject = (id: string, name: string) => {
     if (window.confirm(`Hapus proyek "${name}" beserta seluruh task board?`)) {
-      try {
-        await deleteAgencyProject(id);
-        showToast(language === 'id' ? 'Proyek dihapus dari server.' : 'Project deleted from server.');
-      } catch (error: any) {
-        showToast(error?.message || (language === 'id' ? 'Gagal menghapus proyek.' : 'Failed to delete project.'));
-      }
+      deleteAgencyProject(id);
+      showToast(language === 'id' ? 'Proyek dihapus.' : 'Project deleted.');
     }
   };
 
-  const handleAddTask = async (e: React.FormEvent) => {
+  const handleAddTask = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!canManageKanbanTasks || !selectedProject || !taskTitle.trim()) return;
+    if (!selectedProject || !taskTitle.trim()) return;
 
     const subtasksList: TaskSubtask[] = initialSubtasksInput
       .split('\n')
@@ -293,16 +265,11 @@ export const AdminProjects: React.FC = () => {
     };
 
     const updatedTasks = [...selectedProject.tasks, newTask];
-    try {
-      await saveAgencyProject({
-        ...selectedProject,
-        tasks: updatedTasks,
-        updatedAt: new Date().toISOString()
-      });
-    } catch (error: any) {
-      showToast(error?.message || (language === 'id' ? 'Gagal menambahkan task.' : 'Failed to create task.'));
-      return;
-    }
+    saveAgencyProject({
+      ...selectedProject,
+      tasks: updatedTasks,
+      updatedAt: new Date().toISOString()
+    });
 
     setIsTaskModalOpen(false);
     setTaskTitle('');
@@ -311,28 +278,23 @@ export const AdminProjects: React.FC = () => {
     showToast(language === 'id' ? 'Tugas tim berhasil ditambahkan.' : 'Task successfully created.');
   };
 
-  const handleDeleteTask = async (taskId: string) => {
-    if (!canManageKanbanTasks || !selectedProject) return;
+  const handleDeleteTask = (taskId: string) => {
+    if (!selectedProject) return;
     const updatedTasks = selectedProject.tasks.filter(t => t.id !== taskId);
-    try {
-      await saveAgencyProject({
-        ...selectedProject,
-        tasks: updatedTasks,
-        updatedAt: new Date().toISOString()
-      });
-    } catch (error: any) {
-      showToast(error?.message || (language === 'id' ? 'Gagal menghapus task.' : 'Failed to remove task.'));
-      return;
-    }
+    saveAgencyProject({
+      ...selectedProject,
+      tasks: updatedTasks,
+      updatedAt: new Date().toISOString()
+    });
     if (activeTaskDrawer?.id === taskId) {
       setActiveTaskDrawer(null);
     }
     showToast('Task removed.');
   };
 
-  const handleToggleSubtask = async (taskId: string, subtaskId: string, e?: React.MouseEvent) => {
+  const handleToggleSubtask = (taskId: string, subtaskId: string, e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
-    if (!canManageKanbanTasks || !selectedProject) return;
+    if (!selectedProject) return;
 
     const updatedTasks = selectedProject.tasks.map(t => {
       if (t.id === taskId && t.subtasks) {
@@ -342,20 +304,15 @@ export const AdminProjects: React.FC = () => {
       return t;
     });
 
-    try {
-      await saveAgencyProject({
-        ...selectedProject,
-        tasks: updatedTasks,
-        updatedAt: new Date().toISOString()
-      });
-    } catch (error: any) {
-      showToast(error?.message || (language === 'id' ? 'Gagal memperbarui subtask.' : 'Failed to update subtask.'));
-    }
+    saveAgencyProject({
+      ...selectedProject,
+      tasks: updatedTasks,
+      updatedAt: new Date().toISOString()
+    });
   };
 
-  const handleAddSubtaskInDrawer = async (e: React.FormEvent) => {
+  const handleAddSubtaskInDrawer = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!canManageKanbanTasks) return;
     if (!selectedProject || !activeTaskDrawer || !newSubtaskTitle.trim()) return;
 
     const newSub: TaskSubtask = {
@@ -372,20 +329,17 @@ export const AdminProjects: React.FC = () => {
       return t;
     });
 
-    try {
-      await saveAgencyProject({
-        ...selectedProject,
-        tasks: updatedTasks,
-        updatedAt: new Date().toISOString()
-      });
-      setNewSubtaskTitle('');
-    } catch (error: any) {
-      showToast(error?.message || (language === 'id' ? 'Gagal menambahkan subtask.' : 'Failed to add subtask.'));
-    }
+    saveAgencyProject({
+      ...selectedProject,
+      tasks: updatedTasks,
+      updatedAt: new Date().toISOString()
+    });
+
+    setNewSubtaskTitle('');
   };
 
-  const handleDeleteSubtaskInDrawer = async (subtaskId: string) => {
-    if (!canManageKanbanTasks || !selectedProject || !activeTaskDrawer) return;
+  const handleDeleteSubtaskInDrawer = (subtaskId: string) => {
+    if (!selectedProject || !activeTaskDrawer) return;
     const updatedTasks = selectedProject.tasks.map(t => {
       if (t.id === activeTaskDrawer.id && t.subtasks) {
         return { ...t, subtasks: t.subtasks.filter(st => st.id !== subtaskId) };
@@ -393,18 +347,14 @@ export const AdminProjects: React.FC = () => {
       return t;
     });
 
-    try {
-      await saveAgencyProject({
-        ...selectedProject,
-        tasks: updatedTasks,
-        updatedAt: new Date().toISOString()
-      });
-    } catch (error: any) {
-      showToast(error?.message || (language === 'id' ? 'Gagal menghapus subtask.' : 'Failed to delete subtask.'));
-    }
+    saveAgencyProject({
+      ...selectedProject,
+      tasks: updatedTasks,
+      updatedAt: new Date().toISOString()
+    });
   };
 
-  const handleToggleMilestone = async (milestoneId: string) => {
+  const handleToggleMilestone = (milestoneId: string) => {
     if (!selectedProject) return;
     const updatedMilestones = selectedProject.milestones.map(m =>
       m.id === milestoneId ? { ...m, completed: !m.completed } : m
@@ -412,17 +362,13 @@ export const AdminProjects: React.FC = () => {
     const completedCount = updatedMilestones.filter(m => m.completed).length;
     const calcProgress = Math.round((completedCount / updatedMilestones.length) * 100);
 
-    try {
-      await saveAgencyProject({
-        ...selectedProject,
-        milestones: updatedMilestones,
-        progressPercent: calcProgress,
-        updatedAt: new Date().toISOString()
-      });
-      showToast('Milestone status updated.');
-    } catch (error: any) {
-      showToast(error?.message || (language === 'id' ? 'Gagal memperbarui milestone.' : 'Failed to update milestone.'));
-    }
+    saveAgencyProject({
+      ...selectedProject,
+      milestones: updatedMilestones,
+      progressPercent: calcProgress,
+      updatedAt: new Date().toISOString()
+    });
+    showToast('Milestone status updated.');
   };
 
   // Drag & Drop Handlers
@@ -444,18 +390,13 @@ export const AdminProjects: React.FC = () => {
     setDragOverColumnId(null);
   };
 
-  const handleDropOnColumn = async (e: React.DragEvent, columnId: TaskStatus) => {
+  const handleDropOnColumn = (e: React.DragEvent, columnId: TaskStatus) => {
     e.preventDefault();
-    if (!canManageKanbanTasks) return;
     const taskId = e.dataTransfer.getData('text/plain') || draggedTaskId;
     if (taskId && selectedProject) {
-      try {
-        await updateTaskStatus(selectedProject.id, taskId, columnId);
-        const colLabel = TASK_COLUMNS.find(c => c.id === columnId)?.label || columnId;
-        showToast(`Task moved to ${colLabel}`);
-      } catch (error: any) {
-        showToast(error?.message || (language === 'id' ? 'Gagal memindahkan task.' : 'Failed to move task.'));
-      }
+      updateTaskStatus(selectedProject.id, taskId, columnId);
+      const colLabel = TASK_COLUMNS.find(c => c.id === columnId)?.label || columnId;
+      showToast(`Task moved to ${colLabel}`);
     }
     setDraggedTaskId(null);
     setDragOverColumnId(null);
@@ -465,27 +406,27 @@ export const AdminProjects: React.FC = () => {
     switch (priority) {
       case 'urgent':
         return (
-          <span className="px-2 py-0.5 rounded bg-rose-500/20 text-rose-400 border border-rose-500/30 text-[10px] font-sans font-bold uppercase flex items-center gap-1 shadow-sm shadow-rose-500/20">
+          <span className="px-2 py-0.5 rounded bg-rose-500/20 text-rose-400 border border-rose-500/30 text-[10px] font-mono font-bold uppercase flex items-center gap-1 shadow-sm shadow-rose-500/20">
             <span className="w-1.5 h-1.5 rounded-full bg-rose-400 animate-pulse" />
             Urgent
           </span>
         );
       case 'high':
         return (
-          <span className="px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 border border-amber-500/30 text-[10px] font-sans font-bold uppercase">
+          <span className="px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 border border-amber-500/30 text-[10px] font-mono font-bold uppercase">
             High
           </span>
         );
       case 'medium':
         return (
-          <span className="px-2 py-0.5 rounded bg-rose-500/20 text-rose-400 border border-rose-500/30 text-[10px] font-sans font-bold uppercase">
+          <span className="px-2 py-0.5 rounded bg-rose-500/20 text-rose-400 border border-rose-500/30 text-[10px] font-mono font-bold uppercase">
             Medium
           </span>
         );
       case 'low':
       default:
         return (
-          <span className="px-2 py-0.5 rounded bg-zinc-500/20 text-zinc-400 border border-zinc-500/30 text-[10px] font-sans font-bold uppercase">
+          <span className="px-2 py-0.5 rounded bg-zinc-500/20 text-zinc-400 border border-zinc-500/30 text-[10px] font-mono font-bold uppercase">
             Low
           </span>
         );
@@ -499,7 +440,7 @@ export const AdminProjects: React.FC = () => {
     const diffDays = Math.ceil((due.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
 
     if (isDone) {
-      return <span className="text-[var(--ams-secondary)]">{dueDateStr}</span>;
+      return <span className="text-[#8A94A6]">{dueDateStr}</span>;
     }
 
     if (diffDays < 0) {
@@ -518,7 +459,7 @@ export const AdminProjects: React.FC = () => {
       );
     } else {
       return (
-        <span className="text-[var(--ams-secondary)] flex items-center gap-1">
+        <span className="text-[#8A94A6] flex items-center gap-1">
           <Calendar size={10} />
           <span>In {diffDays}d</span>
         </span>
@@ -532,11 +473,11 @@ export const AdminProjects: React.FC = () => {
       {/* 1. Header & Project Actions */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[rgba(255,255,255,0.07)]">
         <div>
-          <h1 className="text-2xl font-sans font-bold text-white flex items-center gap-3">
-            <Layers className="text-[var(--ams-red)]" size={24} />
+          <h1 className="text-2xl font-display font-bold text-white flex items-center gap-3">
+            <Layers className="text-[#FF1E27]" size={24} />
             <span>{t('admin.nav.projects')}</span>
           </h1>
-          <p className="text-xs text-[var(--ams-secondary)] mt-1 font-sans">
+          <p className="text-xs text-[#8A94A6] mt-1 font-mono">
             {language === 'id'
               ? 'Manajemen sprint teknis, task execution board, dan delivery milestone klien.'
               : 'Client delivery sprint workspace, draggable task Kanban, and milestone execution.'}
@@ -544,21 +485,19 @@ export const AdminProjects: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-3">
-          {canManageProjects && (
-            <button
-              onClick={handleOpenCreateProject}
-              className="h-10 px-4 rounded-[var(--ams-radius-control)] bg-[var(--ams-red)] hover:bg-[var(--ams-red)] text-white text-xs font-sans font-bold transition-all flex items-center gap-2 shadow-lg shadow-[var(--ams-red)]/20 min-h-[40px]"
-            >
-              <Plus size={15} />
-              <span>{language === 'id' ? 'Buat Proyek Baru' : 'New Project'}</span>
-            </button>
-          )}
+          <button
+            onClick={handleOpenCreateProject}
+            className="h-10 px-4 rounded-xl bg-[#E50914] hover:bg-[#FF1E27] text-white text-xs font-mono font-bold transition-all flex items-center gap-2 shadow-lg shadow-[#E50914]/20 min-h-[40px]"
+          >
+            <Plus size={15} />
+            <span>{language === 'id' ? 'Buat Proyek Baru' : 'New Project'}</span>
+          </button>
         </div>
       </div>
 
       {/* Toast Alert */}
       {statusMessage && (
-        <div className="p-3.5 rounded-[var(--ams-radius-control)] bg-emerald-950/40 border border-emerald-500/40 text-emerald-300 text-xs font-sans flex items-center gap-2 animate-in fade-in duration-300">
+        <div className="p-3.5 rounded-xl bg-emerald-950/40 border border-emerald-500/40 text-emerald-300 text-xs font-mono flex items-center gap-2 animate-in fade-in duration-300">
           <Check size={15} />
           <span>{statusMessage}</span>
         </div>
@@ -573,10 +512,10 @@ export const AdminProjects: React.FC = () => {
               <button
                 key={proj.id}
                 onClick={() => setSelectedProjectId(proj.id)}
-                className={`px-4 py-3 rounded-[var(--ams-radius-control)] border font-sans text-left transition-all shrink-0 min-w-[220px] max-w-[280px] flex flex-col justify-between ${
+                className={`px-4 py-3 rounded-xl border font-mono text-left transition-all shrink-0 min-w-[220px] max-w-[280px] flex flex-col justify-between ${
                   isSelected
-                    ? 'bg-[var(--ams-elevated)] border-[var(--ams-red)] ring-1 ring-[var(--ams-red)]/30 shadow-lg shadow-[var(--ams-red)]/10'
-                    : 'bg-[var(--ams-surface)] border-[rgba(255,255,255,0.07)] hover:border-[#383C46] hover:bg-[var(--ams-elevated)]'
+                    ? 'bg-[#181B22] border-[#E50914] ring-1 ring-[#E50914]/30 shadow-lg shadow-[#E50914]/10'
+                    : 'bg-[#111318] border-[rgba(255,255,255,0.07)] hover:border-[#383C46] hover:bg-[#181B22]'
                 }`}
               >
                 <div className="flex items-center justify-between gap-2 mb-1.5 w-full">
@@ -586,14 +525,14 @@ export const AdminProjects: React.FC = () => {
                   }`}>
                     {proj.status}
                   </span>
-                  <span className="text-[10px] text-[var(--ams-secondary)] font-bold">
+                  <span className="text-[10px] text-[#64748B] font-bold">
                     {proj.progressPercent}%
                   </span>
                 </div>
                 <div className="font-bold text-xs text-white truncate w-full mb-0.5">
                   {proj.name}
                 </div>
-                <div className="text-[10px] text-[var(--ams-secondary)] truncate w-full">
+                <div className="text-[10px] text-[#8A94A6] truncate w-full">
                   {proj.clientCompany}
                 </div>
               </button>
@@ -604,22 +543,18 @@ export const AdminProjects: React.FC = () => {
 
       {/* 3. Selected Project Overview Hero Card */}
       {selectedProject && (
-        <div className="bg-[var(--ams-surface)] border border-[rgba(255,255,255,0.07)] rounded-[var(--ams-radius-card)] p-5 space-y-4">
+        <div className="bg-[#111318] border border-[rgba(255,255,255,0.07)] rounded-2xl p-5 space-y-4">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="space-y-1 min-w-0">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="px-2.5 py-0.5 rounded-full bg-[var(--ams-red)]/15 text-[var(--ams-red)] border border-[var(--ams-red)]/30 text-[10px] font-sans font-bold uppercase tracking-wider">
+                <span className="px-2.5 py-0.5 rounded-full bg-[#E50914]/15 text-[#FF1E27] border border-[#E50914]/30 text-[10px] font-mono font-bold uppercase tracking-wider">
                   {selectedProject.serviceCategory}
                 </span>
-                <span className="text-xs font-sans text-[var(--ams-secondary)]">
+                <span className="text-xs font-mono text-[#8A94A6]">
                   PIC: <strong className="text-white">{selectedProject.clientName}</strong> ({selectedProject.clientCompany})
                 </span>
-                <span className="text-xs font-sans text-[var(--ams-secondary)] flex items-center gap-1.5">
-                  <span>DRI:</span>
-                  <strong className="text-white">{selectedProject.teamLead}</strong>
-                </span>
               </div>
-              <h2 className="text-xl font-sans font-bold text-white tracking-tight">
+              <h2 className="text-xl font-display font-bold text-white tracking-tight">
                 {selectedProject.name}
               </h2>
             </div>
@@ -630,9 +565,9 @@ export const AdminProjects: React.FC = () => {
                   href={selectedProject.repositoryUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-3 py-1.5 rounded-[var(--ams-radius-control)] bg-[var(--ams-elevated)] hover:bg-[var(--ams-elevated)] border border-[rgba(255,255,255,0.07)] text-xs font-sans text-[var(--ams-secondary)] hover:text-white transition-colors flex items-center gap-1.5"
+                  className="px-3 py-1.5 rounded-xl bg-[#181B22] hover:bg-[#222630] border border-[rgba(255,255,255,0.07)] text-xs font-mono text-[#8A94A6] hover:text-white transition-colors flex items-center gap-1.5"
                 >
-                  <GitBranch size={13} className="text-[var(--ams-red)]" />
+                  <GitBranch size={13} className="text-[#FF1E27]" />
                   <span>Repo</span>
                 </a>
               )}
@@ -642,7 +577,7 @@ export const AdminProjects: React.FC = () => {
                   href={selectedProject.liveStagingUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-3 py-1.5 rounded-[var(--ams-radius-control)] bg-[var(--ams-elevated)] hover:bg-[var(--ams-elevated)] border border-[rgba(255,255,255,0.07)] text-xs font-sans text-emerald-400 hover:text-emerald-300 transition-colors flex items-center gap-1.5"
+                  className="px-3 py-1.5 rounded-xl bg-[#181B22] hover:bg-[#222630] border border-[rgba(255,255,255,0.07)] text-xs font-mono text-emerald-400 hover:text-emerald-300 transition-colors flex items-center gap-1.5"
                 >
                   <ExternalLink size={13} />
                   <span>Staging</span>
@@ -652,7 +587,7 @@ export const AdminProjects: React.FC = () => {
               {canManageProjects && (
                 <button
                   onClick={() => handleOpenEditProject(selectedProject)}
-                  className="p-2 rounded-[var(--ams-radius-control)] bg-[var(--ams-elevated)] hover:bg-[var(--ams-elevated)] text-[var(--ams-secondary)] hover:text-white border border-[rgba(255,255,255,0.07)] transition-colors"
+                  className="p-2 rounded-xl bg-[#181B22] hover:bg-[#222630] text-[#8A94A6] hover:text-white border border-[rgba(255,255,255,0.07)] transition-colors"
                   title="Edit Project Details"
                 >
                   <Edit3 size={14} />
@@ -662,7 +597,7 @@ export const AdminProjects: React.FC = () => {
               {canDeleteProjects && (
                 <button
                   onClick={() => handleDeleteProject(selectedProject.id, selectedProject.name)}
-                  className="p-2 rounded-[var(--ams-radius-control)] bg-[var(--ams-elevated)] hover:bg-red-950/40 text-[var(--ams-secondary)] hover:text-red-400 border border-[rgba(255,255,255,0.07)] hover:border-red-500/30 transition-colors"
+                  className="p-2 rounded-xl bg-[#181B22] hover:bg-red-950/40 text-[#8A94A6] hover:text-red-400 border border-[rgba(255,255,255,0.07)] hover:border-red-500/30 transition-colors"
                   title="Delete Project"
                 >
                   <Trash2 size={14} />
@@ -672,13 +607,13 @@ export const AdminProjects: React.FC = () => {
           </div>
 
           {/* Progress & Milestone Overview */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 pt-3 border-t border-[rgba(255,255,255,0.07)] text-xs font-sans">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 pt-3 border-t border-[rgba(255,255,255,0.07)] text-xs font-mono">
             <div>
-              <div className="text-[var(--ams-secondary)] mb-1 text-[11px]">Sprint Progress</div>
+              <div className="text-[#8A94A6] mb-1 text-[11px]">Sprint Progress</div>
               <div className="flex items-center gap-2">
-                <div className="flex-1 bg-[var(--ams-elevated)] h-2 rounded-full overflow-hidden border border-[rgba(255,255,255,0.07)]">
+                <div className="flex-1 bg-[#181B22] h-2 rounded-full overflow-hidden border border-[rgba(255,255,255,0.07)]">
                   <div
-                    className="bg-[var(--ams-red)] h-full rounded-full transition-all duration-500"
+                    className="bg-[#E50914] h-full rounded-full transition-all duration-500"
                     style={{ width: `${selectedProject.progressPercent}%` }}
                   />
                 </div>
@@ -687,29 +622,29 @@ export const AdminProjects: React.FC = () => {
             </div>
 
             <div>
-              <div className="text-[var(--ams-secondary)] mb-1 text-[11px]">{language === 'id' ? 'Total Nilai Kontrak' : 'Total Contract Budget'}</div>
+              <div className="text-[#8A94A6] mb-1 text-[11px]">{language === 'id' ? 'Total Nilai Kontrak' : 'Total Contract Budget'}</div>
               <div className="font-bold text-emerald-400 text-sm">
                 {formatAmount(selectedProject.budget, currency)}
               </div>
             </div>
 
             <div>
-              <div className="text-[var(--ams-secondary)] mb-1 text-[11px]">Timeline Target</div>
+              <div className="text-[#8A94A6] mb-1 text-[11px]">Timeline Target</div>
               <div className="text-white font-bold">
                 {selectedProject.startDate} → {selectedProject.targetEndDate}
               </div>
             </div>
 
             <div>
-              <div className="text-[var(--ams-secondary)] mb-1 text-[11px]">Tech Stack</div>
+              <div className="text-[#8A94A6] mb-1 text-[11px]">Tech Stack</div>
               <div className="flex flex-wrap gap-1">
                 {selectedProject.techStack.slice(0, 3).map((tech, i) => (
-                  <span key={i} className="text-[10px] px-1.5 py-0.5 rounded bg-[var(--ams-elevated)] border border-[rgba(255,255,255,0.07)] text-[#D0D4DC]">
+                  <span key={i} className="text-[10px] px-1.5 py-0.5 rounded bg-[#181B22] border border-[rgba(255,255,255,0.07)] text-[#D0D4DC]">
                     {tech}
                   </span>
                 ))}
                 {selectedProject.techStack.length > 3 && (
-                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-[var(--ams-elevated)] border border-[rgba(255,255,255,0.07)] text-[var(--ams-secondary)]">
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#181B22] border border-[rgba(255,255,255,0.07)] text-[#64748B]">
                     +{selectedProject.techStack.length - 3}
                   </span>
                 )}
@@ -720,7 +655,7 @@ export const AdminProjects: React.FC = () => {
           {/* Collapsible Milestones list */}
           {selectedProject.milestones && selectedProject.milestones.length > 0 && (
             <div className="pt-3 border-t border-[rgba(255,255,255,0.07)]">
-              <div className="text-[11px] font-sans text-[var(--ams-secondary)] uppercase tracking-wider mb-2 font-semibold flex items-center justify-between">
+              <div className="text-[11px] font-mono text-[#8A94A6] uppercase tracking-wider mb-2 font-semibold flex items-center justify-between">
                 <span>Milestones & Deliverables ({selectedProject.milestones.filter(m => m.completed).length}/{selectedProject.milestones.length})</span>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
@@ -728,22 +663,22 @@ export const AdminProjects: React.FC = () => {
                   <div
                     key={ms.id}
                     onClick={() => handleToggleMilestone(ms.id)}
-                    className={`p-2.5 rounded-[var(--ams-radius-control)] border text-xs font-sans flex items-start gap-2 cursor-pointer transition-all ${
+                    className={`p-2.5 rounded-xl border text-xs font-mono flex items-start gap-2 cursor-pointer transition-all ${
                       ms.completed
                         ? 'bg-emerald-950/20 border-emerald-500/30 text-emerald-300'
-                        : 'bg-[var(--ams-elevated)] border-[rgba(255,255,255,0.07)] text-[var(--ams-secondary)] hover:text-white'
+                        : 'bg-[#181B22] border-[rgba(255,255,255,0.07)] text-[#8A94A6] hover:text-white'
                     }`}
                   >
                     {ms.completed ? (
                       <CheckCircle2 size={15} className="text-emerald-400 shrink-0 mt-0.5" />
                     ) : (
-                      <Square size={15} className="text-[var(--ams-secondary)] shrink-0 mt-0.5" />
+                      <Square size={15} className="text-[#64748B] shrink-0 mt-0.5" />
                     )}
                     <div className="min-w-0">
                       <div className={`truncate font-semibold ${ms.completed ? 'line-through text-emerald-400/70' : 'text-white'}`}>
                         {ms.title}
                       </div>
-                      <div className="text-[10px] text-[var(--ams-secondary)] mt-0.5">Due {ms.dueDate}</div>
+                      <div className="text-[10px] text-[#64748B] mt-0.5">Due {ms.dueDate}</div>
                     </div>
                   </div>
                 ))}
@@ -758,11 +693,11 @@ export const AdminProjects: React.FC = () => {
         <div className="space-y-4">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-3 border-b border-[rgba(255,255,255,0.07)]">
             <div>
-              <h3 className="text-base font-sans font-bold text-white flex items-center gap-2">
-                <ListTodo className="text-[var(--ams-red)]" size={18} />
+              <h3 className="text-base font-display font-bold text-white flex items-center gap-2">
+                <ListTodo className="text-[#FF1E27]" size={18} />
                 <span>Task Execution Board</span>
               </h3>
-              <p className="text-xs text-[var(--ams-secondary)] font-sans mt-0.5">
+              <p className="text-xs text-[#8A94A6] font-mono mt-0.5">
                 {language === 'id' 
                   ? 'Drag kartu sprint antar kolom untuk update status. Klik kartu untuk melihat detail & checklist.'
                   : 'Drag cards smoothly between columns to update sprint status. Click any task to inspect details & subtasks.'}
@@ -772,25 +707,23 @@ export const AdminProjects: React.FC = () => {
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
               {/* Contextual Card Search */}
               <div className="relative min-w-[200px] sm:w-64">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--ams-secondary)]" size={14} />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8A94A6]" size={14} />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder={language === 'id' ? 'Cari tugas sprint...' : 'Filter sprint tasks...'}
-                  className="w-full pl-8 pr-3 py-2 bg-[var(--ams-elevated)] border border-[rgba(255,255,255,0.08)] rounded-[var(--ams-radius-control)] text-xs text-white focus:border-[var(--k-red-border)] placeholder:text-[var(--ams-secondary)] font-sans h-10 min-h-[40px]"
+                  className="w-full pl-8 pr-3 py-2 bg-[#181B22] border border-[rgba(255,255,255,0.08)] rounded-xl text-xs text-white focus:outline-none focus:border-[#E50914] placeholder:text-[#64748B] font-mono h-10 min-h-[40px]"
                 />
               </div>
 
-              {canManageKanbanTasks && (
-                <button
-                  onClick={() => setIsTaskModalOpen(true)}
-                className="h-10 px-4 rounded-[var(--ams-radius-control)] bg-[var(--ams-red)] hover:bg-[var(--ams-red)] text-white text-xs font-sans font-bold transition-all flex items-center justify-center gap-2 shadow-md shrink-0 min-h-[40px]"
+              <button
+                onClick={() => setIsTaskModalOpen(true)}
+                className="h-10 px-4 rounded-xl bg-[#E50914] hover:bg-[#FF1E27] text-white text-xs font-mono font-bold transition-all flex items-center justify-center gap-2 shadow-md shrink-0 min-h-[40px]"
               >
                 <Plus size={14} />
-                  <span>{t('admin.proj.addTask')}</span>
-                </button>
-              )}
+                <span>{t('admin.proj.addTask')}</span>
+              </button>
             </div>
           </div>
 
@@ -821,9 +754,9 @@ export const AdminProjects: React.FC = () => {
                   onDragOver={(e) => handleDragOverColumn(e, col.id)}
                   onDragLeave={handleDragLeaveColumn}
                   onDrop={(e) => handleDropOnColumn(e, col.id)}
-                  className={`w-[290px] sm:w-[320px] shrink-0 bg-[var(--ams-surface)] border rounded-[var(--ams-radius-card)] p-3.5 flex flex-col min-h-[440px] transition-all ${
+                  className={`w-[290px] sm:w-[320px] shrink-0 bg-[#111318] border rounded-2xl p-3.5 flex flex-col min-h-[440px] transition-all ${
                     isOver
-                      ? 'border-[var(--ams-red)] ring-2 ring-[var(--ams-red)]/30 bg-[var(--ams-red)]/5'
+                      ? 'border-[#E50914] ring-2 ring-[#E50914]/30 bg-[#E50914]/5'
                       : 'border-[rgba(255,255,255,0.07)]'
                   }`}
                 >
@@ -831,9 +764,9 @@ export const AdminProjects: React.FC = () => {
                   <div className="flex items-center justify-between pb-3 mb-3 border-b border-[rgba(255,255,255,0.07)] select-none">
                     <div className="flex items-center gap-2">
                       <div className={`w-2.5 h-2.5 rounded-full ${col.dotColor}`} />
-                      <span className="text-xs font-sans font-bold text-white uppercase">{col.label}</span>
+                      <span className="text-xs font-mono font-bold text-white uppercase">{col.label}</span>
                     </div>
-                    <span className="px-2 py-0.5 rounded-full bg-[var(--ams-elevated)] text-[var(--ams-secondary)] text-[10px] font-sans font-bold border border-[rgba(255,255,255,0.07)]">
+                    <span className="px-2 py-0.5 rounded-full bg-[#181B22] text-[#8A94A6] text-[10px] font-mono font-bold border border-[rgba(255,255,255,0.07)]">
                       {colTasks.length}
                     </span>
                   </div>
@@ -841,7 +774,7 @@ export const AdminProjects: React.FC = () => {
                   {/* Task Cards List */}
                   <div className="space-y-3 flex-1 overflow-y-auto max-h-[560px] pr-1 scrollbar-thin">
                     {colTasks.length === 0 ? (
-                      <div className="h-36 flex flex-col items-center justify-center text-center text-[11px] font-sans text-[var(--ams-secondary)] border border-dashed border-[rgba(255,255,255,0.07)] rounded-[var(--ams-radius-control)] p-4 select-none">
+                      <div className="h-36 flex flex-col items-center justify-center text-center text-[11px] font-mono text-[#64748B] border border-dashed border-[rgba(255,255,255,0.07)] rounded-xl p-4 select-none">
                         <span>Drop tasks here</span>
                       </div>
                     ) : (
@@ -853,42 +786,40 @@ export const AdminProjects: React.FC = () => {
                         return (
                           <div
                             key={task.id}
-                            draggable={canManageKanbanTasks}
-                            onDragStart={(e) => { if (canManageKanbanTasks) handleDragStart(e, task.id); }}
+                            draggable={true}
+                            onDragStart={(e) => handleDragStart(e, task.id)}
                             onClick={() => setActiveTaskDrawer(task)}
-                            className={`draggable-card task-card bg-[var(--ams-elevated)] border hover:border-[var(--ams-red)]/60 p-3.5 rounded-[var(--ams-radius-control)] space-y-2.5 shadow-md transition-all cursor-pointer group relative select-none ${
-                              isDragging ? 'opacity-40 scale-95 border-[var(--ams-red)] border-dashed' : 'border-[rgba(255,255,255,0.07)]'
+                            className={`draggable-card task-card bg-[#181B22] border hover:border-[#E50914]/60 p-3.5 rounded-xl space-y-2.5 shadow-md transition-all cursor-pointer group relative select-none ${
+                              isDragging ? 'opacity-40 scale-95 border-[#E50914] border-dashed' : 'border-[rgba(255,255,255,0.07)]'
                             }`}
                           >
                             {/* Drag Handle & Priority */}
                             <div className="flex items-center justify-between gap-2">
-                              <div className="flex items-center gap-1.5 text-[var(--ams-secondary)] group-hover:text-[var(--ams-secondary)] transition-colors cursor-grab" data-drag-handle>
+                              <div className="flex items-center gap-1.5 text-[#64748B] group-hover:text-[#8A94A6] transition-colors cursor-grab" data-drag-handle>
                                 <GripVertical size={14} />
                                 {getPriorityBadge(task.priority)}
                               </div>
 
-                              {canManageKanbanTasks && (
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleDeleteTask(task.id);
-                                  }}
-                                className="text-[var(--ams-secondary)] hover:text-rose-400 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-rose-950/30"
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleDeleteTask(task.id);
+                                }}
+                                className="text-[#64748B] hover:text-rose-400 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-rose-950/30"
                                 title="Delete task"
                               >
-                                  <Trash2 size={12} />
-                                </button>
-                              )}
+                                <Trash2 size={12} />
+                              </button>
                             </div>
 
                             {/* Task Title */}
-                            <h4 className="font-bold text-xs text-white leading-snug group-hover:text-[var(--ams-red)] transition-colors">
+                            <h4 className="font-bold text-xs text-white leading-snug group-hover:text-[#FF1E27] transition-colors">
                               {task.title}
                             </h4>
 
                             {/* Description Preview */}
                             {task.description && (
-                              <p className="text-[11px] text-[var(--ams-secondary)] leading-relaxed line-clamp-2">
+                              <p className="text-[11px] text-[#8A94A6] leading-relaxed line-clamp-2">
                                 {task.description}
                               </p>
                             )}
@@ -896,14 +827,14 @@ export const AdminProjects: React.FC = () => {
                             {/* Subtasks Progress Bar & Checklist */}
                             {totalSubs > 0 && (
                               <div className="space-y-1.5 pt-1.5 border-t border-[rgba(255,255,255,0.07)]/80">
-                                <div className="flex items-center justify-between text-[10px] font-sans text-[var(--ams-secondary)]">
+                                <div className="flex items-center justify-between text-[10px] font-mono text-[#8A94A6]">
                                   <span className="flex items-center gap-1">
-                                    <CheckSquare size={11} className="text-[var(--ams-red)]" />
+                                    <CheckSquare size={11} className="text-[#FF1E27]" />
                                     <span>Subtasks</span>
                                   </span>
                                   <span className="font-bold text-white">{completedSubs}/{totalSubs}</span>
                                 </div>
-                                <div className="w-full bg-[var(--ams-bg)] h-1.5 rounded-full overflow-hidden border border-[rgba(255,255,255,0.07)]">
+                                <div className="w-full bg-[#090A0F] h-1.5 rounded-full overflow-hidden border border-[rgba(255,255,255,0.07)]">
                                   <div
                                     className="bg-emerald-400 h-full rounded-full transition-all duration-300"
                                     style={{ width: `${(completedSubs / totalSubs) * 100}%` }}
@@ -913,15 +844,15 @@ export const AdminProjects: React.FC = () => {
                             )}
 
                             {/* Footer: Assignee & Due Date Notice */}
-                            <div className="flex items-center justify-between pt-2 border-t border-[rgba(255,255,255,0.07)] text-[10px] font-sans">
-                              <span className="text-[var(--ams-secondary)] flex items-center gap-1.5 truncate max-w-[140px]">
+                            <div className="flex items-center justify-between pt-2 border-t border-[rgba(255,255,255,0.07)] text-[10px] font-mono">
+                              <span className="text-[#8A94A6] flex items-center gap-1.5 truncate max-w-[140px]">
                                 <div className="w-4 h-4 rounded-full bg-[#20242D] border border-white/10 flex items-center justify-center text-[9px] text-white font-bold">
                                   {task.assignedTo.charAt(0)}
                                 </div>
                                 <span className="truncate">{task.assignedTo}</span>
                               </span>
 
-                              <div className="text-[10px] font-sans">
+                              <div className="text-[10px] font-mono">
                                 {formatDueNotice(task.dueDate, task.status === 'done')}
                               </div>
                             </div>
@@ -947,16 +878,16 @@ export const AdminProjects: React.FC = () => {
             onClick={() => setActiveTaskDrawer(null)}
           />
 
-          <div className="relative ml-auto w-full sm:max-w-lg bg-[var(--ams-surface)] border-l-0 sm:border-l border-[rgba(255,255,255,0.07)] h-full flex flex-col justify-between z-10 shadow-2xl overflow-hidden animate-in slide-in-from-right duration-200 font-sans text-xs">
+          <div className="relative ml-auto w-full sm:max-w-lg bg-[#111318] border-l-0 sm:border-l border-[rgba(255,255,255,0.07)] h-full flex flex-col justify-between z-10 shadow-2xl overflow-hidden animate-in slide-in-from-right duration-200 font-mono text-xs">
             {/* Sticky Drawer Header */}
-            <div className="sticky top-0 z-20 bg-[var(--ams-surface)]/95 backdrop-blur-md px-5 sm:px-6 py-4 border-b border-[rgba(255,255,255,0.07)] flex items-center justify-between shrink-0">
+            <div className="sticky top-0 z-20 bg-[#111318]/95 backdrop-blur-md px-5 sm:px-6 py-4 border-b border-[rgba(255,255,255,0.07)] flex items-center justify-between shrink-0">
               <div className="flex items-center gap-2">
-                <ListTodo className="text-[var(--ams-red)]" size={18} />
-                <span className="font-sans font-bold text-white text-base">Task Details</span>
+                <ListTodo className="text-[#FF1E27]" size={18} />
+                <span className="font-display font-bold text-white text-base">Task Details</span>
               </div>
               <button
                 onClick={() => setActiveTaskDrawer(null)}
-                className="w-8 h-8 rounded-[var(--ams-radius-control)] bg-[var(--ams-elevated)] text-[var(--ams-secondary)] hover:text-white border border-[rgba(255,255,255,0.07)] flex items-center justify-center transition-colors shrink-0 ml-3"
+                className="w-8 h-8 rounded-lg bg-[#181B22] text-[#8A94A6] hover:text-white border border-[rgba(255,255,255,0.07)] flex items-center justify-center transition-colors shrink-0 ml-3"
               >
                 <X size={16} />
               </button>
@@ -969,36 +900,30 @@ export const AdminProjects: React.FC = () => {
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   {getPriorityBadge(activeTaskDrawer.priority)}
-                  <span className="text-[11px] text-[var(--ams-secondary)]">
+                  <span className="text-[11px] text-[#64748B]">
                     Created {new Date(activeTaskDrawer.createdAt).toLocaleDateString()}
                   </span>
                 </div>
-                <h3 className="text-lg font-bold font-sans text-white">
+                <h3 className="text-lg font-bold font-display text-white">
                   {activeTaskDrawer.title}
                 </h3>
               </div>
 
               {/* Status Stage Switcher */}
               <div className="space-y-1.5">
-                <label className="text-[11px] text-[var(--ams-secondary)] uppercase tracking-wider font-semibold">Sprint Stage</label>
+                <label className="text-[11px] text-[#8A94A6] uppercase tracking-wider font-semibold">Sprint Stage</label>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
                   {TASK_COLUMNS.map((col) => (
                     <button
                       key={col.id}
-                      disabled={!canManageKanbanTasks}
-                      onClick={async () => {
-                        if (!canManageKanbanTasks) return;
-                        try {
-                          await updateTaskStatus(selectedProject.id, activeTaskDrawer.id, col.id);
-                          showToast(`Moved to ${col.label}`);
-                        } catch (error: any) {
-                          showToast(error?.message || (language === 'id' ? 'Gagal memindahkan task.' : 'Failed to move task.'));
-                        }
+                      onClick={() => {
+                        updateTaskStatus(selectedProject.id, activeTaskDrawer.id, col.id);
+                        showToast(`Moved to ${col.label}`);
                       }}
-                      className={`px-2.5 py-1.5 rounded-[var(--ams-radius-control)] border text-[11px] transition-all font-bold ${
+                      className={`px-2.5 py-1.5 rounded-xl border text-[11px] transition-all font-bold ${
                         activeTaskDrawer.status === col.id
-                          ? 'bg-[var(--ams-red)] text-white border-[var(--ams-red)] shadow-sm'
-                          : 'bg-[var(--ams-elevated)] text-[var(--ams-secondary)] border-[rgba(255,255,255,0.07)] hover:text-white'
+                          ? 'bg-[#E50914] text-white border-[#E50914] shadow-sm'
+                          : 'bg-[#181B22] text-[#8A94A6] border-[rgba(255,255,255,0.07)] hover:text-white'
                       }`}
                     >
                       {col.label}
@@ -1008,16 +933,16 @@ export const AdminProjects: React.FC = () => {
               </div>
 
               {/* Assignee & Due Date Grid */}
-              <div className="grid grid-cols-2 gap-3 p-3 rounded-[var(--ams-radius-control)] bg-[var(--ams-elevated)] border border-[rgba(255,255,255,0.07)]">
+              <div className="grid grid-cols-2 gap-3 p-3 rounded-xl bg-[#181B22] border border-[rgba(255,255,255,0.07)]">
                 <div>
-                  <div className="text-[10px] text-[var(--ams-secondary)] uppercase font-bold mb-1">Assignee</div>
+                  <div className="text-[10px] text-[#64748B] uppercase font-bold mb-1">Assignee</div>
                   <div className="text-white font-bold flex items-center gap-1.5">
-                    <User size={13} className="text-[var(--ams-red)]" />
+                    <User size={13} className="text-[#FF1E27]" />
                     <span>{activeTaskDrawer.assignedTo}</span>
                   </div>
                 </div>
                 <div>
-                  <div className="text-[10px] text-[var(--ams-secondary)] uppercase font-bold mb-1">Due Date</div>
+                  <div className="text-[10px] text-[#64748B] uppercase font-bold mb-1">Due Date</div>
                   <div className="text-white font-bold flex items-center gap-1.5">
                     <Calendar size={13} className="text-emerald-400" />
                     <span>{activeTaskDrawer.dueDate}</span>
@@ -1027,8 +952,8 @@ export const AdminProjects: React.FC = () => {
 
               {/* Description */}
               <div className="space-y-1.5">
-                <label className="text-[11px] text-[var(--ams-secondary)] uppercase tracking-wider font-semibold">Description & Acceptance Criteria</label>
-                <div className="p-3.5 rounded-[var(--ams-radius-control)] bg-[var(--ams-elevated)] border border-[rgba(255,255,255,0.07)] text-zinc-300 text-xs leading-relaxed">
+                <label className="text-[11px] text-[#8A94A6] uppercase tracking-wider font-semibold">Description & Acceptance Criteria</label>
+                <div className="p-3.5 rounded-xl bg-[#181B22] border border-[rgba(255,255,255,0.07)] text-zinc-300 text-xs leading-relaxed">
                   {activeTaskDrawer.description || 'No detailed description provided.'}
                 </div>
               </div>
@@ -1036,8 +961,8 @@ export const AdminProjects: React.FC = () => {
               {/* Subtasks Checklist Manager */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <label className="text-[11px] text-[var(--ams-secondary)] uppercase tracking-wider font-semibold flex items-center gap-1.5">
-                    <CheckSquare size={13} className="text-[var(--ams-red)]" />
+                  <label className="text-[11px] text-[#8A94A6] uppercase tracking-wider font-semibold flex items-center gap-1.5">
+                    <CheckSquare size={13} className="text-[#FF1E27]" />
                     <span>Checklist ({activeTaskDrawer.subtasks?.filter(s => s.completed).length || 0}/{activeTaskDrawer.subtasks?.length || 0})</span>
                   </label>
                 </div>
@@ -1047,30 +972,27 @@ export const AdminProjects: React.FC = () => {
                   {activeTaskDrawer.subtasks?.map((st) => (
                     <div
                       key={st.id}
-                      className="flex items-center justify-between p-2.5 rounded-[var(--ams-radius-control)] bg-[var(--ams-elevated)] border border-[rgba(255,255,255,0.07)] hover:border-[#383C46] transition-colors"
+                      className="flex items-center justify-between p-2.5 rounded-xl bg-[#181B22] border border-[rgba(255,255,255,0.07)] hover:border-[#383C46] transition-colors"
                     >
                       <button
-                        disabled={!canManageKanbanTasks}
-                      onClick={() => handleToggleSubtask(activeTaskDrawer.id, st.id)}
+                        onClick={() => handleToggleSubtask(activeTaskDrawer.id, st.id)}
                         className="flex items-center gap-2.5 text-left min-w-0 flex-1 cursor-pointer"
                       >
                         {st.completed ? (
                           <CheckCircle2 size={16} className="text-emerald-400 shrink-0" />
                         ) : (
-                          <Square size={16} className="text-[var(--ams-secondary)] shrink-0" />
+                          <Square size={16} className="text-[#64748B] shrink-0" />
                         )}
-                        <span className={`text-xs ${st.completed ? 'line-through text-[var(--ams-secondary)]' : 'text-white'}`}>
+                        <span className={`text-xs ${st.completed ? 'line-through text-[#64748B]' : 'text-white'}`}>
                           {st.title}
                         </span>
                       </button>
-                      {canManageKanbanTasks && (
-                        <button
-                          onClick={() => handleDeleteSubtaskInDrawer(st.id)}
-                          className="text-[var(--ams-secondary)] hover:text-rose-400 p-1"
+                      <button
+                        onClick={() => handleDeleteSubtaskInDrawer(st.id)}
+                        className="text-[#64748B] hover:text-rose-400 p-1"
                       >
-                          <Trash2 size={12} />
-                        </button>
-                      )}
+                        <Trash2 size={12} />
+                      </button>
                     </div>
                   ))}
 
@@ -1079,15 +1001,14 @@ export const AdminProjects: React.FC = () => {
                     <input
                       type="text"
                       value={newSubtaskTitle}
-                      disabled={!canManageKanbanTasks}
                       onChange={(e) => setNewSubtaskTitle(e.target.value)}
                       placeholder="Add subtask item and press enter..."
-                      className="flex-1 px-3 py-2 bg-[var(--ams-bg)] border border-[rgba(255,255,255,0.07)] rounded-[var(--ams-radius-control)] text-xs text-white focus:border-[var(--k-red-border)] font-sans"
+                      className="flex-1 px-3 py-2 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-xs text-white focus:outline-none focus:border-[#E50914] font-mono"
                     />
                     <button
                       type="submit"
-                      disabled={!canManageKanbanTasks || !newSubtaskTitle.trim()}
-                      className="px-3 py-2 rounded-[var(--ams-radius-control)] bg-[var(--ams-red)] text-white text-xs font-bold disabled:opacity-50"
+                      disabled={!newSubtaskTitle.trim()}
+                      className="px-3 py-2 rounded-xl bg-[#E50914] text-white text-xs font-bold disabled:opacity-50"
                     >
                       <Plus size={14} />
                     </button>
@@ -1097,20 +1018,18 @@ export const AdminProjects: React.FC = () => {
             </div>
 
             {/* Sticky Drawer Footer */}
-            <div className="sticky bottom-0 z-20 bg-[var(--ams-surface)]/95 backdrop-blur-md px-5 sm:px-6 py-3.5 border-t border-[rgba(255,255,255,0.07)] flex items-center justify-between shrink-0">
-              {canManageKanbanTasks && (
-                <button
-                  onClick={() => handleDeleteTask(activeTaskDrawer.id)}
-                  className="h-10 px-3 min-h-[40px] rounded-[var(--ams-radius-control)] bg-red-950/40 text-red-300 border border-red-500/30 hover:bg-red-950/60 transition-colors flex items-center gap-1.5"
+            <div className="sticky bottom-0 z-20 bg-[#111318]/95 backdrop-blur-md px-5 sm:px-6 py-3.5 border-t border-[rgba(255,255,255,0.07)] flex items-center justify-between shrink-0">
+              <button
+                onClick={() => handleDeleteTask(activeTaskDrawer.id)}
+                className="h-10 px-3 min-h-[40px] rounded-xl bg-red-950/40 text-red-300 border border-red-500/30 hover:bg-red-950/60 transition-colors flex items-center gap-1.5"
               >
                 <Trash2 size={13} />
-                  <span>Delete Task</span>
-                </button>
-              )}
+                <span>Delete Task</span>
+              </button>
 
               <button
                 onClick={() => setActiveTaskDrawer(null)}
-                className="h-10 px-4 min-h-[40px] rounded-[var(--ams-radius-control)] bg-[var(--ams-elevated)] text-white border border-[rgba(255,255,255,0.07)] hover:bg-[#20242D] transition-colors"
+                className="h-10 px-4 min-h-[40px] rounded-xl bg-[#181B22] text-white border border-[rgba(255,255,255,0.07)] hover:bg-[#20242D] transition-colors"
               >
                 Close
               </button>
@@ -1124,16 +1043,16 @@ export const AdminProjects: React.FC = () => {
       {/* ------------------------------------------------------------- */}
       {isProjectModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-0 sm:p-4 overflow-y-auto">
-          <div className="bg-[var(--ams-elevated)] border-0 sm:border sm:border-[rgba(255,255,255,0.07)] rounded-none sm:rounded-[var(--ams-radius-card)] w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-2xl shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-150">
+          <div className="bg-[#181B22] border-0 sm:border sm:border-[rgba(255,255,255,0.07)] rounded-none sm:rounded-2xl w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-2xl shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-150">
             {/* Sticky Header */}
-            <div className="sticky top-0 z-20 bg-[var(--ams-elevated)]/95 backdrop-blur-md px-5 sm:px-6 py-4 border-b border-[rgba(255,255,255,0.07)] flex items-center justify-between shrink-0">
-              <h3 className="font-sans font-bold text-white text-base sm:text-lg flex items-center gap-2">
-                <Layers className="text-[var(--ams-red)]" size={20} />
+            <div className="sticky top-0 z-20 bg-[#181B22]/95 backdrop-blur-md px-5 sm:px-6 py-4 border-b border-[rgba(255,255,255,0.07)] flex items-center justify-between shrink-0">
+              <h3 className="font-display font-bold text-white text-base sm:text-lg flex items-center gap-2">
+                <Layers className="text-[#FF1E27]" size={20} />
                 <span>{editingProject ? 'Edit Project' : 'Create New Agency Project'}</span>
               </h3>
               <button 
                 onClick={() => setIsProjectModalOpen(false)} 
-                className="w-8 h-8 rounded-[var(--ams-radius-control)] bg-[var(--ams-bg)] text-[var(--ams-secondary)] hover:text-white border border-[rgba(255,255,255,0.07)] flex items-center justify-center transition-colors shrink-0 ml-3"
+                className="w-8 h-8 rounded-lg bg-[#090A0F] text-[#8A94A6] hover:text-white border border-[rgba(255,255,255,0.07)] flex items-center justify-center transition-colors shrink-0 ml-3"
               >
                 <X size={16} />
               </button>
@@ -1141,71 +1060,50 @@ export const AdminProjects: React.FC = () => {
 
             <form onSubmit={handleSaveProject} className="flex-1 flex flex-col overflow-hidden">
               {/* Scrollable Body */}
-              <div className="p-5 sm:p-6 overflow-y-auto flex-1 space-y-4 text-xs font-sans custom-scrollbar">
+              <div className="p-5 sm:p-6 overflow-y-auto flex-1 space-y-4 text-xs font-mono custom-scrollbar">
                 <div>
-                  <label className="block text-[var(--ams-secondary)] mb-1 font-semibold">Project Name *</label>
+                  <label className="block text-[#8A94A6] mb-1 font-semibold">Project Name *</label>
                   <input
                     type="text"
                     value={projName}
                     onChange={(e) => setProjName(e.target.value)}
                     required
                     placeholder="e.g. Lumina Luxury Real Estate Headless Web Platform"
-                    className="w-full px-3.5 py-2.5 bg-[var(--ams-bg)] border border-[rgba(255,255,255,0.07)] rounded-[var(--ams-radius-control)] text-white focus:border-[var(--k-red-border)]"
+                    className="w-full px-3.5 py-2.5 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
                   />
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-[var(--ams-secondary)] mb-1 font-semibold">Client PIC Name</label>
+                    <label className="block text-[#8A94A6] mb-1 font-semibold">Client PIC Name</label>
                     <input
                       type="text"
                       value={clientName}
                       onChange={(e) => setClientName(e.target.value)}
                       placeholder="e.g. Marcus Thorne"
-                      className="w-full px-3.5 py-2.5 bg-[var(--ams-bg)] border border-[rgba(255,255,255,0.07)] rounded-[var(--ams-radius-control)] text-white focus:border-[var(--k-red-border)]"
+                      className="w-full px-3.5 py-2.5 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
                     />
                   </div>
                   <div>
-                    <label className="block text-[var(--ams-secondary)] mb-1 font-semibold">Client Company *</label>
+                    <label className="block text-[#8A94A6] mb-1 font-semibold">Client Company *</label>
                     <input
                       type="text"
                       value={clientCompany}
                       onChange={(e) => setClientCompany(e.target.value)}
                       required
                       placeholder="e.g. Lumina Real Estate Global"
-                      className="w-full px-3.5 py-2.5 bg-[var(--ams-bg)] border border-[rgba(255,255,255,0.07)] rounded-[var(--ams-radius-control)] text-white focus:border-[var(--k-red-border)]"
+                      className="w-full px-3.5 py-2.5 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
                     />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-[var(--ams-secondary)] mb-1 font-semibold">{language === 'id' ? 'DRI / Penanggung Jawab Utama *' : 'DRI / Directly Responsible Individual *'}</label>
-                    <input
-                      type="text"
-                      value={driName}
-                      onChange={(e) => setDriName(e.target.value)}
-                      required
-                      placeholder={language === 'id' ? 'Contoh: Principal Tech Lead' : 'e.g. Principal Tech Lead'}
-                      className="w-full px-3.5 py-2.5 bg-[var(--ams-bg)] border border-[rgba(255,255,255,0.07)] rounded-[var(--ams-radius-control)] text-white focus:border-[var(--k-red-border)]"
-                    />
-                    <p className="mt-1 text-[10px] text-[var(--ams-secondary)]">{language === 'id' ? 'Satu orang memegang akuntabilitas delivery proyek.' : 'One person owns delivery accountability for the project.'}</p>
-                  </div>
-                  <div className="flex items-end">
-                    <div className="w-full p-3 rounded-[var(--ams-radius-control)] bg-[var(--ams-bg)] border border-[rgba(255,255,255,0.07)] text-[var(--ams-secondary)]">
-                      <div className="text-[10px] uppercase tracking-wider font-bold">{language === 'id' ? 'Prinsip DRI' : 'DRI Principle'}</div>
-                      <div className="mt-1 text-[11px] leading-relaxed">{language === 'id' ? 'Keputusan dan follow-up memiliki satu owner yang jelas.' : 'Decisions and follow-up have one clearly accountable owner.'}</div>
-                    </div>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div>
-                    <label className="block text-[var(--ams-secondary)] mb-1 font-semibold">Service Category</label>
+                    <label className="block text-[#8A94A6] mb-1 font-semibold">Service Category</label>
                     <select
                       value={serviceCategory}
                       onChange={(e) => setServiceCategory(e.target.value)}
-                      className="w-full px-3.5 py-2.5 bg-[var(--ams-bg)] border border-[rgba(255,255,255,0.07)] rounded-[var(--ams-radius-control)] text-white focus:border-[var(--k-red-border)]"
+                      className="w-full px-3.5 py-2.5 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
                     >
                       <option value="Web Development">Web Development</option>
                       <option value="Mobile App">Mobile App</option>
@@ -1216,21 +1114,21 @@ export const AdminProjects: React.FC = () => {
                   </div>
 
                   <div>
-                    <label className="block text-[var(--ams-secondary)] mb-1 font-semibold">Budget (IDR)</label>
+                    <label className="block text-[#8A94A6] mb-1 font-semibold">Budget (IDR)</label>
                     <input
                       type="number"
                       value={budget}
                       onChange={(e) => setBudget(Number(e.target.value))}
-                      className="w-full px-3.5 py-2.5 bg-[var(--ams-bg)] border border-[rgba(255,255,255,0.07)] rounded-[var(--ams-radius-control)] text-white focus:border-[var(--k-red-border)]"
+                      className="w-full px-3.5 py-2.5 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-[var(--ams-secondary)] mb-1 font-semibold">Status</label>
+                    <label className="block text-[#8A94A6] mb-1 font-semibold">Status</label>
                     <select
                       value={projStatus}
                       onChange={(e) => setProjStatus(e.target.value as ProjectStatus)}
-                      className="w-full px-3.5 py-2.5 bg-[var(--ams-bg)] border border-[rgba(255,255,255,0.07)] rounded-[var(--ams-radius-control)] text-white focus:border-[var(--k-red-border)]"
+                      className="w-full px-3.5 py-2.5 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
                     >
                       <option value="planning">Planning</option>
                       <option value="in_progress">In Progress</option>
@@ -1243,72 +1141,72 @@ export const AdminProjects: React.FC = () => {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-[var(--ams-secondary)] mb-1 font-semibold">Start Date</label>
+                    <label className="block text-[#8A94A6] mb-1 font-semibold">Start Date</label>
                     <input
                       type="date"
                       value={startDate}
                       onChange={(e) => setStartDate(e.target.value)}
-                      className="w-full px-3.5 py-2.5 bg-[var(--ams-bg)] border border-[rgba(255,255,255,0.07)] rounded-[var(--ams-radius-control)] text-white focus:border-[var(--k-red-border)]"
+                      className="w-full px-3.5 py-2.5 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
                     />
                   </div>
                   <div>
-                    <label className="block text-[var(--ams-secondary)] mb-1 font-semibold">Target End Date</label>
+                    <label className="block text-[#8A94A6] mb-1 font-semibold">Target End Date</label>
                     <input
                       type="date"
                       value={targetEndDate}
                       onChange={(e) => setTargetEndDate(e.target.value)}
-                      className="w-full px-3.5 py-2.5 bg-[var(--ams-bg)] border border-[rgba(255,255,255,0.07)] rounded-[var(--ams-radius-control)] text-white focus:border-[var(--k-red-border)]"
+                      className="w-full px-3.5 py-2.5 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-[var(--ams-secondary)] mb-1 font-semibold">Tech Stack (comma separated)</label>
+                  <label className="block text-[#8A94A6] mb-1 font-semibold">Tech Stack (comma separated)</label>
                   <input
                     type="text"
                     value={techStackInput}
                     onChange={(e) => setTechStackInput(e.target.value)}
                     placeholder="e.g. Next.js 14, TypeScript, Tailwind CSS, PostgreSQL"
-                    className="w-full px-3.5 py-2.5 bg-[var(--ams-bg)] border border-[rgba(255,255,255,0.07)] rounded-[var(--ams-radius-control)] text-white focus:border-[var(--k-red-border)]"
+                    className="w-full px-3.5 py-2.5 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
                   />
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-[var(--ams-secondary)] mb-1 font-semibold">Repository URL</label>
+                    <label className="block text-[#8A94A6] mb-1 font-semibold">Repository URL</label>
                     <input
                       type="url"
                       value={repoUrl}
                       onChange={(e) => setRepoUrl(e.target.value)}
                       placeholder="https://github.com/kapitech-agency/..."
-                      className="w-full px-3.5 py-2.5 bg-[var(--ams-bg)] border border-[rgba(255,255,255,0.07)] rounded-[var(--ams-radius-control)] text-white focus:border-[var(--k-red-border)]"
+                      className="w-full px-3.5 py-2.5 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
                     />
                   </div>
                   <div>
-                    <label className="block text-[var(--ams-secondary)] mb-1 font-semibold">Live Staging URL</label>
+                    <label className="block text-[#8A94A6] mb-1 font-semibold">Live Staging URL</label>
                     <input
                       type="url"
                       value={stagingUrl}
                       onChange={(e) => setStagingUrl(e.target.value)}
                       placeholder="https://staging.app.kapitech.id"
-                      className="w-full px-3.5 py-2.5 bg-[var(--ams-bg)] border border-[rgba(255,255,255,0.07)] rounded-[var(--ams-radius-control)] text-white focus:border-[var(--k-red-border)]"
+                      className="w-full px-3.5 py-2.5 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
                     />
                   </div>
                 </div>
               </div>
 
               {/* Sticky Footer */}
-              <div className="sticky bottom-0 z-20 bg-[var(--ams-elevated)]/95 backdrop-blur-md px-5 sm:px-6 py-3.5 border-t border-[rgba(255,255,255,0.07)] flex items-center justify-end gap-2.5 shrink-0">
+              <div className="sticky bottom-0 z-20 bg-[#181B22]/95 backdrop-blur-md px-5 sm:px-6 py-3.5 border-t border-[rgba(255,255,255,0.07)] flex items-center justify-end gap-2.5 shrink-0">
                 <button
                   type="button"
                   onClick={() => setIsProjectModalOpen(false)}
-                  className="h-10 px-4 min-h-[40px] rounded-[var(--ams-radius-control)] bg-[var(--ams-bg)] text-[var(--ams-secondary)] hover:text-white border border-[rgba(255,255,255,0.07)] text-xs font-sans font-medium transition-colors"
+                  className="h-10 px-4 min-h-[40px] rounded-xl bg-[#090A0F] text-[#8A94A6] hover:text-white border border-[rgba(255,255,255,0.07)] text-xs font-mono font-medium transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="h-10 px-6 min-h-[40px] rounded-[var(--ams-radius-control)] bg-[var(--ams-red)] text-white font-sans font-bold hover:bg-[var(--ams-red)] transition-all shadow-md shadow-[var(--ams-red)]/20"
+                  className="h-10 px-6 min-h-[40px] rounded-xl bg-[#E50914] text-white font-mono font-bold hover:bg-[#FF1E27] transition-all shadow-md shadow-[#E50914]/20"
                 >
                   Save Project
                 </button>
@@ -1323,16 +1221,16 @@ export const AdminProjects: React.FC = () => {
       {/* ------------------------------------------------------------- */}
       {isTaskModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-0 sm:p-4 overflow-y-auto">
-          <div className="bg-[var(--ams-elevated)] border-0 sm:border sm:border-[rgba(255,255,255,0.07)] rounded-none sm:rounded-[var(--ams-radius-card)] w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-lg shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-150">
+          <div className="bg-[#181B22] border-0 sm:border sm:border-[rgba(255,255,255,0.07)] rounded-none sm:rounded-2xl w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-lg shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-150">
             {/* Sticky Header */}
-            <div className="sticky top-0 z-20 bg-[var(--ams-elevated)]/95 backdrop-blur-md px-5 sm:px-6 py-4 border-b border-[rgba(255,255,255,0.07)] flex items-center justify-between shrink-0">
-              <h3 className="font-sans font-bold text-white text-base flex items-center gap-2">
-                <ListTodo className="text-[var(--ams-red)]" size={18} />
+            <div className="sticky top-0 z-20 bg-[#181B22]/95 backdrop-blur-md px-5 sm:px-6 py-4 border-b border-[rgba(255,255,255,0.07)] flex items-center justify-between shrink-0">
+              <h3 className="font-display font-bold text-white text-base flex items-center gap-2">
+                <ListTodo className="text-[#FF1E27]" size={18} />
                 <span>Add Task to Sprint</span>
               </h3>
               <button 
                 onClick={() => setIsTaskModalOpen(false)} 
-                className="w-8 h-8 rounded-[var(--ams-radius-control)] bg-[var(--ams-bg)] text-[var(--ams-secondary)] hover:text-white border border-[rgba(255,255,255,0.07)] flex items-center justify-center transition-colors shrink-0 ml-3"
+                className="w-8 h-8 rounded-lg bg-[#090A0F] text-[#8A94A6] hover:text-white border border-[rgba(255,255,255,0.07)] flex items-center justify-center transition-colors shrink-0 ml-3"
               >
                 <X size={16} />
               </button>
@@ -1340,37 +1238,37 @@ export const AdminProjects: React.FC = () => {
 
             <form onSubmit={handleAddTask} className="flex-1 flex flex-col overflow-hidden">
               {/* Scrollable Body */}
-              <div className="p-5 sm:p-6 overflow-y-auto flex-1 space-y-4 text-xs font-sans custom-scrollbar">
+              <div className="p-5 sm:p-6 overflow-y-auto flex-1 space-y-4 text-xs font-mono custom-scrollbar">
                 <div>
-                  <label className="block text-[var(--ams-secondary)] mb-1 font-semibold">Task Title *</label>
+                  <label className="block text-[#8A94A6] mb-1 font-semibold">Task Title *</label>
                   <input
                     type="text"
                     required
                     value={taskTitle}
                     onChange={(e) => setTaskTitle(e.target.value)}
                     placeholder="e.g. Implement Mapbox Vector Tile Cluster Loader"
-                    className="w-full px-3.5 py-2.5 bg-[var(--ams-bg)] border border-[rgba(255,255,255,0.07)] rounded-[var(--ams-radius-control)] text-white focus:border-[var(--k-red-border)]"
+                    className="w-full px-3.5 py-2.5 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[var(--ams-secondary)] mb-1 font-semibold">Description / Scope</label>
+                  <label className="block text-[#8A94A6] mb-1 font-semibold">Description / Scope</label>
                   <textarea
                     rows={3}
                     value={taskDesc}
                     onChange={(e) => setTaskDesc(e.target.value)}
                     placeholder="Acceptance criteria and technical notes..."
-                    className="w-full px-3.5 py-2 bg-[var(--ams-bg)] border border-[rgba(255,255,255,0.07)] rounded-[var(--ams-radius-control)] text-white focus:border-[var(--k-red-border)] font-sans"
+                    className="w-full px-3.5 py-2 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914] font-sans"
                   />
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-[var(--ams-secondary)] mb-1 font-semibold">Priority</label>
+                    <label className="block text-[#8A94A6] mb-1 font-semibold">Priority</label>
                     <select
                       value={taskPriority}
                       onChange={(e) => setTaskPriority(e.target.value as TaskPriority)}
-                      className="w-full px-3.5 py-2.5 bg-[var(--ams-bg)] border border-[rgba(255,255,255,0.07)] rounded-[var(--ams-radius-control)] text-white focus:border-[var(--k-red-border)]"
+                      className="w-full px-3.5 py-2.5 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
                     >
                       <option value="low">Low</option>
                       <option value="medium">Medium</option>
@@ -1380,31 +1278,28 @@ export const AdminProjects: React.FC = () => {
                   </div>
 
                   <div>
-                    <label className="block text-[var(--ams-secondary)] mb-1 font-semibold">Assignee</label>
+                    <label className="block text-[#8A94A6] mb-1 font-semibold">Assignee</label>
                     <select
                       value={taskAssignee}
                       onChange={(e) => setTaskAssignee(e.target.value)}
-                      required
-                      className="w-full px-3.5 py-2.5 bg-[var(--ams-bg)] border border-[rgba(255,255,255,0.07)] rounded-[var(--ams-radius-control)] text-white focus:border-[var(--k-red-border)]"
+                      className="w-full px-3.5 py-2.5 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
                     >
-                      {taskAssignees.length === 0 ? (
-                        <option value="">No active assignees available</option>
-                      ) : taskAssignees.map((assignee) => (
-                        <option key={assignee.id} value={assignee.username}>
-                          {assignee.name} · @{assignee.username}
-                        </option>
-                      ))}
+                      <option value="Lead Full-Stack Tech">Lead Full-Stack Tech</option>
+                      <option value="Senior Frontend Dev">Senior Frontend Dev</option>
+                      <option value="UI/UX Specialist">UI/UX Specialist</option>
+                      <option value="Cloud & AI Engineer">Cloud & AI Engineer</option>
+                      <option value="QA Specialist">QA Specialist</option>
                     </select>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-[var(--ams-secondary)] mb-1 font-semibold">Initial Stage</label>
+                    <label className="block text-[#8A94A6] mb-1 font-semibold">Initial Stage</label>
                     <select
                       value={taskStatus}
                       onChange={(e) => setTaskStatus(e.target.value as TaskStatus)}
-                      className="w-full px-3.5 py-2.5 bg-[var(--ams-bg)] border border-[rgba(255,255,255,0.07)] rounded-[var(--ams-radius-control)] text-white focus:border-[var(--k-red-border)]"
+                      className="w-full px-3.5 py-2.5 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
                     >
                       <option value="todo">To Do</option>
                       <option value="in_progress">In Progress</option>
@@ -1414,40 +1309,40 @@ export const AdminProjects: React.FC = () => {
                   </div>
 
                   <div>
-                    <label className="block text-[var(--ams-secondary)] mb-1 font-semibold">Due Date</label>
+                    <label className="block text-[#8A94A6] mb-1 font-semibold">Due Date</label>
                     <input
                       type="date"
                       value={taskDueDate}
                       onChange={(e) => setTaskDueDate(e.target.value)}
-                      className="w-full px-3.5 py-2.5 bg-[var(--ams-bg)] border border-[rgba(255,255,255,0.07)] rounded-[var(--ams-radius-control)] text-white focus:border-[var(--k-red-border)]"
+                      className="w-full px-3.5 py-2.5 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-[var(--ams-secondary)] mb-1 font-semibold">Subtask Checklist (1 item per line)</label>
+                  <label className="block text-[#8A94A6] mb-1 font-semibold">Subtask Checklist (1 item per line)</label>
                   <textarea
                     rows={2}
                     value={initialSubtasksInput}
                     onChange={(e) => setInitialSubtasksInput(e.target.value)}
                     placeholder="Setup API endpoints&#10;Add unit tests"
-                    className="w-full px-3.5 py-2 bg-[var(--ams-bg)] border border-[rgba(255,255,255,0.07)] rounded-[var(--ams-radius-control)] text-white focus:border-[var(--k-red-border)]"
+                    className="w-full px-3.5 py-2 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
                   />
                 </div>
               </div>
 
               {/* Sticky Footer */}
-              <div className="sticky bottom-0 z-20 bg-[var(--ams-elevated)]/95 backdrop-blur-md px-5 sm:px-6 py-3.5 border-t border-[rgba(255,255,255,0.07)] flex items-center justify-end gap-2.5 shrink-0">
+              <div className="sticky bottom-0 z-20 bg-[#181B22]/95 backdrop-blur-md px-5 sm:px-6 py-3.5 border-t border-[rgba(255,255,255,0.07)] flex items-center justify-end gap-2.5 shrink-0">
                 <button
                   type="button"
                   onClick={() => setIsTaskModalOpen(false)}
-                  className="h-10 px-4 min-h-[40px] rounded-[var(--ams-radius-control)] bg-[var(--ams-bg)] text-[var(--ams-secondary)] hover:text-white border border-[rgba(255,255,255,0.07)] text-xs font-sans font-medium transition-colors"
+                  className="h-10 px-4 min-h-[40px] rounded-xl bg-[#090A0F] text-[#8A94A6] hover:text-white border border-[rgba(255,255,255,0.07)] text-xs font-mono font-medium transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="h-10 px-6 min-h-[40px] rounded-[var(--ams-radius-control)] bg-[var(--ams-red)] text-white font-sans font-bold hover:bg-[var(--ams-red)] transition-all shadow-md shadow-[var(--ams-red)]/20"
+                  className="h-10 px-6 min-h-[40px] rounded-xl bg-[#E50914] text-white font-mono font-bold hover:bg-[#FF1E27] transition-all shadow-md shadow-[#E50914]/20"
                 >
                   Add Task
                 </button>
