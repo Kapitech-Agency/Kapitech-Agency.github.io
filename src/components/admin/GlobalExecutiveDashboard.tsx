@@ -151,7 +151,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
               {language === 'id' ? 'Executive Briefing & Kendali Operasi' : 'Executive Overview & Operations'}
             </h1>
           </div>
-          <p className="ams-page-subtitle mt-1">
+          <p className="text-[13px] leading-[18px] font-sans text-[var(--muted)] mt-1">
             {language === 'id'
               ? 'Snapshot server saat ini untuk pipeline, piutang, risiko proyek, dan prioritas tindakan.'
               : 'Current server snapshot for sales pipeline, receivables, project delivery, and action priorities.'}
