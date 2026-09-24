@@ -239,7 +239,7 @@ export const DataMigrationModal: React.FC<DataMigrationModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-0 sm:p-4 overflow-y-auto">
-      <div className="fixed inset-0 bg-black/80 " onClick={onClose} />
+      <div className="fixed inset-0 bg-black/80  overflow-y-auto overscroll-contain p-3 sm:p-4" onClick={onClose} />
       <div className="relative w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-2xl bg-[var(--panel)] border-0 sm:border sm:border-[var(--line)] rounded-none sm:rounded-card shadow-none z-10 flex flex-col overflow-hidden animate-in zoom-in-95 duration-150">
         
         {/* Sticky Header */}
