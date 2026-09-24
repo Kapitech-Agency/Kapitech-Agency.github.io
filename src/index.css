@@ -1167,3 +1167,39 @@
   border-color: var(--line) !important;
 }
 \n
+
+/* Semantic status surfaces for legacy utility markup. */
+.ams-shell [class*="bg-emerald-500/10"],
+.ams-shell [class*="bg-green-500/10"] {
+  background-color: color-mix(in srgb, var(--success) 10%, transparent) !important;
+}
+.ams-shell [class*="bg-amber-500/10"],
+.ams-shell [class*="bg-yellow-500/10"] {
+  background-color: color-mix(in srgb, var(--warning) 10%, transparent) !important;
+}
+.ams-shell [class*="bg-blue-500/10"],
+.ams-shell [class*="bg-cyan-500/10"],
+.ams-shell [class*="bg-sky-500/10"] {
+  background-color: color-mix(in srgb, var(--info) 10%, transparent) !important;
+}
+.ams-shell [class*="bg-red-500/10"],
+.ams-shell [class*="bg-red-500/15"],
+.ams-shell [class*="bg-red-500/20"] {
+  background-color: color-mix(in srgb, var(--danger) 10%, transparent) !important;
+}
+.ams-shell [class*="border-emerald-500/"],
+.ams-shell [class*="border-green-500/"] {
+  border-color: color-mix(in srgb, var(--success) 28%, var(--line)) !important;
+}
+.ams-shell [class*="border-amber-500/"],
+.ams-shell [class*="border-yellow-500/"] {
+  border-color: color-mix(in srgb, var(--warning) 28%, var(--line)) !important;
+}
+.ams-shell [class*="border-blue-500/"],
+.ams-shell [class*="border-cyan-500/"],
+.ams-shell [class*="border-sky-500/"] {
+  border-color: color-mix(in srgb, var(--info) 28%, var(--line)) !important;
+}
+.ams-shell [class*="border-red-500/"] {
+  border-color: color-mix(in srgb, var(--danger) 28%, var(--line)) !important;
+}
