@@ -31,6 +31,7 @@ import { AgencyClient } from '../../lib/clientStore';
 import { useLanguage } from '../../lib/LanguageContext';
 import { api } from '../../lib/apiClient';
 import { useRbacRole, StakeholderRole, ROLE_DEFINITIONS } from '../../lib/rbacEngine';
+import { CustomSelect } from '../../components/ui/CustomSelect';
 import { 
   getActiveCurrency, 
   setActiveCurrency, 
@@ -1110,18 +1111,7 @@ export const AdminDashboard: React.FC = () => {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-[var(--muted)] font-sans mb-1">Service Pillar</label>
-                  <select
-                    value={newLeadPillar}
-                    onChange={(e) => setNewLeadPillar(e.target.value as CrmServicePillar)}
-                    className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-card outline-none"
-                  >
-                    <option value="Web Development">Web Development</option>
-                    <option value="AI & Cloud Solutions">AI & Cloud Solutions</option>
-                    <option value="UI/UX Design">UI/UX Design</option>
-                    <option value="Digital Product MVP">Digital Product MVP</option>
-                    <option value="Mobile App">Mobile App</option>
-                    <option value="Branding & Identity">Branding & Identity</option>
-                  </select>
+                  <CustomSelect value={newLeadPillar} onChange={(value) => setNewLeadPillar(value as CrmServicePillar)} options={[{value:'Web Development',label:'Web Development'},{value:'AI & Cloud Solutions',label:'AI & Cloud Solutions'},{value:'UI/UX Design',label:'UI/UX Design'},{value:'Digital Product MVP',label:'Digital Product MVP'},{value:'Mobile App',label:'Mobile App'},{value:'Branding & Identity',label:'Branding & Identity'}]} className="w-full" />
                 </div>
 
                 <div>
@@ -1285,16 +1275,7 @@ export const AdminDashboard: React.FC = () => {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-[var(--muted)] font-sans mb-1">Service Pillar</label>
-                  <select
-                    value={quickProjPillar}
-                    onChange={(e) => setQuickProjPillar(e.target.value)}
-                    className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-card outline-none"
-                  >
-                    <option value="AI & Cloud Solutions">AI & Cloud Solutions</option>
-                    <option value="Web Development">Web Development</option>
-                    <option value="UI/UX Design">UI/UX Design</option>
-                    <option value="Digital Product MVP">Digital Product MVP</option>
-                  </select>
+                  <CustomSelect value={quickProjPillar} onChange={setQuickProjPillar} options={[{value:'AI & Cloud Solutions',label:'AI & Cloud Solutions'},{value:'Web Development',label:'Web Development'},{value:'UI/UX Design',label:'UI/UX Design'},{value:'Digital Product MVP',label:'Digital Product MVP'}]} className="w-full" />
                 </div>
 
                 <div>
@@ -1360,17 +1341,7 @@ export const AdminDashboard: React.FC = () => {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-[var(--muted)] font-sans mb-1">Category</label>
-                  <select
-                    value={quickExpCategory}
-                    onChange={(e) => setQuickExpCategory(e.target.value)}
-                    className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-card outline-none"
-                  >
-                    <option value="Software & Cloud">Software & Cloud</option>
-                    <option value="Salaries & Contractors">Salaries & Contractors</option>
-                    <option value="Office & Hardware">Office & Hardware</option>
-                    <option value="Marketing & Ads">Marketing & Ads</option>
-                    <option value="Legal & Admin">Legal & Admin</option>
-                  </select>
+                  <CustomSelect value={quickExpCategory} onChange={setQuickExpCategory} options={[{value:'Software & Cloud',label:'Software & Cloud'},{value:'Salaries & Contractors',label:'Salaries & Contractors'},{value:'Office & Hardware',label:'Office & Hardware'},{value:'Marketing & Ads',label:'Marketing & Ads'},{value:'Legal & Admin',label:'Legal & Admin'}]} className="w-full" />
                 </div>
 
                 <div>
