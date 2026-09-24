@@ -88,7 +88,7 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
                     <span className="truncate font-medium">{item.label}</span>
                   </div>
                   {item.badge && (
-                    <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-bg text-muted border border-line">
+                    <span className="px-1.5 py-0.5 rounded text-[9px] font-medium bg-bg text-muted border border-line">
                       {item.badge}
                     </span>
                   )}
