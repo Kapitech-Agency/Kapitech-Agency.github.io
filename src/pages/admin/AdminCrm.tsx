@@ -674,7 +674,7 @@ export const AdminCrm: React.FC = () => {
                             draggable={true}
                             onDragStart={(e) => handleDragStart(e, lead.id)}
                             onClick={() => handleOpenLeadDrawer(lead)}
-                            className={`draggable-card kanban-card bg-[var(--panel)] hover:bg-[var(--panel)] border hover:border-[var(--accent)]/60 rounded-card p-3 cursor-pointer transition-all shadow-md group relative ${
+                            className={`draggable-card kanban-card bg-[var(--panel)] hover:bg-[var(--panel)] border hover:border-[var(--accent)]/60 rounded-card p-3 cursor-pointer transition-all group relative ${
                               isDragging ? 'opacity-40 scale-95 border-[var(--accent)] border-dashed' : 'border-[var(--line)]'
                             }`}
                           >
@@ -787,7 +787,7 @@ export const AdminCrm: React.FC = () => {
                 <div
                   key={lead.id}
                   onClick={() => handleOpenLeadDrawer(lead)}
-                  className="bg-[var(--panel)] hover:bg-[var(--panel)] border border-[var(--line)] hover:border-[var(--line)] rounded-card p-4 space-y-3 transition-all cursor-pointer shadow-lg"
+                  className="bg-[var(--panel)] hover:bg-[var(--panel)] border border-[var(--line)] hover:border-[var(--line)] rounded-card p-4 space-y-3 transition-all cursor-pointer"
                 >
                   {/* Header: Client, Company & Stage */}
                   <div className="flex items-start justify-between gap-2">
@@ -1330,7 +1330,7 @@ export const AdminCrm: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="h-10 px-5 rounded-card bg-[var(--accent)] text-[var(--text)] font-sans font-semibold text-xs hover:bg-[var(--danger)] transition-all shadow-md shadow-[var(--accent)]/20 min-h-10"
+                  className="h-10 px-5 rounded-card bg-[var(--accent)] text-[var(--text)] font-sans font-semibold text-xs hover:bg-[var(--accent)] transition-colors min-h-10"
                 >
                   {editingLead ? (language === 'id' ? 'Simpan Perubahan' : 'Update Deal') : (language === 'id' ? 'Buat Deal' : 'Save Deal')}
                 </button>
