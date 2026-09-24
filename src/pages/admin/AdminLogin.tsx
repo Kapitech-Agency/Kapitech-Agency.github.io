@@ -104,8 +104,8 @@ export const AdminLogin: React.FC = () => {
   const mfaEnabledNotice = searchParams.get('mfaEnabled') === '1';
 
   return (
-    <div data-kapi-admin="true" className="min-h-screen bg-[var(--bg)] text-[var(--text)] flex items-center justify-center px-4 py-10">
-      <div className="w-full max-w-md">
+    <div data-kapi-admin="true" className="ams-shell min-h-screen bg-[var(--bg)] text-[var(--text)] flex items-center justify-center px-4 py-8 sm:py-10 font-sans">
+      <div className="w-full max-w-[420px]">
         <Link
           to="/"
           className="inline-flex items-center gap-2 text-xs font-sans text-[var(--muted)] hover:text-[var(--text)] mb-6"
@@ -114,15 +114,15 @@ export const AdminLogin: React.FC = () => {
           {language === 'id' ? 'Kembali ke Website' : 'Back to Website'}
         </Link>
 
-        <div className="bg-[var(--panel)] border border-[var(--line)] rounded-[var(--ams-radius-card)] p-7 shadow-none">
+        <div className="bg-[var(--panel)] border border-[var(--line)] rounded-card p-5 sm:p-6 shadow-none">
           <div className="text-center mb-7">
             <div className="w-12 h-12 rounded-[var(--ams-radius-card)] bg-[var(--accent)]/10 border border-[var(--accent)]/30 flex items-center justify-center text-[var(--accent)] mx-auto mb-4">
               <Lock size={24} />
             </div>
-            <h1 className="text-2xl font-semibold tracking-tight">
+            <h1 className="text-xl sm:text-[22px] leading-7 font-semibold tracking-tight">
               {language === 'id' ? 'Portal Admin Internal' : 'Internal Admin Portal'}
             </h1>
-            <p className="text-xs text-[var(--muted)] mt-2 leading-relaxed">
+            <p className="text-[13px] leading-[18px] text-[var(--muted)] mt-2">
               {language === 'id'
                 ? 'Masuk untuk mengelola operasi, CRM, proyek, keuangan, dan konten Kapitech.'
                 : 'Sign in to manage Kapitech operations, CRM, projects, finance, and content.'}
@@ -203,7 +203,7 @@ export const AdminLogin: React.FC = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full h-11 rounded-[var(--ams-radius-control)] bg-[var(--accent)] hover:bg-[var(--accent)] disabled:bg-[var(--panel-hover)] text-[var(--text)] text-xs font-medium font-sans normal-case tracking-normal flex items-center justify-center gap-2 transition-colors"
+              className="w-full min-h-10 h-10 rounded-control bg-[var(--accent)] hover:bg-[var(--accent)] disabled:bg-[var(--panel-hover)] text-[var(--text)] text-xs font-medium font-sans normal-case tracking-normal flex items-center justify-center gap-2 transition-colors"
             >
               {loading
                 ? (language === 'id' ? 'Memverifikasi…' : 'Verifying…')
