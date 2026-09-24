@@ -96,7 +96,7 @@ export const AdminCmsServices: React.FC = () => {
     setTempCapabilities(tempCapabilities.filter((_, i) => i !== index));
   };
 
-  const handleCreateService = (e: React.FormEvent) => {
+  const handleCreateService = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newTitle || !newSlug) return;
 
