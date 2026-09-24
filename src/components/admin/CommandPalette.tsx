@@ -257,7 +257,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
       case 'Deal': return 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30';
       case 'Client': return 'bg-blue-500/10 text-blue-400 border-blue-500/30';
       case 'Project': return 'bg-amber-500/10 text-amber-400 border-amber-500/30';
-      case 'Invoice': return 'bg-[#E63946]/10 text-[#E63946] border-[#E63946]/30';
+      case 'Invoice': return 'bg-[#B00020]/10 text-[#B00020] border-[#B00020]/30';
       case 'Proposal': return 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30';
       default: return 'bg-zinc-800 text-zinc-300 border-white/10';
     }
@@ -291,7 +291,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
       >
         <div className="flex items-center gap-3 border-b border-white/[.08] bg-white/[.025] p-4">
           {isSearching ? (
-            <Loader2 size={18} className="shrink-0 animate-spin text-[#E63946]" />
+            <Loader2 size={18} className="shrink-0 animate-spin text-[#B00020]" />
           ) : (
             <Search size={18} className="shrink-0 text-[#A1A1A6]" />
           )}
@@ -352,7 +352,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
                           </div>
                         </div>
                       </div>
-                      <ArrowRight size={12} className={`shrink-0 transition-all ${isActive ? 'translate-x-0.5 text-[#E63946]' : 'text-[#6E6E73]'}`} />
+                      <ArrowRight size={12} className={`shrink-0 transition-all ${isActive ? 'translate-x-0.5 text-[#B00020]' : 'text-[#6E6E73]'}`} />
                     </button>
                   );
                 })}
@@ -404,7 +404,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
                       <span className="rounded bg-white/[.025] px-2 py-0.5 text-[10px] font-sans text-[#A1A1A6] border border-white/[.07]">
                         {item.shortcut}
                       </span>
-                      <ArrowRight size={12} className={`transition-all ${isActive ? 'translate-x-0.5 text-[#E63946]' : 'text-[#6E6E73]'}`} />
+                      <ArrowRight size={12} className={`transition-all ${isActive ? 'translate-x-0.5 text-[#B00020]' : 'text-[#6E6E73]'}`} />
                     </div>
                   </button>
                 );
@@ -419,7 +419,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
             <span>↵ Select</span>
             <span>ESC Close</span>
           </div>
-          <div className="flex items-center gap-1 font-semibold text-[#E63946]">
+          <div className="flex items-center gap-1 font-semibold text-[#B00020]">
             <Command size={11} />
             <span>KAPITECH AMS</span>
           </div>
