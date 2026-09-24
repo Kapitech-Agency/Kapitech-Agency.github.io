@@ -289,7 +289,7 @@ export const AdminVendors: React.FC = () => {
           <button
             onClick={handleOpenAdd}
                             disabled={!canManageVendors}
-            className="h-10 px-4 rounded-card bg-[var(--accent)] hover:bg-[var(--danger)] text-[var(--text)] text-xs font-semibold shadow-none shadow-[var(--accent)]/25 flex items-center gap-2 transition-all min-h-[40px]"
+            className="h-10 px-4 rounded-card bg-[var(--accent)] hover:bg-[var(--accent)] text-[var(--text)] text-xs font-semibold shadow-none flex items-center gap-2 transition-all min-h-[40px]"
           >
             <Plus size={15} />
             <span>{language === 'id' ? 'Tambah Vendor' : 'Add Vendor'}</span>
@@ -661,7 +661,7 @@ export const AdminVendors: React.FC = () => {
                   setIsDrawerOpen(false);
                   handleOpenEdit(selectedVendor);
                 }}
-                className="px-4 py-2 rounded-card bg-[var(--accent)] hover:bg-[var(--danger)] text-[var(--text)] text-xs font-semibold"
+                className="px-4 py-2 rounded-card bg-[var(--accent)] hover:bg-[var(--accent)] text-[var(--text)] text-xs font-semibold"
               >
                 {language === 'id' ? 'Edit Profil' : 'Edit Profile'}
               </button>
@@ -831,7 +831,7 @@ export const AdminVendors: React.FC = () => {
                   type="checkbox"
                   checked={formIsVetted}
                   onChange={e => setFormIsVetted(e.target.checked)}
-                  className="w-4 h-4 rounded bg-[var(--panel)] border-white/20 text-[var(--accent)] focus:ring-0 focus:ring-offset-0 cursor-pointer"
+                  className="w-4 h-4 rounded bg-[var(--panel)] border-[var(--line)] text-[var(--accent)] focus:ring-0 focus:ring-offset-0 cursor-pointer"
                 />
               </div>
 
@@ -871,7 +871,7 @@ export const AdminVendors: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-card bg-[var(--accent)] hover:bg-[var(--danger)] text-[var(--text)] text-xs font-semibold shadow-none shadow-[var(--accent)]/25"
+                  className="px-5 py-2 rounded-card bg-[var(--accent)] hover:bg-[var(--accent)] text-[var(--text)] text-xs font-semibold shadow-none"
                 >
                   {language === 'id' ? 'Simpan Vendor' : 'Save Vendor'}
                 </button>
