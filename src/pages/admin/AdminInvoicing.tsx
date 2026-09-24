@@ -50,6 +50,7 @@ import { CustomSelect } from '../../components/ui/CustomSelect';
 import { InvoiceStatusDropdown } from '../../components/ui/InvoiceStatusDropdown';
 import { AgencyProject } from '../../lib/projectStore';
 import { getAdminSession, hasAdminPermission } from '../../lib/adminAuth';
+import { api } from '../../lib/apiClient';
 
 export const AdminInvoicing: React.FC = () => {
   const { t, language } = useLanguage();
