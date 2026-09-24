@@ -143,7 +143,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
       {/* ------------------------------------------------------------- */}
       {/* 1. HEADER WITH SERVER STATUS & REFRESH */}
       {/* ------------------------------------------------------------- */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[var(--k-border)]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-line">
         <div>
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
@@ -159,7 +159,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-3 shrink-0">
-          <span className="text-[11px] font-sans text-[var(--k-text-secondary)]">
+          <span className="text-[11px] font-sans text-[var(--muted)]">
             {language === 'id' ? 'Diperbarui:' : 'Synced:'} {lastRefreshed.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
           </span>
           <button
@@ -168,16 +168,16 @@ export const GlobalExecutiveDashboard: React.FC = () => {
             className="ams-action flex items-center gap-1.5 disabled:opacity-50"
             title="Refresh metrics from server"
           >
-            <RefreshCw size={13} className={isLoading ? 'animate-spin text-[var(--k-red)]' : 'text-[var(--k-text-secondary)]'} />
+            <RefreshCw size={13} className={isLoading ? 'animate-spin text-[var(--accent)]' : 'text-[var(--muted)]'} />
             <span>{isLoading ? 'Syncing...' : 'Refresh'}</span>
           </button>
         </div>
       </div>
 
       {error && (
-        <div className="p-3 rounded-[var(--k-card-radius)] bg-red-950/40 border border-red-500/40 text-red-200 text-xs font-sans flex items-center justify-between">
+        <div className="p-3 rounded-card bg-[var(--danger)]/10 border border-[var(--danger)]/30 text-[var(--text)] text-xs font-sans flex items-center justify-between">
           <span>{error}</span>
-          <button onClick={fetchOverview} className="underline hover:text-[var(--k-text)]">Retry</button>
+          <button onClick={fetchOverview} className="underline hover:text-[var(--text)]">Retry</button>
         </div>
       )}
 
@@ -186,10 +186,10 @@ export const GlobalExecutiveDashboard: React.FC = () => {
       {/* ------------------------------------------------------------- */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Revenue Collected */}
-        <div className="kapi-card ams-kpi flex flex-col justify-between hover:border-[var(--k-border-strong)] transition-colors">
-          <div className="flex items-center justify-between text-xs font-sans text-[var(--k-text-secondary)]">
+        <div className="kapi-card ams-kpi flex flex-col justify-between hover:border-[var(--line)] transition-colors">
+          <div className="flex items-center justify-between text-xs font-sans text-[var(--muted)]">
             <span>{language === 'id' ? 'Pendapatan Diterima' : 'Revenue Collected'}</span>
-            <div className="w-7 h-7 rounded-[var(--k-control-radius)] bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+            <div className="w-7 h-7 rounded-control bg-[var(--success)]/10 border border-[var(--success)]/20 flex items-center justify-center text-[var(--success)]">
               <DollarSign size={15} />
             </div>
           </div>
@@ -199,16 +199,16 @@ export const GlobalExecutiveDashboard: React.FC = () => {
             </div>
             <div className="ams-meta mt-1 flex items-center gap-1">
               <span>Billed Total:</span>
-              <span className="text-zinc-300 font-semibold">{formatCurrency(metrics.totalBilled)}</span>
+              <span className="text-[var(--text)] font-semibold">{formatCurrency(metrics.totalBilled)}</span>
             </div>
           </div>
         </div>
 
         {/* Outstanding Receivables */}
-        <div className="kapi-card ams-kpi flex flex-col justify-between hover:border-[var(--k-border-strong)] transition-colors">
-          <div className="flex items-center justify-between text-xs font-sans text-[var(--k-text-secondary)]">
+        <div className="kapi-card ams-kpi flex flex-col justify-between hover:border-[var(--line)] transition-colors">
+          <div className="flex items-center justify-between text-xs font-sans text-[var(--muted)]">
             <span>{language === 'id' ? 'Piutang Berjalan' : 'Outstanding Receivables'}</span>
-            <div className={`w-7 h-7 rounded-[var(--k-control-radius)] flex items-center justify-center ${metrics.overdueReceivables > 0 ? 'bg-red-500/10 border border-red-500/30 text-red-400' : 'bg-amber-500/10 border border-amber-500/20 text-amber-400'}`}>
+            <div className={`w-7 h-7 rounded-control flex items-center justify-center ${metrics.overdueReceivables > 0 ? 'bg-[var(--danger)]/10 border border-red-500/30 text-[var(--danger)]' : 'bg-[var(--warning)]/10 border border-[var(--warning)]/20 text-[var(--warning)]'}`}>
               <TrendingUp size={15} />
             </div>
           </div>
@@ -218,22 +218,22 @@ export const GlobalExecutiveDashboard: React.FC = () => {
             </div>
             <div className="ams-meta mt-1 flex items-center gap-1">
               {metrics.overdueReceivables > 0 ? (
-                <span className="text-red-400 font-bold flex items-center gap-1">
+                <span className="text-[var(--danger)] font-semibold flex items-center gap-1">
                   <AlertTriangle size={11} />
                   {formatCurrency(metrics.overdueReceivables)} Overdue
                 </span>
               ) : (
-                <span className="text-emerald-400">All within payment terms</span>
+                <span className="text-[var(--success)]">All within payment terms</span>
               )}
             </div>
           </div>
         </div>
 
         {/* Active Pipeline */}
-        <div className="kapi-card ams-kpi flex flex-col justify-between hover:border-[var(--k-border-strong)] transition-colors">
-          <div className="flex items-center justify-between text-xs font-sans text-[var(--k-text-secondary)]">
+        <div className="kapi-card ams-kpi flex flex-col justify-between hover:border-[var(--line)] transition-colors">
+          <div className="flex items-center justify-between text-xs font-sans text-[var(--muted)]">
             <span>{language === 'id' ? 'Nilai Pipeline Aktif' : 'Active Pipeline'}</span>
-            <div className="w-7 h-7 rounded-[var(--k-control-radius)] bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400">
+            <div className="w-7 h-7 rounded-control bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-[var(--info)]">
               <Kanban size={15} />
             </div>
           </div>
@@ -243,19 +243,19 @@ export const GlobalExecutiveDashboard: React.FC = () => {
             </div>
             <div className="ams-meta mt-1 flex items-center gap-1">
               <span>Active Deals:</span>
-              <span className="text-zinc-300 font-semibold">{data?.todayAtKapitech?.dealsInPipelineCount || 0}</span>
-              <span className="text-zinc-500">•</span>
+              <span className="text-[var(--text)] font-semibold">{data?.todayAtKapitech?.dealsInPipelineCount || 0}</span>
+              <span className="text-[var(--muted)]">•</span>
               <span>Leads:</span>
-              <span className="text-zinc-300 font-semibold">{metrics.openLeads}</span>
+              <span className="text-[var(--text)] font-semibold">{metrics.openLeads}</span>
             </div>
           </div>
         </div>
 
         {/* Active Projects */}
-        <div className="kapi-card ams-kpi flex flex-col justify-between hover:border-[var(--k-border-strong)] transition-colors">
-          <div className="flex items-center justify-between text-xs font-sans text-[var(--k-text-secondary)]">
+        <div className="kapi-card ams-kpi flex flex-col justify-between hover:border-[var(--line)] transition-colors">
+          <div className="flex items-center justify-between text-xs font-sans text-[var(--muted)]">
             <span>{language === 'id' ? 'Proyek Berjalan' : 'Active Projects'}</span>
-            <div className="w-7 h-7 rounded-[var(--k-control-radius)] bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
+            <div className="w-7 h-7 rounded-control bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
               <Layers size={15} />
             </div>
           </div>
@@ -265,12 +265,12 @@ export const GlobalExecutiveDashboard: React.FC = () => {
             </div>
             <div className="ams-meta mt-1 flex items-center gap-1">
               {metrics.projectsAtRisk > 0 ? (
-                <span className="text-amber-400 font-semibold flex items-center gap-1">
+                <span className="text-[var(--warning)] font-semibold flex items-center gap-1">
                   <AlertTriangle size={11} />
                   {metrics.projectsAtRisk} At Risk / Delayed
                 </span>
               ) : (
-                <span className="text-emerald-400 font-semibold flex items-center gap-1">
+                <span className="text-[var(--success)] font-semibold flex items-center gap-1">
                   <CheckCircle2 size={11} />
                   No risk flags
                 </span>
@@ -287,17 +287,17 @@ export const GlobalExecutiveDashboard: React.FC = () => {
         <div className="flex items-center justify-between gap-4 mb-4">
           <div className="flex items-center gap-2 min-w-0">
             {attentionItems.length > 0 ? (
-              <AlertTriangle className="text-[var(--k-red)] shrink-0" size={16} />
+              <AlertTriangle className="text-[var(--accent)] shrink-0" size={16} />
             ) : (
-              <CheckCircle2 className="text-emerald-400 shrink-0" size={16} />
+              <CheckCircle2 className="text-[var(--success)] shrink-0" size={16} />
             )}
-            <h2 className="text-sm font-bold font-sans text-[var(--k-text)] truncate">
+            <h2 className="text-sm font-semibold font-sans text-[var(--text)] truncate">
               {language === 'id' ? 'Prioritas Tindakan Eksekutif' : 'Executive Action Priorities'}
             </h2>
-            <span className={`px-2 py-0.5 rounded-full text-[10px] font-sans font-bold shrink-0 ${
+            <span className={`px-2 py-0.5 rounded-badge text-[10px] font-sans font-semibold shrink-0 ${
               attentionItems.length > 0
-                ? 'bg-[var(--k-red)]/20 text-[var(--k-red)]'
-                : 'bg-emerald-500/10 text-emerald-400'
+                ? 'bg-[var(--accent)]/20 text-[var(--accent)]'
+                : 'bg-[var(--success)]/10 text-[var(--success)]'
             }`}>
               {attentionItems.length}
             </span>
@@ -305,13 +305,13 @@ export const GlobalExecutiveDashboard: React.FC = () => {
         </div>
 
         {attentionItems.length === 0 ? (
-          <div className="flex items-center gap-3 px-3.5 py-3 rounded-[var(--k-control-radius)] bg-emerald-500/[0.04] border border-emerald-500/10">
-            <CheckCircle2 className="text-emerald-400 shrink-0" size={18} />
+          <div className="flex items-center gap-3 px-3.5 py-3 rounded-control bg-[var(--success)]/5 border border-[var(--success)]/15">
+            <CheckCircle2 className="text-[var(--success)] shrink-0" size={18} />
             <div className="min-w-0">
-              <p className="text-xs font-sans text-[var(--k-text)] font-medium">
+              <p className="text-xs font-sans text-[var(--text)] font-medium">
                 {language === 'id' ? 'Tidak ada tindakan yang perlu dilakukan.' : 'No action required.'}
               </p>
-              <p className="text-[11px] font-sans text-[var(--k-text-secondary)]">
+              <p className="text-[11px] font-sans text-[var(--muted)]">
                 {language === 'id' ? 'Tidak ada invoice jatuh tempo, proyek terblokir, atau persetujuan tertunda.' : 'No overdue invoices, blocked projects, or pending approvals.'}
               </p>
             </div>
@@ -325,24 +325,24 @@ export const GlobalExecutiveDashboard: React.FC = () => {
                   key={item.id}
                   className={`kapi-card ams-inbox-item border flex items-start justify-between gap-3 transition-all ${
                     isDanger 
-                      ? 'bg-red-950/20 border-red-500/30 hover:border-red-500/50' 
-                      : 'bg-amber-950/20 border-amber-500/30 hover:border-amber-500/50'
+                      ? 'bg-[var(--danger)]/10 border-[var(--danger)]/30 hover:border-[var(--danger)]/50' 
+                      : 'bg-[var(--warning)]/10 border-[var(--warning)]/30 hover:border-[var(--warning)]/50'
                   }`}
                 >
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
-                      <span className={`px-1.5 py-0.2 rounded text-[9px] font-sans uppercase font-bold ${
-                        isDanger ? 'bg-red-500/20 text-red-400' : 'bg-amber-500/20 text-amber-400'
+                      <span className={`px-1.5 py-0.2 rounded text-[9px] font-sans uppercase font-semibold ${
+                        isDanger ? 'bg-[var(--danger)]/10 text-[var(--danger)]' : 'bg-[var(--warning)]/10 text-[var(--warning)]'
                       }`}>
                         {item.category}
                       </span>
-                      <h4 className="text-xs font-semibold text-[var(--k-text)]">{item.title}</h4>
+                      <h4 className="text-xs font-semibold text-[var(--text)]">{item.title}</h4>
                     </div>
-                    <p className="text-[11px] text-[var(--k-text-secondary)] leading-relaxed">{item.description}</p>
+                    <p className="text-[11px] text-[var(--muted)] leading-relaxed">{item.description}</p>
                   </div>
                   <Link
                     to={item.linkUrl}
-                    className="p-1.5 rounded-[var(--k-control-radius)] bg-[var(--k-surface)] hover:bg-[var(--k-surface-raised)] text-[var(--k-text)] border border-[var(--k-border)] shrink-0 text-xs font-sans flex items-center gap-1 hover:border-[var(--k-red)] transition-colors"
+                    className="min-h-10 min-w-10 px-2 rounded-control bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--text)] border border-line shrink-0 text-xs font-sans flex items-center gap-1 hover:border-[var(--accent)] transition-colors"
                   >
                     <span>Resolve</span>
                     <ArrowUpRight size={12} />
@@ -362,15 +362,15 @@ export const GlobalExecutiveDashboard: React.FC = () => {
         <div className="kapi-card ams-panel p-5 space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-sm font-bold font-sans text-[var(--k-text)] flex items-center gap-2">
-                <Kanban size={15} className="text-[var(--k-red)]" />
+              <h3 className="text-sm font-semibold font-sans text-[var(--text)] flex items-center gap-2">
+                <Kanban size={15} className="text-[var(--accent)]" />
                 <span>{language === 'id' ? 'Sebaran Tahapan Pipeline CRM' : 'Sales Pipeline by Stage'}</span>
               </h3>
-              <p className="text-[10px] font-sans text-[var(--k-text-secondary)] mt-0.5">Current deal distribution</p>
+              <p className="text-[10px] font-sans text-[var(--muted)] mt-0.5">Current deal distribution</p>
             </div>
             <Link
               to="/admin/crm"
-              className="text-xs font-sans text-[var(--k-red)] hover:underline flex items-center gap-1"
+              className="text-xs font-sans text-[var(--accent)] hover:underline flex items-center gap-1"
             >
               <span>Open CRM</span>
               <ArrowUpRight size={12} />
@@ -379,18 +379,18 @@ export const GlobalExecutiveDashboard: React.FC = () => {
 
           <div className="space-y-2.5">
             {pipelineStages.length === 0 ? (
-              <div className="p-6 text-center text-xs font-sans text-[var(--k-text-secondary)]">
+              <div className="p-6 text-center text-xs font-sans text-[var(--muted)]">
                 No deals currently in pipeline.
               </div>
             ) : (
               pipelineStages.map((st) => (
-                <div key={st.stage} className="p-2.5 rounded-[var(--k-control-radius)] bg-[var(--k-surface)] border border-white/[0.04] flex items-center justify-between text-xs">
+                <div key={st.stage} className="p-2.5 rounded-control bg-[var(--panel)] border border-line flex items-center justify-between text-xs">
                   <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-[var(--k-red)]" />
+                    <span className="w-2 h-2 rounded-full bg-[var(--accent)]" />
                     <span className="font-sans uppercase text-[#F8FAFC] text-[11px] font-semibold">{st.stage}</span>
-                    <span className="text-[10px] font-sans text-[var(--k-text-secondary)]">({st.count} deals)</span>
+                    <span className="text-[10px] font-sans text-[var(--muted)]">({st.count} deals)</span>
                   </div>
-                  <span className="font-sans text-zinc-300 font-bold">{formatCurrency(st.value)}</span>
+                  <span className="font-sans text-[var(--text)] font-semibold">{formatCurrency(st.value)}</span>
                 </div>
               ))
             )}
@@ -401,15 +401,15 @@ export const GlobalExecutiveDashboard: React.FC = () => {
         <div className="kapi-card ams-panel p-5 space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-sm font-bold font-sans text-[var(--k-text)] flex items-center gap-2">
-                <DollarSign size={15} className="text-emerald-400" />
+              <h3 className="text-sm font-semibold font-sans text-[var(--text)] flex items-center gap-2">
+                <DollarSign size={15} className="text-[var(--success)]" />
                 <span>{language === 'id' ? 'Ringkasan Keuangan Operasional' : 'Financial Operating Summary'}</span>
               </h3>
-              <p className="text-[10px] font-sans text-[var(--k-text-secondary)] mt-0.5">Current financial snapshot</p>
+              <p className="text-[10px] font-sans text-[var(--muted)] mt-0.5">Current financial snapshot</p>
             </div>
             <Link
               to="/admin/invoicing"
-              className="text-xs font-sans text-[var(--k-red)] hover:underline flex items-center gap-1"
+              className="text-xs font-sans text-[var(--accent)] hover:underline flex items-center gap-1"
             >
               <span>Invoicing</span>
               <ArrowUpRight size={12} />
@@ -417,30 +417,30 @@ export const GlobalExecutiveDashboard: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-2 gap-3 text-xs">
-            <div className="p-3 rounded-[var(--k-control-radius)] bg-[var(--k-surface)] border border-white/[0.04]">
-              <div className="text-[10px] font-sans text-[var(--k-text-secondary)]">Operating Expenses (OpEx)</div>
-              <div className="text-base font-bold font-sans text-[var(--k-text)] mt-1">
+            <div className="p-3 rounded-control bg-[var(--panel)] border border-line">
+              <div className="text-[10px] font-sans text-[var(--muted)]">Operating Expenses (OpEx)</div>
+              <div className="text-base font-semibold font-sans text-[var(--text)] mt-1">
                 {formatCurrency(data?.financials?.operatingExpenses || 0)}
               </div>
             </div>
 
-            <div className="p-3 rounded-[var(--k-control-radius)] bg-[var(--k-surface)] border border-white/[0.04]">
-              <div className="text-[10px] font-sans text-[var(--k-text-secondary)]">Net Operating Margin</div>
-              <div className="text-base font-bold font-sans text-emerald-400 mt-1">
+            <div className="p-3 rounded-control bg-[var(--panel)] border border-line">
+              <div className="text-[10px] font-sans text-[var(--muted)]">Net Operating Margin</div>
+              <div className="text-base font-semibold font-sans text-[var(--success)] mt-1">
                 {data?.financials?.margin || '0'}%
               </div>
             </div>
 
-            <div className="p-3 rounded-[var(--k-control-radius)] bg-[var(--k-surface)] border border-white/[0.04]">
-              <div className="text-[10px] font-sans text-[var(--k-text-secondary)]">Net Operating Profit</div>
-              <div className={`text-base font-bold font-sans mt-1 ${(data?.financials?.netOperatingProfit || 0) >= 0 ? 'text-[var(--k-text)]' : 'text-red-400'}`}>
+            <div className="p-3 rounded-control bg-[var(--panel)] border border-line">
+              <div className="text-[10px] font-sans text-[var(--muted)]">Net Operating Profit</div>
+              <div className={`text-base font-semibold font-sans mt-1 ${(data?.financials?.netOperatingProfit || 0) >= 0 ? 'text-[var(--text)]' : 'text-[var(--danger)]'}`}>
                 {formatCurrency(data?.financials?.netOperatingProfit || 0)}
               </div>
             </div>
 
-            <div className="p-3 rounded-[var(--k-control-radius)] bg-[var(--k-surface)] border border-white/[0.04]">
-              <div className="text-[10px] font-sans text-[var(--k-text-secondary)]">Proposals Awaiting Approval</div>
-              <div className="text-base font-bold font-sans text-zinc-300 mt-1">
+            <div className="p-3 rounded-control bg-[var(--panel)] border border-line">
+              <div className="text-[10px] font-sans text-[var(--muted)]">Proposals Awaiting Approval</div>
+              <div className="text-base font-semibold font-sans text-[var(--text)] mt-1">
                 {data?.todayAtKapitech?.proposalsAwaitingCount || 0}
               </div>
             </div>
@@ -454,15 +454,15 @@ export const GlobalExecutiveDashboard: React.FC = () => {
       <div className="kapi-card ams-panel p-5 space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-sm font-bold font-sans text-[var(--k-text)] flex items-center gap-2">
-              <Layers size={15} className="text-[var(--k-red)]" />
+            <h3 className="text-sm font-semibold font-sans text-[var(--text)] flex items-center gap-2">
+              <Layers size={15} className="text-[var(--accent)]" />
               <span>{language === 'id' ? 'Status Eksekusi Proyek Klien' : 'Client Project Delivery Status'}</span>
             </h3>
-            <p className="text-[10px] font-sans text-[var(--k-text-secondary)] mt-0.5">Current active engagements from project registry</p>
+            <p className="text-[10px] font-sans text-[var(--muted)] mt-0.5">Current active engagements from project registry</p>
           </div>
           <Link
             to="/admin/projects"
-            className="text-xs font-sans text-[var(--k-red)] hover:underline flex items-center gap-1"
+            className="text-xs font-sans text-[var(--accent)] hover:underline flex items-center gap-1"
           >
             <span>All Projects</span>
             <ArrowUpRight size={12} />
@@ -477,7 +477,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
               <thead>
-                <tr className="border-b border-[var(--k-border)] text-[10px] font-sans text-[var(--k-text-secondary)] uppercase">
+                <tr className="border-b border-line text-[10px] font-sans text-[var(--muted)] uppercase">
                   <th className="py-2.5 px-3">Project</th>
                   <th className="py-2.5 px-3">Client</th>
                   <th className="py-2.5 px-3">Health</th>
@@ -486,40 +486,40 @@ export const GlobalExecutiveDashboard: React.FC = () => {
                   <th className="py-2.5 px-3 text-right">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/[0.04] text-zinc-300">
+              <tbody className="divide-y divide-white/[0.04] text-[var(--text)]">
                 {recentProjects.map((p) => {
                   const isAtRisk = p.health === 'At Risk' || p.health === 'Delayed';
                   return (
-                    <tr key={p.id} className="hover:bg-white/[0.02] transition-colors">
-                      <td className="py-3 px-3 font-semibold text-[var(--k-text)]">
+                    <tr key={p.id} className="hover:bg-panel-hover transition-colors">
+                      <td className="py-3 px-3 font-semibold text-[var(--text)]">
                         <div className="flex items-center gap-2">
                           <span className="truncate max-w-[220px]">{p.title || p.name || 'Untitled Project'}</span>
                         </div>
                       </td>
-                      <td className="py-3 px-3 text-zinc-400 font-sans text-[11px]">
+                      <td className="py-3 px-3 text-[var(--muted)] font-sans text-[11px]">
                         {p.client || 'Internal'}
                       </td>
                       <td className="py-3 px-3">
-                        <span className={`px-2 py-0.5 rounded text-[10px] font-sans uppercase font-bold ${
+                        <span className={`px-2 py-0.5 rounded text-[10px] font-sans uppercase font-semibold ${
                           p.health === 'On Track'
-                            ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                            ? 'bg-[var(--success)]/10 text-[var(--success)] border border-[var(--success)]/20'
                             : isAtRisk
-                            ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
-                            : 'bg-zinc-800 text-zinc-400'
+                            ? 'bg-[var(--warning)]/10 text-[var(--warning)] border border-[var(--warning)]/20'
+                            : 'bg-zinc-800 text-[var(--muted)]'
                         }`}>
                           {p.health || 'Active'}
                         </span>
                       </td>
-                      <td className="py-3 px-3 font-sans text-[11px] text-[var(--k-text)]">
+                      <td className="py-3 px-3 font-sans text-[11px] text-[var(--text)]">
                         {formatCurrency(p.contractValue || p.budget || 0)}
                       </td>
-                      <td className="py-3 px-3 font-sans text-[11px] text-[var(--k-text-secondary)]">
+                      <td className="py-3 px-3 font-sans text-[11px] text-[var(--muted)]">
                         {p.deadline || p.targetDeliveryDate || 'N/A'}
                       </td>
                       <td className="py-3 px-3 text-right">
                         <button
                           onClick={() => navigate('/admin/projects')}
-                          className="text-[11px] font-sans text-[var(--k-red)] hover:underline"
+                          className="min-h-10 inline-flex items-center text-[11px] font-sans text-[var(--accent)] hover:underline"
                         >
                           View →
                         </button>
@@ -539,15 +539,15 @@ export const GlobalExecutiveDashboard: React.FC = () => {
       <div className="kapi-card ams-panel p-5 space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-sm font-bold font-sans text-[var(--k-text)] flex items-center gap-2">
-              <Activity size={15} className="text-[var(--k-red)]" />
+            <h3 className="text-sm font-semibold font-sans text-[var(--text)] flex items-center gap-2">
+              <Activity size={15} className="text-[var(--accent)]" />
               <span>{language === 'id' ? 'Log Aktivitas Sistem & Audit Trail' : 'System Audit Trail & Operations Feed'}</span>
             </h3>
-            <p className="text-[10px] font-sans text-[var(--k-text-secondary)] mt-0.5">Events recorded by the server audit log</p>
+            <p className="text-[10px] font-sans text-[var(--muted)] mt-0.5">Events recorded by the server audit log</p>
           </div>
           <Link
             to="/admin/settings"
-            className="text-xs font-sans text-[var(--k-text-secondary)] hover:text-[var(--k-text)] flex items-center gap-1"
+            className="text-xs font-sans text-[var(--muted)] hover:text-[var(--text)] flex items-center gap-1"
           >
             <span>Full Audit Logs</span>
             <ExternalLink size={11} />
@@ -556,20 +556,20 @@ export const GlobalExecutiveDashboard: React.FC = () => {
 
         <div className="space-y-2">
           {recentLogs.length === 0 ? (
-            <div className="p-6 text-center text-xs font-sans text-[var(--k-text-secondary)]">
+            <div className="p-6 text-center text-xs font-sans text-[var(--muted)]">
               No audit activities recorded.
             </div>
           ) : (
             recentLogs.slice(0, 6).map((log, idx) => (
-              <div key={log.id || idx} className="p-2.5 rounded-[var(--k-control-radius)] bg-[var(--k-surface)] border border-white/[0.04] flex items-center justify-between text-xs font-sans">
+              <div key={log.id || idx} className="p-2.5 rounded-control bg-[var(--panel)] border border-line flex items-center justify-between text-xs font-sans">
                 <div className="flex items-center gap-3 min-w-0">
                   <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${
-                    log.severity === 'danger' ? 'bg-red-500' : log.severity === 'warning' ? 'bg-amber-400' : 'bg-emerald-400'
+                    log.severity === 'danger' ? 'bg-[var(--danger)]' : log.severity === 'warning' ? 'bg-[var(--warning)]' : 'bg-[var(--success)]'
                   }`} />
-                  <span className="font-bold text-[var(--k-text)] uppercase text-[10px] shrink-0">{log.action}</span>
-                  <span className="text-[var(--k-text-secondary)] truncate">{log.details || log.message}</span>
+                  <span className="font-semibold text-[var(--text)] uppercase text-[10px] shrink-0">{log.action}</span>
+                  <span className="text-[var(--muted)] truncate">{log.details || log.message}</span>
                 </div>
-                <div className="text-[10px] text-[var(--k-text-secondary)] shrink-0 ml-2">
+                <div className="text-[10px] text-[var(--muted)] shrink-0 ml-2">
                   {log.timestamp ? new Date(log.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Recent'}
                 </div>
               </div>
