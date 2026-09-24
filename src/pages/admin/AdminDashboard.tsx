@@ -439,7 +439,7 @@ export const AdminDashboard: React.FC = () => {
       <div className="ams-dashboard-header flex flex-col xl:flex-row xl:items-center justify-between gap-4 pb-4 border-b border-white/[0.07]">
         <div>
           <div className="flex items-center gap-2.5 flex-wrap">
-            <h1 className="text-2xl sm:text-[25px] font-heading font-bold text-[#F8FAFC] tracking-[-0.025em]">
+            <h1 className="text-xl font-heading font-semibold text-[#F8FAFC] tracking-[-0.025em]">
               {language === 'id' ? 'Ikhtisar Eksekutif Agensi' : 'Executive Agency Overview'}
             </h1>
             <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-emerald-500/[0.07] border border-emerald-500/15 text-[10px] font-sans font-semibold text-emerald-400">
@@ -555,7 +555,7 @@ export const AdminDashboard: React.FC = () => {
       {/* ------------------------------------------------------------- */}
       {/* 2. CORE HIGH-VISIBILITY KPI DECK (4 TOP-TIER METRIC CARDS)    */}
       {/* ------------------------------------------------------------- */}
-      <div className="ams-kpi-grid grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-5">
+      <div className="ams-kpi-grid grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
         
         {/* Metric Card 1: Gross Realized Revenue */}
         <div className="p-5 rounded-xl bg-[var(--panel)] border border-white/[0.07]  flex flex-col justify-between group transition-colors duration-150">
@@ -702,7 +702,7 @@ export const AdminDashboard: React.FC = () => {
 
       {/* ------------------------------------------------------------- */}
       {/* Backend-backed finance and CRM snapshot */}
-      <div className="ams-summary-grid grid grid-cols-1 xl:grid-cols-2 gap-5">
+      <div className="ams-summary-grid grid grid-cols-1 xl:grid-cols-2 gap-3">
         <section className="ams-card p-5">
           <div className="flex items-center justify-between pb-3 border-b border-white/[0.07]">
             <div><h3 className="ams-section-title">{language === 'id' ? 'Ringkasan Keuangan' : 'Financial Summary'}</h3><p className="ams-section-subtitle">{language === 'id' ? 'Data dihitung di server.' : 'Calculated by the backend.'}</p></div>
@@ -731,7 +731,7 @@ export const AdminDashboard: React.FC = () => {
 
       {/* 4. OPERATIONAL MASTER SECTION (8 COLS LEFT : 4 COLS RIGHT)    */}
       {/* ------------------------------------------------------------- */}
-      <div className="ams-detail-grid grid grid-cols-1 xl:grid-cols-12 gap-6">
+      <div className="ams-detail-grid grid grid-cols-1 xl:grid-cols-12 gap-3">
         
         {/* Left Column: Priority Active Projects & Recent Invoices (8 cols) */}
         <div className="xl:col-span-8 space-y-6">
