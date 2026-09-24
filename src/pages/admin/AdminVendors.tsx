@@ -273,9 +273,9 @@ export const AdminVendors: React.FC = () => {
     <div className="space-y-6">
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-[var(--line)]">
-        <div>
+        <div className="pb-4 border-b border-[var(--line)]">
           <h1 className="text-xl sm:text-2xl font-semibold font-sans text-[var(--text)] tracking-tight">{language === 'id' ? 'Direktori Vendor & Kontraktor' : 'Vendor & Talent Directory'}</h1>
-          <p className="text-xs font-sans text-[var(--muted)] mt-1">
+          <p className="text-[13px] leading-[18px] font-sans text-[var(--muted)] mt-1 max-w-3xl">
             {language === 'id'
               ? 'Database mitra agensi, freelance spesialis terverifikasi, tarif per jam, dan evaluasi performa SLA.'
               : 'Database of vetted agency partners, specialized freelance contractors, hourly rates, and SLA contract ratings.'}
