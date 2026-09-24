@@ -284,30 +284,37 @@ export const GlobalExecutiveDashboard: React.FC = () => {
       {/* 3. NEEDS ATTENTION: ACTIONABLE OPERATIONAL SIGNALS */}
       {/* ------------------------------------------------------------- */}
       <div className="kapi-card ams-panel p-5">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2">
-            <AlertTriangle className="text-[var(--k-red)]" size={16} />
-            <h2 className="text-sm font-bold font-sans text-[var(--k-text)]">
-              {language === 'id' ? 'Prioritas Tindakan Eksekutif (Needs Attention)' : 'Executive Action Priorities (Needs Attention)'}
+        <div className="flex items-center justify-between gap-4 mb-4">
+          <div className="flex items-center gap-2 min-w-0">
+            {attentionItems.length > 0 ? (
+              <AlertTriangle className="text-[var(--k-red)] shrink-0" size={16} />
+            ) : (
+              <CheckCircle2 className="text-emerald-400 shrink-0" size={16} />
+            )}
+            <h2 className="text-sm font-bold font-sans text-[var(--k-text)] truncate">
+              {language === 'id' ? 'Prioritas Tindakan Eksekutif' : 'Executive Action Priorities'}
             </h2>
-            <span className="px-2 py-0.5 rounded-full text-[10px] font-sans font-bold bg-[var(--k-red)]/20 text-[var(--k-red)]">
+            <span className={`px-2 py-0.5 rounded-full text-[10px] font-sans font-bold shrink-0 ${
+              attentionItems.length > 0
+                ? 'bg-[var(--k-red)]/20 text-[var(--k-red)]'
+                : 'bg-emerald-500/10 text-emerald-400'
+            }`}>
               {attentionItems.length}
             </span>
           </div>
-          <span className="text-[10px] font-sans text-[var(--k-text-secondary)]">
-            {language === 'id' ? 'Dipicu otomatis dari data operasional' : 'Auto-derived from system records'}
-          </span>
         </div>
 
         {attentionItems.length === 0 ? (
-          <div className="ams-empty-state bg-[var(--k-surface)]/40 border border-white/[0.04]">
-            <CheckCircle2 className="mx-auto text-emerald-400 mb-2" size={24} />
-            <p className="text-xs font-sans text-[var(--k-text)] font-medium">
-              {language === 'id' ? 'Semua parameter operasional dalam batas normal.' : 'All operational parameters are currently healthy.'}
-            </p>
-            <p className="text-[11px] font-sans text-[var(--k-text-secondary)] mt-0.5">
-              No overdue invoices, blocked projects, or pending authorizations requiring immediate partner signoff.
-            </p>
+          <div className="flex items-center gap-3 px-3.5 py-3 rounded-[var(--k-control-radius)] bg-emerald-500/[0.04] border border-emerald-500/10">
+            <CheckCircle2 className="text-emerald-400 shrink-0" size={18} />
+            <div className="min-w-0">
+              <p className="text-xs font-sans text-[var(--k-text)] font-medium">
+                {language === 'id' ? 'Tidak ada tindakan yang perlu dilakukan.' : 'No action required.'}
+              </p>
+              <p className="text-[11px] font-sans text-[var(--k-text-secondary)]">
+                {language === 'id' ? 'Tidak ada invoice jatuh tempo, proyek terblokir, atau persetujuan tertunda.' : 'No overdue invoices, blocked projects, or pending approvals.'}
+              </p>
+            </div>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
