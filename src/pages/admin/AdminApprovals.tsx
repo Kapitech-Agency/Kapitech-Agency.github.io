@@ -20,6 +20,7 @@ import { api } from '../../lib/apiClient';
 import { useLanguage } from '../../lib/LanguageContext';
 import { getActiveCurrency, formatAmount, CurrencyCode, CURRENCY_EVENT } from '../../lib/currency';
 import { hasAdminPermission } from '../../lib/adminAuth';
+import { CustomSelect } from '../../components/ui/CustomSelect';
 
 interface ApprovalItem {
   id: string;
@@ -274,17 +275,17 @@ export const AdminApprovals: React.FC = () => {
             ))}
           </div>
 
-          <select
+          <CustomSelect
             value={typeFilter}
-            onChange={(e) => setTypeFilter(e.target.value)}
-            className="h-9 px-2.5 rounded-control bg-[var(--panel)] text-[var(--muted)] border border-[var(--line)] text-xs font-sans focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
-          >
-            <option value="all">All Types</option>
-            <option value="invoice">Invoice</option>
-            <option value="budget">Budget</option>
-            <option value="proposal">Proposal</option>
-            <option value="expense">Expense</option>
-          </select>
+            onChange={setTypeFilter}
+            options={[
+              { value: 'all', label: 'All Types' },
+              { value: 'invoice', label: 'Invoice' },
+              { value: 'budget', label: 'Budget' },
+              { value: 'proposal', label: 'Proposal' },
+              { value: 'expense', label: 'Expense' }
+            ]}
+          />
         </div>
       </div>
 
