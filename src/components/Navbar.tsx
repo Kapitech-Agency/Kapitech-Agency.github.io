@@ -119,10 +119,6 @@ export const Navbar = () => {
                 )}
               >
                 <span>{t('nav.work')}</span>
-                <span className={cn(
-                  "absolute -bottom-0.5 left-0 w-0 h-[1.5px] bg-brand-red transition-all duration-300",
-                  location.pathname === '/work' ? "w-full" : "hover:w-full"
-                )} />
               </Link>
 
               {/* SERVICES DROPDOWN TRIGGER */}
@@ -143,10 +139,6 @@ export const Navbar = () => {
                 >
                   <span>{t('nav.services')}</span>
                   <ChevronDown className={cn("w-3.5 h-3.5 transition-transform duration-200", isServicesDropdownOpen ? "rotate-180 text-brand-red" : "opacity-70")} />
-                  <span className={cn(
-                    "absolute -bottom-0.5 left-0 w-0 h-[1.5px] bg-brand-red transition-all duration-300",
-                    isServicesActive ? "w-full" : ""
-                  )} />
                 </button>
               </div>
 
@@ -159,10 +151,6 @@ export const Navbar = () => {
                 )}
               >
                 <span>{t('nav.about')}</span>
-                <span className={cn(
-                  "absolute -bottom-0.5 left-0 w-0 h-[1.5px] bg-brand-red transition-all duration-300",
-                  location.pathname === '/about' ? "w-full" : "hover:w-full"
-                )} />
               </Link>
 
               {/* Careers Link */}
@@ -174,10 +162,6 @@ export const Navbar = () => {
                 )}
               >
                 <span>{t('nav.careers')}</span>
-                <span className={cn(
-                  "absolute -bottom-0.5 left-0 w-0 h-[1.5px] bg-brand-red transition-all duration-300",
-                  location.pathname === '/careers' ? "w-full" : "hover:w-full"
-                )} />
               </Link>
             </div>
 
