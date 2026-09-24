@@ -189,7 +189,7 @@ export const Footer = () => {
                 <ArrowUpRight size={18} />
               </Link>
               <div className="kapi-footer-status">
-                <span className="w-2 h-2 rounded-full bg-brand-red animate-pulse shadow-[0_0_8px_rgba(176,0,32,0.45)]" />
+                <span className="w-2 h-2 rounded-full bg-brand-red animate-pulse shadow-[0_0_8px_rgba(255,26,26,0.6)]" />
                 <span>{language === 'id' ? 'Tangerang Selatan, ID' : 'South Tangerang, ID'} • {localTime || '12:00:00'} WIB</span>
               </div>
             </div>
@@ -294,7 +294,8 @@ export const Footer = () => {
                 { name: t('nav.services'), href: '/services' },
                 { name: t('nav.about'), href: '/about' },
                 { name: t('nav.careers'), href: '/careers' },
-                { name: t('nav.contact'), href: '/contact' }
+                { name: t('nav.contact'), href: '/contact' },
+                { name: language === 'id' ? 'Inbox Database' : 'Database Inbox', href: '/inbox' }
               ].map((item) => (
                 <li key={item.name}>
                   <Link 
