@@ -122,7 +122,7 @@ export const Home = () => {
   ];
 
   return (
-    <div className="bg-[var(--k-bg)] text-white min-h-screen selection:bg-brand-red selection:text-white" role="main">
+    <div className="bg-[#0B0C0E] text-white min-h-screen selection:bg-brand-red selection:text-white" role="main">
       {/* Hero Section */}
       <section className="relative min-h-[85vh] sm:min-h-[90vh] flex flex-col justify-center px-4 sm:px-6 md:px-12 pt-28 sm:pt-36 md:pt-40 pb-16 sm:pb-20 overflow-hidden">
         <AtmosphericBackground 
@@ -134,7 +134,7 @@ export const Home = () => {
         <div className="max-w-7xl mx-auto w-full relative z-10">
           <div className="max-w-4xl">
             {/* Status Chip */}
-            <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full border border-[var(--k-border)] bg-[var(--k-surface)]/80 backdrop-blur-md mb-6 sm:mb-8">
+            <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full border border-[#262930] bg-[#16181D]/80 backdrop-blur-md mb-6 sm:mb-8">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-red opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-red"></span>
@@ -168,7 +168,7 @@ export const Home = () => {
               </Link>
               <Link 
                 to="/work" 
-                className="h-12 sm:h-13 px-7 sm:px-8 rounded-full border border-[var(--k-border)] bg-[var(--k-surface)] hover:bg-[#1E2128] text-white transition-colors duration-300 text-xs font-semibold uppercase tracking-wider flex items-center justify-center gap-2 active:scale-95"
+                className="h-12 sm:h-13 px-7 sm:px-8 rounded-full border border-[#262930] bg-[#16181D] hover:bg-[#1E2128] text-white transition-colors duration-300 text-xs font-semibold uppercase tracking-wider flex items-center justify-center gap-2 active:scale-95"
               >
                 <span>{language === 'id' ? 'Jelajahi 50 Portofolio' : 'Explore 50 Case Studies'}</span>
               </Link>
@@ -178,19 +178,19 @@ export const Home = () => {
       </section>
 
       {/* REDESIGNED STATS SECTION - Minimal, Simple, High-Contrast & Sleek */}
-      <section className="py-12 sm:py-16 px-4 sm:px-6 md:px-12 bg-[var(--k-bg)] border-y border-[var(--k-border)]" aria-label="Key Agency Statistics">
+      <section className="py-12 sm:py-16 px-4 sm:px-6 md:px-12 bg-[#0B0C0E] border-y border-[#262930]" aria-label="Key Agency Statistics">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {stats.map((stat, i) => (
               <div 
                 key={i} 
-                className="relative p-6 rounded-2xl bg-[var(--k-surface)] border border-[var(--k-border)] hover:border-brand-red/40 transition-all duration-300 group flex flex-col justify-between"
+                className="relative p-6 rounded-2xl bg-[#16181D] border border-[#262930] hover:border-brand-red/40 transition-all duration-300 group flex flex-col justify-between"
               >
                 <div className="flex items-center justify-between mb-4">
                   <span className="text-[11px] font-mono uppercase tracking-widest text-brand-red font-semibold">
                     {stat.label}
                   </span>
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[var(--k-bg)] border border-[var(--k-border)] text-[#8A909D]">
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#0B0C0E] border border-[#262930] text-[#8A909D]">
                     0{i + 1}
                   </span>
                 </div>
@@ -204,7 +204,7 @@ export const Home = () => {
                   </div>
                 </div>
 
-                <p className="text-xs text-[#8A909D] font-light leading-relaxed pt-3 border-t border-[var(--k-border)] mt-2">
+                <p className="text-xs text-[#8A909D] font-light leading-relaxed pt-3 border-t border-[#262930] mt-2">
                   {stat.desc}
                 </p>
               </div>
@@ -214,7 +214,7 @@ export const Home = () => {
       </section>
 
       {/* CLIENTS & PARTNERS SECTION - LOOPING CAROUSEL WITH SIDE SHADOWS */}
-      <section className="py-14 sm:py-20 bg-[var(--k-bg)] border-b border-[var(--k-border)] overflow-hidden relative" id="clients">
+      <section className="py-14 sm:py-20 bg-[#0B0C0E] border-b border-[#262930] overflow-hidden relative" id="clients">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12 mb-8 sm:mb-10 text-center">
           <span className="text-brand-red font-mono font-semibold tracking-widest uppercase text-xs mb-2 block">
             {language === 'id' ? 'KLIEN & MITRA TERPERCAYA' : 'TRUSTED BY INNOVATION LEADERS'}
@@ -230,10 +230,10 @@ export const Home = () => {
         <div className="relative w-full overflow-hidden py-4">
           
           {/* Left Gradient Shadow */}
-          <div className="absolute left-0 top-0 bottom-0 w-24 sm:w-40 bg-gradient-to-r from-[var(--k-bg)] via-[var(--k-bg)]/90 to-transparent z-20 pointer-events-none" />
+          <div className="absolute left-0 top-0 bottom-0 w-24 sm:w-40 bg-gradient-to-r from-[#0B0C0E] via-[#0B0C0E]/90 to-transparent z-20 pointer-events-none" />
           
           {/* Right Gradient Shadow */}
-          <div className="absolute right-0 top-0 bottom-0 w-24 sm:w-40 bg-gradient-to-l from-[var(--k-bg)] via-[var(--k-bg)]/90 to-transparent z-20 pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-0 w-24 sm:w-40 bg-gradient-to-l from-[#0B0C0E] via-[#0B0C0E]/90 to-transparent z-20 pointer-events-none" />
 
           {/* Marquee Motion Container */}
           <div className="flex w-max">
@@ -292,7 +292,7 @@ export const Home = () => {
       </section>
 
       {/* SOLUTIONS & 3 CORE PILLARS SECTION */}
-      <section className="py-16 sm:py-24 md:py-32 px-4 sm:px-6 md:px-12 bg-[var(--k-bg)] border-b border-[var(--k-border)] relative z-10" id="services">
+      <section className="py-16 sm:py-24 md:py-32 px-4 sm:px-6 md:px-12 bg-[#0B0C0E] border-b border-[#262930] relative z-10" id="services">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 sm:gap-6 mb-12 sm:mb-16">
             <div>
@@ -337,7 +337,7 @@ export const Home = () => {
               <Link 
                 key={idx} 
                 to={`/solutions/${sol.slug}`}
-                className="group p-6 sm:p-7 rounded-2xl bg-[var(--k-surface)] border border-[var(--k-border)] hover:border-brand-red/40 hover:bg-[#1E2128] transition-all flex flex-col justify-between"
+                className="group p-6 sm:p-7 rounded-2xl bg-[#16181D] border border-[#262930] hover:border-brand-red/40 hover:bg-[#1E2128] transition-all flex flex-col justify-between"
               >
                 <div>
                   <span className="text-[10px] font-mono uppercase tracking-widest text-brand-red font-semibold block mb-1">
@@ -350,7 +350,7 @@ export const Home = () => {
                     {sol.desc}
                   </p>
                 </div>
-                <div className="pt-4 mt-4 border-t border-[var(--k-border)]">
+                <div className="pt-4 mt-4 border-t border-[#262930]">
                   <div className="text-xs font-mono text-brand-red group-hover:text-white flex items-center gap-1.5 transition-colors">
                     <span>{language === 'id' ? 'Lihat Detail Subpage' : 'Explore Subpage'}</span>
                     <ArrowUpRight size={13} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
@@ -475,7 +475,7 @@ export const Home = () => {
       </section>
 
       {/* FEATURED PROJECTS PREVIEW (Linked to 50 Case Studies) */}
-      <section className="py-16 sm:py-24 md:py-32 px-4 sm:px-6 md:px-12 bg-[var(--k-bg)] border-b border-[var(--k-border)] relative z-10" id="work">
+      <section className="py-16 sm:py-24 md:py-32 px-4 sm:px-6 md:px-12 bg-[#0B0C0E] border-b border-[#262930] relative z-10" id="work">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 sm:gap-6 mb-10 sm:mb-16">
             <div>
@@ -500,16 +500,16 @@ export const Home = () => {
               <Link 
                 key={project.id}
                 to="/work"
-                className="group rounded-2xl overflow-hidden bg-[var(--k-surface)] border border-[var(--k-border)] hover:border-brand-red/40 transition-all duration-300 flex flex-col"
+                className="group rounded-2xl overflow-hidden bg-[#16181D] border border-[#262930] hover:border-brand-red/40 transition-all duration-300 flex flex-col"
               >
-                <div className="relative aspect-[16/10] overflow-hidden bg-[var(--k-bg)]">
+                <div className="relative aspect-[16/10] overflow-hidden bg-[#0B0C0E]">
                   <img 
                     src={project.image} 
                     alt={project.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     loading="lazy"
                   />
-                  <div className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-[var(--k-bg)]/90 backdrop-blur-md text-[10px] font-mono text-brand-red border border-[var(--k-border)]">
+                  <div className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-[#0B0C0E]/90 backdrop-blur-md text-[10px] font-mono text-brand-red border border-[#262930]">
                     {project.impact[0] ? `${project.impact[0].value} ${project.impact[0].label}` : project.year}
                   </div>
                 </div>
@@ -530,10 +530,10 @@ export const Home = () => {
                       {language === 'id' ? project.descId : project.desc}
                     </p>
                   </div>
-                  <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-[var(--k-border)]">
+                  <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-[#262930]">
                     <div className="flex flex-wrap gap-1.5">
                       {project.technologies.slice(0, 3).map((item) => (
-                        <span key={item} className="px-2 py-0.5 rounded bg-[var(--k-bg)] border border-[var(--k-border)] text-[10px] font-mono text-[#8A909D]">
+                        <span key={item} className="px-2 py-0.5 rounded bg-[#0B0C0E] border border-[#262930] text-[10px] font-mono text-[#8A909D]">
                           {item}
                         </span>
                       ))}
@@ -550,7 +550,7 @@ export const Home = () => {
       </section>
 
       {/* WORKING PROCESS STEPPING */}
-      <section className="py-16 sm:py-24 px-4 sm:px-6 md:px-12 bg-[var(--k-bg)] border-b border-[var(--k-border)]">
+      <section className="py-16 sm:py-24 px-4 sm:px-6 md:px-12 bg-[#0B0C0E] border-b border-[#262930]">
         <div className="max-w-7xl mx-auto">
           <div className="max-w-2xl mb-12 sm:mb-16">
             <span className="text-brand-red font-mono font-semibold tracking-widest uppercase text-xs mb-3 block">
@@ -565,7 +565,7 @@ export const Home = () => {
             {processSteps.map((step) => (
               <div 
                 key={step.step}
-                className="p-6 rounded-2xl bg-[var(--k-surface)] border border-[var(--k-border)] hover:border-brand-red/30 transition-colors flex flex-col justify-between"
+                className="p-6 rounded-2xl bg-[#16181D] border border-[#262930] hover:border-brand-red/30 transition-colors flex flex-col justify-between"
               >
                 <div className="text-2xl font-display font-bold text-brand-red font-mono mb-4">
                   {step.step}

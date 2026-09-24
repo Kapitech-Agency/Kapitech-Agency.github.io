@@ -164,7 +164,7 @@ export const Work = () => {
   const currentFeatured = featuredProjects[featuredIndex] || projectsList[0];
 
   return (
-    <div className="bg-[var(--k-bg)] text-white min-h-screen selection:bg-brand-red selection:text-white relative" role="main">
+    <div className="bg-[#0A0A0A] text-white min-h-screen selection:bg-brand-red selection:text-white relative" role="main">
       {/* Hero Section */}
       <section className="relative pt-32 sm:pt-36 md:pt-40 pb-16 sm:pb-20 px-4 sm:px-6 md:px-12 border-b border-[#2A2A2A] overflow-hidden">
         <AtmosphericBackground 
@@ -204,7 +204,7 @@ export const Work = () => {
 
       {/* Featured Spotlight Carousel */}
       {currentFeatured && (
-        <section className="py-12 sm:py-16 px-4 sm:px-6 md:px-12 border-b border-[#2A2A2A] bg-[var(--k-bg)]">
+        <section className="py-12 sm:py-16 px-4 sm:px-6 md:px-12 border-b border-[#2A2A2A] bg-[#0A0A0A]">
           <div className="max-w-7xl mx-auto">
             <div className="flex items-center justify-between mb-8">
               <div className="flex items-center gap-2.5">
@@ -238,14 +238,14 @@ export const Work = () => {
               onClick={() => setSelectedProject(currentFeatured)}
               className="cursor-pointer group relative rounded-2xl overflow-hidden border border-[#2A2A2A] bg-[#161616] hover:border-brand-red/50 transition-all duration-300 grid grid-cols-1 lg:grid-cols-12 gap-0"
             >
-              <div className="lg:col-span-7 relative aspect-[16/10] sm:aspect-auto sm:h-96 lg:h-[460px] overflow-hidden bg-[var(--k-bg)]">
+              <div className="lg:col-span-7 relative aspect-[16/10] sm:aspect-auto sm:h-96 lg:h-[460px] overflow-hidden bg-[#0A0A0A]">
                 <img 
                   src={currentFeatured.image} 
                   alt={currentFeatured.title}
                   className="w-full h-full object-cover sm:object-cover transition-transform duration-700 group-hover:scale-105"
                   loading="lazy"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[var(--k-bg)]/90 via-[var(--k-bg)]/30 to-transparent lg:hidden" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A]/90 via-[#0A0A0A]/30 to-transparent lg:hidden" />
               </div>
 
               <div className="lg:col-span-5 p-6 sm:p-8 lg:p-10 flex flex-col justify-between">
@@ -254,7 +254,7 @@ export const Work = () => {
                     <span className="px-2.5 py-1 rounded-full bg-brand-red/10 border border-brand-red/30 text-brand-red text-[11px] font-mono font-medium">
                       {currentFeatured.pillar}
                     </span>
-                    <span className="px-2.5 py-1 rounded-full bg-[var(--k-bg)] border border-[#2A2A2A] text-[#8E8E93] text-[11px] font-mono">
+                    <span className="px-2.5 py-1 rounded-full bg-[#0A0A0A] border border-[#2A2A2A] text-[#8E8E93] text-[11px] font-mono">
                       {currentFeatured.service}
                     </span>
                     <span className="text-[#8E8E93]/70 text-xs font-mono ml-auto">
@@ -299,12 +299,12 @@ export const Work = () => {
       )}
 
       {/* Filter & Search Bar Section */}
-      <section className="py-4 sm:py-6 md:py-8 px-4 sm:px-6 md:px-12 sticky top-16 sm:top-20 z-30 bg-[var(--k-bg)]/95 backdrop-blur-xl border-b border-[var(--k-border)] shadow-xl">
+      <section className="py-4 sm:py-6 md:py-8 px-4 sm:px-6 md:px-12 sticky top-16 sm:top-20 z-30 bg-[#0B0C0E]/95 backdrop-blur-xl border-b border-[#262930] shadow-xl">
         <div className="max-w-7xl mx-auto space-y-3 sm:space-y-4">
           {/* Top Controls: Main Pillars + Instant Search */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4">
             {/* Primary Pillar Tabs */}
-            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 bg-[var(--k-surface)] p-1 sm:p-1.5 rounded-xl border border-[var(--k-border)]">
+            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 bg-[#16181D] p-1 sm:p-1.5 rounded-xl border border-[#262930]">
               {[
                 { key: 'All', labelEn: 'All Disciplines', labelId: 'Semua Bidang' },
                 { key: 'Visual Experience', labelEn: 'Visual Experience', labelId: 'Visual Experience' },
@@ -335,7 +335,7 @@ export const Work = () => {
                   setVisibleCount(12);
                 }}
                 placeholder={language === 'id' ? 'Cari studi kasus, klien, stack...' : 'Search case study, client, tech...'}
-                className="w-full bg-[var(--k-surface)] border border-[var(--k-border)] rounded-xl pl-10 pr-9 py-2.5 text-base sm:text-xs text-white placeholder:text-[#8A909D] focus:outline-none focus:border-brand-red transition-colors font-mono min-h-[44px]"
+                className="w-full bg-[#16181D] border border-[#262930] rounded-xl pl-10 pr-9 py-2.5 text-base sm:text-xs text-white placeholder:text-[#8A909D] focus:outline-none focus:border-brand-red transition-colors font-mono min-h-[44px]"
               />
               {searchQuery && (
                 <button
@@ -352,7 +352,7 @@ export const Work = () => {
           {/* Granular Service Pill Filter Scroll with Drag-to-Scroll & Right Black Fade */}
           <div className="relative group/filter">
             {/* Right Fade Black Gradient */}
-            <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-16 sm:w-24 bg-gradient-to-l from-[var(--k-bg)] via-[var(--k-bg)]/80 to-transparent z-10" />
+            <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-16 sm:w-24 bg-gradient-to-l from-[#0B0C0E] via-[#0B0C0E]/80 to-transparent z-10" />
 
             <div 
               ref={serviceScrollRef}
@@ -376,7 +376,7 @@ export const Work = () => {
                   className={`px-3.5 py-2 rounded-full text-xs font-mono whitespace-nowrap transition-all duration-200 shrink-0 border min-h-[38px] flex items-center ${
                     activeService === srv
                       ? 'bg-brand-red text-white border-brand-red font-semibold shadow-md shadow-brand-red/20'
-                      : 'bg-[var(--k-surface)] text-[#8A909D] border-[var(--k-border)] hover:border-brand-red/40 hover:text-white'
+                      : 'bg-[#16181D] text-[#8A909D] border-[#262930] hover:border-brand-red/40 hover:text-white'
                   }`}
                 >
                   {srv === 'All' ? (language === 'id' ? 'Semua Layanan' : 'All Services') : srv}
@@ -412,10 +412,10 @@ export const Work = () => {
       </section>
 
       {/* Projects Grid Section */}
-      <section className="py-12 sm:py-16 px-4 sm:px-6 md:px-12 bg-[var(--k-bg)]">
+      <section className="py-12 sm:py-16 px-4 sm:px-6 md:px-12 bg-[#0B0C0E]">
         <div className="max-w-7xl mx-auto">
           {filteredProjects.length === 0 ? (
-            <div className="text-center py-24 border border-dashed border-[var(--k-border)] rounded-2xl p-8 bg-[var(--k-surface)]/50">
+            <div className="text-center py-24 border border-dashed border-[#262930] rounded-2xl p-8 bg-[#16181D]/50">
               <Search className="w-10 h-10 text-[#8A909D] mx-auto mb-4" />
               <h3 className="text-xl font-display font-bold text-white mb-2">
                 {language === 'id' ? 'Studi Kasus Tidak Ditemukan' : 'No Case Studies Found'}
@@ -448,10 +448,10 @@ export const Work = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3 }}
                     onClick={() => setSelectedProject(project)}
-                    className="cursor-pointer group rounded-2xl overflow-hidden border border-[var(--k-border)] bg-[var(--k-surface)] hover:bg-[#1E2128] hover:border-brand-red/40 transition-all duration-300 flex flex-col h-full"
+                    className="cursor-pointer group rounded-2xl overflow-hidden border border-[#262930] bg-[#16181D] hover:bg-[#1E2128] hover:border-brand-red/40 transition-all duration-300 flex flex-col h-full"
                   >
                     {/* Thumbnail Image */}
-                    <div className="relative aspect-[16/10] overflow-hidden bg-[var(--k-bg)]">
+                    <div className="relative aspect-[16/10] overflow-hidden bg-[#0B0C0E]">
                       <img 
                         src={project.image} 
                         alt={project.title}
@@ -459,12 +459,12 @@ export const Work = () => {
                         loading="lazy"
                       />
                       <div className="absolute top-3 left-3 flex flex-wrap gap-1.5">
-                        <span className="px-2 py-0.5 rounded-md bg-[var(--k-bg)]/80 backdrop-blur-md border border-[var(--k-border)] text-[10px] font-mono text-white">
+                        <span className="px-2 py-0.5 rounded-md bg-[#0B0C0E]/80 backdrop-blur-md border border-[#262930] text-[10px] font-mono text-white">
                           {project.service}
                         </span>
                       </div>
                       <div className="absolute top-3 right-3">
-                        <span className="px-2 py-0.5 rounded-md bg-[var(--k-bg)]/80 backdrop-blur-md border border-[var(--k-border)] text-[10px] font-mono text-[#8A909D]">
+                        <span className="px-2 py-0.5 rounded-md bg-[#0B0C0E]/80 backdrop-blur-md border border-[#262930] text-[10px] font-mono text-[#8A909D]">
                           {project.year}
                         </span>
                       </div>
@@ -484,7 +484,7 @@ export const Work = () => {
                         </p>
                       </div>
 
-                      <div className="pt-4 border-t border-[var(--k-border)] flex items-center justify-between">
+                      <div className="pt-4 border-t border-[#262930] flex items-center justify-between">
                         <div className="flex items-center gap-1.5">
                           {project.impact[0] && (
                             <span className="text-xs font-mono font-bold text-white">
@@ -492,7 +492,7 @@ export const Work = () => {
                             </span>
                           )}
                         </div>
-                        <div className="w-8 h-8 rounded-full border border-[var(--k-border)] bg-[var(--k-bg)] flex items-center justify-center text-[#8A909D] group-hover:text-brand-red group-hover:border-brand-red/40 group-hover:scale-110 transition-all">
+                        <div className="w-8 h-8 rounded-full border border-[#262930] bg-[#0B0C0E] flex items-center justify-center text-[#8A909D] group-hover:text-brand-red group-hover:border-brand-red/40 group-hover:scale-110 transition-all">
                           <ArrowUpRight size={14} />
                         </div>
                       </div>
@@ -506,7 +506,7 @@ export const Work = () => {
                 <div className="text-center pt-12">
                   <button
                     onClick={() => setVisibleCount(prev => prev + 12)}
-                    className="px-8 py-3.5 rounded-full bg-[var(--k-surface)] hover:bg-brand-red text-white border border-[var(--k-border)] hover:border-brand-red text-xs font-mono font-semibold transition-all duration-300 shadow-lg min-h-[44px]"
+                    className="px-8 py-3.5 rounded-full bg-[#16181D] hover:bg-brand-red text-white border border-[#262930] hover:border-brand-red text-xs font-mono font-semibold transition-all duration-300 shadow-lg min-h-[44px]"
                   >
                     {language === 'id' ? 'Muat Lebih Banyak Studi Kasus' : 'Load More Case Studies'} ({filteredProjects.length - visibleCount} {language === 'id' ? 'tersisa' : 'remaining'})
                   </button>
@@ -526,10 +526,10 @@ export const Work = () => {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ duration: 0.25 }}
-              className="relative w-full max-w-4xl bg-[var(--k-surface)] border border-[var(--k-border)] rounded-2xl overflow-hidden shadow-2xl my-8 max-h-[90vh] flex flex-col"
+              className="relative w-full max-w-4xl bg-[#16181D] border border-[#262930] rounded-2xl overflow-hidden shadow-2xl my-8 max-h-[90vh] flex flex-col"
             >
               {/* Modal Header Bar */}
-              <div className="sticky top-0 z-20 flex items-center justify-between p-4 sm:p-5 bg-[var(--k-surface)]/95 backdrop-blur-md border-b border-[var(--k-border)] gap-3">
+              <div className="sticky top-0 z-20 flex items-center justify-between p-4 sm:p-5 bg-[#16181D]/95 backdrop-blur-md border-b border-[#262930] gap-3">
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2 mb-1">
                     <span className="px-2.5 py-0.5 rounded-full bg-brand-red/10 border border-brand-red/30 text-brand-red text-[11px] font-mono font-medium">
@@ -545,7 +545,7 @@ export const Work = () => {
                 </div>
                 <button
                   onClick={() => setSelectedProject(null)}
-                  className="w-9 h-9 rounded-full bg-[var(--k-bg)] hover:bg-white/10 border border-[var(--k-border)] flex items-center justify-center text-[#8A909D] hover:text-white transition-colors shrink-0 min-h-[44px] min-w-[44px]"
+                  className="w-9 h-9 rounded-full bg-[#0B0C0E] hover:bg-white/10 border border-[#262930] flex items-center justify-center text-[#8A909D] hover:text-white transition-colors shrink-0 min-h-[44px] min-w-[44px]"
                   aria-label="Close case study modal"
                 >
                   <X size={18} />
@@ -555,13 +555,13 @@ export const Work = () => {
               {/* Modal Scrollable Content */}
               <div className="overflow-y-auto p-6 sm:p-8 space-y-8">
                 {/* Hero Banner */}
-                <div className="relative aspect-[16/10] sm:aspect-auto sm:h-80 md:h-96 rounded-xl overflow-hidden bg-[var(--k-bg)] border border-[var(--k-border)]">
+                <div className="relative aspect-[16/10] sm:aspect-auto sm:h-80 md:h-96 rounded-xl overflow-hidden bg-[#0B0C0E] border border-[#262930]">
                   <img 
                     src={selectedProject.image} 
                     alt={selectedProject.title}
                     className="w-full h-full object-cover"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[var(--k-bg)] via-[var(--k-bg)]/40 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0B0C0E] via-[#0B0C0E]/40 to-transparent" />
                   <div className="absolute bottom-4 left-4 right-4 sm:bottom-6 sm:left-6">
                     <span className="text-xs font-mono text-[#8A909D] block mb-1">
                       {selectedProject.client} • {selectedProject.industry} • {selectedProject.year}
@@ -579,7 +579,7 @@ export const Work = () => {
                   </h4>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     {selectedProject.impact.map((item, idx) => (
-                      <div key={idx} className="p-4 rounded-xl bg-[var(--k-bg)] border border-[var(--k-border)]">
+                      <div key={idx} className="p-4 rounded-xl bg-[#0B0C0E] border border-[#262930]">
                         <span className="text-2xl sm:text-3xl font-display font-bold text-white block mb-1">
                           {item.value}
                         </span>
@@ -593,7 +593,7 @@ export const Work = () => {
 
                 {/* Challenge & Solution */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="p-5 rounded-xl bg-[var(--k-bg)] border border-[var(--k-border)]">
+                  <div className="p-5 rounded-xl bg-[#0B0C0E] border border-[#262930]">
                     <h4 className="text-xs font-mono uppercase tracking-wider text-[#FF6B00] mb-2 font-semibold flex items-center gap-2">
                       <span className="w-2 h-2 rounded-full bg-[#FF6B00]" />
                       <span>{language === 'id' ? 'Tantangan Bisnis' : 'The Challenge'}</span>
@@ -603,7 +603,7 @@ export const Work = () => {
                     </p>
                   </div>
 
-                  <div className="p-5 rounded-xl bg-[var(--k-bg)] border border-[var(--k-border)]">
+                  <div className="p-5 rounded-xl bg-[#0B0C0E] border border-[#262930]">
                     <h4 className="text-xs font-mono uppercase tracking-wider text-brand-red mb-2 font-semibold flex items-center gap-2">
                       <span className="w-2 h-2 rounded-full bg-brand-red" />
                       <span>{language === 'id' ? 'Solusi & Rekayasa Kapitech' : 'Our Solution & Execution'}</span>
@@ -615,7 +615,7 @@ export const Work = () => {
                 </div>
 
                 {/* Deliverables & Tech Stack */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-[var(--k-border)]">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-[#262930]">
                   <div>
                     <h4 className="text-xs font-mono uppercase tracking-wider text-[#8A909D] mb-3 font-semibold">
                       {language === 'id' ? 'Hasil Kerja & Serah Terima' : 'Core Deliverables'}
@@ -636,7 +636,7 @@ export const Work = () => {
                     </h4>
                     <div className="flex flex-wrap gap-2">
                       {selectedProject.technologies.map((tech, idx) => (
-                        <span key={idx} className="px-3 py-1 rounded-lg bg-[var(--k-bg)] border border-[var(--k-border)] text-xs font-mono text-[#8A909D]">
+                        <span key={idx} className="px-3 py-1 rounded-lg bg-[#0B0C0E] border border-[#262930] text-xs font-mono text-[#8A909D]">
                           {tech}
                         </span>
                       ))}
@@ -645,7 +645,7 @@ export const Work = () => {
                 </div>
 
                 {/* Footer CTA inside Modal */}
-                <div className="p-6 rounded-xl bg-gradient-to-r from-brand-red/20 via-[var(--k-bg)] to-[var(--k-bg)] border border-brand-red/30 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="p-6 rounded-xl bg-gradient-to-r from-brand-red/20 via-[#0B0C0E] to-[#0B0C0E] border border-brand-red/30 flex flex-col sm:flex-row items-center justify-between gap-4">
                   <div>
                     <h4 className="text-base font-display font-bold text-white">
                       {language === 'id' ? 'Tertarik membangun proyek serupa?' : 'Looking to build a similar project?'}

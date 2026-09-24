@@ -106,7 +106,7 @@ function scheduleCrmHydrationRetry(): void {
 }
 
 function hydrateCrmFromServer(): void {
-  if (crmServerHydrationStarted) return;
+  if (!import.meta.env.PROD || crmServerHydrationStarted) return;
   crmServerHydrationStarted = true;
   api.crm.getDeals().then((res) => {
     if (!res.success || !Array.isArray(res.data?.deals)) {

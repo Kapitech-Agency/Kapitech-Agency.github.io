@@ -121,14 +121,14 @@ export const InvoiceStatusDropdown: React.FC<InvoiceStatusDropdownProps> = ({
                   }}
                   className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-md text-left transition-colors ${
                     isSelected
-                      ? 'bg-white/[0.08] text-[var(--k-text)] font-semibold'
-                      : 'text-[#94A3B8] hover:text-[var(--k-text)] hover:bg-white/[0.08]'
+                      ? 'bg-white/[0.08] text-[#F8FAFC] font-semibold'
+                      : 'text-[#94A3B8] hover:text-[#F8FAFC] hover:bg-white/[0.08]'
                   }`}
                 >
                   <span className={`px-2 py-0.5 rounded text-[10px] uppercase font-bold border ${config.badgeClass}`}>
                     {config.label}
                   </span>
-                  {isSelected && <Check size={12} className="text-[var(--k-text)] ml-2 shrink-0" />}
+                  {isSelected && <Check size={12} className="text-[#F8FAFC] ml-2 shrink-0" />}
                 </button>
               );
             })}

@@ -632,9 +632,9 @@ export const Services = () => {
   }, [activeCategory]);
 
   return (
-    <div className="bg-[var(--k-bg)] text-white min-h-screen selection:bg-brand-red selection:text-white relative" role="main">
+    <div className="bg-[#0B0C0E] text-white min-h-screen selection:bg-brand-red selection:text-white relative" role="main">
       {/* Hero Section */}
-      <section className="relative pt-32 sm:pt-36 md:pt-40 pb-16 sm:pb-20 px-4 sm:px-6 md:px-12 border-b border-[var(--k-border)] overflow-hidden">
+      <section className="relative pt-32 sm:pt-36 md:pt-40 pb-16 sm:pb-20 px-4 sm:px-6 md:px-12 border-b border-[#262930] overflow-hidden">
         <AtmosphericBackground 
           imageUrl="/hero_background_3d.png"
           opacity={0.06}
@@ -655,14 +655,14 @@ export const Services = () => {
               }
             </p>
             <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 text-xs font-mono text-[#8A909D]">
-              <span className="px-3 py-1.5 rounded-full bg-[var(--k-surface)] border border-[var(--k-border)] flex items-center gap-2">
+              <span className="px-3 py-1.5 rounded-full bg-[#16181D] border border-[#262930] flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-brand-red animate-pulse shadow-[0_0_8px_rgba(255,26,26,0.6)]" />
                 <span className="text-white">3 {language === 'id' ? 'Solusi Strategis' : 'Strategic Solutions'}</span>
               </span>
-              <span className="px-3 py-1.5 rounded-full bg-[var(--k-surface)] border border-[var(--k-border)] text-white">
+              <span className="px-3 py-1.5 rounded-full bg-[#16181D] border border-[#262930] text-white">
                 15 {language === 'id' ? 'Layanan Spesialis' : 'Specialized Services'}
               </span>
-              <span className="px-3 py-1.5 rounded-full bg-[var(--k-surface)] border border-[var(--k-border)] text-brand-red font-semibold">
+              <span className="px-3 py-1.5 rounded-full bg-[#16181D] border border-[#262930] text-brand-red font-semibold">
                 Branding • Design • Development
               </span>
             </div>
@@ -671,7 +671,7 @@ export const Services = () => {
       </section>
 
       {/* SECTION 1: STRATEGIC SOLUTIONS (Always visible above filter) */}
-      <section className="py-14 sm:py-20 px-4 sm:px-6 md:px-12 border-b border-[var(--k-border)] bg-[var(--k-bg)] relative">
+      <section className="py-14 sm:py-20 px-4 sm:px-6 md:px-12 border-b border-[#262930] bg-[#0B0C0E] relative">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
             <div>
@@ -695,7 +695,7 @@ export const Services = () => {
               <Link
                 key={sol.id}
                 to={`/solutions/${sol.id}`}
-                className="group relative rounded-2xl p-6 sm:p-8 bg-[var(--k-surface)] hover:bg-[#20232B] border border-[var(--k-border)] hover:border-brand-red/60 transition-all duration-300 flex flex-col justify-between"
+                className="group relative rounded-2xl p-6 sm:p-8 bg-[#16181D] hover:bg-[#20232B] border border-[#262930] hover:border-brand-red/60 transition-all duration-300 flex flex-col justify-between"
               >
                 <div>
                   <div className="flex items-center justify-between mb-6">
@@ -720,7 +720,7 @@ export const Services = () => {
                   </p>
                 </div>
 
-                <div className="pt-4 border-t border-[var(--k-border)] flex items-center justify-between">
+                <div className="pt-4 border-t border-[#262930] flex items-center justify-between">
                   <span className="text-xs font-mono text-[#8A909D]/70">
                     {language === 'id' ? sol.timelineId : sol.timeline}
                   </span>
@@ -736,9 +736,9 @@ export const Services = () => {
       </section>
 
       {/* Pillar Filter Tabs */}
-      <section className="py-6 sm:py-8 px-4 sm:px-6 md:px-12 border-b border-[var(--k-border)] bg-[var(--k-bg)]/95 sticky top-16 sm:top-20 z-30 backdrop-blur-md">
+      <section className="py-6 sm:py-8 px-4 sm:px-6 md:px-12 border-b border-[#262930] bg-[#0B0C0E]/95 sticky top-16 sm:top-20 z-30 backdrop-blur-md">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
-          <div className="flex flex-wrap items-center gap-2 bg-[var(--k-surface)] p-1.5 rounded-xl border border-[var(--k-border)] w-full sm:w-auto">
+          <div className="flex flex-wrap items-center gap-2 bg-[#16181D] p-1.5 rounded-xl border border-[#262930] w-full sm:w-auto">
             {[
               { key: 'All', labelEn: 'All Services (15)', labelId: 'Semua Layanan (15)' },
               { key: 'Branding', labelEn: '1. Branding (5)', labelId: '1. Branding (5)' },
@@ -777,7 +777,7 @@ export const Services = () => {
             return (
               <div key={cat} className="space-y-6">
                 {/* Category Pillar Header */}
-                <div className="flex items-center justify-between pb-4 border-b border-[var(--k-border)]">
+                <div className="flex items-center justify-between pb-4 border-b border-[#262930]">
                   <div className="flex items-center gap-3">
                     <span className="text-xs font-mono tracking-widest text-brand-red font-semibold uppercase">
                       {cat === 'Branding' ? '01. ' : cat === 'Design' ? '02. ' : '03. '}
@@ -797,14 +797,14 @@ export const Services = () => {
                     <Link
                       key={srv.id}
                       to={`/services/${srv.id}`}
-                      className="group rounded-2xl p-6 sm:p-7 bg-[var(--k-surface)] hover:bg-[#20232B] border border-[var(--k-border)] hover:border-brand-red/50 transition-all duration-300 flex flex-col justify-between"
+                      className="group rounded-2xl p-6 sm:p-7 bg-[#16181D] hover:bg-[#20232B] border border-[#262930] hover:border-brand-red/50 transition-all duration-300 flex flex-col justify-between"
                     >
                       <div>
                         <div className="flex items-center justify-between mb-5">
                           <div className="w-11 h-11 rounded-xl bg-brand-red/10 border border-brand-red/30 flex items-center justify-center text-brand-red group-hover:scale-110 transition-transform">
                             {srv.icon}
                           </div>
-                          <span className="px-2.5 py-1 rounded-full bg-[var(--k-bg)] border border-[var(--k-border)] text-[10px] sm:text-[11px] font-mono text-[#8A909D]">
+                          <span className="px-2.5 py-1 rounded-full bg-[#0B0C0E] border border-[#262930] text-[10px] sm:text-[11px] font-mono text-[#8A909D]">
                             {srv.category}
                           </span>
                         </div>
@@ -821,7 +821,7 @@ export const Services = () => {
                           {language === 'id' ? srv.summaryId : srv.summary}
                         </p>
 
-                        <div className="pt-3.5 border-t border-[var(--k-border)] space-y-1.5 mb-5">
+                        <div className="pt-3.5 border-t border-[#262930] space-y-1.5 mb-5">
                           {(language === 'id' ? srv.deliverablesId : srv.deliverables).slice(0, 2).map((item, idx) => (
                             <div key={idx} className="flex items-center gap-2 text-xs text-[#8A909D] font-light truncate">
                               <CheckCircle2 size={13} className="text-emerald-400 shrink-0" />
@@ -831,7 +831,7 @@ export const Services = () => {
                         </div>
                       </div>
 
-                      <div className="pt-3.5 border-t border-[var(--k-border)] flex items-center justify-between">
+                      <div className="pt-3.5 border-t border-[#262930] flex items-center justify-between">
                         <span className="text-xs font-mono text-[#8A909D]/70">
                           {language === 'id' ? srv.timelineId : srv.timeline}
                         </span>
@@ -858,10 +858,10 @@ export const Services = () => {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ duration: 0.25 }}
-              className="relative w-full max-w-3xl bg-[var(--k-surface)] border border-[var(--k-border)] rounded-2xl overflow-hidden shadow-2xl my-8 max-h-[90vh] flex flex-col"
+              className="relative w-full max-w-3xl bg-[#16181D] border border-[#262930] rounded-2xl overflow-hidden shadow-2xl my-8 max-h-[90vh] flex flex-col"
             >
               {/* Modal Header */}
-              <div className="sticky top-0 z-20 flex items-center justify-between p-4 sm:p-6 bg-[var(--k-surface)]/95 backdrop-blur border-b border-[var(--k-border)]">
+              <div className="sticky top-0 z-20 flex items-center justify-between p-4 sm:p-6 bg-[#16181D]/95 backdrop-blur border-b border-[#262930]">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-xl bg-brand-red/10 border border-brand-red/30 flex items-center justify-center text-brand-red">
                     {selectedService.icon}
@@ -877,7 +877,7 @@ export const Services = () => {
                 </div>
                 <button
                   onClick={() => setSelectedService(null)}
-                  className="w-9 h-9 rounded-full bg-[var(--k-bg)] hover:bg-white/10 border border-[var(--k-border)] flex items-center justify-center text-[#8A909D] hover:text-white transition-colors"
+                  className="w-9 h-9 rounded-full bg-[#0B0C0E] hover:bg-white/10 border border-[#262930] flex items-center justify-center text-[#8A909D] hover:text-white transition-colors"
                   aria-label="Close modal"
                 >
                   <X size={18} />
@@ -898,7 +898,7 @@ export const Services = () => {
                   </p>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-xl bg-[var(--k-bg)] border border-[var(--k-border)]">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-xl bg-[#0B0C0E] border border-[#262930]">
                   <div>
                     <span className="text-[11px] font-mono text-[#8A909D] uppercase block mb-1">
                       {language === 'id' ? 'Estimasi Pengerjaan' : 'Estimated Timeline'}
@@ -941,7 +941,7 @@ export const Services = () => {
                     </h4>
                     <div className="flex flex-wrap gap-2">
                       {selectedService.tools.map((tool, idx) => (
-                        <span key={idx} className="px-3 py-1 rounded-lg bg-[var(--k-bg)] border border-[var(--k-border)] text-xs font-mono text-[#8A909D]">
+                        <span key={idx} className="px-3 py-1 rounded-lg bg-[#0B0C0E] border border-[#262930] text-xs font-mono text-[#8A909D]">
                           {tool}
                         </span>
                       ))}
@@ -950,7 +950,7 @@ export const Services = () => {
                 )}
 
                 {/* Modal Footer CTA */}
-                <div className="pt-4 border-t border-[var(--k-border)] flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="pt-4 border-t border-[#262930] flex flex-col sm:flex-row items-center justify-between gap-4">
                   <div>
                     <span className="text-xs text-[#8A909D] font-light block">
                       {language === 'id' ? 'Konsultasikan kebutuhan spesifik Anda dengan tim kami.' : 'Consult your specific requirements with our team.'}

@@ -6,10 +6,10 @@
    ========================================================================== */
 :root {
   /* Surface & Background Elevation Layers (Linear/Vercel Dark System) */
-  --bg-app: var(--k-bg);
-  --bg-surface-base: var(--k-surface);
-  --bg-surface-elevated: var(--k-surface-raised);
-  --bg-surface-subtle: var(--k-surface-subtle);
+  --bg-app: #090A0F;
+  --bg-surface-base: #111318;
+  --bg-surface-elevated: #181B22;
+  --bg-surface-subtle: #21252F;
 
   /* Borders & Glassmorphism */
   --border-subtle: rgba(255, 255, 255, 0.07);
@@ -17,16 +17,16 @@
   --border-active: rgba(229, 9, 20, 0.4);
 
   /* Red Brand Accent (Refined Strategy) */
-  --primary-red: var(--k-red);
-  --primary-red-hover: var(--k-red-hover);
+  --primary-red: #E50914;
+  --primary-red-hover: #FF1E27;
   --primary-red-glow: 0 0 16px rgba(229, 9, 20, 0.25);
   --primary-red-subtle: rgba(229, 9, 20, 0.08);
   --primary-red-border: rgba(229, 9, 20, 0.3);
 
   /* Typography & Foreground Tokens */
-  --text-primary: var(--k-text);
-  --text-secondary: var(--k-text-secondary);
-  --text-muted: var(--k-text-muted);
+  --text-primary: #F8FAFC;
+  --text-secondary: #8A94A6;
+  --text-muted: #64748B;
 
   /* Layout & Standard Radii */
   --radius-modal: 16px;
@@ -35,24 +35,24 @@
   --radius-pill: 9999px;
 
   /* Legacy compatibility aliases */
-  --kapi-red-primary: var(--k-red);
-  --kapi-red-electric: var(--k-red-hover);
-  --kapi-red-hover: var(--k-red-hover);
+  --kapi-red-primary: #E50914;
+  --kapi-red-electric: #FF1E27;
+  --kapi-red-hover: #FF1E27;
   --kapi-red-glow: rgba(229, 9, 20, 0.12);
   --kapi-red-glow-hover: rgba(229, 9, 20, 0.25);
   --kapi-red-border-hover: rgba(229, 9, 20, 0.5);
 
-  --kapi-bg-obsidian: var(--k-bg);
-  --kapi-bg-charcoal-deep: var(--k-surface);
-  --kapi-bg-card: var(--k-surface);
-  --kapi-bg-card-hover: var(--k-surface-raised);
+  --kapi-bg-obsidian: #090A0F;
+  --kapi-bg-charcoal-deep: #111318;
+  --kapi-bg-card: #111318;
+  --kapi-bg-card-hover: #181B22;
   
   --kapi-border-subtle: rgba(255, 255, 255, 0.07);
   --kapi-border-highlight: rgba(255, 255, 255, 0.12);
 
-  --kapi-text-white: var(--k-text);
-  --kapi-text-slate: var(--k-text-secondary);
-  --kapi-text-muted: var(--k-text-muted);
+  --kapi-text-white: #F8FAFC;
+  --kapi-text-slate: #8A94A6;
+  --kapi-text-muted: #64748B;
 
   --kapi-radius-card: 12px;
   --kapi-radius-pill: 9999px;
@@ -60,29 +60,6 @@
 
   --kapi-ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
   --kapi-transition-smooth: all 0.3s var(--kapi-ease-spring);
-
-  /* Enterprise & AMS token bridge for --k-* prefixes used across components */
-  --k-bg: var(--bg-app, var(--k-bg));
-  --k-bg-deep: var(--bg-app, var(--k-bg));
-  --k-surface: var(--bg-surface-base, var(--k-surface));
-  --k-surface-base: var(--bg-surface-base, var(--k-surface));
-  --k-surface-raised: var(--bg-surface-elevated, var(--k-surface-raised));
-  --k-surface-subtle: var(--bg-surface-subtle, var(--k-surface-subtle));
-  --k-border: var(--border-subtle, rgba(255, 255, 255, 0.08));
-  --k-border-subtle: var(--border-subtle, rgba(255, 255, 255, 0.07));
-  --k-border-medium: var(--border-medium, rgba(255, 255, 255, 0.12));
-  --k-border-strong: rgba(255, 255, 255, 0.2);
-  --k-text: var(--text-primary, var(--k-text));
-  --k-text-secondary: var(--text-secondary, var(--k-text-secondary));
-  --k-text-muted: #94A3B8;
-  --k-red: var(--k-red);
-  --k-red-hover: var(--k-red-hover);
-  --k-red-border: rgba(229, 9, 20, 0.35);
-  --k-red-glow: rgba(229, 9, 20, 0.25);
-  --k-card-radius: 12px;
-  --k-control-radius: 8px;
-  --k-modal-radius: 16px;
-  --k-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
 }
 
 @theme {
@@ -92,24 +69,24 @@
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
   
   /* Primary Accent: Refined Brand Red */
-  --color-brand-red: var(--k-red);
-  --color-brand-red-bright: var(--k-red-hover);
-  --color-brand-red-hover: var(--k-red-hover);
+  --color-brand-red: #E50914;
+  --color-brand-red-bright: #FF1E27;
+  --color-brand-red-hover: #FF1E27;
   --color-brand-red-glow: rgba(229, 9, 20, 0.25);
 
   /* Surfaces - Strict Solid Dark Palette */
-  --color-dark-base: var(--k-bg);
-  --color-dark-card: var(--k-surface);
-  --color-dark-card-hover: var(--k-surface-raised);
-  --color-dark-subtle: var(--k-surface-subtle);
+  --color-dark-base: #090A0F;
+  --color-dark-card: #111318;
+  --color-dark-card-hover: #181B22;
+  --color-dark-subtle: #21252F;
   --color-dark-border: rgba(255, 255, 255, 0.07);
   --color-dark-divider: rgba(255, 255, 255, 0.12);
-  --color-charcoal: var(--k-surface);
+  --color-charcoal: #111318;
 
   /* Typography */
-  --color-text-headline: var(--k-text);
-  --color-text-body: var(--k-text-secondary);
-  --color-text-muted: var(--k-text-muted);
+  --color-text-headline: #F8FAFC;
+  --color-text-body: #8A94A6;
+  --color-text-muted: #64748B;
 }
 
 @layer base {
@@ -127,7 +104,7 @@
     overflow-x: hidden;
     width: 100%;
     selection-background-color: #E60023;
-    selection-color: var(--k-text);
+    selection-color: #FFFFFF;
   }
 
   /* Accessibility Keyboard Focus Styles */
@@ -142,7 +119,7 @@
 
   /* Fluid Typography */
   h1, h2, h3, h4, h5, h6 {
-    color: var(--k-text);
+    color: #FFFFFF;
   }
 
   h1 {
@@ -616,30 +593,8 @@
   --series-4: #b9b9c6;
   --success: #34d399;
   --warning: #f5a524;
+  --danger: #f97066;
   --info: #5b8cff;
-
-  /* Scoped AMS bridge for --k-* tokens */
-  --k-bg: var(--bg);
-  --k-bg-deep: var(--bg);
-  --k-surface: var(--panel);
-  --k-surface-base: var(--panel);
-  --k-surface-raised: color-mix(in srgb, var(--panel) 85%, var(--text));
-  --k-surface-subtle: color-mix(in srgb, var(--panel) 75%, var(--text));
-  --k-border: var(--line);
-  --k-border-subtle: var(--line);
-  --k-border-medium: rgba(255, 255, 255, 0.12);
-  --k-border-strong: rgba(255, 255, 255, 0.2);
-  --k-text: var(--text);
-  --k-text-secondary: var(--muted);
-  --k-text-muted: var(--muted);
-  --k-red: var(--accent);
-  --k-red-hover: #c40f34;
-  --k-red-border: rgba(220, 20, 60, 0.35);
-  --k-red-glow: rgba(220, 20, 60, 0.25);
-  --k-card-radius: 12px;
-  --k-control-radius: 8px;
-  --k-modal-radius: 16px;
-  --k-shadow-sm: none;
 
   min-width: 0;
   background: var(--bg);
@@ -730,76 +685,14 @@
 
 .ams-shell .ams-card,
 .ams-shell .metric-card,
-.ams-shell .glass-panel,
-.ams-shell .ams-panel,
-.ams-panel {
+.ams-shell .glass-panel {
   background: var(--panel);
   border: 1px solid var(--line);
   border-radius: 12px;
   box-shadow: none;
 }
-.ams-shell .metric-card,
-.ams-shell .ams-kpi,
-.ams-kpi {
-  background: var(--panel);
-  border: 1px solid var(--line);
-  border-radius: 12px;
+.ams-shell .metric-card {
   padding: 16px;
-}
-
-.ams-shell .ams-page-title,
-.ams-page-title {
-  font-size: 20px;
-  line-height: 28px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  color: var(--text);
-}
-
-.ams-shell .ams-page-subtitle,
-.ams-page-subtitle {
-  font-size: 13px;
-  line-height: 18px;
-  color: var(--muted);
-}
-
-.ams-shell .ams-kpi-value,
-.ams-kpi-value {
-  font-size: 24px;
-  line-height: 32px;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: -0.02em;
-  color: var(--text);
-}
-
-.ams-shell .ams-meta,
-.ams-meta {
-  font-size: 12px;
-  line-height: 16px;
-  color: var(--muted);
-}
-
-.ams-shell .ams-action,
-.ams-action {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  height: 32px;
-  padding: 0 12px;
-  font-size: 12px;
-  font-weight: 500;
-  border-radius: 8px;
-  background: var(--panel);
-  border: 1px solid var(--line);
-  color: var(--text);
-  transition: all 0.15s ease;
-  cursor: pointer;
-}
-.ams-shell .ams-action:hover,
-.ams-action:hover {
-  border-color: var(--muted);
-  background: color-mix(in srgb, var(--panel) 90%, var(--text));
 }
 
 .ams-shell button,

@@ -249,9 +249,9 @@ export const Contact = () => {
   const displayedFaqs = showAllFaqs ? allFaqs : allFaqs.slice(0, 4);
 
   return (
-    <div className="bg-[var(--k-bg)] text-white min-h-screen selection:bg-brand-red selection:text-white relative" role="main">
+    <div className="bg-[#0B0C0E] text-white min-h-screen selection:bg-brand-red selection:text-white relative" role="main">
       {/* Hero Section */}
-      <section className="relative pt-28 sm:pt-32 md:pt-36 pb-12 sm:pb-16 px-4 sm:px-6 md:px-12 border-b border-[var(--k-border)] overflow-hidden">
+      <section className="relative pt-28 sm:pt-32 md:pt-36 pb-12 sm:pb-16 px-4 sm:px-6 md:px-12 border-b border-[#262930] overflow-hidden">
         <AtmosphericBackground imageUrl="/hero_background_3d.png" opacity={0.12} disableGrayscale={true} />
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="max-w-3xl">
@@ -275,7 +275,7 @@ export const Contact = () => {
       </section>
 
       {/* Main Form & Info Section */}
-      <section className="py-16 sm:py-20 px-4 sm:px-6 md:px-12 border-b border-[var(--k-border)] relative z-10 bg-[var(--k-bg)]">
+      <section className="py-16 sm:py-20 px-4 sm:px-6 md:px-12 border-b border-[#262930] relative z-10 bg-[#0B0C0E]">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
             {/* Left Column: Direct Info & Location */}
@@ -299,7 +299,7 @@ export const Contact = () => {
 
               <div className="space-y-3 sm:space-y-4">
                 {/* Email Client */}
-                <div className="p-4 sm:p-5 rounded-2xl bg-[var(--k-surface)] border border-[var(--k-border)] flex items-start gap-3.5 sm:gap-4 hover:border-brand-red/40 transition-colors">
+                <div className="p-4 sm:p-5 rounded-2xl bg-[#16181D] border border-[#262930] flex items-start gap-3.5 sm:gap-4 hover:border-brand-red/40 transition-colors">
                   <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-brand-red/10 border border-brand-red/20 flex items-center justify-center text-brand-red shrink-0 mt-0.5">
                     <Mail size={16} />
                   </div>
@@ -317,7 +317,7 @@ export const Contact = () => {
                 </div>
 
                 {/* Email Business */}
-                <div className="p-4 sm:p-5 rounded-2xl bg-[var(--k-surface)] border border-[var(--k-border)] flex items-start gap-3.5 sm:gap-4 hover:border-brand-red/40 transition-colors">
+                <div className="p-4 sm:p-5 rounded-2xl bg-[#16181D] border border-[#262930] flex items-start gap-3.5 sm:gap-4 hover:border-brand-red/40 transition-colors">
                   <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#FF6B00]/10 border border-[#FF6B00]/20 flex items-center justify-center text-[#FF6B00] shrink-0 mt-0.5">
                     <Globe size={16} />
                   </div>
@@ -335,7 +335,7 @@ export const Contact = () => {
                 </div>
 
                 {/* Careers Recruitment Email */}
-                <div className="p-4 sm:p-5 rounded-2xl bg-[var(--k-surface)] border border-[var(--k-border)] flex items-start gap-3.5 sm:gap-4 hover:border-brand-red/40 transition-colors">
+                <div className="p-4 sm:p-5 rounded-2xl bg-[#16181D] border border-[#262930] flex items-start gap-3.5 sm:gap-4 hover:border-brand-red/40 transition-colors">
                   <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-brand-red/10 border border-brand-red/20 flex items-center justify-center text-brand-red shrink-0 mt-0.5">
                     <Mail size={16} />
                   </div>
@@ -353,7 +353,7 @@ export const Contact = () => {
                 </div>
 
                 {/* Phone */}
-                <div className="p-4 sm:p-5 rounded-2xl bg-[var(--k-surface)] border border-[var(--k-border)] flex items-start gap-3.5 sm:gap-4 hover:border-brand-red/40 transition-colors">
+                <div className="p-4 sm:p-5 rounded-2xl bg-[#16181D] border border-[#262930] flex items-start gap-3.5 sm:gap-4 hover:border-brand-red/40 transition-colors">
                   <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-brand-red/10 border border-brand-red/20 flex items-center justify-center text-brand-red shrink-0 mt-0.5">
                     <Phone size={16} />
                   </div>
@@ -371,7 +371,7 @@ export const Contact = () => {
                 </div>
 
                 {/* Location */}
-                <div className="p-4 sm:p-5 rounded-2xl bg-[var(--k-surface)] border border-[var(--k-border)] flex items-start gap-3.5 sm:gap-4 hover:border-brand-red/40 transition-colors">
+                <div className="p-4 sm:p-5 rounded-2xl bg-[#16181D] border border-[#262930] flex items-start gap-3.5 sm:gap-4 hover:border-brand-red/40 transition-colors">
                   <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-brand-red/10 border border-brand-red/20 flex items-center justify-center text-brand-red shrink-0 mt-0.5">
                     <MapPin size={16} />
                   </div>
@@ -386,7 +386,7 @@ export const Contact = () => {
                 </div>
 
                 {/* Working Hours */}
-                <div className="p-4 sm:p-5 rounded-2xl bg-[var(--k-surface)] border border-[var(--k-border)] flex items-start gap-3.5 sm:gap-4">
+                <div className="p-4 sm:p-5 rounded-2xl bg-[#16181D] border border-[#262930] flex items-start gap-3.5 sm:gap-4">
                   <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-brand-red/10 border border-brand-red/20 flex items-center justify-center text-brand-red shrink-0 mt-0.5">
                     <Clock size={16} />
                   </div>
@@ -405,7 +405,7 @@ export const Contact = () => {
 
             {/* Right Column: Interactive Consultation Form */}
             <div className="lg:col-span-7">
-              <div className="p-5 sm:p-8 md:p-12 rounded-2xl sm:rounded-3xl bg-[var(--k-surface)] border border-[var(--k-border)]">
+              <div className="p-5 sm:p-8 md:p-12 rounded-2xl sm:rounded-3xl bg-[#16181D] border border-[#262930]">
                 {isSubmitted ? (
                   <div className="text-center py-12 sm:py-16 space-y-4">
                     <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 mx-auto">
@@ -435,7 +435,7 @@ export const Contact = () => {
 
                       <a
                         href="/inbox"
-                        className="w-full sm:w-auto px-6 py-3 rounded-full bg-[var(--k-bg)] border border-[var(--k-border)] hover:border-brand-red/50 text-white text-xs font-mono font-semibold uppercase tracking-wider transition-colors min-h-[44px] flex items-center justify-center gap-2"
+                        className="w-full sm:w-auto px-6 py-3 rounded-full bg-[#0B0C0E] border border-[#262930] hover:border-brand-red/50 text-white text-xs font-mono font-semibold uppercase tracking-wider transition-colors min-h-[44px] flex items-center justify-center gap-2"
                       >
                         <span>{language === 'id' ? 'Lihat di Inbox Database' : 'View in Inbox'}</span>
                         <ArrowUpRight size={14} />
@@ -483,7 +483,7 @@ export const Contact = () => {
                             className={`p-3 rounded-xl text-xs text-left border transition-colors flex items-center justify-between min-h-[44px] ${
                               selectedServices.includes(srv)
                                 ? 'bg-brand-red/20 border-brand-red text-white'
-                                : 'bg-[var(--k-bg)] border-[var(--k-border)] text-[#8A909D] hover:border-brand-red/40 hover:text-white'
+                                : 'bg-[#0B0C0E] border-[#262930] text-[#8A909D] hover:border-brand-red/40 hover:text-white'
                             }`}
                           >
                             <span>{srv}</span>
@@ -506,7 +506,7 @@ export const Contact = () => {
                           value={formState.name}
                           onChange={handleInputChange}
                           placeholder={language === 'id' ? 'cth. Budi Santoso' : 'e.g. John Doe'}
-                          className={`w-full bg-[var(--k-bg)] border ${formErrors.name ? 'border-brand-red' : 'border-[var(--k-border)]'} rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-base sm:text-xs text-white placeholder:text-[#8A909D]/50 focus:outline-none focus:border-brand-red font-mono min-h-[44px]`}
+                          className={`w-full bg-[#0B0C0E] border ${formErrors.name ? 'border-brand-red' : 'border-[#262930]'} rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-base sm:text-xs text-white placeholder:text-[#8A909D]/50 focus:outline-none focus:border-brand-red font-mono min-h-[44px]`}
                         />
                         {formErrors.name && (
                           <p className="text-[11px] font-mono text-brand-red mt-1 flex items-center gap-1">
@@ -526,7 +526,7 @@ export const Contact = () => {
                           value={formState.email}
                           onChange={handleInputChange}
                           placeholder="john@company.com"
-                          className={`w-full bg-[var(--k-bg)] border ${formErrors.email ? 'border-brand-red' : 'border-[var(--k-border)]'} rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-base sm:text-xs text-white placeholder:text-[#8A909D]/50 focus:outline-none focus:border-brand-red font-mono min-h-[44px]`}
+                          className={`w-full bg-[#0B0C0E] border ${formErrors.email ? 'border-brand-red' : 'border-[#262930]'} rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-base sm:text-xs text-white placeholder:text-[#8A909D]/50 focus:outline-none focus:border-brand-red font-mono min-h-[44px]`}
                         />
                         {formErrors.email && (
                           <p className="text-[11px] font-mono text-brand-red mt-1 flex items-center gap-1">
@@ -548,7 +548,7 @@ export const Contact = () => {
                           value={formState.company}
                           onChange={handleInputChange}
                           placeholder="e.g. Acme Corp"
-                          className="w-full bg-[var(--k-bg)] border border-[var(--k-border)] rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-base sm:text-xs text-white placeholder:text-[#8A909D]/50 focus:outline-none focus:border-brand-red font-mono min-h-[44px]"
+                          className="w-full bg-[#0B0C0E] border border-[#262930] rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-base sm:text-xs text-white placeholder:text-[#8A909D]/50 focus:outline-none focus:border-brand-red font-mono min-h-[44px]"
                         />
                       </div>
                       <div>
@@ -561,7 +561,7 @@ export const Contact = () => {
                           value={formState.phone}
                           onChange={handleInputChange}
                           placeholder="+62 812-xxxx-xxxx"
-                          className={`w-full bg-[var(--k-bg)] border ${formErrors.phone ? 'border-brand-red' : 'border-[var(--k-border)]'} rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-base sm:text-xs text-white placeholder:text-[#8A909D]/50 focus:outline-none focus:border-brand-red font-mono min-h-[44px]`}
+                          className={`w-full bg-[#0B0C0E] border ${formErrors.phone ? 'border-brand-red' : 'border-[#262930]'} rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-base sm:text-xs text-white placeholder:text-[#8A909D]/50 focus:outline-none focus:border-brand-red font-mono min-h-[44px]`}
                         />
                         {formErrors.phone && (
                           <p className="text-[11px] font-mono text-brand-red mt-1 flex items-center gap-1">
@@ -586,7 +586,7 @@ export const Contact = () => {
                             className={`p-3 rounded-xl text-xs text-left border transition-colors min-h-[44px] flex items-center ${
                               budgetRange === opt
                                 ? 'bg-brand-red text-white font-semibold border-brand-red shadow-md shadow-brand-red/20'
-                                : 'bg-[var(--k-bg)] border-[var(--k-border)] text-[#8A909D] hover:border-brand-red/40 hover:text-white'
+                                : 'bg-[#0B0C0E] border-[#262930] text-[#8A909D] hover:border-brand-red/40 hover:text-white'
                             }`}
                           >
                             {opt}
@@ -607,7 +607,7 @@ export const Contact = () => {
                         value={formState.message}
                         onChange={handleInputChange}
                         placeholder={language === 'id' ? 'Ceritakan tentang kebutuhan produk yang ingin dibangun, tantangan saat ini, target rilis, dll...' : 'Tell us about what you want to build, existing challenges, desired launch dates, etc...'}
-                        className={`w-full bg-[var(--k-bg)] border ${formErrors.message ? 'border-brand-red' : 'border-[var(--k-border)]'} rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-base sm:text-xs text-white placeholder:text-[#8A909D]/50 focus:outline-none focus:border-brand-red resize-none font-mono`}
+                        className={`w-full bg-[#0B0C0E] border ${formErrors.message ? 'border-brand-red' : 'border-[#262930]'} rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-base sm:text-xs text-white placeholder:text-[#8A909D]/50 focus:outline-none focus:border-brand-red resize-none font-mono`}
                       />
                       {formErrors.message && (
                         <p className="text-[11px] font-mono text-brand-red mt-1 flex items-center gap-1">
@@ -640,7 +640,7 @@ export const Contact = () => {
       </section>
 
       {/* Frequently Asked Questions */}
-      <section className="py-16 sm:py-24 px-4 sm:px-6 md:px-12 relative z-10 bg-[var(--k-bg)]">
+      <section className="py-16 sm:py-24 px-4 sm:px-6 md:px-12 relative z-10 bg-[#0B0C0E]">
         <div className="max-w-7xl mx-auto">
           <div className="max-w-2xl mb-10 sm:mb-16">
             <span className="text-brand-red font-mono font-semibold tracking-widest uppercase text-xs mb-2 sm:mb-3 block">
@@ -663,7 +663,7 @@ export const Contact = () => {
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: i * 0.05 }}
-                className="p-6 sm:p-8 rounded-2xl bg-[var(--k-surface)] border border-[var(--k-border)] flex flex-col justify-between min-h-[150px] sm:min-h-[170px] hover:border-brand-red/40 transition-colors"
+                className="p-6 sm:p-8 rounded-2xl bg-[#16181D] border border-[#262930] flex flex-col justify-between min-h-[150px] sm:min-h-[170px] hover:border-brand-red/40 transition-colors"
               >
                 <div>
                   <h3 className="text-sm sm:text-base font-display font-bold text-white mb-2 sm:mb-3">
@@ -681,7 +681,7 @@ export const Contact = () => {
           <div className="flex justify-center">
             <button
               onClick={() => setShowAllFaqs(prev => !prev)}
-              className="px-7 sm:px-8 py-3.5 rounded-full border border-[var(--k-border)] bg-[var(--k-surface)] hover:bg-[#1E2128] text-white text-xs font-semibold uppercase tracking-wider transition-all duration-300 flex items-center gap-2 active:scale-95 min-h-[44px]"
+              className="px-7 sm:px-8 py-3.5 rounded-full border border-[#262930] bg-[#16181D] hover:bg-[#1E2128] text-white text-xs font-semibold uppercase tracking-wider transition-all duration-300 flex items-center gap-2 active:scale-95 min-h-[44px]"
             >
               <span>
                 {language === 'id'

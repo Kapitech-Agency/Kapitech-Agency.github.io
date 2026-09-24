@@ -219,7 +219,7 @@ export const SubmissionsInbox: React.FC = () => {
   return (
     <div className="min-h-screen pt-28 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 pb-6 border-b border-[var(--k-border)]">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 pb-6 border-b border-[#262930]">
         <div>
           <div className="flex items-center gap-2 text-brand-red text-xs font-mono uppercase tracking-wider mb-2 font-semibold">
             <ShieldCheck size={16} />
@@ -228,7 +228,7 @@ export const SubmissionsInbox: React.FC = () => {
           <h1 className="text-2xl sm:text-3xl font-display font-bold text-white flex items-center gap-3">
             <Inbox className="text-brand-red" />
             <span>{language === 'id' ? 'Inbox Database Formulir' : 'Submissions Database Inbox'}</span>
-            <span className="text-xs font-mono py-1 px-3 bg-[var(--k-surface)] border border-[var(--k-border)] rounded-full text-[#8A909D]">
+            <span className="text-xs font-mono py-1 px-3 bg-[#16181D] border border-[#262930] rounded-full text-[#8A909D]">
               {submissions.length} Total
             </span>
           </h1>
@@ -244,7 +244,7 @@ export const SubmissionsInbox: React.FC = () => {
           <button
             onClick={handleCreateTestSubmission}
             disabled={testSending}
-            className="px-3 py-1.5 rounded-lg bg-[var(--k-surface)] hover:bg-brand-red text-white hover:text-white border border-[var(--k-border)] hover:border-brand-red text-xs font-mono transition-all flex items-center gap-1.5 shadow-sm"
+            className="px-3 py-1.5 rounded-lg bg-[#16181D] hover:bg-brand-red text-white hover:text-white border border-[#262930] hover:border-brand-red text-xs font-mono transition-all flex items-center gap-1.5 shadow-sm"
             title="Kirim contoh data tes masuk"
           >
             {testSending ? <RefreshCw className="animate-spin" size={13} /> : <Plus size={13} />}
@@ -254,7 +254,7 @@ export const SubmissionsInbox: React.FC = () => {
           {submissions.length > 0 && (
             <button
               onClick={handleExportCSV}
-              className="px-3 py-1.5 rounded-lg bg-[var(--k-surface)] hover:bg-[#20232B] text-[#8A909D] hover:text-white border border-[var(--k-border)] text-xs font-mono transition-colors flex items-center gap-1.5"
+              className="px-3 py-1.5 rounded-lg bg-[#16181D] hover:bg-[#20232B] text-[#8A909D] hover:text-white border border-[#262930] text-xs font-mono transition-colors flex items-center gap-1.5"
               title="Unduh data dalam format CSV Excel"
             >
               <Download size={13} />
@@ -262,7 +262,7 @@ export const SubmissionsInbox: React.FC = () => {
             </button>
           )}
 
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[var(--k-surface)] border border-[var(--k-border)] text-xs font-mono text-emerald-400">
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#16181D] border border-[#262930] text-xs font-mono text-emerald-400">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
             <span>Database Live: Active</span>
           </div>
@@ -292,12 +292,12 @@ export const SubmissionsInbox: React.FC = () => {
               className={`px-3 py-1.5 rounded-lg text-xs font-mono transition-all flex items-center gap-1.5 border ${
                 filterType === tab.key
                   ? 'bg-brand-red text-white border-brand-red font-semibold'
-                  : 'bg-[var(--k-surface)] text-[#8A909D] border-[var(--k-border)] hover:text-white hover:border-[#383C46]'
+                  : 'bg-[#16181D] text-[#8A909D] border-[#262930] hover:text-white hover:border-[#383C46]'
               }`}
             >
               <span>{tab.label}</span>
               <span className={`px-1.5 py-0.2 rounded-full text-[10px] ${
-                filterType === tab.key ? 'bg-black/30 text-white' : 'bg-[var(--k-bg)] text-[#8A909D]'
+                filterType === tab.key ? 'bg-black/30 text-white' : 'bg-[#0B0C0E] text-[#8A909D]'
               }`}>
                 {count}
               </span>
@@ -316,7 +316,7 @@ export const SubmissionsInbox: React.FC = () => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={language === 'id' ? 'Cari nama, email, perusahaan, keahlian, atau isi pesan...' : 'Search by name, email, company, specialty, or message...'}
-            className="w-full pl-10 pr-4 py-2.5 bg-[var(--k-surface)] border border-[var(--k-border)] rounded-xl text-sm text-white focus:outline-none focus:border-brand-red placeholder:text-[#5C626E]"
+            className="w-full pl-10 pr-4 py-2.5 bg-[#16181D] border border-[#262930] rounded-xl text-sm text-white focus:outline-none focus:border-brand-red placeholder:text-[#5C626E]"
           />
         </div>
 
@@ -326,7 +326,7 @@ export const SubmissionsInbox: React.FC = () => {
           <select
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value)}
-            className="w-full py-2.5 px-3 bg-[var(--k-surface)] border border-[var(--k-border)] rounded-xl text-sm text-white focus:outline-none focus:border-brand-red"
+            className="w-full py-2.5 px-3 bg-[#16181D] border border-[#262930] rounded-xl text-sm text-white focus:outline-none focus:border-brand-red"
           >
             <option value="all">{language === 'id' ? 'Semua Status' : 'All Statuses'}</option>
             <option value="new">Status: New</option>
@@ -348,7 +348,7 @@ export const SubmissionsInbox: React.FC = () => {
               <p className="text-sm font-mono">{language === 'id' ? 'Memuat database pesan...' : 'Loading database submissions...'}</p>
             </div>
           ) : filteredItems.length === 0 ? (
-            <div className="bg-[var(--k-surface)] border border-[var(--k-border)] rounded-2xl p-10 text-center text-[#8A909D]">
+            <div className="bg-[#16181D] border border-[#262930] rounded-2xl p-10 text-center text-[#8A909D]">
               <MessageSquare className="mx-auto mb-3 text-[#5C626E]" size={36} />
               <h3 className="text-white font-medium mb-1">
                 {language === 'id' ? 'Belum Ada Pesan yang Sesuai' : 'No Submissions Match Filters'}
@@ -374,7 +374,7 @@ export const SubmissionsInbox: React.FC = () => {
                 className={`p-4 rounded-xl border transition-all cursor-pointer text-left ${
                   selectedSubmission?.id === item.id 
                     ? 'bg-[#1D2027] border-brand-red/60 shadow-lg shadow-brand-red/5' 
-                    : 'bg-[var(--k-surface)] border-[var(--k-border)] hover:border-[#383C46] hover:bg-[#1A1D24]'
+                    : 'bg-[#16181D] border-[#262930] hover:border-[#383C46] hover:bg-[#1A1D24]'
                 }`}
               >
                 <div className="flex items-start justify-between gap-3 mb-2">
@@ -405,7 +405,7 @@ export const SubmissionsInbox: React.FC = () => {
                   {item.message}
                 </p>
 
-                <div className="flex items-center justify-between text-[11px] font-mono text-[#5C626E] pt-2 border-t border-[var(--k-border)]">
+                <div className="flex items-center justify-between text-[11px] font-mono text-[#5C626E] pt-2 border-t border-[#262930]">
                   <span className="truncate max-w-[180px]">{item.company || item.specialty || item.positionTitle || 'Direct Lead'}</span>
                   <span className="text-brand-red text-[10px] font-medium">{item.budget ? `${item.budget}` : 'Review'}</span>
                 </div>
@@ -416,10 +416,10 @@ export const SubmissionsInbox: React.FC = () => {
 
         {/* Detail Section */}
         {selectedSubmission && (
-          <div className="lg:col-span-7 bg-[var(--k-surface)] border border-[var(--k-border)] rounded-2xl p-6 sm:p-8 flex flex-col justify-between">
+          <div className="lg:col-span-7 bg-[#16181D] border border-[#262930] rounded-2xl p-6 sm:p-8 flex flex-col justify-between">
             <div>
               {/* Detail Header */}
-              <div className="flex items-start justify-between gap-4 pb-6 border-b border-[var(--k-border)] mb-6">
+              <div className="flex items-start justify-between gap-4 pb-6 border-b border-[#262930] mb-6">
                 <div>
                   <div className="flex items-center gap-2 mb-2">
                     {getTypeBadge(selectedSubmission.type)}
@@ -438,7 +438,7 @@ export const SubmissionsInbox: React.FC = () => {
 
                 <button
                   onClick={() => setSelectedSubmission(null)}
-                  className="text-xs text-[#8A909D] hover:text-white px-2.5 py-1 rounded bg-[var(--k-bg)] border border-[var(--k-border)]"
+                  className="text-xs text-[#8A909D] hover:text-white px-2.5 py-1 rounded bg-[#0B0C0E] border border-[#262930]"
                 >
                   ✕ Close
                 </button>
@@ -446,7 +446,7 @@ export const SubmissionsInbox: React.FC = () => {
 
               {/* Contact Info Cards */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
-                <div className="p-3.5 rounded-xl bg-[var(--k-bg)] border border-[var(--k-border)]">
+                <div className="p-3.5 rounded-xl bg-[#0B0C0E] border border-[#262930]">
                   <div className="flex items-center justify-between text-xs font-mono text-[#8A909D] mb-1">
                     <div className="flex items-center gap-1.5">
                       <Mail size={14} className="text-brand-red" />
@@ -468,7 +468,7 @@ export const SubmissionsInbox: React.FC = () => {
                   </a>
                 </div>
 
-                <div className="p-3.5 rounded-xl bg-[var(--k-bg)] border border-[var(--k-border)]">
+                <div className="p-3.5 rounded-xl bg-[#0B0C0E] border border-[#262930]">
                   <div className="flex items-center justify-between text-xs font-mono text-[#8A909D] mb-1">
                     <div className="flex items-center gap-1.5">
                       <Phone size={14} className="text-brand-red" />
@@ -494,7 +494,7 @@ export const SubmissionsInbox: React.FC = () => {
 
               {/* Additional Fields if Career / Vendor / Budget */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
-                <div className="p-3.5 rounded-xl bg-[var(--k-bg)] border border-[var(--k-border)]">
+                <div className="p-3.5 rounded-xl bg-[#0B0C0E] border border-[#262930]">
                   <div className="flex items-center gap-2 text-xs font-mono text-[#8A909D] mb-1.5">
                     <Tag size={14} className="text-brand-red" />
                     <span>{selectedSubmission.specialty ? 'Keahlian / Posisi' : 'Layanan Diminta'}</span>
@@ -502,7 +502,7 @@ export const SubmissionsInbox: React.FC = () => {
                   <div className="flex flex-wrap gap-1.5">
                     {selectedSubmission.services && selectedSubmission.services.length > 0 ? (
                       selectedSubmission.services.map((svc, i) => (
-                        <span key={i} className="text-[11px] font-mono px-2 py-0.5 rounded bg-[var(--k-surface)] border border-[var(--k-border)] text-[#D0D4DC]">
+                        <span key={i} className="text-[11px] font-mono px-2 py-0.5 rounded bg-[#16181D] border border-[#262930] text-[#D0D4DC]">
                           {svc}
                         </span>
                       ))
@@ -514,7 +514,7 @@ export const SubmissionsInbox: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="p-3.5 rounded-xl bg-[var(--k-bg)] border border-[var(--k-border)]">
+                <div className="p-3.5 rounded-xl bg-[#0B0C0E] border border-[#262930]">
                   <div className="flex items-center gap-2 text-xs font-mono text-[#8A909D] mb-1">
                     <DollarSign size={14} className="text-brand-red" />
                     <span>{selectedSubmission.rateCard ? 'Rate / Ekspektasi Biaya' : 'Estimasi Anggaran'}</span>
@@ -527,7 +527,7 @@ export const SubmissionsInbox: React.FC = () => {
 
               {/* Portfolio Link if available */}
               {selectedSubmission.portfolioUrl && (
-                <div className="p-3.5 rounded-xl bg-[var(--k-bg)] border border-[var(--k-border)] mb-6">
+                <div className="p-3.5 rounded-xl bg-[#0B0C0E] border border-[#262930] mb-6">
                   <div className="flex items-center gap-2 text-xs font-mono text-[#8A909D] mb-1">
                     <Globe size={14} className="text-brand-red" />
                     <span>Tautan Portofolio / CV</span>
@@ -549,7 +549,7 @@ export const SubmissionsInbox: React.FC = () => {
                 <label className="text-xs font-mono text-[#8A909D] uppercase tracking-wider block mb-2">
                   {language === 'id' ? 'Detail Pesan / Brief Formulir' : 'Message Body & Submission Brief'}
                 </label>
-                <div className="p-4 rounded-xl bg-[var(--k-bg)] border border-[var(--k-border)] text-xs sm:text-sm text-gray-200 whitespace-pre-wrap leading-relaxed max-h-64 overflow-y-auto">
+                <div className="p-4 rounded-xl bg-[#0B0C0E] border border-[#262930] text-xs sm:text-sm text-gray-200 whitespace-pre-wrap leading-relaxed max-h-64 overflow-y-auto">
                   {selectedSubmission.message}
                 </div>
               </div>
@@ -562,14 +562,14 @@ export const SubmissionsInbox: React.FC = () => {
             </div>
 
             {/* Actions Bar */}
-            <div className="pt-6 border-t border-[var(--k-border)] flex flex-wrap items-center justify-between gap-3">
+            <div className="pt-6 border-t border-[#262930] flex flex-wrap items-center justify-between gap-3">
               <div className="flex items-center gap-2">
                 <span className="text-xs font-mono text-[#8A909D]">Status:</span>
                 <select
                   disabled={isUpdating}
                   value={selectedSubmission.status}
                   onChange={(e) => handleStatusChange(selectedSubmission.id, e.target.value as ContactSubmission['status'])}
-                  className="text-xs py-1.5 px-2.5 bg-[var(--k-bg)] border border-[var(--k-border)] rounded-lg text-white focus:outline-none focus:border-brand-red font-mono"
+                  className="text-xs py-1.5 px-2.5 bg-[#0B0C0E] border border-[#262930] rounded-lg text-white focus:outline-none focus:border-brand-red font-mono"
                 >
                   <option value="new">New</option>
                   <option value="in-review">In Review</option>
@@ -589,7 +589,7 @@ export const SubmissionsInbox: React.FC = () => {
 
                 <button
                   onClick={() => handleDelete(selectedSubmission.id)}
-                  className="p-1.5 rounded-lg bg-[var(--k-bg)] border border-[var(--k-border)] text-[#8A909D] hover:text-red-400 hover:border-red-500/40 transition-colors"
+                  className="p-1.5 rounded-lg bg-[#0B0C0E] border border-[#262930] text-[#8A909D] hover:text-red-400 hover:border-red-500/40 transition-colors"
                   title="Hapus data ini"
                 >
                   <Trash2 size={15} />

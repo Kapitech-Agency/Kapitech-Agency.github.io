@@ -268,7 +268,7 @@ export const AdminDocuments: React.FC = () => {
                   <th className="py-3 px-4 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/[0.04] text-xs font-sans text-[var(--k-text)]">
+              <tbody className="divide-y divide-white/[0.04] text-xs font-sans text-[#F8FAFC]">
                 {filteredDocs.map((doc) => {
                   const docTitle = doc.name || doc.title || 'Untitled Document';
                   const docDate = doc.uploadedDate || (doc.uploadedAt ? new Date(doc.uploadedAt).toLocaleDateString() : 'Recent');

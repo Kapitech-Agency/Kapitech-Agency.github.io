@@ -387,7 +387,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
                 <div key={st.stage} className="p-2.5 rounded-[var(--k-control-radius)] bg-[var(--k-surface)] border border-white/[0.04] flex items-center justify-between text-xs">
                   <div className="flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-[var(--k-red)]" />
-                    <span className="font-sans uppercase text-[var(--k-text)] text-[11px] font-semibold">{st.stage}</span>
+                    <span className="font-sans uppercase text-[#F8FAFC] text-[11px] font-semibold">{st.stage}</span>
                     <span className="text-[10px] font-sans text-[var(--k-text-secondary)]">({st.count} deals)</span>
                   </div>
                   <span className="font-sans text-zinc-300 font-bold">{formatCurrency(st.value)}</span>
