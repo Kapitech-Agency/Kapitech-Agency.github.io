@@ -284,7 +284,7 @@ export const AdminProjects: React.FC = () => {
     };
 
     const updatedTasks = [...selectedProject.tasks, newTask];
-    saveAgencyProject({
+    persistProject({
       ...selectedProject,
       tasks: updatedTasks,
       updatedAt: new Date().toISOString()
@@ -300,7 +300,7 @@ export const AdminProjects: React.FC = () => {
   const handleDeleteTask = (taskId: string) => {
     if (!selectedProject) return;
     const updatedTasks = selectedProject.tasks.filter(t => t.id !== taskId);
-    saveAgencyProject({
+    persistProject({
       ...selectedProject,
       tasks: updatedTasks,
       updatedAt: new Date().toISOString()
@@ -323,7 +323,7 @@ export const AdminProjects: React.FC = () => {
       return t;
     });
 
-    saveAgencyProject({
+    persistProject({
       ...selectedProject,
       tasks: updatedTasks,
       updatedAt: new Date().toISOString()
@@ -348,7 +348,7 @@ export const AdminProjects: React.FC = () => {
       return t;
     });
 
-    saveAgencyProject({
+    persistProject({
       ...selectedProject,
       tasks: updatedTasks,
       updatedAt: new Date().toISOString()
@@ -366,7 +366,7 @@ export const AdminProjects: React.FC = () => {
       return t;
     });
 
-    saveAgencyProject({
+    persistProject({
       ...selectedProject,
       tasks: updatedTasks,
       updatedAt: new Date().toISOString()
@@ -381,7 +381,7 @@ export const AdminProjects: React.FC = () => {
     const completedCount = updatedMilestones.filter(m => m.completed).length;
     const calcProgress = Math.round((completedCount / updatedMilestones.length) * 100);
 
-    saveAgencyProject({
+    persistProject({
       ...selectedProject,
       milestones: updatedMilestones,
       progressPercent: calcProgress,
@@ -940,7 +940,7 @@ export const AdminProjects: React.FC = () => {
                     <button
                       key={col.id}
                       onClick={() => {
-                        updateTaskStatus(selectedProject.id, activeTaskDrawer.id, col.id);
+                        void api.tasks.update(activeTaskDrawer.id, { status: col.id }).then((res) => { if (res.success) void loadData(); else showToast(res.error || 'Task status update failed.'); });
                         showToast(`Moved to ${col.label}`);
                       }}
                       className={`px-2.5 py-1.5 rounded-xl border text-[11px] transition-all font-bold ${
