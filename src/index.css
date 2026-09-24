@@ -873,3 +873,233 @@
     transition-duration: .01ms !important;
   }
 }
+
+/* ==========================================================================
+   AMS FRONTEND NORMALIZATION PASS
+   Scoped compatibility layer for existing admin markup.
+   This layer changes presentation only. It does not alter data, behavior,
+   routing, permissions, authentication, API calls, or business logic.
+   ========================================================================== */
+
+.ams-shell {
+  color-scheme: dark;
+}
+
+/* Reconcile legacy AMS palette to the canonical design-system tokens. */
+.ams-shell [class*="bg-[#090A0F]"],
+.ams-shell [class*="bg-[#0B0C0E]"],
+.ams-shell [class*="bg-[#0D0F12]"] {
+  background-color: var(--bg) !important;
+}
+.ams-shell [class*="bg-[#111318]"],
+.ams-shell [class*="bg-[#181B22]"] {
+  background-color: var(--panel) !important;
+}
+.ams-shell [class*="bg-[#21252F]"] {
+  background-color: color-mix(in srgb, var(--text) 6%, var(--panel)) !important;
+}
+
+.ams-shell [class*="text-[#F8FAFC]"],
+.ams-shell [class*="text-[#FFFFFF]"],
+.ams-shell [class~="text-white"] {
+  color: var(--text) !important;
+}
+.ams-shell [class*="text-[#8A94A6]"],
+.ams-shell [class*="text-[#64748B]"],
+.ams-shell [class*="text-[#5C626E]"] {
+  color: var(--muted) !important;
+}
+.ams-shell [class*="text-[#E50914]"],
+.ams-shell [class*="text-[#FF1E27]"] {
+  color: var(--accent-text) !important;
+}
+.ams-shell [class*="bg-[#E50914]"] {
+  background-color: var(--accent) !important;
+}
+.ams-shell [class*="bg-[#FF1E27]"] {
+  background-color: var(--accent) !important;
+}
+.ams-shell [class*="border-[rgba(255,255,255,0.07)]"],
+.ams-shell [class*="border-white/[0.07]"] {
+  border-color: var(--line) !important;
+}
+.ams-shell [class*="border-[rgba(255,255,255,0.12)]"],
+.ams-shell [class*="border-white/[0.12]"] {
+  border-color: color-mix(in srgb, var(--line) 150%, transparent) !important;
+}
+
+/* Status colors remain semantic and never use the brand crimson. */
+.ams-shell [class*="text-red-400"],
+.ams-shell [class*="text-red-500"] {
+  color: var(--danger) !important;
+}
+.ams-shell [class*="bg-red-950"] {
+  background-color: color-mix(in srgb, var(--danger) 14%, transparent) !important;
+}
+.ams-shell [class*="border-red-500"] {
+  border-color: color-mix(in srgb, var(--danger) 45%, var(--line)) !important;
+}
+.ams-shell [class*="text-emerald-400"],
+.ams-shell [class*="text-green-400"] {
+  color: var(--success) !important;
+}
+.ams-shell [class*="text-amber-400"] {
+  color: var(--warning) !important;
+}
+.ams-shell [class*="text-blue-400"],
+.ams-shell [class*="text-sky-400"] {
+  color: var(--info) !important;
+}
+
+/* Typography: one family, calm sentence-case hierarchy. */
+.ams-shell .font-mono,
+.ams-shell .font-display,
+.ams-shell .font-heading {
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif !important;
+}
+.ams-shell .uppercase {
+  text-transform: none !important;
+}
+.ams-shell [class*="tracking-"] {
+  letter-spacing: 0 !important;
+}
+.ams-shell .font-bold {
+  font-weight: 600 !important;
+}
+.ams-shell .font-extrabold {
+  font-weight: 600 !important;
+}
+
+/* Normalize the common legacy radius variants without touching avatars. */
+.ams-shell .rounded-xl {
+  border-radius: 8px !important;
+}
+.ams-shell .rounded-2xl,
+.ams-shell .rounded-3xl {
+  border-radius: 12px !important;
+}
+.ams-shell .rounded-lg {
+  border-radius: 8px !important;
+}
+.ams-shell .rounded-md {
+  border-radius: 6px !important;
+}
+.ams-shell .rounded-sm {
+  border-radius: 5px !important;
+}
+
+/* Dark AMS uses borders, not decorative elevation. Keep popovers readable. */
+.ams-shell .shadow,
+.ams-shell .shadow-sm,
+.ams-shell .shadow-md,
+.ams-shell .shadow-lg,
+.ams-shell .shadow-xl,
+.ams-shell .shadow-2xl,
+.ams-shell [class*="shadow-["] {
+  box-shadow: none !important;
+}
+
+/* Remove glass treatment from admin surfaces. */
+.ams-shell .backdrop-blur,
+.ams-shell .backdrop-blur-sm,
+.ams-shell .backdrop-blur-md,
+.ams-shell .backdrop-blur-lg,
+.ams-shell .backdrop-blur-xl {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Consistent interactive sizing. Do not force checkboxes/radios or icon-only
+   controls into text-field geometry. */
+.ams-shell button:not([role="switch"]):not([aria-label*="menu" i]) {
+  min-height: 36px;
+}
+.ams-shell input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+.ams-shell select {
+  height: 36px;
+  min-height: 36px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+.ams-shell textarea {
+  min-height: 96px;
+}
+
+/* Avoid the white browser outline seen on legacy search fields. */
+.ams-shell input:focus,
+.ams-shell select:focus,
+.ams-shell textarea:focus {
+  outline: none !important;
+}
+.ams-shell input:focus-visible,
+.ams-shell select:focus-visible,
+.ams-shell textarea:focus-visible {
+  outline: 2px solid var(--accent) !important;
+  outline-offset: 2px !important;
+}
+
+/* Dense admin content should never overflow its grid cell. */
+.ams-shell .truncate,
+.ams-shell [class*="truncate"] {
+  min-width: 0;
+}
+.ams-shell .whitespace-nowrap {
+  max-width: 100%;
+}
+.ams-shell img,
+.ams-shell svg {
+  max-width: 100%;
+}
+
+/* Tables: keep compact rows while allowing long content to wrap when needed. */
+.ams-shell table td,
+.ams-shell table th {
+  vertical-align: middle;
+}
+.ams-shell table td [class*="truncate"] {
+  min-width: 0;
+}
+.ams-shell table td:first-child,
+.ams-shell table th:first-child {
+  padding-left: 16px;
+}
+.ams-shell table td:last-child,
+.ams-shell table th:last-child {
+  padding-right: 16px;
+}
+
+/* Standard page rhythm for the existing admin wrappers. */
+.ams-shell main > div.flex-1 > :where(.space-y-8, .space-y-7, .space-y-6) {
+  row-gap: 24px;
+}
+.ams-shell main > div.flex-1 > :where(.space-y-5, .space-y-4) {
+  row-gap: 16px;
+}
+
+/* Modal/backdrop presentation stays flat and restrained. */
+.ams-shell .fixed.inset-0[class*="bg-black"] {
+  background: color-mix(in srgb, var(--bg) 82%, transparent) !important;
+}
+.ams-shell .fixed.inset-0 > [class*="bg-[#111318]"],
+.ams-shell .fixed.inset-0 > [class*="bg-[#0D0F12]"],
+.ams-shell .fixed.inset-0 > [class*="bg-[var(--ams-bg)]"] {
+  background: var(--panel) !important;
+  border-color: var(--line) !important;
+}
+
+/* Mobile: preserve the 52px chrome and provide safe, compact page padding. */
+@media (max-width: 899px) {
+  .ams-shell > main > div.flex-1 {
+    padding: 16px;
+  }
+}
+@media (max-width: 599px) {
+  .ams-shell > main > div.flex-1 {
+    padding: 14px;
+  }
+  .ams-shell h1 {
+    font-size: 18px;
+    line-height: 24px;
+  }
+}
+\n
