@@ -39,6 +39,7 @@ const AdminClients = lazy(() => import('./pages/admin/AdminClients').then((m) =>
 const AdminProposals = lazy(() => import('./pages/admin/AdminProposals').then((m) => ({ default: m.AdminProposals })));
 const AdminApprovals = lazy(() => import('./pages/admin/AdminApprovals').then((m) => ({ default: m.AdminApprovals })));
 const AdminDocuments = lazy(() => import('./pages/admin/AdminDocuments').then((m) => ({ default: m.AdminDocuments })));
+const AdminTimeLogs = lazy(() => import('./pages/admin/AdminTimeLogs').then((m) => ({ default: m.AdminTimeLogs })));
 const AdminCmsProjects = lazy(() => import('./pages/admin/AdminCmsProjects').then((m) => ({ default: m.AdminCmsProjects })));
 const AdminCmsServices = lazy(() => import('./pages/admin/AdminCmsServices').then((m) => ({ default: m.AdminCmsServices })));
 const AdminCmsTestimonials = lazy(() => import('./pages/admin/AdminCmsTestimonials').then((m) => ({ default: m.AdminCmsTestimonials })));
@@ -121,6 +122,7 @@ const AnimatedRoutes = () => {
             <Route path="projects" element={<AdminProjects />} />
             <Route path="approvals" element={<AdminApprovals />} />
             <Route path="documents" element={<AdminDocuments />} />
+            <Route path="time-logs" element={<AdminTimeLogs />} />
             <Route path="vendors" element={<AdminVendors />} />
             <Route path="clients" element={<AdminClients />} />
             <Route path="cms/projects" element={<AdminCmsProjects />} />
