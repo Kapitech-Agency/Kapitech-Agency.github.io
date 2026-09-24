@@ -1009,11 +1009,7 @@
   -webkit-backdrop-filter: none !important;
 }
 
-/* Consistent interactive sizing. Do not force checkboxes/radios or icon-only
-   controls into text-field geometry. */
-.ams-shell button:not([role="switch"]):not([aria-label*="menu" i]) {
-  min-height: 36px;
-}
+/* Interactive sizing is owned by each component so compact icon actions remain compact. */
 .ams-shell input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
 .ams-shell select {
   height: 36px;
@@ -1096,6 +1092,11 @@
 @media (max-width: 599px) {
   .ams-shell > main > div.flex-1 {
     padding: 14px;
+  }
+  .ams-shell input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+  .ams-shell select {
+    height: 40px;
+    min-height: 40px;
   }
   .ams-shell h1 {
     font-size: 18px;
