@@ -54,10 +54,10 @@ export const ProductionReadinessCard: React.FC<Props> = ({ language }) => {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <span className={'inline-flex items-center min-h-10 px-3 rounded-control border text-[10px] font-sans font-bold ' + (result?.productionReady ? 'border-emerald-500/30 bg-success/5 text-success' : 'border-amber-500/30 bg-warning/5 text-warning')}>
+          <span className={'inline-flex items-center min-h-10 px-3 rounded-control border text-[10px] font-sans font-semibold ' + (result?.productionReady ? 'border-emerald-500/30 bg-success/5 text-success' : 'border-amber-500/30 bg-warning/5 text-warning')}>
             {result?.productionReady ? 'Production Ready' : language === 'id' ? 'Cutover Ditahan' : 'Cutover Blocked'}
           </span>
-          <button type="button" onClick={() => void refresh()} disabled={loading} className="min-h-10 px-3 rounded-control bg-[var(--k-surface-raised)] border border-white/[0.08] text-[#CBD5E1] text-[10px] font-sans font-bold disabled:opacity-50" aria-label="Refresh production readiness">
+          <button type="button" onClick={() => void refresh()} disabled={loading} className="min-h-10 px-3 rounded-control bg-[var(--panel-hover)] border border-[var(--line)] text-[var(--muted)] text-[10px] font-sans font-semibold disabled:opacity-50" aria-label="Refresh production readiness">
             <RefreshCw size={12} className={loading ? 'animate-spin' : ''} />
           </button>
         </div>
