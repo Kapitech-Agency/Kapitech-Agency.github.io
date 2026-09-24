@@ -681,3 +681,172 @@
   .ams-shell select { min-height: 44px; }
   .ams-shell .ams-control { min-height: 44px; }
 }
+/* ==========================================================================
+   AMS FE POLISH PASS
+   UI-only layer. No API, auth, RBAC, data, finance, or workflow behavior.
+   ========================================================================== */
+:root {
+  --k-bg: #090A0F;
+  --k-bg-deep: #090A0F;
+  --k-surface: #111318;
+  --k-surface-raised: #181B22;
+  --k-surface-subtle: #21252F;
+  --k-text: #F8FAFC;
+  --k-text-secondary: #8A94A6;
+  --k-text-tertiary: #64748B;
+  --k-red: #E50914;
+  --k-card-radius: 14px;
+  --k-control-radius: 9px;
+  --k-shadow-sm: 0 6px 18px rgba(0,0,0,.22);
+  --k-shadow-md: 0 14px 36px rgba(0,0,0,.28);
+}
+
+.ams-shell {
+  background: radial-gradient(900px 420px at 72% -10%, rgba(229,9,20,.055), transparent 62%), #090A0F;
+  color: #F8FAFC;
+}
+.ams-shell > main { min-width: 0; background: #090A0F; }
+.ams-shell > main > header {
+  min-height: 64px;
+  height: 64px;
+  background: rgba(9,10,15,.94);
+  border-bottom-color: rgba(255,255,255,.075);
+  box-shadow: 0 1px 0 rgba(255,255,255,.015), 0 8px 24px rgba(0,0,0,.18);
+}
+.ams-shell h1 { font-size: clamp(1.5rem,2.1vw,2rem); line-height:1.15; letter-spacing:-.035em; text-wrap:balance; }
+.ams-shell h2 { font-size: clamp(1.15rem,1.5vw,1.5rem); line-height:1.2; letter-spacing:-.025em; text-wrap:balance; }
+.ams-shell h3 { font-size:1rem; line-height:1.3; letter-spacing:-.015em; }
+.ams-shell aside { background:#111318; border-color:rgba(255,255,255,.075); }
+.ams-shell aside a { min-height:36px; }
+.ams-shell aside a:hover { background:rgba(255,255,255,.045); }
+.ams-shell aside select { width:100%; max-width:100%; min-width:0; }
+
+.ams-shell > main > header input {
+  height:36px;
+  background:#111318;
+  border-color:rgba(255,255,255,.075);
+  box-shadow:none;
+}
+.ams-shell > main > header input:focus,
+.ams-shell > main > header input:focus-visible {
+  outline:none !important;
+  box-shadow:0 0 0 3px rgba(229,9,20,.08) !important;
+  border-color:rgba(229,9,20,.55) !important;
+}
+
+.ams-shell [class*="bg-[#111318]"],
+.ams-shell [class*="bg-[var(--k-surface)]"],
+.ams-shell .glass-panel,
+.ams-shell .metric-card,
+.ams-shell .ams-card {
+  border-color:rgba(255,255,255,.075);
+  box-shadow:none;
+}
+.ams-shell [class*="bg-[#181B22]"] { border-color:rgba(255,255,255,.075); }
+.ams-shell [class*="rounded-3xl"] { border-radius:18px !important; }
+.ams-shell [class*="rounded-2xl"] { border-radius:14px !important; }
+.ams-shell [class*="rounded-xl"] { border-radius:10px !important; }
+.ams-shell [class*="rounded-lg"] { border-radius:8px !important; }
+.ams-shell [class*="shadow-2xl"],
+.ams-shell [class*="shadow-xl"] { box-shadow:0 14px 36px rgba(0,0,0,.30) !important; }
+.ams-shell [class*="shadow-[0_0_"] { box-shadow:none !important; }
+
+.ams-shell input:not([type="checkbox"]):not([type="radio"]),
+.ams-shell select,
+.ams-shell textarea {
+  background-color:#111318;
+  color:#F8FAFC;
+  border:1px solid rgba(255,255,255,.075);
+  box-shadow:none;
+}
+.ams-shell input:not([type="checkbox"]):not([type="radio"]),
+.ams-shell select { min-height:40px; }
+.ams-shell textarea { min-height:96px; resize:vertical; }
+.ams-shell input::placeholder,
+.ams-shell textarea::placeholder { color:#64748B; }
+.ams-shell input:hover:not(:disabled):not([type="checkbox"]):not([type="radio"]),
+.ams-shell select:hover:not(:disabled),
+.ams-shell textarea:hover:not(:disabled) { border-color:rgba(255,255,255,.14); }
+.ams-shell input:focus,
+.ams-shell select:focus,
+.ams-shell textarea:focus,
+.ams-shell input:focus-visible,
+.ams-shell select:focus-visible,
+.ams-shell textarea:focus-visible {
+  outline:none !important;
+  border-color:rgba(229,9,20,.62) !important;
+  box-shadow:0 0 0 3px rgba(229,9,20,.075) !important;
+}
+
+.ams-shell button {
+  line-height:1.2;
+  transition:background-color .16s ease,border-color .16s ease,color .16s ease,transform .16s ease,box-shadow .16s ease;
+}
+.ams-shell button:active:not(:disabled) { transform:translateY(1px); }
+.ams-shell button:disabled { opacity:.52; filter:saturate(.7); cursor:not-allowed; }
+
+.ams-shell table { width:100%; font-size:12px; }
+.ams-shell thead th {
+  color:#64748B;
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  white-space:nowrap;
+  background:rgba(255,255,255,.015);
+}
+.ams-shell tbody tr { border-color:rgba(255,255,255,.06); }
+.ams-shell tbody tr:hover { background:rgba(255,255,255,.022); }
+.ams-shell td,.ams-shell th { vertical-align:middle; }
+.ams-shell td { color:#C7CDD8; }
+
+.ams-shell [role="dialog"] { max-width:min(720px,calc(100vw - 32px)); }
+.ams-shell .fixed.inset-0 { overscroll-behavior:contain; }
+.ams-shell .fixed.inset-0 > div { max-height:calc(100vh - 32px); overflow-y:auto; }
+
+[data-kapi-admin="true"] {
+  --k-bg:#090A0F;
+  --k-bg-deep:#090A0F;
+  --k-surface:#111318;
+  --k-surface-raised:#181B22;
+  --k-text:#F8FAFC;
+  --k-text-secondary:#8A94A6;
+  --k-text-tertiary:#64748B;
+  --k-red:#E50914;
+  background:radial-gradient(700px 420px at 50% 0%,rgba(229,9,20,.07),transparent 65%),#090A0F;
+}
+[data-kapi-admin="true"] > div > div {
+  border-color:rgba(255,255,255,.08);
+  background:rgba(17,19,24,.94);
+  box-shadow:0 20px 60px rgba(0,0,0,.38);
+}
+[data-kapi-admin="true"] input:not([type="checkbox"]) {
+  min-height:44px;
+  background:#111318;
+  border-color:rgba(255,255,255,.08);
+}
+[data-kapi-admin="true"] input:focus,
+[data-kapi-admin="true"] input:focus-visible {
+  outline:none !important;
+  border-color:rgba(229,9,20,.62) !important;
+  box-shadow:0 0 0 3px rgba(229,9,20,.075) !important;
+}
+
+@media (max-width:767px) {
+  .ams-shell > main > header { min-height:56px; height:56px; }
+  .ams-shell input:not([type="checkbox"]):not([type="radio"]),
+  .ams-shell select,
+  .ams-shell .ams-control { min-height:44px; }
+  .ams-shell table { min-width:680px; }
+  .ams-shell .overflow-x-auto { -webkit-overflow-scrolling:touch; }
+  [data-kapi-admin="true"] { padding-top:24px; padding-bottom:24px; }
+  [data-kapi-admin="true"] > div > div { padding:22px; border-radius:14px; }
+}
+@media (prefers-reduced-motion:reduce) {
+  .ams-shell *,[data-kapi-admin="true"] * {
+    animation-duration:.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.01ms !important;
+    scroll-behavior:auto !important;
+  }
+}
+
