@@ -320,7 +320,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
                       className={`group flex w-full items-center justify-between rounded-control p-2.5 text-left transition-colors ${isActive ? 'bg-panel' : 'hover:bg-bg'}`}
                     >
                       <div className="flex min-w-0 items-center gap-2.5">
-                        <span className={`shrink-0 rounded border px-2 py-0.5 text-[9px] font-sans font-bold uppercase ${getBadgeColor(result.type)}`}>
+                        <span className={`shrink-0 rounded border px-2 py-0.5 text-[9px] font-sans font-medium normal-case ${getBadgeColor(result.type)}`}>
                           {result.type}
                         </span>
                         <div className="min-w-0">
