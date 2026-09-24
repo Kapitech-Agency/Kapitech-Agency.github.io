@@ -294,8 +294,7 @@ export const Footer = () => {
                 { name: t('nav.services'), href: '/services' },
                 { name: t('nav.about'), href: '/about' },
                 { name: t('nav.careers'), href: '/careers' },
-                { name: t('nav.contact'), href: '/contact' },
-                { name: language === 'id' ? 'Inbox Database' : 'Database Inbox', href: '/inbox' }
+                { name: t('nav.contact'), href: '/contact' }
               ].map((item) => (
                 <li key={item.name}>
                   <Link 
