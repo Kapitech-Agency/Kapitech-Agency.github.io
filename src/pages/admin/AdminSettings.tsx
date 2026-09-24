@@ -1411,23 +1411,12 @@ export const AdminSettings: React.FC = () => {
                 className="w-full px-3.5 py-2.5 bg-[#181B22] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914] font-mono min-h-[44px]"
               />
             </div>
-
-            <div className="pt-3 flex justify-end">
-              <button
-                type="button"
-                onClick={() => {
-                  setApiSaveStatus(
-                    language === 'id' 
-                      ? 'Konfigurasi API & Cloud berhasil disimpan.' 
-                      : 'API & Cloud settings successfully saved.'
-                  );
-                  setTimeout(() => setApiSaveStatus(null), 3000);
-                }}
-                className="px-5 py-2.5 rounded-xl bg-[#E50914] text-white text-xs font-mono font-bold hover:bg-[#FF1E27] transition-all flex items-center gap-2 min-h-[44px]"
-              >
-                <Save size={14} />
-                <span>{language === 'id' ? 'Simpan Konfigurasi API' : 'Save API Settings'}</span>
-              </button>
+            <div className="pt-3 border-t border-[rgba(255,255,255,0.07)]">
+              <p className="text-[11px] text-[#64748B] font-mono">
+                {language === 'id'
+                  ? 'Konfigurasi koneksi ini dikelola oleh environment dan server. Panel ini tidak menyimpan perubahan koneksi.'
+                  : 'These connection values are managed by the environment and server. This panel does not persist connection changes.'}
+              </p>
             </div>
           </div>
         </div>

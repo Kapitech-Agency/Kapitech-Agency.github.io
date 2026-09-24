@@ -607,3 +607,11 @@
 }
 
 
+
+
+/* AMS control cleanup. Keep actions compact, readable, and consistent. */
+.ams-shell button { font-family: var(--font-sans); letter-spacing: -0.01em; }
+.ams-shell button:disabled { cursor: not-allowed; }
+.ams-shell button:not([class*="rounded-full"]) { border-radius: 10px; }
+.ams-shell input, .ams-shell textarea, .ams-shell select { border-radius: 10px; }
+.ams-shell [class*="shadow-[0_0_"] { box-shadow: none !important; }

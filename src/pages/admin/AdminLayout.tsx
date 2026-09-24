@@ -162,8 +162,7 @@ export const AdminLayout: React.FC = () => {
           to: '/admin/crm',
           label: t('admin.nav.crm'),
           icon: Kanban,
-          badge: currency,
-          badgeColor: 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-bold font-mono'
+          badge: null
         },
         {
           key: 'projects',
@@ -197,8 +196,7 @@ export const AdminLayout: React.FC = () => {
           to: '/admin/vendors',
           label: t('admin.nav.vendors'),
           icon: Briefcase,
-          badge: 'Vetted',
-          badgeColor: 'bg-zinc-800 text-zinc-300 font-mono text-[9px]'
+          badge: null
         }
       ]
     },
@@ -245,8 +243,7 @@ export const AdminLayout: React.FC = () => {
           to: '/admin/settings?tab=rbac',
           label: language === 'id' ? 'Akun & Hak Akses' : 'Accounts & RBAC',
           icon: Users,
-          badge: 'RBAC',
-          badgeColor: 'bg-[#E50914]/10 text-[#FF1E27] border border-[#E50914]/30 font-mono text-[9px] font-bold'
+          badge: null
         }
       ]
     }
@@ -294,7 +291,7 @@ export const AdminLayout: React.FC = () => {
   }
 
   return (
-    <div className="h-screen w-full bg-[#090A0F] text-[#F8FAFC] flex flex-col md:flex-row selection:bg-[#E50914] selection:text-white font-sans antialiased overflow-hidden">
+    <div className="h-screen w-full bg-[#090A0F] text-[#F8FAFC] flex flex-col md:flex-row selection:bg-[#E50914] selection:text-white font-sans antialiased overflow-hidden ams-shell">
       
       {/* Universal Command Palette */}
       <CommandPalette 

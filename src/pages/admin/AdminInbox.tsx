@@ -260,65 +260,6 @@ export const AdminInbox: React.FC = () => {
     setTimeout(() => setToastMessage(null), 3000);
   };
 
-  // Simulate rich enterprise brief
-  const handleCreateTestSubmission = async () => {
-    setTestSending(true);
-    try {
-      const mockClients = [
-        {
-          name: 'Adrian Wibowo',
-          company: 'PT Fintek Nusantara Global',
-          phone: '+62 811-9872-4321',
-          services: ['Web Development', 'AI & Cloud Solutions', 'UI/UX Design'],
-          budget: '$25,000 - $50,000',
-          message: 'Kami memerlukan redesain dan pembangunan full-stack platform core banking API & dashboard investor institusional dengan standar ISO 27001 dan latensi sub-100ms.',
-          source: 'Kapitech Website Form (Production)'
-        },
-        {
-          name: 'Sarah Jenkins',
-          company: 'AeroCloud Analytics Inc.',
-          phone: '+1 (415) 890-3412',
-          services: ['UI/UX Design', 'Digital Product MVP'],
-          budget: '$10,000 - $25,000',
-          message: 'Seeking a top-tier design & engineering studio to architect our Series-A B2B SaaS analytics portal in Next.js/Tailwind with interactive D3 charts.',
-          source: 'Direct Client Inquiry'
-        },
-        {
-          name: 'Budi Hartono',
-          company: 'Veritas Retail Ecosystem',
-          phone: '+62 812-4455-8899',
-          services: ['Mobile App', 'Web Development'],
-          budget: '$5,000 - $15,000',
-          message: 'Halo tim Kapitech, kami ingin berkonsultasi mengenai migrasi e-commerce omnichannel kami ke modern headless architecture dengan sistem manajemen stok real-time.',
-          source: 'Website Brief Dispatcher'
-        }
-      ];
-
-      const sample = mockClients[Math.floor(Math.random() * mockClients.length)];
-
-      await submitToInbox({
-        fullName: sample.name,
-        email: `${sample.name.toLowerCase().replace(/[^a-z]/g, '.')}@example.com`,
-        company: sample.company,
-        phone: sample.phone,
-        services: sample.services,
-        budget: sample.budget,
-        message: sample.message,
-        source: sample.source,
-        type: 'inquiry',
-        priority: 'urgent'
-      });
-
-      setToastMessage({
-        text: language === 'id' ? `Simulasi lead "${sample.name}" berhasil ditambahkan.` : `Simulated inbound lead "${sample.name}" received!`
-      });
-      setTimeout(() => setToastMessage(null), 3000);
-    } catch (e) {
-      console.error('Error creating test submission:', e);
-    } finally {
-      setTestSending(false);
-    }
-  };
 
   // Copy helper
   const handleCopyText = (text: string, id: string) => {
@@ -624,15 +565,7 @@ export const AdminInbox: React.FC = () => {
             </button>
           )}
 
-          {/* Simulate new lead (Strictly single icon rule) */}
-          <button
-            onClick={handleCreateTestSubmission}
-            disabled={testSending}
-            className="h-10 px-4 rounded-xl bg-[#181B22] hover:bg-[#21252F] text-white border border-[rgba(255,255,255,0.08)] text-xs font-mono transition-colors flex items-center gap-1.5 min-h-[40px]"
-          >
-            {testSending ? <RefreshCw className="animate-spin text-[#FF1E27]" size={14} /> : <Plus size={14} className="text-[#FF1E27]" />}
-            <span>{language === 'id' ? 'Simulasi Lead' : 'Simulate Lead'}</span>
-          </button>
+
 
           {/* Export CSV */}
           {submissions.length > 0 && (
@@ -1034,14 +967,7 @@ export const AdminInbox: React.FC = () => {
             )}
 
             {submissions.length === 0 && (
-              <button
-                onClick={handleCreateTestSubmission}
-                disabled={testSending}
-                className="h-9 px-4 rounded-xl bg-[#E50914] hover:bg-[#FF1E27] text-white text-xs font-mono font-bold transition-all flex items-center gap-2 shadow-lg shadow-[#E50914]/20 disabled:opacity-50"
-              >
-                <Plus size={14} />
-                <span>{testSending ? (language === 'id' ? 'Membuat...' : 'Generating...') : (language === 'id' ? 'Buat Contoh Brief Masuk' : 'Generate Sample Brief')}</span>
-              </button>
+              
             )}
           </div>
         </div>
