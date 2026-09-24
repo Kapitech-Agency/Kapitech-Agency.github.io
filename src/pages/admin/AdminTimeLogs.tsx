@@ -98,7 +98,7 @@ export const AdminTimeLogs: React.FC = () => {
   };
 
   return (
-    <div className="h-full overflow-y-auto bg-[#090A0F] text-white">
+    <div className="h-full overflow-y-auto bg-[var(--bg)] text-white">
       <div className="max-w-[1500px] mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
         <header className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
           <div>
@@ -165,7 +165,7 @@ export const AdminTimeLogs: React.FC = () => {
                 <input value={notes} onChange={e => setNotes(e.target.value)} placeholder="Optional context" className="ams-control w-full" />
               </label>
               <div className="flex items-center gap-3">
-                <label className="flex items-center gap-2 h-10 px-3 rounded-[var(--ams-radius-control)] border border-white/[0.08] bg-[#090A0F] text-xs cursor-pointer">
+                <label className="flex items-center gap-2 h-10 px-3 rounded-[var(--ams-radius-control)] border border-white/[0.08] bg-[var(--bg)] text-xs cursor-pointer">
                   <input type="checkbox" checked={billable} onChange={e => setBillable(e.target.checked)} className="accent-[var(--accent)]" />
                   Billable
                 </label>
@@ -197,7 +197,7 @@ export const AdminTimeLogs: React.FC = () => {
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full min-w-[760px] text-left">
-                <thead className="bg-[#0D0F14] text-xs normal-case tracking-normal text-[var(--muted)]">
+                <thead className="bg-[var(--bg)] text-xs normal-case tracking-normal text-[var(--muted)]">
                   <tr>
                     <th className="px-4 py-3 font-medium">Date</th>
                     <th className="px-4 py-3 font-medium">Project / Task</th>
