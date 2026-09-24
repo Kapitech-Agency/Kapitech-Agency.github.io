@@ -625,7 +625,7 @@ export const AdminProposals: React.FC = () => {
       {/* CREATE PROPOSAL MODAL */}
       {isCreateModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/80  flex items-center justify-center p-4">
-          <div className="bg-[var(--ams-bg)] border border-[var(--line)] rounded-card w-full max-w-2xl max-h-[90vh] flex flex-col shadow-[0_24px_64px_rgba(0,0,0,0.55)] overflow-hidden">
+          <div className="bg-[var(--ams-bg)] border border-[var(--line)] rounded-card w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden">
             <div className="p-4 border-b border-[var(--line)] flex items-center justify-between bg-[var(--panel)]">
               <div className="flex items-center gap-2">
                 <FileText className="text-[var(--accent)]" size={18} />
@@ -830,7 +830,7 @@ export const AdminProposals: React.FC = () => {
       {/* PREVIEW PROPOSAL MODAL */}
       {previewProposal && (
         <div className="fixed inset-0 z-50 bg-black/85  flex items-center justify-center p-4">
-          <div className="bg-[var(--ams-bg)] border border-[var(--line)] rounded-card w-full max-w-xl shadow-[0_24px_64px_rgba(0,0,0,0.55)] overflow-hidden">
+          <div className="bg-[var(--ams-bg)] border border-[var(--line)] rounded-card w-full max-w-xl overflow-hidden">
             <div className="p-4 border-b border-[var(--line)] flex items-center justify-between bg-[var(--panel)]">
               <div className="flex items-center gap-2">
                 <span className="text-[var(--accent)] font-sans font-semibold text-xs">{previewProposal.proposalNumber}</span>
