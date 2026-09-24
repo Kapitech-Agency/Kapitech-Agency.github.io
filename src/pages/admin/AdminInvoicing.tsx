@@ -251,21 +251,21 @@ export const AdminInvoicing: React.FC = () => {
     switch (status) {
       case 'paid':
         return (
-          <span className="px-2.5 py-1 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-[10px] font-sans font-bold flex items-center gap-1.5">
+          <span className="px-2.5 py-1 rounded-lg bg-[var(--success)]/10 text-[var(--success)] border border-[var(--success)]/30 text-[10px] font-sans font-semibold flex items-center gap-1.5">
             <CheckCircle2 size={12} />
             <span>PAID</span>
           </span>
         );
       case 'sent':
         return (
-          <span className="px-2.5 py-1 rounded-lg bg-rose-500/10 text-rose-400 border border-rose-500/30 text-[10px] font-sans font-bold flex items-center gap-1.5">
+          <span className="px-2.5 py-1 rounded-lg bg-rose-500/10 text-rose-400 border border-rose-500/30 text-[10px] font-sans font-semibold flex items-center gap-1.5">
             <Send size={12} />
             <span>SENT</span>
           </span>
         );
       case 'overdue':
         return (
-          <span className="px-2.5 py-1 rounded-lg bg-rose-500/10 text-rose-400 border border-rose-500/30 text-[10px] font-sans font-bold flex items-center gap-1.5 animate-pulse">
+          <span className="px-2.5 py-1 rounded-lg bg-rose-500/10 text-rose-400 border border-rose-500/30 text-[10px] font-sans font-semibold flex items-center gap-1.5 animate-pulse">
             <AlertCircle size={12} />
             <span>OVERDUE</span>
           </span>
@@ -273,7 +273,7 @@ export const AdminInvoicing: React.FC = () => {
       case 'draft':
       default:
         return (
-          <span className="px-2.5 py-1 rounded-lg bg-zinc-500/10 text-zinc-400 border border-zinc-500/30 text-[10px] font-sans font-bold flex items-center gap-1.5">
+          <span className="px-2.5 py-1 rounded-lg bg-[var(--panel-hover)] text-[var(--muted)] border border-[var(--line)] text-[10px] font-sans font-semibold flex items-center gap-1.5">
             <Clock size={12} />
             <span>DRAFT</span>
           </span>
@@ -284,10 +284,10 @@ export const AdminInvoicing: React.FC = () => {
   if (!canViewFinancials) {
     return (
       <div className="min-h-[60vh] flex flex-col items-center justify-center text-center p-8 bg-[var(--panel)] border border-[var(--line)] rounded-card max-w-xl mx-auto my-12 animate-in fade-in duration-200">
-        <div className="w-16 h-16 rounded-card bg-red-500/10 border border-red-500/20 text-[var(--danger)] flex items-center justify-center mb-4 shadow-lg shadow-red-500/5">
+        <div className="w-16 h-16 rounded-card bg-[var(--danger)]/10 border border-[var(--danger)]/30 text-[var(--danger)] flex items-center justify-center mb-4 shadow-none">
           <ShieldCheck size={32} />
         </div>
-        <h2 className="text-xl font-display font-bold text-white mb-2">
+        <h2 className="text-xl font-display font-semibold text-[var(--text)] mb-2">
           {language === 'id' ? 'Akses Terbatas: Finansial & Invoicing' : 'Restricted Access: Financials & Invoicing'}
         </h2>
         <p className="text-sm text-[var(--muted)] mb-6 leading-relaxed">
@@ -295,7 +295,7 @@ export const AdminInvoicing: React.FC = () => {
             ? `Akun Anda (${session?.user?.name || session?.user?.username}) terdaftar dengan peran "${session?.user?.role}". Akses modul keuangan, pembukuan invoice, dan data billing dibatasi khusus untuk Eksekutif / Manajemen Sponsor Kapitech.`
             : `Your account (${session?.user?.name || session?.user?.username}) is registered as "${session?.user?.role}". Financial ledger, invoices, and billing metrics are restricted to Executive Stakeholders / Sponsors.`}
         </p>
-        <div className="px-4 py-2.5 rounded-xl bg-[var(--panel)] border border-[var(--line)] text-xs font-sans text-[var(--muted)]">
+        <div className="px-4 py-2.5 rounded-card bg-[var(--panel)] border border-[var(--line)] text-xs font-sans text-[var(--muted)]">
           {language === 'id' ? 'Hubungi Executive Sponsor untuk peningkatan otorisasi hak akses.' : 'Contact an Executive Sponsor for elevated authorization.'}
         </div>
       </div>
@@ -308,7 +308,7 @@ export const AdminInvoicing: React.FC = () => {
       {/* 1. Header & Actions */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[var(--line)]">
         <div>
-          <h1 className="text-xl font-display font-semibold text-white flex items-center gap-3">
+          <h1 className="text-xl font-display font-semibold text-[var(--text)] flex items-center gap-3">
             <Receipt className="text-[var(--danger)]" size={26} />
             <span>{t('admin.fin.title')}</span>
           </h1>
@@ -321,7 +321,7 @@ export const AdminInvoicing: React.FC = () => {
           <button
             onClick={() => setIsExpenseModalOpen(true)}
             disabled={!canManageInvoices}
-            className="h-10 px-4 rounded-control bg-[var(--panel)] hover:bg-[var(--panel)] text-white text-xs font-sans font-bold border border-[var(--line)] transition-all flex items-center justify-center gap-1.5 min-h-[40px] disabled:opacity-50 disabled:cursor-not-allowed"
+            className="min-h-10 px-4 rounded-control bg-[var(--panel)] hover:bg-[var(--panel-hover)] text-[var(--text)] text-xs font-sans font-medium border border-[var(--line)] transition-colors flex items-center justify-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Plus size={14} />
             <span>{t('admin.fin.recordExpense')}</span>
@@ -330,7 +330,7 @@ export const AdminInvoicing: React.FC = () => {
           {canManageInvoices && (
             <button
               onClick={handleOpenCreateInvoice}
-              className="h-10 px-4 rounded-xl bg-[var(--accent)] hover:bg-[var(--danger)] text-white text-xs font-sans font-bold transition-all flex items-center justify-center gap-1.5 shadow-lg shadow-[var(--accent)]/20 min-h-[40px]"
+              className="min-h-10 px-4 rounded-control bg-[var(--accent)] hover:bg-[var(--panel-hover)] text-[var(--text)] text-xs font-sans font-medium transition-colors flex items-center justify-center gap-1.5"
             >
               <Plus size={14} />
               <span>{t('admin.fin.createInvoice')}</span>
@@ -340,7 +340,7 @@ export const AdminInvoicing: React.FC = () => {
       </div>
 
       {statusMessage && (
-        <div className="p-3.5 rounded-xl bg-emerald-950/40 border border-emerald-500/40 text-emerald-300 text-xs font-sans flex items-center gap-2">
+        <div className="p-3.5 rounded-card bg-[var(--success)]/10 border border-[var(--success)]/30 text-[var(--success)] text-xs font-sans flex items-center gap-2">
           <Check size={14} />
           <span>{statusMessage}</span>
         </div>
@@ -354,17 +354,17 @@ export const AdminInvoicing: React.FC = () => {
           <div>
             <div className="flex items-center justify-between text-[var(--muted)] mb-2">
               <span className="text-xs font-sans normal-case font-semibold">{t('admin.fin.revenuePaid')}</span>
-              <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+              <div className="w-8 h-8 rounded-lg bg-[var(--success)]/10 border border-[var(--success)]/30 flex items-center justify-center text-[var(--success)]">
                 <DollarSign size={16} />
               </div>
             </div>
-            <div className="text-2xl sm:text-3xl font-display font-bold text-white tracking-tight">
+            <div className="text-2xl sm:text-3xl font-display font-semibold text-[var(--text)] tracking-tight">
               {formatAmount(metrics.totalPaidRevenue, currency)}
             </div>
           </div>
           <div className="flex items-center justify-between mt-4 pt-3 border-t border-[var(--line)] text-[11px] font-sans">
             <span className="text-[var(--muted)]">{metrics.paidCount} {language === 'id' ? 'Invoice Lunas' : 'Paid Invoices'}</span>
-            <span className="text-emerald-400 font-semibold">{metrics.collectionRate}% {language === 'id' ? 'Tertagih' : 'Collected'}</span>
+            <span className="text-[var(--success)] font-semibold">{metrics.collectionRate}% {language === 'id' ? 'Tertagih' : 'Collected'}</span>
           </div>
         </div>
 
@@ -373,17 +373,17 @@ export const AdminInvoicing: React.FC = () => {
           <div>
             <div className="flex items-center justify-between text-[var(--muted)] mb-2">
               <span className="text-xs font-sans normal-case font-semibold">{t('admin.fin.outstanding')}</span>
-              <div className="w-8 h-8 rounded-lg bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-400">
+              <div className="w-8 h-8 rounded-lg bg-[var(--danger)]/10 border border-[var(--danger)]/30 flex items-center justify-center text-[var(--danger)]">
                 <Clock size={16} />
               </div>
             </div>
-            <div className="text-2xl sm:text-3xl font-display font-bold text-white tracking-tight">
+            <div className="text-2xl sm:text-3xl font-display font-semibold text-[var(--text)] tracking-tight">
               {formatAmount(metrics.totalOutstanding, currency)}
             </div>
           </div>
           <div className="flex items-center justify-between mt-4 pt-3 border-t border-[var(--line)] text-[11px] font-sans">
             <span className="text-[var(--muted)]">{metrics.sentCount} {language === 'id' ? 'Invoice Tertunda' : 'Pending Invoices'}</span>
-            <span className="text-red-400 font-semibold">{language === 'id' ? 'Menunggu Pelunasan' : 'Awaiting Settlement'}</span>
+            <span className="text-[var(--danger)] font-semibold">{language === 'id' ? 'Menunggu Pelunasan' : 'Awaiting Settlement'}</span>
           </div>
         </div>
 
@@ -396,7 +396,7 @@ export const AdminInvoicing: React.FC = () => {
                 <TrendingDown size={16} />
               </div>
             </div>
-            <div className="text-2xl sm:text-3xl font-display font-bold text-white tracking-tight">
+            <div className="text-2xl sm:text-3xl font-display font-semibold text-[var(--text)] tracking-tight">
               {formatAmount(metrics.totalExpenses, currency)}
             </div>
           </div>
@@ -415,7 +415,7 @@ export const AdminInvoicing: React.FC = () => {
                 <TrendingUp size={16} />
               </div>
             </div>
-            <div className="text-2xl sm:text-3xl font-display font-bold text-white tracking-tight">
+            <div className="text-2xl sm:text-3xl font-display font-semibold text-[var(--text)] tracking-tight">
               {formatAmount(metrics.netOperatingProfit, currency)}
             </div>
           </div>
@@ -433,13 +433,13 @@ export const AdminInvoicing: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[var(--panel)] border border-[var(--line)] p-3 sm:p-4 rounded-card">
         
         {/* Left: Tab Switcher */}
-        <div className="flex items-center gap-1.5 bg-[var(--panel)] p-1 rounded-xl border border-[var(--line)] shrink-0">
+        <div className="flex items-center gap-1.5 bg-[var(--panel)] p-1 rounded-card border border-[var(--line)] shrink-0">
           <button
             onClick={() => setActiveTab('invoices')}
             className={`px-3.5 py-1.5 rounded-lg text-xs font-sans transition-all flex items-center gap-1.5 ${
               activeTab === 'invoices'
-                ? 'bg-[var(--accent)] text-white font-bold shadow-md'
-                : 'text-[var(--muted)] hover:text-white'
+                ? 'bg-[var(--accent)] text-[var(--text)] font-semibold shadow-md'
+                : 'text-[var(--muted)] hover:text-[var(--text)]'
             }`}
           >
             <Receipt size={14} />
@@ -449,8 +449,8 @@ export const AdminInvoicing: React.FC = () => {
             onClick={() => setActiveTab('expenses')}
             className={`px-3.5 py-1.5 rounded-lg text-xs font-sans transition-all flex items-center gap-1.5 ${
               activeTab === 'expenses'
-                ? 'bg-[var(--accent)] text-white font-bold shadow-md'
-                : 'text-[var(--muted)] hover:text-white'
+                ? 'bg-[var(--accent)] text-[var(--text)] font-semibold shadow-md'
+                : 'text-[var(--muted)] hover:text-[var(--text)]'
             }`}
           >
             <CreditCard size={14} />
@@ -468,7 +468,7 @@ export const AdminInvoicing: React.FC = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={language === 'id' ? 'Cari no invoice, klien...' : 'Search invoice number, client...'}
-                className="w-full pl-8 pr-3 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-xs text-white placeholder-[var(--muted)] focus:outline-none focus:border-[var(--accent)] font-sans"
+                className="w-full pl-8 pr-3 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-card text-xs text-[var(--text)] placeholder-[var(--muted)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20 font-sans"
               />
             </div>
 
@@ -525,10 +525,10 @@ export const AdminInvoicing: React.FC = () => {
                   </div>
 
                   {/* Client & Dates */}
-                  <div className="bg-[var(--panel)]/60 rounded-xl p-3 border border-[var(--line)] space-y-1.5 text-xs font-sans">
+                  <div className="bg-[var(--panel)]/60 rounded-card p-3 border border-[var(--line)] space-y-1.5 text-xs font-sans">
                     <div className="flex items-center justify-between">
                       <span className="text-[var(--muted)] text-[11px]">{language === 'id' ? 'Klien:' : 'Client:'}</span>
-                      <span className="font-bold text-white text-right">{inv.clientName}</span>
+                      <span className="font-semibold text-[var(--text)] text-right">{inv.clientName}</span>
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-[var(--muted)] text-[11px]">{language === 'id' ? 'Perusahaan:' : 'Company:'}</span>
@@ -544,7 +544,7 @@ export const AdminInvoicing: React.FC = () => {
                   <div className="flex items-center justify-between pt-1">
                     <div>
                       <div className="text-[10px] normal-case font-sans text-[var(--muted)]">{language === 'id' ? 'Total Tagihan' : 'Total Amount'}</div>
-                      <div className="text-base font-bold text-emerald-400 font-display">
+                      <div className="text-base font-semibold text-[var(--success)] font-display">
                         {formatAmount(inv.total, currency)}
                       </div>
                       <div className="text-[10px] font-sans text-[var(--muted)]">
@@ -553,8 +553,8 @@ export const AdminInvoicing: React.FC = () => {
                       {((inv.amountPaid && inv.amountPaid > 0) || inv.status === 'partially_paid') && (
                         <div className="mt-1.5 space-y-1">
                           <div className="flex items-center gap-2 text-[10px] font-sans">
-                            <span className="text-emerald-400">Paid: {formatAmount(inv.amountPaid || 0, currency)}</span>
-                            <span className="text-amber-400 font-semibold">Due: {formatAmount(inv.balanceDue ?? (inv.total - (inv.amountPaid || 0)), currency)}</span>
+                            <span className="text-[var(--success)]">Paid: {formatAmount(inv.amountPaid || 0, currency)}</span>
+                            <span className="text-[var(--warning)] font-semibold">Due: {formatAmount(inv.balanceDue ?? (inv.total - (inv.amountPaid || 0)), currency)}</span>
                           </div>
                           <div className="w-28 bg-[var(--panel)] h-1.5 rounded-full overflow-hidden">
                             <div 
@@ -570,7 +570,7 @@ export const AdminInvoicing: React.FC = () => {
                       {inv.status !== 'paid' && (
                         <button
                           onClick={() => handleOpenPaymentModal(inv)}
-                          className="h-9 px-2.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-sans flex items-center justify-center gap-1 transition-colors min-h-10"
+                          className="h-9 px-2.5 rounded-card bg-[var(--success)]/10 hover:bg-emerald-500/20 text-[var(--success)] border border-[var(--success)]/30 text-xs font-sans flex items-center justify-center gap-1 transition-colors min-h-10"
                           title="Record Payment"
                         >
                           <CreditCard size={13} />
@@ -579,7 +579,7 @@ export const AdminInvoicing: React.FC = () => {
                       )}
                       <button
                         onClick={() => setPreviewInvoice(inv)}
-                        className="h-9 px-3 rounded-control bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--muted)] hover:text-white border border-[var(--line)] text-xs font-sans flex items-center justify-center gap-1 transition-colors min-h-10"
+                        className="h-9 px-3 rounded-control bg-[var(--panel)] hover:bg-[var(--panel-hover)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] text-xs font-sans flex items-center justify-center gap-1 transition-colors min-h-10"
                         title="Preview & Print Invoice"
                       >
                         <FileText size={13} />
@@ -587,7 +587,7 @@ export const AdminInvoicing: React.FC = () => {
                       </button>
                       <button
                         onClick={() => handleOpenEditInvoice(inv)}
-                        className="w-9 h-9 rounded-control bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--muted)] hover:text-white border border-[var(--line)] flex items-center justify-center transition-colors min-h-10 min-w-10"
+                        className="w-9 h-9 rounded-control bg-[var(--panel)] hover:bg-[var(--panel-hover)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] flex items-center justify-center transition-colors min-h-10 min-w-10"
                         title="Edit Invoice"
                       >
                         <Edit3 size={14} />
@@ -595,7 +595,7 @@ export const AdminInvoicing: React.FC = () => {
                       {canDeleteInvoice && (
                         <button
                           onClick={() => handleDeleteInvoice(inv.id, inv.invoiceNumber)}
-                          className="w-9 h-9 rounded-xl bg-[var(--panel)] hover:bg-red-950/40 text-[var(--muted)] hover:text-red-400 border border-[var(--line)] hover:border-red-500/30 flex items-center justify-center transition-colors min-h-10 min-w-10"
+                          className="w-9 h-9 rounded-card bg-[var(--panel)] hover:bg-red-950/40 text-[var(--muted)] hover:text-[var(--danger)] border border-[var(--line)] hover:border-[var(--danger)]/30 flex items-center justify-center transition-colors min-h-10 min-w-10"
                           title="Delete Invoice"
                         >
                           <Trash2 size={14} />
@@ -647,14 +647,14 @@ export const AdminInvoicing: React.FC = () => {
                         </button>
                       </td>
                       <td className="py-3 px-4">
-                        <div className="font-bold text-white">{inv.clientName}</div>
+                        <div className="font-semibold text-[var(--text)]">{inv.clientName}</div>
                         <div className="text-[11px] text-[var(--muted)]">{inv.clientCompany}</div>
                       </td>
                       <td className="py-3 px-4 text-[var(--muted)]">
                         <div>Issue: {inv.issueDate}</div>
                         <div className="text-[10px] text-[var(--muted)]">Due: {inv.dueDate}</div>
                       </td>
-                      <td className="py-3 px-4 font-bold text-emerald-400 font-display">
+                      <td className="py-3 px-4 font-semibold text-[var(--success)] font-display">
                         {formatAmount(inv.total, currency)}
                         <div className="text-[10px] font-sans text-[var(--muted)] font-normal">
                           incl. {inv.taxPercent}% PPN
@@ -662,8 +662,8 @@ export const AdminInvoicing: React.FC = () => {
                         {((inv.amountPaid && inv.amountPaid > 0) || inv.status === 'partially_paid') && (
                           <div className="mt-1 space-y-1">
                             <div className="flex items-center gap-2 text-[10px] font-sans font-normal">
-                              <span className="text-emerald-400">Paid: {formatAmount(inv.amountPaid || 0, currency)}</span>
-                              <span className="text-amber-400 font-semibold">Bal: {formatAmount(inv.balanceDue ?? (inv.total - (inv.amountPaid || 0)), currency)}</span>
+                              <span className="text-[var(--success)]">Paid: {formatAmount(inv.amountPaid || 0, currency)}</span>
+                              <span className="text-[var(--warning)] font-semibold">Bal: {formatAmount(inv.balanceDue ?? (inv.total - (inv.amountPaid || 0)), currency)}</span>
                             </div>
                             <div className="w-24 bg-[var(--panel)] h-1.5 rounded-full overflow-hidden">
                               <div 
@@ -688,7 +688,7 @@ export const AdminInvoicing: React.FC = () => {
                           {inv.status !== 'paid' && (
                             <button
                               onClick={() => handleOpenPaymentModal(inv)}
-                              className="h-9 px-2.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-sans flex items-center justify-center gap-1 transition-colors min-h-10"
+                              className="h-9 px-2.5 rounded-card bg-[var(--success)]/10 hover:bg-emerald-500/20 text-[var(--success)] border border-[var(--success)]/30 text-xs font-sans flex items-center justify-center gap-1 transition-colors min-h-10"
                               title="Record Payment"
                             >
                               <CreditCard size={13} />
@@ -697,14 +697,14 @@ export const AdminInvoicing: React.FC = () => {
                           )}
                           <button
                             onClick={() => setPreviewInvoice(inv)}
-                            className="w-9 h-9 rounded-control bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--muted)] hover:text-white border border-[var(--line)] flex items-center justify-center transition-colors min-h-10 min-w-10"
+                            className="w-9 h-9 rounded-control bg-[var(--panel)] hover:bg-[var(--panel-hover)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] flex items-center justify-center transition-colors min-h-10 min-w-10"
                             title="Preview & Print Invoice"
                           >
                             <FileText size={14} />
                           </button>
                           <button
                             onClick={() => handleOpenEditInvoice(inv)}
-                            className="w-9 h-9 rounded-control bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--muted)] hover:text-white border border-[var(--line)] flex items-center justify-center transition-colors min-h-10 min-w-10"
+                            className="w-9 h-9 rounded-control bg-[var(--panel)] hover:bg-[var(--panel-hover)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] flex items-center justify-center transition-colors min-h-10 min-w-10"
                             title="Edit Invoice"
                           >
                             <Edit3 size={14} />
@@ -712,7 +712,7 @@ export const AdminInvoicing: React.FC = () => {
                           {canDeleteInvoice && (
                             <button
                               onClick={() => handleDeleteInvoice(inv.id, inv.invoiceNumber)}
-                              className="w-9 h-9 rounded-xl bg-[var(--panel)] hover:bg-red-950/40 text-[var(--muted)] hover:text-red-400 border border-[var(--line)] hover:border-red-500/30 flex items-center justify-center transition-colors min-h-10 min-w-10"
+                              className="w-9 h-9 rounded-card bg-[var(--panel)] hover:bg-red-950/40 text-[var(--muted)] hover:text-[var(--danger)] border border-[var(--line)] hover:border-[var(--danger)]/30 flex items-center justify-center transition-colors min-h-10 min-w-10"
                               title="Delete Invoice"
                             >
                               <Trash2 size={14} />
@@ -743,18 +743,18 @@ export const AdminInvoicing: React.FC = () => {
                   className="bg-[var(--panel)] border border-[var(--line)] rounded-card p-4 space-y-3 shadow-lg"
                 >
                   <div className="flex items-center justify-between">
-                    <span className="px-2.5 py-1 rounded-lg bg-amber-500/10 text-amber-300 border border-amber-500/20 text-[10px] font-sans font-bold">
+                    <span className="px-2.5 py-1 rounded-lg bg-[var(--warning)]/10 text-amber-300 border border-amber-500/20 text-[10px] font-sans font-semibold">
                       {exp.category}
                     </span>
                     <span className="text-[11px] font-sans text-[var(--muted)]">{exp.date}</span>
                   </div>
 
-                  <div className="text-white font-medium text-sm font-sans">{exp.description}</div>
+                  <div className="text-[var(--text)] font-medium text-sm font-sans">{exp.description}</div>
 
                   <div className="flex items-center justify-between pt-2 border-t border-[var(--line)]">
                     <div>
                       <div className="text-[10px] font-sans text-[var(--muted)]">{language === 'id' ? 'Nominal Pengeluaran' : 'Expense Amount'}</div>
-                      <div className="text-base font-bold text-rose-400 font-display">
+                      <div className="text-base font-semibold text-rose-400 font-display">
                         {formatAmount(exp.amount, currency)}
                       </div>
                       <div className="text-[10px] font-sans text-[var(--muted)]">
@@ -764,7 +764,7 @@ export const AdminInvoicing: React.FC = () => {
 
                     <button
                       onClick={() => handleDeleteExpense(exp.id)}
-                      className="w-9 h-9 rounded-xl bg-[var(--panel)] hover:bg-red-950/40 text-[var(--muted)] hover:text-red-400 border border-[var(--line)] hover:border-red-500/30 flex items-center justify-center transition-colors min-h-10 min-w-10"
+                      className="w-9 h-9 rounded-card bg-[var(--panel)] hover:bg-red-950/40 text-[var(--muted)] hover:text-[var(--danger)] border border-[var(--line)] hover:border-[var(--danger)]/30 flex items-center justify-center transition-colors min-h-10 min-w-10"
                       title="Delete Record"
                     >
                       <Trash2 size={14} />
@@ -796,19 +796,19 @@ export const AdminInvoicing: React.FC = () => {
                   <tr key={exp.id} className="hover:bg-panel transition-colors">
                     <td className="py-3 px-4 text-[var(--muted)]">{exp.date}</td>
                     <td className="py-3 px-4">
-                      <span className="px-2 py-0.5 rounded bg-[var(--panel)] text-amber-400 border border-amber-500/20 text-[10px]">
+                      <span className="px-2 py-0.5 rounded bg-[var(--panel)] text-[var(--warning)] border border-amber-500/20 text-[10px]">
                         {exp.category}
                       </span>
                     </td>
-                    <td className="py-3 px-4 font-medium text-white">{exp.description}</td>
-                    <td className="py-3 px-4 font-bold text-rose-400 font-display">
+                    <td className="py-3 px-4 font-medium text-[var(--text)]">{exp.description}</td>
+                    <td className="py-3 px-4 font-semibold text-rose-400 font-display">
                       {formatAmount(exp.amount, currency)}
                     </td>
                     <td className="py-3 px-4 text-[var(--muted)]">{exp.recordedBy}</td>
                     <td className="py-3 px-4 text-right">
                       <button
                         onClick={() => handleDeleteExpense(exp.id)}
-                        className="w-9 h-9 rounded-xl bg-[var(--panel)] hover:bg-red-950/40 text-[var(--muted)] hover:text-red-400 border border-[var(--line)] hover:border-red-500/30 inline-flex items-center justify-center transition-colors min-h-10 min-w-10"
+                        className="w-9 h-9 rounded-card bg-[var(--panel)] hover:bg-red-950/40 text-[var(--muted)] hover:text-[var(--danger)] border border-[var(--line)] hover:border-[var(--danger)]/30 inline-flex items-center justify-center transition-colors min-h-10 min-w-10"
                         title="Delete Record"
                       >
                         <Trash2 size={14} />
@@ -829,13 +829,13 @@ export const AdminInvoicing: React.FC = () => {
             
             {/* Sticky Header */}
             <div className="sticky top-0 z-20 bg-[var(--panel)]/95  px-5 sm:px-6 py-4 border-b border-[var(--line)] flex items-center justify-between shrink-0">
-              <h3 className="font-display font-bold text-white text-base sm:text-lg flex items-center gap-2">
+              <h3 className="font-display font-semibold text-[var(--text)] text-base sm:text-lg flex items-center gap-2">
                 <Receipt className="text-[var(--danger)]" size={20} />
                 <span>{editingInvoice ? 'Edit Client Invoice' : 'Create New Invoice'}</span>
               </h3>
               <button 
                 onClick={() => setIsInvoiceModalOpen(false)} 
-                className="w-8 h-8 rounded-lg text-[var(--muted)] hover:text-white bg-[var(--bg)] border border-[var(--line)] flex items-center justify-center transition-colors shrink-0 ml-3"
+                className="w-8 h-8 rounded-lg text-[var(--muted)] hover:text-[var(--text)] bg-[var(--bg)] border border-[var(--line)] flex items-center justify-center transition-colors shrink-0 ml-3"
               >
                 <X size={16} />
               </button>
@@ -845,10 +845,10 @@ export const AdminInvoicing: React.FC = () => {
               {/* Scrollable Body */}
               <div className="p-5 sm:p-6 overflow-y-auto flex-1 space-y-4 text-xs font-sans custom-scrollbar">
                 {!editingInvoice && availableProjects.length > 0 && (
-                  <div className="p-3 bg-[var(--bg)] border border-[var(--line)] rounded-xl space-y-1.5">
+                  <div className="p-3 bg-[var(--bg)] border border-[var(--line)] rounded-card space-y-1.5">
                     <label className="block text-[var(--muted)] font-semibold flex items-center justify-between">
                       <span>{language === 'id' ? 'Tautkan ke Proyek yang Disetujui (Approved)' : 'Link to Approved Project'}</span>
-                      <span className="text-[10px] text-emerald-400 font-sans">Status: Approved / In Progress</span>
+                      <span className="text-[10px] text-[var(--success)] font-sans">Status: Approved / In Progress</span>
                     </label>
                     <CustomSelect
                       value={selectedProjectId}
@@ -875,7 +875,7 @@ export const AdminInvoicing: React.FC = () => {
                       onChange={(e) => setClientName(e.target.value)}
                       required
                       placeholder="e.g. Marcus Thorne"
-                      className="w-full px-3 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
+                      className="w-full px-3 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
                     />
                   </div>
                   <div>
@@ -886,7 +886,7 @@ export const AdminInvoicing: React.FC = () => {
                       onChange={(e) => setClientCompany(e.target.value)}
                       required
                       placeholder="e.g. Lumina Real Estate"
-                      className="w-full px-3 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
+                      className="w-full px-3 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
                     />
                   </div>
                 </div>
@@ -899,7 +899,7 @@ export const AdminInvoicing: React.FC = () => {
                       value={clientEmail}
                       onChange={(e) => setClientEmail(e.target.value)}
                       placeholder="client@company.com"
-                      className="w-full px-3 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
+                      className="w-full px-3 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
                     />
                   </div>
                   <div>
@@ -909,20 +909,20 @@ export const AdminInvoicing: React.FC = () => {
                       value={clientPhone}
                       onChange={(e) => setClientPhone(e.target.value)}
                       placeholder="+62 811-XXXX-XXXX"
-                      className="w-full px-3 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
+                      className="w-full px-3 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
                     />
                   </div>
                 </div>
 
-                <div className="p-4 bg-[var(--bg)] border border-[var(--line)] rounded-xl space-y-3">
-                  <label className="block text-white font-bold">Line Item & Milestone Valuation</label>
+                <div className="p-4 bg-[var(--bg)] border border-[var(--line)] rounded-card space-y-3">
+                  <label className="block text-[var(--text)] font-semibold">Line Item & Milestone Valuation</label>
                   <div>
                     <label className="block text-[var(--muted)] mb-1">Deliverable Description</label>
                     <textarea
                       rows={2}
                       value={itemDesc}
                       onChange={(e) => setItemDesc(e.target.value)}
-                      className="w-full px-3 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
+                      className="w-full px-3 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
                     />
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -932,7 +932,7 @@ export const AdminInvoicing: React.FC = () => {
                         type="number"
                         value={itemAmount}
                         onChange={(e) => setItemAmount(Number(e.target.value))}
-                        className="w-full px-3 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
+                        className="w-full px-3 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
                       />
                     </div>
                     <div>
@@ -941,11 +941,11 @@ export const AdminInvoicing: React.FC = () => {
                         type="number"
                         value={taxPercent}
                         onChange={(e) => setTaxPercent(Number(e.target.value))}
-                        className="w-full px-3 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
+                        className="w-full px-3 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
                       />
                     </div>
                   </div>
-                  <div className="pt-2 text-right text-emerald-400 font-bold font-display text-sm">
+                  <div className="pt-2 text-right text-[var(--success)] font-semibold font-display text-sm">
                     Total Payable: {formatIDR(itemAmount + Math.round((itemAmount * taxPercent) / 100))}
                   </div>
                 </div>
@@ -957,7 +957,7 @@ export const AdminInvoicing: React.FC = () => {
                       type="date"
                       value={issueDate}
                       onChange={(e) => setIssueDate(e.target.value)}
-                      className="w-full px-3 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
+                      className="w-full px-3 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
                     />
                   </div>
                   <div>
@@ -966,7 +966,7 @@ export const AdminInvoicing: React.FC = () => {
                       type="date"
                       value={dueDate}
                       onChange={(e) => setDueDate(e.target.value)}
-                      className="w-full px-3 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
+                      className="w-full px-3 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
                     />
                   </div>
                   <div>
@@ -977,8 +977,8 @@ export const AdminInvoicing: React.FC = () => {
                       options={[
                         { value: 'draft', label: 'Draft', badge: 'Draft', badgeColor: 'bg-slate-500/10 text-slate-400 border border-slate-500/20' },
                         { value: 'sent', label: 'Sent', badge: 'Sent', badgeColor: 'bg-blue-500/10 text-blue-400 border border-blue-500/20' },
-                        { value: 'paid', label: 'Paid', badge: 'Paid', badgeColor: 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' },
-                        { value: 'overdue', label: 'Overdue', badge: 'Overdue', badgeColor: 'bg-red-500/10 text-red-400 border border-red-500/20' }
+                        { value: 'paid', label: 'Paid', badge: 'Paid', badgeColor: 'bg-[var(--success)]/10 text-[var(--success)] border border-emerald-500/20' },
+                        { value: 'overdue', label: 'Overdue', badge: 'Overdue', badgeColor: 'bg-[var(--danger)]/10 text-[var(--danger)] border border-red-500/20' }
                       ]}
                       className="w-full"
                       triggerClassName="w-full justify-between"
@@ -992,7 +992,7 @@ export const AdminInvoicing: React.FC = () => {
                     rows={2}
                     value={invoiceNotes}
                     onChange={(e) => setInvoiceNotes(e.target.value)}
-                    className="w-full px-3 py-2 bg-[var(--bg)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
+                    className="w-full px-3 py-2 bg-[var(--bg)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
                   />
                 </div>
               </div>
@@ -1002,13 +1002,13 @@ export const AdminInvoicing: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsInvoiceModalOpen(false)}
-                  className="h-10 px-4 rounded-xl bg-[var(--bg)] hover:bg-[var(--panel)] text-[var(--muted)] hover:text-white border border-[var(--line)] text-xs font-sans font-medium transition-colors min-h-[40px]"
+                  className="h-10 px-4 rounded-card bg-[var(--bg)] hover:bg-[var(--panel-hover)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] text-xs font-sans font-medium transition-colors min-h-10"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="h-10 px-5 rounded-xl bg-[var(--accent)] hover:bg-[var(--danger)] text-white text-xs font-sans font-bold transition-all shadow-lg shadow-[var(--accent)]/20 min-h-[40px]"
+                  className="h-10 px-5 rounded-card bg-[var(--accent)] hover:bg-[var(--panel-hover)] text-[var(--text)] text-xs font-sans font-semibold transition-all shadow-none min-h-10"
                 >
                   Save Invoice
                 </button>
@@ -1025,13 +1025,13 @@ export const AdminInvoicing: React.FC = () => {
             
             {/* Sticky Header */}
             <div className="sticky top-0 z-20 bg-[var(--panel)]/95  px-5 sm:px-6 py-4 border-b border-[var(--line)] flex items-center justify-between shrink-0">
-              <h3 className="font-display font-bold text-white text-base flex items-center gap-2">
+              <h3 className="font-display font-semibold text-[var(--text)] text-base flex items-center gap-2">
                 <CreditCard className="text-[var(--danger)]" size={18} />
                 <span>Record Studio Expense</span>
               </h3>
               <button 
                 onClick={() => setIsExpenseModalOpen(false)} 
-                className="w-8 h-8 rounded-lg text-[var(--muted)] hover:text-white bg-[var(--bg)] border border-[var(--line)] flex items-center justify-center transition-colors shrink-0 ml-3"
+                className="w-8 h-8 rounded-lg text-[var(--muted)] hover:text-[var(--text)] bg-[var(--bg)] border border-[var(--line)] flex items-center justify-center transition-colors shrink-0 ml-3"
               >
                 <X size={16} />
               </button>
@@ -1065,7 +1065,7 @@ export const AdminInvoicing: React.FC = () => {
                     onChange={(e) => setExpDesc(e.target.value)}
                     required
                     placeholder="e.g. Google Cloud Run cluster billing"
-                    className="w-full px-3 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
+                    className="w-full px-3 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
                   />
                 </div>
 
@@ -1077,7 +1077,7 @@ export const AdminInvoicing: React.FC = () => {
                       value={expAmount}
                       onChange={(e) => setExpAmount(Number(e.target.value))}
                       required
-                      className="w-full px-3 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
+                      className="w-full px-3 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
                     />
                   </div>
                   <div>
@@ -1086,7 +1086,7 @@ export const AdminInvoicing: React.FC = () => {
                       type="date"
                       value={expDate}
                       onChange={(e) => setExpDate(e.target.value)}
-                      className="w-full px-3 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
+                      className="w-full px-3 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
                     />
                   </div>
                 </div>
@@ -1097,13 +1097,13 @@ export const AdminInvoicing: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsExpenseModalOpen(false)}
-                  className="h-10 px-4 rounded-xl bg-[var(--bg)] hover:bg-[var(--panel)] text-[var(--muted)] hover:text-white border border-[var(--line)] text-xs font-sans font-medium transition-colors min-h-[40px]"
+                  className="h-10 px-4 rounded-card bg-[var(--bg)] hover:bg-[var(--panel-hover)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] text-xs font-sans font-medium transition-colors min-h-10"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="h-10 px-5 rounded-xl bg-[var(--accent)] hover:bg-[var(--danger)] text-white text-xs font-sans font-bold transition-all shadow-lg shadow-[var(--accent)]/20 min-h-[40px]"
+                  className="h-10 px-5 rounded-card bg-[var(--accent)] hover:bg-[var(--panel-hover)] text-[var(--text)] text-xs font-sans font-semibold transition-all shadow-none min-h-10"
                 >
                   Save Expense
                 </button>
@@ -1120,7 +1120,7 @@ export const AdminInvoicing: React.FC = () => {
             {/* Modal Header */}
             <div className="sticky top-0 z-20 bg-[var(--panel)]/95  px-5 sm:px-6 py-4 border-b border-[var(--line)] flex items-center justify-between shrink-0">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+                <div className="w-8 h-8 rounded-card bg-[var(--success)]/10 border border-emerald-500/20 flex items-center justify-center text-[var(--success)]">
                   <CreditCard size={16} />
                 </div>
                 <div>
@@ -1134,7 +1134,7 @@ export const AdminInvoicing: React.FC = () => {
               </div>
               <button
                 onClick={() => setPaymentModalInvoice(null)}
-                className="w-8 h-8 rounded-control bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--muted)] hover:text-white flex items-center justify-center transition-colors border border-[var(--line)]"
+                className="w-8 h-8 rounded-control bg-[var(--panel)] hover:bg-[var(--panel-hover)] text-[var(--muted)] hover:text-[var(--text)] flex items-center justify-center transition-colors border border-[var(--line)]"
               >
                 <X size={15} />
               </button>
@@ -1144,18 +1144,18 @@ export const AdminInvoicing: React.FC = () => {
             <form onSubmit={handleRecordPaymentSubmit} className="flex flex-col flex-1 overflow-y-auto">
               <div className="p-5 sm:p-6 space-y-4 text-xs font-sans">
                 {/* Summary Box */}
-                <div className="bg-[var(--panel)] p-4 rounded-xl border border-[var(--line)] space-y-2">
+                <div className="bg-[var(--panel)] p-4 rounded-card border border-[var(--line)] space-y-2">
                   <div className="flex items-center justify-between text-[var(--muted)]">
                     <span>{language === 'id' ? 'Total Invoice:' : 'Total Invoice:'}</span>
-                    <span className="text-white font-bold">{formatAmount(paymentModalInvoice.total, currency)}</span>
+                    <span className="text-[var(--text)] font-semibold">{formatAmount(paymentModalInvoice.total, currency)}</span>
                   </div>
                   <div className="flex items-center justify-between text-[var(--muted)]">
                     <span>{language === 'id' ? 'Sudah Dibayar:' : 'Already Paid:'}</span>
-                    <span className="text-emerald-400 font-bold">{formatAmount(paymentModalInvoice.amountPaid || 0, currency)}</span>
+                    <span className="text-[var(--success)] font-semibold">{formatAmount(paymentModalInvoice.amountPaid || 0, currency)}</span>
                   </div>
                   <div className="flex items-center justify-between pt-2 border-t border-[var(--line)]">
-                    <span className="text-white font-semibold">{language === 'id' ? 'Sisa Tagihan (Balance Due):' : 'Remaining Balance Due:'}</span>
-                    <span className="text-amber-400 font-bold text-sm font-display">
+                    <span className="text-[var(--text)] font-semibold">{language === 'id' ? 'Sisa Tagihan (Balance Due):' : 'Remaining Balance Due:'}</span>
+                    <span className="text-[var(--warning)] font-semibold text-sm font-display">
                       {formatAmount(paymentModalInvoice.balanceDue ?? (paymentModalInvoice.total - (paymentModalInvoice.amountPaid || 0)), currency)}
                     </span>
                   </div>
@@ -1164,7 +1164,7 @@ export const AdminInvoicing: React.FC = () => {
                 {/* Amount to Record */}
                 <div>
                   <div className="flex items-center justify-between mb-1.5">
-                    <label className="text-white font-semibold">
+                    <label className="text-[var(--text)] font-semibold">
                       {language === 'id' ? 'Nominal Pembayaran Diterima (IDR)' : 'Payment Amount Received (IDR)'}
                     </label>
                     <div className="flex items-center gap-1.5">
@@ -1174,7 +1174,7 @@ export const AdminInvoicing: React.FC = () => {
                           const rem = paymentModalInvoice.balanceDue ?? (paymentModalInvoice.total - (paymentModalInvoice.amountPaid || 0));
                           setPaymentAmount(rem > 0 ? rem : paymentModalInvoice.total);
                         }}
-                        className="px-2 py-0.5 rounded bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px]"
+                        className="px-2 py-0.5 rounded bg-[var(--success)]/10 hover:bg-emerald-500/20 text-[var(--success)] border border-[var(--success)]/30 text-[10px]"
                       >
                         100% Full
                       </button>
@@ -1197,7 +1197,7 @@ export const AdminInvoicing: React.FC = () => {
                     required
                     min={1}
                     max={paymentModalInvoice.total}
-                    className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-white text-sm focus:outline-none focus:border-emerald-500 font-bold font-sans"
+                    className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-card text-[var(--text)] text-sm focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20 font-semibold font-sans"
                   />
                 </div>
 
@@ -1227,7 +1227,7 @@ export const AdminInvoicing: React.FC = () => {
                       value={paymentDate}
                       onChange={(e) => setPaymentDate(e.target.value)}
                       required
-                      className="w-full px-3 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-emerald-500 font-sans"
+                      className="w-full px-3 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20 font-sans"
                     />
                   </div>
                 </div>
@@ -1242,7 +1242,7 @@ export const AdminInvoicing: React.FC = () => {
                     value={paymentRef}
                     onChange={(e) => setPaymentRef(e.target.value)}
                     placeholder="e.g. BCA-WS-99882312 or MANDIRI-TRX-102"
-                    className="w-full px-3 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-emerald-500 font-sans"
+                    className="w-full px-3 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20 font-sans"
                   />
                 </div>
 
@@ -1256,7 +1256,7 @@ export const AdminInvoicing: React.FC = () => {
                     value={paymentNotes}
                     onChange={(e) => setPaymentNotes(e.target.value)}
                     placeholder="e.g. Received via Bank Mandiri 123-00-998877-1"
-                    className="w-full px-3 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-emerald-500 font-sans"
+                    className="w-full px-3 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20 font-sans"
                   />
                 </div>
               </div>
@@ -1266,13 +1266,13 @@ export const AdminInvoicing: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setPaymentModalInvoice(null)}
-                  className="h-10 px-4 rounded-control bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--muted)] hover:text-white border border-[var(--line)] text-xs font-sans font-medium transition-colors min-h-[40px]"
+                  className="h-10 px-4 rounded-control bg-[var(--panel)] hover:bg-[var(--panel-hover)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] text-xs font-sans font-medium transition-colors min-h-10"
                 >
                   {language === 'id' ? 'Batal' : 'Cancel'}
                 </button>
                 <button
                   type="submit"
-                  className="h-10 px-5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-sans font-bold transition-all shadow-lg shadow-emerald-600/20 min-h-[40px] flex items-center gap-1.5"
+                  className="h-10 px-5 rounded-card bg-emerald-600 hover:bg-emerald-500 text-[var(--text)] text-xs font-sans font-semibold transition-all shadow-lg shadow-emerald-600/20 min-h-10 flex items-center gap-1.5"
                 >
                   <Check size={14} />
                   <span>{language === 'id' ? 'Simpan Pembayaran' : 'Confirm Payment'}</span>
@@ -1295,7 +1295,7 @@ export const AdminInvoicing: React.FC = () => {
                   <img src="/favicon.png" alt="Kapitech" className="w-full h-full object-contain" />
                 </div>
                 <div>
-                  <span className="text-sm font-bold font-display tracking-tight text-zinc-900 block">KAPITECH INVOICE</span>
+                  <span className="text-sm font-semibold font-display tracking-tight text-zinc-900 block">KAPITECH INVOICE</span>
                   <span className="text-[11px] font-sans text-zinc-500">{previewInvoice.invoiceNumber}</span>
                 </div>
               </div>
@@ -1312,16 +1312,16 @@ export const AdminInvoicing: React.FC = () => {
               {/* Invoice Printable Header */}
               <div className="flex justify-between items-start border-b border-zinc-200 pb-6 mb-6">
                 <div>
-                  <span className="text-lg font-bold font-display tracking-tight text-zinc-900">PT Kapitech Digital Indonesia</span>
+                  <span className="text-lg font-semibold font-display tracking-tight text-zinc-900">PT Kapitech Digital Indonesia</span>
                   <p className="text-xs text-zinc-500 max-w-xs mt-1 leading-relaxed">
                     Linea Residence Block G No. 5, Paku Jaya, South Tangerang, Banten 15220, Indonesia
                   </p>
                 </div>
 
                 <div className="text-right">
-                  <span className="text-2xl font-bold font-display text-zinc-900 block">INVOICE</span>
-                  <span className="text-sm font-sans text-zinc-600 font-bold block">{previewInvoice.invoiceNumber}</span>
-                  <span className="text-xs font-sans px-2 py-0.5 rounded normal-case font-bold mt-2 inline-block bg-zinc-100 text-zinc-800">
+                  <span className="text-2xl font-semibold font-display text-zinc-900 block">INVOICE</span>
+                  <span className="text-sm font-sans text-zinc-600 font-semibold block">{previewInvoice.invoiceNumber}</span>
+                  <span className="text-xs font-sans px-2 py-0.5 rounded normal-case font-semibold mt-2 inline-block bg-zinc-100 text-zinc-800">
                     Status: {previewInvoice.status.toUpperCase()}
                   </span>
                 </div>
@@ -1330,14 +1330,14 @@ export const AdminInvoicing: React.FC = () => {
               {/* Billed To */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4 text-xs">
                 <div>
-                  <span className="text-zinc-400 normal-case font-sans font-semibold block mb-1">Billed To:</span>
+                  <span className="text-[var(--muted)] normal-case font-sans font-semibold block mb-1">Billed To:</span>
                   <strong className="text-sm text-zinc-900 block">{previewInvoice.clientName}</strong>
                   <span className="text-zinc-700 block">{previewInvoice.clientCompany}</span>
                   <span className="text-zinc-500 block">{previewInvoice.clientEmail}</span>
                   {previewInvoice.clientPhone && <span className="text-zinc-500 block">{previewInvoice.clientPhone}</span>}
                 </div>
                 <div className="sm:text-right">
-                  <span className="text-zinc-400 normal-case font-sans font-semibold block mb-1">Invoice Details:</span>
+                  <span className="text-[var(--muted)] normal-case font-sans font-semibold block mb-1">Invoice Details:</span>
                   <div><strong>Issue Date:</strong> {previewInvoice.issueDate}</div>
                   <div><strong>Payment Due:</strong> {previewInvoice.dueDate}</div>
                   <div><strong>Currency:</strong> IDR (Indonesian Rupiah)</div>
@@ -1361,7 +1361,7 @@ export const AdminInvoicing: React.FC = () => {
                         <td className="py-3 font-medium text-zinc-800">{item.description}</td>
                         <td className="py-3 text-right font-sans">{item.quantity}</td>
                         <td className="py-3 text-right font-sans">{formatIDR(item.unitPrice)}</td>
-                        <td className="py-3 text-right font-sans font-bold">{formatIDR(item.amount)}</td>
+                        <td className="py-3 text-right font-sans font-semibold">{formatIDR(item.amount)}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -1371,13 +1371,13 @@ export const AdminInvoicing: React.FC = () => {
               {/* Totals Calculation & Payments Ledger */}
               <div className="flex flex-col sm:flex-row sm:justify-between gap-4 mb-6 text-xs font-sans">
                 {previewInvoice.payments && previewInvoice.payments.length > 0 ? (
-                  <div className="flex-1 bg-zinc-50 border border-zinc-200 rounded-xl p-3">
-                    <span className="text-[10px] font-bold text-zinc-900 normal-case block mb-2">Recorded Payment Ledger:</span>
+                  <div className="flex-1 bg-zinc-50 border border-zinc-200 rounded-card p-3">
+                    <span className="text-[10px] font-semibold text-zinc-900 normal-case block mb-2">Recorded Payment Ledger:</span>
                     <div className="space-y-1.5">
                       {previewInvoice.payments.map((p, idx) => (
                         <div key={idx} className="flex justify-between items-center text-[11px] text-zinc-700">
                           <span>{p.date} • {p.method.replace('_', ' ')} {p.reference ? `(${p.reference})` : ''}</span>
-                          <span className="font-bold text-emerald-600">{formatIDR(p.amount)}</span>
+                          <span className="font-semibold text-emerald-600">{formatIDR(p.amount)}</span>
                         </div>
                       ))}
                     </div>
@@ -1395,7 +1395,7 @@ export const AdminInvoicing: React.FC = () => {
                     <span>PPN ({previewInvoice.taxPercent}%):</span>
                     <span>{formatIDR(previewInvoice.taxAmount)}</span>
                   </div>
-                  <div className="flex justify-between text-sm font-bold text-zinc-900 pt-2 border-t border-zinc-900 font-display">
+                  <div className="flex justify-between text-sm font-semibold text-zinc-900 pt-2 border-t border-zinc-900 font-display">
                     <span>Total Amount:</span>
                     <span className="text-zinc-900">{formatIDR(previewInvoice.total)}</span>
                   </div>
@@ -1405,7 +1405,7 @@ export const AdminInvoicing: React.FC = () => {
                         <span>Total Paid:</span>
                         <span>- {formatIDR(previewInvoice.amountPaid)}</span>
                       </div>
-                      <div className="flex justify-between text-sm font-bold text-red-600 pt-1 border-t border-dashed border-zinc-300">
+                      <div className="flex justify-between text-sm font-semibold text-red-600 pt-1 border-t border-dashed border-zinc-300">
                         <span>Balance Due:</span>
                         <span>{formatIDR(previewInvoice.balanceDue ?? (previewInvoice.total - previewInvoice.amountPaid))}</span>
                       </div>
@@ -1415,7 +1415,7 @@ export const AdminInvoicing: React.FC = () => {
               </div>
 
               {/* Bank details & Signoff */}
-              <div className="bg-zinc-50 p-4 rounded-xl text-xs text-zinc-600 border border-zinc-200">
+              <div className="bg-zinc-50 p-4 rounded-card text-xs text-zinc-600 border border-zinc-200">
                 <strong className="text-zinc-900 block mb-1">Bank Payment Wire Instructions:</strong>
                 <p className="font-sans text-[11px] leading-relaxed">
                   Bank Mandiri Indonesia (Cabang Serpong)<br />
@@ -1428,10 +1428,10 @@ export const AdminInvoicing: React.FC = () => {
 
             {/* Sticky Footer for Preview Modal */}
             <div className="sticky bottom-0 z-20 bg-white/95  px-6 py-3.5 border-t border-zinc-200 flex items-center justify-between text-xs shrink-0">
-              <span className="text-zinc-400 font-sans">kapitech.id • Finance Division</span>
+              <span className="text-[var(--muted)] font-sans">kapitech.id • Finance Division</span>
               <button
                 onClick={() => window.print()}
-                className="h-10 px-4 min-h-[40px] rounded-xl bg-zinc-900 text-white font-sans font-bold text-xs flex items-center gap-1.5 hover:bg-zinc-800 transition-colors"
+                className="h-10 px-4 min-h-10 rounded-card bg-zinc-900 text-[var(--text)] font-sans font-semibold text-xs flex items-center gap-1.5 hover:bg-zinc-800 transition-colors"
               >
                 <Download size={14} />
                 <span>Print / Save PDF</span>
