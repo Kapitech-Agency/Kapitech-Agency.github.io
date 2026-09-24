@@ -1836,3 +1836,33 @@
     scroll-behavior: auto !important;
   }
 }
+
+
+/* Final QA: quiet active nav state, accent hierarchy, hero motion, sticky CTA, footer rhythm */
+.kapi-public-shell .kapi-nav-link::after{content:"";position:absolute;inset:5px 0;z-index:-1;border-radius:10px;background:transparent;opacity:0;transform:scale(.96);transition:opacity 180ms ease,transform 180ms ease,background 180ms ease}
+.kapi-public-shell .kapi-nav-link.kapi-nav-active::after,
+.kapi-public-shell .kapi-nav-services-trigger[aria-expanded="true"]::after{background:rgba(176,0,32,.10);box-shadow:inset 0 0 0 1px rgba(176,0,32,.18);opacity:1;transform:scale(1)}
+.kapi-public-shell .kapi-nav-link.kapi-nav-active{color:var(--pub-text)!important}
+.kapi-public-shell .kapi-nav-cta,.kapi-public-shell .kapi-footer-cta{box-shadow:0 10px 28px rgba(176,0,32,.18)}
+.kapi-public-shell .kapi-nav-cta:hover,.kapi-public-shell .kapi-footer-cta:hover{box-shadow:0 14px 34px rgba(176,0,32,.25);transform:translateY(-1px)}
+.kapi-public-shell .kapi-hero-orbit{will-change:transform;animation:kapi-hero-drift 12s ease-in-out infinite alternate}
+.kapi-public-shell .kapi-hero-orbit-two{animation-duration:16s;animation-delay:-4s}
+.kapi-public-shell .kapi-hero-grid{animation:kapi-hero-grid-breathe 10s ease-in-out infinite alternate}
+@keyframes kapi-hero-drift{from{transform:translate3d(0,-8px,0) scale(1)}to{transform:translate3d(18px,14px,0) scale(1.045)}}
+@keyframes kapi-hero-grid-breathe{from{opacity:.42}to{opacity:.72}}
+.kapi-public-shell .kapi-floating-contact{position:fixed!important;right:max(16px,var(--pub-gutter));bottom:max(16px,env(safe-area-inset-bottom,16px));z-index:80;pointer-events:none}
+.kapi-public-shell .kapi-floating-contact>*{pointer-events:auto}
+.kapi-public-shell .kapi-public-footer .kapi-footer-title{margin-bottom:20px!important}
+.kapi-public-shell .kapi-public-footer p{margin-block:0}
+.kapi-public-shell .kapi-public-footer h4+ul,.kapi-public-shell .kapi-public-footer h4+div{margin-top:8px}
+@media(max-width:767px){
+ .kapi-public-shell .kapi-public-footer{padding:56px 20px 24px}
+ .kapi-public-shell .kapi-public-footer .grid{gap:40px}
+ .kapi-public-shell .kapi-public-footer h4{margin-bottom:16px!important;line-height:1.3}
+ .kapi-public-shell .kapi-public-footer .pb-12{padding-bottom:40px}
+ .kapi-public-shell .kapi-public-footer .mb-12{margin-bottom:40px}
+ .kapi-public-shell .kapi-public-footer .mb-16{margin-bottom:48px}
+ .kapi-public-shell .kapi-public-footer .kapi-footer-cta{width:100%}
+ .kapi-public-shell .kapi-floating-contact{right:16px;bottom:max(16px,env(safe-area-inset-bottom,16px))}
+}
+@media(prefers-reduced-motion:reduce){.kapi-public-shell .kapi-hero-orbit,.kapi-public-shell .kapi-hero-grid{animation:none}}
