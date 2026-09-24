@@ -232,7 +232,7 @@ export const AdminLayout: React.FC = () => {
           key: 'timelogs',
           to: '/admin/time-logs',
           label: language === 'id' ? 'Time Tracking' : 'Time Tracking',
-          icon: U('calendar'),
+          icon: U('file'),
           badge: null
         }
       ]
