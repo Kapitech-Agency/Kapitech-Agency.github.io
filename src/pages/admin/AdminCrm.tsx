@@ -365,7 +365,7 @@ export const AdminCrm: React.FC = () => {
             <div className="w-9 h-9 rounded-xl bg-[var(--accent)]/10 border border-[var(--accent)]/30 flex items-center justify-center text-[var(--danger)] shrink-0">
               <Briefcase size={18} />
             </div>
-            <h1 className="text-xl sm:text-2xl font-display font-bold text-white flex items-center gap-2.5">
+            <h1 className="text-xl font-display font-semibold text-white flex items-center gap-2.5">
               <span>{t('admin.crm.title')}</span>
               <span className="px-2 py-0.5 rounded-full text-[10px] font-sans font-bold normal-case tracking-normal bg-[var(--accent)]/15 text-[var(--danger)] border border-[var(--accent)]/30">
                 Enterprise
@@ -437,7 +437,7 @@ export const AdminCrm: React.FC = () => {
       )}
 
       {/* 2. Enterprise CRM KPI Funnel & Metrics Bar */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-4 sm:gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-3">
         {/* Active Pipeline Card */}
         <div className="lg:col-span-4 bg-[var(--panel)] border border-[var(--line)] p-5 sm:p-6 rounded-card flex flex-col justify-between group hover:border-[var(--line)] transition-all">
           <div>
