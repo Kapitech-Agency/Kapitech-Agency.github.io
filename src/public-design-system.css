@@ -1749,6 +1749,69 @@
   }
 }
 
+/* -------------------------------------------------------------------------- */
+/* Public control normalization                                               */
+/* -------------------------------------------------------------------------- */
+
+/* Keep legacy page markup visually aligned with the shared control system. */
+.kapi-public-shell a.bg-brand-red,
+.kapi-public-shell button.bg-brand-red {
+  min-height: 44px;
+  padding-block: 0.75rem;
+  padding-inline: 1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 12px;
+  font-size: 14px;
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: -.01em;
+}
+
+.kapi-public-shell a.bg-brand-red:hover,
+.kapi-public-shell button.bg-brand-red:hover {
+  background: var(--pub-red-hover) !important;
+  color: #fff !important;
+}
+
+.kapi-public-shell a.bg-brand-red:active,
+.kapi-public-shell button.bg-brand-red:active {
+  transform: scale(.98);
+}
+
+/* Secondary action geometry used by older page sections. */
+.kapi-public-shell a.kapi-action-button.bg-brand-red,
+.kapi-public-shell button.kapi-action-button.bg-brand-red {
+  min-height: 44px;
+  padding-inline: 16px;
+  border-radius: 12px;
+}
+
+/* Section headings that still use page-level Tailwind classes inherit the same
+   display rhythm without changing compact card headings. */
+.kapi-public-shell section > .max-w-7xl > h2,
+.kapi-public-shell section > .max-w-6xl > h2,
+.kapi-public-shell section > .max-w-5xl > h2 {
+  font-size: clamp(30px, 3.4vw, 48px);
+  line-height: 1.05;
+  letter-spacing: -.045em;
+  text-wrap: balance;
+}
+
+.kapi-public-shell section > .max-w-7xl > h2 + p,
+.kapi-public-shell section > .max-w-6xl > h2 + p,
+.kapi-public-shell section > .max-w-5xl > h2 + p {
+  margin-top: 12px;
+}
+
+/* Prevent common flex rows from overflowing on narrow screens. */
+.kapi-public-shell .flex.min-w-0 > *,
+.kapi-public-shell .grid.min-w-0 > * {
+  min-width: 0;
+}
+
 /* Accessibility preferences */
 @media (prefers-reduced-transparency: reduce) {
   .kapi-public-shell .kapi-public-nav,
