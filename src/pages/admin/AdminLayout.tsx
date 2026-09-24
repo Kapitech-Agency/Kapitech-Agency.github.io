@@ -376,7 +376,7 @@ export const AdminLayout: React.FC = () => {
                 ? 'bg-accent/15 text-fg font-medium'
                 : 'text-muted hover:text-fg hover:bg-bg'}`}
             >
-              <UntitledIcon name="settings" size={16} className={isItemActive(settingsItem.to) ? 'text-accent-text' : 'text-muted'} />
+              <Settings size={16} className={isItemActive(settingsItem.to) ? 'text-accent-text' : 'text-muted'} />
               {!sidebarCollapsed && <span className="truncate">{settingsItem.label}</span>}
             </Link>
           </div>
@@ -538,7 +538,7 @@ export const AdminLayout: React.FC = () => {
                     : 'text-muted hover:text-fg hover:bg-bg'
                 }
               >
-                <UntitledIcon name="settings" size={16} className={isItemActive(settingsItem.to) ? 'text-accent-text' : 'text-muted'} />
+                <Settings size={16} className={isItemActive(settingsItem.to) ? 'text-accent-text' : 'text-muted'} />
                 <span>{settingsItem.label}</span>
               </Link>
             )}
