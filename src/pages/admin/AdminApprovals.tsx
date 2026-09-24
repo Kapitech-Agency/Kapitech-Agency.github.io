@@ -161,12 +161,12 @@ export const AdminApprovals: React.FC = () => {
   const getRiskBadge = (level: string) => {
     const l = level?.toLowerCase();
     if (l === 'high') {
-      return <span className="px-2 py-0.5 rounded text-xs font-sans bg-red-500/10 text-red-400 border border-red-500/30 uppercase font-bold">High Risk</span>;
+      return <span className="px-2 py-0.5 rounded text-xs font-sans bg-red-500/10 text-red-400 border border-red-500/30 normal-case font-bold">High Risk</span>;
     }
     if (l === 'medium') {
-      return <span className="px-2 py-0.5 rounded text-xs font-sans bg-amber-500/10 text-amber-400 border border-amber-500/30 uppercase font-bold">Medium Risk</span>;
+      return <span className="px-2 py-0.5 rounded text-xs font-sans bg-amber-500/10 text-amber-400 border border-amber-500/30 normal-case font-bold">Medium Risk</span>;
     }
-    return <span className="px-2 py-0.5 rounded text-xs font-sans bg-zinc-800 text-zinc-300 border border-white/10 uppercase font-bold">Low Risk</span>;
+    return <span className="px-2 py-0.5 rounded text-xs font-sans bg-zinc-800 text-zinc-300 border border-white/10 normal-case font-bold">Low Risk</span>;
   };
 
   return (
@@ -316,7 +316,7 @@ export const AdminApprovals: React.FC = () => {
                   <div className="min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="font-bold text-sm text-white">{item.title}</span>
-                      <span className="px-2 py-0.5 rounded text-xs font-sans uppercase bg-[var(--ams-surface)] text-[var(--ams-secondary)] border border-white/[0.07]">
+                      <span className="px-2 py-0.5 rounded text-xs font-sans normal-case bg-[var(--ams-surface)] text-[var(--ams-secondary)] border border-white/[0.07]">
                         {item.type}
                       </span>
                       {getRiskBadge(item.riskLevel)}
@@ -378,7 +378,7 @@ export const AdminApprovals: React.FC = () => {
                       </button>
                     </div>
                   ) : (
-                    <span className={`px-2.5 py-0.5 rounded text-xs font-sans font-bold uppercase border ${
+                    <span className={`px-2.5 py-0.5 rounded text-xs font-sans font-bold normal-case border ${
                       item.status.toLowerCase() === 'approved'
                         ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30'
                         : item.status.toLowerCase() === 'rejected'
@@ -404,8 +404,8 @@ export const AdminApprovals: React.FC = () => {
 
       {/* DECISION MODAL */}
       {activeItem && canApproveBudgets && (
-        <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="bg-[var(--ams-bg)] border border-white/[0.07] rounded-2xl w-full max-w-md shadow-[0_24px_64px_rgba(0,0,0,0.8)] overflow-hidden">
+        <div className="fixed inset-0 z-50 bg-black/85  flex items-center justify-center p-4">
+          <div className="bg-[var(--ams-bg)] border border-white/[0.07] rounded-card w-full max-w-md shadow-[0_24px_64px_rgba(0,0,0,0.8)] overflow-hidden">
             <div className="p-4 border-b border-white/[0.07] flex items-center justify-between bg-[var(--ams-surface)]">
               <h3 className="text-sm font-bold font-sans text-white flex items-center gap-2">
                 <ShieldCheck size={16} className="text-[var(--ams-red)]" />
