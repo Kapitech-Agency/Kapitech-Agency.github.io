@@ -216,115 +216,28 @@ export const AdminCrm: React.FC = () => {
     }
   };
 
-  const handleConvertToProject = (lead: CrmLead) => {
-    const newProj: AgencyProject = {
-      id: 'proj_' + Date.now().toString(36),
-      name: `${lead.company} — ${lead.servicePillar}`,
-      clientName: lead.clientName,
-      clientCompany: lead.company,
-      clientEmail: lead.email || '',
-      crmLeadId: lead.id,
-      serviceCategory: lead.servicePillar,
-      status: 'in_progress',
-      budget: lead.dealValue,
-      progressPercent: 15,
-      startDate: new Date().toISOString().split('T')[0],
-      targetEndDate: new Date(Date.now() + 45 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-      teamLead: 'Principal Tech Lead',
-      teamMembers: ['Senior Frontend Dev', 'UI/UX Specialist'],
-      techStack: ['Next.js 14', 'TypeScript', 'Tailwind CSS'],
-      liveStagingUrl: 'https://staging.app.kapitech.id',
-      milestones: [
-        { id: 'm_1', title: 'Sprint 1: Architecture & UI Spec', dueDate: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], completed: false },
-        { id: 'm_2', title: 'Sprint 2: Core Engineering Handover', dueDate: new Date(Date.now() + 45 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], completed: false }
-      ],
-      tasks: [
-        {
-          id: 't_init_1',
-          title: `Kickoff sprint architecture and repository setup for ${lead.company}`,
-          status: 'in_progress',
-          priority: 'high',
-          assignedTo: 'Lead Full-Stack Tech',
-          dueDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-          createdAt: new Date().toISOString(),
-          subtasks: [
-            { id: 'st_1', title: 'Setup GitHub repository with CI/CD', completed: false },
-            { id: 'st_2', title: 'Initialize staging domain at kapitech.id', completed: false }
-          ]
-        }
-      ],
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    };
-
-    // 1. Save Active Agency Project
-    saveAgencyProject(newProj);
-
-    // 2. Automatically generate 50% Retainer Down Payment Invoice
-    const downPaymentAmount = Math.round(lead.dealValue * 0.5);
-    const taxAmount = Math.round(downPaymentAmount * 0.11);
-    saveAgencyInvoice({
-      id: 'inv_' + Date.now().toString(36),
-      invoiceNumber: `KAPI-INV-${new Date().getFullYear()}-${Math.floor(100 + Math.random() * 900)}`,
-      type: 'invoice',
-      clientName: lead.clientName,
-      clientCompany: lead.company,
-      clientEmail: lead.email || '',
-      clientPhone: lead.phone || '',
-      projectId: newProj.id,
-      leadId: lead.id,
-      items: [
-        {
-          id: 'item_1',
-          description: `${lead.company} — 50% Kickoff Retainer & Sprint Deliverables (${lead.servicePillar})`,
-          quantity: 1,
-          unitPrice: downPaymentAmount,
-          amount: downPaymentAmount
-        }
-      ],
-      subtotal: downPaymentAmount,
-      discountPercent: 0,
-      discountAmount: 0,
-      taxPercent: 11,
-      taxAmount: taxAmount,
-      total: downPaymentAmount + taxAmount,
-      currency: 'IDR',
-      status: 'sent',
-      issueDate: new Date().toISOString().split('T')[0],
-      dueDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-      notes: 'Invoice Retainer Down Payment 50% untuk memulai sprint implementasi teknis.',
-      paymentTerms: 'Bank Transfer Net 14. Mandiri: 123-00-998877-1 / BCA: 889-012-3344 a/n PT Kapitech Digital Indonesia',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    });
-
-    // 3. Centralized Client Directory Synchronization
-    saveAgencyClient({
-      id: 'cli_' + Date.now().toString(36),
-      name: lead.clientName,
-      company: lead.company,
-      email: lead.email || '',
-      phone: lead.phone || '',
-      location: 'Indonesia',
-      industry: lead.servicePillar,
-      status: 'active',
-      totalSpend: lead.dealValue,
-      projectsCount: 1,
-      contactPersonRole: 'Primary Stakeholder',
-      notes: `Converted from CRM Closed Won Deal (${lead.servicePillar})`,
-      slaDailyAdSpendBudget: 10000000,
-      currentDailyAdSpend: 5000000,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    });
-
-    showToast(
-      language === 'id' 
-        ? `Deal berhasil dikonversi: Proyek, Invoice DP 50%, & Klien Direktori telah dibuat!` 
-        : `Deal converted: Project, 50% Retainer Invoice, & Client record created!`
-    );
+  const handleConvertToProject = async (lead: CrmLead) => {
+    if (!canManageCrm) {
+      showToast(language === 'id' ? 'Anda tidak memiliki izin mengelola CRM.' : 'You do not have CRM permission.');
+      return;
+    }
+    try {
+      const res = await api.crm.convertWonDeal(lead.id);
+      if (!res.success) {
+        showToast(res.error || (language === 'id' ? 'Konversi deal gagal.' : 'Deal conversion failed.'));
+        return;
+      }
+      showToast(
+        res.data?.replayed
+          ? (language === 'id' ? 'Konversi deal sudah pernah diproses.' : 'This deal conversion was already processed.')
+          : (language === 'id'
+            ? 'Deal berhasil dikonversi melalui workflow server.'
+            : 'Deal converted through the server workflow.')
+      );
+    } catch {
+      showToast(language === 'id' ? 'Konversi deal gagal.' : 'Deal conversion failed.');
+    }
   };
-
   const handleOpenLeadDrawer = (lead: CrmLead) => {
     setSelectedLead(lead);
     setIsDrawerOpen(true);
