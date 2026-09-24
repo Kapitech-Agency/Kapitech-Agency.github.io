@@ -32,22 +32,7 @@ import {
   GripVertical,
   ArrowRight
 } from 'lucide-react';
-import { 
-  CrmLead, 
-  CrmStage, 
-  CrmPriority, 
-  CrmServicePillar, 
-  CrmSource, 
-  CRM_STAGE_DEFINITIONS, 
-  getCmsLeads, 
-  saveCrmLead, 
-  deleteCrmLead, 
-  updateLeadStage, 
-  addLeadNote, 
-  computeCrmMetrics, 
-  exportCrmLeadsToCsv,
-  CRM_EVENT_NAME 
-} from '../../lib/crmStore';
+import { CrmLead, CrmStage, CrmPriority, CrmServicePillar, CrmSource, CRM_STAGE_DEFINITIONS, computeCrmMetrics, exportCrmLeadsToCsv } from '../../lib/crmStore';
 import { useLanguage } from '../../lib/LanguageContext';
 import { useDragToScroll } from '../../lib/useDragToScroll';
 import { ScrollShadowContainer } from '../../components/ui/ScrollShadowContainer';
