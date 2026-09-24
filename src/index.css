@@ -1429,3 +1429,238 @@ body {
     max-width: 100%;
   }
 }
+
+
+/* ==========================================================================
+   KAPITECH FINAL UI CONSISTENCY LAYER
+   Single visual contract for AMS. UI-only: no data, API, auth, RBAC or workflow logic.
+   ========================================================================== */
+.ams-shell {
+  --ams-bg: #090A0F;
+  --ams-surface: #111318;
+  --ams-surface-raised: #181B22;
+  --ams-surface-subtle: #21252F;
+  --ams-border: rgba(255,255,255,.07);
+  --ams-border-strong: rgba(255,255,255,.12);
+  --ams-text: #F8FAFC;
+  --ams-secondary: #8A94A6;
+  --ams-muted: #64748B;
+  --ams-accent: #E50914;
+  --ams-accent-hover: #FF1E27;
+  --ams-danger: #FF1E27;
+  --ams-success: #34D399;
+  --ams-info: #60A5FA;
+  --ams-radius-card: 14px;
+  --ams-radius-control: 9px;
+  --ams-space-page: clamp(16px, 2vw, 28px);
+  --ams-shadow-card: 0 8px 24px rgba(0,0,0,.22);
+  background: var(--ams-bg);
+  color: var(--ams-secondary);
+}
+
+/* One type family, one hierarchy. */
+.ams-shell,
+.ams-shell button,
+.ams-shell input,
+.ams-shell textarea,
+.ams-shell select {
+  font-family: var(--font-sans);
+}
+
+.ams-shell h1 {
+  font-size: 24px;
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: -.025em;
+}
+.ams-shell h2 {
+  font-size: 18px;
+  line-height: 1.3;
+  font-weight: 650;
+  letter-spacing: -.018em;
+}
+.ams-shell h3 {
+  font-size: 15px;
+  line-height: 1.35;
+  font-weight: 650;
+  letter-spacing: -.012em;
+}
+.ams-shell p {
+  font-size: 13px;
+  line-height: 1.55;
+}
+.ams-shell label {
+  font-size: 12px;
+  line-height: 1.4;
+  font-weight: 550;
+  color: var(--ams-secondary);
+}
+.ams-shell th {
+  font-size: 11px;
+  line-height: 1.35;
+  color: var(--ams-muted);
+  text-transform: uppercase;
+  letter-spacing: .055em;
+}
+.ams-shell td {
+  font-size: 13px;
+  line-height: 1.45;
+}
+.ams-shell button {
+  font-size: 13px;
+  line-height: 1.2;
+}
+.ams-shell input,
+.ams-shell textarea,
+.ams-shell select {
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--ams-text);
+  background-color: var(--ams-bg);
+  border-color: var(--ams-border);
+}
+.ams-shell input::placeholder,
+.ams-shell textarea::placeholder {
+  color: var(--ams-muted);
+}
+
+/* Shared surface treatment. */
+.ams-shell .ams-card,
+.ams-shell .metric-card,
+.ams-shell .glass-panel {
+  background: var(--ams-surface);
+  border: 1px solid var(--ams-border);
+  border-radius: var(--ams-radius-card);
+  box-shadow: var(--ams-shadow-card);
+}
+.ams-shell .ams-card:hover,
+.ams-shell .metric-card:hover {
+  border-color: var(--ams-border-strong);
+}
+.ams-shell .ams-section-label {
+  color: var(--ams-muted);
+  font-size: 10px;
+  line-height: 1.35;
+  font-weight: 700;
+  letter-spacing: .1em;
+}
+.ams-shell .ams-section-title {
+  color: var(--ams-text);
+  font-size: 12px;
+  line-height: 1.4;
+  font-weight: 650;
+}
+
+/* Consistent controls and disabled/read-only states. */
+.ams-shell .ams-control,
+.ams-shell input:not([type="checkbox"]):not([type="radio"]),
+.ams-shell select,
+.ams-shell textarea {
+  border-radius: var(--ams-radius-control);
+}
+.ams-shell input:disabled,
+.ams-shell select:disabled,
+.ams-shell textarea:disabled,
+.ams-shell button:disabled {
+  opacity: .58;
+  cursor: not-allowed;
+}
+.ams-shell select:disabled {
+  background-image: none;
+}
+.ams-shell button:focus-visible,
+.ams-shell a:focus-visible,
+.ams-shell input:focus-visible,
+.ams-shell select:focus-visible,
+.ams-shell textarea:focus-visible {
+  outline: 2px solid rgba(229,9,20,.75);
+  outline-offset: 2px;
+}
+
+/* Locked RBAC role control: visibly read-only, never presented as an action. */
+.ams-shell select[aria-disabled="true"] {
+  border-color: rgba(255,255,255,.08);
+  color: var(--ams-secondary);
+  background-color: var(--ams-surface);
+  cursor: not-allowed;
+}
+
+/* Stable action groups. */
+.ams-shell [role="group"],
+.ams-shell .flex.items-center.gap-1,
+.ams-shell .flex.items-center.gap-2 {
+  min-width: 0;
+}
+.ams-shell .truncate {
+  min-width: 0;
+}
+.ams-shell table {
+  width: 100%;
+}
+.ams-shell .overflow-x-auto {
+  scrollbar-width: thin;
+}
+
+/* Public shell uses the same brand tokens as AMS, while retaining its own layout. */
+.kapi-public-shell {
+  --k-brand: #E50914;
+  --k-brand-hover: #FF1E27;
+  --k-bg: #090A0F;
+  --k-surface: #111318;
+  --k-surface-raised: #181B22;
+  --k-border: rgba(255,255,255,.07);
+  --k-text: #F8FAFC;
+  --k-text-secondary: #8A94A6;
+  --k-text-muted: #64748B;
+  background-color: var(--k-bg);
+  color: var(--k-text-secondary);
+}
+.kapi-public-shell h1,
+.kapi-public-shell h2,
+.kapi-public-shell h3,
+.kapi-public-shell h4 {
+  color: var(--k-text);
+}
+.kapi-public-shell a:focus-visible,
+.kapi-public-shell button:focus-visible,
+.kapi-public-shell input:focus-visible,
+.kapi-public-shell textarea:focus-visible,
+.kapi-public-shell select:focus-visible {
+  outline-color: var(--k-brand);
+}
+.kapi-public-shell input,
+.kapi-public-shell textarea,
+.kapi-public-shell select {
+  border-color: var(--k-border);
+  color: var(--k-text);
+  background-color: var(--k-surface);
+}
+.kapi-public-shell input::placeholder,
+.kapi-public-shell textarea::placeholder {
+  color: var(--k-text-muted);
+}
+
+@media (max-width: 767px) {
+  .ams-shell h1 { font-size: 21px; }
+  .ams-shell h2 { font-size: 17px; }
+  .ams-shell h3 { font-size: 14px; }
+  .ams-shell p { font-size: 13px; }
+  .ams-shell td { font-size: 12px; }
+  .ams-shell button { min-height: 40px; }
+  .ams-shell .ams-card,
+  .ams-shell .metric-card,
+  .ams-shell .glass-panel {
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0,0,0,.18);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ams-shell *,
+  .kapi-public-shell * {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
