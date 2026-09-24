@@ -1684,9 +1684,7 @@
    Keeps existing page functionality while aligning older admin surfaces.
    ========================================================================== */
 
-.ams-shell .font-display {
-  font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
-}
+
 
 .ams-shell .text-gray-200,
 .ams-shell .text-gray-300,
