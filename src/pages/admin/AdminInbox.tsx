@@ -48,6 +48,7 @@ import {
 } from '../../lib/currency';
 import { EmailForwardingGuideModal } from '../../components/EmailForwardingGuideModal';
 import { CannedResponsesModal } from '../../components/admin/inbox/CannedResponsesModal';
+import { CustomSelect } from '../../components/ui/CustomSelect';
 import { ConvertToCrmModal } from '../../components/admin/inbox/ConvertToCrmModal';
 import { useLanguage } from '../../lib/LanguageContext';
 import { api } from '../../lib/apiClient';
@@ -707,32 +708,12 @@ export const AdminInbox: React.FC = () => {
 
           {/* Status Dropdown */}
           <div className="md:col-span-2">
-            <select
-              value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value)}
-              className="w-full py-2 px-3 bg-[var(--panel)] border border-[var(--line)] rounded-card text-xs text-[var(--text)] focus:outline-none focus:border-[var(--accent)] font-sans h-10 min-h-[40px]"
-            >
-              <option value="all">{language === 'id' ? 'Semua Status' : 'All Status'}</option>
-              <option value="new">Status: New</option>
-              <option value="in-review">Status: In Review</option>
-              <option value="contacted">Status: Contacted</option>
-              <option value="closed">Status: Closed Deal</option>
-            </select>
+            <CustomSelect value={filterStatus} onChange={setFilterStatus} options={[{value:'all',label:language === 'id' ? 'Semua Status' : 'All Status'},{value:'new',label:'Status: New'},{value:'in-review',label:'Status: In Review'},{value:'contacted',label:'Status: Contacted'},{value:'closed',label:'Status: Closed Deal'}]} />
           </div>
 
           {/* Priority Dropdown */}
           <div className="md:col-span-2">
-            <select
-              value={filterPriority}
-              onChange={(e) => setFilterPriority(e.target.value)}
-              className="w-full py-2 px-3 bg-[var(--panel)] border border-[var(--line)] rounded-card text-xs text-[var(--text)] focus:outline-none focus:border-[var(--accent)] font-sans h-10 min-h-[40px]"
-            >
-              <option value="all">{language === 'id' ? 'Semua Prioritas' : 'All Priorities'}</option>
-              <option value="urgent">Urgent</option>
-              <option value="high">High</option>
-              <option value="normal">Normal</option>
-              <option value="low">Low</option>
-            </select>
+            <CustomSelect value={filterPriority} onChange={setFilterPriority} options={[{value:'all',label:language === 'id' ? 'Semua Prioritas' : 'All Priorities'},{value:'urgent',label:'Urgent'},{value:'high',label:'High'},{value:'normal',label:'Normal'},{value:'low',label:'Low'}]} />
           </div>
 
           {/* Starred Only Toggle */}
@@ -1359,16 +1340,7 @@ export const AdminInbox: React.FC = () => {
                         <User size={13} className="text-emerald-400" />
                         <span>{language === 'id' ? 'Penanggung Jawab Kualifikasi' : 'Assigned Triage Lead'}</span>
                       </label>
-                      <select
-                        value={selectedSubmission.assignedTo || 'Lead Full-Stack Tech'}
-                        onChange={(e) => handleAssigneeChange(selectedSubmission.id, e.target.value)}
-                        className="w-full px-3 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-card text-xs text-[var(--text)] font-sans focus:outline-none focus:border-emerald-500"
-                      >
-                        <option value="Lead Full-Stack Tech">Lead Full-Stack Tech (Engineering)</option>
-                        <option value="Senior UI/UX Designer">Senior UI/UX Designer (Design)</option>
-                        <option value="Technical Project Manager">Technical Project Manager (Scoping)</option>
-                        <option value="Business Director">Business Director (Accounts)</option>
-                      </select>
+                      <CustomSelect value={selectedSubmission.assignedTo || 'Lead Full-Stack Tech'} onChange={(value) => handleAssigneeChange(selectedSubmission.id, value)} options={[{value:'Lead Full-Stack Tech',label:'Lead Full-Stack Tech (Engineering)'},{value:'Senior UI/UX Designer',label:'Senior UI/UX Designer (Design)'},{value:'Technical Project Manager',label:'Technical Project Manager (Scoping)'},{value:'Business Director',label:'Business Director (Accounts)'}]} />
                     </div>
                   </div>
                 )}
