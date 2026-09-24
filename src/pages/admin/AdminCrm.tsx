@@ -887,7 +887,7 @@ export const AdminCrm: React.FC = () => {
                     <th className="py-3.5 px-4 text-right">{language === 'id' ? 'Aksi' : 'Actions'}</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#30363D]">
+                <tbody className="divide-y divide-line">
                   {filteredLeads.length === 0 ? (
                     <tr>
                       <td colSpan={8} className="py-8 text-center text-[var(--muted)] font-sans">
