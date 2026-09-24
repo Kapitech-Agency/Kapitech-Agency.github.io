@@ -883,6 +883,25 @@
 
 .ams-shell {
   color-scheme: dark;
+
+  /* Legacy admin aliases kept only as a compatibility bridge. */
+  --ams-bg: var(--bg);
+  --ams-surface: var(--panel);
+  --ams-panel: var(--panel);
+  --ams-border: var(--line);
+  --ams-text: var(--text);
+  --ams-secondary: var(--muted);
+  --ams-muted: var(--muted);
+  --ams-red: var(--accent);
+  --ams-red-text: var(--accent-text);
+  --ams-success: var(--success);
+  --ams-warning: var(--warning);
+  --ams-danger: var(--danger);
+  --ams-info: var(--info);
+  --ams-radius-card: 12px;
+  --ams-radius-control: 8px;
+  --ams-radius-chip: 6px;
+  --ams-radius-badge: 5px;
 }
 
 /* Reconcile legacy AMS palette to the canonical design-system tokens. */
@@ -1102,5 +1121,52 @@
     font-size: 18px;
     line-height: 24px;
   }
+}
+\n
+/* Shared legacy control class: map it to the canonical input primitive. */
+.ams-shell .ams-control {
+  width: 100%;
+  height: 36px;
+  min-height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  color: var(--text);
+  font: 400 13px/18px Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+.ams-shell .ams-control::placeholder {
+  color: var(--muted);
+}
+.ams-shell .ams-control:focus {
+  outline: 2px solid var(--accent) !important;
+  outline-offset: 2px !important;
+  border-color: var(--accent) !important;
+}
+.ams-shell .ams-control:disabled {
+  opacity: .55;
+  cursor: not-allowed;
+}
+
+/* Data-dense number alignment. */
+.ams-shell table td,
+.ams-shell table th,
+.ams-shell [data-numeric="true"] {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Keep status chips readable after sentence-case normalization. */
+.ams-shell [class*="rounded-full"] {
+  border-radius: 999px;
+}
+.ams-shell [class*="bg-emerald-500/"] { color: var(--success); }
+.ams-shell [class*="bg-amber-500/"] { color: var(--warning); }
+.ams-shell [class*="bg-blue-500/"] { color: var(--info); }
+.ams-shell [class*="bg-red-500/"] { color: var(--danger); }
+
+/* Admin toast: one quiet surface, no glow. */
+.ams-shell [class*="fixed"][class*="z-50"][class*="shadow-"] {
+  box-shadow: none !important;
+  border-color: var(--line) !important;
 }
 \n
