@@ -429,7 +429,7 @@ export const AdminClients: React.FC = () => {
                         href={`https://wa.me/${client.phone.replace(/\D/g, '')}`}
                         target="_blank"
                         rel="noreferrer"
-                        className="w-9 h-9 rounded-xl bg-[var(--panel)] hover:bg-emerald-950/40 text-emerald-400 border border-[var(--line)] hover:border-emerald-500/30 flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
+                        className="w-9 h-9 rounded-control bg-[var(--panel)] hover:bg-emerald-950/40 text-emerald-400 border border-[var(--line)] hover:border-emerald-500/30 flex items-center justify-center transition-colors min-h-10 min-w-10"
                         title="Chat WhatsApp"
                       >
                         <Phone size={13} />
@@ -437,14 +437,14 @@ export const AdminClients: React.FC = () => {
                     )}
                     <button
                       onClick={() => handleOpenEditClient(client)}
-                      className="w-9 h-9 rounded-xl bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
+                      className="w-9 h-9 rounded-control bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] flex items-center justify-center transition-colors min-h-10 min-w-10"
                       title="Edit Client"
                     >
                       <Edit3 size={13} />
                     </button>
                     <button
                       onClick={() => handleDeleteClient(client.id, client.name)}
-                      className="w-9 h-9 rounded-xl bg-[var(--panel)] hover:bg-red-950/40 text-[var(--muted)] hover:text-red-400 border border-[var(--line)] hover:border-red-500/30 flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
+                      className="w-9 h-9 rounded-control bg-[var(--panel)] hover:bg-red-950/40 text-[var(--muted)] hover:text-red-400 border border-[var(--line)] hover:border-red-500/30 flex items-center justify-center transition-colors min-h-10 min-w-10"
                       title="Delete Client"
                     >
                       <Trash2 size={13} />
@@ -548,14 +548,14 @@ export const AdminClients: React.FC = () => {
                       <div className="flex items-center justify-end gap-1.5">
                         <button
                           onClick={() => handleOpenEditClient(client)}
-                          className="w-9 h-9 rounded-xl bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
+                          className="w-9 h-9 rounded-control bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] flex items-center justify-center transition-colors min-h-10 min-w-10"
                           title="Edit Client"
                         >
                           <Edit3 size={13} />
                         </button>
                         <button
                           onClick={() => handleDeleteClient(client.id, client.name)}
-                          className="w-9 h-9 rounded-xl bg-[var(--panel)] hover:bg-red-950/40 text-[var(--muted)] hover:text-red-400 border border-[var(--line)] hover:border-red-500/30 flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
+                          className="w-9 h-9 rounded-control bg-[var(--panel)] hover:bg-red-950/40 text-[var(--muted)] hover:text-red-400 border border-[var(--line)] hover:border-red-500/30 flex items-center justify-center transition-colors min-h-10 min-w-10"
                           title="Delete Client"
                         >
                           <Trash2 size={13} />
@@ -730,7 +730,7 @@ export const AdminClients: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsClientModalOpen(false)}
-                  className="h-10 px-4 rounded-xl bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] font-sans text-xs transition-colors min-h-[40px]"
+                  className="h-10 px-4 rounded-control bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] font-sans text-xs transition-colors min-h-[40px]"
                 >
                   {language === 'id' ? 'Batal' : 'Cancel'}
                 </button>
