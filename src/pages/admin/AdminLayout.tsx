@@ -14,7 +14,6 @@ const U = (name: UntitledIconName) => (props: { size?: number; className?: strin
 const AmsChevron = U('chevron');
 const AmsMenu = U('menu');
 const AmsClose = U('close');
-const AmsSearch = U('search');
 
 interface NavItem {
   key: string;
@@ -405,39 +404,8 @@ export const AdminLayout: React.FC = () => {
           </Link>
         </div>
 
-        <div className="flex items-center gap-2">
-          {/* Mobile Language Switcher */}
-          <div className="flex items-center bg-bg border border-line rounded-lg p-0.5 font-sans text-[10px]">
-            <button
-              onClick={() => setLanguage('en')}
-              className={`px-2 py-1 rounded-md font-semibold transition-all ${
-                language === 'en'
-                  ? 'bg-panel text-fg shadow-sm border border-line font-bold'
-                  : 'text-muted'
-              }`}
-            >
-              EN
-            </button>
-            <button
-              onClick={() => setLanguage('id')}
-              className={`px-2 py-1 rounded-md font-semibold transition-all ${
-                language === 'id'
-                  ? 'bg-panel text-fg shadow-sm border border-line font-bold'
-                  : 'text-muted'
-              }`}
-            >
-              ID
-            </button>
-          </div>
-
-          {/* Quick Currency Pill */}
-          <button
-            onClick={() => handleSwitchCurrency(currency === 'IDR' ? 'USD' : 'IDR')}
-            className="px-2.5 py-1.5 rounded-lg bg-bg border border-line text-[10px] font-sans font-bold text-emerald-400 hover:bg-panel transition-all min-h-[36px]"
-            title="Toggle Currency"
-          >
-            {currency}
-          </button>
+        <div className="flex items-center">
+          <AdminNotificationCenter />
         </div>
       </div>
 
