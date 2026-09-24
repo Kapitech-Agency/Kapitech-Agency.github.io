@@ -99,7 +99,7 @@ export const AdminTimeLogs: React.FC = () => {
 
   return (
     <div className="h-full overflow-y-auto bg-[var(--bg)] text-[var(--text)]">
-      <div className="max-w-[1500px] mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+      <div className="max-w-[1500px] mx-auto p-4 sm:p-5 lg:p-6 space-y-6">
         <header className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 text-[11px] font-sans normal-case tracking-normal text-[var(--muted)]">
