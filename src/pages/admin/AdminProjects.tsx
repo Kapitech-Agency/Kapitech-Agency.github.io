@@ -489,9 +489,9 @@ export const AdminProjects: React.FC = () => {
     <div className="space-y-6">
       
       {/* 1. Header & Project Actions */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-6 border-b border-[var(--line)]">
+      <div className="ams-dashboard-header">
         <div>
-          <h1 className="text-xl font-display font-semibold text-[var(--text)] flex items-center gap-3">
+          <h1 className="ams-page-title">
             <Layers className="text-[var(--danger)]" size={24} />
             <span>{t('admin.nav.projects')}</span>
           </h1>
@@ -909,7 +909,7 @@ export const AdminProjects: React.FC = () => {
               </div>
               <button
                 onClick={() => setActiveTaskDrawer(null)}
-                className="w-8 h-8 rounded-lg bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] flex items-center justify-center transition-colors shrink-0 ml-3"
+                className="w-8 h-8 rounded-control bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] flex items-center justify-center transition-colors shrink-0 ml-3"
               >
                 <X size={16} />
               </button>
@@ -1074,7 +1074,7 @@ export const AdminProjects: React.FC = () => {
               </h3>
               <button 
                 onClick={() => setIsProjectModalOpen(false)} 
-                className="w-8 h-8 rounded-lg bg-[var(--bg)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] flex items-center justify-center transition-colors shrink-0 ml-3"
+                className="w-8 h-8 rounded-control bg-[var(--bg)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] flex items-center justify-center transition-colors shrink-0 ml-3"
               >
                 <X size={16} />
               </button>
@@ -1244,7 +1244,7 @@ export const AdminProjects: React.FC = () => {
               </h3>
               <button 
                 onClick={() => setIsTaskModalOpen(false)} 
-                className="w-8 h-8 rounded-lg bg-[var(--bg)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] flex items-center justify-center transition-colors shrink-0 ml-3"
+                className="w-8 h-8 rounded-control bg-[var(--bg)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] flex items-center justify-center transition-colors shrink-0 ml-3"
               >
                 <X size={16} />
               </button>
