@@ -386,7 +386,7 @@ export const AdminCrm: React.FC = () => {
               onClick={() => handleCurrencyToggle('IDR')}
               className={`min-h-10 px-3 rounded-control transition-colors font-medium flex items-center justify-center ${
                 currency === 'IDR'
-                  ? 'bg-[var(--accent)] text-[var(--text)] shadow-sm'
+                  ? 'bg-[var(--accent)] text-[var(--text)]'
                   : 'text-[var(--muted)] hover:text-[var(--text)]'
               }`}
             >
@@ -396,7 +396,7 @@ export const AdminCrm: React.FC = () => {
               onClick={() => handleCurrencyToggle('USD')}
               className={`min-h-10 px-3 rounded-control transition-colors font-medium flex items-center justify-center ${
                 currency === 'USD'
-                  ? 'bg-[var(--accent)] text-[var(--text)] shadow-sm'
+                  ? 'bg-[var(--accent)] text-[var(--text)]'
                   : 'text-[var(--muted)] hover:text-[var(--text)]'
               }`}
             >
@@ -577,7 +577,7 @@ export const AdminCrm: React.FC = () => {
             onClick={() => setViewMode('kanban')}
             className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-sans font-semibold transition-all min-h-[38px] ${
               viewMode === 'kanban'
-                ? 'bg-[var(--panel)] text-[var(--text)] shadow-sm border border-[var(--line)]'
+                ? 'bg-[var(--panel)] text-[var(--text)] border border-[var(--line)]'
                 : 'text-[var(--muted)] hover:text-[var(--text)]'
             }`}
           >
@@ -588,7 +588,7 @@ export const AdminCrm: React.FC = () => {
             onClick={() => setViewMode('list')}
             className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-sans font-semibold transition-all min-h-[38px] ${
               viewMode === 'list'
-                ? 'bg-[var(--panel)] text-[var(--text)] shadow-sm border border-[var(--line)]'
+                ? 'bg-[var(--panel)] text-[var(--text)] border border-[var(--line)]'
                 : 'text-[var(--muted)] hover:text-[var(--text)]'
             }`}
           >
@@ -727,7 +727,7 @@ export const AdminCrm: React.FC = () => {
                                   <button
                                     onClick={() => handleConvertToProject(lead)}
                                     title={language === 'id' ? 'Konversi ke Proyek Aktif' : 'Convert deal to Agency Project'}
-                                    className="h-10 sm:h-7 min-h-10 sm:min-h-0 px-2.5 rounded-control bg-[var(--accent)]/20 hover:bg-[var(--accent)]/40 text-[var(--danger)] border border-[var(--accent)]/30 text-[10px] font-semibold font-sans transition-all flex items-center gap-1 active:scale-95 shadow-sm whitespace-nowrap"
+                                    className="h-10 sm:h-7 min-h-10 sm:min-h-0 px-2.5 rounded-control bg-[var(--accent)]/20 hover:bg-[var(--accent)]/40 text-[var(--danger)] border border-[var(--accent)]/30 text-[10px] font-semibold font-sans transition-colors flex items-center gap-1 whitespace-nowrap"
                                   >
                                     <Layers size={11} />
                                     <span>Project</span>
@@ -1115,7 +1115,7 @@ export const AdminCrm: React.FC = () => {
                   />
                   <button
                     type="submit"
-                    className="px-3.5 py-2 rounded-card bg-[var(--accent)] hover:bg-[var(--danger)] text-[var(--text)] text-xs font-sans font-semibold transition-colors flex items-center gap-1 shrink-0 min-h-10"
+                    className="px-3.5 py-2 rounded-card bg-[var(--accent)] hover:bg-[var(--accent)] text-[var(--text)] text-xs font-sans font-semibold transition-colors flex items-center gap-1 shrink-0 min-h-10"
                   >
                     <Plus size={13} />
                     <span>{language === 'id' ? 'Catat' : 'Log'}</span>
