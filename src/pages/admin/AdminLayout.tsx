@@ -213,6 +213,11 @@ export const AdminLayout: React.FC = () => {
       .filter(section => section.items.length > 0);
   }, [navSections, isAllowed]);
 
+  const settingsItem = filteredNavSections
+    .find((section) => section.id === 'admin')
+    ?.items.find((item) => item.key === 'settings');
+  const contentNavSections = filteredNavSections.filter((section) => section.id !== 'admin');
+
   // Helper to determine if link is active
   const isItemActive = (itemTo: string) => {
     if (itemTo.includes('tab=')) {
@@ -303,7 +308,7 @@ export const AdminLayout: React.FC = () => {
 
         {/* Navigation List - 4 Structured Sections Filtered by Dynamic RBAC */}
         <div className="flex-1 px-2 py-3 space-y-3 overflow-y-auto custom-scrollbar">
-          {filteredNavSections.map((section) => (
+          {contentNavSections.map((section) => (
             <div key={section.id} className="space-y-1">
               {!sidebarCollapsed && (
                 <div className="text-xs font-sans text-muted font-medium px-3 pt-2 pb-1">
@@ -460,7 +465,7 @@ export const AdminLayout: React.FC = () => {
             <div className="flex-1 overflow-y-auto p-3 space-y-4 custom-scrollbar">
               {filteredNavSections.map((section) => (
                 <div key={section.id} className="space-y-1">
-                  <div className="text-[10px] font-sans text-muted font-bold tracking-wider px-3 pt-1 uppercase">
+                  <div className="text-[11px] font-sans text-muted font-medium px-3 pt-1">
                     {t(section.titleKey)}
                   </div>
                   {section.items.map((item) => {
@@ -486,7 +491,7 @@ export const AdminLayout: React.FC = () => {
                           <span className="truncate">{item.label}</span>
                         </div>
                         {item.badge !== null && item.badge !== undefined && (
-                          <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold shrink-0 ${item.badgeColor || 'bg-bg text-muted border border-line'}`}>
+                          <span className={`px-2 py-0.5 rounded-badge text-[10px] font-semibold shrink-0 ${item.badgeColor || 'bg-bg text-muted border border-line'}`}>
                             {item.badge}
                           </span>
                         )}
@@ -498,7 +503,23 @@ export const AdminLayout: React.FC = () => {
 
             </div>
 
-            {/* Bottom session details */}
+            {/* Settings remains pinned above the session controls */}
+            {settingsItem && (
+              <Link
+                to={settingsItem.to}
+                onClick={() => setMobileMenuOpen(false)}
+                className={`relative flex items-center gap-3 px-3 py-2.5 rounded-control text-xs font-sans min-h-[40px] transition-colors $
+                  isItemActive(settingsItem.to)
+                    ? 'bg-accent/15 text-fg font-medium'
+                    : 'text-muted hover:text-fg hover:bg-bg'
+                }
+              >
+                <UntitledIcon name="settings" size={16} className={isItemActive(settingsItem.to) ? 'text-accent-text' : 'text-muted'} />
+                <span>{settingsItem.label}</span>
+              </Link>
+            )}
+
+            {/* Bottom session details */
             <div className="p-3.5 border-t border-line bg-bg flex items-center justify-between shrink-0">
               <div className="flex items-center gap-2.5 min-w-0">
                 <div className="w-8 h-8 rounded-lg bg-accent border border-line flex items-center justify-center text-xs font-sans text-fg font-bold shrink-0 ">
@@ -515,7 +536,7 @@ export const AdminLayout: React.FC = () => {
               <button
                 onClick={handleLogout}
                 aria-label="Logout"
-                className="px-3 py-2 min-h-[44px] rounded-xl bg-panel hover:bg-red-950/50 border border-line hover:border-accent/30 text-muted hover:text-accent-text text-xs font-sans flex items-center gap-1.5 shrink-0 transition-all"
+                className="px-3 py-2 min-h-[40px] rounded-control bg-panel hover:bg-bg border border-line hover:border-accent/30 text-muted hover:text-fg text-xs font-sans flex items-center gap-1.5 shrink-0 transition-all"
               >
                 <UntitledIcon name="logout" size={14} />
                 <span>{t('admin.nav.logout')}</span>
