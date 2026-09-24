@@ -71,7 +71,7 @@ export const AdminCmsTestimonials: React.FC = () => {
     <div className="space-y-6">
       
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[rgba(255,255,255,0.07)]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[var(--line)]">
         <div>
           <h1 className="text-2xl font-display font-bold text-white flex items-center gap-3">
             <Quote className="text-[var(--danger)]" size={24} />
@@ -105,7 +105,7 @@ export const AdminCmsTestimonials: React.FC = () => {
         {testimonials.map((item) => (
           <div
             key={item.id}
-            className="bg-[var(--panel)] border border-[rgba(255,255,255,0.07)] rounded-card p-6 flex flex-col justify-between hover:border-[rgba(255,255,255,0.15)] transition-all"
+            className="bg-[var(--panel)] border border-[var(--line)] rounded-card p-6 flex flex-col justify-between hover:border-[var(--line)] transition-all"
           >
             <div>
               {/* Rating stars */}
@@ -121,13 +121,13 @@ export const AdminCmsTestimonials: React.FC = () => {
               </p>
             </div>
 
-            <div className="pt-4 border-t border-[rgba(255,255,255,0.07)] flex items-center justify-between">
+            <div className="pt-4 border-t border-[var(--line)] flex items-center justify-between">
               <div>
                 <div className="text-xs font-bold text-white">{item.author}</div>
                 <div className="text-[11px] font-sans text-[var(--muted)]">
                   {item.role}, <span className="text-white">{item.company}</span>
                 </div>
-                <div className="text-[10px] font-sans text-[#64748B] mt-0.5 flex items-center gap-1">
+                <div className="text-[10px] font-sans text-[var(--muted)] mt-0.5 flex items-center gap-1">
                   <MapPin size={10} />
                   <span>{item.location}</span>
                 </div>
@@ -136,13 +136,13 @@ export const AdminCmsTestimonials: React.FC = () => {
               <div className="flex items-center gap-1.5">
                 <button
                   onClick={() => handleOpenEdit(item)}
-                  className="p-2 rounded-lg bg-[var(--panel)] hover:bg-[#21252F] text-[var(--muted)] hover:text-white border border-[rgba(255,255,255,0.07)] transition-colors min-h-[36px] min-w-[36px] flex items-center justify-center"
+                  className="p-2 rounded-lg bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--muted)] hover:text-white border border-[var(--line)] transition-colors min-h-[36px] min-w-[36px] flex items-center justify-center"
                 >
                   <Edit3 size={14} />
                 </button>
                 <button
                   onClick={() => handleDelete(item.id, item.author)}
-                  className="p-2 rounded-lg bg-[var(--panel)] hover:bg-red-950/40 text-[var(--muted)] hover:text-red-400 border border-[rgba(255,255,255,0.07)] hover:border-red-500/30 transition-colors min-h-[36px] min-w-[36px] flex items-center justify-center"
+                  className="p-2 rounded-lg bg-[var(--panel)] hover:bg-red-950/40 text-[var(--muted)] hover:text-red-400 border border-[var(--line)] hover:border-red-500/30 transition-colors min-h-[36px] min-w-[36px] flex items-center justify-center"
                 >
                   <Trash2 size={14} />
                 </button>
@@ -156,8 +156,8 @@ export const AdminCmsTestimonials: React.FC = () => {
       {/* Modal: Add / Edit Testimonial */}
       {isModalOpen && editingItem && (
         <div className="fixed inset-0 bg-black/80  z-50 flex items-center justify-center p-4">
-          <div className="bg-[var(--panel)] border border-[rgba(255,255,255,0.07)] rounded-card max-w-lg w-full p-6 sm:p-7 shadow-none">
-            <div className="flex items-center justify-between pb-4 border-b border-[rgba(255,255,255,0.07)] mb-5">
+          <div className="bg-[var(--panel)] border border-[var(--line)] rounded-card max-w-lg w-full p-6 sm:p-7 shadow-none">
+            <div className="flex items-center justify-between pb-4 border-b border-[var(--line)] mb-5">
               <h2 className="text-base font-bold font-display text-white">
                 {editingItem.author ? `Edit: ${editingItem.author}` : (language === 'id' ? 'Tambah Testimoni Klien' : 'Add Client Testimonial')}
               </h2>
@@ -177,7 +177,7 @@ export const AdminCmsTestimonials: React.FC = () => {
                   value={editingItem.author}
                   onChange={(e) => setEditingItem({ ...editingItem, author: e.target.value })}
                   placeholder="e.g., Marcus Thorne"
-                  className="w-full px-3 py-2.5 bg-[var(--panel)] border border-[rgba(255,255,255,0.07)] rounded-xl text-xs text-white focus:outline-none focus:border-[var(--accent)] font-sans min-h-[44px]"
+                  className="w-full px-3 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-xs text-white focus:outline-none focus:border-[var(--accent)] font-sans min-h-[44px]"
                 />
               </div>
 
@@ -191,7 +191,7 @@ export const AdminCmsTestimonials: React.FC = () => {
                     value={editingItem.role}
                     onChange={(e) => setEditingItem({ ...editingItem, role: e.target.value })}
                     placeholder="e.g., VP of Product"
-                    className="w-full px-3 py-2 bg-[var(--panel)] border border-[rgba(255,255,255,0.07)] rounded-xl text-xs text-white focus:outline-none focus:border-[var(--accent)] font-sans min-h-[44px]"
+                    className="w-full px-3 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-xs text-white focus:outline-none focus:border-[var(--accent)] font-sans min-h-[44px]"
                   />
                 </div>
                 <div>
@@ -203,7 +203,7 @@ export const AdminCmsTestimonials: React.FC = () => {
                     value={editingItem.company}
                     onChange={(e) => setEditingItem({ ...editingItem, company: e.target.value })}
                     placeholder="e.g., Finova Global"
-                    className="w-full px-3 py-2 bg-[var(--panel)] border border-[rgba(255,255,255,0.07)] rounded-xl text-xs text-white focus:outline-none focus:border-[var(--accent)] font-sans min-h-[44px]"
+                    className="w-full px-3 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-xs text-white focus:outline-none focus:border-[var(--accent)] font-sans min-h-[44px]"
                   />
                 </div>
               </div>
@@ -217,7 +217,7 @@ export const AdminCmsTestimonials: React.FC = () => {
                   value={editingItem.location}
                   onChange={(e) => setEditingItem({ ...editingItem, location: e.target.value })}
                   placeholder="e.g., Jakarta, Indonesia"
-                  className="w-full px-3 py-2 bg-[var(--panel)] border border-[rgba(255,255,255,0.07)] rounded-xl text-xs text-white focus:outline-none focus:border-[var(--accent)] font-sans min-h-[44px]"
+                  className="w-full px-3 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-xs text-white focus:outline-none focus:border-[var(--accent)] font-sans min-h-[44px]"
                 />
               </div>
 
@@ -231,7 +231,7 @@ export const AdminCmsTestimonials: React.FC = () => {
                   value={editingItem.quoteId || editingItem.quote}
                   onChange={(e) => setEditingItem({ ...editingItem, quoteId: e.target.value, quote: e.target.value })}
                   placeholder={language === 'id' ? 'Ceritakan dampak positif atau kecepatan kerja sama dengan Kapitech...' : 'Share client feedback, impact, and delivery speed...'}
-                  className="w-full px-3 py-2 bg-[var(--panel)] border border-[rgba(255,255,255,0.07)] rounded-xl text-xs text-white focus:outline-none focus:border-[var(--accent)] font-sans"
+                  className="w-full px-3 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-xs text-white focus:outline-none focus:border-[var(--accent)] font-sans"
                 />
               </div>
 
@@ -239,7 +239,7 @@ export const AdminCmsTestimonials: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 rounded-xl bg-[var(--panel)] text-[var(--muted)] hover:text-white border border-[rgba(255,255,255,0.07)] text-xs font-sans min-h-[44px]"
+                  className="px-4 py-2 rounded-xl bg-[var(--panel)] text-[var(--muted)] hover:text-white border border-[var(--line)] text-xs font-sans min-h-[44px]"
                 >
                   {language === 'id' ? 'Batal' : 'Cancel'}
                 </button>
