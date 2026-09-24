@@ -27,7 +27,7 @@ import {
   Check,
   X
 } from 'lucide-react';
-import { AgencyInvoice, AgencyExpense, InvoiceStatus } from '../../lib/financeStore'; from '../../lib/financeStore';
+import { AgencyInvoice, AgencyExpense, InvoiceStatus } from '../../lib/financeStore';
 import { formatAmount, formatIDR, getActiveCurrency, CURRENCY_EVENT, CurrencyCode } from '../../lib/currency';
 import { useLanguage } from '../../lib/LanguageContext';
 import { useDragToScroll } from '../../lib/useDragToScroll';
