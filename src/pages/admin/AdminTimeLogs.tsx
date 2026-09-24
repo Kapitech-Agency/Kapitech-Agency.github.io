@@ -37,13 +37,14 @@ export const AdminTimeLogs: React.FC = () => {
 
   const load = async () => {
     setLoading(true);
-    const [logsRes] = await Promise.all([
+    const [logsRes, projectsRes] = await Promise.all([
       api.timeLogs.getAll(),
       api.projects.getAll()
     ]);
     if (logsRes.success && logsRes.data?.timeLogs) setLogs(logsRes.data.timeLogs);
     else setStatus(logsRes.error || 'Unable to load time logs.');
-    if (projectsRes?.success && Array.isArray(projectsRes.data?.projects)) setProjects(projectsRes.data.projects);\n    setLoading(false);
+    if (projectsRes?.success && Array.isArray(projectsRes.data?.projects)) setProjects(projectsRes.data.projects);
+    setLoading(false);
   };
 
   useEffect(() => { void load(); }, []);
