@@ -523,7 +523,7 @@ export const AdminProposals: React.FC = () => {
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse min-w-[750px]">
               <thead>
-                <tr className="border-b border-white/[0.07] bg-[var(--ams-surface)]/50 text-xs font-sans text-[var(--ams-secondary)] uppercase">
+                <tr className="border-b border-white/[0.07] bg-[var(--ams-surface)]/50 text-xs font-sans text-[var(--ams-secondary)] normal-case">
                   <th className="py-3 px-4">Ref / Title</th>
                   <th className="py-3 px-4">Client</th>
                   <th className="py-3 px-4">Value</th>
@@ -624,8 +624,8 @@ export const AdminProposals: React.FC = () => {
 
       {/* CREATE PROPOSAL MODAL */}
       {isCreateModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="bg-[var(--ams-bg)] border border-white/[0.07] rounded-2xl w-full max-w-2xl max-h-[90vh] flex flex-col shadow-[0_24px_64px_rgba(0,0,0,0.8)] overflow-hidden">
+        <div className="fixed inset-0 z-50 bg-black/80  flex items-center justify-center p-4">
+          <div className="bg-[var(--ams-bg)] border border-white/[0.07] rounded-card w-full max-w-2xl max-h-[90vh] flex flex-col shadow-[0_24px_64px_rgba(0,0,0,0.8)] overflow-hidden">
             <div className="p-4 border-b border-white/[0.07] flex items-center justify-between bg-[var(--ams-surface)]">
               <div className="flex items-center gap-2">
                 <FileText className="text-[var(--ams-red)]" size={18} />
@@ -695,7 +695,7 @@ export const AdminProposals: React.FC = () => {
               {/* Line Items Builder */}
               <div className="space-y-2 pt-2 border-t border-white/[0.07]">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-sans text-[var(--ams-secondary)] uppercase tracking-wider">Line Items</span>
+                  <span className="text-xs font-sans text-[var(--ams-secondary)] normal-case tracking-normal">Line Items</span>
                   <button
                     type="button"
                     onClick={handleAddItem}
@@ -829,8 +829,8 @@ export const AdminProposals: React.FC = () => {
 
       {/* PREVIEW PROPOSAL MODAL */}
       {previewProposal && (
-        <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="bg-[var(--ams-bg)] border border-white/[0.07] rounded-2xl w-full max-w-xl shadow-[0_24px_64px_rgba(0,0,0,0.8)] overflow-hidden">
+        <div className="fixed inset-0 z-50 bg-black/85  flex items-center justify-center p-4">
+          <div className="bg-[var(--ams-bg)] border border-white/[0.07] rounded-card w-full max-w-xl shadow-[0_24px_64px_rgba(0,0,0,0.8)] overflow-hidden">
             <div className="p-4 border-b border-white/[0.07] flex items-center justify-between bg-[var(--ams-surface)]">
               <div className="flex items-center gap-2">
                 <span className="text-[var(--ams-red)] font-sans font-bold text-xs">{previewProposal.proposalNumber}</span>
@@ -861,7 +861,7 @@ export const AdminProposals: React.FC = () => {
               </div>
 
               <div className="space-y-2">
-                <div className="text-xs font-sans text-[var(--ams-secondary)] uppercase tracking-wider">Scope Deliverables</div>
+                <div className="text-xs font-sans text-[var(--ams-secondary)] normal-case tracking-normal">Scope Deliverables</div>
                 <div className="divide-y divide-white/[0.04] bg-[var(--ams-surface)] rounded-xl border border-white/[0.07] p-3">
                   {previewProposal.lineItems?.map((item) => (
                     <div key={item.id} className="py-2 flex justify-between items-center text-xs">
