@@ -20,7 +20,8 @@ import {
   Sliders,
   Tag
 } from 'lucide-react';
-import { getCmsProjects, saveCmsProject, deleteCmsProject, resetCmsProjectsToDefault } from '../../lib/cmsStore';
+import { resetCmsProjectsToDefault } from '../../lib/cmsStore';
+import { api } from '../../lib/apiClient';
 import { ProjectItem } from '../../data/projectsData';
 import { useLanguage } from '../../lib/LanguageContext';
 import { useDragToScroll } from '../../lib/useDragToScroll';
@@ -44,15 +45,17 @@ export const AdminCmsProjects: React.FC = () => {
   const [metricLabel, setMetricLabel] = useState('');
   const [metricValue, setMetricValue] = useState('');
 
-  const loadProjects = () => {
-    setProjects(getCmsProjects());
+  const loadProjects = async () => {
+    try {
+      const res = await api.cms.getProjects();
+      if (res.success && Array.isArray(res.data?.projects)) setProjects(res.data.projects as ProjectItem[]);
+    } catch {
+      setStatusMessage(language === 'id' ? 'Gagal memuat case study.' : 'Failed to load case studies.');
+    }
   };
 
   useEffect(() => {
-    loadProjects();
-    const handleUpdate = () => loadProjects();
-    window.addEventListener('kapitech_cms_updated', handleUpdate);
-    return () => window.removeEventListener('kapitech_cms_updated', handleUpdate);
+    void loadProjects();
   }, []);
 
   const handleOpenAdd = () => {
@@ -92,8 +95,7 @@ export const AdminCmsProjects: React.FC = () => {
 
   const handleDelete = (id: string, title: string) => {
     if (window.confirm(`Delete case study "${title}" from CMS?`)) {
-      deleteCmsProject(id);
-      loadProjects();
+      void api.cms.deleteProject(id).then((res) => { if (res.success) void loadProjects(); else setStatusMessage(res.error || 'Delete failed.'); });
       setStatusMessage('Case study deleted successfully.');
       setTimeout(() => setStatusMessage(null), 3000);
     }
@@ -101,8 +103,7 @@ export const AdminCmsProjects: React.FC = () => {
 
   const handleToggleFeatured = (project: ProjectItem) => {
     const updated = { ...project, featured: !project.featured };
-    saveCmsProject(updated);
-    loadProjects();
+    void api.cms.updateProject(updated.id, updated).then((res) => { if (res.success) void loadProjects(); else setStatusMessage(res.error || 'Update failed.'); });
   };
 
   const handleFileUpload = (file: File) => {
@@ -187,17 +188,20 @@ export const AdminCmsProjects: React.FC = () => {
     });
   };
 
-  const handleSaveModal = (e: React.FormEvent) => {
+  const handleSaveModal = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingProject || !editingProject.title.trim()) {
       alert('Project title is required.');
       return;
     }
 
-    saveCmsProject(editingProject);
+    const res = editingProject.id && projects.some(p => p.id === editingProject.id)
+      ? await api.cms.updateProject(editingProject.id, editingProject)
+      : await api.cms.createProject(editingProject);
+    if (!res.success) { setStatusMessage(res.error || 'Failed to save case study.'); return; }
     setIsModalOpen(false);
     setEditingProject(null);
-    loadProjects();
+    await loadProjects();
     setStatusMessage('Case study published successfully to live site!');
     setTimeout(() => setStatusMessage(null), 3000);
   };
