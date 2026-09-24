@@ -1866,3 +1866,31 @@
  .kapi-public-shell .kapi-floating-contact{right:16px;bottom:max(16px,env(safe-area-inset-bottom,16px))}
 }
 @media(prefers-reduced-motion:reduce){.kapi-public-shell .kapi-hero-orbit,.kapi-public-shell .kapi-hero-grid{animation:none}}
+
+
+/* Services dropdown: stable desktop panel, deliberate columns, no hover gap */
+@media (min-width:768px){
+ .kapi-public-shell .kapi-mega-menu{
+   top:72px;
+   left:50%;
+   width:min(1180px,calc(100vw - 32px));
+   padding:28px 30px 22px;
+   border-radius:20px;
+   overflow:hidden;
+ }
+ .kapi-public-shell .kapi-mega-menu > div:first-child{
+   grid-template-columns:repeat(4,minmax(0,1fr));
+   gap:24px;
+ }
+ .kapi-public-shell .kapi-mega-menu > div:first-child > div{
+   min-width:0;
+ }
+ .kapi-public-shell .kapi-mega-menu a{
+   min-height:58px;
+ }
+}
+@media (max-width:1100px) and (min-width:768px){
+ .kapi-public-shell .kapi-mega-menu{top:68px;padding:22px 20px 18px}
+ .kapi-public-shell .kapi-mega-menu > div:first-child{gap:14px}
+ .kapi-public-shell .kapi-mega-menu a{padding:9px}
+}
