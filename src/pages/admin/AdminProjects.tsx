@@ -1122,19 +1122,13 @@ export const AdminProjects: React.FC = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   <div>
                     <label className="block text-[var(--muted)] mb-1 font-semibold">Service Category</label>
-                    <select
-                      value={serviceCategory}
-                      required
-                      onChange={(e) => setServiceCategory(e.target.value)}
-                      className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
-                    >
-                      <option value="" disabled>Select service category</option>
-                      <option value="Web Development">Web Development</option>
-                      <option value="Mobile App">Mobile App</option>
-                      <option value="UI/UX Design System">UI/UX Design System</option>
-                      <option value="Cloud Architecture">Cloud Architecture</option>
-                      <option value="AI / LLM Integration">AI / LLM Integration</option>
-                    </select>
+                    <CustomSelect value={serviceCategory} onChange={setServiceCategory} className="w-full" size="sm" options={[
+                      { value: 'Web Development', label: 'Web Development' },
+                      { value: 'Mobile App', label: 'Mobile App' },
+                      { value: 'UI/UX Design System', label: 'UI/UX Design System' },
+                      { value: 'Cloud Architecture', label: 'Cloud Architecture' },
+                      { value: 'AI / LLM Integration', label: 'AI / LLM Integration' }
+                    ]} />
                   </div>
 
                   <div>
@@ -1149,17 +1143,13 @@ export const AdminProjects: React.FC = () => {
 
                   <div>
                     <label className="block text-[var(--muted)] mb-1 font-semibold">Status</label>
-                    <select
-                      value={projStatus}
-                      onChange={(e) => setProjStatus(e.target.value as ProjectStatus)}
-                      className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
-                    >
-                      <option value="planning">Planning</option>
-                      <option value="in_progress">In Progress</option>
-                      <option value="review">Review & QA</option>
-                      <option value="completed">Completed</option>
-                      <option value="on_hold">On Hold</option>
-                    </select>
+                    <CustomSelect value={projStatus} onChange={(value) => setProjStatus(value as ProjectStatus)} className="w-full" size="sm" options={[
+                      { value: 'planning', label: 'Planning' },
+                      { value: 'in_progress', label: 'In Progress' },
+                      { value: 'review', label: 'Review & QA' },
+                      { value: 'completed', label: 'Completed' },
+                      { value: 'on_hold', label: 'On Hold' }
+                    ]} />
                   </div>
                 </div>
 
@@ -1289,16 +1279,12 @@ export const AdminProjects: React.FC = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block text-[var(--muted)] mb-1 font-semibold">Priority</label>
-                    <select
-                      value={taskPriority}
-                      onChange={(e) => setTaskPriority(e.target.value as TaskPriority)}
-                      className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
-                    >
-                      <option value="low">Low</option>
-                      <option value="medium">Medium</option>
-                      <option value="high">High</option>
-                      <option value="urgent">Urgent</option>
-                    </select>
+                    <CustomSelect value={taskPriority} onChange={(value) => setTaskPriority(value as TaskPriority)} className="w-full" size="sm" options={[
+                      { value: 'low', label: 'Low' },
+                      { value: 'medium', label: 'Medium' },
+                      { value: 'high', label: 'High' },
+                      { value: 'urgent', label: 'Urgent' }
+                    ]} />
                   </div>
 
                   <div>
@@ -1323,16 +1309,12 @@ export const AdminProjects: React.FC = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block text-[var(--muted)] mb-1 font-semibold">Initial Stage</label>
-                    <select
-                      value={taskStatus}
-                      onChange={(e) => setTaskStatus(e.target.value as TaskStatus)}
-                      className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
-                    >
-                      <option value="todo">To Do</option>
-                      <option value="in_progress">In Progress</option>
-                      <option value="review">Review & QA</option>
-                      <option value="done">Done</option>
-                    </select>
+                    <CustomSelect value={taskStatus} onChange={(value) => setTaskStatus(value as TaskStatus)} className="w-full" size="sm" options={[
+                      { value: 'todo', label: 'To Do' },
+                      { value: 'in_progress', label: 'In Progress' },
+                      { value: 'review', label: 'Review & QA' },
+                      { value: 'done', label: 'Done' }
+                    ]} />
                   </div>
 
                   <div>
