@@ -40,6 +40,7 @@ import { CustomSelect } from '../../components/ui/CustomSelect';
 import { formatAmount, getActiveCurrency, setGlobalCurrency, CurrencyCode, CURRENCY_EVENT } from '../../lib/currency';
 import { hasAdminPermission } from '../../lib/adminAuth';
 import { api } from '../../lib/apiClient';
+import { CustomSelect } from '../../components/ui/CustomSelect';
 
 export const AdminCrm: React.FC = () => {
   const { language, t } = useLanguage();
@@ -1035,17 +1036,7 @@ export const AdminCrm: React.FC = () => {
 
                 <div className="flex items-center gap-2">
                   <span className="text-xs text-[var(--muted)]">{language === 'id' ? 'Tahap:' : 'Stage:'}</span>
-                  <select
-                    value={selectedLead.stage}
-                    onChange={(e) => handleStageChange(selectedLead.id, e.target.value as CrmStage)}
-                    className="px-3 py-1.5 bg-[var(--panel)] border border-[var(--line)] rounded-card text-xs text-[var(--text)] focus:outline-none focus:border-[var(--accent)] font-sans"
-                  >
-                    {CRM_STAGE_DEFINITIONS.map(s => (
-                      <option key={s.key} value={s.key}>
-                        {language === 'id' ? s.labelId : s.label}
-                      </option>
-                    ))}
-                  </select>
+                  <CustomSelect value={selectedLead.stage} onChange={(value) => handleStageChange(selectedLead.id, value as CrmStage)} options={CRM_STAGE_DEFINITIONS.map(s => ({ value: s.key, label: language === 'id' ? s.labelId : s.label }))} />
                 </div>
               </div>
 
@@ -1243,18 +1234,7 @@ export const AdminCrm: React.FC = () => {
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-[var(--muted)] mb-1 font-semibold">{language === 'id' ? 'Pilar Layanan' : 'Service Pillar'}</label>
-                  <select
-                    value={formPillar}
-                    onChange={(e) => setFormPillar(e.target.value as CrmServicePillar)}
-                    className="w-full px-3 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)] min-h-10"
-                  >
-                    <option value="Web Development">Web Development</option>
-                    <option value="Mobile App">Mobile App</option>
-                    <option value="UI/UX Design">UI/UX Design</option>
-                    <option value="Branding & Identity">Branding & Identity</option>
-                    <option value="AI & Cloud Solutions">AI & Cloud Solutions</option>
-                    <option value="Digital Product MVP">Digital Product MVP</option>
-                  </select>
+                  <CustomSelect value={formPillar} onChange={(value) => setFormPillar(value as CrmServicePillar)} options={[{value:'Web Development',label:'Web Development'},{value:'Mobile App',label:'Mobile App'},{value:'UI/UX Design',label:'UI/UX Design'},{value:'Branding & Identity',label:'Branding & Identity'},{value:'AI & Cloud Solutions',label:'AI & Cloud Solutions'},{value:'Digital Product MVP',label:'Digital Product MVP'}]} />
                 </div>
 
                 <div>
@@ -1269,33 +1249,14 @@ export const AdminCrm: React.FC = () => {
 
                 <div>
                   <label className="block text-[var(--muted)] mb-1 font-semibold">{language === 'id' ? 'Tahap' : 'Stage'}</label>
-                  <select
-                    value={formStage}
-                    onChange={(e) => setFormStage(e.target.value as CrmStage)}
-                    className="w-full px-3 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)] min-h-10"
-                  >
-                    {CRM_STAGE_DEFINITIONS.map(s => (
-                      <option key={s.key} value={s.key}>
-                        {language === 'id' ? s.labelId : s.label}
-                      </option>
-                    ))}
-                  </select>
+                  <CustomSelect value={formStage} onChange={(value) => setFormStage(value as CrmStage)} options={CRM_STAGE_DEFINITIONS.map(s => ({ value: s.key, label: language === 'id' ? s.labelId : s.label }))} />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-[var(--muted)] mb-1 font-semibold">{language === 'id' ? 'Prioritas' : 'Priority'}</label>
-                  <select
-                    value={formPriority}
-                    onChange={(e) => setFormPriority(e.target.value as CrmPriority)}
-                    className="w-full px-3 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)] min-h-10"
-                  >
-                    <option value="low">Low</option>
-                    <option value="medium">Medium</option>
-                    <option value="high">High</option>
-                    <option value="urgent">Urgent</option>
-                  </select>
+                  <CustomSelect value={formPriority} onChange={(value) => setFormPriority(value as CrmPriority)} options={[{value:'low',label:'Low'},{value:'medium',label:'Medium'},{value:'high',label:'High'},{value:'urgent',label:'Urgent'}]} />
                 </div>
 
                 <div>
