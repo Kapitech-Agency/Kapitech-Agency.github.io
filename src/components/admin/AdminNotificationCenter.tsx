@@ -51,7 +51,7 @@ export const AdminNotificationCenter: React.FC = () => {
       <button
         type="button"
         onClick={() => setOpen(v => !v)}
-        className="relative h-9 w-9 rounded-control border border-line bg-panel text-muted hover:text-fg hover:border-line transition-colors flex items-center justify-center"
+        className="relative min-h-10 min-w-10 rounded-control border border-line bg-panel text-muted hover:text-fg hover:border-line transition-colors flex items-center justify-center"
         aria-label={language === 'id' ? 'Notifikasi' : 'Notifications'}
         aria-expanded={open}
       >
@@ -65,10 +65,10 @@ export const AdminNotificationCenter: React.FC = () => {
           <div className="absolute right-0 top-11 z-50 w-[min(380px,calc(100vw-24px))] overflow-hidden rounded-card border border-line bg-panel shadow-none">
             <div className="flex items-center justify-between border-b border-line px-4 py-3">
               <div>
-                <p className="text-[13px] font-semibold text-white">{language === 'id' ? 'Notifikasi' : 'Notifications'}</p>
+                <p className="text-[13px] font-semibold text-[var(--text)]">{language === 'id' ? 'Notifikasi' : 'Notifications'}</p>
                 <p className="mt-0.5 text-[11px] text-muted">{unread} {language === 'id' ? 'belum dibaca' : 'unread'}</p>
               </div>
-              {unread > 0 && <button type="button" onClick={() => void markAllRead()} className="inline-flex items-center gap-1.5 text-[11px] font-medium text-accent-text hover:text-white"><CheckCheck size={14}/>{language === 'id' ? 'Tandai semua' : 'Mark all read'}</button>}
+              {unread > 0 && <button type="button" onClick={() => void markAllRead()} className="inline-flex min-h-10 items-center gap-1.5 text-[11px] font-medium text-accent-text hover:text-fg"><CheckCheck size={14}/>{language === 'id' ? 'Tandai semua' : 'Mark all read'}</button>}
             </div>
             <div className="max-h-[min(60vh,460px)] overflow-y-auto">
               {loading && items.length === 0 ? (
@@ -76,11 +76,11 @@ export const AdminNotificationCenter: React.FC = () => {
               ) : items.length === 0 ? (
                 <div className="px-4 py-10 text-center text-[12px] text-[var(--muted)]">{language === 'id' ? 'Tidak ada notifikasi.' : 'No notifications.'}</div>
               ) : items.slice(0, 30).map(item => (
-                <button key={item.id} type="button" onClick={() => void markRead(item.id)} className={`w-full border-b border-line px-4 py-3 text-left transition-colors hover:bg-bg ${(!item.isRead && !item.readAt) ? 'bg-accent/5' : ''}`}>
+                <button key={item.id} type="button" onClick={() => void markRead(item.id)} className={`w-full border-b border-line px-4 py-3 text-left transition-colors hover:bg-panel-hover ${(!item.isRead && !item.readAt) ? 'bg-accent/5' : ''}`}>
                   <div className="flex gap-3">
                     <span className={`mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full ${(!item.isRead && !item.readAt) ? 'bg-accent' : 'bg-line'}`} />
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-[12px] font-semibold text-white">{item.title || item.type || (language === 'id' ? 'Notifikasi sistem' : 'System notification')}</p>
+                      <p className="truncate text-[12px] font-semibold text-[var(--text)]">{item.title || item.type || (language === 'id' ? 'Notifikasi sistem' : 'System notification')}</p>
                       <p className="mt-1 line-clamp-2 text-[11px] leading-5 text-muted">{item.message || ''}</p>
                       {item.createdAt && <p className="mt-1.5 text-[10px] text-[var(--muted)]">{new Date(item.createdAt).toLocaleString(language === 'id' ? 'id-ID' : 'en-US')}</p>}
                     </div>
