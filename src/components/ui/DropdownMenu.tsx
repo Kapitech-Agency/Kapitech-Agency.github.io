@@ -68,14 +68,14 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
           >
             {items.map((item) => (
               <React.Fragment key={item.id}>
-                {item.divider && <div className="h-px bg-[rgba(255,255,255,0.06)] my-1" />}
+                {item.divider && <div className="h-px bg-line my-1" />}
                 <button
                   type="button"
                   onClick={() => {
                     item.onClick();
                     setIsOpen(false);
                   }}
-                  className={`w-full flex items-center justify-between px-3 py-2 rounded-md text-left transition-colors ${
+                  className={`w-full flex items-center justify-between min-h-10 sm:min-h-9 px-3 py-2 rounded-control text-left transition-colors ${
                     item.variant === 'danger'
                       ? 'text-danger hover:text-fg hover:bg-danger/10'
                       : item.variant === 'warning'
