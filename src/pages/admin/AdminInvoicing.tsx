@@ -251,21 +251,21 @@ export const AdminInvoicing: React.FC = () => {
     switch (status) {
       case 'paid':
         return (
-          <span className="px-2.5 py-1 rounded-lg bg-[var(--success)]/10 text-[var(--success)] border border-[var(--success)]/30 text-[10px] font-sans font-semibold flex items-center gap-1.5">
+          <span className="px-2.5 py-1 rounded-control bg-[var(--success)]/10 text-[var(--success)] border border-[var(--success)]/30 text-[10px] font-sans font-semibold flex items-center gap-1.5">
             <CheckCircle2 size={12} />
             <span>PAID</span>
           </span>
         );
       case 'sent':
         return (
-          <span className="px-2.5 py-1 rounded-lg bg-rose-500/10 text-rose-400 border border-rose-500/30 text-[10px] font-sans font-semibold flex items-center gap-1.5">
+          <span className="px-2.5 py-1 rounded-control bg-rose-500/10 text-rose-400 border border-rose-500/30 text-[10px] font-sans font-semibold flex items-center gap-1.5">
             <Send size={12} />
             <span>SENT</span>
           </span>
         );
       case 'overdue':
         return (
-          <span className="px-2.5 py-1 rounded-lg bg-rose-500/10 text-rose-400 border border-rose-500/30 text-[10px] font-sans font-semibold flex items-center gap-1.5 animate-pulse">
+          <span className="px-2.5 py-1 rounded-control bg-rose-500/10 text-rose-400 border border-rose-500/30 text-[10px] font-sans font-semibold flex items-center gap-1.5 animate-pulse">
             <AlertCircle size={12} />
             <span>OVERDUE</span>
           </span>
@@ -273,7 +273,7 @@ export const AdminInvoicing: React.FC = () => {
       case 'draft':
       default:
         return (
-          <span className="px-2.5 py-1 rounded-lg bg-[var(--panel-hover)] text-[var(--muted)] border border-[var(--line)] text-[10px] font-sans font-semibold flex items-center gap-1.5">
+          <span className="px-2.5 py-1 rounded-control bg-[var(--panel-hover)] text-[var(--muted)] border border-[var(--line)] text-[10px] font-sans font-semibold flex items-center gap-1.5">
             <Clock size={12} />
             <span>DRAFT</span>
           </span>
@@ -287,7 +287,7 @@ export const AdminInvoicing: React.FC = () => {
         <div className="w-16 h-16 rounded-card bg-[var(--danger)]/10 border border-[var(--danger)]/30 text-[var(--danger)] flex items-center justify-center mb-4 shadow-none">
           <ShieldCheck size={32} />
         </div>
-        <h2 className="text-xl font-display font-semibold text-[var(--text)] mb-2">
+        <h2 className="text-xl font-sans font-semibold text-[var(--text)] mb-2">
           {language === 'id' ? 'Akses Terbatas: Finansial & Invoicing' : 'Restricted Access: Financials & Invoicing'}
         </h2>
         <p className="text-sm text-[var(--muted)] mb-6 leading-relaxed">
@@ -308,7 +308,7 @@ export const AdminInvoicing: React.FC = () => {
       {/* 1. Header & Actions */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[var(--line)]">
         <div>
-          <h1 className="text-xl font-display font-semibold text-[var(--text)] flex items-center gap-3">
+          <h1 className="text-xl font-sans font-semibold text-[var(--text)] flex items-center gap-3">
             <Receipt className="text-[var(--danger)]" size={26} />
             <span>{t('admin.fin.title')}</span>
           </h1>
@@ -354,11 +354,11 @@ export const AdminInvoicing: React.FC = () => {
           <div>
             <div className="flex items-center justify-between text-[var(--muted)] mb-2">
               <span className="text-xs font-sans normal-case font-semibold">{t('admin.fin.revenuePaid')}</span>
-              <div className="w-8 h-8 rounded-lg bg-[var(--success)]/10 border border-[var(--success)]/30 flex items-center justify-center text-[var(--success)]">
+              <div className="w-8 h-8 rounded-control bg-[var(--success)]/10 border border-[var(--success)]/30 flex items-center justify-center text-[var(--success)]">
                 <DollarSign size={16} />
               </div>
             </div>
-            <div className="text-2xl sm:text-3xl font-display font-semibold text-[var(--text)] tracking-tight">
+            <div className="text-2xl sm:text-3xl font-sans font-semibold text-[var(--text)] tracking-tight">
               {formatAmount(metrics.totalPaidRevenue, currency)}
             </div>
           </div>
@@ -373,11 +373,11 @@ export const AdminInvoicing: React.FC = () => {
           <div>
             <div className="flex items-center justify-between text-[var(--muted)] mb-2">
               <span className="text-xs font-sans normal-case font-semibold">{t('admin.fin.outstanding')}</span>
-              <div className="w-8 h-8 rounded-lg bg-[var(--danger)]/10 border border-[var(--danger)]/30 flex items-center justify-center text-[var(--danger)]">
+              <div className="w-8 h-8 rounded-control bg-[var(--danger)]/10 border border-[var(--danger)]/30 flex items-center justify-center text-[var(--danger)]">
                 <Clock size={16} />
               </div>
             </div>
-            <div className="text-2xl sm:text-3xl font-display font-semibold text-[var(--text)] tracking-tight">
+            <div className="text-2xl sm:text-3xl font-sans font-semibold text-[var(--text)] tracking-tight">
               {formatAmount(metrics.totalOutstanding, currency)}
             </div>
           </div>
@@ -392,11 +392,11 @@ export const AdminInvoicing: React.FC = () => {
           <div>
             <div className="flex items-center justify-between text-[var(--muted)] mb-2">
               <span className="text-xs font-sans normal-case font-semibold">{t('admin.fin.expenses')}</span>
-              <div className="w-8 h-8 rounded-lg bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-400">
+              <div className="w-8 h-8 rounded-control bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-400">
                 <TrendingDown size={16} />
               </div>
             </div>
-            <div className="text-2xl sm:text-3xl font-display font-semibold text-[var(--text)] tracking-tight">
+            <div className="text-2xl sm:text-3xl font-sans font-semibold text-[var(--text)] tracking-tight">
               {formatAmount(metrics.totalExpenses, currency)}
             </div>
           </div>
@@ -411,11 +411,11 @@ export const AdminInvoicing: React.FC = () => {
           <div>
             <div className="flex items-center justify-between text-[var(--muted)] mb-2">
               <span className="text-xs font-sans normal-case font-semibold">{t('admin.fin.netProfit')}</span>
-              <div className="w-8 h-8 rounded-lg bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400">
+              <div className="w-8 h-8 rounded-control bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400">
                 <TrendingUp size={16} />
               </div>
             </div>
-            <div className="text-2xl sm:text-3xl font-display font-semibold text-[var(--text)] tracking-tight">
+            <div className="text-2xl sm:text-3xl font-sans font-semibold text-[var(--text)] tracking-tight">
               {formatAmount(metrics.netOperatingProfit, currency)}
             </div>
           </div>
@@ -436,7 +436,7 @@ export const AdminInvoicing: React.FC = () => {
         <div className="flex items-center gap-1.5 bg-[var(--panel)] p-1 rounded-card border border-[var(--line)] shrink-0">
           <button
             onClick={() => setActiveTab('invoices')}
-            className={`px-3.5 py-1.5 rounded-lg text-xs font-sans transition-all flex items-center gap-1.5 ${
+            className={`px-3.5 py-1.5 rounded-control text-xs font-sans transition-all flex items-center gap-1.5 ${
               activeTab === 'invoices'
                 ? 'bg-[var(--accent)] text-[var(--text)] font-semibold'
                 : 'text-[var(--muted)] hover:text-[var(--text)]'
@@ -447,7 +447,7 @@ export const AdminInvoicing: React.FC = () => {
           </button>
           <button
             onClick={() => setActiveTab('expenses')}
-            className={`px-3.5 py-1.5 rounded-lg text-xs font-sans transition-all flex items-center gap-1.5 ${
+            className={`px-3.5 py-1.5 rounded-control text-xs font-sans transition-all flex items-center gap-1.5 ${
               activeTab === 'expenses'
                 ? 'bg-[var(--accent)] text-[var(--text)] font-semibold'
                 : 'text-[var(--muted)] hover:text-[var(--text)]'
@@ -508,7 +508,7 @@ export const AdminInvoicing: React.FC = () => {
                   <div className="flex items-center justify-between gap-2">
                     <button 
                       onClick={() => setPreviewInvoice(inv)} 
-                      className="font-semibold text-[var(--text)] font-display text-sm hover:text-[var(--danger)] flex items-center gap-1.5 transition-colors"
+                      className="font-semibold text-[var(--text)] font-sans text-sm hover:text-[var(--danger)] flex items-center gap-1.5 transition-colors"
                     >
                       <span>{inv.invoiceNumber}</span>
                       <ExternalLink size={12} className="text-[var(--muted)]" />
@@ -544,7 +544,7 @@ export const AdminInvoicing: React.FC = () => {
                   <div className="flex items-center justify-between pt-1">
                     <div>
                       <div className="text-[10px] normal-case font-sans text-[var(--muted)]">{language === 'id' ? 'Total Tagihan' : 'Total Amount'}</div>
-                      <div className="text-base font-semibold text-[var(--success)] font-display">
+                      <div className="text-base font-semibold text-[var(--success)] font-sans">
                         {formatAmount(inv.total, currency)}
                       </div>
                       <div className="text-[10px] font-sans text-[var(--muted)]">
@@ -637,7 +637,7 @@ export const AdminInvoicing: React.FC = () => {
                 ) : (
                   filteredInvoices.map((inv) => (
                     <tr key={inv.id} className="hover:bg-panel transition-colors group">
-                      <td className="py-3 px-4 font-semibold text-[var(--text)] font-display">
+                      <td className="py-3 px-4 font-semibold text-[var(--text)] font-sans">
                         <button 
                           onClick={() => setPreviewInvoice(inv)} 
                           className="hover:text-[var(--danger)] flex items-center gap-1.5"
@@ -654,7 +654,7 @@ export const AdminInvoicing: React.FC = () => {
                         <div>Issue: {inv.issueDate}</div>
                         <div className="text-[10px] text-[var(--muted)]">Due: {inv.dueDate}</div>
                       </td>
-                      <td className="py-3 px-4 font-semibold text-[var(--success)] font-display">
+                      <td className="py-3 px-4 font-semibold text-[var(--success)] font-sans">
                         {formatAmount(inv.total, currency)}
                         <div className="text-[10px] font-sans text-[var(--muted)] font-normal">
                           incl. {inv.taxPercent}% PPN
@@ -743,7 +743,7 @@ export const AdminInvoicing: React.FC = () => {
                   className="bg-[var(--panel)] border border-[var(--line)] rounded-card p-4 space-y-3"
                 >
                   <div className="flex items-center justify-between">
-                    <span className="px-2.5 py-1 rounded-lg bg-[var(--warning)]/10 text-amber-300 border border-amber-500/20 text-[10px] font-sans font-semibold">
+                    <span className="px-2.5 py-1 rounded-control bg-[var(--warning)]/10 text-amber-300 border border-amber-500/20 text-[10px] font-sans font-semibold">
                       {exp.category}
                     </span>
                     <span className="text-[11px] font-sans text-[var(--muted)]">{exp.date}</span>
@@ -754,7 +754,7 @@ export const AdminInvoicing: React.FC = () => {
                   <div className="flex items-center justify-between pt-2 border-t border-[var(--line)]">
                     <div>
                       <div className="text-[10px] font-sans text-[var(--muted)]">{language === 'id' ? 'Nominal Pengeluaran' : 'Expense Amount'}</div>
-                      <div className="text-base font-semibold text-rose-400 font-display">
+                      <div className="text-base font-semibold text-rose-400 font-sans">
                         {formatAmount(exp.amount, currency)}
                       </div>
                       <div className="text-[10px] font-sans text-[var(--muted)]">
@@ -815,7 +815,7 @@ export const AdminInvoicing: React.FC = () => {
                       </span>
                     </td>
                     <td className="py-3 px-4 font-medium text-[var(--text)]">{exp.description}</td>
-                    <td className="py-3 px-4 font-semibold text-rose-400 font-display">
+                    <td className="py-3 px-4 font-semibold text-rose-400 font-sans">
                       {formatAmount(exp.amount, currency)}
                     </td>
                     <td className="py-3 px-4 text-[var(--muted)]">{exp.recordedBy}</td>
@@ -843,13 +843,13 @@ export const AdminInvoicing: React.FC = () => {
             
             {/* Sticky Header */}
             <div className="sticky top-0 z-20 bg-[var(--panel)]/95  px-5 sm:px-6 py-4 border-b border-[var(--line)] flex items-center justify-between shrink-0">
-              <h3 className="font-display font-semibold text-[var(--text)] text-base sm:text-lg flex items-center gap-2">
+              <h3 className="font-sans font-semibold text-[var(--text)] text-base sm:text-lg flex items-center gap-2">
                 <Receipt className="text-[var(--danger)]" size={20} />
                 <span>{editingInvoice ? 'Edit Client Invoice' : 'Create New Invoice'}</span>
               </h3>
               <button 
                 onClick={() => setIsInvoiceModalOpen(false)} 
-                className="w-8 h-8 rounded-lg text-[var(--muted)] hover:text-[var(--text)] bg-[var(--bg)] border border-[var(--line)] flex items-center justify-center transition-colors shrink-0 ml-3"
+                className="w-8 h-8 rounded-control text-[var(--muted)] hover:text-[var(--text)] bg-[var(--bg)] border border-[var(--line)] flex items-center justify-center transition-colors shrink-0 ml-3"
               >
                 <X size={16} />
               </button>
@@ -959,7 +959,7 @@ export const AdminInvoicing: React.FC = () => {
                       />
                     </div>
                   </div>
-                  <div className="pt-2 text-right text-[var(--success)] font-semibold font-display text-sm">
+                  <div className="pt-2 text-right text-[var(--success)] font-semibold font-sans text-sm">
                     Total Payable: {formatIDR(itemAmount + Math.round((itemAmount * taxPercent) / 100))}
                   </div>
                 </div>
@@ -1039,13 +1039,13 @@ export const AdminInvoicing: React.FC = () => {
             
             {/* Sticky Header */}
             <div className="sticky top-0 z-20 bg-[var(--panel)]/95  px-5 sm:px-6 py-4 border-b border-[var(--line)] flex items-center justify-between shrink-0">
-              <h3 className="font-display font-semibold text-[var(--text)] text-base flex items-center gap-2">
+              <h3 className="font-sans font-semibold text-[var(--text)] text-base flex items-center gap-2">
                 <CreditCard className="text-[var(--danger)]" size={18} />
                 <span>Record Studio Expense</span>
               </h3>
               <button 
                 onClick={() => setIsExpenseModalOpen(false)} 
-                className="w-8 h-8 rounded-lg text-[var(--muted)] hover:text-[var(--text)] bg-[var(--bg)] border border-[var(--line)] flex items-center justify-center transition-colors shrink-0 ml-3"
+                className="w-8 h-8 rounded-control text-[var(--muted)] hover:text-[var(--text)] bg-[var(--bg)] border border-[var(--line)] flex items-center justify-center transition-colors shrink-0 ml-3"
               >
                 <X size={16} />
               </button>
@@ -1138,7 +1138,7 @@ export const AdminInvoicing: React.FC = () => {
                   <CreditCard size={16} />
                 </div>
                 <div>
-                  <h3 className="text-sm font-semibold text-[var(--text)] font-display">
+                  <h3 className="text-sm font-semibold text-[var(--text)] font-sans">
                     {language === 'id' ? 'Catat Pembayaran Klien' : 'Record Client Payment'}
                   </h3>
                   <p className="text-[11px] font-sans text-[var(--muted)]">
@@ -1169,7 +1169,7 @@ export const AdminInvoicing: React.FC = () => {
                   </div>
                   <div className="flex items-center justify-between pt-2 border-t border-[var(--line)]">
                     <span className="text-[var(--text)] font-semibold">{language === 'id' ? 'Sisa Tagihan (Balance Due):' : 'Remaining Balance Due:'}</span>
-                    <span className="text-[var(--warning)] font-semibold text-sm font-display">
+                    <span className="text-[var(--warning)] font-semibold text-sm font-sans">
                       {formatAmount(paymentModalInvoice.balanceDue ?? (paymentModalInvoice.total - (paymentModalInvoice.amountPaid || 0)), currency)}
                     </span>
                   </div>
@@ -1305,11 +1305,11 @@ export const AdminInvoicing: React.FC = () => {
             {/* Sticky Header for Preview Modal */}
             <div className="sticky top-0 z-20 bg-[var(--panel)] px-4 sm:px-6 py-4 border-b border-[var(--line)] flex items-center justify-between shrink-0">
               <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-lg bg-zinc-900 flex items-center justify-center p-1 shadow-sm">
+                <div className="w-7 h-7 rounded-control bg-zinc-900 flex items-center justify-center p-1 shadow-none">
                   <img src="/favicon.png" alt="Kapitech" className="w-full h-full object-contain" />
                 </div>
                 <div>
-                  <span className="text-sm font-semibold font-display tracking-tight text-zinc-900 block">KAPITECH INVOICE</span>
+                  <span className="text-sm font-semibold font-sans tracking-tight text-zinc-900 block">KAPITECH INVOICE</span>
                   <span className="text-[11px] font-sans text-zinc-500">{previewInvoice.invoiceNumber}</span>
                 </div>
               </div>
@@ -1326,14 +1326,14 @@ export const AdminInvoicing: React.FC = () => {
               {/* Invoice Printable Header */}
               <div className="flex justify-between items-start border-b border-zinc-200 pb-6 mb-6">
                 <div>
-                  <span className="text-lg font-semibold font-display tracking-tight text-zinc-900">PT Kapitech Digital Indonesia</span>
+                  <span className="text-lg font-semibold font-sans tracking-tight text-zinc-900">PT Kapitech Digital Indonesia</span>
                   <p className="text-xs text-zinc-500 max-w-xs mt-1 leading-relaxed">
                     Linea Residence Block G No. 5, Paku Jaya, South Tangerang, Banten 15220, Indonesia
                   </p>
                 </div>
 
                 <div className="text-right">
-                  <span className="text-2xl font-semibold font-display text-zinc-900 block">INVOICE</span>
+                  <span className="text-2xl font-semibold font-sans text-zinc-900 block">INVOICE</span>
                   <span className="text-sm font-sans text-zinc-600 font-semibold block">{previewInvoice.invoiceNumber}</span>
                   <span className="text-xs font-sans px-2 py-0.5 rounded normal-case font-semibold mt-2 inline-block bg-zinc-100 text-zinc-800">
                     Status: {previewInvoice.status.toUpperCase()}
@@ -1409,7 +1409,7 @@ export const AdminInvoicing: React.FC = () => {
                     <span>PPN ({previewInvoice.taxPercent}%):</span>
                     <span>{formatIDR(previewInvoice.taxAmount)}</span>
                   </div>
-                  <div className="flex justify-between text-sm font-semibold text-zinc-900 pt-2 border-t border-zinc-900 font-display">
+                  <div className="flex justify-between text-sm font-semibold text-zinc-900 pt-2 border-t border-zinc-900 font-sans">
                     <span>Total Amount:</span>
                     <span className="text-zinc-900">{formatIDR(previewInvoice.total)}</span>
                   </div>
