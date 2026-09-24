@@ -107,7 +107,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
         </span>
         <ChevronDown
           size={15}
-          className={`shrink-0 text-[#A1A1AA] transition-transform duration-150 ${isOpen ? 'rotate-180 text-[#B00020]' : ''}`}
+          className={`shrink-0 text-[#A1A1AA] transition-transform duration-150 ${isOpen ? 'rotate-180 text-[#E63946]' : ''}`}
         />
       </button>
 
@@ -158,7 +158,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
                       </span>
                     )}
                     {selected && (
-                      <Check size={14} className="text-[#B00020]" />
+                      <Check size={14} className="text-[#E63946]" />
                     )}
                   </span>
                 </button>
