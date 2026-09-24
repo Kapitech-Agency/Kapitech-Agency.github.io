@@ -161,20 +161,20 @@ export const AdminApprovals: React.FC = () => {
   const getRiskBadge = (level: string) => {
     const l = level?.toLowerCase();
     if (l === 'high') {
-      return <span className="px-2 py-0.5 rounded text-xs font-sans bg-red-500/10 text-[var(--danger)] border border-red-500/30 normal-case font-semibold">High Risk</span>;
+      return <span className="px-2 py-0.5 rounded text-xs font-sans bg-red-500/10 text-[var(--danger)] border border-[var(--danger)]/30 normal-case font-semibold">High Risk</span>;
     }
     if (l === 'medium') {
-      return <span className="px-2 py-0.5 rounded text-xs font-sans bg-amber-500/10 text-[var(--warning)] border border-amber-500/30 normal-case font-semibold">Medium Risk</span>;
+      return <span className="px-2 py-0.5 rounded text-xs font-sans bg-amber-500/10 text-[var(--warning)] border border-[var(--warning)]/30 normal-case font-semibold">Medium Risk</span>;
     }
-    return <span className="px-2 py-0.5 rounded text-xs font-sans bg-zinc-800 text-zinc-300 border border-[var(--line)] normal-case font-semibold">Low Risk</span>;
+    return <span className="px-2 py-0.5 rounded text-xs font-sans bg-[var(--panel-hover)] text-[var(--muted)] border border-[var(--line)] normal-case font-semibold">Low Risk</span>;
   };
 
   return (
     <div className="space-y-6 animate-in fade-in duration-200">
       {/* Toast Notification */}
       {notification && (
-        <div className="fixed top-20 right-6 z-50 px-4 py-2.5 rounded-card bg-[var(--panel)] border border-[var(--ams-red)]/40 text-[var(--text)] text-xs font-sans shadow-[0_8px_30px_rgba(0,0,0,0.8)] flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-[var(--ams-red)] animate-ping" />
+        <div className="fixed top-20 right-6 z-50 px-4 py-2.5 rounded-card bg-[var(--panel)] border border-[var(--accent)]/40 text-[var(--text)] text-xs font-sans shadow-none flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-[var(--accent)] " />
           <span>{notification}</span>
         </div>
       )}
@@ -256,7 +256,7 @@ export const AdminApprovals: React.FC = () => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={language === 'id' ? 'Cari judul, pemohon, atau catatan...' : 'Search title, requester, or notes...'}
-            className="w-full h-9 pl-8 pr-3 text-xs bg-[var(--panel)] text-[var(--text)] placeholder-[var(--ams-secondary)] rounded-control border border-[var(--line)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ams-red)]/40 focus:border-[var(--ams-red)] font-sans"
+            className="w-full h-9 pl-8 pr-3 text-xs bg-[var(--panel)] text-[var(--text)] placeholder-[var(--ams-secondary)] rounded-control border border-[var(--line)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 focus:border-[var(--accent)] font-sans"
           />
         </div>
 
@@ -280,7 +280,7 @@ export const AdminApprovals: React.FC = () => {
           <select
             value={typeFilter}
             onChange={(e) => setTypeFilter(e.target.value)}
-            className="h-9 px-2.5 rounded-control bg-[var(--panel)] text-[var(--muted)] border border-[var(--line)] text-xs font-sans focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ams-red)]/40"
+            className="h-9 px-2.5 rounded-control bg-[var(--panel)] text-[var(--muted)] border border-[var(--line)] text-xs font-sans focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
           >
             <option value="all">All Types</option>
             <option value="invoice">Invoice</option>
@@ -306,7 +306,7 @@ export const AdminApprovals: React.FC = () => {
           filteredApprovals.map((item) => (
             <div 
               key={item.id}
-              className="p-4 rounded-card bg-[var(--bg)] border border-[var(--line)] hover:border-white/20 transition-all space-y-3"
+              className="p-4 rounded-card bg-[var(--bg)] border border-[var(--line)] hover:border-[var(--line)] transition-all space-y-3"
             >
               <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
                 <div className="flex items-start gap-3 min-w-0">
@@ -361,7 +361,7 @@ export const AdminApprovals: React.FC = () => {
                           setActiveItem(item);
                           setDecisionAction('Approve');
                         }}
-                        className="px-3 py-1 rounded-control bg-emerald-500/15 hover:bg-emerald-500/25 text-[var(--success)] border border-emerald-500/30 text-xs font-sans font-semibold flex items-center gap-1 transition-colors"
+                        className="px-3 py-1 rounded-control bg-[var(--success)]/10 hover:bg-emerald-500/25 text-[var(--success)] border border-[var(--success)]/30 text-xs font-sans font-semibold flex items-center gap-1 transition-colors"
                       >
                         <Check size={12} />
                         <span>Approve</span>
@@ -371,7 +371,7 @@ export const AdminApprovals: React.FC = () => {
                           setActiveItem(item);
                           setDecisionAction('Reject');
                         }}
-                        className="px-3 py-1 rounded-control bg-red-500/15 hover:bg-red-500/25 text-[var(--danger)] border border-red-500/30 text-xs font-sans font-semibold flex items-center gap-1 transition-colors"
+                        className="px-3 py-1 rounded-control bg-[var(--danger)]/10 hover:bg-red-500/25 text-[var(--danger)] border border-[var(--danger)]/30 text-xs font-sans font-semibold flex items-center gap-1 transition-colors"
                       >
                         <X size={12} />
                         <span>Reject</span>
@@ -380,10 +380,10 @@ export const AdminApprovals: React.FC = () => {
                   ) : (
                     <span className={`px-2.5 py-0.5 rounded text-xs font-sans font-semibold normal-case border ${
                       item.status.toLowerCase() === 'approved'
-                        ? 'bg-emerald-500/15 text-[var(--success)] border-emerald-500/30'
+                        ? 'bg-[var(--success)]/10 text-[var(--success)] border-[var(--success)]/30'
                         : item.status.toLowerCase() === 'rejected'
-                        ? 'bg-red-500/15 text-[var(--danger)] border-red-500/30'
-                        : 'bg-amber-500/15 text-[var(--warning)] border-amber-500/30'
+                        ? 'bg-[var(--danger)]/10 text-[var(--danger)] border-[var(--danger)]/30'
+                        : 'bg-[var(--warning)]/10 text-[var(--warning)] border-[var(--warning)]/30'
                     }`}>
                       {item.status}
                     </span>
@@ -392,7 +392,7 @@ export const AdminApprovals: React.FC = () => {
               </div>
 
               {item.reviewNotes && (
-                <div className="text-xs font-sans text-[var(--muted)] bg-[var(--panel)]/50 p-2.5 rounded-control border border-white/[0.04] flex items-center gap-2">
+                <div className="text-xs font-sans text-[var(--muted)] bg-[var(--panel)]/50 p-2.5 rounded-control border border-[var(--line)] flex items-center gap-2">
                   <MessageSquare size={12} className="text-[var(--accent)] shrink-0" />
                   <span>Decision notes: {item.reviewNotes}</span>
                 </div>
@@ -405,7 +405,7 @@ export const AdminApprovals: React.FC = () => {
       {/* DECISION MODAL */}
       {activeItem && canApproveBudgets && (
         <div className="fixed inset-0 z-50 bg-black/85  flex items-center justify-center p-4">
-          <div className="bg-[var(--bg)] border border-[var(--line)] rounded-card w-full max-w-md shadow-[0_24px_64px_rgba(0,0,0,0.8)] overflow-hidden">
+          <div className="bg-[var(--bg)] border border-[var(--line)] rounded-card w-full max-w-md shadow-none overflow-hidden">
             <div className="p-4 border-b border-[var(--line)] flex items-center justify-between bg-[var(--panel)]">
               <h3 className="text-sm font-semibold font-sans text-[var(--text)] flex items-center gap-2">
                 <ShieldCheck size={16} className="text-[var(--accent)]" />
@@ -413,7 +413,7 @@ export const AdminApprovals: React.FC = () => {
               </h3>
               <button
                 onClick={() => setActiveItem(null)}
-                className="p-1 text-[var(--muted)] hover:text-[var(--text)] rounded-control hover:bg-white/[0.06]"
+                className="p-1 text-[var(--muted)] hover:text-[var(--text)] rounded-control hover:bg-[var(--panel-hover)]"
               >
                 <X size={16} />
               </button>
@@ -440,7 +440,7 @@ export const AdminApprovals: React.FC = () => {
                     onClick={() => setDecisionAction('Approve')}
                     className={`py-2 rounded-control border text-center transition-all ${
                       decisionAction === 'Approve'
-                        ? 'bg-emerald-500/20 text-[var(--success)] border-emerald-500/50 font-semibold'
+                        ? 'bg-[var(--success)]/10 text-[var(--success)] border-[var(--success)]/30 font-semibold'
                         : 'bg-[var(--panel)] text-[var(--muted)] border-[var(--line)]'
                     }`}
                   >
@@ -451,7 +451,7 @@ export const AdminApprovals: React.FC = () => {
                     onClick={() => setDecisionAction('Request Changes')}
                     className={`py-2 rounded-control border text-center transition-all ${
                       decisionAction === 'Request Changes'
-                        ? 'bg-amber-500/20 text-[var(--warning)] border-amber-500/50 font-semibold'
+                        ? 'bg-[var(--warning)]/10 text-[var(--warning)] border-[var(--warning)]/30 font-semibold'
                         : 'bg-[var(--panel)] text-[var(--muted)] border-[var(--line)]'
                     }`}
                   >
@@ -462,7 +462,7 @@ export const AdminApprovals: React.FC = () => {
                     onClick={() => setDecisionAction('Reject')}
                     className={`py-2 rounded-control border text-center transition-all ${
                       decisionAction === 'Reject'
-                        ? 'bg-red-500/20 text-[var(--danger)] border-red-500/50 font-semibold'
+                        ? 'bg-[var(--danger)]/10 text-[var(--danger)] border-[var(--danger)]/30 font-semibold'
                         : 'bg-[var(--panel)] text-[var(--muted)] border-[var(--line)]'
                     }`}
                   >
@@ -478,7 +478,7 @@ export const AdminApprovals: React.FC = () => {
                   value={decisionNotes}
                   onChange={(e) => setDecisionNotes(e.target.value)}
                   placeholder="Record rationale for the immutable security audit log..."
-                  className="w-full p-2.5 rounded-control bg-[var(--panel)] text-[var(--text)] border border-[var(--line)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ams-red)]/40 focus:border-[var(--ams-red)] text-xs resize-none"
+                  className="w-full p-2.5 rounded-control bg-[var(--panel)] text-[var(--text)] border border-[var(--line)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 focus:border-[var(--accent)] text-xs resize-none"
                 />
               </div>
 
@@ -486,14 +486,14 @@ export const AdminApprovals: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setActiveItem(null)}
-                  className="px-4 py-2 rounded-card bg-[var(--panel)] hover:bg-[var(--ams-elevated)] text-[var(--muted)] text-xs font-sans"
+                  className="px-4 py-2 rounded-card bg-[var(--panel)] hover:bg-[var(--panel-hover)] text-[var(--muted)] text-xs font-sans"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-5 py-2 rounded-card bg-[var(--ams-red)] hover:bg-[var(--ams-red)] text-[var(--text)] text-xs font-sans font-semibold disabled:opacity-50 flex items-center gap-1.5"
+                  className="px-5 py-2 rounded-card bg-[var(--accent)] hover:bg-[var(--accent)] text-[var(--text)] text-xs font-sans font-semibold disabled:opacity-50 flex items-center gap-1.5"
                 >
                   {isSubmitting ? <Loader2 size={13} className="animate-spin" /> : <ShieldCheck size={14} />}
                   <span>Confirm Decision</span>
