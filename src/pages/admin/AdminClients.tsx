@@ -208,7 +208,7 @@ export const AdminClients: React.FC = () => {
       {/* 1. Header & Actions */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[var(--line)]">
         <div>
-          <h1 className="text-2xl font-sans font-bold text-white flex items-center gap-3 tracking-tight">
+          <h1 className="text-xl font-sans font-semibold text-white flex items-center gap-3 tracking-tight">
             <Users className="text-[var(--accent)]" size={26} />
             <span>{t('admin.client.title')}</span>
           </h1>
@@ -256,7 +256,7 @@ export const AdminClients: React.FC = () => {
       )}
 
       {/* 2. Key Metrics Summary (3 cols) */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 w-full">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full">
         <div className="w-full h-full bg-[var(--panel)] border border-[var(--line)] p-5 rounded-xl flex flex-col justify-between">
           <div className="flex items-center justify-between text-[var(--muted)] mb-2">
             <span className="text-xs font-sans normal-case font-semibold">{t('admin.client.totalClients')}</span>
