@@ -139,7 +139,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
                   aria-selected={isSelected}
                   className={`w-full flex items-center justify-between min-h-10 sm:min-h-9 px-3 py-2 rounded-control text-left transition-colors group ${
                     isSelected
-                      ? 'bg-bg text-fg font-semibold border border-line'
+                      ? 'bg-panel-hover text-fg font-semibold border border-line'
                       : 'text-muted hover:text-fg hover:bg-panel-hover'
                   }`}
                 >
