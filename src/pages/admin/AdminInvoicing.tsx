@@ -27,21 +27,7 @@ import {
   Check,
   X
 } from 'lucide-react';
-import { 
-  AgencyInvoice, 
-  AgencyExpense, 
-  InvoiceStatus, 
-  getAgencyInvoices, 
-  saveAgencyInvoice, 
-  deleteAgencyInvoice, 
-  updateInvoiceStatus, 
-  recordInvoicePayment,
-  getAgencyExpenses, 
-  saveAgencyExpense, 
-  deleteAgencyExpense, 
-  computeFinancialMetrics, 
-  FINANCE_EVENT_NAME 
-} from '../../lib/financeStore';
+import { AgencyInvoice, AgencyExpense, InvoiceStatus } from '../../lib/financeStore'; from '../../lib/financeStore';
 import { formatAmount, formatIDR, getActiveCurrency, CURRENCY_EVENT, CurrencyCode } from '../../lib/currency';
 import { useLanguage } from '../../lib/LanguageContext';
 import { useDragToScroll } from '../../lib/useDragToScroll';
@@ -62,6 +48,7 @@ export const AdminInvoicing: React.FC = () => {
   const canCreateInvoice = canManageInvoices;
   const canDeleteInvoice = userRole.startsWith('Tier 1') || session?.user?.stakeholderType === 'Master';
   const [currency, setCurrency] = useState<CurrencyCode>(getActiveCurrency());
+  const [serverMetrics, setServerMetrics] = useState<any>({ totalRevenueCollected: 0, totalOutstanding: 0, totalExpense: 0, netProfit: 0, profitMargin: '0' });
   const [invoices, setInvoices] = useState<AgencyInvoice[]>([]);
   const [expenses, setExpenses] = useState<AgencyExpense[]>([]);
   const [activeTab, setActiveTab] = useState<'invoices' | 'expenses'>('invoices');
@@ -110,9 +97,10 @@ export const AdminInvoicing: React.FC = () => {
   const [paymentNotes, setPaymentNotes] = useState<string>('');
 
   const loadData = async () => {
-    const [invoiceRes, expenseRes] = await Promise.all([api.finance.getInvoices(), api.finance.getExpenses()]);
+    const [invoiceRes, expenseRes, metricsRes] = await Promise.all([api.finance.getInvoices(), api.finance.getExpenses(), api.finance.getMetrics()]);
     if (invoiceRes.success && Array.isArray(invoiceRes.data?.invoices)) setInvoices(invoiceRes.data.invoices as AgencyInvoice[]);
     if (expenseRes.success && Array.isArray(expenseRes.data?.expenses)) setExpenses(expenseRes.data.expenses as AgencyExpense[]);
+    if (metricsRes.success && metricsRes.data?.metrics) setServerMetrics(metricsRes.data.metrics);
   };
 
   useEffect(() => {
@@ -129,10 +117,12 @@ export const AdminInvoicing: React.FC = () => {
   }, []);
 
   const metrics = useMemo(() => ({
-    totalRevenue: invoices.reduce((s, i) => s + Number(i.total || 0), 0),
-    totalExpenses: expenses.reduce((s, e) => s + Number(e.amount || 0), 0),
-    netProfit: invoices.reduce((s, i) => s + Number(i.amountPaid || 0), 0) - expenses.reduce((s, e) => s + Number(e.amount || 0), 0)
-  }), [invoices, expenses]);
+    totalRevenue: Number(serverMetrics.totalRevenueCollected || 0),
+    totalExpenses: Number(serverMetrics.totalExpense || 0),
+    netProfit: Number(serverMetrics.netProfit || 0),
+    totalOutstanding: Number(serverMetrics.totalOutstanding || 0),
+    profitMargin: Number(serverMetrics.profitMargin || 0)
+  }), [serverMetrics]);
 
   const filteredInvoices = useMemo(() => {
     return invoices.filter(inv => {
@@ -151,113 +141,34 @@ export const AdminInvoicing: React.FC = () => {
   };
 
   const handleOpenCreateInvoice = async () => {
-    const projectRes = await api.projects.getAll();
-    const allProj = (projectRes.success && Array.isArray(projectRes.data?.projects) ? projectRes.data.projects : []) as AgencyProject[];
-    setAvailableProjects(allProj);
-    const approvedProj = allProj.filter(p => p.status === 'in_progress' || p.status === 'completed' || p.status === 'review');
-    
-    if (approvedProj.length > 0) {
-      const first = approvedProj[0];
-      setSelectedProjectId(first.id);
-      setClientName(first.clientName);
-      setClientCompany(first.clientCompany);
-      setClientEmail(first.clientEmail);
-      setItemDesc(`${first.name} - Milestone Deliverable`);
-      setItemAmount(Math.round(first.budget * 0.4));
-    } else {
-      setSelectedProjectId('');
-      setClientName('');
-      setClientCompany('');
-      setClientEmail('');
-      setItemDesc('Digital Product & Engineering Phase 1 Deliverables');
-      setItemAmount(45000000);
-    }
-
+    setAvailableProjects([]);
+    setSelectedProjectId('');
+    setClientName(''); setClientCompany(''); setClientEmail(''); setClientPhone('');
+    setItemDesc(''); setItemAmount(0); setIssueDate(''); setDueDate('');
+    setTaxPercent(11); setInvoiceNotes('');
     setEditingInvoice(null);
-    setClientPhone('');
-    setIssueDate(new Date().toISOString().split('T')[0]);
-    setDueDate(new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]);
-    setTaxPercent(11);
-    setInvoiceStatus('sent');
-    setInvoiceNotes('Payment terms: Net 14 days. Bank Account Mandiri 123-00-998877-1 a/n PT Kapitech Digital Indonesia.');
-    setIsInvoiceModalOpen(true);
-  };
-
-  const handleSelectProjectChange = (projId: string) => {
-    setSelectedProjectId(projId);
-    if (!projId) return;
-    const found = availableProjects.find(p => p.id === projId);
-    if (found) {
-      setClientName(found.clientName);
-      setClientCompany(found.clientCompany);
-      setClientEmail(found.clientEmail);
-      setItemDesc(`${found.name} - Sprint Deliverables`);
-      setItemAmount(Math.round(found.budget * 0.5));
-    }
-  };
-
-  const handleOpenEditInvoice = (inv: AgencyInvoice) => {
-    setEditingInvoice(inv);
-    setClientName(inv.clientName);
-    setClientCompany(inv.clientCompany);
-    setClientEmail(inv.clientEmail);
-    setClientPhone(inv.clientPhone || '');
-    setItemDesc(inv.items[0]?.description || 'Custom Web Engineering Services');
-    setItemAmount(inv.items[0]?.amount || inv.subtotal);
-    setIssueDate(inv.issueDate);
-    setDueDate(inv.dueDate);
-    setTaxPercent(inv.taxPercent || 0);
-    setInvoiceStatus(inv.status);
-    setInvoiceNotes(inv.notes || '');
     setIsInvoiceModalOpen(true);
   };
 
   const handleSaveInvoice = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!clientName.trim() || !clientCompany.trim()) {
-      alert('Client Name and Company are required.');
-      return;
-    }
-
-    const subtotal = Number(itemAmount) || 0;
-    const taxVal = Math.round((subtotal * (Number(taxPercent) || 0)) / 100);
-    const totalVal = subtotal + taxVal;
-
-    const invData: AgencyInvoice = {
-      id: editingInvoice?.id || 'inv_' + Date.now().toString(36),
-      invoiceNumber: editingInvoice?.invoiceNumber || `KAPI-INV-${new Date().getFullYear()}-${Math.floor(100 + Math.random() * 900)}`,
-      clientName,
-      clientCompany,
-      clientEmail,
-      clientPhone,
-      items: [
-        {
-          id: 'item_' + Date.now().toString(36),
-          description: itemDesc,
-          quantity: 1,
-          unitPrice: subtotal,
-          amount: subtotal
-        }
-      ],
-      subtotal,
+    if (!clientName.trim() || !clientCompany.trim() || !itemDesc.trim()) return;
+    const payload = {
+      clientName: clientName.trim(), clientCompany: clientCompany.trim(), clientEmail: clientEmail.trim(), clientPhone: clientPhone.trim(),
+      projectId: selectedProjectId || undefined,
+      items: [{ description: itemDesc.trim(), quantity: 1, unitPrice: Math.max(0, Number(itemAmount) || 0) }],
       taxPercent: Number(taxPercent) || 0,
-      taxAmount: taxVal,
-      total: totalVal,
-      currency: 'IDR',
+      discountPercent: 0,
+      currency,
       status: invoiceStatus,
-      issueDate,
-      dueDate,
-      notes: invoiceNotes,
-      paymentTerms: 'Bank Transfer Net 14',
-      createdAt: editingInvoice?.createdAt || new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      issueDate: issueDate || undefined,
+      dueDate: dueDate || undefined,
+      notes: invoiceNotes.trim()
     };
-
-    const res = editingInvoice ? await api.finance.updateInvoice(invData.id, invData) : await api.finance.createInvoice(invData);
-    if (!res.success) { showToast(res.error || 'Invoice gagal disimpan.'); return; }
-    await loadData();
-    setIsInvoiceModalOpen(false);
-    showToast(language === 'id' ? 'Invoice berhasil disimpan.' : 'Invoice successfully saved.');
+    const res = editingInvoice ? await api.finance.updateInvoice(editingInvoice.id, payload) : await api.finance.createInvoice(payload);
+    if (!res.success) { showToast(res.error || 'Invoice could not be saved.'); return; }
+    await loadData(); setIsInvoiceModalOpen(false);
+    showToast(language === 'id' ? 'Invoice berhasil disimpan.' : 'Invoice saved successfully.');
   };
 
   const handleDeleteInvoice = async (id: string, invNum: string) => {
@@ -271,12 +182,8 @@ export const AdminInvoicing: React.FC = () => {
 
   const handleOpenPaymentModal = (inv: AgencyInvoice) => {
     setPaymentModalInvoice(inv);
-    const remaining = inv.balanceDue !== undefined ? inv.balanceDue : (inv.total - (inv.amountPaid || 0));
-    setPaymentAmount(remaining > 0 ? remaining : inv.total);
-    setPaymentMethod('bank_transfer');
-    setPaymentRef(`TRX-${Math.floor(100000 + Math.random() * 900000)}`);
-    setPaymentDate(new Date().toISOString().split('T')[0]);
-    setPaymentNotes('');
+    setPaymentAmount(Number(inv.balanceDue ?? inv.total ?? 0));
+    setPaymentMethod('bank_transfer'); setPaymentRef(''); setPaymentDate(new Date().toISOString().slice(0,10)); setPaymentNotes('');
   };
 
   const handleRecordPaymentSubmit = async (e: React.FormEvent) => {
@@ -302,26 +209,11 @@ export const AdminInvoicing: React.FC = () => {
 
   const handleSaveExpense = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!expDesc.trim() || !expAmount) {
-      alert('Description and amount are required.');
-      return;
-    }
-
-    const newExpense: AgencyExpense = {
-      id: 'exp_' + Date.now().toString(36),
-      category: expCategory,
-      description: expDesc,
-      amount: Number(expAmount),
-      date: expDate,
-      recordedBy: 'Principal Admin'
-    };
-
-    const res = await api.finance.createExpense(newExpense);
-    if (!res.success) { showToast(res.error || 'Expense gagal disimpan.'); return; }
-    await loadData();
-    setIsExpenseModalOpen(false);
-    setExpDesc('');
-    showToast(language === 'id' ? 'Pengeluaran berhasil dicatat.' : 'Expense successfully recorded.');
+    if (!expDesc.trim() || !expAmount) return;
+    const res = await api.finance.createExpense({ category: expCategory, description: expDesc.trim(), amount: Number(expAmount), date: expDate, currency });
+    if (!res.success) { showToast(res.error || 'Expense could not be saved.'); return; }
+    await loadData(); setIsExpenseModalOpen(false); setExpDesc('');
+    showToast(language === 'id' ? 'Pengeluaran berhasil dicatat.' : 'Expense recorded successfully.');
   };
 
   const handleDeleteExpense = async (id: string) => {
@@ -603,7 +495,7 @@ export const AdminInvoicing: React.FC = () => {
                       <InvoiceStatusDropdown
                         status={inv.status}
                         onChange={(newStatus) => {
-                          updateInvoiceStatus(inv.id, newStatus);
+                          void api.finance.updateInvoice(inv.id, { status: newStatus }).then((res) => { if (res.success) { void loadData(); } else showToast(res.error || 'Status update failed.'); });
                           showToast(`Status updated to ${newStatus.toUpperCase()}`);
                         }}
                       />
