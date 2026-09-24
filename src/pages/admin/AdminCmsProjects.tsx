@@ -326,7 +326,7 @@ export const AdminCmsProjects: React.FC = () => {
 
               <div className="absolute bottom-3 left-3 right-3">
                 <div className="text-[11px] font-sans text-[var(--text)]/80">{project.client}</div>
-                <div className="text-base font-semibold font-display text-[var(--text)] truncate drop-shadow-md">
+                <div className="text-base font-semibold font-display text-[var(--text)] truncate">
                   {project.title}
                 </div>
               </div>
