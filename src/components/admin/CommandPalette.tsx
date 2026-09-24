@@ -9,7 +9,6 @@ import {
   Users,
   Inbox,
   Settings,
-  ExternalLink,
   Command,
   ArrowRight,
   X,
@@ -174,14 +173,6 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
       icon: Settings,
       shortcut: 'G S',
       action: () => { navigate('/admin/settings'); onClose(); }
-    },
-    {
-      id: 'act_site',
-      title: language === 'id' ? 'Buka Website Publik (kapitech.id)' : 'Open Public Site (kapitech.id)',
-      category: language === 'id' ? 'Tautan Eksternal' : 'External Link',
-      icon: ExternalLink,
-      shortcut: '↗',
-      action: () => { window.open('/', '_blank', 'noopener,noreferrer'); onClose(); }
     }
   ];
 
