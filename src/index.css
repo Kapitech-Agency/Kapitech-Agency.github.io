@@ -850,3 +850,162 @@
   }
 }
 
+/* ==========================================================================
+   AMS FE POLISH II
+   UI-only. No API, state, auth, RBAC, finance, or workflow changes.
+   ========================================================================== */
+.ams-shell {
+  --ams-space-1: 4px;
+  --ams-space-2: 8px;
+  --ams-space-3: 12px;
+  --ams-space-4: 16px;
+  --ams-space-5: 20px;
+  --ams-space-6: 24px;
+  --ams-space-8: 32px;
+}
+
+/* Clearer page container and section rhythm */
+.ams-shell main > div:not(.fixed) {
+  scrollbar-gutter: stable;
+}
+.ams-shell main > div:not(.fixed) > div {
+  min-width: 0;
+}
+
+/* Keep dense AMS information readable without making cards feel oversized. */
+.ams-shell .grid {
+  min-width: 0;
+}
+.ams-shell .grid > * {
+  min-width: 0;
+}
+
+/* Improve text wrapping in dense cards and navigation. */
+.ams-shell p,
+.ams-shell span,
+.ams-shell label,
+.ams-shell td,
+.ams-shell th {
+  overflow-wrap: break-word;
+}
+.ams-shell nav span,
+.ams-shell aside span {
+  overflow-wrap: normal;
+}
+
+/* Interactive rows feel clickable without adding visual noise. */
+.ams-shell tr {
+  transition: background-color .14s ease;
+}
+.ams-shell button:hover:not(:disabled) {
+  border-color: rgba(255,255,255,.14);
+}
+.ams-shell button:focus-visible,
+.ams-shell a:focus-visible {
+  outline: 2px solid rgba(229,9,20,.72);
+  outline-offset: 2px;
+}
+
+/* Make primary actions visually distinct from secondary actions. */
+.ams-shell button.bg-red-600:hover:not(:disabled),
+.ams-shell button.bg-red-500:hover:not(:disabled),
+.ams-shell button[class*="bg-[#E50914]"]:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+/* Avoid accidental horizontal page overflow from long values. */
+.ams-shell,
+.ams-shell main,
+.ams-shell section,
+.ams-shell article {
+  overflow-x: clip;
+}
+.ams-shell .overflow-x-auto {
+  overflow-x: auto !important;
+  overscroll-behavior-x: contain;
+}
+
+/* Compact KPI cards */
+.ams-shell .metric-card {
+  padding: 16px;
+  border-radius: 14px;
+}
+.ams-shell .metric-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(0,0,0,.24);
+}
+
+/* Better empty/loading states when utility classes are used. */
+.ams-shell [aria-busy="true"] {
+  cursor: progress;
+}
+
+/* Disabled fields should read as unavailable, not broken. */
+.ams-shell input:disabled,
+.ams-shell select:disabled,
+.ams-shell textarea:disabled {
+  opacity: .62;
+  background: #0D0F14;
+  color: #7B8494;
+}
+
+/* Checkboxes/radios remain native-sized and aligned. */
+.ams-shell input[type="checkbox"],
+.ams-shell input[type="radio"] {
+  accent-color: #E50914;
+  flex: 0 0 auto;
+}
+
+/* Selects should retain readable text when native arrows are present. */
+.ams-shell select {
+  color-scheme: dark;
+}
+
+/* Long dropdowns should not visually dominate compact forms. */
+.ams-shell option {
+  background: #111318;
+  color: #F8FAFC;
+}
+
+/* Toasts/alerts: readable above the dense dark UI. */
+.ams-shell [role="alert"],
+.ams-shell [role="status"] {
+  line-height: 1.45;
+}
+
+/* Mobile navigation/content breathing room. */
+@media (max-width: 767px) {
+  .ams-shell main {
+    width: 100%;
+    max-width: 100%;
+  }
+  .ams-shell h1 {
+    font-size: 1.5rem;
+    line-height: 1.18;
+  }
+  .ams-shell h2 {
+    font-size: 1.2rem;
+  }
+  .ams-shell .metric-card {
+    padding: 14px;
+  }
+  .ams-shell button {
+    min-height: 40px;
+  }
+  .ams-shell button[aria-label],
+  .ams-shell button[title] {
+    min-width: 40px;
+  }
+}
+
+/* Touch targets for icon controls without stretching ordinary text buttons. */
+@media (pointer: coarse) {
+  .ams-shell button[aria-label],
+  .ams-shell button[title],
+  .ams-shell a[aria-label],
+  .ams-shell a[title] {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+
