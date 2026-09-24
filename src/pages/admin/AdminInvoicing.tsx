@@ -508,7 +508,7 @@ export const AdminInvoicing: React.FC = () => {
                   <div className="flex items-center justify-between gap-2">
                     <button 
                       onClick={() => setPreviewInvoice(inv)} 
-                      className="font-bold text-white font-display text-sm hover:text-[var(--danger)] flex items-center gap-1.5 transition-colors"
+                      className="font-semibold text-[var(--text)] font-display text-sm hover:text-[var(--danger)] flex items-center gap-1.5 transition-colors"
                     >
                       <span>{inv.invoiceNumber}</span>
                       <ExternalLink size={12} className="text-[var(--muted)]" />
@@ -637,7 +637,7 @@ export const AdminInvoicing: React.FC = () => {
                 ) : (
                   filteredInvoices.map((inv) => (
                     <tr key={inv.id} className="hover:bg-panel transition-colors group">
-                      <td className="py-3.5 px-4 font-bold text-white font-display">
+                      <td className="py-3 px-4 font-semibold text-[var(--text)] font-display">
                         <button 
                           onClick={() => setPreviewInvoice(inv)} 
                           className="hover:text-[var(--danger)] flex items-center gap-1.5"
@@ -646,15 +646,15 @@ export const AdminInvoicing: React.FC = () => {
                           <ExternalLink size={11} className="text-[var(--muted)] group-hover:text-[var(--danger)]" />
                         </button>
                       </td>
-                      <td className="py-3.5 px-4">
+                      <td className="py-3 px-4">
                         <div className="font-bold text-white">{inv.clientName}</div>
                         <div className="text-[11px] text-[var(--muted)]">{inv.clientCompany}</div>
                       </td>
-                      <td className="py-3.5 px-4 text-[var(--muted)]">
+                      <td className="py-3 px-4 text-[var(--muted)]">
                         <div>Issue: {inv.issueDate}</div>
                         <div className="text-[10px] text-[var(--muted)]">Due: {inv.dueDate}</div>
                       </td>
-                      <td className="py-3.5 px-4 font-bold text-emerald-400 font-display">
+                      <td className="py-3 px-4 font-bold text-emerald-400 font-display">
                         {formatAmount(inv.total, currency)}
                         <div className="text-[10px] font-sans text-[var(--muted)] font-normal">
                           incl. {inv.taxPercent}% PPN
@@ -674,7 +674,7 @@ export const AdminInvoicing: React.FC = () => {
                           </div>
                         )}
                       </td>
-                      <td className="py-3.5 px-4">
+                      <td className="py-3 px-4">
                         <InvoiceStatusDropdown
                           status={inv.status}
                           onChange={(newStatus) => {
@@ -683,7 +683,7 @@ export const AdminInvoicing: React.FC = () => {
                           }}
                         />
                       </td>
-                      <td className="py-3.5 px-4 text-right">
+                      <td className="py-3 px-4 text-right">
                         <div className="flex items-center justify-end gap-1.5">
                           {inv.status !== 'paid' && (
                             <button
@@ -794,18 +794,18 @@ export const AdminInvoicing: React.FC = () => {
               <tbody className="divide-y divide-[var(--line)]">
                 {expenses.map((exp) => (
                   <tr key={exp.id} className="hover:bg-panel transition-colors">
-                    <td className="py-3.5 px-4 text-[var(--muted)]">{exp.date}</td>
-                    <td className="py-3.5 px-4">
+                    <td className="py-3 px-4 text-[var(--muted)]">{exp.date}</td>
+                    <td className="py-3 px-4">
                       <span className="px-2 py-0.5 rounded bg-[var(--panel)] text-amber-400 border border-amber-500/20 text-[10px]">
                         {exp.category}
                       </span>
                     </td>
-                    <td className="py-3.5 px-4 font-medium text-white">{exp.description}</td>
-                    <td className="py-3.5 px-4 font-bold text-rose-400 font-display">
+                    <td className="py-3 px-4 font-medium text-white">{exp.description}</td>
+                    <td className="py-3 px-4 font-bold text-rose-400 font-display">
                       {formatAmount(exp.amount, currency)}
                     </td>
-                    <td className="py-3.5 px-4 text-[var(--muted)]">{exp.recordedBy}</td>
-                    <td className="py-3.5 px-4 text-right">
+                    <td className="py-3 px-4 text-[var(--muted)]">{exp.recordedBy}</td>
+                    <td className="py-3 px-4 text-right">
                       <button
                         onClick={() => handleDeleteExpense(exp.id)}
                         className="w-9 h-9 rounded-xl bg-[var(--panel)] hover:bg-red-950/40 text-[var(--muted)] hover:text-red-400 border border-[var(--line)] hover:border-red-500/30 inline-flex items-center justify-center transition-colors min-h-[36px] min-w-[36px]"
@@ -1124,7 +1124,7 @@ export const AdminInvoicing: React.FC = () => {
                   <CreditCard size={16} />
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-white font-display">
+                  <h3 className="text-sm font-semibold text-[var(--text)] font-display">
                     {language === 'id' ? 'Catat Pembayaran Klien' : 'Record Client Payment'}
                   </h3>
                   <p className="text-[11px] font-sans text-[var(--muted)]">
