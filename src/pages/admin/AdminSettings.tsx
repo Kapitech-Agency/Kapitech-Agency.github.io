@@ -387,7 +387,7 @@ export const AdminSettings: React.FC = () => {
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-6 border-b border-[var(--line)]">
         <div>
-          <h1 className="text-xl font-display font-semibold text-[var(--text)] flex items-center gap-3">
+          <h1 className="ams-page-title">
             <Settings className="text-[var(--accent)]" size={24} />
             <span>{language === 'id' ? 'Pengaturan Sistem & Keamanan' : 'System Settings & Security'}</span>
           </h1>
@@ -834,7 +834,7 @@ export const AdminSettings: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => handleOpenEditPermissions(acc)}
-                        className="h-8 px-2.5 rounded-lg bg-[var(--panel)] hover:bg-[var(--panel)] text-gray-200 text-[11px] font-sans font-medium flex items-center gap-1.5 transition-colors"
+                        className="h-8 px-2.5 rounded-control bg-[var(--panel)] hover:bg-[var(--panel)] text-gray-200 text-[11px] font-sans font-medium flex items-center gap-1.5 transition-colors"
                       >
                         <Sliders size={13} className="text-[var(--danger)]" />
                         <span>{language === 'id' ? 'Atur Izin' : 'Permissions'}</span>
@@ -844,7 +844,7 @@ export const AdminSettings: React.FC = () => {
                         <button
                           type="button"
                           onClick={() => handleDeleteAccountClick(acc.id, acc.name)}
-                          className="h-8 px-2 rounded-lg hover:bg-red-500/10 text-[var(--muted)] hover:text-[var(--danger)] text-[11px] font-sans transition-colors flex items-center gap-1"
+                          className="h-8 px-2 rounded-control hover:bg-red-500/10 text-[var(--muted)] hover:text-[var(--danger)] text-[11px] font-sans transition-colors flex items-center gap-1"
                           title="Hapus Akun"
                         >
                           <Trash2 size={13} />
@@ -961,7 +961,7 @@ export const AdminSettings: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setIsAddAccountModalOpen(false)}
-                className="w-8 h-8 rounded-lg bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] flex items-center justify-center transition-colors shrink-0"
+                className="w-8 h-8 rounded-control bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] flex items-center justify-center transition-colors shrink-0"
               >
                 <X size={16} />
               </button>
@@ -1133,7 +1133,7 @@ export const AdminSettings: React.FC = () => {
                   ].map((item) => (
                     <label 
                       key={item.key}
-                      className="flex items-center gap-2 p-2 rounded-lg bg-[var(--panel)]/50 hover:bg-[var(--panel)] cursor-pointer text-xs font-sans transition-colors"
+                      className="flex items-center gap-2 p-2 rounded-control bg-[var(--panel)]/50 hover:bg-[var(--panel)] cursor-pointer text-xs font-sans transition-colors"
                     >
                       <input
                         type="checkbox"
@@ -1197,7 +1197,7 @@ export const AdminSettings: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setIsEditPermsModalOpen(false)}
-                className="w-8 h-8 rounded-lg bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] flex items-center justify-center transition-colors shrink-0"
+                className="w-8 h-8 rounded-control bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] flex items-center justify-center transition-colors shrink-0"
               >
                 <X size={16} />
               </button>
@@ -1296,7 +1296,7 @@ export const AdminSettings: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setMfaActive(!mfaActive)}
-                className={`px-3.5 py-1.5 rounded-lg text-xs font-sans font-semibold transition-all self-start sm:self-auto min-h-10 ${
+                className={`px-3.5 py-1.5 rounded-control text-xs font-sans font-semibold transition-all self-start sm:self-auto min-h-10 ${
                   mfaActive ? 'bg-[var(--success)]/10 text-[var(--success)] border border-[var(--success)]/30' : 'bg-[var(--panel)] text-[var(--muted)]'
                 }`}
               >
