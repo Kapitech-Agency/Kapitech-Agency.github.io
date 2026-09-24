@@ -556,7 +556,7 @@ export const About = () => {
       {/* Bottom CTA */}
       <section className="py-16 sm:py-24 px-4 sm:px-6 md:px-12 text-center relative z-10 bg-[var(--k-bg-deep)]">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-2xl sm:text-3xl md:kapi-section-title font-sans font-bold mb-4 sm:mb-6 text-white">
+          <h2 className="text-2xl sm:text-3xl kapi-section-title font-sans font-bold mb-4 sm:mb-6 text-white">
             {language === 'id' ? 'Siap berkolaborasi membangun produk digital Anda berikutnya?' : 'Ready to collaborate on your next digital product?'}
           </h2>
           <p className="text-xs sm:text-sm md:text-base text-[var(--k-text-secondary)] font-light leading-relaxed mb-6 sm:mb-8 max-w-xl mx-auto">
