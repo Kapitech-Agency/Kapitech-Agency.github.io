@@ -42,11 +42,11 @@ export const ProductionReadinessCard: React.FC<Props> = ({ language }) => {
   }, [refresh]);
 
   return (
-    <div className="p-5 rounded-[var(--k-card-radius)] bg-[var(--k-surface-raised)] border border-white/[0.07] space-y-4">
+    <div className="p-4 rounded-card bg-panel border border-line space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h3 className="text-sm font-bold text-[var(--k-text)] flex items-center gap-2">
-            <ShieldCheck size={15} className="text-[var(--k-red)]" />
+          <h3 className="text-sm font-semibold text-[var(--k-text)] flex items-center gap-2">
+            <ShieldCheck size={15} className="text-accent" />
             <span>Production Readiness Gate</span>
           </h3>
           <p className="text-[11px] text-[var(--k-text-secondary)] font-sans mt-1">
@@ -54,23 +54,23 @@ export const ProductionReadinessCard: React.FC<Props> = ({ language }) => {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <span className={'inline-flex items-center min-h-[30px] px-2.5 rounded-[var(--k-control-radius)] border text-[10px] font-sans font-bold ' + (result?.productionReady ? 'border-emerald-500/30 bg-emerald-500/5 text-emerald-300' : 'border-amber-500/30 bg-amber-500/5 text-amber-300')}>
+          <span className={'inline-flex items-center min-h-10 px-3 rounded-control border text-[10px] font-sans font-bold ' + (result?.productionReady ? 'border-emerald-500/30 bg-success/5 text-success' : 'border-amber-500/30 bg-warning/5 text-warning')}>
             {result?.productionReady ? 'Production Ready' : language === 'id' ? 'Cutover Ditahan' : 'Cutover Blocked'}
           </span>
-          <button type="button" onClick={() => void refresh()} disabled={loading} className="min-h-[30px] px-2.5 rounded-[var(--k-control-radius)] bg-[var(--k-surface-raised)] border border-white/[0.08] text-[#CBD5E1] text-[10px] font-sans font-bold disabled:opacity-50" aria-label="Refresh production readiness">
+          <button type="button" onClick={() => void refresh()} disabled={loading} className="min-h-10 px-3 rounded-control bg-[var(--k-surface-raised)] border border-white/[0.08] text-[#CBD5E1] text-[10px] font-sans font-bold disabled:opacity-50" aria-label="Refresh production readiness">
             <RefreshCw size={12} className={loading ? 'animate-spin' : ''} />
           </button>
         </div>
       </div>
       {result && (
         <>
-          {result.status?.reason && <div className="rounded-[var(--k-control-radius)] border border-amber-500/20 bg-amber-500/5 p-3 text-[11px] text-amber-200 font-sans">{result.status.reason}</div>}
+          {result.status?.reason && <div className="rounded-control border border-warning/20 bg-warning/5 p-3 text-[11px] text-amber-200 font-sans">{result.status.reason}</div>}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
             {labels.map(([key, label]) => {
               const ready = Boolean(result.gates[key]);
-              return <div key={key} className="flex items-center justify-between gap-2 rounded-[var(--k-control-radius)] bg-[var(--k-surface)] border border-white/[0.07] px-3 py-2.5">
+              return <div key={key} className="flex items-center justify-between gap-2 rounded-control bg-panel border border-line px-3 py-2.5">
                 <span className="text-[10px] text-[var(--k-text-secondary)] font-sans">{label}</span>
-                {ready ? <Check size={14} className="text-emerald-300 shrink-0" /> : <AlertCircle size={14} className="text-amber-300 shrink-0" />}
+                {ready ? <Check size={14} className="text-success shrink-0" /> : <AlertCircle size={14} className="text-warning shrink-0" />}
               </div>;
             })}
           </div>
