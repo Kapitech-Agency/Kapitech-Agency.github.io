@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { UntitledIcon } from './UntitledIcon';
+import { Check, ChevronDown } from 'lucide-react';
 
 export interface SelectOption {
   value: string;
@@ -115,7 +115,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
           )}
         </div>
 
-        <UntitledIcon name="chevron" size={size === 'xs' ? 14 : 16} className="text-muted shrink-0" />
+        <ChevronDown size={size === 'xs' ? 14 : 16} className="text-muted shrink-0" />
       </button>
 
       {isOpen && (
@@ -175,7 +175,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
                         {option.badge}
                       </span>
                     )}
-                    {isSelected && <UntitledIcon name="check" size={14} className="text-accent-text shrink-0" />}
+                    {isSelected && <Check size={14} className="text-accent-text shrink-0" />}
                   </div>
                 </button>
               );
