@@ -108,7 +108,7 @@ export const AdminTimeLogs: React.FC = () => {
             <h1 className="mt-2 text-xl font-semibold tracking-tight">Time Tracking</h1>
             <p className="mt-1 text-[13px] leading-5 text-[var(--muted)] max-w-2xl">Record delivery time against projects and tasks, with billable visibility for operational reporting.</p>
           </div>
-          <button onClick={() => void load()} className="inline-flex items-center justify-center gap-2 h-10 px-4 rounded-[var(--ams-radius-control)] border border-white/[0.08] bg-[var(--panel)] text-sm text-[var(--text)] hover:bg-[var(--panel)] transition-colors">
+          <button onClick={() => void load()} className="inline-flex items-center justify-center gap-2 h-10 px-4 rounded-[var(--ams-radius-control)] border border-[var(--line)] bg-[var(--panel)] text-sm text-[var(--text)] hover:bg-[var(--panel)] transition-colors">
             <RefreshCw size={14} /> Refresh
           </button>
         </header>
@@ -119,7 +119,7 @@ export const AdminTimeLogs: React.FC = () => {
             ['Billable time', formatMinutes(billableMinutes), ReceiptText],
             ['Entries', String(logs.length), CalendarDays]
           ].map(([label, value, Icon]: any) => (
-            <div key={label} className="rounded-[var(--ams-radius-card)] border border-white/[0.07] bg-[var(--panel)] p-4">
+            <div key={label} className="rounded-[var(--ams-radius-card)] border border-[var(--line)] bg-[var(--panel)] p-4">
               <div className="flex items-center justify-between">
                 <span className="text-xs text-[var(--muted)]">{label}</span>
                 <Icon size={15} className="text-[var(--accent)]" />
@@ -130,7 +130,7 @@ export const AdminTimeLogs: React.FC = () => {
         </section>
 
         {canManage && (
-          <form onSubmit={submit} className="rounded-[var(--ams-radius-card)] border border-white/[0.07] bg-[var(--panel)] p-4 sm:p-5 space-y-4">
+          <form onSubmit={submit} className="rounded-[var(--ams-radius-card)] border border-[var(--line)] bg-[var(--panel)] p-4 sm:p-5 space-y-4">
             <div className="flex items-center justify-between gap-3">
               <div>
                 <h2 className="text-sm font-semibold">New time entry</h2>
@@ -165,7 +165,7 @@ export const AdminTimeLogs: React.FC = () => {
                 <input value={notes} onChange={e => setNotes(e.target.value)} placeholder="Optional context" className="ams-control w-full" />
               </label>
               <div className="flex items-center gap-3">
-                <label className="flex items-center gap-2 h-10 px-3 rounded-[var(--ams-radius-control)] border border-white/[0.08] bg-[var(--bg)] text-xs cursor-pointer">
+                <label className="flex items-center gap-2 h-10 px-3 rounded-[var(--ams-radius-control)] border border-[var(--line)] bg-[var(--bg)] text-xs cursor-pointer">
                   <input type="checkbox" checked={billable} onChange={e => setBillable(e.target.checked)} className="accent-[var(--accent)]" />
                   Billable
                 </label>
@@ -177,10 +177,10 @@ export const AdminTimeLogs: React.FC = () => {
           </form>
         )}
 
-        {status && <div className="rounded-xl border border-white/[0.07] bg-[var(--panel)] px-4 py-3 text-xs text-[var(--text)]">{status}</div>}
+        {status && <div className="rounded-xl border border-[var(--line)] bg-[var(--panel)] px-4 py-3 text-xs text-[var(--text)]">{status}</div>}
 
-        <section className="rounded-[var(--ams-radius-card)] border border-white/[0.07] bg-[var(--panel)] overflow-hidden">
-          <div className="px-4 sm:px-5 py-4 border-b border-white/[0.07] flex items-center justify-between">
+        <section className="rounded-[var(--ams-radius-card)] border border-[var(--line)] bg-[var(--panel)] overflow-hidden">
+          <div className="px-4 sm:px-5 py-4 border-b border-[var(--line)] flex items-center justify-between">
             <div>
               <h2 className="text-sm font-semibold">Recent entries</h2>
               <p className="text-xs text-[var(--muted)] mt-1">{loading ? 'Loading…' : `${logs.length} entries`}</p>
@@ -207,9 +207,9 @@ export const AdminTimeLogs: React.FC = () => {
                     <th className="px-4 py-3 font-medium text-right">Action</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-white/[0.05]">
+                <tbody className="divide-y divide-[var(--line)]">
                   {logs.map(log => (
-                    <tr key={log.id} className="hover:bg-white/[0.02]">
+                    <tr key={log.id} className="hover:bg-[var(--panel-hover)]">
                       <td className="px-4 py-3 text-xs text-[var(--text)] whitespace-nowrap">{log.date}</td>
                       <td className="px-4 py-3">
                         <div className="text-xs font-medium text-[var(--text)]">{log.projectName || 'General'}</div>
@@ -220,7 +220,7 @@ export const AdminTimeLogs: React.FC = () => {
                       <td className="px-4 py-3"><span className="inline-flex px-2 py-1 rounded-badge border border-line text-[10px] text-[var(--text)]">{log.billable ? 'Billable' : 'Non-billable'}</span></td>
                       <td className="px-4 py-3 text-right">
                         {(canDeleteAll || log.userId === getAdminSession()?.user?.id) && (
-                          <button onClick={() => void remove(log)} className="w-8 h-8 inline-flex items-center justify-center rounded-lg text-[var(--muted)] hover:text-[var(--danger)] hover:bg-[var(--accent)]/10" title="Delete time entry">
+                          <button onClick={() => void remove(log)} className="min-h-10 min-w-10 inline-flex items-center justify-center rounded-control text-[var(--muted)] hover:text-[var(--danger)] hover:bg-[var(--danger)]/10" title="Delete time entry">
                             <Trash2 size={14} />
                           </button>
                         )}
