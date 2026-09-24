@@ -3309,3 +3309,29 @@
     transition-duration:.001ms!important;
   }
 }
+
+
+/* FINAL NAV + MOBILE SHELL ALIGNMENT */
+.kapi-public-shell .kapi-public-nav{height:64px}
+.kapi-public-shell .kapi-public-nav .kapi-nav-inner{height:64px;min-height:64px}
+.kapi-public-shell .kapi-mega-menu{top:64px}
+@media(min-width:768px){
+  .kapi-public-shell .kapi-public-nav{height:72px}
+  .kapi-public-shell .kapi-public-nav .kapi-nav-inner{height:72px;min-height:72px}
+  .kapi-public-shell .kapi-mega-menu{top:72px}
+}
+@media(max-width:767px){
+  .kapi-public-shell .kapi-public-nav .kapi-nav-inner{
+    width:calc(100% - 32px);
+    gap:12px;
+  }
+  .kapi-public-shell .kapi-public-nav .kapi-nav-inner > a:first-child img{
+    height:23px!important;
+    max-width:150px!important;
+  }
+  .kapi-public-shell .kapi-language-option{
+    min-width:32px;
+    height:32px;
+    padding-inline:8px;
+  }
+}
