@@ -20,7 +20,6 @@ import {
   Sliders,
   Tag
 } from 'lucide-react';
-import { resetCmsProjectsToDefault } from '../../lib/cmsStore';
 import { api } from '../../lib/apiClient';
 import { ProjectItem } from '../../data/projectsData';
 import { useLanguage } from '../../lib/LanguageContext';
