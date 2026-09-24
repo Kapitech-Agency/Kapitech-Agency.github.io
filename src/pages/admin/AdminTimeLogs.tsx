@@ -2,7 +2,7 @@ import React, { FormEvent, useEffect, useMemo, useState } from 'react';
 import { Clock3, Plus, Trash2, RefreshCw, CalendarDays, Timer, ReceiptText } from 'lucide-react';
 import { api } from '../../lib/apiClient';
 import { getAdminSession, hasAdminPermission } from '../../lib/adminAuth';
-import { getAgencyProjects } from '../../lib/projectStore';
+
 
 type TimeLog = {
   id: string;
@@ -39,11 +39,11 @@ export const AdminTimeLogs: React.FC = () => {
     setLoading(true);
     const [logsRes] = await Promise.all([
       api.timeLogs.getAll(),
-      Promise.resolve(setProjects(getAgencyProjects()))
+      api.projects.getAll()
     ]);
     if (logsRes.success && logsRes.data?.timeLogs) setLogs(logsRes.data.timeLogs);
     else setStatus(logsRes.error || 'Unable to load time logs.');
-    setLoading(false);
+    if (projectsRes?.success && Array.isArray(projectsRes.data?.projects)) setProjects(projectsRes.data.projects);\n    setLoading(false);
   };
 
   useEffect(() => { void load(); }, []);
