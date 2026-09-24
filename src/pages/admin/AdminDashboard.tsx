@@ -866,10 +866,10 @@ export const AdminDashboard: React.FC = () => {
                         <td className="py-3">
                           <span className={`inline-flex items-center gap-1 text-[10px] font-sans font-semibold px-2 py-0.5 rounded-full border ${
                             isPaid 
-                              ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/25 shadow-[0_0_12px_rgba(16,185,129,0.2)]'
+                              ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/25 shadow-none'
                               : isOverdue
-                              ? 'bg-red-500/10 text-red-400 border-red-500/25 shadow-[0_0_12px_rgba(239,68,68,0.2)]'
-                              : 'bg-amber-500/10 text-amber-400 border-amber-500/25 shadow-[0_0_12px_rgba(245,158,11,0.2)]'
+                              ? 'bg-red-500/10 text-red-400 border-red-500/25 shadow-none'
+                              : 'bg-amber-500/10 text-amber-400 border-amber-500/25 shadow-none'
                           }`}>
                             <span className={`w-1.5 h-1.5 rounded-full ${isPaid ? 'bg-emerald-400' : isOverdue ? 'bg-red-400' : 'bg-amber-400'}`} />
                             {inv.status.toUpperCase()}
