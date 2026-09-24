@@ -2575,3 +2575,61 @@ body {
   border-color: var(--ams-border-strong);
   color: var(--ams-text);
 }
+
+
+/* AMS form controls: Untitled UI-inspired dark treatment */
+.ams-shell main select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: var(--ams-surface);
+  border: 1px solid var(--ams-border);
+  border-radius: 9px;
+  color: var(--ams-text);
+  min-height: 38px;
+  padding-right: 34px !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238A94A6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 15px;
+  transition: border-color 140ms ease, background-color 140ms ease, box-shadow 140ms ease;
+}
+
+.ams-shell main select:hover:not(:disabled) {
+  border-color: rgba(255,255,255,.14);
+  background-color: var(--ams-surface-raised);
+}
+
+.ams-shell main select:focus {
+  outline: none;
+  border-color: rgba(229,9,20,.75);
+  box-shadow: 0 0 0 3px rgba(229,9,20,.10);
+}
+
+.ams-shell main select:disabled {
+  opacity: .55;
+  cursor: not-allowed;
+}
+
+.ams-shell main option {
+  background: #111318;
+  color: #F8FAFC;
+}
+
+.ams-shell main input:not([type="checkbox"]):not([type="radio"]),
+.ams-shell main textarea {
+  border-radius: 9px;
+  transition: border-color 140ms ease, background-color 140ms ease, box-shadow 140ms ease;
+}
+
+.ams-shell main input:not([type="checkbox"]):not([type="radio"]):focus,
+.ams-shell main textarea:focus {
+  outline: none;
+  border-color: rgba(229,9,20,.75);
+  box-shadow: 0 0 0 3px rgba(229,9,20,.10);
+}
+
+@media (max-width: 767px) {
+  .ams-shell main select {
+    min-height: 40px;
+  }
+}
