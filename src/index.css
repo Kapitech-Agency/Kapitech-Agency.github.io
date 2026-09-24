@@ -1155,10 +1155,7 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* Keep status chips readable after sentence-case normalization. */
-.ams-shell [class*="rounded-full"] {
-  border-radius: 999px;
-}
+/* Preserve semantic status colors from legacy utility classes. */
 .ams-shell [class*="bg-emerald-500/"] { color: var(--success); }
 .ams-shell [class*="bg-amber-500/"] { color: var(--warning); }
 .ams-shell [class*="bg-blue-500/"] { color: var(--info); }
