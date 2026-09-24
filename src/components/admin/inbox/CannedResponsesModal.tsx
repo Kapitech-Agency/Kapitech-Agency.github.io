@@ -225,7 +225,7 @@ https://kapitech.id`
               <MessageSquare size={16} />
             </div>
             <div>
-              <h3 className="text-base font-semibold text-[var(--text)] font-display">
+              <h3 className="text-base font-semibold text-[var(--text)] font-sans">
                 {language === 'id' ? 'Template Respon Cepat Agensi' : 'Executive Canned Responses'}
               </h3>
               <p className="text-xs text-[var(--muted)] font-sans">
