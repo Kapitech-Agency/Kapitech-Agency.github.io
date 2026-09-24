@@ -526,14 +526,14 @@ export const AdminVendors: React.FC = () => {
                     setSelectedVendor(vendor);
                     setIsDrawerOpen(true);
                   }}
-                  className="px-2.5 py-1 rounded-lg bg-[var(--panel)] hover:bg-[var(--panel-hover)] border border-[var(--line)] text-xs font-sans text-[var(--text)] transition-colors"
+                  className="px-2.5 py-1 rounded-control bg-[var(--panel)] hover:bg-[var(--panel-hover)] border border-[var(--line)] text-xs font-sans text-[var(--text)] transition-colors"
                 >
                   {language === 'id' ? 'Detail' : 'View'}
                 </button>
                 <button
                   onClick={() => handleOpenEdit(vendor)}
                                   disabled={!canManageVendors}
-                  className="p-1.5 rounded-lg bg-[var(--panel)] hover:bg-[var(--panel-hover)] border border-[var(--line)] text-[var(--muted)] hover:text-[var(--text)] transition-colors"
+                  className="p-1.5 rounded-control bg-[var(--panel)] hover:bg-[var(--panel-hover)] border border-[var(--line)] text-[var(--muted)] hover:text-[var(--text)] transition-colors"
                   title="Edit Vendor"
                 >
                   <Edit3 size={13} />
@@ -541,7 +541,7 @@ export const AdminVendors: React.FC = () => {
                 <button
                   onClick={() => handleDeleteVendor(vendor.id, vendor.name)}
                            disabled={!canManageVendors}
-                  className="p-1.5 rounded-lg bg-[var(--panel)] hover:bg-red-950/40 border border-[var(--line)] text-[var(--muted)] hover:text-red-400 transition-colors"
+                  className="p-1.5 rounded-control bg-[var(--panel)] hover:bg-red-950/40 border border-[var(--line)] text-[var(--muted)] hover:text-red-400 transition-colors"
                   title="Delete Vendor"
                 >
                   <Trash2 size={13} />
@@ -684,7 +684,7 @@ export const AdminVendors: React.FC = () => {
               </h3>
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="p-1.5 rounded-lg bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)]"
+                className="p-1.5 rounded-control bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)]"
               >
                 <X size={15} />
               </button>
