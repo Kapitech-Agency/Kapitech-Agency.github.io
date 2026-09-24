@@ -1384,3 +1384,16 @@ img,svg,video,canvas{max-width:100%}
     -webkit-backdrop-filter: none;
   }
 }
+
+
+/* Final geometry correction: preserve intentional pills/circles while keeping
+   ordinary controls rectangular and compact. */
+[data-kapi-admin="true"] .rounded-full {
+  border-radius: 9999px !important;
+}
+[data-kapi-admin="true"] button.rounded-full[aria-label]:has(svg) {
+  aspect-ratio: 1 / 1;
+  width: 40px;
+  min-width: 40px;
+  padding-inline: 0.625rem;
+}
