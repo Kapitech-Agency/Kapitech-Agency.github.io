@@ -291,7 +291,6 @@ export const AdminInvoicing: React.FC = () => {
       date: paymentDate,
       method: paymentMethod,
       reference: paymentRef,
-      recordedBy: session?.user?.name || session?.user?.username || 'Finance Officer',
       notes: paymentNotes
     });
     if (updated.success) {
