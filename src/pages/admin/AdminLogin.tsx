@@ -105,7 +105,7 @@ export const AdminLogin: React.FC = () => {
 
   return (
     <div data-kapi-admin="true" className="ams-shell min-h-screen bg-[var(--bg)] text-[var(--text)] flex items-center justify-center px-4 py-8 sm:py-10 font-sans">
-      <div className="w-full max-w-[420px]">
+      <div className="w-full max-w-[440px]">
         <Link
           to="/"
           className="inline-flex items-center gap-2 text-xs font-sans text-[var(--muted)] hover:text-[var(--text)] mb-6"
@@ -114,9 +114,9 @@ export const AdminLogin: React.FC = () => {
           {language === 'id' ? 'Kembali ke Website' : 'Back to Website'}
         </Link>
 
-        <div className="bg-[var(--panel)] border border-[var(--line)] rounded-card p-5 sm:p-6 shadow-none">
-          <div className="text-center mb-7">
-            <div className="w-12 h-12 rounded-[var(--ams-radius-card)] bg-[var(--accent)]/10 border border-[var(--accent)]/30 flex items-center justify-center text-[var(--accent)] mx-auto mb-4">
+        <div className="bg-[var(--panel)] border border-[var(--line)] rounded-card p-5 sm:p-7 shadow-none">
+          <div className="text-center mb-6 pb-6 border-b border-[var(--line)]">
+            <div className="w-11 h-11 rounded-control bg-[var(--accent)]/10 border border-[var(--accent)]/30 flex items-center justify-center text-[var(--accent)] mx-auto mb-4">
               <Lock size={24} />
             </div>
             <h1 className="text-xl sm:text-[22px] leading-7 font-semibold tracking-tight">
@@ -137,7 +137,7 @@ export const AdminLogin: React.FC = () => {
           )}
 
           {errorMessage && (
-            <div className="mb-5 p-3.5 rounded-[var(--ams-radius-control)] bg-red-950/30 border border-red-500/30 text-red-300 text-xs flex items-start gap-2">
+            <div className="mb-5 p-3.5 rounded-[var(--ams-radius-control)] bg-[var(--danger)]/10 border border-[var(--danger)]/30 text-[var(--danger)] text-xs flex items-start gap-2">
               <AlertCircle size={16} className="shrink-0 mt-0.5" />
               <span>{errorMessage}</span>
             </div>
@@ -158,7 +158,7 @@ export const AdminLogin: React.FC = () => {
                   disabled={loading}
                   value={identifier}
                   onChange={(e) => setIdentifier(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 bg-[var(--panel-hover)] border border-[var(--line)] rounded-[var(--ams-radius-control)] text-sm text-[var(--text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 focus:border-[var(--accent)] font-sans"
+                  className="w-full pl-10 pr-4 h-10 min-h-10 bg-[var(--panel-hover)] border border-[var(--line)] rounded-[var(--ams-radius-control)] text-sm text-[var(--text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 focus:border-[var(--accent)] font-sans"
                   placeholder="admin atau email"
                 />
               </div>
@@ -176,7 +176,7 @@ export const AdminLogin: React.FC = () => {
                   disabled={loading}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-10 pr-10 py-2.5 bg-[var(--panel-hover)] border border-[var(--line)] rounded-[var(--ams-radius-control)] text-sm text-[var(--text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 focus:border-[var(--accent)] font-sans"
+                  className="w-full pl-10 pr-10 h-10 min-h-10 bg-[var(--panel-hover)] border border-[var(--line)] rounded-[var(--ams-radius-control)] text-sm text-[var(--text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 focus:border-[var(--accent)] font-sans"
                   placeholder="••••••••"
                 />
                 <button
