@@ -264,13 +264,13 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
       }}
     >
       <div
-        className="w-full max-w-xl overflow-hidden rounded-control border border-line bg-panel flex max-h-[80vh] flex-col"
+        className="flex max-h-[80vh] w-full max-w-xl flex-col overflow-hidden rounded-card border border-line bg-panel"
         role="dialog"
         aria-modal="true"
         aria-label={language === 'id' ? 'Command Palette' : 'Command Palette'}
         onMouseDown={(event) => event.stopPropagation()}
       >
-        <div className="flex items-center gap-3 border-b border-line bg-bg p-4">
+        <div className="flex min-h-14 items-center gap-3 border-b border-line bg-bg px-4">
           {isSearching ? (
             <Loader2 size={18} className="shrink-0  text-accent-text" />
           ) : (
@@ -293,7 +293,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
           <button
             type="button"
             onClick={onClose}
-            className="rounded-control p-2 text-muted transition-colors hover:bg-panel hover:text-fg"
+            className="min-h-10 min-w-10 shrink-0 rounded-control p-2 text-muted transition-colors hover:bg-panel-hover hover:text-fg"
             aria-label={language === 'id' ? 'Tutup pencarian' : 'Close search'}
           >
             <X size={16} />
@@ -317,10 +317,10 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
                       aria-selected={isActive}
                       onMouseEnter={() => setActiveIndex(index)}
                       onClick={() => runSelected(index)}
-                      className={`group flex w-full items-center justify-between rounded-control p-2.5 text-left transition-colors ${isActive ? 'bg-panel' : 'hover:bg-bg'}`}
+                      className={`group flex w-full items-center justify-between rounded-control p-2.5 text-left transition-colors ${isActive ? 'bg-panel' : 'hover:bg-panel-hover'}`}
                     >
                       <div className="flex min-w-0 items-center gap-2.5">
-                        <span className={`shrink-0 rounded border px-2 py-0.5 text-[9px] font-sans font-medium normal-case ${getBadgeColor(result.type)}`}>
+                        <span className={`shrink-0 rounded-badge border px-2 py-0.5 text-[9px] font-sans font-medium normal-case ${getBadgeColor(result.type)}`}>
                           {result.type}
                         </span>
                         <div className="min-w-0">
@@ -366,10 +366,10 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
                     aria-selected={isActive}
                     onMouseEnter={() => setActiveIndex(selectableIndex)}
                     onClick={() => runSelected(selectableIndex)}
-                    className={`group flex w-full items-center justify-between rounded-[var(--k-control-radius)] p-2.5 text-left transition-colors ${isActive ? 'bg-panel' : 'hover:bg-bg'}`}
+                    className={`group flex w-full items-center justify-between rounded-control p-2.5 text-left transition-colors ${isActive ? 'bg-panel' : 'hover:bg-panel-hover'}`}
                   >
                     <div className="flex min-w-0 items-center gap-3">
-                      <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-[var(--k-control-radius)] border transition-colors ${isActive ? 'border-line bg-panel text-[var(--k-text)]' : 'border-line bg-bg text-muted'}`}>
+                      <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-control border transition-colors ${isActive ? 'border-line bg-panel text-fg' : 'border-line bg-bg text-muted'}`}>
                         <Icon size={15} />
                       </div>
                       <div className="min-w-0">
@@ -382,7 +382,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
                       </div>
                     </div>
                     <div className="flex shrink-0 items-center gap-2">
-                      <span className="rounded bg-bg px-2 py-0.5 text-[10px] font-sans text-muted border border-line">
+                      <span className="rounded-badge border border-line bg-bg px-2 py-0.5 text-[10px] font-sans text-muted">
                         {item.shortcut}
                       </span>
                       <ArrowRight size={12} className={`transition-all ${isActive ? 'text-accent-text' : 'text-muted'}`} />
@@ -394,7 +394,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
           </div>
         </div>
 
-        <div className="flex items-center justify-between border-t border-line bg-bg p-3 text-[11px] font-sans text-muted">
+        <div className="flex min-h-12 items-center justify-between border-t border-line bg-bg px-3 text-[11px] font-sans text-muted">
           <div className="flex items-center gap-3">
             <span>↑↓ Navigate</span>
             <span>↵ Select</span>
