@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronDown, Check } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
 
 export interface SelectOption {
   value: string;
@@ -122,13 +121,8 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
         />
       </button>
 
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: 4, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 2, scale: 0.98 }}
-            transition={{ duration: 0.12, ease: 'easeOut' }}
+      {isOpen && (
+          <div
             className={`absolute z-[100] mt-1 min-w-[140px] sm:min-w-[180px] max-w-[calc(100vw-32px)] sm:max-w-[260px] max-h-[260px] overflow-y-auto bg-[#111318] border border-[rgba(255,255,255,0.07)] rounded-xl p-1 shadow-[0_16px_40px_rgba(0,0,0,0.8)] space-y-0.5 font-sans text-xs custom-scrollbar ${
               align === 'right' ? 'right-0' : 'left-0'
             } ${menuClassName}`}
@@ -186,9 +180,8 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
                 </button>
               );
             })}
-          </motion.div>
+          </div>
         )}
-      </AnimatePresence>
     </div>
   );
 };
