@@ -303,7 +303,7 @@ export const AdminLayout: React.FC = () => {
           {!sidebarCollapsed ? (
             <>
               <Link to="/admin/dashboard" className="flex items-center gap-3 group overflow-hidden">
-                <div className="h-8 px-2.5 rounded-lg bg-bg border border-line flex items-center justify-center shrink-0  group-hover:border-accent/40 transition-colors">
+                <div className="h-8 px-2.5 rounded-control bg-bg border border-line flex items-center justify-center shrink-0  group-hover:border-accent/40 transition-colors">
                   <img src="/white.png" alt="Kapitech" className="h-3.5 w-auto object-contain" />
                 </div>
                 <div className="min-w-0">
@@ -410,7 +410,7 @@ export const AdminLayout: React.FC = () => {
         <div className="p-2.5 border-t border-line bg-panel space-y-2.5">
           <div className={`flex items-center justify-between ${sidebarCollapsed ? 'flex-col gap-2.5' : ''}`}>
             <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-8 h-8 rounded-lg bg-accent border border-line flex items-center justify-center text-xs font-sans text-fg font-semibold shrink-0 ">
+              <div className="w-8 h-8 rounded-control bg-accent border border-line flex items-center justify-center text-xs font-sans text-fg font-semibold shrink-0 ">
                 {roleMeta.accountProfile.avatarLabel}
               </div>
               {!sidebarCollapsed && (
@@ -429,7 +429,7 @@ export const AdminLayout: React.FC = () => {
             <button
               onClick={handleLogout}
               title={t('admin.nav.logout')}
-              className="p-2 flex items-center justify-center rounded-lg bg-bg hover:bg-danger/10 text-muted hover:text-accent-text border border-line hover:border-accent/30 transition-all shrink-0"
+              className="p-2 flex items-center justify-center rounded-control bg-bg hover:bg-danger/10 text-muted hover:text-accent-text border border-line hover:border-accent/30 transition-all shrink-0"
             >
               <LogOut size={15} />
             </button>
@@ -468,7 +468,7 @@ export const AdminLayout: React.FC = () => {
           </button>
 
           <Link to="/admin/dashboard" className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-accent flex items-center justify-center text-fg font-semibold text-xs shadow-none shrink-0">
+            <div className="w-7 h-7 rounded-control bg-accent flex items-center justify-center text-fg font-semibold text-xs shadow-none shrink-0">
               K
             </div>
             <div className="min-w-0">
@@ -507,7 +507,7 @@ export const AdminLayout: React.FC = () => {
                 onClick={() => setMobileMenuOpen(false)}
                 className="flex items-center gap-2.5"
               >
-                <div className="h-8 px-2.5 rounded-lg bg-bg border border-line flex items-center justify-center shrink-0 ">
+                <div className="h-8 px-2.5 rounded-control bg-bg border border-line flex items-center justify-center shrink-0 ">
                   <img src="/white.png" alt="Kapitech" className="h-3.5 w-auto object-contain" />
                 </div>
                 <div>
@@ -592,7 +592,7 @@ export const AdminLayout: React.FC = () => {
             {/* Bottom session details */}
             <div className="p-3.5 border-t border-line bg-bg flex items-center justify-between shrink-0">
               <div className="flex items-center gap-2.5 min-w-0">
-                <div className="w-8 h-8 rounded-lg bg-accent border border-line flex items-center justify-center text-xs font-sans text-fg font-semibold shrink-0 ">
+                <div className="w-8 h-8 rounded-control bg-accent border border-line flex items-center justify-center text-xs font-sans text-fg font-semibold shrink-0 ">
                   {roleMeta.accountProfile.avatarLabel}
                 </div>
                 <div className="min-w-0">
