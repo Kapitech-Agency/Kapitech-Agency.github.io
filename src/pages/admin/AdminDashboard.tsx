@@ -31,17 +31,15 @@ import {
   FileSpreadsheet
 } from 'lucide-react';
 import { getAdminSession, getAuditLogs, SecurityAuditLog } from '../../lib/adminAuth';
-import { subscribeToInbox, ContactSubmission } from '../../lib/submissions';
-import { getActiveProjects, AgencyProject, PROJECT_EVENT_NAME, saveAgencyProject } from '../../lib/projectStore';
-import { getCmsLeads, CrmLead, CRM_EVENT_NAME, saveCrmLead, CrmServicePillar, CrmSource } from '../../lib/crmStore';
+import { ContactSubmission } from '../../lib/submissions';
+import { AgencyProject } from '../../lib/projectStore';
+import { CrmLead, CrmServicePillar, CrmSource } from '../../lib/crmStore';
 import { 
   getAgencyInvoices, 
   getAgencyExpenses, 
   computeFinancialMetrics, 
   getMonthlyCashFlowSeries, 
   getAccountsReceivableAging,
-  saveAgencyInvoice, 
-  saveAgencyExpense,
   FINANCE_EVENT_NAME,
   AgencyInvoice,
   AgencyExpense,
@@ -50,6 +48,7 @@ import {
 } from '../../lib/financeStore';
 import { getAgencyClients, AgencyClient, CLIENT_EVENT_NAME } from '../../lib/clientStore';
 import { useLanguage } from '../../lib/LanguageContext';
+import { api } from '../../lib/apiClient';
 import { useRbacRole, StakeholderRole, ROLE_DEFINITIONS } from '../../lib/rbacEngine';
 import { 
   getActiveCurrency, 
@@ -69,13 +68,13 @@ export const AdminDashboard: React.FC = () => {
   const { role: rbacRole, setRole: setRbacRole, roleMeta, isAllowed } = useRbacRole();
 
   // Core Live State from Stores
-  const [invoices, setInvoices] = useState<AgencyInvoice[]>(() => getAgencyInvoices());
-  const [expenses, setExpenses] = useState<AgencyExpense[]>(() => getAgencyExpenses());
-  const [leads, setLeads] = useState<CrmLead[]>(() => getCmsLeads());
-  const [projects, setProjects] = useState<AgencyProject[]>(() => getActiveProjects());
-  const [clients, setClients] = useState<AgencyClient[]>(() => getAgencyClients());
+  const [invoices, setInvoices] = useState<AgencyInvoice[]>([]);
+  const [expenses, setExpenses] = useState<AgencyExpense[]>([]);
+  const [leads, setLeads] = useState<CrmLead[]>([]);
+  const [projects, setProjects] = useState<AgencyProject[]>([]);
+  const [clients, setClients] = useState<AgencyClient[]>([]);
   const [inboxSubmissions, setInboxSubmissions] = useState<ContactSubmission[]>([]);
-  const [auditLogs, setAuditLogs] = useState<SecurityAuditLog[]>(() => getAuditLogs());
+  const [auditLogs, setAuditLogs] = useState<SecurityAuditLog[]>([]);
   const [currency, setCurrencyState] = useState<CurrencyCode>(() => getActiveCurrency());
 
   // Interactive Period & Segment Filters
@@ -122,41 +121,33 @@ export const AdminDashboard: React.FC = () => {
     setTimeout(() => setNotification(null), 3500);
   };
 
-  // Synchronize with Live Event Bus
+  // Dashboard data is server-backed. No local data store is used as a source of truth.
   useEffect(() => {
-    const handleFinance = () => {
-      setInvoices(getAgencyInvoices());
-      setExpenses(getAgencyExpenses());
+    let active = true;
+    const refresh = async () => {
+      const [invoiceRes, expenseRes, crmRes, projectRes, clientRes, leadRes, auditRes] = await Promise.all([
+        api.finance.getInvoices(),
+        api.finance.getExpenses(),
+        api.crm.getDeals(),
+        api.projects.getAll(),
+        api.clients.getAll(),
+        api.leads.getAll(),
+        api.auditLogs.getAll()
+      ]);
+      if (!active) return;
+      if (invoiceRes.success) setInvoices((invoiceRes.data?.invoices || []) as AgencyInvoice[]);
+      if (expenseRes.success) setExpenses((expenseRes.data?.expenses || []) as AgencyExpense[]);
+      if (crmRes.success) setLeads((crmRes.data?.deals || []) as CrmLead[]);
+      if (projectRes.success) setProjects((projectRes.data?.projects || []) as AgencyProject[]);
+      if (clientRes.success) setClients((clientRes.data?.clients || []) as AgencyClient[]);
+      if (leadRes.success) setInboxSubmissions((leadRes.data?.leads || []) as ContactSubmission[]);
+      if (auditRes.success) setAuditLogs((auditRes.data?.logs || []) as SecurityAuditLog[]);
     };
-    const handleCrm = () => setLeads(getCmsLeads());
-    const handleProj = () => setProjects(getActiveProjects());
-    const handleClients = () => setClients(getAgencyClients());
-    const handleCurrency = (e: Event) => {
-      const custom = e as CustomEvent<{ currency: CurrencyCode }>;
-      if (custom.detail?.currency) {
-        setCurrencyState(custom.detail.currency);
-      }
-    };
-
-    window.addEventListener(FINANCE_EVENT_NAME, handleFinance);
-    window.addEventListener(CRM_EVENT_NAME, handleCrm);
-    window.addEventListener(PROJECT_EVENT_NAME, handleProj);
-    window.addEventListener(CLIENT_EVENT_NAME, handleClients);
-    window.addEventListener(CURRENCY_EVENT, handleCurrency);
-
-    const unsubInbox = subscribeToInbox((subs) => {
-      setInboxSubmissions(subs);
-    });
-
-    return () => {
-      window.removeEventListener(FINANCE_EVENT_NAME, handleFinance);
-      window.removeEventListener(CRM_EVENT_NAME, handleCrm);
-      window.removeEventListener(PROJECT_EVENT_NAME, handleProj);
-      window.removeEventListener(CLIENT_EVENT_NAME, handleClients);
-      window.removeEventListener(CURRENCY_EVENT, handleCurrency);
-      unsubInbox();
-    };
+    void refresh();
+    const timer = window.setInterval(() => void refresh(), 30000);
+    return () => { active = false; window.clearInterval(timer); };
   }, []);
+
 
   // 1. FINANCIAL METRICS & KPI ENGINE
   const finMetrics = useMemo(() => {
@@ -355,7 +346,7 @@ export const AdminDashboard: React.FC = () => {
       updatedAt: new Date().toISOString()
     };
 
-    saveCrmLead(newLead);
+    await api.crm.createDeal(newLead);
     showToast(language === 'id' ? `Inquiry dikonversi menjadi CRM Lead: ${sub.fullName}` : `Inquiry converted to CRM Lead: ${sub.fullName}`);
   };
 
@@ -383,7 +374,7 @@ export const AdminDashboard: React.FC = () => {
       updatedAt: new Date().toISOString()
     };
 
-    saveCrmLead(leadObj);
+    await api.crm.createDeal(leadObj);
     setIsAddLeadModalOpen(false);
     setNewLeadName('');
     setNewLeadCompany('');
@@ -432,7 +423,7 @@ export const AdminDashboard: React.FC = () => {
       updatedAt: new Date().toISOString()
     };
 
-    saveAgencyInvoice(invObj);
+    await api.finance.createInvoice(invObj);
     setIsNewInvoiceModalOpen(false);
     setQuickInvCompany('');
     setQuickInvClient('');
@@ -479,7 +470,7 @@ export const AdminDashboard: React.FC = () => {
       updatedAt: new Date().toISOString()
     };
 
-    saveAgencyProject(projObj);
+    await api.projects.create(projObj);
     setIsNewProjectModalOpen(false);
     setQuickProjTitle('');
     setQuickProjClient('');
@@ -502,7 +493,7 @@ export const AdminDashboard: React.FC = () => {
       recordedBy: session?.user.username || 'Admin'
     };
 
-    saveAgencyExpense(expObj);
+    await api.finance.createExpense(expObj);
     setIsRecordExpenseModalOpen(false);
     setQuickExpDesc('');
     showToast(language === 'id' ? `Biaya operasional dicatat: ${formatCurrency(amt, currency)}` : `Expense recorded: ${formatCurrency(amt, currency)}`);
