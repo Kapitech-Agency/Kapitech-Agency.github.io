@@ -212,7 +212,7 @@ export const AdminDocuments: React.FC = () => {
               }`}
             >
               <div className="text-xs font-sans normal-case tracking-normal capitalize">{cat}</div>
-              <div className="text-lg font-bold font-sans text-[var(--text)] mt-1">{count}</div>
+              <div className="text-lg font-semibold font-sans text-[var(--text)] mt-1">{count}</div>
             </button>
           );
         })}
