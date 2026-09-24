@@ -11,18 +11,52 @@ export const FloatingContact = () => {
   const { language } = useLanguage();
 
   useEffect(() => {
-    const toggleVisibility = () => {
-      if (window.scrollY > 160) {
-        setIsVisible(true);
-      } else {
-        setIsVisible(false);
+    const hero = document.querySelector<HTMLElement>('.kapi-home-hero, .kapi-page-hero');
+
+    if (!hero || typeof IntersectionObserver === 'undefined') {
+      const syncFromScroll = () => {
+        setIsVisible(window.scrollY > Math.max(240, window.innerHeight * 0.45));
+        if (window.scrollY <= Math.max(240, window.innerHeight * 0.45)) {
+          setIsOpen(false);
+        }
+      };
+
+      syncFromScroll();
+      window.addEventListener('scroll', syncFromScroll, { passive: true });
+      return () => window.removeEventListener('scroll', syncFromScroll);
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        const shouldShow = !entry.isIntersecting && entry.boundingClientRect.bottom <= 0;
+        setIsVisible(shouldShow);
+        if (!shouldShow) {
+          setIsOpen(false);
+        }
+      },
+      {
+        threshold: 0,
+        rootMargin: '0px 0px -12% 0px',
+      }
+    );
+
+    observer.observe(hero);
+
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
         setIsOpen(false);
       }
     };
 
-    window.addEventListener('scroll', toggleVisibility);
-    return () => window.removeEventListener('scroll', toggleVisibility);
-  }, []);
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen]);
 
   const contactOptions = [
     {
