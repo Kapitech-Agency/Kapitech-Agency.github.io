@@ -2633,3 +2633,251 @@ body {
     min-height: 40px;
   }
 }
+
+
+/* ==========================================================================
+   AMS FINAL UI SYSTEM
+   Kapitech public-site visual language: restrained black surfaces, Kapitech red,
+   clear typography, compact controls, predictable grids.
+   ========================================================================== */
+
+.ams-shell {
+  --ams-surface-0: #090A0F;
+  --ams-surface-1: #111318;
+  --ams-surface-2: #181B22;
+  --ams-border-soft: rgba(255,255,255,.075);
+  --ams-border-strong: rgba(255,255,255,.12);
+  --ams-brand: #E50914;
+  --ams-brand-hover: #FF1E27;
+  --ams-copy-1: #F8FAFC;
+  --ams-copy-2: #A3ADBD;
+  --ams-copy-3: #697586;
+}
+
+.ams-shell main {
+  background: var(--ams-surface-0);
+}
+
+.ams-shell main h1,
+.ams-shell main h2,
+.ams-shell main h3,
+.ams-shell main h4 {
+  font-family: "Outfit", "Inter", sans-serif;
+  color: var(--ams-copy-1);
+  letter-spacing: -.025em;
+}
+
+.ams-shell main p,
+.ams-shell main label,
+.ams-shell main span {
+  min-width: 0;
+}
+
+.ams-shell main input:not([type="checkbox"]):not([type="radio"]),
+.ams-shell main textarea,
+.ams-shell main select {
+  background-color: var(--ams-surface-1);
+  border-color: var(--ams-border-soft);
+  color: var(--ams-copy-1);
+  box-shadow: none;
+}
+
+.ams-shell main input:not([type="checkbox"]):not([type="radio"]):hover,
+.ams-shell main textarea:hover,
+.ams-shell main select:hover {
+  border-color: var(--ams-border-strong);
+}
+
+.ams-shell main input:not([type="checkbox"]):not([type="radio"]):focus,
+.ams-shell main textarea:focus,
+.ams-shell main select:focus,
+.ams-shell header input:focus {
+  outline: none !important;
+  border-color: rgba(229,9,20,.62) !important;
+  box-shadow: 0 0 0 3px rgba(229,9,20,.08) !important;
+}
+
+.ams-shell main button,
+.ams-shell main a[role="button"] {
+  border-radius: 9px;
+}
+
+.ams-shell main button[class*="bg-[#E50914]"],
+.ams-shell main a[class*="bg-[#E50914]"] {
+  background-color: var(--ams-brand);
+}
+
+.ams-shell main button[class*="bg-[#E50914]"]:hover,
+.ams-shell main a[class*="bg-[#E50914]"]:hover {
+  background-color: var(--ams-brand-hover);
+}
+
+.ams-shell main .ams-card {
+  background: var(--ams-surface-1);
+  border-color: var(--ams-border-soft);
+  border-radius: 12px;
+  box-shadow: none;
+}
+
+.ams-shell main .ams-stat {
+  background: var(--ams-surface-2);
+  border-color: var(--ams-border-soft);
+}
+
+.ams-shell main .ams-stat strong {
+  font-family: "Outfit", "Inter", sans-serif;
+  font-variant-numeric: tabular-nums;
+}
+
+.ams-shell .ams-kpi-grid {
+  align-items: stretch;
+}
+
+.ams-shell .ams-kpi-grid > * {
+  min-width: 0;
+  min-height: 156px;
+  height: 100%;
+}
+
+.ams-shell .ams-summary-grid {
+  align-items: stretch;
+}
+
+.ams-shell .ams-summary-grid > section {
+  min-width: 0;
+  min-height: 210px;
+  height: 100%;
+}
+
+.ams-shell .ams-detail-grid {
+  align-items: start;
+}
+
+.ams-shell .ams-detail-grid > * {
+  min-width: 0;
+}
+
+.ams-shell main .grid {
+  min-width: 0;
+  align-items: stretch;
+}
+
+.ams-shell main .grid > * {
+  min-width: 0;
+}
+
+.ams-shell main [class*="overflow-x-auto"] {
+  max-width: 100%;
+}
+
+.ams-shell main [role="alert"] {
+  padding: 10px 14px;
+  border-color: rgba(229,9,20,.22);
+  background: rgba(229,9,20,.045);
+}
+
+.ams-shell aside {
+  width: 248px;
+  background: var(--ams-surface-1);
+  border-color: var(--ams-border-soft);
+}
+
+.ams-shell aside a {
+  min-width: 0;
+}
+
+.ams-shell aside a span {
+  line-height: 1.25;
+}
+
+.ams-shell aside .text-\[11px\] {
+  letter-spacing: .055em;
+}
+
+.ams-shell header {
+  background: rgba(9,10,15,.94);
+  border-color: var(--ams-border-soft);
+  box-shadow: 0 1px 0 rgba(255,255,255,.025);
+}
+
+.ams-shell header input {
+  background: var(--ams-surface-1);
+  border-color: var(--ams-border-soft);
+}
+
+.ams-shell header input::placeholder {
+  color: var(--ams-copy-3);
+}
+
+.ams-shell main .text-emerald-400 {
+  color: #35D399;
+}
+
+.ams-shell main .text-cyan-400 {
+  color: #38BDF8;
+}
+
+.ams-shell main .text-violet-400 {
+  color: #A78BFA;
+}
+
+.ams-shell main .text-amber-400 {
+  color: #FBBF24;
+}
+
+.ams-shell main .text-red-300,
+.ams-shell main .text-red-400 {
+  color: #FF6670;
+}
+
+.ams-shell main [class*="rounded-full"] {
+  border-radius: 999px;
+}
+
+.ams-shell main [class*="rounded-full"][class*="px-"] {
+  min-height: 24px;
+}
+
+.ams-shell [role="dialog"] {
+  border-color: var(--ams-border-soft);
+  background: var(--ams-surface-1);
+  border-radius: 14px;
+}
+
+.ams-shell .custom-scrollbar {
+  scrollbar-color: rgba(255,255,255,.16) transparent;
+}
+
+@media (max-width: 1100px) {
+  .ams-shell aside {
+    width: 232px;
+  }
+}
+
+@media (max-width: 767px) {
+  .ams-shell aside {
+    width: min(320px, 88vw);
+  }
+
+  .ams-shell .ams-kpi-grid {
+    grid-template-columns: repeat(2, minmax(0,1fr));
+  }
+
+  .ams-shell .ams-kpi-grid > * {
+    min-height: 142px;
+  }
+
+  .ams-shell .ams-summary-grid > section {
+    min-height: 0;
+  }
+}
+
+@media (max-width: 520px) {
+  .ams-shell .ams-kpi-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ams-shell .ams-kpi-grid > * {
+    min-height: 0;
+  }
+}

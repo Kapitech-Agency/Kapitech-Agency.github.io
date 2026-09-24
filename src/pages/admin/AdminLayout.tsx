@@ -5,8 +5,7 @@ import { useLanguage } from '../../lib/LanguageContext';
 import { getActiveCurrency, setActiveCurrency, CurrencyCode, CURRENCY_EVENT } from '../../lib/currency';
 import { CommandPalette } from '../../components/admin/CommandPalette';
 import { AdminNotificationCenter } from '../../components/admin/AdminNotificationCenter';
-import { CustomSelect } from '../../components/ui/CustomSelect';
-import { useRbacRole, StakeholderRole, ROLE_DEFINITIONS } from '../../lib/rbacEngine';
+import { useRbacRole } from '../../lib/rbacEngine';
 
 
 
@@ -15,12 +14,10 @@ const U = (name: UntitledIconName) => (props: { size?: number; className?: strin
 );
 const AmsChevron = U('chevron');
 const AmsHome = U('home');
-const AmsSettings = U('settings');
-const AmsCheck = U('check');
 const AmsMenu = U('menu');
 const AmsClose = U('close');
 const AmsSearch = U('search');
-const AmsCalendar = U('file');
+const AmsCalendar = U('clock');
 
 interface NavItem {
   key: string;
@@ -51,7 +48,7 @@ export const AdminLayout: React.FC = () => {
   const [currency, setCurrencyState] = useState<CurrencyCode>(getActiveCurrency());
 
   // Dynamic RBAC Permission Engine
-  const { role: rbacRole, setRole: setRbacRole, roleMeta, isAllowed } = useRbacRole(
+  const { roleMeta, isAllowed } = useRbacRole(
     session?.user?.stakeholderType,
     session?.user?.division,
     session?.user?.role,
@@ -150,8 +147,8 @@ export const AdminLayout: React.FC = () => {
         {
           key: 'proposals',
           to: '/admin/proposals',
-          label: language === 'id' ? 'Proposal & Quotation' : 'Proposals & Quotes',
-          icon: U('file'),
+          label: language === 'id' ? 'Proposal & Penawaran' : 'Proposals & Quotes',
+          icon: U('receipt'),
           badge: null
         },
         {
@@ -185,14 +182,14 @@ export const AdminLayout: React.FC = () => {
           key: 'vendors',
           to: '/admin/vendors',
           label: t('admin.nav.vendors'),
-          icon: U('users'),
+          icon: U('briefcase'),
           badge: null
         },
         {
           key: 'approvals',
           to: '/admin/approvals',
-          label: language === 'id' ? 'Approval Center' : 'Approval Center',
-          icon: U('check-circle'),
+          label: language === 'id' ? 'Pusat Persetujuan' : 'Approval Center',
+          icon: U('shield'),
           badge: null
         }
       ]
@@ -205,34 +202,34 @@ export const AdminLayout: React.FC = () => {
           key: 'services',
           to: '/admin/cms/services',
           label: t('admin.nav.servicesCatalog'),
-          icon: U('file'),
+          icon: U('layers'),
           badge: null
         },
         {
           key: 'cms_projects',
           to: '/admin/cms/projects',
           label: t('admin.nav.caseStudies'),
-          icon: U('file'),
+          icon: U('layers'),
           badge: null
         },
         {
           key: 'testimonials',
           to: '/admin/cms/testimonials',
           label: t('admin.cms.testiTitle'),
-          icon: U('file'),
+          icon: U('users'),
           badge: null
         },
         {
           key: 'documents',
           to: '/admin/documents',
-          label: language === 'id' ? 'Documents' : 'Documents',
+          label: language === 'id' ? 'Dokumen' : 'Documents',
           icon: U('file'),
           badge: null
         },
         {
           key: 'timelogs',
           to: '/admin/time-logs',
-          label: language === 'id' ? 'Time Tracking' : 'Time Tracking',
+          label: language === 'id' ? 'Pelacakan Waktu' : 'Time Tracking',
           icon: U('clock'),
           badge: null
         }
@@ -449,33 +446,6 @@ export const AdminLayout: React.FC = () => {
             </button>
           </div>
 
-          {/* Active Stakeholder Role Selector (Dynamic RBAC Engine) */}
-          {!sidebarCollapsed && (
-            <div className="pt-2 border-t border-white/[0.07]">
-              <div className="flex items-center justify-between text-[10px] font-mono text-[#8A94A6] mb-1 px-0.5">
-                <span className="flex items-center gap-1">
-                  <AmsCheck size={11} className="text-[#E50914]" />
-                  <span>{language === 'id' ? 'Hak Akses Peran' : 'Active Role'}</span>
-                </span>
-                <span className="text-[8px] px-1 py-0.5 rounded bg-[#181B22] border border-white/[0.07] text-[#E50914] font-bold">LOCKED</span>
-              </div>
-              <CustomSelect
-                value={rbacRole}
-                onChange={(value) => setRbacRole(value as StakeholderRole)}
-                disabled={Boolean(session?.user?.stakeholderType)}
-                size="xs"
-                className="w-full"
-                triggerClassName="w-full !bg-[#181B22] !border-white/[0.07] !text-[#F8FAFC]"
-                options={[
-                  { value: 'executive', label: '1. Stakeholder Executive (Full Access)' },
-                  { value: 'pm', label: '2. Project Manager' },
-                  { value: 'finance', label: '3. Financial Officer' },
-                  { value: 'account_manager', label: '4. Account Manager' },
-                  { value: 'client_viewer', label: '5. Client / Viewer' }
-                ]}
-              />
-            </div>
-          )}
         </div>
 
       </aside>
@@ -684,29 +654,6 @@ export const AdminLayout: React.FC = () => {
                 </Link>
               </div>
 
-              {/* Mobile Role Selector Dropdown */}
-              <div className="pt-2">
-                <div className="p-3 rounded-xl bg-[#181B22] border border-white/[0.07] space-y-1.5">
-                  <div className="flex items-center justify-between text-[10px] font-mono text-[#8A94A6]">
-                    <span className="flex items-center gap-1">
-                      <AmsCheck size={11} className="text-[#E50914]" />
-                      <span>{language === 'id' ? 'Peran Aktif' : 'Active Role'}</span>
-                    </span>
-                    <span className="text-[8px] px-1 py-0.5 rounded bg-[#111318] border border-white/[0.07] text-[#E50914] font-bold">LOCKED</span>
-                  </div>
-                  <select
-                    value={rbacRole}
-                    onChange={(e) => setRbacRole(e.target.value as StakeholderRole)}
-                    className="w-full h-8 px-2 rounded-lg bg-[#111318] text-white border border-white/[0.07] text-xs font-mono focus:outline-none focus:border-[#E50914] cursor-pointer"
-                  >
-                    <option value="executive">1. Stakeholder Executive (Full Access)</option>
-                    <option value="pm">2. Project Manager</option>
-                    <option value="finance">3. Financial Officer</option>
-                    <option value="account_manager">4. Account Manager</option>
-                    <option value="client_viewer">5. Client / Viewer</option>
-                  </select>
-                </div>
-              </div>
             </div>
 
             {/* Bottom session details */}
@@ -728,7 +675,7 @@ export const AdminLayout: React.FC = () => {
                 aria-label="Logout"
                 className="px-3 py-2 min-h-[44px] rounded-xl bg-[#111318] hover:bg-red-950/50 border border-white/[0.07] hover:border-[#E50914]/30 text-[#8A94A6] hover:text-[#FF1E27] text-xs font-mono flex items-center gap-1.5 shrink-0 transition-all"
               >
-                <AmsSettings size={14} />
+                <UntitledIcon name="logout" size={14} />
                 <span>{t('admin.nav.logout')}</span>
               </button>
             </div>
@@ -766,7 +713,7 @@ export const AdminLayout: React.FC = () => {
               type="text"
               onClick={() => setCommandPaletteOpen(true)}
               readOnly
-              placeholder={t('admin.dash.searchPlaceholder') || "U('search') projects, clients, tasks (⌘K)..."}
+              placeholder={t('admin.dash.searchPlaceholder') || 'Search projects, clients, tasks (⌘K)...'}
               className="w-full h-8 pl-8 pr-12 text-xs bg-[#111318] text-white placeholder-[#8A94A6] rounded-lg border border-white/[0.07] hover:border-white/20 focus:outline-none focus:border-[#E50914] transition-colors cursor-pointer"
             />
             <kbd className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] font-mono text-[#8A94A6] bg-[#181B22] border border-white/[0.07] px-1.5 py-0.5 rounded pointer-events-none">

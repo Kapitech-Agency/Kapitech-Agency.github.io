@@ -459,7 +459,9 @@ export const AdminDashboard: React.FC = () => {
         <div className="ams-dashboard-actions flex items-center gap-2 overflow-x-auto pb-1">
 
           {/* Authenticated role context is server-authoritative. */}
-          <div className="h-9 px-2.5 rounded-lg bg-[#111318] border border-white/[0.07] text-[11px] font-mono text-[#8A94A6] flex items-center gap-2 shrink-0" title="Role is controlled by authenticated RBAC policy">\n            <ShieldCheck size={13} className="text-[#E50914]" />\n            <span className="text-white font-semibold">{roleMeta?.title || ROLE_DEFINITIONS[rbacRole]?.title || "Authenticated role"}</span>\n          </div>
+          <div className="h-9 px-2.5 rounded-lg bg-[#111318] border border-white/[0.07] text-[11px] font-mono text-[#8A94A6] flex items-center gap-2 shrink-0" title="Role is controlled by authenticated RBAC policy">
+            <ShieldCheck size={13} className="text-[#E50914]" />\n            <span className="text-white font-semibold">{roleMeta?.title || ROLE_DEFINITIONS[rbacRole]?.title || "Authenticated role"}</span>
+          </div>
           
           {/* Currency Switcher Pill */}
           <button
@@ -554,7 +556,7 @@ export const AdminDashboard: React.FC = () => {
       {/* ------------------------------------------------------------- */}
       {/* 2. CORE HIGH-VISIBILITY KPI DECK (4 TOP-TIER METRIC CARDS)    */}
       {/* ------------------------------------------------------------- */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-5">
+      <div className="ams-kpi-grid grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-5">
         
         {/* Metric Card 1: Gross Realized Revenue */}
         <div className="p-5 rounded-xl bg-[#111318] border border-white/[0.07]  flex flex-col justify-between group transition-colors duration-150">
@@ -654,7 +656,7 @@ export const AdminDashboard: React.FC = () => {
 
           <div className="mt-4 pt-3 border-t border-white/[0.07] flex items-center justify-between text-[11px] font-mono">
             <span className="text-violet-400 font-semibold">
-              {pipelineMetrics.wonLeadsCount || 5} {language === 'id' ? 'Won' : 'Won Deals'}
+              {pipelineMetrics.wonLeadsCount} {language === 'id' ? 'Won' : 'Won Deals'}
             </span>
             <span className="text-[#8A94A6]">
               {language === 'id' ? 'Margin Bersih: ' : 'Net Margin: '}
@@ -701,7 +703,7 @@ export const AdminDashboard: React.FC = () => {
 
       {/* ------------------------------------------------------------- */}
       {/* Backend-backed finance and CRM snapshot */}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
+      <div className="ams-summary-grid grid grid-cols-1 xl:grid-cols-2 gap-5">
         <section className="ams-card p-5">
           <div className="flex items-center justify-between pb-3 border-b border-white/[0.07]">
             <div><h3 className="ams-section-title">{language === 'id' ? 'Ringkasan Keuangan' : 'Financial Summary'}</h3><p className="ams-section-subtitle">{language === 'id' ? 'Data dihitung di server.' : 'Calculated by the backend.'}</p></div>
@@ -730,7 +732,7 @@ export const AdminDashboard: React.FC = () => {
 
       {/* 4. OPERATIONAL MASTER SECTION (8 COLS LEFT : 4 COLS RIGHT)    */}
       {/* ------------------------------------------------------------- */}
-      <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
+      <div className="ams-detail-grid grid grid-cols-1 xl:grid-cols-12 gap-6">
         
         {/* Left Column: Priority Active Projects & Recent Invoices (8 cols) */}
         <div className="xl:col-span-8 space-y-6">

@@ -87,15 +87,15 @@ export const AdminProjects: React.FC = () => {
   const [clientName, setClientName] = useState('');
   const [clientCompany, setClientCompany] = useState('');
   const [clientEmail, setClientEmail] = useState('');
-  const [serviceCategory, setServiceCategory] = useState('Web Development');
-  const [budget, setBudget] = useState<number>(65000000);
-  const [progressPercent, setProgressPercent] = useState<number>(30);
+  const [serviceCategory, setServiceCategory] = useState('');
+  const [budget, setBudget] = useState<number>(0);
+  const [progressPercent, setProgressPercent] = useState<number>(0);
   const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
   const [targetEndDate, setTargetEndDate] = useState(new Date(Date.now() + 45 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]);
-  const [techStackInput, setTechStackInput] = useState('Next.js, TypeScript, Tailwind CSS, Node.js');
+  const [techStackInput, setTechStackInput] = useState('');
   const [repoUrl, setRepoUrl] = useState('');
   const [stagingUrl, setStagingUrl] = useState('');
-  const [projStatus, setProjStatus] = useState<ProjectStatus>('in_progress');
+  const [projStatus, setProjStatus] = useState<ProjectStatus>('planning');
 
   // Task Creation Modal State
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
@@ -185,7 +185,7 @@ export const AdminProjects: React.FC = () => {
     setTechStackInput('React, TypeScript, Tailwind CSS');
     setRepoUrl('');
     setStagingUrl('https://staging.app.kapitech.id');
-    setProjStatus('in_progress');
+    setProjStatus('planning');
     setIsProjectModalOpen(true);
   };
 
@@ -1124,9 +1124,11 @@ export const AdminProjects: React.FC = () => {
                     <label className="block text-[#8A94A6] mb-1 font-semibold">Service Category</label>
                     <select
                       value={serviceCategory}
+                      required
                       onChange={(e) => setServiceCategory(e.target.value)}
                       className="w-full px-3.5 py-2.5 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[#E50914]"
                     >
+                      <option value="" disabled>Select service category</option>
                       <option value="Web Development">Web Development</option>
                       <option value="Mobile App">Mobile App</option>
                       <option value="UI/UX Design System">UI/UX Design System</option>
