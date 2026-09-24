@@ -1009,3 +1009,270 @@
   }
 }
 
+
+
+/* ==========================================================================
+   AMS MOBILE UX POLISH III
+   Mobile-first visual refinement. UI-only.
+   ========================================================================== */
+
+@media (max-width: 767px) {
+  /* Give the mobile shell a cleaner app-like rhythm. */
+  .ams-shell {
+    min-height: 100dvh;
+    background:
+      radial-gradient(520px 260px at 80% -8%, rgba(229,9,20,.065), transparent 68%),
+      #090A0F;
+  }
+
+  .ams-shell > main {
+    min-height: 0;
+  }
+
+  .ams-shell > main > div:last-child {
+    padding: 16px;
+    padding-bottom: max(24px, env(safe-area-inset-bottom));
+  }
+
+  /* Mobile topbar: compact, balanced, and safe around notches. */
+  .ams-shell > div.md\\:hidden {
+    min-height: 58px;
+    height: 58px;
+    padding-top: max(7px, env(safe-area-inset-top));
+    padding-bottom: 7px;
+    padding-left: max(12px, env(safe-area-inset-left));
+    padding-right: max(12px, env(safe-area-inset-right));
+    background: rgba(17,19,24,.94);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    box-shadow: 0 8px 24px rgba(0,0,0,.22);
+  }
+
+  .ams-shell > div.md\\:hidden > div:first-child {
+    min-width: 0;
+  }
+
+  .ams-shell > div.md\\:hidden a {
+    min-width: 0;
+  }
+
+  .ams-shell > div.md\\:hidden a > div:last-child {
+    min-width: 0;
+  }
+
+  /* Avoid oversized language/currency controls on narrow screens. */
+  .ams-shell > div.md\\:hidden > div:last-child {
+    gap: 5px;
+  }
+
+  .ams-shell > div.md\\:hidden > div:last-child > div {
+    padding: 2px;
+  }
+
+  .ams-shell > div.md\\:hidden > div:last-child button {
+    min-height: 34px;
+    min-width: 0;
+    padding: 0 8px;
+  }
+
+  .ams-shell > div.md\\:hidden > div:last-child > button {
+    min-height: 36px;
+    min-width: 0;
+    padding: 0 9px;
+  }
+
+  /* Page headings and action groups stack naturally on small screens. */
+  .ams-shell h1 {
+    max-width: 100%;
+    margin-bottom: 4px;
+  }
+
+  .ams-shell h2,
+  .ams-shell h3 {
+    max-width: 100%;
+  }
+
+  .ams-shell [class*="justify-between"] {
+    min-width: 0;
+  }
+
+  /* Cards: tighter padding, softer radius, no accidental horizontal overflow. */
+  .ams-shell .ams-card,
+  .ams-shell .metric-card,
+  .ams-shell .glass-panel {
+    border-radius: 13px;
+  }
+
+  .ams-shell .ams-card {
+    overflow: hidden;
+  }
+
+  /* Keep common responsive grids useful instead of creating tiny columns. */
+  .ams-shell .grid {
+    gap: 12px;
+  }
+
+  /* Forms become one-column friendly while preserving existing layout intent. */
+  .ams-shell form {
+    min-width: 0;
+  }
+
+  .ams-shell form .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ams-shell label {
+    min-width: 0;
+  }
+
+  .ams-shell input:not([type="checkbox"]):not([type="radio"]),
+  .ams-shell select,
+  .ams-shell textarea {
+    width: 100%;
+    max-width: 100%;
+    font-size: 16px;
+  }
+
+  /* 16px prevents iOS Safari from zooming focused form controls. */
+  .ams-shell input[type="date"],
+  .ams-shell input[type="time"],
+  .ams-shell input[type="number"] {
+    font-size: 16px;
+  }
+
+  /* Action groups should wrap instead of pushing the page sideways. */
+  .ams-shell .flex {
+    min-width: 0;
+  }
+
+  .ams-shell .flex-wrap {
+    row-gap: 8px;
+  }
+
+  /* Tables remain horizontally scrollable, with enough breathing room. */
+  .ams-shell .overflow-x-auto {
+    width: 100%;
+    max-width: 100%;
+    border-radius: 10px;
+    scrollbar-width: thin;
+  }
+
+  .ams-shell .overflow-x-auto table {
+    min-width: 640px;
+  }
+
+  /* Dense rows get slightly more vertical room for touch interaction. */
+  .ams-shell td,
+  .ams-shell th {
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  /* Dialogs should behave like bottom sheets on phones, without changing content. */
+  .ams-shell [role="dialog"] {
+    width: min(100% - 24px, 720px);
+    max-width: calc(100vw - 24px);
+    max-height: calc(100dvh - 24px);
+    border-radius: 16px;
+  }
+
+  .ams-shell .fixed.inset-0 {
+    padding: 12px;
+    align-items: flex-end;
+  }
+
+  .ams-shell .fixed.inset-0 > div {
+    width: 100%;
+    max-width: 720px;
+    max-height: calc(100dvh - 24px);
+    border-radius: 16px;
+  }
+
+  /* Make primary action rows easy to scan. */
+  .ams-shell button {
+    white-space: nowrap;
+  }
+
+  .ams-shell button[class*="w-full"],
+  .ams-shell a[class*="w-full"] {
+    width: 100%;
+  }
+
+  /* Mobile drawer polish. */
+  .ams-shell > div.fixed.inset-0.z-50 > div.relative {
+    width: min(320px, 88vw);
+    max-width: 88vw;
+    box-shadow: 14px 0 48px rgba(0,0,0,.48);
+    border-right-color: rgba(255,255,255,.09);
+  }
+
+  .ams-shell > div.fixed.inset-0.z-50 .custom-scrollbar {
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+  }
+
+  .ams-shell > div.fixed.inset-0.z-50 a {
+    min-height: 46px;
+  }
+
+  /* Keep role selector readable without making it dominate the drawer. */
+  .ams-shell > div.fixed.inset-0.z-50 select {
+    min-height: 42px;
+    font-size: 14px;
+  }
+
+  /* Reduce decorative glow on phones for performance and clarity. */
+  .ams-shell .shadow-\\[0_0_12px_rgba\\(229\\,9px\\,20px\\,0\\.35\\)\\] {
+    box-shadow: none;
+  }
+}
+
+/* Extra-small phones: prioritize content over chrome. */
+@media (max-width: 390px) {
+  .ams-shell > main > div:last-child {
+    padding: 12px;
+    padding-bottom: max(20px, env(safe-area-inset-bottom));
+  }
+
+  .ams-shell > div.md\\:hidden {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .ams-shell > div.md\\:hidden > div:first-child {
+    gap: 7px;
+  }
+
+  .ams-shell > div.md\\:hidden .font-sans.font-bold {
+    font-size: 11px;
+  }
+
+  .ams-shell > div.md\\:hidden .font-mono {
+    font-size: 8px;
+  }
+
+  .ams-shell > div.md\\:hidden > div:last-child > div:first-child {
+    display: none;
+  }
+
+  .ams-shell > div.md\\:hidden > div:last-child > button {
+    font-size: 9px;
+  }
+
+  .ams-shell .metric-card {
+    padding: 13px;
+  }
+}
+
+/* Touch devices: remove hover-lift behavior that can feel jumpy. */
+@media (hover: none) and (pointer: coarse) {
+  .ams-shell .metric-card:hover,
+  .ams-shell button:hover,
+  .ams-shell tr:hover {
+    transform: none;
+  }
+
+  .ams-shell button:active:not(:disabled) {
+    transform: scale(.98);
+  }
+}
