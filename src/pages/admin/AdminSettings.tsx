@@ -1452,6 +1452,7 @@ export const AdminSettings: React.FC = () => {
             </div>
           </div>
         </div>
+        </div>
       )}
 
       {/* TAB 6: AUDIT TRAIL */}
