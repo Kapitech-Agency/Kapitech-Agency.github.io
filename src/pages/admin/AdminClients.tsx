@@ -18,13 +18,7 @@ import {
   Flame,
   Activity
 } from 'lucide-react';
-import {
-  AgencyClient,
-  getAgencyClients,
-  saveAgencyClient,
-  deleteAgencyClient,
-  CLIENT_EVENT_NAME
-} from '../../lib/clientStore';
+import { AgencyClient } from '../../lib/clientStore';
 import { formatAmount, getActiveCurrency, CURRENCY_EVENT, CurrencyCode } from '../../lib/currency';
 import { useLanguage } from '../../lib/LanguageContext';
 import { hasAdminPermission } from '../../lib/adminAuth';
@@ -76,8 +70,6 @@ export const AdminClients: React.FC = () => {
 
   useEffect(() => {
     loadData();
-    const handleUpdate = () => { void loadData(); }
-    window.addEventListener(CLIENT_EVENT_NAME, handleUpdate);
 
     const handleCurrencyChange = (e: any) => {
       setCurrency(e.detail?.currency || getActiveCurrency());
@@ -85,7 +77,6 @@ export const AdminClients: React.FC = () => {
     window.addEventListener(CURRENCY_EVENT, handleCurrencyChange);
 
     return () => {
-      window.removeEventListener(CLIENT_EVENT_NAME, handleUpdate);
       window.removeEventListener(CURRENCY_EVENT, handleCurrencyChange);
     };
   }, []);
