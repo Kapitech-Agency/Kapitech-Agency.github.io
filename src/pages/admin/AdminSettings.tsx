@@ -166,8 +166,7 @@ export const AdminSettings: React.FC = () => {
       email: newAccEmail,
       passwordPlain: newAccPassword,
       role: newAccRole,
-      division: newAccDivision,
-      customPermissions: newAccPermissions
+      division: newAccDivision
     });
 
     if (res.success) {
