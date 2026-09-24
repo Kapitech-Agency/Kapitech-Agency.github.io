@@ -53,7 +53,7 @@ export const AdminLayout: React.FC = () => {
   );
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {\n    try { return window.localStorage.getItem('kapitech_ams_sidebar_collapsed') === '1'; } catch { return false; }\n  });\n\n  useEffect(() => {\n    try { window.localStorage.setItem('kapitech_ams_sidebar_collapsed', sidebarCollapsed ? '1' : '0'); } catch {}\n  }, [sidebarCollapsed]);
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
   const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
 
@@ -312,7 +312,7 @@ export const AdminLayout: React.FC = () => {
                 onClick={() => setSidebarCollapsed(false)}
                 aria-label="Expand sidebar"
                 title="Expand sidebar"
-                className="h-8 w-8 rounded-control bg-bg hover:bg-panel-hover text-muted hover:text-fg border border-line flex items-center justify-center transition-colors"
+                className="min-h-10 min-w-10 rounded-control bg-bg hover:bg-panel-hover text-muted hover:text-fg border border-line flex items-center justify-center transition-colors"
               >
                 <ChevronRight size={15} />
               </button>
