@@ -489,7 +489,7 @@ export const AdminProjects: React.FC = () => {
     <div className="space-y-6">
       
       {/* 1. Header & Project Actions */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[rgba(255,255,255,0.07)]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[var(--line)]">
         <div>
           <h1 className="text-2xl font-display font-bold text-white flex items-center gap-3">
             <Layers className="text-[var(--danger)]" size={24} />
@@ -535,7 +535,7 @@ export const AdminProjects: React.FC = () => {
                 className={`px-4 py-3 rounded-xl border font-sans text-left transition-all shrink-0 min-w-[220px] max-w-[280px] flex flex-col justify-between ${
                   isSelected
                     ? 'bg-[var(--panel)] border-[var(--accent)] ring-1 ring-[var(--accent)]/30 shadow-lg shadow-[var(--accent)]/10'
-                    : 'bg-[var(--panel)] border-[rgba(255,255,255,0.07)] hover:border-[#383C46] hover:bg-[var(--panel)]'
+                    : 'bg-[var(--panel)] border-[var(--line)] hover:border-[var(--line)] hover:bg-[var(--panel)]'
                 }`}
               >
                 <div className="flex items-center justify-between gap-2 mb-1.5 w-full">
@@ -545,7 +545,7 @@ export const AdminProjects: React.FC = () => {
                   }`}>
                     {proj.status}
                   </span>
-                  <span className="text-[10px] text-[#64748B] font-bold">
+                  <span className="text-[10px] text-[var(--muted)] font-bold">
                     {proj.progressPercent}%
                   </span>
                 </div>
@@ -563,7 +563,7 @@ export const AdminProjects: React.FC = () => {
 
       {/* 3. Selected Project Overview Hero Card */}
       {selectedProject && (
-        <div className="bg-[var(--panel)] border border-[rgba(255,255,255,0.07)] rounded-card p-5 space-y-4">
+        <div className="bg-[var(--panel)] border border-[var(--line)] rounded-card p-5 space-y-4">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="space-y-1 min-w-0">
               <div className="flex flex-wrap items-center gap-2">
@@ -585,7 +585,7 @@ export const AdminProjects: React.FC = () => {
                   href={selectedProject.repositoryUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-3 py-1.5 rounded-xl bg-[var(--panel)] hover:bg-[#222630] border border-[rgba(255,255,255,0.07)] text-xs font-sans text-[var(--muted)] hover:text-white transition-colors flex items-center gap-1.5"
+                  className="px-3 py-1.5 rounded-xl bg-[var(--panel)] hover:bg-[var(--panel)] border border-[var(--line)] text-xs font-sans text-[var(--muted)] hover:text-white transition-colors flex items-center gap-1.5"
                 >
                   <GitBranch size={13} className="text-[var(--danger)]" />
                   <span>Repo</span>
@@ -597,7 +597,7 @@ export const AdminProjects: React.FC = () => {
                   href={selectedProject.liveStagingUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-3 py-1.5 rounded-xl bg-[var(--panel)] hover:bg-[#222630] border border-[rgba(255,255,255,0.07)] text-xs font-sans text-emerald-400 hover:text-emerald-300 transition-colors flex items-center gap-1.5"
+                  className="px-3 py-1.5 rounded-xl bg-[var(--panel)] hover:bg-[var(--panel)] border border-[var(--line)] text-xs font-sans text-emerald-400 hover:text-emerald-300 transition-colors flex items-center gap-1.5"
                 >
                   <ExternalLink size={13} />
                   <span>Staging</span>
@@ -607,7 +607,7 @@ export const AdminProjects: React.FC = () => {
               {canManageProjects && (
                 <button
                   onClick={() => handleOpenEditProject(selectedProject)}
-                  className="p-2 rounded-xl bg-[var(--panel)] hover:bg-[#222630] text-[var(--muted)] hover:text-white border border-[rgba(255,255,255,0.07)] transition-colors"
+                  className="p-2 rounded-xl bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--muted)] hover:text-white border border-[var(--line)] transition-colors"
                   title="Edit Project Details"
                 >
                   <Edit3 size={14} />
@@ -617,7 +617,7 @@ export const AdminProjects: React.FC = () => {
               {canDeleteProjects && (
                 <button
                   onClick={() => handleDeleteProject(selectedProject.id, selectedProject.name)}
-                  className="p-2 rounded-xl bg-[var(--panel)] hover:bg-red-950/40 text-[var(--muted)] hover:text-red-400 border border-[rgba(255,255,255,0.07)] hover:border-red-500/30 transition-colors"
+                  className="p-2 rounded-xl bg-[var(--panel)] hover:bg-red-950/40 text-[var(--muted)] hover:text-red-400 border border-[var(--line)] hover:border-red-500/30 transition-colors"
                   title="Delete Project"
                 >
                   <Trash2 size={14} />
@@ -627,11 +627,11 @@ export const AdminProjects: React.FC = () => {
           </div>
 
           {/* Progress & Milestone Overview */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 pt-3 border-t border-[rgba(255,255,255,0.07)] text-xs font-sans">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 pt-3 border-t border-[var(--line)] text-xs font-sans">
             <div>
               <div className="text-[var(--muted)] mb-1 text-[11px]">Sprint Progress</div>
               <div className="flex items-center gap-2">
-                <div className="flex-1 bg-[var(--panel)] h-2 rounded-full overflow-hidden border border-[rgba(255,255,255,0.07)]">
+                <div className="flex-1 bg-[var(--panel)] h-2 rounded-full overflow-hidden border border-[var(--line)]">
                   <div
                     className="bg-[var(--accent)] h-full rounded-full transition-all duration-500"
                     style={{ width: `${selectedProject.progressPercent}%` }}
@@ -659,12 +659,12 @@ export const AdminProjects: React.FC = () => {
               <div className="text-[var(--muted)] mb-1 text-[11px]">Tech Stack</div>
               <div className="flex flex-wrap gap-1">
                 {selectedProject.techStack.slice(0, 3).map((tech, i) => (
-                  <span key={i} className="text-[10px] px-1.5 py-0.5 rounded bg-[var(--panel)] border border-[rgba(255,255,255,0.07)] text-[#D0D4DC]">
+                  <span key={i} className="text-[10px] px-1.5 py-0.5 rounded bg-[var(--panel)] border border-[var(--line)] text-[var(--text)]">
                     {tech}
                   </span>
                 ))}
                 {selectedProject.techStack.length > 3 && (
-                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-[var(--panel)] border border-[rgba(255,255,255,0.07)] text-[#64748B]">
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-[var(--panel)] border border-[var(--line)] text-[var(--muted)]">
                     +{selectedProject.techStack.length - 3}
                   </span>
                 )}
@@ -674,7 +674,7 @@ export const AdminProjects: React.FC = () => {
 
           {/* Collapsible Milestones list */}
           {selectedProject.milestones && selectedProject.milestones.length > 0 && (
-            <div className="pt-3 border-t border-[rgba(255,255,255,0.07)]">
+            <div className="pt-3 border-t border-[var(--line)]">
               <div className="text-[11px] font-sans text-[var(--muted)] normal-case tracking-normal mb-2 font-semibold flex items-center justify-between">
                 <span>Milestones & Deliverables ({selectedProject.milestones.filter(m => m.completed).length}/{selectedProject.milestones.length})</span>
               </div>
@@ -686,19 +686,19 @@ export const AdminProjects: React.FC = () => {
                     className={`p-2.5 rounded-xl border text-xs font-sans flex items-start gap-2 cursor-pointer transition-all ${
                       ms.completed
                         ? 'bg-emerald-950/20 border-emerald-500/30 text-emerald-300'
-                        : 'bg-[var(--panel)] border-[rgba(255,255,255,0.07)] text-[var(--muted)] hover:text-white'
+                        : 'bg-[var(--panel)] border-[var(--line)] text-[var(--muted)] hover:text-white'
                     }`}
                   >
                     {ms.completed ? (
                       <CheckCircle2 size={15} className="text-emerald-400 shrink-0 mt-0.5" />
                     ) : (
-                      <Square size={15} className="text-[#64748B] shrink-0 mt-0.5" />
+                      <Square size={15} className="text-[var(--muted)] shrink-0 mt-0.5" />
                     )}
                     <div className="min-w-0">
                       <div className={`truncate font-semibold ${ms.completed ? 'line-through text-emerald-400/70' : 'text-white'}`}>
                         {ms.title}
                       </div>
-                      <div className="text-[10px] text-[#64748B] mt-0.5">Due {ms.dueDate}</div>
+                      <div className="text-[10px] text-[var(--muted)] mt-0.5">Due {ms.dueDate}</div>
                     </div>
                   </div>
                 ))}
@@ -711,7 +711,7 @@ export const AdminProjects: React.FC = () => {
       {/* 4. Interactive Task Execution Kanban Board */}
       {selectedProject && (
         <div className="space-y-4">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-3 border-b border-[rgba(255,255,255,0.07)]">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-3 border-b border-[var(--line)]">
             <div>
               <h3 className="text-base font-display font-bold text-white flex items-center gap-2">
                 <ListTodo className="text-[var(--danger)]" size={18} />
@@ -733,7 +733,7 @@ export const AdminProjects: React.FC = () => {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder={language === 'id' ? 'Cari tugas sprint...' : 'Filter sprint tasks...'}
-                  className="w-full pl-8 pr-3 py-2 bg-[var(--panel)] border border-[rgba(255,255,255,0.08)] rounded-xl text-xs text-white focus:outline-none focus:border-[var(--accent)] placeholder:text-[#64748B] font-sans h-10 min-h-[40px]"
+                  className="w-full pl-8 pr-3 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-xs text-white focus:outline-none focus:border-[var(--accent)] placeholder:text-[var(--muted)] font-sans h-10 min-h-[40px]"
                 />
               </div>
 
@@ -779,16 +779,16 @@ export const AdminProjects: React.FC = () => {
                   className={`w-[290px] sm:w-[320px] shrink-0 bg-[var(--panel)] border rounded-card p-3.5 flex flex-col min-h-[440px] transition-all ${
                     isOver
                       ? 'border-[var(--accent)] ring-2 ring-[var(--accent)]/30 bg-[var(--accent)]/5'
-                      : 'border-[rgba(255,255,255,0.07)]'
+                      : 'border-[var(--line)]'
                   }`}
                 >
                   {/* Column Header */}
-                  <div className="flex items-center justify-between pb-3 mb-3 border-b border-[rgba(255,255,255,0.07)] select-none">
+                  <div className="flex items-center justify-between pb-3 mb-3 border-b border-[var(--line)] select-none">
                     <div className="flex items-center gap-2">
                       <div className={`w-2.5 h-2.5 rounded-full ${col.dotColor}`} />
                       <span className="text-xs font-sans font-bold text-white normal-case">{col.label}</span>
                     </div>
-                    <span className="px-2 py-0.5 rounded-full bg-[var(--panel)] text-[var(--muted)] text-[10px] font-sans font-bold border border-[rgba(255,255,255,0.07)]">
+                    <span className="px-2 py-0.5 rounded-full bg-[var(--panel)] text-[var(--muted)] text-[10px] font-sans font-bold border border-[var(--line)]">
                       {colTasks.length}
                     </span>
                   </div>
@@ -796,7 +796,7 @@ export const AdminProjects: React.FC = () => {
                   {/* Task Cards List */}
                   <div className="space-y-3 flex-1 overflow-y-auto max-h-[560px] pr-1 scrollbar-thin">
                     {colTasks.length === 0 ? (
-                      <div className="h-36 flex flex-col items-center justify-center text-center text-[11px] font-sans text-[#64748B] border border-dashed border-[rgba(255,255,255,0.07)] rounded-xl p-4 select-none">
+                      <div className="h-36 flex flex-col items-center justify-center text-center text-[11px] font-sans text-[var(--muted)] border border-dashed border-[var(--line)] rounded-xl p-4 select-none">
                         <span>Drop tasks here</span>
                       </div>
                     ) : (
@@ -812,12 +812,12 @@ export const AdminProjects: React.FC = () => {
                             onDragStart={(e) => handleDragStart(e, task.id)}
                             onClick={() => setActiveTaskDrawer(task)}
                             className={`draggable-card task-card bg-[var(--panel)] border hover:border-[var(--accent)]/60 p-3.5 rounded-xl space-y-2.5 shadow-md transition-all cursor-pointer group relative select-none ${
-                              isDragging ? 'opacity-40 scale-95 border-[var(--accent)] border-dashed' : 'border-[rgba(255,255,255,0.07)]'
+                              isDragging ? 'opacity-40 scale-95 border-[var(--accent)] border-dashed' : 'border-[var(--line)]'
                             }`}
                           >
                             {/* Drag Handle & Priority */}
                             <div className="flex items-center justify-between gap-2">
-                              <div className="flex items-center gap-1.5 text-[#64748B] group-hover:text-[var(--muted)] transition-colors cursor-grab" data-drag-handle>
+                              <div className="flex items-center gap-1.5 text-[var(--muted)] group-hover:text-[var(--muted)] transition-colors cursor-grab" data-drag-handle>
                                 <GripVertical size={14} />
                                 {getPriorityBadge(task.priority)}
                               </div>
@@ -827,7 +827,7 @@ export const AdminProjects: React.FC = () => {
                                   e.stopPropagation();
                                   handleDeleteTask(task.id);
                                 }}
-                                className="text-[#64748B] hover:text-rose-400 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-rose-950/30"
+                                className="text-[var(--muted)] hover:text-rose-400 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-rose-950/30"
                                 title="Delete task"
                               >
                                 <Trash2 size={12} />
@@ -848,7 +848,7 @@ export const AdminProjects: React.FC = () => {
 
                             {/* Subtasks Progress Bar & Checklist */}
                             {totalSubs > 0 && (
-                              <div className="space-y-1.5 pt-1.5 border-t border-[rgba(255,255,255,0.07)]/80">
+                              <div className="space-y-1.5 pt-1.5 border-t border-[var(--line)]/80">
                                 <div className="flex items-center justify-between text-[10px] font-sans text-[var(--muted)]">
                                   <span className="flex items-center gap-1">
                                     <CheckSquare size={11} className="text-[var(--danger)]" />
@@ -856,7 +856,7 @@ export const AdminProjects: React.FC = () => {
                                   </span>
                                   <span className="font-bold text-white">{completedSubs}/{totalSubs}</span>
                                 </div>
-                                <div className="w-full bg-[#090A0F] h-1.5 rounded-full overflow-hidden border border-[rgba(255,255,255,0.07)]">
+                                <div className="w-full bg-[var(--bg)] h-1.5 rounded-full overflow-hidden border border-[var(--line)]">
                                   <div
                                     className="bg-emerald-400 h-full rounded-full transition-all duration-300"
                                     style={{ width: `${(completedSubs / totalSubs) * 100}%` }}
@@ -866,9 +866,9 @@ export const AdminProjects: React.FC = () => {
                             )}
 
                             {/* Footer: Assignee & Due Date Notice */}
-                            <div className="flex items-center justify-between pt-2 border-t border-[rgba(255,255,255,0.07)] text-[10px] font-sans">
+                            <div className="flex items-center justify-between pt-2 border-t border-[var(--line)] text-[10px] font-sans">
                               <span className="text-[var(--muted)] flex items-center gap-1.5 truncate max-w-[140px]">
-                                <div className="w-4 h-4 rounded-full bg-[#20242D] border border-white/10 flex items-center justify-center text-[9px] text-white font-bold">
+                                <div className="w-4 h-4 rounded-full bg-[var(--panel)] border border-white/10 flex items-center justify-center text-[9px] text-white font-bold">
                                   {task.assignedTo.charAt(0)}
                                 </div>
                                 <span className="truncate">{task.assignedTo}</span>
@@ -900,16 +900,16 @@ export const AdminProjects: React.FC = () => {
             onClick={() => setActiveTaskDrawer(null)}
           />
 
-          <div className="relative ml-auto w-full sm:max-w-lg bg-[var(--panel)] border-l-0 sm:border-l border-[rgba(255,255,255,0.07)] h-full flex flex-col justify-between z-10 shadow-none overflow-hidden animate-in slide-in-from-right duration-200 font-sans text-xs">
+          <div className="relative ml-auto w-full sm:max-w-lg bg-[var(--panel)] border-l-0 sm:border-l border-[var(--line)] h-full flex flex-col justify-between z-10 shadow-none overflow-hidden animate-in slide-in-from-right duration-200 font-sans text-xs">
             {/* Sticky Drawer Header */}
-            <div className="sticky top-0 z-20 bg-[var(--panel)]/95  px-5 sm:px-6 py-4 border-b border-[rgba(255,255,255,0.07)] flex items-center justify-between shrink-0">
+            <div className="sticky top-0 z-20 bg-[var(--panel)]/95  px-5 sm:px-6 py-4 border-b border-[var(--line)] flex items-center justify-between shrink-0">
               <div className="flex items-center gap-2">
                 <ListTodo className="text-[var(--danger)]" size={18} />
                 <span className="font-display font-bold text-white text-base">Task Details</span>
               </div>
               <button
                 onClick={() => setActiveTaskDrawer(null)}
-                className="w-8 h-8 rounded-lg bg-[var(--panel)] text-[var(--muted)] hover:text-white border border-[rgba(255,255,255,0.07)] flex items-center justify-center transition-colors shrink-0 ml-3"
+                className="w-8 h-8 rounded-lg bg-[var(--panel)] text-[var(--muted)] hover:text-white border border-[var(--line)] flex items-center justify-center transition-colors shrink-0 ml-3"
               >
                 <X size={16} />
               </button>
@@ -922,7 +922,7 @@ export const AdminProjects: React.FC = () => {
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   {getPriorityBadge(activeTaskDrawer.priority)}
-                  <span className="text-[11px] text-[#64748B]">
+                  <span className="text-[11px] text-[var(--muted)]">
                     Created {new Date(activeTaskDrawer.createdAt).toLocaleDateString()}
                   </span>
                 </div>
@@ -945,7 +945,7 @@ export const AdminProjects: React.FC = () => {
                       className={`px-2.5 py-1.5 rounded-xl border text-[11px] transition-all font-bold ${
                         activeTaskDrawer.status === col.id
                           ? 'bg-[var(--accent)] text-white border-[var(--accent)] shadow-sm'
-                          : 'bg-[var(--panel)] text-[var(--muted)] border-[rgba(255,255,255,0.07)] hover:text-white'
+                          : 'bg-[var(--panel)] text-[var(--muted)] border-[var(--line)] hover:text-white'
                       }`}
                     >
                       {col.label}
@@ -955,16 +955,16 @@ export const AdminProjects: React.FC = () => {
               </div>
 
               {/* Assignee & Due Date Grid */}
-              <div className="grid grid-cols-2 gap-3 p-3 rounded-xl bg-[var(--panel)] border border-[rgba(255,255,255,0.07)]">
+              <div className="grid grid-cols-2 gap-3 p-3 rounded-xl bg-[var(--panel)] border border-[var(--line)]">
                 <div>
-                  <div className="text-[10px] text-[#64748B] normal-case font-bold mb-1">Assignee</div>
+                  <div className="text-[10px] text-[var(--muted)] normal-case font-bold mb-1">Assignee</div>
                   <div className="text-white font-bold flex items-center gap-1.5">
                     <User size={13} className="text-[var(--danger)]" />
                     <span>{activeTaskDrawer.assignedTo}</span>
                   </div>
                 </div>
                 <div>
-                  <div className="text-[10px] text-[#64748B] normal-case font-bold mb-1">Due Date</div>
+                  <div className="text-[10px] text-[var(--muted)] normal-case font-bold mb-1">Due Date</div>
                   <div className="text-white font-bold flex items-center gap-1.5">
                     <Calendar size={13} className="text-emerald-400" />
                     <span>{activeTaskDrawer.dueDate}</span>
@@ -975,7 +975,7 @@ export const AdminProjects: React.FC = () => {
               {/* Description */}
               <div className="space-y-1.5">
                 <label className="text-[11px] text-[var(--muted)] normal-case tracking-normal font-semibold">Description & Acceptance Criteria</label>
-                <div className="p-3.5 rounded-xl bg-[var(--panel)] border border-[rgba(255,255,255,0.07)] text-zinc-300 text-xs leading-relaxed">
+                <div className="p-3.5 rounded-xl bg-[var(--panel)] border border-[var(--line)] text-zinc-300 text-xs leading-relaxed">
                   {activeTaskDrawer.description || 'No detailed description provided.'}
                 </div>
               </div>
@@ -994,7 +994,7 @@ export const AdminProjects: React.FC = () => {
                   {activeTaskDrawer.subtasks?.map((st) => (
                     <div
                       key={st.id}
-                      className="flex items-center justify-between p-2.5 rounded-xl bg-[var(--panel)] border border-[rgba(255,255,255,0.07)] hover:border-[#383C46] transition-colors"
+                      className="flex items-center justify-between p-2.5 rounded-xl bg-[var(--panel)] border border-[var(--line)] hover:border-[var(--line)] transition-colors"
                     >
                       <button
                         onClick={() => handleToggleSubtask(activeTaskDrawer.id, st.id)}
@@ -1003,15 +1003,15 @@ export const AdminProjects: React.FC = () => {
                         {st.completed ? (
                           <CheckCircle2 size={16} className="text-emerald-400 shrink-0" />
                         ) : (
-                          <Square size={16} className="text-[#64748B] shrink-0" />
+                          <Square size={16} className="text-[var(--muted)] shrink-0" />
                         )}
-                        <span className={`text-xs ${st.completed ? 'line-through text-[#64748B]' : 'text-white'}`}>
+                        <span className={`text-xs ${st.completed ? 'line-through text-[var(--muted)]' : 'text-white'}`}>
                           {st.title}
                         </span>
                       </button>
                       <button
                         onClick={() => handleDeleteSubtaskInDrawer(st.id)}
-                        className="text-[#64748B] hover:text-rose-400 p-1"
+                        className="text-[var(--muted)] hover:text-rose-400 p-1"
                       >
                         <Trash2 size={12} />
                       </button>
@@ -1025,7 +1025,7 @@ export const AdminProjects: React.FC = () => {
                       value={newSubtaskTitle}
                       onChange={(e) => setNewSubtaskTitle(e.target.value)}
                       placeholder="Add subtask item and press enter..."
-                      className="flex-1 px-3 py-2 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-xs text-white focus:outline-none focus:border-[var(--accent)] font-sans"
+                      className="flex-1 px-3 py-2 bg-[var(--bg)] border border-[var(--line)] rounded-xl text-xs text-white focus:outline-none focus:border-[var(--accent)] font-sans"
                     />
                     <button
                       type="submit"
@@ -1040,7 +1040,7 @@ export const AdminProjects: React.FC = () => {
             </div>
 
             {/* Sticky Drawer Footer */}
-            <div className="sticky bottom-0 z-20 bg-[var(--panel)]/95  px-5 sm:px-6 py-3.5 border-t border-[rgba(255,255,255,0.07)] flex items-center justify-between shrink-0">
+            <div className="sticky bottom-0 z-20 bg-[var(--panel)]/95  px-5 sm:px-6 py-3.5 border-t border-[var(--line)] flex items-center justify-between shrink-0">
               <button
                 onClick={() => handleDeleteTask(activeTaskDrawer.id)}
                 className="h-10 px-3 min-h-[40px] rounded-xl bg-red-950/40 text-red-300 border border-red-500/30 hover:bg-red-950/60 transition-colors flex items-center gap-1.5"
@@ -1051,7 +1051,7 @@ export const AdminProjects: React.FC = () => {
 
               <button
                 onClick={() => setActiveTaskDrawer(null)}
-                className="h-10 px-4 min-h-[40px] rounded-xl bg-[var(--panel)] text-white border border-[rgba(255,255,255,0.07)] hover:bg-[#20242D] transition-colors"
+                className="h-10 px-4 min-h-[40px] rounded-xl bg-[var(--panel)] text-white border border-[var(--line)] hover:bg-[var(--panel)] transition-colors"
               >
                 Close
               </button>
@@ -1065,16 +1065,16 @@ export const AdminProjects: React.FC = () => {
       {/* ------------------------------------------------------------- */}
       {isProjectModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/80  flex items-center justify-center p-0 sm:p-4 overflow-y-auto">
-          <div className="bg-[var(--panel)] border-0 sm:border sm:border-[rgba(255,255,255,0.07)] rounded-none sm:rounded-card w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-2xl shadow-none flex flex-col overflow-hidden animate-in zoom-in-95 duration-150">
+          <div className="bg-[var(--panel)] border-0 sm:border sm:border-[var(--line)] rounded-none sm:rounded-card w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-2xl shadow-none flex flex-col overflow-hidden animate-in zoom-in-95 duration-150">
             {/* Sticky Header */}
-            <div className="sticky top-0 z-20 bg-[var(--panel)]/95  px-5 sm:px-6 py-4 border-b border-[rgba(255,255,255,0.07)] flex items-center justify-between shrink-0">
+            <div className="sticky top-0 z-20 bg-[var(--panel)]/95  px-5 sm:px-6 py-4 border-b border-[var(--line)] flex items-center justify-between shrink-0">
               <h3 className="font-display font-bold text-white text-base sm:text-lg flex items-center gap-2">
                 <Layers className="text-[var(--danger)]" size={20} />
                 <span>{editingProject ? 'Edit Project' : 'Create New Agency Project'}</span>
               </h3>
               <button 
                 onClick={() => setIsProjectModalOpen(false)} 
-                className="w-8 h-8 rounded-lg bg-[#090A0F] text-[var(--muted)] hover:text-white border border-[rgba(255,255,255,0.07)] flex items-center justify-center transition-colors shrink-0 ml-3"
+                className="w-8 h-8 rounded-lg bg-[var(--bg)] text-[var(--muted)] hover:text-white border border-[var(--line)] flex items-center justify-center transition-colors shrink-0 ml-3"
               >
                 <X size={16} />
               </button>
@@ -1091,7 +1091,7 @@ export const AdminProjects: React.FC = () => {
                     onChange={(e) => setProjName(e.target.value)}
                     required
                     placeholder="e.g. Lumina Luxury Real Estate Headless Web Platform"
-                    className="w-full px-3.5 py-2.5 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
+                    className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
                   />
                 </div>
 
@@ -1103,7 +1103,7 @@ export const AdminProjects: React.FC = () => {
                       value={clientName}
                       onChange={(e) => setClientName(e.target.value)}
                       placeholder="e.g. Marcus Thorne"
-                      className="w-full px-3.5 py-2.5 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
+                      className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
                     />
                   </div>
                   <div>
@@ -1114,7 +1114,7 @@ export const AdminProjects: React.FC = () => {
                       onChange={(e) => setClientCompany(e.target.value)}
                       required
                       placeholder="e.g. Lumina Real Estate Global"
-                      className="w-full px-3.5 py-2.5 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
+                      className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
                     />
                   </div>
                 </div>
@@ -1126,7 +1126,7 @@ export const AdminProjects: React.FC = () => {
                       value={serviceCategory}
                       required
                       onChange={(e) => setServiceCategory(e.target.value)}
-                      className="w-full px-3.5 py-2.5 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
+                      className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
                     >
                       <option value="" disabled>Select service category</option>
                       <option value="Web Development">Web Development</option>
@@ -1143,7 +1143,7 @@ export const AdminProjects: React.FC = () => {
                       type="number"
                       value={budget}
                       onChange={(e) => setBudget(Number(e.target.value))}
-                      className="w-full px-3.5 py-2.5 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
+                      className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
                     />
                   </div>
 
@@ -1152,7 +1152,7 @@ export const AdminProjects: React.FC = () => {
                     <select
                       value={projStatus}
                       onChange={(e) => setProjStatus(e.target.value as ProjectStatus)}
-                      className="w-full px-3.5 py-2.5 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
+                      className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
                     >
                       <option value="planning">Planning</option>
                       <option value="in_progress">In Progress</option>
@@ -1170,7 +1170,7 @@ export const AdminProjects: React.FC = () => {
                       type="date"
                       value={startDate}
                       onChange={(e) => setStartDate(e.target.value)}
-                      className="w-full px-3.5 py-2.5 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
+                      className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
                     />
                   </div>
                   <div>
@@ -1179,7 +1179,7 @@ export const AdminProjects: React.FC = () => {
                       type="date"
                       value={targetEndDate}
                       onChange={(e) => setTargetEndDate(e.target.value)}
-                      className="w-full px-3.5 py-2.5 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
+                      className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
                     />
                   </div>
                 </div>
@@ -1191,7 +1191,7 @@ export const AdminProjects: React.FC = () => {
                     value={techStackInput}
                     onChange={(e) => setTechStackInput(e.target.value)}
                     placeholder="e.g. Next.js 14, TypeScript, Tailwind CSS, PostgreSQL"
-                    className="w-full px-3.5 py-2.5 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
+                    className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
                   />
                 </div>
 
@@ -1203,7 +1203,7 @@ export const AdminProjects: React.FC = () => {
                       value={repoUrl}
                       onChange={(e) => setRepoUrl(e.target.value)}
                       placeholder="https://github.com/kapitech-agency/..."
-                      className="w-full px-3.5 py-2.5 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
+                      className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
                     />
                   </div>
                   <div>
@@ -1213,18 +1213,18 @@ export const AdminProjects: React.FC = () => {
                       value={stagingUrl}
                       onChange={(e) => setStagingUrl(e.target.value)}
                       placeholder="https://staging.app.kapitech.id"
-                      className="w-full px-3.5 py-2.5 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
+                      className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
                     />
                   </div>
                 </div>
               </div>
 
               {/* Sticky Footer */}
-              <div className="sticky bottom-0 z-20 bg-[var(--panel)]/95  px-5 sm:px-6 py-3.5 border-t border-[rgba(255,255,255,0.07)] flex items-center justify-end gap-2.5 shrink-0">
+              <div className="sticky bottom-0 z-20 bg-[var(--panel)]/95  px-5 sm:px-6 py-3.5 border-t border-[var(--line)] flex items-center justify-end gap-2.5 shrink-0">
                 <button
                   type="button"
                   onClick={() => setIsProjectModalOpen(false)}
-                  className="h-10 px-4 min-h-[40px] rounded-xl bg-[#090A0F] text-[var(--muted)] hover:text-white border border-[rgba(255,255,255,0.07)] text-xs font-sans font-medium transition-colors"
+                  className="h-10 px-4 min-h-[40px] rounded-xl bg-[var(--bg)] text-[var(--muted)] hover:text-white border border-[var(--line)] text-xs font-sans font-medium transition-colors"
                 >
                   Cancel
                 </button>
@@ -1245,16 +1245,16 @@ export const AdminProjects: React.FC = () => {
       {/* ------------------------------------------------------------- */}
       {isTaskModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/80  flex items-center justify-center p-0 sm:p-4 overflow-y-auto">
-          <div className="bg-[var(--panel)] border-0 sm:border sm:border-[rgba(255,255,255,0.07)] rounded-none sm:rounded-card w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-lg shadow-none flex flex-col overflow-hidden animate-in zoom-in-95 duration-150">
+          <div className="bg-[var(--panel)] border-0 sm:border sm:border-[var(--line)] rounded-none sm:rounded-card w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-lg shadow-none flex flex-col overflow-hidden animate-in zoom-in-95 duration-150">
             {/* Sticky Header */}
-            <div className="sticky top-0 z-20 bg-[var(--panel)]/95  px-5 sm:px-6 py-4 border-b border-[rgba(255,255,255,0.07)] flex items-center justify-between shrink-0">
+            <div className="sticky top-0 z-20 bg-[var(--panel)]/95  px-5 sm:px-6 py-4 border-b border-[var(--line)] flex items-center justify-between shrink-0">
               <h3 className="font-display font-bold text-white text-base flex items-center gap-2">
                 <ListTodo className="text-[var(--danger)]" size={18} />
                 <span>Add Task to Sprint</span>
               </h3>
               <button 
                 onClick={() => setIsTaskModalOpen(false)} 
-                className="w-8 h-8 rounded-lg bg-[#090A0F] text-[var(--muted)] hover:text-white border border-[rgba(255,255,255,0.07)] flex items-center justify-center transition-colors shrink-0 ml-3"
+                className="w-8 h-8 rounded-lg bg-[var(--bg)] text-[var(--muted)] hover:text-white border border-[var(--line)] flex items-center justify-center transition-colors shrink-0 ml-3"
               >
                 <X size={16} />
               </button>
@@ -1271,7 +1271,7 @@ export const AdminProjects: React.FC = () => {
                     value={taskTitle}
                     onChange={(e) => setTaskTitle(e.target.value)}
                     placeholder="e.g. Implement Mapbox Vector Tile Cluster Loader"
-                    className="w-full px-3.5 py-2.5 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
+                    className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
                   />
                 </div>
 
@@ -1282,7 +1282,7 @@ export const AdminProjects: React.FC = () => {
                     value={taskDesc}
                     onChange={(e) => setTaskDesc(e.target.value)}
                     placeholder="Acceptance criteria and technical notes..."
-                    className="w-full px-3.5 py-2 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)] font-sans"
+                    className="w-full px-3.5 py-2 bg-[var(--bg)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)] font-sans"
                   />
                 </div>
 
@@ -1292,7 +1292,7 @@ export const AdminProjects: React.FC = () => {
                     <select
                       value={taskPriority}
                       onChange={(e) => setTaskPriority(e.target.value as TaskPriority)}
-                      className="w-full px-3.5 py-2.5 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
+                      className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
                     >
                       <option value="low">Low</option>
                       <option value="medium">Medium</option>
@@ -1307,7 +1307,7 @@ export const AdminProjects: React.FC = () => {
                       value={taskAssignee}
                       onChange={(e) => setTaskAssignee(e.target.value)}
                       required
-                      className="w-full px-3.5 py-2.5 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
+                      className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
                     >
                       {taskAssignees.length === 0 ? (
                         <option value="">No active assignees available</option>
@@ -1326,7 +1326,7 @@ export const AdminProjects: React.FC = () => {
                     <select
                       value={taskStatus}
                       onChange={(e) => setTaskStatus(e.target.value as TaskStatus)}
-                      className="w-full px-3.5 py-2.5 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
+                      className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
                     >
                       <option value="todo">To Do</option>
                       <option value="in_progress">In Progress</option>
@@ -1341,7 +1341,7 @@ export const AdminProjects: React.FC = () => {
                       type="date"
                       value={taskDueDate}
                       onChange={(e) => setTaskDueDate(e.target.value)}
-                      className="w-full px-3.5 py-2.5 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
+                      className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
                     />
                   </div>
                 </div>
@@ -1353,17 +1353,17 @@ export const AdminProjects: React.FC = () => {
                     value={initialSubtasksInput}
                     onChange={(e) => setInitialSubtasksInput(e.target.value)}
                     placeholder="Setup API endpoints&#10;Add unit tests"
-                    className="w-full px-3.5 py-2 bg-[#090A0F] border border-[rgba(255,255,255,0.07)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
+                    className="w-full px-3.5 py-2 bg-[var(--bg)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
                   />
                 </div>
               </div>
 
               {/* Sticky Footer */}
-              <div className="sticky bottom-0 z-20 bg-[var(--panel)]/95  px-5 sm:px-6 py-3.5 border-t border-[rgba(255,255,255,0.07)] flex items-center justify-end gap-2.5 shrink-0">
+              <div className="sticky bottom-0 z-20 bg-[var(--panel)]/95  px-5 sm:px-6 py-3.5 border-t border-[var(--line)] flex items-center justify-end gap-2.5 shrink-0">
                 <button
                   type="button"
                   onClick={() => setIsTaskModalOpen(false)}
-                  className="h-10 px-4 min-h-[40px] rounded-xl bg-[#090A0F] text-[var(--muted)] hover:text-white border border-[rgba(255,255,255,0.07)] text-xs font-sans font-medium transition-colors"
+                  className="h-10 px-4 min-h-[40px] rounded-xl bg-[var(--bg)] text-[var(--muted)] hover:text-white border border-[var(--line)] text-xs font-sans font-medium transition-colors"
                 >
                   Cancel
                 </button>
