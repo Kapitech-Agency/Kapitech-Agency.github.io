@@ -318,7 +318,7 @@ export const AdminLayout: React.FC = () => {
               </Link>
               <button
                 onClick={() => setSidebarCollapsed(true)}
-                className="h-10 w-10 min-h-10 min-w-10 rounded-control bg-bg hover:bg-panel text-muted hover:text-fg border border-line transition-colors flex items-center justify-center shrink-0"
+                className="ams-sidebar-toggle h-10 w-10 min-h-10 min-w-10 rounded-control bg-bg hover:bg-panel text-muted hover:text-fg border border-line transition-colors flex items-center justify-center shrink-0"
                 title="Collapse sidebar"
               >
                 <ChevronLeft size={15} />
@@ -330,7 +330,7 @@ export const AdminLayout: React.FC = () => {
                 onClick={() => setSidebarCollapsed(false)}
                 aria-label="Expand sidebar"
                 title="Expand sidebar"
-                className="h-10 w-10 min-h-10 min-w-10 rounded-control bg-bg hover:bg-panel-hover text-muted hover:text-fg border border-line flex items-center justify-center transition-colors"
+                className="ams-sidebar-toggle h-10 w-10 min-h-10 min-w-10 rounded-control bg-bg hover:bg-panel-hover text-muted hover:text-fg border border-line flex items-center justify-center transition-colors"
               >
                 <ChevronRight size={15} />
               </button>
