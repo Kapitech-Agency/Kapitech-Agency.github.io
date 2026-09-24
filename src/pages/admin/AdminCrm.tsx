@@ -36,7 +36,6 @@ import { CrmLead, CrmStage, CrmPriority, CrmServicePillar, CrmSource, CRM_STAGE_
 import { useLanguage } from '../../lib/LanguageContext';
 import { useDragToScroll } from '../../lib/useDragToScroll';
 import { ScrollShadowContainer } from '../../components/ui/ScrollShadowContainer';
-import { CustomSelect } from '../../components/ui/CustomSelect';
 import { formatAmount, getActiveCurrency, setGlobalCurrency, CurrencyCode, CURRENCY_EVENT } from '../../lib/currency';
 import { hasAdminPermission } from '../../lib/adminAuth';
 import { api } from '../../lib/apiClient';
