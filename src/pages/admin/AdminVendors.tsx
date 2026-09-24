@@ -263,12 +263,15 @@ export const AdminVendors: React.FC = () => {
           return;
         }
         setVendors(prev => prev.filter(item => item.id !== id));
-      if (selectedVendor?.id === id) {
-        setIsDrawerOpen(false);
-        setSelectedVendor(null);
-      }
+        if (selectedVendor?.id === id) {
+          setIsDrawerOpen(false);
+          setSelectedVendor(null);
+        }
         setStatusMessage(language === 'id' ? 'Vendor telah dihapus.' : 'Vendor deleted successfully.');
         setTimeout(() => setStatusMessage(null), 3000);
+      }).catch(() => {
+        setStatusMessage(language === 'id' ? 'Vendor gagal dihapus.' : 'Failed to delete vendor.');
+      });
     }
   };
 
