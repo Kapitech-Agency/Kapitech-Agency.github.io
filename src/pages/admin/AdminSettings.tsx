@@ -485,7 +485,7 @@ export const AdminSettings: React.FC = () => {
               <UserCheck size={20} />
             </div>
             <div>
-              <h2 className="text-base font-semibold font-display text-[var(--text)]">
+              <h2 className="text-base font-semibold font-sans text-[var(--text)]">
                 {language === 'id' ? 'Profil & Identitas Master' : 'Master Profile & Identity'}
               </h2>
               <p className="text-xs text-[var(--muted)] font-sans">
@@ -587,7 +587,7 @@ export const AdminSettings: React.FC = () => {
               <Palette size={20} />
             </div>
             <div>
-              <h2 className="text-base font-semibold font-display text-[var(--text)]">
+              <h2 className="text-base font-semibold font-sans text-[var(--text)]">
                 {language === 'id' ? 'Identitas Brand, Metadata & Notifikasi' : 'Brand Identity, Metadata & Notification Rules'}
               </h2>
               <p className="text-xs text-[var(--muted)] font-sans">
@@ -722,7 +722,7 @@ export const AdminSettings: React.FC = () => {
                   <Users size={20} />
                 </div>
                 <div>
-                  <h2 className="text-base font-semibold font-display text-[var(--text)]">
+                  <h2 className="text-base font-semibold font-sans text-[var(--text)]">
                     {language === 'id' ? 'Manajemen Akun Stakeholder & Teknisi' : 'Stakeholder & Technical Accounts'}
                   </h2>
                   <p className="text-xs text-[var(--muted)] font-sans">
@@ -867,7 +867,7 @@ export const AdminSettings: React.FC = () => {
                 <Layers size={20} />
               </div>
               <div>
-                <h2 className="text-base font-semibold font-display text-[var(--text)]">
+                <h2 className="text-base font-semibold font-sans text-[var(--text)]">
                   {language === 'id' ? 'Standar Hirarki Hak Akses Stakeholder Kapitech' : 'Kapitech Stakeholder Access Standards'}
                 </h2>
                 <p className="text-xs text-[var(--muted)] font-sans">
@@ -949,7 +949,7 @@ export const AdminSettings: React.FC = () => {
                   <UserPlus size={18} />
                 </div>
                 <div>
-                  <h3 className="text-base font-semibold font-display text-[var(--text)]">
+                  <h3 className="text-base font-semibold font-sans text-[var(--text)]">
                     {language === 'id' ? 'Tambah Akun Stakeholder / Teknisi' : 'Add Stakeholder / Technical Account'}
                   </h3>
                   <p className="text-[11px] font-sans text-[var(--muted)]">
@@ -1185,7 +1185,7 @@ export const AdminSettings: React.FC = () => {
                   <Sliders size={18} />
                 </div>
                 <div>
-                  <h3 className="text-base font-semibold font-display text-[var(--text)]">
+                  <h3 className="text-base font-semibold font-sans text-[var(--text)]">
                     {language === 'id' ? 'Atur Hak Akses Granular' : 'Manage Granular Permissions'}
                   </h3>
                   <p className="text-[11px] font-sans text-[var(--muted)]">
@@ -1269,7 +1269,7 @@ export const AdminSettings: React.FC = () => {
               <Lock size={20} />
             </div>
             <div>
-              <h2 className="text-base font-semibold font-display text-[var(--text)]">
+              <h2 className="text-base font-semibold font-sans text-[var(--text)]">
                 {language === 'id' ? 'Kebijakan Keamanan, MFA & Password' : 'Security, MFA & Password Policy'}
               </h2>
               <p className="text-xs text-[var(--muted)] font-sans">
@@ -1400,7 +1400,7 @@ export const AdminSettings: React.FC = () => {
               <Database size={20} />
             </div>
             <div>
-              <h2 className="text-base font-semibold font-display text-[var(--text)]">
+              <h2 className="text-base font-semibold font-sans text-[var(--text)]">
                 {language === 'id' ? 'Integrasi API & Cloud' : 'API & Cloud Integrations'}
               </h2>
               <p className="text-xs text-[var(--muted)] font-sans">
@@ -1486,7 +1486,7 @@ export const AdminSettings: React.FC = () => {
           
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-[var(--line)]">
             <div>
-              <h2 className="text-base font-semibold font-display text-[var(--text)] flex items-center gap-2">
+              <h2 className="text-base font-semibold font-sans text-[var(--text)] flex items-center gap-2">
                 <ShieldCheck size={18} className="text-[var(--accent)]" />
                 <span>{language === 'id' ? 'Riwayat Audit Aktivitas & Keamanan' : 'Security & Activity Audit Trail'}</span>
               </h2>
