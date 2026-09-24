@@ -424,27 +424,27 @@ export const AdminProjects: React.FC = () => {
     switch (priority) {
       case 'urgent':
         return (
-          <span className="px-2 py-0.5 rounded bg-rose-500/20 text-rose-400 border border-rose-500/30 text-[10px] font-sans font-bold normal-case flex items-center gap-1 shadow-sm shadow-rose-500/20">
+          <span className="px-2 py-0.5 rounded bg-[var(--danger)]/10 text-[var(--danger)] border border-[var(--danger)]/30 text-[10px] font-sans font-bold normal-case flex items-center gap-1 shadow-sm shadow-rose-500/20">
             <span className="w-1.5 h-1.5 rounded-full bg-rose-400 animate-pulse" />
             Urgent
           </span>
         );
       case 'high':
         return (
-          <span className="px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 border border-amber-500/30 text-[10px] font-sans font-bold normal-case">
+          <span className="px-2 py-0.5 rounded bg-[var(--warning)]/10 text-[var(--warning)] border border-[var(--warning)]/30 text-[10px] font-sans font-bold normal-case">
             High
           </span>
         );
       case 'medium':
         return (
-          <span className="px-2 py-0.5 rounded bg-rose-500/20 text-rose-400 border border-rose-500/30 text-[10px] font-sans font-bold normal-case">
+          <span className="px-2 py-0.5 rounded bg-[var(--danger)]/10 text-[var(--danger)] border border-[var(--danger)]/30 text-[10px] font-sans font-bold normal-case">
             Medium
           </span>
         );
       case 'low':
       default:
         return (
-          <span className="px-2 py-0.5 rounded bg-zinc-500/20 text-zinc-400 border border-zinc-500/30 text-[10px] font-sans font-bold normal-case">
+          <span className="px-2 py-0.5 rounded bg-[var(--panel-hover)] text-[var(--muted)] border border-[var(--line)] text-[10px] font-sans font-bold normal-case">
             Low
           </span>
         );
@@ -463,14 +463,14 @@ export const AdminProjects: React.FC = () => {
 
     if (diffDays < 0) {
       return (
-        <span className="text-rose-400 font-bold flex items-center gap-1">
+        <span className="text-[var(--danger)] font-medium flex items-center gap-1">
           <AlertCircle size={10} />
           <span>{Math.abs(diffDays)}d overdue</span>
         </span>
       );
     } else if (diffDays === 0) {
       return (
-        <span className="text-amber-400 font-bold flex items-center gap-1">
+        <span className="text-[var(--warning)] font-medium flex items-center gap-1">
           <Clock size={10} />
           <span>Due today</span>
         </span>
@@ -491,7 +491,7 @@ export const AdminProjects: React.FC = () => {
       {/* 1. Header & Project Actions */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-6 border-b border-[var(--line)]">
         <div>
-          <h1 className="text-xl font-display font-semibold text-white flex items-center gap-3">
+          <h1 className="text-xl font-display font-semibold text-[var(--text)] flex items-center gap-3">
             <Layers className="text-[var(--danger)]" size={24} />
             <span>{t('admin.nav.projects')}</span>
           </h1>
@@ -506,7 +506,7 @@ export const AdminProjects: React.FC = () => {
           {canManageProjects && (
             <button
               onClick={handleOpenCreateProject}
-              className="h-10 px-4 rounded-xl bg-[var(--accent)] hover:bg-[var(--danger)] text-white text-xs font-sans font-bold transition-all flex items-center gap-2 shadow-lg shadow-[var(--accent)]/20 min-h-[40px]"
+              className="min-h-10 px-4 rounded-control bg-[var(--accent)] hover:bg-[var(--panel-hover)] text-[var(--text)] text-xs font-sans font-medium transition-colors flex items-center gap-2 min-h-10"
             >
               <Plus size={15} />
               <span>{language === 'id' ? 'Buat Proyek Baru' : 'New Project'}</span>
@@ -517,7 +517,7 @@ export const AdminProjects: React.FC = () => {
 
       {/* Toast Alert */}
       {statusMessage && (
-        <div className="p-3.5 rounded-xl bg-emerald-950/40 border border-emerald-500/40 text-emerald-300 text-xs font-sans flex items-center gap-2 animate-in fade-in duration-300">
+        <div className="p-3.5 rounded-card bg-[var(--success)]/10 border border-[var(--success)]/30 text-[var(--success)] text-xs font-sans flex items-center gap-2 animate-in fade-in duration-300">
           <Check size={15} />
           <span>{statusMessage}</span>
         </div>
@@ -532,7 +532,7 @@ export const AdminProjects: React.FC = () => {
               <button
                 key={proj.id}
                 onClick={() => setSelectedProjectId(proj.id)}
-                className={`px-4 py-3 rounded-xl border font-sans text-left transition-all shrink-0 min-w-[220px] max-w-[280px] flex flex-col justify-between ${
+                className={`px-4 py-3 rounded-card border font-sans text-left transition-all shrink-0 min-w-[220px] max-w-[280px] flex flex-col justify-between ${
                   isSelected
                     ? 'bg-[var(--panel)] border-[var(--accent)] ring-1 ring-[var(--accent)]/30 shadow-lg shadow-[var(--accent)]/10'
                     : 'bg-[var(--panel)] border-[var(--line)] hover:border-[var(--line)] hover:bg-[var(--panel)]'
@@ -549,7 +549,7 @@ export const AdminProjects: React.FC = () => {
                     {proj.progressPercent}%
                   </span>
                 </div>
-                <div className="font-bold text-xs text-white truncate w-full mb-0.5">
+                <div className="font-bold text-xs text-[var(--text)] truncate w-full mb-0.5">
                   {proj.name}
                 </div>
                 <div className="text-[10px] text-[var(--muted)] truncate w-full">
@@ -571,10 +571,10 @@ export const AdminProjects: React.FC = () => {
                   {selectedProject.serviceCategory}
                 </span>
                 <span className="text-xs font-sans text-[var(--muted)]">
-                  PIC: <strong className="text-white">{selectedProject.clientName}</strong> ({selectedProject.clientCompany})
+                  PIC: <strong className="text-[var(--text)]">{selectedProject.clientName}</strong> ({selectedProject.clientCompany})
                 </span>
               </div>
-              <h2 className="text-xl font-display font-bold text-white tracking-tight">
+              <h2 className="text-xl font-display font-semibold text-[var(--text)] tracking-tight">
                 {selectedProject.name}
               </h2>
             </div>
@@ -585,7 +585,7 @@ export const AdminProjects: React.FC = () => {
                   href={selectedProject.repositoryUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="min-h-10 px-3 py-1.5 rounded-control bg-[var(--panel)] hover:bg-[var(--panel)] border border-[var(--line)] text-xs font-sans text-[var(--muted)] hover:text-white transition-colors flex items-center gap-1.5"
+                  className="min-h-10 px-3 py-1.5 rounded-control bg-[var(--panel)] hover:bg-[var(--panel)] border border-[var(--line)] text-xs font-sans text-[var(--muted)] hover:text-[var(--text)] transition-colors flex items-center gap-1.5"
                 >
                   <GitBranch size={13} className="text-[var(--danger)]" />
                   <span>Repo</span>
@@ -597,7 +597,7 @@ export const AdminProjects: React.FC = () => {
                   href={selectedProject.liveStagingUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-3 py-1.5 rounded-xl bg-[var(--panel)] hover:bg-[var(--panel)] border border-[var(--line)] text-xs font-sans text-emerald-400 hover:text-emerald-300 transition-colors flex items-center gap-1.5"
+                  className="px-3 py-1.5 rounded-card bg-[var(--panel)] hover:bg-[var(--panel)] border border-[var(--line)] text-xs font-sans text-emerald-400 hover:text-emerald-300 transition-colors flex items-center gap-1.5"
                 >
                   <ExternalLink size={13} />
                   <span>Staging</span>
@@ -607,7 +607,7 @@ export const AdminProjects: React.FC = () => {
               {canManageProjects && (
                 <button
                   onClick={() => handleOpenEditProject(selectedProject)}
-                  className="p-2.5 min-h-10 min-w-10 rounded-control bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--muted)] hover:text-white border border-[var(--line)] transition-colors"
+                  className="p-2.5 min-h-10 min-w-10 rounded-control bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] transition-colors"
                   title="Edit Project Details"
                 >
                   <Edit3 size={14} />
@@ -637,7 +637,7 @@ export const AdminProjects: React.FC = () => {
                     style={{ width: `${selectedProject.progressPercent}%` }}
                   />
                 </div>
-                <span className="font-bold text-white text-xs">{selectedProject.progressPercent}%</span>
+                <span className="font-bold text-[var(--text)] text-xs">{selectedProject.progressPercent}%</span>
               </div>
             </div>
 
@@ -650,7 +650,7 @@ export const AdminProjects: React.FC = () => {
 
             <div>
               <div className="text-[var(--muted)] mb-1 text-[11px]">Timeline Target</div>
-              <div className="text-white font-bold">
+              <div className="text-[var(--text)] font-bold">
                 {selectedProject.startDate} → {selectedProject.targetEndDate}
               </div>
             </div>
@@ -683,10 +683,10 @@ export const AdminProjects: React.FC = () => {
                   <div
                     key={ms.id}
                     onClick={() => handleToggleMilestone(ms.id)}
-                    className={`p-2.5 rounded-xl border text-xs font-sans flex items-start gap-2 cursor-pointer transition-all ${
+                    className={`p-2.5 rounded-card border text-xs font-sans flex items-start gap-2 cursor-pointer transition-all ${
                       ms.completed
                         ? 'bg-emerald-950/20 border-emerald-500/30 text-emerald-300'
-                        : 'bg-[var(--panel)] border-[var(--line)] text-[var(--muted)] hover:text-white'
+                        : 'bg-[var(--panel)] border-[var(--line)] text-[var(--muted)] hover:text-[var(--text)]'
                     }`}
                   >
                     {ms.completed ? (
@@ -695,7 +695,7 @@ export const AdminProjects: React.FC = () => {
                       <Square size={15} className="text-[var(--muted)] shrink-0 mt-0.5" />
                     )}
                     <div className="min-w-0">
-                      <div className={`truncate font-semibold ${ms.completed ? 'line-through text-emerald-400/70' : 'text-white'}`}>
+                      <div className={`truncate font-semibold ${ms.completed ? 'line-through text-emerald-400/70' : 'text-[var(--text)]'}`}>
                         {ms.title}
                       </div>
                       <div className="text-[10px] text-[var(--muted)] mt-0.5">Due {ms.dueDate}</div>
@@ -713,7 +713,7 @@ export const AdminProjects: React.FC = () => {
         <div className="space-y-4">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-3 border-b border-[var(--line)]">
             <div>
-              <h3 className="text-base font-display font-bold text-white flex items-center gap-2">
+              <h3 className="text-base font-display font-semibold text-[var(--text)] flex items-center gap-2">
                 <ListTodo className="text-[var(--danger)]" size={18} />
                 <span>Task Execution Board</span>
               </h3>
@@ -733,14 +733,14 @@ export const AdminProjects: React.FC = () => {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder={language === 'id' ? 'Cari tugas sprint...' : 'Filter sprint tasks...'}
-                  className="w-full pl-8 pr-3 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-xl text-xs text-white focus:outline-none focus:border-[var(--accent)] placeholder:text-[var(--muted)] font-sans h-10 min-h-[40px]"
+                  className="w-full pl-8 pr-3 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-card text-xs text-[var(--text)] focus:outline-none focus:border-[var(--accent)] placeholder:text-[var(--muted)] font-sans h-10 min-h-10"
                 />
               </div>
 
               {canManageKanbanTasks && (
                 <button
                   onClick={() => setIsTaskModalOpen(true)}
-                  className="h-10 px-4 rounded-control bg-[var(--accent)] hover:bg-[var(--danger)] text-white text-xs font-sans font-medium transition-colors flex items-center justify-center gap-2 shrink-0 min-h-10"
+                  className="min-h-10 px-4 rounded-control bg-[var(--accent)] hover:bg-[var(--panel-hover)] text-[var(--text)] text-xs font-sans font-medium transition-colors flex items-center justify-center gap-2 shrink-0 min-h-10"
                 >
                   <Plus size={14} />
                   <span>{t('admin.proj.addTask')}</span>
@@ -786,7 +786,7 @@ export const AdminProjects: React.FC = () => {
                   <div className="flex items-center justify-between pb-3 mb-3 border-b border-[var(--line)] select-none">
                     <div className="flex items-center gap-2">
                       <div className={`w-2.5 h-2.5 rounded-full ${col.dotColor}`} />
-                      <span className="text-xs font-sans font-bold text-white normal-case">{col.label}</span>
+                      <span className="text-xs font-sans font-bold text-[var(--text)] normal-case">{col.label}</span>
                     </div>
                     <span className="px-2 py-0.5 rounded-full bg-[var(--panel)] text-[var(--muted)] text-[10px] font-sans font-bold border border-[var(--line)]">
                       {colTasks.length}
@@ -796,7 +796,7 @@ export const AdminProjects: React.FC = () => {
                   {/* Task Cards List */}
                   <div className="space-y-3 flex-1 overflow-y-auto max-h-[560px] pr-1 scrollbar-thin">
                     {colTasks.length === 0 ? (
-                      <div className="h-36 flex flex-col items-center justify-center text-center text-[11px] font-sans text-[var(--muted)] border border-dashed border-[var(--line)] rounded-xl p-4 select-none">
+                      <div className="h-36 flex flex-col items-center justify-center text-center text-[11px] font-sans text-[var(--muted)] border border-dashed border-[var(--line)] rounded-card p-4 select-none">
                         <span>Drop tasks here</span>
                       </div>
                     ) : (
@@ -811,7 +811,7 @@ export const AdminProjects: React.FC = () => {
                             draggable={canManageKanbanTasks}
                             onDragStart={(e) => handleDragStart(e, task.id)}
                             onClick={() => setActiveTaskDrawer(task)}
-                            className={`draggable-card task-card bg-[var(--panel)] border hover:border-[var(--accent)]/60 p-3.5 rounded-xl space-y-2.5 shadow-md transition-all cursor-pointer group relative select-none ${
+                            className={`draggable-card task-card bg-[var(--panel)] border hover:border-[var(--accent)]/60 p-3.5 rounded-card space-y-2.5 shadow-md transition-all cursor-pointer group relative select-none ${
                               isDragging ? 'opacity-40 scale-95 border-[var(--accent)] border-dashed' : 'border-[var(--line)]'
                             }`}
                           >
@@ -835,7 +835,7 @@ export const AdminProjects: React.FC = () => {
                             </div>
 
                             {/* Task Title */}
-                            <h4 className="font-bold text-xs text-white leading-snug group-hover:text-[var(--danger)] transition-colors">
+                            <h4 className="font-bold text-xs text-[var(--text)] leading-snug group-hover:text-[var(--danger)] transition-colors">
                               {task.title}
                             </h4>
 
@@ -854,7 +854,7 @@ export const AdminProjects: React.FC = () => {
                                     <CheckSquare size={11} className="text-[var(--danger)]" />
                                     <span>Subtasks</span>
                                   </span>
-                                  <span className="font-bold text-white">{completedSubs}/{totalSubs}</span>
+                                  <span className="font-bold text-[var(--text)]">{completedSubs}/{totalSubs}</span>
                                 </div>
                                 <div className="w-full bg-[var(--bg)] h-1.5 rounded-full overflow-hidden border border-[var(--line)]">
                                   <div
@@ -868,7 +868,7 @@ export const AdminProjects: React.FC = () => {
                             {/* Footer: Assignee & Due Date Notice */}
                             <div className="flex items-center justify-between pt-2 border-t border-[var(--line)] text-[10px] font-sans">
                               <span className="text-[var(--muted)] flex items-center gap-1.5 truncate max-w-[140px]">
-                                <div className="w-4 h-4 rounded-full bg-[var(--panel)] border border-white/10 flex items-center justify-center text-[9px] text-white font-bold">
+                                <div className="w-4 h-4 rounded-full bg-[var(--panel)] border border-white/10 flex items-center justify-center text-[9px] text-[var(--text)] font-bold">
                                   {task.assignedTo.charAt(0)}
                                 </div>
                                 <span className="truncate">{task.assignedTo}</span>
@@ -905,11 +905,11 @@ export const AdminProjects: React.FC = () => {
             <div className="sticky top-0 z-20 bg-[var(--panel)]/95  px-5 sm:px-6 py-4 border-b border-[var(--line)] flex items-center justify-between shrink-0">
               <div className="flex items-center gap-2">
                 <ListTodo className="text-[var(--danger)]" size={18} />
-                <span className="font-display font-bold text-white text-base">Task Details</span>
+                <span className="font-display font-semibold text-[var(--text)] text-base">Task Details</span>
               </div>
               <button
                 onClick={() => setActiveTaskDrawer(null)}
-                className="w-8 h-8 rounded-lg bg-[var(--panel)] text-[var(--muted)] hover:text-white border border-[var(--line)] flex items-center justify-center transition-colors shrink-0 ml-3"
+                className="w-8 h-8 rounded-lg bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] flex items-center justify-center transition-colors shrink-0 ml-3"
               >
                 <X size={16} />
               </button>
@@ -926,7 +926,7 @@ export const AdminProjects: React.FC = () => {
                     Created {new Date(activeTaskDrawer.createdAt).toLocaleDateString()}
                   </span>
                 </div>
-                <h3 className="text-lg font-bold font-display text-white">
+                <h3 className="text-lg font-bold font-display text-[var(--text)]">
                   {activeTaskDrawer.title}
                 </h3>
               </div>
@@ -942,10 +942,10 @@ export const AdminProjects: React.FC = () => {
                         void api.tasks.update(activeTaskDrawer.id, { status: col.id }).then((res) => { if (res.success) void loadData(); else showToast(res.error || 'Task status update failed.'); });
                         showToast(`Moved to ${col.label}`);
                       }}
-                      className={`px-2.5 py-1.5 rounded-xl border text-[11px] transition-all font-bold ${
+                      className={`px-2.5 py-1.5 rounded-card border text-[11px] transition-all font-bold ${
                         activeTaskDrawer.status === col.id
-                          ? 'bg-[var(--accent)] text-white border-[var(--accent)] shadow-sm'
-                          : 'bg-[var(--panel)] text-[var(--muted)] border-[var(--line)] hover:text-white'
+                          ? 'bg-[var(--accent)] text-[var(--text)] border-[var(--accent)] shadow-sm'
+                          : 'bg-[var(--panel)] text-[var(--muted)] border-[var(--line)] hover:text-[var(--text)]'
                       }`}
                     >
                       {col.label}
@@ -955,17 +955,17 @@ export const AdminProjects: React.FC = () => {
               </div>
 
               {/* Assignee & Due Date Grid */}
-              <div className="grid grid-cols-2 gap-3 p-3 rounded-xl bg-[var(--panel)] border border-[var(--line)]">
+              <div className="grid grid-cols-2 gap-3 p-3 rounded-card bg-[var(--panel)] border border-[var(--line)]">
                 <div>
                   <div className="text-[10px] text-[var(--muted)] normal-case font-bold mb-1">Assignee</div>
-                  <div className="text-white font-bold flex items-center gap-1.5">
+                  <div className="text-[var(--text)] font-bold flex items-center gap-1.5">
                     <User size={13} className="text-[var(--danger)]" />
                     <span>{activeTaskDrawer.assignedTo}</span>
                   </div>
                 </div>
                 <div>
                   <div className="text-[10px] text-[var(--muted)] normal-case font-bold mb-1">Due Date</div>
-                  <div className="text-white font-bold flex items-center gap-1.5">
+                  <div className="text-[var(--text)] font-bold flex items-center gap-1.5">
                     <Calendar size={13} className="text-emerald-400" />
                     <span>{activeTaskDrawer.dueDate}</span>
                   </div>
@@ -975,7 +975,7 @@ export const AdminProjects: React.FC = () => {
               {/* Description */}
               <div className="space-y-1.5">
                 <label className="text-[11px] text-[var(--muted)] normal-case tracking-normal font-semibold">Description & Acceptance Criteria</label>
-                <div className="p-3.5 rounded-xl bg-[var(--panel)] border border-[var(--line)] text-zinc-300 text-xs leading-relaxed">
+                <div className="p-3.5 rounded-card bg-[var(--panel)] border border-[var(--line)] text-zinc-300 text-xs leading-relaxed">
                   {activeTaskDrawer.description || 'No detailed description provided.'}
                 </div>
               </div>
@@ -994,7 +994,7 @@ export const AdminProjects: React.FC = () => {
                   {activeTaskDrawer.subtasks?.map((st) => (
                     <div
                       key={st.id}
-                      className="flex items-center justify-between p-2.5 rounded-xl bg-[var(--panel)] border border-[var(--line)] hover:border-[var(--line)] transition-colors"
+                      className="flex items-center justify-between p-2.5 rounded-card bg-[var(--panel)] border border-[var(--line)] hover:border-[var(--line)] transition-colors"
                     >
                       <button
                         onClick={() => handleToggleSubtask(activeTaskDrawer.id, st.id)}
@@ -1005,7 +1005,7 @@ export const AdminProjects: React.FC = () => {
                         ) : (
                           <Square size={16} className="text-[var(--muted)] shrink-0" />
                         )}
-                        <span className={`text-xs ${st.completed ? 'line-through text-[var(--muted)]' : 'text-white'}`}>
+                        <span className={`text-xs ${st.completed ? 'line-through text-[var(--muted)]' : 'text-[var(--text)]'}`}>
                           {st.title}
                         </span>
                       </button>
@@ -1025,12 +1025,12 @@ export const AdminProjects: React.FC = () => {
                       value={newSubtaskTitle}
                       onChange={(e) => setNewSubtaskTitle(e.target.value)}
                       placeholder="Add subtask item and press enter..."
-                      className="flex-1 px-3 py-2 bg-[var(--bg)] border border-[var(--line)] rounded-xl text-xs text-white focus:outline-none focus:border-[var(--accent)] font-sans"
+                      className="flex-1 px-3 py-2 bg-[var(--bg)] border border-[var(--line)] rounded-card text-xs text-[var(--text)] focus:outline-none focus:border-[var(--accent)] font-sans"
                     />
                     <button
                       type="submit"
                       disabled={!newSubtaskTitle.trim()}
-                      className="px-3 py-2 rounded-xl bg-[var(--accent)] text-white text-xs font-bold disabled:opacity-50"
+                      className="px-3 py-2 rounded-control bg-[var(--accent)] text-[var(--text)] text-xs font-bold disabled:opacity-50"
                     >
                       <Plus size={14} />
                     </button>
@@ -1043,7 +1043,7 @@ export const AdminProjects: React.FC = () => {
             <div className="sticky bottom-0 z-20 bg-[var(--panel)]/95  px-5 sm:px-6 py-3.5 border-t border-[var(--line)] flex items-center justify-between shrink-0">
               <button
                 onClick={() => handleDeleteTask(activeTaskDrawer.id)}
-                className="h-10 px-3 min-h-[40px] rounded-xl bg-red-950/40 text-red-300 border border-red-500/30 hover:bg-red-950/60 transition-colors flex items-center gap-1.5"
+                className="h-10 px-3 min-h-10 rounded-control bg-[var(--danger)]/10 text-[var(--danger)] border border-[var(--danger)]/30 hover:bg-[var(--panel-hover)]/15 transition-colors flex items-center gap-1.5"
               >
                 <Trash2 size={13} />
                 <span>Delete Task</span>
@@ -1051,7 +1051,7 @@ export const AdminProjects: React.FC = () => {
 
               <button
                 onClick={() => setActiveTaskDrawer(null)}
-                className="h-10 px-4 min-h-[40px] rounded-xl bg-[var(--panel)] text-white border border-[var(--line)] hover:bg-[var(--panel)] transition-colors"
+                className="min-h-10 px-4 min-h-10 rounded-card bg-[var(--panel)] text-[var(--text)] border border-[var(--line)] hover:bg-[var(--panel)] transition-colors"
               >
                 Close
               </button>
@@ -1068,13 +1068,13 @@ export const AdminProjects: React.FC = () => {
           <div className="bg-[var(--panel)] border-0 sm:border sm:border-[var(--line)] rounded-none sm:rounded-card w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-2xl shadow-none flex flex-col overflow-hidden animate-in zoom-in-95 duration-150">
             {/* Sticky Header */}
             <div className="sticky top-0 z-20 bg-[var(--panel)]/95  px-5 sm:px-6 py-4 border-b border-[var(--line)] flex items-center justify-between shrink-0">
-              <h3 className="font-display font-bold text-white text-base sm:text-lg flex items-center gap-2">
+              <h3 className="font-display font-semibold text-[var(--text)] text-base sm:text-lg flex items-center gap-2">
                 <Layers className="text-[var(--danger)]" size={20} />
                 <span>{editingProject ? 'Edit Project' : 'Create New Agency Project'}</span>
               </h3>
               <button 
                 onClick={() => setIsProjectModalOpen(false)} 
-                className="w-8 h-8 rounded-lg bg-[var(--bg)] text-[var(--muted)] hover:text-white border border-[var(--line)] flex items-center justify-center transition-colors shrink-0 ml-3"
+                className="w-8 h-8 rounded-lg bg-[var(--bg)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] flex items-center justify-center transition-colors shrink-0 ml-3"
               >
                 <X size={16} />
               </button>
@@ -1091,7 +1091,7 @@ export const AdminProjects: React.FC = () => {
                     onChange={(e) => setProjName(e.target.value)}
                     required
                     placeholder="e.g. Lumina Luxury Real Estate Headless Web Platform"
-                    className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
+                    className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                   />
                 </div>
 
@@ -1103,7 +1103,7 @@ export const AdminProjects: React.FC = () => {
                       value={clientName}
                       onChange={(e) => setClientName(e.target.value)}
                       placeholder="e.g. Marcus Thorne"
-                      className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
+                      className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                     />
                   </div>
                   <div>
@@ -1114,7 +1114,7 @@ export const AdminProjects: React.FC = () => {
                       onChange={(e) => setClientCompany(e.target.value)}
                       required
                       placeholder="e.g. Lumina Real Estate Global"
-                      className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
+                      className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                     />
                   </div>
                 </div>
@@ -1126,7 +1126,7 @@ export const AdminProjects: React.FC = () => {
                       value={serviceCategory}
                       required
                       onChange={(e) => setServiceCategory(e.target.value)}
-                      className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
+                      className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                     >
                       <option value="" disabled>Select service category</option>
                       <option value="Web Development">Web Development</option>
@@ -1143,7 +1143,7 @@ export const AdminProjects: React.FC = () => {
                       type="number"
                       value={budget}
                       onChange={(e) => setBudget(Number(e.target.value))}
-                      className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
+                      className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                     />
                   </div>
 
@@ -1152,7 +1152,7 @@ export const AdminProjects: React.FC = () => {
                     <select
                       value={projStatus}
                       onChange={(e) => setProjStatus(e.target.value as ProjectStatus)}
-                      className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
+                      className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                     >
                       <option value="planning">Planning</option>
                       <option value="in_progress">In Progress</option>
@@ -1170,7 +1170,7 @@ export const AdminProjects: React.FC = () => {
                       type="date"
                       value={startDate}
                       onChange={(e) => setStartDate(e.target.value)}
-                      className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
+                      className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                     />
                   </div>
                   <div>
@@ -1179,7 +1179,7 @@ export const AdminProjects: React.FC = () => {
                       type="date"
                       value={targetEndDate}
                       onChange={(e) => setTargetEndDate(e.target.value)}
-                      className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
+                      className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                     />
                   </div>
                 </div>
@@ -1191,7 +1191,7 @@ export const AdminProjects: React.FC = () => {
                     value={techStackInput}
                     onChange={(e) => setTechStackInput(e.target.value)}
                     placeholder="e.g. Next.js 14, TypeScript, Tailwind CSS, PostgreSQL"
-                    className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
+                    className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                   />
                 </div>
 
@@ -1203,7 +1203,7 @@ export const AdminProjects: React.FC = () => {
                       value={repoUrl}
                       onChange={(e) => setRepoUrl(e.target.value)}
                       placeholder="https://github.com/kapitech-agency/..."
-                      className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
+                      className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                     />
                   </div>
                   <div>
@@ -1213,7 +1213,7 @@ export const AdminProjects: React.FC = () => {
                       value={stagingUrl}
                       onChange={(e) => setStagingUrl(e.target.value)}
                       placeholder="https://staging.app.kapitech.id"
-                      className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
+                      className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                     />
                   </div>
                 </div>
@@ -1224,13 +1224,13 @@ export const AdminProjects: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsProjectModalOpen(false)}
-                  className="h-10 px-4 min-h-[40px] rounded-xl bg-[var(--bg)] text-[var(--muted)] hover:text-white border border-[var(--line)] text-xs font-sans font-medium transition-colors"
+                  className="min-h-10 px-4 min-h-10 rounded-card bg-[var(--bg)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] text-xs font-sans font-medium transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="h-10 px-6 min-h-[40px] rounded-xl bg-[var(--accent)] text-white font-sans font-bold hover:bg-[var(--danger)] transition-all shadow-md shadow-[var(--accent)]/20"
+                  className="min-h-10 px-6 min-h-10 rounded-control bg-[var(--accent)] text-[var(--text)] font-sans font-bold hover:bg-[var(--panel-hover)] transition-all shadow-md shadow-[var(--accent)]/20"
                 >
                   Save Project
                 </button>
@@ -1248,13 +1248,13 @@ export const AdminProjects: React.FC = () => {
           <div className="bg-[var(--panel)] border-0 sm:border sm:border-[var(--line)] rounded-none sm:rounded-card w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-lg shadow-none flex flex-col overflow-hidden animate-in zoom-in-95 duration-150">
             {/* Sticky Header */}
             <div className="sticky top-0 z-20 bg-[var(--panel)]/95  px-5 sm:px-6 py-4 border-b border-[var(--line)] flex items-center justify-between shrink-0">
-              <h3 className="font-display font-bold text-white text-base flex items-center gap-2">
+              <h3 className="font-display font-semibold text-[var(--text)] text-base flex items-center gap-2">
                 <ListTodo className="text-[var(--danger)]" size={18} />
                 <span>Add Task to Sprint</span>
               </h3>
               <button 
                 onClick={() => setIsTaskModalOpen(false)} 
-                className="w-8 h-8 rounded-lg bg-[var(--bg)] text-[var(--muted)] hover:text-white border border-[var(--line)] flex items-center justify-center transition-colors shrink-0 ml-3"
+                className="w-8 h-8 rounded-lg bg-[var(--bg)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] flex items-center justify-center transition-colors shrink-0 ml-3"
               >
                 <X size={16} />
               </button>
@@ -1271,7 +1271,7 @@ export const AdminProjects: React.FC = () => {
                     value={taskTitle}
                     onChange={(e) => setTaskTitle(e.target.value)}
                     placeholder="e.g. Implement Mapbox Vector Tile Cluster Loader"
-                    className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
+                    className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                   />
                 </div>
 
@@ -1282,7 +1282,7 @@ export const AdminProjects: React.FC = () => {
                     value={taskDesc}
                     onChange={(e) => setTaskDesc(e.target.value)}
                     placeholder="Acceptance criteria and technical notes..."
-                    className="w-full px-3.5 py-2 bg-[var(--bg)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)] font-sans"
+                    className="w-full px-3.5 py-2 bg-[var(--bg)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)] font-sans"
                   />
                 </div>
 
@@ -1292,7 +1292,7 @@ export const AdminProjects: React.FC = () => {
                     <select
                       value={taskPriority}
                       onChange={(e) => setTaskPriority(e.target.value as TaskPriority)}
-                      className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
+                      className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                     >
                       <option value="low">Low</option>
                       <option value="medium">Medium</option>
@@ -1307,7 +1307,7 @@ export const AdminProjects: React.FC = () => {
                       value={taskAssignee}
                       onChange={(e) => setTaskAssignee(e.target.value)}
                       required
-                      className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
+                      className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                     >
                       {taskAssignees.length === 0 ? (
                         <option value="">No active assignees available</option>
@@ -1326,7 +1326,7 @@ export const AdminProjects: React.FC = () => {
                     <select
                       value={taskStatus}
                       onChange={(e) => setTaskStatus(e.target.value as TaskStatus)}
-                      className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
+                      className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                     >
                       <option value="todo">To Do</option>
                       <option value="in_progress">In Progress</option>
@@ -1341,7 +1341,7 @@ export const AdminProjects: React.FC = () => {
                       type="date"
                       value={taskDueDate}
                       onChange={(e) => setTaskDueDate(e.target.value)}
-                      className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
+                      className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                     />
                   </div>
                 </div>
@@ -1353,7 +1353,7 @@ export const AdminProjects: React.FC = () => {
                     value={initialSubtasksInput}
                     onChange={(e) => setInitialSubtasksInput(e.target.value)}
                     placeholder="Setup API endpoints&#10;Add unit tests"
-                    className="w-full px-3.5 py-2 bg-[var(--bg)] border border-[var(--line)] rounded-xl text-white focus:outline-none focus:border-[var(--accent)]"
+                    className="w-full px-3.5 py-2 bg-[var(--bg)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                   />
                 </div>
               </div>
@@ -1363,13 +1363,13 @@ export const AdminProjects: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsTaskModalOpen(false)}
-                  className="h-10 px-4 min-h-[40px] rounded-xl bg-[var(--bg)] text-[var(--muted)] hover:text-white border border-[var(--line)] text-xs font-sans font-medium transition-colors"
+                  className="min-h-10 px-4 min-h-10 rounded-card bg-[var(--bg)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] text-xs font-sans font-medium transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="h-10 px-6 min-h-[40px] rounded-xl bg-[var(--accent)] text-white font-sans font-bold hover:bg-[var(--danger)] transition-all shadow-md shadow-[var(--accent)]/20"
+                  className="min-h-10 px-6 min-h-10 rounded-control bg-[var(--accent)] text-[var(--text)] font-sans font-bold hover:bg-[var(--panel-hover)] transition-all shadow-md shadow-[var(--accent)]/20"
                 >
                   Add Task
                 </button>
