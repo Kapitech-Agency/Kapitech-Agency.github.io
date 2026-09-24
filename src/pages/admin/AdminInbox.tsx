@@ -958,7 +958,7 @@ export const AdminInbox: React.FC = () => {
                   onClick={() => handleSelectSubmission(item)}
                   className={`relative p-4 rounded-card border transition-all cursor-pointer font-sans group ${
                     isSelected
-                      ? 'bg-[var(--panel)] border-[var(--accent)] shadow-lg shadow-[var(--accent)]/10'
+                      ? 'bg-[var(--panel)] border-[var(--accent)]'
                       : item.status === 'new'
                       ? 'bg-[var(--panel)] border-rose-500/30 hover:border-rose-500/50'
                       : 'bg-[var(--panel)] border-[var(--line)] hover:border-[var(--line)] hover:bg-[var(--panel-hover)]'
@@ -1122,7 +1122,7 @@ export const AdminInbox: React.FC = () => {
                     ) : (
                       <button
                         onClick={() => setIsCrmModalOpen(true)}
-                        className="h-9 px-3.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-sans font-semibold transition-all flex items-center gap-1.5 shadow-md shadow-emerald-500/20"
+                        className="h-9 px-3.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-sans font-semibold transition-colors flex items-center gap-1.5"
                       >
                         <Briefcase size={14} />
                         <span>{language === 'id' ? 'Konversi ke CRM' : 'Convert to CRM'}</span>
