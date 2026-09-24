@@ -532,11 +532,11 @@ export const AdminLayout: React.FC = () => {
               <Link
                 to={settingsItem.to}
                 onClick={() => setMobileMenuOpen(false)}
-                className={`relative flex items-center gap-3 px-3 py-2.5 rounded-control text-xs font-sans min-h-[40px] transition-colors $
+                className={`relative flex items-center gap-3 px-3 py-2.5 rounded-control text-xs font-sans min-h-[40px] transition-colors ${
                   isItemActive(settingsItem.to)
                     ? 'bg-accent/15 text-fg font-medium'
                     : 'text-muted hover:text-fg hover:bg-bg'
-                }
+                }`}
               >
                 <Settings size={16} className={isItemActive(settingsItem.to) ? 'text-accent-text' : 'text-muted'} />
                 <span>{settingsItem.label}</span>
