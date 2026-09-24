@@ -13,14 +13,14 @@
   /* Borders & Glassmorphism */
   --border-subtle: rgba(255, 255, 255, 0.07);
   --border-medium: rgba(255, 255, 255, 0.12);
-  --border-active: rgba(230,57,70, 0.4);
+  --border-active: rgba(176, 0, 32, 0.4);
 
   /* Red Brand Accent (Refined Strategy) */
-  --primary-red: #E63946;
-  --primary-red-hover: #C92F3C;
-  --primary-red-glow: 0 0 16px rgba(230,57,70, 0.25);
-  --primary-red-subtle: rgba(230,57,70, 0.08);
-  --primary-red-border: rgba(230,57,70, 0.3);
+  --primary-red: #B00020;
+  --primary-red-hover: #C1121F;
+  --primary-red-glow: 0 0 16px rgba(176, 0, 32, 0.25);
+  --primary-red-subtle: rgba(176, 0, 32, 0.08);
+  --primary-red-border: rgba(176, 0, 32, 0.3);
 
   /* Typography & Foreground Tokens */
   --text-primary: #F8FAFC;
@@ -34,12 +34,12 @@
   --radius-pill: 9999px;
 
   /* Legacy compatibility aliases */
-  --kapi-red-primary: #E63946;
-  --kapi-red-electric: #C92F3C;
-  --kapi-red-hover: #C92F3C;
-  --kapi-red-glow: rgba(230,57,70, 0.12);
-  --kapi-red-glow-hover: rgba(230,57,70, 0.25);
-  --kapi-red-border-hover: rgba(230,57,70, 0.5);
+  --kapi-red-primary: #B00020;
+  --kapi-red-electric: #C1121F;
+  --kapi-red-hover: #C1121F;
+  --kapi-red-glow: rgba(176, 0, 32, 0.12);
+  --kapi-red-glow-hover: rgba(176, 0, 32, 0.25);
+  --kapi-red-border-hover: rgba(176, 0, 32, 0.5);
 
   --kapi-bg-obsidian: #090A0F;
   --kapi-bg-charcoal-deep: #111318;
@@ -68,10 +68,10 @@
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
   
   /* Primary Accent: Refined Brand Red */
-  --color-brand-red: #E63946;
-  --color-brand-red-bright: #C92F3C;
-  --color-brand-red-hover: #C92F3C;
-  --color-brand-red-glow: rgba(230,57,70, 0.25);
+  --color-brand-red: #B00020;
+  --color-brand-red-bright: #C1121F;
+  --color-brand-red-hover: #C1121F;
+  --color-brand-red-glow: rgba(176, 0, 32, 0.25);
 
   /* Surfaces - Strict Solid Dark Palette */
   --color-dark-base: #090A0F;
@@ -102,7 +102,7 @@
     font-family: var(--font-sans);
     overflow-x: hidden;
     width: 100%;
-    selection-background-color: #E63946;
+    selection-background-color: #B00020;
     selection-color: #FFFFFF;
   }
 
@@ -112,7 +112,7 @@
   input:focus-visible,
   textarea:focus-visible,
   select:focus-visible {
-    outline: 2px solid #E63946;
+    outline: 2px solid #B00020;
     outline-offset: 2px;
   }
 
@@ -161,9 +161,9 @@
   --ams-muted: #71717A;
   --ams-border: rgba(255,255,255,.085);
   --ams-border-strong: rgba(255,255,255,.15);
-  --ams-red: #E63946;
-  --ams-red-hover: #C92F3C;
-  --ams-red-soft: rgba(230,57,70,.12);
+  --ams-red: #B00020;
+  --ams-red-hover: #C1121F;
+  --ams-red-soft: rgba(176,0,32,.12);
   --ams-radius-control: 10px;
   --ams-radius-card: 16px;
   --ams-radius-panel: 20px;
@@ -196,8 +196,8 @@
 .admin-shell textarea:focus,
 .admin-shell select:focus {
   outline: none;
-  border-color: rgba(230,57,70,.65);
-  box-shadow: 0 0 0 3px rgba(230,57,70,.10);
+  border-color: rgba(176,0,32,.65);
+  box-shadow: 0 0 0 3px rgba(176,0,32,.10);
 }
 .admin-shell table { border-collapse: separate; border-spacing: 0; }
 .admin-shell th {
@@ -372,7 +372,7 @@
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(230,57,70, 0.5);
+  background: rgba(229, 9, 20, 0.5);
 }
 
 
@@ -410,7 +410,7 @@
 }
 
 [data-kapi-admin="true"] ::selection {
-  background: rgba(230,57,70, 0.85);
+  background: rgba(229, 9, 20, 0.85);
   color: #fff;
 }
 
@@ -469,7 +469,7 @@
   --ams-divider: rgba(255, 255, 255, 0.075);
   --ams-divider-strong: rgba(255, 255, 255, 0.12);
   --ams-focus-ring: rgba(255, 255, 255, 0.92);
-  --ams-accent-soft: rgba(230,57,70, 0.11);
+  --ams-accent-soft: rgba(229, 9, 20, 0.11);
   --ams-ease: cubic-bezier(0.22, 1, 0.36, 1);
   --ams-motion-fast: 160ms;
   --ams-motion-standard: 240ms;
@@ -521,7 +521,7 @@ body:has([data-kapi-admin="true"]) .kapi-noise-overlay {
 [data-kapi-admin="true"] textarea:focus-visible {
   outline: 2px solid var(--ams-focus-ring);
   outline-offset: 2px;
-  box-shadow: 0 0 0 4px rgba(230,57,70, 0.22);
+  box-shadow: 0 0 0 4px rgba(229, 9, 20, 0.22);
 }
 
 [data-kapi-admin="true"] main {
@@ -995,10 +995,10 @@ body:has([data-kapi-admin="true"]) .kapi-noise-overlay {
    Public UI is intentionally isolated in public-design-system.css.
    ========================================================================== */
 :root {
-  --k-red: #E63946;
-  --k-red-hover: #C92F3C;
-  --k-red-soft: rgba(230,57,70,.12);
-  --k-red-border: rgba(230,57,70,.34);
+  --k-red: #B00020;
+  --k-red-hover: #C1121F;
+  --k-red-soft: rgba(176,0,32,.12);
+  --k-red-border: rgba(176,0,32,.34);
   --k-font-ui: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", Helvetica, Arial, sans-serif;
   --k-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
   --k-radius-control: 12px;
@@ -1035,7 +1035,7 @@ body:has([data-kapi-admin="true"]) .kapi-noise-overlay {
 [data-kapi-admin="true"] .ams-content .metric-card svg { width: 18px; height: 18px; }
 [data-kapi-admin="true"] .ams-search,
 [data-kapi-admin="true"] .ams-search input { outline: none !important; }
-[data-kapi-admin="true"] .ams-search:focus-within { border-color: rgba(230,57,70,.48) !important; box-shadow: 0 0 0 3px rgba(230,57,70,.10) !important; }
+[data-kapi-admin="true"] .ams-search:focus-within { border-color: rgba(176,0,32,.48) !important; box-shadow: 0 0 0 3px rgba(176,0,32,.10) !important; }
 [data-kapi-admin="true"] .ams-search input:focus { outline: none !important; box-shadow: none !important; border-color: transparent !important; }
 [data-kapi-admin="true"] .ams-search,
 [data-kapi-admin="true"] .ams-search input { height: 40px; border-radius: 12px !important; }
@@ -1049,7 +1049,7 @@ body:has([data-kapi-admin="true"]) .kapi-noise-overlay {
 [data-kapi-admin="true"] textarea:focus,
 [data-kapi-admin="true"] select:focus,
 [data-kapi-admin="true"] button:focus { outline: none; }
-[data-kapi-admin="true"] :where(a,button,input,select,textarea):focus-visible { outline: 2px solid rgba(230,57,70,.75); outline-offset: 2px; box-shadow: none; }
+[data-kapi-admin="true"] :where(a,button,input,select,textarea):focus-visible { outline: 2px solid rgba(176,0,32,.75); outline-offset: 2px; box-shadow: none; }
 @media (max-width: 767px) {
   [data-kapi-admin="true"] .ams-content { padding: 20px 16px 96px !important; }
   [data-kapi-admin="true"] .ams-content .kapi-card,
@@ -1084,316 +1084,3 @@ body:has([data-kapi-admin="true"]) .kapi-noise-overlay {
 .admin-shell .ams-panel { min-height: 100%; }
 .admin-shell .ams-inbox-item { padding: 14px; border: 1px solid var(--ams-border); border-radius: 14px; background: var(--ams-surface); }
 .admin-shell .ams-empty-state { padding: 24px; text-align: center; color: var(--ams-secondary); font-size: .75rem; border: 1px solid var(--ams-border); border-radius: 12px; background: rgba(17,19,24,.55); }
-
-/* KAPITECH APPLE UI QA OVERRIDE v2 */
-:root{--k-apple-red:#E63946;--k-apple-red-dark:#C92F3C;--k-apple-bg:#0B0B0D;--k-apple-surface:#151517;--k-apple-border:rgba(255,255,255,.10);--k-apple-border-strong:rgba(255,255,255,.16);--k-apple-text:#F5F5F7;--k-apple-secondary:#A1A1A6;--k-apple-tertiary:#86868B;--k-apple-radius-sm:10px;--k-apple-radius-md:14px;--k-apple-radius-lg:18px;--k-apple-radius-xl:22px;--k-apple-ease:cubic-bezier(.22,1,.36,1)}
-html{text-rendering:optimizeLegibility}
-button,a,input,select,textarea{-webkit-tap-highlight-color:transparent}
-img,svg,video,canvas{max-width:100%}
-.kapi-public-shell,.admin-shell,[data-kapi-admin=true]{min-width:0;overflow-wrap:anywhere}
-
-/* PUBLIC */
-.kapi-public-shell{--pub-red:var(--k-apple-red);--pub-red-hover:var(--k-apple-red-dark);--pub-bg:var(--k-apple-bg);--pub-surface:rgba(24,24,27,.78);--pub-text:var(--k-apple-text);--pub-text-secondary:var(--k-apple-secondary);--pub-border:var(--k-apple-border);background:var(--pub-bg);color:var(--pub-text)}
-.kapi-public-shell h1,.kapi-public-shell h2,.kapi-public-shell h3,.kapi-public-shell h4{color:var(--pub-text);text-wrap:balance}
-.kapi-public-shell h1{font-size:clamp(2.5rem,7vw,5.5rem);line-height:.98;letter-spacing:-.055em;font-weight:700}
-.kapi-public-shell h2{font-size:clamp(2rem,4.5vw,3.5rem);line-height:1.02;letter-spacing:-.045em;font-weight:650}
-.kapi-public-shell h3{font-size:clamp(1.25rem,2.5vw,1.75rem);line-height:1.15;letter-spacing:-.025em;font-weight:650}
-.kapi-public-shell p{color:var(--pub-text-secondary);line-height:1.65}
-.kapi-public-shell .max-w-7xl{max-width:1200px}
-.kapi-public-shell .kapi-public-nav,.kapi-public-shell .kapi-nav-top,.kapi-public-shell .kapi-nav-scrolled,.kapi-public-shell .kapi-mega-menu,.kapi-public-shell .kapi-glass-mobile-menu,.kapi-public-shell .kapi-glass-sheet{border-color:var(--pub-border)!important;background:rgba(11,11,13,.72)!important;backdrop-filter:saturate(180%) blur(24px);-webkit-backdrop-filter:saturate(180%) blur(24px)}
-.kapi-public-shell .kapi-nav-link,.kapi-public-shell .kapi-nav-services-trigger{min-height:44px;border-radius:var(--k-apple-radius-sm);color:var(--pub-text-secondary)}
-.kapi-public-shell .kapi-nav-link:hover,.kapi-public-shell .kapi-nav-services-trigger:hover{color:var(--pub-text);background:rgba(255,255,255,.055)}
-.kapi-public-shell .kapi-nav-link.kapi-nav-active,.kapi-public-shell .kapi-nav-services-trigger[aria-expanded=true]{color:var(--pub-text)!important}
-.kapi-public-shell .kapi-nav-link.kapi-nav-active::after,.kapi-public-shell .kapi-nav-services-trigger[aria-expanded=true]::after{background:rgba(230,57,70,.11)!important;box-shadow:inset 0 0 0 1px rgba(230,57,70,.14)!important}
-.kapi-public-shell .kapi-nav-cta,.kapi-public-shell .kapi-button-primary,.kapi-public-shell .kapi-footer-cta{min-height:44px;border-radius:999px!important;background:var(--pub-red)!important;border:1px solid var(--pub-red)!important;color:#fff!important;box-shadow:0 8px 24px rgba(230,57,70,.18);transition:transform 180ms var(--k-apple-ease),background-color 180ms ease,box-shadow 180ms ease}
-.kapi-public-shell .kapi-nav-cta:hover,.kapi-public-shell .kapi-button-primary:hover,.kapi-public-shell .kapi-footer-cta:hover{background:var(--pub-red-hover)!important;transform:translateY(-1px);box-shadow:0 12px 30px rgba(230,57,70,.23)}
-.kapi-public-shell .kapi-card,.kapi-public-shell .kapi-service-card{border:1px solid var(--pub-border)!important;border-radius:var(--k-apple-radius-lg)!important;background:rgba(21,21,23,.76)!important;box-shadow:0 12px 36px rgba(0,0,0,.16)!important;transition:transform 220ms var(--k-apple-ease),border-color 180ms ease,background-color 180ms ease,box-shadow 220ms ease}
-.kapi-public-shell .kapi-card:hover,.kapi-public-shell .kapi-service-card:hover{transform:translateY(-2px);border-color:rgba(230,57,70,.24)!important;background:rgba(27,27,30,.86)!important;box-shadow:0 18px 44px rgba(0,0,0,.20)!important}
-.kapi-public-shell .kapi-card-icon-box,.kapi-public-shell .kapi-service-icon{width:44px;height:44px;border-radius:12px!important}
-.kapi-public-shell input,.kapi-public-shell textarea,.kapi-public-shell select{min-height:44px;border-radius:var(--k-apple-radius-sm)!important;background:rgba(255,255,255,.045)!important;border:1px solid var(--pub-border)!important;color:var(--pub-text)!important}
-.kapi-public-shell .kapi-modal-panel{border-radius:var(--k-apple-radius-xl)!important;background:rgba(21,21,23,.94)!important;border:1px solid var(--k-apple-border-strong)!important;box-shadow:0 30px 90px rgba(0,0,0,.50)!important;backdrop-filter:blur(28px) saturate(150%);-webkit-backdrop-filter:blur(28px) saturate(150%)}
-
-/* AMS */
-[data-kapi-admin=true],.admin-shell{--ams-bg-primary:#0B0B0D;--ams-surface:#19191C;--ams-surface-2:#202024;--ams-elevated:#252529;--ams-text-primary:#F5F5F7;--ams-text-secondary:#A1A1A6;--ams-text-tertiary:#86868B;--ams-red:#E63946;--ams-red-hover:#C92F3C;--ams-border:rgba(255,255,255,.095);--ams-border-strong:rgba(255,255,255,.15);--ams-radius-control:10px;--ams-radius-card:16px;--ams-radius-panel:20px;background:var(--ams-bg-primary);color:var(--ams-text-primary);font-family:'Manrope',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
-[data-kapi-admin=true] .ams-shell{background:var(--ams-bg-primary)!important}
-[data-kapi-admin=true] .ams-sidebar,[data-kapi-admin=true] .ams-header,[data-kapi-admin=true] .ams-mobile-nav{background:rgba(21,21,23,.78)!important;border-color:var(--ams-border)!important;backdrop-filter:saturate(180%) blur(24px);-webkit-backdrop-filter:saturate(180%) blur(24px)}
-[data-kapi-admin=true] .ams-sidebar{width:248px}
-[data-kapi-admin=true] .ams-sidebar.ams-sidebar-collapsed{width:72px}
-[data-kapi-admin=true] .ams-sidebar-nav a{min-height:44px;border-radius:12px;color:var(--ams-text-secondary)}
-[data-kapi-admin=true] .ams-sidebar-nav a:hover{color:var(--ams-text-primary);background:rgba(255,255,255,.045)}
-[data-kapi-admin=true] .ams-sidebar-nav a[aria-current=page]{color:var(--ams-text-primary);background:rgba(230,57,70,.12)!important;box-shadow:inset 3px 0 0 var(--ams-red),inset 0 0 0 1px rgba(230,57,70,.10)}
-[data-kapi-admin=true] .kapi-card,[data-kapi-admin=true] .ams-surface,[data-kapi-admin=true] .metric-card{border:1px solid var(--ams-border)!important;border-radius:var(--ams-radius-card)!important;background:rgba(25,25,28,.82)!important;box-shadow:none!important}
-[data-kapi-admin=true] .kapi-card:hover,[data-kapi-admin=true] .metric-card:hover{transform:translateY(-1px);background:rgba(31,31,35,.90)!important;border-color:var(--ams-border-strong)!important;box-shadow:0 12px 34px rgba(0,0,0,.20)!important}
-[data-kapi-admin=true] .ams-page-title{font-size:clamp(1.5rem,2.6vw,2.25rem);line-height:1.08;letter-spacing:-.045em;font-weight:700}
-[data-kapi-admin=true] .ams-page-subtitle{color:var(--ams-text-secondary);max-width:70ch}
-[data-kapi-admin=true] .ams-kpi{min-height:136px;padding:20px}
-[data-kapi-admin=true] .ams-kpi-value{font-size:clamp(1.4rem,2.4vw,2rem);font-weight:700;letter-spacing:-.045em}
-[data-kapi-admin=true] input,[data-kapi-admin=true] select,[data-kapi-admin=true] textarea{min-height:44px!important;border-radius:10px!important;background:rgba(255,255,255,.045)!important;border:1px solid var(--ams-border)!important;color:var(--ams-text-primary)!important;box-shadow:none!important}
-[data-kapi-admin=true] input::placeholder,[data-kapi-admin=true] textarea::placeholder{color:#71717A!important}
-[data-kapi-admin=true] th{color:var(--ams-text-tertiary)!important;font-size:11px!important;font-weight:650;letter-spacing:.045em}
-[data-kapi-admin=true] td{border-top-color:rgba(255,255,255,.055)!important;color:var(--ams-text-secondary);line-height:1.45}
-[data-kapi-admin=true] .ams-action{min-height:44px;border-radius:10px;background:var(--ams-surface-2);border-color:var(--ams-border)}
-[data-kapi-admin=true] .ams-action-primary{background:var(--ams-red)!important;border-color:var(--ams-red)!important;color:#fff!important}
-[data-kapi-admin=true] .ams-action-primary:hover{background:var(--ams-red-hover)!important}
-[data-kapi-admin=true] .ams-status{min-height:28px;border-radius:999px;padding-inline:10px}
-
-/* Focus: no white click outline. Red ring only for keyboard navigation. */
-.kapi-public-shell input:focus,.kapi-public-shell textarea:focus,.kapi-public-shell select:focus,[data-kapi-admin=true] input:focus,[data-kapi-admin=true] textarea:focus,[data-kapi-admin=true] select:focus{outline:none!important;box-shadow:none!important}
-.kapi-public-shell input:focus-visible,.kapi-public-shell textarea:focus-visible,.kapi-public-shell select:focus-visible,[data-kapi-admin=true] input:focus-visible,[data-kapi-admin=true] textarea:focus-visible,[data-kapi-admin=true] select:focus-visible{outline:2px solid rgba(230,57,70,.72)!important;outline-offset:2px;box-shadow:0 0 0 4px rgba(230,57,70,.12)!important}
-.kapi-public-shell button:focus-visible,.kapi-public-shell a:focus-visible,[data-kapi-admin=true] button:focus-visible,[data-kapi-admin=true] a:focus-visible{outline:2px solid rgba(230,57,70,.78)!important;outline-offset:3px;box-shadow:none!important}
-
-/* Prevent stretched circular controls and preserve intentional pill buttons. */
-.kapi-public-shell button.rounded-full,[data-kapi-admin=true] button.rounded-full{aspect-ratio:auto;flex:0 0 auto}
-[data-kapi-admin=true] .fixed.inset-0[class*="backdrop-blur"]{background:rgba(0,0,0,.62)!important;backdrop-filter:blur(18px) saturate(120%)!important;-webkit-backdrop-filter:blur(18px) saturate(120%)!important}
-[data-kapi-admin=true] .fixed.inset-0[class*="backdrop-blur"]>div{max-width:min(720px,calc(100vw - 32px));max-height:calc(100svh - 32px);border-radius:var(--ams-radius-panel)!important;border-color:var(--ams-border-strong)!important;background:rgba(25,25,28,.96)!important;box-shadow:0 30px 90px rgba(0,0,0,.55)!important}
-[data-kapi-admin=true] .overflow-x-auto{max-width:100%;overscroll-behavior-inline:contain}
-
-@media(max-width:767px){
- .kapi-public-shell h1{font-size:clamp(2.35rem,13vw,4rem);letter-spacing:-.05em}
- .kapi-public-shell h2{font-size:clamp(1.9rem,9vw,3rem)}
- .kapi-public-shell .kapi-nav-inner{min-height:60px;height:60px}
- [data-kapi-admin=true] .ams-sidebar{width:min(88vw,320px)}
- [data-kapi-admin=true] .ams-page-title{font-size:1.5rem}
- [data-kapi-admin=true] .ams-kpi{min-height:124px;padding:16px}
- [data-kapi-admin=true] .kapi-card,[data-kapi-admin=true] .ams-surface,[data-kapi-admin=true] .metric-card{border-radius:14px!important}
- [data-kapi-admin=true] button,[data-kapi-admin=true] a[role=button]{min-height:44px}
- [data-kapi-admin=true] .overflow-x-auto{scrollbar-width:none}
- [data-kapi-admin=true] .overflow-x-auto::-webkit-scrollbar{display:none}
-}
-@media(prefers-reduced-motion:reduce){
- .kapi-public-shell *,.kapi-public-shell *::before,.kapi-public-shell *::after,[data-kapi-admin=true] *,[data-kapi-admin=true] *::before,[data-kapi-admin=true] *::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
-}
-@media(prefers-reduced-transparency:reduce){
- .kapi-public-shell .kapi-public-nav,.kapi-public-shell .kapi-nav-top,.kapi-public-shell .kapi-nav-scrolled,.kapi-public-shell .kapi-mega-menu,.kapi-public-shell .kapi-glass-mobile-menu,.kapi-public-shell .kapi-glass-sheet,[data-kapi-admin=true] .ams-sidebar,[data-kapi-admin=true] .ams-header,[data-kapi-admin=true] .ams-mobile-nav{background:var(--k-apple-surface)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
-}
-
-/* KAPITECH ACCENT NORMALIZATION v1 */
-/* Legacy red tokens are mapped to the single Kapitech accent so old utility classes remain visually consistent. */
-:root{--k-brand-red:#E63946;--k-brand-red-dark:#C92F3C}
-
-
-/* ==========================================================================
-   KAPITECH FINAL UI QA v3
-   Single final cascade for consistent Apple-inspired behavior.
-   ========================================================================== */
-:root {
-  --k-brand-red-final: #E63946;
-  --k-brand-red-hover-final: #C92F3C;
-  --k-apple-black: #0B0B0D;
-  --k-apple-surface: #151517;
-  --k-apple-surface-raised: #1C1C1F;
-  --k-apple-divider: rgba(255,255,255,.10);
-  --k-apple-divider-strong: rgba(255,255,255,.16);
-  --k-apple-label: #F5F5F7;
-  --k-apple-secondary-label: #A1A1A6;
-  --k-apple-tertiary-label: #86868B;
-  --k-apple-radius-control: 10px;
-  --k-apple-radius-card: 16px;
-  --k-apple-radius-panel: 20px;
-  --k-apple-ease: cubic-bezier(.22,1,.36,1);
-}
-
-[data-kapi-admin="true"] {
-  --k-red: var(--k-brand-red-final);
-  --k-red-hover: var(--k-brand-red-hover-final);
-  --k-red-soft: rgba(230,57,70,.10);
-  --k-red-border: rgba(230,57,70,.30);
-  --k-surface: var(--k-apple-surface);
-  --k-surface-raised: var(--k-apple-surface-raised);
-  --k-border: var(--k-apple-divider);
-  --k-text: var(--k-apple-label);
-  --k-text-secondary: var(--k-apple-secondary-label);
-  --k-text-muted: var(--k-apple-tertiary-label);
-}
-
-/* Controls: consistent geometry, no accidental oval/stretch behavior. */
-[data-kapi-admin="true"] button,
-[data-kapi-admin="true"] [role="button"],
-[data-kapi-admin="true"] input,
-[data-kapi-admin="true"] select,
-[data-kapi-admin="true"] textarea {
-  border-radius: var(--k-apple-radius-control);
-}
-
-[data-kapi-admin="true"] button:focus,
-[data-kapi-admin="true"] [role="button"]:focus,
-[data-kapi-admin="true"] input:focus,
-[data-kapi-admin="true"] select:focus,
-[data-kapi-admin="true"] textarea:focus {
-  outline: none !important;
-  box-shadow: none;
-}
-
-[data-kapi-admin="true"] button:focus-visible,
-[data-kapi-admin="true"] [role="button"]:focus-visible,
-[data-kapi-admin="true"] input:focus-visible,
-[data-kapi-admin="true"] select:focus-visible,
-[data-kapi-admin="true"] textarea:focus-visible {
-  outline: 2px solid var(--k-brand-red-final) !important;
-  outline-offset: 2px;
-  box-shadow: 0 0 0 3px rgba(230,57,70,.16) !important;
-}
-
-[data-kapi-admin="true"] input::placeholder,
-[data-kapi-admin="true"] textarea::placeholder {
-  color: var(--k-apple-tertiary-label);
-}
-
-/* Sidebar and top navigation: quiet translucent chrome. */
-[data-kapi-admin="true"] .ams-sidebar,
-[data-kapi-admin="true"] .ams-sidebar-brand {
-  background: rgba(21,21,23,.88) !important;
-  border-color: var(--k-apple-divider) !important;
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
-}
-
-[data-kapi-admin="true"] .ams-topbar {
-  background: rgba(11,11,13,.78) !important;
-  border-color: var(--k-apple-divider) !important;
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
-}
-
-/* Sidebar labels must never collide with badges or escape the navigation box. */
-[data-kapi-admin="true"] .ams-sidebar-nav a {
-  min-width: 0;
-  min-height: 44px;
-}
-[data-kapi-admin="true"] .ams-sidebar-nav a > div,
-[data-kapi-admin="true"] .ams-sidebar-nav a > div > span {
-  min-width: 0;
-}
-[data-kapi-admin="true"] .ams-sidebar-nav a > div > span {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-[data-kapi-admin="true"] .ams-sidebar-nav a .truncate {
-  min-width: 0;
-}
-
-/* Content hierarchy: less visual noise, tighter Apple-like rhythm. */
-[data-kapi-admin="true"] .kapi-card,
-[data-kapi-admin="true"] .metric-card,
-[data-kapi-admin="true"] .ams-surface {
-  border-radius: var(--k-apple-radius-card);
-  border-color: var(--k-apple-divider);
-  box-shadow: none;
-}
-[data-kapi-admin="true"] .kapi-card:hover,
-[data-kapi-admin="true"] .metric-card:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 12px 32px rgba(0,0,0,.22);
-}
-[data-kapi-admin="true"] .ams-kpi {
-  min-height: 132px;
-}
-[data-kapi-admin="true"] .ams-page-title {
-  max-width: 28ch;
-  text-wrap: balance;
-}
-
-/* Data tables: predictable density and horizontal containment. */
-[data-kapi-admin="true"] table {
-  width: 100%;
-}
-[data-kapi-admin="true"] th,
-[data-kapi-admin="true"] td {
-  vertical-align: middle;
-}
-[data-kapi-admin="true"] th {
-  white-space: nowrap;
-}
-[data-kapi-admin="true"] td {
-  overflow-wrap: anywhere;
-}
-
-/* Dialogs and drawers: one consistent glass language. */
-[data-kapi-admin="true"] [role="dialog"] {
-  border-radius: var(--k-apple-radius-panel);
-  border-color: var(--k-apple-divider-strong);
-  background: rgba(21,21,23,.94);
-  box-shadow: 0 30px 90px rgba(0,0,0,.50);
-  backdrop-filter: blur(24px) saturate(150%);
-  -webkit-backdrop-filter: blur(24px) saturate(150%);
-}
-[data-kapi-admin="true"] .fixed.inset-0.bg-black\/80 {
-  background: rgba(0,0,0,.62);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-}
-
-/* Toasts should read as transient system feedback, not giant cards. */
-[data-kapi-admin="true"] [class*="fixed"][class*="top-20"][class*="right-6"] {
-  border-radius: 12px;
-  box-shadow: 0 14px 40px rgba(0,0,0,.38);
-}
-
-/* Public site final consistency. */
-.kapi-public-shell input:focus,
-.kapi-public-shell select:focus,
-.kapi-public-shell textarea:focus,
-.kapi-public-shell button:focus {
-  outline: none;
-}
-.kapi-public-shell input:focus-visible,
-.kapi-public-shell select:focus-visible,
-.kapi-public-shell textarea:focus-visible,
-.kapi-public-shell button:focus-visible {
-  outline: 2px solid var(--k-brand-red-final);
-  outline-offset: 2px;
-  box-shadow: 0 0 0 3px rgba(230,57,70,.14);
-}
-.kapi-public-shell .rounded-full {
-  border-radius: 9999px;
-}
-
-/* Keep intentional circular icon controls circular. */
-[data-kapi-admin="true"] button.rounded-full[aria-label]:has(svg) {
-  aspect-ratio: 1 / 1;
-  width: auto;
-}
-
-/* Mobile: preserve spacing and prevent full-width controls from becoming oversized. */
-@media (max-width: 767px) {
-  [data-kapi-admin="true"] .ams-kpi {
-    min-height: 120px;
-    padding: 14px;
-  }
-  [data-kapi-admin="true"] .ams-page-title {
-    font-size: clamp(1.4rem, 7vw, 1.75rem);
-  }
-  [data-kapi-admin="true"] .ams-sidebar {
-    width: min(88vw, 320px) !important;
-  }
-  [data-kapi-admin="true"] .kapi-card,
-  [data-kapi-admin="true"] .metric-card,
-  [data-kapi-admin="true"] .ams-surface {
-    border-radius: 14px;
-  }
-}
-
-@media (prefers-reduced-transparency: reduce) {
-  [data-kapi-admin="true"] .ams-sidebar,
-  [data-kapi-admin="true"] .ams-sidebar-brand,
-  [data-kapi-admin="true"] .ams-topbar,
-  [data-kapi-admin="true"] [role="dialog"] {
-    background: var(--k-apple-surface) !important;
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-  }
-}
-
-
-/* Final geometry correction: preserve intentional pills/circles while keeping
-   ordinary controls rectangular and compact. */
-[data-kapi-admin="true"] .rounded-full {
-  border-radius: 9999px !important;
-}
-[data-kapi-admin="true"] button.rounded-full[aria-label]:has(svg) {
-  aspect-ratio: 1 / 1;
-  width: 40px;
-  min-width: 40px;
-  padding-inline: 0.625rem;
-}
