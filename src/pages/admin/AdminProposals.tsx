@@ -24,6 +24,7 @@ import { api } from '../../lib/apiClient';
 import { useLanguage } from '../../lib/LanguageContext';
 import { getActiveCurrency, formatAmount, CurrencyCode, CURRENCY_EVENT } from '../../lib/currency';
 import { getAdminSession, hasAdminPermission } from '../../lib/adminAuth';
+import { CustomSelect } from '../../components/ui/CustomSelect';
 
 interface ProposalLineItem {
   id: string;
@@ -568,19 +569,21 @@ export const AdminProposals: React.FC = () => {
                     <td className="py-3 px-4 text-right">
                       <div className="flex items-center justify-end gap-1.5">
                         {/* Status update quick dropdown */}
-                        <select
+                        <CustomSelect
                           value={p.status}
-                          onChange={(e) => handleStatusChange(p.id, e.target.value as Proposal['status'])}
+                          onChange={(value) => handleStatusChange(p.id, value as Proposal['status'])}
                           disabled={['approved', 'accepted', 'rejected'].includes(p.status)}
-                          className="min-h-10 h-9 px-2 rounded-control bg-[var(--panel)] text-[var(--ams-secondary)] hover:text-[var(--text)] border border-[var(--line)] text-xs font-sans focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ams-red)]/40 disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          <option value="draft">Draft</option>
-                          <option value="review">Review</option>
-                          <option value="sent">Sent</option>
-                          {!['draft', 'review', 'sent'].includes(p.status) && (
-                            <option value={p.status} disabled>{p.status.charAt(0).toUpperCase() + p.status.slice(1)}</option>
-                          )}
-                        </select>
+                          size="xs"
+                          className="min-w-[112px]"
+                          options={[
+                            { value: 'draft', label: 'Draft' },
+                            { value: 'review', label: 'Review' },
+                            { value: 'sent', label: 'Sent' },
+                            ...(!['draft', 'review', 'sent'].includes(p.status)
+                              ? [{ value: p.status, label: p.status.charAt(0).toUpperCase() + p.status.slice(1) }]
+                              : [])
+                          ]}
+                        />
 
                         {/* Convert to invoice button if accepted or approved */}
                         {(p.status === 'accepted' || p.status === 'approved') && !p.invoiceId && (
