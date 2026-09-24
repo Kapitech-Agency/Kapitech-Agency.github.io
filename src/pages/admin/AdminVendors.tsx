@@ -194,7 +194,7 @@ export const AdminVendors: React.FC = () => {
     setTimeout(() => setStatusMessage(null), 3000);
   };
 
-  const handleSaveVendor = (e: React.FormEvent) => {
+  const handleSaveVendor = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formName.trim() || !formEmail.trim()) {
       alert('Nama vendor dan email wajib diisi.');
