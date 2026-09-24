@@ -180,11 +180,8 @@ export const AdminApprovals: React.FC = () => {
       )}
 
       {/* Header */}
-      <div>
-        <h1 className="text-xl sm:text-2xl font-semibold font-sans tracking-tight text-[var(--text)] flex items-center gap-2.5">
-          <ShieldCheck className="text-[var(--accent)]" size={24} />
-          <span>{language === 'id' ? 'Pusat Persetujuan Eksekutif' : 'Executive Approvals Center'}</span>
-        </h1>
+      <div className="pb-5 border-b border-[var(--line)]">
+        <h1 className="text-xl sm:text-2xl font-semibold font-sans tracking-tight text-[var(--text)]">{language === 'id' ? 'Pusat Persetujuan Eksekutif' : 'Executive Approvals Center'}</h1>
         <p className="text-xs font-sans text-[var(--muted)] mt-1">
           {language === 'id' 
             ? 'Otorisasi anggaran klien, invoice berisiko tinggi, proposal komersial, dan pengeluaran operasional.' 
