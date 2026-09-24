@@ -3086,3 +3086,122 @@
     line-height:.95!important;
   }
 }
+
+
+/* PUBLIC PRECISION PASS v7 */
+.kapi-public-shell{
+  --pub-red:#B00020;
+  --pub-red-hover:#8F001A;
+  --pub-red-soft:rgba(176,0,32,.12);
+  --pub-red-border:rgba(176,0,32,.34);
+  --pub-gutter:clamp(20px,3.2vw,48px);
+  --pub-content:1240px;
+}
+.kapi-public-shell :not(h1):not(h2):not(h3):not(h4).text-xs{font-size:12px!important;line-height:1.45!important}
+.kapi-public-shell :not(h1):not(h2):not(h3):not(h4).text-sm{font-size:14px!important;line-height:1.5!important}
+.kapi-public-shell :not(h1):not(h2):not(h3):not(h4).text-base{font-size:16px!important;line-height:1.55!important}
+.kapi-public-shell :not(h1):not(h2):not(h3):not(h4).text-lg{font-size:18px!important;line-height:1.4!important}
+.kapi-public-shell :not(h1):not(h2):not(h3):not(h4).text-xl{font-size:20px!important;line-height:1.25!important}
+.kapi-public-shell :not(h1):not(h2):not(h3):not(h4).text-2xl{font-size:24px!important;line-height:1.2!important}
+.kapi-public-shell :not(h1):not(h2):not(h3):not(h4).text-3xl{font-size:30px!important;line-height:1.1!important}
+.kapi-public-shell :not(h1):not(h2):not(h3):not(h4).text-4xl{font-size:36px!important;line-height:1.05!important}
+.kapi-public-shell .kapi-display-title,.kapi-public-shell h1{font-size:clamp(44px,6.2vw,88px)!important;line-height:.98!important;letter-spacing:-.055em!important;max-width:18ch}
+.kapi-public-shell h2,.kapi-public-shell .kapi-section-title{font-size:clamp(30px,3.4vw,46px)!important;line-height:1.06!important;letter-spacing:-.04em!important}
+.kapi-public-shell h3{font-size:clamp(20px,2vw,26px)!important;line-height:1.18!important;letter-spacing:-.025em!important}
+.kapi-public-shell h4{font-size:16px!important;line-height:1.3!important}
+
+.kapi-public-shell .kapi-page-hero{min-height:440px!important;padding:144px var(--pub-gutter) 64px!important;display:flex;align-items:flex-end}
+.kapi-public-shell .kapi-page-hero > .max-w-7xl{width:min(calc(100% - 2 * var(--pub-gutter)),var(--pub-content))}
+.kapi-public-shell .kapi-page-hero .kapi-display-title{max-width:17ch}
+.kapi-public-shell .kapi-page-hero .kapi-page-description{max-width:64ch;margin-top:20px}
+.kapi-public-shell .kapi-page-shell > section:not(.kapi-page-hero){padding-top:80px!important;padding-bottom:80px!important}
+.kapi-public-shell .kapi-page-shell .grid,.kapi-public-shell .kapi-page-shell .grid > *{min-width:0}
+.kapi-public-shell .kapi-page-shell .p-10{padding:28px!important}
+.kapi-public-shell .kapi-page-shell .p-8{padding:24px!important}
+.kapi-public-shell .kapi-page-shell .p-7{padding:22px!important}
+.kapi-public-shell .kapi-page-shell .p-6{padding:20px!important}
+.kapi-public-shell .kapi-page-shell .p-5{padding:18px!important}
+
+.kapi-public-shell .kapi-home-hero{min-height:min(820px,calc(100svh - 8px))!important;padding:clamp(112px,15vh,156px) var(--pub-gutter) clamp(64px,8vh,88px)!important}
+.kapi-public-shell .kapi-home-content{max-width:960px!important}
+.kapi-public-shell .kapi-home-content .kapi-display-title{max-width:17ch!important}
+.kapi-public-shell .kapi-home-content > p{max-width:64ch!important;margin-top:24px!important}
+.kapi-public-shell .kapi-home-content > div:last-child{margin-top:28px!important}
+.kapi-public-shell #services .grid{gap:24px!important}
+.kapi-public-shell .kapi-work-filter-section{overflow:hidden}
+.kapi-public-shell .kapi-work-filter-inner{min-width:0}
+.kapi-public-shell .kapi-work-filter-inner .overflow-x-auto{scrollbar-width:none;overscroll-behavior-x:contain}
+.kapi-public-shell .kapi-work-filter-inner .overflow-x-auto::-webkit-scrollbar{display:none}
+
+.kapi-public-shell .kapi-contact-form form{gap:20px!important}
+.kapi-public-shell .kapi-contact-form label{font-size:12px!important;line-height:1.4!important}
+.kapi-public-shell .kapi-contact-form input,.kapi-public-shell .kapi-contact-form select,.kapi-public-shell .kapi-contact-form textarea{min-height:48px!important;font-size:16px!important;line-height:1.4!important}
+.kapi-public-shell .kapi-contact-form textarea{min-height:136px!important}
+.kapi-public-shell .kapi-choice-button{min-height:48px!important;font-size:14px!important;border-radius:12px!important}
+.kapi-public-shell .kapi-nav-inner{width:min(calc(100% - 2 * var(--pub-gutter)),var(--pub-content));margin-inline:auto}
+.kapi-public-shell .kapi-public-nav-links{gap:18px!important}
+.kapi-public-shell .kapi-nav-link,.kapi-public-shell .kapi-nav-services-trigger{font-size:13px!important;line-height:1.2!important}
+
+.kapi-public-shell button.rounded-full[aria-label],.kapi-public-shell a.rounded-full[aria-label]{width:40px!important;min-width:40px!important;height:40px!important;min-height:40px!important;padding:0!important;aspect-ratio:1!important}
+.kapi-public-shell .kapi-floating-contact button{width:52px!important;height:52px!important;min-width:52px!important;min-height:52px!important}
+.kapi-public-shell .kapi-modal-panel{width:min(920px,calc(100vw - 32px))!important;max-height:min(90svh,900px)!important;margin:24px auto!important}
+.kapi-public-shell .kapi-modal-panel > .overflow-y-auto{min-height:0}
+.kapi-public-shell .kapi-modal-panel .p-8{padding:24px!important}
+
+.kapi-public-shell .kapi-service-detail{padding-top:120px!important;padding-bottom:80px!important}
+.kapi-public-shell .kapi-service-detail > .max-w-7xl{width:min(calc(100% - 2 * var(--pub-gutter)),var(--pub-content))!important}
+.kapi-public-shell .kapi-service-detail .mb-20{margin-bottom:64px!important}
+.kapi-public-shell .kapi-service-detail .mb-28{margin-bottom:80px!important}
+.kapi-public-shell .kapi-service-detail .mb-12{margin-bottom:40px!important}
+.kapi-public-shell .kapi-service-detail .p-16{padding:40px!important}
+.kapi-public-shell .kapi-service-detail .p-12{padding:32px!important}
+.kapi-public-shell .kapi-policy-page{padding:120px var(--pub-gutter) 72px!important}
+.kapi-public-shell .kapi-policy-page > .max-w-4xl{width:min(896px,calc(100% - 2 * var(--pub-gutter)))!important}
+.kapi-public-shell .kapi-policy-page h2{margin-top:40px;margin-bottom:12px}
+.kapi-public-shell .kapi-policy-page h3{margin-top:28px;margin-bottom:10px}
+.kapi-public-shell .kapi-policy-page p,.kapi-public-shell .kapi-policy-page li{font-size:15px;line-height:1.72}
+.kapi-public-shell .kapi-not-found{min-height:calc(100svh - 72px);padding:120px var(--pub-gutter) 64px!important}
+
+.kapi-public-shell .kapi-public-footer .max-w-7xl{width:min(calc(100% - 2 * var(--pub-gutter)),var(--pub-content));margin-inline:auto}
+.kapi-public-shell .kapi-public-footer a,.kapi-public-shell .kapi-public-footer p{overflow-wrap:anywhere}
+.kapi-public-shell :focus{outline:none}
+.kapi-public-shell :focus-visible{outline:2px solid var(--pub-red)!important;outline-offset:2px;box-shadow:0 0 0 3px rgba(176,0,32,.14)!important}
+
+@media(max-width:767px){
+  .kapi-public-shell{--pub-gutter:16px}
+  .kapi-public-shell .kapi-display-title,.kapi-public-shell h1{font-size:clamp(38px,11.5vw,52px)!important;line-height:.99!important;max-width:15ch}
+  .kapi-public-shell h2,.kapi-public-shell .kapi-section-title{font-size:28px!important;line-height:1.08!important}
+  .kapi-public-shell h3{font-size:21px!important}
+  .kapi-public-shell .kapi-page-hero{min-height:340px!important;padding:108px 16px 48px!important}
+  .kapi-public-shell .kapi-page-shell > section:not(.kapi-page-hero){padding-top:52px!important;padding-bottom:52px!important}
+  .kapi-public-shell .kapi-home-hero{min-height:calc(100svh - 8px)!important;padding:96px 16px 52px!important}
+  .kapi-public-shell .kapi-home-content .kapi-display-title{max-width:15ch!important}
+  .kapi-public-shell .kapi-home-content > p{font-size:16px!important;margin-top:18px!important}
+  .kapi-public-shell .kapi-home-content > div:last-child{margin-top:22px!important}
+  .kapi-public-shell .kapi-home-content > div:last-child a,.kapi-public-shell .kapi-home-content > div:last-child button{width:100%;min-height:48px;justify-content:center}
+  .kapi-public-shell .kapi-page-shell .p-10{padding:22px!important}
+  .kapi-public-shell .kapi-page-shell .p-8{padding:20px!important}
+  .kapi-public-shell .kapi-page-shell .p-7{padding:20px!important}
+  .kapi-public-shell .kapi-page-shell .p-6{padding:18px!important}
+  .kapi-public-shell .kapi-page-shell .p-5{padding:16px!important}
+  .kapi-public-shell .kapi-contact-form form{gap:18px!important}
+  .kapi-public-shell .kapi-contact-form textarea{min-height:132px!important}
+  .kapi-public-shell .kapi-modal-panel{width:calc(100vw - 24px)!important;max-height:calc(100svh - 24px)!important;margin:12px auto!important;border-radius:18px!important}
+  .kapi-public-shell .kapi-modal-panel .p-8{padding:20px!important}
+  .kapi-public-shell .kapi-service-detail{padding-top:92px!important;padding-bottom:56px!important}
+  .kapi-public-shell .kapi-service-detail .mb-20,.kapi-public-shell .kapi-service-detail .mb-28{margin-bottom:48px!important}
+  .kapi-public-shell .kapi-service-detail .mb-12{margin-bottom:32px!important}
+  .kapi-public-shell .kapi-service-detail .p-16,.kapi-public-shell .kapi-service-detail .p-12{padding:20px!important}
+  .kapi-public-shell .kapi-policy-page{padding:92px 16px 52px!important}
+  .kapi-public-shell .kapi-policy-page h2{margin-top:32px}
+  .kapi-public-shell .kapi-policy-page h3{margin-top:24px}
+  .kapi-public-shell .kapi-not-found{min-height:calc(100svh - 60px);padding:92px 16px 48px!important}
+  .kapi-public-shell .kapi-not-found .text-5xl,.kapi-public-shell .kapi-not-found .text-8xl{font-size:72px!important;line-height:.95!important}
+}
+@media(max-width:420px){
+  .kapi-public-shell{--pub-gutter:14px}
+  .kapi-public-shell .kapi-display-title,.kapi-public-shell h1{font-size:clamp(36px,11vw,47px)!important}
+  .kapi-public-shell .kapi-page-hero{min-height:316px!important;padding:96px 14px 40px!important}
+  .kapi-public-shell .kapi-page-shell > section:not(.kapi-page-hero){padding-top:44px!important;padding-bottom:44px!important}
+  .kapi-public-shell .kapi-home-hero{padding:88px 14px 46px!important}
+}
