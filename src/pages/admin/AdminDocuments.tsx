@@ -168,8 +168,8 @@ export const AdminDocuments: React.FC = () => {
     <div className="space-y-6 animate-in fade-in duration-200">
       {/* Toast Notification */}
       {notification && (
-        <div className="fixed top-20 right-6 z-50 px-4 py-2.5 rounded-xl bg-[var(--ams-surface)] border border-[var(--ams-red)]/40 text-[var(--text)] text-xs font-sans shadow-[0_8px_30px_rgba(0,0,0,0.8)] flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-[var(--ams-red)] animate-ping" />
+        <div className="fixed top-20 right-6 z-50 px-4 py-2.5 rounded-card bg-[var(--panel)] border border-[var(--line)] text-[var(--text)] text-xs font-sans shadow-none flex items-center gap-2">
+          <span className="w-2 h-2 rounded-badge bg-[var(--accent)]" />
           <span>{notification}</span>
         </div>
       )}
@@ -190,7 +190,7 @@ export const AdminDocuments: React.FC = () => {
 
         <button
           onClick={() => setIsUploadModalOpen(true)}
-          className="px-4 py-2.5 rounded-xl bg-[var(--accent)] hover:bg-[var(--accent)] text-white text-xs font-sans font-medium flex items-center justify-center gap-2 rounded-control min-h-10 px-3 transition-colors shrink-0"
+          className="min-h-10 px-3 rounded-control bg-[var(--accent)] hover:bg-[var(--accent)] text-white text-xs font-sans font-medium flex items-center justify-center gap-2 transition-colors shrink-0"
         >
           <Plus size={15} />
           <span>{language === 'id' ? 'Unggah Dokumen' : 'Upload Document'}</span>
@@ -205,10 +205,10 @@ export const AdminDocuments: React.FC = () => {
             <button
               key={cat}
               onClick={() => setCategoryFilter(categoryFilter === cat ? 'all' : cat)}
-              className={`p-3 rounded-card border text-left transition-all ${
+              className={`min-h-10 p-3 rounded-card border text-left transition-colors ${
                 categoryFilter === cat
-                  ? 'bg-[var(--ams-red)]/10 border-[var(--ams-red)]/40 text-[var(--text)]'
-                  : 'bg-[var(--ams-bg)] border-[var(--line)] text-[var(--ams-secondary)] hover:text-[var(--text)] hover:border-white/20'
+                  ? 'bg-[var(--accent)]/10 border-[var(--accent)]/30 text-[var(--text)]'
+                  : 'bg-[var(--panel)] border-[var(--line)] text-[var(--muted)] hover:text-[var(--text)] hover:border-[var(--line)]'
               }`}
             >
               <div className="text-xs font-sans normal-case tracking-normal capitalize">{cat}</div>
@@ -227,7 +227,7 @@ export const AdminDocuments: React.FC = () => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={language === 'id' ? 'Cari judul file, tag, atau nomor kontrak...' : 'Search document title or references...'}
-            className="w-full min-h-10 sm:h-9 pl-8 pr-3 text-xs bg-[var(--ams-surface)] text-[var(--text)] placeholder-[var(--ams-secondary)] rounded-control border border-[var(--line)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ams-red)]/40 focus:border-[var(--ams-red)] font-sans"
+            className="w-full min-h-10 sm:h-9 pl-8 pr-3 text-xs bg-[var(--panel)] text-[var(--text)] placeholder-[var(--ams-secondary)] rounded-control border border-[var(--line)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30 focus:border-[var(--accent)] font-sans"
           />
         </div>
 
@@ -235,7 +235,7 @@ export const AdminDocuments: React.FC = () => {
           {categoryFilter !== 'all' && (
             <button
               onClick={() => setCategoryFilter('all')}
-              className="px-2.5 py-1 rounded-lg text-xs font-sans bg-zinc-800 text-[var(--text)] flex items-center gap-1 hover:text-[var(--text)]"
+              className="px-2.5 py-1 min-h-10 px-3 rounded-control text-xs font-sans bg-[var(--panel)] border border-[var(--line)] text-[var(--text)] flex items-center gap-1 hover:text-[var(--text)]"
             >
               <span>Reset filter ({categoryFilter})</span>
               <X size={12} />
@@ -290,7 +290,7 @@ export const AdminDocuments: React.FC = () => {
                         </div>
                       </td>
                       <td className="py-3 px-4">
-                        <span className="px-2 py-0.5 rounded text-xs font-sans normal-case bg-[var(--ams-surface)] text-[var(--ams-secondary)] border border-[var(--line)]">
+                        <span className="px-2 py-0.5 rounded-badge text-xs font-sans normal-case bg-[var(--panel)] text-[var(--muted)] border border-[var(--line)]">
                           {doc.category}
                         </span>
                       </td>
@@ -333,7 +333,7 @@ export const AdminDocuments: React.FC = () => {
                           <button
                             onClick={() => handleDelete(doc.id)}
                             title="Delete"
-                            className="p-1.5 rounded hover:bg-[var(--danger)]/10 text-[var(--ams-secondary)] hover:text-[var(--danger)] transition-colors"
+                            className="min-h-10 min-w-10 rounded-control hover:bg-[var(--danger)]/10 text-[var(--muted)] hover:text-[var(--danger)] transition-colors flex items-center justify-center"
                           >
                             <Trash2 size={13} />
                           </button>
@@ -351,9 +351,9 @@ export const AdminDocuments: React.FC = () => {
       {/* UPLOAD MODAL */}
       {isUploadModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/85  flex items-center justify-center p-4">
-          <div className="bg-[var(--ams-bg)] border border-[var(--line)] rounded-card w-full max-w-md shadow-[0_24px_64px_rgba(0,0,0,0.55)] overflow-hidden">
+          <div className="bg-[var(--panel)] border border-[var(--line)] rounded-card w-full max-w-md shadow-none overflow-hidden">
             <div className="p-4 border-b border-[var(--line)] flex items-center justify-between bg-[var(--ams-surface)]">
-              <h3 className="text-sm font-bold font-sans text-[var(--text)] flex items-center gap-2">
+              <h3 className="text-sm font-semibold font-sans text-[var(--text)] flex items-center gap-2">
                 <UploadCloud size={16} className="text-[var(--accent)]" />
                 <span>Add Document to Registry</span>
               </h3>
@@ -365,7 +365,7 @@ export const AdminDocuments: React.FC = () => {
               </button>
             </div>
 
-            <form onSubmit={handleUploadSubmit} className="p-5 space-y-4 text-xs font-sans">
+            <form onSubmit={handleUploadSubmit} className="p-4 space-y-4 text-xs font-sans">
               <div className="space-y-1">
                 <label className="text-xs font-sans text-[var(--ams-secondary)]">Document Title *</label>
                 <input
@@ -418,7 +418,7 @@ export const AdminDocuments: React.FC = () => {
                   onChange={(e) => setUploadFile(e.target.files?.[0] || null)}
                   className="w-full h-10 px-2 py-2 rounded-control bg-[var(--panel)] text-[var(--text)] border border-[var(--line)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ams-red)]/40 focus:border-[var(--ams-red)] text-xs"
                 />
-                <p className="text-xs text-[var(--k-text-tertiary)] font-sans">
+                <p className="text-xs text-[var(--muted)] font-sans">
                   {language === 'id'
                     ? 'File disimpan di server-side private vault, di luar static web root. Maksimal 25 MB. Akses selalu melalui session + RBAC.'
                     : 'Files are stored in a server-side private vault outside the static web root. Max 25 MB. Access requires session + RBAC.'}
@@ -429,7 +429,7 @@ export const AdminDocuments: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsUploadModalOpen(false)}
-                  className="min-h-10 px-4 py-2 rounded-control bg-[var(--panel)] hover:bg-[var(--ams-elevated)] text-[var(--ams-secondary)] text-xs font-sans"
+                  className="min-h-10 px-4 py-2 rounded-control bg-[var(--panel)] hover:bg-[var(--panel-hover)] border border-[var(--line)] text-[var(--ams-secondary)] text-xs font-sans"
                 >
                   Cancel
                 </button>
