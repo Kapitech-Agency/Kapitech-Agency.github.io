@@ -795,7 +795,7 @@ export const AdminInvoicing: React.FC = () => {
                 {expenses.length === 0 ? (
                   <tr>
                     <td colSpan={6} className="py-12 px-4 text-center text-xs font-sans text-[var(--muted)]">
-                      {language === 'id' ? 'Tidak ada catatan pengeluaran yang sesuai kriteria.' : 'No expense records found matching criteria.'}
+                      {language === 'id' ? 'Tidak ada pengeluaran yang sesuai kriteria.' : 'No expenses found matching criteria.'}
                     </td>
                   </tr>
                 ) : expenses.map((exp) => (
