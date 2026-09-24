@@ -123,7 +123,7 @@ export const Navbar = () => {
 
               {/* SERVICES DROPDOWN TRIGGER */}
               <div 
-                className="relative flex items-center h-7"
+                className="relative flex items-center h-10"
                 onMouseEnter={handleMouseEnterServices}
                 onMouseLeave={handleMouseLeaveServices}
               >
@@ -250,7 +250,7 @@ export const Navbar = () => {
               transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
               onMouseEnter={handleMouseEnterServices}
               onMouseLeave={handleMouseLeaveServices}
-              className="kapi-mega-menu hidden md:block"
+              className="kapi-mega-menu"
             >
               <div className="max-w-7xl mx-auto grid grid-cols-4 gap-8 lg:gap-10">
                 
