@@ -85,7 +85,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
         disabled={disabled}
         aria-expanded={isOpen}
         onClick={() => setIsOpen((open) => !open)}
-        className={`ams-control flex w-full items-center justify-between rounded-[12px] border bg-[#181B22] text-[#F5F5F7] transition-colors duration-150 select-none ${sizes[size]} ${isOpen ? 'border-[rgba(176,0,32,.55)]' : 'border-[rgba(255,255,255,.09)] hover:border-[rgba(255,255,255,.16)]'} ${disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'} ${triggerClassName}`}
+        className={`ams-control flex w-full items-center justify-between rounded-[12px] border bg-[#181B22] text-[#F5F5F7] transition-colors duration-150 select-none ${sizes[size]} ${isOpen ? 'border-[rgba(230,57,70,.55)]' : 'border-[rgba(255,255,255,.09)] hover:border-[rgba(255,255,255,.16)]'} ${disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'} ${triggerClassName}`}
       >
         <span className="flex min-w-0 items-center gap-2 pr-2">
           {prefixIcon && (
