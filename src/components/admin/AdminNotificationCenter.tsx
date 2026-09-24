@@ -56,7 +56,7 @@ export const AdminNotificationCenter: React.FC = () => {
         aria-expanded={open}
       >
         <Bell size={16} />
-        {unread > 0 && <span className="absolute -right-1 -top-1 min-w-[17px] h-[17px] px-1 rounded-badge bg-accent text-fg text-[9px] font-bold flex items-center justify-center">{unread > 99 ? '99+' : unread}</span>}
+        {unread > 0 && <span className="absolute -right-1 -top-1 min-w-[17px] h-[17px] px-1 rounded-badge bg-accent text-fg text-[9px] font-medium flex items-center justify-center">{unread > 99 ? '99+' : unread}</span>}
       </button>
 
       {open && (
@@ -72,9 +72,9 @@ export const AdminNotificationCenter: React.FC = () => {
             </div>
             <div className="max-h-[min(60vh,460px)] overflow-y-auto">
               {loading && items.length === 0 ? (
-                <div className="px-4 py-10 text-center text-[12px] text-[#64748B]">{language === 'id' ? 'Memuat notifikasi...' : 'Loading notifications...'}</div>
+                <div className="px-4 py-10 text-center text-[12px] text-[var(--muted)]">{language === 'id' ? 'Memuat notifikasi...' : 'Loading notifications...'}</div>
               ) : items.length === 0 ? (
-                <div className="px-4 py-10 text-center text-[12px] text-[#64748B]">{language === 'id' ? 'Tidak ada notifikasi.' : 'No notifications.'}</div>
+                <div className="px-4 py-10 text-center text-[12px] text-[var(--muted)]">{language === 'id' ? 'Tidak ada notifikasi.' : 'No notifications.'}</div>
               ) : items.slice(0, 30).map(item => (
                 <button key={item.id} type="button" onClick={() => void markRead(item.id)} className={`w-full border-b border-line px-4 py-3 text-left transition-colors hover:bg-bg ${(!item.isRead && !item.readAt) ? 'bg-accent/5' : ''}`}>
                   <div className="flex gap-3">
@@ -82,7 +82,7 @@ export const AdminNotificationCenter: React.FC = () => {
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-[12px] font-semibold text-white">{item.title || item.type || (language === 'id' ? 'Notifikasi sistem' : 'System notification')}</p>
                       <p className="mt-1 line-clamp-2 text-[11px] leading-5 text-muted">{item.message || ''}</p>
-                      {item.createdAt && <p className="mt-1.5 text-[10px] text-[#64748B]">{new Date(item.createdAt).toLocaleString(language === 'id' ? 'id-ID' : 'en-US')}</p>}
+                      {item.createdAt && <p className="mt-1.5 text-[10px] text-[var(--muted)]">{new Date(item.createdAt).toLocaleString(language === 'id' ? 'id-ID' : 'en-US')}</p>}
                     </div>
                   </div>
                 </button>
