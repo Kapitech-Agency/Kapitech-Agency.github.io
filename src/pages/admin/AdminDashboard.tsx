@@ -36,7 +36,6 @@ import { CrmLead, CrmServicePillar, CrmSource } from '../../lib/crmStore';
 import { 
     AgencyInvoice,
   AgencyExpense,
-  InvoiceLineItem
 } from '../../lib/financeStore';
 import { AgencyClient } from '../../lib/clientStore';
 import { useLanguage } from '../../lib/LanguageContext';
@@ -340,107 +339,60 @@ export const AdminDashboard: React.FC = () => {
 
   const handleCreateInvoice = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!quickInvCompany.trim()) return;
-
-    const amt = parseFloat(quickInvAmount) || 0;
-    const items = [{ description: quickInvDesc.trim() || 'Service', quantity: 1, unitPrice: amt }];
-
-        const invObj: AgencyInvoice = {
-      id: 'inv_' + Date.now().toString(36),
-      invoiceNumber: `KAPI-INV-${new Date().getFullYear()}-${Math.floor(100 + Math.random() * 900)}`,
+    if (!quickInvCompany.trim() || !quickInvDesc.trim()) return;
+    const amount = Math.max(0, Number(quickInvAmount) || 0);
+    const payload = {
       clientName: quickInvClient.trim() || quickInvCompany.trim(),
       clientCompany: quickInvCompany.trim(),
-      clientEmail: '',
-      type: 'invoice',
-      items,
-      subtotal,
-      discountPercent: 0,
-      discountAmount,
+      items: [{ description: quickInvDesc.trim(), quantity: 1, unitPrice: amount }],
+      currency,
       taxPercent: 11,
-      taxAmount,
-      total,
-      currency: 'IDR',
-      status: 'sent',
-      issueDate: new Date().toISOString().split('T')[0],
-      dueDate: new Date(Date.now() + 14 * 86400000).toISOString().split('T')[0],
-      paymentTerms: 'Bank Transfer Net 14. Mandiri / BCA',
-      notes: 'Standard agency services sprint retainer.',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      discountPercent: 0,
+      notes: quickInvDesc.trim()
     };
-
-    await api.finance.createInvoice(invObj);
+    const res = await api.finance.createInvoice(payload);
+    if (!res.success) { showToast(res.error || 'Invoice could not be created.'); return; }
     setIsNewInvoiceModalOpen(false);
     setQuickInvCompany('');
     setQuickInvClient('');
-    showToast(language === 'id' ? `Invoice baru diterbitkan: ${invObj.invoiceNumber}` : `Invoice created: ${invObj.invoiceNumber}`);
+    showToast(language === 'id' ? 'Invoice berhasil dibuat.' : 'Invoice created successfully.');
   };
 
   const handleCreateProject = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!quickProjTitle.trim() || !quickProjClient.trim()) return;
-
-    const budget = parseFloat(quickProjBudget) || 0;
-    const projObj: AgencyProject = {
+    const payload = {
       name: quickProjTitle.trim(),
       clientName: quickProjClient.trim(),
       clientCompany: quickProjClient.trim(),
-      clientEmail: '',
       serviceCategory: quickProjPillar,
-      status: 'in_progress',
-      budget,
-      progressPercent: 10,
-      startDate: new Date().toISOString().split('T')[0],
-      targetEndDate: new Date(Date.now() + 45 * 86400000).toISOString().split('T')[0],
-      teamLead: 'Lead Full-Stack Tech',
-      teamMembers: ['Lead Tech', 'Frontend Engineer', 'UI/UX Designer'],
-      techStack: ['React', 'TypeScript', 'Tailwind CSS', 'Node.js'],
-      milestones: [
-        { id: 'm_1', title: 'Architecture Specification & Wireframes', dueDate: new Date().toISOString().split('T')[0], completed: true },
-        { id: 'm_2', title: 'Core Implementation & Security Hardening', dueDate: new Date(Date.now() + 20 * 86400000).toISOString().split('T')[0], completed: false },
-        { id: 'm_3', title: 'Production Deployment & SLA Handoff', dueDate: new Date(Date.now() + 45 * 86400000).toISOString().split('T')[0], completed: false }
-      ],
-      tasks: [
-        {
-          id: 't_1',
-          title: 'Setup repository and CI/CD pipelines',
-          status: 'done',
-          priority: 'high',
-          assignedTo: 'Lead Tech',
-          dueDate: new Date().toISOString().split('T')[0],
-          createdAt: new Date().toISOString()
-        }
-      ],
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      budget: Math.max(0, Number(quickProjBudget) || 0)
     };
-
-    await api.projects.create(projObj);
+    const res = await api.projects.create(payload);
+    if (!res.success) { showToast(res.error || 'Project could not be created.'); return; }
     setIsNewProjectModalOpen(false);
     setQuickProjTitle('');
     setQuickProjClient('');
-    showToast(language === 'id' ? `Proyek baru dimulai: ${projObj.name}` : `Project initiated: ${projObj.name}`);
+    showToast(language === 'id' ? 'Proyek berhasil dibuat.' : 'Project created successfully.');
   };
 
   const handleRecordExpense = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!quickExpDesc.trim()) return;
-
-    const amt = parseFloat(quickExpAmount) || 0;
-    const expObj: AgencyExpense = {
+    const amount = Math.max(0, Number(quickExpAmount) || 0);
+    const payload = {
       type: 'OpEx',
-      category: quickExpCategory as any,
+      category: quickExpCategory,
       description: quickExpDesc.trim(),
-      amount: amt,
-      date: new Date().toISOString().split('T')[0],
-      recurringInterval: 'monthly',
-      recordedBy: session?.user.username || 'Admin'
+      amount,
+      currency,
+      date: new Date().toISOString().slice(0, 10)
     };
-
-    await api.finance.createExpense(expObj);
+    const res = await api.finance.createExpense(payload);
+    if (!res.success) { showToast(res.error || 'Expense could not be created.'); return; }
     setIsRecordExpenseModalOpen(false);
     setQuickExpDesc('');
-    showToast(language === 'id' ? `Biaya operasional dicatat: ${formatCurrency(amt, currency)}` : `Expense recorded: ${formatCurrency(amt, currency)}`);
+    showToast(language === 'id' ? 'Biaya berhasil dicatat.' : 'Expense recorded successfully.');
   };
 
   // CSV Export Functionality
