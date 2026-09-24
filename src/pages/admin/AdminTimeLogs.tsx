@@ -1,5 +1,5 @@
 import React, { FormEvent, useEffect, useMemo, useState } from 'react';
-import { Clock3, Plus, Trash2, RefreshCw, CalendarDays, Timer, ReceiptText } from 'lucide-react';
+import { Plus, Trash2, RefreshCw, CalendarDays, Timer, ReceiptText } from 'lucide-react';
 import { api } from '../../lib/apiClient';
 import { CustomSelect } from '../../components/ui/CustomSelect';
 import { getAdminSession, hasAdminPermission } from '../../lib/adminAuth';
@@ -103,14 +103,10 @@ export const AdminTimeLogs: React.FC = () => {
       <div className="max-w-[1500px] mx-auto p-4 sm:p-5 lg:p-6 space-y-6">
         <header className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
           <div>
-            <div className="flex items-center gap-2 text-[11px] font-sans normal-case tracking-normal text-[var(--muted)]">
-              <Clock3 size={13} className="text-[var(--accent)]" /> Delivery Operations
+            <div className="pb-4 border-b border-[var(--line)]">
+              <h1 className="text-xl font-semibold tracking-tight">Time Tracking</h1>
+              <p className="mt-1 text-[13px] leading-[18px] text-[var(--muted)]">Track project time and billable work.</p>
             </div>
-            <div className="pb-5 border-b border-[var(--line)]">
-            <h1 className="text-xl font-semibold tracking-tight">Time Tracking</h1>
-            <p className="mt-1 text-[13px] leading-[18px] text-[var(--muted)]">Track project time and billable work.</p>
-          </div>
-            <p className="mt-1 text-[13px] leading-5 text-[var(--muted)] max-w-2xl">Record delivery time against projects and tasks, with billable visibility for operational reporting.</p>
           </div>
           <button onClick={() => void load()} className="inline-flex items-center justify-center gap-2 h-10 px-4 rounded-control border border-[var(--line)] bg-[var(--panel)] text-sm text-[var(--text)] hover:bg-[var(--panel)] transition-colors">
             <RefreshCw size={14} /> Refresh
@@ -195,7 +191,7 @@ export const AdminTimeLogs: React.FC = () => {
             <div className="p-8 text-sm text-[var(--muted)]">Loading time entries…</div>
           ) : logs.length === 0 ? (
             <div className="p-8 text-center">
-              <Clock3 size={22} className="mx-auto text-[var(--muted)]" />
+              <Timer size={22} className="mx-auto text-[var(--muted)]" />
               <p className="mt-3 text-sm text-[var(--text)]">No time entries yet</p>
               <p className="mt-1 text-xs text-[var(--muted)]">Add the first delivery time entry above.</p>
             </div>
