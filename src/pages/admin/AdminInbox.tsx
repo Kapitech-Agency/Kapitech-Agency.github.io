@@ -1345,7 +1345,7 @@ export const AdminInbox: React.FC = () => {
                           type="button"
                           disabled={isSavingNote}
                           onClick={handleSaveInternalNote}
-                          className="px-4 py-2 rounded-card bg-[var(--accent)] hover:bg-[var(--danger)] text-[var(--text)] text-xs font-sans font-semibold transition-all flex items-center gap-1.5 "
+                          className="px-4 py-2 rounded-card bg-[var(--accent)] hover:bg-[var(--accent)] text-[var(--text)] text-xs font-sans font-semibold transition-all flex items-center gap-1.5 "
                         >
                           <Check size={14} />
                           <span>{isSavingNote ? (language === 'id' ? 'Menyimpan...' : 'Saving...') : (language === 'id' ? 'Simpan Catatan' : 'Save Notes')}</span>
