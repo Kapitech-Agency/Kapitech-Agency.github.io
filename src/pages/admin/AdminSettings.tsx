@@ -564,7 +564,7 @@ export const AdminSettings: React.FC = () => {
           onClick={() => handleTabChange('profile')}
           className={`px-4 py-2.5 rounded-xl text-xs font-sans transition-all flex items-center gap-2 shrink-0 min-h-[44px] ${
             activeTab === 'profile'
-              ? 'bg-[var(--k-red)] text-white font-bold shadow-[0_0_12px_rgba(230,57,70,0.25)]'
+              ? 'bg-[var(--k-red)] text-white font-bold shadow-[0_0_12px_rgba(229,9,20,0.25)]'
               : 'text-[var(--k-text-secondary)] hover:text-white hover:bg-[var(--k-surface)]'
           }`}
         >
@@ -577,7 +577,7 @@ export const AdminSettings: React.FC = () => {
           onClick={() => handleTabChange('branding')}
           className={`px-4 py-2.5 rounded-xl text-xs font-sans transition-all flex items-center gap-2 shrink-0 min-h-[44px] ${
             activeTab === 'branding'
-              ? 'bg-[var(--k-red)] text-white font-bold shadow-[0_0_12px_rgba(230,57,70,0.25)]'
+              ? 'bg-[var(--k-red)] text-white font-bold shadow-[0_0_12px_rgba(229,9,20,0.25)]'
               : 'text-[var(--k-text-secondary)] hover:text-white hover:bg-[var(--k-surface)]'
           }`}
         >
@@ -591,7 +591,7 @@ export const AdminSettings: React.FC = () => {
           onClick={() => handleTabChange('rbac')}
           className={`px-4 py-2.5 rounded-xl text-xs font-sans transition-all flex items-center gap-2 shrink-0 min-h-[44px] ${
             activeTab === 'rbac'
-              ? 'bg-[var(--k-red)] text-white font-bold shadow-[0_0_12px_rgba(230,57,70,0.25)]'
+              ? 'bg-[var(--k-red)] text-white font-bold shadow-[0_0_12px_rgba(229,9,20,0.25)]'
               : 'text-[var(--k-text-secondary)] hover:text-white hover:bg-[var(--k-surface)]'
           }`}
         >
@@ -604,7 +604,7 @@ export const AdminSettings: React.FC = () => {
           onClick={() => handleTabChange('security')}
           className={`px-4 py-2.5 rounded-xl text-xs font-sans transition-all flex items-center gap-2 shrink-0 min-h-[44px] ${
             activeTab === 'security'
-              ? 'bg-[var(--k-red)] text-white font-bold shadow-[0_0_12px_rgba(230,57,70,0.25)]'
+              ? 'bg-[var(--k-red)] text-white font-bold shadow-[0_0_12px_rgba(229,9,20,0.25)]'
               : 'text-[var(--k-text-secondary)] hover:text-white hover:bg-[var(--k-surface)]'
           }`}
         >
@@ -617,7 +617,7 @@ export const AdminSettings: React.FC = () => {
           onClick={() => handleTabChange('api')}
           className={`px-4 py-2.5 rounded-xl text-xs font-sans transition-all flex items-center gap-2 shrink-0 min-h-[44px] ${
             activeTab === 'api'
-              ? 'bg-[var(--k-red)] text-white font-bold shadow-[0_0_12px_rgba(230,57,70,0.25)]'
+              ? 'bg-[var(--k-red)] text-white font-bold shadow-[0_0_12px_rgba(229,9,20,0.25)]'
               : 'text-[var(--k-text-secondary)] hover:text-white hover:bg-[var(--k-surface)]'
           }`}
         >
@@ -631,7 +631,7 @@ export const AdminSettings: React.FC = () => {
           onClick={() => handleTabChange('audit')}
           className={`px-4 py-2.5 rounded-xl text-xs font-sans transition-all flex items-center gap-2 shrink-0 min-h-[44px] ${
             activeTab === 'audit'
-              ? 'bg-[var(--k-red)] text-white font-bold shadow-[0_0_12px_rgba(230,57,70,0.25)]'
+              ? 'bg-[var(--k-red)] text-white font-bold shadow-[0_0_12px_rgba(229,9,20,0.25)]'
               : 'text-[var(--k-text-secondary)] hover:text-white hover:bg-[var(--k-surface)]'
           }`}
         >
