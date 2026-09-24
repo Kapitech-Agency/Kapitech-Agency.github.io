@@ -105,7 +105,10 @@ export const AdminTimeLogs: React.FC = () => {
             <div className="flex items-center gap-2 text-[11px] font-sans normal-case tracking-normal text-[var(--muted)]">
               <Clock3 size={13} className="text-[var(--accent)]" /> Delivery Operations
             </div>
-            <h1 className="mt-2 text-xl font-semibold tracking-tight">Time Tracking</h1>
+            <div className="pb-5 border-b border-[var(--line)]">
+            <h1 className="text-xl font-semibold tracking-tight">Time Tracking</h1>
+            <p className="mt-1 text-[13px] leading-[18px] text-[var(--muted)]">Track project time and billable work.</p>
+          </div>
             <p className="mt-1 text-[13px] leading-5 text-[var(--muted)] max-w-2xl">Record delivery time against projects and tasks, with billable visibility for operational reporting.</p>
           </div>
           <button onClick={() => void load()} className="inline-flex items-center justify-center gap-2 h-10 px-4 rounded-control border border-[var(--line)] bg-[var(--panel)] text-sm text-[var(--text)] hover:bg-[var(--panel)] transition-colors">
