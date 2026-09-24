@@ -5,6 +5,7 @@ import { useLanguage } from '../../lib/LanguageContext';
 import { getActiveCurrency, setActiveCurrency, CurrencyCode, CURRENCY_EVENT } from '../../lib/currency';
 import { CommandPalette } from '../../components/admin/CommandPalette';
 import { AdminNotificationCenter } from '../../components/admin/AdminNotificationCenter';
+import { CustomSelect } from '../../components/ui/CustomSelect';
 import { useRbacRole, StakeholderRole, ROLE_DEFINITIONS } from '../../lib/rbacEngine';
 
 
@@ -143,7 +144,7 @@ export const AdminLayout: React.FC = () => {
           key: 'crm',
           to: '/admin/crm',
           label: t('admin.nav.crm'),
-          icon: U('briefcase'),
+          icon: U('users'),
           badge: null
         },
         {
@@ -170,28 +171,28 @@ export const AdminLayout: React.FC = () => {
           key: 'invoicing',
           to: '/admin/invoicing',
           label: t('admin.nav.invoicing'),
-          icon: U('file'),
+          icon: U('bank'),
           badge: null
         },
         {
           key: 'clients',
           to: '/admin/clients',
           label: t('admin.nav.clients'),
-          icon: U('briefcase'),
+          icon: U('users'),
           badge: null
         },
         {
           key: 'vendors',
           to: '/admin/vendors',
           label: t('admin.nav.vendors'),
-          icon: U('briefcase'),
+          icon: U('users'),
           badge: null
         },
         {
           key: 'approvals',
           to: '/admin/approvals',
           label: language === 'id' ? 'Approval Center' : 'Approval Center',
-          icon: U('check'),
+          icon: U('check-circle'),
           badge: null
         }
       ]
@@ -225,14 +226,14 @@ export const AdminLayout: React.FC = () => {
           key: 'documents',
           to: '/admin/documents',
           label: language === 'id' ? 'Documents' : 'Documents',
-          icon: U('file'),
+          icon: U('clock'),
           badge: null
         },
         {
           key: 'timelogs',
           to: '/admin/time-logs',
           label: language === 'id' ? 'Time Tracking' : 'Time Tracking',
-          icon: U('file'),
+          icon: U('clock'),
           badge: null
         }
       ]
@@ -444,7 +445,7 @@ export const AdminLayout: React.FC = () => {
               title={t('admin.nav.logout')}
               className="p-2 flex items-center justify-center rounded-lg bg-[#181B22] hover:bg-red-950/40 text-[#8A94A6] hover:text-[#FF1E27] border border-white/[0.07] hover:border-[#E50914]/30 transition-all shrink-0"
             >
-              <AmsSettings size={14} />
+              <UntitledIcon name="logout" size={15} />
             </button>
           </div>
 
@@ -458,20 +459,21 @@ export const AdminLayout: React.FC = () => {
                 </span>
                 <span className="text-[8px] px-1 py-0.5 rounded bg-[#181B22] border border-white/[0.07] text-[#E50914] font-bold">LOCKED</span>
               </div>
-              <select
+              <CustomSelect
                 value={rbacRole}
-                onChange={(e) => setRbacRole(e.target.value as StakeholderRole)}
+                onChange={(value) => setRbacRole(value as StakeholderRole)}
                 disabled={Boolean(session?.user?.stakeholderType)}
-                aria-disabled={Boolean(session?.user?.stakeholderType)}
-                className="w-full h-8 px-2 rounded-lg bg-[#181B22] text-white border border-white/[0.07] text-[11px] font-mono focus:outline-none focus:border-[#E50914] transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
-                title={session?.user?.stakeholderType ? "Role is locked by the authenticated RBAC policy" : "Development-only role simulator"}
-              >
-                <option value="executive">1. Stakeholder Executive (Full Access)</option>
-                <option value="pm">2. Project Manager</option>
-                <option value="finance">3. Financial Officer</option>
-                <option value="account_manager">4. Account Manager</option>
-                <option value="client_viewer">5. Client / Viewer</option>
-              </select>
+                size="xs"
+                className="w-full"
+                triggerClassName="w-full !bg-[#181B22] !border-white/[0.07] !text-[#F8FAFC]"
+                options={[
+                  { value: 'executive', label: '1. Stakeholder Executive (Full Access)' },
+                  { value: 'pm', label: '2. Project Manager' },
+                  { value: 'finance', label: '3. Financial Officer' },
+                  { value: 'account_manager', label: '4. Account Manager' },
+                  { value: 'client_viewer', label: '5. Client / Viewer' }
+                ]}
+              />
             </div>
           )}
         </div>
