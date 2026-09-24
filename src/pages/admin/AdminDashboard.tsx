@@ -1,34 +1,25 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
-  Plus, 
-  Search, 
-  TrendingUp, 
-  DollarSign, 
-  Receipt, 
-  CheckCircle2, 
-  Layers, 
-  Activity, 
-  Clock, 
-  Calendar, 
-  ArrowUpRight, 
-  Building2, 
-  ShieldCheck, 
-  Download, 
-  Kanban, 
-  Inbox, 
-  Zap, 
-  AlertTriangle, 
-  Check, 
-  X, 
-  ChevronRight, 
-  Filter, 
-  RefreshCw,
-  Cpu,
-  BarChart3,
-  Percent,
-  FileSpreadsheet
-} from 'lucide-react';
+import { UntitledIcon } from '../../components/ui/UntitledIcon';
+
+const A = (name: React.ComponentProps<typeof UntitledIcon>['name']) => (props: { size?: number; className?: string }) => (
+  <UntitledIcon name={name} size={props.size ?? 18} className={props.className} />
+);
+const Plus = A('plus');
+const TrendingUp = A('trend-up');
+const DollarSign = A('bank');
+const Receipt = A('receipt');
+const CheckCircle2 = A('check-circle');
+const Layers = A('layers');
+const Activity = A('activity');
+const ShieldCheck = A('shield');
+const Download = A('download');
+const Kanban = A('columns');
+const Inbox = A('inbox');
+const X = A('x');
+const ChevronRight = A('chevron-right');
+const Cpu = A('cpu');
+const Percent = A('percent');
 import { getAdminSession, SecurityAuditLog } from '../../lib/adminAuth';
 import { ContactSubmission } from '../../lib/submissions';
 import { AgencyProject } from '../../lib/projectStore';
@@ -529,7 +520,7 @@ export const AdminDashboard: React.FC = () => {
           {isAllowed('crm') && (
             <button
               onClick={() => setIsAddLeadModalOpen(true)}
-              className="h-9 px-3 rounded-xl bg-[#111318] hover:bg-[#181B22] border border-white/[0.07] hover:border-white/20 text-xs font-sans font-semibold text-[#F8FAFC] transition-all flex items-center gap-1.5 shadow-sm"
+              className="h-9 px-3 rounded-xl bg-[#111318] hover:bg-[#181B22] border border-white/[0.07]  text-xs font-sans font-semibold text-[#F8FAFC] transition-all flex items-center gap-1.5 shadow-sm"
             >
               <Plus size={14} className="text-emerald-400" />
               <span>{language === 'id' ? 'Tambah Lead' : 'Add Lead'}</span>
@@ -540,7 +531,7 @@ export const AdminDashboard: React.FC = () => {
           {isAllowed('invoicing') && (
             <button
               onClick={() => setIsNewInvoiceModalOpen(true)}
-              className="h-9 px-3 rounded-xl bg-[#111318] hover:bg-[#181B22] border border-white/[0.07] hover:border-white/20 text-xs font-sans font-semibold text-[#F8FAFC] transition-all flex items-center gap-1.5 shadow-sm"
+              className="h-9 px-3 rounded-xl bg-[#111318] hover:bg-[#181B22] border border-white/[0.07]  text-xs font-sans font-semibold text-[#F8FAFC] transition-all flex items-center gap-1.5 shadow-sm"
             >
               <Plus size={14} className="text-purple-400" />
               <span>{language === 'id' ? 'Buat Invoice' : 'New Invoice'}</span>
@@ -566,7 +557,7 @@ export const AdminDashboard: React.FC = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-5">
         
         {/* Metric Card 1: Gross Realized Revenue */}
-        <div className="p-5 rounded-xl bg-[#111318] border border-white/[0.07] hover:border-white/20 flex flex-col justify-between group transition-all duration-200">
+        <div className="p-5 rounded-xl bg-[#111318] border border-white/[0.07]  flex flex-col justify-between group transition-colors duration-150">
           <div>
             <div className="flex items-center justify-between text-[#8A94A6] mb-3">
               <span className="text-[11px] font-mono uppercase tracking-wider font-semibold">
@@ -604,7 +595,7 @@ export const AdminDashboard: React.FC = () => {
         </div>
 
         {/* Metric Card 2: Active CRM Deals & Pipeline */}
-        <div className="p-5 rounded-xl bg-[#111318] border border-white/[0.07] hover:border-white/20 flex flex-col justify-between group transition-all duration-200">
+        <div className="p-5 rounded-xl bg-[#111318] border border-white/[0.07]  flex flex-col justify-between group transition-colors duration-150">
           <div>
             <div className="flex items-center justify-between text-[#8A94A6] mb-3">
               <span className="text-[11px] font-mono uppercase tracking-wider font-semibold">
@@ -640,7 +631,7 @@ export const AdminDashboard: React.FC = () => {
         </div>
 
         {/* Metric Card 3: Conversion & Win Rate */}
-        <div className="p-5 rounded-xl bg-[#111318] border border-white/[0.07] hover:border-white/20 flex flex-col justify-between group transition-all duration-200">
+        <div className="p-5 rounded-xl bg-[#111318] border border-white/[0.07]  flex flex-col justify-between group transition-colors duration-150">
           <div>
             <div className="flex items-center justify-between text-[#8A94A6] mb-3">
               <span className="text-[11px] font-mono uppercase tracking-wider font-semibold">
@@ -675,7 +666,7 @@ export const AdminDashboard: React.FC = () => {
         </div>
 
         {/* Metric Card 4: Active Client Projects & Delivery SLA */}
-        <div className="p-5 rounded-xl bg-[#111318] border border-white/[0.07] hover:border-white/20 flex flex-col justify-between group transition-all duration-200">
+        <div className="p-5 rounded-xl bg-[#111318] border border-white/[0.07]  flex flex-col justify-between group transition-colors duration-150">
           <div>
             <div className="flex items-center justify-between text-[#8A94A6] mb-3">
               <span className="text-[11px] font-mono uppercase tracking-wider font-semibold">
@@ -770,11 +761,11 @@ export const AdminDashboard: React.FC = () => {
                 <div
                   key={proj.id}
                   onClick={() => navigate('/admin/projects')}
-                  className="p-4 rounded-xl bg-[#181B22] border border-white/[0.07] hover:border-white/20 transition-all cursor-pointer group flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+                  className="p-4 rounded-xl bg-[#181B22] border border-white/[0.07]  transition-all cursor-pointer group flex flex-col sm:flex-row sm:items-center justify-between gap-3"
                 >
                   <div className="space-y-1">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-sm font-semibold text-white group-hover:text-[#FF1E27] transition-colors">
+                      <span className="text-sm font-semibold text-white  transition-colors">
                         {proj.name}
                       </span>
                       <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/25 font-semibold">
