@@ -50,7 +50,7 @@ export const Modal: React.FC<ModalProps> = ({
 
   if (!open) return null;
   return (
-    <div className="ams-modal-root fixed inset-0 z-[80] flex items-center justify-center p-3 sm:p-4" role="presentation">
+    <div className="ams-modal-root fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4" role="presentation">
       <button aria-label="Close dialog overlay" className="absolute inset-0 bg-black/70" onClick={() => closeOnOutsideClick && onClose()} />
       <div ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby={labelledBy}
         className={`relative w-full ${sizes[size]} max-h-[calc(100dvh-24px)] flex flex-col overflow-hidden rounded-card border border-line bg-panel`}>
