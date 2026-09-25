@@ -125,6 +125,7 @@ export const AdminSettings: React.FC = () => {
   // Accounts Management state (Stakeholder Executive & Teknisi IT)
   const [accounts, setAccounts] = useState<AdminAccount[]>([]);
   const [isAddAccountModalOpen, setIsAddAccountModalOpen] = useState(false);
+  const [confirmAction, setConfirmAction] = useState<{ type: 'account' | 'logs'; id?: string; name?: string } | null>(null);
   const [isEditPermsModalOpen, setIsEditPermsModalOpen] = useState(false);
   const [editingAccount, setEditingAccount] = useState<AdminAccount | null>(null);
   const [accountActionMessage, setAccountActionMessage] = useState<{ success: boolean; message: string } | null>(null);
@@ -154,7 +155,15 @@ export const AdminSettings: React.FC = () => {
         if (mounted && res.success && res.data?.settings) setMetaSettings(res.data.settings as SiteMetaSettings);
       });
     }
-    return () => { mounted = false; };
+    return (
+    <>
+      <Modal open={!!confirmAction} onClose={() => setConfirmAction(null)} size="sm" title={confirmAction?.type === 'account' ? (language === 'id' ? 'Hapus akun stakeholder?' : 'Delete stakeholder account?') : (language === 'id' ? 'Hapus audit log?' : 'Clear audit logs?')} description={confirmAction?.type === 'account' ? (language === 'id' ? `Akun ${confirmAction.name || ''} akan dihapus secara permanen.` : `Account ${confirmAction.name || ''} will be permanently deleted.`) : (language === 'id' ? 'Seluruh riwayat audit log keamanan akan dihapus.' : 'All security audit log history will be cleared.') }>
+        <div className="flex flex-col-reverse sm:flex-row justify-end gap-2">
+          <button type="button" onClick={() => setConfirmAction(null)} className="min-h-10 px-4 rounded-control border border-[var(--line)] bg-[var(--panel)] text-xs text-[var(--muted)]">Cancel</button>
+          <button type="button" onClick={() => confirmAction?.type === 'account' && confirmAction.id && void confirmDeleteAccount(confirmAction.id, confirmAction.name || '') || confirmAction?.type === 'logs' && confirmClearLogs()} className="min-h-10 px-4 rounded-control bg-[var(--danger)] text-white text-xs font-semibold">Delete</button>
+        </div>
+      </Modal>
+      <div>) => { mounted = false; };
   }, [activeTab, canViewAuditLogs, canManageAdminAccounts]);
 
   useEffect(() => {
@@ -229,25 +238,22 @@ export const AdminSettings: React.FC = () => {
     }
   };
 
-  const handleDeleteAccountClick = async (id: string, name: string) => {
-    const confirmMsg = language === 'id'
-      ? `Hapus akun stakeholder "${name}" dari sistem Kapitech? Tindakan ini tidak dapat dibatalkan.`
-      : `Delete stakeholder account "${name}" permanently? This action cannot be undone.`;
-    
-    if (window.confirm(confirmMsg)) {
-      const res = await deleteAdminAccount(id);
-      if (res.success) {
-        refreshAccounts();
-        setAccountActionMessage({
-          success: true,
-          message: language === 'id' ? `Akun "${name}" berhasil dihapus.` : `Account "${name}" deleted.`
-        });
-        setTimeout(() => setAccountActionMessage(null), 4000);
-      } else {
-        alert(res.error);
-      }
-    }
+  const handleDeleteAccountClick = (id: string, name: string) => {
+    setConfirmAction({ type: 'account', id, name });
   };
+
+  const confirmDeleteAccount = async (id: string, name: string) => {
+    const res = await deleteAdminAccount(id);
+    if (res.success) {
+      await refreshAccounts();
+      setAccountActionMessage({ success: true, message: language === 'id' ? `Akun "${name}" berhasil dihapus.` : `Account "${name}" deleted.` });
+      setTimeout(() => setAccountActionMessage(null), 4000);
+    } else {
+      setAccountActionMessage({ success: false, message: res.error || (language === 'id' ? 'Gagal menghapus akun.' : 'Failed to delete account.') });
+    }
+    setConfirmAction(null);
+  };
+
 
   const handleOpenEditPermissions = (acc: AdminAccount) => {
     setEditingAccount(acc);
@@ -269,7 +275,7 @@ export const AdminSettings: React.FC = () => {
       });
       setTimeout(() => setAccountActionMessage(null), 4000);
     } else {
-      alert(res.error);
+      setAccountActionMessage({ success: false, message: res.error || (language === 'id' ? 'Gagal memperbarui hak akses.' : 'Failed to update permissions.') });
     }
   };
 
@@ -360,13 +366,18 @@ export const AdminSettings: React.FC = () => {
   };
 
   const handleClearLogs = () => {
-    const confirmMsg = language === 'id' 
-      ? 'Hapus seluruh riwayat audit log keamanan?' 
-      : 'Clear all security audit logs permanently?';
-    if (window.confirm(confirmMsg)) {
-      clearAuditLogs();
-      setLogs([]);
+    if (logs.length === 0) {
+      setAccountActionMessage({ success: false, message: language === 'id' ? 'Tidak ada audit log untuk dihapus.' : 'There are no audit logs to clear.' });
+      return;
     }
+    setConfirmAction({ type: 'logs' });
+  };
+
+  const confirmClearLogs = () => {
+    clearAuditLogs();
+    setLogs([]);
+    setConfirmAction(null);
+    setAccountActionMessage({ success: true, message: language === 'id' ? 'Audit log berhasil dihapus.' : 'Audit logs cleared.' });
   };
 
   const handleExportLogs = () => {
@@ -1558,6 +1569,8 @@ export const AdminSettings: React.FC = () => {
       )}
 
     </div>
+      </div>
+    </>
   );
 };
 
