@@ -432,7 +432,7 @@ export const AdminVendors: React.FC = () => {
       </div>
 
       {/* Vendors Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 w-full">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4 w-full">
         {filteredVendors.map(vendor => (
           <div
             key={vendor.id}
