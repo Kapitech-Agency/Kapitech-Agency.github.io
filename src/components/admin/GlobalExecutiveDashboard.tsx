@@ -188,7 +188,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
       {/* ------------------------------------------------------------- */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Revenue Collected */}
-        <div className="kapi-card ams-kpi flex flex-col justify-between hover:border-[var(--line)] transition-colors">
+        <div className="ams-dashboard-card ams-kpi flex flex-col justify-between hover:border-[var(--line)] transition-colors">
           <div className="flex items-center justify-between text-xs font-sans text-[var(--muted)]">
             <span>{language === 'id' ? 'Pendapatan Diterima' : 'Revenue Collected'}</span>
             <div className="w-7 h-7 rounded-control bg-[var(--success)]/10 border border-[var(--success)]/20 flex items-center justify-center text-[var(--success)]">
@@ -207,7 +207,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
         </div>
 
         {/* Outstanding Receivables */}
-        <div className="kapi-card ams-kpi flex flex-col justify-between hover:border-[var(--line)] transition-colors">
+        <div className="ams-dashboard-card ams-kpi flex flex-col justify-between hover:border-[var(--line)] transition-colors">
           <div className="flex items-center justify-between text-xs font-sans text-[var(--muted)]">
             <span>{language === 'id' ? 'Piutang Berjalan' : 'Outstanding Receivables'}</span>
             <div className={`w-7 h-7 rounded-control flex items-center justify-center ${metrics.overdueReceivables > 0 ? 'bg-[var(--danger)]/10 border border-red-500/30 text-[var(--danger)]' : 'bg-[var(--warning)]/10 border border-[var(--warning)]/20 text-[var(--warning)]'}`}>
@@ -232,7 +232,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
         </div>
 
         {/* Active Pipeline */}
-        <div className="kapi-card ams-kpi flex flex-col justify-between hover:border-[var(--line)] transition-colors">
+        <div className="ams-dashboard-card ams-kpi flex flex-col justify-between hover:border-[var(--line)] transition-colors">
           <div className="flex items-center justify-between text-xs font-sans text-[var(--muted)]">
             <span>{language === 'id' ? 'Nilai Pipeline Aktif' : 'Active Pipeline'}</span>
             <div className="w-7 h-7 rounded-control bg-[var(--info)]/10 border border-[var(--info)]/20 flex items-center justify-center text-[var(--info)]">
@@ -254,7 +254,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
         </div>
 
         {/* Active Projects */}
-        <div className="kapi-card ams-kpi flex flex-col justify-between hover:border-[var(--line)] transition-colors">
+        <div className="ams-dashboard-card ams-kpi flex flex-col justify-between hover:border-[var(--line)] transition-colors">
           <div className="flex items-center justify-between text-xs font-sans text-[var(--muted)]">
             <span>{language === 'id' ? 'Proyek Berjalan' : 'Active Projects'}</span>
             <div className="w-7 h-7 rounded-control bg-[var(--info)]/10 border border-[var(--info)]/20 flex items-center justify-center text-[var(--info)]">
@@ -285,7 +285,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
       {/* ------------------------------------------------------------- */}
       {/* 3. NEEDS ATTENTION: ACTIONABLE OPERATIONAL SIGNALS */}
       {/* ------------------------------------------------------------- */}
-      <div className="kapi-card ams-panel p-5">
+      <div className="ams-dashboard-card ams-panel p-5">
         <div className="flex items-center justify-between gap-4 mb-4">
           <div className="flex items-center gap-2 min-w-0">
             {attentionItems.length > 0 ? (
@@ -327,7 +327,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
               return (
                 <div
                   key={item.id}
-                  className={`kapi-card ams-inbox-item border flex items-start justify-between gap-3 transition-all ${
+                  className={`ams-dashboard-card ams-inbox-item border flex items-start justify-between gap-3 transition-all ${
                     isDanger 
                       ? 'bg-[var(--danger)]/10 border-[var(--danger)]/30 hover:border-[var(--danger)]/50' 
                       : 'bg-[var(--warning)]/10 border-[var(--warning)]/30 hover:border-[var(--warning)]/50'
@@ -363,7 +363,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
       {/* ------------------------------------------------------------- */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Sales Pipeline Breakdown */}
-        <div className="kapi-card ams-panel p-5 space-y-4">
+        <div className="ams-dashboard-card ams-panel p-5 space-y-4">
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-sm font-semibold font-sans text-[var(--text)] flex items-center gap-2">
@@ -402,7 +402,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
         </div>
 
         {/* Financial Operating Summary */}
-        <div className="kapi-card ams-panel p-5 space-y-4">
+        <div className="ams-dashboard-card ams-panel p-5 space-y-4">
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-sm font-semibold font-sans text-[var(--text)] flex items-center gap-2">
@@ -455,7 +455,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
       {/* ------------------------------------------------------------- */}
       {/* 5. ACTIVE PROJECTS STATUS (DELIVERY HEALTH) */}
       {/* ------------------------------------------------------------- */}
-      <div className="kapi-card ams-panel p-5 space-y-4">
+      <div className="ams-dashboard-card ams-panel p-5 space-y-4">
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-sm font-semibold font-sans text-[var(--text)] flex items-center gap-2">
@@ -546,7 +546,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
       {/* ------------------------------------------------------------- */}
       {/* 6. RECENT AUDIT ACTIVITY (IMMUTABLE SERVER ACTIVITY TRAIL) */}
       {/* ------------------------------------------------------------- */}
-      <div className="kapi-card ams-panel p-5 space-y-4">
+      <div className="ams-dashboard-card ams-panel p-5 space-y-4">
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-sm font-semibold font-sans text-[var(--text)] flex items-center gap-2">
