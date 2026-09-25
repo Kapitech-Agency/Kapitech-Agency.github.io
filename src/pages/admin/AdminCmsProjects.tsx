@@ -450,7 +450,7 @@ export const AdminCmsProjects: React.FC = () => {
                 <div className="text-[11px] text-[var(--muted)] mb-4">
                   Live Showcase Preview (as rendered on <code className="text-[var(--text)]">kapitech.id/work</code>):
                 </div>
-                <div className="w-full max-w-sm bg-[var(--panel)] border border-[var(--line)] rounded-card overflow-hidden shadow-none">
+                <div className="w-full max-w-sm max-h-[calc(100dvh-24px)] bg-[var(--panel)] border border-[var(--line)] rounded-card overflow-y-auto shadow-none">
                   <div className="relative h-48 w-full bg-[var(--bg)]">
                     <img src={editingProject.image} alt={editingProject.title} className="w-full h-full object-cover" />
                     <div className="absolute inset-0 bg-black/40" />
