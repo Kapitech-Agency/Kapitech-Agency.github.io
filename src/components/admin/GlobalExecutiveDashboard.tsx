@@ -305,13 +305,15 @@ export const GlobalExecutiveDashboard: React.FC = () => {
         </div>
 
         {attentionItems.length === 0 ? (
-          <div className="flex items-center justify-center gap-3 px-3.5 py-3 rounded-control bg-[var(--success)]/5 border border-[var(--success)]/15 text-center">
-            <CheckCircle2 className="text-[var(--success)] shrink-0" size={18} />
+          <div className="flex min-h-[176px] flex-col items-center justify-center gap-3 rounded-control border border-line bg-bg px-4 py-8 text-center">
+            <div className="flex h-9 w-9 items-center justify-center rounded-control border border-success/20 bg-success/10 text-success">
+              <CheckCircle2 size={18} />
+            </div>
             <div className="min-w-0 text-center">
-              <p className="text-xs font-sans text-[var(--text)] font-medium">
+              <p className="text-sm font-medium text-fg">
                 {language === 'id' ? 'Tidak ada tindakan yang perlu dilakukan.' : 'No action required.'}
               </p>
-              <p className="text-[11px] font-sans text-[var(--muted)]">
+              <p className="mt-1 max-w-[48ch] text-xs leading-relaxed text-muted">
                 {language === 'id' ? 'Tidak ada invoice jatuh tempo, proyek terblokir, atau persetujuan tertunda.' : 'No overdue invoices, blocked projects, or pending approvals.'}
               </p>
             </div>
@@ -470,8 +472,14 @@ export const GlobalExecutiveDashboard: React.FC = () => {
         </div>
 
         {recentProjects.length === 0 ? (
-          <div className="ams-empty-state flex min-h-20 items-center justify-center rounded-control border border-line bg-panel px-4 py-4 text-center text-xs text-muted">
-            No active projects currently enrolled in registry.
+          <div className="ams-empty-state flex min-h-[160px] flex-col items-center justify-center gap-3 rounded-control border border-line bg-bg px-4 py-8 text-center">
+            <div className="flex h-9 w-9 items-center justify-center rounded-control border border-line bg-panel text-muted">
+              <Layers size={18} />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-fg">No active projects currently enrolled in registry.</p>
+              <p className="mt-1 text-xs leading-relaxed text-muted">Active client projects will appear here when they are available.</p>
+            </div>
           </div>
         ) : (
           <div className="overflow-x-auto">
