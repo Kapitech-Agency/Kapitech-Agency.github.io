@@ -114,7 +114,7 @@ export const AdminLogin: React.FC = () => {
           {language === 'id' ? 'Kembali ke Website' : 'Back to Website'}
         </Link>
 
-        <div className="bg-[var(--panel)] border border-[var(--line)] rounded-card p-5 sm:p-6 shadow-none">
+        <div className="bg-[var(--panel)] border border-[var(--line)] rounded-card p-5 sm:p-6 -none">
           <div className="text-left mb-5 pb-5 border-b border-[var(--line)]">
             <div className="w-10 h-10 rounded-control bg-[var(--accent)]/10 border border-[var(--accent)]/30 flex items-center justify-center text-[var(--accent)] mb-4">
               <Lock size={24} />
@@ -130,7 +130,7 @@ export const AdminLogin: React.FC = () => {
           </div>
 
           {mfaEnabledNotice && (
-            <div className="mb-5 p-3.5 rounded-[var(--ams-radius-control)] bg-[var(--success)]/10 border border-[var(--success)]/30 text-[var(--success)] text-xs flex items-start gap-2">
+            <div className="mb-5 p-3.5 rounded-control bg-[var(--success)]/10 border border-[var(--success)]/30 text-[var(--success)] text-xs flex items-start gap-2">
               <ShieldCheck size={16} className="shrink-0 mt-0.5" />
               <span>{language === 'id' ? 'MFA berhasil diaktifkan. Silakan login ulang untuk melanjutkan.' : 'MFA is enabled. Sign in again to continue.'}</span>
             </div>
@@ -215,7 +215,7 @@ export const AdminLogin: React.FC = () => {
           <form onSubmit={handleMfaSubmit} className="space-y-5">
             <div className="rounded-[var(--ams-radius-control)] border border-amber-500/25 bg-amber-500/5 p-4">
               <div className="flex items-center gap-2 text-sm font-semibold text-[var(--text)]">
-                <ShieldCheck size={18} className="text-amber-400" />
+                <ShieldCheck size={18} className="text-warning" />
                 {language === 'id' ? 'Verifikasi MFA diperlukan' : 'MFA verification required'}
               </div>
               <p className="mt-2 text-xs leading-relaxed text-[var(--muted)]">
