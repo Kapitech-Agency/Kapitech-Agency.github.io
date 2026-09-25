@@ -525,7 +525,7 @@ export const AdminInbox: React.FC = () => {
           {/* Email alerts guide modal button */}
           <button
             onClick={() => setIsEmailModalOpen(true)}
-            className="h-10 px-3.5 rounded-card bg-[var(--panel)] hover:bg-[var(--panel-hover)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] text-xs font-sans transition-colors flex items-center gap-1.5 min-h-[40px]"
+            className="h-10 px-3.5 rounded-control bg-[var(--panel)] hover:bg-[var(--panel-hover)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] text-xs font-sans transition-colors flex items-center gap-1.5 min-h-[40px]"
             title="Configure forwarding rules"
           >
             <Mail size={14} className="text-[var(--danger)]" />
@@ -536,7 +536,7 @@ export const AdminInbox: React.FC = () => {
           {metrics.newCount > 0 && (
             <button
               onClick={handleMarkAllRead}
-              className="h-10 px-3.5 rounded-card bg-[var(--panel)] hover:bg-[var(--panel-hover)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] text-xs font-sans transition-colors flex items-center gap-1.5 min-h-[40px]"
+              className="h-10 px-3.5 rounded-control bg-[var(--panel)] hover:bg-[var(--panel-hover)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] text-xs font-sans transition-colors flex items-center gap-1.5 min-h-[40px]"
             >
               <Check size={14} />
               <span>{language === 'id' ? 'Tandai Dibaca' : 'Mark Read'}</span>
@@ -549,7 +549,7 @@ export const AdminInbox: React.FC = () => {
           {submissions.length > 0 && (
             <button
               onClick={handleExportCSV}
-              className="h-10 px-3.5 rounded-card bg-[var(--panel)] hover:bg-[var(--panel-hover)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] text-xs font-sans transition-colors flex items-center gap-1.5 min-h-[40px]"
+              className="h-10 px-3.5 rounded-control bg-[var(--panel)] hover:bg-[var(--panel-hover)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] text-xs font-sans transition-colors flex items-center gap-1.5 min-h-[40px]"
             >
               <Download size={14} />
               <span>Export CSV</span>
@@ -1101,7 +1101,7 @@ export const AdminInbox: React.FC = () => {
                     {crmDeals.some(d => (d as any).inquiryId === selectedSubmission.id) ? (
                       <Link
                         to="/admin/crm"
-                        className="h-9 px-3.5 rounded-control bg-[var(--success)]/10 text-[var(--success)] border border-[var(--success)]/30 hover:bg-emerald-500/20 text-xs font-sans font-semibold transition-all flex items-center gap-1.5"
+                        className="h-9 px-3.5 rounded-control bg-[var(--success)]/10 text-[var(--success)] border border-[var(--success)]/30 hover:bg-[var(--success)]/20 text-xs font-sans font-semibold transition-all flex items-center gap-1.5"
                       >
                         <ShieldCheck size={14} />
                         <span>{language === 'id' ? 'Buka Deal di CRM' : 'View CRM Deal'}</span>
@@ -1110,7 +1110,7 @@ export const AdminInbox: React.FC = () => {
                     ) : (
                       <button
                         onClick={() => setIsCrmModalOpen(true)}
-                        className="h-9 px-3.5 rounded-control bg-[var(--success)] hover:brightness-110 text-black text-xs font-sans font-semibold transition-colors flex items-center gap-1.5"
+                        className="h-9 px-3.5 rounded-control bg-[var(--success)] hover:brightness-110 text-[var(--text)] text-xs font-sans font-semibold transition-colors flex items-center gap-1.5"
                       >
                         <Briefcase size={14} />
                         <span>{language === 'id' ? 'Konversi ke CRM' : 'Convert to CRM'}</span>

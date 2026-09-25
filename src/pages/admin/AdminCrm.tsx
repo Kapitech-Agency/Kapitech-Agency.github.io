@@ -371,7 +371,7 @@ export const AdminCrm: React.FC = () => {
       <div className="ams-dashboard-header flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-card bg-[var(--accent)]/10 border border-[var(--accent)]/30 flex items-center justify-center text-[var(--danger)] shrink-0">
+            <div className="w-9 h-9 rounded-control bg-[var(--accent)]/10 border border-[var(--accent)]/30 flex items-center justify-center text-[var(--danger)] shrink-0">
               <Briefcase size={18} />
             </div>
             <h1 className="ams-page-title flex items-center gap-2.5">
@@ -756,7 +756,7 @@ export const AdminCrm: React.FC = () => {
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     title={language === 'id' ? 'Kirim Pesan WhatsApp' : 'Send WhatsApp message'}
-                                    className="h-8 w-8 rounded-control bg-[var(--panel)] hover:bg-[var(--success)]/10 text-[var(--muted)] hover:text-[var(--success)] border border-[var(--line)] hover:border-[var(--success)]/30 transition-all flex items-center justify-center shrink-0"
+                                    className="min-h-10 min-w-10 rounded-control bg-[var(--panel)] hover:bg-[var(--success)]/10 text-[var(--muted)] hover:text-[var(--success)] border border-[var(--line)] hover:border-[var(--success)]/30 transition-all flex items-center justify-center shrink-0"
                                   >
                                     <Send size={11} />
                                   </a>
@@ -852,7 +852,7 @@ export const AdminCrm: React.FC = () => {
                           href={`https://wa.me/${cleanPhone(lead.phone)}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="w-9 h-9 rounded-card bg-[var(--panel)] text-[var(--success)] hover:bg-[var(--success)]/15 border border-[var(--line)] hover:border-[var(--success)]/30 flex items-center justify-center min-h-10 min-w-10"
+                          className="w-9 h-9 rounded-control bg-[var(--panel)] text-[var(--success)] hover:bg-[var(--success)]/15 border border-[var(--line)] hover:border-[var(--success)]/30 flex items-center justify-center min-h-10 min-w-10"
                           title="WhatsApp client"
                         >
                           <Send size={13} />
@@ -867,7 +867,7 @@ export const AdminCrm: React.FC = () => {
                       </button>
                       <button
                         onClick={() => handleDeleteLead(lead.id, lead.clientName)}
-                        className="w-9 h-9 rounded-card bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--danger)] border border-[var(--line)] hover:border-[var(--danger)]/40 flex items-center justify-center min-h-10 min-w-10"
+                        className="w-9 h-9 rounded-control bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--danger)] border border-[var(--line)] hover:border-[var(--danger)]/40 flex items-center justify-center min-h-10 min-w-10"
                         title="Delete deal"
                       >
                         <Trash2 size={13} />
@@ -954,7 +954,7 @@ export const AdminCrm: React.FC = () => {
                               <button
                                 onClick={() => handleConvertToProject(lead)}
                                 title="Create project"
-                                className="w-9 h-9 rounded-card bg-[var(--success)]/10 text-[var(--success)] hover:bg-[var(--success)]/15 border border-[var(--success)]/30 flex items-center justify-center transition-colors min-h-10 min-w-10"
+                                className="w-9 h-9 rounded-control bg-[var(--success)]/10 text-[var(--success)] hover:bg-[var(--success)]/15 border border-[var(--success)]/30 flex items-center justify-center transition-colors min-h-10 min-w-10"
                               >
                                 <Layers size={13} />
                               </button>
@@ -964,7 +964,7 @@ export const AdminCrm: React.FC = () => {
                                 href={`https://wa.me/${cleanPhone(lead.phone)}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="w-9 h-9 rounded-card bg-[var(--panel)] text-[var(--success)] hover:bg-[var(--success)]/15 border border-[var(--line)] hover:border-[var(--success)]/30 flex items-center justify-center transition-colors min-h-10 min-w-10"
+                                className="w-9 h-9 rounded-control bg-[var(--panel)] text-[var(--success)] hover:bg-[var(--success)]/15 border border-[var(--line)] hover:border-[var(--success)]/30 flex items-center justify-center transition-colors min-h-10 min-w-10"
                                 title="WhatsApp client"
                               >
                                 <Send size={13} />
@@ -979,7 +979,7 @@ export const AdminCrm: React.FC = () => {
                             </button>
                             <button
                               onClick={() => handleDeleteLead(lead.id, lead.clientName)}
-                              className="w-9 h-9 rounded-card bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--danger)] border border-[var(--line)] hover:border-[var(--danger)]/40 flex items-center justify-center transition-colors min-h-10 min-w-10"
+                              className="w-9 h-9 rounded-control bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--danger)] border border-[var(--line)] hover:border-[var(--danger)]/40 flex items-center justify-center transition-colors min-h-10 min-w-10"
                               title="Delete deal"
                             >
                               <Trash2 size={13} />
@@ -1024,7 +1024,7 @@ export const AdminCrm: React.FC = () => {
 
                 <button
                   onClick={() => setIsDrawerOpen(false)}
-                  className="w-8 h-8 rounded-card bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] flex items-center justify-center transition-colors text-xs font-sans"
+                  className="w-8 h-8 rounded-control bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] flex items-center justify-center transition-colors text-xs font-sans"
                 >
                   <X size={15} />
                 </button>
@@ -1113,7 +1113,7 @@ export const AdminCrm: React.FC = () => {
                   />
                   <button
                     type="submit"
-                    className="px-3.5 py-2 rounded-card bg-[var(--accent)] hover:bg-[var(--accent)] text-[var(--text)] text-xs font-sans font-semibold transition-colors flex items-center gap-1 shrink-0 min-h-10"
+                    className="px-3.5 py-2 rounded-control bg-[var(--accent)] hover:bg-[var(--accent)] text-[var(--text)] text-xs font-sans font-semibold transition-colors flex items-center gap-1 shrink-0 min-h-10"
                   >
                     <Plus size={13} />
                     <span>{language === 'id' ? 'Catat' : 'Log'}</span>
@@ -1146,7 +1146,7 @@ export const AdminCrm: React.FC = () => {
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => handleOpenEditModal(selectedLead)}
-                  className="px-3.5 py-2 rounded-card bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--text)] border border-[var(--line)] text-xs transition-colors flex items-center gap-1.5 min-h-10"
+                  className="px-3.5 py-2 rounded-control bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--text)] border border-[var(--line)] text-xs transition-colors flex items-center gap-1.5 min-h-10"
                 >
                   <Edit3 size={13} />
                   <span>{t('admin.action.edit')}</span>
@@ -1163,7 +1163,7 @@ export const AdminCrm: React.FC = () => {
               {selectedLead.stage === 'won' && (
                 <button
                   onClick={() => handleConvertToProject(selectedLead)}
-                  className="px-4 py-2 rounded-card bg-[var(--accent)] hover:bg-[var(--panel-hover)] text-[var(--text)] font-semibold text-xs flex items-center gap-1.5 shadow-none min-h-10"
+                  className="px-4 py-2 rounded-control bg-[var(--accent)] hover:brightness-110 text-white font-semibold text-xs flex items-center gap-1.5 shadow-none min-h-10"
                 >
                   <Layers size={13} />
                   <span>{t('admin.crm.convertToProject')}</span>

@@ -426,7 +426,7 @@ export const AdminProposals: React.FC = () => {
           onClick={() => setIsCreateModalOpen(true)}
           disabled={!canManageCrm}
           title={!canManageCrm ? 'Requires CRM permission' : undefined}
-          className="px-4 py-2.5 rounded-control bg-[var(--accent)] hover:brightness-110 text-white text-xs font-sans font-medium flex items-center justify-center gap-2 min-h-10 px-3 transition-colors shrink-0"
+          className="px-3 rounded-control bg-[var(--accent)] hover:brightness-110 text-white text-xs font-sans font-medium flex items-center justify-center gap-2 min-h-10 transition-colors shrink-0"
         >
           <Plus size={15} />
           <span>{language === 'id' ? 'Buat Proposal Baru' : 'New Proposal'}</span>
@@ -835,7 +835,7 @@ export const AdminProposals: React.FC = () => {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-5 py-2 rounded-control min-h-10 px-4 rounded-control bg-[var(--accent)] hover:brightness-110 text-white text-xs font-sans font-medium flex items-center gap-2 disabled:opacity-50"
+                  className="px-4 py-2 rounded-control min-h-10 bg-[var(--accent)] hover:brightness-110 text-white text-xs font-sans font-medium flex items-center gap-2 disabled:opacity-50"
                 >
                   {isSubmitting ? <Loader2 size={13} className="animate-spin" /> : <Plus size={14} />}
                   <span>Generate Proposal</span>
