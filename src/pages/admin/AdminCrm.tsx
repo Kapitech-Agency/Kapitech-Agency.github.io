@@ -418,7 +418,7 @@ export const AdminCrm: React.FC = () => {
                           <button
                             onClick={() => handleOpenAddModal('new')}
                             disabled={!canManageCrm}
-                            className="min-h-10 px-4 rounded-control bg-[var(--accent)] hover:bg-[var(--accent)] text-white text-xs font-sans font-medium transition-colors flex items-center justify-center gap-2"
+                            className="min-h-10 px-4 rounded-control bg-[var(--accent)] hover:bg-[var(--accent)] text-[var(--accent-text)] text-xs font-sans font-medium transition-colors flex items-center justify-center gap-2"
                           >
                             <Plus size={15} />
                             <span>{t('admin.crm.addDeal')}</span>
@@ -586,7 +586,7 @@ export const AdminCrm: React.FC = () => {
           </button>
           <button
             onClick={() => setViewMode('list')}
-            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-sans font-semibold transition-all min-h-[38px] ${
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-control text-xs font-sans font-semibold transition-all min-h-10 ${
               viewMode === 'list'
                 ? 'bg-[var(--panel)] text-[var(--text)] border border-[var(--line)]'
                 : 'text-[var(--muted)] hover:text-[var(--text)]'
