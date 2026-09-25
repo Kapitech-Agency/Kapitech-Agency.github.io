@@ -275,7 +275,6 @@ export const AdminVendors: React.FC = () => {
       }).catch(() => {
         setStatusMessage(language === 'id' ? 'Vendor gagal dihapus.' : 'Failed to delete vendor.');
       });
-    }
   };
 
   return (
