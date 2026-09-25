@@ -551,7 +551,7 @@ export const AdminCrm: React.FC = () => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={language === 'id' ? 'Cari prospek, perusahaan, atau kata kunci...' : 'Search leads, companies, or keywords...'}
-              className="w-full pl-9 pr-3.5 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-card text-xs text-[var(--text)] placeholder-[var(--muted)] focus:outline-none focus:border-[var(--accent)] font-sans h-10 min-h-10"
+              className="w-full pl-9 pr-3.5 py-2 rounded-control bg-[var(--panel)] border border-[var(--line)] text-xs text-[var(--text)] placeholder-[var(--muted)] focus:outline-none focus:border-[var(--accent)] font-sans min-h-10"
             />
           </div>
 
@@ -1301,7 +1301,7 @@ export const AdminCrm: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="h-10 px-5 rounded-card bg-[var(--accent)] text-white font-sans font-semibold text-xs hover:bg-[var(--accent)] transition-colors min-h-10"
+                  className="min-h-10 px-5 rounded-control bg-[var(--accent)] text-white font-sans font-semibold text-xs hover:bg-[var(--accent)] transition-colors"
                 >
                   {editingLead ? (language === 'id' ? 'Simpan Perubahan' : 'Update Deal') : (language === 'id' ? 'Buat Deal' : 'Save Deal')}
                 </button>
