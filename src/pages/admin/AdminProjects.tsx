@@ -617,7 +617,7 @@ export const AdminProjects: React.FC = () => {
               {canDeleteProjects && (
                 <button
                   onClick={() => handleDeleteProject(selectedProject.id, selectedProject.name)}
-                  className="p-2.5 min-h-10 min-w-10 rounded-control bg-[var(--panel)] hover:bg-red-950/40 text-[var(--muted)] hover:text-red-400 border border-[var(--line)] hover:border-red-500/30 transition-colors"
+                  className="p-2.5 min-h-10 min-w-10 rounded-control bg-[var(--panel)] hover:bg-red-950/40 text-[var(--muted)] hover:text-[var(--danger)] border border-[var(--line)] hover:border-[var(--danger)]/30 transition-colors"
                   title="Delete Project"
                 >
                   <Trash2 size={14} />
@@ -827,7 +827,7 @@ export const AdminProjects: React.FC = () => {
                                   e.stopPropagation();
                                   handleDeleteTask(task.id);
                                 }}
-                                className="text-[var(--muted)] hover:text-rose-400 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-rose-950/30"
+                                className="text-[var(--muted)] hover:text-[var(--danger)] opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-[var(--danger)]/10"
                                 title="Delete task"
                               >
                                 <Trash2 size={12} />
