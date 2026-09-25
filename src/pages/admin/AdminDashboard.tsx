@@ -1076,7 +1076,7 @@ export const AdminDashboard: React.FC = () => {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-[var(--muted)] font-sans mb-1">Service Pillar</label>
                   <CustomSelect value={newLeadPillar} onChange={(value) => setNewLeadPillar(value as CrmServicePillar)} options={[{value:'Web Development',label:'Web Development'},{value:'AI & Cloud Solutions',label:'AI & Cloud Solutions'},{value:'UI/UX Design',label:'UI/UX Design'},{value:'Digital Product MVP',label:'Digital Product MVP'},{value:'Branding & Identity',label:'Branding & Identity'}]} className="w-full" />
@@ -1097,7 +1097,7 @@ export const AdminDashboard: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsAddLeadModalOpen(false)}
-                  className="px-4 py-2 rounded-card bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] font-semibold"
+                  className="min-h-10 px-4 py-2 rounded-control bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] font-semibold"
                 >
                   Cancel
                 </button>
@@ -1183,7 +1183,7 @@ export const AdminDashboard: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsNewInvoiceModalOpen(false)}
-                  className="px-4 py-2 rounded-card bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] font-semibold"
+                  className="min-h-10 px-4 py-2 rounded-control bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] font-semibold"
                 >
                   Cancel
                 </button>
@@ -1240,7 +1240,7 @@ export const AdminDashboard: React.FC = () => {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-[var(--muted)] font-sans mb-1">Service Pillar</label>
                   <CustomSelect value={quickProjPillar} onChange={setQuickProjPillar} options={[{value:'AI & Cloud Solutions',label:'AI & Cloud Solutions'},{value:'Web Development',label:'Web Development'},{value:'UI/UX Design',label:'UI/UX Design'},{value:'Digital Product MVP',label:'Digital Product MVP'}]} className="w-full" />
@@ -1261,7 +1261,7 @@ export const AdminDashboard: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsNewProjectModalOpen(false)}
-                  className="px-4 py-2 rounded-card bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] font-semibold"
+                  className="min-h-10 px-4 py-2 rounded-control bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] font-semibold"
                 >
                   Cancel
                 </button>
@@ -1306,7 +1306,7 @@ export const AdminDashboard: React.FC = () => {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-[var(--muted)] font-sans mb-1">Category</label>
                   <CustomSelect value={quickExpCategory} onChange={setQuickExpCategory} options={[{value:'Software & Cloud',label:'Software & Cloud'},{value:'Salaries & Contractors',label:'Salaries & Contractors'},{value:'Office & Hardware',label:'Office & Hardware'},{value:'Marketing & Ads',label:'Marketing & Ads'},{value:'Legal & Admin',label:'Legal & Admin'}]} className="w-full" />
@@ -1328,7 +1328,7 @@ export const AdminDashboard: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsRecordExpenseModalOpen(false)}
-                  className="px-4 py-2 rounded-card bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] font-semibold"
+                  className="min-h-10 px-4 py-2 rounded-control bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] font-semibold"
                 >
                   Cancel
                 </button>
