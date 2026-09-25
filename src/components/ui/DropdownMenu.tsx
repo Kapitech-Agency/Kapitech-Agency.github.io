@@ -33,11 +33,20 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
   return (
     <div className={`relative inline-block text-left ${className}`} ref={triggerRef}>
       <div
-        onClick={() => setIsOpen(v => !v)}
+        role="button"
+        tabIndex={0}
+        aria-haspopup="menu"
+        aria-expanded={isOpen}
+        onClick={() => setIsOpen((open) => !open)}
         onKeyDown={(e) => {
-          if (e.key === 'Escape' || e.key === 'Tab') setIsOpen(false);
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            setIsOpen((open) => !open);
+          } else if (e.key === 'Escape' || e.key === 'Tab') {
+            setIsOpen(false);
+          }
         }}
-        className="cursor-pointer"
+        className="cursor-pointer rounded-control focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
       >
         {trigger}
       </div>
@@ -47,13 +56,12 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
         anchorRef={triggerRef}
         onClose={() => setIsOpen(false)}
         align={align}
-        className={`min-w-[190px] max-w-[calc(100vw-16px)] bg-panel border border-line rounded-control p-1 font-sans text-xs ${menuClassName}`}
+        className={`z-50 min-w-[190px] max-w-[calc(100vw-16px)] bg-bg border border-line rounded-control p-1 font-sans text-xs ${menuClassName}`}
       >
         <motion.div
           initial={{ opacity: 0, y: 4, scale: 0.98 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: 2, scale: 0.98 }}
-          transition={{ duration: 0.12, ease: 'easeOut' }}
+          transition={{ duration: 0.15, ease: 'easeOut' }}
           className="space-y-0.5"
         >
           {items.map((item) => (
@@ -65,12 +73,12 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
                   item.onClick();
                   setIsOpen(false);
                 }}
-                className={`w-full flex items-center justify-between min-h-10 sm:min-h-9 px-3 py-2 rounded-control text-left transition-colors ${
+                className={`w-full flex items-center justify-between min-h-10 sm:min-h-9 px-3 py-2 rounded-control text-left transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-[-2px] ${
                   item.variant === 'danger'
                     ? 'text-danger hover:text-fg hover:bg-danger/10'
                     : item.variant === 'warning'
-                    ? 'text-warning hover:text-fg hover:bg-warning/10'
-                    : 'text-muted hover:text-fg hover:bg-panel-hover'
+                      ? 'text-warning hover:text-fg hover:bg-warning/10'
+                      : 'text-muted hover:text-fg hover:bg-panel'
                 }`}
               >
                 <div className="flex items-center gap-2.5 min-w-0">
@@ -78,7 +86,7 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
                   <span className="truncate font-medium">{item.label}</span>
                 </div>
                 {item.badge && (
-                  <span className="px-1.5 py-0.5 rounded text-[9px] font-medium bg-bg text-muted border border-line">
+                  <span className="px-1.5 py-0.5 rounded-badge text-[9px] font-medium bg-panel text-muted border border-line">
                     {item.badge}
                   </span>
                 )}
