@@ -258,14 +258,14 @@ export const AdminInvoicing: React.FC = () => {
         );
       case 'sent':
         return (
-          <span className="px-2.5 py-1 rounded-control bg-rose-500/10 text-rose-400 border border-rose-500/30 text-[10px] font-sans font-semibold flex items-center gap-1.5">
+          <span className="px-2.5 py-1 rounded-control bg-[var(--danger)]/10 text-[var(--danger)] border border-[var(--danger)]/30 text-[10px] font-sans font-semibold flex items-center gap-1.5">
             <Send size={12} />
             <span>SENT</span>
           </span>
         );
       case 'overdue':
         return (
-          <span className="px-2.5 py-1 rounded-control bg-rose-500/10 text-rose-400 border border-rose-500/30 text-[10px] font-sans font-semibold flex items-center gap-1.5 animate-pulse">
+          <span className="px-2.5 py-1 rounded-control bg-[var(--danger)]/10 text-[var(--danger)] border border-[var(--danger)]/30 text-[10px] font-sans font-semibold flex items-center gap-1.5 animate-pulse">
             <AlertCircle size={12} />
             <span>OVERDUE</span>
           </span>
@@ -306,7 +306,7 @@ export const AdminInvoicing: React.FC = () => {
     <div className="space-y-6">
       
       {/* 1. Header & Actions */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[var(--line)]">
+      <div className="ams-page-header flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-xl font-sans font-semibold text-[var(--text)] flex items-center gap-3">
             <Receipt className="text-[var(--danger)]" size={26} />
