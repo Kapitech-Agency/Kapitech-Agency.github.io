@@ -834,7 +834,7 @@ export const AdminDashboard: React.FC = () => {
                         <td className="py-3">
                           <span className={`inline-flex items-center gap-1 text-[10px] font-sans font-semibold px-2 py-0.5 rounded-full border ${
                             isPaid 
-                              ? 'bg-emerald-500/10 text-[var(--success)] border-emerald-500/25 shadow-none'
+                              ? 'bg-[var(--success)]/10 text-[var(--success)] border-[var(--success)]/25 shadow-none'
                               : isOverdue
                               ? 'bg-[var(--danger)]/10 text-[var(--danger)] border-[var(--danger)]/25 shadow-none'
                               : 'bg-[var(--warning)]/10 text-[var(--warning)] border-[var(--warning)]/25 shadow-none'
