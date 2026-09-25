@@ -112,13 +112,7 @@ export const AdminInvoicing: React.FC = () => {
       setCurrency(e.detail?.currency || getActiveCurrency());
     };
     window.addEventListener(CURRENCY_EVENT, handleCurrencyChange);
-
-    return (
-    <>
-      <Modal open={!!confirmAction} onClose={() => setConfirmAction(null)} size="sm" title={confirmAction?.type === 'invoice' ? 'Delete invoice?' : 'Delete expense?'} description={confirmAction?.type === 'invoice' ? `Invoice ${confirmAction?.label || ''} will be permanently removed.` : 'This expense record will be permanently removed.'}>
-        <div className="flex flex-col-reverse sm:flex-row justify-end gap-2"><button type="button" onClick={() => setConfirmAction(null)} className="min-h-10 px-4 rounded-control border border-[var(--line)] bg-[var(--panel)] text-xs text-[var(--muted)]">Cancel</button><button type="button" onClick={() => confirmAction?.type === 'invoice' ? void confirmDeleteInvoice(confirmAction.id) : confirmAction && void confirmDeleteExpense(confirmAction.id)} className="min-h-10 px-4 rounded-control bg-[var(--danger)] text-white text-xs font-semibold">Delete</button></div>
-      </Modal>
-      <div>) => {
+    return () => {
       window.removeEventListener(CURRENCY_EVENT, handleCurrencyChange);
     };
   }, []);
@@ -1463,6 +1457,13 @@ export const AdminInvoicing: React.FC = () => {
           </div>
         </div>
       )}
+
+      <Modal open={!!confirmAction} onClose={() => setConfirmAction(null)} size="sm" title={confirmAction?.type === 'invoice' ? 'Delete invoice?' : 'Delete expense?'} description={confirmAction?.type === 'invoice' ? `Invoice ${confirmAction?.label || ''} will be permanently removed.` : 'This expense record will be permanently removed.'}>
+        <div className="flex flex-col-reverse sm:flex-row justify-end gap-2">
+          <button type="button" onClick={() => setConfirmAction(null)} className="min-h-10 px-4 rounded-control border border-[var(--line)] bg-[var(--panel)] text-xs text-[var(--muted)]">Cancel</button>
+          <button type="button" onClick={() => confirmAction?.type === 'invoice' ? void confirmDeleteInvoice(confirmAction.id) : confirmAction && void confirmDeleteExpense(confirmAction.id)} className="min-h-10 px-4 rounded-control bg-[var(--danger)] text-white text-xs font-semibold">Delete</button>
+        </div>
+      </Modal>
 
     </div>
   );
