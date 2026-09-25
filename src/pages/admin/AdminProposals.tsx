@@ -718,7 +718,7 @@ export const AdminProposals: React.FC = () => {
                   <button
                     type="button"
                     onClick={handleAddItem}
-                    className="px-2 py-0.5 rounded-control bg-[var(--panel)] hover:bg-[var(--ams-elevated)] text-xs font-sans text-[var(--accent)] border border-[var(--accent)]/30 flex items-center gap-1"
+                    className="px-2 py-0.5 rounded-control bg-[var(--panel)] hover:bg-[var(--panel-hover)] text-xs font-sans text-[var(--accent)] border border-[var(--accent)]/30 flex items-center gap-1"
                   >
                     <Plus size={12} />
                     <span>Add Item</span>
@@ -928,7 +928,7 @@ export const AdminProposals: React.FC = () => {
                   onClick={() => {
                     window.print();
                   }}
-                  className="px-3 py-1.5 rounded-control bg-[var(--panel)] hover:bg-[var(--ams-elevated)] text-xs font-sans text-[var(--muted)] hover:text-[var(--text)] flex items-center gap-1.5 border border-[var(--line)]"
+                  className="px-3 py-1.5 rounded-control bg-[var(--panel)] hover:bg-[var(--panel-hover)] text-xs font-sans text-[var(--muted)] hover:text-[var(--text)] flex items-center gap-1.5 border border-[var(--line)]"
                 >
                   <Download size={13} />
                   <span>Export / Print</span>
