@@ -155,15 +155,7 @@ export const AdminSettings: React.FC = () => {
         if (mounted && res.success && res.data?.settings) setMetaSettings(res.data.settings as SiteMetaSettings);
       });
     }
-    return (
-    <>
-      <Modal open={!!confirmAction} onClose={() => setConfirmAction(null)} size="sm" title={confirmAction?.type === 'account' ? (language === 'id' ? 'Hapus akun stakeholder?' : 'Delete stakeholder account?') : (language === 'id' ? 'Hapus audit log?' : 'Clear audit logs?')} description={confirmAction?.type === 'account' ? (language === 'id' ? `Akun ${confirmAction.name || ''} akan dihapus secara permanen.` : `Account ${confirmAction.name || ''} will be permanently deleted.`) : (language === 'id' ? 'Seluruh riwayat audit log keamanan akan dihapus.' : 'All security audit log history will be cleared.') }>
-        <div className="flex flex-col-reverse sm:flex-row justify-end gap-2">
-          <button type="button" onClick={() => setConfirmAction(null)} className="min-h-10 px-4 rounded-control border border-[var(--line)] bg-[var(--panel)] text-xs text-[var(--muted)]">Cancel</button>
-          <button type="button" onClick={() => confirmAction?.type === 'account' && confirmAction.id && void confirmDeleteAccount(confirmAction.id, confirmAction.name || '') || confirmAction?.type === 'logs' && confirmClearLogs()} className="min-h-10 px-4 rounded-control bg-[var(--danger)] text-white text-xs font-semibold">Delete</button>
-        </div>
-      </Modal>
-      <div>) => { mounted = false; };
+    return () => { mounted = false; };
   }, [activeTab, canViewAuditLogs, canManageAdminAccounts]);
 
   useEffect(() => {
@@ -1568,9 +1560,20 @@ export const AdminSettings: React.FC = () => {
         </div>
       )}
 
+      <Modal
+        open={!!confirmAction}
+        onClose={() => setConfirmAction(null)}
+        size="sm"
+        title={confirmAction?.type === 'account' ? (language === 'id' ? 'Hapus akun stakeholder?' : 'Delete stakeholder account?') : (language === 'id' ? 'Hapus audit log?' : 'Clear audit logs?')}
+        description={confirmAction?.type === 'account' ? (language === 'id' ? `Akun ${confirmAction.name || ''} akan dihapus secara permanen.` : `Account ${confirmAction.name || ''} will be permanently deleted.`) : (language === 'id' ? 'Seluruh riwayat audit log keamanan akan dihapus.' : 'All security audit log history will be cleared.')}
+      >
+        <div className="flex flex-col-reverse sm:flex-row justify-end gap-2">
+          <button type="button" onClick={() => setConfirmAction(null)} className="min-h-10 px-4 rounded-control border border-[var(--line)] bg-[var(--panel)] text-xs text-[var(--muted)]">Cancel</button>
+          <button type="button" onClick={() => confirmAction?.type === 'account' && confirmAction.id ? void confirmDeleteAccount(confirmAction.id, confirmAction.name || '') : confirmAction?.type === 'logs' ? void confirmClearLogs() : undefined} className="min-h-10 px-4 rounded-control bg-[var(--danger)] text-white text-xs font-semibold">Delete</button>
+        </div>
+      </Modal>
+
     </div>
-      </div>
-    </>
   );
 };
 
