@@ -1166,13 +1166,13 @@ export const AdminSettings: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsAddAccountModalOpen(false)}
-                  className="h-10 px-4 min-h-10 rounded-card bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] text-xs font-sans font-semibold transition-colors"
+                  className="h-10 px-4 rounded-control bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] text-xs font-sans font-semibold transition-colors"
                 >
                   {language === 'id' ? 'Batal' : 'Cancel'}
                 </button>
                 <button
                   type="submit"
-                  className="h-10 px-5 min-h-10 rounded-card bg-[var(--accent)] text-white text-xs font-sans font-semibold hover:bg-[var(--accent)] transition-all shadow-none flex items-center gap-2"
+                  className="h-10 px-5 rounded-control bg-[var(--accent)] text-white text-xs font-sans font-semibold hover:bg-[var(--accent)] transition-all shadow-none flex items-center gap-2"
                 >
                   <Save size={14} />
                   <span>{language === 'id' ? 'Simpan Akun Baru' : 'Save Account'}</span>
@@ -1254,14 +1254,14 @@ export const AdminSettings: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setIsEditPermsModalOpen(false)}
-                className="h-10 px-4 min-h-10 rounded-card bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] text-xs font-sans font-semibold transition-colors"
+                className="h-10 px-4 rounded-control bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] text-xs font-sans font-semibold transition-colors"
               >
                 {language === 'id' ? 'Batal' : 'Cancel'}
               </button>
               <button
                 type="button"
                 onClick={handleSavePermissions}
-                className="h-10 px-5 min-h-10 rounded-card bg-[var(--accent)] text-white text-xs font-sans font-semibold hover:bg-[var(--accent)] transition-all shadow-none flex items-center gap-2"
+                className="h-10 px-5 rounded-control bg-[var(--accent)] text-white text-xs font-sans font-semibold hover:bg-[var(--accent)] transition-all shadow-none flex items-center gap-2"
               >
                 <Save size={14} />
                 <span>{language === 'id' ? 'Simpan Perubahan Hak Akses' : 'Save Permissions'}</span>
@@ -1323,7 +1323,7 @@ export const AdminSettings: React.FC = () => {
                 type="number"
                 value={sessionTimeoutMin}
                 onChange={(e) => setSessionTimeoutMin(parseInt(e.target.value) || 60)}
-                className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-card text-xs text-[var(--text)] font-sans focus:outline-none focus:border-[var(--accent)] min-h-10"
+                className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-control text-xs text-[var(--text)] font-sans focus:outline-none focus:border-[var(--accent)] min-h-10"
               />
               <p className="text-[10px] text-[var(--muted)] font-sans">
                 {language === 'id'
@@ -1438,7 +1438,7 @@ export const AdminSettings: React.FC = () => {
                 type="text"
                 value={webhookUrl}
                 onChange={(e) => setWebhookUrl(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)] font-sans min-h-10"
+                className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)] font-sans min-h-10"
               />
             </div>
 
@@ -1451,7 +1451,7 @@ export const AdminSettings: React.FC = () => {
                   type="text"
                   value={smtpHost}
                   onChange={(e) => setSmtpHost(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)] font-sans min-h-10"
+                  className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)] font-sans min-h-10"
                 />
               </div>
 
@@ -1463,7 +1463,7 @@ export const AdminSettings: React.FC = () => {
                   type="text"
                   value={smtpPort}
                   onChange={(e) => setSmtpPort(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)] font-sans min-h-10"
+                  className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)] font-sans min-h-10"
                 />
               </div>
             </div>
@@ -1476,7 +1476,7 @@ export const AdminSettings: React.FC = () => {
                 type="text"
                 value={cloudRunRegion}
                 onChange={(e) => setCloudRunRegion(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)] font-sans min-h-10"
+                className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)] font-sans min-h-10"
               />
             </div>
             <div className="pt-3 border-t border-[var(--line)]">
@@ -1512,7 +1512,7 @@ export const AdminSettings: React.FC = () => {
               <button
                 onClick={handleExportLogs}
                 disabled={logs.length === 0}
-                className="px-3.5 py-2 rounded-card bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--text)] border border-[var(--line)] text-xs font-sans transition-colors flex items-center gap-1.5 disabled:opacity-50 min-h-10"
+                className="px-3.5 py-2 rounded-control bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--text)] border border-[var(--line)] text-xs font-sans transition-colors flex items-center gap-1.5 disabled:opacity-50 min-h-10"
               >
                 <Download size={13} />
                 <span>Export JSON</span>
@@ -1521,7 +1521,7 @@ export const AdminSettings: React.FC = () => {
               <button
                 onClick={handleClearLogs}
                 disabled={logs.length === 0}
-                className="px-3.5 py-2 rounded-card bg-[var(--panel)] hover:bg-[var(--danger)]/10 text-[var(--muted)] hover:text-[var(--danger)] border border-[var(--line)] hover:border-[var(--danger)]/30 text-xs font-sans transition-colors flex items-center gap-1.5 disabled:opacity-50 min-h-10"
+                className="px-3.5 py-2 rounded-control bg-[var(--panel)] hover:bg-[var(--danger)]/10 text-[var(--muted)] hover:text-[var(--danger)] border border-[var(--line)] hover:border-[var(--danger)]/30 text-xs font-sans transition-colors flex items-center gap-1.5 disabled:opacity-50 min-h-10"
               >
                 <Trash2 size={13} />
                 <span>{language === 'id' ? 'Hapus Log' : 'Clear Logs'}</span>
