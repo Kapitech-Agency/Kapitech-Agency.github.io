@@ -288,12 +288,12 @@ export const AdminCmsServices: React.FC = () => {
 
       {/* Category Pills & Search */}
       <div className="w-full flex flex-col sm:flex-row items-center justify-between gap-3 bg-[var(--panel)] p-3 rounded-card border border-[var(--line)]">
-        <div className="flex flex-wrap items-center gap-1.5 w-full sm:w-auto">
+        <div className="flex flex-nowrap items-center gap-1.5 w-full sm:w-auto overflow-x-auto pb-1 sm:overflow-visible sm:pb-0">
           {categories.map((cat) => (
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
-              className={`px-3 py-1.5 rounded-control text-xs font-sans transition-all ${
+              className={`shrink-0 px-3 py-1.5 rounded-control text-xs font-sans transition-all ${
                 selectedCategory === cat
                   ? 'bg-[var(--accent)] text-white font-semibold shadow-none'
                   : 'text-[var(--muted)] hover:text-[var(--text)] hover:bg-[var(--panel)]'
