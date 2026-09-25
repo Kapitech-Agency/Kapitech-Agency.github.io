@@ -580,7 +580,7 @@ export const AdminSettings: React.FC = () => {
               <button
                 type="submit"
                 disabled={securityLoading}
-                className="px-5 py-2.5 rounded-card bg-[var(--accent)] text-white text-xs font-sans font-semibold hover:bg-[var(--accent)] transition-all shadow-none flex items-center gap-2 disabled:opacity-50 min-h-10"
+                className="px-5 py-2.5 rounded-control bg-[var(--accent)] text-white text-xs font-sans font-semibold hover:brightness-110 transition-all shadow-none flex items-center gap-2 disabled:opacity-50 min-h-10"
               >
                 {securityLoading ? <RefreshCw size={14} className="animate-spin" /> : <Save size={14} />}
                 <span>{language === 'id' ? 'Perbarui Akun Master' : 'Update Master Account'}</span>
@@ -700,7 +700,7 @@ export const AdminSettings: React.FC = () => {
             <div className="pt-4 flex items-center justify-end">
               <button
                 type="submit"
-                className="px-5 py-2.5 rounded-card bg-[var(--accent)] text-white text-xs font-sans font-semibold hover:bg-[var(--accent)] transition-all shadow-none flex items-center gap-2 min-h-10"
+                className="px-5 py-2.5 rounded-control bg-[var(--accent)] text-white text-xs font-sans font-semibold hover:brightness-110 transition-all shadow-none flex items-center gap-2 min-h-10"
               >
                 <Save size={14} />
                 <span>{language === 'id' ? 'Simpan Pengaturan Brand' : 'Save Brand Settings'}</span>
@@ -747,7 +747,7 @@ export const AdminSettings: React.FC = () => {
               <button
                 type="button"
                 onClick={handleOpenAddAccount}
-                className="h-10 px-4 min-h-10 rounded-card bg-[var(--accent)] text-white text-xs font-sans font-semibold hover:bg-[var(--accent)] transition-all shadow-none flex items-center justify-center gap-2 self-start sm:self-auto shrink-0"
+                className="h-10 px-4 min-h-10 rounded-control bg-[var(--accent)] text-white text-xs font-sans font-semibold hover:brightness-110 transition-all shadow-none flex items-center justify-center gap-2 self-start sm:self-auto shrink-0"
               >
                 <UserPlus size={15} />
                 <span>{language === 'id' ? 'Tambah Akun Baru' : 'Add New Account'}</span>
@@ -1383,7 +1383,7 @@ export const AdminSettings: React.FC = () => {
                 <button
                   type="submit"
                   disabled={securityLoading}
-                  className="px-5 py-2.5 rounded-card bg-[var(--accent)] text-white text-xs font-sans font-semibold hover:bg-[var(--accent)] transition-all flex items-center gap-2 min-h-10"
+                  className="px-5 py-2.5 rounded-control bg-[var(--accent)] text-white text-xs font-sans font-semibold hover:brightness-110 transition-all flex items-center gap-2 min-h-10"
                 >
                   <Save size={14} />
                   <span>{language === 'id' ? 'Update Password Terenkripsi' : 'Update Encrypted Password'}</span>
