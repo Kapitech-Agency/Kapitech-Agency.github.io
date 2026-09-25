@@ -865,7 +865,7 @@ export const AdminVendors: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 rounded-card bg-[var(--panel)] hover:bg-[var(--panel-hover)] text-[var(--text)] text-xs font-semibold border border-[var(--line)]"
+                  className="min-h-10 px-4 py-2 rounded-control bg-[var(--panel)] hover:bg-[var(--panel-hover)] text-[var(--text)] text-xs font-semibold border border-[var(--line)]"
                 >
                   {language === 'id' ? 'Batal' : 'Cancel'}
                 </button>
