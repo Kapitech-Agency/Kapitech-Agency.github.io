@@ -233,7 +233,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
         <div className="kapi-card ams-kpi flex flex-col justify-between hover:border-[var(--line)] transition-colors">
           <div className="flex items-center justify-between text-xs font-sans text-[var(--muted)]">
             <span>{language === 'id' ? 'Nilai Pipeline Aktif' : 'Active Pipeline'}</span>
-            <div className="w-7 h-7 rounded-control bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-[var(--info)]">
+            <div className="w-7 h-7 rounded-control bg-[var(--info)]/10 border border-[var(--info)]/20 flex items-center justify-center text-[var(--info)]">
               <Kanban size={15} />
             </div>
           </div>
@@ -255,7 +255,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
         <div className="kapi-card ams-kpi flex flex-col justify-between hover:border-[var(--line)] transition-colors">
           <div className="flex items-center justify-between text-xs font-sans text-[var(--muted)]">
             <span>{language === 'id' ? 'Proyek Berjalan' : 'Active Projects'}</span>
-            <div className="w-7 h-7 rounded-control bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
+            <div className="w-7 h-7 rounded-control bg-[var(--info)]/10 border border-[var(--info)]/20 flex items-center justify-center text-[var(--info)]">
               <Layers size={15} />
             </div>
           </div>
@@ -387,7 +387,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
                 <div key={st.stage} className="p-2.5 rounded-control bg-[var(--panel)] border border-[var(--line)] flex items-center justify-between text-xs">
                   <div className="flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-[var(--accent)]" />
-                    <span className="font-sans uppercase text-[#F8FAFC] text-[11px] font-semibold">{st.stage}</span>
+                    <span className="font-sans uppercase text-[var(--text)] text-[11px] font-semibold">{st.stage}</span>
                     <span className="text-[10px] font-sans text-[var(--muted)]">({st.count} deals)</span>
                   </div>
                   <span className="font-sans text-[var(--text)] font-semibold">{formatCurrency(st.value)}</span>
