@@ -56,7 +56,7 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
         anchorRef={triggerRef}
         onClose={() => setIsOpen(false)}
         align={align}
-        className={`z-50 min-w-[190px] max-w-[calc(100vw-16px)] bg-bg border border-line rounded-control p-1 font-sans text-xs ${menuClassName}`}
+        className={`ams-dropdown-surface z-50 min-w-[190px] max-w-[calc(100vw-16px)] p-1 font-sans text-xs ${menuClassName}`}
       >
         <motion.div
           initial={{ opacity: 0, y: 4, scale: 0.98 }}
@@ -73,7 +73,7 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
                   item.onClick();
                   setIsOpen(false);
                 }}
-                className={`w-full flex items-center justify-between min-h-10 sm:min-h-9 px-3 py-2 rounded-chip text-left transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-[-2px] ${
+                className={`ams-dropdown-item w-full flex items-center justify-between min-h-10 sm:min-h-9 text-left transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-[-2px] ${
                   item.variant === 'danger'
                     ? 'text-danger hover:text-fg hover:bg-danger/10'
                     : item.variant === 'warning'
