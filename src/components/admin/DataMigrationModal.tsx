@@ -296,7 +296,7 @@ export const DataMigrationModal: React.FC<DataMigrationModalProps> = ({
                 }}
                 className={`p-3 rounded-control border flex flex-row sm:flex-col items-center gap-2 sm:gap-1.5 text-xs font-sans transition-all min-h-10 sm:min-h-[auto] ${
                   targetModule === 'projects'
-                    ? 'bg-[var(--accent)]/15 border-[var(--accent)] text-[var(--text)] font-medium shadow-sm'
+                    ? 'bg-[var(--accent)]/15 border-[var(--accent)] text-[var(--text)] font-medium'
                     : 'bg-[var(--panel)] border-[var(--line)] text-[var(--muted)] hover:text-[var(--text)]'
                 }`}
               >
@@ -312,7 +312,7 @@ export const DataMigrationModal: React.FC<DataMigrationModalProps> = ({
                 }}
                 className={`p-3 rounded-control border flex flex-row sm:flex-col items-center gap-2 sm:gap-1.5 text-xs font-sans transition-all min-h-10 sm:min-h-[auto] ${
                   targetModule === 'invoices'
-                    ? 'bg-[var(--accent)]/15 border-[var(--accent)] text-[var(--text)] font-medium shadow-sm'
+                    ? 'bg-[var(--accent)]/15 border-[var(--accent)] text-[var(--text)] font-medium'
                     : 'bg-[var(--panel)] border-[var(--line)] text-[var(--muted)] hover:text-[var(--text)]'
                 }`}
               >
