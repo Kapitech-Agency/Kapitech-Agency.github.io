@@ -62,7 +62,7 @@ export const AdminNotificationCenter: React.FC = () => {
       {open && (
         <>
           <button aria-label="Close notifications" className="fixed inset-0 z-40 cursor-default" onClick={() => setOpen(false)} />
-          <div className="absolute right-0 top-[44px] z-50 w-[min(380px,calc(100vw-24px))] overflow-hidden rounded-card border border-line bg-panel shadow-none">
+          <div className="absolute right-0 top-[44px] z-50 w-[min(380px,calc(100vw-24px))] overflow-hidden rounded-card border border-line bg-panel -none">
             <div className="flex min-h-14 items-center justify-between border-b border-line px-4">
               <div>
                 <p className="text-[13px] font-semibold text-[var(--text)]">{language === 'id' ? 'Notifikasi' : 'Notifications'}</p>
