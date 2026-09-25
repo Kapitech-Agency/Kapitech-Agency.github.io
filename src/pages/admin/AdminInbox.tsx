@@ -375,14 +375,14 @@ export const AdminInbox: React.FC = () => {
     switch (type) {
       case 'career':
         return (
-          <span className="px-2 py-0.5 rounded-md bg-purple-500/10 border border-purple-500/30 text-purple-300 text-[10px] font-sans flex items-center gap-1">
+          <span className="px-2 py-0.5 rounded-md bg-[var(--info)]/10 border border-[var(--info)]/30 text-[var(--info)] text-[10px] font-sans flex items-center gap-1">
             <Briefcase size={10} />
             <span>Studio Role</span>
           </span>
         );
       case 'vendor':
         return (
-          <span className="px-2 py-0.5 rounded-md bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 text-[10px] font-sans flex items-center gap-1">
+          <span className="px-2 py-0.5 rounded-md bg-[var(--panel)] border border-[var(--line)] text-[var(--muted)] text-[10px] font-sans flex items-center gap-1">
             <Globe size={10} />
             <span>Freelance Vendor</span>
           </span>
@@ -480,7 +480,7 @@ export const AdminInbox: React.FC = () => {
       
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="p-4 rounded-card bg-[var(--success)]/10 border border-[var(--success)]/30 text-[var(--success)] text-xs font-sans flex items-center justify-between shadow-none animate-in fade-in duration-300">
+        <div className="p-3 sm:p-4 rounded-card bg-[var(--success)]/10 border border-[var(--success)]/30 text-[var(--success)] text-xs font-sans flex items-start sm:items-center justify-between gap-2 shadow-none animate-in fade-in duration-300">
           <div className="flex items-center gap-2.5">
             <Check size={16} className="text-[var(--success)] shrink-0" />
             <span>{toastMessage.text}</span>
@@ -500,7 +500,7 @@ export const AdminInbox: React.FC = () => {
       {/* ------------------------------------------------------------- */}
       {/* 1. EXECUTIVE HEADER & ACTIONS */}
       {/* ------------------------------------------------------------- */}
-      <div className="ams-page-header flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-6 border-b border-[var(--line)]">
+      <div className="ams-page-header flex flex-col lg:flex-row lg:items-center justify-between gap-3 sm:gap-4 pb-4 sm:pb-5 border-b border-[var(--line)]">
         <div>
           <div className="flex items-center gap-2.5 mb-1.5 flex-wrap">
             <div className="w-8 h-8 rounded-card bg-[var(--accent)]/10 border border-[var(--accent)]/30 flex items-center justify-center text-[var(--danger)] shrink-0">
