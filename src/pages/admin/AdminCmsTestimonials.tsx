@@ -3,6 +3,8 @@ import { Quote, Plus, Star, Edit3, Trash2, Check, UserCheck, MessageSquare, Buil
 import { TestimonialItem } from '../../lib/cmsStore';
 import { api } from '../../lib/apiClient';
 import { useLanguage } from '../../lib/LanguageContext';
+import { Modal } from '../../components/ui/Modal';
+import { Button } from '../../components/ui/Button';
 
 export const AdminCmsTestimonials: React.FC = () => {
   const { language } = useLanguage();
@@ -10,10 +12,17 @@ export const AdminCmsTestimonials: React.FC = () => {
   const [editingItem, setEditingItem] = useState<TestimonialItem | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   const loadData = async () => {
-    const res = await api.cms.getTestimonials();
-    if (res.success && Array.isArray(res.data?.testimonials)) setTestimonials(res.data.testimonials as TestimonialItem[]);
+    setIsLoading(true); setLoadError(null);
+    try {
+      const res = await api.cms.getTestimonials();
+      if (res.success && Array.isArray(res.data?.testimonials)) setTestimonials(res.data.testimonials as TestimonialItem[]);
+      else setLoadError(res.error || 'Unable to load testimonials.');
+    } catch { setLoadError('Unable to load testimonials. Check the connection and retry.'); }
+    finally { setIsLoading(false); }
   };
 
   useEffect(() => {
@@ -101,6 +110,23 @@ export const AdminCmsTestimonials: React.FC = () => {
       )}
 
       {/* Testimonials List */}
+      {isLoading ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3" aria-label="Loading testimonials">
+          {[1,2,3].map(i => <div key={i} className="h-48 rounded-card border border-line bg-panel animate-pulse" />)}
+        </div>
+      ) : loadError ? (
+        <div className="rounded-card border border-danger/30 bg-danger/5 p-6 flex items-center justify-between gap-4">
+          <div><p className="text-sm font-semibold text-fg">Unable to load testimonials</p><p className="mt-1 text-xs text-muted">{loadError}</p></div>
+          <Button variant="secondary" onClick={() => void loadData()}>Retry</Button>
+        </div>
+      ) : testimonials.length === 0 ? (
+        <div className="rounded-card border border-line bg-panel p-8 text-center">
+          <MessageSquare className="mx-auto text-muted" size={22} />
+          <p className="mt-3 text-sm font-semibold text-fg">No testimonials yet</p>
+          <p className="mt-1 text-xs text-muted">Add a client testimonial to publish social proof.</p>
+          <Button className="mt-4" icon={<Plus size={14} />} onClick={handleOpenAdd}>Add Testimonial</Button>
+        </div>
+      ) : (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
         {testimonials.map((item) => (
           <div
@@ -152,20 +178,12 @@ export const AdminCmsTestimonials: React.FC = () => {
           </div>
         ))}
       </div>
+      )}
 
       {/* Modal: Add / Edit Testimonial */}
       {isModalOpen && editingItem && (
-        <div className="fixed inset-0 bg-black/80  z-50 flex items-center justify-center p-4">
-          <div className="bg-[var(--panel)] border border-[var(--line)] rounded-card max-w-lg w-full p-4 sm:p-5 shadow-none">
-            <div className="flex items-center justify-between pb-4 border-b border-[var(--line)] mb-5">
-              <h2 className="text-base font-semibold font-sans text-[var(--text)]">
-                {editingItem.author ? `Edit: ${editingItem.author}` : (language === 'id' ? 'Tambah Testimoni Klien' : 'Add Client Testimonial')}
-              </h2>
-              <button onClick={() => setIsModalOpen(false)} className="text-[var(--muted)] hover:text-[var(--text)] text-xs font-sans">
-                ✕ {language === 'id' ? 'Tutup' : 'Close'}
-              </button>
-            </div>
-
+        <Modal open={isModalOpen} onClose={() => setIsModalOpen(false)} size="lg" title={editingItem.author ? `Edit: ${editingItem.author}` : (language === 'id' ? 'Tambah Testimoni Klien' : 'Add Client Testimonial')}>
+          <div className="space-y-4">
             <form onSubmit={handleSaveModal} className="space-y-4">
               <div>
                 <label className="block text-xs font-sans text-[var(--muted)] mb-1 font-semibold">
@@ -236,23 +254,12 @@ export const AdminCmsTestimonials: React.FC = () => {
               </div>
 
               <div className="pt-2 flex items-center justify-end gap-2">
-                <button
-                  type="button"
-                  onClick={() => setIsModalOpen(false)}
-                  className="min-h-10 px-3 rounded-control bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] text-xs font-sans"
-                >
-                  {language === 'id' ? 'Batal' : 'Cancel'}
-                </button>
-                <button
-                  type="submit"
-                  className="min-h-10 px-3 rounded-control bg-[var(--accent)] text-[var(--text)] text-xs font-sans font-medium hover:bg-[var(--accent)] transition-colors"
-                >
-                  {language === 'id' ? 'Simpan Testimoni' : 'Save Testimonial'}
-                </button>
+                <Button type="button" variant="secondary" onClick={() => setIsModalOpen(false)}>{language === 'id' ? 'Batal' : 'Cancel'}</Button>
+                <Button type="submit">{language === 'id' ? 'Simpan Testimoni' : 'Save Testimonial'}</Button>
               </div>
             </form>
           </div>
-        </div>
+        </Modal>
       )}
 
     </div>
