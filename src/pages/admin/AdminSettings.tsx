@@ -829,7 +829,7 @@ export const AdminSettings: React.FC = () => {
                           </span>
                         )}
                         {acc.permissions?.canViewAuditLogs && (
-                          <span className="text-[9px] font-sans px-1.5 py-0.5 bg-slate-800 text-slate-300 border border-slate-700 rounded">
+                          <span className="text-[9px] font-sans px-1.5 py-0.5 bg-[var(--panel)] text-[var(--muted)] border border-[var(--line)] rounded">
                             Audit Logs
                           </span>
                         )}
