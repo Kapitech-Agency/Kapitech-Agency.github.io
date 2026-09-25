@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Check, ChevronDown } from 'lucide-react';
+import { DropdownPortal } from './DropdownPortal';
 
 export interface SelectOption {
   value: string;
@@ -39,31 +40,11 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
 
   const selectedOption = options.find((opt) => opt.value === value);
   const selectedIndex = Math.max(0, options.findIndex((opt) => opt.value === value));
   useEffect(() => setActiveIndex(selectedIndex), [selectedIndex]);
-
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
-        setIsOpen(false);
-      }
-    };
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setIsOpen(false);
-    };
-
-    if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-      document.addEventListener('keydown', handleKeyDown);
-    }
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-      document.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [isOpen]);
 
   const sizeClasses = {
     xs: 'h-10 sm:h-8 px-2.5 text-[11px] gap-2 rounded-control',
@@ -72,7 +53,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
   };
 
   return (
-    <div className={`relative inline-block text-left ${className}`} ref={containerRef}>
+    <div className={`relative inline-block text-left ${className}`}>
       <button
         type="button"
         disabled={disabled}
@@ -82,15 +63,16 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
           if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
             e.preventDefault();
             const delta = e.key === 'ArrowDown' ? 1 : -1;
-            const nextIndex = (activeIndex + delta + options.length) % options.length;
-            const next = options[nextIndex];
-            if (next) { setActiveIndex(nextIndex); onChange(next.value); }
+            const nextIndex = options.length ? (activeIndex + delta + options.length) % options.length : 0;
+            setActiveIndex(nextIndex);
             setIsOpen(true);
           } else if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
             if (isOpen && options[activeIndex]) { onChange(options[activeIndex].value); setIsOpen(false); } else setIsOpen(true);
           }
+          if (e.key === 'Tab') setIsOpen(false);
         }}
+        ref={triggerRef}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
         className={`flex items-center justify-between font-sans transition-colors duration-150 border select-none ${
@@ -118,75 +100,61 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
           )}
         </div>
 
-        <ChevronDown size={size === 'xs' ? 14 : 16} className="text-muted shrink-0" />
+        <ChevronDown size={size === 'xs' ? 14 : 16} className={`text-muted shrink-0 transition-transform duration-150 ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
-      {isOpen && (
-          <div
-            role="listbox"
-            className={`absolute z-[100] mt-1 min-w-[140px] sm:min-w-[180px] max-w-[calc(100vw-32px)] sm:max-w-[280px] max-h-[280px] overflow-y-auto bg-panel border border-line rounded-control p-1 shadow-none space-y-0.5 font-sans text-xs custom-scrollbar ${
-              align === 'right' ? 'right-0' : 'left-0'
-            } ${menuClassName}`}
-          >
-            {options.map((option) => {
-              const isSelected = option.value === value;
-              return (
-                <button
-                  key={option.value}
-                  type="button"
-                  onMouseEnter={() => setActiveIndex(options.findIndex((opt) => opt.value === option.value))}
-                  onClick={() => {
-                    onChange(option.value);
-                    setActiveIndex(options.findIndex((opt) => opt.value === option.value));
-                    setIsOpen(false);
-                  }}
-                  role="option"
-                  aria-selected={isSelected}
-                  className={`w-full flex items-center justify-between min-h-10 sm:min-h-9 px-3 py-2 rounded-control text-left transition-colors group ${
-                    isSelected
-                      ? 'bg-accent/10 text-fg font-semibold border border-accent/30'
-                      : 'text-muted hover:text-fg hover:bg-panel-hover'
-                  }`}
-                >
-                  <div className="flex items-center gap-2.5 min-w-0 pr-2">
-                    {option.icon && (
-                      <span className={isSelected ? 'text-accent-text' : 'text-muted group-hover:text-fg'}>
-                        {option.icon}
-                      </span>
-                    )}
-                    <div className="truncate">
-                      <div className="truncate font-medium">{option.label}</div>
-                      {option.description && (
-                        <div
-                          className={`text-[10px] truncate ${
-                            isSelected ? 'text-muted' : 'text-muted'
-                          }`}
-                        >
-                          {option.description}
-                        </div>
-                      )}
-                    </div>
+      <DropdownPortal
+        open={isOpen}
+        anchorRef={triggerRef}
+        onClose={() => setIsOpen(false)}
+        align={align}
+        className="min-w-[140px] sm:min-w-[180px] max-w-[calc(100vw-16px)] sm:max-w-[280px] max-h-[280px] overflow-y-auto bg-panel border border-line rounded-control p-1 custom-scrollbar font-sans text-xs"
+      >
+        <div role="listbox" aria-label={placeholder}>
+          {options.length === 0 ? (
+            <div className="px-3 py-2.5 text-muted">No options available</div>
+          ) : options.map((option, index) => {
+            const isSelected = option.value === value;
+            const isActive = index === activeIndex;
+            return (
+              <button
+                key={option.value}
+                id={`custom-select-option-${option.value}`}
+                type="button"
+                onMouseEnter={() => setActiveIndex(index)}
+                onClick={() => {
+                  onChange(option.value);
+                  setActiveIndex(index);
+                  setIsOpen(false);
+                  triggerRef.current?.focus();
+                }}
+                role="option"
+                aria-selected={isSelected}
+                className={`w-full flex items-center justify-between min-h-10 sm:min-h-9 px-3 py-2 rounded-control text-left transition-colors group ${
+                  isSelected
+                    ? 'bg-accent/10 text-fg font-semibold border border-accent/30'
+                    : isActive
+                    ? 'text-fg bg-panel-hover'
+                    : 'text-muted hover:text-fg hover:bg-panel-hover'
+                }`}
+              >
+                <div className="flex items-center gap-2.5 min-w-0 pr-2">
+                  {option.icon && <span className={isSelected ? 'text-accent-text' : 'text-muted group-hover:text-fg'}>{option.icon}</span>}
+                  <div className="truncate">
+                    <div className="truncate font-medium">{option.label}</div>
+                    {option.description && <div className="text-[10px] truncate text-muted">{option.description}</div>}
                   </div>
+                </div>
+                <div className="flex items-center gap-1.5 shrink-0">
+                  {option.badge && <span className={`px-1.5 py-0.5 rounded text-[9px] font-semibold ${isSelected ? 'bg-bg text-fg border border-line' : option.badgeColor || 'bg-panel-hover text-muted border border-line'}`}>{option.badge}</span>}
+                  {isSelected && <Check size={14} className="text-accent-text shrink-0" />}
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </DropdownPortal>
 
-                  <div className="flex items-center gap-1.5 shrink-0">
-                    {option.badge && (
-                      <span
-                        className={`px-1.5 py-0.5 rounded text-[9px] font-semibold ${
-                          isSelected
-                            ? 'bg-bg text-fg border border-line'
-                            : option.badgeColor || 'bg-panel-hover text-muted border border-line'
-                        }`}
-                      >
-                        {option.badge}
-                      </span>
-                    )}
-                    {isSelected && <Check size={14} className="text-accent-text shrink-0" />}
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-        )}
     </div>
   );
 };
