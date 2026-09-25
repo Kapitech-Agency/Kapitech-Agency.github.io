@@ -739,7 +739,7 @@ export const AdminInbox: React.FC = () => {
       {viewMode === 'table' ? (
         /* DENSE SPREADSHEET TABLE VIEW */
         <div className="bg-[var(--panel)] border border-[var(--line)] rounded-card overflow-hidden shadow-none">
-          <div className="overflow-x-auto custom-scrollbar">
+          <div className="ams-table-scroll overflow-x-auto custom-scrollbar">
             <table className="w-full text-left border-collapse text-xs font-sans">
               <thead>
                 <tr className="bg-[var(--panel)] border-b border-[var(--line)] text-[var(--muted)]">
