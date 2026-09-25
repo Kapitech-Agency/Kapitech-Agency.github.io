@@ -983,11 +983,6 @@
 .ams-shell .fixed.inset-0[class*="bg-black"] {
   background: color-mix(in srgb, var(--bg) 82%, transparent) !important;
 }
-.ams-shell .fixed.inset-0 > [class*="bg-[#111318]"],
-.ams-shell .fixed.inset-0 > [class*="bg-[#0D0F12]"] {
-  background: var(--panel) !important;
-  border-color: var(--line) !important;
-}
 
 /* Mobile: preserve the 52px chrome and provide safe, compact page padding. */
 @media (max-width: 899px) {
