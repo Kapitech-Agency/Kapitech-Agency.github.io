@@ -65,7 +65,7 @@ export const ProductionReadinessCard: React.FC<Props> = ({ language }) => {
       {result && (
         <>
           {result.status?.reason && <div className="rounded-control border border-warning/20 bg-warning/5 p-3 text-[11px] text-amber-200 font-sans">{result.status.reason}</div>}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
             {labels.map(([key, label]) => {
               const ready = Boolean(result.gates[key]);
               return <div key={key} className="flex items-center justify-between gap-2 rounded-control bg-panel border border-line px-3 py-2.5">
