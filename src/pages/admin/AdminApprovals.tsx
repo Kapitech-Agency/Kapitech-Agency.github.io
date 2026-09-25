@@ -404,8 +404,8 @@ export const AdminApprovals: React.FC = () => {
 
       {/* DECISION MODAL */}
       {activeItem && canApproveBudgets && (
-        <div className="fixed inset-0 z-50 bg-black/85 flex items-center justify-center p-4">
-          <div className="bg-[var(--bg)] border border-[var(--line)] rounded-card w-full max-w-md shadow-none overflow-hidden">
+        <div className="fixed inset-0 z-50 bg-black/85 flex items-center justify-center p-4" role="presentation">
+          <div className="bg-[var(--bg)] border border-[var(--line)] rounded-card w-full max-w-md max-h-[calc(100dvh-24px)] overflow-y-auto shadow-none">
             <div className="p-4 border-b border-[var(--line)] flex items-center justify-between bg-[var(--panel)]">
               <h3 className="text-sm font-semibold font-sans text-[var(--text)] flex items-center gap-2">
                 <ShieldCheck size={16} className="text-[var(--accent)]" />
@@ -486,7 +486,7 @@ export const AdminApprovals: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setActiveItem(null)}
-                  className="px-4 py-2 rounded-[12px] bg-[var(--panel)] hover:bg-[var(--panel-hover)] text-[var(--muted)] text-xs font-sans"
+                  className="min-h-10 px-4 py-2 rounded-control bg-[var(--panel)] hover:bg-[var(--panel-hover)] border border-[var(--line)] text-[var(--muted)] text-xs font-sans"
                 >
                   Cancel
                 </button>
