@@ -228,11 +228,11 @@ export const AdminCmsProjects: React.FC = () => {
     return matchesPillar && matchesSearch;
   });
 
-  <Modal open={!!deleteTarget} onClose={() => setDeleteTarget(null)} size="sm" title="Delete case study?" description={deleteTarget ? `Case study "${deleteTarget.title}" will be permanently removed.` : undefined}>
-    <div className="flex flex-col-reverse sm:flex-row justify-end gap-2"><button type="button" onClick={() => setDeleteTarget(null)} className="min-h-10 px-4 rounded-control border border-[var(--line)] bg-[var(--panel)] text-xs text-[var(--muted)]">Cancel</button><button type="button" onClick={() => void confirmDeleteProject()} className="min-h-10 px-4 rounded-control bg-[var(--danger)] text-white text-xs font-semibold">Delete</button></div>
-  </Modal>
   return (
     <div className="space-y-6">
+        <Modal open={!!deleteTarget} onClose={() => setDeleteTarget(null)} size="sm" title="Delete case study?" description={deleteTarget ? `Case study "${deleteTarget.title}" will be permanently removed.` : undefined}>
+          <div className="flex flex-col-reverse sm:flex-row justify-end gap-2"><button type="button" onClick={() => setDeleteTarget(null)} className="min-h-10 px-4 rounded-control border border-[var(--line)] bg-[var(--panel)] text-xs text-[var(--muted)]">Cancel</button><button type="button" onClick={() => void confirmDeleteProject()} className="min-h-10 px-4 rounded-control bg-[var(--danger)] text-white text-xs font-semibold">Delete</button></div>
+        </Modal>
       
       {/* Top Title & Actions */}
       <div className="ams-page-header flex flex-col sm:flex-row sm:items-center justify-between gap-4">
