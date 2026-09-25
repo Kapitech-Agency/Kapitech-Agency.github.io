@@ -42,6 +42,7 @@ import { useLanguage } from '../../lib/LanguageContext';
 import { useDragToScroll } from '../../lib/useDragToScroll';
 import { ScrollShadowContainer } from '../../components/ui/ScrollShadowContainer';
 import { CustomSelect } from '../../components/ui/CustomSelect';
+import { Modal } from '../../components/ui/Modal';
 import { getAdminSession, hasAdminPermission } from '../../lib/adminAuth';
 import { api } from '../../lib/apiClient';
 
@@ -66,6 +67,8 @@ export const AdminProjects: React.FC = () => {
   const [selectedProjectId, setSelectedProjectId] = useState<string>('');
   const [searchQuery, setSearchQuery] = useState('');
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
 
   // Drag-to-scroll hook for horizontal container
   const kanbanScrollRef = useDragToScroll<HTMLDivElement>();
@@ -210,7 +213,7 @@ export const AdminProjects: React.FC = () => {
   const handleSaveProject = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!projName.trim() || !clientCompany.trim()) {
-      alert('Project Title and Client Company are required.');
+      showToast('Project Title and Client Company are required.');
       return;
     }
 
@@ -249,10 +252,18 @@ export const AdminProjects: React.FC = () => {
   };
 
   const handleDeleteProject = (id: string, name: string) => {
-    if (window.confirm(`Hapus proyek "${name}" beserta seluruh task board?`)) {
-      void api.projects.delete(id).then((res) => { if (res.success) void loadData(); else showToast(res.error || 'Project delete failed.'); });
+    setDeleteTarget({ id, name });
+  };
+
+  const confirmDeleteProject = async (id: string) => {
+    const res = await api.projects.delete(id);
+    if (res.success) {
+      await loadData();
       showToast(language === 'id' ? 'Proyek dihapus.' : 'Project deleted.');
+    } else {
+      showToast(res.error || 'Project delete failed.');
     }
+    setDeleteTarget(null);
   };
 
   const handleAddTask = (e: React.FormEvent) => {
@@ -486,7 +497,14 @@ export const AdminProjects: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <>
+      <Modal open={!!deleteTarget} onClose={() => setDeleteTarget(null)} size="sm" title={language === "id" ? "Hapus proyek?" : "Delete project?"} description={language === "id" ? `Proyek ${deleteTarget?.name || ""} beserta task board akan dihapus.` : `Project ${deleteTarget?.name || ""} and its task board will be removed.`}>
+        <div className="flex flex-col-reverse sm:flex-row justify-end gap-2">
+          <button type="button" onClick={() => setDeleteTarget(null)} className="min-h-10 px-4 rounded-control border border-[var(--line)] bg-[var(--panel)] text-xs text-[var(--muted)]">Cancel</button>
+          <button type="button" onClick={() => deleteTarget && void confirmDeleteProject(deleteTarget.id)} className="min-h-10 px-4 rounded-control bg-[var(--danger)] text-white text-xs font-semibold">Delete</button>
+        </div>
+      </Modal>
+      <div className="space-y-6">
       
       {/* 1. Header & Project Actions */}
       <div className="ams-dashboard-header">
@@ -1124,8 +1142,7 @@ export const AdminProjects: React.FC = () => {
                     <label className="block text-[var(--muted)] mb-1 font-semibold">Service Category</label>
                     <CustomSelect value={serviceCategory} onChange={setServiceCategory} className="w-full" size="sm" options={[
                       { value: 'Web Development', label: 'Web Development' },
-                      { value: 'Mobile App', label: 'Mobile App' },
-                      { value: 'UI/UX Design System', label: 'UI/UX Design System' },
+                                            { value: 'UI/UX Design System', label: 'UI/UX Design System' },
                       { value: 'Cloud Architecture', label: 'Cloud Architecture' },
                       { value: 'AI / LLM Integration', label: 'AI / LLM Integration' }
                     ]} />
@@ -1359,7 +1376,8 @@ export const AdminProjects: React.FC = () => {
         </div>
       )}
 
-    </div>
+      </div>
+    </>
   );
 };
 export default AdminProjects;

@@ -40,6 +40,7 @@ import { formatAmount, getActiveCurrency, setGlobalCurrency, CurrencyCode, CURRE
 import { hasAdminPermission } from '../../lib/adminAuth';
 import { api } from '../../lib/apiClient';
 import { CustomSelect } from '../../components/ui/CustomSelect';
+import { Modal } from '../../components/ui/Modal';
 
 export const AdminCrm: React.FC = () => {
   const { language, t } = useLanguage();
@@ -64,6 +65,7 @@ export const AdminCrm: React.FC = () => {
   const [editingLead, setEditingLead] = useState<CrmLead | null>(null);
   const [newNoteText, setNewNoteText] = useState('');
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
 
   // Form State for Add/Edit
   const [formClientName, setFormClientName] = useState('');
@@ -264,7 +266,7 @@ export const AdminCrm: React.FC = () => {
     e.preventDefault();
     if (!canManageCrm) return;
     if (!formClientName.trim() || !formCompany.trim()) {
-      alert(language === 'id' ? 'Nama klien dan perusahaan wajib diisi.' : 'Client name and company are required.');
+      showToast(language === 'id' ? 'Nama klien dan perusahaan wajib diisi.' : 'Client name and company are required.');
       return;
     }
 
@@ -296,16 +298,16 @@ export const AdminCrm: React.FC = () => {
 
   const handleDeleteLead = async (id: string, name: string) => {
     if (!canManageCrm) return;
-    if (window.confirm(language === 'id' ? `Hapus prospek ${name}?` : `Delete lead ${name}?`)) {
-      const res = await api.crm.deleteDeal(id);
-      if (!res.success) { showToast(res.error || 'Delete failed.'); return; }
-      await loadLeads();
-      if (selectedLead && selectedLead.id === id) {
-        setIsDrawerOpen(false);
-        setSelectedLead(null);
-      }
-      showToast(language === 'id' ? 'Data deal telah dihapus.' : 'Deal removed from CRM.');
-    }
+    setDeleteTarget({ id, name });
+  };
+
+  const confirmDeleteLead = async (id: string) => {
+    const res = await api.crm.deleteDeal(id);
+    if (!res.success) { showToast(res.error || 'Delete failed.'); setDeleteTarget(null); return; }
+    await loadLeads();
+    if (selectedLead && selectedLead.id === id) { setIsDrawerOpen(false); setSelectedLead(null); }
+    setDeleteTarget(null);
+    showToast(language === 'id' ? 'Data deal telah dihapus.' : 'Deal removed from CRM.');
   };
 
   const handleAddNote = async (e: React.FormEvent) => {
@@ -356,7 +358,14 @@ export const AdminCrm: React.FC = () => {
   };
 
   return (
-    <div className="space-y-5 sm:space-y-6">
+    <>
+      <Modal open={!!deleteTarget} onClose={() => setDeleteTarget(null)} size="sm" title={language === 'id' ? 'Hapus prospek?' : 'Delete lead?'} description={language === 'id' ? `Prospek ${deleteTarget?.name || ''} akan dihapus dari CRM.` : `Lead ${deleteTarget?.name || ''} will be removed from CRM.`}>
+        <div className="flex flex-col-reverse sm:flex-row justify-end gap-2">
+          <button type="button" onClick={() => setDeleteTarget(null)} className="min-h-10 px-4 rounded-control border border-[var(--line)] bg-[var(--panel)] text-xs text-[var(--muted)]">Cancel</button>
+          <button type="button" onClick={() => deleteTarget && void confirmDeleteLead(deleteTarget.id)} className="min-h-10 px-4 rounded-control bg-[var(--danger)] text-white text-xs font-semibold">Delete</button>
+        </div>
+      </Modal>
+      <div className="space-y-5 sm:space-y-6">
       
       {/* 1. Header & Actions */}
       <div className="ams-dashboard-header flex flex-col lg:flex-row lg:items-center justify-between gap-4">
@@ -551,8 +560,7 @@ export const AdminCrm: React.FC = () => {
             options={[
               { value: 'All', label: language === 'id' ? 'Semua Pilar Layanan' : 'All Pillars' },
               { value: 'Web Development', label: 'Web Development' },
-              { value: 'Mobile App', label: 'Mobile App' },
-              { value: 'UI/UX Design', label: 'UI/UX Design' },
+                            { value: 'UI/UX Design', label: 'UI/UX Design' },
               { value: 'Branding & Identity', label: 'Branding & Identity' },
               { value: 'AI & Cloud Solutions', label: 'AI & Cloud Solutions' },
               { value: 'Digital Product MVP', label: 'Digital Product MVP' }
@@ -1233,7 +1241,7 @@ export const AdminCrm: React.FC = () => {
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-[var(--muted)] mb-1 font-semibold">{language === 'id' ? 'Pilar Layanan' : 'Service Pillar'}</label>
-                  <CustomSelect value={formPillar} onChange={(value) => setFormPillar(value as CrmServicePillar)} options={[{value:'Web Development',label:'Web Development'},{value:'Mobile App',label:'Mobile App'},{value:'UI/UX Design',label:'UI/UX Design'},{value:'Branding & Identity',label:'Branding & Identity'},{value:'AI & Cloud Solutions',label:'AI & Cloud Solutions'},{value:'Digital Product MVP',label:'Digital Product MVP'}]} />
+                  <CustomSelect value={formPillar} onChange={(value) => setFormPillar(value as CrmServicePillar)} options={[{value:'Web Development',label:'Web Development'},{value:'UI/UX Design',label:'UI/UX Design'},{value:'Branding & Identity',label:'Branding & Identity'},{value:'AI & Cloud Solutions',label:'AI & Cloud Solutions'},{value:'Digital Product MVP',label:'Digital Product MVP'}]} />
                 </div>
 
                 <div>
@@ -1300,7 +1308,8 @@ export const AdminCrm: React.FC = () => {
         </div>
       )}
 
-    </div>
+      </div>
+    </>
   );
 };
 export default AdminCrm;

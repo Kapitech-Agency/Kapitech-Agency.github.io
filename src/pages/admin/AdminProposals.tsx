@@ -25,6 +25,7 @@ import { useLanguage } from '../../lib/LanguageContext';
 import { getActiveCurrency, formatAmount, CurrencyCode, CURRENCY_EVENT } from '../../lib/currency';
 import { getAdminSession, hasAdminPermission } from '../../lib/adminAuth';
 import { CustomSelect } from '../../components/ui/CustomSelect';
+import { Modal } from '../../components/ui/Modal';
 
 interface ProposalLineItem {
   id: string;
@@ -125,6 +126,7 @@ export const AdminProposals: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [notification, setNotification] = useState<string | null>(null);
+  const [confirmAction, setConfirmAction] = useState<{ type: 'convert' | 'delete'; id: string } | null>(null);
 
   // Modal states
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -313,10 +315,10 @@ export const AdminProposals: React.FC = () => {
       showToast(language === 'id' ? 'Anda tidak memiliki izin membuat invoice.' : 'You do not have invoice permission.');
       return;
     }
-    if (!window.confirm(language === 'id' ? 'Konversi proposal ini menjadi invoice resmi?' : 'Convert this approved proposal to an official invoice?')) {
-      return;
-    }
+    setConfirmAction({ type: 'convert', id });
+  };
 
+  const confirmConvertToInvoice = async (id: string) => {
     try {
       const res = await api.proposals.convertToInvoice(id);
       if (res.success && res.data?.invoice) {
@@ -327,6 +329,8 @@ export const AdminProposals: React.FC = () => {
       }
     } catch {
       showToast('Error converting to invoice.');
+    } finally {
+      setConfirmAction(null);
     }
   };
 
@@ -335,7 +339,10 @@ export const AdminProposals: React.FC = () => {
       showToast(language === 'id' ? 'Anda tidak memiliki izin menghapus proposal.' : 'You do not have permission to delete proposals.');
       return;
     }
-    if (!window.confirm('Delete proposal?')) return;
+    setConfirmAction({ type: 'delete', id });
+  };
+
+  const confirmDeleteProposal = async (id: string) => {
     try {
       const res = await api.proposals.delete(id);
       if (res.success) {
@@ -344,6 +351,8 @@ export const AdminProposals: React.FC = () => {
       }
     } catch {
       showToast('Failed to delete proposal.');
+    } finally {
+      setConfirmAction(null);
     }
   };
 
@@ -624,6 +633,22 @@ export const AdminProposals: React.FC = () => {
           </div>
         )}
       </div>
+
+      <Modal open={!!confirmAction} onClose={() => setConfirmAction(null)} size="sm" title={confirmAction?.type === 'convert' ? 'Convert proposal to invoice?' : 'Delete proposal?'} description={confirmAction?.type === 'convert' ? 'This will create the official invoice workflow from the approved proposal.' : 'The proposal will be removed from the registry.'}>
+        <div className="flex flex-col-reverse sm:flex-row justify-end gap-2">
+          <button type="button" onClick={() => setConfirmAction(null)} className="min-h-10 px-4 rounded-control border border-[var(--line)] bg-[var(--panel)] text-xs text-[var(--muted)]">Cancel</button>
+          <button type="button" onClick={() => confirmAction?.type === 'convert' ? void confirmConvertToInvoice(confirmAction.id) : confirmAction && void confirmDeleteProposal(confirmAction.id)} className={`min-h-10 px-4 rounded-control text-white text-xs font-semibold ${confirmAction?.type === 'convert' ? 'bg-[var(--accent)]' : 'bg-[var(--danger)]'}`}>
+            {confirmAction?.type === 'convert' ? 'Convert to Invoice' : 'Delete'}
+          </button>
+        </div>
+      </Modal>
+
+      <Modal open={!!confirmAction} onClose={() => setConfirmAction(null)} size="sm" title={confirmAction?.type === 'convert' ? 'Convert proposal to invoice?' : 'Delete proposal?'} description={confirmAction?.type === 'convert' ? 'This creates the official invoice workflow from the approved proposal.' : 'The proposal will be removed from the registry.'}>
+        <div className="flex flex-col-reverse sm:flex-row justify-end gap-2">
+          <button type="button" onClick={() => setConfirmAction(null)} className="min-h-10 px-4 rounded-control border border-[var(--line)] bg-[var(--panel)] text-xs text-[var(--muted)]">Cancel</button>
+          <button type="button" onClick={() => confirmAction?.type === 'convert' ? void confirmConvertToInvoice(confirmAction.id) : confirmAction && void confirmDeleteProposal(confirmAction.id)} className={`min-h-10 px-4 rounded-control text-white text-xs font-semibold ${confirmAction?.type === 'convert' ? 'bg-[var(--accent)]' : 'bg-[var(--danger)]'}`}>{confirmAction?.type === 'convert' ? 'Convert to Invoice' : 'Delete'}</button>
+        </div>
+      </Modal>
 
       {/* CREATE PROPOSAL MODAL */}
       {isCreateModalOpen && (
