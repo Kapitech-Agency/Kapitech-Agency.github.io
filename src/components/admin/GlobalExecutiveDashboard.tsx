@@ -4,7 +4,6 @@ import {
   Activity,
   AlertTriangle,
   ArrowUpRight,
-  CheckCircle2,
   CircleDollarSign,
   ClipboardCheck,
   FolderKanban,
