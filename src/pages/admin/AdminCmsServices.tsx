@@ -214,7 +214,7 @@ export const AdminCmsServices: React.FC = () => {
 
           <button
             onClick={() => setIsAddModalOpen(true)}
-            className="px-4 py-2 rounded-card bg-[var(--accent)] hover:bg-[var(--accent)] text-[var(--text)] text-xs font-sans font-semibold transition-all flex items-center gap-1.5 shadow-none min-h-[38px]"
+            className="px-4 py-2 rounded-card bg-[var(--accent)] hover:brightness-110 text-white text-xs font-sans font-semibold transition-all flex items-center gap-1.5 shadow-none min-h-[38px]"
           >
             <Plus size={14} />
             <span>Add Service</span>
@@ -490,7 +490,7 @@ export const AdminCmsServices: React.FC = () => {
                   href={`/services/${selectedServiceForDetail.slug}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-4 py-2 rounded-card bg-[var(--accent)] hover:bg-[var(--accent)] text-[var(--text)] text-xs font-sans font-semibold flex items-center gap-1 shadow-none transition-all"
+                  className="px-4 py-2 rounded-card bg-[var(--accent)] hover:brightness-110 text-white text-xs font-sans font-semibold flex items-center gap-1 shadow-none transition-all"
                 >
                   <span>Open Public Page</span>
                   <ExternalLink size={12} />
@@ -621,7 +621,7 @@ export const AdminCmsServices: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-card bg-[var(--accent)] hover:bg-[var(--accent)] text-[var(--text)] text-xs font-semibold shadow-none transition-all"
+                  className="px-5 py-2 rounded-card bg-[var(--accent)] hover:brightness-110 text-white text-xs font-semibold shadow-none transition-all"
                 >
                   Publish Service
                 </button>
