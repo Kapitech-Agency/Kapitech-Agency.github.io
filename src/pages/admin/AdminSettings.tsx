@@ -573,7 +573,7 @@ export const AdminSettings: React.FC = () => {
               <button
                 type="submit"
                 disabled={securityLoading}
-                className="px-5 py-2.5 rounded-control bg-[var(--accent)] text-white text-xs font-sans font-semibold hover:brightness-110 transition-all shadow-none flex items-center gap-2 disabled:opacity-50 min-h-10"
+                className="px-5 py-2.5 rounded-control bg-[var(--accent)] text-white text-xs font-sans font-semibold hover:brightness-110 transition-all -none flex items-center gap-2 disabled:opacity-50 min-h-10"
               >
                 {securityLoading ? <RefreshCw size={14} className="animate-spin" /> : <Save size={14} />}
                 <span>{language === 'id' ? 'Perbarui Akun Master' : 'Update Master Account'}</span>
@@ -693,7 +693,7 @@ export const AdminSettings: React.FC = () => {
             <div className="pt-4 flex items-center justify-end">
               <button
                 type="submit"
-                className="px-5 py-2.5 rounded-control bg-[var(--accent)] text-white text-xs font-sans font-semibold hover:brightness-110 transition-all shadow-none flex items-center gap-2 min-h-10"
+                className="px-5 py-2.5 rounded-control bg-[var(--accent)] text-white text-xs font-sans font-semibold hover:brightness-110 transition-all -none flex items-center gap-2 min-h-10"
               >
                 <Save size={14} />
                 <span>{language === 'id' ? 'Simpan Pengaturan Brand' : 'Save Brand Settings'}</span>
@@ -740,7 +740,7 @@ export const AdminSettings: React.FC = () => {
               <button
                 type="button"
                 onClick={handleOpenAddAccount}
-                className="h-10 px-4 min-h-10 rounded-control bg-[var(--accent)] text-white text-xs font-sans font-semibold hover:brightness-110 transition-all shadow-none flex items-center justify-center gap-2 self-start sm:self-auto shrink-0"
+                className="h-10 px-4 min-h-10 rounded-control bg-[var(--accent)] text-white text-xs font-sans font-semibold hover:brightness-110 transition-all -none flex items-center justify-center gap-2 self-start sm:self-auto shrink-0"
               >
                 <UserPlus size={15} />
                 <span>{language === 'id' ? 'Tambah Akun Baru' : 'Add New Account'}</span>
@@ -867,7 +867,7 @@ export const AdminSettings: React.FC = () => {
           {/* Reference RBAC Matrix */}
           <div className="w-full bg-[var(--panel)] border border-[var(--line)] rounded-card p-5 sm:p-6 space-y-6">
             <div className="flex items-center gap-3 pb-4 border-b border-[var(--line)]">
-              <div className="w-10 h-10 rounded-card bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 shrink-0">
+              <div className="w-10 h-10 rounded-card bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-info shrink-0">
                 <Layers size={20} />
               </div>
               <div>
@@ -944,7 +944,7 @@ export const AdminSettings: React.FC = () => {
       {/* MODAL: TAMBAH AKUN BARU (MOBILE FULLSCREEN + STICKY HEADER & FOOTER) */}
       {isAddAccountModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-0 sm:p-4 bg-black/80  overflow-y-auto">
-          <div className="w-full h-full sm:h-auto sm:max-h-[calc(100dvh-24px)] sm:max-w-2xl bg-[var(--panel)] border-0 sm:border sm:border-[var(--line)] rounded-none sm:rounded-card shadow-none flex flex-col overflow-hidden">
+          <div className="w-full h-full sm:h-auto sm:max-h-[calc(100dvh-24px)] sm:max-w-2xl bg-[var(--panel)] border-0 sm:border sm:border-[var(--line)] rounded-none sm:rounded-card -none flex flex-col overflow-hidden">
             
             {/* Sticky Header */}
             <div className="sticky top-0 z-20 bg-[var(--panel)]  px-5 sm:px-6 py-4 border-b border-[var(--line)] flex items-center justify-between shrink-0">
@@ -1044,7 +1044,7 @@ export const AdminSettings: React.FC = () => {
                     }`}
                   >
                     <div className="flex items-center gap-2 mb-1">
-                      <UserCheck size={16} className="text-cyan-400" />
+                      <UserCheck size={16} className="text-info" />
                       <span className="font-semibold text-xs text-[var(--text)]">Operational Staff</span>
                     </div>
                     <p className="text-[11px] text-[var(--muted)] leading-relaxed font-sans">
@@ -1165,7 +1165,7 @@ export const AdminSettings: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="h-10 px-5 rounded-control bg-[var(--accent)] text-white text-xs font-sans font-semibold hover:bg-[var(--accent)] transition-all shadow-none flex items-center gap-2"
+                  className="h-10 px-5 rounded-control bg-[var(--accent)] text-white text-xs font-sans font-semibold hover:bg-[var(--accent)] transition-all -none flex items-center gap-2"
                 >
                   <Save size={14} />
                   <span>{language === 'id' ? 'Simpan Akun Baru' : 'Save Account'}</span>
@@ -1180,7 +1180,7 @@ export const AdminSettings: React.FC = () => {
       {/* MODAL: EDIT PERMISSIONS (MOBILE FULLSCREEN + STICKY HEADER & FOOTER) */}
       {isEditPermsModalOpen && editingAccount && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-0 sm:p-4 bg-black/80  overflow-y-auto">
-          <div className="w-full h-full sm:h-auto sm:max-h-[calc(100dvh-24px)] sm:max-w-xl bg-[var(--panel)] border-0 sm:border sm:border-[var(--line)] rounded-none sm:rounded-card shadow-none flex flex-col overflow-hidden">
+          <div className="w-full h-full sm:h-auto sm:max-h-[calc(100dvh-24px)] sm:max-w-xl bg-[var(--panel)] border-0 sm:border sm:border-[var(--line)] rounded-none sm:rounded-card -none flex flex-col overflow-hidden">
             
             {/* Sticky Header */}
             <div className="sticky top-0 z-20 bg-[var(--panel)]  px-5 sm:px-6 py-4 border-b border-[var(--line)] flex items-center justify-between shrink-0">
@@ -1254,7 +1254,7 @@ export const AdminSettings: React.FC = () => {
               <button
                 type="button"
                 onClick={handleSavePermissions}
-                className="h-10 px-5 rounded-control bg-[var(--accent)] text-white text-xs font-sans font-semibold hover:bg-[var(--accent)] transition-all shadow-none flex items-center gap-2"
+                className="h-10 px-5 rounded-control bg-[var(--accent)] text-white text-xs font-sans font-semibold hover:bg-[var(--accent)] transition-all -none flex items-center gap-2"
               >
                 <Save size={14} />
                 <span>{language === 'id' ? 'Simpan Perubahan Hak Akses' : 'Save Permissions'}</span>
