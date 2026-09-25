@@ -209,6 +209,7 @@ export const AdminCmsServices: React.FC = () => {
             <span>Service Catalog & Execution Engine</span>
           </div>
           <h1 className="ams-page-title">
+            <Layers className="text-[var(--accent-text)] shrink-0" size={22} />
             <span>Agency Services (SEO & Dev)</span>
           </h1>
           <p className="text-xs sm:text-sm text-[var(--muted)] mt-1">
