@@ -692,9 +692,9 @@ export const AdminInbox: React.FC = () => {
         </div>
 
         {/* Search & Secondary Filter Dropdowns */}
-        <div className="flex flex-row md:flex-row md:items-center gap-2.5 pt-1 overflow-x-auto pb-1 md:overflow-visible md:pb-0">
+        <div className="flex flex-col md:flex-row md:items-center gap-2.5 pt-1">
           {/* Universal Search */}
-          <div className="relative shrink-0 w-[240px] md:flex-1 md:min-w-0 md:w-auto">
+          <div className="relative w-full md:flex-1 md:min-w-0 md:w-auto">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--muted)]" size={15} />
             <input
               type="text"
@@ -713,19 +713,20 @@ export const AdminInbox: React.FC = () => {
             )}
           </div>
 
-          {/* Status Dropdown */}
-          <div className="w-[150px] md:w-[150px] shrink-0">
-            <CustomSelect value={filterStatus} onChange={setFilterStatus} options={[{value:'all',label:language === 'id' ? 'Semua Status' : 'All Status'},{value:'new',label:'Status: New'},{value:'in-review',label:'Status: In Review'},{value:'contacted',label:'Status: Contacted'},{value:'closed',label:'Status: Closed Deal'}]} />
-          </div>
+          <div className="flex items-center gap-2.5 overflow-x-auto pb-1 -mx-1 px-1 custom-scrollbar touch-pan-x md:overflow-visible md:pb-0 md:mx-0 md:px-0">
+            {/* Status Dropdown */}
+            <div className="w-[150px] shrink-0">
+              <CustomSelect value={filterStatus} onChange={setFilterStatus} options={[{value:'all',label:language === 'id' ? 'Semua Status' : 'All Status'},{value:'new',label:'Status: New'},{value:'in-review',label:'Status: In Review'},{value:'contacted',label:'Status: Contacted'},{value:'closed',label:'Status: Closed Deal'}]} />
+            </div>
 
-          {/* Priority Dropdown */}
-          <div className="w-full md:w-[150px] shrink-0">
-            <CustomSelect value={filterPriority} onChange={setFilterPriority} options={[{value:'all',label:language === 'id' ? 'Semua Prioritas' : 'All Priorities'},{value:'urgent',label:'Urgent'},{value:'high',label:'High'},{value:'normal',label:'Normal'},{value:'low',label:'Low'}]} />
-          </div>
+            {/* Priority Dropdown */}
+            <div className="w-[150px] shrink-0">
+              <CustomSelect value={filterPriority} onChange={setFilterPriority} options={[{value:'all',label:language === 'id' ? 'Semua Prioritas' : 'All Priorities'},{value:'urgent',label:'Urgent'},{value:'high',label:'High'},{value:'normal',label:'Normal'},{value:'low',label:'Low'}]} />
+            </div>
 
-          {/* Starred Only Toggle */}
-          <div className="w-full md:w-[120px] shrink-0 flex items-center">
-            <button
+            {/* Starred Only Toggle */}
+            <div className="w-[120px] shrink-0 flex items-center">
+              <button
               onClick={() => setOnlyStarred(!onlyStarred)}
               className={`w-full h-10 min-h-10 px-3 rounded-control border text-xs font-sans transition-colors flex items-center justify-center gap-2 ${
                 onlyStarred
