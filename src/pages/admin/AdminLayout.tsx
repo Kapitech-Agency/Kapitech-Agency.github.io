@@ -434,7 +434,7 @@ export const AdminLayout: React.FC = () => {
           </button>
 
           <Link to="/admin/dashboard" className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-control bg-accent flex items-center justify-center text-fg font-semibold text-xs shadow-none shrink-0">
+            <div className="w-6 h-6 rounded-control bg-accent flex items-center justify-center text-fg font-semibold text-xs shadow-none shrink-0">
               K
             </div>
             <div className="min-w-0">
@@ -557,7 +557,7 @@ export const AdminLayout: React.FC = () => {
             {/* Bottom session details */}
             <div className="p-3.5 border-t border-line bg-bg flex items-center justify-between shrink-0">
               <div className="flex items-center gap-2.5 min-w-0">
-                <div className="w-7 h-7 rounded-control bg-accent border border-line flex items-center justify-center text-xs font-sans text-fg font-semibold shrink-0 ">
+                <div className="w-6 h-6 rounded-control bg-accent border border-line flex items-center justify-center text-xs font-sans text-fg font-semibold shrink-0 ">
                   {roleMeta.accountProfile.avatarLabel}
                 </div>
                 <div className="min-w-0">
