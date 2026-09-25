@@ -68,7 +68,6 @@ export const AdminProjects: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
-  const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
 
   // Drag-to-scroll hook for horizontal container
   const kanbanScrollRef = useDragToScroll<HTMLDivElement>();
