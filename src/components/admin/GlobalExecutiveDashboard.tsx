@@ -139,11 +139,11 @@ export const GlobalExecutiveDashboard: React.FC = () => {
   const recentLogs = data?.recentActivity || [];
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-200">
+    <div className="ams-dashboard-page space-y-6 animate-in fade-in duration-200">
       {/* ------------------------------------------------------------- */}
       {/* 1. HEADER WITH SERVER STATUS & REFRESH */}
       {/* ------------------------------------------------------------- */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[var(--line)]">
+      <div className="ams-dashboard-header flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[var(--line)]">
         <div>
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
