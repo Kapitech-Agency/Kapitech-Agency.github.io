@@ -449,7 +449,7 @@ export const AdminCrm: React.FC = () => {
                 <Layers size={16} />
               </div>
             </div>
-            <div className="text-2xl sm:text-3xl font-display font-semibold text-[var(--text)] tracking-tight break-words font-sans">
+            <div className="text-2xl sm:text-3xl font-sans font-semibold text-[var(--text)] tracking-tight break-words font-sans">
               {formatAmount(metrics.totalPipelineValue, currency)}
             </div>
           </div>
@@ -475,7 +475,7 @@ export const AdminCrm: React.FC = () => {
                 <CheckCircle2 size={16} />
               </div>
             </div>
-            <div className="text-2xl sm:text-3xl font-display font-semibold text-[var(--success)] tracking-tight break-words font-sans">
+            <div className="text-2xl sm:text-3xl font-sans font-semibold text-[var(--success)] tracking-tight break-words font-sans">
               {formatAmount(metrics.totalWonValue, currency)}
             </div>
           </div>
@@ -637,7 +637,7 @@ export const AdminCrm: React.FC = () => {
                           stageDef.key === 'proposal' ? 'bg-red-400' :
                           stageDef.key === 'contacted' ? 'bg-amber-400' : 'bg-zinc-500'
                         }`} />
-                        <h3 className="text-xs font-semibold font-display text-[var(--text)] truncate">
+                        <h3 className="text-xs font-semibold font-sans text-[var(--text)] truncate">
                           {language === 'id' ? stageDef.labelId : stageDef.label}
                         </h3>
                         <span className="text-[10px] font-sans px-1.5 py-0.2 rounded bg-[var(--panel)] text-[var(--muted)] border border-[var(--line)] shrink-0">
@@ -692,7 +692,7 @@ export const AdminCrm: React.FC = () => {
                             </div>
 
                             {/* Client & Company */}
-                            <h4 className="text-xs font-semibold text-[var(--text)] font-display leading-snug group-hover:text-[var(--danger)] transition-colors line-clamp-1">
+                            <h4 className="text-xs font-semibold text-[var(--text)] font-sans leading-snug group-hover:text-[var(--danger)] transition-colors line-clamp-1">
                               {lead.clientName}
                             </h4>
                             <p className="text-[11px] text-[var(--muted)] font-sans truncate mb-2.5">
@@ -701,7 +701,7 @@ export const AdminCrm: React.FC = () => {
 
                             {/* Deal Value & Source */}
                             <div className="flex items-center justify-between text-xs font-sans pb-2.5 mb-2.5 border-t border-[var(--line)] pt-2">
-                              <span className="text-[var(--success)] font-semibold font-display text-sm tracking-tight">
+                              <span className="text-[var(--success)] font-semibold font-sans text-sm tracking-tight">
                                 {formatAmount(lead.dealValue, currency)}
                               </span>
                               <span className="text-[10px] text-[var(--muted)] font-sans px-1.5 py-0.5 rounded bg-[var(--panel)] border border-[var(--line)] shrink-0">
@@ -792,7 +792,7 @@ export const AdminCrm: React.FC = () => {
                   {/* Header: Client, Company & Stage */}
                   <div className="flex items-start justify-between gap-2">
                     <div>
-                      <div className="font-semibold text-[var(--text)] text-base font-display">{lead.clientName}</div>
+                      <div className="font-semibold text-[var(--text)] text-base font-sans">{lead.clientName}</div>
                       <div className="text-xs text-[var(--muted)] font-sans">{lead.company}</div>
                     </div>
                     <span className="px-2.5 py-1 rounded-lg bg-[var(--panel)] border border-[var(--line)] text-[11px] font-sans text-[var(--text)] shrink-0 font-semibold">
@@ -902,7 +902,7 @@ export const AdminCrm: React.FC = () => {
                         className="hover:bg-[var(--panel)] transition-colors cursor-pointer"
                       >
                         <td className="py-3 px-4">
-                          <div className="font-semibold text-[var(--text)] font-display text-sm">
+                          <div className="font-semibold text-[var(--text)] font-sans text-sm">
                             {lead.clientName}
                           </div>
                           <div className="text-[11px] text-[var(--muted)]">
@@ -916,7 +916,7 @@ export const AdminCrm: React.FC = () => {
                           </span>
                         </td>
 
-                        <td className="py-3 px-4 text-right font-semibold text-[var(--success)] font-display text-sm font-sans">
+                        <td className="py-3 px-4 text-right font-semibold text-[var(--success)] font-sans text-sm font-sans">
                           {formatAmount(lead.dealValue, currency)}
                         </td>
 
@@ -1006,7 +1006,7 @@ export const AdminCrm: React.FC = () => {
                       ID: {selectedLead.id}
                     </span>
                   </div>
-                  <h2 className="text-xl sm:text-2xl font-semibold font-display text-[var(--text)]">
+                  <h2 className="text-xl sm:text-2xl font-semibold font-sans text-[var(--text)]">
                     {selectedLead.clientName}
                   </h2>
                   <p className="text-xs text-[var(--danger)] font-semibold mt-0.5">
@@ -1028,7 +1028,7 @@ export const AdminCrm: React.FC = () => {
                   <div className="text-[10px] text-[var(--muted)] normal-case tracking-normal font-semibold">
                     {language === 'id' ? 'Valuasi Prospek' : 'Deal Valuation'}
                   </div>
-                  <div className="text-2xl font-semibold font-display text-[var(--success)] font-sans">
+                  <div className="text-2xl font-semibold font-sans text-[var(--success)] font-sans">
                     {formatAmount(selectedLead.dealValue, currency)}
                   </div>
                 </div>
@@ -1172,7 +1172,7 @@ export const AdminCrm: React.FC = () => {
         <div className="fixed inset-0 z-50 bg-black/80  flex items-center justify-center p-4 overflow-y-auto">
           <div className="bg-[var(--panel)] border border-[var(--line)] rounded-card w-full max-w-xl max-h-[90vh] overflow-y-auto p-6 shadow-none">
             <div className="flex items-center justify-between pb-4 mb-4 border-b border-[var(--line)]">
-              <h3 className="font-display font-semibold text-[var(--text)] text-lg flex items-center gap-2">
+              <h3 className="font-sans font-semibold text-[var(--text)] text-lg flex items-center gap-2">
                 <Briefcase className="text-[var(--danger)]" size={20} />
                 <span>{editingLead ? (language === 'id' ? 'Edit Data Prospek' : 'Edit CRM Deal') : t('admin.crm.addDeal')}</span>
               </h3>
