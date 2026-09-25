@@ -34,6 +34,7 @@ import {
 import { formatAmount, getActiveCurrency, CurrencyCode, CURRENCY_EVENT } from '../../lib/currency';
 import { useLanguage } from '../../lib/LanguageContext';
 import { CustomSelect } from '../../components/ui/CustomSelect';
+import { Modal } from '../../components/ui/Modal';
 import { api } from '../../lib/apiClient';
 import { hasAdminPermission } from '../../lib/adminAuth';
 
@@ -53,6 +54,7 @@ export const AdminVendors: React.FC = () => {
   const [selectedVendor, setSelectedVendor] = useState<AgencyVendor | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
   const [editingVendor, setEditingVendor] = useState<AgencyVendor | null>(null);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
 
@@ -100,7 +102,12 @@ export const AdminVendors: React.FC = () => {
       }
     };
     window.addEventListener(CURRENCY_EVENT, handleCurrency);
-    return () => window.removeEventListener(CURRENCY_EVENT, handleCurrency);
+    return (
+    <>
+      <Modal open={!!deleteTarget} onClose={() => setDeleteTarget(null)} size="sm" title={language === 'id' ? 'Hapus vendor?' : 'Delete vendor?'} description={language === 'id' ? `Vendor ${deleteTarget?.name || ''} akan dihapus dari direktori.` : `Vendor ${deleteTarget?.name || ''} will be removed from the directory.`}>
+        <div className="flex flex-col-reverse sm:flex-row justify-end gap-2"><button type="button" onClick={() => setDeleteTarget(null)} className="min-h-10 px-4 rounded-control border border-[var(--line)] bg-[var(--panel)] text-xs text-[var(--muted)]">Cancel</button><button type="button" onClick={() => deleteTarget && void confirmDeleteVendor(deleteTarget.id)} className="min-h-10 px-4 rounded-control bg-[var(--danger)] text-white text-xs font-semibold">Delete</button></div>
+      </Modal>
+      <div>) => window.removeEventListener(CURRENCY_EVENT, handleCurrency);
   }, []);
 
   // Filtered list
@@ -248,8 +255,11 @@ export const AdminVendors: React.FC = () => {
   };
 
   const handleDeleteVendor = (id: string, name: string) => {
-    if (window.confirm(language === 'id' ? `Hapus vendor ${name}?` : `Delete vendor ${name}?`)) {
-      if (!canManageVendors) return;
+    if (!canManageVendors) return;
+    setDeleteTarget({ id, name });
+  };
+
+  const confirmDeleteVendor = async (id: string) => {
       void api.vendors.delete(id).then((res) => {
         if (!res.success) {
           setStatusMessage(res.error || (language === 'id' ? 'Vendor gagal dihapus.' : 'Failed to delete vendor.'));
