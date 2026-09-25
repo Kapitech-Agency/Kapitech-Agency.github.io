@@ -699,7 +699,7 @@ export const AdminVendors: React.FC = () => {
               </button>
             </div>
 
-            <form onSubmit={handleSaveVendor} className="py-4 space-y-3.5 max-h-[75vh] overflow-y-auto pr-1 custom-scrollbar">
+            <form onSubmit={handleSaveVendor} className="py-4 space-y-3.5 max-h-[calc(100dvh-24px)] overflow-y-auto pr-1 custom-scrollbar">
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="text-[11px] font-sans text-[var(--muted)] normal-case block mb-1">
