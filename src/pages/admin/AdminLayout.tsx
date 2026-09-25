@@ -343,7 +343,7 @@ export const AdminLayout: React.FC = () => {
                   <span className="text-[13px] font-semibold tracking-[0.01em] text-fg whitespace-nowrap">KAPITECH</span>
                   <span className="shrink-0 rounded-badge border border-accent/25 bg-accent/8 px-1.5 py-0.5 text-[9px] font-semibold tracking-[0.04em] text-accent-text">AMS</span>
                 </div>
-                <p className="mt-1 text-[10px] leading-4 text-muted whitespace-nowrap">Agency Management System</p>
+                <p className="mt-1 text-[10px] leading-4 text-muted whitespace-nowrap">AMS</p>
               </div>
             )}
           </Link>
@@ -587,8 +587,10 @@ export const AdminLayout: React.FC = () => {
       <main className="flex-1 flex flex-col min-w-0 h-full overflow-y-auto bg-bg custom-scrollbar">
         
         {/* Sticky desktop top bar */}
-        <header className="hidden min-[900px]:flex h-[52px] px-6 border-b border-line bg-bg sticky top-0 z-30 items-center justify-end shrink-0" aria-label="AMS top bar">
-          <AdminNotificationCenter />
+        <header className="hidden min-[900px]:flex h-[52px] border-b border-line bg-bg sticky top-0 z-30 items-center shrink-0" aria-label="AMS top bar">
+          <div className="w-full max-w-[1560px] mx-auto px-4 sm:px-5 lg:px-6 flex items-center justify-end">
+            <AdminNotificationCenter />
+          </div>
         </header>
 
         {/* View Outlet */}
