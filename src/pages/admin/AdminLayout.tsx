@@ -349,10 +349,10 @@ export const AdminLayout: React.FC = () => {
           </Link>
         </div>
         <div className={`flex-1 min-h-0 overflow-hidden ${sidebarCollapsed ? 'px-2 py-3' : 'px-2.5 py-3'}`}>
-          <div className={sidebarCollapsed ? 'space-y-2' : 'space-y-4'}>
+          <div className={sidebarCollapsed ? 'space-y-1.5' : 'space-y-2.5'}>
             {contentNavSections.map((section) => (
               <div key={section.id} className="space-y-1">
-                {!sidebarCollapsed && <div className="px-2.5 pb-1.5 text-[10px] font-semibold uppercase tracking-[0.09em] text-muted">{t(section.titleKey)}</div>}
+                {!sidebarCollapsed && <div className="px-2.5 pb-1 text-[10px] font-semibold uppercase tracking-[0.09em] text-muted">{t(section.titleKey)}</div>}
                 {sidebarCollapsed && <div className="mx-auto mb-2 h-px w-5 bg-line" />}
                 <div className="space-y-0.5">
                   {section.items.map((item) => {
@@ -360,7 +360,7 @@ export const AdminLayout: React.FC = () => {
                     const active = isItemActive(item.to);
                     return (
                       <Link key={item.to} to={item.to} title={sidebarCollapsed ? item.label : undefined} aria-current={active ? 'page' : undefined}
-                        className={`group flex min-h-10 items-center rounded-control text-[13px] font-medium transition-[background-color,color,transform] duration-150 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-panel active:scale-[0.985] ${sidebarCollapsed ? 'mx-auto h-10 w-10 justify-center px-0' : 'gap-2.5 px-2.5'} ${active ? 'bg-accent/12 text-fg' : 'text-muted hover:bg-panel-hover hover:text-fg'}`}>
+                        className={`group flex min-h-10 items-center rounded-control text-[13px] font-medium transition-[background-color,color,transform] duration-150 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-panel active:scale-[0.985] ${sidebarCollapsed ? 'mx-auto h-9 w-9 justify-center px-0' : 'gap-2.5 px-2.5'} ${active ? 'bg-accent/12 text-fg' : 'text-muted hover:bg-panel-hover hover:text-fg'}`}>
                         <Icon size={16} strokeWidth={active ? 2.1 : 1.8} className={`shrink-0 transition-colors duration-150 ${active ? 'text-accent-text' : 'text-muted group-hover:text-fg'}`} />
                         {!sidebarCollapsed && <span className="min-w-0 truncate">{item.label}</span>}
                         {!sidebarCollapsed && item.badge !== null && item.badge !== undefined && <span className="ml-auto shrink-0 rounded-badge border border-line bg-bg px-1.5 py-0.5 text-[10px] font-semibold text-muted">{item.badge}</span>}
@@ -372,15 +372,15 @@ export const AdminLayout: React.FC = () => {
             ))}
           </div>
         </div>
-        <div className="relative shrink-0 px-2.5 py-3" aria-label="Sidebar resize control">
+        <div className="relative shrink-0 px-2.5 py-2" aria-label="Sidebar resize control">
           <div className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-line" aria-hidden="true" />
           <button type="button" onClick={() => setSidebarCollapsed(v => !v)} aria-label={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'} title={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-            className="ams-sidebar-toggle group relative z-10 mx-auto flex h-6 w-6 items-center justify-center rounded-control border border-line bg-panel text-muted transition-[background-color,border-color,color,transform] duration-150 ease-out hover:border-accent/30 hover:bg-panel-hover hover:text-fg active:scale-[0.96] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-panel">
-            {sidebarCollapsed ? <ChevronRight size={15} strokeWidth={2} /> : <ChevronLeft size={15} strokeWidth={2} />}
+            className="ams-sidebar-toggle group relative z-10 mx-auto flex h-5 w-5 items-center justify-center rounded-control border border-line bg-panel text-muted transition-[background-color,border-color,color,transform] duration-150 ease-out hover:border-accent/30 hover:bg-panel-hover hover:text-fg active:scale-[0.96] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-panel">
+            {sidebarCollapsed ? <ChevronRight size={13} strokeWidth={2} /> : <ChevronLeft size={13} strokeWidth={2} />}
           </button>
         </div>
         {settingsItem && (
-          <div className="shrink-0 px-2.5 pb-2">
+          <div className="shrink-0 px-2.5 pb-1.5">
             <Link to={settingsItem.to} title={sidebarCollapsed ? settingsItem.label : undefined} aria-current={isItemActive(settingsItem.to) ? 'page' : undefined}
               className={`group flex min-h-10 items-center rounded-control text-[13px] font-medium transition-[background-color,color,transform] duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-panel active:scale-[0.985] ${sidebarCollapsed ? 'mx-auto h-10 w-10 justify-center px-0' : 'gap-2.5 px-2.5'} ${isItemActive(settingsItem.to) ? 'bg-accent/12 text-fg' : 'text-muted hover:bg-panel-hover hover:text-fg'}`}>
               <Settings size={16} strokeWidth={isItemActive(settingsItem.to) ? 2.1 : 1.8} className={`shrink-0 transition-colors duration-150 ${isItemActive(settingsItem.to) ? 'text-accent-text' : 'text-muted group-hover:text-fg'}`} />
@@ -388,7 +388,7 @@ export const AdminLayout: React.FC = () => {
             </Link>
           </div>
         )}
-        <div className={`shrink-0 border-t border-line bg-panel px-2.5 py-2.5 ${sidebarCollapsed ? 'space-y-2' : ''}`}>
+        <div className={`shrink-0 border-t border-line bg-panel px-2.5 py-2 ${sidebarCollapsed ? 'space-y-2' : ''}`}>
           <div className={`group flex min-h-10 items-center rounded-control transition-colors duration-150 hover:bg-panel-hover ${sidebarCollapsed ? 'justify-center' : 'gap-2.5 px-1.5'}`}>
             <div className="h-8 w-8 rounded-control bg-accent/90 border border-accent/30 flex items-center justify-center text-xs font-semibold text-fg shrink-0">{roleMeta.accountProfile.avatarLabel}</div>
             {!sidebarCollapsed && (
