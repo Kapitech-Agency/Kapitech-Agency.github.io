@@ -174,7 +174,7 @@ export const AdminApprovals: React.FC = () => {
     <div className="space-y-6 animate-in fade-in duration-200">
       {/* Toast Notification */}
       {notification && (
-        <div className="fixed top-20 right-6 z-50 px-4 py-2.5 rounded-[12px] bg-[var(--panel)] border border-[var(--accent)]/40 text-[var(--text)] text-xs font-sans shadow-none flex items-center gap-2">
+        <div className="fixed top-16 left-3 right-3 sm:left-auto sm:top-20 sm:right-6 z-50 px-4 py-2.5 rounded-card bg-[var(--panel)] border border-[var(--accent)]/40 text-[var(--text)] text-xs font-sans shadow-none flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-[var(--accent)] " />
           <span>{notification}</span>
         </div>
@@ -264,7 +264,7 @@ export const AdminApprovals: React.FC = () => {
               <button
                 key={st}
                 onClick={() => setStatusFilter(st)}
-                className={`px-2.5 py-1.5 min-h-8 rounded-md text-xs font-sans capitalize transition-all ${
+                className={`px-2.5 py-1.5 min-h-10 rounded-control text-xs font-sans capitalize transition-all ${
                   statusFilter === st
                     ? 'bg-[var(--accent)] text-white border border-[var(--accent)] font-semibold'
                     : 'text-[var(--muted)] hover:text-[var(--text)]'
