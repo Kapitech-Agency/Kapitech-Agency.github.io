@@ -152,11 +152,11 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
                   }}
                   role="option"
                   aria-selected={isSelected}
-                  className={`w-full flex items-center justify-between min-h-10 sm:min-h-9 px-3 py-2 rounded-control text-left transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-[-2px] group ${
+                  className={`w-full flex items-center justify-between min-h-10 sm:min-h-9 px-3 py-2 rounded-chip text-left transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-[-2px] group ${
                     isSelected
-                      ? 'bg-accent/10 text-fg font-semibold'
+                      ? 'bg-accent/14 text-fg font-semibold'
                       : isActive
-                        ? 'text-fg bg-panel'
+                        ? 'text-fg bg-panel-hover'
                         : 'text-muted hover:text-fg hover:bg-panel'
                   }`}
                 >
