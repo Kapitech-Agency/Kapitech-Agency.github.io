@@ -962,7 +962,7 @@ export const AdminProjects: React.FC = () => {
                       }}
                       className={`px-2.5 py-1.5 rounded-card border text-[11px] transition-all font-semibold ${
                         activeTaskDrawer.status === col.id
-                          ? 'bg-[var(--accent)] text-[var(--text)] border-[var(--accent)] shadow-none'
+                          ? 'bg-[var(--accent)] text-white border-[var(--accent)] shadow-none'
                           : 'bg-[var(--panel)] text-[var(--muted)] border-[var(--line)] hover:text-[var(--text)]'
                       }`}
                     >
@@ -1048,7 +1048,7 @@ export const AdminProjects: React.FC = () => {
                     <button
                       type="submit"
                       disabled={!newSubtaskTitle.trim()}
-                      className="px-3 py-2 rounded-control bg-[var(--accent)] text-[var(--text)] text-xs font-semibold disabled:opacity-50"
+                      className="px-3 py-2 rounded-control bg-[var(--accent)] text-white text-xs font-semibold disabled:opacity-50"
                     >
                       <Plus size={14} />
                     </button>
@@ -1237,7 +1237,7 @@ export const AdminProjects: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="min-h-10 px-6 min-h-10 rounded-control bg-[var(--accent)] text-[var(--text)] font-sans font-semibold hover:bg-[var(--panel-hover)] transition-all shadow-none"
+                  className="min-h-10 px-6 min-h-10 rounded-control bg-[var(--accent)] text-white font-sans font-semibold hover:bg-[var(--panel-hover)] transition-all shadow-none"
                 >
                   Save Project
                 </button>
@@ -1366,7 +1366,7 @@ export const AdminProjects: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="min-h-10 px-6 min-h-10 rounded-control bg-[var(--accent)] text-[var(--text)] font-sans font-semibold hover:bg-[var(--panel-hover)] transition-all shadow-none"
+                  className="min-h-10 px-6 min-h-10 rounded-control bg-[var(--accent)] text-white font-sans font-semibold hover:bg-[var(--panel-hover)] transition-all shadow-none"
                 >
                   Add Task
                 </button>
