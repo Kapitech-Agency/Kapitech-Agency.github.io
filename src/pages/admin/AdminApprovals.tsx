@@ -260,13 +260,13 @@ export const AdminApprovals: React.FC = () => {
 
         <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
           <div className="flex items-center gap-1 bg-[var(--panel)] p-1 rounded-control border border-[var(--line)]">
-            {(['Pending', 'Approved', 'Rejected', 'all'] as const).map((st) => (
+            {(['Pending', 'Approved', 'Rejected', 'Changes Requested', 'all'] as const).map((st) => (
               <button
                 key={st}
                 onClick={() => setStatusFilter(st)}
-                className={`px-2.5 py-1 rounded-md text-xs font-sans capitalize transition-all ${
+                className={`px-2.5 py-1.5 min-h-8 rounded-md text-xs font-sans capitalize transition-all ${
                   statusFilter === st
-                    ? 'bg-[var(--bg)] text-[var(--text)] shadow-none border border-[var(--line)] font-semibold'
+                    ? 'bg-[var(--accent)] text-white border border-[var(--accent)] font-semibold'
                     : 'text-[var(--muted)] hover:text-[var(--text)]'
                 }`}
               >
@@ -376,11 +376,13 @@ export const AdminApprovals: React.FC = () => {
                       </button>
                     </div>
                   ) : (
-                    <span className={`px-2.5 py-0.5 rounded text-xs font-sans font-semibold normal-case border ${
+                    <span className={`px-2.5 py-1 rounded-badge text-xs font-sans font-semibold normal-case border ${
                       item.status.toLowerCase() === 'approved'
                         ? 'bg-[var(--success)]/10 text-[var(--success)] border-[var(--success)]/30'
                         : item.status.toLowerCase() === 'rejected'
                         ? 'bg-[var(--danger)]/10 text-[var(--danger)] border-[var(--danger)]/30'
+                        : item.status.toLowerCase() === 'changes requested'
+                        ? 'bg-[var(--warning)]/10 text-[var(--warning)] border-[var(--warning)]/30'
                         : 'bg-[var(--warning)]/10 text-[var(--warning)] border-[var(--warning)]/30'
                     }`}>
                       {item.status}
@@ -491,7 +493,7 @@ export const AdminApprovals: React.FC = () => {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-5 py-2 rounded-[8px] bg-[var(--accent)] hover:bg-[var(--accent)] text-[var(--text)] text-xs font-sans font-semibold disabled:opacity-50 flex items-center gap-1.5"
+                  className="px-5 py-2 rounded-control bg-[var(--accent)] hover:bg-[#c40f34] text-white text-xs font-sans font-semibold disabled:opacity-50 flex items-center gap-1.5 min-h-10"
                 >
                   {isSubmitting ? <Loader2 size={13} className="animate-spin" /> : <ShieldCheck size={14} />}
                   <span>Confirm Decision</span>
