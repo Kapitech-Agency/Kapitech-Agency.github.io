@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Quote, Plus, Star, Edit3, Trash2, Check, MessageSquare, MapPin } from 'lucide-react';
+import { Users, Plus, Star, Edit3, Trash2, Check, MessageSquare, MapPin } from 'lucide-react';
 import { TestimonialItem } from '../../lib/cmsStore';
 import { api } from '../../lib/apiClient';
 import { useLanguage } from '../../lib/LanguageContext';
