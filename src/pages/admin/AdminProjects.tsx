@@ -435,7 +435,7 @@ export const AdminProjects: React.FC = () => {
     switch (priority) {
       case 'urgent':
         return (
-          <span className="px-2 py-0.5 rounded bg-[var(--danger)]/10 text-[var(--danger)] border border-[var(--danger)]/30 text-[10px] font-sans font-semibold normal-case flex items-center gap-1 -none">
+          <span className="px-2 py-0.5 rounded-badge bg-[var(--danger)]/10 text-[var(--danger)] border border-[var(--danger)]/30 text-[10px] font-sans font-semibold normal-case flex items-center gap-1">
             <span className="w-1.5 h-1.5 rounded-full bg-[var(--danger)] animate-pulse" />
             Urgent
           </span>
@@ -448,7 +448,7 @@ export const AdminProjects: React.FC = () => {
         );
       case 'medium':
         return (
-          <span className="px-2 py-0.5 rounded bg-[var(--danger)]/10 text-[var(--danger)] border border-[var(--danger)]/30 text-[10px] font-sans font-semibold normal-case">
+          <span className="px-2 py-0.5 rounded-badge bg-[var(--danger)]/10 text-[var(--danger)] border border-[var(--danger)]/30 text-[10px] font-sans font-semibold normal-case">
             Medium
           </span>
         );
