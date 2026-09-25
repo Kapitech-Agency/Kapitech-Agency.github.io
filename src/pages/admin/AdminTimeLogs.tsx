@@ -119,7 +119,7 @@ export const AdminTimeLogs: React.FC = () => {
             ['Billable time', formatMinutes(billableMinutes), ReceiptText],
             ['Entries', String(logs.length), CalendarDays]
           ].map(([label, value, Icon]: any) => (
-            <div key={label} className="rounded-[12px] border border-[var(--line)] bg-[var(--panel)] p-4">
+            <div key={label} className="rounded-card border border-[var(--line)] bg-[var(--panel)] p-4">
               <div className="flex items-center justify-between">
                 <span className="text-xs text-[var(--muted)]">{label}</span>
                 <Icon size={15} className="text-[var(--accent)]" />
@@ -130,7 +130,7 @@ export const AdminTimeLogs: React.FC = () => {
         </section>
 
         {canManage && (
-          <form onSubmit={submit} className="rounded-[12px] border border-[var(--line)] bg-[var(--panel)] p-4 sm:p-5 space-y-4">
+          <form onSubmit={submit} className="rounded-card border border-[var(--line)] bg-[var(--panel)] p-4 sm:p-5 space-y-4">
             <div className="flex items-center justify-between gap-3">
               <div>
                 <h2 className="text-sm font-semibold">New time entry</h2>
@@ -178,9 +178,9 @@ export const AdminTimeLogs: React.FC = () => {
           </form>
         )}
 
-        {status && <div className="rounded-[12px] border border-[var(--line)] bg-[var(--panel)] px-4 py-3 text-xs text-[var(--text)]">{status}</div>}
+        {status && <div className="rounded-card border border-[var(--line)] bg-[var(--panel)] px-4 py-3 text-xs text-[var(--text)]">{status}</div>}
 
-        <section className="rounded-[12px] border border-[var(--line)] bg-[var(--panel)] overflow-hidden">
+        <section className="rounded-card border border-[var(--line)] bg-[var(--panel)] overflow-hidden">
           <div className="px-4 sm:px-5 py-4 border-b border-[var(--line)] flex items-center justify-between">
             <div>
               <h2 className="text-sm font-semibold">Recent entries</h2>
