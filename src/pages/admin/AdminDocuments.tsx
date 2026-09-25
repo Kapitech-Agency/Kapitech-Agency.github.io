@@ -206,8 +206,8 @@ export const AdminDocuments: React.FC = () => {
 
       {/* Document filters */}
       <div className="rounded-card border border-[var(--line)] bg-[var(--panel)] p-2"><div className="mb-2 px-2 text-xs font-medium text-[var(--muted)]">Filter documents</div><div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
-        {(['contract', 'proposal', 'invoice', 'deliverable', 'compliance'] as const).map((cat) => {
-          const count = documents.filter(d => (d.category || '').toLowerCase().includes(cat)).length;
+        {(['all', 'contract', 'proposal', 'invoice', 'deliverable', 'compliance'] as const).map((cat) => {
+          const count = cat === 'all' ? documents.length : documents.filter(d => (d.category || '').toLowerCase().includes(cat)).length;
           return (
             <button
               key={cat}
@@ -218,12 +218,12 @@ export const AdminDocuments: React.FC = () => {
                   : 'bg-[var(--panel)] border-[var(--line)] text-[var(--muted)] hover:text-[var(--text)] hover:border-[var(--line)]'
               }`}
             >
-              <div className="text-xs font-sans normal-case tracking-normal capitalize">{cat}</div>
+              <div className="text-xs font-sans normal-case tracking-normal capitalize">{cat === 'all' ? 'All documents' : cat}</div>
               <div className="text-lg font-semibold font-sans text-[var(--text)] mt-1">{count}</div>
             </button>
           );
         })}
-      </div>
+      </div></div>
 
       {/* Search and Filters */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-3 sm:p-4 rounded-card bg-[var(--panel)] border border-[var(--line)]">
