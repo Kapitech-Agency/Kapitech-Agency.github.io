@@ -238,7 +238,7 @@ export const AdminCmsProjects: React.FC = () => {
       <div className="ams-page-header flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
         <div>
           <h1 className="ams-page-title">
-            <FolderKanban className="text-[var(--danger)]" size={24} />
+            <Layers className="text-[var(--accent-text)] shrink-0" size={22} />
             <span>{t('admin.nav.cmsProjects')}</span>
           </h1>
           <p className="text-xs text-[var(--muted)] mt-1 font-sans">
