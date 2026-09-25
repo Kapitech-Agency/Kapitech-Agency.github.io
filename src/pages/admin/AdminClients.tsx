@@ -77,11 +77,7 @@ export const AdminClients: React.FC = () => {
       setCurrency(e.detail?.currency || getActiveCurrency());
     };
     window.addEventListener(CURRENCY_EVENT, handleCurrencyChange);
-
-    return (
-    <>
-      <Modal open={!!deleteTarget} onClose={() => setDeleteTarget(null)} size="sm" title={language === 'id' ? 'Hapus klien?' : 'Delete client?'} description={language === 'id' ? `Catatan klien ${deleteTarget?.name || ''} akan dihapus.` : `Client record ${deleteTarget?.name || ''} will be removed.`}><div className="flex flex-col-reverse sm:flex-row justify-end gap-2"><button type="button" onClick={() => setDeleteTarget(null)} className="min-h-10 px-4 rounded-control border border-[var(--line)] bg-[var(--panel)] text-xs text-[var(--muted)]">Cancel</button><button type="button" onClick={() => deleteTarget && void confirmDeleteClient(deleteTarget.id)} className="min-h-10 px-4 rounded-control bg-[var(--danger)] text-white text-xs font-semibold">Delete</button></div></Modal>
-      <div>) => {
+    return () => {
       window.removeEventListener(CURRENCY_EVENT, handleCurrencyChange);
     };
   }, []);
@@ -753,6 +749,13 @@ export const AdminClients: React.FC = () => {
           </div>
         </div>
       )}
+
+      <Modal open={!!deleteTarget} onClose={() => setDeleteTarget(null)} size="sm" title={language === 'id' ? 'Hapus klien?' : 'Delete client?'} description={language === 'id' ? `Catatan klien ${deleteTarget?.name || ''} akan dihapus.` : `Client record ${deleteTarget?.name || ''} will be removed.`}>
+        <div className="flex flex-col-reverse sm:flex-row justify-end gap-2">
+          <button type="button" onClick={() => setDeleteTarget(null)} className="min-h-10 px-4 rounded-control border border-[var(--line)] bg-[var(--panel)] text-xs text-[var(--muted)]">Cancel</button>
+          <button type="button" onClick={() => deleteTarget && void confirmDeleteClient(deleteTarget.id)} className="min-h-10 px-4 rounded-control bg-[var(--danger)] text-white text-xs font-semibold">Delete</button>
+        </div>
+      </Modal>
 
     </div>
   );
