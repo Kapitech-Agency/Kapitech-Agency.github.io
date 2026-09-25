@@ -305,7 +305,7 @@ export const AdminVendors: React.FC = () => {
 
       {/* Success Notification */}
       {statusMessage && (
-        <div className="p-3 rounded-card bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-sans flex items-center justify-between animate-in fade-in duration-200">
+        <div className="p-3 rounded-card bg-[var(--success)]/10 border border-[var(--success)]/30 text-[var(--success)] text-xs font-sans flex items-center justify-between animate-in fade-in duration-200">
           <div className="flex items-center gap-2">
             <CheckCircle2 size={16} />
             <span>{statusMessage}</span>
