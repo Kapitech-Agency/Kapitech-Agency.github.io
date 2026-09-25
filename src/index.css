@@ -1336,25 +1336,11 @@
 
 
 /* ==========================================================================
-   AMS POLISH PASS: GLOBAL LEGACY NORMALIZATION
-   Keeps existing page functionality while aligning older admin surfaces.
+   AMS POLISH PASS: GLOBAL LAYOUT NORMALIZATION
+   Keeps existing page functionality while enforcing shared AMS layout behavior.
    ========================================================================== */
 
 
-
-.ams-shell .text-gray-200,
-.ams-shell .text-gray-300,
-.ams-shell .text-gray-400 {
-  color: var(--muted);
-}
-
-.ams-shell .text-gray-100 {
-  color: var(--text);
-}
-
-.ams-shell .hover\:bg-white\/\[0\.03\]:hover {
-  background: color-mix(in srgb, var(--text) 4%, transparent);
-}
 
 .ams-shell .ams-page-title svg {
   flex: 0 0 auto;
@@ -1435,8 +1421,7 @@
 }
 
 /* AMS DESIGN SYSTEM SURFACE RECONCILIATION
-   Keep AMS surfaces on the canonical tokens. No white/transparent legacy
-   borders, glass surfaces, or shadow treatment. */
+   Keep AMS surfaces on the canonical tokens and shared interaction states. */
 .ams-shell {
   background: var(--bg);
   color: var(--text);
