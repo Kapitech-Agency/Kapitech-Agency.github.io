@@ -434,7 +434,7 @@ export const AdminProposals: React.FC = () => {
       </div>
 
       {/* Metrics Row */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <div className="p-4 rounded-card bg-[var(--panel)] border border-[var(--line)] space-y-1">
           <div className="text-xs font-sans text-[var(--muted)] flex items-center justify-between">
             <span>{language === 'id' ? 'Total Nilai Ditawarkan' : 'Total Proposed'}</span>
