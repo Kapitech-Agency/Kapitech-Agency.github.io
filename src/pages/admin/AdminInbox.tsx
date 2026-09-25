@@ -525,7 +525,7 @@ export const AdminInbox: React.FC = () => {
           {/* Email alerts guide modal button */}
           <button
             onClick={() => setIsEmailModalOpen(true)}
-            className="h-10 px-3.5 rounded-control bg-[var(--panel)] hover:bg-[var(--panel-hover)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] text-xs font-sans transition-colors flex items-center gap-1.5 min-h-[40px]"
+            className="min-h-10 px-3.5 rounded-control bg-[var(--panel)] hover:bg-[var(--panel-hover)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] text-xs font-sans transition-colors flex items-center gap-1.5"
             title="Configure forwarding rules"
           >
             <Mail size={14} className="text-[var(--danger)]" />
@@ -536,7 +536,7 @@ export const AdminInbox: React.FC = () => {
           {metrics.newCount > 0 && (
             <button
               onClick={handleMarkAllRead}
-              className="h-10 px-3.5 rounded-control bg-[var(--panel)] hover:bg-[var(--panel-hover)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] text-xs font-sans transition-colors flex items-center gap-1.5 min-h-[40px]"
+              className="min-h-10 px-3.5 rounded-control bg-[var(--panel)] hover:bg-[var(--panel-hover)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] text-xs font-sans transition-colors flex items-center gap-1.5"
             >
               <Check size={14} />
               <span>{language === 'id' ? 'Tandai Dibaca' : 'Mark Read'}</span>
@@ -549,7 +549,7 @@ export const AdminInbox: React.FC = () => {
           {submissions.length > 0 && (
             <button
               onClick={handleExportCSV}
-              className="h-10 px-3.5 rounded-control bg-[var(--panel)] hover:bg-[var(--panel-hover)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] text-xs font-sans transition-colors flex items-center gap-1.5 min-h-[40px]"
+              className="min-h-10 px-3.5 rounded-control bg-[var(--panel)] hover:bg-[var(--panel-hover)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] text-xs font-sans transition-colors flex items-center gap-1.5"
             >
               <Download size={14} />
               <span>Export CSV</span>
@@ -701,7 +701,7 @@ export const AdminInbox: React.FC = () => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={language === 'id' ? 'Cari nama, email, perusahaan, jasa, atau isi brief...' : 'Search name, email, company, requested stack, or message...'}
-              className="w-full pl-10 pr-8 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-control text-xs text-[var(--text)] focus:outline-none focus:border-[var(--accent)] placeholder:text-[var(--muted)] font-sans h-10 min-h-[40px]"
+              className="w-full pl-10 pr-8 py-2 rounded-control bg-[var(--panel)] border border-[var(--line)] text-xs text-[var(--text)] focus:outline-none focus:border-[var(--accent)] placeholder:text-[var(--muted)] font-sans min-h-10"
             />
             {searchQuery && (
               <button
@@ -919,7 +919,7 @@ export const AdminInbox: React.FC = () => {
                   setFilterType('all');
                   setOnlyStarred(false);
                 }}
-                className="h-9 px-4 rounded-card bg-[var(--panel)] hover:bg-[var(--panel-hover)] text-[var(--text)] border border-[var(--line)] text-xs font-sans font-medium transition-colors"
+                className="min-h-10 px-4 rounded-control bg-[var(--panel)] hover:bg-[var(--panel-hover)] text-[var(--text)] border border-[var(--line)] text-xs font-sans font-medium transition-colors"
               >
                 {language === 'id' ? 'Reset Semua Filter' : 'Reset All Filters'}
               </button>
