@@ -15,7 +15,8 @@ import {
   Calendar,
   User,
   Activity,
-  FolderOpen
+  FolderOpen,
+  Home
 } from 'lucide-react';
 import { api } from '../../lib/apiClient';
 import { useLanguage } from '../../lib/LanguageContext';
@@ -148,7 +149,8 @@ export const GlobalExecutiveDashboard: React.FC = () => {
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
             <h1 className="ams-page-title">
-              {language === 'id' ? 'Executive Briefing & Kendali Operasi' : 'Executive Overview & Operations'}
+              <Home className="text-[var(--accent-text)] shrink-0" size={22} />
+              <span>{language === 'id' ? 'Executive Briefing & Kendali Operasi' : 'Executive Overview & Operations'}</span>
             </h1>
           </div>
           <p className="text-[13px] leading-[18px] font-sans text-[var(--muted)] mt-1">
