@@ -503,7 +503,7 @@ export const AdminDashboard: React.FC = () => {
               onClick={() => setIsNewInvoiceModalOpen(true)}
               className="min-h-10 px-3 rounded-control bg-[var(--panel)] hover:bg-[var(--panel-hover)] border border-[var(--line)]  text-xs font-sans font-semibold text-[var(--text)] transition-colors flex items-center gap-1.5"
             >
-              <Plus size={14} className="text-purple-400" />
+              <Plus size={14} className="text-[var(--info)]" />
               <span>{language === 'id' ? 'Buat Invoice' : 'New Invoice'}</span>
             </button>
           )}
@@ -642,7 +642,7 @@ export const AdminDashboard: React.FC = () => {
               <span className="text-[11px] font-sans normal-case tracking-normal font-semibold">
                 {language === 'id' ? 'Proyek Aktif & Progress Delivery' : 'Active Projects & Delivery Progress'}
               </span>
-              <div className="w-8 h-8 rounded-control bg-cyan-500/10 border border-cyan-500/20 text-[var(--muted)] flex items-center justify-center">
+              <div className="w-8 h-8 rounded-control bg-[var(--info)]/10 border border-[var(--info)]/20 text-[var(--muted)] flex items-center justify-center">
                 <Layers size={16} />
               </div>
             </div>
@@ -738,7 +738,7 @@ export const AdminDashboard: React.FC = () => {
                       <span className="text-sm font-semibold text-[var(--text)]  transition-colors">
                         {proj.name}
                       </span>
-                      <span className="text-[10px] font-sans px-2 py-0.5 rounded bg-cyan-500/10 text-[var(--muted)] border border-cyan-500/25 font-semibold">
+                      <span className="text-[10px] font-sans px-2 py-0.5 rounded bg-[var(--info)]/10 text-[var(--muted)] border border-[var(--info)]/25 font-semibold">
                         {proj.serviceCategory}
                       </span>
                     </div>
@@ -938,7 +938,7 @@ export const AdminDashboard: React.FC = () => {
           <div className="p-4 sm:p-5 rounded-card bg-[var(--panel)] border border-line space-y-4 min-w-0">
             <div className="flex items-center justify-between pb-3 border-b border-[var(--line)]">
               <div className="flex items-center gap-2">
-                <Inbox size={16} className="text-purple-400" />
+                <Inbox size={16} className="text-[var(--info)]" />
                 <h3 className="text-base font-heading font-semibold text-[var(--text)] tracking-tight">
                   {language === 'id' ? 'Inquiry Masuk kapitech.id' : 'Inbound Inquiries Triage'}
                 </h3>
@@ -967,7 +967,7 @@ export const AdminDashboard: React.FC = () => {
                       <span className="font-semibold text-[var(--text)]">
                         {sub.fullName} {sub.company ? `(${sub.company})` : ''}
                       </span>
-                      <span className="text-[10px] font-sans text-purple-400">
+                      <span className="text-[10px] font-sans text-[var(--info)]">
                         {sub.email}
                       </span>
                     </div>
