@@ -447,19 +447,19 @@ export const AdminInbox: React.FC = () => {
     switch (priority) {
       case 'urgent':
         return (
-          <span className="px-1.5 py-0.5 rounded text-[9px] font-sans bg-[var(--danger)]/10 text-[var(--danger)] border border-[var(--danger)]/30 font-semibold">
+          <span className="px-1.5 py-0.5 rounded-badge text-[9px] font-sans bg-[var(--danger)]/10 text-[var(--danger)] border border-[var(--danger)]/30 font-semibold">
             Urgent
           </span>
         );
       case 'high':
         return (
-          <span className="px-1.5 py-0.5 rounded text-[9px] font-sans bg-[var(--warning)]/10 text-[var(--warning)] border border-[var(--warning)]/30">
+          <span className="px-1.5 py-0.5 rounded-badge text-[9px] font-sans bg-[var(--warning)]/10 text-[var(--warning)] border border-[var(--warning)]/30">
             High
           </span>
         );
       case 'low':
         return (
-          <span className="px-1.5 py-0.5 rounded text-[9px] font-sans bg-[var(--panel-hover)] text-[var(--muted)] border border-[var(--line)]">
+          <span className="px-1.5 py-0.5 rounded-badge text-[9px] font-sans bg-[var(--panel-hover)] text-[var(--muted)] border border-[var(--line)]">
             Low
           </span>
         );
@@ -480,7 +480,7 @@ export const AdminInbox: React.FC = () => {
       
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="p-3 sm:p-4 rounded-card bg-[var(--success)]/10 border border-[var(--success)]/30 text-[var(--success)] text-xs font-sans flex items-start sm:items-center justify-between gap-2 -none animate-in fade-in duration-300">
+        <div className="p-3 sm:p-4 rounded-card bg-[var(--success)]/10 border border-[var(--success)]/30 text-[var(--success)] text-xs font-sans flex items-start sm:items-center justify-between gap-2 animate-in fade-in duration-300">
           <div className="flex items-center gap-2.5">
             <Check size={16} className="text-[var(--success)] shrink-0" />
             <span>{toastMessage.text}</span>
@@ -563,7 +563,7 @@ export const AdminInbox: React.FC = () => {
       {/* ------------------------------------------------------------- */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         {/* Metric 1: Total Inbound */}
-        <div className="p-4 rounded-[12px] bg-[var(--panel)] border border-[var(--line)] space-y-1">
+        <div className="p-4 rounded-card bg-[var(--panel)] border border-[var(--line)] space-y-1">
           <div className="flex items-center justify-between text-xs font-sans text-[var(--muted)]">
             <span>{language === 'id' ? 'Total Masuk' : 'Total Inbound'}</span>
             <Inbox size={14} className="text-[var(--muted)]" />
@@ -965,7 +965,7 @@ export const AdminInbox: React.FC = () => {
                         {renderStatusBadge(item.status)}
                         {renderPriorityBadge(item.priority)}
                         {isConverted && (
-                          <span className="px-1.5 py-0.5 rounded text-[9px] font-sans bg-[var(--success)]/10 text-[var(--success)] border border-[var(--success)]/30 font-semibold">
+                          <span className="px-1.5 py-0.5 rounded-badge text-[9px] font-sans bg-[var(--success)]/10 text-[var(--success)] border border-[var(--success)]/30 font-semibold">
                             CRM ✓
                           </span>
                         )}
