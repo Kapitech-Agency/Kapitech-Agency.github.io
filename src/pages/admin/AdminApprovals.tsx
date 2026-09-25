@@ -258,7 +258,7 @@ export const AdminApprovals: React.FC = () => {
           />
         </div>
 
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0 max-w-full">
           <div className="flex items-center gap-1 bg-[var(--panel)] p-1 rounded-control border border-[var(--line)]">
             {(['Pending', 'Approved', 'Rejected', 'Changes Requested', 'all'] as const).map((st) => (
               <button

@@ -629,7 +629,7 @@ export const AdminInbox: React.FC = () => {
         
         {/* Top Channel Category Tabs */}
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-nowrap items-center gap-2 overflow-x-auto pb-1 sm:flex-wrap sm:overflow-visible sm:pb-0">
             {[
               { key: 'all', label: language === 'id' ? 'Semua Form' : 'All Briefs' },
               { key: 'inquiry', label: language === 'id' ? 'Konsultasi Klien' : 'Client Briefs' },
@@ -692,9 +692,9 @@ export const AdminInbox: React.FC = () => {
         </div>
 
         {/* Search & Secondary Filter Dropdowns */}
-        <div className="flex flex-col md:flex-row md:items-center gap-2.5 pt-1">
+        <div className="flex flex-row md:flex-row md:items-center gap-2.5 pt-1 overflow-x-auto pb-1 md:overflow-visible md:pb-0">
           {/* Universal Search */}
-          <div className="relative flex-1 min-w-0">
+          <div className="relative shrink-0 w-[240px] md:flex-1 md:min-w-0 md:w-auto">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--muted)]" size={15} />
             <input
               type="text"
@@ -714,7 +714,7 @@ export const AdminInbox: React.FC = () => {
           </div>
 
           {/* Status Dropdown */}
-          <div className="w-full md:w-[150px] shrink-0">
+          <div className="w-[150px] md:w-[150px] shrink-0">
             <CustomSelect value={filterStatus} onChange={setFilterStatus} options={[{value:'all',label:language === 'id' ? 'Semua Status' : 'All Status'},{value:'new',label:'Status: New'},{value:'in-review',label:'Status: In Review'},{value:'contacted',label:'Status: Contacted'},{value:'closed',label:'Status: Closed Deal'}]} />
           </div>
 

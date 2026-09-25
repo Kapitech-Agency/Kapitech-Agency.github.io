@@ -374,8 +374,8 @@ export const AdminVendors: React.FC = () => {
           />
         </div>
 
-        <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto">
-          <div className="w-40">
+        <div className="flex flex-nowrap items-center gap-2 w-full lg:w-auto overflow-x-auto pb-1 lg:flex-wrap lg:overflow-visible lg:pb-0">
+          <div className="w-[160px] shrink-0 lg:w-40">
             <CustomSelect
               value={selectedCategory}
               onChange={val => setSelectedCategory(val)}
@@ -391,7 +391,7 @@ export const AdminVendors: React.FC = () => {
             />
           </div>
 
-          <div className="w-36">
+          <div className="w-[144px] shrink-0 lg:w-36">
             <CustomSelect
               value={selectedType}
               onChange={val => setSelectedType(val)}
@@ -404,7 +404,7 @@ export const AdminVendors: React.FC = () => {
             />
           </div>
 
-          <div className="w-32">
+          <div className="w-[128px] shrink-0 lg:w-32">
             <CustomSelect
               value={statusFilter}
               onChange={val => setStatusFilter(val)}

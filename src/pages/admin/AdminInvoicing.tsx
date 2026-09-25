@@ -467,8 +467,8 @@ export const AdminInvoicing: React.FC = () => {
 
         {/* Right: Search & Status Filter */}
         {activeTab === 'invoices' && (
-          <div className="flex flex-wrap items-center gap-2 flex-1 sm:justify-end">
-            <div className="relative flex-1 max-w-xs">
+          <div className="flex flex-nowrap items-center gap-2 flex-1 overflow-x-auto pb-1 sm:flex-wrap sm:overflow-visible sm:pb-0 sm:justify-end">
+            <div className="relative shrink-0 w-[240px] sm:flex-1 sm:max-w-xs">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted)]" size={14} />
               <input
                 type="text"
@@ -480,6 +480,7 @@ export const AdminInvoicing: React.FC = () => {
             </div>
 
             <CustomSelect
+              className="shrink-0 w-[160px]"
               value={filterStatus}
               onChange={(val) => setFilterStatus(val)}
               options={[

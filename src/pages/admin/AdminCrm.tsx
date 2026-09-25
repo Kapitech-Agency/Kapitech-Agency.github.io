@@ -542,8 +542,8 @@ export const AdminCrm: React.FC = () => {
 
       {/* 3. Filter Bar & View Mode Switcher */}
       <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 bg-[var(--panel)] border border-[var(--line)] p-3 sm:p-4 rounded-card">
-        <div className="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-2.5 flex-1 min-w-0">
-          <div className="relative flex-1 min-w-0 sm:min-w-[220px] max-w-none lg:max-w-md">
+        <div className="flex flex-row items-center gap-2.5 flex-1 min-w-0 overflow-x-auto pb-1 sm:flex-wrap sm:overflow-visible sm:pb-0">
+          <div className="relative shrink-0 w-[240px] sm:flex-1 sm:min-w-0 sm:w-auto sm:max-w-none lg:max-w-md">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--muted)]" size={14} />
             <input
               type="text"
@@ -555,6 +555,7 @@ export const AdminCrm: React.FC = () => {
           </div>
 
           <CustomSelect
+            className="shrink-0 w-[180px] sm:w-auto"
             value={selectedPillar}
             onChange={(val) => setSelectedPillar(val)}
             options={[
@@ -568,6 +569,7 @@ export const AdminCrm: React.FC = () => {
           />
 
           <CustomSelect
+            className="shrink-0 w-[160px] sm:w-auto"
             value={selectedPriority}
             onChange={(val) => setSelectedPriority(val)}
             options={[
