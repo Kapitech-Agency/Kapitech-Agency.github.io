@@ -298,7 +298,7 @@ export const AdminCmsProjects: React.FC = () => {
       {/* Projects Grid with Drag-to-scroll support */}
       <div 
         ref={galleryScrollRef}
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4"
       >
         {filteredProjects.map((project) => (
           <div
