@@ -286,7 +286,7 @@ export const AdminVendors: React.FC = () => {
           <button
             onClick={handleOpenAdd}
                             disabled={!canManageVendors}
-            className="h-10 px-4 rounded-[8px] bg-[var(--accent)] hover:bg-[#c40f34] text-[var(--text)] text-xs font-semibold shadow-none flex items-center gap-2 transition-all min-h-[40px]"
+            className="h-10 px-4 rounded-[8px] bg-[var(--accent)] hover:bg-[var(--accent)] text-[var(--text)] text-xs font-semibold shadow-none flex items-center gap-2 transition-all min-h-[40px]"
           >
             <Plus size={15} />
             <span>{language === 'id' ? 'Tambah Vendor' : 'Add Vendor'}</span>
@@ -658,7 +658,7 @@ export const AdminVendors: React.FC = () => {
                   setIsDrawerOpen(false);
                   handleOpenEdit(selectedVendor);
                 }}
-                className="px-4 py-2 rounded-[8px] bg-[var(--accent)] hover:bg-[#c40f34] text-[var(--text)] text-xs font-semibold"
+                className="px-4 py-2 rounded-[8px] bg-[var(--accent)] hover:bg-[var(--accent)] text-[var(--text)] text-xs font-semibold"
               >
                 {language === 'id' ? 'Edit Profil' : 'Edit Profile'}
               </button>
@@ -868,7 +868,7 @@ export const AdminVendors: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-[8px] bg-[var(--accent)] hover:bg-[#c40f34] text-[var(--text)] text-xs font-semibold shadow-none"
+                  className="px-5 py-2 rounded-[8px] bg-[var(--accent)] hover:bg-[var(--accent)] text-[var(--text)] text-xs font-semibold shadow-none"
                 >
                   {language === 'id' ? 'Simpan Vendor' : 'Save Vendor'}
                 </button>
