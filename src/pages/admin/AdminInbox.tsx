@@ -645,7 +645,7 @@ export const AdminInbox: React.FC = () => {
                 <button
                   key={tab.key}
                   onClick={() => setFilterType(tab.key)}
-                  className={`h-9 px-3 rounded-card text-xs font-sans transition-all flex items-center gap-2 border min-h-10 ${
+                  className={`h-10 px-3 rounded-control text-xs font-sans transition-all flex items-center gap-2 border min-h-10 ${
                     filterType === tab.key
                       ? 'bg-[var(--accent)] text-white border-[var(--accent)] font-semibold'
                       : 'bg-[var(--panel)] text-[var(--muted)] border-[var(--line)] hover:text-[var(--text)]'
@@ -727,7 +727,7 @@ export const AdminInbox: React.FC = () => {
           <div className="w-full md:w-[120px] shrink-0 flex items-center">
             <button
               onClick={() => setOnlyStarred(!onlyStarred)}
-              className={`w-full h-10 min-h-10 px-3 rounded-card border text-xs font-sans transition-colors flex items-center justify-center gap-2 ${
+              className={`w-full h-10 min-h-10 px-3 rounded-control border text-xs font-sans transition-colors flex items-center justify-center gap-2 ${
                 onlyStarred
                   ? 'bg-[var(--warning)]/10 border-[var(--warning)]/30 text-[var(--warning)] font-semibold'
                   : 'bg-[var(--panel)] border-[var(--line)] text-[var(--muted)] hover:text-[var(--text)]'

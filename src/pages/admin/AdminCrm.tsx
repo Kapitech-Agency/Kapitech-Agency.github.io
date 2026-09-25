@@ -1109,7 +1109,7 @@ export const AdminCrm: React.FC = () => {
                     value={newNoteText}
                     onChange={(e) => setNewNoteText(e.target.value)}
                     placeholder={language === 'id' ? 'Catat ringkasan meeting atau jadwal follow-up...' : 'Log call, meeting summary, or follow-up note...'}
-                    className="flex-1 px-3.5 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-card text-xs text-[var(--text)] placeholder-[var(--muted)] focus:outline-none focus:border-[var(--accent)] font-sans min-h-10"
+                    className="flex-1 px-3.5 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-control text-xs text-[var(--text)] placeholder-[var(--muted)] focus:outline-none focus:border-[var(--accent)] font-sans min-h-10"
                   />
                   <button
                     type="submit"
@@ -1184,7 +1184,7 @@ export const AdminCrm: React.FC = () => {
                 <Briefcase className="text-[var(--danger)]" size={20} />
                 <span>{editingLead ? (language === 'id' ? 'Edit Data Prospek' : 'Edit CRM Deal') : t('admin.crm.addDeal')}</span>
               </h3>
-              <button onClick={() => setIsAddModalOpen(false)} className="p-1.5 text-[var(--muted)] hover:text-[var(--text)] rounded-lg bg-[var(--panel)] border border-[var(--line)]">
+              <button onClick={() => setIsAddModalOpen(false)} className="min-h-10 min-w-10 p-1.5 text-[var(--muted)] hover:text-[var(--text)] rounded-control bg-[var(--panel)] border border-[var(--line)]">
                 <X size={16} />
               </button>
             </div>
