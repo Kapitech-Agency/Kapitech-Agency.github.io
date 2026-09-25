@@ -315,10 +315,10 @@ export const AdminProposals: React.FC = () => {
       showToast(language === 'id' ? 'Anda tidak memiliki izin membuat invoice.' : 'You do not have invoice permission.');
       return;
     }
-    if (!window.confirm(language === 'id' ? 'Konversi proposal ini menjadi invoice resmi?' : 'Convert this approved proposal to an official invoice?')) {
-      return;
-    }
+    setConfirmAction({ type: 'convert', id });
+  };
 
+  const confirmConvertToInvoice = async (id: string) => {
     try {
       const res = await api.proposals.convertToInvoice(id);
       if (res.success && res.data?.invoice) {
@@ -329,6 +329,8 @@ export const AdminProposals: React.FC = () => {
       }
     } catch {
       showToast('Error converting to invoice.');
+    } finally {
+      setConfirmAction(null);
     }
   };
 
@@ -349,6 +351,8 @@ export const AdminProposals: React.FC = () => {
       }
     } catch {
       showToast('Failed to delete proposal.');
+    } finally {
+      setConfirmAction(null);
     }
   };
 
@@ -636,6 +640,13 @@ export const AdminProposals: React.FC = () => {
           <button type="button" onClick={() => confirmAction?.type === 'convert' ? void confirmConvertToInvoice(confirmAction.id) : confirmAction && void confirmDeleteProposal(confirmAction.id)} className={`min-h-10 px-4 rounded-control text-white text-xs font-semibold ${confirmAction?.type === 'convert' ? 'bg-[var(--accent)]' : 'bg-[var(--danger)]'}`}>
             {confirmAction?.type === 'convert' ? 'Convert to Invoice' : 'Delete'}
           </button>
+        </div>
+      </Modal>
+
+      <Modal open={!!confirmAction} onClose={() => setConfirmAction(null)} size="sm" title={confirmAction?.type === 'convert' ? 'Convert proposal to invoice?' : 'Delete proposal?'} description={confirmAction?.type === 'convert' ? 'This creates the official invoice workflow from the approved proposal.' : 'The proposal will be removed from the registry.'}>
+        <div className="flex flex-col-reverse sm:flex-row justify-end gap-2">
+          <button type="button" onClick={() => setConfirmAction(null)} className="min-h-10 px-4 rounded-control border border-[var(--line)] bg-[var(--panel)] text-xs text-[var(--muted)]">Cancel</button>
+          <button type="button" onClick={() => confirmAction?.type === 'convert' ? void confirmConvertToInvoice(confirmAction.id) : confirmAction && void confirmDeleteProposal(confirmAction.id)} className={`min-h-10 px-4 rounded-control text-white text-xs font-semibold ${confirmAction?.type === 'convert' ? 'bg-[var(--accent)]' : 'bg-[var(--danger)]'}`}>{confirmAction?.type === 'convert' ? 'Convert to Invoice' : 'Delete'}</button>
         </div>
       </Modal>
 
