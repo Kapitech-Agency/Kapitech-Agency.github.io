@@ -559,7 +559,7 @@ export const AdminProjects: React.FC = () => {
                 <div className="flex items-center justify-between gap-2 mb-1.5 w-full">
                   <span className={`text-[9px] normal-case px-1.5 py-0.5 rounded font-semibold ${
                     proj.status === 'completed' ? 'bg-[var(--success)]/10 text-[var(--success)]' :
-                    proj.status === 'in_progress' ? 'bg-red-500/20 text-red-400' : 'bg-zinc-500/20 text-zinc-400'
+                    proj.status === 'in_progress' ? 'bg-[var(--danger)]/20 text-[var(--danger)]' : 'bg-zinc-500/20 text-zinc-400'
                   }`}>
                     {proj.status}
                   </span>
