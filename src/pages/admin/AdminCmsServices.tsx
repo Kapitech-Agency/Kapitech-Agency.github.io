@@ -295,7 +295,7 @@ export const AdminCmsServices: React.FC = () => {
               onClick={() => setSelectedCategory(cat)}
               className={`px-3 py-1.5 rounded-control text-xs font-sans transition-all ${
                 selectedCategory === cat
-                  ? 'bg-[var(--accent)] text-[var(--text)] font-semibold shadow-none'
+                  ? 'bg-[var(--accent)] text-white font-semibold shadow-none'
                   : 'text-[var(--muted)] hover:text-[var(--text)] hover:bg-[var(--panel)]'
               }`}
             >

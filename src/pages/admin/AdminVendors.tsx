@@ -583,7 +583,7 @@ export const AdminVendors: React.FC = () => {
             <div>
               <div className="flex items-center justify-between pb-4 border-b border-[var(--line)]">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-card bg-[var(--accent)] flex items-center justify-center font-semibold text-[var(--text)] text-sm">
+                  <div className="w-10 h-10 rounded-card bg-[var(--accent)] flex items-center justify-center font-semibold text-white text-sm">
                     {selectedVendor.name.charAt(0).toUpperCase()}
                   </div>
                   <div>
