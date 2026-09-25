@@ -2062,3 +2062,34 @@
 .ams-shell .ams-mobile-drawer > .relative > a {
   flex: 0 0 auto;
 }
+
+
+/* AMS TABLE AND HORIZONTAL SCROLL SURFACES */
+.ams-shell .overflow-x-auto {
+  scrollbar-gutter: stable;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x pan-y;
+}
+
+.ams-shell .overflow-x-auto table {
+  min-width: max-content;
+}
+
+@media (max-width: 599px) {
+  .ams-shell .overflow-x-auto {
+    border-radius: 8px;
+  }
+
+  .ams-shell .overflow-x-auto table th,
+  .ams-shell .overflow-x-auto table td {
+    white-space: nowrap;
+  }
+
+  .ams-shell .ams-kanban-scroll {
+    min-width: 1120px;
+  }
+
+  .ams-shell .kanban-card {
+    min-height: 112px;
+  }
+}
