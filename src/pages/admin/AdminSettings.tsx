@@ -392,7 +392,7 @@ export const AdminSettings: React.FC = () => {
       <div className="ams-page-header flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3">
         <div>
           <h1 className="ams-page-title">
-            <Settings className="text-[var(--accent)]" size={24} />
+            <Settings className="text-[var(--accent-text)] shrink-0" size={22} />
             <span>{language === 'id' ? 'Pengaturan Sistem & Keamanan' : 'Settings'}</span>
           </h1>
           <p className="text-xs text-[var(--muted)] mt-1 font-sans">
