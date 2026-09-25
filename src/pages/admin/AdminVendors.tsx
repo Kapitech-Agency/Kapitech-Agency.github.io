@@ -89,7 +89,6 @@ export const AdminVendors: React.FC = () => {
   };
 
   useEffect(() => {
-    loadVendors();
     void loadVendors();
   }, [canViewVendors, language]);
 
