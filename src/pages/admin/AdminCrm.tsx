@@ -575,7 +575,7 @@ export const AdminCrm: React.FC = () => {
         <div className="flex items-center gap-1 bg-[var(--bg)] p-1 rounded-card border border-[var(--line)] self-stretch lg:self-auto shrink-0">
           <button
             onClick={() => setViewMode('kanban')}
-            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-sans font-semibold transition-all min-h-[38px] ${
+            className={`flex items-center justify-center gap-2 px-3 py-1.5 rounded-control text-xs font-sans font-semibold transition-all min-h-10 ${
               viewMode === 'kanban'
                 ? 'bg-[var(--panel)] text-[var(--text)] border border-[var(--line)]'
                 : 'text-[var(--muted)] hover:text-[var(--text)]'
@@ -652,7 +652,7 @@ export const AdminCrm: React.FC = () => {
                     <button
                       onClick={() => handleOpenAddModal(stageDef.key)}
                       title={`Add deal to ${stageDef.labelId}`}
-                      className="p-1 rounded-lg bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] transition-colors shrink-0"
+                      className="min-h-10 min-w-10 p-1.5 rounded-control bg-[var(--panel)] hover:bg-[var(--panel-hover)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] transition-colors flex items-center justify-center shrink-0"
                     >
                       <Plus size={13} />
                     </button>
