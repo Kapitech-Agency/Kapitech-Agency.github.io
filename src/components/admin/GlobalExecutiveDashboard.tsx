@@ -1,22 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { 
-  DollarSign, 
-  TrendingUp, 
-  AlertTriangle, 
-  Layers, 
-  RefreshCw, 
-  ArrowUpRight, 
-  Clock, 
-  ShieldCheck, 
-  ExternalLink,
-  Kanban,
-  CheckCircle2,
-  Calendar,
-  User,
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import {
   Activity,
-  FolderOpen,
-  Home
+  AlertTriangle,
+  ArrowUpRight,
+  CheckCircle2,
+  CircleDollarSign,
+  ClipboardCheck,
+  FolderKanban,
+  Info,
+  RefreshCw,
+  ShieldAlert,
+  WalletCards,
 } from 'lucide-react';
 import { api } from '../../lib/apiClient';
 import { useLanguage } from '../../lib/LanguageContext';
@@ -35,14 +30,6 @@ interface ExecutiveOverviewData {
     overdueTasks: number;
     openLeads: number;
   };
-  todayAtKapitech: {
-    openLeadsCount: number;
-    dealsInPipelineCount: number;
-    pipelineValue: number | null;
-    proposalsAwaitingCount: number;
-    projectsAtRiskCount: number;
-    overdueInvoicesCount: number;
-  };
   financials: {
     revenueThisMonth: number | null;
     cashCollected: number | null;
@@ -51,11 +38,7 @@ interface ExecutiveOverviewData {
     netOperatingProfit: number | null;
     margin: string | null;
   };
-  pipelineByStage: Array<{
-    stage: string;
-    count: number;
-    value: number;
-  }>;
+  pipelineByStage: Array<{ stage: string; count: number; value: number }>;
   attentionItems: Array<{
     id: string;
     title: string;
@@ -68,22 +51,104 @@ interface ExecutiveOverviewData {
   recentActivity: Array<any>;
 }
 
+const cardClass = 'rounded-card border border-line bg-panel p-4';
+const ghostLinkClass = 'inline-flex min-h-10 items-center gap-1.5 rounded-control px-2.5 text-xs font-medium text-muted transition-colors hover:bg-bg hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent';
+
+function EmptyState({
+  icon: Icon,
+  message,
+  description,
+  action,
+}: {
+  icon: React.ElementType;
+  message: string;
+  description?: string;
+  action?: React.ReactNode;
+}) {
+  return (
+    <div className="flex min-h-[176px] flex-col items-center justify-center rounded-card border border-line bg-bg px-4 py-8 text-center">
+      <div className="flex h-10 w-10 items-center justify-center rounded-control border border-line bg-panel text-muted">
+        <Icon size={18} strokeWidth={1.8} />
+      </div>
+      <p className="mt-3 text-sm font-medium text-fg">{message}</p>
+      {description && (
+        <p className="mt-1 max-w-[52ch] text-xs leading-relaxed text-muted">{description}</p>
+      )}
+      {action && <div className="mt-3">{action}</div>}
+    </div>
+  );
+}
+
+function MetricCard({
+  label,
+  value,
+  icon: Icon,
+  tone,
+  meta,
+}: {
+  label: string;
+  value: string | number;
+  icon: React.ElementType;
+  tone: 'success' | 'warning' | 'info' | 'neutral';
+  meta?: React.ReactNode;
+}) {
+  const toneClasses = {
+    success: 'border-success/20 bg-success/10 text-success',
+    warning: 'border-warning/20 bg-warning/10 text-warning',
+    info: 'border-info/20 bg-info/10 text-info',
+    neutral: 'border-line bg-bg text-muted',
+  }[tone];
+
+  return (
+    <section className="rounded-card border border-line bg-panel p-4" aria-label={label}>
+      <div className="flex items-start justify-between gap-3">
+        <span className="text-xs leading-4 text-muted">{label}</span>
+        <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-control border ${toneClasses}`}>
+          <Icon size={15} strokeWidth={1.8} />
+        </span>
+      </div>
+      <div className="mt-4">
+        <div className="text-xl font-medium leading-7 tracking-tight tabular-nums text-fg">{value}</div>
+        {meta && <div className="mt-1.5 text-xs leading-4 text-muted">{meta}</div>}
+      </div>
+    </section>
+  );
+}
+
+function Card({
+  title,
+  action,
+  children,
+  className = '',
+}: {
+  title: string;
+  action?: React.ReactNode;
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <section className={`${cardClass} ${className}`}>
+      <div className="flex min-h-7 items-center justify-between gap-3">
+        <h2 className="text-sm font-semibold leading-5 text-fg">{title}</h2>
+        {action}
+      </div>
+      <div className="mt-3">{children}</div>
+    </section>
+  );
+}
+
 export const GlobalExecutiveDashboard: React.FC = () => {
   const { language } = useLanguage();
-  const navigate = useNavigate();
   const [currency, setCurrency] = useState<CurrencyCode>(getActiveCurrency());
-
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState<ExecutiveOverviewData | null>(null);
-  const [lastRefreshed, setLastRefreshed] = useState<Date>(new Date());
+  const [lastRefreshed, setLastRefreshed] = useState(new Date());
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const handleCurrencyChange = (e: Event) => {
-      const custom = e as CustomEvent<{ currency: CurrencyCode }>;
-      if (custom.detail?.currency) {
-        setCurrency(custom.detail.currency);
-      }
+    const handleCurrencyChange = (event: Event) => {
+      const custom = event as CustomEvent<{ currency: CurrencyCode }>;
+      if (custom.detail?.currency) setCurrency(custom.detail.currency);
     };
     window.addEventListener(CURRENCY_EVENT, handleCurrencyChange);
     return () => window.removeEventListener(CURRENCY_EVENT, handleCurrencyChange);
@@ -93,13 +158,13 @@ export const GlobalExecutiveDashboard: React.FC = () => {
     setIsLoading(true);
     setError(null);
     try {
-      const res = await api.executive.getOverview();
-      if (res.success) {
-        const payload = (res.data || res) as ExecutiveOverviewData;
+      const response = await api.executive.getOverview();
+      if (response.success) {
+        const payload = (response.data || response) as ExecutiveOverviewData;
         setData(payload);
         setLastRefreshed(new Date());
       } else {
-        setError(res.error || 'Failed to load executive metrics.');
+        setError(response.error || 'Failed to load executive metrics.');
       }
     } catch {
       setError('Network communication failed while fetching executive overview.');
@@ -109,19 +174,16 @@ export const GlobalExecutiveDashboard: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchOverview();
+    void fetchOverview();
   }, []);
 
-  const formatCurrency = (val: number | null | undefined) => {
-    if (val === null || val === undefined) return language === 'id' ? 'Terbatas' : 'Restricted';
-    if (currency === 'USD') {
-      const usdVal = Math.round(val / 16000);
-      return `$${usdVal.toLocaleString()}`;
-    }
-    return `Rp ${val.toLocaleString('id-ID')}`;
+  const formatCurrency = (value: number | null | undefined) => {
+    if (value === null || value === undefined) return language === 'id' ? 'Terbatas' : 'Restricted';
+    if (currency === 'USD') return `$${Math.round(value / 16000).toLocaleString('en-US')}`;
+    return `Rp ${value.toLocaleString('id-ID')}`;
   };
 
-  const metrics = data?.metrics || {
+  const metrics = data?.metrics ?? {
     revenueCollected: 0,
     totalBilled: 0,
     outstandingReceivables: 0,
@@ -131,464 +193,269 @@ export const GlobalExecutiveDashboard: React.FC = () => {
     projectsAtRisk: 0,
     pendingApprovals: 0,
     overdueTasks: 0,
-    openLeads: 0
+    openLeads: 0,
   };
 
-  const attentionItems = data?.attentionItems || [];
-  const pipelineStages = data?.pipelineByStage || [];
-  const recentProjects = data?.projects || [];
-  const recentLogs = data?.recentActivity || [];
+  const financials = data?.financials ?? {
+    revenueThisMonth: 0,
+    cashCollected: 0,
+    outstandingReceivables: 0,
+    operatingExpenses: 0,
+    netOperatingProfit: 0,
+    margin: '0%',
+  };
+
+  const attentionItems = data?.attentionItems ?? [];
+  const pipelineStages = data?.pipelineByStage ?? [];
+  const projects = data?.projects ?? [];
+  const recentActivity = data?.recentActivity ?? [];
+
+  const retryLabel = language === 'id' ? 'Coba lagi' : 'Retry';
+  const openCrmLabel = language === 'id' ? 'Buka CRM' : 'Open CRM';
+  const invoicingLabel = language === 'id' ? 'Invoicing' : 'Invoicing';
+  const projectsLabel = language === 'id' ? 'Semua proyek' : 'All Projects';
+  const auditLabel = language === 'id' ? 'Log audit lengkap' : 'Full Audit Logs';
 
   return (
-    <div className="ams-dashboard-page space-y-6 animate-in fade-in duration-200">
-      {/* ------------------------------------------------------------- */}
-      {/* 1. HEADER WITH SERVER STATUS & REFRESH */}
-      {/* ------------------------------------------------------------- */}
-      <div className="ams-dashboard-header flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[var(--line)]">
-        <div>
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <h1 className="ams-page-title">
-              <Home className="text-[var(--accent-text)] shrink-0" size={22} />
-              <span>{language === 'id' ? 'Executive Briefing & Kendali Operasi' : 'Executive Overview & Operations'}</span>
-            </h1>
-          </div>
-          <p className="text-[13px] leading-[18px] font-sans text-[var(--muted)] mt-1">
-            {language === 'id'
-              ? 'Snapshot server saat ini untuk pipeline, piutang, risiko proyek, dan prioritas tindakan.'
-              : 'Current server snapshot for sales pipeline, receivables, project delivery, and action priorities.'}
+    <div className="space-y-6">
+      <header className="flex flex-col gap-4 border-b border-line pb-4 sm:flex-row sm:items-end sm:justify-between">
+        <div className="min-w-0">
+          <h1 className="text-xl font-semibold leading-7 tracking-tight text-fg">
+            Executive Overview &amp; Operations
+          </h1>
+          <p className="mt-1 text-xs leading-4 text-muted">
+            Current operational snapshot for pipeline, receivables, project delivery, and priorities.
           </p>
         </div>
-
-        <div className="flex items-center gap-3 shrink-0">
-          <span className="text-[11px] font-sans text-[var(--muted)]">
-            {language === 'id' ? 'Diperbarui:' : 'Synced:'} {lastRefreshed.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+        <div className="flex flex-wrap items-center gap-2 sm:justify-end">
+          <span className="text-[11px] leading-4 text-muted tabular-nums">
+            Synced {lastRefreshed.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
           </span>
           <button
-            onClick={fetchOverview}
+            type="button"
+            onClick={() => void fetchOverview()}
             disabled={isLoading}
-            className="ams-action flex items-center gap-1.5 disabled:opacity-50"
-            title="Refresh metrics from server"
+            className="inline-flex min-h-10 items-center gap-1.5 rounded-control border border-line bg-transparent px-3 text-xs font-medium text-muted transition-[background-color,border-color,color,transform] hover:bg-panel hover:text-fg active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
           >
-            <RefreshCw size={13} className={isLoading ? 'animate-spin text-[var(--accent)]' : 'text-[var(--muted)]'} />
-            <span>{isLoading ? 'Syncing...' : 'Refresh'}</span>
+            <RefreshCw size={14} className={isLoading ? 'animate-spin text-accent-text' : ''} />
+            {isLoading ? 'Syncing...' : 'Refresh'}
           </button>
         </div>
+      </header>
+
+      <div className="flex flex-col gap-3 rounded-card border border-danger bg-danger/10 p-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex min-w-0 items-start gap-3">
+          <ShieldAlert className="mt-0.5 shrink-0 text-danger" size={17} />
+          <p className="text-xs leading-5 text-fg">MFA is required before accessing protected AMS functions.</p>
+        </div>
+        <button
+          type="button"
+          onClick={() => void fetchOverview()}
+          disabled={isLoading}
+          className="inline-flex min-h-10 shrink-0 items-center justify-center rounded-control border border-danger/40 bg-danger/10 px-3 text-xs font-semibold text-danger transition-colors hover:bg-danger/15 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-danger"
+        >
+          {isLoading ? 'Retrying...' : retryLabel}
+        </button>
       </div>
 
       {error && (
-        <div className="p-3 rounded-card bg-[var(--danger)]/10 border border-[var(--danger)]/30 text-[var(--text)] text-xs font-sans flex items-center justify-between">
-          <span>{error}</span>
-          <button onClick={fetchOverview} className="underline hover:text-[var(--text)]">Retry</button>
+        <div className="rounded-card border border-danger bg-danger/10 px-4 py-3 text-xs leading-5 text-fg" role="alert">
+          {error}
         </div>
       )}
 
-      {/* ------------------------------------------------------------- */}
-      {/* 2. CORE KPI ROW */}
-      {/* ------------------------------------------------------------- */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Revenue Collected */}
-        <div className="ams-dashboard-card ams-kpi flex flex-col justify-between hover:border-[var(--line)] transition-colors">
-          <div className="flex items-center justify-between text-xs font-sans text-[var(--muted)]">
-            <span>{language === 'id' ? 'Pendapatan Diterima' : 'Revenue Collected'}</span>
-            <div className="w-7 h-7 rounded-control bg-[var(--success)]/10 border border-[var(--success)]/20 flex items-center justify-center text-[var(--success)]">
-              <DollarSign size={15} />
-            </div>
-          </div>
-          <div className="mt-3">
-            <div className="ams-kpi-value">
-              {formatCurrency(metrics.revenueCollected)}
-            </div>
-            <div className="ams-meta mt-1 flex items-center gap-1">
-              <span>Billed Total:</span>
-              <span className="text-[var(--text)] font-semibold">{formatCurrency(metrics.totalBilled)}</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Outstanding Receivables */}
-        <div className="ams-dashboard-card ams-kpi flex flex-col justify-between hover:border-[var(--line)] transition-colors">
-          <div className="flex items-center justify-between text-xs font-sans text-[var(--muted)]">
-            <span>{language === 'id' ? 'Piutang Berjalan' : 'Outstanding Receivables'}</span>
-            <div className={`w-7 h-7 rounded-control flex items-center justify-center ${metrics.overdueReceivables > 0 ? 'bg-[var(--danger)]/10 border border-red-500/30 text-[var(--danger)]' : 'bg-[var(--warning)]/10 border border-[var(--warning)]/20 text-[var(--warning)]'}`}>
-              <TrendingUp size={15} />
-            </div>
-          </div>
-          <div className="mt-3">
-            <div className="ams-kpi-value">
-              {formatCurrency(metrics.outstandingReceivables)}
-            </div>
-            <div className="ams-meta mt-1 flex items-center gap-1">
-              {metrics.overdueReceivables > 0 ? (
-                <span className="text-[var(--danger)] font-semibold flex items-center gap-1">
-                  <AlertTriangle size={11} />
-                  {formatCurrency(metrics.overdueReceivables)} Overdue
-                </span>
-              ) : (
-                <span className="text-[var(--success)]">All within payment terms</span>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Active Pipeline */}
-        <div className="ams-dashboard-card ams-kpi flex flex-col justify-between hover:border-[var(--line)] transition-colors">
-          <div className="flex items-center justify-between text-xs font-sans text-[var(--muted)]">
-            <span>{language === 'id' ? 'Nilai Pipeline Aktif' : 'Active Pipeline'}</span>
-            <div className="w-7 h-7 rounded-control bg-[var(--info)]/10 border border-[var(--info)]/20 flex items-center justify-center text-[var(--info)]">
-              <Kanban size={15} />
-            </div>
-          </div>
-          <div className="mt-3">
-            <div className="ams-kpi-value">
-              {formatCurrency(metrics.activePipeline)}
-            </div>
-            <div className="ams-meta mt-1 flex items-center gap-1">
-              <span>Active Deals:</span>
-              <span className="text-[var(--text)] font-semibold">{data?.todayAtKapitech?.dealsInPipelineCount || 0}</span>
-              <span className="text-[var(--muted)]">•</span>
-              <span>Leads:</span>
-              <span className="text-[var(--text)] font-semibold">{metrics.openLeads}</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Active Projects */}
-        <div className="ams-dashboard-card ams-kpi flex flex-col justify-between hover:border-[var(--line)] transition-colors">
-          <div className="flex items-center justify-between text-xs font-sans text-[var(--muted)]">
-            <span>{language === 'id' ? 'Proyek Berjalan' : 'Active Projects'}</span>
-            <div className="w-7 h-7 rounded-control bg-[var(--info)]/10 border border-[var(--info)]/20 flex items-center justify-center text-[var(--info)]">
-              <Layers size={15} />
-            </div>
-          </div>
-          <div className="mt-3">
-            <div className="ams-kpi-value">
-              {metrics.activeProjects}
-            </div>
-            <div className="ams-meta mt-1 flex items-center gap-1">
-              {metrics.projectsAtRisk > 0 ? (
-                <span className="text-[var(--warning)] font-semibold flex items-center gap-1">
-                  <AlertTriangle size={11} />
-                  {metrics.projectsAtRisk} At Risk / Delayed
-                </span>
-              ) : (
-                <span className="text-[var(--success)] font-semibold flex items-center gap-1">
-                  <CheckCircle2 size={11} />
-                  No risk flags
-                </span>
-              )}
-            </div>
-          </div>
-        </div>
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <MetricCard
+          label="Revenue Collected"
+          value={formatCurrency(metrics.revenueCollected)}
+          icon={CircleDollarSign}
+          tone="success"
+          meta={<>Billed total: <span className="font-medium tabular-nums text-fg">{formatCurrency(metrics.totalBilled)}</span></>}
+        />
+        <MetricCard
+          label="Outstanding Receivables"
+          value={formatCurrency(metrics.outstandingReceivables)}
+          icon={WalletCards}
+          tone="warning"
+          meta={metrics.overdueReceivables > 0 ? (
+            <span className="inline-flex items-center gap-1 text-danger">
+              <AlertTriangle size={12} />
+              {formatCurrency(metrics.overdueReceivables)} overdue
+            </span>
+          ) : 'All within payment terms'}
+        />
+        <MetricCard
+          label="Active Pipeline"
+          value={formatCurrency(metrics.activePipeline)}
+          icon={FolderKanban}
+          tone="info"
+          meta={<>Active deals: <span className="font-medium tabular-nums text-fg">{data?.pipelineByStage?.reduce((sum, stage) => sum + stage.count, 0) || 0}</span></>}
+        />
+        <MetricCard
+          label="Active Projects"
+          value={metrics.activeProjects}
+          icon={ClipboardCheck}
+          tone="neutral"
+          meta={metrics.projectsAtRisk > 0 ? (
+            <span className="text-warning">{metrics.projectsAtRisk} at risk</span>
+          ) : (
+            <span className="text-success">No risk flags</span>
+          )}
+        />
       </div>
 
-      {/* ------------------------------------------------------------- */}
-      {/* 3. NEEDS ATTENTION: ACTIONABLE OPERATIONAL SIGNALS */}
-      {/* ------------------------------------------------------------- */}
-      <div className="ams-dashboard-card ams-panel p-5">
-        <div className="flex items-center justify-between gap-4 mb-4">
-          <div className="flex items-center gap-2 min-w-0">
-            {attentionItems.length > 0 ? (
-              <AlertTriangle className="text-[var(--accent)] shrink-0" size={16} />
-            ) : (
-              <CheckCircle2 className="text-[var(--success)] shrink-0" size={16} />
-            )}
-            <h2 className="text-sm font-semibold font-sans text-[var(--text)] truncate">
-              {language === 'id' ? 'Prioritas Tindakan Eksekutif' : 'Executive Action Priorities'}
-            </h2>
-            <span className={`px-2 py-0.5 rounded-badge text-[10px] font-sans font-semibold shrink-0 ${
-              attentionItems.length > 0
-                ? 'bg-[var(--accent)]/20 text-[var(--accent)]'
-                : 'bg-[var(--success)]/10 text-[var(--success)]'
-            }`}>
-              {attentionItems.length}
-            </span>
-          </div>
-        </div>
-
+      <Card
+        title="Executive Action Priorities"
+        action={
+          <span className="rounded-badge bg-success/10 px-2 py-0.5 text-[10px] font-semibold leading-4 text-success">
+            {attentionItems.length}
+          </span>
+        }
+      >
         {attentionItems.length === 0 ? (
-          <div className="flex min-h-[176px] flex-col items-center justify-center gap-3 rounded-control border border-line bg-bg px-4 py-8 text-center">
-            <div className="flex h-9 w-9 items-center justify-center rounded-control border border-success/20 bg-success/10 text-success">
-              <CheckCircle2 size={18} />
-            </div>
-            <div className="min-w-0 text-center">
-              <p className="text-sm font-medium text-fg">
-                {language === 'id' ? 'Tidak ada tindakan yang perlu dilakukan.' : 'No action required.'}
-              </p>
-              <p className="mt-1 max-w-[48ch] text-xs leading-relaxed text-muted">
-                {language === 'id' ? 'Tidak ada invoice jatuh tempo, proyek terblokir, atau persetujuan tertunda.' : 'No overdue invoices, blocked projects, or pending approvals.'}
-              </p>
-            </div>
-          </div>
+          <EmptyState
+            icon={ClipboardCheck}
+            message="No action required."
+            description="No overdue invoices, blocked projects, or pending approvals."
+          />
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {attentionItems.map((item) => {
-              const isDanger = item.severity === 'danger';
-              return (
-                <div
-                  key={item.id}
-                  className={`ams-dashboard-card ams-inbox-item border flex items-start justify-between gap-3 transition-all ${
-                    isDanger 
-                      ? 'bg-[var(--danger)]/10 border-[var(--danger)]/30 hover:border-[var(--danger)]/50' 
-                      : 'bg-[var(--warning)]/10 border-[var(--warning)]/30 hover:border-[var(--warning)]/50'
-                  }`}
-                >
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2">
-                      <span className={`px-1.5 py-0.2 rounded text-[9px] font-sans uppercase font-semibold ${
-                        isDanger ? 'bg-[var(--danger)]/10 text-[var(--danger)]' : 'bg-[var(--warning)]/10 text-[var(--warning)]'
-                      }`}>
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+            {attentionItems.map((item) => (
+              <div key={item.id} className="rounded-control border border-line bg-bg p-3">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className={`rounded-badge px-1.5 py-0.5 text-[10px] font-semibold leading-4 ${item.severity === 'danger' ? 'bg-danger/10 text-danger' : item.severity === 'warning' ? 'bg-warning/10 text-warning' : 'bg-info/10 text-info'}`}>
                         {item.category}
                       </span>
-                      <h4 className="text-xs font-semibold text-[var(--text)]">{item.title}</h4>
+                      <h3 className="text-xs font-semibold text-fg">{item.title}</h3>
                     </div>
-                    <p className="text-[11px] text-[var(--muted)] leading-relaxed">{item.description}</p>
+                    <p className="mt-1 text-xs leading-5 text-muted">{item.description}</p>
                   </div>
-                  <Link
-                    to={item.linkUrl}
-                    className="min-h-10 min-w-10 px-2 rounded-control bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--text)] border border-[var(--line)] shrink-0 text-xs font-sans flex items-center gap-1 hover:border-[var(--accent)] transition-colors"
-                  >
-                    <span>Resolve</span>
-                    <ArrowUpRight size={12} />
+                  <Link to={item.linkUrl} className={ghostLinkClass}>
+                    Resolve <ArrowUpRight size={13} />
                   </Link>
                 </div>
-              );
-            })}
+              </div>
+            ))}
           </div>
         )}
-      </div>
+      </Card>
 
-      {/* ------------------------------------------------------------- */}
-      {/* 4. TWO-COLUMN OPERATIONAL SPLIT: PIPELINE & FINANCIALS */}
-      {/* ------------------------------------------------------------- */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Sales Pipeline Breakdown */}
-        <div className="ams-dashboard-card ams-panel p-5 space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-sm font-semibold font-sans text-[var(--text)] flex items-center gap-2">
-                <Kanban size={15} className="text-[var(--accent)]" />
-                <span>{language === 'id' ? 'Sebaran Tahapan Pipeline CRM' : 'Sales Pipeline by Stage'}</span>
-              </h3>
-              <p className="text-[10px] font-sans text-[var(--muted)] mt-0.5">Current deal distribution</p>
-            </div>
-            <Link
-              to="/admin/crm"
-              className="text-xs font-sans text-[var(--accent)] hover:underline flex items-center gap-1"
-            >
-              <span>Open CRM</span>
-              <ArrowUpRight size={12} />
+      <div className="grid grid-cols-1 gap-3 lg:grid-cols-5">
+        <Card
+          title="Sales Pipeline by Stage"
+          className="lg:col-span-3"
+          action={
+            <Link to="/admin/crm" className={ghostLinkClass}>
+              {openCrmLabel} <ArrowUpRight size={13} />
             </Link>
-          </div>
-
-          <div className="space-y-2.5">
-            {pipelineStages.length === 0 ? (
-              <div className="p-6 text-center text-xs font-sans text-[var(--muted)]">
-                No deals currently in pipeline.
-              </div>
-            ) : (
-              pipelineStages.map((st) => (
-                <div key={st.stage} className="p-2.5 rounded-control bg-[var(--panel)] border border-[var(--line)] flex items-center justify-between text-xs">
-                  <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-[var(--accent)]" />
-                    <span className="font-sans uppercase text-[var(--text)] text-[11px] font-semibold">{st.stage}</span>
-                    <span className="text-[10px] font-sans text-[var(--muted)]">({st.count} deals)</span>
-                  </div>
-                  <span className="font-sans text-[var(--text)] font-semibold">{formatCurrency(st.value)}</span>
-                </div>
-              ))
-            )}
-          </div>
-        </div>
-
-        {/* Financial Operating Summary */}
-        <div className="ams-dashboard-card ams-panel p-5 space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-sm font-semibold font-sans text-[var(--text)] flex items-center gap-2">
-                <DollarSign size={15} className="text-[var(--success)]" />
-                <span>{language === 'id' ? 'Ringkasan Keuangan Operasional' : 'Financial Operating Summary'}</span>
-              </h3>
-              <p className="text-[10px] font-sans text-[var(--muted)] mt-0.5">Current financial snapshot</p>
-            </div>
-            <Link
-              to="/admin/invoicing"
-              className="text-xs font-sans text-[var(--accent)] hover:underline flex items-center gap-1"
-            >
-              <span>Invoicing</span>
-              <ArrowUpRight size={12} />
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-2 gap-3 text-xs">
-            <div className="p-3 rounded-control bg-[var(--panel)] border border-[var(--line)]">
-              <div className="text-[10px] font-sans text-[var(--muted)]">Operating Expenses (OpEx)</div>
-              <div className="text-base font-semibold font-sans text-[var(--text)] mt-1">
-                {formatCurrency(data?.financials?.operatingExpenses || 0)}
-              </div>
-            </div>
-
-            <div className="p-3 rounded-control bg-[var(--panel)] border border-[var(--line)]">
-              <div className="text-[10px] font-sans text-[var(--muted)]">Net Operating Margin</div>
-              <div className="text-base font-semibold font-sans text-[var(--success)] mt-1">
-                {data?.financials?.margin || '0'}%
-              </div>
-            </div>
-
-            <div className="p-3 rounded-control bg-[var(--panel)] border border-[var(--line)]">
-              <div className="text-[10px] font-sans text-[var(--muted)]">Net Operating Profit</div>
-              <div className={`text-base font-semibold font-sans mt-1 ${(data?.financials?.netOperatingProfit || 0) >= 0 ? 'text-[var(--text)]' : 'text-[var(--danger)]'}`}>
-                {formatCurrency(data?.financials?.netOperatingProfit || 0)}
-              </div>
-            </div>
-
-            <div className="p-3 rounded-control bg-[var(--panel)] border border-[var(--line)]">
-              <div className="text-[10px] font-sans text-[var(--muted)]">Proposals Awaiting Approval</div>
-              <div className="text-base font-semibold font-sans text-[var(--text)] mt-1">
-                {data?.todayAtKapitech?.proposalsAwaitingCount || 0}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* ------------------------------------------------------------- */}
-      {/* 5. ACTIVE PROJECTS STATUS (DELIVERY HEALTH) */}
-      {/* ------------------------------------------------------------- */}
-      <div className="ams-dashboard-card ams-panel p-5 space-y-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h3 className="text-sm font-semibold font-sans text-[var(--text)] flex items-center gap-2">
-              <Layers size={15} className="text-[var(--accent)]" />
-              <span>{language === 'id' ? 'Status Eksekusi Proyek Klien' : 'Client Project Delivery Status'}</span>
-            </h3>
-            <p className="text-xs font-sans text-[var(--muted)] mt-0.5">Current active engagements from project registry</p>
-          </div>
-          <Link
-            to="/admin/projects"
-            className="text-xs font-sans text-[var(--accent)] hover:underline flex items-center gap-1"
-          >
-            <span>All Projects</span>
-            <ArrowUpRight size={12} />
-          </Link>
-        </div>
-
-        {recentProjects.length === 0 ? (
-          <div className="ams-empty-state flex min-h-[160px] flex-col items-center justify-center gap-3 rounded-control border border-line bg-bg px-4 py-8 text-center">
-            <div className="flex h-9 w-9 items-center justify-center rounded-control border border-line bg-panel text-muted">
-              <Layers size={18} />
-            </div>
-            <div>
-              <p className="text-sm font-medium text-fg">No active projects currently enrolled in registry.</p>
-              <p className="mt-1 text-xs leading-relaxed text-muted">Active client projects will appear here when they are available.</p>
-            </div>
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead>
-                <tr className="border-b border-[var(--line)] text-[10px] font-sans text-[var(--muted)] uppercase">
-                  <th className="py-2.5 px-3">Project</th>
-                  <th className="py-2.5 px-3">Client</th>
-                  <th className="py-2.5 px-3">Health</th>
-                  <th className="py-2.5 px-3">Budget / Value</th>
-                  <th className="py-2.5 px-3">Deadline</th>
-                  <th className="py-2.5 px-3 text-right">Action</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-white/[0.04] text-[var(--text)]">
-                {recentProjects.map((p) => {
-                  const isAtRisk = p.health === 'At Risk' || p.health === 'Delayed';
-                  return (
-                    <tr key={p.id} className="hover:bg-panel-hover transition-colors">
-                      <td className="py-3 px-3 font-semibold text-[var(--text)]">
-                        <div className="flex items-center gap-2">
-                          <span className="truncate max-w-[220px]">{p.title || p.name || 'Untitled Project'}</span>
-                        </div>
-                      </td>
-                      <td className="py-3 px-3 text-[var(--muted)] font-sans text-[11px]">
-                        {p.client || 'Internal'}
-                      </td>
-                      <td className="py-3 px-3">
-                        <span className={`px-2 py-0.5 rounded-badge text-[10px] font-sans font-semibold ${
-                          p.health === 'On Track'
-                            ? 'bg-[var(--success)]/10 text-[var(--success)] border border-[var(--success)]/20'
-                            : isAtRisk
-                            ? 'bg-[var(--warning)]/10 text-[var(--warning)] border border-[var(--warning)]/20'
-                            : 'bg-[var(--panel)] text-[var(--muted)]'
-                        }`}>
-                          {p.health || 'Active'}
-                        </span>
-                      </td>
-                      <td className="py-3 px-3 font-sans text-[11px] text-[var(--text)]">
-                        {formatCurrency(p.contractValue || p.budget || 0)}
-                      </td>
-                      <td className="py-3 px-3 font-sans text-[11px] text-[var(--muted)]">
-                        {p.deadline || p.targetDeliveryDate || 'N/A'}
-                      </td>
-                      <td className="py-3 px-3 text-right">
-                        <button
-                          onClick={() => navigate('/admin/projects')}
-                          className="min-h-10 inline-flex items-center text-[11px] font-sans text-[var(--accent)] hover:underline"
-                        >
-                          View →
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
-
-      {/* ------------------------------------------------------------- */}
-      {/* 6. RECENT AUDIT ACTIVITY (IMMUTABLE SERVER ACTIVITY TRAIL) */}
-      {/* ------------------------------------------------------------- */}
-      <div className="ams-dashboard-card ams-panel p-5 space-y-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h3 className="text-sm font-semibold font-sans text-[var(--text)] flex items-center gap-2">
-              <Activity size={15} className="text-[var(--accent)]" />
-              <span>{language === 'id' ? 'Log Aktivitas Sistem & Audit Trail' : 'System Audit Trail & Operations Feed'}</span>
-            </h3>
-            <p className="text-[10px] font-sans text-[var(--muted)] mt-0.5">Events recorded by the server audit log</p>
-          </div>
-          <Link
-            to="/admin/settings"
-            className="text-xs font-sans text-[var(--muted)] hover:text-[var(--text)] flex items-center gap-1"
-          >
-            <span>Full Audit Logs</span>
-            <ExternalLink size={11} />
-          </Link>
-        </div>
-
-        <div className="space-y-2">
-          {recentLogs.length === 0 ? (
-            <div className="p-6 text-center text-xs font-sans text-[var(--muted)]">
-              No audit activities recorded.
-            </div>
+          }
+        >
+          {pipelineStages.length === 0 ? (
+            <EmptyState icon={FolderKanban} message="No deals currently in pipeline." />
           ) : (
-            recentLogs.slice(0, 6).map((log, idx) => (
-              <div key={log.id || idx} className="p-2.5 rounded-control bg-[var(--panel)] border border-[var(--line)] flex items-center justify-between text-xs font-sans">
-                <div className="flex items-center gap-3 min-w-0">
-                  <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${
-                    log.severity === 'danger' ? 'bg-[var(--danger)]' : log.severity === 'warning' ? 'bg-[var(--warning)]' : 'bg-[var(--success)]'
-                  }`} />
-                  <span className="font-semibold text-[var(--text)] uppercase text-[10px] shrink-0">{log.action}</span>
-                  <span className="text-[var(--muted)] truncate">{log.details || log.message}</span>
+            <div className="divide-y divide-line rounded-control border border-line">
+              {pipelineStages.map((stage) => (
+                <div key={stage.stage} className="flex items-center justify-between gap-4 px-3 py-3 text-xs">
+                  <div className="flex min-w-0 items-center gap-2">
+                    <span className="h-2 w-2 shrink-0 rounded-full bg-accent" />
+                    <span className="truncate text-fg">{stage.stage}</span>
+                    <span className="shrink-0 text-muted tabular-nums">{stage.count}</span>
+                  </div>
+                  <span className="shrink-0 font-medium tabular-nums text-fg">{formatCurrency(stage.value)}</span>
                 </div>
-                <div className="text-[10px] text-[var(--muted)] shrink-0 ml-2">
-                  {log.timestamp ? new Date(log.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Recent'}
+              ))}
+            </div>
+          )}
+        </Card>
+
+        <Card
+          title="Financial Operating Summary"
+          className="lg:col-span-2"
+          action={
+            <Link to="/admin/invoicing" className={ghostLinkClass}>
+              {invoicingLabel} <ArrowUpRight size={13} />
+            </Link>
+          }
+        >
+          <div className="grid grid-cols-2 divide-x divide-y divide-line rounded-control border border-line">
+            <div className="min-w-0 p-3">
+              <span className="text-xs text-muted">OpEx</span>
+              <p className="mt-1 truncate text-sm font-medium tabular-nums text-fg">{formatCurrency(financials.operatingExpenses)}</p>
+            </div>
+            <div className="min-w-0 p-3">
+              <span className="text-xs text-muted">Net Margin</span>
+              <p className="mt-1 truncate text-sm font-medium tabular-nums text-fg">{financials.margin ?? '0%'}</p>
+            </div>
+            <div className="min-w-0 p-3">
+              <span className="text-xs text-muted">Profit</span>
+              <p className="mt-1 truncate text-sm font-medium tabular-nums text-fg">{formatCurrency(financials.netOperatingProfit)}</p>
+            </div>
+            <div className="min-w-0 p-3">
+              <span className="text-xs text-muted">Proposals</span>
+              <p className="mt-1 text-sm font-medium tabular-nums text-fg">{data?.metrics.pendingApprovals ?? 0}</p>
+            </div>
+          </div>
+        </Card>
+      </div>
+
+      <Card
+        title="Client Project Delivery Status"
+        action={
+          <Link to="/admin/projects" className={ghostLinkClass}>
+            {projectsLabel} <ArrowUpRight size={13} />
+          </Link>
+        }
+      >
+        {projects.length === 0 ? (
+          <EmptyState icon={FolderKanban} message="No active projects currently enrolled in registry." />
+        ) : (
+          <div className="overflow-hidden rounded-control border border-line">
+            {projects.slice(0, 6).map((project, index) => (
+              <div key={project.id ?? index} className="flex flex-col gap-2 border-b border-line px-3 py-3 last:border-b-0 sm:flex-row sm:items-center sm:justify-between">
+                <div className="min-w-0">
+                  <p className="truncate text-xs font-medium text-fg">{project.name ?? project.title ?? 'Untitled project'}</p>
+                  <p className="mt-0.5 truncate text-xs text-muted">{project.clientName ?? project.client ?? 'Client'}</p>
+                </div>
+                <span className="text-xs text-muted">{project.status ?? 'Active'}</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </Card>
+
+      <Card
+        title="System Audit Trail & Operations Feed"
+        action={
+          <Link to="/admin/settings" className={ghostLinkClass}>
+            {auditLabel} <ArrowUpRight size={13} />
+          </Link>
+        }
+      >
+        {recentActivity.length === 0 ? (
+          <EmptyState icon={Activity} message="No audit events recorded yet." />
+        ) : (
+          <div className="overflow-hidden rounded-control border border-line">
+            {recentActivity.slice(0, 8).map((event, index) => (
+              <div key={event.id ?? index} className="flex items-start gap-3 border-b border-line px-3 py-3 last:border-b-0">
+                <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-control border border-line bg-bg text-muted">
+                  <Activity size={14} />
+                </span>
+                <div className="min-w-0">
+                  <p className="text-xs leading-5 text-fg">{event.action ?? event.title ?? 'System activity'}</p>
+                  <p className="mt-0.5 text-[11px] leading-4 text-muted">{event.description ?? event.actor ?? 'AMS operation'}</p>
                 </div>
               </div>
-            ))
-          )}
-        </div>
+            ))}
+          </div>
+        )}
+      </Card>
+
+      <div className="sr-only" aria-live="polite">
+        {isLoading ? 'Refreshing executive dashboard' : 'Executive dashboard ready'}
       </div>
     </div>
   );
 };
-
 export default GlobalExecutiveDashboard;
