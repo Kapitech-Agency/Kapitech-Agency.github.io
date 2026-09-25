@@ -700,7 +700,7 @@ export const AdminVendors: React.FC = () => {
             </div>
 
             <form onSubmit={handleSaveVendor} className="py-4 space-y-3.5 max-h-[calc(100dvh-24px)] overflow-y-auto pr-1 custom-scrollbar">
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="text-[11px] font-sans text-[var(--muted)] normal-case block mb-1">
                     {language === 'id' ? 'Nama Lengkap *' : 'Full Name *'}
@@ -729,7 +729,7 @@ export const AdminVendors: React.FC = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="text-[11px] font-sans text-[var(--muted)] normal-case block mb-1">Email *</label>
                   <input
@@ -756,7 +756,7 @@ export const AdminVendors: React.FC = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="text-[11px] font-sans text-[var(--muted)] normal-case block mb-1">
                     {language === 'id' ? 'Kategori Layanan' : 'Category'}
@@ -788,7 +788,7 @@ export const AdminVendors: React.FC = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="text-[11px] font-sans text-[var(--muted)] normal-case block mb-1">
                     {language === 'id' ? 'Tipe Kemitraan' : 'Engagement Type'}

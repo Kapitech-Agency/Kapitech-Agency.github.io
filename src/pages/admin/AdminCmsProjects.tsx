@@ -476,7 +476,7 @@ export const AdminCmsProjects: React.FC = () => {
                       ))}
                     </div>
                     {editingProject.impact && editingProject.impact.length > 0 && (
-                      <div className="grid grid-cols-2 gap-2 pt-2 border-t border-[var(--line)]">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2 border-t border-[var(--line)]">
                         {editingProject.impact.map((imp, idx) => (
                           <div key={idx} className="bg-[var(--panel)] p-2 rounded-control border border-[var(--line)]">
                             <div className="text-[9px] text-[var(--muted)] normal-case">{imp.label}</div>
