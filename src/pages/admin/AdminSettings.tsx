@@ -878,7 +878,7 @@ export const AdminSettings: React.FC = () => {
               </div>
             </div>
 
-            <div className="overflow-x-auto custom-scrollbar">
+            <div className="ams-table-scroll overflow-x-auto custom-scrollbar">
               <table className="w-full text-xs font-sans text-left border-collapse min-w-[650px]">
                 <thead>
                   <tr className="border-b border-[var(--line)] text-[var(--muted)]">
