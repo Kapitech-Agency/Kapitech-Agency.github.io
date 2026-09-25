@@ -198,7 +198,7 @@ export const AdminDocuments: React.FC = () => {
 
         <button
           onClick={() => setIsUploadModalOpen(true)}
-          className="min-h-10 px-3 rounded-control bg-[var(--accent)] hover:bg-[var(--accent)] text-[var(--accent-text)] text-xs font-sans font-medium flex items-center justify-center gap-2 transition-colors shrink-0"
+          className="min-h-10 px-3 rounded-control bg-[var(--accent)] hover:brightness-110 text-white text-xs font-sans font-medium flex items-center justify-center gap-2 transition-colors shrink-0"
         >
           <Plus size={15} />
           <span>{language === 'id' ? 'Unggah Dokumen' : 'Upload Document'}</span>
@@ -432,7 +432,7 @@ export const AdminDocuments: React.FC = () => {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="min-h-10 px-4 py-2 rounded-control bg-[var(--accent)] hover:bg-[var(--accent)] text-[var(--accent-text)] text-xs font-sans font-medium disabled:opacity-50 flex items-center gap-1.5"
+                  className="min-h-10 px-4 py-2 rounded-control bg-[var(--accent)] hover:brightness-110 text-white text-xs font-sans font-medium disabled:opacity-50 flex items-center gap-1.5"
                 >
                   {isSubmitting ? <Loader2 size={13} className="animate-spin" /> : <Plus size={14} />}
                   <span>{language === 'id' ? 'Simpan ke Private Vault' : 'Store in Private Vault'}</span>

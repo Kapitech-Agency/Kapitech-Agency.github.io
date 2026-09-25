@@ -846,7 +846,7 @@ export const AdminInvoicing: React.FC = () => {
       {/* 5. Create / Edit Invoice Modal (Mobile Fullscreen + Sticky Header) */}
       {isInvoiceModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/80  flex items-center justify-center p-0 sm:p-4 overflow-y-auto">
-          <div className="bg-[var(--panel)] border-0 sm:border sm:border-[var(--line)] rounded-none sm:rounded-card w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-2xl shadow-none flex flex-col overflow-hidden">
+          <div className="bg-[var(--panel)] border-0 sm:border sm:border-[var(--line)] rounded-none sm:rounded-card w-full h-full sm:h-auto sm:max-h-[calc(100dvh-24px)] sm:max-w-2xl shadow-none flex flex-col overflow-hidden">
             
             {/* Sticky Header */}
             <div className="sticky top-0 z-20 bg-[var(--panel)]/95  px-5 sm:px-6 py-4 border-b border-[var(--line)] flex items-center justify-between shrink-0">
@@ -1042,7 +1042,7 @@ export const AdminInvoicing: React.FC = () => {
       {/* 6. Record Expense Modal (Mobile Fullscreen + Sticky Header) */}
       {isExpenseModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/80  flex items-center justify-center p-0 sm:p-4 overflow-y-auto">
-          <div className="bg-[var(--panel)] border-0 sm:border sm:border-[var(--line)] rounded-none sm:rounded-card w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-md shadow-none flex flex-col overflow-hidden">
+          <div className="bg-[var(--panel)] border-0 sm:border sm:border-[var(--line)] rounded-none sm:rounded-card w-full h-full sm:h-auto sm:max-h-[calc(100dvh-24px)] sm:max-w-md shadow-none flex flex-col overflow-hidden">
             
             {/* Sticky Header */}
             <div className="sticky top-0 z-20 bg-[var(--panel)]/95  px-5 sm:px-6 py-4 border-b border-[var(--line)] flex items-center justify-between shrink-0">
@@ -1137,7 +1137,7 @@ export const AdminInvoicing: React.FC = () => {
       {/* 6b. Record Payment Modal */}
       {paymentModalInvoice && (
         <div className="fixed inset-0 z-50 bg-black/80  flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-          <div className="bg-[var(--panel)] border border-[var(--line)] rounded-card w-full max-w-lg shadow-none relative overflow-hidden flex flex-col max-h-[92vh]">
+          <div className="bg-[var(--panel)] border border-[var(--line)] rounded-card w-full max-w-lg shadow-none relative overflow-hidden flex flex-col max-h-[calc(100dvh-24px)]">
             {/* Modal Header */}
             <div className="sticky top-0 z-20 bg-[var(--panel)]/95  px-5 sm:px-6 py-4 border-b border-[var(--line)] flex items-center justify-between shrink-0">
               <div className="flex items-center gap-2.5">
@@ -1307,7 +1307,7 @@ export const AdminInvoicing: React.FC = () => {
       {/* 7. Printable Invoice Preview Slide-Over / Modal (Mobile Fullscreen + Sticky Header) */}
       {previewInvoice && (
         <div className="fixed inset-0 z-50 bg-black/85  flex items-center justify-center p-0 sm:p-4 overflow-y-auto">
-          <div className="bg-[var(--panel)] text-[var(--text)] border border-[var(--line)] rounded-none sm:rounded-card w-full h-full sm:h-auto sm:max-h-[92vh] sm:max-w-2xl shadow-none font-sans relative flex flex-col overflow-hidden">
+          <div className="bg-[var(--panel)] text-[var(--text)] border border-[var(--line)] rounded-none sm:rounded-card w-full h-full sm:h-auto sm:max-h-[calc(100dvh-24px)] sm:max-w-2xl shadow-none font-sans relative flex flex-col overflow-hidden">
             
             {/* Sticky Header for Preview Modal */}
             <div className="sticky top-0 z-20 bg-[var(--panel)] px-4 sm:px-6 py-4 border-b border-[var(--line)] flex items-center justify-between shrink-0">

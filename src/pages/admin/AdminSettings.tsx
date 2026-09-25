@@ -855,7 +855,7 @@ export const AdminSettings: React.FC = () => {
                         <button
                           type="button"
                           onClick={() => handleDeleteAccountClick(acc.id, acc.name)}
-                          className="h-8 px-2 rounded-control hover:bg-red-500/10 text-[var(--muted)] hover:text-[var(--danger)] text-[11px] font-sans transition-colors flex items-center gap-1"
+                          className="h-8 px-2 rounded-control hover:bg-[var(--danger)]/10 text-[var(--muted)] hover:text-[var(--danger)] text-[11px] font-sans transition-colors flex items-center gap-1"
                           title="Hapus Akun"
                         >
                           <Trash2 size={13} />
@@ -951,7 +951,7 @@ export const AdminSettings: React.FC = () => {
       {/* MODAL: TAMBAH AKUN BARU (MOBILE FULLSCREEN + STICKY HEADER & FOOTER) */}
       {isAddAccountModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-0 sm:p-4 bg-black/80  overflow-y-auto">
-          <div className="w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-2xl bg-[var(--panel)] border-0 sm:border sm:border-[var(--line)] rounded-none sm:rounded-card shadow-none flex flex-col overflow-hidden">
+          <div className="w-full h-full sm:h-auto sm:max-h-[calc(100dvh-24px)] sm:max-w-2xl bg-[var(--panel)] border-0 sm:border sm:border-[var(--line)] rounded-none sm:rounded-card shadow-none flex flex-col overflow-hidden">
             
             {/* Sticky Header */}
             <div className="sticky top-0 z-20 bg-[var(--panel)]  px-5 sm:px-6 py-4 border-b border-[var(--line)] flex items-center justify-between shrink-0">
@@ -1187,7 +1187,7 @@ export const AdminSettings: React.FC = () => {
       {/* MODAL: EDIT PERMISSIONS (MOBILE FULLSCREEN + STICKY HEADER & FOOTER) */}
       {isEditPermsModalOpen && editingAccount && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-0 sm:p-4 bg-black/80  overflow-y-auto">
-          <div className="w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-xl bg-[var(--panel)] border-0 sm:border sm:border-[var(--line)] rounded-none sm:rounded-card shadow-none flex flex-col overflow-hidden">
+          <div className="w-full h-full sm:h-auto sm:max-h-[calc(100dvh-24px)] sm:max-w-xl bg-[var(--panel)] border-0 sm:border sm:border-[var(--line)] rounded-none sm:rounded-card shadow-none flex flex-col overflow-hidden">
             
             {/* Sticky Header */}
             <div className="sticky top-0 z-20 bg-[var(--panel)]  px-5 sm:px-6 py-4 border-b border-[var(--line)] flex items-center justify-between shrink-0">

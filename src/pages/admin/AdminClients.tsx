@@ -228,7 +228,7 @@ export const AdminClients: React.FC = () => {
         {canManageClients && (
           <button
             onClick={handleOpenCreateClient}
-            className="min-h-10 px-4 rounded-control bg-[var(--accent)] hover:bg-[var(--accent)] text-[var(--accent-text)] text-xs font-sans font-medium transition-colors flex items-center justify-center gap-1.5 self-start sm:self-auto"
+            className="min-h-10 px-4 rounded-control bg-[var(--accent)] hover:brightness-110 text-white text-xs font-sans font-medium transition-colors flex items-center justify-center gap-1.5 self-start sm:self-auto"
           >
             <Plus size={14} />
             <span>{t('admin.client.addClient')}</span>
