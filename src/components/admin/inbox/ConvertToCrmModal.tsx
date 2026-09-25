@@ -228,7 +228,7 @@ export const ConvertToCrmModal: React.FC<ConvertToCrmModalProps> = ({
                   onClick={() => setPillar(p)}
                   className={`p-2.5 rounded-control border text-left text-xs font-sans transition-all ${
                     pillar === p
-                      ? 'bg-[var(--accent)]/10 text-[var(--accent-text)] border-[var(--accent)]/30 font-semibold shadow-sm'
+                      ? 'bg-[var(--accent)]/10 text-[var(--accent-text)] border-[var(--accent)]/30 font-semibold'
                       : 'bg-[var(--panel)] text-[var(--muted)] border-line hover:text-[var(--text)]'
                   }`}
                 >
@@ -252,7 +252,7 @@ export const ConvertToCrmModal: React.FC<ConvertToCrmModalProps> = ({
                   onClick={() => setStage(stg.value)}
                   className={`p-3 rounded-control border text-left transition-all ${
                     stage === stg.value
-                      ? 'bg-[var(--accent)]/10 text-[var(--accent-text)] border-[var(--accent)]/30 font-semibold shadow-sm'
+                      ? 'bg-[var(--accent)]/10 text-[var(--accent-text)] border-[var(--accent)]/30 font-semibold'
                       : 'bg-[var(--panel)] text-[var(--muted)] border-line hover:text-[var(--text)]'
                   }`}
                 >
