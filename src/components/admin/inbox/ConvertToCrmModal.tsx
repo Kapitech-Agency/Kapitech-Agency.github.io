@@ -121,7 +121,7 @@ export const ConvertToCrmModal: React.FC<ConvertToCrmModalProps> = ({
       />
 
       {/* Modal Dialog */}
-      <div className="relative w-full max-w-xl bg-[var(--panel)] border border-line rounded-card shadow-none flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-xl bg-[var(--panel)] border border-line rounded-card -none flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         
         {/* Header */}
         <div className="p-5 border-b border-line flex items-center justify-between bg-[var(--panel)]">
@@ -303,7 +303,7 @@ export const ConvertToCrmModal: React.FC<ConvertToCrmModalProps> = ({
             type="button"
             disabled={isSubmitting}
             onClick={handleConvert}
-            className="px-5 py-2.5 rounded-control bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white text-xs font-sans font-medium transition-colors flex items-center gap-2 shadow-none"
+            className="px-5 py-2.5 rounded-control bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white text-xs font-sans font-medium transition-colors flex items-center gap-2 -none"
           >
             <span>{language === 'id' ? 'Konfirmasi & Buat Lead CRM' : 'Confirm & Create CRM Deal'}</span>
             <ArrowRight size={14} />
