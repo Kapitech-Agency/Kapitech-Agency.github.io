@@ -509,7 +509,7 @@ export const AdminProjects: React.FC = () => {
       <div className="ams-dashboard-header">
         <div>
           <h1 className="ams-page-title">
-            <Layers className="text-[var(--danger)]" size={24} />
+            <Briefcase className="text-[var(--accent-text)] shrink-0" size={22} />
             <span>{t('admin.nav.projects')}</span>
           </h1>
           <p className="text-xs text-[var(--muted)] mt-1 font-sans">
