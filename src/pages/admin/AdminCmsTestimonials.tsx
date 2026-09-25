@@ -116,7 +116,7 @@ export const AdminCmsTestimonials: React.FC = () => {
               </div>
 
               {/* Quote */}
-              <p className="text-xs text-gray-300 leading-relaxed italic mb-6">
+              <p className="text-xs text-[var(--muted)] leading-relaxed italic mb-6">
                 "{item.quoteId || item.quote}"
               </p>
             </div>
