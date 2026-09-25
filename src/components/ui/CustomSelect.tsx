@@ -128,7 +128,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
         anchorRef={triggerRef}
         onClose={() => setIsOpen(false)}
         align={align}
-        className={`z-50 min-w-[140px] sm:min-w-[180px] max-w-[calc(100vw-16px)] sm:max-w-[280px] max-h-[280px] overflow-y-auto bg-bg border border-line rounded-control p-1 custom-scrollbar font-sans text-xs ${menuClassName}`}
+        className={`ams-dropdown-surface z-50 min-w-[140px] sm:min-w-[180px] max-w-[calc(100vw-16px)] sm:max-w-[280px] max-h-[280px] overflow-y-auto p-1 custom-scrollbar font-sans text-xs ${menuClassName}`}
       >
         <div role="listbox" aria-label={placeholder}>
           {options.length === 0 ? (
@@ -152,7 +152,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
                   }}
                   role="option"
                   aria-selected={isSelected}
-                  className={`w-full flex items-center justify-between min-h-10 sm:min-h-9 px-3 py-2 rounded-chip text-left transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-[-2px] group ${
+                  className={`ams-dropdown-item w-full flex items-center justify-between min-h-10 sm:min-h-9 text-left transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-[-2px] group ${
                     isSelected
                       ? 'bg-accent/14 text-fg font-semibold'
                       : isActive
