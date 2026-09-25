@@ -47,13 +47,13 @@ jobs:
         run: bun run db:migrate
 
       - name: Security regression tests
-        run: bun test
+        run: node --import tsx --test tests/**/*.test.ts
 
       - name: PostgreSQL integration tests
         env:
           KAPITECH_POSTGRES_URL: postgresql://postgres:postgres@localhost:5432/kapitech_ams_test
           KAPITECH_POSTGRES_SSL: disable
-        run: bun test tests/postgres-integration.test.ts
+        run: node --import tsx --test tests/postgres-integration.test.ts
 
       - name: Dependency audit
         run: bun audit --audit-level=high
