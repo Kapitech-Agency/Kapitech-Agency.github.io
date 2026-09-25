@@ -216,7 +216,7 @@ https://kapitech.id`
       />
 
       {/* Modal Dialog */}
-      <div className="relative w-full max-w-2xl max-h-[85vh] bg-[var(--panel)] border border-line rounded-card shadow-none flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-2xl max-h-[calc(100dvh-24px)] bg-[var(--panel)] border border-line rounded-card shadow-none flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         
         {/* Header */}
         <div className="p-5 border-b border-line flex items-center justify-between bg-[var(--panel)]">

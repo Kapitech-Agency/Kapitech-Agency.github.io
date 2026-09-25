@@ -896,7 +896,7 @@ export const AdminInvoicing: React.FC = () => {
                       onChange={(e) => setClientName(e.target.value)}
                       required
                       placeholder="e.g. Marcus Thorne"
-                      className="w-full px-3 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
+                      className="w-full px-3 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
                     />
                   </div>
                   <div>
@@ -907,7 +907,7 @@ export const AdminInvoicing: React.FC = () => {
                       onChange={(e) => setClientCompany(e.target.value)}
                       required
                       placeholder="e.g. Lumina Real Estate"
-                      className="w-full px-3 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
+                      className="w-full px-3 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
                     />
                   </div>
                 </div>
@@ -920,7 +920,7 @@ export const AdminInvoicing: React.FC = () => {
                       value={clientEmail}
                       onChange={(e) => setClientEmail(e.target.value)}
                       placeholder="client@company.com"
-                      className="w-full px-3 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
+                      className="w-full px-3 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
                     />
                   </div>
                   <div>
@@ -930,7 +930,7 @@ export const AdminInvoicing: React.FC = () => {
                       value={clientPhone}
                       onChange={(e) => setClientPhone(e.target.value)}
                       placeholder="+62 811-XXXX-XXXX"
-                      className="w-full px-3 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
+                      className="w-full px-3 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
                     />
                   </div>
                 </div>
@@ -978,7 +978,7 @@ export const AdminInvoicing: React.FC = () => {
                       type="date"
                       value={issueDate}
                       onChange={(e) => setIssueDate(e.target.value)}
-                      className="w-full px-3 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
+                      className="w-full px-3 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
                     />
                   </div>
                   <div>
@@ -987,7 +987,7 @@ export const AdminInvoicing: React.FC = () => {
                       type="date"
                       value={dueDate}
                       onChange={(e) => setDueDate(e.target.value)}
-                      className="w-full px-3 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
+                      className="w-full px-3 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
                     />
                   </div>
                   <div>
@@ -1013,7 +1013,7 @@ export const AdminInvoicing: React.FC = () => {
                     rows={2}
                     value={invoiceNotes}
                     onChange={(e) => setInvoiceNotes(e.target.value)}
-                    className="w-full px-3 py-2 bg-[var(--bg)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
+                    className="w-full px-3 py-2 bg-[var(--bg)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
                   />
                 </div>
               </div>
@@ -1086,7 +1086,7 @@ export const AdminInvoicing: React.FC = () => {
                     onChange={(e) => setExpDesc(e.target.value)}
                     required
                     placeholder="e.g. Google Cloud Run cluster billing"
-                    className="w-full px-3 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
+                    className="w-full px-3 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
                   />
                 </div>
 
@@ -1098,7 +1098,7 @@ export const AdminInvoicing: React.FC = () => {
                       value={expAmount}
                       onChange={(e) => setExpAmount(Number(e.target.value))}
                       required
-                      className="w-full px-3 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
+                      className="w-full px-3 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
                     />
                   </div>
                   <div>
@@ -1107,7 +1107,7 @@ export const AdminInvoicing: React.FC = () => {
                       type="date"
                       value={expDate}
                       onChange={(e) => setExpDate(e.target.value)}
-                      className="w-full px-3 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
+                      className="w-full px-3 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
                     />
                   </div>
                 </div>
