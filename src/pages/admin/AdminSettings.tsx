@@ -510,7 +510,7 @@ export const AdminSettings: React.FC = () => {
           {securityStatus && (
             <div className={`mb-6 p-4 rounded-card text-xs font-sans flex items-start gap-2.5 ${
               securityStatus.success 
-                ? 'bg-[var(--success)]/10 border border-[var(--success)]/30 text-emerald-300' 
+                ? 'bg-[var(--success)]/10 border border-[var(--success)]/30 text-[var(--success)]' 
                 : 'bg-[var(--danger)]/10 border border-[var(--danger)]/30 text-red-300'
             }`}>
               {securityStatus.success ? <Check size={16} className="shrink-0 mt-0.5" /> : <AlertCircle size={16} className="shrink-0 mt-0.5" />}
@@ -610,7 +610,7 @@ export const AdminSettings: React.FC = () => {
           </div>
 
           {metaStatus && (
-            <div className="mb-6 p-4 rounded-card text-xs font-sans flex items-start gap-2.5 bg-[var(--success)]/10 border border-[var(--success)]/30 text-emerald-300">
+            <div className="mb-6 p-4 rounded-card text-xs font-sans flex items-start gap-2.5 bg-[var(--success)]/10 border border-[var(--success)]/30 text-[var(--success)]">
               <Check size={16} className="shrink-0 mt-0.5" />
               <span>{metaStatus}</span>
             </div>
@@ -717,7 +717,7 @@ export const AdminSettings: React.FC = () => {
           {accountActionMessage && (
             <div className={`p-4 rounded-card border flex items-center gap-3 text-xs font-sans animate-fadeIn ${
               accountActionMessage.success
-                ? 'bg-[var(--success)]/10 border-[var(--success)]/30 text-emerald-300'
+                ? 'bg-[var(--success)]/10 border-[var(--success)]/30 text-[var(--success)]'
                 : 'bg-[var(--danger)]/10 border-[var(--danger)]/30 text-red-300'
             }`}>
               {accountActionMessage.success ? <Check size={16} className="shrink-0 text-[var(--success)]" /> : <AlertCircle size={16} className="shrink-0 text-[var(--danger)]" />}
@@ -771,8 +771,8 @@ export const AdminSettings: React.FC = () => {
                         <div className="flex items-center gap-2.5">
                           <div className={`w-9 h-9 rounded-card flex items-center justify-center font-semibold text-xs font-sans ${
                             isMaster ? 'bg-red-500/20 text-[var(--danger)] border border-red-500/30' :
-                            isExecutive ? 'bg-amber-500/20 text-[var(--warning)] border border-amber-500/30' :
-                            isIT ? 'bg-emerald-500/20 text-[var(--success)] border border-emerald-500/30' :
+                            isExecutive ? 'bg-amber-500/20 text-[var(--warning)] border border-[var(--warning)]/30' :
+                            isIT ? 'bg-emerald-500/20 text-[var(--success)] border border-[var(--success)]/30' :
                             'bg-purple-500/20 text-purple-400 border border-purple-500/30'
                           }`}>
                             {acc.name.split(' ').map(n => n[0]).slice(0, 2).join('')}
@@ -785,8 +785,8 @@ export const AdminSettings: React.FC = () => {
 
                         <span className={`text-[10px] font-sans px-2 py-0.5 rounded-full border shrink-0 ${
                           isMaster ? 'bg-red-500/10 text-[var(--danger)] border-red-500/30' :
-                          isExecutive ? 'bg-amber-500/10 text-amber-300 border-amber-500/30' :
-                          isIT ? 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30' :
+                          isExecutive ? 'bg-[var(--warning)]/10 text-[var(--warning)] border-[var(--warning)]/30' :
+                          isIT ? 'bg-[var(--success)]/10 text-[var(--success)] border-[var(--success)]/30' :
                           'bg-purple-500/10 text-purple-300 border-purple-500/30'
                         }`}>
                           {acc.division || 'Operations'}
@@ -814,12 +814,12 @@ export const AdminSettings: React.FC = () => {
                       {/* Permissions Summary Badges */}
                       <div className="mt-3 pt-3 border-t border-[var(--line)] flex flex-wrap gap-1">
                         {acc.permissions?.canManageInvoicing && (
-                          <span className="text-[9px] font-sans px-1.5 py-0.5 bg-[var(--success)]/10 text-emerald-300 border border-emerald-800/40 rounded">
+                          <span className="text-[9px] font-sans px-1.5 py-0.5 bg-[var(--success)]/10 text-[var(--success)] border border-emerald-800/40 rounded">
                             Invoice
                           </span>
                         )}
                         {acc.permissions?.canApproveBudgets && (
-                          <span className="text-[9px] font-sans px-1.5 py-0.5 bg-[var(--warning)]/10/40 text-amber-300 border border-amber-800/40 rounded">
+                          <span className="text-[9px] font-sans px-1.5 py-0.5 bg-[var(--warning)]/10 text-[var(--warning)] border border-amber-800/40 rounded">
                             Budget Approval
                           </span>
                         )}
@@ -908,7 +908,7 @@ export const AdminSettings: React.FC = () => {
                     </td>
                     <td className="py-3.5 px-4 text-[var(--success)] font-semibold">{language === 'id' ? 'Approval & Audit Finansial Penuh' : 'Financial Approval & Audit'}</td>
                     <td className="py-3.5 px-4 text-[var(--success)] font-semibold">{language === 'id' ? 'Akses Penuh Pipeline' : 'Full Pipeline View'}</td>
-                    <td className="py-3.5 px-4 text-amber-300">{language === 'id' ? 'Review Milestone & Delivery' : 'Milestone & Delivery Review'}</td>
+                    <td className="py-3.5 px-4 text-[var(--warning)]">{language === 'id' ? 'Review Milestone & Delivery' : 'Milestone & Delivery Review'}</td>
                     <td className="py-3.5 px-4 text-[var(--muted)]">{language === 'id' ? 'Audit Log & Governance' : 'Audit Logs & Governance'}</td>
                   </tr>
                   <tr className="hover:bg-[var(--panel)]/60 transition-colors">
@@ -926,7 +926,7 @@ export const AdminSettings: React.FC = () => {
                       <span className="w-2 h-2 rounded-full bg-purple-400 shrink-0"></span>
                       <span>Tier 2: Project Manager (PM)</span>
                     </td>
-                    <td className="py-3.5 px-4 text-amber-300">{language === 'id' ? 'Lihat & Draf Invoice' : 'View & Draft Invoices'}</td>
+                    <td className="py-3.5 px-4 text-[var(--warning)]">{language === 'id' ? 'Lihat & Draf Invoice' : 'View & Draft Invoices'}</td>
                     <td className="py-3.5 px-4 text-[var(--success)] font-semibold">{language === 'id' ? 'Kelola Pipeline & Delegasi' : 'Manage Pipeline & Assign'}</td>
                     <td className="py-3.5 px-4 text-[var(--success)] font-semibold">{language === 'id' ? 'Sprint Planning & Kelola Task' : 'Sprint Planning & Task Mgmt'}</td>
                     <td className="py-3.5 px-4 text-[var(--muted)]">{language === 'id' ? 'Hanya Lihat' : 'View Only'}</td>
@@ -992,7 +992,7 @@ export const AdminSettings: React.FC = () => {
                     onClick={() => handleRoleChangeForNewAccount('Stakeholder Executive')}
                     className={`p-3.5 rounded-card border text-left transition-all ${
                       newAccRole === 'Stakeholder Executive'
-                        ? 'bg-amber-500/10 border-amber-500/50 ring-1 ring-amber-500/30'
+                        ? 'bg-[var(--warning)]/10 border-amber-500/50 ring-1 ring-amber-500/30'
                         : 'bg-[var(--panel)] border-[var(--line)] hover:border-[var(--line)]'
                     }`}
                   >
@@ -1010,7 +1010,7 @@ export const AdminSettings: React.FC = () => {
                     onClick={() => handleRoleChangeForNewAccount('Teknisi IT / Systems Engineer')}
                     className={`p-3.5 rounded-card border text-left transition-all ${
                       newAccRole === 'Teknisi IT / Systems Engineer'
-                        ? 'bg-emerald-500/10 border-emerald-500/50 ring-1 ring-emerald-500/30'
+                        ? 'bg-[var(--success)]/10 border-emerald-500/50 ring-1 ring-emerald-500/30'
                         : 'bg-[var(--panel)] border-[var(--line)] hover:border-[var(--line)]'
                     }`}
                   >
@@ -1407,7 +1407,7 @@ export const AdminSettings: React.FC = () => {
           )}
           <div className="w-full max-w-4xl bg-[var(--panel)] border border-[var(--line)] rounded-card p-5 sm:p-6 space-y-6">
           <div className="flex items-center gap-3 pb-4 border-b border-[var(--line)]">
-            <div className="w-10 h-10 rounded-card bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-[var(--success)] shrink-0">
+            <div className="w-10 h-10 rounded-card bg-[var(--success)]/10 border border-[var(--success)]/30 flex items-center justify-center text-[var(--success)] shrink-0">
               <Database size={20} />
             </div>
             <div>
@@ -1423,7 +1423,7 @@ export const AdminSettings: React.FC = () => {
           </div>
 
           {apiSaveStatus && (
-            <div className="p-4 rounded-card text-xs font-sans flex items-start gap-2.5 bg-[var(--success)]/10 border border-[var(--success)]/30 text-emerald-300">
+            <div className="p-4 rounded-card text-xs font-sans flex items-start gap-2.5 bg-[var(--success)]/10 border border-[var(--success)]/30 text-[var(--success)]">
               <Check size={16} className="shrink-0 mt-0.5" />
               <span>{apiSaveStatus}</span>
             </div>
