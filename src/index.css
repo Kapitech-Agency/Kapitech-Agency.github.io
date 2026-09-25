@@ -702,14 +702,6 @@
   border-radius: 8px;
   box-shadow: none;
 }
-.ams-shell button:focus-visible,
-.ams-shell a:focus-visible,
-.ams-shell input:focus-visible,
-.ams-shell select:focus-visible,
-.ams-shell textarea:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-}
 .ams-shell button:disabled,
 .ams-shell input:disabled,
 .ams-shell select:disabled,
@@ -1997,10 +1989,6 @@
 }
 .ams-shell [role="dialog"]:not(.ams-mobile-drawer) > :where(.overflow-y-auto, .max-h-\\[calc\\(100dvh-2rem\\)\\]) {
   scrollbar-gutter: stable;
-}
-.ams-shell .ams-page-header,
-.ams-shell .ams-dashboard-header {
-  min-width: 0;
 }
 @media (max-width: 599px) {
   .ams-shell .ams-page-header,
