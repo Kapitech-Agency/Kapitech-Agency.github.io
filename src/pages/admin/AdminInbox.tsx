@@ -389,7 +389,7 @@ export const AdminInbox: React.FC = () => {
         );
       case 'newsletter':
         return (
-          <span className="px-2 py-0.5 rounded-md bg-amber-500/10 border border-amber-500/30 text-amber-300 text-[10px] font-sans flex items-center gap-1">
+          <span className="px-2 py-0.5 rounded-md bg-[var(--warning)]/10 border border-[var(--warning)]/30 text-[var(--warning)] text-[10px] font-sans flex items-center gap-1">
             <Sparkles size={10} />
             <span>Newsletter</span>
           </span>
@@ -729,11 +729,11 @@ export const AdminInbox: React.FC = () => {
               onClick={() => setOnlyStarred(!onlyStarred)}
               className={`w-full h-10 min-h-10 px-3 rounded-card border text-xs font-sans transition-colors flex items-center justify-center gap-2 ${
                 onlyStarred
-                  ? 'bg-amber-500/10 border-amber-500/30 text-amber-400 font-semibold'
+                  ? 'bg-[var(--warning)]/10 border-[var(--warning)]/30 text-[var(--warning)] font-semibold'
                   : 'bg-[var(--panel)] border-[var(--line)] text-[var(--muted)] hover:text-[var(--text)]'
               }`}
             >
-              <Star size={14} className={onlyStarred ? 'fill-amber-400 text-amber-400' : ''} />
+              <Star size={14} className={onlyStarred ? 'fill-[var(--warning)] text-[var(--warning)]' : ''} />
               <span>{language === 'id' ? 'Ditandai' : 'Starred'}</span>
             </button>
           </div>
@@ -785,7 +785,7 @@ export const AdminInbox: React.FC = () => {
                           <Star 
                             size={14} 
                             className={`mx-auto transition-colors ${
-                              item.starred ? 'fill-amber-400 text-amber-400' : 'text-[var(--muted)] hover:text-amber-400'
+                              item.starred ? 'fill-[var(--warning)] text-[var(--warning)]' : 'text-[var(--muted)] hover:text-[var(--warning)]'
                             }`} 
                           />
                         </td>
@@ -795,7 +795,7 @@ export const AdminInbox: React.FC = () => {
                           <div className="font-semibold text-[var(--text)] font-sans text-sm flex items-center gap-1.5">
                             <span>{item.fullName}</span>
                             {isConverted && (
-                              <span className="text-[9px] font-sans px-1.5 py-0.2 rounded bg-emerald-500/10 text-[var(--success)] border border-emerald-500/30">
+                              <span className="text-[9px] font-sans px-1.5 py-0.2 rounded bg-[var(--success)]/10 text-[var(--success)] border border-[var(--success)]/30">
                                 CRM ✓
                               </span>
                             )}
@@ -854,7 +854,7 @@ export const AdminInbox: React.FC = () => {
                                 href={`https://wa.me/${cleanPhoneForWhatsApp(item.phone)}?text=Halo%20${encodeURIComponent(item.fullName)},%20terima%20kasih%20telah%20menghubungi%20Kapitech%20Agency...`}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="p-1.5 rounded-control bg-emerald-950/60 hover:bg-emerald-900/80 text-[var(--success)] border border-emerald-500/20"
+                                className="p-1.5 rounded-control bg-[var(--success)]/10 hover:bg-[var(--success)]/15 text-[var(--success)] border border-[var(--success)]/20"
                                 title="Chat on WhatsApp"
                               >
                                 <ExternalLink size={12} />
@@ -948,7 +948,7 @@ export const AdminInbox: React.FC = () => {
                     isSelected
                       ? 'bg-[var(--panel)] border-[var(--accent)]'
                       : item.status === 'new'
-                      ? 'bg-[var(--panel)] border-rose-500/30 hover:border-rose-500/50'
+                      ? 'bg-[var(--panel)] border-[var(--danger)]/30 hover:border-rose-500/50'
                       : 'bg-[var(--panel)] border-[var(--line)] hover:border-[var(--line)] hover:bg-[var(--panel-hover)]'
                   }`}
                 >
@@ -964,7 +964,7 @@ export const AdminInbox: React.FC = () => {
                         {renderStatusBadge(item.status)}
                         {renderPriorityBadge(item.priority)}
                         {isConverted && (
-                          <span className="px-1.5 py-0.5 rounded text-[9px] font-sans bg-emerald-500/10 text-[var(--success)] border border-emerald-500/30 font-semibold">
+                          <span className="px-1.5 py-0.5 rounded text-[9px] font-sans bg-[var(--success)]/10 text-[var(--success)] border border-[var(--success)]/30 font-semibold">
                             CRM ✓
                           </span>
                         )}
@@ -973,9 +973,9 @@ export const AdminInbox: React.FC = () => {
                       <div className="flex items-center gap-2 shrink-0">
                         <button
                           onClick={(e) => handleToggleStar(e, item.id, item.starred)}
-                          className="p-1 text-[var(--muted)] hover:text-amber-400 transition-colors"
+                          className="p-1 text-[var(--muted)] hover:text-[var(--warning)] transition-colors"
                         >
-                          <Star size={13} className={item.starred ? 'fill-amber-400 text-amber-400' : ''} />
+                          <Star size={13} className={item.starred ? 'fill-[var(--warning)] text-[var(--warning)]' : ''} />
                         </button>
                         <span className="text-[10px] text-[var(--muted)]">
                           {formatRelativeTime(item.createdAt)}
@@ -1020,7 +1020,7 @@ export const AdminInbox: React.FC = () => {
 
                     {/* Bottom notes indicator if present */}
                     {item.internalNotes && (
-                      <div className="mt-2.5 pt-2 border-t border-[var(--line)] flex items-center gap-1.5 text-[10px] text-amber-400/80">
+                      <div className="mt-2.5 pt-2 border-t border-[var(--line)] flex items-center gap-1.5 text-[10px] text-[var(--warning)]/80">
                         <FileText size={11} />
                         <span className="truncate">{item.internalNotes}</span>
                       </div>
@@ -1078,10 +1078,10 @@ export const AdminInbox: React.FC = () => {
                     {/* Star toggle */}
                     <button
                       onClick={(e) => handleToggleStar(e, selectedSubmission.id, selectedSubmission.starred)}
-                      className="p-2 rounded-card bg-[var(--panel)] border border-[var(--line)] text-[var(--muted)] hover:text-amber-400 transition-colors"
+                      className="p-2 rounded-card bg-[var(--panel)] border border-[var(--line)] text-[var(--muted)] hover:text-[var(--warning)] transition-colors"
                       title="Star this brief"
                     >
-                      <Star size={15} className={selectedSubmission.starred ? 'fill-amber-400 text-amber-400' : ''} />
+                      <Star size={15} className={selectedSubmission.starred ? 'fill-[var(--warning)] text-[var(--warning)]' : ''} />
                     </button>
 
                     {/* Close button on desktop */}
@@ -1101,7 +1101,7 @@ export const AdminInbox: React.FC = () => {
                     {crmDeals.some(d => (d as any).inquiryId === selectedSubmission.id) ? (
                       <Link
                         to="/admin/crm"
-                        className="h-9 px-3.5 rounded-control bg-emerald-500/10 text-[var(--success)] border border-emerald-500/30 hover:bg-emerald-500/20 text-xs font-sans font-semibold transition-all flex items-center gap-1.5"
+                        className="h-9 px-3.5 rounded-control bg-[var(--success)]/10 text-[var(--success)] border border-[var(--success)]/30 hover:bg-emerald-500/20 text-xs font-sans font-semibold transition-all flex items-center gap-1.5"
                       >
                         <ShieldCheck size={14} />
                         <span>{language === 'id' ? 'Buka Deal di CRM' : 'View CRM Deal'}</span>
