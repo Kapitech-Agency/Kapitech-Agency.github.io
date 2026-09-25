@@ -416,7 +416,7 @@ export const AdminSettings: React.FC = () => {
           onClick={() => handleTabChange('profile')}
           className={`px-4 py-2.5 rounded-card text-xs font-sans transition-all flex items-center gap-2 shrink-0 min-h-10 ${
             activeTab === 'profile'
-              ? 'bg-[var(--accent)] text-[var(--text)] font-semibold '
+              ? 'bg-[var(--accent)] text-white font-semibold '
               : 'text-[var(--muted)] hover:text-[var(--text)] hover:bg-[var(--panel)]'
           }`}
         >
@@ -428,7 +428,7 @@ export const AdminSettings: React.FC = () => {
           onClick={() => handleTabChange('branding')}
           className={`px-4 py-2.5 rounded-card text-xs font-sans transition-all flex items-center gap-2 shrink-0 min-h-10 ${
             activeTab === 'branding'
-              ? 'bg-[var(--accent)] text-[var(--text)] font-semibold '
+              ? 'bg-[var(--accent)] text-white font-semibold '
               : 'text-[var(--muted)] hover:text-[var(--text)] hover:bg-[var(--panel)]'
           }`}
         >
@@ -441,7 +441,7 @@ export const AdminSettings: React.FC = () => {
            disabled={!canManageAdminAccounts}
           className={`px-4 py-2.5 rounded-card text-xs font-sans transition-all flex items-center gap-2 shrink-0 min-h-10 ${
             activeTab === 'rbac'
-              ? 'bg-[var(--accent)] text-[var(--text)] font-semibold '
+              ? 'bg-[var(--accent)] text-white font-semibold '
               : 'text-[var(--muted)] hover:text-[var(--text)] hover:bg-[var(--panel)]'
           }`}
         >
@@ -453,7 +453,7 @@ export const AdminSettings: React.FC = () => {
           onClick={() => handleTabChange('security')}
           className={`px-4 py-2.5 rounded-card text-xs font-sans transition-all flex items-center gap-2 shrink-0 min-h-10 ${
             activeTab === 'security'
-              ? 'bg-[var(--accent)] text-[var(--text)] font-semibold '
+              ? 'bg-[var(--accent)] text-white font-semibold '
               : 'text-[var(--muted)] hover:text-[var(--text)] hover:bg-[var(--panel)]'
           }`}
         >
@@ -466,7 +466,7 @@ export const AdminSettings: React.FC = () => {
            disabled={!canAccessServer}
           className={`px-4 py-2.5 rounded-card text-xs font-sans transition-all flex items-center gap-2 shrink-0 min-h-10 ${
             activeTab === 'api'
-              ? 'bg-[var(--accent)] text-[var(--text)] font-semibold '
+              ? 'bg-[var(--accent)] text-white font-semibold '
               : 'text-[var(--muted)] hover:text-[var(--text)] hover:bg-[var(--panel)]'
           }`}
         >
@@ -479,7 +479,7 @@ export const AdminSettings: React.FC = () => {
            disabled={!canViewAuditLogs}
           className={`px-4 py-2.5 rounded-card text-xs font-sans transition-all flex items-center gap-2 shrink-0 min-h-10 ${
             activeTab === 'audit'
-              ? 'bg-[var(--accent)] text-[var(--text)] font-semibold '
+              ? 'bg-[var(--accent)] text-white font-semibold '
               : 'text-[var(--muted)] hover:text-[var(--text)] hover:bg-[var(--panel)]'
           }`}
         >
@@ -580,7 +580,7 @@ export const AdminSettings: React.FC = () => {
               <button
                 type="submit"
                 disabled={securityLoading}
-                className="px-5 py-2.5 rounded-card bg-[var(--accent)] text-[var(--text)] text-xs font-sans font-semibold hover:bg-[var(--accent)] transition-all shadow-none flex items-center gap-2 disabled:opacity-50 min-h-10"
+                className="px-5 py-2.5 rounded-card bg-[var(--accent)] text-white text-xs font-sans font-semibold hover:bg-[var(--accent)] transition-all shadow-none flex items-center gap-2 disabled:opacity-50 min-h-10"
               >
                 {securityLoading ? <RefreshCw size={14} className="animate-spin" /> : <Save size={14} />}
                 <span>{language === 'id' ? 'Perbarui Akun Master' : 'Update Master Account'}</span>
@@ -700,7 +700,7 @@ export const AdminSettings: React.FC = () => {
             <div className="pt-4 flex items-center justify-end">
               <button
                 type="submit"
-                className="px-5 py-2.5 rounded-card bg-[var(--accent)] text-[var(--text)] text-xs font-sans font-semibold hover:bg-[var(--accent)] transition-all shadow-none flex items-center gap-2 min-h-10"
+                className="px-5 py-2.5 rounded-card bg-[var(--accent)] text-white text-xs font-sans font-semibold hover:bg-[var(--accent)] transition-all shadow-none flex items-center gap-2 min-h-10"
               >
                 <Save size={14} />
                 <span>{language === 'id' ? 'Simpan Pengaturan Brand' : 'Save Brand Settings'}</span>
@@ -747,7 +747,7 @@ export const AdminSettings: React.FC = () => {
               <button
                 type="button"
                 onClick={handleOpenAddAccount}
-                className="h-10 px-4 min-h-10 rounded-card bg-[var(--accent)] text-[var(--text)] text-xs font-sans font-semibold hover:bg-[var(--accent)] transition-all shadow-none flex items-center justify-center gap-2 self-start sm:self-auto shrink-0"
+                className="h-10 px-4 min-h-10 rounded-card bg-[var(--accent)] text-white text-xs font-sans font-semibold hover:bg-[var(--accent)] transition-all shadow-none flex items-center justify-center gap-2 self-start sm:self-auto shrink-0"
               >
                 <UserPlus size={15} />
                 <span>{language === 'id' ? 'Tambah Akun Baru' : 'Add New Account'}</span>
@@ -1172,7 +1172,7 @@ export const AdminSettings: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="h-10 px-5 min-h-10 rounded-card bg-[var(--accent)] text-[var(--text)] text-xs font-sans font-semibold hover:bg-[var(--accent)] transition-all shadow-none flex items-center gap-2"
+                  className="h-10 px-5 min-h-10 rounded-card bg-[var(--accent)] text-white text-xs font-sans font-semibold hover:bg-[var(--accent)] transition-all shadow-none flex items-center gap-2"
                 >
                   <Save size={14} />
                   <span>{language === 'id' ? 'Simpan Akun Baru' : 'Save Account'}</span>
@@ -1261,7 +1261,7 @@ export const AdminSettings: React.FC = () => {
               <button
                 type="button"
                 onClick={handleSavePermissions}
-                className="h-10 px-5 min-h-10 rounded-card bg-[var(--accent)] text-[var(--text)] text-xs font-sans font-semibold hover:bg-[var(--accent)] transition-all shadow-none flex items-center gap-2"
+                className="h-10 px-5 min-h-10 rounded-card bg-[var(--accent)] text-white text-xs font-sans font-semibold hover:bg-[var(--accent)] transition-all shadow-none flex items-center gap-2"
               >
                 <Save size={14} />
                 <span>{language === 'id' ? 'Simpan Perubahan Hak Akses' : 'Save Permissions'}</span>
@@ -1383,7 +1383,7 @@ export const AdminSettings: React.FC = () => {
                 <button
                   type="submit"
                   disabled={securityLoading}
-                  className="px-5 py-2.5 rounded-card bg-[var(--accent)] text-[var(--text)] text-xs font-sans font-semibold hover:bg-[var(--accent)] transition-all flex items-center gap-2 min-h-10"
+                  className="px-5 py-2.5 rounded-card bg-[var(--accent)] text-white text-xs font-sans font-semibold hover:bg-[var(--accent)] transition-all flex items-center gap-2 min-h-10"
                 >
                   <Save size={14} />
                   <span>{language === 'id' ? 'Update Password Terenkripsi' : 'Update Encrypted Password'}</span>
