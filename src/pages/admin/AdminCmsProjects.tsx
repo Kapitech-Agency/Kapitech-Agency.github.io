@@ -439,7 +439,7 @@ export const AdminCmsProjects: React.FC = () => {
                   <div className="relative h-48 w-full bg-[var(--bg)]">
                     <img src={editingProject.image} alt={editingProject.title} className="w-full h-full object-cover" />
                     <div className="absolute inset-0 bg-black/40" />
-                    <div className="absolute top-3 left-3 px-2 py-0.5 rounded text-[10px] font-sans font-semibold bg-rose-500/20 text-rose-300 border border-rose-500/40">
+                    <div className="absolute top-3 left-3 px-2 py-0.5 rounded text-[10px] font-sans font-semibold bg-[var(--accent)]/10 text-[var(--accent-text)] border border-[var(--accent)]/30">
                       {editingProject.pillar}
                     </div>
                     <div className="absolute bottom-3 left-3 right-3">
