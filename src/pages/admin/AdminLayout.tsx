@@ -358,7 +358,7 @@ export const AdminLayout: React.FC = () => {
           <div className={sidebarCollapsed ? 'space-y-2' : 'space-y-4'}>
             {contentNavSections.map((section) => (
               <div key={section.id} className="space-y-1">
-                {!sidebarCollapsed && <div className="px-2.5 pb-1 text-[10px] font-semibold uppercase tracking-[0.09em] text-muted">{t(section.titleKey)}</div>}
+                {!sidebarCollapsed && <div className="px-2.5 pb-1 text-[10px] font-semibold text-muted">{t(section.titleKey)}</div>}
                 {sidebarCollapsed && <div className="mx-auto mb-2 h-px w-5 bg-line" />}
                 <div className="space-y-0.5">
                   {section.items.map((item) => {
@@ -433,7 +433,7 @@ export const AdminLayout: React.FC = () => {
           </button>
 
           <Link to="/admin/dashboard" className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-control bg-accent flex items-center justify-center text-fg font-semibold text-xs shadow-none shrink-0">
+            <div className="w-6 h-6 rounded-control bg-accent flex items-center justify-center text-fg font-semibold text-xs -none shrink-0">
               K
             </div>
             <div className="min-w-0">
