@@ -634,15 +634,6 @@ export const AdminProposals: React.FC = () => {
         )}
       </div>
 
-      <Modal open={!!confirmAction} onClose={() => setConfirmAction(null)} size="sm" title={confirmAction?.type === 'convert' ? 'Convert proposal to invoice?' : 'Delete proposal?'} description={confirmAction?.type === 'convert' ? 'This will create the official invoice workflow from the approved proposal.' : 'The proposal will be removed from the registry.'}>
-        <div className="flex flex-col-reverse sm:flex-row justify-end gap-2">
-          <button type="button" onClick={() => setConfirmAction(null)} className="min-h-10 px-4 rounded-control border border-[var(--line)] bg-[var(--panel)] text-xs text-[var(--muted)]">Cancel</button>
-          <button type="button" onClick={() => confirmAction?.type === 'convert' ? void confirmConvertToInvoice(confirmAction.id) : confirmAction && void confirmDeleteProposal(confirmAction.id)} className={`min-h-10 px-4 rounded-control text-white text-xs font-semibold ${confirmAction?.type === 'convert' ? 'bg-[var(--accent)]' : 'bg-[var(--danger)]'}`}>
-            {confirmAction?.type === 'convert' ? 'Convert to Invoice' : 'Delete'}
-          </button>
-        </div>
-      </Modal>
-
       <Modal open={!!confirmAction} onClose={() => setConfirmAction(null)} size="sm" title={confirmAction?.type === 'convert' ? 'Convert proposal to invoice?' : 'Delete proposal?'} description={confirmAction?.type === 'convert' ? 'This creates the official invoice workflow from the approved proposal.' : 'The proposal will be removed from the registry.'}>
         <div className="flex flex-col-reverse sm:flex-row justify-end gap-2">
           <button type="button" onClick={() => setConfirmAction(null)} className="min-h-10 px-4 rounded-control border border-[var(--line)] bg-[var(--panel)] text-xs text-[var(--muted)]">Cancel</button>
@@ -775,7 +766,7 @@ export const AdminProposals: React.FC = () => {
                           type="button"
                           onClick={() => handleRemoveItem(item.id)}
                           disabled={formItems.length === 1}
-                          className="p-1 text-[var(--ams-secondary)] hover:text-red-400 disabled:opacity-30"
+                          className="p-1 text-[var(--ams-secondary)] hover:text-[var(--danger)] disabled:opacity-30"
                         >
                           <Trash2 size={13} />
                         </button>
