@@ -33,6 +33,7 @@ import { useLanguage } from '../../lib/LanguageContext';
 import { useDragToScroll } from '../../lib/useDragToScroll';
 import { ScrollShadowContainer } from '../../components/ui/ScrollShadowContainer';
 import { CustomSelect } from '../../components/ui/CustomSelect';
+import { Modal } from '../../components/ui/Modal';
 import { InvoiceStatusDropdown } from '../../components/ui/InvoiceStatusDropdown';
 import { AgencyProject } from '../../lib/projectStore';
 import { getAdminSession, hasAdminPermission } from '../../lib/adminAuth';
@@ -61,6 +62,7 @@ export const AdminInvoicing: React.FC = () => {
 
   // Modal State for Invoice
   const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false);
+  const [confirmAction, setConfirmAction] = useState<{ type: 'invoice' | 'expense'; id: string; label?: string } | null>(null);
   const [editingInvoice, setEditingInvoice] = useState<AgencyInvoice | null>(null);
   
   // Invoice Form Fields
@@ -111,7 +113,12 @@ export const AdminInvoicing: React.FC = () => {
     };
     window.addEventListener(CURRENCY_EVENT, handleCurrencyChange);
 
-    return () => {
+    return (
+    <>
+      <Modal open={!!confirmAction} onClose={() => setConfirmAction(null)} size="sm" title={confirmAction?.type === 'invoice' ? 'Delete invoice?' : 'Delete expense?'} description={confirmAction?.type === 'invoice' ? `Invoice ${confirmAction?.label || ''} will be permanently removed.` : 'This expense record will be permanently removed.'}>
+        <div className="flex flex-col-reverse sm:flex-row justify-end gap-2"><button type="button" onClick={() => setConfirmAction(null)} className="min-h-10 px-4 rounded-control border border-[var(--line)] bg-[var(--panel)] text-xs text-[var(--muted)]">Cancel</button><button type="button" onClick={() => confirmAction?.type === 'invoice' ? void confirmDeleteInvoice(confirmAction.id) : confirmAction && void confirmDeleteExpense(confirmAction.id)} className="min-h-10 px-4 rounded-control bg-[var(--danger)] text-white text-xs font-semibold">Delete</button></div>
+      </Modal>
+      <div>) => {
       window.removeEventListener(CURRENCY_EVENT, handleCurrencyChange);
     };
   }, []);
@@ -193,13 +200,13 @@ export const AdminInvoicing: React.FC = () => {
     showToast(language === 'id' ? 'Invoice berhasil disimpan.' : 'Invoice saved successfully.');
   };
 
-  const handleDeleteInvoice = async (id: string, invNum: string) => {
-    if (window.confirm(`Hapus invoice ${invNum}?`)) {
-      const res = await api.finance.deleteInvoice(id);
-      if (!res.success) { showToast(res.error || 'Invoice gagal dihapus.'); return; }
-      await loadData();
-      showToast(language === 'id' ? 'Invoice dihapus.' : 'Invoice deleted.');
-    }
+  const handleDeleteInvoice = (id: string, invNum: string) => setConfirmAction({ type: 'invoice', id, label: invNum });
+
+  const confirmDeleteInvoice = async (id: string) => {
+    const res = await api.finance.deleteInvoice(id);
+    if (!res.success) showToast(res.error || 'Invoice gagal dihapus.');
+    else { await loadData(); showToast(language === 'id' ? 'Invoice dihapus.' : 'Invoice deleted.'); }
+    setConfirmAction(null);
   };
 
   const handleOpenPaymentModal = (inv: AgencyInvoice) => {
@@ -238,13 +245,13 @@ export const AdminInvoicing: React.FC = () => {
     showToast(language === 'id' ? 'Pengeluaran berhasil dicatat.' : 'Expense recorded successfully.');
   };
 
-  const handleDeleteExpense = async (id: string) => {
-    if (window.confirm('Hapus catatan pengeluaran ini?')) {
-      const res = await api.finance.deleteExpense(id);
-      if (!res.success) { showToast(res.error || 'Expense gagal dihapus.'); return; }
-      await loadData();
-      showToast(language === 'id' ? 'Pengeluaran dihapus.' : 'Expense deleted.');
-    }
+  const handleDeleteExpense = (id: string) => setConfirmAction({ type: 'expense', id });
+
+  const confirmDeleteExpense = async (id: string) => {
+    const res = await api.finance.deleteExpense(id);
+    if (!res.success) showToast(res.error || 'Expense gagal dihapus.');
+    else { await loadData(); showToast(language === 'id' ? 'Pengeluaran dihapus.' : 'Expense deleted.'); }
+    setConfirmAction(null);
   };
 
   const getStatusBadge = (status: InvoiceStatus) => {
