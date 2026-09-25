@@ -1069,7 +1069,7 @@ export const AdminProjects: React.FC = () => {
 
               <button
                 onClick={() => setActiveTaskDrawer(null)}
-                className="min-h-10 px-4 min-h-10 rounded-card bg-[var(--panel)] text-[var(--text)] border border-[var(--line)] hover:bg-[var(--panel)] transition-colors"
+                className="min-h-10 px-4 rounded-control bg-[var(--panel)] text-[var(--text)] border border-[var(--line)] hover:bg-[var(--panel)] transition-colors"
               >
                 Close
               </button>
@@ -1231,7 +1231,7 @@ export const AdminProjects: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsProjectModalOpen(false)}
-                  className="min-h-10 px-4 min-h-10 rounded-card bg-[var(--bg)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] text-xs font-sans font-medium transition-colors"
+                  className="min-h-10 px-4 rounded-control bg-[var(--bg)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] text-xs font-sans font-medium transition-colors"
                 >
                   Cancel
                 </button>
@@ -1360,7 +1360,7 @@ export const AdminProjects: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsTaskModalOpen(false)}
-                  className="min-h-10 px-4 min-h-10 rounded-card bg-[var(--bg)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] text-xs font-sans font-medium transition-colors"
+                  className="min-h-10 px-4 rounded-control bg-[var(--bg)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] text-xs font-sans font-medium transition-colors"
                 >
                   Cancel
                 </button>
