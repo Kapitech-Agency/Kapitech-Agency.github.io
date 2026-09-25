@@ -511,7 +511,7 @@ export const AdminSettings: React.FC = () => {
             <div className={`mb-6 p-4 rounded-card text-xs font-sans flex items-start gap-2.5 ${
               securityStatus.success 
                 ? 'bg-[var(--success)]/10 border border-[var(--success)]/30 text-[var(--success)]' 
-                : 'bg-[var(--danger)]/10 border border-[var(--danger)]/30 text-red-300'
+                : 'bg-[var(--danger)]/10 border border-[var(--danger)]/30 text-[var(--danger)]'
             }`}>
               {securityStatus.success ? <Check size={16} className="shrink-0 mt-0.5" /> : <AlertCircle size={16} className="shrink-0 mt-0.5" />}
               <span>{securityStatus.message}</span>
@@ -718,7 +718,7 @@ export const AdminSettings: React.FC = () => {
             <div className={`p-4 rounded-card border flex items-center gap-3 text-xs font-sans animate-fadeIn ${
               accountActionMessage.success
                 ? 'bg-[var(--success)]/10 border-[var(--success)]/30 text-[var(--success)]'
-                : 'bg-[var(--danger)]/10 border-[var(--danger)]/30 text-red-300'
+                : 'bg-[var(--danger)]/10 border-[var(--danger)]/30 text-[var(--danger)]'
             }`}>
               {accountActionMessage.success ? <Check size={16} className="shrink-0 text-[var(--success)]" /> : <AlertCircle size={16} className="shrink-0 text-[var(--danger)]" />}
               <span>{accountActionMessage.message}</span>
@@ -770,9 +770,9 @@ export const AdminSettings: React.FC = () => {
                       <div className="flex items-start justify-between gap-2 mb-2.5">
                         <div className="flex items-center gap-2.5">
                           <div className={`w-9 h-9 rounded-card flex items-center justify-center font-semibold text-xs font-sans ${
-                            isMaster ? 'bg-red-500/20 text-[var(--danger)] border border-red-500/30' :
+                            isMaster ? 'bg-[var(--danger)]/20 text-[var(--danger)] border border-[var(--danger)]/30' :
                             isExecutive ? 'bg-amber-500/20 text-[var(--warning)] border border-[var(--warning)]/30' :
-                            isIT ? 'bg-emerald-500/20 text-[var(--success)] border border-[var(--success)]/30' :
+                            isIT ? 'bg-[var(--success)]/20 text-[var(--success)] border border-[var(--success)]/30' :
                             'bg-purple-500/20 text-purple-400 border border-purple-500/30'
                           }`}>
                             {acc.name.split(' ').map(n => n[0]).slice(0, 2).join('')}
@@ -784,7 +784,7 @@ export const AdminSettings: React.FC = () => {
                         </div>
 
                         <span className={`text-[10px] font-sans px-2 py-0.5 rounded-full border shrink-0 ${
-                          isMaster ? 'bg-red-500/10 text-[var(--danger)] border-red-500/30' :
+                          isMaster ? 'bg-[var(--danger)]/10 text-[var(--danger)] border-[var(--danger)]/30' :
                           isExecutive ? 'bg-[var(--warning)]/10 text-[var(--warning)] border-[var(--warning)]/30' :
                           isIT ? 'bg-[var(--success)]/10 text-[var(--success)] border-[var(--success)]/30' :
                           'bg-purple-500/10 text-purple-300 border-purple-500/30'
@@ -805,7 +805,7 @@ export const AdminSettings: React.FC = () => {
                         <div className="text-[var(--muted)] flex items-center justify-between">
                           <span>Status:</span>
                           <span className="text-[var(--success)] flex items-center gap-1">
-                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                            <span className="w-1.5 h-1.5 rounded-full bg-[var(--success)]" />
                             Aktif
                           </span>
                         </div>
@@ -814,7 +814,7 @@ export const AdminSettings: React.FC = () => {
                       {/* Permissions Summary Badges */}
                       <div className="mt-3 pt-3 border-t border-[var(--line)] flex flex-wrap gap-1">
                         {acc.permissions?.canManageInvoicing && (
-                          <span className="text-[9px] font-sans px-1.5 py-0.5 bg-[var(--success)]/10 text-[var(--success)] border border-emerald-800/40 rounded">
+                          <span className="text-[9px] font-sans px-1.5 py-0.5 bg-[var(--success)]/10 text-[var(--success)] border border-[var(--success)]/30 rounded">
                             Invoice
                           </span>
                         )}
@@ -913,7 +913,7 @@ export const AdminSettings: React.FC = () => {
                   </tr>
                   <tr className="hover:bg-[var(--panel)]/60 transition-colors">
                     <td className="py-3.5 px-4 font-semibold text-[var(--text)] flex items-center gap-2">
-                      <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>
+                      <span className="w-2 h-2 rounded-full bg-[var(--success)] shrink-0"></span>
                       <span>Teknisi IT / Systems Engineer</span>
                     </td>
                     <td className="py-3.5 px-4 text-[var(--muted)]">{language === 'id' ? 'Tanpa Akses Finansial' : 'No Financial Access'}</td>
@@ -1010,7 +1010,7 @@ export const AdminSettings: React.FC = () => {
                     onClick={() => handleRoleChangeForNewAccount('Teknisi IT / Systems Engineer')}
                     className={`p-3.5 rounded-card border text-left transition-all ${
                       newAccRole === 'Teknisi IT / Systems Engineer'
-                        ? 'bg-[var(--success)]/10 border-emerald-500/50 ring-1 ring-emerald-500/30'
+                        ? 'bg-[var(--success)]/10 border-emerald-500/50 ring-1 ring-[var(--success)]/30'
                         : 'bg-[var(--panel)] border-[var(--line)] hover:border-[var(--line)]'
                     }`}
                   >
@@ -1544,7 +1544,7 @@ export const AdminSettings: React.FC = () => {
                     <div className="flex items-center gap-2 mb-0.5">
                       <span className={`px-2 py-0.5 rounded text-[10px] font-semibold ${
                         log.severity === 'critical' 
-                          ? 'bg-red-950 text-[var(--danger)] border border-[var(--danger)]/30' 
+                          ? 'bg-[var(--danger)]/15 text-[var(--danger)] border border-[var(--danger)]/30' 
                           : log.severity === 'warning' 
                           ? 'bg-[var(--warning)]/10 text-[var(--warning)] border border-[var(--warning)]/30' 
                           : 'bg-[var(--success)]/10 text-[var(--success)] border border-[var(--success)]/30'
