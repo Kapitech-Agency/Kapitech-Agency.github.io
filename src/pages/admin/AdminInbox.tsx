@@ -482,7 +482,7 @@ export const AdminInbox: React.FC = () => {
       {toastMessage && (
         <div className="p-4 rounded-card bg-[var(--success)]/10 border border-[var(--success)]/30 text-[var(--success)] text-xs font-sans flex items-center justify-between shadow-none animate-in fade-in duration-300">
           <div className="flex items-center gap-2.5">
-            <Check size={16} className="text-emerald-400 shrink-0" />
+            <Check size={16} className="text-[var(--success)] shrink-0" />
             <span>{toastMessage.text}</span>
           </div>
           {toastMessage.link && (
@@ -580,9 +580,9 @@ export const AdminInbox: React.FC = () => {
         <div className="p-4 rounded-card bg-[var(--panel)] border border-[var(--line)] space-y-1">
           <div className="flex items-center justify-between text-xs font-sans text-[var(--muted)]">
             <span>{language === 'id' ? 'Perlu Ditinjau' : 'Action Needed'}</span>
-            <AlertCircle size={14} className="text-rose-400" />
+            <AlertCircle size={14} className="text-[var(--danger)]" />
           </div>
-          <div className="text-2xl font-semibold font-sans text-rose-400 flex items-center gap-2">
+          <div className="text-2xl font-semibold font-sans text-[var(--danger)] flex items-center gap-2">
             <span>{metrics.newCount}</span>
             {metrics.newCount > 0 && (
               <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping" />
@@ -597,9 +597,9 @@ export const AdminInbox: React.FC = () => {
         <div className="p-4 rounded-card bg-[var(--panel)] border border-[var(--line)] space-y-1">
           <div className="flex items-center justify-between text-xs font-sans text-[var(--muted)]">
             <span>{language === 'id' ? 'Dikonversi ke CRM' : 'Converted to CRM'}</span>
-            <Briefcase size={14} className="text-emerald-400" />
+            <Briefcase size={14} className="text-[var(--success)]" />
           </div>
-          <div className="text-2xl font-semibold font-sans text-emerald-400">
+          <div className="text-2xl font-semibold font-sans text-[var(--success)]">
             {metrics.convertedCount} <span className="text-xs text-[var(--muted)]">({metrics.conversionRate}%)</span>
           </div>
           <p className="text-[11px] font-sans text-[var(--muted)]">
@@ -611,7 +611,7 @@ export const AdminInbox: React.FC = () => {
         <div className="p-4 rounded-card bg-[var(--panel)] border border-[var(--line)] space-y-1">
           <div className="flex items-center justify-between text-xs font-sans text-[var(--muted)]">
             <span>{language === 'id' ? 'Volume Peluang' : 'Intake Valuation'}</span>
-            <TrendingUp size={14} className="text-emerald-400" />
+            <TrendingUp size={14} className="text-[var(--success)]" />
           </div>
           <div className="text-xl sm:text-2xl font-semibold font-sans text-[var(--text)] truncate">
             {formatAmount(metrics.totalPipelineValue, currency)}
@@ -795,7 +795,7 @@ export const AdminInbox: React.FC = () => {
                           <div className="font-semibold text-[var(--text)] font-sans text-sm flex items-center gap-1.5">
                             <span>{item.fullName}</span>
                             {isConverted && (
-                              <span className="text-[9px] font-sans px-1.5 py-0.2 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                              <span className="text-[9px] font-sans px-1.5 py-0.2 rounded bg-emerald-500/10 text-[var(--success)] border border-emerald-500/30">
                                 CRM ✓
                               </span>
                             )}
@@ -854,7 +854,7 @@ export const AdminInbox: React.FC = () => {
                                 href={`https://wa.me/${cleanPhoneForWhatsApp(item.phone)}?text=Halo%20${encodeURIComponent(item.fullName)},%20terima%20kasih%20telah%20menghubungi%20Kapitech%20Agency...`}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="p-1.5 rounded-control bg-emerald-950/60 hover:bg-emerald-900/80 text-emerald-400 border border-emerald-500/20"
+                                className="p-1.5 rounded-control bg-emerald-950/60 hover:bg-emerald-900/80 text-[var(--success)] border border-emerald-500/20"
                                 title="Chat on WhatsApp"
                               >
                                 <ExternalLink size={12} />
@@ -964,7 +964,7 @@ export const AdminInbox: React.FC = () => {
                         {renderStatusBadge(item.status)}
                         {renderPriorityBadge(item.priority)}
                         {isConverted && (
-                          <span className="px-1.5 py-0.5 rounded text-[9px] font-sans bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-semibold">
+                          <span className="px-1.5 py-0.5 rounded text-[9px] font-sans bg-emerald-500/10 text-[var(--success)] border border-emerald-500/30 font-semibold">
                             CRM ✓
                           </span>
                         )}
@@ -988,7 +988,7 @@ export const AdminInbox: React.FC = () => {
                       <h3 className="font-semibold text-sm text-[var(--text)] font-sans truncate">
                         {item.fullName || 'Anonymous Client'}
                       </h3>
-                      <span className="text-xs font-sans font-semibold text-emerald-400 shrink-0">
+                      <span className="text-xs font-sans font-semibold text-[var(--success)] shrink-0">
                         {formatAmount(estimateDealValue(item), currency)}
                       </span>
                     </div>
@@ -1067,7 +1067,7 @@ export const AdminInbox: React.FC = () => {
                         {selectedSubmission.fullName}
                       </h2>
 
-                      <p className="text-xs text-emerald-400 font-sans mt-0.5 font-semibold flex items-center gap-1.5">
+                      <p className="text-xs text-[var(--success)] font-sans mt-0.5 font-semibold flex items-center gap-1.5">
                         <Building2 size={12} />
                         <span>{selectedSubmission.company || selectedSubmission.positionTitle || 'Individual Client'}</span>
                       </p>
@@ -1101,7 +1101,7 @@ export const AdminInbox: React.FC = () => {
                     {crmDeals.some(d => (d as any).inquiryId === selectedSubmission.id) ? (
                       <Link
                         to="/admin/crm"
-                        className="h-9 px-3.5 rounded-control bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/20 text-xs font-sans font-semibold transition-all flex items-center gap-1.5"
+                        className="h-9 px-3.5 rounded-control bg-emerald-500/10 text-[var(--success)] border border-emerald-500/30 hover:bg-emerald-500/20 text-xs font-sans font-semibold transition-all flex items-center gap-1.5"
                       >
                         <ShieldCheck size={14} />
                         <span>{language === 'id' ? 'Buka Deal di CRM' : 'View CRM Deal'}</span>
@@ -1264,7 +1264,7 @@ export const AdminInbox: React.FC = () => {
                             <DollarSign size={13} className="text-[var(--danger)]" />
                             <span>{language === 'id' ? 'Estimasi Anggaran' : 'Budget Bracket'}</span>
                           </div>
-                          <span className="text-emerald-400 font-semibold">
+                          <span className="text-[var(--success)] font-semibold">
                             {formatAmount(estimateDealValue(selectedSubmission), currency)}
                           </span>
                         </div>
@@ -1344,7 +1344,7 @@ export const AdminInbox: React.FC = () => {
                     {/* Assigned Owner Setting */}
                     <div className="p-4 rounded-card bg-[var(--panel)] border border-[var(--line)] space-y-2">
                       <label className="text-xs font-sans text-[var(--muted)] flex items-center gap-1.5">
-                        <User size={13} className="text-emerald-400" />
+                        <User size={13} className="text-[var(--success)]" />
                         <span>{language === 'id' ? 'Penanggung Jawab Kualifikasi' : 'Assigned Triage Lead'}</span>
                       </label>
                       <CustomSelect value={selectedSubmission.assignedTo || 'Lead Full-Stack Tech'} onChange={(value) => handleAssigneeChange(selectedSubmission.id, value)} options={[{value:'Lead Full-Stack Tech',label:'Lead Full-Stack Tech (Engineering)'},{value:'Senior UI/UX Designer',label:'Senior UI/UX Designer (Design)'},{value:'Technical Project Manager',label:'Technical Project Manager (Scoping)'},{value:'Business Director',label:'Business Director (Accounts)'}]} />
