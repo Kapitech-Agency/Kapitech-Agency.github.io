@@ -289,7 +289,7 @@ export const AdminVendors: React.FC = () => {
           <button
             onClick={handleOpenAdd}
                             disabled={!canManageVendors}
-            className="h-10 px-4 rounded-control bg-[var(--accent)] hover:brightness-110 text-white text-xs font-semibold flex items-center gap-2 transition-all min-h-[40px]"
+            className="min-h-10 px-4 rounded-control bg-[var(--accent)] hover:brightness-110 text-white text-xs font-semibold flex items-center gap-2 transition-all"
           >
             <Plus size={15} />
             <span>{language === 'id' ? 'Tambah Vendor' : 'Add Vendor'}</span>
