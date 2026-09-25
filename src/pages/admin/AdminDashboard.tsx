@@ -482,7 +482,7 @@ export const AdminDashboard: React.FC = () => {
             className="min-h-10 xl:h-9 px-3 rounded-control bg-[var(--panel)] hover:bg-[var(--panel)] border border-line hover:border-accent/30 text-xs font-sans font-semibold text-[var(--text)] transition-all flex items-center gap-1.5 shrink-0"
             title="Download CSV Executive Summary"
           >
-            <Download size={13} className="text-cyan-400" />
+            <Download size={13} className="text-[var(--muted)]" />
             <span className="hidden sm:inline">{language === 'id' ? 'Ekspor CSV' : 'Export CSV'}</span>
           </button>
 
@@ -607,7 +607,7 @@ export const AdminDashboard: React.FC = () => {
               <span className="text-[11px] font-sans normal-case tracking-normal font-semibold">
                 {language === 'id' ? 'Rasio Konversi & Kemenangan' : 'Conversion & Win Rate'}
               </span>
-              <div className="w-8 h-8 rounded-control bg-violet-500/10 border border-violet-500/20 text-violet-400 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-control bg-violet-500/10 border border-violet-500/20 text-[var(--accent-text)] flex items-center justify-center">
                 <Percent size={15} />
               </div>
             </div>
@@ -616,14 +616,14 @@ export const AdminDashboard: React.FC = () => {
               {pipelineMetrics.conversionRate}%
             </div>
 
-            <div className="text-[11px] font-sans text-violet-400 mt-1.5 flex items-center gap-1">
+            <div className="text-[11px] font-sans text-[var(--accent-text)] mt-1.5 flex items-center gap-1">
               <CheckCircle2 size={12} />
               <span>{language === 'id' ? 'Efisiensi Sales Siklus Tinggi' : 'High Efficiency Sales Cycle'}</span>
             </div>
           </div>
 
           <div className="mt-4 pt-3 border-t border-[var(--line)] flex items-center justify-between text-[11px] font-sans">
-            <span className="text-violet-400 font-semibold">
+            <span className="text-[var(--accent-text)] font-semibold">
               {pipelineMetrics.wonLeadsCount} {language === 'id' ? 'Won' : 'Won Deals'}
             </span>
             <span className="text-[var(--muted)]">
@@ -642,7 +642,7 @@ export const AdminDashboard: React.FC = () => {
               <span className="text-[11px] font-sans normal-case tracking-normal font-semibold">
                 {language === 'id' ? 'Proyek Aktif & Progress Delivery' : 'Active Projects & Delivery Progress'}
               </span>
-              <div className="w-8 h-8 rounded-control bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-control bg-cyan-500/10 border border-cyan-500/20 text-[var(--muted)] flex items-center justify-center">
                 <Layers size={16} />
               </div>
             </div>
@@ -651,14 +651,14 @@ export const AdminDashboard: React.FC = () => {
               {projectMetrics.total} {language === 'id' ? 'Sprint' : 'Sprints'}
             </div>
 
-            <div className="text-[11px] font-sans text-cyan-400 mt-1.5 flex items-center gap-1">
+            <div className="text-[11px] font-sans text-[var(--muted)] mt-1.5 flex items-center gap-1">
               <ShieldCheck size={12} />
               <span>{projectMetrics.averageProgress}% {language === 'id' ? 'Progress Rata-rata' : 'Average Progress'}</span>
             </div>
           </div>
 
           <div className="mt-4 pt-3 border-t border-[var(--line)] flex items-center justify-between text-[11px] font-sans">
-            <span className="text-cyan-400 font-semibold">
+            <span className="text-[var(--muted)] font-semibold">
               {projectMetrics.inProgress} {language === 'id' ? 'Dalam Eksekusi' : 'In Production'}
             </span>
             <span className="text-[var(--muted)]">
@@ -710,7 +710,7 @@ export const AdminDashboard: React.FC = () => {
             <div className="flex items-center justify-between pb-3 border-b border-[var(--line)]">
               <div>
                 <h3 className="text-base font-heading font-semibold text-[var(--text)] tracking-tight flex items-center gap-2">
-                  <Layers size={17} className="text-cyan-400" />
+                  <Layers size={17} className="text-[var(--muted)]" />
                   <span>{language === 'id' ? 'Proyek Klien Prioritas & Status Sprint' : 'Priority Active Projects & Deliverables'}</span>
                 </h3>
                 <p className="text-xs text-[var(--muted)] mt-0.5 font-sans">
@@ -738,7 +738,7 @@ export const AdminDashboard: React.FC = () => {
                       <span className="text-sm font-semibold text-[var(--text)]  transition-colors">
                         {proj.name}
                       </span>
-                      <span className="text-[10px] font-sans px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/25 font-semibold">
+                      <span className="text-[10px] font-sans px-2 py-0.5 rounded bg-cyan-500/10 text-[var(--muted)] border border-cyan-500/25 font-semibold">
                         {proj.serviceCategory}
                       </span>
                     </div>
@@ -991,7 +991,7 @@ export const AdminDashboard: React.FC = () => {
           <div className="p-5 rounded-card bg-[var(--panel)] border border-[var(--line)] space-y-3 font-sans text-xs">
             <div className="flex items-center justify-between text-[var(--muted)] pb-2 border-b border-[var(--line)]">
               <span className="font-semibold text-[var(--text)] flex items-center gap-1.5">
-                <Cpu size={14} className="text-cyan-400" />
+                <Cpu size={14} className="text-[var(--muted)]" />
                 OPERATIONAL CONTROLS
               </span>
               <span className="text-[var(--success)] font-semibold">ACTIVE</span>
