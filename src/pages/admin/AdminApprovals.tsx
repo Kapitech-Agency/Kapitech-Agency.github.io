@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { 
-  ShieldCheck, 
+  ShieldCheck,
+  Shield, 
   CheckCircle2, 
   AlertTriangle, 
   Clock, 
@@ -182,7 +183,10 @@ export const AdminApprovals: React.FC = () => {
 
       {/* Header */}
       <div className="ams-page-header pb-5 border-b border-[var(--line)]">
-        <h1 className="text-xl sm:text-2xl font-semibold font-sans tracking-tight text-[var(--text)]">{language === 'id' ? 'Pusat Persetujuan Eksekutif' : 'Executive Approvals Center'}</h1>
+        <h1 className="ams-page-title">
+          <Shield size={22} className="text-[var(--accent-text)] shrink-0" />
+          <span>{language === 'id' ? 'Pusat Persetujuan Eksekutif' : 'Executive Approvals Center'}</span>
+        </h1>
         <p className="text-xs font-sans text-[var(--muted)] mt-1">
           {language === 'id' 
             ? 'Otorisasi anggaran klien, invoice berisiko tinggi, proposal komersial, dan pengeluaran operasional.' 
@@ -192,7 +196,7 @@ export const AdminApprovals: React.FC = () => {
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        <div className="p-4 rounded-card bg-[var(--bg)] border border-[var(--line)] space-y-1">
+        <div className="p-4 rounded-card bg-[var(--panel)] border border-[var(--line)] space-y-1">
           <div className="text-xs font-sans text-[var(--muted)] flex items-center justify-between">
             <span>{language === 'id' ? 'Menunggu Otorisasi' : 'Pending Authorization'}</span>
             <Clock size={13} className="text-[var(--warning)]" />
@@ -205,7 +209,7 @@ export const AdminApprovals: React.FC = () => {
           </div>
         </div>
 
-        <div className="p-4 rounded-card bg-[var(--bg)] border border-[var(--line)] space-y-1">
+        <div className="p-4 rounded-card bg-[var(--panel)] border border-[var(--line)] space-y-1">
           <div className="text-xs font-sans text-[var(--muted)] flex items-center justify-between">
             <span>{language === 'id' ? 'Nilai Tertunda' : 'Pending Value'}</span>
             <DollarSign size={13} className="text-[var(--accent)]" />
@@ -218,7 +222,7 @@ export const AdminApprovals: React.FC = () => {
           </div>
         </div>
 
-        <div className="p-4 rounded-card bg-[var(--bg)] border border-[var(--line)] space-y-1">
+        <div className="p-4 rounded-card bg-[var(--panel)] border border-[var(--line)] space-y-1">
           <div className="text-xs font-sans text-[var(--muted)] flex items-center justify-between">
             <span>{language === 'id' ? 'Tinggi Risiko' : 'High Risk Items'}</span>
             <AlertTriangle size={13} className="text-[var(--danger)]" />
@@ -231,7 +235,7 @@ export const AdminApprovals: React.FC = () => {
           </div>
         </div>
 
-        <div className="p-4 rounded-card bg-[var(--bg)] border border-[var(--line)] space-y-1">
+        <div className="p-4 rounded-card bg-[var(--panel)] border border-[var(--line)] space-y-1">
           <div className="text-xs font-sans text-[var(--muted)] flex items-center justify-between">
             <span>{language === 'id' ? 'Telah Disetujui' : 'Total Approved'}</span>
             <CheckCircle2 size={13} className="text-[var(--success)]" />
@@ -246,7 +250,7 @@ export const AdminApprovals: React.FC = () => {
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-3 rounded-card bg-[var(--bg)] border border-[var(--line)]">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-3 rounded-card bg-[var(--panel)] border border-[var(--line)]">
         <div className="relative flex-1">
           <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted)]" />
           <input
@@ -263,11 +267,13 @@ export const AdminApprovals: React.FC = () => {
             {(['Pending', 'Approved', 'Rejected', 'Changes Requested', 'all'] as const).map((st) => (
               <button
                 key={st}
+                type="button"
+                aria-pressed={statusFilter === st}
                 onClick={() => setStatusFilter(st)}
-                className={`px-2.5 py-1.5 min-h-10 rounded-control text-xs font-sans capitalize transition-all ${
+                className={`min-h-10 sm:min-h-9 px-2.5 rounded-chip text-xs font-sans capitalize transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent active:scale-[.98] ${
                   statusFilter === st
                     ? 'bg-[var(--accent)] text-white border border-[var(--accent)] font-semibold'
-                    : 'text-[var(--muted)] hover:text-[var(--text)]'
+                    : 'text-[var(--muted)] hover:bg-[var(--bg)] hover:text-[var(--text)]'
                 }`}
               >
                 {st}
