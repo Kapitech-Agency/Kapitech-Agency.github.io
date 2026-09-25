@@ -2266,3 +2266,102 @@
     animation: none !important;
   }
 }
+
+
+/* Executive dashboard spacing refinement.
+   Keeps the dashboard dense on desktop and intentional on mobile without
+   changing data, actions, or business logic. */
+.ams-shell .ams-dashboard-page {
+  row-gap: 24px;
+}
+
+.ams-shell .ams-dashboard-page .ams-kpi {
+  padding: 16px !important;
+  min-height: 132px;
+}
+
+.ams-shell .ams-dashboard-page > .grid.grid-cols-1.sm\:grid-cols-2.lg\:grid-cols-4 {
+  gap: 16px;
+}
+
+.ams-shell .ams-dashboard-page .ams-panel {
+  padding: 16px !important;
+}
+
+.ams-shell .ams-dashboard-page .ams-dashboard-header {
+  gap: 16px;
+  padding-bottom: 16px;
+}
+
+@media (max-width: 899px) {
+  .ams-shell .ams-dashboard-page {
+    row-gap: 16px;
+  }
+
+  .ams-shell .ams-dashboard-page .ams-kpi {
+    min-height: 0;
+  }
+
+  .ams-shell .ams-dashboard-page .ams-dashboard-header {
+    gap: 12px;
+  }
+}
+
+@media (max-width: 599px) {
+  .ams-shell > main > div.flex-1 {
+    padding: 16px;
+  }
+
+  .ams-shell .ams-dashboard-page {
+    row-gap: 16px;
+  }
+
+  .ams-shell .ams-dashboard-page .ams-dashboard-header {
+    gap: 12px;
+    padding-bottom: 14px;
+  }
+
+  .ams-shell .ams-dashboard-page > .grid.grid-cols-1.sm\:grid-cols-2.lg\:grid-cols-4 {
+    gap: 12px;
+  }
+
+  .ams-shell .ams-dashboard-page .ams-kpi {
+    padding: 14px !important;
+  }
+
+  .ams-shell .ams-dashboard-page .ams-panel {
+    padding: 14px !important;
+  }
+
+  .ams-shell .ams-dashboard-page .ams-panel > .flex.items-center.justify-between {
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .ams-shell .ams-dashboard-page .ams-panel > .flex.items-center.justify-between > div:first-child {
+    min-width: 0;
+  }
+
+  .ams-shell .ams-dashboard-page .ams-panel > .flex.items-center.justify-between h3,
+  .ams-shell .ams-dashboard-page .ams-panel > .flex.items-center.justify-between h2 {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .ams-shell .ams-dashboard-page .ams-dashboard-header > div:first-child {
+    width: 100%;
+  }
+
+  .ams-shell .ams-dashboard-page .ams-dashboard-header > div:last-child {
+    width: 100%;
+    gap: 8px;
+  }
+
+  .ams-shell .ams-dashboard-page .ams-dashboard-header > div:last-child > span {
+    width: 100%;
+  }
+
+  .ams-shell .ams-dashboard-page .ams-dashboard-header .ams-action {
+    width: auto;
+  }
+}
