@@ -34,7 +34,7 @@ jobs:
         run: bun run lint
 
       - name: Regression tests
-        run: bun test
+        run: node --import tsx --test tests/**/*.test.ts
 
       - name: Production build
         env:
