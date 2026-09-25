@@ -557,7 +557,7 @@ export const AdminLayout: React.FC = () => {
             {/* Bottom session details */}
             <div className="p-3.5 border-t border-line bg-bg flex items-center justify-between shrink-0">
               <div className="flex items-center gap-2.5 min-w-0">
-                <div className="w-8 h-8 rounded-control bg-accent border border-line flex items-center justify-center text-xs font-sans text-fg font-semibold shrink-0 ">
+                <div className="w-7 h-7 rounded-control bg-accent border border-line flex items-center justify-center text-xs font-sans text-fg font-semibold shrink-0 ">
                   {roleMeta.accountProfile.avatarLabel}
                 </div>
                 <div className="min-w-0">
