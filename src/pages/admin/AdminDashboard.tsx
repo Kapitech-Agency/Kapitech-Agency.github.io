@@ -445,7 +445,7 @@ export const AdminDashboard: React.FC = () => {
             </h1>
             <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-emerald-500/[0.07] border border-emerald-500/15 text-[10px] font-sans font-semibold text-emerald-400">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-              <span>System live</span>
+              <span>Live data</span>
             </div>
           </div>
           <p className="text-xs sm:text-sm text-[var(--muted)] mt-1 font-sans leading-[18px] max-w-3xl text-left">
@@ -1111,7 +1111,7 @@ export const AdminDashboard: React.FC = () => {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-[var(--muted)] font-sans mb-1">Service Pillar</label>
-                  <CustomSelect value={newLeadPillar} onChange={(value) => setNewLeadPillar(value as CrmServicePillar)} options={[{value:'Web Development',label:'Web Development'},{value:'AI & Cloud Solutions',label:'AI & Cloud Solutions'},{value:'UI/UX Design',label:'UI/UX Design'},{value:'Digital Product MVP',label:'Digital Product MVP'},{value:'Mobile App',label:'Mobile App'},{value:'Branding & Identity',label:'Branding & Identity'}]} className="w-full" />
+                  <CustomSelect value={newLeadPillar} onChange={(value) => setNewLeadPillar(value as CrmServicePillar)} options={[{value:'Web Development',label:'Web Development'},{value:'AI & Cloud Solutions',label:'AI & Cloud Solutions'},{value:'UI/UX Design',label:'UI/UX Design'},{value:'Digital Product MVP',label:'Digital Product MVP'},{value:'Branding & Identity',label:'Branding & Identity'}]} className="w-full" />
                 </div>
 
                 <div>
