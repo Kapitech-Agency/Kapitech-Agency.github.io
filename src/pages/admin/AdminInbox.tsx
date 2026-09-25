@@ -1373,7 +1373,7 @@ export const AdminInbox: React.FC = () => {
                 {/* Delete Button */}
                 <button
                   onClick={() => handleDelete(selectedSubmission.id)}
-                  className="h-10 w-10 p-2 rounded-card bg-[var(--panel)] border border-[var(--line)] text-[var(--muted)] hover:text-red-400 hover:border-red-500/40 transition-colors min-h-[40px] min-w-[40px] flex items-center justify-center"
+                  className="h-10 w-10 p-2 rounded-control bg-[var(--panel)] border border-[var(--line)] text-[var(--muted)] hover:text-[var(--danger)] hover:border-[var(--danger)]/40 transition-colors min-h-[40px] min-w-[40px] flex items-center justify-center"
                   title={language === 'id' ? 'Hapus pesan ini secara permanen' : 'Delete this brief permanently'}
                 >
                   <Trash2 size={16} />
