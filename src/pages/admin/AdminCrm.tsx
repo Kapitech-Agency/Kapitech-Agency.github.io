@@ -372,7 +372,7 @@ export const AdminCrm: React.FC = () => {
         <div>
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-control bg-[var(--accent)]/10 border border-[var(--accent)]/30 flex items-center justify-center text-[var(--danger)] shrink-0">
-              <Briefcase size={18} />
+              <Users size={18} />
             </div>
             <h1 className="ams-page-title flex items-center gap-2.5">
               <span>{t('admin.crm.title')}</span>
