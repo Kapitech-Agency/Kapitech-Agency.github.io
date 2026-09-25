@@ -998,8 +998,8 @@ export const AdminInvoicing: React.FC = () => {
                       options={[
                         { value: 'draft', label: 'Draft', badge: 'Draft', badgeColor: 'bg-slate-500/10 text-slate-400 border border-slate-500/20' },
                         { value: 'sent', label: 'Sent', badge: 'Sent', badgeColor: 'bg-blue-500/10 text-blue-400 border border-blue-500/20' },
-                        { value: 'paid', label: 'Paid', badge: 'Paid', badgeColor: 'bg-[var(--success)]/10 text-[var(--success)] border border-emerald-500/20' },
-                        { value: 'overdue', label: 'Overdue', badge: 'Overdue', badgeColor: 'bg-[var(--danger)]/10 text-[var(--danger)] border border-red-500/20' }
+                        { value: 'paid', label: 'Paid', badge: 'Paid', badgeColor: 'bg-[var(--success)]/10 text-[var(--success)] border border-[var(--success)]/20' },
+                        { value: 'overdue', label: 'Overdue', badge: 'Overdue', badgeColor: 'bg-[var(--danger)]/10 text-[var(--danger)] border border-[var(--danger)]/20' }
                       ]}
                       className="w-full"
                       triggerClassName="w-full justify-between"
@@ -1141,7 +1141,7 @@ export const AdminInvoicing: React.FC = () => {
             {/* Modal Header */}
             <div className="sticky top-0 z-20 bg-[var(--panel)]/95  px-5 sm:px-6 py-4 border-b border-[var(--line)] flex items-center justify-between shrink-0">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-card bg-[var(--success)]/10 border border-emerald-500/20 flex items-center justify-center text-[var(--success)]">
+                <div className="w-8 h-8 rounded-card bg-[var(--success)]/10 border border-[var(--success)]/20 flex items-center justify-center text-[var(--success)]">
                   <CreditCard size={16} />
                 </div>
                 <div>
@@ -1293,7 +1293,7 @@ export const AdminInvoicing: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="h-10 px-5 rounded-card bg-emerald-600 hover:bg-emerald-500 text-[var(--text)] text-xs font-sans font-semibold transition-colors shadow-none min-h-10 flex items-center gap-1.5"
+                  className="h-10 px-5 rounded-card bg-[var(--success)] hover:brightness-110 text-white text-xs font-sans font-semibold transition-colors shadow-none min-h-10 flex items-center gap-1.5"
                 >
                   <Check size={14} />
                   <span>{language === 'id' ? 'Simpan Pembayaran' : 'Confirm Payment'}</span>
@@ -1398,7 +1398,7 @@ export const AdminInvoicing: React.FC = () => {
                       {previewInvoice.payments.map((p, idx) => (
                         <div key={idx} className="flex justify-between items-center text-[11px] text-zinc-700">
                           <span>{p.date} • {p.method.replace('_', ' ')} {p.reference ? `(${p.reference})` : ''}</span>
-                          <span className="font-semibold text-emerald-600">{formatIDR(p.amount)}</span>
+                          <span className="font-semibold text-[var(--success)]">{formatIDR(p.amount)}</span>
                         </div>
                       ))}
                     </div>
@@ -1422,11 +1422,11 @@ export const AdminInvoicing: React.FC = () => {
                   </div>
                   {previewInvoice.amountPaid && previewInvoice.amountPaid > 0 ? (
                     <>
-                      <div className="flex justify-between text-emerald-600 font-semibold pt-1">
+                      <div className="flex justify-between text-[var(--success)] font-semibold pt-1">
                         <span>Total Paid:</span>
                         <span>- {formatIDR(previewInvoice.amountPaid)}</span>
                       </div>
-                      <div className="flex justify-between text-sm font-semibold text-red-600 pt-1 border-t border-dashed border-zinc-300">
+                      <div className="flex justify-between text-sm font-semibold text-[var(--danger)] pt-1 border-t border-dashed border-zinc-300">
                         <span>Balance Due:</span>
                         <span>{formatIDR(previewInvoice.balanceDue ?? (previewInvoice.total - previewInvoice.amountPaid))}</span>
                       </div>
