@@ -305,9 +305,9 @@ export const GlobalExecutiveDashboard: React.FC = () => {
         </div>
 
         {attentionItems.length === 0 ? (
-          <div className="flex items-center gap-3 px-3.5 py-3 rounded-control bg-[var(--success)]/5 border border-[var(--success)]/15">
+          <div className="flex items-center justify-center gap-3 px-3.5 py-3 rounded-control bg-[var(--success)]/5 border border-[var(--success)]/15 text-center">
             <CheckCircle2 className="text-[var(--success)] shrink-0" size={18} />
-            <div className="min-w-0">
+            <div className="min-w-0 text-center">
               <p className="text-xs font-sans text-[var(--text)] font-medium">
                 {language === 'id' ? 'Tidak ada tindakan yang perlu dilakukan.' : 'No action required.'}
               </p>
@@ -458,7 +458,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
               <Layers size={15} className="text-[var(--accent)]" />
               <span>{language === 'id' ? 'Status Eksekusi Proyek Klien' : 'Client Project Delivery Status'}</span>
             </h3>
-            <p className="text-[10px] font-sans text-[var(--muted)] mt-0.5">Current active engagements from project registry</p>
+            <p className="text-xs font-sans text-[var(--muted)] mt-0.5">Current active engagements from project registry</p>
           </div>
           <Link
             to="/admin/projects"
@@ -470,7 +470,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
         </div>
 
         {recentProjects.length === 0 ? (
-          <div className="ams-empty-state">
+          <div className="ams-empty-state flex min-h-20 items-center justify-center rounded-control border border-line bg-panel px-4 py-4 text-center text-xs text-muted">
             No active projects currently enrolled in registry.
           </div>
         ) : (
@@ -500,7 +500,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
                         {p.client || 'Internal'}
                       </td>
                       <td className="py-3 px-3">
-                        <span className={`px-2 py-0.5 rounded text-[10px] font-sans uppercase font-semibold ${
+                        <span className={`px-2 py-0.5 rounded-badge text-[10px] font-sans font-semibold ${
                           p.health === 'On Track'
                             ? 'bg-[var(--success)]/10 text-[var(--success)] border border-[var(--success)]/20'
                             : isAtRisk
