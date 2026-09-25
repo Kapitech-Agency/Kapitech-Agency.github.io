@@ -291,7 +291,7 @@ export const AdminLayout: React.FC = () => {
       {/* DESKTOP SIDEBAR */}
       {/* ------------------------------------------------------------- */}
       <aside 
-        className={`hidden min-[900px]:flex flex-col bg-panel border-r border-line shrink-0 h-full z-30 transition-colors duration-150 ${
+        className={`hidden min-[900px]:flex flex-col bg-panel border-r border-line shrink-0 h-full z-30 transition-[width,min-width] duration-150 ${sidebarCollapsed ? "ams-sidebar-collapsed" : "ams-sidebar-expanded"} ${
           sidebarCollapsed ? 'w-[64px]' : 'w-[220px]'
         }`}
       >
