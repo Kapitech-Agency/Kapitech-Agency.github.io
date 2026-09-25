@@ -535,7 +535,7 @@ export const AdminProposals: React.FC = () => {
               </thead>
               <tbody className="divide-y divide-[var(--line)] text-xs font-sans text-[var(--text)]">
                 {filteredProposals.map((p) => (
-                  <tr key={p.id} className="hover:bg-white/[0.03] transition-colors">
+                  <tr key={p.id} className="hover:bg-[var(--panel-hover)] transition-colors">
                     <td className="py-3 px-4">
                       <div className="font-semibold text-[var(--text)]">{p.title}</div>
                       <div className="text-xs font-sans text-[var(--ams-secondary)] flex items-center gap-2 mt-0.5">
