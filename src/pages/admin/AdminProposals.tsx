@@ -409,7 +409,7 @@ export const AdminProposals: React.FC = () => {
       )}
 
       {/* Header & Main Actions */}
-      <div className="ams-page-header flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-[var(--line)]">
+      <div className="ams-page-header flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 pb-4 sm:pb-5 border-b border-[var(--line)]">
         <div>
           <h1 className="ams-page-title flex items-center gap-2.5">
             <FileText className="text-[var(--accent)]" size={24} />
