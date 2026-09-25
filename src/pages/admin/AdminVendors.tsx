@@ -310,7 +310,7 @@ export const AdminVendors: React.FC = () => {
             <CheckCircle2 size={16} />
             <span>{statusMessage}</span>
           </div>
-          <button onClick={() => setStatusMessage(null)} className="text-emerald-400 hover:text-[var(--text)]">
+          <button onClick={() => setStatusMessage(null)} className="text-[var(--success)] hover:text-[var(--text)]">
             <X size={14} />
           </button>
         </div>
@@ -323,7 +323,7 @@ export const AdminVendors: React.FC = () => {
             {language === 'id' ? 'Total Mitra Terdaftar' : 'Total Vetted Vendors'}
           </div>
           <div className="mt-2 text-2xl font-semibold font-sans text-[var(--text)]">{vendors.length}</div>
-          <div className="text-[10px] font-sans text-emerald-400 mt-1 flex items-center gap-1">
+          <div className="text-[10px] font-sans text-[var(--success)] mt-1 flex items-center gap-1">
             <span className="w-1.5 h-1.5 rounded-full bg-[var(--success)]" />
             <span>{vendors.filter(v => v.status === 'active').length} Active</span>
           </div>
@@ -355,7 +355,7 @@ export const AdminVendors: React.FC = () => {
           </div>
           <div className="mt-2 text-2xl font-semibold font-sans text-[var(--text)] flex items-center gap-1.5">
             <span>4.9</span>
-            <Star size={16} className="text-amber-400 fill-amber-400" />
+            <Star size={16} className="text-[var(--warning)] fill-[var(--warning)]" />
           </div>
           <div className="text-[10px] font-sans text-[var(--muted)] mt-1">From 42 verified deliverables</div>
         </div>
@@ -474,9 +474,9 @@ export const AdminVendors: React.FC = () => {
                   <span
                     className={`px-2 py-0.5 rounded-full text-[10px] font-sans capitalize ${
                       vendor.status === 'active'
-                        ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'
+                        ? 'bg-[var(--success)]/10 text-[var(--success)] border border-[var(--success)]/30'
                         : vendor.status === 'under_review'
-                        ? 'bg-amber-500/15 text-amber-400 border border-amber-500/30'
+                        ? 'bg-amber-500/15 text-[var(--warning)] border border-[var(--warning)]/30'
                         : 'bg-zinc-800 text-zinc-400 border border-zinc-700'
                     }`}
                   >
@@ -497,7 +497,7 @@ export const AdminVendors: React.FC = () => {
                   <span className="text-[10px] font-sans text-[var(--muted)] normal-case block">
                     {language === 'id' ? 'Tarif Jam' : 'Hourly Rate'}
                   </span>
-                  <span className="text-xs font-sans font-semibold text-emerald-400 mt-0.5 block">
+                  <span className="text-xs font-sans font-semibold text-[var(--success)] mt-0.5 block">
                     {formatAmount(vendor.hourlyRate, currency)}/hr
                   </span>
                 </div>
@@ -523,8 +523,8 @@ export const AdminVendors: React.FC = () => {
 
             {/* Bottom Actions */}
             <div className="mt-5 pt-3.5 border-t border-[var(--line)] flex items-center justify-between">
-              <div className="flex items-center gap-1.5 text-xs font-sans text-amber-400">
-                <Star size={13} className="fill-amber-400 text-amber-400" />
+              <div className="flex items-center gap-1.5 text-xs font-sans text-[var(--warning)]">
+                <Star size={13} className="fill-[var(--warning)] text-[var(--warning)]" />
                 <span className="font-semibold">{vendor.rating.toFixed(1)}</span>
                 <span className="text-[10px] text-[var(--muted)]">({vendor.completedProjectsCount} projects)</span>
               </div>
@@ -620,7 +620,7 @@ export const AdminVendors: React.FC = () => {
                       </a>
                     </div>
                     <div className="flex items-center gap-2 text-[var(--muted)]">
-                      <Phone size={13} className="text-emerald-400" />
+                      <Phone size={13} className="text-[var(--success)]" />
                       <span>{selectedVendor.phone}</span>
                     </div>
                     <div className="flex items-center gap-2 text-[var(--muted)]">
@@ -637,7 +637,7 @@ export const AdminVendors: React.FC = () => {
                   <div className="bg-[var(--panel)] p-3 rounded-card border border-[var(--line)] flex items-center justify-between">
                     <div>
                       <span className="text-[10px] font-sans text-[var(--muted)]">Standard Hourly</span>
-                      <p className="text-sm font-sans font-semibold text-emerald-400">
+                      <p className="text-sm font-sans font-semibold text-[var(--success)]">
                         {formatAmount(selectedVendor.hourlyRate, currency)}/hr
                       </p>
                     </div>
