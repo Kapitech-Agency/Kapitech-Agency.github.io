@@ -21,6 +21,7 @@ import {
   Tag
 } from 'lucide-react';
 import { api } from '../../lib/apiClient';
+import { Modal } from '../../components/ui/Modal';
 import { ProjectItem } from '../../data/projectsData';
 import { useLanguage } from '../../lib/LanguageContext';
 import { useDragToScroll } from '../../lib/useDragToScroll';
@@ -36,6 +37,7 @@ export const AdminCmsProjects: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalTab, setModalTab] = useState<'details' | 'preview'>('details');
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; title: string } | null>(null);
   const [isDraggingFile, setIsDraggingFile] = useState(false);
 
   // Tag inputs state
@@ -93,11 +95,21 @@ export const AdminCmsProjects: React.FC = () => {
   };
 
   const handleDelete = (id: string, title: string) => {
-    if (window.confirm(`Delete case study "${title}" from CMS?`)) {
-      void api.cms.deleteProject(id).then((res) => { if (res.success) void loadProjects(); else setStatusMessage(res.error || 'Delete failed.'); });
+    setDeleteTarget({ id, title });
+  };
+
+  const confirmDeleteProject = async () => {
+    if (!deleteTarget) return;
+    const { id } = deleteTarget;
+    setDeleteTarget(null);
+    const res = await api.cms.deleteProject(id);
+    if (res.success) {
+      void loadProjects();
       setStatusMessage('Case study deleted successfully.');
-      setTimeout(() => setStatusMessage(null), 3000);
+    } else {
+      setStatusMessage(res.error || 'Delete failed.');
     }
+    setTimeout(() => setStatusMessage(null), 3000);
   };
 
   const handleToggleFeatured = (project: ProjectItem) => {
@@ -216,6 +228,9 @@ export const AdminCmsProjects: React.FC = () => {
     return matchesPillar && matchesSearch;
   });
 
+  <Modal open={!!deleteTarget} onClose={() => setDeleteTarget(null)} size="sm" title="Delete case study?" description={deleteTarget ? `Case study "${deleteTarget.title}" will be permanently removed.` : undefined}>
+    <div className="flex flex-col-reverse sm:flex-row justify-end gap-2"><button type="button" onClick={() => setDeleteTarget(null)} className="min-h-10 px-4 rounded-control border border-[var(--line)] bg-[var(--panel)] text-xs text-[var(--muted)]">Cancel</button><button type="button" onClick={() => void confirmDeleteProject()} className="min-h-10 px-4 rounded-control bg-[var(--danger)] text-white text-xs font-semibold">Delete</button></div>
+  </Modal>
   return (
     <div className="space-y-6">
       
