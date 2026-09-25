@@ -505,7 +505,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
                             ? 'bg-[var(--success)]/10 text-[var(--success)] border border-[var(--success)]/20'
                             : isAtRisk
                             ? 'bg-[var(--warning)]/10 text-[var(--warning)] border border-[var(--warning)]/20'
-                            : 'bg-zinc-800 text-[var(--muted)]'
+                            : 'bg-[var(--panel)] text-[var(--muted)]'
                         }`}>
                           {p.health || 'Active'}
                         </span>
