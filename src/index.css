@@ -907,19 +907,6 @@
   min-height: 96px;
 }
 
-/* Avoid the white browser outline seen on legacy search fields. */
-.ams-shell input:focus,
-.ams-shell select:focus,
-.ams-shell textarea:focus {
-  outline: none !important;
-}
-.ams-shell input:focus-visible,
-.ams-shell select:focus-visible,
-.ams-shell textarea:focus-visible {
-  outline: 2px solid var(--accent) !important;
-  outline-offset: 2px !important;
-}
-
 /* Canonical native form controls. Keep compact desktop density while preserving 40px mobile touch targets. */
 .ams-shell input[type="checkbox"],
 .ams-shell input[type="radio"] {
@@ -1086,50 +1073,7 @@
 }
 
 
-/* AMS native select normalization */
-.ams-shell select {
-  appearance: none;
-  -webkit-appearance: none;
-  min-height: 36px;
-  padding-right: 34px;
-  border-radius: 8px;
-  border: 1px solid var(--line);
-  background-color: var(--panel);
-  color: var(--text);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%238b8b99' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 10px center;
-  background-size: 14px;
-}
-.ams-shell select:hover { border-color: var(--panel-hover); }
-.ams-shell select:focus-visible { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 25%, transparent); }
-.ams-shell select:disabled { opacity: .55; cursor: not-allowed; }
-.ams-shell option { background: var(--panel); color: var(--text); }
-@media (max-width: 899px) { .ams-shell select { min-height: 40px; } }
 
-/* AMS interaction and hierarchy refinement */
-.ams-shell > aside { transition: width 150ms ease, min-width 150ms ease, background-color 150ms ease; }
-.ams-shell aside [aria-label="Expand sidebar"] { position: relative; z-index: 2; flex: 0 0 auto; }
-.ams-shell .ams-dashboard-header > div:first-child > p { color: var(--muted) !important; }
-.ams-shell .ams-dashboard-header p { color: var(--muted) !important; }
-.ams-shell .ams-empty-state,
-.ams-shell [data-empty-state="true"] { text-align: center; }
-.ams-shell select {
-  appearance: none;
-  -webkit-appearance: none;
-  padding-right: 34px;
-  background-color: var(--panel);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%238b8b99' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 10px center;
-}
-@media (max-width: 899px) {
-  .ams-shell > aside { transition: transform 150ms ease, width 150ms ease, min-width 150ms ease; }
-}
-
-
-/* AMS surface reconciliation: existing legacy markup mapped to the canonical
-   application surface without changing public-site styles. */
 .ams-shell .ams-kpi {
   background: transparent !important;
   border: 0 !important;
