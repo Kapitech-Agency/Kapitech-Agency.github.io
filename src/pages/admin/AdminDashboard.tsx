@@ -1103,7 +1103,7 @@ export const AdminDashboard: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-card bg-[var(--accent)] hover:bg-[var(--accent)] text-white font-semibold transition-colors"
+                  className="min-h-10 px-4 py-2 rounded-control bg-[var(--accent)] hover:bg-[var(--accent)] text-white font-semibold transition-colors"
                 >
                   Save Lead
                 </button>
@@ -1189,7 +1189,7 @@ export const AdminDashboard: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-card bg-[var(--accent)] hover:bg-[var(--accent)] text-white font-semibold transition-colors"
+                  className="min-h-10 px-4 py-2 rounded-control bg-[var(--accent)] hover:bg-[var(--accent)] text-white font-semibold transition-colors"
                 >
                   Dispatch Invoice
                 </button>
@@ -1267,7 +1267,7 @@ export const AdminDashboard: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-card bg-[var(--accent)] hover:bg-[var(--accent)] text-white font-semibold transition-colors"
+                  className="min-h-10 px-4 py-2 rounded-control bg-[var(--accent)] hover:bg-[var(--accent)] text-white font-semibold transition-colors"
                 >
                   Start Project
                 </button>
@@ -1334,7 +1334,7 @@ export const AdminDashboard: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-card bg-[var(--accent)] hover:bg-[var(--accent)] text-white font-semibold transition-colors"
+                  className="min-h-10 px-4 py-2 rounded-control bg-[var(--accent)] hover:bg-[var(--accent)] text-white font-semibold transition-colors"
                 >
                   Save Expense
                 </button>
