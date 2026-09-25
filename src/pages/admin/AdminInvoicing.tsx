@@ -392,7 +392,7 @@ export const AdminInvoicing: React.FC = () => {
           <div>
             <div className="flex items-center justify-between text-[var(--muted)] mb-2">
               <span className="text-xs font-sans normal-case font-semibold">{t('admin.fin.expenses')}</span>
-              <div className="w-8 h-8 rounded-control bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-400">
+              <div className="w-8 h-8 rounded-control bg-[var(--danger)]/10 border border-[var(--danger)]/30 flex items-center justify-center text-[var(--danger)]">
                 <TrendingDown size={16} />
               </div>
             </div>
@@ -558,7 +558,7 @@ export const AdminInvoicing: React.FC = () => {
                           </div>
                           <div className="w-28 bg-[var(--panel)] h-1.5 rounded-full overflow-hidden">
                             <div 
-                              className="bg-emerald-500 h-full rounded-full transition-all" 
+                              className="bg-[var(--success)] h-full rounded-full transition-all" 
                               style={{ width: `${Math.min(100, Math.round(((inv.amountPaid || 0) / inv.total) * 100))}%` }}
                             />
                           </div>
@@ -570,7 +570,7 @@ export const AdminInvoicing: React.FC = () => {
                       {inv.status !== 'paid' && (
                         <button
                           onClick={() => handleOpenPaymentModal(inv)}
-                          className="h-9 px-2.5 rounded-card bg-[var(--success)]/10 hover:bg-emerald-500/20 text-[var(--success)] border border-[var(--success)]/30 text-xs font-sans flex items-center justify-center gap-1 transition-colors min-h-10"
+                          className="h-9 px-2.5 rounded-card bg-[var(--success)]/10 hover:bg-[var(--success)]/20 text-[var(--success)] border border-[var(--success)]/30 text-xs font-sans flex items-center justify-center gap-1 transition-colors min-h-10"
                           title="Record Payment"
                         >
                           <CreditCard size={13} />
@@ -595,7 +595,7 @@ export const AdminInvoicing: React.FC = () => {
                       {canDeleteInvoice && (
                         <button
                           onClick={() => handleDeleteInvoice(inv.id, inv.invoiceNumber)}
-                          className="w-9 h-9 rounded-card bg-[var(--panel)] hover:bg-red-950/40 text-[var(--muted)] hover:text-[var(--danger)] border border-[var(--line)] hover:border-[var(--danger)]/30 flex items-center justify-center transition-colors min-h-10 min-w-10"
+                          className="w-9 h-9 rounded-card bg-[var(--panel)] hover:bg-[var(--danger)]/10 text-[var(--muted)] hover:text-[var(--danger)] border border-[var(--line)] hover:border-[var(--danger)]/30 flex items-center justify-center transition-colors min-h-10 min-w-10"
                           title="Delete Invoice"
                         >
                           <Trash2 size={14} />
@@ -667,7 +667,7 @@ export const AdminInvoicing: React.FC = () => {
                             </div>
                             <div className="w-24 bg-[var(--panel)] h-1.5 rounded-full overflow-hidden">
                               <div 
-                                className="bg-emerald-500 h-full rounded-full transition-all" 
+                                className="bg-[var(--success)] h-full rounded-full transition-all" 
                                 style={{ width: `${Math.min(100, Math.round(((inv.amountPaid || 0) / inv.total) * 100))}%` }}
                               />
                             </div>
@@ -688,7 +688,7 @@ export const AdminInvoicing: React.FC = () => {
                           {inv.status !== 'paid' && (
                             <button
                               onClick={() => handleOpenPaymentModal(inv)}
-                              className="h-9 px-2.5 rounded-card bg-[var(--success)]/10 hover:bg-emerald-500/20 text-[var(--success)] border border-[var(--success)]/30 text-xs font-sans flex items-center justify-center gap-1 transition-colors min-h-10"
+                              className="h-9 px-2.5 rounded-card bg-[var(--success)]/10 hover:bg-[var(--success)]/20 text-[var(--success)] border border-[var(--success)]/30 text-xs font-sans flex items-center justify-center gap-1 transition-colors min-h-10"
                               title="Record Payment"
                             >
                               <CreditCard size={13} />
@@ -712,7 +712,7 @@ export const AdminInvoicing: React.FC = () => {
                           {canDeleteInvoice && (
                             <button
                               onClick={() => handleDeleteInvoice(inv.id, inv.invoiceNumber)}
-                              className="w-9 h-9 rounded-card bg-[var(--panel)] hover:bg-red-950/40 text-[var(--muted)] hover:text-[var(--danger)] border border-[var(--line)] hover:border-[var(--danger)]/30 flex items-center justify-center transition-colors min-h-10 min-w-10"
+                              className="w-9 h-9 rounded-card bg-[var(--panel)] hover:bg-[var(--danger)]/10 text-[var(--muted)] hover:text-[var(--danger)] border border-[var(--line)] hover:border-[var(--danger)]/30 flex items-center justify-center transition-colors min-h-10 min-w-10"
                               title="Delete Invoice"
                             >
                               <Trash2 size={14} />
@@ -764,7 +764,7 @@ export const AdminInvoicing: React.FC = () => {
 
                     <button
                       onClick={() => handleDeleteExpense(exp.id)}
-                      className="w-9 h-9 rounded-card bg-[var(--panel)] hover:bg-red-950/40 text-[var(--muted)] hover:text-[var(--danger)] border border-[var(--line)] hover:border-[var(--danger)]/30 flex items-center justify-center transition-colors min-h-10 min-w-10"
+                      className="w-9 h-9 rounded-card bg-[var(--panel)] hover:bg-[var(--danger)]/10 text-[var(--muted)] hover:text-[var(--danger)] border border-[var(--line)] hover:border-[var(--danger)]/30 flex items-center justify-center transition-colors min-h-10 min-w-10"
                       title="Delete Record"
                     >
                       <Trash2 size={14} />
@@ -822,7 +822,7 @@ export const AdminInvoicing: React.FC = () => {
                     <td className="py-3 px-4 text-right">
                       <button
                         onClick={() => handleDeleteExpense(exp.id)}
-                        className="w-9 h-9 rounded-card bg-[var(--panel)] hover:bg-red-950/40 text-[var(--muted)] hover:text-[var(--danger)] border border-[var(--line)] hover:border-[var(--danger)]/30 inline-flex items-center justify-center transition-colors min-h-10 min-w-10"
+                        className="w-9 h-9 rounded-card bg-[var(--panel)] hover:bg-[var(--danger)]/10 text-[var(--muted)] hover:text-[var(--danger)] border border-[var(--line)] hover:border-[var(--danger)]/30 inline-flex items-center justify-center transition-colors min-h-10 min-w-10"
                         title="Delete Record"
                       >
                         <Trash2 size={14} />
@@ -1188,7 +1188,7 @@ export const AdminInvoicing: React.FC = () => {
                           const rem = paymentModalInvoice.balanceDue ?? (paymentModalInvoice.total - (paymentModalInvoice.amountPaid || 0));
                           setPaymentAmount(rem > 0 ? rem : paymentModalInvoice.total);
                         }}
-                        className="px-2 py-0.5 rounded bg-[var(--success)]/10 hover:bg-emerald-500/20 text-[var(--success)] border border-[var(--success)]/30 text-[10px]"
+                        className="px-2 py-0.5 rounded bg-[var(--success)]/10 hover:bg-[var(--success)]/20 text-[var(--success)] border border-[var(--success)]/30 text-[10px]"
                       >
                         100% Full
                       </button>
@@ -1305,7 +1305,7 @@ export const AdminInvoicing: React.FC = () => {
             {/* Sticky Header for Preview Modal */}
             <div className="sticky top-0 z-20 bg-[var(--panel)] px-4 sm:px-6 py-4 border-b border-[var(--line)] flex items-center justify-between shrink-0">
               <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-control bg-zinc-900 flex items-center justify-center p-1 shadow-none">
+                <div className="w-7 h-7 rounded-control bg-[var(--bg)] flex items-center justify-center p-1 shadow-none">
                   <img src="/favicon.png" alt="Kapitech" className="w-full h-full object-contain" />
                 </div>
                 <div>
@@ -1445,7 +1445,7 @@ export const AdminInvoicing: React.FC = () => {
               <span className="text-[var(--muted)] font-sans">kapitech.id • Finance Division</span>
               <button
                 onClick={() => window.print()}
-                className="h-10 px-4 min-h-10 rounded-card bg-zinc-900 text-[var(--text)] font-sans font-semibold text-xs flex items-center gap-1.5 hover:bg-zinc-800 transition-colors"
+                className="h-10 px-4 min-h-10 rounded-card bg-[var(--bg)] text-[var(--text)] font-sans font-semibold text-xs flex items-center gap-1.5 hover:bg-zinc-800 transition-colors"
               >
                 <Download size={14} />
                 <span>Print / Save PDF</span>
