@@ -445,7 +445,7 @@ export const AdminDashboard: React.FC = () => {
             </h1>
             <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-emerald-500/[0.07] border border-emerald-500/15 text-[10px] font-sans font-semibold text-emerald-400">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-              <span>System live</span>
+              <span>Live data</span>
             </div>
           </div>
           <p className="text-xs sm:text-sm text-[var(--muted)] mt-1 font-sans leading-[18px] max-w-3xl text-left">
@@ -480,7 +480,7 @@ export const AdminDashboard: React.FC = () => {
               onClick={() => setPeriodFilter('thisMonth')}
               className={`px-2.5 py-1 rounded-md transition-all ${
                 periodFilter === 'thisMonth' 
-                  ? 'bg-[var(--accent)] text-[var(--text)] font-semibold' 
+                  ? 'bg-[var(--accent)] text-white font-semibold' 
                   : 'text-[var(--muted)] hover:text-[var(--text)]'
               }`}
             >
@@ -490,7 +490,7 @@ export const AdminDashboard: React.FC = () => {
               onClick={() => setPeriodFilter('q3')}
               className={`px-2.5 py-1 rounded-control transition-all ${
                 periodFilter === 'q3' 
-                  ? 'bg-[var(--accent)] text-[var(--text)] font-semibold' 
+                  ? 'bg-[var(--accent)] text-white font-semibold' 
                   : 'text-[var(--muted)] hover:text-[var(--text)]'
               }`}
             >
@@ -500,7 +500,7 @@ export const AdminDashboard: React.FC = () => {
               onClick={() => setPeriodFilter('ytd')}
               className={`px-2.5 py-1 rounded-control transition-all ${
                 periodFilter === 'ytd' 
-                  ? 'bg-[var(--accent)] text-[var(--text)] font-semibold' 
+                  ? 'bg-[var(--accent)] text-white font-semibold' 
                   : 'text-[var(--muted)] hover:text-[var(--text)]'
               }`}
             >
@@ -544,7 +544,7 @@ export const AdminDashboard: React.FC = () => {
           {isAllowed('projects') && (
             <button
               onClick={() => setIsNewProjectModalOpen(true)}
-              className="min-h-10 xl:h-9 px-3.5 rounded-control bg-[var(--accent)] hover:bg-[var(--accent)] text-[var(--text)] text-xs font-sans font-semibold transition-colors flex items-center gap-1.5"
+              className="min-h-10 xl:h-9 px-3.5 rounded-control bg-[var(--accent)] hover:bg-[var(--accent)] text-white text-xs font-sans font-semibold transition-colors flex items-center gap-1.5"
             >
               <Plus size={14} />
               <span>{language === 'id' ? 'Mulai Proyek' : 'New Project'}</span>
@@ -620,7 +620,7 @@ export const AdminDashboard: React.FC = () => {
           </div>
 
           <div className="mt-4 pt-3 border-t border-[var(--line)] flex items-center justify-between text-[11px] font-sans">
-            <span className="text-[var(--danger)] font-semibold flex items-center gap-1">
+            <span className="text-[var(--accent-text)] font-semibold flex items-center gap-1">
               {pipelineMetrics.activeLeadsCount} {language === 'id' ? 'Deal Terkualifikasi' : 'Qualified Deals'}
             </span>
             <span className="text-[var(--muted)]">
@@ -751,7 +751,7 @@ export const AdminDashboard: React.FC = () => {
               </div>
               <button
                 onClick={() => navigate('/admin/projects')}
-                className="text-xs font-sans text-[var(--accent)] hover:text-[var(--danger)] font-semibold flex items-center gap-1"
+                className="text-xs font-sans text-[var(--accent)] hover:text-[var(--accent-text)] font-semibold flex items-center gap-1"
               >
                 <span>{language === 'id' ? 'Task Board' : 'View All'}</span>
                 <ChevronRight size={13} />
@@ -821,7 +821,7 @@ export const AdminDashboard: React.FC = () => {
               </div>
               <button
                 onClick={() => navigate('/admin/invoicing')}
-                className="text-xs font-sans text-[var(--accent)] hover:text-[var(--danger)] font-semibold flex items-center gap-1"
+                className="text-xs font-sans text-[var(--accent)] hover:text-[var(--accent-text)] font-semibold flex items-center gap-1"
               >
                 <span>{language === 'id' ? 'Semua Invoice' : 'View Financials'}</span>
                 <ChevronRight size={13} />
@@ -906,7 +906,7 @@ export const AdminDashboard: React.FC = () => {
               <button
                 onClick={() => setActivityTab('all')}
                 className={`flex-1 py-1 rounded-control transition-all ${
-                  activityTab === 'all' ? 'bg-[var(--accent)] text-[var(--text)] font-semibold' : 'text-[var(--muted)] hover:text-[var(--text)]'
+                  activityTab === 'all' ? 'bg-[var(--accent)] text-white font-semibold' : 'text-[var(--muted)] hover:text-[var(--text)]'
                 }`}
               >
                 All
@@ -914,7 +914,7 @@ export const AdminDashboard: React.FC = () => {
               <button
                 onClick={() => setActivityTab('deals')}
                 className={`flex-1 py-1 rounded-control transition-all ${
-                  activityTab === 'deals' ? 'bg-[var(--accent)] text-[var(--text)] font-semibold' : 'text-[var(--muted)] hover:text-[var(--text)]'
+                  activityTab === 'deals' ? 'bg-[var(--accent)] text-white font-semibold' : 'text-[var(--muted)] hover:text-[var(--text)]'
                 }`}
               >
                 Deals
@@ -922,7 +922,7 @@ export const AdminDashboard: React.FC = () => {
               <button
                 onClick={() => setActivityTab('invoices')}
                 className={`flex-1 py-1 rounded-control transition-all ${
-                  activityTab === 'invoices' ? 'bg-[var(--accent)] text-[var(--text)] font-semibold' : 'text-[var(--muted)] hover:text-[var(--text)]'
+                  activityTab === 'invoices' ? 'bg-[var(--accent)] text-white font-semibold' : 'text-[var(--muted)] hover:text-[var(--text)]'
                 }`}
               >
                 Invoices
@@ -930,7 +930,7 @@ export const AdminDashboard: React.FC = () => {
               <button
                 onClick={() => setActivityTab('projects')}
                 className={`flex-1 py-1 rounded-control transition-all ${
-                  activityTab === 'projects' ? 'bg-[var(--accent)] text-[var(--text)] font-semibold' : 'text-[var(--muted)] hover:text-[var(--text)]'
+                  activityTab === 'projects' ? 'bg-[var(--accent)] text-white font-semibold' : 'text-[var(--muted)] hover:text-[var(--text)]'
                 }`}
               >
                 Projects
@@ -977,7 +977,7 @@ export const AdminDashboard: React.FC = () => {
               </div>
               <button
                 onClick={() => navigate('/admin/inbox')}
-                className="text-xs font-sans text-[var(--accent)] hover:text-[var(--danger)] font-semibold flex items-center gap-1"
+                className="text-xs font-sans text-[var(--accent)] hover:text-[var(--accent-text)] font-semibold flex items-center gap-1"
               >
                 <span>{language === 'id' ? 'Buka Inbox' : 'Open Inbox'}</span>
                 <ChevronRight size={13} />
@@ -1019,32 +1019,32 @@ export const AdminDashboard: React.FC = () => {
             </div>
           </div>
 
-          {/* Widget 3: Agency SLA & Infrastructure Security Health */}
+          {/* Widget 3: Operational Controls */}
           <div className="p-5 rounded-card bg-[var(--panel)] border border-[var(--line)] space-y-3 font-sans text-xs">
             <div className="flex items-center justify-between text-[var(--muted)] pb-2 border-b border-[var(--line)]">
               <span className="font-semibold text-[var(--text)] flex items-center gap-1.5">
                 <Cpu size={14} className="text-cyan-400" />
-                INFRASTRUCTURE & SLA
+                OPERATIONAL CONTROLS
               </span>
-              <span className="text-emerald-400 font-semibold">99.98% HEALTHY</span>
+              <span className="text-emerald-400 font-semibold">ACTIVE</span>
             </div>
 
             <div className="space-y-2 text-[11px]">
               <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
-                <span className="text-[var(--muted)]">Core Domain:</span>
-                <span className="text-[var(--text)] font-semibold">https://kapitech.id (Edge CDN)</span>
+                <span className="text-[var(--muted)]">Authenticated role:</span>
+                <span className="text-[var(--text)] font-semibold text-right">{roleMeta?.title || 'Authenticated role'}</span>
               </div>
               <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
-                <span className="text-[var(--muted)]">AMS Domain:</span>
-                <span className="text-[var(--text)] font-semibold">https://ams.kapitech.id (Cloud Run)</span>
+                <span className="text-[var(--muted)]">RBAC modules:</span>
+                <span className="text-[var(--text)] font-semibold text-right">{Object.keys(ROLE_DEFINITIONS[rbacRole]?.permissions || {}).length} configured</span>
               </div>
               <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
-                <span className="text-[var(--muted)]">RBAC Policy:</span>
-                <span className="text-emerald-400 font-semibold">Zero-Trust Enforced</span>
+                <span className="text-[var(--muted)]">Audit events:</span>
+                <span className="text-[var(--text)] font-semibold">{auditLogs.length}</span>
               </div>
               <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
-                <span className="text-[var(--muted)]">Security Vulnerabilities:</span>
-                <span className="text-emerald-400 font-semibold">0 High / 0 Critical</span>
+                <span className="text-[var(--muted)]">Data source:</span>
+                <span className="text-emerald-400 font-semibold">Server-backed</span>
               </div>
             </div>
           </div>
@@ -1111,7 +1111,7 @@ export const AdminDashboard: React.FC = () => {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-[var(--muted)] font-sans mb-1">Service Pillar</label>
-                  <CustomSelect value={newLeadPillar} onChange={(value) => setNewLeadPillar(value as CrmServicePillar)} options={[{value:'Web Development',label:'Web Development'},{value:'AI & Cloud Solutions',label:'AI & Cloud Solutions'},{value:'UI/UX Design',label:'UI/UX Design'},{value:'Digital Product MVP',label:'Digital Product MVP'},{value:'Mobile App',label:'Mobile App'},{value:'Branding & Identity',label:'Branding & Identity'}]} className="w-full" />
+                  <CustomSelect value={newLeadPillar} onChange={(value) => setNewLeadPillar(value as CrmServicePillar)} options={[{value:'Web Development',label:'Web Development'},{value:'AI & Cloud Solutions',label:'AI & Cloud Solutions'},{value:'UI/UX Design',label:'UI/UX Design'},{value:'Digital Product MVP',label:'Digital Product MVP'},{value:'Branding & Identity',label:'Branding & Identity'}]} className="w-full" />
                 </div>
 
                 <div>
@@ -1135,7 +1135,7 @@ export const AdminDashboard: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-card bg-[var(--accent)] hover:bg-[var(--accent)] text-[var(--text)] font-semibold transition-colors"
+                  className="px-4 py-2 rounded-card bg-[var(--accent)] hover:bg-[var(--accent)] text-white font-semibold transition-colors"
                 >
                   Save Lead
                 </button>
@@ -1221,7 +1221,7 @@ export const AdminDashboard: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-card bg-[var(--accent)] hover:bg-[var(--accent)] text-[var(--text)] font-semibold transition-colors"
+                  className="px-4 py-2 rounded-card bg-[var(--accent)] hover:bg-[var(--accent)] text-white font-semibold transition-colors"
                 >
                   Dispatch Invoice
                 </button>
@@ -1299,7 +1299,7 @@ export const AdminDashboard: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-card bg-[var(--accent)] hover:bg-[var(--accent)] text-[var(--text)] font-semibold transition-colors"
+                  className="px-4 py-2 rounded-card bg-[var(--accent)] hover:bg-[var(--accent)] text-white font-semibold transition-colors"
                 >
                   Start Project
                 </button>
@@ -1366,7 +1366,7 @@ export const AdminDashboard: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-card bg-[var(--accent)] hover:bg-[var(--accent)] text-[var(--text)] font-semibold transition-colors"
+                  className="px-4 py-2 rounded-card bg-[var(--accent)] hover:bg-[var(--accent)] text-white font-semibold transition-colors"
                 >
                   Save Expense
                 </button>
