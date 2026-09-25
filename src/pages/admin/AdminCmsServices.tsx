@@ -332,7 +332,7 @@ export const AdminCmsServices: React.FC = () => {
                     {item.category}
                   </span>
                 </div>
-                <span className="text-[10px] font-sans px-2 py-0.5 rounded-full bg-[var(--success)]/10 border border-[var(--success)]/30 text-[var(--success)] font-semibold">
+                <span className="text-[10px] font-sans px-2 py-0.5 rounded-badge bg-[var(--success)]/10 border border-[var(--success)]/30 text-[var(--success)] font-semibold">
                   {item.badgeId || item.badge || 'Active'}
                 </span>
               </div>
