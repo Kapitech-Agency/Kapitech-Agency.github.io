@@ -886,7 +886,7 @@ export const AdminProjects: React.FC = () => {
                             {/* Footer: Assignee & Due Date Notice */}
                             <div className="flex items-center justify-between pt-2 border-t border-[var(--line)] text-[10px] font-sans">
                               <span className="text-[var(--muted)] flex items-center gap-1.5 truncate max-w-[140px]">
-                                <div className="w-4 h-4 rounded-full bg-[var(--panel)] border border-white/10 flex items-center justify-center text-[9px] text-[var(--text)] font-semibold">
+                                <div className="w-4 h-4 rounded-full bg-[var(--panel)] border border-[var(--line)] flex items-center justify-center text-[9px] text-[var(--text)] font-semibold">
                                   {task.assignedTo.charAt(0)}
                                 </div>
                                 <span className="truncate">{task.assignedTo}</span>
