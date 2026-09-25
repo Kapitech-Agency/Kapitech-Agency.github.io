@@ -29,7 +29,7 @@ interface NavItem {
   key: string;
   to: string;
   label: string;
-  icon: React.ComponentType<{ size?: number; className?: string }>;
+  icon: React.ComponentType<{ size?: number; className?: string; strokeWidth?: number }>;
   badge?: string | number | null;
   badgeColor?: string;
   exact?: boolean;
