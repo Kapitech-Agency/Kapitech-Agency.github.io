@@ -96,7 +96,7 @@ export const AdminCmsTestimonials: React.FC = () => {
 
         <button
           onClick={handleOpenAdd}
-          className="min-h-10 px-3 rounded-control bg-[var(--accent)] hover:bg-[var(--accent)] text-[var(--text)] text-xs font-sans font-medium transition-colors flex items-center gap-2"
+          className="min-h-10 px-3 rounded-control bg-[var(--accent)] hover:bg-[var(--accent)] text-white text-xs font-sans font-medium transition-colors flex items-center gap-2"
         >
           <Plus size={14} />
           <span>{language === 'id' ? 'Tambah Testimoni' : 'Add Testimonial'}</span>
