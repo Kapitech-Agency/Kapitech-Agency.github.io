@@ -237,7 +237,7 @@ export const AdminClients: React.FC = () => {
         <div className="p-4 rounded-card bg-[var(--danger)]/10 border border-[var(--danger)]/30 text-[var(--text)] space-y-2">
           <div className="flex items-center gap-2.5 text-[var(--danger)] font-medium font-sans text-xs normal-case tracking-normal">
             <ShieldAlert size={16} />
-            <span>CRITICAL SLA VIOLATION WARNING: Daily Ad-Spend Exceeded Cap</span>
+            <span>Critical SLA warning: daily ad spend exceeded the cap</span>
           </div>
           <div className="text-xs font-sans text-[var(--danger)]">
             {clientsExceedingSla.map(c => (
