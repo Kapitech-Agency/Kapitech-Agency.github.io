@@ -86,7 +86,7 @@ export const AdminCmsTestimonials: React.FC = () => {
 
         <button
           onClick={handleOpenAdd}
-          className="min-h-10 px-3 rounded-control bg-[var(--accent)] hover:bg-[var(--accent-text)] text-white text-xs font-sans font-medium transition-colors flex items-center gap-2"
+          className="min-h-10 px-3 rounded-control bg-[var(--accent)] hover:bg-[var(--accent-text)] text-[var(--text)] text-xs font-sans font-medium transition-colors flex items-center gap-2"
         >
           <Plus size={14} />
           <span>{language === 'id' ? 'Tambah Testimoni' : 'Add Testimonial'}</span>
@@ -125,7 +125,7 @@ export const AdminCmsTestimonials: React.FC = () => {
               <div>
                 <div className="text-xs font-medium text-[var(--text)]">{item.author}</div>
                 <div className="text-xs font-sans text-[var(--muted)]">
-                  {item.role}, <span className="text-white">{item.company}</span>
+                  {item.role}, <span className="text-[var(--text)]">{item.company}</span>
                 </div>
                 <div className="text-[11px] font-sans text-[var(--muted)] mt-0.5 flex items-center gap-1">
                   <MapPin size={10} />
@@ -161,7 +161,7 @@ export const AdminCmsTestimonials: React.FC = () => {
               <h2 className="text-base font-semibold font-sans text-[var(--text)]">
                 {editingItem.author ? `Edit: ${editingItem.author}` : (language === 'id' ? 'Tambah Testimoni Klien' : 'Add Client Testimonial')}
               </h2>
-              <button onClick={() => setIsModalOpen(false)} className="text-[var(--muted)] hover:text-white text-xs font-sans">
+              <button onClick={() => setIsModalOpen(false)} className="text-[var(--muted)] hover:text-[var(--text)] text-xs font-sans">
                 ✕ {language === 'id' ? 'Tutup' : 'Close'}
               </button>
             </div>
@@ -245,7 +245,7 @@ export const AdminCmsTestimonials: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="min-h-10 px-3 rounded-control bg-[var(--accent)] text-white text-xs font-sans font-medium hover:bg-[var(--accent-text)] transition-colors"
+                  className="min-h-10 px-3 rounded-control bg-[var(--accent)] text-[var(--text)] text-xs font-sans font-medium hover:bg-[var(--accent-text)] transition-colors"
                 >
                   {language === 'id' ? 'Simpan Testimoni' : 'Save Testimonial'}
                 </button>
