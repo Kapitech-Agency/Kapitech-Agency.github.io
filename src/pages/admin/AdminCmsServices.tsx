@@ -296,13 +296,13 @@ export const AdminCmsServices: React.FC = () => {
         </div>
 
         <div className="relative w-full sm:w-72">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5C626E]" size={14} />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted)]" size={14} />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={language === 'id' ? 'Cari layanan berdasarkan nama atau slug...' : 'Search service by name or slug...'}
-            className="w-full pl-9 pr-3 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-card text-xs text-[var(--text)] placeholder:text-[#5C626E] focus:outline-none focus:border-[var(--accent)] font-sans transition-colors min-h-[40px]"
+            className="w-full pl-9 pr-3 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-card text-xs text-[var(--text)] placeholder:text-[var(--muted)] focus:outline-none focus:border-[var(--accent)] font-sans transition-colors min-h-[40px]"
           />
         </div>
       </div>
@@ -337,7 +337,7 @@ export const AdminCmsServices: React.FC = () => {
 
               {/* Core Capabilities Preview */}
               <div className="space-y-1.5 mb-4">
-                <div className="text-[10px] font-sans text-[#5C626E] normal-case tracking-normal font-semibold">
+                <div className="text-[10px] font-sans text-[var(--muted)] normal-case tracking-normal font-semibold">
                   Core Capabilities:
                 </div>
                 <div className="flex flex-wrap gap-1.5">
@@ -352,7 +352,7 @@ export const AdminCmsServices: React.FC = () => {
               {/* Tech Stack / Tools */}
               {item.tools && item.tools.length > 0 && (
                 <div className="pt-2 border-t border-[var(--line)] mb-3 flex items-center gap-1.5 overflow-x-auto custom-scrollbar pb-1">
-                  <span className="text-[10px] font-sans text-[#5C626E] shrink-0">Tech:</span>
+                  <span className="text-[10px] font-sans text-[var(--muted)] shrink-0">Tech:</span>
                   {item.tools.slice(0, 4).map((tool, tIdx) => (
                     <span key={tIdx} className="text-[9px] font-sans text-[var(--muted)] bg-[var(--panel)] px-1.5 py-0.5 rounded border border-[var(--line)] shrink-0">
                       {tool}
@@ -425,7 +425,7 @@ export const AdminCmsServices: React.FC = () => {
 
             {/* Capabilities */}
             <div className="mb-5">
-              <h4 className="text-xs font-sans normal-case text-[#5C626E] font-semibold tracking-normal mb-2">
+              <h4 className="text-xs font-sans normal-case text-[var(--muted)] font-semibold tracking-normal mb-2">
                 Detailed Capabilities & SLA Scope
               </h4>
               <div className="space-y-2">
@@ -446,7 +446,7 @@ export const AdminCmsServices: React.FC = () => {
             {/* Process Stages */}
             {selectedServiceForDetail.processStages && selectedServiceForDetail.processStages.length > 0 && (
               <div className="mb-5">
-                <h4 className="text-xs font-sans normal-case text-[#5C626E] font-semibold tracking-normal mb-2">
+                <h4 className="text-xs font-sans normal-case text-[var(--muted)] font-semibold tracking-normal mb-2">
                   Delivery Process & Milestones
                 </h4>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
