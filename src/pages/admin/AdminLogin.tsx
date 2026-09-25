@@ -203,7 +203,7 @@ export const AdminLogin: React.FC = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full min-h-10 h-10 rounded-control bg-[var(--accent)] hover:bg-[var(--accent)] disabled:bg-[var(--panel-hover)] text-[var(--text)] text-xs font-medium font-sans normal-case tracking-normal flex items-center justify-center gap-2 transition-colors"
+              className="w-full min-h-10 h-10 rounded-control bg-[var(--accent)] hover:bg-[var(--accent)] disabled:bg-[var(--panel-hover)] text-white disabled:text-[var(--muted)] text-xs font-medium font-sans normal-case tracking-normal flex items-center justify-center gap-2 transition-colors"
             >
               {loading
                 ? (language === 'id' ? 'Memverifikasi…' : 'Verifying…')
@@ -248,7 +248,7 @@ export const AdminLogin: React.FC = () => {
             <button
               type="submit"
               disabled={loading || (mfaRecoveryMode ? mfaCode.trim().length < 12 : mfaCode.length !== 6)}
-              className="w-full h-11 rounded-[var(--ams-radius-control)] bg-[var(--accent)] hover:bg-[var(--accent)] disabled:bg-[var(--panel-hover)] text-[var(--text)] text-xs font-medium font-sans normal-case tracking-normal flex items-center justify-center gap-2 transition-colors"
+              className="w-full h-11 rounded-[var(--ams-radius-control)] bg-[var(--accent)] hover:bg-[var(--accent)] disabled:bg-[var(--panel-hover)] text-white disabled:text-[var(--muted)] text-xs font-medium font-sans normal-case tracking-normal flex items-center justify-center gap-2 transition-colors"
             >
               {loading
                 ? (language === 'id' ? 'Memverifikasi…' : 'Verifying…')
