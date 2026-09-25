@@ -86,7 +86,7 @@ export const AdminCmsTestimonials: React.FC = () => {
 
         <button
           onClick={handleOpenAdd}
-          className="min-h-10 px-3 rounded-control bg-[var(--accent)] hover:bg-[var(--accent-text)] text-[var(--text)] text-xs font-sans font-medium transition-colors flex items-center gap-2"
+          className="min-h-10 px-3 rounded-control bg-[var(--accent)] hover:bg-[var(--accent)] text-[var(--text)] text-xs font-sans font-medium transition-colors flex items-center gap-2"
         >
           <Plus size={14} />
           <span>{language === 'id' ? 'Tambah Testimoni' : 'Add Testimonial'}</span>
@@ -245,7 +245,7 @@ export const AdminCmsTestimonials: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="min-h-10 px-3 rounded-control bg-[var(--accent)] text-[var(--text)] text-xs font-sans font-medium hover:bg-[var(--accent-text)] transition-colors"
+                  className="min-h-10 px-3 rounded-control bg-[var(--accent)] text-[var(--text)] text-xs font-sans font-medium hover:bg-[var(--accent)] transition-colors"
                 >
                   {language === 'id' ? 'Simpan Testimoni' : 'Save Testimonial'}
                 </button>
