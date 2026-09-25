@@ -409,7 +409,7 @@ export const AdminInvoicing: React.FC = () => {
           </div>
           <div className="flex items-center justify-between mt-4 pt-3 border-t border-[var(--line)] text-[11px] font-sans">
             <span className="text-[var(--muted)]">{expenses.length} {language === 'id' ? 'Catatan' : 'Records'}</span>
-            <span className="text-rose-400 font-semibold">Infrastructure & Ops</span>
+            <span className="text-[var(--danger)] font-semibold">Infrastructure & Ops</span>
           </div>
         </div>
 
@@ -750,7 +750,7 @@ export const AdminInvoicing: React.FC = () => {
                   className="bg-[var(--panel)] border border-[var(--line)] rounded-card p-4 space-y-3"
                 >
                   <div className="flex items-center justify-between">
-                    <span className="px-2.5 py-1 rounded-control bg-[var(--warning)]/10 text-amber-300 border border-amber-500/20 text-[10px] font-sans font-semibold">
+                    <span className="px-2.5 py-1 rounded-control bg-[var(--warning)]/10 text-[var(--warning)] border border-[var(--warning)]/20 text-[10px] font-sans font-semibold">
                       {exp.category}
                     </span>
                     <span className="text-[11px] font-sans text-[var(--muted)]">{exp.date}</span>
@@ -761,7 +761,7 @@ export const AdminInvoicing: React.FC = () => {
                   <div className="flex items-center justify-between pt-2 border-t border-[var(--line)]">
                     <div>
                       <div className="text-[10px] font-sans text-[var(--muted)]">{language === 'id' ? 'Nominal Pengeluaran' : 'Expense Amount'}</div>
-                      <div className="text-base font-semibold text-rose-400 font-sans">
+                      <div className="text-base font-semibold text-[var(--danger)] font-sans">
                         {formatAmount(exp.amount, currency)}
                       </div>
                       <div className="text-[10px] font-sans text-[var(--muted)]">
@@ -817,12 +817,12 @@ export const AdminInvoicing: React.FC = () => {
                   <tr key={exp.id} className="hover:bg-panel transition-colors">
                     <td className="py-3 px-4 text-[var(--muted)]">{exp.date}</td>
                     <td className="py-3 px-4">
-                      <span className="px-2 py-0.5 rounded bg-[var(--panel)] text-[var(--warning)] border border-amber-500/20 text-[10px]">
+                      <span className="px-2 py-0.5 rounded bg-[var(--panel)] text-[var(--warning)] border border-[var(--warning)]/20 text-[10px]">
                         {exp.category}
                       </span>
                     </td>
                     <td className="py-3 px-4 font-medium text-[var(--text)]">{exp.description}</td>
-                    <td className="py-3 px-4 font-semibold text-rose-400 font-sans">
+                    <td className="py-3 px-4 font-semibold text-[var(--danger)] font-sans">
                       {formatAmount(exp.amount, currency)}
                     </td>
                     <td className="py-3 px-4 text-[var(--muted)]">{exp.recordedBy}</td>
