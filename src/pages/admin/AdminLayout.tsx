@@ -375,7 +375,7 @@ export const AdminLayout: React.FC = () => {
         <div className="relative shrink-0 px-2.5 py-3" aria-label="Sidebar resize control">
           <div className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-line" aria-hidden="true" />
           <button type="button" onClick={() => setSidebarCollapsed(v => !v)} aria-label={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'} title={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-            className="ams-sidebar-toggle group relative z-10 mx-auto flex h-8 w-8 items-center justify-center rounded-control border border-line bg-panel text-muted transition-[background-color,border-color,color,transform] duration-150 ease-out hover:border-accent/30 hover:bg-panel-hover hover:text-fg active:scale-[0.96] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-panel">
+            className="ams-sidebar-toggle group relative z-10 mx-auto flex h-6 w-6 items-center justify-center rounded-control border border-line bg-panel text-muted transition-[background-color,border-color,color,transform] duration-150 ease-out hover:border-accent/30 hover:bg-panel-hover hover:text-fg active:scale-[0.96] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-panel">
             {sidebarCollapsed ? <ChevronRight size={15} strokeWidth={2} /> : <ChevronLeft size={15} strokeWidth={2} />}
           </button>
         </div>
