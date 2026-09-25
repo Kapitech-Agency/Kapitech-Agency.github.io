@@ -289,7 +289,7 @@ export const AdminVendors: React.FC = () => {
           <button
             onClick={handleOpenAdd}
                             disabled={!canManageVendors}
-            className="h-10 px-4 rounded-control bg-[var(--accent)] hover:brightness-110 text-white text-xs font-semibold shadow-none flex items-center gap-2 transition-all min-h-[40px]"
+            className="h-10 px-4 rounded-control bg-[var(--accent)] hover:brightness-110 text-white text-xs font-semibold -none flex items-center gap-2 transition-all min-h-[40px]"
           >
             <Plus size={15} />
             <span>{language === 'id' ? 'Tambah Vendor' : 'Add Vendor'}</span>
@@ -340,7 +340,7 @@ export const AdminVendors: React.FC = () => {
           <div className="mt-2 text-2xl font-semibold font-sans text-[var(--text)]">
             {vendors.filter(v => v.type === 'agency_partner').length}
           </div>
-          <div className="text-[10px] font-sans text-cyan-400 mt-1">DevOps, Cloud & Legal</div>
+          <div className="text-[10px] font-sans text-info mt-1">DevOps, Cloud & Legal</div>
         </div>
 
         <div className="w-full h-full p-4 rounded-card bg-[var(--panel)] border border-[var(--line)] flex flex-col justify-between">
@@ -506,7 +506,7 @@ export const AdminVendors: React.FC = () => {
                   {vendor.skills.map((skill, idx) => (
                     <span
                       key={idx}
-                      className="px-2 py-0.5 rounded-md bg-[var(--panel)] border border-[var(--line)] text-[10px] font-sans text-[var(--muted)]"
+                      className="px-2 py-0.5 rounded-chip bg-[var(--panel)] border border-[var(--line)] text-[10px] font-sans text-[var(--muted)]"
                     >
                       {skill}
                     </span>
@@ -573,7 +573,7 @@ export const AdminVendors: React.FC = () => {
       {isDrawerOpen && selectedVendor && (
         <div className="fixed inset-0 z-50 flex">
           <div className="fixed inset-0 bg-black/80 " onClick={() => setIsDrawerOpen(false)} />
-          <div className="relative ml-auto w-full max-w-md bg-[var(--panel)] border-l border-[var(--line)] h-full max-h-[100dvh] flex flex-col justify-between p-4 sm:p-6 z-10 shadow-none overflow-y-auto animate-in slide-in-from-right duration-200">
+          <div className="relative ml-auto w-full max-w-md bg-[var(--panel)] border-l border-[var(--line)] h-full max-h-[100dvh] flex flex-col justify-between p-4 sm:p-6 z-10 -none overflow-y-auto animate-in slide-in-from-right duration-200">
             <div>
               <div className="flex items-center justify-between pb-4 border-b border-[var(--line)]">
                 <div className="flex items-center gap-3">
@@ -618,7 +618,7 @@ export const AdminVendors: React.FC = () => {
                       <span>{selectedVendor.phone}</span>
                     </div>
                     <div className="flex items-center gap-2 text-[var(--muted)]">
-                      <Globe size={13} className="text-cyan-400" />
+                      <Globe size={13} className="text-info" />
                       <span>{selectedVendor.location}</span>
                     </div>
                   </div>
@@ -674,7 +674,7 @@ export const AdminVendors: React.FC = () => {
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="fixed inset-0 bg-black/80 " onClick={() => setIsModalOpen(false)} />
-          <div className="relative w-full max-w-lg bg-[var(--panel)] border border-[var(--line)] rounded-card shadow-none p-4 sm:p-6 z-10 animate-in zoom-in-95 duration-150">
+          <div className="relative w-full max-w-lg bg-[var(--panel)] border border-[var(--line)] rounded-card -none p-4 sm:p-6 z-10 animate-in zoom-in-95 duration-150">
             <div className="flex items-center justify-between pb-4 border-b border-[var(--line)]">
               <h3 className="text-sm font-semibold text-[var(--text)]">
                 {editingVendor
@@ -871,7 +871,7 @@ export const AdminVendors: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-control bg-[var(--accent)] hover:brightness-110 text-white text-xs font-semibold shadow-none"
+                  className="px-5 py-2 rounded-control bg-[var(--accent)] hover:brightness-110 text-white text-xs font-semibold -none"
                 >
                   {language === 'id' ? 'Simpan Vendor' : 'Save Vendor'}
                 </button>
