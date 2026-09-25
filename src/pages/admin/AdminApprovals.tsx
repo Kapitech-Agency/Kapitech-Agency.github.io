@@ -21,6 +21,7 @@ import { useLanguage } from '../../lib/LanguageContext';
 import { getActiveCurrency, formatAmount, CurrencyCode, CURRENCY_EVENT } from '../../lib/currency';
 import { hasAdminPermission } from '../../lib/adminAuth';
 import { CustomSelect } from '../../components/ui/CustomSelect';
+import { Modal } from '../../components/ui/Modal';
 
 interface ApprovalItem {
   id: string;
@@ -404,7 +405,7 @@ export const AdminApprovals: React.FC = () => {
 
       {/* DECISION MODAL */}
       {activeItem && canApproveBudgets && (
-        <div className="fixed inset-0 z-50 bg-black/85 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-black/85 flex items-center justify-center p-4" role="presentation">
           <div className="bg-[var(--bg)] border border-[var(--line)] rounded-card w-full max-w-md shadow-none overflow-hidden">
             <div className="p-4 border-b border-[var(--line)] flex items-center justify-between bg-[var(--panel)]">
               <h3 className="text-sm font-semibold font-sans text-[var(--text)] flex items-center gap-2">
