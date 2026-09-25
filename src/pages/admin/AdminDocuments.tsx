@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { 
-  FolderOpen, 
   FileText, 
   UploadCloud, 
   Plus, 
@@ -186,7 +185,7 @@ export const AdminDocuments: React.FC = () => {
       <div className="ams-page-header flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 pb-4 sm:pb-5 border-b border-[var(--line)]">
         <div>
           <h1 className="ams-page-title flex items-center gap-2.5">
-            <FolderOpen className="text-[var(--accent)]" size={24} />
+            <FileText className="text-[var(--accent-text)] shrink-0" size={22} />
             <span>{language === 'id' ? 'Brankas Dokumen & Aset Agency' : 'Documents & Asset Vault'}</span>
           </h1>
           <p className="text-xs font-sans text-[var(--muted)] mt-1">
@@ -205,15 +204,15 @@ export const AdminDocuments: React.FC = () => {
         </button>
       </div>
 
-      {/* Category Summary Badges */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+      {/* Document filters */}
+      <div className="rounded-card border border-[var(--line)] bg-[var(--panel)] p-2"><div className="mb-2 px-2 text-xs font-medium text-[var(--muted)]">Filter documents</div><div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
         {(['contract', 'proposal', 'invoice', 'deliverable', 'compliance'] as const).map((cat) => {
           const count = documents.filter(d => (d.category || '').toLowerCase().includes(cat)).length;
           return (
             <button
               key={cat}
               onClick={() => setCategoryFilter(categoryFilter === cat ? 'all' : cat)}
-              className={`min-h-10 p-3 rounded-control border text-left transition-colors ${
+              className={`min-h-10 px-3 py-2 rounded-chip border text-left transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent active:scale-[.98] ${
                 categoryFilter === cat
                   ? 'bg-[var(--accent)]/10 border-[var(--accent)]/30 text-[var(--text)]'
                   : 'bg-[var(--panel)] border-[var(--line)] text-[var(--muted)] hover:text-[var(--text)] hover:border-[var(--line)]'
@@ -255,12 +254,12 @@ export const AdminDocuments: React.FC = () => {
       {/* Documents Grid / Table */}
       <div className="rounded-card bg-[var(--panel)] border border-[var(--line)] overflow-hidden">
         {isLoading ? (
-          <div className="p-12 text-center text-xs font-sans text-[var(--muted)] flex flex-col items-center justify-center gap-2">
+          <div className="min-h-[160px] px-4 py-8 text-center text-xs font-sans text-[var(--muted)] flex flex-col items-center justify-center gap-2">
             <Loader2 className="animate-spin text-[var(--accent)]" size={20} />
             <span>Loading document vault...</span>
           </div>
         ) : filteredDocs.length === 0 ? (
-          <div className="p-12 text-center text-xs font-sans text-[var(--muted)]">
+          <div className="min-h-[160px] px-4 py-8 text-center text-xs font-sans text-[var(--muted)] flex flex-col items-center justify-center">
             {language === 'id' ? 'Belum ada dokumen di registri.' : 'No documents found in the registry.'}
           </div>
         ) : (
