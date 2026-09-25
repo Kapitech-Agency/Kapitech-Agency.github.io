@@ -1980,22 +1980,9 @@
   }
 }
 
-/* AMS SIDEBAR GEOMETRY FIX */
-.ams-shell > aside.ams-sidebar-expanded {
-  width: 220px !important;
-  min-width: 220px !important;
-}
-.ams-shell > aside.ams-sidebar-collapsed {
-  width: 64px !important;
-  min-width: 64px !important;
-}
-@media (max-width: 899px) {
-  .ams-shell > aside.ams-sidebar-expanded,
-  .ams-shell > aside.ams-sidebar-collapsed {
-    width: min(280px, 86vw) !important;
-    min-width: min(280px, 86vw) !important;
-  }
-}
+/* AMS SIDEBAR GEOMETRY */
+.ams-shell > aside.ams-sidebar-expanded,
+.ams-shell > aside.ams-sidebar-collapsed { min-width: 0; }
 
 
 /* AMS final responsive interaction pass: predictable mobile controls and dialogs. */
@@ -2416,7 +2403,7 @@
 .ams-shell [class*="bg-[var(--accent)]"] svg { color: #fff !important; }
 .ams-shell .ams-sidebar-toggle { position: relative; z-index: 2; }
 .ams-shell .ams-sidebar-expanded .ams-sidebar-toggle,
-.ams-shell .ams-sidebar-collapsed .ams-sidebar-toggle { margin: 0 auto; }
+.ams-shell .ams-sidebar-collapsed .ams-sidebar-toggle { margin: 0; }
 .ams-shell .ams-page-header { min-width: 0; }
 .ams-shell .ams-page-header p { max-width: 72ch; }
 .ams-shell .ams-page-title { display:flex; align-items:center; gap:8px; min-width:0; }
