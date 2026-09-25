@@ -266,7 +266,7 @@ export const AdminApprovals: React.FC = () => {
                 onClick={() => setStatusFilter(st)}
                 className={`px-2.5 py-1 rounded-md text-xs font-sans capitalize transition-all ${
                   statusFilter === st
-                    ? 'bg-[var(--bg)] text-[var(--text)] shadow-sm border border-[var(--line)] font-semibold'
+                    ? 'bg-[var(--bg)] text-[var(--text)] shadow-none border border-[var(--line)] font-semibold'
                     : 'text-[var(--muted)] hover:text-[var(--text)]'
                 }`}
               >
