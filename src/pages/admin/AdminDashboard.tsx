@@ -1049,7 +1049,7 @@ export const AdminDashboard: React.FC = () => {
                   value={newLeadName}
                   onChange={(e) => setNewLeadName(e.target.value)}
                   placeholder="e.g. Irwan Prasetyo"
-                  className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-card outline-none"
+                  className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-control outline-none"
                 />
               </div>
 
@@ -1061,7 +1061,7 @@ export const AdminDashboard: React.FC = () => {
                   value={newLeadCompany}
                   onChange={(e) => setNewLeadCompany(e.target.value)}
                   placeholder="e.g. PT Bank Central Asia"
-                  className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-card outline-none"
+                  className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-control outline-none"
                 />
               </div>
 
@@ -1072,7 +1072,7 @@ export const AdminDashboard: React.FC = () => {
                   value={newLeadEmail}
                   onChange={(e) => setNewLeadEmail(e.target.value)}
                   placeholder="name@company.com"
-                  className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-card outline-none"
+                  className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-control outline-none"
                 />
               </div>
 
@@ -1088,7 +1088,7 @@ export const AdminDashboard: React.FC = () => {
                     type="number"
                     value={newLeadValue}
                     onChange={(e) => setNewLeadValue(e.target.value)}
-                    className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-card outline-none"
+                    className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-control outline-none"
                   />
                 </div>
               </div>
@@ -1138,7 +1138,7 @@ export const AdminDashboard: React.FC = () => {
                   value={quickInvCompany}
                   onChange={(e) => setQuickInvCompany(e.target.value)}
                   placeholder="e.g. PT Astra Digital Ventura"
-                  className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-card outline-none"
+                  className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-control outline-none"
                 />
               </div>
 
@@ -1149,7 +1149,7 @@ export const AdminDashboard: React.FC = () => {
                   required
                   value={quickInvAmount}
                   onChange={(e) => setQuickInvAmount(e.target.value)}
-                  className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-card outline-none"
+                  className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-control outline-none"
                 />
               </div>
 
@@ -1160,7 +1160,7 @@ export const AdminDashboard: React.FC = () => {
                   value={quickInvDesc}
                   onChange={(e) => setQuickInvDesc(e.target.value)}
                   placeholder="Sprint Retainer 50% Kickoff"
-                  className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-card outline-none"
+                  className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-control outline-none"
                 />
               </div>
 
@@ -1224,7 +1224,7 @@ export const AdminDashboard: React.FC = () => {
                   value={quickProjTitle}
                   onChange={(e) => setQuickProjTitle(e.target.value)}
                   placeholder="e.g. NextGen Mobile Banking Modernization"
-                  className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-card outline-none"
+                  className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-control outline-none"
                 />
               </div>
 
@@ -1236,7 +1236,7 @@ export const AdminDashboard: React.FC = () => {
                   value={quickProjClient}
                   onChange={(e) => setQuickProjClient(e.target.value)}
                   placeholder="e.g. Telkomsel Labs"
-                  className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-card outline-none"
+                  className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-control outline-none"
                 />
               </div>
 
@@ -1252,7 +1252,7 @@ export const AdminDashboard: React.FC = () => {
                     type="number"
                     value={quickProjBudget}
                     onChange={(e) => setQuickProjBudget(e.target.value)}
-                    className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-card outline-none"
+                    className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-control outline-none"
                   />
                 </div>
               </div>
@@ -1302,7 +1302,7 @@ export const AdminDashboard: React.FC = () => {
                   value={quickExpDesc}
                   onChange={(e) => setQuickExpDesc(e.target.value)}
                   placeholder="e.g. AWS & GCP Kubernetes Cluster Tier"
-                  className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-card outline-none"
+                  className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-control outline-none"
                 />
               </div>
 
@@ -1319,7 +1319,7 @@ export const AdminDashboard: React.FC = () => {
                     required
                     value={quickExpAmount}
                     onChange={(e) => setQuickExpAmount(e.target.value)}
-                    className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-card outline-none"
+                    className="w-full h-10 px-3 bg-[var(--panel)] border border-[var(--line)] focus:border-[var(--accent)] text-[var(--text)] rounded-control outline-none"
                   />
                 </div>
               </div>
