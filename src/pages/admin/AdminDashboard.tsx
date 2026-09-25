@@ -61,7 +61,6 @@ export const AdminDashboard: React.FC = () => {
   const [serverFinanceMetrics, setServerFinanceMetrics] = useState<any>({ totalRevenueCollected: 0, totalOutstanding: 0, totalExpense: 0, netProfit: 0, profitMargin: '0', overdueCount: 0 });
 
   // Interactive Period & Segment Filters
-  const [periodFilter, setPeriodFilter] = useState<'thisMonth' | 'q3' | 'ytd'>('thisMonth');
   const [activityTab, setActivityTab] = useState<'all' | 'deals' | 'invoices' | 'projects'>('all');
   const [notification, setNotification] = useState<string | null>(null);
 
@@ -139,7 +138,7 @@ export const AdminDashboard: React.FC = () => {
     totalExpenses: Number(serverFinanceMetrics.totalExpense || 0),
     netOperatingProfit: Number(serverFinanceMetrics.netProfit || 0),
     netMarginPercent: Number(serverFinanceMetrics.profitMargin || 0),
-    totalOverdue: 0
+    totalOverdue: Number(serverFinanceMetrics.overdueCount || 0)
   }), [serverFinanceMetrics]);
 
   // 2. CRM PIPELINE KPI ENGINE
@@ -171,18 +170,21 @@ export const AdminDashboard: React.FC = () => {
     };
   }, [leads]);
 
-  // 3. ACTIVE PROJECTS & SLA ENGINE
+  // 3. ACTIVE PROJECTS & DELIVERY ENGINE
   const projectMetrics = useMemo(() => {
     const total = projects.length;
     const inProgress = projects.filter(p => p.status === 'in_progress').length;
     const completed = projects.filter(p => p.status === 'completed').length;
-    const slaRate = 0;
+    const projectsWithProgress = projects.filter(p => typeof p.progressPercent === 'number');
+    const averageProgress = projectsWithProgress.length > 0
+      ? Math.round(projectsWithProgress.reduce((sum, p) => sum + (p.progressPercent || 0), 0) / projectsWithProgress.length)
+      : 0;
 
     return {
       total,
       inProgress,
       completed,
-      slaRate
+      averageProgress
     };
   }, [projects]);
 
@@ -398,7 +400,7 @@ export const AdminDashboard: React.FC = () => {
       ['Active Qualified Deals Count', pipelineMetrics.activeLeadsCount],
       ['Conversion & Win Rate %', `${pipelineMetrics.conversionRate}%`],
       ['Active Projects Count', projectMetrics.total],
-      ['On-Time SLA Delivery %', `${projectMetrics.slaRate}%`],
+      ['Average Project Progress %', `${projectMetrics.averageProgress}%`],
       [],
       ['RECENT INVOICES LEDGER'],
       ['Invoice #', 'Client', 'Status', 'Total (IDR)', 'Due Date'],
@@ -473,40 +475,6 @@ export const AdminDashboard: React.FC = () => {
             <span>{currency}</span>
             <span className="text-[10px] text-[var(--muted)] font-normal">({currency === 'IDR' ? 'USD' : 'IDR'})</span>
           </button>
-
-          {/* Timeframe Selector */}
-          <div className="flex items-center rounded-control bg-[var(--panel)] p-0.5 border border-line text-[11px] font-sans shrink-0 max-w-full overflow-x-auto">
-            <button
-              onClick={() => setPeriodFilter('thisMonth')}
-              className={`px-2.5 py-1 rounded-md transition-all ${
-                periodFilter === 'thisMonth' 
-                  ? 'bg-[var(--accent)] text-white font-semibold' 
-                  : 'text-[var(--muted)] hover:text-[var(--text)]'
-              }`}
-            >
-              {language === 'id' ? 'Bulan Ini' : 'This Month'}
-            </button>
-            <button
-              onClick={() => setPeriodFilter('q3')}
-              className={`px-2.5 py-1 rounded-control transition-all ${
-                periodFilter === 'q3' 
-                  ? 'bg-[var(--accent)] text-white font-semibold' 
-                  : 'text-[var(--muted)] hover:text-[var(--text)]'
-              }`}
-            >
-              Q3 2026
-            </button>
-            <button
-              onClick={() => setPeriodFilter('ytd')}
-              className={`px-2.5 py-1 rounded-control transition-all ${
-                periodFilter === 'ytd' 
-                  ? 'bg-[var(--accent)] text-white font-semibold' 
-                  : 'text-[var(--muted)] hover:text-[var(--text)]'
-              }`}
-            >
-              YTD
-            </button>
-          </div>
 
           {/* Export CSV Summary */}
           <button
@@ -667,12 +635,12 @@ export const AdminDashboard: React.FC = () => {
           </div>
         </div>
 
-        {/* Metric Card 4: Active Client Projects & Delivery SLA */}
+        {/* Metric Card 4: Active Client Projects & Delivery Progress */}
         <div className="p-4 sm:p-5 rounded-card bg-[var(--panel)] border border-line flex flex-col justify-between group transition-colors duration-150 min-w-0">
           <div>
             <div className="flex items-center justify-between text-[var(--muted)] mb-3">
               <span className="text-[11px] font-sans normal-case tracking-normal font-semibold">
-                {language === 'id' ? 'Proyek Aktif & SLA Rilis' : 'Active Projects & Delivery SLA'}
+                {language === 'id' ? 'Proyek Aktif & Progress Delivery' : 'Active Projects & Delivery Progress'}
               </span>
               <div className="w-8 h-8 rounded-control bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 flex items-center justify-center">
                 <Layers size={16} />
@@ -685,7 +653,7 @@ export const AdminDashboard: React.FC = () => {
 
             <div className="text-[11px] font-sans text-cyan-400 mt-1.5 flex items-center gap-1">
               <ShieldCheck size={12} />
-              <span>{projectMetrics.slaRate}% {language === 'id' ? 'Tepat Waktu' : 'On-Time SLA Delivery'}</span>
+              <span>{projectMetrics.averageProgress}% {language === 'id' ? 'Progress Rata-rata' : 'Average Progress'}</span>
             </div>
           </div>
 
@@ -746,7 +714,7 @@ export const AdminDashboard: React.FC = () => {
                   <span>{language === 'id' ? 'Proyek Klien Prioritas & Status Sprint' : 'Priority Active Projects & Deliverables'}</span>
                 </h3>
                 <p className="text-xs text-[var(--muted)] mt-0.5 font-sans">
-                  {language === 'id' ? 'Status delivery SLA, milestone sprint aktif, dan anggaran terkelola.' : 'Current sprint health, milestone delivery progress, and allocated budgets.'}
+                  {language === 'id' ? 'Progress delivery, milestone sprint aktif, dan anggaran terkelola.' : 'Current delivery progress, sprint milestones, and allocated budgets.'}
                 </p>
               </div>
               <button
