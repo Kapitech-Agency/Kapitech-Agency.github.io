@@ -1295,7 +1295,7 @@ export const AdminCrm: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsAddModalOpen(false)}
-                  className="h-10 px-4 rounded-card bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] text-xs font-sans font-medium transition-colors min-h-10"
+                  className="min-h-10 px-4 rounded-control bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] text-xs font-sans font-medium transition-colors"
                 >
                   {t('admin.action.cancel')}
                 </button>
