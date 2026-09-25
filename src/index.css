@@ -2093,3 +2093,176 @@
     min-height: 112px;
   }
 }
+
+/* AMS MOBILE-FIRST FINAL PASS
+   Focus: dashboard hierarchy, page actions, project board controls, touch targets.
+   Scoped to AMS only. No business logic changes. */
+.ams-shell .ams-dashboard-header,
+.ams-shell .ams-page-header {
+  min-width: 0;
+}
+
+.ams-shell .ams-dashboard-header > div,
+.ams-shell .ams-page-header > div {
+  min-width: 0;
+}
+
+.ams-shell .ams-dashboard-header > div:last-child,
+.ams-shell .ams-page-header > div:last-child {
+  flex-wrap: wrap;
+}
+
+.ams-shell .ams-dashboard-header > div:last-child > *,
+.ams-shell .ams-page-header > div:last-child > * {
+  flex: 0 0 auto;
+}
+
+.ams-shell .ams-dashboard-header .ams-action,
+.ams-shell .ams-page-header .ams-action {
+  min-height: 40px;
+}
+
+.ams-shell .ams-dashboard-header a,
+.ams-shell .ams-page-header a {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.ams-shell .ams-kpi {
+  min-width: 0;
+}
+
+.ams-shell .ams-kpi-value {
+  overflow-wrap: anywhere;
+}
+
+.ams-shell .ams-panel {
+  min-width: 0;
+}
+
+@media (max-width: 899px) {
+  .ams-shell .ams-dashboard-header,
+  .ams-shell .ams-page-header {
+    gap: 12px;
+  }
+
+  .ams-shell .ams-dashboard-header > div:last-child,
+  .ams-shell .ams-page-header > div:last-child {
+    width: 100%;
+  }
+
+  .ams-shell .ams-dashboard-header > div:last-child {
+    justify-content: flex-start;
+  }
+
+  .ams-shell .ams-dashboard-header > div:last-child > span {
+    margin-right: auto;
+  }
+
+  .ams-shell .ams-dashboard-header > div:last-child > .ams-action {
+    margin-left: auto;
+  }
+
+  .ams-shell .ams-dashboard-header + .kapi-card,
+  .ams-shell .ams-dashboard-header + .ams-card {
+    margin-top: 0;
+  }
+
+  .ams-shell .ams-panel {
+    padding: 16px !important;
+  }
+
+  .ams-shell .ams-panel > .flex.items-center.justify-between {
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 599px) {
+  .ams-shell .ams-dashboard-header,
+  .ams-shell .ams-page-header {
+    padding-bottom: 14px;
+  }
+
+  .ams-shell .ams-dashboard-header > div:last-child {
+    gap: 8px;
+  }
+
+  .ams-shell .ams-dashboard-header > div:last-child > span {
+    width: 100%;
+    margin-right: 0;
+  }
+
+  .ams-shell .ams-dashboard-header > div:last-child > .ams-action {
+    margin-left: 0;
+    width: auto;
+  }
+
+  .ams-shell .ams-panel {
+    padding: 14px !important;
+  }
+
+  .ams-shell .ams-panel .grid.grid-cols-2 {
+    gap: 8px;
+  }
+
+  .ams-shell .ams-panel .grid.grid-cols-2 > * {
+    min-width: 0;
+  }
+
+  .ams-shell .ams-panel a {
+    min-height: 40px;
+  }
+
+  .ams-shell .ams-panel table {
+    min-width: 680px;
+  }
+
+  .ams-shell .ams-panel table th,
+  .ams-shell .ams-panel table td {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .ams-shell .ams-page-title {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+  }
+
+  .ams-shell .ams-kpi-value {
+    font-size: 22px;
+    line-height: 28px;
+  }
+
+  .ams-shell .ams-kpi .ams-meta {
+    min-height: 16px;
+    flex-wrap: wrap;
+  }
+
+  /* Project selector cards remain intentionally horizontal, but become easier to tap. */
+  .ams-shell .custom-scrollbar > button {
+    min-height: 88px;
+  }
+
+  /* Project board columns keep their operational width and scroll horizontally. */
+  .ams-shell .ams-kanban-scroll {
+    padding-bottom: 8px;
+  }
+
+  .ams-shell .ams-kanban-scroll > * {
+    min-width: 280px;
+  }
+
+  /* Prevent dense project action rows from overflowing the viewport. */
+  .ams-shell .ams-dashboard-header button,
+  .ams-shell .ams-page-header button {
+    max-width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ams-shell .ams-dashboard-header *,
+  .ams-shell .ams-page-header * {
+    animation: none !important;
+  }
+}
