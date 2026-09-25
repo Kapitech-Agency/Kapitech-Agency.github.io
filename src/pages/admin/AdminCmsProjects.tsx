@@ -402,7 +402,7 @@ export const AdminCmsProjects: React.FC = () => {
       {/* MODAL: ADD / EDIT PROJECT WITH LIVE PREVIEW & DRAG & DROP */}
       {isModalOpen && editingProject && (
         <div className="fixed inset-0 bg-black/80  z-50 flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-[var(--panel)] border border-[var(--line)] rounded-card max-w-3xl w-full max-h-[calc(100dvh-24px)] overflow-y-auto p-4 sm:p-6 -none font-sans text-xs">
+          <div className="bg-[var(--panel)] border border-[var(--line)] rounded-card max-w-3xl w-full max-h-[calc(100dvh-24px)] overflow-y-auto p-4 sm:p-6 font-sans text-xs">
             
             <div className="flex items-center justify-between pb-4 border-b border-[var(--line)] mb-6">
               <div className="flex items-center gap-3">
@@ -450,7 +450,7 @@ export const AdminCmsProjects: React.FC = () => {
                 <div className="text-[11px] text-[var(--muted)] mb-4">
                   Live Showcase Preview (as rendered on <code className="text-[var(--text)]">kapitech.id/work</code>):
                 </div>
-                <div className="w-full max-w-sm max-h-[calc(100dvh-24px)] bg-[var(--panel)] border border-[var(--line)] rounded-card overflow-y-auto -none">
+                <div className="w-full max-w-sm max-h-[calc(100dvh-24px)] bg-[var(--panel)] border border-[var(--line)] rounded-card overflow-y-auto">
                   <div className="relative h-48 w-full bg-[var(--bg)]">
                     <img src={editingProject.image} alt={editingProject.title} className="w-full h-full object-cover" />
                     <div className="absolute inset-0 bg-black/40" />
@@ -717,7 +717,7 @@ export const AdminCmsProjects: React.FC = () => {
                     </button>
                     <button
                       type="submit"
-                      className="px-5 py-2 rounded-control bg-[var(--accent)] text-white font-semibold hover:brightness-110 transition-all -none"
+                      className="px-5 py-2 rounded-control bg-[var(--accent)] text-white font-semibold hover:brightness-110 transition-all"
                     >
                       Save Case Study
                     </button>
