@@ -627,7 +627,7 @@ export const AdminCrm: React.FC = () => {
                   }`}
                 >
                   {/* Column Header */}
-                  <div className="p-3 border-b border-[var(--line)] flex items-center justify-between bg-[var(--panel)] rounded-t-2xl">
+                  <div className="p-3 border-b border-[var(--line)] flex items-center justify-between bg-[var(--panel)] rounded-t-card">
                     <div className="min-w-0 pr-2">
                       <div className="flex items-center gap-2">
                         <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${
