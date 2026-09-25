@@ -1964,3 +1964,43 @@
     min-width: min(280px, 86vw) !important;
   }
 }
+
+
+/* AMS final responsive interaction pass: predictable mobile controls and dialogs. */
+.ams-shell .ams-sidebar-toggle,
+.ams-shell .ams-mobile-topbar button,
+.ams-shell [role="dialog"] button[aria-label] {
+  min-width: 40px;
+  min-height: 40px;
+}
+.ams-shell [role="dialog"] {
+  overscroll-behavior: contain;
+}
+.ams-shell [role="dialog"] > :where(.overflow-y-auto, .max-h-\\[calc\\(100dvh-2rem\\)\\]) {
+  scrollbar-gutter: stable;
+}
+.ams-shell .ams-page-header,
+.ams-shell .ams-dashboard-header {
+  min-width: 0;
+}
+@media (max-width: 599px) {
+  .ams-shell .ams-page-header,
+  .ams-shell .ams-dashboard-header {
+    padding-bottom: 16px;
+  }
+  .ams-shell .ams-page-header > div,
+  .ams-shell .ams-dashboard-header > div {
+    min-width: 0;
+  }
+  .ams-shell .ams-page-header .flex,
+  .ams-shell .ams-dashboard-header .flex {
+    min-width: 0;
+  }
+  .ams-shell [role="dialog"] {
+    margin: 12px;
+    max-height: calc(100dvh - 24px);
+  }
+  .ams-shell [role="dialog"] > div {
+    max-width: 100%;
+  }
+}
