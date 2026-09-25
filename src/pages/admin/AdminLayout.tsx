@@ -479,8 +479,8 @@ export const AdminLayout: React.FC = () => {
       {/* ------------------------------------------------------------- */}
       {/* MOBILE TOPBAR - Single, sleek, non-cluttered header */}
       {/* ------------------------------------------------------------- */}
-      <div className="min-[900px]:hidden ams-mobile-topbar flex items-center justify-between px-3.5 bg-panel border-b border-line sticky top-0 z-40 shrink-0 h-[52px]">
-        <div className="flex items-center gap-2.5">
+      <div className="min-[900px]:hidden ams-mobile-topbar flex items-center justify-between gap-2 px-3 bg-panel border-b border-line sticky top-0 z-40 shrink-0 h-[52px] min-h-[52px] pt-[env(safe-area-inset-top)]">
+        <div className="flex items-center gap-2.5 min-w-0">
           <button
             onClick={() => setMobileMenuOpen(true)}
             aria-label="Open navigation menu"
@@ -520,10 +520,10 @@ export const AdminLayout: React.FC = () => {
             onClick={() => setMobileMenuOpen(false)}
           />
 
-          <div className="relative w-[280px] max-w-[86vw] bg-panel border-r border-line h-[100dvh] flex flex-col justify-between z-50 overflow-hidden animate-in slide-in-from-left duration-200">
+          <div className="relative w-[300px] max-w-[88vw] bg-panel border-r border-line h-[100dvh] flex flex-col justify-between z-50 overflow-hidden animate-in slide-in-from-left duration-200">
             
             {/* Drawer Header */}
-            <div className="p-4 border-b border-line flex items-center justify-between bg-panel shrink-0">
+            <div className="p-3.5 border-b border-line flex items-center justify-between gap-2 bg-panel shrink-0">
               <Link 
                 to="/admin/dashboard" 
                 onClick={() => setMobileMenuOpen(false)}
@@ -554,7 +554,7 @@ export const AdminLayout: React.FC = () => {
 
 
             {/* Scrollable Navigation List Filtered by Dynamic RBAC */}
-            <div className="flex-1 overflow-y-auto p-3 space-y-4 custom-scrollbar">
+            <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain p-3 space-y-4 custom-scrollbar">
               {contentNavSections.map((section) => (
                 <div key={section.id} className="space-y-1">
                   <div className="text-[11px] font-sans text-muted font-medium px-3 pt-1">
