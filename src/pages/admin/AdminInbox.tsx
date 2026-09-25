@@ -1468,6 +1468,7 @@ export const AdminInbox: React.FC = () => {
       />
 
     </div>
+    </div>
   );
 };
 
