@@ -952,7 +952,7 @@ export const AdminProjects: React.FC = () => {
               {/* Status Stage Switcher */}
               <div className="space-y-1.5">
                 <label className="text-[11px] text-[var(--muted)] normal-case tracking-normal font-semibold">Sprint Stage</label>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-1.5">
                   {TASK_COLUMNS.map((col) => (
                     <button
                       key={col.id}
@@ -973,7 +973,7 @@ export const AdminProjects: React.FC = () => {
               </div>
 
               {/* Assignee & Due Date Grid */}
-              <div className="grid grid-cols-2 gap-3 p-3 rounded-card bg-[var(--panel)] border border-[var(--line)]">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 rounded-card bg-[var(--panel)] border border-[var(--line)]">
                 <div>
                   <div className="text-[10px] text-[var(--muted)] normal-case font-semibold mb-1">Assignee</div>
                   <div className="text-[var(--text)] font-semibold flex items-center gap-1.5">
