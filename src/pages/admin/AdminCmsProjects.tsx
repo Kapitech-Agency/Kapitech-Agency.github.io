@@ -418,7 +418,7 @@ export const AdminCmsProjects: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setModalTab('details')}
-                    className={`px-3 py-1 rounded-md text-[11px] font-semibold transition-all ${
+                    className={`px-3 py-1 rounded-chip text-[11px] font-semibold transition-all ${
                       modalTab === 'details' ? 'bg-[var(--panel)] text-[var(--text)]' : 'text-[var(--muted)] hover:text-[var(--text)]'
                     }`}
                   >
@@ -427,7 +427,7 @@ export const AdminCmsProjects: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setModalTab('preview')}
-                    className={`flex items-center gap-1.5 px-3 py-1 rounded-md text-[11px] font-semibold transition-all ${
+                    className={`flex items-center gap-1.5 px-3 py-1 rounded-chip text-[11px] font-semibold transition-all ${
                       modalTab === 'preview' ? 'bg-[var(--panel)] text-[var(--text)]' : 'text-[var(--muted)] hover:text-[var(--text)]'
                     }`}
                   >
