@@ -302,28 +302,28 @@ export const AdminLayout: React.FC = () => {
         }`}>
           {!sidebarCollapsed ? (
             <>
-              <Link to="/admin/dashboard" className="flex items-center gap-3 group overflow-hidden">
-                <div className="h-8 px-2.5 rounded-control bg-bg border border-line flex items-center justify-center shrink-0  group-hover:border-accent/40 transition-colors">
-                  <img src="/white.png" alt="Kapitech" className="h-3.5 w-auto object-contain" />
+              <Link to="/admin/dashboard" className="flex items-center gap-2 min-w-0 flex-1 overflow-hidden group">
+                <div className="h-8 w-9 rounded-control bg-bg border border-line flex items-center justify-center shrink-0 group-hover:border-accent/40 transition-colors">
+                  <img src="/white.png" alt="Kapitech" className="h-3.5 w-auto max-w-[28px] object-contain" />
                 </div>
-                <div className="min-w-0">
-                  <div className="font-sans font-semibold text-fg text-sm flex items-center gap-1.5">
-                    <span>KAPITECH</span>
-                    <span className="text-xs font-sans px-1.5 py-0.5 rounded-badge text-accent-text border border-accent/30 font-semibold">
+                <div className="min-w-0 flex-1">
+                  <div className="font-sans font-semibold text-fg text-[13px] leading-4 flex items-center gap-1 min-w-0">
+                    <span className="truncate">KAPITECH</span>
+                    <span className="text-[10px] font-sans px-1.5 py-0.5 rounded-badge text-accent-text border border-accent/30 font-semibold shrink-0">
                       AMS
                     </span>
                   </div>
-                  <p className="text-[10px] font-sans text-muted -mt-0.5 truncate">Agency Management System</p>
+                  <p className="text-[9px] leading-3 font-sans text-muted mt-0.5 truncate">Agency Management System</p>
                 </div>
               </Link>
               <button
                 onClick={() => setSidebarCollapsed(true)}
-                className="ams-sidebar-toggle h-10 w-10 min-h-10 min-w-10 rounded-control bg-bg hover:bg-panel text-muted hover:text-fg border border-line transition-colors flex items-center justify-center shrink-0"
+                className="ams-sidebar-toggle h-8 w-8 min-h-8 min-w-8 ml-2 rounded-control bg-bg hover:bg-panel text-muted hover:text-fg border border-line transition-colors flex items-center justify-center shrink-0"
                 title="Collapse sidebar"
+                aria-label="Collapse sidebar"
               >
                 <ChevronLeft size={15} />
               </button>
-            </>
           ) : (
             <div className="flex items-center justify-center w-full h-8">
               <button
