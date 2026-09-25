@@ -497,7 +497,7 @@ export const AdminProposals: React.FC = () => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={language === 'id' ? 'Cari nomor proposal, judul proyek, atau nama klien...' : 'Search proposal #, project title, or client...'}
-            className="w-full min-h-10 sm:h-9 pl-8 pr-3 text-xs bg-[var(--panel)] text-[var(--text)] placeholder-[var(--ams-secondary)] rounded-control border border-[var(--line)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ams-red)]/40 focus:border-[var(--accent)] font-sans"
+            className="w-full min-h-10 sm:h-9 pl-8 pr-3 text-xs bg-[var(--panel)] text-[var(--text)] placeholder-[var(--ams-secondary)] rounded-control border border-[var(--line)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30 focus:border-[var(--accent)] font-sans"
           />
         </div>
 
@@ -670,7 +670,7 @@ export const AdminProposals: React.FC = () => {
                     value={formTitle}
                     onChange={(e) => setFormTitle(e.target.value)}
                     placeholder="e.g. Kapitech AI Automation Platform"
-                    className="w-full min-h-10 sm:h-9 px-3 rounded-control bg-[var(--panel)] text-[var(--text)] border border-[var(--line)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ams-red)]/40 focus:border-[var(--accent)]"
+                    className="w-full min-h-10 sm:h-9 px-3 rounded-control bg-[var(--panel)] text-[var(--text)] border border-[var(--line)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30 focus:border-[var(--accent)]"
                   />
                 </div>
 
@@ -682,7 +682,7 @@ export const AdminProposals: React.FC = () => {
                     value={formClientName}
                     onChange={(e) => setFormClientName(e.target.value)}
                     placeholder="e.g. Raditya Pratama"
-                    className="w-full min-h-10 sm:h-9 px-3 rounded-control bg-[var(--panel)] text-[var(--text)] border border-[var(--line)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ams-red)]/40 focus:border-[var(--accent)]"
+                    className="w-full min-h-10 sm:h-9 px-3 rounded-control bg-[var(--panel)] text-[var(--text)] border border-[var(--line)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30 focus:border-[var(--accent)]"
                   />
                 </div>
               </div>
@@ -695,7 +695,7 @@ export const AdminProposals: React.FC = () => {
                     value={formClientCompany}
                     onChange={(e) => setFormClientCompany(e.target.value)}
                     placeholder="e.g. PT Nusantara Digital"
-                    className="w-full min-h-10 sm:h-9 px-3 rounded-control bg-[var(--panel)] text-[var(--text)] border border-[var(--line)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ams-red)]/40 focus:border-[var(--accent)]"
+                    className="w-full min-h-10 sm:h-9 px-3 rounded-control bg-[var(--panel)] text-[var(--text)] border border-[var(--line)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30 focus:border-[var(--accent)]"
                   />
                 </div>
 
@@ -706,7 +706,7 @@ export const AdminProposals: React.FC = () => {
                     value={formClientEmail}
                     onChange={(e) => setFormClientEmail(e.target.value)}
                     placeholder="e.g. client@company.id"
-                    className="w-full min-h-10 sm:h-9 px-3 rounded-control bg-[var(--panel)] text-[var(--text)] border border-[var(--line)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ams-red)]/40 focus:border-[var(--accent)]"
+                    className="w-full min-h-10 sm:h-9 px-3 rounded-control bg-[var(--panel)] text-[var(--text)] border border-[var(--line)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30 focus:border-[var(--accent)]"
                   />
                 </div>
               </div>

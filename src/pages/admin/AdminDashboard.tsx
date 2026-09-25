@@ -1027,7 +1027,7 @@ export const AdminDashboard: React.FC = () => {
       {/* MODAL 1: ADD CRM LEAD */}
       {isAddLeadModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 animate-in fade-in duration-200">
-          <div className="w-full max-w-md max-h-[calc(100dvh-2rem)] overflow-y-auto bg-[var(--panel)] border border-line rounded-card p-4 sm:p-6 shadow-none space-y-5 animate-in zoom-in-95 duration-200">
+          <div className="w-full max-w-md max-h-[calc(100dvh-24px)] overflow-y-auto bg-[var(--panel)] border border-line rounded-card p-4 sm:p-6 shadow-none space-y-5 animate-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between pb-3 border-b border-[var(--line)]">
               <h3 className="text-lg font-heading font-semibold text-[var(--text)]">
                 {language === 'id' ? 'Tambah Lead CRM Baru' : 'Add New CRM Lead'}
@@ -1116,7 +1116,7 @@ export const AdminDashboard: React.FC = () => {
       {/* MODAL 2: QUICK INVOICE */}
       {isNewInvoiceModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 animate-in fade-in duration-200">
-          <div className="w-full max-w-md max-h-[calc(100dvh-2rem)] overflow-y-auto bg-[var(--panel)] border border-line rounded-card p-4 sm:p-6 shadow-none space-y-5 animate-in zoom-in-95 duration-200">
+          <div className="w-full max-w-md max-h-[calc(100dvh-24px)] overflow-y-auto bg-[var(--panel)] border border-line rounded-card p-4 sm:p-6 shadow-none space-y-5 animate-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between pb-3 border-b border-[var(--line)]">
               <h3 className="text-lg font-heading font-semibold text-[var(--text)]">
                 {language === 'id' ? 'Terbitkan Invoice Klien' : 'Create Client Invoice'}
@@ -1202,7 +1202,7 @@ export const AdminDashboard: React.FC = () => {
       {/* MODAL 3: QUICK PROJECT */}
       {isNewProjectModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 animate-in fade-in duration-200">
-          <div className="w-full max-w-md max-h-[calc(100dvh-2rem)] overflow-y-auto bg-[var(--panel)] border border-line rounded-card p-4 sm:p-6 shadow-none space-y-5 animate-in zoom-in-95 duration-200">
+          <div className="w-full max-w-md max-h-[calc(100dvh-24px)] overflow-y-auto bg-[var(--panel)] border border-line rounded-card p-4 sm:p-6 shadow-none space-y-5 animate-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between pb-3 border-b border-[var(--line)]">
               <h3 className="text-lg font-heading font-semibold text-[var(--text)]">
                 {language === 'id' ? 'Mulai Proyek Sprint Baru' : 'Initiate Active Project'}
@@ -1280,7 +1280,7 @@ export const AdminDashboard: React.FC = () => {
       {/* MODAL 4: RECORD EXPENSE */}
       {isRecordExpenseModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 animate-in fade-in duration-200">
-          <div className="w-full max-w-md max-h-[calc(100dvh-2rem)] overflow-y-auto bg-[var(--panel)] border border-line rounded-card p-4 sm:p-6 shadow-none space-y-5 animate-in zoom-in-95 duration-200">
+          <div className="w-full max-w-md max-h-[calc(100dvh-24px)] overflow-y-auto bg-[var(--panel)] border border-line rounded-card p-4 sm:p-6 shadow-none space-y-5 animate-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between pb-3 border-b border-[var(--line)]">
               <h3 className="text-lg font-heading font-semibold text-[var(--text)]">
                 {language === 'id' ? 'Catat Biaya Operasional' : 'Record Operating Expense'}
