@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { ChevronDown, Check, CircleCheck, Clock3, Send, CircleAlert, FileText } from 'lucide-react';
 import { motion } from 'motion/react';
 import { DropdownPortal } from './DropdownPortal';
@@ -98,7 +98,8 @@ export const InvoiceStatusDropdown: React.FC<InvoiceStatusDropdownProps> = ({
             );
           })}
         </motion.div>
-      </DropdownPortal>/div>
+      </DropdownPortal>
+    </div>
   );
 };
 
