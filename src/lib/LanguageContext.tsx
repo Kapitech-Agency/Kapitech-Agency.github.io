@@ -241,7 +241,7 @@ const translations: Record<Language, Record<string, string>> = {
     'admin.cms.projectsSubtitle': 'Manage case studies, high-resolution media galleries, and technical highlights.',
     'admin.cms.servicesTitle': 'CMS: Studio Service Offerings',
     'admin.cms.servicesSubtitle': 'Configure agency core capabilities and bespoke service landing details.',
-    'admin.cms.testiTitle': 'CMS: Client Testimonials',
+    'admin.cms.testiTitle': 'Testimonials',
     'admin.cms.testiSubtitle': 'Manage executive quotes, ratings, and client verification badges.',
     'admin.cms.uploadImage': 'Upload Image (PNG/JPG/WebP)',
     'admin.cms.dragDropImage': 'Drag and drop image here or click to browse',
