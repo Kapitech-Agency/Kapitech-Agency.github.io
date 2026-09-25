@@ -108,7 +108,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
         anchorRef={triggerRef}
         onClose={() => setIsOpen(false)}
         align={align}
-        className="min-w-[140px] sm:min-w-[180px] max-w-[calc(100vw-16px)] sm:max-w-[280px] max-h-[280px] overflow-y-auto bg-panel border border-line rounded-control p-1 custom-scrollbar font-sans text-xs"
+        className={`min-w-[140px] sm:min-w-[180px] max-w-[calc(100vw-16px)] sm:max-w-[280px] max-h-[280px] overflow-y-auto bg-panel border border-line rounded-control p-1 custom-scrollbar font-sans text-xs ${menuClassName}`}
       >
         <div role="listbox" aria-label={placeholder}>
           {options.length === 0 ? (
