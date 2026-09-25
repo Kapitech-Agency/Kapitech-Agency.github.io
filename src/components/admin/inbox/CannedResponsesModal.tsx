@@ -216,7 +216,7 @@ https://kapitech.id`
       />
 
       {/* Modal Dialog */}
-      <div className="relative w-full max-w-2xl max-h-[calc(100dvh-24px)] bg-[var(--panel)] border border-line rounded-card shadow-none flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-2xl max-h-[calc(100dvh-24px)] bg-[var(--panel)] border border-line rounded-card -none flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         
         {/* Header */}
         <div className="p-5 border-b border-line flex items-center justify-between bg-[var(--panel)]">
@@ -283,7 +283,7 @@ https://kapitech.id`
                     <a
                       href={`mailto:${submission.email}?subject=${encodeURIComponent(tpl.subject)}&body=${encodeURIComponent(tpl.body)}`}
                       onClick={onClose}
-                      className="min-h-10 px-2.5 rounded-control bg-[var(--accent)] hover:brightness-110 text-white text-xs font-sans font-semibold transition-colors flex items-center gap-1.5 shadow-none"
+                      className="min-h-10 px-2.5 rounded-control bg-[var(--accent)] hover:brightness-110 text-white text-xs font-sans font-semibold transition-colors flex items-center gap-1.5 -none"
                       title="Send via default Email Client"
                     >
                       <Send size={12} />
