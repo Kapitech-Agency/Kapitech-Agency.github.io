@@ -540,7 +540,7 @@ export const AdminVendors: React.FC = () => {
                 <button
                   onClick={() => handleDeleteVendor(vendor.id, vendor.name)}
                            disabled={!canManageVendors}
-                  className="p-1.5 rounded-control bg-[var(--panel)] hover:bg-red-950/40 border border-[var(--line)] text-[var(--muted)] hover:text-red-400 transition-colors"
+                  className="p-1.5 rounded-control bg-[var(--panel)] hover:bg-[var(--danger)]/10 border border-[var(--line)] text-[var(--muted)] hover:text-[var(--danger)] transition-colors"
                   title="Delete Vendor"
                 >
                   <Trash2 size={13} />
