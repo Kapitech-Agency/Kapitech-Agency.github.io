@@ -524,7 +524,7 @@ export const AdminProjects: React.FC = () => {
           {canManageProjects && (
             <button
               onClick={handleOpenCreateProject}
-              className="min-h-10 px-4 rounded-control bg-[var(--accent)] hover:brightness-110 text-white text-xs font-sans font-medium transition-colors flex items-center gap-2 min-h-10"
+              className="min-h-10 px-4 rounded-control bg-[var(--accent)] hover:brightness-110 text-white text-xs font-sans font-medium transition-colors flex items-center gap-2"
             >
               <Plus size={15} />
               <span>{language === 'id' ? 'Buat Proyek Baru' : 'New Project'}</span>
@@ -615,7 +615,7 @@ export const AdminProjects: React.FC = () => {
                   href={selectedProject.liveStagingUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-3 py-1.5 rounded-card bg-[var(--panel)] hover:bg-[var(--panel)] border border-[var(--line)] text-xs font-sans text-[var(--success)] hover:text-[var(--success)] transition-colors flex items-center gap-1.5"
+                  className="px-3 py-1.5 rounded-control bg-[var(--panel)] hover:bg-[var(--panel)] border border-[var(--line)] text-xs font-sans text-[var(--success)] hover:text-[var(--success)] transition-colors flex items-center gap-1.5"
                 >
                   <ExternalLink size={13} />
                   <span>Staging</span>
@@ -701,7 +701,7 @@ export const AdminProjects: React.FC = () => {
                   <div
                     key={ms.id}
                     onClick={() => handleToggleMilestone(ms.id)}
-                    className={`p-2.5 rounded-card border text-xs font-sans flex items-start gap-2 cursor-pointer transition-all ${
+                    className={`p-2.5 rounded-control border text-xs font-sans flex items-start gap-2 cursor-pointer transition-all ${
                       ms.completed
                         ? 'bg-emerald-950/20 border-[var(--success)]/30 text-[var(--success)]'
                         : 'bg-[var(--panel)] border-[var(--line)] text-[var(--muted)] hover:text-[var(--text)]'
@@ -927,7 +927,7 @@ export const AdminProjects: React.FC = () => {
               </div>
               <button
                 onClick={() => setActiveTaskDrawer(null)}
-                className="w-8 h-8 rounded-control bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] flex items-center justify-center transition-colors shrink-0 ml-3"
+                className="min-h-10 min-w-10 rounded-control bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] flex items-center justify-center transition-colors shrink-0 ml-3"
               >
                 <X size={16} />
               </button>
@@ -1092,7 +1092,7 @@ export const AdminProjects: React.FC = () => {
               </h3>
               <button 
                 onClick={() => setIsProjectModalOpen(false)} 
-                className="w-8 h-8 rounded-control bg-[var(--bg)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] flex items-center justify-center transition-colors shrink-0 ml-3"
+                className="min-h-10 min-w-10 rounded-control bg-[var(--bg)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] flex items-center justify-center transition-colors shrink-0 ml-3"
               >
                 <X size={16} />
               </button>
@@ -1261,7 +1261,7 @@ export const AdminProjects: React.FC = () => {
               </h3>
               <button 
                 onClick={() => setIsTaskModalOpen(false)} 
-                className="w-8 h-8 rounded-control bg-[var(--bg)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] flex items-center justify-center transition-colors shrink-0 ml-3"
+                className="min-h-10 min-w-10 rounded-control bg-[var(--bg)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] flex items-center justify-center transition-colors shrink-0 ml-3"
               >
                 <X size={16} />
               </button>
