@@ -1833,23 +1833,6 @@
 .ams-shell .text-gray-400 { color: var(--muted); }
 .ams-shell .border-line { border-color: var(--line); }
 
- .ams-shell .ams-card {
-  background: var(--panel) !important;
-  border: 1px solid var(--line) !important;
-  border-radius: 12px !important;
-  box-shadow: none !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  transform: none !important;
-}
-
- .ams-shell .ams-card:hover {
-  background: var(--panel) !important;
-  border-color: var(--line) !important;
-  box-shadow: none !important;
-  transform: none !important;
-}
-
 .ams-shell input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
 .ams-shell select,
 .ams-shell textarea,
