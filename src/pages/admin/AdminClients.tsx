@@ -437,7 +437,7 @@ export const AdminClients: React.FC = () => {
                         href={`https://wa.me/${client.phone.replace(/\D/g, '')}`}
                         target="_blank"
                         rel="noreferrer"
-                        className="w-9 h-9 rounded-control bg-[var(--panel)] hover:bg-emerald-950/40 text-[var(--success)] border border-[var(--line)] hover:border-[var(--success)]/30 flex items-center justify-center transition-colors min-h-10 min-w-10"
+                        className="w-9 h-9 rounded-control bg-[var(--panel)] hover:bg-[var(--success)]/10 text-[var(--success)] border border-[var(--line)] hover:border-[var(--success)]/30 flex items-center justify-center transition-colors min-h-10 min-w-10"
                         title="Chat WhatsApp"
                       >
                         <Phone size={13} />
@@ -669,7 +669,7 @@ export const AdminClients: React.FC = () => {
 
               {/* SLA Ad Spend Cap Section */}
               <div className="p-3 bg-[var(--panel)] border border-[var(--line)] rounded-card space-y-2">
-                <div className="flex items-center gap-1.5 text-amber-400 font-semibold">
+                <div className="flex items-center gap-1.5 text-[var(--warning)] font-semibold">
                   <Activity size={13} />
                   <span>SLA Daily Ad-Spend Cap & Tracking (IDR)</span>
                 </div>
@@ -712,9 +712,9 @@ export const AdminClients: React.FC = () => {
                     value={clientStatus}
                     onChange={(val) => setClientStatus(val as any)}
                     options={[
-                      { value: 'active', label: 'Active', badge: 'Active', badgeColor: 'bg-[var(--success)]/10 text-[var(--success)] border border-emerald-500/20' },
+                      { value: 'active', label: 'Active', badge: 'Active', badgeColor: 'bg-[var(--success)]/10 text-[var(--success)] border border-[var(--success)]/20' },
                       { value: 'completed', label: 'Completed', badge: 'Completed', badgeColor: 'bg-[var(--info)]/10 text-[var(--info)] border border-blue-500/20' },
-                      { value: 'lead', label: 'Lead', badge: 'Lead', badgeColor: 'bg-amber-500/10 text-amber-400 border border-amber-500/20' },
+                      { value: 'lead', label: 'Lead', badge: 'Lead', badgeColor: 'bg-[var(--warning)]/10 text-[var(--warning)] border border-[var(--warning)]/20' },
                       { value: 'inactive', label: 'Inactive', badge: 'Inactive', badgeColor: 'bg-slate-500/10 text-slate-400 border border-slate-500/20' }
                     ]}
                     className="w-full"
