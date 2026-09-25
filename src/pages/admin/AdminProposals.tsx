@@ -384,7 +384,7 @@ export const AdminProposals: React.FC = () => {
   const getStatusBadge = (status: Proposal['status']) => {
     switch (status) {
       case 'draft':
-        return <span className="px-2 py-0.5 rounded text-xs font-sans bg-zinc-800 text-zinc-300 border border-white/10">Draft</span>;
+        return <span className="px-2 py-0.5 rounded text-xs font-sans bg-[var(--panel)] text-[var(--muted)] border border-[var(--line)]">Draft</span>;
       case 'review':
         return <span className="px-2 py-0.5 rounded text-xs font-sans bg-[var(--warning)]/10 text-[var(--warning)] border border-[var(--warning)]/30">In Review</span>;
       case 'approved':
@@ -953,7 +953,7 @@ export const AdminProposals: React.FC = () => {
                         handleConvertToInvoice(previewProposal.id);
                         setPreviewProposal(null);
                       }}
-                      className="px-3 py-1.5 rounded-control bg-[var(--success)] text-black font-medium min-h-10 px-3 rounded-control text-xs font-sans"
+                      className="px-3 py-1.5 rounded-control bg-[var(--success)] text-[var(--text)] font-medium min-h-10 px-3 rounded-control text-xs font-sans"
                     >
                       Convert to Invoice
                     </button>
