@@ -685,9 +685,9 @@ export const AdminInbox: React.FC = () => {
         </div>
 
         {/* Search & Secondary Filter Dropdowns */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-3 pt-1">
+        <div className="flex flex-col md:flex-row md:items-center gap-3 pt-1">
           {/* Universal Search */}
-          <div className="relative md:col-span-6">
+          <div className="relative flex-1 min-w-0">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--muted)]" size={15} />
             <input
               type="text"
@@ -707,20 +707,20 @@ export const AdminInbox: React.FC = () => {
           </div>
 
           {/* Status Dropdown */}
-          <div className="md:col-span-2">
+          <div className="w-full md:w-[150px] shrink-0">
             <CustomSelect value={filterStatus} onChange={setFilterStatus} options={[{value:'all',label:language === 'id' ? 'Semua Status' : 'All Status'},{value:'new',label:'Status: New'},{value:'in-review',label:'Status: In Review'},{value:'contacted',label:'Status: Contacted'},{value:'closed',label:'Status: Closed Deal'}]} />
           </div>
 
           {/* Priority Dropdown */}
-          <div className="md:col-span-2">
+          <div className="w-full md:w-[150px] shrink-0">
             <CustomSelect value={filterPriority} onChange={setFilterPriority} options={[{value:'all',label:language === 'id' ? 'Semua Prioritas' : 'All Priorities'},{value:'urgent',label:'Urgent'},{value:'high',label:'High'},{value:'normal',label:'Normal'},{value:'low',label:'Low'}]} />
           </div>
 
           {/* Starred Only Toggle */}
-          <div className="md:col-span-2 flex items-center">
+          <div className="w-full md:w-[120px] shrink-0 flex items-center">
             <button
               onClick={() => setOnlyStarred(!onlyStarred)}
-              className={`w-full h-10 px-3 rounded-card border text-xs font-sans transition-colors flex items-center justify-center gap-2 ${
+              className={`w-full h-10 min-h-10 px-3 rounded-card border text-xs font-sans transition-colors flex items-center justify-center gap-2 ${
                 onlyStarred
                   ? 'bg-amber-500/10 border-amber-500/30 text-amber-400 font-semibold'
                   : 'bg-[var(--panel)] border-[var(--line)] text-[var(--muted)] hover:text-[var(--text)]'

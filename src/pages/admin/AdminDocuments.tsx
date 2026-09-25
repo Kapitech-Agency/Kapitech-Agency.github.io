@@ -209,7 +209,7 @@ export const AdminDocuments: React.FC = () => {
               className={`min-h-10 p-3 rounded-card border text-left transition-colors ${
                 categoryFilter === cat
                   ? 'bg-[var(--accent)]/10 border-[var(--accent)]/30 text-[var(--text)]'
-                  : 'bg-[var(--panel)] border-[var(--line)] text-[var(--muted)] hover:text-[var(--text)] hover:border-[var(--line)]'
+                  : 'bg-[var(--panel)] border-[var(--line)] text-[var(--muted)] hover:text-white hover:border-[var(--line)]'
               }`}
             >
               <div className="text-xs font-sans normal-case tracking-normal capitalize">{cat}</div>

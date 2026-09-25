@@ -389,7 +389,7 @@ export const AdminSettings: React.FC = () => {
         <div>
           <h1 className="ams-page-title">
             <Settings className="text-[var(--accent)]" size={24} />
-            <span>{language === 'id' ? 'Pengaturan Sistem & Keamanan' : 'System Settings & Security'}</span>
+            <span>{language === 'id' ? 'Pengaturan Sistem & Keamanan' : 'Settings'}</span>
           </h1>
           <p className="text-xs text-[var(--muted)] mt-1 font-sans">
             {language === 'id'
@@ -479,7 +479,7 @@ export const AdminSettings: React.FC = () => {
 
       {/* TAB 1: PROFILE & MASTER ACCOUNT */}
       {activeTab === 'profile' && (
-        <div className="w-full max-w-4xl bg-[var(--panel)] border border-[var(--line)] rounded-card p-5 sm:p-6">
+        <div className="w-full bg-[var(--panel)] border border-[var(--line)] rounded-card p-5 sm:p-6">
           <div className="flex items-center gap-3 mb-6 pb-4 border-b border-[var(--line)]">
             <div className="w-10 h-10 rounded-card bg-[var(--accent)]/10 border border-[var(--accent)]/30 flex items-center justify-center text-[var(--accent)] shrink-0">
               <UserCheck size={20} />
@@ -1263,7 +1263,7 @@ export const AdminSettings: React.FC = () => {
 
       {/* TAB 4: SECURITY & MFA POLICY */}
       {activeTab === 'security' && (
-        <div className="w-full max-w-4xl bg-[var(--panel)] border border-[var(--line)] rounded-card p-5 sm:p-6 space-y-6">
+        <div className="w-full bg-[var(--panel)] border border-[var(--line)] rounded-card p-5 sm:p-6 space-y-6">
           <div className="flex items-center gap-3 pb-4 border-b border-[var(--line)]">
             <div className="w-10 h-10 rounded-card bg-[var(--warning)]/10 border border-[var(--warning)]/30 flex items-center justify-center text-[var(--warning)] shrink-0">
               <Lock size={20} />
@@ -1385,7 +1385,7 @@ export const AdminSettings: React.FC = () => {
 
       {/* TAB 5: API & CLOUD CONNECTIONS */}
       {activeTab === 'api' && canAccessServer && (
-        <div className="w-full max-w-4xl space-y-4">
+        <div className="w-full space-y-4">
           {canAccessServer && <ProductionReadinessCard language={language} />}
           {canAccessServer && (
             <div className="p-4 rounded-card bg-[var(--panel)] border border-[var(--line)]">

@@ -38,10 +38,12 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
   prefixIcon
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const selectedOption = options.find((opt) => opt.value === value);
   const selectedIndex = Math.max(0, options.findIndex((opt) => opt.value === value));
+  useEffect(() => setActiveIndex(selectedIndex), [selectedIndex]);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -80,12 +82,13 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
           if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
             e.preventDefault();
             const delta = e.key === 'ArrowDown' ? 1 : -1;
-            const next = options[(selectedIndex + delta + options.length) % options.length];
-            if (next) onChange(next.value);
+            const nextIndex = (activeIndex + delta + options.length) % options.length;
+            const next = options[nextIndex];
+            if (next) { setActiveIndex(nextIndex); onChange(next.value); }
             setIsOpen(true);
           } else if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
-            setIsOpen(v => !v);
+            if (isOpen && options[activeIndex]) { onChange(options[activeIndex].value); setIsOpen(false); } else setIsOpen(true);
           }
         }}
         aria-haspopup="listbox"
@@ -131,15 +134,17 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
                 <button
                   key={option.value}
                   type="button"
+                  onMouseEnter={() => setActiveIndex(options.findIndex((opt) => opt.value === option.value))}
                   onClick={() => {
                     onChange(option.value);
+                    setActiveIndex(options.findIndex((opt) => opt.value === option.value));
                     setIsOpen(false);
                   }}
                   role="option"
                   aria-selected={isSelected}
                   className={`w-full flex items-center justify-between min-h-10 sm:min-h-9 px-3 py-2 rounded-control text-left transition-colors group ${
                     isSelected
-                      ? 'bg-panel-hover text-fg font-semibold border border-line'
+                      ? 'bg-accent/10 text-fg font-semibold border border-accent/30'
                       : 'text-muted hover:text-fg hover:bg-panel-hover'
                   }`}
                 >
