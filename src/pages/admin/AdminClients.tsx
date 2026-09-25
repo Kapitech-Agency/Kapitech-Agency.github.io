@@ -348,7 +348,7 @@ export const AdminClients: React.FC = () => {
             return (
               <div 
                 key={client.id}
-                className={`bg-[var(--panel)] border rounded-card p-4 space-y-3 transition-all shadow-none ${
+                className={`bg-[var(--panel)] border rounded-card p-4 space-y-3 transition-all -none ${
                   isOverBudget ? 'border-[var(--danger)]/40 bg-[var(--danger)]/10' : 'border-[var(--line)] hover:border-[var(--line)]'
                 }`}
               >
@@ -577,7 +577,7 @@ export const AdminClients: React.FC = () => {
       {/* 5. Create / Edit Client Modal */}
       {isClientModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/80  flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-[var(--panel)] border border-[var(--line)] rounded-card w-full max-w-lg p-6 space-y-4 shadow-none my-8 text-xs font-sans">
+          <div className="bg-[var(--panel)] border border-[var(--line)] rounded-card w-full max-w-lg p-6 space-y-4 -none my-8 text-xs font-sans">
             <div className="flex items-center justify-between pb-3 border-b border-[var(--line)]">
               <h2 className="text-base font-semibold font-sans text-[var(--text)] flex items-center gap-2">
                 <Users className="text-[var(--accent)]" size={18} />
@@ -740,7 +740,7 @@ export const AdminClients: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="h-10 px-5 rounded-control bg-[var(--accent)] hover:brightness-110 text-white font-sans font-semibold text-xs shadow-none transition-all min-h-10"
+                  className="h-10 px-5 rounded-control bg-[var(--accent)] hover:brightness-110 text-white font-sans font-semibold text-xs -none transition-all min-h-10"
                 >
                   {language === 'id' ? 'Simpan Klien' : 'Save Client'}
                 </button>
