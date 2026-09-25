@@ -581,7 +581,7 @@ export const AdminInvoicing: React.FC = () => {
                       )}
                       <button
                         onClick={() => setPreviewInvoice(inv)}
-                        className="h-9 px-3 rounded-control bg-[var(--panel)] hover:bg-[var(--panel-hover)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] text-xs font-sans flex items-center justify-center gap-1 transition-colors min-h-10"
+                        className="min-h-10 px-3 rounded-control bg-[var(--panel)] hover:bg-[var(--panel-hover)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] text-xs font-sans flex items-center justify-center gap-1 transition-colors"
                         title="Preview & Print Invoice"
                       >
                         <FileText size={13} />
