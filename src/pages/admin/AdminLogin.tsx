@@ -182,7 +182,7 @@ export const AdminLogin: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--muted)] hover:text-[var(--text)]"
+                  className="absolute right-1.5 top-1/2 -translate-y-1/2 min-h-9 min-w-9 flex items-center justify-center rounded-control text-[var(--muted)] hover:text-[var(--text)]"
                   aria-label={showPassword ? 'Hide password' : 'Show password'}
                 >
                   {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -203,7 +203,7 @@ export const AdminLogin: React.FC = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full min-h-10 h-10 rounded-control bg-[var(--accent)] hover:bg-[#c40f34] disabled:bg-[var(--panel-hover)] text-[var(--text)] text-xs font-medium font-sans normal-case tracking-normal flex items-center justify-center gap-2 transition-colors"
+              className="w-full min-h-10 h-10 rounded-control bg-[var(--accent)] hover:bg-[var(--accent)] disabled:bg-[var(--panel-hover)] text-[var(--text)] text-xs font-medium font-sans normal-case tracking-normal flex items-center justify-center gap-2 transition-colors"
             >
               {loading
                 ? (language === 'id' ? 'Memverifikasi…' : 'Verifying…')
