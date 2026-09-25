@@ -175,7 +175,7 @@ export const AdminDocuments: React.FC = () => {
     <div className="space-y-6 animate-in fade-in duration-200">
       {/* Toast Notification */}
       {notification && (
-        <div className="fixed top-16 left-3 right-3 sm:left-auto sm:top-20 sm:right-6 z-50 px-4 py-2.5 rounded-card bg-[var(--panel)] border border-[var(--line)] text-[var(--text)] text-xs font-sans -none flex items-center gap-2">
+        <div className="fixed top-16 left-3 right-3 sm:left-auto sm:top-20 sm:right-6 z-50 px-4 py-2.5 rounded-card bg-[var(--panel)] border border-[var(--line)] text-[var(--text)] text-xs font-sans flex items-center gap-2">
           <span className="w-2 h-2 rounded-badge bg-[var(--accent)]" />
           <span>{notification}</span>
         </div>
@@ -365,7 +365,7 @@ export const AdminDocuments: React.FC = () => {
       {/* UPLOAD MODAL */}
       {isUploadModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/85  flex items-center justify-center p-4">
-          <div className="bg-[var(--panel)] border border-[var(--line)] rounded-card w-full max-w-md max-h-[calc(100dvh-24px)] overflow-y-auto -none">
+          <div className="bg-[var(--panel)] border border-[var(--line)] rounded-card w-full max-w-md max-h-[calc(100dvh-24px)] overflow-y-auto">
             <div className="p-4 border-b border-[var(--line)] flex items-center justify-between bg-[var(--panel)]">
               <h3 className="text-sm font-semibold font-sans text-[var(--text)] flex items-center gap-2">
                 <UploadCloud size={16} className="text-[var(--accent)]" />
