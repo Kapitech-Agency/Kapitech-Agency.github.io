@@ -1043,7 +1043,7 @@ export const AdminInbox: React.FC = () => {
                 <div className="flex items-start justify-between gap-4 pb-5 border-b border-[var(--line)] mb-5">
                   <div className="flex items-start gap-3">
                     {/* Client Avatar Initials */}
-                    <div className="w-12 h-12 rounded-card bg-gradient-to-br from-[var(--panel)] to-[var(--panel)] border border-white/10 flex items-center justify-center text-[var(--text)] font-sans font-semibold text-lg shrink-0 shadow-inner">
+                    <div className="w-12 h-12 rounded-card bg-[var(--panel)] border border-[var(--line)] flex items-center justify-center text-[var(--text)] font-sans font-semibold text-lg shrink-0 shadow-inner">
                       {selectedSubmission.fullName.charAt(0).toUpperCase()}
                     </div>
 
