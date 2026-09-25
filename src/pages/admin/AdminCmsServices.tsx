@@ -514,7 +514,7 @@ export const AdminCmsServices: React.FC = () => {
       {/* Add New Service Modal */}
       {isAddModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/80  flex items-center justify-center p-4">
-          <div className="bg-[var(--panel)] border border-[var(--line)] rounded-card w-full max-w-lg shadow-none p-4 sm:p-6 relative max-h-[90vh] overflow-y-auto custom-scrollbar animate-in zoom-in-95 duration-150">
+          <div className="bg-[var(--panel)] border border-[var(--line)] rounded-card w-full max-w-lg shadow-none p-4 sm:p-6 relative max-h-[calc(100dvh-24px)] overflow-y-auto custom-scrollbar animate-in zoom-in-95 duration-150">
             <button
               onClick={() => setIsAddModalOpen(false)}
               className="absolute top-4 right-4 p-1.5 rounded-control text-[var(--muted)] hover:text-[var(--text)] bg-[var(--panel)] border border-[var(--line)]"

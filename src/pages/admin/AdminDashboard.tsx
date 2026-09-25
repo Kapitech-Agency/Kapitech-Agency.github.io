@@ -430,7 +430,7 @@ export const AdminDashboard: React.FC = () => {
       {/* GLOBAL TOAST NOTIFICATION BANNER                               */}
       {/* ------------------------------------------------------------- */}
       {notification && (
-        <div className="fixed top-20 right-5 z-50 flex items-center gap-2.5 bg-[var(--panel)] text-[var(--text)] px-4 py-3 rounded-control border border-[var(--line)] shadow-none">
+        <div className="fixed top-16 left-3 right-3 sm:left-auto sm:top-20 sm:right-5 z-50 flex items-center gap-2.5 bg-[var(--panel)] text-[var(--text)] px-4 py-3 rounded-control border border-[var(--line)] shadow-none">
           <Activity size={15} className="text-[var(--accent)]" />
           <span className="text-xs font-sans font-medium">{notification}</span>
         </div>

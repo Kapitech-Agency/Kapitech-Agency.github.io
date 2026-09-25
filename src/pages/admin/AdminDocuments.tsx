@@ -366,7 +366,7 @@ export const AdminDocuments: React.FC = () => {
       {/* UPLOAD MODAL */}
       {isUploadModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/85  flex items-center justify-center p-4">
-          <div className="bg-[var(--panel)] border border-[var(--line)] rounded-card w-full max-w-md shadow-none overflow-hidden">
+          <div className="bg-[var(--panel)] border border-[var(--line)] rounded-card w-full max-w-md max-h-[calc(100dvh-24px)] overflow-y-auto shadow-none">
             <div className="p-4 border-b border-[var(--line)] flex items-center justify-between bg-[var(--ams-surface)]">
               <h3 className="text-sm font-semibold font-sans text-[var(--text)] flex items-center gap-2">
                 <UploadCloud size={16} className="text-[var(--accent)]" />
