@@ -385,7 +385,7 @@ export const AdminSettings: React.FC = () => {
     <div className="space-y-6">
       
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-6 border-b border-[var(--line)]">
+      <div className="ams-page-header lex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h1 className="ams-page-title">
             <Settings className="text-[var(--accent)]" size={24} />
@@ -499,7 +499,7 @@ export const AdminSettings: React.FC = () => {
           {securityStatus && (
             <div className={`mb-6 p-4 rounded-card text-xs font-sans flex items-start gap-2.5 ${
               securityStatus.success 
-                ? 'bg-[var(--success)]/10/40 border border-[var(--success)]/30 text-emerald-300' 
+                ? 'bg-[var(--success)]/10 border border-[var(--success)]/30 text-emerald-300' 
                 : 'bg-[var(--danger)]/10 border border-[var(--danger)]/30 text-red-300'
             }`}>
               {securityStatus.success ? <Check size={16} className="shrink-0 mt-0.5" /> : <AlertCircle size={16} className="shrink-0 mt-0.5" />}
