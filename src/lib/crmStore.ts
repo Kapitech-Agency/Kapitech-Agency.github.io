@@ -185,9 +185,9 @@ export const CRM_STAGE_DEFINITIONS: {
     key: 'lost',
     label: 'Closed Lost',
     labelId: 'Tidak Lanjut (Lost)',
-    color: 'text-zinc-400',
-    borderColor: 'border-zinc-500/30',
-    bgLight: 'bg-zinc-950/20',
+    color: 'text-[var(--muted)]',
+    borderColor: 'border-[var(--line)]',
+    bgLight: 'bg-[var(--panel)]',
     probability: 0.0
   }
 ];
@@ -613,7 +613,7 @@ export const exportCrmLeadsToCsv = (leads: CrmLead[]): void => {
     `"${l.createdAt}"`
   ]);
 
-  const csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+  const csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\\n');
   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
