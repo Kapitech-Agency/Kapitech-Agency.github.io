@@ -27,7 +27,7 @@ export const Modal: React.FC<ModalProps> = ({
     triggerRef.current = document.activeElement as HTMLElement | null;
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
-    const focusables = (): HTMLElement[] => dialogRef.current ? Array.from(dialogRef.current.querySelectorAll<HTMLElement>('button:not([disabled]),input:not([disabled]),textarea:not([disabled]),select:not([disabled]),[href],[tabindex="0"]')).filter((el): el is HTMLElement => el.getClientRects().length > 0) : [];
+    const focusables = (): HTMLElement[] => dialogRef.current ? Array.from(dialogRef.current.querySelectorAll<HTMLElement>('button:not([disabled]),input:not([disabled]),textarea:not([disabled]),select:not([disabled]),[href],[tabindex="0"]')).filter(el => el.getClientRects().length > 0) : [];
     requestAnimationFrame(() => focusables()[0]?.focus());
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') { e.preventDefault(); onClose(); return; }
