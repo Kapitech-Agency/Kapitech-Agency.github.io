@@ -1083,7 +1083,7 @@ export const AdminCrm: React.FC = () => {
                 <label className="block text-[var(--muted)] normal-case tracking-normal mb-2 font-semibold text-[11px]">
                   {language === 'id' ? 'Deskripsi Scope & Catatan Klien' : 'Project Scope & Acceptance Notes'}
                 </label>
-                <div className="p-4 rounded-card bg-[var(--panel)] border border-[var(--line)] text-gray-200 leading-relaxed font-sans text-xs">
+                <div className="p-4 rounded-card bg-[var(--panel)] border border-[var(--line)] text-[var(--muted)] leading-relaxed font-sans text-xs">
                   {selectedLead.description || (language === 'id' ? 'Belum ada catatan scope proyek.' : 'No detailed scope notes provided.')}
                 </div>
               </div>
