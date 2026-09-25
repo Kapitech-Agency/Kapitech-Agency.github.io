@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronDown, Check, CircleCheck, Clock3, Send, CircleAlert, FileText } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion } from 'motion/react';
+import { DropdownPortal } from './DropdownPortal';
 import { InvoiceStatus } from '../../lib/financeStore';
 
 interface InvoiceStatusDropdownProps {
@@ -53,37 +54,19 @@ export const InvoiceStatusDropdown: React.FC<InvoiceStatusDropdownProps> = ({
   size = 'sm'
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
-        setIsOpen(false);
-      }
-    };
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setIsOpen(false);
-    };
-
-    if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-      document.addEventListener('keydown', handleKeyDown);
-    }
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-      document.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [isOpen]);
+  const triggerRef = useRef<HTMLButtonElement>(null);
 
   const current = statusConfigs[status] || statusConfigs.draft;
   const CurrentIcon = current.icon;
 
   return (
-    <div className="relative inline-block text-left" ref={containerRef}>
+    <div className="relative inline-block text-left">
       <button
         type="button"
         disabled={disabled}
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => !disabled && setIsOpen(v => !v)}
+        onKeyDown={(e) => { if (e.key === "Escape" || e.key === "Tab") setIsOpen(false); }}
+        ref={triggerRef}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
         className={`flex items-center justify-between gap-2 rounded-badge font-sans text-xs font-semibold border transition-colors duration-150 select-none ${
@@ -99,48 +82,23 @@ export const InvoiceStatusDropdown: React.FC<InvoiceStatusDropdownProps> = ({
         <ChevronDown size={12} className={`shrink-0 transition-transform duration-150 opacity-70 ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: 3 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 2 }}
-            transition={{ duration: 0.15, ease: 'easeOut' }}
-            role="listbox"
-            className="absolute left-0 sm:left-auto right-auto sm:right-0 md:left-0 md:right-auto z-50 mt-1 min-w-[150px] max-w-[calc(100vw-32px)] bg-panel border border-line rounded-control p-1 shadow-none space-y-0.5 font-sans text-xs"
-          >
-            {statuses.map((item) => {
-              const isSelected = item === status;
-              const config = statusConfigs[item];
-              const Icon = config.icon;
-              return (
-                <button
-                  key={item}
-                  type="button"
-                  role="option"
-                  aria-selected={isSelected}
-                  onClick={() => {
-                    onChange(item);
-                    setIsOpen(false);
-                  }}
-                  className={`w-full flex items-center justify-between min-h-10 sm:min-h-9 px-2.5 py-2 rounded-control text-left transition-colors ${
-                    isSelected
-                      ? 'bg-panel-hover text-fg font-semibold'
-                      : 'text-muted hover:text-fg hover:bg-panel-hover'
-                  }`}
-                >
-                  <span className="flex items-center gap-2 min-w-0">
-                    <Icon size={13} className="shrink-0" />
-                    <span className="truncate">{config.label}</span>
-                  </span>
-                  {isSelected && <Check size={13} className="text-fg ml-2 shrink-0" />}
-                </button>
-              );
-            })}
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
+      <DropdownPortal open={isOpen} anchorRef={triggerRef} onClose={() => setIsOpen(false)} align="left" className="min-w-[150px] max-w-[calc(100vw-16px)] bg-panel border border-line rounded-control p-1 font-sans text-xs">
+        <motion.div initial={{ opacity: 0, y: 3 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 2 }} transition={{ duration: 0.15, ease: 'easeOut' }} role="listbox" className="space-y-0.5">
+          {statuses.map((item) => {
+            const isSelected = item === status;
+            const config = statusConfigs[item];
+            const Icon = config.icon;
+            return (
+              <button key={item} type="button" role="option" aria-selected={isSelected}
+                onClick={() => { onChange(item); setIsOpen(false); triggerRef.current?.focus(); }}
+                className={`w-full flex items-center justify-between min-h-10 sm:min-h-9 px-2.5 py-2 rounded-control text-left transition-colors ${isSelected ? 'bg-accent/10 text-fg font-semibold' : 'text-muted hover:text-fg hover:bg-panel-hover'}`}>
+                <span className="flex items-center gap-2 min-w-0"><Icon size={13} className="shrink-0" /><span className="truncate">{config.label}</span></span>
+                {isSelected && <Check size={13} className="text-accent-text ml-2 shrink-0" />}
+              </button>
+            );
+          })}
+        </motion.div>
+      </DropdownPortal>/div>
   );
 };
 
