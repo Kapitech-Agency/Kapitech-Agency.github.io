@@ -402,7 +402,7 @@ export const AdminCmsProjects: React.FC = () => {
       {/* MODAL: ADD / EDIT PROJECT WITH LIVE PREVIEW & DRAG & DROP */}
       {isModalOpen && editingProject && (
         <div className="fixed inset-0 bg-black/80  z-50 flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-[var(--panel)] border border-[var(--line)] rounded-card max-w-3xl w-full max-h-[90vh] overflow-y-auto p-4 sm:p-6 shadow-none font-sans text-xs">
+          <div className="bg-[var(--panel)] border border-[var(--line)] rounded-card max-w-3xl w-full max-h-[calc(100dvh-24px)] overflow-y-auto p-4 sm:p-6 shadow-none font-sans text-xs">
             
             <div className="flex items-center justify-between pb-4 border-b border-[var(--line)] mb-6">
               <div className="flex items-center gap-3">
