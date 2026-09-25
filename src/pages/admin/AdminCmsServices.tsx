@@ -233,7 +233,7 @@ export const AdminCmsServices: React.FC = () => {
 
       {statusMessage && (
         <div className="p-3.5 rounded-card bg-[var(--success)]/10 border border-[var(--success)]/30 text-[var(--success)] text-xs font-sans flex items-center justify-between animate-in fade-in duration-200">
-          <div className="flex items-center gap-2">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
             <CheckCircle2 size={16} className="text-[var(--success)]" />
             <span>{statusMessage}</span>
           </div>
@@ -325,7 +325,7 @@ export const AdminCmsServices: React.FC = () => {
           >
             <div>
               <div className="flex items-center justify-between gap-2 mb-3">
-                <div className="flex items-center gap-2">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
                   {getCategoryIcon(item.category)}
                   <span className="text-[10px] font-sans text-[var(--muted)] normal-case tracking-normal font-semibold">
                     {item.category}
@@ -374,7 +374,7 @@ export const AdminCmsServices: React.FC = () => {
             <div className="pt-4 border-t border-[var(--line)] flex items-center justify-between text-xs font-sans text-[var(--muted)]">
               <span className="truncate max-w-[120px]">/{item.slug}</span>
               
-              <div className="flex items-center gap-2">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
                 <button
                   onClick={() => setSelectedServiceForDetail(item)}
                   className="px-2.5 py-1 rounded-control bg-[var(--panel)] hover:bg-[var(--panel-hover)] border border-[var(--line)] text-[var(--text)] text-[11px] font-sans flex items-center gap-1 transition-colors"
@@ -423,7 +423,7 @@ export const AdminCmsServices: React.FC = () => {
             </p>
 
             {/* Metrics */}
-            <div className="grid grid-cols-3 gap-3 mb-5">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5">
               {selectedServiceForDetail.metrics?.map((m, idx) => (
                 <div key={idx} className="bg-[var(--panel)] border border-[var(--line)] p-3 rounded-card text-center">
                   <div className="text-lg font-sans font-semibold text-[var(--accent)]">{m.value}</div>
@@ -479,19 +479,19 @@ export const AdminCmsServices: React.FC = () => {
               </div>
             )}
 
-            <div className="flex items-center justify-between pt-4 border-t border-[var(--line)]">
+            <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-2.5 pt-4 border-t border-[var(--line)]">
               <button
                 onClick={() => handleDeleteService(selectedServiceForDetail.slug)}
-                className="px-3 py-2 rounded-card bg-[var(--danger)]/10 border border-[var(--danger)]/30 text-[var(--danger)] hover:bg-[var(--danger)]/15 text-xs font-sans flex items-center gap-1.5 transition-colors"
+                className="min-h-10 px-3 py-2 rounded-control bg-[var(--danger)]/10 border border-[var(--danger)]/30 text-[var(--danger)] hover:bg-[var(--danger)]/15 text-xs font-sans flex items-center gap-1.5 transition-colors"
               >
                 <Trash2 size={13} />
                 <span>Delete Offering</span>
               </button>
 
-              <div className="flex items-center gap-2">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
                 <button
                   onClick={() => setSelectedServiceForDetail(null)}
-                  className="px-4 py-2 rounded-card bg-[var(--panel)] hover:bg-[var(--panel-hover)] border border-[var(--line)] text-[var(--text)] text-xs font-sans transition-colors"
+                  className="min-h-10 px-4 py-2 rounded-control bg-[var(--panel)] hover:bg-[var(--panel-hover)] border border-[var(--line)] text-[var(--text)] text-xs font-sans transition-colors"
                 >
                   Close
                 </button>
@@ -545,7 +545,7 @@ export const AdminCmsServices: React.FC = () => {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-[var(--muted)] mb-1 font-medium">URL Slug *</label>
                   <input
@@ -624,7 +624,7 @@ export const AdminCmsServices: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsAddModalOpen(false)}
-                  className="px-4 py-2 rounded-card bg-[var(--panel)] hover:bg-[var(--panel-hover)] border border-[var(--line)] text-[var(--text)] text-xs transition-colors"
+                  className="min-h-10 px-4 py-2 rounded-control bg-[var(--panel)] hover:bg-[var(--panel-hover)] border border-[var(--line)] text-[var(--text)] text-xs transition-colors"
                 >
                   Cancel
                 </button>
