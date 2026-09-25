@@ -542,7 +542,7 @@ export const AdminCmsServices: React.FC = () => {
                     setNewSlug(e.target.value.toLowerCase().replace(/[^a-z0-9]/g, '-'));
                   }}
                   placeholder="e.g. Enterprise SEO & Core Web Vitals"
-                  className="w-full px-3 py-2 rounded-card bg-[var(--panel)] border border-[var(--line)] text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
+                  className="w-full px-3 py-2.5 rounded-control bg-[var(--panel)] border border-[var(--line)] text-[var(--text)] focus:outline-none focus:border-[var(--accent)] min-h-10"
                 />
               </div>
 
@@ -571,7 +571,7 @@ export const AdminCmsServices: React.FC = () => {
                   value={newHeadline}
                   onChange={(e) => setNewHeadline(e.target.value)}
                   placeholder="e.g. High-Impact Technical SEO for Scaling Ventures"
-                  className="w-full px-3 py-2 rounded-card bg-[var(--panel)] border border-[var(--line)] text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
+                  className="w-full px-3 py-2.5 rounded-control bg-[var(--panel)] border border-[var(--line)] text-[var(--text)] focus:outline-none focus:border-[var(--accent)] min-h-10"
                 />
               </div>
 
@@ -582,7 +582,7 @@ export const AdminCmsServices: React.FC = () => {
                   value={newSubtitle}
                   onChange={(e) => setNewSubtitle(e.target.value)}
                   placeholder="Explain client value proposition, measurable KPI improvements, and SLA guarantee..."
-                  className="w-full px-3 py-2 rounded-card bg-[var(--panel)] border border-[var(--line)] text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
+                  className="w-full px-3 py-2.5 rounded-control bg-[var(--panel)] border border-[var(--line)] text-[var(--text)] focus:outline-none focus:border-[var(--accent)] min-h-10"
                 />
               </div>
 
