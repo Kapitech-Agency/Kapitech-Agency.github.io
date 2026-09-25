@@ -521,7 +521,7 @@ export const AdminProposals: React.FC = () => {
             {language === 'id' ? 'Tidak ada proposal yang sesuai.' : 'No proposals found.'}
           </div>
         ) : (
-          <div className="overflow-x-auto">
+          <div className="ams-table-scroll overflow-x-auto">
             <table className="w-full text-left border-collapse min-w-[750px]">
               <thead>
                 <tr className="border-b border-[var(--line)] bg-[var(--panel)]/50 text-xs font-sans text-[var(--ams-secondary)] normal-case">
