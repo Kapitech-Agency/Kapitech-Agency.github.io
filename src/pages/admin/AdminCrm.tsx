@@ -867,7 +867,7 @@ export const AdminCrm: React.FC = () => {
                       </button>
                       <button
                         onClick={() => handleDeleteLead(lead.id, lead.clientName)}
-                        className="w-9 h-9 rounded-card bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--danger)] border border-[var(--line)] hover:border-red-500/40 flex items-center justify-center min-h-10 min-w-10"
+                        className="w-9 h-9 rounded-card bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--danger)] border border-[var(--line)] hover:border-[var(--danger)]/40 flex items-center justify-center min-h-10 min-w-10"
                         title="Delete deal"
                       >
                         <Trash2 size={13} />
@@ -979,7 +979,7 @@ export const AdminCrm: React.FC = () => {
                             </button>
                             <button
                               onClick={() => handleDeleteLead(lead.id, lead.clientName)}
-                              className="w-9 h-9 rounded-card bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--danger)] border border-[var(--line)] hover:border-red-500/40 flex items-center justify-center transition-colors min-h-10 min-w-10"
+                              className="w-9 h-9 rounded-card bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--danger)] border border-[var(--line)] hover:border-[var(--danger)]/40 flex items-center justify-center transition-colors min-h-10 min-w-10"
                               title="Delete deal"
                             >
                               <Trash2 size={13} />

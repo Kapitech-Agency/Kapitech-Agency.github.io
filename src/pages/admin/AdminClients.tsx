@@ -452,7 +452,7 @@ export const AdminClients: React.FC = () => {
                     </button>
                     <button
                       onClick={() => handleDeleteClient(client.id, client.name)}
-                      className="w-9 h-9 rounded-control bg-[var(--panel)] hover:bg-red-950/40 text-[var(--muted)] hover:text-[var(--danger)] border border-[var(--line)] hover:border-red-500/30 flex items-center justify-center transition-colors min-h-10 min-w-10"
+                      className="w-9 h-9 rounded-control bg-[var(--panel)] hover:bg-[var(--danger)]/10 text-[var(--muted)] hover:text-[var(--danger)] border border-[var(--line)] hover:border-[var(--danger)]/30 flex items-center justify-center transition-colors min-h-10 min-w-10"
                       title="Delete Client"
                     >
                       <Trash2 size={13} />
@@ -563,7 +563,7 @@ export const AdminClients: React.FC = () => {
                         </button>
                         <button
                           onClick={() => handleDeleteClient(client.id, client.name)}
-                          className="w-9 h-9 rounded-control bg-[var(--panel)] hover:bg-red-950/40 text-[var(--muted)] hover:text-[var(--danger)] border border-[var(--line)] hover:border-red-500/30 flex items-center justify-center transition-colors min-h-10 min-w-10"
+                          className="w-9 h-9 rounded-control bg-[var(--panel)] hover:bg-[var(--danger)]/10 text-[var(--muted)] hover:text-[var(--danger)] border border-[var(--line)] hover:border-[var(--danger)]/30 flex items-center justify-center transition-colors min-h-10 min-w-10"
                           title="Delete Client"
                         >
                           <Trash2 size={13} />
