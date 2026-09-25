@@ -746,7 +746,7 @@ export const AdminInbox: React.FC = () => {
       {/* ------------------------------------------------------------- */}
       {viewMode === 'table' ? (
         /* DENSE SPREADSHEET TABLE VIEW */
-        <div className="bg-[var(--panel)] border border-[var(--line)] rounded-card overflow-hidden -none">
+        <div className="bg-[var(--panel)] border border-[var(--line)] rounded-card overflow-hidden">
           <div className="ams-table-scroll overflow-x-auto custom-scrollbar">
             <table className="w-full text-left border-collapse text-xs font-sans">
               <thead>
@@ -1033,7 +1033,7 @@ export const AdminInbox: React.FC = () => {
 
           {/* Right: Message Reader & Command Hub Pane */}
           {selectedSubmission ? (
-            <div className="col-span-12 lg:col-span-7 bg-[var(--panel)] border border-[var(--line)] rounded-card p-5 sm:p-7 flex flex-col justify-between -none">
+            <div className="col-span-12 lg:col-span-7 bg-[var(--panel)] border border-[var(--line)] rounded-card p-5 sm:p-7 flex flex-col justify-between">
               <div>
                 
                 {/* Mobile Back Button */}
@@ -1289,7 +1289,7 @@ export const AdminInbox: React.FC = () => {
                           <span>{copiedId === 'msg' ? (language === 'id' ? 'Tersalin' : 'Copied') : (language === 'id' ? 'Salin Brief' : 'Copy Brief')}</span>
                         </button>
                       </div>
-                      <div className="p-4 rounded-card bg-[var(--panel)] border border-[var(--line)] text-xs text-[var(--muted)] whitespace-pre-wrap leading-relaxed max-h-64 overflow-y-auto font-sans -none">
+                      <div className="p-4 rounded-card bg-[var(--panel)] border border-[var(--line)] text-xs text-[var(--muted)] whitespace-pre-wrap leading-relaxed max-h-64 overflow-y-auto font-sans">
                         {selectedSubmission.message}
                       </div>
                     </div>
