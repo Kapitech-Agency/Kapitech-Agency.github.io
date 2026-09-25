@@ -213,7 +213,7 @@ export const AdminDocuments: React.FC = () => {
             <button
               key={cat}
               onClick={() => setCategoryFilter(categoryFilter === cat ? 'all' : cat)}
-              className={`min-h-10 p-3 rounded-card border text-left transition-colors ${
+              className={`min-h-10 p-3 rounded-control border text-left transition-colors ${
                 categoryFilter === cat
                   ? 'bg-[var(--accent)]/10 border-[var(--accent)]/30 text-[var(--text)]'
                   : 'bg-[var(--panel)] border-[var(--line)] text-[var(--muted)] hover:text-[var(--text)] hover:border-[var(--line)]'
@@ -243,7 +243,7 @@ export const AdminDocuments: React.FC = () => {
           {categoryFilter !== 'all' && (
             <button
               onClick={() => setCategoryFilter('all')}
-              className="px-2.5 py-1 min-h-10 px-3 rounded-control text-xs font-sans bg-[var(--panel)] border border-[var(--line)] text-[var(--text)] flex items-center gap-1 hover:text-[var(--text)]"
+              className="px-3 min-h-10 rounded-control text-xs font-sans bg-[var(--panel)] border border-[var(--line)] text-[var(--text)] flex items-center gap-1 hover:text-[var(--text)]"
             >
               <span>Reset filter ({categoryFilter})</span>
               <X size={12} />

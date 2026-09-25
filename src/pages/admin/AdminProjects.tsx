@@ -1043,7 +1043,7 @@ export const AdminProjects: React.FC = () => {
                       value={newSubtaskTitle}
                       onChange={(e) => setNewSubtaskTitle(e.target.value)}
                       placeholder="Add subtask item and press enter..."
-                      className="flex-1 px-3 py-2 bg-[var(--bg)] border border-[var(--line)] rounded-card text-xs text-[var(--text)] focus:outline-none focus:border-[var(--accent)] font-sans"
+                      className="flex-1 px-3 py-2 bg-[var(--bg)] border border-[var(--line)] rounded-control text-xs text-[var(--text)] focus:outline-none focus:border-[var(--accent)] font-sans"
                     />
                     <button
                       type="submit"
@@ -1109,7 +1109,7 @@ export const AdminProjects: React.FC = () => {
                     onChange={(e) => setProjName(e.target.value)}
                     required
                     placeholder="e.g. Lumina Luxury Real Estate Headless Web Platform"
-                    className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
+                    className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                   />
                 </div>
 
@@ -1121,7 +1121,7 @@ export const AdminProjects: React.FC = () => {
                       value={clientName}
                       onChange={(e) => setClientName(e.target.value)}
                       placeholder="e.g. Marcus Thorne"
-                      className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
+                      className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                     />
                   </div>
                   <div>
@@ -1132,7 +1132,7 @@ export const AdminProjects: React.FC = () => {
                       onChange={(e) => setClientCompany(e.target.value)}
                       required
                       placeholder="e.g. Lumina Real Estate Global"
-                      className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
+                      className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                     />
                   </div>
                 </div>
@@ -1154,7 +1154,7 @@ export const AdminProjects: React.FC = () => {
                       type="number"
                       value={budget}
                       onChange={(e) => setBudget(Number(e.target.value))}
-                      className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
+                      className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                     />
                   </div>
 
@@ -1177,7 +1177,7 @@ export const AdminProjects: React.FC = () => {
                       type="date"
                       value={startDate}
                       onChange={(e) => setStartDate(e.target.value)}
-                      className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
+                      className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                     />
                   </div>
                   <div>
@@ -1186,7 +1186,7 @@ export const AdminProjects: React.FC = () => {
                       type="date"
                       value={targetEndDate}
                       onChange={(e) => setTargetEndDate(e.target.value)}
-                      className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
+                      className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                     />
                   </div>
                 </div>
@@ -1198,7 +1198,7 @@ export const AdminProjects: React.FC = () => {
                     value={techStackInput}
                     onChange={(e) => setTechStackInput(e.target.value)}
                     placeholder="e.g. Next.js 14, TypeScript, Tailwind CSS, PostgreSQL"
-                    className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
+                    className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                   />
                 </div>
 
@@ -1210,7 +1210,7 @@ export const AdminProjects: React.FC = () => {
                       value={repoUrl}
                       onChange={(e) => setRepoUrl(e.target.value)}
                       placeholder="https://github.com/kapitech-agency/..."
-                      className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
+                      className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                     />
                   </div>
                   <div>
@@ -1220,7 +1220,7 @@ export const AdminProjects: React.FC = () => {
                       value={stagingUrl}
                       onChange={(e) => setStagingUrl(e.target.value)}
                       placeholder="https://staging.app.kapitech.id"
-                      className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
+                      className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                     />
                   </div>
                 </div>
@@ -1237,7 +1237,7 @@ export const AdminProjects: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="min-h-10 px-6 min-h-10 rounded-control bg-[var(--accent)] text-white font-sans font-semibold hover:bg-[var(--panel-hover)] transition-all shadow-none"
+                  className="min-h-10 px-6 rounded-control bg-[var(--accent)] text-white font-sans font-semibold hover:bg-[var(--panel-hover)] transition-all shadow-none"
                 >
                   Save Project
                 </button>
@@ -1278,7 +1278,7 @@ export const AdminProjects: React.FC = () => {
                     value={taskTitle}
                     onChange={(e) => setTaskTitle(e.target.value)}
                     placeholder="e.g. Implement Mapbox Vector Tile Cluster Loader"
-                    className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
+                    className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                   />
                 </div>
 
@@ -1289,7 +1289,7 @@ export const AdminProjects: React.FC = () => {
                     value={taskDesc}
                     onChange={(e) => setTaskDesc(e.target.value)}
                     placeholder="Acceptance criteria and technical notes..."
-                    className="w-full px-3.5 py-2 bg-[var(--bg)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)] font-sans"
+                    className="w-full px-3.5 py-2 bg-[var(--bg)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)] font-sans"
                   />
                 </div>
 
@@ -1338,7 +1338,7 @@ export const AdminProjects: React.FC = () => {
                       type="date"
                       value={taskDueDate}
                       onChange={(e) => setTaskDueDate(e.target.value)}
-                      className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
+                      className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                     />
                   </div>
                 </div>
@@ -1366,7 +1366,7 @@ export const AdminProjects: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="min-h-10 px-6 min-h-10 rounded-control bg-[var(--accent)] text-white font-sans font-semibold hover:bg-[var(--panel-hover)] transition-all shadow-none"
+                  className="min-h-10 px-6 rounded-control bg-[var(--accent)] text-white font-sans font-semibold hover:bg-[var(--panel-hover)] transition-all shadow-none"
                 >
                   Add Task
                 </button>
