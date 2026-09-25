@@ -614,7 +614,7 @@ export const AdminInvoicing: React.FC = () => {
             shadowBg="surface"
             shadowSize="md"
             className="hidden md:block rounded-card overflow-hidden"
-            scrollClassName="bg-[var(--panel)] border border-[var(--line)] rounded-card overflow-x-auto shadow-none select-none"
+            scrollClassName="ams-table-scroll bg-[var(--panel)] border border-[var(--line)] rounded-card overflow-x-auto shadow-none select-none"
           >
             <table className="w-full text-left text-xs font-sans min-w-[750px]">
               <thead className="sticky top-0 z-10 bg-[var(--panel)]">
