@@ -513,7 +513,7 @@ export const AdminLayout: React.FC = () => {
                         key={item.to}
                         to={item.to}
                         onClick={() => setMobileMenuOpen(false)}
-                        className={`relative flex items-center justify-between px-3 py-2.5 rounded-control text-xs font-sans transition-all min-h-10 group ${
+                        className={`relative flex items-center justify-between px-3 py-2.5 rounded-control text-xs font-sans transition-[background-color,color,transform] duration-150 min-h-10 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-panel active:scale-[0.985] ${
                           active 
                             ? 'bg-accent/15 text-fg font-semibold ' 
                             : 'text-muted hover:text-fg hover:bg-panel-hover'
@@ -542,7 +542,7 @@ export const AdminLayout: React.FC = () => {
                 <Link
                   to={settingsItem.to}
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`relative flex items-center gap-3 px-3 py-2.5 rounded-control text-xs font-sans min-h-[40px] transition-colors ${
+                  className={`relative flex items-center gap-3 px-3 py-2.5 rounded-control text-xs font-sans min-h-[40px] transition-[background-color,color,transform] duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-panel active:scale-[0.985] ${
                     isItemActive(settingsItem.to)
                       ? 'bg-accent/15 text-fg font-medium'
                       : 'text-muted hover:text-fg hover:bg-bg'
