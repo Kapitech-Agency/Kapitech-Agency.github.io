@@ -264,7 +264,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
       }}
     >
       <div
-        className="flex max-h-[80vh] w-full max-w-xl flex-col overflow-hidden rounded-card border border-line bg-panel"
+        className="flex max-h-[calc(100dvh-24px)] w-full max-w-xl flex-col overflow-hidden rounded-card border border-line bg-panel"
         role="dialog"
         aria-modal="true"
         aria-label={language === 'id' ? 'Command Palette' : 'Command Palette'}
