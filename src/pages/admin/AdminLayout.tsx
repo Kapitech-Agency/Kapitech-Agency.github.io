@@ -348,7 +348,7 @@ export const AdminLayout: React.FC = () => {
             )}
           </Link>
         </div>
-        <div className={`flex-1 min-h-0 overflow-y-auto custom-scrollbar ${sidebarCollapsed ? 'px-2 py-3' : 'px-2.5 py-3'}`}>
+        <div className={`flex-1 min-h-0 overflow-hidden ${sidebarCollapsed ? 'px-2 py-3' : 'px-2.5 py-3'}`}>
           <div className={sidebarCollapsed ? 'space-y-2' : 'space-y-4'}>
             {contentNavSections.map((section) => (
               <div key={section.id} className="space-y-1">
