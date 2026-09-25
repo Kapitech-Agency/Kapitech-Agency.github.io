@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import {
+  Briefcase,
   Layers,
   Plus,
   Search,
