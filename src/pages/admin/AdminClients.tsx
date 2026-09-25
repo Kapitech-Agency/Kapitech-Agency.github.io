@@ -367,7 +367,7 @@ export const AdminClients: React.FC = () => {
                       ? 'bg-[var(--success)]/10 text-[var(--success)] border border-[var(--success)]/30'
                       : client.status === 'completed'
                       ? 'bg-[var(--info)]/10 text-[var(--info)] border border-[var(--info)]/30'
-                      : 'bg-zinc-500/10 text-zinc-400 border border-zinc-500/30'
+                      : 'bg-[var(--panel)]/50 text-[var(--muted)] border border-[var(--line)]'
                   }`}>
                     {client.status}
                   </span>
@@ -547,7 +547,7 @@ export const AdminClients: React.FC = () => {
                           ? 'bg-[var(--success)]/10 text-[var(--success)] border border-[var(--success)]/30'
                           : client.status === 'completed'
                           ? 'bg-[var(--info)]/10 text-[var(--info)] border border-[var(--info)]/30'
-                          : 'bg-zinc-500/10 text-zinc-400 border border-zinc-500/30'
+                          : 'bg-[var(--panel)]/50 text-[var(--muted)] border border-[var(--line)]'
                       }`}>
                         {client.status}
                       </span>
