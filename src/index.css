@@ -919,8 +919,7 @@
 }
 
 .ams-shell [class*="text-[#F8FAFC]"],
-.ams-shell [class*="text-[#FFFFFF]"],
-.ams-shell [class~="text-white"] {
+.ams-shell [class*="text-[#FFFFFF]"] {
   color: var(--text) !important;
 }
 .ams-shell [class*="text-[#8A94A6]"],
