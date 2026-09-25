@@ -337,7 +337,7 @@ export const AdminInvoicing: React.FC = () => {
           {canManageInvoices && (
             <button
               onClick={handleOpenCreateInvoice}
-              className="min-h-10 px-4 rounded-control bg-[var(--accent)] hover:bg-[var(--panel-hover)] text-[var(--text)] text-xs font-sans font-medium transition-colors flex items-center justify-center gap-1.5"
+              className="min-h-10 px-4 rounded-control bg-[var(--accent)] hover:brightness-110 text-white text-xs font-sans font-medium transition-colors flex items-center justify-center gap-1.5"
             >
               <Plus size={14} />
               <span>{t('admin.fin.createInvoice')}</span>
@@ -1029,7 +1029,7 @@ export const AdminInvoicing: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="h-10 px-5 rounded-card bg-[var(--accent)] hover:bg-[var(--panel-hover)] text-[var(--text)] text-xs font-sans font-semibold transition-all shadow-none min-h-10"
+                  className="h-10 px-5 rounded-card bg-[var(--accent)] hover:brightness-110 text-white text-xs font-sans font-semibold transition-all shadow-none min-h-10"
                 >
                   Save Invoice
                 </button>
@@ -1124,7 +1124,7 @@ export const AdminInvoicing: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="h-10 px-5 rounded-card bg-[var(--accent)] hover:bg-[var(--panel-hover)] text-[var(--text)] text-xs font-sans font-semibold transition-all shadow-none min-h-10"
+                  className="h-10 px-5 rounded-card bg-[var(--accent)] hover:brightness-110 text-white text-xs font-sans font-semibold transition-all shadow-none min-h-10"
                 >
                   Save Expense
                 </button>
