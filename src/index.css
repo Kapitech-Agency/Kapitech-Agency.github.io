@@ -1493,7 +1493,7 @@
   background: color-mix(in srgb, var(--text) 4%, transparent);
 }
 
-.ams-shell [role="dialog"] {
+.ams-shell [role="dialog"]:not(.ams-mobile-drawer) {
   color: var(--text);
 }
 
@@ -1539,7 +1539,7 @@
     min-width: 0;
   }
 
-  .ams-shell [role="dialog"] > div {
+  .ams-shell [role="dialog"]:not(.ams-mobile-drawer) > div {
     max-height: calc(100dvh - 24px);
   }
 }
@@ -1620,11 +1620,11 @@
   box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 18%, transparent);
 }
 
-.ams-shell [role="dialog"] {
+.ams-shell [role="dialog"]:not(.ams-mobile-drawer) {
   overscroll-behavior: contain;
 }
 
-.ams-shell [role="dialog"] > div {
+.ams-shell [role="dialog"]:not(.ams-mobile-drawer) > div {
   border-radius: 12px;
   border-color: var(--line);
   box-shadow: none;
@@ -1654,7 +1654,7 @@
     min-height: 118px;
   }
 
-  .ams-shell [role="dialog"] > div {
+  .ams-shell [role="dialog"]:not(.ams-mobile-drawer) > div {
     width: min(100%, calc(100vw - 24px));
     margin: 12px;
   }
@@ -1973,10 +1973,10 @@
   min-width: 40px;
   min-height: 40px;
 }
-.ams-shell [role="dialog"] {
+.ams-shell [role="dialog"]:not(.ams-mobile-drawer) {
   overscroll-behavior: contain;
 }
-.ams-shell [role="dialog"] > :where(.overflow-y-auto, .max-h-\\[calc\\(100dvh-2rem\\)\\]) {
+.ams-shell [role="dialog"]:not(.ams-mobile-drawer) > :where(.overflow-y-auto, .max-h-\\[calc\\(100dvh-2rem\\)\\]) {
   scrollbar-gutter: stable;
 }
 .ams-shell .ams-page-header,
@@ -1996,28 +1996,69 @@
   .ams-shell .ams-dashboard-header .flex {
     min-width: 0;
   }
-  .ams-shell [role="dialog"] {
+  .ams-shell [role="dialog"]:not(.ams-mobile-drawer) {
     margin: 12px;
     max-height: calc(100dvh - 24px);
   }
-  .ams-shell [role="dialog"] > div {
+  .ams-shell [role="dialog"]:not(.ams-mobile-drawer) > div {
     max-width: 100%;
   }
 }
 
 
 /* AMS modal viewport guard: keeps centered dialogs usable on short and mobile screens. */
-.ams-shell .fixed.inset-0.z-50.flex.items-center.justify-center > div:last-child {
+.ams-shell .fixed.inset-0.z-50.flex.items-center.justify-center:not(.ams-mobile-drawer) > div:last-child {
   max-height: calc(100dvh - 24px);
   overscroll-behavior: contain;
 }
 @media (max-width: 599px) {
-  .ams-shell .fixed.inset-0.z-50.flex.items-center.justify-center {
+  .ams-shell .fixed.inset-0.z-50.flex.items-center.justify-center:not(.ams-mobile-drawer) {
     padding: 12px;
   }
-  .ams-shell .fixed.inset-0.z-50.flex.items-center.justify-center > div:last-child {
+  .ams-shell .fixed.inset-0.z-50.flex.items-center.justify-center:not(.ams-mobile-drawer) > div:last-child {
     width: 100%;
     max-width: 100%;
     max-height: calc(100dvh - 24px);
   }
+}
+
+
+/* AMS MOBILE DRAWER HARDENING */
+@media (max-width: 899px) {
+  .ams-shell .ams-mobile-drawer {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100%;
+    height: 100dvh;
+    max-width: none;
+    max-height: none;
+  }
+
+  .ams-shell .ams-mobile-drawer > .relative {
+    width: min(300px, 86vw);
+    max-width: 86vw;
+    height: 100dvh;
+    max-height: none;
+    margin: 0 !important;
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .ams-shell .ams-mobile-drawer > .fixed.inset-0 {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100%;
+    max-width: none;
+    height: 100dvh;
+  }
+
+  .ams-shell .ams-mobile-drawer .custom-scrollbar {
+    min-height: 0;
+    overscroll-behavior: contain;
+  }
+}
+
+/* Keep the pinned mobile settings action visually aligned with the drawer navigation. */
+.ams-shell .ams-mobile-drawer > .relative > a {
+  flex: 0 0 auto;
 }
