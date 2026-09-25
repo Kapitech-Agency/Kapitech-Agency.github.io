@@ -197,14 +197,17 @@ export const AdminClients: React.FC = () => {
 
   const handleDeleteClient = (id: string, clientName: string) => {
     if (!canManageClients) return;
-    if (window.confirm(`Hapus catatan klien "${clientName}"?`)) {
-      if (!canManageClients) return;
-      void api.clients.delete(id).then((res) => {
-        if (!res.success) { setStatusMessage(res.error || 'Failed to delete client.'); return; }
-        setClients(prev => prev.filter(item => item.id !== id));
-      }).catch(() => setStatusMessage(language === 'id' ? 'Client gagal dihapus.' : 'Failed to delete client.'));
+    setDeleteTarget({ id, name: clientName });
+  };
+
+  const confirmDeleteClient = async (id: string) => {
+    const res = await api.clients.delete(id);
+    if (!res.success) setStatusMessage(res.error || 'Failed to delete client.');
+    else {
+      setClients(prev => prev.filter(item => item.id !== id));
       showToast(language === 'id' ? 'Klien dihapus.' : 'Client deleted.');
     }
+    setDeleteTarget(null);
   };
 
   return (
