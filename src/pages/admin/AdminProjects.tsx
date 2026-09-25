@@ -918,7 +918,7 @@ export const AdminProjects: React.FC = () => {
             onClick={() => setActiveTaskDrawer(null)}
           />
 
-          <div className="relative ml-auto w-full sm:max-w-lg bg-[var(--panel)] border-l-0 sm:border-l border-[var(--line)] h-full flex flex-col justify-between z-10 shadow-none overflow-hidden animate-in slide-in-from-right duration-200 font-sans text-xs">
+          <div className="relative ml-auto w-full sm:max-w-lg bg-[var(--panel)] border-l-0 sm:border-l border-[var(--line)] h-full max-h-[100dvh] flex flex-col justify-between z-10 shadow-none overflow-hidden animate-in slide-in-from-right duration-200 font-sans text-xs">
             {/* Sticky Drawer Header */}
             <div className="sticky top-0 z-20 bg-[var(--panel)]/95  px-5 sm:px-6 py-4 border-b border-[var(--line)] flex items-center justify-between shrink-0">
               <div className="flex items-center gap-2">

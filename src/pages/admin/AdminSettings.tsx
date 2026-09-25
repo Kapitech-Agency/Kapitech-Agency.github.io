@@ -845,7 +845,7 @@ export const AdminSettings: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => handleOpenEditPermissions(acc)}
-                        className="h-8 px-2.5 rounded-control bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--text)] text-[11px] font-sans font-medium flex items-center gap-1.5 transition-colors"
+                        className="min-h-10 px-2.5 rounded-control bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--text)] text-[11px] font-sans font-medium flex items-center gap-1.5 transition-colors"
                       >
                         <Sliders size={13} className="text-[var(--danger)]" />
                         <span>{language === 'id' ? 'Atur Izin' : 'Permissions'}</span>
