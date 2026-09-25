@@ -1325,7 +1325,7 @@ export const AdminInbox: React.FC = () => {
                         placeholder={language === 'id' 
                           ? 'Tulis catatan teknis, rangkuman discovery call, kesepakatan timeline, atau petunjuk khusus untuk tim...' 
                           : 'Enter technical scoping notes, discovery call summary, milestone commitments, or specific client instructions...'}
-                        className="w-full p-3 bg-[var(--panel)] border border-[var(--line)] rounded-card text-xs text-[var(--text)] placeholder:text-[var(--muted)] font-sans focus:outline-none focus:border-[var(--accent)] leading-relaxed"
+                        className="w-full min-h-10 p-3 bg-[var(--panel)] border border-[var(--line)] rounded-control text-xs text-[var(--text)] placeholder:text-[var(--muted)] font-sans focus:outline-none focus:border-[var(--accent)] leading-relaxed"
                       />
 
                       <div className="flex items-center justify-end">
@@ -1333,7 +1333,7 @@ export const AdminInbox: React.FC = () => {
                           type="button"
                           disabled={isSavingNote}
                           onClick={handleSaveInternalNote}
-                          className="px-4 py-2 rounded-card bg-[var(--accent)] hover:bg-[var(--accent)] text-white text-xs font-sans font-semibold transition-all flex items-center gap-1.5 "
+                          className="min-h-10 px-4 py-2 rounded-control bg-[var(--accent)] hover:bg-[var(--accent)] text-white text-xs font-sans font-semibold transition-all flex items-center gap-1.5 "
                         >
                           <Check size={14} />
                           <span>{isSavingNote ? (language === 'id' ? 'Menyimpan...' : 'Saving...') : (language === 'id' ? 'Simpan Catatan' : 'Save Notes')}</span>
