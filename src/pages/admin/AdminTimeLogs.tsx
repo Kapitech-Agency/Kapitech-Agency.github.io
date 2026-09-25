@@ -144,7 +144,7 @@ export const AdminTimeLogs: React.FC = () => {
               </div>
               <Plus size={17} className="text-[var(--accent)]" />
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
               <label className="space-y-1.5">
                 <span className="text-[11px] text-[var(--muted)]">Project</span>
                 <CustomSelect
@@ -166,12 +166,12 @@ export const AdminTimeLogs: React.FC = () => {
                 <input type="date" value={date} onChange={e => setDate(e.target.value)} className="ams-control w-full" />
               </label>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-3 items-end">
+            <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-3 items-end">
               <label className="space-y-1.5">
                 <span className="text-[11px] text-[var(--muted)]">Notes</span>
                 <input value={notes} onChange={e => setNotes(e.target.value)} placeholder="Optional context" className="ams-control w-full" />
               </label>
-              <div className="flex items-center gap-3">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
                 <label className="flex items-center gap-2 h-10 px-3 rounded-control border border-[var(--line)] bg-[var(--bg)] text-xs cursor-pointer">
                   <input type="checkbox" checked={billable} onChange={e => setBillable(e.target.checked)} className="accent-[var(--accent)]" />
                   Billable
