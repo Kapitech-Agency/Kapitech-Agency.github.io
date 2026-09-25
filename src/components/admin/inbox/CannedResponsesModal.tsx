@@ -283,7 +283,7 @@ https://kapitech.id`
                     <a
                       href={`mailto:${submission.email}?subject=${encodeURIComponent(tpl.subject)}&body=${encodeURIComponent(tpl.body)}`}
                       onClick={onClose}
-                      className="min-h-10 px-2.5 rounded-control bg-[var(--accent)] hover:bg-[var(--accent)] text-[var(--text)] text-xs font-sans font-semibold transition-colors flex items-center gap-1.5 shadow-none"
+                      className="min-h-10 px-2.5 rounded-control bg-[var(--accent)] hover:brightness-110 text-white text-xs font-sans font-semibold transition-colors flex items-center gap-1.5 shadow-none"
                       title="Send via default Email Client"
                     >
                       <Send size={12} />
@@ -297,7 +297,7 @@ https://kapitech.id`
                         target="_blank"
                         rel="noopener noreferrer"
                         onClick={onClose}
-                        className="min-h-10 px-2.5 rounded-control bg-[var(--success)] hover:bg-[var(--success)]/90 text-[var(--text)] text-xs font-sans font-semibold transition-colors flex items-center gap-1.5"
+                        className="min-h-10 px-2.5 rounded-control bg-[var(--success)] hover:brightness-110 text-white text-xs font-sans font-semibold transition-colors flex items-center gap-1.5"
                         title="Send via WhatsApp"
                       >
                         <span>WA</span>
