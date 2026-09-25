@@ -375,21 +375,21 @@ export const AdminInbox: React.FC = () => {
     switch (type) {
       case 'career':
         return (
-          <span className="px-2 py-0.5 rounded-md bg-[var(--info)]/10 border border-[var(--info)]/30 text-[var(--info)] text-[10px] font-sans flex items-center gap-1">
+          <span className="px-2 py-0.5 rounded-chip bg-[var(--info)]/10 border border-[var(--info)]/30 text-[var(--info)] text-[10px] font-sans flex items-center gap-1">
             <Briefcase size={10} />
             <span>Studio Role</span>
           </span>
         );
       case 'vendor':
         return (
-          <span className="px-2 py-0.5 rounded-md bg-[var(--panel)] border border-[var(--line)] text-[var(--muted)] text-[10px] font-sans flex items-center gap-1">
+          <span className="px-2 py-0.5 rounded-chip bg-[var(--panel)] border border-[var(--line)] text-[var(--muted)] text-[10px] font-sans flex items-center gap-1">
             <Globe size={10} />
             <span>Freelance Vendor</span>
           </span>
         );
       case 'newsletter':
         return (
-          <span className="px-2 py-0.5 rounded-md bg-[var(--warning)]/10 border border-[var(--warning)]/30 text-[var(--warning)] text-[10px] font-sans flex items-center gap-1">
+          <span className="px-2 py-0.5 rounded-chip bg-[var(--warning)]/10 border border-[var(--warning)]/30 text-[var(--warning)] text-[10px] font-sans flex items-center gap-1">
             <Sparkles size={10} />
             <span>Newsletter</span>
           </span>
@@ -397,7 +397,7 @@ export const AdminInbox: React.FC = () => {
       case 'inquiry':
       default:
         return (
-          <span className="px-2 py-0.5 rounded-md bg-[var(--accent)]/10 border border-[var(--accent)]/30 text-[var(--danger)] text-[10px] font-sans flex items-center gap-1 font-semibold">
+          <span className="px-2 py-0.5 rounded-chip bg-[var(--accent)]/10 border border-[var(--accent)]/30 text-[var(--danger)] text-[10px] font-sans flex items-center gap-1 font-semibold">
             <MessageSquare size={10} />
             <span>Client Brief</span>
           </span>
@@ -410,32 +410,32 @@ export const AdminInbox: React.FC = () => {
     switch (status) {
       case 'new':
         return (
-          <span className="px-2 py-0.5 rounded-md text-[10px] font-sans bg-[var(--danger)]/10 text-[var(--danger)] border border-[var(--danger)]/30 font-semibold flex items-center gap-1">
+          <span className="px-2 py-0.5 rounded-chip text-[10px] font-sans bg-[var(--danger)]/10 text-[var(--danger)] border border-[var(--danger)]/30 font-semibold flex items-center gap-1">
             <span className="w-1.5 h-1.5 rounded-full bg-[var(--danger)] " />
             <span>New</span>
           </span>
         );
       case 'in-review':
         return (
-          <span className="px-2 py-0.5 rounded-md text-[10px] font-sans bg-[var(--warning)]/10 text-[var(--warning)] border border-[var(--warning)]/30">
+          <span className="px-2 py-0.5 rounded-chip text-[10px] font-sans bg-[var(--warning)]/10 text-[var(--warning)] border border-[var(--warning)]/30">
             In Review
           </span>
         );
       case 'contacted':
         return (
-          <span className="px-2 py-0.5 rounded-md text-[10px] font-sans bg-[var(--info)]/10 text-[var(--info)] border border-[var(--info)]/30">
+          <span className="px-2 py-0.5 rounded-chip text-[10px] font-sans bg-[var(--info)]/10 text-[var(--info)] border border-[var(--info)]/30">
             Contacted
           </span>
         );
       case 'closed':
         return (
-          <span className="px-2 py-0.5 rounded-md text-[10px] font-sans bg-[var(--success)]/10 text-[var(--success)] border border-[var(--success)]/30 font-semibold">
+          <span className="px-2 py-0.5 rounded-chip text-[10px] font-sans bg-[var(--success)]/10 text-[var(--success)] border border-[var(--success)]/30 font-semibold">
             Closed Deal
           </span>
         );
       default:
         return (
-          <span className="px-2 py-0.5 rounded-md text-[10px] font-sans bg-[var(--panel)] text-[var(--muted)] border border-[var(--line)]">
+          <span className="px-2 py-0.5 rounded-chip text-[10px] font-sans bg-[var(--panel)] text-[var(--muted)] border border-[var(--line)]">
             {status}
           </span>
         );
@@ -480,7 +480,7 @@ export const AdminInbox: React.FC = () => {
       
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="p-3 sm:p-4 rounded-card bg-[var(--success)]/10 border border-[var(--success)]/30 text-[var(--success)] text-xs font-sans flex items-start sm:items-center justify-between gap-2 shadow-none animate-in fade-in duration-300">
+        <div className="p-3 sm:p-4 rounded-card bg-[var(--success)]/10 border border-[var(--success)]/30 text-[var(--success)] text-xs font-sans flex items-start sm:items-center justify-between gap-2 -none animate-in fade-in duration-300">
           <div className="flex items-center gap-2.5">
             <Check size={16} className="text-[var(--success)] shrink-0" />
             <span>{toastMessage.text}</span>
@@ -746,7 +746,7 @@ export const AdminInbox: React.FC = () => {
       {/* ------------------------------------------------------------- */}
       {viewMode === 'table' ? (
         /* DENSE SPREADSHEET TABLE VIEW */
-        <div className="bg-[var(--panel)] border border-[var(--line)] rounded-card overflow-hidden shadow-none">
+        <div className="bg-[var(--panel)] border border-[var(--line)] rounded-card overflow-hidden -none">
           <div className="ams-table-scroll overflow-x-auto custom-scrollbar">
             <table className="w-full text-left border-collapse text-xs font-sans">
               <thead>
@@ -1033,7 +1033,7 @@ export const AdminInbox: React.FC = () => {
 
           {/* Right: Message Reader & Command Hub Pane */}
           {selectedSubmission ? (
-            <div className="col-span-12 lg:col-span-7 bg-[var(--panel)] border border-[var(--line)] rounded-card p-5 sm:p-7 flex flex-col justify-between shadow-none">
+            <div className="col-span-12 lg:col-span-7 bg-[var(--panel)] border border-[var(--line)] rounded-card p-5 sm:p-7 flex flex-col justify-between -none">
               <div>
                 
                 {/* Mobile Back Button */}
@@ -1289,7 +1289,7 @@ export const AdminInbox: React.FC = () => {
                           <span>{copiedId === 'msg' ? (language === 'id' ? 'Tersalin' : 'Copied') : (language === 'id' ? 'Salin Brief' : 'Copy Brief')}</span>
                         </button>
                       </div>
-                      <div className="p-4 rounded-card bg-[var(--panel)] border border-[var(--line)] text-xs text-[var(--muted)] whitespace-pre-wrap leading-relaxed max-h-64 overflow-y-auto font-sans shadow-none">
+                      <div className="p-4 rounded-card bg-[var(--panel)] border border-[var(--line)] text-xs text-[var(--muted)] whitespace-pre-wrap leading-relaxed max-h-64 overflow-y-auto font-sans -none">
                         {selectedSubmission.message}
                       </div>
                     </div>
