@@ -918,9 +918,9 @@ export const AdminProjects: React.FC = () => {
             onClick={() => setActiveTaskDrawer(null)}
           />
 
-          <div className="relative ml-auto w-full sm:max-w-lg bg-[var(--panel)] border-l-0 sm:border-l border-[var(--line)] h-full max-h-[100dvh] flex flex-col justify-between z-10 -none overflow-hidden animate-in slide-in-from-right duration-200 font-sans text-xs">
+          <div className="relative ml-auto w-full sm:max-w-lg bg-[var(--panel)] border-l-0 sm:border-l border-[var(--line)] h-full max-h-[100dvh] flex flex-col justify-between z-10 overflow-hidden animate-in slide-in-from-right duration-200 font-sans text-xs">
             {/* Sticky Drawer Header */}
-            <div className="sticky top-0 z-20 bg-[var(--panel)]/95  px-5 sm:px-6 py-4 border-b border-[var(--line)] flex items-center justify-between shrink-0">
+            <div className="sticky top-0 z-20 bg-[var(--panel)]/95 px-5 sm:px-6 py-4 border-b border-[var(--line)] flex items-center justify-between shrink-0">
               <div className="flex items-center gap-2">
                 <ListTodo className="text-[var(--danger)]" size={18} />
                 <span className="font-sans font-semibold text-[var(--text)] text-base">Task Details</span>
@@ -962,7 +962,7 @@ export const AdminProjects: React.FC = () => {
                       }}
                       className={`px-2.5 py-1.5 rounded-card border text-[11px] transition-all font-semibold ${
                         activeTaskDrawer.status === col.id
-                          ? 'bg-[var(--accent)] text-white border-[var(--accent)] -none'
+                          ? 'bg-[var(--accent)] text-white border-[var(--accent)]'
                           : 'bg-[var(--panel)] text-[var(--muted)] border-[var(--line)] hover:text-[var(--text)]'
                       }`}
                     >
@@ -1083,7 +1083,7 @@ export const AdminProjects: React.FC = () => {
       {/* ------------------------------------------------------------- */}
       {isProjectModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/80  flex items-center justify-center p-0 sm:p-4 overflow-y-auto">
-          <div className="bg-[var(--panel)] border-0 sm:border sm:border-[var(--line)] rounded-none sm:rounded-card w-full h-full sm:h-auto sm:max-h-[calc(100dvh-24px)] sm:max-w-2xl -none flex flex-col overflow-hidden animate-in zoom-in-95 duration-150">
+          <div className="bg-[var(--panel)] border-0 sm:border sm:border-[var(--line)] rounded-none sm:rounded-card w-full h-full sm:h-auto sm:max-h-[calc(100dvh-24px)] sm:max-w-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-150">
             {/* Sticky Header */}
             <div className="sticky top-0 z-20 bg-[var(--panel)]/95  px-5 sm:px-6 py-4 border-b border-[var(--line)] flex items-center justify-between shrink-0">
               <h3 className="font-sans font-semibold text-[var(--text)] text-base sm:text-lg flex items-center gap-2">
@@ -1237,7 +1237,7 @@ export const AdminProjects: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="min-h-10 px-6 rounded-control bg-[var(--accent)] text-white font-sans font-semibold hover:bg-[var(--panel-hover)] transition-all -none"
+                  className="min-h-10 px-6 rounded-control bg-[var(--accent)] text-white font-sans font-semibold hover:bg-[var(--panel-hover)] transition-all"
                 >
                   Save Project
                 </button>
@@ -1252,7 +1252,7 @@ export const AdminProjects: React.FC = () => {
       {/* ------------------------------------------------------------- */}
       {isTaskModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/80  flex items-center justify-center p-0 sm:p-4 overflow-y-auto">
-          <div className="bg-[var(--panel)] border-0 sm:border sm:border-[var(--line)] rounded-none sm:rounded-card w-full h-full sm:h-auto sm:max-h-[calc(100dvh-24px)] sm:max-w-lg -none flex flex-col overflow-hidden animate-in zoom-in-95 duration-150">
+          <div className="bg-[var(--panel)] border-0 sm:border sm:border-[var(--line)] rounded-none sm:rounded-card w-full h-full sm:h-auto sm:max-h-[calc(100dvh-24px)] sm:max-w-lg flex flex-col overflow-hidden animate-in zoom-in-95 duration-150">
             {/* Sticky Header */}
             <div className="sticky top-0 z-20 bg-[var(--panel)]/95  px-5 sm:px-6 py-4 border-b border-[var(--line)] flex items-center justify-between shrink-0">
               <h3 className="font-sans font-semibold text-[var(--text)] text-base flex items-center gap-2">
@@ -1350,7 +1350,7 @@ export const AdminProjects: React.FC = () => {
                     value={initialSubtasksInput}
                     onChange={(e) => setInitialSubtasksInput(e.target.value)}
                     placeholder="Setup API endpoints&#10;Add unit tests"
-                    className="w-full px-3.5 py-2 bg-[var(--bg)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
+                    className="w-full px-3.5 py-2.5 bg-[var(--bg)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                   />
                 </div>
               </div>
@@ -1366,7 +1366,7 @@ export const AdminProjects: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="min-h-10 px-6 rounded-control bg-[var(--accent)] text-white font-sans font-semibold hover:bg-[var(--panel-hover)] transition-all -none"
+                  className="min-h-10 px-6 rounded-control bg-[var(--accent)] text-white font-sans font-semibold hover:bg-[var(--panel-hover)] transition-all"
                 >
                   Add Task
                 </button>
