@@ -14,6 +14,7 @@ import { api } from '../../lib/apiClient';
 import { useLanguage } from '../../lib/LanguageContext';
 import { hasAdminPermission } from '../../lib/adminAuth';
 import { CustomSelect } from '../../components/ui/CustomSelect';
+import { Modal } from '../../components/ui/Modal';
 
 interface DocumentItem {
   id: string;
@@ -58,6 +59,7 @@ export const AdminDocuments: React.FC = () => {
   const [uploadFile, setUploadFile] = useState<File | null>(null);
   const [uploadRelatedType, setUploadRelatedType] = useState('General');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
 
   const showToast = (msg: string) => {
     setNotification(msg);
@@ -143,7 +145,10 @@ export const AdminDocuments: React.FC = () => {
 
   const handleDelete = async (id: string) => {
     if (!canManageDocuments) return;
-    if (!window.confirm('Delete document from vault?')) return;
+    setDeleteTarget(id);
+  };
+
+  const confirmDelete = async (id: string) => {
     try {
       const res = await api.documents.delete(id);
       if (res.success) {
@@ -152,6 +157,8 @@ export const AdminDocuments: React.FC = () => {
       }
     } catch {
       showToast('Failed to delete.');
+    } finally {
+      setDeleteTarget(null);
     }
   };
 
@@ -348,6 +355,13 @@ export const AdminDocuments: React.FC = () => {
           </div>
         )}
       </div>
+
+      <Modal open={!!deleteTarget} onClose={() => setDeleteTarget(null)} size="sm" title={language === 'id' ? 'Hapus dokumen?' : 'Delete document?'} description={language === 'id' ? 'Dokumen akan dihapus dari private vault dan tindakan ini tidak dapat dibatalkan.' : 'The document will be removed from the private vault and this action cannot be undone.'}>
+        <div className="flex flex-col-reverse sm:flex-row justify-end gap-2">
+          <button type="button" onClick={() => setDeleteTarget(null)} className="min-h-10 px-4 rounded-control border border-[var(--line)] bg-[var(--panel)] text-xs text-[var(--muted)]">Cancel</button>
+          <button type="button" onClick={() => deleteTarget && void confirmDelete(deleteTarget)} className="min-h-10 px-4 rounded-control bg-[var(--danger)] text-white text-xs font-semibold">Delete permanently</button>
+        </div>
+      </Modal>
 
       {/* UPLOAD MODAL */}
       {isUploadModalOpen && (
