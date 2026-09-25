@@ -343,7 +343,7 @@ export const AdminCrm: React.FC = () => {
       case 'Web Development':
         return 'text-[var(--danger)] bg-[var(--accent)]/10 border-[var(--accent)]/30';
       case 'Mobile App':
-        return 'text-[var(--danger)] bg-rose-500/10 border-rose-500/30';
+        return 'text-[var(--danger)] bg-[var(--danger)]/10 border-[var(--danger)]/30';
       case 'UI/UX Design':
         return 'text-[var(--info)] bg-[var(--info)]/10 border-[var(--info)]/30';
       case 'Branding & Identity':
@@ -523,7 +523,7 @@ export const AdminCrm: React.FC = () => {
               <div className="text-[10px] font-sans text-[var(--muted)] truncate">Pitch→SOW</div>
               <div className="text-sm font-semibold font-sans text-[var(--text)] mt-0.5">{funnelStats.pitchToSow}%</div>
             </div>
-            <div className="bg-[var(--panel)] border border-emerald-500/20 bg-emerald-950/15 rounded-card p-2 text-center">
+            <div className="bg-[var(--panel)] border border-[var(--success)]/20 bg-emerald-950/15 rounded-card p-2 text-center">
               <div className="text-[10px] font-sans text-[var(--success)] truncate">SOW→Won</div>
               <div className="text-sm font-semibold font-sans text-[var(--success)] mt-0.5">{funnelStats.sowToWon}%</div>
             </div>
@@ -725,7 +725,7 @@ export const AdminCrm: React.FC = () => {
                                   <button
                                     onClick={() => handleStageChange(lead.id, 'won')}
                                     title={language === 'id' ? 'Tandai Deal Dimenangkan (Won)' : 'Mark deal as Won'}
-                                    className="h-10 sm:h-7 min-h-10 sm:min-h-0 px-2.5 rounded-control bg-emerald-950/60 hover:bg-emerald-900/80 text-[var(--success)] border border-[var(--success)]/30 text-[10px] font-semibold font-sans transition-all flex items-center gap-1 active:scale-95 whitespace-nowrap"
+                                    className="h-10 sm:h-7 min-h-10 sm:min-h-0 px-2.5 rounded-control bg-[var(--success)]/10 hover:bg-[var(--success)]/15 text-[var(--success)] border border-[var(--success)]/30 text-[10px] font-semibold font-sans transition-all flex items-center gap-1 active:scale-95 whitespace-nowrap"
                                   >
                                     <Check size={11} className="text-[var(--success)]" />
                                     <span>Won</span>
@@ -756,7 +756,7 @@ export const AdminCrm: React.FC = () => {
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     title={language === 'id' ? 'Kirim Pesan WhatsApp' : 'Send WhatsApp message'}
-                                    className="h-8 w-8 rounded-control bg-[var(--panel)] hover:bg-emerald-950/60 text-[var(--muted)] hover:text-[var(--success)] border border-[var(--line)] hover:border-[var(--success)]/30 transition-all flex items-center justify-center shrink-0"
+                                    className="h-8 w-8 rounded-control bg-[var(--panel)] hover:bg-[var(--success)]/10 text-[var(--muted)] hover:text-[var(--success)] border border-[var(--line)] hover:border-[var(--success)]/30 transition-all flex items-center justify-center shrink-0"
                                   >
                                     <Send size={11} />
                                   </a>
@@ -842,7 +842,7 @@ export const AdminCrm: React.FC = () => {
                         <button
                           onClick={() => handleConvertToProject(lead)}
                           title="Create project"
-                          className="w-10 h-10 rounded-control bg-emerald-950/40 text-[var(--success)] hover:bg-emerald-950/80 border border-[var(--success)]/30 flex items-center justify-center min-h-10 min-w-10"
+                          className="w-10 h-10 rounded-control bg-[var(--success)]/10 text-[var(--success)] hover:bg-[var(--success)]/15 border border-[var(--success)]/30 flex items-center justify-center min-h-10 min-w-10"
                         >
                           <Layers size={13} />
                         </button>
@@ -852,7 +852,7 @@ export const AdminCrm: React.FC = () => {
                           href={`https://wa.me/${cleanPhone(lead.phone)}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="w-9 h-9 rounded-card bg-[var(--panel)] text-[var(--success)] hover:bg-emerald-950/50 border border-[var(--line)] hover:border-[var(--success)]/30 flex items-center justify-center min-h-10 min-w-10"
+                          className="w-9 h-9 rounded-card bg-[var(--panel)] text-[var(--success)] hover:bg-[var(--success)]/15 border border-[var(--line)] hover:border-[var(--success)]/30 flex items-center justify-center min-h-10 min-w-10"
                           title="WhatsApp client"
                         >
                           <Send size={13} />
@@ -954,7 +954,7 @@ export const AdminCrm: React.FC = () => {
                               <button
                                 onClick={() => handleConvertToProject(lead)}
                                 title="Create project"
-                                className="w-9 h-9 rounded-card bg-emerald-950/40 text-[var(--success)] hover:bg-emerald-950/80 border border-[var(--success)]/30 flex items-center justify-center transition-colors min-h-10 min-w-10"
+                                className="w-9 h-9 rounded-card bg-[var(--success)]/10 text-[var(--success)] hover:bg-[var(--success)]/15 border border-[var(--success)]/30 flex items-center justify-center transition-colors min-h-10 min-w-10"
                               >
                                 <Layers size={13} />
                               </button>
@@ -964,7 +964,7 @@ export const AdminCrm: React.FC = () => {
                                 href={`https://wa.me/${cleanPhone(lead.phone)}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="w-9 h-9 rounded-card bg-[var(--panel)] text-[var(--success)] hover:bg-emerald-950/50 border border-[var(--line)] hover:border-[var(--success)]/30 flex items-center justify-center transition-colors min-h-10 min-w-10"
+                                className="w-9 h-9 rounded-card bg-[var(--panel)] text-[var(--success)] hover:bg-[var(--success)]/15 border border-[var(--line)] hover:border-[var(--success)]/30 flex items-center justify-center transition-colors min-h-10 min-w-10"
                                 title="WhatsApp client"
                               >
                                 <Send size={13} />
