@@ -50,6 +50,7 @@ import { EmailForwardingGuideModal } from '../../components/EmailForwardingGuide
 import { CannedResponsesModal } from '../../components/admin/inbox/CannedResponsesModal';
 import { CustomSelect } from '../../components/ui/CustomSelect';
 import { ConvertToCrmModal } from '../../components/admin/inbox/ConvertToCrmModal';
+import { Modal } from '../../components/ui/Modal';
 import { useLanguage } from '../../lib/LanguageContext';
 import { api } from '../../lib/apiClient';
 
@@ -86,6 +87,7 @@ export const AdminInbox: React.FC = () => {
   const [testSending, setTestSending] = useState(false);
   const [prevCount, setPrevCount] = useState<number | null>(null);
   const [toastMessage, setToastMessage] = useState<{ text: string; link?: string; linkText?: string } | null>(null);
+  const [confirmAction, setConfirmAction] = useState<{ type: 'delete' | 'mark-read'; id?: string; count?: number } | null>(null);
 
   // Sync Currency
   useEffect(() => {
@@ -204,44 +206,49 @@ export const AdminInbox: React.FC = () => {
 
   // Delete submission
   const handleDelete = async (id: string) => {
-    const confirmMsg = language === 'id' 
-      ? 'Hapus data pesan ini secara permanen dari database Kapitech?' 
-      : 'Permanently delete this brief from the Kapitech database?';
-    if (!window.confirm(confirmMsg)) return;
+    setConfirmAction({ type: 'delete', id });
+  };
 
+  const confirmDelete = async (id: string) => {
     try {
       const res = await api.leads.delete(id);
       if (!res.success) throw new Error(res.error || 'Delete failed');
       await refreshInbox();
-      if (selectedSubmission?.id === id) {
-        setSelectedSubmission(null);
-      }
+      if (selectedSubmission?.id === id) setSelectedSubmission(null);
       setToastMessage({
         text: language === 'id' ? 'Pesan telah dihapus.' : 'Record deleted successfully.'
       });
       setTimeout(() => setToastMessage(null), 3000);
     } catch (err) {
       console.error('Failed to delete submission:', err);
+    } finally {
+      setConfirmAction(null);
     }
   };
 
   // Mark all new as In-Review
   const handleMarkAllRead = async () => {
-    const unread = submissions.filter(s => s.status === 'new');
-    if (unread.length === 0) return;
-    const confirmMsg = language === 'id' 
-      ? `Tandai ${unread.length} pesan baru sebagai 'In Review'?` 
-      : `Mark ${unread.length} new messages as 'In Review'?`;
-    if (!window.confirm(confirmMsg)) return;
+    const count = submissions.filter(s => s.status === 'new').length;
+    if (count > 0) setConfirmAction({ type: 'mark-read', count });
+  };
 
-    for (const item of unread) {
-      const res = await api.leads.update(item.id, { status: 'in-review' });
-      if (!res.success) throw new Error(res.error || 'Bulk status update failed');
+  const confirmMarkAllRead = async (count: number) => {
+    try {
+      const unread = submissions.filter(s => s.status === 'new');
+      for (const item of unread) {
+        const res = await api.leads.update(item.id, { status: 'in-review' });
+        if (!res.success) throw new Error(res.error || 'Bulk status update failed');
+      }
+      await refreshInbox();
+      setToastMessage({
+        text: language === 'id' ? `${count} pesan ditandai telah ditinjau.` : `${count} messages marked as In Review.`
+      });
+      setTimeout(() => setToastMessage(null), 3000);
+    } catch (err) {
+      console.error('Failed to mark messages as read:', err);
+    } finally {
+      setConfirmAction(null);
     }
-    setToastMessage({
-      text: language === 'id' ? `${unread.length} pesan ditandai telah ditinjau.` : `${unread.length} messages marked as In Review.`
-    });
-    setTimeout(() => setToastMessage(null), 3000);
   };
 
 
@@ -284,7 +291,7 @@ export const AdminInbox: React.FC = () => {
     if (sub.budget) {
       const b = sub.budget.toLowerCase();
       if (b.includes('25,000') || b.includes('50,000') || b.includes('100jt') || b.includes('100m')) return 120000000;
-      if (b.includes('10,000') || b.includes('25,000') || b.includes('50jt')) return 75000000;
+      if (b.includes('10,000') || b.includes('50jt')) return 75000000;
       if (b.includes('5,000') || b.includes('15,000') || b.includes('25jt')) return 45000000;
     }
     return 35000000;
@@ -1398,6 +1405,32 @@ export const AdminInbox: React.FC = () => {
       {/* 5. MODALS & DIALOGS */}
       {/* ------------------------------------------------------------- */}
       
+      {/* Shared confirmation dialog */}
+      <Modal
+        open={Boolean(confirmAction)}
+        onClose={() => setConfirmAction(null)}
+        title={confirmAction?.type === 'delete' ? (language === 'id' ? 'Hapus pesan?' : 'Delete message?') : (language === 'id' ? 'Tandai pesan sebagai ditinjau?' : 'Mark messages as reviewed?')}
+        description={confirmAction?.type === 'delete'
+          ? (language === 'id' ? 'Tindakan ini menghapus data inbox secara permanen dan tidak dapat dibatalkan.' : 'This permanently removes the inbox record and cannot be undone.')
+          : (language === 'id' ? `Sebanyak ${confirmAction?.count ?? 0} pesan baru akan diubah menjadi In Review.` : `${confirmAction?.count ?? 0} new messages will be moved to In Review.`)}
+        footer={(
+          <>
+            <button type="button" onClick={() => setConfirmAction(null)} className="min-h-10 rounded-control border border-line bg-panel px-4 text-xs font-medium text-muted hover:bg-bg hover:text-fg">Cancel</button>
+            <button
+              type="button"
+              onClick={() => confirmAction?.type === 'delete' && confirmAction.id
+                ? void confirmDelete(confirmAction.id)
+                : confirmAction?.count
+                  ? void confirmMarkAllRead(confirmAction.count)
+                  : setConfirmAction(null)}
+              className={`min-h-10 rounded-control px-4 text-xs font-semibold text-white ${confirmAction?.type === 'delete' ? 'bg-[var(--danger)] hover:bg-[var(--danger)]/90' : 'bg-[var(--accent)] hover:bg-[var(--accent)]/90'}`}
+            >
+              {confirmAction?.type === 'delete' ? (language === 'id' ? 'Hapus Permanen' : 'Delete Permanently') : (language === 'id' ? 'Tandai In Review' : 'Mark In Review')}
+            </button>
+          </>
+        )}
+      />
+
       {/* Canned Responses Template Modal */}
       {selectedSubmission && (
         <CannedResponsesModal
