@@ -948,7 +948,7 @@ export const AdminInvoicing: React.FC = () => {
                         type="number"
                         value={itemAmount}
                         onChange={(e) => setItemAmount(Number(e.target.value))}
-                        className="w-full px-3 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
+                        className="w-full px-3 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20 min-h-10"
                       />
                     </div>
                     <div>
@@ -957,7 +957,7 @@ export const AdminInvoicing: React.FC = () => {
                         type="number"
                         value={taxPercent}
                         onChange={(e) => setTaxPercent(Number(e.target.value))}
-                        className="w-full px-3 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
+                        className="w-full px-3 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20 min-h-10"
                       />
                     </div>
                   </div>
