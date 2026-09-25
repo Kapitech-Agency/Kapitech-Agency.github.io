@@ -1281,7 +1281,7 @@ export const AdminInbox: React.FC = () => {
                           <span>{copiedId === 'msg' ? (language === 'id' ? 'Tersalin' : 'Copied') : (language === 'id' ? 'Salin Brief' : 'Copy Brief')}</span>
                         </button>
                       </div>
-                      <div className="p-4 rounded-card bg-[var(--panel)] border border-[var(--line)] text-xs text-gray-200 whitespace-pre-wrap leading-relaxed max-h-64 overflow-y-auto font-sans shadow-inner">
+                      <div className="p-4 rounded-card bg-[var(--panel)] border border-[var(--line)] text-xs text-[var(--muted)] whitespace-pre-wrap leading-relaxed max-h-64 overflow-y-auto font-sans shadow-none">
                         {selectedSubmission.message}
                       </div>
                     </div>
