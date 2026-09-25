@@ -332,9 +332,9 @@ export const AdminLayout: React.FC = () => {
         transition={{ duration: 0.18, ease: 'easeOut' }}
         className={`hidden min-[900px]:flex flex-col bg-panel border-r border-line shrink-0 h-full z-30 overflow-hidden ${sidebarCollapsed ? 'ams-sidebar-collapsed' : 'ams-sidebar-expanded'}`}
       >
-        <div className="shrink-0 px-3 pt-3 pb-3 border-b border-line">
+        <div className="shrink-0 px-3 py-1.5 border-b border-line">
           <Link to="/admin/dashboard" aria-label="Kapitech AMS dashboard" className={`group flex items-center rounded-control min-h-10 transition-colors duration-150 hover:bg-panel-hover focus-visible:outline-none ${sidebarCollapsed ? 'justify-center px-1' : 'gap-3 px-2'}`}>
-            <div className="h-9 w-9 rounded-control bg-bg border border-line flex items-center justify-center shrink-0 transition-colors duration-150 group-hover:border-accent/40">
+            <div className="h-9 w-9 rounded-control bg-bg border border-line p-1.5 flex items-center justify-center shrink-0 transition-colors duration-150 group-hover:border-accent/40">
               <img src="/white.png" alt="Kapitech" className="h-3.5 w-auto max-w-[28px] object-contain" />
             </div>
             {!sidebarCollapsed && (
