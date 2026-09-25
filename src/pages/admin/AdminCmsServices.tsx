@@ -80,7 +80,7 @@ export const AdminCmsServices: React.FC = () => {
       case 'Development':
         return <Code size={14} className="text-red-400" />;
       case 'Branding':
-        return <Sparkles size={14} className="text-amber-400" />;
+        return <Sparkles size={14} className="text-[var(--warning)]" />;
       case 'Solutions':
       default:
         return <Cpu size={14} className="text-[var(--success)]" />;
@@ -232,9 +232,9 @@ export const AdminCmsServices: React.FC = () => {
       </div>
 
       {statusMessage && (
-        <div className="p-3.5 rounded-card bg-[var(--success)]/10 border border-[var(--success)]/30 text-emerald-400 text-xs font-sans flex items-center justify-between animate-in fade-in duration-200">
+        <div className="p-3.5 rounded-card bg-[var(--success)]/10 border border-[var(--success)]/30 text-[var(--success)] text-xs font-sans flex items-center justify-between animate-in fade-in duration-200">
           <div className="flex items-center gap-2">
-            <CheckCircle2 size={16} className="text-emerald-400" />
+            <CheckCircle2 size={16} className="text-[var(--success)]" />
             <span>{statusMessage}</span>
           </div>
           <button onClick={() => setStatusMessage(null)} className="text-[var(--muted)] hover:text-[var(--text)]">
@@ -278,7 +278,7 @@ export const AdminCmsServices: React.FC = () => {
         <div className="w-full h-full bg-[var(--panel)] border border-[var(--line)] p-4 rounded-card flex items-center justify-between shadow-none">
           <div>
             <div className="text-xs font-sans text-[var(--muted)]">Standard Delivery SLA</div>
-            <div className="text-xl font-sans font-semibold text-emerald-400 mt-0.5">7 - 14 Days</div>
+            <div className="text-xl font-sans font-semibold text-[var(--success)] mt-0.5">7 - 14 Days</div>
           </div>
           <div className="w-8 h-8 rounded-control bg-[var(--success)]/10 border border-[var(--success)]/30 flex items-center justify-center text-[var(--success)]">
             <ShieldCheck size={16} />
@@ -441,7 +441,7 @@ export const AdminCmsServices: React.FC = () => {
                 {selectedServiceForDetail.capabilities?.map((cap, cIdx) => (
                   <div key={cIdx} className="bg-[var(--panel)] border border-[var(--line)] p-3 rounded-card">
                     <div className="text-xs font-semibold text-[var(--text)] flex items-center gap-2">
-                      <CheckCircle2 size={13} className="text-emerald-400" />
+                      <CheckCircle2 size={13} className="text-[var(--success)]" />
                       <span>{cap.title || cap.titleId}</span>
                     </div>
                     <p className="text-[11px] text-[var(--muted)] mt-1 pl-5">
@@ -468,7 +468,7 @@ export const AdminCmsServices: React.FC = () => {
                       <p className="text-[11px] text-[var(--muted)] mb-2">{stage.stageDesc}</p>
                       <div className="flex flex-wrap gap-1">
                         {stage.deliverables?.map((d, dIdx) => (
-                          <span key={dIdx} className="text-[9px] font-sans bg-[var(--panel)] text-emerald-400 px-1.5 py-0.5 rounded border border-[var(--line)]">
+                          <span key={dIdx} className="text-[9px] font-sans bg-[var(--panel)] text-[var(--success)] px-1.5 py-0.5 rounded border border-[var(--line)]">
                             ✓ {d}
                           </span>
                         ))}
