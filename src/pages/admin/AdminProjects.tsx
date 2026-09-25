@@ -47,7 +47,7 @@ import { getAdminSession, hasAdminPermission } from '../../lib/adminAuth';
 import { api } from '../../lib/apiClient';
 
 const TASK_COLUMNS: { id: TaskStatus; label: string; dotColor: string; bgAccent: string }[] = [
-  { id: 'todo', label: 'To Do', dotColor: 'bg-zinc-400', bgAccent: 'group-hover:border-[var(--line)]' },
+  { id: 'todo', label: 'To Do', dotColor: 'bg-[var(--muted)]', bgAccent: 'group-hover:border-[var(--line)]' },
   { id: 'in_progress', label: 'In Progress', dotColor: 'bg-[var(--danger)]', bgAccent: 'group-hover:border-[var(--danger)]/30' },
   { id: 'review', label: 'Review & QA', dotColor: 'bg-[var(--warning)]', bgAccent: 'group-hover:border-[var(--warning)]/30' },
   { id: 'done', label: 'Done', dotColor: 'bg-[var(--success)]', bgAccent: 'group-hover:border-[var(--success)]/30' }
@@ -559,7 +559,7 @@ export const AdminProjects: React.FC = () => {
                 <div className="flex items-center justify-between gap-2 mb-1.5 w-full">
                   <span className={`text-[9px] normal-case px-1.5 py-0.5 rounded font-semibold ${
                     proj.status === 'completed' ? 'bg-[var(--success)]/10 text-[var(--success)]' :
-                    proj.status === 'in_progress' ? 'bg-[var(--danger)]/20 text-[var(--danger)]' : 'bg-zinc-500/20 text-zinc-400'
+                    proj.status === 'in_progress' ? 'bg-[var(--danger)]/20 text-[var(--danger)]' : 'bg-[var(--panel)]/50 text-[var(--muted)]'
                   }`}>
                     {proj.status}
                   </span>
@@ -993,7 +993,7 @@ export const AdminProjects: React.FC = () => {
               {/* Description */}
               <div className="space-y-1.5">
                 <label className="text-[11px] text-[var(--muted)] normal-case tracking-normal font-semibold">Description & Acceptance Criteria</label>
-                <div className="p-3.5 rounded-card bg-[var(--panel)] border border-[var(--line)] text-zinc-300 text-xs leading-relaxed">
+                <div className="p-3.5 rounded-card bg-[var(--panel)] border border-[var(--line)] text-[var(--text)] text-xs leading-relaxed">
                   {activeTaskDrawer.description || 'No detailed description provided.'}
                 </div>
               </div>

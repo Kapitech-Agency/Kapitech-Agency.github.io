@@ -353,7 +353,7 @@ export const AdminCrm: React.FC = () => {
       case 'Digital Product MVP':
         return 'text-[var(--info)] bg-[var(--info)]/10 border-[var(--info)]/30';
       default:
-        return 'text-zinc-400 bg-zinc-500/10 border-zinc-500/30';
+        return 'text-[var(--muted)] bg-[var(--panel)]/50 border-[var(--line)]';
     }
   };
 
@@ -643,7 +643,7 @@ export const AdminCrm: React.FC = () => {
                           stageDef.key === 'new' ? 'bg-rose-400 animate-pulse' :
                           stageDef.key === 'negotiation' ? 'bg-purple-400' :
                           stageDef.key === 'proposal' ? 'bg-red-400' :
-                          stageDef.key === 'contacted' ? 'bg-amber-400' : 'bg-zinc-500'
+                          stageDef.key === 'contacted' ? 'bg-amber-400' : 'bg-[var(--muted)]'
                         }`} />
                         <h3 className="text-xs font-semibold font-sans text-[var(--text)] truncate">
                           {language === 'id' ? stageDef.labelId : stageDef.label}
