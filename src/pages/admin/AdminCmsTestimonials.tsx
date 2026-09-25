@@ -14,6 +14,7 @@ export const AdminCmsTestimonials: React.FC = () => {
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; author: string } | null>(null);
 
   const loadData = async () => {
     setIsLoading(true); setLoadError(null);
@@ -49,20 +50,20 @@ export const AdminCmsTestimonials: React.FC = () => {
     setIsModalOpen(true);
   };
 
-  const handleDelete = async (id: string, author: string) => {
-    if (window.confirm(`Hapus testimoni dari "${author}"?`)) {
-      const res = await api.cms.deleteTestimonial(id);
-      if (!res.success) { setStatusMessage(res.error || 'Delete failed.'); return; }
-      await loadData();
-      setStatusMessage('Testimoni berhasil dihapus.');
-      setTimeout(() => setStatusMessage(null), 3000);
-    }
+  const handleDelete = async () => {
+    if (!deleteTarget) return;
+    const res = await api.cms.deleteTestimonial(deleteTarget.id);
+    setDeleteTarget(null);
+    if (!res.success) { setStatusMessage(res.error || 'Delete failed.'); return; }
+    await loadData();
+    setStatusMessage('Testimoni berhasil dihapus.');
+    setTimeout(() => setStatusMessage(null), 3000);
   };
 
   const handleSaveModal = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingItem || !editingItem.author.trim() || (!editingItem.quoteId && !editingItem.quote)) {
-      alert('Nama author dan isi kutipan testimoni wajib diisi.');
+      setStatusMessage('Nama author dan isi kutipan testimoni wajib diisi.');
       return;
     }
 
@@ -167,7 +168,7 @@ export const AdminCmsTestimonials: React.FC = () => {
                   <Edit3 size={14} />
                 </button>
                 <button
-                  onClick={() => handleDelete(item.id, item.author)}
+                  onClick={() => setDeleteTarget({ id: item.id, author: item.author })}
                   className="min-h-10 min-w-10 rounded-control bg-[var(--panel)] hover:bg-[var(--danger)]/10 text-[var(--muted)] hover:text-[var(--danger)] border border-[var(--line)] hover:border-[var(--danger)]/30 transition-colors flex items-center justify-center"
                 >
                   <Trash2 size={14} />
@@ -178,6 +179,23 @@ export const AdminCmsTestimonials: React.FC = () => {
           </div>
         ))}
       </div>
+      )}
+
+      {deleteTarget && (
+        <Modal open={!!deleteTarget} onClose={() => setDeleteTarget(null)} size="sm"
+          title="Delete testimonial"
+          description={`This will permanently remove the testimonial from the CMS. Review the author before confirming.`}>
+          <div className="space-y-4">
+            <div className="rounded-control border border-danger/30 bg-danger/5 p-3">
+              <p className="text-sm font-semibold text-fg">{deleteTarget.author}</p>
+              <p className="mt-1 text-xs text-muted">The testimonial will no longer appear on the public site.</p>
+            </div>
+            <div className="flex justify-end gap-2">
+              <Button type="button" variant="secondary" onClick={() => setDeleteTarget(null)}>Cancel</Button>
+              <Button type="button" variant="danger" onClick={() => void handleDelete()}>Delete</Button>
+            </div>
+          </div>
+        </Modal>
       )}
 
       {/* Modal: Add / Edit Testimonial */}
