@@ -744,7 +744,7 @@ export const AdminClients: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="h-10 px-5 rounded-control bg-[var(--accent)] hover:bg-[var(--panel-hover)] text-[var(--text)] font-sans font-semibold text-xs shadow-none transition-all min-h-10"
+                  className="h-10 px-5 rounded-control bg-[var(--accent)] hover:brightness-110 text-white font-sans font-semibold text-xs shadow-none transition-all min-h-10"
                 >
                   {language === 'id' ? 'Simpan Klien' : 'Save Client'}
                 </button>
