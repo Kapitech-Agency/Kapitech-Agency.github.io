@@ -8,7 +8,6 @@ import {
   CircleDollarSign,
   ClipboardCheck,
   FolderKanban,
-  Info,
   RefreshCw,
   ShieldAlert,
   WalletCards,
