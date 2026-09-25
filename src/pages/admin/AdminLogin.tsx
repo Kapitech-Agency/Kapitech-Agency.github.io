@@ -137,7 +137,7 @@ export const AdminLogin: React.FC = () => {
           )}
 
           {errorMessage && (
-            <div className="mb-5 p-3.5 rounded-[var(--ams-radius-control)] bg-[var(--danger)]/10 border border-[var(--danger)]/30 text-[var(--danger)] text-xs flex items-start gap-2">
+            <div className="mb-5 p-3.5 rounded-control bg-[var(--danger)]/10 border border-[var(--danger)]/30 text-[var(--danger)] text-xs flex items-start gap-2">
               <AlertCircle size={16} className="shrink-0 mt-0.5" />
               <span>{errorMessage}</span>
             </div>
