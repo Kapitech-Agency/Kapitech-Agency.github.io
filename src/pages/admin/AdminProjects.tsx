@@ -524,7 +524,7 @@ export const AdminProjects: React.FC = () => {
           {canManageProjects && (
             <button
               onClick={handleOpenCreateProject}
-              className="min-h-10 px-4 rounded-control bg-[var(--accent)] hover:bg-[var(--panel-hover)] text-[var(--text)] text-xs font-sans font-medium transition-colors flex items-center gap-2 min-h-10"
+              className="min-h-10 px-4 rounded-control bg-[var(--accent)] hover:brightness-110 text-white text-xs font-sans font-medium transition-colors flex items-center gap-2 min-h-10"
             >
               <Plus size={15} />
               <span>{language === 'id' ? 'Buat Proyek Baru' : 'New Project'}</span>
@@ -758,7 +758,7 @@ export const AdminProjects: React.FC = () => {
               {canManageKanbanTasks && (
                 <button
                   onClick={() => setIsTaskModalOpen(true)}
-                  className="min-h-10 px-4 rounded-control bg-[var(--accent)] hover:bg-[var(--panel-hover)] text-[var(--text)] text-xs font-sans font-medium transition-colors flex items-center justify-center gap-2 shrink-0 min-h-10"
+                  className="min-h-10 px-4 rounded-control bg-[var(--accent)] hover:brightness-110 text-white text-xs font-sans font-medium transition-colors flex items-center justify-center gap-2 shrink-0 min-h-10"
                 >
                   <Plus size={14} />
                   <span>{t('admin.proj.addTask')}</span>
