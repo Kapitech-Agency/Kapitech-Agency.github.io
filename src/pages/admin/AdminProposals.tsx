@@ -918,7 +918,7 @@ export const AdminProposals: React.FC = () => {
               </div>
 
               {previewProposal.paymentTerms && (
-                <div className="text-xs font-sans text-[var(--muted)] bg-[var(--panel)]/50 p-2.5 rounded-control border border-white/[0.04]">
+                <div className="text-xs font-sans text-[var(--muted)] bg-[var(--panel)]/50 p-2.5 rounded-control border border-[var(--line)]">
                   Terms: {previewProposal.paymentTerms}
                 </div>
               )}

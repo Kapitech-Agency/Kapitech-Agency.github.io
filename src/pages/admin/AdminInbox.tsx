@@ -668,7 +668,7 @@ export const AdminInbox: React.FC = () => {
               onClick={() => setViewMode('split')}
               className={`px-2.5 py-1.5 rounded-control text-xs font-sans transition-all flex items-center gap-1.5 ${
                 viewMode === 'split'
-                  ? 'bg-[var(--panel)] text-[var(--text)] font-semibold border border-white/10'
+                  ? 'bg-[var(--panel)] text-[var(--text)] font-semibold border border-[var(--line)]'
                   : 'text-[var(--muted)] hover:text-[var(--text)]'
               }`}
               title="Split Master-Detail View"
@@ -680,7 +680,7 @@ export const AdminInbox: React.FC = () => {
               onClick={() => setViewMode('table')}
               className={`px-2.5 py-1.5 rounded-control text-xs font-sans transition-all flex items-center gap-1.5 ${
                 viewMode === 'table'
-                  ? 'bg-[var(--panel)] text-[var(--text)] font-semibold border border-white/10'
+                  ? 'bg-[var(--panel)] text-[var(--text)] font-semibold border border-[var(--line)]'
                   : 'text-[var(--muted)] hover:text-[var(--text)]'
               }`}
               title="Spreadsheet Table View"
