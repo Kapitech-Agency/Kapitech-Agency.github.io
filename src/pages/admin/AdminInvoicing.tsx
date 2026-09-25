@@ -996,8 +996,8 @@ export const AdminInvoicing: React.FC = () => {
                       value={invoiceStatus}
                       onChange={(val) => setInvoiceStatus(val as InvoiceStatus)}
                       options={[
-                        { value: 'draft', label: 'Draft', badge: 'Draft', badgeColor: 'bg-slate-500/10 text-slate-400 border border-slate-500/20' },
-                        { value: 'sent', label: 'Sent', badge: 'Sent', badgeColor: 'bg-blue-500/10 text-blue-400 border border-blue-500/20' },
+                        { value: 'draft', label: 'Draft', badge: 'Draft', badgeColor: 'bg-[var(--panel)] text-[var(--muted)] border border-[var(--line)]' },
+                        { value: 'sent', label: 'Sent', badge: 'Sent', badgeColor: 'bg-[var(--info)]/10 text-[var(--info)] border border-[var(--info)]/20' },
                         { value: 'paid', label: 'Paid', badge: 'Paid', badgeColor: 'bg-[var(--success)]/10 text-[var(--success)] border border-[var(--success)]/20' },
                         { value: 'overdue', label: 'Overdue', badge: 'Overdue', badgeColor: 'bg-[var(--danger)]/10 text-[var(--danger)] border border-[var(--danger)]/20' }
                       ]}
@@ -1205,7 +1205,7 @@ export const AdminInvoicing: React.FC = () => {
                           const rem = paymentModalInvoice.balanceDue ?? (paymentModalInvoice.total - (paymentModalInvoice.amountPaid || 0));
                           setPaymentAmount(Math.round(rem / 2));
                         }}
-                        className="px-2 py-0.5 rounded bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/30 text-[10px]"
+                        className="px-2 py-0.5 rounded bg-[var(--info)]/10 hover:bg-[var(--info)]/20 text-[var(--info)] border border-[var(--info)]/30 text-[10px]"
                       >
                         50% DP
                       </button>
