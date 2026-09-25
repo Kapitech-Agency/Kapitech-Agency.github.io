@@ -677,7 +677,7 @@ export const AdminDashboard: React.FC = () => {
             <div><h3 className="ams-section-title">{language === 'id' ? 'Ringkasan Keuangan' : 'Financial Summary'}</h3><p className="ams-section-subtitle">{language === 'id' ? 'Data dihitung di server.' : 'Calculated by the backend.'}</p></div>
             <button onClick={() => navigate('/admin/invoicing')} className="ams-link-button">{language === 'id' ? 'Buka' : 'Open'}</button>
           </div>
-          <div className="grid grid-cols-2 gap-3 mt-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
             <div className="ams-stat"><span>Revenue Collected</span><strong>{formatCurrency(finMetrics.totalPaidRevenue, currency)}</strong></div>
             <div className="ams-stat"><span>Outstanding</span><strong>{formatCurrency(finMetrics.totalOutstanding, currency)}</strong></div>
             <div className="ams-stat"><span>Expenses</span><strong>{formatCurrency(finMetrics.totalExpenses, currency)}</strong></div>
@@ -689,7 +689,7 @@ export const AdminDashboard: React.FC = () => {
             <div><h3 className="ams-section-title">{language === 'id' ? 'Pipeline CRM' : 'CRM Pipeline'}</h3><p className="ams-section-subtitle">{language === 'id' ? 'Distribusi deal dari server.' : 'Deal distribution from the backend.'}</p></div>
             <button onClick={() => navigate('/admin/crm')} className="ams-link-button">{language === 'id' ? 'Buka' : 'Open'}</button>
           </div>
-          <div className="grid grid-cols-2 gap-3 mt-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
             <div className="ams-stat"><span>Active Deals</span><strong>{pipelineMetrics.activeLeadsCount}</strong></div>
             <div className="ams-stat"><span>Won Deals</span><strong>{pipelineMetrics.wonLeadsCount}</strong></div>
             <div className="ams-stat"><span>Pipeline Value</span><strong>{formatCurrency(pipelineMetrics.totalPipelineValue, currency)}</strong></div>

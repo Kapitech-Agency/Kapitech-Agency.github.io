@@ -206,7 +206,7 @@ export const AdminDocuments: React.FC = () => {
       </div>
 
       {/* Category Summary Badges */}
-      <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
         {(['contract', 'proposal', 'invoice', 'deliverable', 'compliance'] as const).map((cat) => {
           const count = documents.filter(d => (d.category || '').toLowerCase().includes(cat)).length;
           return (

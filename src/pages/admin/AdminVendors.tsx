@@ -317,7 +317,7 @@ export const AdminVendors: React.FC = () => {
       )}
 
       {/* Top Summary Metrics */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 w-full">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 w-full">
         <div className="w-full h-full p-4 rounded-card bg-[var(--panel)] border border-[var(--line)] flex flex-col justify-between">
           <div className="text-[11px] font-sans text-[var(--muted)] normal-case tracking-normal">
             {language === 'id' ? 'Total Mitra Terdaftar' : 'Total Vetted Vendors'}

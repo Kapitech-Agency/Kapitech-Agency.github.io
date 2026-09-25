@@ -510,7 +510,7 @@ export const AdminCrm: React.FC = () => {
             </span>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 my-auto py-2">
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 my-auto py-2">
             <div className="bg-[var(--panel)] border border-[var(--line)] rounded-card p-2 text-center">
               <div className="text-[10px] font-sans text-[var(--muted)] truncate">Lead→Scope</div>
               <div className="text-sm font-semibold font-sans text-[var(--text)] mt-0.5">{funnelStats.leadToScope}%</div>
