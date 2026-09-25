@@ -445,8 +445,8 @@ export const AdminDashboard: React.FC = () => {
             <h1 className="text-xl font-heading font-semibold text-[var(--text)] tracking-[-0.025em]">
               {language === 'id' ? 'Ikhtisar Eksekutif Agensi' : 'Executive Agency Overview'}
             </h1>
-            <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-emerald-500/[0.07] border border-emerald-500/15 text-[10px] font-sans font-semibold text-emerald-400">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+            <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-[var(--success)]/10 border border-[var(--success)]/20 text-[10px] font-sans font-semibold text-[var(--success)]">
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--success)]" />
               <span>Live data</span>
             </div>
           </div>
@@ -492,7 +492,7 @@ export const AdminDashboard: React.FC = () => {
               onClick={() => setIsAddLeadModalOpen(true)}
               className="min-h-10 px-3 rounded-control bg-[var(--panel)] hover:bg-[var(--panel-hover)] border border-[var(--line)]  text-xs font-sans font-semibold text-[var(--text)] transition-colors flex items-center gap-1.5"
             >
-              <Plus size={14} className="text-emerald-400" />
+              <Plus size={14} className="text-[var(--success)]" />
               <span>{language === 'id' ? 'Tambah Lead' : 'Add Lead'}</span>
             </button>
           )}
@@ -533,7 +533,7 @@ export const AdminDashboard: React.FC = () => {
               <span className="text-[11px] font-sans normal-case tracking-normal font-semibold">
                 {language === 'id' ? 'Total Pendapatan Realisasi' : 'Gross Realized Revenue'}
               </span>
-              <div className="w-8 h-8 rounded-control bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-control bg-[var(--success)]/10 border border-[var(--success)]/20 text-[var(--success)] flex items-center justify-center">
                 <DollarSign size={16} />
               </div>
             </div>
@@ -551,7 +551,7 @@ export const AdminDashboard: React.FC = () => {
           </div>
 
           <div className="mt-4 pt-3 border-t border-[var(--line)] flex items-center justify-between text-[11px] font-sans">
-            <span className="text-emerald-400 font-semibold flex items-center gap-1">
+            <span className="text-[var(--success)] font-semibold flex items-center gap-1">
               <TrendingUp size={12} />
               Server calculated
             </span>
@@ -663,7 +663,7 @@ export const AdminDashboard: React.FC = () => {
             </span>
             <span className="text-[var(--muted)]">
               {language === 'id' ? 'Kendala Kritis: ' : 'Roadblocks: '}
-              <strong className="text-emerald-400 font-semibold">0</strong>
+              <strong className="text-[var(--success)] font-semibold">0</strong>
             </span>
           </div>
         </div>
@@ -765,7 +765,7 @@ export const AdminDashboard: React.FC = () => {
                       <div className="text-[var(--text)] font-semibold">
                         {formatCurrency(proj.budget, currency)}
                       </div>
-                      <span className="text-emerald-400 text-[10px]">
+                      <span className="text-[var(--success)] text-[10px]">
                         {proj.targetEndDate ? `Due: ${proj.targetEndDate}` : 'On SLA'}
                       </span>
                     </div>
@@ -780,7 +780,7 @@ export const AdminDashboard: React.FC = () => {
             <div className="flex items-center justify-between pb-3 border-b border-[var(--line)]">
               <div>
                 <h3 className="text-base font-heading font-semibold text-[var(--text)] tracking-tight flex items-center gap-2">
-                  <Receipt size={17} className="text-emerald-400" />
+                  <Receipt size={17} className="text-[var(--success)]" />
                   <span>{language === 'id' ? 'Buku Besar Invoice & Penerimaan' : 'Recent Invoices & Cashflow Ledger'}</span>
                 </h3>
                 <p className="text-xs text-[var(--muted)] mt-0.5 font-sans">
@@ -834,12 +834,12 @@ export const AdminDashboard: React.FC = () => {
                         <td className="py-3">
                           <span className={`inline-flex items-center gap-1 text-[10px] font-sans font-semibold px-2 py-0.5 rounded-full border ${
                             isPaid 
-                              ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/25 shadow-none'
+                              ? 'bg-emerald-500/10 text-[var(--success)] border-emerald-500/25 shadow-none'
                               : isOverdue
-                              ? 'bg-red-500/10 text-red-400 border-red-500/25 shadow-none'
-                              : 'bg-amber-500/10 text-amber-400 border-amber-500/25 shadow-none'
+                              ? 'bg-[var(--danger)]/10 text-[var(--danger)] border-[var(--danger)]/25 shadow-none'
+                              : 'bg-[var(--warning)]/10 text-[var(--warning)] border-[var(--warning)]/25 shadow-none'
                           }`}>
-                            <span className={`w-1.5 h-1.5 rounded-full ${isPaid ? 'bg-emerald-400' : isOverdue ? 'bg-red-400' : 'bg-amber-400'}`} />
+                            <span className={`w-1.5 h-1.5 rounded-full ${isPaid ? 'bg-[var(--success)]' : isOverdue ? 'bg-[var(--danger)]' : 'bg-[var(--warning)]'}`} />
                             {inv.status.toUpperCase()}
                           </span>
                         </td>
@@ -862,7 +862,7 @@ export const AdminDashboard: React.FC = () => {
           <div className="p-4 sm:p-5 rounded-card bg-[var(--panel)] border border-line space-y-4 min-w-0">
             <div className="flex items-center justify-between pb-3 border-b border-[var(--line)]">
               <div className="flex items-center gap-2">
-                <Activity size={16} className="text-emerald-400" />
+                <Activity size={16} className="text-[var(--success)]" />
                 <h3 className="text-base font-heading font-semibold text-[var(--text)] tracking-tight">
                   {language === 'id' ? 'Aktivitas Agensi Real-Time' : 'Live Activity Stream'}
                 </h3>
@@ -994,7 +994,7 @@ export const AdminDashboard: React.FC = () => {
                 <Cpu size={14} className="text-cyan-400" />
                 OPERATIONAL CONTROLS
               </span>
-              <span className="text-emerald-400 font-semibold">ACTIVE</span>
+              <span className="text-[var(--success)] font-semibold">ACTIVE</span>
             </div>
 
             <div className="space-y-2 text-[11px]">
@@ -1012,7 +1012,7 @@ export const AdminDashboard: React.FC = () => {
               </div>
               <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
                 <span className="text-[var(--muted)]">Data source:</span>
-                <span className="text-emerald-400 font-semibold">Server-backed</span>
+                <span className="text-[var(--success)] font-semibold">Server-backed</span>
               </div>
             </div>
           </div>
@@ -1175,7 +1175,7 @@ export const AdminDashboard: React.FC = () => {
                 </div>
                 <div className="flex justify-between pt-1 border-t border-[var(--line)] font-semibold text-[var(--text)]">
                   <span>Total Due:</span>
-                  <span className="text-emerald-400">{formatCurrency(Math.round((parseFloat(quickInvAmount) || 0) * 1.11), 'IDR')}</span>
+                  <span className="text-[var(--success)]">{formatCurrency(Math.round((parseFloat(quickInvAmount) || 0) * 1.11), 'IDR')}</span>
                 </div>
               </div>
 

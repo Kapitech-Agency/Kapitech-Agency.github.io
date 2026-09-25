@@ -1110,7 +1110,7 @@ export const AdminInbox: React.FC = () => {
                     ) : (
                       <button
                         onClick={() => setIsCrmModalOpen(true)}
-                        className="h-9 px-3.5 rounded-control bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-sans font-semibold transition-colors flex items-center gap-1.5"
+                        className="h-9 px-3.5 rounded-control bg-[var(--success)] hover:brightness-110 text-black text-xs font-sans font-semibold transition-colors flex items-center gap-1.5"
                       >
                         <Briefcase size={14} />
                         <span>{language === 'id' ? 'Konversi ke CRM' : 'Convert to CRM'}</span>
@@ -1135,7 +1135,7 @@ export const AdminInbox: React.FC = () => {
                         href={`https://wa.me/${cleanPhoneForWhatsApp(selectedSubmission.phone)}?text=Halo%20${encodeURIComponent(selectedSubmission.fullName)},%20kami%20dari%20Kapitech%20Agency.%20Menindaklanjuti%20formulir%20konsultasi%20proyek%20Anda...`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="h-9 px-3 rounded-control bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-500/30 text-xs font-sans transition-colors flex items-center gap-1"
+                        className="h-9 px-3 rounded-control bg-[var(--success)]/10 hover:bg-[var(--success)]/20 text-[var(--success)] border border-[var(--success)]/30 text-xs font-sans transition-colors flex items-center gap-1"
                         title="Chat via WhatsApp"
                       >
                         <span>WhatsApp</span>
