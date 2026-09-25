@@ -402,7 +402,7 @@ export const AdminProposals: React.FC = () => {
     <div className="space-y-6 animate-in fade-in duration-200">
       {/* Toast Notification */}
       {notification && (
-        <div className="fixed top-20 right-6 z-50 px-4 py-2.5 rounded-[12px] bg-[var(--panel)] border border-[var(--line)] text-[var(--text)] text-xs font-sans shadow-none flex items-center gap-2">
+        <div className="fixed top-16 left-3 right-3 sm:left-auto sm:top-20 sm:right-6 z-50 px-4 py-2.5 rounded-card bg-[var(--panel)] border border-[var(--line)] text-[var(--text)] text-xs font-sans shadow-none flex items-center gap-2">
           <span className="w-2 h-2 rounded-badge bg-[var(--accent)]" />
           <span>{notification}</span>
         </div>
