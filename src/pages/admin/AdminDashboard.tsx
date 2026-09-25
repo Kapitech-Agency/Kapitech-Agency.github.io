@@ -800,8 +800,8 @@ export const AdminDashboard: React.FC = () => {
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="border-b border-[var(--line)] text-[11px] font-sans text-[var(--muted)]">
-                    <th className="pb-2.5 font-semibold">INVOICE #</th>
-                    <th className="pb-2.5 font-semibold">KLIEN / PERUSAHAAN</th>
+                    <th className="pb-2.5 font-semibold">Invoice #</th>
+                    <th className="pb-2.5 font-semibold">Klien / Perusahaan</th>
                     <th className="pb-2.5 font-semibold">TOTAL TAGIHAN</th>
                     <th className="pb-2.5 font-semibold">STATUS</th>
                     <th className="pb-2.5 font-semibold text-right">JATUH TEMPO</th>
