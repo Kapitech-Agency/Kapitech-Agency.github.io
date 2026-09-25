@@ -1926,10 +1926,6 @@
   background-color: color-mix(in srgb, var(--ams-bg) 82%, transparent) !important;
 }
 
-.ams-shell [class*="text-white"] {
-  color: var(--ams-text);
-}
-
 .ams-shell [class*="shadow-"] {
   box-shadow: none !important;
 }
