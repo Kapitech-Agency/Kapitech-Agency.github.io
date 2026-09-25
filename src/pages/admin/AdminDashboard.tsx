@@ -527,7 +527,7 @@ export const AdminDashboard: React.FC = () => {
       <div className="ams-kpi-grid grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
         
         {/* Metric Card 1: Gross Realized Revenue */}
-        <div className="p-0 flex flex-col justify-between min-w-0">
+        <div className="ams-dashboard-card flex min-h-[168px] min-w-0 flex-col justify-between p-4">
           <div>
             <div className="flex items-center justify-between text-[var(--muted)] mb-3">
               <span className="text-xs font-sans normal-case tracking-normal font-medium">
@@ -565,7 +565,7 @@ export const AdminDashboard: React.FC = () => {
         </div>
 
         {/* Metric Card 2: Active CRM Deals & Pipeline */}
-        <div className="p-0 flex flex-col justify-between min-w-0">
+        <div className="ams-dashboard-card flex min-h-[168px] min-w-0 flex-col justify-between p-4">
           <div>
             <div className="flex items-center justify-between text-[var(--muted)] mb-3">
               <span className="text-xs font-sans normal-case tracking-normal font-medium">
@@ -601,7 +601,7 @@ export const AdminDashboard: React.FC = () => {
         </div>
 
         {/* Metric Card 3: Conversion & Win Rate */}
-        <div className="p-0 flex flex-col justify-between min-w-0">
+        <div className="ams-dashboard-card flex min-h-[168px] min-w-0 flex-col justify-between p-4">
           <div>
             <div className="flex items-center justify-between text-[var(--muted)] mb-3">
               <span className="text-xs font-sans normal-case tracking-normal font-medium">
@@ -636,7 +636,7 @@ export const AdminDashboard: React.FC = () => {
         </div>
 
         {/* Metric Card 4: Active Client Projects & Delivery Progress */}
-        <div className="p-0 flex flex-col justify-between min-w-0">
+        <div className="ams-dashboard-card flex min-h-[168px] min-w-0 flex-col justify-between p-4">
           <div>
             <div className="flex items-center justify-between text-[var(--muted)] mb-3">
               <span className="text-xs font-sans normal-case tracking-normal font-medium">
@@ -672,7 +672,7 @@ export const AdminDashboard: React.FC = () => {
       {/* ------------------------------------------------------------- */}
       {/* Backend-backed finance and CRM snapshot */}
       <div className="ams-summary-grid grid grid-cols-1 xl:grid-cols-2 gap-3">
-        <section className="ams-card p-5">
+        <section className="ams-dashboard-card p-4">
           <div className="flex items-center justify-between pb-3 border-b border-[var(--line)]">
             <div><h3 className="ams-section-title">{language === 'id' ? 'Ringkasan Keuangan' : 'Financial Summary'}</h3><p className="ams-section-subtitle">{language === 'id' ? 'Data dihitung di server.' : 'Calculated by the backend.'}</p></div>
             <button onClick={() => navigate('/admin/invoicing')} className="ams-link-button">{language === 'id' ? 'Buka' : 'Open'}</button>
@@ -684,7 +684,7 @@ export const AdminDashboard: React.FC = () => {
             <div className="ams-stat"><span>Net Profit</span><strong>{formatCurrency(finMetrics.netOperatingProfit, currency)}</strong></div>
           </div>
         </section>
-        <section className="ams-card p-5">
+        <section className="ams-dashboard-card p-4">
           <div className="flex items-center justify-between pb-3 border-b border-[var(--line)]">
             <div><h3 className="ams-section-title">{language === 'id' ? 'Pipeline CRM' : 'CRM Pipeline'}</h3><p className="ams-section-subtitle">{language === 'id' ? 'Distribusi deal dari server.' : 'Deal distribution from the backend.'}</p></div>
             <button onClick={() => navigate('/admin/crm')} className="ams-link-button">{language === 'id' ? 'Buka' : 'Open'}</button>
@@ -706,7 +706,7 @@ export const AdminDashboard: React.FC = () => {
         <div className="xl:col-span-8 space-y-6">
           
           {/* Section: Priority Active Projects */}
-          <div className="p-4 sm:p-5 rounded-card bg-[var(--panel)] border border-line space-y-4 min-w-0">
+          <div className="ams-dashboard-card min-w-0 space-y-4 p-4">
             <div className="flex items-center justify-between pb-3 border-b border-[var(--line)]">
               <div>
                 <h3 className="text-base font-heading font-semibold text-[var(--text)] tracking-tight flex items-center gap-2">
@@ -776,7 +776,7 @@ export const AdminDashboard: React.FC = () => {
           </div>
 
           {/* Section: Recent Invoices & Financial Ledger */}
-          <div className="p-4 sm:p-5 rounded-card bg-[var(--panel)] border border-line space-y-4 min-w-0">
+          <div className="ams-dashboard-card min-w-0 space-y-4 p-4">
             <div className="flex items-center justify-between pb-3 border-b border-[var(--line)]">
               <div>
                 <h3 className="text-base font-heading font-semibold text-[var(--text)] tracking-tight flex items-center gap-2">
@@ -859,7 +859,7 @@ export const AdminDashboard: React.FC = () => {
         <div className="xl:col-span-4 space-y-6">
           
           {/* Widget 1: Real-Time Agency Activity Feed */}
-          <div className="p-4 sm:p-5 rounded-card bg-[var(--panel)] border border-line space-y-4 min-w-0">
+          <div className="ams-dashboard-card min-w-0 space-y-4 p-4">
             <div className="flex items-center justify-between pb-3 border-b border-[var(--line)]">
               <div className="flex items-center gap-2">
                 <Activity size={16} className="text-[var(--success)]" />
@@ -915,7 +915,7 @@ export const AdminDashboard: React.FC = () => {
                 activityFeed.map((item) => (
                   <div
                     key={item.id}
-                    className="p-3 rounded-card bg-[var(--panel)] border border-[var(--line)] hover:border-[var(--line)] transition-all space-y-1"
+                    className="ams-dashboard-card p-4 transition-colors space-y-1"
                   >
                     <div className="flex items-center justify-between text-[11px]">
                       <span className="font-semibold text-[var(--text)] truncate max-w-[200px]">
@@ -935,7 +935,7 @@ export const AdminDashboard: React.FC = () => {
           </div>
 
           {/* Widget 2: Protected Inbox Inbound Inquiries Triage */}
-          <div className="p-4 sm:p-5 rounded-card bg-[var(--panel)] border border-line space-y-4 min-w-0">
+          <div className="ams-dashboard-card min-w-0 space-y-4 p-4">
             <div className="flex items-center justify-between pb-3 border-b border-[var(--line)]">
               <div className="flex items-center gap-2">
                 <Inbox size={16} className="text-[var(--info)]" />
@@ -954,14 +954,14 @@ export const AdminDashboard: React.FC = () => {
 
             <div className="space-y-3">
               {inboxSubmissions.length === 0 ? (
-                <div className="p-4 rounded-card bg-[var(--panel)] text-center text-xs font-sans text-[var(--muted)]">
+                <div className="ams-dashboard-card p-4 text-center text-xs font-sans text-[var(--muted)]">
                   {language === 'id' ? 'Semua inquiry situs publik telah ditindaklanjuti.' : 'All public site inquiries have been triaged.'}
                 </div>
               ) : (
                 inboxSubmissions.slice(0, 3).map((sub) => (
                   <div
                     key={sub.id}
-                    className="p-3 rounded-card bg-[var(--panel)] border border-[var(--line)] hover:border-[var(--line)] transition-all space-y-2"
+                    className="ams-dashboard-card p-4 transition-colors space-y-2"
                   >
                     <div className="flex items-start justify-between gap-3 text-xs min-w-0">
                       <span className="font-semibold text-[var(--text)]">
@@ -988,7 +988,7 @@ export const AdminDashboard: React.FC = () => {
           </div>
 
           {/* Widget 3: Operational Controls */}
-          <div className="p-5 rounded-card bg-[var(--panel)] border border-[var(--line)] space-y-3 font-sans text-xs">
+          <div className="ams-dashboard-card space-y-3 p-4 font-sans text-xs">
             <div className="flex items-center justify-between text-[var(--muted)] pb-2 border-b border-[var(--line)]">
               <span className="font-semibold text-[var(--text)] flex items-center gap-1.5">
                 <Cpu size={14} className="text-[var(--muted)]" />
@@ -1164,7 +1164,7 @@ export const AdminDashboard: React.FC = () => {
                 />
               </div>
 
-              <div className="p-3 rounded-card bg-[var(--panel)] border border-[var(--line)] text-[11px] font-sans text-[var(--muted)] space-y-1">
+              <div className="ams-dashboard-card p-4 text-[11px] font-sans text-[var(--muted)] space-y-1">
                 <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
                   <span>Subtotal:</span>
                   <span className="text-[var(--text)]">{formatCurrency(parseFloat(quickInvAmount) || 0, 'IDR')}</span>
