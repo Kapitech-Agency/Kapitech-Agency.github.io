@@ -1833,10 +1833,7 @@
 .ams-shell .text-gray-400 { color: var(--muted); }
 .ams-shell .border-line { border-color: var(--line); }
 
-.ams-shell .kapi-card,
-.ams-shell .ams-card,
-.ams-shell .metric-card,
-.ams-shell .glass-panel {
+ .ams-shell .ams-card {
   background: var(--panel) !important;
   border: 1px solid var(--line) !important;
   border-radius: 12px !important;
@@ -1846,10 +1843,7 @@
   transform: none !important;
 }
 
-.ams-shell .kapi-card:hover,
-.ams-shell .ams-card:hover,
-.ams-shell .metric-card:hover,
-.ams-shell .glass-panel:hover {
+ .ams-shell .ams-card:hover {
   background: var(--panel) !important;
   border-color: var(--line) !important;
   box-shadow: none !important;
