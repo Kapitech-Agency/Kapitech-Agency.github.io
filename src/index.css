@@ -2004,3 +2004,20 @@
     max-width: 100%;
   }
 }
+
+
+/* AMS modal viewport guard: keeps centered dialogs usable on short and mobile screens. */
+.ams-shell .fixed.inset-0.z-50.flex.items-center.justify-center > div:last-child {
+  max-height: calc(100dvh - 24px);
+  overscroll-behavior: contain;
+}
+@media (max-width: 599px) {
+  .ams-shell .fixed.inset-0.z-50.flex.items-center.justify-center {
+    padding: 12px;
+  }
+  .ams-shell .fixed.inset-0.z-50.flex.items-center.justify-center > div:last-child {
+    width: 100%;
+    max-width: 100%;
+    max-height: calc(100dvh - 24px);
+  }
+}
