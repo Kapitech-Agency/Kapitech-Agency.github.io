@@ -152,6 +152,8 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
                   }}
                   role="option"
                   aria-selected={isSelected}
+                  data-selected={isSelected}
+                  data-active={isActive}
                   className={`ams-dropdown-item w-full flex items-center justify-between min-h-10 sm:min-h-9 text-left transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-[-2px] group ${
                     isSelected
                       ? 'bg-accent/14 text-fg font-semibold'
