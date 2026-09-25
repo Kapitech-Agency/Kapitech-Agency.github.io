@@ -635,7 +635,7 @@ export const AdminProjects: React.FC = () => {
               {canDeleteProjects && (
                 <button
                   onClick={() => handleDeleteProject(selectedProject.id, selectedProject.name)}
-                  className="p-2.5 min-h-10 min-w-10 rounded-control bg-[var(--panel)] hover:bg-red-950/40 text-[var(--muted)] hover:text-[var(--danger)] border border-[var(--line)] hover:border-[var(--danger)]/30 transition-colors"
+                  className="p-2.5 min-h-10 min-w-10 rounded-control bg-[var(--panel)] hover:bg-[var(--danger)]/10 text-[var(--muted)] hover:text-[var(--danger)] border border-[var(--line)] hover:border-[var(--danger)]/30 transition-colors"
                   title="Delete Project"
                 >
                   <Trash2 size={14} />
@@ -1083,7 +1083,7 @@ export const AdminProjects: React.FC = () => {
       {/* ------------------------------------------------------------- */}
       {isProjectModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/80  flex items-center justify-center p-0 sm:p-4 overflow-y-auto">
-          <div className="bg-[var(--panel)] border-0 sm:border sm:border-[var(--line)] rounded-none sm:rounded-card w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-2xl shadow-none flex flex-col overflow-hidden animate-in zoom-in-95 duration-150">
+          <div className="bg-[var(--panel)] border-0 sm:border sm:border-[var(--line)] rounded-none sm:rounded-card w-full h-full sm:h-auto sm:max-h-[calc(100dvh-24px)] sm:max-w-2xl shadow-none flex flex-col overflow-hidden animate-in zoom-in-95 duration-150">
             {/* Sticky Header */}
             <div className="sticky top-0 z-20 bg-[var(--panel)]/95  px-5 sm:px-6 py-4 border-b border-[var(--line)] flex items-center justify-between shrink-0">
               <h3 className="font-sans font-semibold text-[var(--text)] text-base sm:text-lg flex items-center gap-2">
@@ -1252,7 +1252,7 @@ export const AdminProjects: React.FC = () => {
       {/* ------------------------------------------------------------- */}
       {isTaskModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/80  flex items-center justify-center p-0 sm:p-4 overflow-y-auto">
-          <div className="bg-[var(--panel)] border-0 sm:border sm:border-[var(--line)] rounded-none sm:rounded-card w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-lg shadow-none flex flex-col overflow-hidden animate-in zoom-in-95 duration-150">
+          <div className="bg-[var(--panel)] border-0 sm:border sm:border-[var(--line)] rounded-none sm:rounded-card w-full h-full sm:h-auto sm:max-h-[calc(100dvh-24px)] sm:max-w-lg shadow-none flex flex-col overflow-hidden animate-in zoom-in-95 duration-150">
             {/* Sticky Header */}
             <div className="sticky top-0 z-20 bg-[var(--panel)]/95  px-5 sm:px-6 py-4 border-b border-[var(--line)] flex items-center justify-between shrink-0">
               <h3 className="font-sans font-semibold text-[var(--text)] text-base flex items-center gap-2">
