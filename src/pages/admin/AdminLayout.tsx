@@ -324,6 +324,7 @@ export const AdminLayout: React.FC = () => {
               >
                 <ChevronLeft size={15} />
               </button>
+            </>
           ) : (
             <div className="flex items-center justify-center w-full h-8">
               <button
