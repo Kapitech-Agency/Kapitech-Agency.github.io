@@ -114,9 +114,20 @@ export const AdminTimeLogs: React.FC = () => {
               <p className="mt-1 text-[13px] leading-[18px] text-[var(--muted)]">Track project time and billable work.</p>
             </div>
           </div>
-          <button onClick={() => void load()} className="inline-flex items-center justify-center gap-2 h-10 min-h-10 px-4 rounded-control border border-[var(--line)] bg-[var(--panel)] text-sm text-[var(--text)] hover:bg-[var(--panel)] transition-colors self-stretch sm:self-auto">
-            <RefreshCw size={14} /> Refresh
-          </button>
+          <div className="flex items-center gap-2 self-stretch sm:self-auto">
+            {canManage && (
+              <button
+                type="button"
+                onClick={() => document.getElementById('time-entry-form')?.scrollIntoView({ behavior: 'smooth', block: 'center' })}
+                className="inline-flex min-h-10 items-center justify-center gap-2 rounded-control bg-[var(--accent)] px-3 text-xs font-medium text-white transition-colors hover:bg-[var(--accent-hover)] active:bg-[var(--accent-pressed)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+              >
+                <Plus size={15} /> Add Time Entry
+              </button>
+            )}
+            <button onClick={() => void load()} className="inline-flex min-h-10 items-center justify-center gap-2 rounded-control border border-[var(--line)] bg-[var(--panel)] px-3 text-xs text-[var(--text)] transition-colors hover:bg-[var(--bg)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent self-stretch sm:self-auto">
+              <RefreshCw size={14} /> Refresh
+            </button>
+          </div>
         </header>
 
         <section className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -136,13 +147,13 @@ export const AdminTimeLogs: React.FC = () => {
         </section>
 
         {canManage && (
-          <form onSubmit={submit} className="rounded-card border border-[var(--line)] bg-[var(--panel)] p-4 sm:p-5 space-y-4">
+          <form id="time-entry-form" onSubmit={submit} className="rounded-card border border-[var(--line)] bg-[var(--panel)] p-4 space-y-4">
             <div className="flex items-center justify-between gap-3">
               <div>
                 <h2 className="text-sm font-semibold">New time entry</h2>
                 <p className="text-xs text-[var(--muted)] mt-1">Keep project time accurate and traceable.</p>
               </div>
-              <Plus size={17} className="text-[var(--accent)]" />
+              <span className="hidden sm:inline-flex h-7 w-7 items-center justify-center rounded-control border border-line bg-bg text-accent-text" aria-hidden="true"><Plus size={15} /></span>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
               <label className="space-y-1.5">
@@ -196,7 +207,7 @@ export const AdminTimeLogs: React.FC = () => {
           {loading ? (
             <div className="p-8 text-sm text-[var(--muted)]">Loading time entries…</div>
           ) : logs.length === 0 ? (
-            <div className="p-8 text-center">
+            <div className="min-h-[160px] px-4 py-8 text-center">
               <Timer size={22} className="mx-auto text-[var(--muted)]" />
               <p className="mt-3 text-sm text-[var(--text)]">No time entries yet</p>
               <p className="mt-1 text-xs text-[var(--muted)]">Add the first delivery time entry above.</p>
