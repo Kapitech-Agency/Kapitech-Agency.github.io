@@ -119,6 +119,7 @@ export const InvoiceStatusDropdown: React.FC<InvoiceStatusDropdownProps> = ({
                   setIsOpen(false);
                   triggerRef.current?.focus();
                 }}
+                data-selected={isSelected}
                 className={`ams-dropdown-item w-full flex items-center justify-between min-h-10 sm:min-h-9 px-2.5 py-2 text-left transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-[-2px] ${
                   isSelected
                     ? 'bg-accent/10 text-fg font-semibold'
