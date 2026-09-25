@@ -984,8 +984,7 @@
   background: color-mix(in srgb, var(--bg) 82%, transparent) !important;
 }
 .ams-shell .fixed.inset-0 > [class*="bg-[#111318]"],
-.ams-shell .fixed.inset-0 > [class*="bg-[#0D0F12]"],
-.ams-shell .fixed.inset-0 > [class*="bg-[var(--ams-bg)]"] {
+.ams-shell .fixed.inset-0 > [class*="bg-[#0D0F12]"] {
   background: var(--panel) !important;
   border-color: var(--line) !important;
 }
