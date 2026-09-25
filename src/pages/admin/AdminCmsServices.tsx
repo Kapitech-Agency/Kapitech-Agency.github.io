@@ -193,7 +193,7 @@ export const AdminCmsServices: React.FC = () => {
     <div className="space-y-6">
       
       {/* Top Header */}
-      <div className="ams-page-header lex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4">
+      <div className="ams-page-header flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4">
         <div>
           <div className="flex items-center gap-2 text-[var(--accent)] font-sans text-xs font-semibold normal-case tracking-normal mb-1">
             <Cpu size={14} />
