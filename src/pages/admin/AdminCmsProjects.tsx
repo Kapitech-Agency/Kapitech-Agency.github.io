@@ -236,7 +236,7 @@ export const AdminCmsProjects: React.FC = () => {
         <div className="flex items-center gap-3">
           <button
             onClick={handleOpenAdd}
-            className="min-h-10 px-4 rounded-control bg-[var(--accent)] hover:bg-[var(--panel-hover)] text-[var(--text)] text-xs font-sans font-medium transition-colors flex items-center gap-2"
+            className="min-h-10 px-4 rounded-control bg-[var(--accent)] hover:brightness-110 text-white text-xs font-sans font-medium transition-colors flex items-center gap-2"
           >
             <Plus size={15} />
             <span>{language === 'id' ? 'Tambah Case Study' : 'Add Case Study'}</span>
