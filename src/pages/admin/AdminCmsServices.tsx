@@ -81,7 +81,7 @@ export const AdminCmsServices: React.FC = () => {
         return <Sparkles size={14} className="text-amber-400" />;
       case 'Solutions':
       default:
-        return <Cpu size={14} className="text-emerald-400" />;
+        return <Cpu size={14} className="text-[var(--success)]" />;
     }
   };
 
@@ -223,7 +223,7 @@ export const AdminCmsServices: React.FC = () => {
       </div>
 
       {statusMessage && (
-        <div className="p-3.5 rounded-card bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-sans flex items-center justify-between animate-in fade-in duration-200">
+        <div className="p-3.5 rounded-card bg-[var(--success)]/10 border border-[var(--success)]/30 text-emerald-400 text-xs font-sans flex items-center justify-between animate-in fade-in duration-200">
           <div className="flex items-center gap-2">
             <CheckCircle2 size={16} className="text-emerald-400" />
             <span>{statusMessage}</span>
@@ -342,7 +342,7 @@ export const AdminCmsServices: React.FC = () => {
                 </div>
                 <div className="flex flex-wrap gap-1.5">
                   {item.capabilities.slice(0, 3).map((c, idx) => (
-                    <span key={idx} className="text-[10px] font-sans px-2 py-0.5 rounded-control bg-[var(--panel)] text-[#F8FAFC] border border-[var(--line)]">
+                    <span key={idx} className="text-[10px] font-sans px-2 py-0.5 rounded-control bg-[var(--panel)] text-[var(--text)] border border-[var(--line)]">
                       {c.title || c.titleId}
                     </span>
                   ))}
