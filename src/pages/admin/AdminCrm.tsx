@@ -7,6 +7,7 @@ import {
   TrendingUp, 
   Calendar, 
   User, 
+  Users,
   Building2, 
   Mail, 
   Phone, 
