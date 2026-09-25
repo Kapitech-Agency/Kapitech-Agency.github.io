@@ -73,7 +73,7 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
                   item.onClick();
                   setIsOpen(false);
                 }}
-                className={`w-full flex items-center justify-between min-h-10 sm:min-h-9 px-3 py-2 rounded-control text-left transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-[-2px] ${
+                className={`w-full flex items-center justify-between min-h-10 sm:min-h-9 px-3 py-2 rounded-chip text-left transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-[-2px] ${
                   item.variant === 'danger'
                     ? 'text-danger hover:text-fg hover:bg-danger/10'
                     : item.variant === 'warning'
