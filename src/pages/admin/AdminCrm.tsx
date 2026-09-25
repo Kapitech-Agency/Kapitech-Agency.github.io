@@ -1298,7 +1298,7 @@ export const AdminCrm: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="h-10 px-5 rounded-card bg-[var(--accent)] text-[var(--text)] font-sans font-semibold text-xs hover:bg-[var(--accent)] transition-colors min-h-10"
+                  className="h-10 px-5 rounded-card bg-[var(--accent)] text-white font-sans font-semibold text-xs hover:bg-[var(--accent)] transition-colors min-h-10"
                 >
                   {editingLead ? (language === 'id' ? 'Simpan Perubahan' : 'Update Deal') : (language === 'id' ? 'Buat Deal' : 'Save Deal')}
                 </button>
