@@ -240,7 +240,7 @@ export const DataMigrationModal: React.FC<DataMigrationModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-0 sm:p-4 overflow-y-auto">
       <div className="fixed inset-0 bg-black/80" onClick={onClose} />
-      <div className="relative w-full h-full sm:h-auto sm:max-h-[calc(100dvh-24px)] sm:max-w-2xl bg-[var(--panel)] border-0 sm:border sm:border-[var(--line)] rounded-none sm:rounded-card shadow-none z-10 flex flex-col overflow-hidden animate-in zoom-in-95 duration-150">
+      <div className="relative w-full h-full sm:h-auto sm:max-h-[calc(100dvh-24px)] sm:max-w-2xl bg-[var(--panel)] border-0 sm:border sm:border-[var(--line)] rounded-none sm:rounded-card -none z-10 flex flex-col overflow-hidden animate-in zoom-in-95 duration-150">
         
         {/* Sticky Header */}
         <div className="sticky top-0 z-20 bg-[var(--panel)]/95  px-5 sm:px-6 py-4 border-b border-[var(--line)] flex items-center justify-between shrink-0">
@@ -280,7 +280,7 @@ export const DataMigrationModal: React.FC<DataMigrationModalProps> = ({
                 }}
                 className={`p-3 rounded-control border flex flex-row sm:flex-col items-center gap-2 sm:gap-1.5 text-xs font-sans transition-all min-h-10 sm:min-h-[auto] ${
                   targetModule === 'clients'
-                    ? 'bg-[var(--accent)]/15 border-[var(--accent)] text-[var(--text)] font-medium shadow-none'
+                    ? 'bg-[var(--accent)]/15 border-[var(--accent)] text-[var(--text)] font-medium -none'
                     : 'bg-[var(--panel)] border-[var(--line)] text-[var(--muted)] hover:text-[var(--text)]'
                 }`}
               >
@@ -333,7 +333,7 @@ export const DataMigrationModal: React.FC<DataMigrationModalProps> = ({
               onClick={handleDownloadTemplate}
               className="min-h-10 px-3 rounded-control bg-[var(--panel)] hover:bg-[var(--line)] border border-[var(--line)] text-xs font-sans text-[var(--text)] flex items-center justify-center gap-1.5 transition-colors shrink-0 min-h-10"
             >
-              <Download size={13} className="text-emerald-400" />
+              <Download size={13} className="text-success" />
               <span>Download .CSV</span>
             </button>
           </div>
@@ -359,8 +359,8 @@ export const DataMigrationModal: React.FC<DataMigrationModalProps> = ({
           {statusMessage && (
             <div className={`p-3 rounded-control border text-xs font-sans flex items-center gap-2 ${
               statusMessage.success
-                ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
-                : 'bg-red-500/10 border-red-500/30 text-red-400'
+                ? 'bg-emerald-500/10 border-emerald-500/30 text-success'
+                : 'bg-red-500/10 border-red-500/30 text-danger'
             }`}>
               {statusMessage.success ? <CheckCircle2 size={16} /> : <AlertCircle size={16} />}
               <span>{statusMessage.message}</span>
@@ -393,7 +393,7 @@ export const DataMigrationModal: React.FC<DataMigrationModalProps> = ({
             type="button"
             onClick={handleExecuteImport}
             disabled={parsing || !file}
-            className="h-10 px-5 min-h-[40px] rounded-control bg-[var(--accent)] hover:bg-[var(--accent-hover)] disabled:opacity-50 text-[var(--text)] text-xs font-sans font-medium shadow-none flex items-center gap-2 transition-all"
+            className="h-10 px-5 min-h-[40px] rounded-control bg-[var(--accent)] hover:bg-[var(--accent-hover)] disabled:opacity-50 text-[var(--text)] text-xs font-sans font-medium -none flex items-center gap-2 transition-all"
           >
             <FileCheck2 size={15} />
             <span>{parsing ? 'Processing...' : language === 'id' ? 'Mulai Impor Data' : 'Execute Import'}</span>
