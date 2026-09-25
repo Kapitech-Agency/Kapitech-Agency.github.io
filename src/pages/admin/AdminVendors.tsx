@@ -370,7 +370,7 @@ export const AdminVendors: React.FC = () => {
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
             placeholder={language === 'id' ? 'Cari nama, keahlian, atau email...' : 'Search name, skills, or email...'}
-            className="w-full pl-9 pr-3 py-2 rounded-card bg-[var(--panel)] border border-[var(--line)] text-xs font-sans text-[var(--text)] placeholder:text-[var(--muted)] focus:outline-none focus:border-[var(--accent)] h-10 min-h-[40px]"
+            className="w-full pl-9 pr-3 py-2 rounded-control bg-[var(--panel)] border border-[var(--line)] text-xs font-sans text-[var(--text)] placeholder:text-[var(--muted)] focus:outline-none focus:border-[var(--accent)] h-10 min-h-[40px]"
           />
         </div>
 
@@ -711,7 +711,7 @@ export const AdminVendors: React.FC = () => {
                     value={formName}
                     onChange={e => setFormName(e.target.value)}
                     placeholder="e.g. Dimas Pratama"
-                    className="w-full px-3 py-2 rounded-card bg-[var(--panel)] border border-[var(--line)] text-xs font-sans text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
+                    className="w-full px-3 py-2 rounded-control bg-[var(--panel)] border border-[var(--line)] text-xs font-sans text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                   />
                 </div>
 
@@ -724,7 +724,7 @@ export const AdminVendors: React.FC = () => {
                     value={formCompany}
                     onChange={e => setFormCompany(e.target.value)}
                     placeholder="e.g. PixelCraft Studio"
-                    className="w-full px-3 py-2 rounded-card bg-[var(--panel)] border border-[var(--line)] text-xs font-sans text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
+                    className="w-full px-3 py-2 rounded-control bg-[var(--panel)] border border-[var(--line)] text-xs font-sans text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                   />
                 </div>
               </div>
@@ -738,7 +738,7 @@ export const AdminVendors: React.FC = () => {
                     value={formEmail}
                     onChange={e => setFormEmail(e.target.value)}
                     placeholder="talent@example.com"
-                    className="w-full px-3 py-2 rounded-card bg-[var(--panel)] border border-[var(--line)] text-xs font-sans text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
+                    className="w-full px-3 py-2 rounded-control bg-[var(--panel)] border border-[var(--line)] text-xs font-sans text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                   />
                 </div>
 
@@ -751,7 +751,7 @@ export const AdminVendors: React.FC = () => {
                     value={formPhone}
                     onChange={e => setFormPhone(e.target.value)}
                     placeholder="+62 812..."
-                    className="w-full px-3 py-2 rounded-card bg-[var(--panel)] border border-[var(--line)] text-xs font-sans text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
+                    className="w-full px-3 py-2 rounded-control bg-[var(--panel)] border border-[var(--line)] text-xs font-sans text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                   />
                 </div>
               </div>
@@ -783,7 +783,7 @@ export const AdminVendors: React.FC = () => {
                     type="number"
                     value={formRate}
                     onChange={e => setFormRate(Number(e.target.value))}
-                    className="w-full px-3 py-2 rounded-card bg-[var(--panel)] border border-[var(--line)] text-xs font-sans text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
+                    className="w-full px-3 py-2 rounded-control bg-[var(--panel)] border border-[var(--line)] text-xs font-sans text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                   />
                 </div>
               </div>
@@ -850,7 +850,7 @@ export const AdminVendors: React.FC = () => {
                   value={formSkills}
                   onChange={e => setFormSkills(e.target.value)}
                   placeholder="Next.js, Tailwind, Docker, Three.js"
-                  className="w-full px-3 py-2 rounded-card bg-[var(--panel)] border border-[var(--line)] text-xs font-sans text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
+                  className="w-full px-3 py-2 rounded-control bg-[var(--panel)] border border-[var(--line)] text-xs font-sans text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                 />
               </div>
 
@@ -863,7 +863,7 @@ export const AdminVendors: React.FC = () => {
                   value={formNotes}
                   onChange={e => setFormNotes(e.target.value)}
                   placeholder="Reliable performance and clean deliverables..."
-                  className="w-full px-3 py-2 rounded-card bg-[var(--panel)] border border-[var(--line)] text-xs font-sans text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
+                  className="w-full px-3 py-2 rounded-control bg-[var(--panel)] border border-[var(--line)] text-xs font-sans text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                 />
               </div>
 
