@@ -2391,7 +2391,7 @@
 
 /* AMS 2026 visual reconciliation. Keep this scoped to the admin shell. */
 .ams-shell {
-  font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-family: Manrope, system-ui, -apple-system, "Segoe UI", sans-serif;
   background: var(--bg);
   color: var(--text);
 }
