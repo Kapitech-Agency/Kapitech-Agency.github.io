@@ -162,7 +162,7 @@ export const AdminApprovals: React.FC = () => {
   const getRiskBadge = (level: string) => {
     const l = level?.toLowerCase();
     if (l === 'high') {
-      return <span className="px-2 py-0.5 rounded text-xs font-sans bg-red-500/10 text-[var(--danger)] border border-[var(--danger)]/30 normal-case font-semibold">High Risk</span>;
+      return <span className="px-2 py-0.5 rounded text-xs font-sans bg-[var(--danger)]/10 text-[var(--danger)] border border-[var(--danger)]/30 normal-case font-semibold">High Risk</span>;
     }
     if (l === 'medium') {
       return <span className="px-2 py-0.5 rounded text-xs font-sans bg-amber-500/10 text-[var(--warning)] border border-[var(--warning)]/30 normal-case font-semibold">Medium Risk</span>;
@@ -493,7 +493,7 @@ export const AdminApprovals: React.FC = () => {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-5 py-2 rounded-control bg-[var(--accent)] hover:bg-[#c40f34] text-white text-xs font-sans font-semibold disabled:opacity-50 flex items-center gap-1.5 min-h-10"
+                  className="px-5 py-2 rounded-control bg-[var(--accent)] hover:brightness-110 text-white text-xs font-sans font-semibold disabled:opacity-50 flex items-center gap-1.5 min-h-10"
                 >
                   {isSubmitting ? <Loader2 size={13} className="animate-spin" /> : <ShieldCheck size={14} />}
                   <span>Confirm Decision</span>

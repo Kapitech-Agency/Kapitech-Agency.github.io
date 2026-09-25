@@ -411,7 +411,7 @@ export const AdminInbox: React.FC = () => {
       case 'new':
         return (
           <span className="px-2 py-0.5 rounded-md text-[10px] font-sans bg-[var(--danger)]/10 text-[var(--danger)] border border-[var(--danger)]/30 font-semibold flex items-center gap-1">
-            <span className="w-1.5 h-1.5 rounded-full bg-rose-500 " />
+            <span className="w-1.5 h-1.5 rounded-full bg-[var(--danger)] " />
             <span>New</span>
           </span>
         );
@@ -585,7 +585,7 @@ export const AdminInbox: React.FC = () => {
           <div className="text-2xl font-semibold font-sans text-[var(--danger)] flex items-center gap-2">
             <span>{metrics.newCount}</span>
             {metrics.newCount > 0 && (
-              <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping" />
+              <span className="w-2 h-2 rounded-full bg-[var(--danger)] animate-ping" />
             )}
           </div>
           <p className="text-[11px] font-sans text-[var(--muted)]">
@@ -948,7 +948,7 @@ export const AdminInbox: React.FC = () => {
                     isSelected
                       ? 'bg-[var(--panel)] border-[var(--accent)]'
                       : item.status === 'new'
-                      ? 'bg-[var(--panel)] border-[var(--danger)]/30 hover:border-rose-500/50'
+                      ? 'bg-[var(--panel)] border-[var(--danger)]/30 hover:border-[var(--danger)]/50'
                       : 'bg-[var(--panel)] border-[var(--line)] hover:border-[var(--line)] hover:bg-[var(--panel-hover)]'
                   }`}
                 >
