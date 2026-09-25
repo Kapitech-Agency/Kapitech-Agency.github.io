@@ -1287,7 +1287,7 @@ export const AdminCrm: React.FC = () => {
                   value={formDescription}
                   onChange={(e) => setFormDescription(e.target.value)}
                   placeholder={language === 'id' ? 'Kebutuhan teknis, ekspektasi timeline, catatan budget...' : 'Requirements, tech stack expectations, budget notes...'}
-                  className="w-full px-3.5 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)] font-sans text-xs"
+                  className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)] font-sans text-xs min-h-10"
                 />
               </div>
 
