@@ -295,7 +295,7 @@ export const AdminVendors: React.FC = () => {
           <button
             onClick={handleOpenAdd}
                             disabled={!canManageVendors}
-            className="h-10 px-4 rounded-[8px] bg-[var(--accent)] hover:bg-[var(--accent)] text-[var(--text)] text-xs font-semibold shadow-none flex items-center gap-2 transition-all min-h-[40px]"
+            className="h-10 px-4 rounded-control bg-[var(--accent)] hover:brightness-110 text-white text-xs font-semibold shadow-none flex items-center gap-2 transition-all min-h-[40px]"
           >
             <Plus size={15} />
             <span>{language === 'id' ? 'Tambah Vendor' : 'Add Vendor'}</span>
@@ -324,7 +324,7 @@ export const AdminVendors: React.FC = () => {
           </div>
           <div className="mt-2 text-2xl font-semibold font-sans text-[var(--text)]">{vendors.length}</div>
           <div className="text-[10px] font-sans text-emerald-400 mt-1 flex items-center gap-1">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+            <span className="w-1.5 h-1.5 rounded-full bg-[var(--success)]" />
             <span>{vendors.filter(v => v.status === 'active').length} Active</span>
           </div>
         </div>
@@ -667,7 +667,7 @@ export const AdminVendors: React.FC = () => {
                   setIsDrawerOpen(false);
                   handleOpenEdit(selectedVendor);
                 }}
-                className="px-4 py-2 rounded-[8px] bg-[var(--accent)] hover:bg-[var(--accent)] text-[var(--text)] text-xs font-semibold"
+                className="px-4 py-2 rounded-control bg-[var(--accent)] hover:brightness-110 text-white text-xs font-semibold"
               >
                 {language === 'id' ? 'Edit Profil' : 'Edit Profile'}
               </button>
@@ -877,7 +877,7 @@ export const AdminVendors: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-[8px] bg-[var(--accent)] hover:bg-[var(--accent)] text-[var(--text)] text-xs font-semibold shadow-none"
+                  className="px-5 py-2 rounded-control bg-[var(--accent)] hover:brightness-110 text-white text-xs font-semibold shadow-none"
                 >
                   {language === 'id' ? 'Simpan Vendor' : 'Save Vendor'}
                 </button>
