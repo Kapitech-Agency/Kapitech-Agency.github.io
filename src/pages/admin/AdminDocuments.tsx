@@ -257,7 +257,7 @@ export const AdminDocuments: React.FC = () => {
             {language === 'id' ? 'Belum ada dokumen di registri.' : 'No documents found in the registry.'}
           </div>
         ) : (
-          <div className="overflow-x-auto">
+          <div className="ams-table-scroll overflow-x-auto">
             <table className="w-full text-left border-collapse min-w-[700px]">
               <thead>
                 <tr className="border-b border-[var(--line)] bg-[var(--ams-surface)]/50 text-xs font-sans text-[var(--ams-secondary)] normal-case">
