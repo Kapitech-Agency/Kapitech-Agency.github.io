@@ -490,7 +490,7 @@ export const AdminDashboard: React.FC = () => {
           {isAllowed('crm') && (
             <button
               onClick={() => setIsAddLeadModalOpen(true)}
-              className="h-9 px-3 rounded-card bg-[var(--panel)] hover:bg-[var(--panel)] border border-[var(--line)]  text-xs font-sans font-semibold text-[var(--text)] transition-colors flex items-center gap-1.5"
+              className="min-h-10 px-3 rounded-control bg-[var(--panel)] hover:bg-[var(--panel-hover)] border border-[var(--line)]  text-xs font-sans font-semibold text-[var(--text)] transition-colors flex items-center gap-1.5"
             >
               <Plus size={14} className="text-emerald-400" />
               <span>{language === 'id' ? 'Tambah Lead' : 'Add Lead'}</span>
@@ -501,7 +501,7 @@ export const AdminDashboard: React.FC = () => {
           {isAllowed('invoicing') && (
             <button
               onClick={() => setIsNewInvoiceModalOpen(true)}
-              className="h-9 px-3 rounded-card bg-[var(--panel)] hover:bg-[var(--panel)] border border-[var(--line)]  text-xs font-sans font-semibold text-[var(--text)] transition-colors flex items-center gap-1.5"
+              className="min-h-10 px-3 rounded-control bg-[var(--panel)] hover:bg-[var(--panel-hover)] border border-[var(--line)]  text-xs font-sans font-semibold text-[var(--text)] transition-colors flex items-center gap-1.5"
             >
               <Plus size={14} className="text-purple-400" />
               <span>{language === 'id' ? 'Buat Invoice' : 'New Invoice'}</span>
@@ -870,7 +870,7 @@ export const AdminDashboard: React.FC = () => {
             </div>
 
             {/* Filter Tabs */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-0.5 rounded-control bg-[var(--panel)] p-0.5 border border-line text-[10px] font-sans">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-0.5 rounded-control bg-[var(--bg)] p-0.5 border border-line text-[10px] font-sans">
               <button
                 onClick={() => setActivityTab('all')}
                 className={`flex-1 py-1 rounded-control transition-all ${
