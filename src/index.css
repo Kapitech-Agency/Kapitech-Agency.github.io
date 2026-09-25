@@ -2072,6 +2072,9 @@
 }
 
 .ams-shell .overflow-x-auto table {
+  min-width: 0;
+}
+.ams-shell .ams-table-scroll table {
   min-width: max-content;
 }
 
