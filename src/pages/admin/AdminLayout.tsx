@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { motion } from 'motion/react';
 import { Link, useLocation, useNavigate, Outlet } from 'react-router-dom';
 import {
   Home,
@@ -325,141 +326,84 @@ export const AdminLayout: React.FC = () => {
 
       {/* ------------------------------------------------------------- */}
       {/* DESKTOP SIDEBAR */}
-      {/* ------------------------------------------------------------- */}
-      <aside 
-        className={`hidden min-[900px]:flex flex-col bg-panel border-r border-line shrink-0 h-full z-30 transition-[width,min-width] duration-150 ${sidebarCollapsed ? "ams-sidebar-collapsed" : "ams-sidebar-expanded"} ${
-          sidebarCollapsed ? 'w-[64px]' : 'w-[220px]'
-        }`}
+      <motion.aside
+        initial={false}
+        animate={{ width: sidebarCollapsed ? 64 : 232 }}
+        transition={{ duration: 0.18, ease: 'easeOut' }}
+        className={`hidden min-[900px]:flex flex-col bg-panel border-r border-line shrink-0 h-full z-30 overflow-hidden ${sidebarCollapsed ? 'ams-sidebar-collapsed' : 'ams-sidebar-expanded'}`}
       >
-        
-        {/* Brand Header. Collapse control intentionally lives below navigation. */}
-        <div className={`h-[64px] border-b border-line flex items-center bg-panel px-3`}>
-          <Link to="/admin/dashboard" className={`flex items-center gap-2.5 min-w-0 w-full group ${sidebarCollapsed ? 'justify-center' : ''}`}>
-            <div className="h-9 w-9 rounded-control bg-bg border border-line flex items-center justify-center shrink-0 group-hover:border-accent/40 transition-colors">
+        <div className="shrink-0 px-3 pt-3 pb-3 border-b border-line">
+          <Link to="/admin/dashboard" aria-label="Kapitech AMS dashboard" className={`group flex items-center rounded-control min-h-10 transition-colors duration-150 hover:bg-panel-hover focus-visible:outline-none ${sidebarCollapsed ? 'justify-center px-1' : 'gap-3 px-2'}`}>
+            <div className="h-9 w-9 rounded-control bg-bg border border-line flex items-center justify-center shrink-0 transition-colors duration-150 group-hover:border-accent/40">
               <img src="/white.png" alt="Kapitech" className="h-3.5 w-auto max-w-[28px] object-contain" />
             </div>
             {!sidebarCollapsed && (
-              <div className="min-w-0">
-                <div className="font-semibold text-fg text-[13px] leading-4 flex items-center gap-1.5">
-                  <span>KAPITECH</span>
-                  <span className="text-[10px] px-1.5 py-0.5 rounded-badge text-accent-text border border-accent/30 font-semibold">AMS</span>
+              <div className="min-w-0 py-0.5">
+                <div className="flex items-center gap-2 leading-none">
+                  <span className="text-[13px] font-semibold tracking-[0.01em] text-fg whitespace-nowrap">KAPITECH</span>
+                  <span className="shrink-0 rounded-badge border border-accent/25 bg-accent/8 px-1.5 py-0.5 text-[9px] font-semibold tracking-[0.04em] text-accent-text">AMS</span>
                 </div>
-                <p className="text-[9px] leading-3 text-muted mt-0.5 whitespace-nowrap">Agency Management System</p>
+                <p className="mt-1 text-[10px] leading-4 text-muted whitespace-nowrap">Agency Management System</p>
               </div>
             )}
           </Link>
         </div>
-        {/* Navigation List - 4 Structured Sections Filtered by Dynamic RBAC */}
-        <div className={`flex-1 overflow-y-auto custom-scrollbar ${sidebarCollapsed ? "px-2 py-3 space-y-2" : "px-2 py-3 space-y-3"}`}>
-          {contentNavSections.map((section) => (
-            <div key={section.id} className="space-y-1">
-              {!sidebarCollapsed && (
-                <div className="text-xs font-sans text-muted font-medium px-3 pt-2 pb-1">
-                  {t(section.titleKey)}
+        <div className={`flex-1 min-h-0 overflow-y-auto custom-scrollbar ${sidebarCollapsed ? 'px-2 py-3' : 'px-2.5 py-3'}`}>
+          <div className={sidebarCollapsed ? 'space-y-2' : 'space-y-4'}>
+            {contentNavSections.map((section) => (
+              <div key={section.id} className="space-y-1">
+                {!sidebarCollapsed && <div className="px-2.5 pb-1.5 text-[10px] font-semibold uppercase tracking-[0.09em] text-muted">{t(section.titleKey)}</div>}
+                {sidebarCollapsed && <div className="mx-auto mb-2 h-px w-5 bg-line" />}
+                <div className="space-y-0.5">
+                  {section.items.map((item) => {
+                    const Icon = item.icon;
+                    const active = isItemActive(item.to);
+                    return (
+                      <Link key={item.to} to={item.to} title={sidebarCollapsed ? item.label : undefined} aria-current={active ? 'page' : undefined}
+                        className={`group flex min-h-10 items-center rounded-control text-[13px] font-medium transition-[background-color,color,transform] duration-150 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-panel active:scale-[0.985] ${sidebarCollapsed ? 'mx-auto h-10 w-10 justify-center px-0' : 'gap-2.5 px-2.5'} ${active ? 'bg-accent/12 text-fg' : 'text-muted hover:bg-panel-hover hover:text-fg'}`}>
+                        <Icon size={16} strokeWidth={active ? 2.1 : 1.8} className={`shrink-0 transition-colors duration-150 ${active ? 'text-accent-text' : 'text-muted group-hover:text-fg'}`} />
+                        {!sidebarCollapsed && <span className="min-w-0 truncate">{item.label}</span>}
+                        {!sidebarCollapsed && item.badge !== null && item.badge !== undefined && <span className="ml-auto shrink-0 rounded-badge border border-line bg-bg px-1.5 py-0.5 text-[10px] font-semibold text-muted">{item.badge}</span>}
+                      </Link>
+                    );
+                  })}
                 </div>
-              )}
-              {sidebarCollapsed && (
-                <div className="w-6 h-px bg-line mx-auto my-2" />
-              )}
-              {section.items.map((item) => {
-                const Icon = item.icon;
-                const active = isItemActive(item.to);
-
-                return (
-                  <Link
-                    key={item.to}
-                    to={item.to}
-                    title={sidebarCollapsed ? item.label : undefined}
-                    className={`relative flex items-center justify-between px-2.5 py-2 rounded-control text-[13px] font-sans transition-colors duration-150 group ${
-                      active
-                        ? 'bg-accent/15 text-fg font-medium'
-                        : 'text-muted hover:text-fg hover:bg-panel-hover'
-                    } ${sidebarCollapsed ? 'w-10 h-10 mx-auto justify-center px-0 py-0' : ''}`}
-                  >
-                    {/* Linear-style Left Indicator Strip */}
-                    {active && (
-                      <span className="absolute left-0 top-1.5 bottom-1.5 w-[3px] bg-accent rounded-r-full" />
-                    )}
-
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <Icon size={16} className={active ? 'text-accent-text shrink-0' : 'text-muted group-hover:text-fg shrink-0 transition-colors'} />
-                      {!sidebarCollapsed && <span className="truncate">{item.label}</span>}
-                    </div>
-
-                    {!sidebarCollapsed && item.badge !== null && item.badge !== undefined && (
-                      <span className={`px-1.5 py-0.5 rounded-badge text-xs font-semibold ml-auto shrink-0 ${
-                        item.badgeColor || 'bg-bg text-muted border border-line'
-                      }`}>
-                        {item.badge}
-                      </span>
-                    )}
-                  </Link>
-                );
-              })}
-            </div>
-          ))}
-
+              </div>
+            ))}
+          </div>
         </div>
-
-        {/* Collapse control lives on the lower navigation divider. */}
-        <div className="px-2 py-2 border-t border-line flex justify-center">
-          <button
-            onClick={() => setSidebarCollapsed(v => !v)}
-            aria-label={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-            title={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-            className="ams-sidebar-toggle h-10 w-10 min-h-10 min-w-10 rounded-control bg-bg hover:bg-panel-hover text-muted hover:text-fg border border-line flex items-center justify-center transition-colors"
-          >
-            {sidebarCollapsed ? <ChevronRight size={15} /> : <ChevronLeft size={15} />}
+        <div className="relative shrink-0 px-2.5 py-3" aria-label="Sidebar resize control">
+          <div className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-line" aria-hidden="true" />
+          <button type="button" onClick={() => setSidebarCollapsed(v => !v)} aria-label={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'} title={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            className="ams-sidebar-toggle group relative z-10 mx-auto flex h-8 w-8 items-center justify-center rounded-control border border-line bg-panel text-muted transition-[background-color,border-color,color,transform] duration-150 ease-out hover:border-accent/30 hover:bg-panel-hover hover:text-fg active:scale-[0.96] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-panel">
+            {sidebarCollapsed ? <ChevronRight size={15} strokeWidth={2} /> : <ChevronLeft size={15} strokeWidth={2} />}
           </button>
         </div>
-        {/* Pinned settings navigation */}
         {settingsItem && (
-          <div className="px-2 pb-2 pt-2 border-t border-line">
-            <Link
-              to={settingsItem.to}
-              title={sidebarCollapsed ? settingsItem.label : undefined}
-              className={`relative flex items-center gap-2.5 px-2.5 py-2 rounded-control text-[13px] font-sans min-h-[40px] transition-colors ${sidebarCollapsed ? 'w-10 mx-auto justify-center px-0' : ''} ${isItemActive(settingsItem.to)
-                ? 'bg-accent/15 text-fg font-medium'
-                : 'text-muted hover:text-fg hover:bg-bg'}`}
-            >
-              <Settings size={16} className={isItemActive(settingsItem.to) ? 'text-accent-text' : 'text-muted'} />
+          <div className="shrink-0 px-2.5 pb-2">
+            <Link to={settingsItem.to} title={sidebarCollapsed ? settingsItem.label : undefined} aria-current={isItemActive(settingsItem.to) ? 'page' : undefined}
+              className={`group flex min-h-10 items-center rounded-control text-[13px] font-medium transition-[background-color,color,transform] duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-panel active:scale-[0.985] ${sidebarCollapsed ? 'mx-auto h-10 w-10 justify-center px-0' : 'gap-2.5 px-2.5'} ${isItemActive(settingsItem.to) ? 'bg-accent/12 text-fg' : 'text-muted hover:bg-panel-hover hover:text-fg'}`}>
+              <Settings size={16} strokeWidth={isItemActive(settingsItem.to) ? 2.1 : 1.8} className={`shrink-0 transition-colors duration-150 ${isItemActive(settingsItem.to) ? 'text-accent-text' : 'text-muted group-hover:text-fg'}`} />
               {!sidebarCollapsed && <span className="truncate">{settingsItem.label}</span>}
             </Link>
           </div>
         )}
-
-        {/* Footer: Admin Profile & Discrete Role Simulator Dropdown */}
-        <div className={`p-2.5 border-t border-line bg-panel ${sidebarCollapsed ? "space-y-2" : "space-y-2.5"}`}>
-          <div className={`flex items-center justify-between ${sidebarCollapsed ? 'flex-col gap-2.5' : ''}`}>
-            <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-8 h-8 rounded-control bg-accent border border-line flex items-center justify-center text-xs font-sans text-fg font-semibold shrink-0 ">
-                {roleMeta.accountProfile.avatarLabel}
+        <div className={`shrink-0 border-t border-line bg-panel px-2.5 py-2.5 ${sidebarCollapsed ? 'space-y-2' : ''}`}>
+          <div className={`group flex min-h-10 items-center rounded-control transition-colors duration-150 hover:bg-panel-hover ${sidebarCollapsed ? 'justify-center' : 'gap-2.5 px-1.5'}`}>
+            <div className="h-8 w-8 rounded-control bg-accent/90 border border-accent/30 flex items-center justify-center text-xs font-semibold text-fg shrink-0">{roleMeta.accountProfile.avatarLabel}</div>
+            {!sidebarCollapsed && (
+              <div className="min-w-0 flex-1">
+                <div className="truncate text-xs font-semibold text-fg">{roleMeta.accountProfile.displayName}</div>
+                <div className="mt-0.5 flex min-w-0 items-center gap-1 text-[11px] text-muted"><span className="h-1.5 w-1.5 shrink-0 rounded-full bg-success" /><span className="truncate">{roleMeta.accountProfile.accountId}</span></div>
               </div>
-              {!sidebarCollapsed && (
-                <div className="min-w-0">
-                  <div className="text-xs font-semibold text-fg truncate">
-                    {roleMeta.accountProfile.displayName}
-                  </div>
-                  <div className="text-xs font-sans text-muted truncate flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
-                    <span className="truncate">{roleMeta.accountProfile.accountId}</span>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            <button
-              onClick={handleLogout}
-              title={t('admin.nav.logout')}
-              className="p-2 flex items-center justify-center rounded-control bg-bg hover:bg-danger/10 text-muted hover:text-accent-text border border-line hover:border-accent/30 transition-all shrink-0"
-            >
-              <LogOut size={15} />
+            )}
+            <button type="button" onClick={handleLogout} aria-label={t('admin.nav.logout')} title={t('admin.nav.logout')}
+              className={`group/logout flex h-8 w-8 shrink-0 items-center justify-center rounded-control border border-line bg-bg text-muted transition-[background-color,border-color,color,transform] duration-150 hover:border-danger/30 hover:bg-danger/10 hover:text-danger active:scale-[0.96] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-danger focus-visible:ring-offset-2 focus-visible:ring-offset-panel ${sidebarCollapsed ? '' : 'ml-auto'}`}>
+              <LogOut size={15} strokeWidth={1.9} />
             </button>
           </div>
-
         </div>
-
-      </aside>
+      </motion.aside>
 
       {logoutConfirmOpen && (
         <div className="fixed inset-0 z-[70] bg-black/70 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="logout-title">
@@ -484,7 +428,7 @@ export const AdminLayout: React.FC = () => {
           <button
             onClick={() => setMobileMenuOpen(true)}
             aria-label="Open navigation menu"
-            className="min-h-10 min-w-10 flex items-center justify-center rounded-control bg-bg text-fg border border-line hover:bg-panel transition-colors "
+            "className="min-h-10 min-w-10 flex items-center justify-center rounded-control bg-bg text-fg border border-line transition-[background-color,border-color,color,transform] duration-150 hover:bg-panel-hover hover:border-accent/30 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
           >
             <Menu size={20} />
           </button>
@@ -546,7 +490,7 @@ export const AdminLayout: React.FC = () => {
               <button
                 onClick={() => setMobileMenuOpen(false)}
                 aria-label="Close navigation menu"
-                className="min-h-10 min-w-10 flex items-center justify-center rounded-control bg-bg text-muted hover:text-fg border border-line transition-colors"
+                className="min-h-10 min-w-10 flex items-center justify-center rounded-control bg-bg text-muted border border-line transition-[background-color,border-color,color,transform] duration-150 hover:bg-panel-hover hover:border-accent/30 hover:text-fg active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
               >
                 <X size={18} />
               </button>
@@ -575,9 +519,6 @@ export const AdminLayout: React.FC = () => {
                             : 'text-muted hover:text-fg hover:bg-panel-hover'
                         }`}
                       >
-                        {active && (
-                          <span className="absolute left-0 top-2 bottom-2 w-[3px] bg-accent rounded-r-full" />
-                        )}
                         <div className="flex items-center gap-3 min-w-0">
                           <Icon size={17} className={active ? 'text-accent-text shrink-0' : 'text-muted shrink-0'} />
                           <span className="truncate">{item.label}</span>
@@ -630,7 +571,7 @@ export const AdminLayout: React.FC = () => {
               <button
                 onClick={handleLogout}
                 aria-label="Logout"
-                className="px-3 py-2 min-h-[40px] rounded-control bg-panel hover:bg-bg border border-line hover:border-accent/30 text-muted hover:text-fg text-xs font-sans flex items-center gap-1.5 shrink-0 transition-all"
+                className="px-3 py-2 min-h-[40px] rounded-control bg-panel border border-line text-muted text-xs font-sans flex items-center gap-1.5 shrink-0 transition-[background-color,border-color,color,transform] duration-150 hover:bg-panel-hover hover:border-danger/30 hover:text-danger active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-danger"
               >
                 <LogOut size={14} />
                 <span>{t('admin.nav.logout')}</span>
