@@ -220,7 +220,7 @@ export const AdminCmsProjects: React.FC = () => {
     <div className="space-y-6">
       
       {/* Top Title & Actions */}
-      <div className="ams-page-header lex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="ams-page-header flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="ams-page-title">
             <FolderKanban className="text-[var(--danger)]" size={24} />
