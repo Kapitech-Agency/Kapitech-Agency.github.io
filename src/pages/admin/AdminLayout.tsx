@@ -73,21 +73,57 @@ export const AdminLayout: React.FC = () => {
     setMobileMenuOpen(false);
   }, [location.pathname]);
 
-  // Mobile navigation is a true drawer: lock the page behind it and allow Escape to close it.
+  // Mobile navigation is a true drawer: lock the page, trap keyboard focus, and restore focus on close.
   useEffect(() => {
     if (!mobileMenuOpen) return;
 
     const previousOverflow = document.body.style.overflow;
+    const previousActiveElement = document.activeElement as HTMLElement | null;
     document.body.style.overflow = 'hidden';
 
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setMobileMenuOpen(false);
+    const getFocusable = () => {
+      const drawer = document.querySelector<HTMLElement>('.ams-mobile-drawer > .relative');
+      if (!drawer) return [];
+      return Array.from(drawer.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      )).filter((element) => element.getClientRects().length > 0);
     };
 
+    const focusFirstControl = () => {
+      const closeButton = document.querySelector<HTMLElement>('.ams-mobile-drawer button[aria-label="Close navigation menu"]');
+      (closeButton || getFocusable()[0])?.focus();
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        setMobileMenuOpen(false);
+        return;
+      }
+
+      if (event.key !== 'Tab') return;
+      const focusable = getFocusable();
+      if (!focusable.length) return;
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    const frame = window.requestAnimationFrame(focusFirstControl);
     document.addEventListener('keydown', handleKeyDown);
     return () => {
+      window.cancelAnimationFrame(frame);
       document.body.style.overflow = previousOverflow;
       document.removeEventListener('keydown', handleKeyDown);
+      if (previousActiveElement?.isConnected) previousActiveElement.focus();
     };
   }, [mobileMenuOpen]);
 
