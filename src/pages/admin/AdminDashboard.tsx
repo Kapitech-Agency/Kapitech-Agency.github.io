@@ -527,10 +527,10 @@ export const AdminDashboard: React.FC = () => {
       <div className="ams-kpi-grid grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
         
         {/* Metric Card 1: Gross Realized Revenue */}
-        <div className="p-4 sm:p-5 rounded-card bg-[var(--panel)] border border-line flex flex-col justify-between group transition-colors duration-150 min-w-0">
+        <div className="p-0 flex flex-col justify-between min-w-0">
           <div>
             <div className="flex items-center justify-between text-[var(--muted)] mb-3">
-              <span className="text-[11px] font-sans normal-case tracking-normal font-semibold">
+              <span className="text-xs font-sans normal-case tracking-normal font-medium">
                 {language === 'id' ? 'Total Pendapatan Realisasi' : 'Gross Realized Revenue'}
               </span>
               <div className="w-8 h-8 rounded-control bg-[var(--success)]/10 border border-[var(--success)]/20 text-[var(--success)] flex items-center justify-center">
@@ -538,7 +538,7 @@ export const AdminDashboard: React.FC = () => {
               </div>
             </div>
             
-            <div className="text-2xl lg:text-[28px] font-sans font-semibold text-[var(--text)] tracking-tight leading-none">
+            <div className="text-2xl font-sans font-medium text-[var(--text)] leading-8 tabular-nums">
               {formatCurrency(finMetrics.totalPaidRevenue, currency)}
             </div>
 
@@ -565,10 +565,10 @@ export const AdminDashboard: React.FC = () => {
         </div>
 
         {/* Metric Card 2: Active CRM Deals & Pipeline */}
-        <div className="p-4 sm:p-5 rounded-card bg-[var(--panel)] border border-line flex flex-col justify-between group transition-colors duration-150 min-w-0">
+        <div className="p-0 flex flex-col justify-between min-w-0">
           <div>
             <div className="flex items-center justify-between text-[var(--muted)] mb-3">
-              <span className="text-[11px] font-sans normal-case tracking-normal font-semibold">
+              <span className="text-xs font-sans normal-case tracking-normal font-medium">
                 {language === 'id' ? 'Pipeline Deal Aktif' : 'Active CRM Pipeline'}
               </span>
               <div className="w-8 h-8 rounded-control bg-[var(--accent)]/10 border border-[var(--accent)]/25 text-[var(--danger)] flex items-center justify-center">
@@ -576,7 +576,7 @@ export const AdminDashboard: React.FC = () => {
               </div>
             </div>
 
-            <div className="text-2xl lg:text-[28px] font-sans font-semibold text-[var(--text)] tracking-tight leading-none">
+            <div className="text-2xl font-sans font-medium text-[var(--text)] leading-8 tabular-nums">
               {formatCurrency(pipelineMetrics.totalPipelineValue, currency)}
             </div>
 
@@ -601,18 +601,18 @@ export const AdminDashboard: React.FC = () => {
         </div>
 
         {/* Metric Card 3: Conversion & Win Rate */}
-        <div className="p-4 sm:p-5 rounded-card bg-[var(--panel)] border border-line flex flex-col justify-between group transition-colors duration-150 min-w-0">
+        <div className="p-0 flex flex-col justify-between min-w-0">
           <div>
             <div className="flex items-center justify-between text-[var(--muted)] mb-3">
-              <span className="text-[11px] font-sans normal-case tracking-normal font-semibold">
+              <span className="text-xs font-sans normal-case tracking-normal font-medium">
                 {language === 'id' ? 'Rasio Konversi & Kemenangan' : 'Conversion & Win Rate'}
               </span>
-              <div className="w-8 h-8 rounded-control bg-violet-500/10 border border-violet-500/20 text-[var(--accent-text)] flex items-center justify-center">
+              <div className="w-8 h-8 rounded-control bg-[var(--accent)]/10 border border-[var(--accent)]/20 text-[var(--accent-text)] flex items-center justify-center">
                 <Percent size={15} />
               </div>
             </div>
 
-            <div className="text-2xl lg:text-[28px] font-sans font-semibold text-[var(--text)] tracking-tight leading-none">
+            <div className="text-2xl font-sans font-medium text-[var(--text)] leading-8 tabular-nums">
               {pipelineMetrics.conversionRate}%
             </div>
 
@@ -636,10 +636,10 @@ export const AdminDashboard: React.FC = () => {
         </div>
 
         {/* Metric Card 4: Active Client Projects & Delivery Progress */}
-        <div className="p-4 sm:p-5 rounded-card bg-[var(--panel)] border border-line flex flex-col justify-between group transition-colors duration-150 min-w-0">
+        <div className="p-0 flex flex-col justify-between min-w-0">
           <div>
             <div className="flex items-center justify-between text-[var(--muted)] mb-3">
-              <span className="text-[11px] font-sans normal-case tracking-normal font-semibold">
+              <span className="text-xs font-sans normal-case tracking-normal font-medium">
                 {language === 'id' ? 'Proyek Aktif & Progress Delivery' : 'Active Projects & Delivery Progress'}
               </span>
               <div className="w-8 h-8 rounded-control bg-[var(--info)]/10 border border-[var(--info)]/20 text-[var(--muted)] flex items-center justify-center">
@@ -647,7 +647,7 @@ export const AdminDashboard: React.FC = () => {
               </div>
             </div>
 
-            <div className="text-2xl lg:text-[28px] font-sans font-semibold text-[var(--text)] tracking-tight leading-none">
+            <div className="text-2xl font-sans font-medium text-[var(--text)] leading-8 tabular-nums">
               {projectMetrics.total} {language === 'id' ? 'Sprint' : 'Sprints'}
             </div>
 
