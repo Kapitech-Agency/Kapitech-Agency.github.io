@@ -942,7 +942,7 @@ export const AdminProposals: React.FC = () => {
                         setPreviewProposal(null);
                       }}
                       disabled={!canApproveBudgets}
-                      className="px-3 py-1.5 rounded-control bg-[var(--info)]/10 text-[var(--info)] border border-[var(--info)]/30 min-h-10 px-3 rounded-control text-xs font-sans font-semibold"
+                      className="px-3 py-1.5 rounded-control bg-[var(--info)]/10 text-[var(--info)] border border-[var(--info)]/30 min-h-10 text-xs font-sans font-semibold"
                     >
                       Approve Proposal
                     </button>
@@ -953,7 +953,7 @@ export const AdminProposals: React.FC = () => {
                         handleConvertToInvoice(previewProposal.id);
                         setPreviewProposal(null);
                       }}
-                      className="px-3 py-1.5 rounded-control bg-[var(--success)] text-[var(--text)] font-medium min-h-10 px-3 rounded-control text-xs font-sans"
+                      className="px-3 py-1.5 rounded-control bg-[var(--success)] text-[var(--text)] font-medium min-h-10 text-xs font-sans"
                     >
                       Convert to Invoice
                     </button>
