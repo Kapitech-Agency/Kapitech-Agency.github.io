@@ -414,7 +414,7 @@ export const AdminSettings: React.FC = () => {
       <div className="flex items-center gap-2 border-b border-[var(--line)] pb-2 overflow-x-auto custom-scrollbar">
         <button
           onClick={() => handleTabChange('profile')}
-          className={`px-4 py-2.5 rounded-card text-xs font-sans transition-all flex items-center gap-2 shrink-0 min-h-10 ${
+          className={`px-4 py-2.5 rounded-control text-xs font-sans transition-all flex items-center gap-2 shrink-0 min-h-10 ${
             activeTab === 'profile'
               ? 'bg-[var(--accent)] text-white font-semibold '
               : 'text-[var(--muted)] hover:text-[var(--text)] hover:bg-[var(--panel)]'
@@ -426,7 +426,7 @@ export const AdminSettings: React.FC = () => {
 
         <button
           onClick={() => handleTabChange('branding')}
-          className={`px-4 py-2.5 rounded-card text-xs font-sans transition-all flex items-center gap-2 shrink-0 min-h-10 ${
+          className={`px-4 py-2.5 rounded-control text-xs font-sans transition-all flex items-center gap-2 shrink-0 min-h-10 ${
             activeTab === 'branding'
               ? 'bg-[var(--accent)] text-white font-semibold '
               : 'text-[var(--muted)] hover:text-[var(--text)] hover:bg-[var(--panel)]'
@@ -439,7 +439,7 @@ export const AdminSettings: React.FC = () => {
         <button
           onClick={() => handleTabChange('rbac')}
            disabled={!canManageAdminAccounts}
-          className={`px-4 py-2.5 rounded-card text-xs font-sans transition-all flex items-center gap-2 shrink-0 min-h-10 ${
+          className={`px-4 py-2.5 rounded-control text-xs font-sans transition-all flex items-center gap-2 shrink-0 min-h-10 ${
             activeTab === 'rbac'
               ? 'bg-[var(--accent)] text-white font-semibold '
               : 'text-[var(--muted)] hover:text-[var(--text)] hover:bg-[var(--panel)]'
@@ -451,7 +451,7 @@ export const AdminSettings: React.FC = () => {
 
         <button
           onClick={() => handleTabChange('security')}
-          className={`px-4 py-2.5 rounded-card text-xs font-sans transition-all flex items-center gap-2 shrink-0 min-h-10 ${
+          className={`px-4 py-2.5 rounded-control text-xs font-sans transition-all flex items-center gap-2 shrink-0 min-h-10 ${
             activeTab === 'security'
               ? 'bg-[var(--accent)] text-white font-semibold '
               : 'text-[var(--muted)] hover:text-[var(--text)] hover:bg-[var(--panel)]'
@@ -464,7 +464,7 @@ export const AdminSettings: React.FC = () => {
         <button
           onClick={() => handleTabChange('api')}
            disabled={!canAccessServer}
-          className={`px-4 py-2.5 rounded-card text-xs font-sans transition-all flex items-center gap-2 shrink-0 min-h-10 ${
+          className={`px-4 py-2.5 rounded-control text-xs font-sans transition-all flex items-center gap-2 shrink-0 min-h-10 ${
             activeTab === 'api'
               ? 'bg-[var(--accent)] text-white font-semibold '
               : 'text-[var(--muted)] hover:text-[var(--text)] hover:bg-[var(--panel)]'
@@ -477,7 +477,7 @@ export const AdminSettings: React.FC = () => {
         <button
           onClick={() => handleTabChange('audit')}
            disabled={!canViewAuditLogs}
-          className={`px-4 py-2.5 rounded-card text-xs font-sans transition-all flex items-center gap-2 shrink-0 min-h-10 ${
+          className={`px-4 py-2.5 rounded-control text-xs font-sans transition-all flex items-center gap-2 shrink-0 min-h-10 ${
             activeTab === 'audit'
               ? 'bg-[var(--accent)] text-white font-semibold '
               : 'text-[var(--muted)] hover:text-[var(--text)] hover:bg-[var(--panel)]'
@@ -529,7 +529,7 @@ export const AdminSettings: React.FC = () => {
                   required
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-card text-xs text-[var(--text)] focus:outline-none focus:border-[var(--accent)] font-sans min-h-10"
+                  className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-control text-xs text-[var(--text)] focus:outline-none focus:border-[var(--accent)] font-sans min-h-10"
                 />
               </div>
 
@@ -542,7 +542,7 @@ export const AdminSettings: React.FC = () => {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-card text-xs text-[var(--text)] focus:outline-none focus:border-[var(--accent)] font-sans min-h-10"
+                  className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-control text-xs text-[var(--text)] focus:outline-none focus:border-[var(--accent)] font-sans min-h-10"
                 />
               </div>
             </div>
@@ -572,7 +572,7 @@ export const AdminSettings: React.FC = () => {
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
                 placeholder={language === 'id' ? 'Masukkan password admin saat ini...' : 'Enter your current password...'}
-                className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-card text-xs text-[var(--text)] focus:outline-none focus:border-[var(--accent)] font-sans min-h-10"
+                className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-control text-xs text-[var(--text)] focus:outline-none focus:border-[var(--accent)] font-sans min-h-10"
               />
             </div>
 
@@ -626,7 +626,7 @@ export const AdminSettings: React.FC = () => {
                   type="text"
                   value={metaSettings.agencyName}
                   onChange={(e) => setMetaSettings({ ...metaSettings, agencyName: e.target.value })}
-                  className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-card text-xs text-[var(--text)] focus:outline-none focus:border-[var(--accent)] font-sans min-h-10"
+                  className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-control text-xs text-[var(--text)] focus:outline-none focus:border-[var(--accent)] font-sans min-h-10"
                 />
               </div>
 
@@ -638,7 +638,7 @@ export const AdminSettings: React.FC = () => {
                   type="text"
                   value="https://kapitech.id"
                   disabled
-                  className="w-full px-3.5 py-2.5 bg-[var(--panel)]/50 border border-[var(--line)] rounded-card text-xs text-[var(--muted)] font-sans cursor-not-allowed min-h-10"
+                  className="w-full px-3.5 py-2.5 bg-[var(--panel)]/50 border border-[var(--line)] rounded-control text-xs text-[var(--muted)] font-sans cursor-not-allowed min-h-10"
                 />
               </div>
             </div>
@@ -651,7 +651,7 @@ export const AdminSettings: React.FC = () => {
                 type="text"
                 value={metaSettings.tagline}
                 onChange={(e) => setMetaSettings({ ...metaSettings, tagline: e.target.value })}
-                className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-card text-xs text-[var(--text)] focus:outline-none focus:border-[var(--accent)] font-sans min-h-10"
+                className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-control text-xs text-[var(--text)] focus:outline-none focus:border-[var(--accent)] font-sans min-h-10"
               />
             </div>
 
@@ -663,7 +663,7 @@ export const AdminSettings: React.FC = () => {
                 rows={3}
                 value={metaSettings.metaDescription}
                 onChange={(e) => setMetaSettings({ ...metaSettings, metaDescription: e.target.value })}
-                className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-card text-xs text-[var(--text)] focus:outline-none focus:border-[var(--accent)] font-sans"
+                className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-control text-xs text-[var(--text)] focus:outline-none focus:border-[var(--accent)] font-sans"
               />
             </div>
 
@@ -1347,7 +1347,7 @@ export const AdminSettings: React.FC = () => {
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-card text-xs text-[var(--text)] focus:outline-none focus:border-[var(--accent)] font-sans min-h-10"
+                    className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-control text-xs text-[var(--text)] focus:outline-none focus:border-[var(--accent)] font-sans min-h-10"
                   />
                 </div>
 
@@ -1360,7 +1360,7 @@ export const AdminSettings: React.FC = () => {
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-card text-xs text-[var(--text)] focus:outline-none focus:border-[var(--accent)] font-sans min-h-10"
+                    className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-control text-xs text-[var(--text)] focus:outline-none focus:border-[var(--accent)] font-sans min-h-10"
                   />
                 </div>
               </div>
@@ -1375,7 +1375,7 @@ export const AdminSettings: React.FC = () => {
                   value={currentPassword}
                   onChange={(e) => setCurrentPassword(e.target.value)}
                   placeholder={language === 'id' ? 'Masukkan password admin saat ini...' : 'Enter your current admin password...'}
-                  className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-card text-xs text-[var(--text)] focus:outline-none focus:border-[var(--accent)] font-sans min-h-10"
+                  className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-control text-xs text-[var(--text)] focus:outline-none focus:border-[var(--accent)] font-sans min-h-10"
                 />
               </div>
 
