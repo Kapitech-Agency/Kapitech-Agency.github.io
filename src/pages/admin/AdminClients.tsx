@@ -713,9 +713,9 @@ export const AdminClients: React.FC = () => {
                     onChange={(val) => setClientStatus(val as any)}
                     options={[
                       { value: 'active', label: 'Active', badge: 'Active', badgeColor: 'bg-[var(--success)]/10 text-[var(--success)] border border-[var(--success)]/20' },
-                      { value: 'completed', label: 'Completed', badge: 'Completed', badgeColor: 'bg-[var(--info)]/10 text-[var(--info)] border border-blue-500/20' },
+                      { value: 'completed', label: 'Completed', badge: 'Completed', badgeColor: 'bg-[var(--info)]/10 text-[var(--info)] border border-[var(--info)]/20' },
                       { value: 'lead', label: 'Lead', badge: 'Lead', badgeColor: 'bg-[var(--warning)]/10 text-[var(--warning)] border border-[var(--warning)]/20' },
-                      { value: 'inactive', label: 'Inactive', badge: 'Inactive', badgeColor: 'bg-slate-500/10 text-slate-400 border border-slate-500/20' }
+                      { value: 'inactive', label: 'Inactive', badge: 'Inactive', badgeColor: 'bg-[var(--panel)] text-[var(--muted)] border border-[var(--line)]' }
                     ]}
                     className="w-full"
                     triggerClassName="w-full justify-between"
