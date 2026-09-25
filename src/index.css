@@ -824,8 +824,14 @@
 @media (prefers-reduced-motion: reduce) {
   .ams-shell .ams-sidebar-toggle,
   .ams-shell .ams-sidebar-toggle svg,
-  .ams-shell a,
-  .ams-shell button { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
+  .ams-shell .ams-sidebar-expanded a,
+  .ams-shell .ams-sidebar-collapsed a,
+  .ams-shell .ams-mobile-drawer a,
+  .ams-shell .ams-mobile-drawer button {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
 }
 
 /* Keep semantic status colors separate from the crimson brand accent. */
