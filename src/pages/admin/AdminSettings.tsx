@@ -385,7 +385,7 @@ export const AdminSettings: React.FC = () => {
     <div className="space-y-6">
       
       {/* Top Header */}
-      <div className="ams-page-header lex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="ams-page-header flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h1 className="ams-page-title">
             <Settings className="text-[var(--accent)]" size={24} />
@@ -599,7 +599,7 @@ export const AdminSettings: React.FC = () => {
           </div>
 
           {metaStatus && (
-            <div className="mb-6 p-4 rounded-card text-xs font-sans flex items-start gap-2.5 bg-[var(--success)]/10/40 border border-[var(--success)]/30 text-emerald-300">
+            <div className="mb-6 p-4 rounded-card text-xs font-sans flex items-start gap-2.5 bg-[var(--success)]/10 border border-[var(--success)]/30 text-emerald-300">
               <Check size={16} className="shrink-0 mt-0.5" />
               <span>{metaStatus}</span>
             </div>
@@ -706,7 +706,7 @@ export const AdminSettings: React.FC = () => {
           {accountActionMessage && (
             <div className={`p-4 rounded-card border flex items-center gap-3 text-xs font-sans animate-fadeIn ${
               accountActionMessage.success
-                ? 'bg-[var(--success)]/10/40 border-[var(--success)]/30 text-emerald-300'
+                ? 'bg-[var(--success)]/10 border-[var(--success)]/30 text-emerald-300'
                 : 'bg-[var(--danger)]/10 border-[var(--danger)]/30 text-red-300'
             }`}>
               {accountActionMessage.success ? <Check size={16} className="shrink-0 text-[var(--success)]" /> : <AlertCircle size={16} className="shrink-0 text-[var(--danger)]" />}
@@ -803,7 +803,7 @@ export const AdminSettings: React.FC = () => {
                       {/* Permissions Summary Badges */}
                       <div className="mt-3 pt-3 border-t border-[var(--line)] flex flex-wrap gap-1">
                         {acc.permissions?.canManageInvoicing && (
-                          <span className="text-[9px] font-sans px-1.5 py-0.5 bg-[var(--success)]/10/40 text-emerald-300 border border-emerald-800/40 rounded">
+                          <span className="text-[9px] font-sans px-1.5 py-0.5 bg-[var(--success)]/10 text-emerald-300 border border-emerald-800/40 rounded">
                             Invoice
                           </span>
                         )}
@@ -1412,7 +1412,7 @@ export const AdminSettings: React.FC = () => {
           </div>
 
           {apiSaveStatus && (
-            <div className="p-4 rounded-card text-xs font-sans flex items-start gap-2.5 bg-[var(--success)]/10/40 border border-[var(--success)]/30 text-emerald-300">
+            <div className="p-4 rounded-card text-xs font-sans flex items-start gap-2.5 bg-[var(--success)]/10 border border-[var(--success)]/30 text-emerald-300">
               <Check size={16} className="shrink-0 mt-0.5" />
               <span>{apiSaveStatus}</span>
             </div>
