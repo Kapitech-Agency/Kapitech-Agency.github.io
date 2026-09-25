@@ -51,7 +51,7 @@ export const AdminNotificationCenter: React.FC = () => {
       <button
         type="button"
         onClick={() => setOpen(v => !v)}
-        className="relative min-h-10 min-w-10 rounded-control border border-line bg-panel text-muted hover:text-fg hover:border-line transition-colors flex items-center justify-center"
+        className="relative h-9 w-9 sm:h-9 sm:w-9 rounded-control border border-line bg-panel text-muted hover:text-fg hover:border-muted transition-colors flex items-center justify-center"
         aria-label={language === 'id' ? 'Notifikasi' : 'Notifications'}
         aria-expanded={open}
       >
@@ -62,8 +62,8 @@ export const AdminNotificationCenter: React.FC = () => {
       {open && (
         <>
           <button aria-label="Close notifications" className="fixed inset-0 z-40 cursor-default" onClick={() => setOpen(false)} />
-          <div className="absolute right-0 top-11 z-50 w-[min(380px,calc(100vw-24px))] overflow-hidden rounded-card border border-line bg-panel shadow-none">
-            <div className="flex items-center justify-between border-b border-line px-4 py-3">
+          <div className="absolute right-0 top-[44px] z-50 w-[min(380px,calc(100vw-24px))] overflow-hidden rounded-card border border-line bg-panel shadow-none">
+            <div className="flex min-h-14 items-center justify-between border-b border-line px-4">
               <div>
                 <p className="text-[13px] font-semibold text-[var(--text)]">{language === 'id' ? 'Notifikasi' : 'Notifications'}</p>
                 <p className="mt-0.5 text-[11px] text-muted">{unread} {language === 'id' ? 'belum dibaca' : 'unread'}</p>
