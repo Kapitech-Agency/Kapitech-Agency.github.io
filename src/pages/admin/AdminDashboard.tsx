@@ -731,7 +731,7 @@ export const AdminDashboard: React.FC = () => {
                 <div
                   key={proj.id}
                   onClick={() => navigate('/admin/projects')}
-                  className="p-4 rounded-card bg-[var(--panel)] border border-[var(--line)]  transition-all cursor-pointer group flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+                  className="ams-dashboard-card cursor-pointer transition-colors group flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4"
                 >
                   <div className="space-y-1">
                     <div className="flex items-center gap-2 flex-wrap">
