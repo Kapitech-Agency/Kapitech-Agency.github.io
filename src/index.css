@@ -1429,8 +1429,6 @@
 .ams-shell .text-muted { color: var(--muted); }
 .ams-shell .border-line { border-color: var(--line); }
 
-.ams-shell .hover\\:bg-panel-hover:hover,
-.ams-shell .hover\\:bg-bg:hover { background-color: var(--panel-hover); }
 
 .ams-shell main {
   background: var(--bg);
