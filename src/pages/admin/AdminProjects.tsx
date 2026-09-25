@@ -497,7 +497,14 @@ export const AdminProjects: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <>
+      <Modal open={!!deleteTarget} onClose={() => setDeleteTarget(null)} size="sm" title={language === "id" ? "Hapus proyek?" : "Delete project?"} description={language === "id" ? `Proyek ${deleteTarget?.name || ""} beserta task board akan dihapus.` : `Project ${deleteTarget?.name || ""} and its task board will be removed.`}>
+        <div className="flex flex-col-reverse sm:flex-row justify-end gap-2">
+          <button type="button" onClick={() => setDeleteTarget(null)} className="min-h-10 px-4 rounded-control border border-[var(--line)] bg-[var(--panel)] text-xs text-[var(--muted)]">Cancel</button>
+          <button type="button" onClick={() => deleteTarget && void confirmDeleteProject(deleteTarget.id)} className="min-h-10 px-4 rounded-control bg-[var(--danger)] text-white text-xs font-semibold">Delete</button>
+        </div>
+      </Modal>
+      <div className="space-y-6">
       
       {/* 1. Header & Project Actions */}
       <div className="ams-dashboard-header">
