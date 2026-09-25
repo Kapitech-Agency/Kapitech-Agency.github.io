@@ -37,27 +37,34 @@ export const DropdownPortal: React.FC<DropdownPortalProps> = ({
       const below = window.innerHeight - rect.bottom;
       const above = rect.top;
       const openUp = below < menuRect.height + offset && above > below;
+
       const top = openUp
         ? Math.max(viewportPadding, rect.top - menuRect.height - offset)
-        : Math.min(window.innerHeight - menuRect.height - viewportPadding, rect.bottom + offset);
+        : Math.min(
+            window.innerHeight - menuRect.height - viewportPadding,
+            rect.bottom + offset
+          );
 
       let left = align === 'right' ? rect.right - menuRect.width : rect.left;
-      left = Math.max(viewportPadding, Math.min(left, window.innerWidth - menuRect.width - viewportPadding));
+      left = Math.max(
+        viewportPadding,
+        Math.min(left, window.innerWidth - menuRect.width - viewportPadding)
+      );
 
       setStyle({
         position: 'fixed',
         top,
         left,
-        minWidth: Math.min(rect.width, window.innerWidth - viewportPadding * 2),
         maxWidth: window.innerWidth - viewportPadding * 2,
-        zIndex: 120,
         visibility: 'visible'
       });
     };
 
     const handlePointerDown = (event: PointerEvent) => {
       const target = event.target as Node;
-      if (!anchorRef.current?.contains(target) && !menuRef.current?.contains(target)) onClose();
+      if (!anchorRef.current?.contains(target) && !menuRef.current?.contains(target)) {
+        onClose();
+      }
     };
 
     const handleKeyDown = (event: KeyboardEvent) => {
