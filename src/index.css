@@ -1953,6 +1953,54 @@
     padding-bottom: max(24px, env(safe-area-inset-bottom));
   }
 }
+/* AMS DASHBOARD CARD SYSTEM
+   Dashboard cards use the same surface geometry as the design system:
+   panel surface, 1px line, 12px radius, 16px padding, no shadow/glass. */
+.ams-shell .ams-dashboard-card {
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.ams-shell .ams-dashboard-card:hover {
+  box-shadow: none;
+}
+
+.ams-shell .ams-dashboard-card .border-t,
+.ams-shell .ams-dashboard-card .border-b {
+  border-color: var(--line);
+}
+
+.ams-shell .ams-dashboard-card .text-2xl {
+  font-size: 24px;
+  line-height: 32px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.ams-shell .ams-dashboard-card .text-base {
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 600;
+}
+
+@media (max-width: 599px) {
+  .ams-shell .ams-dashboard-card {
+    border-radius: 12px;
+    padding: 14px;
+  }
+
+  .ams-shell .ams-dashboard-card .text-2xl {
+    font-size: 22px;
+    line-height: 28px;
+  }
+}
+
 /* AMS SIDEBAR GEOMETRY FIX */
 .ams-shell > aside.ams-sidebar-expanded {
   width: 220px !important;
