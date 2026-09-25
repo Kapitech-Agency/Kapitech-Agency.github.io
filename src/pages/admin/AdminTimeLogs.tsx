@@ -114,7 +114,7 @@ export const AdminTimeLogs: React.FC = () => {
               <p className="mt-1 text-[13px] leading-[18px] text-[var(--muted)]">Track project time and billable work.</p>
             </div>
           </div>
-          <button onClick={() => void load()} className="inline-flex items-center justify-center gap-2 h-10 px-4 rounded-control border border-[var(--line)] bg-[var(--panel)] text-sm text-[var(--text)] hover:bg-[var(--panel)] transition-colors">
+          <button onClick={() => void load()} className="inline-flex items-center justify-center gap-2 h-10 min-h-10 px-4 rounded-control border border-[var(--line)] bg-[var(--panel)] text-sm text-[var(--text)] hover:bg-[var(--panel)] transition-colors self-stretch sm:self-auto">
             <RefreshCw size={14} /> Refresh
           </button>
         </header>
@@ -187,7 +187,7 @@ export const AdminTimeLogs: React.FC = () => {
         {status && <div className="rounded-card border border-[var(--line)] bg-[var(--panel)] px-4 py-3 text-xs text-[var(--text)]">{status}</div>}
 
         <section className="rounded-card border border-[var(--line)] bg-[var(--panel)] overflow-hidden">
-          <div className="px-4 sm:px-5 py-4 border-b border-[var(--line)] flex items-center justify-between">
+          <div className="px-4 sm:px-5 py-4 border-b border-[var(--line)] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5">
             <div>
               <h2 className="text-sm font-semibold">Recent entries</h2>
               <p className="text-xs text-[var(--muted)] mt-1">{loading ? 'Loading…' : `${logs.length} entries`}</p>
