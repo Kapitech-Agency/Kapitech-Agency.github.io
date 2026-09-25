@@ -1066,7 +1066,7 @@ export const AdminSettings: React.FC = () => {
                     value={newAccName}
                     onChange={(e) => setNewAccName(e.target.value)}
                     placeholder="Contoh: Alexander Hartanto"
-                    className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-card text-sm text-[var(--text)] font-sans focus:outline-none focus:border-[var(--accent)] transition-all"
+                    className="w-full min-h-10 px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-control text-sm text-[var(--text)] font-sans focus:outline-none focus:border-[var(--accent)] transition-all"
                   />
                 </div>
 
@@ -1080,7 +1080,7 @@ export const AdminSettings: React.FC = () => {
                     value={newAccUsername}
                     onChange={(e) => setNewAccUsername(e.target.value)}
                     placeholder="Contoh: exec.alex"
-                    className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-card text-sm text-[var(--text)] font-sans focus:outline-none focus:border-[var(--accent)] transition-all"
+                    className="w-full min-h-10 px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-control text-sm text-[var(--text)] font-sans focus:outline-none focus:border-[var(--accent)] transition-all"
                   />
                 </div>
 
@@ -1094,7 +1094,7 @@ export const AdminSettings: React.FC = () => {
                     value={newAccEmail}
                     onChange={(e) => setNewAccEmail(e.target.value)}
                     placeholder="alex@kapitech.id"
-                    className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-card text-sm text-[var(--text)] font-sans focus:outline-none focus:border-[var(--accent)] transition-all"
+                    className="w-full min-h-10 px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-control text-sm text-[var(--text)] font-sans focus:outline-none focus:border-[var(--accent)] transition-all"
                   />
                 </div>
 
@@ -1108,7 +1108,7 @@ export const AdminSettings: React.FC = () => {
                     value={newAccPassword}
                     onChange={(e) => setNewAccPassword(e.target.value)}
                     placeholder="Minimal 6 karakter"
-                    className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-card text-sm text-[var(--text)] font-sans focus:outline-none focus:border-[var(--accent)] transition-all"
+                    className="w-full min-h-10 px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-control text-sm text-[var(--text)] font-sans focus:outline-none focus:border-[var(--accent)] transition-all"
                   />
                 </div>
               </div>
