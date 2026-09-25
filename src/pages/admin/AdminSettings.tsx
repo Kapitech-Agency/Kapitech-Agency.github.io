@@ -396,7 +396,7 @@ export const AdminSettings: React.FC = () => {
     <div className="space-y-6">
       
       {/* Top Header */}
-      <div className="ams-page-header flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="ams-page-header flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3">
         <div>
           <h1 className="ams-page-title">
             <Settings className="text-[var(--accent)]" size={24} />
@@ -727,7 +727,7 @@ export const AdminSettings: React.FC = () => {
 
           {/* Accounts Management Section */}
           <div className="bg-[var(--panel)] border border-[var(--line)] rounded-card p-5 sm:p-6 space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-5 border-b border-[var(--line)]">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 pb-5 border-b border-[var(--line)]">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-card bg-[var(--accent)]/10 border border-[var(--accent)]/30 flex items-center justify-center text-[var(--danger)] shrink-0">
                   <Users size={20} />
@@ -1292,7 +1292,7 @@ export const AdminSettings: React.FC = () => {
           </div>
 
           <div className="space-y-4">
-            <div className="p-4 bg-[var(--panel)] border border-[var(--line)] rounded-card flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="p-4 bg-[var(--panel)] border border-[var(--line)] rounded-card flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3">
               <div className="space-y-1">
                 <div className="text-[var(--text)] font-sans font-semibold flex items-center gap-2 text-xs">
                   <Smartphone size={15} className="text-[var(--success)] shrink-0" />
@@ -1495,7 +1495,7 @@ export const AdminSettings: React.FC = () => {
       {activeTab === 'audit' && canViewAuditLogs && (
         <div className="w-full bg-[var(--panel)] border border-[var(--line)] rounded-card p-5 sm:p-6">
           
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-[var(--line)]">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 mb-6 pb-4 border-b border-[var(--line)]">
             <div>
               <h2 className="text-base font-semibold font-sans text-[var(--text)] flex items-center gap-2">
                 <ShieldCheck size={18} className="text-[var(--accent)]" />
