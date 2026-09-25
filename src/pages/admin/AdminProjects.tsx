@@ -558,7 +558,7 @@ export const AdminProjects: React.FC = () => {
               >
                 <div className="flex items-center justify-between gap-2 mb-1.5 w-full">
                   <span className={`text-[9px] normal-case px-1.5 py-0.5 rounded font-semibold ${
-                    proj.status === 'completed' ? 'bg-emerald-500/20 text-emerald-400' :
+                    proj.status === 'completed' ? 'bg-[var(--success)]/10 text-[var(--success)]' :
                     proj.status === 'in_progress' ? 'bg-red-500/20 text-red-400' : 'bg-zinc-500/20 text-zinc-400'
                   }`}>
                     {proj.status}
@@ -615,7 +615,7 @@ export const AdminProjects: React.FC = () => {
                   href={selectedProject.liveStagingUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-3 py-1.5 rounded-card bg-[var(--panel)] hover:bg-[var(--panel)] border border-[var(--line)] text-xs font-sans text-emerald-400 hover:text-emerald-300 transition-colors flex items-center gap-1.5"
+                  className="px-3 py-1.5 rounded-card bg-[var(--panel)] hover:bg-[var(--panel)] border border-[var(--line)] text-xs font-sans text-[var(--success)] hover:text-[var(--success)] transition-colors flex items-center gap-1.5"
                 >
                   <ExternalLink size={13} />
                   <span>Staging</span>
@@ -661,7 +661,7 @@ export const AdminProjects: React.FC = () => {
 
             <div>
               <div className="text-[var(--muted)] mb-1 text-[11px]">{language === 'id' ? 'Total Nilai Kontrak' : 'Total Contract Budget'}</div>
-              <div className="font-semibold text-emerald-400 text-sm">
+              <div className="font-semibold text-[var(--success)] text-sm">
                 {formatAmount(selectedProject.budget, currency)}
               </div>
             </div>
@@ -703,17 +703,17 @@ export const AdminProjects: React.FC = () => {
                     onClick={() => handleToggleMilestone(ms.id)}
                     className={`p-2.5 rounded-card border text-xs font-sans flex items-start gap-2 cursor-pointer transition-all ${
                       ms.completed
-                        ? 'bg-emerald-950/20 border-emerald-500/30 text-emerald-300'
+                        ? 'bg-emerald-950/20 border-[var(--success)]/30 text-[var(--success)]'
                         : 'bg-[var(--panel)] border-[var(--line)] text-[var(--muted)] hover:text-[var(--text)]'
                     }`}
                   >
                     {ms.completed ? (
-                      <CheckCircle2 size={15} className="text-emerald-400 shrink-0 mt-0.5" />
+                      <CheckCircle2 size={15} className="text-[var(--success)] shrink-0 mt-0.5" />
                     ) : (
                       <Square size={15} className="text-[var(--muted)] shrink-0 mt-0.5" />
                     )}
                     <div className="min-w-0">
-                      <div className={`truncate font-semibold ${ms.completed ? 'line-through text-emerald-400/70' : 'text-[var(--text)]'}`}>
+                      <div className={`truncate font-semibold ${ms.completed ? 'line-through text-[var(--success)]/70' : 'text-[var(--text)]'}`}>
                         {ms.title}
                       </div>
                       <div className="text-[10px] text-[var(--muted)] mt-0.5">Due {ms.dueDate}</div>
@@ -984,7 +984,7 @@ export const AdminProjects: React.FC = () => {
                 <div>
                   <div className="text-[10px] text-[var(--muted)] normal-case font-semibold mb-1">Due Date</div>
                   <div className="text-[var(--text)] font-semibold flex items-center gap-1.5">
-                    <Calendar size={13} className="text-emerald-400" />
+                    <Calendar size={13} className="text-[var(--success)]" />
                     <span>{activeTaskDrawer.dueDate}</span>
                   </div>
                 </div>
@@ -1019,7 +1019,7 @@ export const AdminProjects: React.FC = () => {
                         className="flex items-center gap-2.5 text-left min-w-0 flex-1 cursor-pointer"
                       >
                         {st.completed ? (
-                          <CheckCircle2 size={16} className="text-emerald-400 shrink-0" />
+                          <CheckCircle2 size={16} className="text-[var(--success)] shrink-0" />
                         ) : (
                           <Square size={16} className="text-[var(--muted)] shrink-0" />
                         )}
@@ -1029,7 +1029,7 @@ export const AdminProjects: React.FC = () => {
                       </button>
                       <button
                         onClick={() => handleDeleteSubtaskInDrawer(st.id)}
-                        className="text-[var(--muted)] hover:text-rose-400 p-1"
+                        className="text-[var(--muted)] hover:text-[var(--danger)] p-1"
                       >
                         <Trash2 size={12} />
                       </button>
