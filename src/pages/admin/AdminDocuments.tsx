@@ -327,7 +327,7 @@ export const AdminDocuments: React.FC = () => {
                               <Download size={14} />
                             </a>
                           ) : (
-                            <span title={language === 'id' ? 'Tidak ada URL dokumen' : 'No document URL'} className="p-1.5 text-[#475569]">
+                            <span title={language === 'id' ? 'Tidak ada URL dokumen' : 'No document URL'} className="p-1.5 text-[var(--muted)]">
                               <Download size={14} />
                             </span>
                           )}
