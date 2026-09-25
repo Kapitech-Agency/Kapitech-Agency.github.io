@@ -2,6 +2,7 @@ import React, { FormEvent, useEffect, useMemo, useState } from 'react';
 import { Plus, Trash2, RefreshCw, CalendarDays, Timer, ReceiptText } from 'lucide-react';
 import { api } from '../../lib/apiClient';
 import { CustomSelect } from '../../components/ui/CustomSelect';
+import { Modal } from '../../components/ui/Modal';
 import { getAdminSession, hasAdminPermission } from '../../lib/adminAuth';
 
 
@@ -35,6 +36,7 @@ export const AdminTimeLogs: React.FC = () => {
   const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
   const [billable, setBillable] = useState(true);
   const [notes, setNotes] = useState('');
+  const [deleteTarget, setDeleteTarget] = useState<TimeLog | null>(null);
 
   const load = async () => {
     setLoading(true);
@@ -92,10 +94,14 @@ export const AdminTimeLogs: React.FC = () => {
 
   const remove = async (log: TimeLog) => {
     if (!canManage || (!canDeleteAll && log.userId !== getAdminSession()?.user?.id)) return;
-    if (!window.confirm('Delete this time entry?')) return;
+    setDeleteTarget(log);
+  };
+
+  const confirmRemove = async (log: TimeLog) => {
     const res = await api.timeLogs.delete(log.id);
     if (res.success) setLogs(current => current.filter(item => item.id !== log.id));
     else setStatus(res.error || 'Time entry could not be deleted.');
+    setDeleteTarget(null);
   };
 
   return (
@@ -234,6 +240,18 @@ export const AdminTimeLogs: React.FC = () => {
           )}
         </section>
       </div>
+      <Modal open={!!deleteTarget} onClose={() => setDeleteTarget(null)} size="sm" title="Delete time entry" description="This removes the selected time entry from the time log.">
+        <div className="space-y-4">
+          <div className="rounded-control border border-[var(--line)] bg-[var(--bg)] p-3 text-xs text-[var(--muted)]">
+            <div className="font-semibold text-[var(--text)]">{deleteTarget?.projectName || 'General'}</div>
+            <div className="mt-1">{deleteTarget?.taskTitle || 'General activity'} · {deleteTarget ? formatMinutes(Number(deleteTarget.durationMinutes || 0)) : ''}</div>
+          </div>
+          <div className="flex flex-col-reverse sm:flex-row justify-end gap-2">
+            <button type="button" onClick={() => setDeleteTarget(null)} className="min-h-10 px-4 rounded-control border border-[var(--line)] bg-[var(--panel)] text-xs text-[var(--muted)]">Cancel</button>
+            <button type="button" onClick={() => deleteTarget && void confirmRemove(deleteTarget)} className="min-h-10 px-4 rounded-control bg-[var(--danger)] text-white text-xs font-semibold">Delete</button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 };
