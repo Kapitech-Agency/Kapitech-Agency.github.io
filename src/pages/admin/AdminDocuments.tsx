@@ -189,7 +189,7 @@ export const AdminDocuments: React.FC = () => {
             <FolderOpen className="text-[var(--accent)]" size={24} />
             <span>{language === 'id' ? 'Brankas Dokumen & Aset Agency' : 'Documents & Asset Vault'}</span>
           </h1>
-          <p className="text-xs font-sans text-[var(--ams-secondary)] mt-1">
+          <p className="text-xs font-sans text-[var(--muted)] mt-1">
             {language === 'id' 
               ? 'Arsip kontrak digital, NDA, proposal komersial, berkas kepatuhan pajak, dan deliverable proyek.' 
               : 'Digital contract repository, NDAs, commercial proposals, tax compliance, and project assets.'}
@@ -229,13 +229,13 @@ export const AdminDocuments: React.FC = () => {
       {/* Search and Filters */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-3 sm:p-4 rounded-card bg-[var(--panel)] border border-[var(--line)]">
         <div className="relative flex-1">
-          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--ams-secondary)]" />
+          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted)]" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={language === 'id' ? 'Cari judul file, tag, atau nomor kontrak...' : 'Search document title or references...'}
-            className="w-full min-h-10 sm:h-9 pl-8 pr-3 text-xs bg-[var(--panel)] text-[var(--text)] placeholder-[var(--ams-secondary)] rounded-control border border-[var(--line)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30 focus:border-[var(--accent)] font-sans"
+            className="w-full min-h-10 sm:h-9 pl-8 pr-3 text-xs bg-[var(--panel)] text-[var(--text)] placeholder-[var(--muted)] rounded-control border border-[var(--line)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30 focus:border-[var(--accent)] font-sans"
           />
         </div>
 
@@ -255,19 +255,19 @@ export const AdminDocuments: React.FC = () => {
       {/* Documents Grid / Table */}
       <div className="rounded-card bg-[var(--panel)] border border-[var(--line)] overflow-hidden">
         {isLoading ? (
-          <div className="p-12 text-center text-xs font-sans text-[var(--ams-secondary)] flex flex-col items-center justify-center gap-2">
+          <div className="p-12 text-center text-xs font-sans text-[var(--muted)] flex flex-col items-center justify-center gap-2">
             <Loader2 className="animate-spin text-[var(--accent)]" size={20} />
             <span>Loading document vault...</span>
           </div>
         ) : filteredDocs.length === 0 ? (
-          <div className="p-12 text-center text-xs font-sans text-[var(--ams-secondary)]">
+          <div className="p-12 text-center text-xs font-sans text-[var(--muted)]">
             {language === 'id' ? 'Belum ada dokumen di registri.' : 'No documents found in the registry.'}
           </div>
         ) : (
           <div className="ams-table-scroll overflow-x-auto">
             <table className="w-full text-left border-collapse min-w-[700px]">
               <thead>
-                <tr className="border-b border-[var(--line)] bg-[var(--ams-surface)]/50 text-xs font-sans text-[var(--ams-secondary)] normal-case">
+                <tr className="border-b border-[var(--line)] bg-[var(--ams-surface)]/50 text-xs font-sans text-[var(--muted)] normal-case">
                   <th className="py-3 px-4">Document Title</th>
                   <th className="py-3 px-4">Category</th>
                   <th className="py-3 px-4">Size</th>
@@ -293,7 +293,7 @@ export const AdminDocuments: React.FC = () => {
                           </div>
                           <div>
                             <div className="font-semibold text-[var(--text)]">{docTitle}</div>
-                            <div className="text-xs font-sans text-[var(--ams-secondary)]">{docType}</div>
+                            <div className="text-xs font-sans text-[var(--muted)]">{docType}</div>
                           </div>
                         </div>
                       </td>
@@ -302,7 +302,7 @@ export const AdminDocuments: React.FC = () => {
                           {doc.category}
                         </span>
                       </td>
-                      <td className="py-3 px-4 font-sans text-xs text-[var(--ams-secondary)]">
+                      <td className="py-3 px-4 font-sans text-xs text-[var(--muted)]">
                         {docSize}
                       </td>
                       <td className="py-3 px-4 font-sans text-xs text-[var(--text)]">
@@ -317,9 +317,9 @@ export const AdminDocuments: React.FC = () => {
                           {doc.status === 'ready' || doc.sourceType === 'external_link' ? 'ready' : 'pending'}
                         </span>
                       </td>
-                      <td className="py-3 px-4 font-sans text-xs text-[var(--ams-secondary)]">
+                      <td className="py-3 px-4 font-sans text-xs text-[var(--muted)]">
                         <div>{docDate}</div>
-                        <div className="text-xs text-[var(--ams-secondary)]/70">by {docOwner}</div>
+                        <div className="text-xs text-[var(--muted)]/70">by {docOwner}</div>
                       </td>
                       <td className="py-3 px-4 text-right">
                         <div className="flex items-center justify-end gap-1.5">
@@ -329,7 +329,7 @@ export const AdminDocuments: React.FC = () => {
                               target="_blank"
                               rel="noopener noreferrer"
                               title={language === 'id' ? 'Buka dokumen' : 'Open document'}
-                              className="min-h-10 min-w-10 p-2 rounded-control hover:bg-[var(--panel-hover)] text-[var(--ams-secondary)] hover:text-[var(--text)] transition-colors flex items-center justify-center"
+                              className="min-h-10 min-w-10 p-2 rounded-control hover:bg-[var(--panel-hover)] text-[var(--muted)] hover:text-[var(--text)] transition-colors flex items-center justify-center"
                             >
                               <Download size={14} />
                             </a>
@@ -374,7 +374,7 @@ export const AdminDocuments: React.FC = () => {
               </h3>
               <button
                 onClick={() => setIsUploadModalOpen(false)}
-                className="min-h-10 min-w-10 p-2 text-[var(--ams-secondary)] hover:text-[var(--text)] rounded-control hover:bg-[var(--panel-hover)] flex items-center justify-center"
+                className="min-h-10 min-w-10 p-2 text-[var(--muted)] hover:text-[var(--text)] rounded-control hover:bg-[var(--panel-hover)] flex items-center justify-center"
               >
                 <X size={16} />
               </button>
@@ -382,7 +382,7 @@ export const AdminDocuments: React.FC = () => {
 
             <form onSubmit={handleUploadSubmit} className="p-4 space-y-4 text-xs font-sans">
               <div className="space-y-1">
-                <label className="text-xs font-sans text-[var(--ams-secondary)]">Document Title *</label>
+                <label className="text-xs font-sans text-[var(--muted)]">Document Title *</label>
                 <input
                   type="text"
                   required
@@ -393,20 +393,20 @@ export const AdminDocuments: React.FC = () => {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="text-xs font-sans text-[var(--ams-secondary)]">Category</label>
+                  <label className="text-xs font-sans text-[var(--muted)]">Category</label>
                   <CustomSelect value={uploadCategory} onChange={setUploadCategory} options={['Contract','Proposal','Invoice','Deliverable','Compliance'].map(value => ({value,label:value}))} className="w-full" />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-sans text-[var(--ams-secondary)]">Related Entity</label>
+                  <label className="text-xs font-sans text-[var(--muted)]">Related Entity</label>
                   <CustomSelect value={uploadRelatedType} onChange={setUploadRelatedType} options={['General','Client','Deal','Project'].map(value => ({value,label:value}))} className="w-full" />
                 </div>
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-sans text-[var(--ams-secondary)]">{language === 'id' ? 'File Dokumen *' : 'Document File *'}</label>
+                <label className="text-xs font-sans text-[var(--muted)]">{language === 'id' ? 'File Dokumen *' : 'Document File *'}</label>
                 <input
                   type="file"
                   required
@@ -425,7 +425,7 @@ export const AdminDocuments: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsUploadModalOpen(false)}
-                  className="min-h-10 px-4 py-2 rounded-control bg-[var(--panel)] hover:bg-[var(--panel-hover)] border border-[var(--line)] text-[var(--ams-secondary)] text-xs font-sans"
+                  className="min-h-10 px-4 py-2 rounded-control bg-[var(--panel)] hover:bg-[var(--panel-hover)] border border-[var(--line)] text-[var(--muted)] text-xs font-sans"
                 >
                   Cancel
                 </button>
