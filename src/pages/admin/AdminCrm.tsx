@@ -883,7 +883,7 @@ export const AdminCrm: React.FC = () => {
           </div>
 
           {/* Desktop Table View */}
-          <div className="hidden md:block bg-[var(--panel)] border border-[var(--line)] rounded-card overflow-hidden -none">
+          <div className="hidden md:block bg-[var(--panel)] border border-[var(--line)] rounded-card overflow-hidden">
             <div className="ams-table-scroll overflow-x-auto">
               <table className="w-full text-left text-xs font-sans">
                 <thead className="bg-[var(--panel)] text-[var(--muted)] border-b border-[var(--line)] normal-case text-[10px] tracking-normal">
@@ -1002,7 +1002,7 @@ export const AdminCrm: React.FC = () => {
       {/* 5. CLIENT & DEAL PROFILE DRAWER */}
       {isDrawerOpen && selectedLead && (
         <div className="fixed inset-0 z-50 flex justify-end bg-black/80 ">
-          <div className="bg-[var(--panel)] border-l border-[var(--line)] w-full sm:max-w-xl h-full flex flex-col justify-between p-5 sm:p-7 overflow-y-auto -none animate-in slide-in-from-right duration-300 font-sans text-xs">
+          <div className="bg-[var(--panel)] border-l border-[var(--line)] w-full sm:max-w-xl h-full flex flex-col justify-between p-5 sm:p-7 overflow-y-auto animate-in slide-in-from-right duration-300 font-sans text-xs">
             
             <div className="space-y-6">
               {/* Drawer Top Header */}
@@ -1166,7 +1166,7 @@ export const AdminCrm: React.FC = () => {
               {selectedLead.stage === 'won' && (
                 <button
                   onClick={() => handleConvertToProject(selectedLead)}
-                  className="px-4 py-2 rounded-control bg-[var(--accent)] hover:brightness-110 text-white font-semibold text-xs flex items-center gap-1.5 -none min-h-10"
+                  className="px-4 py-2 rounded-control bg-[var(--accent)] hover:brightness-110 text-white font-semibold text-xs flex items-center gap-1.5 min-h-10"
                 >
                   <Layers size={13} />
                   <span>{t('admin.crm.convertToProject')}</span>
@@ -1181,7 +1181,7 @@ export const AdminCrm: React.FC = () => {
       {/* 6. CREATE / EDIT DEAL MODAL */}
       {isAddModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/80  flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-[var(--panel)] border border-[var(--line)] rounded-card w-full max-w-xl max-h-[calc(100dvh-24px)] overflow-y-auto p-6 -none">
+          <div className="bg-[var(--panel)] border border-[var(--line)] rounded-card w-full max-w-xl max-h-[calc(100dvh-24px)] overflow-y-auto p-6">
             <div className="flex items-center justify-between pb-4 mb-4 border-b border-[var(--line)]">
               <h3 className="font-sans font-semibold text-[var(--text)] text-lg flex items-center gap-2">
                 <Briefcase className="text-[var(--danger)]" size={20} />
