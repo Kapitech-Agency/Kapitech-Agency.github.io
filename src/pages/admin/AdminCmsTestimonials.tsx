@@ -85,7 +85,7 @@ export const AdminCmsTestimonials: React.FC = () => {
         <div>
           <h1 className="ams-page-title">
             <Quote className="text-[var(--danger)]" size={24} />
-            <span>CMS: Client Testimonials & Social Proof</span>
+            <span>Testimonials</span>
           </h1>
           <p className="text-xs text-[var(--muted)] mt-1 font-sans">
             {language === 'id' 
@@ -96,7 +96,7 @@ export const AdminCmsTestimonials: React.FC = () => {
 
         <button
           onClick={handleOpenAdd}
-          className="min-h-10 px-3 rounded-control bg-[var(--accent)] hover:bg-[var(--accent)] text-white text-xs font-sans font-medium transition-colors flex items-center gap-2"
+          className="min-h-9 px-3 rounded-control bg-[var(--accent)] hover:bg-[var(--accent)] text-white text-xs font-sans font-medium transition-colors flex items-center gap-2"
         >
           <Plus size={14} />
           <span>{language === 'id' ? 'Tambah Testimoni' : 'Add Testimonial'}</span>
@@ -136,7 +136,7 @@ export const AdminCmsTestimonials: React.FC = () => {
           >
             <div>
               {/* Rating stars */}
-              <div className="flex items-center gap-1 text-amber-400 mb-4">
+              <div className="flex items-center gap-1 text-[var(--warning)] mb-4">
                 {[...Array(item.rating || 5)].map((_, i) => (
                   <Star key={i} size={14} fill="currentColor" />
                 ))}
@@ -163,13 +163,13 @@ export const AdminCmsTestimonials: React.FC = () => {
               <div className="flex items-center gap-1.5">
                 <button
                   onClick={() => handleOpenEdit(item)}
-                  className="min-h-10 min-w-10 rounded-control bg-[var(--panel)] hover:bg-[var(--panel-hover)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] transition-colors flex items-center justify-center"
+                  className="min-h-9 min-w-9 rounded-control bg-[var(--panel)] hover:bg-[var(--panel-hover)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] transition-colors flex items-center justify-center"
                 >
                   <Edit3 size={14} />
                 </button>
                 <button
                   onClick={() => setDeleteTarget({ id: item.id, author: item.author })}
-                  className="min-h-10 min-w-10 rounded-control bg-[var(--panel)] hover:bg-[var(--danger)]/10 text-[var(--muted)] hover:text-[var(--danger)] border border-[var(--line)] hover:border-[var(--danger)]/30 transition-colors flex items-center justify-center"
+                  className="min-h-9 min-w-9 rounded-control bg-[var(--panel)] hover:bg-[var(--danger)]/10 text-[var(--muted)] hover:text-[var(--danger)] border border-[var(--line)] hover:border-[var(--danger)]/30 transition-colors flex items-center justify-center"
                 >
                   <Trash2 size={14} />
                 </button>
@@ -213,7 +213,7 @@ export const AdminCmsTestimonials: React.FC = () => {
                   value={editingItem.author}
                   onChange={(e) => setEditingItem({ ...editingItem, author: e.target.value })}
                   placeholder="e.g., Marcus Thorne"
-                  className="w-full ams-control w-full text-xs text-[var(--text)] font-sans min-h-10"
+                  className="w-full ams-control text-xs text-[var(--text)] font-sans min-h-10"
                 />
               </div>
 
@@ -227,7 +227,7 @@ export const AdminCmsTestimonials: React.FC = () => {
                     value={editingItem.role}
                     onChange={(e) => setEditingItem({ ...editingItem, role: e.target.value })}
                     placeholder="e.g., VP of Product"
-                    className="w-full ams-control w-full text-xs text-[var(--text)] font-sans min-h-10"
+                    className="w-full ams-control text-xs text-[var(--text)] font-sans min-h-10"
                   />
                 </div>
                 <div>
@@ -239,7 +239,7 @@ export const AdminCmsTestimonials: React.FC = () => {
                     value={editingItem.company}
                     onChange={(e) => setEditingItem({ ...editingItem, company: e.target.value })}
                     placeholder="e.g., Finova Global"
-                    className="w-full ams-control w-full text-xs text-[var(--text)] font-sans min-h-10"
+                    className="w-full ams-control text-xs text-[var(--text)] font-sans min-h-10"
                   />
                 </div>
               </div>
@@ -253,7 +253,7 @@ export const AdminCmsTestimonials: React.FC = () => {
                   value={editingItem.location}
                   onChange={(e) => setEditingItem({ ...editingItem, location: e.target.value })}
                   placeholder="e.g., Jakarta, Indonesia"
-                  className="w-full ams-control w-full text-xs text-[var(--text)] font-sans min-h-10"
+                  className="w-full ams-control text-xs text-[var(--text)] font-sans min-h-10"
                 />
               </div>
 
@@ -267,7 +267,7 @@ export const AdminCmsTestimonials: React.FC = () => {
                   value={editingItem.quoteId || editingItem.quote}
                   onChange={(e) => setEditingItem({ ...editingItem, quoteId: e.target.value, quote: e.target.value })}
                   placeholder={language === 'id' ? 'Ceritakan dampak positif atau kecepatan kerja sama dengan Kapitech...' : 'Share client feedback, impact, and delivery speed...'}
-                  className="w-full ams-control w-full text-xs text-[var(--text)] font-sans"
+                  className="w-full ams-control text-xs text-[var(--text)] font-sans"
                 />
               </div>
 
