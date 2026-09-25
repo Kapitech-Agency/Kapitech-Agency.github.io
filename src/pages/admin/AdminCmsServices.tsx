@@ -271,7 +271,7 @@ export const AdminCmsServices: React.FC = () => {
             <div className="text-xs font-sans text-[var(--muted)]">Standard Delivery SLA</div>
             <div className="text-xl font-sans font-semibold text-emerald-400 mt-0.5">7 - 14 Days</div>
           </div>
-          <div className="w-8 h-8 rounded-control bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+          <div className="w-8 h-8 rounded-control bg-[var(--success)]/10 border border-[var(--success)]/30 flex items-center justify-center text-[var(--success)]">
             <ShieldCheck size={16} />
           </div>
         </div>
@@ -322,7 +322,7 @@ export const AdminCmsServices: React.FC = () => {
                     {item.category}
                   </span>
                 </div>
-                <span className="text-[10px] font-sans px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-semibold">
+                <span className="text-[10px] font-sans px-2 py-0.5 rounded-full bg-[var(--success)]/10 border border-[var(--success)]/30 text-[var(--success)] font-semibold">
                   {item.badgeId || item.badge || 'Active'}
                 </span>
               </div>
@@ -473,7 +473,7 @@ export const AdminCmsServices: React.FC = () => {
             <div className="flex items-center justify-between pt-4 border-t border-[var(--line)]">
               <button
                 onClick={() => handleDeleteService(selectedServiceForDetail.slug)}
-                className="px-3 py-2 rounded-card bg-red-950/30 border border-red-500/30 text-red-400 hover:bg-red-900/40 text-xs font-sans flex items-center gap-1.5 transition-colors"
+                className="px-3 py-2 rounded-card bg-[var(--danger)]/10 border border-[var(--danger)]/30 text-[var(--danger)] hover:bg-[var(--danger)]/15 text-xs font-sans flex items-center gap-1.5 transition-colors"
               >
                 <Trash2 size={13} />
                 <span>Delete Offering</span>
