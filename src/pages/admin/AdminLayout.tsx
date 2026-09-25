@@ -349,7 +349,7 @@ export const AdminLayout: React.FC = () => {
           </Link>
         </div>
         <div className={`flex-1 min-h-0 overflow-hidden ${sidebarCollapsed ? 'px-2 py-3' : 'px-2.5 py-3'}`}>
-          <div className={sidebarCollapsed ? 'space-y-1' : 'space-y-1.5'}>
+          <div className={sidebarCollapsed ? 'space-y-2' : 'space-y-4'}>
             {contentNavSections.map((section) => (
               <div key={section.id} className="space-y-1">
                 {!sidebarCollapsed && <div className="px-2.5 pb-1 text-[10px] font-semibold uppercase tracking-[0.09em] text-muted">{t(section.titleKey)}</div>}
@@ -360,7 +360,7 @@ export const AdminLayout: React.FC = () => {
                     const active = isItemActive(item.to);
                     return (
                       <Link key={item.to} to={item.to} title={sidebarCollapsed ? item.label : undefined} aria-current={active ? 'page' : undefined}
-                        className={`group flex min-h-10 items-center rounded-control text-[13px] font-medium transition-[background-color,color,transform] duration-150 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-panel active:scale-[0.985] ${sidebarCollapsed ? 'mx-auto h-8 w-8 justify-center px-0' : 'gap-2.5 px-2.5'} ${active ? 'bg-accent/12 text-fg' : 'text-muted hover:bg-panel-hover hover:text-fg'}`}>
+                        className={`group flex min-h-10 items-center rounded-control text-[13px] font-medium transition-[background-color,color,transform] duration-150 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-panel active:scale-[0.985] ${sidebarCollapsed ? 'mx-auto h-10 w-10 justify-center px-0' : 'gap-2.5 px-2.5'} ${active ? 'bg-accent/12 text-fg' : 'text-muted hover:bg-panel-hover hover:text-fg'}`}>
                         <Icon size={16} strokeWidth={active ? 2.1 : 1.8} className={`shrink-0 transition-colors duration-150 ${active ? 'text-accent-text' : 'text-muted group-hover:text-fg'}`} />
                         {!sidebarCollapsed && <span className="min-w-0 truncate">{item.label}</span>}
                         {!sidebarCollapsed && item.badge !== null && item.badge !== undefined && <span className="ml-auto shrink-0 rounded-badge border border-line bg-bg px-1.5 py-0.5 text-[10px] font-semibold text-muted">{item.badge}</span>}
