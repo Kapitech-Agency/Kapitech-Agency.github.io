@@ -142,7 +142,7 @@ export const AdminApprovals: React.FC = () => {
   const filteredApprovals = useMemo(() => {
     return approvals.filter(item => {
       const matchesStatus = statusFilter === 'all' || item.status.toLowerCase() === statusFilter.toLowerCase();
-      const matchesType = typeFilter === 'all' || item.type.toLowerCase() === typeFilter.toLowerCase();
+      const matchesType = typeFilter === 'all' || item.type.toLowerCase().includes(typeFilter.toLowerCase());
       const matchesSearch = 
         item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         item.requester.toLowerCase().includes(searchQuery.toLowerCase()) ||
