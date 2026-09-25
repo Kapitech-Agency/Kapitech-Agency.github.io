@@ -776,7 +776,7 @@ export const AdminSettings: React.FC = () => {
                           </div>
                         </div>
 
-                        <span className={`text-[10px] font-sans px-2 py-0.5 rounded-full border shrink-0 ${
+                        <span className={`text-[10px] font-sans px-2 py-0.5 rounded-badge border shrink-0 ${
                           isMaster ? 'bg-[var(--danger)]/10 text-[var(--danger)] border-[var(--danger)]/30' :
                           isExecutive ? 'bg-[var(--warning)]/10 text-[var(--warning)] border-[var(--warning)]/30' :
                           isIT ? 'bg-[var(--success)]/10 text-[var(--success)] border-[var(--success)]/30' :
