@@ -39,7 +39,6 @@ export const ScrollShadowContainer: React.FC<ScrollShadowContainerProps> = ({
 
   const { canScrollLeft, canScrollRight, canScrollTop, canScrollBottom, scrollBy } = useScrollShadow(activeRef);
 
-  // Automatically activate smooth mouse drag-to-scroll on horizontal containers
   useEffect(() => {
     if (!enableDragToScroll || (direction !== 'horizontal' && direction !== 'both')) {
       return;
@@ -55,7 +54,6 @@ export const ScrollShadowContainer: React.FC<ScrollShadowContainerProps> = ({
 
     let cleanup = checkAndAttach();
 
-    // In case element mounts slightly after initial render
     const rafId = requestAnimationFrame(() => {
       if (!cleanup || cleanup.name === '') {
         cleanup = checkAndAttach();
@@ -68,7 +66,6 @@ export const ScrollShadowContainer: React.FC<ScrollShadowContainerProps> = ({
     };
   }, [activeRef, direction, enableDragToScroll]);
 
-  // Background color mapping
   const bgClassMap = {
     app: {
       left: 'from-[var(--bg)] via-[var(--bg)]/85 to-transparent',
@@ -98,7 +95,6 @@ export const ScrollShadowContainer: React.FC<ScrollShadowContainerProps> = ({
 
   const gradients = bgClassMap[shadowBg];
 
-  // Size mapping
   const sizeMap = {
     sm: { hWidth: 'w-8 sm:w-12', vHeight: 'h-6' },
     md: { hWidth: 'w-12 sm:w-20', vHeight: 'h-10' },
@@ -107,9 +103,10 @@ export const ScrollShadowContainer: React.FC<ScrollShadowContainerProps> = ({
 
   const { hWidth, vHeight } = sizeMap[shadowSize];
 
+  const navButtonClass = 'hidden md:flex absolute top-1/2 -translate-y-1/2 size-10 rounded-control bg-[var(--panel)]/95 hover:bg-[var(--line)] text-[var(--text)] border border-[var(--line)] items-center justify-center z-30 transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg)]';
+
   return (
     <div className={`relative group/scroll-shadow ${className}`}>
-      {/* Horizontal Left Shadow */}
       {(direction === 'horizontal' || direction === 'both') && (
         <div
           aria-hidden="true"
@@ -119,7 +116,6 @@ export const ScrollShadowContainer: React.FC<ScrollShadowContainerProps> = ({
         />
       )}
 
-      {/* Horizontal Right Shadow */}
       {(direction === 'horizontal' || direction === 'both') && (
         <div
           aria-hidden="true"
@@ -129,7 +125,6 @@ export const ScrollShadowContainer: React.FC<ScrollShadowContainerProps> = ({
         />
       )}
 
-      {/* Vertical Top Shadow */}
       {(direction === 'vertical' || direction === 'both') && (
         <div
           aria-hidden="true"
@@ -139,7 +134,6 @@ export const ScrollShadowContainer: React.FC<ScrollShadowContainerProps> = ({
         />
       )}
 
-      {/* Vertical Bottom Shadow */}
       {(direction === 'vertical' || direction === 'both') && (
         <div
           aria-hidden="true"
@@ -149,37 +143,35 @@ export const ScrollShadowContainer: React.FC<ScrollShadowContainerProps> = ({
         />
       )}
 
-      {/* Optional Desktop Quick Scroll Buttons */}
       {showNavButtons && (direction === 'horizontal' || direction === 'both') && (
         <>
           <button
             type="button"
             onClick={() => scrollBy(-scrollStep, 0, true)}
             aria-label="Scroll left"
-            className={`hidden md:flex absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-[var(--panel)]/90 hover:bg-[var(--line)] text-white border border-white/10 shadow-xl items-center justify-center z-30 transition-all duration-200 ${
+            className={`${navButtonClass} left-2 ${
               canScrollLeft
                 ? 'opacity-0 group-hover/scroll-shadow:opacity-100 pointer-events-auto'
                 : 'opacity-0 pointer-events-none'
             }`}
           >
-            <ChevronLeft size={16} />
+            <ChevronLeft size={16} aria-hidden="true" />
           </button>
           <button
             type="button"
             onClick={() => scrollBy(scrollStep, 0, true)}
             aria-label="Scroll right"
-            className={`hidden md:flex absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-[var(--panel)]/90 hover:bg-[var(--line)] text-white border border-white/10 shadow-xl items-center justify-center z-30 transition-all duration-200 ${
+            className={`${navButtonClass} right-2 ${
               canScrollRight
                 ? 'opacity-0 group-hover/scroll-shadow:opacity-100 pointer-events-auto'
                 : 'opacity-0 pointer-events-none'
             }`}
           >
-            <ChevronRight size={16} />
+            <ChevronRight size={16} aria-hidden="true" />
           </button>
         </>
       )}
 
-      {/* Scrollable Container */}
       <div ref={activeRef} className={scrollClassName}>
         {children}
       </div>
