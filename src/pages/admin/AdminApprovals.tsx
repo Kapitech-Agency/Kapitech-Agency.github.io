@@ -182,7 +182,7 @@ export const AdminApprovals: React.FC = () => {
       )}
 
       {/* Header */}
-      <div className="ams-page-header pb-5 border-b border-[var(--line)]">
+      <div className="ams-page-header pb-5">
         <h1 className="ams-page-title">
           <Shield size={22} className="text-[var(--accent-text)] shrink-0" />
           <span>{language === 'id' ? 'Pusat Persetujuan Eksekutif' : 'Executive Approvals Center'}</span>
