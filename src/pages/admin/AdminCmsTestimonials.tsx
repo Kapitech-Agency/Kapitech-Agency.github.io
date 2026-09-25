@@ -84,7 +84,7 @@ export const AdminCmsTestimonials: React.FC = () => {
       <div className="ams-page-header flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="ams-page-title">
-            <Quote className="text-[var(--danger)]" size={24} />
+            <Users className="text-[var(--accent-text)] shrink-0" size={22} />
             <span>Testimonials</span>
           </h1>
           <p className="text-xs text-[var(--muted)] mt-1 font-sans">
@@ -96,7 +96,7 @@ export const AdminCmsTestimonials: React.FC = () => {
 
         <button
           onClick={handleOpenAdd}
-          className="min-h-9 px-3 rounded-control bg-[var(--accent)] hover:bg-[var(--accent)] text-white text-xs font-sans font-medium transition-colors flex items-center gap-2"
+          className="min-h-10 px-3 rounded-control bg-[var(--accent)] hover:bg-[var(--accent-hover)] active:bg-[var(--accent-pressed)] text-white text-xs font-sans font-medium transition-colors flex items-center gap-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
         >
           <Plus size={14} />
           <span>{language === 'id' ? 'Tambah Testimoni' : 'Add Testimonial'}</span>
