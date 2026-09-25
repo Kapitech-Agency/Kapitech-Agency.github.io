@@ -68,6 +68,7 @@ export const AdminProjects: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
 
   // Drag-to-scroll hook for horizontal container
   const kanbanScrollRef = useDragToScroll<HTMLDivElement>();
@@ -251,10 +252,18 @@ export const AdminProjects: React.FC = () => {
   };
 
   const handleDeleteProject = (id: string, name: string) => {
-    if (window.confirm(`Hapus proyek "${name}" beserta seluruh task board?`)) {
-      void api.projects.delete(id).then((res) => { if (res.success) void loadData(); else showToast(res.error || 'Project delete failed.'); });
+    setDeleteTarget({ id, name });
+  };
+
+  const confirmDeleteProject = async (id: string) => {
+    const res = await api.projects.delete(id);
+    if (res.success) {
+      await loadData();
       showToast(language === 'id' ? 'Proyek dihapus.' : 'Project deleted.');
+    } else {
+      showToast(res.error || 'Project delete failed.');
     }
+    setDeleteTarget(null);
   };
 
   const handleAddTask = (e: React.FormEvent) => {
