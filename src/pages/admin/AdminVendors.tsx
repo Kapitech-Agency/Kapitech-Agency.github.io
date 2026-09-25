@@ -275,7 +275,7 @@ export const AdminVendors: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Top Header */}
-      <div className="ams-page-header flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 pb-4 sm:pb-5 border-b border-[var(--line)]">
+      <div className="ams-page-header flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 pb-4 sm:pb-5">
         <div>
           <h1 className="text-xl sm:text-2xl font-semibold font-sans text-[var(--text)] tracking-tight">{language === 'id' ? 'Direktori Vendor & Kontraktor' : 'Vendor & Talent Directory'}</h1>
           <p className="text-[13px] leading-[18px] font-sans text-[var(--muted)] mt-1 max-w-3xl">
