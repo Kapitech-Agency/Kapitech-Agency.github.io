@@ -94,7 +94,7 @@ export const InvoiceStatusDropdown: React.FC<InvoiceStatusDropdownProps> = ({
         anchorRef={triggerRef}
         onClose={() => setIsOpen(false)}
         align="left"
-        className="z-50 min-w-[150px] max-w-[calc(100vw-16px)] bg-bg border border-line rounded-control p-1 font-sans text-xs"
+        className="ams-dropdown-surface z-50 min-w-[150px] max-w-[calc(100vw-16px)] p-1 font-sans text-xs"
       >
         <motion.div
           initial={{ opacity: 0, y: 3 }}
@@ -119,7 +119,7 @@ export const InvoiceStatusDropdown: React.FC<InvoiceStatusDropdownProps> = ({
                   setIsOpen(false);
                   triggerRef.current?.focus();
                 }}
-                className={`w-full flex items-center justify-between min-h-10 sm:min-h-9 px-2.5 py-2 rounded-control text-left transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-[-2px] ${
+                className={`ams-dropdown-item w-full flex items-center justify-between min-h-10 sm:min-h-9 px-2.5 py-2 text-left transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-[-2px] ${
                   isSelected
                     ? 'bg-accent/10 text-fg font-semibold'
                     : 'text-muted hover:text-fg hover:bg-panel'
