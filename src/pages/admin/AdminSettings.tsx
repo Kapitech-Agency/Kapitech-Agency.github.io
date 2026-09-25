@@ -789,7 +789,7 @@ export const AdminSettings: React.FC = () => {
                         </div>
                         <div className="text-[var(--muted)] flex items-center justify-between">
                           <span>Email:</span>
-                          <span className="text-gray-300 truncate max-w-[170px]">{acc.email}</span>
+                          <span className="text-[var(--muted)] truncate max-w-[170px]">{acc.email}</span>
                         </div>
                         <div className="text-[var(--muted)] flex items-center justify-between">
                           <span>Status:</span>
@@ -834,7 +834,7 @@ export const AdminSettings: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => handleOpenEditPermissions(acc)}
-                        className="h-8 px-2.5 rounded-control bg-[var(--panel)] hover:bg-[var(--panel)] text-gray-200 text-[11px] font-sans font-medium flex items-center gap-1.5 transition-colors"
+                        className="h-8 px-2.5 rounded-control bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--text)] text-[11px] font-sans font-medium flex items-center gap-1.5 transition-colors"
                       >
                         <Sliders size={13} className="text-[var(--danger)]" />
                         <span>{language === 'id' ? 'Atur Izin' : 'Permissions'}</span>
@@ -1144,7 +1144,7 @@ export const AdminSettings: React.FC = () => {
                         })}
                         className="w-4 h-4 rounded bg-[var(--bg)] border-[var(--line)] text-[var(--accent)] accent-[var(--accent)]"
                       />
-                      <span className="text-gray-200 text-[11px] truncate">{item.label}</span>
+                      <span className="text-[var(--text)] text-[11px] truncate">{item.label}</span>
                     </label>
                   ))}
                 </div>
@@ -1224,7 +1224,7 @@ export const AdminSettings: React.FC = () => {
                   key={item.key}
                   className="flex items-center justify-between p-3 rounded-card bg-[var(--panel)] border border-[var(--line)] hover:border-[var(--line)] cursor-pointer text-xs font-sans transition-colors"
                 >
-                  <span className="text-gray-200 font-medium">{item.label}</span>
+                  <span className="text-[var(--text)] font-medium">{item.label}</span>
                   <input
                     type="checkbox"
                     checked={!!tempPermissions[item.key as keyof StakeholderPermissions]}
@@ -1542,7 +1542,7 @@ export const AdminSettings: React.FC = () => {
                       </span>
                       <span className="text-[var(--muted)] text-[11px] font-semibold">{log.actor}</span>
                     </div>
-                    <p className="text-gray-300 text-xs">{log.details}</p>
+                    <p className="text-[var(--muted)] text-xs">{log.details}</p>
                   </div>
 
                   <div className="text-[10px] text-[var(--muted)] shrink-0 sm:text-right font-sans">
