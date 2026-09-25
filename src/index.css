@@ -814,6 +814,20 @@
   background: color-mix(in srgb, var(--danger) 14%, transparent);
 }
 
+/* Sidebar refinement: shared interaction and motion layer. */
+.ams-shell .ams-sidebar-toggle { will-change: transform, background-color, border-color; }
+.ams-shell .ams-sidebar-toggle svg { transition: transform 180ms ease-out; }
+.ams-shell .ams-sidebar-toggle:hover svg { transform: translateX(-1px); }
+.ams-shell .ams-sidebar-collapsed .ams-sidebar-toggle:hover svg { transform: translateX(1px); }
+.ams-shell .ams-sidebar-expanded a[aria-current="page"],
+.ams-shell .ams-sidebar-collapsed a[aria-current="page"] { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 10%, transparent); }
+@media (prefers-reduced-motion: reduce) {
+  .ams-shell .ams-sidebar-toggle,
+  .ams-shell .ams-sidebar-toggle svg,
+  .ams-shell a,
+  .ams-shell button { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
+}
+
 /* Keep semantic status colors separate from the crimson brand accent. */
 .ams-shell [data-status="success"] { color: var(--success); }
 .ams-shell [data-status="warning"] { color: var(--warning); }
