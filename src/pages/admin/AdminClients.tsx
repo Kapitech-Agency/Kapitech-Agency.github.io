@@ -213,7 +213,7 @@ export const AdminClients: React.FC = () => {
       <div className="ams-dashboard-header flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="ams-page-title flex items-center gap-3">
-            <Users className="text-[var(--accent)]" size={26} />
+            <Users className="text-[var(--accent-text)] shrink-0" size={22} />
             <span>{t('admin.client.title')}</span>
           </h1>
           <p className="text-xs font-sans text-[var(--muted)] mt-1">
