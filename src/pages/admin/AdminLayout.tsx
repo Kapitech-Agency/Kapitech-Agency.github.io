@@ -328,25 +328,31 @@ export const AdminLayout: React.FC = () => {
       {/* DESKTOP SIDEBAR */}
       <motion.aside
         initial={false}
-        animate={{ width: sidebarCollapsed ? 64 : 232 }}
+        animate={{ width: sidebarCollapsed ? 68 : 232 }}
         transition={{ duration: 0.18, ease: 'easeOut' }}
         className={`hidden min-[900px]:flex flex-col bg-panel border-r border-line shrink-0 h-full z-30 overflow-hidden ${sidebarCollapsed ? 'ams-sidebar-collapsed' : 'ams-sidebar-expanded'}`}
       >
-        <div className="shrink-0 px-3 py-1.5 border-b border-line">
-          <Link to="/admin/dashboard" aria-label="Kapitech AMS dashboard" className={`group flex items-center rounded-control min-h-10 transition-colors duration-150 hover:bg-panel-hover focus-visible:outline-none ${sidebarCollapsed ? 'justify-center px-1' : 'gap-3 px-2'}`}>
-            <div className="h-9 w-9 rounded-control bg-bg border border-line p-1.5 flex items-center justify-center shrink-0 transition-colors duration-150 group-hover:border-accent/40">
-              <img src="/white.png" alt="Kapitech" className="h-3.5 w-auto max-w-[28px] object-contain" />
-            </div>
-            {!sidebarCollapsed && (
-              <div className="min-w-0 py-0.5">
-                <div className="flex items-center gap-2 leading-none">
-                  <span className="text-[13px] font-semibold tracking-[0.01em] text-fg whitespace-nowrap">KAPITECH</span>
-                  <span className="shrink-0 rounded-badge border border-accent/25 bg-accent/8 px-1.5 py-0.5 text-[9px] font-semibold tracking-[0.04em] text-accent-text">AMS</span>
-                </div>
-                <p className="mt-1 text-[10px] leading-4 text-muted whitespace-nowrap">AMS</p>
+        <div className="shrink-0 px-2.5 py-2 border-b border-line">
+          <div className={`flex items-center min-w-0 ${sidebarCollapsed ? 'justify-center' : 'gap-2'}`}>
+            <Link to="/admin/dashboard" aria-label="Kapitech AMS dashboard" className={`group flex min-w-0 flex-1 items-center rounded-control min-h-10 transition-colors duration-150 hover:bg-panel-hover focus-visible:outline-none ${sidebarCollapsed ? 'justify-center px-1' : 'gap-3 px-2'}`}>
+              <div className="h-9 w-9 rounded-control bg-bg border border-line p-1.5 flex items-center justify-center shrink-0 transition-colors duration-150 group-hover:border-accent/40">
+                <img src="/white.png" alt="Kapitech" className="h-3.5 w-auto max-w-[28px] object-contain" />
               </div>
-            )}
-          </Link>
+              {!sidebarCollapsed && (
+                <div className="min-w-0 py-0.5">
+                  <div className="flex items-center gap-2 leading-none">
+                    <span className="text-[13px] font-semibold tracking-[0.01em] text-fg whitespace-nowrap">KAPITECH</span>
+                    <span className="shrink-0 rounded-badge border border-accent/25 bg-accent/8 px-1.5 py-0.5 text-[9px] font-semibold tracking-[0.04em] text-accent-text">AMS</span>
+                  </div>
+                  <p className="mt-1 text-[10px] leading-4 text-muted whitespace-nowrap">Agency Management System</p>
+                </div>
+              )}
+            </Link>
+            <button type="button" onClick={() => setSidebarCollapsed(v => !v)} aria-label={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'} title={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+              className={`ams-sidebar-toggle group shrink-0 flex h-7 w-7 items-center justify-center rounded-control border border-line bg-panel text-muted transition-[background-color,border-color,color,transform] duration-150 ease-out hover:border-accent/30 hover:bg-panel-hover hover:text-fg active:scale-[0.96] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-panel ${sidebarCollapsed ? 'absolute right-2 top-2' : ''}`}>
+              {sidebarCollapsed ? <ChevronRight size={13} strokeWidth={2} /> : <ChevronLeft size={13} strokeWidth={2} />}
+            </button>
+          </div>
         </div>
         <div className={`flex-1 min-h-0 overflow-hidden ${sidebarCollapsed ? 'px-2 py-3' : 'px-2.5 py-3'}`}>
           <div className={sidebarCollapsed ? 'space-y-2' : 'space-y-4'}>
@@ -372,13 +378,6 @@ export const AdminLayout: React.FC = () => {
             ))}
           </div>
         </div>
-        <div className="relative shrink-0 px-2.5 py-1.5" aria-label="Sidebar resize control">
-          <div className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-line" aria-hidden="true" />
-          <button type="button" onClick={() => setSidebarCollapsed(v => !v)} aria-label={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'} title={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-            className="ams-sidebar-toggle group relative z-10 mx-auto flex h-5 w-5 items-center justify-center rounded-control border border-line bg-panel text-muted transition-[background-color,border-color,color,transform] duration-150 ease-out hover:border-accent/30 hover:bg-panel-hover hover:text-fg active:scale-[0.96] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-panel">
-            {sidebarCollapsed ? <ChevronRight size={13} strokeWidth={2} /> : <ChevronLeft size={13} strokeWidth={2} />}
-          </button>
-        </div>
         {settingsItem && (
           <div className="shrink-0 px-2.5 pb-1">
             <Link to={settingsItem.to} title={sidebarCollapsed ? settingsItem.label : undefined} aria-current={isItemActive(settingsItem.to) ? 'page' : undefined}
@@ -388,7 +387,7 @@ export const AdminLayout: React.FC = () => {
             </Link>
           </div>
         )}
-        <div className={`shrink-0 border-t border-line bg-panel px-2.5 py-1.5 ${sidebarCollapsed ? 'space-y-2' : ''}`}>
+        <div className={`shrink-0 border-t border-line bg-panel px-2.5 py-2 ${sidebarCollapsed ? 'space-y-2' : ''}`}>
           <div className={`group flex min-h-10 items-center rounded-control transition-colors duration-150 hover:bg-panel-hover ${sidebarCollapsed ? 'justify-center' : 'gap-2.5 px-1.5'}`}>
             <div className="h-8 w-8 rounded-control bg-accent/90 border border-accent/30 flex items-center justify-center text-xs font-semibold text-fg shrink-0">{roleMeta.accountProfile.avatarLabel}</div>
             {!sidebarCollapsed && (
