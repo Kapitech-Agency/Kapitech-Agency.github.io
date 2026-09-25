@@ -434,7 +434,7 @@ export const AdminApprovals: React.FC = () => {
 
               <div className="space-y-1">
                 <label className="text-xs font-sans text-[var(--muted)]">Action</label>
-                <div className="grid grid-cols-3 gap-2 font-sans text-xs">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 font-sans text-xs">
                   <button
                     type="button"
                     onClick={() => setDecisionAction('Approve')}
