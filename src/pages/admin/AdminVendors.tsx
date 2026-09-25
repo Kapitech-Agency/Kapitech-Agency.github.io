@@ -309,7 +309,7 @@ export const AdminVendors: React.FC = () => {
 
       {/* Top Summary Metrics */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 w-full">
-        <div className="w-full h-full p-4 rounded-[12px] bg-[var(--panel)] border border-[var(--line)] flex flex-col justify-between">
+        <div className="w-full h-full p-4 rounded-card bg-[var(--panel)] border border-[var(--line)] flex flex-col justify-between">
           <div className="text-[11px] font-sans text-[var(--muted)] normal-case tracking-normal">
             {language === 'id' ? 'Total Mitra Terdaftar' : 'Total Vetted Vendors'}
           </div>
@@ -320,7 +320,7 @@ export const AdminVendors: React.FC = () => {
           </div>
         </div>
 
-        <div className="w-full h-full p-4 rounded-[12px] bg-[var(--panel)] border border-[var(--line)] flex flex-col justify-between">
+        <div className="w-full h-full p-4 rounded-card bg-[var(--panel)] border border-[var(--line)] flex flex-col justify-between">
           <div className="text-[11px] font-sans text-[var(--muted)] normal-case tracking-normal">
             {language === 'id' ? 'Spesialis Freelance' : 'Freelance Talent'}
           </div>
@@ -330,7 +330,7 @@ export const AdminVendors: React.FC = () => {
           <div className="text-[10px] font-sans text-[var(--muted)] mt-1">Design, Dev & 3D</div>
         </div>
 
-        <div className="w-full h-full p-4 rounded-[12px] bg-[var(--panel)] border border-[var(--line)] flex flex-col justify-between">
+        <div className="w-full h-full p-4 rounded-card bg-[var(--panel)] border border-[var(--line)] flex flex-col justify-between">
           <div className="text-[11px] font-sans text-[var(--muted)] normal-case tracking-normal">
             {language === 'id' ? 'Partner Agensi' : 'Agency Partners'}
           </div>
@@ -340,7 +340,7 @@ export const AdminVendors: React.FC = () => {
           <div className="text-[10px] font-sans text-cyan-400 mt-1">DevOps, Cloud & Legal</div>
         </div>
 
-        <div className="w-full h-full p-4 rounded-[12px] bg-[var(--panel)] border border-[var(--line)] flex flex-col justify-between">
+        <div className="w-full h-full p-4 rounded-card bg-[var(--panel)] border border-[var(--line)] flex flex-col justify-between">
           <div className="text-[11px] font-sans text-[var(--muted)] normal-case tracking-normal">
             {language === 'id' ? 'Rata-rata Rating SLA' : 'Avg Performance SLA'}
           </div>
@@ -353,7 +353,7 @@ export const AdminVendors: React.FC = () => {
       </div>
 
       {/* Filter & Search Bar */}
-      <div className="w-full p-4 rounded-[12px] bg-[var(--panel)] border border-[var(--line)] flex flex-col lg:flex-row items-center justify-between gap-3">
+      <div className="w-full p-4 rounded-card bg-[var(--panel)] border border-[var(--line)] flex flex-col lg:flex-row items-center justify-between gap-3">
         <div className="relative w-full lg:w-96">
           <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted)]" />
           <input
@@ -361,7 +361,7 @@ export const AdminVendors: React.FC = () => {
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
             placeholder={language === 'id' ? 'Cari nama, keahlian, atau email...' : 'Search name, skills, or email...'}
-            className="w-full pl-9 pr-3 py-2 rounded-[12px] bg-[var(--panel)] border border-[var(--line)] text-xs font-sans text-[var(--text)] placeholder:text-[var(--muted)] focus:outline-none focus:border-[var(--accent)] h-10 min-h-[40px]"
+            className="w-full pl-9 pr-3 py-2 rounded-card bg-[var(--panel)] border border-[var(--line)] text-xs font-sans text-[var(--text)] placeholder:text-[var(--muted)] focus:outline-none focus:border-[var(--accent)] h-10 min-h-[40px]"
           />
         </div>
 
@@ -427,13 +427,13 @@ export const AdminVendors: React.FC = () => {
         {filteredVendors.map(vendor => (
           <div
             key={vendor.id}
-            className="w-full h-full p-5 rounded-[12px] bg-[var(--panel)] border border-[var(--line)] hover:border-[rgba(255,255,255,0.14)] transition-all flex flex-col justify-between group"
+            className="w-full h-full p-5 rounded-card bg-[var(--panel)] border border-[var(--line)] hover:border-[rgba(255,255,255,0.14)] transition-all flex flex-col justify-between group"
           >
             <div>
               {/* Header Card */}
               <div className="flex items-start justify-between gap-3">
                 <div className="flex items-center gap-3">
-                  <div className="w-11 h-11 rounded-[12px] bg-[var(--panel)] border border-[var(--line)] flex items-center justify-center font-semibold text-sm text-[var(--text)]">
+                  <div className="w-11 h-11 rounded-card bg-[var(--panel)] border border-[var(--line)] flex items-center justify-center font-semibold text-sm text-[var(--text)]">
                     {vendor.name.charAt(0).toUpperCase()}
                   </div>
                   <div>
@@ -553,7 +553,7 @@ export const AdminVendors: React.FC = () => {
       </div>
 
       {filteredVendors.length === 0 && (
-        <div className="w-full p-12 rounded-[12px] bg-[var(--panel)] border border-[var(--line)] text-center">
+        <div className="w-full p-12 rounded-card bg-[var(--panel)] border border-[var(--line)] text-center">
           <Users size={32} className="mx-auto text-[var(--muted)] mb-3" />
           <h3 className="text-sm font-semibold text-[var(--text)]">
             {language === 'id' ? 'Tidak ada vendor yang cocok' : 'No matching vendors found'}
@@ -603,7 +603,7 @@ export const AdminVendors: React.FC = () => {
                   <span className="text-[10px] font-sans text-[var(--muted)] normal-case block mb-1">
                     {language === 'id' ? 'Kontak & Lokasi' : 'Contact & Location'}
                   </span>
-                  <div className="space-y-1.5 bg-[var(--panel)] p-3 rounded-[12px] border border-[var(--line)]">
+                  <div className="space-y-1.5 bg-[var(--panel)] p-3 rounded-card border border-[var(--line)]">
                     <div className="flex items-center gap-2 text-[var(--muted)]">
                       <Mail size={13} className="text-[var(--accent)]" />
                       <a href={`mailto:${selectedVendor.email}`} className="text-[var(--text)] hover:underline">
@@ -625,7 +625,7 @@ export const AdminVendors: React.FC = () => {
                   <span className="text-[10px] font-sans text-[var(--muted)] normal-case block mb-1">
                     {language === 'id' ? 'Tarif & Kontrak' : 'Rate & Contracts'}
                   </span>
-                  <div className="bg-[var(--panel)] p-3 rounded-[12px] border border-[var(--line)] flex items-center justify-between">
+                  <div className="bg-[var(--panel)] p-3 rounded-card border border-[var(--line)] flex items-center justify-between">
                     <div>
                       <span className="text-[10px] font-sans text-[var(--muted)]">Standard Hourly</span>
                       <p className="text-sm font-sans font-semibold text-emerald-400">
@@ -644,7 +644,7 @@ export const AdminVendors: React.FC = () => {
                     <span className="text-[10px] font-sans text-[var(--muted)] normal-case block mb-1">
                       {language === 'id' ? 'Catatan Kinerja' : 'Performance Notes'}
                     </span>
-                    <div className="bg-[var(--panel)] p-3 rounded-[12px] border border-[var(--line)] text-[var(--muted)] leading-relaxed">
+                    <div className="bg-[var(--panel)] p-3 rounded-card border border-[var(--line)] text-[var(--muted)] leading-relaxed">
                       {selectedVendor.notes}
                     </div>
                   </div>
@@ -702,7 +702,7 @@ export const AdminVendors: React.FC = () => {
                     value={formName}
                     onChange={e => setFormName(e.target.value)}
                     placeholder="e.g. Dimas Pratama"
-                    className="w-full px-3 py-2 rounded-[12px] bg-[var(--panel)] border border-[var(--line)] text-xs font-sans text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
+                    className="w-full px-3 py-2 rounded-card bg-[var(--panel)] border border-[var(--line)] text-xs font-sans text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                   />
                 </div>
 
@@ -715,7 +715,7 @@ export const AdminVendors: React.FC = () => {
                     value={formCompany}
                     onChange={e => setFormCompany(e.target.value)}
                     placeholder="e.g. PixelCraft Studio"
-                    className="w-full px-3 py-2 rounded-[12px] bg-[var(--panel)] border border-[var(--line)] text-xs font-sans text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
+                    className="w-full px-3 py-2 rounded-card bg-[var(--panel)] border border-[var(--line)] text-xs font-sans text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                   />
                 </div>
               </div>
@@ -729,7 +729,7 @@ export const AdminVendors: React.FC = () => {
                     value={formEmail}
                     onChange={e => setFormEmail(e.target.value)}
                     placeholder="talent@example.com"
-                    className="w-full px-3 py-2 rounded-[12px] bg-[var(--panel)] border border-[var(--line)] text-xs font-sans text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
+                    className="w-full px-3 py-2 rounded-card bg-[var(--panel)] border border-[var(--line)] text-xs font-sans text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                   />
                 </div>
 
@@ -742,7 +742,7 @@ export const AdminVendors: React.FC = () => {
                     value={formPhone}
                     onChange={e => setFormPhone(e.target.value)}
                     placeholder="+62 812..."
-                    className="w-full px-3 py-2 rounded-[12px] bg-[var(--panel)] border border-[var(--line)] text-xs font-sans text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
+                    className="w-full px-3 py-2 rounded-card bg-[var(--panel)] border border-[var(--line)] text-xs font-sans text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                   />
                 </div>
               </div>
@@ -774,7 +774,7 @@ export const AdminVendors: React.FC = () => {
                     type="number"
                     value={formRate}
                     onChange={e => setFormRate(Number(e.target.value))}
-                    className="w-full px-3 py-2 rounded-[12px] bg-[var(--panel)] border border-[var(--line)] text-xs font-sans text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
+                    className="w-full px-3 py-2 rounded-card bg-[var(--panel)] border border-[var(--line)] text-xs font-sans text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                   />
                 </div>
               </div>
@@ -812,7 +812,7 @@ export const AdminVendors: React.FC = () => {
               </div>
 
               {/* Vetted Status Verification Toggle */}
-              <div className="p-3 rounded-[12px] bg-[var(--panel)] border border-[var(--line)] flex items-center justify-between">
+              <div className="p-3 rounded-card bg-[var(--panel)] border border-[var(--line)] flex items-center justify-between">
                 <div>
                   <span className="text-xs font-semibold text-[var(--text)] flex items-center gap-1.5">
                     <ShieldCheck size={14} className="text-[var(--accent)]" />
@@ -841,7 +841,7 @@ export const AdminVendors: React.FC = () => {
                   value={formSkills}
                   onChange={e => setFormSkills(e.target.value)}
                   placeholder="Next.js, Tailwind, Docker, Three.js"
-                  className="w-full px-3 py-2 rounded-[12px] bg-[var(--panel)] border border-[var(--line)] text-xs font-sans text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
+                  className="w-full px-3 py-2 rounded-card bg-[var(--panel)] border border-[var(--line)] text-xs font-sans text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                 />
               </div>
 
@@ -854,7 +854,7 @@ export const AdminVendors: React.FC = () => {
                   value={formNotes}
                   onChange={e => setFormNotes(e.target.value)}
                   placeholder="Reliable performance and clean deliverables..."
-                  className="w-full px-3 py-2 rounded-[12px] bg-[var(--panel)] border border-[var(--line)] text-xs font-sans text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
+                  className="w-full px-3 py-2 rounded-card bg-[var(--panel)] border border-[var(--line)] text-xs font-sans text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                 />
               </div>
 
@@ -862,7 +862,7 @@ export const AdminVendors: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 rounded-[12px] bg-[var(--panel)] hover:bg-[var(--panel-hover)] text-[var(--text)] text-xs font-semibold border border-[var(--line)]"
+                  className="px-4 py-2 rounded-card bg-[var(--panel)] hover:bg-[var(--panel-hover)] text-[var(--text)] text-xs font-semibold border border-[var(--line)]"
                 >
                   {language === 'id' ? 'Batal' : 'Cancel'}
                 </button>
