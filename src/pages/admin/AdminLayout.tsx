@@ -332,49 +332,23 @@ export const AdminLayout: React.FC = () => {
         }`}
       >
         
-        {/* Brand Header */}
-        <div className={`h-[52px] border-b border-line flex items-center bg-panel transition-all ${
-          sidebarCollapsed ? 'justify-center px-2' : 'justify-between px-4'
-        }`}>
-          {!sidebarCollapsed ? (
-            <>
-              <Link to="/admin/dashboard" className="flex items-center gap-2 min-w-0 flex-1 overflow-hidden group">
-                <div className="h-8 w-9 rounded-control bg-bg border border-line flex items-center justify-center shrink-0 group-hover:border-accent/40 transition-colors">
-                  <img src="/white.png" alt="Kapitech" className="h-3.5 w-auto max-w-[28px] object-contain" />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="font-sans font-semibold text-fg text-[13px] leading-4 flex items-center gap-1 min-w-0">
-                    <span className="truncate">KAPITECH</span>
-                    <span className="text-[10px] font-sans px-1.5 py-0.5 rounded-badge text-accent-text border border-accent/30 font-semibold shrink-0">
-                      AMS
-                    </span>
-                  </div>
-                  <p className="text-[9px] leading-3 font-sans text-muted mt-0.5 truncate">Agency Management System</p>
-                </div>
-              </Link>
-              <button
-                onClick={() => setSidebarCollapsed(true)}
-                className="ams-sidebar-toggle h-8 w-8 min-h-8 min-w-8 ml-2 rounded-control bg-bg hover:bg-panel text-muted hover:text-fg border border-line transition-colors flex items-center justify-center shrink-0"
-                title="Collapse sidebar"
-                aria-label="Collapse sidebar"
-              >
-                <ChevronLeft size={15} />
-              </button>
-            </>
-          ) : (
-            <div className="flex items-center justify-center w-full h-8">
-              <button
-                onClick={() => setSidebarCollapsed(false)}
-                aria-label="Expand sidebar"
-                title="Expand sidebar"
-                className="ams-sidebar-toggle h-10 w-10 min-h-10 min-w-10 rounded-control bg-bg hover:bg-panel-hover text-muted hover:text-fg border border-line flex items-center justify-center transition-colors"
-              >
-                <ChevronRight size={15} />
-              </button>
+        {/* Brand Header. Collapse control intentionally lives below navigation. */}
+        <div className={`h-[64px] border-b border-line flex items-center bg-panel px-3`}>
+          <Link to="/admin/dashboard" className={`flex items-center gap-2.5 min-w-0 w-full group ${sidebarCollapsed ? 'justify-center' : ''}`}>
+            <div className="h-9 w-9 rounded-control bg-bg border border-line flex items-center justify-center shrink-0 group-hover:border-accent/40 transition-colors">
+              <img src="/white.png" alt="Kapitech" className="h-3.5 w-auto max-w-[28px] object-contain" />
             </div>
-          )}
+            {!sidebarCollapsed && (
+              <div className="min-w-0">
+                <div className="font-semibold text-fg text-[13px] leading-4 flex items-center gap-1.5">
+                  <span>KAPITECH</span>
+                  <span className="text-[10px] px-1.5 py-0.5 rounded-badge text-accent-text border border-accent/30 font-semibold">AMS</span>
+                </div>
+                <p className="text-[9px] leading-3 text-muted mt-0.5 whitespace-nowrap">Agency Management System</p>
+              </div>
+            )}
+          </Link>
         </div>
-
         {/* Navigation List - 4 Structured Sections Filtered by Dynamic RBAC */}
         <div className={`flex-1 overflow-y-auto custom-scrollbar ${sidebarCollapsed ? "px-2 py-3 space-y-2" : "px-2 py-3 space-y-3"}`}>
           {contentNavSections.map((section) => (
@@ -427,6 +401,17 @@ export const AdminLayout: React.FC = () => {
 
         </div>
 
+        {/* Collapse control lives on the lower navigation divider. */}
+        <div className="px-2 py-2 border-t border-line flex justify-center">
+          <button
+            onClick={() => setSidebarCollapsed(v => !v)}
+            aria-label={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            title={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            className="ams-sidebar-toggle h-10 w-10 min-h-10 min-w-10 rounded-control bg-bg hover:bg-panel-hover text-muted hover:text-fg border border-line flex items-center justify-center transition-colors"
+          >
+            {sidebarCollapsed ? <ChevronRight size={15} /> : <ChevronLeft size={15} />}
+          </button>
+        </div>
         {/* Pinned settings navigation */}
         {settingsItem && (
           <div className="px-2 pb-2 pt-2 border-t border-line">
