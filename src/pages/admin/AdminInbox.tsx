@@ -692,7 +692,7 @@ export const AdminInbox: React.FC = () => {
         </div>
 
         {/* Search & Secondary Filter Dropdowns */}
-        <div className="flex flex-col md:flex-row md:items-center gap-3 pt-1">
+        <div className="flex flex-col md:flex-row md:items-center gap-2.5 pt-1">
           {/* Universal Search */}
           <div className="relative flex-1 min-w-0">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--muted)]" size={15} />

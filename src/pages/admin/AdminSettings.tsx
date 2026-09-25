@@ -755,7 +755,7 @@ export const AdminSettings: React.FC = () => {
             </div>
 
             {/* Accounts Grid / List */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {accounts.map((acc) => {
                 const isExecutive = acc.role === 'Stakeholder Executive' || acc.stakeholderType === 'Executive';
                 const isIT = acc.role === 'Teknisi IT / Systems Engineer' || acc.stakeholderType === 'IT_Technical';
