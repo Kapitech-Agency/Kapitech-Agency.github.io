@@ -427,7 +427,7 @@ export const AdminCrm: React.FC = () => {
                           <button
                             onClick={() => handleOpenAddModal('new')}
                             disabled={!canManageCrm}
-                            className="min-h-10 px-4 rounded-control bg-[var(--accent)] hover:bg-[var(--accent)] text-[var(--accent-text)] text-xs font-sans font-medium transition-colors flex items-center justify-center gap-2"
+                            className="min-h-10 px-4 rounded-control bg-[var(--accent)] hover:brightness-110 text-white text-xs font-sans font-medium transition-colors flex items-center justify-center gap-2"
                           >
                             <Plus size={15} />
                             <span>{t('admin.crm.addDeal')}</span>
@@ -1178,7 +1178,7 @@ export const AdminCrm: React.FC = () => {
       {/* 6. CREATE / EDIT DEAL MODAL */}
       {isAddModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/80  flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-[var(--panel)] border border-[var(--line)] rounded-card w-full max-w-xl max-h-[90vh] overflow-y-auto p-6 shadow-none">
+          <div className="bg-[var(--panel)] border border-[var(--line)] rounded-card w-full max-w-xl max-h-[calc(100dvh-24px)] overflow-y-auto p-6 shadow-none">
             <div className="flex items-center justify-between pb-4 mb-4 border-b border-[var(--line)]">
               <h3 className="font-sans font-semibold text-[var(--text)] text-lg flex items-center gap-2">
                 <Briefcase className="text-[var(--danger)]" size={20} />
