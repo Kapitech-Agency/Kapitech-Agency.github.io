@@ -873,7 +873,7 @@ export const AdminCrm: React.FC = () => {
 
           {/* Desktop Table View */}
           <div className="hidden md:block bg-[var(--panel)] border border-[var(--line)] rounded-card overflow-hidden shadow-none">
-            <div className="overflow-x-auto">
+            <div className="ams-table-scroll overflow-x-auto">
               <table className="w-full text-left text-xs font-sans">
                 <thead className="bg-[var(--panel)] text-[var(--muted)] border-b border-[var(--line)] normal-case text-[10px] tracking-normal">
                   <tr>
