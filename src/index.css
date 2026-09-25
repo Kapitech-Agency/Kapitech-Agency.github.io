@@ -5,6 +5,8 @@
    KAPITECH AGENCY AMS & ENTERPRISE ECOSYSTEM - DESIGN TOKENS & COLOR ARCHITECTURE
    ========================================================================== */
 :root {
+  --accent-hover:#c40f34;
+  --accent-pressed:#a10c2b;
   /* Surface & Background Elevation Layers (Linear/Vercel Dark System) */
   --bg-app: #090A0F;
   --bg-surface-base: #111318;
