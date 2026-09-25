@@ -339,7 +339,7 @@ export const AdminLayout: React.FC = () => {
         </div>
 
         {/* Navigation List - 4 Structured Sections Filtered by Dynamic RBAC */}
-        <div className="flex-1 px-2 py-3 space-y-3 overflow-y-auto custom-scrollbar">
+        <div className={`flex-1 overflow-y-auto custom-scrollbar ${sidebarCollapsed ? "px-2 py-3 space-y-2" : "px-2 py-3 space-y-3"}`}>
           {contentNavSections.map((section) => (
             <div key={section.id} className="space-y-1">
               {!sidebarCollapsed && (
@@ -348,7 +348,7 @@ export const AdminLayout: React.FC = () => {
                 </div>
               )}
               {sidebarCollapsed && (
-                <div className="w-5 h-px bg-line mx-auto my-3" />
+                <div className="w-6 h-px bg-line mx-auto my-2" />
               )}
               {section.items.map((item) => {
                 const Icon = item.icon;
@@ -392,7 +392,7 @@ export const AdminLayout: React.FC = () => {
 
         {/* Pinned settings navigation */}
         {settingsItem && (
-          <div className="px-2 pb-2">
+          <div className="px-2 pb-2 pt-2 border-t border-line">
             <Link
               to={settingsItem.to}
               title={sidebarCollapsed ? settingsItem.label : undefined}
@@ -407,7 +407,7 @@ export const AdminLayout: React.FC = () => {
         )}
 
         {/* Footer: Admin Profile & Discrete Role Simulator Dropdown */}
-        <div className="p-2.5 border-t border-line bg-panel space-y-2.5">
+        <div className={`p-2.5 border-t border-line bg-panel ${sidebarCollapsed ? "space-y-2" : "space-y-2.5"}`}>
           <div className={`flex items-center justify-between ${sidebarCollapsed ? 'flex-col gap-2.5' : ''}`}>
             <div className="flex items-center gap-2.5 min-w-0">
               <div className="w-8 h-8 rounded-control bg-accent border border-line flex items-center justify-center text-xs font-sans text-fg font-semibold shrink-0 ">
