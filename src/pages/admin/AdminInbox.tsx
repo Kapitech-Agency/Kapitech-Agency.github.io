@@ -647,7 +647,7 @@ export const AdminInbox: React.FC = () => {
                   onClick={() => setFilterType(tab.key)}
                   className={`h-9 px-3 rounded-card text-xs font-sans transition-all flex items-center gap-2 border min-h-10 ${
                     filterType === tab.key
-                      ? 'bg-[var(--accent)] text-[var(--text)] border-[var(--accent)] font-semibold'
+                      ? 'bg-[var(--accent)] text-white border-[var(--accent)] font-semibold'
                       : 'bg-[var(--panel)] text-[var(--muted)] border-[var(--line)] hover:text-[var(--text)]'
                   }`}
                 >
@@ -1146,7 +1146,7 @@ export const AdminInbox: React.FC = () => {
                     {/* Mailto */}
                     <a
                       href={`mailto:${selectedSubmission.email}?subject=Kapitech Agency - Project Brief Follow-up&body=Dear ${encodeURIComponent(selectedSubmission.fullName)},%0D%0A%0D%0AThank you for reaching out to Kapitech Agency regarding your project brief.`}
-                      className="h-9 px-3 rounded-control bg-[var(--accent)] hover:bg-[var(--accent)] text-[var(--text)] text-xs font-sans font-semibold transition-colors flex items-center gap-1"
+                      className="h-9 px-3 rounded-control bg-[var(--accent)] hover:bg-[var(--accent)] text-white text-xs font-sans font-semibold transition-colors flex items-center gap-1"
                       title="Compose Email"
                     >
                       <Mail size={13} />
@@ -1333,7 +1333,7 @@ export const AdminInbox: React.FC = () => {
                           type="button"
                           disabled={isSavingNote}
                           onClick={handleSaveInternalNote}
-                          className="px-4 py-2 rounded-card bg-[var(--accent)] hover:bg-[var(--accent)] text-[var(--text)] text-xs font-sans font-semibold transition-all flex items-center gap-1.5 "
+                          className="px-4 py-2 rounded-card bg-[var(--accent)] hover:bg-[var(--accent)] text-white text-xs font-sans font-semibold transition-all flex items-center gap-1.5 "
                         >
                           <Check size={14} />
                           <span>{isSavingNote ? (language === 'id' ? 'Menyimpan...' : 'Saving...') : (language === 'id' ? 'Simpan Catatan' : 'Save Notes')}</span>

@@ -1052,6 +1052,27 @@
   outline-offset: 2px !important;
 }
 
+/* Canonical native form controls. Keep compact desktop density while preserving 40px mobile touch targets. */
+.ams-shell input[type="checkbox"],
+.ams-shell input[type="radio"] {
+  width: 16px;
+  height: 16px;
+  min-width: 16px;
+  min-height: 16px;
+  margin: 0;
+  accent-color: var(--accent);
+}
+.ams-shell input[type="checkbox"]:focus-visible,
+.ams-shell input[type="radio"]:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.ams-shell input[type="checkbox"]:disabled,
+.ams-shell input[type="radio"]:disabled {
+  cursor: not-allowed;
+  opacity: .5;
+}
+
 /* Dense admin content should never overflow its grid cell. */
 .ams-shell .truncate,
 .ams-shell [class*="truncate"] {
