@@ -1286,7 +1286,7 @@ export const AdminInvoicing: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="h-10 px-5 rounded-card bg-emerald-600 hover:bg-emerald-500 text-[var(--text)] text-xs font-sans font-semibold transition-colors shadow-emerald-600/20 min-h-10 flex items-center gap-1.5"
+                  className="h-10 px-5 rounded-card bg-emerald-600 hover:bg-emerald-500 text-[var(--text)] text-xs font-sans font-semibold transition-colors shadow-none min-h-10 flex items-center gap-1.5"
                 >
                   <Check size={14} />
                   <span>{language === 'id' ? 'Simpan Pembayaran' : 'Confirm Payment'}</span>
