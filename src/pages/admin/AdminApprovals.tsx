@@ -181,7 +181,7 @@ export const AdminApprovals: React.FC = () => {
       )}
 
       {/* Header */}
-      <div className="pb-5 border-b border-[var(--line)]">
+      <div className="ams-page-header pb-5 border-b border-[var(--line)]">
         <h1 className="text-xl sm:text-2xl font-semibold font-sans tracking-tight text-[var(--text)]">{language === 'id' ? 'Pusat Persetujuan Eksekutif' : 'Executive Approvals Center'}</h1>
         <p className="text-xs font-sans text-[var(--muted)] mt-1">
           {language === 'id' 
