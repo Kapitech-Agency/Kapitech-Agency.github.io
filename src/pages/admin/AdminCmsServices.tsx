@@ -224,7 +224,7 @@ export const AdminCmsServices: React.FC = () => {
 
           <button
             onClick={() => setIsAddModalOpen(true)}
-            className="px-4 py-2 rounded-control bg-[var(--accent)] hover:brightness-110 text-white text-xs font-sans font-semibold transition-all flex items-center gap-1.5 -none min-h-10"
+            className="px-4 py-2 rounded-control bg-[var(--accent)] hover:brightness-110 text-white text-xs font-sans font-semibold transition-all flex items-center gap-1.5 min-h-10"
           >
             <Plus size={14} />
             <span>Add Service</span>
@@ -246,7 +246,7 @@ export const AdminCmsServices: React.FC = () => {
 
       {/* Quick Metrics Bar */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
-        <div className="w-full h-full bg-[var(--panel)] border border-[var(--line)] p-4 rounded-card flex items-center justify-between -none">
+        <div className="w-full h-full bg-[var(--panel)] border border-[var(--line)] p-4 rounded-card flex items-center justify-between">
           <div>
             <div className="text-xs font-sans text-[var(--muted)]">SEO & Growth Services</div>
             <div className="text-xl font-sans font-semibold text-[var(--text)] mt-0.5">3 Modules</div>
@@ -256,7 +256,7 @@ export const AdminCmsServices: React.FC = () => {
           </div>
         </div>
 
-        <div className="w-full h-full bg-[var(--panel)] border border-[var(--line)] p-4 rounded-card flex items-center justify-between -none">
+        <div className="w-full h-full bg-[var(--panel)] border border-[var(--line)] p-4 rounded-card flex items-center justify-between">
           <div>
             <div className="text-xs font-sans text-[var(--muted)]">Development & Cloud</div>
             <div className="text-xl font-sans font-semibold text-[var(--text)] mt-0.5">5 Stacks</div>
@@ -266,7 +266,7 @@ export const AdminCmsServices: React.FC = () => {
           </div>
         </div>
 
-        <div className="w-full h-full bg-[var(--panel)] border border-[var(--line)] p-4 rounded-card flex items-center justify-between -none">
+        <div className="w-full h-full bg-[var(--panel)] border border-[var(--line)] p-4 rounded-card flex items-center justify-between">
           <div>
             <div className="text-xs font-sans text-[var(--muted)]">UI/UX Design Systems</div>
             <div className="text-xl font-sans font-semibold text-[var(--text)] mt-0.5">4 Systems</div>
@@ -276,7 +276,7 @@ export const AdminCmsServices: React.FC = () => {
           </div>
         </div>
 
-        <div className="w-full h-full bg-[var(--panel)] border border-[var(--line)] p-4 rounded-card flex items-center justify-between -none">
+        <div className="w-full h-full bg-[var(--panel)] border border-[var(--line)] p-4 rounded-card flex items-center justify-between">
           <div>
             <div className="text-xs font-sans text-[var(--muted)]">Standard Delivery SLA</div>
             <div className="text-xl font-sans font-semibold text-[var(--success)] mt-0.5">7 - 14 Days</div>
@@ -296,7 +296,7 @@ export const AdminCmsServices: React.FC = () => {
               onClick={() => setSelectedCategory(cat)}
               className={`shrink-0 px-3 py-1.5 rounded-control text-xs font-sans transition-all ${
                 selectedCategory === cat
-                  ? 'bg-[var(--accent)] text-white font-semibold -none'
+                  ? 'bg-[var(--accent)] text-white font-semibold'
                   : 'text-[var(--muted)] hover:text-[var(--text)] hover:bg-[var(--panel)]'
               }`}
             >
@@ -322,7 +322,7 @@ export const AdminCmsServices: React.FC = () => {
         {filtered.map((item) => (
           <div
             key={item.slug}
-            className="w-full h-full bg-[var(--panel)] border border-[var(--line)] rounded-card p-5 flex flex-col justify-between hover:border-[var(--line)] transition-all -none group"
+            className="w-full h-full bg-[var(--panel)] border border-[var(--line)] rounded-card p-5 flex flex-col justify-between hover:border-[var(--line)] transition-all group"
           >
             <div>
               <div className="flex items-center justify-between gap-2 mb-3">
@@ -402,7 +402,7 @@ export const AdminCmsServices: React.FC = () => {
       {/* Service Detail / Inspection Modal */}
       {selectedServiceForDetail && (
         <div className="fixed inset-0 z-50 bg-black/80  flex items-center justify-center p-4">
-          <div className="bg-[var(--panel)] border border-[var(--line)] rounded-card w-full max-w-2xl -none p-4 sm:p-6 relative max-h-[calc(100dvh-24px)] overflow-y-auto custom-scrollbar animate-in zoom-in-95 duration-150">
+          <div className="bg-[var(--panel)] border border-[var(--line)] rounded-card w-full max-w-2xl p-4 sm:p-6 relative max-h-[calc(100dvh-24px)] overflow-y-auto custom-scrollbar animate-in zoom-in-95 duration-150">
             <button
               onClick={() => setSelectedServiceForDetail(null)}
               className="absolute top-4 right-4 p-1.5 rounded-control text-[var(--muted)] hover:text-[var(--text)] bg-[var(--panel)] border border-[var(--line)]"
@@ -500,7 +500,7 @@ export const AdminCmsServices: React.FC = () => {
                   href={`/services/${selectedServiceForDetail.slug}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-4 py-2 rounded-control bg-[var(--accent)] hover:brightness-110 text-white text-xs font-sans font-semibold flex items-center gap-1 -none transition-all"
+                  className="px-4 py-2 rounded-control bg-[var(--accent)] hover:brightness-110 text-white text-xs font-sans font-semibold flex items-center gap-1 transition-all"
                 >
                   <span>Open Public Page</span>
                   <ExternalLink size={12} />
@@ -515,7 +515,7 @@ export const AdminCmsServices: React.FC = () => {
       {/* Add New Service Modal */}
       {isAddModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/80  flex items-center justify-center p-4">
-          <div className="bg-[var(--panel)] border border-[var(--line)] rounded-card w-full max-w-lg -none p-4 sm:p-6 relative max-h-[calc(100dvh-24px)] overflow-y-auto custom-scrollbar animate-in zoom-in-95 duration-150">
+          <div className="bg-[var(--panel)] border border-[var(--line)] rounded-card w-full max-w-lg p-4 sm:p-6 relative max-h-[calc(100dvh-24px)] overflow-y-auto custom-scrollbar animate-in zoom-in-95 duration-150">
             <button
               onClick={() => setIsAddModalOpen(false)}
               className="absolute top-4 right-4 p-1.5 rounded-control text-[var(--muted)] hover:text-[var(--text)] bg-[var(--panel)] border border-[var(--line)]"
@@ -631,7 +631,7 @@ export const AdminCmsServices: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-control bg-[var(--accent)] hover:brightness-110 text-white text-xs font-semibold -none transition-all"
+                  className="px-5 py-2 rounded-control bg-[var(--accent)] hover:brightness-110 text-white text-xs font-semibold transition-all"
                 >
                   Publish Service
                 </button>
