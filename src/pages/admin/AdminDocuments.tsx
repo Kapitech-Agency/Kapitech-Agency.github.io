@@ -182,7 +182,7 @@ export const AdminDocuments: React.FC = () => {
       )}
 
       {/* Header */}
-      <div className="ams-page-header flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 pb-4 sm:pb-5 border-b border-[var(--line)]">
+      <div className="ams-page-header flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 pb-4 sm:pb-5">
         <div>
           <h1 className="ams-page-title flex items-center gap-2.5">
             <FileText className="text-[var(--accent-text)] shrink-0" size={22} />
