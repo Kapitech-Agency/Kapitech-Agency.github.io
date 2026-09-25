@@ -84,7 +84,7 @@ jobs:
           ADMIN_INITIAL_PASSWORD: smoke-test-password-123456
           ADMIN_INITIAL_EMAIL: admin@smoke.kapitech.test
         run: |
-          bun dist/server.cjs > /tmp/kapitech-ams-smoke.log 2>&1 &
+          node dist/server.cjs > /tmp/kapitech-ams-smoke.log 2>&1 &
           PID=$!
           trap 'status=$?; if [ "$status" -ne 0 ]; then echo "===== AMS smoke server log ====="; cat /tmp/kapitech-ams-smoke.log || true; fi; kill $PID >/dev/null 2>&1 || true' EXIT
           ready=0
