@@ -285,7 +285,7 @@ export const AdminInvoicing: React.FC = () => {
   if (!canViewFinancials) {
     return (
       <div className="min-h-[60vh] flex flex-col items-center justify-center text-center p-8 bg-[var(--panel)] border border-[var(--line)] rounded-card max-w-xl mx-auto my-12 animate-in fade-in duration-200">
-        <div className="w-16 h-16 rounded-card bg-[var(--danger)]/10 border border-[var(--danger)]/30 text-[var(--danger)] flex items-center justify-center mb-4 -none">
+        <div className="w-16 h-16 rounded-card bg-[var(--danger)]/10 border border-[var(--danger)]/30 text-[var(--danger)] flex items-center justify-center mb-4">
           <ShieldCheck size={32} />
         </div>
         <h2 className="text-xl font-sans font-semibold text-[var(--text)] mb-2">
@@ -616,7 +616,7 @@ export const AdminInvoicing: React.FC = () => {
             shadowBg="surface"
             shadowSize="md"
             className="hidden md:block rounded-card overflow-hidden"
-            scrollClassName="ams-table-scroll bg-[var(--panel)] border border-[var(--line)] rounded-card overflow-x-auto -none select-none"
+            scrollClassName="ams-table-scroll bg-[var(--panel)] border border-[var(--line)] rounded-card overflow-x-auto select-none"
           >
             <table className="w-full text-left text-xs font-sans min-w-[750px]">
               <thead className="sticky top-0 z-10 bg-[var(--panel)]">
@@ -780,7 +780,7 @@ export const AdminInvoicing: React.FC = () => {
           {/* Desktop View: Full Expense Table */}
           <div 
             ref={tableScrollRef}
-            className="hidden md:block bg-[var(--panel)] border border-[var(--line)] rounded-card overflow-x-auto -none select-none"
+            className="hidden md:block bg-[var(--panel)] border border-[var(--line)] rounded-card overflow-x-auto select-none"
           >
             <table className="w-full text-left text-xs font-sans min-w-[650px]">
               <thead className="sticky top-0 z-10 bg-[var(--panel)]">
@@ -841,7 +841,7 @@ export const AdminInvoicing: React.FC = () => {
       {/* 5. Create / Edit Invoice Modal (Mobile Fullscreen + Sticky Header) */}
       {isInvoiceModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/80  flex items-center justify-center p-0 sm:p-4 overflow-y-auto">
-          <div className="bg-[var(--panel)] border-0 sm:border sm:border-[var(--line)] rounded-none sm:rounded-card w-full h-full sm:h-auto sm:max-h-[calc(100dvh-24px)] sm:max-w-2xl -none flex flex-col overflow-hidden">
+          <div className="bg-[var(--panel)] border-0 sm:border sm:border-[var(--line)] rounded-none sm:rounded-card w-full h-full sm:h-auto sm:max-h-[calc(100dvh-24px)] sm:max-w-2xl flex flex-col overflow-hidden">
             
             {/* Sticky Header */}
             <div className="sticky top-0 z-20 bg-[var(--panel)]/95  px-5 sm:px-6 py-4 border-b border-[var(--line)] flex items-center justify-between shrink-0">
@@ -1024,7 +1024,7 @@ export const AdminInvoicing: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="min-h-10 px-5 rounded-control bg-[var(--accent)] hover:brightness-110 text-white text-xs font-sans font-semibold transition-all -none"
+                  className="min-h-10 px-5 rounded-control bg-[var(--accent)] hover:brightness-110 text-white text-xs font-sans font-semibold transition-all"
                 >
                   Save Invoice
                 </button>
@@ -1037,7 +1037,7 @@ export const AdminInvoicing: React.FC = () => {
       {/* 6. Record Expense Modal (Mobile Fullscreen + Sticky Header) */}
       {isExpenseModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/80  flex items-center justify-center p-0 sm:p-4 overflow-y-auto">
-          <div className="bg-[var(--panel)] border-0 sm:border sm:border-[var(--line)] rounded-none sm:rounded-card w-full h-full sm:h-auto sm:max-h-[calc(100dvh-24px)] sm:max-w-md -none flex flex-col overflow-hidden">
+          <div className="bg-[var(--panel)] border-0 sm:border sm:border-[var(--line)] rounded-none sm:rounded-card w-full h-full sm:h-auto sm:max-h-[calc(100dvh-24px)] sm:max-w-md flex flex-col overflow-hidden">
             
             {/* Sticky Header */}
             <div className="sticky top-0 z-20 bg-[var(--panel)]/95  px-5 sm:px-6 py-4 border-b border-[var(--line)] flex items-center justify-between shrink-0">
@@ -1119,7 +1119,7 @@ export const AdminInvoicing: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="min-h-10 px-5 rounded-control bg-[var(--accent)] hover:brightness-110 text-white text-xs font-sans font-semibold transition-all -none"
+                  className="min-h-10 px-5 rounded-control bg-[var(--accent)] hover:brightness-110 text-white text-xs font-sans font-semibold transition-all"
                 >
                   Save Expense
                 </button>
@@ -1132,7 +1132,7 @@ export const AdminInvoicing: React.FC = () => {
       {/* 6b. Record Payment Modal */}
       {paymentModalInvoice && (
         <div className="fixed inset-0 z-50 bg-black/80  flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-          <div className="bg-[var(--panel)] border border-[var(--line)] rounded-card w-full max-w-lg -none relative overflow-hidden flex flex-col max-h-[calc(100dvh-24px)]">
+          <div className="bg-[var(--panel)] border border-[var(--line)] rounded-card w-full max-w-lg relative overflow-hidden flex flex-col max-h-[calc(100dvh-24px)]">
             {/* Modal Header */}
             <div className="sticky top-0 z-20 bg-[var(--panel)]/95  px-5 sm:px-6 py-4 border-b border-[var(--line)] flex items-center justify-between shrink-0">
               <div className="flex items-center gap-2.5">
@@ -1288,7 +1288,7 @@ export const AdminInvoicing: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="h-10 px-5 rounded-control bg-[var(--success)] hover:brightness-110 text-white text-xs font-sans font-semibold transition-colors -none min-h-10 flex items-center gap-1.5"
+                  className="h-10 px-5 rounded-control bg-[var(--success)] hover:brightness-110 text-white text-xs font-sans font-semibold transition-colors min-h-10 flex items-center gap-1.5"
                 >
                   <Check size={14} />
                   <span>{language === 'id' ? 'Simpan Pembayaran' : 'Confirm Payment'}</span>
@@ -1302,12 +1302,12 @@ export const AdminInvoicing: React.FC = () => {
       {/* 7. Printable Invoice Preview Slide-Over / Modal (Mobile Fullscreen + Sticky Header) */}
       {previewInvoice && (
         <div className="fixed inset-0 z-50 bg-black/85  flex items-center justify-center p-0 sm:p-4 overflow-y-auto">
-          <div className="bg-[var(--panel)] text-[var(--text)] border border-[var(--line)] rounded-none sm:rounded-card w-full h-full sm:h-auto sm:max-h-[calc(100dvh-24px)] sm:max-w-2xl -none font-sans relative flex flex-col overflow-hidden">
+          <div className="bg-[var(--panel)] text-[var(--text)] border border-[var(--line)] rounded-none sm:rounded-card w-full h-full sm:h-auto sm:max-h-[calc(100dvh-24px)] sm:max-w-2xl font-sans relative flex flex-col overflow-hidden">
             
             {/* Sticky Header for Preview Modal */}
             <div className="sticky top-0 z-20 bg-[var(--panel)] px-4 sm:px-6 py-4 border-b border-[var(--line)] flex items-center justify-between shrink-0">
               <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-control bg-[var(--bg)] flex items-center justify-center p-1 -none">
+                <div className="w-7 h-7 rounded-control bg-[var(--bg)] flex items-center justify-center p-1">
                   <img src="/favicon.png" alt="Kapitech" className="w-full h-full object-contain" />
                 </div>
                 <div>
