@@ -91,17 +91,17 @@ export const AdminNotificationCenter: React.FC = () => {
         onClose={closeMenu}
         align="right"
         offset={8}
-        className="ams-dropdown-surface z-40 w-[min(380px,calc(100vw-24px))] overflow-hidden"
+        className="ams-notification-surface w-[min(380px,calc(100vw-24px))] overflow-hidden"
       >
         <section id="ams-notification-menu" role="dialog" aria-label={language === 'id' ? 'Notifikasi' : 'Notifications'}>
-          <div className="flex min-h-14 items-center justify-between gap-3 border-b border-line bg-panel px-4">
+          <div className="ams-notification-header flex min-h-14 items-center justify-between gap-3 border-b border-line px-4">
             <div>
               <p className="text-[13px] font-semibold text-fg">{language === 'id' ? 'Notifikasi' : 'Notifications'}</p>
               <p className="mt-0.5 text-[11px] text-muted">{unread} {language === 'id' ? 'belum dibaca' : 'unread'}</p>
             </div>
             {unread > 0 && <button type="button" onClick={() => void markAllRead()} disabled={markingAllRead} className="inline-flex min-h-10 items-center gap-1.5 rounded-control px-2 text-[11px] font-medium text-accent-text hover:bg-panel-hover hover:text-fg disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"><CheckCheck size={14}/>{language === 'id' ? 'Tandai semua' : 'Mark all read'}</button>}
           </div>
-          <div className="max-h-[min(60vh,460px)] overflow-y-auto overscroll-contain bg-panel custom-scrollbar">
+          <div className="ams-notification-list max-h-[min(60vh,460px)] overflow-y-auto overscroll-contain custom-scrollbar">
             {error ? (
               <div className="px-4 py-10 text-center" role="status">
                 <p className="text-[12px] font-medium text-fg">{error}</p>
@@ -114,7 +114,7 @@ export const AdminNotificationCenter: React.FC = () => {
             ) : items.length === 0 ? (
               <div className="px-4 py-10 text-center text-[12px] text-muted">{language === 'id' ? 'Tidak ada notifikasi.' : 'No notifications.'}</div>
             ) : items.slice(0, 30).map(item => (
-              <button key={item.id} type="button" onClick={() => void markRead(item.id)} className={`w-full border-b border-line px-4 py-3.5 text-left transition-colors hover:bg-panel-hover focus-visible:outline-none focus-visible:bg-panel-hover ${(!item.isRead && !item.readAt) ? 'bg-accent/5' : 'bg-panel'}`}>
+              <button key={item.id} type="button" onClick={() => void markRead(item.id)} className={`ams-notification-item w-full border-b border-line px-4 py-3.5 text-left transition-colors hover:bg-panel-hover focus-visible:outline-none focus-visible:bg-panel-hover ${(!item.isRead && !item.readAt) ? 'is-unread' : ''}`}>
                 <div className="flex gap-3">
                   <span className={`mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full ${(!item.isRead && !item.readAt) ? 'bg-accent' : 'bg-line'}`} />
                   <div className="min-w-0 flex-1">
