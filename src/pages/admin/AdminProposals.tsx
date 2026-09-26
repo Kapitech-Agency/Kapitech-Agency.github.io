@@ -643,7 +643,7 @@ export const AdminProposals: React.FC = () => {
 
       {/* CREATE PROPOSAL MODAL */}
       {isCreateModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/80  flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-bg/80  flex items-center justify-center p-4">
           <div className="bg-[var(--panel)] border border-[var(--line)] rounded-card w-full max-w-2xl max-h-[calc(100dvh-24px)] flex flex-col overflow-hidden">
             <div className="p-4 border-b border-[var(--line)] flex items-center justify-between bg-[var(--panel)]">
               <div className="flex items-center gap-2">
@@ -848,7 +848,7 @@ export const AdminProposals: React.FC = () => {
 
       {/* PREVIEW PROPOSAL MODAL */}
       {previewProposal && (
-        <div className="fixed inset-0 z-50 bg-black/85  flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-bg/80  flex items-center justify-center p-4">
           <div className="bg-[var(--panel)] border border-[var(--line)] rounded-card w-full max-w-xl max-h-[calc(100dvh-24px)] overflow-y-auto overflow-hidden">
             <div className="p-4 border-b border-[var(--line)] flex items-center justify-between bg-[var(--panel)]">
               <div className="flex items-center gap-2">
