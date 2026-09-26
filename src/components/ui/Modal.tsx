@@ -56,7 +56,7 @@ export const Modal: React.FC<ModalProps> = ({
     <div className="ams-modal-root fixed inset-0 z-50 flex items-center justify-center p-3 pb-[max(12px,env(safe-area-inset-bottom))] pt-[max(12px,env(safe-area-inset-top))] sm:p-4" role="presentation">
       <button aria-label="Close dialog overlay" type="button" tabIndex={-1} aria-hidden="true" className="absolute inset-0 bg-bg/80" onClick={() => closeOnOutsideClick && onClose()} />
       <div ref={dialogRef} role="dialog" tabIndex={-1} aria-modal="true" aria-labelledby={titleId} aria-describedby={description ? descriptionId : undefined}
-        className={`relative w-full ${sizes[size]} max-h-[calc(100dvh-32px)] flex flex-col overflow-hidden rounded-card border border-line bg-panel`}>
+        className={`relative w-full ${sizes[size]} max-h-[calc(100dvh-24px)] sm:max-h-[calc(100dvh-32px)] flex flex-col overflow-hidden rounded-card border border-line bg-panel`}>
         <header className="flex items-start justify-between gap-4 border-b border-line px-4 py-4">
           <div className="min-w-0">
             <h2 id={titleId} className="text-sm font-semibold text-fg">{title}</h2>
