@@ -1903,3 +1903,48 @@
 .ams-shell .border-zinc-200 { border-color: var(--line) !important; }
 .ams-shell .border-zinc-300 { border-color: var(--line) !important; }
 .ams-shell .border-zinc-900 { border-color: var(--line) !important; }
+
+/* ================================================================
+   LEADS + INBOX PIXEL AUDIT PASS
+   Scoped only to AdminCrm and AdminInbox.
+   ================================================================ */
+.ams-shell .ams-leads-page,.ams-shell .ams-inbox-page{min-width:0;width:100%;color:var(--text)}
+.ams-shell .ams-leads-page>*,.ams-shell .ams-inbox-page>*{min-width:0}
+.ams-shell .ams-leads-page .ams-page-header,.ams-shell .ams-inbox-page .ams-page-header{gap:16px;padding-bottom:16px}
+.ams-shell .ams-leads-page .ams-page-header>div:first-child,.ams-shell .ams-inbox-page .ams-page-header>div:first-child{min-width:0}
+.ams-shell .ams-leads-page .ams-page-header h1,.ams-shell .ams-inbox-page .ams-page-header h1{min-width:0;overflow-wrap:anywhere}
+.ams-shell .ams-leads-page input,.ams-shell .ams-leads-page textarea,.ams-shell .ams-inbox-page input,.ams-shell .ams-inbox-page textarea{min-height:36px;border-radius:8px}
+.ams-shell .ams-leads-page input:focus-visible,.ams-shell .ams-leads-page textarea:focus-visible,.ams-shell .ams-inbox-page input:focus-visible,.ams-shell .ams-inbox-page textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-color:var(--accent)!important}
+.ams-shell .ams-leads-page table,.ams-shell .ams-inbox-page table{border-collapse:separate;border-spacing:0;font-variant-numeric:tabular-nums}
+.ams-shell .ams-leads-page table thead th,.ams-shell .ams-inbox-page table thead th{height:40px;padding-top:0;padding-bottom:0;font-size:12px;line-height:16px;font-weight:400}
+.ams-shell .ams-leads-page table tbody td,.ams-shell .ams-inbox-page table tbody td{padding-top:10px;padding-bottom:10px}
+.ams-shell .ams-leads-page .ams-table-scroll,.ams-shell .ams-inbox-page .ams-table-scroll{max-width:100%;overflow-x:auto;overflow-y:hidden;scrollbar-gutter:stable;-webkit-overflow-scrolling:touch}
+.ams-shell .ams-leads-page .ams-kanban-scroll{min-width:0;width:100%;overscroll-behavior-x:contain;scrollbar-gutter:stable}
+.ams-shell .ams-leads-page .ams-kanban-scroll> *{flex:0 0 300px;min-width:280px;max-width:340px}
+.ams-shell .ams-leads-page .ams-drawer-surface{width:min(100%,560px);max-width:560px;padding:24px;overscroll-behavior:contain;scrollbar-gutter:stable}
+.ams-shell .ams-inbox-page .ams-inbox-workspace{min-width:0}
+.ams-shell .ams-inbox-page .ams-inbox-list-pane,.ams-shell .ams-inbox-page .ams-inbox-reader-pane{min-width:0;min-height:0}
+.ams-shell .ams-inbox-page .ams-inbox-reader-pane{overflow:hidden}
+.ams-shell .ams-inbox-page .ams-inbox-filter-tabs{min-width:0;scrollbar-width:thin;overscroll-behavior-x:contain}
+.ams-shell .ams-leads-page button,.ams-shell .ams-leads-page a,.ams-shell .ams-inbox-page button,.ams-shell .ams-inbox-page a{touch-action:manipulation}
+.ams-shell .ams-leads-page button:focus-visible,.ams-shell .ams-leads-page a:focus-visible,.ams-shell .ams-inbox-page button:focus-visible,.ams-shell .ams-inbox-page a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media(max-width:1099px){
+ .ams-shell .ams-leads-page .ams-page-header,.ams-shell .ams-inbox-page .ams-page-header{align-items:flex-start}
+ .ams-shell .ams-leads-page .ams-page-header>div:last-child,.ams-shell .ams-inbox-page .ams-page-header>div:last-child{width:100%}
+}
+@media(max-width:899px){
+ .ams-shell .ams-leads-page,.ams-shell .ams-inbox-page{gap:16px}
+ .ams-shell .ams-leads-page .ams-page-header,.ams-shell .ams-inbox-page .ams-page-header{gap:12px;padding-bottom:16px}
+ .ams-shell .ams-leads-page .ams-drawer-surface{width:min(100%,520px);max-width:100%;padding:20px}
+}
+@media(max-width:599px){
+ .ams-shell .ams-leads-page .ams-page-header,.ams-shell .ams-inbox-page .ams-page-header{gap:12px;padding-bottom:14px}
+ .ams-shell .ams-leads-page .ams-page-header>div:last-child,.ams-shell .ams-inbox-page .ams-page-header>div:last-child{display:flex;flex-wrap:wrap;width:100%;gap:8px}
+ .ams-shell .ams-leads-page .ams-kanban-scroll> *{flex-basis:min(84vw,320px);min-width:min(84vw,280px);max-width:min(84vw,320px)}
+ .ams-shell .ams-leads-page .ams-drawer-surface{width:100%;max-width:100%;padding:16px}
+ .ams-shell .ams-inbox-page .ams-inbox-filter-tabs{width:100%;flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px}
+ .ams-shell .ams-inbox-page table{min-width:760px}
+}
+@media(prefers-reduced-motion:reduce){
+ .ams-shell .ams-leads-page *,.ams-shell .ams-inbox-page *{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important}
+}
