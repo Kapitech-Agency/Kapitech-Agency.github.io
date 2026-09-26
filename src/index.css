@@ -1346,7 +1346,7 @@
 
 .ams-dropdown-surface {
   background: var(--panel) !important;
-  border: 1px solid var(--line);
+  border: 1px solid var(--line) !important;
   border-radius: var(--radius-control);
   box-shadow: none;
   backdrop-filter: none;
