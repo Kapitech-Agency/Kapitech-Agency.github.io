@@ -125,24 +125,17 @@ export const DataMigrationModal: React.FC<DataMigrationModalProps> = ({
             const lead: CrmLead = {
               id: 'crm_' + Date.now().toString(36) + '_' + Math.random().toString(36).substring(2, 6),
               clientName: cols[0],
-              company: cols[1] || 'Enterprise Client',
+              company: cols[1] || '',
               email: cols[2],
               phone: cols[3] || '',
-              servicePillar: (cols[4] as any) || 'Web Development',
-              dealValue: Number(cols[5]) || 45000000,
+              servicePillar: (cols[4] as any) || '',
+              dealValue: Number(cols[5]) || 0,
               stage: (cols[6] as any) || 'new',
               priority: (cols[7] as any) || 'medium',
-              source: 'Referral',
-              description: 'Migrated via enterprise CSV import utility.',
-              assignedTo: 'Account Executive',
-              notes: [
-                {
-                  id: 'n_' + Date.now(),
-                  author: 'CSV Import Utility',
-                  text: 'Migrated via enterprise CSV import utility.',
-                  createdAt: new Date().toISOString()
-                }
-              ],
+              source: 'CSV Import',
+              description: '',
+              assignedTo: '',
+              notes: [],
               createdAt: new Date().toISOString(),
               updatedAt: new Date().toISOString()
             };
@@ -157,21 +150,19 @@ export const DataMigrationModal: React.FC<DataMigrationModalProps> = ({
             const proj: AgencyProject = {
               id: 'proj_' + Date.now().toString(36) + '_' + Math.random().toString(36).substring(2, 6),
               name: cols[0],
-              clientName: cols[1] || 'Client',
-              clientCompany: cols[2] || 'Company',
-              clientEmail: cols[3] || 'client@example.com',
-              serviceCategory: cols[4] || 'Web Development',
-              budget: Number(cols[5]) || 65000000,
-              progressPercent: 10,
+              clientName: cols[1] || '',
+              clientCompany: cols[2] || '',
+              clientEmail: cols[3] || '',
+              serviceCategory: cols[4] || '',
+              budget: Number(cols[5]) || 0,
+              progressPercent: 0,
               status: 'planning',
-              startDate: cols[6] || new Date().toISOString().split('T')[0],
-              targetEndDate: cols[7] || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-              teamLead: cols[8] || 'Lead Full-Stack Tech',
-              teamMembers: ['Senior Frontend Dev', 'UI/UX Specialist'],
-              techStack: ['Next.js', 'TypeScript', 'Tailwind CSS'],
-              milestones: [
-                { id: 'm1', title: 'Sprint 1 Architecture', dueDate: '2026-09-15', completed: false }
-              ],
+              startDate: cols[6] || '',
+              targetEndDate: cols[7] || '',
+              teamLead: cols[8] || '',
+              teamMembers: [],
+              techStack: [],
+              milestones: [],
               tasks: [],
               createdAt: new Date().toISOString(),
               updatedAt: new Date().toISOString()
@@ -184,18 +175,18 @@ export const DataMigrationModal: React.FC<DataMigrationModalProps> = ({
         dataLines.forEach(line => {
           const cols = line.split(',').map(c => c.trim());
           if (cols.length >= 4 && cols[0]) {
-            const amount = Number(cols[5]) || 25000000;
+            const amount = Number(cols[5]) || 0;
             const tax = Math.round(amount * 0.11);
             const inv: AgencyInvoice = {
               id: 'inv_' + Date.now().toString(36) + '_' + Math.random().toString(36).substring(2, 6),
               invoiceNumber: cols[0],
-              clientName: cols[1] || 'Client',
-              clientCompany: cols[2] || 'Company',
-              clientEmail: cols[3] || 'billing@example.com',
+              clientName: cols[1] || '',
+              clientCompany: cols[2] || '',
+              clientEmail: cols[3] || '',
               items: [
                 {
                   id: 'item_1',
-                  description: cols[4] || 'Deliverable Milestone Billing',
+                  description: cols[4] || '',
                   quantity: 1,
                   unitPrice: amount,
                   amount: amount
@@ -207,8 +198,8 @@ export const DataMigrationModal: React.FC<DataMigrationModalProps> = ({
               total: amount + tax,
               currency: 'IDR',
               status: (cols[6] as any) || 'sent',
-              issueDate: cols[7] || new Date().toISOString().split('T')[0],
-              dueDate: cols[8] || new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+              issueDate: cols[7] || '',
+              dueDate: cols[8] || '',
               createdAt: new Date().toISOString(),
               updatedAt: new Date().toISOString()
             };
