@@ -918,7 +918,7 @@ export const AdminProjects: React.FC = () => {
             onClick={() => setActiveTaskDrawer(null)}
           />
 
-          <div className="relative ml-auto w-full sm:max-w-lg bg-[var(--panel)] border-l-0 sm:border-l border-[var(--line)] h-full max-h-[100dvh] flex flex-col justify-between z-10 overflow-hidden animate-in slide-in-from-right duration-200 font-sans text-xs">
+          <div className="relative ml-auto w-full sm:max-w-lg bg-[var(--panel)] border-l-0 sm:border-l border-[var(--line)] h-full max-h-[100dvh] flex flex-col justify-between z-10 overflow-hidden ams-drawer-surface font-sans text-xs">
             {/* Sticky Drawer Header */}
             <div className="sticky top-0 z-20 bg-[var(--panel)]/95 px-5 sm:px-6 py-4 border-b border-[var(--line)] flex items-center justify-between shrink-0">
               <div className="flex items-center gap-2">
@@ -1083,7 +1083,7 @@ export const AdminProjects: React.FC = () => {
       {/* ------------------------------------------------------------- */}
       {isProjectModalOpen && (
         <div className="fixed inset-0 z-50 bg-bg/80  flex items-center justify-center p-0 sm:p-4 overflow-y-auto">
-          <div className="bg-[var(--panel)] border-0 sm:border sm:border-[var(--line)] rounded-card w-full h-full sm:h-auto sm:max-h-[calc(100dvh-28px)] sm:max-w-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-150">
+          <div className="bg-[var(--panel)] border-0 sm:border sm:border-[var(--line)] rounded-card w-full h-full sm:h-auto sm:max-h-[calc(100dvh-28px)] sm:max-w-2xl flex flex-col overflow-hidden ams-dialog-surface">
             {/* Sticky Header */}
             <div className="sticky top-0 z-20 bg-[var(--panel)]/95  px-5 sm:px-6 py-4 border-b border-[var(--line)] flex items-center justify-between shrink-0">
               <h3 className="font-sans font-semibold text-[var(--text)] text-base sm:text-lg flex items-center gap-2">
@@ -1252,7 +1252,7 @@ export const AdminProjects: React.FC = () => {
       {/* ------------------------------------------------------------- */}
       {isTaskModalOpen && (
         <div className="fixed inset-0 z-50 bg-bg/80  flex items-center justify-center p-0 sm:p-4 overflow-y-auto">
-          <div className="bg-[var(--panel)] border-0 sm:border sm:border-[var(--line)] rounded-card w-full h-full sm:h-auto sm:max-h-[calc(100dvh-28px)] sm:max-w-lg flex flex-col overflow-hidden animate-in zoom-in-95 duration-150">
+          <div className="bg-[var(--panel)] border-0 sm:border sm:border-[var(--line)] rounded-card w-full h-full sm:h-auto sm:max-h-[calc(100dvh-28px)] sm:max-w-lg flex flex-col overflow-hidden ams-dialog-surface">
             {/* Sticky Header */}
             <div className="sticky top-0 z-20 bg-[var(--panel)]/95  px-5 sm:px-6 py-4 border-b border-[var(--line)] flex items-center justify-between shrink-0">
               <h3 className="font-sans font-semibold text-[var(--text)] text-base flex items-center gap-2">
