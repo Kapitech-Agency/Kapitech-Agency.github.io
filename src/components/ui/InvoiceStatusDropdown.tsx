@@ -57,14 +57,23 @@ export const InvoiceStatusDropdown: React.FC<InvoiceStatusDropdownProps> = ({
   const triggerRef = useRef<HTMLButtonElement>(null);
 
   const current = statusConfigs[status] || statusConfigs.draft;
-  const CurrentIcon = current.icon;\n\n  const close = () => {\n    setIsOpen(false);\n    requestAnimationFrame(() => triggerRef.current?.focus());\n  };
+  const CurrentIcon = current.icon;
+
+  const close = () => {
+    setIsOpen(false);
+    requestAnimationFrame(() => triggerRef.current?.focus());
+  };
 
   return (
     <div className="relative inline-block text-left">
       <button
         type="button"
         disabled={disabled}
-        onClick={() => {\n          if (disabled) return;\n          setActiveIndex(Math.max(0, statuses.indexOf(status)));\n          setIsOpen((open) => !open);\n        }}
+        onClick={() => {
+          if (disabled) return;
+          setActiveIndex(Math.max(0, statuses.indexOf(status)));
+          setIsOpen((open) => !open);
+        }}
         onKeyDown={(e) => {
           if (e.key === 'Escape' || e.key === 'Tab') setIsOpen(false);
         }}
@@ -119,7 +128,8 @@ export const InvoiceStatusDropdown: React.FC<InvoiceStatusDropdownProps> = ({
                   setIsOpen(false);
                   triggerRef.current?.focus();
                 }}
-                data-selected={isSelected}\n                data-active={statuses.indexOf(item) === activeIndex}
+                data-selected={isSelected}
+                data-active={statuses.indexOf(item) === activeIndex}
                 className={`ams-dropdown-item w-full flex items-center justify-between min-h-10 sm:min-h-9 px-2.5 py-2 text-left transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-[-2px] ${
                   isSelected
                     ? 'bg-accent/10 text-fg font-semibold'
