@@ -573,7 +573,7 @@ export const AdminVendors: React.FC = () => {
       {isDrawerOpen && selectedVendor && (
         <div className="fixed inset-0 z-50 flex">
           <div className="fixed inset-0 bg-bg/80 " onClick={() => setIsDrawerOpen(false)} />
-          <div className="relative ml-auto w-full max-w-md bg-[var(--panel)] border-l border-[var(--line)] h-full max-h-[100dvh] flex flex-col justify-between p-4 sm:p-6 z-10 overflow-y-auto animate-in slide-in-from-right duration-200">
+          <div className="relative ml-auto w-full max-w-md bg-[var(--panel)] border-l border-[var(--line)] h-full max-h-[100dvh] flex flex-col justify-between p-4 sm:p-6 z-10 overflow-y-auto ams-drawer-surface">
             <div>
               <div className="flex items-center justify-between pb-4 border-b border-[var(--line)]">
                 <div className="flex items-center gap-3">
@@ -674,7 +674,7 @@ export const AdminVendors: React.FC = () => {
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="fixed inset-0 bg-bg/80 " onClick={() => setIsModalOpen(false)} />
-          <div className="relative w-full max-w-lg bg-[var(--panel)] border border-[var(--line)] rounded-card p-4 sm:p-6 z-10 animate-in zoom-in-95 duration-150">
+          <div className="relative w-full max-w-lg bg-[var(--panel)] border border-[var(--line)] rounded-card p-4 sm:p-6 z-10 ams-dialog-surface">
             <div className="flex items-center justify-between pb-4 border-b border-[var(--line)]">
               <h3 className="text-sm font-semibold text-[var(--text)]">
                 {editingVendor
