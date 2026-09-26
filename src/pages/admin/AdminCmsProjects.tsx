@@ -231,17 +231,17 @@ export const AdminCmsProjects: React.FC = () => {
   return (
     <div className="space-y-6">
         <Modal open={!!deleteTarget} onClose={() => setDeleteTarget(null)} size="sm" title="Delete case study?" description={deleteTarget ? `Case study "${deleteTarget.title}" will be permanently removed.` : undefined}>
-          <div className="flex flex-col-reverse sm:flex-row justify-end gap-2"><button type="button" onClick={() => setDeleteTarget(null)} className="min-h-10 px-4 rounded-control border border-[var(--line)] bg-[var(--panel)] text-xs text-[var(--muted)]">Cancel</button><button type="button" onClick={() => void confirmDeleteProject()} className="min-h-10 px-4 rounded-control bg-[var(--danger)] text-white text-xs font-semibold">Delete</button></div>
+          <div className="flex flex-col-reverse sm:flex-row justify-end gap-2"><button type="button" onClick={() => setDeleteTarget(null)} className="min-h-10 px-4 rounded-control border border-line bg-panel text-xs text-muted">Cancel</button><button type="button" onClick={() => void confirmDeleteProject()} className="min-h-10 px-4 rounded-control bg-danger text-white text-xs font-semibold">Delete</button></div>
         </Modal>
       
       {/* Top Title & Actions */}
       <div className="ams-page-header flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
         <div>
           <h1 className="ams-page-title">
-            <Layers className="text-[var(--accent-text)] shrink-0" size={22} />
+            <Layers className="text-accent-text shrink-0" size={22} />
             <span>{t('admin.nav.cmsProjects')}</span>
           </h1>
-          <p className="text-xs text-[var(--muted)] mt-1 font-sans">
+          <p className="text-xs text-muted mt-1 font-sans">
             {language === 'id'
               ? 'Kelola showcase studi kasus dan portofolio agency untuk kapitech.id/work.'
               : 'Manage case studies, portfolio showcases, and technical deliverables at kapitech.id/work.'}
@@ -251,7 +251,7 @@ export const AdminCmsProjects: React.FC = () => {
         <div className="flex items-center gap-3">
           <button
             onClick={handleOpenAdd}
-            className="min-h-10 px-4 rounded-control bg-[var(--accent)] hover:brightness-110 text-white text-xs font-sans font-medium transition-colors flex items-center gap-2"
+            className="min-h-10 px-4 rounded-control bg-accent hover:brightness-110 text-white text-xs font-sans font-medium transition-colors flex items-center gap-2"
           >
             <Plus size={15} />
             <span>{language === 'id' ? 'Tambah Case Study' : 'Add Case Study'}</span>
@@ -261,23 +261,23 @@ export const AdminCmsProjects: React.FC = () => {
 
       {/* Success alert */}
       {statusMessage && (
-        <div className="p-3.5 rounded-card bg-[var(--success)]/10 border border-[var(--success)]/30 text-[var(--success)] text-xs font-sans flex items-center gap-2 animate-in fade-in duration-300">
+        <div className="p-3.5 rounded-card bg-success/10 border border-success/30 text-success text-xs font-sans flex items-center gap-2 animate-in fade-in duration-300">
           <Check size={15} />
           <span>{statusMessage}</span>
         </div>
       )}
 
       {/* Filter & Search Bar (In-Card) */}
-      <div className="bg-[var(--panel)] border border-[var(--line)] p-4 rounded-card">
+      <div className="bg-panel border border-line p-4 rounded-card">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div className="relative sm:col-span-2">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--muted)]" size={14} />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted" size={14} />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={language === 'id' ? 'Cari proyek, klien, industri, teknologi...' : 'Search projects, client names, industries, tech stack...'}
-              className="w-full pl-10 pr-4 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-control text-xs text-[var(--text)] focus:outline-none focus:border-[var(--accent)] placeholder:text-[var(--muted)] font-sans min-h-10 py-2.5"
+              className="w-full pl-10 pr-4 py-2.5 bg-panel border border-line rounded-control text-xs text-text focus:outline-none focus:border-accent placeholder:text-muted font-sans min-h-10 py-2.5"
             />
           </div>
 
@@ -303,23 +303,23 @@ export const AdminCmsProjects: React.FC = () => {
         {filteredProjects.map((project) => (
           <div
             key={project.id}
-            className="bg-[var(--panel)] border border-[var(--line)] hover:border-[var(--line)] rounded-card overflow-hidden flex flex-col group transition-all"
+            className="bg-panel border border-line hover:border-line rounded-card overflow-hidden flex flex-col group transition-all"
           >
             {/* Image Thumbnail */}
-            <div className="relative h-48 w-full bg-[var(--bg)] overflow-hidden">
+            <div className="relative h-48 w-full bg-bg overflow-hidden">
               <img
                 src={project.image}
                 alt={project.title}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
-              <div className="absolute inset-0 bg-black/30" />
+              <div className="absolute inset-0 bg-bg/30" />
 
               {/* Badges on image */}
               <div className="absolute top-3 left-3 flex items-center gap-1.5">
                 <span className={`px-2 py-0.5 rounded text-[10px] font-sans font-semibold border ${
                   project.pillar === 'Visual Experience'
-                    ? 'bg-[var(--info)]/10 text-[var(--info)] border-[var(--info)]/30'
-                    : 'bg-[var(--info)]/10 text-[var(--info)] border-[var(--info)]/30'
+                    ? 'bg-info/10 text-info border-info/30'
+                    : 'bg-info/10 text-info border-info/30'
                 }`}>
                   {project.pillar}
                 </span>
@@ -330,8 +330,8 @@ export const AdminCmsProjects: React.FC = () => {
                   onClick={() => handleToggleFeatured(project)}
                   className={`p-1.5 rounded-control border text-xs transition-colors  ${
                     project.featured
-                      ? 'bg-[var(--warning)]/10 text-[var(--warning)] border-[var(--warning)]/30'
-                      : 'bg-[var(--panel)] text-[var(--muted)] border-[var(--line)] hover:text-[var(--text)]'
+                      ? 'bg-warning/10 text-warning border-warning/30'
+                      : 'bg-panel text-muted border-line hover:text-text'
                   }`}
                   title={project.featured ? 'Status: Featured (Click to toggle)' : 'Click to feature'}
                 >
@@ -340,8 +340,8 @@ export const AdminCmsProjects: React.FC = () => {
               </div>
 
               <div className="absolute bottom-3 left-3 right-3">
-                <div className="text-[11px] font-sans text-[var(--text)]/80">{project.client}</div>
-                <div className="text-base font-semibold font-sans text-[var(--text)] truncate">
+                <div className="text-[11px] font-sans text-text/80">{project.client}</div>
+                <div className="text-base font-semibold font-sans text-text truncate">
                   {project.title}
                 </div>
               </div>
@@ -349,7 +349,7 @@ export const AdminCmsProjects: React.FC = () => {
 
             {/* Body */}
             <div className="p-4 flex-1 flex flex-col justify-between space-y-4 font-sans text-xs">
-              <p className="text-[var(--muted)] line-clamp-2 font-sans text-xs">
+              <p className="text-muted line-clamp-2 font-sans text-xs">
                 {project.descId || project.desc || 'No case study summary entered.'}
               </p>
 
@@ -358,28 +358,28 @@ export const AdminCmsProjects: React.FC = () => {
                 {project.technologies.slice(0, 4).map((tech, idx) => (
                   <span
                     key={idx}
-                    className="text-[10px] font-sans px-2 py-0.5 rounded bg-[var(--panel)] border border-[var(--line)] text-[var(--muted)]"
+                    className="text-[10px] font-sans px-2 py-0.5 rounded bg-panel border border-line text-muted"
                   >
                     {tech}
                   </span>
                 ))}
                 {project.technologies.length > 4 && (
-                  <span className="text-[10px] font-sans px-1.5 py-0.5 rounded bg-[var(--panel)] border border-[var(--line)] text-[var(--muted)]">
+                  <span className="text-[10px] font-sans px-1.5 py-0.5 rounded bg-panel border border-line text-muted">
                     +{project.technologies.length - 4}
                   </span>
                 )}
               </div>
 
               {/* Action Buttons */}
-              <div className="pt-3 border-t border-[var(--line)] flex items-center justify-between">
-                <div className="text-[10px] text-[var(--muted)]">
+              <div className="pt-3 border-t border-line flex items-center justify-between">
+                <div className="text-[10px] text-muted">
                   Release {project.year || '2025'}
                 </div>
 
                 <div className="flex items-center gap-1.5">
                   <button
                     onClick={() => handleOpenEdit(project)}
-                    className="p-1.5 rounded-control bg-[var(--panel)] hover:bg-[var(--panel-hover)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] transition-colors"
+                    className="p-1.5 rounded-control bg-panel hover:bg-panel-hover text-muted hover:text-text border border-line transition-colors"
                     title="Edit Case Study"
                   >
                     <Edit3 size={13} />
@@ -387,7 +387,7 @@ export const AdminCmsProjects: React.FC = () => {
 
                   <button
                     onClick={() => handleDelete(project.id, project.title)}
-                    className="p-1.5 rounded-control bg-[var(--panel)] hover:bg-[var(--accent)]/10 text-[var(--muted)] hover:text-[var(--danger)] border border-[var(--line)] hover:border-[var(--danger)]/30 transition-colors"
+                    className="p-1.5 rounded-control bg-panel hover:bg-accent/10 text-muted hover:text-danger border border-line hover:border-danger/30 transition-colors"
                     title="Delete Case Study"
                   >
                     <Trash2 size={13} />
@@ -402,24 +402,24 @@ export const AdminCmsProjects: React.FC = () => {
       {/* MODAL: ADD / EDIT PROJECT WITH LIVE PREVIEW & DRAG & DROP */}
       {isModalOpen && editingProject && (
         <div className="fixed inset-0 bg-bg/90 z-50 flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-[var(--panel)] border border-[var(--line)] rounded-card max-w-3xl w-full max-h-[calc(100dvh-24px)] overflow-y-auto p-4 sm:p-6 font-sans text-xs">
+          <div className="bg-panel border border-line rounded-card max-w-3xl w-full max-h-[calc(100dvh-24px)] overflow-y-auto p-4 sm:p-6 font-sans text-xs">
             
-            <div className="flex items-center justify-between pb-4 border-b border-[var(--line)] mb-6">
+            <div className="flex items-center justify-between pb-4 border-b border-line mb-6">
               <div className="flex items-center gap-3">
-                <FolderKanban className="text-[var(--danger)]" size={20} />
-                <h2 className="text-lg font-semibold font-sans text-[var(--text)]">
+                <FolderKanban className="text-danger" size={20} />
+                <h2 className="text-lg font-semibold font-sans text-text">
                   {editingProject.title ? `Edit: ${editingProject.title}` : 'Add New Case Study'}
                 </h2>
               </div>
 
               <div className="flex items-center gap-3">
                 {/* Modal Tab Switcher */}
-                <div className="flex items-center rounded-control bg-[var(--panel)] border border-[var(--line)] p-0.5">
+                <div className="flex items-center rounded-control bg-panel border border-line p-0.5">
                   <button
                     type="button"
                     onClick={() => setModalTab('details')}
                     className={`px-3 py-1 rounded-chip text-[11px] font-semibold transition-all ${
-                      modalTab === 'details' ? 'bg-[var(--panel)] text-[var(--text)]' : 'text-[var(--muted)] hover:text-[var(--text)]'
+                      modalTab === 'details' ? 'bg-panel text-text' : 'text-muted hover:text-text'
                     }`}
                   >
                     Details
@@ -428,7 +428,7 @@ export const AdminCmsProjects: React.FC = () => {
                     type="button"
                     onClick={() => setModalTab('preview')}
                     className={`flex items-center gap-1.5 px-3 py-1 rounded-chip text-[11px] font-semibold transition-all ${
-                      modalTab === 'preview' ? 'bg-[var(--panel)] text-[var(--text)]' : 'text-[var(--muted)] hover:text-[var(--text)]'
+                      modalTab === 'preview' ? 'bg-panel text-text' : 'text-muted hover:text-text'
                     }`}
                   >
                     <Eye size={12} />
@@ -438,7 +438,7 @@ export const AdminCmsProjects: React.FC = () => {
 
                 <button
                   onClick={() => setIsModalOpen(false)}
-                  className="p-1.5 rounded-control bg-[var(--panel)] hover:bg-[var(--panel-hover)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)]"
+                  className="p-1.5 rounded-control bg-panel hover:bg-panel-hover text-muted hover:text-text border border-line"
                 >
                   <X size={15} />
                 </button>
@@ -447,40 +447,40 @@ export const AdminCmsProjects: React.FC = () => {
 
             {modalTab === 'preview' ? (
               <div className="py-6 flex flex-col items-center">
-                <div className="text-[11px] text-[var(--muted)] mb-4">
-                  Live Showcase Preview (as rendered on <code className="text-[var(--text)]">kapitech.id/work</code>):
+                <div className="text-[11px] text-muted mb-4">
+                  Live Showcase Preview (as rendered on <code className="text-text">kapitech.id/work</code>):
                 </div>
-                <div className="w-full max-w-sm max-h-[calc(100dvh-24px)] bg-[var(--panel)] border border-[var(--line)] rounded-card overflow-y-auto">
-                  <div className="relative h-48 w-full bg-[var(--bg)]">
+                <div className="w-full max-w-sm max-h-[calc(100dvh-24px)] bg-panel border border-line rounded-card overflow-y-auto">
+                  <div className="relative h-48 w-full bg-bg">
                     <img src={editingProject.image} alt={editingProject.title} className="w-full h-full object-cover" />
-                    <div className="absolute inset-0 bg-black/40" />
-                    <div className="absolute top-3 left-3 px-2 py-0.5 rounded text-[10px] font-sans font-semibold bg-[var(--accent)]/10 text-[var(--accent-text)] border border-[var(--accent)]/30">
+                    <div className="absolute inset-0 bg-bg/40" />
+                    <div className="absolute top-3 left-3 px-2 py-0.5 rounded text-[10px] font-sans font-semibold bg-accent/10 text-accent-text border border-accent/30">
                       {editingProject.pillar}
                     </div>
                     <div className="absolute bottom-3 left-3 right-3">
-                      <div className="text-[10px] text-[var(--text)]/80">{editingProject.client || 'Client Name'}</div>
-                      <div className="text-base font-semibold font-sans text-[var(--text)] truncate">
+                      <div className="text-[10px] text-text/80">{editingProject.client || 'Client Name'}</div>
+                      <div className="text-base font-semibold font-sans text-text truncate">
                         {editingProject.title || 'Untitled Case Study'}
                       </div>
                     </div>
                   </div>
                   <div className="p-4 space-y-3 font-sans text-xs">
-                    <p className="text-[var(--muted)] text-xs font-sans">
+                    <p className="text-muted text-xs font-sans">
                       {editingProject.descId || editingProject.desc || 'No description entered.'}
                     </p>
                     <div className="flex flex-wrap gap-1">
                       {editingProject.technologies.map((t, idx) => (
-                        <span key={idx} className="text-[10px] px-2 py-0.5 rounded bg-[var(--panel)] border border-[var(--line)] text-[var(--muted)]">
+                        <span key={idx} className="text-[10px] px-2 py-0.5 rounded bg-panel border border-line text-muted">
                           {t}
                         </span>
                       ))}
                     </div>
                     {editingProject.impact && editingProject.impact.length > 0 && (
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2 border-t border-[var(--line)]">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2 border-t border-line">
                         {editingProject.impact.map((imp, idx) => (
-                          <div key={idx} className="bg-[var(--panel)] p-2 rounded-control border border-[var(--line)]">
-                            <div className="text-[9px] text-[var(--muted)] normal-case">{imp.label}</div>
-                            <div className="text-xs font-semibold text-[var(--success)]">{imp.value}</div>
+                          <div key={idx} className="bg-panel p-2 rounded-control border border-line">
+                            <div className="text-[9px] text-muted normal-case">{imp.label}</div>
+                            <div className="text-xs font-semibold text-success">{imp.value}</div>
                           </div>
                         ))}
                       </div>
@@ -493,61 +493,61 @@ export const AdminCmsProjects: React.FC = () => {
                 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-[var(--muted)] mb-1 font-semibold">Project Title *</label>
+                    <label className="block text-muted mb-1 font-semibold">Project Title *</label>
                     <input
                       type="text"
                       required
                       value={editingProject.title}
                       onChange={(e) => setEditingProject({ ...editingProject, title: e.target.value })}
                       placeholder="e.g. Bank Digital Nusantara Mobile"
-                      className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)] font-sans"
+                      className="w-full px-3.5 py-2.5 bg-panel border border-line rounded-control text-text focus:outline-none focus:border-accent font-sans"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-[var(--muted)] mb-1 font-semibold">Client Name / Company</label>
+                    <label className="block text-muted mb-1 font-semibold">Client Name / Company</label>
                     <input
                       type="text"
                       value={editingProject.client}
                       onChange={(e) => setEditingProject({ ...editingProject, client: e.target.value })}
                       placeholder="PT Bank Digital Nusantara"
-                      className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)] font-sans"
+                      className="w-full px-3.5 py-2.5 bg-panel border border-line rounded-control text-text focus:outline-none focus:border-accent font-sans"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div>
-                    <label className="block text-[var(--muted)] mb-1 font-semibold">Studio Pillar</label>
+                    <label className="block text-muted mb-1 font-semibold">Studio Pillar</label>
                     <CustomSelect value={editingProject.pillar} onChange={(value) => setEditingProject({ ...editingProject, pillar: value as any })} options={[{value:'Visual Experience',label:'Visual Experience'},{value:'Innovation Development',label:'Innovation Development'}]} className="w-full" />
                   </div>
 
                   <div>
-                    <label className="block text-[var(--muted)] mb-1 font-semibold">Service Category</label>
+                    <label className="block text-muted mb-1 font-semibold">Service Category</label>
                     <input
                       type="text"
                       value={editingProject.service}
                       onChange={(e) => setEditingProject({ ...editingProject, service: e.target.value as any })}
                       placeholder="UI/UX Design, Web Application..."
-                      className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)] font-sans"
+                      className="w-full px-3.5 py-2.5 bg-panel border border-line rounded-control text-text focus:outline-none focus:border-accent font-sans"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-[var(--muted)] mb-1 font-semibold">Release Year</label>
+                    <label className="block text-muted mb-1 font-semibold">Release Year</label>
                     <input
                       type="text"
                       value={editingProject.year}
                       onChange={(e) => setEditingProject({ ...editingProject, year: e.target.value })}
                       placeholder="2025"
-                      className="w-full px-3.5 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)] font-sans"
+                      className="w-full px-3.5 py-2.5 bg-panel border border-line rounded-control text-text focus:outline-none focus:border-accent font-sans"
                     />
                   </div>
                 </div>
 
                 {/* Drag & Drop File Upload or URL */}
                 <div>
-                  <label className="block text-[var(--muted)] mb-1 font-semibold">
+                  <label className="block text-muted mb-1 font-semibold">
                     Cover Image (Drag & Drop File or URL)
                   </label>
                   
@@ -557,22 +557,22 @@ export const AdminCmsProjects: React.FC = () => {
                     onDrop={handleDrop}
                     className={`border-2 border-dashed rounded-control p-4 text-center transition-all ${
                       isDraggingFile 
-                        ? 'border-[var(--accent)] bg-[var(--accent)]/10' 
-                        : 'border-[var(--line)] bg-[var(--panel)] hover:border-[var(--line)]'
+                        ? 'border-accent bg-accent/10' 
+                        : 'border-line bg-panel hover:border-line'
                     }`}
                   >
                     <div className="flex flex-col items-center justify-center gap-2">
                       {editingProject.image ? (
-                        <div className="relative w-36 h-20 rounded-control overflow-hidden border border-[var(--line)] mb-1">
+                        <div className="relative w-36 h-20 rounded-control overflow-hidden border border-line mb-1">
                           <img src={editingProject.image} alt="Preview" className="w-full h-full object-cover" />
                         </div>
                       ) : (
-                        <UploadCloud className="text-[var(--muted)]" size={28} />
+                        <UploadCloud className="text-muted" size={28} />
                       )}
                       
-                      <div className="text-[var(--text)]">
+                      <div className="text-text">
                         <span>Drag & drop image here, or </span>
-                        <label className="text-[var(--danger)] cursor-pointer hover:underline font-semibold">
+                        <label className="text-danger cursor-pointer hover:underline font-semibold">
                           browse file
                           <input
                             type="file"
@@ -586,7 +586,7 @@ export const AdminCmsProjects: React.FC = () => {
                           />
                         </label>
                       </div>
-                      <p className="text-[10px] text-[var(--muted)]">PNG, JPG, WebP up to 10MB</p>
+                      <p className="text-[10px] text-muted">PNG, JPG, WebP up to 10MB</p>
                     </div>
                   </div>
 
@@ -596,25 +596,25 @@ export const AdminCmsProjects: React.FC = () => {
                       value={editingProject.image}
                       onChange={(e) => setEditingProject({ ...editingProject, image: e.target.value })}
                       placeholder="Or paste direct image URL (https://...)"
-                      className="w-full px-3.5 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)] font-sans"
+                      className="w-full px-3.5 py-2 bg-panel border border-line rounded-control text-text focus:outline-none focus:border-accent font-sans"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-[var(--muted)] mb-1 font-semibold">Short Executive Summary</label>
+                  <label className="block text-muted mb-1 font-semibold">Short Executive Summary</label>
                   <textarea
                     rows={2}
                     value={editingProject.descId || editingProject.desc}
                     onChange={(e) => setEditingProject({ ...editingProject, descId: e.target.value, desc: e.target.value })}
                     placeholder="Brief description of the solution delivered for client..."
-                    className="w-full px-3.5 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)] font-sans text-xs"
+                    className="w-full px-3.5 py-2 bg-panel border border-line rounded-control text-text focus:outline-none focus:border-accent font-sans text-xs"
                   />
                 </div>
 
                 {/* Tech Stack Chip Manager */}
                 <div>
-                  <label className="block text-[var(--muted)] mb-1 font-semibold">Tech Stack & Frameworks</label>
+                  <label className="block text-muted mb-1 font-semibold">Tech Stack & Frameworks</label>
                   <div className="flex gap-2 mb-2">
                     <input
                       type="text"
@@ -622,12 +622,12 @@ export const AdminCmsProjects: React.FC = () => {
                       onChange={(e) => setTechInput(e.target.value)}
                       onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddTech(); } }}
                       placeholder="Type tech name and press Enter (e.g. Next.js 14, Tailwind, Go)..."
-                      className="flex-1 px-3.5 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
+                      className="flex-1 px-3.5 py-2 bg-panel border border-line rounded-control text-text focus:outline-none focus:border-accent"
                     />
                     <button
                       type="button"
                       onClick={handleAddTech}
-                      className="px-3.5 py-2 rounded-control bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--text)] border border-[var(--line)]"
+                      className="px-3.5 py-2 rounded-control bg-panel hover:bg-panel text-text border border-line"
                     >
                       Add Tag
                     </button>
@@ -636,13 +636,13 @@ export const AdminCmsProjects: React.FC = () => {
                     {editingProject.technologies.map((tech, idx) => (
                       <span
                         key={idx}
-                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-control bg-[var(--panel)] border border-[var(--line)] text-[var(--text)] text-[11px]"
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-control bg-panel border border-line text-text text-[11px]"
                       >
                         <span>{tech}</span>
                         <button
                           type="button"
                           onClick={() => handleRemoveTech(tech)}
-                          className="text-[var(--muted)] hover:text-[var(--danger)]"
+                          className="text-muted hover:text-danger"
                         >
                           ✕
                         </button>
@@ -653,26 +653,26 @@ export const AdminCmsProjects: React.FC = () => {
 
                 {/* Impact Metrics Editor */}
                 <div>
-                  <label className="block text-[var(--muted)] mb-1 font-semibold">Impact Metrics & Key Results</label>
+                  <label className="block text-muted mb-1 font-semibold">Impact Metrics & Key Results</label>
                   <div className="flex gap-2 mb-2">
                     <input
                       type="text"
                       value={metricLabel}
                       onChange={(e) => setMetricLabel(e.target.value)}
                       placeholder="Metric label (e.g. Conversion Lift)"
-                      className="flex-1 px-3.5 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
+                      className="flex-1 px-3.5 py-2 bg-panel border border-line rounded-control text-text focus:outline-none focus:border-accent"
                     />
                     <input
                       type="text"
                       value={metricValue}
                       onChange={(e) => setMetricValue(e.target.value)}
                       placeholder="Value (e.g. +40%)"
-                      className="w-32 px-3.5 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
+                      className="w-32 px-3.5 py-2 bg-panel border border-line rounded-control text-text focus:outline-none focus:border-accent"
                     />
                     <button
                       type="button"
                       onClick={handleAddImpactMetric}
-                      className="px-3.5 py-2 rounded-control bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--text)] border border-[var(--line)]"
+                      className="px-3.5 py-2 rounded-control bg-panel hover:bg-panel text-text border border-line"
                     >
                       Add Metric
                     </button>
@@ -680,13 +680,13 @@ export const AdminCmsProjects: React.FC = () => {
                   {editingProject.impact && editingProject.impact.length > 0 && (
                     <div className="flex flex-wrap gap-2">
                       {editingProject.impact.map((imp, idx) => (
-                        <div key={idx} className="flex items-center gap-2 px-3 py-1.5 rounded-control bg-[var(--panel)] border border-[var(--line)]">
-                          <span className="text-[var(--muted)]">{imp.label}:</span>
-                          <span className="text-[var(--success)] font-semibold">{imp.value}</span>
+                        <div key={idx} className="flex items-center gap-2 px-3 py-1.5 rounded-control bg-panel border border-line">
+                          <span className="text-muted">{imp.label}:</span>
+                          <span className="text-success font-semibold">{imp.value}</span>
                           <button
                             type="button"
                             onClick={() => handleRemoveImpactMetric(idx)}
-                            className="text-[var(--muted)] hover:text-[var(--danger)] ml-1"
+                            className="text-muted hover:text-danger ml-1"
                           >
                             ✕
                           </button>
@@ -696,28 +696,28 @@ export const AdminCmsProjects: React.FC = () => {
                   )}
                 </div>
 
-                <div className="pt-3 border-t border-[var(--line)] flex items-center justify-between">
+                <div className="pt-3 border-t border-line flex items-center justify-between">
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input
                       type="checkbox"
                       checked={editingProject.featured}
                       onChange={(e) => setEditingProject({ ...editingProject, featured: e.target.checked })}
-                      className="w-4 h-4 rounded bg-[var(--panel)] border-[var(--line)] text-[var(--danger)] accent-brand-red"
+                      className="w-4 h-4 rounded bg-panel border-line text-danger accent-brand-red"
                     />
-                    <span className="text-[var(--text)]">Feature in Homepage Highlights</span>
+                    <span className="text-text">Feature in Homepage Highlights</span>
                   </label>
 
                   <div className="flex items-center gap-2">
                     <button
                       type="button"
                       onClick={() => setIsModalOpen(false)}
-                      className="px-4 py-2 rounded-control bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)]"
+                      className="px-4 py-2 rounded-control bg-panel text-muted hover:text-text border border-line"
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
-                      className="px-5 py-2 rounded-control bg-[var(--accent)] text-white font-semibold hover:brightness-110 transition-all"
+                      className="px-5 py-2 rounded-control bg-accent text-white font-semibold hover:brightness-110 transition-all"
                     >
                       Save Case Study
                     </button>
