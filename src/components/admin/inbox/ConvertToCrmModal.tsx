@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { 
-  Briefcase, 
   X, 
   Check, 
   DollarSign, 
@@ -271,8 +270,6 @@ export const ConvertToCrmModal: React.FC<ConvertToCrmModalProps> = ({
           </div>
 
         </div>
-
-      </div>
 
     </Modal>
   );
