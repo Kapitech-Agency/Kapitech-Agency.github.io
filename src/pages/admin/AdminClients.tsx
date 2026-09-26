@@ -824,29 +824,29 @@ export const AdminClients: React.FC = () => {
             </div>
           </section>
 
-          <section aria-labelledby="client-relationship-section" className="grid gap-5 border-t border-line pt-6 sm:grid-cols-[180px_minmax(0,1fr)]">
+          <section aria-labelledby="client-relationship-section" className="grid gap-3 border-t border-line pt-4 sm:grid-cols-[160px_minmax(0,1fr)]">
             <div>
               <h3 id="client-relationship-section" className="text-sm font-semibold text-fg">Client relationship</h3>
               <p className="mt-1 text-xs leading-4 text-muted">Operational values tracked on the client record.</p>
             </div>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="grid grid-cols-2 gap-3">
               <div><label htmlFor="client-projects" className="mb-1.5 block">Projects count</label><input id="client-projects" type="number" min="0" inputMode="numeric" value={projectsCount} onChange={(event) => setProjectsCount(Number(event.target.value))} /></div>
               <div><label htmlFor="client-spend" className="mb-1.5 block">Cumulative billed value</label><input id="client-spend" type="number" min="0" inputMode="decimal" value={totalSpend} onChange={(event) => setTotalSpend(Number(event.target.value))} /></div>
             </div>
           </section>
 
-          <section aria-labelledby="client-sla-section" className="grid gap-5 border-t border-line pt-6 sm:grid-cols-[180px_minmax(0,1fr)]">
+          <section aria-labelledby="client-sla-section" className="grid gap-3 border-t border-line pt-4 sm:grid-cols-[160px_minmax(0,1fr)]">
             <div>
               <h3 id="client-sla-section" className="text-sm font-semibold text-fg">Daily ad-spend SLA</h3>
               <p className="mt-1 text-xs leading-4 text-muted">Optional tracking for the configured daily cap.</p>
             </div>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="grid grid-cols-2 gap-3">
               <div><label htmlFor="client-sla" className="mb-1.5 block">Agreed daily cap</label><input id="client-sla" type="number" min="0" inputMode="decimal" value={slaDailyBudget} onChange={(event) => setSlaDailyBudget(Number(event.target.value))} /></div>
               <div><label htmlFor="client-daily-spend" className="mb-1.5 block">Current daily spend</label><input id="client-daily-spend" type="number" min="0" inputMode="decimal" value={currentDailySpend} onChange={(event) => setCurrentDailySpend(Number(event.target.value))} /></div>
             </div>
           </section>
 
-          <section aria-labelledby="client-notes-section" className="grid gap-5 border-t border-line pt-6 sm:grid-cols-[180px_minmax(0,1fr)]">
+          <section aria-labelledby="client-notes-section" className="grid gap-3 border-t border-line pt-4 sm:grid-cols-[160px_minmax(0,1fr)]">
             <div>
               <h3 id="client-notes-section" className="text-sm font-semibold text-fg">Notes & requirements</h3>
               <p className="mt-1 text-xs leading-4 text-muted">Preferences, requirements, billing context, or operational notes.</p>
