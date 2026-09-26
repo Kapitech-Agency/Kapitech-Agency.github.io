@@ -385,7 +385,7 @@ export const DataMigrationModal: React.FC<DataMigrationModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="h-10 px-4 min-h-[40px] rounded-control bg-[var(--panel)] hover:bg-[var(--panel)] border border-[var(--line)] text-xs font-sans text-[var(--text)] transition-colors"
+            className="min-h-10 px-4 rounded-control bg-[var(--panel)] hover:bg-[var(--panel)] border border-[var(--line)] text-xs font-sans text-[var(--text)] transition-colors"
           >
             {language === 'id' ? 'Tutup' : 'Close'}
           </button>
