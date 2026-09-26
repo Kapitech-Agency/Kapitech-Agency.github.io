@@ -23,6 +23,7 @@ import { getAdminSession, logoutAdmin } from '../../lib/adminAuth';
 import { useLanguage } from '../../lib/LanguageContext';
 import { CommandPalette } from '../../components/admin/CommandPalette';
 import { AdminNotificationCenter } from '../../components/admin/AdminNotificationCenter';
+import { Modal } from '../../components/ui/Modal';
 import { useRbacRole } from '../../lib/rbacEngine';
 
 interface NavItem {
@@ -404,20 +405,31 @@ export const AdminLayout: React.FC = () => {
         </div>
       </motion.aside>
 
-      {logoutConfirmOpen && (
-        <div className="fixed inset-0 z-[70] bg-black/70 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="logout-title">
-          <div className="w-full max-w-sm rounded-card bg-panel border border-line overflow-hidden">
-            <div className="p-4 border-b border-line">
-              <h2 id="logout-title" className="text-sm font-semibold text-fg">{language === 'id' ? 'Keluar dari AMS?' : 'Sign out of AMS?'}</h2>
-              <p className="mt-1.5 text-xs leading-relaxed text-muted">{t('admin.nav.logoutConfirm')}</p>
-            </div>
-            <div className="p-4 flex items-center justify-end gap-2">
-              <button type="button" onClick={() => setLogoutConfirmOpen(false)} className="min-h-10 px-3 rounded-control bg-panel border border-line text-xs font-medium text-muted hover:text-fg hover:bg-panel-hover">{language === 'id' ? 'Batal' : 'Cancel'}</button>
-              <button type="button" onClick={confirmLogout} className="min-h-10 px-3 rounded-control bg-danger/10 border border-danger/30 text-danger hover:bg-danger/15 text-xs font-semibold">{language === 'id' ? 'Keluar' : 'Sign out'}</button>
-            </div>
-          </div>
-        </div>
-      )}
+      <Modal
+        open={logoutConfirmOpen}
+        onClose={() => setLogoutConfirmOpen(false)}
+        size="sm"
+        title={language === 'id' ? 'Keluar dari AMS?' : 'Sign out of AMS?'}
+        description={t('admin.nav.logoutConfirm')}
+        footer={(
+          <>
+            <button
+              type="button"
+              onClick={() => setLogoutConfirmOpen(false)}
+              className="min-h-10 w-full sm:w-auto px-3 rounded-control border border-line bg-panel text-xs font-medium text-muted hover:text-fg hover:bg-panel-hover"
+            >
+              {language === 'id' ? 'Batal' : 'Cancel'}
+            </button>
+            <button
+              type="button"
+              onClick={confirmLogout}
+              className="min-h-10 w-full sm:w-auto px-3 rounded-control bg-danger/10 border border-danger/30 text-danger hover:bg-danger/15 text-xs font-semibold"
+            >
+              {language === 'id' ? 'Keluar' : 'Sign out'}
+            </button>
+          </>
+        )}
+      />
 
       {/* ------------------------------------------------------------- */}
       {/* MOBILE TOPBAR - Single, sleek, non-cluttered header */}
@@ -463,7 +475,7 @@ export const AdminLayout: React.FC = () => {
             onClick={() => setMobileMenuOpen(false)}
           />
 
-          <div className="relative w-[300px] max-w-[88vw] bg-panel border-r border-line h-[100dvh] flex flex-col justify-between z-50 overflow-hidden animate-in slide-in-from-left duration-200">
+          <motion.div initial={{ x: -16, opacity: 0.98 }} animate={{ x: 0, opacity: 1 }} transition={{ duration: 0.18, ease: "easeOut" }} className="relative w-[300px] max-w-[88vw] bg-panel border-r border-line h-[100dvh] flex flex-col justify-between z-50 overflow-hidden">
             
             {/* Drawer Header */}
             <div className="p-3.5 border-b border-line flex items-center justify-between gap-2 bg-panel shrink-0">
@@ -576,7 +588,7 @@ export const AdminLayout: React.FC = () => {
                 <span>{t('admin.nav.logout')}</span>
               </button>
             </div>
-          </div>
+          </motion.div>
         </div>
       )}
 
