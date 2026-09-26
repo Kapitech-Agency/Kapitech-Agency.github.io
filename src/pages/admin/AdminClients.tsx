@@ -27,6 +27,14 @@ import { Button } from '../../components/ui/Button';
 import { CustomSelect } from '../../components/ui/CustomSelect';
 import { Modal } from '../../components/ui/Modal';
 
+const STATUS_OPTIONS: Array<{ value: AgencyClient['status'] | 'all'; label: string }> = [
+  { value: 'all', label: 'All statuses' },
+  { value: 'active', label: 'Active' },
+  { value: 'completed', label: 'Completed' },
+  { value: 'lead', label: 'Lead' },
+  { value: 'inactive', label: 'Inactive' }
+];
+
 export const AdminClients: React.FC = () => {
   const canManageClients = hasAdminPermission('canManageClients');
   const { t, language } = useLanguage();
