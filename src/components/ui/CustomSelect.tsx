@@ -133,7 +133,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
         anchorRef={triggerRef}
         onClose={() => setIsOpen(false)}
         align={align}
-        className={`ams-dropdown-surface z-40 min-w-[140px] sm:min-w-[180px] max-w-[calc(100vw-16px)] sm:max-w-[280px] max-h-[min(320px,calc(100dvh-16px))] overflow-y-auto overscroll-contain p-1 custom-scrollbar font-sans text-xs ${menuClassName}`}
+        className={`ams-dropdown-surface bg-panel border border-line z-40 min-w-[140px] sm:min-w-[180px] max-w-[calc(100vw-16px)] sm:max-w-[280px] max-h-[min(320px,calc(100dvh-16px))] overflow-y-auto overscroll-contain p-1 custom-scrollbar font-sans text-xs ${menuClassName}`}
       >
         <div id={listboxId} role="listbox" aria-label={placeholder}>
           {options.length === 0 ? (
