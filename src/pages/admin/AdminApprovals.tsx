@@ -175,7 +175,7 @@ export const AdminApprovals: React.FC = () => {
     <div className="space-y-6 animate-in fade-in duration-200">
       {/* Toast Notification */}
       {notification && (
-        <div className="fixed top-16 left-3 right-3 sm:left-auto sm:top-20 sm:right-6 z-50 px-4 py-2.5 rounded-card bg-panel border border-accent/40 text-text text-xs font-sans flex items-center gap-2">
+        <div className="fixed top-16 left-3 right-3 sm:left-auto sm:top-20 sm:right-6 z-50 px-4 py-2.5 rounded-card bg-panel border border-accent/40 text-fg text-xs font-sans flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-accent " />
           <span>{notification}</span>
         </div>
@@ -214,7 +214,7 @@ export const AdminApprovals: React.FC = () => {
             <span>{language === 'id' ? 'Nilai Tertunda' : 'Pending Value'}</span>
             <DollarSign size={13} className="text-accent" />
           </div>
-          <div className="text-lg sm:text-xl font-semibold font-sans text-text">
+          <div className="text-lg sm:text-xl font-semibold font-sans text-fg">
             {formatAmount(metrics.totalPendingValue, currency)}
           </div>
           <div className="text-xs font-sans text-muted">
@@ -258,7 +258,7 @@ export const AdminApprovals: React.FC = () => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={language === 'id' ? 'Cari judul, pemohon, atau catatan...' : 'Search title, requester, or notes...'}
-            className="w-full h-9 pl-8 pr-3 text-xs bg-panel text-text placeholder-muted rounded-control border border-line focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 focus:border-accent font-sans"
+            className="w-full h-9 pl-8 pr-3 text-xs bg-panel text-fg placeholder-muted rounded-control border border-line focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 focus:border-accent font-sans"
           />
         </div>
 
@@ -273,7 +273,7 @@ export const AdminApprovals: React.FC = () => {
                 className={`min-h-10 sm:min-h-9 px-2.5 rounded-chip text-xs font-sans capitalize transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent active:scale-[.98] ${
                   statusFilter === st
                     ? 'bg-accent text-white border border-accent font-semibold'
-                    : 'text-muted hover:bg-bg hover:text-text'
+                    : 'text-muted hover:bg-bg hover:text-fg'
                 }`}
               >
                 {st}
@@ -319,7 +319,7 @@ export const AdminApprovals: React.FC = () => {
                   </div>
                   <div className="min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="font-semibold text-sm text-text">{item.title}</span>
+                      <span className="font-semibold text-sm text-fg">{item.title}</span>
                       <span className="px-2 py-0.5 rounded text-xs font-sans normal-case bg-panel text-muted border border-line">
                         {item.type}
                       </span>
@@ -352,7 +352,7 @@ export const AdminApprovals: React.FC = () => {
                   {item.value > 0 && (
                     <div className="text-right">
                       <div className="text-xs font-sans text-muted">Value</div>
-                      <div className="font-semibold font-sans text-text text-sm">
+                      <div className="font-semibold font-sans text-fg text-sm">
                         {formatAmount(item.value, currency)}
                       </div>
                     </div>
@@ -413,13 +413,13 @@ export const AdminApprovals: React.FC = () => {
         <div className="fixed inset-0 z-50 bg-bg/80 flex items-center justify-center p-4" role="presentation">
           <div className="bg-bg border border-line rounded-card w-full max-w-md max-h-[calc(100dvh-24px)] overflow-y-auto">
             <div className="p-4 border-b border-line flex items-center justify-between bg-panel">
-              <h3 className="text-sm font-semibold font-sans text-text flex items-center gap-2">
+              <h3 className="text-sm font-semibold font-sans text-fg flex items-center gap-2">
                 <ShieldCheck size={16} className="text-accent" />
                 <span>Executive Decision Confirmation</span>
               </h3>
               <button
                 onClick={() => setActiveItem(null)}
-                className="p-1 text-muted hover:text-text rounded-control hover:bg-panel-hover"
+                className="p-1 text-muted hover:text-fg rounded-control hover:bg-panel-hover"
               >
                 <X size={16} />
               </button>
@@ -427,7 +427,7 @@ export const AdminApprovals: React.FC = () => {
 
             <form onSubmit={handleDecisionSubmit} className="p-5 space-y-4 text-xs font-sans">
               <div>
-                <div className="font-semibold text-text text-sm">{activeItem.title}</div>
+                <div className="font-semibold text-fg text-sm">{activeItem.title}</div>
                 <div className="text-xs font-sans text-muted mt-0.5">
                   Requested by: {activeItem.requester}
                 </div>
@@ -484,7 +484,7 @@ export const AdminApprovals: React.FC = () => {
                   value={decisionNotes}
                   onChange={(e) => setDecisionNotes(e.target.value)}
                   placeholder="Record rationale for the immutable security audit log..."
-                  className="w-full p-2.5 rounded-control bg-panel text-text border border-line focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 focus:border-accent text-xs resize-none"
+                  className="w-full p-2.5 rounded-control bg-panel text-fg border border-line focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 focus:border-accent text-xs resize-none"
                 />
               </div>
 
@@ -499,7 +499,7 @@ export const AdminApprovals: React.FC = () => {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-5 py-2 rounded-control bg-accent hover:brightness-110 text-white text-xs font-sans font-semibold disabled:opacity-50 flex items-center gap-1.5 min-h-10"
+                  className="px-5 py-2 rounded-control bg-accent hover:bg-[var(--accent-hover)] text-white text-xs font-sans font-semibold disabled:opacity-50 flex items-center gap-1.5 min-h-10"
                 >
                   {isSubmitting ? <Loader2 size={13} className="animate-spin" /> : <ShieldCheck size={14} />}
                   <span>Confirm Decision</span>
