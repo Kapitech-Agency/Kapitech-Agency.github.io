@@ -430,7 +430,7 @@ export const AdminVendors: React.FC = () => {
         {filteredVendors.map(vendor => (
           <div
             key={vendor.id}
-            className="w-full h-full p-4 rounded-card bg-panel border border-line hover:border-[rgba(255,255,255,0.14)] transition-all flex flex-col justify-between group"
+            className="w-full h-full p-4 rounded-card bg-panel border border-line hover:border-muted transition-all flex flex-col justify-between group"
           >
             <div>
               {/* Header Card */}
