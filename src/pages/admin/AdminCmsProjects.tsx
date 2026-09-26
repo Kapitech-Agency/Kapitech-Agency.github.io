@@ -251,7 +251,7 @@ export const AdminCmsProjects: React.FC = () => {
         <div className="flex items-center gap-3">
           <button
             onClick={handleOpenAdd}
-            className="min-h-10 px-4 rounded-control bg-accent hover:bg-[var(--accent-hover)] text-white text-xs font-sans font-medium transition-colors flex items-center gap-2"
+            className="min-h-10 px-4 rounded-control bg-accent hover:bg-accent-hover text-white text-xs font-sans font-medium transition-colors flex items-center gap-2"
           >
             <Plus size={15} />
             <span>{language === 'id' ? 'Tambah Case Study' : 'Add Case Study'}</span>
@@ -717,7 +717,7 @@ export const AdminCmsProjects: React.FC = () => {
                     </button>
                     <button
                       type="submit"
-                      className="px-5 py-2 rounded-control bg-accent text-white font-semibold hover:bg-[var(--accent-hover)] transition-all"
+                      className="px-5 py-2 rounded-control bg-accent text-white font-semibold hover:bg-accent-hover transition-all"
                     >
                       Save Case Study
                     </button>
