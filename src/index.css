@@ -1830,9 +1830,16 @@
 
 /* AMS 2026 visual reconciliation. Keep this scoped to the admin shell. */
 .ams-shell {
+  height: 100dvh;
+  min-height: 100dvh;
+  overflow: hidden;
   font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
   background: var(--bg);
   color: var(--text);
+}
+.ams-shell main {
+  min-height: 0;
+  overscroll-behavior: none;
 }
 .ams-shell .bg-accent { background-color: var(--accent); }
 .ams-shell .text-accent { color: var(--accent-text); }
