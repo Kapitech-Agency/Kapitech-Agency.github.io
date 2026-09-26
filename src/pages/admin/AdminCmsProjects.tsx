@@ -348,7 +348,7 @@ export const AdminCmsProjects: React.FC = () => {
             </div>
 
             {/* Body */}
-            <div className="p-5 flex-1 flex flex-col justify-between space-y-4 font-sans text-xs">
+            <div className="p-4 flex-1 flex flex-col justify-between space-y-4 font-sans text-xs">
               <p className="text-[var(--muted)] line-clamp-2 font-sans text-xs">
                 {project.descId || project.desc || 'No case study summary entered.'}
               </p>
