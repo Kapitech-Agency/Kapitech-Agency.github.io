@@ -105,7 +105,7 @@ export const AdminTimeLogs: React.FC = () => {
   };
 
   return (
-    <div className="h-full overflow-y-auto bg-bg text-text">
+    <div className="min-h-full bg-bg text-fg">
       <div className="max-w-[1500px] mx-auto p-4 sm:p-5 lg:p-6 space-y-6">
         <header className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4 pb-5 border-b border-line">
           <div className="flex items-center gap-2 self-stretch sm:self-auto">
@@ -118,7 +118,7 @@ export const AdminTimeLogs: React.FC = () => {
                 <Plus size={15} /> Add Time Entry
               </button>
             )}
-            <button onClick={() => void load()} className="inline-flex min-h-10 items-center justify-center gap-2 rounded-control border border-line bg-panel px-3 text-xs text-text transition-colors hover:bg-bg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent self-stretch sm:self-auto">
+            <button onClick={() => void load()} className="inline-flex min-h-10 items-center justify-center gap-2 rounded-control border border-line bg-panel px-3 text-xs text-fg transition-colors hover:bg-bg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent self-stretch sm:self-auto">
               <RefreshCw size={14} /> Refresh
             </button>
           </div>
@@ -135,7 +135,7 @@ export const AdminTimeLogs: React.FC = () => {
                 <span className="text-xs text-muted">{label}</span>
                 <Icon size={15} className="text-accent" />
               </div>
-              <div className="mt-2 text-xl font-semibold tracking-tight">{value}</div>
+              <div className="mt-2 text-xl font-semibold tracking-[-0.01em]">{value}</div>
             </div>
           ))}
         </section>
@@ -181,7 +181,7 @@ export const AdminTimeLogs: React.FC = () => {
                   <input type="checkbox" checked={billable} onChange={e => setBillable(e.target.checked)} className="accent-accent" />
                   Billable
                 </label>
-                <button disabled={saving} className="min-h-10 px-4 rounded-control bg-accent hover:brightness-110 disabled:opacity-50 text-white text-xs font-semibold inline-flex items-center gap-2">
+                <button disabled={saving} className="min-h-10 px-4 rounded-control bg-accent hover:bg-[var(--accent-hover)] disabled:opacity-50 text-white text-xs font-semibold inline-flex items-center gap-2">
                   {saving ? 'Saving…' : 'Add entry'}
                 </button>
               </div>
@@ -189,7 +189,7 @@ export const AdminTimeLogs: React.FC = () => {
           </form>
         )}
 
-        {status && <div className="rounded-card border border-line bg-panel px-4 py-3 text-xs text-text">{status}</div>}
+        {status && <div className="rounded-card border border-line bg-panel px-4 py-3 text-xs text-fg">{status}</div>}
 
         <section className="rounded-card border border-line bg-panel overflow-hidden">
           <div className="px-4 sm:px-5 py-4 border-b border-line flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5">
@@ -203,12 +203,12 @@ export const AdminTimeLogs: React.FC = () => {
           ) : logs.length === 0 ? (
             <div className="min-h-[160px] px-4 py-8 text-center">
               <Timer size={22} className="mx-auto text-muted" />
-              <p className="mt-3 text-sm text-text">No time entries yet</p>
+              <p className="mt-3 text-sm text-fg">No time entries yet</p>
               <p className="mt-1 text-xs text-muted">Add the first delivery time entry above.</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full min-w-[760px] text-left">
+              <table className="ams-table w-full min-w-[760px] text-left">
                 <thead className="bg-bg text-xs normal-case tracking-normal text-muted">
                   <tr>
                     <th className="px-4 py-3 font-medium">Date</th>
@@ -222,14 +222,14 @@ export const AdminTimeLogs: React.FC = () => {
                 <tbody className="divide-y divide-line">
                   {logs.map(log => (
                     <tr key={log.id} className="hover:bg-panel-hover">
-                      <td className="px-4 py-3 text-xs text-text whitespace-nowrap">{log.date}</td>
+                      <td className="px-4 py-3 text-xs text-fg whitespace-nowrap">{log.date}</td>
                       <td className="px-4 py-3">
-                        <div className="text-xs font-medium text-text">{log.projectName || 'General'}</div>
+                        <div className="text-xs font-medium text-fg">{log.projectName || 'General'}</div>
                         <div className="text-[11px] text-muted mt-0.5">{log.taskTitle || 'General activity'}</div>
                       </td>
-                      <td className="px-4 py-3 text-xs text-text">{log.user || '—'}</td>
-                      <td className="px-4 py-3 text-xs font-semibold text-text">{formatMinutes(Number(log.durationMinutes || 0))}</td>
-                      <td className="px-4 py-3"><span className="inline-flex px-2 py-1 rounded-badge border border-line text-[10px] text-text">{log.billable ? 'Billable' : 'Non-billable'}</span></td>
+                      <td className="px-4 py-3 text-xs text-fg">{log.user || '—'}</td>
+                      <td className="px-4 py-3 text-xs font-semibold text-fg">{formatMinutes(Number(log.durationMinutes || 0))}</td>
+                      <td className="px-4 py-3"><span className="inline-flex px-2 py-1 rounded-badge border border-line text-[10px] text-fg">{log.billable ? 'Billable' : 'Non-billable'}</span></td>
                       <td className="px-4 py-3 text-right">
                         {(canDeleteAll || log.userId === getAdminSession()?.user?.id) && (
                           <button onClick={() => void remove(log)} className="min-h-10 min-w-10 inline-flex items-center justify-center rounded-control text-muted hover:text-danger hover:bg-accent/10" title="Delete time entry">
@@ -248,7 +248,7 @@ export const AdminTimeLogs: React.FC = () => {
       <Modal open={!!deleteTarget} onClose={() => setDeleteTarget(null)} size="sm" title="Delete time entry" description="This removes the selected time entry from the time log.">
         <div className="space-y-4">
           <div className="rounded-control border border-line bg-bg p-3 text-xs text-muted">
-            <div className="font-semibold text-text">{deleteTarget?.projectName || 'General'}</div>
+            <div className="font-semibold text-fg">{deleteTarget?.projectName || 'General'}</div>
             <div className="mt-1">{deleteTarget?.taskTitle || 'General activity'} · {deleteTarget ? formatMinutes(Number(deleteTarget.durationMinutes || 0)) : ''}</div>
           </div>
           <div className="flex flex-col-reverse sm:flex-row justify-end gap-2">
