@@ -209,7 +209,7 @@ export const AdminInvoicing: React.FC = () => {
       }
 
       setInvoices(invoiceRes.data.invoices as AgencyInvoice[]);
-      setExpenses(invoiceRes.data.expenses as FinanceExpense[]);
+      setExpenses(expenseRes.data.expenses as FinanceExpense[]);
       setServerMetrics(metricsRes.data.metrics as ServerMetrics);
       if (clientRes.success && Array.isArray(clientRes.data?.clients)) {
         setClients(clientRes.data.clients as FinanceClient[]);
