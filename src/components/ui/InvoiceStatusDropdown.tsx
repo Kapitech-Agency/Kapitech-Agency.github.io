@@ -1,6 +1,5 @@
 import React, { useState, useRef } from 'react';
 import { ChevronDown, Check, CircleCheck, Clock3, Send, CircleAlert, FileText } from 'lucide-react';
-import { motion } from 'motion/react';
 import { DropdownPortal } from './DropdownPortal';
 import { InvoiceStatus } from '../../lib/financeStore';
 
@@ -104,15 +103,9 @@ export const InvoiceStatusDropdown: React.FC<InvoiceStatusDropdownProps> = ({
         anchorRef={triggerRef}
         onClose={() => setIsOpen(false)}
         align="left"
-        className="ams-dropdown-surface bg-panel border border-line z-40 min-w-[150px] max-w-[calc(100vw-16px)] max-h-[min(320px,calc(100dvh-16px))] overflow-y-auto overscroll-contain p-1 font-sans text-xs"
+        className="ams-popover-surface min-w-[150px] max-w-[calc(100vw-16px)] max-h-[min(320px,calc(100dvh-16px))] overflow-y-auto overscroll-contain p-1 font-sans text-xs"
       >
-        <motion.div
-          initial={{ opacity: 0, y: 3 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.15, ease: 'easeOut' }}
-          role="listbox"
-          className="space-y-0.5"
-        >
+        <div role="listbox" className="space-y-0.5">
           {statuses.map((item) => {
             const isSelected = item === status;
             const config = statusConfigs[item];
