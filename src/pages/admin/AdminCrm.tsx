@@ -469,7 +469,7 @@ export const AdminCrm: React.FC = () => {
         </div>
 
         {/* Stage Conversion Funnel */}
-        <div className="md:col-span-2 lg:col-span-5 ams-crm-funnel-card bg-[var(--panel)] border border-[var(--line)] p-4 sm:p-5 rounded-card flex flex-col justify-between group transition-colors">
+        <div className="md:col-span-2 lg:col-span-5 bg-[var(--panel)] border border-[var(--line)] p-5 sm:p-6 rounded-card flex flex-col justify-between group hover:border-[var(--line)] transition-all">
           <div className="flex items-center justify-between text-[var(--muted)] mb-2">
             <span className="text-xs font-sans normal-case tracking-normal font-semibold flex items-center gap-2 text-[var(--text)]">
               <Activity size={14} className="text-[var(--danger)]" />
@@ -481,7 +481,7 @@ export const AdminCrm: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 my-auto py-2">
-            <div className="bg-[var(--panel)] border border-[var(--line)] rounded-card p-2 text-center">
+            <div className="bg-[var(--bg)] border border-[var(--line)] rounded-control p-2.5 text-center">
               <div className="text-[10px] font-sans text-[var(--muted)] truncate">Lead→Scope</div>
               <div className="text-sm font-semibold font-sans text-[var(--text)] mt-0.5">{funnelStats.leadToScope}%</div>
             </div>
@@ -493,7 +493,7 @@ export const AdminCrm: React.FC = () => {
               <div className="text-[10px] font-sans text-[var(--muted)] truncate">Pitch→SOW</div>
               <div className="text-sm font-semibold font-sans text-[var(--text)] mt-0.5">{funnelStats.pitchToSow}%</div>
             </div>
-            <div className="bg-[var(--panel)] border border-[var(--success)]/20 bg-[var(--success)]/10 rounded-card p-2 text-center">
+            <div className="bg-[var(--success)]/10 border border-[var(--success)]/20 rounded-control p-2.5 text-center">
               <div className="text-[10px] font-sans text-[var(--success)] truncate">SOW→Won</div>
               <div className="text-sm font-semibold font-sans text-[var(--success)] mt-0.5">{funnelStats.sowToWon}%</div>
             </div>
