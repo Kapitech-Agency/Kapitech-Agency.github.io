@@ -17,7 +17,11 @@ import {
   ChevronRight,
   Menu,
   X,
-  LogOut
+  LogOut,
+  Sun,
+  Moon,
+  UserCircle,
+  HelpCircle
 } from 'lucide-react';
 import { getAdminSession, logoutAdmin } from '../../lib/adminAuth';
 import { useLanguage } from '../../lib/LanguageContext';
@@ -26,6 +30,7 @@ import { AdminNotificationCenter } from '../../components/admin/AdminNotificatio
 import { Modal } from '../../components/ui/Modal';
 import { useRbacRole } from '../../lib/rbacEngine';
 import { AmsBrandLogo } from '../../components/admin/AmsBrandLogo';
+import { DropdownPortal } from '../../components/ui/DropdownPortal';
 
 interface NavItem {
   key: string;
@@ -71,6 +76,16 @@ export const AdminLayout: React.FC = () => {
   }, [sidebarCollapsed]);
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
   const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
+  const [theme, setTheme] = useState<'dark' | 'light'>(() => {
+    try { return window.localStorage.getItem('kapitech_ams_theme') === 'light' ? 'light' : 'dark'; } catch { return 'dark'; }
+  });
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+  const profileTriggerRef = React.useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    try { window.localStorage.setItem('kapitech_ams_theme', theme); } catch {}
+  }, [theme]);
 
   useEffect(() => {
     setMobileMenuOpen(false);
@@ -456,7 +471,10 @@ export const AdminLayout: React.FC = () => {
           </Link>
         </div>
 
-        <div className="flex items-center">
+        <div className="flex items-center gap-1.5">
+          <button type="button" aria-label={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'} onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} className="flex h-10 w-10 items-center justify-center rounded-control border border-line bg-panel text-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent">
+            {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+          </button>
           <AdminNotificationCenter />
         </div>
       </div>
@@ -599,9 +617,66 @@ export const AdminLayout: React.FC = () => {
       <main className="flex-1 flex flex-col min-w-0 min-h-0 h-full overflow-y-auto overscroll-none bg-bg custom-scrollbar">
         
         {/* Sticky desktop top bar */}
-        <header className="hidden min-[900px]:flex h-[52px] border-b border-line bg-bg sticky top-0 z-30 items-center shrink-0" aria-label="AMS top bar">
-          <div className="w-full max-w-[1560px] mx-auto px-4 sm:px-5 lg:px-6 flex items-center justify-end">
-            <AdminNotificationCenter />
+        <header className="hidden min-[900px]:flex h-[52px] border-b border-line bg-panel sticky top-0 z-30 items-center shrink-0" aria-label="AMS top bar">
+          <div className="w-full max-w-[1560px] mx-auto px-4 sm:px-5 lg:px-6 flex items-center justify-between gap-4">
+            <div className="min-w-0 flex items-center gap-2 text-xs text-muted">
+              <span className="truncate">{activeItemLabel}</span>
+            </div>
+            <div className="flex items-center gap-1.5 shrink-0">
+              <Link
+                to="/admin/settings?tab=audit"
+                aria-label="Open help and audit"
+                title="Help and audit"
+                className="flex h-10 w-10 items-center justify-center rounded-control border border-line bg-panel text-muted transition-colors hover:bg-panel-hover hover:text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+              >
+                <HelpCircle size={16} />
+              </Link>
+              <button
+                type="button"
+                aria-label={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
+                title={theme === 'dark' ? 'Light theme' : 'Dark theme'}
+                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                className="flex h-10 w-10 items-center justify-center rounded-control border border-line bg-panel text-muted transition-colors hover:bg-panel-hover hover:text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+              >
+                {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+              </button>
+              <AdminNotificationCenter />
+              <div className="relative">
+                <button
+                  ref={profileTriggerRef}
+                  type="button"
+                  onClick={() => setProfileMenuOpen(v => !v)}
+                  aria-label="Open account menu"
+                  aria-haspopup="menu"
+                  aria-expanded={profileMenuOpen}
+                  className="flex h-10 w-10 items-center justify-center rounded-control border border-line bg-panel text-muted transition-colors hover:bg-panel-hover hover:text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                >
+                  <UserCircle size={17} />
+                </button>
+                <DropdownPortal
+                  open={profileMenuOpen}
+                  anchorRef={profileTriggerRef}
+                  onClose={() => setProfileMenuOpen(false)}
+                  align="right"
+                  offset={8}
+                  className="ams-popover-surface w-56 p-1"
+                >
+                  <div className="border-b border-line px-3 py-2.5">
+                    <p className="truncate text-xs font-semibold text-fg">{roleMeta.accountProfile.displayName}</p>
+                    <p className="mt-0.5 truncate text-[11px] text-muted">{roleMeta.accountProfile.accountId}</p>
+                  </div>
+                  <Link to="/admin/settings?tab=profile" onClick={() => setProfileMenuOpen(false)} className="ams-dropdown-item flex min-h-10 items-center rounded-chip px-2.5 text-xs">
+                    Profile
+                  </Link>
+                  <Link to="/admin/settings?tab=security" onClick={() => setProfileMenuOpen(false)} className="ams-dropdown-item flex min-h-10 items-center rounded-chip px-2.5 text-xs">
+                    Security
+                  </Link>
+                  <button type="button" onClick={() => { setProfileMenuOpen(false); handleLogout(); }} className="ams-dropdown-item flex min-h-10 w-full items-center rounded-chip px-2.5 text-left text-xs text-danger">
+                    Sign out
+                  </button>
+                </DropdownPortal>
+              </div>
+            </div>
           </div>
         </header>
 
