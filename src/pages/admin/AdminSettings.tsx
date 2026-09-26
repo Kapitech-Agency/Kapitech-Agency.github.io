@@ -1199,6 +1199,7 @@ export const AdminSettings: React.FC = () => {
             </div>
 
           </div>
+      </Modal>
         </div>
       )}
 
