@@ -395,7 +395,7 @@ export const AdminCrm: React.FC = () => {
           </button>
           {canManageCrm && (
             <>
-              <button type="button" onClick={() => handleOpenAddModal('new')} className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-control bg-accent px-3 text-xs font-semibold text-white transition-colors hover:bg-[var(--accent-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
+              <button type="button" onClick={() => handleOpenAddModal('new')} className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-control bg-accent px-3 text-xs font-semibold text-white transition-colors hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
               <Plus size={14} />
               <span>{t('admin.crm.addDeal')}</span>
               </button>
@@ -1141,7 +1141,7 @@ export const AdminCrm: React.FC = () => {
                 <button
                   onClick={() => handleConvertToProject(selectedLead)}
                   disabled={!canManageCrm}
-                  className="px-4 py-2 rounded-control bg-accent hover:bg-[var(--accent-hover)] text-white font-semibold text-xs flex items-center gap-1.5 min-h-10"
+                  className="px-4 py-2 rounded-control bg-accent hover:bg-accent-hover text-white font-semibold text-xs flex items-center gap-1.5 min-h-10"
                 >
                   <Layers size={13} />
                   <span>{t('admin.crm.convertToProject')}</span>
