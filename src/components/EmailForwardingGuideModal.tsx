@@ -112,5 +112,6 @@ export const EmailForwardingGuideModal: React.FC<EmailForwardingGuideModalProps>
           </section>
         </div>
 
+    </Modal>
   );
 };
