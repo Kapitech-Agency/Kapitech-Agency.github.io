@@ -52,7 +52,7 @@ export const Modal: React.FC<ModalProps> = ({
   if (!open) return null;
   return (
     <div className="ams-modal-root fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4" role="presentation">
-      <button aria-label="Close dialog overlay" type="button" aria-hidden="true" className="absolute inset-0 bg-bg/80" onClick={() => closeOnOutsideClick && onClose()} />
+      <button aria-label="Close dialog overlay" type="button" tabIndex={-1} aria-hidden="true" className="absolute inset-0 bg-bg/80" onClick={() => closeOnOutsideClick && onClose()} />
       <div ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby={labelledBy} aria-describedby={description ? descriptionId : undefined}
         className={`relative w-full ${sizes[size]} max-h-[calc(100dvh-28px)] flex flex-col overflow-hidden rounded-card border border-line bg-panel`}>
         <header className="flex items-start justify-between gap-4 border-b border-line px-4 py-3.5 sm:px-5">
