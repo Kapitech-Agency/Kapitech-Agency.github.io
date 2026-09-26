@@ -528,7 +528,7 @@
 .ams-shell .ams-sidebar-expanded a[aria-current=page],.ams-shell .ams-sidebar-collapsed a[aria-current=page]{box-shadow:inset 2px 0 0 var(--accent);background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--text)}
 .ams-shell .ams-sidebar-expanded,.ams-shell .ams-sidebar-collapsed{min-width:0}
 .ams-shell .ams-kanban-scroll{min-height:0;width:max-content;overscroll-behavior-x:contain}.ams-shell .kanban-card{min-height:126px}
-.ams-shell [role=dialog]:not(.ams-mobile-drawer)>div{border:1px solid var(--line);border-radius:12px;box-shadow:none}.ams-shell [role=dialog]{overscroll-behavior:contain}
+.ams-shell [role=dialog]{overscroll-behavior:contain}
 .ams-shell .ams-popover-surface{background:var(--bg);color:var(--text);border:1px solid var(--line);border-radius:8px;box-shadow:none}.ams-shell .ams-notification-surface{background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:12px;box-shadow:none}
 .ams-shell .ams-popover-surface .ams-dropdown-item{min-height:36px;padding:8px 10px;background:transparent;color:var(--muted);border-radius:6px}
 .ams-shell .ams-popover-surface .ams-dropdown-item:hover,.ams-shell .ams-popover-surface .ams-dropdown-item[data-active=true]{background:var(--panel-hover);color:var(--text)}
@@ -541,8 +541,8 @@
 .ams-shell .ams-leads-page .ams-kanban-scroll> *{flex:0 0 300px;min-width:280px;max-width:340px}
 .ams-shell .ams-inbox-list-pane,.ams-shell .ams-inbox-reader-pane{min-width:0;min-height:0}.ams-shell .ams-inbox-reader-pane{overflow:hidden}
 .ams-shell .ams-modal-root,.ams-shell [role=dialog]{overscroll-behavior:contain}
-.ams-shell .ams-modal-root>[role=dialog],.ams-shell .ams-dialog-surface{animation:ams-dialog-in 160ms ease-out}.ams-shell .ams-drawer-surface{animation:ams-drawer-in 180ms ease-out}
-@keyframes ams-dialog-in{from{opacity:0;transform:translateY(4px) scale(.99)}to{opacity:1;transform:translateY(0) scale(1)}}@keyframes ams-drawer-in{from{opacity:.98;transform:translateX(12px)}to{opacity:1;transform:translateX(0)}}
+.ams-shell .ams-drawer-surface{animation:ams-drawer-in 180ms ease-out}
+@keyframes ams-drawer-in{from{opacity:.98;transform:translateX(12px)}to{opacity:1;transform:translateX(0)}}
 .ams-shell .custom-scrollbar::-webkit-scrollbar{width:4px;height:4px}.ams-shell .custom-scrollbar::-webkit-scrollbar-track{background:transparent}.ams-shell .custom-scrollbar::-webkit-scrollbar-thumb{background:var(--line);border-radius:3px}.ams-shell .custom-scrollbar::-webkit-scrollbar-thumb:hover{background:var(--muted)}
 .ams-portal-root{font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--text)}
 .ams-portal-root .ams-popover-surface,.ams-portal-root .ams-notification-surface{box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none}
