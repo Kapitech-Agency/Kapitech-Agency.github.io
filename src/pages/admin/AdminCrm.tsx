@@ -368,7 +368,7 @@ export const AdminCrm: React.FC = () => {
       <Modal open={!!deleteTarget} onClose={() => setDeleteTarget(null)} size="sm" title={language === 'id' ? 'Hapus prospek?' : 'Delete lead?'} description={language === 'id' ? `Prospek ${deleteTarget?.name || ''} akan dihapus dari CRM.` : `Lead ${deleteTarget?.name || ''} will be removed from CRM.`}>
         <div className="flex flex-col-reverse sm:flex-row justify-end gap-2">
           <button type="button" onClick={() => setDeleteTarget(null)} className="min-h-10 px-4 rounded-control border border-[var(--line)] bg-[var(--panel)] text-xs text-[var(--muted)]">Cancel</button>
-          <button type="button" onClick={() => deleteTarget && void confirmDeleteLead(deleteTarget.id)} className="min-h-10 px-4 rounded-control bg-[var(--danger)] text-white text-xs font-semibold">Delete</button>
+          <button type="button" onClick={() => deleteTarget && void confirmDeleteLead(deleteTarget.id)} disabled={!canManageCrm} className="min-h-10 px-4 rounded-control bg-[var(--danger)] text-white text-xs font-semibold">Delete</button>
         </div>
       </Modal>
       <div className="ams-leads-page space-y-6 pb-8">
@@ -931,6 +931,7 @@ export const AdminCrm: React.FC = () => {
                             {lead.stage === 'won' && (
                               <button
                                 onClick={() => handleConvertToProject(lead)}
+                                disabled={!canManageCrm}
                                 title="Create project"
                                 className="w-9 h-9 rounded-control bg-[var(--success)]/10 text-[var(--success)] hover:bg-[var(--success)]/15 border border-[var(--success)]/30 flex items-center justify-center transition-colors min-h-10 min-w-10"
                               >
@@ -950,6 +951,7 @@ export const AdminCrm: React.FC = () => {
                             )}
                             <button
                               onClick={() => handleOpenEditModal(lead)}
+                              disabled={!canManageCrm}
                               className="w-10 h-10 rounded-control bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] flex items-center justify-center transition-colors min-h-10 min-w-10"
                               title="Edit deal"
                             >
@@ -957,6 +959,7 @@ export const AdminCrm: React.FC = () => {
                             </button>
                             <button
                               onClick={() => handleDeleteLead(lead.id, lead.clientName)}
+                              disabled={!canManageCrm}
                               className="w-9 h-9 rounded-control bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--danger)] border border-[var(--line)] hover:border-[var(--danger)]/40 flex items-center justify-center transition-colors min-h-10 min-w-10"
                               title="Delete deal"
                             >
