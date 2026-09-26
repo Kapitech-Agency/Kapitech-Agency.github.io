@@ -2066,6 +2066,12 @@
   background: transparent;
 }
 
+/* Keep the funnel as a true rounded card after the KPI-strip flattening rules. */
+.ams-shell .ams-crm-kpi > .ams-crm-funnel-card.bg-\[var\(--panel\)\] {
+  background: var(--panel);
+  border-radius: var(--radius-card);
+}
+
 .ams-shell .ams-crm-toolbar,
 .ams-shell .ams-inbox-toolbar {
   border-radius: var(--radius-card);
