@@ -331,7 +331,7 @@ export const DataMigrationModal: React.FC<DataMigrationModalProps> = ({
             <button
               type="button"
               onClick={handleDownloadTemplate}
-              className="min-h-10 px-3 rounded-control bg-panel hover:bg-[var(--line)] border border-line text-xs font-sans text-fg flex items-center justify-center gap-1.5 transition-colors shrink-0 min-h-10"
+              className="min-h-10 px-3 rounded-control bg-panel hover:bg-panel-hover border border-line text-xs font-sans text-fg flex items-center justify-center gap-1.5 transition-colors shrink-0 min-h-10"
             >
               <Download size={13} className="text-success" />
               <span>Download .CSV</span>
