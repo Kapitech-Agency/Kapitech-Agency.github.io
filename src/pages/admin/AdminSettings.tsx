@@ -410,7 +410,7 @@ export const AdminSettings: React.FC = () => {
           className={`px-4 py-2.5 rounded-control text-xs font-sans transition-all flex items-center gap-2 shrink-0 min-h-10 ${
             activeTab === 'profile'
               ? 'bg-accent text-white font-semibold '
-              : 'text-muted hover:text-text hover:bg-panel'
+              : 'text-muted hover:text-fg hover:bg-panel'
           }`}
         >
           <UserCheck size={15} />
@@ -422,7 +422,7 @@ export const AdminSettings: React.FC = () => {
           className={`px-4 py-2.5 rounded-control text-xs font-sans transition-all flex items-center gap-2 shrink-0 min-h-10 ${
             activeTab === 'branding'
               ? 'bg-accent text-white font-semibold '
-              : 'text-muted hover:text-text hover:bg-panel'
+              : 'text-muted hover:text-fg hover:bg-panel'
           }`}
         >
           <Palette size={15} />
@@ -435,7 +435,7 @@ export const AdminSettings: React.FC = () => {
           className={`px-4 py-2.5 rounded-control text-xs font-sans transition-all flex items-center gap-2 shrink-0 min-h-10 ${
             activeTab === 'rbac'
               ? 'bg-accent text-white font-semibold '
-              : 'text-muted hover:text-text hover:bg-panel'
+              : 'text-muted hover:text-fg hover:bg-panel'
           }`}
         >
           <Layers size={15} />
@@ -447,7 +447,7 @@ export const AdminSettings: React.FC = () => {
           className={`px-4 py-2.5 rounded-control text-xs font-sans transition-all flex items-center gap-2 shrink-0 min-h-10 ${
             activeTab === 'security'
               ? 'bg-accent text-white font-semibold '
-              : 'text-muted hover:text-text hover:bg-panel'
+              : 'text-muted hover:text-fg hover:bg-panel'
           }`}
         >
           <Lock size={15} />
@@ -460,7 +460,7 @@ export const AdminSettings: React.FC = () => {
           className={`px-4 py-2.5 rounded-control text-xs font-sans transition-all flex items-center gap-2 shrink-0 min-h-10 ${
             activeTab === 'api'
               ? 'bg-accent text-white font-semibold '
-              : 'text-muted hover:text-text hover:bg-panel'
+              : 'text-muted hover:text-fg hover:bg-panel'
           }`}
         >
           <Database size={15} />
@@ -473,7 +473,7 @@ export const AdminSettings: React.FC = () => {
           className={`px-4 py-2.5 rounded-control text-xs font-sans transition-all flex items-center gap-2 shrink-0 min-h-10 ${
             activeTab === 'audit'
               ? 'bg-accent text-white font-semibold '
-              : 'text-muted hover:text-text hover:bg-panel'
+              : 'text-muted hover:text-fg hover:bg-panel'
           }`}
         >
           <ShieldCheck size={15} />
@@ -489,7 +489,7 @@ export const AdminSettings: React.FC = () => {
               <UserCheck size={20} />
             </div>
             <div>
-              <h2 className="text-base font-semibold font-sans text-text">
+              <h2 className="text-base font-semibold font-sans text-fg">
                 {language === 'id' ? 'Profil & Identitas Master' : 'Master Profile & Identity'}
               </h2>
               <p className="text-xs text-muted font-sans">
@@ -522,7 +522,7 @@ export const AdminSettings: React.FC = () => {
                   required
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-panel border border-line rounded-control text-xs text-text focus:outline-none focus:border-accent font-sans min-h-10"
+                  className="w-full px-3.5 py-2.5 bg-panel border border-line rounded-control text-xs text-fg focus:outline-none focus:border-accent font-sans min-h-10"
                 />
               </div>
 
@@ -535,7 +535,7 @@ export const AdminSettings: React.FC = () => {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-panel border border-line rounded-control text-xs text-text focus:outline-none focus:border-accent font-sans min-h-10"
+                  className="w-full px-3.5 py-2.5 bg-panel border border-line rounded-control text-xs text-fg focus:outline-none focus:border-accent font-sans min-h-10"
                 />
               </div>
             </div>
@@ -547,7 +547,7 @@ export const AdminSettings: React.FC = () => {
               </div>
               <div className="flex items-center justify-between text-xs font-sans">
                 <span className="text-muted">{language === 'id' ? 'Divisi Agensi:' : 'Agency Division:'}</span>
-                <span className="text-text font-semibold">{storedCreds.division || 'Management'}</span>
+                <span className="text-fg font-semibold">{storedCreds.division || 'Management'}</span>
               </div>
               <div className="flex items-center justify-between text-xs font-sans">
                 <span className="text-muted">{language === 'id' ? 'Terakhir Login:' : 'Last Login:'}</span>
@@ -565,7 +565,7 @@ export const AdminSettings: React.FC = () => {
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
                 placeholder={language === 'id' ? 'Masukkan password admin saat ini...' : 'Enter your current password...'}
-                className="w-full px-3.5 py-2.5 bg-panel border border-line rounded-control text-xs text-text focus:outline-none focus:border-accent font-sans min-h-10"
+                className="w-full px-3.5 py-2.5 bg-panel border border-line rounded-control text-xs text-fg focus:outline-none focus:border-accent font-sans min-h-10"
               />
             </div>
 
@@ -573,7 +573,7 @@ export const AdminSettings: React.FC = () => {
               <button
                 type="submit"
                 disabled={securityLoading}
-                className="px-5 py-2.5 rounded-control bg-accent text-white text-xs font-sans font-semibold hover:brightness-110 transition-all flex items-center gap-2 disabled:opacity-50 min-h-10"
+                className="px-5 py-2.5 rounded-control bg-accent text-white text-xs font-sans font-semibold hover:bg-[var(--accent-hover)] transition-all flex items-center gap-2 disabled:opacity-50 min-h-10"
               >
                 {securityLoading ? <RefreshCw size={14} className="animate-spin" /> : <Save size={14} />}
                 <span>{language === 'id' ? 'Perbarui Akun Master' : 'Update Master Account'}</span>
@@ -591,7 +591,7 @@ export const AdminSettings: React.FC = () => {
               <Palette size={20} />
             </div>
             <div>
-              <h2 className="text-base font-semibold font-sans text-text">
+              <h2 className="text-base font-semibold font-sans text-fg">
                 {language === 'id' ? 'Identitas Brand, Metadata & Notifikasi' : 'Brand Identity, Metadata & Notification Rules'}
               </h2>
               <p className="text-xs text-muted font-sans">
@@ -619,7 +619,7 @@ export const AdminSettings: React.FC = () => {
                   type="text"
                   value={metaSettings.agencyName}
                   onChange={(e) => setMetaSettings({ ...metaSettings, agencyName: e.target.value })}
-                  className="w-full px-3.5 py-2.5 bg-panel border border-line rounded-control text-xs text-text focus:outline-none focus:border-accent font-sans min-h-10"
+                  className="w-full px-3.5 py-2.5 bg-panel border border-line rounded-control text-xs text-fg focus:outline-none focus:border-accent font-sans min-h-10"
                 />
               </div>
 
@@ -644,7 +644,7 @@ export const AdminSettings: React.FC = () => {
                 type="text"
                 value={metaSettings.tagline}
                 onChange={(e) => setMetaSettings({ ...metaSettings, tagline: e.target.value })}
-                className="w-full px-3.5 py-2.5 bg-panel border border-line rounded-control text-xs text-text focus:outline-none focus:border-accent font-sans min-h-10"
+                className="w-full px-3.5 py-2.5 bg-panel border border-line rounded-control text-xs text-fg focus:outline-none focus:border-accent font-sans min-h-10"
               />
             </div>
 
@@ -656,7 +656,7 @@ export const AdminSettings: React.FC = () => {
                 rows={3}
                 value={metaSettings.metaDescription}
                 onChange={(e) => setMetaSettings({ ...metaSettings, metaDescription: e.target.value })}
-                className="w-full px-3.5 py-2.5 bg-panel border border-line rounded-control text-xs text-text focus:outline-none focus:border-accent font-sans"
+                className="w-full px-3.5 py-2.5 bg-panel border border-line rounded-control text-xs text-fg focus:outline-none focus:border-accent font-sans"
               />
             </div>
 
@@ -668,7 +668,7 @@ export const AdminSettings: React.FC = () => {
                   onChange={(e) => setMetaSettings({ ...metaSettings, soundEffectsEnabled: e.target.checked })}
                   className="w-4 h-4 rounded bg-panel border-line text-accent accent-accent"
                 />
-                <span className="text-xs text-text font-sans">
+                <span className="text-xs text-fg font-sans">
                   {language === 'id' 
                     ? 'Aktifkan Notifikasi Suara (Chime) saat ada lead baru masuk' 
                     : 'Enable audio chime notification on new incoming lead submission'}
@@ -682,7 +682,7 @@ export const AdminSettings: React.FC = () => {
                   onChange={(e) => setMetaSettings({ ...metaSettings, enableLiveChat: e.target.checked })}
                   className="w-4 h-4 rounded bg-panel border-line text-accent accent-accent"
                 />
-                <span className="text-xs text-text font-sans">
+                <span className="text-xs text-fg font-sans">
                   {language === 'id' 
                     ? 'Tampilkan Floating Contact & WhatsApp Widget di pojok kanan bawah' 
                     : 'Display Floating WhatsApp & Contact Widget on bottom-right'}
@@ -693,7 +693,7 @@ export const AdminSettings: React.FC = () => {
             <div className="pt-4 flex items-center justify-end">
               <button
                 type="submit"
-                className="px-5 py-2.5 rounded-control bg-accent text-white text-xs font-sans font-semibold hover:brightness-110 transition-all flex items-center gap-2 min-h-10"
+                className="px-5 py-2.5 rounded-control bg-accent text-white text-xs font-sans font-semibold hover:bg-[var(--accent-hover)] transition-all flex items-center gap-2 min-h-10"
               >
                 <Save size={14} />
                 <span>{language === 'id' ? 'Simpan Pengaturan Brand' : 'Save Brand Settings'}</span>
@@ -726,7 +726,7 @@ export const AdminSettings: React.FC = () => {
                   <Users size={20} />
                 </div>
                 <div>
-                  <h2 className="text-base font-semibold font-sans text-text">
+                  <h2 className="text-base font-semibold font-sans text-fg">
                     {language === 'id' ? 'Manajemen Akun Stakeholder & Teknisi' : 'Stakeholder & Technical Accounts'}
                   </h2>
                   <p className="text-xs text-muted font-sans">
@@ -740,7 +740,7 @@ export const AdminSettings: React.FC = () => {
               <button
                 type="button"
                 onClick={handleOpenAddAccount}
-                className="h-10 px-4 min-h-10 rounded-control bg-accent text-white text-xs font-sans font-semibold hover:brightness-110 transition-all flex items-center justify-center gap-2 self-start sm:self-auto shrink-0"
+                className="h-10 px-4 min-h-10 rounded-control bg-accent text-white text-xs font-sans font-semibold hover:bg-[var(--accent-hover)] transition-all flex items-center justify-center gap-2 self-start sm:self-auto shrink-0"
               >
                 <UserPlus size={15} />
                 <span>{language === 'id' ? 'Tambah Akun Baru' : 'Add New Account'}</span>
@@ -771,7 +771,7 @@ export const AdminSettings: React.FC = () => {
                             {acc.name.split(' ').map(n => n[0]).slice(0, 2).join('')}
                           </div>
                           <div>
-                            <h3 className="text-sm font-semibold text-text leading-snug">{acc.name}</h3>
+                            <h3 className="text-sm font-semibold text-fg leading-snug">{acc.name}</h3>
                             <p className="text-[11px] font-sans text-muted">@{acc.username}</p>
                           </div>
                         </div>
@@ -789,7 +789,7 @@ export const AdminSettings: React.FC = () => {
                       <div className="space-y-1.5 pt-1 text-[11px] font-sans">
                         <div className="text-muted flex items-center justify-between">
                           <span>Role:</span>
-                          <span className="font-semibold text-text truncate max-w-[170px]">{acc.role}</span>
+                          <span className="font-semibold text-fg truncate max-w-[170px]">{acc.role}</span>
                         </div>
                         <div className="text-muted flex items-center justify-between">
                           <span>Email:</span>
@@ -838,7 +838,7 @@ export const AdminSettings: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => handleOpenEditPermissions(acc)}
-                        className="min-h-10 px-2.5 rounded-control bg-panel hover:bg-panel text-text text-[11px] font-sans font-medium flex items-center gap-1.5 transition-colors"
+                        className="min-h-10 px-2.5 rounded-control bg-panel hover:bg-panel text-fg text-[11px] font-sans font-medium flex items-center gap-1.5 transition-colors"
                       >
                         <Sliders size={13} className="text-danger" />
                         <span>{language === 'id' ? 'Atur Izin' : 'Permissions'}</span>
@@ -871,7 +871,7 @@ export const AdminSettings: React.FC = () => {
                 <Layers size={20} />
               </div>
               <div>
-                <h2 className="text-base font-semibold font-sans text-text">
+                <h2 className="text-base font-semibold font-sans text-fg">
                   {language === 'id' ? 'Standar Hirarki Hak Akses Stakeholder Kapitech' : 'Kapitech Stakeholder Access Standards'}
                 </h2>
                 <p className="text-xs text-muted font-sans">
@@ -883,7 +883,7 @@ export const AdminSettings: React.FC = () => {
             </div>
 
             <div className="ams-table-scroll overflow-x-auto custom-scrollbar">
-              <table className="w-full text-xs font-sans text-left border-collapse min-w-[650px]">
+              <table className="ams-table w-full text-xs font-sans text-left border-collapse min-w-[650px]">
                 <thead>
                   <tr className="border-b border-line text-muted">
                     <th className="py-3 px-4 font-semibold">{language === 'id' ? 'Tingkatan & Peran' : 'Tier Level & Role'}</th>
@@ -895,7 +895,7 @@ export const AdminSettings: React.FC = () => {
                 </thead>
                 <tbody className="divide-y divide-line">
                   <tr className="hover:bg-panel/60 transition-colors">
-                    <td className="py-3.5 px-4 font-semibold text-text flex items-center gap-2">
+                    <td className="py-3.5 px-4 font-semibold text-fg flex items-center gap-2">
                       <span className="w-2 h-2 rounded-full bg-warning shrink-0"></span>
                       <span>Stakeholder Executive (Managing Partner)</span>
                     </td>
@@ -905,7 +905,7 @@ export const AdminSettings: React.FC = () => {
                     <td className="py-3.5 px-4 text-muted">{language === 'id' ? 'Audit Log & Governance' : 'Audit Logs & Governance'}</td>
                   </tr>
                   <tr className="hover:bg-panel/60 transition-colors">
-                    <td className="py-3.5 px-4 font-semibold text-text flex items-center gap-2">
+                    <td className="py-3.5 px-4 font-semibold text-fg flex items-center gap-2">
                       <span className="w-2 h-2 rounded-full bg-success shrink-0"></span>
                       <span>Teknisi IT / Systems Engineer</span>
                     </td>
@@ -915,7 +915,7 @@ export const AdminSettings: React.FC = () => {
                     <td className="py-3.5 px-4 text-success font-semibold">{language === 'id' ? 'Server, Cloud Run, API & Diagnostics' : 'Full Server, Cloud & Diagnostics'}</td>
                   </tr>
                   <tr className="hover:bg-panel/60 transition-colors">
-                    <td className="py-3.5 px-4 font-semibold text-text flex items-center gap-2">
+                    <td className="py-3.5 px-4 font-semibold text-fg flex items-center gap-2">
                       <span className="w-2 h-2 rounded-full bg-series-3 shrink-0"></span>
                       <span>Tier 2: Project Manager (PM)</span>
                     </td>
@@ -925,7 +925,7 @@ export const AdminSettings: React.FC = () => {
                     <td className="py-3.5 px-4 text-muted">{language === 'id' ? 'Hanya Lihat' : 'View Only'}</td>
                   </tr>
                   <tr className="hover:bg-panel/60 transition-colors">
-                    <td className="py-3.5 px-4 font-semibold text-text flex items-center gap-2">
+                    <td className="py-3.5 px-4 font-semibold text-fg flex items-center gap-2">
                       <span className="w-2 h-2 rounded-full bg-cyan-400 shrink-0"></span>
                       <span>Tier 3: Operational Staff</span>
                     </td>
@@ -953,7 +953,7 @@ export const AdminSettings: React.FC = () => {
                   <UserPlus size={18} />
                 </div>
                 <div>
-                  <h3 className="text-base font-semibold font-sans text-text">
+                  <h3 className="text-base font-semibold font-sans text-fg">
                     {language === 'id' ? 'Tambah Akun Stakeholder / Teknisi' : 'Add Stakeholder / Technical Account'}
                   </h3>
                   <p className="text-[11px] font-sans text-muted">
@@ -965,7 +965,7 @@ export const AdminSettings: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setIsAddAccountModalOpen(false)}
-                className="w-8 h-8 rounded-control bg-panel hover:bg-panel text-muted hover:text-text flex items-center justify-center transition-colors shrink-0"
+                className="w-8 h-8 rounded-control bg-panel hover:bg-panel text-muted hover:text-fg flex items-center justify-center transition-colors shrink-0"
               >
                 <X size={16} />
               </button>
@@ -991,7 +991,7 @@ export const AdminSettings: React.FC = () => {
                   >
                     <div className="flex items-center gap-2 mb-1">
                       <Briefcase size={16} className="text-warning" />
-                      <span className="font-semibold text-xs text-text">Stakeholder Executive</span>
+                      <span className="font-semibold text-xs text-fg">Stakeholder Executive</span>
                     </div>
                     <p className="text-[11px] text-muted leading-relaxed font-sans">
                       C-Level, Managing Partner, Sponsor. Akses approval finansial & review strategis.
@@ -1009,7 +1009,7 @@ export const AdminSettings: React.FC = () => {
                   >
                     <div className="flex items-center gap-2 mb-1">
                       <Terminal size={16} className="text-success" />
-                      <span className="font-semibold text-xs text-text">Teknisi IT / Engineer</span>
+                      <span className="font-semibold text-xs text-fg">Teknisi IT / Engineer</span>
                     </div>
                     <p className="text-[11px] text-muted leading-relaxed font-sans">
                       Lead DevOps, Infrastructure, Cloud Run & API. Akses teknis penuh tanpa finansial.
@@ -1027,7 +1027,7 @@ export const AdminSettings: React.FC = () => {
                   >
                     <div className="flex items-center gap-2 mb-1">
                       <Layers size={16} className="text-series-3" />
-                      <span className="font-semibold text-xs text-text">Project Manager (PM)</span>
+                      <span className="font-semibold text-xs text-fg">Project Manager (PM)</span>
                     </div>
                     <p className="text-[11px] text-muted leading-relaxed font-sans">
                       Sprint planning, delivery klien, task delegation & draf faktur invoice.
@@ -1045,7 +1045,7 @@ export const AdminSettings: React.FC = () => {
                   >
                     <div className="flex items-center gap-2 mb-1">
                       <UserCheck size={16} className="text-info" />
-                      <span className="font-semibold text-xs text-text">Operational Staff</span>
+                      <span className="font-semibold text-xs text-fg">Operational Staff</span>
                     </div>
                     <p className="text-[11px] text-muted leading-relaxed font-sans">
                       Staf teknis / desainer operasional untuk update tugas harian.
@@ -1066,7 +1066,7 @@ export const AdminSettings: React.FC = () => {
                     value={newAccName}
                     onChange={(e) => setNewAccName(e.target.value)}
                     placeholder="Contoh: Alexander Hartanto"
-                    className="w-full min-h-10 px-3.5 py-2.5 bg-panel border border-line rounded-control text-sm text-text font-sans focus:outline-none focus:border-accent transition-all"
+                    className="w-full min-h-10 px-3.5 py-2.5 bg-panel border border-line rounded-control text-sm text-fg font-sans focus:outline-none focus:border-accent transition-all"
                   />
                 </div>
 
@@ -1080,7 +1080,7 @@ export const AdminSettings: React.FC = () => {
                     value={newAccUsername}
                     onChange={(e) => setNewAccUsername(e.target.value)}
                     placeholder="Contoh: exec.alex"
-                    className="w-full min-h-10 px-3.5 py-2.5 bg-panel border border-line rounded-control text-sm text-text font-sans focus:outline-none focus:border-accent transition-all"
+                    className="w-full min-h-10 px-3.5 py-2.5 bg-panel border border-line rounded-control text-sm text-fg font-sans focus:outline-none focus:border-accent transition-all"
                   />
                 </div>
 
@@ -1094,7 +1094,7 @@ export const AdminSettings: React.FC = () => {
                     value={newAccEmail}
                     onChange={(e) => setNewAccEmail(e.target.value)}
                     placeholder="alex@kapitech.id"
-                    className="w-full min-h-10 px-3.5 py-2.5 bg-panel border border-line rounded-control text-sm text-text font-sans focus:outline-none focus:border-accent transition-all"
+                    className="w-full min-h-10 px-3.5 py-2.5 bg-panel border border-line rounded-control text-sm text-fg font-sans focus:outline-none focus:border-accent transition-all"
                   />
                 </div>
 
@@ -1108,7 +1108,7 @@ export const AdminSettings: React.FC = () => {
                     value={newAccPassword}
                     onChange={(e) => setNewAccPassword(e.target.value)}
                     placeholder="Minimal 6 karakter"
-                    className="w-full min-h-10 px-3.5 py-2.5 bg-panel border border-line rounded-control text-sm text-text font-sans focus:outline-none focus:border-accent transition-all"
+                    className="w-full min-h-10 px-3.5 py-2.5 bg-panel border border-line rounded-control text-sm text-fg font-sans focus:outline-none focus:border-accent transition-all"
                   />
                 </div>
               </div>
@@ -1148,7 +1148,7 @@ export const AdminSettings: React.FC = () => {
                         })}
                         className="w-4 h-4 rounded bg-bg border-line text-accent accent-accent"
                       />
-                      <span className="text-text text-[11px] truncate">{item.label}</span>
+                      <span className="text-fg text-[11px] truncate">{item.label}</span>
                     </label>
                   ))}
                 </div>
@@ -1159,7 +1159,7 @@ export const AdminSettings: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsAddAccountModalOpen(false)}
-                  className="h-10 px-4 rounded-control bg-panel text-muted hover:text-text text-xs font-sans font-semibold transition-colors"
+                  className="h-10 px-4 rounded-control bg-panel text-muted hover:text-fg text-xs font-sans font-semibold transition-colors"
                 >
                   {language === 'id' ? 'Batal' : 'Cancel'}
                 </button>
@@ -1189,7 +1189,7 @@ export const AdminSettings: React.FC = () => {
                   <Sliders size={18} />
                 </div>
                 <div>
-                  <h3 className="text-base font-semibold font-sans text-text">
+                  <h3 className="text-base font-semibold font-sans text-fg">
                     {language === 'id' ? 'Atur Hak Akses Granular' : 'Manage Granular Permissions'}
                   </h3>
                   <p className="text-[11px] font-sans text-muted">
@@ -1201,7 +1201,7 @@ export const AdminSettings: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setIsEditPermsModalOpen(false)}
-                className="w-8 h-8 rounded-control bg-panel hover:bg-panel text-muted hover:text-text flex items-center justify-center transition-colors shrink-0"
+                className="w-8 h-8 rounded-control bg-panel hover:bg-panel text-muted hover:text-fg flex items-center justify-center transition-colors shrink-0"
               >
                 <X size={16} />
               </button>
@@ -1228,7 +1228,7 @@ export const AdminSettings: React.FC = () => {
                   key={item.key}
                   className="flex items-center justify-between p-3 rounded-card bg-panel border border-line hover:border-line cursor-pointer text-xs font-sans transition-colors"
                 >
-                  <span className="text-text font-medium">{item.label}</span>
+                  <span className="text-fg font-medium">{item.label}</span>
                   <input
                     type="checkbox"
                     checked={!!tempPermissions[item.key as keyof StakeholderPermissions]}
@@ -1247,7 +1247,7 @@ export const AdminSettings: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setIsEditPermsModalOpen(false)}
-                className="h-10 px-4 rounded-control bg-panel text-muted hover:text-text text-xs font-sans font-semibold transition-colors"
+                className="h-10 px-4 rounded-control bg-panel text-muted hover:text-fg text-xs font-sans font-semibold transition-colors"
               >
                 {language === 'id' ? 'Batal' : 'Cancel'}
               </button>
@@ -1273,7 +1273,7 @@ export const AdminSettings: React.FC = () => {
               <Lock size={20} />
             </div>
             <div>
-              <h2 className="text-base font-semibold font-sans text-text">
+              <h2 className="text-base font-semibold font-sans text-fg">
                 {language === 'id' ? 'Kebijakan Keamanan, MFA & Password' : 'Security, MFA & Password Policy'}
               </h2>
               <p className="text-xs text-muted font-sans">
@@ -1287,7 +1287,7 @@ export const AdminSettings: React.FC = () => {
           <div className="space-y-4">
             <div className="p-4 bg-panel border border-line rounded-card flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3">
               <div className="space-y-1">
-                <div className="text-text font-sans font-semibold flex items-center gap-2 text-xs">
+                <div className="text-fg font-sans font-semibold flex items-center gap-2 text-xs">
                   <Smartphone size={15} className="text-success shrink-0" />
                   <span>{language === 'id' ? 'Wajibkan Multi-Factor Authentication (MFA)' : 'Enforce Multi-Factor Authentication (MFA)'}</span>
                 </div>
@@ -1316,7 +1316,7 @@ export const AdminSettings: React.FC = () => {
                 type="number"
                 value={sessionTimeoutMin}
                 onChange={(e) => setSessionTimeoutMin(parseInt(e.target.value) || 60)}
-                className="w-full px-3.5 py-2.5 bg-panel border border-line rounded-control text-xs text-text font-sans focus:outline-none focus:border-accent min-h-10"
+                className="w-full px-3.5 py-2.5 bg-panel border border-line rounded-control text-xs text-fg font-sans focus:outline-none focus:border-accent min-h-10"
               />
               <p className="text-[10px] text-muted font-sans">
                 {language === 'id'
@@ -1326,7 +1326,7 @@ export const AdminSettings: React.FC = () => {
             </div>
 
             <form onSubmit={handleUpdateSecurity} className="space-y-3 pt-3 border-t border-line">
-              <h3 className="text-xs font-semibold text-text font-sans">
+              <h3 className="text-xs font-semibold text-fg font-sans">
                 {language === 'id' ? 'Ganti Password Master' : 'Change Master Password'}
               </h3>
               
@@ -1340,7 +1340,7 @@ export const AdminSettings: React.FC = () => {
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="w-full px-3.5 py-2.5 bg-panel border border-line rounded-control text-xs text-text focus:outline-none focus:border-accent font-sans min-h-10"
+                    className="w-full px-3.5 py-2.5 bg-panel border border-line rounded-control text-xs text-fg focus:outline-none focus:border-accent font-sans min-h-10"
                   />
                 </div>
 
@@ -1353,7 +1353,7 @@ export const AdminSettings: React.FC = () => {
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="w-full px-3.5 py-2.5 bg-panel border border-line rounded-control text-xs text-text focus:outline-none focus:border-accent font-sans min-h-10"
+                    className="w-full px-3.5 py-2.5 bg-panel border border-line rounded-control text-xs text-fg focus:outline-none focus:border-accent font-sans min-h-10"
                   />
                 </div>
               </div>
@@ -1368,7 +1368,7 @@ export const AdminSettings: React.FC = () => {
                   value={currentPassword}
                   onChange={(e) => setCurrentPassword(e.target.value)}
                   placeholder={language === 'id' ? 'Masukkan password admin saat ini...' : 'Enter your current admin password...'}
-                  className="w-full px-3.5 py-2.5 bg-panel border border-line rounded-control text-xs text-text focus:outline-none focus:border-accent font-sans min-h-10"
+                  className="w-full px-3.5 py-2.5 bg-panel border border-line rounded-control text-xs text-fg focus:outline-none focus:border-accent font-sans min-h-10"
                 />
               </div>
 
@@ -1376,7 +1376,7 @@ export const AdminSettings: React.FC = () => {
                 <button
                   type="submit"
                   disabled={securityLoading}
-                  className="px-5 py-2.5 rounded-control bg-accent text-white text-xs font-sans font-semibold hover:brightness-110 transition-all flex items-center gap-2 min-h-10"
+                  className="px-5 py-2.5 rounded-control bg-accent text-white text-xs font-sans font-semibold hover:bg-[var(--accent-hover)] transition-all flex items-center gap-2 min-h-10"
                 >
                   <Save size={14} />
                   <span>{language === 'id' ? 'Update Password Terenkripsi' : 'Update Encrypted Password'}</span>
@@ -1394,7 +1394,7 @@ export const AdminSettings: React.FC = () => {
           {canAccessServer && (
             <div className="p-4 rounded-card bg-panel border border-line">
               <div className="text-[10px] font-sans normal-case tracking-normal text-muted">Backup Retention</div>
-              <div className="text-sm font-semibold text-text mt-1">{backupRetentionDays} days</div>
+              <div className="text-sm font-semibold text-fg mt-1">{backupRetentionDays} days</div>
               <p className="text-[11px] text-muted font-sans mt-1">Provider-managed backup retention reported by the server.</p>
             </div>
           )}
@@ -1404,7 +1404,7 @@ export const AdminSettings: React.FC = () => {
               <Database size={20} />
             </div>
             <div>
-              <h2 className="text-base font-semibold font-sans text-text">
+              <h2 className="text-base font-semibold font-sans text-fg">
                 {language === 'id' ? 'Integrasi API & Cloud' : 'API & Cloud Integrations'}
               </h2>
               <p className="text-xs text-muted font-sans">
@@ -1431,7 +1431,7 @@ export const AdminSettings: React.FC = () => {
                 type="text"
                 value={webhookUrl}
                 onChange={(e) => setWebhookUrl(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-panel border border-line rounded-control text-text focus:outline-none focus:border-accent font-sans min-h-10"
+                className="w-full px-3.5 py-2.5 bg-panel border border-line rounded-control text-fg focus:outline-none focus:border-accent font-sans min-h-10"
               />
             </div>
 
@@ -1444,7 +1444,7 @@ export const AdminSettings: React.FC = () => {
                   type="text"
                   value={smtpHost}
                   onChange={(e) => setSmtpHost(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-panel border border-line rounded-control text-text focus:outline-none focus:border-accent font-sans min-h-10"
+                  className="w-full px-3.5 py-2.5 bg-panel border border-line rounded-control text-fg focus:outline-none focus:border-accent font-sans min-h-10"
                 />
               </div>
 
@@ -1456,7 +1456,7 @@ export const AdminSettings: React.FC = () => {
                   type="text"
                   value={smtpPort}
                   onChange={(e) => setSmtpPort(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-panel border border-line rounded-control text-text focus:outline-none focus:border-accent font-sans min-h-10"
+                  className="w-full px-3.5 py-2.5 bg-panel border border-line rounded-control text-fg focus:outline-none focus:border-accent font-sans min-h-10"
                 />
               </div>
             </div>
@@ -1469,7 +1469,7 @@ export const AdminSettings: React.FC = () => {
                 type="text"
                 value={cloudRunRegion}
                 onChange={(e) => setCloudRunRegion(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-panel border border-line rounded-control text-text focus:outline-none focus:border-accent font-sans min-h-10"
+                className="w-full px-3.5 py-2.5 bg-panel border border-line rounded-control text-fg focus:outline-none focus:border-accent font-sans min-h-10"
               />
             </div>
             <div className="pt-3 border-t border-line">
@@ -1490,7 +1490,7 @@ export const AdminSettings: React.FC = () => {
           
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 mb-6 pb-4 border-b border-line">
             <div>
-              <h2 className="text-base font-semibold font-sans text-text flex items-center gap-2">
+              <h2 className="text-base font-semibold font-sans text-fg flex items-center gap-2">
                 <ShieldCheck size={18} className="text-accent" />
                 <span>{language === 'id' ? 'Riwayat Audit Aktivitas & Keamanan' : 'Security & Activity Audit Trail'}</span>
               </h2>
@@ -1505,7 +1505,7 @@ export const AdminSettings: React.FC = () => {
               <button
                 onClick={handleExportLogs}
                 disabled={logs.length === 0}
-                className="px-3.5 py-2 rounded-control bg-panel hover:bg-panel text-text border border-line text-xs font-sans transition-colors flex items-center gap-1.5 disabled:opacity-50 min-h-10"
+                className="px-3.5 py-2 rounded-control bg-panel hover:bg-panel text-fg border border-line text-xs font-sans transition-colors flex items-center gap-1.5 disabled:opacity-50 min-h-10"
               >
                 <Download size={13} />
                 <span>Export JSON</span>
