@@ -576,7 +576,7 @@ export const AdminClients: React.FC = () => {
 
       {/* 5. Create / Edit Client Modal */}
       {isClientModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/80  flex items-center justify-center p-4 overflow-y-auto">
+        <div className="fixed inset-0 z-50 bg-bg/80  flex items-center justify-center p-4 overflow-y-auto">
           <div className="bg-[var(--panel)] border border-[var(--line)] rounded-card w-full max-w-lg p-6 space-y-4 -none my-8 text-xs font-sans">
             <div className="flex items-center justify-between pb-3 border-b border-[var(--line)]">
               <h2 className="text-base font-semibold font-sans text-[var(--text)] flex items-center gap-2">
