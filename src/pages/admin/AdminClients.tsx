@@ -9,6 +9,7 @@ import {
   ChevronRight,
   Eye,
   Globe,
+  Pencil,
   Mail,
   MapPin,
   Phone,
@@ -223,7 +224,8 @@ export const AdminClients: React.FC = () => {
 
   const handleSaveClient = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!canManageClients || isSaving) return;
+    if (!canManageClients) return;
+    if (isSaving) return;
 
     if (!name.trim() || !company.trim()) {
       setFormError(language === 'id' ? 'Nama kontak dan perusahaan wajib diisi.' : 'Contact name and company are required.');
@@ -574,7 +576,7 @@ export const AdminClients: React.FC = () => {
                                     aria-label={`Edit ${client.company}`}
                                     title="Edit client"
                                   >
-                                    <Users size={15} aria-hidden="true" />
+                                    <Pencil size={15} aria-hidden="true" />
                                   </button>
                                   <button
                                     type="button"
