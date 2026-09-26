@@ -764,8 +764,14 @@ export const AdminInvoicing: React.FC = () => {
             <div className="mt-3">
               {tab === 'invoices' ? (
                 <>
-                  {filteredExpenses.length === 0 ? (
-                    <EmptyState title={language === 'id' ? 'Belum ada pengeluaran' : 'No expenses found'} description={expenseTypeFilter !== 'all' ? 'No actual expense records match this filter.' : 'Only actual expense records are shown. No placeholder rows are used.'} action={canManageInvoices ? <button type="button" onClick={() => setExpenseModalOpen(true)} className={primaryClass}><Plus size={14} />Record expense</button> : undefined} />
+                  {filteredInvoices.length === 0 ? (
+                    <EmptyState
+                      title={language === 'id' ? 'Belum ada invoice' : 'No invoices found'}
+                      description={search || statusFilter !== 'all' ? 'No invoices match the current search or filter.' : 'No invoice records are available yet.'}
+                      action={canManageInvoices ? <button type="button" onClick={() => setInvoiceModalOpen(true)} className={primaryClass}><Plus size={14} />Create invoice</button> : undefined}
+                    />
+                  ) : (
+                    <>
                   ) : (
                     <>
                   <div className="hidden overflow-x-auto rounded-card border border-line bg-panel md:block">
@@ -857,6 +863,16 @@ export const AdminInvoicing: React.FC = () => {
                 </>
               ) : (
                 <>
+                  {filteredExpenses.length === 0 ? (
+                    <EmptyState
+                      title={language === 'id' ? 'Belum ada pengeluaran' : 'No expenses found'}
+                      description={expenseTypeFilter !== 'all' ? 'No actual expense records match this filter.' : 'Only actual expense records are shown. No placeholder rows are used.'}
+                      action={canManageInvoices ? <button type="button" onClick={() => setExpenseModalOpen(true)} className={primaryClass}><Plus size={14} />Record expense</button> : undefined}
+                    />
+                  ) : (
+                    <>
+              ) : (
+                <>
                   <div className="hidden overflow-x-auto rounded-card border border-line bg-panel md:block">
                     <table className="w-full min-w-[760px] text-left text-xs">
                       <thead>
@@ -901,8 +917,7 @@ export const AdminInvoicing: React.FC = () => {
                     </>
                   )}
                 </>
-              )}
-            </div>
+              )}            </div>
           </section>
         </>
       )}
