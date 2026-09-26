@@ -363,8 +363,6 @@ export const DataMigrationModal: React.FC<DataMigrationModalProps> = ({
             <span>{parsing ? 'Processing...' : language === 'id' ? 'Mulai Impor Data' : 'Execute Import'}</span>
           </button>
         </div>
-
-        </div>
     </Modal>
   );
 };
