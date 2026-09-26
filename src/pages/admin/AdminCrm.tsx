@@ -409,7 +409,7 @@ export const AdminCrm: React.FC = () => {
       )}
 
       {/* 2. Enterprise CRM KPI Funnel & Metrics Bar */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-3">
+      <div className="ams-crm-kpi grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-3">
         {/* Active Pipeline Card */}
         <div className="lg:col-span-4 bg-[var(--panel)] border border-[var(--line)] p-4 rounded-card flex flex-col justify-between group hover:border-[var(--line)] transition-all">
           <div>
@@ -504,7 +504,7 @@ export const AdminCrm: React.FC = () => {
       </div>
 
       {/* 3. Filter Bar & View Mode Switcher */}
-      <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 bg-[var(--panel)] border border-[var(--line)] p-3 sm:p-4 rounded-card">
+      <div className="ams-crm-toolbar flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 bg-[var(--panel)] border border-[var(--line)] p-3 sm:p-4 rounded-card">
         <div className="flex flex-row items-center gap-2.5 flex-1 min-w-0 overflow-x-auto pb-1 sm:flex-wrap sm:overflow-visible sm:pb-0">
           <div className="relative shrink-0 w-[240px] sm:flex-1 sm:min-w-0 sm:w-auto sm:max-w-none lg:max-w-md">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--muted)]" size={14} />
