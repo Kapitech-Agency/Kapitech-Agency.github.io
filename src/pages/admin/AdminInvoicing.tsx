@@ -904,34 +904,7 @@ export const AdminInvoicing: React.FC = () => {
                     </table>
                   </div>
 
-                  <div className="hidden">
-                    {paginatedInvoices.map((invoice) => {
-                      const balance = Number(invoice.balanceDue ?? (invoice.total - (invoice.amountPaid || 0)));
-                      return (
-                        <article key={invoice.id} className="rounded-card border border-line bg-panel p-4">
-                          <div className="flex items-start justify-between gap-3">
-                            <button type="button" onClick={() => openPrintPreview(invoice)} className="min-w-0 text-left">
-                              <p className="truncate text-sm font-medium text-fg">{invoice.invoiceNumber}</p>
-                              <p className="mt-1 truncate text-xs text-muted">{invoice.clientCompany || invoice.clientName}</p>
-                            </button>
-                            <StatusBadge status={invoice.status} />
-                          </div>
-                          <div className="mt-4 grid grid-cols-2 gap-3 border-y border-line py-3">
-                            <div><p className="text-[11px] text-muted">Amount</p><p className="mt-1 text-sm font-medium tabular-nums text-fg">{formatAmount(invoice.total, invoice.currency)}</p></div>
-                            <div><p className="text-[11px] text-muted">Balance</p><p className="mt-1 text-sm font-medium tabular-nums text-warning">{balance > 0 ? formatAmount(balance, invoice.currency) : 'Settled'}</p></div>
-                            <div><p className="text-[11px] text-muted">Issue</p><p className="mt-1 text-xs tabular-nums text-fg">{invoice.issueDate}</p></div>
-                            <div><p className="text-[11px] text-muted">Due</p><p className={'mt-1 text-xs tabular-nums ' + (invoice.status === 'overdue' ? 'text-danger' : 'text-fg')}>{invoice.dueDate}</p></div>
-                          </div>
-                          <div className="mt-3 flex flex-wrap items-center justify-end gap-2">
-                            {canManageInvoices && invoice.status !== 'paid' && invoice.status !== 'cancelled' && balance > 0 && <button type="button" onClick={() => openPayment(invoice)} className={actionClass}><CreditCard size={13} />Pay</button>}
-                            <button type="button" onClick={() => openPrintPreview(invoice)} className={actionClass}><FileText size={13} />View</button>
-                            {canManageInvoices && invoice.status !== 'cancelled' && <button type="button" onClick={() => openEditInvoice(invoice)} className={actionClass}><Edit3 size={13} />Edit</button>}
-                            {canManageInvoices && canDeleteInvoice && invoice.status !== 'cancelled' && <button type="button" onClick={() => setConfirmAction({ type: 'invoice', id: invoice.id, label: invoice.invoiceNumber })} className={actionClass}><Trash2 size={13} />Cancel</button>}
-                          </div>
-                        </article>
-                      );
-                    })}
-                  </div>
+                  
                   {invoicePageCount > 1 && (
                     <div className="mt-3 flex flex-col gap-2 border-t border-line px-1 pt-3 sm:flex-row sm:items-center sm:justify-between">
                       <p className="text-[11px] tabular-nums text-muted">Showing {((invoicePage - 1) * invoicePageSize) + 1}-{Math.min(invoicePage * invoicePageSize, filteredInvoices.length)} of {filteredInvoices.length}</p>
@@ -984,18 +957,7 @@ export const AdminInvoicing: React.FC = () => {
                     </table>
                   </div>
 
-                  <div className="hidden">
-                    {filteredExpenses.map((expense) => (
-                      <article key={expense.id} className="rounded-card border border-line bg-panel p-4">
-                        <div className="flex items-start justify-between gap-3">
-                          <div className="min-w-0"><p className="text-sm font-medium text-fg">{expense.description}</p><p className="mt-1 text-xs text-muted">{expense.category} · {expense.type || 'OpEx'}</p></div>
-                          <p className="shrink-0 text-sm font-medium tabular-nums text-fg">{formatAmount(expense.amount, expense.currency || currency)}</p>
-                        </div>
-                        <div className="mt-3 flex items-center justify-between border-t border-line pt-3 text-[11px] text-muted"><span>{expense.date}</span><span>{expense.recordedBy}</span></div>
-                        {canManageInvoices && <div className="mt-3 flex justify-end"><button type="button" onClick={() => setConfirmAction({ type: 'expense', id: expense.id, label: expense.description })} className={actionClass}><Trash2 size={13} />Void expense</button></div>}
-                      </article>
-                    ))}
-                  </div>
+                  
                     </>
                   )}
                 </>
