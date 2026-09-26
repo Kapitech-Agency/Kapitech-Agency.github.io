@@ -1154,19 +1154,7 @@ export const AdminCrm: React.FC = () => {
       )}
 
       {/* 6. CREATE / EDIT DEAL MODAL */}
-      {isAddModalOpen && (
-        <div className="fixed inset-0 z-50 bg-bg/80  flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-panel border border-line rounded-card w-full max-w-xl max-h-[calc(100dvh-24px)] overflow-y-auto p-6">
-            <div className="flex items-center justify-between pb-4 mb-4 border-b border-line">
-              <h3 className="font-sans font-semibold text-fg text-lg flex items-center gap-2">
-                <Briefcase className="text-danger" size={20} />
-                <span>{editingLead ? (language === 'id' ? 'Edit Data Prospek' : 'Edit CRM Deal') : t('admin.crm.addDeal')}</span>
-              </h3>
-              <button onClick={() => setIsAddModalOpen(false)} className="min-h-10 min-w-10 p-1.5 text-muted hover:text-fg rounded-control bg-panel border border-line">
-                <X size={16} />
-              </button>
-            </div>
-
+      <Modal open={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} size="lg" title={editingLead ? (language === 'id' ? 'Edit Data Prospek' : 'Edit CRM Deal') : t('admin.crm.addDeal')} description={language === 'id' ? 'Kelola detail deal dan scope kebutuhan klien.' : 'Manage deal details and client scope.'}>
             <form onSubmit={handleSaveLead} className="space-y-4 text-xs font-sans">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
@@ -1283,9 +1271,7 @@ export const AdminCrm: React.FC = () => {
                 </button>
               </div>
             </form>
-          </div>
-        </div>
-      )}
+      </Modal>
 
       </div>
     </>
