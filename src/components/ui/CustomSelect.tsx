@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useId } from 'react';
 import { Check, ChevronDown } from 'lucide-react';
 import { DropdownPortal } from './DropdownPortal';
 
@@ -40,7 +40,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
-  const triggerRef = useRef<HTMLButtonElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);\n  const listboxId = useId();
 
   const selectedOption = options.find((opt) => opt.value === value);
   const selectedIndex = Math.max(0, options.findIndex((opt) => opt.value === value));
@@ -78,7 +78,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
             } else {
               setIsOpen(true);
             }
-          } else if (e.key === 'Escape') {
+          } else if (e.key === 'Home' || e.key === 'End') {\n            e.preventDefault();\n            setActiveIndex(e.key === 'Home' ? 0 : Math.max(0, options.length - 1));\n            setIsOpen(true);\n          } else if (e.key === 'Escape') {
             e.preventDefault();
             setIsOpen(false);
           } else if (e.key === 'Tab') {
@@ -128,9 +128,9 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
         anchorRef={triggerRef}
         onClose={() => setIsOpen(false)}
         align={align}
-        className={`ams-dropdown-surface z-50 min-w-[140px] sm:min-w-[180px] max-w-[calc(100vw-16px)] sm:max-w-[280px] max-h-[280px] overflow-y-auto p-1 custom-scrollbar font-sans text-xs ${menuClassName}`}
+        className={`ams-dropdown-surface z-40 min-w-[140px] sm:min-w-[180px] max-w-[calc(100vw-16px)] sm:max-w-[280px] max-h-[min(320px,calc(100dvh-16px))] overflow-y-auto overscroll-contain p-1 custom-scrollbar font-sans text-xs ${menuClassName}`}
       >
-        <div role="listbox" aria-label={placeholder}>
+        <div id={listboxId} role="listbox" aria-label={placeholder}>
           {options.length === 0 ? (
             <div className="px-3 py-2.5 text-muted">No options available</div>
           ) : (
