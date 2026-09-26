@@ -15,6 +15,7 @@ import {
 import { api } from '../../lib/apiClient';
 import { useLanguage } from '../../lib/LanguageContext';
 import { getActiveCurrency, CURRENCY_EVENT, CurrencyCode } from '../../lib/currency';
+import { getAdminSession } from '../../lib/adminAuth';
 
 interface ExecutiveOverviewData {
   metrics: {
@@ -143,6 +144,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
   const [data, setData] = useState<ExecutiveOverviewData | null>(null);
   const [lastRefreshed, setLastRefreshed] = useState(new Date());
   const [error, setError] = useState<string | null>(null);
+  const mfaRequired = getAdminSession()?.user.mfaEnabled !== true;
 
   useEffect(() => {
     const handleCurrencyChange = (event: Event) => {
@@ -243,6 +245,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
         </div>
       </header>
 
+      {mfaRequired && (
       <div className="flex flex-col gap-3 rounded-card border border-danger bg-danger/10 p-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex min-w-0 items-start gap-3">
           <ShieldAlert className="mt-0.5 shrink-0 text-danger" size={17} />
@@ -266,6 +269,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
           </Link>
         </div>
       </div>
+      )}
 
       {error && (
         <div className="rounded-card border border-danger bg-danger/10 px-4 py-3 text-xs leading-5 text-fg" role="alert">
