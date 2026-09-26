@@ -523,9 +523,9 @@ export const AdminClients: React.FC = () => {
                     value={clientStatus}
                     onChange={(val) => setClientStatus(val as any)}
                     options={[
-                      { value: 'active', label: 'Active', badge: 'Active', badgeColor: 'bg-success/10 text-fg-success border border-text-success/20' },
-                      { value: 'completed', label: 'Completed', badge: 'Completed', badgeColor: 'bg-text-info/10 text-fg-info border border-text-info/20' },
-                      { value: 'lead', label: 'Lead', badge: 'Lead', badgeColor: 'bg-text-warning/10 text-fg-warning border border-text-warning/20' },
+                      { value: 'active', label: 'Active', badge: 'Active', badgeColor: 'bg-success/10 text-fg-success border border-success/20' },
+                      { value: 'completed', label: 'Completed', badge: 'Completed', badgeColor: 'bg-info/10 text-fg-info border border-info/20' },
+                      { value: 'lead', label: 'Lead', badge: 'Lead', badgeColor: 'bg-warning/10 text-fg-warning border border-warning/20' },
                       { value: 'inactive', label: 'Inactive', badge: 'Inactive', badgeColor: 'bg-bg-panel text-muted border border-border-line' }
                     ]}
                     className="w-full"
@@ -568,7 +568,7 @@ export const AdminClients: React.FC = () => {
       <Modal open={!!deleteTarget} onClose={() => setDeleteTarget(null)} size="sm" title={language === 'id' ? 'Hapus klien?' : 'Delete client?'} description={language === 'id' ? `Catatan klien ${deleteTarget?.name || ''} akan dihapus.` : `Client record ${deleteTarget?.name || ''} will be removed.`}>
         <div className="flex flex-col-reverse sm:flex-row justify-end gap-2">
           <button type="button" onClick={() => setDeleteTarget(null)} className="min-h-10 px-4 rounded-control border border-border-line bg-bg-panel text-xs text-muted">Cancel</button>
-          <button type="button" onClick={() => deleteTarget && void confirmDeleteClient(deleteTarget.id)} className="min-h-10 px-4 rounded-control bg-text-danger text-white text-xs font-semibold">Delete</button>
+          <button type="button" onClick={() => deleteTarget && void confirmDeleteClient(deleteTarget.id)} className="min-h-10 px-4 rounded-control bg-danger text-white text-xs font-semibold">Delete</button>
         </div>
       </Modal>
 
