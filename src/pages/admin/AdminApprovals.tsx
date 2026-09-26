@@ -17,6 +17,7 @@ import {
   X,
   FileText
 } from 'lucide-react';
+import { Modal } from '../../components/ui/Modal';
 import { api } from '../../lib/apiClient';
 import { useLanguage } from '../../lib/LanguageContext';
 import { getActiveCurrency, formatAmount, CurrencyCode, CURRENCY_EVENT } from '../../lib/currency';
