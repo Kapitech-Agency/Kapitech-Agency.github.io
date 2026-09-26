@@ -542,7 +542,7 @@ export const AdminInbox: React.FC = () => {
             <span>{language === 'id' ? 'Notifikasi Email' : 'Email Alerts'}</span>
           </button>
           {metrics.newCount > 0 && (
-            <button type="button" onClick={handleMarkAllRead} className="ams-action inline-flex min-h-10 items-center justify-center gap-1.5 rounded-control border border-line bg-transparent px-3 text-xs font-medium text-muted transition-colors hover:bg-bg hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
+            <button type="button" onClick={handleMarkAllRead} disabled={!canManageCrm} className="ams-action inline-flex min-h-10 items-center justify-center gap-1.5 rounded-control border border-line bg-transparent px-3 text-xs font-medium text-muted transition-colors hover:bg-bg hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
               <Check size={14} />
               <span>{language === 'id' ? 'Tandai Dibaca' : 'Mark Read'}</span>
             </button>
@@ -1110,6 +1110,7 @@ export const AdminInbox: React.FC = () => {
                     ) : (
                       <button
                         onClick={() => setIsCrmModalOpen(true)}
+                        disabled={!canManageCrm}
                         className="h-9 px-3.5 rounded-control bg-[var(--success)] hover:brightness-110 text-[var(--text)] text-xs font-sans font-semibold transition-colors flex items-center gap-1.5"
                       >
                         <Briefcase size={14} />
