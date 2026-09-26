@@ -19,12 +19,19 @@ export const AdminNotificationCenter: React.FC = () => {
   const [items, setItems] = useState<ServerNotification[]>([]);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [markingAllRead, setMarkingAllRead] = useState(false);
   const triggerRef = useRef<HTMLButtonElement>(null);
 
   const refresh = async () => {
     setLoading(true);
     const res = await api.notifications.getAll();
-    if (res.success && Array.isArray(res.data?.notifications)) setItems(res.data.notifications as ServerNotification[]);
+    if (res.success && Array.isArray(res.data?.notifications)) {
+      setItems(res.data.notifications as ServerNotification[]);
+      setError(null);
+    } else {
+      setError(language === 'id' ? 'Notifikasi tidak dapat dimuat.' : 'Notifications could not be loaded.');
+    }
     setLoading(false);
   };
 
@@ -47,8 +54,19 @@ export const AdminNotificationCenter: React.FC = () => {
   };
 
   const markAllRead = async () => {
-    const res = await api.notifications.markAllRead();
-    if (res.success) setItems(prev => prev.map(item => ({ ...item, isRead: true, readAt: new Date().toISOString() })));
+    if (markingAllRead || unread === 0) return;
+    setMarkingAllRead(true);
+    try {
+      const res = await api.notifications.markAllRead();
+      if (res.success) {
+        setItems(prev => prev.map(item => ({ ...item, isRead: true, readAt: new Date().toISOString() })));
+        setError(null);
+      } else {
+        setError(language === 'id' ? 'Notifikasi belum dapat ditandai dibaca.' : 'Notifications could not be marked as read.');
+      }
+    } finally {
+      setMarkingAllRead(false);
+    }
   };
 
   return (
@@ -81,10 +99,17 @@ export const AdminNotificationCenter: React.FC = () => {
               <p className="text-[13px] font-semibold text-fg">{language === 'id' ? 'Notifikasi' : 'Notifications'}</p>
               <p className="mt-0.5 text-[11px] text-muted">{unread} {language === 'id' ? 'belum dibaca' : 'unread'}</p>
             </div>
-            {unread > 0 && <button type="button" onClick={() => void markAllRead()} className="inline-flex min-h-10 items-center gap-1.5 rounded-control px-2 text-[11px] font-medium text-accent-text hover:bg-panel-hover hover:text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"><CheckCheck size={14}/>{language === 'id' ? 'Tandai semua' : 'Mark all read'}</button>}
+            {unread > 0 && <button type="button" onClick={() => void markAllRead()} disabled={markingAllRead} className="inline-flex min-h-10 items-center gap-1.5 rounded-control px-2 text-[11px] font-medium text-accent-text hover:bg-panel-hover hover:text-fg disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"><CheckCheck size={14}/>{language === 'id' ? 'Tandai semua' : 'Mark all read'}</button>}
           </div>
           <div className="max-h-[min(60vh,460px)] overflow-y-auto overscroll-contain bg-panel custom-scrollbar">
-            {loading && items.length === 0 ? (
+            {error ? (
+              <div className="px-4 py-10 text-center" role="status">
+                <p className="text-[12px] font-medium text-fg">{error}</p>
+                <button type="button" onClick={() => void refresh()} className="mt-3 min-h-10 rounded-control border border-line bg-panel px-3 text-[11px] font-medium text-muted hover:bg-panel-hover hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
+                  {language === 'id' ? 'Coba lagi' : 'Retry'}
+                </button>
+              </div>
+            ) : loading && items.length === 0 ? (
               <div className="px-4 py-10 text-center text-[12px] text-muted">{language === 'id' ? 'Memuat notifikasi...' : 'Loading notifications...'}</div>
             ) : items.length === 0 ? (
               <div className="px-4 py-10 text-center text-[12px] text-muted">{language === 'id' ? 'Tidak ada notifikasi.' : 'No notifications.'}</div>
