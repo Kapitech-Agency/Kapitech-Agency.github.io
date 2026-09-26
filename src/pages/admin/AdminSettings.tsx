@@ -937,41 +937,10 @@ export const AdminSettings: React.FC = () => {
                 </tbody>
               </table>
             </div>
-          </div>
-        </div>
-      )}
+      </Modal>
 
       {/* MODAL: TAMBAH AKUN BARU (MOBILE FULLSCREEN + STICKY HEADER & FOOTER) */}
-      {isAddAccountModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-0 sm:p-4 bg-bg/80  overflow-y-auto">
-          <div className="w-full h-full sm:h-auto sm:max-h-[calc(100dvh-28px)] sm:max-w-2xl bg-panel border-0 sm:border sm:border-line rounded-card flex flex-col overflow-hidden">
-            
-            {/* Sticky Header */}
-            <div className="sticky top-0 z-20 bg-panel  px-5 sm:px-6 py-4 border-b border-line flex items-center justify-between shrink-0">
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-card bg-accent/10 border border-accent/30 flex items-center justify-center text-danger shrink-0">
-                  <UserPlus size={18} />
-                </div>
-                <div>
-                  <h3 className="text-base font-semibold font-sans text-fg">
-                    {language === 'id' ? 'Tambah Akun Stakeholder / Teknisi' : 'Add Stakeholder / Technical Account'}
-                  </h3>
-                  <p className="text-[11px] font-sans text-muted">
-                    {language === 'id' ? 'Pilih peran dan sesuaikan hak akses sistem.' : 'Select role and configure granular permissions.'}
-                  </p>
-                </div>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => setIsAddAccountModalOpen(false)}
-                className="w-8 h-8 rounded-control bg-panel hover:bg-panel text-muted hover:text-fg flex items-center justify-center transition-colors shrink-0"
-              >
-                <X size={16} />
-              </button>
-            </div>
-
-            {/* Scrollable Form Content */}
+      <Modal open={isAddAccountModalOpen} onClose={() => setIsAddAccountModalOpen(false)} size="lg" title={language === 'id' ? 'Tambah Akun Stakeholder / Teknisi' : 'Add Stakeholder / Technical Account'} description={language === 'id' ? 'Pilih peran dan sesuaikan hak akses sistem.' : 'Select role and configure granular permissions.'}>
             <form onSubmit={handleCreateAccountSubmit} className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-5 custom-scrollbar">
               
               {/* Role Selection Cards */}
@@ -1173,41 +1142,10 @@ export const AdminSettings: React.FC = () => {
               </div>
 
             </form>
-          </div>
-        </div>
-      )}
+      </Modal>
 
       {/* MODAL: EDIT PERMISSIONS (MOBILE FULLSCREEN + STICKY HEADER & FOOTER) */}
-      {isEditPermsModalOpen && editingAccount && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-0 sm:p-4 bg-bg/80  overflow-y-auto">
-          <div className="w-full h-full sm:h-auto sm:max-h-[calc(100dvh-28px)] sm:max-w-xl bg-panel border-0 sm:border sm:border-line rounded-card flex flex-col overflow-hidden">
-            
-            {/* Sticky Header */}
-            <div className="sticky top-0 z-20 bg-panel  px-5 sm:px-6 py-4 border-b border-line flex items-center justify-between shrink-0">
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-card bg-warning/10 border border-warning/30 flex items-center justify-center text-warning shrink-0">
-                  <Sliders size={18} />
-                </div>
-                <div>
-                  <h3 className="text-base font-semibold font-sans text-fg">
-                    {language === 'id' ? 'Atur Hak Akses Granular' : 'Manage Granular Permissions'}
-                  </h3>
-                  <p className="text-[11px] font-sans text-muted">
-                    {editingAccount.name} ({editingAccount.role})
-                  </p>
-                </div>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => setIsEditPermsModalOpen(false)}
-                className="w-8 h-8 rounded-control bg-panel hover:bg-panel text-muted hover:text-fg flex items-center justify-center transition-colors shrink-0"
-              >
-                <X size={16} />
-              </button>
-            </div>
-
-            {/* Scrollable Checkbox List */}
+      <Modal open={isEditPermsModalOpen && !!editingAccount} onClose={() => setIsEditPermsModalOpen(false)} size="lg" title={language === 'id' ? 'Atur Hak Akses Granular' : 'Manage Granular Permissions'} description={editingAccount ? editingAccount.name + ' (' + editingAccount.role + ')' : undefined}>
             <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-2.5 custom-scrollbar">
               {[
                 { key: 'canManageInvoicing', label: 'Finansial & Invoicing (Buat & Hapus Invoice)' },
