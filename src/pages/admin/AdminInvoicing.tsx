@@ -642,7 +642,7 @@ export const AdminInvoicing: React.FC = () => {
       ) : (
         <>
           <section aria-labelledby="finance-snapshot-title">
-            <div className="mb-3 flex items-end justify-between gap-3">
+            <div className="mb-3 flex items-end justify-between gap-3 border-b border-line pb-3">
               <div>
                 <h2 id="finance-snapshot-title" className="text-sm font-semibold text-fg">{language === 'id' ? 'Ringkasan finansial' : 'Financial snapshot'}</h2>
                 <p className="mt-1 text-xs text-muted">{currency} ledger based on current server-calculated metrics.</p>
@@ -690,7 +690,7 @@ export const AdminInvoicing: React.FC = () => {
                   { label: 'Operating profit', value: serverMetrics ? formatAmount(serverMetrics.netProfit, currency) : '—', tone: 'text-success' },
                   { label: 'Outstanding', value: serverMetrics ? formatAmount(serverMetrics.totalOutstanding, currency) : '—', tone: 'text-warning' }
                 ].map((item) => (
-                  <div key={item.label} className="min-w-0 bg-panel p-3.5">
+                  <div key={item.label} className="min-w-0 bg-[#1d1d1d] p-3.5">
                     <p className="text-xs text-muted">{item.label}</p>
                     <p className={'mt-2 truncate text-sm font-medium tabular-nums ' + item.tone}>{item.value}</p>
                   </div>
