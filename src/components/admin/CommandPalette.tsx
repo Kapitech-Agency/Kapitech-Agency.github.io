@@ -257,7 +257,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-start justify-center bg-black/70 px-3 pt-16 pb-3 sm:px-4 sm:pt-24 sm:pb-4 overflow-y-auto overscroll-contain"
+      className="fixed inset-0 z-50 flex items-start justify-center bg-bg/80 px-3 pt-16 pb-3 sm:px-4 sm:pt-24 sm:pb-4 overflow-y-auto overscroll-contain"
       role="presentation"
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) onClose();
