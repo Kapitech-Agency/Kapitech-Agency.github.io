@@ -26,6 +26,7 @@ import { formatAmount, getActiveCurrency, CURRENCY_EVENT, CurrencyCode } from '.
 import { useLanguage } from '../../lib/LanguageContext';
 import { hasAdminPermission } from '../../lib/adminAuth';
 import { api } from '../../lib/apiClient';
+import { Button } from '../../components/ui/Button';
 import { CustomSelect } from '../../components/ui/CustomSelect';
 import { Modal } from '../../components/ui/Modal';
 
@@ -53,15 +54,15 @@ export const AdminClients: React.FC = () => {
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [website, setWebsite] = useState('');
-  const [location, setLocation] = useState('Jakarta, Indonesia');
-  const [industry, setIndustry] = useState('Real Estate & Luxury Property');
+  const [location, setLocation] = useState('');
+  const [industry, setIndustry] = useState('');
   const [clientStatus, setClientStatus] = useState<AgencyClient['status']>('active');
-  const [totalSpend, setTotalSpend] = useState<number>(50000000);
-  const [projectsCount, setProjectsCount] = useState<number>(1);
-  const [role, setRole] = useState('Managing Director');
+  const [totalSpend, setTotalSpend] = useState<number>(0);
+  const [projectsCount, setProjectsCount] = useState<number>(0);
+  const [role, setRole] = useState('');
   const [notes, setNotes] = useState('');
-  const [slaDailyBudget, setSlaDailyBudget] = useState<number>(5000000);
-  const [currentDailySpend, setCurrentDailySpend] = useState<number>(3500000);
+  const [slaDailyBudget, setSlaDailyBudget] = useState<number>(0);
+  const [currentDailySpend, setCurrentDailySpend] = useState<number>(0);
 
   const loadData = async () => {
     try {
@@ -92,7 +93,7 @@ export const AdminClients: React.FC = () => {
   const filteredClients = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
     const result = clients.filter(c => {
-      const matchSearch = !query || [c.name, c.company, c.email, c.contactPersonRole, c.industry, c.id].some(value => value.toLowerCase().includes(query));
+      const matchSearch = !query || [c.name, c.company, c.email, c.contactPersonRole, c.industry, c.location, c.id].some(value => String(value || '').toLowerCase().includes(query));
       const matchStatus = statusFilter === 'all' || c.status === statusFilter;
       return matchSearch && matchStatus;
     });
@@ -179,7 +180,7 @@ export const AdminClients: React.FC = () => {
       industry,
       status: clientStatus,
       totalSpend: Number(totalSpend) || 0,
-      projectsCount: Number(projectsCount) || 1,
+      projectsCount: Math.max(0, Number(projectsCount) || 0),
       contactPersonRole: role,
       notes,
       slaDailyAdSpendBudget: Number(slaDailyBudget) || 0,
@@ -271,32 +272,32 @@ export const AdminClients: React.FC = () => {
 
       {/* 2. Key Metrics Summary (3 cols) */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full">
-        <div className="w-full h-full bg-panel border border-line p-4 rounded-card flex flex-col justify-between">
+        <div className="ams-kpi">
           <div className="flex items-center justify-between text-muted mb-2">
             <span className="text-xs font-sans normal-case font-semibold">{t('admin.client.totalClients')}</span>
             <div className="w-8 h-8 rounded-control bg-panel border border-line flex items-center justify-center text-fg">
               <Users size={16} />
             </div>
           </div>
-          <div className="text-3xl font-sans font-semibold text-fg tracking-[-0.01em]">
+          <div className="ams-kpi-value">
             {clients.length}
           </div>
-          <div className="mt-3 pt-2 border-t border-line text-[11px] font-sans text-muted">
+          <div className="mt-2 text-xs text-muted">
             {language === 'id' ? 'Klien Enterprise & SME' : 'Across Enterprise & SME tiers'}
           </div>
         </div>
 
-        <div className="w-full h-full bg-panel border border-line p-5 rounded-card flex flex-col justify-between">
+        <div className="ams-kpi">
           <div className="flex items-center justify-between text-muted mb-2">
             <span className="text-xs font-sans normal-case font-semibold">{t('admin.client.activeAccounts')}</span>
             <div className="w-8 h-8 rounded-control bg-success/10 border border-success/30 flex items-center justify-center text-success">
               <UserCheck size={16} />
             </div>
           </div>
-          <div className="text-3xl font-sans font-semibold text-success tracking-[-0.01em]">
+          <div className="ams-kpi-value text-success">
             {activeAccountsCount}
           </div>
-          <div className="mt-3 pt-2 border-t border-line text-[11px] font-sans text-success">
+          <div className="mt-2 text-xs text-muted">
             {language === 'id' ? 'Retainer & Sprint Aktif' : 'Active Retainers & Sprints'}
           </div>
         </div>
@@ -308,7 +309,7 @@ export const AdminClients: React.FC = () => {
               <DollarSign size={16} />
             </div>
           </div>
-          <div className="text-2xl sm:text-3xl font-sans font-semibold text-fg tracking-[-0.01em]">
+          <div className="ams-kpi-value">
             {formatAmount(totalLifetimeSpend, currency)}
           </div>
           <div className="mt-3 pt-2 border-t border-line text-[11px] font-sans text-muted">
@@ -318,19 +319,20 @@ export const AdminClients: React.FC = () => {
       </div>
 
       {/* 3. Search & Filter Bar */}
-      <div className="w-full flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-panel border border-line p-4 rounded-card">
-        <div className="relative flex-1 min-w-0 max-w-sm">
+      <div className="w-full flex flex-col sm:flex-row sm:items-end gap-3">
+        <div className="relative flex-1 min-w-0 sm:max-w-xl">
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted" size={14} />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={t('admin.client.searchPlaceholder')}
-            className="w-full pl-9 pr-3 py-2 bg-panel border border-line rounded-control text-xs text-fg placeholder:text-muted focus:outline-none focus:border-accent font-sans min-h-10"
+            className="w-full h-9 pl-9 pr-3 bg-panel border border-line rounded-control text-[13px] text-fg placeholder:text-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
           />
         </div>
 
         <div className="w-full sm:w-48">
+          <label className="mb-1.5 block text-xs font-medium text-muted">Status</label>
           <CustomSelect
             value={statusFilter}
             onChange={setStatusFilter}
@@ -389,187 +391,61 @@ export const AdminClients: React.FC = () => {
         {filteredClients.length > 0 && <div className="flex flex-col gap-3 border-t border-line px-4 py-3 sm:flex-row sm:items-center sm:justify-between"><p className="text-xs text-muted">{(page - 1) * pageSize + 1}–{Math.min(page * pageSize, filteredClients.length)} of {filteredClients.length}</p><div className="flex items-center gap-1.5"><button type="button" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} aria-label="Previous page" className="inline-flex min-h-10 min-w-10 items-center justify-center rounded-control border border-line text-muted hover:bg-bg hover:text-fg disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"><ChevronLeft size={15} /></button><span className="min-w-16 text-center text-xs tabular-nums text-fg">{page} / {pageCount}</span><button type="button" onClick={() => setPage(p => Math.min(pageCount, p + 1))} disabled={page === pageCount} aria-label="Next page" className="inline-flex min-h-10 min-w-10 items-center justify-center rounded-control border border-line text-muted hover:bg-bg hover:text-fg disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"><ChevronRight size={15} /></button></div></div>}
       </section>
 
-      {/* 5. Create / Edit Client Modal */}
-      {isClientModalOpen && (
-        <div className="fixed inset-0 z-50 bg-bg/80  flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-panel border border-line rounded-card w-full max-w-lg p-6 space-y-4  my-8 text-xs font-sans">
-            <div className="flex items-center justify-between pb-3 border-b border-line">
-              <h2 className="text-base font-semibold font-sans text-fg flex items-center gap-2">
-                <Users className="text-bg-accent" size={18} />
-                <span>{editingClient ? (language === 'id' ? 'Edit Profil Klien' : 'Edit Client Profile') : (language === 'id' ? 'Tambah Klien Baru' : 'Add New Client')}</span>
-              </h2>
-              <button
-                onClick={() => setIsClientModalOpen(false)}
-                className="p-1.5 rounded-control text-muted hover:text-fg bg-panel border border-line"
-              >
-                <X size={14} />
-              </button>
-            </div>
-
-            <form onSubmit={handleSaveClient} className="space-y-3.5">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-muted mb-1 font-semibold">{language === 'id' ? 'Nama Kontak (PIC) *' : 'Contact Person (PIC) *'}</label>
-                  <input
-                    type="text"
-                    required
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="e.g. John Doe"
-                    className="w-full px-3 py-2 bg-panel border border-line rounded-control text-fg focus:outline-none focus:border-accent"
-                  />
-                </div>
-                <div>
-                  <label className="block text-muted mb-1 font-semibold">{language === 'id' ? 'Perusahaan Klien *' : 'Company Name *'}</label>
-                  <input
-                    type="text"
-                    required
-                    value={company}
-                    onChange={(e) => setCompany(e.target.value)}
-                    placeholder="e.g. Acme Global Tech"
-                    className="w-full px-3 py-2 bg-panel border border-line rounded-control text-fg focus:outline-none focus:border-accent"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-muted mb-1 font-semibold">PIC Role / Title</label>
-                  <input
-                    type="text"
-                    value={role}
-                    onChange={(e) => setRole(e.target.value)}
-                    placeholder="Managing Director, VP Engineering..."
-                    className="w-full px-3 py-2 bg-panel border border-line rounded-control text-fg focus:outline-none focus:border-accent"
-                  />
-                </div>
-                <div>
-                  <label className="block text-muted mb-1 font-semibold">Industry</label>
-                  <input
-                    type="text"
-                    value={industry}
-                    onChange={(e) => setIndustry(e.target.value)}
-                    placeholder="Fintech, Real Estate, E-Commerce..."
-                    className="w-full px-3 py-2 bg-panel border border-line rounded-control text-fg focus:outline-none focus:border-accent"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-muted mb-1 font-semibold">Email Klien</label>
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="contact@company.com"
-                    className="w-full px-3 py-2 bg-panel border border-line rounded-control text-fg focus:outline-none focus:border-accent"
-                  />
-                </div>
-                <div>
-                  <label className="block text-muted mb-1 font-semibold">Phone / WhatsApp</label>
-                  <input
-                    type="text"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    placeholder="+62 811-XXXX-XXXX"
-                    className="w-full px-3 py-2 bg-panel border border-line rounded-control text-fg focus:outline-none focus:border-accent"
-                  />
-                </div>
-              </div>
-
-              {/* SLA Ad Spend Cap Section */}
-              <div className="p-3 bg-panel border border-line rounded-card space-y-2">
-                <div className="flex items-center gap-1.5 text-warning font-semibold">
-                  <Activity size={13} />
-                  <span>SLA Daily Ad-Spend Cap & Tracking (IDR)</span>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-muted mb-1 font-semibold">SLA Agreed Daily Budget Cap</label>
-                    <input
-                      type="number"
-                      value={slaDailyBudget}
-                      onChange={(e) => setSlaDailyBudget(Number(e.target.value))}
-                      className="w-full px-3 py-2 bg-panel border border-line rounded-control text-fg focus:outline-none focus:border-accent"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-muted mb-1 font-semibold">Current Actual Daily Spend</label>
-                    <input
-                      type="number"
-                      value={currentDailySpend}
-                      onChange={(e) => setCurrentDailySpend(Number(e.target.value))}
-                      className="w-full px-3 py-2 bg-panel border border-line rounded-control text-fg focus:outline-none focus:border-accent"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-muted mb-1 font-semibold">{language === 'id' ? 'Lokasi' : 'Location'}</label>
-                  <input
-                    type="text"
-                    value={location}
-                    onChange={(e) => setLocation(e.target.value)}
-                    placeholder="Jakarta, Indonesia"
-                    className="w-full px-3 py-2 bg-panel border border-line rounded-control text-fg focus:outline-none focus:border-accent"
-                  />
-                </div>
-                <div>
-                  <label className="block text-muted mb-1 font-semibold">Account Status</label>
-                  <CustomSelect
-                    value={clientStatus}
-                    onChange={(val) => setClientStatus(val as any)}
-                    options={[
-                      { value: 'active', label: 'Active', badge: 'Active', badgeColor: 'bg-success/10 text-success border border-success/20' },
-                      { value: 'completed', label: 'Completed', badge: 'Completed', badgeColor: 'bg-info/10 text-info border border-info/20' },
-                      { value: 'lead', label: 'Lead', badge: 'Lead', badgeColor: 'bg-warning/10 text-warning border border-warning/20' },
-                      { value: 'inactive', label: 'Inactive', badge: 'Inactive', badgeColor: 'bg-panel text-muted border border-line' }
-                    ]}
-                    className="w-full"
-                    triggerClassName="w-full justify-between"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-muted mb-1 font-semibold">{language === 'id' ? 'Catatan & Preferensi Klien' : 'Client Notes & Requirements'}</label>
-                <textarea
-                  rows={2}
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  placeholder="Special client preferences, NDA details, billing notes..."
-                  className="w-full px-3 py-2 bg-panel border border-line rounded-control text-fg focus:outline-none focus:border-accent"
-                />
-              </div>
-
-              <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-line">
-                <button
-                  type="button"
-                  onClick={() => setIsClientModalOpen(false)}
-                  className="h-10 px-4 rounded-control bg-panel hover:bg-panel text-muted hover:text-fg border border-line font-sans text-xs transition-colors min-h-10"
-                >
-                  {language === 'id' ? 'Batal' : 'Cancel'}
-                </button>
-                <button
-                  type="submit"
-                  className="h-10 px-5 rounded-control bg-accent hover:bg-accent/90 text-white font-sans font-semibold text-xs transition-all min-h-10"
-                >
-                  {language === 'id' ? 'Simpan Klien' : 'Save Client'}
-                </button>
-              </div>
-            </form>
+      <Modal
+        open={isClientModalOpen}
+        onClose={() => setIsClientModalOpen(false)}
+        size="lg"
+        title={editingClient ? (language === 'id' ? 'Edit klien' : 'Edit client') : (language === 'id' ? 'Tambah klien' : 'Add client')}
+        description={editingClient ? 'Update the existing client record.' : 'Create a client record using information available to your team.'}
+        footer={
+          <>
+            <Button type="button" variant="secondary" onClick={() => setIsClientModalOpen(false)}>Cancel</Button>
+            <Button type="submit" form="client-form" variant="primary">Save client</Button>
+          </>
+        }
+      >
+        <form id="client-form" onSubmit={handleSaveClient} className="space-y-5">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div><label htmlFor="client-name" className="mb-1.5 block text-xs font-medium text-muted">Contact person *</label><input id="client-name" required value={name} onChange={(e) => setName(e.target.value)} placeholder="Contact person" /></div>
+            <div><label htmlFor="client-company" className="mb-1.5 block text-xs font-medium text-muted">Company *</label><input id="client-company" required value={company} onChange={(e) => setCompany(e.target.value)} placeholder="Company name" /></div>
+            <div><label htmlFor="client-role" className="mb-1.5 block text-xs font-medium text-muted">Contact role</label><input id="client-role" value={role} onChange={(e) => setRole(e.target.value)} placeholder="Role or title" /></div>
+            <div><label htmlFor="client-industry" className="mb-1.5 block text-xs font-medium text-muted">Industry</label><input id="client-industry" value={industry} onChange={(e) => setIndustry(e.target.value)} placeholder="Industry" /></div>
+            <div><label htmlFor="client-email" className="mb-1.5 block text-xs font-medium text-muted">Email</label><input id="client-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="contact@company.com" /></div>
+            <div><label htmlFor="client-phone" className="mb-1.5 block text-xs font-medium text-muted">Phone / WhatsApp</label><input id="client-phone" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+62 ..." /></div>
+            <div><label htmlFor="client-website" className="mb-1.5 block text-xs font-medium text-muted">Website</label><input id="client-website" type="url" value={website} onChange={(e) => setWebsite(e.target.value)} placeholder="https://company.com" /></div>
+            <div><label htmlFor="client-location" className="mb-1.5 block text-xs font-medium text-muted">Location</label><input id="client-location" value={location} onChange={(e) => setLocation(e.target.value)} placeholder="City, country" /></div>
           </div>
-        </div>
-      )}
+          <div className="rounded-card border border-line bg-bg p-4">
+            <div className="flex items-center gap-2"><Activity size={15} className="text-warning" aria-hidden="true" /><h3 className="text-sm font-semibold text-fg">Daily ad-spend SLA</h3></div>
+            <p className="mt-1 text-xs text-muted">Optional operational tracking for the agreed daily cap.</p>
+            <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div><label htmlFor="client-sla" className="mb-1.5 block text-xs font-medium text-muted">Agreed daily cap</label><input id="client-sla" type="number" min="0" value={slaDailyBudget} onChange={(e) => setSlaDailyBudget(Number(e.target.value))} /></div>
+              <div><label htmlFor="client-daily-spend" className="mb-1.5 block text-xs font-medium text-muted">Current daily spend</label><input id="client-daily-spend" type="number" min="0" value={currentDailySpend} onChange={(e) => setCurrentDailySpend(Number(e.target.value))} /></div>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div><label className="mb-1.5 block text-xs font-medium text-muted">Account status</label><CustomSelect value={clientStatus} onChange={(v) => setClientStatus(v as AgencyClient['status'])} options={STATUS_OPTIONS.filter((o) => o.value !== 'all')} className="w-full" triggerClassName="w-full" /></div>
+            <div><label htmlFor="client-projects" className="mb-1.5 block text-xs font-medium text-muted">Projects count</label><input id="client-projects" type="number" min="0" value={projectsCount} onChange={(e) => setProjectsCount(Number(e.target.value))} /></div>
+            <div><label htmlFor="client-spend" className="mb-1.5 block text-xs font-medium text-muted">Cumulative billed value</label><input id="client-spend" type="number" min="0" value={totalSpend} onChange={(e) => setTotalSpend(Number(e.target.value))} /></div>
+          </div>
+          <div><label htmlFor="client-notes" className="mb-1.5 block text-xs font-medium text-muted">Notes & requirements</label><textarea id="client-notes" rows={4} value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Client preferences, requirements, billing notes..." /></div>
+        </form>
+      </Modal>
 
-      <Modal open={!!deleteTarget} onClose={() => setDeleteTarget(null)} size="sm" title={language === 'id' ? 'Hapus klien?' : 'Delete client?'} description={language === 'id' ? `Catatan klien ${deleteTarget?.name || ''} akan dihapus.` : `Client record ${deleteTarget?.name || ''} will be removed.`}>
-        <div className="flex flex-col-reverse sm:flex-row justify-end gap-2">
-          <button type="button" onClick={() => setDeleteTarget(null)} className="min-h-10 px-4 rounded-control border border-line bg-panel text-xs text-muted">Cancel</button>
-          <button type="button" onClick={() => deleteTarget && void confirmDeleteClient(deleteTarget.id)} className="min-h-10 px-4 rounded-control bg-danger text-white text-xs font-semibold">Delete</button>
-        </div>
+      <Modal
+        open={!!deleteTarget}
+        onClose={() => setDeleteTarget(null)}
+        size="sm"
+        title={language === 'id' ? 'Hapus klien?' : 'Delete client?'}
+        description={language === 'id' ? 'Catatan klien akan dihapus.' : 'This client record will be removed.'}
+        footer={
+          <>
+            <Button type="button" variant="secondary" onClick={() => setDeleteTarget(null)}>Cancel</Button>
+            <Button type="button" variant="destructive" onClick={() => deleteTarget && void confirmDeleteClient(deleteTarget.id)}>Delete client</Button>
+          </>
+        }
+      >
+        <p className="text-sm text-muted">This action removes the client record through the existing client API.</p>
       </Modal>
 
     </div>
