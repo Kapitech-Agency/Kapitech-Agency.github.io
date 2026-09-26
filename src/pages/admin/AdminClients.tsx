@@ -12,7 +12,11 @@ import {
   Activity,
   ChevronLeft,
   ChevronRight,
-  ArrowUpDown
+  ArrowUpDown,
+  Eye,
+  Mail,
+  Globe,
+  MapPin
 } from 'lucide-react';
 import { AgencyClient } from '../../lib/clientStore';
 import { formatAmount, getActiveCurrency, CURRENCY_EVENT, CurrencyCode } from '../../lib/currency';
@@ -35,6 +39,9 @@ export const AdminClients: React.FC = () => {
   const [page, setPage] = useState(1);
   const pageSize = 10;
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
+  const [statusTone, setStatusTone] = useState<'success' | 'danger'>('success');
+  const [isLoading, setIsLoading] = useState(true);
+  const [selectedClient, setSelectedClient] = useState<AgencyClient | null>(null);
 
   // Modal State
   const [isClientModalOpen, setIsClientModalOpen] = useState(false);
@@ -58,11 +65,15 @@ export const AdminClients: React.FC = () => {
   const [currentDailySpend, setCurrentDailySpend] = useState<number>(0);
 
   const loadData = async () => {
+    setIsLoading(true);
     try {
       const res = await api.clients.getAll();
       if (res.success && Array.isArray(res.data?.clients)) setClients(res.data.clients as AgencyClient[]);
+      else showToast(res.error || (language === 'id' ? 'Gagal memuat client.' : 'Failed to load clients.'), 'danger');
     } catch {
-      showToast(language === 'id' ? 'Gagal memuat client.' : 'Failed to load clients.');
+      showToast(language === 'id' ? 'Gagal memuat client.' : 'Failed to load clients.', 'danger');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -78,7 +89,8 @@ export const AdminClients: React.FC = () => {
     };
   }, []);
 
-  const showToast = (msg: string) => {
+  const showToast = (msg: string, tone: 'success' | 'danger' = 'success') => {
+    setStatusTone(tone);
     setStatusMessage(msg);
     setTimeout(() => setStatusMessage(null), 3500);
   };
@@ -158,7 +170,7 @@ export const AdminClients: React.FC = () => {
     e.preventDefault();
     if (!canManageClients) return;
     if (!name.trim() || !company.trim()) {
-      setStatusMessage(language === 'id' ? 'Nama kontak dan perusahaan wajib diisi.' : 'Client name and company are required.');
+      showToast(language === 'id' ? 'Nama kontak dan perusahaan wajib diisi.' : 'Client name and company are required.', 'danger');
       return;
     }
 
@@ -187,7 +199,7 @@ export const AdminClients: React.FC = () => {
       ? await api.clients.update(clientData.id, clientData)
       : await api.clients.create(clientData);
     if (!res.success || !res.data?.client) {
-      setStatusMessage(res.error || (language === 'id' ? 'Client gagal disimpan.' : 'Failed to save client.'));
+      showToast(res.error || (language === 'id' ? 'Client gagal disimpan.' : 'Failed to save client.'), 'danger');
       return;
     }
     setClients(prev => editingClient ? prev.map(item => item.id === clientData.id ? res.data!.client as AgencyClient : item) : [res.data!.client as AgencyClient, ...prev]);
@@ -202,7 +214,7 @@ export const AdminClients: React.FC = () => {
 
   const confirmDeleteClient = async (id: string) => {
     const res = await api.clients.delete(id);
-    if (!res.success) setStatusMessage(res.error || 'Failed to delete client.');
+    if (!res.success) showToast(res.error || 'Failed to delete client.', 'danger');
     else {
       setClients(prev => prev.filter(item => item.id !== id));
       showToast(language === 'id' ? 'Klien dihapus.' : 'Client deleted.');
@@ -253,8 +265,8 @@ export const AdminClients: React.FC = () => {
       )}
 
       {statusMessage && (
-        <div className="p-3 rounded-card bg-success/10 border border-success/30 text-success text-xs font-sans flex items-center gap-2">
-          <Check size={14} />
+        <div className={'p-3 rounded-card border text-xs font-sans flex items-center gap-2 ' + (statusTone === 'danger' ? 'bg-danger/10 border-danger/30 text-danger' : 'bg-success/10 border-success/30 text-success')}>
+          {statusTone === 'danger' ? <ShieldAlert size={14} /> : <Check size={14} />}
           <span>{statusMessage}</span>
         </div>
       )}
@@ -354,12 +366,14 @@ export const AdminClients: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {paginatedClients.length === 0 ? (
+              {isLoading ? (
+                <tr><td colSpan={7} className="px-4 py-12 text-center text-muted" aria-live="polite">{language === 'id' ? 'Memuat client…' : 'Loading clients…'}</td></tr>
+              ) : paginatedClients.length === 0 ? (
                 <tr><td colSpan={7} className="px-4 py-12 text-center text-muted">{language === 'id' ? 'Tidak ada data klien yang sesuai.' : 'No clients found.'}</td></tr>
               ) : paginatedClients.map((client) => {
                 const isOverBudget = Boolean(client.slaDailyAdSpendBudget && client.currentDailyAdSpend && client.currentDailyAdSpend > client.slaDailyAdSpendBudget);
                 return <tr key={client.id} className="border-b border-line last:border-b-0 hover:bg-bg">
-                  <td className="px-4 py-3 align-top"><div className="font-medium text-fg">{client.name}</div><div className="mt-0.5 text-[11px] text-muted">{client.contactPersonRole || client.id}</div></td>
+                  <td className="px-4 py-3 align-top"><button type="button" onClick={() => setSelectedClient(client)} className="group text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"><span className="inline-flex items-center gap-1.5 font-medium text-fg group-hover:text-accent-text">{client.name}<Eye size={13} className="text-muted group-hover:text-accent-text" aria-hidden="true" /></span><span className="mt-0.5 block text-[11px] text-muted">{client.contactPersonRole || client.id}</span></button></td>
                   <td className="px-4 py-3 align-top"><div className="font-medium text-fg">{client.company}</div><div className="mt-0.5 text-[11px] text-muted">{client.industry}</div></td>
                   <td className="px-4 py-3 align-top text-muted">{new Date(client.updatedAt).toLocaleDateString(language === 'id' ? 'id-ID' : 'en-US')}</td>
                   <td className="px-4 py-3 align-top tabular-nums text-fg">{client.projectsCount}</td>
@@ -373,6 +387,37 @@ export const AdminClients: React.FC = () => {
         </div>
         {filteredClients.length > 0 && <div className="flex flex-col gap-3 border-t border-line px-4 py-3 sm:flex-row sm:items-center sm:justify-between"><p className="text-xs text-muted">{(page - 1) * pageSize + 1}–{Math.min(page * pageSize, filteredClients.length)} of {filteredClients.length}</p><div className="flex items-center gap-1.5"><button type="button" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} aria-label="Previous page" className="inline-flex min-h-10 min-w-10 items-center justify-center rounded-control border border-line text-muted hover:bg-bg hover:text-fg disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"><ChevronLeft size={15} /></button><span className="min-w-16 text-center text-xs tabular-nums text-fg">{page} / {pageCount}</span><button type="button" onClick={() => setPage(p => Math.min(pageCount, p + 1))} disabled={page === pageCount} aria-label="Next page" className="inline-flex min-h-10 min-w-10 items-center justify-center rounded-control border border-line text-muted hover:bg-bg hover:text-fg disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"><ChevronRight size={15} /></button></div></div>}
       </section>
+
+      <Modal
+        open={!!selectedClient}
+        onClose={() => setSelectedClient(null)}
+        size="lg"
+        title={selectedClient?.company || (language === 'id' ? 'Detail client' : 'Client details')}
+        description={selectedClient ? selectedClient.name : undefined}
+        footer={<Button type="button" variant="secondary" onClick={() => setSelectedClient(null)}>Close</Button>}
+      >
+        {selectedClient && (
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div><div className="text-xs text-muted">Status</div><div className="mt-1 text-sm font-medium text-fg">{selectedClient.status}</div></div>
+              <div><div className="text-xs text-muted">Industry</div><div className="mt-1 text-sm text-fg">{selectedClient.industry || '—'}</div></div>
+              <div><div className="text-xs text-muted">Contact role</div><div className="mt-1 text-sm text-fg">{selectedClient.contactPersonRole || '—'}</div></div>
+              <div><div className="text-xs text-muted">Projects</div><div className="mt-1 text-sm tabular-nums text-fg">{selectedClient.projectsCount}</div></div>
+            </div>
+            <div className="border-y border-line py-4 space-y-3">
+              <div className="flex items-center gap-2 text-sm"><Mail size={14} className="text-muted" /><span className="truncate text-fg">{selectedClient.email || '—'}</span></div>
+              <div className="flex items-center gap-2 text-sm"><Phone size={14} className="text-muted" /><span className="text-fg">{selectedClient.phone || '—'}</span></div>
+              <div className="flex items-center gap-2 text-sm"><MapPin size={14} className="text-muted" /><span className="text-fg">{selectedClient.location || '—'}</span></div>
+              {selectedClient.website && <a href={selectedClient.website} target="_blank" rel="noreferrer" className="flex items-center gap-2 text-sm text-accent-text hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"><Globe size={14} />{selectedClient.website}</a>}
+            </div>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div><div className="text-xs text-muted">Cumulative billed value</div><div className="mt-1 text-sm font-medium tabular-nums text-fg">{formatAmount(selectedClient.totalSpend || 0, currency)}</div></div>
+              <div><div className="text-xs text-muted">Daily ad spend</div><div className="mt-1 text-sm font-medium tabular-nums text-fg">{formatAmount(selectedClient.currentDailyAdSpend || 0, currency)}{selectedClient.slaDailyAdSpendBudget ? <span className="text-muted"> / {formatAmount(selectedClient.slaDailyAdSpendBudget, currency)} cap</span> : null}</div></div>
+            </div>
+            {selectedClient.notes && <div><div className="text-xs text-muted">Notes</div><p className="mt-1 text-sm whitespace-pre-wrap text-fg">{selectedClient.notes}</p></div>}
+          </div>
+        )}
+      </Modal>
 
       <Modal
         open={isClientModalOpen}
