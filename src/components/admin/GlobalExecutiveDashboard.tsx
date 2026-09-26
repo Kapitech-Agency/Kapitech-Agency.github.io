@@ -374,8 +374,8 @@ export const GlobalExecutiveDashboard: React.FC = () => {
               <Metric label="Outstanding" value={formatCurrency(metrics?.outstandingReceivables)} icon={WalletCards} tone="warning" href="/admin/invoicing" context={metrics?.overdueReceivables ? `${formatCurrency(metrics.overdueReceivables)} overdue` : 'No overdue balance reported'} />
               <Metric label="Open leads" value={metrics?.openLeads ?? 0} icon={Users} tone="info" href="/admin/crm" context={metrics?.activePipeline != null ? `${formatCurrency(metrics.activePipeline)} active pipeline` : 'CRM access required'} />
               <Metric label="Active projects" value={metrics?.activeProjects ?? 0} icon={FolderKanban} tone="success" href="/admin/projects" context={metrics?.projectsAtRisk ? `${metrics.projectsAtRisk} at risk` : 'No active risk flags'} />
-              <Metric label="Pending approvals" value={metrics?.pendingApprovals ?? 0} icon={ClipboardCheck} tone="warning" href="/admin/approval-center" context="Awaiting review" />
-              <Metric label="Overdue tasks" value={metrics?.overdueTasks ?? 0} icon={AlertTriangle} tone="danger" href="/admin/tasks" context="Needs attention" />
+              <Metric label="Pending approvals" value={metrics?.pendingApprovals ?? 0} icon={ClipboardCheck} tone="warning" href="/admin/approvals" context="Awaiting review" />
+              <Metric label="Overdue tasks" value={metrics?.overdueTasks ?? 0} icon={AlertTriangle} tone="danger" href="/admin/projects" context="Needs attention" />
             </div>
           </section>
 
