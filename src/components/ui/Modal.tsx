@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useId, useRef } from 'react';
 import { X } from 'lucide-react';
 
 export interface ModalProps {
@@ -17,11 +17,13 @@ const sizes = { sm: 'max-w-sm', md: 'max-w-md', lg: 'max-w-lg', xl: 'max-w-3xl' 
 
 export const Modal: React.FC<ModalProps> = ({
   open, onClose, title, description, children, footer, size = 'md',
-  closeOnOutsideClick = true, labelledBy = 'ams-modal-title'
+  closeOnOutsideClick = true, labelledBy
 }) => {
   const dialogRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLElement | null>(null);
-  const descriptionId = `${labelledBy}-description`;
+  const instanceId = useId();
+  const titleId = labelledBy ?? `ams-modal-title-${instanceId}`;
+  const descriptionId = `${titleId}-description`;
 
   useEffect(() => {
     if (!open) return;
@@ -31,7 +33,7 @@ export const Modal: React.FC<ModalProps> = ({
     const focusables = (): HTMLElement[] => dialogRef.current
       ? (Array.from(dialogRef.current.querySelectorAll('button:not([disabled]),input:not([disabled]),textarea:not([disabled]),select:not([disabled]),[href],[tabindex="0"]')) as HTMLElement[]).filter(el => el.getClientRects().length > 0)
       : [];
-    requestAnimationFrame(() => focusables()[0]?.focus());
+    requestAnimationFrame(() => (focusables()[0] ?? dialogRef.current)?.focus());
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') { e.preventDefault(); onClose(); return; }
       if (e.key !== 'Tab') return;
@@ -51,13 +53,13 @@ export const Modal: React.FC<ModalProps> = ({
 
   if (!open) return null;
   return (
-    <div className="ams-modal-root fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4" role="presentation">
+    <div className="ams-modal-root fixed inset-0 z-50 flex items-center justify-center p-3 pb-[max(12px,env(safe-area-inset-bottom))] pt-[max(12px,env(safe-area-inset-top))] sm:p-4" role="presentation">
       <button aria-label="Close dialog overlay" type="button" tabIndex={-1} aria-hidden="true" className="absolute inset-0 bg-bg/80" onClick={() => closeOnOutsideClick && onClose()} />
-      <div ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby={labelledBy} aria-describedby={description ? descriptionId : undefined}
+      <div ref={dialogRef} role="dialog" tabIndex={-1} aria-modal="true" aria-labelledby={titleId} aria-describedby={description ? descriptionId : undefined}
         className={`relative w-full ${sizes[size]} max-h-[calc(100dvh-32px)] flex flex-col overflow-hidden rounded-card border border-line bg-panel`}>
         <header className="flex items-start justify-between gap-4 border-b border-line px-4 py-4">
           <div className="min-w-0">
-            <h2 id={labelledBy} className="text-sm font-semibold text-fg">{title}</h2>
+            <h2 id={titleId} className="text-sm font-semibold text-fg">{title}</h2>
             {description && <p id={descriptionId} className="mt-1 text-xs leading-relaxed text-muted">{description}</p>}
           </div>
           <button type="button" onClick={onClose} aria-label="Close dialog"

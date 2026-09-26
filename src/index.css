@@ -515,6 +515,12 @@
   min-width:0;min-height:100dvh;background:var(--bg);color:var(--text);
   font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;overflow:hidden;
 }
+:root[data-theme="light"] .ams-shell{
+  --bg:#f4f4f7;--panel:#fff;--panel-hover:color-mix(in srgb,var(--text) 4%,var(--panel));
+  --line:#e3e3ea;--text:#16161c;--muted:#6c6c7a;--accent:#dc143c;--accent-text:#c40f34;
+  --series-2:#12a672;--series-3:#3b6fe0;--series-4:#8a8a98;
+  --success:#12a672;--warning:#b7791f;--danger:#d92d20;--info:#3b6fe0;
+}
 .ams-shell *,.ams-shell *::before,.ams-shell *::after{box-sizing:border-box}
 .ams-shell :where(h1,h2,h3,h4,h5,h6,p,label,span,button,input,select,textarea,td,th){font-family:inherit;letter-spacing:0}
 .ams-shell h1{margin:0;font-size:20px;line-height:28px;font-weight:600;letter-spacing:-.01em}
