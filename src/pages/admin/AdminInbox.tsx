@@ -528,7 +528,7 @@ export const AdminInbox: React.FC = () => {
             <span aria-hidden="true">/</span>
             <span className="text-fg">Leads & Inbox</span>
           </div>
-          <h1 className="mt-2 text-xl font-semibold leading-7 tracking-tight text-fg">Leads & Inbox</h1>
+          <h1 className="mt-2 text-xl font-semibold leading-7 tracking-[-0.01em] text-fg">Leads & Inbox</h1>
           <p className="mt-1 max-w-2xl text-xs leading-5 text-muted">
             {language === 'id'
               ? 'Kelola inquiry masuk, lakukan triage, balas dengan cepat, dan teruskan peluang yang siap ke CRM.'
@@ -566,7 +566,7 @@ export const AdminInbox: React.FC = () => {
             <span>{language === 'id' ? 'Total Masuk' : 'Total Inbound'}</span>
             <Inbox size={14} className="text-muted" />
           </div>
-          <div className="text-2xl font-semibold font-sans text-text">
+          <div className="text-2xl font-semibold font-sans text-fg">
             {metrics.total}
           </div>
           <p className="text-[11px] font-sans text-muted">
@@ -611,7 +611,7 @@ export const AdminInbox: React.FC = () => {
             <span>{language === 'id' ? 'Volume Peluang' : 'Intake Valuation'}</span>
             <TrendingUp size={14} className="text-success" />
           </div>
-          <div className="text-xl sm:text-2xl font-semibold font-sans text-text truncate">
+          <div className="text-xl sm:text-2xl font-semibold font-sans text-fg truncate">
             {formatAmount(metrics.totalPipelineValue, currency)}
           </div>
           <p className="text-[11px] font-sans text-muted">
@@ -646,12 +646,12 @@ export const AdminInbox: React.FC = () => {
                   className={`min-h-10 px-3 rounded-control text-xs font-sans transition-all flex items-center gap-2 border ${
                     filterType === tab.key
                       ? 'bg-accent text-white border-accent font-semibold'
-                      : 'bg-panel text-muted border-line hover:text-text'
+                      : 'bg-panel text-muted border-line hover:text-fg'
                   }`}
                 >
                   <span>{tab.label}</span>
                   <span className={`px-1.5 py-0.5 rounded-full text-[10px] ${
-                    filterType === tab.key ? 'bg-panel-hover text-text' : 'bg-panel text-muted'
+                    filterType === tab.key ? 'bg-panel-hover text-fg' : 'bg-panel text-muted'
                   }`}>
                     {count}
                   </span>
@@ -666,8 +666,8 @@ export const AdminInbox: React.FC = () => {
               onClick={() => setViewMode('split')}
               className={`px-2.5 py-1.5 rounded-control text-xs font-sans transition-all flex items-center gap-1.5 ${
                 viewMode === 'split'
-                  ? 'bg-panel text-text font-semibold border border-line'
-                  : 'text-muted hover:text-text'
+                  ? 'bg-panel text-fg font-semibold border border-line'
+                  : 'text-muted hover:text-fg'
               }`}
               title="Split Master-Detail View"
             >
@@ -678,8 +678,8 @@ export const AdminInbox: React.FC = () => {
               onClick={() => setViewMode('table')}
               className={`px-2.5 py-1.5 rounded-control text-xs font-sans transition-all flex items-center gap-1.5 ${
                 viewMode === 'table'
-                  ? 'bg-panel text-text font-semibold border border-line'
-                  : 'text-muted hover:text-text'
+                  ? 'bg-panel text-fg font-semibold border border-line'
+                  : 'text-muted hover:text-fg'
               }`}
               title="Spreadsheet Table View"
             >
@@ -699,12 +699,12 @@ export const AdminInbox: React.FC = () => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={language === 'id' ? 'Cari nama, email, perusahaan, jasa, atau isi brief...' : 'Search name, email, company, requested stack, or message...'}
-              className="w-full pl-10 pr-8 py-2 rounded-control bg-panel border border-line text-xs text-text focus:outline-none focus:border-accent placeholder:text-muted font-sans min-h-10"
+              className="w-full pl-10 pr-8 py-2 rounded-control bg-panel border border-line text-xs text-fg focus:outline-none focus:border-accent placeholder:text-muted font-sans min-h-10"
             />
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-text text-xs"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-fg text-xs"
               >
                 ✕
               </button>
@@ -729,7 +729,7 @@ export const AdminInbox: React.FC = () => {
               className={`w-full min-h-10 px-3 rounded-control border text-xs font-sans transition-colors flex items-center justify-center gap-2 ${
                 onlyStarred
                   ? 'bg-warning/10 border-warning/30 text-warning font-semibold'
-                  : 'bg-panel border-line text-muted hover:text-text'
+                  : 'bg-panel border-line text-muted hover:text-fg'
               }`}
             >
               <Star size={14} className={onlyStarred ? 'fill-warning text-warning' : ''} />
@@ -746,7 +746,7 @@ export const AdminInbox: React.FC = () => {
         /* DENSE SPREADSHEET TABLE VIEW */
         <div className="bg-panel border border-line rounded-card overflow-hidden">
           <div className="ams-table-scroll overflow-x-auto custom-scrollbar">
-            <table className="w-full text-left border-collapse text-xs font-sans">
+            <table className="ams-table w-full text-left border-collapse text-xs font-sans">
               <thead>
                 <tr className="bg-panel border-b border-line text-muted">
                   <th className="p-3 w-10 text-center">★</th>
@@ -791,7 +791,7 @@ export const AdminInbox: React.FC = () => {
 
                         {/* Name & Company */}
                         <td className="p-3">
-                          <div className="font-semibold text-text font-sans text-sm flex items-center gap-1.5">
+                          <div className="font-semibold text-fg font-sans text-sm flex items-center gap-1.5">
                             <span>{item.fullName}</span>
                             {isConverted && (
                               <span className="text-[9px] font-sans px-1.5 py-0.2 rounded bg-success/10 text-success border border-success/30">
@@ -814,7 +814,7 @@ export const AdminInbox: React.FC = () => {
                           <div className="flex flex-wrap gap-1">
                             {item.services && item.services.length > 0 ? (
                               item.services.slice(0, 2).map((svc, i) => (
-                                <span key={i} className="px-1.5 py-0.5 rounded bg-panel border border-line text-[10px] text-text">
+                                <span key={i} className="px-1.5 py-0.5 rounded bg-panel border border-line text-[10px] text-fg">
                                   {svc}
                                 </span>
                               ))
@@ -828,7 +828,7 @@ export const AdminInbox: React.FC = () => {
                         </td>
 
                         {/* Valuation */}
-                        <td className="p-3 font-semibold text-text">
+                        <td className="p-3 font-semibold text-fg">
                           {formatAmount(estimateDealValue(item), currency)}
                         </td>
 
@@ -864,7 +864,7 @@ export const AdminInbox: React.FC = () => {
                                 handleSelectSubmission(item);
                                 setViewMode('split');
                               }}
-                              className="px-2.5 py-1 rounded-control bg-panel hover:bg-panel-hover text-muted hover:text-text border border-line text-[11px]"
+                              className="px-2.5 py-1 rounded-control bg-panel hover:bg-panel-hover text-muted hover:text-fg border border-line text-[11px]"
                             >
                               {language === 'id' ? 'Buka' : 'Inspect'}
                             </button>
@@ -891,7 +891,7 @@ export const AdminInbox: React.FC = () => {
             <Inbox size={32} />
           </div>
           <div className="space-y-1.5">
-            <h3 className="text-text font-semibold font-sans text-base sm:text-lg text-center">
+            <h3 className="text-fg font-semibold font-sans text-base sm:text-lg text-center">
               {submissions.length === 0
                 ? (language === 'id' ? 'Kotak Masuk Masih Kosong' : 'No Inbound Records Found')
                 : (language === 'id' ? 'Tidak Ada Pesan yang Sesuai Kriteria' : 'No Inbound Records Match Your Filters')}
@@ -917,7 +917,7 @@ export const AdminInbox: React.FC = () => {
                   setFilterType('all');
                   setOnlyStarred(false);
                 }}
-                className="min-h-10 px-4 rounded-control bg-panel hover:bg-panel-hover text-text border border-line text-xs font-sans font-medium transition-colors"
+                className="min-h-10 px-4 rounded-control bg-panel hover:bg-panel-hover text-fg border border-line text-xs font-sans font-medium transition-colors"
               >
                 {language === 'id' ? 'Reset Semua Filter' : 'Reset All Filters'}
               </button>
@@ -985,7 +985,7 @@ export const AdminInbox: React.FC = () => {
 
                     {/* Client Name & Company */}
                     <div className="flex items-baseline justify-between gap-2 mb-1">
-                      <h3 className="font-semibold text-sm text-text font-sans truncate">
+                      <h3 className="font-semibold text-sm text-fg font-sans truncate">
                         {item.fullName || 'Anonymous Client'}
                       </h3>
                       <span className="text-xs font-sans font-semibold text-success shrink-0">
@@ -1039,7 +1039,7 @@ export const AdminInbox: React.FC = () => {
                 <div className="lg:hidden mb-4 pb-3 border-b border-line">
                   <button
                     onClick={() => setSelectedSubmission(null)}
-                    className="flex items-center gap-2 text-xs font-sans text-muted hover:text-text transition-colors min-h-[44px]"
+                    className="flex items-center gap-2 text-xs font-sans text-muted hover:text-fg transition-colors min-h-[44px]"
                   >
                     <ArrowLeft size={16} />
                     <span>{language === 'id' ? 'Kembali ke Daftar Pesan' : 'Back to Briefs List'}</span>
@@ -1050,7 +1050,7 @@ export const AdminInbox: React.FC = () => {
                 <div className="flex items-start justify-between gap-4 pb-5 border-b border-line mb-5">
                   <div className="flex items-start gap-3">
                     {/* Client Avatar Initials */}
-                    <div className="w-12 h-12 rounded-card bg-panel border border-line flex items-center justify-center text-text font-sans font-semibold text-lg shrink-0">
+                    <div className="w-12 h-12 rounded-card bg-panel border border-line flex items-center justify-center text-fg font-sans font-semibold text-lg shrink-0">
                       {selectedSubmission.fullName.charAt(0).toUpperCase()}
                     </div>
 
@@ -1063,7 +1063,7 @@ export const AdminInbox: React.FC = () => {
                         </span>
                       </div>
                       
-                      <h2 className="text-xl sm:text-2xl font-semibold font-sans text-text tracking-tight">
+                      <h2 className="text-xl sm:text-2xl font-semibold font-sans text-fg tracking-[-0.01em]">
                         {selectedSubmission.fullName}
                       </h2>
 
@@ -1087,7 +1087,7 @@ export const AdminInbox: React.FC = () => {
                     {/* Close button on desktop */}
                     <button
                       onClick={() => setSelectedSubmission(null)}
-                      className="hidden lg:inline-flex text-xs text-muted hover:text-text px-3 py-2 rounded-control bg-panel border border-line min-h-10 items-center" aria-label="Close brief"
+                      className="hidden lg:inline-flex text-xs text-muted hover:text-fg px-3 py-2 rounded-control bg-panel border border-line min-h-10 items-center" aria-label="Close brief"
                     >
                       ✕
                     </button>
@@ -1111,7 +1111,7 @@ export const AdminInbox: React.FC = () => {
                       <button
                         onClick={() => setIsCrmModalOpen(true)}
                         disabled={!canManageCrm}
-                        className="h-9 px-3.5 rounded-control bg-success hover:brightness-110 text-text text-xs font-sans font-semibold transition-colors flex items-center gap-1.5"
+                        className="h-9 px-3.5 rounded-control bg-success hover:bg-[var(--accent-hover)] text-fg text-xs font-sans font-semibold transition-colors flex items-center gap-1.5"
                       >
                         <Briefcase size={14} />
                         <span>{language === 'id' ? 'Konversi ke CRM' : 'Convert to CRM'}</span>
@@ -1122,7 +1122,7 @@ export const AdminInbox: React.FC = () => {
                     <button
                       onClick={() => setIsCannedModalOpen(true)}
                       disabled={!canManageCrm}
-                      className="h-9 px-3.5 rounded-control bg-panel hover:bg-panel-hover text-text border border-line text-xs font-sans font-semibold transition-colors flex items-center gap-1.5"
+                      className="h-9 px-3.5 rounded-control bg-panel hover:bg-panel-hover text-fg border border-line text-xs font-sans font-semibold transition-colors flex items-center gap-1.5"
                     >
                       <Sparkles size={13} className="text-danger" />
                       <span>{language === 'id' ? 'Respon Cepat' : 'Canned Response'}</span>
@@ -1163,8 +1163,8 @@ export const AdminInbox: React.FC = () => {
                     onClick={() => setDetailTab('brief')}
                     className={`pb-1 text-xs font-sans font-semibold transition-colors border-b-2 ${
                       detailTab === 'brief'
-                        ? 'text-text border-accent'
-                        : 'text-muted border-transparent hover:text-text'
+                        ? 'text-fg border-accent'
+                        : 'text-muted border-transparent hover:text-fg'
                     }`}
                   >
                     {language === 'id' ? 'Detail Brief & Kontak' : 'Brief & Contact Specs'}
@@ -1174,8 +1174,8 @@ export const AdminInbox: React.FC = () => {
                     onClick={() => setDetailTab('notes')}
                     className={`pb-1 text-xs font-sans font-semibold transition-colors border-b-2 flex items-center gap-1.5 ${
                       detailTab === 'notes'
-                        ? 'text-text border-accent'
-                        : 'text-muted border-transparent hover:text-text'
+                        ? 'text-fg border-accent'
+                        : 'text-muted border-transparent hover:text-fg'
                     }`}
                   >
                     <span>{language === 'id' ? 'Catatan Tim Agensi' : 'Internal Team Notes'}</span>
@@ -1207,7 +1207,7 @@ export const AdminInbox: React.FC = () => {
                         </div>
                         <a 
                           href={`mailto:${selectedSubmission.email}`}
-                          className="text-xs font-sans font-medium text-text hover:text-danger transition-colors break-all block"
+                          className="text-xs font-sans font-medium text-fg hover:text-danger transition-colors break-all block"
                         >
                           {selectedSubmission.email}
                         </a>
@@ -1230,7 +1230,7 @@ export const AdminInbox: React.FC = () => {
                             </button>
                           )}
                         </div>
-                        <p className="text-xs font-sans font-medium text-text">
+                        <p className="text-xs font-sans font-medium text-fg">
                           {selectedSubmission.phone || '-'}
                         </p>
                       </div>
@@ -1247,12 +1247,12 @@ export const AdminInbox: React.FC = () => {
                         <div className="flex flex-wrap gap-1.5">
                           {selectedSubmission.services && selectedSubmission.services.length > 0 ? (
                             selectedSubmission.services.map((svc, i) => (
-                              <span key={i} className="text-[10px] font-sans px-2 py-0.5 rounded bg-panel border border-line text-text">
+                              <span key={i} className="text-[10px] font-sans px-2 py-0.5 rounded bg-panel border border-line text-fg">
                                 {svc}
                               </span>
                             ))
                           ) : (
-                            <span className="text-xs text-text font-sans">
+                            <span className="text-xs text-fg font-sans">
                               {selectedSubmission.specialty || selectedSubmission.positionTitle || 'General Consultation'}
                             </span>
                           )}
@@ -1270,7 +1270,7 @@ export const AdminInbox: React.FC = () => {
                             {formatAmount(estimateDealValue(selectedSubmission), currency)}
                           </span>
                         </div>
-                        <p className="text-xs font-sans font-semibold text-text">
+                        <p className="text-xs font-sans font-semibold text-fg">
                           {selectedSubmission.budget || selectedSubmission.rateCard || (language === 'id' ? 'Tidak ditentukan' : 'Unspecified')}
                         </p>
                       </div>
@@ -1284,7 +1284,7 @@ export const AdminInbox: React.FC = () => {
                         </label>
                         <button
                           onClick={() => handleCopyText(selectedSubmission.message, 'msg')}
-                          className="text-[10px] text-muted hover:text-text flex items-center gap-1 font-sans"
+                          className="text-[10px] text-muted hover:text-fg flex items-center gap-1 font-sans"
                         >
                           <Copy size={11} />
                           <span>{copiedId === 'msg' ? (language === 'id' ? 'Tersalin' : 'Copied') : (language === 'id' ? 'Salin Brief' : 'Copy Brief')}</span>
@@ -1297,10 +1297,10 @@ export const AdminInbox: React.FC = () => {
 
                     {/* Metadata Specs */}
                     <div className="p-3 rounded-card bg-panel/50 border border-line text-[11px] font-sans text-muted grid grid-cols-1 sm:grid-cols-2 gap-2">
-                      <div>{language === 'id' ? 'Kanal Sumber:' : 'Intake Source:'} <span className="text-text">{selectedSubmission.source || 'Website Form'}</span></div>
-                      <div>{language === 'id' ? 'Waktu Diterima:' : 'Timestamp:'} <span className="text-text">{new Date(selectedSubmission.createdAt).toLocaleString()}</span></div>
+                      <div>{language === 'id' ? 'Kanal Sumber:' : 'Intake Source:'} <span className="text-fg">{selectedSubmission.source || 'Website Form'}</span></div>
+                      <div>{language === 'id' ? 'Waktu Diterima:' : 'Timestamp:'} <span className="text-fg">{new Date(selectedSubmission.createdAt).toLocaleString()}</span></div>
                       {selectedSubmission.userAgent && (
-                        <div className="sm:col-span-2 truncate">{language === 'id' ? 'Klien Browser:' : 'User Agent:'} <span className="text-text">{selectedSubmission.userAgent}</span></div>
+                        <div className="sm:col-span-2 truncate">{language === 'id' ? 'Klien Browser:' : 'User Agent:'} <span className="text-fg">{selectedSubmission.userAgent}</span></div>
                       )}
                     </div>
                   </div>
@@ -1311,7 +1311,7 @@ export const AdminInbox: React.FC = () => {
                   <div className="space-y-4">
                     <div className="p-4 rounded-card bg-panel border border-line space-y-3">
                       <div className="flex items-center justify-between">
-                        <label className="text-xs font-sans text-text font-semibold flex items-center gap-1.5">
+                        <label className="text-xs font-sans text-fg font-semibold flex items-center gap-1.5">
                           <FileText size={14} className="text-danger" />
                           <span>{language === 'id' ? 'Catatan Rahasia Agensi' : 'Private Agency Team Notes'}</span>
                         </label>
@@ -1327,7 +1327,7 @@ export const AdminInbox: React.FC = () => {
                         placeholder={language === 'id' 
                           ? 'Tulis catatan teknis, rangkuman discovery call, kesepakatan timeline, atau petunjuk khusus untuk tim...' 
                           : 'Enter technical scoping notes, discovery call summary, milestone commitments, or specific client instructions...'}
-                        className="w-full min-h-10 p-3 bg-panel border border-line rounded-control text-xs text-text placeholder:text-muted font-sans focus:outline-none focus:border-accent leading-relaxed"
+                        className="w-full min-h-10 p-3 bg-panel border border-line rounded-control text-xs text-fg placeholder:text-muted font-sans focus:outline-none focus:border-accent leading-relaxed"
                       />
 
                       <div className="flex items-center justify-end">
@@ -1390,7 +1390,7 @@ export const AdminInbox: React.FC = () => {
               <div className="w-16 h-16 rounded-card bg-panel border border-line flex items-center justify-center text-line mb-4">
                 <Inbox size={32} />
               </div>
-              <h3 className="text-text font-medium mb-1 font-sans text-base">
+              <h3 className="text-fg font-medium mb-1 font-sans text-base">
                 {language === 'id' ? 'Pilih Pesan untuk Membaca Brief' : 'Select a Brief to Inspect'}
               </h3>
               <p className="text-xs text-muted max-w-sm font-sans leading-relaxed">
