@@ -22,7 +22,8 @@ export type CrmSource =
   | 'WhatsApp Direct' 
   | 'Referral' 
   | 'LinkedIn / Outreach' 
-  | 'Event / Partner';
+  | 'Event / Partner' 
+  | 'CSV Import';
 
 export interface CrmNote {
   id: string;
