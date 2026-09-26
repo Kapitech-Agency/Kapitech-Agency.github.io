@@ -23,6 +23,7 @@ interface CustomSelectProps {
   size?: 'xs' | 'sm' | 'md';
   disabled?: boolean;
   prefixIcon?: React.ReactNode;
+  'aria-label'?: string;
 }
 
 export const CustomSelect: React.FC<CustomSelectProps> = ({
@@ -36,7 +37,8 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
   align = 'left',
   size = 'sm',
   disabled = false,
-  prefixIcon
+  prefixIcon,
+  'aria-label': ariaLabel
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -91,6 +93,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
           }
         }}
         ref={triggerRef}
+        aria-label={ariaLabel}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
         aria-controls={isOpen ? listboxId : undefined}
