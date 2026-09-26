@@ -387,7 +387,15 @@ export const AdminClients: React.FC = () => {
         </div>
       )}
 
-      <section aria-label={language === 'id' ? 'Ringkasan klien' : 'Client snapshot'} className="mb-6">
+      <section aria-labelledby="client-snapshot-title" className="mb-6">
+        <div className="mb-3">
+          <h2 id="client-snapshot-title" className="text-sm font-semibold text-fg">
+            {language === 'id' ? 'Ringkasan klien' : 'Client snapshot'}
+          </h2>
+          <p className="mt-1 text-xs leading-5 text-muted">
+            {language === 'id' ? 'Sinyal utama dari direktori klien saat ini.' : 'Key signals from the current client directory.'}
+          </p>
+        </div>
         <div className="grid grid-cols-2 border-y border-line sm:grid-cols-4">
           {[
             { label: language === 'id' ? 'Total klien' : 'Total clients', value: clientMetrics.total, helper: language === 'id' ? 'Semua status' : 'All statuses', valueClass: 'text-fg' },
