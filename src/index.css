@@ -1947,3 +1947,148 @@
 @media(prefers-reduced-motion:reduce){
  .ams-shell .ams-leads-page *,.ams-shell .ams-inbox-page *{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important}
 }
+
+
+/* ================================================================
+   LEADS + INBOX STRUCTURAL POLISH
+   Aligns both workspaces with the Dashboard header and spacing rhythm.
+   ================================================================ */
+.ams-shell .ams-leads-page .ams-dashboard-header,
+.ams-shell .ams-inbox-page .ams-dashboard-header {
+  margin-bottom: 24px;
+  gap: 16px;
+  padding-bottom: 20px;
+}
+
+.ams-shell .ams-leads-page .ams-dashboard-header h1,
+.ams-shell .ams-inbox-page .ams-dashboard-header h1 {
+  letter-spacing: -0.02em;
+}
+
+.ams-shell .ams-leads-page .ams-dashboard-header > div:last-child,
+.ams-shell .ams-inbox-page .ams-dashboard-header > div:last-child {
+  align-items: center;
+}
+
+.ams-shell .ams-crm-kpi,
+.ams-shell .ams-inbox-kpi {
+  gap: 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.ams-shell .ams-crm-kpi > div,
+.ams-shell .ams-inbox-kpi > div {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.ams-shell .ams-crm-kpi > div + div,
+.ams-shell .ams-inbox-kpi > div + div {
+  border-left: 1px solid var(--line);
+}
+
+.ams-shell .ams-crm-kpi > div:hover,
+.ams-shell .ams-inbox-kpi > div:hover {
+  border-color: var(--line);
+}
+
+.ams-shell .ams-crm-kpi > div {
+  padding: 18px 16px;
+  min-height: 148px;
+}
+
+.ams-shell .ams-inbox-kpi > div {
+  padding: 18px 16px;
+  min-height: 126px;
+}
+
+.ams-shell .ams-crm-kpi .rounded-card,
+.ams-shell .ams-inbox-kpi .rounded-card {
+  border-radius: 0;
+}
+
+.ams-shell .ams-crm-kpi .bg-\[var\(--panel\)\],
+.ams-shell .ams-inbox-kpi .bg-\[var\(--panel\)\] {
+  background: transparent;
+}
+
+.ams-shell .ams-crm-toolbar,
+.ams-shell .ams-inbox-toolbar {
+  border-radius: var(--radius-card);
+  padding: 12px;
+}
+
+.ams-shell .ams-crm-toolbar input,
+.ams-shell .ams-inbox-toolbar input {
+  background: var(--bg) !important;
+}
+
+.ams-shell .ams-crm-toolbar .ams-control,
+.ams-shell .ams-inbox-toolbar .ams-control {
+  background: var(--bg) !important;
+}
+
+.ams-shell .ams-inbox-workspace {
+  gap: 16px;
+}
+
+.ams-shell .ams-inbox-list-pane,
+.ams-shell .ams-inbox-reader-pane {
+  border-color: var(--line);
+}
+
+@media (max-width: 899px) {
+  .ams-shell .ams-leads-page .ams-dashboard-header,
+  .ams-shell .ams-inbox-page .ams-dashboard-header {
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+  }
+
+  .ams-shell .ams-crm-kpi,
+  .ams-shell .ams-inbox-kpi {
+    border-bottom: 0;
+  }
+
+  .ams-shell .ams-crm-kpi > div,
+  .ams-shell .ams-inbox-kpi > div {
+    min-height: 0;
+  }
+
+  .ams-shell .ams-crm-kpi > div + div,
+  .ams-shell .ams-inbox-kpi > div + div {
+    border-left: 0;
+    border-top: 1px solid var(--line);
+  }
+}
+
+@media (max-width: 599px) {
+  .ams-shell .ams-leads-page .ams-dashboard-header,
+  .ams-shell .ams-inbox-page .ams-dashboard-header {
+    margin-bottom: 14px;
+    padding-bottom: 14px;
+  }
+
+  .ams-shell .ams-leads-page .ams-dashboard-header > div:last-child,
+  .ams-shell .ams-inbox-page .ams-dashboard-header > div:last-child {
+    width: 100%;
+    gap: 8px;
+  }
+
+  .ams-shell .ams-leads-page .ams-dashboard-header > div:last-child > *,
+  .ams-shell .ams-inbox-page .ams-dashboard-header > div:last-child > * {
+    flex: 0 0 auto;
+  }
+
+  .ams-shell .ams-crm-kpi > div,
+  .ams-shell .ams-inbox-kpi > div {
+    padding: 14px;
+  }
+
+  .ams-shell .ams-crm-toolbar,
+  .ams-shell .ams-inbox-toolbar {
+    padding: 10px;
+  }
+}
