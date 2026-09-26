@@ -535,7 +535,7 @@ export const AdminInbox: React.FC = () => {
       {/* ------------------------------------------------------------- */}
       {/* 2. EXECUTIVE KPI SUMMARY RIBBON */}
       {/* ------------------------------------------------------------- */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="ams-inbox-kpi grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         {/* Metric 1: Total Inbound */}
         <div className="p-4 rounded-card bg-[var(--panel)] border border-[var(--line)] space-y-1">
           <div className="flex items-center justify-between text-xs font-sans text-[var(--muted)]">
@@ -599,7 +599,7 @@ export const AdminInbox: React.FC = () => {
       {/* ------------------------------------------------------------- */}
       {/* 3. UNIFIED FILTER TABS & TOOLBAR */}
       {/* ------------------------------------------------------------- */}
-      <div className="bg-[var(--panel)] border border-[var(--line)] p-4 sm:p-5 rounded-card space-y-3">
+      <div className="ams-inbox-toolbar bg-[var(--panel)] border border-[var(--line)] p-4 sm:p-5 rounded-card space-y-3">
         
         {/* Top Channel Category Tabs */}
         <div className="flex flex-wrap items-center justify-between gap-3">
