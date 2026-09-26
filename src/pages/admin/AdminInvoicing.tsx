@@ -691,7 +691,7 @@ export const AdminInvoicing: React.FC = () => {
                   { label: 'Operating profit', value: serverMetrics ? formatAmount(serverMetrics.netProfit, currency) : '—', tone: 'text-success' },
                   { label: 'Outstanding', value: serverMetrics ? formatAmount(serverMetrics.totalOutstanding, currency) : '—', tone: 'text-warning' }
                 ].map((item) => (
-                  <div key={item.label} className="min-w-0 bg-[#1d1d1d] p-3.5">
+                  <div key={item.label} className="min-w-0 bg-bg p-3.5">
                     <p className="text-xs text-muted">{item.label}</p>
                     <p className={'mt-2 truncate text-sm font-medium tabular-nums ' + item.tone}>{item.value}</p>
                   </div>
