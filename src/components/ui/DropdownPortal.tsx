@@ -12,75 +12,60 @@ interface DropdownPortalProps {
 }
 
 export const DropdownPortal: React.FC<DropdownPortalProps> = ({
-  open,
-  anchorRef,
-  onClose,
-  children,
-  className = '',
-  align = 'left',
-  offset = 6
+  open, anchorRef, onClose, children, className = '', align = 'left', offset = 6
 }) => {
   const menuRef = useRef<HTMLDivElement>(null);
   const [style, setStyle] = useState<React.CSSProperties>({ visibility: 'hidden' });
 
   useLayoutEffect(() => {
     if (!open) return;
-
+    let frame = 0;
     const updatePosition = () => {
-      const anchor = anchorRef.current;
-      const menu = menuRef.current;
-      if (!anchor || !menu) return;
-
-      const rect = anchor.getBoundingClientRect();
-      const menuRect = menu.getBoundingClientRect();
-      const viewportPadding = 8;
-      const below = window.innerHeight - rect.bottom;
-      const above = rect.top;
-      const openUp = below < menuRect.height + offset && above > below;
-
-      const top = openUp
-        ? Math.max(viewportPadding, rect.top - menuRect.height - offset)
-        : Math.min(
-            window.innerHeight - menuRect.height - viewportPadding,
-            rect.bottom + offset
-          );
-
-      let left = align === 'right' ? rect.right - menuRect.width : rect.left;
-      left = Math.max(
-        viewportPadding,
-        Math.min(left, window.innerWidth - menuRect.width - viewportPadding)
-      );
-
-      setStyle({
-        position: 'fixed',
-        top,
-        left,
-        maxWidth: window.innerWidth - viewportPadding * 2,
-        visibility: 'visible'
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        const anchor = anchorRef.current;
+        const menu = menuRef.current;
+        if (!anchor || !menu) return;
+        const rect = anchor.getBoundingClientRect();
+        const menuRect = menu.getBoundingClientRect();
+        const viewportPadding = 8;
+        const viewportHeight = window.innerHeight;
+        const viewportWidth = window.innerWidth;
+        const availableBelow = Math.max(0, viewportHeight - rect.bottom - viewportPadding - offset);
+        const availableAbove = Math.max(0, rect.top - viewportPadding - offset);
+        const canOpenUp = availableBelow < menuRect.height && availableAbove > availableBelow;
+        const top = canOpenUp
+          ? Math.max(viewportPadding, rect.top - menuRect.height - offset)
+          : Math.min(viewportHeight - menuRect.height - viewportPadding, rect.bottom + offset);
+        const rawLeft = align === 'right' ? rect.right - menuRect.width : rect.left;
+        const left = Math.max(viewportPadding, Math.min(rawLeft, viewportWidth - menuRect.width - viewportPadding));
+        setStyle({
+          position: 'fixed',
+          top,
+          left,
+          maxWidth: viewportWidth - viewportPadding * 2,
+          maxHeight: Math.max(120, viewportHeight - viewportPadding * 2),
+          visibility: 'visible'
+        });
       });
     };
-
     const handlePointerDown = (event: PointerEvent) => {
       const target = event.target as Node;
-      if (!anchorRef.current?.contains(target) && !menuRef.current?.contains(target)) {
-        onClose();
-      }
+      if (!anchorRef.current?.contains(target) && !menuRef.current?.contains(target)) onClose();
     };
-
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         event.preventDefault();
         onClose();
       }
     };
-
     updatePosition();
     window.addEventListener('resize', updatePosition);
     window.addEventListener('scroll', updatePosition, true);
     document.addEventListener('pointerdown', handlePointerDown, true);
     document.addEventListener('keydown', handleKeyDown);
-
     return () => {
+      cancelAnimationFrame(frame);
       window.removeEventListener('resize', updatePosition);
       window.removeEventListener('scroll', updatePosition, true);
       document.removeEventListener('pointerdown', handlePointerDown, true);
@@ -89,13 +74,7 @@ export const DropdownPortal: React.FC<DropdownPortalProps> = ({
   }, [open, anchorRef, onClose, align, offset]);
 
   if (!open) return null;
-
-  return createPortal(
-    <div ref={menuRef} style={style} className={className}>
-      {children}
-    </div>,
-    document.body
-  );
+  return createPortal(<div ref={menuRef} style={style} className={className}>{children}</div>, document.body);
 };
 
 export default DropdownPortal;
