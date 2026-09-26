@@ -412,7 +412,7 @@ export const AdminInvoicing: React.FC = () => {
           <div>
             <div className="flex items-center justify-between text-[var(--muted)] mb-2">
               <span className="text-xs font-sans normal-case font-semibold">{t('admin.fin.netProfit')}</span>
-              <div className="w-8 h-8 rounded-control bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400">
+              <div className="w-8 h-8 rounded-control bg-[var(--series-3)]/10 border border-[var(--series-3)]/30 flex items-center justify-center text-[var(--series-3)]">
                 <TrendingUp size={16} />
               </div>
             </div>
@@ -422,7 +422,7 @@ export const AdminInvoicing: React.FC = () => {
           </div>
           <div className="flex items-center justify-between mt-4 pt-3 border-t border-[var(--line)] text-[11px] font-sans">
             <span className="text-[var(--muted)]">Margin</span>
-            <span className="text-purple-400 font-semibold">
+            <span className="text-[var(--series-3)] font-semibold">
               {metrics.totalPaidRevenue > 0 ? Math.round((metrics.netOperatingProfit / metrics.totalPaidRevenue) * 100) : 0}% Net
             </span>
           </div>
