@@ -599,9 +599,13 @@ export const AdminCrm: React.FC = () => {
               return (
                 <div 
                   key={stageDef.key}
-                  onDragOver={(e) => handleDragOverColumn(e, stageDef.key)}
-                  onDragLeave={handleDragLeaveColumn}
-                  onDrop={(e) => handleDropOnColumn(e, stageDef.key)}
+                  onDragOver={(e) => {
+                    if (canManageCrm) handleDragOverColumn(e, stageDef.key);
+                  }}
+                  onDragLeave={canManageCrm ? handleDragLeaveColumn : undefined}
+                  onDrop={(e) => {
+                    if (canManageCrm) handleDropOnColumn(e, stageDef.key);
+                  }}
                   className={`bg-[var(--panel)] border rounded-card flex flex-col flex-1 min-w-[280px] max-w-[340px] shrink-0 transition-all ${
                     isOver ? 'border-[var(--accent)] ring-2 ring-[var(--accent)]/30 bg-[var(--accent)]/5' : 'border-[var(--line)]'
                   }`}
@@ -652,8 +656,8 @@ export const AdminCrm: React.FC = () => {
                         return (
                           <div
                             key={lead.id}
-                            draggable={true}
-                            onDragStart={(e) => handleDragStart(e, lead.id)}
+                            draggable={canManageCrm}
+                            onDragStart={canManageCrm ? (e) => handleDragStart(e, lead.id) : undefined}
                             onClick={() => handleOpenLeadDrawer(lead)}
                             className={`draggable-card kanban-card bg-[var(--panel)] hover:bg-[var(--panel)] border hover:border-[var(--accent)]/60 rounded-card p-3 cursor-pointer transition-all group relative ${
                               isDragging ? 'opacity-40 scale-95 border-[var(--accent)] border-dashed' : 'border-[var(--line)]'
@@ -1024,7 +1028,7 @@ export const AdminCrm: React.FC = () => {
 
                 <div className="flex items-center gap-2">
                   <span className="text-xs text-[var(--muted)]">{language === 'id' ? 'Tahap:' : 'Stage:'}</span>
-                  <CustomSelect value={selectedLead.stage} onChange={(value) => handleStageChange(selectedLead.id, value as CrmStage)} options={CRM_STAGE_DEFINITIONS.map(s => ({ value: s.key, label: language === 'id' ? s.labelId : s.label }))} />
+                  <CustomSelect value={selectedLead.stage} onChange={(value) => handleStageChange(selectedLead.id, value as CrmStage)} options={CRM_STAGE_DEFINITIONS.map(s => ({ value: s.key, label: language === 'id' ? s.labelId : s.label }))} disabled={!canManageCrm} />
                 </div>
               </div>
 
@@ -1128,6 +1132,7 @@ export const AdminCrm: React.FC = () => {
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => handleOpenEditModal(selectedLead)}
+                  disabled={!canManageCrm}
                   className="px-3.5 py-2 rounded-control bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--text)] border border-[var(--line)] text-xs transition-colors flex items-center gap-1.5 min-h-10"
                 >
                   <Edit3 size={13} />
@@ -1146,6 +1151,7 @@ export const AdminCrm: React.FC = () => {
               {selectedLead.stage === 'won' && (
                 <button
                   onClick={() => handleConvertToProject(selectedLead)}
+                  disabled={!canManageCrm}
                   className="px-4 py-2 rounded-control bg-[var(--accent)] hover:brightness-110 text-white font-semibold text-xs flex items-center gap-1.5 min-h-10"
                 >
                   <Layers size={13} />
