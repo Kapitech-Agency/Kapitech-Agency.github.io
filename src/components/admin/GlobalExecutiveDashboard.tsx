@@ -342,7 +342,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
           </div>
           <div className="grid w-full grid-cols-1 gap-2 sm:w-auto sm:grid-cols-2">
             <button type="button" onClick={() => void retryMfaStatus()} disabled={mfaRetrying} className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-control border border-danger/40 bg-danger/10 px-3 text-xs font-semibold text-danger hover:bg-danger/15 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-danger">
-              <RefreshCw size={14} className={isLoading ? 'animate-spin' : ''} />
+              <RefreshCw size={14} className={mfaRetrying ? 'animate-spin' : ''} />
               {mfaRetrying ? 'Retrying' : (language === 'id' ? 'Coba lagi' : 'Retry')}
             </button>
             <Link to="/admin/settings?tab=security&mfaRequired=1" className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-control border border-line bg-panel px-3 text-xs font-medium text-muted hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
@@ -362,7 +362,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
       {isLoading && !data ? (
         <div className="space-y-6" aria-label="Loading dashboard">
           <div className="grid grid-cols-2 gap-3 min-[900px]:grid-cols-4">
-            {Array.from({ length: 4 }).map((_, index) => <SkeletonBlock key={index} className="h-28" />)}
+            {Array.from({ length: 6 }).map((_, index) => <SkeletonBlock key={index} className="h-24" />)}
           </div>
           <SkeletonBlock className="h-[310px]" />
           <div className="grid gap-3 lg:grid-cols-2"><SkeletonBlock className="h-[300px]" /><SkeletonBlock className="h-[300px]" /></div>
@@ -452,9 +452,28 @@ export const GlobalExecutiveDashboard: React.FC = () => {
                 <div className="bg-panel p-3.5"><p className="text-xs text-muted">Outstanding</p><p className="mt-1 text-sm font-medium tabular-nums text-fg">{formatCurrency(financials?.outstandingReceivables)}</p></div>
                 <div className="bg-panel p-3.5"><p className="text-xs text-muted">Overdue</p><p className="mt-1 text-sm font-medium tabular-nums text-danger">{formatCurrency(metrics?.overdueReceivables)}</p></div>
               </div>
-              <div className="mt-4 flex flex-col gap-3 rounded-control border border-line bg-bg p-3.5 sm:flex-row sm:items-center sm:justify-between">
-                <div><p className="text-xs text-muted">Net operating profit</p><p className="mt-1 text-xl font-medium tabular-nums text-fg">{formatCurrency(financials?.netOperatingProfit)}</p></div>
-                <div className="text-left sm:text-right"><p className="text-xs text-muted">Net margin</p><p className="mt-1 text-xl font-medium tabular-nums text-fg">{financials?.margin ?? 'Restricted'}</p></div>
+              <div className="mt-4 grid gap-4 rounded-control border border-line bg-bg p-4 sm:grid-cols-[1fr_auto] sm:items-center">
+                <div className="min-w-0">
+                  <div className="flex items-end justify-between gap-3">
+                    <div>
+                      <p className="text-xs text-muted">Collection rate</p>
+                      <p className="mt-1 text-xl font-medium tabular-nums text-fg">
+                        {financialMetrics?.collectionRate != null ? `${financialMetrics.collectionRate}%` : 'Restricted'}
+                      </p>
+                    </div>
+                    <span className="text-xs text-muted">Receivables collected</span>
+                  </div>
+                  {financialMetrics?.collectionRate != null && (
+                    <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-line">
+                      <div className="h-full rounded-full bg-success" style={{ width: `${Math.min(100, Math.max(0, financialMetrics.collectionRate))}%` }} />
+                    </div>
+                  )}
+                </div>
+                <div className="border-t border-line pt-3 sm:border-l sm:border-t-0 sm:pl-5 sm:pt-0">
+                  <p className="text-xs text-muted">Net operating profit</p>
+                  <p className="mt-1 text-xl font-medium tabular-nums text-fg">{formatCurrency(financials?.netOperatingProfit)}</p>
+                  <p className="mt-1 text-xs text-muted">Net margin {financials?.margin ?? 'Restricted'}</p>
+                </div>
               </div>
             </section>
 
@@ -481,7 +500,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
               <div className="mt-4 grid grid-cols-2 gap-2">
                 {operationalActions.map((item) => {
                   const Icon = item.icon;
-                  return <Link key={item.href} to={item.href} className="flex min-h-20 flex-col justify-between rounded-control border border-line bg-bg p-3 text-xs font-medium text-fg transition-colors hover:border-muted hover:bg-panel focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"><Icon size={17} className="text-accent-text" /><span className="flex items-center justify-between gap-2">{item.label}<ArrowUpRight size={13} className="text-muted" /></span></Link>;
+                  return <Link key={item.href} to={item.href} className="group flex min-h-20 flex-col justify-between rounded-control border border-line bg-bg p-3 text-xs font-medium text-fg transition-colors hover:border-muted hover:bg-panel focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"><Icon size={17} className="text-muted transition-colors group-hover:text-accent-text" /><span className="flex items-center justify-between gap-2">{item.label}<ArrowUpRight size={13} className="text-muted" /></span></Link>;
                 })}
               </div>
             </section>
