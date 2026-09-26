@@ -76,7 +76,7 @@ export const AdminCmsServices: React.FC = () => {
   const getCategoryIcon = (category: string) => {
     switch (category) {
       case 'Design':
-        return <Palette size={14} className="text-purple-400" />;
+        return <Palette size={14} className="text-[var(--series-3)]" />;
       case 'Development':
         return <Code size={14} className="text-[var(--danger)]" />;
       case 'Branding':
@@ -271,7 +271,7 @@ export const AdminCmsServices: React.FC = () => {
             <div className="text-xs font-sans text-[var(--muted)]">UI/UX Design Systems</div>
             <div className="text-xl font-sans font-semibold text-[var(--text)] mt-0.5">4 Systems</div>
           </div>
-          <div className="w-8 h-8 rounded-control bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400">
+          <div className="w-8 h-8 rounded-control bg-[var(--series-3)]/10 border border-[var(--series-3)]/30 flex items-center justify-center text-[var(--series-3)]">
             <PenTool size={16} />
           </div>
         </div>
