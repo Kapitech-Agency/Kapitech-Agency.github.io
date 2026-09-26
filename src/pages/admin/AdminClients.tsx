@@ -226,7 +226,7 @@ export const AdminClients: React.FC = () => {
             <Users className="text-accent-text shrink-0" size={22} />
             <span>{t('admin.client.title')}</span>
           </h1>
-          <p className="text-xs font-sans text-[var(--muted)] mt-1">
+          <p className="text-xs font-sans text-text-muted mt-1">
             {t('admin.client.subtitle')}
           </p>
         </div>
@@ -244,16 +244,16 @@ export const AdminClients: React.FC = () => {
 
       {/* Critical SLA Ad-Spend Alert Banner */}
       {clientsExceedingSla.length > 0 && (
-        <div className="p-4 rounded-card bg-[var(--danger)]/10 border border-[var(--danger)]/30 text-[var(--text)] space-y-2">
-          <div className="flex items-center gap-2.5 text-[var(--danger)] font-medium font-sans text-xs normal-case tracking-normal">
+        <div className="p-4 rounded-card bg-text-danger/10 border border-text-danger/30 text-text-fg space-y-2">
+          <div className="flex items-center gap-2.5 text-text-danger font-medium font-sans text-xs normal-case tracking-normal">
             <ShieldAlert size={16} />
             <span>Critical SLA warning: daily ad spend exceeded the cap</span>
           </div>
-          <div className="text-xs font-sans text-[var(--danger)]">
+          <div className="text-xs font-sans text-text-danger">
             {clientsExceedingSla.map(c => (
-              <div key={c.id} className="flex items-center justify-between py-1 border-t border-[var(--danger)]/20 mt-1">
+              <div key={c.id} className="flex items-center justify-between py-1 border-t border-text-danger/20 mt-1">
                 <span>{c.company} ({c.name})</span>
-                <span className="font-semibold text-[var(--danger)]">
+                <span className="font-semibold text-text-danger">
                   Actual: {formatAmount(c.currentDailyAdSpend || 0, currency)} / SLA Cap: {formatAmount(c.slaDailyAdSpendBudget || 0, currency)}
                 </span>
               </div>
@@ -263,7 +263,7 @@ export const AdminClients: React.FC = () => {
       )}
 
       {statusMessage && (
-        <div className="p-3 rounded-card bg-[var(--success)]/10 border border-[var(--success)]/30 text-[var(--success)] text-xs font-sans flex items-center gap-2">
+        <div className="p-3 rounded-card bg-text-success/10 border border-text-success/30 text-text-success text-xs font-sans flex items-center gap-2">
           <Check size={14} />
           <span>{statusMessage}</span>
         </div>
@@ -271,62 +271,62 @@ export const AdminClients: React.FC = () => {
 
       {/* 2. Key Metrics Summary (3 cols) */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full">
-        <div className="w-full h-full bg-[var(--panel)] border border-[var(--line)] p-4 rounded-card flex flex-col justify-between">
-          <div className="flex items-center justify-between text-[var(--muted)] mb-2">
+        <div className="w-full h-full bg-bg-panel border border-border-line p-4 rounded-card flex flex-col justify-between">
+          <div className="flex items-center justify-between text-text-muted mb-2">
             <span className="text-xs font-sans normal-case font-semibold">{t('admin.client.totalClients')}</span>
-            <div className="w-8 h-8 rounded-control bg-[var(--panel)] border border-[var(--line)] flex items-center justify-center text-[var(--text)]">
+            <div className="w-8 h-8 rounded-control bg-bg-panel border border-border-line flex items-center justify-center text-text-fg">
               <Users size={16} />
             </div>
           </div>
-          <div className="text-3xl font-sans font-semibold text-[var(--text)] tracking-tight">
+          <div className="text-3xl font-sans font-semibold text-text-fg tracking-tight">
             {clients.length}
           </div>
-          <div className="mt-3 pt-2 border-t border-[var(--line)] text-[11px] font-sans text-[var(--muted)]">
+          <div className="mt-3 pt-2 border-t border-border-line text-[11px] font-sans text-text-muted">
             {language === 'id' ? 'Klien Enterprise & SME' : 'Across Enterprise & SME tiers'}
           </div>
         </div>
 
-        <div className="w-full h-full bg-[var(--panel)] border border-[var(--line)] p-5 rounded-card flex flex-col justify-between">
-          <div className="flex items-center justify-between text-[var(--muted)] mb-2">
+        <div className="w-full h-full bg-bg-panel border border-border-line p-5 rounded-card flex flex-col justify-between">
+          <div className="flex items-center justify-between text-text-muted mb-2">
             <span className="text-xs font-sans normal-case font-semibold">{t('admin.client.activeAccounts')}</span>
-            <div className="w-8 h-8 rounded-control bg-[var(--success)]/10 border border-[var(--success)]/30 flex items-center justify-center text-[var(--success)]">
+            <div className="w-8 h-8 rounded-control bg-text-success/10 border border-text-success/30 flex items-center justify-center text-text-success">
               <UserCheck size={16} />
             </div>
           </div>
-          <div className="text-3xl font-sans font-semibold text-[var(--success)] tracking-tight">
+          <div className="text-3xl font-sans font-semibold text-text-success tracking-tight">
             {activeAccountsCount}
           </div>
-          <div className="mt-3 pt-2 border-t border-[var(--line)] text-[11px] font-sans text-[var(--success)]">
+          <div className="mt-3 pt-2 border-t border-border-line text-[11px] font-sans text-text-success">
             {language === 'id' ? 'Retainer & Sprint Aktif' : 'Active Retainers & Sprints'}
           </div>
         </div>
 
-        <div className="w-full h-full bg-[var(--panel)] border border-[var(--line)] p-5 rounded-card flex flex-col justify-between">
-          <div className="flex items-center justify-between text-[var(--muted)] mb-2">
+        <div className="w-full h-full bg-bg-panel border border-border-line p-5 rounded-card flex flex-col justify-between">
+          <div className="flex items-center justify-between text-text-muted mb-2">
             <span className="text-xs font-sans normal-case font-semibold">{t('admin.client.lifetimeSpend')}</span>
-            <div className="w-8 h-8 rounded-control bg-[var(--panel-hover)] border border-[var(--line)] flex items-center justify-center text-[var(--muted)]">
+            <div className="w-8 h-8 rounded-control bg-bg-bg border border-border-line flex items-center justify-center text-text-muted">
               <DollarSign size={16} />
             </div>
           </div>
-          <div className="text-2xl sm:text-3xl font-sans font-semibold text-[var(--text)] tracking-tight">
+          <div className="text-2xl sm:text-3xl font-sans font-semibold text-text-fg tracking-tight">
             {formatAmount(totalLifetimeSpend, currency)}
           </div>
-          <div className="mt-3 pt-2 border-t border-[var(--line)] text-[11px] font-sans text-[var(--muted)]">
+          <div className="mt-3 pt-2 border-t border-border-line text-[11px] font-sans text-text-muted">
             {language === 'id' ? 'Total Nilai Kontrak Billed' : 'Cumulative Billed Value'}
           </div>
         </div>
       </div>
 
       {/* 3. Search & Filter Bar */}
-      <div className="w-full flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[var(--panel)] border border-[var(--line)] p-4 rounded-card">
+      <div className="w-full flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-bg-panel border border-border-line p-4 rounded-card">
         <div className="relative flex-1 min-w-0 max-w-sm">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--muted)]" size={14} />
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted" size={14} />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={t('admin.client.searchPlaceholder')}
-            className="w-full pl-9 pr-3 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-control text-xs text-[var(--text)] placeholder:text-[var(--muted)] focus:outline-none focus:border-[var(--accent)] font-sans min-h-10"
+            className="w-full pl-9 pr-3 py-2 bg-bg-panel border border-border-line rounded-control text-xs text-text-fg placeholder:text-text-muted focus:outline-none focus:border-bg-accent font-sans min-h-10"
           />
         </div>
 
@@ -392,15 +392,15 @@ export const AdminClients: React.FC = () => {
       {/* 5. Create / Edit Client Modal */}
       {isClientModalOpen && (
         <div className="fixed inset-0 z-50 bg-bg/80  flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-[var(--panel)] border border-[var(--line)] rounded-card w-full max-w-lg p-6 space-y-4 -none my-8 text-xs font-sans">
-            <div className="flex items-center justify-between pb-3 border-b border-[var(--line)]">
-              <h2 className="text-base font-semibold font-sans text-[var(--text)] flex items-center gap-2">
-                <Users className="text-[var(--accent)]" size={18} />
+          <div className="bg-bg-panel border border-border-line rounded-card w-full max-w-lg p-6 space-y-4  my-8 text-xs font-sans">
+            <div className="flex items-center justify-between pb-3 border-b border-border-line">
+              <h2 className="text-base font-semibold font-sans text-text-fg flex items-center gap-2">
+                <Users className="text-bg-accent" size={18} />
                 <span>{editingClient ? (language === 'id' ? 'Edit Profil Klien' : 'Edit Client Profile') : (language === 'id' ? 'Tambah Klien Baru' : 'Add New Client')}</span>
               </h2>
               <button
                 onClick={() => setIsClientModalOpen(false)}
-                className="p-1.5 rounded-control text-[var(--muted)] hover:text-[var(--text)] bg-[var(--panel)] border border-[var(--line)]"
+                className="p-1.5 rounded-control text-text-muted hover:text-text-fg bg-bg-panel border border-border-line"
               >
                 <X size={14} />
               </button>
@@ -409,98 +409,98 @@ export const AdminClients: React.FC = () => {
             <form onSubmit={handleSaveClient} className="space-y-3.5">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[var(--muted)] mb-1 font-semibold">{language === 'id' ? 'Nama Kontak (PIC) *' : 'Contact Person (PIC) *'}</label>
+                  <label className="block text-text-muted mb-1 font-semibold">{language === 'id' ? 'Nama Kontak (PIC) *' : 'Contact Person (PIC) *'}</label>
                   <input
                     type="text"
                     required
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="e.g. John Doe"
-                    className="w-full px-3 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
+                    className="w-full px-3 py-2 bg-bg-panel border border-border-line rounded-control text-text-fg focus:outline-none focus:border-bg-accent"
                   />
                 </div>
                 <div>
-                  <label className="block text-[var(--muted)] mb-1 font-semibold">{language === 'id' ? 'Perusahaan Klien *' : 'Company Name *'}</label>
+                  <label className="block text-text-muted mb-1 font-semibold">{language === 'id' ? 'Perusahaan Klien *' : 'Company Name *'}</label>
                   <input
                     type="text"
                     required
                     value={company}
                     onChange={(e) => setCompany(e.target.value)}
                     placeholder="e.g. Acme Global Tech"
-                    className="w-full px-3 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
+                    className="w-full px-3 py-2 bg-bg-panel border border-border-line rounded-control text-text-fg focus:outline-none focus:border-bg-accent"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[var(--muted)] mb-1 font-semibold">PIC Role / Title</label>
+                  <label className="block text-text-muted mb-1 font-semibold">PIC Role / Title</label>
                   <input
                     type="text"
                     value={role}
                     onChange={(e) => setRole(e.target.value)}
                     placeholder="Managing Director, VP Engineering..."
-                    className="w-full px-3 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
+                    className="w-full px-3 py-2 bg-bg-panel border border-border-line rounded-control text-text-fg focus:outline-none focus:border-bg-accent"
                   />
                 </div>
                 <div>
-                  <label className="block text-[var(--muted)] mb-1 font-semibold">Industry</label>
+                  <label className="block text-text-muted mb-1 font-semibold">Industry</label>
                   <input
                     type="text"
                     value={industry}
                     onChange={(e) => setIndustry(e.target.value)}
                     placeholder="Fintech, Real Estate, E-Commerce..."
-                    className="w-full px-3 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
+                    className="w-full px-3 py-2 bg-bg-panel border border-border-line rounded-control text-text-fg focus:outline-none focus:border-bg-accent"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[var(--muted)] mb-1 font-semibold">Email Klien</label>
+                  <label className="block text-text-muted mb-1 font-semibold">Email Klien</label>
                   <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="contact@company.com"
-                    className="w-full px-3 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
+                    className="w-full px-3 py-2 bg-bg-panel border border-border-line rounded-control text-text-fg focus:outline-none focus:border-bg-accent"
                   />
                 </div>
                 <div>
-                  <label className="block text-[var(--muted)] mb-1 font-semibold">Phone / WhatsApp</label>
+                  <label className="block text-text-muted mb-1 font-semibold">Phone / WhatsApp</label>
                   <input
                     type="text"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     placeholder="+62 811-XXXX-XXXX"
-                    className="w-full px-3 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
+                    className="w-full px-3 py-2 bg-bg-panel border border-border-line rounded-control text-text-fg focus:outline-none focus:border-bg-accent"
                   />
                 </div>
               </div>
 
               {/* SLA Ad Spend Cap Section */}
-              <div className="p-3 bg-[var(--panel)] border border-[var(--line)] rounded-card space-y-2">
-                <div className="flex items-center gap-1.5 text-[var(--warning)] font-semibold">
+              <div className="p-3 bg-bg-panel border border-border-line rounded-card space-y-2">
+                <div className="flex items-center gap-1.5 text-text-warning font-semibold">
                   <Activity size={13} />
                   <span>SLA Daily Ad-Spend Cap & Tracking (IDR)</span>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-[var(--muted)] mb-1 font-semibold">SLA Agreed Daily Budget Cap</label>
+                    <label className="block text-text-muted mb-1 font-semibold">SLA Agreed Daily Budget Cap</label>
                     <input
                       type="number"
                       value={slaDailyBudget}
                       onChange={(e) => setSlaDailyBudget(Number(e.target.value))}
-                      className="w-full px-3 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
+                      className="w-full px-3 py-2 bg-bg-panel border border-border-line rounded-control text-text-fg focus:outline-none focus:border-bg-accent"
                     />
                   </div>
                   <div>
-                    <label className="block text-[var(--muted)] mb-1 font-semibold">Current Actual Daily Spend</label>
+                    <label className="block text-text-muted mb-1 font-semibold">Current Actual Daily Spend</label>
                     <input
                       type="number"
                       value={currentDailySpend}
                       onChange={(e) => setCurrentDailySpend(Number(e.target.value))}
-                      className="w-full px-3 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
+                      className="w-full px-3 py-2 bg-bg-panel border border-border-line rounded-control text-text-fg focus:outline-none focus:border-bg-accent"
                     />
                   </div>
                 </div>
@@ -508,25 +508,25 @@ export const AdminClients: React.FC = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[var(--muted)] mb-1 font-semibold">{language === 'id' ? 'Lokasi' : 'Location'}</label>
+                  <label className="block text-text-muted mb-1 font-semibold">{language === 'id' ? 'Lokasi' : 'Location'}</label>
                   <input
                     type="text"
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
                     placeholder="Jakarta, Indonesia"
-                    className="w-full px-3 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
+                    className="w-full px-3 py-2 bg-bg-panel border border-border-line rounded-control text-text-fg focus:outline-none focus:border-bg-accent"
                   />
                 </div>
                 <div>
-                  <label className="block text-[var(--muted)] mb-1 font-semibold">Account Status</label>
+                  <label className="block text-text-muted mb-1 font-semibold">Account Status</label>
                   <CustomSelect
                     value={clientStatus}
                     onChange={(val) => setClientStatus(val as any)}
                     options={[
-                      { value: 'active', label: 'Active', badge: 'Active', badgeColor: 'bg-[var(--success)]/10 text-[var(--success)] border border-[var(--success)]/20' },
-                      { value: 'completed', label: 'Completed', badge: 'Completed', badgeColor: 'bg-[var(--info)]/10 text-[var(--info)] border border-[var(--info)]/20' },
-                      { value: 'lead', label: 'Lead', badge: 'Lead', badgeColor: 'bg-[var(--warning)]/10 text-[var(--warning)] border border-[var(--warning)]/20' },
-                      { value: 'inactive', label: 'Inactive', badge: 'Inactive', badgeColor: 'bg-[var(--panel)] text-[var(--muted)] border border-[var(--line)]' }
+                      { value: 'active', label: 'Active', badge: 'Active', badgeColor: 'bg-text-success/10 text-text-success border border-text-success/20' },
+                      { value: 'completed', label: 'Completed', badge: 'Completed', badgeColor: 'bg-text-info/10 text-text-info border border-text-info/20' },
+                      { value: 'lead', label: 'Lead', badge: 'Lead', badgeColor: 'bg-text-warning/10 text-text-warning border border-text-warning/20' },
+                      { value: 'inactive', label: 'Inactive', badge: 'Inactive', badgeColor: 'bg-bg-panel text-text-muted border border-border-line' }
                     ]}
                     className="w-full"
                     triggerClassName="w-full justify-between"
@@ -535,27 +535,27 @@ export const AdminClients: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-[var(--muted)] mb-1 font-semibold">{language === 'id' ? 'Catatan & Preferensi Klien' : 'Client Notes & Requirements'}</label>
+                <label className="block text-text-muted mb-1 font-semibold">{language === 'id' ? 'Catatan & Preferensi Klien' : 'Client Notes & Requirements'}</label>
                 <textarea
                   rows={2}
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   placeholder="Special client preferences, NDA details, billing notes..."
-                  className="w-full px-3 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
+                  className="w-full px-3 py-2 bg-bg-panel border border-border-line rounded-control text-text-fg focus:outline-none focus:border-bg-accent"
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-[var(--line)]">
+              <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-border-line">
                 <button
                   type="button"
                   onClick={() => setIsClientModalOpen(false)}
-                  className="h-10 px-4 rounded-control bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] font-sans text-xs transition-colors min-h-10"
+                  className="h-10 px-4 rounded-control bg-bg-panel hover:bg-bg-panel text-text-muted hover:text-text-fg border border-border-line font-sans text-xs transition-colors min-h-10"
                 >
                   {language === 'id' ? 'Batal' : 'Cancel'}
                 </button>
                 <button
                   type="submit"
-                  className="h-10 px-5 rounded-control bg-[var(--accent)] hover:brightness-110 text-white font-sans font-semibold text-xs -none transition-all min-h-10"
+                  className="h-10 px-5 rounded-control bg-bg-accent hover:bg-accent/90 text-white font-sans font-semibold text-xs -none transition-all min-h-10"
                 >
                   {language === 'id' ? 'Simpan Klien' : 'Save Client'}
                 </button>
@@ -567,8 +567,8 @@ export const AdminClients: React.FC = () => {
 
       <Modal open={!!deleteTarget} onClose={() => setDeleteTarget(null)} size="sm" title={language === 'id' ? 'Hapus klien?' : 'Delete client?'} description={language === 'id' ? `Catatan klien ${deleteTarget?.name || ''} akan dihapus.` : `Client record ${deleteTarget?.name || ''} will be removed.`}>
         <div className="flex flex-col-reverse sm:flex-row justify-end gap-2">
-          <button type="button" onClick={() => setDeleteTarget(null)} className="min-h-10 px-4 rounded-control border border-[var(--line)] bg-[var(--panel)] text-xs text-[var(--muted)]">Cancel</button>
-          <button type="button" onClick={() => deleteTarget && void confirmDeleteClient(deleteTarget.id)} className="min-h-10 px-4 rounded-control bg-[var(--danger)] text-white text-xs font-semibold">Delete</button>
+          <button type="button" onClick={() => setDeleteTarget(null)} className="min-h-10 px-4 rounded-control border border-border-line bg-bg-panel text-xs text-text-muted">Cancel</button>
+          <button type="button" onClick={() => deleteTarget && void confirmDeleteClient(deleteTarget.id)} className="min-h-10 px-4 rounded-control bg-text-danger text-white text-xs font-semibold">Delete</button>
         </div>
       </Modal>
 
