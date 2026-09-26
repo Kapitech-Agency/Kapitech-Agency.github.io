@@ -764,7 +764,7 @@ export const AdminSettings: React.FC = () => {
                         <div className="flex items-center gap-2.5">
                           <div className={`w-9 h-9 rounded-card flex items-center justify-center font-semibold text-xs font-sans ${
                             isMaster ? 'bg-[var(--danger)]/20 text-[var(--danger)] border border-[var(--danger)]/30' :
-                            isExecutive ? 'bg-amber-500/20 text-[var(--warning)] border border-[var(--warning)]/30' :
+                            isExecutive ? 'bg-warning/20 text-warning border border-warning/30' :
                             isIT ? 'bg-[var(--success)]/20 text-[var(--success)] border border-[var(--success)]/30' :
                             'bg-[var(--series-3)]/20 text-[var(--series-3)] border border-[var(--series-3)]/30'
                           }`}>
@@ -867,7 +867,7 @@ export const AdminSettings: React.FC = () => {
           {/* Reference RBAC Matrix */}
           <div className="w-full bg-[var(--panel)] border border-[var(--line)] rounded-card p-5 sm:p-6 space-y-6">
             <div className="flex items-center gap-3 pb-4 border-b border-[var(--line)]">
-              <div className="w-10 h-10 rounded-card bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-info shrink-0">
+              <div className="w-10 h-10 rounded-card bg-info/10 border border-info/30 flex items-center justify-center text-info shrink-0">
                 <Layers size={20} />
               </div>
               <div>
