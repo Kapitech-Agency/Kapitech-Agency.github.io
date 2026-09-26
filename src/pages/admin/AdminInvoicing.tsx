@@ -656,7 +656,7 @@ export const AdminInvoicing: React.FC = () => {
               )}
             </div>
 
-            <div className="grid grid-cols-2 gap-y-6 border-y border-line py-5 sm:grid-cols-3 min-[1100px]:grid-cols-6">
+            <div className="grid grid-cols-2 divide-x divide-line py-5 sm:grid-cols-3 min-[1100px]:grid-cols-6">
               {[
                 { label: language === 'id' ? 'Pendapatan diterima' : 'Revenue collected', value: serverMetrics ? formatAmount(serverMetrics.totalRevenueCollected, currency) : '—', context: serverMetrics ? serverMetrics.paidCount + ' paid invoices' : '—', icon: DollarSign, tone: 'text-accent-text' },
                 { label: language === 'id' ? 'Piutang' : 'Outstanding', value: serverMetrics ? formatAmount(serverMetrics.totalOutstanding, currency) : '—', context: serverMetrics ? serverMetrics.overdueCount + ' overdue' : '—', icon: WalletCards, tone: 'text-warning' },
@@ -667,7 +667,7 @@ export const AdminInvoicing: React.FC = () => {
               ].map((metric) => {
                 const Icon = metric.icon;
                 return (
-                <div key={metric.label} className="min-w-0 px-1">
+                <div key={metric.label} className="min-w-0 px-4 first:pl-0 last:pr-0 sm:px-4">
                   <div className="flex items-start justify-between gap-3">
                     <span className="text-xs leading-4 text-muted">{metric.label}</span>
                     <Icon size={16} className={'shrink-0 ' + metric.tone} strokeWidth={1.8} />
