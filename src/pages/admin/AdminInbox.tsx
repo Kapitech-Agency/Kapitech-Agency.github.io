@@ -1032,7 +1032,7 @@ export const AdminInbox: React.FC = () => {
 
           {/* Right: Message Reader & Command Hub Pane */}
           {selectedSubmission ? (
-            <div className="ams-inbox-reader-pane col-span-12 lg:col-span-7 bg-panel border border-line rounded-card p-5 sm:p-7 flex flex-col justify-between">
+            <div className="ams-inbox-reader-pane col-span-12 lg:col-span-7 bg-panel border border-line rounded-card p-5 sm:p-6 flex flex-col justify-between">
               <div>
                 
                 {/* Mobile Back Button */}
