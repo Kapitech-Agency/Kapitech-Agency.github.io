@@ -410,7 +410,7 @@ export const AdminApprovals: React.FC = () => {
 
       {/* DECISION MODAL */}
       {activeItem && canApproveBudgets && (
-        <div className="fixed inset-0 z-50 bg-black/85 flex items-center justify-center p-4" role="presentation">
+        <div className="fixed inset-0 z-50 bg-bg/80 flex items-center justify-center p-4" role="presentation">
           <div className="bg-[var(--bg)] border border-[var(--line)] rounded-card w-full max-w-md max-h-[calc(100dvh-24px)] overflow-y-auto">
             <div className="p-4 border-b border-[var(--line)] flex items-center justify-between bg-[var(--panel)]">
               <h3 className="text-sm font-semibold font-sans text-[var(--text)] flex items-center gap-2">
