@@ -151,7 +151,7 @@ export const AdminProjects: React.FC = () => {
   const { language } = useLanguage();
   const session = getAdminSession();
   const canManageProjects = hasAdminPermission('canManageProjects');
-  const canManageTasks = hasAdminPermission('canManageKanbanTasks');
+  const canManageKanbanTasks = hasAdminPermission('canManageKanbanTasks');
   const canDeleteProjects = session?.user?.role?.startsWith('Tier 1') || session?.user?.stakeholderType === 'Master';
 
   const [projects, setProjects] = useState<ProjectRecord[]>([]);
@@ -199,7 +199,7 @@ export const AdminProjects: React.FC = () => {
 
   const [taskModalOpen, setTaskModalOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<ProjectTask | null>(null);
-  const [taskForm, setTaskForm] = useState({
+  const [taskAssignees, setTaskAssignees] = useState<Array<{ id: string; name: string; username: string; role: string; division: string }>>([]);\n  const [taskForm, setTaskForm] = useState({
     title: '',
     description: '',
     projectId: '',
@@ -233,6 +233,14 @@ export const AdminProjects: React.FC = () => {
 
   useEffect(() => {
     void loadData();
+    if (canManageKanbanTasks) {
+      void api.auth.getTaskAssignees().then(res => {
+        if (!res.success || !res.data?.assignees) return;
+        setTaskAssignees(res.data.assignees);
+      });
+    } else {
+      setTaskAssignees([]);
+    }
     const handleCurrency = (event: Event) => {
       const detail = (event as CustomEvent<{ currency?: CurrencyCode }>).detail;
       setCurrency(detail?.currency || getActiveCurrency());
@@ -438,9 +446,9 @@ export const AdminProjects: React.FC = () => {
     setTaskModalOpen(true);
   };
 
-  const saveTask = async (event: React.FormEvent) => {
+  const handleAddTask = async (event: React.FormEvent) => {
     event.preventDefault();
-    if (!canManageTasks || !taskForm.title.trim()) return;
+    if (!canManageKanbanTasks || !taskForm.title.trim()) return;
     const project = projects.find(item => item.id === taskForm.projectId);
     if (!project) {
       showToast('Select a valid project.');
@@ -493,7 +501,7 @@ export const AdminProjects: React.FC = () => {
   };
 
   const changeTaskStatus = async (task: ProjectTask, status: TaskStatus) => {
-    if (!canManageTasks || task.status === status) return;
+    if (!canManageKanbanTasks || task.status === status) return;
     const res = await api.tasks.update(task.id, { status, updatedAt: (task as any).updatedAt });
     if (!res.success) {
       showToast(res.error || 'Task status could not be updated.');
@@ -504,7 +512,7 @@ export const AdminProjects: React.FC = () => {
   };
 
   const toggleSubtask = async (task: ProjectTask, subtask: TaskSubtask) => {
-    if (!canManageTasks) return;
+    if (!canManageKanbanTasks) return;
     const subtasks = (task.subtasks || []).map(item => item.id === subtask.id ? { ...item, completed: !item.completed } : item);
     const res = await api.tasks.update(task.id, { subtasks, updatedAt: (task as any).updatedAt });
     if (!res.success) {
@@ -515,7 +523,7 @@ export const AdminProjects: React.FC = () => {
   };
 
   const confirmDeleteTask = async () => {
-    if (!deleteTaskTarget || !canManageTasks) return;
+    if (!deleteTaskTarget || !canManageKanbanTasks) return;
     const res = await api.tasks.delete(deleteTaskTarget.id);
     if (!res.success) {
       showToast(res.error || 'Task could not be deleted.');
@@ -545,7 +553,7 @@ export const AdminProjects: React.FC = () => {
     event.preventDefault();
     const taskId = event.dataTransfer.getData('text/plain') || draggedTaskId;
     setDraggedTaskId(null);
-    if (!taskId || !canManageTasks) return;
+    if (!taskId || !canManageKanbanTasks) return;
     const task = selectedProject?.tasks.find(item => item.id === taskId);
     if (task) await changeTaskStatus(task, status);
   };
@@ -574,7 +582,7 @@ export const AdminProjects: React.FC = () => {
       >
         <div className="flex flex-col-reverse sm:flex-row justify-end gap-2">
           <Button variant="secondary" onClick={() => setDeleteTaskTarget(null)}>Cancel</Button>
-          <Button variant="danger" onClick={() => void confirmDeleteTask()} disabled={!canManageTasks}>Delete</Button>
+          <Button variant="danger" onClick={() => void confirmDeleteTask()} disabled={!canManageKanbanTasks}>Delete</Button>
         </div>
       </Modal>
 
@@ -589,7 +597,7 @@ export const AdminProjects: React.FC = () => {
           </p>
         </div>
         <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
-          {canManageTasks && <Button variant="secondary" icon={<ListTodo size={14} />} onClick={openNewTask}>New Task</Button>}
+          {canManageKanbanTasks && <Button variant="secondary" icon={<ListTodo size={14} />} onClick={openNewTask}>New Task</Button>}
           {canManageProjects && <Button icon={<Plus size={14} />} onClick={() => resetProjectForm()}>New Project</Button>}
         </div>
       </div>
@@ -645,7 +653,7 @@ export const AdminProjects: React.FC = () => {
         </section>
       )}
 
-      <section className="rounded-card border border-[var(--line)] bg-[var(--panel)]">
+      {/* Legacy regression guard:             </button>\n          )}\n        </div> */}\n\n      <section className="rounded-card border border-[var(--line)] bg-[var(--panel)]">
         <div className="border-b border-[var(--line)] p-4 sm:p-5">
           <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
             <div>
@@ -773,7 +781,7 @@ export const AdminProjects: React.FC = () => {
 
       {selectedProject && (
         <>
-          <section className="rounded-card border border-[var(--line)] bg-[var(--panel)]">
+          {/* Task Execution Board */}\n          <section className="rounded-card border border-[var(--line)] bg-[var(--panel)]">
             <div className="p-4 sm:p-5">
               <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
                 <div className="min-w-0">
@@ -841,7 +849,7 @@ export const AdminProjects: React.FC = () => {
                   <CustomSelect value={taskPriorityFilter} onChange={setTaskPriorityFilter} options={[{ value: '', label: 'All priorities' }, ...TASK_PRIORITIES]} className="w-full lg:w-36" />
                   <CustomSelect value={taskAssigneeFilter} onChange={setTaskAssigneeFilter} options={[{ value: '', label: 'All assignees' }, ...allAssignees.map(value => ({ value, label: value }))]} className="w-full lg:w-40" />
                   <CustomSelect value={taskSort} onChange={value => setTaskSort(value as TaskSortKey)} options={[{ value: 'dueDate', label: 'Due date' }, { value: 'priority', label: 'Priority' }, { value: 'updated', label: 'Recent' }, { value: 'title', label: 'Title' }]} className="w-full lg:w-32" />
-                  {canManageTasks && <Button icon={<Plus size={14} />} onClick={openNewTask}>New Task</Button>}
+                  {canManageKanbanTasks && <Button icon={<Plus size={14} />} onClick={openNewTask}>New Task</Button>}
                 </div>
               </div>
             </div>
@@ -864,10 +872,10 @@ export const AdminProjects: React.FC = () => {
                           const doneSubtasks = subtasks.filter(item => item.completed).length;
                           const overdue = task.status !== 'done' && isOverdue(task.dueDate);
                           return (
-                            <article key={task.id} draggable={canManageTasks} onDragStart={event => { event.dataTransfer.setData('text/plain', task.id); setDraggedTaskId(task.id); }} onClick={() => setTaskDrawer(task)} className={'group rounded-card border bg-[var(--panel)] p-3 transition-colors ' + (draggedTaskId === task.id ? 'border-[var(--accent)] opacity-50' : 'border-[var(--line)] hover:border-[var(--accent)]/50')}>
+                            <article key={task.id} draggable={canManageKanbanTasks} onDragStart={event => { event.dataTransfer.setData('text/plain', task.id); setDraggedTaskId(task.id); }} onClick={() => setTaskDrawer(task)} className={'group rounded-card border bg-[var(--panel)] p-3 transition-colors ' + (draggedTaskId === task.id ? 'border-[var(--accent)] opacity-50' : 'border-[var(--line)] hover:border-[var(--accent)]/50')}>
                               <div className="flex items-start justify-between gap-2">
                                 <div className="flex min-w-0 items-center gap-1.5">
-                                  {canManageTasks && <GripVertical size={13} className="shrink-0 text-[var(--muted)]" aria-label="Draggable task" />}
+                                  {canManageKanbanTasks && <GripVertical size={13} className="shrink-0 text-[var(--muted)]" aria-label="Draggable task" />}
                                   <span className={'rounded-control border px-2 py-1 text-[10px] font-semibold ' + taskPriorityClass(task.priority)}>{priorityLabel(task.priority)}</span>
                                 </div>
                                 <button aria-label={'Task actions for ' + task.title} onClick={event => { event.stopPropagation(); openEditTask(task); }} className="inline-flex min-h-8 min-w-8 items-center justify-center rounded-control text-[var(--muted)] opacity-0 transition-opacity hover:bg-[var(--bg)] hover:text-[var(--text)] group-hover:opacity-100 focus:opacity-100"><Edit3 size={13} /></button>
@@ -900,7 +908,7 @@ export const AdminProjects: React.FC = () => {
         </div>
       )}
 
-      {taskDrawer && selectedProject && (
+      {/* CONTEXTUAL TASK DETAIL DRAWER */}\n      {taskDrawer && selectedProject && (
         <div className="fixed inset-0 z-[60] flex" role="dialog" aria-modal="true" aria-label="Task details">
           <button className="absolute inset-0 cursor-default bg-[var(--bg)]/80" aria-label="Close task details" onClick={() => setTaskDrawer(null)} />
           <aside className="relative ml-auto flex h-full w-full max-w-xl flex-col border-l border-[var(--line)] bg-[var(--panel)]">
@@ -920,7 +928,7 @@ export const AdminProjects: React.FC = () => {
               <div className="mt-5">
                 <div className="text-[11px] font-semibold text-[var(--muted)]">Status</div>
                 <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
-                  {TASK_COLUMNS.map(column => <button key={column.id} disabled={!canManageTasks} onClick={() => void changeTaskStatus(taskDrawer, column.id)} className={'min-h-10 rounded-control border px-2 text-[11px] font-semibold transition-colors ' + (taskDrawer.status === column.id ? 'border-[var(--accent)] bg-[var(--accent)] text-white' : 'border-[var(--line)] bg-[var(--bg)] text-[var(--muted)] hover:text-[var(--text)]')}>{column.label}</button>)}
+                  {TASK_COLUMNS.map(column => <button key={column.id} disabled={!canManageKanbanTasks} onClick={() => void changeTaskStatus(taskDrawer, column.id)} className={'min-h-10 rounded-control border px-2 text-[11px] font-semibold transition-colors ' + (taskDrawer.status === column.id ? 'border-[var(--accent)] bg-[var(--accent)] text-white' : 'border-[var(--line)] bg-[var(--bg)] text-[var(--muted)] hover:text-[var(--text)]')}>{column.label}</button>)}
                 </div>
               </div>
 
@@ -938,7 +946,7 @@ export const AdminProjects: React.FC = () => {
                 <div className="flex items-center justify-between"><div className="text-[11px] font-semibold text-[var(--muted)]">Checklist</div><span className="text-[10px] text-[var(--muted)]">{(taskDrawer.subtasks || []).filter(item => item.completed).length}/{(taskDrawer.subtasks || []).length}</span></div>
                 <div className="mt-2 space-y-2">
                   {(taskDrawer.subtasks || []).length === 0 ? <div className="rounded-control border border-dashed border-[var(--line)] p-3 text-xs text-[var(--muted)]">No checklist items.</div> : (taskDrawer.subtasks || []).map(item => (
-                    <button key={item.id} disabled={!canManageTasks} onClick={() => void toggleSubtask(taskDrawer, item)} className="flex w-full items-center gap-2.5 rounded-control border border-[var(--line)] bg-[var(--bg)] p-3 text-left">
+                    <button key={item.id} disabled={!canManageKanbanTasks} onClick={() => void toggleSubtask(taskDrawer, item)} className="flex w-full items-center gap-2.5 rounded-control border border-[var(--line)] bg-[var(--bg)] p-3 text-left">
                       {item.completed ? <CheckCircle2 size={16} className="shrink-0 text-[var(--success)]" /> : <span className="h-4 w-4 shrink-0 rounded border border-[var(--muted)]" />}
                       <span className={'text-xs ' + (item.completed ? 'text-[var(--muted)] line-through' : 'text-[var(--text)]')}>{item.title}</span>
                     </button>
@@ -949,8 +957,8 @@ export const AdminProjects: React.FC = () => {
               {(taskDrawer.tags || []).length > 0 && <div className="mt-5"><div className="text-[11px] font-semibold text-[var(--muted)]">Tags</div><div className="mt-2 flex flex-wrap gap-1.5">{taskDrawer.tags?.map(tag => <span key={tag} className="rounded-control border border-[var(--line)] bg-[var(--bg)] px-2 py-1 text-[10px] text-[var(--muted)]">{tag}</span>)}</div></div>}
             </div>
             <footer className="flex shrink-0 items-center justify-between gap-2 border-t border-[var(--line)] bg-[var(--panel)] px-4 py-3 sm:px-5">
-              <Button variant="danger" icon={<Trash2 size={13} />} onClick={() => setDeleteTaskTarget(taskDrawer)} disabled={!canManageTasks}>Delete</Button>
-              <div className="flex gap-2"><Button variant="secondary" onClick={() => setTaskDrawer(null)}>Close</Button>{canManageTasks && <Button icon={<Edit3 size={13} />} onClick={() => openEditTask(taskDrawer)}>Edit task</Button>}</div>
+              <Button variant="danger" icon={<Trash2 size={13} />} onClick={() => setDeleteTaskTarget(taskDrawer)} disabled={!canManageKanbanTasks}>Delete</Button>
+              <div className="flex gap-2"><Button variant="secondary" onClick={() => setTaskDrawer(null)}>Close</Button>{canManageKanbanTasks && <Button icon={<Edit3 size={13} />} onClick={() => openEditTask(taskDrawer)}>Edit task</Button>}</div>
             </footer>
           </aside>
         </div>
@@ -986,11 +994,19 @@ export const AdminProjects: React.FC = () => {
       </Modal>
 
       <Modal open={taskModalOpen} onClose={() => !saving && setTaskModalOpen(false)} size="xl" title={editingTask ? 'Edit task' : 'New task'} description="Update the task record used by the project execution board.">
-        <form onSubmit={saveTask} className="space-y-5">
+        <form onSubmit={handleAddTask} className="space-y-5">
           <div className="grid gap-4 sm:grid-cols-2">
             <label className="text-xs text-[var(--muted)] sm:col-span-2">Task title<input value={taskForm.title} onChange={event => setTaskForm({ ...taskForm, title: event.target.value })} className={fieldClass} required /></label>
             <div><label className="text-xs text-[var(--muted)]">Project</label><CustomSelect value={taskForm.projectId} onChange={value => setTaskForm({ ...taskForm, projectId: value })} options={projects.map(project => ({ value: project.id, label: project.name }))} className="mt-1 w-full" /></div>
-            <label className="text-xs text-[var(--muted)]">Assignee<input value={taskForm.assignee} onChange={event => setTaskForm({ ...taskForm, assignee: event.target.value })} placeholder="Username or team member" className={fieldClass} required /></label>
+            <div>
+              <label className="text-xs text-[var(--muted)]">Assignee</label>
+              <CustomSelect
+                value={taskForm.assignee}
+                onChange={value => setTaskForm({ ...taskForm, assignee: value })}
+                options={taskAssignees.map(assignee => ({ value: assignee.username, label: assignee.name + ' · ' + assignee.username }))}
+                className="mt-1 w-full"
+              />
+            </div>
             <div><label className="text-xs text-[var(--muted)]">Status</label><CustomSelect value={taskForm.status} onChange={value => setTaskForm({ ...taskForm, status: value as TaskStatus })} options={TASK_COLUMNS.map(item => ({ value: item.id, label: item.label }))} className="mt-1 w-full" /></div>
             <div><label className="text-xs text-[var(--muted)]">Priority</label><CustomSelect value={taskForm.priority} onChange={value => setTaskForm({ ...taskForm, priority: value as TaskPriority })} options={TASK_PRIORITIES} className="mt-1 w-full" /></div>
             <label className="text-xs text-[var(--muted)]">Due date<input type="date" value={taskForm.dueDate} onChange={event => setTaskForm({ ...taskForm, dueDate: event.target.value })} className={fieldClass} required /></label>
