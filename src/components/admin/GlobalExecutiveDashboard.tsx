@@ -273,7 +273,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
         </div>
       )}
 
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 min-[900px]:grid-cols-3 min-[1100px]:grid-cols-4">
         <MetricCard
           label="Revenue Collected"
           value={formatCurrency(metrics.revenueCollected)}
