@@ -972,38 +972,16 @@ export const AdminCrm: React.FC = () => {
 
       {/* 5. CLIENT & DEAL PROFILE DRAWER */}
       {isDrawerOpen && selectedLead && (
-        <div className="fixed inset-0 z-50 flex justify-end bg-bg/80 ">
-          <div className="bg-panel border-l border-line w-full sm:max-w-xl h-full flex flex-col justify-between p-5 sm:p-7 overflow-y-auto font-sans text-xs">
+        <Modal
+          open={isDrawerOpen}
+          onClose={() => setIsDrawerOpen(false)}
+          size="lg"
+          title={selectedLead.clientName}
+          description={selectedLead.company}
+        >
+          <div className="space-y-6 text-xs font-sans">
             
             <div className="space-y-6">
-              {/* Drawer Top Header */}
-              <div className="flex items-start justify-between gap-4 pb-5 border-b border-line">
-                <div>
-                  <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-                    <span className={`px-2.5 py-0.5 rounded-badge text-[10px] border font-semibold ${getPillarColor(selectedLead.servicePillar)}`}>
-                      {selectedLead.servicePillar}
-                    </span>
-                    {getPriorityBadge(selectedLead.priority)}
-                    <span className="text-[10px] text-muted">
-                      ID: {selectedLead.id}
-                    </span>
-                  </div>
-                  <h2 className="text-xl sm:text-2xl font-semibold font-sans text-fg">
-                    {selectedLead.clientName}
-                  </h2>
-                  <p className="text-xs text-danger font-semibold mt-0.5">
-                    {selectedLead.company}
-                  </p>
-                </div>
-
-                <button
-                  onClick={() => setIsDrawerOpen(false)}
-                  className="w-8 h-8 rounded-control bg-panel hover:bg-panel text-muted hover:text-fg border border-line flex items-center justify-center transition-colors text-xs font-sans"
-                >
-                  <X size={15} />
-                </button>
-              </div>
-
               {/* Deal Value & Stage Selector Widget */}
               <div className="p-4 rounded-card bg-panel border border-line flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
@@ -1150,7 +1128,7 @@ export const AdminCrm: React.FC = () => {
             </div>
 
           </div>
-        </div>
+        </Modal>
       )}
 
       {/* 6. CREATE / EDIT DEAL MODAL */}
