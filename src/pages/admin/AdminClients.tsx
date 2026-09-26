@@ -786,95 +786,141 @@ export const AdminClients: React.FC = () => {
         onClose={() => !isSaving && setIsClientModalOpen(false)}
         size="xl"
         title={editingClient ? 'Edit client' : 'Add client'}
-        description={editingClient ? 'Update the existing client record.' : 'Create a client record using information available to your team.'}
+        description={editingClient
+          ? 'Update the client record and operational settings.'
+          : 'Create a client record with the information your team needs to operate the account.'}
         footer={
           <>
-            <Button type="button" variant="secondary" onClick={() => setIsClientModalOpen(false)} disabled={isSaving}>Cancel</Button>
-            <Button type="submit" form="client-form" variant="primary" loading={isSaving}>Save client</Button>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => setIsClientModalOpen(false)}
+              disabled={isSaving}
+              className="w-full sm:w-auto"
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              form="client-form"
+              variant="primary"
+              loading={isSaving}
+              className="w-full sm:w-auto"
+            >
+              {editingClient ? 'Save changes' : 'Create client'}
+            </Button>
           </>
         }
       >
-        <form id="client-form" onSubmit={handleSaveClient} className="space-y-5">
+        <form id="client-form" onSubmit={handleSaveClient} className="space-y-6">
           {formError && (
-            <div role="alert" className="flex items-start gap-2 rounded-card border border-danger/30 bg-danger/10 p-3 text-xs text-danger">
+            <div role="alert" className="flex items-start gap-2 rounded-card border border-danger/30 bg-danger/10 p-3 text-xs leading-5 text-danger">
               <ShieldAlert size={14} className="mt-0.5 shrink-0" aria-hidden="true" />
               <span>{formError}</span>
             </div>
           )}
 
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            {[
-              ['client-name', 'Contact person', name, setName, 'Contact person', true],
-              ['client-company', 'Company', company, setCompany, 'Company name', true],
-              ['client-role', 'Contact role', role, setRole, 'Role or title', false],
-              ['client-industry', 'Industry', industry, setIndustry, 'Industry', false],
-              ['client-email', 'Email', email, setEmail, 'contact@company.com', false],
-              ['client-phone', 'Phone / WhatsApp', phone, setPhone, '+62 ...', false],
-              ['client-website', 'Website', website, setWebsite, 'https://company.com', false],
-              ['client-location', 'Location', location, setLocation, 'City, country', false]
-            ].map(([id, label, value, setter, placeholder, required]) => (
-              <div key={id as string} className="min-w-0">
-                <label htmlFor={id as string} className="mb-1.5 block text-xs font-medium text-muted">
-                  {label as string}{required ? ' *' : ''}
-                </label>
-                <input
-                  id={id as string}
-                  type={id === 'client-email' ? 'email' : id === 'client-website' ? 'url' : 'text'}
-                  required={Boolean(required)}
-                  value={value as string}
-                  onChange={(event) => (setter as React.Dispatch<React.SetStateAction<string>>)(event.target.value)}
-                  placeholder={placeholder as string}
+          <section aria-labelledby="client-contact-section">
+            <div className="mb-3">
+              <h3 id="client-contact-section" className="text-sm font-semibold text-fg">Contact information</h3>
+              <p className="mt-1 text-xs leading-5 text-muted">The primary contact and company details for this account.</p>
+            </div>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              {[
+                ['client-name', 'Contact person', name, setName, 'Contact person', true],
+                ['client-company', 'Company', company, setCompany, 'Company name', true],
+                ['client-role', 'Contact role', role, setRole, 'Role or title', false],
+                ['client-industry', 'Industry', industry, setIndustry, 'Industry', false],
+                ['client-email', 'Email', email, setEmail, 'contact@company.com', false],
+                ['client-phone', 'Phone / WhatsApp', phone, setPhone, '+62 ...', false],
+                ['client-website', 'Website', website, setWebsite, 'https://company.com', false],
+                ['client-location', 'Location', location, setLocation, 'City, country', false]
+              ].map(([id, label, value, setter, placeholder, required]) => (
+                <div key={id as string} className="min-w-0">
+                  <label htmlFor={id as string} className="mb-1.5 block text-xs font-medium text-muted">
+                    {label as string}{required ? ' *' : ''}
+                  </label>
+                  <input
+                    id={id as string}
+                    type={id === 'client-email' ? 'email' : id === 'client-website' ? 'url' : 'text'}
+                    required={Boolean(required)}
+                    value={value as string}
+                    onChange={(event) => (setter as React.Dispatch<React.SetStateAction<string>>)(event.target.value)}
+                    placeholder={placeholder as string}
+                  />
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <section aria-labelledby="client-account-section" className="border-t border-line pt-5">
+            <div className="mb-3">
+              <h3 id="client-account-section" className="text-sm font-semibold text-fg">Account settings</h3>
+              <p className="mt-1 text-xs leading-5 text-muted">Keep the account status aligned with its current relationship.</p>
+            </div>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div>
+                <label htmlFor="client-status" className="mb-1.5 block text-xs font-medium text-muted">Account status</label>
+                <CustomSelect
+                  value={clientStatus}
+                  onChange={(value) => setClientStatus(value as AgencyClient['status'])}
+                  options={STATUS_OPTIONS}
+                  aria-label="Client account status"
+                  className="w-full"
+                  triggerClassName="w-full"
                 />
               </div>
-            ))}
-          </div>
+            </div>
+          </section>
 
-          <div>
-            <label htmlFor="client-status" className="mb-1.5 block text-xs font-medium text-muted">Account status</label>
-            <CustomSelect
-              value={clientStatus}
-              onChange={(value) => setClientStatus(value as AgencyClient['status'])}
-              options={STATUS_OPTIONS}
-              aria-label="Client account status"
-              className="w-full"
-              triggerClassName="w-full sm:max-w-xs"
-            />
-          </div>
-
-          <div>
-            <p className="text-sm font-semibold text-fg">Client relationship</p>
-            <p className="mt-1 text-xs text-muted">Keep operational values aligned with the existing client record.</p>
-            <div className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <section aria-labelledby="client-relationship-section" className="border-t border-line pt-5">
+            <div className="mb-3">
+              <h3 id="client-relationship-section" className="text-sm font-semibold text-fg">Client relationship</h3>
+              <p className="mt-1 text-xs leading-5 text-muted">Operational values already tracked on the client record.</p>
+            </div>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
                 <label htmlFor="client-projects" className="mb-1.5 block text-xs font-medium text-muted">Projects count</label>
-                <input id="client-projects" type="number" min="0" value={projectsCount} onChange={(event) => setProjectsCount(Number(event.target.value))} />
+                <input id="client-projects" type="number" min="0" inputMode="numeric" value={projectsCount} onChange={(event) => setProjectsCount(Number(event.target.value))} />
               </div>
               <div>
                 <label htmlFor="client-spend" className="mb-1.5 block text-xs font-medium text-muted">Cumulative billed value</label>
-                <input id="client-spend" type="number" min="0" value={totalSpend} onChange={(event) => setTotalSpend(Number(event.target.value))} />
+                <input id="client-spend" type="number" min="0" inputMode="decimal" value={totalSpend} onChange={(event) => setTotalSpend(Number(event.target.value))} />
               </div>
             </div>
-          </div>
+          </section>
 
-          <div>
-            <p className="text-sm font-semibold text-fg">Daily ad-spend SLA</p>
-            <p className="mt-1 text-xs text-muted">Optional operational tracking for the configured daily cap.</p>
-            <div className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <section aria-labelledby="client-sla-section" className="border-t border-line pt-5">
+            <div className="mb-3">
+              <h3 id="client-sla-section" className="text-sm font-semibold text-fg">Daily ad-spend SLA</h3>
+              <p className="mt-1 text-xs leading-5 text-muted">Optional operational tracking for the configured daily cap.</p>
+            </div>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
                 <label htmlFor="client-sla" className="mb-1.5 block text-xs font-medium text-muted">Agreed daily cap</label>
-                <input id="client-sla" type="number" min="0" value={slaDailyBudget} onChange={(event) => setSlaDailyBudget(Number(event.target.value))} />
+                <input id="client-sla" type="number" min="0" inputMode="decimal" value={slaDailyBudget} onChange={(event) => setSlaDailyBudget(Number(event.target.value))} />
               </div>
               <div>
                 <label htmlFor="client-daily-spend" className="mb-1.5 block text-xs font-medium text-muted">Current daily spend</label>
-                <input id="client-daily-spend" type="number" min="0" value={currentDailySpend} onChange={(event) => setCurrentDailySpend(Number(event.target.value))} />
+                <input id="client-daily-spend" type="number" min="0" inputMode="decimal" value={currentDailySpend} onChange={(event) => setCurrentDailySpend(Number(event.target.value))} />
               </div>
             </div>
-          </div>
+          </section>
 
-          <div>
-            <label htmlFor="client-notes" className="mb-1.5 block text-xs font-medium text-muted">Notes & requirements</label>
-            <textarea id="client-notes" rows={4} value={notes} onChange={(event) => setNotes(event.target.value)} placeholder="Client preferences, requirements, billing notes..." />
-          </div>
+          <section aria-labelledby="client-notes-section" className="border-t border-line pt-5">
+            <div className="mb-3">
+              <h3 id="client-notes-section" className="text-sm font-semibold text-fg">Notes & requirements</h3>
+              <p className="mt-1 text-xs leading-5 text-muted">Add preferences, requirements, billing context, or other operational notes.</p>
+            </div>
+            <textarea
+              id="client-notes"
+              rows={4}
+              value={notes}
+              onChange={(event) => setNotes(event.target.value)}
+              placeholder="Client preferences, requirements, billing notes..."
+              className="min-h-28 resize-y"
+            />
+          </section>
         </form>
       </Modal>
 
