@@ -1104,6 +1104,38 @@
   font-weight: 600;
   letter-spacing: -0.01em;
 }
+
+.ams-shell .ams-page-title {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  gap: 10px;
+}
+
+.ams-shell .ams-page-title > svg {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
+  stroke-width: 1.8;
+}
+
+.ams-shell .ams-page-header {
+  padding-bottom: 16px;
+}
+
+.ams-shell .ams-page-header > div:first-child {
+  min-width: 0;
+}
+
+.ams-shell .ams-page-header .ams-page-title span {
+  min-width: 0;
+}
+
+@media (max-width: 599px) {
+  .ams-shell .ams-page-header {
+    padding-bottom: 14px;
+  }
+}
 .ams-shell .ams-action {
   min-height: 40px;
   padding: 0 12px;
