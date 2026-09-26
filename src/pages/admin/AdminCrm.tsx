@@ -999,7 +999,7 @@ export const AdminCrm: React.FC = () => {
       {/* 5. CLIENT & DEAL PROFILE DRAWER */}
       {isDrawerOpen && selectedLead && (
         <div className="fixed inset-0 z-50 flex justify-end bg-bg/80 ">
-          <div className="bg-[var(--panel)] border-l border-[var(--line)] w-full sm:max-w-xl h-full flex flex-col justify-between p-5 sm:p-7 overflow-y-auto animate-in slide-in-from-right duration-300 font-sans text-xs">
+          <div className="bg-[var(--panel)] border-l border-[var(--line)] w-full sm:max-w-xl h-full flex flex-col justify-between p-5 sm:p-7 overflow-y-auto ams-drawer-surface font-sans text-xs">
             
             <div className="space-y-6">
               {/* Drawer Top Header */}
