@@ -773,8 +773,8 @@ export const AdminProjects: React.FC = () => {
                       <ChevronRight size={16} className="mt-1 shrink-0 text-muted" />
                     </div>
                     <div className="mt-3 flex flex-wrap gap-2">
-                      <span className={'rounded-control border px-2 py-1 text-[10px] font-semibold ' + projectStatusClass(project.status)}>{statusLabel(project.status)}</span>
-                      {project.health && <span className={'rounded-control border px-2 py-1 text-[10px] font-semibold ' + projectHealthClass(project.health)}>{project.health}</span>}
+                      <span className={'rounded-badge border px-2 py-1 text-[10px] font-semibold ' + projectStatusClass(project.status)}>{statusLabel(project.status)}</span>
+                      {project.health && <span className={'rounded-badge border px-2 py-1 text-[10px] font-semibold ' + projectHealthClass(project.health)}>{project.health}</span>}
                     </div>
                     <div className="mt-3 flex items-center gap-4 text-[11px] text-muted">
                       <span>{project.progressPercent}% complete</span>
@@ -889,7 +889,7 @@ export const AdminProjects: React.FC = () => {
                               <div className="flex items-start justify-between gap-2">
                                 <div className="flex min-w-0 items-center gap-1.5">
                                   {canManageKanbanTasks && <GripVertical size={13} className="shrink-0 text-muted" aria-label="Draggable task" />}
-                                  <span className={'rounded-control border px-2 py-1 text-[10px] font-semibold ' + taskPriorityClass(task.priority)}>{priorityLabel(task.priority)}</span>
+                                  <span className={'rounded-badge border px-2 py-1 text-[10px] font-semibold ' + taskPriorityClass(task.priority)}>{priorityLabel(task.priority)}</span>
                                 </div>
                                 <button aria-label={'Task actions for ' + task.title} onClick={event => { event.stopPropagation(); openEditTask(task); }} className="inline-flex min-h-8 min-w-8 items-center justify-center rounded-control text-muted opacity-0 transition-opacity hover:bg-bg hover:text-fg group-hover:opacity-100 focus:opacity-100"><Edit3 size={13} /></button>
                               </div>
@@ -935,7 +935,7 @@ export const AdminProjects: React.FC = () => {
             </header>
             <div className="min-h-0 flex-1 overflow-y-auto p-4 sm:p-5">
               <div className="flex flex-wrap gap-2">
-                <span className={'rounded-control border px-2 py-1 text-[10px] font-semibold ' + taskPriorityClass(taskDrawer.priority)}>{priorityLabel(taskDrawer.priority)}</span>
+                <span className={'rounded-badge border px-2 py-1 text-[10px] font-semibold ' + taskPriorityClass(taskDrawer.priority)}>{priorityLabel(taskDrawer.priority)}</span>
                 <span className="rounded-control border border-line bg-bg px-2 py-1 text-[10px] text-muted">{formatDate(taskDrawer.dueDate)}</span>
               </div>
 
