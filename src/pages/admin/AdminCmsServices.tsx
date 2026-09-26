@@ -498,29 +498,10 @@ export const AdminCmsServices: React.FC = () => {
                 </a>
               </div>
             </div>
-
-          </div>
-        </div>
-      )}
+      </Modal>
 
       {/* Add New Service Modal */}
-      {isAddModalOpen && (
-        <div className="fixed inset-0 z-50 bg-bg/90  flex items-center justify-center p-4">
-          <div className="bg-panel border border-line rounded-card w-full max-w-lg p-4 sm:p-6 relative max-h-[calc(100dvh-24px)] overflow-y-auto custom-scrollbar animate-in zoom-in-95 duration-150">
-            <button
-              onClick={() => setIsAddModalOpen(false)}
-              className="absolute top-4 right-4 p-1.5 rounded-control text-muted hover:text-fg bg-panel border border-line"
-            >
-              <X size={16} />
-            </button>
-
-            <h3 className="text-lg font-sans font-semibold text-fg mb-1">
-              Add New Agency Service Offering
-            </h3>
-            <p className="text-xs text-muted mb-5">
-              Publish a new technical capability or SEO service package into the agency catalog.
-            </p>
-
+      <Modal open={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} size="lg" title="Add New Agency Service Offering" description="Publish a new technical capability or SEO service package into the agency catalog.">
             <form onSubmit={handleCreateService} className="space-y-4 text-xs font-sans">
               <div>
                 <label className="block text-muted mb-1 font-medium">Service Title *</label>
