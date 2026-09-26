@@ -227,7 +227,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
     }
   };
 
-  const canViewFinancials = data?.financials.revenueThisMonth !== null;
+  const canViewFinancials = data !== null && data.financials.revenueThisMonth !== null;
   const financeSeries = useMemo(() => {
     if (!canViewFinancials) return [];
     try {
