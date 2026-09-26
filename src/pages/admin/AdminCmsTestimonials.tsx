@@ -150,9 +150,9 @@ export const AdminCmsTestimonials: React.FC = () => {
 
             <div className="pt-4 border-t border-line flex items-center justify-between">
               <div>
-                <div className="text-xs font-medium text-text">{item.author}</div>
+                <div className="text-xs font-medium text-fg">{item.author}</div>
                 <div className="text-xs font-sans text-muted">
-                  {item.role}, <span className="text-text">{item.company}</span>
+                  {item.role}, <span className="text-fg">{item.company}</span>
                 </div>
                 <div className="text-[11px] font-sans text-muted mt-0.5 flex items-center gap-1">
                   <MapPin size={10} />
@@ -163,7 +163,7 @@ export const AdminCmsTestimonials: React.FC = () => {
               <div className="flex items-center gap-1.5">
                 <button
                   onClick={() => handleOpenEdit(item)}
-                  className="min-h-9 min-w-9 rounded-control bg-panel hover:bg-panel-hover text-muted hover:text-text border border-line transition-colors flex items-center justify-center"
+                  className="min-h-9 min-w-9 rounded-control bg-panel hover:bg-panel-hover text-muted hover:text-fg border border-line transition-colors flex items-center justify-center"
                 >
                   <Edit3 size={14} />
                 </button>
@@ -213,7 +213,7 @@ export const AdminCmsTestimonials: React.FC = () => {
                   value={editingItem.author}
                   onChange={(e) => setEditingItem({ ...editingItem, author: e.target.value })}
                   placeholder="e.g., Marcus Thorne"
-                  className="w-full ams-control text-xs text-text font-sans min-h-10"
+                  className="w-full ams-control text-xs text-fg font-sans min-h-10"
                 />
               </div>
 
@@ -227,7 +227,7 @@ export const AdminCmsTestimonials: React.FC = () => {
                     value={editingItem.role}
                     onChange={(e) => setEditingItem({ ...editingItem, role: e.target.value })}
                     placeholder="e.g., VP of Product"
-                    className="w-full ams-control text-xs text-text font-sans min-h-10"
+                    className="w-full ams-control text-xs text-fg font-sans min-h-10"
                   />
                 </div>
                 <div>
@@ -239,7 +239,7 @@ export const AdminCmsTestimonials: React.FC = () => {
                     value={editingItem.company}
                     onChange={(e) => setEditingItem({ ...editingItem, company: e.target.value })}
                     placeholder="e.g., Finova Global"
-                    className="w-full ams-control text-xs text-text font-sans min-h-10"
+                    className="w-full ams-control text-xs text-fg font-sans min-h-10"
                   />
                 </div>
               </div>
@@ -253,7 +253,7 @@ export const AdminCmsTestimonials: React.FC = () => {
                   value={editingItem.location}
                   onChange={(e) => setEditingItem({ ...editingItem, location: e.target.value })}
                   placeholder="e.g., Jakarta, Indonesia"
-                  className="w-full ams-control text-xs text-text font-sans min-h-10"
+                  className="w-full ams-control text-xs text-fg font-sans min-h-10"
                 />
               </div>
 
@@ -267,7 +267,7 @@ export const AdminCmsTestimonials: React.FC = () => {
                   value={editingItem.quoteId || editingItem.quote}
                   onChange={(e) => setEditingItem({ ...editingItem, quoteId: e.target.value, quote: e.target.value })}
                   placeholder={language === 'id' ? 'Ceritakan dampak positif atau kecepatan kerja sama dengan Kapitech...' : 'Share client feedback, impact, and delivery speed...'}
-                  className="w-full ams-control text-xs text-text font-sans"
+                  className="w-full ams-control text-xs text-fg font-sans"
                 />
               </div>
 
