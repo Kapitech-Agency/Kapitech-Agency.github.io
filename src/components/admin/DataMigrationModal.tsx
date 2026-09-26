@@ -232,29 +232,6 @@ export const DataMigrationModal: React.FC<DataMigrationModalProps> = ({
   return (
     <Modal open={true} onClose={onClose} size="lg" title={language === 'id' ? 'Impor Data & Migrasi Skema' : 'Data Migration & CSV Import'} description={language === 'id' ? 'Unggah file spreadsheet CSV dengan pemetaan otomatis.' : 'Upload structured CSV templates with instant schema ingestion.'}>
         <div className="flex-1 min-h-0 space-y-4 overflow-y-auto custom-scrollbar">
-        <div className="sticky top-0 z-20 bg-panel/95  px-5 sm:px-6 py-4 border-b border-line flex items-center justify-between shrink-0">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-control bg-accent/10 text-accent-text border border-accent/30 flex items-center justify-center shrink-0">
-              <FileSpreadsheet size={18} />
-            </div>
-            <div>
-              <h3 className="text-sm font-medium text-fg leading-tight">
-                {language === 'id' ? 'Impor Data & Migrasi Skema' : 'Data Migration & CSV Import'}
-              </h3>
-              <p className="text-[11px] font-sans text-muted">
-                {language === 'id' ? 'Unggah file spreadsheet CSV dengan pemetaan otomatis' : 'Upload structured CSV templates with instant schema ingestion'}
-              </p>
-            </div>
-          </div>
-          <button 
-            onClick={onClose} 
-            className="w-8 h-8 rounded-control bg-panel text-muted hover:text-fg border border-line flex items-center justify-center transition-colors shrink-0 ml-3"
-          >
-            <X size={15} />
-          </button>
-        </div>
-
-        {/* Scrollable Body */}
         <div className="p-5 sm:p-6 overflow-y-auto flex-1 space-y-4 custom-scrollbar">
           <div>
             <label className="text-[11px] font-sans text-muted normal-case block mb-2">
