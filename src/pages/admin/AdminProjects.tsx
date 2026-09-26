@@ -784,7 +784,8 @@ export const AdminProjects: React.FC = () => {
 
       {selectedProject && (
         <>
-          {/* Task Execution Board */}\n          <section className="rounded-card border border-[var(--line)] bg-[var(--panel)]">
+          {/* Task Execution Board */}
+          <section className="rounded-card border border-[var(--line)] bg-[var(--panel)]">
             <div className="p-4 sm:p-5">
               <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
                 <div className="min-w-0">
@@ -913,7 +914,8 @@ export const AdminProjects: React.FC = () => {
         </div>
       )}
 
-      {/* CONTEXTUAL TASK DETAIL DRAWER */}\n      {taskDrawer && selectedProject && (
+      {/* CONTEXTUAL TASK DETAIL DRAWER */}
+      {taskDrawer && selectedProject && (
         <div className="fixed inset-0 z-[60] flex" role="dialog" aria-modal="true" aria-label="Task details">
           <button className="absolute inset-0 cursor-default bg-[var(--bg)]/80" aria-label="Close task details" onClick={() => setTaskDrawer(null)} />
           <aside className="relative ml-auto flex h-full w-full max-w-xl flex-col border-l border-[var(--line)] bg-[var(--panel)]">
