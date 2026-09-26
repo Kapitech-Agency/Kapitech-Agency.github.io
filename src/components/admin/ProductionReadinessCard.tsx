@@ -45,11 +45,11 @@ export const ProductionReadinessCard: React.FC<Props> = ({ language }) => {
     <div className="p-4 rounded-card bg-panel border border-line space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h3 className="text-sm font-semibold text-[var(--k-text)] flex items-center gap-2">
+          <h3 className="text-sm font-semibold text-fg flex items-center gap-2">
             <ShieldCheck size={15} className="text-accent" />
             <span>Production Readiness Gate</span>
           </h3>
-          <p className="text-[11px] text-[var(--k-text-secondary)] font-sans mt-1">
+          <p className="text-[11px] text-muted font-sans mt-1">
             {language === 'id' ? 'Status server-side dari seluruh kontrol wajib sebelum cutover PostgreSQL.' : 'Server-side status of all required controls before PostgreSQL cutover.'}
           </p>
         </div>
@@ -57,7 +57,7 @@ export const ProductionReadinessCard: React.FC<Props> = ({ language }) => {
           <span className={'inline-flex items-center min-h-10 px-3 rounded-control border text-[10px] font-sans font-semibold ' + (result?.productionReady ? 'border-success/30 bg-success/5 text-success' : 'border-warning/30 bg-warning/5 text-warning')}>
             {result?.productionReady ? 'Production Ready' : language === 'id' ? 'Cutover Ditahan' : 'Cutover Blocked'}
           </span>
-          <button type="button" onClick={() => void refresh()} disabled={loading} className="min-h-10 px-3 rounded-control bg-[var(--panel-hover)] border border-[var(--line)] text-[var(--muted)] text-[10px] font-sans font-semibold disabled:opacity-50" aria-label="Refresh production readiness">
+          <button type="button" onClick={() => void refresh()} disabled={loading} className="min-h-10 px-3 rounded-control bg-panel border border-line text-muted text-[10px] font-sans font-semibold disabled:opacity-50" aria-label="Refresh production readiness">
             <RefreshCw size={12} className={loading ? 'animate-spin' : ''} />
           </button>
         </div>
@@ -69,7 +69,7 @@ export const ProductionReadinessCard: React.FC<Props> = ({ language }) => {
             {labels.map(([key, label]) => {
               const ready = Boolean(result.gates[key]);
               return <div key={key} className="flex items-center justify-between gap-2 rounded-control bg-panel border border-line px-3 py-2.5">
-                <span className="text-[10px] text-[var(--k-text-secondary)] font-sans">{label}</span>
+                <span className="text-[10px] text-muted font-sans">{label}</span>
                 {ready ? <Check size={14} className="text-success shrink-0" /> : <AlertCircle size={14} className="text-warning shrink-0" />}
               </div>;
             })}
