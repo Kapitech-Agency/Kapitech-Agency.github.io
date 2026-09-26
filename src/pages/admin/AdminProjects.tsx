@@ -587,21 +587,23 @@ export const AdminProjects: React.FC = () => {
         </div>
       </Modal>
 
-      <div className="ams-page-header flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+      <header className="ams-dashboard-header mb-6 flex flex-col gap-4 border-b border-line pb-5 sm:flex-row sm:items-end sm:justify-between">
         <div className="min-w-0">
-          <h1 className="ams-page-title flex items-center gap-2.5">
-            <FolderKanban className="shrink-0 text-[var(--accent-text)]" size={22} />
-            <span>{language === 'id' ? 'Projects & Tasks' : 'Projects & Tasks'}</span>
-          </h1>
-          <p className="mt-1 max-w-3xl text-[13px] leading-[18px] text-[var(--muted)]">
+          <div className="flex items-center gap-2 text-xs text-muted">
+            <span>Kapitech AMS</span>
+            <span aria-hidden="true">/</span>
+            <span className="text-fg">Projects &amp; Tasks</span>
+          </div>
+          <h1 className="mt-2 text-xl font-semibold leading-7 tracking-tight text-fg">Projects &amp; Tasks</h1>
+          <p className="mt-1 max-w-2xl text-xs leading-5 text-muted">
             {language === 'id' ? 'Pantau delivery proyek, pekerjaan terbuka, deadline, dan tanggung jawab tim.' : 'Track delivery, outstanding work, deadlines, and team ownership from one workspace.'}
           </p>
         </div>
-        <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
+        <div className="flex flex-wrap items-center gap-2 sm:justify-end">
           {canManageKanbanTasks && <Button variant="secondary" icon={<ListTodo size={14} />} onClick={openNewTask}>New Task</Button>}
           {canManageProjects && <Button icon={<Plus size={14} />} onClick={() => resetProjectForm()}>New Project</Button>}
         </div>
-      </div>
+      </header>
 
       {toast && (
         <div role="status" className="fixed bottom-4 left-1/2 z-[70] -translate-x-1/2 rounded-control border border-[var(--line)] bg-[var(--panel)] px-4 py-3 text-xs text-[var(--text)] shadow-lg">
@@ -663,22 +665,22 @@ export const AdminProjects: React.FC = () => {
               <h2 className="text-sm font-semibold text-[var(--text)]">Projects</h2>
               <p className="mt-1 text-xs text-[var(--muted)]">Select a project to inspect its delivery state and task board.</p>
             </div>
-            <div className="flex flex-col gap-2 sm:flex-row">
-              <div className="relative min-w-0 sm:w-64">
-                <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted)]" />
+            <div className="flex w-full min-w-0 flex-col gap-2 sm:flex-row sm:items-center xl:w-auto">
+              <div className="relative min-w-0 w-full sm:w-[260px]">
+                <Search size={14} strokeWidth={1.8} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted)]" aria-hidden="true" />
                 <input
                   value={projectSearch}
                   onChange={event => setProjectSearch(event.target.value)}
                   placeholder="Search projects..."
                   aria-label="Search projects"
-                  className={fieldClass + ' pl-8'}
+                  className={fieldClass + ' mt-0 min-w-0 pl-9 pr-3'}
                 />
               </div>
               <CustomSelect
                 value={projectStatusFilter}
                 onChange={setProjectStatusFilter}
                 options={[{ value: '', label: 'All statuses' }, ...PROJECT_STATUSES]}
-                className="w-full sm:w-40"
+                className="mt-0 w-full sm:w-40"
               />
               <CustomSelect
                 value={projectSort}
@@ -689,7 +691,7 @@ export const AdminProjects: React.FC = () => {
                   { value: 'progress', label: 'Progress' },
                   { value: 'name', label: 'Name' },
                 ]}
-                className="w-full sm:w-40"
+                className="mt-0 w-full sm:w-40"
               />
             </div>
           </div>
