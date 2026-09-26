@@ -916,7 +916,7 @@ export const AdminSettings: React.FC = () => {
                   </tr>
                   <tr className="hover:bg-[var(--panel)]/60 transition-colors">
                     <td className="py-3.5 px-4 font-semibold text-[var(--text)] flex items-center gap-2">
-                      <span className="w-2 h-2 rounded-full bg-purple-400 shrink-0"></span>
+                      <span className="w-2 h-2 rounded-full bg-[var(--series-3)] shrink-0"></span>
                       <span>Tier 2: Project Manager (PM)</span>
                     </td>
                     <td className="py-3.5 px-4 text-[var(--warning)]">{language === 'id' ? 'Lihat & Draf Invoice' : 'View & Draft Invoices'}</td>
