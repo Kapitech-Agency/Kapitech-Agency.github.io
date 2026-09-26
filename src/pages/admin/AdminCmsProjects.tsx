@@ -406,7 +406,7 @@ export const AdminCmsProjects: React.FC = () => {
             
             <div className="flex items-center justify-between pb-4 border-b border-line mb-6">
               <div className="flex items-center gap-3">
-                <FolderKanban className="text-danger" size={20} />
+                <FolderKanban className="text-accent-text" size={20} />
                 <h2 className="text-lg font-semibold font-sans text-fg">
                   {editingProject.title ? `Edit: ${editingProject.title}` : 'Add New Case Study'}
                 </h2>
