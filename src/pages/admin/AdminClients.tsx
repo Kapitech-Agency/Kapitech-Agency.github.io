@@ -210,9 +210,9 @@ export const AdminClients: React.FC = () => {
     <div className="space-y-5 sm:space-y-6">
       
       {/* 1. Header & Actions */}
-      <div className="ams-dashboard-header flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="ams-page-header flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
         <div>
-          <h1 className="ams-page-title flex items-center gap-3">
+          <h1 className="ams-page-title flex items-center gap-2.5">
             <Users className="text-[var(--accent-text)] shrink-0" size={22} />
             <span>{t('admin.client.title')}</span>
           </h1>
