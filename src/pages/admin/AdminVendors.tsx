@@ -289,7 +289,7 @@ export const AdminVendors: React.FC = () => {
           <button
             onClick={handleOpenAdd}
                             disabled={!canManageVendors}
-            className="min-h-10 px-4 rounded-control bg-accent hover:bg-[var(--accent-hover)] text-white text-xs font-semibold flex items-center gap-2 transition-all"
+            className="min-h-10 px-4 rounded-control bg-accent hover:bg-accent-hover text-white text-xs font-semibold flex items-center gap-2 transition-all"
           >
             <Plus size={15} />
             <span>{language === 'id' ? 'Tambah Vendor' : 'Add Vendor'}</span>
@@ -661,7 +661,7 @@ export const AdminVendors: React.FC = () => {
                   setIsDrawerOpen(false);
                   handleOpenEdit(selectedVendor);
                 }}
-                className="px-4 py-2 rounded-control bg-accent hover:bg-[var(--accent-hover)] text-white text-xs font-semibold"
+                className="px-4 py-2 rounded-control bg-accent hover:bg-accent-hover text-white text-xs font-semibold"
               >
                 {language === 'id' ? 'Edit Profil' : 'Edit Profile'}
               </button>
@@ -871,7 +871,7 @@ export const AdminVendors: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-control bg-accent hover:bg-[var(--accent-hover)] text-white text-xs font-semibold"
+                  className="px-5 py-2 rounded-control bg-accent hover:bg-accent-hover text-white text-xs font-semibold"
                 >
                   {language === 'id' ? 'Simpan Vendor' : 'Save Vendor'}
                 </button>
