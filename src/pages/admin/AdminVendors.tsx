@@ -571,36 +571,15 @@ export const AdminVendors: React.FC = () => {
 
       {/* Detail Slideover Drawer */}
       {isDrawerOpen && selectedVendor && (
-        <div className="fixed inset-0 z-50 flex">
-          <div className="fixed inset-0 bg-bg/80 " onClick={() => setIsDrawerOpen(false)} />
-          <div className="relative ml-auto w-full max-w-md bg-panel border-l border-line h-full max-h-[100dvh] flex flex-col justify-between p-4 sm:p-6 z-10 overflow-y-auto">
+        <Modal
+          open={isDrawerOpen}
+          onClose={() => setIsDrawerOpen(false)}
+          size="lg"
+          title={selectedVendor.name}
+          description={selectedVendor.primaryCategory}
+        >
+          <div className="space-y-4 text-xs font-sans">
             <div>
-              <div className="flex items-center justify-between pb-4 border-b border-line">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-card bg-accent flex items-center justify-center font-semibold text-white text-sm">
-                    {selectedVendor.name.charAt(0).toUpperCase()}
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <h3 className="text-sm font-semibold text-fg">{selectedVendor.name}</h3>
-                      {(selectedVendor.isVetted ?? true) && (
-                        <span className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-badge text-[10px] font-sans font-semibold bg-accent/10 text-accent-text border border-accent/30">
-                          <ShieldCheck size={11} />
-                          <span>Vetted</span>
-                        </span>
-                      )}
-                    </div>
-                    <p className="text-xs font-sans text-muted">{selectedVendor.primaryCategory}</p>
-                  </div>
-                </div>
-                <button
-                  onClick={() => setIsDrawerOpen(false)}
-                  className="min-h-10 min-w-10 rounded-control bg-panel text-muted hover:text-fg border border-line flex items-center justify-center"
-                >
-                  <X size={15} />
-                </button>
-              </div>
-
               <div className="py-4 space-y-4 text-xs font-sans">
                 <div>
                   <span className="text-[10px] font-sans text-muted normal-case block mb-1">
@@ -667,7 +646,7 @@ export const AdminVendors: React.FC = () => {
               </button>
             </div>
           </div>
-        </div>
+        </Modal>
       )}
 
       {/* Add / Edit Modal */}
