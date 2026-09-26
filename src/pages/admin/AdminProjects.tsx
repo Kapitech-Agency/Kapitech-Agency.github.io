@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import {
   AlertCircle,
-  ArrowRight,
   Briefcase,
   Calendar,
   Check,
@@ -171,7 +170,7 @@ export const AdminProjects: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
   const [deleteProject, setDeleteProject] = useState<ProjectRecord | null>(null);
-  const [deleteTask, setDeleteTask] = useState<ProjectTask | null>(null);
+  const [deleteTaskTarget, setDeleteTaskTarget] = useState<ProjectTask | null>(null);
   const [taskDrawer, setTaskDrawer] = useState<ProjectTask | null>(null);
   const [draggedTaskId, setDraggedTaskId] = useState<string | null>(null);
 
@@ -515,12 +514,12 @@ export const AdminProjects: React.FC = () => {
     await loadData();
   };
 
-  const deleteTask = async () => {
-    if (!deleteTask || !canManageTasks) return;
-    const res = await api.tasks.delete(deleteTask.id);
+  const confirmDeleteTask = async () => {
+    if (!deleteTaskTarget || !canManageTasks) return;
+    const res = await api.tasks.delete(deleteTaskTarget.id);
     if (!res.success) {
       showToast(res.error || 'Task could not be deleted.');
-      setDeleteTask(null);
+      setDeleteTaskTarget(null);
       return;
     }
     setDeleteTask(null);
@@ -567,15 +566,15 @@ export const AdminProjects: React.FC = () => {
       </Modal>
 
       <Modal
-        open={!!deleteTask}
-        onClose={() => setDeleteTask(null)}
+        open={!!deleteTaskTarget}
+        onClose={() => setDeleteTaskTarget(null)}
         size="sm"
         title="Delete task?"
-        description={deleteTask ? 'Task "' + deleteTask.title + '" will be permanently removed.' : undefined}
+        description={deleteTaskTarget ? 'Task "' + deleteTaskTarget.title + '" will be permanently removed.' : undefined}
       >
         <div className="flex flex-col-reverse sm:flex-row justify-end gap-2">
           <Button variant="secondary" onClick={() => setDeleteTask(null)}>Cancel</Button>
-          <Button variant="danger" onClick={() => void deleteTask()} disabled={!canManageTasks}>Delete</Button>
+          <Button variant="danger" onClick={() => void confirmDeleteTask()} disabled={!canManageTasks}>Delete</Button>
         </div>
       </Modal>
 
@@ -950,7 +949,7 @@ export const AdminProjects: React.FC = () => {
               {(taskDrawer.tags || []).length > 0 && <div className="mt-5"><div className="text-[11px] font-semibold text-[var(--muted)]">Tags</div><div className="mt-2 flex flex-wrap gap-1.5">{taskDrawer.tags?.map(tag => <span key={tag} className="rounded-control border border-[var(--line)] bg-[var(--bg)] px-2 py-1 text-[10px] text-[var(--muted)]">{tag}</span>)}</div></div>}
             </div>
             <footer className="flex shrink-0 items-center justify-between gap-2 border-t border-[var(--line)] bg-[var(--panel)] px-4 py-3 sm:px-5">
-              <Button variant="danger" icon={<Trash2 size={13} />} onClick={() => setDeleteTask(taskDrawer)} disabled={!canManageTasks}>Delete</Button>
+              <Button variant="danger" icon={<Trash2 size={13} />} onClick={() => setDeleteTaskTarget(taskDrawer)} disabled={!canManageTasks}>Delete</Button>
               <div className="flex gap-2"><Button variant="secondary" onClick={() => setTaskDrawer(null)}>Close</Button>{canManageTasks && <Button icon={<Edit3 size={13} />} onClick={() => openEditTask(taskDrawer)}>Edit task</Button>}</div>
             </footer>
           </aside>
