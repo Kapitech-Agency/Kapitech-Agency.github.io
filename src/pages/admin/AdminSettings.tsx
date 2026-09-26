@@ -937,7 +937,6 @@ export const AdminSettings: React.FC = () => {
                 </tbody>
               </table>
             </div>
-      </Modal>
 
       {/* MODAL: TAMBAH AKUN BARU (MOBILE FULLSCREEN + STICKY HEADER & FOOTER) */}
       <Modal open={isAddAccountModalOpen} onClose={() => setIsAddAccountModalOpen(false)} size="lg" title={language === 'id' ? 'Tambah Akun Stakeholder / Teknisi' : 'Add Stakeholder / Technical Account'} description={language === 'id' ? 'Pilih peran dan sesuaikan hak akses sistem.' : 'Select role and configure granular permissions.'}>
