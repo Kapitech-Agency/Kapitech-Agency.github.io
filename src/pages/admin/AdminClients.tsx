@@ -244,14 +244,14 @@ export const AdminClients: React.FC = () => {
 
       {/* Critical SLA Ad-Spend Alert Banner */}
       {clientsExceedingSla.length > 0 && (
-        <div className="p-4 rounded-card bg-text-danger/10 border border-text-danger/30 text-fg space-y-2">
+        <div className="p-4 rounded-card bg-danger/10 border border-danger/30 text-fg space-y-2">
           <div className="flex items-center gap-2.5 text-danger font-medium font-sans text-xs normal-case tracking-normal">
             <ShieldAlert size={16} />
             <span>Critical SLA warning: daily ad spend exceeded the cap</span>
           </div>
           <div className="text-xs font-sans text-danger">
             {clientsExceedingSla.map(c => (
-              <div key={c.id} className="flex items-center justify-between py-1 border-t border-text-danger/20 mt-1">
+              <div key={c.id} className="flex items-center justify-between py-1 border-t border-danger/20 mt-1">
                 <span>{c.company} ({c.name})</span>
                 <span className="font-semibold text-danger">
                   Actual: {formatAmount(c.currentDailyAdSpend || 0, currency)} / SLA Cap: {formatAmount(c.slaDailyAdSpendBudget || 0, currency)}
@@ -263,7 +263,7 @@ export const AdminClients: React.FC = () => {
       )}
 
       {statusMessage && (
-        <div className="p-3 rounded-card bg-text-success/10 border border-text-success/30 text-fg-success text-xs font-sans flex items-center gap-2">
+        <div className="p-3 rounded-card bg-success/10 border border-success/30 text-fg-success text-xs font-sans flex items-center gap-2">
           <Check size={14} />
           <span>{statusMessage}</span>
         </div>
@@ -289,7 +289,7 @@ export const AdminClients: React.FC = () => {
         <div className="w-full h-full bg-bg-panel border border-border-line p-5 rounded-card flex flex-col justify-between">
           <div className="flex items-center justify-between text-muted mb-2">
             <span className="text-xs font-sans normal-case font-semibold">{t('admin.client.activeAccounts')}</span>
-            <div className="w-8 h-8 rounded-control bg-text-success/10 border border-text-success/30 flex items-center justify-center text-fg-success">
+            <div className="w-8 h-8 rounded-control bg-success/10 border border-success/30 flex items-center justify-center text-fg-success">
               <UserCheck size={16} />
             </div>
           </div>
@@ -523,7 +523,7 @@ export const AdminClients: React.FC = () => {
                     value={clientStatus}
                     onChange={(val) => setClientStatus(val as any)}
                     options={[
-                      { value: 'active', label: 'Active', badge: 'Active', badgeColor: 'bg-text-success/10 text-fg-success border border-text-success/20' },
+                      { value: 'active', label: 'Active', badge: 'Active', badgeColor: 'bg-success/10 text-fg-success border border-text-success/20' },
                       { value: 'completed', label: 'Completed', badge: 'Completed', badgeColor: 'bg-text-info/10 text-fg-info border border-text-info/20' },
                       { value: 'lead', label: 'Lead', badge: 'Lead', badgeColor: 'bg-text-warning/10 text-fg-warning border border-text-warning/20' },
                       { value: 'inactive', label: 'Inactive', badge: 'Inactive', badgeColor: 'bg-bg-panel text-muted border border-border-line' }
