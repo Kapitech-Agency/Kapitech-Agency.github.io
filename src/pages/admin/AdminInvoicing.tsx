@@ -728,7 +728,7 @@ export const AdminInvoicing: React.FC = () => {
           </section>
 
           <section className="mt-6" aria-labelledby="finance-workspace-title">
-            <div className="rounded-card border border-line bg-panel p-3 sm:p-4">
+            <div className="rounded-card border border-line bg-panel p-4 sm:p-5">
               <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
                 <div className="inline-flex w-fit items-center rounded-control border border-line bg-bg p-1">
                   <button type="button" onClick={() => setTab('invoices')} className={'inline-flex min-h-9 items-center gap-1.5 rounded-chip px-3 text-xs font-medium ' + (tab === 'invoices' ? 'bg-accent text-white' : 'text-muted hover:text-fg')}>
