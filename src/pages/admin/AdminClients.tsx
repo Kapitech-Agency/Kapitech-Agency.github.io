@@ -405,13 +405,14 @@ export const AdminClients: React.FC = () => {
             { label: language === 'id' ? 'Prospek' : 'Leads', value: clientMetrics.leads, helper: language === 'id' ? 'Status lead' : 'Lead status', valueClass: 'text-info' },
             { label: language === 'id' ? 'Melewati SLA' : 'Over budget', value: clientMetrics.overBudget, helper: language === 'id' ? 'Daily ad-spend' : 'Daily ad-spend SLA', valueClass: 'text-warning' }
           ].map((metric, index) => (
-            <div key={metric.label} className={`ams-kpi min-w-0 px-4 py-4 ${index > 0 ? 'border-l border-line' : ''}`}>
+            <div key={metric.label} className={`ams-kpi min-w-0 px-4 py-4 ${index === 1 ? 'border-l border-line' : ''} ${index >= 2 ? 'border-t border-line sm:border-l sm:border-t-0' : ''}`}>
               <p className="ams-meta">{metric.label}</p>
               <p className={`ams-kpi-value mt-2 ${metric.valueClass}`}>{isLoading ? '—' : metric.value}</p>
               <p className="ams-meta mt-1">{metric.helper}</p>
             </div>
           ))}
-        </div>     </section>
+        </div>
+      </section>
       <section
         aria-label={language === 'id' ? 'Pencarian dan filter klien' : 'Client directory controls'}
         className="mb-4 rounded-card border border-line bg-panel p-4"
