@@ -192,7 +192,7 @@ export const AdminCmsTestimonials: React.FC = () => {
             </div>
             <div className="flex justify-end gap-2">
               <Button type="button" variant="secondary" onClick={() => setDeleteTarget(null)}>Cancel</Button>
-              <Button type="button" variant="danger" onClick={() => void handleDelete()}>Delete</Button>
+              <Button type="button" variant="destructive" onClick={() => void handleDelete()}>Delete</Button>
             </div>
           </div>
         </Modal>
