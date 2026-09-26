@@ -135,7 +135,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
         anchorRef={triggerRef}
         onClose={() => setIsOpen(false)}
         align={align}
-        className={`ams-dropdown-surface bg-panel border border-line z-40 min-w-[140px] sm:min-w-[180px] max-w-[calc(100vw-16px)] sm:max-w-[280px] max-h-[min(320px,calc(100dvh-16px))] overflow-y-auto overscroll-contain p-1 custom-scrollbar font-sans text-xs ${menuClassName}`}
+        className={`ams-popover-surface min-w-[140px] sm:min-w-[180px] max-w-[calc(100vw-16px)] sm:max-w-[280px] max-h-[min(320px,calc(100dvh-16px))] overflow-y-auto overscroll-contain p-1 custom-scrollbar font-sans text-xs ${menuClassName}`}
       >
         <div id={listboxId} role="listbox" aria-label={placeholder}>
           {options.length === 0 ? (
@@ -166,7 +166,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
                       ? 'bg-accent/14 text-fg font-semibold'
                       : isActive
                         ? 'text-fg bg-panel-hover'
-                        : 'text-muted hover:text-fg hover:bg-panel'
+                        : 'text-muted hover:text-fg hover:bg-panel-hover'
                   }`}
                 >
                   <div className="flex items-center gap-2.5 min-w-0 pr-2">
