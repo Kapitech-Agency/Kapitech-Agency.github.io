@@ -4,7 +4,6 @@ import {
   FileSpreadsheet, 
   CheckCircle2, 
   AlertCircle, 
-  X, 
   Download, 
   Layers, 
   Users, 
@@ -231,7 +230,6 @@ export const DataMigrationModal: React.FC<DataMigrationModalProps> = ({
 
   return (
     <Modal open={true} onClose={onClose} size="lg" title={language === 'id' ? 'Impor Data & Migrasi Skema' : 'Data Migration & CSV Import'} description={language === 'id' ? 'Unggah file spreadsheet CSV dengan pemetaan otomatis.' : 'Upload structured CSV templates with instant schema ingestion.'}>
-        <div className="flex-1 min-h-0 space-y-4 overflow-y-auto custom-scrollbar">
         <div className="p-5 sm:p-6 overflow-y-auto flex-1 space-y-4 custom-scrollbar">
           <div>
             <label className="text-[11px] font-sans text-muted normal-case block mb-2">
@@ -347,7 +345,7 @@ export const DataMigrationModal: React.FC<DataMigrationModalProps> = ({
         </div>
 
         {/* Sticky Footer */}
-        <div className="sticky bottom-0 z-20 bg-panel/95  px-5 sm:px-6 py-3.5 border-t border-line flex items-center justify-end gap-2.5 shrink-0">
+        <div className="flex items-center justify-end gap-2.5 border-t border-line pt-3.5 mt-4">
           <button
             type="button"
             onClick={onClose}
@@ -366,7 +364,6 @@ export const DataMigrationModal: React.FC<DataMigrationModalProps> = ({
           </button>
         </div>
 
-      </div>
         </div>
     </Modal>
   );
