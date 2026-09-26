@@ -193,6 +193,10 @@ export const AdminCrm: React.FC = () => {
   };
 
   const handleStageChange = async (leadId: string, newStage: CrmStage) => {
+    if (!canManageCrm) {
+      showToast(language === 'id' ? 'Anda tidak memiliki izin mengelola CRM.' : 'You do not have CRM permission.');
+      return;
+    }
     const res = await api.crm.updateDeal(leadId, { stage: newStage });
     if (!res.success) { showToast(res.error || (language === 'id' ? 'Tahap deal gagal diperbarui.' : 'Failed to update deal stage.')); return; }
     await loadLeads();
@@ -303,6 +307,7 @@ export const AdminCrm: React.FC = () => {
   };
 
   const confirmDeleteLead = async (id: string) => {
+    if (!canManageCrm) return;
     const res = await api.crm.deleteDeal(id);
     if (!res.success) { showToast(res.error || 'Delete failed.'); setDeleteTarget(null); return; }
     await loadLeads();
@@ -313,7 +318,7 @@ export const AdminCrm: React.FC = () => {
 
   const handleAddNote = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedLead || !newNoteText.trim()) return;
+    if (!canManageCrm || !selectedLead || !newNoteText.trim()) return;
 
     const nextNotes = [...(selectedLead.notes || []), { id: `note_${Date.now().toString(36)}`, text: newNoteText.trim(), type: 'note', createdAt: new Date().toISOString() }];
     const res = await api.crm.updateDeal(selectedLead.id, { notes: nextNotes });
@@ -392,10 +397,12 @@ export const AdminCrm: React.FC = () => {
             <span>{t('admin.action.exportCsv')}</span>
           </button>
           {canManageCrm && (
-            <button type="button" onClick={() => handleOpenAddModal('new')} className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-control bg-accent px-3 text-xs font-semibold text-white transition-colors hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
+            <>
+              <button type="button" onClick={() => handleOpenAddModal('new')} className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-control bg-accent px-3 text-xs font-semibold text-white transition-colors hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
               <Plus size={14} />
               <span>{t('admin.crm.addDeal')}</span>
-            </button>
+              </button>
+            </>
           )}
         </div>
       </header>
@@ -624,7 +631,8 @@ export const AdminCrm: React.FC = () => {
 
                     <button
                       onClick={() => handleOpenAddModal(stageDef.key)}
-                      title={`Add deal to ${stageDef.labelId}`}
+                      disabled={!canManageCrm}
+                      title={!canManageCrm ? 'Requires CRM permission' : `Add deal to ${stageDef.labelId}`}
                       className="min-h-10 min-w-10 p-1.5 rounded-control bg-[var(--panel)] hover:bg-[var(--panel-hover)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] transition-colors flex items-center justify-center shrink-0"
                     >
                       <Plus size={13} />
@@ -689,6 +697,7 @@ export const AdminCrm: React.FC = () => {
                                 {lead.stage !== 'won' && lead.stage !== 'lost' && (
                                   <button
                                     onClick={() => handleStageChange(lead.id, 'won')}
+                                    disabled={!canManageCrm}
                                     title={language === 'id' ? 'Tandai Deal Dimenangkan (Won)' : 'Mark deal as Won'}
                                     className="h-10 sm:h-7 min-h-10 sm:min-h-0 px-2.5 rounded-control bg-[var(--success)]/10 hover:bg-[var(--success)]/15 text-[var(--success)] border border-[var(--success)]/30 text-[10px] font-semibold font-sans transition-all flex items-center gap-1 active:scale-95 whitespace-nowrap"
                                   >
@@ -699,6 +708,7 @@ export const AdminCrm: React.FC = () => {
                                 {lead.stage === 'won' && (
                                   <button
                                     onClick={() => handleConvertToProject(lead)}
+                                    disabled={!canManageCrm}
                                     title={language === 'id' ? 'Konversi ke Proyek Aktif' : 'Convert deal to Agency Project'}
                                     className="h-10 sm:h-7 min-h-10 sm:min-h-0 px-2.5 rounded-control bg-[var(--accent)]/20 hover:bg-[var(--accent)]/40 text-[var(--danger)] border border-[var(--accent)]/30 text-[10px] font-semibold font-sans transition-colors flex items-center gap-1 whitespace-nowrap"
                                   >
@@ -806,6 +816,7 @@ export const AdminCrm: React.FC = () => {
                       {lead.stage === 'won' && (
                         <button
                           onClick={() => handleConvertToProject(lead)}
+                          disabled={!canManageCrm}
                           title="Create project"
                           className="w-10 h-10 rounded-control bg-[var(--success)]/10 text-[var(--success)] hover:bg-[var(--success)]/15 border border-[var(--success)]/30 flex items-center justify-center min-h-10 min-w-10"
                         >
@@ -825,6 +836,7 @@ export const AdminCrm: React.FC = () => {
                       )}
                       <button
                         onClick={() => handleOpenEditModal(lead)}
+                        disabled={!canManageCrm}
                         className="w-10 h-10 rounded-control bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] flex items-center justify-center min-h-10 min-w-10"
                         title="Edit deal"
                       >
@@ -832,6 +844,7 @@ export const AdminCrm: React.FC = () => {
                       </button>
                       <button
                         onClick={() => handleDeleteLead(lead.id, lead.clientName)}
+                        disabled={!canManageCrm}
                         className="w-9 h-9 rounded-control bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--danger)] border border-[var(--line)] hover:border-[var(--danger)]/40 flex items-center justify-center min-h-10 min-w-10"
                         title="Delete deal"
                       >
@@ -1078,6 +1091,7 @@ export const AdminCrm: React.FC = () => {
                   />
                   <button
                     type="submit"
+                    disabled={!canManageCrm}
                     className="px-3.5 py-2 rounded-control bg-[var(--accent)] hover:bg-[var(--accent)] text-[var(--text)] text-xs font-sans font-semibold transition-colors flex items-center gap-1 shrink-0 min-h-10"
                   >
                     <Plus size={13} />
@@ -1118,6 +1132,7 @@ export const AdminCrm: React.FC = () => {
                 </button>
                 <button
                   onClick={() => handleDeleteLead(selectedLead.id, selectedLead.clientName)}
+                  disabled={!canManageCrm}
                   className="p-2 rounded-card bg-[var(--panel)] hover:bg-[var(--danger)]/15 text-[var(--muted)] hover:text-[var(--danger)] border border-[var(--line)] hover:border-[var(--danger)]/30 transition-colors min-h-10 min-w-[40px] flex items-center justify-center"
                   title="Delete deal"
                 >
@@ -1263,6 +1278,7 @@ export const AdminCrm: React.FC = () => {
                 </button>
                 <button
                   type="submit"
+                  disabled={!canManageCrm}
                   className="min-h-10 px-5 rounded-control bg-[var(--accent)] text-white font-sans font-semibold text-xs hover:bg-[var(--accent)] transition-colors"
                 >
                   {editingLead ? (language === 'id' ? 'Simpan Perubahan' : 'Update Deal') : (language === 'id' ? 'Buat Deal' : 'Save Deal')}
