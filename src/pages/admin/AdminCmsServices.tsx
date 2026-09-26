@@ -213,18 +213,18 @@ export const AdminCmsServices: React.FC = () => {
             <span>Agency Services (SEO & Dev)</span>
           </h1>
           <p className="text-xs sm:text-sm text-muted mt-1">
-            Manage live service offerings, SLA benchmarks, deliverables, and technical capabilities published on <code className="text-text bg-panel px-1.5 py-0.5 rounded border border-line">/services</code>.
+            Manage live service offerings, SLA benchmarks, deliverables, and technical capabilities published on <code className="text-fg bg-panel px-1.5 py-0.5 rounded border border-line">/services</code>.
           </p>
         </div>
 
         <div className="flex items-center gap-3">
           <div className="text-xs font-sans text-muted bg-panel px-3.5 py-2 rounded-card border border-line">
-            Active Catalog: <strong className="text-text">{servicesList.length} Offerings</strong>
+            Active Catalog: <strong className="text-fg">{servicesList.length} Offerings</strong>
           </div>
 
           <button
             onClick={() => setIsAddModalOpen(true)}
-            className="px-4 py-2 rounded-control bg-accent hover:brightness-110 text-white text-xs font-sans font-semibold transition-all flex items-center gap-1.5 min-h-10"
+            className="px-4 py-2 rounded-control bg-accent hover:bg-[var(--accent-hover)] text-white text-xs font-sans font-semibold transition-all flex items-center gap-1.5 min-h-10"
           >
             <Plus size={14} />
             <span>Add Service</span>
@@ -238,7 +238,7 @@ export const AdminCmsServices: React.FC = () => {
             <CheckCircle2 size={16} className="text-success" />
             <span>{statusMessage}</span>
           </div>
-          <button onClick={() => setStatusMessage(null)} className="text-muted hover:text-text">
+          <button onClick={() => setStatusMessage(null)} className="text-muted hover:text-fg">
             <X size={14} />
           </button>
         </div>
@@ -249,7 +249,7 @@ export const AdminCmsServices: React.FC = () => {
         <div className="w-full h-full bg-panel border border-line p-4 rounded-card flex items-center justify-between">
           <div>
             <div className="text-xs font-sans text-muted">SEO & Growth Services</div>
-            <div className="text-xl font-sans font-semibold text-text mt-0.5">3 Modules</div>
+            <div className="text-xl font-sans font-semibold text-fg mt-0.5">3 Modules</div>
           </div>
           <div className="w-8 h-8 rounded-control bg-info/10 border border-info/30 flex items-center justify-center text-info">
             <SearchCode size={16} />
@@ -259,7 +259,7 @@ export const AdminCmsServices: React.FC = () => {
         <div className="w-full h-full bg-panel border border-line p-4 rounded-card flex items-center justify-between">
           <div>
             <div className="text-xs font-sans text-muted">Development & Cloud</div>
-            <div className="text-xl font-sans font-semibold text-text mt-0.5">5 Stacks</div>
+            <div className="text-xl font-sans font-semibold text-fg mt-0.5">5 Stacks</div>
           </div>
           <div className="w-8 h-8 rounded-control bg-accent/10 border border-accent/30 flex items-center justify-center text-accent">
             <FileCode2 size={16} />
@@ -269,7 +269,7 @@ export const AdminCmsServices: React.FC = () => {
         <div className="w-full h-full bg-panel border border-line p-4 rounded-card flex items-center justify-between">
           <div>
             <div className="text-xs font-sans text-muted">UI/UX Design Systems</div>
-            <div className="text-xl font-sans font-semibold text-text mt-0.5">4 Systems</div>
+            <div className="text-xl font-sans font-semibold text-fg mt-0.5">4 Systems</div>
           </div>
           <div className="w-8 h-8 rounded-control bg-series-3/10 border border-series-3/30 flex items-center justify-center text-series-3">
             <PenTool size={16} />
@@ -297,7 +297,7 @@ export const AdminCmsServices: React.FC = () => {
               className={`shrink-0 px-3 py-1.5 rounded-control text-xs font-sans transition-all ${
                 selectedCategory === cat
                   ? 'bg-accent text-white font-semibold'
-                  : 'text-muted hover:text-text hover:bg-panel'
+                  : 'text-muted hover:text-fg hover:bg-panel'
               }`}
             >
               {cat}
@@ -312,7 +312,7 @@ export const AdminCmsServices: React.FC = () => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={language === 'id' ? 'Cari layanan berdasarkan nama atau slug...' : 'Search service by name or slug...'}
-            className="w-full pl-9 pr-3 py-2 bg-panel border border-line rounded-control text-xs text-text placeholder:text-muted focus:outline-none focus:border-accent font-sans transition-colors min-h-10 py-2.5"
+            className="w-full pl-9 pr-3 py-2 bg-panel border border-line rounded-control text-xs text-fg placeholder:text-muted focus:outline-none focus:border-accent font-sans transition-colors min-h-10 py-2.5"
           />
         </div>
       </div>
@@ -337,7 +337,7 @@ export const AdminCmsServices: React.FC = () => {
                 </span>
               </div>
 
-              <h3 className="text-base font-semibold font-sans text-text mb-1.5 group-hover:text-accent transition-colors">
+              <h3 className="text-base font-semibold font-sans text-fg mb-1.5 group-hover:text-accent transition-colors">
                 {item.title}
               </h3>
               
@@ -352,7 +352,7 @@ export const AdminCmsServices: React.FC = () => {
                 </div>
                 <div className="flex flex-wrap gap-1.5">
                   {item.capabilities.slice(0, 3).map((c, idx) => (
-                    <span key={idx} className="text-[10px] font-sans px-2 py-0.5 rounded-control bg-panel text-text border border-line">
+                    <span key={idx} className="text-[10px] font-sans px-2 py-0.5 rounded-control bg-panel text-fg border border-line">
                       {c.title || c.titleId}
                     </span>
                   ))}
@@ -378,7 +378,7 @@ export const AdminCmsServices: React.FC = () => {
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
                 <button
                   onClick={() => setSelectedServiceForDetail(item)}
-                  className="px-2.5 py-1 rounded-control bg-panel hover:bg-panel-hover border border-line text-text text-[11px] font-sans flex items-center gap-1 transition-colors"
+                  className="px-2.5 py-1 rounded-control bg-panel hover:bg-panel-hover border border-line text-fg text-[11px] font-sans flex items-center gap-1 transition-colors"
                 >
                   <Eye size={12} className="text-muted" />
                   <span>Inspect</span>
@@ -405,7 +405,7 @@ export const AdminCmsServices: React.FC = () => {
           <div className="bg-panel border border-line rounded-card w-full max-w-2xl p-4 sm:p-6 relative max-h-[calc(100dvh-24px)] overflow-y-auto custom-scrollbar animate-in zoom-in-95 duration-150">
             <button
               onClick={() => setSelectedServiceForDetail(null)}
-              className="absolute top-4 right-4 p-1.5 rounded-control text-muted hover:text-text bg-panel border border-line"
+              className="absolute top-4 right-4 p-1.5 rounded-control text-muted hover:text-fg bg-panel border border-line"
             >
               <X size={16} />
             </button>
@@ -416,7 +416,7 @@ export const AdminCmsServices: React.FC = () => {
               <span className="text-muted">/{selectedServiceForDetail.slug}</span>
             </div>
 
-            <h2 className="text-xl font-sans font-semibold text-text mb-2">
+            <h2 className="text-xl font-sans font-semibold text-fg mb-2">
               {selectedServiceForDetail.title}
             </h2>
             <p className="text-xs text-muted mb-5 leading-relaxed">
@@ -441,7 +441,7 @@ export const AdminCmsServices: React.FC = () => {
               <div className="space-y-2">
                 {selectedServiceForDetail.capabilities?.map((cap, cIdx) => (
                   <div key={cIdx} className="bg-panel border border-line p-3 rounded-card">
-                    <div className="text-xs font-semibold text-text flex items-center gap-2">
+                    <div className="text-xs font-semibold text-fg flex items-center gap-2">
                       <CheckCircle2 size={13} className="text-success" />
                       <span>{cap.title || cap.titleId}</span>
                     </div>
@@ -464,7 +464,7 @@ export const AdminCmsServices: React.FC = () => {
                     <div key={sIdx} className="bg-panel border border-line p-3 rounded-card">
                       <div className="flex items-center gap-2 text-accent font-sans text-xs font-semibold mb-1">
                         <span>{stage.stageNumber}</span>
-                        <span className="text-text font-sans font-semibold">{stage.stageName}</span>
+                        <span className="text-fg font-sans font-semibold">{stage.stageName}</span>
                       </div>
                       <p className="text-[11px] text-muted mb-2">{stage.stageDesc}</p>
                       <div className="flex flex-wrap gap-1">
@@ -492,7 +492,7 @@ export const AdminCmsServices: React.FC = () => {
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
                 <button
                   onClick={() => setSelectedServiceForDetail(null)}
-                  className="min-h-10 px-4 py-2 rounded-control bg-panel hover:bg-panel-hover border border-line text-text text-xs font-sans transition-colors"
+                  className="min-h-10 px-4 py-2 rounded-control bg-panel hover:bg-panel-hover border border-line text-fg text-xs font-sans transition-colors"
                 >
                   Close
                 </button>
@@ -500,7 +500,7 @@ export const AdminCmsServices: React.FC = () => {
                   href={`/services/${selectedServiceForDetail.slug}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-4 py-2 rounded-control bg-accent hover:brightness-110 text-white text-xs font-sans font-semibold flex items-center gap-1 transition-all"
+                  className="px-4 py-2 rounded-control bg-accent hover:bg-[var(--accent-hover)] text-white text-xs font-sans font-semibold flex items-center gap-1 transition-all"
                 >
                   <span>Open Public Page</span>
                   <ExternalLink size={12} />
@@ -518,12 +518,12 @@ export const AdminCmsServices: React.FC = () => {
           <div className="bg-panel border border-line rounded-card w-full max-w-lg p-4 sm:p-6 relative max-h-[calc(100dvh-24px)] overflow-y-auto custom-scrollbar animate-in zoom-in-95 duration-150">
             <button
               onClick={() => setIsAddModalOpen(false)}
-              className="absolute top-4 right-4 p-1.5 rounded-control text-muted hover:text-text bg-panel border border-line"
+              className="absolute top-4 right-4 p-1.5 rounded-control text-muted hover:text-fg bg-panel border border-line"
             >
               <X size={16} />
             </button>
 
-            <h3 className="text-lg font-sans font-semibold text-text mb-1">
+            <h3 className="text-lg font-sans font-semibold text-fg mb-1">
               Add New Agency Service Offering
             </h3>
             <p className="text-xs text-muted mb-5">
@@ -542,7 +542,7 @@ export const AdminCmsServices: React.FC = () => {
                     setNewSlug(e.target.value.toLowerCase().replace(/[^a-z0-9]/g, '-'));
                   }}
                   placeholder="e.g. Enterprise SEO & Core Web Vitals"
-                  className="w-full px-3 py-2.5 rounded-control bg-panel border border-line text-text focus:outline-none focus:border-accent min-h-10"
+                  className="w-full px-3 py-2.5 rounded-control bg-panel border border-line text-fg focus:outline-none focus:border-accent min-h-10"
                 />
               </div>
 
@@ -555,7 +555,7 @@ export const AdminCmsServices: React.FC = () => {
                     value={newSlug}
                     onChange={(e) => setNewSlug(e.target.value)}
                     placeholder="e.g. enterprise-seo"
-                    className="w-full px-3 py-2 rounded-card bg-panel border border-line text-text font-sans text-[11px] focus:outline-none focus:border-accent"
+                    className="w-full px-3 py-2 rounded-card bg-panel border border-line text-fg font-sans text-[11px] focus:outline-none focus:border-accent"
                   />
                 </div>
                 <div>
@@ -571,7 +571,7 @@ export const AdminCmsServices: React.FC = () => {
                   value={newHeadline}
                   onChange={(e) => setNewHeadline(e.target.value)}
                   placeholder="e.g. High-Impact Technical SEO for Scaling Ventures"
-                  className="w-full px-3 py-2.5 rounded-control bg-panel border border-line text-text focus:outline-none focus:border-accent min-h-10"
+                  className="w-full px-3 py-2.5 rounded-control bg-panel border border-line text-fg focus:outline-none focus:border-accent min-h-10"
                 />
               </div>
 
@@ -582,7 +582,7 @@ export const AdminCmsServices: React.FC = () => {
                   value={newSubtitle}
                   onChange={(e) => setNewSubtitle(e.target.value)}
                   placeholder="Explain client value proposition, measurable KPI improvements, and SLA guarantee..."
-                  className="w-full px-3 py-2.5 rounded-control bg-panel border border-line text-text focus:outline-none focus:border-accent min-h-10"
+                  className="w-full px-3 py-2.5 rounded-control bg-panel border border-line text-fg focus:outline-none focus:border-accent min-h-10"
                 />
               </div>
 
@@ -595,12 +595,12 @@ export const AdminCmsServices: React.FC = () => {
                     value={newCapability}
                     onChange={(e) => setNewCapability(e.target.value)}
                     placeholder="Add deliverable point..."
-                    className="flex-1 px-3 py-1.5 rounded-card bg-panel border border-line text-text text-xs focus:outline-none focus:border-accent"
+                    className="flex-1 px-3 py-1.5 rounded-card bg-panel border border-line text-fg text-xs focus:outline-none focus:border-accent"
                   />
                   <button
                     type="button"
                     onClick={handleAddTempCapability}
-                    className="px-3 py-1.5 rounded-card bg-panel hover:bg-panel-hover border border-line text-text text-xs font-semibold transition-colors"
+                    className="px-3 py-1.5 rounded-card bg-panel hover:bg-panel-hover border border-line text-fg text-xs font-semibold transition-colors"
                   >
                     Add
                   </button>
@@ -608,11 +608,11 @@ export const AdminCmsServices: React.FC = () => {
                 <div className="space-y-1.5 max-h-32 overflow-y-auto custom-scrollbar">
                   {tempCapabilities.map((cap, idx) => (
                     <div key={idx} className="flex items-center justify-between p-2 rounded-control bg-panel border border-line text-[11px]">
-                      <span className="text-text truncate">{cap}</span>
+                      <span className="text-fg truncate">{cap}</span>
                       <button
                         type="button"
                         onClick={() => handleRemoveTempCapability(idx)}
-                        className="text-danger hover:brightness-110 ml-2"
+                        className="text-danger hover:bg-[var(--accent-hover)] ml-2"
                       >
                         <X size={12} />
                       </button>
@@ -625,13 +625,13 @@ export const AdminCmsServices: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsAddModalOpen(false)}
-                  className="min-h-10 px-4 py-2 rounded-control bg-panel hover:bg-panel-hover border border-line text-text text-xs transition-colors"
+                  className="min-h-10 px-4 py-2 rounded-control bg-panel hover:bg-panel-hover border border-line text-fg text-xs transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-control bg-accent hover:brightness-110 text-white text-xs font-semibold transition-all"
+                  className="px-5 py-2 rounded-control bg-accent hover:bg-[var(--accent-hover)] text-white text-xs font-semibold transition-all"
                 >
                   Publish Service
                 </button>
