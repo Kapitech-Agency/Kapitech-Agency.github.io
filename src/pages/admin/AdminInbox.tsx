@@ -1111,7 +1111,7 @@ export const AdminInbox: React.FC = () => {
                       <button
                         onClick={() => setIsCrmModalOpen(true)}
                         disabled={!canManageCrm}
-                        className="h-9 px-3.5 rounded-control bg-success hover:bg-[var(--accent-hover)] text-fg text-xs font-sans font-semibold transition-colors flex items-center gap-1.5"
+                        className="h-9 px-3.5 rounded-control bg-success hover:bg-accent-hover text-fg text-xs font-sans font-semibold transition-colors flex items-center gap-1.5"
                       >
                         <Briefcase size={14} />
                         <span>{language === 'id' ? 'Konversi ke CRM' : 'Convert to CRM'}</span>
