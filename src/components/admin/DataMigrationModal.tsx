@@ -359,8 +359,8 @@ export const DataMigrationModal: React.FC<DataMigrationModalProps> = ({
           {statusMessage && (
             <div className={`p-3 rounded-control border text-xs font-sans flex items-center gap-2 ${
               statusMessage.success
-                ? 'bg-emerald-500/10 border-emerald-500/30 text-success'
-                : 'bg-red-500/10 border-red-500/30 text-danger'
+                ? 'bg-success/10 border-success/30 text-success'
+                : 'bg-danger/10 border-danger/30 text-danger'
             }`}>
               {statusMessage.success ? <CheckCircle2 size={16} /> : <AlertCircle size={16} />}
               <span>{statusMessage.message}</span>
