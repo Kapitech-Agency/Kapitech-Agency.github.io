@@ -251,7 +251,7 @@ export const AdminCmsProjects: React.FC = () => {
         <div className="flex items-center gap-3">
           <button
             onClick={handleOpenAdd}
-            className="min-h-10 px-4 rounded-control bg-accent hover:brightness-110 text-white text-xs font-sans font-medium transition-colors flex items-center gap-2"
+            className="min-h-10 px-4 rounded-control bg-accent hover:bg-[var(--accent-hover)] text-white text-xs font-sans font-medium transition-colors flex items-center gap-2"
           >
             <Plus size={15} />
             <span>{language === 'id' ? 'Tambah Case Study' : 'Add Case Study'}</span>
@@ -277,7 +277,7 @@ export const AdminCmsProjects: React.FC = () => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={language === 'id' ? 'Cari proyek, klien, industri, teknologi...' : 'Search projects, client names, industries, tech stack...'}
-              className="w-full pl-10 pr-4 py-2.5 bg-panel border border-line rounded-control text-xs text-text focus:outline-none focus:border-accent placeholder:text-muted font-sans min-h-10 py-2.5"
+              className="w-full pl-10 pr-4 py-2.5 bg-panel border border-line rounded-control text-xs text-fg focus:outline-none focus:border-accent placeholder:text-muted font-sans min-h-10 py-2.5"
             />
           </div>
 
@@ -331,7 +331,7 @@ export const AdminCmsProjects: React.FC = () => {
                   className={`p-1.5 rounded-control border text-xs transition-colors  ${
                     project.featured
                       ? 'bg-warning/10 text-warning border-warning/30'
-                      : 'bg-panel text-muted border-line hover:text-text'
+                      : 'bg-panel text-muted border-line hover:text-fg'
                   }`}
                   title={project.featured ? 'Status: Featured (Click to toggle)' : 'Click to feature'}
                 >
@@ -340,8 +340,8 @@ export const AdminCmsProjects: React.FC = () => {
               </div>
 
               <div className="absolute bottom-3 left-3 right-3">
-                <div className="text-[11px] font-sans text-text/80">{project.client}</div>
-                <div className="text-base font-semibold font-sans text-text truncate">
+                <div className="text-[11px] font-sans text-fg/80">{project.client}</div>
+                <div className="text-base font-semibold font-sans text-fg truncate">
                   {project.title}
                 </div>
               </div>
@@ -379,7 +379,7 @@ export const AdminCmsProjects: React.FC = () => {
                 <div className="flex items-center gap-1.5">
                   <button
                     onClick={() => handleOpenEdit(project)}
-                    className="p-1.5 rounded-control bg-panel hover:bg-panel-hover text-muted hover:text-text border border-line transition-colors"
+                    className="p-1.5 rounded-control bg-panel hover:bg-panel-hover text-muted hover:text-fg border border-line transition-colors"
                     title="Edit Case Study"
                   >
                     <Edit3 size={13} />
@@ -407,7 +407,7 @@ export const AdminCmsProjects: React.FC = () => {
             <div className="flex items-center justify-between pb-4 border-b border-line mb-6">
               <div className="flex items-center gap-3">
                 <FolderKanban className="text-danger" size={20} />
-                <h2 className="text-lg font-semibold font-sans text-text">
+                <h2 className="text-lg font-semibold font-sans text-fg">
                   {editingProject.title ? `Edit: ${editingProject.title}` : 'Add New Case Study'}
                 </h2>
               </div>
@@ -419,7 +419,7 @@ export const AdminCmsProjects: React.FC = () => {
                     type="button"
                     onClick={() => setModalTab('details')}
                     className={`px-3 py-1 rounded-chip text-[11px] font-semibold transition-all ${
-                      modalTab === 'details' ? 'bg-panel text-text' : 'text-muted hover:text-text'
+                      modalTab === 'details' ? 'bg-panel text-fg' : 'text-muted hover:text-fg'
                     }`}
                   >
                     Details
@@ -428,7 +428,7 @@ export const AdminCmsProjects: React.FC = () => {
                     type="button"
                     onClick={() => setModalTab('preview')}
                     className={`flex items-center gap-1.5 px-3 py-1 rounded-chip text-[11px] font-semibold transition-all ${
-                      modalTab === 'preview' ? 'bg-panel text-text' : 'text-muted hover:text-text'
+                      modalTab === 'preview' ? 'bg-panel text-fg' : 'text-muted hover:text-fg'
                     }`}
                   >
                     <Eye size={12} />
@@ -438,7 +438,7 @@ export const AdminCmsProjects: React.FC = () => {
 
                 <button
                   onClick={() => setIsModalOpen(false)}
-                  className="p-1.5 rounded-control bg-panel hover:bg-panel-hover text-muted hover:text-text border border-line"
+                  className="p-1.5 rounded-control bg-panel hover:bg-panel-hover text-muted hover:text-fg border border-line"
                 >
                   <X size={15} />
                 </button>
@@ -448,7 +448,7 @@ export const AdminCmsProjects: React.FC = () => {
             {modalTab === 'preview' ? (
               <div className="py-6 flex flex-col items-center">
                 <div className="text-[11px] text-muted mb-4">
-                  Live Showcase Preview (as rendered on <code className="text-text">kapitech.id/work</code>):
+                  Live Showcase Preview (as rendered on <code className="text-fg">kapitech.id/work</code>):
                 </div>
                 <div className="w-full max-w-sm max-h-[calc(100dvh-24px)] bg-panel border border-line rounded-card overflow-y-auto">
                   <div className="relative h-48 w-full bg-bg">
@@ -458,8 +458,8 @@ export const AdminCmsProjects: React.FC = () => {
                       {editingProject.pillar}
                     </div>
                     <div className="absolute bottom-3 left-3 right-3">
-                      <div className="text-[10px] text-text/80">{editingProject.client || 'Client Name'}</div>
-                      <div className="text-base font-semibold font-sans text-text truncate">
+                      <div className="text-[10px] text-fg/80">{editingProject.client || 'Client Name'}</div>
+                      <div className="text-base font-semibold font-sans text-fg truncate">
                         {editingProject.title || 'Untitled Case Study'}
                       </div>
                     </div>
@@ -500,7 +500,7 @@ export const AdminCmsProjects: React.FC = () => {
                       value={editingProject.title}
                       onChange={(e) => setEditingProject({ ...editingProject, title: e.target.value })}
                       placeholder="e.g. Bank Digital Nusantara Mobile"
-                      className="w-full px-3.5 py-2.5 bg-panel border border-line rounded-control text-text focus:outline-none focus:border-accent font-sans"
+                      className="w-full px-3.5 py-2.5 bg-panel border border-line rounded-control text-fg focus:outline-none focus:border-accent font-sans"
                     />
                   </div>
 
@@ -511,7 +511,7 @@ export const AdminCmsProjects: React.FC = () => {
                       value={editingProject.client}
                       onChange={(e) => setEditingProject({ ...editingProject, client: e.target.value })}
                       placeholder="PT Bank Digital Nusantara"
-                      className="w-full px-3.5 py-2.5 bg-panel border border-line rounded-control text-text focus:outline-none focus:border-accent font-sans"
+                      className="w-full px-3.5 py-2.5 bg-panel border border-line rounded-control text-fg focus:outline-none focus:border-accent font-sans"
                     />
                   </div>
                 </div>
@@ -529,7 +529,7 @@ export const AdminCmsProjects: React.FC = () => {
                       value={editingProject.service}
                       onChange={(e) => setEditingProject({ ...editingProject, service: e.target.value as any })}
                       placeholder="UI/UX Design, Web Application..."
-                      className="w-full px-3.5 py-2.5 bg-panel border border-line rounded-control text-text focus:outline-none focus:border-accent font-sans"
+                      className="w-full px-3.5 py-2.5 bg-panel border border-line rounded-control text-fg focus:outline-none focus:border-accent font-sans"
                     />
                   </div>
 
@@ -540,7 +540,7 @@ export const AdminCmsProjects: React.FC = () => {
                       value={editingProject.year}
                       onChange={(e) => setEditingProject({ ...editingProject, year: e.target.value })}
                       placeholder="2025"
-                      className="w-full px-3.5 py-2.5 bg-panel border border-line rounded-control text-text focus:outline-none focus:border-accent font-sans"
+                      className="w-full px-3.5 py-2.5 bg-panel border border-line rounded-control text-fg focus:outline-none focus:border-accent font-sans"
                     />
                   </div>
                 </div>
@@ -570,7 +570,7 @@ export const AdminCmsProjects: React.FC = () => {
                         <UploadCloud className="text-muted" size={28} />
                       )}
                       
-                      <div className="text-text">
+                      <div className="text-fg">
                         <span>Drag & drop image here, or </span>
                         <label className="text-danger cursor-pointer hover:underline font-semibold">
                           browse file
@@ -596,7 +596,7 @@ export const AdminCmsProjects: React.FC = () => {
                       value={editingProject.image}
                       onChange={(e) => setEditingProject({ ...editingProject, image: e.target.value })}
                       placeholder="Or paste direct image URL (https://...)"
-                      className="w-full px-3.5 py-2 bg-panel border border-line rounded-control text-text focus:outline-none focus:border-accent font-sans"
+                      className="w-full px-3.5 py-2 bg-panel border border-line rounded-control text-fg focus:outline-none focus:border-accent font-sans"
                     />
                   </div>
                 </div>
@@ -608,7 +608,7 @@ export const AdminCmsProjects: React.FC = () => {
                     value={editingProject.descId || editingProject.desc}
                     onChange={(e) => setEditingProject({ ...editingProject, descId: e.target.value, desc: e.target.value })}
                     placeholder="Brief description of the solution delivered for client..."
-                    className="w-full px-3.5 py-2 bg-panel border border-line rounded-control text-text focus:outline-none focus:border-accent font-sans text-xs"
+                    className="w-full px-3.5 py-2 bg-panel border border-line rounded-control text-fg focus:outline-none focus:border-accent font-sans text-xs"
                   />
                 </div>
 
@@ -622,12 +622,12 @@ export const AdminCmsProjects: React.FC = () => {
                       onChange={(e) => setTechInput(e.target.value)}
                       onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddTech(); } }}
                       placeholder="Type tech name and press Enter (e.g. Next.js 14, Tailwind, Go)..."
-                      className="flex-1 px-3.5 py-2 bg-panel border border-line rounded-control text-text focus:outline-none focus:border-accent"
+                      className="flex-1 px-3.5 py-2 bg-panel border border-line rounded-control text-fg focus:outline-none focus:border-accent"
                     />
                     <button
                       type="button"
                       onClick={handleAddTech}
-                      className="px-3.5 py-2 rounded-control bg-panel hover:bg-panel text-text border border-line"
+                      className="px-3.5 py-2 rounded-control bg-panel hover:bg-panel text-fg border border-line"
                     >
                       Add Tag
                     </button>
@@ -636,7 +636,7 @@ export const AdminCmsProjects: React.FC = () => {
                     {editingProject.technologies.map((tech, idx) => (
                       <span
                         key={idx}
-                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-control bg-panel border border-line text-text text-[11px]"
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-control bg-panel border border-line text-fg text-[11px]"
                       >
                         <span>{tech}</span>
                         <button
@@ -660,19 +660,19 @@ export const AdminCmsProjects: React.FC = () => {
                       value={metricLabel}
                       onChange={(e) => setMetricLabel(e.target.value)}
                       placeholder="Metric label (e.g. Conversion Lift)"
-                      className="flex-1 px-3.5 py-2 bg-panel border border-line rounded-control text-text focus:outline-none focus:border-accent"
+                      className="flex-1 px-3.5 py-2 bg-panel border border-line rounded-control text-fg focus:outline-none focus:border-accent"
                     />
                     <input
                       type="text"
                       value={metricValue}
                       onChange={(e) => setMetricValue(e.target.value)}
                       placeholder="Value (e.g. +40%)"
-                      className="w-32 px-3.5 py-2 bg-panel border border-line rounded-control text-text focus:outline-none focus:border-accent"
+                      className="w-32 px-3.5 py-2 bg-panel border border-line rounded-control text-fg focus:outline-none focus:border-accent"
                     />
                     <button
                       type="button"
                       onClick={handleAddImpactMetric}
-                      className="px-3.5 py-2 rounded-control bg-panel hover:bg-panel text-text border border-line"
+                      className="px-3.5 py-2 rounded-control bg-panel hover:bg-panel text-fg border border-line"
                     >
                       Add Metric
                     </button>
@@ -704,20 +704,20 @@ export const AdminCmsProjects: React.FC = () => {
                       onChange={(e) => setEditingProject({ ...editingProject, featured: e.target.checked })}
                       className="w-4 h-4 rounded bg-panel border-line text-danger accent-brand-red"
                     />
-                    <span className="text-text">Feature in Homepage Highlights</span>
+                    <span className="text-fg">Feature in Homepage Highlights</span>
                   </label>
 
                   <div className="flex items-center gap-2">
                     <button
                       type="button"
                       onClick={() => setIsModalOpen(false)}
-                      className="px-4 py-2 rounded-control bg-panel text-muted hover:text-text border border-line"
+                      className="px-4 py-2 rounded-control bg-panel text-muted hover:text-fg border border-line"
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
-                      className="px-5 py-2 rounded-control bg-accent text-white font-semibold hover:brightness-110 transition-all"
+                      className="px-5 py-2 rounded-control bg-accent text-white font-semibold hover:bg-[var(--accent-hover)] transition-all"
                     >
                       Save Case Study
                     </button>
