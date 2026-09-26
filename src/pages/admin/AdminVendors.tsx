@@ -671,28 +671,7 @@ export const AdminVendors: React.FC = () => {
       )}
 
       {/* Add / Edit Modal */}
-      {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="fixed inset-0 bg-bg/80 " onClick={() => setIsModalOpen(false)} />
-          <div className="relative w-full max-w-lg bg-panel border border-line rounded-card p-4 sm:p-6 z-10">
-            <div className="flex items-center justify-between pb-4 border-b border-line">
-              <h3 className="text-sm font-semibold text-fg">
-                {editingVendor
-                  ? language === 'id'
-                    ? 'Edit Profil Vendor'
-                    : 'Edit Vendor Profile'
-                  : language === 'id'
-                  ? 'Tambah Vendor Baru'
-                  : 'Add New Talent Vendor'}
-              </h3>
-              <button
-                onClick={() => setIsModalOpen(false)}
-                className="p-1.5 rounded-control bg-panel text-muted hover:text-fg border border-line"
-              >
-                <X size={15} />
-              </button>
-            </div>
-
+      <Modal open={isModalOpen} onClose={() => setIsModalOpen(false)} size="lg" title={editingVendor ? (language === 'id' ? 'Edit Profil Vendor' : 'Edit Vendor Profile') : (language === 'id' ? 'Tambah Vendor Baru' : 'Add New Talent Vendor')} description={language === 'id' ? 'Kelola profil, keahlian, dan evaluasi SLA vendor.' : 'Manage vendor profile, skills, and SLA review.'}>
             <form onSubmit={handleSaveVendor} className="py-4 space-y-3.5 max-h-[calc(100dvh-24px)] overflow-y-auto pr-1 custom-scrollbar">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
@@ -877,9 +856,7 @@ export const AdminVendors: React.FC = () => {
                 </button>
               </div>
             </form>
-          </div>
-        </div>
-      )}
+      </Modal>
       <Modal
         open={!!deleteTarget}
         onClose={() => setDeleteTarget(null)}
