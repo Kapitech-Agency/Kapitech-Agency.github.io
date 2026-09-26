@@ -46,8 +46,16 @@ export const DropdownPortal: React.FC<DropdownPortalProps> = ({
           maxWidth: viewportWidth - viewportPadding * 2,
           maxHeight: Math.max(120, viewportHeight - viewportPadding * 2),
           zIndex: 60,
-          visibility: 'visible'
-        });
+          visibility: 'visible',
+          '--ams-bg': '#09090c',
+          '--ams-panel': '#0f0f14',
+          '--ams-panel-hover': '#15151b',
+          '--ams-line': '#20202a',
+          '--ams-text': '#f3f3f6',
+          '--ams-muted': '#8b8b99',
+          '--ams-accent': '#dc143c',
+          '--ams-accent-text': '#ff4d6d'
+        } as React.CSSProperties);
       });
     };
     const handlePointerDown = (event: PointerEvent) => {
