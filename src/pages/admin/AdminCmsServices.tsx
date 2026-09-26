@@ -322,7 +322,7 @@ export const AdminCmsServices: React.FC = () => {
         {filtered.map((item) => (
           <div
             key={item.slug}
-            className="w-full h-full bg-[var(--panel)] border border-[var(--line)] rounded-card p-5 flex flex-col justify-between hover:border-[var(--line)] transition-all group"
+            className="w-full h-full bg-[var(--panel)] border border-[var(--line)] rounded-card p-4 flex flex-col justify-between hover:border-[var(--line)] transition-all group"
           >
             <div>
               <div className="flex items-center justify-between gap-2 mb-3">
