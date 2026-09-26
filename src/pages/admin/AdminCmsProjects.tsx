@@ -316,7 +316,7 @@ export const AdminCmsProjects: React.FC = () => {
 
               {/* Badges on image */}
               <div className="absolute top-3 left-3 flex items-center gap-1.5">
-                <span className={`px-2 py-0.5 rounded text-[10px] font-sans font-semibold border ${
+                <span className={`px-2 py-0.5 rounded-badge text-[10px] font-sans font-semibold border ${
                   project.pillar === 'Visual Experience'
                     ? 'bg-info/10 text-info border-info/30'
                     : 'bg-info/10 text-info border-info/30'
@@ -454,7 +454,7 @@ export const AdminCmsProjects: React.FC = () => {
                   <div className="relative h-48 w-full bg-bg">
                     <img src={editingProject.image} alt={editingProject.title} className="w-full h-full object-cover" />
                     <div className="absolute inset-0 bg-bg/40" />
-                    <div className="absolute top-3 left-3 px-2 py-0.5 rounded text-[10px] font-sans font-semibold bg-accent/10 text-accent-text border border-accent/30">
+                    <div className="absolute top-3 left-3 px-2 py-0.5 rounded-badge text-[10px] font-sans font-semibold bg-accent/10 text-accent-text border border-accent/30">
                       {editingProject.pillar}
                     </div>
                     <div className="absolute bottom-3 left-3 right-3">
