@@ -140,7 +140,7 @@ export const InvoiceStatusDropdown: React.FC<InvoiceStatusDropdownProps> = ({
               </button>
             );
           })}
-        </motion.div>
+        </div>
       </DropdownPortal>
     </div>
   );
