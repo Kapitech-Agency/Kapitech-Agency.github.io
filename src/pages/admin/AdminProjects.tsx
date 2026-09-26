@@ -923,16 +923,14 @@ export const AdminProjects: React.FC = () => {
 
       {/* CONTEXTUAL TASK DETAIL DRAWER */}
       {taskDrawer && selectedProject && (
-        <div className="fixed inset-0 z-[60] flex" role="dialog" aria-modal="true" aria-label="Task details">
-          <button className="absolute inset-0 cursor-default bg-bg/80" aria-label="Close task details" onClick={() => setTaskDrawer(null)} />
-          <aside className="relative ml-auto flex h-full w-full max-w-xl flex-col border-l border-line bg-panel">
-            <header className="flex shrink-0 items-center justify-between gap-3 border-b border-line px-4 py-4 sm:px-5">
-              <div className="min-w-0">
-                <div className="flex items-center gap-2 text-[11px] text-muted"><ListTodo size={14} className="text-accent-text" />Task details</div>
-                <h2 className="mt-1 truncate text-base font-semibold text-fg">{taskDrawer.title}</h2>
-              </div>
-              <button onClick={() => setTaskDrawer(null)} aria-label="Close task details" className="inline-flex min-h-10 min-w-10 items-center justify-center rounded-control border border-line text-muted hover:bg-bg hover:text-fg"><X size={16} /></button>
-            </header>
+        <Modal
+          open={!!taskDrawer}
+          onClose={() => setTaskDrawer(null)}
+          size="lg"
+          title={taskDrawer.title}
+          description="Task details"
+        >
+
             <div className="min-h-0 flex-1 overflow-y-auto p-4 sm:p-5">
               <div className="flex flex-wrap gap-2">
                 <span className={'rounded-badge border px-2 py-1 text-[10px] font-semibold ' + taskPriorityClass(taskDrawer.priority)}>{priorityLabel(taskDrawer.priority)}</span>
@@ -974,8 +972,7 @@ export const AdminProjects: React.FC = () => {
               <Button variant="destructive" icon={<Trash2 size={13} />} onClick={() => setDeleteTaskTarget(taskDrawer)} disabled={!canManageKanbanTasks}>Delete</Button>
               <div className="flex gap-2"><Button variant="secondary" onClick={() => setTaskDrawer(null)}>Close</Button>{canManageKanbanTasks && <Button icon={<Edit3 size={13} />} onClick={() => openEditTask(taskDrawer)}>Edit task</Button>}</div>
             </footer>
-          </aside>
-        </div>
+        </Modal>
       )}
 
       <Modal open={projectModalOpen} onClose={() => !saving && setProjectModalOpen(false)} size="xl" title={editingProject ? 'Edit project' : 'New project'} description="Keep project information aligned with the delivery record.">
