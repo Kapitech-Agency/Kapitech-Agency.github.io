@@ -90,7 +90,7 @@ export const TrendChart: React.FC<{
             return (
               <g key={ratio}>
                 <line x1={left} x2={width - right} y1={yy} y2={yy} stroke="var(--line)" strokeWidth="1" />
-                <text x={left - 8} y={yy + 4} textAnchor="end" fontSize="10" fill="var(--muted)">{formatCompact(value)}</text>
+                <text x={left - 8} y={yy + 4} textAnchor="end" fontSize="10" fill="var(--muted)">{primaryFormat(value)}</text>
               </g>
             );
           })}
