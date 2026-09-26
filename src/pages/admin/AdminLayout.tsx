@@ -445,7 +445,7 @@ export const AdminLayout: React.FC = () => {
           </button>
 
           <Link to="/admin/dashboard" className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-control bg-accent flex items-center justify-center text-fg font-semibold text-xs -none shrink-0">
+            <div className="w-6 h-6 rounded-control bg-accent flex items-center justify-center text-fg font-semibold text-xs shrink-0">
               K
             </div>
             <div className="min-w-0">
@@ -471,7 +471,7 @@ export const AdminLayout: React.FC = () => {
           <button
             type="button"
             aria-label="Close navigation menu"
-            className="fixed inset-0 bg-black/70 transition-opacity cursor-default"
+            className="fixed inset-0 bg-bg/80 transition-opacity cursor-default"
             onClick={() => setMobileMenuOpen(false)}
           />
 
