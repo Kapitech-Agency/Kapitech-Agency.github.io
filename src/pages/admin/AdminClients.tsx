@@ -3,19 +3,14 @@ import {
   Users,
   Plus,
   Search,
-  Building2,
-  Mail,
   Phone,
-  MapPin,
   DollarSign,
   Trash2,
   Edit3,
   Check,
-  X,
   UserCheck,
   AlertTriangle,
   ShieldAlert,
-  Flame,
   Activity,
   ChevronLeft,
   ChevronRight,
@@ -165,7 +160,7 @@ export const AdminClients: React.FC = () => {
     e.preventDefault();
     if (!canManageClients) return;
     if (!name.trim() || !company.trim()) {
-      alert('Client Name and Company are required.');
+      setStatusMessage(language === 'id' ? 'Nama kontak dan perusahaan wajib diisi.' : 'Client name and company are required.');
       return;
     }
 
@@ -233,13 +228,9 @@ export const AdminClients: React.FC = () => {
         </div>
 
         {canManageClients && (
-          <button
-            onClick={handleOpenCreateClient}
-            className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-control bg-accent px-3.5 text-xs font-medium text-white transition-colors hover:bg-accent/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent self-start sm:self-auto"
-          >
-            <Plus size={14} />
-            <span>{t('admin.client.addClient')}</span>
-          </button>
+          <Button type="button" variant="primary" icon={<Plus size={14} />} onClick={handleOpenCreateClient} className="w-full sm:w-auto">
+            {t('admin.client.addClient')}
+          </Button>
         )}
       </div>
 
@@ -275,9 +266,7 @@ export const AdminClients: React.FC = () => {
         <div className="ams-kpi">
           <div className="flex items-center justify-between text-muted mb-2">
             <span className="text-xs font-sans normal-case font-semibold">{t('admin.client.totalClients')}</span>
-            <div className="w-8 h-8 rounded-control bg-panel border border-line flex items-center justify-center text-fg">
-              <Users size={16} />
-            </div>
+
           </div>
           <div className="ams-kpi-value">
             {clients.length}
@@ -290,9 +279,7 @@ export const AdminClients: React.FC = () => {
         <div className="ams-kpi">
           <div className="flex items-center justify-between text-muted mb-2">
             <span className="text-xs font-sans normal-case font-semibold">{t('admin.client.activeAccounts')}</span>
-            <div className="w-8 h-8 rounded-control bg-success/10 border border-success/30 flex items-center justify-center text-success">
-              <UserCheck size={16} />
-            </div>
+
           </div>
           <div className="ams-kpi-value text-success">
             {activeAccountsCount}
@@ -302,17 +289,15 @@ export const AdminClients: React.FC = () => {
           </div>
         </div>
 
-        <div className="w-full h-full bg-panel border border-line p-5 rounded-card flex flex-col justify-between">
+        <div className="ams-kpi">
           <div className="flex items-center justify-between text-muted mb-2">
             <span className="text-xs font-sans normal-case font-semibold">{t('admin.client.lifetimeSpend')}</span>
-            <div className="w-8 h-8 rounded-control bg-bg border border-line flex items-center justify-center text-muted">
-              <DollarSign size={16} />
-            </div>
+
           </div>
           <div className="ams-kpi-value">
             {formatAmount(totalLifetimeSpend, currency)}
           </div>
-          <div className="mt-3 pt-2 border-t border-line text-[11px] font-sans text-muted">
+          <div className="mt-2 text-xs text-muted">
             {language === 'id' ? 'Total Nilai Kontrak Billed' : 'Cumulative Billed Value'}
           </div>
         </div>
