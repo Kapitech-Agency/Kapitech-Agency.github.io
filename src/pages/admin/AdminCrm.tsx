@@ -469,13 +469,13 @@ export const AdminCrm: React.FC = () => {
         </div>
 
         {/* Stage Conversion Funnel */}
-        <div className="md:col-span-2 lg:col-span-5 bg-[var(--panel)] border border-[var(--line)] p-5 sm:p-6 rounded-card flex flex-col justify-between group hover:border-[var(--line)] transition-all">
+        <div className="md:col-span-2 lg:col-span-5 ams-crm-funnel-card bg-[var(--panel)] border border-[var(--line)] p-4 sm:p-5 rounded-card flex flex-col justify-between group transition-colors">
           <div className="flex items-center justify-between text-[var(--muted)] mb-2">
             <span className="text-xs font-sans normal-case tracking-normal font-semibold flex items-center gap-2 text-[var(--text)]">
               <Activity size={14} className="text-[var(--danger)]" />
               <span>{language === 'id' ? 'Corong Konversi Tahapan' : 'Stage Conversion Funnel'}</span>
             </span>
-            <span className="text-[10px] font-sans px-2 py-0.5 rounded bg-[var(--panel)] text-[var(--muted)] border border-[var(--line)]">
+            <span className="text-[10px] font-sans px-2 py-0.5 rounded-badge bg-[var(--panel)] text-[var(--muted)] border border-[var(--line)]">
               Lead → Won Conversion
             </span>
           </div>
