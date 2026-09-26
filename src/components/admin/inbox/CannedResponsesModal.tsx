@@ -223,7 +223,7 @@ https://kapitech.id`
         </div>
       }
     >
-        <div className="p-5 space-y-4 overflow-y-auto custom-scrollbar flex-1">
+        <div className="space-y-4">
           {templates.map((tpl) => {
             const Icon = tpl.icon;
             const isCopied = copiedKey === tpl.key;
@@ -231,16 +231,16 @@ https://kapitech.id`
             return (
               <div 
                 key={tpl.key}
-                className="p-4 rounded-control bg-[var(--panel)] border border-line hover:border-[var(--line)] transition-all space-y-3"
+                className="p-4 rounded-control bg-panel border border-line hover:border-[var(--line)] transition-all space-y-3"
               >
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 rounded-control bg-[var(--panel)] flex items-center justify-center text-[var(--accent)] shrink-0">
+                    <div className="w-6 h-6 rounded-control bg-panel flex items-center justify-center text-accent-text shrink-0">
                       <Icon size={13} />
                     </div>
                     <div>
-                      <h4 className="text-xs font-semibold text-[var(--text)] font-sans">{tpl.title}</h4>
-                      <span className="text-[10px] font-sans text-[var(--muted)]">{tpl.category}</span>
+                      <h4 className="text-xs font-semibold text-fg font-sans">{tpl.title}</h4>
+                      <span className="text-[10px] font-sans text-muted">{tpl.category}</span>
                     </div>
                   </div>
 
@@ -250,8 +250,8 @@ https://kapitech.id`
                       onClick={() => handleCopy(tpl.key, tpl.body)}
                       className={`min-h-10 px-2.5 rounded-control text-xs font-sans transition-all flex items-center gap-1.5 border ${
                         isCopied 
-                          ? 'bg-[var(--success)]/10 text-[var(--success)] border-[var(--success)]/30 font-semibold' 
-                          : 'bg-[var(--panel)] text-[var(--muted)] border-line hover:text-[var(--text)] hover:border-[var(--line)]'
+                          ? 'bg-success/10 text-success border-success/30 font-semibold' 
+                          : 'bg-panel text-muted border-line hover:text-fg hover:border-[var(--line)]'
                       }`}
                       title="Copy response body"
                     >
@@ -288,7 +288,7 @@ https://kapitech.id`
                 </div>
 
                 {/* Body Preview */}
-                <div className="p-3 rounded-control bg-[var(--panel)] border border-line text-[11px] text-[var(--muted)] font-sans leading-relaxed whitespace-pre-wrap max-h-36 overflow-y-auto">
+                <div className="p-3 rounded-control bg-panel border border-line text-[11px] text-muted font-sans leading-relaxed whitespace-pre-wrap max-h-36 overflow-y-auto">
                   {tpl.body}
                 </div>
               </div>
