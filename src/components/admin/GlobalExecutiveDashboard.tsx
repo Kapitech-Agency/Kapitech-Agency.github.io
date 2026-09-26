@@ -364,7 +364,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
       {isLoading && !data ? (
         <div className="space-y-6" aria-label="Loading dashboard">
           <div className="grid grid-cols-2 gap-3 min-[900px]:grid-cols-4">
-            {Array.from({ length: 6 }).map((_, index) => <SkeletonBlock key={index} className="h-24" />)}
+            {Array.from({ length: 6 }).map((_, index) => (\n              <React.Fragment key={`dashboard-skeleton-${index}`}>\n                <SkeletonBlock className="h-24" />\n              </React.Fragment>\n            ))}
           </div>
           <SkeletonBlock className="h-[310px]" />
           <div className="grid gap-3 lg:grid-cols-2"><SkeletonBlock className="h-[300px]" /><SkeletonBlock className="h-[300px]" /></div>
