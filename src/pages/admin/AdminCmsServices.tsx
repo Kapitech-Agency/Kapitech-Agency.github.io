@@ -251,7 +251,7 @@ export const AdminCmsServices: React.FC = () => {
             <div className="text-xs font-sans text-[var(--muted)]">SEO & Growth Services</div>
             <div className="text-xl font-sans font-semibold text-[var(--text)] mt-0.5">3 Modules</div>
           </div>
-          <div className="w-8 h-8 rounded-control bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-info">
+          <div className="w-8 h-8 rounded-control bg-info/10 border border-info/30 flex items-center justify-center text-info">
             <SearchCode size={16} />
           </div>
         </div>
