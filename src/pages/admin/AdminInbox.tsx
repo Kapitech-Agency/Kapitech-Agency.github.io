@@ -1179,7 +1179,7 @@ export const AdminInbox: React.FC = () => {
                   >
                     <span>{language === 'id' ? 'Catatan Tim Agensi' : 'Internal Team Notes'}</span>
                     {selectedSubmission.internalNotes && (
-                      <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-[var(--warning)]" />
                     )}
                   </button>
                 </div>
