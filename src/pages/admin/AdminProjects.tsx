@@ -665,7 +665,7 @@ export const AdminProjects: React.FC = () => {
               <h2 className="text-sm font-semibold text-[var(--text)]">Projects</h2>
               <p className="mt-1 text-xs text-[var(--muted)]">Select a project to inspect its delivery state and task board.</p>
             </div>
-            <div className="projects-filter-bar grid w-full min-w-0 grid-cols-1 gap-2.5 sm:grid-cols-[minmax(240px,1fr)_168px_190px] xl:w-auto xl:min-w-[630px]">
+            <div className="projects-filter-bar grid w-full min-w-0 grid-cols-1 items-center gap-2.5 sm:grid-cols-[minmax(240px,1fr)_168px_190px] xl:w-auto xl:min-w-[630px]">
               <label className="relative block min-w-0">
                 <span className="sr-only">Search projects</span>
                 <Search size={14} strokeWidth={1.8} className="pointer-events-none absolute left-3 top-1/2 z-10 -translate-y-1/2 text-[var(--muted)]" aria-hidden="true" />
@@ -681,7 +681,7 @@ export const AdminProjects: React.FC = () => {
                 value={projectStatusFilter}
                 onChange={setProjectStatusFilter}
                 options={[{ value: '', label: 'All statuses' }, ...PROJECT_STATUSES]}
-                className="w-full min-w-0"
+                className="w-full min-w-0 h-10 sm:h-9"
                 triggerClassName="h-10 min-h-10 w-full sm:h-9 sm:min-h-9"
                 aria-label="Project status"
               />
@@ -694,7 +694,7 @@ export const AdminProjects: React.FC = () => {
                   { value: 'progress', label: 'Progress' },
                   { value: 'name', label: 'Name' },
                 ]}
-                className="w-full min-w-0"
+                className="w-full min-w-0 h-10 sm:h-9"
                 triggerClassName="h-10 min-h-10 w-full whitespace-nowrap sm:h-9 sm:min-h-9"
                 aria-label="Project sort"
               />
