@@ -498,7 +498,7 @@ export const AdminProposals: React.FC = () => {
   };
 
   const openConvert = (proposal: Proposal) => {
-    if (!canManageInvoices || proposal.status !== 'accepted' || proposal.invoiceId) return;
+    if (!canManageInvoices || proposal.status !== 'approved') return;
     setConfirmAction({ type: 'convert', proposal });
   };
 
@@ -744,7 +744,7 @@ export const AdminProposals: React.FC = () => {
                           {proposal.status !== 'accepted' && canManageCrm && (
                             <button type="button" onClick={() => openEdit(proposal)} aria-label={'Edit ' + proposal.proposalNumber} title="Edit" className="inline-flex min-h-10 min-w-10 items-center justify-center rounded-control text-muted hover:bg-panel-hover hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"><FileText size={15} aria-hidden="true" /></button>
                           )}
-                          {proposal.status === 'accepted' && !proposal.invoiceId && canManageInvoices && (
+                          {proposal.status === 'approved' && canManageInvoices && (
                             <button type="button" onClick={() => openConvert(proposal)} className="inline-flex min-h-10 items-center gap-1.5 rounded-control border border-success/30 bg-success/10 px-2.5 text-xs font-semibold text-success hover:bg-success/15 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"><Receipt size={14} aria-hidden="true" />Invoice</button>
                           )}
                           {proposal.status === 'draft' && canManageCrm && (
@@ -918,7 +918,7 @@ export const AdminProposals: React.FC = () => {
               <button type="button" onClick={() => window.print()} className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-control border border-line bg-panel px-3 text-xs font-medium text-muted hover:bg-panel-hover hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"><Download size={14} aria-hidden="true" />Print / Export</button>
               <div className="flex flex-wrap justify-end gap-2">
                 {detailProposal.status !== 'accepted' && canManageCrm && <button type="button" onClick={() => { setDetailProposal(null); openEdit(detailProposal); }} className="inline-flex min-h-10 items-center gap-1.5 rounded-control border border-line bg-panel px-3 text-xs font-medium text-fg hover:bg-panel-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"><FileText size={14} aria-hidden="true" />Edit</button>}
-                {detailProposal.status === 'accepted' && !detailProposal.invoiceId && canManageInvoices && <button type="button" onClick={() => openConvert(detailProposal)} className="inline-flex min-h-10 items-center gap-1.5 rounded-control bg-accent px-3 text-xs font-semibold text-white hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"><CheckCircle2 size={14} aria-hidden="true" />Convert to invoice</button>}
+                {detailProposal.status === 'approved' && canManageInvoices && <button type="button" onClick={() => openConvert(detailProposal)} className="inline-flex min-h-10 items-center gap-1.5 rounded-control bg-accent px-3 text-xs font-semibold text-white hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"><CheckCircle2 size={14} aria-hidden="true" />Convert to invoice</button>}
               </div>
             </div>
 
