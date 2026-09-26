@@ -521,7 +521,7 @@ export const AdminCrm: React.FC = () => {
               <div className="text-[10px] font-sans text-[var(--muted)] truncate">Pitch→SOW</div>
               <div className="text-sm font-semibold font-sans text-[var(--text)] mt-0.5">{funnelStats.pitchToSow}%</div>
             </div>
-            <div className="bg-[var(--panel)] border border-[var(--success)]/20 bg-emerald-950/15 rounded-card p-2 text-center">
+            <div className="bg-[var(--panel)] border border-[var(--success)]/20 bg-[var(--success)]/10 rounded-card p-2 text-center">
               <div className="text-[10px] font-sans text-[var(--success)] truncate">SOW→Won</div>
               <div className="text-sm font-semibold font-sans text-[var(--success)] mt-0.5">{funnelStats.sowToWon}%</div>
             </div>
