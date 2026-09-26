@@ -40,7 +40,8 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
-  const triggerRef = useRef<HTMLButtonElement>(null);\n  const listboxId = useId();
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const listboxId = useId();
 
   const selectedOption = options.find((opt) => opt.value === value);
   const selectedIndex = Math.max(0, options.findIndex((opt) => opt.value === value));
