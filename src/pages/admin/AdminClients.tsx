@@ -16,15 +16,16 @@ import {
   AlertTriangle,
   ShieldAlert,
   Flame,
-  Activity
+  Activity,
+  ChevronLeft,
+  ChevronRight,
+  ArrowUpDown
 } from 'lucide-react';
 import { AgencyClient } from '../../lib/clientStore';
 import { formatAmount, getActiveCurrency, CURRENCY_EVENT, CurrencyCode } from '../../lib/currency';
 import { useLanguage } from '../../lib/LanguageContext';
 import { hasAdminPermission } from '../../lib/adminAuth';
 import { api } from '../../lib/apiClient';
-import { useDragToScroll } from '../../lib/useDragToScroll';
-import { ScrollShadowContainer } from '../../components/ui/ScrollShadowContainer';
 import { CustomSelect } from '../../components/ui/CustomSelect';
 import { Modal } from '../../components/ui/Modal';
 
@@ -35,10 +36,11 @@ export const AdminClients: React.FC = () => {
   const [clients, setClients] = useState<AgencyClient[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [sortKey, setSortKey] = useState<'name' | 'company' | 'updatedAt' | 'projectsCount'>('updatedAt');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
+  const [page, setPage] = useState(1);
+  const pageSize = 10;
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
-
-  // Drag-to-scroll hook for horizontal table
-  const tableScrollRef = useDragToScroll<HTMLDivElement>();
 
   // Modal State
   const [isClientModalOpen, setIsClientModalOpen] = useState(false);
@@ -88,16 +90,24 @@ export const AdminClients: React.FC = () => {
   };
 
   const filteredClients = useMemo(() => {
-    return clients.filter(c => {
-      const matchSearch =
-        c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        c.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        c.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        c.industry.toLowerCase().includes(searchQuery.toLowerCase());
+    const query = searchQuery.trim().toLowerCase();
+    const result = clients.filter(c => {
+      const matchSearch = !query || [c.name, c.company, c.email, c.contactPersonRole, c.industry, c.id].some(value => value.toLowerCase().includes(query));
       const matchStatus = statusFilter === 'all' || c.status === statusFilter;
       return matchSearch && matchStatus;
     });
-  }, [clients, searchQuery, statusFilter]);
+    return [...result].sort((a, b) => {
+      const left = sortKey === 'projectsCount' ? a.projectsCount : sortKey === 'updatedAt' ? a.updatedAt : sortKey === 'company' ? a.company : a.name;
+      const right = sortKey === 'projectsCount' ? b.projectsCount : sortKey === 'updatedAt' ? b.updatedAt : sortKey === 'company' ? b.company : b.name;
+      const comparison = typeof left === 'number' && typeof right === 'number' ? left - right : String(left).localeCompare(String(right), undefined, { sensitivity: 'base' });
+      return sortDirection === 'asc' ? comparison : -comparison;
+    });
+  }, [clients, searchQuery, statusFilter, sortKey, sortDirection]);
+
+  useEffect(() => { setPage(1); }, [searchQuery, statusFilter, sortKey, sortDirection]);
+  const pageCount = Math.max(1, Math.ceil(filteredClients.length / pageSize));
+  const paginatedClients = useMemo(() => filteredClients.slice((page - 1) * pageSize, page * pageSize), [filteredClients, page]);
+  useEffect(() => { if (page > pageCount) setPage(pageCount); }, [page, pageCount]);
 
   const activeAccountsCount = useMemo(() => clients.filter(c => c.status === 'active').length, [clients]);
   const totalLifetimeSpend = useMemo(() => clients.reduce((sum, c) => sum + (c.totalSpend || 0), 0), [clients]);
@@ -119,15 +129,15 @@ export const AdminClients: React.FC = () => {
     setEmail('');
     setPhone('');
     setWebsite('');
-    setLocation('Jakarta, Indonesia');
-    setIndustry('Real Estate & PropTech');
+    setLocation('');
+    setIndustry('');
     setClientStatus('active');
-    setTotalSpend(65000000);
-    setProjectsCount(1);
-    setRole('Head of Product');
+    setTotalSpend(0);
+    setProjectsCount(0);
+    setRole('');
     setNotes('');
-    setSlaDailyBudget(5000000);
-    setCurrentDailySpend(3500000);
+    setSlaDailyBudget(0);
+    setCurrentDailySpend(0);
     setIsClientModalOpen(true);
   };
 
@@ -145,7 +155,7 @@ export const AdminClients: React.FC = () => {
     setProjectsCount(c.projectsCount);
     setRole(c.contactPersonRole);
     setNotes(c.notes || '');
-    setSlaDailyBudget(c.slaDailyAdSpendBudget || 5000000);
+    setSlaDailyBudget(c.slaDailyAdSpendBudget || 0);
     setCurrentDailySpend(c.currentDailyAdSpend || 0);
     setIsClientModalOpen(true);
   };
@@ -213,7 +223,7 @@ export const AdminClients: React.FC = () => {
       <div className="ams-page-header flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
         <div>
           <h1 className="ams-page-title flex items-center gap-2.5">
-            <Users className="text-[var(--accent-text)] shrink-0" size={22} />
+            <Users className="text-accent-text shrink-0" size={22} />
             <span>{t('admin.client.title')}</span>
           </h1>
           <p className="text-xs font-sans text-[var(--muted)] mt-1">
@@ -224,7 +234,7 @@ export const AdminClients: React.FC = () => {
         {canManageClients && (
           <button
             onClick={handleOpenCreateClient}
-            className="min-h-10 px-4 rounded-control bg-[var(--accent)] hover:brightness-110 text-white text-xs font-sans font-medium transition-colors flex items-center justify-center gap-1.5 self-start sm:self-auto"
+            className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-control bg-accent px-3.5 text-xs font-medium text-white transition-colors hover:bg-accent/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent self-start sm:self-auto"
           >
             <Plus size={14} />
             <span>{t('admin.client.addClient')}</span>
@@ -335,244 +345,49 @@ export const AdminClients: React.FC = () => {
         </div>
       </div>
 
-      {/* 4. Clients Data Table & Mobile Card Stream */}
-      {/* Mobile View: Clean Client Cards (Zero Horizontal Scrolling) */}
-      <div className="md:hidden space-y-3">
-        {filteredClients.length === 0 ? (
-          <div className="py-12 text-center text-[var(--muted)] bg-[var(--panel)] border border-[var(--line)] rounded-card text-xs font-sans">
-            {language === 'id' ? 'Tidak ada data klien yang sesuai.' : 'No clients found.'}
-          </div>
-        ) : (
-          filteredClients.map((client) => {
-            const isOverBudget = client.slaDailyAdSpendBudget && client.currentDailyAdSpend && client.currentDailyAdSpend > client.slaDailyAdSpendBudget;
-            return (
-              <div 
-                key={client.id}
-                className={`bg-[var(--panel)] border rounded-card p-4 space-y-3 transition-all -none ${
-                  isOverBudget ? 'border-[var(--danger)]/40 bg-[var(--danger)]/10' : 'border-[var(--line)] hover:border-[var(--line)]'
-                }`}
-              >
-                {/* Header: Name, Role & Status */}
-                <div className="flex items-start justify-between gap-2">
-                  <div>
-                    <div className="font-semibold text-[var(--text)] text-base">{client.name}</div>
-                    <div className="text-[11px] text-[var(--danger)] font-semibold">{client.contactPersonRole}</div>
-                  </div>
-                  <span className={`px-2.5 py-1 rounded-control text-[10px] font-sans font-semibold normal-case shrink-0 ${
-                    client.status === 'active'
-                      ? 'bg-[var(--success)]/10 text-[var(--success)] border border-[var(--success)]/30'
-                      : client.status === 'completed'
-                      ? 'bg-[var(--info)]/10 text-[var(--info)] border border-[var(--info)]/30'
-                      : 'bg-[var(--panel)]/50 text-[var(--muted)] border border-[var(--line)]'
-                  }`}>
-                    {client.status}
-                  </span>
-                </div>
-
-                {/* Company & Industry */}
-                <div className="flex items-center gap-2 text-xs font-sans text-[var(--text)] bg-[var(--panel)]/60 p-2.5 rounded-control border border-[var(--line)]">
-                  <Building2 size={13} className="text-[var(--muted)] shrink-0" />
-                  <span className="font-semibold text-[var(--text)]">{client.company}</span>
-                  <span className="text-[var(--muted)]">•</span>
-                  <span className="text-[11px] text-[var(--muted)] truncate">{client.industry}</span>
-                </div>
-
-                {/* Contact: Email & Phone */}
-                <div className="grid grid-cols-1 gap-1.5 text-xs font-sans text-[var(--muted)]">
-                  <a 
-                    href={`mailto:${client.email}`}
-                    className="flex items-center gap-1.5 text-[var(--text)] hover:text-[var(--text)] transition-colors truncate"
-                  >
-                    <Mail size={12} className="text-[var(--muted)] shrink-0" />
-                    <span className="truncate">{client.email}</span>
-                  </a>
-                  {client.phone && (
-                    <a 
-                      href={`tel:${client.phone}`}
-                      className="flex items-center gap-1.5 text-[var(--text)] hover:text-[var(--text)] transition-colors"
-                    >
-                      <Phone size={12} className="text-[var(--muted)] shrink-0" />
-                      <span>{client.phone}</span>
-                    </a>
-                  )}
-                  {client.location && (
-                    <div className="flex items-center gap-1.5 text-[var(--muted)] text-[11px]">
-                      <MapPin size={12} className="shrink-0" />
-                      <span>{client.location}</span>
-                    </div>
-                  )}
-                </div>
-
-                {/* SLA Ad-Spend Status & Actions */}
-                <div className="pt-2 border-t border-[var(--line)] flex items-center justify-between gap-2">
-                  <div>
-                    {client.slaDailyAdSpendBudget ? (
-                      <div>
-                        <div className="text-[10px] normal-case font-sans text-[var(--muted)]">Daily SLA Ad-Spend</div>
-                        <div className={`font-semibold font-sans text-sm flex items-center gap-1 ${isOverBudget ? 'text-[var(--danger)]' : 'text-[var(--success)]'}`}>
-                          {isOverBudget && <AlertTriangle size={12} className="text-[var(--danger)] shrink-0" />}
-                          <span>{formatAmount(client.currentDailyAdSpend || 0, currency)}</span>
-                        </div>
-                        <div className="text-[10px] font-sans text-[var(--muted)]">
-                          Cap: {formatAmount(client.slaDailyAdSpendBudget, currency)}/day
-                        </div>
-                      </div>
-                    ) : (
-                      <div>
-                        <div className="text-[10px] normal-case font-sans text-[var(--muted)]">Lifetime Spend</div>
-                        <div className="font-semibold font-sans text-[var(--text)] text-sm">
-                          {formatAmount(client.totalSpend || 0, currency)}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="flex items-center gap-1.5">
-                    {client.phone && (
-                      <a
-                        href={`https://wa.me/${client.phone.replace(/\D/g, '')}`}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="w-9 h-9 rounded-control bg-[var(--panel)] hover:bg-[var(--success)]/10 text-[var(--success)] border border-[var(--line)] hover:border-[var(--success)]/30 flex items-center justify-center transition-colors min-h-10 min-w-10"
-                        title="Chat WhatsApp"
-                      >
-                        <Phone size={13} />
-                      </a>
-                    )}
-                    <button
-                      onClick={() => handleOpenEditClient(client)}
-                      className="w-9 h-9 rounded-control bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] flex items-center justify-center transition-colors min-h-10 min-w-10"
-                      title="Edit Client"
-                    >
-                      <Edit3 size={13} />
+      {/* 4. Clients Data Table */}
+      <section className="overflow-hidden rounded-card border border-line bg-panel" aria-label={language === 'id' ? 'Daftar klien' : 'Client list'}>
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[980px] border-collapse text-left text-xs">
+            <thead className="sticky top-0 z-10 bg-panel">
+              <tr className="border-b border-line text-muted">
+                {[
+                  ['name', t('admin.client.colName')],
+                  ['company', t('admin.client.colCompany')],
+                  ['updatedAt', language === 'id' ? 'Terakhir diperbarui' : 'Last updated'],
+                  ['projectsCount', language === 'id' ? 'Proyek' : 'Projects']
+                ].map(([key, label]) => (
+                  <th key={key} className="px-4 py-3 font-medium">
+                    <button type="button" onClick={() => { const next = key as typeof sortKey; setSortDirection(sortKey === next && sortDirection === 'asc' ? 'desc' : 'asc'); setSortKey(next); }} className="inline-flex min-h-8 items-center gap-1.5 rounded-control text-left text-[11px] font-medium text-muted hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
+                      {label}<ArrowUpDown size={12} aria-hidden="true" />
                     </button>
-                    <button
-                      onClick={() => handleDeleteClient(client.id, client.name)}
-                      className="w-9 h-9 rounded-control bg-[var(--panel)] hover:bg-[var(--danger)]/10 text-[var(--muted)] hover:text-[var(--danger)] border border-[var(--line)] hover:border-[var(--danger)]/30 flex items-center justify-center transition-colors min-h-10 min-w-10"
-                      title="Delete Client"
-                    >
-                      <Trash2 size={13} />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            );
-          })
-        )}
-      </div>
-
-      {/* Desktop View: Full Data Table with Edge Shadows */}
-      <ScrollShadowContainer
-        externalRef={tableScrollRef}
-        shadowBg="surface"
-        shadowSize="md"
-        className="hidden md:block w-full rounded-card overflow-hidden"
-        scrollClassName="w-full bg-[var(--panel)] border border-[var(--line)] rounded-card overflow-x-auto select-none cursor-grab active:cursor-grabbing custom-scrollbar max-h-[750px] overflow-y-auto"
-      >
-        <table className="w-full text-left text-xs font-sans min-w-[760px]">
-          <thead className="sticky top-0 z-10 bg-[var(--panel)]">
-            <tr className="border-b border-[var(--line)] text-[var(--muted)] bg-[var(--panel)] font-sans text-[11px]">
-              <th className="py-3 px-4 font-semibold">{t('admin.client.colName')}</th>
-              <th className="py-3 px-4 font-semibold">{t('admin.client.colCompany')}</th>
-              <th className="py-3 px-4 font-semibold">{t('admin.client.colContact')}</th>
-              <th className="py-3 px-4 font-semibold">{t('admin.client.colLocation')}</th>
-              <th className="py-3 px-4 font-semibold">SLA Ad-Spend / Cap</th>
-              <th className="py-3 px-4 font-semibold">{t('admin.client.colStatus')}</th>
-              <th className="py-3 px-4 font-semibold text-right">{t('admin.client.colActions')}</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-[var(--line)]">
-            {filteredClients.length === 0 ? (
-              <tr>
-                <td colSpan={7} className="py-12 text-center text-[var(--muted)]">
-                  {language === 'id' ? 'Tidak ada data klien yang sesuai.' : 'No clients found.'}
-                </td>
+                  </th>
+                ))}
+                <th className="px-4 py-3 font-medium">{t('admin.client.colContact')}</th>
+                <th className="px-4 py-3 font-medium">{t('admin.client.colStatus')}</th>
+                <th className="px-4 py-3 text-right font-medium">{t('admin.client.colActions')}</th>
               </tr>
-            ) : (
-              filteredClients.map((client) => {
-                const isOverBudget = client.slaDailyAdSpendBudget && client.currentDailyAdSpend && client.currentDailyAdSpend > client.slaDailyAdSpendBudget;
-                return (
-                  <tr key={client.id} className={`hover:bg-[var(--panel)] transition-colors group ${isOverBudget ? 'bg-[var(--danger)]/10' : ''}`}>
-                    <td className="py-3 px-4">
-                      <div className="font-semibold text-[var(--text)] text-sm">{client.name}</div>
-                      <div className="text-[10px] text-[var(--accent)] font-semibold">{client.contactPersonRole}</div>
-                    </td>
-                    <td className="py-3 px-4">
-                      <div className="font-semibold text-[var(--text)] flex items-center gap-1.5">
-                        <Building2 size={12} className="text-[var(--muted)]" />
-                        <span>{client.company}</span>
-                      </div>
-                      <div className="text-[10px] text-[var(--muted)]">{client.industry}</div>
-                    </td>
-                    <td className="py-3 px-4 text-[var(--muted)] space-y-0.5 text-[11px]">
-                      <div className="flex items-center gap-1 text-[var(--text)]">
-                        <Mail size={11} className="text-[var(--muted)]" />
-                        <span>{client.email}</span>
-                      </div>
-                      {client.phone && (
-                        <div className="flex items-center gap-1">
-                          <Phone size={11} className="text-[var(--muted)]" />
-                          <span>{client.phone}</span>
-                        </div>
-                      )}
-                    </td>
-                    <td className="py-3 px-4 text-[var(--muted)]">
-                      <div className="flex items-center gap-1">
-                        <MapPin size={11} className="text-[var(--muted)]" />
-                        <span>{client.location}</span>
-                      </div>
-                    </td>
-                    <td className="py-3 px-4 font-sans text-xs">
-                      {client.slaDailyAdSpendBudget ? (
-                        <div>
-                          <div className={`font-semibold flex items-center gap-1 ${isOverBudget ? 'text-[var(--danger)]' : 'text-[var(--success)]'}`}>
-                            {isOverBudget && <AlertTriangle size={12} className="text-[var(--danger)] shrink-0" />}
-                            <span>{formatAmount(client.currentDailyAdSpend || 0, currency)}</span>
-                          </div>
-                          <div className="text-[10px] text-[var(--muted)]">
-                            Cap: {formatAmount(client.slaDailyAdSpendBudget, currency)}/day
-                          </div>
-                        </div>
-                      ) : (
-                        <span className="text-[var(--muted)] text-[11px]">No SLA Cap</span>
-                      )}
-                    </td>
-                    <td className="py-3 px-4">
-                      <span className={`px-2 py-0.5 rounded text-[10px] font-sans font-semibold normal-case ${
-                        client.status === 'active'
-                          ? 'bg-[var(--success)]/10 text-[var(--success)] border border-[var(--success)]/30'
-                          : client.status === 'completed'
-                          ? 'bg-[var(--info)]/10 text-[var(--info)] border border-[var(--info)]/30'
-                          : 'bg-[var(--panel)]/50 text-[var(--muted)] border border-[var(--line)]'
-                      }`}>
-                        {client.status}
-                      </span>
-                    </td>
-                    <td className="py-3 px-4 text-right">
-                      <div className="flex items-center justify-end gap-1.5">
-                        <button
-                          onClick={() => handleOpenEditClient(client)}
-                          className="w-9 h-9 rounded-control bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] border border-[var(--line)] flex items-center justify-center transition-colors min-h-10 min-w-10"
-                          title="Edit Client"
-                        >
-                          <Edit3 size={13} />
-                        </button>
-                        <button
-                          onClick={() => handleDeleteClient(client.id, client.name)}
-                          className="w-9 h-9 rounded-control bg-[var(--panel)] hover:bg-[var(--danger)]/10 text-[var(--muted)] hover:text-[var(--danger)] border border-[var(--line)] hover:border-[var(--danger)]/30 flex items-center justify-center transition-colors min-h-10 min-w-10"
-                          title="Delete Client"
-                        >
-                          <Trash2 size={13} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })
-            )}
-          </tbody>
-        </table>
-      </ScrollShadowContainer>
+            </thead>
+            <tbody>
+              {paginatedClients.length === 0 ? (
+                <tr><td colSpan={7} className="px-4 py-12 text-center text-muted">{language === 'id' ? 'Tidak ada data klien yang sesuai.' : 'No clients found.'}</td></tr>
+              ) : paginatedClients.map((client) => {
+                const isOverBudget = Boolean(client.slaDailyAdSpendBudget && client.currentDailyAdSpend && client.currentDailyAdSpend > client.slaDailyAdSpendBudget);
+                return <tr key={client.id} className="border-b border-line last:border-b-0 hover:bg-bg">
+                  <td className="px-4 py-3 align-top"><div className="font-medium text-fg">{client.name}</div><div className="mt-0.5 text-[11px] text-muted">{client.contactPersonRole || client.id}</div></td>
+                  <td className="px-4 py-3 align-top"><div className="font-medium text-fg">{client.company}</div><div className="mt-0.5 text-[11px] text-muted">{client.industry}</div></td>
+                  <td className="px-4 py-3 align-top text-muted">{new Date(client.updatedAt).toLocaleDateString(language === 'id' ? 'id-ID' : 'en-US')}</td>
+                  <td className="px-4 py-3 align-top tabular-nums text-fg">{client.projectsCount}</td>
+                  <td className="px-4 py-3 align-top"><div className="flex max-w-[260px] flex-col gap-1"><a href={client.email ? 'mailto:' + client.email : undefined} className="truncate text-fg hover:text-accent-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">{client.email || '—'}</a>{client.phone && <a href={'tel:' + client.phone} className="text-muted hover:text-fg">{client.phone}</a>}</div></td>
+                  <td className="px-4 py-3 align-top"><span className={'inline-flex items-center gap-1.5 rounded-badge border px-2 py-1 text-[11px] font-medium ' + (client.status === 'active' ? 'border-success/20 bg-success/10 text-success' : client.status === 'completed' ? 'border-info/20 bg-info/10 text-info' : client.status === 'lead' ? 'border-warning/20 bg-warning/10 text-warning' : 'border-line bg-bg text-muted')}>{client.status === 'active' ? 'Active' : client.status === 'completed' ? 'Completed' : client.status === 'lead' ? 'Lead' : 'Inactive'}{isOverBudget && <AlertTriangle size={12} aria-label="SLA exceeded" />}</span></td>
+                  <td className="px-4 py-3 text-right align-top"><div className="flex justify-end gap-1.5">{client.phone && <a href={'https://wa.me/' + client.phone.replace(/\\D/g, '')} target="_blank" rel="noreferrer" aria-label={'WhatsApp ' + client.name} className="inline-flex min-h-10 min-w-10 items-center justify-center rounded-control border border-line text-muted hover:bg-bg hover:text-success focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"><Phone size={14} /></a>}<button type="button" onClick={() => handleOpenEditClient(client)} aria-label={'Edit ' + client.name} className="inline-flex min-h-10 min-w-10 items-center justify-center rounded-control border border-line text-muted hover:bg-bg hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"><Edit3 size={14} /></button><button type="button" onClick={() => handleDeleteClient(client.id, client.name)} aria-label={'Delete ' + client.name} className="inline-flex min-h-10 min-w-10 items-center justify-center rounded-control border border-line text-muted hover:bg-danger/10 hover:text-danger focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"><Trash2 size={14} /></button></div></td>
+                </tr>;
+              })}
+            </tbody>
+          </table>
+        </div>
+        {filteredClients.length > 0 && <div className="flex flex-col gap-3 border-t border-line px-4 py-3 sm:flex-row sm:items-center sm:justify-between"><p className="text-xs text-muted">{(page - 1) * pageSize + 1}–{Math.min(page * pageSize, filteredClients.length)} of {filteredClients.length}</p><div className="flex items-center gap-1.5"><button type="button" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} aria-label="Previous page" className="inline-flex min-h-10 min-w-10 items-center justify-center rounded-control border border-line text-muted hover:bg-bg hover:text-fg disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"><ChevronLeft size={15} /></button><span className="min-w-16 text-center text-xs tabular-nums text-fg">{page} / {pageCount}</span><button type="button" onClick={() => setPage(p => Math.min(pageCount, p + 1))} disabled={page === pageCount} aria-label="Next page" className="inline-flex min-h-10 min-w-10 items-center justify-center rounded-control border border-line text-muted hover:bg-bg hover:text-fg disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"><ChevronRight size={15} /></button></div></div>}
+      </section>
 
       {/* 5. Create / Edit Client Modal */}
       {isClientModalOpen && (
