@@ -202,6 +202,8 @@ export const GlobalExecutiveDashboard: React.FC = () => {
         const mfaBlocked = responseCode === 'MFA_REQUIRED' || /MFA is required/i.test(response.error || '');
         if (mfaBlocked) {
           setMfaRequired(true);
+          setData(null);
+          setLastRefreshed(null);
           setError(null);
         } else {
           setError(response.error || 'Dashboard data is temporarily unavailable.');
