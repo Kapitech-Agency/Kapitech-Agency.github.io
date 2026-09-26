@@ -788,7 +788,7 @@ export const AdminClients: React.FC = () => {
           </>
         }
       >
-        <form id="client-form" onSubmit={handleSaveClient} className="space-y-4">
+        <form id="client-form" onSubmit={handleSaveClient} className="space-y-5">
           {formError && (
             <div role="alert" className="flex items-start gap-2 rounded-control border border-danger/30 bg-danger/10 p-3 text-xs leading-5 text-danger">
               <ShieldAlert size={14} className="mt-0.5 shrink-0" aria-hidden="true" />
@@ -796,12 +796,12 @@ export const AdminClients: React.FC = () => {
             </div>
           )}
 
-          <section aria-labelledby="client-contact-section" className="grid gap-3 sm:grid-cols-[160px_minmax(0,1fr)]">
+          <section aria-labelledby="client-contact-section" className="grid gap-4 sm:grid-cols-[176px_minmax(0,1fr)] sm:gap-5">
             <div>
               <h3 id="client-contact-section" className="text-sm font-semibold text-fg">Contact information</h3>
               <p className="mt-1 text-xs leading-4 text-muted">Primary contact and company details.</p>
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <div><label htmlFor="client-name" className="mb-1.5 block">Contact person *</label><input id="client-name" type="text" required value={name} onChange={(event) => setName(event.target.value)} placeholder="Contact person" /></div>
               <div><label htmlFor="client-company" className="mb-1.5 block">Company *</label><input id="client-company" type="text" required value={company} onChange={(event) => setCompany(event.target.value)} placeholder="Company name" /></div>
               <div><label htmlFor="client-role" className="mb-1.5 block">Contact role</label><input id="client-role" type="text" value={role} onChange={(event) => setRole(event.target.value)} placeholder="Role or title" /></div>
@@ -813,7 +813,7 @@ export const AdminClients: React.FC = () => {
             </div>
           </section>
 
-          <section aria-labelledby="client-account-section" className="grid gap-3 border-t border-line pt-4 sm:grid-cols-[160px_minmax(0,1fr)]">
+          <section aria-labelledby="client-account-section" className="grid gap-4 border-t border-line pt-5 sm:grid-cols-[176px_minmax(0,1fr)] sm:gap-5">
             <div>
               <h3 id="client-account-section" className="text-sm font-semibold text-fg">Account settings</h3>
               <p className="mt-1 text-xs leading-4 text-muted">Keep the account state aligned with the relationship.</p>
@@ -829,7 +829,7 @@ export const AdminClients: React.FC = () => {
               <h3 id="client-relationship-section" className="text-sm font-semibold text-fg">Client relationship</h3>
               <p className="mt-1 text-xs leading-4 text-muted">Operational values tracked on the client record.</p>
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <div><label htmlFor="client-projects" className="mb-1.5 block">Projects count</label><input id="client-projects" type="number" min="0" inputMode="numeric" value={projectsCount} onChange={(event) => setProjectsCount(Number(event.target.value))} /></div>
               <div><label htmlFor="client-spend" className="mb-1.5 block">Cumulative billed value</label><input id="client-spend" type="number" min="0" inputMode="decimal" value={totalSpend} onChange={(event) => setTotalSpend(Number(event.target.value))} /></div>
             </div>
