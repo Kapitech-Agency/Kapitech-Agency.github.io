@@ -1850,10 +1850,16 @@
 .ams-shell .ams-page-title > span { min-width:0; overflow-wrap:anywhere; }
 .ams-shell button, .ams-shell a[role="button"] { touch-action: manipulation; }
 .ams-shell .ams-modal-root { overscroll-behavior: contain; }
-.ams-shell .ams-modal-root > [role="dialog"] { animation: ams-dialog-in 160ms ease-out; }
+.ams-shell .ams-modal-root > [role="dialog"],
+.ams-shell .ams-dialog-surface { animation: ams-dialog-in 160ms ease-out; }
+.ams-shell .ams-drawer-surface { animation: ams-drawer-in 180ms ease-out; }
 @keyframes ams-dialog-in {
   from { opacity:0; transform:translateY(4px) scale(.99); }
   to { opacity:1; transform:translateY(0) scale(1); }
+}
+@keyframes ams-drawer-in {
+  from { opacity:0.98; transform:translateX(12px); }
+  to { opacity:1; transform:translateX(0); }
 }
 .ams-shell table { font-variant-numeric: tabular-nums; }
 .ams-shell [role="status"] { min-width:0; }
@@ -1870,7 +1876,9 @@
   .ams-shell .ams-page-header button { max-width:100%; }
 }
 @media (prefers-reduced-motion:reduce) {
-  .ams-shell .ams-modal-root > [role="dialog"] { animation:none; }
+  .ams-shell .ams-modal-root > [role="dialog"],
+  .ams-shell .ams-dialog-surface,
+  .ams-shell .ams-drawer-surface { animation:none; }
 }
 
 /* AMS legacy palette bridge: keep remaining invoice-preview markup on canonical tokens. */
