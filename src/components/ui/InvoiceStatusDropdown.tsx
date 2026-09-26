@@ -41,6 +41,11 @@ const statusConfigs: Record<InvoiceStatus, StatusConfig> = {
     label: 'Draft',
     badgeClass: 'bg-panel text-muted border-line',
     icon: FileText
+  },
+  cancelled: {
+    label: 'Cancelled',
+    badgeClass: 'bg-danger/10 text-danger border-danger/20',
+    icon: CircleAlert
   }
 };
 
