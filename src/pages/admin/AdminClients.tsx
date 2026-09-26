@@ -304,7 +304,7 @@ export const AdminClients: React.FC = () => {
         <div className="w-full h-full bg-panel border border-line p-5 rounded-card flex flex-col justify-between">
           <div className="flex items-center justify-between text-muted mb-2">
             <span className="text-xs font-sans normal-case font-semibold">{t('admin.client.lifetimeSpend')}</span>
-            <div className="w-8 h-8 rounded-control bg-bg-bg border border-line flex items-center justify-center text-muted">
+            <div className="w-8 h-8 rounded-control bg-bg border border-line flex items-center justify-center text-muted">
               <DollarSign size={16} />
             </div>
           </div>
