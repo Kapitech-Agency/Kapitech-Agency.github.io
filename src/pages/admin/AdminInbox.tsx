@@ -650,7 +650,7 @@ export const AdminInbox: React.FC = () => {
                   }`}
                 >
                   <span>{tab.label}</span>
-                  <span className={`px-1.5 py-0.5 rounded-full text-[10px] ${
+                  <span className={`px-1.5 py-0.5 rounded-chip text-[10px] ${
                     filterType === tab.key ? 'bg-panel-hover text-fg' : 'bg-panel text-muted'
                   }`}>
                     {count}
