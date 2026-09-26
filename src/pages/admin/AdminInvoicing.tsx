@@ -141,9 +141,13 @@ export const AdminInvoicing: React.FC = () => {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [sort, setSort] = useState<SortKey>('updated');
+  const [expenseSearch, setExpenseSearch] = useState('');
   const [expenseTypeFilter, setExpenseTypeFilter] = useState('all');
+  const [expenseSort, setExpenseSort] = useState<'date_desc' | 'date_asc' | 'amount_high' | 'amount_low'>('date_desc');
   const [invoicePage, setInvoicePage] = useState(1);
+  const [expensePage, setExpensePage] = useState(1);
   const invoicePageSize = 10;
+  const expensePageSize = 10;
 
   const [invoiceModalOpen, setInvoiceModalOpen] = useState(false);
   const [editingInvoice, setEditingInvoice] = useState<AgencyInvoice | null>(null);
@@ -297,6 +301,10 @@ export const AdminInvoicing: React.FC = () => {
     setInvoicePage(1);
   }, [search, statusFilter, sort, currency]);
 
+  useEffect(() => {
+    setExpensePage(1);
+  }, [expenseSearch, expenseTypeFilter, expenseSort, currency]);
+
   const paginatedInvoices = useMemo(() => {
     const start = (invoicePage - 1) * invoicePageSize;
     return filteredInvoices.slice(start, start + invoicePageSize);
@@ -324,9 +332,27 @@ export const AdminInvoicing: React.FC = () => {
   })), [currencyInvoices]);
 
   const filteredExpenses = useMemo(() => {
-    if (expenseTypeFilter === 'all') return currencyExpenses;
-    return currencyExpenses.filter((expense) => (expense.type || 'OpEx') === expenseTypeFilter);
-  }, [currencyExpenses, expenseTypeFilter]);
+    const query = expenseSearch.trim().toLowerCase();
+    const result = currencyExpenses.filter((expense) => {
+      const searchable = [expense.description, expense.category, expense.type || 'OpEx', expense.recordedBy, expense.date].join(' ').toLowerCase();
+      const matchesSearch = !query || searchable.includes(query);
+      const matchesType = expenseTypeFilter === 'all' || (expense.type || 'OpEx') === expenseTypeFilter;
+      return matchesSearch && matchesType;
+    });
+
+    return [...result].sort((a, b) => {
+      if (expenseSort === 'amount_high') return Number(b.amount) - Number(a.amount);
+      if (expenseSort === 'amount_low') return Number(a.amount) - Number(b.amount);
+      if (expenseSort === 'date_asc') return String(a.date || '').localeCompare(String(b.date || ''));
+      return String(b.date || '').localeCompare(String(a.date || ''));
+    });
+  }, [currencyExpenses, expenseSearch, expenseTypeFilter, expenseSort]);
+
+  const paginatedExpenses = useMemo(() => {
+    const start = (expensePage - 1) * expensePageSize;
+    return filteredExpenses.slice(start, start + expensePageSize);
+  }, [filteredExpenses, expensePage]);
+  const expensePageCount = Math.max(1, Math.ceil(filteredExpenses.length / expensePageSize));
 
   const invoiceTotals = useMemo(
     () => computeInvoiceTotals(invoiceItems, taxPercent, discountPercent),
@@ -691,18 +717,18 @@ export const AdminInvoicing: React.FC = () => {
               )}
             </div>
 
-            <div className="grid grid-cols-2 divide-x divide-y divide-line py-0 sm:grid-cols-3 min-[1100px]:grid-cols-6 min-[1100px]:divide-y-0">
+            <div className="grid grid-cols-2 sm:grid-cols-3 min-[1100px]:grid-cols-6">
               {[
                 { label: language === 'id' ? 'Pendapatan diterima' : 'Revenue collected', value: serverMetrics ? formatAmount(serverMetrics.totalRevenueCollected, currency) : '—', context: serverMetrics ? serverMetrics.paidCount + ' paid invoices' : '—', icon: DollarSign, tone: 'text-accent-text' },
                 { label: language === 'id' ? 'Piutang' : 'Outstanding', value: serverMetrics ? formatAmount(serverMetrics.totalOutstanding, currency) : '—', context: serverMetrics ? serverMetrics.overdueCount + ' overdue' : '—', icon: WalletCards, tone: 'text-warning' },
-                { label: language === 'id' ? 'Pengeluaran' : 'Expenses', value: serverMetrics ? formatAmount(serverMetrics.totalExpense, currency) : '—', context: currencyExpenses.length + ' records', icon: TrendingDown, tone: 'text-danger' },
+                { label: language === 'id' ? 'Pengeluaran' : 'Expenses', value: serverMetrics ? formatAmount(serverMetrics.totalExpense, currency) : '—', context: currencyExpenses.length + ' records', icon: TrendingDown, tone: 'text-series-3' },
                 { label: language === 'id' ? 'Laba operasi' : 'Operating profit', value: serverMetrics ? formatAmount(serverMetrics.netProfit, currency) : '—', context: serverMetrics ? serverMetrics.profitMargin + '% margin' : '—', icon: TrendingUp, tone: 'text-success' },
                 { label: 'OpEx', value: formatAmount(derivedMetrics.opExExpenses, currency), context: 'Operating expense', icon: CreditCard, tone: 'text-info' },
                 { label: 'CapEx', value: formatAmount(derivedMetrics.capExExpenses, currency), context: 'Capital expense', icon: ArrowUpRight, tone: 'text-muted' }
               ].map((metric) => {
                 const Icon = metric.icon;
                 return (
-                <div key={metric.label} className="min-w-0 px-4 py-5 first:pl-0 sm:px-4 min-[1100px]:py-5">
+                <div key={metric.label} className="min-w-0 border-l border-line px-4 py-5 first:border-l-0 min-[1100px]:py-5">
                   <div className="flex items-start justify-between gap-3">
                     <span className="text-xs leading-4 text-muted">{metric.label}</span>
                     <Icon size={16} className={'shrink-0 ' + metric.tone} strokeWidth={1.8} />
@@ -724,17 +750,18 @@ export const AdminInvoicing: React.FC = () => {
                 </div>
                 <span className="rounded-badge bg-accent/10 px-2 py-1 text-[11px] font-semibold text-accent-text">{serverMetrics?.profitMargin || '0'}% margin</span>
               </div>
-              <div className="mt-5 overflow-x-auto rounded-control border border-line">
-                <table className="w-full min-w-[640px] table-fixed text-left">
-                  <tbody>
-                    <tr>
-                      <td className="w-1/4 border-r border-line px-4 py-4 align-top sm:px-5"><p className="text-xs text-muted">Revenue</p><p className="mt-2 truncate text-sm font-medium tabular-nums text-accent-text">{serverMetrics ? formatAmount(serverMetrics.totalRevenueCollected, currency) : '—'}</p></td>
-                      <td className="w-1/4 border-r border-line px-4 py-4 align-top sm:px-5"><p className="text-xs text-muted">Expenses</p><p className="mt-2 truncate text-sm font-medium tabular-nums text-danger">{serverMetrics ? formatAmount(serverMetrics.totalExpense, currency) : '—'}</p></td>
-                      <td className="w-1/4 border-r border-line px-4 py-4 align-top sm:px-5"><p className="text-xs text-muted">Operating profit</p><p className="mt-2 truncate text-sm font-medium tabular-nums text-success">{serverMetrics ? formatAmount(serverMetrics.netProfit, currency) : '—'}</p></td>
-                      <td className="w-1/4 px-4 py-4 align-top sm:px-5"><p className="text-xs text-muted">Outstanding</p><p className="mt-2 truncate text-sm font-medium tabular-nums text-warning">{serverMetrics ? formatAmount(serverMetrics.totalOutstanding, currency) : '—'}</p></td>
-                    </tr>
-                  </tbody>
-                </table>
+              <div className="mt-5 grid grid-cols-2 border-y border-line sm:grid-cols-4">
+                {[
+                  { label: 'Revenue', value: serverMetrics ? formatAmount(serverMetrics.totalRevenueCollected, currency) : '—', tone: 'text-accent-text' },
+                  { label: 'Expenses', value: serverMetrics ? formatAmount(serverMetrics.totalExpense, currency) : '—', tone: 'text-series-3' },
+                  { label: 'Operating profit', value: serverMetrics ? formatAmount(serverMetrics.netProfit, currency) : '—', tone: 'text-success' },
+                  { label: 'Outstanding', value: serverMetrics ? formatAmount(serverMetrics.totalOutstanding, currency) : '—', tone: 'text-warning' }
+                ].map((metric) => (
+                  <div key={metric.label} className="min-w-0 border-l border-line px-4 py-4 first:border-l-0 sm:px-5">
+                    <p className="text-xs text-muted">{metric.label}</p>
+                    <p className={'mt-2 truncate text-sm font-medium tabular-nums ' + metric.tone}>{metric.value}</p>
+                  </div>
+                ))}
               </div>
               <div className="mt-4 grid grid-cols-2 divide-x divide-y divide-line border-t border-line pt-0 sm:grid-cols-3 sm:divide-y-0">
                 <div className="min-w-0 px-3 py-4 sm:pl-4"><p className="text-xs text-muted">Collection rate</p><p className="mt-1 text-sm font-medium tabular-nums text-fg">{currencyInvoices.length ? derivedMetrics.collectionRate + '%' : '—'}</p></div>
@@ -809,7 +836,7 @@ export const AdminInvoicing: React.FC = () => {
                 </div>
 
                 {tab === 'invoices' ? (
-                  <div className="grid w-full grid-cols-1 gap-2 sm:grid-cols-[minmax(360px,1fr)_168px_190px] lg:w-auto lg:min-w-[760px]">
+                  <div className="grid w-full grid-cols-1 gap-2 sm:grid-cols-[minmax(320px,1fr)_168px_190px] lg:w-auto lg:min-w-[680px]">
                     <label className="relative min-w-0">
                       <span className="sr-only">Search invoices</span>
                       <Search size={14} className="pointer-events-none absolute left-3 top-1/2 z-10 -translate-y-1/2 text-muted" />
@@ -819,8 +846,19 @@ export const AdminInvoicing: React.FC = () => {
                     <CustomSelect value={sort} onChange={(value) => setSort(value as SortKey)} options={sortOptions} className="w-full min-w-0" triggerClassName="h-10 min-h-10 w-full whitespace-nowrap sm:h-9 sm:min-h-9" aria-label="Invoice sort" />
                   </div>
                 ) : (
-                  <div className="flex w-full justify-end lg:w-auto lg:min-w-[190px]">
-                    <CustomSelect value={expenseTypeFilter} onChange={setExpenseTypeFilter} options={expenseTypeOptions} className="w-full sm:w-[190px]" triggerClassName="h-10 min-h-10 w-full sm:h-9 sm:min-h-9" aria-label="Expense type filter" />
+                  <div className="grid w-full grid-cols-1 gap-2 sm:grid-cols-[minmax(320px,1fr)_168px_190px] lg:w-auto lg:min-w-[680px]">
+                    <label className="relative min-w-0">
+                      <span className="sr-only">Search expenses</span>
+                      <Search size={14} className="pointer-events-none absolute left-3 top-1/2 z-10 -translate-y-1/2 text-muted" />
+                      <input value={expenseSearch} onChange={(event) => setExpenseSearch(event.target.value)} placeholder={language === 'id' ? 'Cari pengeluaran, kategori, pencatat...' : 'Search expense, category, recorder...'} className={fieldClass + ' pl-9 pr-3'} />
+                    </label>
+                    <CustomSelect value={expenseTypeFilter} onChange={setExpenseTypeFilter} options={expenseTypeOptions} className="w-full min-w-0" triggerClassName="h-10 min-h-10 w-full sm:h-9 sm:min-h-9" aria-label="Expense type filter" />
+                    <CustomSelect value={expenseSort} onChange={(value) => setExpenseSort(value as typeof expenseSort)} options={[
+                      { value: 'date_desc', label: language === 'id' ? 'Tanggal terbaru' : 'Newest date' },
+                      { value: 'date_asc', label: language === 'id' ? 'Tanggal terlama' : 'Oldest date' },
+                      { value: 'amount_high', label: language === 'id' ? 'Nominal tertinggi' : 'Highest amount' },
+                      { value: 'amount_low', label: language === 'id' ? 'Nominal terendah' : 'Lowest amount' }
+                    ]} className="w-full min-w-0" triggerClassName="h-10 min-h-10 w-full whitespace-nowrap sm:h-9 sm:min-h-9" aria-label="Expense sort" />
                   </div>
                 )}
               </div>
@@ -940,7 +978,7 @@ export const AdminInvoicing: React.FC = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {filteredExpenses.map((expense) => (
+                        {paginatedExpenses.map((expense) => (
                           <tr key={expense.id} className="border-t border-line transition-colors hover:bg-bg">
                             <td className="px-4 py-3 tabular-nums text-muted">{expense.date}</td>
                             <td className="px-4 py-3"><div className="font-medium text-fg">{expense.type || 'OpEx'}</div><div className="mt-1 text-[11px] text-muted">{expense.category}</div></td>
@@ -955,8 +993,16 @@ export const AdminInvoicing: React.FC = () => {
                       </tbody>
                     </table>
                   </div>
-
-                  
+                  {expensePageCount > 1 && (
+                    <div className="mt-3 flex flex-col gap-2 border-t border-line px-1 pt-3 sm:flex-row sm:items-center sm:justify-between">
+                      <p className="text-[11px] tabular-nums text-muted">Showing {((expensePage - 1) * expensePageSize) + 1}-{Math.min(expensePage * expensePageSize, filteredExpenses.length)} of {filteredExpenses.length}</p>
+                      <div className="flex items-center gap-2">
+                        <button type="button" onClick={() => setExpensePage((page) => Math.max(1, page - 1))} disabled={expensePage === 1} className={actionClass}>Previous</button>
+                        <span className="min-w-16 text-center text-[11px] tabular-nums text-muted">{expensePage} / {expensePageCount}</span>
+                        <button type="button" onClick={() => setExpensePage((page) => Math.min(expensePageCount, page + 1))} disabled={expensePage === expensePageCount} className={actionClass}>Next</button>
+                      </div>
+                    </div>
+                  )}
                     </>
                   )}
                 </>
