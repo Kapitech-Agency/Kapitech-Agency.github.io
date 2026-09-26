@@ -8,11 +8,11 @@ import {
   Calendar, 
   FileText, 
   Briefcase, 
-  Sparkles, 
-  X 
+  Sparkles 
 } from 'lucide-react';
 import { ContactSubmission } from '../../../lib/submissions';
 import { useLanguage } from '../../../lib/LanguageContext';
+import { Modal } from '../../ui/Modal';
 
 interface CannedResponsesModalProps {
   isOpen: boolean;
@@ -208,41 +208,21 @@ https://kapitech.id`
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      {/* Backdrop */}
-      <div 
-        className="fixed inset-0 bg-black/80  transition-opacity" 
-        onClick={onClose}
-      />
-
-      {/* Modal Dialog */}
-      <div className="relative w-full max-w-2xl max-h-[calc(100dvh-24px)] bg-[var(--panel)] border border-line rounded-card -none flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-        
-        {/* Header */}
-        <div className="p-5 border-b border-line flex items-center justify-between bg-[var(--panel)]">
-          <div className="flex items-center gap-2.5">
-            <div className="min-h-10 min-w-10 rounded-control bg-[var(--accent)]/10 border border-[var(--accent)]/30 flex items-center justify-center text-[var(--accent)]">
-              <MessageSquare size={16} />
-            </div>
-            <div>
-              <h3 className="text-base font-semibold text-[var(--text)] font-sans">
-                {language === 'id' ? 'Template Respon Cepat Agensi' : 'Executive Canned Responses'}
-              </h3>
-              <p className="text-xs text-[var(--muted)] font-sans">
-                {language === 'id' ? `Disesuaikan untuk: ${clientName}` : `Personalized for: ${clientName}`}
-              </p>
-            </div>
-          </div>
-
-          <button
-            onClick={onClose}
-            className="min-h-10 min-w-10 rounded-control bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] transition-colors flex items-center justify-center border border-line"
-          >
-            <X size={16} />
+    <Modal
+      open={isOpen}
+      onClose={onClose}
+      size="xl"
+      title={language === 'id' ? 'Template Respon Cepat Agensi' : 'Executive Canned Responses'}
+      description={language === 'id' ? `Disesuaikan untuk: ${clientName}` : `Personalized for: ${clientName}`}
+      footer={
+        <div className="flex w-full items-center justify-between gap-3 text-xs text-muted">
+          <span>{language === 'id' ? 'Format teks otomatis menyertakan identitas brief.' : 'Templates auto-merge client brief variables.'}</span>
+          <button type="button" onClick={onClose} className="min-h-10 rounded-control border border-line bg-panel px-3 text-xs font-medium text-fg transition-colors hover:bg-bg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
+            {language === 'id' ? 'Tutup' : 'Close'}
           </button>
         </div>
-
-        {/* Templates List */}
+      }
+    >
         <div className="p-5 space-y-4 overflow-y-auto custom-scrollbar flex-1">
           {templates.map((tpl) => {
             const Icon = tpl.icon;
@@ -283,7 +263,7 @@ https://kapitech.id`
                     <a
                       href={`mailto:${submission.email}?subject=${encodeURIComponent(tpl.subject)}&body=${encodeURIComponent(tpl.body)}`}
                       onClick={onClose}
-                      className="min-h-10 px-2.5 rounded-control bg-[var(--accent)] hover:brightness-110 text-white text-xs font-sans font-semibold transition-colors flex items-center gap-1.5 -none"
+                      className="min-h-10 px-2.5 rounded-control bg-accent hover:brightness-110 text-white text-xs font-semibold transition-colors flex items-center gap-1.5"
                       title="Send via default Email Client"
                     >
                       <Send size={12} />
@@ -315,19 +295,6 @@ https://kapitech.id`
             );
           })}
         </div>
-
-        {/* Footer */}
-        <div className="p-4 border-t border-line bg-[var(--panel)] flex items-center justify-between text-xs font-sans text-[var(--muted)]">
-          <span>{language === 'id' ? 'Format teks otomatis menyertakan identitas brief.' : 'Templates auto-merge client brief variables.'}</span>
-          <button
-            onClick={onClose}
-            className="min-h-10 px-3 rounded-control bg-[var(--panel)] text-[var(--text)] hover:bg-[var(--panel)] border border-line transition-colors"
-          >
-            {language === 'id' ? 'Tutup' : 'Close'}
-          </button>
-        </div>
-
-      </div>
-    </div>
+    </Modal>
   );
 };
