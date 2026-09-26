@@ -328,7 +328,7 @@ export const AdminLayout: React.FC = () => {
       {/* DESKTOP SIDEBAR */}
       <motion.aside
         initial={false}
-        animate={{ width: sidebarCollapsed ? 68 : 232 }}
+        animate={{ width: sidebarCollapsed ? 64 : 220 }}
         transition={{ duration: 0.18, ease: 'easeOut' }}
         className={`hidden min-[900px]:flex flex-col bg-panel border-r border-line shrink-0 h-full z-30 overflow-hidden ${sidebarCollapsed ? 'ams-sidebar-collapsed' : 'ams-sidebar-expanded'}`}
       >
