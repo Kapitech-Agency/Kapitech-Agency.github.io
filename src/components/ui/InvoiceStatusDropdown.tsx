@@ -54,6 +54,7 @@ export const InvoiceStatusDropdown: React.FC<InvoiceStatusDropdownProps> = ({
   size = 'sm'
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(0);
   const triggerRef = useRef<HTMLButtonElement>(null);
 
   const current = statusConfigs[status] || statusConfigs.draft;
