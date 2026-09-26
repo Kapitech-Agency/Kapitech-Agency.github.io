@@ -263,7 +263,7 @@ export const AdminClients: React.FC = () => {
       )}
 
       {statusMessage && (
-        <div className="p-3 rounded-card bg-success/10 border border-success/30 text-fg-success text-xs font-sans flex items-center gap-2">
+        <div className="p-3 rounded-card bg-success/10 border border-success/30 text-success text-xs font-sans flex items-center gap-2">
           <Check size={14} />
           <span>{statusMessage}</span>
         </div>
@@ -289,14 +289,14 @@ export const AdminClients: React.FC = () => {
         <div className="w-full h-full bg-bg-panel border border-border-line p-5 rounded-card flex flex-col justify-between">
           <div className="flex items-center justify-between text-muted mb-2">
             <span className="text-xs font-sans normal-case font-semibold">{t('admin.client.activeAccounts')}</span>
-            <div className="w-8 h-8 rounded-control bg-success/10 border border-success/30 flex items-center justify-center text-fg-success">
+            <div className="w-8 h-8 rounded-control bg-success/10 border border-success/30 flex items-center justify-center text-success">
               <UserCheck size={16} />
             </div>
           </div>
-          <div className="text-3xl font-sans font-semibold text-fg-success tracking-[-0.01em]">
+          <div className="text-3xl font-sans font-semibold text-success tracking-[-0.01em]">
             {activeAccountsCount}
           </div>
-          <div className="mt-3 pt-2 border-t border-border-line text-[11px] font-sans text-fg-success">
+          <div className="mt-3 pt-2 border-t border-border-line text-[11px] font-sans text-success">
             {language === 'id' ? 'Retainer & Sprint Aktif' : 'Active Retainers & Sprints'}
           </div>
         </div>
@@ -480,7 +480,7 @@ export const AdminClients: React.FC = () => {
 
               {/* SLA Ad Spend Cap Section */}
               <div className="p-3 bg-bg-panel border border-border-line rounded-card space-y-2">
-                <div className="flex items-center gap-1.5 text-fg-warning font-semibold">
+                <div className="flex items-center gap-1.5 text-warning font-semibold">
                   <Activity size={13} />
                   <span>SLA Daily Ad-Spend Cap & Tracking (IDR)</span>
                 </div>
@@ -523,9 +523,9 @@ export const AdminClients: React.FC = () => {
                     value={clientStatus}
                     onChange={(val) => setClientStatus(val as any)}
                     options={[
-                      { value: 'active', label: 'Active', badge: 'Active', badgeColor: 'bg-success/10 text-fg-success border border-success/20' },
-                      { value: 'completed', label: 'Completed', badge: 'Completed', badgeColor: 'bg-info/10 text-fg-info border border-info/20' },
-                      { value: 'lead', label: 'Lead', badge: 'Lead', badgeColor: 'bg-warning/10 text-fg-warning border border-warning/20' },
+                      { value: 'active', label: 'Active', badge: 'Active', badgeColor: 'bg-success/10 text-success border border-success/20' },
+                      { value: 'completed', label: 'Completed', badge: 'Completed', badgeColor: 'bg-info/10 text-info border border-info/20' },
+                      { value: 'lead', label: 'Lead', badge: 'Lead', badgeColor: 'bg-warning/10 text-warning border border-warning/20' },
                       { value: 'inactive', label: 'Inactive', badge: 'Inactive', badgeColor: 'bg-bg-panel text-muted border border-border-line' }
                     ]}
                     className="w-full"
