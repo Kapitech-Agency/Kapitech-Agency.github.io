@@ -849,7 +849,9 @@ export const AdminProjects: React.FC = () => {
                   <CustomSelect value={taskPriorityFilter} onChange={setTaskPriorityFilter} options={[{ value: '', label: 'All priorities' }, ...TASK_PRIORITIES]} className="w-full lg:w-36" />
                   <CustomSelect value={taskAssigneeFilter} onChange={setTaskAssigneeFilter} options={[{ value: '', label: 'All assignees' }, ...allAssignees.map(value => ({ value, label: value }))]} className="w-full lg:w-40" />
                   <CustomSelect value={taskSort} onChange={value => setTaskSort(value as TaskSortKey)} options={[{ value: 'dueDate', label: 'Due date' }, { value: 'priority', label: 'Priority' }, { value: 'updated', label: 'Recent' }, { value: 'title', label: 'Title' }]} className="w-full lg:w-32" />
-                  {canManageKanbanTasks && <Button icon={<Plus size={14} />} onClick={openNewTask}>New Task</Button>}
+                  {canManageKanbanTasks && (
+                    <Button icon={<Plus size={14} />} onClick={openNewTask}>New Task</Button>
+                  )}
                 </div>
               </div>
             </div>
