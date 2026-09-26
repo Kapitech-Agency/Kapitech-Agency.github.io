@@ -522,7 +522,7 @@ export const AdminProjects: React.FC = () => {
       setDeleteTaskTarget(null);
       return;
     }
-    setDeleteTask(null);
+    setDeleteTaskTarget(null);
     setTaskDrawer(null);
     await loadData();
     showToast('Task deleted.');
@@ -573,7 +573,7 @@ export const AdminProjects: React.FC = () => {
         description={deleteTaskTarget ? 'Task "' + deleteTaskTarget.title + '" will be permanently removed.' : undefined}
       >
         <div className="flex flex-col-reverse sm:flex-row justify-end gap-2">
-          <Button variant="secondary" onClick={() => setDeleteTask(null)}>Cancel</Button>
+          <Button variant="secondary" onClick={() => setDeleteTaskTarget(null)}>Cancel</Button>
           <Button variant="danger" onClick={() => void confirmDeleteTask()} disabled={!canManageTasks}>Delete</Button>
         </div>
       </Modal>
