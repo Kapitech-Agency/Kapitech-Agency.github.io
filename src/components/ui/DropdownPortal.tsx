@@ -46,17 +46,7 @@ export const DropdownPortal: React.FC<DropdownPortalProps> = ({
           maxWidth: viewportWidth - viewportPadding * 2,
           maxHeight: Math.max(120, viewportHeight - viewportPadding * 2),
           zIndex: 60,
-          visibility: 'visible',
-          '--ams-bg': '#09090c',
-          '--ams-panel': '#0f0f14',
-          '--ams-panel-hover': '#15151b',
-          '--ams-line': '#20202a',
-          '--ams-text': '#f3f3f6',
-          '--ams-muted': '#8b8b99',
-          '--ams-accent': '#dc143c',
-          '--ams-accent-text': '#ff4d6d',
-          '--ams-radius-control': '8px',
-          '--ams-radius-card': '12px'
+          visibility: 'visible'
         } as React.CSSProperties);
       });
     };
@@ -85,7 +75,8 @@ export const DropdownPortal: React.FC<DropdownPortalProps> = ({
   }, [open, anchorRef, onClose, align, offset]);
 
   if (!open) return null;
-  return createPortal(<div ref={menuRef} style={style} className={className}>{children}</div>, document.body);
+  const portalRoot = document.querySelector<HTMLElement>('.ams-shell') || document.body;
+  return createPortal(<div ref={menuRef} style={style} className={className}>{children}</div>, portalRoot);
 };
 
 export default DropdownPortal;
