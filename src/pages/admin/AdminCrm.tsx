@@ -639,11 +639,11 @@ export const AdminCrm: React.FC = () => {
                     <div className="min-w-0 pr-2">
                       <div className="flex items-center gap-2">
                         <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${
-                          stageDef.key === 'won' ? 'bg-emerald-400' :
-                          stageDef.key === 'new' ? 'bg-rose-400 animate-pulse' :
-                          stageDef.key === 'negotiation' ? 'bg-purple-400' :
-                          stageDef.key === 'proposal' ? 'bg-red-400' :
-                          stageDef.key === 'contacted' ? 'bg-amber-400' : 'bg-[var(--muted)]'
+                          stageDef.key === 'won' ? 'bg-success' :
+                          stageDef.key === 'new' ? 'bg-info' :
+                          stageDef.key === 'negotiation' ? 'bg-series-3' :
+                          stageDef.key === 'proposal' ? 'bg-accent' :
+                          stageDef.key === 'contacted' ? 'bg-warning' : 'bg-muted'
                         }`} />
                         <h3 className="text-xs font-semibold font-sans text-[var(--text)] truncate">
                           {language === 'id' ? stageDef.labelId : stageDef.label}
