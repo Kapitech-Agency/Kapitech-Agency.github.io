@@ -748,7 +748,7 @@ export const AdminInvoicing: React.FC = () => {
                 </div>
 
                 {tab === 'invoices' ? (
-                  <div className="grid w-full grid-cols-1 gap-2 sm:grid-cols-[minmax(220px,1fr)_168px_190px] lg:w-auto lg:min-w-[620px]">
+                  <div className="grid w-full grid-cols-1 gap-2 sm:grid-cols-[minmax(360px,1fr)_168px_190px] lg:w-auto lg:min-w-[760px]">
                     <label className="relative min-w-0">
                       <span className="sr-only">Search invoices</span>
                       <Search size={14} className="pointer-events-none absolute left-3 top-1/2 z-10 -translate-y-1/2 text-muted" />
