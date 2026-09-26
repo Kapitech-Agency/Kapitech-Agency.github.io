@@ -710,10 +710,10 @@ export const AdminInvoicing: React.FC = () => {
               </div>
             </div>
 
-            <div className={cardClass}>
+            <div className={`${cardClass} mt-3`}>
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <h2 className="text-sm font-semibold text-fg">{language === 'id' ? 'Arus kas tercatat' : 'Recorded cash flow'}</h2>
+                  <h2 id="financial-trend-title" className="text-sm font-semibold text-fg">{language === 'id' ? 'Arus kas tercatat' : 'Recorded cash flow'}</h2>
                   <p className="mt-1 text-xs leading-5 text-muted">Only periods with actual payment and expense data are shown.</p>
                 </div>
                 <TrendingUp size={16} className="text-muted" strokeWidth={1.8} />
