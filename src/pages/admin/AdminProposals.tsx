@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   AlertCircle,
-  Calendar,
   CheckCircle2,
   ChevronRight,
   Clock3,
@@ -15,7 +14,7 @@ import {
   Send,
   ShieldCheck,
   Trash2,
-  X
+  Receipt
 } from 'lucide-react';
 import { api } from '../../lib/apiClient';
 import { useLanguage } from '../../lib/LanguageContext';
@@ -606,7 +605,7 @@ export const AdminProposals: React.FC = () => {
               onChange={(value) => setStatusFilter(value as ProposalStatus | 'all')}
               size="sm"
               options={[{ value: 'all', label: language === 'id' ? 'Semua status' : 'All statuses' }, ...STATUS_OPTIONS.map((item) => ({ ...item, label: language === 'id' && item.value === 'review' ? 'Review internal' : item.label }))]}
-              aria-label={language === 'id' ? 'Filter status' : 'Status filter'}
+              
             />
             <CustomSelect
               value={expiryFilter}
@@ -618,7 +617,7 @@ export const AdminProposals: React.FC = () => {
                 { value: 'expiring', label: language === 'id' ? '≤ 7 hari' : '≤ 7 days' },
                 { value: 'expired', label: language === 'id' ? 'Kedaluwarsa' : 'Expired' }
               ]}
-              aria-label={language === 'id' ? 'Filter masa berlaku' : 'Expiry filter'}
+              
             />
             <CustomSelect
               value={sortBy}
@@ -631,7 +630,7 @@ export const AdminProposals: React.FC = () => {
                 { value: 'amount-low', label: language === 'id' ? 'Nilai terendah' : 'Lowest value' },
                 { value: 'expiry', label: language === 'id' ? 'Masa berlaku terdekat' : 'Nearest expiry' }
               ]}
-              aria-label={language === 'id' ? 'Urutkan proposal' : 'Sort proposals'}
+              
             />
           </div>
         </div>
@@ -743,7 +742,7 @@ export const AdminProposals: React.FC = () => {
                             <button type="button" onClick={() => openEdit(proposal)} aria-label={'Edit ' + proposal.proposalNumber} title="Edit" className="inline-flex min-h-10 min-w-10 items-center justify-center rounded-control text-muted hover:bg-panel-hover hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"><FileText size={15} aria-hidden="true" /></button>
                           )}
                           {proposal.status === 'accepted' && !proposal.invoiceId && canManageInvoices && (
-                            <button type="button" onClick={() => openConvert(proposal)} className="inline-flex min-h-10 items-center gap-1.5 rounded-control border border-success/30 bg-success/10 px-2.5 text-xs font-semibold text-success hover:bg-success/15 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"><ReceiptIcon />Invoice</button>
+                            <button type="button" onClick={() => openConvert(proposal)} className="inline-flex min-h-10 items-center gap-1.5 rounded-control border border-success/30 bg-success/10 px-2.5 text-xs font-semibold text-success hover:bg-success/15 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"><Receipt size={14} aria-hidden="true" />Invoice</button>
                           )}
                           {proposal.status === 'draft' && canManageCrm && (
                             <button type="button" onClick={() => openDelete(proposal)} aria-label={'Delete ' + proposal.proposalNumber} title="Delete draft" className="inline-flex min-h-10 min-w-10 items-center justify-center rounded-control text-muted hover:bg-danger/10 hover:text-danger focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"><Trash2 size={14} aria-hidden="true" /></button>
@@ -924,7 +923,7 @@ export const AdminProposals: React.FC = () => {
               <section className="border-t border-line pt-4">
                 <div className="mb-2 text-xs font-semibold text-fg">Status</div>
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-                  <CustomSelect value={detailProposal.status} onChange={(value) => void handleStatusChange(detailProposal, value as ProposalStatus)} size="sm" options={STATUS_OPTIONS.map((item) => ({ ...item, disabled: (item.value === 'approved' || item.value === 'rejected') && !canApproveBudgets }))} />
+                  <CustomSelect value={detailProposal.status} onChange={(value) => void handleStatusChange(detailProposal, value as ProposalStatus)} size="sm" options={STATUS_OPTIONS.filter((item) => canApproveBudgets || !['approved', 'rejected'].includes(item.value))} />
                   {detailProposal.status === 'review' && <span className="text-xs text-muted">Approval status is permission-controlled.</span>}
                 </div>
               </section>
@@ -952,9 +951,5 @@ export const AdminProposals: React.FC = () => {
     </div>
   );
 };
-
-function ReceiptIcon() {
-  return <span className="inline-flex h-3.5 w-3.5 items-center justify-center rounded-[3px] border border-current text-[9px]" aria-hidden="true">↗</span>;
-}
 
 export default AdminProposals;
