@@ -658,16 +658,19 @@ export const AdminInvoicing: React.FC = () => {
                 { label: language === 'id' ? 'Laba operasi' : 'Operating profit', value: serverMetrics ? formatAmount(serverMetrics.netProfit, currency) : '—', context: serverMetrics ? serverMetrics.profitMargin + '% margin' : '—', icon: TrendingUp, tone: 'text-success' },
                 { label: 'OpEx', value: formatAmount(derivedMetrics.opExExpenses, currency), context: 'Operating expense', icon: CreditCard, tone: 'text-info' },
                 { label: 'CapEx', value: formatAmount(derivedMetrics.capExExpenses, currency), context: 'Capital expense', icon: ArrowUpRight, tone: 'text-muted' }
-              ].map((metric) => (
+              ].map((metric) => {
+                const Icon = metric.icon;
+                return (
                 <div key={metric.label} className="min-w-0 px-1">
                   <div className="flex items-start justify-between gap-3">
                     <span className="text-xs leading-4 text-muted">{metric.label}</span>
-                    <metric.icon size={16} className={'shrink-0 ' + metric.tone} strokeWidth={1.8} />
+                    <Icon size={16} className={'shrink-0 ' + metric.tone} strokeWidth={1.8} />
                   </div>
                   <div className="mt-3 truncate text-lg font-medium leading-7 tracking-tight tabular-nums text-fg sm:text-xl">{metric.value}</div>
                   <div className="mt-1 min-h-4 text-[11px] leading-4 text-muted">{metric.context}</div>
                 </div>
-              ))}
+                );
+              })}
             </div>
           </section>
 
