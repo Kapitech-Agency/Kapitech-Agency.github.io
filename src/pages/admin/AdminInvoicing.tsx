@@ -691,7 +691,7 @@ export const AdminInvoicing: React.FC = () => {
               )}
             </div>
 
-            <div className="grid grid-cols-2 divide-x divide-line py-5 sm:grid-cols-3 min-[1100px]:grid-cols-6">
+            <div className="grid grid-cols-2 divide-x divide-y divide-line py-0 sm:grid-cols-3 min-[1100px]:grid-cols-6 min-[1100px]:divide-y-0">
               {[
                 { label: language === 'id' ? 'Pendapatan diterima' : 'Revenue collected', value: serverMetrics ? formatAmount(serverMetrics.totalRevenueCollected, currency) : '—', context: serverMetrics ? serverMetrics.paidCount + ' paid invoices' : '—', icon: DollarSign, tone: 'text-accent-text' },
                 { label: language === 'id' ? 'Piutang' : 'Outstanding', value: serverMetrics ? formatAmount(serverMetrics.totalOutstanding, currency) : '—', context: serverMetrics ? serverMetrics.overdueCount + ' overdue' : '—', icon: WalletCards, tone: 'text-warning' },
@@ -702,7 +702,7 @@ export const AdminInvoicing: React.FC = () => {
               ].map((metric) => {
                 const Icon = metric.icon;
                 return (
-                <div key={metric.label} className="min-w-0 px-4 first:pl-0 last:pr-0 sm:px-4">
+                <div key={metric.label} className="min-w-0 px-4 py-5 first:pl-0 sm:px-4 min-[1100px]:py-5">
                   <div className="flex items-start justify-between gap-3">
                     <span className="text-xs leading-4 text-muted">{metric.label}</span>
                     <Icon size={16} className={'shrink-0 ' + metric.tone} strokeWidth={1.8} />
@@ -724,7 +724,7 @@ export const AdminInvoicing: React.FC = () => {
                 </div>
                 <span className="rounded-badge bg-accent/10 px-2 py-1 text-[11px] font-semibold text-accent-text">{serverMetrics?.profitMargin || '0'}% margin</span>
               </div>
-              <div className="mt-5 grid grid-cols-2 gap-y-4 border-y border-line py-4 sm:grid-cols-4 sm:gap-y-0">
+              <div className="mt-5 grid grid-cols-2 divide-x divide-y divide-line border-y border-line py-0 sm:grid-cols-4 sm:divide-y-0">
                 {[
                   { label: 'Revenue', value: serverMetrics ? formatAmount(serverMetrics.totalRevenueCollected, currency) : '—', tone: 'text-accent-text' },
                   { label: 'Expenses', value: serverMetrics ? formatAmount(serverMetrics.totalExpense, currency) : '—', tone: 'text-danger' },
@@ -737,10 +737,10 @@ export const AdminInvoicing: React.FC = () => {
                   </div>
                 ))}
               </div>
-              <div className="mt-4 grid grid-cols-2 gap-y-4 border-t border-line pt-4 sm:grid-cols-3 sm:gap-y-0">
-                <div className="min-w-0 sm:border-l sm:border-line sm:pl-4"><p className="text-xs text-muted">Collection rate</p><p className="mt-1 text-sm font-medium tabular-nums text-fg">{currencyInvoices.length ? derivedMetrics.collectionRate + '%' : '—'}</p></div>
-                <div className="min-w-0 sm:border-l sm:border-line sm:pl-4"><p className="text-xs text-muted">Monthly burn rate</p><p className="mt-1 text-sm font-medium tabular-nums text-fg">{derivedMetrics.monthlyBurnRate ? formatAmount(derivedMetrics.monthlyBurnRate, currency) : '—'}</p></div>
-                <div className="min-w-0 sm:border-l sm:border-line sm:pl-4"><p className="text-xs text-muted">Cash runway</p><p className="mt-1 text-sm font-medium tabular-nums text-fg">{derivedMetrics.cashRunwayMonths == null ? 'Not available' : derivedMetrics.cashRunwayMonths + ' mo'}</p></div>
+              <div className="mt-4 grid grid-cols-2 divide-x divide-y divide-line border-t border-line pt-0 sm:grid-cols-3 sm:divide-y-0">
+                <div className="min-w-0 px-3 py-4 sm:pl-4"><p className="text-xs text-muted">Collection rate</p><p className="mt-1 text-sm font-medium tabular-nums text-fg">{currencyInvoices.length ? derivedMetrics.collectionRate + '%' : '—'}</p></div>
+                <div className="min-w-0 px-3 py-4 sm:pl-4"><p className="text-xs text-muted">Monthly burn rate</p><p className="mt-1 text-sm font-medium tabular-nums text-fg">{derivedMetrics.monthlyBurnRate ? formatAmount(derivedMetrics.monthlyBurnRate, currency) : '—'}</p></div>
+                <div className="min-w-0 px-3 py-4 sm:pl-4"><p className="text-xs text-muted">Cash runway</p><p className="mt-1 text-sm font-medium tabular-nums text-fg">{derivedMetrics.cashRunwayMonths == null ? 'Not available' : derivedMetrics.cashRunwayMonths + ' mo'}</p></div>
               </div>
             </div>
 
@@ -848,7 +848,7 @@ export const AdminInvoicing: React.FC = () => {
                     />
                   ) : (
                     <>
-                  <div className="hidden overflow-x-auto rounded-card border border-line bg-panel md:block">
+                  <div className="overflow-x-auto rounded-card border border-line bg-panel">
                     <table className="w-full min-w-[980px] text-left text-xs">
                       <thead>
                         <tr>
@@ -904,7 +904,7 @@ export const AdminInvoicing: React.FC = () => {
                     </table>
                   </div>
 
-                  <div className="space-y-3 md:hidden">
+                  <div className="hidden">
                     {paginatedInvoices.map((invoice) => {
                       const balance = Number(invoice.balanceDue ?? (invoice.total - (invoice.amountPaid || 0)));
                       return (
@@ -955,7 +955,7 @@ export const AdminInvoicing: React.FC = () => {
                     />
                   ) : (
                     <>
-                  <div className="hidden overflow-x-auto rounded-card border border-line bg-panel md:block">
+                  <div className="overflow-x-auto rounded-card border border-line bg-panel">
                     <table className="w-full min-w-[760px] text-left text-xs">
                       <thead>
                         <tr>
@@ -984,7 +984,7 @@ export const AdminInvoicing: React.FC = () => {
                     </table>
                   </div>
 
-                  <div className="space-y-3 md:hidden">
+                  <div className="hidden">
                     {filteredExpenses.map((expense) => (
                       <article key={expense.id} className="rounded-card border border-line bg-panel p-4">
                         <div className="flex items-start justify-between gap-3">
