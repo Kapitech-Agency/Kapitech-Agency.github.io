@@ -665,22 +665,24 @@ export const AdminProjects: React.FC = () => {
               <h2 className="text-sm font-semibold text-[var(--text)]">Projects</h2>
               <p className="mt-1 text-xs text-[var(--muted)]">Select a project to inspect its delivery state and task board.</p>
             </div>
-            <div className="flex w-full min-w-0 flex-col gap-2 sm:flex-row sm:items-center xl:w-auto">
-              <div className="relative min-w-0 w-full sm:w-[260px]">
+            <div className="grid w-full min-w-0 grid-cols-1 gap-2 sm:grid-cols-[minmax(220px,1fr)_160px_160px] xl:w-auto xl:min-w-[600px]">
+              <div className="relative min-w-0">
                 <Search size={14} strokeWidth={1.8} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted)]" aria-hidden="true" />
                 <input
                   value={projectSearch}
                   onChange={event => setProjectSearch(event.target.value)}
                   placeholder="Search projects..."
                   aria-label="Search projects"
-                  className={fieldClass + ' mt-0 min-w-0 pl-9 pr-3'}
+                  className={fieldClass + ' mt-0 h-10 min-h-10 min-w-0 truncate pl-9 pr-3 leading-5 sm:h-9 sm:min-h-9'}
                 />
               </div>
               <CustomSelect
                 value={projectStatusFilter}
                 onChange={setProjectStatusFilter}
                 options={[{ value: '', label: 'All statuses' }, ...PROJECT_STATUSES]}
-                className="mt-0 w-full sm:w-40"
+                className="w-full min-w-0"
+                triggerClassName="h-10 min-h-10 sm:h-9 sm:min-h-9"
+                aria-label="Project status"
               />
               <CustomSelect
                 value={projectSort}
@@ -691,7 +693,9 @@ export const AdminProjects: React.FC = () => {
                   { value: 'progress', label: 'Progress' },
                   { value: 'name', label: 'Name' },
                 ]}
-                className="mt-0 w-full sm:w-40"
+                className="w-full min-w-0"
+                triggerClassName="h-10 min-h-10 sm:h-9 sm:min-h-9"
+                aria-label="Project sort"
               />
             </div>
           </div>
