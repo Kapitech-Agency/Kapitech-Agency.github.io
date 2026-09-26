@@ -772,6 +772,7 @@ export const AdminClients: React.FC = () => {
         open={isClientModalOpen}
         onClose={() => !isSaving && setIsClientModalOpen(false)}
         size="xl"
+        fitContent
         title={editingClient ? 'Edit client' : 'Add client'}
         description={editingClient
           ? 'Update the client record and operational settings.'
@@ -787,7 +788,7 @@ export const AdminClients: React.FC = () => {
           </>
         }
       >
-        <form id="client-form" onSubmit={handleSaveClient} className="space-y-8">
+        <form id="client-form" onSubmit={handleSaveClient} className="space-y-4">
           {formError && (
             <div role="alert" className="flex items-start gap-2 rounded-control border border-danger/30 bg-danger/10 p-3 text-xs leading-5 text-danger">
               <ShieldAlert size={14} className="mt-0.5 shrink-0" aria-hidden="true" />
@@ -795,12 +796,12 @@ export const AdminClients: React.FC = () => {
             </div>
           )}
 
-          <section aria-labelledby="client-contact-section" className="grid gap-5 sm:grid-cols-[180px_minmax(0,1fr)]">
+          <section aria-labelledby="client-contact-section" className="grid gap-3 sm:grid-cols-[160px_minmax(0,1fr)]">
             <div>
               <h3 id="client-contact-section" className="text-sm font-semibold text-fg">Contact information</h3>
               <p className="mt-1 text-xs leading-4 text-muted">Primary contact and company details.</p>
             </div>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="grid grid-cols-2 gap-3">
               <div><label htmlFor="client-name" className="mb-1.5 block">Contact person *</label><input id="client-name" type="text" required value={name} onChange={(event) => setName(event.target.value)} placeholder="Contact person" /></div>
               <div><label htmlFor="client-company" className="mb-1.5 block">Company *</label><input id="client-company" type="text" required value={company} onChange={(event) => setCompany(event.target.value)} placeholder="Company name" /></div>
               <div><label htmlFor="client-role" className="mb-1.5 block">Contact role</label><input id="client-role" type="text" value={role} onChange={(event) => setRole(event.target.value)} placeholder="Role or title" /></div>
@@ -812,7 +813,7 @@ export const AdminClients: React.FC = () => {
             </div>
           </section>
 
-          <section aria-labelledby="client-account-section" className="grid gap-5 border-t border-line pt-6 sm:grid-cols-[180px_minmax(0,1fr)]">
+          <section aria-labelledby="client-account-section" className="grid gap-3 border-t border-line pt-4 sm:grid-cols-[160px_minmax(0,1fr)]">
             <div>
               <h3 id="client-account-section" className="text-sm font-semibold text-fg">Account settings</h3>
               <p className="mt-1 text-xs leading-4 text-muted">Keep the account state aligned with the relationship.</p>
@@ -850,7 +851,7 @@ export const AdminClients: React.FC = () => {
               <h3 id="client-notes-section" className="text-sm font-semibold text-fg">Notes & requirements</h3>
               <p className="mt-1 text-xs leading-4 text-muted">Preferences, requirements, billing context, or operational notes.</p>
             </div>
-            <textarea id="client-notes" rows={4} value={notes} onChange={(event) => setNotes(event.target.value)} placeholder="Client preferences, requirements, billing notes..." className="resize-y" />
+            <textarea id="client-notes" rows={3} value={notes} onChange={(event) => setNotes(event.target.value)} placeholder="Client preferences, requirements, billing notes..." className="resize-y" />
           </section>
         </form>
       </Modal>
