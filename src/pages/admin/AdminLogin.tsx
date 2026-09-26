@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { Lock, KeyRound, Mail, Eye, EyeOff, AlertCircle, ArrowRight, ArrowLeft, ShieldCheck } from 'lucide-react';
 import { api } from '../../lib/apiClient';
@@ -19,6 +19,7 @@ export const AdminLogin: React.FC = () => {
   const [mfaRequired, setMfaRequired] = useState(false);
   const [mfaRecoveryMode, setMfaRecoveryMode] = useState(false);
   const [mfaCode, setMfaCode] = useState('');
+  const mfaInputRefs = useRef<Array<HTMLInputElement | null>>([]);
 
   const searchParams = new URLSearchParams(location.search);
   const redirectUrl = searchParams.get('redirect') || '/admin/dashboard';
@@ -104,25 +105,25 @@ export const AdminLogin: React.FC = () => {
   const mfaEnabledNotice = searchParams.get('mfaEnabled') === '1';
 
   return (
-    <div data-kapi-admin="true" className="ams-shell min-h-screen bg-[var(--bg)] text-[var(--text)] flex items-center justify-center px-4 py-6 sm:px-6 sm:py-10 font-sans">
+    <div data-kapi-admin="true" className="ams-shell min-h-screen bg-bg text-fg flex items-center justify-center px-4 py-6 sm:px-6 sm:py-10 font-sans">
       <div className="w-full max-w-[420px]">
         <Link
           to="/"
-          className="inline-flex items-center gap-2 min-h-10 text-xs font-sans text-[var(--muted)] hover:text-[var(--text)] mb-4 sm:mb-5"
+          className="inline-flex items-center gap-2 min-h-10 text-xs font-sans text-muted hover:text-fg mb-4 sm:mb-5"
         >
           <ArrowLeft size={14} />
           {language === 'id' ? 'Kembali ke Website' : 'Back to Website'}
         </Link>
 
-        <div className="bg-[var(--panel)] border border-[var(--line)] rounded-card p-5 sm:p-6 -none">
-          <div className="text-left mb-5 pb-5 border-b border-[var(--line)]">
-            <div className="w-10 h-10 rounded-control bg-[var(--accent)]/10 border border-[var(--accent)]/30 flex items-center justify-center text-[var(--accent)] mb-4">
+        <div className="bg-panel border border-line rounded-card p-5 sm:p-6 -none">
+          <div className="text-left mb-5 pb-5 border-b border-line">
+            <div className="w-10 h-10 rounded-control bg-accent/10 border border-accent/30 flex items-center justify-center text-accent-text mb-4">
               <Lock size={24} />
             </div>
             <h1 className="text-xl leading-7 font-semibold tracking-tight">
               {language === 'id' ? 'Portal Admin Internal' : 'Internal Admin Portal'}
             </h1>
-            <p className="text-[13px] leading-[18px] text-[var(--muted)] mt-1.5 max-w-[38rem]">
+            <p className="text-[13px] leading-[18px] text-muted mt-1.5 max-w-[38rem]">
               {language === 'id'
                 ? 'Masuk untuk mengelola operasi, CRM, proyek, keuangan, dan konten Kapitech.'
                 : 'Sign in to manage Kapitech operations, CRM, projects, finance, and content.'}
@@ -130,14 +131,14 @@ export const AdminLogin: React.FC = () => {
           </div>
 
           {mfaEnabledNotice && (
-            <div className="mb-5 p-3.5 rounded-control bg-[var(--success)]/10 border border-[var(--success)]/30 text-[var(--success)] text-xs flex items-start gap-2">
+            <div className="mb-5 p-3.5 rounded-control bg-success/10 border border-success/30 text-success text-xs flex items-start gap-2">
               <ShieldCheck size={16} className="shrink-0 mt-0.5" />
               <span>{language === 'id' ? 'MFA berhasil diaktifkan. Silakan login ulang untuk melanjutkan.' : 'MFA is enabled. Sign in again to continue.'}</span>
             </div>
           )}
 
           {errorMessage && (
-            <div className="mb-5 p-3.5 rounded-control bg-[var(--danger)]/10 border border-[var(--danger)]/30 text-[var(--danger)] text-xs flex items-start gap-2">
+            <div className="mb-5 p-3.5 rounded-control bg-danger/10 border border-danger/30 text-danger text-xs flex items-start gap-2">
               <AlertCircle size={16} className="shrink-0 mt-0.5" />
               <span>{errorMessage}</span>
             </div>
@@ -146,11 +147,11 @@ export const AdminLogin: React.FC = () => {
           {!mfaRequired ? (
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-xs font-sans text-[var(--muted)] mb-1.5">
+              <label className="block text-xs font-sans text-muted mb-1.5">
                 {language === 'id' ? 'Username / Email' : 'Username / Email'}
               </label>
               <div className="relative">
-                <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--accent)]" />
+                <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-accent-text" />
                 <input
                   type="text"
                   required
@@ -158,31 +159,31 @@ export const AdminLogin: React.FC = () => {
                   disabled={loading}
                   value={identifier}
                   onChange={(e) => setIdentifier(e.target.value)}
-                  className="w-full pl-10 pr-4 h-10 min-h-10 bg-[var(--bg)] border border-[var(--line)] rounded-control text-sm text-[var(--text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 focus:border-[var(--accent)] font-sans"
+                  className="w-full pl-10 pr-4 h-10 min-h-10 bg-bg border border-line rounded-control text-sm text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 focus:border-accent font-sans"
                   placeholder="admin atau email"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-sans text-[var(--muted)] mb-1.5">
+              <label className="block text-xs font-sans text-muted mb-1.5">
                 Password
               </label>
               <div className="relative">
-                <KeyRound size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--accent)]" />
+                <KeyRound size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-accent-text" />
                 <input
                   type={showPassword ? 'text' : 'password'}
                   required
                   disabled={loading}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-10 pr-10 h-10 min-h-10 bg-[var(--panel-hover)] border border-[var(--line)] rounded-control text-sm text-[var(--text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 focus:border-[var(--accent)] font-sans"
+                  className="w-full pl-10 pr-10 h-10 min-h-10 bg-panel border border-line rounded-control text-sm text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 focus:border-accent font-sans"
                   placeholder="••••••••"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-1.5 top-1/2 -translate-y-1/2 min-h-9 min-w-9 flex items-center justify-center rounded-control text-[var(--muted)] hover:text-[var(--text)]"
+                  className="absolute right-1.5 top-1/2 -translate-y-1/2 min-h-9 min-w-9 flex items-center justify-center rounded-control text-muted hover:text-fg"
                   aria-label={showPassword ? 'Hide password' : 'Show password'}
                 >
                   {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -190,7 +191,7 @@ export const AdminLogin: React.FC = () => {
               </div>
             </div>
 
-            <label className="flex items-center gap-2 text-xs text-[var(--muted)] cursor-pointer">
+            <label className="flex items-center gap-2 text-xs text-muted cursor-pointer">
               <input
                 type="checkbox"
                 checked={rememberMe}
@@ -203,7 +204,7 @@ export const AdminLogin: React.FC = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full min-h-10 h-10 rounded-control bg-[var(--accent)] hover:bg-[var(--accent)] disabled:bg-[var(--panel-hover)] text-white disabled:text-[var(--muted)] text-xs font-medium font-sans normal-case tracking-normal flex items-center justify-center gap-2 transition-colors"
+              className="w-full min-h-10 h-10 rounded-control bg-accent hover:bg-accent disabled:bg-panel text-white disabled:text-muted text-xs font-medium font-sans normal-case tracking-normal flex items-center justify-center gap-2 transition-colors"
             >
               {loading
                 ? (language === 'id' ? 'Memverifikasi…' : 'Verifying…')
@@ -213,12 +214,12 @@ export const AdminLogin: React.FC = () => {
           </form>
           ) : (
           <form onSubmit={handleMfaSubmit} className="space-y-5">
-            <div className="rounded-control border border-[var(--warning)]/30 bg-[var(--warning)]/10 p-4">
-              <div className="flex items-center gap-2 text-sm font-semibold text-[var(--text)]">
+            <div className="rounded-control border border-warning/30 bg-warning/10 p-4">
+              <div className="flex items-center gap-2 text-sm font-semibold text-fg">
                 <ShieldCheck size={18} className="text-warning" />
                 {language === 'id' ? 'Verifikasi MFA diperlukan' : 'MFA verification required'}
               </div>
-              <p className="mt-2 text-xs leading-relaxed text-[var(--muted)]">
+              <p className="mt-2 text-xs leading-relaxed text-muted">
                 {mfaRecoveryMode
                   ? (language === 'id' ? 'Masukkan salah satu recovery code yang Anda simpan saat MFA diaktifkan. Kode yang berhasil digunakan akan langsung tidak dapat digunakan lagi.' : 'Enter one of the recovery codes saved when MFA was enabled. A successfully used code is immediately invalidated.')
                   : (language === 'id' ? 'Buka aplikasi authenticator Anda dan masukkan kode TOTP 6 digit untuk menyelesaikan login.' : 'Open your authenticator app and enter the 6-digit TOTP code to complete sign-in.')}
@@ -226,29 +227,63 @@ export const AdminLogin: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-xs font-sans text-[var(--muted)] mb-1.5">
+              <label className="block text-xs font-sans text-muted mb-1.5">
                 {mfaRecoveryMode ? 'Recovery code' : (language === 'id' ? 'Kode TOTP' : 'TOTP code')}
               </label>
-              <input
-                type="text"
-                inputMode={mfaRecoveryMode ? "text" : "numeric"}
-                autoComplete={mfaRecoveryMode ? "off" : "one-time-code"}
-                pattern={mfaRecoveryMode ? undefined : "\\d{6}"}
-                maxLength={mfaRecoveryMode ? 128 : 6}
-                required
-                autoFocus
-                disabled={loading}
-                value={mfaCode}
-                onChange={(e) => setMfaCode(mfaRecoveryMode ? e.target.value.toUpperCase().slice(0, 128) : e.target.value.replace(/\D/g, "").slice(0, 6))}
-                className={`w-full px-4 py-3 bg-[var(--panel-hover)] border border-[var(--line)] rounded-control text-center text-xl text-[var(--text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 focus:border-[var(--accent)] font-sans ${mfaRecoveryMode ? "tracking-[0.12em]" : "tracking-[0.4em]"}`}
-                placeholder={mfaRecoveryMode ? "XXXX-XXXX-XXXX" : "000000"}
-              />
-            </div>
+              {mfaRecoveryMode ? (
+                <input
+                  type="text"
+                  inputMode="text"
+                  autoComplete="off"
+                  maxLength={128}
+                  required
+                  autoFocus
+                  disabled={loading}
+                  value={mfaCode}
+                  onChange={(e) => setMfaCode(e.target.value.toUpperCase().slice(0, 128))}
+                  className="w-full h-9 px-3 rounded-control bg-panel border border-line text-center text-sm text-fg font-sans focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                  placeholder="XXXX-XXXX-XXXX"
+                />
+              ) : (
+                <div className="grid grid-cols-6 gap-2" role="group" aria-label="6-digit TOTP code">
+                  {Array.from({ length: 6 }, (_, index) => (
+                    <input
+                      key={index}
+                      ref={(el) => { mfaInputRefs.current[index] = el; }}
+                      type="text"
+                      inputMode="numeric"
+                      autoComplete={index === 0 ? "one-time-code" : "off"}
+                      maxLength={1}
+                      required
+                      disabled={loading}
+                      value={mfaCode[index] || ''}
+                      aria-label={`TOTP digit ${index + 1}`}
+                      onChange={(e) => {
+                        const digit = e.target.value.replace(/\\D/g, '').slice(-1);
+                        const next = mfaCode.split('');
+                        next[index] = digit;
+                        setMfaCode(next.join('').slice(0, 6));
+                        if (digit && index < 5) mfaInputRefs.current[index + 1]?.focus();
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Backspace' && !mfaCode[index] && index > 0) mfaInputRefs.current[index - 1]?.focus();
+                      }}
+                      onPaste={(e) => {
+                        e.preventDefault();
+                        const pasted = e.clipboardData.getData('text').replace(/\\D/g, '').slice(0, 6);
+                        setMfaCode(pasted);
+                        requestAnimationFrame(() => mfaInputRefs.current[Math.min(pasted.length, 5)]?.focus());
+                      }}
+                      className="h-11 w-full rounded-control border border-line bg-panel text-center text-lg font-medium tabular-nums text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                    />
+                  ))}
+                </div>
+              )}           </div>
 
             <button
               type="submit"
               disabled={loading || (mfaRecoveryMode ? mfaCode.trim().length < 12 : mfaCode.length !== 6)}
-              className="w-full h-11 rounded-control bg-[var(--accent)] hover:bg-[var(--accent)] disabled:bg-[var(--panel-hover)] text-white disabled:text-[var(--muted)] text-xs font-medium font-sans normal-case tracking-normal flex items-center justify-center gap-2 transition-colors"
+              className="w-full h-11 rounded-control bg-accent hover:bg-accent disabled:bg-panel text-white disabled:text-muted text-xs font-medium font-sans normal-case tracking-normal flex items-center justify-center gap-2 transition-colors"
             >
               {loading
                 ? (language === 'id' ? 'Memverifikasi…' : 'Verifying…')
@@ -264,7 +299,7 @@ export const AdminLogin: React.FC = () => {
                 setErrorMessage(null);
               }}
               disabled={loading}
-              className="w-full h-10 rounded-control bg-transparent border border-[var(--line)] text-[var(--muted)] hover:text-[var(--text)] text-xs font-sans font-semibold transition-colors flex items-center justify-center gap-2"
+              className="w-full h-10 rounded-control bg-transparent border border-line text-muted hover:text-fg text-xs font-sans font-semibold transition-colors flex items-center justify-center gap-2"
             >
               {mfaRecoveryMode ? (language === 'id' ? 'Gunakan kode authenticator' : 'Use authenticator code') : (language === 'id' ? 'Gunakan recovery code' : 'Use recovery code')}
             </button>
@@ -273,7 +308,7 @@ export const AdminLogin: React.FC = () => {
               type="button"
               onClick={handleBackToPassword}
               disabled={loading}
-              className="w-full h-10 rounded-control bg-[var(--panel-hover)] text-[var(--muted)] hover:text-[var(--text)] text-xs font-sans font-semibold transition-colors flex items-center justify-center gap-2"
+              className="w-full h-10 rounded-control bg-panel text-muted hover:text-fg text-xs font-sans font-semibold transition-colors flex items-center justify-center gap-2"
             >
               <ArrowLeft size={14} />
               {language === 'id' ? 'Kembali ke login password' : 'Back to password sign-in'}
@@ -281,7 +316,7 @@ export const AdminLogin: React.FC = () => {
           </form>
           )}
 
-          <p className="mt-5 pt-4 border-t border-[var(--line)] text-xs text-[var(--muted)] font-sans text-center">
+          <p className="mt-5 pt-4 border-t border-line text-xs text-muted font-sans text-center">
             {language === 'id'
               ? 'Sesi diverifikasi oleh server.'
               : 'Session is verified by the server.'}
