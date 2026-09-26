@@ -21,6 +21,7 @@ import {
 import { useLanguage } from '../../../lib/LanguageContext';
 import { formatAmount, getActiveCurrency, CurrencyCode } from '../../../lib/currency';
 import { CustomSelect } from '../../ui/CustomSelect';
+import { Modal } from '../../ui/Modal';
 
 interface ConvertToCrmModalProps {
   isOpen: boolean;
@@ -113,57 +114,39 @@ export const ConvertToCrmModal: React.FC<ConvertToCrmModalProps> = ({
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      {/* Backdrop */}
-      <div 
-        className="fixed inset-0 bg-black/80  transition-opacity" 
-        onClick={onClose}
-      />
-
-      {/* Modal Dialog */}
-      <div className="relative w-full max-w-xl bg-[var(--panel)] border border-line rounded-card -none flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-        
-        {/* Header */}
-        <div className="p-5 border-b border-line flex items-center justify-between bg-[var(--panel)]">
-          <div className="flex items-center gap-2.5">
-            <div className="min-h-10 min-w-10 rounded-control bg-[var(--success)]/10 border border-[var(--success)]/30 flex items-center justify-center text-[var(--accent)]">
-              <Briefcase size={18} />
-            </div>
-            <div>
-              <h3 className="text-base font-semibold text-[var(--text)] font-sans flex items-center gap-2">
-                <span>{language === 'id' ? 'Konversi ke Agency CRM Pipeline' : 'Convert to Agency CRM Pipeline'}</span>
-                <Sparkles size={14} className="text-[var(--accent)]" />
-              </h3>
-              <p className="text-xs text-[var(--muted)] font-sans">
-                {language === 'id' ? 'Sinkronisasi prospek klien ke sistem tracking deal agensi.' : 'Bridge inbound brief into an active sales pipeline opportunity.'}
-              </p>
-            </div>
-          </div>
-
-          <button
-            onClick={onClose}
-            className="min-h-10 min-w-10 rounded-control bg-[var(--panel)] hover:bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)] transition-colors flex items-center justify-center border border-line"
-          >
-            <X size={16} />
+    <Modal
+      open={isOpen}
+      onClose={onClose}
+      size="lg"
+      title={language === 'id' ? 'Konversi ke Agency CRM Pipeline' : 'Convert to Agency CRM Pipeline'}
+      description={language === 'id' ? 'Sinkronisasi prospek klien ke sistem tracking deal agensi.' : 'Bridge inbound brief into an active sales pipeline opportunity.'}
+      footer={
+        <>
+          <button type="button" onClick={onClose} className="min-h-10 rounded-control border border-line bg-panel px-4 text-xs font-medium text-muted transition-colors hover:bg-bg hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
+            {language === 'id' ? 'Batal' : 'Cancel'}
           </button>
-        </div>
-
-        {/* Content Body */}
-        <div className="p-6 space-y-5 overflow-y-auto max-h-[70vh] custom-scrollbar">
+          <button type="button" disabled={isSubmitting} onClick={handleConvert} className="inline-flex min-h-10 items-center justify-center gap-2 rounded-control bg-accent px-4 text-xs font-semibold text-white transition-colors hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
+            <span>{language === 'id' ? 'Konfirmasi & Buat Lead CRM' : 'Confirm & Create CRM Deal'}</span>
+            <ArrowRight size={14} />
+          </button>
+        </>
+      }
+    >
+      <div className="space-y-5">
           
           {/* Client Summary Card */}
-          <div className="p-4 rounded-control bg-[var(--panel)] border border-line grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="p-4 rounded-control bg-panel border border-line grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <span className="text-[10px] font-sans text-[var(--muted)] block mb-0.5">{language === 'id' ? 'Nama Klien' : 'Client Name'}</span>
-              <span className="text-xs font-semibold text-[var(--text)] flex items-center gap-1.5">
-                <User size={13} className="text-[var(--accent)]" />
+              <span className="text-[10px] font-sans text-muted block mb-0.5">{language === 'id' ? 'Nama Klien' : 'Client Name'}</span>
+              <span className="text-xs font-semibold text-fg flex items-center gap-1.5">
+                <User size={13} className="text-accent-text" />
                 {submission.fullName}
               </span>
             </div>
             <div>
-              <span className="text-[10px] font-sans text-[var(--muted)] block mb-0.5">{language === 'id' ? 'Perusahaan / Organisasi' : 'Company / Brand'}</span>
-              <span className="text-xs font-medium text-[var(--text)] flex items-center gap-1.5">
-                <Building2 size={13} className="text-[var(--accent)]" />
+              <span className="text-[10px] font-sans text-muted block mb-0.5">{language === 'id' ? 'Perusahaan / Organisasi' : 'Company / Brand'}</span>
+              <span className="text-xs font-medium text-fg flex items-center gap-1.5">
+                <Building2 size={13} className="text-accent-text" />
                 {submission.company || 'Individual Client'}
               </span>
             </div>
@@ -172,11 +155,11 @@ export const ConvertToCrmModal: React.FC<ConvertToCrmModalProps> = ({
           {/* Deal Value Input */}
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
-              <label className="text-xs font-sans text-[var(--muted)] flex items-center gap-1.5">
-                <DollarSign size={13} className="text-[var(--accent)]" />
+              <label className="text-xs font-sans text-muted flex items-center gap-1.5">
+                <DollarSign size={13} className="text-accent-text" />
                 <span>{language === 'id' ? 'Estimasi Nilai Kontrak (Deal Value in IDR)' : 'Estimated Deal Value (IDR)'}</span>
               </label>
-              <span className="text-[11px] font-sans font-semibold text-[var(--accent)]">
+              <span className="text-[11px] font-sans font-semibold text-accent-text">
                 {formatAmount(dealValue, currency)}
               </span>
             </div>
@@ -188,9 +171,9 @@ export const ConvertToCrmModal: React.FC<ConvertToCrmModalProps> = ({
                 step="1000000"
                 value={dealValue}
                 onChange={(e) => setDealValue(Number(e.target.value) || 0)}
-                className="w-full pl-4 pr-16 py-2.5 bg-[var(--panel)] border border-line rounded-control text-sm font-sans text-[var(--text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30 focus:border-[var(--accent)]"
+                className="w-full pl-4 pr-16 py-2.5 bg-panel border border-line rounded-control text-sm font-sans text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30 focus:border-[var(--accent)]"
               />
-              <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-sans text-[var(--muted)]">
+              <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-sans text-muted">
                 IDR
               </span>
             </div>
@@ -204,8 +187,8 @@ export const ConvertToCrmModal: React.FC<ConvertToCrmModalProps> = ({
                   onClick={() => setDealValue(preset)}
                   className={`px-2 py-1 rounded-control text-[10px] font-sans transition-colors border ${
                     dealValue === preset
-                      ? 'bg-[var(--accent)]/10 text-[var(--accent-text)] border-[var(--accent)]/30 font-semibold'
-                      : 'bg-[var(--panel)] text-[var(--muted)] border-line hover:text-[var(--text)]'
+                      ? 'bg-accent/10 text-accent-text border-accent/30 font-semibold'
+                      : 'bg-panel text-muted border-line hover:text-fg'
                   }`}
                 >
                   {formatIDR(preset)}
@@ -216,8 +199,8 @@ export const ConvertToCrmModal: React.FC<ConvertToCrmModalProps> = ({
 
           {/* Service Pillar Selection */}
           <div className="space-y-1.5">
-            <label className="text-xs font-sans text-[var(--muted)] flex items-center gap-1.5">
-              <Layers size={13} className="text-[var(--accent)]" />
+            <label className="text-xs font-sans text-muted flex items-center gap-1.5">
+              <Layers size={13} className="text-accent-text" />
               <span>{language === 'id' ? 'Pilar Layanan Agensi' : 'Agency Service Pillar'}</span>
             </label>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
@@ -228,8 +211,8 @@ export const ConvertToCrmModal: React.FC<ConvertToCrmModalProps> = ({
                   onClick={() => setPillar(p)}
                   className={`p-2.5 rounded-control border text-left text-xs font-sans transition-all ${
                     pillar === p
-                      ? 'bg-[var(--accent)]/10 text-[var(--accent-text)] border-[var(--accent)]/30 font-semibold'
-                      : 'bg-[var(--panel)] text-[var(--muted)] border-line hover:text-[var(--text)]'
+                      ? 'bg-accent/10 text-accent-text border-accent/30 font-semibold'
+                      : 'bg-panel text-muted border-line hover:text-fg'
                   }`}
                 >
                   {p}
@@ -240,8 +223,8 @@ export const ConvertToCrmModal: React.FC<ConvertToCrmModalProps> = ({
 
           {/* Target Stage Selection */}
           <div className="space-y-1.5">
-            <label className="text-xs font-sans text-[var(--muted)] flex items-center gap-1.5">
-              <Calendar size={13} className="text-[var(--accent)]" />
+            <label className="text-xs font-sans text-muted flex items-center gap-1.5">
+              <Calendar size={13} className="text-accent-text" />
               <span>{language === 'id' ? 'Tahapan Awal di CRM' : 'Initial CRM Stage'}</span>
             </label>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -252,14 +235,14 @@ export const ConvertToCrmModal: React.FC<ConvertToCrmModalProps> = ({
                   onClick={() => setStage(stg.value)}
                   className={`p-3 rounded-control border text-left transition-all ${
                     stage === stg.value
-                      ? 'bg-[var(--accent)]/10 text-[var(--accent-text)] border-[var(--accent)]/30 font-semibold'
-                      : 'bg-[var(--panel)] text-[var(--muted)] border-line hover:text-[var(--text)]'
+                      ? 'bg-accent/10 text-accent-text border-accent/30 font-semibold'
+                      : 'bg-panel text-muted border-line hover:text-fg'
                   }`}
                 >
                   <div className="text-xs font-sans font-semibold">
                     {language === 'id' ? stg.labelId : stg.labelEn}
                   </div>
-                  <div className="text-[10px] font-sans text-[var(--muted)] mt-0.5">
+                  <div className="text-[10px] font-sans text-muted mt-0.5">
                     {stg.desc}
                   </div>
                 </button>
@@ -269,8 +252,8 @@ export const ConvertToCrmModal: React.FC<ConvertToCrmModalProps> = ({
 
           {/* Assignee */}
           <div className="space-y-1.5">
-            <label className="text-xs font-sans text-[var(--muted)] flex items-center gap-1.5">
-              <User size={13} className="text-[var(--accent)]" />
+            <label className="text-xs font-sans text-muted flex items-center gap-1.5">
+              <User size={13} className="text-accent-text" />
               <span>{language === 'id' ? 'Penanggung Jawab (Owner)' : 'Assigned Team Lead'}</span>
             </label>
             <CustomSelect
@@ -290,11 +273,11 @@ export const ConvertToCrmModal: React.FC<ConvertToCrmModalProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t border-line bg-[var(--panel)] flex items-center justify-between">
+        <div className="p-4 border-t border-line bg-panel flex items-center justify-between">
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 rounded-control bg-[var(--panel)] text-xs font-sans text-[var(--muted)] hover:text-[var(--text)] border border-line transition-colors"
+            className="px-4 py-2 rounded-control bg-panel text-xs font-sans text-muted hover:text-fg border border-line transition-colors"
           >
             {language === 'id' ? 'Batal' : 'Cancel'}
           </button>
@@ -303,14 +286,14 @@ export const ConvertToCrmModal: React.FC<ConvertToCrmModalProps> = ({
             type="button"
             disabled={isSubmitting}
             onClick={handleConvert}
-            className="px-5 py-2.5 rounded-control bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white text-xs font-sans font-medium transition-colors flex items-center gap-2 -none"
+            className="px-5 py-2.5 rounded-control bg-accent hover:bg-accent text-white text-xs font-sans font-medium transition-colors flex items-center gap-2"
           >
             <span>{language === 'id' ? 'Konfirmasi & Buat Lead CRM' : 'Confirm & Create CRM Deal'}</span>
             <ArrowRight size={14} />
           </button>
         </div>
 
-      </div>
-    </div>
+
+    </Modal>
   );
 };
