@@ -98,14 +98,6 @@ const SkeletonBlock = ({ className = '' }: { className?: string }) => (
   <div className={`animate-pulse rounded-control bg-line/70 ${className}`} aria-hidden="true" />
 );
 
-const formatCompactCurrency = (value: number) => {
-  if (!Number.isFinite(value)) return 'Rp 0';
-  if (Math.abs(value) >= 1_000_000_000) return `Rp ${(value / 1_000_000_000).toFixed(1)} M`;
-  if (Math.abs(value) >= 1_000_000) return `Rp ${(value / 1_000_000).toFixed(1)} Jt`;
-  if (Math.abs(value) >= 1_000) return `Rp ${(value / 1_000).toFixed(0)} Rb`;
-  return `Rp ${Math.round(value).toLocaleString('id-ID')}`;
-};
-
 const statusTone = (status: string): ProjectTone => {
   const value = status.toLowerCase();
   if (value.includes('complete') || value === 'done') return 'success';
@@ -141,7 +133,7 @@ const Metric = ({
   href?: string;
 }) => {
   const content = (
-    <div className="min-w-0">
+    <div className="min-w-0 px-1">
       <div className="flex items-start justify-between gap-3">
         <span className="text-xs leading-4 text-muted">{label}</span>
         <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-control border border-line ${toneClass[tone]}`} aria-hidden="true">
@@ -352,11 +344,13 @@ export const GlobalExecutiveDashboard: React.FC = () => {
                 <p className="mt-1 text-xs text-muted">The few signals worth checking first.</p>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-2 min-[900px]:grid-cols-4">
+            <div className="grid grid-cols-2 gap-y-6 sm:grid-cols-3 min-[1100px]:grid-cols-6">
               <Metric label="Revenue collected" value={formatCurrency(metrics?.revenueCollected)} icon={CircleDollarSign} href="/admin/invoicing" context={financials?.revenueThisMonth != null ? `${formatCurrency(financials.revenueThisMonth)} this month` : 'Financial access required'} />
               <Metric label="Outstanding" value={formatCurrency(metrics?.outstandingReceivables)} icon={WalletCards} tone="warning" href="/admin/invoicing" context={metrics?.overdueReceivables ? `${formatCurrency(metrics.overdueReceivables)} overdue` : 'No overdue balance reported'} />
               <Metric label="Open leads" value={metrics?.openLeads ?? 0} icon={Users} tone="info" href="/admin/crm" context={metrics?.activePipeline != null ? `${formatCurrency(metrics.activePipeline)} active pipeline` : 'CRM access required'} />
               <Metric label="Active projects" value={metrics?.activeProjects ?? 0} icon={FolderKanban} tone="success" href="/admin/projects" context={metrics?.projectsAtRisk ? `${metrics.projectsAtRisk} at risk` : 'No active risk flags'} />
+              <Metric label="Pending approvals" value={metrics?.pendingApprovals ?? 0} icon={ClipboardCheck} tone="warning" href="/admin/approval-center" context="Awaiting review" />
+              <Metric label="Overdue tasks" value={metrics?.overdueTasks ?? 0} icon={AlertTriangle} tone="danger" href="/admin/tasks" context="Needs attention" />
             </div>
           </section>
 
@@ -391,8 +385,8 @@ export const GlobalExecutiveDashboard: React.FC = () => {
             </div>
           </section>
 
-          <div className="mt-6 grid gap-3 lg:grid-cols-5">
-            <section className={`${cardClass} lg:col-span-3`} aria-labelledby="pipeline-title">
+          <div className="mt-6 grid gap-3 min-[1100px]:grid-cols-12">
+            <section className={`${cardClass} min-[1100px]:col-span-7`} aria-labelledby="pipeline-title">
               <div className="flex items-start justify-between gap-3">
                 <div><h2 id="pipeline-title" className="text-sm font-semibold text-fg">Lead pipeline</h2><p className="mt-1 text-xs text-muted">Lead count by current CRM stage.</p></div>
                 <Link to="/admin/crm" className={actionClass}>Open CRM <ArrowUpRight size={13} /></Link>
@@ -402,7 +396,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
               </div>
             </section>
 
-            <section className={`${cardClass} lg:col-span-2`} aria-labelledby="project-status-title">
+            <section className={`${cardClass} min-[1100px]:col-span-5`} aria-labelledby="project-status-title">
               <div className="flex items-start justify-between gap-3">
                 <div><h2 id="project-status-title" className="text-sm font-semibold text-fg">Project delivery</h2><p className="mt-1 text-xs text-muted">Current status mix across active projects.</p></div>
                 <Link to="/admin/projects" className={actionClass}>Projects <ArrowUpRight size={13} /></Link>
@@ -413,8 +407,8 @@ export const GlobalExecutiveDashboard: React.FC = () => {
             </section>
           </div>
 
-          <div className="mt-6 grid gap-3 lg:grid-cols-5">
-            <section className={`${cardClass} lg:col-span-3`} aria-labelledby="financial-summary-title">
+          <div className="mt-6 grid gap-3 min-[1100px]:grid-cols-12">
+            <section className={`${cardClass} min-[1100px]:col-span-7`} aria-labelledby="financial-summary-title">
               <div className="flex items-start justify-between gap-3">
                 <div><h2 id="financial-summary-title" className="text-sm font-semibold text-fg">Financial operating summary</h2><p className="mt-1 text-xs text-muted">Receivables and operating performance from current financial data.</p></div>
                 {financialMetrics?.collectionRate !== null && financialMetrics?.collectionRate !== undefined && <span className="rounded-badge bg-success/10 px-2 py-1 text-[11px] font-semibold text-success">{financialMetrics.collectionRate}% collection rate</span>}
@@ -431,7 +425,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
               </div>
             </section>
 
-            <section className={`${cardClass} lg:col-span-2`} aria-labelledby="attention-title">
+            <section className={`${cardClass} min-[1100px]:col-span-5`} aria-labelledby="attention-title">
               <div className="flex items-start justify-between gap-3">
                 <div><h2 id="attention-title" className="text-sm font-semibold text-fg">Action required</h2><p className="mt-1 text-xs text-muted">Only current items generated by the operational data.</p></div>
                 <span className={`rounded-badge px-2 py-1 text-[11px] font-semibold ${attentionCount ? 'bg-warning/10 text-warning' : 'bg-success/10 text-success'}`}>{attentionCount}</span>
@@ -448,8 +442,8 @@ export const GlobalExecutiveDashboard: React.FC = () => {
             </section>
           </div>
 
-          <div className="mt-6 grid gap-3 lg:grid-cols-5">
-            <section className={`${cardClass} lg:col-span-2`} aria-labelledby="quick-actions-title">
+          <div className="mt-6 grid gap-3 min-[1100px]:grid-cols-12">
+            <section className={`${cardClass} min-[1100px]:col-span-4`} aria-labelledby="quick-actions-title">
               <div><h2 id="quick-actions-title" className="text-sm font-semibold text-fg">Quick actions</h2><p className="mt-1 text-xs text-muted">Jump directly to the modules used most often.</p></div>
               <div className="mt-4 grid grid-cols-2 gap-2">
                 {operationalActions.map((item) => {
@@ -459,7 +453,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
               </div>
             </section>
 
-            <section className={`${cardClass} lg:col-span-3`} aria-labelledby="activity-title">
+            <section className={`${cardClass} min-[1100px]:col-span-8`} aria-labelledby="activity-title">
               <div className="flex items-start justify-between gap-3"><div><h2 id="activity-title" className="text-sm font-semibold text-fg">Recent activity</h2><p className="mt-1 text-xs text-muted">Latest audit events returned for this account.</p></div><Link to="/admin/settings" className={actionClass}>View audit log <ArrowUpRight size={13} /></Link></div>
               <div className="mt-4 overflow-hidden rounded-control border border-line">
                 {recentActivity.length ? recentActivity.slice(0, 6).map((event, index) => (
