@@ -824,7 +824,7 @@ export const AdminClients: React.FC = () => {
             </div>
           </section>
 
-          <section aria-labelledby="client-relationship-section" className="grid gap-3 border-t border-line pt-4 sm:grid-cols-[160px_minmax(0,1fr)]">
+          <section aria-labelledby="client-relationship-section" className="grid gap-4 border-t border-line pt-5 sm:grid-cols-[176px_minmax(0,1fr)] sm:gap-5">
             <div>
               <h3 id="client-relationship-section" className="text-sm font-semibold text-fg">Client relationship</h3>
               <p className="mt-1 text-xs leading-4 text-muted">Operational values tracked on the client record.</p>
