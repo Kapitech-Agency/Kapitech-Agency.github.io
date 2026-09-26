@@ -684,58 +684,6 @@
   box-shadow: none;
 }
 
-.ams-shell .ams-card,
-.ams-shell .metric-card,
-.ams-shell .glass-panel {
-  background: var(--panel);
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  box-shadow: none;
-}
-.ams-shell .metric-card {
-  padding: 16px;
-}
-
-.ams-shell button,
-.ams-shell a[role="button"] {
-  border-radius: 8px;
-  box-shadow: none;
-}
-.ams-shell button:disabled,
-.ams-shell input:disabled,
-.ams-shell select:disabled,
-.ams-shell textarea:disabled {
-  opacity: .55;
-  cursor: not-allowed;
-}
-
-.ams-shell input:not([type="checkbox"]):not([type="radio"]),
-.ams-shell select,
-.ams-shell textarea {
-  background: var(--panel);
-  color: var(--text);
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  box-shadow: none;
-}
-.ams-shell input:not([type="checkbox"]):not([type="radio"]),
-.ams-shell select {
-  min-height: 36px;
-}
-.ams-shell textarea {
-  min-height: 96px;
-}
-.ams-shell input::placeholder,
-.ams-shell textarea::placeholder {
-  color: var(--muted);
-}
-.ams-shell input:focus,
-.ams-shell select:focus,
-.ams-shell textarea:focus {
-  border-color: var(--accent);
-  box-shadow: none;
-}
-
 .ams-shell table {
   width: 100%;
   border-collapse: separate;
