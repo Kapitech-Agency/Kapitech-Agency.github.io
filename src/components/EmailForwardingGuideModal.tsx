@@ -20,7 +20,7 @@ export const EmailForwardingGuideModal: React.FC<EmailForwardingGuideModalProps>
   };
 
   return (
-    <div className="ams-modal-root fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4" role="presentation">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4" role="presentation">
       <button
         type="button"
         aria-label={language === 'id' ? 'Tutup dialog' : 'Close dialog'}
