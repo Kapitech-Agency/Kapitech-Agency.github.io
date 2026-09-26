@@ -182,6 +182,13 @@ export const AdminClients: React.FC = () => {
     [clients]
   );
 
+  const clientMetrics = useMemo(() => ({
+    total: clients.length,
+    active: clients.filter((client) => client.status === 'active').length,
+    leads: clients.filter((client) => client.status === 'lead').length,
+    overBudget: overBudgetClients.length,
+  }), [clients, overBudgetClients]);
+
   const openCreate = () => {
     setEditingClient(null);
     setName('');
@@ -327,26 +334,29 @@ export const AdminClients: React.FC = () => {
       <header className="ams-dashboard-header mb-6 flex flex-col gap-4 border-b border-line pb-5 sm:flex-row sm:items-end sm:justify-between">
         <div className="min-w-0">
           <div className="flex items-center gap-2 text-xs text-muted">
-            <Users size={14} aria-hidden="true" />
             <span>Kapitech AMS</span>
+            <span aria-hidden="true">/</span>
+            <span className="text-fg">{t('admin.client.title')}</span>
           </div>
           <h1 className="mt-2 text-xl font-semibold leading-7 tracking-[-0.01em] text-fg">
             {t('admin.client.title')}
           </h1>
-          <p className="mt-1 max-w-2xl text-xs leading-4 text-muted">
+          <p className="mt-1 max-w-2xl text-xs leading-5 text-muted">
             {t('admin.client.subtitle')}
           </p>
         </div>
         {canManageClients && (
-          <Button
-            type="button"
-            variant="primary"
-            icon={<Plus size={14} aria-hidden="true" />}
-            onClick={openCreate}
-            className="w-full sm:w-auto"
-          >
-            {t('admin.client.addClient')}
-          </Button>
+          <div className="flex flex-wrap items-center gap-2 sm:justify-end">
+            <Button
+              type="button"
+              variant="primary"
+              icon={<Plus size={14} aria-hidden="true" />}
+              onClick={openCreate}
+              className="w-full sm:w-auto"
+            >
+              {t('admin.client.addClient')}
+            </Button>
+          </div>
         )}
       </header>
 
@@ -377,6 +387,48 @@ export const AdminClients: React.FC = () => {
         </div>
       )}
 
+      <section aria-labelledby="client-snapshot-title" className="mb-6">
+        <div className="mb-3 flex items-end justify-between gap-3">
+          <div>
+            <h2 id="client-snapshot-title" className="text-sm font-semibold text-fg">
+              {language === 'id' ? 'Ringkasan klien' : 'Client snapshot'}
+            </h2>
+            <p className="mt-1 text-xs text-muted">
+              {language === 'id' ? 'Sinyal utama dari direktori klien saat ini.' : 'The key signals from the current client directory.'}
+            </p>
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-y-6 border-y border-line py-5 sm:grid-cols-4">
+          <div className="min-w-0 px-1">
+            <p className="text-xs leading-4 text-muted">{language === 'id' ? 'Total klien' : 'Total clients'}</p>
+            <p className="mt-3 text-2xl font-medium leading-8 tracking-[-0.02em] tabular-nums text-fg">
+              {isLoading ? '—' : clientMetrics.total}
+            </p>
+            <p className="mt-1 min-h-4 text-xs leading-4 text-muted">{language === 'id' ? 'Semua status' : 'All statuses'}</p>
+          </div>
+          <div className="min-w-0 px-1">
+            <p className="text-xs leading-4 text-muted">{language === 'id' ? 'Klien aktif' : 'Active clients'}</p>
+            <p className="mt-3 text-2xl font-medium leading-8 tracking-[-0.02em] tabular-nums text-success">
+              {isLoading ? '—' : clientMetrics.active}
+            </p>
+            <p className="mt-1 min-h-4 text-xs leading-4 text-muted">{language === 'id' ? 'Sedang berjalan' : 'Currently active'}</p>
+          </div>
+          <div className="min-w-0 px-1">
+            <p className="text-xs leading-4 text-muted">{language === 'id' ? 'Prospek' : 'Leads'}</p>
+            <p className="mt-3 text-2xl font-medium leading-8 tracking-[-0.02em] tabular-nums text-info">
+              {isLoading ? '—' : clientMetrics.leads}
+            </p>
+            <p className="mt-1 min-h-4 text-xs leading-4 text-muted">{language === 'id' ? 'Status lead' : 'Lead status'}</p>
+          </div>
+          <div className="min-w-0 px-1">
+            <p className="text-xs leading-4 text-muted">{language === 'id' ? 'Melewati SLA' : 'Over budget'}</p>
+            <p className="mt-3 text-2xl font-medium leading-8 tracking-[-0.02em] tabular-nums text-warning">
+              {isLoading ? '—' : clientMetrics.overBudget}
+            </p>
+            <p className="mt-1 min-h-4 text-xs leading-4 text-muted">{language === 'id' ? 'Daily ad-spend' : 'Daily ad-spend SLA'}</p>
+          </div>
+        </div>
+      </section>
       <section
         aria-label={language === 'id' ? 'Pencarian dan filter klien' : 'Client directory controls'}
         className="mb-4 rounded-card border border-line bg-panel p-4"
@@ -732,7 +784,7 @@ export const AdminClients: React.FC = () => {
       <Modal
         open={isClientModalOpen}
         onClose={() => !isSaving && setIsClientModalOpen(false)}
-        size="lg"
+        size="xl"
         title={editingClient ? 'Edit client' : 'Add client'}
         description={editingClient ? 'Update the existing client record.' : 'Create a client record using information available to your team.'}
         footer={
