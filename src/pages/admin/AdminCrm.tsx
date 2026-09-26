@@ -388,9 +388,9 @@ export const AdminCrm: React.FC = () => {
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2 sm:justify-end">
-          <div className="flex h-10 items-center rounded-control border border-line bg-transparent p-0.5">
-            <button type="button" onClick={() => handleCurrencyToggle('IDR')} className={"min-h-9 rounded-control px-3 text-xs font-medium transition-colors " + (currency === 'IDR' ? 'bg-bg text-fg' : 'text-muted hover:text-fg')}>IDR</button>
-            <button type="button" onClick={() => handleCurrencyToggle('USD')} className={"min-h-9 rounded-control px-3 text-xs font-medium transition-colors " + (currency === 'USD' ? 'bg-bg text-fg' : 'text-muted hover:text-fg')}>USD</button>
+          <div className="flex h-10 items-center rounded-control border border-line bg-transparent p-0.5" aria-label="Currency">
+            <button type="button" onClick={() => handleCurrencyToggle('IDR')} aria-pressed={currency === 'IDR'} className={"min-h-9 rounded-control px-3 text-xs font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent " + (currency === 'IDR' ? 'bg-accent text-white' : 'text-muted hover:bg-bg hover:text-fg')}>IDR</button>
+            <button type="button" onClick={() => handleCurrencyToggle('USD')} aria-pressed={currency === 'USD'} className={"min-h-9 rounded-control px-3 text-xs font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent " + (currency === 'USD' ? 'bg-accent text-white' : 'text-muted hover:bg-bg hover:text-fg')}>USD</button>
           </div>
           <button type="button" onClick={() => exportCrmLeadsToCsv(filteredLeads)} className="ams-action inline-flex min-h-10 items-center justify-center gap-1.5 rounded-control border border-line bg-transparent px-3 text-xs font-medium text-muted transition-colors hover:bg-bg hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" title={t('admin.action.exportCsv')}>
             <Download size={14} />
