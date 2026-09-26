@@ -213,7 +213,7 @@ export const AdminLogin: React.FC = () => {
           </form>
           ) : (
           <form onSubmit={handleMfaSubmit} className="space-y-5">
-            <div className="rounded-control border border-amber-500/25 bg-amber-500/5 p-4">
+            <div className="rounded-control border border-[var(--warning)]/30 bg-[var(--warning)]/10 p-4">
               <div className="flex items-center gap-2 text-sm font-semibold text-[var(--text)]">
                 <ShieldCheck size={18} className="text-warning" />
                 {language === 'id' ? 'Verifikasi MFA diperlukan' : 'MFA verification required'}
