@@ -78,7 +78,7 @@ export const AdminCmsServices: React.FC = () => {
       case 'Design':
         return <Palette size={14} className="text-series-3" />;
       case 'Development':
-        return <Code size={14} className="text-danger" />;
+        return <Code size={14} className="text-accent-text" />;
       case 'Branding':
         return <Sparkles size={14} className="text-warning" />;
       case 'Solutions':
