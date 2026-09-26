@@ -1198,7 +1198,6 @@ export const AdminSettings: React.FC = () => {
               </button>
             </div>
 
-          </div>
       </Modal>
         </div>
       )}
