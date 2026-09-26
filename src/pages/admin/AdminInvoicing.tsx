@@ -807,7 +807,7 @@ export const AdminInvoicing: React.FC = () => {
                                   )}
                                   <button type="button" onClick={() => openPrintPreview(invoice)} className="inline-flex min-h-9 min-w-9 items-center justify-center rounded-control border border-line bg-transparent text-muted hover:bg-bg hover:text-fg" aria-label="View invoice"><FileText size={14} /></button>
                                   {canManageInvoices && invoice.status !== 'cancelled' && <button type="button" onClick={() => openEditInvoice(invoice)} className="inline-flex min-h-9 min-w-9 items-center justify-center rounded-control border border-line bg-transparent text-muted hover:bg-bg hover:text-fg" aria-label="Edit invoice"><Edit3 size={14} /></button>}
-                                  {canDeleteInvoice && invoice.status !== 'cancelled' && <button type="button" onClick={() => setConfirmAction({ type: 'invoice', id: invoice.id, label: invoice.invoiceNumber })} className="inline-flex min-h-9 min-w-9 items-center justify-center rounded-control border border-line bg-transparent text-muted hover:border-danger/30 hover:bg-danger/10 hover:text-danger" aria-label="Cancel invoice"><Trash2 size={14} /></button>}
+                                  {canManageInvoices && canDeleteInvoice && invoice.status !== 'cancelled' && <button type="button" onClick={() => setConfirmAction({ type: 'invoice', id: invoice.id, label: invoice.invoiceNumber })} className="inline-flex min-h-9 min-w-9 items-center justify-center rounded-control border border-line bg-transparent text-muted hover:border-danger/30 hover:bg-danger/10 hover:text-danger" aria-label="Cancel invoice"><Trash2 size={14} /></button>}
                                 </div>
                               </td>
                             </tr>
@@ -841,7 +841,7 @@ export const AdminInvoicing: React.FC = () => {
                             {canManageInvoices && invoice.status !== 'paid' && invoice.status !== 'cancelled' && balance > 0 && <button type="button" onClick={() => openPayment(invoice)} className={actionClass}><CreditCard size={13} />Pay</button>}
                             <button type="button" onClick={() => openPrintPreview(invoice)} className={actionClass}><FileText size={13} />View</button>
                             {canManageInvoices && invoice.status !== 'cancelled' && <button type="button" onClick={() => openEditInvoice(invoice)} className={actionClass}><Edit3 size={13} />Edit</button>}
-                            {canDeleteInvoice && invoice.status !== 'cancelled' && <button type="button" onClick={() => setConfirmAction({ type: 'invoice', id: invoice.id, label: invoice.invoiceNumber })} className={actionClass}><Trash2 size={13} />Cancel</button>}
+                            {canManageInvoices && canDeleteInvoice && invoice.status !== 'cancelled' && <button type="button" onClick={() => setConfirmAction({ type: 'invoice', id: invoice.id, label: invoice.invoiceNumber })} className={actionClass}><Trash2 size={13} />Cancel</button>}
                           </div>
                         </article>
                       );
