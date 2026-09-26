@@ -1344,40 +1344,72 @@
   outline-offset: 2px;
 }
 
-.ams-dropdown-surface {
-  background: var(--panel) !important;
-  border: 1px solid var(--line) !important;
+/* AMS popovers: one canonical surface for every custom dropdown. */
+.ams-shell .ams-popover-surface {
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--line);
   border-radius: var(--radius-control);
-  box-shadow: none;
+  box-shadow: 0 12px 32px rgb(0 0 0 / 18%);
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
   isolation: isolate;
-  overflow: hidden;
 }
 
-.ams-dropdown-surface .ams-dropdown-item {
+.ams-shell .ams-popover-surface .ams-dropdown-item {
   min-height: 36px;
   padding: 8px 10px;
   background: transparent;
-  color: var(--muted, #8A94A6);
+  color: var(--muted);
   border-radius: 6px;
 }
 
-.ams-dropdown-surface .ams-dropdown-item:hover,
-.ams-dropdown-surface .ams-dropdown-item[data-active="true"] {
-  background: color-mix(in srgb, var(--text, #F8FAFC) 6%, transparent);
-  color: var(--text, #F8FAFC);
+.ams-shell .ams-popover-surface .ams-dropdown-item:hover,
+.ams-shell .ams-popover-surface .ams-dropdown-item[data-active="true"] {
+  background: var(--panel-hover);
+  color: var(--text);
 }
 
-.ams-dropdown-surface .ams-dropdown-item[data-selected="true"] {
-  background: color-mix(in srgb, var(--accent, #DC143C) 12%, transparent);
-  color: var(--text, #F8FAFC);
+.ams-shell .ams-popover-surface .ams-dropdown-item[data-selected="true"] {
+  background: color-mix(in srgb, var(--accent) 10%, var(--panel));
+  color: var(--text);
   font-weight: 600;
 }
 
-.ams-dropdown-surface .ams-dropdown-item:focus-visible {
-  outline: 2px solid var(--accent, #DC143C);
+.ams-shell .ams-popover-surface .ams-dropdown-item:focus-visible {
+  outline: 2px solid var(--accent);
   outline-offset: -2px;
+}
+
+.ams-shell .ams-notification-surface {
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  box-shadow: 0 16px 40px rgb(0 0 0 / 22%);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  isolation: isolate;
+}
+
+.ams-shell .ams-notification-header {
+  background: var(--panel);
+}
+
+.ams-shell .ams-notification-list {
+  background: var(--panel);
+}
+
+.ams-shell .ams-notification-item {
+  background: var(--panel);
+}
+
+.ams-shell .ams-notification-item.is-unread {
+  background: color-mix(in srgb, var(--accent) 5%, var(--panel));
+}
+
+.ams-shell .ams-notification-item:last-child {
+  border-bottom: 0;
 }
 
 .ams-shell .ams-dashboard-header,
