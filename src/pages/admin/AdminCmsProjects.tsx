@@ -400,11 +400,8 @@ export const AdminCmsProjects: React.FC = () => {
       </div>
 
       {/* MODAL: ADD / EDIT PROJECT WITH LIVE PREVIEW & DRAG & DROP */}
-      {isModalOpen && editingProject && (
-        <div className="fixed inset-0 bg-bg/90 z-50 flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-panel border border-line rounded-card max-w-3xl w-full max-h-[calc(100dvh-24px)] overflow-y-auto p-4 sm:p-6 font-sans text-xs">
-            
-            <div className="flex items-center justify-between pb-4 border-b border-line mb-6">
+      <Modal open={isModalOpen && !!editingProject} onClose={() => setIsModalOpen(false)} size="xl" title={editingProject?.title ? 'Edit: ' + editingProject.title : 'Add New Case Study'} description="Manage the case study content and live card preview.">
+            <div className="flex items-center justify-end pb-3 border-b border-line mb-4">
               <div className="flex items-center gap-3">
                 <FolderKanban className="text-accent-text" size={20} />
                 <h2 className="text-lg font-semibold font-sans text-fg">
@@ -436,12 +433,6 @@ export const AdminCmsProjects: React.FC = () => {
                   </button>
                 </div>
 
-                <button
-                  onClick={() => setIsModalOpen(false)}
-                  className="p-1.5 rounded-control bg-panel hover:bg-panel-hover text-muted hover:text-fg border border-line"
-                >
-                  <X size={15} />
-                </button>
               </div>
             </div>
 
@@ -726,9 +717,7 @@ export const AdminCmsProjects: React.FC = () => {
 
               </form>
             )}
-
-          </div>
-        </div>
+      </Modal>
       )}
 
     </div>
