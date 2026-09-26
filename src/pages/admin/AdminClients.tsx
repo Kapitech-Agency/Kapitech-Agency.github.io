@@ -387,17 +387,7 @@ export const AdminClients: React.FC = () => {
         </div>
       )}
 
-      <section aria-labelledby="client-snapshot-title" className="mb-6">
-        <div className="mb-3 flex items-end justify-between gap-3">
-          <div>
-            <h2 id="client-snapshot-title" className="text-sm font-semibold text-fg">
-              {language === 'id' ? 'Ringkasan klien' : 'Client snapshot'}
-            </h2>
-            <p className="mt-1 text-xs text-muted">
-              {language === 'id' ? 'Sinyal utama dari direktori klien saat ini.' : 'The key signals from the current client directory.'}
-            </p>
-          </div>
-        </div>
+      <section aria-label={language === 'id' ? 'Ringkasan klien' : 'Client snapshot'} className="mb-6">
         <div className="grid grid-cols-2 border-y border-line sm:grid-cols-4">
           {[
             { label: language === 'id' ? 'Total klien' : 'Total clients', value: clientMetrics.total, helper: language === 'id' ? 'Semua status' : 'All statuses', valueClass: 'text-fg' },
@@ -415,7 +405,7 @@ export const AdminClients: React.FC = () => {
       </section>
       <section
         aria-label={language === 'id' ? 'Pencarian dan filter klien' : 'Client directory controls'}
-        className="mb-4 rounded-card border border-line bg-panel p-4"
+        className="mb-6 rounded-card border border-line bg-panel p-4"
       >
         <div className="flex min-w-0 flex-col gap-3 lg:flex-row lg:items-end">
           <div className="min-w-0 flex-1">
