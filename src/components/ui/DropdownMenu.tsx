@@ -46,7 +46,7 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
             setIsOpen(false);
           }
         }}
-        className="cursor-pointer rounded-control focus-visible:outline-none focus-visible:shadow-[inset_0_0_0_2px_var(--accent)]"
+        className="cursor-pointer rounded-control focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
       >
         {trigger}
       </div>
