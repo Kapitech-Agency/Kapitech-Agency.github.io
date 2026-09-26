@@ -727,7 +727,7 @@ export const AdminProjects: React.FC = () => {
                     const isSelected = project.id === selectedProjectId;
                     const overdue = project.tasks.filter(task => task.status !== 'done' && isOverdue(task.dueDate)).length;
                     return (
-                      <tr key={project.id} className={isSelected ? 'bg-[color-mix(in_srgb,var(--accent)_6%,transparent)]' : 'hover:bg-bg'}>
+                      <tr key={project.id} className={isSelected ? 'bg-accent/10' : 'hover:bg-bg'}>
                         <td className="px-4 py-3">
                           <button className="min-w-0 text-left" onClick={() => setSelectedProjectId(project.id)}>
                             <div className="max-w-[280px] truncate text-xs font-semibold text-fg">{project.name}</div>
