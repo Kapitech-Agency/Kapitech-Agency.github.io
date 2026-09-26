@@ -372,10 +372,7 @@ export const AdminCrm: React.FC = () => {
       <div className="ams-dashboard-header flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-control bg-[var(--accent)]/10 border border-[var(--accent)]/30 flex items-center justify-center text-[var(--danger)] shrink-0">
-              <Users size={18} />
-            </div>
-            <h1 className="ams-page-title flex items-center gap-2.5">
+<h1 className="ams-page-title flex items-center gap-2.5">\n              <Users className="text-[var(--accent-text)] shrink-0" size={22} />
               <span>{t('admin.crm.title')}</span>
               <span className="px-2 py-0.5 rounded-badge text-[10px] font-sans font-semibold normal-case tracking-normal bg-[var(--accent)]/15 text-[var(--danger)] border border-[var(--accent)]/30">
                 Enterprise
