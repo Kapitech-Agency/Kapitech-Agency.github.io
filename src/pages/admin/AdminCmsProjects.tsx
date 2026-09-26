@@ -718,7 +718,6 @@ export const AdminCmsProjects: React.FC = () => {
               </form>
             )}
       </Modal>
-      )}
 
     </div>
   );
