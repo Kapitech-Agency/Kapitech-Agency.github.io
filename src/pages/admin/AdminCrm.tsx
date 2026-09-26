@@ -998,7 +998,7 @@ export const AdminCrm: React.FC = () => {
 
       {/* 5. CLIENT & DEAL PROFILE DRAWER */}
       {isDrawerOpen && selectedLead && (
-        <div className="fixed inset-0 z-50 flex justify-end bg-black/80 ">
+        <div className="fixed inset-0 z-50 flex justify-end bg-bg/80 ">
           <div className="bg-[var(--panel)] border-l border-[var(--line)] w-full sm:max-w-xl h-full flex flex-col justify-between p-5 sm:p-7 overflow-y-auto animate-in slide-in-from-right duration-300 font-sans text-xs">
             
             <div className="space-y-6">
@@ -1177,7 +1177,7 @@ export const AdminCrm: React.FC = () => {
 
       {/* 6. CREATE / EDIT DEAL MODAL */}
       {isAddModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/80  flex items-center justify-center p-4 overflow-y-auto">
+        <div className="fixed inset-0 z-50 bg-bg/80  flex items-center justify-center p-4 overflow-y-auto">
           <div className="bg-[var(--panel)] border border-[var(--line)] rounded-card w-full max-w-xl max-h-[calc(100dvh-24px)] overflow-y-auto p-6">
             <div className="flex items-center justify-between pb-4 mb-4 border-b border-[var(--line)]">
               <h3 className="font-sans font-semibold text-[var(--text)] text-lg flex items-center gap-2">
