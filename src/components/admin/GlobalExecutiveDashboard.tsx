@@ -80,7 +80,7 @@ interface ExecutiveOverviewData {
 
 type ProjectTone = 'accent' | 'success' | 'info' | 'warning' | 'danger' | 'muted';
 
-const cardClass = 'rounded-card border border-line bg-panel p-4 sm:p-5';
+const cardClass = 'ams-dashboard-card rounded-card border border-line bg-panel p-4 sm:p-5';
 const actionClass = 'inline-flex min-h-10 items-center justify-center gap-1.5 rounded-control border border-line bg-transparent px-3 text-xs font-medium text-muted transition-colors hover:bg-bg hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent';
 
 const EmptyState = ({ message, description, action }: { message: string; description?: string; action?: React.ReactNode }) => (
@@ -310,7 +310,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
 
   return (
     <div className="min-h-full pb-8">
-      <header className="ams-page-header mb-6 flex flex-col gap-4 border-b border-line pb-5 sm:flex-row sm:items-end sm:justify-between">
+      <header className="ams-dashboard-header mb-6 flex flex-col gap-4 border-b border-line pb-5 sm:flex-row sm:items-end sm:justify-between">
         <div className="min-w-0">
           <div className="flex items-center gap-2 text-xs text-muted">
             <span>Kapitech AMS</span>
@@ -363,7 +363,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
 
       {isLoading && !data ? (
         <div className="space-y-6" aria-label="Loading dashboard">
-          <div className="grid grid-cols-2 gap-3 min-[900px]:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3 min-[900px]:grid-cols-3 min-[1100px]:grid-cols-6">
             {Array.from({ length: 6 }).map((_, index) => (
               <React.Fragment key={`dashboard-skeleton-${index}`}>
                 <SkeletonBlock className="h-24" />
