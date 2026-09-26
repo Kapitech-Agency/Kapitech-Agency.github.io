@@ -507,7 +507,7 @@ export const AdminProjects: React.FC = () => {
       <div className="space-y-6">
       
       {/* 1. Header & Project Actions */}
-      <div className="ams-dashboard-header">
+      <div className="ams-page-header">
         <div>
           <h1 className="ams-page-title">
             <Briefcase className="text-[var(--accent-text)] shrink-0" size={22} />
@@ -581,7 +581,7 @@ export const AdminProjects: React.FC = () => {
 
       {/* 3. Selected Project Overview Hero Card */}
       {selectedProject && (
-        <div className="bg-[var(--panel)] border border-[var(--line)] rounded-card p-5 space-y-4">
+        <div className="bg-[var(--panel)] border border-[var(--line)] rounded-card p-4 space-y-4">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
             <div className="space-y-1 min-w-0">
               <div className="flex flex-wrap items-center gap-2">
