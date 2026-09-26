@@ -5152,9 +5152,19 @@ apiRouter.get('/notifications', requireAuth, async (req: AuthenticatedRequest, r
   const canViewFinance = isMaster || Boolean(req.user!.permissions?.canViewFinancials || req.user!.permissions?.canManageInvoices);
   const canViewCrm = isMaster || Boolean(req.user!.permissions?.canManageCrm);
   const canViewApprovals = isMaster || Boolean(req.user!.permissions?.canApproveBudgets || req.user!.permissions?.canManageProjects);
-  const source = getDataSourceMode() === 'postgres'
-    ? await postgresNotificationRepository.list()
-    : getDatabase().notifications || [];
+  let source: any[] = [];
+  if (getDataSourceMode() === 'postgres') {
+    try {
+      source = await postgresNotificationRepository.list();
+    } catch (error) {
+      // Keep the notification center usable during PostgreSQL initialization
+      // or a transient notification-table failure. JSON remains the compatibility store.
+      console.error('Notification repository unavailable:', error);
+      source = getDatabase().notifications || [];
+    }
+  } else {
+    source = getDatabase().notifications || [];
+  }
 
   const notifications = source.filter((notification) => canViewNotification(req.user!, notification)).map((notification) => ({
     ...notification,
