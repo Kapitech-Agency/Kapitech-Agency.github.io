@@ -985,7 +985,7 @@ export const AdminSettings: React.FC = () => {
                     onClick={() => handleRoleChangeForNewAccount('Stakeholder Executive')}
                     className={`p-3.5 rounded-card border text-left transition-all ${
                       newAccRole === 'Stakeholder Executive'
-                        ? 'bg-[var(--warning)]/10 border-amber-500/50 ring-1 ring-amber-500/30'
+                        ? 'bg-warning/10 border-warning/50 ring-1 ring-warning/30'
                         : 'bg-[var(--panel)] border-[var(--line)] hover:border-[var(--line)]'
                     }`}
                   >
@@ -1003,7 +1003,7 @@ export const AdminSettings: React.FC = () => {
                     onClick={() => handleRoleChangeForNewAccount('Teknisi IT / Systems Engineer')}
                     className={`p-3.5 rounded-card border text-left transition-all ${
                       newAccRole === 'Teknisi IT / Systems Engineer'
-                        ? 'bg-[var(--success)]/10 border-emerald-500/50 ring-1 ring-[var(--success)]/30'
+                        ? 'bg-success/10 border-success/50 ring-1 ring-success/30'
                         : 'bg-[var(--panel)] border-[var(--line)] hover:border-[var(--line)]'
                     }`}
                   >
@@ -1039,7 +1039,7 @@ export const AdminSettings: React.FC = () => {
                     onClick={() => handleRoleChangeForNewAccount('Tier 3: Operational Staff')}
                     className={`p-3.5 rounded-card border text-left transition-all ${
                       newAccRole === 'Tier 3: Operational Staff'
-                        ? 'bg-cyan-500/10 border-cyan-500/50 ring-1 ring-cyan-500/30'
+                        ? 'bg-info/10 border-info/50 ring-1 ring-info/30'
                         : 'bg-[var(--panel)] border-[var(--line)] hover:border-[var(--line)]'
                     }`}
                   >
