@@ -271,22 +271,22 @@ export const AdminClients: React.FC = () => {
 
       {/* 2. Key Metrics Summary (3 cols) */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full">
-        <div className="w-full h-full bg-bg-panel border border-border-line p-4 rounded-card flex flex-col justify-between">
+        <div className="w-full h-full bg-panel border border-line p-4 rounded-card flex flex-col justify-between">
           <div className="flex items-center justify-between text-muted mb-2">
             <span className="text-xs font-sans normal-case font-semibold">{t('admin.client.totalClients')}</span>
-            <div className="w-8 h-8 rounded-control bg-bg-panel border border-border-line flex items-center justify-center text-fg">
+            <div className="w-8 h-8 rounded-control bg-panel border border-line flex items-center justify-center text-fg">
               <Users size={16} />
             </div>
           </div>
           <div className="text-3xl font-sans font-semibold text-fg tracking-[-0.01em]">
             {clients.length}
           </div>
-          <div className="mt-3 pt-2 border-t border-border-line text-[11px] font-sans text-muted">
+          <div className="mt-3 pt-2 border-t border-line text-[11px] font-sans text-muted">
             {language === 'id' ? 'Klien Enterprise & SME' : 'Across Enterprise & SME tiers'}
           </div>
         </div>
 
-        <div className="w-full h-full bg-bg-panel border border-border-line p-5 rounded-card flex flex-col justify-between">
+        <div className="w-full h-full bg-panel border border-line p-5 rounded-card flex flex-col justify-between">
           <div className="flex items-center justify-between text-muted mb-2">
             <span className="text-xs font-sans normal-case font-semibold">{t('admin.client.activeAccounts')}</span>
             <div className="w-8 h-8 rounded-control bg-success/10 border border-success/30 flex items-center justify-center text-success">
@@ -296,29 +296,29 @@ export const AdminClients: React.FC = () => {
           <div className="text-3xl font-sans font-semibold text-success tracking-[-0.01em]">
             {activeAccountsCount}
           </div>
-          <div className="mt-3 pt-2 border-t border-border-line text-[11px] font-sans text-success">
+          <div className="mt-3 pt-2 border-t border-line text-[11px] font-sans text-success">
             {language === 'id' ? 'Retainer & Sprint Aktif' : 'Active Retainers & Sprints'}
           </div>
         </div>
 
-        <div className="w-full h-full bg-bg-panel border border-border-line p-5 rounded-card flex flex-col justify-between">
+        <div className="w-full h-full bg-panel border border-line p-5 rounded-card flex flex-col justify-between">
           <div className="flex items-center justify-between text-muted mb-2">
             <span className="text-xs font-sans normal-case font-semibold">{t('admin.client.lifetimeSpend')}</span>
-            <div className="w-8 h-8 rounded-control bg-bg-bg border border-border-line flex items-center justify-center text-muted">
+            <div className="w-8 h-8 rounded-control bg-bg-bg border border-line flex items-center justify-center text-muted">
               <DollarSign size={16} />
             </div>
           </div>
           <div className="text-2xl sm:text-3xl font-sans font-semibold text-fg tracking-[-0.01em]">
             {formatAmount(totalLifetimeSpend, currency)}
           </div>
-          <div className="mt-3 pt-2 border-t border-border-line text-[11px] font-sans text-muted">
+          <div className="mt-3 pt-2 border-t border-line text-[11px] font-sans text-muted">
             {language === 'id' ? 'Total Nilai Kontrak Billed' : 'Cumulative Billed Value'}
           </div>
         </div>
       </div>
 
       {/* 3. Search & Filter Bar */}
-      <div className="w-full flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-bg-panel border border-border-line p-4 rounded-card">
+      <div className="w-full flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-panel border border-line p-4 rounded-card">
         <div className="relative flex-1 min-w-0 max-w-sm">
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted" size={14} />
           <input
@@ -326,7 +326,7 @@ export const AdminClients: React.FC = () => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={t('admin.client.searchPlaceholder')}
-            className="w-full pl-9 pr-3 py-2 bg-bg-panel border border-border-line rounded-control text-xs text-fg placeholder:text-muted focus:outline-none focus:border-bg-accent font-sans min-h-10"
+            className="w-full pl-9 pr-3 py-2 bg-panel border border-line rounded-control text-xs text-fg placeholder:text-muted focus:outline-none focus:border-accent font-sans min-h-10"
           />
         </div>
 
@@ -380,7 +380,7 @@ export const AdminClients: React.FC = () => {
                   <td className="px-4 py-3 align-top tabular-nums text-fg">{client.projectsCount}</td>
                   <td className="px-4 py-3 align-top"><div className="flex max-w-[260px] flex-col gap-1"><a href={client.email ? 'mailto:' + client.email : undefined} className="truncate text-fg hover:text-accent-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">{client.email || '—'}</a>{client.phone && <a href={'tel:' + client.phone} className="text-muted hover:text-fg">{client.phone}</a>}</div></td>
                   <td className="px-4 py-3 align-top"><span className={'inline-flex items-center gap-1.5 rounded-badge border px-2 py-1 text-[11px] font-medium ' + (client.status === 'active' ? 'border-success/20 bg-success/10 text-success' : client.status === 'completed' ? 'border-info/20 bg-info/10 text-info' : client.status === 'lead' ? 'border-warning/20 bg-warning/10 text-warning' : 'border-line bg-bg text-muted')}>{client.status === 'active' ? 'Active' : client.status === 'completed' ? 'Completed' : client.status === 'lead' ? 'Lead' : 'Inactive'}{isOverBudget && <AlertTriangle size={12} aria-label="SLA exceeded" />}</span></td>
-                  <td className="px-4 py-3 text-right align-top"><div className="flex justify-end gap-1.5">{client.phone && <a href={'https://wa.me/' + client.phone.replace(/\\D/g, '')} target="_blank" rel="noreferrer" aria-label={'WhatsApp ' + client.name} className="inline-flex min-h-10 min-w-10 items-center justify-center rounded-control border border-line text-muted hover:bg-bg hover:text-success focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"><Phone size={14} /></a>}<button type="button" onClick={() => handleOpenEditClient(client)} aria-label={'Edit ' + client.name} className="inline-flex min-h-10 min-w-10 items-center justify-center rounded-control border border-line text-muted hover:bg-bg hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"><Edit3 size={14} /></button><button type="button" onClick={() => handleDeleteClient(client.id, client.name)} aria-label={'Delete ' + client.name} className="inline-flex min-h-10 min-w-10 items-center justify-center rounded-control border border-line text-muted hover:bg-danger/10 hover:text-danger focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"><Trash2 size={14} /></button></div></td>
+                  <td className="px-4 py-3 text-right align-top"><div className="flex justify-end gap-1.5">{client.phone && <a href={'https://wa.me/' + client.phone.replace(/\D/g, '')} target="_blank" rel="noreferrer" aria-label={'WhatsApp ' + client.name} className="inline-flex min-h-10 min-w-10 items-center justify-center rounded-control border border-line text-muted hover:bg-bg hover:text-success focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"><Phone size={14} /></a>}<button type="button" onClick={() => handleOpenEditClient(client)} aria-label={'Edit ' + client.name} className="inline-flex min-h-10 min-w-10 items-center justify-center rounded-control border border-line text-muted hover:bg-bg hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"><Edit3 size={14} /></button><button type="button" onClick={() => handleDeleteClient(client.id, client.name)} aria-label={'Delete ' + client.name} className="inline-flex min-h-10 min-w-10 items-center justify-center rounded-control border border-line text-muted hover:bg-danger/10 hover:text-danger focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"><Trash2 size={14} /></button></div></td>
                 </tr>;
               })}
             </tbody>
@@ -392,15 +392,15 @@ export const AdminClients: React.FC = () => {
       {/* 5. Create / Edit Client Modal */}
       {isClientModalOpen && (
         <div className="fixed inset-0 z-50 bg-bg/80  flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-bg-panel border border-border-line rounded-card w-full max-w-lg p-6 space-y-4  my-8 text-xs font-sans">
-            <div className="flex items-center justify-between pb-3 border-b border-border-line">
+          <div className="bg-panel border border-line rounded-card w-full max-w-lg p-6 space-y-4  my-8 text-xs font-sans">
+            <div className="flex items-center justify-between pb-3 border-b border-line">
               <h2 className="text-base font-semibold font-sans text-fg flex items-center gap-2">
                 <Users className="text-bg-accent" size={18} />
                 <span>{editingClient ? (language === 'id' ? 'Edit Profil Klien' : 'Edit Client Profile') : (language === 'id' ? 'Tambah Klien Baru' : 'Add New Client')}</span>
               </h2>
               <button
                 onClick={() => setIsClientModalOpen(false)}
-                className="p-1.5 rounded-control text-muted hover:text-fg bg-bg-panel border border-border-line"
+                className="p-1.5 rounded-control text-muted hover:text-fg bg-panel border border-line"
               >
                 <X size={14} />
               </button>
@@ -416,7 +416,7 @@ export const AdminClients: React.FC = () => {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="e.g. John Doe"
-                    className="w-full px-3 py-2 bg-bg-panel border border-border-line rounded-control text-fg focus:outline-none focus:border-bg-accent"
+                    className="w-full px-3 py-2 bg-panel border border-line rounded-control text-fg focus:outline-none focus:border-accent"
                   />
                 </div>
                 <div>
@@ -427,7 +427,7 @@ export const AdminClients: React.FC = () => {
                     value={company}
                     onChange={(e) => setCompany(e.target.value)}
                     placeholder="e.g. Acme Global Tech"
-                    className="w-full px-3 py-2 bg-bg-panel border border-border-line rounded-control text-fg focus:outline-none focus:border-bg-accent"
+                    className="w-full px-3 py-2 bg-panel border border-line rounded-control text-fg focus:outline-none focus:border-accent"
                   />
                 </div>
               </div>
@@ -440,7 +440,7 @@ export const AdminClients: React.FC = () => {
                     value={role}
                     onChange={(e) => setRole(e.target.value)}
                     placeholder="Managing Director, VP Engineering..."
-                    className="w-full px-3 py-2 bg-bg-panel border border-border-line rounded-control text-fg focus:outline-none focus:border-bg-accent"
+                    className="w-full px-3 py-2 bg-panel border border-line rounded-control text-fg focus:outline-none focus:border-accent"
                   />
                 </div>
                 <div>
@@ -450,7 +450,7 @@ export const AdminClients: React.FC = () => {
                     value={industry}
                     onChange={(e) => setIndustry(e.target.value)}
                     placeholder="Fintech, Real Estate, E-Commerce..."
-                    className="w-full px-3 py-2 bg-bg-panel border border-border-line rounded-control text-fg focus:outline-none focus:border-bg-accent"
+                    className="w-full px-3 py-2 bg-panel border border-line rounded-control text-fg focus:outline-none focus:border-accent"
                   />
                 </div>
               </div>
@@ -463,7 +463,7 @@ export const AdminClients: React.FC = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="contact@company.com"
-                    className="w-full px-3 py-2 bg-bg-panel border border-border-line rounded-control text-fg focus:outline-none focus:border-bg-accent"
+                    className="w-full px-3 py-2 bg-panel border border-line rounded-control text-fg focus:outline-none focus:border-accent"
                   />
                 </div>
                 <div>
@@ -473,13 +473,13 @@ export const AdminClients: React.FC = () => {
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     placeholder="+62 811-XXXX-XXXX"
-                    className="w-full px-3 py-2 bg-bg-panel border border-border-line rounded-control text-fg focus:outline-none focus:border-bg-accent"
+                    className="w-full px-3 py-2 bg-panel border border-line rounded-control text-fg focus:outline-none focus:border-accent"
                   />
                 </div>
               </div>
 
               {/* SLA Ad Spend Cap Section */}
-              <div className="p-3 bg-bg-panel border border-border-line rounded-card space-y-2">
+              <div className="p-3 bg-panel border border-line rounded-card space-y-2">
                 <div className="flex items-center gap-1.5 text-warning font-semibold">
                   <Activity size={13} />
                   <span>SLA Daily Ad-Spend Cap & Tracking (IDR)</span>
@@ -491,7 +491,7 @@ export const AdminClients: React.FC = () => {
                       type="number"
                       value={slaDailyBudget}
                       onChange={(e) => setSlaDailyBudget(Number(e.target.value))}
-                      className="w-full px-3 py-2 bg-bg-panel border border-border-line rounded-control text-fg focus:outline-none focus:border-bg-accent"
+                      className="w-full px-3 py-2 bg-panel border border-line rounded-control text-fg focus:outline-none focus:border-accent"
                     />
                   </div>
                   <div>
@@ -500,7 +500,7 @@ export const AdminClients: React.FC = () => {
                       type="number"
                       value={currentDailySpend}
                       onChange={(e) => setCurrentDailySpend(Number(e.target.value))}
-                      className="w-full px-3 py-2 bg-bg-panel border border-border-line rounded-control text-fg focus:outline-none focus:border-bg-accent"
+                      className="w-full px-3 py-2 bg-panel border border-line rounded-control text-fg focus:outline-none focus:border-accent"
                     />
                   </div>
                 </div>
@@ -514,7 +514,7 @@ export const AdminClients: React.FC = () => {
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
                     placeholder="Jakarta, Indonesia"
-                    className="w-full px-3 py-2 bg-bg-panel border border-border-line rounded-control text-fg focus:outline-none focus:border-bg-accent"
+                    className="w-full px-3 py-2 bg-panel border border-line rounded-control text-fg focus:outline-none focus:border-accent"
                   />
                 </div>
                 <div>
@@ -526,7 +526,7 @@ export const AdminClients: React.FC = () => {
                       { value: 'active', label: 'Active', badge: 'Active', badgeColor: 'bg-success/10 text-success border border-success/20' },
                       { value: 'completed', label: 'Completed', badge: 'Completed', badgeColor: 'bg-info/10 text-info border border-info/20' },
                       { value: 'lead', label: 'Lead', badge: 'Lead', badgeColor: 'bg-warning/10 text-warning border border-warning/20' },
-                      { value: 'inactive', label: 'Inactive', badge: 'Inactive', badgeColor: 'bg-bg-panel text-muted border border-border-line' }
+                      { value: 'inactive', label: 'Inactive', badge: 'Inactive', badgeColor: 'bg-panel text-muted border border-line' }
                     ]}
                     className="w-full"
                     triggerClassName="w-full justify-between"
@@ -541,21 +541,21 @@ export const AdminClients: React.FC = () => {
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   placeholder="Special client preferences, NDA details, billing notes..."
-                  className="w-full px-3 py-2 bg-bg-panel border border-border-line rounded-control text-fg focus:outline-none focus:border-bg-accent"
+                  className="w-full px-3 py-2 bg-panel border border-line rounded-control text-fg focus:outline-none focus:border-accent"
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-border-line">
+              <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-line">
                 <button
                   type="button"
                   onClick={() => setIsClientModalOpen(false)}
-                  className="h-10 px-4 rounded-control bg-bg-panel hover:bg-bg-panel text-muted hover:text-fg border border-border-line font-sans text-xs transition-colors min-h-10"
+                  className="h-10 px-4 rounded-control bg-panel hover:bg-panel text-muted hover:text-fg border border-line font-sans text-xs transition-colors min-h-10"
                 >
                   {language === 'id' ? 'Batal' : 'Cancel'}
                 </button>
                 <button
                   type="submit"
-                  className="h-10 px-5 rounded-control bg-bg-accent hover:bg-accent/90 text-white font-sans font-semibold text-xs -none transition-all min-h-10"
+                  className="h-10 px-5 rounded-control bg-accent hover:bg-accent/90 text-white font-sans font-semibold text-xs transition-all min-h-10"
                 >
                   {language === 'id' ? 'Simpan Klien' : 'Save Client'}
                 </button>
@@ -567,7 +567,7 @@ export const AdminClients: React.FC = () => {
 
       <Modal open={!!deleteTarget} onClose={() => setDeleteTarget(null)} size="sm" title={language === 'id' ? 'Hapus klien?' : 'Delete client?'} description={language === 'id' ? `Catatan klien ${deleteTarget?.name || ''} akan dihapus.` : `Client record ${deleteTarget?.name || ''} will be removed.`}>
         <div className="flex flex-col-reverse sm:flex-row justify-end gap-2">
-          <button type="button" onClick={() => setDeleteTarget(null)} className="min-h-10 px-4 rounded-control border border-border-line bg-bg-panel text-xs text-muted">Cancel</button>
+          <button type="button" onClick={() => setDeleteTarget(null)} className="min-h-10 px-4 rounded-control border border-line bg-panel text-xs text-muted">Cancel</button>
           <button type="button" onClick={() => deleteTarget && void confirmDeleteClient(deleteTarget.id)} className="min-h-10 px-4 rounded-control bg-danger text-white text-xs font-semibold">Delete</button>
         </div>
       </Modal>
