@@ -17,7 +17,7 @@ import {
 } from 'lucide-react';
 import { api } from '../../lib/apiClient';
 import { useLanguage } from '../../lib/LanguageContext';
-import { getActiveCurrency, CURRENCY_EVENT, CurrencyCode } from '../../lib/currency';
+import { getActiveCurrency, CURRENCY_EVENT, CurrencyCode, formatAmount } from '../../lib/currency';
 import { getAdminSession } from '../../lib/adminAuth';
 import {
   FINANCE_EVENT_NAME,
@@ -160,6 +160,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [financeVersion, setFinanceVersion] = useState(0);
   const [mfaRequired, setMfaRequired] = useState(() => getAdminSession()?.user.mfaEnabled !== true);
+  const [mfaRetrying, setMfaRetrying] = useState(false);
 
   useEffect(() => {
     const handleCurrencyChange = (event: Event) => {
@@ -201,6 +202,22 @@ export const GlobalExecutiveDashboard: React.FC = () => {
     void fetchOverview();
   }, []);
 
+  const retryMfaStatus = async () => {
+    setMfaRetrying(true);
+    try {
+      const response = await api.auth.me();
+      if (response.success && response.data?.success && response.data.user) {
+        const user = response.data.user;
+        setMfaRequired(user.mfaEnabled !== true);
+        if (user.mfaEnabled === true) {
+          window.dispatchEvent(new CustomEvent('kapitech_auth_state_changed'));
+        }
+      }
+    } finally {
+      setMfaRetrying(false);
+    }
+  };
+
   const canViewFinancials = data?.financials.revenueThisMonth !== null;
   const financeSeries = useMemo(() => {
     if (!canViewFinancials) return [];
@@ -233,8 +250,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
 
   const formatCurrency = (value: number | null | undefined) => {
     if (value === null || value === undefined) return language === 'id' ? 'Restricted' : 'Restricted';
-    if (currency === 'USD') return `$${Math.round(value / 16000).toLocaleString('en-US')}`;
-    return `Rp ${value.toLocaleString('id-ID')}`;
+    return formatAmount(value, currency, false);
   };
 
   const projectStatusData = useMemo(() => {
@@ -309,9 +325,9 @@ export const GlobalExecutiveDashboard: React.FC = () => {
             </div>
           </div>
           <div className="grid w-full grid-cols-1 gap-2 sm:w-auto sm:grid-cols-2">
-            <button type="button" onClick={() => void fetchOverview()} disabled={isLoading} className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-control border border-danger/40 bg-danger/10 px-3 text-xs font-semibold text-danger hover:bg-danger/15 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-danger">
+            <button type="button" onClick={() => void retryMfaStatus()} disabled={mfaRetrying} className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-control border border-danger/40 bg-danger/10 px-3 text-xs font-semibold text-danger hover:bg-danger/15 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-danger">
               <RefreshCw size={14} className={isLoading ? 'animate-spin' : ''} />
-              {isLoading ? 'Retrying' : (language === 'id' ? 'Coba lagi' : 'Retry')}
+              {mfaRetrying ? 'Retrying' : (language === 'id' ? 'Coba lagi' : 'Retry')}
             </button>
             <Link to="/admin/settings?tab=security&mfaRequired=1" className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-control border border-line bg-panel px-3 text-xs font-medium text-muted hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
               MFA Settings <ArrowUpRight size={13} />
@@ -369,6 +385,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
                     data={financeSeries.map((point) => ({ label: point.month, primary: point.inflow, secondary: point.outflow, tertiary: point.net }))}
                     primaryLabel="Revenue"
                     secondaryLabel="Expenses"
+                    primaryFormat={(value) => formatAmount(value, currency, true)}
                     ariaLabel="Six month financial trend showing collected revenue and expenses."
                   />
                   <div className="mt-4 grid grid-cols-2 gap-3 border-t border-line pt-4 sm:grid-cols-4">
@@ -398,7 +415,7 @@ export const GlobalExecutiveDashboard: React.FC = () => {
 
             <section className={`${cardClass} min-[1100px]:col-span-5`} aria-labelledby="project-status-title">
               <div className="flex items-start justify-between gap-3">
-                <div><h2 id="project-status-title" className="text-sm font-semibold text-fg">Project delivery</h2><p className="mt-1 text-xs text-muted">Current status mix across active projects.</p></div>
+                <div><h2 id="project-status-title" className="text-sm font-semibold text-fg">Project delivery</h2><p className="mt-1 text-xs text-muted">Current project status mix returned by the operational data.</p></div>
                 <Link to="/admin/projects" className={actionClass}>Projects <ArrowUpRight size={13} /></Link>
               </div>
               <div className="mt-5">
