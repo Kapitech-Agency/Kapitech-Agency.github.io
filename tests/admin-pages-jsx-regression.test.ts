@@ -20,13 +20,13 @@ test('Admin invoicing keeps financial mutations permission-gated and uses the sh
   assert.ok(!source.includes('123-00-998877-1'));
   assert.ok(source.includes('serverMetrics.totalInvoicesCount'));
   assert.ok(source.includes('border-b border-line pb-3'));
-  assert.ok(source.includes('const cardClass = \'ams-dashboard-card rounded-card border border-line bg-panel p-4 sm:p-5\';'));
-  assert.ok(source.includes('sm:border-l sm:border-line'));
+  assert.ok(source.includes('const cardClass = \'ams-dashboard-card rounded-card border border-line bg-panel p-4\';'));
+  assert.ok(source.includes('border-l border-line px-4 py-5 first:border-l-0'));
   assert.ok(source.includes('id="financial-trend-title"'));
   assert.ok(source.includes('<Receipt size={12} aria-hidden="true" />'));
-  assert.ok(source.includes('minmax(360px,1fr)_168px_190px'));
-  assert.ok(source.includes('w-full min-w-[980px] text-left text-xs'));
-  assert.ok(source.includes('w-full min-w-[760px] text-left text-xs'));
+  assert.ok(source.includes('grid-cols-2 sm:grid-cols-3 min-[1100px]:grid-cols-6'));
+  assert.ok(source.includes('w-full min-w-[1040px] border-collapse text-left text-xs'));
+  assert.ok(source.includes('w-full min-w-[820px] border-collapse text-left text-xs'));
 });
 
 test('Admin projects mutation actions stay behind their permissions', () => {
