@@ -10,10 +10,14 @@ test('Admin CRM mutation actions stay grouped behind the CRM permission', () => 
   assert.ok(source.includes('</button>\n            </>\n          )}'));
 });
 
-test('Admin invoicing expense cards have balanced JSX wrapper structure', () => {
+test('Admin invoicing keeps financial mutations permission-gated and uses the shared dashboard visual language', () => {
   const source = fs.readFileSync(path.resolve(process.cwd(), 'src/pages/admin/AdminInvoicing.tsx'), 'utf8');
-  assert.ok(source.includes('                  </div>\n                </div>\n              ))'));
-  assert.ok(!source.includes('                  </div>\n                </div>\n              </div>\n              ))'));
+  assert.ok(source.includes('const canManageInvoices = hasAdminPermission(\'canManageInvoices\');'));
+  assert.ok(source.includes('{canManageInvoices && ('));
+  assert.ok(source.includes('ams-dashboard-header'));
+  assert.ok(source.includes('computeInvoiceTotals'));
+  assert.ok(source.includes('api.finance.getMetrics(currency)'));
+  assert.ok(!source.includes('123-00-998877-1'));
 });
 
 test('Admin projects mutation actions stay behind their permissions', () => {
