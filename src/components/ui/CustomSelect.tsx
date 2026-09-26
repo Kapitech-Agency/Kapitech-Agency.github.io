@@ -93,6 +93,8 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
         ref={triggerRef}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
+        aria-controls={isOpen ? listboxId : undefined}
+        aria-disabled={disabled || undefined}
         className={`flex w-full items-center justify-between font-sans transition-colors duration-150 border select-none focus-visible:outline-none ${
           sizeClasses[size]
         } ${
@@ -146,7 +148,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
               return (
                 <button
                   key={option.value}
-                  id={`custom-select-option-${option.value}`}
+                  id={`${listboxId}-option-${index}`}
                   type="button"
                   onMouseEnter={() => setActiveIndex(index)}
                   onClick={() => {
