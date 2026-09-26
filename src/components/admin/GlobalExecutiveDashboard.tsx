@@ -117,6 +117,15 @@ const toneClass: Record<ProjectTone, string> = {
   muted: 'bg-bg text-muted',
 };
 
+const iconToneClass: Record<ProjectTone, string> = {
+  accent: 'text-accent-text',
+  success: 'text-success',
+  info: 'text-info',
+  warning: 'text-warning',
+  danger: 'text-danger',
+  muted: 'text-muted',
+};
+
 const Metric = ({
   label,
   value,
@@ -136,7 +145,7 @@ const Metric = ({
     <div className="min-w-0 px-1">
       <div className="flex items-start justify-between gap-3">
         <span className="text-xs leading-4 text-muted">{label}</span>
-        <span className={`flex h-7 w-7 shrink-0 items-center justify-center ${toneClass[tone]}`.replace("bg-accent/10 text-accent-text","text-accent-text bg-transparent").replace("bg-success/10 text-success","text-success bg-transparent").replace("bg-info/10 text-info","text-info bg-transparent").replace("bg-warning/10 text-warning","text-warning bg-transparent").replace("bg-danger/10 text-danger","text-danger bg-transparent").replace("bg-bg text-muted","text-muted bg-transparent")}` aria-hidden="true">
+        <span className={`flex h-7 w-7 shrink-0 items-center justify-center ${iconToneClass[tone]}`} aria-hidden="true">
           <Icon size={16} strokeWidth={1.8} />
         </span>
       </div>
