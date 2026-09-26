@@ -37,20 +37,6 @@ export const EmailForwardingGuideModal: React.FC<EmailForwardingGuideModalProps>
         </button>
       }
     >
-      <button
-        type="button"
-        aria-label={language === 'id' ? 'Tutup dialog' : 'Close dialog'}
-        className="absolute inset-0 bg-bg/80"
-        onClick={onClose}
-      />
-      <div
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="email-alerts-modal-title"
-        className="relative flex w-full max-w-2xl max-h-[calc(100dvh-28px)] flex-col overflow-hidden rounded-card border border-line bg-panel"
-      >
-
-
         <div className="min-h-0 flex-1 space-y-3 overflow-y-auto px-4 py-4 custom-scrollbar sm:px-5">
           <section className="rounded-control border border-line bg-bg p-4">
             <div className="flex items-start gap-3">
@@ -126,8 +112,5 @@ export const EmailForwardingGuideModal: React.FC<EmailForwardingGuideModalProps>
           </section>
         </div>
 
-
-      </div>
-    </div>
   );
 };
