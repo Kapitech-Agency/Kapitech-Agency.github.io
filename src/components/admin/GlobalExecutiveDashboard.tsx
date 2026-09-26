@@ -198,7 +198,14 @@ export const GlobalExecutiveDashboard: React.FC = () => {
         setData(payload);
         setLastRefreshed(new Date());
       } else {
-        setError(response.error || 'Dashboard data is temporarily unavailable.');
+        const responseCode = (response.data as { code?: string } | undefined)?.code;
+        const mfaBlocked = responseCode === 'MFA_REQUIRED' || /MFA is required/i.test(response.error || '');
+        if (mfaBlocked) {
+          setMfaRequired(true);
+          setError(null);
+        } else {
+          setError(response.error || 'Dashboard data is temporarily unavailable.');
+        }
       }
     } catch {
       setError('Dashboard data is temporarily unavailable. Retry to reconnect.');
