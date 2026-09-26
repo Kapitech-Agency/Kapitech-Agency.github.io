@@ -175,7 +175,7 @@ export const AdminDocuments: React.FC = () => {
     <div className="space-y-6 animate-in fade-in duration-200">
       {/* Toast Notification */}
       {notification && (
-        <div className="fixed top-16 left-3 right-3 sm:left-auto sm:top-20 sm:right-6 z-50 px-4 py-2.5 rounded-card bg-panel border border-line text-text text-xs font-sans flex items-center gap-2">
+        <div className="fixed top-16 left-3 right-3 sm:left-auto sm:top-20 sm:right-6 z-50 px-4 py-2.5 rounded-card bg-panel border border-line text-fg text-xs font-sans flex items-center gap-2">
           <span className="w-2 h-2 rounded-badge bg-accent" />
           <span>{notification}</span>
         </div>
@@ -197,7 +197,7 @@ export const AdminDocuments: React.FC = () => {
 
         <button
           onClick={() => setIsUploadModalOpen(true)}
-          className="min-h-10 px-3 rounded-control bg-accent hover:brightness-110 text-white text-xs font-sans font-medium flex items-center justify-center gap-2 transition-colors shrink-0"
+          className="min-h-10 px-3 rounded-control bg-accent hover:bg-[var(--accent-hover)] text-white text-xs font-sans font-medium flex items-center justify-center gap-2 transition-colors shrink-0"
         >
           <Plus size={15} />
           <span>{language === 'id' ? 'Unggah Dokumen' : 'Upload Document'}</span>
@@ -214,12 +214,12 @@ export const AdminDocuments: React.FC = () => {
               onClick={() => setCategoryFilter(categoryFilter === cat ? 'all' : cat)}
               className={`min-h-10 px-3 py-2 rounded-chip border text-left transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent active:scale-[.98] ${
                 categoryFilter === cat
-                  ? 'bg-accent/10 border-accent/30 text-text'
-                  : 'bg-panel border-line text-muted hover:text-text hover:border-line'
+                  ? 'bg-accent/10 border-accent/30 text-fg'
+                  : 'bg-panel border-line text-muted hover:text-fg hover:border-line'
               }`}
             >
               <div className="text-xs font-sans normal-case tracking-normal capitalize">{cat === 'all' ? 'All documents' : cat}</div>
-              <div className="text-lg font-semibold font-sans text-text mt-1">{count}</div>
+              <div className="text-lg font-semibold font-sans text-fg mt-1">{count}</div>
             </button>
           );
         })}
@@ -234,7 +234,7 @@ export const AdminDocuments: React.FC = () => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={language === 'id' ? 'Cari judul file, tag, atau nomor kontrak...' : 'Search document title or references...'}
-            className="w-full min-h-10 sm:h-9 pl-8 pr-3 text-xs bg-panel text-text placeholder-muted rounded-control border border-line focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/30 focus:border-accent font-sans"
+            className="w-full min-h-10 sm:h-9 pl-8 pr-3 text-xs bg-panel text-fg placeholder-muted rounded-control border border-line focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/30 focus:border-accent font-sans"
           />
         </div>
 
@@ -242,7 +242,7 @@ export const AdminDocuments: React.FC = () => {
           {categoryFilter !== 'all' && (
             <button
               onClick={() => setCategoryFilter('all')}
-              className="px-3 min-h-10 rounded-control text-xs font-sans bg-panel border border-line text-text flex items-center gap-1 hover:text-text"
+              className="px-3 min-h-10 rounded-control text-xs font-sans bg-panel border border-line text-fg flex items-center gap-1 hover:text-fg"
             >
               <span>Reset filter ({categoryFilter})</span>
               <X size={12} />
@@ -264,7 +264,7 @@ export const AdminDocuments: React.FC = () => {
           </div>
         ) : (
           <div className="ams-table-scroll overflow-x-auto">
-            <table className="w-full text-left border-collapse min-w-[700px]">
+            <table className="ams-table w-full text-left border-collapse min-w-[700px]">
               <thead>
                 <tr className="border-b border-line bg-panel/50 text-xs font-sans text-muted normal-case">
                   <th className="py-3 px-4">Document Title</th>
@@ -275,7 +275,7 @@ export const AdminDocuments: React.FC = () => {
                   <th className="py-3 px-4 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-line text-xs font-sans text-text">
+              <tbody className="divide-y divide-line text-xs font-sans text-fg">
                 {filteredDocs.map((doc) => {
                   const docTitle = doc.name || doc.title || 'Untitled Document';
                   const docDate = doc.uploadedDate || (doc.uploadedAt ? new Date(doc.uploadedAt).toLocaleDateString() : 'Recent');
@@ -291,7 +291,7 @@ export const AdminDocuments: React.FC = () => {
                             <FileText size={14} />
                           </div>
                           <div>
-                            <div className="font-semibold text-text">{docTitle}</div>
+                            <div className="font-semibold text-fg">{docTitle}</div>
                             <div className="text-xs font-sans text-muted">{docType}</div>
                           </div>
                         </div>
@@ -304,7 +304,7 @@ export const AdminDocuments: React.FC = () => {
                       <td className="py-3 px-4 font-sans text-xs text-muted">
                         {docSize}
                       </td>
-                      <td className="py-3 px-4 font-sans text-xs text-text">
+                      <td className="py-3 px-4 font-sans text-xs text-fg">
                         {doc.relatedEntity || 'General'}
                       </td>
                       <td className="py-3 px-4">
@@ -328,7 +328,7 @@ export const AdminDocuments: React.FC = () => {
                               target="_blank"
                               rel="noopener noreferrer"
                               title={language === 'id' ? 'Buka dokumen' : 'Open document'}
-                              className="min-h-10 min-w-10 p-2 rounded-control hover:bg-panel-hover text-muted hover:text-text transition-colors flex items-center justify-center"
+                              className="min-h-10 min-w-10 p-2 rounded-control hover:bg-panel-hover text-muted hover:text-fg transition-colors flex items-center justify-center"
                             >
                               <Download size={14} />
                             </a>
@@ -367,13 +367,13 @@ export const AdminDocuments: React.FC = () => {
         <div className="fixed inset-0 z-50 bg-bg/80  flex items-center justify-center p-4">
           <div className="bg-panel border border-line rounded-card w-full max-w-md max-h-[calc(100dvh-24px)] overflow-y-auto">
             <div className="p-4 border-b border-line flex items-center justify-between bg-panel">
-              <h3 className="text-sm font-semibold font-sans text-text flex items-center gap-2">
+              <h3 className="text-sm font-semibold font-sans text-fg flex items-center gap-2">
                 <UploadCloud size={16} className="text-accent" />
                 <span>Add Document to Registry</span>
               </h3>
               <button
                 onClick={() => setIsUploadModalOpen(false)}
-                className="min-h-10 min-w-10 p-2 text-muted hover:text-text rounded-control hover:bg-panel-hover flex items-center justify-center"
+                className="min-h-10 min-w-10 p-2 text-muted hover:text-fg rounded-control hover:bg-panel-hover flex items-center justify-center"
               >
                 <X size={16} />
               </button>
@@ -388,7 +388,7 @@ export const AdminDocuments: React.FC = () => {
                   value={uploadTitle}
                   onChange={(e) => setUploadTitle(e.target.value)}
                   placeholder="e.g. Master Services Agreement 2026"
-                  className="w-full min-h-10 sm:h-9 px-3 rounded-control bg-panel text-text border border-line focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/30 focus:border-accent"
+                  className="w-full min-h-10 sm:h-9 px-3 rounded-control bg-panel text-fg border border-line focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/30 focus:border-accent"
                 />
               </div>
 
@@ -411,7 +411,7 @@ export const AdminDocuments: React.FC = () => {
                   required
                   accept={allowedDocumentTypes}
                   onChange={(e) => setUploadFile(e.target.files?.[0] || null)}
-                  className="w-full h-10 px-2 py-2 rounded-control bg-panel text-text border border-line focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/30 focus:border-accent text-xs"
+                  className="w-full h-10 px-2 py-2 rounded-control bg-panel text-fg border border-line focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/30 focus:border-accent text-xs"
                 />
                 <p className="text-xs text-muted font-sans">
                   {language === 'id'
@@ -431,7 +431,7 @@ export const AdminDocuments: React.FC = () => {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="min-h-10 px-4 py-2 rounded-control bg-accent hover:brightness-110 text-white text-xs font-sans font-medium disabled:opacity-50 flex items-center gap-1.5"
+                  className="min-h-10 px-4 py-2 rounded-control bg-accent hover:bg-[var(--accent-hover)] text-white text-xs font-sans font-medium disabled:opacity-50 flex items-center gap-1.5"
                 >
                   {isSubmitting ? <Loader2 size={13} className="animate-spin" /> : <Plus size={14} />}
                   <span>{language === 'id' ? 'Simpan ke Private Vault' : 'Store in Private Vault'}</span>
