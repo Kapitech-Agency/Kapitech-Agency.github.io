@@ -479,7 +479,7 @@ export const AdminClients: React.FC = () => {
             />
           </div>
 
-          <div className="flex min-w-0 items-center justify-between gap-2 lg:justify-end">
+          <div className="flex min-w-0 items-center justify-end gap-2 lg:shrink-0">
             {(searchQuery || statusFilter !== 'all') && (
               <Button
                 type="button"
@@ -492,10 +492,15 @@ export const AdminClients: React.FC = () => {
                 Clear filters
               </Button>
             )}
-            <span className="shrink-0 text-xs tabular-nums text-muted">
-              {filteredClients.length} result{filteredClients.length === 1 ? '' : 's'}
-            </span>
           </div>
+        </div>
+        <div className="mt-3 flex flex-col gap-2 border-t border-line pt-3 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-xs tabular-nums text-muted">
+            {filteredClients.length} result{filteredClients.length === 1 ? '' : 's'}
+          </p>
+          <p className="text-xs text-muted">
+            {language === 'id' ? 'Hasil mengikuti pencarian dan filter aktif.' : 'Results reflect the active search and filters.'}
+          </p>
         </div>
       </section>
 
