@@ -45,6 +45,7 @@ export const DropdownPortal: React.FC<DropdownPortalProps> = ({
           left,
           maxWidth: viewportWidth - viewportPadding * 2,
           maxHeight: Math.max(120, viewportHeight - viewportPadding * 2),
+          zIndex: 60,
           visibility: 'visible'
         });
       });
