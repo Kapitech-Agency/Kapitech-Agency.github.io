@@ -470,7 +470,7 @@ export const AdminVendors: React.FC = () => {
                       vendor.status === 'active'
                         ? 'bg-[var(--success)]/10 text-[var(--success)] border border-[var(--success)]/30'
                         : vendor.status === 'under_review'
-                        ? 'bg-amber-500/15 text-[var(--warning)] border border-[var(--warning)]/30'
+                        ? 'bg-[var(--warning)]/10 text-[var(--warning)] border border-[var(--warning)]/30'
                         : 'bg-[var(--panel)] text-[var(--muted)] border border-[var(--line)]'
                     }`}
                   >
