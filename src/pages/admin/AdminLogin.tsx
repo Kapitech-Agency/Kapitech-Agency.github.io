@@ -120,7 +120,7 @@ export const AdminLogin: React.FC = () => {
             <div className="w-10 h-10 rounded-control bg-accent/10 border border-accent/30 flex items-center justify-center text-accent-text mb-4">
               <Lock size={24} />
             </div>
-            <h1 className="text-xl leading-7 font-semibold tracking-tight">
+            <h1 className="text-xl leading-7 font-semibold tracking-[-0.01em]">
               {language === 'id' ? 'Portal Admin Internal' : 'Internal Admin Portal'}
             </h1>
             <p className="text-[13px] leading-[18px] text-muted mt-1.5 max-w-[38rem]">
