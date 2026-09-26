@@ -54,7 +54,9 @@ export const DropdownPortal: React.FC<DropdownPortalProps> = ({
           '--ams-text': '#f3f3f6',
           '--ams-muted': '#8b8b99',
           '--ams-accent': '#dc143c',
-          '--ams-accent-text': '#ff4d6d'
+          '--ams-accent-text': '#ff4d6d',
+          '--ams-radius-control': '8px',
+          '--ams-radius-card': '12px'
         } as React.CSSProperties);
       });
     };
