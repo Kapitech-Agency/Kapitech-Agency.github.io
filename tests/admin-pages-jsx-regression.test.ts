@@ -16,7 +16,9 @@ test('Admin invoicing expense cards have balanced JSX wrapper structure', () => 
   assert.ok(!source.includes('                  </div>\n                </div>\n              </div>\n              ))'));
 });
 
-test('Admin projects action conditional is explicitly closed', () => {
+test('Admin projects mutation actions stay behind their permissions', () => {
   const source = fs.readFileSync(path.resolve(process.cwd(), 'src/pages/admin/AdminProjects.tsx'), 'utf8');
-  assert.ok(source.includes('            </button>\n          )}\n        </div>'));
+  assert.ok(source.includes('{canManageKanbanTasks && <Button'));
+  assert.ok(source.includes('{canManageProjects && <Button'));
+  assert.ok(!source.includes('Legacy regression guard:'));
 });
