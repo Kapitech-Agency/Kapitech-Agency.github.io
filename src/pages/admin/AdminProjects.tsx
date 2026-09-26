@@ -606,7 +606,7 @@ export const AdminProjects: React.FC = () => {
       </header>
 
       {toast && (
-        <div role="status" className="fixed bottom-4 left-1/2 z-[70] -translate-x-1/2 rounded-control border border-[var(--line)] bg-[var(--panel)] px-4 py-3 text-xs text-[var(--text)] shadow-lg">
+        <div role="status" className="fixed bottom-4 left-1/2 z-[70] -translate-x-1/2 rounded-control border border-[var(--line)] bg-[var(--panel)] px-4 py-3 text-xs text-[var(--text)]">
           {toast}
         </div>
       )}
