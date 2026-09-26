@@ -466,7 +466,7 @@ export const AdminVendors: React.FC = () => {
 
                 <div className="flex items-center gap-1.5">
                   <span
-                    className={`px-2 py-0.5 rounded-full text-[10px] font-sans capitalize ${
+                    className={`px-2 py-0.5 rounded-badge text-[10px] font-sans capitalize ${
                       vendor.status === 'active'
                         ? 'bg-success/10 text-success border border-success/30'
                         : vendor.status === 'under_review'
