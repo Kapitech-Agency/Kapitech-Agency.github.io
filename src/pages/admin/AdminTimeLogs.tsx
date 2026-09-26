@@ -181,7 +181,7 @@ export const AdminTimeLogs: React.FC = () => {
                   <input type="checkbox" checked={billable} onChange={e => setBillable(e.target.checked)} className="accent-accent" />
                   Billable
                 </label>
-                <button disabled={saving} className="min-h-10 px-4 rounded-control bg-accent hover:bg-[var(--accent-hover)] disabled:opacity-50 text-white text-xs font-semibold inline-flex items-center gap-2">
+                <button disabled={saving} className="min-h-10 px-4 rounded-control bg-accent hover:bg-accent-hover disabled:opacity-50 text-white text-xs font-semibold inline-flex items-center gap-2">
                   {saving ? 'Saving…' : 'Add entry'}
                 </button>
               </div>
