@@ -703,7 +703,7 @@ export const AdminProjects: React.FC = () => {
                     onClick={() => handleToggleMilestone(ms.id)}
                     className={`p-2.5 rounded-control border text-xs font-sans flex items-start gap-2 cursor-pointer transition-all ${
                       ms.completed
-                        ? 'bg-emerald-950/20 border-[var(--success)]/30 text-[var(--success)]'
+                        ? 'bg-[var(--success)]/10 border-[var(--success)]/30 text-[var(--success)]'
                         : 'bg-[var(--panel)] border-[var(--line)] text-[var(--muted)] hover:text-[var(--text)]'
                     }`}
                   >
