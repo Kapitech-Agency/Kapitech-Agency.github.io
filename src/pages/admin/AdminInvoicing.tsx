@@ -122,6 +122,7 @@ export const AdminInvoicing: React.FC = () => {
   const session = getAdminSession();
   const canViewFinancials = hasAdminPermission('canViewFinancials');
   const canManageInvoices = hasAdminPermission('canManageInvoices');
+  const canCreateInvoice = canManageInvoices;
   const canDeleteInvoice = session?.user?.role?.startsWith('Tier 1') || session?.user?.stakeholderType === 'Master';
 
   const [currency, setCurrency] = useState<CurrencyCode>(getActiveCurrency());
@@ -604,11 +605,11 @@ export const AdminInvoicing: React.FC = () => {
           </button>
           {canManageInvoices && (
             <>
-              <button type="button" onClick={() => setExpenseModalOpen(true)} className={actionClass}>
+              <button type="button" onClick={() => setExpenseModalOpen(true)} disabled={!canManageInvoices} className={actionClass}>
                 <Plus size={14} />
                 {language === 'id' ? 'Catat pengeluaran' : 'Record expense'}
               </button>
-              <button type="button" onClick={openCreateInvoice} className={primaryClass}>
+              <button type="button" onClick={openCreateInvoice} disabled={!canManageInvoices} className={primaryClass}>
                 <Plus size={14} />
                 {language === 'id' ? 'Buat invoice' : 'Create invoice'}
               </button>
