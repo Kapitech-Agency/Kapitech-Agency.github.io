@@ -115,7 +115,7 @@ export const AdminLogin: React.FC = () => {
           {language === 'id' ? 'Kembali ke Website' : 'Back to Website'}
         </Link>
 
-        <div className="bg-panel border border-line rounded-card p-5 sm:p-6 -none">
+        <div className="bg-panel border border-line rounded-card p-5 sm:p-6">
           <div className="text-left mb-5 pb-5 border-b border-line">
             <div className="w-10 h-10 rounded-control bg-accent/10 border border-accent/30 flex items-center justify-center text-accent-text mb-4">
               <Lock size={24} />
@@ -159,7 +159,7 @@ export const AdminLogin: React.FC = () => {
                   disabled={loading}
                   value={identifier}
                   onChange={(e) => setIdentifier(e.target.value)}
-                  className="w-full pl-10 pr-4 h-10 min-h-10 bg-bg border border-line rounded-control text-sm text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 focus:border-accent font-sans"
+                  className="w-full pl-10 pr-4 h-10 min-h-10 bg-bg border border-line rounded-control text-sm text-fg focus-visible:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent focus:border-accent font-sans"
                   placeholder="admin atau email"
                 />
               </div>
@@ -177,7 +177,7 @@ export const AdminLogin: React.FC = () => {
                   disabled={loading}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-10 pr-10 h-10 min-h-10 bg-panel border border-line rounded-control text-sm text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 focus:border-accent font-sans"
+                  className="w-full pl-10 pr-10 h-10 min-h-10 bg-panel border border-line rounded-control text-sm text-fg focus-visible:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent focus:border-accent font-sans"
                   placeholder="••••••••"
                 />
                 <button
@@ -196,7 +196,7 @@ export const AdminLogin: React.FC = () => {
                 type="checkbox"
                 checked={rememberMe}
                 onChange={(e) => setRememberMe(e.target.checked)}
-                className="accent-[var(--accent)]"
+                className="accent-accent"
               />
               {language === 'id' ? 'Pertahankan sesi di perangkat ini' : 'Keep this session on this device'}
             </label>
@@ -259,7 +259,7 @@ export const AdminLogin: React.FC = () => {
                       value={mfaCode[index] || ''}
                       aria-label={`TOTP digit ${index + 1}`}
                       onChange={(e) => {
-                        const digit = e.target.value.replace(/\\D/g, '').slice(-1);
+                        const digit = e.target.value.replace(/\D/g, '').slice(-1);
                         const next = mfaCode.split('');
                         next[index] = digit;
                         setMfaCode(next.join('').slice(0, 6));
@@ -270,7 +270,7 @@ export const AdminLogin: React.FC = () => {
                       }}
                       onPaste={(e) => {
                         e.preventDefault();
-                        const pasted = e.clipboardData.getData('text').replace(/\\D/g, '').slice(0, 6);
+                        const pasted = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
                         setMfaCode(pasted);
                         requestAnimationFrame(() => mfaInputRefs.current[Math.min(pasted.length, 5)]?.focus());
                       }}
