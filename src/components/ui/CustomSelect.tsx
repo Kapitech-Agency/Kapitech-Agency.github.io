@@ -88,7 +88,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
         ref={triggerRef}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
-        className={`flex w-full items-center justify-between font-sans transition-colors duration-150 border select-none focus-visible:outline-none focus-visible:shadow-[inset_0_0_0_2px_var(--accent)] ${
+        className={`flex w-full items-center justify-between font-sans transition-colors duration-150 border select-none focus-visible:outline-none ${
           sizeClasses[size]
         } ${
           isOpen
@@ -154,7 +154,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
                   aria-selected={isSelected}
                   data-selected={isSelected}
                   data-active={isActive}
-                  className={`ams-dropdown-item w-full flex items-center justify-between min-h-10 sm:min-h-9 text-left transition-colors focus-visible:outline-none focus-visible:shadow-[inset_0_0_0_2px_var(--accent)] group ${
+                  className={`ams-dropdown-item w-full flex items-center justify-between min-h-10 sm:min-h-9 text-left transition-colors focus-visible:outline-none group ${
                     isSelected
                       ? 'bg-accent/14 text-fg font-semibold'
                       : isActive
