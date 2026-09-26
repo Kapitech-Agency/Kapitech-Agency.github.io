@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { X, Mail, Check, Copy, ExternalLink, ShieldCheck, Sparkles } from 'lucide-react';
+import { Mail, Check, Copy, ShieldCheck, Sparkles } from 'lucide-react';
+import { Modal } from './ui/Modal';
 import { useLanguage } from '../lib/LanguageContext';
 
 interface EmailForwardingGuideModalProps {
@@ -20,7 +21,22 @@ export const EmailForwardingGuideModal: React.FC<EmailForwardingGuideModalProps>
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4" role="presentation">
+    <Modal
+      open={isOpen}
+      onClose={onClose}
+      size="lg"
+      title={language === 'id' ? 'Notifikasi Email' : 'Email Alerts'}
+      description={language === 'id' ? 'Panduan konfigurasi penerusan notifikasi inquiry ke email tim.' : 'Configure how inbound inquiry notifications are routed to your team email.'}
+      footer={
+        <button
+          type="button"
+          onClick={onClose}
+          className="inline-flex min-h-10 items-center justify-center rounded-control border border-line bg-transparent px-4 text-xs font-medium text-muted transition-colors hover:bg-bg hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+        >
+          {language === 'id' ? 'Tutup' : 'Close'}
+        </button>
+      }
+    >
       <button
         type="button"
         aria-label={language === 'id' ? 'Tutup dialog' : 'Close dialog'}
@@ -33,31 +49,7 @@ export const EmailForwardingGuideModal: React.FC<EmailForwardingGuideModalProps>
         aria-labelledby="email-alerts-modal-title"
         className="relative flex w-full max-w-2xl max-h-[calc(100dvh-28px)] flex-col overflow-hidden rounded-card border border-line bg-panel"
       >
-        <header className="flex items-start justify-between gap-4 border-b border-line px-4 py-3.5 sm:px-5">
-          <div className="flex min-w-0 items-start gap-3">
-            <div className="flex min-h-10 min-w-10 shrink-0 items-center justify-center rounded-control border border-accent/30 bg-accent/10 text-accent-text">
-              <Mail size={17} />
-            </div>
-            <div className="min-w-0">
-              <h2 id="email-alerts-modal-title" className="text-sm font-semibold text-fg">
-                {language === 'id' ? 'Notifikasi Email' : 'Email Alerts'}
-              </h2>
-              <p className="mt-1 text-xs leading-relaxed text-muted">
-                {language === 'id'
-                  ? 'Panduan konfigurasi penerusan notifikasi inquiry ke email tim.'
-                  : 'Configure how inbound inquiry notifications are routed to your team email.'}
-              </p>
-            </div>
-          </div>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label={language === 'id' ? 'Tutup dialog' : 'Close dialog'}
-            className="flex min-h-10 min-w-10 shrink-0 items-center justify-center rounded-control border border-line text-muted transition-colors hover:bg-bg hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-          >
-            <X size={16} />
-          </button>
-        </header>
+
 
         <div className="min-h-0 flex-1 space-y-3 overflow-y-auto px-4 py-4 custom-scrollbar sm:px-5">
           <section className="rounded-control border border-line bg-bg p-4">
@@ -134,15 +126,7 @@ export const EmailForwardingGuideModal: React.FC<EmailForwardingGuideModalProps>
           </section>
         </div>
 
-        <footer className="flex items-center justify-end gap-2 border-t border-line bg-panel px-4 py-3.5 sm:px-5">
-          <button
-            type="button"
-            onClick={onClose}
-            className="inline-flex min-h-10 items-center justify-center rounded-control border border-line bg-transparent px-4 text-xs font-medium text-muted transition-colors hover:bg-bg hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-          >
-            {language === 'id' ? 'Tutup' : 'Close'}
-          </button>
-        </footer>
+
       </div>
     </div>
   );
