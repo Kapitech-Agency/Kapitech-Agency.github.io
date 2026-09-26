@@ -64,8 +64,26 @@
   --kapi-transition-smooth: all 0.3s var(--kapi-ease-spring);
 }
 
-@theme {
+@theme inline {
   --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --color-bg: var(--bg);
+  --color-panel: var(--panel);
+  --color-line: var(--line);
+  --color-fg: var(--text);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-text: var(--accent-text);
+  --color-series-2: var(--series-2);
+  --color-series-3: var(--series-3);
+  --color-series-4: var(--series-4);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  --color-info: var(--info);
+  --radius-badge: 5px;
+  --radius-chip: 6px;
+  --radius-control: 8px;
+  --radius-card: 12px;
   --font-display: "Space Grotesk", sans-serif;
   --font-heading: "Outfit", "Inter", sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
@@ -560,36 +578,17 @@
    unaffected. Component geometry remains owned by React/Tailwind markup.
    ========================================================================== */
 
-@theme inline {
-  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --color-bg: var(--bg);
-  --color-panel: var(--panel);
-  --color-line: var(--line);
-  --color-fg: var(--text);
-  --color-muted: var(--muted);
-  --color-accent: var(--accent);
-  --color-accent-text: var(--accent-text);
-  --color-series-2: var(--series-2);
-  --color-series-3: var(--series-3);
-  --color-series-4: var(--series-4);
-  --color-success: var(--success);
-  --color-warning: var(--warning);
-  --color-danger: var(--danger);
-  --color-info: var(--info);
-  --radius-badge: 5px;
-  --radius-chip: 6px;
-  --radius-control: 8px;
-  --radius-card: 12px;
-}
+
 
 .ams-shell {
-  --bg: #090A0F;
-  --panel: #111318;
-  --line: rgba(255, 255, 255, 0.07);
-  --text: #F8FAFC;
-  --muted: #8A94A6;
-  --accent: #DC143C;
-  --accent-text: #FF4D6D;
+  --bg: #09090c;
+  --panel: #0f0f14;
+  --panel-hover: color-mix(in srgb, var(--text) 4%, var(--panel));
+  --line: #20202a;
+  --text: #f3f3f6;
+  --muted: #8b8b99;
+  --accent: #dc143c;
+  --accent-text: #ff4d6d;
   --series-2: #34d399;
   --series-3: #5b8cff;
   --series-4: #b9b9c6;
@@ -1417,10 +1416,10 @@
   border-radius: 8px !important;
 }
 
-.ams-shell input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):focus,
-.ams-shell select:focus,
-.ams-shell textarea:focus,
-.ams-shell .ams-control:focus {
+.ams-shell input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):focus-visible,
+.ams-shell select:focus-visible,
+.ams-shell textarea:focus-visible,
+.ams-shell .ams-control:focus-visible {
   border-color: var(--accent) !important;
   box-shadow: none !important;
   outline: 2px solid var(--accent) !important;
@@ -1428,12 +1427,12 @@
 }
 
 .ams-dropdown-surface {
-  background: color-mix(in srgb, var(--panel, #111318) 96%, transparent) !important;
-  border: 1px solid var(--line, rgba(255,255,255,.07)) !important;
-  border-radius: 10px !important;
-  box-shadow: 0 16px 40px rgba(0,0,0,.34), 0 4px 12px rgba(0,0,0,.2) !important;
-  backdrop-filter: blur(18px) saturate(120%) !important;
-  -webkit-backdrop-filter: blur(18px) saturate(120%) !important;
+  background: var(--panel) !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 8px !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
   opacity: 1 !important;
   overflow: hidden;
   isolation: isolate;
@@ -1493,10 +1492,6 @@
   box-shadow: none;
 }
 
-.ams-shell [class*="shadow-"] {
-  box-shadow: none !important;
-}
-
 @media (max-width: 899px) {
   .ams-shell main > .flex-1 { padding: 16px; }
   .ams-shell .ams-dashboard-header,
@@ -1546,11 +1541,6 @@
 }
 
 @media (max-width: 599px) {
-  .ams-shell .ams-dashboard-card {
-    border-radius: 12px;
-    padding: 14px;
-  }
-
   .ams-shell .ams-dashboard-card .text-2xl {
     font-size: 22px;
     line-height: 28px;
@@ -1793,10 +1783,6 @@
     width: auto;
   }
 
-  .ams-shell .ams-panel {
-    padding: 14px !important;
-  }
-
   .ams-shell .ams-panel .grid.grid-cols-2 {
     gap: 8px;
   }
@@ -1924,10 +1910,6 @@
     padding: 14px !important;
   }
 
-  .ams-shell .ams-dashboard-page .ams-panel {
-    padding: 14px !important;
-  }
-
   .ams-shell .ams-dashboard-page .ams-panel > .flex.items-center.justify-between {
     gap: 12px;
     align-items: flex-start;
@@ -1982,7 +1964,6 @@
 .ams-shell .ams-page-title { display:flex; align-items:center; gap:10px; min-width:0; }
 .ams-shell .ams-page-title > svg { width:20px; height:20px; flex:0 0 20px; stroke-width:1.8; }
 .ams-shell .ams-page-title > span { min-width:0; overflow-wrap:anywhere; }
-.ams-shell input, .ams-shell textarea, .ams-shell select { min-height:40px; }
 .ams-shell button, .ams-shell a[role="button"] { touch-action: manipulation; }
 .ams-shell .ams-modal-root { overscroll-behavior: contain; }
 .ams-shell .ams-modal-root > [role="dialog"] { animation: ams-dialog-in 160ms ease-out; }
