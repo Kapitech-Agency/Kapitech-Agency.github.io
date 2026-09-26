@@ -570,7 +570,7 @@ export const AdminProjects: React.FC = () => {
       >
         <div className="flex flex-col-reverse sm:flex-row justify-end gap-2">
           <Button variant="secondary" onClick={() => setDeleteProject(null)}>Cancel</Button>
-          <Button variant="danger" onClick={() => void deleteProjectConfirmed()} disabled={!canDeleteProjects}>Delete</Button>
+          <Button variant="destructive" onClick={() => void deleteProjectConfirmed()} disabled={!canDeleteProjects}>Delete</Button>
         </div>
       </Modal>
 
@@ -583,7 +583,7 @@ export const AdminProjects: React.FC = () => {
       >
         <div className="flex flex-col-reverse sm:flex-row justify-end gap-2">
           <Button variant="secondary" onClick={() => setDeleteTaskTarget(null)}>Cancel</Button>
-          <Button variant="danger" onClick={() => void confirmDeleteTask()} disabled={!canManageKanbanTasks}>Delete</Button>
+          <Button variant="destructive" onClick={() => void confirmDeleteTask()} disabled={!canManageKanbanTasks}>Delete</Button>
         </div>
       </Modal>
 
@@ -808,7 +808,7 @@ export const AdminProjects: React.FC = () => {
                   {selectedProject.repositoryUrl && <a href={selectedProject.repositoryUrl} target="_blank" rel="noreferrer" className="inline-flex min-h-10 items-center gap-2 rounded-control border border-line bg-panel px-3 text-xs text-fg hover:bg-bg"><Code2 size={14} />Repository</a>}
                   {selectedProject.liveStagingUrl && <a href={selectedProject.liveStagingUrl} target="_blank" rel="noreferrer" className="inline-flex min-h-10 items-center gap-2 rounded-control border border-line bg-panel px-3 text-xs text-fg hover:bg-bg"><ExternalLink size={14} />Staging</a>}
                   {canManageProjects && <Button variant="secondary" icon={<Edit3 size={14} />} onClick={() => resetProjectForm(selectedProject)}>Edit</Button>}
-                  {canDeleteProjects && <Button variant="danger" icon={<Trash2 size={14} />} onClick={() => setDeleteProject(selectedProject)}>Delete</Button>}
+                  {canDeleteProjects && <Button variant="destructive" icon={<Trash2 size={14} />} onClick={() => setDeleteProject(selectedProject)}>Delete</Button>}
                 </div>
               </div>
 
@@ -971,7 +971,7 @@ export const AdminProjects: React.FC = () => {
               {(taskDrawer.tags || []).length > 0 && <div className="mt-5"><div className="text-[11px] font-semibold text-muted">Tags</div><div className="mt-2 flex flex-wrap gap-1.5">{taskDrawer.tags?.map(tag => <span key={tag} className="rounded-control border border-line bg-bg px-2 py-1 text-[10px] text-muted">{tag}</span>)}</div></div>}
             </div>
             <footer className="flex shrink-0 items-center justify-between gap-2 border-t border-line bg-panel px-4 py-3 sm:px-5">
-              <Button variant="danger" icon={<Trash2 size={13} />} onClick={() => setDeleteTaskTarget(taskDrawer)} disabled={!canManageKanbanTasks}>Delete</Button>
+              <Button variant="destructive" icon={<Trash2 size={13} />} onClick={() => setDeleteTaskTarget(taskDrawer)} disabled={!canManageKanbanTasks}>Delete</Button>
               <div className="flex gap-2"><Button variant="secondary" onClick={() => setTaskDrawer(null)}>Close</Button>{canManageKanbanTasks && <Button icon={<Edit3 size={13} />} onClick={() => openEditTask(taskDrawer)}>Edit task</Button>}</div>
             </footer>
           </aside>
