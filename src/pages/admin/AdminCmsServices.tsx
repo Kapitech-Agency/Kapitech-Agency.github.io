@@ -401,7 +401,7 @@ export const AdminCmsServices: React.FC = () => {
 
       {/* Service Detail / Inspection Modal */}
       {selectedServiceForDetail && (
-        <div className="fixed inset-0 z-50 bg-black/80  flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-bg/90  flex items-center justify-center p-4">
           <div className="bg-[var(--panel)] border border-[var(--line)] rounded-card w-full max-w-2xl p-4 sm:p-6 relative max-h-[calc(100dvh-24px)] overflow-y-auto custom-scrollbar animate-in zoom-in-95 duration-150">
             <button
               onClick={() => setSelectedServiceForDetail(null)}
@@ -514,7 +514,7 @@ export const AdminCmsServices: React.FC = () => {
 
       {/* Add New Service Modal */}
       {isAddModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/80  flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-bg/90  flex items-center justify-center p-4">
           <div className="bg-[var(--panel)] border border-[var(--line)] rounded-card w-full max-w-lg p-4 sm:p-6 relative max-h-[calc(100dvh-24px)] overflow-y-auto custom-scrollbar animate-in zoom-in-95 duration-150">
             <button
               onClick={() => setIsAddModalOpen(false)}
