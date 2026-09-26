@@ -387,17 +387,7 @@ export const AdminClients: React.FC = () => {
         </div>
       )}
 
-      <section aria-labelledby="client-snapshot-title" className="mb-6">
-        <div className="mb-3 flex items-end justify-between gap-3">
-          <div>
-            <h2 id="client-snapshot-title" className="text-sm font-semibold text-fg">
-              {language === 'id' ? 'Ringkasan klien' : 'Client snapshot'}
-            </h2>
-            <p className="mt-1 text-xs text-muted">
-              {language === 'id' ? 'Sinyal utama dari direktori klien saat ini.' : 'The key signals from the current client directory.'}
-            </p>
-          </div>
-        </div>
+      <section aria-label={language === 'id' ? 'Ringkasan klien' : 'Client snapshot'} className="mb-6">
         <div className="grid grid-cols-2 border-y border-line sm:grid-cols-4">
           {[
             { label: language === 'id' ? 'Total klien' : 'Total clients', value: clientMetrics.total, helper: language === 'id' ? 'Semua status' : 'All statuses', valueClass: 'text-fg' },
@@ -405,7 +395,7 @@ export const AdminClients: React.FC = () => {
             { label: language === 'id' ? 'Prospek' : 'Leads', value: clientMetrics.leads, helper: language === 'id' ? 'Status lead' : 'Lead status', valueClass: 'text-info' },
             { label: language === 'id' ? 'Melewati SLA' : 'Over budget', value: clientMetrics.overBudget, helper: language === 'id' ? 'Daily ad-spend' : 'Daily ad-spend SLA', valueClass: 'text-warning' }
           ].map((metric, index) => (
-            <div key={metric.label} className={`ams-kpi min-w-0 px-4 py-4 ${index === 1 ? 'border-l border-line' : ''} ${index >= 2 ? 'border-t border-line sm:border-l sm:border-t-0' : ''}`}>
+            <div key={metric.label} className={`ams-kpi min-w-0 px-4 py-4 ${index % 2 === 1 ? 'border-l border-line' : ''} ${index >= 2 ? 'border-t border-line' : ''} ${index > 0 ? 'sm:border-l sm:border-t-0' : ''}`}>
               <p className="ams-meta">{metric.label}</p>
               <p className={`ams-kpi-value mt-2 ${metric.valueClass}`}>{isLoading ? '—' : metric.value}</p>
               <p className="ams-meta mt-1">{metric.helper}</p>
@@ -415,7 +405,7 @@ export const AdminClients: React.FC = () => {
       </section>
       <section
         aria-label={language === 'id' ? 'Pencarian dan filter klien' : 'Client directory controls'}
-        className="mb-4 rounded-card border border-line bg-panel p-4"
+        className="mb-6 rounded-card border border-line bg-panel p-4"
       >
         <div className="flex min-w-0 flex-col gap-3 lg:flex-row lg:items-end">
           <div className="min-w-0 flex-1">
@@ -780,28 +770,16 @@ export const AdminClients: React.FC = () => {
           : 'Create a client record with the information your team needs to operate the account.'}
         footer={
           <>
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={() => setIsClientModalOpen(false)}
-              disabled={isSaving}
-              className="w-full sm:w-auto"
-            >
+            <Button type="button" variant="secondary" onClick={() => setIsClientModalOpen(false)} disabled={isSaving} className="w-full sm:w-auto">
               Cancel
             </Button>
-            <Button
-              type="submit"
-              form="client-form"
-              variant="primary"
-              loading={isSaving}
-              className="w-full sm:w-auto"
-            >
+            <Button type="submit" form="client-form" variant="primary" loading={isSaving} className="w-full sm:w-auto">
               {editingClient ? 'Save changes' : 'Create client'}
             </Button>
           </>
         }
       >
-        <form id="client-form" onSubmit={handleSaveClient} className="space-y-6">
+        <form id="client-form" onSubmit={handleSaveClient} className="space-y-8">
           {formError && (
             <div role="alert" className="flex items-start gap-2 rounded-control border border-danger/30 bg-danger/10 p-3 text-xs leading-5 text-danger">
               <ShieldAlert size={14} className="mt-0.5 shrink-0" aria-hidden="true" />
@@ -809,8 +787,8 @@ export const AdminClients: React.FC = () => {
             </div>
           )}
 
-          <section aria-labelledby="client-contact-section">
-            <div className="mb-4">
+          <section aria-labelledby="client-contact-section" className="grid gap-5 sm:grid-cols-[180px_minmax(0,1fr)]">
+            <div>
               <h3 id="client-contact-section" className="text-sm font-semibold text-fg">Contact information</h3>
               <p className="mt-1 text-xs leading-4 text-muted">Primary contact and company details.</p>
             </div>
@@ -826,36 +804,48 @@ export const AdminClients: React.FC = () => {
             </div>
           </section>
 
-          <section aria-labelledby="client-account-section" className="border-t border-line pt-5">
-            <div className="mb-4"><h3 id="client-account-section" className="text-sm font-semibold text-fg">Account settings</h3><p className="mt-1 text-xs leading-4 text-muted">Keep the account state aligned with the relationship.</p></div>
+          <section aria-labelledby="client-account-section" className="grid gap-5 border-t border-line pt-6 sm:grid-cols-[180px_minmax(0,1fr)]">
+            <div>
+              <h3 id="client-account-section" className="text-sm font-semibold text-fg">Account settings</h3>
+              <p className="mt-1 text-xs leading-4 text-muted">Keep the account state aligned with the relationship.</p>
+            </div>
             <div className="max-w-sm">
               <label htmlFor="client-status" className="mb-1.5 block">Account status</label>
               <CustomSelect value={clientStatus} onChange={(value) => setClientStatus(value as AgencyClient['status'])} options={STATUS_OPTIONS} aria-label="Client account status" className="w-full" triggerClassName="w-full" />
             </div>
           </section>
 
-          <section aria-labelledby="client-relationship-section" className="border-t border-line pt-5">
-            <div className="mb-4"><h3 id="client-relationship-section" className="text-sm font-semibold text-fg">Client relationship</h3><p className="mt-1 text-xs leading-4 text-muted">Operational values tracked on the client record.</p></div>
+          <section aria-labelledby="client-relationship-section" className="grid gap-5 border-t border-line pt-6 sm:grid-cols-[180px_minmax(0,1fr)]">
+            <div>
+              <h3 id="client-relationship-section" className="text-sm font-semibold text-fg">Client relationship</h3>
+              <p className="mt-1 text-xs leading-4 text-muted">Operational values tracked on the client record.</p>
+            </div>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div><label htmlFor="client-projects" className="mb-1.5 block">Projects count</label><input id="client-projects" type="number" min="0" inputMode="numeric" value={projectsCount} onChange={(event) => setProjectsCount(Number(event.target.value))} /></div>
               <div><label htmlFor="client-spend" className="mb-1.5 block">Cumulative billed value</label><input id="client-spend" type="number" min="0" inputMode="decimal" value={totalSpend} onChange={(event) => setTotalSpend(Number(event.target.value))} /></div>
             </div>
           </section>
 
-          <section aria-labelledby="client-sla-section" className="border-t border-line pt-5">
-            <div className="mb-4"><h3 id="client-sla-section" className="text-sm font-semibold text-fg">Daily ad-spend SLA</h3><p className="mt-1 text-xs leading-4 text-muted">Optional tracking for the configured daily cap.</p></div>
+          <section aria-labelledby="client-sla-section" className="grid gap-5 border-t border-line pt-6 sm:grid-cols-[180px_minmax(0,1fr)]">
+            <div>
+              <h3 id="client-sla-section" className="text-sm font-semibold text-fg">Daily ad-spend SLA</h3>
+              <p className="mt-1 text-xs leading-4 text-muted">Optional tracking for the configured daily cap.</p>
+            </div>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div><label htmlFor="client-sla" className="mb-1.5 block">Agreed daily cap</label><input id="client-sla" type="number" min="0" inputMode="decimal" value={slaDailyBudget} onChange={(event) => setSlaDailyBudget(Number(event.target.value))} /></div>
               <div><label htmlFor="client-daily-spend" className="mb-1.5 block">Current daily spend</label><input id="client-daily-spend" type="number" min="0" inputMode="decimal" value={currentDailySpend} onChange={(event) => setCurrentDailySpend(Number(event.target.value))} /></div>
             </div>
           </section>
 
-          <section aria-labelledby="client-notes-section" className="border-t border-line pt-5">
-            <div className="mb-4"><h3 id="client-notes-section" className="text-sm font-semibold text-fg">Notes & requirements</h3><p className="mt-1 text-xs leading-4 text-muted">Preferences, requirements, billing context, or operational notes.</p></div>
+          <section aria-labelledby="client-notes-section" className="grid gap-5 border-t border-line pt-6 sm:grid-cols-[180px_minmax(0,1fr)]">
+            <div>
+              <h3 id="client-notes-section" className="text-sm font-semibold text-fg">Notes & requirements</h3>
+              <p className="mt-1 text-xs leading-4 text-muted">Preferences, requirements, billing context, or operational notes.</p>
+            </div>
             <textarea id="client-notes" rows={4} value={notes} onChange={(event) => setNotes(event.target.value)} placeholder="Client preferences, requirements, billing notes..." className="resize-y" />
           </section>
-        </form> </Modal>
-
+        </form>
+      </Modal>
       <Modal
         open={!!deleteTarget}
         onClose={() => !isDeleting && setDeleteTarget(null)}
