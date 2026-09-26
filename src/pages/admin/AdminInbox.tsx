@@ -974,7 +974,7 @@ export const AdminInbox: React.FC = () => {
                       <div className="flex items-center gap-2 shrink-0">
                         <button
                           onClick={(e) => handleToggleStar(e, item.id, item.starred)}
-                          className="p-1 text-[var(--muted)] hover:text-[var(--warning)] transition-colors"
+                          className="min-h-10 min-w-10 rounded-control flex items-center justify-center text-[var(--muted)] hover:text-[var(--warning)] hover:bg-[var(--warning)]/10 transition-colors focus-visible:outline-none" aria-label={item.starred ? "Unstar brief" : "Star brief"}
                         >
                           <Star size={13} className={item.starred ? 'fill-[var(--warning)] text-[var(--warning)]' : ''} />
                         </button>
@@ -1088,7 +1088,7 @@ export const AdminInbox: React.FC = () => {
                     {/* Close button on desktop */}
                     <button
                       onClick={() => setSelectedSubmission(null)}
-                      className="hidden lg:inline-flex text-xs text-[var(--muted)] hover:text-[var(--text)] px-3 py-2 rounded-control bg-[var(--panel)] border border-[var(--line)] min-h-10 items-center"
+                      className="hidden lg:inline-flex text-xs text-[var(--muted)] hover:text-[var(--text)] px-3 py-2 rounded-control bg-[var(--panel)] border border-[var(--line)] min-h-10 items-center" aria-label="Close brief"
                     >
                       ✕
                     </button>
