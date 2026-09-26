@@ -914,7 +914,7 @@ export const AdminProjects: React.FC = () => {
       {activeTaskDrawer && selectedProject && (
         <div className="fixed inset-0 z-50 flex">
           <div
-            className="fixed inset-0 bg-black/80  transition-opacity"
+            className="fixed inset-0 bg-bg/80  transition-opacity"
             onClick={() => setActiveTaskDrawer(null)}
           />
 
@@ -1082,8 +1082,8 @@ export const AdminProjects: React.FC = () => {
       {/* CREATE / EDIT PROJECT MODAL */}
       {/* ------------------------------------------------------------- */}
       {isProjectModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/80  flex items-center justify-center p-0 sm:p-4 overflow-y-auto">
-          <div className="bg-[var(--panel)] border-0 sm:border sm:border-[var(--line)] rounded-none sm:rounded-card w-full h-full sm:h-auto sm:max-h-[calc(100dvh-24px)] sm:max-w-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-150">
+        <div className="fixed inset-0 z-50 bg-bg/80  flex items-center justify-center p-0 sm:p-4 overflow-y-auto">
+          <div className="bg-[var(--panel)] border-0 sm:border sm:border-[var(--line)] rounded-card w-full h-full sm:h-auto sm:max-h-[calc(100dvh-28px)] sm:max-w-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-150">
             {/* Sticky Header */}
             <div className="sticky top-0 z-20 bg-[var(--panel)]/95  px-5 sm:px-6 py-4 border-b border-[var(--line)] flex items-center justify-between shrink-0">
               <h3 className="font-sans font-semibold text-[var(--text)] text-base sm:text-lg flex items-center gap-2">
@@ -1251,8 +1251,8 @@ export const AdminProjects: React.FC = () => {
       {/* CREATE NEW TASK MODAL (Mobile Fullscreen + Sticky) */}
       {/* ------------------------------------------------------------- */}
       {isTaskModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/80  flex items-center justify-center p-0 sm:p-4 overflow-y-auto">
-          <div className="bg-[var(--panel)] border-0 sm:border sm:border-[var(--line)] rounded-none sm:rounded-card w-full h-full sm:h-auto sm:max-h-[calc(100dvh-24px)] sm:max-w-lg flex flex-col overflow-hidden animate-in zoom-in-95 duration-150">
+        <div className="fixed inset-0 z-50 bg-bg/80  flex items-center justify-center p-0 sm:p-4 overflow-y-auto">
+          <div className="bg-[var(--panel)] border-0 sm:border sm:border-[var(--line)] rounded-card w-full h-full sm:h-auto sm:max-h-[calc(100dvh-28px)] sm:max-w-lg flex flex-col overflow-hidden animate-in zoom-in-95 duration-150">
             {/* Sticky Header */}
             <div className="sticky top-0 z-20 bg-[var(--panel)]/95  px-5 sm:px-6 py-4 border-b border-[var(--line)] flex items-center justify-between shrink-0">
               <h3 className="font-sans font-semibold text-[var(--text)] text-base flex items-center gap-2">
