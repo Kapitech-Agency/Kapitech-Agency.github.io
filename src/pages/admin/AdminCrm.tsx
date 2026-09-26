@@ -980,7 +980,7 @@ export const AdminCrm: React.FC = () => {
               <div className="flex items-start justify-between gap-4 pb-5 border-b border-line">
                 <div>
                   <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-                    <span className={`px-2.5 py-0.5 rounded text-[10px] border font-semibold ${getPillarColor(selectedLead.servicePillar)}`}>
+                    <span className={`px-2.5 py-0.5 rounded-badge text-[10px] border font-semibold ${getPillarColor(selectedLead.servicePillar)}`}>
                       {selectedLead.servicePillar}
                     </span>
                     {getPriorityBadge(selectedLead.priority)}
