@@ -368,7 +368,7 @@ export const AdminCrm: React.FC = () => {
       <Modal open={!!deleteTarget} onClose={() => setDeleteTarget(null)} size="sm" title={language === 'id' ? 'Hapus prospek?' : 'Delete lead?'} description={language === 'id' ? `Prospek ${deleteTarget?.name || ''} akan dihapus dari CRM.` : `Lead ${deleteTarget?.name || ''} will be removed from CRM.`}>
         <div className="flex flex-col-reverse sm:flex-row justify-end gap-2">
           <button type="button" onClick={() => setDeleteTarget(null)} className="min-h-10 px-4 rounded-control border border-[var(--line)] bg-[var(--panel)] text-xs text-[var(--muted)]">Cancel</button>
-          <button type="button" onClick={() => deleteTarget && void confirmDeleteLead(deleteTarget.id)} disabled={!canManageCrm} className="min-h-10 px-4 rounded-control bg-[var(--danger)] text-white text-xs font-semibold">Delete</button>
+          <button type="button" onClick={() => deleteTarget && void confirmDeleteLead(deleteTarget.id)} disabled={!canManageCrm} className="px-3.5 py-2 rounded-control bg-[var(--danger)] text-white text-xs font-semibold">Delete</button>
         </div>
       </Modal>
       <div className="ams-leads-page space-y-6 pb-8">
