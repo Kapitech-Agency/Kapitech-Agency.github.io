@@ -812,12 +812,12 @@ export const AdminSettings: React.FC = () => {
                           </span>
                         )}
                         {acc.permissions?.canApproveBudgets && (
-                          <span className="text-[9px] font-sans px-1.5 py-0.5 bg-warning/10 text-warning border border-amber-800/40 rounded">
+                          <span className="text-[9px] font-sans px-1.5 py-0.5 bg-warning/10 text-warning border border-warning/30 rounded-badge">
                             Budget Approval
                           </span>
                         )}
                         {acc.permissions?.canManageInfrastructure && (
-                          <span className="text-[9px] font-sans px-1.5 py-0.5 bg-cyan-950/40 text-cyan-300 border border-cyan-800/40 rounded">
+                          <span className="text-[9px] font-sans px-1.5 py-0.5 bg-info/10 text-info border border-info/30 rounded-badge">
                             DevOps / Cloud
                           </span>
                         )}
@@ -827,7 +827,7 @@ export const AdminSettings: React.FC = () => {
                           </span>
                         )}
                         {acc.permissions?.canManageCrm && (
-                          <span className="text-[9px] font-sans px-1.5 py-0.5 bg-blue-950/40 text-blue-300 border border-blue-800/40 rounded">
+                          <span className="text-[9px] font-sans px-1.5 py-0.5 bg-series-3/10 text-series-3 border border-series-3/30 rounded-badge">
                             CRM
                           </span>
                         )}
@@ -926,11 +926,11 @@ export const AdminSettings: React.FC = () => {
                   </tr>
                   <tr className="hover:bg-panel/60 transition-colors">
                     <td className="py-3.5 px-4 font-semibold text-fg flex items-center gap-2">
-                      <span className="w-2 h-2 rounded-full bg-cyan-400 shrink-0"></span>
+                      <span className="w-2 h-2 rounded-full bg-info shrink-0"></span>
                       <span>Tier 3: Operational Staff</span>
                     </td>
                     <td className="py-3.5 px-4 text-muted">{language === 'id' ? 'Tanpa Akses' : 'No Access'}</td>
-                    <td className="py-3.5 px-4 text-cyan-300">{language === 'id' ? 'Lihat Prospek Terkait' : 'View Assigned Deals'}</td>
+                    <td className="py-3.5 px-4 text-info">{language === 'id' ? 'Lihat Prospek Terkait' : 'View Assigned Deals'}</td>
                     <td className="py-3.5 px-4 text-success font-semibold">{language === 'id' ? 'Update Task Terkait' : 'Update Assigned Tasks'}</td>
                     <td className="py-3.5 px-4 text-muted">{language === 'id' ? 'Tanpa Akses' : 'No Access'}</td>
                   </tr>
