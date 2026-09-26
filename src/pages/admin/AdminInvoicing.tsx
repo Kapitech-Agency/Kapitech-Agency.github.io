@@ -351,7 +351,7 @@ export const AdminInvoicing: React.FC = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         
         {/* Metric 1: Collected Revenue */}
-        <div className="bg-[var(--panel)] border border-[var(--line)] p-5 rounded-card flex flex-col justify-between h-full group hover:border-[var(--line)] transition-all">
+        <div className="bg-[var(--panel)] border border-[var(--line)] p-4 rounded-card flex flex-col justify-between h-full group hover:border-[var(--line)] transition-all">
           <div>
             <div className="flex items-center justify-between text-[var(--muted)] mb-2">
               <span className="text-xs font-sans normal-case font-semibold">{t('admin.fin.revenuePaid')}</span>
