@@ -25,6 +25,7 @@ import { CommandPalette } from '../../components/admin/CommandPalette';
 import { AdminNotificationCenter } from '../../components/admin/AdminNotificationCenter';
 import { Modal } from '../../components/ui/Modal';
 import { useRbacRole } from '../../lib/rbacEngine';
+import { AmsBrandLogo } from '../../components/admin/AmsBrandLogo';
 
 interface NavItem {
   key: string;
@@ -337,7 +338,7 @@ export const AdminLayout: React.FC = () => {
           <div className={`flex items-center min-w-0 ${sidebarCollapsed ? 'justify-center' : 'gap-2'}`}>
             <Link to="/admin/dashboard" aria-label="Kapitech AMS dashboard" className={`group flex min-w-0 flex-1 items-center rounded-control min-h-10 transition-colors duration-150 hover:bg-panel-hover focus-visible:outline-none ${sidebarCollapsed ? 'justify-center px-1' : 'gap-3 px-2'}`}>
               <div className="h-9 w-9 rounded-control bg-bg border border-line p-1.5 flex items-center justify-center shrink-0 transition-colors duration-150 group-hover:border-accent/40">
-                <img src="/white.png" alt="Kapitech" className="h-3.5 w-auto max-w-[28px] object-contain" />
+                <AmsBrandLogo className="h-5 w-5" />
               </div>
               {!sidebarCollapsed && (
                 <div className="min-w-0 py-0.5">
@@ -445,8 +446,8 @@ export const AdminLayout: React.FC = () => {
           </button>
 
           <Link to="/admin/dashboard" className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-control bg-accent flex items-center justify-center text-fg font-semibold text-xs shrink-0">
-              K
+            <div className="flex h-7 w-7 items-center justify-center rounded-control border border-line bg-bg shrink-0">
+              <AmsBrandLogo compact className="h-4 w-4" />
             </div>
             <div className="min-w-0">
               <span className="font-sans font-semibold text-fg text-xs block truncate">KAPITECH AMS</span>
@@ -484,8 +485,8 @@ export const AdminLayout: React.FC = () => {
                 onClick={() => setMobileMenuOpen(false)}
                 className="flex items-center gap-2.5"
               >
-                <div className="h-8 px-2.5 rounded-control bg-bg border border-line flex items-center justify-center shrink-0 ">
-                  <img src="/white.png" alt="Kapitech" className="h-3.5 w-auto object-contain" />
+                <div className="h-8 px-2.5 rounded-control bg-bg border border-line flex items-center justify-center shrink-0">
+                  <AmsBrandLogo className="h-4 w-4" />
                 </div>
                 <div>
                   <div className="font-sans font-semibold text-fg text-sm flex items-center gap-1.5">
