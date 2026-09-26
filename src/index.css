@@ -1345,9 +1345,14 @@
 }
 
 /* AMS PORTAL SURFACES
-   Portals mount inside .ams-shell so they inherit the canonical AMS tokens.
-   No legacy glass, blur, or alternate portal palette is allowed. */
-.ams-shell .ams-popover-surface {
+   Portals mount outside the application shell to avoid clipping by layout
+   overflow. The portal root receives the live AMS tokens from .ams-shell. */
+.ams-portal-root {
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+  color: var(--text);
+}
+
+.ams-portal-root .ams-popover-surface {
   background: var(--bg);
   color: var(--text);
   border: 1px solid var(--line);
@@ -1358,7 +1363,7 @@
   isolation: isolate;
 }
 
-.ams-shell .ams-popover-surface .ams-dropdown-item {
+.ams-portal-root .ams-popover-surface .ams-dropdown-item {
   min-height: 36px;
   padding: 8px 10px;
   background: transparent;
@@ -1366,24 +1371,24 @@
   border-radius: 6px;
 }
 
-.ams-shell .ams-popover-surface .ams-dropdown-item:hover,
-.ams-shell .ams-popover-surface .ams-dropdown-item[data-active="true"] {
+.ams-portal-root .ams-popover-surface .ams-dropdown-item:hover,
+.ams-portal-root .ams-popover-surface .ams-dropdown-item[data-active="true"] {
   background: var(--panel-hover);
   color: var(--text);
 }
 
-.ams-shell .ams-popover-surface .ams-dropdown-item[data-selected="true"] {
+.ams-portal-root .ams-popover-surface .ams-dropdown-item[data-selected="true"] {
   background: color-mix(in srgb, var(--accent) 14%, transparent);
   color: var(--text);
   font-weight: 600;
 }
 
-.ams-shell .ams-popover-surface .ams-dropdown-item:focus-visible {
+.ams-portal-root .ams-popover-surface .ams-dropdown-item:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
 
-.ams-shell .ams-notification-surface {
+.ams-portal-root .ams-notification-surface {
   background: var(--panel);
   color: var(--text);
   border: 1px solid var(--line);
@@ -1394,22 +1399,22 @@
   isolation: isolate;
 }
 
-.ams-shell .ams-notification-header,
-.ams-shell .ams-notification-list,
-.ams-shell .ams-notification-item {
+.ams-portal-root .ams-notification-header,
+.ams-portal-root .ams-notification-list,
+.ams-portal-root .ams-notification-item {
   background: var(--panel);
 }
 
-.ams-shell .ams-notification-item:hover,
-.ams-shell .ams-notification-item:focus-visible {
+.ams-portal-root .ams-notification-item:hover,
+.ams-portal-root .ams-notification-item:focus-visible {
   background: var(--panel-hover);
 }
 
-.ams-shell .ams-notification-item.is-unread {
+.ams-portal-root .ams-notification-item.is-unread {
   background: color-mix(in srgb, var(--accent) 8%, var(--panel));
 }
 
-.ams-shell .ams-notification-item:last-child {
+.ams-portal-root .ams-notification-item:last-child {
   border-bottom: 0;
 }
 
