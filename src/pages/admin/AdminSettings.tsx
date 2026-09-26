@@ -587,7 +587,7 @@ export const AdminSettings: React.FC = () => {
       {activeTab === 'branding' && (
         <div className="w-full max-w-4xl bg-[var(--panel)] border border-[var(--line)] rounded-card p-5 sm:p-6">
           <div className="flex items-center gap-3 mb-6 pb-4 border-b border-[var(--line)]">
-            <div className="w-10 h-10 rounded-card bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 shrink-0">
+            <div className="w-10 h-10 rounded-card bg-[var(--series-3)]/10 border border-[var(--series-3)]/30 flex items-center justify-center text-[var(--series-3)] shrink-0">
               <Palette size={20} />
             </div>
             <div>
@@ -766,7 +766,7 @@ export const AdminSettings: React.FC = () => {
                             isMaster ? 'bg-[var(--danger)]/20 text-[var(--danger)] border border-[var(--danger)]/30' :
                             isExecutive ? 'bg-amber-500/20 text-[var(--warning)] border border-[var(--warning)]/30' :
                             isIT ? 'bg-[var(--success)]/20 text-[var(--success)] border border-[var(--success)]/30' :
-                            'bg-purple-500/20 text-purple-400 border border-purple-500/30'
+                            'bg-[var(--series-3)]/20 text-[var(--series-3)] border border-[var(--series-3)]/30'
                           }`}>
                             {acc.name.split(' ').map(n => n[0]).slice(0, 2).join('')}
                           </div>
@@ -780,7 +780,7 @@ export const AdminSettings: React.FC = () => {
                           isMaster ? 'bg-[var(--danger)]/10 text-[var(--danger)] border-[var(--danger)]/30' :
                           isExecutive ? 'bg-[var(--warning)]/10 text-[var(--warning)] border-[var(--warning)]/30' :
                           isIT ? 'bg-[var(--success)]/10 text-[var(--success)] border-[var(--success)]/30' :
-                          'bg-purple-500/10 text-purple-300 border-purple-500/30'
+                          'bg-[var(--series-3)]/10 text-[var(--series-3)] border-[var(--series-3)]/30'
                         }`}>
                           {acc.division || 'Operations'}
                         </span>
@@ -896,7 +896,7 @@ export const AdminSettings: React.FC = () => {
                 <tbody className="divide-y divide-[var(--line)]">
                   <tr className="hover:bg-[var(--panel)]/60 transition-colors">
                     <td className="py-3.5 px-4 font-semibold text-[var(--text)] flex items-center gap-2">
-                      <span className="w-2 h-2 rounded-full bg-amber-400 shrink-0"></span>
+                      <span className="w-2 h-2 rounded-full bg-[var(--warning)] shrink-0"></span>
                       <span>Stakeholder Executive (Managing Partner)</span>
                     </td>
                     <td className="py-3.5 px-4 text-[var(--success)] font-semibold">{language === 'id' ? 'Approval & Audit Finansial Penuh' : 'Financial Approval & Audit'}</td>
@@ -1021,12 +1021,12 @@ export const AdminSettings: React.FC = () => {
                     onClick={() => handleRoleChangeForNewAccount('Tier 2: Project Manager (PM)')}
                     className={`p-3.5 rounded-card border text-left transition-all ${
                       newAccRole === 'Tier 2: Project Manager (PM)'
-                        ? 'bg-purple-500/10 border-purple-500/50 ring-1 ring-purple-500/30'
+                        ? 'bg-[var(--series-3)]/10 border-[var(--series-3)]/50 ring-1 ring-[var(--series-3)]/30'
                         : 'bg-[var(--panel)] border-[var(--line)] hover:border-[var(--line)]'
                     }`}
                   >
                     <div className="flex items-center gap-2 mb-1">
-                      <Layers size={16} className="text-purple-400" />
+                      <Layers size={16} className="text-[var(--series-3)]" />
                       <span className="font-semibold text-xs text-[var(--text)]">Project Manager (PM)</span>
                     </div>
                     <p className="text-[11px] text-[var(--muted)] leading-relaxed font-sans">
