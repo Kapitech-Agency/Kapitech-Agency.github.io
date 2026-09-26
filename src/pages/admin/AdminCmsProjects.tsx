@@ -693,7 +693,7 @@ export const AdminCmsProjects: React.FC = () => {
                       type="checkbox"
                       checked={editingProject.featured}
                       onChange={(e) => setEditingProject({ ...editingProject, featured: e.target.checked })}
-                      className="w-4 h-4 rounded bg-panel border-line text-danger accent-brand-red"
+                      className="w-4 h-4 rounded bg-panel border-line text-danger accent-accent"
                     />
                     <span className="text-fg">Feature in Homepage Highlights</span>
                   </label>
