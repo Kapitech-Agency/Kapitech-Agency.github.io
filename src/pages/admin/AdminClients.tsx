@@ -1,22 +1,23 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
-  Users,
-  Plus,
-  Search,
-  Phone,
-  Trash2,
-  Edit3,
-  Check,
-  AlertTriangle,
-  ShieldAlert,
   Activity,
+  ArrowDown,
+  ArrowUp,
+  ArrowUpDown,
+  Check,
   ChevronLeft,
   ChevronRight,
-  ArrowUpDown,
   Eye,
-  Mail,
   Globe,
-  MapPin
+  Mail,
+  MapPin,
+  Phone,
+  Plus,
+  Search,
+  ShieldAlert,
+  Trash2,
+  Users,
+  X
 } from 'lucide-react';
 import { AgencyClient } from '../../lib/clientStore';
 import { formatAmount, getActiveCurrency, CURRENCY_EVENT, CurrencyCode } from '../../lib/currency';
@@ -27,13 +28,39 @@ import { Button } from '../../components/ui/Button';
 import { CustomSelect } from '../../components/ui/CustomSelect';
 import { Modal } from '../../components/ui/Modal';
 
-const STATUS_OPTIONS: Array<{ value: AgencyClient['status'] | 'all'; label: string }> = [
-  { value: 'all', label: 'All statuses' },
+type SortKey = 'name' | 'company' | 'updatedAt' | 'projectsCount';
+type SortDirection = 'asc' | 'desc';
+
+const STATUS_OPTIONS: Array<{ value: AgencyClient['status']; label: string }> = [
   { value: 'active', label: 'Active' },
   { value: 'completed', label: 'Completed' },
   { value: 'lead', label: 'Lead' },
   { value: 'inactive', label: 'Inactive' }
 ];
+
+const statusMeta: Record<AgencyClient['status'], { label: string; tone: 'success' | 'info' | 'warning' | 'neutral'; icon: React.ReactNode }> = {
+  active: { label: 'Active', tone: 'success', icon: <Activity size={12} aria-hidden="true" /> },
+  completed: { label: 'Completed', tone: 'info', icon: <Check size={12} aria-hidden="true" /> },
+  lead: { label: 'Lead', tone: 'warning', icon: <Users size={12} aria-hidden="true" /> },
+  inactive: { label: 'Inactive', tone: 'neutral', icon: <X size={12} aria-hidden="true" /> }
+};
+
+const statusClasses: Record<'success' | 'info' | 'warning' | 'neutral', string> = {
+  success: 'bg-success/10 text-success',
+  info: 'bg-info/10 text-info',
+  warning: 'bg-warning/10 text-warning',
+  neutral: 'bg-bg text-muted'
+};
+
+const formatDate = (value: string, language: string) => {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '—';
+  return new Intl.DateTimeFormat(language === 'id' ? 'id-ID' : 'en-US', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric'
+  }).format(date);
+};
 
 export const AdminClients: React.FC = () => {
   const canManageClients = hasAdminPermission('canManageClients');
@@ -41,22 +68,24 @@ export const AdminClients: React.FC = () => {
   const [currency, setCurrency] = useState<CurrencyCode>(getActiveCurrency());
   const [clients, setClients] = useState<AgencyClient[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState<string>('all');
-  const [sortKey, setSortKey] = useState<'name' | 'company' | 'updatedAt' | 'projectsCount'>('updatedAt');
-  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
+  const [statusFilter, setStatusFilter] = useState<'all' | AgencyClient['status']>('all');
+  const [sortKey, setSortKey] = useState<SortKey>('updatedAt');
+  const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
   const [page, setPage] = useState(1);
   const pageSize = 10;
+
+  const [isLoading, setIsLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [statusTone, setStatusTone] = useState<'success' | 'danger'>('success');
-  const [isLoading, setIsLoading] = useState(true);
+
   const [selectedClient, setSelectedClient] = useState<AgencyClient | null>(null);
-
-  // Modal State
   const [isClientModalOpen, setIsClientModalOpen] = useState(false);
-  const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
   const [editingClient, setEditingClient] = useState<AgencyClient | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<AgencyClient | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
-  // Form Fields
   const [name, setName] = useState('');
   const [company, setCompany] = useState('');
   const [email, setEmail] = useState('');
@@ -65,78 +94,94 @@ export const AdminClients: React.FC = () => {
   const [location, setLocation] = useState('');
   const [industry, setIndustry] = useState('');
   const [clientStatus, setClientStatus] = useState<AgencyClient['status']>('active');
-  const [totalSpend, setTotalSpend] = useState<number>(0);
-  const [projectsCount, setProjectsCount] = useState<number>(0);
+  const [totalSpend, setTotalSpend] = useState(0);
+  const [projectsCount, setProjectsCount] = useState(0);
   const [role, setRole] = useState('');
   const [notes, setNotes] = useState('');
-  const [slaDailyBudget, setSlaDailyBudget] = useState<number>(0);
-  const [currentDailySpend, setCurrentDailySpend] = useState<number>(0);
+  const [slaDailyBudget, setSlaDailyBudget] = useState(0);
+  const [currentDailySpend, setCurrentDailySpend] = useState(0);
+  const [formError, setFormError] = useState<string | null>(null);
+
+  const showToast = (message: string, tone: 'success' | 'danger' = 'success') => {
+    setStatusTone(tone);
+    setStatusMessage(message);
+    window.setTimeout(() => setStatusMessage(null), 3500);
+  };
 
   const loadData = async () => {
     setIsLoading(true);
+    setErrorMessage(null);
     try {
       const res = await api.clients.getAll();
-      if (res.success && Array.isArray(res.data?.clients)) setClients(res.data.clients as AgencyClient[]);
-      else showToast(res.error || (language === 'id' ? 'Gagal memuat client.' : 'Failed to load clients.'), 'danger');
+      if (res.success && Array.isArray(res.data?.clients)) {
+        setClients(res.data.clients as AgencyClient[]);
+      } else {
+        setErrorMessage(language === 'id' ? 'Daftar klien gagal dimuat.' : 'Client directory could not be loaded.');
+      }
     } catch {
-      showToast(language === 'id' ? 'Gagal memuat client.' : 'Failed to load clients.', 'danger');
+      setErrorMessage(language === 'id' ? 'Daftar klien gagal dimuat.' : 'Client directory could not be loaded.');
     } finally {
       setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    loadData();
-
-    const handleCurrencyChange = (e: any) => {
-      setCurrency(e.detail?.currency || getActiveCurrency());
+    void loadData();
+    const handleCurrencyChange = (event: Event) => {
+      const customEvent = event as CustomEvent<{ currency?: CurrencyCode }>;
+      setCurrency(customEvent.detail?.currency || getActiveCurrency());
     };
     window.addEventListener(CURRENCY_EVENT, handleCurrencyChange);
-    return () => {
-      window.removeEventListener(CURRENCY_EVENT, handleCurrencyChange);
-    };
-  }, []);
-
-  const showToast = (msg: string, tone: 'success' | 'danger' = 'success') => {
-    setStatusTone(tone);
-    setStatusMessage(msg);
-    setTimeout(() => setStatusMessage(null), 3500);
-  };
+    return () => window.removeEventListener(CURRENCY_EVENT, handleCurrencyChange);
+  }, [language]);
 
   const filteredClients = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
-    const result = clients.filter(c => {
-      const matchSearch = !query || [c.name, c.company, c.email, c.contactPersonRole, c.industry, c.location, c.id].some(value => String(value || '').toLowerCase().includes(query));
-      const matchStatus = statusFilter === 'all' || c.status === statusFilter;
-      return matchSearch && matchStatus;
+    const result = clients.filter((client) => {
+      const searchable = [client.name, client.company, client.email, client.id]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase();
+      return (!query || searchable.includes(query)) &&
+        (statusFilter === 'all' || client.status === statusFilter);
     });
+
     return [...result].sort((a, b) => {
-      const left = sortKey === 'projectsCount' ? a.projectsCount : sortKey === 'updatedAt' ? a.updatedAt : sortKey === 'company' ? a.company : a.name;
-      const right = sortKey === 'projectsCount' ? b.projectsCount : sortKey === 'updatedAt' ? b.updatedAt : sortKey === 'company' ? b.company : b.name;
-      const comparison = typeof left === 'number' && typeof right === 'number' ? left - right : String(left).localeCompare(String(right), undefined, { sensitivity: 'base' });
+      let comparison = 0;
+      if (sortKey === 'projectsCount') {
+        comparison = a.projectsCount - b.projectsCount;
+      } else if (sortKey === 'updatedAt') {
+        comparison = new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime();
+      } else {
+        comparison = String(a[sortKey]).localeCompare(String(b[sortKey]), undefined, { sensitivity: 'base' });
+      }
       return sortDirection === 'asc' ? comparison : -comparison;
     });
   }, [clients, searchQuery, statusFilter, sortKey, sortDirection]);
 
-  useEffect(() => { setPage(1); }, [searchQuery, statusFilter, sortKey, sortDirection]);
+  useEffect(() => {
+    setPage(1);
+  }, [searchQuery, statusFilter, sortKey, sortDirection]);
+
   const pageCount = Math.max(1, Math.ceil(filteredClients.length / pageSize));
-  const paginatedClients = useMemo(() => filteredClients.slice((page - 1) * pageSize, page * pageSize), [filteredClients, page]);
-  useEffect(() => { if (page > pageCount) setPage(pageCount); }, [page, pageCount]);
+  const paginatedClients = useMemo(
+    () => filteredClients.slice((page - 1) * pageSize, page * pageSize),
+    [filteredClients, page]
+  );
 
-  const activeAccountsCount = useMemo(() => clients.filter(c => c.status === 'active').length, [clients]);
-  const totalLifetimeSpend = useMemo(() => clients.reduce((sum, c) => sum + (c.totalSpend || 0), 0), [clients]);
-  
-  // SLA Warnings Check
-  const clientsExceedingSla = useMemo(() => {
-    return clients.filter(c => {
-      if (c.slaDailyAdSpendBudget && c.currentDailyAdSpend) {
-        return c.currentDailyAdSpend > c.slaDailyAdSpendBudget;
-      }
-      return false;
-    });
-  }, [clients]);
+  useEffect(() => {
+    if (page > pageCount) setPage(pageCount);
+  }, [page, pageCount]);
 
-  const handleOpenCreateClient = () => {
+  const overBudgetClients = useMemo(
+    () => clients.filter((client) =>
+      Boolean(client.slaDailyAdSpendBudget && client.currentDailyAdSpend &&
+        client.currentDailyAdSpend > client.slaDailyAdSpendBudget)
+    ),
+    [clients]
+  );
+
+  const openCreate = () => {
     setEditingClient(null);
     setName('');
     setCompany('');
@@ -152,333 +197,659 @@ export const AdminClients: React.FC = () => {
     setNotes('');
     setSlaDailyBudget(0);
     setCurrentDailySpend(0);
+    setFormError(null);
     setIsClientModalOpen(true);
   };
 
-  const handleOpenEditClient = (c: AgencyClient) => {
-    setEditingClient(c);
-    setName(c.name);
-    setCompany(c.company);
-    setEmail(c.email);
-    setPhone(c.phone);
-    setWebsite(c.website || '');
-    setLocation(c.location);
-    setIndustry(c.industry);
-    setClientStatus(c.status);
-    setTotalSpend(c.totalSpend);
-    setProjectsCount(c.projectsCount);
-    setRole(c.contactPersonRole);
-    setNotes(c.notes || '');
-    setSlaDailyBudget(c.slaDailyAdSpendBudget || 0);
-    setCurrentDailySpend(c.currentDailyAdSpend || 0);
+  const openEdit = (client: AgencyClient) => {
+    setEditingClient(client);
+    setName(client.name);
+    setCompany(client.company);
+    setEmail(client.email);
+    setPhone(client.phone);
+    setWebsite(client.website || '');
+    setLocation(client.location);
+    setIndustry(client.industry);
+    setClientStatus(client.status);
+    setTotalSpend(client.totalSpend || 0);
+    setProjectsCount(client.projectsCount || 0);
+    setRole(client.contactPersonRole || '');
+    setNotes(client.notes || '');
+    setSlaDailyBudget(client.slaDailyAdSpendBudget || 0);
+    setCurrentDailySpend(client.currentDailyAdSpend || 0);
+    setFormError(null);
     setIsClientModalOpen(true);
   };
 
-  const handleSaveClient = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!canManageClients) return;
+  const handleSaveClient = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!canManageClients || isSaving) return;
+
     if (!name.trim() || !company.trim()) {
-      showToast(language === 'id' ? 'Nama kontak dan perusahaan wajib diisi.' : 'Client name and company are required.', 'danger');
+      setFormError(language === 'id' ? 'Nama kontak dan perusahaan wajib diisi.' : 'Contact name and company are required.');
       return;
     }
 
+    setIsSaving(true);
+    setFormError(null);
+
     const clientData: AgencyClient = {
       id: editingClient?.id || 'client_' + Date.now().toString(36),
-      name,
-      company,
-      email,
-      phone,
-      website,
-      location,
-      industry,
+      name: name.trim(),
+      company: company.trim(),
+      email: email.trim(),
+      phone: phone.trim(),
+      website: website.trim(),
+      location: location.trim(),
+      industry: industry.trim(),
       status: clientStatus,
       totalSpend: Number(totalSpend) || 0,
       projectsCount: Math.max(0, Number(projectsCount) || 0),
-      contactPersonRole: role,
-      notes,
-      slaDailyAdSpendBudget: Number(slaDailyBudget) || 0,
-      currentDailyAdSpend: Number(currentDailySpend) || 0,
+      contactPersonRole: role.trim(),
+      notes: notes.trim(),
+      slaDailyAdSpendBudget: Math.max(0, Number(slaDailyBudget) || 0),
+      currentDailyAdSpend: Math.max(0, Number(currentDailySpend) || 0),
       createdAt: editingClient?.createdAt || new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
 
-    if (!canManageClients) return;
-    const res = editingClient
-      ? await api.clients.update(clientData.id, clientData)
-      : await api.clients.create(clientData);
-    if (!res.success || !res.data?.client) {
-      showToast(res.error || (language === 'id' ? 'Client gagal disimpan.' : 'Failed to save client.'), 'danger');
-      return;
+    try {
+      const res = editingClient
+        ? await api.clients.update(clientData.id, clientData)
+        : await api.clients.create(clientData);
+
+      if (!res.success || !res.data?.client) {
+        setFormError(res.error || (language === 'id' ? 'Klien gagal disimpan.' : 'Client could not be saved.'));
+        return;
+      }
+
+      const savedClient = res.data.client as AgencyClient;
+      setClients((current) => editingClient
+        ? current.map((item) => item.id === savedClient.id ? savedClient : item)
+        : [savedClient, ...current]);
+      setIsClientModalOpen(false);
+      showToast(language === 'id' ? 'Klien berhasil disimpan.' : 'Client saved.');
+    } catch {
+      setFormError(language === 'id' ? 'Klien gagal disimpan.' : 'Client could not be saved.');
+    } finally {
+      setIsSaving(false);
     }
-    setClients(prev => editingClient ? prev.map(item => item.id === clientData.id ? res.data!.client as AgencyClient : item) : [res.data!.client as AgencyClient, ...prev]);
-    setIsClientModalOpen(false);
-    showToast(language === 'id' ? 'Klien berhasil disimpan.' : 'Client record saved.');
   };
 
-  const handleDeleteClient = (id: string, clientName: string) => {
-    if (!canManageClients) return;
-    setDeleteTarget({ id, name: clientName });
-  };
-
-  const confirmDeleteClient = async (id: string) => {
-    const res = await api.clients.delete(id);
-    if (!res.success) showToast(res.error || 'Failed to delete client.', 'danger');
-    else {
-      setClients(prev => prev.filter(item => item.id !== id));
+  const confirmDelete = async () => {
+    if (!deleteTarget || !canManageClients || isDeleting) return;
+    setIsDeleting(true);
+    try {
+      const res = await api.clients.delete(deleteTarget.id);
+      if (!res.success) {
+        showToast(res.error || (language === 'id' ? 'Klien gagal dihapus.' : 'Client could not be deleted.'), 'danger');
+        return;
+      }
+      setClients((current) => current.filter((client) => client.id !== deleteTarget.id));
+      if (selectedClient?.id === deleteTarget.id) setSelectedClient(null);
       showToast(language === 'id' ? 'Klien dihapus.' : 'Client deleted.');
+      setDeleteTarget(null);
+    } catch {
+      showToast(language === 'id' ? 'Klien gagal dihapus.' : 'Client could not be deleted.', 'danger');
+    } finally {
+      setIsDeleting(false);
     }
-    setDeleteTarget(null);
+  };
+
+  const toggleSort = (key: SortKey) => {
+    if (sortKey === key) {
+      setSortDirection((current) => current === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortKey(key);
+      setSortDirection(key === 'updatedAt' ? 'desc' : 'asc');
+    }
+  };
+
+  const SortButton: React.FC<{ label: string; sort: SortKey }> = ({ label, sort }) => {
+    const active = sortKey === sort;
+    return (
+      <button
+        type="button"
+        onClick={() => toggleSort(sort)}
+        className="inline-flex min-h-8 items-center gap-1.5 rounded-control text-left text-xs font-medium text-muted hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+        aria-label={active ? `Sort by ${label}, ${sortDirection === 'asc' ? 'ascending' : 'descending'}` : `Sort by ${label}`}
+      >
+        <span>{label}</span>
+        {active ? (sortDirection === 'asc' ? <ArrowUp size={12} aria-hidden="true" /> : <ArrowDown size={12} aria-hidden="true" />) : <ArrowUpDown size={12} aria-hidden="true" />}
+      </button>
+    );
   };
 
   return (
-    <div className="space-y-6">
-      
-      {/* 1. Header & Actions */}
-      <div className="ams-page-header flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
-        <div>
-          <h1 className="ams-page-title flex items-center gap-2.5">
-            <Users className="text-accent-text shrink-0" size={22} />
-            <span>{t('admin.client.title')}</span>
+    <div className="min-h-full pb-8">
+      <header className="ams-dashboard-header mb-6 flex flex-col gap-4 border-b border-line pb-5 sm:flex-row sm:items-end sm:justify-between">
+        <div className="min-w-0">
+          <div className="flex items-center gap-2 text-xs text-muted">
+            <Users size={14} aria-hidden="true" />
+            <span>Kapitech AMS</span>
+          </div>
+          <h1 className="mt-2 text-xl font-semibold leading-7 tracking-[-0.01em] text-fg">
+            {t('admin.client.title')}
           </h1>
-          <p className="text-xs font-sans text-muted mt-1">
+          <p className="mt-1 max-w-2xl text-xs leading-4 text-muted">
             {t('admin.client.subtitle')}
           </p>
         </div>
-
         {canManageClients && (
-          <Button type="button" variant="primary" icon={<Plus size={14} />} onClick={handleOpenCreateClient} className="w-full sm:w-auto">
+          <Button
+            type="button"
+            variant="primary"
+            icon={<Plus size={14} aria-hidden="true" />}
+            onClick={openCreate}
+            className="w-full sm:w-auto"
+          >
             {t('admin.client.addClient')}
           </Button>
         )}
-      </div>
-
-      {/* Critical SLA Ad-Spend Alert Banner */}
-      {clientsExceedingSla.length > 0 && (
-        <div className="p-4 rounded-card bg-danger/10 border border-danger/30 text-fg space-y-2">
-          <div className="flex items-center gap-2.5 text-danger font-medium font-sans text-xs normal-case tracking-normal">
-            <ShieldAlert size={16} />
-            <span>Critical SLA warning: daily ad spend exceeded the cap</span>
-          </div>
-          <div className="text-xs font-sans text-danger">
-            {clientsExceedingSla.map(c => (
-              <div key={c.id} className="flex items-center justify-between py-1 border-t border-danger/20 mt-1">
-                <span>{c.company} ({c.name})</span>
-                <span className="font-semibold text-danger">
-                  Actual: {formatAmount(c.currentDailyAdSpend || 0, currency)} / SLA Cap: {formatAmount(c.slaDailyAdSpendBudget || 0, currency)}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+      </header>
 
       {statusMessage && (
-        <div className={'p-3 rounded-card border text-xs font-sans flex items-center gap-2 ' + (statusTone === 'danger' ? 'bg-danger/10 border-danger/30 text-danger' : 'bg-success/10 border-success/30 text-success')}>
-          {statusTone === 'danger' ? <ShieldAlert size={14} /> : <Check size={14} />}
+        <div
+          role="status"
+          aria-live="polite"
+          className={`mb-4 flex items-center gap-2 rounded-card border p-3 text-xs ${statusTone === 'danger'
+            ? 'border-danger/30 bg-danger/10 text-danger'
+            : 'border-success/30 bg-success/10 text-success'}`}
+        >
+          {statusTone === 'danger' ? <ShieldAlert size={14} aria-hidden="true" /> : <Check size={14} aria-hidden="true" />}
           <span>{statusMessage}</span>
         </div>
       )}
 
-      {/* 2. Client KPI strip */}
-      <section aria-labelledby="client-snapshot-title">
-        <div className="mb-3 flex items-end justify-between gap-3">
-          <div>
-            <h2 id="client-snapshot-title" className="text-sm font-semibold text-fg">{language === 'id' ? 'Ringkasan klien' : 'Client snapshot'}</h2>
-            <p className="mt-1 text-xs text-muted">{language === 'id' ? 'Sinyal utama dari direktori klien saat ini.' : 'The key signals from the current client directory.'}</p>
+      {overBudgetClients.length > 0 && (
+        <div className="mb-4 rounded-card border border-warning/30 bg-warning/10 p-3">
+          <div className="flex items-start gap-2 text-xs text-warning">
+            <ShieldAlert size={15} className="mt-0.5 shrink-0" aria-hidden="true" />
+            <div className="min-w-0">
+              <p className="font-medium text-warning">Daily ad-spend SLA exceeded</p>
+              <p className="mt-1 text-warning">
+                {overBudgetClients.length} client{overBudgetClients.length === 1 ? '' : 's'} exceed{overBudgetClients.length === 1 ? 's' : ''} the configured daily cap.
+              </p>
+            </div>
           </div>
         </div>
-        <div className="grid grid-cols-2 gap-y-6 border-y border-line py-5 sm:grid-cols-3">
-          <div className="min-w-0 px-1 sm:px-4 sm:first:pl-1">
-            <div className="flex items-start justify-between gap-3">
-              <span className="text-xs leading-4 text-muted">{t('admin.client.totalClients')}</span>
-              <Users size={16} strokeWidth={1.8} className="shrink-0 text-muted" aria-hidden="true" />
+      )}
+
+      <section
+        aria-label={language === 'id' ? 'Pencarian dan filter klien' : 'Client directory controls'}
+        className="mb-4 rounded-card border border-line bg-panel p-4"
+      >
+        <div className="flex min-w-0 flex-col gap-3 lg:flex-row lg:items-end">
+          <div className="min-w-0 flex-1">
+            <label htmlFor="client-search" className="mb-1.5 block text-xs font-medium text-muted">
+              {language === 'id' ? 'Cari klien' : 'Search clients'}
+            </label>
+            <div className="relative">
+              <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted" size={15} aria-hidden="true" />
+              <input
+                id="client-search"
+                type="search"
+                value={searchQuery}
+                onChange={(event) => setSearchQuery(event.target.value)}
+                placeholder={t('admin.client.searchPlaceholder')}
+                className="h-10 w-full pl-9 pr-9 text-[13px]"
+                autoComplete="off"
+              />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery('')}
+                  aria-label="Clear search"
+                  className="absolute right-1.5 top-1/2 flex min-h-8 min-w-8 -translate-y-1/2 items-center justify-center rounded-control text-muted hover:bg-bg hover:text-fg"
+                >
+                  <X size={14} aria-hidden="true" />
+                </button>
+              )}
             </div>
-            <div className="mt-3 text-2xl font-medium leading-8 tracking-[-0.02em] tabular-nums text-fg">{clients.length}</div>
-            <div className="mt-1 min-h-4 text-xs leading-4 text-muted">{language === 'id' ? 'Seluruh akun yang terdaftar' : 'All registered client accounts'}</div>
           </div>
-          <div className="min-w-0 border-l border-line px-1 sm:px-4">
-            <div className="flex items-start justify-between gap-3">
-              <span className="text-xs leading-4 text-muted">{t('admin.client.activeAccounts')}</span>
-              <Activity size={16} strokeWidth={1.8} className="shrink-0 text-success" aria-hidden="true" />
-            </div>
-            <div className="mt-3 text-2xl font-medium leading-8 tracking-[-0.02em] tabular-nums text-success">{activeAccountsCount}</div>
-            <div className="mt-1 min-h-4 text-xs leading-4 text-muted">{language === 'id' ? 'Akun dengan status aktif' : 'Accounts currently active'}</div>
+
+          <div className="w-full lg:w-48 lg:shrink-0">
+            <label htmlFor="client-status" className="mb-1.5 block text-xs font-medium text-muted">
+              Status
+            </label>
+            <CustomSelect
+              value={statusFilter}
+              onChange={(value) => setStatusFilter(value as 'all' | AgencyClient['status'])}
+              options={[
+                { value: 'all', label: language === 'id' ? 'Semua status' : 'All statuses' },
+                ...STATUS_OPTIONS
+              ]}
+              aria-label="Filter clients by status"
+              className="w-full"
+              triggerClassName="w-full"
+            />
           </div>
-          <div className="col-span-2 min-w-0 border-t border-line px-1 pt-5 sm:col-span-1 sm:border-l sm:border-t-0 sm:px-4 sm:pt-0">
-            <div className="flex items-start justify-between gap-3">
-              <span className="text-xs leading-4 text-muted">{t('admin.client.lifetimeSpend')}</span>
-              <span className="shrink-0 text-xs font-medium text-muted tabular-nums">{currency}</span>
-            </div>
-            <div className="mt-3 text-2xl font-medium leading-8 tracking-[-0.02em] tabular-nums text-fg">{formatAmount(totalLifetimeSpend, currency)}</div>
-            <div className="mt-1 min-h-4 text-xs leading-4 text-muted">{language === 'id' ? 'Nilai billed kumulatif' : 'Cumulative billed value'}</div>
+
+          <div className="flex min-w-0 items-center justify-between gap-2 lg:justify-end">
+            {(searchQuery || statusFilter !== 'all') && (
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => {
+                  setSearchQuery('');
+                  setStatusFilter('all');
+                }}
+              >
+                Clear filters
+              </Button>
+            )}
+            <span className="shrink-0 text-xs tabular-nums text-muted">
+              {filteredClients.length} result{filteredClients.length === 1 ? '' : 's'}
+            </span>
           </div>
         </div>
       </section>
 
-      {/* 3. Search & Filter Bar */}
-      <div className="w-full flex flex-col sm:flex-row sm:items-end gap-3">
-        <div className="relative flex-1 min-w-0 sm:max-w-xl">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted" size={14} />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder={t('admin.client.searchPlaceholder')}
-            className="w-full h-9 pl-9 pr-3 bg-panel border border-line rounded-control text-[13px] text-fg placeholder:text-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-          />
-        </div>
-
-        <div className="w-full sm:w-48">
-          <label className="mb-1.5 block text-xs font-medium text-muted">Status</label>
-          <CustomSelect
-            value={statusFilter}
-            onChange={setStatusFilter}
-            options={[
-              { value: 'all', label: language === 'id' ? 'Semua Status' : 'All Statuses' },
-              { value: 'active', label: 'Active' },
-              { value: 'completed', label: 'Completed' },
-              { value: 'lead', label: 'Lead' },
-              { value: 'inactive', label: 'Inactive' }
-            ]}
-          />
-        </div>
-      </div>
-
-      {/* 4. Clients Data Table */}
       <section className="overflow-hidden rounded-card border border-line bg-panel" aria-label={language === 'id' ? 'Daftar klien' : 'Client list'}>
-        <div className="overflow-x-auto">
-          <table className="ams-table w-full min-w-[980px] border-collapse text-left text-xs">
-            <thead className="sticky top-0 z-10 bg-panel">
-              <tr className="border-b border-line text-muted">
-                {[
-                  ['name', t('admin.client.colName')],
-                  ['company', t('admin.client.colCompany')],
-                  ['updatedAt', language === 'id' ? 'Terakhir diperbarui' : 'Last updated'],
-                  ['projectsCount', language === 'id' ? 'Proyek' : 'Projects']
-                ].map(([key, label]) => (
-                  <th key={key} className="px-4 py-3 font-medium">
-                    <button type="button" onClick={() => { const next = key as typeof sortKey; setSortDirection(sortKey === next && sortDirection === 'asc' ? 'desc' : 'asc'); setSortKey(next); }} className="inline-flex min-h-8 items-center gap-1.5 rounded-control text-left text-[11px] font-medium text-muted hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
-                      {label}<ArrowUpDown size={12} aria-hidden="true" />
-                    </button>
-                  </th>
-                ))}
-                <th className="px-4 py-3 font-medium">{t('admin.client.colContact')}</th>
-                <th className="px-4 py-3 font-medium">{t('admin.client.colStatus')}</th>
-                <th className="px-4 py-3 text-right font-medium">{t('admin.client.colActions')}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {isLoading ? (
-                <tr><td colSpan={7} className="px-4 py-12 text-center text-muted" aria-live="polite">{language === 'id' ? 'Memuat client…' : 'Loading clients…'}</td></tr>
-              ) : paginatedClients.length === 0 ? (
-                <tr><td colSpan={7} className="px-4 py-12 text-center text-muted">{language === 'id' ? 'Tidak ada data klien yang sesuai.' : 'No clients found.'}</td></tr>
-              ) : paginatedClients.map((client) => {
-                const isOverBudget = Boolean(client.slaDailyAdSpendBudget && client.currentDailyAdSpend && client.currentDailyAdSpend > client.slaDailyAdSpendBudget);
-                return <tr key={client.id} className="border-b border-line last:border-b-0 hover:bg-bg">
-                  <td className="px-4 py-3 align-top"><button type="button" onClick={() => setSelectedClient(client)} className="group text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"><span className="inline-flex items-center gap-1.5 font-medium text-fg group-hover:text-accent-text">{client.name}<Eye size={13} className="text-muted group-hover:text-accent-text" aria-hidden="true" /></span><span className="mt-0.5 block text-[11px] text-muted">{client.contactPersonRole || client.id}</span></button></td>
-                  <td className="px-4 py-3 align-top"><div className="font-medium text-fg">{client.company}</div><div className="mt-0.5 text-[11px] text-muted">{client.industry}</div></td>
-                  <td className="px-4 py-3 align-top text-muted">{new Date(client.updatedAt).toLocaleDateString(language === 'id' ? 'id-ID' : 'en-US')}</td>
-                  <td className="px-4 py-3 align-top tabular-nums text-fg">{client.projectsCount}</td>
-                  <td className="px-4 py-3 align-top"><div className="flex max-w-[260px] flex-col gap-1"><a href={client.email ? 'mailto:' + client.email : undefined} className="truncate text-fg hover:text-accent-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">{client.email || '—'}</a>{client.phone && <a href={'tel:' + client.phone} className="text-muted hover:text-fg">{client.phone}</a>}</div></td>
-                  <td className="px-4 py-3 align-top"><span className={'inline-flex items-center gap-1.5 rounded-badge border px-2 py-1 text-[11px] font-medium ' + (client.status === 'active' ? 'border-success/20 bg-success/10 text-success' : client.status === 'completed' ? 'border-info/20 bg-info/10 text-info' : client.status === 'lead' ? 'border-warning/20 bg-warning/10 text-warning' : 'border-line bg-bg text-muted')}>{client.status === 'active' ? 'Active' : client.status === 'completed' ? 'Completed' : client.status === 'lead' ? 'Lead' : 'Inactive'}{isOverBudget && <AlertTriangle size={12} aria-label="SLA exceeded" />}</span></td>
-                  <td className="px-4 py-3 text-right align-top"><div className="flex justify-end gap-1.5">{client.phone && <a href={'https://wa.me/' + client.phone.replace(/\D/g, '')} target="_blank" rel="noreferrer" aria-label={'WhatsApp ' + client.name} className="inline-flex min-h-10 min-w-10 items-center justify-center rounded-control border border-line text-muted hover:bg-bg hover:text-success focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"><Phone size={14} /></a>}{canManageClients && <><button type="button" onClick={() => handleOpenEditClient(client)} aria-label={'Edit ' + client.name} className="inline-flex min-h-10 min-w-10 items-center justify-center rounded-control border border-line text-muted hover:bg-bg hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"><Edit3 size={14} /></button><button type="button" onClick={() => handleDeleteClient(client.id, client.name)} aria-label={'Delete ' + client.name} className="inline-flex min-h-10 min-w-10 items-center justify-center rounded-control border border-line text-muted hover:bg-danger/10 hover:text-danger focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"><Trash2 size={14} /></button></>}</div></td>
-                </tr>;
-              })}
-            </tbody>
-          </table>
-        </div>
-        {filteredClients.length > 0 && <div className="flex flex-col gap-3 border-t border-line px-4 py-3 sm:flex-row sm:items-center sm:justify-between"><p className="text-xs text-muted">{(page - 1) * pageSize + 1}–{Math.min(page * pageSize, filteredClients.length)} of {filteredClients.length}</p><div className="flex items-center gap-1.5"><button type="button" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} aria-label="Previous page" className="inline-flex min-h-10 min-w-10 items-center justify-center rounded-control border border-line text-muted hover:bg-bg hover:text-fg disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"><ChevronLeft size={15} /></button><span className="min-w-16 text-center text-xs tabular-nums text-fg">{page} / {pageCount}</span><button type="button" onClick={() => setPage(p => Math.min(pageCount, p + 1))} disabled={page === pageCount} aria-label="Next page" className="inline-flex min-h-10 min-w-10 items-center justify-center rounded-control border border-line text-muted hover:bg-bg hover:text-fg disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"><ChevronRight size={15} /></button></div></div>}
+        {errorMessage ? (
+          <div className="flex min-h-48 flex-col items-center justify-center gap-3 px-4 py-10 text-center">
+            <ShieldAlert size={20} className="text-danger" aria-hidden="true" />
+            <div>
+              <p className="text-sm font-medium text-fg">{errorMessage}</p>
+              <p className="mt-1 text-xs text-muted">Check the connection and retry.</p>
+            </div>
+            <Button type="button" variant="secondary" onClick={() => void loadData()}>Retry</Button>
+          </div>
+        ) : (
+          <>
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[940px] text-left">
+                <thead>
+                  <tr>
+                    <th scope="col"><SortButton label="Client" sort="name" /></th>
+                    <th scope="col"><SortButton label="Company" sort="company" /></th>
+                    <th scope="col">Contact</th>
+                    <th scope="col">Status</th>
+                    <th scope="col" className="text-right"><SortButton label="Projects" sort="projectsCount" /></th>
+                    <th scope="col"><SortButton label="Last updated" sort="updatedAt" /></th>
+                    <th scope="col" className="text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {isLoading ? (
+                    Array.from({ length: 6 }).map((_, index) => (
+                      <tr key={index} aria-hidden="true">
+                        {Array.from({ length: 7 }).map((__, cell) => (
+                          <td key={cell}>
+                            <div className="h-3 w-24 animate-pulse rounded-badge bg-line" />
+                          </td>
+                        ))}
+                      </tr>
+                    ))
+                  ) : paginatedClients.length === 0 ? (
+                    <tr>
+                      <td colSpan={7} className="px-4 py-12 text-center">
+                        <div className="mx-auto max-w-sm">
+                          <Users size={20} className="mx-auto text-muted" aria-hidden="true" />
+                          <p className="mt-3 text-sm font-medium text-fg">
+                            {clients.length === 0
+                              ? (language === 'id' ? 'Belum ada klien.' : 'No clients yet.')
+                              : (language === 'id' ? 'Tidak ada hasil yang cocok.' : 'No matching clients.')}
+                          </p>
+                          <p className="mt-1 text-xs text-muted">
+                            {clients.length === 0
+                              ? 'Add your first client to build the directory.'
+                              : 'Try another search or clear the active filters.'}
+                          </p>
+                          {clients.length === 0 && canManageClients && (
+                            <Button type="button" variant="primary" icon={<Plus size={14} />} onClick={openCreate} className="mt-4">
+                              Add client
+                            </Button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ) : (
+                    paginatedClients.map((client) => {
+                      const meta = statusMeta[client.status];
+                      return (
+                        <tr key={client.id}>
+                          <td>
+                            <button
+                              type="button"
+                              onClick={() => setSelectedClient(client)}
+                              className="group block max-w-[220px] text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                              aria-label={`View ${client.company}`}
+                            >
+                              <span className="block truncate text-[13px] font-medium text-fg group-hover:text-accent-text">
+                                {client.name}
+                              </span>
+                              <span className="mt-0.5 block truncate text-xs text-muted">
+                                {client.id}
+                              </span>
+                            </button>
+                          </td>
+                          <td>
+                            <div className="max-w-[230px]">
+                              <p className="truncate text-[13px] font-medium text-fg">{client.company}</p>
+                              <p className="mt-0.5 truncate text-xs text-muted">{client.industry || '—'}</p>
+                            </div>
+                          </td>
+                          <td>
+                            <div className="max-w-[230px] min-w-0">
+                              {client.email ? (
+                                <a href={`mailto:${client.email}`} className="block truncate text-[13px] text-fg hover:text-accent-text">
+                                  {client.email}
+                                </a>
+                              ) : (
+                                <span className="text-muted">—</span>
+                              )}
+                              {client.phone && (
+                                <a href={`tel:${client.phone}`} className="mt-0.5 block truncate text-xs text-muted hover:text-fg">
+                                  {client.phone}
+                                </a>
+                              )}
+                            </div>
+                          </td>
+                          <td>
+                            <span className={`inline-flex items-center gap-1.5 rounded-badge px-2 py-1 text-xs font-semibold ${statusClasses[meta.tone]}`}>
+                              {meta.icon}
+                              {meta.label}
+                            </span>
+                          </td>
+                          <td className="text-right tabular-nums">{client.projectsCount}</td>
+                          <td className="whitespace-nowrap text-muted">{formatDate(client.updatedAt, language)}</td>
+                          <td>
+                            <div className="flex items-center justify-end gap-1">
+                              <button
+                                type="button"
+                                onClick={() => setSelectedClient(client)}
+                                className="flex min-h-10 min-w-10 items-center justify-center rounded-control text-muted hover:bg-bg hover:text-fg"
+                                aria-label={`View ${client.company}`}
+                                title="View client"
+                              >
+                                <Eye size={15} aria-hidden="true" />
+                              </button>
+                              {canManageClients && (
+                                <>
+                                  <button
+                                    type="button"
+                                    onClick={() => openEdit(client)}
+                                    className="flex min-h-10 min-w-10 items-center justify-center rounded-control text-muted hover:bg-bg hover:text-fg"
+                                    aria-label={`Edit ${client.company}`}
+                                    title="Edit client"
+                                  >
+                                    <Users size={15} aria-hidden="true" />
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => setDeleteTarget(client)}
+                                    className="flex min-h-10 min-w-10 items-center justify-center rounded-control text-muted hover:bg-danger/10 hover:text-danger"
+                                    aria-label={`Delete ${client.company}`}
+                                    title="Delete client"
+                                  >
+                                    <Trash2 size={15} aria-hidden="true" />
+                                  </button>
+                                </>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            {!isLoading && filteredClients.length > 0 && (
+              <div className="flex flex-col gap-3 border-t border-line px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+                <p className="text-xs text-muted">
+                  Showing <span className="tabular-nums text-fg">{(page - 1) * pageSize + 1}</span> to{' '}
+                  <span className="tabular-nums text-fg">{Math.min(page * pageSize, filteredClients.length)}</span> of{' '}
+                  <span className="tabular-nums text-fg">{filteredClients.length}</span>
+                </p>
+                <div className="flex items-center gap-1">
+                  <button
+                    type="button"
+                    onClick={() => setPage((current) => Math.max(1, current - 1))}
+                    disabled={page === 1}
+                    aria-label="Previous page"
+                    className="flex min-h-10 min-w-10 items-center justify-center rounded-control text-muted hover:bg-bg hover:text-fg disabled:cursor-not-allowed disabled:opacity-40"
+                  >
+                    <ChevronLeft size={16} aria-hidden="true" />
+                  </button>
+                  <span className="min-w-16 text-center text-xs tabular-nums text-fg">{page} / {pageCount}</span>
+                  <button
+                    type="button"
+                    onClick={() => setPage((current) => Math.min(pageCount, current + 1))}
+                    disabled={page === pageCount}
+                    aria-label="Next page"
+                    className="flex min-h-10 min-w-10 items-center justify-center rounded-control text-muted hover:bg-bg hover:text-fg disabled:cursor-not-allowed disabled:opacity-40"
+                  >
+                    <ChevronRight size={16} aria-hidden="true" />
+                  </button>
+                </div>
+              </div>
+            )}
+          </>
+        )}
       </section>
 
       <Modal
         open={!!selectedClient}
         onClose={() => setSelectedClient(null)}
         size="lg"
-        title={selectedClient?.company || (language === 'id' ? 'Detail client' : 'Client details')}
-        description={selectedClient ? selectedClient.name : undefined}
+        title={selectedClient?.company || 'Client details'}
+        description={selectedClient ? `${selectedClient.name} · ${selectedClient.id}` : undefined}
         footer={<Button type="button" variant="secondary" onClick={() => setSelectedClient(null)}>Close</Button>}
       >
         {selectedClient && (
           <div className="space-y-6">
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div><div className="text-xs text-muted">Status</div><div className="mt-1 text-sm font-medium text-fg">{selectedClient.status}</div></div>
-              <div><div className="text-xs text-muted">Industry</div><div className="mt-1 text-sm text-fg">{selectedClient.industry || '—'}</div></div>
-              <div><div className="text-xs text-muted">Contact role</div><div className="mt-1 text-sm text-fg">{selectedClient.contactPersonRole || '—'}</div></div>
-              <div><div className="text-xs text-muted">Projects</div><div className="mt-1 text-sm tabular-nums text-fg">{selectedClient.projectsCount}</div></div>
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+              <div className="min-w-0">
+                <p className="text-base font-semibold text-fg">{selectedClient.name}</p>
+                <p className="mt-1 text-xs text-muted">{selectedClient.contactPersonRole || 'Primary contact'}</p>
+              </div>
+              <span className={`inline-flex w-fit shrink-0 items-center gap-1.5 rounded-badge px-2 py-1 text-xs font-semibold ${statusClasses[statusMeta[selectedClient.status].tone]}`}>
+                {statusMeta[selectedClient.status].icon}
+                {statusMeta[selectedClient.status].label}
+              </span>
             </div>
-            <div className="border-y border-line py-4 space-y-3">
-              <div className="flex items-center gap-2 text-sm"><Mail size={14} className="text-muted" /><span className="truncate text-fg">{selectedClient.email || '—'}</span></div>
-              <div className="flex items-center gap-2 text-sm"><Phone size={14} className="text-muted" /><span className="text-fg">{selectedClient.phone || '—'}</span></div>
-              <div className="flex items-center gap-2 text-sm"><MapPin size={14} className="text-muted" /><span className="text-fg">{selectedClient.location || '—'}</span></div>
-              {selectedClient.website && <a href={selectedClient.website} target="_blank" rel="noreferrer" className="flex items-center gap-2 text-sm text-accent-text hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"><Globe size={14} />{selectedClient.website}</a>}
+
+            <div className="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2">
+              <div>
+                <p className="text-xs text-muted">Email</p>
+                {selectedClient.email ? (
+                  <a href={`mailto:${selectedClient.email}`} className="mt-1 block truncate text-sm text-fg hover:text-accent-text">{selectedClient.email}</a>
+                ) : <p className="mt-1 text-sm text-fg">—</p>}
+              </div>
+              <div>
+                <p className="text-xs text-muted">Phone</p>
+                {selectedClient.phone ? (
+                  <a href={`tel:${selectedClient.phone}`} className="mt-1 block text-sm text-fg hover:text-accent-text">{selectedClient.phone}</a>
+                ) : <p className="mt-1 text-sm text-fg">—</p>}
+              </div>
+              <div>
+                <p className="text-xs text-muted">Industry</p>
+                <p className="mt-1 text-sm text-fg">{selectedClient.industry || '—'}</p>
+              </div>
+              <div>
+                <p className="text-xs text-muted">Location</p>
+                <p className="mt-1 text-sm text-fg">{selectedClient.location || '—'}</p>
+              </div>
+              <div className="sm:col-span-2">
+                <p className="text-xs text-muted">Website</p>
+                {selectedClient.website ? (
+                  <a href={selectedClient.website} target="_blank" rel="noreferrer" className="mt-1 inline-flex max-w-full items-center gap-2 truncate text-sm text-accent-text hover:text-fg">
+                    <Globe size={14} className="shrink-0" aria-hidden="true" />
+                    <span className="truncate">{selectedClient.website}</span>
+                  </a>
+                ) : <p className="mt-1 text-sm text-fg">—</p>}
+              </div>
             </div>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div><div className="text-xs text-muted">Cumulative billed value</div><div className="mt-1 text-sm font-medium tabular-nums text-fg">{formatAmount(selectedClient.totalSpend || 0, currency)}</div></div>
-              <div><div className="text-xs text-muted">Daily ad spend</div><div className="mt-1 text-sm font-medium tabular-nums text-fg">{formatAmount(selectedClient.currentDailyAdSpend || 0, currency)}{selectedClient.slaDailyAdSpendBudget ? <span className="text-muted"> / {formatAmount(selectedClient.slaDailyAdSpendBudget, currency)} cap</span> : null}</div></div>
+
+            <div className="border-y border-line py-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-xs text-muted">Projects</p>
+                  <p className="mt-1 text-base font-medium tabular-nums text-fg">{selectedClient.projectsCount}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-muted">Cumulative billed value</p>
+                  <p className="mt-1 text-base font-medium tabular-nums text-fg">{formatAmount(selectedClient.totalSpend || 0, currency)}</p>
+                </div>
+              </div>
             </div>
-            {selectedClient.notes && <div><div className="text-xs text-muted">Notes</div><p className="mt-1 text-sm whitespace-pre-wrap text-fg">{selectedClient.notes}</p></div>}
+
+            {(selectedClient.slaDailyAdSpendBudget || selectedClient.currentDailyAdSpend) ? (
+              <div>
+                <p className="text-xs font-medium text-fg">Daily ad-spend SLA</p>
+                <div className="mt-2 grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-xs text-muted">Current spend</p>
+                    <p className="mt-1 text-sm tabular-nums text-fg">{formatAmount(selectedClient.currentDailyAdSpend || 0, currency)}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted">Agreed cap</p>
+                    <p className="mt-1 text-sm tabular-nums text-fg">{formatAmount(selectedClient.slaDailyAdSpendBudget || 0, currency)}</p>
+                  </div>
+                </div>
+              </div>
+            ) : null}
+
+            {selectedClient.notes && (
+              <div>
+                <p className="text-xs text-muted">Notes</p>
+                <p className="mt-1 whitespace-pre-wrap text-sm leading-5 text-fg">{selectedClient.notes}</p>
+              </div>
+            )}
+
+            <div className="text-xs text-muted">
+              Last updated {formatDate(selectedClient.updatedAt, language)}
+            </div>
           </div>
         )}
       </Modal>
 
       <Modal
         open={isClientModalOpen}
-        onClose={() => setIsClientModalOpen(false)}
+        onClose={() => !isSaving && setIsClientModalOpen(false)}
         size="lg"
-        title={editingClient ? (language === 'id' ? 'Edit klien' : 'Edit client') : (language === 'id' ? 'Tambah klien' : 'Add client')}
+        title={editingClient ? 'Edit client' : 'Add client'}
         description={editingClient ? 'Update the existing client record.' : 'Create a client record using information available to your team.'}
         footer={
           <>
-            <Button type="button" variant="secondary" onClick={() => setIsClientModalOpen(false)}>Cancel</Button>
-            <Button type="submit" form="client-form" variant="primary">Save client</Button>
+            <Button type="button" variant="secondary" onClick={() => setIsClientModalOpen(false)} disabled={isSaving}>Cancel</Button>
+            <Button type="submit" form="client-form" variant="primary" loading={isSaving}>Save client</Button>
           </>
         }
       >
         <form id="client-form" onSubmit={handleSaveClient} className="space-y-5">
+          {formError && (
+            <div role="alert" className="flex items-start gap-2 rounded-card border border-danger/30 bg-danger/10 p-3 text-xs text-danger">
+              <ShieldAlert size={14} className="mt-0.5 shrink-0" aria-hidden="true" />
+              <span>{formError}</span>
+            </div>
+          )}
+
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div><label htmlFor="client-name" className="mb-1.5 block text-xs font-medium text-muted">Contact person *</label><input id="client-name" required value={name} onChange={(e) => setName(e.target.value)} placeholder="Contact person" /></div>
-            <div><label htmlFor="client-company" className="mb-1.5 block text-xs font-medium text-muted">Company *</label><input id="client-company" required value={company} onChange={(e) => setCompany(e.target.value)} placeholder="Company name" /></div>
-            <div><label htmlFor="client-role" className="mb-1.5 block text-xs font-medium text-muted">Contact role</label><input id="client-role" value={role} onChange={(e) => setRole(e.target.value)} placeholder="Role or title" /></div>
-            <div><label htmlFor="client-industry" className="mb-1.5 block text-xs font-medium text-muted">Industry</label><input id="client-industry" value={industry} onChange={(e) => setIndustry(e.target.value)} placeholder="Industry" /></div>
-            <div><label htmlFor="client-email" className="mb-1.5 block text-xs font-medium text-muted">Email</label><input id="client-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="contact@company.com" /></div>
-            <div><label htmlFor="client-phone" className="mb-1.5 block text-xs font-medium text-muted">Phone / WhatsApp</label><input id="client-phone" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+62 ..." /></div>
-            <div><label htmlFor="client-website" className="mb-1.5 block text-xs font-medium text-muted">Website</label><input id="client-website" type="url" value={website} onChange={(e) => setWebsite(e.target.value)} placeholder="https://company.com" /></div>
-            <div><label htmlFor="client-location" className="mb-1.5 block text-xs font-medium text-muted">Location</label><input id="client-location" value={location} onChange={(e) => setLocation(e.target.value)} placeholder="City, country" /></div>
+            {[
+              ['client-name', 'Contact person', name, setName, 'Contact person', true],
+              ['client-company', 'Company', company, setCompany, 'Company name', true],
+              ['client-role', 'Contact role', role, setRole, 'Role or title', false],
+              ['client-industry', 'Industry', industry, setIndustry, 'Industry', false],
+              ['client-email', 'Email', email, setEmail, 'contact@company.com', false],
+              ['client-phone', 'Phone / WhatsApp', phone, setPhone, '+62 ...', false],
+              ['client-website', 'Website', website, setWebsite, 'https://company.com', false],
+              ['client-location', 'Location', location, setLocation, 'City, country', false]
+            ].map(([id, label, value, setter, placeholder, required]) => (
+              <div key={id as string} className="min-w-0">
+                <label htmlFor={id as string} className="mb-1.5 block text-xs font-medium text-muted">
+                  {label as string}{required ? ' *' : ''}
+                </label>
+                <input
+                  id={id as string}
+                  type={id === 'client-email' ? 'email' : id === 'client-website' ? 'url' : 'text'}
+                  required={Boolean(required)}
+                  value={value as string}
+                  onChange={(event) => (setter as React.Dispatch<React.SetStateAction<string>>)(event.target.value)}
+                  placeholder={placeholder as string}
+                />
+              </div>
+            ))}
           </div>
-          <div className="rounded-card border border-line bg-bg p-4">
-            <div className="flex items-center gap-2"><Activity size={15} className="text-warning" aria-hidden="true" /><h3 className="text-sm font-semibold text-fg">Daily ad-spend SLA</h3></div>
-            <p className="mt-1 text-xs text-muted">Optional operational tracking for the agreed daily cap.</p>
-            <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div><label htmlFor="client-sla" className="mb-1.5 block text-xs font-medium text-muted">Agreed daily cap</label><input id="client-sla" type="number" min="0" value={slaDailyBudget} onChange={(e) => setSlaDailyBudget(Number(e.target.value))} /></div>
-              <div><label htmlFor="client-daily-spend" className="mb-1.5 block text-xs font-medium text-muted">Current daily spend</label><input id="client-daily-spend" type="number" min="0" value={currentDailySpend} onChange={(e) => setCurrentDailySpend(Number(e.target.value))} /></div>
+
+          <div>
+            <label htmlFor="client-status" className="mb-1.5 block text-xs font-medium text-muted">Account status</label>
+            <CustomSelect
+              value={clientStatus}
+              onChange={(value) => setClientStatus(value as AgencyClient['status'])}
+              options={STATUS_OPTIONS}
+              aria-label="Client account status"
+              className="w-full"
+              triggerClassName="w-full sm:max-w-xs"
+            />
+          </div>
+
+          <div>
+            <p className="text-sm font-semibold text-fg">Client relationship</p>
+            <p className="mt-1 text-xs text-muted">Keep operational values aligned with the existing client record.</p>
+            <div className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div>
+                <label htmlFor="client-projects" className="mb-1.5 block text-xs font-medium text-muted">Projects count</label>
+                <input id="client-projects" type="number" min="0" value={projectsCount} onChange={(event) => setProjectsCount(Number(event.target.value))} />
+              </div>
+              <div>
+                <label htmlFor="client-spend" className="mb-1.5 block text-xs font-medium text-muted">Cumulative billed value</label>
+                <input id="client-spend" type="number" min="0" value={totalSpend} onChange={(event) => setTotalSpend(Number(event.target.value))} />
+              </div>
             </div>
           </div>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div><label className="mb-1.5 block text-xs font-medium text-muted">Account status</label><CustomSelect value={clientStatus} onChange={(v) => setClientStatus(v as AgencyClient['status'])} options={STATUS_OPTIONS.filter((o) => o.value !== 'all')} className="w-full" triggerClassName="w-full" /></div>
-            <div><label htmlFor="client-projects" className="mb-1.5 block text-xs font-medium text-muted">Projects count</label><input id="client-projects" type="number" min="0" value={projectsCount} onChange={(e) => setProjectsCount(Number(e.target.value))} /></div>
-            <div><label htmlFor="client-spend" className="mb-1.5 block text-xs font-medium text-muted">Cumulative billed value</label><input id="client-spend" type="number" min="0" value={totalSpend} onChange={(e) => setTotalSpend(Number(e.target.value))} /></div>
+
+          <div>
+            <p className="text-sm font-semibold text-fg">Daily ad-spend SLA</p>
+            <p className="mt-1 text-xs text-muted">Optional operational tracking for the configured daily cap.</p>
+            <div className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div>
+                <label htmlFor="client-sla" className="mb-1.5 block text-xs font-medium text-muted">Agreed daily cap</label>
+                <input id="client-sla" type="number" min="0" value={slaDailyBudget} onChange={(event) => setSlaDailyBudget(Number(event.target.value))} />
+              </div>
+              <div>
+                <label htmlFor="client-daily-spend" className="mb-1.5 block text-xs font-medium text-muted">Current daily spend</label>
+                <input id="client-daily-spend" type="number" min="0" value={currentDailySpend} onChange={(event) => setCurrentDailySpend(Number(event.target.value))} />
+              </div>
+            </div>
           </div>
-          <div><label htmlFor="client-notes" className="mb-1.5 block text-xs font-medium text-muted">Notes & requirements</label><textarea id="client-notes" rows={4} value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Client preferences, requirements, billing notes..." /></div>
+
+          <div>
+            <label htmlFor="client-notes" className="mb-1.5 block text-xs font-medium text-muted">Notes & requirements</label>
+            <textarea id="client-notes" rows={4} value={notes} onChange={(event) => setNotes(event.target.value)} placeholder="Client preferences, requirements, billing notes..." />
+          </div>
         </form>
       </Modal>
 
       <Modal
         open={!!deleteTarget}
-        onClose={() => setDeleteTarget(null)}
+        onClose={() => !isDeleting && setDeleteTarget(null)}
         size="sm"
-        title={language === 'id' ? 'Hapus klien?' : 'Delete client?'}
-        description={language === 'id' ? 'Catatan klien akan dihapus.' : 'This client record will be removed.'}
+        title="Delete client?"
+        description={deleteTarget ? `This will remove the client record for ${deleteTarget.company}.` : undefined}
         footer={
           <>
-            <Button type="button" variant="secondary" onClick={() => setDeleteTarget(null)}>Cancel</Button>
-            <Button type="button" variant="destructive" onClick={() => deleteTarget && void confirmDeleteClient(deleteTarget.id)}>Delete client</Button>
+            <Button type="button" variant="secondary" onClick={() => setDeleteTarget(null)} disabled={isDeleting}>Cancel</Button>
+            <Button type="button" variant="destructive" onClick={() => void confirmDelete()} loading={isDeleting}>Delete client</Button>
           </>
         }
       >
-        <p className="text-sm text-muted">This action removes the client record through the existing client API.</p>
+        {deleteTarget && (
+          <div className="space-y-3">
+            <p className="text-sm text-fg">
+              You are deleting <span className="font-medium">{deleteTarget.company}</span>.
+            </p>
+            <p className="text-xs leading-5 text-muted">
+              The existing client API will remove this record. Confirm only if this is the intended client.
+            </p>
+          </div>
+        )}
       </Modal>
-
     </div>
   );
 };
+
 export default AdminClients;
