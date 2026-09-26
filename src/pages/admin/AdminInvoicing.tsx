@@ -30,7 +30,7 @@ import { TrendChart } from '../../components/charts/DashboardCharts';
 import { getAdminSession, hasAdminPermission } from '../../lib/adminAuth';
 import { api } from '../../lib/apiClient';
 
-type SortKey = 'updated' | 'due' | 'amount_high' | 'amount_low' | 'invoice';
+type SortKey = 'updated' | 'due' | 'oldest' | 'amount_high' | 'amount_low' | 'invoice';
 type Tab = 'invoices' | 'expenses';
 type FinanceClient = {
   id: string;
@@ -142,6 +142,8 @@ export const AdminInvoicing: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState('all');
   const [sort, setSort] = useState<SortKey>('updated');
   const [expenseTypeFilter, setExpenseTypeFilter] = useState('all');
+  const [invoicePage, setInvoicePage] = useState(1);
+  const invoicePageSize = 10;
 
   const [invoiceModalOpen, setInvoiceModalOpen] = useState(false);
   const [editingInvoice, setEditingInvoice] = useState<AgencyInvoice | null>(null);
@@ -285,10 +287,41 @@ export const AdminInvoicing: React.FC = () => {
       if (sort === 'amount_high') return b.total - a.total;
       if (sort === 'amount_low') return a.total - b.total;
       if (sort === 'due') return String(a.dueDate).localeCompare(String(b.dueDate));
+      if (sort === 'oldest') return String(a.updatedAt || '').localeCompare(String(b.updatedAt || ''));
       if (sort === 'invoice') return a.invoiceNumber.localeCompare(b.invoiceNumber);
       return String(b.updatedAt || '').localeCompare(String(a.updatedAt || ''));
     });
   }, [currencyInvoices, search, statusFilter, sort, projects]);
+
+  useEffect(() => {
+    setInvoicePage(1);
+  }, [search, statusFilter, sort, currency]);
+
+  const paginatedInvoices = useMemo(() => {
+    const start = (invoicePage - 1) * invoicePageSize;
+    return filteredInvoices.slice(start, start + invoicePageSize);
+  }, [filteredInvoices, invoicePage]);
+
+  const invoicePageCount = Math.max(1, Math.ceil(filteredInvoices.length / invoicePageSize));
+
+  const actionRequiredInvoices = useMemo(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return currencyInvoices
+      .filter((invoice) => invoice.status !== 'paid' && invoice.status !== 'cancelled')
+      .map((invoice) => {
+        const due = new Date(invoice.dueDate + 'T00:00:00');
+        const daysUntilDue = Math.ceil((due.getTime() - today.getTime()) / 86400000);
+        return { invoice, daysUntilDue };
+      })
+      .filter(({ daysUntilDue }) => daysUntilDue <= 7)
+      .sort((a, b) => a.daysUntilDue - b.daysUntilDue);
+  }, [currencyInvoices]);
+
+  const invoiceStatusCounts = useMemo(() => (['draft', 'sent', 'partially_paid', 'paid', 'overdue', 'cancelled'] as InvoiceStatus[]).map((status) => ({
+    status,
+    count: currencyInvoices.filter((invoice) => invoice.status === status).length
+  })), [currencyInvoices]);
 
   const filteredExpenses = useMemo(() => {
     if (expenseTypeFilter === 'all') return currencyExpenses;
@@ -544,6 +577,7 @@ export const AdminInvoicing: React.FC = () => {
   const sortOptions = [
     { value: 'updated', label: language === 'id' ? 'Terakhir diperbarui' : 'Recently updated' },
     { value: 'due', label: language === 'id' ? 'Jatuh tempo' : 'Due date' },
+    { value: 'oldest', label: language === 'id' ? 'Terlama diperbarui' : 'Oldest updated' },
     { value: 'amount_high', label: language === 'id' ? 'Nominal tertinggi' : 'Highest amount' },
     { value: 'amount_low', label: language === 'id' ? 'Nominal terendah' : 'Lowest amount' },
     { value: 'invoice', label: language === 'id' ? 'Nomor invoice' : 'Invoice number' }
@@ -734,6 +768,33 @@ export const AdminInvoicing: React.FC = () => {
             </div>
           </section>
 
+          {actionRequiredInvoices.length > 0 && (
+            <section className="mt-6" aria-labelledby="finance-actions-title">
+              <div className={cardClass}>
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                  <div>
+                    <h2 id="finance-actions-title" className="text-sm font-semibold text-fg">{language === 'id' ? 'Perlu perhatian' : 'Action required'}</h2>
+                    <p className="mt-1 text-xs leading-5 text-muted">Invoices that are overdue or due within the next 7 days.</p>
+                  </div>
+                  <span className="rounded-badge border border-warning/30 bg-warning/10 px-2 py-1 text-[11px] font-semibold tabular-nums text-warning">{actionRequiredInvoices.length}</span>
+                </div>
+                <div className="mt-4 divide-y divide-line border-y border-line">
+                  {actionRequiredInvoices.slice(0, 5).map(({ invoice, daysUntilDue }) => {
+                    const balance = Number(invoice.balanceDue ?? (invoice.total - (invoice.amountPaid || 0)));
+                    const overdue = invoice.status === 'overdue' || daysUntilDue < 0;
+                    return (
+                      <button key={invoice.id} type="button" onClick={() => openPrintPreview(invoice)} className="flex w-full items-center gap-3 py-3 text-left hover:bg-bg focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-accent">
+                        <span className={'flex h-8 w-8 shrink-0 items-center justify-center rounded-control ' + (overdue ? 'bg-danger/10 text-danger' : 'bg-warning/10 text-warning')}><AlertCircle size={15} /></span>
+                        <span className="min-w-0 flex-1"><span className="block truncate text-xs font-medium text-fg">{invoice.invoiceNumber}</span><span className="mt-0.5 block truncate text-[11px] text-muted">{invoice.clientCompany || invoice.clientName}</span></span>
+                        <span className="shrink-0 text-right"><span className="block text-xs font-medium tabular-nums text-fg">{formatAmount(balance, invoice.currency)}</span><span className={'mt-0.5 block text-[11px] ' + (overdue ? 'text-danger' : 'text-warning')}>{overdue ? 'Overdue' : (daysUntilDue + 'd left')}</span></span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </section>
+          )}
+
           <section className="mt-6" aria-labelledby="finance-workspace-title">
             <div className="rounded-card border border-line bg-panel p-4 sm:p-5">
               <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
@@ -764,6 +825,16 @@ export const AdminInvoicing: React.FC = () => {
                   </div>
                 )}
               </div>
+              {tab === 'invoices' && currencyInvoices.length > 0 && (
+                <div className="mt-3 flex gap-1 overflow-x-auto border-t border-line pt-3">
+                  {invoiceStatusCounts.filter((item) => item.count > 0).map(({ status, count }) => (
+                    <button key={status} type="button" onClick={() => setStatusFilter(status)} className={'shrink-0 rounded-chip border px-2.5 py-1 text-[11px] font-semibold transition-colors ' + (statusFilter === status ? 'border-accent/30 bg-accent/10 text-accent-text' : 'border-line text-muted hover:text-fg')}>
+                      {statusLabel[status]} <span className="tabular-nums">{count}</span>
+                    </button>
+                  ))}
+                  {statusFilter !== 'all' && <button type="button" onClick={() => setStatusFilter('all')} className="shrink-0 rounded-chip px-2.5 py-1 text-[11px] text-muted hover:text-fg">Clear</button>}
+                </div>
+              )}
             </div>
 
             <div className="mt-3">
@@ -790,7 +861,7 @@ export const AdminInvoicing: React.FC = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {filteredInvoices.map((invoice) => {
+                        {paginatedInvoices.map((invoice) => {
                           const balance = Number(invoice.balanceDue ?? (invoice.total - (invoice.amountPaid || 0)));
                           const project = projects.find((item) => item.id === invoice.projectId);
                           return (
@@ -861,6 +932,16 @@ export const AdminInvoicing: React.FC = () => {
                       );
                     })}
                   </div>
+                  {invoicePageCount > 1 && (
+                    <div className="mt-3 flex flex-col gap-2 border-t border-line px-1 pt-3 sm:flex-row sm:items-center sm:justify-between">
+                      <p className="text-[11px] tabular-nums text-muted">Showing {((invoicePage - 1) * invoicePageSize) + 1}-{Math.min(invoicePage * invoicePageSize, filteredInvoices.length)} of {filteredInvoices.length}</p>
+                      <div className="flex items-center gap-2">
+                        <button type="button" onClick={() => setInvoicePage((page) => Math.max(1, page - 1))} disabled={invoicePage === 1} className={actionClass}>Previous</button>
+                        <span className="min-w-16 text-center text-[11px] tabular-nums text-muted">{invoicePage} / {invoicePageCount}</span>
+                        <button type="button" onClick={() => setInvoicePage((page) => Math.min(invoicePageCount, page + 1))} disabled={invoicePage === invoicePageCount} className={actionClass}>Next</button>
+                      </div>
+                    </div>
+                  )}
                     </>
                   )}
                 </>
