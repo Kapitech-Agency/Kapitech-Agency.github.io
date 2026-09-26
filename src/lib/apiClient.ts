@@ -279,7 +279,7 @@ export const api = {
         body: JSON.stringify(exp)
       }),
     deleteExpense: (id: string) => apiRequest(`/api/finance/expenses/${id}`, { method: 'DELETE' }),
-    getMetrics: (currency?: string) => apiRequest<{ success: boolean; metrics: any }>(`/api/finance/metrics${currency ? `?currency=${encodeURIComponent(currency)}` : ''}`)
+    getMetrics: (currency?: string) => apiRequest<{ success: boolean; metrics: any }>('/api/finance/metrics' + (currency ? `?currency=${encodeURIComponent(currency)}` : ''))
   },
 
   // Vendors
