@@ -79,7 +79,11 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
             } else {
               setIsOpen(true);
             }
-          } else if (e.key === 'Home' || e.key === 'End') {\n            e.preventDefault();\n            setActiveIndex(e.key === 'Home' ? 0 : Math.max(0, options.length - 1));\n            setIsOpen(true);\n          } else if (e.key === 'Escape') {
+          } else if (e.key === 'Home' || e.key === 'End') {
+            e.preventDefault();
+            setActiveIndex(e.key === 'Home' ? 0 : Math.max(0, options.length - 1));
+            setIsOpen(true);
+          } else if (e.key === 'Escape') {
             e.preventDefault();
             setIsOpen(false);
           } else if (e.key === 'Tab') {
