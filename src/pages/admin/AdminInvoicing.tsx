@@ -2,16 +2,13 @@ import React, { useEffect, useMemo, useState } from 'react';
 import {
   AlertCircle,
   ArrowUpRight,
-  CalendarDays,
   Check,
   CheckCircle2,
-  ChevronRight,
   CreditCard,
   DollarSign,
   Download,
   Edit3,
   FileText,
-  Filter,
   Plus,
   Receipt,
   RefreshCw,
@@ -20,7 +17,6 @@ import {
   Trash2,
   TrendingDown,
   TrendingUp,
-  UserRound,
   WalletCards,
   X
 } from 'lucide-react';
