@@ -476,7 +476,7 @@ export const AdminInbox: React.FC = () => {
   }, [selectedSubmission, crmDeals]);
 
   return (
-    <div className="space-y-5 sm:space-y-6">
+    <div className="ams-inbox-page space-y-5 sm:space-y-6">
       
       {/* Toast Notification */}
       {toastMessage && (
@@ -929,10 +929,10 @@ export const AdminInbox: React.FC = () => {
         </div>
       ) : (
         /* SPLIT MASTER-DETAIL VIEW (when items exist) */
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 items-start">
+        <div className="ams-inbox-workspace grid grid-cols-1 lg:grid-cols-12 gap-3 items-start">
           
           {/* Left: Master Briefs List Pane */}
-          <div className={`space-y-3 ${
+          <div className={`ams-inbox-list-pane space-y-3 ${
             selectedSubmission 
               ? 'hidden lg:block lg:col-span-5' 
               : 'col-span-12 lg:col-span-5'
@@ -1033,7 +1033,7 @@ export const AdminInbox: React.FC = () => {
 
           {/* Right: Message Reader & Command Hub Pane */}
           {selectedSubmission ? (
-            <div className="col-span-12 lg:col-span-7 bg-[var(--panel)] border border-[var(--line)] rounded-card p-5 sm:p-7 flex flex-col justify-between">
+            <div className="ams-inbox-reader-pane col-span-12 lg:col-span-7 bg-[var(--panel)] border border-[var(--line)] rounded-card p-5 sm:p-7 flex flex-col justify-between">
               <div>
                 
                 {/* Mobile Back Button */}
