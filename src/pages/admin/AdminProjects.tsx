@@ -123,28 +123,28 @@ const taskStatusLabel = (status: TaskStatus) => TASK_COLUMNS.find(item => item.i
 
 const priorityLabel = (priority: TaskPriority) => TASK_PRIORITIES.find(item => item.value === priority)?.label || priority;
 
-const fieldClass = 'mt-1 w-full min-h-10 rounded-control border border-[var(--line)] bg-[var(--bg)] px-3 text-xs text-[var(--text)] outline-none transition-colors placeholder:text-[var(--muted)] focus:border-[var(--accent)]';
+const fieldClass = 'mt-1 w-full min-h-10 rounded-control border border-line bg-bg px-3 text-xs text-text outline-none transition-colors placeholder:text-muted focus:border-accent';
 
 const projectHealthClass = (health?: ProjectHealth) => {
-  if (health === 'Good') return 'text-[var(--success)] border-[var(--success)]/30 bg-[var(--success)]/10';
-  if (health === 'At Risk') return 'text-[var(--warning)] border-[var(--warning)]/30 bg-[var(--warning)]/10';
-  if (health === 'Delayed' || health === 'Blocked') return 'text-[var(--danger)] border-[var(--danger)]/30 bg-[var(--danger)]/10';
-  return 'text-[var(--muted)] border-[var(--line)] bg-[var(--bg)]';
+  if (health === 'Good') return 'text-success border-success/30 bg-success/10';
+  if (health === 'At Risk') return 'text-warning border-warning/30 bg-warning/10';
+  if (health === 'Delayed' || health === 'Blocked') return 'text-danger border-danger/30 bg-danger/10';
+  return 'text-muted border-line bg-bg';
 };
 
 const projectStatusClass = (status: ProjectStatus) => {
-  if (status === 'completed') return 'text-[var(--success)] border-[var(--success)]/30 bg-[var(--success)]/10';
-  if (status === 'on_hold') return 'text-[var(--warning)] border-[var(--warning)]/30 bg-[var(--warning)]/10';
-  if (status === 'review') return 'text-[var(--info)] border-[var(--info)]/30 bg-[var(--info)]/10';
-  if (status === 'in_progress') return 'text-[var(--accent-text)] border-[var(--accent)]/30 bg-[var(--accent)]/10';
-  return 'text-[var(--muted)] border-[var(--line)] bg-[var(--bg)]';
+  if (status === 'completed') return 'text-success border-success/30 bg-success/10';
+  if (status === 'on_hold') return 'text-warning border-warning/30 bg-warning/10';
+  if (status === 'review') return 'text-info border-info/30 bg-info/10';
+  if (status === 'in_progress') return 'text-accent-text border-accent/30 bg-accent/10';
+  return 'text-muted border-line bg-bg';
 };
 
 const taskPriorityClass = (priority: TaskPriority) => {
-  if (priority === 'urgent') return 'text-[var(--danger)] border-[var(--danger)]/30 bg-[var(--danger)]/10';
-  if (priority === 'high') return 'text-[var(--warning)] border-[var(--warning)]/30 bg-[var(--warning)]/10';
-  if (priority === 'medium') return 'text-[var(--info)] border-[var(--info)]/30 bg-[var(--info)]/10';
-  return 'text-[var(--muted)] border-[var(--line)] bg-[var(--bg)]';
+  if (priority === 'urgent') return 'text-danger border-danger/30 bg-danger/10';
+  if (priority === 'high') return 'text-warning border-warning/30 bg-warning/10';
+  if (priority === 'medium') return 'text-info border-info/30 bg-info/10';
+  return 'text-muted border-line bg-bg';
 };
 
 export const AdminProjects: React.FC = () => {
@@ -606,18 +606,18 @@ export const AdminProjects: React.FC = () => {
       </header>
 
       {toast && (
-        <div role="status" className="fixed bottom-4 left-1/2 z-[70] -translate-x-1/2 rounded-control border border-[var(--line)] bg-[var(--panel)] px-4 py-3 text-xs text-[var(--text)]">
+        <div role="status" className="fixed bottom-4 left-1/2 z-[70] -translate-x-1/2 rounded-control border border-line bg-panel px-4 py-3 text-xs text-text">
           {toast}
         </div>
       )}
 
       {error && (
-        <div className="rounded-card border border-[var(--danger)]/30 bg-[var(--danger)]/5 p-4 flex items-center justify-between gap-4">
+        <div className="rounded-card border border-danger/30 bg-danger/5 p-4 flex items-center justify-between gap-4">
           <div className="flex min-w-0 items-start gap-3">
-            <AlertCircle className="mt-0.5 shrink-0 text-[var(--danger)]" size={17} />
+            <AlertCircle className="mt-0.5 shrink-0 text-danger" size={17} />
             <div>
-              <p className="text-xs font-semibold text-[var(--text)]">Unable to load Projects & Tasks</p>
-              <p className="mt-1 text-xs text-[var(--muted)]">{error}</p>
+              <p className="text-xs font-semibold text-text">Unable to load Projects & Tasks</p>
+              <p className="mt-1 text-xs text-muted">{error}</p>
             </div>
           </div>
           <Button variant="secondary" onClick={() => void loadData()}>Retry</Button>
@@ -631,26 +631,26 @@ export const AdminProjects: React.FC = () => {
           { label: 'At Risk', value: projectMetrics.atRisk, icon: ShieldAlert },
           { label: 'Overdue Tasks', value: projectMetrics.overdueTasks, icon: AlertCircle },
         ].map(item => (
-          <div key={item.label} className="rounded-card border border-[var(--line)] bg-[var(--panel)] p-4">
+          <div key={item.label} className="rounded-card border border-line bg-panel p-4">
             <div className="flex items-center justify-between gap-3">
-              <span className="text-xs text-[var(--muted)]">{item.label}</span>
-              <item.icon size={15} className="text-[var(--muted)]" />
+              <span className="text-xs text-muted">{item.label}</span>
+              <item.icon size={15} className="text-muted" />
             </div>
-            <div className="mt-2 text-[24px] leading-8 font-medium tabular-nums text-[var(--text)]">{item.value}</div>
+            <div className="mt-2 text-[24px] leading-8 font-medium tabular-nums text-text">{item.value}</div>
           </div>
         ))}
       </section>
 
       {(projectMetrics.overdueTasks > 0 || projectMetrics.dueToday > 0) && (
-        <section className="rounded-card border border-[var(--line)] bg-[var(--panel)] p-4 sm:p-5">
+        <section className="rounded-card border border-line bg-panel p-4 sm:p-5">
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <div>
-              <h2 className="text-sm font-semibold text-[var(--text)]">Action required</h2>
-              <p className="mt-1 text-xs text-[var(--muted)]">Focus on delivery items that need attention today.</p>
+              <h2 className="text-sm font-semibold text-text">Action required</h2>
+              <p className="mt-1 text-xs text-muted">Focus on delivery items that need attention today.</p>
             </div>
             <div className="flex flex-wrap gap-2">
-              {projectMetrics.overdueTasks > 0 && <span className="inline-flex items-center gap-1.5 rounded-control border border-[var(--danger)]/30 bg-[var(--danger)]/10 px-2.5 py-1.5 text-xs text-[var(--danger)]"><AlertCircle size={13} />{projectMetrics.overdueTasks} overdue</span>}
-              {projectMetrics.dueToday > 0 && <span className="inline-flex items-center gap-1.5 rounded-control border border-[var(--warning)]/30 bg-[var(--warning)]/10 px-2.5 py-1.5 text-xs text-[var(--warning)]"><Clock size={13} />{projectMetrics.dueToday} due today</span>}
+              {projectMetrics.overdueTasks > 0 && <span className="inline-flex items-center gap-1.5 rounded-control border border-danger/30 bg-danger/10 px-2.5 py-1.5 text-xs text-danger"><AlertCircle size={13} />{projectMetrics.overdueTasks} overdue</span>}
+              {projectMetrics.dueToday > 0 && <span className="inline-flex items-center gap-1.5 rounded-control border border-warning/30 bg-warning/10 px-2.5 py-1.5 text-xs text-warning"><Clock size={13} />{projectMetrics.dueToday} due today</span>}
             </div>
           </div>
         </section>
@@ -658,17 +658,17 @@ export const AdminProjects: React.FC = () => {
 
 
 
-      <section className="rounded-card border border-[var(--line)] bg-[var(--panel)]">
-        <div className="border-b border-[var(--line)] p-4 sm:p-5">
+      <section className="rounded-card border border-line bg-panel">
+        <div className="border-b border-line p-4 sm:p-5">
           <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
             <div>
-              <h2 className="text-sm font-semibold text-[var(--text)]">Projects</h2>
-              <p className="mt-1 text-xs text-[var(--muted)]">Select a project to inspect its delivery state and task board.</p>
+              <h2 className="text-sm font-semibold text-text">Projects</h2>
+              <p className="mt-1 text-xs text-muted">Select a project to inspect its delivery state and task board.</p>
             </div>
             <div className="projects-filter-bar grid w-full min-w-0 grid-cols-1 items-center gap-2.5 sm:grid-cols-[minmax(240px,1fr)_168px_190px] xl:w-auto xl:min-w-[630px]">
               <label className="relative block min-w-0">
                 <span className="sr-only">Search projects</span>
-                <Search size={14} strokeWidth={1.8} className="pointer-events-none absolute left-3 top-1/2 z-10 -translate-y-1/2 text-[var(--muted)]" aria-hidden="true" />
+                <Search size={14} strokeWidth={1.8} className="pointer-events-none absolute left-3 top-1/2 z-10 -translate-y-1/2 text-muted" aria-hidden="true" />
                 <input
                   value={projectSearch}
                   onChange={event => setProjectSearch(event.target.value)}
@@ -703,35 +703,35 @@ export const AdminProjects: React.FC = () => {
         </div>
 
         {loading ? (
-          <div className="divide-y divide-[var(--line)]">
-            {[1, 2, 3].map(item => <div key={item} className="h-20 animate-pulse bg-[var(--panel)]" />)}
+          <div className="divide-y divide-line">
+            {[1, 2, 3].map(item => <div key={item} className="h-20 animate-pulse bg-panel" />)}
           </div>
         ) : filteredProjects.length === 0 ? (
           <div className="p-8 text-center">
-            <Briefcase className="mx-auto text-[var(--muted)]" size={22} />
-            <p className="mt-3 text-sm font-semibold text-[var(--text)]">{projects.length ? 'No matching projects' : 'No projects yet'}</p>
-            <p className="mt-1 text-xs text-[var(--muted)]">{projects.length ? 'Try a different search or clear the filters.' : 'Create a project when a delivery record is ready.'}</p>
+            <Briefcase className="mx-auto text-muted" size={22} />
+            <p className="mt-3 text-sm font-semibold text-text">{projects.length ? 'No matching projects' : 'No projects yet'}</p>
+            <p className="mt-1 text-xs text-muted">{projects.length ? 'Try a different search or clear the filters.' : 'Create a project when a delivery record is ready.'}</p>
             {projects.length === 0 && canManageProjects && <Button className="mt-4" icon={<Plus size={14} />} onClick={() => resetProjectForm()}>New Project</Button>}
           </div>
         ) : (
           <>
             <div className="hidden overflow-x-auto md:block">
               <table className="w-full min-w-[920px] border-collapse text-left">
-                <thead className="border-b border-[var(--line)] bg-[var(--bg)]">
+                <thead className="border-b border-line bg-bg">
                   <tr>
-                    {['Project', 'Status', 'Progress', 'Owner', 'Deadline', 'Tasks', ''].map(label => <th key={label} className="px-4 py-3 text-[11px] font-semibold text-[var(--muted)]">{label}</th>)}
+                    {['Project', 'Status', 'Progress', 'Owner', 'Deadline', 'Tasks', ''].map(label => <th key={label} className="px-4 py-3 text-[11px] font-semibold text-muted">{label}</th>)}
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[var(--line)]">
+                <tbody className="divide-y divide-line">
                   {filteredProjects.map(project => {
                     const isSelected = project.id === selectedProjectId;
                     const overdue = project.tasks.filter(task => task.status !== 'done' && isOverdue(task.dueDate)).length;
                     return (
-                      <tr key={project.id} className={isSelected ? 'bg-[color-mix(in_srgb,var(--accent)_6%,transparent)]' : 'hover:bg-[var(--bg)]'}>
+                      <tr key={project.id} className={isSelected ? 'bg-[color-mix(in_srgb,var(--accent)_6%,transparent)]' : 'hover:bg-bg'}>
                         <td className="px-4 py-3">
                           <button className="min-w-0 text-left" onClick={() => setSelectedProjectId(project.id)}>
-                            <div className="max-w-[280px] truncate text-xs font-semibold text-[var(--text)]">{project.name}</div>
-                            <div className="mt-1 max-w-[280px] truncate text-[11px] text-[var(--muted)]">{project.clientCompany || project.clientName || 'No client'}</div>
+                            <div className="max-w-[280px] truncate text-xs font-semibold text-text">{project.name}</div>
+                            <div className="mt-1 max-w-[280px] truncate text-[11px] text-muted">{project.clientCompany || project.clientName || 'No client'}</div>
                           </button>
                         </td>
                         <td className="px-4 py-3">
@@ -739,19 +739,19 @@ export const AdminProjects: React.FC = () => {
                         </td>
                         <td className="px-4 py-3">
                           <div className="w-36">
-                            <div className="flex items-center justify-between text-[10px] text-[var(--muted)]"><span>Progress</span><span className="tabular-nums text-[var(--text)]">{project.progressPercent}%</span></div>
-                            <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-[var(--bg)]"><div className="h-full rounded-full bg-[var(--accent)]" style={{ width: project.progressPercent + '%' }} /></div>
+                            <div className="flex items-center justify-between text-[10px] text-muted"><span>Progress</span><span className="tabular-nums text-text">{project.progressPercent}%</span></div>
+                            <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-bg"><div className="h-full rounded-full bg-accent" style={{ width: project.progressPercent + '%' }} /></div>
                           </div>
                         </td>
-                        <td className="px-4 py-3 text-xs text-[var(--text)]">{project.teamLead || 'Unassigned'}</td>
+                        <td className="px-4 py-3 text-xs text-text">{project.teamLead || 'Unassigned'}</td>
                         <td className="px-4 py-3">
-                          <span className={isOverdue(project.targetEndDate) && project.status !== 'completed' ? 'text-[var(--danger)]' : 'text-[var(--text)]'}>{formatDate(project.targetEndDate)}</span>
+                          <span className={isOverdue(project.targetEndDate) && project.status !== 'completed' ? 'text-danger' : 'text-text'}>{formatDate(project.targetEndDate)}</span>
                         </td>
                         <td className="px-4 py-3">
-                          <div className="flex items-center gap-2 text-xs tabular-nums"><span className="text-[var(--text)]">{project.tasks.filter(task => task.status === 'done').length}/{project.tasks.length}</span>{overdue > 0 && <span className="text-[var(--danger)]">{overdue} overdue</span>}</div>
+                          <div className="flex items-center gap-2 text-xs tabular-nums"><span className="text-text">{project.tasks.filter(task => task.status === 'done').length}/{project.tasks.length}</span>{overdue > 0 && <span className="text-danger">{overdue} overdue</span>}</div>
                         </td>
                         <td className="px-4 py-3 text-right">
-                          <button aria-label={'Open ' + project.name} onClick={() => setSelectedProjectId(project.id)} className="inline-flex min-h-9 min-w-9 items-center justify-center rounded-control text-[var(--muted)] hover:bg-[var(--bg)] hover:text-[var(--text)]"><ChevronRight size={15} /></button>
+                          <button aria-label={'Open ' + project.name} onClick={() => setSelectedProjectId(project.id)} className="inline-flex min-h-9 min-w-9 items-center justify-center rounded-control text-muted hover:bg-bg hover:text-text"><ChevronRight size={15} /></button>
                         </td>
                       </tr>
                     );
@@ -760,26 +760,26 @@ export const AdminProjects: React.FC = () => {
               </table>
             </div>
 
-            <div className="divide-y divide-[var(--line)] md:hidden">
+            <div className="divide-y divide-line md:hidden">
               {filteredProjects.map(project => {
                 const overdue = project.tasks.filter(task => task.status !== 'done' && isOverdue(task.dueDate)).length;
                 return (
-                  <button key={project.id} onClick={() => setSelectedProjectId(project.id)} className="block w-full p-4 text-left hover:bg-[var(--bg)]">
+                  <button key={project.id} onClick={() => setSelectedProjectId(project.id)} className="block w-full p-4 text-left hover:bg-bg">
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
-                        <div className="truncate text-sm font-semibold text-[var(--text)]">{project.name}</div>
-                        <div className="mt-1 truncate text-xs text-[var(--muted)]">{project.clientCompany || 'No client'}</div>
+                        <div className="truncate text-sm font-semibold text-text">{project.name}</div>
+                        <div className="mt-1 truncate text-xs text-muted">{project.clientCompany || 'No client'}</div>
                       </div>
-                      <ChevronRight size={16} className="mt-1 shrink-0 text-[var(--muted)]" />
+                      <ChevronRight size={16} className="mt-1 shrink-0 text-muted" />
                     </div>
                     <div className="mt-3 flex flex-wrap gap-2">
                       <span className={'rounded-control border px-2 py-1 text-[10px] font-semibold ' + projectStatusClass(project.status)}>{statusLabel(project.status)}</span>
                       {project.health && <span className={'rounded-control border px-2 py-1 text-[10px] font-semibold ' + projectHealthClass(project.health)}>{project.health}</span>}
                     </div>
-                    <div className="mt-3 flex items-center gap-4 text-[11px] text-[var(--muted)]">
+                    <div className="mt-3 flex items-center gap-4 text-[11px] text-muted">
                       <span>{project.progressPercent}% complete</span>
                       <span>{project.tasks.filter(task => task.status === 'done').length}/{project.tasks.length} tasks</span>
-                      {overdue > 0 && <span className="text-[var(--danger)]">{overdue} overdue</span>}
+                      {overdue > 0 && <span className="text-danger">{overdue} overdue</span>}
                     </div>
                   </button>
                 );
@@ -792,21 +792,21 @@ export const AdminProjects: React.FC = () => {
       {selectedProject && (
         <>
           {/* Task Execution Board */}
-          <section className="rounded-card border border-[var(--line)] bg-[var(--panel)]">
+          <section className="rounded-card border border-line bg-panel">
             <div className="p-4 sm:p-5">
               <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
                     <span className={'rounded-control border px-2 py-1 text-[11px] font-semibold ' + projectStatusClass(selectedProject.status)}>{statusLabel(selectedProject.status)}</span>
                     {selectedProject.health && <span className={'rounded-control border px-2 py-1 text-[11px] font-semibold ' + projectHealthClass(selectedProject.health)}>{selectedProject.health}</span>}
-                    <span className="text-[11px] text-[var(--muted)]">{selectedProject.serviceCategory || 'Delivery project'}</span>
+                    <span className="text-[11px] text-muted">{selectedProject.serviceCategory || 'Delivery project'}</span>
                   </div>
-                  <h2 className="mt-3 text-xl font-semibold tracking-tight text-[var(--text)]">{selectedProject.name}</h2>
-                  <p className="mt-1 text-xs text-[var(--muted)]">{selectedProject.clientCompany || selectedProject.clientName || 'No client'}{selectedProject.clientName ? ' · ' + selectedProject.clientName : ''}</p>
+                  <h2 className="mt-3 text-xl font-semibold tracking-tight text-text">{selectedProject.name}</h2>
+                  <p className="mt-1 text-xs text-muted">{selectedProject.clientCompany || selectedProject.clientName || 'No client'}{selectedProject.clientName ? ' · ' + selectedProject.clientName : ''}</p>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  {selectedProject.repositoryUrl && <a href={selectedProject.repositoryUrl} target="_blank" rel="noreferrer" className="inline-flex min-h-10 items-center gap-2 rounded-control border border-[var(--line)] bg-[var(--panel)] px-3 text-xs text-[var(--text)] hover:bg-[var(--bg)]"><Code2 size={14} />Repository</a>}
-                  {selectedProject.liveStagingUrl && <a href={selectedProject.liveStagingUrl} target="_blank" rel="noreferrer" className="inline-flex min-h-10 items-center gap-2 rounded-control border border-[var(--line)] bg-[var(--panel)] px-3 text-xs text-[var(--text)] hover:bg-[var(--bg)]"><ExternalLink size={14} />Staging</a>}
+                  {selectedProject.repositoryUrl && <a href={selectedProject.repositoryUrl} target="_blank" rel="noreferrer" className="inline-flex min-h-10 items-center gap-2 rounded-control border border-line bg-panel px-3 text-xs text-text hover:bg-bg"><Code2 size={14} />Repository</a>}
+                  {selectedProject.liveStagingUrl && <a href={selectedProject.liveStagingUrl} target="_blank" rel="noreferrer" className="inline-flex min-h-10 items-center gap-2 rounded-control border border-line bg-panel px-3 text-xs text-text hover:bg-bg"><ExternalLink size={14} />Staging</a>}
                   {canManageProjects && <Button variant="secondary" icon={<Edit3 size={14} />} onClick={() => resetProjectForm(selectedProject)}>Edit</Button>}
                   {canDeleteProjects && <Button variant="danger" icon={<Trash2 size={14} />} onClick={() => setDeleteProject(selectedProject)}>Delete</Button>}
                 </div>
@@ -820,40 +820,40 @@ export const AdminProjects: React.FC = () => {
                   { label: 'Tasks', value: selectedProjectTaskStats.done + '/' + selectedProjectTaskStats.total + ' done', icon: ListTodo },
                   { label: 'Budget', value: formatAmount(selectedProject.budget, currency), icon: Briefcase },
                 ].map(item => (
-                  <div key={item.label} className="rounded-control border border-[var(--line)] bg-[var(--bg)] p-3">
-                    <div className="flex items-center gap-2 text-[11px] text-[var(--muted)]"><item.icon size={13} />{item.label}</div>
-                    <div className="mt-2 truncate text-xs font-semibold text-[var(--text)] tabular-nums">{item.value}</div>
+                  <div key={item.label} className="rounded-control border border-line bg-bg p-3">
+                    <div className="flex items-center gap-2 text-[11px] text-muted"><item.icon size={13} />{item.label}</div>
+                    <div className="mt-2 truncate text-xs font-semibold text-text tabular-nums">{item.value}</div>
                   </div>
                 ))}
               </div>
 
               <div className="mt-5">
-                <div className="flex items-center justify-between text-[11px] text-[var(--muted)]"><span>Project progress</span><span className="tabular-nums text-[var(--text)]">{selectedProject.progressPercent}%</span></div>
-                <div className="mt-2 h-2 overflow-hidden rounded-full bg-[var(--bg)]"><div className="h-full rounded-full bg-[var(--accent)]" style={{ width: selectedProject.progressPercent + '%' }} /></div>
+                <div className="flex items-center justify-between text-[11px] text-muted"><span>Project progress</span><span className="tabular-nums text-text">{selectedProject.progressPercent}%</span></div>
+                <div className="mt-2 h-2 overflow-hidden rounded-full bg-bg"><div className="h-full rounded-full bg-accent" style={{ width: selectedProject.progressPercent + '%' }} /></div>
               </div>
 
               {(selectedProject.notes || selectedProject.techStack.length || selectedProject.teamMembers.length) && (
                 <div className="mt-5 grid gap-4 lg:grid-cols-3">
-                  {selectedProject.notes && <div className="lg:col-span-2"><div className="text-[11px] font-semibold text-[var(--muted)]">Project notes</div><p className="mt-2 text-xs leading-5 text-[var(--text)]">{selectedProject.notes}</p></div>}
+                  {selectedProject.notes && <div className="lg:col-span-2"><div className="text-[11px] font-semibold text-muted">Project notes</div><p className="mt-2 text-xs leading-5 text-text">{selectedProject.notes}</p></div>}
                   <div className="space-y-3">
-                    {selectedProject.teamMembers.length > 0 && <div><div className="flex items-center gap-2 text-[11px] font-semibold text-[var(--muted)]"><Users size={13} />Team</div><div className="mt-2 flex flex-wrap gap-1.5">{selectedProject.teamMembers.map(member => <span key={member} className="rounded-control border border-[var(--line)] bg-[var(--bg)] px-2 py-1 text-[10px] text-[var(--text)]">{member}</span>)}</div></div>}
-                    {selectedProject.techStack.length > 0 && <div><div className="flex items-center gap-2 text-[11px] font-semibold text-[var(--muted)]"><Tag size={13} />Stack</div><div className="mt-2 flex flex-wrap gap-1.5">{selectedProject.techStack.map(item => <span key={item} className="rounded-control border border-[var(--line)] bg-[var(--bg)] px-2 py-1 text-[10px] text-[var(--muted)]">{item}</span>)}</div></div>}
+                    {selectedProject.teamMembers.length > 0 && <div><div className="flex items-center gap-2 text-[11px] font-semibold text-muted"><Users size={13} />Team</div><div className="mt-2 flex flex-wrap gap-1.5">{selectedProject.teamMembers.map(member => <span key={member} className="rounded-control border border-line bg-bg px-2 py-1 text-[10px] text-text">{member}</span>)}</div></div>}
+                    {selectedProject.techStack.length > 0 && <div><div className="flex items-center gap-2 text-[11px] font-semibold text-muted"><Tag size={13} />Stack</div><div className="mt-2 flex flex-wrap gap-1.5">{selectedProject.techStack.map(item => <span key={item} className="rounded-control border border-line bg-bg px-2 py-1 text-[10px] text-muted">{item}</span>)}</div></div>}
                   </div>
                 </div>
               )}
             </div>
           </section>
 
-          <section className="rounded-card border border-[var(--line)] bg-[var(--panel)]">
-            <div className="border-b border-[var(--line)] p-4 sm:p-5">
+          <section className="rounded-card border border-line bg-panel">
+            <div className="border-b border-line p-4 sm:p-5">
               <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
                 <div>
-                  <div className="flex items-center gap-2"><ListTodo size={16} className="text-[var(--accent-text)]" /><h2 className="text-sm font-semibold text-[var(--text)]">Tasks</h2></div>
-                  <p className="mt-1 text-xs text-[var(--muted)]">{selectedProjectTaskStats.open} open · {selectedProjectTaskStats.done} done · {selectedProjectTaskStats.overdue} overdue</p>
+                  <div className="flex items-center gap-2"><ListTodo size={16} className="text-accent-text" /><h2 className="text-sm font-semibold text-text">Tasks</h2></div>
+                  <p className="mt-1 text-xs text-muted">{selectedProjectTaskStats.open} open · {selectedProjectTaskStats.done} done · {selectedProjectTaskStats.overdue} overdue</p>
                 </div>
                 <div className="flex flex-col gap-2 lg:flex-row">
                   <div className="relative min-w-0 lg:w-60">
-                    <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted)]" />
+                    <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
                     <input value={taskSearch} onChange={event => setTaskSearch(event.target.value)} placeholder="Search tasks..." aria-label="Search tasks" className={fieldClass + ' pl-8'} />
                   </div>
                   <CustomSelect value={taskStatusFilter} onChange={setTaskStatusFilter} options={[{ value: '', label: 'All statuses' }, ...TASK_COLUMNS.map(item => ({ value: item.id, label: item.label }))]} className="w-full lg:w-36" />
@@ -872,33 +872,33 @@ export const AdminProjects: React.FC = () => {
                 {TASK_COLUMNS.map(column => {
                   const tasks = visibleTasks.filter(task => task.status === column.id);
                   return (
-                    <div key={column.id} onDragOver={event => event.preventDefault()} onDrop={event => void onDropTask(event, column.id)} className="w-[280px] rounded-card border border-[var(--line)] bg-[var(--bg)] p-3 sm:w-[300px]">
-                      <div className="flex items-center justify-between border-b border-[var(--line)] pb-3">
-                        <div className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-[var(--muted)]" /><span className="text-xs font-semibold text-[var(--text)]">{column.label}</span></div>
-                        <span className="rounded-control border border-[var(--line)] bg-[var(--panel)] px-2 py-1 text-[10px] tabular-nums text-[var(--muted)]">{tasks.length}</span>
+                    <div key={column.id} onDragOver={event => event.preventDefault()} onDrop={event => void onDropTask(event, column.id)} className="w-[280px] rounded-card border border-line bg-bg p-3 sm:w-[300px]">
+                      <div className="flex items-center justify-between border-b border-line pb-3">
+                        <div className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-muted" /><span className="text-xs font-semibold text-text">{column.label}</span></div>
+                        <span className="rounded-control border border-line bg-panel px-2 py-1 text-[10px] tabular-nums text-muted">{tasks.length}</span>
                       </div>
                       <div className="mt-3 space-y-2.5">
                         {tasks.length === 0 ? (
-                          <div className="flex min-h-28 items-center justify-center rounded-control border border-dashed border-[var(--line)] px-3 text-center text-[11px] text-[var(--muted)]">No tasks in this stage.</div>
+                          <div className="flex min-h-28 items-center justify-center rounded-control border border-dashed border-line px-3 text-center text-[11px] text-muted">No tasks in this stage.</div>
                         ) : tasks.map(task => {
                           const subtasks = task.subtasks || [];
                           const doneSubtasks = subtasks.filter(item => item.completed).length;
                           const overdue = task.status !== 'done' && isOverdue(task.dueDate);
                           return (
-                            <article key={task.id} draggable={canManageKanbanTasks} onDragStart={event => { event.dataTransfer.setData('text/plain', task.id); setDraggedTaskId(task.id); }} onClick={() => setTaskDrawer(task)} className={'group rounded-card border bg-[var(--panel)] p-3 transition-colors ' + (draggedTaskId === task.id ? 'border-[var(--accent)] opacity-50' : 'border-[var(--line)] hover:border-[var(--accent)]/50')}>
+                            <article key={task.id} draggable={canManageKanbanTasks} onDragStart={event => { event.dataTransfer.setData('text/plain', task.id); setDraggedTaskId(task.id); }} onClick={() => setTaskDrawer(task)} className={'group rounded-card border bg-panel p-3 transition-colors ' + (draggedTaskId === task.id ? 'border-accent opacity-50' : 'border-line hover:border-accent/50')}>
                               <div className="flex items-start justify-between gap-2">
                                 <div className="flex min-w-0 items-center gap-1.5">
-                                  {canManageKanbanTasks && <GripVertical size={13} className="shrink-0 text-[var(--muted)]" aria-label="Draggable task" />}
+                                  {canManageKanbanTasks && <GripVertical size={13} className="shrink-0 text-muted" aria-label="Draggable task" />}
                                   <span className={'rounded-control border px-2 py-1 text-[10px] font-semibold ' + taskPriorityClass(task.priority)}>{priorityLabel(task.priority)}</span>
                                 </div>
-                                <button aria-label={'Task actions for ' + task.title} onClick={event => { event.stopPropagation(); openEditTask(task); }} className="inline-flex min-h-8 min-w-8 items-center justify-center rounded-control text-[var(--muted)] opacity-0 transition-opacity hover:bg-[var(--bg)] hover:text-[var(--text)] group-hover:opacity-100 focus:opacity-100"><Edit3 size={13} /></button>
+                                <button aria-label={'Task actions for ' + task.title} onClick={event => { event.stopPropagation(); openEditTask(task); }} className="inline-flex min-h-8 min-w-8 items-center justify-center rounded-control text-muted opacity-0 transition-opacity hover:bg-bg hover:text-text group-hover:opacity-100 focus:opacity-100"><Edit3 size={13} /></button>
                               </div>
-                              <h3 className="mt-2 text-xs font-semibold leading-5 text-[var(--text)]">{task.title}</h3>
-                              {task.description && <p className="mt-1 line-clamp-2 text-[11px] leading-4 text-[var(--muted)]">{task.description}</p>}
-                              {subtasks.length > 0 && <div className="mt-3"><div className="flex items-center justify-between text-[10px] text-[var(--muted)]"><span>Checklist</span><span className="tabular-nums">{doneSubtasks}/{subtasks.length}</span></div><div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-[var(--bg)]"><div className="h-full rounded-full bg-[var(--success)]" style={{ width: ((doneSubtasks / subtasks.length) * 100) + '%' }} /></div></div>}
-                              <div className="mt-3 flex items-center justify-between gap-2 border-t border-[var(--line)] pt-2.5 text-[10px]">
-                                <span className="flex min-w-0 items-center gap-1.5 text-[var(--muted)]"><span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-[var(--line)] bg-[var(--bg)] text-[9px] font-semibold text-[var(--text)]">{task.assignedTo.charAt(0) || '?'}</span><span className="truncate">{task.assignedTo || 'Unassigned'}</span></span>
-                                <span className={overdue ? 'shrink-0 font-semibold text-[var(--danger)]' : 'shrink-0 text-[var(--muted)]'}>{overdue ? 'Overdue' : formatDate(task.dueDate)}</span>
+                              <h3 className="mt-2 text-xs font-semibold leading-5 text-text">{task.title}</h3>
+                              {task.description && <p className="mt-1 line-clamp-2 text-[11px] leading-4 text-muted">{task.description}</p>}
+                              {subtasks.length > 0 && <div className="mt-3"><div className="flex items-center justify-between text-[10px] text-muted"><span>Checklist</span><span className="tabular-nums">{doneSubtasks}/{subtasks.length}</span></div><div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-bg"><div className="h-full rounded-full bg-success" style={{ width: ((doneSubtasks / subtasks.length) * 100) + '%' }} /></div></div>}
+                              <div className="mt-3 flex items-center justify-between gap-2 border-t border-line pt-2.5 text-[10px]">
+                                <span className="flex min-w-0 items-center gap-1.5 text-muted"><span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-line bg-bg text-[9px] font-semibold text-text">{task.assignedTo.charAt(0) || '?'}</span><span className="truncate">{task.assignedTo || 'Unassigned'}</span></span>
+                                <span className={overdue ? 'shrink-0 font-semibold text-danger' : 'shrink-0 text-muted'}>{overdue ? 'Overdue' : formatDate(task.dueDate)}</span>
                               </div>
                             </article>
                           );
@@ -914,63 +914,63 @@ export const AdminProjects: React.FC = () => {
       )}
 
       {!selectedProject && !loading && projects.length > 0 && (
-        <div className="rounded-card border border-dashed border-[var(--line)] bg-[var(--panel)] p-8 text-center">
-          <FolderKanban className="mx-auto text-[var(--muted)]" size={22} />
-          <p className="mt-3 text-sm font-semibold text-[var(--text)]">Select a project</p>
-          <p className="mt-1 text-xs text-[var(--muted)]">Choose a project above to open its delivery workspace.</p>
+        <div className="rounded-card border border-dashed border-line bg-panel p-8 text-center">
+          <FolderKanban className="mx-auto text-muted" size={22} />
+          <p className="mt-3 text-sm font-semibold text-text">Select a project</p>
+          <p className="mt-1 text-xs text-muted">Choose a project above to open its delivery workspace.</p>
         </div>
       )}
 
       {/* CONTEXTUAL TASK DETAIL DRAWER */}
       {taskDrawer && selectedProject && (
         <div className="fixed inset-0 z-[60] flex" role="dialog" aria-modal="true" aria-label="Task details">
-          <button className="absolute inset-0 cursor-default bg-[var(--bg)]/80" aria-label="Close task details" onClick={() => setTaskDrawer(null)} />
-          <aside className="relative ml-auto flex h-full w-full max-w-xl flex-col border-l border-[var(--line)] bg-[var(--panel)]">
-            <header className="flex shrink-0 items-center justify-between gap-3 border-b border-[var(--line)] px-4 py-4 sm:px-5">
+          <button className="absolute inset-0 cursor-default bg-bg/80" aria-label="Close task details" onClick={() => setTaskDrawer(null)} />
+          <aside className="relative ml-auto flex h-full w-full max-w-xl flex-col border-l border-line bg-panel">
+            <header className="flex shrink-0 items-center justify-between gap-3 border-b border-line px-4 py-4 sm:px-5">
               <div className="min-w-0">
-                <div className="flex items-center gap-2 text-[11px] text-[var(--muted)]"><ListTodo size={14} className="text-[var(--accent-text)]" />Task details</div>
-                <h2 className="mt-1 truncate text-base font-semibold text-[var(--text)]">{taskDrawer.title}</h2>
+                <div className="flex items-center gap-2 text-[11px] text-muted"><ListTodo size={14} className="text-accent-text" />Task details</div>
+                <h2 className="mt-1 truncate text-base font-semibold text-text">{taskDrawer.title}</h2>
               </div>
-              <button onClick={() => setTaskDrawer(null)} aria-label="Close task details" className="inline-flex min-h-10 min-w-10 items-center justify-center rounded-control border border-[var(--line)] text-[var(--muted)] hover:bg-[var(--bg)] hover:text-[var(--text)]"><X size={16} /></button>
+              <button onClick={() => setTaskDrawer(null)} aria-label="Close task details" className="inline-flex min-h-10 min-w-10 items-center justify-center rounded-control border border-line text-muted hover:bg-bg hover:text-text"><X size={16} /></button>
             </header>
             <div className="min-h-0 flex-1 overflow-y-auto p-4 sm:p-5">
               <div className="flex flex-wrap gap-2">
                 <span className={'rounded-control border px-2 py-1 text-[10px] font-semibold ' + taskPriorityClass(taskDrawer.priority)}>{priorityLabel(taskDrawer.priority)}</span>
-                <span className="rounded-control border border-[var(--line)] bg-[var(--bg)] px-2 py-1 text-[10px] text-[var(--muted)]">{formatDate(taskDrawer.dueDate)}</span>
+                <span className="rounded-control border border-line bg-bg px-2 py-1 text-[10px] text-muted">{formatDate(taskDrawer.dueDate)}</span>
               </div>
 
               <div className="mt-5">
-                <div className="text-[11px] font-semibold text-[var(--muted)]">Status</div>
+                <div className="text-[11px] font-semibold text-muted">Status</div>
                 <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
-                  {TASK_COLUMNS.map(column => <button key={column.id} disabled={!canManageKanbanTasks} onClick={() => void changeTaskStatus(taskDrawer, column.id)} className={'min-h-10 rounded-control border px-2 text-[11px] font-semibold transition-colors ' + (taskDrawer.status === column.id ? 'border-[var(--accent)] bg-[var(--accent)] text-white' : 'border-[var(--line)] bg-[var(--bg)] text-[var(--muted)] hover:text-[var(--text)]')}>{column.label}</button>)}
+                  {TASK_COLUMNS.map(column => <button key={column.id} disabled={!canManageKanbanTasks} onClick={() => void changeTaskStatus(taskDrawer, column.id)} className={'min-h-10 rounded-control border px-2 text-[11px] font-semibold transition-colors ' + (taskDrawer.status === column.id ? 'border-accent bg-accent text-white' : 'border-line bg-bg text-muted hover:text-text')}>{column.label}</button>)}
                 </div>
               </div>
 
               <div className="mt-5 grid gap-3 sm:grid-cols-2">
-                <div className="rounded-control border border-[var(--line)] bg-[var(--bg)] p-3"><div className="text-[10px] text-[var(--muted)]">Assignee</div><div className="mt-1 flex items-center gap-2 text-xs font-semibold text-[var(--text)]"><User size={13} />{taskDrawer.assignedTo || 'Unassigned'}</div></div>
-                <div className="rounded-control border border-[var(--line)] bg-[var(--bg)] p-3"><div className="text-[10px] text-[var(--muted)]">Due date</div><div className="mt-1 flex items-center gap-2 text-xs font-semibold text-[var(--text)]"><Calendar size={13} />{formatDate(taskDrawer.dueDate)}</div></div>
+                <div className="rounded-control border border-line bg-bg p-3"><div className="text-[10px] text-muted">Assignee</div><div className="mt-1 flex items-center gap-2 text-xs font-semibold text-text"><User size={13} />{taskDrawer.assignedTo || 'Unassigned'}</div></div>
+                <div className="rounded-control border border-line bg-bg p-3"><div className="text-[10px] text-muted">Due date</div><div className="mt-1 flex items-center gap-2 text-xs font-semibold text-text"><Calendar size={13} />{formatDate(taskDrawer.dueDate)}</div></div>
               </div>
 
               <div className="mt-5">
-                <div className="text-[11px] font-semibold text-[var(--muted)]">Description</div>
-                <div className="mt-2 rounded-card border border-[var(--line)] bg-[var(--bg)] p-3 text-xs leading-5 text-[var(--text)]">{taskDrawer.description || 'No description provided.'}</div>
+                <div className="text-[11px] font-semibold text-muted">Description</div>
+                <div className="mt-2 rounded-card border border-line bg-bg p-3 text-xs leading-5 text-text">{taskDrawer.description || 'No description provided.'}</div>
               </div>
 
               <div className="mt-5">
-                <div className="flex items-center justify-between"><div className="text-[11px] font-semibold text-[var(--muted)]">Checklist</div><span className="text-[10px] text-[var(--muted)]">{(taskDrawer.subtasks || []).filter(item => item.completed).length}/{(taskDrawer.subtasks || []).length}</span></div>
+                <div className="flex items-center justify-between"><div className="text-[11px] font-semibold text-muted">Checklist</div><span className="text-[10px] text-muted">{(taskDrawer.subtasks || []).filter(item => item.completed).length}/{(taskDrawer.subtasks || []).length}</span></div>
                 <div className="mt-2 space-y-2">
-                  {(taskDrawer.subtasks || []).length === 0 ? <div className="rounded-control border border-dashed border-[var(--line)] p-3 text-xs text-[var(--muted)]">No checklist items.</div> : (taskDrawer.subtasks || []).map(item => (
-                    <button key={item.id} disabled={!canManageKanbanTasks} onClick={() => void toggleSubtask(taskDrawer, item)} className="flex w-full items-center gap-2.5 rounded-control border border-[var(--line)] bg-[var(--bg)] p-3 text-left">
-                      {item.completed ? <CheckCircle2 size={16} className="shrink-0 text-[var(--success)]" /> : <span className="h-4 w-4 shrink-0 rounded border border-[var(--muted)]" />}
-                      <span className={'text-xs ' + (item.completed ? 'text-[var(--muted)] line-through' : 'text-[var(--text)]')}>{item.title}</span>
+                  {(taskDrawer.subtasks || []).length === 0 ? <div className="rounded-control border border-dashed border-line p-3 text-xs text-muted">No checklist items.</div> : (taskDrawer.subtasks || []).map(item => (
+                    <button key={item.id} disabled={!canManageKanbanTasks} onClick={() => void toggleSubtask(taskDrawer, item)} className="flex w-full items-center gap-2.5 rounded-control border border-line bg-bg p-3 text-left">
+                      {item.completed ? <CheckCircle2 size={16} className="shrink-0 text-success" /> : <span className="h-4 w-4 shrink-0 rounded border border-muted" />}
+                      <span className={'text-xs ' + (item.completed ? 'text-muted line-through' : 'text-text')}>{item.title}</span>
                     </button>
                   ))}
                 </div>
               </div>
 
-              {(taskDrawer.tags || []).length > 0 && <div className="mt-5"><div className="text-[11px] font-semibold text-[var(--muted)]">Tags</div><div className="mt-2 flex flex-wrap gap-1.5">{taskDrawer.tags?.map(tag => <span key={tag} className="rounded-control border border-[var(--line)] bg-[var(--bg)] px-2 py-1 text-[10px] text-[var(--muted)]">{tag}</span>)}</div></div>}
+              {(taskDrawer.tags || []).length > 0 && <div className="mt-5"><div className="text-[11px] font-semibold text-muted">Tags</div><div className="mt-2 flex flex-wrap gap-1.5">{taskDrawer.tags?.map(tag => <span key={tag} className="rounded-control border border-line bg-bg px-2 py-1 text-[10px] text-muted">{tag}</span>)}</div></div>}
             </div>
-            <footer className="flex shrink-0 items-center justify-between gap-2 border-t border-[var(--line)] bg-[var(--panel)] px-4 py-3 sm:px-5">
+            <footer className="flex shrink-0 items-center justify-between gap-2 border-t border-line bg-panel px-4 py-3 sm:px-5">
               <Button variant="danger" icon={<Trash2 size={13} />} onClick={() => setDeleteTaskTarget(taskDrawer)} disabled={!canManageKanbanTasks}>Delete</Button>
               <div className="flex gap-2"><Button variant="secondary" onClick={() => setTaskDrawer(null)}>Close</Button>{canManageKanbanTasks && <Button icon={<Edit3 size={13} />} onClick={() => openEditTask(taskDrawer)}>Edit task</Button>}</div>
             </footer>
@@ -981,26 +981,26 @@ export const AdminProjects: React.FC = () => {
       <Modal open={projectModalOpen} onClose={() => !saving && setProjectModalOpen(false)} size="xl" title={editingProject ? 'Edit project' : 'New project'} description="Keep project information aligned with the delivery record.">
         <form onSubmit={saveProject} className="space-y-5">
           <div className="grid gap-4 sm:grid-cols-2">
-            <label className="text-xs text-[var(--muted)]">Project name<input value={projectForm.name} onChange={event => setProjectForm({ ...projectForm, name: event.target.value })} className={fieldClass} required /></label>
-            <label className="text-xs text-[var(--muted)]">Client company<input value={projectForm.clientCompany} onChange={event => setProjectForm({ ...projectForm, clientCompany: event.target.value })} className={fieldClass} required /></label>
-            <label className="text-xs text-[var(--muted)]">Client contact<input value={projectForm.clientName} onChange={event => setProjectForm({ ...projectForm, clientName: event.target.value })} className={fieldClass} /></label>
-            <label className="text-xs text-[var(--muted)]">Client email<input type="email" value={projectForm.clientEmail} onChange={event => setProjectForm({ ...projectForm, clientEmail: event.target.value })} className={fieldClass} /></label>
-            <label className="text-xs text-[var(--muted)]">Service category<input value={projectForm.serviceCategory} onChange={event => setProjectForm({ ...projectForm, serviceCategory: event.target.value })} className={fieldClass} /></label>
-            <label className="text-xs text-[var(--muted)]">Owner<input value={projectForm.teamLead} onChange={event => setProjectForm({ ...projectForm, teamLead: event.target.value })} className={fieldClass} /></label>
-            <div><label className="text-xs text-[var(--muted)]">Status</label><CustomSelect value={projectForm.status} onChange={value => setProjectForm({ ...projectForm, status: value as ProjectStatus })} options={PROJECT_STATUSES} className="mt-1 w-full" /></div>
-            <div><label className="text-xs text-[var(--muted)]">Health</label><CustomSelect value={projectForm.health} onChange={value => setProjectForm({ ...projectForm, health: value as ProjectHealth })} options={['Good', 'At Risk', 'Delayed', 'Blocked'].map(value => ({ value, label: value }))} className="mt-1 w-full" /></div>
-            <label className="text-xs text-[var(--muted)]">Budget<input type="number" min="0" value={projectForm.budget} onChange={event => setProjectForm({ ...projectForm, budget: event.target.value })} className={fieldClass} /></label>
-            <label className="text-xs text-[var(--muted)]">Progress %<input type="number" min="0" max="100" value={projectForm.progressPercent} onChange={event => setProjectForm({ ...projectForm, progressPercent: event.target.value })} className={fieldClass} /></label>
-            <label className="text-xs text-[var(--muted)]">Start date<input type="date" value={projectForm.startDate} onChange={event => setProjectForm({ ...projectForm, startDate: event.target.value })} className={fieldClass} /></label>
-            <label className="text-xs text-[var(--muted)]">Deadline<input type="date" value={projectForm.targetEndDate} onChange={event => setProjectForm({ ...projectForm, targetEndDate: event.target.value })} className={fieldClass} /></label>
-            <label className="text-xs text-[var(--muted)] sm:col-span-2">Team members, comma separated<input value={projectForm.teamMembers} onChange={event => setProjectForm({ ...projectForm, teamMembers: event.target.value })} className={fieldClass} /></label>
-            <label className="text-xs text-[var(--muted)] sm:col-span-2">Technology stack, comma separated<input value={projectForm.techStack} onChange={event => setProjectForm({ ...projectForm, techStack: event.target.value })} className={fieldClass} /></label>
-            <label className="text-xs text-[var(--muted)]">Repository URL<input type="url" value={projectForm.repositoryUrl} onChange={event => setProjectForm({ ...projectForm, repositoryUrl: event.target.value })} className={fieldClass} /></label>
-            <label className="text-xs text-[var(--muted)]">Figma URL<input type="url" value={projectForm.figmaUrl} onChange={event => setProjectForm({ ...projectForm, figmaUrl: event.target.value })} className={fieldClass} /></label>
-            <label className="text-xs text-[var(--muted)] sm:col-span-2">Staging URL<input type="url" value={projectForm.liveStagingUrl} onChange={event => setProjectForm({ ...projectForm, liveStagingUrl: event.target.value })} className={fieldClass} /></label>
-            <label className="text-xs text-[var(--muted)] sm:col-span-2">Notes<textarea value={projectForm.notes} onChange={event => setProjectForm({ ...projectForm, notes: event.target.value })} className={fieldClass + ' min-h-24 py-2'} /></label>
+            <label className="text-xs text-muted">Project name<input value={projectForm.name} onChange={event => setProjectForm({ ...projectForm, name: event.target.value })} className={fieldClass} required /></label>
+            <label className="text-xs text-muted">Client company<input value={projectForm.clientCompany} onChange={event => setProjectForm({ ...projectForm, clientCompany: event.target.value })} className={fieldClass} required /></label>
+            <label className="text-xs text-muted">Client contact<input value={projectForm.clientName} onChange={event => setProjectForm({ ...projectForm, clientName: event.target.value })} className={fieldClass} /></label>
+            <label className="text-xs text-muted">Client email<input type="email" value={projectForm.clientEmail} onChange={event => setProjectForm({ ...projectForm, clientEmail: event.target.value })} className={fieldClass} /></label>
+            <label className="text-xs text-muted">Service category<input value={projectForm.serviceCategory} onChange={event => setProjectForm({ ...projectForm, serviceCategory: event.target.value })} className={fieldClass} /></label>
+            <label className="text-xs text-muted">Owner<input value={projectForm.teamLead} onChange={event => setProjectForm({ ...projectForm, teamLead: event.target.value })} className={fieldClass} /></label>
+            <div><label className="text-xs text-muted">Status</label><CustomSelect value={projectForm.status} onChange={value => setProjectForm({ ...projectForm, status: value as ProjectStatus })} options={PROJECT_STATUSES} className="mt-1 w-full" /></div>
+            <div><label className="text-xs text-muted">Health</label><CustomSelect value={projectForm.health} onChange={value => setProjectForm({ ...projectForm, health: value as ProjectHealth })} options={['Good', 'At Risk', 'Delayed', 'Blocked'].map(value => ({ value, label: value }))} className="mt-1 w-full" /></div>
+            <label className="text-xs text-muted">Budget<input type="number" min="0" value={projectForm.budget} onChange={event => setProjectForm({ ...projectForm, budget: event.target.value })} className={fieldClass} /></label>
+            <label className="text-xs text-muted">Progress %<input type="number" min="0" max="100" value={projectForm.progressPercent} onChange={event => setProjectForm({ ...projectForm, progressPercent: event.target.value })} className={fieldClass} /></label>
+            <label className="text-xs text-muted">Start date<input type="date" value={projectForm.startDate} onChange={event => setProjectForm({ ...projectForm, startDate: event.target.value })} className={fieldClass} /></label>
+            <label className="text-xs text-muted">Deadline<input type="date" value={projectForm.targetEndDate} onChange={event => setProjectForm({ ...projectForm, targetEndDate: event.target.value })} className={fieldClass} /></label>
+            <label className="text-xs text-muted sm:col-span-2">Team members, comma separated<input value={projectForm.teamMembers} onChange={event => setProjectForm({ ...projectForm, teamMembers: event.target.value })} className={fieldClass} /></label>
+            <label className="text-xs text-muted sm:col-span-2">Technology stack, comma separated<input value={projectForm.techStack} onChange={event => setProjectForm({ ...projectForm, techStack: event.target.value })} className={fieldClass} /></label>
+            <label className="text-xs text-muted">Repository URL<input type="url" value={projectForm.repositoryUrl} onChange={event => setProjectForm({ ...projectForm, repositoryUrl: event.target.value })} className={fieldClass} /></label>
+            <label className="text-xs text-muted">Figma URL<input type="url" value={projectForm.figmaUrl} onChange={event => setProjectForm({ ...projectForm, figmaUrl: event.target.value })} className={fieldClass} /></label>
+            <label className="text-xs text-muted sm:col-span-2">Staging URL<input type="url" value={projectForm.liveStagingUrl} onChange={event => setProjectForm({ ...projectForm, liveStagingUrl: event.target.value })} className={fieldClass} /></label>
+            <label className="text-xs text-muted sm:col-span-2">Notes<textarea value={projectForm.notes} onChange={event => setProjectForm({ ...projectForm, notes: event.target.value })} className={fieldClass + ' min-h-24 py-2'} /></label>
           </div>
-          <div className="flex flex-col-reverse gap-2 border-t border-[var(--line)] pt-4 sm:flex-row sm:justify-end">
+          <div className="flex flex-col-reverse gap-2 border-t border-line pt-4 sm:flex-row sm:justify-end">
             <Button type="button" variant="secondary" onClick={() => setProjectModalOpen(false)} disabled={saving}>Cancel</Button>
             <Button type="submit" loading={saving}>{editingProject ? 'Save changes' : 'Create project'}</Button>
           </div>
@@ -1010,10 +1010,10 @@ export const AdminProjects: React.FC = () => {
       <Modal open={taskModalOpen} onClose={() => !saving && setTaskModalOpen(false)} size="xl" title={editingTask ? 'Edit task' : 'New task'} description="Update the task record used by the project execution board.">
         <form onSubmit={handleAddTask} className="space-y-5">
           <div className="grid gap-4 sm:grid-cols-2">
-            <label className="text-xs text-[var(--muted)] sm:col-span-2">Task title<input value={taskForm.title} onChange={event => setTaskForm({ ...taskForm, title: event.target.value })} className={fieldClass} required /></label>
-            <div><label className="text-xs text-[var(--muted)]">Project</label><CustomSelect value={taskForm.projectId} onChange={value => setTaskForm({ ...taskForm, projectId: value })} options={projects.map(project => ({ value: project.id, label: project.name }))} className="mt-1 w-full" /></div>
+            <label className="text-xs text-muted sm:col-span-2">Task title<input value={taskForm.title} onChange={event => setTaskForm({ ...taskForm, title: event.target.value })} className={fieldClass} required /></label>
+            <div><label className="text-xs text-muted">Project</label><CustomSelect value={taskForm.projectId} onChange={value => setTaskForm({ ...taskForm, projectId: value })} options={projects.map(project => ({ value: project.id, label: project.name }))} className="mt-1 w-full" /></div>
             <div>
-              <label className="text-xs text-[var(--muted)]">Assignee</label>
+              <label className="text-xs text-muted">Assignee</label>
               <CustomSelect
                 value={taskForm.assignee}
                 onChange={value => setTaskForm({ ...taskForm, assignee: value })}
@@ -1021,14 +1021,14 @@ export const AdminProjects: React.FC = () => {
                 className="mt-1 w-full"
               />
             </div>
-            <div><label className="text-xs text-[var(--muted)]">Status</label><CustomSelect value={taskForm.status} onChange={value => setTaskForm({ ...taskForm, status: value as TaskStatus })} options={TASK_COLUMNS.map(item => ({ value: item.id, label: item.label }))} className="mt-1 w-full" /></div>
-            <div><label className="text-xs text-[var(--muted)]">Priority</label><CustomSelect value={taskForm.priority} onChange={value => setTaskForm({ ...taskForm, priority: value as TaskPriority })} options={TASK_PRIORITIES} className="mt-1 w-full" /></div>
-            <label className="text-xs text-[var(--muted)]">Due date<input type="date" value={taskForm.dueDate} onChange={event => setTaskForm({ ...taskForm, dueDate: event.target.value })} className={fieldClass} required /></label>
-            <label className="text-xs text-[var(--muted)]">Tags, comma separated<input value={taskForm.tags} onChange={event => setTaskForm({ ...taskForm, tags: event.target.value })} className={fieldClass} /></label>
-            <label className="text-xs text-[var(--muted)] sm:col-span-2">Description<textarea value={taskForm.description} onChange={event => setTaskForm({ ...taskForm, description: event.target.value })} className={fieldClass + ' min-h-24 py-2'} /></label>
-            <label className="text-xs text-[var(--muted)] sm:col-span-2">Checklist, one item per line<textarea value={taskForm.subtasks} onChange={event => setTaskForm({ ...taskForm, subtasks: event.target.value })} className={fieldClass + ' min-h-24 py-2'} /></label>
+            <div><label className="text-xs text-muted">Status</label><CustomSelect value={taskForm.status} onChange={value => setTaskForm({ ...taskForm, status: value as TaskStatus })} options={TASK_COLUMNS.map(item => ({ value: item.id, label: item.label }))} className="mt-1 w-full" /></div>
+            <div><label className="text-xs text-muted">Priority</label><CustomSelect value={taskForm.priority} onChange={value => setTaskForm({ ...taskForm, priority: value as TaskPriority })} options={TASK_PRIORITIES} className="mt-1 w-full" /></div>
+            <label className="text-xs text-muted">Due date<input type="date" value={taskForm.dueDate} onChange={event => setTaskForm({ ...taskForm, dueDate: event.target.value })} className={fieldClass} required /></label>
+            <label className="text-xs text-muted">Tags, comma separated<input value={taskForm.tags} onChange={event => setTaskForm({ ...taskForm, tags: event.target.value })} className={fieldClass} /></label>
+            <label className="text-xs text-muted sm:col-span-2">Description<textarea value={taskForm.description} onChange={event => setTaskForm({ ...taskForm, description: event.target.value })} className={fieldClass + ' min-h-24 py-2'} /></label>
+            <label className="text-xs text-muted sm:col-span-2">Checklist, one item per line<textarea value={taskForm.subtasks} onChange={event => setTaskForm({ ...taskForm, subtasks: event.target.value })} className={fieldClass + ' min-h-24 py-2'} /></label>
           </div>
-          <div className="flex flex-col-reverse gap-2 border-t border-[var(--line)] pt-4 sm:flex-row sm:justify-end">
+          <div className="flex flex-col-reverse gap-2 border-t border-line pt-4 sm:flex-row sm:justify-end">
             <Button type="button" variant="secondary" onClick={() => setTaskModalOpen(false)} disabled={saving}>Cancel</Button>
             <Button type="submit" loading={saving}>{editingTask ? 'Save changes' : 'Create task'}</Button>
           </div>
