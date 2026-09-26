@@ -24,6 +24,7 @@ import {
   getAgencyExpenses,
   getAgencyInvoices,
   getMonthlyCashFlowSeries,
+  computeFinancialMetrics,
 } from '../../lib/financeStore';
 import { TrendChart, BarChart, DonutChart } from '../charts/DashboardCharts';
 
@@ -222,13 +223,13 @@ export const GlobalExecutiveDashboard: React.FC = () => {
     if (!canViewFinancials) return null;
     const invoices = getAgencyInvoices();
     const expenses = getAgencyExpenses();
-    const paid = invoices.reduce((sum, invoice) => sum + (Number(invoice.amountPaid) || 0), 0);
-    const overdue = invoices.filter((invoice) => invoice.status === 'overdue').reduce((sum, invoice) => sum + (Number(invoice.balanceDue ?? invoice.total) || 0), 0);
-    const outstanding = invoices.filter((invoice) => ['sent', 'overdue', 'partially_paid'].includes(invoice.status))
-      .reduce((sum, invoice) => sum + (Number(invoice.balanceDue ?? invoice.total) || 0), 0);
-    const expenseTotal = expenses.reduce((sum, expense) => sum + (Number(expense.amount) || 0), 0);
-    const collectionRate = invoices.length ? Math.round((invoices.filter((invoice) => invoice.status === 'paid').length / invoices.length) * 100) : null;
-    return { paid, overdue, outstanding, expenseTotal, collectionRate };
+    const metrics = computeFinancialMetrics(invoices, expenses);
+    return {
+      collectionRate: invoices.length ? metrics.collectionRate : null,
+      totalOutstanding: metrics.totalOutstanding,
+      totalOverdue: metrics.totalOverdue,
+      totalExpenses: metrics.totalExpenses,
+    };
   }, [canViewFinancials, financeVersion]);
 
   const metrics = data?.metrics;
