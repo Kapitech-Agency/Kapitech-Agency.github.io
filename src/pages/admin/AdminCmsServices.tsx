@@ -224,7 +224,7 @@ export const AdminCmsServices: React.FC = () => {
 
           <button
             onClick={() => setIsAddModalOpen(true)}
-            className="px-4 py-2 rounded-control bg-accent hover:bg-[var(--accent-hover)] text-white text-xs font-sans font-semibold transition-all flex items-center gap-1.5 min-h-10"
+            className="px-4 py-2 rounded-control bg-accent hover:bg-accent-hover text-white text-xs font-sans font-semibold transition-all flex items-center gap-1.5 min-h-10"
           >
             <Plus size={14} />
             <span>Add Service</span>
@@ -500,7 +500,7 @@ export const AdminCmsServices: React.FC = () => {
                   href={`/services/${selectedServiceForDetail.slug}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-4 py-2 rounded-control bg-accent hover:bg-[var(--accent-hover)] text-white text-xs font-sans font-semibold flex items-center gap-1 transition-all"
+                  className="px-4 py-2 rounded-control bg-accent hover:bg-accent-hover text-white text-xs font-sans font-semibold flex items-center gap-1 transition-all"
                 >
                   <span>Open Public Page</span>
                   <ExternalLink size={12} />
@@ -612,7 +612,7 @@ export const AdminCmsServices: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => handleRemoveTempCapability(idx)}
-                        className="text-danger hover:bg-[var(--accent-hover)] ml-2"
+                        className="text-danger hover:bg-accent-hover ml-2"
                       >
                         <X size={12} />
                       </button>
@@ -631,7 +631,7 @@ export const AdminCmsServices: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-control bg-accent hover:bg-[var(--accent-hover)] text-white text-xs font-semibold transition-all"
+                  className="px-5 py-2 rounded-control bg-accent hover:bg-accent-hover text-white text-xs font-semibold transition-all"
                 >
                   Publish Service
                 </button>
