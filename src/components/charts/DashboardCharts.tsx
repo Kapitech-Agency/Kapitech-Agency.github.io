@@ -73,7 +73,7 @@ export const TrendChart: React.FC<{
   if (!data.length) return null;
 
   const active = activeIndex === null ? null : points[activeIndex];
-  const tooltipLeft = active ? Math.min(86, Math.max(14, (active.x / width) * 100)) : 0;
+  const tooltipLeft = active ? (active.x < width / 2 ? 64 : 36) : 50;
 
   return (
     <div className="relative min-w-0" role="img" aria-label={ariaLabel}>
@@ -82,7 +82,7 @@ export const TrendChart: React.FC<{
         {secondaryLabel && <span className="inline-flex items-center gap-2"><i className="h-2 w-2 rounded-full bg-series-3" />{secondaryLabel}</span>}
       </div>
       <div className="relative overflow-hidden rounded-control border border-line bg-bg/40">
-        <svg viewBox={`0 0 ${width} ${height}`} className="block h-[220px] w-full min-w-[520px] touch-none" preserveAspectRatio="none"
+        <svg viewBox={`0 0 ${width} ${height}`} className="block h-[220px] w-full touch-none" preserveAspectRatio="none"
           onMouseLeave={() => setActiveIndex(null)}>
           {[0, 0.25, 0.5, 0.75, 1].map((ratio) => {
             const value = maxValue - ratio * range;
@@ -163,7 +163,7 @@ export const BarChart: React.FC<{
   return (
     <div className="min-w-0" role="img" aria-label={ariaLabel}>
       <div className="relative overflow-hidden rounded-control border border-line bg-bg/40">
-        <svg viewBox={`0 0 ${width} ${height}`} className="block h-[220px] w-full min-w-[520px]" preserveAspectRatio="none" onMouseLeave={() => setActiveIndex(null)}>
+        <svg viewBox={`0 0 ${width} ${height}`} className="block h-[220px] w-full" preserveAspectRatio="none" onMouseLeave={() => setActiveIndex(null)}>
           {[0, 0.5, 1].map((ratio) => {
             const yy = top + (1 - ratio) * innerHeight;
             return <line key={ratio} x1={left} x2={width - 16} y1={yy} y2={yy} stroke="var(--line)" strokeWidth="1" />;
