@@ -54,8 +54,8 @@ export const Modal: React.FC<ModalProps> = ({
     <div className="ams-modal-root fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4" role="presentation">
       <button aria-label="Close dialog overlay" type="button" tabIndex={-1} aria-hidden="true" className="absolute inset-0 bg-bg/80" onClick={() => closeOnOutsideClick && onClose()} />
       <div ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby={labelledBy} aria-describedby={description ? descriptionId : undefined}
-        className={`relative w-full ${sizes[size]} max-h-[calc(100dvh-28px)] flex flex-col overflow-hidden rounded-card border border-line bg-panel`}>
-        <header className="flex items-start justify-between gap-4 border-b border-line px-4 py-3.5 sm:px-5">
+        className={`relative w-full ${sizes[size]} max-h-[calc(100dvh-32px)] flex flex-col overflow-hidden rounded-card border border-line bg-panel`}>
+        <header className="flex items-start justify-between gap-4 border-b border-line px-4 py-4">
           <div className="min-w-0">
             <h2 id={labelledBy} className="text-sm font-semibold text-fg">{title}</h2>
             {description && <p id={descriptionId} className="mt-1 text-xs leading-relaxed text-muted">{description}</p>}
@@ -65,8 +65,8 @@ export const Modal: React.FC<ModalProps> = ({
             <X size={16} />
           </button>
         </header>
-        <div className="min-h-0 flex-1 overflow-y-auto px-4 py-4 sm:px-5">{children}</div>
-        {footer && <footer className="flex flex-col-reverse sm:flex-row sm:flex-wrap items-stretch sm:items-center justify-end gap-2 border-t border-line bg-panel px-4 py-3.5 sm:px-5">{footer}</footer>}
+        <div className="min-h-0 flex-1 overflow-y-auto px-4 py-4">{children}</div>
+        {footer && <footer className="flex flex-col-reverse sm:flex-row sm:flex-wrap items-stretch sm:items-center justify-end gap-2 border-t border-line bg-panel px-4 py-4">{footer}</footer>}
       </div>
     </div>
   );
