@@ -409,22 +409,7 @@ export const AdminApprovals: React.FC = () => {
       </div>
 
       {/* DECISION MODAL */}
-      {activeItem && canApproveBudgets && (
-        <div className="fixed inset-0 z-50 bg-bg/80 flex items-center justify-center p-4" role="presentation">
-          <div className="bg-bg border border-line rounded-card w-full max-w-md max-h-[calc(100dvh-24px)] overflow-y-auto">
-            <div className="p-4 border-b border-line flex items-center justify-between bg-panel">
-              <h3 className="text-sm font-semibold font-sans text-fg flex items-center gap-2">
-                <ShieldCheck size={16} className="text-accent" />
-                <span>Executive Decision Confirmation</span>
-              </h3>
-              <button
-                onClick={() => setActiveItem(null)}
-                className="p-1 text-muted hover:text-fg rounded-control hover:bg-panel-hover"
-              >
-                <X size={16} />
-              </button>
-            </div>
-
+      <Modal open={!!activeItem && canApproveBudgets} onClose={() => setActiveItem(null)} size="md" title="Executive Decision Confirmation" description="Record the decision and rationale in the security audit log.">
             <form onSubmit={handleDecisionSubmit} className="p-5 space-y-4 text-xs font-sans">
               <div>
                 <div className="font-semibold text-fg text-sm">{activeItem.title}</div>
@@ -506,9 +491,7 @@ export const AdminApprovals: React.FC = () => {
                 </button>
               </div>
             </form>
-          </div>
-        </div>
-      )}
+      </Modal>
     </div>
   );
 };
