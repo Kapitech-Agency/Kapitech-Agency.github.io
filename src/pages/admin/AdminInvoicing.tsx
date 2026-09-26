@@ -905,7 +905,7 @@ export const AdminInvoicing: React.FC = () => {
                   </div>
 
                   <div className="space-y-3 md:hidden">
-                    {filteredInvoices.map((invoice) => {
+                    {paginatedInvoices.map((invoice) => {
                       const balance = Number(invoice.balanceDue ?? (invoice.total - (invoice.amountPaid || 0)));
                       return (
                         <article key={invoice.id} className="rounded-card border border-line bg-panel p-4">
