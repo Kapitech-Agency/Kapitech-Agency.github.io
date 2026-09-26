@@ -199,7 +199,8 @@ export const AdminProjects: React.FC = () => {
 
   const [taskModalOpen, setTaskModalOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<ProjectTask | null>(null);
-  const [taskAssignees, setTaskAssignees] = useState<Array<{ id: string; name: string; username: string; role: string; division: string }>>([]);\n  const [taskForm, setTaskForm] = useState({
+  const [taskAssignees, setTaskAssignees] = useState<Array<{ id: string; name: string; username: string; role: string; division: string }>>([]);
+  const [taskForm, setTaskForm] = useState({
     title: '',
     description: '',
     projectId: '',
