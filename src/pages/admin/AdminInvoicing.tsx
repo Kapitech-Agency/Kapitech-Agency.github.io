@@ -643,14 +643,18 @@ export const AdminInvoicing: React.FC = () => {
       ) : (
         <>
           <section aria-labelledby="finance-snapshot-title">
-            <div className="flex items-end justify-between gap-3">
-              <div>
+            <div className="mb-3 flex items-end justify-between gap-3 border-b border-line pb-3">
+              <div className="min-w-0">
                 <h2 id="finance-snapshot-title" className="text-sm font-semibold text-fg">{language === 'id' ? 'Ringkasan finansial' : 'Financial snapshot'}</h2>
                 <p className="mt-1 text-xs text-muted">{currency} ledger based on current server-calculated metrics.</p>
               </div>
-              {serverMetrics && <span className="text-[11px] tabular-nums text-muted">{serverMetrics.totalInvoicesCount} invoices</span>}
+              {serverMetrics && (
+                <span className="inline-flex shrink-0 items-center gap-1.5 rounded-badge border border-accent/20 bg-accent/10 px-2 py-1 text-[11px] font-semibold tabular-nums text-accent-text">
+                  <Receipt size={12} aria-hidden="true" />
+                  {serverMetrics.totalInvoicesCount} invoices
+                </span>
+              )}
             </div>
-            <div className="mt-3 h-px w-full bg-line" aria-hidden="true" />
 
             <div className="grid grid-cols-2 gap-y-6 border-y border-line py-5 sm:grid-cols-3 min-[1100px]:grid-cols-6">
               {[
