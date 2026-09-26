@@ -541,8 +541,8 @@
 .ams-shell .ams-leads-page .ams-kanban-scroll> *{flex:0 0 300px;min-width:280px;max-width:340px}
 .ams-shell .ams-inbox-list-pane,.ams-shell .ams-inbox-reader-pane{min-width:0;min-height:0}.ams-shell .ams-inbox-reader-pane{overflow:hidden}
 .ams-shell .ams-modal-root,.ams-shell [role=dialog]{overscroll-behavior:contain}
-.ams-shell .ams-modal-root>[role=dialog],.ams-shell .ams-dialog-surface{animation:ams-dialog-in 160ms ease-out}.ams-shell .ams-drawer-surface{animation:ams-drawer-in 180ms ease-out}
-@keyframes ams-dialog-in{from{opacity:0;transform:translateY(4px) scale(.99)}to{opacity:1;transform:translateY(0) scale(1)}}@keyframes ams-drawer-in{from{opacity:.98;transform:translateX(12px)}to{opacity:1;transform:translateX(0)}}
+.ams-shell .ams-drawer-surface{animation:ams-drawer-in 180ms ease-out}
+@keyframes ams-drawer-in{from{opacity:.98;transform:translateX(12px)}to{opacity:1;transform:translateX(0)}}
 .ams-shell .custom-scrollbar::-webkit-scrollbar{width:4px;height:4px}.ams-shell .custom-scrollbar::-webkit-scrollbar-track{background:transparent}.ams-shell .custom-scrollbar::-webkit-scrollbar-thumb{background:var(--line);border-radius:3px}.ams-shell .custom-scrollbar::-webkit-scrollbar-thumb:hover{background:var(--muted)}
 .ams-portal-root{font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--text)}
 .ams-portal-root .ams-popover-surface,.ams-portal-root .ams-notification-surface{box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none}
