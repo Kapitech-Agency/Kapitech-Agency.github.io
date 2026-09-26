@@ -1344,71 +1344,67 @@
   outline-offset: 2px;
 }
 
-/* AMS popovers: one canonical surface for every custom dropdown. */
-.ams-shell .ams-popover-surface {
-  background: var(--bg);
-  color: var(--text);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-control);
+/* AMS PORTAL SURFACES
+   Dropdowns and notifications are rendered into document.body via a portal,
+   so these surfaces must not depend on the .ams-shell scope. */
+.ams-popover-surface {
+  background: var(--ams-panel, #0f0f14);
+  color: var(--ams-text, #f3f3f6);
+  border: 1px solid var(--ams-line, #20202a);
+  border-radius: 8px;
   box-shadow: none;
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
   isolation: isolate;
 }
 
-.ams-shell .ams-popover-surface .ams-dropdown-item {
+.ams-popover-surface .ams-dropdown-item {
   min-height: 36px;
   padding: 8px 10px;
   background: transparent;
-  color: var(--muted);
+  color: var(--ams-muted, #8b8b99);
   border-radius: 6px;
 }
 
-.ams-shell .ams-popover-surface .ams-dropdown-item:hover,
-.ams-shell .ams-popover-surface .ams-dropdown-item[data-active="true"] {
-  background: var(--panel-hover);
-  color: var(--text);
+.ams-popover-surface .ams-dropdown-item:hover,
+.ams-popover-surface .ams-dropdown-item[data-active="true"] {
+  background: var(--ams-panel-hover, #15151b);
+  color: var(--ams-text, #f3f3f6);
 }
 
-.ams-shell .ams-popover-surface .ams-dropdown-item[data-selected="true"] {
-  background: color-mix(in srgb, var(--accent) 10%, var(--panel));
-  color: var(--text);
+.ams-popover-surface .ams-dropdown-item[data-selected="true"] {
+  background: color-mix(in srgb, var(--ams-accent, #dc143c) 10%, var(--ams-panel, #0f0f14));
+  color: var(--ams-text, #f3f3f6);
   font-weight: 600;
 }
 
-.ams-shell .ams-popover-surface .ams-dropdown-item:focus-visible {
-  outline: 2px solid var(--accent);
+.ams-popover-surface .ams-dropdown-item:focus-visible {
+  outline: 2px solid var(--ams-accent, #dc143c);
   outline-offset: -2px;
 }
 
-.ams-shell .ams-notification-surface {
-  background: var(--bg);
-  color: var(--text);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-card);
+.ams-notification-surface {
+  background: var(--ams-panel, #0f0f14);
+  color: var(--ams-text, #f3f3f6);
+  border: 1px solid var(--ams-line, #20202a);
+  border-radius: 12px;
   box-shadow: none;
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
   isolation: isolate;
 }
 
-.ams-shell .ams-notification-header {
-  background: var(--bg);
+.ams-notification-header,
+.ams-notification-list,
+.ams-notification-item {
+  background: var(--ams-panel, #0f0f14);
 }
 
-.ams-shell .ams-notification-list {
-  background: var(--bg);
+.ams-notification-item.is-unread {
+  background: color-mix(in srgb, var(--ams-accent, #dc143c) 5%, var(--ams-panel, #0f0f14));
 }
 
-.ams-shell .ams-notification-item {
-  background: var(--bg);
-}
-
-.ams-shell .ams-notification-item.is-unread {
-  background: color-mix(in srgb, var(--accent) 5%, var(--bg));
-}
-
-.ams-shell .ams-notification-item:last-child {
+.ams-notification-item:last-child {
   border-bottom: 0;
 }
 
