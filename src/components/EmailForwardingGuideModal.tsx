@@ -20,94 +20,129 @@ export const EmailForwardingGuideModal: React.FC<EmailForwardingGuideModalProps>
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-      <div className="bg-[#111318] border border-[rgba(255,255,255,0.07)] rounded-2xl max-w-2xl w-full p-6 sm:p-7 shadow-2xl relative max-h-[90vh] overflow-y-auto">
-        
-        {/* Header */}
-        <div className="flex items-center justify-between pb-4 border-b border-[rgba(255,255,255,0.07)] mb-5">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-[var(--k-red)]/10 border border-[var(--k-red-border)] flex items-center justify-center text-[var(--k-red)]">
-              <Mail size={18} />
+    <div className="ams-modal-root fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4" role="presentation">
+      <button
+        type="button"
+        aria-label={language === 'id' ? 'Tutup dialog' : 'Close dialog'}
+        className="absolute inset-0 bg-bg/80"
+        onClick={onClose}
+      />
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="email-alerts-modal-title"
+        className="relative flex w-full max-w-2xl max-h-[calc(100dvh-28px)] flex-col overflow-hidden rounded-card border border-line bg-panel"
+      >
+        <header className="flex items-start justify-between gap-4 border-b border-line px-4 py-3.5 sm:px-5">
+          <div className="flex min-w-0 items-start gap-3">
+            <div className="flex min-h-10 min-w-10 shrink-0 items-center justify-center rounded-control border border-accent/30 bg-accent/10 text-accent-text">
+              <Mail size={17} />
             </div>
-            <div>
-              <h2 className="text-base font-bold font-display text-white">
-                {language === 'id' ? 'Panduan Notifikasi Email Otomatis' : 'Automated Email Alert Integration'}
+            <div className="min-w-0">
+              <h2 id="email-alerts-modal-title" className="text-sm font-semibold text-fg">
+                {language === 'id' ? 'Notifikasi Email' : 'Email Alerts'}
               </h2>
-              <p className="text-xs text-[#8A94A6]">
-                {language === 'id' 
-                  ? 'Cara konfigurasi agar pesan klien langsung diteruskan ke inbox email Anda' 
-                  : 'How to route client contact leads instantly into your primary executive mailbox'}
+              <p className="mt-1 text-xs leading-relaxed text-muted">
+                {language === 'id'
+                  ? 'Panduan konfigurasi penerusan notifikasi inquiry ke email tim.'
+                  : 'Configure how inbound inquiry notifications are routed to your team email.'}
               </p>
             </div>
           </div>
-
           <button
+            type="button"
             onClick={onClose}
-            className="w-8 h-8 rounded-xl bg-[#181B22] hover:bg-[#21252F] text-[#8A94A6] hover:text-white border border-[rgba(255,255,255,0.07)] flex items-center justify-center transition-colors"
+            aria-label={language === 'id' ? 'Tutup dialog' : 'Close dialog'}
+            className="flex min-h-10 min-w-10 shrink-0 items-center justify-center rounded-control border border-line text-muted transition-colors hover:bg-bg hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
           >
             <X size={16} />
           </button>
-        </div>
+        </header>
 
-        {/* Content */}
-        <div className="space-y-4 text-xs">
-          
-          <div className="p-4 rounded-xl bg-[#181B22] border border-[rgba(255,255,255,0.07)]">
-            <h3 className="font-bold text-white mb-1.5 flex items-center gap-2">
-              <ShieldCheck size={15} className="text-emerald-400" />
-              <span>1. Alamat Email Tujuan Default</span>
-            </h3>
-            <p className="text-[#8A94A6] leading-relaxed mb-3">
-              Semua formulir publik (/contact, /careers, dan footer newsletter) sudah terhubung ke sistem penyimpanan database dan disiapkan untuk meneruskan ke email resmi:
-            </p>
-            <div className="flex items-center justify-between p-2.5 rounded-lg bg-[#111318] border border-[rgba(255,255,255,0.07)] font-mono text-white">
-              <span>business@kapitech.id / kapitechagency@gmail.com</span>
-              <button
-                onClick={() => copyToClipboard('business@kapitech.id', 'email')}
-                className="text-[var(--k-red)] hover:underline text-[11px] flex items-center gap-1"
-              >
-                {copiedKey === 'email' ? <Check size={13} /> : <Copy size={13} />}
-                <span>{copiedKey === 'email' ? 'Tersalin' : 'Salin'}</span>
-              </button>
+        <div className="min-h-0 flex-1 space-y-3 overflow-y-auto px-4 py-4 custom-scrollbar sm:px-5">
+          <section className="rounded-control border border-line bg-bg p-4">
+            <div className="flex items-start gap-3">
+              <ShieldCheck size={15} className="mt-0.5 shrink-0 text-success" />
+              <div className="min-w-0 flex-1">
+                <h3 className="text-xs font-semibold text-fg">
+                  {language === 'id' ? 'Alamat Email Tujuan' : 'Default Destination'}
+                </h3>
+                <p className="mt-1.5 text-xs leading-relaxed text-muted">
+                  {language === 'id'
+                    ? 'Form publik tersimpan di sistem inbox AMS dan dapat diteruskan ke alamat email operasional.'
+                    : 'Public form submissions are stored in the AMS inbox and can be routed to an operational mailbox.'}
+                </p>
+                <div className="mt-3 flex flex-col gap-2 rounded-control border border-line bg-panel p-2.5 sm:flex-row sm:items-center sm:justify-between">
+                  <code className="min-w-0 break-all text-xs text-fg">business@kapitech.id</code>
+                  <button
+                    type="button"
+                    onClick={() => copyToClipboard('business@kapitech.id', 'email')}
+                    className="inline-flex min-h-9 shrink-0 items-center justify-center gap-1.5 rounded-control border border-line bg-transparent px-3 text-[11px] font-medium text-muted transition-colors hover:bg-bg hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                  >
+                    {copiedKey === 'email' ? <Check size={13} /> : <Copy size={13} />}
+                    <span>{copiedKey === 'email' ? (language === 'id' ? 'Tersalin' : 'Copied') : (language === 'id' ? 'Salin' : 'Copy')}</span>
+                  </button>
+                </div>
+              </div>
             </div>
-          </div>
+          </section>
 
-          <div className="p-4 rounded-xl bg-[#181B22] border border-[rgba(255,255,255,0.07)]">
-            <h3 className="font-bold text-white mb-1.5 flex items-center gap-2">
-              <Sparkles size={15} className="text-[var(--k-red)]" />
-              <span>2. Opsi Penyedia Email Relay (EmailJS / Resend API)</span>
-            </h3>
-            <p className="text-[#8A94A6] leading-relaxed mb-2">
-              Untuk mengaktifkan pengiriman email SMTP/API otomatis secara live tanpa server perantara:
-            </p>
-            <ol className="list-decimal list-inside space-y-1.5 text-[#8A94A6] pl-1 font-sans">
-              <li>Daftar gratis di <a href="https://www.emailjs.com" target="_blank" rel="noreferrer" className="text-[var(--k-red)] hover:underline inline-flex items-center gap-0.5">EmailJS.com <ExternalLink size={10} /></a> atau <a href="https://resend.com" target="_blank" rel="noreferrer" className="text-[var(--k-red)] hover:underline inline-flex items-center gap-0.5">Resend.com <ExternalLink size={10} /></a>.</li>
-              <li>Buat Email Service yang terhubung ke akun Gmail atau domain <code className="text-white">@kapitech.id</code>.</li>
-              <li>Salin <code className="text-white">SERVICE_ID</code>, <code className="text-white">TEMPLATE_ID</code>, dan <code className="text-white">PUBLIC_KEY</code> ke file konfigurasi <code className="text-white">src/lib/emailService.ts</code>.</li>
-            </ol>
-          </div>
+          <section className="rounded-control border border-line bg-bg p-4">
+            <div className="flex items-start gap-3">
+              <Sparkles size={15} className="mt-0.5 shrink-0 text-accent-text" />
+              <div className="min-w-0">
+                <h3 className="text-xs font-semibold text-fg">
+                  {language === 'id' ? 'Provider Email Relay' : 'Email Relay Provider'}
+                </h3>
+                <p className="mt-1.5 text-xs leading-relaxed text-muted">
+                  {language === 'id'
+                    ? 'Untuk pengiriman otomatis melalui provider email, gunakan EmailJS atau Resend dan hubungkan konfigurasi service yang sesuai.'
+                    : 'For automated delivery, connect an email provider such as EmailJS or Resend and configure the required service credentials.'}
+                </p>
+                <ol className="mt-3 list-decimal space-y-1.5 pl-4 text-xs leading-relaxed text-muted">
+                  <li>
+                    Daftar di{' '}
+                    <a href="https://www.emailjs.com" target="_blank" rel="noreferrer" className="text-accent-text hover:underline">
+                      EmailJS
+                    </a>{' '}
+                    atau{' '}
+                    <a href="https://resend.com" target="_blank" rel="noreferrer" className="text-accent-text hover:underline">
+                      Resend
+                    </a>.
+                  </li>
+                  <li>Hubungkan service ke Gmail atau domain <code className="text-fg">@kapitech.id</code>.</li>
+                  <li>Masukkan <code className="text-fg">SERVICE_ID</code>, <code className="text-fg">TEMPLATE_ID</code>, dan <code className="text-fg">PUBLIC_KEY</code> pada konfigurasi email.</li>
+                </ol>
+              </div>
+            </div>
+          </section>
 
-          <div className="p-4 rounded-xl bg-[#181B22] border border-[rgba(255,255,255,0.07)]">
-            <h3 className="font-bold text-white mb-1.5">
-              3. Status Sistem Saat Ini
-            </h3>
-            <p className="text-[#8A94A6] leading-relaxed">
-              ✅ <strong>Real-time Inbox:</strong> Setiap kali ada user submit formulir di web, data langsung muncul di panel Inbox Admin secara instan dengan notifikasi suara audio chime dan badge unread counter.
-            </p>
-          </div>
-
+          <section className="rounded-control border border-line bg-bg p-4">
+            <div className="flex items-start gap-3">
+              <Check size={15} className="mt-0.5 shrink-0 text-success" />
+              <div>
+                <h3 className="text-xs font-semibold text-fg">
+                  {language === 'id' ? 'Status Inbox' : 'Inbox Status'}
+                </h3>
+                <p className="mt-1.5 text-xs leading-relaxed text-muted">
+                  {language === 'id'
+                    ? 'Inquiry dari formulir website tetap masuk ke Inbox AMS secara real-time, termasuk unread counter dan notifikasi audio.'
+                    : 'Website inquiries continue to appear in the AMS Inbox in real time, including unread count and audio notification.'}
+                </p>
+              </div>
+            </div>
+          </section>
         </div>
 
-        {/* Footer actions */}
-        <div className="pt-5 mt-5 border-t border-[rgba(255,255,255,0.07)] flex items-center justify-end">
+        <footer className="flex items-center justify-end gap-2 border-t border-line bg-panel px-4 py-3.5 sm:px-5">
           <button
+            type="button"
             onClick={onClose}
-            className="px-5 py-2 rounded-xl bg-[var(--k-red)] text-white text-xs font-mono font-bold hover:bg-[var(--k-red-hover)] transition-all shadow-md shadow-[var(--k-red)]/20"
+            className="inline-flex min-h-10 items-center justify-center rounded-control border border-line bg-transparent px-4 text-xs font-medium text-muted transition-colors hover:bg-bg hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
           >
-            Mengerti & Tutup
+            {language === 'id' ? 'Tutup' : 'Close'}
           </button>
-        </div>
-
+        </footer>
       </div>
     </div>
   );
