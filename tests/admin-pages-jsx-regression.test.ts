@@ -3,9 +3,11 @@ import fs from 'node:fs';
 import path from 'node:path';
 import test from 'node:test';
 
-test('Admin CRM action conditional wraps multiple controls in a fragment', () => {
+test('Admin CRM mutation actions stay grouped behind the CRM permission', () => {
   const source = fs.readFileSync(path.resolve(process.cwd(), 'src/pages/admin/AdminCrm.tsx'), 'utf8');
-  assert.ok(source.includes('{canManageCrm && (\n                        <>'));
+  assert.ok(source.includes('{canManageCrm && ('));
+  assert.ok(source.includes('disabled={!canManageCrm}'));
+  assert.ok(source.includes('</button>\n            </>\n          )}'));
 });
 
 test('Admin invoicing expense cards have balanced JSX wrapper structure', () => {
