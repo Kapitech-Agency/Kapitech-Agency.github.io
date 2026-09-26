@@ -513,9 +513,9 @@ export const AdminInbox: React.FC = () => {
         </div>
         <div className="flex flex-wrap items-center gap-2 sm:justify-end">
           <span className="text-[11px] tabular-nums text-muted">{submissions.length} inbound</span>
-          <button type="button" onClick={() => setIsEmailModalOpen(true)} className="ams-action inline-flex min-h-10 items-center justify-center gap-1.5 rounded-control border border-line bg-transparent px-3 text-xs font-medium text-muted transition-colors hover:bg-bg hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" title="Configure forwarding rules">
+          <button type="button" onClick={() => setIsEmailModalOpen(true)} className="ams-action inline-flex min-h-10 items-center justify-center gap-1.5 rounded-control border border-line bg-transparent px-3 text-xs font-medium text-muted transition-colors hover:bg-bg hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" title={language === 'id' ? 'Buka pengaturan notifikasi email' : 'Open email alert settings'}>
             <Mail size={14} />
-            <span>{language === 'id' ? 'Rules Email' : 'Email Alerts'}</span>
+            <span>{language === 'id' ? 'Notifikasi Email' : 'Email Alerts'}</span>
           </button>
           {metrics.newCount > 0 && (
             <button type="button" onClick={handleMarkAllRead} className="ams-action inline-flex min-h-10 items-center justify-center gap-1.5 rounded-control border border-line bg-transparent px-3 text-xs font-medium text-muted transition-colors hover:bg-bg hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
