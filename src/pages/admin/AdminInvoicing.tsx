@@ -938,7 +938,7 @@ export const AdminInvoicing: React.FC = () => {
                       rows={2}
                       value={itemDesc}
                       onChange={(e) => setItemDesc(e.target.value)}
-                      className="w-full px-3 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
+                      className="w-full px-3 py-2 bg-[var(--panel)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
                     />
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -1243,7 +1243,7 @@ export const AdminInvoicing: React.FC = () => {
                       value={paymentDate}
                       onChange={(e) => setPaymentDate(e.target.value)}
                       required
-                      className="w-full px-3 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20 font-sans"
+                      className="w-full px-3 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)] font-sans"
                     />
                   </div>
                 </div>
@@ -1258,7 +1258,7 @@ export const AdminInvoicing: React.FC = () => {
                     value={paymentRef}
                     onChange={(e) => setPaymentRef(e.target.value)}
                     placeholder="e.g. BCA-WS-99882312 or MANDIRI-TRX-102"
-                    className="w-full px-3 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20 font-sans"
+                    className="w-full px-3 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)] font-sans"
                   />
                 </div>
 
@@ -1272,7 +1272,7 @@ export const AdminInvoicing: React.FC = () => {
                     value={paymentNotes}
                     onChange={(e) => setPaymentNotes(e.target.value)}
                     placeholder="e.g. Received via Bank Mandiri 123-00-998877-1"
-                    className="w-full px-3 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-card text-[var(--text)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20 font-sans"
+                    className="w-full px-3 py-2.5 bg-[var(--panel)] border border-[var(--line)] rounded-control text-[var(--text)] focus:outline-none focus:border-[var(--accent)] font-sans"
                   />
                 </div>
               </div>
