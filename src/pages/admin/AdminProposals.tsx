@@ -536,7 +536,7 @@ export const AdminProposals: React.FC = () => {
             <span aria-hidden="true">/</span>
             <span className="text-fg">{language === 'id' ? 'Proposal & Penawaran' : 'Proposal & Quotes'}</span>
           </div>
-          <h1 className="mt-2 text-xl font-semibold leading-7 tracking-tight text-fg">
+          <h1 className="mt-2 text-xl font-semibold leading-7 tracking-[-0.01em] text-fg">
             {language === 'id' ? 'Proposal & Penawaran' : 'Proposal & Quotes'}
           </h1>
           <p className="mt-1 max-w-2xl text-xs leading-5 text-muted">
@@ -557,7 +557,7 @@ export const AdminProposals: React.FC = () => {
             type="button"
             onClick={openCreate}
             disabled={!canManageCrm}
-            className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-control bg-accent px-3 text-xs font-semibold text-white transition-colors hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-control bg-accent px-3 text-xs font-semibold text-white transition-colors hover:bg-[var(--accent-hover)] disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
           >
             <Plus size={14} aria-hidden="true" />
             <span>{language === 'id' ? 'Buat Proposal' : 'Create Proposal'}</span>
@@ -683,7 +683,7 @@ export const AdminProposals: React.FC = () => {
           <FileText className="mx-auto text-muted" size={22} aria-hidden="true" />
           <h2 className="mt-3 text-sm font-semibold text-fg">{language === 'id' ? 'Belum ada proposal' : 'No proposals yet'}</h2>
           <p className="mx-auto mt-1 max-w-md text-xs leading-5 text-muted">{language === 'id' ? 'Proposal yang dibuat dari workflow komersial akan muncul di sini.' : 'Proposals created from the commercial workflow will appear here.'}</p>
-          {canManageCrm && <button type="button" onClick={openCreate} className="mt-4 inline-flex min-h-10 items-center gap-1.5 rounded-control bg-accent px-3 text-xs font-semibold text-white hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"><Plus size={14} aria-hidden="true" />{language === 'id' ? 'Buat proposal pertama' : 'Create your first proposal'}</button>}
+          {canManageCrm && <button type="button" onClick={openCreate} className="mt-4 inline-flex min-h-10 items-center gap-1.5 rounded-control bg-accent px-3 text-xs font-semibold text-white hover:bg-[var(--accent-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"><Plus size={14} aria-hidden="true" />{language === 'id' ? 'Buat proposal pertama' : 'Create your first proposal'}</button>}
         </section>
       ) : filteredProposals.length === 0 ? (
         <section className="rounded-card border border-line bg-panel p-8 text-center sm:p-12">
@@ -702,7 +702,7 @@ export const AdminProposals: React.FC = () => {
               </div>
             </div>
             <div className="overflow-x-auto">
-              <table className="w-full min-w-[900px] border-collapse text-left">
+              <table className="ams-table w-full min-w-[900px] border-collapse text-left">
                 <thead>
                   <tr className="border-b border-line text-xs text-muted">
                     <th className="px-4 py-3 font-medium sm:px-5">Proposal</th>
@@ -850,7 +850,7 @@ export const AdminProposals: React.FC = () => {
 
           <div className="flex flex-col-reverse gap-2 border-t border-line pt-4 sm:flex-row sm:justify-end">
             <button type="button" onClick={() => setFormOpen(false)} disabled={isSubmitting} className="inline-flex min-h-10 items-center justify-center rounded-control border border-line bg-panel px-4 text-xs font-medium text-muted hover:bg-panel-hover hover:text-fg disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">Cancel</button>
-            <button type="submit" disabled={isSubmitting || !canManageCrm} className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-control bg-accent px-4 text-xs font-semibold text-white hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
+            <button type="submit" disabled={isSubmitting || !canManageCrm} className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-control bg-accent px-4 text-xs font-semibold text-white hover:bg-[var(--accent-hover)] disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
               {isSubmitting ? <Loader2 size={14} className="animate-spin" aria-hidden="true" /> : <CheckCircle2 size={14} aria-hidden="true" />}
               {editingProposal ? 'Save changes' : 'Create proposal'}
             </button>
@@ -918,7 +918,7 @@ export const AdminProposals: React.FC = () => {
               <button type="button" onClick={() => window.print()} className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-control border border-line bg-panel px-3 text-xs font-medium text-muted hover:bg-panel-hover hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"><Download size={14} aria-hidden="true" />Print / Export</button>
               <div className="flex flex-wrap justify-end gap-2">
                 {detailProposal.status !== 'accepted' && canManageCrm && <button type="button" onClick={() => { setDetailProposal(null); openEdit(detailProposal); }} className="inline-flex min-h-10 items-center gap-1.5 rounded-control border border-line bg-panel px-3 text-xs font-medium text-fg hover:bg-panel-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"><FileText size={14} aria-hidden="true" />Edit</button>}
-                {detailProposal.status === 'approved' && canManageInvoices && <button type="button" onClick={() => openConvert(detailProposal)} className="inline-flex min-h-10 items-center gap-1.5 rounded-control bg-accent px-3 text-xs font-semibold text-white hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"><CheckCircle2 size={14} aria-hidden="true" />Convert to invoice</button>}
+                {detailProposal.status === 'approved' && canManageInvoices && <button type="button" onClick={() => openConvert(detailProposal)} className="inline-flex min-h-10 items-center gap-1.5 rounded-control bg-accent px-3 text-xs font-semibold text-white hover:bg-[var(--accent-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"><CheckCircle2 size={14} aria-hidden="true" />Convert to invoice</button>}
               </div>
             </div>
 
