@@ -123,7 +123,7 @@ const taskStatusLabel = (status: TaskStatus) => TASK_COLUMNS.find(item => item.i
 
 const priorityLabel = (priority: TaskPriority) => TASK_PRIORITIES.find(item => item.value === priority)?.label || priority;
 
-const fieldClass = 'mt-1 w-full min-h-10 rounded-control border border-line bg-bg px-3 text-xs text-text outline-none transition-colors placeholder:text-muted focus:border-accent';
+const fieldClass = 'mt-1 w-full min-h-10 rounded-control border border-line bg-bg px-3 text-xs text-fg outline-none transition-colors placeholder:text-muted focus:border-accent';
 
 const projectHealthClass = (health?: ProjectHealth) => {
   if (health === 'Good') return 'text-success border-success/30 bg-success/10';
@@ -594,7 +594,7 @@ export const AdminProjects: React.FC = () => {
             <span aria-hidden="true">/</span>
             <span className="text-fg">Projects &amp; Tasks</span>
           </div>
-          <h1 className="mt-2 text-xl font-semibold leading-7 tracking-tight text-fg">Projects &amp; Tasks</h1>
+          <h1 className="mt-2 text-xl font-semibold leading-7 tracking-[-0.01em] text-fg">Projects &amp; Tasks</h1>
           <p className="mt-1 max-w-2xl text-xs leading-5 text-muted">
             {language === 'id' ? 'Pantau delivery proyek, pekerjaan terbuka, deadline, dan tanggung jawab tim.' : 'Track delivery, outstanding work, deadlines, and team ownership from one workspace.'}
           </p>
@@ -606,7 +606,7 @@ export const AdminProjects: React.FC = () => {
       </header>
 
       {toast && (
-        <div role="status" className="fixed bottom-4 left-1/2 z-[70] -translate-x-1/2 rounded-control border border-line bg-panel px-4 py-3 text-xs text-text">
+        <div role="status" className="fixed bottom-4 left-1/2 z-[70] -translate-x-1/2 rounded-control border border-line bg-panel px-4 py-3 text-xs text-fg">
           {toast}
         </div>
       )}
@@ -616,7 +616,7 @@ export const AdminProjects: React.FC = () => {
           <div className="flex min-w-0 items-start gap-3">
             <AlertCircle className="mt-0.5 shrink-0 text-danger" size={17} />
             <div>
-              <p className="text-xs font-semibold text-text">Unable to load Projects & Tasks</p>
+              <p className="text-xs font-semibold text-fg">Unable to load Projects & Tasks</p>
               <p className="mt-1 text-xs text-muted">{error}</p>
             </div>
           </div>
@@ -636,7 +636,7 @@ export const AdminProjects: React.FC = () => {
               <span className="text-xs text-muted">{item.label}</span>
               <item.icon size={15} className="text-muted" />
             </div>
-            <div className="mt-2 text-[24px] leading-8 font-medium tabular-nums text-text">{item.value}</div>
+            <div className="mt-2 text-[24px] leading-8 font-medium tabular-nums text-fg">{item.value}</div>
           </div>
         ))}
       </section>
@@ -645,7 +645,7 @@ export const AdminProjects: React.FC = () => {
         <section className="rounded-card border border-line bg-panel p-4 sm:p-5">
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <div>
-              <h2 className="text-sm font-semibold text-text">Action required</h2>
+              <h2 className="text-sm font-semibold text-fg">Action required</h2>
               <p className="mt-1 text-xs text-muted">Focus on delivery items that need attention today.</p>
             </div>
             <div className="flex flex-wrap gap-2">
@@ -662,7 +662,7 @@ export const AdminProjects: React.FC = () => {
         <div className="border-b border-line p-4 sm:p-5">
           <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
             <div>
-              <h2 className="text-sm font-semibold text-text">Projects</h2>
+              <h2 className="text-sm font-semibold text-fg">Projects</h2>
               <p className="mt-1 text-xs text-muted">Select a project to inspect its delivery state and task board.</p>
             </div>
             <div className="projects-filter-bar grid w-full min-w-0 grid-cols-1 items-center gap-2.5 sm:grid-cols-[minmax(240px,1fr)_168px_190px] xl:w-auto xl:min-w-[630px]">
@@ -709,14 +709,14 @@ export const AdminProjects: React.FC = () => {
         ) : filteredProjects.length === 0 ? (
           <div className="p-8 text-center">
             <Briefcase className="mx-auto text-muted" size={22} />
-            <p className="mt-3 text-sm font-semibold text-text">{projects.length ? 'No matching projects' : 'No projects yet'}</p>
+            <p className="mt-3 text-sm font-semibold text-fg">{projects.length ? 'No matching projects' : 'No projects yet'}</p>
             <p className="mt-1 text-xs text-muted">{projects.length ? 'Try a different search or clear the filters.' : 'Create a project when a delivery record is ready.'}</p>
             {projects.length === 0 && canManageProjects && <Button className="mt-4" icon={<Plus size={14} />} onClick={() => resetProjectForm()}>New Project</Button>}
           </div>
         ) : (
           <>
             <div className="hidden overflow-x-auto md:block">
-              <table className="w-full min-w-[920px] border-collapse text-left">
+              <table className="ams-table w-full min-w-[920px] border-collapse text-left">
                 <thead className="border-b border-line bg-bg">
                   <tr>
                     {['Project', 'Status', 'Progress', 'Owner', 'Deadline', 'Tasks', ''].map(label => <th key={label} className="px-4 py-3 text-[11px] font-semibold text-muted">{label}</th>)}
@@ -730,7 +730,7 @@ export const AdminProjects: React.FC = () => {
                       <tr key={project.id} className={isSelected ? 'bg-[color-mix(in_srgb,var(--accent)_6%,transparent)]' : 'hover:bg-bg'}>
                         <td className="px-4 py-3">
                           <button className="min-w-0 text-left" onClick={() => setSelectedProjectId(project.id)}>
-                            <div className="max-w-[280px] truncate text-xs font-semibold text-text">{project.name}</div>
+                            <div className="max-w-[280px] truncate text-xs font-semibold text-fg">{project.name}</div>
                             <div className="mt-1 max-w-[280px] truncate text-[11px] text-muted">{project.clientCompany || project.clientName || 'No client'}</div>
                           </button>
                         </td>
@@ -739,19 +739,19 @@ export const AdminProjects: React.FC = () => {
                         </td>
                         <td className="px-4 py-3">
                           <div className="w-36">
-                            <div className="flex items-center justify-between text-[10px] text-muted"><span>Progress</span><span className="tabular-nums text-text">{project.progressPercent}%</span></div>
+                            <div className="flex items-center justify-between text-[10px] text-muted"><span>Progress</span><span className="tabular-nums text-fg">{project.progressPercent}%</span></div>
                             <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-bg"><div className="h-full rounded-full bg-accent" style={{ width: project.progressPercent + '%' }} /></div>
                           </div>
                         </td>
-                        <td className="px-4 py-3 text-xs text-text">{project.teamLead || 'Unassigned'}</td>
+                        <td className="px-4 py-3 text-xs text-fg">{project.teamLead || 'Unassigned'}</td>
                         <td className="px-4 py-3">
-                          <span className={isOverdue(project.targetEndDate) && project.status !== 'completed' ? 'text-danger' : 'text-text'}>{formatDate(project.targetEndDate)}</span>
+                          <span className={isOverdue(project.targetEndDate) && project.status !== 'completed' ? 'text-danger' : 'text-fg'}>{formatDate(project.targetEndDate)}</span>
                         </td>
                         <td className="px-4 py-3">
-                          <div className="flex items-center gap-2 text-xs tabular-nums"><span className="text-text">{project.tasks.filter(task => task.status === 'done').length}/{project.tasks.length}</span>{overdue > 0 && <span className="text-danger">{overdue} overdue</span>}</div>
+                          <div className="flex items-center gap-2 text-xs tabular-nums"><span className="text-fg">{project.tasks.filter(task => task.status === 'done').length}/{project.tasks.length}</span>{overdue > 0 && <span className="text-danger">{overdue} overdue</span>}</div>
                         </td>
                         <td className="px-4 py-3 text-right">
-                          <button aria-label={'Open ' + project.name} onClick={() => setSelectedProjectId(project.id)} className="inline-flex min-h-9 min-w-9 items-center justify-center rounded-control text-muted hover:bg-bg hover:text-text"><ChevronRight size={15} /></button>
+                          <button aria-label={'Open ' + project.name} onClick={() => setSelectedProjectId(project.id)} className="inline-flex min-h-9 min-w-9 items-center justify-center rounded-control text-muted hover:bg-bg hover:text-fg"><ChevronRight size={15} /></button>
                         </td>
                       </tr>
                     );
@@ -767,7 +767,7 @@ export const AdminProjects: React.FC = () => {
                   <button key={project.id} onClick={() => setSelectedProjectId(project.id)} className="block w-full p-4 text-left hover:bg-bg">
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
-                        <div className="truncate text-sm font-semibold text-text">{project.name}</div>
+                        <div className="truncate text-sm font-semibold text-fg">{project.name}</div>
                         <div className="mt-1 truncate text-xs text-muted">{project.clientCompany || 'No client'}</div>
                       </div>
                       <ChevronRight size={16} className="mt-1 shrink-0 text-muted" />
@@ -801,12 +801,12 @@ export const AdminProjects: React.FC = () => {
                     {selectedProject.health && <span className={'rounded-control border px-2 py-1 text-[11px] font-semibold ' + projectHealthClass(selectedProject.health)}>{selectedProject.health}</span>}
                     <span className="text-[11px] text-muted">{selectedProject.serviceCategory || 'Delivery project'}</span>
                   </div>
-                  <h2 className="mt-3 text-xl font-semibold tracking-tight text-text">{selectedProject.name}</h2>
+                  <h2 className="mt-3 text-xl font-semibold tracking-[-0.01em] text-fg">{selectedProject.name}</h2>
                   <p className="mt-1 text-xs text-muted">{selectedProject.clientCompany || selectedProject.clientName || 'No client'}{selectedProject.clientName ? ' · ' + selectedProject.clientName : ''}</p>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  {selectedProject.repositoryUrl && <a href={selectedProject.repositoryUrl} target="_blank" rel="noreferrer" className="inline-flex min-h-10 items-center gap-2 rounded-control border border-line bg-panel px-3 text-xs text-text hover:bg-bg"><Code2 size={14} />Repository</a>}
-                  {selectedProject.liveStagingUrl && <a href={selectedProject.liveStagingUrl} target="_blank" rel="noreferrer" className="inline-flex min-h-10 items-center gap-2 rounded-control border border-line bg-panel px-3 text-xs text-text hover:bg-bg"><ExternalLink size={14} />Staging</a>}
+                  {selectedProject.repositoryUrl && <a href={selectedProject.repositoryUrl} target="_blank" rel="noreferrer" className="inline-flex min-h-10 items-center gap-2 rounded-control border border-line bg-panel px-3 text-xs text-fg hover:bg-bg"><Code2 size={14} />Repository</a>}
+                  {selectedProject.liveStagingUrl && <a href={selectedProject.liveStagingUrl} target="_blank" rel="noreferrer" className="inline-flex min-h-10 items-center gap-2 rounded-control border border-line bg-panel px-3 text-xs text-fg hover:bg-bg"><ExternalLink size={14} />Staging</a>}
                   {canManageProjects && <Button variant="secondary" icon={<Edit3 size={14} />} onClick={() => resetProjectForm(selectedProject)}>Edit</Button>}
                   {canDeleteProjects && <Button variant="danger" icon={<Trash2 size={14} />} onClick={() => setDeleteProject(selectedProject)}>Delete</Button>}
                 </div>
@@ -822,21 +822,21 @@ export const AdminProjects: React.FC = () => {
                 ].map(item => (
                   <div key={item.label} className="rounded-control border border-line bg-bg p-3">
                     <div className="flex items-center gap-2 text-[11px] text-muted"><item.icon size={13} />{item.label}</div>
-                    <div className="mt-2 truncate text-xs font-semibold text-text tabular-nums">{item.value}</div>
+                    <div className="mt-2 truncate text-xs font-semibold text-fg tabular-nums">{item.value}</div>
                   </div>
                 ))}
               </div>
 
               <div className="mt-5">
-                <div className="flex items-center justify-between text-[11px] text-muted"><span>Project progress</span><span className="tabular-nums text-text">{selectedProject.progressPercent}%</span></div>
+                <div className="flex items-center justify-between text-[11px] text-muted"><span>Project progress</span><span className="tabular-nums text-fg">{selectedProject.progressPercent}%</span></div>
                 <div className="mt-2 h-2 overflow-hidden rounded-full bg-bg"><div className="h-full rounded-full bg-accent" style={{ width: selectedProject.progressPercent + '%' }} /></div>
               </div>
 
               {(selectedProject.notes || selectedProject.techStack.length || selectedProject.teamMembers.length) && (
                 <div className="mt-5 grid gap-4 lg:grid-cols-3">
-                  {selectedProject.notes && <div className="lg:col-span-2"><div className="text-[11px] font-semibold text-muted">Project notes</div><p className="mt-2 text-xs leading-5 text-text">{selectedProject.notes}</p></div>}
+                  {selectedProject.notes && <div className="lg:col-span-2"><div className="text-[11px] font-semibold text-muted">Project notes</div><p className="mt-2 text-xs leading-5 text-fg">{selectedProject.notes}</p></div>}
                   <div className="space-y-3">
-                    {selectedProject.teamMembers.length > 0 && <div><div className="flex items-center gap-2 text-[11px] font-semibold text-muted"><Users size={13} />Team</div><div className="mt-2 flex flex-wrap gap-1.5">{selectedProject.teamMembers.map(member => <span key={member} className="rounded-control border border-line bg-bg px-2 py-1 text-[10px] text-text">{member}</span>)}</div></div>}
+                    {selectedProject.teamMembers.length > 0 && <div><div className="flex items-center gap-2 text-[11px] font-semibold text-muted"><Users size={13} />Team</div><div className="mt-2 flex flex-wrap gap-1.5">{selectedProject.teamMembers.map(member => <span key={member} className="rounded-control border border-line bg-bg px-2 py-1 text-[10px] text-fg">{member}</span>)}</div></div>}
                     {selectedProject.techStack.length > 0 && <div><div className="flex items-center gap-2 text-[11px] font-semibold text-muted"><Tag size={13} />Stack</div><div className="mt-2 flex flex-wrap gap-1.5">{selectedProject.techStack.map(item => <span key={item} className="rounded-control border border-line bg-bg px-2 py-1 text-[10px] text-muted">{item}</span>)}</div></div>}
                   </div>
                 </div>
@@ -848,7 +848,7 @@ export const AdminProjects: React.FC = () => {
             <div className="border-b border-line p-4 sm:p-5">
               <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
                 <div>
-                  <div className="flex items-center gap-2"><ListTodo size={16} className="text-accent-text" /><h2 className="text-sm font-semibold text-text">Tasks</h2></div>
+                  <div className="flex items-center gap-2"><ListTodo size={16} className="text-accent-text" /><h2 className="text-sm font-semibold text-fg">Tasks</h2></div>
                   <p className="mt-1 text-xs text-muted">{selectedProjectTaskStats.open} open · {selectedProjectTaskStats.done} done · {selectedProjectTaskStats.overdue} overdue</p>
                 </div>
                 <div className="flex flex-col gap-2 lg:flex-row">
@@ -874,7 +874,7 @@ export const AdminProjects: React.FC = () => {
                   return (
                     <div key={column.id} onDragOver={event => event.preventDefault()} onDrop={event => void onDropTask(event, column.id)} className="w-[280px] rounded-card border border-line bg-bg p-3 sm:w-[300px]">
                       <div className="flex items-center justify-between border-b border-line pb-3">
-                        <div className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-muted" /><span className="text-xs font-semibold text-text">{column.label}</span></div>
+                        <div className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-muted" /><span className="text-xs font-semibold text-fg">{column.label}</span></div>
                         <span className="rounded-control border border-line bg-panel px-2 py-1 text-[10px] tabular-nums text-muted">{tasks.length}</span>
                       </div>
                       <div className="mt-3 space-y-2.5">
@@ -891,13 +891,13 @@ export const AdminProjects: React.FC = () => {
                                   {canManageKanbanTasks && <GripVertical size={13} className="shrink-0 text-muted" aria-label="Draggable task" />}
                                   <span className={'rounded-control border px-2 py-1 text-[10px] font-semibold ' + taskPriorityClass(task.priority)}>{priorityLabel(task.priority)}</span>
                                 </div>
-                                <button aria-label={'Task actions for ' + task.title} onClick={event => { event.stopPropagation(); openEditTask(task); }} className="inline-flex min-h-8 min-w-8 items-center justify-center rounded-control text-muted opacity-0 transition-opacity hover:bg-bg hover:text-text group-hover:opacity-100 focus:opacity-100"><Edit3 size={13} /></button>
+                                <button aria-label={'Task actions for ' + task.title} onClick={event => { event.stopPropagation(); openEditTask(task); }} className="inline-flex min-h-8 min-w-8 items-center justify-center rounded-control text-muted opacity-0 transition-opacity hover:bg-bg hover:text-fg group-hover:opacity-100 focus:opacity-100"><Edit3 size={13} /></button>
                               </div>
-                              <h3 className="mt-2 text-xs font-semibold leading-5 text-text">{task.title}</h3>
+                              <h3 className="mt-2 text-xs font-semibold leading-5 text-fg">{task.title}</h3>
                               {task.description && <p className="mt-1 line-clamp-2 text-[11px] leading-4 text-muted">{task.description}</p>}
                               {subtasks.length > 0 && <div className="mt-3"><div className="flex items-center justify-between text-[10px] text-muted"><span>Checklist</span><span className="tabular-nums">{doneSubtasks}/{subtasks.length}</span></div><div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-bg"><div className="h-full rounded-full bg-success" style={{ width: ((doneSubtasks / subtasks.length) * 100) + '%' }} /></div></div>}
                               <div className="mt-3 flex items-center justify-between gap-2 border-t border-line pt-2.5 text-[10px]">
-                                <span className="flex min-w-0 items-center gap-1.5 text-muted"><span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-line bg-bg text-[9px] font-semibold text-text">{task.assignedTo.charAt(0) || '?'}</span><span className="truncate">{task.assignedTo || 'Unassigned'}</span></span>
+                                <span className="flex min-w-0 items-center gap-1.5 text-muted"><span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-line bg-bg text-[9px] font-semibold text-fg">{task.assignedTo.charAt(0) || '?'}</span><span className="truncate">{task.assignedTo || 'Unassigned'}</span></span>
                                 <span className={overdue ? 'shrink-0 font-semibold text-danger' : 'shrink-0 text-muted'}>{overdue ? 'Overdue' : formatDate(task.dueDate)}</span>
                               </div>
                             </article>
@@ -916,7 +916,7 @@ export const AdminProjects: React.FC = () => {
       {!selectedProject && !loading && projects.length > 0 && (
         <div className="rounded-card border border-dashed border-line bg-panel p-8 text-center">
           <FolderKanban className="mx-auto text-muted" size={22} />
-          <p className="mt-3 text-sm font-semibold text-text">Select a project</p>
+          <p className="mt-3 text-sm font-semibold text-fg">Select a project</p>
           <p className="mt-1 text-xs text-muted">Choose a project above to open its delivery workspace.</p>
         </div>
       )}
@@ -929,9 +929,9 @@ export const AdminProjects: React.FC = () => {
             <header className="flex shrink-0 items-center justify-between gap-3 border-b border-line px-4 py-4 sm:px-5">
               <div className="min-w-0">
                 <div className="flex items-center gap-2 text-[11px] text-muted"><ListTodo size={14} className="text-accent-text" />Task details</div>
-                <h2 className="mt-1 truncate text-base font-semibold text-text">{taskDrawer.title}</h2>
+                <h2 className="mt-1 truncate text-base font-semibold text-fg">{taskDrawer.title}</h2>
               </div>
-              <button onClick={() => setTaskDrawer(null)} aria-label="Close task details" className="inline-flex min-h-10 min-w-10 items-center justify-center rounded-control border border-line text-muted hover:bg-bg hover:text-text"><X size={16} /></button>
+              <button onClick={() => setTaskDrawer(null)} aria-label="Close task details" className="inline-flex min-h-10 min-w-10 items-center justify-center rounded-control border border-line text-muted hover:bg-bg hover:text-fg"><X size={16} /></button>
             </header>
             <div className="min-h-0 flex-1 overflow-y-auto p-4 sm:p-5">
               <div className="flex flex-wrap gap-2">
@@ -942,18 +942,18 @@ export const AdminProjects: React.FC = () => {
               <div className="mt-5">
                 <div className="text-[11px] font-semibold text-muted">Status</div>
                 <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
-                  {TASK_COLUMNS.map(column => <button key={column.id} disabled={!canManageKanbanTasks} onClick={() => void changeTaskStatus(taskDrawer, column.id)} className={'min-h-10 rounded-control border px-2 text-[11px] font-semibold transition-colors ' + (taskDrawer.status === column.id ? 'border-accent bg-accent text-white' : 'border-line bg-bg text-muted hover:text-text')}>{column.label}</button>)}
+                  {TASK_COLUMNS.map(column => <button key={column.id} disabled={!canManageKanbanTasks} onClick={() => void changeTaskStatus(taskDrawer, column.id)} className={'min-h-10 rounded-control border px-2 text-[11px] font-semibold transition-colors ' + (taskDrawer.status === column.id ? 'border-accent bg-accent text-white' : 'border-line bg-bg text-muted hover:text-fg')}>{column.label}</button>)}
                 </div>
               </div>
 
               <div className="mt-5 grid gap-3 sm:grid-cols-2">
-                <div className="rounded-control border border-line bg-bg p-3"><div className="text-[10px] text-muted">Assignee</div><div className="mt-1 flex items-center gap-2 text-xs font-semibold text-text"><User size={13} />{taskDrawer.assignedTo || 'Unassigned'}</div></div>
-                <div className="rounded-control border border-line bg-bg p-3"><div className="text-[10px] text-muted">Due date</div><div className="mt-1 flex items-center gap-2 text-xs font-semibold text-text"><Calendar size={13} />{formatDate(taskDrawer.dueDate)}</div></div>
+                <div className="rounded-control border border-line bg-bg p-3"><div className="text-[10px] text-muted">Assignee</div><div className="mt-1 flex items-center gap-2 text-xs font-semibold text-fg"><User size={13} />{taskDrawer.assignedTo || 'Unassigned'}</div></div>
+                <div className="rounded-control border border-line bg-bg p-3"><div className="text-[10px] text-muted">Due date</div><div className="mt-1 flex items-center gap-2 text-xs font-semibold text-fg"><Calendar size={13} />{formatDate(taskDrawer.dueDate)}</div></div>
               </div>
 
               <div className="mt-5">
                 <div className="text-[11px] font-semibold text-muted">Description</div>
-                <div className="mt-2 rounded-card border border-line bg-bg p-3 text-xs leading-5 text-text">{taskDrawer.description || 'No description provided.'}</div>
+                <div className="mt-2 rounded-card border border-line bg-bg p-3 text-xs leading-5 text-fg">{taskDrawer.description || 'No description provided.'}</div>
               </div>
 
               <div className="mt-5">
@@ -962,7 +962,7 @@ export const AdminProjects: React.FC = () => {
                   {(taskDrawer.subtasks || []).length === 0 ? <div className="rounded-control border border-dashed border-line p-3 text-xs text-muted">No checklist items.</div> : (taskDrawer.subtasks || []).map(item => (
                     <button key={item.id} disabled={!canManageKanbanTasks} onClick={() => void toggleSubtask(taskDrawer, item)} className="flex w-full items-center gap-2.5 rounded-control border border-line bg-bg p-3 text-left">
                       {item.completed ? <CheckCircle2 size={16} className="shrink-0 text-success" /> : <span className="h-4 w-4 shrink-0 rounded border border-muted" />}
-                      <span className={'text-xs ' + (item.completed ? 'text-muted line-through' : 'text-text')}>{item.title}</span>
+                      <span className={'text-xs ' + (item.completed ? 'text-muted line-through' : 'text-fg')}>{item.title}</span>
                     </button>
                   ))}
                 </div>
