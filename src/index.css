@@ -971,26 +971,6 @@
 }
 
 /* Mobile: preserve the 52px chrome and provide safe, compact page padding. */
-@media (max-width: 899px) {
-  .ams-shell > main > div.flex-1 {
-    padding: 16px;
-  }
-}
-@media (max-width: 599px) {
-  .ams-shell > main > div.flex-1 {
-    padding: 14px;
-  }
-  .ams-shell input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
-  .ams-shell select {
-    height: 40px;
-    min-height: 40px;
-  }
-  .ams-shell h1 {
-    font-size: 18px;
-    line-height: 24px;
-  }
-}
-
 /* Shared legacy control class: map it to the canonical input primitive. */
 .ams-shell .ams-control {
   width: 100%;
@@ -1005,11 +985,6 @@
 }
 .ams-shell .ams-control::placeholder {
   color: var(--muted);
-}
-.ams-shell .ams-control:focus {
-  outline: 2px solid var(--accent) !important;
-  outline-offset: 2px !important;
-  border-color: var(--accent) !important;
 }
 .ams-shell .ams-control:disabled {
   opacity: .55;
@@ -1095,31 +1070,6 @@
   color: var(--muted);
   font-size: 12px;
   line-height: 16px;
-}
-.ams-shell .ams-page-title {
-  color: var(--text);
-  font-size: 20px;
-  line-height: 28px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-}
-
-.ams-shell .ams-page-header {
-  padding-bottom: 16px;
-}
-
-.ams-shell .ams-page-header > div:first-child {
-  min-width: 0;
-}
-
-.ams-shell .ams-page-header .ams-page-title span {
-  min-width: 0;
-}
-
-@media (max-width: 599px) {
-  .ams-shell .ams-page-header {
-    padding-bottom: 14px;
-  }
 }
 .ams-shell .ams-action {
   min-height: 40px;
@@ -1235,9 +1185,6 @@
   box-shadow: none;
 }
 
-.ams-shell [role="dialog"]:not(.ams-mobile-drawer) {
-  overscroll-behavior: contain;
-}
 
 .ams-shell [role="dialog"]:not(.ams-mobile-drawer) > div {
   border-radius: 12px;
