@@ -77,6 +77,7 @@ const emptyLineItem = (): InvoiceLineItem => ({
   amount: 0
 });
 
+const cardClass = 'ams-dashboard-card rounded-card border border-line bg-panel p-4 sm:p-5';
 const actionClass = 'inline-flex min-h-10 items-center justify-center gap-1.5 rounded-control border border-line bg-transparent px-3 text-xs font-medium text-muted transition-colors hover:bg-bg hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-50';
 const primaryClass = 'inline-flex min-h-10 items-center justify-center gap-1.5 rounded-control bg-accent px-3.5 text-xs font-semibold text-white transition-colors hover:bg-accent/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-50';
 const fieldClass = 'min-h-10 w-full rounded-control border border-line bg-bg px-3 text-xs text-fg outline-none transition-colors placeholder:text-muted focus:border-accent';
@@ -680,8 +681,8 @@ export const AdminInvoicing: React.FC = () => {
             </div>
           </section>
 
-          <section className="mt-6 grid gap-3 min-[1100px]:grid-cols-12" aria-labelledby="financial-flow-title">
-            <div className="rounded-card border border-line bg-panel p-4 sm:p-5 min-[1100px]:col-span-7">
+          <section className="mt-6" aria-labelledby="financial-flow-title">
+            <div className={cardClass}>
               <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div>
                   <h2 id="financial-flow-title" className="text-sm font-semibold text-fg">{language === 'id' ? 'Financial operating summary' : 'Financial operating summary'}</h2>
@@ -689,27 +690,27 @@ export const AdminInvoicing: React.FC = () => {
                 </div>
                 <span className="rounded-badge bg-accent/10 px-2 py-1 text-[11px] font-semibold text-accent-text">{serverMetrics?.profitMargin || '0'}% margin</span>
               </div>
-              <div className="mt-5 grid grid-cols-1 gap-px overflow-hidden rounded-control border border-line bg-line sm:grid-cols-4">
+              <div className="mt-5 grid grid-cols-2 gap-y-4 border-y border-line py-4 sm:grid-cols-4 sm:gap-y-0">
                 {[
                   { label: 'Revenue', value: serverMetrics ? formatAmount(serverMetrics.totalRevenueCollected, currency) : '—', tone: 'text-accent-text' },
                   { label: 'Expenses', value: serverMetrics ? formatAmount(serverMetrics.totalExpense, currency) : '—', tone: 'text-danger' },
                   { label: 'Operating profit', value: serverMetrics ? formatAmount(serverMetrics.netProfit, currency) : '—', tone: 'text-success' },
                   { label: 'Outstanding', value: serverMetrics ? formatAmount(serverMetrics.totalOutstanding, currency) : '—', tone: 'text-warning' }
                 ].map((item) => (
-                  <div key={item.label} className="min-w-0 bg-bg p-3.5">
+                  <div key={item.label} className="min-w-0 border-line px-3 first:pl-0 last:pr-0 sm:border-l sm:px-4 sm:first:border-l-0">
                     <p className="text-xs text-muted">{item.label}</p>
                     <p className={'mt-2 truncate text-sm font-medium tabular-nums ' + item.tone}>{item.value}</p>
                   </div>
                 ))}
               </div>
-              <div className="mt-4 grid grid-cols-2 gap-3 border-t border-line pt-4 sm:grid-cols-3">
-                <div><p className="text-xs text-muted">Collection rate</p><p className="mt-1 text-sm font-medium tabular-nums text-fg">{currencyInvoices.length ? derivedMetrics.collectionRate + '%' : '—'}</p></div>
-                <div><p className="text-xs text-muted">Monthly burn rate</p><p className="mt-1 text-sm font-medium tabular-nums text-fg">{derivedMetrics.monthlyBurnRate ? formatAmount(derivedMetrics.monthlyBurnRate, currency) : '—'}</p></div>
-                <div><p className="text-xs text-muted">Cash runway</p><p className="mt-1 text-sm font-medium tabular-nums text-fg">{derivedMetrics.cashRunwayMonths == null ? 'Not available' : derivedMetrics.cashRunwayMonths + ' mo'}</p></div>
+              <div className="mt-4 grid grid-cols-2 gap-y-4 border-t border-line pt-4 sm:grid-cols-3 sm:gap-y-0">
+                <div className="min-w-0 sm:border-l sm:border-line sm:pl-4"><p className="text-xs text-muted">Collection rate</p><p className="mt-1 text-sm font-medium tabular-nums text-fg">{currencyInvoices.length ? derivedMetrics.collectionRate + '%' : '—'}</p></div>
+                <div className="min-w-0 sm:border-l sm:border-line sm:pl-4"><p className="text-xs text-muted">Monthly burn rate</p><p className="mt-1 text-sm font-medium tabular-nums text-fg">{derivedMetrics.monthlyBurnRate ? formatAmount(derivedMetrics.monthlyBurnRate, currency) : '—'}</p></div>
+                <div className="min-w-0 sm:border-l sm:border-line sm:pl-4"><p className="text-xs text-muted">Cash runway</p><p className="mt-1 text-sm font-medium tabular-nums text-fg">{derivedMetrics.cashRunwayMonths == null ? 'Not available' : derivedMetrics.cashRunwayMonths + ' mo'}</p></div>
               </div>
             </div>
 
-            <div className="rounded-card border border-line bg-panel p-4 sm:p-5 min-[1100px]:col-span-5">
+            <div className={cardClass}>
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <h2 className="text-sm font-semibold text-fg">{language === 'id' ? 'Arus kas tercatat' : 'Recorded cash flow'}</h2>
