@@ -604,6 +604,7 @@ export const AdminProposals: React.FC = () => {
               value={statusFilter}
               onChange={(value) => setStatusFilter(value as ProposalStatus | 'all')}
               size="sm"
+              aria-label={language === 'id' ? 'Filter status' : 'Status filter'}
               options={[{ value: 'all', label: language === 'id' ? 'Semua status' : 'All statuses' }, ...STATUS_OPTIONS.map((item) => ({ ...item, label: language === 'id' && item.value === 'review' ? 'Review internal' : item.label }))]}
               
             />
@@ -611,6 +612,7 @@ export const AdminProposals: React.FC = () => {
               value={expiryFilter}
               onChange={(value) => setExpiryFilter(value as typeof expiryFilter)}
               size="sm"
+              aria-label={language === 'id' ? 'Filter masa berlaku' : 'Expiry filter'}
               options={[
                 { value: 'all', label: language === 'id' ? 'Semua masa berlaku' : 'All expiry' },
                 { value: 'active', label: language === 'id' ? 'Masih aktif' : 'Active' },
@@ -623,6 +625,7 @@ export const AdminProposals: React.FC = () => {
               value={sortBy}
               onChange={(value) => setSortBy(value as SortOption)}
               size="sm"
+              aria-label={language === 'id' ? 'Urutkan proposal' : 'Sort proposals'}
               options={[
                 { value: 'newest', label: language === 'id' ? 'Terbaru' : 'Newest' },
                 { value: 'oldest', label: language === 'id' ? 'Terlama' : 'Oldest' },
