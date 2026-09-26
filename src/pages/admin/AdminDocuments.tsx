@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { 
   FileText, 
-  UploadCloud, 
   Plus, 
   Search, 
   Download, 
@@ -363,22 +362,7 @@ export const AdminDocuments: React.FC = () => {
       </Modal>
 
       {/* UPLOAD MODAL */}
-      {isUploadModalOpen && (
-        <div className="fixed inset-0 z-50 bg-bg/80  flex items-center justify-center p-4">
-          <div className="bg-panel border border-line rounded-card w-full max-w-md max-h-[calc(100dvh-24px)] overflow-y-auto">
-            <div className="p-4 border-b border-line flex items-center justify-between bg-panel">
-              <h3 className="text-sm font-semibold font-sans text-fg flex items-center gap-2">
-                <UploadCloud size={16} className="text-accent" />
-                <span>Add Document to Registry</span>
-              </h3>
-              <button
-                onClick={() => setIsUploadModalOpen(false)}
-                className="min-h-10 min-w-10 p-2 text-muted hover:text-fg rounded-control hover:bg-panel-hover flex items-center justify-center"
-              >
-                <X size={16} />
-              </button>
-            </div>
-
+      <Modal open={isUploadModalOpen} onClose={() => setIsUploadModalOpen(false)} size="md" title={language === 'id' ? 'Unggah dokumen' : 'Upload document'} description={language === 'id' ? 'Tambahkan dokumen ke private vault AMS.' : 'Add a document to the AMS private vault.'}>
             <form onSubmit={handleUploadSubmit} className="p-4 space-y-4 text-xs font-sans">
               <div className="space-y-1">
                 <label className="text-xs font-sans text-muted">Document Title *</label>
@@ -438,9 +422,7 @@ export const AdminDocuments: React.FC = () => {
                 </button>
               </div>
             </form>
-          </div>
-        </div>
-      )}
+      </Modal>
     </div>
   );
 };
